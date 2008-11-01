@@ -33,20 +33,25 @@ ini_set('display_errors', true);
 
 define('EXT', '.php');
 define('DOCROOT', getcwd().DIRECTORY_SEPARATOR);
-define('GALLERY',  basename(__FILE__));
 
 // If the front controller is a symlink, change to the real docroot
-is_link(GALLERY) and chdir(dirname(realpath(__FILE__)));
+is_link(basename(__FILE__)) and chdir(dirname(realpath(__FILE__)));
 
 // Define application and system paths
 define('APPPATH', realpath('core') . "/");
-define('VARPATH', realpath('var') . "/");
 define('MODPATH', realpath('modules') . "/");
 define('THEMEPATH', realpath('themes') . "/");
 define('SYSPATH', realpath('kohana') . "/");
 
-// Override any settings here in index.local.php
-file_exists('index.local.php') and include('index.local.php');
+// Force a test run if we're in command line mode.
+if (PHP_SAPI == 'cli') {
+  $_SERVER['argv'] = array($_SERVER['argv'][0], 'test');
+  define('TEST_MODE', 1);
+  @system('mkdir -p test/var/logs');
+  define('VARPATH', realpath('test/var') . '/');
+} else {
+  define('VARPATH', realpath('var') . '/');
+}
 
 // Initialize.
 require SYSPATH . 'core/Bootstrap' . EXT;
