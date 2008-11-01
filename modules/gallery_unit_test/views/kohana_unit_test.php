@@ -16,24 +16,24 @@ foreach ($results as $class => $methods) {
       if ($result === true AND $hide_passed === true) {
 	continue;
       }
-      printf("%-40.40s", $method);
+      printf("%-56.56s", $method);
       if ($result === true) {
 	echo Kohana::lang("unit_test.passed"), "\n";
       } else if ($result instanceof Kohana_Unit_Test_Exception) {
 	echo Kohana::lang("unit_test.failed"), "\n";
-	echo "  ", html::specialchars($result->getMessage()), "\n";
-	echo "  ", html::specialchars($result->getFile());
+	echo "  ", $result->getMessage(), "\n";
+	echo "  ", $result->getFile();
 	echo " ", "(" . Kohana::lang("unit_test.line") . " " . $result->getLine(), ")\n";
 	if ($result->getDebug() !== null) {
 	  echo "  ", "(", gettype($result->getDebug()), ") ",
-	    html::specialchars(var_export($result->getDebug(), true)), "\n";
+	    var_export($result->getDebug(), true), "\n";
 	}
       } else if ($result instanceof Exception) {
 	echo Kohana::lang("unit_test.error"), "\n";
 	if ($result->getMessage()) {
-	  echo "  ", html::specialchars($result->getMessage()), "\n";
+	  echo "  ", $result->getMessage(), "\n";
 	}
-	echo "  ", html::specialchars($result->getFile()), " (",
+	echo "  ", $result->getFile(), " (",
 	  Kohana::lang("unit_test.line"), " ", $result->getLine(), ")\n";
       }
     }

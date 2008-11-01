@@ -29,11 +29,9 @@ class Test_Controller extends Controller {
       if ($path != MODPATH . "unit_test/tests") {
 	$paths[] = $path;
       }
-
     }
     Kohana::config_set('unit_test.paths', $paths);
 
-    $test = new Unit_Test(DOCROOT . "modules/gallery_unit_test/tests");
-    echo $test;
+    print new Unit_Test();
   }
 }
