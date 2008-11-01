@@ -1,5 +1,5 @@
-<?php
-/*
+<?php defined("SYSPATH") or die("No direct script access.");
+/**
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2008 Bharat Mediratta
  *
