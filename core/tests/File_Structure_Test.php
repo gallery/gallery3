@@ -28,6 +28,20 @@ class File_Structure_Test extends Unit_Test_Case {
       }
     }
   }
+
+  public function view_files_end_in_html_dot_php_test() {
+    $dir = new GalleryCodeFilterIterator(
+      new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
+    foreach ($dir as $file) {
+      if ($file->getFilename() == 'kohana_unit_test.php') {
+	// Exception, this file must be named accordingly for the test framework
+	continue;
+      }
+      if (preg_match("|/views\b|", $file->getPath())) {
+	$this->assert_equal(".html.php", substr($file->getPathname(), -9), $file->getPathname());
+      }
+    }
+  }
 }
 
 class GalleryCodeFilterIterator extends FilterIterator {
