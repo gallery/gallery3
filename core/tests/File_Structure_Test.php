@@ -22,10 +22,11 @@ class File_Structure_Test extends Unit_Test_Case {
   public function no_trailing_closing_php_tag_test() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
+    $incorrect = array();
     foreach ($dir as $file) {
-      if (preg_match('/(\?\>\s*)$/', file_get_contents($file), $matches)) {
-	$this->assert_true(false, "$file ends in a trailing ?>");
-      }
+      $this->assert_false(
+	preg_match('/\?\>\s*$/', file_get_contents($file)),
+	"{$file->getPathname()} ends in ?>");
     }
   }
 
@@ -34,12 +35,12 @@ class File_Structure_Test extends Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
       if ($file->getFilename() == 'kohana_unit_test.php') {
-	// Exception, this file must be named accordingly for the test framework
+	// Exception: this file must be named accordingly for the test framework
 	continue;
       }
-      if (preg_match("|/views\b|", $file->getPath())) {
-	$this->assert_equal(".html.php", substr($file->getPathname(), -9), $file->getPathname());
-      }
+      $this->assert_false(
+	preg_match("|/views/.*?(?<!\.html)\.php|", $file->getPathname()),
+	"{$file->getPathname()} should end in .html.php");
     }
   }
 }
