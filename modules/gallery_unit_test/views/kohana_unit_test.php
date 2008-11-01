@@ -1,3 +1,4 @@
+<? defined("SYSPATH") or die("No direct script access."); ?>
 <?php
 foreach ($results as $class => $methods) {
   echo str_repeat("-", 100), "\n";
@@ -28,6 +29,7 @@ foreach ($results as $class => $methods) {
 	  echo "  ", "(", gettype($result->getDebug()), ") ",
 	    var_export($result->getDebug(), true), "\n";
 	}
+	echo "\n";
       } else if ($result instanceof Exception) {
 	echo Kohana::lang("unit_test.error"), "\n";
 	if ($result->getMessage()) {
@@ -35,6 +37,7 @@ foreach ($results as $class => $methods) {
 	}
 	echo "  ", $result->getFile(), " (",
 	  Kohana::lang("unit_test.line"), " ", $result->getLine(), ")\n";
+	echo "\n";
       }
     }
   }
