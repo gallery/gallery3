@@ -22,6 +22,17 @@ class Test_Controller extends Controller {
     if (!defined('TEST_MODE')) {
       print Kohana::show_404();
     }
+
+    // Find all tests, excluding sample tests that come with the unit_test module.
+    $paths = array(APPPATH . "tests");
+    foreach (glob(MODPATH . "*/tests") as $path) {
+      if ($path != MODPATH . "unit_test/tests") {
+	$paths[] = $path;
+      }
+
+    }
+    Kohana::config_set('unit_test.paths', $paths);
+
     $test = new Unit_Test(DOCROOT . "modules/gallery_unit_test/tests");
     echo $test;
   }

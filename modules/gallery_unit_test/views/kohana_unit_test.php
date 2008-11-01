@@ -51,8 +51,10 @@ foreach ($results as $class => $methods) {
 }
 
 printf(">> TOTAL\t%s: %.2f%%\t%s: %d\t%s: %d\t%s: %d\t%s: %d\n",
-       Kohana::lang("unit_test.score"), 100 * ($totals["passed"] / $totals["total"]),
+       Kohana::lang("unit_test.score"),
+       ($totals["total"] ? 100 * ($totals["passed"] / $totals["total"]) : 0),
        Kohana::lang("unit_test.total"), $totals["total"],
        Kohana::lang("unit_test.passed"), $totals["passed"],
        Kohana::lang("unit_test.failed"), $totals["failed"],
        Kohana::lang("unit_test.errors"), $totals["errors"]);
+
