@@ -1,4 +1,4 @@
-<?php
+<?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2008 Bharat Mediratta
@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 class File_Structure_Test extends Unit_Test_Case {
   public function no_trailing_closing_php_tag_test() {
     $dir = new GalleryCodeFilterIterator(
@@ -39,9 +38,50 @@ class File_Structure_Test extends Unit_Test_Case {
 	continue;
       }
       $this->assert_false(
-	preg_match("|/views/.*?(?<!\.html)\.php|", $file->getPathname()),
+	preg_match("|/views/.*?(?<!\.html)\.php$|", $file->getPathname()),
 	"{$file->getPathname()} should end in .html.php");
     }
+  }
+
+  public function code_files_start_with_gallery_preamble_test() {
+    $dir = new GalleryCodeFilterIterator(
+      new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
+
+    $expected = $this->_get_preamble(__FILE__);
+    foreach ($dir as $file) {
+      if (preg_match("/views/", $file->getPathname())) {
+	// The preamble for views is a single line that prevents direct script access
+	$lines = file($file->getPathname());
+	$this->assert_equal(
+	  "<? defined(\"SYSPATH\") or die(\"No direct script access.\"); ?>\n",
+	  $lines[0],
+	  "in file: {$file->getPathname()}");
+      } else if (preg_match("|\.php$|", $file->getPathname())) {
+	$actual = $this->_get_preamble($file->getPathname());
+	if ($file->getPathName() == DOCROOT . "index.php") {
+	  // index.php allows direct access, so modify our expectations for the first line
+	  $index_expected = $expected;
+	  $index_expected[0] = "<?php";
+	  $this->assert_equal($index_expected, $actual, "in file: {$file->getPathname()}");
+	} else {
+	  // We expect the full preamble in regular PHP files
+	  $actual = $this->_get_preamble($file->getPathname());
+	  $this->assert_equal($expected, $actual, "in file: {$file->getPathname()}");
+	}
+      }
+    }
+  }
+
+  private function _get_preamble($file) {
+    $lines = file($file);
+    $copy = array();
+    for ($i = 0; $i < count($lines); $i++) {
+      $copy[] = rtrim($lines[$i]);
+      if (!strncmp($lines[$i], ' */', 3)) {
+	return $copy;
+      }
+    }
+    return $copy;
   }
 }
 
