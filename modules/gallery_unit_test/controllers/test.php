@@ -27,7 +27,7 @@ class Test_Controller extends Controller {
     $paths = array(APPPATH . "tests");
     foreach (glob(MODPATH . "*/tests") as $path) {
       if ($path != MODPATH . "unit_test/tests") {
-	$paths[] = $path;
+        $paths[] = $path;
       }
     }
     Kohana::config_set('unit_test.paths', $paths);
