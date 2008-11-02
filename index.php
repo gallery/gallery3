@@ -49,7 +49,11 @@ if (PHP_SAPI == 'cli') {
   @system('mkdir -p test/var/logs');
   define('VARPATH', realpath('test/var') . '/');
 } else {
-  define('VARPATH', realpath('var') . '/');
+  if (file_exists('var')) {
+    define('VARPATH', realpath('var') . '/');
+  } else {
+    define('VARPATH', getcwd() . "/var/");
+  }
 }
 
 // Initialize.

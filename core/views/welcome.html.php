@@ -13,14 +13,32 @@
         background: white;
         border: 1px solid black;
         margin: 0 auto;
+        padding: -10px;
       }
 
       div.inner {
-        padding: 1em;
+        padding: 0 1em 0 1em;
+        margin: 0px;
       }
 
       p {
+        margin: 0 0 0 0;
         padding-left: 1em;
+      }
+
+      pre {
+        margin: 0;
+        padding-left: 2em;
+      }
+
+      .error {
+        color: red;
+      }
+
+      div.block {
+        padding: 0px;
+        margin: 0px;
+        padding-bottom: 1em;
       }
 
       ul {
@@ -51,7 +69,14 @@
 	  links to get you started.
 	</p>
 
-	<h2>Useful Links</h2>
+	<h2>About your config</h2>
+	<iframe width="100%" src="<?= url::site("welcome/syscheck") ?>"/></iframe>
+
+	<h2>Activities</h2>
+	<p>
+	</p>
+
+	<h2>Documentation</h2>
 	<ul>
 	  <li>
 	    <a href="http://docs.google.com/Doc?id=dfjxt593_184ff9jhmd8&hl=en">Gallery3: Prioritized Feature List</a>
