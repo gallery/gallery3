@@ -86,7 +86,10 @@ $config['log_threshold'] = 4;
 /**
  * Message logging directory.
  */
-$config['log_directory'] = VARPATH . 'logs';
+$config['log_directory'] = VARPATH . "logs";
+if (!is_writable($config['log_directory'])) {
+  $config['log_threshold'] = 0;
+}
 
 /**
  * Enable or disable displaying of Kohana error pages. This will not affect
@@ -117,4 +120,6 @@ $config['modules'] = array
 (
   MODPATH . 'gallery_unit_test',
   MODPATH . 'unit_test',
+  MODPATH . 'mptt',
+  MODPATH . 'forge',
 );
