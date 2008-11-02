@@ -23,6 +23,27 @@ class Test_Controller extends Controller {
       print Kohana::show_404();
     }
 
+    $original_config = DOCROOT . "var/database.php";
+    $test_config = VARPATH . "database.php";
+    if (!file_exists($original_config)) {
+      print "Please create $original and create a 'unit_test' database configuration.\n";
+    } else {
+      copy($original_config, $test_config);
+      $db_config = Kohana::config('database');
+      if (empty($db_config['unit_test'])) {
+	print "Please create create a 'unit_test' database configuration in $db_config.\n";
+	return;
+      }
+
+      try {
+	$db = Database::instance('unit_test');
+	$db->connect();
+      } catch (Exception $e) {
+	print "{$e->getMessage()}\n";
+	return;
+      }
+    }
+
     // Find all tests, excluding sample tests that come with the unit_test module.
     $paths = array(APPPATH . "tests");
     foreach (glob(MODPATH . "*/tests") as $path) {
@@ -31,6 +52,8 @@ class Test_Controller extends Controller {
       }
     }
     Kohana::config_set('unit_test.paths', $paths);
+
+    core_installer::install();
 
     print new Unit_Test();
   }

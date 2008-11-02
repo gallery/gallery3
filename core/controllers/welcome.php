@@ -20,7 +20,7 @@
 class Welcome_Controller extends Template_Controller {
   public $template = 'welcome.html';
 
-  function Index() {
+  function index() {
     $this->template->syscheck = new View('welcome_syscheck.html');
     $this->template->syscheck->errors = $this->_get_config_errors();
     $this->_create_directories();
@@ -77,7 +77,7 @@ class Welcome_Controller extends Template_Controller {
     return $errors;
   }
 
-  function _error_handler() {
+  function _error_handler($x) {
   }
 
   function _create_directories() {
