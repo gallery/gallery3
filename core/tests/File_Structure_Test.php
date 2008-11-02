@@ -23,9 +23,11 @@ class File_Structure_Test extends Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     $incorrect = array();
     foreach ($dir as $file) {
-      $this->assert_false(
-	preg_match('/\?\>\s*$/', file_get_contents($file)),
-	"{$file->getPathname()} ends in ?>");
+      if (!preg_match("|\.html\.php$|", $file->getPathname())) {
+	$this->assert_false(
+	  preg_match('/\?\>\s*$/', file_get_contents($file)),
+	  "{$file->getPathname()} ends in ?>");
+      }
     }
   }
 
