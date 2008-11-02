@@ -21,6 +21,10 @@
         margin: 0px;
       }
 
+      h1, h2, h3 {
+        margin-bottom: .1em;
+      }
+
       p {
         margin: 0 0 0 0;
         padding-left: 1em;
@@ -35,6 +39,14 @@
         color: red;
       }
 
+      .success {
+        color: green;
+      }
+
+      p.success {
+        font-weight: bold;
+      }
+
       div.block {
         padding: 0px;
         margin: 0px;
@@ -42,7 +54,7 @@
       }
 
       ul {
-        margin-top: -1em;
+        margin-top: -.25em;
       }
     </style>
   </head>
@@ -69,8 +81,8 @@
 	  links to get you started.
 	</p>
 
-	<h2>About your config</h2>
-	<iframe width="100%" src="<?= url::site("welcome/syscheck") ?>"/></iframe>
+	<h2>System Configuration</h2>
+	<?= $syscheck ?>
 
 	<h2>Activities</h2>
 	<p>
