@@ -39,7 +39,7 @@ class core_installer {
                    UNIQUE KEY(`name`))
 		 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE  `items` (
+      $db->query("CREATE TABLE `items` (
 		   `id` int(9) NOT NULL auto_increment,
 		   `type` char(32) default NULL,
 		   `title` char(255) default NULL,
