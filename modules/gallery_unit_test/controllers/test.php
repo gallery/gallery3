@@ -56,6 +56,9 @@ class Test_Controller extends Controller {
     }
     Kohana::config_set('unit_test.paths', $paths);
 
+    // We probably don't want to uninstall and reinstall the core every time, but let's start off
+    // this way.
+    core_installer::uninstall();
     core_installer::install();
 
     print new Unit_Test();
