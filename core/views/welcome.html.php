@@ -26,7 +26,7 @@
       }
 
       p {
-        margin: 0 0 0 0;
+        margin: 0 0 1em 0;
         padding-left: 1em;
       }
 
