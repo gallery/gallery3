@@ -1,0 +1,652 @@
+/**
+ * Gx Styles
+ *
+ * @requires YUI reset, font, grids, and base CSS
+ *
+ * Sheet organization:
+ * 1) Global element styles
+ * 2) Text (fonts, headings, links)
+ * 3) Layout containers
+ * 4) Generic blocks
+ * 5) Primary content blocks
+ * 6) Navigation and menus
+ * 7) Tables
+ * 8) Forms, additional form CSS stored in css/forms.css (temporarily)
+ * 9) General browser hacks
+ */
+
+ @import url('forms.css');
+
+/**
+ ** **************************************************
+ * 1) Global unique styles
+ ** **************************************************
+ */
+
+/* ~~~~~~~~~ general elements ~~~~~~~~~~ */
+body, html {
+  background-color: #ccc;
+}
+
+/* ~~~~~~~~~ text elements ~~~~~~~~~~ */
+h1 {
+	margin-top: 0px;
+}
+a {
+	color: #6B8CB7;
+	text-decoration: none;
+}
+a:hover {
+	color: #FF3300;
+	text-decoration: underline;
+}
+
+/* ~~~~~~~~~ list elements ~~~~~~~~~~ */
+li {
+	list-style-type: none;
+}
+
+/* ~~~~~~~~~ table elements ~~~~~~~~~~ */
+caption {
+	text-align: left;
+}
+th {
+	text-align: left;
+}
+
+/* ~~~~~~~~~ form elements ~~~~~~~~~~ */
+form {
+
+}
+legend {
+
+}
+label {
+
+}
+input {
+
+}
+textarea {
+
+}
+
+/**
+ ** **************************************************
+ * 2) High level content containers (header, content, sidebar, footer)
+ ** **************************************************
+ */
+
+/* ~~~~~ View Container ??? ~~~~~~ */
+.gAlbumView,
+.gItemView {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-width: 0 1px 1px 1px;
+}
+
+/* ~~~~~~~~ high level content containers ~~~~~~~~ */
+
+#gHeader {
+	position: relative;
+
+}
+
+#gContent {
+  border-right: 1px solid #ccc;
+  padding: 20px;
+	clear: both;
+}
+
+#gSidebar {
+  width: 18.4615em;
+  padding: 1em 0 0 0;
+}
+
+#gFooter {
+  border-top: 1px solid #ccc;
+  padding: .5em;
+}
+
+/**
+ ** **************************************************
+ * 3) Header styles (logo, login, site menu, breadcrumbs, search)
+ ** **************************************************
+ */
+
+/* ~~~~~~~~ logo/title  ~~~~~~~~ */
+
+#gLogo {
+  float: left;
+  margin: 10px;
+}
+#gHeader h1 {
+	float: left;
+	margin: 20px 0 0 20px;
+}
+
+/* ~~~~~~~~ login menu ~~~~~~~~ */
+
+#gLoginMenu {
+  position: absolute;
+	top: 0px;
+	right: 13px;
+	border: 1px solid silver;
+	border-width: 0 1px 1px 1px;
+	padding: 5px;
+  text-align: right;
+}
+#gLoginMenu form {
+  margin-top: 5px;
+}
+#gLoginMenu label {
+  font-size: 0.8em;
+}
+#gLoginMenu input.text,
+#gLoginMenu input.password {
+  width: 80px;
+	padding: 0 0 .1em 0;
+}
+#gLoginMenu input.submit {
+	font-size: 0.9em;
+	font-weight: bold;
+}
+
+/* ~~~~~~~~ site menu  ~~~~~~~~ */
+
+#gSiteMenu {
+	height: 31px;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  clear: both;
+}
+#gSiteMenu li {
+  list-style-type: none;
+  float: left;
+  display: block;
+  width: 20%;
+	background: #E6EBF0;
+}
+#gSiteMenu li a {
+	color: #003366;
+	font-weight: bold;
+  height: 20px;
+  display: block;
+  text-align: center;
+	padding: 7px 7px 3px 7px;
+	background: url('../images/bg_sitemenu.png') repeat-x;
+	margin-left: 1px;
+	border: 1px solid #336699;
+	border-width: 0 1px 1px 0;
+	text-decoration: none;
+	letter-spacing: .1em;
+}
+#gSiteMenu li a:hover {
+	color: #FF3300;
+	background: url('../images/bg_sitemenu_hover.png');
+}
+#gSiteMenu li a.active {
+	background: #DCE6EF;
+	border-color: #DCE6EF;
+	color: #FF3300;
+}
+
+/* ~~~~~~~~~ breadcrumbs ~~~~~~~~~~ */
+
+#gBreadcrumbs {
+	border-bottom: 1px solid silver;
+  margin: 0;
+  padding: 0 0 0 14px;
+  height: 28px;
+  list-style-type: none;
+}
+#gBreadcrumbs li {
+  list-style-type: none;
+  background: transparent url('../images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
+  padding: 0 0 0 10px;
+  float: left;
+}
+#gBreadcrumbs li.root {
+  background: transparent;
+  padding: 0;
+}
+#gBreadcrumbs li a,
+#gBreadcrumbs li span {
+  padding: 6px 6px 6px 6px;
+  display: block;
+}
+#gBreadcrumbs li.active span {
+  font-weight: bold;
+}
+
+/* ~~~~~~~~~ search form ~~~~~~~~~~ */
+
+#gSearchForm {
+	position: absolute;
+	right: 13px;
+	top: 103px;
+}
+#gSearchForm input.text {
+	padding: 1px;
+}
+#gSearchForm input.submit {
+	height: 20px;
+}
+
+/**
+ ** **************************************************
+ * 4) Generic styles
+ ** **************************************************
+ */
+
+.buttonlink {
+	border: 1px solid lightgray;
+	padding: 5px;
+}
+.buttonlink:hover {
+	background-color: #F3F3F3;
+}
+.understate {
+	color: silver;
+}
+
+
+/*
+.gBlock {
+	margin: 0 1em 1.5em 0;
+	border: 1px solid #336699;
+	padding: 0;
+}
+.gBlockHeader {
+	background-color: #E8E8E8;
+	padding: .3em;
+	height: 1.5em;
+	border-bottom: 1px solid #6B8CB7;
+	margin: 0 !important;
+}
+.gBlockHeader h2 {
+	color: #003366;
+	margin: 0;
+	float: left;
+	font-size: 1.1em;
+}
+.gBlockHeader .minimize {
+	float: right;
+}
+.gBlockContent {
+	margin: .3em;
+}
+*/
+
+.gBlock {
+	margin: 0 1em 2em 0;
+	padding: 0;
+}
+.gBlockHeader {
+	background-color: #E8E8E8;
+	padding: .3em;
+	height: 1.5em;
+	margin: 0 !important;
+}
+.gBlockHeader h2 {
+	margin: 0;
+	float: left;
+	font-size: 1.1em;
+}
+.gBlockHeader .minimize {
+	float: right;
+}
+.gBlockContent {
+	margin: .2em .5em 0 .5em;
+}
+.gBlockContent {
+	margin: .2em .5em 0 .5em;
+}
+table.gBlockContent {
+	width: 214px;
+	table-layout: fixed;
+}
+table.gBlockContent th {
+	padding: .3em .3em .3em 0;
+}
+table.gBlockContent td {
+	padding: .3em 0 .3em .3em;
+}
+
+/**
+ ** **************************************************
+ * 5) Content blocks - inherits from Generic blocks
+ ** **************************************************
+ */
+
+#gItem {
+  width: 500px;
+	margin-left: auto;
+  margin-right: auto;
+}
+#gItem a.buttonlink {
+  float: right;
+}
+#gItem img {
+	clear: both;
+  display: block;
+  width: 500px;
+  height: 400px;
+  border: 1px solid silver;
+  background-color: #e7e7e7;
+}
+#gItem h1 {
+  margin: 10px 0 10px 0;
+}
+
+/* ~~~~~~~~~ metadata ~~~~~~~~~~ */
+
+table.gMetadata {
+
+}
+table.gMetadata td,
+table.gMetadata th {
+	border: 0;
+}
+table.gMetadata td.toggle {
+	text-align: right;
+}
+
+/* ~~~~~~~~~ upload ~~~~~~~~~~ */
+
+#gUploadForm .gBreadcrumbs li input, #gUploadForm .gBreadcrumbs li select {
+  width: 140px;
+  margin-left: 5px;
+}
+
+/* ~~~~ individual photo ~~~~~~~ */
+
+.gPhotoView img {
+  width: 400px;
+  height: 300px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 20px;
+}
+
+/* ~~~~~~~~~ comments ~~~~~~~~~~ */
+
+#gComments {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+#gComments h2 {
+  margin-top: 0;
+}
+#gComments ul {
+  margin: 0;
+}
+#gComments ul li {
+  list-style-type: none;
+  margin-bottom: 15px;
+}
+#gComments ul li p {
+  background-color: #E8E8E8;
+  margin-bottom: 2px;
+  padding: 4px;
+}
+#gComments ul li div {
+  padding: 8px;
+}
+
+/* ~~~~~~~~~ album ~~~~~~~~~~ */
+
+#gAlbumGridHeader {
+	height: 40px;
+	position: relative;
+}
+#gAlbumGridHeader h1 {
+	display: inline;
+}
+#gAlbumGridHeader span {
+	padding-left: 10px;
+}
+#gSlideshowLink {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+#gAlbumGrid .gItemContainer,
+#gAlbumGrid .gAlbumContainer {
+	width: 32%;
+	height: 220px;
+	float: left;
+	text-align: center;
+	border: 1px lightgray solid;
+	margin: 0px 0px 10px 1.49%;
+	padding: 5px 0px 5px 0px;
+}
+#gAlbumGrid .first {
+	margin: 0px 0px 10px 0px;
+}
+
+.gAlbum {
+	background-color: #D4DAFF;
+}
+.gAlbum h2 {
+	color: #000066;
+}
+
+.gItemContainer h2,
+.gAlbumContainer h2 {
+	margin: 5px 0px 5px 0px;
+}
+
+
+/* ~~~~~~~~~ tag cloud ~~~~~~~~~~ */
+
+.gTagCloud ul {
+	text-align: justify;
+	padding: 0;
+}
+.gTagCloud ul li {
+	text-align: justify;
+	display: inline;
+}
+.gTagCloud ul li a {
+	text-decoration: none;
+}
+.gTagCloud ul li a.size0 {
+	font-size: 100%;
+	font-weight: 100;
+	color: #99CCFF;
+}
+.gTagCloud ul li a.size1 {
+	font-size: 110%;
+	font-weight: 300;
+	color: #6699FF;
+}
+.gTagCloud ul li a.size2 {
+	font-size: 120%;
+	font-weight: 500;
+	color: #6699CC;
+}
+.gTagCloud ul li a.size3 {
+	font-size: 130%;
+	font-weight: 700;
+	color: #336699;
+}
+.gTagCloud ul li a.size4 {
+	font-size: 140%;
+	font-weight: 900;
+	color: #0E2B52;
+}
+.gTagCloud ul li a:hover {
+	color: #FF3300;
+	text-decoration: underline;
+}
+.gTagCloud form {
+	margin-top: 10px;
+}
+
+/* ~~~~~~~~~ album tree ~~~~~~~~~~ */
+
+#gAlbumTree {
+	border: 1px solid lightgray;
+	margin: 20px 0 20px 0;
+	padding: 5px;
+}
+#gAlbumTree #gTreeContainer {
+	border: 1px solid lightgray;
+	padding: 0 0 0 5px;
+}
+
+
+/**
+ ** **************************************************
+ * 6) Navigation and menus
+ ** **************************************************
+ */
+
+
+
+/* ~~~~~~~~~ pagination ~~~~~~~~~~ */
+
+#gPagination {
+	clear: both;
+	padding: 10px 0px 0px 0px;
+	text-align: center;
+}
+#gPagination a,
+#gPagination span {
+	border: 1px solid lightgray;
+	padding: 5px;
+	background-repeat: no-repeat;
+}
+#gPagination a:hover {
+	background-color: #F3F3F3;
+}
+#gPagination .first {
+	background-image: url('../images/first.png');
+	background-position: left;
+	padding-left: 20px;
+}
+#gPagination .first_inactive {
+	background-image: url('../images/first_inactive.png');
+	background-position: left;
+	padding-left: 20px;
+}
+#gPagination .previous {
+	background-image: url('../images/previous.png');
+	background-position: left;
+	padding-left: 17px;
+}
+#gPagination .previous_inactive {
+	background-image: url('../images/previous_inactive.png');
+	background-position: left;
+	padding-left: 17px;
+}
+#gPagination .next {
+	background-image: url('../images/next.png');
+	background-position: right;
+	padding-right: 17px;
+}
+#gPagination .next_inactive {
+	background-image: url('../images/next_inactive.png');
+	background-position: right;
+	padding-right: 17px;
+}
+#gPagination .last {
+	background-image: url('../images/last.png');
+	background-position: right;
+	padding-right: 20px;
+}
+#gPagination .last_inactive {
+	background-image: url('../images/last_inactive.png');
+	background-position: right;
+	padding-right: 20px;
+}
+
+
+/**
+ ** **************************************************
+ * 7) Tables
+ ** **************************************************
+ */
+
+
+/**
+ ** **************************************************
+ * 8) Forms
+ ** **************************************************
+ */
+
+#gCommentAdd {
+  width: 500px;
+}
+
+/* ----------- upload ----------------- */
+
+#gUploadForm .gBreadcrumbs li input, #gUploadForm .gBreadcrumbs li select {
+  width: 140px;
+  margin-left: 5px;
+}
+
+#gUploadForm-queue {
+  width: 500px;
+}
+
+#gUploadForm-queue td, #gUploadForm-queue th {
+  text-align: left;
+  border-color: #e7e7e7;
+}
+
+#gUploadForm-queue caption {
+  display: none;
+}
+
+#gUploadForm-queue thead th {
+  text-align: center;
+  border-bottom: 2px solid #000;
+}
+
+#gUploadForm-queue thead th, #gUploadForm-queue thead td {
+  background-color: #e7e7e7;
+}
+
+#gUploadForm-queue tfoot td {
+  border-top: 2px solid #000;
+}
+
+#gUploadForm-queue .filesize {
+  width: 60px;
+}
+
+#gUploadForm-queue td.filesize {
+  text-align: right;
+}
+
+#gUploadForm-queue tfoot td.filesize {
+  color: #ccc;
+}
+
+#gUploadForm-queue .action {
+  width: 40px;
+}
+
+#gUploadForm-button {
+  width: 130px;
+  margin-left: 370px;
+}
+
+/**
+ ** **************************************************
+ * 9) Browser hacks
+ ** **************************************************
+ */
+
+/* Keep containers holding only floated elements from collapsing in Safari */
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
