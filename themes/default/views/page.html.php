@@ -31,6 +31,7 @@
 	</div>
 	<?= $sidebar ?>
       </div>
+      <?= $footer ?>
     </div>
   </body>
 </html>
