@@ -44,10 +44,10 @@ class core_installer {
 		   `type` char(32) default NULL,
 		   `title` char(255) default NULL,
 		   `path` char(255) default NULL,
-		   `parent_id` int(9) default NULL,
-		   `level` int(9) default NULL,
 		   `left` int(9) default NULL,
 		   `right` int(9) default NULL,
+		   `parent_id` int(9) default NULL,
+		   `scope` int(9) default NULL,
 		   PRIMARY KEY (`id`),
 		   KEY `parent_id` (`parent_id`),
 		   KEY `type` (`type`))
