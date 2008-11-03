@@ -27,7 +27,6 @@
 
       p {
         margin: 0 0 0 0;
-        padding-left: 1em;
       }
 
       pre {
@@ -49,6 +48,7 @@
 
       div.block {
         padding: 0px;
+        padding-left: 1em;
         margin: 0px;
         padding-bottom: 1em;
       }

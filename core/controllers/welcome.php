@@ -18,12 +18,28 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Welcome_Controller extends Template_Controller {
-  public $template = 'welcome.html';
+  public $template = "welcome.html";
 
   function index() {
-    $this->template->syscheck = new View('welcome_syscheck.html');
+    $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
+
+    try {
+      $this->template->syscheck->modules = ORM::factory("module")->find_all();
+    } catch (Exception $e) {
+      $this->template->syscheck->modules = array();
+    }
     $this->_create_directories();
+  }
+
+  function install($module) {
+    call_user_func(array("{$module}_installer", "install"));
+    url::redirect("welcome");
+  }
+
+  function uninstall($module) {
+    call_user_func(array("{$module}_installer", "uninstall"));
+    url::redirect("welcome");
   }
 
   private function _get_config_errors() {
@@ -56,13 +72,13 @@ class Welcome_Controller extends Template_Controller {
       $error->message2 = "Then edit this file and enter your database configuration settings.";
       $errors[] = $error;
     } else {
-      $old_handler = set_error_handler(array('Welcome_Controller', '_error_handler'));
+      $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
       try {
 	Database::instance()->connect();
       } catch (Exception $e) {
 	$error = new stdClass();
 	$error->message = "Database error: {$e->getMessage()}";
-	$db_name = Kohana::config('database.default.connection.database');
+	$db_name = Kohana::config("database.default.connection.database");
 	if (strchr($error->message, "Unknown database")) {
 	  $error->instructions[] = "mysqladmin -uroot create $db_name";
 	} else {
