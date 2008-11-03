@@ -29,6 +29,6 @@ class Theme_Test extends Unit_Test_Case {
   }
 
   public function _fake_debug_backtrace() {
-    return array(array('file' => THEMEPATH . "fake_theme/views/some_file.html.php"));
+    return array(array(), array('file' => THEMEPATH . "fake_theme/views/some_file.html.php"));
   }
 }

@@ -21,9 +21,12 @@ class theme_Core {
   public static $debug_backtrace = "debug_backtrace";
 
   public static function url($path) {
-    $caller = array_shift(call_user_func(theme::$debug_backtrace));
-    $calling_file = $caller['file'];
-    $theme_name = substr($caller['file'], strlen(THEMEPATH));
+    // Using debug_backtrace() sucks.  But I don't know of another way to get
+    // the location of the caller without forcing them to pass it in as an argument, which
+    // makes for a crappy API.
+    $backtrace = call_user_func(theme::$debug_backtrace);
+    $calling_file = $backtrace[1]['file'];
+    $theme_name = substr($calling_file, strlen(THEMEPATH));
     $theme_name = substr($theme_name, 0, strcspn($theme_name, "/"));
     return url::base() . "themes/{$theme_name}/$path";
   }
