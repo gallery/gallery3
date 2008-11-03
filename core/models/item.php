@@ -18,4 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Item_Model extends MPTT {
+  protected $left_column = "left";
+  protected $right_column = "right";
 }
