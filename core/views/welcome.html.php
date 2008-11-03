@@ -27,6 +27,11 @@
 
       p {
         margin: 0 0 0 0;
+        padding-left: 1em;
+      }
+
+      table {
+        padding-left: 1em;
       }
 
       pre {
@@ -48,9 +53,7 @@
 
       div.block {
         padding: 0px;
-        padding-left: 1em;
         margin: 0px;
-        padding-bottom: 1em;
       }
 
       ul {
@@ -65,7 +68,6 @@
       </center>
       <div class="inner">
 	<h1>Gallery3 Scaffold</h1>
-
 	<p>
 	  This is
 	  a <b><a href="http://www.google.com/images?q=scaffold">scaffold</a></b>:
