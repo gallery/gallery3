@@ -88,6 +88,7 @@
 
 	<h2>Activities</h2>
 	<p>
+	<?= html::anchor("album/1", "Browse Gallery") ?>
 	</p>
 
 	<h2>Documentation</h2>

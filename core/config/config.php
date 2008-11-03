@@ -122,4 +122,6 @@ $config['modules'] = array
   MODPATH . 'unit_test',
   MODPATH . 'mptt',
   MODPATH . 'forge',
+
+  THEMEPATH . 'default',
 );
