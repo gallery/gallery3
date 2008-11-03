@@ -21,7 +21,7 @@ class core_installer {
   public function install() {
     $db = Database::instance();
     try {
-      $base_version = ORM::factory('module')->where('name', 'core')->find()->version;
+      $base_version = ORM::factory("module")->where("name", "core")->find()->version;
     } catch (Exception $e) {
       if ($e->getMessage() == "Table modules does not exist in your database.") {
 	$base_version = 0;
@@ -52,10 +52,19 @@ class core_installer {
 		   KEY `parent_id` (`parent_id`),
 		   KEY `type` (`type`))
 		 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-      $core = ORM::factory('module')->where('name', 'core')->find();
+
+      foreach (array("albums", "thumbnails") as $dir) {
+	@mkdir(VARPATH . $dir);
+      }
+
+      $core = ORM::factory("module")->where("name", "core")->find();
       $core->name = "core";
       $core->version = 1;
       $core->save();
+
+      $root = ORM::factory("item");
+      $root->title = "Gallery";
+      $root->make_root();
     }
   }
 

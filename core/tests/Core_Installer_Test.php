@@ -17,13 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Test extends Unit_Test_Case {
-  public function create_item_test() {
-    ORM::factory('item');
+
+/**
+ * This test case operates under the assumption that core_installer::install() is called by the
+ * test controller before it starts.
+ */
+class Core_Installer_Test extends Unit_Test_Case {
+  public function install_creates_albums_dir_test() {
+    $this->assert_true(file_exists(VARPATH . "albums"));
   }
 
-  public function create_root_item_test() {
+  public function install_creates_thumbnails_dir_test() {
+    $this->assert_true(file_exists(VARPATH . "thumbnails"));
+  }
+
+  public function install_registers_core_module_test() {
+    $core = ORM::factory("module")->where("name", "core")->find();
+    $this->assert_equal("core", $core->name);
+
+    // This is probably too volatile to keep for long
+    $this->assert_equal(1, $core->version);
+  }
+
+  public function install_creates_root_item_test() {
     $root = ORM::factory('item')->find(1);
     $this->assert_equal("Gallery", $root->title);
+    $this->assert_equal(1, $root->left);
+    $this->assert_equal(2, $root->right);
+    $this->assert_equal(null, $root->parent_id);
+    $this->assert_equal(1, $root->scope);
   }
 }
