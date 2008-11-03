@@ -38,6 +38,9 @@ class Test_Controller extends Controller {
       try {
 	$db = Database::instance('unit_test');
 	$db->connect();
+
+	// Make this the default database for the rest of this run
+	Database::$instances = array('default' => $db);
       } catch (Exception $e) {
 	print "{$e->getMessage()}\n";
 	return;
