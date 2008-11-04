@@ -1,4 +1,6 @@
-Installation instructions:
-* mkdir -p var/logs
-* chmod -R 777 var
+To get started, point your browser at the gallery3 dir.  That should
+take you to the scaffolding page which will walk you through the
+process of getting installed.  Questions, problems?  Send an email to
+gallery-devel@lists.sourceforge.net.
+
 
