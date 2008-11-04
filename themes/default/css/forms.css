@@ -4,43 +4,43 @@
 
 /* Zero out padding and margin, adjust where needed later */
 form, fieldset, label, input, .checkbox, textarea, select, option, form div {
-	margin: 0;
-	padding: 0;
+        margin: 0;
+        padding: 0;
 }
 fieldset {
-	margin: 1em 0;
-	padding: 1em;
-	border: 1px solid #999;
+        margin: 1em 0;
+        padding: 1em;
+        border: 1px solid #999;
 }
 legend {
-	font-weight: bold;
-	margin: 0 2% .5em 0;
-	padding: .2em .5em;
+        font-weight: bold;
+        margin: 0 2% .5em 0;
+        padding: .2em .5em;
 }
-input.text, textarea, select, input.password { 
-	border: 1px solid #666; 
-	border-right: 1px solid #ccc; 
-	border-bottom: 1px solid #ccc;
+input.text, textarea, select, input.password {
+        border: 1px solid #666;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
 }
 option {
-	float: none;
-	clear: both;
-	margin-right: 2em;
+        float: none;
+        clear: both;
+        margin-right: 2em;
 }
-input.radio, input.checkbox { 
-	margin-right: .5em;
+input.radio, input.checkbox {
+        margin-right: .5em;
 }
 /* Create a bit of padding for text inputs and selects */
 input.text, input.password, input.button, textarea, select {
-	padding: .2em;
+        padding: .2em;
 }
-input.button { 
-	margin-right: 1em;
-	padding: .2em .6em;
+input.button {
+        margin-right: 1em;
+        padding: .2em .6em;
 }
-.readonly {	
-	color: #999;
-	background: #e7e7e7;
+.readonly {
+        color: #999;
+        background: #e7e7e7;
 }
 /* standard widths */
 .w12 { width: 12% }
@@ -57,9 +57,9 @@ input.button {
  * Provide proper vertical alignment for expanded and compact forms
  */
 
-.gExpandedForm .row div, 
+.gExpandedForm .row div,
 .gCompactForm div div label {
-	padding-top: .5em;
+        padding-top: .5em;
 }
 
 
@@ -67,47 +67,47 @@ input.button {
  * Expanded form layout styles
  */
 
-.gExpandedForm { overflow: hidden; } 
+.gExpandedForm { overflow: hidden; }
 .gExpandedForm .row {
-	padding: .3em 0;
-	white-space: nowrap;
-	overflow: hidden;
-	clear: both;
+        padding: .3em 0;
+        white-space: nowrap;
+        overflow: hidden;
+        clear: both;
 }
-.gExpandedForm label, 
-.gExpandedForm .row p, 
-.gExpandedForm .row div, 
-.gExpandedForm input, 
-.gExpandedForm select, 
+.gExpandedForm label,
+.gExpandedForm .row p,
+.gExpandedForm .row div,
+.gExpandedForm input,
+.gExpandedForm select,
 .gExpandedForm textarea {
-	float: left;
+        float: left;
 }
 /* change column widths for labels and inputs */
 .gExpandedForm .text, textarea { width: 80%; }
 .gExpandedForm label, .gExpandedForm .row p {
-	width: 15%; 
-	margin: .5em 1em .5em 0;
-	text-align: right;
-	white-space: normal;
-	overflow: hidden;
+        width: 15%;
+        margin: .5em 1em .5em 0;
+        text-align: right;
+        white-space: normal;
+        overflow: hidden;
 }
 .gExpandedForm .row div {
-	white-space: nowrap;
-	overflow: hidden;
-	clear: none;
+        white-space: nowrap;
+        overflow: hidden;
+        clear: none;
 }
 /* labels and form inputs inside of divs should not float */
 .gExpandedForm .row div * {
-	float: none;
-	clear: none;
+        float: none;
+        clear: none;
 }
-.expanded input.checkbox, 
-.expanded input.radio, 
-.expanded select { 
-	margin-top: 1.5em;
+.expanded input.checkbox,
+.expanded input.radio,
+.expanded select {
+        margin-top: 1.5em;
 }
-.gExpandedForm div div input { 
-	margin-right: 0;
+.gExpandedForm div div input {
+        margin-right: 0;
 }
 
 
@@ -115,51 +115,51 @@ input.button {
  * Compact form layout styles
  */
 
-.gCompactForm { overflow: hidden; } 
-.gCompactForm div, 
-.gCompactForm label, 
-.gCompactForm input, 
-.gCompactForm select, 
+.gCompactForm { overflow: hidden; }
+.gCompactForm div,
+.gCompactForm label,
+.gCompactForm input,
+.gCompactForm select,
 .gCompactForm textarea {
-	float: left;
+        float: left;
 }
-.gCompactForm input.text, 
-.gCompactForm select, 
+.gCompactForm input.text,
+.gCompactForm select,
 .gCompactForm textarea {
-	/* set width: auto to allow form element content 
-	to set width otherwise 90% is a good setting */
-	width: 90%; /* determines space between form elements */
+        /* set width: auto to allow form element content
+        to set width otherwise 90% is a good setting */
+        width: 90%; /* determines space between form elements */
 }
-/* Increase width of elements in twoper 
+/* Increase width of elements in twoper
    columns to provide better alignment */
-.gCompactForm .twoper input.text, 
-.gCompactForm .twoper select, 
+.gCompactForm .twoper input.text,
+.gCompactForm .twoper select,
 .gCompactForm .twoper textarea {
-	width: 95%;
+        width: 95%;
 }
 .gCompactForm div {
-	width: 99%;
-	margin-bottom: 1em; /* space between rows */
-	clear: both;
+        width: 99%;
+        margin-bottom: 1em; /* space between rows */
+        clear: both;
 }
 /* Nested divs shouldn't clear floated elements */
 /* keeps nested divs from compounding margin value */
 .gCompactForm div div {
-	margin-bottom: 0; 
-	clear: none;
+        margin-bottom: 0;
+        clear: none;
 }
 /* Nested div label contents should determine their own width */
 .gCompactForm div div label {
-	width: auto;
-	white-space: normal;
-	/* unccomment to stack form inputs inside a row */
-	/* clear: left; */
-	margin-right: 1em;
+        width: auto;
+        white-space: normal;
+        /* unccomment to stack form inputs inside a row */
+        /* clear: left; */
+        margin-right: 1em;
 }
 /* Fix paragraph white space in Safari */
 .gCompactForm div div p {
-	margin: 0;
-	padding: 0;
+        margin: 0;
+        padding: 0;
 }
 
 /* Compact layout - Set item width within rows */
@@ -174,18 +174,18 @@ input.button {
 .nineper label, .nineper div   { width: 10%; }
 .tenper label, .tenper div     { width: 8.7%; }
 
-.oneper label, .oneper div, 
-.twoper label, .twoper div, 
-.threeper label, .threeper div, 
-.fourper label, .fourper div, 
-.fiveper label, .fiveper div, 
-.sixper label, .sixper div, 
-.sevenper label, .sevenper div, 
-.eightper label, .eightper div, 
-.nineper label, .nineper div, 
+.oneper label, .oneper div,
+.twoper label, .twoper div,
+.threeper label, .threeper div,
+.fourper label, .fourper div,
+.fiveper label, .fiveper div,
+.sixper label, .sixper div,
+.sevenper label, .sevenper div,
+.eightper label, .eightper div,
+.nineper label, .nineper div,
 .tenper label, .tenper div {
-	white-space: nowrap;
-	overflow: hidden;
-	border: none;
-	border-collapse: collapse;
+        white-space: nowrap;
+        overflow: hidden;
+        border: none;
+        border-collapse: collapse;
 }

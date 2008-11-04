@@ -74,18 +74,18 @@ class Welcome_Controller extends Template_Controller {
     } else {
       $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
       try {
-	Database::instance()->connect();
+        Database::instance()->connect();
       } catch (Exception $e) {
-	$error = new stdClass();
-	$error->message = "Database error: {$e->getMessage()}";
-	$db_name = Kohana::config("database.default.connection.database");
-	if (strchr($error->message, "Unknown database")) {
-	  $error->instructions[] = "mysqladmin -uroot create $db_name";
-	} else {
-	  $error->instructions = array();
-	  $error->message2 = "Check " . VARPATH . "database.php";
-	}
-	$errors[] = $error;
+        $error = new stdClass();
+        $error->message = "Database error: {$e->getMessage()}";
+        $db_name = Kohana::config("database.default.connection.database");
+        if (strchr($error->message, "Unknown database")) {
+          $error->instructions[] = "mysqladmin -uroot create $db_name";
+        } else {
+          $error->instructions = array();
+          $error->message2 = "Check " . VARPATH . "database.php";
+        }
+        $errors[] = $error;
       }
       set_error_handler($old_handler);
     }

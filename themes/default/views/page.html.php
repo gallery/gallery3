@@ -24,12 +24,12 @@
     <div id="doc2" class="yui-t5 gAlbumView">
       <?= $header ?>
       <div id="bd">
-	<div id="yui-main">
-	  <div id="gContent" class="yui-b">
-	    <?= $content ?>
-	  </div>
-	</div>
-	<?= $sidebar ?>
+        <div id="yui-main">
+          <div id="gContent" class="yui-b">
+            <?= $content ?>
+          </div>
+        </div>
+        <?= $sidebar ?>
       </div>
       <?= $footer ?>
     </div>

@@ -6,23 +6,23 @@
 
     <div id="gTreeContainer"><!-- there might be a better way to make this accessible to the JS -->
       <ul>
-	<li>Gallery
-	  <ul>
-	    <li>Friends &amp; Family
-	      <ul>
-		<li>Christmas 2006</li>
-		<li>Family Reunion</li>
-		<li>Christmas 2007</li>
-	      </ul>
-	    </li>
-	    <li>Vactions
-	      <ul>
-		<li>Cuba</li>
-		<li>Europe</li>
-	      </ul>
-	    </li>
-	  </ul>
-	</li>
+        <li>Gallery
+          <ul>
+            <li>Friends &amp; Family
+              <ul>
+                <li>Christmas 2006</li>
+                <li>Family Reunion</li>
+                <li>Christmas 2007</li>
+              </ul>
+            </li>
+            <li>Vactions
+              <ul>
+                <li>Cuba</li>
+                <li>Europe</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
       </ul>
     </div>
   </div>
@@ -76,24 +76,24 @@
     <caption><h2>Album Info</h2></caption>
     <tbody>
       <tr>
-	<th>Name:</th>
-	<td><strong>Christmas 2007</strong></td>
+        <th>Name:</th>
+        <td><strong>Christmas 2007</strong></td>
       </tr>
       <tr>
-	<th>Taken:</th>
-	<td><span class="date" title="January 21, 2008 8:30pm">January 21, 2008</td>
+        <th>Taken:</th>
+        <td><span class="date" title="January 21, 2008 8:30pm">January 21, 2008</td>
       </tr>
       <tr>
-	<th>Location:</th>
-	<td><a href="#" title="see the location on a map">Mountain View</a></td>
+        <th>Location:</th>
+        <td><a href="#" title="see the location on a map">Mountain View</a></td>
       </tr>
       <tr>
-	<th>Owner:</th>
-	<td><a href="#">username</a></td>
+        <th>Owner:</th>
+        <td><a href="#">username</a></td>
       </tr>
       <tr>
-	<th>Uploaded:</th>
-	<td><span class="date" title="October 23, 2008 11:37am">October 23, 2008</td>
+        <th>Uploaded:</th>
+        <td><span class="date" title="October 23, 2008 11:37am">October 23, 2008</td>
       </tr>
     </tbody>
   </table>

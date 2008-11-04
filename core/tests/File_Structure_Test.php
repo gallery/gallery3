@@ -24,9 +24,9 @@ class File_Structure_Test extends Unit_Test_Case {
     $incorrect = array();
     foreach ($dir as $file) {
       if (!preg_match("|\.html\.php$|", $file->getPathname())) {
-	$this->assert_false(
-	  preg_match('/\?\>\s*$/', file_get_contents($file)),
-	  "{$file->getPathname()} ends in ?>");
+        $this->assert_false(
+          preg_match('/\?\>\s*$/', file_get_contents($file)),
+          "{$file->getPathname()} ends in ?>");
       }
     }
   }
@@ -36,12 +36,12 @@ class File_Structure_Test extends Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
       if ($file->getFilename() == 'kohana_unit_test.php') {
-	// Exception: this file must be named accordingly for the test framework
-	continue;
+        // Exception: this file must be named accordingly for the test framework
+        continue;
       }
       $this->assert_false(
-	preg_match("|/views/.*?(?<!\.html)\.php$|", $file->getPathname()),
-	"{$file->getPathname()} should end in .html.php");
+        preg_match("|/views/.*?(?<!\.html)\.php$|", $file->getPathname()),
+        "{$file->getPathname()} should end in .html.php");
     }
   }
 
@@ -52,24 +52,37 @@ class File_Structure_Test extends Unit_Test_Case {
     $expected = $this->_get_preamble(__FILE__);
     foreach ($dir as $file) {
       if (preg_match("/views/", $file->getPathname())) {
-	// The preamble for views is a single line that prevents direct script access
-	$lines = file($file->getPathname());
-	$this->assert_equal(
-	  "<? defined(\"SYSPATH\") or die(\"No direct script access.\"); ?>\n",
-	  $lines[0],
-	  "in file: {$file->getPathname()}");
+        // The preamble for views is a single line that prevents direct script access
+        $lines = file($file->getPathname());
+        $this->assert_equal(
+          "<? defined(\"SYSPATH\") or die(\"No direct script access.\"); ?>\n",
+          $lines[0],
+          "in file: {$file->getPathname()}");
       } else if (preg_match("|\.php$|", $file->getPathname())) {
-	$actual = $this->_get_preamble($file->getPathname());
-	if ($file->getPathName() == DOCROOT . "index.php") {
-	  // index.php allows direct access, so modify our expectations for the first line
-	  $index_expected = $expected;
-	  $index_expected[0] = "<?php";
-	  $this->assert_equal($index_expected, $actual, "in file: {$file->getPathname()}");
-	} else {
-	  // We expect the full preamble in regular PHP files
-	  $actual = $this->_get_preamble($file->getPathname());
-	  $this->assert_equal($expected, $actual, "in file: {$file->getPathname()}");
-	}
+        $actual = $this->_get_preamble($file->getPathname());
+        if ($file->getPathName() == DOCROOT . "index.php") {
+          // index.php allows direct access, so modify our expectations for the first line
+          $index_expected = $expected;
+          $index_expected[0] = "<?php";
+          $this->assert_equal($index_expected, $actual, "in file: {$file->getPathname()}");
+        } else {
+          // We expect the full preamble in regular PHP files
+          $actual = $this->_get_preamble($file->getPathname());
+          $this->assert_equal($expected, $actual, "in file: {$file->getPathname()}");
+        }
+      }
+    }
+  }
+
+  public function no_tabs_in_our_code_test() {
+    $dir = new GalleryCodeFilterIterator(
+      new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
+    $incorrect = array();
+    foreach ($dir as $file) {
+      if (substr($file->getFilename(), -4) == ".php") {
+        $this->assert_false(
+          preg_match('/\t/', file_get_contents($file)),
+          "{$file->getPathname()} has tabs in it");
       }
     }
   }
@@ -80,7 +93,7 @@ class File_Structure_Test extends Unit_Test_Case {
     for ($i = 0; $i < count($lines); $i++) {
       $copy[] = rtrim($lines[$i]);
       if (!strncmp($lines[$i], ' */', 3)) {
-	return $copy;
+        return $copy;
       }
     }
     return $copy;
@@ -92,12 +105,12 @@ class GalleryCodeFilterIterator extends FilterIterator {
     // Skip anything that we didn't write
     $path_name = $this->getInnerIterator()->getPathName();
     return !(strstr($path_name, ".svn") ||
-	     substr($path_name, -1, 1) == "~" ||
-	     strstr($path_name, SYSPATH) !== false ||
-	     strstr($path_name, MODPATH . 'forge') !== false ||
-	     strstr($path_name, MODPATH . 'unit_test') !== false ||
-	     strstr($path_name, MODPATH . 'mptt') !== false ||
-	     strstr($path_name, DOCROOT . 'var') !== false ||
-	     strstr($path_name, DOCROOT . 'test') !== false);
+             substr($path_name, -1, 1) == "~" ||
+             strstr($path_name, SYSPATH) !== false ||
+             strstr($path_name, MODPATH . 'forge') !== false ||
+             strstr($path_name, MODPATH . 'unit_test') !== false ||
+             strstr($path_name, MODPATH . 'mptt') !== false ||
+             strstr($path_name, DOCROOT . 'var') !== false ||
+             strstr($path_name, DOCROOT . 'test') !== false);
   }
 }

@@ -40,8 +40,8 @@
       <td><?= $module->name ?></td>
       <td><?= $module->version ?></td>
       <td>
-	<?= html::anchor("welcome/install/{$module->name}", "install") ?>,
-	<?= html::anchor("welcome/uninstall/{$module->name}", "uninstall") ?>
+        <?= html::anchor("welcome/install/{$module->name}", "install") ?>,
+        <?= html::anchor("welcome/uninstall/{$module->name}", "uninstall") ?>
       </td>
     </tr>
     <? endforeach; ?>

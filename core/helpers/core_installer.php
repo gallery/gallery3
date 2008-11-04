@@ -24,38 +24,38 @@ class core_installer {
       $base_version = ORM::factory("module")->where("name", "core")->find()->version;
     } catch (Exception $e) {
       if ($e->getMessage() == "Table modules does not exist in your database.") {
-	$base_version = 0;
+        $base_version = 0;
       } else {
-	throw $e;
+        throw $e;
       }
     }
 
     if ($base_version == 0) {
       $db->query("CREATE TABLE `modules` (
-		   `id` int(9) NOT NULL auto_increment,
-		   `name` char(255) default NULL,
-		   `version` int(9) default NULL,
-		   PRIMARY KEY (`id`),
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` char(255) default NULL,
+                   `version` int(9) default NULL,
+                   PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
-		 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE `items` (
-		   `id` int(9) NOT NULL auto_increment,
-		   `type` char(32) default NULL,
-		   `title` char(255) default NULL,
-		   `description` char(255) default NULL,
-		   `path` char(255) default NULL,
-		   `left` int(9) default NULL,
-		   `right` int(9) default NULL,
-		   `parent_id` int(9) default NULL,
-		   `scope` int(9) default NULL,
-		   PRIMARY KEY (`id`),
-		   KEY `parent_id` (`parent_id`),
-		   KEY `type` (`type`))
-		 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                   `id` int(9) NOT NULL auto_increment,
+                   `type` char(32) default NULL,
+                   `title` char(255) default NULL,
+                   `description` char(255) default NULL,
+                   `path` char(255) default NULL,
+                   `left` int(9) default NULL,
+                   `right` int(9) default NULL,
+                   `parent_id` int(9) default NULL,
+                   `scope` int(9) default NULL,
+                   PRIMARY KEY (`id`),
+                   KEY `parent_id` (`parent_id`),
+                   KEY `type` (`type`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       foreach (array("albums", "thumbnails") as $dir) {
-	@mkdir(VARPATH . $dir);
+        @mkdir(VARPATH . $dir);
       }
 
       $core = ORM::factory("module")->where("name", "core")->find();
