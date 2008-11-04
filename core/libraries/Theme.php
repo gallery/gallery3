@@ -18,16 +18,17 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class theme_Core {
-  public static $debug_backtrace = "debug_backtrace";
+  private $theme_name = null;
 
-  public static function url($path) {
-    // Using debug_backtrace() sucks.  But I don't know of another way to get
-    // the location of the caller without forcing them to pass it in as an argument, which
-    // makes for a crappy API.
-    $backtrace = call_user_func(theme::$debug_backtrace);
-    $calling_file = $backtrace[1]['file'];
-    $theme_name = substr($calling_file, strlen(THEMEPATH));
-    $theme_name = substr($theme_name, 0, strcspn($theme_name, "/"));
-    return url::base() . "themes/{$theme_name}/$path";
+  public function __construct($theme_name) {
+    $this->theme_name = $theme_name;
+  }
+
+  public function url($path) {
+    return url::base() . "themes/{$this->theme_name}/$path";
+  }
+
+  public function display($page_name, $view_class="View") {
+    return new $view_class($page_name);
   }
 }

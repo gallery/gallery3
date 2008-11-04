@@ -20,4 +20,22 @@
 class Item_Model extends MPTT {
   protected $left_column = "left";
   protected $right_column = "right";
+
+  public function is_album() {
+    return $this->type == 'album';
+  }
+
+  public function is_photo() {
+    return $this->type == 'photo';
+  }
+
+  // MPTT::get_children returns null if there are no children; change that to an empty array for
+  // consistency.
+  public function get_children() {
+    $children = parent::get_children();
+    if (empty($children)) {
+      $children = array();
+    }
+    return $children;
+  }
 }

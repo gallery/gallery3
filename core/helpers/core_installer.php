@@ -43,6 +43,7 @@ class core_installer {
 		   `id` int(9) NOT NULL auto_increment,
 		   `type` char(32) default NULL,
 		   `title` char(255) default NULL,
+		   `description` char(255) default NULL,
 		   `path` char(255) default NULL,
 		   `left` int(9) default NULL,
 		   `right` int(9) default NULL,
@@ -64,6 +65,7 @@ class core_installer {
 
       $root = ORM::factory("item");
       $root->title = "Gallery";
+      $root->description = "Welcome to your Gallery3";
       $root->make_root();
     }
   }

@@ -19,16 +19,22 @@
  */
 
 class Theme_Test extends Unit_Test_Case {
-  public function teardown() {
-    theme::$debug_backtrace = "debug_backtrace";
-  }
-
   public function url_test() {
-    theme::$debug_backtrace = array("Theme_Test", "_fake_debug_backtrace");
-    $this->assert_equal("http://./themes/fake_theme/file", theme::url("file"));
+    $theme = new Theme("fake_theme");
+    $this->assert_equal("http://./themes/fake_theme/file", $theme->url("file"));
   }
 
-  public function _fake_debug_backtrace() {
-    return array(array(), array('file' => THEMEPATH . "fake_theme/views/some_file.html.php"));
+  public function display_test() {
+    $theme = new Theme("fake_theme");
+    $view = $theme->display("test_page", "Theme_Test_Mock_View");
+    $this->assert_equal("test_page", $view->page_name);
+  }
+}
+
+class Theme_Test_Mock_View {
+  public $page_name = null;
+
+  public function __construct($page_name) {
+    $this->page_name = $page_name;
   }
 }
