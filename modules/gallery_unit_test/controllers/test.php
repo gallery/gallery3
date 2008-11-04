@@ -31,16 +31,16 @@ class Test_Controller extends Controller {
       copy($original_config, $test_config);
       $db_config = Kohana::config('database');
       if (empty($db_config['unit_test'])) {
-	print "Please create create a 'unit_test' database configuration in $db_config.\n";
-	return;
+        print "Please create create a 'unit_test' database configuration in $db_config.\n";
+        return;
       }
 
       try {
-	$db = Database::instance('unit_test');
-	$db->connect();
+        $db = Database::instance('unit_test');
+        $db->connect();
 
-	// Make this the default database for the rest of this run
-	Database::$instances = array('default' => $db);
+        // Make this the default database for the rest of this run
+        Database::$instances = array('default' => $db);
       } catch (Exception $e) {
 	print "{$e->getMessage()}\n";
 	return;
