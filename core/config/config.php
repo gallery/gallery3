@@ -120,7 +120,6 @@ $config['modules'] = array
 (
   MODPATH . 'gallery_unit_test',
   MODPATH . 'unit_test',
-  MODPATH . 'mptt',
   MODPATH . 'forge',
 
   THEMEPATH . 'default',

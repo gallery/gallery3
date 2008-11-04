@@ -17,9 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Model extends MPTT {
-  protected $left_column = "left";
-  protected $right_column = "right";
+class Item_Model extends ORM_MPTT {
+  protected $children = 'items';
 
   public function is_album() {
     return $this->type == 'album';
@@ -29,13 +28,39 @@ class Item_Model extends MPTT {
     return $this->type == 'photo';
   }
 
-  // MPTT::get_children returns null if there are no children; change that to an empty array for
-  // consistency.
-  public function get_children() {
-    $children = parent::get_children();
-    if (empty($children)) {
-      $children = array();
+  private function _get_path() {
+    $paths = array();
+    foreach ($this->parents() as $parent) {
+      if ($parent->id > 1) {
+        $paths[] = $parent->name;
+      }
     }
-    return $children;
+    $path = implode($paths, "/");
+    if (!$this->saved) {
+      $path .= $this->name;
+    }
+    return $path;
+  }
+
+  public function path() {
+    return VARPATH . "albums/{$this->_get_path()}";
+  }
+
+  public function thumbnail_path() {
+    if ($this->is_album()) {
+      return VARPATH . "thumbnails/{$this->_get_path()}";
+    } else {
+      $pi = pathinfo(VARPATH . "thumbnails/{$this->_get_path()}");
+      return "{$pi['dirname']}/{$pi['filename']}_thumb.{$pi['extension']}";
+    }
+  }
+
+  public function resize_path() {
+    if ($this->is_album()) {
+      return VARPATH . "thumbnails/{$this->_get_path()}";
+    } else {
+      $pi = pathinfo(VARPATH . "thumbnails/{$this->_get_path()}");
+      return "{$pi['dirname']}/{$pi['filename']}_resize.{$pi['extension']}";
+    }
   }
 }

@@ -110,6 +110,7 @@ class GalleryCodeFilterIterator extends FilterIterator {
              strstr($path_name, MODPATH . 'forge') !== false ||
              strstr($path_name, MODPATH . 'unit_test') !== false ||
              strstr($path_name, MODPATH . 'mptt') !== false ||
+             strstr($path_name, MODPATH . 'kodoc') !== false ||
              strstr($path_name, DOCROOT . 'var') !== false ||
              strstr($path_name, DOCROOT . 'test') !== false);
   }

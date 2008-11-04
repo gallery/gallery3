@@ -42,6 +42,33 @@ class Welcome_Controller extends Template_Controller {
     url::redirect("welcome");
   }
 
+  function add($count) {
+    srand(time());
+    $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
+    for ($i = 0; $i < $count; $i++) {
+      $parent = $parents[array_rand($parents)];
+      switch(rand(0, 1)) {
+      case 0:
+        $album = album::create($parent->id, "rnd_" . rand(), "Rnd $i", "rnd $i");
+        $parents[] = $album;
+        break;
+
+      case 1:
+        photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg",
+                      "thumbnail.jpg", "rnd_" . rand(), "sample thumbnail");
+        break;
+      }
+
+      print "$i ";
+      if (!($i % 100)) {
+        set_time_limit(30);
+      }
+    }
+    print "<br/>";
+    print html::anchor("welcome", "return");
+    $this->auto_render = false;
+  }
+
   private function _get_config_errors() {
     $errors = array();
     if (!file_exists(VARPATH)) {

@@ -26,7 +26,7 @@
       }
 
       p {
-        margin: 0 0 1em 0;
+        margin: 0 0 0 0;
         padding-left: 1em;
       }
 
@@ -59,6 +59,18 @@
       ul {
         margin-top: -.25em;
       }
+
+      ul.choices {
+        padding-top: 0;
+        padding-left: 1em;
+        margin: 0px;
+      }
+
+      ul.choices li {
+        display: inline;
+        list-stype-type: none;
+        padding: 0px;
+      }
     </style>
   </head>
   <body>
@@ -72,24 +84,25 @@
           This is
           a <b><a href="http://www.google.com/images?q=scaffold">scaffold</a></b>:
           a <i>temporary structure built to support the developers as
-          they create the real product</i>.
-        </p>
-
-        <p>
-          As we flesh out Gallery 3, we'll make it possible for you to
-          peer inside and see the application taking shape.
-          Eventually, this page will go away and you'll start in the
-          application itself.  In the meantime, here are some useful
-          links to get you started.
+          they create the real product</i>. As we flesh out Gallery 3,
+          we'll make it possible for you to peer inside and see the
+          application taking shape.  Eventually, this page will go
+          away and you'll start in the application itself.  In the
+          meantime, here are some useful links to get you started.
         </p>
 
         <h2>System Configuration</h2>
         <?= $syscheck ?>
 
         <h2>Activities</h2>
-        <p>
-        <?= html::anchor("album/1", "Browse Gallery") ?>
-        </p>
+        <p> <?= html::anchor("album/1", "Browse Gallery") ?> </p>
+        <ul class="choices">
+        <li> add: [</li>
+        <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
+        <li> <?= html::anchor("welcome/add/$count", "$count") ?> </li>
+        <? endforeach ?>
+        <li>] photos and albums </li>
+        </ul>
 
         <h2>Documentation</h2>
         <ul>

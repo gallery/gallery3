@@ -41,14 +41,14 @@ class core_installer {
 
       $db->query("CREATE TABLE `items` (
                    `id` int(9) NOT NULL auto_increment,
-                   `type` char(32) default NULL,
+                   `type` char(32) NOT NULL,
                    `title` char(255) default NULL,
                    `description` char(255) default NULL,
-                   `path` char(255) default NULL,
-                   `left` int(9) default NULL,
-                   `right` int(9) default NULL,
-                   `parent_id` int(9) default NULL,
-                   `scope` int(9) default NULL,
+                   `name` char(255) default NULL,
+                   `left` int(9) NOT NULL,
+                   `right` int(9) NOT NULL,
+                   `parent_id` int(9) NOT NULL,
+                   `level` int(9) NOT NULL,
                    PRIMARY KEY (`id`),
                    KEY `parent_id` (`parent_id`),
                    KEY `type` (`type`))
@@ -64,9 +64,14 @@ class core_installer {
       $core->save();
 
       $root = ORM::factory("item");
+      $root->type = 'album';
       $root->title = "Gallery";
       $root->description = "Welcome to your Gallery3";
-      $root->make_root();
+      $root->left = 1;
+      $root->right = 2;
+      $root->parent_id = 0;
+      $root->level = 1;
+      $root->save();
     }
   }
 
@@ -74,5 +79,7 @@ class core_installer {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
+    system("/bin/rm -rf " . VARPATH . "albums");
+    system("/bin/rm -rf " . VARPATH . "thumbnails");
   }
 }

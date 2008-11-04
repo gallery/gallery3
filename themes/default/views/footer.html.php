@@ -1,7 +1,9 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-      <div id="gFooter">
-        Powered by <a href="#">GalleryX</a> | <a href="#">About this Gallery</a> | ...
-      </div>
+      <div id="ft">
+        <div id="gFooter">
+          Powered by <a href="#">Gallery3</a> | <a href="#">About this Gallery</a> | ...
+        </div><!-- END #gFooter -->
+      </div><!-- END YUI #ft -->
     </div>
   </body>
 </html>
