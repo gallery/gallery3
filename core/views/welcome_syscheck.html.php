@@ -35,13 +35,16 @@
       <th align="left">Version</th>
       <th align="left">Action</th>
     </tr>
-    <? foreach ($modules as $module): ?>
+    <? foreach ($modules as $module_name => $module_version): ?>
     <tr>
-      <td><?= $module->name ?></td>
-      <td><?= $module->version ?></td>
+      <td><?= $module_name ?></td>
+      <td><?= empty($module_version) ? "" : $module_version ?></td>
       <td>
-        <?= html::anchor("welcome/install/{$module->name}", "install") ?>,
-        <?= html::anchor("welcome/uninstall/{$module->name}", "uninstall") ?>
+        <? if (empty($module_version)): ?>
+          <?= html::anchor("welcome/install/{$module_name}", "install") ?>
+        <? else: ?>
+          <?= html::anchor("welcome/uninstall/{$module_name}", "uninstall") ?>
+        <? endif; ?>
       </td>
     </tr>
     <? endforeach; ?>
