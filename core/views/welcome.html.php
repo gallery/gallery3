@@ -132,6 +132,7 @@
         <ul id="tabs">
           <li><a href="javascript:show('#configuration')">Configuration</a></li>
           <li><a href="javascript:show('#actions')">Actions</a></li>
+          <li><a href="javascript:show('#info')">Info</a></li>
           <li><a href="javascript:show('#docs')">Docs</a></li>
         </ul>
 
@@ -158,6 +159,16 @@
               <li> <?= html::anchor("welcome/add/$count", "$count") ?> </li>
               <? endforeach ?>
               <li>] photos and albums </li>
+            </ul>
+          </div>
+
+          <div id="info" class="activity">
+            <ul>
+              <li> <?= html::anchor("welcome/mptt&type=text", "MPTT tree (text)") ?> </li>
+              <li>
+                <?= html::anchor("welcome/mptt", "MPTT tree (graph)") ?>
+                <i>(requires /usr/bin/dot from the graphviz package)</i>
+              </li>
             </ul>
           </div>
 

@@ -45,6 +45,34 @@ class Welcome_Controller extends Template_Controller {
     url::redirect("welcome");
   }
 
+  function mptt() {
+    $this->auto_render = false;
+    $items = ORM::factory("item")->orderby("id")->find_all();
+    $data = "digraph G {\n";
+    foreach ($items as $item) {
+      $data .= "  $item->parent_id -> $item->id\n";
+      $data .= "  $item->id [label=\"$item->id <$item->left, $item->right>\"]\n";
+    }
+    $data .= "}\n";
+
+    if ($this->input->get("type") == "text") {
+      print "<pre>$data";
+    } else {
+      $proc = proc_open("/usr/bin/dot -Tsvg",
+			array(array("pipe", "r"),
+			      array("pipe", "w")),
+			$pipes,
+			VARPATH . "tmp");
+      fwrite($pipes[0], $data);
+      fclose($pipes[0]);
+
+      header("Content-Type: image/svg+xml");
+      print(stream_get_contents($pipes[1]));
+      fclose($pipes[1]);
+      proc_close($proc);
+    }
+  }
+
   function add($count) {
     srand(time());
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
