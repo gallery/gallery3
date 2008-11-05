@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class core_installer {
-  public function install() {
+  public static function install() {
     $db = Database::instance();
     try {
       $base_version = ORM::factory("module")->where("name", "core")->find()->version;
@@ -75,7 +75,7 @@ class core_installer {
     }
   }
 
-  public function uninstall() {
+  public static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
