@@ -23,14 +23,17 @@ class Welcome_Controller extends Template_Controller {
   function index() {
     $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
-    $this->template->syscheck->modules = $this->_read_modules();
+    $this->templlate->syscheck->modules = array();
     $this->template->album_count = 0;
     $this->template->photo_count = 0;
     try {
+      $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
+      $this->template->syscheck->modules = $this->_read_modules();
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
       $this->template->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
     } catch (Exception $e) {
     }
+    set_error_handler($old_handler);
 
     $this->_create_directories();
   }
@@ -119,7 +122,7 @@ class Welcome_Controller extends Template_Controller {
     if (!file_exists($db_php)) {
       $error = new stdClass();
       $error->message = "Missing: $db_php";
-      $error->instructions[] = "cp kohana/config/database.php $db_php";
+      $error->instructions[] = "cp " . DOCROOT . "kohana/config/database.php $db_php";
       $error->instructions[] = "chmod 644 $db_php";
       $error->message2 = "Then edit this file and enter your database configuration settings.";
       $errors[] = $error;
