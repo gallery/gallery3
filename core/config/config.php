@@ -126,6 +126,7 @@ $config['modules'] = array
   MODPATH . 'tags',
   MODPATH . 'user',
   MODPATH . 'info',
+  MODPATH . 'gmaps',
 
   THEMEPATH . 'default',
 );
