@@ -28,6 +28,8 @@ class Album_Controller extends Template_Controller {
 
     $this->template->set_global('item', $item);
     $this->template->set_global('children', $item->children());
+
+    /** @todo: this needs to be data-driven */
     $this->template->set_global('theme', new Theme("default", $this->template));
   }
 }

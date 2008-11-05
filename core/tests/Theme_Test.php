@@ -20,14 +20,21 @@
 
 class Theme_Test extends Unit_Test_Case {
   public function url_test() {
-    $theme = new Theme("fake_theme");
+    $theme = new Theme("fake_theme", new View());
     $this->assert_equal("http://./themes/fake_theme/file", $theme->url("file"));
   }
 
   public function display_test() {
-    $theme = new Theme("fake_theme");
+    $theme = new Theme("fake_theme", new View());
     $view = $theme->display("test_page", "Theme_Test_Mock_View");
     $this->assert_equal("test_page", $view->page_name);
+  }
+
+  public function item_test() {
+    $v = new View();
+    $v->item = "fake_item";
+    $theme = new Theme("fake_theme", $v);
+    $this->assert_equal("fake_item", $theme->item());
   }
 }
 

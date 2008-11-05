@@ -1,15 +1,8 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gSidebar" class="yui-b">
-
-  <div id="gCarousel" class="gBlock">
-    <div class="gBlockHeader">
-      <h2>Album: <a href="browse.html">Christmas 2007</a></h2>
-      <a href="#" class="minimize" title="<?= _("Minimize Carousel Block") ?>">[-]</a>
-    </div>
-
-    <img src="<?= $theme->url("images/carousel.png") ?>" width="214" class="gBlockContent" />
-  </div>
-
+  <? foreach ($theme->blocks() as $block): ?>
+    <?= $block ?>
+  <? endforeach ?>
 
   <div id="gTags" class="gBlock">
     <div class="gBlockHeader">

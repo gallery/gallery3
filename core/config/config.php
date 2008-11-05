@@ -122,5 +122,7 @@ $config['modules'] = array
   MODPATH . 'unit_test',
   MODPATH . 'forge',
 
+  MODPATH . 'carousel',
+
   THEMEPATH . 'default',
 );

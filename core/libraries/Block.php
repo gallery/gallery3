@@ -17,30 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Theme_Core {
-  private $theme_name = null;
-  private $template = null;
+class Block_Core {
+  public $id = null;
+  public $title = null;
+  public $content = null;
 
-  public function __construct($theme_name, $template) {
-    $this->theme_name = $theme_name;
-    $this->template = $template;
-  }
-
-  public function url($path) {
-    return url::base() . "themes/{$this->theme_name}/$path";
-  }
-
-  public function item() {
-    return $this->template->item;
-  }
-
-  public function display($page_name, $view_class="View") {
-    return new $view_class($page_name);
-  }
-
-  public function blocks() {
-    /** @todo: this needs to be made data-driven */
-    $blocks = array('carousel' => carousel::block($this));
-    return $blocks;
+  public function __toString() {
+    $v = new View("block.html");
+    $v->id = $this->id;
+    $v->title = $this->title;
+    $v->content = $this->content;
+    return $v->__toString();
   }
 }
