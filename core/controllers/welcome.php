@@ -135,16 +135,13 @@ class Welcome_Controller extends Template_Controller {
       foreach ($installed as $installed_module) {
         $modules[$installed_module->name] = $installed_module->version;
       }
-    } catch (Exception $e) {
-      // The database may not be installed
-    }
 
-    if (!empty($modules["core"])) {
       foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
         $modules[basename(dirname(dirname($file)))] = 0;
       }
+    } catch (Exception $e) {
+      // The database may not be installed
     }
-
     return $modules;
   }
 }
