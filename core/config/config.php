@@ -124,6 +124,7 @@ $config['modules'] = array
 
   MODPATH . 'carousel',
   MODPATH . 'tags',
-
+  MODPATH . 'user',
+  
   THEMEPATH . 'default',
 );
