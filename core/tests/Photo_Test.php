@@ -22,11 +22,11 @@ class Photo_Test extends Unit_Test_Case {
     $rand = rand();
     $photo = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
 
-    $this->assert_equal(VARPATH . "albums/$rand.jpg", $photo->path());
-    $this->assert_equal(VARPATH . "thumbnails/{$rand}_thumb.jpg", $photo->thumbnail_path());
-    $this->assert_equal(VARPATH . "thumbnails/{$rand}_resize.jpg", $photo->resize_path());
+    $this->assert_equal(VARPATH . "albums/$rand.jpg", $photo->file_path());
+    $this->assert_equal(VARPATH . "resizes/{$rand}.thumb.jpg", $photo->thumbnail_path());
+    $this->assert_equal(VARPATH . "resizes/{$rand}.resize.jpg", $photo->resize_path());
 
-    $this->assert_true(is_file($photo->path()), "missing: {$photo->path()}");
+    $this->assert_true(is_file($photo->file_path()), "missing: {$photo->file_path()}");
     $this->assert_true(is_file($photo->resize_path()), "missing: {$photo->resize_path()}");
     $this->assert_true(is_file($photo->thumbnail_path()), "missing: {$photo->thumbnail_path()}");
 
@@ -53,5 +53,17 @@ class Photo_Test extends Unit_Test_Case {
     } catch (Exception $e) {
       // pass
     }
+  }
+
+  public function thumbnail_url_test() {
+    $rand = rand();
+    $photo = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $this->assert_equal("http://./var/resizes/{$rand}.thumb.jpg", $photo->thumbnail_url());
+  }
+
+  public function resize_url_test() {
+    $rand = rand();
+    $photo = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $this->assert_equal("http://./var/resizes/{$rand}.resize.jpg", $photo->resize_url());
   }
 }

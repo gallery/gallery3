@@ -54,7 +54,7 @@ class Photo_Core {
 
     $photo->add_to_parent($parent_id);
 
-    copy($filename, $photo->path());
+    copy($filename, $photo->file_path());
 
     /** @todo: parameterize these values */
     $image = Image::factory($filename);

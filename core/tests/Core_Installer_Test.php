@@ -23,12 +23,9 @@
  * test controller before it starts.
  */
 class Core_Installer_Test extends Unit_Test_Case {
-  public function install_creates_albums_dir_test() {
+  public function install_creates_dirs_test() {
     $this->assert_true(file_exists(VARPATH . "albums"));
-  }
-
-  public function install_creates_thumbnails_dir_test() {
-    $this->assert_true(file_exists(VARPATH . "thumbnails"));
+    $this->assert_true(file_exists(VARPATH . "resizes"));
   }
 
   public function install_registers_core_module_test() {

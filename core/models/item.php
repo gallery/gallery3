@@ -28,8 +28,8 @@ class Item_Model extends ORM_MPTT {
     return $this->type == 'photo';
   }
 
-  private function _get_path() {
-    $paths = array();
+  private function _relative_path($prefix, $tag, $suffix) {
+    $paths = array($prefix);
     foreach ($this->parents() as $parent) {
       if ($parent->id > 1) {
         $paths[] = $parent->name;
@@ -39,28 +39,75 @@ class Item_Model extends ORM_MPTT {
     if (!$this->saved) {
       $path .= $this->name;
     }
+
+    if ($tag) {
+      $pi = pathinfo($path);
+      $path = "{$pi['dirname']}/{$pi['filename']}{$tag}.{$pi['extension']}";
+    }
+
+    if ($suffix) {
+      $path .= $suffix;
+    }
     return $path;
   }
 
-  public function path() {
-    return VARPATH . "albums/{$this->_get_path()}";
-  }
-
-  public function thumbnail_path() {
+  /**
+   * album: /var/albums/album1/album2
+   * photo: /var/albums/album1/album2/photo.jpg
+   */
+  public function file_path() {
     if ($this->is_album()) {
-      return VARPATH . "thumbnails/{$this->_get_path()}";
+      return $this->_relative_path(VARPATH . "albums", "", "");
     } else {
-      $pi = pathinfo(VARPATH . "thumbnails/{$this->_get_path()}");
-      return "{$pi['dirname']}/{$pi['filename']}_thumb.{$pi['extension']}";
+      return $this->_relative_path(VARPATH . "albums", "", "");
     }
   }
 
+  /**
+   * album: /var/resizes/album1/.thumb.jpg
+   * photo: /var/albums/album1/photo.thumb.jpg
+   */
+  public function thumbnail_path() {
+    if ($this->is_album()) {
+      return $this->_relative_path(VARPATH . "resizes", "", "/.thumb.jpg");
+    } else {
+      return $this->_relative_path(VARPATH . "resizes", ".thumb", "");
+    }
+  }
+
+  /**
+   * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
+   * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
+   */
+  public function thumbnail_url() {
+    if ($this->is_album()) {
+      return $this->_relative_path(url::base() . "var/resizes", "", "/.thumb.jpg");
+    } else {
+      return $this->_relative_path(url::base() . "var/resizes", ".thumb", "");
+    }
+  }
+
+  /**
+   * album: /var/resizes/album1/.resize.jpg
+   * photo: /var/albums/album1/photo.resize.jpg
+   */
   public function resize_path() {
     if ($this->is_album()) {
-      return VARPATH . "thumbnails/{$this->_get_path()}";
+      return $this->_relative_path(VARPATH . "resizes", "", "/.resize.jpg");
     } else {
-      $pi = pathinfo(VARPATH . "thumbnails/{$this->_get_path()}");
-      return "{$pi['dirname']}/{$pi['filename']}_resize.{$pi['extension']}";
+      return $this->_relative_path(VARPATH . "resizes", ".resize", "");
+    }
+  }
+
+  /**
+   * album: http://example.com/gallery3/var/resizes/album1/.resize.jpg
+   * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
+   */
+  public function resize_url() {
+    if ($this->is_album()) {
+      return $this->_relative_path(url::base() . "var/resizes", "", "/.resize.jpg");
+    } else {
+      return $this->_relative_path(url::base() . "var/resizes", ".resize", "");
     }
   }
 }

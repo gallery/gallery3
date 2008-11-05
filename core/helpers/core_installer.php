@@ -54,7 +54,7 @@ class core_installer {
                    KEY `type` (`type`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      foreach (array("albums", "thumbnails") as $dir) {
+      foreach (array("albums", "resizes") as $dir) {
         @mkdir(VARPATH . $dir);
       }
 
@@ -80,6 +80,6 @@ class core_installer {
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
     system("/bin/rm -rf " . VARPATH . "albums");
-    system("/bin/rm -rf " . VARPATH . "thumbnails");
+    system("/bin/rm -rf " . VARPATH . "resizes");
   }
 }

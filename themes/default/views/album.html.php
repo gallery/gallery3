@@ -4,13 +4,6 @@
 <div id="bd">
   <div id="yui-main">
     <div id="gContent" class="yui-b">
-      <script type="text/javascript">
-        myTooltip = new YAHOO.widget.Tooltip("myTooltip", {
-        context:"photo-id-1",
-        text:"<strong>Photo title</strong><br />taken December 24, 2007<br />Viewed 27 times<br /><br/>Tags: christmas, familiy, home, xmas",
-        showDelay:500 } );
-      </script>
-
       <div id="gAlbumGrid">
         <div id="gAlbumGridHeader">
           <h1><?= $item->title ?></h1>
@@ -18,54 +11,27 @@
           <a href="#" id="gSlideshowLink" class="buttonlink">Slideshow</a>
         </div>
 
-        <div class="gAlbumContainer first gAlbum">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
+        <? foreach ($children as $i => $child): ?>
+        <? if ($child->is_album()): ?>
+        <div class="gAlbumContainer gAlbum <?= text::alternate("first", "", "") ?>">
+          <a href="<?= url::site("album/{$child->id}") ?>">
+            <img id="photo-id-<?= $child->id ?>" class="photo" alt="photo" src="<?= $child->thumbnail_url() ?>" />
+          </a>
           <h2>Album title</h2>
           <ul class="gMetadata">
             <li>Views: 321</li>
             <li>By: <a href="#">username</a></li>
           </ul>
         </div>
-
-        <div class="gItemContainer">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
-          <h2>Photo title</h2>
+        <? else: ?>
+        <div class="gItemContainer <?= text::alternate("first", "", "") ?>">
+          <a href="<?= url::site("photo/{$child->id}") ?>">
+            <img id="photo-id-<?= $child->id ?>" class="photo" alt="photo" src="<?= $child->thumbnail_url() ?>" />
+          </a>
+          <h2><?= $child->title ?></h2>
         </div>
-
-        <div class="gItemContainer">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
-          <h2>Photo title</h2>
-        </div>
-
-        <div class="gItemContainer first">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
-          <h2>Photo title</h2>
-        </div>
-
-        <div class="gItemContainer">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
-          <h2>Photo title</h2>
-        </div>
-
-        <div class="gItemContainer">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
-          <h2>Photo title</h2>
-        </div>
-
-        <div class="gItemContainer first">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
-          <h2>Photo title</h2>
-        </div>
-
-        <div class="gItemContainer">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
-          <h2>Photo title</h2>
-        </div>
-
-        <div class="gItemContainer">
-          <a href="photo.html"><img id="photo-id-1" class="photo" alt="photo" src="<?= $theme->url("images/thumbnail.jpg") ?>" /></a>
-          <h2>Photo title</h2>
-        </div>
+        <? endif ?>
+        <? endforeach ?>
 
         <div id="gPagination">
           Items 1-10 of 34

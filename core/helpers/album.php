@@ -47,8 +47,11 @@ class Album_Core {
     }
 
     $album = $album->add_to_parent($parent_id);
-    mkdir($album->path());
-    mkdir($album->thumbnail_path());
+    mkdir($album->file_path());
+    $thumbnail_dir = dirname($album->thumbnail_path());
+    if (!file_exists($thumbnail_dir)) {
+      mkdir($thumbnail_dir);
+    }
     return $album;
   }
 }
