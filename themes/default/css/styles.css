@@ -495,7 +495,7 @@ table.gMetadata td.toggle {
 /* ~~~~~~~~~ tags ~~~~~~~~~~ */
 
 #gTags ul {
-	margin-left: 2em;
+	margin-left: .5em;
 }
 #gTags li {
 	list-style-image: url('images/bullet_tag.png');
