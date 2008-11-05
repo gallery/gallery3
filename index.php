@@ -30,6 +30,9 @@ error_reporting(E_ALL);
 // and logging. You can turn off Kohana errors in application/config/config.php
 ini_set('display_errors', true);
 
+// Enable short open tags to make our theme templates work
+ini_set('short_open_tag', 1);
+
 define('EXT', '.php');
 define('DOCROOT', getcwd().DIRECTORY_SEPARATOR);
 
