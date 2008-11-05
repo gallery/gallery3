@@ -41,9 +41,10 @@
           </ul>
 
           <ul id="gBreadcrumbs">
-            <li class="root"><a href="#">Home</a></li>
-            <li><a href="#">Friends &amp; Family</a></li>
-            <li class="active"><span>Christmas 2007</span></li>
+            <? foreach ($parents as $parent): ?>
+            <li><a href="<?= url::site("album/{$parent->id}") ?>"><?= $parent->title ?></a></li>
+            <? endforeach ?>
+            <li class="active"><span><?= $item->title ?></span></li>
           </ul>
 
           <form id="gSearchForm">

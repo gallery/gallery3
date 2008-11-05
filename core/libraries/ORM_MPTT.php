@@ -82,13 +82,15 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
-   * Return all the parents of this node, in order from root to leaf.
+   * Return all the parents of this node, in order from root to this node's immediate parent.
    *
    * @return array ORM
    */
   function parents() {
+    $id = (int)$this->id;
     if (!isset($this->parents)) {
-      $this->parents = $this->where("`left` <= {$this->left}")
+      $this->parents = $this
+        ->where("`left` <= {$this->left}")
         ->where("`right` >= {$this->right}")
         ->orderby("left", "ASC")
         ->find_all();

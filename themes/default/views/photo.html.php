@@ -8,9 +8,9 @@
         <a href="" class="buttonlink">Full size (1024x768)</a>
         <a href="" class="buttonlink">Slideshow</a>
 
-        <img id="photo-id-1" alt="photo" src="images/thumbnail.jpg" />
-        <h1>Photo title</h1>
-        <p>Photo description: Lorem ipsum dolor sit amet.</p>
+        <img id="photo-id-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>" />
+        <h1><?= $item->title ?></h1>
+        <p><?= $item->description ?></p>
       </div>
 
       <div id="gComments">

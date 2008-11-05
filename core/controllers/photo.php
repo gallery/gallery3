@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Album_Controller extends Template_Controller {
-  public $template = "album.html";
+class Photo_Controller extends Template_Controller {
+  public $template = "photo.html";
 
   public function View($id) {
     $item = ORM::factory("item")->where("id", $id)->find();
