@@ -20,33 +20,20 @@
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
 
+  /**
+   * Is this item an album?
+   * @return true if it's an album
+   */
   public function is_album() {
     return $this->type == 'album';
   }
 
+  /**
+   * Is this item a photo?
+   * @return true if it's a photo
+   */
   public function is_photo() {
     return $this->type == 'photo';
-  }
-
-  private function _relative_path($prefix, $tag, $suffix) {
-    $paths = array($prefix);
-    foreach ($this->parents() as $parent) {
-      if ($parent->id > 1) {
-        $paths[] = $parent->name;
-      }
-    }
-    $paths[] = $this->name;
-    $path = implode($paths, "/");
-
-    if ($tag) {
-      $pi = pathinfo($path);
-      $path = "{$pi['dirname']}/{$pi['filename']}{$tag}.{$pi['extension']}";
-    }
-
-    if ($suffix) {
-      $path .= $suffix;
-    }
-    return $path;
   }
 
   /**
@@ -107,5 +94,33 @@ class Item_Model extends ORM_MPTT {
     } else {
       return $this->_relative_path(url::base() . "var/resizes", ".resize", "");
     }
+  }
+
+  /**
+   * Return the relative path to this item's file.
+   * @param string $prefix prefix to the path (eg "/var" or "http://foo.com/var")
+   * @param string $tag    a tag to specify before the extension (eg ".thumb", ".resize")
+   * @param string $suffix suffix to add to end of the path
+   * @return a path
+   */
+  private function _relative_path($prefix, $tag, $suffix) {
+    $paths = array($prefix);
+    foreach ($this->parents() as $parent) {
+      if ($parent->id > 1) {
+        $paths[] = $parent->name;
+      }
+    }
+    $paths[] = $this->name;
+    $path = implode($paths, "/");
+
+    if ($tag) {
+      $pi = pathinfo($path);
+      $path = "{$pi['dirname']}/{$pi['filename']}{$tag}.{$pi['extension']}";
+    }
+
+    if ($suffix) {
+      $path .= $suffix;
+    }
+    return $path;
   }
 }
