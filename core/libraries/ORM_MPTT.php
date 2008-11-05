@@ -97,14 +97,16 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
-   * Return all of the children of this node, unordered.
+   * Return all of the children of this node, ordered by id.
    *
    * @return array ORM
    */
   function children() {
     if (!isset($this->children)) {
       $this->children =
-        $this->where("parent_id", $this->id)->find_all();
+        $this->where("parent_id", $this->id)
+        ->orderby("id", "ASC")
+        ->find_all();
     }
     return $this->children;
   }
