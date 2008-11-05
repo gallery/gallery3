@@ -4,14 +4,14 @@
   <div id="gCarousel" class="gBlock">
     <div class="gBlockHeader">
       <h2>Album: <a href="browse.html">Christmas 2007</a></h2>
-      <a href="#" class="minimize">[-]</a>
+      <a href="#" class="minimize" title="<?= _("Minimize Carousel Block") ?>">[-]</a>
     </div>
 
     <img src="<?= $theme->url("images/carousel.png") ?>" width="214" class="gBlockContent" />
   </div>
 
 
-  <div class="gTagCloud gBlock">
+  <div id="gTags" class="gBlock">
     <div class="gBlockHeader">
       <h2>Tags</h2> &nbsp;
       <a href="#">?</a>
