@@ -23,15 +23,9 @@ class Welcome_Controller extends Template_Controller {
   function index() {
     $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
-
-    try {
-      $this->template->syscheck->modules = $this->_readModules();
-    } catch (Exception $e) {
-      $this->template->syscheck->modules = array();
-    }
-      $this->_create_directories();
+    $this->template->syscheck->modules = $this->_read_modules();
+    $this->_create_directories();
   }
-
 
   function install($module) {
     call_user_func(array("{$module}_installer", "install"));
@@ -134,27 +128,21 @@ class Welcome_Controller extends Template_Controller {
    * Create an array of all the modules that are install or available and the version number
    * @return array(moduleId => version)
    */
-  private function _readModules() {
+  private function _read_modules() {
     $modules = array();
     try {
       $installed = ORM::factory("module")->find_all();
       foreach ($installed as $installed_module) {
         $modules[$installed_module->name] = $installed_module->version;
       }
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+      // The database may not be installed
+    }
 
-    if (!empty($modules['core'])) {
-      if ($dh = opendir(MODPATH)) {
-        while (($file = readdir($dh)) !== false) {
-         if ($file[0] != '.' && 
-             file_exists(MODPATH . "$file/helpers/{$file}_installer.php")) {
-            if (empty($modules[$file])) {
-              $modules[$file] = 0;
-            }
-          }
-        }
+    if (!empty($modules["core"])) {
+      foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
+        $modules[basename(dirname(dirname($file)))] = 0;
       }
-      closedir($dh);
     }
 
     return $modules;
