@@ -26,12 +26,14 @@ class Test_Controller extends Controller {
     $original_config = DOCROOT . "var/database.php";
     $test_config = VARPATH . "database.php";
     if (!file_exists($original_config)) {
-      print "Please create $original and create a 'unit_test' database configuration.\n";
+      print "Please copy kohana/config/database.php to $original_config.\n";
+      print "Then, add a \$config['unit_test'] database configuration in $original_config.\n";
+      return;
     } else {
       copy($original_config, $test_config);
       $db_config = Kohana::config('database');
       if (empty($db_config['unit_test'])) {
-        print "Please create create a 'unit_test' database configuration in $db_config.\n";
+        print "Please create a \$config['unit_test'] database configuration in $test_config.\n";
         return;
       }
 
