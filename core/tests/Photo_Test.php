@@ -63,7 +63,9 @@ class Photo_Test extends Unit_Test_Case {
 
   public function resize_url_test() {
     $rand = rand();
-    $photo = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
-    $this->assert_equal("http://./var/resizes/{$rand}.resize.jpg", $photo->resize_url());
+    $album = album::create(1, $rand, $rand, $rand);
+    $photo = photo::create($album->id, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+
+    $this->assert_equal("http://./var/resizes/{$rand}/{$rand}.resize.jpg", $photo->resize_url());
   }
 }

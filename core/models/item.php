@@ -97,6 +97,48 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * Build a thumbnail for this item from the image provided with the
+   * given width and height
+   *
+   * @chainable
+   * @param string $filename the path to an image
+   * @param integer $width the desired width of the thumbnail
+   * @param integer $height the desired height of the thumbnail
+   * @return ORM
+   */
+  public function set_thumbnail($filename, $width, $height) {
+    Image::factory($filename)
+      ->resize($width, $height, Image::WIDTH)
+      ->save($this->thumbnail_path());
+
+    $dims = getimagesize($this->thumbnail_path());
+    $this->thumbnail_width = $dims[0];
+    $this->thumbnail_height = $dims[1];
+    return $this;
+  }
+
+  /**
+   * Build a resize for this item from the image provided with the
+   * given width and height
+   *
+   * @chainable
+   * @param string $filename the path to an image
+   * @param integer $width the desired width of the resize
+   * @param integer $height the desired height of the resize
+   * @return ORM
+   */
+  public function set_resize($filename, $width, $height) {
+    Image::factory($filename)
+      ->resize($width, $height, Image::WIDTH)
+      ->save($this->resize_path());
+
+    $dims = getimagesize($this->resize_path());
+    $this->resize_width = $dims[0];
+    $this->resize_height = $dims[1];
+    return $this;
+  }
+
+  /**
    * Return the relative path to this item's file.
    * @param string $prefix prefix to the path (eg "/var" or "http://foo.com/var")
    * @param string $tag    a tag to specify before the extension (eg ".thumb", ".resize")

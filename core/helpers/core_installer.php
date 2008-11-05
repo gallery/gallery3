@@ -49,6 +49,10 @@ class core_installer {
                    `right` int(9) NOT NULL,
                    `parent_id` int(9) NOT NULL,
                    `level` int(9) NOT NULL,
+                   `thumbnail_width` int(9) default NULL,
+                   `thumbnail_height` int(9) default NULL,
+                   `resize_width` int(9) default NULL,
+                   `resize_height` int(9) default NULL,
                    PRIMARY KEY (`id`),
                    KEY `parent_id` (`parent_id`),
                    KEY `type` (`type`))

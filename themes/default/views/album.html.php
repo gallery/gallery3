@@ -15,7 +15,10 @@
         <? if ($child->is_album()): ?>
         <div class="gAlbumContainer gAlbum <?= text::alternate("first", "", "") ?>">
           <a href="<?= url::site("album/{$child->id}") ?>">
-            <img id="photo-id-<?= $child->id ?>" class="photo" alt="photo" src="<?= $child->thumbnail_url() ?>" />
+            <img id="photo-id-<?= $child->id ?>" class="photo"
+                 alt="photo" src="<?= $child->thumbnail_url() ?>"
+                 width="<?= $child->thumbnail_width ?>"
+                 height="<?= $child->thumbnail_height ?>" />
           </a>
           <h2>Album title</h2>
           <ul class="gMetadata">
@@ -26,7 +29,10 @@
         <? else: ?>
         <div class="gItemContainer <?= text::alternate("first", "", "") ?>">
           <a href="<?= url::site("photo/{$child->id}") ?>">
-            <img id="photo-id-<?= $child->id ?>" class="photo" alt="photo" src="<?= $child->thumbnail_url() ?>" />
+            <img id="photo-id-<?= $child->id ?>" class="photo"
+                 alt="photo" src="<?= $child->thumbnail_url() ?>"
+                 width="<?= $child->thumbnail_width ?>"
+                 height="<?= $child->thumbnail_height ?>" />
           </a>
           <h2><?= $child->title ?></h2>
         </div>

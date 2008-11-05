@@ -45,6 +45,7 @@ class ORM_MPTT_Core extends ORM {
   /**
    * Add this node as a child of the parent provided.
    *
+   * @chainable
    * @param integer $parent_id the id of the parent node
    * @return ORM
    */
@@ -111,6 +112,13 @@ class ORM_MPTT_Core extends ORM {
         ->find_all();
     }
     return $this->children;
+  }
+
+  function reload() {
+    $this->parent = null;
+    $this->parents = null;
+    $this->children = null;
+    return parent::reload();
   }
 
   /**

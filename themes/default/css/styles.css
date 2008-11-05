@@ -339,10 +339,8 @@ table.gBlockContent td {
   float: right;
 }
 #gItem img {
-	clear: both;
+  clear: both;
   display: block;
-  width: 500px;
-  height: 400px;
   border: 1px solid silver;
   background-color: #e7e7e7;
 }
@@ -425,8 +423,6 @@ table.gMetadata td.toggle {
 
 #gAlbumGrid .gItemContainer,
 #gAlbumGrid .gAlbumContainer {
-	width: 32%;
-	height: 220px;
 	float: left;
 	text-align: center;
 	border: 1px lightgray solid;

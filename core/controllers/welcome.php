@@ -52,8 +52,8 @@ class Welcome_Controller extends Template_Controller {
       $parent = $parents[array_rand($parents)];
       switch(rand(0, 1)) {
       case 0:
-        $album = album::create($parent->id, "rnd_" . rand(), "Rnd $i", "rnd $i");
-        $parents[] = $album;
+        $parents[] = album::create($parent->id, "rnd_" . rand(), "Rnd $i", "rnd $i")
+          ->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150);
         break;
 
       case 1:

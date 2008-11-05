@@ -181,6 +181,9 @@
               <li>
                 <a href="http://codex.gallery2.org/Gallery3:Coding_Standards">Gallery3: Coding Standards</a>
               </li>
+              <li>
+                <a href="http://docs.kohanaphp.com/">Kohana Documentation</a>
+              </li>
             </ul>
           </div>
         </div>

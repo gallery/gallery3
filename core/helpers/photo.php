@@ -52,14 +52,15 @@ class Photo_Core {
       $photo->name = rand() . "." . $pi["extension"];
     }
 
-    $photo->add_to_parent($parent_id);
-
     copy($filename, $photo->file_path());
 
-    /** @todo: parameterize these values */
-    $image = Image::factory($filename);
-    $image->resize(200, 140, Image::WIDTH)->save($photo->thumbnail_path());
-    $image->resize(800, 600, Image::WIDTH)->save($photo->resize_path());
-    return $photo;
+    // This saves the photo
+    $photo->add_to_parent($parent_id);
+
+    /** @todo: parameterize these dimensions */
+    // This saves the photo a second time, which is unfortunate but difficult to avoid.
+    return $photo->set_thumbnail($filename, 200, 140)
+      ->set_resize($filename, 800, 600)
+      ->save();
   }
 }

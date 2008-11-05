@@ -8,7 +8,9 @@
         <a href="" class="buttonlink">Full size (1024x768)</a>
         <a href="" class="buttonlink">Slideshow</a>
 
-        <img id="photo-id-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>" />
+        <img id="photo-id-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>"
+             width="<?= $item->resize_width ?>"
+             height="<?= $item->resize_height ?>" />
         <h1><?= $item->title ?></h1>
         <p><?= $item->description ?></p>
       </div>
