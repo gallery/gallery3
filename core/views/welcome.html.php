@@ -71,7 +71,45 @@
         list-stype-type: none;
         padding: 0px;
       }
+
+      div#activities {
+        margin-bottom: 1em;
+      }
+
+      div.activity {
+        display: none;
+      }
+
+      ul#tabs {
+        margin-left: 0;
+        padding: 1em 0 2px 1em;
+        white-space: nowrap;
+        border-bottom: 1px solid black;
+      }
+
+      ul#tabs li {
+        display: inline;
+        list-style-type: none;
+      }
+
+      ul#tabs a {
+        padding: 3px 10px;
+      }
+
+      ul#tabs a:link, ul#tabs a:visited {
+        color: #fff;
+        background-color: #036;
+        text-decoration: none;
+      }
+
+      ul#tabs a:hover {
+        color: #fff;
+        background-color: #369;
+        text-decoration: none;
+      }
     </style>
+    <script type="text/javascript" src="<?= url::base(), "lib/jquery.js" ?>"></script>
+
   </head>
   <body>
     <div class="outer">
@@ -91,40 +129,58 @@
           meantime, here are some useful links to get you started.
         </p>
 
-        <h2>System Configuration</h2>
-        <?= $syscheck ?>
-
-        <h2>Activities</h2>
-        <p> <?= html::anchor("album/1", "Browse Gallery") ?> </p>
-        <ul class="choices">
-        <li> add: [</li>
-        <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
-        <li> <?= html::anchor("welcome/add/$count", "$count") ?> </li>
-        <? endforeach ?>
-        <li>] photos and albums </li>
+        <ul id="tabs">
+          <li><a href="javascript:show('#configuration')">Configuration</a></li>
+          <li><a href="javascript:show('#actions')">Actions</a></li>
+          <li><a href="javascript:show('#docs')">Docs</a></li>
         </ul>
 
-        <h2>Documentation</h2>
-        <ul>
-          <li>
-            <a href="http://docs.google.com/Doc?id=dfjxt593_184ff9jhmd8&hl=en">Gallery3: Prioritized Feature List</a>
-          </li>
-          <li>
-            <a href="http://docs.google.com/Doc?id=dfjxt593_185czczpm4f&hl=en">Gallery3: Secondary Features</a>
-          </li>
-          <li>
-            <a href="http://gallery.svn.sourceforge.net/viewvc/gallery/trunk/eval/gx/ui/HTML/index.html">Mockups</a>
-          </li>
-          <li>
-            <a href="http://www.nabble.com/Rough-Gallery-3-time-line-td20240153.html">Rough Timeline</a> (as of Oct 29, 2008)
-          </li>
-          <li>
-            <a href="http://codex.gallery2.org/Gallery3:About">Gallery3: About Page</a>
-          </li>
-          <li>
-            <a href="http://codex.gallery2.org/Gallery3:Coding_Standards">Gallery3: Coding Standards</a>
-          </li>
-        </ul>
+        <div id="activities">
+          <script>
+            show = function(section) {
+              $("div.activity").slideUp();
+              $(section).slideDown();
+            }
+          </script>
+
+          <div id="configuration" class="activity" style="display: block">
+            <?= $syscheck ?>
+          </div>
+
+          <div id="actions" class="activity">
+            <p> <?= html::anchor("album/1", "Browse Gallery") ?> </p>
+            <ul class="choices">
+              <li> add: [</li>
+              <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
+              <li> <?= html::anchor("welcome/add/$count", "$count") ?> </li>
+              <? endforeach ?>
+              <li>] photos and albums </li>
+            </ul>
+          </div>
+
+          <div id="docs" class="activity">
+            <ul>
+              <li>
+                <a href="http://docs.google.com/Doc?id=dfjxt593_184ff9jhmd8&hl=en">Gallery3: Prioritized Feature List</a>
+              </li>
+              <li>
+                <a href="http://docs.google.com/Doc?id=dfjxt593_185czczpm4f&hl=en">Gallery3: Secondary Features</a>
+              </li>
+              <li>
+                <a href="http://gallery.svn.sourceforge.net/viewvc/gallery/trunk/eval/gx/ui/HTML/index.html">Mockups</a>
+              </li>
+              <li>
+                <a href="http://www.nabble.com/Rough-Gallery-3-time-line-td20240153.html">Rough Timeline</a> (as of Oct 29, 2008)
+              </li>
+              <li>
+                <a href="http://codex.gallery2.org/Gallery3:About">Gallery3: About Page</a>
+              </li>
+              <li>
+                <a href="http://codex.gallery2.org/Gallery3:Coding_Standards">Gallery3: Coding Standards</a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </body>
