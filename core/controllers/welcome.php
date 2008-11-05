@@ -137,7 +137,9 @@ class Welcome_Controller extends Template_Controller {
       }
 
       foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
-        $modules[basename(dirname(dirname($file)))] = 0;
+        if (empty($modules[basename(dirname(dirname($file)))])) {
+          $modules[basename(dirname(dirname($file)))] = 0;
+        }
       }
     } catch (Exception $e) {
       // The database may not be installed
