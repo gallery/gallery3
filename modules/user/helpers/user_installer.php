@@ -19,6 +19,7 @@
  */
 class user_installer {
   public static function install() {
+    Kohana::log("debug", "user_installer::install");
     $db = Database::instance();
     try {
       $base_version = ORM::factory("module")->where("name", "user")->find()->version;
@@ -26,34 +27,36 @@ class user_installer {
       if ($e->getMessage() == "Table modules does not exist in your database.") {
         $base_version = 0;
       } else {
+        Kohana::log("error", $e);
         throw $e;
       }
     }
+    Kohana::log("debug", "base_version: $base_version");
 
     if ($base_version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `users` (
-        `id` int(9) NOT NULL auto_increment,
-        `name` varchar(255) NOT NULL,
-        `display_name` char(255) NOT NULL,
-        `email` int(9) default NULL,
-       PRIMARY KEY (`id`),
-       UNIQUE KEY(`display_name`))
-     ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+          `id` int(9) NOT NULL auto_increment,
+          `name` varchar(255) NOT NULL,
+          `display_name` char(255) NOT NULL,
+          `email` int(9) default NULL,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY(`display_name`))
+        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE IF NOT EXISTS`groups` (
-        `id` int(9) NOT NULL auto_increment,
-        `name` char(255) default NULL,
-       PRIMARY KEY (`id`),
-       UNIQUE KEY(`name`))
-     ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+          `id` int(9) NOT NULL auto_increment,
+          `name` char(255) default NULL,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY(`name`))
+        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE IF NOT EXISTS `groups_users` (
-        `group_id` int(9) NOT NULL,
-        `user_id` int(9) NOT NULL,
-       PRIMARY KEY (`group_id`, `user_id`),
-       UNIQUE KEY(`user_id`, `group_id`))
-     ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-      
+          `group_id` int(9) NOT NULL,
+          `user_id` int(9) NOT NULL,
+          PRIMARY KEY (`group_id`, `user_id`),
+          UNIQUE KEY(`user_id`, `group_id`))
+        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $user_module = ORM::factory("module")->where("name", "user")->find();
       $user_module->name = "user";
       $user_module->version = 1;
@@ -67,8 +70,11 @@ class user_installer {
       foreach (array("administrator", "registered") as $group_name) {
         $group = ORM::factory("group")->where("name", $group_name)->find();
         $group->name = $group_name;
-        $group->add($user);
         $group->save();
+        if (!$group->add($user)) {
+          /** @todo replace this by throwing an exception once exceptions are implemented */
+          Kohana::Log("debug", "{$user->name} was not added to {$group_name}");
+        }
       }
     }
   }

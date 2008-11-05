@@ -63,6 +63,9 @@ class Test_Controller extends Controller {
     core_installer::uninstall();
     core_installer::install();
 
+    user_installer::uninstall();
+    user_installer::install();
+
     print new Unit_Test();
   }
 }
