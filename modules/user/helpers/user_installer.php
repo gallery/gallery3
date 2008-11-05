@@ -33,13 +33,11 @@ class user_installer {
     if ($base_version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `users` (
         `id` int(9) NOT NULL auto_increment,
-        `logon_name` varchar(255) NOT NULL,
-        `name` char(255) NOT NULL,
+        `name` varchar(255) NOT NULL,
+        `display_name` char(255) NOT NULL,
         `email` int(9) default NULL,
-        `external_id` varchar(255) default null,
        PRIMARY KEY (`id`),
-       UNIQUE KEY(`logon_name`),
-       UNIQUE KEY(`external_id`))
+       UNIQUE KEY(`display_name`))
      ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE IF NOT EXISTS`groups` (
@@ -61,12 +59,12 @@ class user_installer {
       $user_module->version = 1;
       $user_module->save();
 
-      $user = ORM::factory("user")->where("logon_name", "admin")->find();
-      $user->logon_name = "admin";
-      $user->name = "Gallery Administrator";
+      $user = ORM::factory("user")->where("display_name", "admin")->find();
+      $user->name = "admin";
+      $user->display_name = "Gallery Administrator";
       $user->save();
 
-      foreach (array('administrator', 'registered') as $group_name) {
+      foreach (array("administrator", "registered") as $group_name) {
         $group = ORM::factory("group")->where("name", $group_name)->find();
         $group->name = $group_name;
         $group->add($user);
