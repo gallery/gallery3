@@ -59,10 +59,10 @@ class Welcome_Controller extends Template_Controller {
       print "<pre>$data";
     } else {
       $proc = proc_open("/usr/bin/dot -Tsvg",
-			array(array("pipe", "r"),
-			      array("pipe", "w")),
-			$pipes,
-			VARPATH . "tmp");
+                        array(array("pipe", "r"),
+                              array("pipe", "w")),
+                        $pipes,
+                        VARPATH . "tmp");
       fwrite($pipes[0], $data);
       fclose($pipes[0]);
 
