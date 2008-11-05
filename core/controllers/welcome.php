@@ -32,75 +32,7 @@ class Welcome_Controller extends Template_Controller {
       $this->_create_directories();
   }
 
-  /**
-   * Create an array of all the modules that are install or available and the version number
-   * @return array(moduleId => version)
-   */
-  private function _readModules() {
-    $modules = array();
-    try {
-      $installed = ORM::factory("module")->find_all();
-      foreach ($installed as $installedModule) {
-        $modules[$installedModule->name] = $installedModule->version;
-      }
-    } catch (Exception $e) {}
 
-    if (!empty($modules['core'])) {
-      if ($dh = opendir(MODPATH)) {
-        while (($file = readdir($dh)) !== false) {
-         if ($file[0] != '.' && 
-             file_exists(MODPATH . "$file/helpers/{$file}_installer.php")) {
-            if (empty($modules[$file])) {
-              $modules[$file] = 0;
-            }
-          }
-        }
-      }
-      closedir($dh);
-    }
-
-    return $modules;
-  }
-  
-  private function _find_available_modules() {
-    $installed = ORM::factory("module")->find_all();
-    $moduleList = array();
-    foreach ($installed as $installedModule) {
-      $moduleList[$installedModule->name] = 1;
-    }
-    
-    var_dump($moduleList);
-    $modules = array();
-    $paths = Kohana::config('core.modules');
-    foreach ($paths as $path) {
-      $module = substr($path, strrpos($path, "/") + 1);
-      var_dump($module, "$path/helpers/{$module}_installer.php");
-      if (file_exists("$path/helpers/{$module}_installer.php")) {
-        $modules[$module] = !empty($moduleList[$module]) ? "install" : "unintall";
-      }
-//      $installer_directory = "$module_path/helpers";
-//      if (is_dir($controller_directory)) {
-//        if ($dh = opendir($controller_directory)) {
-//          while (($controller = readdir($dh)) !== false) {
-//            if ($controller[0] == ".") {
-//              continue;
-//            }
-//            $matches = array();
-//            if (preg_match("#^admin_([a-zA-Z][a-z_A-Z0-9]*)\.php$#", $controller, $matches)) {
-//              $descriptor = $this->_get_descriptor("Admin_" . ucfirst($matches[1]) . '_Controller');
-//              if (!empty($descriptor)) {
-//                $admin_controllers["admin/$matches[1]"] = $descriptor;
-//              }
-//            }
-//          }
-//          closedir($dh);
-//         }
-//       }
-    }
-
-    return $modules;
-  }
-  
   function install($module) {
     call_user_func(array("{$module}_installer", "install"));
     url::redirect("welcome");
@@ -196,5 +128,35 @@ class Welcome_Controller extends Template_Controller {
     foreach (array("logs") as $dir) {
       @mkdir(VARPATH . "$dir");
     }
+  }
+
+  /**
+   * Create an array of all the modules that are install or available and the version number
+   * @return array(moduleId => version)
+   */
+  private function _readModules() {
+    $modules = array();
+    try {
+      $installed = ORM::factory("module")->find_all();
+      foreach ($installed as $installed_module) {
+        $modules[$installed_module->name] = $installed_module->version;
+      }
+    } catch (Exception $e) {}
+
+    if (!empty($modules['core'])) {
+      if ($dh = opendir(MODPATH)) {
+        while (($file = readdir($dh)) !== false) {
+         if ($file[0] != '.' && 
+             file_exists(MODPATH . "$file/helpers/{$file}_installer.php")) {
+            if (empty($modules[$file])) {
+              $modules[$file] = 0;
+            }
+          }
+        }
+      }
+      closedir($dh);
+    }
+
+    return $modules;
   }
 }
