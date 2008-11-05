@@ -6,38 +6,6 @@
 
   <div class="gBlock">
     <div class="gBlockHeader">
-      <h2>Item Info</h2>
-      <a href="#" class="minimize">[-]</a>
-    </div>
-    <table class="gMetadata gBlockContent">
-      <tbody>
-        <tr>
-          <th>Title:</th>
-          <td>Christmas 2007</td>
-        </tr>
-        <tr>
-          <th>Taken:</th>
-          <td>January 21, 2008</td>
-        </tr>
-        <tr>
-          <th>Uploaded:</th>
-          <td>January 27, 2008</td>
-        </tr>
-        <tr>
-          <th>Owner:</th>
-          <td><a href="#">username</a></td>
-        </tr>
-        <tr>
-          <td colspan="2" class="toggle">
-            <a href="#">more \/</a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="gBlock">
-    <div class="gBlockHeader">
       <h2>Location</h2>
       <a href="#" class="minimize">[-]</a>
     </div>
