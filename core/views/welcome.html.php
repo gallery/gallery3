@@ -175,10 +175,7 @@
           <div id="docs" class="activity">
             <ul>
               <li>
-                <a href="http://docs.google.com/Doc?id=dfjxt593_184ff9jhmd8&hl=en">Gallery3: Prioritized Feature List</a>
-              </li>
-              <li>
-                <a href="http://docs.google.com/Doc?id=dfjxt593_185czczpm4f&hl=en">Gallery3: Secondary Features</a>
+                <a href="http://codex.gallery2.org/Gallery3:Features">Gallery3: Features</a>
               </li>
               <li>
                 <a href="http://gallery.svn.sourceforge.net/viewvc/gallery/trunk/eval/gx/ui/HTML/index.html">Mockups</a>
