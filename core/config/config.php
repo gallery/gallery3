@@ -123,6 +123,7 @@ $config['modules'] = array
   MODPATH . 'forge',
 
   MODPATH . 'carousel',
+  MODPATH . 'tags',
 
   THEMEPATH . 'default',
 );

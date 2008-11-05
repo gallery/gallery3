@@ -17,33 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Theme_Core {
-  private $theme_name = null;
-  private $template = null;
 
-  public function __construct($theme_name, $template) {
-    $this->theme_name = $theme_name;
-    $this->template = $template;
-  }
-
-  public function url($path) {
-    return url::base() . "themes/{$this->theme_name}/$path";
-  }
-
-  public function item() {
-    return $this->template->item;
-  }
-
-  public function display($page_name, $view_class="View") {
-    return new $view_class($page_name);
-  }
-
-  public function blocks() {
-    /** @todo: this needs to be made data-driven */
-    $blocks = array(
-      'carousel' => carousel::block($this),
-      'tags' => tags::block($this),
-    );
-    return $blocks;
+class Tags_Core {
+  public static function block($theme) {
+    $block = new Block();
+    $block->id = "gTags";
+    $block->title = _("Tags");
+    $block->content = new View("tag_cloud.html");
+    return $block;
   }
 }
