@@ -24,6 +24,14 @@ class Welcome_Controller extends Template_Controller {
     $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
     $this->template->syscheck->modules = $this->_read_modules();
+    $this->template->album_count = 0;
+    $this->template->photo_count = 0;
+    try {
+      $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
+      $this->template->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
+    } catch (Exception $e) {
+    }
+
     $this->_create_directories();
   }
 

@@ -148,7 +148,10 @@
           </div>
 
           <div id="actions" class="activity">
-            <p> <?= html::anchor("album/1", "Browse Gallery") ?> </p>
+            <p>
+              <?= html::anchor("album/1", "Browse Gallery") ?>
+              <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos)</i>
+            </p>
             <ul class="choices">
               <li> add: [</li>
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
