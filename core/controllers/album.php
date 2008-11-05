@@ -27,7 +27,7 @@ class Album_Controller extends Template_Controller {
     }
 
     $this->template->set_global('item', $item);
-    $this->template->set_global('children', $item->get_children());
+    $this->template->set_global('children', $item->children());
     $this->template->set_global('theme', new Theme("default", $this->template));
   }
 }
