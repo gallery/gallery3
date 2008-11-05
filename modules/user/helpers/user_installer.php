@@ -75,8 +75,8 @@ class user_installer {
 
   public static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `user`;");
-    $db->query("DROP TABLE IF EXISTS `group`;");
+    $db->query("DROP TABLE IF EXISTS `users`;");
+    $db->query("DROP TABLE IF EXISTS `groups`;");
     $db->query("DROP TABLE IF EXISTS `groups_users`;");
     $user_module = ORM::factory("module")->where("name", "user")->find();
     $user_module->delete();
