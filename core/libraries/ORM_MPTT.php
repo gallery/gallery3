@@ -87,11 +87,11 @@ class ORM_MPTT_Core extends ORM {
    * @return array ORM
    */
   function parents() {
-    $id = (int)$this->id;
     if (!isset($this->parents)) {
       $this->parents = $this
         ->where("`left` <= {$this->left}")
         ->where("`right` >= {$this->right}")
+        ->where("id <> {$this->id}")
         ->orderby("left", "ASC")
         ->find_all();
     }

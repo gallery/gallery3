@@ -50,7 +50,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     foreach ($inner->parents() as $parent) {
       $parent_ids[] = $parent->id;
     }
-    $this->assert_equal(array(1, $outer->id, $inner->id), $parent_ids);
+    $this->assert_equal(array(1, $outer->id), $parent_ids);
   }
 
   public function children_test() {

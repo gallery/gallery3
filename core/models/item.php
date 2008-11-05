@@ -35,10 +35,8 @@ class Item_Model extends ORM_MPTT {
         $paths[] = $parent->name;
       }
     }
+    $paths[] = $this->name;
     $path = implode($paths, "/");
-    if (!$this->saved) {
-      $path .= $this->name;
-    }
 
     if ($tag) {
       $pi = pathinfo($path);
