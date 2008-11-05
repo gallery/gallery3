@@ -33,9 +33,6 @@ class Album_Test extends Unit_Test_Case {
     $this->assert_equal($rand, $album->name);
     $this->assert_equal($rand, $album->title);
     $this->assert_equal($rand, $album->description);
-
-    $this->assert_equal($album->parent()->right - 2, $album->left);
-    $this->assert_equal($album->parent()->right - 1, $album->right);
   }
 
   public function create_conflicting_album_test() {
