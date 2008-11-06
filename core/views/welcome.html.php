@@ -35,8 +35,10 @@
       }
 
       pre {
-        margin: 0;
-        padding-left: 2em;
+        border: 1px solid #666;
+        margin: 1em 0;
+        padding: .5em;
+        overflow: scroll;
       }
 
       .error {

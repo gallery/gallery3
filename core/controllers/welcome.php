@@ -130,10 +130,10 @@ class Welcome_Controller extends Template_Controller {
     $db_php = VARPATH . "database.php";
     if (!file_exists($db_php)) {
       $error = new stdClass();
-      $error->message = "Missing: $db_php";
+      $error->message = "Missing: $db_php <br/> Run the following commands...";
       $error->instructions[] = "cp " . DOCROOT . "kohana/config/database.php $db_php";
       $error->instructions[] = "chmod 644 $db_php";
-      $error->message2 = "Then edit this file and enter your database configuration settings.";
+      $error->message2 = "...then edit this file and enter your database configuration settings.";
       $errors[] = $error;
     } else if (!is_readable($db_php)) {
       $error = new stdClass();
