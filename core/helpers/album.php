@@ -54,17 +54,4 @@ class Album_Core {
     }
     return $album;
   }
-
-  static function set_thumbnail($id, $filename) {
-    $album = ORM::factory("item", $id);
-
-    /** @todo: parameterize these dimensions */
-    $image = Image::factory($filename);
-    $image->resize(200, 140, Image::WIDTH)->save($album->thumbnail_path());
-
-    $dims = getimagesize($album->thumbnail_path());
-    $album->thumbnail_width = $dims[0];
-    $album->thumbnail_height = $dims[1];
-    return $album->save();
-  }
 }
