@@ -23,7 +23,7 @@ class Welcome_Controller extends Template_Controller {
   function index() {
     $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
-    $this->templlate->syscheck->modules = array();
+    $this->template->syscheck->modules = array();
     $this->template->album_count = 0;
     $this->template->photo_count = 0;
     try {
