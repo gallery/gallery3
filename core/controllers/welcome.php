@@ -38,13 +38,22 @@ class Welcome_Controller extends Template_Controller {
     $this->_create_directories();
   }
 
-  function install($module) {
-    call_user_func(array("{$module}_installer", "install"));
+  function install($module_name) {
+    call_user_func(array("{$module_name}_installer", "install"));
     url::redirect("welcome");
   }
 
-  function uninstall($module) {
-    call_user_func(array("{$module}_installer", "uninstall"));
+  function uninstall($module_name) {
+    if ($module_name == "core") {
+      // We have to uninstall all other modules first, else their tables, etc don't
+      // get cleaned up.
+      foreach (ORM::factory("module")->find_all() as $module) {
+        if ($module->name != "core" && $module->version) {
+          call_user_func(array("{$module->name}_installer", "uninstall"));
+        }
+      }
+    }
+    call_user_func(array("{$module_name}_installer", "uninstall"));
     url::redirect("welcome");
   }
 
