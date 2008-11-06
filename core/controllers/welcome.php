@@ -26,11 +26,14 @@ class Welcome_Controller extends Template_Controller {
     $this->template->syscheck->modules = array();
     $this->template->album_count = 0;
     $this->template->photo_count = 0;
+    $this->template->deepest_photo = null;
     try {
       $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
       $this->template->syscheck->modules = $this->_read_modules();
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
       $this->template->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
+      $this->template->deepest_photo = ORM::factory("item")
+        ->where("type", "photo")->orderby("level", "desc")->find();
     } catch (Exception $e) {
     }
     set_error_handler($old_handler);

@@ -171,6 +171,12 @@
                 <?= html::anchor("welcome/mptt", "MPTT tree (graph)") ?>
                 <i>(requires /usr/bin/dot from the graphviz package)</i>
               </li>
+              <? if ($deepest_photo): ?>
+              <li>
+                <?= html::anchor("photo/{$deepest_photo->id}", "Deepest photo") ?>
+                <i>(<?= $deepest_photo->level ?> levels deep)</i>
+              </li>
+              <? endif ?>
             </ul>
           </div>
 
