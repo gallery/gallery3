@@ -3,12 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title>Browse Photos :: <?= $item->title ?></title>
-
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/reset-fonts-grids/reset-fonts-grids.css" />
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/base/base-min.css" />
-    <link rel="stylesheet" type="text/css" href="<?= theme::url("css/styles.css") ?>" media="screen,projection" />
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/styles.css") ?>" media="screen,projection" />
 
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/container/assets/container.css" />
@@ -21,17 +19,56 @@
   </head>
 
   <body class="yui-skin-sam">
-    <div id="doc2" class="yui-t5 gAlbumView">
-      <?= $header ?>
+    <div id="doc2" class="yui-t5 gView">
+
+      <div id="gHeader">
+        <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
+        <h1><?= $item->title ?></h1>
+        <div id="gLoginMenu">
+          <a href="#"><?= _("Register") ?></a> |
+          <a href="#"><?= _("Login") ?></a>
+        </div>
+
+        <ul id="gSiteMenu">
+          <li><a href="index.html"><?= _("HOME") ?></a></li>
+          <li><a class="active" href="browse.html"><?= _("BROWSE") ?></a></li>
+          <li><a href="upload.html"><?= _("UPLOAD") ?></a></li>
+          <li><a href="upload.html"><?= _("MY GALLERY") ?></a></li>
+          <li><a href="#"><?= _("ADMIN") ?></a></li>
+        </ul>
+
+        <ul id="gBreadcrumbs">
+          <? foreach ($parents as $parent): ?>
+          <li><a href="<?= url::site("album/{$parent->id}") ?>"><?= $parent->title ?></a></li>
+          <? endforeach ?>
+          <li class="active"><span><?= $item->title ?></span></li>
+        </ul>
+
+        <form id="gSearchForm">
+          <input type="text" class="text" value="<?= _("Search Gallery ...") ?>"/>
+          <input type="submit" class="submit" value="search" />
+        </form>
+      </div>
+
       <div id="bd">
         <div id="yui-main">
           <div id="gContent" class="yui-b">
             <?= $content ?>
           </div>
         </div>
-        <?= $sidebar ?>
+
+        <div id="gSidebar" class="yui-b">
+          <? foreach ($theme->blocks() as $block): ?>
+            <?= $block ?>
+          <? endforeach ?>
+        </div>
       </div>
-      <?= $footer ?>
+
+      <div id="ft">
+        <div id="gFooter">
+          Powered by <a href="#">Gallery3</a> | <a href="#">About this Gallery</a> | ...
+        </div><!-- END #gFooter -->
+      </div><!-- END YUI #ft -->
     </div>
   </body>
 </html>
