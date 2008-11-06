@@ -18,13 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Album_Controller extends Template_Controller {
-  public $template = "album.html";
+  public $template = "page.html";
 
   public function View($id) {
     $item = ORM::factory("item")->where("id", $id)->find();
     if (empty($item->id)) {
       return Kohana::show_404();
     }
+
+    $this->template->content = new View("album.html");
 
     $this->template->set_global('item', $item);
     $this->template->set_global('children', $item->children());

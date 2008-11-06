@@ -78,6 +78,7 @@ textarea {
  */
 
 /* ~~~~~ View Container ??? ~~~~~~ */
+.gView,
 .gAlbumView,
 .gItemView {
   background-color: #fff;
