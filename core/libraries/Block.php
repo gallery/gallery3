@@ -23,10 +23,6 @@ class Block_Core {
   public $content = null;
 
   public function __toString() {
-    $v = new View("block.html");
-    $v->id = $this->id;
-    $v->title = $this->title;
-    $v->content = $this->content;
-    return $v->__toString();
+    return View::factory("block.html", get_object_vars($this))->__toString();
   }
 }
