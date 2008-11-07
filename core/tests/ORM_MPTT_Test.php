@@ -69,4 +69,29 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     }
     $this->assert_equal(array($inner1->id, $inner2->id), $child_ids);
   }
+
+  public function children_limit_test() {
+    $outer = ORM::factory("item");
+    $outer->add_to_parent(1);
+
+    $inner1 = ORM::factory("item");
+    $inner1->add_to_parent($outer->id);
+
+    $inner2 = ORM::factory("item");
+    $inner2->add_to_parent($outer->id);
+
+    $this->assert_equal(array($inner2->id => null), $outer->children(1, 1)->select_list('id'));
+  }
+
+  public function children_count_test() {
+    $outer = ORM::factory("item");
+    $outer->add_to_parent(1);
+
+    $inner1 = ORM::factory("item");
+    $inner1->add_to_parent($outer->id);
+
+    $inner2 = ORM::factory("item");
+    $inner2->add_to_parent($outer->id);
+    $this->assert_equal(2, $outer->children_count());
+  }
 }

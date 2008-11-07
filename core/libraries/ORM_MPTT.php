@@ -36,6 +36,7 @@ class ORM_MPTT_Core extends ORM {
   private $parent = null;
   private $parents = null;
   private $children = null;
+  private $children_count = null;
 
   function __construct($id=null) {
     parent::__construct($id);
@@ -102,22 +103,47 @@ class ORM_MPTT_Core extends ORM {
   /**
    * Return all of the children of this node, ordered by id.
    *
+   * @chainable
+   * @param   integer  SQL limit
+   * @param   integer  SQL offset
    * @return array ORM
    */
-  function children() {
+  function children($limit=NULL, $offset=0) {
     if (!isset($this->children)) {
       $this->children =
         $this->where("parent_id", $this->id)
         ->orderby("id", "ASC")
-        ->find_all();
+        ->find_all($limit, $offset);
     }
     return $this->children;
   }
 
+  /**
+   * Return all of the children of this node, ordered by id.
+   *
+   * @chainable
+   * @param   integer  SQL limit
+   * @param   integer  SQL offset
+   * @return array ORM
+   */
+  function children_count() {
+    if (!isset($this->children_count)) {
+      $this->children_count =
+        $this->where("parent_id", $this->id)
+        ->orderby("id", "ASC")
+        ->count_all();
+    }
+    return $this->children_count;
+  }
+
+  /**
+   * @see ORM::reload
+   */
   function reload() {
     $this->parent = null;
     $this->parents = null;
     $this->children = null;
+    $this->children_count = null;
     return parent::reload();
   }
 
