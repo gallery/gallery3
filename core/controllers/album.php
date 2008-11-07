@@ -26,13 +26,24 @@ class Album_Controller extends Template_Controller {
       return Kohana::show_404();
     }
 
+    /** @todo: these need to be pulled from the database */
+    $theme_name = "default";
+    $page_size = 9;
+
+    $page = $this->input->get("page", "1");
+    $theme = new Theme($theme_name, $this->template);
+
     $this->template->content = new View("album.html");
-
+    $this->template->set_global('page_size', $page_size);
     $this->template->set_global('item', $item);
-    $this->template->set_global('children', $item->children());
+    $this->template->set_global('children', $item->children($page_size, ($page-1) * $page_size));
     $this->template->set_global('parents', $item->parents());
+    $this->template->set_global('theme', $theme);
 
-    /** @todo: this needs to be data-driven */
-    $this->template->set_global('theme', new Theme("default", $this->template));
+    /** @todo: move this up to a base class */
+    if (Session::instance()->get("use_profiler", false)) {
+      $profiler = new Profiler();
+      print $profiler->render();
+    }
   }
 }

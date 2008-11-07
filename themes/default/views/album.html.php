@@ -27,10 +27,4 @@
   <? endforeach ?>
   </ul>
   
-  <div id="gPagination">
-    Items 1-10 of 34
-    <span class="first_inactive">first</span>
-    <span class="previous_inactive">previous</span>
-    <a href="#" class="next">next</a>
-    <a href="#" class="last">last</a>
-  </div>
+  <?= $theme->pager() ?>

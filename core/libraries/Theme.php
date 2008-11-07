@@ -38,8 +38,18 @@ class Theme_Core {
     return new $view_class($page_name);
   }
 
+  public function pager() {
+    $this->pagination = new Pagination();
+    $this->pagination->initialize(
+      array('query_string' => 'page',
+            'total_items' => $this->template->item->children_count(),
+            'items_per_page' => $this->template->page_size,
+            'style' => 'classic'));
+    return $this->pagination->render();
+  }
+
   public function blocks() {
-    /** @todo: this needs to be made data-driven */
+    /** @todo: make this data driven */
     $blocks = array(
       'carousel' => carousel::block($this),
       'tags' => tags::block($this),
