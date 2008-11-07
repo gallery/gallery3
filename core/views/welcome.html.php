@@ -110,7 +110,8 @@
         text-decoration: none;
       }
     </style>
-    <script type="text/javascript" src="<?= url::base(), "lib/jquery.js" ?>"></script>
+    <script type="text/javascript" src="<?= url::base() . "lib/jquery.js" ?>"></script>
+    <script type="text/javascript" src="<?= url::base() . "lib/jquery.cookie.js" ?>"></script>
 
   </head>
   <body>
@@ -143,10 +144,18 @@
             show = function(section) {
               $("div.activity").slideUp();
               $(section).slideDown();
+              $.cookie("active_section", section);
             }
+            $(document).ready(function(){
+              var active_section = $.cookie("active_section");
+              if (!active_section) {
+                active_section = '#configuration';
+              }
+              $(active_section).show()
+            });
           </script>
 
-          <div id="configuration" class="activity" style="display: block">
+          <div id="configuration" class="activity">
             <?= $syscheck ?>
           </div>
 
@@ -177,6 +186,12 @@
                 <i>(<?= $deepest_photo->level ?> levels deep)</i>
               </li>
               <? endif ?>
+              <li> Profiling:
+                <? if (Session::instance()->get("use_profiler", false)): ?>
+                <b>on</b> <?= html::anchor("welcome/profiler?use_profiler=0", "off") ?>
+                <? else: ?>
+                <?= html::anchor("welcome/profiler?use_profiler=1", "on") ?> <b>off</b>
+                <? endif ?>
             </ul>
           </div>
 

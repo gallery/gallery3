@@ -116,6 +116,11 @@ class Welcome_Controller extends Template_Controller {
     $this->auto_render = false;
   }
 
+  public function profiler() {
+    Session::instance()->set("use_profiler", $this->input->get("use_profiler", false));
+    url::redirect("welcome");
+  }
+
   private function _get_config_errors() {
     $errors = array();
     if (!file_exists(VARPATH)) {
