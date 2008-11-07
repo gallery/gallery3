@@ -122,11 +122,11 @@ $config['modules'] = array
   MODPATH . 'unit_test',
   MODPATH . 'forge',
 
+  THEMEPATH . 'default',
+
   MODPATH . 'carousel',
   MODPATH . 'tags',
   MODPATH . 'user',
   MODPATH . 'info',
   MODPATH . 'gmaps',
-
-  THEMEPATH . 'default',
 );
