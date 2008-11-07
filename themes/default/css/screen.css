@@ -132,7 +132,7 @@ textarea {
   background-repeat: no-repeat;
   padding-left: 12px;
 }
-.gBlockHeader .minimize {
+.gBlockHeader .gMinimize {
   position: absolute;
   top: .45em;
   right: .3em;
@@ -140,7 +140,7 @@ textarea {
   height: 16px;
   background-image: url('images/minimize.png');
 }
-.gBlockHeader .minimize:hover {
+.gBlockHeader .gMinimize:hover {
   background-image: url('images/minimize_active.png');
 }
 .gBlockContent {
