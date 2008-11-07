@@ -4,23 +4,22 @@
  * @requires YUI reset, font, grids, and base CSS
  *
  * Sheet organization:
- * 1) Global element styles
- * 2) Text (fonts, headings, links)
- * 3) Layout containers
- * 4) Generic blocks
- * 5) Primary content blocks
- * 6) Navigation and menus
- * 7) Tables
- * 8) Forms, additional form CSS stored in css/forms.css (temporarily)
- * 9) General browser hacks
+ * 1) HTML elements (headings, links, lists, tables, forms)
+ * 2) Layout containers (view, header, content, sidebar, footer)
+ * 3) Generic content containers (item, block)
+ * 4) Specific content containers and blocks (albums, metadata, comments)
+ * 5) Navigation and menus (menus, breadcrumbs, pagination, tab cloud)
+ * 6) Specific text styles (different headings, font sizes, etc.)
+ * 7) Generic styles ()
+ * 8) Browser hacks (clear fix)
  */
 
- @import url('css/forms.css');
+ @import url('forms.css');
 
 /**
- ** **************************************************
- * 1) Global unique styles
- ** **************************************************
+ ** *******************************************************************
+ * 1) HTML elements (body, headings, links, lists, tables, forms)
+ ** *******************************************************************
  */
 
 /* ~~~~~~~~~ general elements ~~~~~~~~~~ */
@@ -28,33 +27,33 @@ body, html {
   background-color: #ccc;
 }
 
-/* ~~~~~~~~~ text elements ~~~~~~~~~~ */
+/* ~~~~~~~~~ text ~~~~~~~~~~ */
 h1 {
-	margin-top: 0px;
+  margin-top: 0;
 }
 a {
-	color: #6B8CB7;
-	text-decoration: none;
+  color: #6B8CB7;
+  text-decoration: none;
 }
 a:hover {
-	color: #FF3300;
-	text-decoration: underline;
+  color: #FF3300;
+  text-decoration: underline;
 }
 
-/* ~~~~~~~~~ list elements ~~~~~~~~~~ */
+/* ~~~~~~~~~ list ~~~~~~~~~~ */
 li {
-	list-style-type: none;
+  list-style-type: none;
 }
 
-/* ~~~~~~~~~ table elements ~~~~~~~~~~ */
+/* ~~~~~~~~~ table ~~~~~~~~~~ */
 caption {
-	text-align: left;
+  text-align: left;
 }
 th {
-	text-align: left;
+  text-align: left;
 }
 
-/* ~~~~~~~~~ form elements ~~~~~~~~~~ */
+/* ~~~~~~~~~ form ~~~~~~~~~~ */
 form {
 
 }
@@ -72,34 +71,32 @@ textarea {
 }
 
 /**
- ** **************************************************
- * 2) High level content containers (header, content, sidebar, footer)
- ** **************************************************
+ ** *******************************************************************
+ * 2) Layout containers (view, header, content, sidebar, footer)
+ ** *******************************************************************
  */
 
-/* ~~~~~ View Container ??? ~~~~~~ */
-.gView,
-.gAlbumView,
-.gItemView {
+/* ~~~~~ View Container ~~~~~~ */
+.gView {
   background-color: #fff;
   border: 1px solid #ccc;
   border-width: 0 1px 1px 1px;
 }
 
-/* ~~~~~~~~ high level content containers ~~~~~~~~ */
+/* ~~~ Layout Containers ~~~~~ */
 
 #gHeader {
-	position: relative;
-
+  position: relative;
 }
 
 #gContent {
   border-right: 1px solid #ccc;
   padding: 20px;
-	clear: both;
+  clear: both;
 }
 
 #gSidebar {
+  background-color: #fff;
   width: 18.4615em;
   padding: 1.5em 0 0 0;
 }
@@ -110,231 +107,117 @@ textarea {
 }
 
 /**
- ** **************************************************
- * 3) Header styles (logo, login, site menu, breadcrumbs, search)
- ** **************************************************
+ ** ****************************************************************
+ * 3) Generic content containers (item, block)
+ ** ****************************************************************
+ */
+ 
+.gBlock {
+  margin: 0 1em 2.5em 0;
+  padding: 0;
+}
+.gBlockHeader {
+  background-color: #E8E8E8;
+  padding: .3em .4em .3em .4em;
+  height: 1.5em;
+  margin: 0 !important;
+  position: relative;
+  cursor: move;
+}
+.gBlockHeader h2 {
+  margin: 0;
+  float: left;
+  font-size: 1.1em;
+  background-image: url('images/ico_dragable.png');
+  background-repeat: no-repeat;
+  padding-left: 12px;
+}
+.gBlockHeader .minimize {
+  position: absolute;
+  top: .45em;
+  right: .3em;
+  width: 16px;
+  height: 16px;
+  background-image: url('images/minimize.png');
+}
+.gBlockHeader .minimize:hover {
+  background-image: url('images/minimize_active.png');
+}
+.gBlockContent {
+  margin: .5em .5em 0 .5em;
+}
+table.gBlockContent {
+  width: 214px;
+  table-layout: fixed;
+}
+table.gBlockContent th {
+  padding: .3em .3em .3em 0;
+}
+table.gBlockContent td {
+  padding: .3em 0 .3em .3em;
+}
+
+/**
+ ** ****************************************************************
+ * 4) Specific content containers and blocks (albums, metadata, comments)
+ ** ****************************************************************
  */
 
-/* ~~~~~~~~ logo/title  ~~~~~~~~ */
+ /* ~~~~~~~~ logo  ~~~~~~~~ */
 
 #gLogo {
   float: left;
   margin: 10px;
 }
-#gHeader h1 {
-	float: left;
-	margin: 20px 0 0 20px;
+ 
+ .gThumbnail {
+ 
+ }
+
+/* ~~~~~~~~~ album ~~~~~~~~~~ */
+
+#gAlbumGridHeader {
+  height: 40px;
+  position: relative;
+}
+#gAlbumGridHeader h1 {
+  display: inline;
+}
+#gAlbumGridHeader span {
+  padding-left: 10px;
 }
 
-/* ~~~~~~~~ login menu ~~~~~~~~ */
-
-#gLoginMenu {
-  position: absolute;
-	top: 0px;
-	right: 13px;
-	border: 1px solid silver;
-	border-width: 0 1px 1px 1px;
-	padding: 5px;
-  text-align: right;
-}
-#gLoginMenu form {
-  margin-top: 5px;
-}
-#gLoginMenu label {
-  font-size: 0.8em;
-}
-#gLoginMenu input.text,
-#gLoginMenu input.password {
-  width: 80px;
-	padding: 0 0 .1em 0;
-}
-#gLoginMenu input.submit {
-	font-size: 0.9em;
-	font-weight: bold;
-}
-
-/* ~~~~~~~~ site menu  ~~~~~~~~ */
-
-#gSiteMenu {
-	height: 31px;
+#gAlbumGrid {
   margin: 0;
-  padding: 0;
-  list-style-type: none;
-  clear: both;
 }
-#gSiteMenu li {
-  list-style-type: none;
+#gAlbumGrid .gItem {
   float: left;
-  display: block;
-  width: 20%;
-	background: #E6EBF0;
-}
-#gSiteMenu li a {
-	color: #003366;
-	font-weight: bold;
-  height: 20px;
-  display: block;
   text-align: center;
-	padding: 7px 7px 3px 7px;
-	background: url('images/bg_sitemenu.png') repeat-x;
-	margin-left: 1px;
-	border: 1px solid #336699;
-	border-width: 0 1px 1px 0;
-	text-decoration: none;
-	letter-spacing: .1em;
-}
-#gSiteMenu li a:hover {
-	color: #FF3300;
-	background: url('images/bg_sitemenu_hover.png');
-}
-#gSiteMenu li a.active {
-	background: #DCE6EF;
-	border-color: #DCE6EF;
-	color: #FF3300;
+  border: 1px lightgray solid;
+  list-style: none;
+  margin: 0 14px 10px 0;
+  padding: 5px 0 5px 0;
 }
 
-/* ~~~~~~~~~ breadcrumbs ~~~~~~~~~~ */
-
-#gBreadcrumbs {
-	border-bottom: 1px solid silver;
-  margin: 0;
-  padding: 0 0 0 14px;
-  height: 28px;
-  list-style-type: none;
-}
-#gBreadcrumbs li {
-  list-style-type: none;
-  background: transparent url(images/icon_breadcrumb_separator.gif) no-repeat scroll left center;
-  padding: 0 0 0 10px;
-  float: left;
-}
-#gBreadcrumbs li.root {
-  background: transparent;
-  padding: 0;
-}
-#gBreadcrumbs li a,
-#gBreadcrumbs li span {
-  padding: 6px 6px 6px 6px;
-  display: block;
-}
-#gBreadcrumbs li.active span {
-  font-weight: bold;
+#gAlbumGrid .first {
+  clear: left;
 }
 
-/* ~~~~~~~~~ search form ~~~~~~~~~~ */
-
-#gSearchForm {
-	position: absolute;
-	right: 13px;
-	top: 103px;
+.gAlbum {
+  background-color: #D4DAFF;
 }
-#gSearchForm input.text {
-	padding: 1px;
-}
-#gSearchForm input.submit {
-	height: 20px;
+.gAlbum h2 {
+  color: #006;
 }
 
-/**
- ** **************************************************
- * 4) Generic styles
- ** **************************************************
- */
-
-.buttonlink {
-	border: 1px solid lightgray;
-	padding: 5px;
-}
-.buttonlink:hover {
-	background-color: #F3F3F3;
-}
-.understate {
-	color: silver;
+.gItem h2 {
+  margin: 5px 0 5px 0;
 }
 
-
-/*
-.gBlock {
-	margin: 0 1em 1.5em 0;
-	border: 1px solid #336699;
-	padding: 0;
-}
-.gBlockHeader {
-	background-color: #E8E8E8;
-	padding: .3em;
-	height: 1.5em;
-	border-bottom: 1px solid #6B8CB7;
-	margin: 0 !important;
-}
-.gBlockHeader h2 {
-	color: #003366;
-	margin: 0;
-	float: left;
-	font-size: 1.1em;
-}
-.gBlockHeader .minimize {
-	float: right;
-}
-.gBlockContent {
-	margin: .3em;
-}
-*/
-
-.gBlock {
-	margin: 0 1em 2.5em 0;
-	padding: 0;
-}
-.gBlockHeader {
-	background-color: #E8E8E8;
-	padding: .3em .4em .3em .4em;
-	height: 1.5em;
-	margin: 0 !important;
-	position: relative;
-	cursor: move;
-}
-.gBlockHeader h2 {
-	margin: 0;
-	float: left;
-	font-size: 1.1em;
-	background-image: url('images/ico_dragable.png');
-	background-repeat: no-repeat;
-	padding-left: 12px;
-}
-.gBlockHeader .minimize {
-	position: absolute;
-	top: .45em;
-	right: .3em;
-	width: 16px;
-	height: 16px;
-	background-image: url('images/minimize.png');
-}
-.gBlockHeader .minimize:hover {
-	background-image: url('images/minimize_active.png');
-}
-.gBlockContent {
-	margin: .5em .5em 0 .5em;
-}
-table.gBlockContent {
-	width: 214px;
-	table-layout: fixed;
-}
-table.gBlockContent th {
-	padding: .3em .3em .3em 0;
-}
-table.gBlockContent td {
-	padding: .3em 0 .3em .3em;
-}
-
-/**
- ** **************************************************
- * 5) Content blocks - inherits from Generic blocks
- ** **************************************************
- */
+ /* ~~~~ individual photo ~~~~~~~ */
 
 #gItem {
-  width: 500px;
-	margin-left: auto;
-  margin-right: auto;
+  margin: 0;
 }
 #gItem a.buttonlink {
   float: right;
@@ -348,7 +231,7 @@ table.gBlockContent td {
 #gItem h1 {
   margin: 10px 0 10px 0;
 }
-
+ 
 /* ~~~~~~~~~ metadata ~~~~~~~~~~ */
 
 table.gMetadata {
@@ -356,28 +239,12 @@ table.gMetadata {
 }
 table.gMetadata td,
 table.gMetadata th {
-	border: 0;
+  border: 0;
 }
 table.gMetadata td.toggle {
-	text-align: right;
+  text-align: right;
 }
 
-/* ~~~~~~~~~ upload ~~~~~~~~~~ */
-
-#gUploadForm .gBreadcrumbs li input, #gUploadForm .gBreadcrumbs li select {
-  width: 140px;
-  margin-left: 5px;
-}
-
-/* ~~~~ individual photo ~~~~~~~ */
-
-.gPhotoView img {
-  width: 400px;
-  height: 300px;
-  margin-right: auto;
-  margin-left: auto;
-  margin-bottom: 20px;
-}
 
 /* ~~~~~~~~~ comments ~~~~~~~~~~ */
 
@@ -404,198 +271,41 @@ table.gMetadata td.toggle {
   padding: 8px;
 }
 
-/* ~~~~~~~~~ album ~~~~~~~~~~ */
+/* ~~~~~~~~~ Status messages ~~~~~~~~~~ */
 
-#gAlbumGridHeader {
-	height: 40px;
-	position: relative;
-}
-#gAlbumGridHeader h1 {
-	display: inline;
-}
-#gAlbumGridHeader span {
-	padding-left: 10px;
-}
-#gSlideshowLink {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-}
+#gStatusMessages {
 
-#gAlbumGrid .gItemContainer,
-#gAlbumGrid .gAlbumContainer {
-	float: left;
-	text-align: center;
-	border: 1px lightgray solid;
-	margin: 0px 0px 10px 1.49%;
-	padding: 5px 0px 5px 0px;
 }
-#gAlbumGrid .first {
-	margin: 0px 0px 10px 0px;
-}
+.gError {
 
-.gAlbum {
-	background-color: #D4DAFF;
 }
-.gAlbum h2 {
-	color: #000066;
-}
+.gWarning {
 
-.gItemContainer h2,
-.gAlbumContainer h2 {
-	margin: 5px 0px 5px 0px;
 }
+.gSuccess {
 
+}
+.gInfo {
 
-/* ~~~~~~~~~ tag cloud ~~~~~~~~~~ */
+}
+ 
+/* ~~~~~~~~~ search form ~~~~~~~~~~ */
 
-#gTags ul {
-	text-align: justify;
-	padding: 0;
+#gSearchForm {
+  position: absolute;
+  right: 13px;
+  top: 103px;
 }
-#gTags ul li {
-	text-align: justify;
-	display: inline;
+#gSearchForm input.text {
+  padding: 1px;
 }
-#gTags ul li a {
-	text-decoration: none;
+#gSearchForm input.submit {
+  height: 20px;
 }
-#gTags ul li a.size0 {
-	font-size: 100%;
-	font-weight: 100;
-	color: #99CCFF;
-}
-#gTags ul li a.size1 {
-	font-size: 110%;
-	font-weight: 300;
-	color: #6699FF;
-}
-#gTags ul li a.size2 {
-	font-size: 120%;
-	font-weight: 500;
-	color: #6699CC;
-}
-#gTags ul li a.size3 {
-	font-size: 130%;
-	font-weight: 700;
-	color: #336699;
-}
-#gTags ul li a.size4 {
-	font-size: 140%;
-	font-weight: 900;
-	color: #0E2B52;
-}
-#gTags ul li a:hover {
-	color: #FF3300;
-	text-decoration: underline;
-}
-#gTags form {
-	margin-top: 10px;
-}
-
-/* ~~~~~~~~~ tags ~~~~~~~~~~ */
-
-#gTags ul {
-	margin-left: .5em;
-}
-#gTags li {
-	list-style-image: url('images/bullet_tag.png');
-	margin-bottom: .3em;
-}
-
-/* ~~~~~~~~~ album tree ~~~~~~~~~~ */
-
-#gAlbumTree {
-	border: 1px solid lightgray;
-	margin: 20px 0 20px 0;
-	padding: 5px;
-}
-#gAlbumTree #gTreeContainer {
-	border: 1px solid lightgray;
-	padding: 0 0 0 5px;
-}
-
-
-/**
- ** **************************************************
- * 6) Navigation and menus
- ** **************************************************
- */
-
-
-
-/* ~~~~~~~~~ pagination ~~~~~~~~~~ */
-
-#gPagination {
-	clear: both;
-	padding: 10px 0px 0px 0px;
-	text-align: center;
-}
-#gPagination a,
-#gPagination span {
-	border: 1px solid lightgray;
-	padding: 5px;
-	background-repeat: no-repeat;
-}
-#gPagination a:hover {
-	background-color: #F3F3F3;
-}
-#gPagination .first {
-	background-image: url('images/first.png');
-	background-position: left;
-	padding-left: 20px;
-}
-#gPagination .first_inactive {
-	background-image: url('images/first_inactive.png');
-	background-position: left;
-	padding-left: 20px;
-}
-#gPagination .previous {
-	background-image: url('images/previous.png');
-	background-position: left;
-	padding-left: 17px;
-}
-#gPagination .previous_inactive {
-	background-image: url('images/previous_inactive.png');
-	background-position: left;
-	padding-left: 17px;
-}
-#gPagination .next {
-	background-image: url('images/next.png');
-	background-position: right;
-	padding-right: 17px;
-}
-#gPagination .next_inactive {
-	background-image: url('images/next_inactive.png');
-	background-position: right;
-	padding-right: 17px;
-}
-#gPagination .last {
-	background-image: url('images/last.png');
-	background-position: right;
-	padding-right: 20px;
-}
-#gPagination .last_inactive {
-	background-image: url('images/last_inactive.png');
-	background-position: right;
-	padding-right: 20px;
-}
-
-
-/**
- ** **************************************************
- * 7) Tables
- ** **************************************************
- */
-
-
-/**
- ** **************************************************
- * 8) Forms
- ** **************************************************
- */
-
-#gCommentAdd {
+ 
+/* ~~~~~~~~~ comment form ~~~~~~~~~~ */
+ 
+ #gCommentAdd {
   width: 500px;
 }
 
@@ -605,58 +315,307 @@ table.gMetadata td.toggle {
   width: 140px;
   margin-left: 5px;
 }
-
 #gUploadForm-queue {
   width: 500px;
 }
-
 #gUploadForm-queue td, #gUploadForm-queue th {
   text-align: left;
   border-color: #e7e7e7;
 }
-
 #gUploadForm-queue caption {
   display: none;
 }
-
 #gUploadForm-queue thead th {
   text-align: center;
   border-bottom: 2px solid #000;
 }
-
 #gUploadForm-queue thead th, #gUploadForm-queue thead td {
   background-color: #e7e7e7;
 }
-
 #gUploadForm-queue tfoot td {
   border-top: 2px solid #000;
 }
-
 #gUploadForm-queue .filesize {
   width: 60px;
 }
-
 #gUploadForm-queue td.filesize {
   text-align: right;
 }
-
 #gUploadForm-queue tfoot td.filesize {
   color: #ccc;
 }
-
 #gUploadForm-queue .action {
   width: 40px;
 }
-
 #gUploadForm-button {
   width: 130px;
   margin-left: 370px;
 }
 
 /**
- ** **************************************************
- * 9) Browser hacks
- ** **************************************************
+ ** *******************************************************************
+ * 5) Navigation and menus (menus, breadcrumbs, pagination, tab cloud)
+ ** *******************************************************************
+ */
+
+/* ~~~~~~~~ login menu ~~~~~~~~ */
+
+#gLoginMenu {
+  position: absolute;
+  top: 0;
+  right: 13px;
+  border: 1px solid silver;
+  border-width: 0 1px 1px 1px;
+  padding: 5px;
+  text-align: right;
+}
+#gLoginMenu form {
+  margin-top: 5px;
+}
+#gLoginMenu label {
+  font-size: 0.8em;
+}
+#gLoginMenu input.text,
+#gLoginMenu input.password {
+  width: 80px;
+  padding: 0 0 .1em 0;
+}
+#gLoginMenu input.submit {
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+/* ~~~~~~~~ site menu  ~~~~~~~~ */
+
+#gSiteMenu {
+  height: 31px;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  clear: both;
+}
+#gSiteMenu li {
+  list-style-type: none;
+  float: left;
+  display: block;
+  width: 20%;
+  background: #E6EBF0;
+}
+#gSiteMenu li a {
+  color: #003366;
+  font-weight: bold;
+  height: 20px;
+  display: block;
+  text-align: center;
+  padding: 7px 7px 3px 7px;
+  background: url('images/bg_sitemenu.png') repeat-x;
+  margin-left: 1px;
+  border: 1px solid #336699;
+  border-width: 0 1px 1px 0;
+  text-decoration: none;
+  letter-spacing: .1em;
+}
+#gSiteMenu li a:hover {
+  color: #FF3300;
+  background: url('images/bg_sitemenu_hover.png');
+}
+#gSiteMenu li a.active {
+  background: #DCE6EF;
+  border-color: #DCE6EF;
+  color: #FF3300;
+}
+
+ #gSlideshowLink {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* ~~~~~~~~~ breadcrumbs ~~~~~~~~~~ */
+
+#gBreadcrumbs {
+  border-bottom: 1px solid silver;
+  margin: 0;
+  padding: 0 0 0 14px;
+  height: 28px;
+  list-style-type: none;
+}
+#gBreadcrumbs li {
+  list-style-type: none;
+  background: transparent url(images/icon_breadcrumb_separator.gif) no-repeat scroll left center;
+  padding: 0 0 0 10px;
+  float: left;
+}
+#gBreadcrumbs li.root {
+  background: transparent;
+  padding: 0;
+}
+#gBreadcrumbs li a,
+#gBreadcrumbs li span {
+  padding: 6px 6px 6px 6px;
+  display: block;
+}
+#gBreadcrumbs li.active span {
+  font-weight: bold;
+}
+
+/* ~~~~~~~~~ tag cloud ~~~~~~~~~~ */
+
+#gTags ul {
+  text-align: justify;
+  padding: 0;
+}
+#gTags ul li {
+  text-align: justify;
+  display: inline;
+}
+#gTags ul li a {
+  text-decoration: none;
+}
+#gTags ul li a.size0 {
+  font-size: 100%;
+  font-weight: 100;
+  color: #99CCFF;
+}
+#gTags ul li a.size1 {
+  font-size: 110%;
+  font-weight: 300;
+  color: #6699FF;
+}
+#gTags ul li a.size2 {
+  font-size: 120%;
+  font-weight: 500;
+  color: #6699CC;
+}
+#gTags ul li a.size3 {
+  font-size: 130%;
+  font-weight: 700;
+  color: #336699;
+}
+#gTags ul li a.size4 {
+  font-size: 140%;
+  font-weight: 900;
+  color: #0E2B52;
+}
+#gTags ul li a:hover {
+  color: #FF3300;
+  text-decoration: underline;
+}
+#gTags form {
+  margin-top: 10px;
+}
+
+/* ~~~~~~~~~ tags ~~~~~~~~~~ */
+
+#gTags ul {
+  margin-left: .5em;
+}
+#gTags li {
+  list-style-image: url('images/bullet_tag.png');
+  margin-bottom: .3em;
+}
+
+/* ~~~~~~~~~ pagination ~~~~~~~~~~ */
+
+#gPagination {
+  clear: both;
+  padding: 10px 0 0 0;
+  text-align: center;
+}
+#gPagination a,
+#gPagination span {
+  border: 1px solid lightgray;
+  padding: 5px;
+  background-repeat: no-repeat;
+}
+#gPagination a:hover {
+  background-color: #F3F3F3;
+}
+#gPagination .first {
+  background-image: url('images/first.png');
+  background-position: left;
+  padding-left: 20px;
+}
+#gPagination .first_inactive {
+  background-image: url('images/first_inactive.png');
+  background-position: left;
+  padding-left: 20px;
+}
+#gPagination .previous {
+  background-image: url('images/previous.png');
+  background-position: left;
+  padding-left: 17px;
+}
+#gPagination .previous_inactive {
+  background-image: url('images/previous_inactive.png');
+  background-position: left;
+  padding-left: 17px;
+}
+#gPagination .next {
+  background-image: url('images/next.png');
+  background-position: right;
+  padding-right: 17px;
+}
+#gPagination .next_inactive {
+  background-image: url('images/next_inactive.png');
+  background-position: right;
+  padding-right: 17px;
+}
+#gPagination .last {
+  background-image: url('images/last.png');
+  background-position: right;
+  padding-right: 20px;
+}
+#gPagination .last_inactive {
+  background-image: url('images/last_inactive.png');
+  background-position: right;
+  padding-right: 20px;
+}
+
+/* ~~~~~~~~~ album tree ~~~~~~~~~~ */
+
+#gAlbumTree {
+  border: 1px solid lightgray;
+  margin: 20px 0 20px 0;
+  padding: 5px;
+}
+#gAlbumTree #gTreeContainer {
+  border: 1px solid lightgray;
+  padding: 0 0 0 5px;
+}
+
+/**
+ ** *******************************************************************
+ * 6) Specific text styles (different headings, font sizes, etc.)
+ ** *******************************************************************
+ */
+
+#gHeader h1 {
+  float: left;
+  margin: 20px 0 0 20px;
+}
+
+/**
+ ** *******************************************************************
+ * 7) Generic styles
+ ** *******************************************************************
+ */
+
+.buttonlink {
+  border: 1px solid lightgray;
+  padding: 5px;
+}
+.buttonlink:hover {
+  background-color: #F3F3F3;
+}
+.understate {
+  color: silver;
+}
+
+/**
+ ** *******************************************************************
+ * 8) Browser hacks
+ ** *******************************************************************
  */
 
 /* Keep containers holding only floated elements from collapsing in Safari */
