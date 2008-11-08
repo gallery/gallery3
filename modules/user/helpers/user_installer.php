@@ -24,7 +24,7 @@ class user_installer {
     try {
       $base_version = ORM::factory("module")->where("name", "user")->find()->version;
     } catch (Exception $e) {
-      if ($e->getMessage() == "Table modules does not exist in your database.") {
+      if ($e->getCode() == 44) {
         $base_version = 0;
       } else {
         Kohana::log("error", $e);
