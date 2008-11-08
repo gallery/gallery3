@@ -48,7 +48,12 @@
       </td>
     </tr>
     <? endforeach; ?>
+    <tr>
+    </tr>
   </table>
+  <p>
+    <i><b>Note</b>: install the user module before installing the auth module!</i>
+  </p>
   <? endif; ?>
 </div>
 <? endif ?>
