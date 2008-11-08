@@ -62,18 +62,6 @@
         margin-top: -.25em;
       }
 
-      ul.choices {
-        padding-top: 0;
-        padding-left: 1em;
-        margin: 0px;
-      }
-
-      ul.choices li {
-        display: inline;
-        list-stype-type: none;
-        padding: 0px;
-      }
-
       div#activities {
         margin-bottom: 1em;
       }
@@ -96,23 +84,17 @@
 
       ul#tabs a {
         padding: 3px 10px;
-      }
-
-      ul#tabs a:link, ul#tabs a:visited {
         color: #fff;
         background-color: #036;
         text-decoration: none;
       }
 
       ul#tabs a:hover {
-        color: #fff;
         background-color: #369;
-        text-decoration: none;
       }
     </style>
     <script type="text/javascript" src="<?= url::base() . "lib/jquery.js" ?>"></script>
     <script type="text/javascript" src="<?= url::base() . "lib/jquery.cookie.js" ?>"></script>
-
   </head>
   <body>
     <div class="outer">
@@ -133,29 +115,29 @@
         </p>
 
         <ul id="tabs">
-          <li><a href="javascript:show('#configuration')">Configuration</a></li>
-          <li><a href="javascript:show('#actions')">Actions</a></li>
-          <li><a href="javascript:show('#info')">Info</a></li>
-          <li><a href="javascript:show('#docs')">Docs</a></li>
+          <li><a href="javascript:show('config')">Configuration</a></li>
+          <li><a href="javascript:show('actions')">Actions</a></li>
+          <li><a href="javascript:show('info')">Info</a></li>
+          <li><a href="javascript:show('docs')">Docs</a></li>
         </ul>
 
         <div id="activities">
           <script>
             show = function(section) {
               $("div.activity").slideUp();
-              $(section).slideDown();
+              $("#" + section).slideDown();
               $.cookie("active_section", section);
             }
             $(document).ready(function(){
               var active_section = $.cookie("active_section");
               if (!active_section) {
-                active_section = '#configuration';
+                active_section = 'config';
               }
-              $(active_section).show()
+              $("#" + active_section).show()
             });
           </script>
 
-          <div id="configuration" class="activity">
+          <div id="config" class="activity">
             <?= $syscheck ?>
           </div>
 
@@ -164,13 +146,13 @@
               <?= html::anchor("album/1", "Browse Gallery") ?>
               <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos)</i>
             </p>
-            <ul class="choices">
-              <li> add: [</li>
+            <p>
+              add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
-              <li> <?= html::anchor("welcome/add/$count", "$count") ?> </li>
+              <?= html::anchor("welcome/add/$count", "$count") ?>
               <? endforeach ?>
-              <li>] photos and albums </li>
-            </ul>
+              ] photos and albums
+            </p>
           </div>
 
           <div id="info" class="activity">
