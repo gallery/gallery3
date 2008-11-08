@@ -15,7 +15,7 @@ $(document).ready(function() {
   }
 
   var seen_before = {};
-  var editable = $(".gInPlaceEdit");
+  var editable = $("span.gInPlaceEdit");
   for (i = 0; i < editable.length; i++) {
     var matches = editable[i].className.match(/gEditField-(\d+)-(\S+)/);
     if (matches && matches.length == 3) {
