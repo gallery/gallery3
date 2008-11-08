@@ -18,12 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * Implement the Authentication.
- *
- * This code was heavily influenced by code from:
- *  - http://code.google.com/p/kohana-mptt/
- *  - http://code.google.com/p/kohana-mptt/wiki/Documentation
- *  - http://code.google.com/p/s7ncms/source/browse/trunk/modules/s7ncms/libraries/ORM_MPTT.php
+ * Implement the Authentication interface.
  *
  * It was extended to allow configurable drivers
  */
@@ -39,12 +34,12 @@ class Auth_Core implements Auth_Driver {
   /**
    * Singleton instance of Session.
    */
-  public static function instance($config = array()) { 
+  public static function instance($config = array()) {
     if (self::$instance == NULL) {
       // Create a new instance
       self::$instance = new Auth($config);
     }
-    
+
     return self::$instance;
   }
 
