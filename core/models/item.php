@@ -19,6 +19,7 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
+  protected $has_one = array('user');
 
   /**
    * Is this item an album?

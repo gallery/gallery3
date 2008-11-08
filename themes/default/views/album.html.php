@@ -21,7 +21,7 @@
     <h2><?= $child->title ?></h2>
     <ul class="gMetadata">
       <li>Views: 321</li>
-      <li>By: <a href="#">username</a></li>
+      <li>By: <a href="#"><?= isset($child->user_id) ? $child->user->name : "anonymous"?></a></li>
     </ul>
   </li>
   <? endforeach ?>

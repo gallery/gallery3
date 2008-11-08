@@ -33,12 +33,13 @@ class Photo_Core {
    * @param string  $description (optional) the longer description of this photo
    * @return Item_Model
    */
-  static function create($parent_id, $filename, $name, $title, $description=null) {
+  static function create($parent_id, $filename, $name, $title, $description=null, $user_id = null) {
     $photo = ORM::factory("item");
     $photo->type = "photo";
     $photo->title = $title;
     $photo->description = $description;
     $photo->name = $name;
+    $photo->user_id = $user_id;
 
     $pi = pathinfo(basename($filename));
     if (empty($pi["extension"])) {

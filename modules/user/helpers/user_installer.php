@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_installer {
+  protected $has_many = array('items');
+  
   public static function install() {
     Kohana::log("debug", "user_installer::install");
     $db = Database::instance();
@@ -56,6 +58,8 @@ class user_installer {
           PRIMARY KEY (`group_id`, `user_id`),
           UNIQUE KEY(`user_id`, `group_id`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+      
+      $db->query("ALTER TABLE `items` ADD `user_id` INT(9) NULL");
 
       $user_module = ORM::factory("module")->where("name", "user")->find();
       $user_module->name = "user";
@@ -66,6 +70,8 @@ class user_installer {
       $user->name = "admin";
       $user->display_name = "Gallery Administrator";
       $user->save();
+      $id = $user->id;
+      $db->query("UPDATE `items` SET `user_id` = $id ");
 
       foreach (array("administrator", "registered") as $group_name) {
         $group = ORM::factory("group")->where("name", $group_name)->find();
@@ -81,6 +87,7 @@ class user_installer {
 
   public static function uninstall() {
     $db = Database::instance();
+    $db->query("ALTER TABLE `items` DROP `user_id`");
     $db->query("DROP TABLE IF EXISTS `users`;");
     $db->query("DROP TABLE IF EXISTS `groups`;");
     $db->query("DROP TABLE IF EXISTS `groups_users`;");

@@ -3,19 +3,19 @@
   <tbody>
     <tr>
       <th>Title:</th>
-      <td>Christmas 2007</td>
+      <td><?= $item->title; ?></td>
     </tr>
     <tr>
-      <th>Taken:</th>
-      <td>January 21, 2008</td>
+      <th>Description:</th>
+      <td><?= $item->description; ?></td>
     </tr>
     <tr>
-      <th>Uploaded:</th>
-      <td>January 27, 2008</td>
+      <th>Name:</th>
+      <td><?= $item->name; ?></td>
     </tr>
     <tr>
       <th>Owner:</th>
-      <td><a href="#">username</a></td>
+      <td><a href="#"><?= isset($item->user_id) ? $item->user->name : "anonymous"?></a></td>
     </tr>
     <tr>
       <td colspan="2" class="toggle">
