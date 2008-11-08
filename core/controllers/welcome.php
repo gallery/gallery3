@@ -91,17 +91,18 @@ class Welcome_Controller extends Template_Controller {
   function add($count) {
     srand(time());
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
-    $user_module = ORM::factory("module")->where("name", "user")->find();
-    
-    if ($user_module->loaded) {
+
+    try {
       $user_id = ORM::factory("user")->find()->id;
-    } else {
+    } catch (Exception $e) {
       $user_id = null;
     }
+
     for ($i = 0; $i < $count; $i++) {
       $parent = $parents[array_rand($parents)];
       if (!rand(0, 10)) {
-        $parents[] = album::create($parent->id, "rnd_" . rand(), "Rnd $i", "rnd $i", "random album $i", $user_id)
+        $parents[] = album::create(
+          $parent->id, "rnd_" . rand(), "Rnd $i", "rnd $i", "random album $i", $user_id)
           ->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
           ->save();
       } else {
