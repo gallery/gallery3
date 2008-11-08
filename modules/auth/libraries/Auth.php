@@ -54,7 +54,7 @@ class Auth_Core implements Auth_Driver {
     $driver = "Auth_{$config['driver']}_Driver";
     if (!Kohana::auto_load($driver)) {
       // @todo change to gallery specific exceptions
-      throw new Kohana_Exception("Specified Driver: '{$config['driver']}' has not been defined.");
+      throw new Exception("@todo DRIVER_NOT_DEFINED {$config['driver']}");
     }
 
     // Load the driver
@@ -62,8 +62,8 @@ class Auth_Core implements Auth_Driver {
 
     if (!($driver instanceof Auth_Driver)) {
       // @todo change to gallery specific exceptions
-      throw new Kohana_Exception(
-        "Specified Driver: '{$config['driver']}' has not implemented 'Auth_Driver'.");
+      throw new Exception(
+        "@todo Auth_Driver_INTERFACE_NOT_IMPLEMENTED: {$config['driver']}");
     }
 
     $this->_driver = $driver;
