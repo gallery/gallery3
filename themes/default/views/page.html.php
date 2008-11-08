@@ -11,6 +11,8 @@
           "lib/yui/base-min.css" ?>" media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?=
       $theme->url("css/screen.css") ?>" media="screen,print,projection" />
+    <script src="<?= url::base() . "lib/jquery.js" ?>" type="text/javascript"></script>
+    <script src="<?= url::base() . "lib/jquery.jeditable.js" ?>" type="text/javascript"></script>
   </head>
 
   <body>
@@ -26,5 +28,6 @@
       </div>
       <?= $theme->display("footer.html") ?>
     </div>
+    <?= $theme->in_place_edit(); ?>
   </body>
 </html>

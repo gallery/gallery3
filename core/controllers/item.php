@@ -17,22 +17,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photo_Controller extends Template_Controller {
-  public $template = "page.html";
-
+class Item_Controller extends Controller {
   public function view($id) {
     $item = ORM::factory("item")->where("id", $id)->find();
     if (empty($item->id)) {
       return Kohana::show_404();
     }
 
-    $this->template->content = new View("photo.html");
-
-    $this->template->set_global('item', $item);
-    $this->template->set_global('children', $item->children());
-    $this->template->set_global('parents', $item->parents());
-
-    /** @todo: this needs to be data-driven */
-    $this->template->set_global('theme', new Theme("default", $this->template));
+    if (request::method() == 'get') {
+      if ($item->type == 'album') {
+        url::redirect("album/$id");
+      } else {
+        url::redirect("photo/$id");
+      }
+    } else {
+      $key = $this->input->post("key");
+      $value = $this->input->post("value");
+      $item->$key = $value;
+      $item->save();
+      print $value;
+    }
   }
 }

@@ -185,6 +185,10 @@ class Item_Model extends ORM_MPTT {
         $this->owner = ORM::factory("user", $this->owner_id);
       }
       return $this->owner;
+    } else if (substr($column, -5) == "_edit") {
+      $real_column = substr($column, 0, strlen($column) - 5);
+      return "<span class=\"gInPlaceEdit gEditField-{$this->id}-{$real_column}\">" .
+        "{$this->$real_column}</span>";
     } else {
       return parent::__get($column);
     }

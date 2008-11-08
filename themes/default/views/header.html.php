@@ -1,7 +1,7 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gHeader">
   <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
-  <h1><?= $item->title ?></h1>
+  <h1><?= $item->title_edit ?></h1>
   <div id="gLoginMenu">
     <a href="#"><?= _("Register") ?></a> |
     <a href="#"><?= _("Login") ?></a>
@@ -17,9 +17,9 @@
 
   <ul id="gBreadcrumbs">
     <? foreach ($parents as $parent): ?>
-    <li><a href="<?= url::site("album/{$parent->id}") ?>"><?= $parent->title ?></a></li>
+    <li><a href="<?= url::site("album/{$parent->id}") ?>"><?= $parent->title_edit ?></a></li>
     <? endforeach ?>
-    <li class="active"><span><?= $item->title ?></span></li>
+    <li class="active"><?= $item->title_edit ?></li>
   </ul>
 
   <form id="gSearchForm">

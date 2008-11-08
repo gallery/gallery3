@@ -1,7 +1,7 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gAlbumGridHeader">
-  <h1><?= $item->title ?></h1>
-  <span class="understate"><?= $item->description ?></span>
+  <h1><?= $item->title_edit ?></h1>
+  <span class="understate"><?= $item->description_edit ?></span>
   <a href="#" id="gSlideshowLink" class="buttonlink">Slideshow</a>
 </div>
 
@@ -18,7 +18,7 @@
            width="<?= $child->thumbnail_width ?>"
            height="<?= $child->thumbnail_height ?>" />
     </a>
-    <h2><?= $child->title ?></h2>
+    <h2><?= $child->title_edit ?></h2>
     <ul class="gMetadata">
       <li>Views: 321</li>
       <? if ($child->owner): ?>

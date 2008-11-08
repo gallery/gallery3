@@ -48,6 +48,10 @@ class Theme_Core {
     return $this->pagination->render();
   }
 
+  public function in_place_edit() {
+    return new View("in_place_edit.html");
+  }
+
   public function blocks() {
     /** @todo: make this data driven */
     $blocks = array(

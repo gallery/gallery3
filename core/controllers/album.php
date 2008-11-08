@@ -20,7 +20,7 @@
 class Album_Controller extends Template_Controller {
   public $template = "page.html";
 
-  public function View($id) {
+  public function view($id) {
     $item = ORM::factory("item")->where("id", $id)->find();
     if (empty($item->id)) {
       return Kohana::show_404();
