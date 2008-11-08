@@ -3,15 +3,15 @@
   <tbody>
     <tr>
       <th><?= _("Title:") ?></th>
-      <td><?= $item->title; ?></td>
+      <td><?= $item->title_edit; ?></td>
     </tr>
     <tr>
       <th><?= _("Description:") ?></th>
-      <td><?= $item->description; ?></td>
+      <td><?= $item->description_edit; ?></td>
     </tr>
     <tr>
       <th><?= _("Name:") ?></th>
-      <td><?= $item->name; ?></td>
+      <td><?= $item->name_edit; ?></td>
     </tr>
     <? if ($item->owner): ?>
     <tr>
