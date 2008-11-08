@@ -19,7 +19,8 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-  protected $has_one = array('user');
+
+  private $owner = null;
 
   /**
    * Is this item an album?
@@ -165,5 +166,27 @@ class Item_Model extends ORM_MPTT {
       $path .= $suffix;
     }
     return $path;
+  }
+
+  /**
+   * @see ORM::reload
+   */
+  function reload() {
+    $this->owner = null;
+    return parent::reload();
+  }
+
+  /**
+   * @see ORM::__get()
+   */
+  public function __get($column) {
+    if ($column == "owner") {
+      if (!isset($this->owner)) {
+        $this->owner = ORM::factory("user", $this->owner_id);
+      }
+      return $this->owner;
+    } else {
+      return parent::__get($column);
+    }
   }
 }
