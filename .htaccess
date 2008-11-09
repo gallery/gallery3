@@ -1,1 +1,3 @@
 php_flag short_open_tag 1
+php_flag register_globals 0
+
