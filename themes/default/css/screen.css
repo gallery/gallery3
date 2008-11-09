@@ -32,11 +32,11 @@ h1 {
   margin-top: 0;
 }
 a {
-  color: #6B8CB7;
+  color: #6b8cb7;
   text-decoration: none;
 }
 a:hover {
-  color: #FF3300;
+  color: #f30;
   text-decoration: underline;
 }
 
@@ -92,13 +92,12 @@ textarea {
 #gContent {
   border-right: 1px solid #ccc;
   padding: 20px;
-  clear: both;
 }
 
 #gSidebar {
   background-color: #fff;
-  width: 18.4615em;
   padding: 1.5em 0 0 0;
+  width: 18.4615em;
 }
 
 #gFooter {
@@ -117,28 +116,27 @@ textarea {
   padding: 0;
 }
 .gBlockHeader {
-  background-color: #E8E8E8;
-  padding: .3em .4em .3em .4em;
-  height: 1.5em;
-  margin: 0 !important;
-  position: relative;
+  background-color: #e8e8e8;
   cursor: move;
+  height: 1.5em;
+  margin: 0;
+  padding: .3em .4em;
+  position: relative;
 }
 .gBlockHeader h2 {
-  margin: 0;
+  background: url('images/ico_dragable.png') no-repeat;
   float: left;
   font-size: 1.1em;
-  background-image: url('images/ico_dragable.png');
-  background-repeat: no-repeat;
+  margin: 0;
   padding-left: 12px;
 }
 .gBlockHeader .gMinimize {
-  position: absolute;
-  top: .45em;
-  right: .3em;
-  width: 16px;
-  height: 16px;
   background-image: url('images/minimize.png');
+  height: 16px;
+  position: absolute;
+  right: .3em;
+  top: .45em;
+  width: 16px;
 }
 .gBlockHeader .gMinimize:hover {
   background-image: url('images/minimize_active.png');
@@ -147,8 +145,8 @@ textarea {
   margin: .5em .5em 0 .5em;
 }
 table.gBlockContent {
-  width: 214px;
   table-layout: fixed;
+  width: 214px;
 }
 table.gBlockContent th {
   padding: .3em .3em .3em 0;
@@ -191,12 +189,12 @@ table.gBlockContent td {
   margin: 0;
 }
 #gAlbumGrid .gItem {
+  border: 1px solid #ccc;
   float: left;
-  text-align: center;
-  border: 1px lightgray solid;
   list-style: none;
   margin: 0 14px 10px 0;
   padding: 5px 0 5px 0;
+  text-align: center;
 }
 
 #gAlbumGrid .first {
@@ -204,14 +202,14 @@ table.gBlockContent td {
 }
 
 .gAlbum {
-  background-color: #D4DAFF;
+  background-color: #d4daff;
 }
 .gAlbum h2 {
   color: #006;
 }
 
 .gItem h2 {
-  margin: 5px 0 5px 0;
+  margin: 5px 0;
 }
 
  /* ~~~~ individual photo ~~~~~~~ */
@@ -223,13 +221,13 @@ table.gBlockContent td {
   float: right;
 }
 #gItem img {
+  background-color: #e7e7e7;
+  border: 1px solid #c0c0c0;
   clear: both;
   display: block;
-  border: 1px solid silver;
-  background-color: #e7e7e7;
 }
 #gItem h1 {
-  margin: 10px 0 10px 0;
+  margin: 10px 0;
 }
  
 /* ~~~~~~~~~ metadata ~~~~~~~~~~ */
@@ -239,7 +237,7 @@ table.gMetadata {
 }
 table.gMetadata td,
 table.gMetadata th {
-  border: 0;
+  border: none;
 }
 table.gMetadata td.toggle {
   text-align: right;
@@ -263,7 +261,7 @@ table.gMetadata td.toggle {
   margin-bottom: 15px;
 }
 #gComments ul li p {
-  background-color: #E8E8E8;
+  background-color: #e8e8e8;
   margin-bottom: 2px;
   padding: 4px;
 }
@@ -319,15 +317,15 @@ table.gMetadata td.toggle {
   width: 500px;
 }
 #gUploadForm-queue td, #gUploadForm-queue th {
-  text-align: left;
   border-color: #e7e7e7;
+  text-align: left;
 }
 #gUploadForm-queue caption {
   display: none;
 }
 #gUploadForm-queue thead th {
-  text-align: center;
   border-bottom: 2px solid #000;
+  text-align: center;
 }
 #gUploadForm-queue thead th, #gUploadForm-queue thead td {
   background-color: #e7e7e7;
@@ -348,8 +346,8 @@ table.gMetadata td.toggle {
   width: 40px;
 }
 #gUploadForm-button {
-  width: 130px;
   margin-left: 370px;
+  width: 130px;
 }
 
 /**
@@ -361,90 +359,90 @@ table.gMetadata td.toggle {
 /* ~~~~~~~~ login menu ~~~~~~~~ */
 
 #gLoginMenu {
-  position: absolute;
-  top: 0;
-  right: 13px;
-  border: 1px solid silver;
-  border-width: 0 1px 1px 1px;
+  border: 1px solid #c0c0c0;
+  border-top: none;
   padding: 5px;
+  position: absolute;
+  right: 13px;
   text-align: right;
+  top: 0;
 }
 #gLoginMenu form {
   margin-top: 5px;
 }
 #gLoginMenu label {
-  font-size: 0.8em;
+  font-size: .8em;
 }
 #gLoginMenu input.text,
 #gLoginMenu input.password {
-  width: 80px;
   padding: 0 0 .1em 0;
+  width: 80px;
 }
 #gLoginMenu input.submit {
-  font-size: 0.9em;
+  font-size: .9em;
   font-weight: bold;
 }
 
 /* ~~~~~~~~ site menu  ~~~~~~~~ */
 
 #gSiteMenu {
+  clear: both;
   height: 31px;
+  list-style-type: none;
   margin: 0;
   padding: 0;
-  list-style-type: none;
-  clear: both;
 }
 #gSiteMenu li {
-  list-style-type: none;
-  float: left;
+  background: #e6ebf0;
   display: block;
+  float: left;
+  list-style-type: none;
   width: 20%;
-  background: #E6EBF0;
 }
 #gSiteMenu li a {
-  color: #003366;
+  background: url('images/bg_sitemenu.png') repeat-x;
+  border: 1px solid #369;
+  border-width: 0 1px 1px 0;
+  color: #036;
+  display: block;
   font-weight: bold;
   height: 20px;
-  display: block;
-  text-align: center;
-  padding: 7px 7px 3px 7px;
-  background: url('images/bg_sitemenu.png') repeat-x;
-  margin-left: 1px;
-  border: 1px solid #336699;
-  border-width: 0 1px 1px 0;
-  text-decoration: none;
   letter-spacing: .1em;
+  margin-left: 1px;
+  padding: 7px 7px 3px 7px;
+  text-align: center;
+  text-decoration: none;
 }
 #gSiteMenu li a:hover {
-  color: #FF3300;
   background: url('images/bg_sitemenu_hover.png');
+  color: #f30;
 }
 #gSiteMenu li a.active {
-  background: #DCE6EF;
-  border-color: #DCE6EF;
-  color: #FF3300;
+  background: #dce6ef;
+  border-color: #dce6ef;
+  color: #f30;
 }
 
  #gSlideshowLink {
   position: absolute;
-  top: 0;
   right: 0;
+  top: 0;
 }
 
 /* ~~~~~~~~~ breadcrumbs ~~~~~~~~~~ */
 
 #gBreadcrumbs {
-  border-bottom: 1px solid silver;
-  margin: 0;
-  padding: 0 0 0 14px;
+  border-bottom: 1px solid #c0c0c0;
   height: 28px;
   list-style-type: none;
+  margin: 0;
+  padding: 0 0 0 14px;
 }
 #gBreadcrumbs li {
-  list-style-type: none;
-  background: transparent url(images/icon_breadcrumb_separator.gif) no-repeat scroll left center;
-  padding: 0 0 0 10px;
+  background: transparent url('images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
   float: left;
+  list-style-type: none;
+  padding: 0 0 0 10px;
 }
 #gBreadcrumbs li.root {
   background: transparent;
@@ -452,8 +450,8 @@ table.gMetadata td.toggle {
 }
 #gBreadcrumbs li a,
 #gBreadcrumbs li span {
-  padding: 6px 6px 6px 6px;
   display: block;
+  padding: 6px 6px 6px 6px;
 }
 #gBreadcrumbs li.active span {
   font-weight: bold;
@@ -462,40 +460,40 @@ table.gMetadata td.toggle {
 /* ~~~~~~~~~ tag cloud ~~~~~~~~~~ */
 
 #gTags ul {
-  text-align: justify;
   padding: 0;
+  text-align: justify;
 }
 #gTags ul li {
-  text-align: justify;
   display: inline;
+  text-align: justify;
 }
 #gTags ul li a {
   text-decoration: none;
 }
 #gTags ul li a.size0 {
+  color: #9cf;
   font-size: 100%;
   font-weight: 100;
-  color: #99CCFF;
 }
 #gTags ul li a.size1 {
+  color: #69f;
   font-size: 110%;
   font-weight: 300;
-  color: #6699FF;
 }
 #gTags ul li a.size2 {
+  color: #69c;
   font-size: 120%;
   font-weight: 500;
-  color: #6699CC;
 }
 #gTags ul li a.size3 {
+  color: #369;
   font-size: 130%;
   font-weight: 700;
-  color: #336699;
 }
 #gTags ul li a.size4 {
+  color: #0e2b52;
   font-size: 140%;
   font-weight: 900;
-  color: #0E2B52;
 }
 #gTags ul li a:hover {
   color: #FF3300;
@@ -524,12 +522,12 @@ table.gMetadata td.toggle {
 }
 #gPagination a,
 #gPagination span {
-  border: 1px solid lightgray;
-  padding: 5px;
   background-repeat: no-repeat;
+  border: 1px solid #d3d3d3;
+  padding: 5px;
 }
 #gPagination a:hover {
-  background-color: #F3F3F3;
+  background-color: #f3f3f3;
 }
 #gPagination .first {
   background-image: url('images/first.png');
@@ -575,12 +573,12 @@ table.gMetadata td.toggle {
 /* ~~~~~~~~~ album tree ~~~~~~~~~~ */
 
 #gAlbumTree {
-  border: 1px solid lightgray;
+  border: 1px solid #d3d3d3;
   margin: 20px 0 20px 0;
   padding: 5px;
 }
 #gAlbumTree #gTreeContainer {
-  border: 1px solid lightgray;
+  border: 1px solid #d3d3d3;
   padding: 0 0 0 5px;
 }
 
@@ -602,14 +600,14 @@ table.gMetadata td.toggle {
  */
 
 .buttonlink {
-  border: 1px solid lightgray;
+  border: 1px solid #d3d3d3;
   padding: 5px;
 }
 .buttonlink:hover {
-  background-color: #F3F3F3;
+  background-color: #f3f3f3;
 }
 .understate {
-  color: silver;
+  color: #c0c0c0;
 }
 
 /**
@@ -619,10 +617,10 @@ table.gMetadata td.toggle {
  */
 
 /* Keep containers holding only floated elements from collapsing in Safari */
-.clearfix:after {
+.gClearFix:after {
+  clear: both;
   content: ".";
   display: block;
   height: 0;
-  clear: both;
   visibility: hidden;
 }
