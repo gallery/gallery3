@@ -5,14 +5,14 @@
   <head>
     <title><?= _("Browse Photos") ?> :: <?= $item->title ?></title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="<?= url::base() .
-          "lib/yui/reset-fonts-grids.css" ?>" media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::base() .
-          "lib/yui/base-min.css" ?>" media="screen,print,projection" />
+    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
+          media="screen,print,projection" />
+    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/base-min.css") ?>"
+          media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?=
       $theme->url("css/screen.css") ?>" media="screen,print,projection" />
-    <script src="<?= url::base() . "lib/jquery.js" ?>" type="text/javascript"></script>
-    <script src="<?= url::base() . "lib/jquery.jeditable.js" ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
   </head>
 
   <body>
