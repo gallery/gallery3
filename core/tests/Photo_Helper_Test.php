@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photo_Test extends Unit_Test_Case {
+class Photo_Helper_Test extends Unit_Test_Case {
   public function create_photo_test() {
     $rand = rand();
     $photo = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
