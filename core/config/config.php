@@ -130,4 +130,5 @@ $config['modules'] = array
   MODPATH . 'info',
   MODPATH . 'gmaps',
   MODPATH . 'auth',
+  MODPATH . 'comment',
 );
