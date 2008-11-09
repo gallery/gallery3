@@ -20,7 +20,7 @@
 class Item_Controller extends Controller {
 
   public function dispatch($id) {
-    /** @todo this needs security checks */
+    // @todo this needs security checks
     $item = ORM::factory("item")->where("id", $id)->find();
     if (empty($item->id)) {
       return Kohana::show_404();
@@ -60,10 +60,31 @@ class Item_Controller extends Controller {
   }
 
   public function put($item) {
+    // @todo Productionize this code
+    // 1) Add security checks
+    // 2) Support owner_ids properly
+
+    switch ($this->input->post('type')) {
+    case 'album':
+      $new_item = album::create(
+        $item->id, $this->input->post('name'), $this->input->post('title'),
+        $this->input->post('description'));
+      break;
+
+    case 'photo':
+      $new_item = photo::create(
+        $item->id, $_FILES['file']['tmp_name'], $_FILES['file']['name'],
+        $this->input->post('title'), $this->input->post('description'));
+      break;
+    }
+
+    print url::redirect("{$new_item->type}/{$new_item->id}");
+    return;
   }
 
   public function delete($item) {
-    /** @todo: needs security checks */
+    // @todo Production this code
+    // 1) Add security checks
     $parent = $item->parent();
     if ($parent->id) {
       $item->delete();
@@ -72,7 +93,7 @@ class Item_Controller extends Controller {
   }
 
   public function post($item) {
-    /** @todo Productionize this. */
+    // @todo Productionize this
     // 1) Figure out how to do the right validation here.  Validate the form input and apply it to
     //    the model as appropriate.
     // 2) Figure out how to dispatch according to the needs of the client.  Ajax requests from
@@ -82,13 +103,21 @@ class Item_Controller extends Controller {
     // that specifies which field it wants back from the item.  Later on we can expand that to
     // include a data format, etc.
 
-    $post = $this->input->post();
-    foreach (array("title", "description") as $field) {
-      if (array_key_exists($field, $post)) {
-        $value = $item->$field = $post[$field];
+    // These fields are safe to change
+    foreach ($this->input->post() as $key => $value) {
+      switch ($key) {
+      case "title":
+      case "description":
+        $item->$key = $value;
+        break;
       }
     }
+
+    // @todo Support additional fields
+    // These fields require additional work if you change them
+    // parent_id, owner_id
+
     $item->save();
-    print $item->{$post['__return']};
+    print $item->{$this->input->post('__return')};
   }
 }

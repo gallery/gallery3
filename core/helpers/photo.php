@@ -33,7 +33,22 @@ class Photo_Core {
    * @param string  $description (optional) the longer description of this photo
    * @return Item_Model
    */
-  static function create($parent_id, $filename, $name, $title, $description=null, $owner_id = null) {
+  static function create($parent_id, $filename, $name, $title, $description=null, $owner_id=null) {
+    if (!is_file($filename)) {
+      throw new Exception("@todo MISSING_IMAGE_FILE");
+    }
+
+    if (!($image_info = getimagesize($filename))) {
+      throw new Exception("@todo INVALID_IMAGE_FILE");
+    }
+
+    // Force an extension onto the name
+    $pi = pathinfo($name);
+    if (empty($pi["extension"])) {
+      $pi["extension"] = image_type_to_extension($image_info[2], false);
+      $name .= "." . $pi[extension];
+    }
+
     $photo = ORM::factory("item");
     $photo->type = "photo";
     $photo->title = $title;
@@ -41,24 +56,20 @@ class Photo_Core {
     $photo->name = $name;
     $photo->owner_id = $owner_id;
 
-    $pi = pathinfo(basename($filename));
-    if (empty($pi["extension"])) {
-      throw new Exception("@todo UNKNOWN_FILE_TYPE");
-    }
-
+    // Randomize the name if there's a conflict
     while (ORM::Factory("item")
            ->where("parent_id", $parent_id)
            ->where("name", $photo->name)
            ->find()->id) {
+      // @todo Improve this.  Random numbers are not user friendly
       $photo->name = rand() . "." . $pi["extension"];
     }
 
-    copy($filename, $photo->file_path());
-
     // This saves the photo
     $photo->add_to_parent($parent_id);
+    copy($filename, $photo->file_path());
 
-    /** @todo: parameterize these dimensions */
+    // @todo: parameterize these dimensions
     // This saves the photo a second time, which is unfortunate but difficult to avoid.
     return $photo->set_thumbnail($filename, 200, 140)
       ->set_resize($filename, 800, 600)

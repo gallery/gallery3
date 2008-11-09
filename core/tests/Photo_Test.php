@@ -48,7 +48,7 @@ class Photo_Test extends Unit_Test_Case {
 
   public function create_photo_with_no_extension_test() {
     try {
-      photo::create(1, "unknown_file", "name", "title", "description");
+      photo::create(1, "/tmp", "name", "title", "description");
       $this->assert_false("should fail with an exception");
     } catch (Exception $e) {
       // pass
