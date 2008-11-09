@@ -17,33 +17,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Album_Controller extends Template_Controller {
-  public $template = "page.html";
-
-  public function view($id) {
-    $item = ORM::factory("item")->where("id", $id)->find();
-    if (empty($item->id)) {
-      return Kohana::show_404();
-    }
-
+class Album_Controller extends Item_Controller {
+  public function get($item) {
     /** @todo: these need to be pulled from the database */
     $theme_name = "default";
     $page_size = 9;
 
+    $template = new View("page.html");
+
     $page = $this->input->get("page", "1");
-    $theme = new Theme($theme_name, $this->template);
+    $theme = new Theme($theme_name, $template);
 
-    $this->template->content = new View("album.html");
-    $this->template->set_global('page_size', $page_size);
-    $this->template->set_global('item', $item);
-    $this->template->set_global('children', $item->children($page_size, ($page-1) * $page_size));
-    $this->template->set_global('parents', $item->parents());
-    $this->template->set_global('theme', $theme);
+    $template->set_global('page_size', $page_size);
+    $template->set_global('item', $item);
+    $template->set_global('children', $item->children($page_size, ($page-1) * $page_size));
+    $template->set_global('parents', $item->parents());
+    $template->set_global('theme', $theme);
+    $template->content = new View("album.html");
 
-    /** @todo: move this up to a base class */
-    if (Session::instance()->get("use_profiler", false)) {
-      $profiler = new Profiler();
-      print $profiler->render();
-    }
+    print $template->render();
   }
 }

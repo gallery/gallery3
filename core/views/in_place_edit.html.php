@@ -3,8 +3,10 @@
 $(document).ready(function() {
   ajax_update = function(className, id) {
     return function(value, settings) {
+      var post_data = {'__return': settings.name};
+      post_data[settings.name] = value;
       $.post("<?= url::site("item/__ID__") ?>".replace("__ID__", id),
-             {"key": settings.name, "value": value},
+             post_data,
              function(data, textStatus) {
                if (textStatus == "success") {
                  $(className).html(data);
