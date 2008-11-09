@@ -1,8 +1,8 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-<div id="gAlbumGridHeader">
+<div id="gAlbumHeader">
   <h1><?= $item->title_edit ?></h1>
-  <span class="understate"><?= $item->description_edit ?></span>
-  <a href="#" id="gSlideshowLink" class="buttonlink">Slideshow</a>
+  <span class="gUnderState"><?= $item->description_edit ?></span>
+  <a href="#" id="gSlideshowLink" class="gButtonLink">Slideshow</a>
 </div>
 
 <ul id="gAlbumGrid">
@@ -11,7 +11,7 @@
   <? if ($child->is_album()): ?>
   <? $album_class = "gAlbum "; ?>
   <? endif ?>
-  <li class="gItem <?= $album_class . text::alternate("first", "", "") ?>">
+  <li class="gItem <?= $album_class ?>">
     <a href="<?= url::site("{$child->type}/{$child->id}") ?>">
       <img id="gPhotoID-<?= $child->id ?>" class="gThumbnail"
            alt="photo" src="<?= $child->thumbnail_url() ?>"
@@ -22,7 +22,7 @@
     <ul class="gMetadata">
       <li>Views: 321</li>
       <? if ($child->owner): ?>
-      <li><?= _("By:") ?><a href="#"><?= $child->owner->name ?></a></li>
+      <li><?= _("By: ") ?><a href="#"><?= $child->owner->name ?></a></li>
       <? endif ?>
     </ul>
   </li>

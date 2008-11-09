@@ -9,24 +9,36 @@
           media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/base-min.css") ?>"
           media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?=
-      $theme->url("css/screen.css") ?>" media="screen,print,projection" />
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>" 
+          media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
   </head>
 
   <body>
-    <div id="doc2" class="yui-t5 gView">
-      <?= $theme->display("header.html") ?>
+    <div id="doc4" class="yui-t5 gView">
+      <div id="hd">
+        <div id="gHeader">
+          <?= $theme->display("header.html") ?>
+        </div>
+      </div>
       <div id="bd">
         <div id="yui-main">
-          <div id="gContent" class="yui-b">
-            <?= $content ?>
+          <div class="yui-b">
+            <div id="gContent" class="yui-g">
+              <?= $content ?>
+            </div>
           </div>
         </div>
-        <?= $theme->display("sidebar.html") ?>
+        <div id="gSidebar" class="yui-b">
+          <?= $theme->display("sidebar.html") ?>
+        </div>
       </div>
-      <?= $theme->display("footer.html") ?>
+      <div id="ft">
+        <div id="gFooter">
+          <?= $theme->display("footer.html") ?>
+        </div>
+      </div>
     </div>
     <?= $theme->in_place_edit(); ?>
   </body>

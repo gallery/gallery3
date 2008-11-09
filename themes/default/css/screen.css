@@ -172,17 +172,17 @@ table.gBlockContent td {
  
  }
 
-/* ~~~~~~~~~ album ~~~~~~~~~~ */
+/* ~~~~~~~~~ Album ~~~~~~~~~~ */
 
-#gAlbumGridHeader {
+#gAlbumHeader {
   height: 40px;
   position: relative;
 }
-#gAlbumGridHeader h1 {
+#gAlbumHeader h1 {
   display: inline;
 }
-#gAlbumGridHeader span {
-  padding-left: 10px;
+#gAlbumHeader span {
+  padding-right: 10px;
 }
 
 #gAlbumGrid {
@@ -192,13 +192,9 @@ table.gBlockContent td {
   border: 1px solid #ccc;
   float: left;
   list-style: none;
-  margin: 0 14px 10px 0;
+  margin: 0 24px 10px 0;
   padding: 5px 0 5px 0;
   text-align: center;
-}
-
-#gAlbumGrid .first {
-  clear: left;
 }
 
 .gAlbum {
@@ -217,7 +213,7 @@ table.gBlockContent td {
 #gItem {
   margin: 0;
 }
-#gItem a.buttonlink {
+#gItem a.gButtonLink {
   float: right;
 }
 #gItem img {
@@ -361,11 +357,9 @@ table.gMetadata td.toggle {
 #gLoginMenu {
   border: 1px solid #c0c0c0;
   border-top: none;
+  float: right;
+  margin-right: 5px;
   padding: 5px;
-  position: absolute;
-  right: 13px;
-  text-align: right;
-  top: 0;
 }
 #gLoginMenu form {
   margin-top: 5px;
@@ -599,14 +593,14 @@ table.gMetadata td.toggle {
  ** *******************************************************************
  */
 
-.buttonlink {
+.gButtonLink {
   border: 1px solid #d3d3d3;
   padding: 5px;
 }
-.buttonlink:hover {
+.gButtonLink:hover {
   background-color: #f3f3f3;
 }
-.understate {
+.gUnderState {
   color: #c0c0c0;
 }
 
