@@ -32,7 +32,7 @@ class Album_Core {
    * @param string  $description (optional) the longer description of this album
    * @return Item_Model
    */
-  static function create($parent_id, $name, $title, $description=null, $owner_id = null) {
+  static function create($parent_id, $name, $title, $description=null, $owner_id=null) {
     $album = ORM::factory("item");
     $album->type = "album";
     $album->title = $title;
