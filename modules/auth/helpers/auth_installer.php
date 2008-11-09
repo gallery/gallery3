@@ -57,7 +57,6 @@ class auth_installer {
   public static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `passwords`;");
-    $auth_module = ORM::factory("module")->where("name", "auth")->find();
-    $auth_module->delete();
+    ORM::factory("module")->where("name", "auth")->find()->delete();
   }
 }

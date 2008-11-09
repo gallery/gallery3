@@ -54,7 +54,6 @@ class comment_installer {
   public static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `comments`;");
-    $comment_module = ORM::factory("module")->where("name", "comment")->find();
-    $comment_module->delete();
+    ORM::factory("module")->where("name", "comment")->find()->delete();
   }
 }

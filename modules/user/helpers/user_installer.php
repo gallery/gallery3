@@ -87,7 +87,6 @@ class user_installer {
     $db->query("DROP TABLE IF EXISTS `users`;");
     $db->query("DROP TABLE IF EXISTS `groups`;");
     $db->query("DROP TABLE IF EXISTS `groups_users`;");
-    $user_module = ORM::factory("module")->where("name", "user")->find();
-    $user_module->delete();
+    ORM::factory("module")->where("name", "user")->find()->delete();
   }
 }
