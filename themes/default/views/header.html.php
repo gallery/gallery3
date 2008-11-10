@@ -1,7 +1,11 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
 <h1><?= $item->title_edit ?></h1>
-<?= $login ?>
+
+<div id="gLoginMenu">
+  <a href="#"><?= _("Register") ?></a> | 
+  <a href="#"><?= _("Login") ?></a>
+</div>
 
 <ul id="gSiteMenu">
   <li><a href="index.php"><?= _("HOME") ?></a></li>
