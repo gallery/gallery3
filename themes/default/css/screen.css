@@ -31,6 +31,12 @@ body, html {
 h1 {
   margin-top: 0;
 }
+
+#gHeader h1 {
+  float: left;
+  margin: 20px 0 0 20px;
+}
+
 a {
   color: #6b8cb7;
   text-decoration: none;
@@ -86,7 +92,7 @@ textarea {
 /* ~~~ Layout Containers ~~~~~ */
 
 #gHeader {
-  position: relative;
+  border-bottom: 1px solid #ccc;
 }
 
 #gContent {
@@ -97,7 +103,6 @@ textarea {
 #gSidebar {
   background-color: #fff;
   padding: 1.5em 0 0 0;
-  width: 18.4615em;
 }
 
 #gFooter {
@@ -146,7 +151,6 @@ textarea {
 }
 table.gBlockContent {
   table-layout: fixed;
-  width: 214px;
 }
 table.gBlockContent th {
   padding: .3em .3em .3em 0;
@@ -188,7 +192,7 @@ table.gBlockContent td {
 #gAlbumGrid {
   margin: 0;
 }
-#gAlbumGrid .gItem {
+.gItem {
   border: 1px solid #ccc;
   float: left;
   list-style: none;
@@ -196,7 +200,9 @@ table.gBlockContent td {
   padding: 5px 0 5px 0;
   text-align: center;
 }
-
+.gItem h2 {
+  margin: 5px 0;
+}
 .gAlbum {
   background-color: #d4daff;
 }
@@ -204,9 +210,6 @@ table.gBlockContent td {
   color: #006;
 }
 
-.gItem h2 {
-  margin: 5px 0;
-}
 
  /* ~~~~ individual photo ~~~~~~~ */
 
@@ -219,8 +222,6 @@ table.gBlockContent td {
 #gItem img {
   background-color: #e7e7e7;
   border: 1px solid #c0c0c0;
-  clear: both;
-  display: block;
 }
 #gItem h1 {
   margin: 10px 0;
@@ -286,9 +287,8 @@ table.gMetadata td.toggle {
 /* ~~~~~~~~~ search form ~~~~~~~~~~ */
 
 #gSearchForm {
-  position: absolute;
-  right: 13px;
-  top: 103px;
+  float: right;
+  margin-right: 10px;
 }
 #gSearchForm input.text {
   padding: 1px;
@@ -305,14 +305,16 @@ table.gMetadata td.toggle {
 
 /* ----------- upload ----------------- */
 
-#gUploadForm .gBreadcrumbs li input, #gUploadForm .gBreadcrumbs li select {
+#gUploadForm .gBreadcrumbs li input, 
+#gUploadForm .gBreadcrumbs li select {
   width: 140px;
   margin-left: 5px;
 }
 #gUploadForm-queue {
   width: 500px;
 }
-#gUploadForm-queue td, #gUploadForm-queue th {
+#gUploadForm-queue td, 
+#gUploadForm-queue th {
   border-color: #e7e7e7;
   text-align: left;
 }
@@ -323,7 +325,8 @@ table.gMetadata td.toggle {
   border-bottom: 2px solid #000;
   text-align: center;
 }
-#gUploadForm-queue thead th, #gUploadForm-queue thead td {
+#gUploadForm-queue thead th, 
+#gUploadForm-queue thead td {
   background-color: #e7e7e7;
 }
 #gUploadForm-queue tfoot td {
@@ -358,7 +361,7 @@ table.gMetadata td.toggle {
   border: 1px solid #c0c0c0;
   border-top: none;
   float: right;
-  margin-right: 5px;
+  margin-right: 10px;
   padding: 5px;
 }
 #gLoginMenu form {
@@ -377,24 +380,22 @@ table.gMetadata td.toggle {
   font-weight: bold;
 }
 
-/* ~~~~~~~~ site menu  ~~~~~~~~ */
+/* ~~~~~~~~ Site Menu  ~~~~~~~~ */
 
 #gSiteMenu {
+  background: #e6ebf0 url('images/bg_sitemenu.png') repeat-x;
   clear: both;
   height: 31px;
   list-style-type: none;
-  margin: 0;
+  margin: 8px 0;
   padding: 0;
 }
 #gSiteMenu li {
-  background: #e6ebf0;
-  display: block;
   float: left;
   list-style-type: none;
-  width: 20%;
+  width: 19%;
 }
 #gSiteMenu li a {
-  background: url('images/bg_sitemenu.png') repeat-x;
   border: 1px solid #369;
   border-width: 0 1px 1px 0;
   color: #036;
@@ -408,7 +409,7 @@ table.gMetadata td.toggle {
   text-decoration: none;
 }
 #gSiteMenu li a:hover {
-  background: url('images/bg_sitemenu_hover.png');
+  background: url('images/bg_sitemenu_hover.png') repeat-x;
   color: #f30;
 }
 #gSiteMenu li a.active {
@@ -426,26 +427,23 @@ table.gMetadata td.toggle {
 /* ~~~~~~~~~ breadcrumbs ~~~~~~~~~~ */
 
 #gBreadcrumbs {
-  border-bottom: 1px solid #c0c0c0;
   height: 28px;
   list-style-type: none;
-  margin: 0;
-  padding: 0 0 0 14px;
+  margin: 4px 0;
+  padding: 0 0 0 12px;
 }
 #gBreadcrumbs li {
   background: transparent url('images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
   float: left;
   list-style-type: none;
-  padding: 0 0 0 10px;
+  padding: 0 0 0 12px;
 }
 #gBreadcrumbs li.root {
   background: transparent;
-  padding: 0;
 }
 #gBreadcrumbs li a,
 #gBreadcrumbs li span {
   display: block;
-  padding: 6px 6px 6px 6px;
 }
 #gBreadcrumbs li.active span {
   font-weight: bold;
@@ -581,11 +579,6 @@ table.gMetadata td.toggle {
  * 6) Specific text styles (different headings, font sizes, etc.)
  ** *******************************************************************
  */
-
-#gHeader h1 {
-  float: left;
-  margin: 20px 0 0 20px;
-}
 
 /**
  ** *******************************************************************
