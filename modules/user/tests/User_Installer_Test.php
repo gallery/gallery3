@@ -24,7 +24,7 @@
  */
 class User_Installer_Test extends Unit_Test_Case {
   public function install_creates_admin_user_test() {
-    $user = ORM::factory('user')->find(1);
+    $user = ORM::factory("user", 1);
     $this->assert_equal("Gallery Administrator", $user->display_name);
     $this->assert_equal("admin", $user->name);
 
@@ -36,7 +36,7 @@ class User_Installer_Test extends Unit_Test_Case {
   }
 
   public function install_creates_admininstrator_group_test() {
-    $group = ORM::factory('group')->find(1);
+    $group = ORM::factory("group", 1);
     $this->assert_equal("administrator", $group->name);
 
     $users = $group->users->as_array();
@@ -45,7 +45,7 @@ class User_Installer_Test extends Unit_Test_Case {
   }
 
   public function install_creates_registered_group_test() {
-    $group = ORM::factory('group')->find(2);
+    $group = ORM::factory("group", 2);
     $this->assert_equal("registered", $group->name);
 
     $users = $group->users->as_array();
