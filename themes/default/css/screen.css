@@ -115,7 +115,7 @@ textarea {
  * 3) Generic content containers (item, block)
  ** ****************************************************************
  */
- 
+
 .gBlock {
   margin: 0 1em 2.5em 0;
   padding: 0;
@@ -129,14 +129,14 @@ textarea {
   position: relative;
 }
 .gBlockHeader h2 {
-  background: url('images/ico_dragable.png') no-repeat;
+  background: url('../images/ico_dragable.png') no-repeat;
   float: left;
   font-size: 1.1em;
   margin: 0;
   padding-left: 12px;
 }
 .gBlockHeader .gMinimize {
-  background-image: url('images/minimize.png');
+  background-image: url('../images/minimize.png');
   height: 16px;
   position: absolute;
   right: .3em;
@@ -144,7 +144,7 @@ textarea {
   width: 16px;
 }
 .gBlockHeader .gMinimize:hover {
-  background-image: url('images/minimize_active.png');
+  background-image: url('../images/minimize_active.png');
 }
 .gBlockContent {
   margin: .5em .5em 0 .5em;
@@ -171,9 +171,9 @@ table.gBlockContent td {
   float: left;
   margin: 10px;
 }
- 
+
  .gThumbnail {
- 
+
  }
 
 /* ~~~~~~~~~ Album ~~~~~~~~~~ */
@@ -226,7 +226,7 @@ table.gBlockContent td {
 #gItem h1 {
   margin: 10px 0;
 }
- 
+
 /* ~~~~~~~~~ metadata ~~~~~~~~~~ */
 
 table.gMetadata {
@@ -283,7 +283,7 @@ table.gMetadata td.toggle {
 .gInfo {
 
 }
- 
+
 /* ~~~~~~~~~ search form ~~~~~~~~~~ */
 
 #gSearchForm {
@@ -296,16 +296,16 @@ table.gMetadata td.toggle {
 #gSearchForm input.submit {
   height: 20px;
 }
- 
+
 /* ~~~~~~~~~ comment form ~~~~~~~~~~ */
- 
+
  #gCommentAdd {
   width: 500px;
 }
 
 /* ----------- upload ----------------- */
 
-#gUploadForm .gBreadcrumbs li input, 
+#gUploadForm .gBreadcrumbs li input,
 #gUploadForm .gBreadcrumbs li select {
   width: 140px;
   margin-left: 5px;
@@ -313,7 +313,7 @@ table.gMetadata td.toggle {
 #gUploadForm-queue {
   width: 500px;
 }
-#gUploadForm-queue td, 
+#gUploadForm-queue td,
 #gUploadForm-queue th {
   border-color: #e7e7e7;
   text-align: left;
@@ -325,7 +325,7 @@ table.gMetadata td.toggle {
   border-bottom: 2px solid #000;
   text-align: center;
 }
-#gUploadForm-queue thead th, 
+#gUploadForm-queue thead th,
 #gUploadForm-queue thead td {
   background-color: #e7e7e7;
 }
@@ -383,7 +383,7 @@ table.gMetadata td.toggle {
 /* ~~~~~~~~ Site Menu  ~~~~~~~~ */
 
 #gSiteMenu {
-  background: #e6ebf0 url('images/bg_sitemenu.png') repeat-x;
+  background: #e6ebf0 url('../images/bg_sitemenu.png') repeat-x;
   clear: both;
   height: 31px;
   list-style-type: none;
@@ -409,7 +409,7 @@ table.gMetadata td.toggle {
   text-decoration: none;
 }
 #gSiteMenu li a:hover {
-  background: url('images/bg_sitemenu_hover.png') repeat-x;
+  background: url('../images/bg_sitemenu_hover.png') repeat-x;
   color: #f30;
 }
 #gSiteMenu li a.active {
@@ -433,7 +433,7 @@ table.gMetadata td.toggle {
   padding: 0 0 0 12px;
 }
 #gBreadcrumbs li {
-  background: transparent url('images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
+  background: transparent url('../images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
   float: left;
   list-style-type: none;
   padding: 0 0 0 12px;
