@@ -23,6 +23,9 @@ define('IN_PRODUCTION', true);
 // Gallery requires PHP 5.2+
 version_compare(PHP_VERSION, '5.2', '<') and exit('Gallery requires PHP 5.2 or newer.');
 
+// Gallery requires short_tags to be on
+!ini_get('short_open_tag') and exit('Gallery requires short_open_tag to be on.');
+
 // Set the error reporting level.  Use E_ALL unless you have a special need.
 error_reporting(E_ALL);
 
