@@ -501,7 +501,7 @@ table.gMetadata td.toggle {
   margin-left: .5em;
 }
 #gTags li {
-  list-style-image: url('images/bullet_tag.png');
+  list-style-image: url('../images/bullet_tag.png');
   margin-bottom: .3em;
 }
 
@@ -522,42 +522,42 @@ table.gMetadata td.toggle {
   background-color: #f3f3f3;
 }
 #gPagination .first {
-  background-image: url('images/first.png');
+  background-image: url('../images/first.png');
   background-position: left;
   padding-left: 20px;
 }
 #gPagination .first_inactive {
-  background-image: url('images/first_inactive.png');
+  background-image: url('../images/first_inactive.png');
   background-position: left;
   padding-left: 20px;
 }
 #gPagination .previous {
-  background-image: url('images/previous.png');
+  background-image: url('../images/previous.png');
   background-position: left;
   padding-left: 17px;
 }
 #gPagination .previous_inactive {
-  background-image: url('images/previous_inactive.png');
+  background-image: url('../images/previous_inactive.png');
   background-position: left;
   padding-left: 17px;
 }
 #gPagination .next {
-  background-image: url('images/next.png');
+  background-image: url('../images/next.png');
   background-position: right;
   padding-right: 17px;
 }
 #gPagination .next_inactive {
-  background-image: url('images/next_inactive.png');
+  background-image: url('../images/next_inactive.png');
   background-position: right;
   padding-right: 17px;
 }
 #gPagination .last {
-  background-image: url('images/last.png');
+  background-image: url('../images/last.png');
   background-position: right;
   padding-right: 20px;
 }
 #gPagination .last_inactive {
-  background-image: url('images/last_inactive.png');
+  background-image: url('../images/last_inactive.png');
   background-position: right;
   padding-right: 20px;
 }
