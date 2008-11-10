@@ -62,13 +62,13 @@ class Test_Controller extends Controller {
     // this way.  Uninstall modules first and core last.  Ignore errors during uninstall.
     try {
       comment_installer::uninstall();
-//      user_installer::uninstall();
+      user_installer::uninstall();
       core_installer::uninstall();
     } catch (Exception $e) {
     }
 
     core_installer::install();
-//    user_installer::install();
+    user_installer::install();
     comment_installer::install();
 
     print new Unit_Test();
