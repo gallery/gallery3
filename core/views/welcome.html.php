@@ -173,6 +173,13 @@
               <? endforeach ?>
               ] photos and albums
             </p>
+            <p>
+              add: [
+              <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
+              <?= html::anchor("comment/add/$count", "$count") ?>
+              <? endforeach ?>
+              ] comments
+            </p>
             <fieldset>
               <legend>Photos</legend>
               <form method="post" action="<?= url::site("album/1") ?>" enctype="multipart/form-data">
