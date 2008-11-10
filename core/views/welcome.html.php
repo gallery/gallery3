@@ -92,6 +92,11 @@
       ul#tabs a:hover {
         background-color: #369;
       }
+
+      fieldset {
+        margin-left: 1em;
+        padding-bottom: 0;
+      }
     </style>
     <script type="text/javascript" src="<?= url::base() . "lib/jquery.js" ?>"></script>
     <script type="text/javascript" src="<?= url::base() . "lib/jquery.cookie.js" ?>"></script>
@@ -153,24 +158,24 @@
               <? endforeach ?>
               ] photos and albums
             </p>
-            <form method="post" action="<?= url::site("album/1") ?>" enctype="multipart/form-data">
-              <p>
-                Upload:
+            <fieldset>
+              <legend>Photos</legend>
+              <form method="post" action="<?= url::site("album/1") ?>" enctype="multipart/form-data">
                 <input name="file" type="file"/>
                 <input type="hidden" name="type" value="photo"/>
                 <input type="hidden" name="__action" value="put"/>
-                <input type="submit"/>
-              </p>
-            </form>
-            <form method="post" action="<?= url::site("album/1") ?>">
-              <p>
-                Create Album:
+                <input type="submit" value="upload"/>
+              </form>
+            </fieldset>
+            <fieldset>
+              <legend>Albums</legend>
+              <form method="post" action="<?= url::site("album/1") ?>">
                 <input type="text" name="name"/>
                 <input type="hidden" name="type" value="album"/>
                 <input type="hidden" name="__action" value="put"/>
-                <input type="submit"/>
-              </p>
-            </form>
+                <input type="submit" value="create"/>
+              </form>
+            </fieldset>
           </div>
 
           <div id="info" class="activity">
