@@ -66,25 +66,40 @@ class Item_Controller extends Controller {
 
     switch ($this->input->post("type")) {
     case "album":
-      $new_item = album::create(
+      $album = album::create(
         $item->id,
         $this->input->post("name"),
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"));
+      url::redirect("album/{$album->id}");
       break;
 
     case "photo":
-      $new_item = photo::create(
-        $item->id,
-        $_FILES["file"]["tmp_name"],
-        $_FILES["file"]["name"],
-        $this->input->post("title", $this->input->post("name")),
-        $this->input->post("description"));
+      if (is_array($_FILES["file"]["name"])) {
+        for ($i = 0; $i < count($_FILES["file"]["name"]); $i++) {
+          if ($_FILES["file"]["error"][$i] == 0) {
+            $photo = photo::create(
+              $item->id,
+              $_FILES["file"]["tmp_name"][$i],
+              $_FILES["file"]["name"][$i],
+              $_FILES["file"]["name"][$i]);
+          } else {
+            print "ERROR!";
+            // @todo return a reasonable error
+          }
+        }
+        url::redirect("album/{$item->id}");
+      } else {
+        $photo = photo::create(
+          $item->id,
+          $_FILES["file"]["tmp_name"],
+          $_FILES["file"]["name"],
+          $this->input->post("title", $this->input->post("name")),
+          $this->input->post("description"));
+        url::redirect("{$new_item->type}/{$new_item->id}");
+      }
       break;
     }
-
-    print url::redirect("{$new_item->type}/{$new_item->id}");
-    return;
   }
 
   public function delete($item) {

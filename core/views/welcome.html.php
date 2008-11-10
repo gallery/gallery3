@@ -97,9 +97,19 @@
         margin-left: 1em;
         padding-bottom: 0;
       }
+
+      div#photo_upload_wrap {
+        display: inline;
+      }
+
+      div#photo_upload_wrap {
+        display: inline;
+      }
+
     </style>
-    <script type="text/javascript" src="<?= url::base() . "lib/jquery.js" ?>"></script>
-    <script type="text/javascript" src="<?= url::base() . "lib/jquery.cookie.js" ?>"></script>
+    <script type="text/javascript" src="<?= url::file("lib/jquery.js") ?>"></script>
+    <script type="text/javascript" src="<?= url::file("lib/jquery.cookie.js") ?>"></script>
+    <script type="text/javascript" src="<?= url::file("lib/jquery.MultiFile.js") ?>"></script>
   </head>
   <body>
     <div class="outer">
@@ -129,8 +139,12 @@
         <div id="activities">
           <script>
             show = function(section) {
+              var section_id = "#" + section;
+              if ($(section_id).css("display") == "block") {
+                return;
+              }
               $("div.activity").slideUp();
-              $("#" + section).slideDown();
+              $(section_id).slideDown();
               $.cookie("active_section", section);
             }
             $(document).ready(function(){
@@ -138,7 +152,8 @@
               if (!active_section) {
                 active_section = 'config';
               }
-              $("#" + active_section).show()
+              $("#" + active_section).show();
+              $("#photo_upload").MultiFile();
             });
           </script>
 
@@ -161,19 +176,19 @@
             <fieldset>
               <legend>Photos</legend>
               <form method="post" action="<?= url::site("album/1") ?>" enctype="multipart/form-data">
-                <input name="file" type="file"/>
+                <input type="submit" value="upload"/>
+                <input id="photo_upload" name="file[]" type="file"/>
                 <input type="hidden" name="type" value="photo"/>
                 <input type="hidden" name="__action" value="put"/>
-                <input type="submit" value="upload"/>
               </form>
             </fieldset>
             <fieldset>
               <legend>Albums</legend>
               <form method="post" action="<?= url::site("album/1") ?>">
+                <input type="submit" value="create"/>
                 <input type="text" name="name"/>
                 <input type="hidden" name="type" value="album"/>
                 <input type="hidden" name="__action" value="put"/>
-                <input type="submit" value="create"/>
               </form>
             </fieldset>
           </div>
