@@ -35,6 +35,11 @@ class Album_Controller extends Item_Controller {
     $template->set_global('theme', $theme);
     $template->content = new View("album.html");
 
+    $login_view = new View("login.html");
+    $user = Session::instance()->get("user", null);
+    $login_view->logged_in = !empty($user);
+    $template->set_global("login", $login_view);
+
     print $template->render();
   }
 }
