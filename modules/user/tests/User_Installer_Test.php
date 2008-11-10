@@ -19,7 +19,7 @@
  */
 
 /**
- * This test case operates under the assumption that core_installer::install() is called by the
+ * This test case operates under the assumption that user_installer::install() is called by the
  * test controller before it starts.
  */
 class User_Installer_Test extends Unit_Test_Case {
@@ -28,28 +28,26 @@ class User_Installer_Test extends Unit_Test_Case {
     $this->assert_equal("Gallery Administrator", $user->display_name);
     $this->assert_equal("admin", $user->name);
 
-    $groups = $user->groups->as_array();
-    $this->assert_equal(2, count($groups));
-    $this->assert_equal("administrator", $groups[0]->name);
-
-    $this->assert_equal("registered", $groups[1]->name);
+    $this->assert_equal(
+      array("administrator", "registered"),
+      array_keys($user->groups->select_list("name")));
   }
 
   public function install_creates_admininstrator_group_test() {
     $group = ORM::factory("group", 1);
     $this->assert_equal("administrator", $group->name);
 
-    $users = $group->users->as_array();
-    $this->assert_equal(1, count($users));
-    $this->assert_equal("admin", $users[0]->name);
+    $this->assert_equal(
+      array("admin"),
+      array_keys($group->users->select_list("name")));
   }
 
   public function install_creates_registered_group_test() {
     $group = ORM::factory("group", 2);
     $this->assert_equal("registered", $group->name);
 
-    $users = $group->users->as_array();
-    $this->assert_equal(1, count($users));
-    $this->assert_equal("admin", $users[0]->name);
+    $this->assert_equal(
+      array("admin"),
+      array_keys($group->users->select_list("name")));
   }
 }
