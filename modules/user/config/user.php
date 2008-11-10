@@ -17,18 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class user_installer {
-  protected $has_many = array('items');
 
-  public static function install() {
-    Kohana::log("debug", "user_installer::install");
-    $user = User::instance();
-    $user->install();
-  }
+/**
+ * Name of the driver to be used for handling user authentication and password management
+ */
+$config['driver'] = 'Gallery';
 
-  public static function uninstall() {
-    Kohana::log("debug", "user_installer::install");
-    $user = User::instance();
-    $user->uninstall();
-  }
-}
