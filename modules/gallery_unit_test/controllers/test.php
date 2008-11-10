@@ -61,6 +61,7 @@ class Test_Controller extends Controller {
     // We probably don't want to uninstall and reinstall the core every time, but let's start off
     // this way.  Uninstall modules first and core last.  Ignore errors during uninstall.
     try {
+      comment_installer::uninstall();
       auth_installer::uninstall();
       user_installer::uninstall();
       core_installer::uninstall();
@@ -70,6 +71,7 @@ class Test_Controller extends Controller {
     core_installer::install();
     user_installer::install();
     auth_installer::install();
+    comment_installer::install();
 
     print new Unit_Test();
   }
