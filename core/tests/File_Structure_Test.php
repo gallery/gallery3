@@ -45,6 +45,18 @@ class File_Structure_Test extends Unit_Test_Case {
     }
   }
 
+  public function no_windows_line_endings_test() {
+    $dir = new GalleryCodeFilterIterator(
+      new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
+    foreach ($dir as $file) {
+      if (preg_match("/\.(php|css|html|js)$/", $file)) {
+        foreach (file($file) as $line) {
+          $this->assert_true(substr($line, -2) != "\r\n", "$file has windows style line endings");
+        }
+      }
+    }
+  }
+
   public function code_files_start_with_gallery_preamble_test() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
