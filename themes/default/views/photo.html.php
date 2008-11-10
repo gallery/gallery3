@@ -6,8 +6,8 @@
   <img id="gPhotoID-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>"
        width="<?= $item->resize_width ?>"
        height="<?= $item->resize_height ?>" />
-  <h1><?= $item->title ?></h1>
-  <div><?= $item->description ?></div>
+  <h1><?= $item->title_edit ?></h1>
+  <div><?= $item->description_edit ?></div>
   
   <div id="gComments">
     <h2>Comments</h2>
