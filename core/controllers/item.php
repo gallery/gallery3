@@ -30,7 +30,7 @@ class Item_Controller extends Controller {
      * We're expecting to run in an environment that only supports GET/POST, so expect to tunnel
      * PUT/DELETE through POST.
      */
-    if (request::method() == 'get') {
+    if (request::method() == "get") {
       $this->get($item);
 
       if (Session::instance()->get("use_profiler", false)) {
@@ -40,11 +40,11 @@ class Item_Controller extends Controller {
       return;
     }
 
-    switch ($this->input->post('__action')) {
-    case 'put':
+    switch ($this->input->post("__action")) {
+    case "put":
       return $this->put($item);
 
-    case 'delete':
+    case "delete":
       return $this->delete($item);
 
     default:
@@ -64,17 +64,16 @@ class Item_Controller extends Controller {
     // 1) Add security checks
     // 2) Support owner_ids properly
 
-    switch ($this->input->post('type')) {
-    case 'album':
+    switch ($this->input->post("type")) {
+    case "album":
       $new_item = album::create(
-        $item->id, $this->input->post('name'), $this->input->post('title'),
-        $this->input->post('description'));
+        $item->id, $_POST["name"], $_POST["title"], $_POST["description"]);
       break;
 
-    case 'photo':
+    case "photo":
       $new_item = photo::create(
-        $item->id, $_FILES['file']['tmp_name'], $_FILES['file']['name'],
-        $this->input->post('title'), $this->input->post('description'));
+        $item->id, $_FILES["file"]["tmp_name"], $_FILES["file"]["name"],
+        $_POST["title"], $_POST["description"]);
       break;
     }
 
@@ -104,7 +103,8 @@ class Item_Controller extends Controller {
     // include a data format, etc.
 
     // These fields are safe to change
-    foreach ($this->input->post() as $key => $value) {
+    $post = $this->input->post();
+    foreach ($post as $key => $value) {
       switch ($key) {
       case "title":
       case "description":
@@ -118,6 +118,8 @@ class Item_Controller extends Controller {
     // parent_id, owner_id
 
     $item->save();
-    print $item->{$this->input->post('__return')};
+    if (array_key_exists("__return", $post)) {
+      print $item->{$post["__return"]};
+    }
   }
 }
