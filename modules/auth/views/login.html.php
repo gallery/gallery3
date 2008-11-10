@@ -1,3 +1,4 @@
+<? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gLoginMenu">
   <? if ($logged_in == false): ?>
     <a href="<?=url::site("user/register") ?>"><?= _("Register") ?></a> |
@@ -8,7 +9,7 @@
     <!-- @todo integrate this into the theme. -->
     <link rel="stylesheet" type="text/css" href="<?=url::base() . "modules/auth/css/login.css" ?>" media="screen,print,projection" />
     <div id="gLoginPopup">
-      <a id="gLoginPopupClose">x</a>  
+      <a id="gLoginPopupClose">x</a>
       <form id="gLogin" style="display:none;">
         <label for="username">Username</label>
         <input type="text" class="text" id="username" />
