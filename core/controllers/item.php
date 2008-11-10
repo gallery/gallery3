@@ -67,13 +67,19 @@ class Item_Controller extends Controller {
     switch ($this->input->post("type")) {
     case "album":
       $new_item = album::create(
-        $item->id, $_POST["name"], $_POST["title"], $_POST["description"]);
+        $item->id,
+        $this->input->post("name"),
+        $this->input->post("title", $this->input->post("name")),
+        $this->input->post("description"));
       break;
 
     case "photo":
       $new_item = photo::create(
-        $item->id, $_FILES["file"]["tmp_name"], $_FILES["file"]["name"],
-        $_POST["title"], $_POST["description"]);
+        $item->id,
+        $_FILES["file"]["tmp_name"],
+        $_FILES["file"]["name"],
+        $this->input->post("title", $this->input->post("name")),
+        $this->input->post("description"));
       break;
     }
 

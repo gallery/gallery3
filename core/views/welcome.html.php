@@ -155,8 +155,18 @@
             </p>
             <form method="post" action="<?= url::site("album/1") ?>" enctype="multipart/form-data">
               <p>
-                Upload: <input name="file" type="file"/>
+                Upload:
+                <input name="file" type="file"/>
                 <input type="hidden" name="type" value="photo"/>
+                <input type="hidden" name="__action" value="put"/>
+                <input type="submit"/>
+              </p>
+            </form>
+            <form method="post" action="<?= url::site("album/1") ?>">
+              <p>
+                Create Album:
+                <input type="text" name="name"/>
+                <input type="hidden" name="type" value="album"/>
                 <input type="hidden" name="__action" value="put"/>
                 <input type="submit"/>
               </p>
