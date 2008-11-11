@@ -17,26 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Album_Controller extends Item_Controller {
+class User_Controller extends Controller {
+  public function login() {
+    
+  }
 
-  public function _get($item) {
-    // @todo: these need to be pulled from the database
-    $theme_name = "default";
-    $page_size = 9;
+  public function logout() {
+    
+  }
 
-    $template = new View("page.html");
-
-    $page = $this->input->get("page", "1");
-    $theme = new Theme($theme_name, $template);
-
-    $template->set_global('page_size', $page_size);
-    $template->set_global('item', $item);
-    $template->set_global('children', $item->children($page_size, ($page-1) * $page_size));
-    $template->set_global('parents', $item->parents());
-    $template->set_global('theme', $theme);
-    $template->set_global('user', Session::instance()->get('user', null));
-    $template->content = new View("album.html");
-
-    print $template->render();
+  public function register() {
+    
   }
 }
