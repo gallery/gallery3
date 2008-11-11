@@ -34,28 +34,28 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 define('EXT', '.php');
-define('DOCROOT', getcwd().DIRECTORY_SEPARATOR);
+define('DOCROOT', strtr(getcwd() . '/', DIRECTORY_SEPARATOR, '/'));
 
 // If the front controller is a symlink, change to the real docroot
 is_link(basename(__FILE__)) and chdir(dirname(realpath(__FILE__)));
 
 // Define application and system paths
-define('APPPATH', realpath('core') . "/");
-define('MODPATH', realpath('modules') . "/");
-define('THEMEPATH', realpath('themes') . "/");
-define('SYSPATH', realpath('kohana') . "/");
+define('APPPATH', strtr(realpath('core') . '/', DIRECTORY_SEPARATOR, '/'));
+define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
+define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
+define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 
 // Force a test run if we're in command line mode.
 if (PHP_SAPI == 'cli') {
   $_SERVER['argv'] = array($_SERVER['argv'][0], 'test');
   define('TEST_MODE', 1);
   @system('mkdir -p test/var/logs');
-  define('VARPATH', realpath('test/var') . '/');
+  define('VARPATH', strtr(realpath('test/var') . '/', DIRECTORY_SEPARATOR, '/'));
 } else {
   if (file_exists('var')) {
-    define('VARPATH', realpath('var') . '/');
+    define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
   } else {
-    define('VARPATH', getcwd() . "/var/");
+    define('VARPATH', strtr(getcwd() . '/var/', DIRECTORY_SEPARATOR, '/'));
   }
 }
 
