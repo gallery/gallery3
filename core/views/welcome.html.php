@@ -169,14 +169,14 @@
             <p>
               add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
-              <?= html::anchor("welcome/add/$count", "$count") ?>
+              <?= html::anchor("welcome/add_albums_and_photos/$count", "$count") ?>
               <? endforeach ?>
               ] photos and albums
             </p>
             <p>
               add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
-              <?= html::anchor("comment/add/$count", "$count") ?>
+              <?= html::anchor("welcome/add_comments/$count", "$count") ?>
               <? endforeach ?>
               ] comments
             </p>
