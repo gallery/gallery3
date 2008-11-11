@@ -25,4 +25,19 @@
  *
  */
 class user {
+  /**
+   * Function to determine if the user has logged in.
+   * @param $user(optional) Defaults to null, if specified will compare against the user in the 
+   *                        session.
+   * @returns boolean   true if logged in
+   */
+  public static function is_logged_in($user=null) {
+    $session_user = Session::instance()->get("user", null);
+    $logged_in = false;
+    if (!empty($session_user)) {
+      $logged_in = !empty($user) && $session_user === $user;
+    }
+
+    return $logged_in;
+  }
 }

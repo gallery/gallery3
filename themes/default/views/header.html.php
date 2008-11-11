@@ -3,11 +3,12 @@
 <h1><?= $item->title_edit ?></h1>
 
 <div id="gLoginMenu">
-  <? if (empty($user)): ?>
+  <? if (!user::is_logged_in($user)): ?>
     <a href="<?= url::site("user/register")?>"><?= _("Register") ?></a> | 
-    <a href="<?= url::site("user/login")?>"><?= _("Login") ?></a>
+    <a href="<?= url::site("login")?>"><?= _("Login") ?></a>
   <? else: ?>
-    <a href="<?= url::site("user/logout")?>"><?= _("Logout") ?></a>
+    <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a> | 
+    <a href="<?= url::site("logout")?>"><?= _("Logout") ?></a>
   <? endif; ?>
 </div>
 <ul id="gSiteMenu">
