@@ -1,3 +1,4 @@
+
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
@@ -23,7 +24,7 @@ class Tags_Core {
     $block = new Block();
     $block->id = "gTags";
     $block->title = _("Tags");
-    $block->content = new View("tag_cloud.html");
+    $block->content = new View("tags_block.html");
     return $block;
   }
 }
