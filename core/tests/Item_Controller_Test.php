@@ -24,7 +24,7 @@ class Item_Controller_Test extends Unit_Test_Case {
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
 
-    $controller->post($album);
+    $controller->_post($album);
     $this->assert_equal("new title", $album->title);
     $this->assert_equal("new description", $album->description);
   }
@@ -36,7 +36,7 @@ class Item_Controller_Test extends Unit_Test_Case {
     $_POST["description"] = "item_description";
     $_POST["__return"] = "item_description";
 
-    $tihs->assert_equal("item_description", $controller->post($album));
+    $tihs->assert_equal("item_description", $controller->_post($album));
     $this->assert_equal("item_title", $album->title);
     $this->assert_equal("item_description", $album->description);
   }
