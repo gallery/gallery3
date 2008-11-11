@@ -11,8 +11,8 @@
   <? endif; ?>
 </div>
 <ul id="gSiteMenu">
-  <li><a href="index.php"><?= _("HOME") ?></a></li>
-  <li><a class="active" href="index.php/album/1"><?= _("BROWSE") ?></a></li>
+  <li><a href="<?= url::base() ?>"><?= _("HOME") ?></a></li>
+  <li><a class="active" href="<?= url::site("album/1") ?>"><?= _("BROWSE") ?></a></li>
   <li><a href="#"><?= _("UPLOAD") ?></a></li>
   <li><a href="#"><?= _("MY GALLERY") ?></a></li>
   <li><a href="#"><?= _("ADMIN") ?></a></li>
