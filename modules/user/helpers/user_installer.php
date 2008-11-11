@@ -69,7 +69,7 @@ class user_installer {
       $user->name = "admin";
       $user->display_name = "Gallery Administrator";
       // @todo create a helper function to encrypt the password.
-      $user->password = "admin";
+      $user->password = user_password::hash_password("admin");
       $user->save();
       $id = $user->id;
       $db->query("UPDATE `items` SET `owner_id` = $id WHERE `owner_id` IS NULL");

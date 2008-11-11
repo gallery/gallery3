@@ -27,6 +27,7 @@ class User_Installer_Test extends Unit_Test_Case {
     $user = ORM::factory("user", 1);
     $this->assert_equal("Gallery Administrator", $user->display_name);
     $this->assert_equal("admin", $user->name);
+    $this->assert_true(user_password::is_correct_password($user, "admin"));
 
     $this->assert_equal(
       array("administrator", "registered"),
