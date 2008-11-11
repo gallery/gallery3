@@ -24,19 +24,19 @@
  * class Comment_Controller extends REST_Controller {
  *   protected $resource_type = "comment";  // this tells REST which model to use
  *
- *   public function get(ORM $comment) {
+ *   public function _get(ORM $comment) {
  *     // Handle GET request
  *   }
  *
- *   public function put(ORM $comment) {
+ *   public function _put(ORM $comment) {
  *     // Handle PUT request
  *   }
  *
- *   public function post(ORM $comment) {
+ *   public function _post(ORM $comment) {
  *     // Handle POST request
  *   }
  *
- *   public function delete(ORM $comment) {
+ *   public function _delete(ORM $comment) {
  *     // Handle DELETE request
  *   }
  * }
@@ -65,7 +65,7 @@ abstract class REST_Controller extends Controller {
      * PUT/DELETE through POST.
      */
     if (request::method() == "get") {
-      $this->get($resource);
+      $this->_get($resource);
 
       if (Session::instance()->get("use_profiler", false)) {
         $profiler = new Profiler();
@@ -76,13 +76,13 @@ abstract class REST_Controller extends Controller {
 
     switch ($this->input->post("__action")) {
     case "put":
-      return $this->put($resource);
+      return $this->_put($resource);
 
     case "delete":
-      return $this->delete($resource);
+      return $this->_delete($resource);
 
     default:
-      return $this->post($resource);
+      return $this->_post($resource);
     }
   }
 
@@ -90,23 +90,23 @@ abstract class REST_Controller extends Controller {
    * Perform a GET request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function get($resource);
+  abstract public function _get($resource);
 
   /**
    * Perform a PUT request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function put($resource);
+  abstract public function _put($resource);
 
   /**
    * Perform a POST request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function post($resource);
+  abstract public function _post($resource);
 
   /**
    * Perform a DELETE request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function delete($resource);
+  abstract public function _delete($resource);
 }

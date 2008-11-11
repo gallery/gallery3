@@ -19,7 +19,7 @@
  */
 class Photo_Controller extends Item_Controller {
 
-  public function get($item) {
+  public function _get($item) {
     $template = new View("page.html");
 
     // @todo: this needs to be data-driven

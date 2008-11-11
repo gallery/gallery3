@@ -20,14 +20,14 @@
 class Item_Controller extends REST_Controller {
   protected $resource_type = "item";
 
-  public function get($item) {
+  public function _get($item) {
     // Redirect to the more specific resource type, since it will render
     // differently.  We could also just delegate here, but it feels more appropriate
     // to have a single canonical resource mapping.
     return url::redirect("{$item->type}/$item->id");
   }
 
-  public function put($item) {
+  public function _put($item) {
     // @todo Productionize this code
     // 1) Add security checks
     // 2) Support owner_ids properly
@@ -70,7 +70,7 @@ class Item_Controller extends REST_Controller {
     }
   }
 
-  public function delete($item) {
+  public function _delete($item) {
     // @todo Production this code
     // 1) Add security checks
     $parent = $item->parent();
@@ -80,7 +80,7 @@ class Item_Controller extends REST_Controller {
     url::redirect("{$parent->type}/{$parent->id}");
   }
 
-  public function post($item) {
+  public function _post($item) {
     // @todo Productionize this
     // 1) Figure out how to do the right validation here.  Validate the form input and apply it to
     //    the model as appropriate.

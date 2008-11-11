@@ -19,7 +19,7 @@
  */
 class Album_Controller extends Item_Controller {
 
-  public function get($item) {
+  public function _get($item) {
     // @todo: these need to be pulled from the database
     $theme_name = "default";
     $page_size = 9;
