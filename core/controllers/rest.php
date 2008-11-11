@@ -17,6 +17,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+/**
+ * This abstract controller makes it easy to create a RESTful controller.  To use it, create a
+ * subclass which defines the resource type and implements get/post/put/delete methods, like this:
+ *
+ * class Comment_Controller extends REST_Controller {
+ *   protected $resource_type = "comment";  // this tells REST which model to use
+ *
+ *   public function get(ORM $comment) {
+ *     // Handle GET request
+ *   }
+ *
+ *   public function put(ORM $comment) {
+ *     // Handle PUT request
+ *   }
+ *
+ *   public function post(ORM $comment) {
+ *     // Handle POST request
+ *   }
+ *
+ *   public function delete(ORM $comment) {
+ *     // Handle DELETE request
+ *   }
+ * }
+ *
+ * A request to http://example.com/gallery3/comment/3 will result in a call to
+ * REST_Controller::dispatch(3) which will load up the comment associated with id 3.  If there's
+ * no such comment, it returns a 404.  Otherwise, it will then delegate to
+ * Comment_Controller::get() with the ORM instance as an argument.
+ */
 abstract class REST_Controller extends Controller {
   protected $resource_type = null;
 
