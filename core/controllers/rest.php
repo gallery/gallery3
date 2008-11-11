@@ -74,7 +74,7 @@ abstract class REST_Controller extends Controller {
       return;
     }
 
-    switch ($this->input->post("__action")) {
+    switch ($this->input->post("_method")) {
     case "put":
       return $this->_put($resource);
 

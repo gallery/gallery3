@@ -186,7 +186,7 @@
                 <input type="submit" value="upload"/>
                 <input id="photo_upload" name="file[]" type="file"/>
                 <input type="hidden" name="type" value="photo"/>
-                <input type="hidden" name="__action" value="put"/>
+                <input type="hidden" name="_method" value="put"/>
               </form>
             </fieldset>
             <fieldset>
@@ -195,7 +195,7 @@
                 <input type="submit" value="create"/>
                 <input type="text" name="name"/>
                 <input type="hidden" name="type" value="album"/>
-                <input type="hidden" name="__action" value="put"/>
+                <input type="hidden" name="_method" value="put"/>
               </form>
             </fieldset>
           </div>
