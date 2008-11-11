@@ -47,4 +47,25 @@ class Comment_Core {
 
     return $comment->save();
   }
-}
+
+  static function show_comments($item_id) {
+    $v = new View('show_comments.html');
+    $v->comment_list = Comment::show_comment_list($item_id);
+    $v->comment_form = Comment::show_comment_form($item_id);
+    $v->render(true);
+  }
+
+  static function show_comment_list($item_id) {
+    $v = new View('comment_list.html');
+    $v->item_id = $item_id;
+    $v->comments = ORM::factory('comment')->where('item_id', $item_id)
+      ->orderby('datetime', 'desc')
+      ->find_all()->as_array();
+    return $v;
+  }
+
+  static function show_comment_form($item_id) {
+    $v = new View('comment_form.html');
+    $v->item_id = $item_id;
+    return $v;
+  }}
