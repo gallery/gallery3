@@ -3,19 +3,19 @@
   <fieldset>
     <legend>Add comment</legend>
     <div class="row">
-      <label for="gCommentAuthor">Your Name</label>
+      <label for="gCommentAuthor"><?= _("Your Name") ?></label>
       <input type="text" name="author" id="gCommentAuthor" class="text" />
     </div>
     <div class="row">
-      <label for="gCommentEmail">Your Email (not displayed)</label>
+      <label for="gCommentEmail"><?= _("Your Email (not displayed)") ?></label>
       <input type="text" name="email" id="gCommentEmail" class="text" />
     </div>
     <div class="row">
-      <label for="gCommentText">Comment</label>
+      <label for="gCommentText"><?= _("Comment") ?></label>
       <textarea name="text" id="gCommentText"></textarea>
     </div>
     <input type="hidden" id="gItemId" name="item_id" value="<?= $item_id ?>" />
-    <input type="submit" id="gCommentSubmit" value="Add" />
+    <input type="submit" id="gCommentSubmit" value="<?= _("Add") ?>" />
   </fieldset>
 </form>
 

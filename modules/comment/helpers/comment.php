@@ -33,7 +33,7 @@ class Comment_Core {
    * @param integer $datetime optional comment date and time in Unix format
    * @return Comment_Model
    */
-  static function create($author, $email, $text, $item_id, $datetime = NULL) {
+  static function create($author, $email, $text, $item_id, $datetime=NULL) {
     if (is_null($datetime)) {
       $datetime = time();
     }
@@ -68,4 +68,6 @@ class Comment_Core {
     $v = new View('comment_form.html');
     $v->item_id = $item_id;
     return $v;
-  }}
+  }
+}
+
