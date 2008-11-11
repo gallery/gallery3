@@ -17,40 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Controller extends Controller {
-
-  public function dispatch($id) {
-    // @todo this needs security checks
-    $item = ORM::factory("item")->where("id", $id)->find();
-    if (empty($item->id)) {
-      return Kohana::show_404();
-    }
-
-    /**
-     * We're expecting to run in an environment that only supports GET/POST, so expect to tunnel
-     * PUT/DELETE through POST.
-     */
-    if (request::method() == "get") {
-      $this->get($item);
-
-      if (Session::instance()->get("use_profiler", false)) {
-        $profiler = new Profiler();
-        print $profiler->render();
-      }
-      return;
-    }
-
-    switch ($this->input->post("__action")) {
-    case "put":
-      return $this->put($item);
-
-    case "delete":
-      return $this->delete($item);
-
-    default:
-      return $this->post($item);
-    }
-  }
+class Item_Controller extends REST_Controller {
+  protected $resource_type = "item";
 
   public function get($item) {
     // Redirect to the more specific resource type, since it will render

@@ -18,8 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Album_Controller extends Item_Controller {
+
   public function get($item) {
-    /** @todo: these need to be pulled from the database */
+    // @todo: these need to be pulled from the database
     $theme_name = "default";
     $page_size = 9;
 

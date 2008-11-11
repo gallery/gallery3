@@ -18,10 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Photo_Controller extends Item_Controller {
+
   public function get($item) {
     $template = new View("page.html");
 
-    /** @todo: this needs to be data-driven */
+    // @todo: this needs to be data-driven
     $theme = new Theme("default", $template);
 
     $template->set_global('item', $item);
