@@ -116,14 +116,15 @@ class GalleryCodeFilterIterator extends FilterIterator {
   public function accept() {
     // Skip anything that we didn't write
     $path_name = $this->getInnerIterator()->getPathName();
-    return !(strstr($path_name, ".svn") ||
+    return !(strpos($path_name, ".svn") ||
              substr($path_name, -1, 1) == "~" ||
-             strstr($path_name, SYSPATH) !== false ||
-             strstr($path_name, MODPATH . 'forge') !== false ||
-             strstr($path_name, MODPATH . 'unit_test') !== false ||
-             strstr($path_name, MODPATH . 'mptt') !== false ||
-             strstr($path_name, MODPATH . 'kodoc') !== false ||
-             strstr($path_name, DOCROOT . 'var') !== false ||
-             strstr($path_name, DOCROOT . 'test') !== false);
+             strpos($path_name, SYSPATH) !== false ||
+             strpos($path_name, MODPATH . 'forge') !== false ||
+             strpos($path_name, MODPATH . 'unit_test') !== false ||
+             strpos($path_name, MODPATH . 'mptt') !== false ||
+             strpos($path_name, MODPATH . 'kodoc') !== false ||
+             strpos($path_name, MODPATH . 'user/libraries/PasswordHash') !== false ||
+             strpos($path_name, DOCROOT . 'var') !== false ||
+             strpos($path_name, DOCROOT . 'test') !== false);
   }
 }
