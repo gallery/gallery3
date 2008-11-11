@@ -17,15 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class User_Model extends ORM {
-  protected $has_and_belongs_to_many = array('groups');
 
-  public function __set($column, $value) {
-    switch ($column) {
-      case "password":
-        $value = user_password::hash_password($value);
-        break;
-    }
-    parent::__set($column, $value);
-  }
+/**
+ * This helper provides a common around the user management functions. 
+ * 
+ * @author Tim Almdal <public@timalmdal.com>
+ *
+ */
+class user {
 }

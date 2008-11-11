@@ -68,10 +68,10 @@ class user_installer {
       $user = ORM::factory("user")->where("display_name", "admin")->find();
       $user->name = "admin";
       $user->display_name = "Gallery Administrator";
-      // @todo create a helper function to encrypt the password.
-      $user->password = user_password::hash_password("admin");
+      $user->password = "admin";
       $user->save();
       $id = $user->id;
+
       $db->query("UPDATE `items` SET `owner_id` = $id WHERE `owner_id` IS NULL");
 
       foreach (array("administrator", "registered") as $group_name) {
