@@ -37,7 +37,7 @@
   <li><a href="#" class="m size0">writing</a></li>
 </ul>
 
-<form id="gAddTag" class="gBlockContent">
+<form id="gAddTag">
   <input type="text" class="text" value="add new tags ..." id="newtags" />
   <input type="submit" class="submit" value="add" />
   <label for="newtags" class="understate">(separated by commas)</label>
