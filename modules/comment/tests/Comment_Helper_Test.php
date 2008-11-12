@@ -39,4 +39,20 @@ class Comment_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($rand, $comment->item_id);
     $this->assert_true($comment->datetime > time() - 10 && $comment->datetime <= time());
   }
+
+  public function format_elapsed_time_test() {
+    /* This test could be improved by using random numbers and specifically testing corner cases. */
+    $now = time();
+
+    $yesterday = $now - comment::SECONDS_IN_A_DAY;
+    $daysago = $now - 6 * comment::SECONDS_IN_A_DAY;
+    $monthsago = $now - 2 * comment::SECONDS_IN_A_MONTH;
+    $yearsago = $now - 5 * comment::SECONDS_IN_A_YEAR;
+
+    $this->assert_equal('said today', comment::format_elapsed_time($now));
+    $this->assert_equal('said yesterday', comment::format_elapsed_time($yesterday));
+    $this->assert_equal('said 6 days ago', comment::format_elapsed_time($daysago));
+    $this->assert_equal('said 2 months ago', comment::format_elapsed_time($monthsago));
+    $this->assert_equal('said 5 years ago', comment::format_elapsed_time($yearsago));
+  }
 }

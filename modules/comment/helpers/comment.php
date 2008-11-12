@@ -24,6 +24,12 @@
  * Note: by design, this class does not do any permission checking.
  */
 class Comment_Core {
+  const SECONDS_IN_A_MINUTE = 60;
+  const SECONDS_IN_AN_HOUR = 3600;
+  const SECONDS_IN_A_DAY = 86400;
+  const SECONDS_IN_A_MONTH = 2629744;
+  const SECONDS_IN_A_YEAR = 31556926;
+
   /**
    * Create a new photo.
    * @param string  $author author's name
@@ -76,45 +82,37 @@ class Comment_Core {
    *
    * @todo Take into account the viewer's time zone.
    * @todo Properly pluralize strings.
-   * @todo Write test once we settle on the final forms of the messages.
    *
    * @param integer $timestamp Unix format timestamp to compare with
    * @return string user-friendly string containing the amount of time passed
    */
   static function format_elapsed_time($timestamp) {
     $now = time();
-    $date_info_comment = getdate($timestamp);
+    $time_difference = $now - $timestamp;
     $date_info_now = getdate($now);
 
-    /* Check if the comment was posted today or yesterday. */
-    if ($date_info_comment['year'] == $date_info_now['year']
-        && $date_info_comment['mon'] == $date_info_now['mon']) {
-      if ($date_info_comment['mday'] == $date_info_now['mday']) {
-        $message = _('said today');
-      } else if ($date_info_comment['mday'] == $date_info_now['mday'] - 1) {
-        $message = _('said yesterday');
-      }
-      return $message;
-    }
+    /* Calculate the number of days, months and years elapsed since the specified timestamp. */
+    $elapsed_days = round($time_difference / comment::SECONDS_IN_A_DAY);
+    $elapsed_months = round($time_difference / comment::SECONDS_IN_A_MONTH);
+    $elapsed_years = round($time_difference / comment::SECONDS_IN_A_YEAR);
+    $seconds_since_midnight = $date_info_now['hours'] * comment::SECONDS_IN_AN_HOUR
+      + $date_info_now['minutes'] * comment::SECONDS_IN_A_MINUTE + $date_info_now['seconds'];
 
-    /* Calculate the number of days, months or years elapsed since the specified timestamp. */
-    $seconds_in_a_day = 86400;
-    $seconds_in_a_month = 2629744;
-    $seconds_in_a_year = 31556926;
-    $time_difference = $now - $timestamp;
-
-    $elapsed_days = round($time_difference / $seconds_in_a_day);
-    $elapsed_months = round($time_difference / $seconds_in_a_month);
-    $elapsed_years = round($time_difference / $seconds_in_a_year);
-
+    /* Construct message depending on how much time passed. */
     if ($elapsed_years > 0) {
       $message = sprintf(_('said %d years ago'), $elapsed_years);
     } else if ($elapsed_months > 0) {
       $message = sprintf(_('said %d months ago'), $elapsed_months);
     } else {
-      $message = sprintf(_('said %d days ago'), $elapsed_days);
+      if ($time_difference < $seconds_since_midnight) {
+        $message = _('said today');
+      } else if ($time_difference < $seconds_since_midnight + comment::SECONDS_IN_A_DAY) {
+        $message = _('said yesterday');
+      } else {
+        $message = sprintf(_('said %d days ago'), $elapsed_days);
+      }
     }
     return $message;
-  }
+   }
 }
 

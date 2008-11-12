@@ -189,7 +189,6 @@ class Welcome_Controller extends Template_Controller {
       ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic
       tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut
       perferendis doloribus asperiores repellat.";
-    $seconds_in_a_year = 31556926;
 
     if (empty($photos)) {
       url::redirect("welcome");
@@ -199,7 +198,7 @@ class Welcome_Controller extends Template_Controller {
       $photo = $photos[array_rand($photos)];
       comment::create("John Doe", "johndoe@example.com",
         substr($sample_text, 0, rand(30, strlen($sample_text))), $photo->id,
-        time() - rand(0, 2 * $seconds_in_a_year));
+        time() - rand(0, 2 * comment::SECONDS_IN_A_YEAR));
     }
 
     url::redirect("welcome");
