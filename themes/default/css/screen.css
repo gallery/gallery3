@@ -372,6 +372,10 @@ table.gMetadata td.toggle {
   padding: 0;
 }
 
+ #gLoginMenu fieldset legend{
+  display: none;
+}
+
 #gLoginForm {
   margin-top: 5px;
 }

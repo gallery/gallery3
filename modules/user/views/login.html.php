@@ -1,5 +1,6 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <fieldset id="gLogin">
+  <legend>Login</legend>
   <ul>
     <li>
       <label for="username">Username</label>
