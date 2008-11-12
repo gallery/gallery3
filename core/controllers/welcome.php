@@ -151,7 +151,7 @@ class Welcome_Controller extends Template_Controller {
       $parent = $parents[array_rand($parents)];
       if (!rand(0, 10)) {
         $parents[] = album::create(
-          $parent->id, "rnd_" . rand(), "Rnd $i", "rnd $i", "random album $i", $user_id)
+          $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $user_id)
           ->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
           ->save();
       } else {

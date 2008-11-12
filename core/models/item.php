@@ -19,8 +19,7 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-
-  private $owner = null;
+  protected $has_one = array('owner' => 'user');
 
   /**
    * Is this item an album?
@@ -169,23 +168,10 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * @see ORM::reload
-   */
-  function reload() {
-    $this->owner = null;
-    return parent::reload();
-  }
-
-  /**
    * @see ORM::__get()
    */
   public function __get($column) {
-    if ($column == "owner") {
-      if (!isset($this->owner)) {
-        $this->owner = ORM::factory("user", $this->owner_id);
-      }
-      return $this->owner;
-    } else if (substr($column, -5) == "_edit") {
+    if (substr($column, -5) == "_edit") {
       $real_column = substr($column, 0, strlen($column) - 5);
       return "<span class=\"gInPlaceEdit gEditField-{$this->id}-{$real_column}\">" .
         "{$this->$real_column}</span>";
