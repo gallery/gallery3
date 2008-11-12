@@ -4,7 +4,7 @@
   <li id="gComment-<?= $index; ?>" class="gComment <?= $index % 2 ? 'odd' : 'even' ?>">
     <p>
       <a href="#" class="gAuthor"><?= $comment->author ?></a>
-      said <?= round((time() - $comment->datetime)/60) ?> minutes ago
+      <?= comment::format_elapsed_time($comment->datetime) ?>,
       <span class="understate"><?= strftime('%c', $comment->datetime) ?></span>
     </p>
     <div>
