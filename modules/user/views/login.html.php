@@ -1,3 +1,4 @@
+<? defined("SYSPATH") or die("No direct script access."); ?>
 <form id="gLogin">
   <label for="username">Username</label>
   <input type="text" class="text" id="username" />
