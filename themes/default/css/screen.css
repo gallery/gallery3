@@ -272,7 +272,7 @@ table.gMetadata td.toggle {
 
 }
 .gError {
-
+  color: red;
 }
 .gWarning {
 
@@ -392,8 +392,8 @@ table.gMetadata td.toggle {
   list-style-type: none;
 }
 
-#gLoginMenu li input.text,
-#gLoginMenu li input.password {
+#gLoginMenu li input#gUsername,
+#gLoginMenu li input#gPassword {
   padding: 0 0 .1em 0;
   width: 80px;
 }

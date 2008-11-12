@@ -19,24 +19,41 @@
  */
 class Login_Controller extends Controller {
   public function index() {
-    $this->template->title = "User Login";
+    Kohana::log("debug", "Login_Controller/index");
+    $form = new Forge();
+    $form->input("username")->rules("required|length[4,32]");
+    $form->password("password")->rules("required|length[5,40]");
+    $form->submit("Login");
+    print $form->render("login.html", true);
+  }
 
-    $form = new Login_Form();
+  public function process() {
+    Kohana::log("debug", "Login_Controller/process");
 
+    Kohana::log("debug", print_r($_POST, true));
+    $form = new Forge("login.html", true);
+    $form->input("username")->rules("required|length[4,32]");
+    $form->password("password")->rules("required|length[5,40]");
+    $form->submit("Login");
+
+    $response = array();
     if ($form->validate()) {
       // Load the user
       $user = ORM::factory("user")->where("name", $form->username->value)->find();
       if (!$user->loaded) {
-        $form->error_message = "Invalid username or password";
+        $response["error_message"] = "Invalid username or password";
       } else {
         if (user::is_correct_password($user,$form->password->value)) {
           user::login($user);
-          url::redirect("user/success.html");
+          $response["error_message"] = "";
         } else {
-          $form->error_message = "Invalid username or password";
+          $response["error_message"] = "Invalid username or password";
         }
       }
+    } else {
+      $response["error_message"] = "Invalid username or password";
     }
-    $form->render();
+
+    print json_encode($response);
   }
 }

@@ -1,24 +1,23 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-<fieldset id="gLogin">
-  <legend>Login</legend>
-  <ul>
-    <li>
-      <label for="username">Username</label>
-      <input type="text" class="text" id="username" />
-    </li>
-    <li>
-      <label for="password">Password</label>
-      <input type="password" class="password" id="password" />
-    </li>
-    <li>
-      <input type="submit" class="submit" value="<?= _("Login")?>" />
-    </li>
-    <? if (!empty($error_message)): ?>
+<form id="gLogin" action="<?= url::site("login/process") ?>">
+  <fieldset>
+    <legend>Login</legend>
+    <ul>
       <li>
-        <p class="error" id="login_message">
-          <?= $error_message ?>
-       </p>
+        <label for="username">Username</label>
+        <input type="text" id="gUsername" />
       </li>
-    <? endif;?>
-  </ul>
-</fieldset>
+      <li>
+        <label for="password">Password</label>
+        <input type="password" id="gPassword" />
+      </li>
+      <li>
+        <input type="submit" class="submit" value="<?= _("Login")?>" />
+      </li>
+    </ul>
+  </fieldset>
+  <fieldset>
+    <div class="gStatus gError gDisplayNone" id="gLoginMessage">
+    </div>
+  </fieldset>
+</form>

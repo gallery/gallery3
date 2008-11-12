@@ -16,8 +16,7 @@
       <?= _("Login") ?> | <a href="javascript:close_login()">X</a>
     </span>
   <? endif; ?>
-  <span id="gLoginForm"  class="gDisplayNone" >
-    <?= Login_Form::factory() ?>
+  <span id="gLoginForm" class="gDisplayNone" formSrc="<?= url::site("login") ?>" >
   </span>
 </div>
 <ul id="gSiteMenu">
