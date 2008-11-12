@@ -597,6 +597,9 @@ table.gMetadata td.toggle {
   color: #c0c0c0;
 }
 
+.gDisplayNone {
+  display: none;
+}
 /**
  ** *******************************************************************
  * 8) Browser hacks
