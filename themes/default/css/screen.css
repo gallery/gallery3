@@ -365,18 +365,35 @@ table.gMetadata td.toggle {
   padding: 5px;
   text-align: right;
 }
-#gLoginMenu form {
+
+#gLoginMenu fieldset {
+  border-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#gLoginForm {
   margin-top: 5px;
 }
 #gLoginMenu label {
   font-size: .8em;
 }
-#gLoginMenu input.text,
-#gLoginMenu input.password {
+
+#gLoginMenu ul {
+  margin: 0;
+}
+
+#gLoginMenu li {
+  float: left;
+  list-style-type: none;
+}
+
+#gLoginMenu li input.text,
+#gLoginMenu li input.password {
   padding: 0 0 .1em 0;
   width: 80px;
 }
-#gLoginMenu input.submit {
+#gLoginMenu li input.submit {
   font-size: .9em;
   font-weight: bold;
 }
