@@ -133,6 +133,7 @@
           <li><a href="javascript:show('config')">Configuration</a></li>
           <li><a href="javascript:show('actions')">Actions</a></li>
           <li><a href="javascript:show('info')">Info</a></li>
+          <li><a href="javascript:show('benchmarks')">Benchmarks</a></li>
           <li><a href="javascript:show('docs')">Docs</a></li>
         </ul>
 
@@ -219,6 +220,17 @@
                 <? else: ?>
                 <?= html::anchor("welcome/profiler?use_profiler=1", "on") ?> <b>off</b>
                 <? endif ?>
+              </li>
+            </ul>
+          </div>
+
+          <div id="benchmarks" class="activity">
+            <ul>
+              <li>
+                <?= html::anchor("welcome/i18n/build", "Make Translation") ?>
+              </li>
+              <li>
+                <?= html::anchor("welcome/i18n/run", "Run Translation") ?>
               </li>
             </ul>
           </div>

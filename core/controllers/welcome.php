@@ -96,6 +96,47 @@ class Welcome_Controller extends Template_Controller {
     }
   }
 
+  function i18n($action) {
+    $translation_file = VARPATH . "translation.php";
+
+    switch($action) {
+    case "build":
+      $t = array();
+      for ($i = 0; $i < 500; $i++) {
+        $t["this is message $i of many"] = "localized version of $i";
+      }
+
+      $fp = fopen($translation_file, "wb");
+      fwrite($fp, "<? \$t = ");
+      fwrite($fp, var_export($t, 1));
+      fwrite($fp, ";");
+      fclose($fp);
+      url::redirect("welcome");
+      break;
+
+    case "run":
+      Benchmark::start("load_translation");
+      include $translation_file;
+      Benchmark::stop("load_translation");
+
+      $count = 500;
+      Benchmark::start("loop_overhead_$count");
+      for ($i = 0; $i < $count; $i++) {
+      }
+      Benchmark::stop("loop_overhead_$count");
+
+      $count = 500;
+      Benchmark::start("translations_$count");
+      for ($i = 0; $i < $count; $i++) {
+        $value = $t["this is message $i of many"];
+      }
+      Benchmark::stop("loop_overhead_$count");
+
+      $profiler = new Profiler();
+      $this->auto_render = false;
+    }
+  }
+
   function add_albums_and_photos($count) {
     srand(time());
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
