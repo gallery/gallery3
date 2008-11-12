@@ -3,7 +3,10 @@
 <h1><?= $item->title_edit ?></h1>
 
 <div id="gLoginMenu">
-  <? if (!user::is_logged_in($user)): ?>
+  <? if ($user): ?>
+    <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a> | 
+    <a href="<?= url::site("logout")?>"><?= _("Logout") ?></a>
+  <? else: ?>
     <a href="#"><?=_("Recover password") ?></a> |
     <a href="<?= url::site("user/register")?>"><?= _("Register") ?></a> | 
     <span id="gLoginLink">
@@ -12,9 +15,6 @@
     <span id="gLoginClose" class="gDisplayNone">
       <?= _("Login") ?> | <a href="javascript:close_login()">X</a>
     </span>
-  <? else: ?>
-    <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a> | 
-    <a href="<?= url::site("logout")?>"><?= _("Logout") ?></a>
   <? endif; ?>
   <span id="gLoginForm"  class="gDisplayNone" >
     <?= Login_Form::factory()->render() ?>

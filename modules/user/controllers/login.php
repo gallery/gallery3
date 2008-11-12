@@ -25,11 +25,11 @@ class Login_Controller extends Controller {
 
     if ($form->validate()) {
       // Load the user
-      $user = ORM::factory("user")->where("display_name", $form->username->value)->find();
+      $user = ORM::factory("user")->where("name", $form->username->value)->find();
       if (!$user->loaded) {
         $form->error_message = "Invalid username or password";
       } else {
-        if (user_password::is_correct_password($user,$form->password->value)) {
+        if (user::is_correct_password($user,$form->password->value)) {
           user::login($user);
           url::redirect("user/success.html");
         } else {

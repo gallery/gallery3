@@ -65,7 +65,7 @@ class user_installer {
       $user_module->version = 1;
       $user_module->save();
 
-      $user = ORM::factory("user")->where("display_name", "admin")->find();
+      $user = ORM::factory("user")->where("name", "admin")->find();
       $user->name = "admin";
       $user->display_name = "Gallery Administrator";
       $user->password = "admin";
