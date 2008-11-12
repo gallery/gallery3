@@ -52,8 +52,8 @@ class Item_Controller extends REST_Controller {
               $_FILES["file"]["name"][$i],
               $_FILES["file"]["name"][$i]);
           } else {
-            print "ERROR!";
             // @todo return a reasonable error
+            throw new Exception("@todo ERROR_IN_UPLOAD_FILE");
           }
         }
         url::redirect("album/{$item->id}");
