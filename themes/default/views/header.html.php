@@ -4,12 +4,21 @@
 
 <div id="gLoginMenu">
   <? if (!user::is_logged_in($user)): ?>
+    <a href="#"><?=_("Recover password") ?></a> |
     <a href="<?= url::site("user/register")?>"><?= _("Register") ?></a> | 
-    <a href="<?= url::site("login")?>"><?= _("Login") ?></a>
+    <span id="gLoginLink">
+      <a href="javascript:show_login()"><?= _("Login") ?></a>
+    </span>
+    <span id="gLoginClose" class="gDisplayNone">
+      <?= _("Login") ?> | <a href="javascript:close_login()">X</a>
+    </span>
   <? else: ?>
     <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a> | 
     <a href="<?= url::site("logout")?>"><?= _("Logout") ?></a>
   <? endif; ?>
+  <span id="gLoginForm"  class="gDisplayNone" >
+    <?= Login_Form::factory()->render() ?>
+  </span>
 </div>
 <ul id="gSiteMenu">
   <li><a href="<?= url::base() ?>"><?= _("HOME") ?></a></li>

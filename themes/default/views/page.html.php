@@ -13,6 +13,7 @@
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("js/login.js") ?>" type="text/javascript"></script>
   </head>
 
   <body>

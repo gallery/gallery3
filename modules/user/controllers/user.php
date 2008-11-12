@@ -17,16 +17,41 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class User_Controller extends Controller {
-  public function login() {
-    
+class User_Controller extends REST_Controller {
+  protected $resource_type = "user";
+
+  /**
+   * @see Rest_Controller::_get($resource)
+   */
+  public function _get($user) {
+    $template = new View("user_registration.html");
+
+    // @todo: this needs to be data-driven
+    $theme = new Theme("default", $template);
+
+    $template->set_global('user', Session::instance()->get('user', null));
+
+    print $template->render();
   }
 
-  public function logout() {
-    
+  /**
+   *  @see Rest_Controller::_put($resource)
+   */
+  public function _put($resource) {
+    throw new Exception("@todo User_Controller::_put NOT IMPLEMENTED");
   }
 
-  public function register() {
-    
+  /**
+   *  @see Rest_Controller::_post($resource)
+   */
+  public function _post($resource) {
+    throw new Exception("@todo User_Controller::_post NOT IMPLEMENTED");
+  }
+
+  /**
+   *  @see Rest_Controller::_delete($resource)
+   */
+  public function _delete($resource) {
+    throw new Exception("@todo User_Controller::_delete NOT IMPLEMENTED");
   }
 }
