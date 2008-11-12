@@ -363,6 +363,7 @@ table.gMetadata td.toggle {
   float: right;
   margin-right: 10px;
   padding: 5px;
+  text-align: right;
 }
 #gLoginMenu form {
   margin-top: 5px;
@@ -600,6 +601,7 @@ table.gMetadata td.toggle {
 .gDisplayNone {
   display: none;
 }
+
 /**
  ** *******************************************************************
  * 8) Browser hacks

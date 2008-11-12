@@ -17,7 +17,7 @@
     </span>
   <? endif; ?>
   <span id="gLoginForm"  class="gDisplayNone" >
-    <?= Login_Form::factory()->render() ?>
+    <?= Login_Form::factory() ?>
   </span>
 </div>
 <ul id="gSiteMenu">

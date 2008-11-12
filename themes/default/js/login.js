@@ -1,11 +1,11 @@
 function show_login() {
-  $("#gLoginLink").fadeOut("fast");  
-  $("#gLoginForm").fadeIn("fast");  
-  $("#gLoginClose").fadeIn("fast");
+  $("#gLoginLink").css({display: "none"});
+  $("#gLoginForm").css({display: "block"});  
+  $("#gLoginClose").css({display: "inline"});
 }
 
 function close_login() {
-  $("#gLoginLink").fadeIn("fast");  
-  $("#gLoginForm").fadeOut("fast");  
-  $("#gLoginClose").fadeOut("fast");
+  $("#gLoginLink").css({display: "inline"});  
+  $("#gLoginForm").css({display: "none"});  
+  $("#gLoginClose").css({display: "none"});
 }
