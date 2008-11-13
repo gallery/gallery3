@@ -748,11 +748,11 @@ li.gError {
 
 /* ~~~~~~~~~ login form ~~~~~~~~~~ */
 
-#gLoginForm fieldset {
+#gLogin fieldset {
   border: none;
 }
 
-#gLoginForm fieldset legend {
+#gLogin fieldset legend {
   display: none;
 }
 
