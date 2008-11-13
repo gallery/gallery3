@@ -600,7 +600,6 @@ input[type="text"],
 input[type="password"],
 textarea, 
 select { 
-  padding: .3em;
 }
 
 input[type="text"], 
@@ -741,11 +740,13 @@ li.gError {
   border: 2px solid red;
 }
 
-/* ~~~~~~~~~ login form ~~~~~~~~~~ */
+/* ~~~~~~~~ form font size ~~~~~~ */
 
-#gLoginForm * { 
-  font-size: .94em;
+#gHeader form, #gSidebar form { 
+  font-size: .9em;
 }
+
+/* ~~~~~~~~~ login form ~~~~~~~~~~ */
 
 #gLoginForm fieldset {
   border: none;
