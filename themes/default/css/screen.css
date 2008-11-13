@@ -1,5 +1,5 @@
 /**
- * Gx Styles
+ * Gallery 3 Default Theme Styles
  *
  * @requires YUI reset, font, grids, and base CSS
  *
@@ -9,12 +9,12 @@
  * 3) Generic content containers (item, block)
  * 4) Specific content containers and blocks (albums, metadata, comments)
  * 5) Navigation and menus (menus, breadcrumbs, pagination, tab cloud)
- * 6) Specific text styles (different headings, font sizes, etc.)
- * 7) Generic styles ()
+ * 6) Generic styles (.gInline, gOdd/gEven, etc.)
+ * 7) Forms (general and specific)
  * 8) Browser hacks (clear fix)
+ *
+ * @todo Disabled, readonly form inputs
  */
-
- @import url('forms.css');
 
 /**
  ** *******************************************************************
@@ -23,11 +23,13 @@
  */
 
 /* ~~~~~~~~~ general elements ~~~~~~~~~~ */
+
 body, html {
   background-color: #ccc;
 }
 
 /* ~~~~~~~~~ text ~~~~~~~~~~ */
+
 h1 {
   margin-top: 0;
 }
@@ -41,39 +43,26 @@ a {
   color: #6b8cb7;
   text-decoration: none;
 }
+
 a:hover {
   color: #f30;
   text-decoration: underline;
 }
 
 /* ~~~~~~~~~ list ~~~~~~~~~~ */
+
 li {
   list-style-type: none;
 }
 
 /* ~~~~~~~~~ table ~~~~~~~~~~ */
+
 caption {
   text-align: left;
 }
+
 th {
   text-align: left;
-}
-
-/* ~~~~~~~~~ form ~~~~~~~~~~ */
-form {
-
-}
-legend {
-
-}
-label {
-
-}
-input {
-
-}
-textarea {
-
 }
 
 /**
@@ -83,6 +72,7 @@ textarea {
  */
 
 /* ~~~~~ View Container ~~~~~~ */
+
 .gView {
   background-color: #fff;
   border: 1px solid #ccc;
@@ -120,6 +110,7 @@ textarea {
   margin: 0 1em 2.5em 0;
   padding: 0;
 }
+
 .gBlockHeader {
   background-color: #e8e8e8;
   cursor: move;
@@ -128,6 +119,7 @@ textarea {
   padding: .3em .4em;
   position: relative;
 }
+
 .gBlockHeader h2 {
   background: url('../images/ico_dragable.png') no-repeat;
   float: left;
@@ -135,6 +127,7 @@ textarea {
   margin: 0;
   padding-left: 12px;
 }
+
 .gBlockHeader .gMinimize {
   background-image: url('../images/minimize.png');
   height: 16px;
@@ -143,18 +136,23 @@ textarea {
   top: .45em;
   width: 16px;
 }
+
 .gBlockHeader .gMinimize:hover {
   background-image: url('../images/minimize_active.png');
 }
+
 .gBlockContent {
   margin: .5em .5em 0 .5em;
 }
+
 table.gBlockContent {
   table-layout: fixed;
 }
+
 table.gBlockContent th {
   padding: .3em .3em .3em 0;
 }
+
 table.gBlockContent td {
   padding: .3em 0 .3em .3em;
 }
@@ -172,9 +170,8 @@ table.gBlockContent td {
   margin: 10px;
 }
 
- .gThumbnail {
-
- }
+.gThumbnail {
+}
 
 /* ~~~~~~~~~ Album ~~~~~~~~~~ */
 
@@ -182,9 +179,11 @@ table.gBlockContent td {
   height: 40px;
   position: relative;
 }
+
 #gAlbumHeader h1 {
   display: inline;
 }
+
 #gAlbumHeader span {
   padding-right: 10px;
 }
@@ -192,6 +191,7 @@ table.gBlockContent td {
 #gAlbumGrid {
   margin: 0;
 }
+
 .gItem {
   border: 1px solid #ccc;
   float: left;
@@ -200,12 +200,15 @@ table.gBlockContent td {
   padding: 5px 0 5px 0;
   text-align: center;
 }
+
 .gItem h2 {
   margin: 5px 0;
 }
+
 .gAlbum {
   background-color: #d4daff;
 }
+
 .gAlbum h2 {
   color: #006;
 }
@@ -216,13 +219,16 @@ table.gBlockContent td {
 #gItem {
   margin: 0;
 }
+
 #gItem a.gButtonLink {
   float: right;
 }
+
 #gItem img {
   background-color: #e7e7e7;
   border: 1px solid #c0c0c0;
 }
+
 #gItem h1 {
   margin: 10px 0;
 }
@@ -232,10 +238,12 @@ table.gBlockContent td {
 table.gMetadata {
 
 }
+
 table.gMetadata td,
 table.gMetadata th {
   border: none;
 }
+
 table.gMetadata td.toggle {
   text-align: right;
 }
@@ -247,106 +255,50 @@ table.gMetadata td.toggle {
   border: 1px solid #ccc;
   padding: 10px;
 }
+
 #gComments h2 {
   margin-top: 0;
 }
+
 #gComments ul {
   margin: 0;
 }
+
 #gComments ul li {
   list-style-type: none;
   margin-bottom: 15px;
 }
+
 #gComments ul li p {
   background-color: #e8e8e8;
   margin-bottom: 2px;
   padding: 4px;
 }
+
 #gComments ul li div {
   padding: 8px;
 }
 
 /* ~~~~~~~~~ Status messages ~~~~~~~~~~ */
 
-#gStatusMessages {
+.gStatus {
 
 }
+
 .gError {
   color: red;
 }
+
 .gWarning {
 
 }
+
 .gSuccess {
 
 }
+
 .gInfo {
 
-}
-
-/* ~~~~~~~~~ search form ~~~~~~~~~~ */
-
-#gSearchForm {
-  float: right;
-  margin-right: 10px;
-}
-#gSearchForm input.text {
-  padding: 1px;
-}
-#gSearchForm input.submit {
-  height: 20px;
-}
-
-/* ~~~~~~~~~ comment form ~~~~~~~~~~ */
-
- #gCommentAdd {
-  width: 500px;
-}
-
-/* ----------- upload ----------------- */
-
-#gUploadForm .gBreadcrumbs li input,
-#gUploadForm .gBreadcrumbs li select {
-  width: 140px;
-  margin-left: 5px;
-}
-#gUploadForm-queue {
-  width: 500px;
-}
-#gUploadForm-queue td,
-#gUploadForm-queue th {
-  border-color: #e7e7e7;
-  text-align: left;
-}
-#gUploadForm-queue caption {
-  display: none;
-}
-#gUploadForm-queue thead th {
-  border-bottom: 2px solid #000;
-  text-align: center;
-}
-#gUploadForm-queue thead th,
-#gUploadForm-queue thead td {
-  background-color: #e7e7e7;
-}
-#gUploadForm-queue tfoot td {
-  border-top: 2px solid #000;
-}
-#gUploadForm-queue .filesize {
-  width: 60px;
-}
-#gUploadForm-queue td.filesize {
-  text-align: right;
-}
-#gUploadForm-queue tfoot td.filesize {
-  color: #ccc;
-}
-#gUploadForm-queue .action {
-  width: 40px;
-}
-#gUploadForm-button {
-  margin-left: 370px;
-  width: 130px;
 }
 
 /**
@@ -366,42 +318,6 @@ table.gMetadata td.toggle {
   text-align: right;
 }
 
-#gLoginMenu fieldset {
-  border-width: 0;
-  margin: 0;
-  padding: 0;
-}
-
- #gLoginMenu fieldset legend{
-  display: none;
-}
-
-#gLoginForm {
-  margin-top: 5px;
-}
-#gLoginMenu label {
-  font-size: .8em;
-}
-
-#gLoginMenu ul {
-  margin: 0;
-}
-
-#gLoginMenu li {
-  float: left;
-  list-style-type: none;
-}
-
-#gLoginMenu li input#gUsername,
-#gLoginMenu li input#gPassword {
-  padding: 0 0 .1em 0;
-  width: 80px;
-}
-#gLoginMenu li input.submit {
-  font-size: .9em;
-  font-weight: bold;
-}
-
 /* ~~~~~~~~ Site Menu  ~~~~~~~~ */
 
 #gSiteMenu {
@@ -412,11 +328,13 @@ table.gMetadata td.toggle {
   margin: 8px 0;
   padding: 0;
 }
+
 #gSiteMenu li {
   float: left;
   list-style-type: none;
   width: 19%;
 }
+
 #gSiteMenu li a {
   border: 1px solid #369;
   border-width: 0 1px 1px 0;
@@ -430,10 +348,12 @@ table.gMetadata td.toggle {
   text-align: center;
   text-decoration: none;
 }
+
 #gSiteMenu li a:hover {
   background: url('../images/bg_sitemenu_hover.png') repeat-x;
   color: #f30;
 }
+
 #gSiteMenu li a.active {
   background: #dce6ef;
   border-color: #dce6ef;
@@ -454,19 +374,23 @@ table.gMetadata td.toggle {
   margin: 4px 0;
   padding: 0 0 0 12px;
 }
+
 #gBreadcrumbs li {
   background: transparent url('../images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
   float: left;
   list-style-type: none;
   padding: 0 0 0 12px;
 }
+
 #gBreadcrumbs li.root {
   background: transparent;
 }
+
 #gBreadcrumbs li a,
 #gBreadcrumbs li span {
   display: block;
 }
+
 #gBreadcrumbs li.active span {
   font-weight: bold;
 }
@@ -477,42 +401,51 @@ table.gMetadata td.toggle {
   padding: 0;
   text-align: justify;
 }
+
 #gTags ul li {
   display: inline;
   text-align: justify;
 }
+
 #gTags ul li a {
   text-decoration: none;
 }
+
 #gTags ul li a.size0 {
   color: #9cf;
   font-size: 100%;
   font-weight: 100;
 }
+
 #gTags ul li a.size1 {
   color: #69f;
   font-size: 110%;
   font-weight: 300;
 }
+
 #gTags ul li a.size2 {
   color: #69c;
   font-size: 120%;
   font-weight: 500;
 }
+
 #gTags ul li a.size3 {
   color: #369;
   font-size: 130%;
   font-weight: 700;
 }
+
 #gTags ul li a.size4 {
   color: #0e2b52;
   font-size: 140%;
   font-weight: 900;
 }
+
 #gTags ul li a:hover {
   color: #FF3300;
   text-decoration: underline;
 }
+
 #gTags form {
   margin-top: 10px;
 }
@@ -522,6 +455,7 @@ table.gMetadata td.toggle {
 #gTags ul {
   margin-left: .5em;
 }
+
 #gTags li {
   list-style-image: url('../images/bullet_tag.png');
   margin-bottom: .3em;
@@ -534,50 +468,60 @@ table.gMetadata td.toggle {
   padding: 10px 0 0 0;
   text-align: center;
 }
+
 #gPagination a,
 #gPagination span {
   background-repeat: no-repeat;
   border: 1px solid #d3d3d3;
   padding: 5px;
 }
+
 #gPagination a:hover {
   background-color: #f3f3f3;
 }
+
 #gPagination .first {
   background-image: url('../images/first.png');
   background-position: left;
   padding-left: 20px;
 }
+
 #gPagination .first_inactive {
   background-image: url('../images/first_inactive.png');
   background-position: left;
   padding-left: 20px;
 }
+
 #gPagination .previous {
   background-image: url('../images/previous.png');
   background-position: left;
   padding-left: 17px;
 }
+
 #gPagination .previous_inactive {
   background-image: url('../images/previous_inactive.png');
   background-position: left;
   padding-left: 17px;
 }
+
 #gPagination .next {
   background-image: url('../images/next.png');
   background-position: right;
   padding-right: 17px;
 }
+
 #gPagination .next_inactive {
   background-image: url('../images/next_inactive.png');
   background-position: right;
   padding-right: 17px;
 }
+
 #gPagination .last {
   background-image: url('../images/last.png');
   background-position: right;
   padding-right: 20px;
 }
+
 #gPagination .last_inactive {
   background-image: url('../images/last_inactive.png');
   background-position: right;
@@ -591,6 +535,7 @@ table.gMetadata td.toggle {
   margin: 20px 0 20px 0;
   padding: 5px;
 }
+
 #gAlbumTree #gTreeContainer {
   border: 1px solid #d3d3d3;
   padding: 0 0 0 5px;
@@ -598,23 +543,29 @@ table.gMetadata td.toggle {
 
 /**
  ** *******************************************************************
- * 6) Specific text styles (different headings, font sizes, etc.)
+ * 6) Generic styles
  ** *******************************************************************
  */
 
-/**
- ** *******************************************************************
- * 7) Generic styles
- ** *******************************************************************
- */
+.gOdd {
+}
+
+.gEvent {
+}
+
+.gInline {
+  float: left;
+}
 
 .gButtonLink {
   border: 1px solid #d3d3d3;
   padding: 5px;
 }
+
 .gButtonLink:hover {
   background-color: #f3f3f3;
 }
+
 .gUnderState {
   color: #c0c0c0;
 }
@@ -625,7 +576,265 @@ table.gMetadata td.toggle {
 
 /**
  ** *******************************************************************
- * 8) Browser hacks
+ * 8) Forms (general and specific) 
+ ** *******************************************************************
+ */
+
+form {
+}
+
+fieldset {
+  border: 1px solid #ccc;
+  padding: 0;
+}
+
+legend {
+  margin-left: 1em;
+}
+
+label {
+  cursor: help;
+}
+
+input[type="text"], 
+input[type="password"],
+textarea, 
+select { 
+  padding: .3em;
+}
+
+input[type="text"], 
+input[type="password"], 
+textarea, 
+.gValidationRule {
+  width: 40%;
+}
+
+input {
+}
+
+input[type="button"] {
+}
+
+input[type="checkbox"] {
+}
+
+input[type="file"] {
+}
+
+input[type="password"] {
+}
+
+input[type="radio"] {
+}
+
+input[type="reset"] {
+}
+
+input[type="submit"] {
+}
+
+input[type="text"] {
+}
+
+option {
+}
+
+optgroup {
+}
+
+select {
+}
+
+textarea { 
+  width: 99%;
+  height: 12em;
+}
+
+button {
+}
+
+/* ~~~~~~~~~ Form layout ~~~~~~~~~~ */
+
+form ul, form li { 
+  list-style: none !important; 
+}
+form ul { 
+  margin: 0; 
+  padding: 0;
+}
+
+form li { 
+  margin-top: .5em; 
+  padding: .3em 1.5em .3em 1em;
+}
+
+form ul ul {
+  clear: both;
+}
+
+form ul ul li {
+  float: left;
+}
+
+input, 
+textarea {
+  display: block; 
+  clear: both;
+}
+
+/* ~~~~~~~~~ Inline fieldsets ~~~~~~~~~~ */
+
+.gInline li {
+  float: left; 
+  margin: 0;
+  padding: .3em .5em .4em;
+  text-align: left;
+}
+
+.gInline input {
+}
+
+.gInline input[type="Submit"] { 
+  margin-top: 1em;
+}
+
+.gInline .gNoLabels input[type="Submit"] {
+  margin-top: 0;
+}
+
+.gInline input[type="text"], 
+.gInline input[type="password"], 
+.gInline textarea, 
+.gInline .gValidationRule { 
+  width: 10em;
+}
+
+input:focus, 
+textarea:focus, 
+option:focus { 
+  background-color: #ffc;
+}
+
+/* ~~~~~~~~~ Validation ~~~~~~~~~~ */
+
+.gRequired {
+}
+
+ul.gError, 
+li.gError { 
+  background-color: #ffdcdc;
+}
+
+.gError label, .gValidationRule { 
+  color: red;
+}
+
+.gValidationRule {
+  font-size: 80%;
+  margin-top: .5em;
+}
+
+.gError input, 
+.gError textarea, 
+.gError select { 
+  border: 2px solid red;
+}
+
+/* ~~~~~~~~~ login form ~~~~~~~~~~ */
+
+#gLoginForm * { 
+  font-size: .94em;
+}
+
+#gLoginForm fieldset {
+  border: none;
+}
+
+#gLoginForm fieldset legend {
+  display: none;
+}
+
+/* ~~~~~~~~~ search form ~~~~~~~~~~ */
+
+#gSearchForm {
+  float: right;
+  margin-right: 10px;
+}
+
+#gSearchForm input.text {
+  padding: 1px;
+}
+
+#gSearchForm input.submit {
+  height: 20px;
+}
+
+/* ~~~~~~~~~ comment form ~~~~~~~~~~ */
+
+ #gCommentAdd {
+  width: 500px;
+}
+
+/* ----------- upload ----------------- */
+
+#gUploadForm .gBreadcrumbs li input,
+#gUploadForm .gBreadcrumbs li select {
+  width: 140px;
+  margin-left: 5px;
+}
+#gUploadForm-queue {
+  width: 500px;
+}
+
+#gUploadForm-queue td,
+#gUploadForm-queue th {
+  border-color: #e7e7e7;
+  text-align: left;
+}
+
+#gUploadForm-queue caption {
+  display: none;
+}
+
+#gUploadForm-queue thead th {
+  border-bottom: 2px solid #000;
+  text-align: center;
+}
+
+#gUploadForm-queue thead th,
+#gUploadForm-queue thead td {
+  background-color: #e7e7e7;
+}
+
+#gUploadForm-queue tfoot td {
+  border-top: 2px solid #000;
+}
+
+#gUploadForm-queue .filesize {
+  width: 60px;
+}
+
+#gUploadForm-queue td.filesize {
+  text-align: right;
+}
+
+#gUploadForm-queue tfoot td.filesize {
+  color: #ccc;
+}
+
+#gUploadForm-queue .action {
+  width: 40px;
+}
+
+#gUploadForm-button {
+  margin-left: 370px;
+  width: 130px;
+}
+
+/**
+ ** *******************************************************************
+ * 9) Browser hacks
  ** *******************************************************************
  */
 

@@ -38,7 +38,9 @@
 </ul>
 
 <form id="gAddTag">
-  <input type="text" class="text" value="add new tags ..." id="newtags" />
-  <input type="submit" class="submit" value="add" />
-  <label for="newtags" class="understate">(separated by commas)</label>
+  <ul class="gInline">
+    <li><input type="text" class="text" value="add new tags..." id="gNewTags" /></li>
+    <li class="gNoLabels"><input type="submit" value="add" /></li>
+  </ul>
+  <label for="gNewTags" class="gUnderState">(separated by commas)</label>
 </form>

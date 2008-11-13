@@ -16,8 +16,7 @@
       <?= _("Login") ?> | <a href="javascript:close_login()">X</a>
     </span>
   <? endif; ?>
-  <span id="gLoginForm" class="gDisplayNone" formSrc="<?= url::site("login") ?>" >
-  </span>
+  <span id="gLoginForm" class="gDisplayNone" formSrc="<?= url::site("login") ?>"></span>
 </div>
 <ul id="gSiteMenu">
   <li><a href="<?= url::base() ?>"><?= _("HOME") ?></a></li>
@@ -27,9 +26,11 @@
   <li><a href="#"><?= _("ADMIN") ?></a></li>
 </ul>
 
-<form id="gSearchForm">
-  <input type="text" class="text" value="<?= _("Search Gallery ...") ?>"/>
-  <input type="submit" class="submit" value="search" />
+<form id="gSearchForm" class="gInline">
+  <ul class="gNoLabels">
+    <li><input type="text" value="<?= _("Search Gallery ...") ?>"/></li>
+    <li><input type="submit" value="search" /></li>
+  </ul>
 </form>
 
 <ul id="gBreadcrumbs">

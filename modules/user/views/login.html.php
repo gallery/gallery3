@@ -2,22 +2,20 @@
 <form id="gLogin" action="<?= url::site("login/process") ?>">
   <fieldset>
     <legend>Login</legend>
-    <ul>
+    <ul class="gInline">
       <li>
-        <label for="username">Username</label>
+        <label for="gUsername">Username</label>
         <input type="text" id="gUsername" />
       </li>
       <li>
-        <label for="password">Password</label>
+        <label for="gPassword">Password</label>
         <input type="password" id="gPassword" />
       </li>
       <li>
-        <input type="submit" class="submit" value="<?= _("Login")?>" />
+        <input type="submit" value="<?= _("Login")?>" />
       </li>
     </ul>
-  </fieldset>
-  <fieldset>
-    <div class="gStatus gError gDisplayNone" id="gLoginMessage">
+    <div id="gLoginMessage" class="gStatus gError gDisplayNone">
     </div>
   </fieldset>
 </form>
