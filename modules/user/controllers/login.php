@@ -19,7 +19,6 @@
  */
 class Login_Controller extends Controller {
   public function index() {
-    Kohana::log("debug", "Login_Controller/index");
     $form = new Forge();
     $form->input("username")->rules("required|length[4,32]");
     $form->password("password")->rules("required|length[5,40]");
@@ -28,9 +27,6 @@ class Login_Controller extends Controller {
   }
 
   public function process() {
-    Kohana::log("debug", "Login_Controller/process");
-
-    Kohana::log("debug", print_r($_POST, true));
     $form = new Forge("login.html", true);
     $form->input("username")->rules("required|length[4,32]");
     $form->password("password")->rules("required|length[5,40]");
@@ -55,5 +51,14 @@ class Login_Controller extends Controller {
     }
 
     print json_encode($response);
+  }
+
+  public function logout() {
+    try {
+      Session::instance()->destroy();
+    } catch (Exception $e) {
+      Kohana::log("error", $e);
+    }
+    print json_encode(array("logout" => true));
   }
 }
