@@ -725,7 +725,8 @@ li.gError {
   background-color: #ffdcdc;
 }
 
-.gError label, .gValidationRule { 
+.gError label, 
+.gValidationRule { 
   color: red;
 }
 
@@ -734,9 +735,18 @@ li.gError {
   margin-top: .5em;
 }
 
-.gError input, 
-.gError textarea, 
-.gError select { 
+form.gError input[type="text"], 
+li.gError input[type="text"], 
+form.gError input[type="password"], 
+li.gError input[type="password"], 
+form.gError input[type="checkbox"], 
+li.gError input[type="checkbox"], 
+form.gError input[type="radio"], 
+li.gError input[type="radio"], 
+form.gError textarea, 
+li.gError textarea, 
+form.gError select, 
+li.gError select { 
   border: 2px solid red;
 }
 
