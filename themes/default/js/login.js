@@ -41,6 +41,8 @@ function process_login() {
         $("#gLoginMessage").html(data.error_message);
         $("#gLoginMessage").css({display: "block"});
         $("#gLogin").addClass("gError");
+      } else {
+        window.location.reload();
       }
     }
   });

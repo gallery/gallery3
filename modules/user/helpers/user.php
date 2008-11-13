@@ -70,6 +70,18 @@ class user {
   }
 
   /**
+   * Perform the post authentication processing
+   * @param object $user the user object.
+   */
+  public static function login($user) {
+    $user->login_count += 1;
+    $user->last_login = time();
+    $user->save();
+
+    Session::instance()->set('user', $user);
+  }
+
+  /**
    * Create a hashed password using md5 plus salt.
    * @param string $password plaintext password
    * @param string $salt (optional) salt or hash containing salt (randomly generated if omitted)

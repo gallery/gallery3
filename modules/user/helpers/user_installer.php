@@ -41,6 +41,8 @@ class user_installer {
           `name` varchar(255) NOT NULL,
           `display_name` char(255) NOT NULL,
           `password` varchar(128) NOT NULL,
+          `login_count` int(10) unsigned NOT NULL DEFAULT 0,
+          `last_login` int(10) unsigned NOT NULL DEFAULT 0,
           `email` varchar(255) default NULL,
           PRIMARY KEY (`id`),
           UNIQUE KEY(`display_name`))
