@@ -40,6 +40,7 @@ function process_login() {
       if (data.error_message != "") {
         $("#gLoginMessage").html(data.error_message);
         $("#gLoginMessage").css({display: "block"});
+        $("#gLogin").addClass("gError");
       }
     }
   });
