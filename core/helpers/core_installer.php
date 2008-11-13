@@ -20,17 +20,17 @@
 class core_installer {
   public static function install() {
     $db = Database::instance();
+    $version = 0;
     try {
-      $base_version = ORM::factory("module")->where("name", "core")->find()->version;
+      $version = module::get_version("core");
     } catch (Exception $e) {
-      if ($e->getCode() == E_DATABASE_ERROR) {
-        $base_version = 0;
-      } else {
+      if ($e->getCode() != E_DATABASE_ERROR) {
+        Kohana::log("error", $e);
         throw $e;
       }
     }
 
-    if ($base_version == 0) {
+    if ($version == 0) {
       $db->query("CREATE TABLE `modules` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` char(255) default NULL,
@@ -63,10 +63,7 @@ class core_installer {
         @mkdir(VARPATH . $dir);
       }
 
-      $core = ORM::factory("module")->where("name", "core")->find();
-      $core->name = "core";
-      $core->version = 1;
-      $core->save();
+      module::set_version("core", 1);
 
       $root = ORM::factory("item");
       $root->type = 'album';

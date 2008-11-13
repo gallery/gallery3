@@ -17,31 +17,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class comment_installer {
-  public static function install() {
-    Kohana::log("debug", "comment_installer::install");
-    $db = Database::instance();
-    $version = module::get_version("comment");
-    Kohana::log("debug", "version: $version");
 
-    if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS `comments` (
-          `id` int(9) NOT NULL auto_increment,
-          `author` varchar(255) default NULL,
-          `email` varchar(255) default NULL,
-          `text` text,
-          `datetime` int(9) NOT NULL,
-          `item_id` int(9) NOT NULL,
-          PRIMARY KEY (`id`))
-        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
-      module::set_version("comment", 1);
-    }
+/**
+ * This is the API for handling modules.
+ *
+ * Note: by design, this class does not do any permission checking.
+ */
+class Module_Core {
+  public static function get_version($module_name) {
+    return ORM::factory("module")->where("name", $module_name)->find()->version;
   }
 
-  public static function uninstall() {
-    $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `comments`;");
-    module::delete("comment");
+  public static function set_version($module_name, $version) {
+    $module = ORM::factory("module")->where("name", $module_name)->find();
+    if (!$module->loaded) {
+      $module->name = $module_name;
+    }
+    $module->version = 1;
+    $module->save();
+  }
+
+  public static function delete ($module_name) {
+    ORM::factory("module")->where("name", $module_name)->find()->delete();
   }
 }

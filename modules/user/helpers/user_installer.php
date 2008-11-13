@@ -23,19 +23,10 @@ class user_installer {
   public static function install() {
     Kohana::log("debug", "user_installer::install");
     $db = Database::instance();
-    try {
-      $base_version = ORM::factory("module")->where("name", "user")->find()->version;
-    } catch (Exception $e) {
-      if ($e->getCode() == E_DATABASE_ERROR) {
-        $base_version = 0;
-      } else {
-        Kohana::log("error", $e);
-        throw $e;
-      }
-    }
-    Kohana::log("debug", "base_version: $base_version");
+    $version = module::get_version("user");
+    Kohana::log("debug", "version: $version");
 
-    if ($base_version == 0) {
+    if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `users` (
           `id` int(9) NOT NULL auto_increment,
           `name` varchar(255) NOT NULL,
@@ -62,10 +53,7 @@ class user_installer {
           UNIQUE KEY(`user_id`, `group_id`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $user_module = ORM::factory("module")->where("name", "user")->find();
-      $user_module->name = "user";
-      $user_module->version = 1;
-      $user_module->save();
+      module::set_version("user", 1);
 
       $user = ORM::factory("user")->where("name", "admin")->find();
       $user->name = "admin";
@@ -92,6 +80,6 @@ class user_installer {
     $db->query("DROP TABLE IF EXISTS `users`;");
     $db->query("DROP TABLE IF EXISTS `groups`;");
     $db->query("DROP TABLE IF EXISTS `groups_users`;");
-    ORM::factory("module")->where("name", "user")->find()->delete();
+    module::delete("user");
   }
 }
