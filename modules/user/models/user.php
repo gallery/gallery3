@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class User_Model extends ORM {
-  protected $has_and_belongs_to_many = array('groups');
+  protected $has_and_belongs_to_many = array("groups");
 
   public function __set($column, $value) {
     switch ($column) {

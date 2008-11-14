@@ -18,5 +18,5 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Group_Model extends ORM {
-  protected $has_and_belongs_to_many = array('users');
+  protected $has_and_belongs_to_many = array("users");
 }
