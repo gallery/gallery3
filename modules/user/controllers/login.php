@@ -53,12 +53,4 @@ class Login_Controller extends Controller {
     print json_encode($response);
   }
 
-  public function logout() {
-    try {
-      Session::instance()->destroy();
-    } catch (Exception $e) {
-      Kohana::log("error", $e);
-    }
-    print json_encode(array("logout" => true));
-  }
 }
