@@ -2,7 +2,7 @@
 <form id="gLogin" action="<?= url::site("login/process") ?>">
   <fieldset>
     <legend><?= _("Login") ?></legend>
-    <ul class="gInline">
+    <ul>
       <li>
         <label for="gUsername"><?= _("Username") ?></label>
         <input type="text" id="gUsername" />

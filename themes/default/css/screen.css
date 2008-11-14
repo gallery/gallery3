@@ -758,6 +758,9 @@ li.gError select {
 
 /* ~~~~~~~~~ login form ~~~~~~~~~~ */
 
+#gHeader #gLogin li {
+  float: left;
+}
 #gLogin fieldset {
   border: none;
 }
