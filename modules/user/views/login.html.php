@@ -1,14 +1,14 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <form id="gLogin" action="<?= url::site("login/process") ?>">
   <fieldset>
-    <legend>Login</legend>
+    <legend><?= _("Login") ?></legend>
     <ul class="gInline">
       <li>
-        <label for="gUsername">Username</label>
+        <label for="gUsername"><?= _("Username") ?></label>
         <input type="text" id="gUsername" />
       </li>
       <li>
-        <label for="gPassword">Password</label>
+        <label for="gPassword"><?= _("Password") ?></label>
         <input type="password" id="gPassword" />
       </li>
       <li>

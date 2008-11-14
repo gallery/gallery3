@@ -37,17 +37,17 @@ class Login_Controller extends Controller {
       // Load the user
       $user = ORM::factory("user")->where("name", $form->username->value)->find();
       if (!$user->loaded) {
-        $response["error_message"] = "Invalid username or password";
+        $response["error_message"] = _("Invalid username or password");
       } else {
-        if (user::is_correct_password($user,$form->password->value)) {
+        if (user::is_correct_password($user, $form->password->value)) {
           user::login($user);
           $response["error_message"] = "";
         } else {
-          $response["error_message"] = "Invalid username or password";
+          $response["error_message"] = _("Invalid username or password");
         }
       }
     } else {
-      $response["error_message"] = "Invalid username or password";
+      $response["error_message"] = _("Invalid username or password");
     }
 
     print json_encode($response);
