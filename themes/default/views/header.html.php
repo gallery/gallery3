@@ -4,18 +4,27 @@
 
 <div id="gLoginMenu">
   <? if ($user): ?>
-    <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a> |
-    <a href="<?= url::site("logout")?>" id="gLogoutLink"><?= _("Logout") ?></a>
+    <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a> 
+    | <a href="<?= url::site("logout")?>" id="gLogoutLink"><?= _("Logout") ?></a>
   <? else: ?>
-    <a href="#"><?=_("Recover password") ?></a> |
-    <a href="<?= url::site("user/register")?>"><?= _("Register") ?></a> |
+    <a href="#"><?=_("Recover password") ?></a>
+    <span id="gUserLink" >
+      | <a href="javascript:show_form('#gUser')"><?= _("Register") ?></a>
+    </span>
+    <span id="gUserLinkText" class="gDisplayNone">
+      | <?= _("Register") ?>
+    </span>
     <span id="gLoginLink">
-      <a href="javascript:show_login()"><?= _("Login") ?></a>
+      | <a href="javascript:show_form('#gLogin')"><?= _("Login") ?></a>
+    </span>
+    <span id="gLoginText" class="gDisplayNone">
+      | <?= _("Login") ?> 
     </span>
     <span id="gLoginClose" class="gDisplayNone">
-      <?= _("Login") ?> | <a href="javascript:close_login()">X</a>
+      | <a href="javascript:hide_form('#gLogin')">X</a>
     </span>
   <? endif; ?>
+  <span id="gUserForm" class="gDisplayNone" formSrc="<?= url::site("user/dispatch/") ?>"></span>
   <span id="gLoginForm" class="gDisplayNone" formSrc="<?= url::site("login") ?>"></span>
 </div>
 <ul id="gSiteMenu">

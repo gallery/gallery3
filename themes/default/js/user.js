@@ -9,25 +9,23 @@ $(document).ready(function() {
   });
 });
 
-function show_login() {
-  $("#gLoginLink").css({display: "none"});
-  $("#gLoginText").css({display: "inline"});
-  $("#gLoginClose").css({display: "inline"});
-  var url = $("#gLoginForm").attr("formSrc");
+function show_form(formName) {
+  $(formName + "Link").css({display: "none"});
+  $(formName + "Text").css({display: "inline"});
+  $(formName + "Close").css({display: "inline"});
+  var url = $(formName + "Form").attr("formSrc");
   $.get(url, null, function(data, textStatus) {
-    $("#gLoginForm").html(data);
-    $("#gLoginForm").css({display: "block"});  
+    $(formName + "Form").html(data);
+    $(formName + "Form").css({display: "block"});  
   });
 }
 
-function close_login() {
-  $("#gLoginLink").css({display: "inline"});  
-  $("#gLoginForm").css({display: "none"});  
-  $("#gLoginForm").html("");  
-  $("#gLoginText").css({display: "none"});
-  $("#gLoginClose").css({display: "none"});
-  $("input#gUsername").val("");
-  $("input#gPassword").val("");
+function hide_form(formName) {
+  $(formName + "Link").css({display: "inline"});  
+  $(formName + "Form").css({display: "none"});  
+  $(formName + "Form").html("");  
+  $(formName + "Text").css({display: "none"});
+  $(formName + "Close").css({display: "none"});
 }
 
 function process_login() {

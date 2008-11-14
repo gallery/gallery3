@@ -24,14 +24,21 @@ class User_Controller extends REST_Controller {
    * @see Rest_Controller::_get($resource)
    */
   public function _get($user) {
-    $template = new View("user_registration.html");
-
-    // @todo: this needs to be data-driven
-    $theme = new Theme("default", $template);
-
-    $template->set_global('user', Session::instance()->get('user', null));
-
-    print $template->render();
+    $userView = new View("user.html");
+    if (empty($user)) {
+      // @todo remove this when rest_controller is changed to handle a post with no id
+      $user = ORM::factory("user");
+      $user->save();
+      // @todo remove this when rest_controller is changed to handle a post with no id ^
+      $userView->user_id = $user->id;
+      $userView->action = _("User Registration");
+      $userView->button_text = _("Register");
+    } else {
+      $userView->user_id = $user->id;
+      $userView->action = _("User Modify");
+      $userView->button_text = _("Modify");
+    }
+    print $userView;
   }
 
   /**
