@@ -5,11 +5,11 @@
     <ul>
       <li>
         <label for="gUsername"><?= _("Username") ?></label>
-        <input type="text" id="gUsername" />
+        <input type="text" name="username" id="gUsername" />
       </li>
       <li>
         <label for="gPassword"><?= _("Password") ?></label>
-        <input type="password" id="gPassword" />
+        <input type="password" name="password" id="gPassword" />
       </li>
       <li>
         <input type="submit" value="<?= _("Login")?>" />

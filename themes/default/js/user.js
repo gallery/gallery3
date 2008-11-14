@@ -11,6 +11,7 @@ $(document).ready(function() {
 
 function show_login() {
   $("#gLoginLink").css({display: "none"});
+  $("#gLoginText").css({display: "inline"});
   $("#gLoginClose").css({display: "inline"});
   var url = $("#gLoginForm").attr("formSrc");
   $.get(url, null, function(data, textStatus) {
@@ -23,19 +24,17 @@ function close_login() {
   $("#gLoginLink").css({display: "inline"});  
   $("#gLoginForm").css({display: "none"});  
   $("#gLoginForm").html("");  
+  $("#gLoginText").css({display: "none"});
   $("#gLoginClose").css({display: "none"});
   $("input#gUsername").val("");
   $("input#gPassword").val("");
 }
 
 function process_login() {
-  var username = $("input#gUsername").val();
-  var password = $("input#gPassword").val();
-  var data = 'username=' + username + '&password=' +  password;
   $.ajax({
     url: $("#gLogin").attr("action"),
     type: "POST",
-    data: data,
+    data: $("#gLogin").serialize(),
     dataType: "json",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
       alert("textStatus: " + textStatus + "\nerrorThrown: " + errorThrown);
