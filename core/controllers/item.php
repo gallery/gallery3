@@ -21,6 +21,10 @@ class Item_Controller extends REST_Controller {
   protected $resource_type = "item";
 
   public function _get($item) {
+    if (empty($item)) {
+      // A null item is not allowed for albums or photos.
+      return Kohana::show_404();
+    }
     // Redirect to the more specific resource type, since it will render
     // differently.  We could also just delegate here, but it feels more appropriate
     // to have a single canonical resource mapping.

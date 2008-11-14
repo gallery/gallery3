@@ -49,17 +49,25 @@
 abstract class REST_Controller extends Controller {
   protected $resource_type = null;
 
-  public function dispatch($id) {
+  public function dispatch($id=null) {
     if ($this->resource_type == null) {
       throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
     }
 
-    // @todo this needs security checks
-    $resource = ORM::factory($this->resource_type, $id);
-    if (!$resource->loaded) {
+    if ($id != null) {
+      // @todo this needs security checks
+      $resource = ORM::factory($this->resource_type, $id);
+      if (!$resource->loaded) {
+        return Kohana::show_404();
+      }
+    } else if (request::method() == "get") {
+      // A null id and a request method of "get" just returns an empty form
+      // @todo figure out how to handle the input without and id
+      // @todo do we use put for create and post for update?
+      $resource = null;
+    } else {
       return Kohana::show_404();
     }
-
     /**
      * We're expecting to run in an environment that only supports GET/POST, so expect to tunnel
      * PUT/DELETE through POST.
