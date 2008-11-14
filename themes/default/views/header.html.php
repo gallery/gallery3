@@ -4,11 +4,11 @@
 
 <div id="gLoginMenu">
   <? if ($user): ?>
-    <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a> | 
-    <a href="<?= url::site("login/logout")?>" id="gLogoutLink"><?= _("Logout") ?></a>
+    <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a> |
+    <a href="<?= url::site("logout")?>" id="gLogoutLink"><?= _("Logout") ?></a>
   <? else: ?>
     <a href="#"><?=_("Recover password") ?></a> |
-    <a href="<?= url::site("user/register")?>"><?= _("Register") ?></a> | 
+    <a href="<?= url::site("user/register")?>"><?= _("Register") ?></a> |
     <span id="gLoginLink">
       <a href="javascript:show_login()"><?= _("Login") ?></a>
     </span>
