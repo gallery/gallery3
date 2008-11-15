@@ -8,6 +8,7 @@ function show_login(url) {
 }
 
 function ajaxify_login_form() {
+  $("#gLoginMenu form ul").addClass("gInline");
   $("form#gLogin").ajaxForm({
     target: "#gLoginFormContainer",
     success: function(responseText, statusText) {
