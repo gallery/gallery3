@@ -20,7 +20,7 @@
 class Logout_Controller extends Controller {
   public function index() {
     try {
-      Session::instance()->delete("user");
+      Session::instance()->destroy();
     } catch (Exception $e) {
       Kohana::log("error", $e);
     }

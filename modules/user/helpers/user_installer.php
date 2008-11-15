@@ -77,7 +77,7 @@ class user_installer {
 
   public static function uninstall() {
     try {
-      Session::instance()->delete("user");
+      Session::instance()->destroy();
     } catch (Exception $e) {
     }
     $db = Database::instance();
