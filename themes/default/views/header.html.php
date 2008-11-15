@@ -2,6 +2,7 @@
 <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
 <h1><?= $item->title_edit ?></h1>
 
+<? if ($theme->module("user")): ?>
 <ul id="gLoginMenu">
   <? if ($user): ?>
   <a href="<?= url::site("user/{$user->id}?continue=" . url::current(true))?>"><?= _("Modify Profile") ?></a>
@@ -20,6 +21,7 @@
   <div id="gLoginFormContainer"></div>
   <? endif; ?>
 </ul>
+<? endif; ?>
 
 <ul id="gSiteMenu">
   <li><a href="<?= url::base() ?>"><?= _("HOME") ?></a></li>
