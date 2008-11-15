@@ -4,28 +4,24 @@
 function show_comment_add_form(url) {
   $("#gCommentAddLink").hide();
   $.get(url, function(data) {
-    $("#gAddCommentFormContainer").html(data);
+    $("#gCommentAddFormContainer").html(data);
     ajaxify_comment_add_form();
   });
 }
 
 function ajaxify_comment_add_form() {
   $("form#gComment").ajaxForm({
-    target: "#gAddCommentFormContainer",
-    success: function(responseText, statusText) {
-      if (!responseText) {
-        reload_comments();
+    dataType: 'json',
+    success: function(response_data, status_text) {
+      if (response_data['valid']) {
+        $("#gCommentThread").html(response_data["html"]);
+    $("#gCommentAddFormContainer").html("");
         $("#gCommentAddLink").show();
       } else {
+        $("#gCommentAddFormContainer").html(response_data["html"]);
         ajaxify_comment_add_form();
       }
     },
-  });
-}
-
-function reload_comments() {
-  $.get("<?= url::site("photo/{$item_id}/comments") ?>", function(data) {
-    $("#gCommentThread").html(data);
   });
 }
   // ]]>
@@ -35,5 +31,5 @@ function reload_comments() {
     <?= _("Add Comment") ?>
   </a>
 </span>
-<div id="gAddCommentFormContainer"></div>
+<div id="gCommentAddFormContainer"></div>
 

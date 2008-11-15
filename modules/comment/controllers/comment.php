@@ -77,14 +77,21 @@ class Comment_Controller extends REST_Controller {
       $comment->datetime = time();
       $comment->item_id = $this->input->post('item_id');
       $comment->save();
+
+      $data = array('valid' => true, 'html' => sprintf(comment::show_comment_list($item_id)));
     } else {
-      print $form->render("form.html");
+      $data = array('valid' => false, 'html' => sprintf($form->render("form.html")));
+    }
+
+    if (request::method() == "get") {
+      print $data['html'];
+    } else if (request::method() == "post") {
+      print json_encode($data);
     }
   }
 
   public function get_item_comments($item_id) {
-    $v = comment::show_comment_list($item_id);
-    print $v;
+    print comment::show_comment_list($item_id);
   }
 
   /**
