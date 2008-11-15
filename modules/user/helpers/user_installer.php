@@ -76,6 +76,10 @@ class user_installer {
   }
 
   public static function uninstall() {
+    try {
+      Session::instance()->delete("user");
+    } catch (Exception $e) {
+    }
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `users`;");
     $db->query("DROP TABLE IF EXISTS `groups`;");
