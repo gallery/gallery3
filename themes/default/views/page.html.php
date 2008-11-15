@@ -12,9 +12,11 @@
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/user.js") ?>" type="text/javascript"></script>
+    <? if ($user): ?>
+    <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
+    <? endif; ?>
   </head>
 
   <body>
@@ -42,6 +44,8 @@
         </div>
       </div>
     </div>
+    <? if ($user): ?>
     <?= $theme->in_place_edit(); ?>
+    <? endif; ?>
   </body>
 </html>
