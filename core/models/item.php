@@ -19,7 +19,14 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-  protected $has_one = array('owner' => 'user');
+  
+  function __construct($id) {
+    parent::__construct($id);
+    $module = ORM::factory("module")->where("name", 'user')->find();
+    if ($module->loaded) {
+      $this->has_one =  array('owner' => 'user');      
+    }
+  }
 
   /**
    * Is this item an album?

@@ -44,13 +44,24 @@ class Item_Controller extends REST_Controller {
 
     case "photo":
       if (is_array($_FILES["file"]["name"])) {
-        for ($i = 0; $i < count($_FILES["file"]["name"]); $i++) {
+        $user = Session::instance()->get('user');
+        if ($user) {
+          $user_id = $user->id;
+        } else {
+          try {
+            $user_id = ORM::factory("user")->find()->id;
+          } catch (Exception $e) {
+            $user_id = null;
+          }
+        }
+        for ($i = 0; $i < count($_FILES["file"]["name"]) - 1; $i++) {
           if ($_FILES["file"]["error"][$i] == 0) {
             $photo = photo::create(
               $item->id,
               $_FILES["file"]["tmp_name"][$i],
               $_FILES["file"]["name"][$i],
-              $_FILES["file"]["name"][$i]);
+              $_FILES["file"]["name"][$i],
+              '', $user_id);
           } else {
             // @todo return a reasonable error
             throw new Exception("@todo ERROR_IN_UPLOAD_FILE");
