@@ -24,6 +24,8 @@ class Logout_Controller extends Controller {
     } catch (Exception $e) {
       Kohana::log("error", $e);
     }
-    print json_encode(array("logout" => true));
+    if ($this->input->get("continue")) {
+      url::redirect($this->input->get("continue"));
+    }
   }
 }

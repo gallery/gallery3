@@ -576,7 +576,7 @@ table.gMetadata td.toggle {
 
 /**
  ** *******************************************************************
- * 8) Forms (general and specific) 
+ * 8) Forms (general and specific)
  ** *******************************************************************
  */
 
@@ -596,15 +596,15 @@ label {
   cursor: help;
 }
 
-input[type="text"], 
+input[type="text"],
 input[type="password"],
-textarea, 
-select { 
+textarea,
+select {
 }
 
-input[type="text"], 
-input[type="password"], 
-textarea, 
+input[type="text"],
+input[type="password"],
+textarea,
 .gValidationRule {
   width: 40%;
 }
@@ -645,7 +645,7 @@ optgroup {
 select {
 }
 
-textarea { 
+textarea {
   width: 99%;
   height: 12em;
 }
@@ -655,16 +655,16 @@ button {
 
 /* ~~~~~~~~~ Form layout ~~~~~~~~~~ */
 
-form ul, form li { 
-  list-style: none !important; 
+form ul, form li {
+  list-style: none !important;
 }
-form ul { 
-  margin: 0; 
+form ul {
+  margin: 0;
   padding: 0;
 }
 
-form li { 
-  margin-top: .5em; 
+form li {
+  margin-top: .5em;
   padding: .3em 1.5em .3em 1em;
 }
 
@@ -676,16 +676,16 @@ form ul ul li {
   float: left;
 }
 
-input, 
+input,
 textarea {
-  display: block; 
+  display: block;
   clear: both;
 }
 
 /* ~~~~~~~~~ Inline fieldsets ~~~~~~~~~~ */
 
 .gInline li {
-  float: left; 
+  float: left;
   margin: 0;
   padding: .3em .5em .4em;
   text-align: left;
@@ -694,7 +694,7 @@ textarea {
 .gInline input {
 }
 
-.gInline input[type="Submit"] { 
+.gInline input[type="Submit"] {
   margin-top: 1em;
 }
 
@@ -702,16 +702,16 @@ textarea {
   margin-top: 0;
 }
 
-.gInline input[type="text"], 
-.gInline input[type="password"], 
-.gInline textarea, 
-.gInline .gValidationRule { 
+.gInline input[type="text"],
+.gInline input[type="password"],
+.gInline textarea,
+.gInline .gValidationRule {
   width: 10em;
 }
 
-input:focus, 
-textarea:focus, 
-option:focus { 
+input:focus,
+textarea:focus,
+option:focus {
   background-color: #ffc;
 }
 
@@ -720,13 +720,13 @@ option:focus {
 .gRequired {
 }
 
-ul.gError, 
-li.gError { 
+ul.gError,
+li.gError {
   background-color: #ffdcdc;
 }
 
-.gError label, 
-.gValidationRule { 
+.gError label,
+.gValidationRule {
   color: red;
 }
 
@@ -735,24 +735,24 @@ li.gError {
   margin-top: .5em;
 }
 
-form.gError input[type="text"], 
-li.gError input[type="text"], 
-form.gError input[type="password"], 
-li.gError input[type="password"], 
-form.gError input[type="checkbox"], 
-li.gError input[type="checkbox"], 
-form.gError input[type="radio"], 
-li.gError input[type="radio"], 
-form.gError textarea, 
-li.gError textarea, 
-form.gError select, 
-li.gError select { 
+form.gError input[type="text"],
+li.gError input[type="text"],
+form.gError input[type="password"],
+li.gError input[type="password"],
+form.gError input[type="checkbox"],
+li.gError input[type="checkbox"],
+form.gError input[type="radio"],
+li.gError input[type="radio"],
+form.gError textarea,
+li.gError textarea,
+form.gError select,
+li.gError select {
   border: 2px solid red;
 }
 
 /* ~~~~~~~~ form font size ~~~~~~ */
 
-#gHeader form, #gSidebar form { 
+#gHeader form, #gSidebar form {
   font-size: .9em;
 }
 

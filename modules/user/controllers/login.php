@@ -19,38 +19,29 @@
  */
 class Login_Controller extends Controller {
   public function index() {
-    $form = new Forge();
-    $form->input("username")->rules("required|length[4,32]");
-    $form->password("password")->rules("required|length[5,40]");
-    $form->submit("Login");
-    print $form->render("login.html", true);
-  }
+    $form = new Forge("login", "", "post", array("id" => "gLogin"));
+    $group = $form->group(_("Login"));
+    $group->input("name")->label(_("Name"))->id("gName")->class(null);
+    $group->password("password")->label(_("Password"))->id("gPassword")->class(null);
+    $group->submit(_("Login"));
+    $form->hidden("continue")->value($this->input->get("continue"));
+    $group->inputs["name"]->error_messages("invalid_login", _("Invalid name or password"));
 
-  public function process() {
-    $form = new Forge("login.html", true);
-    $form->input("username")->rules("required|length[4,32]");
-    $form->password("password")->rules("required|length[5,40]");
-    $form->submit("Login");
-
-    $response = array();
     if ($form->validate()) {
-      // Load the user
-      $user = ORM::factory("user")->where("name", $form->username->value)->find();
-      if (!$user->loaded) {
-        $response["error_message"] = _("Invalid username or password");
-      } else {
-        if (user::is_correct_password($user, $form->password->value)) {
-          user::login($user);
-          $response["error_message"] = "";
-        } else {
-          $response["error_message"] = _("Invalid username or password");
+      $user = ORM::factory("user")->where("name", $group->inputs["name"]->value)->find();
+      if ($user->loaded &&
+          user::is_correct_password($user, $group->password->value)) {
+        user::login($user);
+        $continue = $form->hidden["continue"]->value;
+        if ($continue) {
+          url::redirect($form->hidden["continue"]->value);
         }
+        return;
+      } else {
+        $group->inputs["name"]->add_error("invalid_login", 1);
       }
-    } else {
-      $response["error_message"] = _("Invalid username or password");
     }
 
-    print json_encode($response);
+    print $form->render("form.html", false);
   }
-
 }

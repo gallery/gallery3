@@ -21,24 +21,58 @@ class User_Controller extends REST_Controller {
   protected $resource_type = "user";
 
   /**
+   * Return the form for creating / modifying users.
+   */
+  private function _get_form($user) {
+    $form = new Forge("user/{$user->id}", "", "post", array("id" => "gUser"));
+    $group = $form->group(_("User Info"));
+    $group->input("name")
+      ->label(_("Name"))
+      ->id("gName")
+      ->class(null)
+      ->value($user->name);
+    $group->input("display_name")
+      ->label(_("Display Name"))
+      ->id("gDisplayName")
+      ->class(null)
+      ->value($user->display_name);
+    $group->password("password")
+      ->label(_("Password"))
+      ->id("gPassword")
+      ->class(null);
+    $group->input("email")
+      ->label(_("Email"))
+      ->id("gEmail")
+      ->class(null)
+      ->value($user->email);
+    $group->submit(_("Modify"));
+    $form->hidden("continue")->value($this->input->get("continue"));
+
+    $this->_add_validation_rules(ORM::factory("user")->validation_rules, $form);
+
+    return $form;
+  }
+
+  /**
+   * @todo Refactor this into a more generic location
+   */
+  private function _add_validation_rules($rules, $form) {
+    foreach ($form->inputs as $name => $input) {
+      if (isset($input->inputs)) {
+        $this->_add_validation_rules($rules, $input);
+      }
+      if (isset($rules[$name])) {
+        $input->rules($rules[$name]);
+      }
+    }
+  }
+
+  /**
    * @see Rest_Controller::_get($resource)
    */
   public function _get($user) {
-    $userView = new View("user.html");
-    if (empty($user)) {
-      // @todo remove this when rest_controller is changed to handle a post with no id
-      $user = ORM::factory("user");
-      $user->save();
-      // @todo remove this when rest_controller is changed to handle a post with no id ^
-      $userView->user_id = $user->id;
-      $userView->action = _("User Registration");
-      $userView->button_text = _("Register");
-    } else {
-      $userView->user_id = $user->id;
-      $userView->action = _("User Modify");
-      $userView->button_text = _("Modify");
-    }
-    print $userView;
+    $form = $this->_get_form($user);
+    print $form->render("form.html", false);
   }
 
   /**
@@ -51,7 +85,17 @@ class User_Controller extends REST_Controller {
   /**
    *  @see Rest_Controller::_post($resource)
    */
-  public function _post($resource) {
+  public function _post($user) {
+    $form = $this->_get_form($user);
+    if ($form->validate()) {
+      // @todo if we use the Validation class here, the ORM can just read the inputs directly.  We
+      // need to investigate that.
+      //
+      // @todo
+      // Verify the user input, store it in the object.
+      // Show errors on validation failure.
+      // On success, redirect if there's a form->continue, else show an empty page.
+    }
     throw new Exception("@todo User_Controller::_post NOT IMPLEMENTED");
   }
 

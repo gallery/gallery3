@@ -1,66 +1,29 @@
-$(document).ready(function() {
-  $("#gLoginForm").submit(function() {
-    process_login();
-    return false;
-  });
-  $("#gLogoutLink").click(function() {
-    process_logout();
-    return false;
-  });
-});
-
-function show_form(formName) {
-  $(formName + "Link").css({display: "none"});
-  $(formName + "Text").css({display: "inline"});
-  $(formName + "Close").css({display: "inline"});
-  var url = $(formName + "Form").attr("formSrc");
-  $.get(url, null, function(data, textStatus) {
-    $(formName + "Form").html(data);
-    $(formName + "Form").css({display: "block"});  
+function show_login(url) {
+  $("#gLoginLink").hide();
+  $("#gLoginClose").show();
+  $.get(url, function(data) {
+    $("#gLoginFormContainer").html(data);
+    ajaxify_login_form();
   });
 }
 
-function hide_form(formName) {
-  $(formName + "Link").css({display: "inline"});  
-  $(formName + "Form").css({display: "none"});  
-  $(formName + "Form").html("");  
-  $(formName + "Text").css({display: "none"});
-  $(formName + "Close").css({display: "none"});
-}
-
-function process_login() {
-  $.ajax({
-    url: $("#gLogin").attr("action"),
-    type: "POST",
-    data: $("#gLogin").serialize(),
-    dataType: "json",
-    error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert("textStatus: " + textStatus + "\nerrorThrown: " + errorThrown);
-    },
-    success: function(data, textStatus) {
-      if (data.error_message != "") {
-        $("#gLoginMessage").html(data.error_message);
-        $("#gLoginMessage").css({display: "block"});
-        $("#gLogin").addClass("gError");
+function ajaxify_login_form() {
+  $("form#gLogin").ajaxForm({
+    target: "#gLoginFormContainer",
+    success: function(responseText, statusText) {
+      if (!responseText) {
+        window.location.reload();
       } else {
-        window.location.reload();
+        ajaxify_login_form();
       }
-    }
+    },
   });
 }
 
-function process_logout() {
-  $.ajax({
-    url: $("#gLogoutLink").attr("href"),
-    type: "GET",
-    dataType: "json",
-    error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert("textStatus: " + textStatus + "\nerrorThrown: " + errorThrown);
-    },
-    success: function(data, textStatus) {
-      if (data.logout) {
-        window.location.reload();
-      }
-    }
-  });
+function close_login() {
+  $("#gLogin").remove();
+  $("#gLoginClose").hide();
+  $("#gLoginLink").show();
+  $("input#gUsername").val("");
+  $("input#gPassword").val("");
 }

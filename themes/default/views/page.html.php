@@ -9,10 +9,11 @@
           media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/base-min.css") ?>"
           media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>" 
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/user.js") ?>" type="text/javascript"></script>
   </head>
 
