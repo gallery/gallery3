@@ -19,12 +19,11 @@
  */
 class Login_Controller extends Controller {
   public function index() {
-    $form = new Forge("login", "", "post", array("id" => "gLogin"));
+    $form = new Forge(url::current(true), "", "post", array("id" => "gLogin"));
     $group = $form->group(_("Login"));
     $group->input("name")->label(_("Name"))->id("gName")->class(null);
     $group->password("password")->label(_("Password"))->id("gPassword")->class(null);
     $group->submit(_("Login"));
-    $form->hidden("continue")->value($this->input->get("continue"));
     $group->inputs["name"]->error_messages("invalid_login", _("Invalid name or password"));
 
     if ($form->validate()) {
@@ -32,9 +31,8 @@ class Login_Controller extends Controller {
       if ($user->loaded &&
           user::is_correct_password($user, $group->password->value)) {
         user::login($user);
-        $continue = $form->hidden["continue"]->value;
-        if ($continue) {
-          url::redirect($form->hidden["continue"]->value);
+        if ($continue = $this->input->get("continue")) {
+          url::redirect($continue);
         }
         return;
       } else {

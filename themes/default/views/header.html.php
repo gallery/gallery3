@@ -4,7 +4,7 @@
 
 <ul id="gLoginMenu">
   <? if ($user): ?>
-  <a href="<?= url::site("user/update")?>"><?= _("Modify Profile") ?></a>
+  <a href="<?= url::site("user/{$user->id}?continue=" . url::current(true))?>"><?= _("Modify Profile") ?></a>
   | <a href="<?= url::site("logout?continue=" . url::current(true)) ?>" id="gLogoutLink">
     <?= _("Logout") ?>
   </a>

@@ -24,7 +24,7 @@ class User_Controller extends REST_Controller {
    * Return the form for creating / modifying users.
    */
   private function _get_form($user) {
-    $form = new Forge("user/{$user->id}", "", "post", array("id" => "gUser"));
+    $form = new Forge(url::current(true), "", "post", array("id" => "gUser"));
     $group = $form->group(_("User Info"));
     $group->input("name")
       ->label(_("Name"))
@@ -46,7 +46,6 @@ class User_Controller extends REST_Controller {
       ->class(null)
       ->value($user->email);
     $group->submit(_("Modify"));
-    $form->hidden("continue")->value($this->input->get("continue"));
 
     $this->_add_validation_rules(ORM::factory("user")->validation_rules, $form);
 
@@ -72,7 +71,7 @@ class User_Controller extends REST_Controller {
    */
   public function _get($user) {
     $form = $this->_get_form($user);
-    print $form->render("form.html", false);
+    print $form->render("form.html");
   }
 
   /**
@@ -88,15 +87,16 @@ class User_Controller extends REST_Controller {
   public function _post($user) {
     $form = $this->_get_form($user);
     if ($form->validate()) {
-      // @todo if we use the Validation class here, the ORM can just read the inputs directly.  We
-      // need to investigate that.
-      //
-      // @todo
-      // Verify the user input, store it in the object.
-      // Show errors on validation failure.
-      // On success, redirect if there's a form->continue, else show an empty page.
+      foreach ($form->as_array() as $key => $value) {
+        $user->$key = $value;
+      }
+      $user->save();
+      if ($continue = $this->input->get("continue")) {
+        url::redirect($continue);
+      }
+      return;
     }
-    throw new Exception("@todo User_Controller::_post NOT IMPLEMENTED");
+    print $form->render("form.html");
   }
 
   /**
