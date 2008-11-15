@@ -19,6 +19,7 @@ function DrawForm($inputs, $level=1) {
       print "$prefix  <legend>$input->name</legend>\n";
       print "$prefix  <ul>\n";
       DrawForm($input->inputs, $level + 2);
+      DrawForm($input->hidden, $level + 2);
       print "$prefix  </ul>\n";
       print "$prefix</fieldset>\n";
     } else {

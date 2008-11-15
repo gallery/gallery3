@@ -2,7 +2,9 @@
 <div id="gComments">
   <? if ($comment_list): ?>
     <h2><?= _("Comments") ?></h2>
-    <?= $comment_list ?>
+    <ul id="gCommentThread">
+      <?= $comment_list ?>
+    </ul>
   <? endif ?>
 
   <?= $comment_form ?>

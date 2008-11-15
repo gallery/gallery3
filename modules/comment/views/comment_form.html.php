@@ -1,25 +1,40 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-<form id="gCommentAdd">
-  <fieldset>
-    <legend>Add comment</legend>
-    <ul>
-      <li>
-        <label for="gCommentAuthor"><?= _("Your Name") ?></label>
-        <input type="text" name="author" id="gCommentAuthor" />
-      </li>
-      <li>
-        <label for="gCommentEmail"><?= _("Your Email (not displayed)") ?></label>
-        <input type="text" name="email" id="gCommentEmail" />
-      </li>
-      <li>
-        <label for="gCommentText"><?= _("Comment") ?></label>
-        <textarea name="text" id="gCommentText"></textarea>
-      </li>
-      <li>
-        <input type="hidden" id="gItemId" name="item_id" value="<?= $item_id ?>" />
-        <input type="submit" id="gCommentSubmit" value="<?= _("Add") ?>" />
-      </li>
-    </ul>
-  </fieldset>
-</form>
+<script type="text/javascript">
+  // <![CDATA[
+function show_comment_add_form(url) {
+  $("#gCommentAddLink").hide();
+  $.get(url, function(data) {
+    $("#gAddCommentFormContainer").html(data);
+    ajaxify_comment_add_form();
+  });
+}
+
+function ajaxify_comment_add_form() {
+  $("#gLoginMenu form ul").addClass("gInline");
+  $("form#gComment").ajaxForm({
+    target: "#gAddCommentFormContainer",
+    success: function(responseText, statusText) {
+      if (!responseText) {
+        reload_comments();
+        $("#gCommentAddLink").show();
+      } else {
+        ajaxify_comment_add_form();
+      }
+    },
+  });
+}
+
+function reload_comments() {
+  $.get("<?= url::site("photo/{$item_id}/comments") ?>", function(data) {
+    $("#gCommentThread").html(data);
+  });
+}
+  // ]]>
+</script>
+<span id="gCommentAddLink">
+  <a href="javascript:show_comment_add_form('<?= url::site("photo/{$item_id}/comments/add") ?>')">
+    <?= _("Add Comment") ?>
+  </a>
+</span>
+<div id="gAddCommentFormContainer"></div>
 
