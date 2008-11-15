@@ -10,7 +10,6 @@ function show_comment_add_form(url) {
 }
 
 function ajaxify_comment_add_form() {
-  $("#gLoginMenu form ul").addClass("gInline");
   $("form#gComment").ajaxForm({
     target: "#gAddCommentFormContainer",
     success: function(responseText, statusText) {
