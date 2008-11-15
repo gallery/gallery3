@@ -48,6 +48,11 @@ class Theme_Core {
     return $this->pagination->render();
   }
 
+  public function module($module_name) {
+    $module = module::get($module_name);
+    return $module->loaded ? $module : null;
+  }
+
   public function in_place_edit() {
     return new View("in_place_edit.html");
   }

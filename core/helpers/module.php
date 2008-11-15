@@ -37,6 +37,10 @@ class Module_Core {
     $module->save();
   }
 
+  public static function get($module_name) {
+    return ORM::factory("module")->where("name", $module_name)->find();
+  }
+
   public static function delete ($module_name) {
     ORM::factory("module")->where("name", $module_name)->find()->delete();
   }
