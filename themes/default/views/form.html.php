@@ -23,29 +23,26 @@ function DrawForm($inputs, $level=1) {
       print "$prefix</fieldset>\n";
     } else {
       if ($input->error_messages()) {
-        $error_messages = array_merge($error_messages, $input->error_messages());
         print "$prefix<li class=\"gError\">\n";
       } else {
         print "$prefix<li>\n";
       }
       if ($input->label()) {
-        print $prefix . "  " . $input->label() . "\n";
+        print "$prefix  {$input->label()}\n";
       }
-      print $prefix . "  " . $input->render() . "\n";
-      print "$prefix</li>\n";
+      print "$prefix  {$input->render()}\n";
       if ($input->message()) {
-        print "$prefix<li>\n";
-        print $prefix . "  " . $input->message() . "\n";
-        print "$prefix</li>\n";
+        print "$prefix  <p>{$input->message()}</p>\n";
       }
+      if ($input->error_messages()) {
+        foreach ($input->error_messages() as $error_message) {
+          print "$prefix  <p class=\"gError\">\n";
+          print "$prefix    $error_message\n";
+          print "$prefix  </p>\n";
+        }
+      }
+      print "$prefix</li>\n";
     }
-  }
-  if ($error_messages) {
-    print "$prefix  <div class=\"gStatus gError\">\n";
-    foreach ($error_messages as $message) {
-      print "<p class=\"gError\">$message<p>";
-    }
-    print "$prefix  </div>\n";
   }
 }
 DrawForm($inputs);
