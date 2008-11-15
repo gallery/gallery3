@@ -32,28 +32,22 @@ class Item_Controller extends REST_Controller {
     // 1) Add security checks
     // 2) Support owner_ids properly
 
+    $user = Session::instance()->get("user");
+    $owner_id = $user ? $user->id : $item->owner_id;
+
     switch ($this->input->post("type")) {
     case "album":
       $album = album::create(
         $item->id,
         $this->input->post("name"),
         $this->input->post("title", $this->input->post("name")),
-        $this->input->post("description"));
+        $this->input->post("description"),
+        $owner_id);
       url::redirect("album/{$album->id}");
       break;
 
     case "photo":
       if (is_array($_FILES["file"]["name"])) {
-        $user = Session::instance()->get('user');
-        if ($user) {
-          $user_id = $user->id;
-        } else {
-          try {
-            $user_id = ORM::factory("user")->find()->id;
-          } catch (Exception $e) {
-            $user_id = null;
-          }
-        }
         for ($i = 0; $i < count($_FILES["file"]["name"]) - 1; $i++) {
           if ($_FILES["file"]["error"][$i] == 0) {
             $photo = photo::create(
@@ -61,7 +55,7 @@ class Item_Controller extends REST_Controller {
               $_FILES["file"]["tmp_name"][$i],
               $_FILES["file"]["name"][$i],
               $_FILES["file"]["name"][$i],
-              '', $user_id);
+              "", $owner_id);
           } else {
             // @todo return a reasonable error
             throw new Exception("@todo ERROR_IN_UPLOAD_FILE");
@@ -74,7 +68,8 @@ class Item_Controller extends REST_Controller {
           $_FILES["file"]["tmp_name"],
           $_FILES["file"]["name"],
           $this->input->post("title", $this->input->post("name")),
-          $this->input->post("description"));
+          $this->input->post("description"),
+          $owner_id);
         url::redirect("{$new_item->type}/{$new_item->id}");
       }
       break;

@@ -21,11 +21,9 @@
     <h2><?= $child->title_edit ?></h2>
     <ul class="gMetadata">
       <li>Views: 321</li>
-<?
-  try {
-      echo "<li>" . _("By: ") . '<a href="#">' . $child->owner->name . "</a></li>";
-  } catch(Exception $e) {}
-?>
+      <? if ($child->owner): ?>
+      <li><?= _("By: ") ?><a href="#"><?= $child->owner->name ?></a></li>
+      <? endif ?>
     </ul>
   </li>
   <? endforeach ?>

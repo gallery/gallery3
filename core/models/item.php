@@ -19,14 +19,7 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-  
-  function __construct($id) {
-    parent::__construct($id);
-    $module = ORM::factory("module")->where("name", 'user')->find();
-    if ($module->loaded) {
-      $this->has_one =  array('owner' => 'user');      
-    }
-  }
+  protected $has_one = array("owner" => "user");
 
   /**
    * Is this item an album?
@@ -182,6 +175,14 @@ class Item_Model extends ORM_MPTT {
       $real_column = substr($column, 0, strlen($column) - 5);
       return "<span class=\"gInPlaceEdit gEditField-{$this->id}-{$real_column}\">" .
         "{$this->$real_column}</span>";
+    } else if ($column == "owner") {
+      // This relationship depends on an outside module, which may not be present so handle
+      // failures gracefully.
+      try {
+        return parent::__get($column);
+      } catch (Exception $e) {
+        return null;
+      }
     } else {
       return parent::__get($column);
     }
