@@ -66,7 +66,8 @@ class Comment_Core {
   }
 
   static function get_edit_form($comment) {
-    $form = new Forge(url::site("comment/{$comment->id}"), "", "post", array("id" => "gCommentForm"));
+    $form = new Forge(
+      url::site("comment/{$comment->id}?_method=put"), "", "post", array("id" => "gCommentForm"));
     $group = $form->group(_("Edit Comment"));
     $group->input("author") ->label(_("Author")) ->id("gAuthor") ->value($comment->author);
     $group->input("email")  ->label(_("Email"))  ->id("gEmail")  ->value($comment->email);

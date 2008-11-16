@@ -44,17 +44,12 @@ class Comment_Controller extends REST_Controller {
    *  @see Rest_Controller::_put($resource)
    */
   public function _put($comment) {
-    $comment = ORM::factory('comment');
-    $comment->item_id = $item_id;
-
-    $form = $this->_get_form($comment);
+    $form = comment::get_edit_form($comment);
     if ($form->validate()) {
       $comment = ORM::factory('comment');
       $comment->author = $this->input->post('author');
       $comment->email = $this->input->post('email');
       $comment->text = $this->input->post('text');
-      $comment->datetime = time();
-      $comment->item_id = $this->input->post('item_id');
       $comment->save();
       return;
     }
