@@ -64,7 +64,6 @@ class Item_Controller extends REST_Controller {
               $_FILES["file"]["name"][$i],
               "", $owner_id);
           } else {
-            // @todo return a reasonable error
             throw new Exception("@todo ERROR_IN_UPLOAD_FILE");
           }
         }
