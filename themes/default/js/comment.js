@@ -4,9 +4,8 @@ $("document").ready(function() {
 
 function ajaxify_comment_form() {
   $("#gCommentForm").ajaxForm({
-    target: "#gCommentForm",
     complete: function(xhr, statusText) {
-      ajaxify_comment_form();
+      $("#gCommentForm").replaceWith(xhr.responseText);
       if (xhr.status == 201) {
         $.get(xhr.getResponseHeader("Location"), function(data, textStatus) {
 		$("#gComment div.gBlockContent ul:first").append(data);
@@ -15,6 +14,7 @@ function ajaxify_comment_form() {
 	);
 	$("#gCommentForm").clearForm();
       }
+      ajaxify_comment_form();
     }
   });
 }
