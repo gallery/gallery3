@@ -142,7 +142,8 @@ class Welcome_Controller extends Template_Controller {
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
 
     try {
-      $user_id = ORM::factory("user")->find()->id;
+      $user = Session::instance()->get("user");
+      $owner_id = $user ? $user->id : ORM::factory("user")->find()->id;
     } catch (Exception $e) {
       $user_id = null;
     }
@@ -151,12 +152,12 @@ class Welcome_Controller extends Template_Controller {
       $parent = $parents[array_rand($parents)];
       if (!rand(0, 10)) {
         $parents[] = album::create(
-          $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $user_id)
+          $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
           ->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
           ->save();
       } else {
         photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg",
-                      "thumbnail.jpg", "rnd_" . rand(), "sample thumbnail", $user_id);
+                      "thumbnail.jpg", "rnd_" . rand(), "sample thumbnail", $owner_id);
       }
 
       if (!($i % 100)) {

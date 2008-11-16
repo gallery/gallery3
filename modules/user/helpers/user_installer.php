@@ -72,6 +72,16 @@ class user_installer {
           throw new Exception("@todo {$user->name} WAS_NOT_ADDED_TO {$group_name}");
         }
       }
+      
+      $user = ORM::factory("user")->where("name", "joe")->find();
+      $user->name = "joe";
+      $user->display_name = "Registered User";
+      $user->password = "joe";
+      $user->save();
+      $group = ORM::factory("group")->where("name", "registered")->find();
+      if (!$group->add($user)) {
+        throw new Exception("@todo {$user->name} WAS_NOT_ADDED_TO {$group_name}");
+      }
     }
   }
 
