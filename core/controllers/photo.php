@@ -42,6 +42,6 @@ class Photo_Controller extends Item_Controller {
     $template->set_global('user', Session::instance()->get('user', null));
     $template->content = new View("photo.html");
 
-    print $template->render();
+    print $template;
   }
 }

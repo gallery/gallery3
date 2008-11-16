@@ -26,7 +26,7 @@ class User_Controller extends REST_Controller {
    */
   public function _form($user) {
     $form = user::get_edit_form($user);
-    print $form->render();
+    print $form;
   }
 
   /**
@@ -40,7 +40,6 @@ class User_Controller extends REST_Controller {
    *  @see Rest_Controller::_put($resource)
    */
   public function _put($resource) {
-    throw new Exception("@todo User_Controller::_put NOT IMPLEMENTED");
   }
 
   /**
@@ -58,7 +57,8 @@ class User_Controller extends REST_Controller {
       }
       return;
     }
-    print $form->render("form.html");
+    print $form;
+   throw new Exception("@todo User_Controller::_put NOT IMPLEMENTED");
   }
 
   /**

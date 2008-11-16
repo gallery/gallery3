@@ -26,7 +26,7 @@ class Comment_Controller extends REST_Controller {
    */
   public function _form($comment) {
     $form = comment::get_edit_form($comment);
-    print $form->render("form.html");
+    print $form;
   }
 
   /**
@@ -58,7 +58,7 @@ class Comment_Controller extends REST_Controller {
       $comment->save();
       return;
     }
-    print $form->render();
+    print $form;
   }
 
   /**

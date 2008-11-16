@@ -26,7 +26,7 @@ class Comments_Controller extends REST_Controller {
    */
   public function _form($item) {
     $form = comment::get_add_form($item);
-    print $form->render("form.html");
+    print $form;
   }
 
   /**
@@ -63,7 +63,7 @@ class Comments_Controller extends REST_Controller {
       header("HTTP/1.1 201 Created");
       header("Location: " . url::site("comment/{$comment->id}"));
     }
-    print $form->render("form.html");
+    print $form;
   }
 
   /**

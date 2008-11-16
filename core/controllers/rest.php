@@ -72,7 +72,7 @@ abstract class REST_Controller extends Controller {
 
       if (Session::instance()->get("use_profiler", false)) {
         $profiler = new Profiler();
-        print $profiler->render();
+        $profiler->render();
       }
       return;
     }
