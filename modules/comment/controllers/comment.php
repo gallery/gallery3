@@ -80,7 +80,7 @@ class Comment_Controller extends REST_Controller {
 
       $data = array('valid' => true, 'html' => sprintf(comment::show_comment_list($item_id)));
     } else {
-      $data = array('valid' => false, 'html' => sprintf($form->render("form.html")));
+      $data = array('valid' => false, 'html' => sprintf($form->render()));
     }
 
     if (request::method() == "get") {

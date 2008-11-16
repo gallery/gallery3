@@ -40,6 +40,6 @@ class Login_Controller extends Controller {
       }
     }
 
-    print $form->render("form.html", false);
+    print $form->render();
   }
 }
