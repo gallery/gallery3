@@ -9,7 +9,7 @@ function show_login(url) {
 
 function ajaxify_login_form() {
   $("#gLoginMenu form ul").addClass("gInline");
-  $("form#gLogin").ajaxForm({
+  $("form#gLoginForm").ajaxForm({
     target: "#gLoginFormContainer",
     success: function(responseText, statusText) {
       if (!responseText) {
@@ -22,7 +22,7 @@ function ajaxify_login_form() {
 }
 
 function close_login() {
-  $("#gLogin").remove();
+  $("#gLoginForm").remove();
   $("#gLoginClose").hide();
   $("#gLoginLink").show();
   $("input#gUsername").val("");
