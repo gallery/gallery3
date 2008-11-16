@@ -19,6 +19,16 @@
  */
 class Album_Controller extends Item_Controller {
 
+  /**
+   *  @see Rest_Controller::_form($resource)
+   */
+  public function _form($comment) {
+    throw new Exception("@todo Comment_Controller::_get NOT IMPLEMENTED");
+  }
+
+  /**
+   *  @see Rest_Controller::_get($resource)
+   */
   public function _get($item) {
     // @todo: these need to be pulled from the database
     $theme_name = "default";

@@ -9,5 +9,5 @@
   <h1><?= $item->title_edit ?></h1>
   <div><?= $item->description_edit ?></div>
 
-  <? comment::show_comments($item->id); ?>
+  <?= comment::block($theme, true); ?>
 </div>

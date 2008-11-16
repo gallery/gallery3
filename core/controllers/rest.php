@@ -39,6 +39,10 @@
  *   public function _delete(ORM $comment) {
  *     // Handle DELETE request
  *   }
+ *
+ *   public function form(ORM $comment) {
+ *     // Show a form for creating a new comment
+ *   }
  * }
  *
  * A request to http://example.com/gallery3/comment/3 will result in a call to
@@ -85,6 +89,20 @@ abstract class REST_Controller extends Controller {
     }
   }
 
+  public function form($id) {
+    if ($this->resource_type == null) {
+      throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
+    }
+
+    // @todo this needs security checks
+    $resource = ORM::factory($this->resource_type, $id);
+    if (!$resource->loaded) {
+      return Kohana::show_404();
+    }
+
+    return $this->_form($resource);
+  }
+
   /**
    * Perform a GET request on this resource
    * @param ORM $resource the instance of this resource type
@@ -108,4 +126,10 @@ abstract class REST_Controller extends Controller {
    * @param ORM $resource the instance of this resource type
    */
   abstract public function _delete($resource);
+
+  /**
+   * Present a form for adding a new resource
+   * @param ORM $resource the resource container for instances of this resource type
+   */
+  abstract public function _form($resource);
 }

@@ -54,26 +54,68 @@ class Comment_Core {
     return $comment->save();
   }
 
-  static function show_comments($item_id) {
-    $v = new View('show_comments.html');
-    $v->comment_list = Comment::show_comment_list($item_id);
-    $v->comment_form = Comment::show_comment_form($item_id);
-    $v->render(true);
+  static function get_add_form($item) {
+    $form = new Forge(url::site("comments/{$item->id}"), "", "post", array("id" => "gCommentForm"));
+    $group = $form->group(_("Add Comment"));
+    $group->input("author") ->label(_("Author")) ->id("gAuthor");
+    $group->input("email")  ->label(_("Email"))  ->id("gEmail");
+    $group->textarea("text")->label(_("Text"))   ->id("gText");
+    $group->submit(_("Add"));
+
+    comment::_add_validation_rules("comment", $form);
+    return $form;
   }
 
-  static function show_comment_list($item_id) {
-    $v = new View('comment_list.html');
-    $v->item_id = $item_id;
-    $v->comments = ORM::factory('comment')->where('item_id', $item_id)
-      ->orderby('datetime', 'desc')
-      ->find_all()->as_array();
-    return $v;
+  static function get_edit_form($comment) {
+    $form = new Forge(url::site("comment/{$comment->id}"), "", "post", array("id" => "gCommentForm"));
+    $group = $form->group(_("Edit Comment"));
+    $group->input("author") ->label(_("Author")) ->id("gAuthor") ->value($comment->author);
+    $group->input("email")  ->label(_("Email"))  ->id("gEmail")  ->value($comment->email);
+    $group->textarea("text")->label(_("Text"))   ->id("gText")   ->value($comment->text);
+    $group->submit(_("Edit"));
+
+    comment::_add_validation_rules("comment", $form);
+    return $form;
   }
 
-  static function show_comment_form($item_id) {
-    $v = new View('comment_form.html');
-    $v->item_id = $item_id;
-    return $v;
+  /**
+   * @todo Refactor this into a more generic location
+   */
+  private static function _add_validation_rules($model_name, $form) {
+    $rules = ORM::factory($model_name)->validation_rules;
+    foreach ($form->inputs as $name => $input) {
+      if (isset($input->inputs)) {
+        comment::_add_validation_rules($model_name, $input);
+      }
+      if (isset($rules[$name])) {
+        $input->rules($rules[$name]);
+      }
+    }
+  }
+
+  static function block($theme, $show_add_form=true) {
+    $block = new Block;
+    $block->id = "gComment";
+    $block->title = _("Comments");
+    $block->content = comment::get_comments($theme->item());
+
+    if ($show_add_form) {
+      $block->content .= comment::get_add_form($theme->item())->render("form.html");
+    }
+    return $block;
+  }
+
+  static function get_comments($item) {
+    $comments = array("<ul>");
+    foreach (ORM::factory('comment')->where('item_id', $item->id)
+             ->orderby('datetime', 'asc')
+             ->find_all() as $comment) {
+      $v = new View("comment.html");
+      $v->comment = $comment;
+      $comments[] = $v;
+    }
+    $comments[] = "</ul>";
+    return implode("\n", $comments);
   }
 
   /**

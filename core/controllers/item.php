@@ -20,6 +20,13 @@
 class Item_Controller extends REST_Controller {
   protected $resource_type = "item";
 
+  /**
+   *  @see Rest_Controller::_form($resource)
+   */
+  public function _form($comment) {
+    throw new Exception("@todo Comment_Controller::_get NOT IMPLEMENTED");
+  }
+
   public function _get($item) {
     // Redirect to the more specific resource type, since it will render
     // differently.  We could also just delegate here, but it feels more appropriate

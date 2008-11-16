@@ -24,11 +24,7 @@
 $config['^rest'] = null;
 $config['^rest/.*'] = null;
 $config['^(\w+)/(\d+)$'] = '$1/dispatch/$2';
+$config['^form/(\w+)/(.*)$'] = '$1/form/$2';
 
 // For now our default page is the scaffolding.
 $config['_default'] = 'welcome';
-
-// Special routes for the comment module.
-// @todo Dynamically load this.
-$config['photo/(\d+)/comments/add$'] = 'comment/add/$1';
-$config['photo/(\d+)/comments$'] = 'comment/get_item_comments/$1';
