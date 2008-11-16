@@ -20,7 +20,7 @@
 class User_Model extends ORM {
   protected $has_and_belongs_to_many = array("groups");
 
-  var $validation_rules = array(
+  var $rules = array(
     "name" => "required|length[4,32]",
     "email" => "valid_email",
     "password" => "required|length[5,40]");

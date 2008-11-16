@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Model extends ORM {
-  var $validation_rules = array(
+  var $rules = array(
     "author" => "required",
     "email" => "required|valid_email",
     "text" => "required");

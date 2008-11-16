@@ -19,12 +19,27 @@
  */
 
 /**
- * This helper provides a common around the user management functions. 
- * 
+ * This helper provides a common around the user management functions.
+ *
  * @author Tim Almdal <public@timalmdal.com>
  *
  */
 class user {
+
+  /**
+   * Return the form for creating / modifying users.
+   */
+  public static function get_edit_form($user) {
+    $form = new Forge(url::site("user/{$user->id}"), "", "post", array("id" => "gUserForm"));
+    $group = $form->group(_("User Info"));
+    $group->input("name")         ->label(_("Name"))         ->id("gName")        ->value($user->name);
+    $group->input("display_name") ->label(_("Display Name")) ->id("gDisplayName") ->value($user->display_name);
+    $group->password("password")  ->label(_("Password"))     ->id("gPassword");
+    $group->input("email")        ->label(_("Email"))        ->id("gEmail")       ->value($user->email);
+    $group->submit(_("Modify"));
+    $form->add_rules_from($user);
+    return $form;
+  }
 
   /**
    * Is the password provided correct?

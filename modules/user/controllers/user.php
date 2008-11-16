@@ -21,57 +21,19 @@ class User_Controller extends REST_Controller {
   protected $resource_type = "user";
 
   /**
-   * Return the form for creating / modifying users.
+   * Present a form for editing a user
+   *  @see Rest_Controller::form($resource)
    */
-  private function _get_form($user) {
-    $form = new Forge(url::current(true), "", "post", array("id" => "gUser"));
-    $group = $form->group(_("User Info"));
-    $group->input("name")
-      ->label(_("Name"))
-      ->id("gName")
-      ->class(null)
-      ->value($user->name);
-    $group->input("display_name")
-      ->label(_("Display Name"))
-      ->id("gDisplayName")
-      ->class(null)
-      ->value($user->display_name);
-    $group->password("password")
-      ->label(_("Password"))
-      ->id("gPassword")
-      ->class(null);
-    $group->input("email")
-      ->label(_("Email"))
-      ->id("gEmail")
-      ->class(null)
-      ->value($user->email);
-    $group->submit(_("Modify"));
-
-    $this->_add_validation_rules(ORM::factory("user")->validation_rules, $form);
-
-    return $form;
-  }
-
-  /**
-   * @todo Refactor this into a more generic location
-   */
-  private function _add_validation_rules($rules, $form) {
-    foreach ($form->inputs as $name => $input) {
-      if (isset($input->inputs)) {
-        $this->_add_validation_rules($rules, $input);
-      }
-      if (isset($rules[$name])) {
-        $input->rules($rules[$name]);
-      }
-    }
+  public function _form($user) {
+    $form = user::get_edit_form($user);
+    print $form->render();
   }
 
   /**
    * @see Rest_Controller::_get($resource)
    */
   public function _get($user) {
-    $form = $this->_get_form($user);
-    print $form->render("form.html");
+    throw new Exception("@todo User_Controller::_get NOT IMPLEMENTED");
   }
 
   /**
@@ -85,7 +47,7 @@ class User_Controller extends REST_Controller {
    *  @see Rest_Controller::_post($resource)
    */
   public function _post($user) {
-    $form = $this->_get_form($user);
+    $form = user::get_edit_form($user);
     if ($form->validate()) {
       foreach ($form->as_array() as $key => $value) {
         $user->$key = $value;

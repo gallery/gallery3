@@ -61,8 +61,7 @@ class Comment_Core {
     $group->input("email")  ->label(_("Email"))  ->id("gEmail");
     $group->textarea("text")->label(_("Text"))   ->id("gText");
     $group->submit(_("Add"));
-
-    comment::_add_validation_rules("comment", $form);
+    $form->add_rules_from(ORM::factory("comment"));
     return $form;
   }
 
@@ -73,8 +72,7 @@ class Comment_Core {
     $group->input("email")  ->label(_("Email"))  ->id("gEmail")  ->value($comment->email);
     $group->textarea("text")->label(_("Text"))   ->id("gText")   ->value($comment->text);
     $group->submit(_("Edit"));
-
-    comment::_add_validation_rules("comment", $form);
+    $form->add_rules_from($comment);
     return $form;
   }
 
