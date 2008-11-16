@@ -397,66 +397,66 @@ table.gMetadata td.toggle {
 
 /* ~~~~~~~~~ tag cloud ~~~~~~~~~~ */
 
-#gTags ul {
+#gTag ul {
   padding: 0;
   text-align: justify;
 }
 
-#gTags ul li {
+#gTag ul li {
   display: inline;
   text-align: justify;
 }
 
-#gTags ul li a {
+#gTag ul li a {
   text-decoration: none;
 }
 
-#gTags ul li a.size0 {
+#gTag ul li a.size0 {
   color: #9cf;
   font-size: 100%;
   font-weight: 100;
 }
 
-#gTags ul li a.size1 {
+#gTag ul li a.size1 {
   color: #69f;
   font-size: 110%;
   font-weight: 300;
 }
 
-#gTags ul li a.size2 {
+#gTag ul li a.size2 {
   color: #69c;
   font-size: 120%;
   font-weight: 500;
 }
 
-#gTags ul li a.size3 {
+#gTag ul li a.size3 {
   color: #369;
   font-size: 130%;
   font-weight: 700;
 }
 
-#gTags ul li a.size4 {
+#gTag ul li a.size4 {
   color: #0e2b52;
   font-size: 140%;
   font-weight: 900;
 }
 
-#gTags ul li a:hover {
+#gTag ul li a:hover {
   color: #FF3300;
   text-decoration: underline;
 }
 
-#gTags form {
+#gTag form {
   margin-top: 10px;
 }
 
 /* ~~~~~~~~~ tags ~~~~~~~~~~ */
 
-#gTags ul {
+#gTag ul {
   margin-left: .5em;
 }
 
-#gTags li {
+#gTag li {
   list-style-image: url('../images/bullet_tag.png');
   margin-bottom: .3em;
 }

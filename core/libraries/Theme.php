@@ -61,7 +61,7 @@ class Theme_Core {
     /** @todo: make this data driven */
     $blocks = array(
       'carousel' => carousel::block($this),
-      'tags' => tags::block($this),
+      'tag' => tag::block($this),
       'info' => info::block($this),
       'gmaps' => gmaps::block($this),
     );
