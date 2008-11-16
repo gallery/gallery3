@@ -39,13 +39,7 @@ class User_Controller extends REST_Controller {
   /**
    *  @see Rest_Controller::_put($resource)
    */
-  public function _put($resource) {
-  }
-
-  /**
-   *  @see Rest_Controller::_post($resource)
-   */
-  public function _post($user) {
+  public function _put($user) {
     $form = user::get_edit_form($user);
     if ($form->validate()) {
       foreach ($form->as_array() as $key => $value) {
@@ -58,13 +52,19 @@ class User_Controller extends REST_Controller {
       return;
     }
     print $form;
-   throw new Exception("@todo User_Controller::_put NOT IMPLEMENTED");
+  }
+
+  /**
+   *  @see Rest_Controller::_post($resource)
+   */
+  public function _post($user) {
+    throw new Exception("@todo User_Controller::_post NOT IMPLEMENTED");
   }
 
   /**
    *  @see Rest_Controller::_delete($resource)
    */
-  public function _delete($resource) {
+  public function _delete($user) {
     throw new Exception("@todo User_Controller::_delete NOT IMPLEMENTED");
   }
 }
