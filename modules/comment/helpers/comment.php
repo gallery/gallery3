@@ -121,7 +121,6 @@ class Comment_Core {
       return json_encode($data);
 
     default:
-      $html = array("<ul>");
       foreach ($comments as $comment) {
         $v = new View("comment.html");
         $v->comment = $comment;
