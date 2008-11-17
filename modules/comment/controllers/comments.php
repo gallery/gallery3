@@ -31,10 +31,10 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Show the comment collection
-   *  @see Rest_Controller::_get($resource)
+   *  @see Rest_Controller::_get($resource, $format)
    */
-  public function _get($item) {
-    print comment::get_comments($item);
+  public function _get($item, $output_format) {
+    print comment::get_comments($item, $output_format);
   }
 
   /**

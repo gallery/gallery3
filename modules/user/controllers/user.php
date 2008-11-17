@@ -30,9 +30,9 @@ class User_Controller extends REST_Controller {
   }
 
   /**
-   * @see Rest_Controller::_get($resource)
+   * @see Rest_Controller::_get($resource, $format)
    */
-  public function _get($user) {
+  public function _get($user, $format) {
     throw new Exception("@todo User_Controller::_get NOT IMPLEMENTED");
   }
 

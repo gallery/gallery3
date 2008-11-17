@@ -24,19 +24,19 @@
  * class Comment_Controller extends REST_Controller {
  *   protected $resource_type = "comment";  // this tells REST which model to use
  *
- *   public function _get(ORM $comment) {
+ *   public function _get(ORM $comment, $output_format) {
  *     // Handle GET request
  *   }
  *
- *   public function _put(ORM $comment) {
+ *   public function _put(ORM $comment, $output_format) {
  *     // Handle PUT request
  *   }
  *
- *   public function _post(ORM $comment) {
+ *   public function _post(ORM $comment, $output_format) {
  *     // Handle POST request
  *   }
  *
- *   public function _delete(ORM $comment) {
+ *   public function _delete(ORM $comment, $output_format) {
  *     // Handle DELETE request
  *   }
  *
@@ -67,8 +67,9 @@ abstract class REST_Controller extends Controller {
      * We're expecting to run in an environment that only supports GET/POST, so expect to tunnel
      * PUT/DELETE through POST.
      */
+    $output_format = $this->input->get("_format", $this->input->post("_format", "html"));
     if (request::method() == "get") {
-      $this->_get($resource);
+      $this->_get($resource, $output_format);
 
       if (Session::instance()->get("use_profiler", false)) {
         $profiler = new Profiler();
@@ -107,7 +108,7 @@ abstract class REST_Controller extends Controller {
    * Perform a GET request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function _get($resource);
+  abstract public function _get($resource, $output_format);
 
   /**
    * Perform a PUT request on this resource

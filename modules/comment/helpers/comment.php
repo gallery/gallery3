@@ -96,7 +96,7 @@ class Comment_Core {
     $block = new Block;
     $block->id = "gComment";
     $block->title = _("Comments");
-    $block->content = comment::get_comments($theme->item());
+    $block->content = comment::get_comments($theme->item(), "html");
 
     if ($show_add_form) {
       $block->content .= comment::get_add_form($theme->item())->render("form.html");
@@ -104,17 +104,31 @@ class Comment_Core {
     return $block;
   }
 
-  static function get_comments($item) {
-    $comments = array("<ul>");
-    foreach (ORM::factory('comment')->where('item_id', $item->id)
-             ->orderby('datetime', 'asc')
-             ->find_all() as $comment) {
-      $v = new View("comment.html");
-      $v->comment = $comment;
-      $comments[] = $v;
+  static function get_comments($item, $output_format) {
+    $comments = ORM::factory('comment')->where('item_id', $item->id)
+      ->orderby('datetime', 'asc')
+      ->find_all();
+
+    switch ($output_format) {
+    case "xml":
+      return xml::to_xml($comments, array("comments", "comment"));
+      break;
+
+    case "json":
+      foreach ($comments as $comment) {
+        $data[] = $comment->as_array();
+      }
+      return json_encode($data);
+
+    default:
+      $html = array("<ul>");
+      foreach ($comments as $comment) {
+        $v = new View("comment.html");
+        $v->comment = $comment;
+        $html[] = $v;
+      }
+      return "<ul>\n" . implode("\n", $html) . "</ul>\n";
     }
-    $comments[] = "</ul>";
-    return implode("\n", $comments);
   }
 
   /**

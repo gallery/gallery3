@@ -17,31 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Photo_Controller extends Item_Controller {
-
-  /**
-   *  @see Rest_Controller::_form($resource)
-   */
-  public function _form($comment) {
-    throw new Exception("@todo Comment_Controller::_form NOT IMPLEMENTED");
-  }
-
-  /**
-   *  @see Rest_Controller::_get($resource, $output_format)
-   */
-  public function _get($item, $output_format) {
-    $template = new View("page.html");
-
-    // @todo: this needs to be data-driven
-    $theme = new Theme("default", $template);
-
-    $template->set_global('item', $item);
-    $template->set_global('children', $item->children());
-    $template->set_global('parents', $item->parents());
-    $template->set_global('theme', $theme);
-    $template->set_global('user', Session::instance()->get('user', null));
-    $template->content = new View("photo.html");
-
-    print $template;
+class Xml_Core {
+  public static function to_xml($array, $element_names) {
+    $xml = "<$element_names[0]>\n";
+    foreach ($array as $key => $value) {
+      if (is_array($value)) {
+        $xml .= xml::to_xml($value, array_slice($element_names, 1));
+      } else if (is_object($value)) {
+        $xml .= xml::to_xml($value->as_array(), array_slice($element_names, 1));
+      } else {
+        $xml .= "<$key>$value</$key>\n";
+      }
+    }
+    $xml .= "</$element_names[0]>\n";
+    return $xml;
   }
 }

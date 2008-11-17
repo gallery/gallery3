@@ -31,13 +31,25 @@ class Comment_Controller extends REST_Controller {
 
   /**
    * Get an existing comment.
-   *  @see Rest_Controller::_get($resource)
+   *  @see Rest_Controller::_get($resource, $output_format)
    */
-  public function _get($comment) {
-    $v = new View("comment.html");
-    $v->comment = $comment;
-    print $v;
+  public function _get($comment, $output_format) {
+    switch ($output_format) {
+    case "xml":
+      print xml::to_xml($comment->as_array(), array("comment"));
+      break;
+
+    case "json":
+      print json_encode($comment->as_array());
+      break;
+
+    default:
+      $v = new View("comment.$output_format");
+      $v->comment = $comment;
+      print $v;
+    }
   }
+
 
   /**
    * Update existing comment.
@@ -46,7 +58,6 @@ class Comment_Controller extends REST_Controller {
   public function _put($comment) {
     $form = comment::get_edit_form($comment);
     if ($form->validate()) {
-      $comment = ORM::factory('comment');
       $comment->author = $this->input->post('author');
       $comment->email = $this->input->post('email');
       $comment->text = $this->input->post('text');
