@@ -127,7 +127,9 @@ class Comment_Core {
         $v->comment = $comment;
         $html[] = $v;
       }
-      return "<ul>\n" . implode("\n", $html) . "</ul>\n";
+      if (!empty($html)) {
+        return "<ul>\n" . implode("\n", $html) . "</ul>\n";
+      }
     }
   }
 
