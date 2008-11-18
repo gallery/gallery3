@@ -129,6 +129,6 @@ $config['modules'] = array
   MODPATH . 'user',
   MODPATH . 'info',
   MODPATH . 'gmaps',
-  MODPATH . 'auth',
+  MODPATH . 'slideshow',
   MODPATH . 'comment',
 );
