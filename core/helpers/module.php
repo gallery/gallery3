@@ -44,4 +44,8 @@ class Module_Core {
   public static function delete ($module_name) {
     ORM::factory("module")->where("name", $module_name)->find()->delete();
   }
+  
+  public static function is_installed($module_name) {
+    return ORM::factory("module")->where("name", $module_name)->find()->loaded;
+  }
 }
