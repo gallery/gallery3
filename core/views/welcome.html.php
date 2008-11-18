@@ -203,7 +203,7 @@
 
           <div id="info" class="activity">
             <ul>
-              <li> <?= html::anchor("welcome/mptt&type=text", "MPTT tree (text)") ?> </li>
+              <li> <?= html::anchor("welcome/mptt?type=text", "MPTT tree (text)") ?> </li>
               <li>
                 <?= html::anchor("welcome/mptt", "MPTT tree (graph)") ?>
                 <i>(requires /usr/bin/dot from the graphviz package)</i>
