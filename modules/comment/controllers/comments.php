@@ -18,59 +18,94 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comments_Controller extends REST_Controller {
-  protected $resource_type = "item";
+  protected $resource_type = "comment";
 
   /**
-   * Present a form for adding a new comment to this item
-   *  @see Rest_Controller::form($resource)
+   * Display comments based on criteria.
+   *  @see Rest_Controller::_delete($resource)
    */
-  public function _form($item) {
-    $form = comment::get_add_form($item);
-    print $form;
+  public function _index($query) {
+    throw new Exception("@todo Comment_Controller::_index NOT IMPLEMENTED");
   }
 
   /**
-   * Show the comment collection
-   *  @see Rest_Controller::_get($resource, $format)
+   * Add a new comment to the collection.
+   * @see Rest_Controller::_create($resource)
    */
-  public function _get($item, $output_format) {
-    print comment::get_comments($item, $output_format);
-  }
-
-  /**
-   * Update existing comment collection.
-   *  @see Rest_Controller::_put($resource)
-   */
-  public function _put($item) {
-    throw new Exception("@todo Comment_Controller::_put NOT IMPLEMENTED");
-  }
-
-  /**
-   * Add a new comment to the collection
-   * @see Rest_Controller::_post($resource)
-   */
-  public function _post($item) {
-    $form = comment::get_add_form($item);
+  public function _create($comment) {
+    $form = comment::get_add_form($this->input->post('item_id'));
     if ($form->validate()) {
-      $comment = ORM::factory('comment');
       $comment->author = $this->input->post('author');
       $comment->email = $this->input->post('email');
       $comment->text = $this->input->post('text');
       $comment->datetime = time();
-      $comment->item_id = $item->id;
+      $comment->item_id = $this->input->post('item_id');
       $comment->save();
 
       header("HTTP/1.1 201 Created");
-      header("Location: " . url::site("comment/{$comment->id}"));
+      header("Location: " . url::site("comments/{$comment->id}"));
     }
+    // @todo Return appropriate HTTP status code indicating error.
     print $form;
   }
 
   /**
-   * Delete existing comment collection.
+   * Display an existing comment.
+   *  @see Rest_Controller::_show($resource, $format)
+   */
+  public function _show($comment, $output_format) {
+    switch ($output_format) {
+    case "xml":
+      print xml::to_xml($comment->as_array(), array("comment"));
+      break;
+
+    case "json":
+      print json_encode($comment->as_array());
+      break;
+
+    default:
+      $v = new View("comment.$output_format");
+      $v->comment = $comment;
+      print $v;
+    }
+  }
+
+  /**
+   * Change an existing comment.
+   *  @see Rest_Controller::_update($resource)
+   */
+  public function _update($comment) {
+    $form = comment::get_edit_form($comment);
+    if ($form->validate()) {
+      $comment->author = $this->input->post('author');
+      $comment->email = $this->input->post('email');
+      $comment->text = $this->input->post('text');
+      $comment->save();
+      return;
+    }
+    // @todo Return appropriate HTTP status code indicating error.
+    print $form;
+  }
+
+  /**
+   * Delete existing comment.
    *  @see Rest_Controller::_delete($resource)
    */
-  public function _delete($item) {
+  public function _delete($comment) {
     throw new Exception("@todo Comment_Controller::_delete NOT IMPLEMENTED");
+  }
+
+  /**
+   * Present a form for adding a new comment to this item or editing an existing comment.
+   *  @see Rest_Controller::form($resource)
+   */
+  public function _form($resource, $form_type) {
+	// This code will be clearer if we split form() into two functions.
+    if ($form_type == "edit") {
+      $form = comment::get_edit_form($resource);
+    } else {
+      $form = comment::get_add_form($resource);
+    }
+    print $form;
   }
 }

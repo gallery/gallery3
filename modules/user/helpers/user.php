@@ -31,7 +31,7 @@ class user {
    */
   public static function get_edit_form($user) {
     $form = new Forge(
-      url::site("user/{$user->id}?_method=put"), "", "post", array("id" => "gUserForm"));
+      url::site("users/{$user->id}?_method=put"), "", "post", array("id" => "gUserForm"));
     $group = $form->group(_("User Info"));
     $group->input("name")         ->label(_("Name"))         ->id("gName")        ->value($user->name);
     $group->input("display_name") ->label(_("Display Name")) ->id("gDisplayName") ->value($user->display_name);

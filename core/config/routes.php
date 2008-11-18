@@ -24,7 +24,9 @@
 $config['^rest'] = null;
 $config['^rest/.*'] = null;
 $config['^(\w+)/(\d+)$'] = '$1/dispatch/$2';
-$config['^form/(\w+)/(.*)$'] = '$1/form/$2';
+// @todo The following will need to support query strings.
+$config['^(\w+)$'] = '$1/index';
+$config['^form/(\w+)/(\w+)/(.*)$'] = '$2/form/$3/$1';
 
 // For now our default page is the scaffolding.
 $config['_default'] = 'welcome';

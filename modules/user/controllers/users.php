@@ -21,25 +21,31 @@ class Users_Controller extends REST_Controller {
   protected $resource_type = "user";
 
   /**
-   * Present a form for editing a user
-   *  @see Rest_Controller::form($resource)
+   * Display comments based on criteria.
+   *  @see Rest_Controller::_delete($resource)
    */
-  public function _form($user) {
-    $form = user::get_edit_form($user);
-    print $form;
+  public function _index($query) {
+    throw new Exception("@todo Comment_Controller::_index NOT IMPLEMENTED");
   }
 
   /**
-   * @see Rest_Controller::_get($resource, $format)
+   *  @see Rest_Controller::_create($resource)
    */
-  public function _get($user, $format) {
-    throw new Exception("@todo User_Controller::_get NOT IMPLEMENTED");
+  public function _create($user) {
+    throw new Exception("@todo User_Controller::_create NOT IMPLEMENTED");
   }
 
   /**
-   *  @see Rest_Controller::_put($resource)
+   * @see Rest_Controller::_show($resource, $format)
    */
-  public function _put($user) {
+  public function _show($user, $format) {
+    throw new Exception("@todo User_Controller::_show NOT IMPLEMENTED");
+  }
+
+  /**
+   *  @see Rest_Controller::_update($resource)
+   */
+  public function _update($user) {
     $form = user::get_edit_form($user);
     if ($form->validate()) {
       foreach ($form->as_array() as $key => $value) {
@@ -55,16 +61,22 @@ class Users_Controller extends REST_Controller {
   }
 
   /**
-   *  @see Rest_Controller::_post($resource)
-   */
-  public function _post($user) {
-    throw new Exception("@todo User_Controller::_post NOT IMPLEMENTED");
-  }
-
-  /**
    *  @see Rest_Controller::_delete($resource)
    */
   public function _delete($user) {
     throw new Exception("@todo User_Controller::_delete NOT IMPLEMENTED");
+  }
+
+  /**
+   * Present a form for editing a user
+   *  @see Rest_Controller::form($resource)
+   */
+  public function _form($user, $form_type) {
+    if ($form_type == "edit") {
+      $form = user::get_edit_form($user);
+      print $form;
+    } else {
+      return Kohana::show_404();
+    }
   }
 }

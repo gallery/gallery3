@@ -54,12 +54,13 @@ class Comment_Core {
     return $comment->save();
   }
 
-  static function get_add_form($item) {
-    $form = new Forge(url::site("comments/{$item->id}"), "", "post", array("id" => "gCommentForm"));
+  static function get_add_form($item_id) {
+    $form = new Forge(url::site("comments"), "", "post", array("id" => "gCommentForm"));
     $group = $form->group(_("Add Comment"));
     $group->input("author") ->label(_("Author")) ->id("gAuthor");
     $group->input("email")  ->label(_("Email"))  ->id("gEmail");
     $group->textarea("text")->label(_("Text"))   ->id("gText");
+    $group->hidden("item_id")->value($item_id);
     $group->submit(_("Add"));
     $form->add_rules_from(ORM::factory("comment"));
     return $form;
@@ -67,7 +68,7 @@ class Comment_Core {
 
   static function get_edit_form($comment) {
     $form = new Forge(
-      url::site("comment/{$comment->id}?_method=put"), "", "post", array("id" => "gCommentForm"));
+      url::site("comments/{$comment->id}?_method=put"), "", "post", array("id" => "gCommentForm"));
     $group = $form->group(_("Edit Comment"));
     $group->input("author") ->label(_("Author")) ->id("gAuthor") ->value($comment->author);
     $group->input("email")  ->label(_("Email"))  ->id("gEmail")  ->value($comment->email);

@@ -20,16 +20,9 @@
 class Photo_Controller extends Item_Controller {
 
   /**
-   *  @see Rest_Controller::_form($resource)
+   *  @see Rest_Controller::_show($resource, $output_format)
    */
-  public function _form($comment) {
-    throw new Exception("@todo Comment_Controller::_form NOT IMPLEMENTED");
-  }
-
-  /**
-   *  @see Rest_Controller::_get($resource, $output_format)
-   */
-  public function _get($item, $output_format) {
+  public function _show($item, $output_format) {
     $template = new View("page.html");
 
     // @todo: this needs to be data-driven

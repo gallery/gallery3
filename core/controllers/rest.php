@@ -24,16 +24,20 @@
  * class Comment_Controller extends REST_Controller {
  *   protected $resource_type = "comment";  // this tells REST which model to use
  *
- *   public function _get(ORM $comment, $output_format) {
+ *   public function _index($query) {
+ *     // Handle GET request to controller root
+ *   }
+ *
+ *   public function _show(ORM $comment, $output_format) {
  *     // Handle GET request
  *   }
  *
- *   public function _put(ORM $comment, $output_format) {
+ *   public function _update(ORM $comment, $output_format) {
  *     // Handle PUT request
  *   }
  *
- *   public function _post(ORM $comment, $output_format) {
- *     // Handle POST request
+ *   public function _create(ORM $comment, $output_format) {
+ *     // Handle POST request to controller root
  *   }
  *
  *   public function _delete(ORM $comment, $output_format) {
@@ -45,7 +49,7 @@
  *   }
  * }
  *
- * A request to http://example.com/gallery3/comment/3 will result in a call to
+ * A request to http://example.com/gallery3/comments/3 will result in a call to
  * REST_Controller::dispatch(3) which will load up the comment associated with id 3.  If there's
  * no such comment, it returns a 404.  Otherwise, it will then delegate to
  * Comment_Controller::get() with the ORM instance as an argument.
@@ -60,7 +64,7 @@ abstract class REST_Controller extends Controller {
 
     // @todo this needs security checks
     $resource = ORM::factory($this->resource_type, $id);
-    if (!$resource->loaded) {
+    if (!$resource->loaded && !$this->request_method() == "post") {
       return Kohana::show_404();
     }
     /**
@@ -68,8 +72,8 @@ abstract class REST_Controller extends Controller {
      * PUT/DELETE through POST.
      */
     $output_format = $this->input->get("_format", $this->input->post("_format", "html"));
-    if (request::method() == "get") {
-      $this->_get($resource, $output_format);
+    if ($this->request_method() == "get") {
+      $this->_show($resource, $output_format);
 
       if (Session::instance()->get("use_profiler", false)) {
         $profiler = new Profiler();
@@ -78,49 +82,88 @@ abstract class REST_Controller extends Controller {
       return;
     }
 
-    switch ($this->input->post("_method", $this->input->get("_method"))) {
+    switch ($this->request_method()) {
     case "put":
-      return $this->_put($resource);
+      return $this->_update($resource);
 
     case "delete":
       return $this->_delete($resource);
 
-    default:
-      return $this->_post($resource);
+    case "post":
+      return $this->_create($resource);
     }
   }
 
-  public function form($id) {
+  // @todo Get rid of $form_type, move to add_form() and edit_form().
+  public function form($data, $form_type) {
     if ($this->resource_type == null) {
       throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
     }
 
     // @todo this needs security checks
-    $resource = ORM::factory($this->resource_type, $id);
-    if (!$resource->loaded) {
-      return Kohana::show_404();
-    }
+    if ($form_type == "edit") {
+      /* We're editing an existing item, load it from the database. */
+      $resource = ORM::factory($this->resource_type, $data);
+      if (!$resource->loaded) {
+        return Kohana::show_404();
+      }
 
-    return $this->_form($resource);
+      return $this->_form($resource, $form_type);
+    } else {
+      /* We're adding a new item, pass along any additional parameters. */
+      return $this->_form($data, $form_type);
+    }
+  }
+
+  public function index($query_string=null) {
+    // @todo Convert query string to an array and pass it along to _index()
+    if (request::method() == "post") {
+      return $this->dispatch(null);
+    }
+    return $this->_index(array());
   }
 
   /**
-   * Perform a GET request on this resource
-   * @param ORM $resource the instance of this resource type
+   * Return HTTP request method taking into consideration PUT and DELETE tunneling through POST.
+   * @todo Move this to a MY_request helper?
+   * @return string HTTP request method
    */
-  abstract public function _get($resource, $output_format);
+  protected function request_method() {
+    if (request::method() == "get") {
+      return "get";
+    } else {
+      switch ($this->input->post("_method", $this->input->get("_method"))) {
+      case "put":    return "put";
+      case "delete": return "delete";
+      default:       return "post";
+      }
+    }
+  }
 
   /**
-   * Perform a PUT request on this resource
-   * @param ORM $resource the instance of this resource type
+   * Perform a GET request on the controller root
+   * (e.g. http://www.example.com/gallery3/comments)
+   * @param array $query name-value pairs from the query string, if any
    */
-  abstract public function _put($resource);
+  abstract public function _index($query);
 
   /**
    * Perform a POST request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function _post($resource);
+  abstract public function _create($resource);
+
+  /**
+   * Perform a GET request on this resource
+   * @param ORM $resource the instance of this resource type
+   */
+  abstract public function _show($resource, $output_format);
+
+  /**
+   * Perform a PUT request on this resource
+   * @param ORM $resource the instance of this resource type
+   */
+  abstract public function _update($resource);
 
   /**
    * Perform a DELETE request on this resource
@@ -132,5 +175,5 @@ abstract class REST_Controller extends Controller {
    * Present a form for adding a new resource
    * @param ORM $resource the resource container for instances of this resource type
    */
-  abstract public function _form($resource);
+  abstract public function _form($resource, $form_type);
 }

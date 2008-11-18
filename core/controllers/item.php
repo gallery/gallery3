@@ -21,20 +21,27 @@ class Item_Controller extends REST_Controller {
   protected $resource_type = "item";
 
   /**
+   *  @see Rest_Controller::_index($query)
+   */
+  public function _index($query) {
+    throw new Exception("@todo Item_Controller::_index NOT IMPLEMENTED");
+  }
+
+  /**
    *  @see Rest_Controller::_form($resource)
    */
-  public function _form($item) {
+  public function _form($item, $form_type) {
     throw new Exception("@todo Comment_Controller::_form NOT IMPLEMENTED");
   }
 
-  public function _get($item, $format) {
+  public function _show($item, $format) {
     // Redirect to the more specific resource type, since it will render
     // differently.  We could also just delegate here, but it feels more appropriate
     // to have a single canonical resource mapping.
     return url::redirect("{$item->type}/$item->id");
   }
 
-  public function _put($item) {
+  public function _update($item) {
     // @todo Productionize this code
     // 1) Add security checks
     // 2) Support owner_ids properly
@@ -92,7 +99,7 @@ class Item_Controller extends REST_Controller {
     url::redirect("{$parent->type}/{$parent->id}");
   }
 
-  public function _post($item) {
+  public function _create($item) {
     // @todo Productionize this
     // 1) Figure out how to do the right validation here.  Validate the form input and apply it to
     //    the model as appropriate.
