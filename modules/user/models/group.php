@@ -19,4 +19,7 @@
  */
 class Group_Model extends ORM {
   protected $has_and_belongs_to_many = array("users");
+
+  var $rules = array(
+    "name" => "required|length[4,255]");
 }

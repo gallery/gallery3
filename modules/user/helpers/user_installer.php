@@ -29,7 +29,7 @@ class user_installer {
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `users` (
           `id` int(9) NOT NULL auto_increment,
-          `name` varchar(255) NOT NULL,
+          `name` varchar(32) NOT NULL,
           `display_name` varchar(255) NOT NULL,
           `password` varchar(128) NOT NULL,
           `login_count` int(10) unsigned NOT NULL DEFAULT 0,

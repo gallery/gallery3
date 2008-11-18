@@ -22,7 +22,8 @@ class User_Model extends ORM {
 
   var $rules = array(
     "name" => "required|length[4,32]",
-    "email" => "valid_email",
+    "display_name" => "length[0,255]",
+    "email" => "valid_email|length[4,255]",
     "password" => "required|length[5,40]");
 
   public function __set($column, $value) {
