@@ -366,6 +366,10 @@ table.gMetadata td.toggle {
   top: 0;
 }
 
+#gItem #gSlideshowLink {
+  position: relative;
+}
+
 /* ~~~~~~~~~ breadcrumbs ~~~~~~~~~~ */
 
 #gBreadcrumbs {
