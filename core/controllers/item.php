@@ -21,9 +21,9 @@ class Item_Controller extends REST_Controller {
   protected $resource_type = "item";
 
   /**
-   *  @see Rest_Controller::_index($query)
+   *  @see Rest_Controller::_index()
    */
-  public function _index($query) {
+  public function _index() {
     throw new Exception("@todo Item_Controller::_index NOT IMPLEMENTED");
   }
 

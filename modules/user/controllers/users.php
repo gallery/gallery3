@@ -22,9 +22,9 @@ class Users_Controller extends REST_Controller {
 
   /**
    * Display comments based on criteria.
-   *  @see Rest_Controller::_delete($resource)
+   *  @see Rest_Controller::_index()
    */
-  public function _index($query) {
+  public function _index() {
     throw new Exception("@todo Comment_Controller::_index NOT IMPLEMENTED");
   }
 
@@ -36,9 +36,9 @@ class Users_Controller extends REST_Controller {
   }
 
   /**
-   * @see Rest_Controller::_show($resource, $format)
+   * @see Rest_Controller::_show($resource, $output_format)
    */
-  public function _show($user, $format) {
+  public function _show($user, $output_format) {
     throw new Exception("@todo User_Controller::_show NOT IMPLEMENTED");
   }
 

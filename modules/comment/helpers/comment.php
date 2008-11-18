@@ -105,17 +105,25 @@ class Comment_Core {
     return $block;
   }
 
-  static function get_comments($item, $output_format) {
-    $comments = ORM::factory('comment')->where('item_id', $item->id)
+  // @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
+  static function get_comments($item_id, $output_format) {
+    $comments = ORM::factory('comment')->where('item_id', $item_id)
       ->orderby('datetime', 'asc')
       ->find_all();
 
+    if (!$comments->count()) {
+      header("HTTP/1.1 400 Bad Request");
+      return;
+    }
+
     switch ($output_format) {
     case "xml":
+      header("Content-Type: application/xml");
       return xml::to_xml($comments, array("comments", "comment"));
       break;
 
     case "json":
+      header("Content-Type: application/json");
       foreach ($comments as $comment) {
         $data[] = $comment->as_array();
       }

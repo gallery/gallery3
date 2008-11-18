@@ -24,7 +24,7 @@
  * class Comment_Controller extends REST_Controller {
  *   protected $resource_type = "comment";  // this tells REST which model to use
  *
- *   public function _index($query) {
+ *   public function _index() {
  *     // Handle GET request to controller root
  *   }
  *
@@ -67,13 +67,9 @@ abstract class REST_Controller extends Controller {
     if (!$resource->loaded && !$this->request_method() == "post") {
       return Kohana::show_404();
     }
-    /**
-     * We're expecting to run in an environment that only supports GET/POST, so expect to tunnel
-     * PUT/DELETE through POST.
-     */
-    $output_format = $this->input->get("_format", $this->input->post("_format", "html"));
+
     if ($this->request_method() == "get") {
-      $this->_show($resource, $output_format);
+      $this->_show($resource, $this->get_output_format());
 
       if (Session::instance()->get("use_profiler", false)) {
         $profiler = new Profiler();
@@ -115,16 +111,18 @@ abstract class REST_Controller extends Controller {
     }
   }
 
-  public function index($query_string=null) {
-    // @todo Convert query string to an array and pass it along to _index()
+  public function index() {
     if (request::method() == "post") {
       return $this->dispatch(null);
     }
-    return $this->_index(array());
+    return $this->_index();
   }
 
   /**
-   * Return HTTP request method taking into consideration PUT and DELETE tunneling through POST.
+   * We're expecting to run in an environment that only supports GET/POST, so expect to tunnel
+   * PUT and DELETE through POST.
+   *
+   * Returns the HTTP request method taking into consideration PUT/DELETE tunneling.
    * @todo Move this to a MY_request helper?
    * @return string HTTP request method
    */
@@ -140,12 +138,16 @@ abstract class REST_Controller extends Controller {
     }
   }
 
+  // @todo Figure out a good consistent method of passing the output format to controller methods.
+  protected function get_output_format() {
+    return $this->input->get("_format", $this->input->post("_format", "html"));
+  }
+
   /**
    * Perform a GET request on the controller root
    * (e.g. http://www.example.com/gallery3/comments)
-   * @param array $query name-value pairs from the query string, if any
    */
-  abstract public function _index($query);
+  abstract public function _index();
 
   /**
    * Perform a POST request on this resource

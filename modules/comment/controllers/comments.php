@@ -22,10 +22,17 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Display comments based on criteria.
-   *  @see Rest_Controller::_delete($resource)
+   *  @see Rest_Controller::_index()
    */
-  public function _index($query) {
-    throw new Exception("@todo Comment_Controller::_index NOT IMPLEMENTED");
+  public function _index() {
+    $item_id = $this->input->get('item_id');
+
+    if (empty($item_id)) {
+      /* We currently do not support getting all comments from the entire gallery. */
+      header("HTTP/1.1 400 Bad Request");
+      return;
+    }
+    print comment::get_comments($item_id, $this->get_output_format());
   }
 
   /**
@@ -51,15 +58,18 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Display an existing comment.
-   *  @see Rest_Controller::_show($resource, $format)
+   *  @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
+   *  @see Rest_Controller::_show($resource, $output_format)
    */
   public function _show($comment, $output_format) {
     switch ($output_format) {
     case "xml":
+      header("Content-Type: application/xml");
       print xml::to_xml($comment->as_array(), array("comment"));
       break;
 
     case "json":
+      header("Content-Type: application/json");
       print json_encode($comment->as_array());
       break;
 
