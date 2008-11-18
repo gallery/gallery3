@@ -145,7 +145,7 @@ class Welcome_Controller extends Template_Controller {
       $user = Session::instance()->get("user");
       $owner_id = $user ? $user->id : ORM::factory("user")->find()->id;
     } catch (Exception $e) {
-      $user_id = null;
+      $owner_id = null;
     }
 
     for ($i = 0; $i < $count; $i++) {
