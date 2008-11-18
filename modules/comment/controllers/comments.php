@@ -107,15 +107,17 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Present a form for adding a new comment to this item or editing an existing comment.
-   *  @see Rest_Controller::form($resource)
+   *  @see Rest_Controller::form_add($resource)
    */
-  public function _form($resource, $form_type) {
-	// This code will be clearer if we split form() into two functions.
-    if ($form_type == "edit") {
-      $form = comment::get_edit_form($resource);
-    } else {
-      $form = comment::get_add_form($resource);
-    }
-    print $form;
+  public function _form_add($item_id) {
+    print comment::get_add_form($item_id);
+  }
+
+  /**
+   * Present a form for editing an existing comment.
+   *  @see Rest_Controller::form_edit($resource)
+   */
+  public function _form_edit($comment) {
+    print $form = comment::get_edit_form($comment);
   }
 }

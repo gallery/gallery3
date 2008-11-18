@@ -28,9 +28,16 @@ class Item_Controller extends REST_Controller {
   }
 
   /**
-   *  @see Rest_Controller::_form($resource)
+   *  @see Rest_Controller::_form_add($parameters)
    */
-  public function _form($item, $form_type) {
+  public function _form_add($parameters) {
+    throw new Exception("@todo Comment_Controller::_form NOT IMPLEMENTED");
+  }
+
+  /**
+   *  @see Rest_Controller::_form_edit($resource)
+   */
+  public function _form_edit($item) {
     throw new Exception("@todo Comment_Controller::_form NOT IMPLEMENTED");
   }
 

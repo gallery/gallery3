@@ -25,29 +25,34 @@
  *   protected $resource_type = "comment";  // this tells REST which model to use
  *
  *   public function _index() {
- *     // Handle GET request to controller root
+ *     // Handle GET request to /controller
  *   }
  *
  *   public function _show(ORM $comment, $output_format) {
- *     // Handle GET request
+ *     // Handle GET request to /comments/{comment_id}
  *   }
  *
  *   public function _update(ORM $comment, $output_format) {
- *     // Handle PUT request
+ *     // Handle PUT request to /comments/{comment_id}
  *   }
  *
  *   public function _create(ORM $comment, $output_format) {
- *     // Handle POST request to controller root
+ *     // Handle POST request to /comments
  *   }
  *
  *   public function _delete(ORM $comment, $output_format) {
- *     // Handle DELETE request
+ *     // Handle DELETE request to /comments/{comments_id}
  *   }
  *
- *   public function form(ORM $comment) {
+ *   public function _form_add($parameters) {
+ *     // Handle GET request to /form/add/comments
  *     // Show a form for creating a new comment
  *   }
- * }
+ *
+ *   public function _form_edit(ORM $comment) {
+ *     // Handle GET request to /form/edit/comments
+ *     // Show a form for editing an existing comment
+ *   }
  *
  * A request to http://example.com/gallery3/comments/3 will result in a call to
  * REST_Controller::dispatch(3) which will load up the comment associated with id 3.  If there's
@@ -60,6 +65,11 @@ abstract class REST_Controller extends Controller {
   public function dispatch($id) {
     if ($this->resource_type == null) {
       throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
+    }
+
+    /* A request on /controller gets routed to REST_Controller::dispatch(0). */
+    if ($id == 0 && $this->request_method() == "get") {
+      return $this->_index();
     }
 
     // @todo this needs security checks
@@ -90,32 +100,24 @@ abstract class REST_Controller extends Controller {
     }
   }
 
-  // @todo Get rid of $form_type, move to add_form() and edit_form().
-  public function form($data, $form_type) {
+  /* We're editing an existing item, load it from the database. */
+  public function form_edit($resource_id) {
     if ($this->resource_type == null) {
       throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
     }
 
     // @todo this needs security checks
-    if ($form_type == "edit") {
-      /* We're editing an existing item, load it from the database. */
-      $resource = ORM::factory($this->resource_type, $data);
-      if (!$resource->loaded) {
-        return Kohana::show_404();
-      }
-
-      return $this->_form($resource, $form_type);
-    } else {
-      /* We're adding a new item, pass along any additional parameters. */
-      return $this->_form($data, $form_type);
+    $resource = ORM::factory($this->resource_type, $resource_id);
+    if (!$resource->loaded) {
+      return Kohana::show_404();
     }
+
+    return $this->_form_edit($resource);
   }
 
-  public function index() {
-    if (request::method() == "post") {
-      return $this->dispatch(null);
-    }
-    return $this->_index();
+  /* We're adding a new item, pass along any additional parameters. */
+  public function form_add($parameters) {
+      return $this->_form_add($parameters);
   }
 
   /**
@@ -175,7 +177,13 @@ abstract class REST_Controller extends Controller {
 
   /**
    * Present a form for adding a new resource
+   * @param string part of the URI after the controller name
+   */
+  abstract public function _form_add($parameter);
+
+  /**
+   * Present a form for editing an existing resource
    * @param ORM $resource the resource container for instances of this resource type
    */
-  abstract public function _form($resource, $form_type);
+  abstract public function _form_edit($resource);
 }

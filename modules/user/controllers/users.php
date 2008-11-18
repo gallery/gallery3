@@ -71,12 +71,15 @@ class Users_Controller extends REST_Controller {
    * Present a form for editing a user
    *  @see Rest_Controller::form($resource)
    */
-  public function _form($user, $form_type) {
-    if ($form_type == "edit") {
-      $form = user::get_edit_form($user);
-      print $form;
-    } else {
-      return Kohana::show_404();
-    }
+  public function _form_edit($user) {
+    print user::get_edit_form($user);
+  }
+
+  /**
+   * Present a form for adding a user
+   *  @see Rest_Controller::form($resource)
+   */
+  public function _form_add($parameters) {
+    throw new Exception("@todo User_Controller::_form_add NOT IMPLEMENTED");
   }
 }

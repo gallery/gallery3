@@ -24,8 +24,8 @@
 $config['^rest'] = null;
 $config['^rest/.*'] = null;
 $config['^(\w+)/(\d+)$'] = '$1/dispatch/$2';
-$config['^(\w+)$'] = '$1/index';
-$config['^form/(\w+)/(\w+)/(.*)$'] = '$2/form/$3/$1';
+$config['^(\w+)$'] = '$1/dispatch/0';
+$config['^form/(edit|add)/(\w+)/(.*)$'] = '$2/form_$1/$3';
 
 // For now our default page is the scaffolding.
 $config['_default'] = 'welcome';
