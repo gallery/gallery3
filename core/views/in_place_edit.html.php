@@ -5,7 +5,7 @@ $(document).ready(function() {
     return function(value, settings) {
       var post_data = {'__return': settings.name};
       post_data[settings.name] = value;
-      $.post("<?= url::site("item/__ID__") ?>".replace("__ID__", id),
+      $.post("<?= url::site("items/__ID__") ?>".replace("__ID__", id),
              post_data,
              function(data, textStatus) {
                if (textStatus == "success") {
