@@ -31,7 +31,7 @@ class File_Structure_Test extends Unit_Test_Case {
     }
   }
 
-  public function view_files_end_in_html_dot_php_test() {
+  public function view_files_correct_suffix_test() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
@@ -40,8 +40,8 @@ class File_Structure_Test extends Unit_Test_Case {
         continue;
       }
       $this->assert_false(
-        preg_match("|/views/.*?(?<!\.html)\.php$|", $file->getPathname()),
-        "{$file->getPathname()} should end in .html.php");
+        preg_match("#/views/.*?(?<!(\.html|mrss))\.php$#", $file->getPathname()),
+        "{$file->getPathname()} should end in .html.php or mrss.php");
     }
   }
 
