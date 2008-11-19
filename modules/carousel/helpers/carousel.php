@@ -22,7 +22,7 @@ class Carousel_Core {
   public static function block($theme) {
     $block = new Block();
     $block->id = "gCarousel";
-    $block->title = "Album: <a href=#>{$theme->item()->title}</a>";
+    $block->title = "Album: <a href=#>{$theme->item()->title_edit}</a>";
     $block->content = '<img src="' .
       url::base() . "modules/carousel/images/carousel.png" .
       '" width="214"';
