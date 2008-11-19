@@ -17,34 +17,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Slideshow_Controller extends REST_Controller {
+class Media_rss_Controller extends REST_Controller {
   // @todo this should be retrieved from the slideshow configuration
   public static $LIMIT = 10;
 
   public function _show($parent, $output_format) {
-    $offset = $this->input->get("offset", 0);
-    $children = array();
-    // @todo actually fill the array
-    switch ($output_format) {
-    case "json":
-      print json_encode($children);
-      break;
-    case "rss":
-      $view = new View("slideshow_feed.rss");
-      $view->item = $parent;
-      $view->children = $children;
-      break;
-    default:
+    if ($output_format != "mediarss") {
       throw new Exception("@todo Unsupported output format: $output_format");
     }
+
+    $offset = $this->input->get("offset", 0);
+
+    $view = new View("slideshow_feed.rss");
+    $view->item = $parent;
+
+    // @todo create a descendent child method on ORM_MTPP to get all of the children
+    $view->children = $children;
   }
 
-  /**
-   * Override the get_output_format.  We want to restrict the check to only $_GET and set the 
-   * default to rss.
-   * @return string
-   */
   protected function get_output_format() {
-    return $this->input->get("_format", "rss");
+    return "mediarss";
   }
 }

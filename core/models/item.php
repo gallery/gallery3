@@ -175,6 +175,11 @@ class Item_Model extends ORM_MPTT {
       $real_column = substr($column, 0, strlen($column) - 5);
       return "<span class=\"gInPlaceEdit gEditField-{$this->id}-{$real_column}\">" .
         "{$this->$real_column}</span>";
+    } else if ($column == "mime_type") {
+      if ($this->is_album() || ($mime_type = file::mime()) === false) {
+        $mime_type = "application/unknown";
+      }
+      return $mime_type;
     } else if ($column == "owner") {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
