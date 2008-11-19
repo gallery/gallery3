@@ -21,6 +21,22 @@ class Media_rss_Controller extends REST_Controller {
   // @todo this should be retrieved from the slideshow configuration
   public static $LIMIT = 10;
 
+  protected $resource_type = "item";
+
+  /**
+   *  @see Rest_Controller::_index()
+   */
+  public function _index() {
+    throw new Exception("@todo Item_Controller::_index NOT IMPLEMENTED");
+  }
+
+  /**
+   *  @see Rest_Controller::_create()
+   */
+  public function _create($resource) {
+    throw new Exception("@todo Item_Controller::_create NOT IMPLEMENTED");
+  }
+  
   public function _show($parent, $output_format) {
     if ($output_format != "mediarss") {
       throw new Exception("@todo Unsupported output format: $output_format");
@@ -28,13 +44,40 @@ class Media_rss_Controller extends REST_Controller {
 
     $offset = $this->input->get("offset", 0);
 
-    $view = new View("slideshow_feed.rss");
+    $view = new View("media.rss");
     $view->item = $parent;
 
     // @todo create a descendent child method on ORM_MTPP to get all of the children
-    $view->children = $children;
+//    $view->children = $parent->descendents();
   }
 
+  /**
+   *  @see Rest_Controller::_update()
+   */
+  public function _update($resource) {
+    throw new Exception("@todo Item_Controller::_update NOT IMPLEMENTED");
+  }
+
+  /**
+   *  @see Rest_Controller::_delete()
+   */
+  public function _delete($resource) {
+    throw new Exception("@todo Item_Controller::_delete NOT IMPLEMENTED");
+  }
+
+  /**
+   *  @see Rest_Controller::_form_add()
+   */
+  public function _form_add($parameter) {
+    throw new Exception("@todo Item_Controller::_form_add NOT IMPLEMENTED");
+  }
+    /**
+   *  @see Rest_Controller::_form_edit()
+   */
+  public function _form_edit($resource) {
+    throw new Exception("@todo Item_Controller::_form_edit NOT IMPLEMENTED");
+  }
+  
   protected function get_output_format() {
     return "mediarss";
   }
