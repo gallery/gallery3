@@ -4,7 +4,7 @@
                    xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title><?= $item->title ?></title>
-    <link><?= url::site("media_rss/$item->id") ?></link>
+    <link><?= url::site("media_rss/{$item->id}") ?></link>
     <description><?= $item->description ?></description>
     <language>en-us</language>
     <? if (isset($prevOffset)): ?>

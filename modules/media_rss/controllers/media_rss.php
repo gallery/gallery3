@@ -33,6 +33,7 @@ class Media_RSS_Controller extends Controller {
       ->where("type", "photo")
       ->find_all();
 
+    header("Content-type: application/rss+xml");
     print $view;
   }
 }
