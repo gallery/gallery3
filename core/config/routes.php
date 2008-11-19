@@ -19,7 +19,7 @@
  */
 
 // The abstract REST_Controller is not directly routable.
-$config['^rest\b'] = null;
+$config['^rest\b.*'] = null;
 
 // For now our default page is the scaffolding.
 $config['_default'] = 'welcome';
