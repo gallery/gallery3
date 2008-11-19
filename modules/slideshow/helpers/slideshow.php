@@ -19,10 +19,6 @@
  */
 class slideshow {
   public static function link() {
-    return "javascript:PicLensLite.start()";
-  }
-
-  public static function button_text() {
-    return _("Slideshow");
+    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
   }
 }

@@ -2,7 +2,7 @@
 <div id="gItem">
   <a href="" class="gButtonLink">Full size (1024x768)</a>
   <? if ($theme->module("slideshow")): ?>
-    <a href="<?= slideshow::link() ?>" id="gSlideshowLink" class="gButtonLink"><?= slideshow::button_text()?></a>
+    <?= slideshow::link() ?>
   <? endif; ?>
 
   <img id="gPhotoID-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>"

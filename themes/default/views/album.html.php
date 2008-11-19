@@ -3,7 +3,7 @@
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
   <? if ($theme->module("slideshow")): ?>
-    <a href="<?= slideshow::link() ?>" id="gSlideshowLink" class="gButtonLink"><?= slideshow::button_text()?></a>
+    <?= slideshow::link() ?>
   <? endif; ?>
 </div>
 
