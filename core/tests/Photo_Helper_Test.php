@@ -20,7 +20,11 @@
 class Photo_Helper_Test extends Unit_Test_Case {
   public function create_photo_test() {
     $rand = rand();
-    $photo = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+
+    $filename = DOCROOT . "core/tests/test.jpg";
+    $image_info = getimagesize($filename);
+
+    $photo = photo::create(1, $filename, "$rand.jpg", $rand, $rand);
 
     $this->assert_equal(VARPATH . "albums/$rand.jpg", $photo->file_path());
     $this->assert_equal(VARPATH . "resizes/{$rand}.thumb.jpg", $photo->thumbnail_path());
@@ -35,6 +39,8 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($rand, $photo->title);
     $this->assert_equal($rand, $photo->description);
     $this->assert_equal("image/jpeg", $photo->mime_type);
+    $this->assert_equal($image_info[0], $photo->width);
+    $this->assert_equal($image_info[1], $photo->height);
 
     $this->assert_equal($photo->parent()->right - 2, $photo->left);
     $this->assert_equal($photo->parent()->right - 1, $photo->right);

@@ -191,9 +191,6 @@ class Item_Model extends ORM_MPTT {
       } catch (Exception $e) {
         return null;
       }
-    } else if ($column == "height" || $column == "width") {
-      $dims = getimagesize($this->file_path());
-      return $column == "width" ? $dims[0] : $dims[1];
     } else {
       return parent::__get($column);
     }
