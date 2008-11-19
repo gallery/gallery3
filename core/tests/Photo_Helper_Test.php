@@ -34,6 +34,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $this->assert_equal("$rand.jpg", $photo->name);
     $this->assert_equal($rand, $photo->title);
     $this->assert_equal($rand, $photo->description);
+    $this->assert_equal("image/jpeg", $photo->mime_type);
 
     $this->assert_equal($photo->parent()->right - 2, $photo->left);
     $this->assert_equal($photo->parent()->right - 1, $photo->right);
