@@ -1,7 +1,9 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gItem">
   <a href="" class="gButtonLink">Full size (1024x768)</a>
-  <a href="javascript:PicLensLite.start()" id="gSlideshowLink" class="gButtonLink">Slideshow</a>
+  <? if ($theme->module("slideshow")): ?>
+    <a href="<?= slideshow::link() ?>" id="gSlideshowLink" class="gButtonLink"><?= slideshow::button_text()?></a>
+  <? endif; ?>
 
   <img id="gPhotoID-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>"
        width="<?= $item->resize_width ?>"

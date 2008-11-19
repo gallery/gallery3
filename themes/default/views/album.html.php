@@ -2,7 +2,9 @@
 <div id="gAlbumHeader">
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
-  <a href="javascript:PicLensLite.start()" id="gSlideshowLink" class="gButtonLink">Slideshow</a>
+  <? if ($theme->module("slideshow")): ?>
+    <a href="<?= slideshow::link() ?>" id="gSlideshowLink" class="gButtonLink"><?= slideshow::button_text()?></a>
+  <? endif; ?>
 </div>
 
 <ul id="gAlbumGrid">
