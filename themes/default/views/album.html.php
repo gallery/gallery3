@@ -2,7 +2,7 @@
 <div id="gAlbumHeader">
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
-  <a href="javascript:slideshow(<?= $item->id ?>);" id="gSlideshowLink" class="gButtonLink">Slideshow</a>
+  <a href="javascript:PicLensLite.start()" id="gSlideshowLink" class="gButtonLink">Slideshow</a>
 </div>
 
 <ul id="gAlbumGrid">

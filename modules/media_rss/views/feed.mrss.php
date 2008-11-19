@@ -20,7 +20,7 @@
     <pubDate><?= $date ?></pubDate>
     <lastBuildDate><?= $date ?></lastBuildDate>
     <? foreach ($children as $child): ?>
-      <item> $child->resize_url(false, "http")
+      <item> 
         <title><?= $child->title ?></title>
         <link><?= url::site("photos/$child->id", "http") ?></link>
         <guid isPermaLink="false"><?= $child->id ?></guid>

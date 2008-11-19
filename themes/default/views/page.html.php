@@ -18,7 +18,7 @@
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/user.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/comment.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/slideshow.js") ?>" type="text/javascript"></script>
+    <script src="http://lite.piclens.com/current/piclens.js" type="text/javascript"></script>
     <? if ($user): ?>
     <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
     <? endif; ?>
