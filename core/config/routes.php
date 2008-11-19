@@ -22,6 +22,7 @@
 // The problem is that we're routing all requests to /{controllername} to Rest_Controller,
 // even requests to controllers that do not implement Rest_Controller.
 $config['^welcome$'] = 'welcome';
+$config['^media_rss/feed/(\d+)'] = 'media_rss/feed/$1';
 
 // REST configuration
 // Any resource requests (eg: album/1 or comment/3) get dispatched to the REST

@@ -8,10 +8,10 @@
     <description><?= $item->description ?></description>
     <language>en-us</language>
     <? if (isset($prevOffset)): ?>
-      <atom:link rel="previous" href="<?= url::site("media_rss/$item->id?offset=\"$prevOffset\"") ?>" />
+    <atom:link rel="previous" href="<?= url::site("media_rss/feed/{$item->id}?offset={$prevOffset}") ?>" />
     <? endif; ?>
     <? if (isset($nextOffset)): ?>
-      <atom:link rel="next" href="href="<?= url::site("media_rss/$item->id?offset=\"$nextOffset\"") ?>"/>
+    <atom:link rel="next" href="href="<?= url::site("media_rss/feed/{$item->id}?offset={$nextOffset}") ?>"/>
     <? endif; ?>
     <?
       // @todo do we want to add an upload date to the items table?
@@ -25,13 +25,13 @@
         <link></link>
         <guid><?= $child->id ?></guid>
         <description type="html"><?= $child->description ?></description>
-        <media:thumbnail url="<?= $child->thumbnail_url() ?>" 
-          type="<?= $child->mine_type ?>"
+        <media:thumbnail url="<?= $child->thumbnail_url() ?>"
+          type="<?= $child->mime_type ?>"
           height="<?= $child->thumbnail_height ?>"
           width="<?= $child->thumbnail_width ?>"
         />
         <media:content url="<?= $child->resize_url() ?>"
-          type="<?= $child->mine_type ?>"
+          type="<?= $child->mime_type ?>"
           height="<?= $child->resize_height ?>"
           width="<?= $child->resize_width ?>"
         />

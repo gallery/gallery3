@@ -176,7 +176,7 @@ class Item_Model extends ORM_MPTT {
       return "<span class=\"gInPlaceEdit gEditField-{$this->id}-{$real_column}\">" .
         "{$this->$real_column}</span>";
     } else if ($column == "mime_type") {
-      if ($this->is_album() || ($mime_type = file::mime()) === false) {
+      if ($this->is_album() || ($mime_type = file::mime($this->file_path())) === false) {
         $mime_type = "application/unknown";
       }
       return $mime_type;
