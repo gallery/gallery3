@@ -24,7 +24,7 @@ class Media_RSS_Controller extends Controller {
       return Kohana::show_404();
     }
 
-    $view = new View("media.rss");
+    $view = new View("media_rss.html");
     $view->item = $item;
 
     // This should probably be a method in ORM_MPTT
