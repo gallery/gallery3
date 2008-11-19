@@ -137,6 +137,32 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
+   * Return all of the children of the specified type, ordered by id.
+   *
+   * @chainable
+   * @param   string   type to return
+   * @param   integer  SQL limit
+   * @param   integer  SQL offset
+   * @param   boolean  flag to return all grandchildren as well
+   * @return array ORM
+   */
+  function decendents_by_type($type="photo", $limit=NULL, $offset=0, $grand_children=false) {
+    if (!isset($this->children)) {
+      if (!empty($grandchildren)) {
+        $this->where("left >=", $this->left)
+             ->where("right <=", $this->right);
+      } else {
+        $this->where("parent_id", $this->id);
+      }
+      $this->children =
+        $this->where("type", $type)
+        ->orderby("id", "ASC")
+        ->find_all($limit, $offset);
+    }
+    return $this->children;
+  }
+
+  /**
    * @see ORM::reload
    */
   function reload() {

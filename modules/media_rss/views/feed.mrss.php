@@ -11,7 +11,7 @@
     <atom:link rel="previous" href="<?= url::site("media_rss/feed/{$item->id}?offset={$prevOffset}") ?>" />
     <? endif; ?>
     <? if (isset($nextOffset)): ?>
-    <atom:link rel="next" href="href="<?= url::site("media_rss/feed/{$item->id}?offset={$nextOffset}") ?>"/>
+    <atom:link rel="next" href="<?= url::site("media_rss/feed/{$item->id}?offset={$nextOffset}") ?>"/>
     <? endif; ?>
     <?
       // @todo do we want to add an upload date to the items table?
@@ -20,16 +20,28 @@
     <pubDate><?= $date ?></pubDate>
     <lastBuildDate><?= $date ?></lastBuildDate>
     <? foreach ($children as $child): ?>
-      <item>
+      <item> $child->resize_url(false, "http")
         <title><?= $child->title ?></title>
-        <link><?= $child->resize_url(false, "http") ?></link>
+        <link><?= url::site("photos/$child->id", "http") ?></link>
         <guid isPermaLink="false"><?= $child->id ?></guid>
         <description><?= $child->description ?></description>
-        <media:content url="<?= $child->thumbnail_url(false, "http") ?>"
-          type="<?= $child->mime_type ?>"
-          height="<?= $child->resize_height ?>"
-          width="<?= $child->resize_width ?>"
-        />
+        <media:group>
+          <media:thumbnail  url="<?= $child->thumbnail_url(false, "http") ?>"
+            height="<?= $child->thumbnail_height ?>"
+            width="<?= $child->thumbnail_width ?>"
+           />
+          <media:content url="<?= $child->resize_url(false, "http") ?>"
+            type="<?= $child->mime_type ?>"
+            height="<?= $child->resize_height ?>"
+            width="<?= $child->resize_width ?>"
+            isDefault="true"
+          />
+          <media:content url="<?= $child->url(false, "http") ?>"
+            type="<?= $child->mime_type ?>"
+            height="<?= $child->height ?>"
+            width="<?= $child->width ?>"
+          />
+        </media:group>
       </item>
     <? endforeach; ?>
   </channel>

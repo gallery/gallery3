@@ -50,6 +50,14 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * album: http://example.com/gallery3/var/resizes/album1/
+   * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
+   */
+  public function url($index = FALSE, $protocol = FALSE) {
+    return $this->_relative_path(url::base($index, $protocol) . "albums", "", "");
+  }
+
+  /**
    * album: /var/resizes/album1/.thumb.jpg
    * photo: /var/albums/album1/photo.thumb.jpg
    */
@@ -183,6 +191,9 @@ class Item_Model extends ORM_MPTT {
       } catch (Exception $e) {
         return null;
       }
+    } else if ($column == "height" || $column == "width") {
+      $dims = getimagesize($this->file_path());
+      return $column == "width" ? $dims[0] : $dims[1];
     } else {
       return parent::__get($column);
     }
