@@ -4,14 +4,17 @@
                    xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title><?= $item->title ?></title>
-    <link><?= url::site("media_rss/{$item->id}", "http") ?></link>
+    <link><?= url::site("albums/{$item->id}", "http") ?></link>
     <description><?= $item->description ?></description>
     <language>en-us</language>
+    <atom:link rel="self" href="<?= url::site("media_rss/feed/{$item->id}") ?>" type="application/rss+xml" />
     <? if (isset($prevOffset)): ?>
-    <atom:link rel="previous" href="<?= url::site("media_rss/feed/{$item->id}?offset={$prevOffset}") ?>" />
+      <atom:link rel="previous" href="<?= url::site("media_rss/feed/{$item->id}?offset={$prevOffset}") ?>" 
+        type="application/rss+xml" />
     <? endif; ?>
     <? if (isset($nextOffset)): ?>
-    <atom:link rel="next" href="<?= url::site("media_rss/feed/{$item->id}?offset={$nextOffset}") ?>"/>
+      <atom:link rel="next" href="<?= url::site("media_rss/feed/{$item->id}?offset={$nextOffset}") ?>"
+        type="application/rss+xml" />
     <? endif; ?>
     <?
       // @todo do we want to add an upload date to the items table?
