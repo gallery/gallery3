@@ -4,7 +4,7 @@
                    xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title><?= $item->title ?></title>
-    <link><?= url::site("media_rss/{$item->id}") ?></link>
+    <link><?= url::site("media_rss/{$item->id}", "http") ?></link>
     <description><?= $item->description ?></description>
     <language>en-us</language>
     <? if (isset($prevOffset)): ?>
@@ -15,22 +15,17 @@
     <? endif; ?>
     <?
       // @todo do we want to add an upload date to the items table?
-      $date = date("D, dd M Y H:i:s e");
+      $date = date("D, d M Y H:i:s T");
     ?>
     <pubDate><?= $date ?></pubDate>
     <lastBuildDate><?= $date ?></lastBuildDate>
     <? foreach ($children as $child): ?>
       <item>
-        <title type="html"><?= $child->title ?></title>
-        <link></link>
-        <guid><?= $child->id ?></guid>
-        <description type="html"><?= $child->description ?></description>
-        <media:thumbnail url="<?= $child->thumbnail_url() ?>"
-          type="<?= $child->mime_type ?>"
-          height="<?= $child->thumbnail_height ?>"
-          width="<?= $child->thumbnail_width ?>"
-        />
-        <media:content url="<?= $child->resize_url() ?>"
+        <title><?= $child->title ?></title>
+        <link><?= $child->resize_url(false, "http") ?></link>
+        <guid isPermaLink="false"><?= $child->id ?></guid>
+        <description><?= $child->description ?></description>
+        <media:content url="<?= $child->thumbnail_url(false, "http") ?>"
           type="<?= $child->mime_type ?>"
           height="<?= $child->resize_height ?>"
           width="<?= $child->resize_width ?>"

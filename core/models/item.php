@@ -65,11 +65,11 @@ class Item_Model extends ORM_MPTT {
    * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
    * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
    */
-  public function thumbnail_url() {
+  public function thumbnail_url($index = FALSE, $protocol = FALSE) {
     if ($this->is_album()) {
-      return $this->_relative_path(url::base() . "var/resizes", "", "/.thumb.jpg");
+      return $this->_relative_path(url::base($index, $protocol) . "var/resizes", "", "/.thumb.jpg");
     } else {
-      return $this->_relative_path(url::base() . "var/resizes", ".thumb", "");
+      return $this->_relative_path(url::base($index, $protocol) . "var/resizes", ".thumb", "");
     }
   }
 
@@ -89,11 +89,11 @@ class Item_Model extends ORM_MPTT {
    * album: http://example.com/gallery3/var/resizes/album1/.resize.jpg
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
-  public function resize_url() {
+  public function resize_url($index = FALSE, $protocol = FALSE) {
     if ($this->is_album()) {
-      return $this->_relative_path(url::base() . "var/resizes", "", "/.resize.jpg");
+      return $this->_relative_path(url::base($index, $protocol) . "var/resizes", "", "/.resize.jpg");
     } else {
-      return $this->_relative_path(url::base() . "var/resizes", ".resize", "");
+      return $this->_relative_path(url::base($index, $protocol) . "var/resizes", ".resize", "");
     }
   }
 
