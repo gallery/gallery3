@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Controller extends REST_Controller {
+class Items_Controller extends REST_Controller {
   protected $resource_type = "item";
 
   /**
@@ -45,7 +45,7 @@ class Item_Controller extends REST_Controller {
     // Redirect to the more specific resource type, since it will render
     // differently.  We could also just delegate here, but it feels more appropriate
     // to have a single canonical resource mapping.
-    return url::redirect("{$item->type}/$item->id");
+    return url::redirect("{$item->type}s}/$item->id");
   }
 
   public function _update($item) {
@@ -90,7 +90,7 @@ class Item_Controller extends REST_Controller {
           $this->input->post("title", $this->input->post("name")),
           $this->input->post("description"),
           $owner_id);
-        url::redirect("{$new_item->type}/{$new_item->id}");
+        url::redirect("{$new_item->type}s/{$new_item->id}");
       }
       break;
     }
@@ -103,7 +103,7 @@ class Item_Controller extends REST_Controller {
     if ($parent->id) {
       $item->delete();
     }
-    url::redirect("{$parent->type}/{$parent->id}");
+    url::redirect("{$parent->type}s/{$parent->id}");
   }
 
   public function _create($item) {

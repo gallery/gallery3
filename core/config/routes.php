@@ -18,6 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+// FIXME Temporary workaround to show the welcome page at /welcome.
+// The problem is that we're routing all requests to /{controllername} to Rest_Controller,
+// even requests to controllers that do not implement Rest_Controller.
+$config['^welcome$'] = 'welcome';
+
 // REST configuration
 // Any resource requests (eg: album/1 or comment/3) get dispatched to the REST
 // dispatcher, and the abstract REST_Controller is not directly routable.

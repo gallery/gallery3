@@ -12,7 +12,7 @@
   <? $album_class = "gAlbum "; ?>
   <? endif ?>
   <li class="gItem <?= $album_class ?>">
-    <a href="<?= url::site("{$child->type}/{$child->id}") ?>">
+    <a href="<?= url::site("{$child->type}s/{$child->id}") ?>">
       <img id="gPhotoID-<?= $child->id ?>" class="gThumbnail"
            alt="photo" src="<?= $child->thumbnail_url() ?>"
            width="<?= $child->thumbnail_width ?>"

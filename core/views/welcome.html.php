@@ -164,7 +164,7 @@
 
           <div id="actions" class="activity">
             <p>
-              <?= html::anchor("album/1", "Browse Gallery") ?>
+              <?= html::anchor("albums/1", "Browse Gallery") ?>
               <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos)</i>
             </p>
             <p>
@@ -183,7 +183,7 @@
             </p>
             <fieldset>
               <legend>Photos</legend>
-              <form method="post" action="<?= url::site("album/1") ?>" enctype="multipart/form-data">
+              <form method="post" action="<?= url::site("albums/1") ?>" enctype="multipart/form-data">
                 <input type="submit" value="upload"/>
                 <input id="photo_upload" name="file[]" type="file"/>
                 <input type="hidden" name="type" value="photo"/>
@@ -192,7 +192,7 @@
             </fieldset>
             <fieldset>
               <legend>Albums</legend>
-              <form method="post" action="<?= url::site("album/1") ?>">
+              <form method="post" action="<?= url::site("albums/1") ?>">
                 <input type="submit" value="create"/>
                 <input type="text" name="name"/>
                 <input type="hidden" name="type" value="album"/>
@@ -210,7 +210,7 @@
               </li>
               <? if ($deepest_photo): ?>
               <li>
-                <?= html::anchor("photo/{$deepest_photo->id}", "Deepest photo") ?>
+                <?= html::anchor("photos/{$deepest_photo->id}", "Deepest photo") ?>
                 <i>(<?= $deepest_photo->level ?> levels deep)</i>
               </li>
               <? endif ?>

@@ -25,7 +25,7 @@
 
 <ul id="gSiteMenu">
   <li><a href="<?= url::base() ?>"><?= _("HOME") ?></a></li>
-  <li><a class="active" href="<?= url::site("album/1") ?>"><?= _("BROWSE") ?></a></li>
+  <li><a class="active" href="<?= url::site("albums/1") ?>"><?= _("BROWSE") ?></a></li>
   <li><a href="#"><?= _("UPLOAD") ?></a></li>
   <li><a href="#"><?= _("MY GALLERY") ?></a></li>
   <li><a href="#"><?= _("ADMIN") ?></a></li>
@@ -40,7 +40,7 @@
 
 <ul id="gBreadcrumbs">
   <? foreach ($parents as $parent): ?>
-  <li><a href="<?= url::site("album/{$parent->id}") ?>"><?= $parent->title_edit ?></a></li>
+  <li><a href="<?= url::site("albums/{$parent->id}") ?>"><?= $parent->title_edit ?></a></li>
   <? endforeach ?>
   <li class="active"><?= $item->title_edit ?></li>
 </ul>
