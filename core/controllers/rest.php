@@ -67,8 +67,8 @@ abstract class REST_Controller extends Controller {
       throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
     }
 
-    /* A request on /controller gets routed to REST_Controller::dispatch(0). */
-    if ($id == 0 && $this->request_method() == "get") {
+    // A request on /controller gets routed to REST_Controller::dispatch(0).
+    if (!$id && $this->request_method() == "get") {
       return $this->_index();
     }
 
@@ -79,7 +79,7 @@ abstract class REST_Controller extends Controller {
     }
 
     if ($this->request_method() == "get") {
-      $this->_show($resource, $this->get_output_format());
+      $this->_show($resource, $this->output_format());
 
       if (Session::instance()->get("use_profiler", false)) {
         $profiler = new Profiler();
@@ -140,9 +140,16 @@ abstract class REST_Controller extends Controller {
     }
   }
 
-  // @todo Figure out a good consistent method of passing the output format to controller methods.
-  protected function get_output_format() {
-    return $this->input->get("_format", $this->input->post("_format", "html"));
+  /**
+   * Choose an output format based on what the client prefers to accept.
+   * @return string "html", "xml" or "json"
+   */
+  protected function output_format() {
+    // Pick a format, but let it be overridden.
+    return $this->input->get(
+      "_format", $this->input->post(
+        "_format", request::preferred_accept(
+          array("html", "xml", "json"))));
   }
 
   /**
