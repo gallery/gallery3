@@ -53,8 +53,9 @@ class Item_Model extends ORM_MPTT {
    * album: http://example.com/gallery3/var/resizes/album1/
    * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
    */
-  public function url($index=false, $protocol=false) {
-    return $this->_relative_path(url::base($index, $protocol) . "var/albums", "", "");
+  public function file_url($full_uri=false) {
+    $func = $full_uri ? "abs_file" : "file";
+    return $this->_relative_path(url::$func("") . "var/albums", "", "");
   }
 
   /**
@@ -73,11 +74,12 @@ class Item_Model extends ORM_MPTT {
    * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
    * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
    */
-  public function thumbnail_url($index=false, $protocol=false) {
+  public function thumbnail_url($full_uri=true) {
+    $func = $full_uri ? "abs_file" : "file";
     if ($this->is_album()) {
-      return $this->_relative_path(url::base($index, $protocol) . "var/resizes", "", "/.thumb.jpg");
+      return $this->_relative_path(url::$func(""), "var/resizes", "", "/.thumb.jpg");
     } else {
-      return $this->_relative_path(url::base($index, $protocol) . "var/resizes", ".thumb", "");
+      return $this->_relative_path(url::$func(""), "var/resizes", ".thumb", "");
     }
   }
 
@@ -97,11 +99,12 @@ class Item_Model extends ORM_MPTT {
    * album: http://example.com/gallery3/var/resizes/album1/.resize.jpg
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
-  public function resize_url($index=false, $protocol=false) {
+  public function resize_url($full_uri=true) {
+    $func = $full_uri ? "abs_file" : "file";
     if ($this->is_album()) {
-      return $this->_relative_path(url::base($index, $protocol) . "var/resizes", "", "/.resize.jpg");
+      return $this->_relative_path(url::$func("") . "var/resizes", "", "/.resize.jpg");
     } else {
-      return $this->_relative_path(url::base($index, $protocol) . "var/resizes", ".resize", "");
+      return $this->_relative_path(url::$func("") . "var/resizes", ".resize", "");
     }
   }
 
