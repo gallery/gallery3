@@ -41,7 +41,7 @@ class Items_Controller extends REST_Controller {
     throw new Exception("@todo Comment_Controller::_form NOT IMPLEMENTED");
   }
 
-  public function _show($item, $format) {
+  public function _show($item) {
     // Redirect to the more specific resource type, since it will render
     // differently.  We could also just delegate here, but it feels more appropriate
     // to have a single canonical resource mapping.

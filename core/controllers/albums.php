@@ -20,9 +20,9 @@
 class Albums_Controller extends Items_Controller {
 
   /**
-   *  @see Rest_Controller::_show($resource, $output_format)
+   *  @see Rest_Controller::_show($resource)
    */
-  public function _show($item, $output_format) {
+  public function _show($item) {
     // @todo: these need to be pulled from the database
     $theme_name = "default";
     $page_size = 9;

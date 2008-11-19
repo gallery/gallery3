@@ -28,19 +28,19 @@
  *     // Handle GET request to /controller
  *   }
  *
- *   public function _show(ORM $comment, $output_format) {
+ *   public function _show(ORM $comment) {
  *     // Handle GET request to /comments/{comment_id}
  *   }
  *
- *   public function _update(ORM $comment, $output_format) {
+ *   public function _update(ORM $comment) {
  *     // Handle PUT request to /comments/{comment_id}
  *   }
  *
- *   public function _create(ORM $comment, $output_format) {
+ *   public function _create(ORM $comment) {
  *     // Handle POST request to /comments
  *   }
  *
- *   public function _delete(ORM $comment, $output_format) {
+ *   public function _delete(ORM $comment) {
  *     // Handle DELETE request to /comments/{comments_id}
  *   }
  *
@@ -62,33 +62,42 @@
 abstract class REST_Controller extends Controller {
   protected $resource_type = null;
 
-  public function dispatch($id) {
+  public function __construct() {
     if ($this->resource_type == null) {
       throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
     }
+    parent::__construct();
+  }
 
-    // A request on /controller gets routed to REST_Controller::dispatch(0).
-    if (!$id && $this->request_method() == "get") {
+  /**
+   * Handle dispatching for all REST controllers.
+   */
+  public function __call($function, $args) {
+    // If no parameter was provided after the controller name (eg "/albums") then $function will
+    // be set to "index".  Otherwise, $function is the first parameter, and $args are all
+    // subsequent parameters.
+    $request_method = rest::request_method();
+    if ($function == "index" && $request_method == "get") {
       return $this->_index();
     }
 
     // @todo this needs security checks
+    $id = $function;
     $resource = ORM::factory($this->resource_type, $id);
-    if (!$resource->loaded && !$this->request_method() == "post") {
+    if (!$resource->loaded && $request_method == "post") {
       return Kohana::show_404();
     }
 
-    if ($this->request_method() == "get") {
-      $this->_show($resource, $this->output_format());
+    switch ($request_method) {
+    case "get":
+      $this->_show($resource);
 
       if (Session::instance()->get("use_profiler", false)) {
         $profiler = new Profiler();
         $profiler->render();
       }
       return;
-    }
 
-    switch ($this->request_method()) {
     case "put":
       return $this->_update($resource);
 
@@ -121,38 +130,6 @@ abstract class REST_Controller extends Controller {
   }
 
   /**
-   * We're expecting to run in an environment that only supports GET/POST, so expect to tunnel
-   * PUT and DELETE through POST.
-   *
-   * Returns the HTTP request method taking into consideration PUT/DELETE tunneling.
-   * @todo Move this to a MY_request helper?
-   * @return string HTTP request method
-   */
-  protected function request_method() {
-    if (request::method() == "get") {
-      return "get";
-    } else {
-      switch ($this->input->post("_method", $this->input->get("_method"))) {
-      case "put":    return "put";
-      case "delete": return "delete";
-      default:       return "post";
-      }
-    }
-  }
-
-  /**
-   * Choose an output format based on what the client prefers to accept.
-   * @return string "html", "xml" or "json"
-   */
-  protected function output_format() {
-    // Pick a format, but let it be overridden.
-    return $this->input->get(
-      "_format", $this->input->post(
-        "_format", request::preferred_accept(
-          array("html", "xml", "json"))));
-  }
-
-  /**
    * Perform a GET request on the controller root
    * (e.g. http://www.example.com/gallery3/comments)
    */
@@ -168,7 +145,7 @@ abstract class REST_Controller extends Controller {
    * Perform a GET request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function _show($resource, $output_format);
+  abstract public function _show($resource);
 
   /**
    * Perform a PUT request on this resource

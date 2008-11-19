@@ -32,7 +32,7 @@ class Comments_Controller extends REST_Controller {
       header("HTTP/1.1 400 Bad Request");
       return;
     }
-    print comment::get_comments($item_id, $this->get_output_format());
+    print comment::get_comments($item_id);
   }
 
   /**
@@ -59,9 +59,10 @@ class Comments_Controller extends REST_Controller {
   /**
    * Display an existing comment.
    *  @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
-   *  @see Rest_Controller::_show($resource, $output_format)
+   *  @see Rest_Controller::_show($resource)
    */
-  public function _show($comment, $output_format) {
+  public function _show($comment) {
+    $output_format = rest::output_format();
     switch ($output_format) {
     case "xml":
       header("Content-Type: application/xml");

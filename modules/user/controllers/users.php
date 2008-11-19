@@ -36,9 +36,9 @@ class Users_Controller extends REST_Controller {
   }
 
   /**
-   * @see Rest_Controller::_show($resource, $output_format)
+   * @see Rest_Controller::_show($resource)
    */
-  public function _show($user, $output_format) {
+  public function _show($user) {
     throw new Exception("@todo User_Controller::_show NOT IMPLEMENTED");
   }
 

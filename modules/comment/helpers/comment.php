@@ -106,7 +106,7 @@ class Comment_Core {
   }
 
   // @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
-  static function get_comments($item_id, $output_format) {
+  static function get_comments($item_id) {
     $comments = ORM::factory('comment')->where('item_id', $item_id)
       ->orderby('datetime', 'asc')
       ->find_all();
@@ -116,7 +116,7 @@ class Comment_Core {
       return;
     }
 
-    switch ($output_format) {
+    switch (rest::output_format()) {
     case "xml":
       header("Content-Type: application/xml");
       return xml::to_xml($comments, array("comments", "comment"));

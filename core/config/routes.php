@@ -18,20 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-// FIXME Temporary workaround to show the welcome page at /welcome.
-// The problem is that we're routing all requests to /{controllername} to Rest_Controller,
-// even requests to controllers that do not implement Rest_Controller.
-$config['^welcome$'] = 'welcome';
-$config['^media_rss/feed/(\d+)'] = 'media_rss/feed/$1';
-
-// REST configuration
-// Any resource requests (eg: album/1 or comment/3) get dispatched to the REST
-// dispatcher, and the abstract REST_Controller is not directly routable.
-$config['^rest'] = null;
-$config['^rest/.*'] = null;
-$config['^(\w+)/(\d+)$'] = '$1/dispatch/$2';
-$config['^(\w+)$'] = '$1/dispatch/0';
-$config['^form/(edit|add)/(\w+)/(.*)$'] = '$2/form_$1/$3';
+// The abstract REST_Controller is not directly routable.
+$config['^rest\b'] = null;
 
 // For now our default page is the scaffolding.
 $config['_default'] = 'welcome';
