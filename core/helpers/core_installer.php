@@ -45,6 +45,7 @@ class core_installer {
                    `title` char(255) default NULL,
                    `description` char(255) default NULL,
                    `name` char(255) default NULL,
+                   `mime_type` char(255) default NULL,
                    `left` int(9) NOT NULL,
                    `right` int(9) NOT NULL,
                    `parent_id` int(9) NOT NULL,

@@ -42,6 +42,7 @@ class Photo_Core {
       throw new Exception("@todo INVALID_IMAGE_FILE");
     }
 
+   Kohana::log("debug", print_r($image_info, true));
     // Force an extension onto the name
     $pi = pathinfo($name);
     if (empty($pi["extension"])) {
@@ -55,6 +56,7 @@ class Photo_Core {
     $photo->description = $description;
     $photo->name = $name;
     $photo->owner_id = $owner_id;
+    $photo->mime_type = empty($image_info['mime']) ? "application/unknown" : $image_info['mime'];
 
     // Randomize the name if there's a conflict
     while (ORM::Factory("item")
