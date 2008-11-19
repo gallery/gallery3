@@ -48,11 +48,9 @@ class Items_Controller extends REST_Controller {
     return url::redirect("{$item->type}s}/$item->id");
   }
 
-  public function _update($item) {
+  public function _create($item) {
     // @todo Productionize this code
     // 1) Add security checks
-    // 2) Support owner_ids properly
-
     $user = Session::instance()->get("user");
     $owner_id = $user ? $user->id : $item->owner_id;
 
@@ -64,7 +62,7 @@ class Items_Controller extends REST_Controller {
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
         $owner_id);
-      url::redirect("album/{$album->id}");
+      url::redirect("albums/{$album->id}");
       break;
 
     case "photo":
@@ -81,7 +79,7 @@ class Items_Controller extends REST_Controller {
             throw new Exception("@todo ERROR_IN_UPLOAD_FILE");
           }
         }
-        url::redirect("album/{$item->id}");
+        url::redirect("albums/{$item->id}");
       } else {
         $photo = photo::create(
           $item->id,
@@ -106,7 +104,7 @@ class Items_Controller extends REST_Controller {
     url::redirect("{$parent->type}s/{$parent->id}");
   }
 
-  public function _create($item) {
+  public function _update($item) {
     // @todo Productionize this
     // 1) Figure out how to do the right validation here.  Validate the form input and apply it to
     //    the model as appropriate.
@@ -133,8 +131,8 @@ class Items_Controller extends REST_Controller {
     // parent_id, owner_id
 
     $item->save();
-    if (array_key_exists("__return", $post)) {
-      print $item->{$post["__return"]};
+    if (array_key_exists("_return", $post)) {
+      print $item->{$post["_return"]};
     }
   }
 }

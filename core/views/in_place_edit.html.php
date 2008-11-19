@@ -3,7 +3,7 @@
 $(document).ready(function() {
   ajax_update = function(className, id) {
     return function(value, settings) {
-      var post_data = {'__return': settings.name};
+      var post_data = {'_method': 'put', '_return': settings.name};
       post_data[settings.name] = value;
       $.post("<?= url::site("items/__ID__") ?>".replace("__ID__", id),
              post_data,
