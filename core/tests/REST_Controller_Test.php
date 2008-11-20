@@ -18,54 +18,61 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class REST_Controller_Test extends Unit_Test_Case {
-  public function dispatch_test() {
-    $mock_controller = new Mock_RESTful_Controller("mock");
-    $mock_not_loaded_controller = new Mock_RESTful_Controller("mock_not_loaded");
+  public function setup() {
+    $this->mock_controller = new Mock_RESTful_Controller("mock");
+    $this->mock_not_loaded_controller = new Mock_RESTful_Controller("mock_not_loaded");
+  }
 
-    /* index() */
+  public function dispatch_index_test() {
     $_SERVER["REQUEST_METHOD"] = "GET";
     $_POST["_method"] = "";
-    $mock_controller->__call("index", "");
-    $this->assert_equal("index", $mock_controller->method_called);
+    $this->mock_controller->__call("index", "");
+    $this->assert_equal("index", $this->mock_controller->method_called);
+  }
 
-    /* show() */
+  public function dispatch_show_test() {
     $_SERVER["REQUEST_METHOD"] = "GET";
     $_POST["_method"] = "";
-    $mock_controller->__call("3", "");
-    $this->assert_equal("show", $mock_controller->method_called);
-    $this->assert_equal("Mock_Model", get_class($mock_controller->resource));
+    $this->mock_controller->__call("3", "");
+    $this->assert_equal("show", $this->mock_controller->method_called);
+    $this->assert_equal("Mock_Model", get_class($this->mock_controller->resource));
+  }
 
-    /* update() */
+  public function dispatch_update_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["_method"] = "PUT";
-    $mock_controller->__call("3", "");
-    $this->assert_equal("update", $mock_controller->method_called);
-    $this->assert_equal("Mock_Model", get_class($mock_controller->resource));
+    $this->mock_controller->__call("3", "");
+    $this->assert_equal("update", $this->mock_controller->method_called);
+    $this->assert_equal("Mock_Model", get_class($this->mock_controller->resource));
+  }
 
-    /* delete */
+  public function dispatch_delete_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["_method"] = "DELETE";
-    $mock_controller->__call("3", "");
-    $this->assert_equal("delete", $mock_controller->method_called);
-    $this->assert_equal("Mock_Model", get_class($mock_controller->resource));
+    $this->mock_controller->__call("3", "");
+    $this->assert_equal("delete", $this->mock_controller->method_called);
+    $this->assert_equal("Mock_Model", get_class($this->mock_controller->resource));
+  }
 
-    /* create */
+  public function dispatch_create_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["_method"] = "";
-    $mock_not_loaded_controller->__call("", "");
-    $this->assert_equal("create", $mock_not_loaded_controller->method_called);
+    $this->mock_not_loaded_controller->__call("", "");
+    $this->assert_equal("create", $this->mock_not_loaded_controller->method_called);
     $this->assert_equal(
-      "Mock_Not_Loaded_Model", get_class($mock_not_loaded_controller->resource));
+      "Mock_Not_Loaded_Model", get_class($this->mock_not_loaded_controller->resource));
+  }
 
-    /* form_add */
-    $mock_controller->form_add("args");
-    $this->assert_equal("form_add", $mock_controller->method_called);
-    $this->assert_equal("args", $mock_controller->resource);
+  public function dispatch_form_test_add() {
+    $this->mock_controller->form_add("args");
+    $this->assert_equal("form_add", $this->mock_controller->method_called);
+    $this->assert_equal("args", $this->mock_controller->resource);
+  }
 
-    /* form_edit */
-    $mock_controller->form_edit("1");
-    $this->assert_equal("form_edit", $mock_controller->method_called);
-    $this->assert_equal("Mock_Model", get_class($mock_controller->resource));
+  public function dispatch_form_test_edit() {
+    $this->mock_controller->form_edit("1");
+    $this->assert_equal("form_edit", $this->mock_controller->method_called);
+    $this->assert_equal("Mock_Model", get_class($this->mock_controller->resource));
   }
 
   public function routes_test() {
