@@ -47,7 +47,7 @@ class Photo_Core {
     $pi = pathinfo($name);
     if (empty($pi["extension"])) {
       $pi["extension"] = image_type_to_extension($image_info[2], false);
-      $name .= "." . $pi[extension];
+      $name .= "." . $pi["extension"];
     }
 
     $photo = ORM::factory("item");
