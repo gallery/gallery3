@@ -72,7 +72,8 @@ class user_installer {
           throw new Exception("@todo {$user->name} WAS_NOT_ADDED_TO {$group_name}");
         }
       }
-      
+
+      // @todo: get this name from the installer.
       $user = ORM::factory("user")->where("name", "joe")->find();
       $user->name = "joe";
       $user->display_name = "Registered User";
