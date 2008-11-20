@@ -77,9 +77,9 @@ class Item_Model extends ORM_MPTT {
   public function thumbnail_url($full_uri=true) {
     $func = $full_uri ? "abs_file" : "file";
     if ($this->is_album()) {
-      return $this->_relative_path(url::$func(""), "var/resizes", "", "/.thumb.jpg");
+      return $this->_relative_path(url::$func("") . "var/resizes", "", "/.thumb.jpg");
     } else {
-      return $this->_relative_path(url::$func(""), "var/resizes", ".thumb", "");
+      return $this->_relative_path(url::$func("") . "var/resizes", ".thumb", "");
     }
   }
 
