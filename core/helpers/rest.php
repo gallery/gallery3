@@ -87,7 +87,7 @@ class REST_Core {
    * @param string Use one of status code constants defined in this class.
    */
   public static function http_status($status_code) {
-    header("HTTP 1.1 " . $status_code);
+    header("HTTP/1.1 " . $status_code);
   }
 
   /**
