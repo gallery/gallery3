@@ -29,7 +29,7 @@ class Comments_Controller extends REST_Controller {
 
     if (empty($item_id)) {
       /* We currently do not support getting all comments from the entire gallery. */
-      header("HTTP/1.1 400 Bad Request");
+      rest::http_status(rest::BAD_REQUEST);
       return;
     }
     print comment::get_comments($item_id);
@@ -49,8 +49,8 @@ class Comments_Controller extends REST_Controller {
       $comment->item_id = $this->input->post('item_id');
       $comment->save();
 
-      header("HTTP/1.1 201 Created");
-      header("Location: " . url::site("comments/{$comment->id}"));
+      rest::http_status(rest::CREATED);
+      rest::http_location(url::site("comments/{$comment->id}"));
     }
     // @todo Return appropriate HTTP status code indicating error.
     print $form;
@@ -65,12 +65,12 @@ class Comments_Controller extends REST_Controller {
     $output_format = rest::output_format();
     switch ($output_format) {
     case "xml":
-      header("Content-Type: application/xml");
+      rest::http_content_type(rest::XML);
       print xml::to_xml($comment->as_array(), array("comment"));
       break;
 
     case "json":
-      header("Content-Type: application/json");
+      rest::http_content_type(rest::JSON);
       print json_encode($comment->as_array());
       break;
 
@@ -103,7 +103,7 @@ class Comments_Controller extends REST_Controller {
    *  @see Rest_Controller::_delete($resource)
    */
   public function _delete($comment) {
-    throw new Exception("@todo Comment_Controller::_delete NOT IMPLEMENTED");
+    rest::http_status(rest::METHOD_NOT_ALLOWED);
   }
 
   /**

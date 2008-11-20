@@ -21,5 +21,8 @@
 // The abstract REST_Controller is not directly routable.
 $config['^rest\b.*'] = null;
 
+// Redirect /form/add and /form/edit to REST_Controller.
+$config['^form/(edit|add)/(\w+)/(.*)$'] = '$2/form_$1/$3';
+
 // For now our default page is the scaffolding.
 $config['_default'] = 'welcome';

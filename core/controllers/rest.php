@@ -84,7 +84,7 @@ abstract class REST_Controller extends Controller {
     // @todo this needs security checks
     $id = $function;
     $resource = ORM::factory($this->resource_type, $id);
-    if (!$resource->loaded && $request_method == "post") {
+    if (!$resource->loaded && !$request_method == "post") {
       return Kohana::show_404();
     }
 

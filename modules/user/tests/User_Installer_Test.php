@@ -48,7 +48,7 @@ class User_Installer_Test extends Unit_Test_Case {
     $this->assert_equal("registered", $group->name);
 
     $this->assert_equal(
-      array("admin"),
+      array("admin", "joe"),
       array_keys($group->users->select_list("name")));
   }
 }

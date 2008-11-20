@@ -112,7 +112,7 @@ class Comment_Core {
       ->find_all();
 
     if (!$comments->count()) {
-      header("HTTP/1.1 400 Bad Request");
+      rest::http_status(rest::BAD_REQUEST);
       return;
     }
 

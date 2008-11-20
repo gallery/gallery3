@@ -17,26 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Item_Controller_Test extends Unit_Test_Case {
+class Items_Controller_Test extends Unit_Test_Case {
   public function change_item_test() {
-    $controller = new Item_Controller();
+    $controller = new Items_Controller();
     $album = album::create(1, "test", "test");
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
 
-    $controller->_post($album);
+    $controller->_update($album);
     $this->assert_equal("new title", $album->title);
     $this->assert_equal("new description", $album->description);
   }
 
   public function change_item_test_with_return() {
-    $controller = new Item_Controller();
+    $controller = new Items_Controller();
     $album = album::create(1, "test", "test");
     $_POST["title"] = "item_title";
     $_POST["description"] = "item_description";
     $_POST["__return"] = "item_description";
 
-    $tihs->assert_equal("item_description", $controller->_post($album));
+    $this->assert_equal("item_description", $controller->_post($album));
     $this->assert_equal("item_title", $album->title);
     $this->assert_equal("item_description", $album->description);
   }
