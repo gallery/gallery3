@@ -17,22 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class media_rss_installer {
-  public static function install() {
-    Kohana::log("debug", "media_rss_installer::install");
-    $version = module::get_version("media_rss");
-    Kohana::log("debug", "version: $version");
-    if ($version == 0) {
-      module::set_version("media_rss", 1);
-
-      dynamic_block::define_blocks("media_rss", array(
-        dynamic_block::HEAD_LINK => "media_rss::link",
-      ));
-    }
-  }
-
-  public static function uninstall() {
-    module::delete("media_rss");
-    dynamic_block::remove_blocks("media_rss");
-  }
+class Block_Model extends ORM {
 }

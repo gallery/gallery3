@@ -24,10 +24,17 @@ class slideshow_installer {
     Kohana::log("debug", "version: $version");
     if ($version == 0) {
       module::set_version("slideshow", 1);
+
+      dynamic_block::define_blocks("slideshow", array(
+        dynamic_block::CONTENT_ALBUM => "slideshow::link",
+        dynamic_block::CONTENT_PHOTO => "slideshow::link",
+        dynamic_block::HEAD_SCRIPT => "slideshow::script",
+      ));
     }
   }
 
   public static function uninstall() {
     module::delete("slideshow");
+    dynamic_block::remove_blocks("slideshow");
   }
 }

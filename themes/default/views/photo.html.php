@@ -1,9 +1,8 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gItem">
   <a href="" class="gButtonLink">Full size (1024x768)</a>
-  <? if ($theme->module("slideshow")): ?>
-    <?= slideshow::link() ?>
-  <? endif; ?>
+  <?= $theme->block(dynamic_block::CONTENT_PHOTO, "slideshow") ?>
+
 
   <img id="gPhotoID-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>"
        width="<?= $item->resize_width ?>"

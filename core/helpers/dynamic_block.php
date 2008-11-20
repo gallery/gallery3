@@ -17,22 +17,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class media_rss_installer {
-  public static function install() {
-    Kohana::log("debug", "media_rss_installer::install");
-    $version = module::get_version("media_rss");
-    Kohana::log("debug", "version: $version");
-    if ($version == 0) {
-      module::set_version("media_rss", 1);
-
-      dynamic_block::define_blocks("media_rss", array(
-        dynamic_block::HEAD_LINK => "media_rss::link",
-      ));
+class dynamic_block_Core{
+  const HEAD_LINK = "link";
+  const HEAD_SCRIPT = "script";
+  const HEADER_TYPE = "header";
+  const FOOTER_TYPE = "footer";
+  const SIDE_BAR_TYPE = "sidebar";
+  const CONTENT_ALBUM = "album";
+  const CONTENT_PHOTO = "photo";
+  
+  public static function define_blocks($module, $callbacks) {
+    // @todo create unit test for this
+    foreach ($callbacks as $type => $method) {
+      $block = ORM::factory("block");
+      $block->module = $module;
+      $block->type = $type;
+      $block->method = $method;
+      $block->save();
     }
   }
 
-  public static function uninstall() {
-    module::delete("media_rss");
-    dynamic_block::remove_blocks("media_rss");
+  public static function remove_blocks($module) {
+    // @todo and don't forget one for this
+    try {
+      ORM::factory("block")->where("module",$module)->find()->delete();
+    } catch (Exception $e) {
+      Kohana::log("error", $e);
+    }
   }
 }

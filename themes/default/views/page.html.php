@@ -11,14 +11,13 @@
           media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />
-    <link rel="alternate" type="application/rss+xml"
-          href="<?= url::site("media_rss/feed/{$theme->item()->id}") ?>"
-          />
+    <?= $theme->block(dynamic_block::HEAD_LINK) ?>
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
+    <?= $theme->block(dynamic_block::HEAD_SCRIPT) ?>
+    <!-- The following scripts would be added via the theme block mechanism -->
     <script src="<?= $theme->url("js/user.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/comment.js") ?>" type="text/javascript"></script>
-    <script src="http://lite.piclens.com/current/piclens.js" type="text/javascript"></script>
     <? if ($user): ?>
     <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
     <? endif; ?>

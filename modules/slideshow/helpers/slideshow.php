@@ -17,8 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class slideshow {
-  public static function link() {
+class slideshow_Core {
+  public static function link($theme) {
     return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
+  }
+
+  public static function script($theme) {
+    return "<script src=\"http://lite.piclens.com/current/piclens.js\" " .
+                    "type=\"text/javascript\"></script>";
   }
 }

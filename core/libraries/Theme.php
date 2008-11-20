@@ -57,7 +57,23 @@ class Theme_Core {
     return new View("in_place_edit.html");
   }
 
+  public function block($type, $module=null) {
+    $block = ORM::factory("block")
+      ->where("type", $type);
+    if (isset($module)) {
+      $block->where("module", $module);
+    }
+    $result = $block->find_all();
+    $blocks = "";
+    foreach ($result as $block) {
+      $blocks .= call_user_func($block->method, $this);
+    }
+
+    return $blocks;
+  }
+
   public function blocks() {
+    // @todo make type mandatory, its only optional while i try this out for slideshow
     /** @todo: make this data driven */
     $blocks = array(
       'carousel' => carousel::block($this),
@@ -65,6 +81,7 @@ class Theme_Core {
       'info' => info::block($this),
       'gmaps' => gmaps::block($this),
     );
+    kohana::Log("debug", print_r($blocks, true));
     return $blocks;
   }
 }
