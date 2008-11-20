@@ -48,7 +48,7 @@ class Media_RSS_Controller extends Controller {
     // @todo do we want to add an upload date to the items table?
     $view->pub_date = date("D, d M Y H:i:s T");
 
-    header("Content-type: application/rss+xml");
+    rest::http_content_type(rest::RSS);
     print $view;
   }
 }

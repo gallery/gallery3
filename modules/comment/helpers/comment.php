@@ -118,12 +118,12 @@ class Comment_Core {
 
     switch (rest::output_format()) {
     case "xml":
-      header("Content-Type: application/xml");
+      rest::http_content_type(rest::XML);
       return xml::to_xml($comments, array("comments", "comment"));
       break;
 
     case "json":
-      header("Content-Type: application/json");
+      rest::http_content_type(rest::JSON);
       foreach ($comments as $comment) {
         $data[] = $comment->as_array();
       }
