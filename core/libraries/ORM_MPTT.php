@@ -37,6 +37,7 @@ class ORM_MPTT_Core extends ORM {
   private $parents = null;
   private $children = null;
   private $children_count = null;
+  private $descendants = array();
   private $descendants_count = array();
 
   function __construct($id=null) {
@@ -143,20 +144,19 @@ class ORM_MPTT_Core extends ORM {
    * @return object ORM_Iterator
    */
   function descendants($limit=NULL, $offset=0, $type=null) {
-    // @todo create a unit test
-    // @todo set up caching in an array; using type=all allows us to cache as decendents[$type]
-    // @todo needs to take into account the offset and limit as well
-    $this->where("left >=", $this->left)
-         ->where("right <=", $this->right);
-    if ($type) {
-      $this->where("type", $type);
+    if (!isset($this->descendants[$type][$offset])) {
+      $this->where("left >", $this->left)
+        ->where("right <=", $this->right);
+      if ($type) {
+        $this->where("type", $type);
+      }
+
+      // @todo: make the order column data driven
+      $this->orderby("id", "ASC");
+
+      $this->descendants[$type][$offset] = $this->find_all($limit, $offset);
     }
-
-    // @todo: make the order column data driven
-    $this->orderby("id", "ASC");
-
-    $descendants = $this->find_all($limit, $offset);
-    return $descendants;
+    return $this->descendants[$type][$offset];
   }
 
   /**

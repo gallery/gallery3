@@ -95,6 +95,42 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $this->assert_equal(2, $outer->children_count());
   }
 
+  public function descendant_test() {
+    $parent = album::create(1, "parent album", "parent album title");
+    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+                  "photo1", "parent album photo");
+
+    $album1 = album::create($parent->id, "album1", "album1 title");
+    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+                  "photo1", "album1 photo");
+
+    $album2 = album::create($parent->id, "album2", "album2 title");
+    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2", 
+                  "photo2", "album2 photo");
+    $parent->reload();
+
+    $this->assert_equal(5, $parent->descendants()->count());
+    $this->assert_equal(3, $parent->descendants(null, 0, "photo")->count());
+    $this->assert_equal(2, $parent->descendants(null, 0, "album")->count());
+  }
+
+  public function descendant_limit_test() {
+    $parent = album::create(1, "parent album", "parent album title");
+    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+                  "photo1", "parent album photo");
+
+    $album1 = album::create($parent->id, "album1", "album1 title");
+    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+                  "photo1", "album1 photo");
+
+    $album2 = album::create($parent->id, "album2", "album2 title");
+    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2", 
+                  "photo2", "album2 photo");
+    $parent->reload();
+
+    $this->assert_equal(2, $parent->descendants(2)->count());
+  }
+
   public function descendant_count_test() {
     $parent = album::create(1, "parent album", "parent album title");
     photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
