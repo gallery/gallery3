@@ -94,4 +94,23 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $inner2->add_to_parent($outer->id);
     $this->assert_equal(2, $outer->children_count());
   }
+
+  public function descendant_count_test() {
+    $parent = album::create(1, "parent album", "parent album title");
+    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+                  "photo1", "parent album photo");
+
+    $album1 = album::create($parent->id, "album1", "album1 title");
+    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+                  "photo1", "album1 photo");
+
+    $album2 = album::create($parent->id, "album2", "album2 title");
+    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2", 
+                  "photo2", "album2 photo");
+    $parent->reload();
+
+    $this->assert_equal(5, $parent->descendants_count());
+    $this->assert_equal(3, $parent->descendants_count("photo"));
+    $this->assert_equal(2, $parent->descendants_count("album"));
+  }
 }

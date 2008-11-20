@@ -37,6 +37,7 @@ class ORM_MPTT_Core extends ORM {
   private $parents = null;
   private $children = null;
   private $children_count = null;
+  private $descendants_count = array();
 
   function __construct($id=null) {
     parent::__construct($id);
@@ -165,18 +166,17 @@ class ORM_MPTT_Core extends ORM {
    * @return   integer  child count
    */
   function descendants_count($type=null) {
-    // @todo create a unit test
-    // @todo set up caching in an array;; using type=all allows us to cache as decendents[$type]
-    $this->where("left >=", $this->left)
-      ->where("right <=", $this->right);
-    if ($type) {
-      $this->where("type", $type);
+    if (!isset($this->descendants_count[$type])) {
+      $this->where("left >", $this->left)
+        ->where("right <=", $this->right);
+      if ($type) {
+        $this->where("type", $type);
+      }
+      $this->descendants_count[$type] = $this->count_all();
     }
 
-    // @todo does it make sense to order it before counting?
-    return $this->count_all();
+    return $this->descendants_count[$type];
   }
-
 
   /**
    * @see ORM::reload
