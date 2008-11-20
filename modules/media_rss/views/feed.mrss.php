@@ -1,5 +1,5 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-<? echo "<?xml version=\"1.0\" ?>"; ?>
+<? echo "<?xml version=\"1.0\" ?>" ?>
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"
                    xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -7,21 +7,20 @@
     <link><?= url::abs_site("albums/{$item->id}") ?></link>
     <description><?= $item->description ?></description>
     <language>en-us</language>
-    <atom:link rel="self" href="<?= url::abs_site("media_rss/feed/{$item->id}") ?>" type="application/rss+xml" />
-    <? if (isset($prevOffset)): ?>
-      <atom:link rel="previous" href="<?= url::abs_site("media_rss/feed/{$item->id}?offset={$prevOffset}") ?>"
-        type="application/rss+xml" />
-    <? endif; ?>
-    <? if (isset($nextOffset)): ?>
-      <atom:link rel="next" href="<?= url::abs_site("media_rss/feed/{$item->id}?offset={$nextOffset}") ?>"
-        type="application/rss+xml" />
-    <? endif; ?>
-    <?
-      // @todo do we want to add an upload date to the items table?
-      $date = date("D, d M Y H:i:s T");
-    ?>
-    <pubDate><?= $date ?></pubDate>
-    <lastBuildDate><?= $date ?></lastBuildDate>
+    <atom:link rel="self" href="<?= url::abs_site("media_rss/feed/{$item->id}") ?>"
+               type="application/rss+xml" />
+    <? if ($previous_page): ?>
+    <atom:link rel="previous"
+               href="<?= url::abs_site("media_rss/feed/{$item->id}?page=$previous_page") ?>"
+               type="application/rss+xml" />
+    <? endif ?>
+    <? if ($next_page): ?>
+    <atom:link rel="next"
+               href="<?= url::abs_site("media_rss/feed/{$item->id}?page=$next_page") ?>"
+               type="application/rss+xml" />
+    <? endif ?>
+    <pubDate><?= $pub_date ?></pubDate>
+    <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($children as $child): ?>
       <item>
         <title><?= $child->title ?></title>
@@ -46,6 +45,6 @@
           />
         </media:group>
       </item>
-    <? endforeach; ?>
+    <? endforeach ?>
   </channel>
 </rss>

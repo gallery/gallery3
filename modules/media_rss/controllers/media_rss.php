@@ -18,25 +18,35 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Media_RSS_Controller extends Controller {
-  public static $LIMIT = 10;
+  public static $page_size = 10;
+
   public function feed($id) {
     $item = ORM::factory("item", $id)->find();
     if (!$item->loaded) {
       return Kohana::show_404();
     }
 
+    $page = $this->input->get("page", 1);
+    if ($page < 1) {
+      url::redirect("media_rss/feed/{$item->id}");
+    }
+
+    $children = $item->descendants(self::$page_size, ($page - 1) * self::$page_size, "photo");
+    $count = $item->descendants_count("photo");
+    $max_pages = ceil($item->descendants_count("photo") / self::$page_size);
+
+    if ($page > $max_pages) {
+      url::redirect("media_rss/feed/{$item->id}?page=$max_pages");
+    }
+
     $view = new View("feed.mrss");
     $view->item = $item;
+    $view->children = $children;
+    $view->previous_page = $page > 1 ? $page - 1 : null;
+    $view->next_page = $page < $max_pages ? $page + 1 : null;
 
-    $offset = $this->input->get("offset", 0);
-    $view->children = $item->decendents(Media_RSS_Controller::$LIMIT, $offset, "photo");
-
-    if (!empty($offset)) {
-      $view->prevOffset = $offset - Media_RSS_Controller::$LIMIT;
-    }
-    if ($view->children->count() >= Media_RSS_Controller::$LIMIT) {
-      $view->nextOffset = $offset + Media_RSS_Controller::$LIMIT;
-    }
+    // @todo do we want to add an upload date to the items table?
+    $view->pub_date = date("D, d M Y H:i:s T");
 
     header("Content-type: application/rss+xml");
     print $view;

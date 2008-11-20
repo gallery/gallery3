@@ -128,10 +128,7 @@ class ORM_MPTT_Core extends ORM {
    */
   function children_count() {
     if (!isset($this->children_count)) {
-      $this->children_count =
-        $this->where("parent_id", $this->id)
-        ->orderby("id", "ASC")
-        ->count_all();
+      $this->children_count = $this->where("parent_id", $this->id)->count_all();
     }
     return $this->children_count;
   }
@@ -144,18 +141,20 @@ class ORM_MPTT_Core extends ORM {
    * @param   string   type to return
    * @return object ORM_Iterator
    */
-  function decendents($limit=NULL, $offset=0, $type="all") {
+  function descendants($limit=NULL, $offset=0, $type=null) {
     // @todo create a unit test
     // @todo set up caching in an array; using type=all allows us to cache as decendents[$type]
     // @todo needs to take into account the offset and limit as well
     $this->where("left >=", $this->left)
          ->where("right <=", $this->right);
-    if ($type != "all") {
+    if ($type) {
       $this->where("type", $type);
     }
-    $descendants =
-      $this->orderby("id", "ASC")
-           ->find_all($limit, $offset);
+
+    // @todo: make the order column data driven
+    $this->orderby("id", "ASC");
+
+    $descendants = $this->find_all($limit, $offset);
     return $descendants;
   }
 
@@ -165,21 +164,20 @@ class ORM_MPTT_Core extends ORM {
    * @param   string   type to count
    * @return   integer  child count
    */
-  function decendents_count($type=all) {
+  function descendants_count($type=null) {
     // @todo create a unit test
     // @todo set up caching in an array;; using type=all allows us to cache as decendents[$type]
     $this->where("left >=", $this->left)
-         ->where("right <=", $this->right);
-    if ($type != "all") {
+      ->where("right <=", $this->right);
+    if ($type) {
       $this->where("type", $type);
     }
-    
+
     // @todo does it make sense to order it before counting?
-    return $this->orderby("id", "ASC")
-           ->count_all();
+    return $this->count_all();
   }
 
-  
+
   /**
    * @see ORM::reload
    */
