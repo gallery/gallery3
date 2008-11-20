@@ -39,9 +39,11 @@ class File_Structure_Test extends Unit_Test_Case {
         // Exception: this file must be named accordingly for the test framework
         continue;
       }
-      $this->assert_true(
-        preg_match("#/views/.*?(\.html|mrss)\.php$#", $file->getPathname()),
-        "{$file->getPathname()} should end in .html.php or mrss.php");
+      if (strpos($file, "views")) {
+        $this->assert_true(
+          preg_match("#/views/.*?(\.html|mrss)\.php$#", $file->getPathname()),
+          "{$file->getPathname()} should end in .html.php or mrss.php");
+      }
     }
   }
 
