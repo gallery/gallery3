@@ -29,7 +29,7 @@ class Media_RSS_Controller extends Controller {
     $view->item = $item;
 
     $offset = $this->input->get("offset", 0);
-    $view->children = $item->decendents_by_type("photo", Media_RSS_Controller::$LIMIT, $offset);
+    $view->children = $item->decendents(Media_RSS_Controller::$LIMIT, $offset, "photo");
 
     if (!empty($offset)) {
       $view->prevOffset = $offset - Media_RSS_Controller::$LIMIT;

@@ -139,29 +139,47 @@ class ORM_MPTT_Core extends ORM {
   /**
    * Return all of the children of the specified type, ordered by id.
    *
-   * @chainable
-   * @param   string   type to return
    * @param   integer  SQL limit
    * @param   integer  SQL offset
-   * @param   boolean  flag to return all grandchildren as well
-   * @return array ORM
+   * @param   string   type to return
+   * @return object ORM_Iterator
    */
-  function decendents_by_type($type="photo", $limit=NULL, $offset=0, $grand_children=false) {
-    if (!isset($this->children)) {
-      if (!empty($grandchildren)) {
-        $this->where("left >=", $this->left)
-             ->where("right <=", $this->right);
-      } else {
-        $this->where("parent_id", $this->id);
-      }
-      $this->children =
-        $this->where("type", $type)
-        ->orderby("id", "ASC")
-        ->find_all($limit, $offset);
+  function decendents($limit=NULL, $offset=0, $type="all") {
+    // @todo create a unit test
+    // @todo set up caching in an array; using type=all allows us to cache as decendents[$type]
+    // @todo needs to take into account the offset and limit as well
+    $this->where("left >=", $this->left)
+         ->where("right <=", $this->right);
+    if ($type != "all") {
+      $this->where("type", $type);
     }
-    return $this->children;
+    $descendants =
+      $this->orderby("id", "ASC")
+           ->find_all($limit, $offset);
+    return $descendants;
   }
 
+  /**
+   * Return the count of all the children of the specified type.
+   *
+   * @param   string   type to count
+   * @return   integer  child count
+   */
+  function decendents_count($type=all) {
+    // @todo create a unit test
+    // @todo set up caching in an array;; using type=all allows us to cache as decendents[$type]
+    $this->where("left >=", $this->left)
+         ->where("right <=", $this->right);
+    if ($type != "all") {
+      $this->where("type", $type);
+    }
+    
+    // @todo does it make sense to order it before counting?
+    return $this->orderby("id", "ASC")
+           ->count_all();
+  }
+
+  
   /**
    * @see ORM::reload
    */
