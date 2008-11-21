@@ -2,26 +2,7 @@
 <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
 <h1><?= $item->title_edit ?></h1>
 
-<? if ($theme->module("user")): ?>
-<ul id="gLoginMenu">
-  <? if ($user): ?>
-  <a href="<?= url::site("user/{$user->id}?continue=" . url::current(true))?>"><?= _("Modify Profile") ?></a>
-  | <a href="<?= url::site("logout?continue=" . url::current(true)) ?>" id="gLogoutLink">
-    <?= _("Logout") ?>
-  </a>
-  <? else: ?>
-  <span id="gLoginLink">
-    <a href="javascript:show_login('<?= url::site("login") ?>')">
-      <?= _("Login") ?>
-    </a>
-  </span>
-  <span id="gLoginClose" class="gDisplayNone">
-    <?= _("Login") ?> | <a href="javascript:close_login()">X</a>
-  </span>
-  <div id="gLoginFormContainer"></div>
-  <? endif; ?>
-</ul>
-<? endif; ?>
+<?= View::top($theme) ?>
 
 <div id="gSiteMenu" class="gClearFix">
   <ul class="ui-tabs-nav">

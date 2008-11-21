@@ -21,9 +21,6 @@
     <!--script src="<?= $theme->url("jquery/jquery.ui.accordion.js") ?>" type="text/javascript"></script-->
     <!--script src="<?= $theme->url("jquery/jquery.ui.init.js") ?>" type="text/javascript"></script-->
     <?= View::head($theme) ?>
-    <? if ($user): ?>
-    <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
-    <? endif; ?>
   </head>
 
   <body>
