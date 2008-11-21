@@ -54,6 +54,26 @@ class REST_Controller_Test extends Unit_Test_Case {
     $this->assert_equal("Mock_Model", get_class($this->mock_controller->resource));
   }
 
+  public function dispatch_404_test() {
+    /* The dispatcher should throw a 404 if the resource isn't loaded and the method isn't POST. */
+    $methods = array(
+      array("GET", ""),
+      array("POST", "PUT"),
+      array("POST", "DELETE"));
+
+    foreach ($methods as $method) {
+      $_SERVER["REQUEST_METHOD"] = $method[0];
+      $_POST["_method"] = $method[1];
+      $exception_caught = false;
+      try {
+        $this->mock_not_loaded_controller->__call(rand(), "");
+      } catch (Kohana_404_Exception $e) {
+        $exception_caught = true;
+      }
+      $this->assert_true($exception_caught, "$method[0], $method[1]");
+    }
+  }
+
   public function dispatch_create_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["_method"] = "";
