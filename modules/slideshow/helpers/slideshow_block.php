@@ -23,7 +23,7 @@ class slideshow_block_Core {
       "</script>";
   }
 
-  public static function album_header() {
+  public static function album_top() {
     return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
   }
 

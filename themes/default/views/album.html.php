@@ -2,7 +2,7 @@
 <div id="gAlbumHeader">
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
-  <?= View::album_header($theme) ?>
+  <?= View::album_top($theme) ?>
 </div>
 
 <ul id="gAlbumGrid">

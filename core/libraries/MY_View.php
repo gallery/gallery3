@@ -65,8 +65,8 @@ class View extends View_Core {
     return self::_get_block_helpers("album", $theme);
   }
 
-  public static function album_header($theme) {
-    return self::_get_block_helpers("album_header", $theme);
+  public static function album_top($theme) {
+    return self::_get_block_helpers("album_top", $theme);
   }
 
   public static function photo($theme) {
