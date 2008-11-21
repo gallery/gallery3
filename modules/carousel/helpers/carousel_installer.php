@@ -17,15 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class carousel_installer {
+  public static function install() {
+    Kohana::log("debug", "carousel_installer::install");
+    $version = module::get_version("carousel");
+    Kohana::log("debug", "carousel: $version");
+    if ($version == 0) {
+      module::set_version("carousel", 1);
+    }
+  }
 
-class Carousel_Core {
-  public static function block($theme) {
-    $block = new Block();
-    $block->id = "gCarousel";
-    $block->title = "Album: <a href=#>{$theme->item()->title_edit}</a>";
-    $block->content = '<img src="' .
-      url::base() . "modules/carousel/images/carousel.png" .
-      '" width="214"';
-    return $block;
+  public static function uninstall() {
+    module::delete("carousel");
   }
 }
