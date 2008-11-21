@@ -24,15 +24,10 @@ class media_rss_installer {
     Kohana::log("debug", "version: $version");
     if ($version == 0) {
       module::set_version("media_rss", 1);
-
-      dynamic_block::define_blocks("media_rss", array(
-        dynamic_block::HEAD_LINK => "media_rss::link",
-      ));
     }
   }
 
   public static function uninstall() {
     module::delete("media_rss");
-    dynamic_block::remove_blocks("media_rss");
   }
 }

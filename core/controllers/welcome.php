@@ -48,11 +48,12 @@ class Welcome_Controller extends Template_Controller {
 
   function uninstall($module_name) {
     if ($module_name == "core") {
-      // Legacy support for uninstalling the auth module
+      // Legacy support for uninstalling the auth module and removing the blocks table
       try {
         $db = Database::instance();
         $db->query("DROP TABLE IF EXISTS `passwords`;");
         ORM::factory("module")->where("name", "auth")->find()->delete();
+        $db->query("DROP TABLE IF EXISTS `blocks`;");
       } catch (Exception $e) {
       }
 

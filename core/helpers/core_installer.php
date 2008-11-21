@@ -62,15 +62,6 @@ class core_installer {
                    KEY `type` (`type`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `blocks` (
-                   `id` int(9) NOT NULL auto_increment,
-                   `module` char(255) NOT NULL,
-                   `type` char(32) NOT NULL,
-                   `method` char(255) NOT NULL,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`type`, `module`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
       foreach (array("albums", "resizes") as $dir) {
         @mkdir(VARPATH . $dir);
       }
@@ -93,7 +84,6 @@ class core_installer {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
-    $db->query("DROP TABLE IF EXISTS `blocks`;");
     system("/bin/rm -rf " . VARPATH . "albums");
     system("/bin/rm -rf " . VARPATH . "resizes");
   }

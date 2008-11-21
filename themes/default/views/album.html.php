@@ -2,7 +2,9 @@
 <div id="gAlbumHeader">
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
-  <?= $theme->block(dynamic_block::CONTENT_ALBUM, "slideshow") ?>
+  <? if ($theme->module("slideshow")): ?>
+    <?= slideshow::link() ?>
+  <? endif; ?>
 </div>
 
 <ul id="gAlbumGrid">
