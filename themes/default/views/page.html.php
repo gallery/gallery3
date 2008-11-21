@@ -23,11 +23,10 @@
     <!-- this stuff will likely be integrated into lib, possibly theme css -->
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("jquery/jquery.ui.css") ?>"
           media="screen,print,projection" />
-    <script src="<?= $theme->url("jquery/jquery.ui.tabs.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("jquery/jquery.ui.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("jquery/jquery.ui.tabs.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("jquery/jquery.ui.accordion.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("jquery/jquery.ui.init.js") ?>" type="text/javascript"></script>
+    <!--script src="<?= $theme->url("jquery/jquery.ui.accordion.js") ?>" type="text/javascript"></script-->
+    <!--script src="<?= $theme->url("jquery/jquery.ui.init.js") ?>" type="text/javascript"></script-->
   </head>
 
   <body>

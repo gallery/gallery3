@@ -4,7 +4,6 @@
   <? if ($theme->module("slideshow")): ?>
     <?= slideshow::link() ?>
   <? endif; ?>
-
   <img id="gPhotoID-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>"
        width="<?= $item->resize_width ?>"
        height="<?= $item->resize_height ?>" />

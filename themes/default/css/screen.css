@@ -4,7 +4,7 @@
  * @requires YUI reset, font, grids, and base CSS
  *
  * Sheet organization:
- * 1) HTML elements (headings, links, lists, tables, forms)
+ * 1) Basic HTML elements (headings, links, lists, tables, forms)
  * 2) Layout containers (view, header, content, sidebar, footer)
  * 3) Generic content containers (item, block)
  * 4) Specific content containers and blocks (albums, metadata, comments)
@@ -12,8 +12,6 @@
  * 6) Generic styles (.gInline, gOdd/gEven, etc.)
  * 7) Forms (general and specific)
  * 8) Browser hacks (clear fix)
- *
- * @todo Disabled, readonly form inputs
  */
 
 /**
@@ -22,17 +20,18 @@
  ** *******************************************************************
  */
 
-/* ~~~~~~~~~ general elements ~~~~~~~~~~ */
+/* Basic HTML elements ~~~~~~~~~~~~~~~~ */
 
 body, html {
   background-color: #ccc;
+  font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
 }
 
 p {
   margin-bottom: 1em;
 }
 
-/* ~~~~~~ Base font size ~~~~~~~~ */
+/* Base font sizes ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gContent { 
   font-size: 1em;
@@ -42,11 +41,27 @@ p {
   font-size: .8em;
 }
 
+.gItem {
+  font-size: .8em;
+}
 
-/* ~~~~~~~~~ Headings ~~~~~~~~~~ */
+
+/* Headings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+h1, h2, h3, h4, h5 {
+  font-weight: bold;
+}
 
 h1 {
-  margin-top: 0;
+  font-size: 1.7em
+}
+
+h2 {
+  font-size: 1.4em
+}
+
+h3 {
+  font-size: 1.2em
 }
 
 #gHeader h1 {
@@ -54,7 +69,7 @@ h1 {
   margin: 20px 0 0 20px;
 }
 
-/* ~~~~~~~~~ Links ~~~~~~~~~~ */
+/* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 a {
   color: #6b8cb7;
@@ -66,16 +81,16 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ~~~~~~~~~ Lists ~~~~~~~~~~ */
+/* Lists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-
-/* ~~~~~~~~~ Tables ~~~~~~~~~~ */
+/* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 caption {
   text-align: left;
 }
 
 th {
+  font-weight: bold;
   text-align: left;
 }
 
@@ -85,7 +100,7 @@ th {
  ** *******************************************************************
  */
 
-/* ~~~~~ View Container ~~~~~~ */
+/* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gView {
   background-color: #fff;
@@ -93,7 +108,7 @@ th {
   border-width: 0 1px 1px 1px;
 }
 
-/* ~~~ Layout Containers ~~~~~ */
+/* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
   border-bottom: 1px solid #ccc;
@@ -106,17 +121,13 @@ th {
 
 #gSidebar {
   background-color: #fff;
-  padding: 20px 20px 0 10px;
-  width: 210px;
+  padding: 20px 20px 0 0;
+  width: 220px;
 }
 
 #gFooter {
   border-top: 1px solid #ccc;
   padding: .5em;
-}
-
-#gSettings {
-  
 }
 
 /**
@@ -126,44 +137,21 @@ th {
  */
 
 .gBlock {
-  margin: 0 0 2.5em 0;
-  padding: 0;
+  margin-bottom: 2.5em;
 }
 
-.gBlockHeader {
-  background-color: #e8e8e8;
-  cursor: move;
-  height: 1.5em;
-  margin: 0;
-  padding: .3em .4em;
-  position: relative;
-}
-
-.gBlockHeader h2 {
-  background: url('../images/ico_dragable.png') no-repeat;
-  float: left;
-  margin: 0;
-  padding-left: 12px;
-}
-
-.gBlockHeader .gMinimize {
-  background-image: url('../images/minimize.png');
-  height: 16px;
-  position: absolute;
-  right: .3em;
-  top: .45em;
-  width: 16px;
-}
-
-.gBlockHeader .gMinimize:hover {
-  background-image: url('../images/minimize_active.png');
+.gBlock h3 {
+  background: #e8e8e8;
+  padding: .3em .75em;
 }
 
 .gBlockContent {
-  margin: .5em .5em 0 .5em;
+  margin: .5em 0;
+  padding-left: .3em;
 }
 
 table.gBlockContent {
+  border: 1px solid #ccc;
   table-layout: fixed;
 }
 
@@ -181,7 +169,7 @@ table.gBlockContent td {
  ** ****************************************************************
  */
 
- /* ~~~~~~~~ logo  ~~~~~~~~ */
+ /* Logo  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gLogo {
   float: left;
@@ -191,7 +179,7 @@ table.gBlockContent td {
 .gThumbnail {
 }
 
-/* ~~~~~~~~~ Album ~~~~~~~~~~ */
+/* Album ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gAlbumHeader {
   height: 40px;
@@ -231,8 +219,7 @@ table.gBlockContent td {
   color: #006;
 }
 
-
- /* ~~~~ individual photo ~~~~~~~ */
+/* Individual photo ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gItem {
   margin: 0;
@@ -251,10 +238,9 @@ table.gBlockContent td {
   margin: 10px 0;
 }
 
-/* ~~~~~~~~~ metadata ~~~~~~~~~~ */
+/* Metadata ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 table.gMetadata {
-
 }
 
 table.gMetadata td,
@@ -266,20 +252,10 @@ table.gMetadata td.toggle {
   text-align: right;
 }
 
-
-/* ~~~~~~~~~ comments ~~~~~~~~~~ */
+/* Comments ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gComments {
-  border: 1px solid #ccc;
-  padding: 10px;
-}
-
-#gComments h2 {
-  margin-top: 0;
-}
-
-#gComments ul {
-  margin: 0;
+  margin-top: 20px;
 }
 
 #gComments ul li {
@@ -297,10 +273,9 @@ table.gMetadata td.toggle {
   padding: 8px;
 }
 
-/* ~~~~~~~~~ Status messages ~~~~~~~~~~ */
+/* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gStatus {
-
 }
 
 .gError {
@@ -308,15 +283,12 @@ table.gMetadata td.toggle {
 }
 
 .gWarning {
-
 }
 
 .gSuccess {
-
 }
 
 .gInfo {
-
 }
 
 /**
@@ -325,7 +297,7 @@ table.gMetadata td.toggle {
  ** *******************************************************************
  */
 
-/* ~~~~~~~~ login menu ~~~~~~~~ */
+/* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gLoginMenu {
   border: 1px solid #c0c0c0;
@@ -336,47 +308,17 @@ table.gMetadata td.toggle {
   text-align: right;
 }
 
-/* ~~~~~~~~ Site Menu  ~~~~~~~~ */
+/* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSiteMenu {
-  background: #e6ebf0 url('../images/bg_sitemenu.png') repeat-x;
+  background: #e6e6e6 url(images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
+  border-bottom: 1px solid #ccc;
   clear: both;
-  height: 31px;
-  list-style-type: none;
-  margin: 8px 0;
-  padding: 0;
+  font-size: 1.2em;
+  width: 100%;
 }
 
-#gSiteMenu li {
-  float: left;
-  list-style-type: none;
-  width: 19%;
-}
-
-#gSiteMenu li a {
-  border: 1px solid #369;
-  border-width: 0 1px 1px 0;
-  color: #036;
-  display: block;
-  font-weight: bold;
-  height: 20px;
-  letter-spacing: .1em;
-  margin-left: 1px;
-  padding: 7px 7px 3px 7px;
-  text-align: center;
-  text-decoration: none;
-}
-
-#gSiteMenu li a:hover {
-  background: url('../images/bg_sitemenu_hover.png') repeat-x;
-  color: #f30;
-}
-
-#gSiteMenu li a.active {
-  background: #dce6ef;
-  border-color: #dce6ef;
-  color: #f30;
-}
+/* Slideshow button ~~~~~~~~~~~~~~~~~~~~~~ */
 
  #gSlideshowLink {
   position: absolute;
@@ -388,20 +330,20 @@ table.gMetadata td.toggle {
   position: relative;
 }
 
-/* ~~~~~~~~~ breadcrumbs ~~~~~~~~~~ */
+/* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gBreadcrumbs {
-  height: 28px;
   list-style-type: none;
-  margin: 4px 0;
-  padding: 0 0 0 12px;
+  height: 30px;
+  margin: 1em 0;
+  padding-left: 20px;
 }
 
 #gBreadcrumbs li {
   background: transparent url('../images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
   float: left;
   list-style-type: none;
-  padding: 0 0 0 12px;
+  padding-left: 12px;
 }
 
 #gBreadcrumbs li.root {
@@ -417,15 +359,16 @@ table.gMetadata td.toggle {
   font-weight: bold;
 }
 
-/* ~~~~~~~~~ tag cloud ~~~~~~~~~~ */
+/* Tag cloud ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gTag ul {
-  padding: 0;
+  font-size: 1.1em;
   text-align: justify;
 }
 
 #gTag ul li {
   display: inline;
+  line-height: 1.5em;
   text-align: justify;
 }
 
@@ -464,7 +407,7 @@ table.gMetadata td.toggle {
 }
 
 #gTag ul li a:hover {
-  color: #FF3300;
+  color: #f30;
   text-decoration: underline;
 }
 
@@ -472,7 +415,7 @@ table.gMetadata td.toggle {
   margin-top: 10px;
 }
 
-/* ~~~~~~~~~ tags ~~~~~~~~~~ */
+/* Tags ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gTag ul {
   margin-left: .5em;
@@ -483,11 +426,11 @@ table.gMetadata td.toggle {
   margin-bottom: .3em;
 }
 
-/* ~~~~~~~~~ pagination ~~~~~~~~~~ */
+/* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gPagination {
   clear: both;
-  padding: 10px 0 0 0;
+  padding-top: 10px;
   text-align: center;
 }
 
@@ -550,17 +493,17 @@ table.gMetadata td.toggle {
   padding-right: 20px;
 }
 
-/* ~~~~~~~~~ album tree ~~~~~~~~~~ */
+/* Album tree ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gAlbumTree {
   border: 1px solid #d3d3d3;
-  margin: 20px 0 20px 0;
+  margin: 20px 0;
   padding: 5px;
 }
 
 #gAlbumTree #gTreeContainer {
   border: 1px solid #d3d3d3;
-  padding: 0 0 0 5px;
+  padding-left: 5px;
 }
 
 /**
@@ -607,7 +550,6 @@ form {
 
 fieldset {
   border: 1px solid #ccc;
-  padding: 0;
 }
 
 legend {
@@ -675,14 +617,12 @@ textarea {
 button {
 }
 
-/* ~~~~~~~~~ Form layout ~~~~~~~~~~ */
+/* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 form ul, form li {
   list-style: none !important;
 }
 form ul {
-  margin: 0;
-  padding: 0;
 }
 
 form li {
@@ -704,11 +644,10 @@ textarea {
   clear: both;
 }
 
-/* ~~~~~~~~~ Inline fieldsets ~~~~~~~~~~ */
+/* Inline fieldsets ~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gInline li {
   float: left;
-  margin: 0;
   padding: .3em .5em .4em;
   text-align: left;
 }
@@ -737,7 +676,7 @@ option:focus {
   background-color: #ffc;
 }
 
-/* ~~~~~~~~~ Validation ~~~~~~~~~~ */
+/* Validation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gRequired {
 }
@@ -772,30 +711,24 @@ li.gError select {
   border: 2px solid red;
 }
 
-/* ~~~~~~~~ form font size ~~~~~~ */
+/* Login form ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader form, #gSidebar form {
-  font-size: .9em;
-}
-
-/* ~~~~~~~~~ login form ~~~~~~~~~~ */
-
-#gHeader #gLogin li {
+#gHeader #gLoginForm li {
   float: left;
 }
-#gLogin fieldset {
+#gLoginForm fieldset {
   border: none;
 }
 
-#gLogin fieldset legend {
+#gLoginForm fieldset legend {
   display: none;
 }
 
-/* ~~~~~~~~~ search form ~~~~~~~~~~ */
+/* Search form ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSearchForm {
   float: right;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 #gSearchForm input.text {
@@ -803,15 +736,14 @@ li.gError select {
 }
 
 #gSearchForm input.submit {
-  height: 20px;
 }
 
-/* ~~~~~~~~~ comment form ~~~~~~~~~~ */
+/* Comment form ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
- #gCommentAdd {
+ #gCommens form {
 }
 
-/* ----------- upload ----------------- */
+/* Upload form ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gUploadForm .gBreadcrumbs li input,
 #gUploadForm .gBreadcrumbs li select {
@@ -873,7 +805,7 @@ li.gError select {
  ** *******************************************************************
  */
 
-/* Keep containers holding only floated elements from collapsing in Safari */
+/* Keep containers w/ only floated elements from collapsing in Safari */
 .gClearFix:after {
   clear: both;
   content: ".";

@@ -23,13 +23,15 @@
 </ul>
 <? endif; ?>
 
-<ul id="gSiteMenu">
-  <li><a href="<?= url::base() ?>"><?= _("HOME") ?></a></li>
-  <li><a class="active" href="<?= url::site("albums/1") ?>"><?= _("BROWSE") ?></a></li>
-  <li><a href="#"><?= _("UPLOAD") ?></a></li>
-  <li><a href="#"><?= _("MY GALLERY") ?></a></li>
-  <li><a href="#"><?= _("ADMIN") ?></a></li>
-</ul>
+<div id="gSiteMenu" class="gClearFix">
+  <ul class="ui-tabs-nav">
+    <li><a href="<?= url::base() ?>"><?= _("HOME") ?></a></li>
+    <li><a class="active" href="<?= url::site("albums/1") ?>"><?= _("BROWSE") ?></a></li>
+    <li><a href="#"><?= _("UPLOAD") ?></a></li>
+    <li><a href="#"><?= _("MY GALLERY") ?></a></li>
+    <li><a href="#"><?= _("ADMIN") ?></a></li>
+  </ul>
+</div>
 
 <form id="gSearchForm" class="gInline">
   <ul class="gNoLabels">
@@ -38,7 +40,7 @@
   </ul>
 </form>
 
-<ul id="gBreadcrumbs">
+<ul id="gBreadcrumbs" class="gClearFix">
   <? foreach ($parents as $parent): ?>
   <li><a href="<?= url::site("albums/{$parent->id}") ?>"><?= $parent->title_edit ?></a></li>
   <? endforeach ?>
