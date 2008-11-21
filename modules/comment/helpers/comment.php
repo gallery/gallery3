@@ -55,7 +55,7 @@ class Comment_Core {
   }
 
   static function get_add_form($item_id) {
-    $form = new Forge(url::site("comments"), "", "post", array("id" => "gCommentForm"));
+    $form = new Forge(url::site("comments"), "", "post");
     $group = $form->group(_("Add Comment"));
     $group->input("author") ->label(_("Author")) ->id("gAuthor");
     $group->input("email")  ->label(_("Email"))  ->id("gEmail");
@@ -68,7 +68,7 @@ class Comment_Core {
 
   static function get_edit_form($comment) {
     $form = new Forge(
-      url::site("comments/{$comment->id}?_method=put"), "", "post", array("id" => "gCommentForm"));
+      url::site("comments/{$comment->id}?_method=put"), "", "post");
     $group = $form->group(_("Edit Comment"));
     $group->input("author") ->label(_("Author")) ->id("gAuthor") ->value($comment->author);
     $group->input("email")  ->label(_("Email"))  ->id("gEmail")  ->value($comment->email);
@@ -95,7 +95,7 @@ class Comment_Core {
 
   static function block($theme, $show_add_form=true) {
     $block = new Block;
-    $block->id = "gComment";
+    $block->id = "gComments";
     $block->title = _("Comments");
     $block->content = comment::get_comments($theme->item(), "html");
 
