@@ -48,4 +48,8 @@ class Module_Core {
   public static function is_installed($module_name) {
     return ORM::factory("module")->where("name", $module_name)->find()->loaded;
   }
+
+  public static function get_list() {
+    return ORM::factory("module")->find_all();
+  }
 }

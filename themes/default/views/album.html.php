@@ -2,9 +2,7 @@
 <div id="gAlbumHeader">
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
-  <? if ($theme->module("slideshow")): ?>
-    <?= slideshow::link() ?>
-  <? endif; ?>
+  <?= View::album_header($theme) ?>
 </div>
 
 <ul id="gAlbumGrid">

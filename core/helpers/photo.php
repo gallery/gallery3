@@ -42,7 +42,6 @@ class Photo_Core {
       throw new Exception("@todo INVALID_IMAGE_FILE");
     }
 
-   Kohana::log("debug", print_r($image_info, true));
     // Force an extension onto the name
     $pi = pathinfo($name);
     if (empty($pi["extension"])) {

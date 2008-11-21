@@ -17,8 +17,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class slideshow {
-  public static function link() {
-    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
+abstract class block_helper_Core {
+
+  public static function admin() {
+    return "";
+  }
+
+  public static function head() {
+    return "";
+  }
+
+  public static function top() {
+    return "";
+  }
+
+  public static function bottom() {
+    return "";
+  }
+
+  public static function sidebar() {
+    return "";
+  }
+
+  public static function album() {
+    return "";
+  }
+
+  public static function photo() {
+    return "";
   }
 }
