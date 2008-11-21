@@ -28,7 +28,22 @@ body, html {
   background-color: #ccc;
 }
 
-/* ~~~~~~~~~ text ~~~~~~~~~~ */
+p {
+  margin-bottom: 1em;
+}
+
+/* ~~~~~~ Base font size ~~~~~~~~ */
+
+#gContent { 
+  font-size: 1em;
+}
+
+#gSidebar, #gHeader, #gFooter {
+  font-size: .8em;
+}
+
+
+/* ~~~~~~~~~ Headings ~~~~~~~~~~ */
 
 h1 {
   margin-top: 0;
@@ -38,6 +53,8 @@ h1 {
   float: left;
   margin: 20px 0 0 20px;
 }
+
+/* ~~~~~~~~~ Links ~~~~~~~~~~ */
 
 a {
   color: #6b8cb7;
@@ -49,13 +66,10 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ~~~~~~~~~ list ~~~~~~~~~~ */
+/* ~~~~~~~~~ Lists ~~~~~~~~~~ */
 
-li {
-  list-style-type: none;
-}
 
-/* ~~~~~~~~~ table ~~~~~~~~~~ */
+/* ~~~~~~~~~ Tables ~~~~~~~~~~ */
 
 caption {
   text-align: left;
@@ -92,12 +106,17 @@ th {
 
 #gSidebar {
   background-color: #fff;
-  padding: 1.5em 0 0 0;
+  padding: 20px 20px 0 10px;
+  width: 210px;
 }
 
 #gFooter {
   border-top: 1px solid #ccc;
   padding: .5em;
+}
+
+#gSettings {
+  
 }
 
 /**
@@ -107,7 +126,7 @@ th {
  */
 
 .gBlock {
-  margin: 0 1em 2.5em 0;
+  margin: 0 0 2.5em 0;
   padding: 0;
 }
 
@@ -123,7 +142,6 @@ th {
 .gBlockHeader h2 {
   background: url('../images/ico_dragable.png') no-repeat;
   float: left;
-  font-size: 1.1em;
   margin: 0;
   padding-left: 12px;
 }
@@ -791,7 +809,6 @@ li.gError select {
 /* ~~~~~~~~~ comment form ~~~~~~~~~~ */
 
  #gCommentAdd {
-  width: 500px;
 }
 
 /* ----------- upload ----------------- */

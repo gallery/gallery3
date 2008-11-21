@@ -7,8 +7,6 @@
     <title><?= _("Browse Photos") ?> :: <?= $item->title ?></title>
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
           media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/base-min.css") ?>"
-          media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />
     <?= $theme->block(dynamic_block::HEAD_LINK) ?>
@@ -21,6 +19,14 @@
     <? if ($user): ?>
     <script src="<?= url::file("lib/jquery.jeditable.js") ?>" type="text/javascript"></script>
     <? endif; ?>
+    <!-- this stuff will likely be integrated into lib, possibly theme css -->
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("jquery/jquery.ui.css") ?>"
+          media="screen,print,projection" />
+    <script src="<?= $theme->url("jquery/jquery.ui.tabs.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/jquery.ui.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/jquery.ui.tabs.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/jquery.ui.accordion.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/jquery.ui.init.js") ?>" type="text/javascript"></script>
   </head>
 
   <body>
