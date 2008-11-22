@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class Module_Core {
+class module_Core {
   public static function get_version($module_name) {
     return ORM::factory("module")->where("name", $module_name)->find()->version;
   }

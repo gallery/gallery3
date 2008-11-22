@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class REST_Core {
+class rest_Core {
   const OK = "200 OK";
   const CREATED = "201 Created";
   const ACCEPTED = "202 Accepted";

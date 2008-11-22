@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class Photo_Core {
+class photo_Core {
   /**
    * Create a new photo.
    * @param integer $parent_id id of parent album
