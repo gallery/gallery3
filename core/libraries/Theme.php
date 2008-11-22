@@ -74,6 +74,9 @@ class Theme_Core {
     case "album_top":
     case "album_blocks":
     case "album_bottom":
+    case "thumbnail_top":
+    case "thumbnail_bottom":
+    case "thumbnail_info":
     case "photo_top":
     case "photo_blocks":
     case "photo_bottom":

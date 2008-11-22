@@ -26,4 +26,13 @@ class info_block_Core {
     $block->content = new View("info_block.html");
     return $block;
   }
+
+  public static function thumbnail_info($theme, $item) {
+    print "<li>Views: 321</li>";
+    if ($item->owner) {
+      print "<li>";
+      printf(_("By: %s"), "<a href=\"#\">{$item->owner->name}</a>");
+      print "</li>";
+    }
+  }
 }

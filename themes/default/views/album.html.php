@@ -12,6 +12,7 @@
   <? $album_class = "gAlbum "; ?>
   <? endif ?>
   <li class="gItem <?= $album_class ?>">
+    <?= $theme->thumbnail_top($child) ?>
     <a href="<?= url::site("{$child->type}s/{$child->id}") ?>">
       <img id="gPhotoID-<?= $child->id ?>" class="gThumbnail"
            alt="photo" src="<?= $child->thumbnail_url() ?>"
@@ -19,11 +20,9 @@
            height="<?= $child->thumbnail_height ?>" />
     </a>
     <h2><?= $child->title_edit ?></h2>
+    <?= $theme->thumbnail_bottom($child) ?>
     <ul class="gMetadata">
-      <li>Views: 321</li>
-      <? if ($child->owner): ?>
-      <li><?= _("By: ") ?><a href="#"><?= $child->owner->name ?></a></li>
-      <? endif ?>
+      <?= $theme->thumbnail_info($child) ?>
     </ul>
   </li>
   <? endforeach ?>
