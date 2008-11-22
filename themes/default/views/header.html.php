@@ -1,7 +1,6 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
+<?= $theme->header_top() ?>
 <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
-
-<?= View::top($theme) ?>
 
 <div id="gSiteMenu" class="gClearFix">
   <ul class="ui-tabs-nav">
@@ -26,3 +25,4 @@
   <? endforeach ?>
   <li class="active"><?= $item->title_edit ?></li>
 </ul>
+<?= $theme->header_bottom() ?>

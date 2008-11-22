@@ -1,7 +1,7 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gItem">
   <a href="" class="gButtonLink">Full size (1024x768)</a>
-  <?= View::photo($theme) ?>
+  <?= $theme->photo_top() ?>
 
   <img id="gPhotoID-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>"
        width="<?= $item->resize_width ?>"
@@ -12,4 +12,6 @@
   <? if (module::is_installed("comment")): ?>
     <?= comment::block($theme, true); ?>
   <? endif ?>
+
+  <?= $theme->photo_bottom() ?>
 </div>

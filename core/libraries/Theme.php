@@ -57,4 +57,46 @@ class Theme_Core {
     return new View("in_place_edit.html");
   }
 
+  /**
+   * Handle all theme functions that insert module content.
+   */
+  public function __call($function, $args) {
+    switch ($function) {
+    case "admin":
+    case "head":
+    case "page_top":
+    case "page_bottom":
+    case "header_top":
+    case "header_bottom":
+    case "sidebar_top":
+    case "sidebar_blocks":
+    case "sidebar_bottom":
+    case "album_top":
+    case "album_blocks":
+    case "album_bottom":
+    case "photo_top":
+    case "photo_blocks":
+    case "photo_bottom":
+      if (empty($this->block_helpers[$function])) {
+        foreach (module::get_list() as $module) {
+          $helper_path = MODPATH . "$module->name/helpers/{$module->name}_block.php";
+          $helper_class = "{$module->name}_block";
+          if (file_exists($helper_path) && method_exists($helper_class, $function)) {
+            $this->block_helpers[$function][] = "$helper_class";
+          }
+        }
+      }
+
+      $blocks = "";
+      if (!empty($this->block_helpers[$function])) {
+        foreach ($this->block_helpers[$function] as $helper_class) {
+          $blocks .= call_user_func_array(array($helper_class, $function), array($this)) . "\n";
+        }
+      }
+      return $blocks;
+
+    default:
+      throw new Exception("@todo UNKNOWN_THEME_FUNCTION: $function");
+    }
+  }
 }

@@ -19,7 +19,7 @@
  */
 
 class info_block_Core {
-  public static function sidebar($theme) {
+  public static function sidebar_blocks($theme) {
     $block = new Block();
     $block->id = "gMetadata";
     $block->title = _("Item Info");

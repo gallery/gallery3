@@ -2,11 +2,11 @@
 <div id="gAlbumHeader">
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
-  <?= View::album_top($theme) ?>
+  <?= $theme->album_top() ?>
 </div>
 
 <ul id="gAlbumGrid">
-  <? foreach ($children as $i => $child): ?>
+<? foreach ($children as $i => $child): ?>
   <? $album_class = ""; ?>
   <? if ($child->is_album()): ?>
   <? $album_class = "gAlbum "; ?>
@@ -27,6 +27,7 @@
     </ul>
   </li>
   <? endforeach ?>
+  <?= $theme->album_bottom() ?>
 </ul>
 
 <?= $theme->pager() ?>

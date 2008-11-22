@@ -23,11 +23,11 @@ class slideshow_block_Core {
       "</script>";
   }
 
-  public static function album_top() {
+  public static function album_top($theme) {
     return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
   }
 
-  public static function photo() {
+  public static function photo_top($theme) {
     return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
   }
 }

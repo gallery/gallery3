@@ -19,7 +19,7 @@
  */
 
 class carousel_block_Core {
-  public static function sidebar($theme) {
+  public static function sidebar_blocks($theme) {
     $block = new Block();
     $block->id = "gCarousel";
     $block->title = "Album: <a href=#>{$theme->item()->title_edit}</a>";

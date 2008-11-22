@@ -20,11 +20,12 @@
     <script src="<?= $theme->url("jquery/jquery.ui.tabs.js") ?>" type="text/javascript"></script>
     <!--script src="<?= $theme->url("jquery/jquery.ui.accordion.js") ?>" type="text/javascript"></script-->
     <!--script src="<?= $theme->url("jquery/jquery.ui.init.js") ?>" type="text/javascript"></script-->
-    <?= View::head($theme) ?>
+    <?= $theme->head() ?>
   </head>
 
   <body>
-    <div id="doc4" class="yui-t5 gView">
+    <?= $theme->page_top() ?>
+   <div id="doc4" class="yui-t5 gView">
       <div id="hd">
         <div id="gHeader">
           <?= $theme->display("header.html") ?>
@@ -48,6 +49,7 @@
         </div>
       </div>
     </div>
+    <?= $theme->page_bottom() ?>
     <? if ($user): ?>
     <?= $theme->in_place_edit(); ?>
     <? endif; ?>

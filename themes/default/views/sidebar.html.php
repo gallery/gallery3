@@ -1,2 +1,4 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-<?= View::sidebar($theme) ?>
+<?= $theme->sidebar_top() ?>
+<?= $theme->sidebar_blocks() ?>
+<?= $theme->sidebar_bottom() ?>

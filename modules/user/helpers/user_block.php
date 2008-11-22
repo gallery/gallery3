@@ -24,7 +24,7 @@ class user_block_Core {
     return empty($user) ? "" : "<script src=\"$url\" type=\"text/javascript\"></script>";
   }
 
-  public static function top($theme) {
+  public static function header_top($theme) {
     $view = new View("login.html");
     $view->user = Session::instance()->get('user', null);
     return $view->render();
