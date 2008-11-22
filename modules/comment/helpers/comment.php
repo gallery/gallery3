@@ -23,7 +23,7 @@
  *
  * Note: by design, this class does not do any permission checking.
  */
-class Comment_Core {
+class comment_Core {
   const SECONDS_IN_A_MINUTE = 60;
   const SECONDS_IN_AN_HOUR = 3600;
   const SECONDS_IN_A_DAY = 86400;
