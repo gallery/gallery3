@@ -1,6 +1,5 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
-<h1><?= $item->title_edit ?></h1>
 
 <?= View::top($theme) ?>
 
@@ -16,7 +15,7 @@
 
 <form id="gSearchForm" class="gInline">
   <ul class="gNoLabels">
-    <li><input type="text" value="<?= _("Search Gallery ...") ?>"/></li>
+    <li><label for="search">Search</label><input type="text" name="search" value="<?= _("Search Gallery ...") ?>"/></li>
     <li><input type="submit" value="<?= _("search") ?>" /></li>
   </ul>
 </form>
