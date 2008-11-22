@@ -57,13 +57,4 @@ class Theme_Core {
     return new View("in_place_edit.html");
   }
 
-  public function blocks() {
-    /** @todo: make this data driven */
-    $blocks = array(
-      'tag' => tag::block($this),
-      'info' => info::block($this),
-      'gmaps' => gmaps::block($this),
-    );
-    return $blocks;
-  }
 }

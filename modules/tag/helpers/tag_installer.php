@@ -17,13 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class tag_installer {
+  public static function install() {
+    Kohana::log("debug", "tag_installer::install");
+    $version = module::get_version("tags");
+    Kohana::log("debug", "tag: $version");
+    if ($version == 0) {
+      module::set_version("tag", 1);
+    }
+  }
 
-class Gmaps_Core {
-  public static function block($theme) {
-    $block = new Block();
-    $block->id = "gMaps";
-    $block->title = _("Location");
-    $block->content = new View("gmaps_block.html");
-    return $block;
+  public static function uninstall() {
+    module::delete("tag");
   }
 }
