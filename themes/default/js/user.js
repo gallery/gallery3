@@ -1,6 +1,6 @@
 function show_login(url) {
   $("#gLoginLink").hide();
-  $("#gLoginClose").show();
+  $(".gClose").show();
   $.get(url, function(data) {
     $("#gLoginFormContainer").html(data);
     ajaxify_login_form();
@@ -8,7 +8,6 @@ function show_login(url) {
 }
 
 function ajaxify_login_form() {
-  $("#gLoginMenu form ul").addClass("gInline");
   $("form#gLoginForm").ajaxForm({
     target: "#gLoginFormContainer",
     success: function(responseText, statusText) {
@@ -23,7 +22,7 @@ function ajaxify_login_form() {
 
 function close_login() {
   $("#gLoginForm").remove();
-  $("#gLoginClose").hide();
+  $(".gClose").hide();
   $("#gLoginLink").show();
   $("input#gUsername").val("");
   $("input#gPassword").val("");

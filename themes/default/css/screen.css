@@ -4,10 +4,10 @@
  * @requires YUI reset, font, grids, and base CSS
  *
  * Sheet organization:
- * 1) Basic HTML elements (headings, links, lists, tables, forms)
+ * 1) Basic HTML elements, global text styles
  * 2) Layout containers (view, header, content, sidebar, footer)
  * 3) Generic content containers (item, block)
- * 4) Specific content containers and blocks (albums, metadata, comments)
+ * 4) Specific content blocks (albums, metadata, comments)
  * 5) Navigation and menus (menus, breadcrumbs, pagination, tab cloud)
  * 6) Generic styles (.gInline, gOdd/gEven, etc.)
  * 7) Forms (general and specific)
@@ -16,7 +16,7 @@
 
 /**
  ** *******************************************************************
- * 1) HTML elements (body, headings, links, lists, tables, forms)
+ * 1) Basic HTML elements, global text styles
  ** *******************************************************************
  */
 
@@ -165,7 +165,7 @@ table.gBlockContent td {
 
 /**
  ** ****************************************************************
- * 4) Specific content containers and blocks (albums, metadata, comments)
+ * 4) Specific content blocks (albums, metadata, comments)
  ** ****************************************************************
  */
 
@@ -173,7 +173,7 @@ table.gBlockContent td {
 
 #gLogo {
   float: left;
-  margin: 10px;
+  margin: 5px 10px 10px 20px;
 }
 
 .gThumbnail {
@@ -201,7 +201,6 @@ table.gBlockContent td {
 .gItem {
   border: 1px solid #ccc;
   float: left;
-  list-style: none;
   margin: 0 24px 10px 0;
   padding: 5px 0 5px 0;
   text-align: center;
@@ -259,7 +258,6 @@ table.gMetadata td.toggle {
 }
 
 #gComments ul li {
-  list-style-type: none;
   margin-bottom: 15px;
 }
 
@@ -280,6 +278,7 @@ table.gMetadata td.toggle {
 
 .gError {
   color: red;
+  padding-bottom: 0;
 }
 
 .gWarning {
@@ -303,18 +302,17 @@ table.gMetadata td.toggle {
   border: 1px solid #c0c0c0;
   border-top: none;
   float: right;
-  margin-right: 10px;
-  padding: 5px;
-  text-align: right;
+  margin-right: 20px;
+  padding: 0;
 }
 
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSiteMenu {
-  background: #e6e6e6 url(images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
   border-bottom: 1px solid #ccc;
   clear: both;
   font-size: 1.2em;
+  padding-left: 20px;
   width: 100%;
 }
 
@@ -333,17 +331,14 @@ table.gMetadata td.toggle {
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gBreadcrumbs {
-  list-style-type: none;
-  height: 30px;
-  margin: 1em 0;
+  height: 32px;
   padding-left: 20px;
 }
 
 #gBreadcrumbs li {
   background: transparent url('../images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
   float: left;
-  list-style-type: none;
-  padding-left: 12px;
+  padding: 10px 0 10px 12px;
 }
 
 #gBreadcrumbs li.root {
@@ -539,6 +534,32 @@ table.gMetadata td.toggle {
   display: none;
 }
 
+.gClose a {
+  border: 1px solid #ccc;
+  color: #ccc;
+  display: block;
+  font-weight: bold;
+  padding: 1px 3px;
+}
+
+.gClose a:hover {
+  border: 1px solid #666;
+  color: #666;
+  text-decoration: none;
+}
+
+.gHide {
+  display: none;
+}
+
+.gShowBlock {
+  display: block;
+}
+
+.gShowInline {
+  display: inline;
+}
+
 /**
  ** *******************************************************************
  * 8) Forms (general and specific)
@@ -619,12 +640,6 @@ button {
 
 /* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-form ul, form li {
-  list-style: none !important;
-}
-form ul {
-}
-
 form li {
   margin-top: .5em;
   padding: .3em 1.5em .3em 1em;
@@ -648,19 +663,7 @@ textarea {
 
 .gInline li {
   float: left;
-  padding: .3em .5em .4em;
-  text-align: left;
-}
-
-.gInline input {
-}
-
-.gInline input[type="Submit"] {
-  margin-top: 1em;
-}
-
-.gInline .gNoLabels input[type="Submit"] {
-  margin-top: 0;
+  padding: .3em .5em .4em .5em;
 }
 
 .gInline input[type="text"],
@@ -668,6 +671,10 @@ textarea {
 .gInline textarea,
 .gInline .gValidationRule {
   width: 10em;
+}
+
+.gInline input[type="Submit"] {
+  margin-top: 1em;
 }
 
 input:focus,
@@ -713,15 +720,24 @@ li.gError select {
 
 /* Login form ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLoginForm li {
-  float: left;
+#gHeader #gLoginFormContainer {
+  padding: 0;
 }
-#gLoginForm fieldset {
+
+#gHeader #gLoginForm fieldset {
   border: none;
 }
 
-#gLoginForm fieldset legend {
+#gHeader #gLoginForm li {
+  margin-top: 0;
+}
+
+#gHeader #gLoginForm legend {
   display: none;
+}
+
+#gHeader #gLoginForm button {
+  margin-top: 1em;
 }
 
 /* Search form ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -731,11 +747,12 @@ li.gError select {
   margin-right: 20px;
 }
 
-#gSearchForm input.text {
-  padding: 1px;
+#gSearchForm label {
+  display: none;
 }
 
-#gSearchForm input.submit {
+#gSearchForm input[type="submit"] {
+  margin-top: 0;
 }
 
 /* Comment form ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
