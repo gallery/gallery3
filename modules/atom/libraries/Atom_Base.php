@@ -66,7 +66,7 @@ class Atom_Base_Core {
 
   protected function add_children_to_base_element() {
     foreach ($this->children as $element_type => $elements) {
-      $base_element = $this->dom->getElementsByTagName($this->element_name)->item(0);
+      $base_element = $this->element;
       foreach ($elements as $id => $element) {
         $base_element->appendChild($element->get_element());
       }

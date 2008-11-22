@@ -117,6 +117,11 @@ class comment_Core {
     }
 
     switch (rest::output_format()) {
+    case "atom":
+      rest::http_content_type(rest::ATOM);
+      print comment::get_atom_feed($comments);
+      break;
+
     case "xml":
       rest::http_content_type(rest::XML);
       return xml::to_xml($comments, array("comments", "comment"));
@@ -139,6 +144,62 @@ class comment_Core {
         return "<ul>\n" . implode("\n", $html) . "</ul>\n";
       }
     }
+  }
+
+  public static function get_atom_entry($comment) {
+
+  }
+
+  /*
+   * This is way too complicated and needs lots of cleanup, but it provides a valid feed.
+   * @todo Fix double slashes in some URIs.
+   * @todo Write Unix -> RFC3339 datetime conversion helper.
+   * @todo Abstract away as much code as possible.
+   * @todo Show photo title instead of photo ID.
+   * @todo Show comment numbers relative to current item, not its database ID.
+   */
+  public static function get_atom_feed($comments) {
+    $latest_comment = 0;
+    $base_url = sprintf("http://%s%s", $_SERVER["HTTP_HOST"], url::base(true));
+    $absoluteUrl = html::specialchars($base_url . url::current(true));
+
+    $feed = new Atom_Feed("feed");
+    $feed->link()
+      ->rel("self")
+      ->href($absoluteUrl);
+
+    foreach ($comments as $comment) {
+      if ($comment->datetime > $latest_comment) {
+        $latest_comment = $comment->datetime;
+      }
+
+      $feed->entry()
+        ->id(sprintf("%s%scomments/%s", $base_url, url::site(), $comment->id))
+        ->updated(date("Y-m-d\TH:i:s", $comment->datetime) . "Z")
+        ->title(sprintf(_("Comment #%d"), $comment->id))
+        ->content($comment->text, "html")
+        ->author()
+          ->name($comment->author)
+          ->email($comment->email)
+          ->uri(sprintf("%s%susers/%s", $base_url, url::site(), $comment->id));
+    }
+    $item_id = $comment->item_id;
+
+    $feed->id($absoluteUrl)
+      ->title(sprintf(_("Comments on photo %d"), $item_id), "text")
+      ->updated(date("Y-m-d\TH:i:s", $latest_comment) . "Z");
+    $feed->link()
+      ->rel("related")
+      ->type("application/atom+xml")
+      ->title(_("Get photo meta data"))
+      ->href(sprintf("%s%sphotos/%s", $base_url, url::site(), $item_id));
+    $feed->link()
+      ->rel("related")
+      ->type("image/jpeg")
+      ->title("Download photo")
+      ->href(sprintf("%s%sphotos/%s", $base_url, url::site(), $item_id));
+
+    return $feed->as_xml();
   }
 
   /**

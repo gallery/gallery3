@@ -74,6 +74,10 @@ class Comments_Controller extends REST_Controller {
       print json_encode($comment->as_array());
       break;
 
+    case "atom":
+      rest::http_content_type(rest::ATOM);
+      break;
+
     default:
       $v = new View("comment.$output_format");
       $v->comment = $comment;
