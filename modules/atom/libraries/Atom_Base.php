@@ -43,6 +43,7 @@ class Atom_Base_Core {
 
   public function as_xml() {
     $this->add_children_to_base_element();
+    $this->dom->formatOutput = true;
     return $this->dom->saveXML();
   }
 

@@ -24,7 +24,6 @@ class Atom_Test extends Unit_Test_Case {
  * http://codex.gallery2.org/Gallery3:Atom_resource_representations
  *
  * Uncomment one or both lines at the end of the tests to see the output.
- * (You'll have to use your editor to reformat it because there aren't any newlines.)
  */
   public function atom_feed_test() {
     $feed = new Atom_Feed("feed");
