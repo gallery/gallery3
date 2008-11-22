@@ -103,7 +103,8 @@ class Comments_Controller extends REST_Controller {
    *  @see Rest_Controller::_delete($resource)
    */
   public function _delete($comment) {
-    rest::http_status(rest::METHOD_NOT_ALLOWED);
+    $comment->delete();
+    rest::http_status(rest::OK);
   }
 
   /**
