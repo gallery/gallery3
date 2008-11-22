@@ -132,4 +132,5 @@ $config['modules'] = array
   MODPATH . 'media_rss',
   MODPATH . 'slideshow',
   MODPATH . 'comment',
+  MODPATH . 'atom'
 );
