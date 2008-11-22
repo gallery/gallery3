@@ -87,13 +87,15 @@ class Theme_Core {
         }
       }
 
-      $blocks = "";
+      $blocks = array();
       if (!empty($this->block_helpers[$function])) {
         foreach ($this->block_helpers[$function] as $helper_class) {
-          $blocks .= call_user_func_array(array($helper_class, $function), array($this)) . "\n";
+          $blocks[] = call_user_func_array(
+            array($helper_class, $function),
+            array_merge(array($this), $args));
         }
       }
-      return $blocks;
+      return implode("\n", $blocks);
 
     default:
       throw new Exception("@todo UNKNOWN_THEME_FUNCTION: $function");
