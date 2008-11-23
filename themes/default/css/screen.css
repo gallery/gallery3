@@ -1,50 +1,34 @@
 /**
  * Gallery 3 Default Theme Styles
  *
- * @requires YUI reset, font, grids, and base CSS
+ * @requires YUI reset, font, grids CSS
  *
  * Sheet organization:
- * 1) Basic HTML elements, global text styles
- * 2) Layout containers (view, header, content, sidebar, footer)
- * 3) Generic content containers (item, block)
- * 4) Specific content blocks (albums, metadata, comments)
- * 5) Navigation and menus (menus, breadcrumbs, pagination, tab cloud)
- * 6) Generic styles (.gInline, gOdd/gEven, etc.)
- * 7) Forms (general and specific)
- * 8) Browser hacks (clear fix)
+ * 1) Basic HTML elements
+ * 2) Base text styles
+ * 3) Layout containers
+ * 4) Generic content containers
+ * 5) Specific content blocks
+ * 6) Navigation and menus
+ * 7) Generic styles
+ * 8) Forms
+ * 9) Browser hacks
  */
 
-/**
- ** *******************************************************************
- * 1) Basic HTML elements, global text styles
- ** *******************************************************************
- */
+/** *******************************************************************
+ * 1) Basic HTML elements
+ ******************************************************************/
 
 /* Basic HTML elements ~~~~~~~~~~~~~~~~ */
 
 body, html {
   background-color: #ccc;
-  font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 p {
   margin-bottom: 1em;
 }
-
-/* Base font sizes ~~~~~~~~~~~~~~~~~~~~~ */
-
-#gContent { 
-  font-size: 1em;
-}
-
-#gSidebar, #gHeader, #gFooter {
-  font-size: .8em;
-}
-
-.gItem {
-  font-size: .8em;
-}
-
 
 /* Headings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -64,11 +48,6 @@ h3 {
   font-size: 1.2em
 }
 
-#gHeader h1 {
-  float: left;
-  margin: 20px 0 0 20px;
-}
-
 /* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 a {
@@ -81,8 +60,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Lists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 caption {
@@ -94,11 +71,24 @@ th {
   text-align: left;
 }
 
-/**
- ** *******************************************************************
- * 2) Layout containers (view, header, content, sidebar, footer)
- ** *******************************************************************
- */
+/** *******************************************************************
+ * 2) Base text styles
+ ******************************************************************/
+#gContent { 
+  font-size: 1em;
+}
+
+#gSidebar, #gHeader, #gFooter {
+  font-size: .8em;
+}
+
+.gItem {
+  font-size: .8em;
+}
+
+/*** *******************************************************************
+ * 3) Layout containers
+ ******************************************************************/
 
 /* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -130,11 +120,9 @@ th {
   padding: .5em;
 }
 
-/**
- ** ****************************************************************
- * 3) Generic content containers (item, block)
- ** ****************************************************************
- */
+/** ****************************************************************
+ * 4) Generic content containers
+ ******************************************************************/
 
 .gBlock {
   margin-bottom: 2.5em;
@@ -163,13 +151,11 @@ table.gBlockContent td {
   padding: .3em 0 .3em .3em;
 }
 
-/**
- ** ****************************************************************
- * 4) Specific content blocks (albums, metadata, comments)
- ** ****************************************************************
- */
+/** ****************************************************************
+ * 5) Specific content blocks
+ ******************************************************************/
 
- /* Logo  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Logo  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gLogo {
   float: left;
@@ -290,11 +276,9 @@ table.gMetadata td.toggle {
 .gInfo {
 }
 
-/**
- ** *******************************************************************
- * 5) Navigation and menus (menus, breadcrumbs, pagination, tab cloud)
- ** *******************************************************************
- */
+/** *******************************************************************
+ * 6) Navigation and menus
+ ******************************************************************/
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -319,9 +303,7 @@ table.gMetadata td.toggle {
 /* Slideshow button ~~~~~~~~~~~~~~~~~~~~~~ */
 
  #gSlideshowLink {
-  position: absolute;
-  right: 0;
-  top: 0;
+  float: right;
 }
 
 #gItem #gSlideshowLink {
@@ -357,7 +339,7 @@ table.gMetadata td.toggle {
 /* Tag cloud ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gTag ul {
-  font-size: 1.1em;
+  font-size: 1.2em;
   text-align: justify;
 }
 
@@ -423,68 +405,70 @@ table.gMetadata td.toggle {
 
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gPagination {
+#gPager {
   clear: both;
-  padding-top: 10px;
-  text-align: center;
+  padding-top: 2em;
 }
 
-#gPagination a,
-#gPagination span {
+#gPager li {
   background-repeat: no-repeat;
-  border: 1px solid #d3d3d3;
+  float: left;
   padding: 5px;
 }
 
-#gPagination a:hover {
-  background-color: #f3f3f3;
+#gPager a {
+  color: #000;
 }
 
-#gPagination .first {
+#gPager .first {
   background-image: url('../images/first.png');
   background-position: left;
   padding-left: 20px;
 }
 
-#gPagination .first_inactive {
+#gPager .first_inactive {
   background-image: url('../images/first_inactive.png');
   background-position: left;
+  color: #ccc;
   padding-left: 20px;
 }
 
-#gPagination .previous {
+#gPager .previous {
   background-image: url('../images/previous.png');
   background-position: left;
   padding-left: 17px;
 }
 
-#gPagination .previous_inactive {
+#gPager .previous_inactive {
   background-image: url('../images/previous_inactive.png');
   background-position: left;
+  color: #ccc;
   padding-left: 17px;
 }
 
-#gPagination .next {
+#gPager .next {
   background-image: url('../images/next.png');
   background-position: right;
   padding-right: 17px;
 }
 
-#gPagination .next_inactive {
+#gPager .next_inactive {
   background-image: url('../images/next_inactive.png');
   background-position: right;
+  color: #ccc;
   padding-right: 17px;
 }
 
-#gPagination .last {
+#gPager .last {
   background-image: url('../images/last.png');
   background-position: right;
   padding-right: 20px;
 }
 
-#gPagination .last_inactive {
+#gPager .last_inactive {
   background-image: url('../images/last_inactive.png');
   background-position: right;
+  color: #ccc;
   padding-right: 20px;
 }
 
@@ -501,16 +485,14 @@ table.gMetadata td.toggle {
   padding-left: 5px;
 }
 
-/**
- ** *******************************************************************
- * 6) Generic styles
- ** *******************************************************************
- */
+/** *******************************************************************
+ * 7) Generic styles
+ ******************************************************************/
 
 .gOdd {
 }
 
-.gEvent {
+.gEven {
 }
 
 .gInline {
@@ -530,10 +512,6 @@ table.gMetadata td.toggle {
   color: #c0c0c0;
 }
 
-.gDisplayNone {
-  display: none;
-}
-
 .gClose a {
   border: 1px solid #ccc;
   color: #ccc;
@@ -548,7 +526,8 @@ table.gMetadata td.toggle {
   text-decoration: none;
 }
 
-.gHide {
+.gHide,
+.gClose {
   display: none;
 }
 
@@ -560,11 +539,9 @@ table.gMetadata td.toggle {
   display: inline;
 }
 
-/**
- ** *******************************************************************
- * 8) Forms (general and specific)
- ** *******************************************************************
- */
+/** *******************************************************************
+ * 8) Forms
+ ******************************************************************/
 
 form {
 }
@@ -592,9 +569,6 @@ input[type="password"],
 textarea,
 .gValidationRule {
   width: 40%;
-}
-
-input {
 }
 
 input[type="button"] {
@@ -755,11 +729,6 @@ li.gError select {
   margin-top: 0;
 }
 
-/* Comment form ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
- #gCommens form {
-}
-
 /* Upload form ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gUploadForm .gBreadcrumbs li input,
@@ -816,11 +785,9 @@ li.gError select {
   width: 130px;
 }
 
-/**
- ** *******************************************************************
+/** *******************************************************************
  * 9) Browser hacks
- ** *******************************************************************
- */
+ *********************************************************************/
 
 /* Keep containers w/ only floated elements from collapsing in Safari */
 .gClearFix:after {
