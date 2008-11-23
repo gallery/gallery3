@@ -27,7 +27,7 @@ class Gallery_Atom_Feed_Core extends Atom_Feed {
     parent::__construct("feed");
 
     /* Set feed ID and self link. */
-    $this->id(atom::get_absolute_url());
+    $this->id(html::specialchars(atom::get_absolute_url()));
     $this->link()
       ->rel("self")
       ->href(atom::get_absolute_url());

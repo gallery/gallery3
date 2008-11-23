@@ -39,7 +39,7 @@ class atom_Core {
    */
   public static function get_absolute_url() {
     $base_url = atom::get_base_url();
-    $absolute_url = html::specialchars($base_url . url::current(true));
+    $absolute_url = $base_url . url::current(true);
     return $absolute_url;
   }
 
