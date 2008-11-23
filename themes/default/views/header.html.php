@@ -12,12 +12,7 @@
   </ul>
 </div>
 
-<form id="gSearchForm" class="gInline">
-  <ul class="gNoLabels">
-    <li><label for="search">Search</label><input type="text" name="search" value="<?= _("Search Gallery ...") ?>"/></li>
-    <li><input type="submit" value="<?= _("search") ?>" /></li>
-  </ul>
-</form>
+<?= $theme->header_bottom() ?>
 
 <ul id="gBreadcrumbs" class="gClearFix">
   <? foreach ($parents as $parent): ?>
@@ -25,4 +20,3 @@
   <? endforeach ?>
   <li class="active"><?= $item->title_edit ?></li>
 </ul>
-<?= $theme->header_bottom() ?>

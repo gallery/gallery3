@@ -74,7 +74,7 @@ th {
 /** *******************************************************************
  * 2) Base text styles
  ******************************************************************/
-#gContent { 
+#gContent {
   font-size: 1em;
 }
 
@@ -720,6 +720,23 @@ li.gError select {
   float: right;
   margin-right: 20px;
 }
+
+#gSearchForm li {
+  float: left;
+  padding: .3em .5em .4em .5em;
+}
+
+#gSearchForm input[type="text"],
+#gSearchForm input[type="password"],
+#gSearchForm textarea,
+#gSearchForm .gValidationRule {
+  width: 10em;
+}
+
+#gSearchForm input[type="Submit"] {
+  margin-top: 1em;
+}
+
 
 #gSearchForm label {
   display: none;
