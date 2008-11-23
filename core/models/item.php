@@ -21,6 +21,13 @@ class Item_Model extends ORM_MPTT {
   protected $children = 'items';
   protected $has_one = array("owner" => "user");
 
+  function __construct($id=null) {
+    parent::__construct($id);
+    if (!in_array("tags", $this->has_and_belongs_to_many) && module::is_installed("tag")) {
+      $this->has_and_belongs_to_many[] = "tags";
+    }
+  }
+
   /**
    * Is this item an album?
    * @return true if it's an album
