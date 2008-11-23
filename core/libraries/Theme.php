@@ -85,7 +85,7 @@ class Theme_Core {
           $helper_path = MODPATH . "$module->name/helpers/{$module->name}_block.php";
           $helper_class = "{$module->name}_block";
           if (file_exists($helper_path) && method_exists($helper_class, $function)) {
-            $this->block_helpers[$function][] = "$helper_class";
+            $this->block_helpers[$function][] = $helper_class;
           }
         }
       }
