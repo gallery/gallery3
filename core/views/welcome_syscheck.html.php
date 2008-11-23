@@ -35,7 +35,13 @@
       <th align="left">Version</th>
       <th align="left">Action</th>
     </tr>
+    <tr class="core">
+      <td> <b> core </b> </td>
+      <td> <b> <?= $modules["core"] ?> </b> </td>
+      <td> <b> <?= html::anchor("welcome/uninstall/core", "reset install") ?> </b> </td>
+    </tr>
     <? foreach ($modules as $module_name => $module_version): ?>
+    <? if ($module_name == "core") continue; ?>
     <tr>
       <td><?= $module_name ?></td>
       <td><?= empty($module_version) ? "" : $module_version ?></td>
@@ -49,6 +55,9 @@
     </tr>
     <? endforeach; ?>
     <tr>
+      <td colspan="3" align="center">
+        <button onclick="document.location.href='<?= url::site("welcome/install/*") ?>'">Install All Plugins</button>
+      </td>
     </tr>
   </table>
   <? endif; ?>

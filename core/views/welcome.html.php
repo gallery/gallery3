@@ -106,6 +106,18 @@
         display: inline;
       }
 
+      tr.core td {
+        border-bottom: 1px solid black;
+
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
     </style>
     <script type="text/javascript" src="<?= url::file("lib/jquery.js") ?>"></script>
     <script type="text/javascript" src="<?= url::file("lib/jquery.cookie.js") ?>"></script>

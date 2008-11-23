@@ -42,21 +42,21 @@ class Welcome_Controller extends Template_Controller {
   }
 
   function install($module_name) {
-    call_user_func(array("{$module_name}_installer", "install"));
+    if ($module_name == "*") {
+      foreach ($this->_read_modules() as $module_name => $version) {
+        if (empty($version)) {
+          call_user_func(array("${module_name}_installer", "install"));
+        }
+      }
+    } else {
+      call_user_func(array("{$module_name}_installer", "install"));
+    }
+
     url::redirect("welcome");
   }
 
   function uninstall($module_name) {
     if ($module_name == "core") {
-      // Legacy support for uninstalling the auth module and removing the blocks table
-      try {
-        $db = Database::instance();
-        $db->query("DROP TABLE IF EXISTS `passwords`;");
-        ORM::factory("module")->where("name", "auth")->find()->delete();
-        $db->query("DROP TABLE IF EXISTS `blocks`;");
-      } catch (Exception $e) {
-      }
-
       // We have to uninstall all other modules first, else their tables, etc don't
       // get cleaned up.
       foreach (ORM::factory("module")->find_all() as $module) {
@@ -292,6 +292,7 @@ class Welcome_Controller extends Template_Controller {
     } catch (Exception $e) {
       // The database may not be installed
     }
+    ksort($modules);
     return $modules;
   }
 }
