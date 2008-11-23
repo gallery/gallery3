@@ -21,21 +21,23 @@ class tag_installer {
   public static function install() {
     Kohana::log("debug", "tag_installer::install");
     $db = Database::instance();
-    $version = module::get_version("tags");
+    $version = module::get_version("tag");
     Kohana::log("debug", "tag: $version");
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `tags` (
           `id` int(9) NOT NULL auto_increment,
-          `tag_text` varchar(255) NOT NULL,
+          `name` varchar(255) NOT NULL,
           PRIMARY KEY (`id`),
-          UNIQUE KEY(`display_name`))
+          UNIQUE KEY(`name`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE IF NOT EXISTS `items_tags` (
+          `id` int(9) NOT NULL auto_increment,
           `item_id` int(9) NOT NULL,
           `tag_id` int(9) NOT NULL,
-          PRIMARY KEY (`item_id`, `tag_id`),
-          UNIQUE KEY(`tag_id`, `item_id`))
+          PRIMARY KEY (`id`),
+          KEY(`tag_id`),
+          KEY(`item_id`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("tag", 1);
     }
