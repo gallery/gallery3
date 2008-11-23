@@ -154,9 +154,9 @@ class comment_Core {
       ->author()
         ->name($comment->author)
         ->email($comment->email)
-        ->uri(sprintf("%susers/%s", atom::get_base_url(), $comment->id));
-    $feed->link()->related_atom(sprintf("photos/%s", $comment->item_id));
-    $feed->link()->related_image(sprintf("photos/%s", $comment->item_id));
+        ->uri(url::abs_site("users/$comment->id"));
+    $feed->link()->related_atom("photos/$comment->item_id");
+    $feed->link()->related_image("photos/$comment->item_id");
 
     return $feed->as_xml();
   }
@@ -173,20 +173,20 @@ class comment_Core {
     $feed = new Gallery_Atom_Feed();
     $feed->title(sprintf(_("Comments on photo %d"), $item_id));
     $feed->updated($latest_comment);
-    $feed->link()->related_atom(sprintf("photos/%s", $item_id));
-    $feed->link()->related_image(sprintf("photos/%s", $item_id));
+    $feed->link()->related_atom("photos/$item_id");
+    $feed->link()->related_image("photos/$item_id");
 
     /* Add individual comments. */
     foreach ($comments as $id => $comment) {
       $feed->entry()
-        ->id(sprintf("%scomments/%s", atom::get_base_url(), $comment->id))
+        ->id(url::abs_site("comments/$comment->id"))
         ->updated($comment->datetime)
         ->title(sprintf(_("Comment #%d"), $comments->count() - $id))
         ->content($comment->text)
         ->author()
           ->name($comment->author)
           ->email($comment->email)
-          ->uri(sprintf("%susers/%s", atom::get_base_url(), $comment->id));
+          ->uri(url::abs_site("users/$comment->id"));
     }
     return $feed->as_xml();
   }
@@ -215,16 +215,16 @@ class comment_Core {
 
     /* Construct message depending on how much time passed. */
     if ($elapsed_years > 0) {
-      $message = sprintf(_('said %d years ago'), $elapsed_years);
+      $message = sprintf(_("said %d years ago"), $elapsed_years);
     } else if ($elapsed_months > 0) {
-      $message = sprintf(_('said %d months ago'), $elapsed_months);
+      $message = sprintf(_("said %d months ago"), $elapsed_months);
     } else {
       if ($time_difference < $seconds_since_midnight) {
-        $message = _('said today');
+        $message = _("said today");
       } else if ($time_difference < $seconds_since_midnight + comment::SECONDS_IN_A_DAY) {
-        $message = _('said yesterday');
+        $message = _("said yesterday");
       } else {
-        $message = sprintf(_('said %d days ago'), $elapsed_days);
+        $message = sprintf(_("said %d days ago"), $elapsed_days);
       }
     }
     return $message;
