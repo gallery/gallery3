@@ -25,12 +25,14 @@ class Atom_Feed_Core extends Atom_Base {
   }
 
   public function title($title) {
+    /* @todo Add optional type argument that defaults to "text" */
     $this->element->appendChild($this->dom->createElement("title", $title));
     return $this;
   }
 
-  public function updated($updated) {
-    $this->element->appendChild($this->dom->createElement("updated", $updated));
+  public function updated($timestamp) {
+    $this->element->appendChild(
+      $this->dom->createElement("updated", atom::unix_to_internet_timestamp($timestamp)));
     return $this;
   }
 
@@ -41,10 +43,5 @@ class Atom_Feed_Core extends Atom_Base {
   public function entry() {
     /* Create new empty entry. */
     return $this->add_child("Atom_Entry", "entry");
-  }
-
-  public function append_entry($atom_entry) {
-    /* Append an exising entry. */
-    $this->element->appendChild($atom_entry->get_element());
   }
 }

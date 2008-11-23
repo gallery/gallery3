@@ -18,35 +18,28 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class Atom_Entry_Core extends Atom_Base {
-  public function id($id) {
-    $this->element->appendChild($this->dom->createElement("id", $id));
+class Gallery_Atom_Link_Core extends Atom_Link {
+  public function related_atom($relative_uri, $title="") {
+    if (empty($title)) {
+      $title = _("Get related meta data");
+    }
+
+    $this->rel("related")
+      ->type(rest::ATOM)
+      ->title($title)
+      ->href(sprintf("%s%s", atom::get_base_url(), $relative_uri));
     return $this;
   }
 
-  public function updated($timestamp) {
-    $this->element->appendChild(
-      $this->dom->createElement("updated", atom::unix_to_internet_timestamp($timestamp)));
+  public function related_image($relative_uri, $title="", $image_type="jpeg") {
+    if (empty($title)) {
+      $title = _("Get related image");
+    }
+
+    $this->rel("related")
+      ->type("image/" . $image_type)
+      ->title($title)
+      ->href(sprintf("%s%s", atom::get_base_url(), $relative_uri));
     return $this;
-  }
-
-  public function title($title) {
-    $this->element->appendChild($this->dom->createElement("title", $title));
-    return $this;
-  }
-
-  public function content($text, $type="html") {
-    $content = $this->dom->createElement("content", html::specialchars($text));
-    $content->setAttribute("type", $type);
-    $this->element->appendChild($content);
-    return $this;
-  }
-
-  public function author() {
-    return $this->add_child("Atom_Author", "author");
-  }
-
-  public function link() {
-    return $this->add_child("Atom_Link", "link");
   }
 }

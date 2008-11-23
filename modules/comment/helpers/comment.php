@@ -108,7 +108,7 @@ class comment_Core {
   // @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
   static function get_comments($item_id) {
     $comments = ORM::factory('comment')->where('item_id', $item_id)
-      ->orderby('datetime', 'asc')
+      ->orderby('datetime', 'desc')
       ->find_all();
 
     if (!$comments->count()) {
@@ -147,84 +147,47 @@ class comment_Core {
   }
 
   public static function get_atom_entry($comment) {
-    $base_url = atom::get_base_url();
-    $absolute_url = atom::get_absolute_url();
-
-    $feed = new Atom_Entry("entry");
-    $feed->id($absolute_url)
-      ->updated(atom::unix_to_internet_timestamp($comment->datetime))
+    $feed = new Gallery_Atom_Entry();
+    $feed->updated($comment->datetime)
       ->title(sprintf(_("Comment #%d"), $comment->id))
-      ->content($comment->text, "html")
+      ->content($comment->text)
       ->author()
         ->name($comment->author)
         ->email($comment->email)
-        ->uri(sprintf("%susers/%s", $base_url, $comment->id));
-    $feed->link()
-      ->rel("self")
-      ->href($absolute_url);
-    $feed->link()
-      ->rel("related")
-      ->type("application/atom+xml")
-      ->title(_("Get photo meta data"))
-      ->href(sprintf("%sphotos/%s", $base_url, $comment->item_id));
-    $feed->link()
-      ->rel("related")
-      ->type("image/jpeg")
-      ->title("Download photo")
-      ->href(sprintf("%sphotos/%s", $base_url, $comment->item_id));
+        ->uri(sprintf("%susers/%s", atom::get_base_url(), $comment->id));
+    $feed->link()->related_atom(sprintf("photos/%s", $comment->item_id));
+    $feed->link()->related_image(sprintf("photos/%s", $comment->item_id));
 
     return $feed->as_xml();
   }
 
   /*
-   * This is way too complicated and needs lots of cleanup, but it provides a valid feed.
-   * @todo Fix double slashes in some URIs.
-   * @todo Abstract away as much code as possible.
    * @todo Show photo title instead of photo ID.
-   * @todo Show comment numbers relative to current item, not its database ID.
    * @todo Put proper user ID into author URI.
    */
   public static function get_atom_feed($comments) {
-    $latest_comment = 0;
-    $base_url = atom::get_base_url();
-    $absolute_url = atom::get_absolute_url();
+    $latest_comment = $comments[0]->datetime;
+    $item_id = $comments[0]->item_id;
 
-    $feed = new Atom_Feed("feed");
-    $feed->link()
-      ->rel("self")
-      ->href($absolute_url);
+    /* Set up feed header. */
+    $feed = new Gallery_Atom_Feed();
+    $feed->title(sprintf(_("Comments on photo %d"), $item_id));
+    $feed->updated($latest_comment);
+    $feed->link()->related_atom(sprintf("photos/%s", $item_id));
+    $feed->link()->related_image(sprintf("photos/%s", $item_id));
 
-    foreach ($comments as $comment) {
-      if ($comment->datetime > $latest_comment) {
-        $latest_comment = $comment->datetime;
-      }
-
+    /* Add individual comments. */
+    foreach ($comments as $id => $comment) {
       $feed->entry()
         ->id(sprintf("%scomments/%s", atom::get_base_url(), $comment->id))
-        ->updated(atom::unix_to_internet_timestamp($comment->datetime))
-        ->title(sprintf(_("Comment #%d"), $comment->id))
-        ->content($comment->text, "html")
+        ->updated($comment->datetime)
+        ->title(sprintf(_("Comment #%d"), $comments->count() - $id))
+        ->content($comment->text)
         ->author()
           ->name($comment->author)
           ->email($comment->email)
           ->uri(sprintf("%susers/%s", atom::get_base_url(), $comment->id));
     }
-    $item_id = $comment->item_id;
-
-    $feed->id($absolute_url)
-      ->title(sprintf(_("Comments on photo %d"), $item_id), "text")
-      ->updated(atom::unix_to_internet_timestamp($latest_comment));
-    $feed->link()
-      ->rel("related")
-      ->type("application/atom+xml")
-      ->title(_("Get photo meta data"))
-      ->href(sprintf("%sphotos/%s", atom::get_base_url(), $item_id));
-    $feed->link()
-      ->rel("related")
-      ->type("image/jpeg")
-      ->title("Download photo")
-      ->href(sprintf("%sphotos/%s", atom::get_base_url(), $item_id));
-
     return $feed->as_xml();
   }
 

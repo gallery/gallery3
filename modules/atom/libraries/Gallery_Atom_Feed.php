@@ -18,35 +18,22 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class Atom_Entry_Core extends Atom_Base {
-  public function id($id) {
-    $this->element->appendChild($this->dom->createElement("id", $id));
-    return $this;
-  }
+/**
+ * This class implements Gallery's specific needs for Atom feeds.
+ *
+ */
+class Gallery_Atom_Feed_Core extends Atom_Feed {
+  function __construct() {
+    parent::__construct("feed");
 
-  public function updated($timestamp) {
-    $this->element->appendChild(
-      $this->dom->createElement("updated", atom::unix_to_internet_timestamp($timestamp)));
-    return $this;
-  }
-
-  public function title($title) {
-    $this->element->appendChild($this->dom->createElement("title", $title));
-    return $this;
-  }
-
-  public function content($text, $type="html") {
-    $content = $this->dom->createElement("content", html::specialchars($text));
-    $content->setAttribute("type", $type);
-    $this->element->appendChild($content);
-    return $this;
-  }
-
-  public function author() {
-    return $this->add_child("Atom_Author", "author");
+    /* Set feed ID and self link. */
+    $this->id(atom::get_absolute_url());
+    $this->link()
+      ->rel("self")
+      ->href(atom::get_absolute_url());
   }
 
   public function link() {
-    return $this->add_child("Atom_Link", "link");
+    return $this->add_child("Gallery_Atom_Link", "link");
   }
 }
