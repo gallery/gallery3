@@ -1,6 +1,2 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-<iframe width="214" height="214" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;hl=en&amp;geocode=&amp;q=mountain+view&amp;sll=37.0625,-95.677068&amp;sspn=50.823846,89.648437&amp;ie=UTF8&amp;z=12&amp;g=mountain+view&amp;ll=37.433704,-122.056046&amp;output=embed&amp;s=AARTsJoyjpSOFMFEv5XZbREeW_hGGS28pQ"></iframe>
-<br />
-<small><a href="http://maps.google.com/maps?f=q&amp;hl=en&amp;geocode=&amp;q=mountain+view&amp;sll=37.0625,-95.677068&amp;sspn=50.823846,89.648437&amp;ie=UTF8&amp;z=12&amp;g=mountain+view&amp;ll=37.433704,-122.056046&amp;source=embed" style="color:#0000FF;text-align:left"><?= _("View Larger Map") ?></a></small>
-
-
+<iframe width="214" height="214" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps/ms?hl=en&amp;geocode=&amp;ie=UTF8&amp;t=h&amp;ei=-ropSbi8KpXIjAOiibmHDQ&amp;view=map&amp;attrid=&amp;s=AARTsJoEm4ODiRa9-yt6-lndtYMlWHPR4w&amp;msa=0&amp;msid=106914852640486882019.000452143d9aa600cc0d6&amp;ll=52.369835,4.886341&amp;spn=0.022429,0.036736&amp;z=13&amp;output=embed"></iframe><br /><small><a href="http://maps.google.com/maps/ms?hl=en&amp;geocode=&amp;ie=UTF8&amp;t=h&amp;ei=-ropSbi8KpXIjAOiibmHDQ&amp;view=map&amp;attrid=&amp;msa=0&amp;msid=106914852640486882019.000452143d9aa600cc0d6&amp;ll=52.369835,4.886341&amp;spn=0.022429,0.036736&amp;z=13&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>
