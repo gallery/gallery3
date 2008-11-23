@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 class Atom_Author_Core extends Atom_Base {
   public function name($name) {
     $this->element->appendChild($this->dom->createElement("name", $name));

@@ -62,8 +62,7 @@ class Comments_Controller extends REST_Controller {
    *  @see Rest_Controller::_show($resource)
    */
   public function _show($comment) {
-    $output_format = rest::output_format();
-    switch ($output_format) {
+    switch (rest::output_format()) {
     case "xml":
       rest::http_content_type(rest::XML);
       print xml::to_xml($comment->as_array(), array("comment"));
@@ -75,7 +74,8 @@ class Comments_Controller extends REST_Controller {
       break;
 
     case "atom":
-      rest::http_content_type(rest::ATOM);
+      rest::http_content_type(rest::XML);
+      print comment::get_atom_entry($comment);
       break;
 
     default:

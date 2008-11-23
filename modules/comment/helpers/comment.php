@@ -118,7 +118,7 @@ class comment_Core {
 
     switch (rest::output_format()) {
     case "atom":
-      rest::http_content_type(rest::ATOM);
+      rest::http_content_type(rest::XML);
       print comment::get_atom_feed($comments);
       break;
 
@@ -147,26 +147,52 @@ class comment_Core {
   }
 
   public static function get_atom_entry($comment) {
+    $base_url = atom::get_base_url();
+    $absolute_url = atom::get_absolute_url();
 
+    $feed = new Atom_Entry("entry");
+    $feed->id($absolute_url)
+      ->updated(atom::unix_to_internet_timestamp($comment->datetime))
+      ->title(sprintf(_("Comment #%d"), $comment->id))
+      ->content($comment->text, "html")
+      ->author()
+        ->name($comment->author)
+        ->email($comment->email)
+        ->uri(sprintf("%susers/%s", $base_url, $comment->id));
+    $feed->link()
+      ->rel("self")
+      ->href($absolute_url);
+    $feed->link()
+      ->rel("related")
+      ->type("application/atom+xml")
+      ->title(_("Get photo meta data"))
+      ->href(sprintf("%sphotos/%s", $base_url, $comment->item_id));
+    $feed->link()
+      ->rel("related")
+      ->type("image/jpeg")
+      ->title("Download photo")
+      ->href(sprintf("%sphotos/%s", $base_url, $comment->item_id));
+
+    return $feed->as_xml();
   }
 
   /*
    * This is way too complicated and needs lots of cleanup, but it provides a valid feed.
    * @todo Fix double slashes in some URIs.
-   * @todo Write Unix -> RFC3339 datetime conversion helper.
    * @todo Abstract away as much code as possible.
    * @todo Show photo title instead of photo ID.
    * @todo Show comment numbers relative to current item, not its database ID.
+   * @todo Put proper user ID into author URI.
    */
   public static function get_atom_feed($comments) {
     $latest_comment = 0;
-    $base_url = sprintf("http://%s%s", $_SERVER["HTTP_HOST"], url::base(true));
-    $absoluteUrl = html::specialchars($base_url . url::current(true));
+    $base_url = atom::get_base_url();
+    $absolute_url = atom::get_absolute_url();
 
     $feed = new Atom_Feed("feed");
     $feed->link()
       ->rel("self")
-      ->href($absoluteUrl);
+      ->href($absolute_url);
 
     foreach ($comments as $comment) {
       if ($comment->datetime > $latest_comment) {
@@ -174,30 +200,30 @@ class comment_Core {
       }
 
       $feed->entry()
-        ->id(sprintf("%s%scomments/%s", $base_url, url::site(), $comment->id))
-        ->updated(date("Y-m-d\TH:i:s", $comment->datetime) . "Z")
+        ->id(sprintf("%scomments/%s", atom::get_base_url(), $comment->id))
+        ->updated(atom::unix_to_internet_timestamp($comment->datetime))
         ->title(sprintf(_("Comment #%d"), $comment->id))
         ->content($comment->text, "html")
         ->author()
           ->name($comment->author)
           ->email($comment->email)
-          ->uri(sprintf("%s%susers/%s", $base_url, url::site(), $comment->id));
+          ->uri(sprintf("%susers/%s", atom::get_base_url(), $comment->id));
     }
     $item_id = $comment->item_id;
 
-    $feed->id($absoluteUrl)
+    $feed->id($absolute_url)
       ->title(sprintf(_("Comments on photo %d"), $item_id), "text")
-      ->updated(date("Y-m-d\TH:i:s", $latest_comment) . "Z");
+      ->updated(atom::unix_to_internet_timestamp($latest_comment));
     $feed->link()
       ->rel("related")
       ->type("application/atom+xml")
       ->title(_("Get photo meta data"))
-      ->href(sprintf("%s%sphotos/%s", $base_url, url::site(), $item_id));
+      ->href(sprintf("%sphotos/%s", atom::get_base_url(), $item_id));
     $feed->link()
       ->rel("related")
       ->type("image/jpeg")
       ->title("Download photo")
-      ->href(sprintf("%s%sphotos/%s", $base_url, url::site(), $item_id));
+      ->href(sprintf("%sphotos/%s", atom::get_base_url(), $item_id));
 
     return $feed->as_xml();
   }
