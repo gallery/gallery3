@@ -3,15 +3,15 @@ $("document").ready(function() {
 });
 
 function ajaxify_comment_form() {
-  $("#gCommentForm").ajaxForm({
+  $("#gComments form").ajaxForm({
     complete: function(xhr, statusText) {
-      $("#gCommentForm").replaceWith(xhr.responseText);
+      $("#gComments form").replaceWith(xhr.responseText);
       if (xhr.status == 201) {
         $.get(xhr.getResponseHeader("Location"), function(data, textStatus) {
-          $("#gComment div.gBlockContent ul:first").append(data);
-          $("#gComment div.gBlockContent ul:first li:last").hide().slideDown();
+          $("#gComments div.gBlockContent ul:first").append(data);
+          $("#gComments div.gBlockContent ul:first li:last").hide().slideDown();
         });
-        $("#gCommentForm").clearForm();
+        $("#gComments form").clearForm();
       }
       ajaxify_comment_form();
     }
