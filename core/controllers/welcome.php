@@ -26,6 +26,7 @@ class Welcome_Controller extends Template_Controller {
     $this->template->syscheck->modules = array();
     $this->template->album_count = 0;
     $this->template->photo_count = 0;
+    $this->template->comment_count = 0;
     $this->template->deepest_photo = null;
     try {
       $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
@@ -36,6 +37,12 @@ class Welcome_Controller extends Template_Controller {
         ->where("type", "photo")->orderby("level", "desc")->find();
     } catch (Exception $e) {
     }
+
+    try {
+      $this->template->comment_count = ORM::factory("comment")->count_all();
+    } catch (Exception $e) {
+    }
+
     set_error_handler($old_handler);
 
     $this->_create_directories();

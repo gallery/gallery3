@@ -177,7 +177,7 @@
           <div id="actions" class="activity">
             <p>
               <?= html::anchor("albums/1", "Browse Gallery") ?>
-              <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos)</i>
+              <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos, <?= $comment_count ?> comments)</i>
             </p>
             <p>
               add: [
