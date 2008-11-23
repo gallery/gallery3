@@ -22,10 +22,10 @@ class carousel_block_Core {
   public static function sidebar_blocks($theme) {
     $block = new Block();
     $block->id = "gCarousel";
-    $block->title = "Album: <a href=#>{$theme->item()->title_edit}</a>";
+    $block->title = "Album: <a href=\"#\">{$theme->item()->title_edit}</a>";
     $block->content = '<img src="' .
       url::base() . "modules/carousel/images/carousel.png" .
-      '" width="214"';
+      '" width="214"/>';
     return $block->__toString();
   }
 }
