@@ -82,7 +82,11 @@ class Theme_Core {
     case "photo_bottom":
       if (empty($this->block_helpers[$function])) {
         foreach (module::get_list() as $module) {
-          $helper_path = MODPATH . "$module->name/helpers/{$module->name}_block.php";
+          if ($module->name == "core") {
+            $helper_path = APPPATH . "helpers/{$module->name}_block.php";
+          } else {
+            $helper_path = MODPATH . "$module->name/helpers/{$module->name}_block.php";
+          }
           $helper_class = "{$module->name}_block";
           if (file_exists($helper_path) && method_exists($helper_class, $function)) {
             $this->block_helpers[$function][] = $helper_class;

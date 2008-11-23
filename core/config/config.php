@@ -135,3 +135,12 @@ $config['modules'] = array
   MODPATH . 'atom',
   MODPATH . 'search'
 );
+
+/**
+ * Set the global site title.
+ * Valid values are:
+ * FALSE: Use the default, which is the album or image title
+ * A string value that ends with '-' will append the string befor the default value
+ * A string value without a trailing '-' will replace the default value.
+ */
+$config['site_title'] = "Gallery3 Rocks";
