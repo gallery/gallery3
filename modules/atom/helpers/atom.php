@@ -35,7 +35,7 @@ class atom_Core {
   }
 
   /**
-   *
+   * @todo can this be normalized with the code in MY_url
    */
   public static function get_absolute_url() {
     $base_url = atom::get_base_url();
@@ -44,7 +44,7 @@ class atom_Core {
   }
 
   /**
-   *
+   * @todo can this be normalized with the code in MY_url
    */
   public static function get_base_url() {
     return sprintf("http://%s%s", $_SERVER["HTTP_HOST"], url::base(true));
