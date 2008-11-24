@@ -27,6 +27,7 @@ class tag_installer {
       $db->query("CREATE TABLE IF NOT EXISTS `tags` (
           `id` int(9) NOT NULL auto_increment,
           `name` varchar(255) NOT NULL,
+          `count` int(10) unsigned NOT NULL DEFAULT 0,
           PRIMARY KEY (`id`),
           UNIQUE KEY(`name`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");

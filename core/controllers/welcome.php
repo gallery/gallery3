@@ -245,14 +245,7 @@ class Welcome_Controller extends Template_Controller {
         $tag_name = $tags[array_rand($tags)];
         $item = $items[array_rand($items)];
 
-        $tag = ORM::factory("tag")->where("name", $tag_name)->find();
-        if (!$tag->loaded) {
-          $tag->name = $tag_name;
-          $tag->save();
-        }
-        if (!$tag->add($item, $tag)) {
-          throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
-        }
+        tag::add_tag($item, $tag_name);
       }
     }
 
