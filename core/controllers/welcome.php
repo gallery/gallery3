@@ -235,11 +235,10 @@ class Welcome_Controller extends Template_Controller {
           $tag->name = $tags_list[$idx];
           $tag->save();
         }
-        if (!$item->add($tag)) {
+        if (!$tag->add($item, $tag)) {
           throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
         }
       }
-      $item->save();
     }
 
     url::redirect("welcome");
