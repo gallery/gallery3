@@ -45,7 +45,7 @@ class Items_Controller extends REST_Controller {
     // Redirect to the more specific resource type, since it will render
     // differently.  We could also just delegate here, but it feels more appropriate
     // to have a single canonical resource mapping.
-    return url::redirect("{$item->type}s}/$item->id");
+    return url::redirect("{$item->type}s/$item->id");
   }
 
   public function _create($item) {
