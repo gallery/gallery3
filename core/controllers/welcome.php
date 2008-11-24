@@ -213,6 +213,38 @@ class Welcome_Controller extends Template_Controller {
     url::redirect("welcome");
   }
 
+  function add_tags($count) {
+    $items = ORM::factory("item")->find_all()->as_array();
+
+    if (empty($items)) {
+      url::redirect("welcome");
+    }
+
+    $tags_list = array("animation", "art", "blind", "blog", "bug-tracker", "bugs20", "canvas",
+      "classification", "cocktail", "exhibtion", "forum", "geo-tagging", "german", "germany",
+      "gl?ser", "graffiti", "illustration", "ITP", "javascript", "miami", "miknow", "nyc", "NYU",
+      "ontology", "open-source", "project", "school-of-information", "screenshot", "shiftspace",
+      "shop", "tagging", "talkingpoints", "university-of-michigan", "usability", "writing");
+
+    $tag_count = count($tags_list);
+    foreach ($items as $key => $item) {
+      $jump = ($key % 5) + 1;
+      for ($idx=0; $idx < $tag_count; $idx=$idx + $jump) {
+        $tag = ORM::factory("tag")->where("name", $tags_list[$idx])->find();
+        if (!$tag->loaded) {
+          $tag->name = $tags_list[$idx];
+          $tag->save();
+        }
+        if (!$item->add($tag)) {
+          throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
+        }
+      }
+      $item->save();
+    }
+
+    url::redirect("welcome");
+  }
+
   public function profiler() {
     Session::instance()->set("use_profiler", $this->input->get("use_profiler", false));
     $this->auto_render = false;

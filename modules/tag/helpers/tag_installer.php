@@ -36,8 +36,8 @@ class tag_installer {
           `item_id` int(9) NOT NULL,
           `tag_id` int(9) NOT NULL,
           PRIMARY KEY (`id`),
-          KEY(`tag_id`),
-          KEY(`item_id`))
+          KEY(`tag_id`, `id`),
+          KEY(`item_id`, `id`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("tag", 1);
     }
