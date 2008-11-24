@@ -47,8 +47,17 @@ class Welcome_Controller extends Template_Controller {
 
     try {
       $this->template->tag_count = ORM::factory("tag")->count_all();
+      $this->template->most_tagged = Database::instance()
+        ->select("item_id AS id", "COUNT(tag_id) AS count")
+        ->from("items_tags")
+        ->groupby("item_id")
+        ->orderby("count", "DESC")
+        ->limit(1)
+        ->get()
+        ->current();
     } catch (Exception $e) {
       $this->template->tag_count = 0;
+      $this->template->most_tagged = 0;
     }
 
     set_error_handler($old_handler);

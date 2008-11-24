@@ -177,7 +177,7 @@
           <div id="actions" class="activity">
             <p>
               <?= html::anchor("albums/1", "Browse Gallery") ?>
-              <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos, <?= $comment_count ?> comments)</i>
+              <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos, <?= $comment_count ?> comments, <?= $tag_count ?> tags)</i>
             </p>
             <p>
               add: [
@@ -229,6 +229,12 @@
               <li>
                 <?= html::anchor("photos/{$deepest_photo->id}", "Deepest photo") ?>
                 <i>(<?= $deepest_photo->level ?> levels deep)</i>
+              </li>
+              <? endif ?>
+              <? if ($most_tagged): ?>
+              <li>
+                <?= html::anchor("items/{$most_tagged->id}", "Most tagged item") ?>
+                <i>(<?= $most_tagged->count ?> tags)</i>
               </li>
               <? endif ?>
               <li> Profiling:
