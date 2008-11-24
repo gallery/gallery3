@@ -76,10 +76,16 @@ class rest_Core {
   public static function output_format() {
     // Pick a format, but let it be overridden.
     $input = Input::instance();
-    return $input->get(
+    $fmt = $input->get(
       "_format", $input->post(
         "_format", request::preferred_accept(
-          array("html", "xml", "json"))));
+          array("xhtml", "html", "xml", "json"))));
+
+    // Some browsers (Chrome!) prefer xhtml over html, but we'll normalize this to html for now.
+    if ($fmt == "xhtml") {
+      $fmt = "html";
+    }
+    return $fmt;
   }
 
   /**
