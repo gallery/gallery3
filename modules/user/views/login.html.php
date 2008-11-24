@@ -7,7 +7,6 @@
       <?= _("Logout") ?></a></li>
   <? else: ?>
     <li id="gLoginFormContainer"></li>
-    <li id="gLoginLink"><a href="javascript:show_login('<?= url::site("login") ?>')">Login</a></li>
-    <li class="gClose gHide"><a href="javascript:close_login()">X</a></li>
+    <li id="gLoginLink"><a href="<?= url::site("login") ?>">Login</a></li>
   <? endif; ?>
 </ul>

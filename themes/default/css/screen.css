@@ -543,14 +543,12 @@ table.gMetadata td.toggle {
  * 8) Forms
  ******************************************************************/
 
-form {
-}
-
 fieldset {
   border: 1px solid #ccc;
 }
 
 legend {
+  font-weight: bold;
   margin-left: 1em;
 }
 
@@ -615,7 +613,7 @@ button {
 /* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 form li {
-  margin-top: .5em;
+  margin: 0 !important;
   padding: .3em 1.5em .3em 1em;
 }
 
@@ -702,10 +700,6 @@ li.gError select {
   border: none;
 }
 
-#gHeader #gLoginForm li {
-  margin-top: 0;
-}
-
 #gHeader #gLoginForm legend {
   display: none;
 }
@@ -736,7 +730,6 @@ li.gError select {
 #gSearchForm input[type="Submit"] {
   margin-top: 1em;
 }
-
 
 #gSearchForm label {
   display: none;
