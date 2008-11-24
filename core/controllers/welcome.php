@@ -24,23 +24,31 @@ class Welcome_Controller extends Template_Controller {
     $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
     $this->template->syscheck->modules = array();
-    $this->template->album_count = 0;
-    $this->template->photo_count = 0;
-    $this->template->comment_count = 0;
-    $this->template->deepest_photo = null;
+
+    $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
+
     try {
-      $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
       $this->template->syscheck->modules = $this->_read_modules();
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
       $this->template->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
       $this->template->deepest_photo = ORM::factory("item")
         ->where("type", "photo")->orderby("level", "desc")->find();
     } catch (Exception $e) {
+      $this->template->album_count = 0;
+      $this->template->photo_count = 0;
+      $this->template->deepest_photo = null;
     }
 
     try {
       $this->template->comment_count = ORM::factory("comment")->count_all();
     } catch (Exception $e) {
+      $this->template->comment_count = 0;
+    }
+
+    try {
+      $this->template->tag_count = ORM::factory("tag")->count_all();
+    } catch (Exception $e) {
+      $this->template->tag_count = 0;
     }
 
     set_error_handler($old_handler);
@@ -216,23 +224,21 @@ class Welcome_Controller extends Template_Controller {
   function add_tags($count) {
     $items = ORM::factory("item")->find_all()->as_array();
 
-    if (empty($items)) {
-      url::redirect("welcome");
-    }
+    if (!empty($items)) {
+      $tags = array(
+        "animation", "art", "blind", "blog", "bug-tracker", "bugs20", "canvas",
+        "classification", "cocktail", "exhibtion", "forum", "geo-tagging", "german", "germany",
+        "glaser", "graffiti", "illustration", "ITP", "javascript", "miami", "miknow", "nyc", "NYU",
+        "ontology", "open-source", "project", "school-of-information", "screenshot", "shiftspace",
+        "shop", "tagging", "talkingpoints", "university-of-michigan", "usability", "writing");
 
-    $tags_list = array("animation", "art", "blind", "blog", "bug-tracker", "bugs20", "canvas",
-      "classification", "cocktail", "exhibtion", "forum", "geo-tagging", "german", "germany",
-      "gl?ser", "graffiti", "illustration", "ITP", "javascript", "miami", "miknow", "nyc", "NYU",
-      "ontology", "open-source", "project", "school-of-information", "screenshot", "shiftspace",
-      "shop", "tagging", "talkingpoints", "university-of-michigan", "usability", "writing");
+      while ($count-- > 0) {
+        $tag_name = $tags[array_rand($tags)];
+        $item = $items[array_rand($items)];
 
-    $tag_count = count($tags_list);
-    foreach ($items as $key => $item) {
-      $jump = ($key % 5) + 1;
-      for ($idx=0; $idx < $tag_count; $idx=$idx + $jump) {
-        $tag = ORM::factory("tag")->where("name", $tags_list[$idx])->find();
+        $tag = ORM::factory("tag")->where("name", $tag_name)->find();
         if (!$tag->loaded) {
-          $tag->name = $tags_list[$idx];
+          $tag->name = $tag_name;
           $tag->save();
         }
         if (!$tag->add($item, $tag)) {
