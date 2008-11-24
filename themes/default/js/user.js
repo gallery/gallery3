@@ -2,7 +2,6 @@
  * @todo preventDefault() not working in IE 6 and 7
  * @todo Close link should be reusable 
  */
-var closeLink = '<li><a href="#">X</a></li>';
 
 $("document").ready(function() {
   $("#gLoginLink").click(function(event){
@@ -10,7 +9,7 @@ $("document").ready(function() {
     var url = $("#gLoginLink a").attr("href");
     $.get(url, function(data) {
 	  $('#gLoginLink').hide();
-	  $("#gLoginMenu").append(closeLink);
+	  $("#gLoginMenu").append('<li><a href="#">X</a></li>');
 	  $("#gLoginMenu li:last").addClass("gClose").show();	  
 	  $("#gLoginMenu .gClose a").click(function(){
 	    $("#gLoginForm").remove();
@@ -19,7 +18,7 @@ $("document").ready(function() {
 	    $("input#gUsername").val("");
 	    $("input#gPassword").val("");  
 	  });
-      $("#gLoginFormContainer").html(data);
+      $("#gLoginFormContainer").html(data).hide().fadeIn();
       ajaxify_login_form();
     });
   });

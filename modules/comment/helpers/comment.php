@@ -108,7 +108,7 @@ class comment_Core {
   // @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
   static function get_comments($item_id) {
     $comments = ORM::factory('comment')->where('item_id', $item_id)
-      ->orderby('datetime', 'desc')
+      ->orderby('datetime', 'asc')
       ->find_all();
 
     if (!$comments->count()) {

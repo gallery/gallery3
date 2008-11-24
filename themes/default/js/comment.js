@@ -8,8 +8,8 @@ function ajaxify_comment_form() {
       $("#gComments form").replaceWith(xhr.responseText);
       if (xhr.status == 201) {
         $.get(xhr.getResponseHeader("Location"), function(data, textStatus) {
-          $("#gComments div.gBlockContent ul:first").append(data);
-          $("#gComments div.gBlockContent ul:first li:last").hide().slideDown();
+          $("#gComments .gBlockContent ul:first").append("<li>"+data+"</li>");
+          $("#gComments .gBlockContent ul:first li:last").hide().slideDown();
         });
         $("#gComments form").clearForm();
       }
