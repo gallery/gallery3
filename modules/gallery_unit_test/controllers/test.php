@@ -61,7 +61,7 @@ class Test_Controller extends Controller {
     // We probably don't want to uninstall and reinstall the core every time, but let's start off
     // this way.  Uninstall modules first and core last.  Ignore errors during uninstall.
     try {
-      $this->uninstall_modules();
+      $this->_uninstall_modules();
     } catch (Exception $e) {
     }
 
@@ -78,7 +78,7 @@ class Test_Controller extends Controller {
 
       $installer_class = "{$module->name}_installer";
       if (method_exists($installer_class, "uninstall")) {
-        call_user_func_array( array($installer_class, "uninstall"), array());
+        Kohana::log("debug", "method uninstall exists");
       }
     }
 
