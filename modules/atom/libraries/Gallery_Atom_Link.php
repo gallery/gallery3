@@ -27,7 +27,7 @@ class Gallery_Atom_Link_Core extends Atom_Link {
     $this->rel("related")
       ->type(rest::ATOM)
       ->title($title)
-      ->href(sprintf("%s%s", atom::get_base_url(), $relative_uri));
+      ->href(sprintf("%s%s", url::base(true, "http"), $relative_uri));
     return $this;
   }
 
@@ -39,7 +39,7 @@ class Gallery_Atom_Link_Core extends Atom_Link {
     $this->rel("related")
       ->type("image/" . $image_type)
       ->title($title)
-      ->href(sprintf("%s%s", atom::get_base_url(), $relative_uri));
+      ->href(sprintf("%s%s", url::base(true, "http"), $relative_uri));
     return $this;
   }
 }

@@ -32,4 +32,8 @@ class url extends url_Core {
   public static function abs_site($path) {
     return url::site($path, "http");
   }
+
+  public static function get_absolute_url() {
+    return self::abs_site(url::current());
+  }
 }

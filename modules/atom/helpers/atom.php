@@ -33,20 +33,4 @@ class atom_Core {
   public static function unix_to_internet_timestamp($timestamp) {
     return sprintf("%sZ", date("Y-m-d\TH:i:s", $timestamp));
   }
-
-  /**
-   * @todo can this be normalized with the code in MY_url
-   */
-  public static function get_absolute_url() {
-    $base_url = atom::get_base_url();
-    $absolute_url = $base_url . url::current(true);
-    return $absolute_url;
-  }
-
-  /**
-   * @todo can this be normalized with the code in MY_url
-   */
-  public static function get_base_url() {
-    return sprintf("http://%s%s", $_SERVER["HTTP_HOST"], url::base(true));
-  }
 }
