@@ -245,7 +245,7 @@ class Welcome_Controller extends Template_Controller {
         $tag_name = $tags[array_rand($tags)];
         $item = $items[array_rand($items)];
 
-        tag::add_tag($item, $tag_name);
+        tag::add($item, $tag_name);
       }
     }
 
