@@ -70,26 +70,37 @@
         display: none;
       }
 
-      ul#tabs {
+      ul.tabs {
         margin-left: 0;
         padding: 1em 0 2px 1em;
         white-space: nowrap;
         border-bottom: 1px solid black;
       }
 
-      ul#tabs li {
+      ul.tabs li {
         display: inline;
         list-style-type: none;
       }
 
-      ul#tabs a {
+      ul.tabs a {
         padding: 3px 10px;
         color: #fff;
         background-color: #036;
         text-decoration: none;
       }
 
-      ul#tabs a:hover {
+      div#access {
+        margin-top: -20px;
+        padding: 0px;
+        padding-left: 20px;
+      }
+
+      div#access ul.tabs a {
+        background-color: #830;
+        border: 1px solid white;
+      }
+
+      ul.tabs a:hover {
         background-color: #369;
       }
 
@@ -108,7 +119,6 @@
 
       tr.core td {
         border-bottom: 1px solid black;
-
       }
 
       a {
@@ -141,9 +151,10 @@
           meantime, here are some useful links to get you started.
         </p>
 
-        <ul id="tabs">
+        <ul class="tabs">
           <li><a href="javascript:show('config')">Configuration</a></li>
           <li><a href="javascript:show('actions')">Actions</a></li>
+          <li><a href="javascript:show('access')">Access</a></li>
           <li><a href="javascript:show('info')">Info</a></li>
           <li><a href="javascript:show('benchmarks')">Benchmarks</a></li>
           <li><a href="javascript:show('docs')">Docs</a></li>
@@ -151,21 +162,34 @@
 
         <div id="activities">
           <script>
-            show = function(section) {
-              var section_id = "#" + section;
-              if ($(section_id).css("display") == "block") {
-                return;
+            show = function(show1, show2, immediate) {
+              if (!show1) {
+                show1 = "configuration";
+              } else if (show1 == "access" && !show2) {
+                show2 = "access_users";
               }
-              $("div.activity").slideUp();
-              $(section_id).slideDown();
-              $.cookie("active_section", section);
+              var acts = $("div.activity");
+              for (var i = 0; i < acts.length; i++) {
+                act = acts[i];
+                if (act.id != show1 && act.id != show2) {
+                  if (immediate) {
+                    $("#" + act.id).hide();
+                  } else {
+                    $("#" + act.id).slideUp();
+                  }
+                } else {
+                  if (immediate) {
+                    $("#" + act.id).show();
+                  } else {
+                    $("#" + act.id).slideDown();
+                  }
+                }
+              }
+              $.cookie("show1", show1);
+              $.cookie("show2", show2);
             }
             $(document).ready(function(){
-              var active_section = $.cookie("active_section");
-              if (!active_section) {
-                active_section = 'config';
-              }
-              $("#" + active_section).show();
+              show($.cookie("show1"), $.cookie("show2"), true);
               $("#photo_upload").MultiFile();
             });
           </script>
@@ -216,6 +240,36 @@
                 <input type="hidden" name="type" value="album"/>
               </form>
             </fieldset>
+          </div>
+
+          <div id="access" class="activity">
+            <ul class="tabs">
+              <li><a href="javascript:show('access', 'access_users')">Users</a></li>
+              <li><a href="javascript:show('access', 'access_groups')">Groups</a></li>
+              <li><a href="javascript:show('access', 'access_permissions')">Permissions</a></li>
+            </ul>
+
+            <div id="access_users" class="activity">
+              <ul>
+                <? foreach ($users as $user): ?>
+                <li> <?= $user->name ?> </li>
+                <? endforeach ?>
+              </ul>
+            </div>
+
+            <div id="access_groups" class="activity">
+              <ul>
+                <? foreach ($groups as $group): ?>
+                <li> <?= $group->name ?> </li>
+                <? endforeach ?>
+              </ul>
+            </div>
+
+            <div id="access_permissions" class="activity">
+              <p>
+                <i>Nothing yet</i>
+              </p>
+            </div>
           </div>
 
           <div id="info" class="activity">

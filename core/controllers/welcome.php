@@ -39,26 +39,10 @@ class Welcome_Controller extends Template_Controller {
       $this->template->deepest_photo = null;
     }
 
-    try {
-      $this->template->comment_count = ORM::factory("comment")->count_all();
-    } catch (Exception $e) {
-      $this->template->comment_count = 0;
-    }
-
-    try {
-      $this->template->tag_count = ORM::factory("tag")->count_all();
-      $this->template->most_tagged = Database::instance()
-        ->select("item_id AS id", "COUNT(tag_id) AS count")
-        ->from("items_tags")
-        ->groupby("item_id")
-        ->orderby("count", "DESC")
-        ->limit(1)
-        ->get()
-        ->current();
-    } catch (Exception $e) {
-      $this->template->tag_count = 0;
-      $this->template->most_tagged = 0;
-    }
+    $this->_load_user_info();
+    $this->_load_group_info();
+    $this->_load_comment_info();
+    $this->_load_tag_info();
 
     set_error_handler($old_handler);
 
@@ -340,5 +324,46 @@ class Welcome_Controller extends Template_Controller {
     }
     ksort($modules);
     return $modules;
+  }
+
+  private function _load_group_info() {
+    try {
+      $this->template->groups = ORM::factory("group")->find_all();
+    } catch (Exception $e) {
+      $this->template->groups = array();
+    }
+  }
+
+  private function _load_user_info() {
+    try {
+      $this->template->users = ORM::factory("user")->find_all();
+    } catch (Exception $e) {
+      $this->template->users = array();
+    }
+  }
+
+  private function _load_comment_info() {
+    try {
+      $this->template->comment_count = ORM::factory("comment")->count_all();
+    } catch (Exception $e) {
+      $this->template->comment_count = 0;
+    }
+  }
+
+  private function _load_tag_info() {
+    try {
+      $this->template->tag_count = ORM::factory("tag")->count_all();
+      $this->template->most_tagged = Database::instance()
+        ->select("item_id AS id", "COUNT(tag_id) AS count")
+        ->from("items_tags")
+        ->groupby("item_id")
+        ->orderby("count", "DESC")
+        ->limit(1)
+        ->get()
+        ->current();
+    } catch (Exception $e) {
+      $this->template->tag_count = 0;
+      $this->template->most_tagged = 0;
+    }
   }
 }
