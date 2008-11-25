@@ -218,12 +218,7 @@ class Welcome_Controller extends Template_Controller {
     $items = ORM::factory("item")->find_all()->as_array();
 
     if (!empty($items)) {
-      $tags = array(
-        "animation", "art", "blind", "blog", "bug-tracker", "bugs20", "canvas",
-        "classification", "cocktail", "exhibtion", "forum", "geo-tagging", "german", "germany",
-        "glaser", "graffiti", "illustration", "ITP", "javascript", "miami", "miknow", "nyc", "NYU",
-        "ontology", "open-source", "project", "school-of-information", "screenshot", "shiftspace",
-        "shop", "tagging", "talkingpoints", "university-of-michigan", "usability", "writing");
+      $tags = $this->_generateTags($count);
 
       while ($count-- > 0) {
         $tag_name = $tags[array_rand($tags)];
@@ -234,6 +229,27 @@ class Welcome_Controller extends Template_Controller {
     }
 
     url::redirect("welcome");
+  }
+
+  private function _generateTags($number){
+
+    list($usec, $sec) = explode(' ', microtime());
+    srand((float) $sec + ((float) $usec * 100000));
+
+    $validchars = "0123456789abcdfghjkmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    $tags = array();
+
+    for ($tag_count = 0; $tag_count < $number; $tag_count++) {
+      $tag  = "";
+      $tag_length = rand(3, 16);
+      for ($counter  = 0; $counter < $tag_length; $counter++) {
+        $tag .= substr($validchars, rand(0, strlen($validchars)-1), 1);;
+      }
+      $tags[] = $tag;
+   }
+
+    return $tags;
   }
 
   public function session($key) {
@@ -394,4 +410,5 @@ class Welcome_Controller extends Template_Controller {
     ORM::factory("group")->where("name", $name)->find()->delete();
     url::redirect("welcome");
   }
+
 }
