@@ -60,16 +60,19 @@ class Test_Controller extends Controller {
 
     // We probably don't want to uninstall and reinstall the core every time, but let's start off
     // this way.  Uninstall modules first and core last.  Ignore errors during uninstall.
+    // @todo make this more dynamic
     try {
       comment_installer::uninstall();
       user_installer::uninstall();
       core_installer::uninstall();
+      tag_installer::uninstall();
     } catch (Exception $e) {
     }
 
     core_installer::install();
     user_installer::install();
     comment_installer::install();
+    tag_installer::install();
 
     print new Unit_Test();
   }

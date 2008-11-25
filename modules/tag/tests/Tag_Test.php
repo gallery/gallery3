@@ -18,5 +18,25 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Tag_Test extends Unit_Test_Case {
+  public function create_tag_test() {
+    $rand = rand();
+    $album = album::create(1, $rand, $rand, $rand);
+    $tag1 = "tag1";
+
+    tag::add($album, $tag1);
+    $tag = ORM::factory("tag")->where("name", $tag1)->find();
+    $this->assert_true(1, $tag->count);
+
+    // Make sure adding the tag again doesn't increase the count
+    tag::add($album, $tag1);
+    $tag = ORM::factory("tag")->where("name", $tag1)->find();
+    $this->assert_true(1, $tag->count);
+
+    $rand = rand();
+    $album = album::create(1, $rand, $rand, $rand);
+    tag::add($album, $tag1);
+    $tag = ORM::factory("tag")->where("name", $tag1)->find();
+    $this->assert_true(2, $tag->count);
+  }
   // @todo put some tests here
 }
