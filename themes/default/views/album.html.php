@@ -2,9 +2,9 @@
 <div id="gAlbumHeader">
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
+  <?= $theme->album_top() ?>
 </div>
 
-<?= $theme->album_top() ?>
 <ul id="gAlbumGrid">
 <? foreach ($children as $i => $child): ?>
   <? $album_class = ""; ?>
