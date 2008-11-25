@@ -28,11 +28,13 @@ class info_block_Core {
   }
 
   public static function thumbnail_info($theme, $item) {
-    print "<li>Views: 321</li>";
+    $results = array();
+    $results .= "<li>Views: 321</li>";
     if ($item->owner) {
-      print "<li>";
-      printf(_("By: %s"), "<a href=\"#\">{$item->owner->name}</a>");
-      print "</li>";
+      $results .= "<li>";
+      $results .= sprintf(_("By: %s"), "<a href=\"#\">{$item->owner->name}</a>");
+      $results .= "</li>";
     }
+    return $results;
   }
 }
