@@ -9,9 +9,5 @@
   <h1><?= $item->title_edit ?></h1>
   <div><?= $item->description_edit ?></div>
 
-  <? if (module::is_installed("comment")): ?>
-    <?= comment::block($theme, true); ?>
-  <? endif ?>
-
   <?= $theme->photo_bottom() ?>
 </div>
