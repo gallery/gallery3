@@ -94,7 +94,7 @@ class Theme_Core {
       if ($debug) {
         if ($function != "head") {
           array_unshift(
-            $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function\">" .
+            $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function gClearFix\">" .
             "<div class=\"title\">$function</div>");
           $blocks[] = "</div>";
         }
