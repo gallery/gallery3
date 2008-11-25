@@ -239,9 +239,16 @@
               <? endif ?>
               <li> Profiling:
                 <? if (Session::instance()->get("use_profiler", false)): ?>
-                <b>on</b> <?= html::anchor("welcome/profiler?use_profiler=0", "off") ?>
+                <b>on</b> <?= html::anchor("welcome/session/profiler?value=0", "off") ?>
                 <? else: ?>
-                <?= html::anchor("welcome/profiler?use_profiler=1", "on") ?> <b>off</b>
+                <?= html::anchor("welcome/session/profiler?value=1", "on") ?> <b>off</b>
+                <? endif ?>
+              </li>
+              <li> Debug:
+                <? if (Session::instance()->get("debug", false)): ?>
+                <b>on</b> <?= html::anchor("welcome/session/debug?value=0", "off") ?>
+                <? else: ?>
+                <?= html::anchor("welcome/session/debug?value=1", "on") ?> <b>off</b>
                 <? endif ?>
               </li>
             </ul>

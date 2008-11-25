@@ -252,8 +252,8 @@ class Welcome_Controller extends Template_Controller {
     url::redirect("welcome");
   }
 
-  public function profiler() {
-    Session::instance()->set("use_profiler", $this->input->get("use_profiler", false));
+  public function session($key) {
+    Session::instance()->set($key, $this->input->get("value", false));
     $this->auto_render = false;
     url::redirect("welcome");
   }

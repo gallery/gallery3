@@ -62,7 +62,6 @@ class Theme_Core {
    */
   public function __call($function, $args) {
     switch ($function) {
-    case "admin":
     case "head":
     case "page_top":
     case "page_bottom":
@@ -80,21 +79,24 @@ class Theme_Core {
     case "photo_top":
     case "photo_blocks":
     case "photo_bottom":
-      if (empty($this->block_helpers[$function])) {
-        foreach (module::get_list() as $module) {
-          $helper_class = "{$module->name}_block";
-          if (method_exists($helper_class, $function)) {
-            $this->block_helpers[$function][] = $helper_class;
-          }
-        }
-      }
+      // @todo: restrict access to this option
+      $debug = Session::instance()->get("debug", false);
 
       $blocks = array();
-      if (!empty($this->block_helpers[$function])) {
-        foreach ($this->block_helpers[$function] as $helper_class) {
+      foreach (module::get_list() as $module) {
+        $helper_class = "{$module->name}_block";
+        if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),
             array_merge(array($this), $args));
+        }
+      }
+      if ($debug) {
+        if ($function != "head") {
+          array_unshift(
+            $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function\">" .
+            "<div class=\"title\">$function</div>");
+          $blocks[] = "</div>";
         }
       }
       return implode("\n", $blocks);

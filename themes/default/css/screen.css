@@ -4,15 +4,16 @@
  * @requires YUI reset, font, grids CSS
  *
  * Sheet organization:
- * 1) Basic HTML elements
- * 2) Base text styles
- * 3) Layout containers
- * 4) Generic content containers
- * 5) Specific content blocks
- * 6) Navigation and menus
- * 7) Generic styles
- * 8) Forms
- * 9) Browser hacks
+ * 1)  Basic HTML elements
+ * 2)  Base text styles
+ * 3)  Layout containers
+ * 4)  Generic content containers
+ * 5)  Specific content blocks
+ * 6)  Navigation and menus
+ * 7)  Generic styles
+ * 8)  Forms
+ * 9)  Browser hacks
+ * 10) Debugging information
  */
 
 /** *******************************************************************
@@ -806,4 +807,28 @@ li.gError select {
   display: block;
   height: 0;
   visibility: hidden;
+}
+
+
+/** *******************************************************************
+ * 10) Debugging information
+ *********************************************************************/
+
+div.gAnnotatedThemeBlock {
+  position: relative;
+  padding: 1em;
+  margin: 1em;
+  border: 1px solid #C00;
+  clear: both;
+}
+
+div.gAnnotatedThemeBlock div.title {
+  position: absolute;
+  top: -1em;
+  right: -1em;
+  border: 1px solid black;
+  background: #C00;
+  color: white;
+  text-align: left;
+  padding: 4px;
 }
