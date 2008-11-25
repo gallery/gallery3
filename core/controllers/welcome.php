@@ -366,4 +366,32 @@ class Welcome_Controller extends Template_Controller {
       $this->template->most_tagged = 0;
     }
   }
+
+  public function add_user() {
+    $name = $this->input->post("user_name");
+    $user = ORM::factory("user");
+    $user->name = $name;
+    $user->display_name = $name;
+    $user->password = $name;
+    $user->save();
+    url::redirect("welcome");
+  }
+
+  public function delete_user($name) {
+    ORM::factory("user")->where("name", $name)->find()->delete();
+    url::redirect("welcome");
+  }
+
+  public function add_group() {
+    $name = $this->input->post("group_name");
+    $group = ORM::factory("group");
+    $group->name = $name;
+    $group->save();
+    url::redirect("welcome");
+  }
+
+  public function delete_group($name) {
+    ORM::factory("group")->where("name", $name)->find()->delete();
+    url::redirect("welcome");
+  }
 }

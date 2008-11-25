@@ -252,17 +252,31 @@
             <div id="access_users" class="activity">
               <ul>
                 <? foreach ($users as $user): ?>
-                <li> <?= $user->name ?> </li>
+                <li> <?= $user->name ?> <?= html::anchor("welcome/delete_user/$user->name", "[x]") ?></li>
                 <? endforeach ?>
               </ul>
+              <fieldset>
+                <legend>Add User</legend>
+                <form method="post" action="<?= url::site("welcome/add_user") ?>">
+                  <input name="user_name" type="text"/>
+                  <input type="submit" value="create"/>
+                </form>
+              </fieldset>
             </div>
 
             <div id="access_groups" class="activity">
               <ul>
                 <? foreach ($groups as $group): ?>
-                <li> <?= $group->name ?> </li>
+                <li> <?= $group->name ?> <?= html::anchor("welcome/delete_group/$group->name", "[x]") ?></li>
                 <? endforeach ?>
               </ul>
+              <fieldset>
+                <legend>Add Group</legend>
+                <form method="post" action="<?= url::site("welcome/add_group") ?>">
+                  <input name="group_name" type="text"/>
+                  <input type="submit" value="create"/>
+                </form>
+              </fieldset>
             </div>
 
             <div id="access_permissions" class="activity">
