@@ -60,20 +60,45 @@ class Test_Controller extends Controller {
 
     // We probably don't want to uninstall and reinstall the core every time, but let's start off
     // this way.  Uninstall modules first and core last.  Ignore errors during uninstall.
-    // @todo make this more dynamic
     try {
-      comment_installer::uninstall();
-      user_installer::uninstall();
-      core_installer::uninstall();
-      tag_installer::uninstall();
+      $this->uninstall_modules();
     } catch (Exception $e) {
     }
 
-    core_installer::install();
-    user_installer::install();
-    comment_installer::install();
-    tag_installer::install();
+    $this->_install_modules();
 
     print new Unit_Test();
+  }
+
+  private function _uninstall_modules() {
+    foreach (module::get_list() as $module) {
+      if ($module->name == "core") {
+        continue;
+      }
+
+      $installer_class = "{$module->name}_installer";
+      if (method_exists($installer_class, "uninstall")) {
+        call_user_func_array( array($installer_class, "uninstall"), array());
+      }
+    }
+
+    // Always uninstall core last.
+   core_installer::uninstall();
+  }
+
+  private function _install_modules() {
+    core_installer::install();
+
+    foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
+      $module_name = basename(dirname(dirname($file)));
+      if ($module_name == "core") {
+        continue;
+      }
+
+      $installer_class = "{$module_name}_installer";
+      if (method_exists($installer_class, "install")) {
+        call_user_func_array( array($installer_class, "install"), array());
+      }
+    }
   }
 }
