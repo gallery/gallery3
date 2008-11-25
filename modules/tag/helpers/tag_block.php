@@ -19,12 +19,18 @@
  */
 
 class tag_block_Core {
-  public static function sidebar_blocks($theme) {
+  public static function head($theme) {
+    $url = url::file("modules/tag/js/tag.js");
+    return "<script src=\"$url\" type=\"text/javascript\"></script>";
+  }
+
+  public static function sidebar_blocks($theme, $filter=1) {
     $block = new Block();
     $block->id = "gTag";
     $block->title = _("Tags");
     $block->content = new View("tag_block.html");
-    $block->content->tag_list = tag::load_buckets();
+    $block->content->tag_list = tag::load_buckets($filter);
+    $block->content->filter = $filter;
     return $block;
   }
 }

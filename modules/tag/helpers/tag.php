@@ -57,7 +57,8 @@ class tag_Core {
    *
    * @param int $filter Minimum frequency to be included in the tag cloud
    * @return array List of tags each entry has the following format:
-   *                array("name" => "tag_name", "count" => "frequency", "class" => "bucket") 
+   *                array("id" => "tag_id", "name" => "tag_name", "count" => "frequency", 
+   *                      "class" => "bucket") 
    */
   public static function load_buckets($filter=1) {
     $tag_list = array();
@@ -84,7 +85,7 @@ class tag_Core {
         }
 
         //  Set the tag to the current class
-        $tag_list[$key] = array("name" => $tag->name, "count" => $tag->count, 
+        $tag_list[$key] = array("id" => $tag->id, "name" => $tag->name, "count" => $tag->count, 
           "class" => "$bucket_count");
         $bucket_items++;
         $tags_set++;
