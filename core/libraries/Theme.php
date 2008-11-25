@@ -53,10 +53,6 @@ class Theme_Core {
     return $module->loaded ? $module : null;
   }
 
-  public function in_place_edit() {
-    return new View("in_place_edit.html");
-  }
-
   /**
    * Handle all theme functions that insert module content.
    */

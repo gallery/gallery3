@@ -50,8 +50,5 @@
       </div>
     </div>
     <?= $theme->page_bottom() ?>
-    <? if ($user): ?>
-    <?= $theme->in_place_edit(); ?>
-    <? endif; ?>
   </body>
 </html>
