@@ -27,7 +27,7 @@ class Theme_Core {
   }
 
   public function url($path) {
-    return url::base() . "themes/{$this->theme_name}/$path";
+    return url::file("themes/{$this->theme_name}/$path");
   }
 
   public function item() {
