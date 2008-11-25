@@ -28,8 +28,7 @@ class info_block_Core {
   }
 
   public static function thumbnail_info($theme, $item) {
-    $results = array();
-    $results .= "<li>Views: 321</li>";
+    $results = "<li>Views: 321</li>";
     if ($item->owner) {
       $results .= "<li>";
       $results .= sprintf(_("By: %s"), "<a href=\"#\">{$item->owner->name}</a>");
