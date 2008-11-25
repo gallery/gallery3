@@ -48,11 +48,6 @@ class Theme_Core {
     return $this->pagination->render();
   }
 
-  public function module($module_name) {
-    $module = module::get($module_name);
-    return $module->loaded ? $module : null;
-  }
-
   /**
    * Handle all theme functions that insert module content.
    */
