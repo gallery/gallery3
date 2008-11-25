@@ -1,6 +1,6 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <script type="text/javascript">
-<![CDATA[
+// <![CDATA[
 $(document).ready(function() {
   ajax_update = function(className, id) {
     return function(value, settings) {
@@ -38,5 +38,5 @@ $(document).ready(function() {
     }
   }
 });
-]]>
+// ]]>
 </script>
