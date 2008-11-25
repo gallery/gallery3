@@ -29,7 +29,7 @@ class Atom_Test extends Unit_Test_Case {
     $feed = new Atom_Feed("feed");
     $feed->id("http://gallery.example.com/comments")
       ->title("Comments on Ocean Beach Sunset", "text")
-      ->updated("2008-11-15T12:00:00Z");
+      ->updated(time());
 
     $feed->link()
       ->rel("self")
@@ -47,7 +47,7 @@ class Atom_Test extends Unit_Test_Case {
 
     $feed->entry()
       ->id("http://gallery.example.com/comments/32")
-      ->updated("2008-11-15T12:00:00Z")
+      ->updated(time())
       ->title("")
       ->content("Wow, that's &lt;b>beautiful&lt;b>!", "html")
       ->author()
@@ -64,7 +64,7 @@ class Atom_Test extends Unit_Test_Case {
     $entry = new Atom_Entry("entry");
     $entry->id("http://gallery.example.com/comments/32")
       ->title("Comment on Ocean Beach Sunset", "text")
-      ->updated("2008-11-15T12:00:00Z")
+      ->updated(time())
       ->content("Wow, that's &lt;b>beautiful&lt;b>!", "html")
       ->author()
         ->name("Jonathan Doe")
