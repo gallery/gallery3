@@ -24,6 +24,7 @@ class tag_block_Core {
     $block->id = "gTag";
     $block->title = _("Tags");
     $block->content = new View("tag_block.html");
+    $block->content->tag_list = tag::load_buckets();
     return $block;
   }
 }
