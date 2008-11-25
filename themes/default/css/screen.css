@@ -303,7 +303,7 @@ table.gMetadata td.toggle {
 
 /* Slideshow button ~~~~~~~~~~~~~~~~~~~~~~ */
 
- #gSlideshowLink {
+#gSlideshowLink {
   float: right;
 }
 
@@ -820,6 +820,14 @@ div.gAnnotatedThemeBlock {
   margin: 1em;
   border: 1px solid #C00;
   clear: both;
+}
+
+div.gAnnotatedThemeBlock_album_top {
+  float: right;
+}
+
+div.gAnnotatedThemeBlock_header_bottom {
+  float: right;
 }
 
 div.gAnnotatedThemeBlock div.title {
