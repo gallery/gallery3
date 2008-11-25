@@ -1,10 +1,10 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gAlbumHeader">
-  <?= $theme->album_top() ?>
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
 </div>
 
+<?= $theme->album_top() ?>
 <ul id="gAlbumGrid">
 <? foreach ($children as $i => $child): ?>
   <? $album_class = ""; ?>
@@ -26,7 +26,7 @@
     </ul>
   </li>
   <? endforeach ?>
-  <?= $theme->album_bottom() ?>
 </ul>
+<?= $theme->album_bottom() ?>
 
 <?= $theme->pager() ?>
