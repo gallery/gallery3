@@ -831,4 +831,5 @@ div.gAnnotatedThemeBlock div.title {
   color: white;
   text-align: left;
   padding: 4px;
+  -moz-border-radius: 5% 5% 5% 5%;
 }
