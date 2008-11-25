@@ -33,7 +33,7 @@ class url extends url_Core {
     return url::site($path, "http");
   }
 
-  public static function get_absolute_url() {
+  public static function abs_current() {
     return self::abs_site(url::current());
   }
 }
