@@ -17,47 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 class tag_Core {
-
   /**
-   * Adds the specified tags to the item
+   * Associate a tag with an item.  Create the tag if it doesn't already exist.
    *
    * @todo Write test.
    *
-   * @param mixed $items a single item or an array of items
-   * @param mixed $tag_names a single tag name or an array of tag names
-   * @throws Exception("@todo {tag_name} WAS_NOT_ADDED_TO {$item_id}")
+   * @param ORM    $item an item
+   * @param string $tag_name a tag name
+   * @throws Exception("@todo {$tag_name} WAS_NOT_ADDED_TO {$item->id}")
    */
-  public static function add_tag($items, $tag_names) {
-    $items = is_array($items) ? $items : array($items);
-    $tag_names = is_array($tag_names) ? $tag_names : array($tag_names);
+  public static function add($item, $tag_name) {
+    $tag = ORM::factory("tag")->where("name", $tag_name)->find();
+    if (!$tag->loaded) {
+      $tag->name = $tag_name;
+      $tag->count = 0;
+      // Need to save it now to get an id assigned.
+      $tag->save();
+    }
 
-    foreach($items as $item) {
-      foreach ($tag_names as $tag_name) {
-        $tag = ORM::factory("tag")->where("name", $tag_name)->find();
-        if (!$tag->loaded) {
-          $tag->name = $tag_name;
-          $tag->count = 0;
-          // Need to save it now to get an id assigned.
-          $tag->save();
-        }
-
-        $tag_has_item = false;
-        foreach($tag->items as $tagged_item) {
-          if ($tagged_item->id == $item->id) {
-            $tag_has_item = true;
-            break;
-          }
-        }
-        if (!$tag_has_item) {
-          $tag->count++;
-          $tag->save();
-          if (!$tag->add($item, $tag)) {
-            throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
-          }
-        }
+    if (!$tag->has($item)) {
+      // Note: ORM::has() causes a database lookup.  ORM::add() calls ORM::has() a second time,
+      // so we're doing an extra database lookup just to make sure that we don't increment the
+      // count value if the tag already existed.
+      if (!$tag->add($item, $tag)) {
+        throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
       }
+      $tag->count++;
+      $tag->save();
     }
   }
 }
