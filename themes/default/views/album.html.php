@@ -6,7 +6,7 @@
 </div>
 
 <ul id="gAlbumGrid">
-<? foreach ($children as $i => $child): ?>
+  <? foreach ($children as $i => $child): ?>
   <? $album_class = ""; ?>
   <? if ($child->is_album()): ?>
   <? $album_class = "gAlbum "; ?>
