@@ -60,10 +60,9 @@ class tag_Core {
    *                array("id" => "tag_id", "name" => "tag_name", "count" => "frequency", 
    *                      "class" => "bucket") 
    */
-  public static function load_buckets($filter=1) {
+  public static function load_buckets() {
     $tag_list = array();
     $tags = ORM::factory("tag")
-      ->where("count >=", $filter)
       ->orderby("count", "ASC")
       ->find_all()
       ->as_array();

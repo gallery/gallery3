@@ -19,11 +19,6 @@
  */
 
 class tag_block_Core {
-  public static function head($theme) {
-    $url = url::file("modules/tag/js/tag.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>";
-  }
-
   public static function sidebar_blocks($theme, $filter=1) {
     $block = new Block();
     $block->id = "gTag";

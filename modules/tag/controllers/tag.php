@@ -24,10 +24,7 @@ class Tag_Controller extends REST_Controller {
    *  @see Rest_Controller::_index()
    */
   public function _index() {
-    $filter = valid::digit($_GET["filter"]) ? $_GET["filter"] : null;
-    $filter = ($filter <= 0) ? 1 :
-      ($filter >= tag::$NUMBER_OF_BUCKETS ? tag::$NUMBER_OF_BUCKETS - 1 : $filter);
-    print tag_block::sidebar_blocks(null, $filter);
+    throw new Exception("@todo Comment_Controller::_form NOT IMPLEMENTED");
   }
 
   /**
@@ -58,7 +55,7 @@ class Tag_Controller extends REST_Controller {
     // @todo Production this code
     // 1) Add security checks
     throw new Exception("@todo Tag_Controller::_delete NOT IMPLEMENTED");
-      }
+  }
 
   public function _update($tag) {
     // @todo Productionize this

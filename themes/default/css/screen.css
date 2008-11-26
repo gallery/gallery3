@@ -408,15 +408,6 @@ table.gMetadata td.toggle {
   margin-top: 10px;
 }
 
-#gTag .gTagFilter {
-  margin-left: .5em;
-}
-
-#gTag #gTagReloadProgress {
-  display: none;
-  text-align: left;
-  color: #0e2b52;
-}
 /* Tags ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gTag ul {
