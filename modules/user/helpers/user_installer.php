@@ -39,7 +39,7 @@ class user_installer {
           UNIQUE KEY(`display_name`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE IF NOT EXISTS`groups` (
+      $db->query("CREATE TABLE IF NOT EXISTS `groups` (
           `id` int(9) NOT NULL auto_increment,
           `name` char(255) default NULL,
           PRIMARY KEY (`id`),
@@ -55,34 +55,16 @@ class user_installer {
 
       module::set_version("user", 1);
 
-      $user = ORM::factory("user")->where("name", "admin")->find();
-      $user->name = "admin";
-      $user->display_name = "Gallery Administrator";
-      $user->password = "admin";
-      $user->save();
-      $id = $user->id;
+      // @todo: get this info from the installer
+      $admin = user::create("admin", "Gallery Administrator", "admin");
+      $user = user::create("joe", "Joe User", "joe");
 
-      $db->query("UPDATE `items` SET `owner_id` = $id WHERE `owner_id` IS NULL");
+      $registered = group::create("Registered Users");
+      $registered->add($admin);
+      $registered->add($user);
 
-      foreach (array("administrator", "registered") as $group_name) {
-        $group = ORM::factory("group")->where("name", $group_name)->find();
-        $group->name = $group_name;
-        $group->save();
-        if (!$group->add($user)) {
-          throw new Exception("@todo {$user->name} WAS_NOT_ADDED_TO {$group_name}");
-        }
-      }
-
-      // @todo: get this name from the installer.
-      $user = ORM::factory("user")->where("name", "joe")->find();
-      $user->name = "joe";
-      $user->display_name = "Registered User";
-      $user->password = "joe";
-      $user->save();
-      $group = ORM::factory("group")->where("name", "registered")->find();
-      if (!$group->add($user)) {
-        throw new Exception("@todo {$user->name} WAS_NOT_ADDED_TO {$group_name}");
-      }
+      // Let the admin own everything
+      $db->query("UPDATE `items` SET `owner_id` = {$admin->id} WHERE `owner_id` IS NULL");
     }
   }
 

@@ -38,6 +38,10 @@ class group_Core {
 
     $group->name = $name;
     $group->save();
+
+    // Create the view column for this group in the items table.
+    Database::instance()->query("ALTER TABLE `items` ADD `view_{$group->id}` BOOLEAN DEFAULT 0");
+
     return $group;
   }
 
@@ -47,6 +51,12 @@ class group_Core {
    * @param string $name the group name
    */
   static function delete($name) {
-    ORM::factory("group")->where("name", $name)->find()->delete();
+    $group = ORM::factory("group")->where("name", $name)->find();
+
+    if ($group->loaded) {
+      // Drop the view column for this group in the items table.
+      Database::instance()->query("ALTER TABLE `items` DROP `view_{$group->id}`");
+      $group->delete();
+    }
   }
 }
