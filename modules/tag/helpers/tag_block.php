@@ -26,12 +26,14 @@ class tag_block_Core {
     $block->content = new View("tag_block.html");
 
     $tags = tag::popular_tags(30)->as_array();
-    $block->content->max_count = $tags[0]->count;
+    if ($tags) {
+      $block->content->max_count = $tags[0]->count;
 
-    usort($tags, array("tag_block", "sort_by_name"));
-    $block->content->tags = $tags;
+      usort($tags, array("tag_block", "sort_by_name"));
+      $block->content->tags = $tags;
 
-    return $block;
+      return $block;
+    }
   }
 
   public static function sort_by_name($tag1, $tag2) {
