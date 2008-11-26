@@ -314,7 +314,7 @@
               <? $current = $album_tree[$current]; ?>
               <ul>
                 <li>
-                  <?= $current->album->title ?>
+                  <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
                   <? $stack[] = "CLOSE"; ?>
                   <? if ($current->children): ?>
                   <? $stack = array_merge($stack, $current->children) ?>
