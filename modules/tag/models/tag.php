@@ -32,7 +32,7 @@ class Tag_Model extends ORM {
     if ($function == "children") {
       return $this->_get_tag_children($args[0], $args[1]);
     } else if ($function == "children_count") {
-      return $this->_get_children_count();
+      return $this->count;
     } else if ($function == "parents") {
       return ORM::factory("item", 1);
     } else {
@@ -47,7 +47,7 @@ class Tag_Model extends ORM {
     if ($property == "title" || $property == "title_edit" || $property == "name_edit") {
       return $this->name;
     } else if ($property == "description_edit") {
-      return "";
+      return "There are {$this->count} items tagged.";
     } else if ($property == "owner") {
       return null;
     } else {
@@ -76,18 +76,5 @@ class Tag_Model extends ORM {
       ->join($join_table, $join_col1, $join_col2)
       ->where($this->foreign_key(NULL, $join_table), $this->object[$this->primary_key])
       ->find_all($limit, $offset);
-  }
-
-  /**
-   * Get the total number of children.
-   * @return int
-   */
-  private function _get_children_count() {
-      return Database::instance()
-        ->select("COUNT(*) AS count")
-        ->from("items_tags")
-        ->where("tag_id", $this->id)
-        ->get()
-        ->current()->count;
   }
 }
