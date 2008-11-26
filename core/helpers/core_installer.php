@@ -76,7 +76,8 @@ class core_installer {
       $root->right = 2;
       $root->parent_id = 0;
       $root->level = 1;
-      $root->save();
+      $root->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
+        ->save();
     }
   }
 
