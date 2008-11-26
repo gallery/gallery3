@@ -28,6 +28,7 @@ class Photos_Controller extends Items_Controller {
     // @todo: this needs to be data-driven
     $theme = new Theme("default", $template);
 
+    $template->set_global("page_type", "photo");
     $template->set_global('item', $item);
     $template->set_global('children', $item->children());
     $template->set_global('parents', $item->parents());

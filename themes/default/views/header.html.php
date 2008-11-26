@@ -14,9 +14,11 @@
 
 <?= $theme->header_bottom() ?>
 
+<? if ($page_type != "tag"): ?>
 <ul id="gBreadcrumbs" class="gClearFix">
   <? foreach ($parents as $parent): ?>
   <li><a href="<?= url::site("albums/{$parent->id}") ?>"><?= $parent->title_edit ?></a></li>
   <? endforeach ?>
   <li class="active"><?= $item->title_edit ?></li>
 </ul>
+<? endif ?>

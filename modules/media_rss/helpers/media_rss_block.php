@@ -19,8 +19,10 @@
  */
 class media_rss_block_Core {
   public static function head($theme) {
-    $url = url::site("media_rss/feed/{$theme->item()->id}");
+    if ($theme->item()) {
+      $url = url::site("media_rss/feed/{$theme->item()->id}");
 
-    return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
+      return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
+    }
   }
 }

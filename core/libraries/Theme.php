@@ -42,7 +42,7 @@ class Theme_Core {
     $this->pagination = new Pagination();
     $this->pagination->initialize(
       array('query_string' => 'page',
-            'total_items' => $this->template->item->children_count(),
+            'total_items' => $this->template->children_count,
             'items_per_page' => $this->template->page_size,
             'style' => 'classic'));
     return $this->pagination->render();
@@ -64,6 +64,8 @@ class Theme_Core {
     case "album_top":
     case "album_blocks":
     case "album_bottom":
+    case "tag_top":
+    case "tag_bottom":
     case "thumbnail_top":
     case "thumbnail_bottom":
     case "thumbnail_info":

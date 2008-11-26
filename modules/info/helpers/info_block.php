@@ -20,11 +20,13 @@
 
 class info_block_Core {
   public static function sidebar_blocks($theme) {
-    $block = new Block();
-    $block->id = "gMetadata";
-    $block->title = _("Item Info");
-    $block->content = new View("info_block.html");
-    return $block;
+    if ($theme->item()) {
+      $block = new Block();
+      $block->id = "gMetadata";
+      $block->title = _("Item Info");
+      $block->content = new View("info_block.html");
+      return $block;
+    }
   }
 
   public static function thumbnail_info($theme, $item) {

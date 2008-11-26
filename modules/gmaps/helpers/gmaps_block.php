@@ -20,10 +20,12 @@
 
 class gmaps_block_Core {
   public static function sidebar_blocks($theme) {
-    $block = new Block();
-    $block->id = "gMaps";
-    $block->title = _("Location");
-    $block->content = new View("gmaps_block.html");
-    return $block;
+    if ($theme->item()) {
+      $block = new Block();
+      $block->id = "gMaps";
+      $block->title = _("Location");
+      $block->content = new View("gmaps_block.html");
+      return $block;
+    }
   }
 }

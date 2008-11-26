@@ -32,6 +32,7 @@ class Albums_Controller extends Items_Controller {
     $page = $this->input->get("page", "1");
     $theme = new Theme($theme_name, $template);
 
+    $template->set_global("page_type", "album");
     $template->set_global('page_size', $page_size);
     $template->set_global('item', $item);
     $template->set_global('children', $item->children($page_size, ($page-1) * $page_size));
