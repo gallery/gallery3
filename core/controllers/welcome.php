@@ -33,10 +33,12 @@ class Welcome_Controller extends Template_Controller {
       $this->template->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
       $this->template->deepest_photo = ORM::factory("item")
         ->where("type", "photo")->orderby("level", "desc")->find();
+      $this->template->album_tree = $this->_load_album_tree();
     } catch (Exception $e) {
       $this->template->album_count = 0;
       $this->template->photo_count = 0;
       $this->template->deepest_photo = null;
+      $this->template->album_tree = array();
     }
 
     $this->_load_user_info();
@@ -423,5 +425,18 @@ class Welcome_Controller extends Template_Controller {
       group::add_user($group->id, $user_id);
     }
     url::redirect("welcome");
+  }
+
+  public function _load_album_tree() {
+    $tree = array();
+    foreach (ORM::factory("item")->where("type", "album")->find_all() as $album) {
+      if ($album->parent_id) {
+        $tree[$album->parent_id]->children[] = $album->id;
+      }
+      $tree[$album->id]->album = $album;
+      $tree[$album->id]->children = array();
+    }
+
+    return $tree;
   }
 }

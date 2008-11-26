@@ -306,9 +306,25 @@
             </div>
 
             <div id="access_permissions" class="activity">
-              <p>
-                <i>Nothing yet</i>
-              </p>
+              <? if ($album_tree): ?>
+              <? $stack = array(1); // hardcoded to the root album ?>
+              <? while ($stack): ?>
+              <? $current = array_pop($stack); ?>
+              <? if ($current != "CLOSE"): ?>
+              <? $current = $album_tree[$current]; ?>
+              <ul>
+                <li>
+                  <?= $current->album->title ?>
+                  <? $stack[] = "CLOSE"; ?>
+                  <? if ($current->children): ?>
+                  <? $stack = array_merge($stack, $current->children) ?>
+                  <? endif ?>
+                  <? else: ?>
+                </li>
+              </ul>
+              <? endif ?>
+              <? endwhile ?>
+              <? endif ?>
             </div>
           </div>
 
