@@ -34,7 +34,10 @@ class Tag_Model extends ORM {
     } else if ($function == "children_count") {
       return $this->count;
     } else if ($function == "parents") {
-      return ORM::factory("item", 1);
+      // Need to return as an ORM_Iterator as opposed to just the model.
+      return ORM::factory("item")
+        ->where("id", 1)
+        ->find_all();
     } else {
       return parent::__call($function, $args);
     }
