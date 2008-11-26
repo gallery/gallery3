@@ -42,7 +42,7 @@ class Tag_Controller extends REST_Controller {
   }
 
   public function _show($tag) {
-    throw new Exception("@todo Tag_Controller::_show NOT IMPLEMENTED");
+    Albums_Controller::_show($tag);
   }
 
   public function _create($tag) {
