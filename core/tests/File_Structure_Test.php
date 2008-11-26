@@ -41,7 +41,8 @@ class File_Structure_Test extends Unit_Test_Case {
       }
       if (strpos($file, "views")) {
         $this->assert_true(
-          preg_match("#/views/.*?(\.html|mrss)\.php$#", $file->getPathname()),
+          preg_match("#/views/.*?(\.html|mrss)\.php$#",
+                     strtr($file->getPathname(), DIRECTORY_SEPARATOR, '/')),
           "{$file->getPathname()} should end in .html.php or mrss.php");
       }
     }
@@ -65,7 +66,7 @@ class File_Structure_Test extends Unit_Test_Case {
 
     $expected = $this->_get_preamble(__FILE__);
     foreach ($dir as $file) {
-      if (preg_match("/views/", $file->getPathname())) {
+      if (preg_match("/views/", strtr($file->getPathname(), DIRECTORY_SEPARATOR, '/'))) {
         // The preamble for views is a single line that prevents direct script access
         $lines = file($file->getPathname());
         $this->assert_equal(
@@ -74,7 +75,7 @@ class File_Structure_Test extends Unit_Test_Case {
           "in file: {$file->getPathname()}");
       } else if (preg_match("|\.php$|", $file->getPathname())) {
         $actual = $this->_get_preamble($file->getPathname());
-        if ($file->getPathName() == DOCROOT . "index.php") {
+        if (strtr($file->getPathName(), DIRECTORY_SEPARATOR, '/') == DOCROOT . "index.php") {
           // index.php allows direct access, so modify our expectations for the first line
           $index_expected = $expected;
           $index_expected[0] = "<?php";
@@ -118,6 +119,7 @@ class GalleryCodeFilterIterator extends FilterIterator {
   public function accept() {
     // Skip anything that we didn't write
     $path_name = $this->getInnerIterator()->getPathName();
+    $path_name = strtr($path_name, DIRECTORY_SEPARATOR, '/');
     return !(strpos($path_name, ".svn") ||
              substr($path_name, -1, 1) == "~" ||
              strpos($path_name, SYSPATH) !== false ||
