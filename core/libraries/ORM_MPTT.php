@@ -110,7 +110,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   integer  SQL offset
    * @return array ORM
    */
-  function children($limit=NULL, $offset=0) {
+  function children($limit=null, $offset=0) {
     if (!isset($this->children)) {
       $this->children =
         $this->where("parent_id", $this->id)
@@ -143,7 +143,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   string   type to return
    * @return object ORM_Iterator
    */
-  function descendants($limit=NULL, $offset=0, $type=null) {
+  function descendants($limit=null, $offset=0, $type=null) {
     if (!isset($this->descendants[$type][$offset])) {
       $this->where("left >", $this->left)
         ->where("right <=", $this->right);
