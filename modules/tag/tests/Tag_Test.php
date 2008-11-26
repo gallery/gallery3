@@ -38,30 +38,4 @@ class Tag_Test extends Unit_Test_Case {
     $tag = ORM::factory("tag")->where("name", $tag1)->find();
     $this->assert_true(2, $tag->count);
   }
-
-  public function load_buckets_test() {
-
-    $tags = array();
-    for ($tag_count = 1; $tag_count <= 8; $tag_count++) {
-      $rand = rand();
-      $album = album::create(1, $rand, $rand, $rand);
-      for ($idx = 0; $idx < $tag_count; $idx++) {
-        tag::add($album, "tag$idx");
-      }
-    }
-
-    $tag_list = tag::load_buckets();
-
-    $expected_tag_list = array(
-      array("id" => "2", "name" => "tag0", "count" => 8, "class" => 5),
-      array("id" => "1", "name" => "tag1", "count" => 9, "class" => 6),
-      array("id" => "3", "name" => "tag2", "count" => 6, "class" => 4),
-      array("id" => "4", "name" => "tag3", "count" => 5, "class" => 3),
-      array("id" => "5", "name" => "tag4", "count" => 4, "class" => 2),
-      array("id" => "6", "name" => "tag5", "count" => 3, "class" => 2),
-      array("id" => "7", "name" => "tag6", "count" => 2, "class" => 1),
-      array("id" => "8", "name" => "tag7", "count" => 1, "class" => 0)
-    );
-    $this->assert_equal($expected_tag_list, $tag_list, "incorrect non filtered tag list");
-  }
 }
