@@ -35,6 +35,6 @@ class tag_block_Core {
   }
 
   public static function sort_by_name($tag1, $tag2) {
-    return strcmp($tag1->name, $tag2->name);
+    return strcasecmp($tag1->name, $tag2->name);
   }
 }
