@@ -390,7 +390,8 @@ class Welcome_Controller extends Template_Controller {
 
   public function add_user() {
     $name = $this->input->post("user_name");
-    user::create($name, $name, $name);
+    $admin = (bool)$this->input->post("admin");
+    user::create($name, $name, $name, $admin);
     url::redirect("welcome");
   }
 

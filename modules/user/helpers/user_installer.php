@@ -35,6 +35,7 @@ class user_installer {
           `login_count` int(10) unsigned NOT NULL DEFAULT 0,
           `last_login` int(10) unsigned NOT NULL DEFAULT 0,
           `email` varchar(255) default NULL,
+          `admin` BOOLEAN default 0,
           PRIMARY KEY (`id`),
           UNIQUE KEY(`display_name`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");

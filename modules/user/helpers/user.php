@@ -64,9 +64,10 @@ class user_Core {
    * @param string  $name
    * @param string  $display_name
    * @param string  $password
+   * @param boolean $admin true if this user is a site admin
    * @return User_Model
    */
-  static function create($name, $display_name, $password) {
+  static function create($name, $display_name, $password, $admin=false) {
     $user = ORM::factory("user");
     if ($user->loaded) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
@@ -75,6 +76,7 @@ class user_Core {
     $user->name = $name;
     $user->display_name = $name;
     $user->password = $name;
+    $user->admin = $admin;
     $user->save();
 
     group::add_user(group::REGISTERED_USERS, $user->id);
