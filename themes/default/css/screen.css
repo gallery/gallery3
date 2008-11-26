@@ -406,6 +406,13 @@ table.gMetadata td.toggle {
 
 #gTag form {
   margin-top: 10px;
+}
+
+#gAddTag input {
+  display: inline;
+  padding: 0px;
+  margin: 0px;
+}
 
 /* Tags ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
