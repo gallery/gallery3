@@ -58,8 +58,8 @@ class Tag_Test extends Unit_Test_Case {
       array("id" => "3", "name" => "tag2", "count" => 6, "class" => 4),
       array("id" => "4", "name" => "tag3", "count" => 5, "class" => 3),
       array("id" => "5", "name" => "tag4", "count" => 4, "class" => 2),
-      array("id" => "6", "name" => "tag5", "count" => 3, "class" => 1),
-      array("id" => "7", "name" => "tag6", "count" => 2, "class" => 0),
+      array("id" => "6", "name" => "tag5", "count" => 3, "class" => 2),
+      array("id" => "7", "name" => "tag6", "count" => 2, "class" => 1),
       array("id" => "8", "name" => "tag7", "count" => 1, "class" => 0)
     );
     $this->assert_equal($expected_tag_list, $tag_list, "incorrect non filtered tag list");

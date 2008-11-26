@@ -57,7 +57,7 @@ class group_Core {
 
     if ($group->loaded) {
       // Drop the view column for this group in the items table.
-      Database::instance()->query("ALTER TABLE `items` DROP `view_{$group->id}`");
+//      Database::instance()->query("ALTER TABLE `items` DROP `view_{$group->id}`");
       $group->delete();
     }
   }
