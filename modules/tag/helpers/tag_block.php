@@ -24,7 +24,17 @@ class tag_block_Core {
     $block->id = "gTag";
     $block->title = _("Tags");
     $block->content = new View("tag_block.html");
-    $block->content->tag_list = tag::load_buckets();
+
+    $tags = tag::popular_tags(30)->as_array();
+    $block->content->max_count = $tags[0]->count;
+
+    usort($tags, array("tag_block", "sort_by_name"));
+    $block->content->tags = $tags;
+
     return $block;
+  }
+
+  public static function sort_by_name($tag1, $tag2) {
+    return strcmp($tag1->name, $tag2->name);
   }
 }

@@ -357,43 +357,43 @@ table.gMetadata td.toggle {
   display: none;
 }
 
-#gTag ul li.size0 {
+#gTag ul li.size1 {
   color: #9cf;
   font-size: 80%;
   font-weight: 100;
 }
 
-#gTag ul li.size1 {
+#gTag ul li.size2 {
   color: #69f;
   font-size: 90%;
   font-weight: 300;
 }
 
-#gTag ul li.size2 {
+#gTag ul li.size3 {
   color: #69c;
   font-size: 100%;
   font-weight: 500;
 }
 
-#gTag ul li.size3 {
+#gTag ul li.size4 {
   color: #369;
   font-size: 110%;
   font-weight: 700;
 }
 
-#gTag ul li.size4 {
+#gTag ul li.size5 {
   color: #0e2b52;
   font-size: 120%;
   font-weight: 900;
 }
 
-#gTag ul li.size5 {
+#gTag ul li.size6 {
   color: #0e2b52;
   font-size: 130%;
   font-weight: 900;
 }
 
-#gTag ul li.size6 {
+#gTag ul li.size7 {
   color: #0e2b52;
   font-size: 140%;
   font-weight: 900;
@@ -406,7 +406,6 @@ table.gMetadata td.toggle {
 
 #gTag form {
   margin-top: 10px;
-}
 
 /* Tags ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
