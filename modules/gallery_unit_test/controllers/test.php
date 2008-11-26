@@ -79,6 +79,7 @@ class Test_Controller extends Controller {
       $installer_class = "{$module->name}_installer";
       if (method_exists($installer_class, "uninstall")) {
         Kohana::log("debug", "method uninstall exists");
+        call_user_func_array(array($installer_class, "uninstall"), array());
       }
     }
 
@@ -97,7 +98,7 @@ class Test_Controller extends Controller {
 
       $installer_class = "{$module_name}_installer";
       if (method_exists($installer_class, "install")) {
-        call_user_func_array( array($installer_class, "install"), array());
+        call_user_func_array(array($installer_class, "install"), array());
       }
     }
   }
