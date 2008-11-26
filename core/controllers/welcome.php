@@ -232,7 +232,6 @@ class Welcome_Controller extends Template_Controller {
   }
 
   private function _generateTags($number){
-
     list($usec, $sec) = explode(' ', microtime());
     srand((float) $sec + ((float) $usec * 100000));
 
@@ -385,29 +384,23 @@ class Welcome_Controller extends Template_Controller {
 
   public function add_user() {
     $name = $this->input->post("user_name");
-    $user = ORM::factory("user");
-    $user->name = $name;
-    $user->display_name = $name;
-    $user->password = $name;
-    $user->save();
+    user::create($name, $name, $name);
     url::redirect("welcome");
   }
 
   public function delete_user($name) {
-    ORM::factory("user")->where("name", $name)->find()->delete();
+    user::delete($name);
     url::redirect("welcome");
   }
 
   public function add_group() {
     $name = $this->input->post("group_name");
-    $group = ORM::factory("group");
-    $group->name = $name;
-    $group->save();
+    group::create($name);
     url::redirect("welcome");
   }
 
   public function delete_group($name) {
-    ORM::factory("group")->where("name", $name)->find()->delete();
+    group::delete($name);
     url::redirect("welcome");
   }
 

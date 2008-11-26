@@ -19,13 +19,11 @@
  */
 
 /**
- * This helper provides a common around the user management functions.
+ * This is the API for handling users.
  *
- * @author Tim Almdal <public@timalmdal.com>
- *
+ * Note: by design, this class does not do any permission checking.
  */
-class user {
-
+class user_Core {
   /**
    * Return the form for creating / modifying users.
    */
@@ -33,13 +31,59 @@ class user {
     $form = new Forge(
       url::site("users/{$user->id}?_method=put"), "", "post", array("id" => "gUserForm"));
     $group = $form->group(_("User Info"));
-    $group->input("name")         ->label(_("Name"))         ->id("gName")        ->value($user->name);
-    $group->input("display_name") ->label(_("Display Name")) ->id("gDisplayName") ->value($user->display_name);
-    $group->password("password")  ->label(_("Password"))     ->id("gPassword");
-    $group->input("email")        ->label(_("Email"))        ->id("gEmail")       ->value($user->email);
+
+    $group->input("name")
+      ->label(_("Name"))
+      ->id("gName")
+      ->value($user->name);
+
+    $group->input("display_name")
+      ->label(_("Display Name"))
+      ->id("gDisplayName")
+      ->value($user->display_name);
+
+    $group->password("password")
+      ->label(_("Password"))
+      ->id("gPassword");
+
+    $group->input("email")
+      ->label(_("Email"))
+      ->id("gEmail")
+      ->value($user->email);
+
     $group->submit(_("Modify"));
     $form->add_rules_from($user);
     return $form;
+  }
+
+  /**
+   * Create a new user.
+   *
+   * @param string  $name
+   * @param string  $display_name
+   * @param string  $password
+   * @return User_Model
+   */
+  static function create($name, $display_name, $password) {
+    $user = ORM::factory("user");
+    if ($user->loaded) {
+      throw new Exception("@todo USER_ALREADY_EXISTS $name");
+    }
+
+    $user->name = $name;
+    $user->display_name = $name;
+    $user->password = $name;
+    $user->save();
+    return $user;
+  }
+
+  /**
+   * Delete a user
+   *
+   * @param string $name the user name
+   */
+  static function delete($name) {
+    ORM::factory("user")->where("name", $name)->find()->delete();
   }
 
   /**
