@@ -19,13 +19,12 @@
  */
 
 class tag_block_Core {
-  public static function sidebar_blocks($theme, $filter=1) {
+  public static function sidebar_blocks($theme) {
     $block = new Block();
     $block->id = "gTag";
     $block->title = _("Tags");
     $block->content = new View("tag_block.html");
-    $block->content->tag_list = tag::load_buckets($filter);
-    $block->content->filter = $filter;
+    $block->content->tag_list = tag::load_buckets();
     return $block;
   }
 }

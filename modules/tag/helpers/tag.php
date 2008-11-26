@@ -19,7 +19,7 @@
  */
 class tag_Core {
   public static $NUMBER_OF_BUCKETS = 7;
-  
+
   /**
    * Associate a tag with an item.  Create the tag if it doesn't already exist.
    *
@@ -51,14 +51,12 @@ class tag_Core {
   }
 
   /**
-   * Assign a css class to the tags based on frequency of use.  Optionally, allow a filter value
-   * which allows for adjusting the granularity of the cloud by ignoring any frequencies below
-   * the specified value.  This code is based on the code from: http://www.hawkee.com/snippet/1485/ 
+   * Assign a css class to the tags based on frequency of use.  This code is based on the code
+   * from: http://www.hawkee.com/snippet/1485/
    *
-   * @param int $filter Minimum frequency to be included in the tag cloud
    * @return array List of tags each entry has the following format:
-   *                array("id" => "tag_id", "name" => "tag_name", "count" => "frequency", 
-   *                      "class" => "bucket") 
+   *                array("id" => "tag_id", "name" => "tag_name", "count" => "frequency",
+   *                      "class" => "bucket")
    */
   public static function load_buckets() {
     $tag_list = array();
@@ -77,14 +75,14 @@ class tag_Core {
              $bucket_count < self::$NUMBER_OF_BUCKETS) {
           $bucket_count++;
           $bucket_items = 0;
-          
+
           //  Calculate a new minimum number if tags for the remaining classes.
           $remaining_tags = count($tags) - $tags_set;
           $min_tags = $remaining_tags / self::$NUMBER_OF_BUCKETS;
         }
 
         //  Set the tag to the current class
-        $tag_list[$key] = array("id" => $tag->id, "name" => $tag->name, "count" => $tag->count, 
+        $tag_list[$key] = array("id" => $tag->id, "name" => $tag->name, "count" => $tag->count,
           "class" => "$bucket_count");
         $bucket_items++;
         $tags_set++;

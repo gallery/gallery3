@@ -3,7 +3,7 @@
   <? foreach ($tag_list as $tag): ?>
     <li class="size<?=$tag["class"] ?>">
       <span><?= $tag["count"] ?> photos are tagged with </span>
-      <a href="<?=url::site("/tag/{$tag["id"]}?filter=$filter") ?>"><?=$tag["name"] ?></a>
+      <a href="<?=url::site("/tag/{$tag["id"]}") ?>"><?=$tag["name"] ?></a>
     </li>
   <? endforeach; ?>
 </ul>
