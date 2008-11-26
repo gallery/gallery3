@@ -24,6 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class user_Core {
+  const ADMIN = 1;
+
   /**
    * Return the form for creating / modifying users.
    */
@@ -74,16 +76,19 @@ class user_Core {
     $user->display_name = $name;
     $user->password = $name;
     $user->save();
+
+    group::add_user(group::REGISTERED_USERS, $user->id);
+
     return $user;
   }
 
   /**
    * Delete a user
    *
-   * @param string $name the user name
+   * @param string $id the user id
    */
-  static function delete($name) {
-    ORM::factory("user")->where("name", $name)->find()->delete();
+  static function delete($id) {
+    ORM::factory("user", $id)->delete();
   }
 
   /**

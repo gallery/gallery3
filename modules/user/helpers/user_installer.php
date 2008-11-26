@@ -55,13 +55,14 @@ class user_installer {
 
       module::set_version("user", 1);
 
+      $registered = group::create("Registered Users");
+
       // @todo: get this info from the installer
       $admin = user::create("admin", "Gallery Administrator", "admin");
       $user = user::create("joe", "Joe User", "joe");
 
-      $registered = group::create("Registered Users");
-      $registered->add($admin);
-      $registered->add($user);
+      group::add_user($registered->id, $admin->id);
+      group::add_user($registered->id, $user->id);
 
       // Let the admin own everything
       $db->query("UPDATE `items` SET `owner_id` = {$admin->id} WHERE `owner_id` IS NULL");
@@ -69,6 +70,11 @@ class user_installer {
   }
 
   public static function uninstall() {
+    // Remove all our groups so that we clean up the items table
+    foreach (ORM::factory("group")->find_all() as $group) {
+      group::delete($group->id);
+    }
+
     try {
       Session::instance()->destroy();
     } catch (Exception $e) {

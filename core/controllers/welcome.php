@@ -394,8 +394,8 @@ class Welcome_Controller extends Template_Controller {
     url::redirect("welcome");
   }
 
-  public function delete_user($name) {
-    user::delete($name);
+  public function delete_user($id) {
+    user::delete($id);
     url::redirect("welcome");
   }
 
@@ -405,9 +405,22 @@ class Welcome_Controller extends Template_Controller {
     url::redirect("welcome");
   }
 
-  public function delete_group($name) {
-    group::delete($name);
+  public function delete_group($id) {
+    group::delete($id);
     url::redirect("welcome");
   }
 
+  public function remove_from_group($group_id, $user_id) {
+    group::remove_user($group_id, $user_id);
+    url::redirect("welcome");
+  }
+
+  public function add_to_group($user_id) {
+    $group_name = $this->input->post("group_name");
+    $group = ORM::factory("group")->where("name", $group_name)->find();
+    if ($group->loaded) {
+      group::add_user($group->id, $user_id);
+    }
+    url::redirect("welcome");
+  }
 }

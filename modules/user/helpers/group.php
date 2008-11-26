@@ -24,6 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class group_Core {
+  const REGISTERED_USERS = 1;
+
   /**
    * Create a new group.
    *
@@ -50,13 +52,58 @@ class group_Core {
    *
    * @param string $name the group name
    */
-  static function delete($name) {
-    $group = ORM::factory("group")->where("name", $name)->find();
+  static function delete($id) {
+    $group = ORM::factory("group", $id);
 
     if ($group->loaded) {
       // Drop the view column for this group in the items table.
       Database::instance()->query("ALTER TABLE `items` DROP `view_{$group->id}`");
       $group->delete();
     }
+  }
+
+  /**
+   * Remove a user from a group
+   *
+   * @param integer $group_id the id of the group
+   * @param integer $user_id the id of the user
+   * @return Group_Model
+   */
+  static function remove_user($group_id, $user_id) {
+    $group = ORM::factory("group", $group_id);
+    if (!$group->loaded) {
+      throw new Exception("@todo MISSING_GROUP $group_id");
+    }
+
+    $user = ORM::factory("user", $user_id);
+    if (!$user->loaded) {
+      throw new Exception("@todo MISSING_USER $user_id");
+    }
+
+    $group->remove($user);
+    return $group;
+  }
+
+
+  /**
+   * Add a user to a group
+   *
+   * @param integer $group_id the id of the group
+   * @param integer $user_id the id of the user
+   * @return Group_Model
+   */
+  static function add_user($group_id, $user_id) {
+    $group = ORM::factory("group", $group_id);
+    if (!$group->loaded) {
+      throw new Exception("@todo MISSING_GROUP $group_id");
+    }
+
+    $user = ORM::factory("user", $user_id);
+    if (!$user->loaded) {
+      throw new Exception("@todo MISSING_USER $user_id");
+    }
+
+    $group->add($user);
+    return $group;
   }
 }

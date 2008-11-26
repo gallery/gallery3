@@ -252,7 +252,27 @@
             <div id="access_users" class="activity">
               <ul>
                 <? foreach ($users as $user): ?>
-                <li> <?= $user->name ?> <?= html::anchor("welcome/delete_user/$user->name", "[x]") ?></li>
+                <li>
+                  <?= $user->name ?>
+                  <? if ($user->id != user::ADMIN): ?>
+                  <?= html::anchor("welcome/delete_user/$user->id", "[x]") ?>
+                  <? endif ?>
+                  <ul>
+                    <? foreach ($user->groups as $group): ?>
+                    <li>
+                      <?= $group->name ?>
+                      <? if ($group->id != group::REGISTERED_USERS): ?>
+                      <?= html::anchor("welcome/remove_from_group/$group->id/$user->id", "[x]") ?>
+                      <? endif ?>
+                    </li>
+                    <? endforeach ?>
+                    <li>
+                      <form method="post" action="<?= url::site("welcome/add_to_group/$user->id") ?>">
+                        <input type="text" name="group_name"/>
+                      </form>
+                    </li>
+                  </ul>
+                </li>
                 <? endforeach ?>
               </ul>
               <fieldset>
@@ -267,7 +287,12 @@
             <div id="access_groups" class="activity">
               <ul>
                 <? foreach ($groups as $group): ?>
-                <li> <?= $group->name ?> <?= html::anchor("welcome/delete_group/$group->name", "[x]") ?></li>
+                <li>
+                  <?= $group->name ?>
+                  <? if ($group->id != group::REGISTERED_USERS): ?>
+                  <?= html::anchor("welcome/delete_group/$group->id", "[x]") ?>
+                  <? endif ?>
+                </li>
                 <? endforeach ?>
               </ul>
               <fieldset>
