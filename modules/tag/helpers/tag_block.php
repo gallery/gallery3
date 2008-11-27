@@ -32,7 +32,7 @@ class tag_block_Core {
 
     if ($theme->page_type() != "tag") {
       $controller = new Tags_Controller();
-      $block->content->form = $controller->form_add($theme->item());
+      $block->content->form = tag::get_add_form($theme->item());
     } else {
       $block->content->form = "";
     }

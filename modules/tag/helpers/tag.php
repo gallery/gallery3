@@ -78,4 +78,14 @@ class tag_Core {
       return $cloud;
     }
   }
+
+  public static function get_add_form($item_id) {
+    $form = new Forge(url::site("tags"), "", "post", array("id" => "gAddTag"));
+    $group = $form->group(_("Add Tag"));
+    $group->input("tag_name");
+    $group->hidden("item_id")->value($item_id);
+    $group->submit(_("Add"));
+    $form->add_rules_from(ORM::factory("tag"));
+    return $form;
+  }
 }

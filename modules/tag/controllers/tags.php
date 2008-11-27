@@ -48,12 +48,7 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _form_add($item_id) {
-    $form = new Forge(url::site("tags"), "", "post", array("id" => "gAddTag"));
-    $form->input("tag_name");
-    $form->hidden("item_id")->value($item_id);
-    $form->submit(_("Add"));
-    $form->add_rules_from(ORM::factory("tag"));
-    return $form;
+    return tag::get_add_form($item_id);
   }
 
   public function _form_edit($tag) {
@@ -62,7 +57,7 @@ class Tags_Controller extends REST_Controller {
 
   public function _create($tag) {
     // @todo: check permissions
-    $form = self::form_add($this->input->post('item_id'));
+    $form = tag::get_add_form($this->input->post('item_id'));
     if ($form->validate()) {
       $item = ORM::factory("item", $this->input->post("item_id"));
       if ($item->loaded) {
