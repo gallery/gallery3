@@ -34,6 +34,10 @@ class Theme_Core {
     return $this->template->item;
   }
 
+  public function page_type() {
+    return $this->template->page_type;
+  }
+
   public function display($page_name, $view_class="View") {
     return new $view_class($page_name);
   }
