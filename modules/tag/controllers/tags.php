@@ -49,7 +49,7 @@ class Tags_Controller extends REST_Controller {
 
   public function _form_add($item_id) {
     $form = new Forge(url::site("tags"), "", "post", array("id" => "gAddTag"));
-    $form->input("tag_name")->value(_("add new tags..."))->id("gNewTags");
+    $form->input("tag_name");
     $form->hidden("item_id")->value($item_id);
     $form->submit(_("Add"));
     $form->add_rules_from(ORM::factory("tag"));

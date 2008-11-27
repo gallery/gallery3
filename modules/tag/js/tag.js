@@ -10,6 +10,7 @@ function ajaxify_tag_form() {
         $.get($("#gTagCloud").attr("src"), function(data, textStatus) {
 	  $("#gTagCloud").html(data);
 	});
+	$("form#gAddTag").clearForm();
       }
       ajaxify_tag_form();
     }
