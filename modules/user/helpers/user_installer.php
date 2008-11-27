@@ -53,7 +53,7 @@ class user_installer {
       $registered = group::create("Registered Users");
 
       // @todo: get this info from the installer
-      $admin = user::create("admin", "Gallery Administrator", "admin");
+      $admin = user::create("admin", "Gallery Administrator", "admin", true);
       $user = user::create("joe", "Joe User", "joe");
 
       group::add_user($registered->id, $admin->id);
