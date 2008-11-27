@@ -9,7 +9,6 @@
     <li><a class="active" href="<?= url::site("albums/1") ?>"><?= _("BROWSE") ?></a></li>
     <li><a href="#"><?= _("UPLOAD") ?></a></li>
     <?= $theme->navigation_bottom() ?>
-    <li><a href="#"><?= _("ADMIN") ?></a></li>
   </ul>
 </div>
 
