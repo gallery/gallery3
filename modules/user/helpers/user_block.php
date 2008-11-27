@@ -19,9 +19,12 @@
  */
 class user_block_Core {
   public static function head($theme) {
+    $url = url::file("modules/user/js/user.js");
+    $script[] = "<script src=\"$url\" type=\"text/javascript\"></script>";
     $user = Session::instance()->get('user', null);
     $url = url::file("lib/jquery.jeditable.js");
-    return empty($user) ? "" : "<script src=\"$url\" type=\"text/javascript\"></script>";
+    $script[] = empty($user) ? "" : "<script src=\"$url\" type=\"text/javascript\"></script>";
+    return implode("\n", $script);
   }
 
   public static function header_top($theme) {

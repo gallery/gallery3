@@ -19,6 +19,11 @@
  */
 
 class comment_block_Core {
+  public static function head($theme) {
+    $url = url::file("modules/comment/js/comment.js");
+    return "<script src=\"$url\" type=\"text/javascript\"></script>\n";
+  }
+
   public static function photo_bottom($theme) {
     return comment::block($theme, true);
   }

@@ -17,8 +17,6 @@
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/user.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/comment.js") ?>" type="text/javascript"></script>
     <!-- this stuff will likely be integrated into lib, possibly theme css -->
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("jquery/jquery.ui.css") ?>"
           media="screen,print,projection" />
