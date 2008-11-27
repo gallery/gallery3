@@ -50,15 +50,11 @@ class Tags_Controller extends REST_Controller {
     $item_id = is_array($parameters) ? $parameters[0] : $parameters;
     $form = tag::get_add_form($item_id);
     if ($form->validate()) {
-      Kohana::log("debug", print_r($this->inputs->post(), true));
-      Kohana::log("debug", $form->inputs["text"]->value);
-      $tags = explode(",", $form->inputs["text"]->value);
-      Kohana::log("debug", print_r($tags, true));
+      $tags = explode(",", $form->inputs["tags"]->value);
 
-      $item = ORM::factory("item", $item_id);
-//      $form->inputs["text"] = "add new tags...";
+//      $item = ORM::factory("item", $item_id);
+      $form->inputs["tags"]->value("add new tags...");
     }
-    Kohana::log("debug", print_r($form, true));
     print $form->render();
   }
 

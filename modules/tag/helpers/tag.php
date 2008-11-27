@@ -62,7 +62,7 @@ class tag_Core {
 
   public static function get_add_form($item_id) {
     $form = new Forge(url::site("form/add/tags/$item_id"), "", "post", array("id" => "gAddTag"));
-    $form->input("text")
+    $form->input("tags")
       ->label(_("(Enter tags separated by commas)"))
       ->id("gNewTags")
       ->class("text")
