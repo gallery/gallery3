@@ -17,13 +17,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Theme_Core {
+class Theme_View_Core extends View {
   private $theme_name = null;
-  private $template = null;
 
-  public function __construct($theme_name, $template) {
+  /**
+   * Attempts to load a view and pre-load view data.
+   *
+   * @throws  Kohana_Exception  if the requested view cannot be found
+   * @param   string  $name view name
+   * @param   string  $page_type page type: album, photo, tags, admin, etc
+   * @param   string  $theme_name view name
+   * @return  void
+   */
+  public function __construct($name, $page_type, $theme_name="default") {
+    parent::__construct($name);
     $this->theme_name = $theme_name;
-    $this->template = $template;
+    $this->set_global('theme', $this);
+    $this->set_global('user', Session::instance()->get('user', null));
+    $this->set_global("page_type", $page_type);
   }
 
   public function url($path) {
@@ -31,11 +42,11 @@ class Theme_Core {
   }
 
   public function item() {
-    return $this->template->item;
+    return $this->item;
   }
 
   public function page_type() {
-    return $this->template->page_type;
+    return $this->page_type;
   }
 
   public function display($page_name, $view_class="View") {
@@ -46,8 +57,8 @@ class Theme_Core {
     $this->pagination = new Pagination();
     $this->pagination->initialize(
       array('query_string' => 'page',
-            'total_items' => $this->template->children_count,
-            'items_per_page' => $this->template->page_size,
+            'total_items' => $this->children_count,
+            'items_per_page' => $this->page_size,
             'style' => 'classic'));
     return $this->pagination->render();
   }

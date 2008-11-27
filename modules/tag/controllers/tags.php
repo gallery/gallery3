@@ -25,18 +25,14 @@ class Tags_Controller extends REST_Controller {
     $theme_name = "default";
     $page_size = 9;
 
-    $template = new View("page.html");
+    $template = new Theme_View("page.html", "tag", $theme_name);
 
     $page = $this->input->get("page", "1");
-    $theme = new Theme($theme_name, $template);
 
-    $template->set_global("page_type", "tag");
     $template->set_global('page_size', $page_size);
     $template->set_global('tag', $tag);
     $template->set_global('children', $tag->items($page_size, ($page-1) * $page_size));
     $template->set_global('children_count', $tag->count);
-    $template->set_global('theme', $theme);
-    $template->set_global('user', Session::instance()->get('user', null));
     $template->content = new View("tag.html");
 
     print $template;

@@ -23,18 +23,14 @@ class Photos_Controller extends Items_Controller {
    *  @see Rest_Controller::_show($resource)
    */
   public function _show($item) {
-    $template = new View("page.html");
-
     // @todo: this needs to be data-driven
-    $theme = new Theme("default", $template);
+    $template = new Theme_View("page.html", "photo", "default");
 
-    $template->set_global("page_type", "photo");
     $template->set_global('item', $item);
     $template->set_global('children', $item->children());
     $template->set_global('children_count', $item->children_count());
     $template->set_global('parents', $item->parents());
-    $template->set_global('theme', $theme);
-    $template->set_global('user', Session::instance()->get('user', null));
+
     $template->content = new View("photo.html");
 
     print $template;
