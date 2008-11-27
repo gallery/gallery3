@@ -75,7 +75,7 @@ class photo_Core {
     // @todo: parameterize these dimensions
     // This saves the photo a second time, which is unfortunate but difficult to avoid.
     return $photo->set_thumbnail($filename, 200, 140)
-      ->set_resize($filename, 800, 600)
+      ->set_resize($filename, 640, 480)
       ->save();
   }
 }
