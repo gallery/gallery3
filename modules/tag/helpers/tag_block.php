@@ -28,23 +28,13 @@ class tag_block_Core {
     $block->id = "gTag";
     $block->title = _("Tags");
     $block->content = new View("tag_block.html");
-
-    $tags = tag::popular_tags(30)->as_array();
-    if ($tags) {
-      $block->content->max_count = $tags[0]->count;
-
-      usort($tags, array("tag_block", "sort_by_name"));
-      $block->content->tags = $tags;
-      if ($block->content->page_type != "tag") {
-        $block->content->item = $theme->item();
-      }
-    } else {
-      $block->content->tags = array();
-    }
+    $block->content->cloud = tag::cloud(30);
 
     if ($theme->page_type() != "tag") {
       $controller = new Tags_Controller();
       $block->content->form = $controller->form_add($theme->item());
+    } else {
+      $block->content->form = "";
     }
 
     return $block;

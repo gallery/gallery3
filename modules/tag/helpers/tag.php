@@ -61,4 +61,21 @@ class tag_Core {
       ->limit($count)
       ->find_all();
   }
+
+  /**
+   * Return a rendering of the cloud for the N most popular tags.
+   *
+   * @param integer $count the number of tags
+   * @return View
+   */
+  public static function cloud($count) {
+    $tags = tag::popular_tags($count)->as_array();
+    if ($tags) {
+      $cloud = new View("tag_block_cloud.html");
+      $cloud->max_count = $tags[0]->count;
+      usort($tags, array("tag_block", "sort_by_name"));
+      $cloud->tags = $tags;
+      return $cloud;
+    }
+  }
 }

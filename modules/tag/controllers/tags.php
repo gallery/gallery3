@@ -43,7 +43,8 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _index() {
-    throw new Exception("@todo Tag_Controller::_index NOT IMPLEMENTED");
+    // @todo: represent this in different formats
+    print tag::cloud(30);
   }
 
   public function _form_add($item_id) {
