@@ -404,14 +404,33 @@ table.gMetadata td.toggle {
   text-decoration: underline;
 }
 
-#gTag form {
-  margin-top: 10px;
+form#gAddTag fieldset legend {
+  display: none;
 }
 
-#gAddTag input {
-  display: inline;
+form#gAddTag fieldset {
+  border: none;
+  float: right;
+}
+
+form#gAddTag ul {
+  width: auto;
+}
+
+form#gAddTag li {
   padding: 0px;
   margin: 0px;
+}
+
+form#gAddTag input {
+  display: inline;
+  float: left
+  margin-right: 1em;
+  padding-right: 10px;
+}
+
+form#gAddTag input[type=text] {
+  width: 12em;
 }
 
 /* Tags ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
