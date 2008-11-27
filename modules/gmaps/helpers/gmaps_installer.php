@@ -19,9 +19,7 @@
  */
 class gmaps_installer {
   public static function install() {
-    Kohana::log("debug", "gmaps_installer::install");
     $version = module::get_version("gmaps");
-    Kohana::log("debug", "gmaps: $version");
     if ($version == 0) {
       module::set_version("gmaps", 1);
     }

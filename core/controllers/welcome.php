@@ -55,6 +55,7 @@ class Welcome_Controller extends Template_Controller {
     if ($module_name == "*") {
       foreach ($this->_read_modules() as $module_name => $version) {
         if (empty($version)) {
+          Kohana::log("debug", "${module_name}_install (initial)");
           call_user_func(array("${module_name}_installer", "install"));
         }
       }

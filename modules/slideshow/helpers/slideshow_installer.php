@@ -19,9 +19,7 @@
  */
 class slideshow_installer {
   public static function install() {
-    Kohana::log("debug", "slideshow_installer::install");
     $version = module::get_version("slideshow");
-    Kohana::log("debug", "version: $version");
     if ($version == 0) {
       module::set_version("slideshow", 1);
     }

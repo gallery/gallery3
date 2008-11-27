@@ -19,9 +19,7 @@
  */
 class carousel_installer {
   public static function install() {
-    Kohana::log("debug", "carousel_installer::install");
     $version = module::get_version("carousel");
-    Kohana::log("debug", "carousel: $version");
     if ($version == 0) {
       module::set_version("carousel", 1);
     }

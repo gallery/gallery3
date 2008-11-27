@@ -19,18 +19,13 @@
  */
 class search_installer {
   public static function install() {
-    Kohana::log("debug", "search_installer::install");
-    $db = Database::instance();
     $version = module::get_version("search");
-    Kohana::log("debug", "version: $version");
-
     if ($version == 0) {
       module::set_version("search", 1);
     }
   }
 
   public static function uninstall() {
-    $db = Database::instance();
     module::delete("search");
   }
 }

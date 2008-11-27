@@ -66,8 +66,6 @@ class core_installer {
         @mkdir(VARPATH . $dir);
       }
 
-      module::set_version("core", 1);
-
       $root = ORM::factory("item");
       $root->type = 'album';
       $root->title = "Gallery";
@@ -78,6 +76,8 @@ class core_installer {
       $root->level = 1;
       $root->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
         ->save();
+
+      module::set_version("core", 1);
     }
   }
 

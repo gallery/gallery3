@@ -19,10 +19,8 @@
  */
 class tag_installer {
   public static function install() {
-    Kohana::log("debug", "tag_installer::install");
     $db = Database::instance();
     $version = module::get_version("tag");
-    Kohana::log("debug", "tag: $version");
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `tags` (
           `id` int(9) NOT NULL auto_increment,

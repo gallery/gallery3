@@ -19,10 +19,8 @@
  */
 class comment_installer {
   public static function install() {
-    Kohana::log("debug", "comment_installer::install");
     $db = Database::instance();
     $version = module::get_version("comment");
-    Kohana::log("debug", "version: $version");
 
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `comments` (

@@ -35,6 +35,7 @@ class module_Core {
     }
     $module->version = 1;
     $module->save();
+    Kohana::log("debug", "$module_name: version is now $version");
   }
 
   public static function get($module_name) {
@@ -43,8 +44,9 @@ class module_Core {
 
   public static function delete ($module_name) {
     ORM::factory("module")->where("name", $module_name)->find()->delete();
+    Kohana::log("debug", "$module_name: module deleted");
   }
-  
+
   public static function is_installed($module_name) {
     return ORM::factory("module")->where("name", $module_name)->find()->loaded;
   }

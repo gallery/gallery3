@@ -19,9 +19,7 @@
  */
 class info_installer {
   public static function install() {
-    Kohana::log("debug", "info_installer::install");
     $version = module::get_version("info");
-    Kohana::log("debug", "info: $version");
     if ($version == 0) {
       module::set_version("info", 1);
     }

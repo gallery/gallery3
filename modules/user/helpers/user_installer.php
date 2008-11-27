@@ -18,13 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_installer {
-  protected $has_many = array('items');
-
   public static function install() {
-    Kohana::log("debug", "user_installer::install");
     $db = Database::instance();
     $version = module::get_version("user");
-    Kohana::log("debug", "version: $version");
 
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `users` (
@@ -54,8 +50,6 @@ class user_installer {
           UNIQUE KEY(`user_id`, `group_id`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      module::set_version("user", 1);
-
       $registered = group::create("Registered Users");
 
       // @todo: get this info from the installer
@@ -67,6 +61,7 @@ class user_installer {
 
       // Let the admin own everything
       $db->query("UPDATE `items` SET `owner_id` = {$admin->id} WHERE `owner_id` IS NULL");
+      module::set_version("user", 1);
     }
   }
 

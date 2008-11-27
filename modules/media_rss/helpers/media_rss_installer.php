@@ -19,9 +19,7 @@
  */
 class media_rss_installer {
   public static function install() {
-    Kohana::log("debug", "media_rss_installer::install");
     $version = module::get_version("media_rss");
-    Kohana::log("debug", "version: $version");
     if ($version == 0) {
       module::set_version("media_rss", 1);
     }
