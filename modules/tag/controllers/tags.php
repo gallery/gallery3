@@ -47,11 +47,23 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _form_add($parameters) {
-    throw new Exception("@todo Tag_Controller::_form NOT IMPLEMENTED");
+    $item_id = is_array($parameters) ? $parameters[0] : $parameters;
+    $form = tag::get_add_form($item_id);
+    if ($form->validate()) {
+      Kohana::log("debug", print_r($this->inputs->post(), true));
+      Kohana::log("debug", $form->inputs["text"]->value);
+      $tags = explode(",", $form->inputs["text"]->value);
+      Kohana::log("debug", print_r($tags, true));
+
+      $item = ORM::factory("item", $item_id);
+//      $form->inputs["text"] = "add new tags...";
+    }
+    Kohana::log("debug", print_r($form, true));
+    print $form->render();
   }
 
   public function _form_edit($tag) {
-    throw new Exception("@todo Tag_Controller::_form NOT IMPLEMENTED");
+    throw new Exception("@todo Tag_Controller::_form_edit NOT IMPLEMENTED");
   }
 
   public function _create($tag) {

@@ -8,11 +8,9 @@
   <? endforeach ?>
 </ul>
 
-<form id="gAddTag">
-  <ul>
-    <li><input type="text" class="text" value="add new tags..." id="gNewTags" /></li>
-    <li><input type="submit" value="add" /></li>
-  </ul>
-  <label for="gNewTags" class="gUnderState"><?= _("(separated by commas)") ?></label>
-</form>
+<? if ($page_type != "tag"): ?>
+  <div id="gTagFormContainer">
+    <?= tag::get_add_form($item->id) ?>
+  </div>
+<? endif; ?>
 

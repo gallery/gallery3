@@ -59,4 +59,16 @@ class tag_Core {
       ->limit($count)
       ->find_all();
   }
+
+  public static function get_add_form($item_id) {
+    $form = new Forge(url::site("form/add/tags/$item_id"), "", "post", array("id" => "gAddTag"));
+    $form->input("text")
+      ->label(_("(Enter tags separated by commas)"))
+      ->id("gNewTags")
+      ->class("text")
+      ->value("add new tags...")
+      ->rules("required");
+    $form->submit(_("Add"));
+    return $form;
+  }
 }

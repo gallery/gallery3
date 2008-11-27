@@ -19,6 +19,11 @@
  */
 
 class tag_block_Core {
+  public static function head($theme) {
+    $url = url::file("modules/tag/js/tag.js");
+    return "<script src=\"$url\" type=\"text/javascript\"></script>";
+  }
+
   public static function sidebar_blocks($theme) {
     $block = new Block();
     $block->id = "gTag";
@@ -31,9 +36,11 @@ class tag_block_Core {
 
       usort($tags, array("tag_block", "sort_by_name"));
       $block->content->tags = $tags;
-
-      return $block;
+      if ($block->content->page_type != "tag") {
+        $block->content->item = $theme->item();
+      }
     }
+    return $block;
   }
 
   public static function sort_by_name($tag1, $tag2) {
