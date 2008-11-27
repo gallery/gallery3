@@ -30,4 +30,8 @@ class slideshow_block_Core {
   public static function photo_top($theme) {
     return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
   }
+
+  public static function tag_top($theme) {
+    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
+  }
 }
