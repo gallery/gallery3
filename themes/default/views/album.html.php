@@ -1,8 +1,10 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gAlbumHeader">
+  <div id="gAlbumHeaderButtons">
+    <?= $theme->album_top() ?>
+  </div>
   <h1><?= $item->title_edit ?></h1>
   <span class="gUnderState"><?= $item->description_edit ?></span>
-  <?= $theme->album_top() ?>
 </div>
 
 <ul id="gAlbumGrid">

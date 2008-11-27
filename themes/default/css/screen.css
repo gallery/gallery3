@@ -181,6 +181,10 @@ table.gBlockContent td {
   padding-right: 10px;
 }
 
+#gAlbumHeaderButtons {
+  float: right;
+}
+
 #gAlbumGrid {
   margin: 0;
 }
@@ -212,6 +216,15 @@ table.gBlockContent td {
 }
 
 #gItem a.gButtonLink {
+  float: right;
+}
+
+#gItemHeader {
+  height: 40px;
+  position: relative;
+}
+
+#gItemHeaderButtons {
   float: right;
 }
 
@@ -299,16 +312,6 @@ table.gMetadata td.toggle {
   font-size: 1.2em;
   padding-left: 20px;
   width: 100%;
-}
-
-/* Slideshow button ~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gSlideshowLink {
-  float: right;
-}
-
-#gItem #gSlideshowLink {
-  position: relative;
 }
 
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -544,6 +547,7 @@ form#gAddTag input[type=text] {
 .gButtonLink {
   border: 1px solid #d3d3d3;
   padding: 5px;
+  margin-left: 5px;
 }
 
 .gButtonLink:hover {
