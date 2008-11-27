@@ -353,47 +353,48 @@ table.gMetadata td.toggle {
 #gTag ul li a {
   text-decoration: none;
 }
+
 #gTag ul li span {
   display: none;
 }
 
-#gTag ul li.size1 {
+#gTag ul li.size1 a {
   color: #9cf;
   font-size: 80%;
   font-weight: 100;
 }
 
-#gTag ul li.size2 {
+#gTag ul li.size2 a {
   color: #69f;
   font-size: 90%;
   font-weight: 300;
 }
 
-#gTag ul li.size3 {
+#gTag ul li.size3 a {
   color: #69c;
   font-size: 100%;
   font-weight: 500;
 }
 
-#gTag ul li.size4 {
+#gTag ul li.size4 a {
   color: #369;
   font-size: 110%;
   font-weight: 700;
 }
 
-#gTag ul li.size5 {
+#gTag ul li.size5 a {
   color: #0e2b52;
   font-size: 120%;
   font-weight: 900;
 }
 
-#gTag ul li.size6 {
+#gTag ul li.size6 a {
   color: #0e2b52;
   font-size: 130%;
   font-weight: 900;
 }
 
-#gTag ul li.size7 {
+#gTag ul li.size7 a {
   color: #0e2b52;
   font-size: 140%;
   font-weight: 900;
