@@ -74,8 +74,8 @@ class user_Core {
     }
 
     $user->name = $name;
-    $user->display_name = $name;
-    $user->password = $name;
+    $user->display_name = $display_name;
+    $user->password = $password;
     $user->admin = $admin;
     $user->save();
 

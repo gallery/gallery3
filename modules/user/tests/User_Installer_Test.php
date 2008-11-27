@@ -30,22 +30,13 @@ class User_Installer_Test extends Unit_Test_Case {
     $this->assert_true(user::is_correct_password($user, "admin"));
 
     $this->assert_equal(
-      array("administrator", "registered"),
+      array("Registered Users"),
       array_keys($user->groups->select_list("name")));
   }
 
-  public function install_creates_admininstrator_group_test() {
-    $group = ORM::factory("group", 1);
-    $this->assert_equal("administrator", $group->name);
-
-    $this->assert_equal(
-      array("admin"),
-      array_keys($group->users->select_list("name")));
-  }
-
   public function install_creates_registered_group_test() {
-    $group = ORM::factory("group", 2);
-    $this->assert_equal("registered", $group->name);
+    $group = ORM::factory("group", 1);
+    $this->assert_equal("Registered Users", $group->name);
 
     $this->assert_equal(
       array("admin", "joe"),
