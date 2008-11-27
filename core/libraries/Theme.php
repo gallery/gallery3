@@ -57,24 +57,26 @@ class Theme_Core {
    */
   public function __call($function, $args) {
     switch ($function) {
-    case "head":
-    case "page_top":
-    case "page_bottom":
-    case "header_top":
-    case "header_bottom":
-    case "sidebar_top":
-    case "sidebar_blocks":
-    case "sidebar_bottom":
-    case "album_top":
     case "album_blocks":
     case "album_bottom":
-    case "tag_top":
+    case "album_top":
+    case "head":
+    case "header_bottom":
+    case "header_top":
+    case "navigation_top":
+    case "navigation_bottom":
+    case "page_bottom":
+    case "page_top":
+    case "photo_blocks":
+    case "photo_top":
+    case "sidebar_blocks":
+    case "sidebar_bottom":
+    case "sidebar_top":
     case "tag_bottom":
-    case "thumbnail_top":
+    case "tag_top":
     case "thumbnail_bottom":
     case "thumbnail_info":
-    case "photo_top":
-    case "photo_blocks":
+    case "thumbnail_top":
     case "photo_bottom":
       // @todo: restrict access to this option
       $debug = Session::instance()->get("debug", false);
