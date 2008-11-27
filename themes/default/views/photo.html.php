@@ -1,6 +1,8 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gItem">
-  <a href="" class="gButtonLink">Full size (1024x768)</a>
+  <a href="" class="gButtonLink">
+    <?= sprintf(_("Full size (%dx%d)"), $item->width, $item->height) ?>
+  </a>
   <?= $theme->photo_top() ?>
 
   <img id="gPhotoID-<?= $item->id ?>" alt="photo" src="<?= $item->resize_url() ?>"
