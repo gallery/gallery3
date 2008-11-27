@@ -32,6 +32,10 @@ class slideshow_block_Core {
   }
 
   public static function tag_top($theme) {
-    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
+    /*
+     * Bharat: @todo
+     * You can revert if you want, problem is there is no item, so we don't create the media_rrs feed
+     */
+    return "";
   }
 }
