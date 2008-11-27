@@ -35,7 +35,8 @@ class Albums_Controller extends Items_Controller {
     $template->set_global("page_type", "album");
     $template->set_global('page_size', $page_size);
     $template->set_global('item', $item);
-    $template->set_global('children', $item->children($page_size, ($page-1) * $page_size));
+    $template->set_global('children', $item->children($page_size, ($page - 1) * $page_size));
+    $template->set_global('children_count', $item->children_count());
     $template->set_global('parents', $item->parents());
     $template->set_global('theme', $theme);
     $template->set_global('user', Session::instance()->get('user', null));
