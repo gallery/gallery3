@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 class tag_block_Core {
   public static function head($theme) {
     $url = url::file("modules/tag/js/tag.js");
@@ -39,7 +38,15 @@ class tag_block_Core {
       if ($block->content->page_type != "tag") {
         $block->content->item = $theme->item();
       }
+    } else {
+      $block->content->tags = array();
     }
+
+    if ($theme->page_type() != "tag") {
+      $controller = new Tags_Controller();
+      $block->content->form = $controller->form_add($theme->item());
+    }
+
     return $block;
   }
 

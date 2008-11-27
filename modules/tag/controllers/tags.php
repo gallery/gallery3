@@ -46,16 +46,13 @@ class Tags_Controller extends REST_Controller {
     throw new Exception("@todo Tag_Controller::_index NOT IMPLEMENTED");
   }
 
-  public function _form_add($parameters) {
-    $item_id = is_array($parameters) ? $parameters[0] : $parameters;
-    $form = tag::get_add_form($item_id);
-    if ($form->validate()) {
-      $tags = explode(",", $form->inputs["tags"]->value);
-
-//      $item = ORM::factory("item", $item_id);
-      $form->inputs["tags"]->value("add new tags...");
-    }
-    print $form->render();
+  public function _form_add($item_id) {
+    $form = new Forge(url::site("tags"), "", "post", array("id" => "gAddTag"));
+    $form->input("tag_name")->value(_("add new tags..."))->id("gNewTags");
+    $form->hidden("item_id")->value($item_id);
+    $form->submit(_("Add"));
+    $form->add_rules_from(ORM::factory("tag"));
+    return $form;
   }
 
   public function _form_edit($tag) {
@@ -63,7 +60,20 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _create($tag) {
-    throw new Exception("@todo Tag_Controller::_create NOT IMPLEMENTED");
+    // @todo: check permissions
+    $form = self::form_add($this->input->post('item_id'));
+    if ($form->validate()) {
+      $item = ORM::factory("item", $this->input->post("item_id"));
+      if ($item->loaded) {
+        tag::add($item, $this->input->post("tag_name"));
+      }
+
+      rest::http_status(rest::CREATED);
+      rest::http_location(url::site("tags/{$tag->id}"));
+    }
+
+    // @todo Return appropriate HTTP status code indicating error.
+    print $form;
   }
 
   public function _delete($tag) {

@@ -1,4 +1,5 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
+<? if ($tags): ?>
 <ul>
   <? foreach ($tags as $tag): ?>
   <li class="size<?=(int)(($tag->count / $max_count) * 7) ?>">
@@ -7,10 +8,11 @@
   </li>
   <? endforeach ?>
 </ul>
+<? endif ?>
 
-<? if ($page_type != "tag"): ?>
-  <div id="gTagFormContainer">
-    <?= tag::get_add_form($item->id) ?>
-  </div>
+<? if (isset($form)): ?>
+<div id="gTagFormContainer">
+  <?= $form ?>
+</div>
 <? endif; ?>
 

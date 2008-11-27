@@ -23,8 +23,9 @@ class tag_Core {
    *
    * @todo Write test.
    *
-   * @param ORM    $item an item
-   * @param string $tag_name a tag name
+   * @param Item_Model $item an item
+   * @param string     $tag_name a tag name
+   * @return Tag_Model
    * @throws Exception("@todo {$tag_name} WAS_NOT_ADDED_TO {$item->id}")
    */
   public static function add($item, $tag_name) {
@@ -46,6 +47,7 @@ class tag_Core {
       $tag->count++;
       $tag->save();
     }
+    return $tag;
   }
 
   /**
@@ -58,17 +60,5 @@ class tag_Core {
       ->orderby("count", "DESC")
       ->limit($count)
       ->find_all();
-  }
-
-  public static function get_add_form($item_id) {
-    $form = new Forge(url::site("form/add/tags/$item_id"), "", "post", array("id" => "gAddTag"));
-    $form->input("tags")
-      ->label(_("(Enter tags separated by commas)"))
-      ->id("gNewTags")
-      ->class("text")
-      ->value("add new tags...")
-      ->rules("required");
-    $form->submit(_("Add"));
-    return $form;
   }
 }
