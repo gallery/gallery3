@@ -45,6 +45,10 @@ class Theme_View_Core extends View {
     return $this->item;
   }
 
+  public function tag() {
+    return $this->tag;
+  }
+
   public function page_type() {
     return $this->page_type;
   }
