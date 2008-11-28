@@ -17,16 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class media_rss_block_Core {
-  public static function head($theme) {
-    if ($theme->item()) {
-      $url = media_rss::item_feed($theme->item());
-    } else if ($theme->tag()) {
-      $url = media_rss::tag_feed($theme->tag());
-    }
 
-    if (!empty($url)) {
-      return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
-    }
+class media_rss_Core {
+  public static function item_feed($item) {
+    $id = $item->type == "album" ? $item->id : $item->parent_id;
+    return url::site("media_rss/albums/$id");
+  }
+
+  public static function tag_feed($tag) {
+    return url::site("media_rss/tags/$tag->id}");
   }
 }
