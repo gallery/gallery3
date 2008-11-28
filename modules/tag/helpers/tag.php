@@ -100,7 +100,7 @@ class tag_Core {
     $path = $photo->file_path();
     $tags = array();
     $size = getimagesize($photo->file_path(), $info);
-    if (is_array($info)) {
+    if (is_array($info) && !empty($info["APP13"])) {
       $iptc = iptcparse($info["APP13"]);
       if (!empty($iptc["2#025"])) {
         foreach($iptc["2#025"] as $tag) {
