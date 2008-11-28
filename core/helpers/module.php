@@ -76,13 +76,11 @@ class module_Core {
   }
 
   public static function load_modules() {
-    Kohana::log("debug", "module::load_modules()");
     $modules = Kohana::config('core.modules');
 
     foreach (array_keys(self::available()) as $module_name) {
       $modules[] = MODPATH . $module_name;
     }
-    Kohana::log("debug", print_r($modules, true));
 
     Kohana::config_set('core.modules', $modules);
   }
