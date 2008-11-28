@@ -31,7 +31,7 @@ class comment_Core {
   const SECONDS_IN_A_YEAR = 31556926;
 
   /**
-   * Create a new photo.
+   * Create a new comment.
    * @param string  $author author's name
    * @param string  $email author's email
    * @param string  $text comment body
@@ -51,7 +51,10 @@ class comment_Core {
     $comment->datetime = $datetime;
     $comment->item_id = $item_id;
 
-    return $comment->save();
+    $comment->save();
+    Event::run("gallery.comment.created", $comment);
+
+    return $comment;
   }
 
   static function get_add_form($item_id) {

@@ -101,6 +101,9 @@ class Items_Controller extends REST_Controller {
     if ($parent->id) {
       $item->delete();
     }
+
+    Event::run("gallery.{$item->type}.deleted", $item);
+
     url::redirect("{$parent->type}s/{$parent->id}");
   }
 
@@ -131,6 +134,9 @@ class Items_Controller extends REST_Controller {
     // parent_id, owner_id
 
     $item->save();
+
+    Event::run("gallery.{$item->type}.changed", $item);
+
     if (array_key_exists("_return", $post)) {
       print $item->{$post["_return"]};
     }

@@ -21,6 +21,7 @@ class Logout_Controller extends Controller {
   public function index() {
     try {
       Session::instance()->destroy();
+      Event::run("gallery.user.logout", $user);
     } catch (Exception $e) {
       Kohana::log("error", $e);
     }

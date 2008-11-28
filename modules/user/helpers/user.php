@@ -81,6 +81,8 @@ class user_Core {
 
     group::add_user(group::REGISTERED_USERS, $user->id);
 
+    Event::run("gallery.user.created", $user);
+
     return $user;
   }
 
@@ -91,6 +93,7 @@ class user_Core {
    */
   static function delete($id) {
     ORM::factory("user", $id)->delete();
+    Event::run("gallery.user.deleted", $user);
   }
 
   /**
@@ -146,6 +149,7 @@ class user_Core {
     $user->save();
 
     Session::instance()->set('user', $user);
+    Event::run("gallery.user.login", $user);
   }
 
   /**

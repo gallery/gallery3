@@ -78,7 +78,7 @@ class photo_Core {
       ->set_resize($filename, 640, 480)
       ->save();
 
-    Event::run("gallery.photo_created", $photo);
+    Event::run("gallery.photo.created", $photo);
 
     return $result;
   }
