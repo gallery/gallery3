@@ -346,16 +346,13 @@ class Welcome_Controller extends Template_Controller {
   private function _read_modules() {
     $modules = array();
     try {
-      $installed = ORM::factory("module")->find_all();
+      $installed = module::installed();
       foreach ($installed as $installed_module) {
         $modules[$installed_module->name] = $installed_module->version;
       }
 
-      foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
-        if (empty($modules[basename(dirname(dirname($file)))])) {
-          $modules[basename(dirname(dirname($file)))] = 0;
-        }
-      }
+      $modules = module::available($modules);
+
     } catch (Exception $e) {
       // The database may not be installed
     }

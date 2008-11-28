@@ -123,16 +123,5 @@ $config['modules'] = array
   MODPATH . 'forge',
 
   THEMEPATH . 'default',
-
-  MODPATH . 'carousel',
-  MODPATH . 'tag',
-  MODPATH . 'user',
-  MODPATH . 'info',
-  MODPATH . 'gmaps',
-  MODPATH . 'media_rss',
-  MODPATH . 'slideshow',
-  MODPATH . 'comment',
-  MODPATH . 'atom',
-  MODPATH . 'search'
 );
 

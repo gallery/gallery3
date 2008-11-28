@@ -64,4 +64,26 @@ class module_Core {
       }
     }
   }
+
+  public static function available($modules=array()) {
+    foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
+      if (empty($modules[basename(dirname(dirname($file)))])) {
+        $modules[basename(dirname(dirname($file)))] = 0;
+      }
+    }
+
+    return $modules;
+  }
+
+  public static function load_modules() {
+    Kohana::log("debug", "module::load_modules()");
+    $modules = Kohana::config('core.modules');
+
+    foreach (array_keys(self::available()) as $module_name) {
+      $modules[] = MODPATH . $module_name;
+    }
+    Kohana::log("debug", print_r($modules, true));
+
+    Kohana::config_set('core.modules', $modules);
+  }
 }
