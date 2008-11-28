@@ -3,21 +3,16 @@
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"
                    xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title><?= $item->title ?></title>
-    <link><?= url::abs_site("albums/{$item->id}") ?></link>
-    <description><?= $item->description ?></description>
+    <title><? $title ?></title>
+    <link><?= $link ?></link>
+    <description><?= $description ?></description>
     <language>en-us</language>
-    <atom:link rel="self" href="<?= url::abs_site("media_rss/feed/{$item->id}") ?>"
-               type="application/rss+xml" />
-    <? if ($previous_page): ?>
-    <atom:link rel="previous"
-               href="<?= url::abs_site("media_rss/feed/{$item->id}?page=$previous_page") ?>"
-               type="application/rss+xml" />
+    <atom:link rel="self" href="<?= $feed_link ?>" type="application/rss+xmlml" />
+    <? if (!empty($previous_page_link)): ?>
+    <atom:link rel="previous" href="<?= $previous_page_link ?>" type="application/rss+xml" />
     <? endif ?>
-    <? if ($next_page): ?>
-    <atom:link rel="next"
-               href="<?= url::abs_site("media_rss/feed/{$item->id}?page=$next_page") ?>"
-               type="application/rss+xml" />
+    <? if (!empty($next_page_link)): ?>
+    <atom:link rel="next" href="<?= $next_page_link ?>" type="application/rss+xml" />
     <? endif ?>
     <pubDate><?= $pub_date ?></pubDate>
     <lastBuildDate><?= $pub_date ?></lastBuildDate>

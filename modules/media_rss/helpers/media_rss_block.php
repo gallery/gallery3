@@ -20,8 +20,16 @@
 class media_rss_block_Core {
   public static function head($theme) {
     if ($theme->item()) {
-      $url = url::site("media_rss/feed/{$theme->item()->id}");
+      if ($theme->item()->type == "album") {
+        $url = url::site("media_rss/albums/{$theme->item()->id}");
+      } else {
+        $url = url::site("media_rss/albums/{$theme->item()->parent_id}");
+      }
+    } else if ($theme->tag()) {
+      $url = url::site("media_rss/tags/{$theme->tag()->id}");
+    }
 
+    if (!empty($url)) {
       return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
     }
   }
