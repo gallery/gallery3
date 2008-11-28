@@ -21,7 +21,7 @@ class Media_RSS_Controller extends Controller {
   public static $page_size = 10;
 
   public function albums($id) {
-    $item = ORM::factory("item", $id)->find();
+    $item = ORM::factory("item", $id);
     if (!$item->loaded) {
       return Kohana::show_404();
     }
@@ -64,7 +64,8 @@ class Media_RSS_Controller extends Controller {
   }
 
   public function tags($id) {
-    $tag = ORM::factory("tag", $id)->find();
+    $tag = ORM::factory("tag", $id);
+
     if (!$tag->loaded) {
       return Kohana::show_404();
     }
