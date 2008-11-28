@@ -71,7 +71,7 @@ class tag_Core {
   public static function cloud($count) {
     $tags = tag::popular_tags($count)->as_array();
     if ($tags) {
-      $cloud = new View("tag_block_cloud.html");
+      $cloud = new View("tag_cloud.html");
       $cloud->max_count = $tags[0]->count;
       usort($tags, array("tag_block", "sort_by_name"));
       $cloud->tags = $tags;
