@@ -88,4 +88,17 @@ class tag_Core {
     $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }
+
+  /**
+   * Handle the creation of a new photo.
+   * @todo Get tags from the XMP and/or IPTC data in the image
+   *
+   * @param Item_Model $photo
+   */
+  public static function on_photo_create() {
+    $photo = Event::$data;
+    Kohana::log("debug", "tag::on_photo_create($photo->name)");
+    return;
+  }
+
 }

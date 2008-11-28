@@ -53,6 +53,9 @@ class album_Core {
     if (!file_exists($thumbnail_dir)) {
       mkdir($thumbnail_dir);
     }
+
+    Event::run("gallery.album_created", $photo);
+
     return $album;
   }
 }
