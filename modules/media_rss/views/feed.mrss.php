@@ -22,11 +22,11 @@
       <link><?= url::abs_site("photos/$child->id") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("photos/$child->id") ?></guid>
       <description><?= $child->description ?></description>
+      <media:thumbnail url="<?= $child->thumbnail_url(true) ?>"
+                       height="<?= $child->thumbnail_height ?>"
+                       width="<?= $child->thumbnail_width ?>"
+                       />
       <media:group>
-        <media:thumbnail url="<?= $child->thumbnail_url(true) ?>"
-                         height="<?= $child->thumbnail_height ?>"
-                         width="<?= $child->thumbnail_width ?>"
-                         />
         <media:content url="<?= $child->resize_url(true) ?>"
                        type="<?= $child->mime_type ?>"
                        height="<?= $child->resize_height ?>"
