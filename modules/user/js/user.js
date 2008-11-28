@@ -5,7 +5,6 @@
 
 $("document").ready(function() {
   $("#gLoginLink").click(function(event){
-    event.preventDefault();
     var url = $("#gLoginLink a").attr("href");
     $.get(url, function(data) {
 	  $('#gLoginLink').hide();
@@ -21,6 +20,7 @@ $("document").ready(function() {
       $("#gLoginFormContainer").html(data).hide().fadeIn();
       ajaxify_login_form();
     });
+    return false;
   });
 });
 
