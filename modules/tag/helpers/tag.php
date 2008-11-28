@@ -88,34 +88,4 @@ class tag_Core {
     $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }
-
-  /**
-   * Handle the creation of a new photo.
-   * @todo Get tags from the XMP and/or IPTC data in the image
-   *
-   * @param Item_Model $photo
-   */
-  public static function on_photo_create() {
-    $photo = Event::$data;
-    $path = $photo->file_path();
-    $tags = array();
-    $size = getimagesize($photo->file_path(), $info);
-    if (is_array($info) && !empty($info["APP13"])) {
-      $iptc = iptcparse($info["APP13"]);
-      if (!empty($iptc["2#025"])) {
-        foreach($iptc["2#025"] as $tag) {
-          $tags[$tag]= 1;
-        }
-      }
-    }
-
-    // @todo figure out how to read the keywords from xmp
-
-    foreach(array_keys($tags) as $tag) {
-      self::add($photo, $tag);
-    }
-
-    return;
-  }
-
 }

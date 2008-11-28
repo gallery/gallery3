@@ -54,7 +54,7 @@ class album_Core {
       mkdir($thumbnail_dir);
     }
 
-    Event::run("gallery.album.created", $album);
+    module::event("album_created", $album);
 
     return $album;
   }

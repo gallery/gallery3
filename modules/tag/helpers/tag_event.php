@@ -17,16 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Logout_Controller extends Controller {
-  public function index() {
-    try {
-      Session::instance()->destroy();
-      module::event("user_logout", $user);
-    } catch (Exception $e) {
-      Kohana::log("error", $e);
+class tag_event_Core {
+  /**
+   * Handle the creation of a new photo.
+   * @todo Get tags from the XMP and/or IPTC data in the image
+   *
+   * @param Item_Model $photo
+   */
+  public static function photo_create($photo) {
+    print "PHOTO CREATE";
+
+    $path = $photo->file_path();
+    $tags = array();
+    $size = getimagesize($photo->file_path(), $info);
+    if (is_array($info) && !empty($info["APP13"])) {
+      $iptc = iptcparse($info["APP13"]);
+      if (!empty($iptc["2#025"])) {
+        foreach($iptc["2#025"] as $tag) {
+          $tags[$tag]= 1;
+        }
+      }
     }
-    if ($this->input->get("continue")) {
-      url::redirect($this->input->get("continue"));
+
+    // @todo figure out how to read the keywords from xmp
+
+    foreach(array_keys($tags) as $tag) {
+      self::add($photo, $tag);
     }
+
+    return;
   }
 }

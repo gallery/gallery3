@@ -52,7 +52,7 @@ class comment_Core {
     $comment->item_id = $item_id;
 
     $comment->save();
-    Event::run("gallery.comment.created", $comment);
+    module::event("comment_created", $comment);
 
     return $comment;
   }
