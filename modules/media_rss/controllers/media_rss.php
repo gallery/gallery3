@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Media_RSS_Controller extends Controller {
-  public static $page_size = 10;
+  public static $page_size = 30;
 
   public function albums($id) {
     $item = ORM::factory("item", $id);
