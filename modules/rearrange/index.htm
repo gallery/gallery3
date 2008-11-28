@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>SimpleTree Drag&Drop</title>
+<style>
+body
+{
+	font: normal 12px arial, tahoma, helvetica, sans-serif;
+	margin:0;
+	padding:20px;
+}
+.simpleTree
+{
+	
+	margin:0;
+	padding:0;
+	/*
+	overflow:auto;
+	width: 250px;
+	height:350px;
+	overflow:auto;
+	border: 1px solid #444444;
+	*/
+}
+.simpleTree li
+{
+	list-style: none;
+	margin:0;
+	padding:0 0 0 34px;
+	line-height: 14px;
+}
+.simpleTree li span
+{
+	display:inline;
+	clear: left;
+	white-space: nowrap;
+}
+.simpleTree ul
+{
+	margin:0; 
+	padding:0;
+}
+.simpleTree .root
+{
+	margin-left:-16px;
+	background: url(images/root.gif) no-repeat 16px 0 #ffffff;
+}
+.simpleTree .line
+{
+	margin:0 0 0 -16px;
+	padding:0;
+	line-height: 3px;
+	height:3px;
+	font-size:3px;
+	background: url(images/line_bg.gif) 0 0 no-repeat transparent;
+}
+.simpleTree .line-last
+{
+	margin:0 0 0 -16px;
+	padding:0;
+	line-height: 3px;
+	height:3px;
+	font-size:3px;
+	background: url(images/spacer.gif) 0 0 no-repeat transparent;
+}
+.simpleTree .line-over
+{
+	margin:0 0 0 -16px;
+	padding:0;
+	line-height: 3px;
+	height:3px;
+	font-size:3px;
+	background: url(images/line_bg_over.gif) 0 0 no-repeat transparent;
+}
+.simpleTree .line-over-last
+{
+	margin:0 0 0 -16px;
+	padding:0;
+	line-height: 3px;
+	height:3px;
+	font-size:3px;
+	background: url(images/line_bg_over_last.gif) 0 0 no-repeat transparent;
+}
+.simpleTree .folder-open
+{
+	margin-left:-16px;
+	background: url(images/collapsable.gif) 0 -2px no-repeat #fff;
+}
+.simpleTree .folder-open-last
+{
+	margin-left:-16px;
+	background: url(images/collapsable-last.gif) 0 -2px no-repeat #fff;
+}
+.simpleTree .folder-close
+{
+	margin-left:-16px;
+	background: url(images/expandable.gif) 0 -2px no-repeat #fff;
+}
+.simpleTree .folder-close-last
+{
+	margin-left:-16px;
+	background: url(images/expandable-last.gif) 0 -2px no-repeat #fff;
+}
+.simpleTree .doc
+{
+	margin-left:-16px;
+	background: url(images/leaf.gif) 0 -1px no-repeat #fff;
+}
+.simpleTree .doc-last
+{
+	margin-left:-16px;
+	background: url(images/leaf-last.gif) 0 -1px no-repeat #fff;
+}
+.simpleTree .ajax
+{
+	background: url(images/spinner.gif) no-repeat 0 0 #ffffff;
+	height: 16px;
+	display:none;
+}
+.simpleTree .ajax li
+{
+	display:none;
+	margin:0; 
+	padding:0;
+}
+.simpleTree .trigger
+{
+	display:inline;
+	margin-left:-32px;
+	width: 28px;
+	height: 11px;
+	cursor:pointer;
+}
+.simpleTree .text
+{
+	cursor: default;
+}
+.simpleTree .active
+{
+	cursor: default;
+	background-color:#F7BE77;
+	padding:0px 2px;
+	border: 1px dashed #444;
+}
+#drag_container
+{
+	background:#ffffff;
+	color:#000;
+	font: normal 11px arial, tahoma, helvetica, sans-serif;
+	border: 1px dashed #767676;
+}
+#drag_container ul
+{
+	list-style: none;
+	padding:0;
+	margin:0;
+}
+
+#drag_container li
+{
+	list-style: none;
+	background-color:#ffffff;
+	line-height:18px;
+	white-space: nowrap;
+	padding:1px 1px 0px 16px;
+	margin:0;
+}
+#drag_container li span
+{
+	padding:0;
+}
+
+#drag_container li.doc, #drag_container li.doc-last
+{
+	background: url(images/leaf.gif) no-repeat -17px 0 #ffffff;
+}
+#drag_container .folder-close, #drag_container .folder-close-last
+{
+	background: url(images/expandable.gif) no-repeat -17px 0 #ffffff;
+}
+
+#drag_container .folder-open, #drag_container .folder-open-last
+{
+	background: url(images/collapsable.gif) no-repeat -17px 0 #ffffff;
+}
+.contextMenu
+{
+	display:none;
+}
+</style>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery.simple.tree.js"></script>
+<script type="text/javascript">
+var simpleTreeCollection;
+$(document).ready(function(){
+	simpleTreeCollection = $('.simpleTree').simpleTree({
+		autoclose: true,
+		afterClick:function(node){
+			//alert("text-"+$('span:first',node).text());
+		},
+		afterDblClick:function(node){
+			//alert("text-"+$('span:first',node).text());
+		},
+		afterMove:function(destination, source, pos){
+			//alert("destination-"+destination.attr('id')+" source-"+source.attr('id')+" pos-"+pos);
+		},
+		afterAjax:function()
+		{
+			//alert('Loaded');
+		},
+		animate:true
+		//,docToFolderConvert:true
+	});
+});
+</script>
+</head>
+
+<body>
+<div class="contextMenu" id="myMenu1">
+	<ul>
+		<li id="add"><img src="images/folder_add.png" /> Add child</li>
+		<li id="reload"><img src="images/arrow_refresh.png" /> Reload</li>
+		<li id="edit"><img src="images/folder_edit.png" /> Edit</li>
+		<li id="delete"><img src="images/folder_delete.png" /> Delete</li>
+	</ul>
+</div>
+<div class="contextMenu" id="myMenu2">
+	<ul>
+		<li id="edit"><img src="images/page_edit.png" /> Edit</li>
+		<li id="delete"><img src="images/page_delete.png" /> Delete</li>
+	</ul>
+</div>
+<ul class="simpleTree">
+	<li class="root" id='1'><span>Tree Root 1</span>
+		<ul>
+			
+			<li class="open" id='2'><span>Tree Node 1</span>
+				<ul>
+					
+					<li id='3'><span>Tree Node 1-1</span>
+						<ul class="ajax">
+							<li id='4'>{url:loadTree.php?tree_id=1}</li>
+						</ul>
+					</li>
+					
+				</ul>
+			</li>
+			
+			<li id='5'><span>Tree Node 2</span>
+				<ul>
+					
+					<li id='6'><span>Tree Node 2-1</span>
+						<ul>
+							
+							<li id='7'><span>Tree Node 2-1-1</span></li>
+							
+							<li id='8'><span>Tree Node 2-1-2</span></li>
+							
+							<li id='9'><span>Tree Node 2-1-3</span></li>
+							
+							<li id='10'><span>Tree Node 2-1-4</span>
+								<ul class="ajax">
+									<li id='11'>{url:loadTree.php?tree_id=1}</li>
+								</ul>
+							</li>
+							
+						</ul>
+					</li>
+					
+					<li id='12'><span>Tree Node 2-2</span>
+						<ul>
+							
+							<li id='13'><span>Tree Node 2-2-1</span></li>
+							
+						</ul>
+					</li>
+					
+					
+					<li id='14'><span>Tree Node 2-3</span>
+						<ul>
+							
+							<li id='15'><span>Tree Node 2-3-1</span>
+									<ul>
+										
+										<li id='16'><span>Tree Node 2-3-1-1</span></li>
+										
+										<li id='17'><span>Tree Node 2-3-1-2</span></li>
+										
+										<li id='18'><span>Tree Node 2-3-1-3</span>
+											<ul>
+												
+												<li id='19'><span>Tree Node 2-3-1-3-1</span></li>
+												
+											</ul>
+										</li>
+										
+										<li id='20'><span>Tree Node 2-3-1-4</span></li>
+										
+										<li id='21'><span>Tree Node 2-3-1-5</span></li>
+										
+										<li id='22'><span>Tree Node 2-3-1-6</span>
+											<ul>
+												
+												<li id='23'><span>Tree Node 2-3-1-6-1</span></li>
+												
+											</ul>
+										</li>
+										
+										<li id='24'><span>Tree Node 2-3-1-7</span></li>
+										
+										<li id='25'><span>Tree Node 2-3-1-8</span></li>
+										
+										<li id='26'><span>Tree Node 2-3-1-9</span>
+											<ul>
+												
+												<li id='27'><span>Tree Node 2-3-1-9-1</span></li>
+												
+											</ul>
+										</li>
+										
+									</ul>
+							</li>
+							
+						</ul>
+					</li>
+					
+				</ul>
+			</li>
+			
+		</ul>
+	</li>
+</ul>
+
+</body>
+
+</html>
