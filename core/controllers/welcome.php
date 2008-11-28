@@ -21,6 +21,8 @@ class Welcome_Controller extends Template_Controller {
   public $template = "welcome.html";
 
   function index() {
+    Session::instance();
+
     $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
     $this->template->syscheck->modules = array();
@@ -147,6 +149,17 @@ class Welcome_Controller extends Template_Controller {
       $profiler = new Profiler();
       $this->auto_render = false;
     }
+  }
+
+  function add_photos() {
+    $path = $this->input->post("path");
+    cookie::set("add_photos_path", $path);
+
+    foreach (glob("$path/*.[Jj][Pp][Gg]") as $file) {
+      set_time_limit(30);
+      photo::create(1, $file, basename($file), basename($file));
+    }
+    url::redirect("welcome");
   }
 
   function add_albums_and_photos($count) {

@@ -233,6 +233,14 @@
               </form>
             </fieldset>
             <fieldset>
+              <legend>Server Side Photos</legend>
+              <form method="post" action="<?= url::site("welcome/add_photos") ?>">
+                <input type="submit" value="upload"/>
+                <input type="text" name="path" size="70"
+                       value="<?= cookie::get("add_photos_path") ?>" />
+              </form>
+            </fieldset>
+            <fieldset>
               <legend>Albums</legend>
               <form method="post" action="<?= url::site("albums/1") ?>">
                 <input type="submit" value="create"/>
