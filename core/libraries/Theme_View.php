@@ -98,7 +98,7 @@ class Theme_View_Core extends View {
       $debug = Session::instance()->get("debug", false);
 
       $blocks = array();
-      foreach (module::get_list() as $module) {
+      foreach (module::installed() as $module) {
         $helper_class = "{$module->name}_block";
         if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(

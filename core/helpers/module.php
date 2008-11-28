@@ -51,7 +51,7 @@ class module_Core {
     return ORM::factory("module")->where("name", $module_name)->find()->loaded;
   }
 
-  public static function get_list() {
+  public static function installed() {
     return ORM::factory("module")->find_all();
   }
 }

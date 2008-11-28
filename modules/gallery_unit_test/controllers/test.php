@@ -71,7 +71,7 @@ class Test_Controller extends Controller {
   }
 
   private function _uninstall_modules() {
-    foreach (module::get_list() as $module) {
+    foreach (module::installed() as $module) {
       if ($module->name == "core") {
         continue;
       }
