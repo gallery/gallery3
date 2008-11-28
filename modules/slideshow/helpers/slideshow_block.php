@@ -23,19 +23,22 @@ class slideshow_block_Core {
       "</script>";
   }
 
+  private static function _piclens_link() {
+    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" " .
+      "class=\"gButtonLink\">" .
+      _("Slideshow") .
+      "</a>";
+  }
+
   public static function album_top($theme) {
-    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
+    return self::_piclens_link();
   }
 
   public static function photo_top($theme) {
-    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" class=\"gButtonLink\">Slideshow</a>";
+    return self::_piclens_link();
   }
 
   public static function tag_top($theme) {
-    /*
-     * Bharat: @todo
-     * You can revert if you want, problem is there is no item, so we don't create the media_rrs feed
-     */
-    return "";
+    return self::_piclens_link();
   }
 }
