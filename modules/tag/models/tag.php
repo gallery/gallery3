@@ -25,14 +25,18 @@ class Tag_Model extends ORM {
 
   /**
    * Return all items associated with this tag.
+   * @param string   $type   the type of item (album, photo)
    * @param integer  $limit  number of rows to limit result to
    * @param integer  $offset offset in result to start returning rows from
    * @return ORM_Iterator
    */
-  public function items($limit=null, $offset=0) {
-    return ORM::factory("item")
+  public function items($limit=null, $offset=0, $type=null) {
+    $model = ORM::factory("item")
       ->join("items_tags", "items.id", "items_tags.item_id")
-      ->where("items_tags.tag_id", $this->id)
-      ->find_all($limit, $offset);
+      ->where("items_tags.tag_id", $this->id);
+    if ($type) {
+      $model->where("items.type", $type);
+    }
+    return $model->find_all($limit, $offset);
  }
 }
