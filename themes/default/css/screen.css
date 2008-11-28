@@ -290,6 +290,22 @@ table.gMetadata td.toggle {
 .gInfo {
 }
 
+/* Credits ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gCredits li {
+  display: inline;
+}
+
+#gCredits li:before {
+  padding: 0px 2px 0px 2px;
+  content: "|"
+}
+
+#gCredits li.first:before {
+  content: ""
+}
+
+
 /** *******************************************************************
  * 6) Navigation and menus
  ******************************************************************/
