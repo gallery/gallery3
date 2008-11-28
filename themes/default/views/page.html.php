@@ -23,7 +23,8 @@
     <script src="<?= $theme->url("jquery/jquery.ui.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("jquery/jquery.ui.tabs.js") ?>" type="text/javascript"></script>
     <!--script src="<?= $theme->url("jquery/jquery.ui.accordion.js") ?>" type="text/javascript"></script-->
-    <!--script src="<?= $theme->url("jquery/jquery.ui.init.js") ?>" type="text/javascript"></script-->
+    <script src="<?= $theme->url("jquery/jquery.dimensions.min.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/jquery.ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
   </head>
 
