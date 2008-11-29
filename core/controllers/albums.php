@@ -33,8 +33,14 @@ class Albums_Controller extends Items_Controller {
 
     $template->set_global('page_size', $page_size);
     $template->set_global('item', $item);
-    $template->set_global('children', $item->children($page_size, ($page - 1) * $page_size));
-    $template->set_global('children_count', $item->children_count());
+
+    // Make sure that the page references a valid offset
+    $children_count = $item->children_count();
+    while (($offset = ($page - 1) * $page_size) > $children_count && $page != 1) {
+      $page--;
+    }
+    $template->set_global('children', $item->children($page_size, $offset));
+    $template->set_global('children_count', $children_count);
     $template->set_global('parents', $item->parents());
     $template->content = new View("album.html");
 
