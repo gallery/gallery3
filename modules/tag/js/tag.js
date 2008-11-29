@@ -3,14 +3,14 @@ $("document").ready(function() {
 });
 
 function ajaxify_tag_form() {
-  $("form#gAddTag").ajaxForm({
+  $("#gTag form").ajaxForm({
     complete: function(xhr, statusText) {
-      $("form#gAddTag").replaceWith(xhr.responseText);
+      $("#gTag form").replaceWith(xhr.responseText);
       if (xhr.status == 201) {
         $.get($("#gTagCloud").attr("src"), function(data, textStatus) {
 	  $("#gTagCloud").html(data);
 	});
-	$("form#gAddTag").clearForm();
+	$("#gTag form").clearForm();
       }
       ajaxify_tag_form();
     }
