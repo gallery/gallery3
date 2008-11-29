@@ -40,7 +40,7 @@ class tag_event_Core {
     // @todo figure out how to read the keywords from xmp
 
     foreach(array_keys($tags) as $tag) {
-      self::add($photo, $tag);
+      tag::add($photo, $tag);
     }
 
     return;
