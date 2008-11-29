@@ -162,7 +162,7 @@ class Welcome_Controller extends Template_Controller {
     url::redirect("welcome");
   }
 
-  function add_albums_and_photos($count) {
+  function add_albums_and_photos($count, $desired_type=null) {
     srand(time());
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
 
@@ -174,8 +174,14 @@ class Welcome_Controller extends Template_Controller {
     }
 
     for ($i = 0; $i < $count; $i++) {
+      set_time_limit(30);
+
       $parent = $parents[array_rand($parents)];
-      if (!rand(0, 10)) {
+      $type = $desired_type;
+      if (!$type) {
+        $type = rand(0, 10) ? "photo" : "album";
+      }
+      if ($type == "album") {
         $parents[] = album::create(
           $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
           ->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
@@ -183,10 +189,6 @@ class Welcome_Controller extends Template_Controller {
       } else {
         photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg",
                       "thumbnail.jpg", "rnd_" . rand(), "sample thumbnail", $owner_id);
-      }
-
-      if (!($i % 100)) {
-        set_time_limit(30);
       }
     }
     url::redirect("welcome");

@@ -31,12 +31,12 @@ class core_installer {
     }
 
     if ($version == 0) {
-      $db->query("CREATE TABLE `modules` (
+      $db->query("CREATE TABLE `access` (
                    `id` int(9) NOT NULL auto_increment,
-                   `name` char(255) default NULL,
-                   `version` int(9) default NULL,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`name`))
+                   `item_id` int(9),
+                   `group_id` int(9) NOT NULL,
+                   `perm` char(255) default NULL,
+                   PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE `items` (
@@ -62,6 +62,14 @@ class core_installer {
                    KEY `type` (`type`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `modules` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` char(255) default NULL,
+                   `version` int(9) default NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       foreach (array("albums", "resizes") as $dir) {
         @mkdir(VARPATH . $dir);
       }
@@ -83,6 +91,7 @@ class core_installer {
 
   public static function uninstall() {
     $db = Database::instance();
+    $db->query("DROP TABLE IF EXISTS `access`;");
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
     system("/bin/rm -rf " . VARPATH . "albums");

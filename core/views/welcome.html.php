@@ -214,6 +214,13 @@
             <p>
               add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
+                <?= html::anchor("welcome/add_albums_and_photos/$count/album", "$count") ?>
+              <? endforeach ?>
+              ] albums only
+            </p>
+            <p>
+              add: [
+              <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
                 <?= html::anchor("welcome/add_comments/$count", "$count") ?>
               <? endforeach ?>
               ] comments
@@ -328,6 +335,14 @@
               <ul>
                 <li>
                   <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
+                  <? foreach (ORM::factory("item")->list_fields("items") as $field => $info): ?>
+                  <? if (!strncmp($field, "view_", 5)): ?>
+                  [<?= $field ?>=<?= $current->album->$field ?>]
+                  <? endif ?>
+                  <? endforeach ?>
+                  <? foreach (ORM::factory("access")->where("item_id", $current->album->id)->find() as $access): ?>
+                  [ <?= $access->id ?> ]
+                  <? endforeach ?>
                   <? $stack[] = "CLOSE"; ?>
                   <? if ($current->children): ?>
                   <? $stack = array_merge($stack, $current->children) ?>
