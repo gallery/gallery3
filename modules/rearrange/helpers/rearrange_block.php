@@ -17,34 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rearrange_Controller extends REST_Controller {
-  protected $resource_type = "item";
+class rearrange_block_Core {
+  public static function head($theme) {
+    $head[] = html::script("modules/rearrange/js/jquery.simple.tree.js");
 
-  public function _show($item) {
-    print rearrange::get_html($item)->render();
-  }
+    $url = url::file("modules/rearrange/css/jquery.simple.tree.css");
+    $head[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$url\" " .
+      "media=\"screen,print,projection\" />";
 
-  public function _index() {
-    print rearrange::get_html()->render();
-  }
-
-  public function _form_add($item_id) {
-    throw new Exception("@todo Rearrange_Controller::_form_add NOT IMPLEMENTED");
-  }
-
-  public function _form_edit($tag) {
-    throw new Exception("@todo Rearrange_Controller::_form_edit NOT IMPLEMENTED");
-  }
-
-  public function _create($tag) {
-    throw new Exception("@todo Rearrange_Controller::_create NOT IMPLEMENTED");
-  }
-
-  public function _delete($tag) {
-    throw new Exception("@todo Rearrange_Controller::_delete NOT IMPLEMENTED");
-  }
-
-  public function _update($tag) {
-    throw new Exception("@todo Rearrange_Controller::_update NOT IMPLEMENTED");
+    return implode("\n", $head);
   }
 }

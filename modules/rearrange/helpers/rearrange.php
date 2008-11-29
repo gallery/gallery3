@@ -17,34 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rearrange_Controller extends REST_Controller {
-  protected $resource_type = "item";
+class rearrange_Core {
+  public static function get_html($item=null) {
+    $view = new View("rearrange.html");
 
-  public function _show($item) {
-    print rearrange::get_html($item)->render();
-  }
+    $view->root = null;
+    if (empty($item)) {
+      $item = ORM::factory("item", 1);
+      $view->root = $item;
+    }
 
-  public function _index() {
-    print rearrange::get_html()->render();
-  }
-
-  public function _form_add($item_id) {
-    throw new Exception("@todo Rearrange_Controller::_form_add NOT IMPLEMENTED");
-  }
-
-  public function _form_edit($tag) {
-    throw new Exception("@todo Rearrange_Controller::_form_edit NOT IMPLEMENTED");
-  }
-
-  public function _create($tag) {
-    throw new Exception("@todo Rearrange_Controller::_create NOT IMPLEMENTED");
-  }
-
-  public function _delete($tag) {
-    throw new Exception("@todo Rearrange_Controller::_delete NOT IMPLEMENTED");
-  }
-
-  public function _update($tag) {
-    throw new Exception("@todo Rearrange_Controller::_update NOT IMPLEMENTED");
+    $view->children = $item->children();
+    return $view;
   }
 }

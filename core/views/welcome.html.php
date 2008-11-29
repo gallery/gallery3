@@ -129,9 +129,10 @@
         text-decoration: underline;
       }
     </style>
-    <script type="text/javascript" src="<?= url::file("lib/jquery.js") ?>"></script>
-    <script type="text/javascript" src="<?= url::file("lib/jquery.cookie.js") ?>"></script>
-    <script type="text/javascript" src="<?= url::file("lib/jquery.MultiFile.js") ?>"></script>
+    <?= html::script("lib/jquery.js") ?>
+    <?= html::script("lib/jquery.cookie.js") ?>
+    <?= html::script("lib/jquery.MultiFile.js") ?>
+    <?= rearrange_block::head(null) ?>
   </head>
   <body>
     <div class="outer">
@@ -247,6 +248,10 @@
                 <input type="text" name="name"/>
                 <input type="hidden" name="type" value="album"/>
               </form>
+            </fieldset>
+            <fieldset>
+              <legend>Rearrange</legend>
+              <?= rearrange::get_html()->render() ?>
             </fieldset>
           </div>
 
