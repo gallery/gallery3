@@ -36,11 +36,13 @@ class Welcome_Controller extends Template_Controller {
       $this->template->deepest_photo = ORM::factory("item")
         ->where("type", "photo")->orderby("level", "desc")->find();
       $this->template->album_tree = $this->_load_album_tree();
+      $this->template->rearrange_html = rearrange::get_html()->render();
     } catch (Exception $e) {
       $this->template->album_count = 0;
       $this->template->photo_count = 0;
       $this->template->deepest_photo = null;
       $this->template->album_tree = array();
+      $this->template->rearrange_html = "";
     }
 
     $this->_load_user_info();

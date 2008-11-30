@@ -258,7 +258,7 @@
             </fieldset>
             <fieldset>
               <legend>Rearrange</legend>
-              <?= rearrange::get_html()->render() ?>
+              <?= $rearrange_html ?>
             </fieldset>
           </div>
 
