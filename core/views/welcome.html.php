@@ -358,6 +358,11 @@
                   <?= html::anchor("welcome/add_perm/0/$perm/{$current->album->id}", strtolower($perm), array("class" => "denied")) ?>
                   <? endif ?>
                   <? endforeach ?>
+                  <? if ($current->album->id != 1): ?>
+                  <span class="understate">
+                    (<?= html::anchor("welcome/reset_all_perms/0/{$current->album->id}", "reset") ?>)
+                  </span>
+                  <? endif; ?>
                   <? $stack[] = "CLOSE"; ?>
                   <? if ($current->children): ?>
                   <? $stack = array_merge($stack, $current->children) ?>

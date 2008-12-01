@@ -65,8 +65,6 @@
  *   directly into Item_Model.  By doing this, we'll be able to find viewable items (the most
  *   common permission access) without doing table joins.
  *
- * o Support setting an intent back to "neutral" so that it can use the parent's value.
- *
  * o Write unit tests.
  */
 class access_Core {
@@ -134,6 +132,17 @@ class access_Core {
    */
   public static function deny($group_id, $perm_name, $item_id) {
     self::_set($group_id, $perm_name, $item_id, self::DENY);
+  }
+
+  /**
+   * Unset the given permission for this item and use inherited values
+   *
+   */
+  public static function reset($group_id, $perm_name, $item_id) {
+    if ($item_id == 1) {
+      throw new Exception("@todo CANT_RESET_ROOT_PERMISSION");
+    }
+    self::_set($group_id, $perm_name, $item_id, null);
   }
 
   /**
@@ -304,12 +313,12 @@ class access_Core {
       // DENY and this ALLOW cannot be obeyed.  So in that case, back up the tree and find any
       // non-DEFAULT and non-ALLOW parent and propagate from there.  If we can't find a matching
       // item, then its safe to propagate from here.
-      if ($access->$field != self::DENY) {
+      if ($access->$field !== self::DENY) {
         $tmp_item = ORM::factory("item")
           ->join("access_intents", "items.id", "access_intents.item_id")
           ->where("left <", $item->left)
           ->where("right >", $item->right)
-          ->where($field, self::DENY)
+          ->where("$field IS NOT", null)
           ->orderby("left", "DESC")
           ->limit(1)
           ->find();
@@ -364,6 +373,24 @@ class access_Core {
         }
       }
     } else {
+      // If the item's intent is ALLOW or DEFAULT, it's possible that some ancestor has specified
+      // DENY and this ALLOW cannot be obeyed.  So in that case, back up the tree and find any
+      // non-DEFAULT and non-ALLOW parent and propagate from there.  If we can't find a matching
+      // item, then its safe to propagate from here.
+      if ($access->$field === null) {
+        $tmp_item = ORM::factory("item")
+          ->join("access_intents", "items.id", "access_intents.item_id")
+          ->where("left <", $item->left)
+          ->where("right >", $item->right)
+          ->where("$field IS NOT", null)
+          ->orderby("left", "DESC")
+          ->limit(1)
+          ->find();
+        if ($tmp_item->loaded) {
+          $item = $tmp_item;
+        }
+      }
+
       // With non-view permissions, each level can override any permissions that came above it
       // so start at the top and work downwards, overlaying permissions as we go.
       $query = $db->query(

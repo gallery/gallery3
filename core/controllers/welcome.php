@@ -480,4 +480,11 @@ class Welcome_Controller extends Template_Controller {
     access::deny($group_id, $perm, $item_id);
     url::redirect("welcome");
   }
+
+  public function reset_all_perms($group_id, $item_id) {
+    foreach (ORM::factory("permission")->find_all() as $perm) {
+      access::reset($group_id, $perm->name, $item_id);
+    }
+    url::redirect("welcome");
+  }
 }
