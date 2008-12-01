@@ -64,6 +64,10 @@
  * o In the near future, we'll be moving the "view" columns out of Access_Intent_Model and
  *   directly into Item_Model.  By doing this, we'll be able to find viewable items (the most
  *   common permission access) without doing table joins.
+ *
+ * o Support setting an intent back to "neutral" so that it can use the parent's value.
+ *
+ * o Write unit tests.
  */
 class access_Core {
   const DENY      = 0;
