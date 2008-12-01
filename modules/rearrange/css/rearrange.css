@@ -8,14 +8,15 @@
   background-image: url(../images/folder_add.png);
   background-repeat: no-repeat;
   padding-left: 20px;
-  padding-bottom: 5px
+  padding-bottom: 5px;
+  cursor: pointer;
 }
 
 #gDeleteItem {
   background-image: url(../images/bin_closed.png);
   background-repeat: no-repeat;
   padding-left: 20px;
-  padding-bottom: 5px
+  padding-bottom: 5px;
 }
 
 UL.jqueryFileTree {

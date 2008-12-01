@@ -31,7 +31,6 @@ if(jQuery) (function($){
     RearrangeTree: function(o, h) {
       // Defaults
       if( !o ) var o = {};
-      if( o.root == undefined ) o.root = '/1';
       if( o.script == undefined ) o.script = 'rearrange';
       if( o.folderEvent == undefined ) o.folderEvent = 'click';
       if( o.expandSpeed == undefined ) o.expandSpeed= 500;
@@ -40,20 +39,68 @@ if(jQuery) (function($){
       if( o.collapseEasing == undefined ) o.collapseEasing = null;
       if( o.multiFolder == undefined ) o.multiFolder = true;
       if( o.loadMessage == undefined ) o.loadMessage = 'Loading...';
-      
+
+      $("#gAddAlbum").draggable({
+        helper: 'clone',
+        containment: "#gRearrange",
+        opacity: .6,
+        revert: "invalid"
+      });
+
+      $("#gDeleteItem").droppable({
+        accept: "a",
+        hoverClass: "droppable-hover",
+          drop: function(ev, ui) {
+            source_element = ui.draggable;
+            source_parent = source_element.parent();
+            target = ui.element;
+            alert(source_element.attr("rel") + "\n" + target.attr("id"));
+          }
+      });
+
       $(this).each( function() {
-        
         function showTree(c, t) {
           $(c).addClass('wait');
           $(".jqueryFileTree.start").remove();
           $.get(o.script + "/" + t, {}, function(data) {
             $(c).find('.start').html('');
             $(c).removeClass('wait').append(data);
-            if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+            $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+            $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+            $(c).find('li.directory').droppable({
+              accept: "#gAddAlbum",
+              hoverClass: "droppable-hover",
+              drop: function(ev, ui) {
+                source_element = ui.draggable;
+                source_parent = source_element.parent();
+                target = ui.element;
+                alert(source_element.attr("rel") + "\n" + target.attr("id"));
+              }
+            });
+            if ($(c).hasClass('treeitem')) {
+	            $(c).find("li a", this.element).draggable({
+	              helper: 'clone',
+	              containment: "#gRearrange",
+	              opacity: .6,
+	              revert: "invalid"
+              });
+            }
+
+            $(c).find('.directory').droppable({
+              accept: "a",
+              greedy: true,
+              hoverClass: "droppable-hover",
+              drop: function(ev, ui) {
+                source_element = ui.draggable;
+                source_parent = source_element.parent();
+                target = ui.element;
+                alert(source_element.attr("rel") + "\n" + target.attr("id"));
+              }
+            });
             bindTree(c);
           });
         }
-        
+
         function bindTree(t) {
           $(t).find('LI A').bind(o.folderEvent, function() {
             if( $(this).parent().hasClass('directory') ) {

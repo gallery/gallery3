@@ -7,7 +7,7 @@ $(document).ready( function() {
 });
 </script>
 <div id="gRearrange">
-  <span id="gAddAlbum">New Album</span>
+  <span id="gAddAlbum" rel="gAddAlbum">New Album</span>
   &nbsp;
   <span id="gDeleteItem">Delete</span>
   <hr/>

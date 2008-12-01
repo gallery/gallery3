@@ -2,11 +2,11 @@
 <ul class="jqueryFileTree" style="display: none">
   <? foreach ($children as $item): ?>
     <? if ($item->type == "album"): ?>
-      <li class="directory <?= $item->children_count() > 0 ? "collapsed" : "" ?>" id="<?= $item->id?>">
+      <li class="directory collapsed treeitem" id="<?= $item->id?>">
         <a href="#" rel="<?= $item->id?>"><?= $item->title?></a>
       </li>
     <? else: ?>
-      <li class="file item" id="<?= $item->id?>"><a href="#" rel="<?= $item->id?>"><?= $item->title?></a>
+      <li class="file item treeitem" id="<?= $item->id?>"><a href="#" rel="<?= $item->id?>"><?= $item->title?></a>
       </li>
     <? endif; ?>
   <? endforeach;?>
