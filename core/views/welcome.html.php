@@ -145,7 +145,7 @@
       }
 
       ul#permissions ul {
-        margin-left: -1em;
+        margin-left: -1.5em;
         list-style-type: none;
       }
 </style>
