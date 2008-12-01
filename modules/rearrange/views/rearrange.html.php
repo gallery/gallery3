@@ -11,5 +11,5 @@ $(document).ready( function() {
   &nbsp;
   <span id="gDeleteItem">Delete</span>
   <hr/>
-  <div id="gRearrangeTree" />
+  <div id="gRearrangeTree"></div>
 </div>
