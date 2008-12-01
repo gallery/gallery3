@@ -53,6 +53,11 @@ class Welcome_Controller extends Template_Controller {
     set_error_handler($old_handler);
 
     $this->_create_directories();
+
+    if (Session::instance()->get("profiler", false)) {
+      $profiler = new Profiler();
+      $profiler->render();
+    }
   }
 
   function install($module_name) {

@@ -402,7 +402,7 @@
               </li>
               <? endif ?>
               <li> Profiling:
-                <? if (Session::instance()->get("use_profiler", false)): ?>
+                <? if (Session::instance()->get("profiler", false)): ?>
                 <b>on</b> <?= html::anchor("welcome/session/profiler?value=0", "off") ?>
                 <? else: ?>
                 <?= html::anchor("welcome/session/profiler?value=1", "on") ?> <b>off</b>
