@@ -133,7 +133,17 @@
         font-size: 70%;
         font-style: italic;
       }
-    </style>
+
+      a.allowed {
+        color: green;
+        font-size: 110%;
+      }
+
+      a.denied {
+        color: red;
+        font-size: 90%;
+      }
+</style>
     <?= html::script("lib/jquery.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
     <?= html::script("lib/jquery.MultiFile.js") ?>
@@ -341,12 +351,13 @@
                 <li>
                   <span class="understate">(<?= $current->album->id ?>)</span>
                   <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
-                  access:
-                  <? if (access::can(group::EVERYBODY, "view", $current->album->id)): ?>
-                  access: <?= html::anchor("welcome/deny_perm/0/view/{$current->album->id}", "yes") ?>
+                  <? foreach (array("view", "edit") as $perm): ?>
+                  <? if (access::can(group::EVERYBODY, $perm, $current->album->id)): ?>
+                  <?= html::anchor("welcome/deny_perm/0/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
                   <? else: ?>
-                  access: <?= html::anchor("welcome/add_perm/0/view/{$current->album->id}", "no") ?>
+                  <?= html::anchor("welcome/add_perm/0/$perm/{$current->album->id}", strtolower($perm), array("class" => "denied")) ?>
                   <? endif ?>
+                  <? endforeach ?>
                   <? $stack[] = "CLOSE"; ?>
                   <? if ($current->children): ?>
                   <? $stack = array_merge($stack, $current->children) ?>
