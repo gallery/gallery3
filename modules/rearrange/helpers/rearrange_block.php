@@ -20,7 +20,6 @@
 class rearrange_block_Core {
   public static function head($theme) {
     $head[] = html::script("modules/rearrange/js/jquery.gallery.rearrange.tree.js");
-    $head[] = html::script("modules/rearrange/js/rearrange.js");
 
     $url = url::file("modules/rearrange/css/rearrange.css");
     $head[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$url\" " .
