@@ -143,6 +143,11 @@
         color: red;
         font-size: 90%;
       }
+
+      ul#permissions ul {
+        margin-left: -1em;
+        list-style-type: none;
+      }
 </style>
     <?= html::script("lib/jquery.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
@@ -347,10 +352,11 @@
               <? $current = array_pop($stack); ?>
               <? if ($current != "CLOSE"): ?>
               <? $current = $album_tree[$current]; ?>
-              <ul>
+              <ul id="permissions">
                 <li>
                   <span class="understate">(<?= $current->album->id ?>)</span>
                   <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
+                  &raquo;
                   <? foreach (array("view", "edit") as $perm): ?>
                   <? if (access::can(group::EVERYBODY, $perm, $current->album->id)): ?>
                   <?= html::anchor("welcome/deny_perm/0/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
