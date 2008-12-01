@@ -99,10 +99,9 @@ class Items_Controller extends REST_Controller {
     // 1) Add security checks
     $parent = $item->parent();
     if ($parent->id) {
+      module::event("{$item->type}_before_delete", $item);
       $item->delete();
     }
-
-    module::event("{$item->type}_deleted", $item);
 
     url::redirect("{$parent->type}s/{$parent->id}");
   }

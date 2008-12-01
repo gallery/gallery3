@@ -128,6 +128,11 @@
       a:hover {
         text-decoration: underline;
       }
+
+      span.understate {
+        font-size: 70%;
+        font-style: italic;
+      }
     </style>
     <?= html::script("lib/jquery.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
@@ -334,15 +339,14 @@
               <? $current = $album_tree[$current]; ?>
               <ul>
                 <li>
+                  <span class="understate">(<?= $current->album->id ?>)</span>
                   <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
-                  <? foreach (ORM::factory("item")->list_fields("items") as $field => $info): ?>
-                  <? if (!strncmp($field, "view_", 5)): ?>
-                  [<?= $field ?>=<?= $current->album->$field ?>]
+                  access:
+                  <? if (access::can(group::EVERYBODY, "view", $current->album->id)): ?>
+                  access: <?= html::anchor("welcome/deny_perm/0/view/{$current->album->id}", "yes") ?>
+                  <? else: ?>
+                  access: <?= html::anchor("welcome/add_perm/0/view/{$current->album->id}", "no") ?>
                   <? endif ?>
-                  <? endforeach ?>
-                  <? foreach (ORM::factory("access")->where("item_id", $current->album->id)->find() as $access): ?>
-                  [ <?= $access->id ?> ]
-                  <? endforeach ?>
                   <? $stack[] = "CLOSE"; ?>
                   <? if ($current->children): ?>
                   <? $stack = array_merge($stack, $current->children) ?>

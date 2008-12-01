@@ -71,16 +71,33 @@ class Welcome_Controller extends Template_Controller {
   }
 
   function uninstall($module_name) {
+    $clean = true;
     if ($module_name == "core") {
       // We have to uninstall all other modules first, else their tables, etc don't
       // get cleaned up.
-      foreach (ORM::factory("module")->find_all() as $module) {
-        if ($module->name != "core" && $module->version) {
-          call_user_func(array("{$module->name}_installer", "uninstall"));
+      try {
+        foreach (ORM::factory("module")->find_all() as $module) {
+          if ($module->name != "core" && $module->version) {
+            try {
+              call_user_func(array("{$module->name}_installer", "uninstall"));
+            } catch (Exception $e) {
+              $clean = false;
+            }
+          }
         }
-      }
+      } catch (Exception $e) { }
     }
     call_user_func(array("{$module_name}_installer", "uninstall"));
+
+    $clean = false;
+    if (!$clean) {
+      // Since we're in a state of flux, it's possible that other stuff went wrong with the
+      // uninstall, so back off and nuke things from orbit.
+      $db = Database::instance();
+      foreach ($db->list_tables() as $table) {
+        $db->query("DROP TABLE `$table`");
+      }
+    }
     url::redirect("welcome");
   }
 
@@ -442,7 +459,7 @@ class Welcome_Controller extends Template_Controller {
     url::redirect("welcome");
   }
 
-  public function _load_album_tree() {
+  private function _load_album_tree() {
     $tree = array();
     foreach (ORM::factory("item")->where("type", "album")->find_all() as $album) {
       if ($album->parent_id) {
@@ -451,7 +468,16 @@ class Welcome_Controller extends Template_Controller {
       $tree[$album->id]->album = $album;
       $tree[$album->id]->children = array();
     }
-
     return $tree;
+  }
+
+  public function add_perm($group_id, $perm, $item_id) {
+    access::allow($group_id, $perm, $item_id);
+    url::redirect("welcome");
+  }
+
+  public function deny_perm($group_id, $perm, $item_id) {
+    access::deny($group_id, $perm, $item_id);
+    url::redirect("welcome");
   }
 }

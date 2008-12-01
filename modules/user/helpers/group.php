@@ -24,6 +24,7 @@
  * Note: by design, this class does not do any permission checking.
  */
 class group_Core {
+  const EVERYBODY = 0;
   const REGISTERED_USERS = 1;
 
   /**
@@ -41,9 +42,7 @@ class group_Core {
     $group->name = $name;
     $group->save();
 
-    // Create the view column for this group in the items table.
-    Database::instance()->query("ALTER TABLE `items` ADD `view_{$group->id}` BOOLEAN DEFAULT 0");
-
+    module::event("group_created", $group);
     return $group;
   }
 
@@ -56,8 +55,7 @@ class group_Core {
     $group = ORM::factory("group", $id);
 
     if ($group->loaded) {
-      // Drop the view column for this group in the items table.
-      Database::instance()->query("ALTER TABLE `items` DROP `view_{$group->id}`");
+      module::event("group_before_delete", $group);
       $group->delete();
     }
   }

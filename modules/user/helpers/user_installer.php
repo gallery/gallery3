@@ -66,14 +66,13 @@ class user_installer {
   }
 
   public static function uninstall() {
-    // Remove all our groups so that we clean up the items table
+    // Delete all users and groups so that we give other modules an opportunity to clean up
+    foreach (ORM::factory("user")->find_all() as $user) {
+      user::delete($user->id);
+    }
+
     foreach (ORM::factory("group")->find_all() as $group) {
-      try {
-        group::delete($group->id);
-      } catch (Kohana_Database_Exception $e) {
-        // We may get errors when we try to remove the view columns from the items table.
-        // Ignore those for now.
-      }
+      group::delete($group->id);
     }
 
     try {

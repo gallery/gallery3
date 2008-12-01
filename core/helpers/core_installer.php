@@ -31,11 +31,15 @@ class core_installer {
     }
 
     if ($version == 0) {
-      $db->query("CREATE TABLE `access` (
+      $db->query("CREATE TABLE `access_caches` (
                    `id` int(9) NOT NULL auto_increment,
                    `item_id` int(9),
-                   `group_id` int(9) NOT NULL,
-                   `perm` char(255) default NULL,
+                   PRIMARY KEY (`id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
+      $db->query("CREATE TABLE `access_intents` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `item_id` int(9),
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
@@ -70,9 +74,20 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `permissions` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` char(255) default NULL,
+                   `version` int(9) default NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       foreach (array("albums", "resizes") as $dir) {
         @mkdir(VARPATH . $dir);
       }
+
+      access::register_permission("view");
+      access::register_permission("edit");
 
       $root = ORM::factory("item");
       $root->type = 'album';
@@ -85,13 +100,19 @@ class core_installer {
       $root->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
         ->save();
 
+      access::add_item($root);
+      access::allow(0, "view", $root->id);
+      access::deny(0, "edit", $root->id);
+
       module::set_version("core", 1);
     }
   }
 
   public static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `access`;");
+    $db->query("DROP TABLE IF EXISTS `access_cache`;");
+    $db->query("DROP TABLE IF EXISTS `access_intent`;");
+    $db->query("DROP TABLE IF EXISTS `permissions`;");
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
     system("/bin/rm -rf " . VARPATH . "albums");

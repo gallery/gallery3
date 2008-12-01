@@ -17,5 +17,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Access_Model extends ORM {
+
+class core_event_Core {
+  public static function group_created($group) {
+    access::add_group($group);
+  }
+
+  public static function group_before_delete($group) {
+    access::remove_group($group);
+  }
+
+  public static function photo_created($photo) {
+    access::add_item($photo);
+  }
+
+  public static function photo_before_delete($photo) {
+    access::remove_item($photo);
+  }
+
+  public static function album_created($album) {
+    access::add_item($album);
+  }
+
+  public static function album_before_delete($album) {
+    access::remove_item($album);
+  }
 }
