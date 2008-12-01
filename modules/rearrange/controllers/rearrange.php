@@ -17,34 +17,52 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Rearrange_Controller extends REST_Controller {
-  protected $resource_type = "item";
+class Rearrange_Controller extends Controller {
 
-  public function _show($item) {
-    print rearrange::get_html($item)->render();
+  public function _show($id) {
+    Kohana::log("debug", sprintf("[%s%s] Rearrange::_show(): %s", __FILE__, __LINE__, print_r($id, true)));
+    print rearrange::get_children($id)->render();
   }
 
   public function _index() {
-    print rearrange::get_html()->render();
+    Kohana::log("debug", sprintf("[%s%s] Rearrange::_index(): %s", __FILE__, __LINE__, print_r(1, true)));
+    print rearrange::get_children()->render();
   }
 
-  public function _form_add($item_id) {
-    throw new Exception("@todo Rearrange_Controller::_form_add NOT IMPLEMENTED");
-  }
+  /**
+   * Handle dispatching for all REST controllers.
+   */
+  public function __call($function, $args) {
+    Kohana::log("debug", sprintf("[%s%s] Rearrange::$function(): %s", __FILE__, __LINE__, print_r($args, true)));
+    // If no parameter was provided after the controller name (eg "/albums") then $function will
+    // be set to "index".  Otherwise, $function is the first parameter, and $args are all
+    // subsequent parameters.
+    $request_method = rest::request_method();
+    if ($function == "index" && $request_method == "get") {
+      return $this->_index();
+    }
 
-  public function _form_edit($tag) {
-    throw new Exception("@todo Rearrange_Controller::_form_edit NOT IMPLEMENTED");
-  }
+    // @todo this needs security checks
+    $id = $function;
 
-  public function _create($tag) {
-    throw new Exception("@todo Rearrange_Controller::_create NOT IMPLEMENTED");
-  }
+    switch ($request_method) {
+    case "get":
+      $this->_show($id);
 
-  public function _delete($tag) {
-    throw new Exception("@todo Rearrange_Controller::_delete NOT IMPLEMENTED");
-  }
+      if (Session::instance()->get("use_profiler", false)) {
+        $profiler = new Profiler();
+        $profiler->render();
+      }
+      return;
 
-  public function _update($tag) {
-    throw new Exception("@todo Rearrange_Controller::_update NOT IMPLEMENTED");
-  }
+    case "put":
+      return $this->_update($id);
+
+    case "delete":
+      return $this->_delete($id);
+
+    case "post":
+      return $this->_create($id);
+    }
+      }
 }

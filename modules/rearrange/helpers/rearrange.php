@@ -18,16 +18,23 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class rearrange_Core {
-  public static function get_html($item=null) {
-    $view = new View("rearrange.html");
+  public static function get_html() {
+    return new View("rearrange.html");
+  }
+
+  public static function get_children($id=null) {
+    $view = new View("rearrange_item_list.html");
 
     $view->root = null;
-    if (empty($item)) {
+    if (empty($id)) {
       $item = ORM::factory("item", 1);
-      $view->root = $item;
+      $view->children = array($item);
+    } else {
+      $item = ORM::factory("item", $id);
+      $view->children = $item->children();
     }
 
-    $view->children = $item->children();
     return $view;
   }
+
 }
