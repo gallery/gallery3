@@ -4,7 +4,7 @@
     <?= $theme->album_top() ?>
   </div>
   <h1><?= $item->title_edit ?></h1>
-  <span class="gUnderState"><?= $item->description_edit ?></span>
+  <div class="gDescription"><?= $item->description_edit ?></div>
 </div>
 
 <ul id="gAlbumGrid">

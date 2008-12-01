@@ -1,5 +1,5 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-<ul id="gLoginMenu" class="gInline">
+<ul id="gLoginMenu">
   <? if ($user): ?>
     <li><a href="<?= url::site("user/{$user->id}?continue=" . url::current(true))?>">
       <?= _("Modify Profile") ?></a></li>

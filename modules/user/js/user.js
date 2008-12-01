@@ -4,19 +4,20 @@
  */
 
 $("document").ready(function() {
-  $("#gLoginLink").click(function(event){
+  $("#gLoginLink").click(function(event) {
     var url = $("#gLoginLink a").attr("href");
     $.get(url, function(data) {
-	  $('#gLoginLink').hide();
-	  $("#gLoginMenu").append('<li><a href="#">X</a></li>');
-	  $("#gLoginMenu li:last").addClass("gClose").show();
-	  $("#gLoginMenu .gClose a").click(function(){
-	    $("#gLoginForm").remove();
-	    $("#gLoginMenu .gClose").remove();
-	    $("#gLoginLink").show();
-	    $("input#gUsername").val("");
-	    $("input#gPassword").val("");
-	  });
+	    $('#gLoginLink').hide();
+	    $("#gLoginMenu").append('<li><a href="#">X</a></li>');
+	    $("#gLoginMenu li:last").addClass("gClose").show();
+	    $("#gLoginMenu .gClose a").click(function() {
+	      $("#gLoginForm").remove();
+	      $("#gLoginMenu .gClose").remove();
+	      $("#gLoginFormContainer").hide();
+	      $("#gLoginLink").show();
+	      $("input#gUsername").val("");
+	      $("input#gPassword").val("");
+	    });
       $("#gLoginFormContainer").html(data).hide().fadeIn();
       ajaxify_login_form();
     });
@@ -25,7 +26,7 @@ $("document").ready(function() {
 });
 
 function ajaxify_login_form() {
-  $("form#gLoginForm").ajaxForm({
+  $("#gLoginForm").ajaxForm({
     target: "#gLoginFormContainer",
     success: function(responseText, statusText) {
       if (!responseText) {
