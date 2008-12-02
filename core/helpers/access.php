@@ -318,7 +318,7 @@ class access_Core {
           ->join("access_intents", "items.id", "access_intents.item_id")
           ->where("left <", $item->left)
           ->where("right >", $item->right)
-          ->where("$field IS NOT", null)
+          ->where("$field", self::DENY)
           ->orderby("left", "DESC")
           ->limit(1)
           ->find();
