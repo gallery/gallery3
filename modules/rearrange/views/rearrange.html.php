@@ -8,6 +8,10 @@ $(document).ready( function() {
 </script>
 <div id="gRearrange">
   <span id="gAddAlbum" rel="gAddAlbum">New Album</span>
+  <div id="gAddAlbumPopup">
+    <a id="gAddAlbumPopupClose">x</a>
+    <div id="gAddAlbumArea"></div>
+  </div>
   &nbsp;
   <span id="gDeleteItem">Delete</span>
   <hr/>

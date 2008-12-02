@@ -21,6 +21,8 @@ class Item_Model extends ORM_MPTT {
   protected $children = 'items';
   protected $has_one = array("owner" => "user");
 
+  var $rules = array();
+
   /**
    * Is this item an album?
    * @return true if it's an album

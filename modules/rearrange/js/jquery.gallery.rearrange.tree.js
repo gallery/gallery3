@@ -71,10 +71,7 @@ if(jQuery) (function($){
               accept: "#gAddAlbum",
               hoverClass: "droppable-hover",
               drop: function(ev, ui) {
-                source_element = ui.draggable;
-                source_parent = source_element.parent();
-                target = ui.element;
-                alert(source_element.attr("rel") + "\n" + target.attr("id"));
+                addAlbum(ui.element);
               }
             });
             if ($(c).hasClass('treeitem')) {
@@ -115,8 +112,7 @@ if(jQuery) (function($){
                 $(this).parent().removeClass('collapsed').addClass('expanded');
               } else {
                 // Collapse
-                $(this).parent().find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
-                $(this).parent().removeClass('expanded').addClass('collapsed');
+                collapse($(this).parent());
               }
             } else {
               h($(this).attr('rel'));
@@ -126,6 +122,37 @@ if(jQuery) (function($){
           // Prevent A from triggering the # on non-click events
           if( o.folderEvent.toLowerCase != 'click' ) $(t).find('LI A').bind('click', function() { return false; });
         }
+
+        function addAlbum(parent) {
+          $("#gAddAlbumPopupClose").click(function() {  
+            $("#gAddAlbumPopup").css({"display": "none"});
+          });
+
+          $.get("form/add/albums/" + parent.attr("id"), {}, function(data) {
+            $("#gAddAlbumArea").html(data);
+            $("#gAddAlbumForm").ajaxForm({
+              complete: function(xhr, statusText) {
+                //$("#gAddAlbumForm").replaceWith(xhr.responseText);
+                if (xhr.status == 200) {
+                  $("#gAddAlbumPopup").css({"display": "none"});
+                  collapse(parent);
+                  showTree(parent, parent.attr("id"));
+                }
+              }
+            });
+            $("#gAddAlbumPopup").css({
+              "display": "block",
+              "top": $("#gAddAlbum").offsetTop + $("#gAddAlbum").offsetHeight,
+              "left":$("#gAddAlbum").offsetLeft
+            });
+          });
+        }
+
+        function collapse(parent) {
+          parent.find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
+          parent.removeClass('expanded').addClass('collapsed');
+        }
+
         // Loading message
         $(this).html('<ul class="jqueryFileTree start"><li class="wait">' + o.loadMessage + '<li></ul>');
         // Get the initial file list

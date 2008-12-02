@@ -46,4 +46,14 @@ class Albums_Controller extends Items_Controller {
 
     print $template;
   }
+
+  /**
+   *  @see Rest_Controller::_form_add($parameters)
+   */
+  public function _form_add($parent_id) {
+    $parent = ORM::factory("item", $parent_id);
+
+    print album::get_add_form($parent)->render();
+  }
+
 }

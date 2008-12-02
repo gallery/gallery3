@@ -150,6 +150,7 @@
       }
 </style>
     <?= html::script("lib/jquery.js") ?>
+    <?= html::script("lib/jquery.form.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
     <?= html::script("lib/jquery.MultiFile.js") ?>
     <?= rearrange_block::head(null) ?>

@@ -12,6 +12,26 @@
   cursor: pointer;
 }
 
+#gAddAlbumPopup {
+  display: none;
+  position: absolute;
+  border: 1px solid #6fa5fd;
+  z-index: 2;
+  background: #ffffff;
+}
+
+#gAddAlbumPopupClose {
+  font-size:14px;  
+  line-height:14px;  
+  right:6px;  
+  top:4px;  
+  position:absolute;  
+  color:#6fa5fd;  
+  font-weight:700;  
+  display:block;
+  cursor: pointer;
+}
+
 #gDeleteItem {
   background-image: url(../images/bin_closed.png);
   background-repeat: no-repeat;
