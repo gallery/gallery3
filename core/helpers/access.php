@@ -331,11 +331,6 @@ class access_Core {
       // access_caches table will already contain DENY values and we won't be able to overwrite
       // them according the rule above.  So mark every permission below this level as UNKNOWN so
       // that we can tell which permissions have been changed, and which ones need to be updated.
-      //
-      // Potential problem: if $item_id's intent is unspecified then we have to back up the tree to
-      // find the nearest non-default parent and update the map starting from there.  That can't
-      // happen currently, but if it does, then the symptom will be that we have a branch of
-      // access_caches in the UNKNOWN state.
       $db->query("UPDATE `access_caches` SET `$field` = ? " .
                  "WHERE `item_id` IN " .
                  "  (SELECT `id` FROM `items` " .
@@ -372,6 +367,17 @@ class access_Core {
             "  AND `right` <= $row->right)");
         }
       }
+
+      // Finally, if our intent is DEFAULT at this point it means that we were unable to find a
+      // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
+      // the hierarchy, and all of those are safe to change to ALLOW.
+      $db->query("UPDATE `access_caches` SET `$field` = ? " .
+                 "WHERE `$field` = ? " .
+                 "AND `item_id` IN " .
+                 "  (SELECT `id` FROM `items` " .
+                 "  WHERE `left` >= $item->left " .
+                 "  AND `right` <= $item->right)",
+                 array(self::ALLOW, self::UNKNOWN));
     } else {
       // If the item's intent is ALLOW or DEFAULT, it's possible that some ancestor has specified
       // DENY and this ALLOW cannot be obeyed.  So in that case, back up the tree and find any
