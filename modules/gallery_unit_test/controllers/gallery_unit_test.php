@@ -58,38 +58,17 @@ class Gallery_Unit_Test_Controller extends Controller {
     }
     Kohana::config_set('unit_test.paths', $paths);
 
-    // We probably don't want to uninstall and reinstall the core every time, but let's start off
-    // this way.  Uninstall modules first and core last.  Ignore errors during uninstall.
-    try {
-      $this->_uninstall_modules();
-    } catch (Exception $e) {
+    // Clean out the database
+    foreach ($db->list_tables() as $table) {
+      $db->query("DROP TABLE $table");
     }
 
-    $this->_install_modules();
+    // Clean out the filesystem
+    @system("rm -rf test/var");
+    @system('mkdir -p test/var/logs');
 
-    print new Unit_Test();
-  }
-
-  private function _uninstall_modules() {
-    foreach (module::installed() as $module) {
-      if ($module->name == "core") {
-        continue;
-      }
-
-      $installer_class = "{$module->name}_installer";
-      Kohana::log("debug", "$installer_class");
-      if (method_exists($installer_class, "uninstall")) {
-        call_user_func_array(array($installer_class, "uninstall"), array());
-      }
-    }
-
-    // Always uninstall core last.
-   core_installer::uninstall();
-  }
-
-  private function _install_modules() {
+    // Install all modules
     core_installer::install();
-
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
       $module_name = basename(dirname(dirname($file)));
       if ($module_name == "core") {
@@ -101,5 +80,7 @@ class Gallery_Unit_Test_Controller extends Controller {
         call_user_func_array(array($installer_class, "install"), array());
       }
     }
+
+    print new Unit_Test();
   }
 }
