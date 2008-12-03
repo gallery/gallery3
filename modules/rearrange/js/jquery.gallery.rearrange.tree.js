@@ -28,6 +28,7 @@
 if(jQuery) (function($){
   
   $.extend($.fn, {
+
     RearrangeTree: function(o, h) {
       // Defaults
       if( !o ) var o = {};
@@ -40,6 +41,109 @@ if(jQuery) (function($){
       if( o.multiFolder == undefined ) o.multiFolder = true;
       if( o.loadMessage == undefined ) o.loadMessage = 'Loading...';
 
+      function showTree(c, t) {
+        $(c).addClass('wait');
+        $(".jqueryFileTree.start").remove();
+        $.get(o.script + "/" + t, {}, function(data) {
+          $(c).find('.start').html('');
+          $(c).removeClass('wait').append(data);
+          $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+          $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+          $(c).find('li.directory').droppable({
+            accept: "#gAddAlbum",
+            drop: function(ev, ui) {
+              addAlbum(ui.element);
+            }
+          });
+          if ($(c).hasClass('treeitem')) {
+            $(c).find("li", this.element).draggable({
+              helper: 'clone',
+              containment: "#gRearrange",
+              opacity: .6,
+              revert: "invalid"
+            });
+          }
+
+          $(c).find('.directory').droppable({
+            accept: "li",
+            greedy: true,
+            hoverClass: "droppable-hover",
+            drop: function(ev, ui) {
+              source_element = ui.draggable;
+              source_parent = source_element.parent();
+              target = ui.element;
+              alert(source_element.attr("id") + "\n" + target.attr("id"));
+            }
+          });
+          bindTree(c);
+        });
+      }
+
+      function bindTree(t) {
+        $(t).find('LI A').bind(o.folderEvent, function() {
+          if( $(this).parent().hasClass('directory') ) {
+            if( $(this).parent().hasClass('collapsed') ) {
+              // Expand
+              if( !o.multiFolder ) {
+                $(this).parent().parent().find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
+                $(this).parent().parent().find('LI.directory').removeClass('expanded').addClass('collapsed');
+              }
+              $(this).parent().find('UL').remove(); // cleanup
+              showTree( $(this).parent(), escape($(this).attr('rel')) );
+              $(this).parent().removeClass('collapsed').addClass('expanded');
+            } else {
+              // Collapse
+              collapse($(this).parent());
+            }
+          } else {
+            h($(this).attr('rel'));
+          }
+          return false;
+        });
+        // Prevent A from triggering the # on non-click events
+        if( o.folderEvent.toLowerCase != 'click' ) $(t).find('LI A').bind('click', function() { return false; });
+      }
+
+      function addAlbum(parent) {
+        $("#gAddAlbumPopupClose").click(function() {  
+          $("#gAddAlbumPopup").css({"display": "none"});
+        });
+
+        $.get("form/add/albums/" + parent.attr("id"), {}, function(data) {
+          $("#gAddAlbumArea").html(data);
+          $("#gAddAlbumForm").ajaxForm({
+            complete: function(xhr, statusText) {
+              if (xhr.status == 200) {
+                $("#gAddAlbumPopup").css({"display": "none"});
+                collapse(parent);
+                showTree(parent, parent.attr("id"));
+              }
+            }
+          });
+          $("#gAddAlbumPopup").css({
+            "display": "block",
+            "top": $("#gAddAlbum").offsetTop + $("#gAddAlbum").offsetHeight,
+            "left":$("#gAddAlbum").offsetLeft
+          });
+        });
+      }
+
+      function collapse(parent) {
+        parent.find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
+        parent.removeClass('expanded').addClass('collapsed');
+      }
+
+      function getParent(element) {
+        parent = element.parent();
+        while(parent != null) {
+          if ($(parent).hasClass("treeitem")) {
+            return parent;
+          }
+          parent = parent.parent();
+        }
+        return null;
+      }
+
       $("#gAddAlbum").draggable({
         helper: 'clone',
         containment: "#gRearrange",
@@ -48,111 +152,33 @@ if(jQuery) (function($){
       });
 
       $("#gDeleteItem").droppable({
-        accept: "a",
-        hoverClass: "droppable-hover",
-          drop: function(ev, ui) {
-            source_element = ui.draggable;
-            source_parent = source_element.parent();
-            target = ui.element;
-            alert(source_element.attr("rel") + "\n" + target.attr("id"));
+        accept: "li",
+        tolerance: "pointer",
+        drop: function(ev, ui) {
+          var element = ui.draggable;
+          var parent = getParent(element);
+
+          var id = element.attr("id");
+          var anchor = $(element).find("a");  
+          if (confirm("Do you really want to delete " + $(element).find("a")[0].textContent)) {
+            $.ajax({
+              url: "items/" + id,
+              success: function(data, textStatus) {
+                collapse(parent);
+                showTree(parent, parent.attr("id"));
+              },
+              error: function(xhr, textStatus, errorThrown) {
+                alert(xhr.status);
+                alert(textStatus);
+                alert(errorThrown);
+              },
+              type: "DELETE"
+            });
           }
+        }
       });
 
       $(this).each( function() {
-        function showTree(c, t) {
-          $(c).addClass('wait');
-          $(".jqueryFileTree.start").remove();
-          $.get(o.script + "/" + t, {}, function(data) {
-            $(c).find('.start').html('');
-            $(c).removeClass('wait').append(data);
-            $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
-            $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
-            $(c).find('li.directory').droppable({
-              accept: "#gAddAlbum",
-              hoverClass: "droppable-hover",
-              drop: function(ev, ui) {
-                addAlbum(ui.element);
-              }
-            });
-            if ($(c).hasClass('treeitem')) {
-	            $(c).find("li a", this.element).draggable({
-	              helper: 'clone',
-	              containment: "#gRearrange",
-	              opacity: .6,
-	              revert: "invalid"
-              });
-            }
-
-            $(c).find('.directory').droppable({
-              accept: "a",
-              greedy: true,
-              hoverClass: "droppable-hover",
-              drop: function(ev, ui) {
-                source_element = ui.draggable;
-                source_parent = source_element.parent();
-                target = ui.element;
-                alert(source_element.attr("rel") + "\n" + target.attr("id"));
-              }
-            });
-            bindTree(c);
-          });
-        }
-
-        function bindTree(t) {
-          $(t).find('LI A').bind(o.folderEvent, function() {
-            if( $(this).parent().hasClass('directory') ) {
-              if( $(this).parent().hasClass('collapsed') ) {
-                // Expand
-                if( !o.multiFolder ) {
-                  $(this).parent().parent().find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
-                  $(this).parent().parent().find('LI.directory').removeClass('expanded').addClass('collapsed');
-                }
-                $(this).parent().find('UL').remove(); // cleanup
-                showTree( $(this).parent(), escape($(this).attr('rel')) );
-                $(this).parent().removeClass('collapsed').addClass('expanded');
-              } else {
-                // Collapse
-                collapse($(this).parent());
-              }
-            } else {
-              h($(this).attr('rel'));
-            }
-            return false;
-          });
-          // Prevent A from triggering the # on non-click events
-          if( o.folderEvent.toLowerCase != 'click' ) $(t).find('LI A').bind('click', function() { return false; });
-        }
-
-        function addAlbum(parent) {
-          $("#gAddAlbumPopupClose").click(function() {  
-            $("#gAddAlbumPopup").css({"display": "none"});
-          });
-
-          $.get("form/add/albums/" + parent.attr("id"), {}, function(data) {
-            $("#gAddAlbumArea").html(data);
-            $("#gAddAlbumForm").ajaxForm({
-              complete: function(xhr, statusText) {
-                //$("#gAddAlbumForm").replaceWith(xhr.responseText);
-                if (xhr.status == 200) {
-                  $("#gAddAlbumPopup").css({"display": "none"});
-                  collapse(parent);
-                  showTree(parent, parent.attr("id"));
-                }
-              }
-            });
-            $("#gAddAlbumPopup").css({
-              "display": "block",
-              "top": $("#gAddAlbum").offsetTop + $("#gAddAlbum").offsetHeight,
-              "left":$("#gAddAlbum").offsetLeft
-            });
-          });
-        }
-
-        function collapse(parent) {
-          parent.find('UL').slideUp({ duration: o.collapseSpeed, easing: o.collapseEasing });
-          parent.removeClass('expanded').addClass('collapsed');
-        }
-
         // Loading message
         $(this).html('<ul class="jqueryFileTree start"><li class="wait">' + o.loadMessage + '<li></ul>');
         // Get the initial file list
