@@ -37,6 +37,13 @@ class Gallery_Unit_Test_Controller extends Controller {
         return;
       }
 
+      if ($db_config['default']['connection']['database'] ==
+          $db_config['unit_test']['connection']['database']) {
+        print "Don't use the default database for your unit tests or you'll lose all your data.\n";
+        print "Try using '{$db_config['default']['connection']['database']}_test' in $test_config\n";
+        return;
+      }
+
       try {
         $db = Database::instance('unit_test');
         $db->connect();
