@@ -1,27 +1,27 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <?php
 foreach ($results as $class => $methods) {
-  echo str_repeat("-", 100), "\n";
-  echo $class, "\n";
-  echo str_repeat("-", 100), "\n";
+  echo "+", str_repeat("-", 98), "+\n";
+  printf("| %-96.96s |\n", $class);
+  echo "+", str_repeat("-", 98), "+\n";
 
   foreach (array("score", "total", "passed", "failed", "errors") as $key) {
     @$totals[$key] += $stats[$class][$key];
   }
 
   if (empty($methods)) {
-    echo Kohana::lang("unit_test.no_tests_found"), "\n";
+    printf("| %-96.96s |\n", "NO TESTS FOUND");
   } else {
     foreach ($methods as $method => $result) {
       // Hide passed tests from report
       if ($result === true AND $hide_passed === true) {
         continue;
       }
-      printf("%-56.56s", $method);
+      printf("| %-56.56s", $method);
       if ($result === true) {
-        echo Kohana::lang("unit_test.passed"), "\n";
+        printf("| PASS                                   |\n");
       } else if ($result instanceof Kohana_Unit_Test_Exception) {
-        echo Kohana::lang("unit_test.failed"), "\n";
+        printf("| FAIL                                   |\n");
         echo "  ", $result->getMessage(), "\n";
         echo "  ", $result->getFile();
         echo " ", "(" . Kohana::lang("unit_test.line") . " " . $result->getLine(), ")\n";
@@ -31,33 +31,31 @@ foreach ($results as $class => $methods) {
         }
         echo "\n";
       } else if ($result instanceof Exception) {
-        echo Kohana::lang("unit_test.error"), "\n";
+        printf("| ERROR                                  |\n");
         if ($result->getMessage()) {
           echo "  ", $result->getMessage(), "\n";
         }
-        echo "  ", $result->getFile(), " (",
-          Kohana::lang("unit_test.line"), " ", $result->getLine(), ")\n";
+        echo "  ", $result->getFile(), " (Line ", $result->getLine(), ")\n";
         echo "\n";
       }
     }
   }
 
-  echo str_repeat("=", 100), "\n";
-  printf(">> %s\t%s: %.2f%%\t%s: %d\t%s: %d\t%s: %d\t%s: %d\n",
+  echo "+", str_repeat("=", 98), "+\n";
+  printf("| %-40.40s %-13.13s %-13.13s %-13.13s %-13.13s |\n",
          $class,
-         Kohana::lang("unit_test.score"), $stats[$class]["score"],
-         Kohana::lang("unit_test.total"), $stats[$class]["total"],
-         Kohana::lang("unit_test.passed"), $stats[$class]["passed"],
-         Kohana::lang("unit_test.failed"), $stats[$class]["failed"],
-         Kohana::lang("unit_test.errors"), $stats[$class]["errors"]);
-  echo str_repeat("-", 100), "\n\n\n";
+         "Score: {$stats[$class]['score']}",
+         "Total: {$stats[$class]['total']}",
+         "PASS: {$stats[$class]['passed']}",
+         "FAIL: {$stats[$class]['failed']}",
+         "ERROR: {$stats[$class]['errors']}");
+  echo "+", str_repeat("=", 98), "+\n\n\n";
 }
 
-printf(">> TOTAL\t%s: %.2f%%\t%s: %d\t%s: %d\t%s: %d\t%s: %d\n",
-       Kohana::lang("unit_test.score"),
-       ($totals["total"] ? 100 * ($totals["passed"] / $totals["total"]) : 0),
-       Kohana::lang("unit_test.total"), $totals["total"],
-       Kohana::lang("unit_test.passed"), $totals["passed"],
-       Kohana::lang("unit_test.failed"), $totals["failed"],
-       Kohana::lang("unit_test.errors"), $totals["errors"]);
-
+printf("  %-40.40s %-13.13s %-13.13s %-13.13s %-13.13s\n",
+       "TOTAL",
+       "Score: " . ($totals["total"] ? 100 * ($totals["passed"] / $totals["total"]) : 0),
+       "Total: {$totals['total']}",
+       "PASS: {$totals['passed']}",
+       "FAIL: {$totals['failed']}",
+       "ERROR: {$totals['errors']}");
