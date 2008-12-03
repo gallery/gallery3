@@ -19,7 +19,6 @@
  */
 class file extends file_Core {
   public function unlink($path) {
-    // @todo create a unit test
     if (is_file($path) && is_writable($path)) {
       return @unlink($path);
     } else if (is_dir($path) && is_writable($path)) {
