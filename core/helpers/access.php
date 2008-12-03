@@ -222,10 +222,7 @@ class access_Core {
     foreach (ORM::factory("permission")->find_all() as $perm) {
       foreach (self::_get_all_groups() as $group) {
         $field = "{$perm->name}_{$group->id}";
-
-        //Temporary disable this to get tests to pass
-        //$access_cache->$field = $parent_access_cache->$field;
-
+        $access_cache->$field = $parent_access_cache->$field;
       }
       $field = "{$perm->name}_0";
       $access_cache->$field = $parent_access_cache->$field;
