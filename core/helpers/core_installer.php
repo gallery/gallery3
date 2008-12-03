@@ -110,8 +110,8 @@ class core_installer {
 
   public static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `access_cache`;");
-    $db->query("DROP TABLE IF EXISTS `access_intent`;");
+    $db->query("DROP TABLE IF EXISTS `access_caches`;");
+    $db->query("DROP TABLE IF EXISTS `access_intents`;");
     $db->query("DROP TABLE IF EXISTS `permissions`;");
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
