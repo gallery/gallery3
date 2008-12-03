@@ -61,7 +61,7 @@ class album_Core {
 
   static function get_add_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddAlbumForm"));
-    $group = $form->group(_("Add Album to ") . $parent->title);
+    $group = $form->group(sprintf(_("Add Album to %s"), $parent->title));
     $group->input("name");
     $group->input("title");
     $group->input("description");
