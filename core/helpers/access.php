@@ -379,10 +379,11 @@ class access_Core {
                  "  AND `right` <= $item->right)",
                  array(self::ALLOW, self::UNKNOWN));
     } else {
-      // If the item's intent is ALLOW or DEFAULT, it's possible that some ancestor has specified
-      // DENY and this ALLOW cannot be obeyed.  So in that case, back up the tree and find any
-      // non-DEFAULT and non-ALLOW parent and propagate from there.  If we can't find a matching
-      // item, then its safe to propagate from here.
+      // If the item's intent is DEFAULT, then we need to back up the chain to find the nearest
+      // parent with an intent and propagate from there.
+      //
+      // @todo To optimize this, we wouldn't need to propagate from the parent, we could just
+      //       propagate from here with the parent's intent.
       if ($access->$field === null) {
         $tmp_item = ORM::factory("item")
           ->join("access_intents", "items.id", "access_intents.item_id")
