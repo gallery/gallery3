@@ -39,6 +39,15 @@ class Item_Model extends ORM_MPTT {
     return $this->type == 'photo';
   }
 
+  public function delete() {
+    parent::delete();
+    if ($this->is_album()) {
+      directory::unlink($this->file_path());
+    } else {
+      unlink($this->file_path());
+    }
+  }
+
   /**
    * album: /var/albums/album1/album2
    * photo: /var/albums/album1/album2/photo.jpg

@@ -102,7 +102,6 @@ class Items_Controller extends REST_Controller {
       module::event("{$item->type}_before_delete", $item);
 
       $item->delete();
-      file::unlink($item->file_path());
     }
 
     url::redirect("{$parent->type}s/{$parent->id}");

@@ -17,19 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class file extends file_Core {
-  public function unlink($path) {
-    if (is_file($path) && is_writable($path)) {
-      return @unlink($path);
-    } else if (is_dir($path) && is_writable($path)) {
+class dir_Core {
+  public static function unlink($path) {
+    if (is_dir($path) && is_writable($path)) {
       foreach (new DirectoryIterator($path) as $resource) {
         if ($resource->isDot()) {
           unset($resource);
           continue;
         } else if ($resource->isFile()) {
-          self::unlink($resource->getPathName());
+          unlink($resource->getPathName());
         } else if ($resource->isDir()) {
-          self::unlink($resource->getRealPath());
+          directory::unlink($resource->getRealPath());
         }
         unset($resource);
       }
