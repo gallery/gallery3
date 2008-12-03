@@ -64,6 +64,10 @@ class Unit_Test_Core {
 				// The class name should be the same as the file name
 				$class = substr($path, strrpos($path, '/') + 1, -(strlen(EXT)));
 
+				if (count($_SERVER['argv']) > 2 && !in_array($class, $_SERVER['argv'])) {
+					continue;
+				}
+
 				// Skip hidden files
 				if (substr($class, 0, 1) === '.')
 					continue;

@@ -47,7 +47,7 @@ define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 
 // Force a test run if we're in command line mode.
 if (PHP_SAPI == 'cli') {
-  $_SERVER['argv'] = array($_SERVER['argv'][0], 'gallery_unit_test');
+  array_splice($_SERVER['argv'], 1, 0, 'gallery_unit_test');
   define('TEST_MODE', 1);
   @system('mkdir -p test/var/logs');
   define('VARPATH', strtr(realpath('test/var') . '/', DIRECTORY_SEPARATOR, '/'));
