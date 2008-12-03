@@ -1,4 +1,4 @@
-<?php defined("SYSPATH") or die("No direct script access."); ?>
+<? defined("SYSPATH") or die("No direct script access."); ?>
 <script>
 $(document).ready( function() {
   $('#gRearrangeTree').RearrangeTree({}, function(file) {
