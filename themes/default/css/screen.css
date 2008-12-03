@@ -12,7 +12,8 @@
  * 6)  Navigation and menus
  * 7)  Generic styles
  * 8)  Browser hacks
- * 9) Debugging information
+ * 9)  Debugging information
+ * 10) Ajax/DOM features
  */
 
 /** *******************************************************************
@@ -664,25 +665,6 @@ table.gMetadata td.toggle {
   background-color: #f3f3f3;
 }
 
-.gClose a {
-  border: 1px solid #ccc;
-  color: #ccc;
-  display: block;
-  font-weight: bold;
-  padding: 1px 3px;
-}
-
-.gClose a:hover {
-  border: 1px solid #666;
-  color: #666;
-  text-decoration: none;
-}
-
-.gHide,
-.gClose {
-  display: none;
-}
-
 /** *******************************************************************
  * 8) Browser hacks
  *********************************************************************/
@@ -727,3 +709,37 @@ div.gAnnotatedThemeBlock div.title {
   font-size: 110%;
   -moz-border-radius: 5% 5% 5% 5%;
 }
+
+/** *******************************************************************
+ * 10) Ajax/DOM features
+ *********************************************************************/
+
+.gInPlaceEdit,
+.gInPlaceEdit form,
+.gInPlaceEdit input {
+  display: inline;
+}
+
+span.gInPlaceEdit:hover {
+  color: #6b8cb7;
+}
+
+.gClose a {
+  border: 1px solid #ccc;
+  color: #ccc;
+  display: block;
+  font-weight: bold;
+  padding: 1px 3px;
+}
+
+.gClose a:hover {
+  border: 1px solid #666;
+  color: #666;
+  text-decoration: none;
+}
+
+.gHide,
+.gClose {
+  display: none;
+}
+
