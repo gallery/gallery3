@@ -176,7 +176,7 @@ class access_Core {
       self::_drop_columns($name, $group->id);
     }
     self::_drop_columns($name, group::EVERYBODY);
-    ORM::factory("permission", $name)->delete();
+    ORM::factory("permission")->where("name", $name)->find()->delete();
   }
 
   /**
