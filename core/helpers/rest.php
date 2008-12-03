@@ -57,11 +57,12 @@ class rest_Core {
    * @return string HTTP request method
    */
   public static function request_method() {
+    Kohana::log("debug", "request::method: " . request::method());
     if (request::method() == "get") {
       return "get";
     } else {
       $input = Input::instance();
-      switch (strtolower($input->post("_method", $input->get("_method")))) {
+      switch (strtolower($input->post("_method", $input->get("_method", request::method())))) {
       case "put":    return "put";
       case "delete": return "delete";
       default:       return "post";
