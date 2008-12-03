@@ -276,7 +276,9 @@ class Database_Mysql_Driver extends Database_Driver {
 
 	public function list_fields($table)
 	{
-		static $tables;
+		if (!defined("TEST_MODE")) {
+			static $tables;
+		}
 
 		if (empty($tables[$table]))
 		{
