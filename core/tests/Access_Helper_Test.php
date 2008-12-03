@@ -18,6 +18,34 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Access_Helper_Test extends Unit_Test_Case {
+  private $_group;
+
+  public function setup() {
+    access::register_permission("access_test");
+    $this->_group = group::create("access_test");
+  }
+
+  public function teardown() {
+    if ($this->_group) {
+      group::delete($this->_group->id);
+      access::delete_permission("access_test");
+    }
+  }
+
+  public function new_groups_and_permissions_add_columns_test() {
+    $fields = Database::instance()->list_fields("access_caches");
+    $this->assert_true(array_key_exists("access_test_{$this->_group->id}", $fields));
+  }
+
+  public function deleting_groups_and_permissions_removes_columns_test() {
+    group::delete($this->_group->id);
+    access::delete_permission("access_test");
+    $fields = Database::instance()->list_fields("access_caches");
+    $this->assert_false(array_key_exists("access_test_{$this->_group->id}", $fields));
+    $this->_group = null;  // So that we don't try to clean this up in teardown
+  }
+
+
   public function can_view_item_test() {
   }
 
@@ -43,12 +71,6 @@ class Access_Helper_Test extends Unit_Test_Case {
   }
 
   public function non_view_permissions_can_be_revoked_lower_down_test() {
-  }
-
-  public function new_groups_and_permissions_add_columns_test() {
-  }
-
-  public function deleting_groups_and_permissions_removes_columns_test() {
   }
 
   public function adding_items_adds_rows_test() {
