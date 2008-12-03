@@ -253,14 +253,7 @@
               <? endforeach ?>
               ] tags
             </p>
-            <fieldset>
-              <legend>Photos</legend>
-              <form method="post" action="<?= url::site("albums/1") ?>" enctype="multipart/form-data">
-                <input type="submit" value="upload"/>
-                <input id="photo_upload" name="file[]" type="file"/>
-                <input type="hidden" name="type" value="photo"/>
-              </form>
-            </fieldset>
+            <?= $add_photo_html ?>
             <fieldset>
               <legend>Server Side Photos</legend>
               <form method="post" action="<?= url::site("welcome/add_photos") ?>">
