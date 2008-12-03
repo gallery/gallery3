@@ -44,6 +44,7 @@ class Welcome_Controller extends Template_Controller {
       $this->template->album_tree = array();
       $this->template->rearrange_html = "";
     }
+    $this->template->add_photo_html = $this->_get_add_photo_html();
 
     $this->_load_user_info();
     $this->_load_group_info();
@@ -491,5 +492,25 @@ class Welcome_Controller extends Template_Controller {
       access::reset($group_id, $perm->name, $item_id);
     }
     url::redirect("welcome");
+  }
+
+  public function form($arg1, $arg2) {
+    if ($arg1 == "add" && $arg2 == "photos") {
+      print $this->_get_add_photo_html();
+    }
+    $this->auto_render = false;
+  }
+
+  public function _get_add_photo_html() {
+    return '
+      <fieldset>
+        <legend>Photos</legend>
+        <form method="post" action="' . url::site("albums/1")  . '" enctype="multipart/form-data">
+          <input type="submit" value="upload"/>
+          <input id="photo_upload" name="file[]" type="file"/>
+          <input type="hidden" name="type" value="photo"/>
+        </form>
+      </fieldset>
+    ';
   }
 }
