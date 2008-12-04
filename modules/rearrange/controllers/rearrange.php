@@ -22,7 +22,6 @@ class Rearrange_Controller extends Controller {
   public function show($id=null) {
     $view = new View("rearrange_item_list.html");
 
-    $view->root = null;
     if (empty($id)) {
       $item = ORM::factory("item", 1);
       $view->children = array($item);
