@@ -19,50 +19,7 @@
  */
 class Rearrange_Controller extends Controller {
 
-  public function _show($id) {
-    Kohana::log("debug", sprintf("[%s%s] Rearrange::_show(): %s", __FILE__, __LINE__, print_r($id, true)));
+  public function show($id=null) {
     print rearrange::get_children($id)->render();
   }
-
-  public function _index() {
-    Kohana::log("debug", sprintf("[%s%s] Rearrange::_index(): %s", __FILE__, __LINE__, print_r(1, true)));
-    print rearrange::get_children()->render();
-  }
-
-  /**
-   * Handle dispatching for all REST controllers.
-   */
-  public function __call($function, $args) {
-    Kohana::log("debug", sprintf("[%s%s] Rearrange::$function(): %s", __FILE__, __LINE__, print_r($args, true)));
-    // If no parameter was provided after the controller name (eg "/albums") then $function will
-    // be set to "index".  Otherwise, $function is the first parameter, and $args are all
-    // subsequent parameters.
-    $request_method = rest::request_method();
-    if ($function == "index" && $request_method == "get") {
-      return $this->_index();
-    }
-
-    // @todo this needs security checks
-    $id = $function;
-
-    switch ($request_method) {
-    case "get":
-      $this->_show($id);
-
-      if (Session::instance()->get("use_profiler", false)) {
-        $profiler = new Profiler();
-        $profiler->render();
-      }
-      return;
-
-    case "put":
-      return $this->_update($id);
-
-    case "delete":
-      return $this->_delete($id);
-
-    case "post":
-      return $this->_create($id);
-    }
-      }
 }

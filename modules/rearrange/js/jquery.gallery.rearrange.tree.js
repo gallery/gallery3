@@ -32,7 +32,7 @@ if(jQuery) (function($){
     RearrangeTree: function(o, h) {
       // Defaults
       if( !o ) var o = {};
-      if( o.script == undefined ) o.script = 'rearrange';
+      if( o.script == undefined ) o.script = 'rearrange/show';
       if( o.folderEvent == undefined ) o.folderEvent = 'click';
       if( o.expandSpeed == undefined ) o.expandSpeed= 500;
       if( o.collapseSpeed == undefined ) o.collapseSpeed= 500;
