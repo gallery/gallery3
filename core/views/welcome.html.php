@@ -148,7 +148,7 @@
         margin-left: -1.5em;
         list-style-type: none;
       }
-</style>
+    </style>
     <?= html::script("lib/jquery.js") ?>
     <?= html::script("lib/jquery.form.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
