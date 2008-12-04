@@ -245,6 +245,9 @@ class ORM_MPTT_Core extends ORM {
     $numberToMove = (int)(($this->right - $this->left) / 2 + 1);
     $size_of_hole = $numberToMove * 2;
     $original_parent = $this->parent;
+    $original_left = $this->left;
+    $original_right = $this->right;
+    $target_right = $target->right;
 
     if (empty($locked)) {
       $this->lock();
@@ -252,11 +255,11 @@ class ORM_MPTT_Core extends ORM {
     try {
       // Make a hole in the target for the move
       $target->db->query(
-        "UPDATE `{$target->table_name}` SET `left` = `left` + $size_of_hole" .
-        " WHERE `left` >= {$target->right}");
+        "UPDATE `{$this->table_name}` SET `left` = `left` + $size_of_hole" .
+        " WHERE `left` >= $target_right");
       $target->db->query(
-        "UPDATE `{$target->table_name}` SET `right` = `right` + $size_of_hole" .
-        " WHERE `right` >= {$target->right}");
+        "UPDATE `{$this->table_name}` SET `right` = `right` + $size_of_hole" .
+        " WHERE `right` >= $target_right");
 
       // Change the parent.
       $this->db->query(
@@ -264,14 +267,14 @@ class ORM_MPTT_Core extends ORM {
         " WHERE `id` = {$this->id}");
 
       // If the source is to the right of the target then we just adjusted its left and right above.
-      $left = $this->left;
-      $right = $this->right;
-      if ($this->left > $target->right) {
+      $left = $original_left;
+      $right = $original_right;
+      if ($original_left > $target_right) {
         $left += $size_of_hole;
         $right += $size_of_hole;
       }
 
-      $newOffset = $target->left - $left + 1;
+      $newOffset = $target->right - $left;
       $this->db->query(
         "UPDATE `{$this->table_name}`" .
         "   SET `left` = `left` + $newOffset," .
