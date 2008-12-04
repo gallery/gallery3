@@ -197,7 +197,7 @@ class access_Core {
    * @param Group_Model $group
    * @return void
    */
-  public static function remove_group($group) {
+  public static function delete_group($group) {
     foreach (ORM::factory("permission")->find_all() as $perm) {
       self::_drop_columns($perm->name, $group->id);
     }
@@ -236,9 +236,9 @@ class access_Core {
    * @param Item_Model $item
    * @return void
    */
-  public static function remove_item($item) {
-    ORM::factory("access_intent")->where("item_id", $item->id)->delete();
-    ORM::factory("access_cache")->where("item_id", $item->id)->delete();
+  public static function delete_item($item) {
+    ORM::factory("access_intent")->where("item_id", $item->id)->find()->delete();
+    ORM::factory("access_cache")->where("item_id", $item->id)->find()->delete();
   }
 
   /**

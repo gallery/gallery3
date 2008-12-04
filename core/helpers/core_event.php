@@ -24,7 +24,7 @@ class core_event_Core {
   }
 
   public static function group_before_delete($group) {
-    access::remove_group($group);
+    access::delete_group($group);
   }
 
   public static function photo_created($photo) {
@@ -32,7 +32,7 @@ class core_event_Core {
   }
 
   public static function photo_before_delete($photo) {
-    access::remove_item($photo);
+    access::delete_item($photo);
   }
 
   public static function album_created($album) {
@@ -40,6 +40,6 @@ class core_event_Core {
   }
 
   public static function album_before_delete($album) {
-    access::remove_item($album);
+    access::delete_item($album);
   }
 }
