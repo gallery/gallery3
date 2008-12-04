@@ -42,10 +42,13 @@ class Item_Model extends ORM_MPTT {
   public function delete() {
     $path = $this->file_path();
     parent::delete();
-    if ($this->is_album()) {
-      dir::unlink($path);
-    } else {
-      unlink($path);
+    // If there is no name, the path is invalid so don't try to delete
+    if (!empty($this->name)) {
+      if ($this->is_album()) {
+        dir::unlink($path);
+      } else {
+        unlink($path);
+      }
     }
   }
 

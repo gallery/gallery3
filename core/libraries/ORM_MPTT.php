@@ -73,6 +73,14 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
+   * Deleted this node and adjust the left and right pointers
+   */
+  public function delete() {
+    parent::delete();
+    $this->_grow(-1);
+  }
+
+  /**
    * Return the parent of this node
    *
    * @return ORM
@@ -194,7 +202,7 @@ class ORM_MPTT_Core extends ORM {
    *
    * @param integer $count the number of new nodes to add
    */
-  private function _grow($count=1) {
+  public function _grow($count=1) {
     $size = $count * 2;
     $this->db->query(
       "UPDATE `{$this->table_name}` SET `left` = `left` + $size WHERE `left` >= {$this->right}");

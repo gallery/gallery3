@@ -97,15 +97,15 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function descendant_test() {
     $parent = album::create(1, "parent album", "parent album title");
-    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
                   "photo1", "parent album photo");
 
     $album1 = album::create($parent->id, "album1", "album1 title");
-    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
                   "photo1", "album1 photo");
 
     $album2 = album::create($parent->id, "album2", "album2 title");
-    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2", 
+    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2",
                   "photo2", "album2 photo");
     $parent->reload();
 
@@ -116,15 +116,15 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function descendant_limit_test() {
     $parent = album::create(1, "parent album", "parent album title");
-    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
                   "photo1", "parent album photo");
 
     $album1 = album::create($parent->id, "album1", "album1 title");
-    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
                   "photo1", "album1 photo");
 
     $album2 = album::create($parent->id, "album2", "album2 title");
-    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2", 
+    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2",
                   "photo2", "album2 photo");
     $parent->reload();
 
@@ -133,15 +133,15 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function descendant_count_test() {
     $parent = album::create(1, "parent album", "parent album title");
-    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
                   "photo1", "parent album photo");
 
     $album1 = album::create($parent->id, "album1", "album1 title");
-    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1", 
+    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
                   "photo1", "album1 photo");
 
     $album2 = album::create($parent->id, "album2", "album2 title");
-    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2", 
+    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2",
                   "photo2", "album2 photo");
     $parent->reload();
 
@@ -149,4 +149,64 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $this->assert_equal(3, $parent->descendants_count("photo"));
     $this->assert_equal(2, $parent->descendants_count("album"));
   }
+
+    public function grow_test() {
+      $parent = ORM::factory("item", 1);
+
+      $outer = ORM::factory("item");
+      $outer->add_to_parent(1);
+
+      $inner1 = ORM::factory("item");
+      $inner1->add_to_parent($outer->id);
+
+      $inner2 = ORM::factory("item");
+      $inner2->add_to_parent($outer->id);
+
+      $parent->reload();
+      $original_parent_right = $parent->right;
+      $original_right = $outer->right;
+
+      $outer->_grow(2);
+
+      $parent->reload();
+      $this->assert_equal($original_right + 2, $outer->right);
+      $this->assert_equal($original_parent_right + 4, $parent->right);
+    }
+
+    public function contract_test() {
+      $parent = ORM::factory("item", 1);
+      $parent->reload();
+      Kohana::log("debug", "original parent->right: " . $parent->right);
+
+      $outer = ORM::factory("item");
+      $outer->add_to_parent(1);
+
+      $inner1 = ORM::factory("item");
+      $inner1->add_to_parent($outer->id);
+
+      $inner2 = ORM::factory("item");
+      $inner2->add_to_parent($outer->id);
+
+      $outer->reload();
+      $parent->reload();
+      $original_parent_right = $parent->right;
+      $original_right = $outer->right;
+
+      $inner3 = ORM::factory("item");
+      $inner3->add_to_parent($outer->id);
+
+      $inner4 = ORM::factory("item");
+      $inner4->add_to_parent($outer->id);
+
+
+      $inner2->delete();
+      $inner4->delete();
+
+      $outer->_grow(-2);
+
+      $outer->reload();
+      $parent->reload();
+      $this->assert_equal($original_right, $outer->right);
+      $this->assert_equal($original_parent_right, $parent->right);
+    }
 }
