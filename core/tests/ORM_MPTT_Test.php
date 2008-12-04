@@ -48,7 +48,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $album1_1_1 = ORM::factory("item")->add_to_parent($album1_1->id);
     $album1_1_2 = ORM::factory("item")->add_to_parent($album1_1->id);
 
-    $album1_1->reload()->delete();
+    $album1_1->delete();
     $album1->reload();
 
     // Now album1 contains only album1_2
@@ -56,19 +56,15 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function parent_test() {
-    $album = ORM::factory("item");
-    $album->add_to_parent(1);
+    $album = ORM::factory("item")->add_to_parent(1);
 
     $parent = ORM::factory("item", 1);
     $this->assert_equal($parent->id, $album->parent()->id);
   }
 
   public function parents_test() {
-    $outer = ORM::factory("item");
-    $outer->add_to_parent(1);
-
-    $inner = ORM::factory("item");
-    $inner->add_to_parent($outer->id);
+    $outer = ORM::factory("item")->add_to_parent(1);
+    $inner = ORM::factory("item")->add_to_parent($outer->id);
 
     $parent_ids = array();
     foreach ($inner->parents() as $parent) {
@@ -78,14 +74,9 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function children_test() {
-    $outer = ORM::factory("item");
-    $outer->add_to_parent(1);
-
-    $inner1 = ORM::factory("item");
-    $inner1->add_to_parent($outer->id);
-
-    $inner2 = ORM::factory("item");
-    $inner2->add_to_parent($outer->id);
+    $outer = ORM::factory("item")->add_to_parent(1);
+    $inner1 = ORM::factory("item")->add_to_parent($outer->id);
+    $inner2 = ORM::factory("item")->add_to_parent($outer->id);
 
     $child_ids = array();
     foreach ($outer->children() as $child) {
@@ -95,82 +86,76 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function children_limit_test() {
-    $outer = ORM::factory("item");
-    $outer->add_to_parent(1);
-
-    $inner1 = ORM::factory("item");
-    $inner1->add_to_parent($outer->id);
-
-    $inner2 = ORM::factory("item");
-    $inner2->add_to_parent($outer->id);
+    $outer = ORM::factory("item")->add_to_parent(1);
+    $inner1 = ORM::factory("item")->add_to_parent($outer->id);
+    $inner2 = ORM::factory("item")->add_to_parent($outer->id);
 
     $this->assert_equal(array($inner2->id => null), $outer->children(1, 1)->select_list('id'));
   }
 
   public function children_count_test() {
-    $outer = ORM::factory("item");
-    $outer->add_to_parent(1);
+    $outer = ORM::factory("item")->add_to_parent(1);
+    $inner1 = ORM::factory("item")->add_to_parent($outer->id);
+    $inner2 = ORM::factory("item")->add_to_parent($outer->id);
 
-    $inner1 = ORM::factory("item");
-    $inner1->add_to_parent($outer->id);
-
-    $inner2 = ORM::factory("item");
-    $inner2->add_to_parent($outer->id);
     $this->assert_equal(2, $outer->children_count());
   }
 
   public function descendant_test() {
-    $parent = album::create(1, "parent album", "parent album title");
-    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
-                  "photo1", "parent album photo");
+    $parent = ORM::factory("item");
+    $parent->type = "album";
+    $parent->add_to_parent(1);
 
-    $album1 = album::create($parent->id, "album1", "album1 title");
-    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
-                  "photo1", "album1 photo");
+    $photo = ORM::factory("item");
+    $photo->type = "photo";
+    $photo->add_to_parent($parent->id);
 
-    $album2 = album::create($parent->id, "album2", "album2 title");
-    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2",
-                  "photo2", "album2 photo");
+    $album1 = ORM::factory("item");
+    $album1->type = "album";
+    $album1->add_to_parent($parent->id);
+
+    $photo1 = ORM::factory("item");
+    $photo1->type = "photo";
+    $photo1->add_to_parent($album1->id);
+
     $parent->reload();
 
-    $this->assert_equal(5, $parent->descendants()->count());
-    $this->assert_equal(3, $parent->descendants(null, 0, "photo")->count());
-    $this->assert_equal(2, $parent->descendants(null, 0, "album")->count());
+    $this->assert_equal(3, $parent->descendants()->count());
+    $this->assert_equal(2, $parent->descendants(null, 0, "photo")->count());
+    $this->assert_equal(1, $parent->descendants(null, 0, "album")->count());
   }
 
   public function descendant_limit_test() {
-    $parent = album::create(1, "parent album", "parent album title");
-    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
-                  "photo1", "parent album photo");
+    $parent = ORM::factory("item")->add_to_parent(1);
+    $album1 = ORM::factory("item")->add_to_parent($parent->id);
+    $album2 = ORM::factory("item")->add_to_parent($parent->id);
+    $album3 = ORM::factory("item")->add_to_parent($parent->id);
 
-    $album1 = album::create($parent->id, "album1", "album1 title");
-    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
-                  "photo1", "album1 photo");
-
-    $album2 = album::create($parent->id, "album2", "album2 title");
-    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2",
-                  "photo2", "album2 photo");
     $parent->reload();
-
     $this->assert_equal(2, $parent->descendants(2)->count());
   }
 
   public function descendant_count_test() {
-    $parent = album::create(1, "parent album", "parent album title");
-    photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
-                  "photo1", "parent album photo");
+    $parent = ORM::factory("item");
+    $parent->type = "album";
+    $parent->add_to_parent(1);
 
-    $album1 = album::create($parent->id, "album1", "album1 title");
-    photo::create($album1->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo1",
-                  "photo1", "album1 photo");
+    $photo = ORM::factory("item");
+    $photo->type = "photo";
+    $photo->add_to_parent($parent->id);
 
-    $album2 = album::create($parent->id, "album2", "album2 title");
-    photo::create($album2->id, DOCROOT . "themes/default/images/thumbnail.jpg", "photo2",
-                  "photo2", "album2 photo");
+    $album1 = ORM::factory("item");
+    $album1->type = "album";
+    $album1->add_to_parent($parent->id);
+
+    $photo1 = ORM::factory("item");
+    $photo1->type = "photo";
+    $photo1->add_to_parent($album1->id);
+
     $parent->reload();
 
-    $this->assert_equal(5, $parent->descendants_count());
-    $this->assert_equal(3, $parent->descendants_count("photo"));
-    $this->assert_equal(2, $parent->descendants_count("album"));
+    $this->assert_equal(3, $parent->descendants_count());
+    $this->assert_equal(2, $parent->descendants_count("photo"));
+    $this->assert_equal(1, $parent->descendants_count("album"));
   }
 }

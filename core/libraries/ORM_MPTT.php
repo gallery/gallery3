@@ -56,8 +56,15 @@ class ORM_MPTT_Core extends ORM {
     $this->_lock();
 
     try {
+      // Make a hole in the parent for this new item
       $parent = ORM::factory($this->model_name, $parent_id);
-      $parent->_grow();
+      $this->db->query(
+        "UPDATE `{$this->table_name}` SET `left` = `left` + 2 WHERE `left` >= {$parent->right}");
+      $this->db->query(
+        "UPDATE `{$this->table_name}` SET `right` = `right` + 2 WHERE `right` >= {$parent->right}");
+      $parent->right += 2;
+
+      // Insert this item into the hole
       $this->left = $parent->right - 2;
       $this->right = $parent->right - 1;
       $this->parent_id = $parent->id;
@@ -73,11 +80,32 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
-   * Deleted this node and adjust the left and right pointers
+   * Delete this node and all of its children.
    */
   public function delete() {
+    $children = $this->children();
+    if ($children) {
+      foreach ($this->children() as $item) {
+        $item->delete();
+      }
+
+      // Deleting children has affected this item
+      $this->reload();
+    }
+
+    $this->_lock();
+    try {
+      $this->db->query(
+        "UPDATE `{$this->table_name}` SET `left` = `left` - 2 WHERE `left` >= {$this->right}");
+      $this->db->query(
+        "UPDATE `{$this->table_name}` SET `right` = `right` - 2 WHERE `right` >= {$this->right}");
+    } catch (Exception $e) {
+      $this->_unlock();
+      throw $e;
+    }
+
+    $this->_unlock();
     parent::delete();
-    $this->_grow(-1);
   }
 
   /**
@@ -197,19 +225,6 @@ class ORM_MPTT_Core extends ORM {
     return parent::reload();
   }
 
-  /**
-   * Grow this node's space enough to make room for 1 or more new nodes.
-   *
-   * @param integer $count the number of new nodes to add
-   */
-  public function _grow($count=1) {
-    $size = $count * 2;
-    $this->db->query(
-      "UPDATE `{$this->table_name}` SET `left` = `left` + $size WHERE `left` >= {$this->right}");
-    $this->db->query(
-      "UPDATE `{$this->table_name}` SET `right` = `right` + $size WHERE `right` >= {$this->right}");
-    $this->right += 2;
-  }
 
   /**
    * Lock the tree to prevent concurrent modification.
