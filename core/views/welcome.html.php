@@ -153,7 +153,9 @@
     <?= html::script("lib/jquery.form.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
     <?= html::script("lib/jquery.MultiFile.js") ?>
+    <? if (class_exists("rearrange_block")): ?>
     <?= rearrange_block::head(null) ?>
+    <? endif ?>
   </head>
   <body>
     <div class="outer">

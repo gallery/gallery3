@@ -18,7 +18,7 @@
 
 <? if (empty($errors)): ?>
 <div class="block">
-  <? if (empty($modules)): ?>
+  <? if (empty($modules['core'])): ?>
   <p class="success">
     Your system is ready, but Gallery is not yet installed.
   </p>

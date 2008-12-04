@@ -62,15 +62,27 @@ class Welcome_Controller extends Template_Controller {
   }
 
   function install($module_name) {
+    $to_install = array();
     if ($module_name == "*") {
       foreach ($this->_read_modules() as $module_name => $version) {
         if (empty($version)) {
-          Kohana::log("debug", "${module_name}_install (initial)");
-          call_user_func(array("${module_name}_installer", "install"));
+          $to_install[] = $module_name;
         }
       }
     } else {
-      call_user_func(array("{$module_name}_installer", "install"));
+      $to_install[] = $module_name;
+    }
+
+    foreach ($to_install as $module_name) {
+      if ($module_name != "core") {
+        require_once(DOCROOT . "modules/${module_name}/helpers/${module_name}_installer.php");
+      }
+      $modules = Kohana::config('core.modules');
+      $modules[] = MODPATH . $module_name;
+      Kohana::config_set('core.modules', $modules);
+
+      Kohana::log("debug", "${module_name}_install (initial)");
+      call_user_func(array("${module_name}_installer", "install"));
     }
 
     url::redirect("welcome");
@@ -371,15 +383,11 @@ class Welcome_Controller extends Template_Controller {
    * @return array(moduleId => version)
    */
   private function _read_modules() {
-    $modules = array();
+    $modules = module::available();
     try {
-      $installed = module::installed();
-      foreach ($installed as $installed_module) {
+      foreach (module::installed() as $installed_module) {
         $modules[$installed_module->name] = $installed_module->version;
       }
-
-      $modules = module::available($modules);
-
     } catch (Exception $e) {
       // The database may not be installed
     }
@@ -388,31 +396,31 @@ class Welcome_Controller extends Template_Controller {
   }
 
   private function _load_group_info() {
-    try {
+    if (class_exists("Group_Model")) {
       $this->template->groups = ORM::factory("group")->find_all();
-    } catch (Exception $e) {
+    } else {
       $this->template->groups = array();
     }
   }
 
   private function _load_user_info() {
-    try {
+    if (class_exists("User_Model")) {
       $this->template->users = ORM::factory("user")->find_all();
-    } catch (Exception $e) {
+    } else {
       $this->template->users = array();
     }
   }
 
   private function _load_comment_info() {
-    try {
+    if (class_exists("Comment_Model")) {
       $this->template->comment_count = ORM::factory("comment")->count_all();
-    } catch (Exception $e) {
+    } else {
       $this->template->comment_count = 0;
     }
   }
 
   private function _load_tag_info() {
-    try {
+    if (class_exists("Tag_Model")) {
       $this->template->tag_count = ORM::factory("tag")->count_all();
       $this->template->most_tagged = Database::instance()
         ->select("item_id AS id", "COUNT(tag_id) AS count")
@@ -422,7 +430,7 @@ class Welcome_Controller extends Template_Controller {
         ->limit(1)
         ->get()
         ->current();
-    } catch (Exception $e) {
+    } else {
       $this->template->tag_count = 0;
       $this->template->most_tagged = 0;
     }

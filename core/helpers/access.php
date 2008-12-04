@@ -162,7 +162,7 @@ class access_Core {
     foreach (self::_get_all_groups() as $group) {
       self::_add_columns($perm_name, $group->id);
     }
-    self::_add_columns($perm_name, group::EVERYBODY);
+    self::_add_columns($perm_name, 0);
   }
 
   /**
@@ -175,7 +175,7 @@ class access_Core {
     foreach (self::_get_all_groups() as $group) {
       self::_drop_columns($name, $group->id);
     }
-    self::_drop_columns($name, group::EVERYBODY);
+    self::_drop_columns($name, 0);
     ORM::factory("permission")->where("name", $name)->find()->delete();
   }
 
@@ -247,9 +247,9 @@ class access_Core {
    * @return ORM_Iterator
    */
   private static function _get_all_groups() {
-    try {
+    if (module::is_installed("user")) {
       return ORM::factory("group")->find_all();
-    } catch (Kohana_Database_Exception $e) {
+    } else {
       return array();
     }
   }

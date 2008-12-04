@@ -65,7 +65,8 @@ class module_Core {
     }
   }
 
-  public static function available($modules=array()) {
+  public static function available() {
+    $modules = array();
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
       if (empty($modules[basename(dirname(dirname($file)))])) {
         $modules[basename(dirname(dirname($file)))] = 0;
@@ -76,12 +77,15 @@ class module_Core {
   }
 
   public static function load_modules() {
-    $modules = Kohana::config('core.modules');
+    try {
+      $modules = Kohana::config('core.modules');
 
-    foreach (array_keys(self::available()) as $module_name) {
-      $modules[] = MODPATH . $module_name;
+      foreach (self::installed() as $module) {
+        $modules[] = MODPATH . $module->name;
+      }
+
+      Kohana::config_set('core.modules', $modules);
+    } catch (Exception $e) {
     }
-
-    Kohana::config_set('core.modules', $modules);
   }
 }
