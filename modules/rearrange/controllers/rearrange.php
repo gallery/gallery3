@@ -20,6 +20,17 @@
 class Rearrange_Controller extends Controller {
 
   public function show($id=null) {
-    print rearrange::get_children($id)->render();
+    $view = new View("rearrange_item_list.html");
+
+    $view->root = null;
+    if (empty($id)) {
+      $item = ORM::factory("item", 1);
+      $view->children = array($item);
+    } else {
+      $item = ORM::factory("item", $id);
+      $view->children = $item->children();
+    }
+
+    print $view;
   }
 }
