@@ -19,16 +19,40 @@
  */
 class ORM_MPTT_Test extends Unit_Test_Case {
   public function add_to_parent_test() {
-    $album = ORM::factory("item");
-    $album->type = "photo";
-    $album->title = "test";
-    $album->name = "test";
-    $album->add_to_parent(1);
+    $album = ORM::factory("item")->add_to_parent(1);
 
     $this->assert_equal($album->parent()->right - 2, $album->left);
     $this->assert_equal($album->parent()->right - 1, $album->right);
     $this->assert_equal($album->parent()->level + 1, $album->level);
     $this->assert_equal($album->parent()->id, $album->parent_id);
+  }
+
+  public function add_hierarchy_test() {
+    $album1 = ORM::factory("item")->add_to_parent(1);
+    $album1_1 = ORM::factory("item")->add_to_parent($album1->id);
+    $album1_2 = ORM::factory("item")->add_to_parent($album1->id);
+    $album1_1_1 = ORM::factory("item")->add_to_parent($album1_1->id);
+    $album1_1_2 = ORM::factory("item")->add_to_parent($album1_1->id);
+
+    $album1->reload();
+    $this->assert_equal(9, $album1->right - $album1->left);
+
+    $album1_1->reload();
+    $this->assert_equal(5, $album1_1->right - $album1_1->left);
+  }
+
+  public function delete_hierarchy_test() {
+    $album1 = ORM::factory("item")->add_to_parent(1);
+    $album1_1 = ORM::factory("item")->add_to_parent($album1->id);
+    $album1_2 = ORM::factory("item")->add_to_parent($album1->id);
+    $album1_1_1 = ORM::factory("item")->add_to_parent($album1_1->id);
+    $album1_1_2 = ORM::factory("item")->add_to_parent($album1_1->id);
+
+    $album1_1->reload()->delete();
+    $album1->reload();
+
+    // Now album1 contains only album1_2
+    $this->assert_equal(3, $album1->right - $album1->left);
   }
 
   public function parent_test() {
@@ -149,64 +173,4 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $this->assert_equal(3, $parent->descendants_count("photo"));
     $this->assert_equal(2, $parent->descendants_count("album"));
   }
-
-    public function grow_test() {
-      $parent = ORM::factory("item", 1);
-
-      $outer = ORM::factory("item");
-      $outer->add_to_parent(1);
-
-      $inner1 = ORM::factory("item");
-      $inner1->add_to_parent($outer->id);
-
-      $inner2 = ORM::factory("item");
-      $inner2->add_to_parent($outer->id);
-
-      $parent->reload();
-      $original_parent_right = $parent->right;
-      $original_right = $outer->right;
-
-      $outer->_grow(2);
-
-      $parent->reload();
-      $this->assert_equal($original_right + 2, $outer->right);
-      $this->assert_equal($original_parent_right + 4, $parent->right);
-    }
-
-    public function contract_test() {
-      $parent = ORM::factory("item", 1);
-      $parent->reload();
-      Kohana::log("debug", "original parent->right: " . $parent->right);
-
-      $outer = ORM::factory("item");
-      $outer->add_to_parent(1);
-
-      $inner1 = ORM::factory("item");
-      $inner1->add_to_parent($outer->id);
-
-      $inner2 = ORM::factory("item");
-      $inner2->add_to_parent($outer->id);
-
-      $outer->reload();
-      $parent->reload();
-      $original_parent_right = $parent->right;
-      $original_right = $outer->right;
-
-      $inner3 = ORM::factory("item");
-      $inner3->add_to_parent($outer->id);
-
-      $inner4 = ORM::factory("item");
-      $inner4->add_to_parent($outer->id);
-
-
-      $inner2->delete();
-      $inner4->delete();
-
-      $outer->_grow(-2);
-
-      $outer->reload();
-      $parent->reload();
-      $this->assert_equal($original_right, $outer->right);
-      $this->assert_equal($original_parent_right, $parent->right);
-    }
 }
