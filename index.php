@@ -51,6 +51,7 @@ if (PHP_SAPI == 'cli') {
   define('TEST_MODE', 1);
   @system('mkdir -p test/var/logs');
   define('VARPATH', strtr(realpath('test/var') . '/', DIRECTORY_SEPARATOR, '/'));
+  @copy("var/database.php", VARPATH . "database.php");
 } else {
   if (file_exists('var')) {
     define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));

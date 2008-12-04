@@ -82,6 +82,11 @@ class Gallery_Unit_Test_Controller extends Controller {
         continue;
       }
 
+      $modules = Kohana::config('core.modules');
+      $modules[] = MODPATH . $module_name;
+      Kohana::config_set('core.modules', $modules);
+      require_once(DOCROOT . "modules/${module_name}/helpers/${module_name}_installer.php");
+
       $installer_class = "{$module_name}_installer";
       if (method_exists($installer_class, "install")) {
         call_user_func_array(array($installer_class, "install"), array());
