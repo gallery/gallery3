@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Directory_Helper_Test extends Unit_Test_Case {
+class Dir_Helper_Test extends Unit_Test_Case {
   public function remove_album_test() {
     $dirname = (VARPATH . "albums/testdir");
     mkdir($dirname, 0777, true);
