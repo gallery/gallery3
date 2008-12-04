@@ -125,7 +125,7 @@ class Welcome_Controller extends Template_Controller {
     $data = "digraph G {\n";
     foreach ($items as $item) {
       $data .= "  $item->parent_id -> $item->id\n";
-      $data .= "  $item->id [label=\"$item->id <$item->left, $item->right>\"]\n";
+      $data .= "  $item->id [label=\"$item->id $item->title <$item->left, $item->right>\"]\n";
     }
     $data .= "}\n";
 

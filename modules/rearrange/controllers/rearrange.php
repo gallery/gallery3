@@ -22,14 +22,26 @@ class Rearrange_Controller extends Controller {
   public function show($id=null) {
     $view = new View("rearrange_item_list.html");
 
-    if (empty($id)) {
-      $item = ORM::factory("item", 1);
-      $view->children = array($item);
-    } else {
-      $item = ORM::factory("item", $id);
-      $view->children = $item->children();
-    }
+    $isRoot = empty($id);
+    $item = ORM::factory("item", $isRoot ? 1 : $id);
+
+    $view->children = $isRoot ? array($item) : $item->children();
 
     print $view;
   }
+
+  public function move($source_id, $target_id) {
+    $source = ORM_MPTT::factory("item", $source_id);
+    $target = ORM_MPTT::factory("item", $target_id);
+
+    try {
+      $source->moveTo($target);
+      print "success";
+    } catch (Exception $e) {
+      Kohana::log("error", $e->getMessage() . "\n" + $e->getTraceAsString());
+      header("HTTP/1.1 500");
+      print  $e->getMessage();
+    }
+  }
+
 }

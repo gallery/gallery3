@@ -70,9 +70,19 @@ if(jQuery) (function($){
             hoverClass: "droppable-hover",
             drop: function(ev, ui) {
               source_element = ui.draggable;
-              source_parent = source_element.parent();
+              source_parent = getParent(source_element);
               target = ui.element;
-              alert(source_element.attr("id") + "\n" + target.attr("id"));
+
+              $.ajax({
+                url: "rearrange/move/" + source_element.attr("id") + "/" + target.attr("id"),
+                success: function(data, textStatus) {
+                  collapse(source_parent);
+                  showTree(source_parent, source_parent.attr("id"));
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                  alert("Http Error Code: " + xhr.status + "Text Status: " + textStatus);
+                }
+              });
             }
           });
           bindTree(c);
@@ -168,9 +178,7 @@ if(jQuery) (function($){
                 showTree(parent, parent.attr("id"));
               },
               error: function(xhr, textStatus, errorThrown) {
-                alert(xhr.status);
-                alert(textStatus);
-                alert(errorThrown);
+                alert("Http Error Code: " + xhr.status + "Text Status: " + textStatus);
               },
               type: "DELETE"
             });

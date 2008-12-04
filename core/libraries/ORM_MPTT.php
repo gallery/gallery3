@@ -53,7 +53,7 @@ class ORM_MPTT_Core extends ORM {
    * @return ORM
    */
   function add_to_parent($parent_id) {
-    $this->_lock();
+    $this->lock();
 
     try {
       // Make a hole in the parent for this new item
@@ -71,11 +71,11 @@ class ORM_MPTT_Core extends ORM {
       $this->level = $parent->level + 1;
       $this->save();
     } catch (Exception $e) {
-      $this->_unlock();
+      $this->unlock();
       throw $e;
     }
 
-    $this->_unlock();
+    $this->unlock();
     return $this;
   }
 
@@ -93,18 +93,18 @@ class ORM_MPTT_Core extends ORM {
       $this->reload();
     }
 
-    $this->_lock();
+    $this->lock();
     try {
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `left` = `left` - 2 WHERE `left` >= {$this->right}");
+        "UPDATE `{$this->table_name}` SET `left` = `left` - 2 WHERE `left` > {$this->right}");
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `right` = `right` - 2 WHERE `right` >= {$this->right}");
+        "UPDATE `{$this->table_name}` SET `right` = `right` - 2 WHERE `right` > {$this->right}");
     } catch (Exception $e) {
-      $this->_unlock();
+      $this->unlock();
       throw $e;
     }
 
-    $this->_unlock();
+    $this->unlock();
     parent::delete();
   }
 
@@ -225,11 +225,88 @@ class ORM_MPTT_Core extends ORM {
     return parent::reload();
   }
 
+  /**
+   * Move this item to the specified target.
+   *
+   * @chainable
+   * @param   Item_Model $target  Target item (must be an album
+   * @param   boolean    $locked  The called is already holding the lock
+   * @return  ORM_MTPP
+   */
+  function moveTo($target, $locked=false) {
+    if ($target->type != "album") {
+      throw new Exception("@todo '{$target->type}' IS NOT A VALID MOVE TARGET");
+    }
+
+    if ($this->id == 1) {
+      throw new Exception("@todo '{$this->title}' IS NOT A VALID SOURCE");
+    }
+
+    $numberToMove = (int)(($this->right - $this->left) / 2 + 1);
+    $size_of_hole = $numberToMove * 2;
+    $original_parent = $this->parent;
+
+    if (empty($locked)) {
+      $this->lock();
+    }
+    try {
+      // Make a hole in the target for the move
+      $target->db->query(
+        "UPDATE `{$target->table_name}` SET `left` = `left` + $size_of_hole" .
+        " WHERE `left` >= {$target->right}");
+      $target->db->query(
+        "UPDATE `{$target->table_name}` SET `right` = `right` + $size_of_hole" .
+        " WHERE `right` >= {$target->right}");
+
+      // Change the parent.
+      $this->db->query(
+        "UPDATE `{$this->table_name}` SET `parent_id` = {$target->id}" .
+        " WHERE `id` = {$this->id}");
+
+      // If the source is to the right of the target then we just adjusted its left and right above.
+      $left = $this->left;
+      $right = $this->right;
+      if ($this->left > $target->right) {
+        $left += $size_of_hole;
+        $right += $size_of_hole;
+      }
+
+      $newOffset = $target->left - $left + 1;
+      $this->db->query(
+        "UPDATE `{$this->table_name}`" .
+        "   SET `left` = `left` + $newOffset," .
+        "       `right` = `right` + $newOffset" .
+      " WHERE `left` >= $left" .
+        "   AND `right` <= $right");
+
+      // Close the hole in the source's parent after the move
+      $this->db->query(
+        "UPDATE `{$this->table_name}` SET `left` = `left` - $size_of_hole" .
+        " WHERE `left` > $right");
+      $this->db->query(
+        "UPDATE `{$this->table_name}` SET `right` = `right` - $size_of_hole" .
+        " WHERE `right` > $right");
+
+    } catch (Exception $e) {
+      if (empty($locked)) {
+        $this->unlock();
+      }
+      throw $e;
+    }
+
+    if (empty($locked)) {
+      $this->_unlock();
+    }
+
+    // Lets reload to get the changes.
+    $this->reload();
+    return $this;
+  }
 
   /**
    * Lock the tree to prevent concurrent modification.
    */
-  private function _lock() {
+  protected function lock() {
     $result = $this->db->query("SELECT GET_LOCK('{$this->table_name}', 1) AS L")->current();
     if (empty($result->L)) {
       throw new Exception("@todo UNABLE_TO_LOCK_EXCEPTION");
@@ -239,7 +316,7 @@ class ORM_MPTT_Core extends ORM {
   /**
    * Unlock the tree.
    */
-  private function _unlock() {
+  protected function unlock() {
     $this->db->query("SELECT RELEASE_LOCK('{$this->table_name}')");
   }
 }

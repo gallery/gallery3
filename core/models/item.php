@@ -53,6 +53,32 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * Move this item to the specified target.
+   *
+   * @chainable
+   * @param   Item_Model $target  Target item (must be an album
+   * @return  ORM_MTPP
+   */
+  function moveTo($target) {
+    $this->lock();
+    try {
+      $original_path = $this->file_path();
+
+      parent::moveTo($target, true);
+
+      $new_path = $this->file_path();
+      rename($original_path, $new_path);
+
+    } catch (Exception $e) {
+      $this->unlock();
+      throw $e;
+    }
+
+    $this->unlock();
+    return $this;
+  }
+
+  /**
    * album: /var/albums/album1/album2
    * photo: /var/albums/album1/album2/photo.jpg
    */
