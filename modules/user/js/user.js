@@ -4,7 +4,7 @@
  */
 
 $("document").ready(function() {
-  $("#gLoginLink").click(function(event) {
+  $("#gLoginLink").click(function() {
     var url = $("#gLoginLink a").attr("href");
     $.get(url, function(data) {
 	    $('#gLoginLink').hide();
