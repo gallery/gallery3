@@ -60,7 +60,7 @@ class module_Core {
       $class = "{$module->name}_event";
       $function = str_replace(".", "_", $name);
       if (method_exists($class, $function)) {
-        call_user_func_array(array($class, $function), array($data));
+        call_user_func_array(array($class, $function), array(&$data));
       }
     }
   }

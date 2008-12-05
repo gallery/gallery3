@@ -55,6 +55,25 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $this->assert_equal(3, $album1->right - $album1->left);
   }
 
+  public function move_to_test() {
+    $album1 = album::create(1, "move_to_test_1", "move_to_test_1");
+    $album1_1 = album::create($album1->id, "move_to_test_1_1", "move_to_test_1_1");
+    $album1_2 = album::create($album1->id, "move_to_test_1_2", "move_to_test_1_2");
+    $album1_1_1 = album::create($album1_1->id, "move_to_test_1_1_1", "move_to_test_1_1_1");
+    $album1_1_2 = album::create($album1_1->id, "move_to_test_1_1_2", "move_to_test_1_1_2");
+
+    $album1_2->reload();
+    $album1_1_1->reload();
+
+    $album1_1_1->moveTo($album1_2);
+
+    $album1_1->reload();
+    $album1_2->reload();
+
+    $this->assert_equal(3, $album1_1->right - $album1_1->left);
+    $this->assert_equal(3, $album1_2->right - $album1_2 ->left);
+  }
+
   public function parent_test() {
     $album = ORM::factory("item")->add_to_parent(1);
 
