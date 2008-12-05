@@ -104,18 +104,16 @@ class Welcome_Controller extends Template_Controller {
           }
         }
       } catch (Exception $e) { }
-    }
-    call_user_func(array("{$module_name}_installer", "uninstall"));
-
-    $clean = false;
-    if (!$clean) {
-      // Since we're in a state of flux, it's possible that other stuff went wrong with the
-      // uninstall, so back off and nuke things from orbit.
-      $db = Database::instance();
-      foreach ($db->list_tables() as $table) {
-        $db->query("DROP TABLE `$table`");
+      if (!$clean) {
+        // Since we're in a state of flux, it's possible that other stuff went wrong with the
+        // uninstall, so back off and nuke things from orbit.
+        $db = Database::instance();
+        foreach ($db->list_tables() as $table) {
+          $db->query("DROP TABLE `$table`");
+        }
       }
     }
+    call_user_func(array("{$module_name}_installer", "uninstall"));
     url::redirect("welcome");
   }
 
