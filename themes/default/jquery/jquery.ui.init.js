@@ -10,7 +10,7 @@ $("document").ready(function() {
    * Reset width of sized photos wider than their 
    * parent container so that they fit
    */
-  if ($("#gItem").width()) {
+  if ($("#gItem").length) {
     var containerWidth = $("#gItem").width();
     var oPhoto = $("#gItem img").filter(function() {
       return this.id.match(/gPhotoID-/);
