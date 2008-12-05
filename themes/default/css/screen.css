@@ -299,6 +299,10 @@ table.gBlockContent td {
 
 /* Album ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+#gAlbumHeader {
+  position: relative;
+}
+
 #gAlbumHeader h1 {
   display: inline;
   margin-right: .6em;
@@ -307,10 +311,6 @@ table.gBlockContent td {
 #gAlbumHeader .gDescription {
   color: #ccc;
   display: inline;
-}
-
-#gAlbumHeaderButtons {
-  float: right;
 }
 
 #gAlbumGrid {
@@ -492,6 +492,18 @@ table.gMetadata td.toggle {
   width: 100%;
 }
 
+#gItemMenu {
+  margin: 0 0 20px 20px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#gItemMenu li {
+  float: left;
+  margin: 0 3px;
+}
+
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gBreadcrumbs {
@@ -656,8 +668,10 @@ table.gMetadata td.toggle {
 
 .gButtonLink {
   border: 1px solid #ccc;
-  padding: 5px;
-  margin-left: 5px;
+  display: block;
+  height: 24px;
+  line-height: 1.7em;
+  padding: 3px 1em 0;
 }
 
 .gButtonLink:hover {
