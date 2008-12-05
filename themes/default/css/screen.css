@@ -601,6 +601,7 @@ table.gMetadata td.toggle {
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gPager {
+  clear: both;
   padding-top: 2em;
 }
 
