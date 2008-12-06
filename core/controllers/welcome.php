@@ -507,16 +507,8 @@ class Welcome_Controller extends Template_Controller {
     $this->auto_render = false;
   }
 
-  public function _get_add_photo_html() {
-    return '
-      <fieldset>
-        <legend>Photos</legend>
-        <form method="post" action="' . url::site("albums/1")  . '" enctype="multipart/form-data">
-          <input type="submit" value="upload"/>
-          <input id="photo_upload" name="file[]" type="file"/>
-          <input type="hidden" name="type" value="photo"/>
-        </form>
-      </fieldset>
-    ';
+  public function _get_add_photo_html($parent_id=1) {
+    $parent = ORM::factory("item", $parent_id);
+    return photo::get_add_form($parent);
   }
 }
