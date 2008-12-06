@@ -23,19 +23,18 @@ class slideshow_block_Core {
       "</script>";
   }
 
-  private static function _piclens_link() {
-    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\" " .
-      "class=\"gButtonLink\">" .
-      _("Slideshow") .
-      "</a>";
+  private static function _piclens_link($theme) {
+    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\">" . 
+      "<img src=\"" . $theme->url("images/ico-view-slideshow.png") . "\" alt=\"" . 
+      _("View slideshow") . "\" /></a>";
   }
 
   public static function album_top($theme) {
-    return self::_piclens_link();
+    return self::_piclens_link($theme);
   }
 
   public static function photo_top($theme) {
-    return self::_piclens_link();
+    return self::_piclens_link($theme);
   }
 
   public static function tag_top($theme) {
