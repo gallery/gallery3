@@ -235,11 +235,11 @@ class ORM_MPTT_Core extends ORM {
    */
   function move_to($target, $locked=false) {
     if ($target->type != "album") {
-      throw new Exception("@todo '{$target->type}' IS NOT A VALID MOVE TARGET");
+      throw new Exception("@todo INVALID_MOVE_TYPE $target->type");
     }
 
     if ($this->id == 1) {
-      throw new Exception("@todo '{$this->title}' IS NOT A VALID SOURCE");
+      throw new Exception("@todo INVALID_SOURCE root album");
     }
 
     $number_to_move = (int)(($this->right - $this->left) / 2 + 1);
