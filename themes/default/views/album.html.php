@@ -2,16 +2,16 @@
 <div id="gAlbumHeader">
   <ul id="gItemMenu">
     <li><a href="#" title="<?= _("View album") ?>">
-    	<img src="<?= $theme->url("images/ico-view-album.png") ?>" 
-    		alt="<?= _("View album") ?>" /></a></li>
+        <img src="<?= $theme->url("images/ico-view-album.png") ?>"
+             alt="<?= _("View album") ?>" /></a></li>
     <li><a href="#" title="<?= _("View album in hybrid mode") ?>">
-    	<img src="<?= $theme->url("images/ico-view-hybrid.png") ?>" 
-    		alt="<?= _("View album in hybrid mode") ?>" /></a></li>
+        <img src="<?= $theme->url("images/ico-view-hybrid.png") ?>"
+             alt="<?= _("View album in hybrid mode") ?>" /></a></li>
     <li><?= $theme->album_top() ?></li>
-    <li><a href="<?= url::site("/form/add/photos/$item->id") ?>" title="<?= _("Add an item") ?>" 
-    		class="gButtonLink gDialogLink"><?= _("Add an item") ?></a></li>
+    <li><a href="<?= url::site("/form/add/photos/$item->id") ?>" title="<?= _("Add an item") ?>"
+        class="gButtonLink gDialogLink"><?= _("Add an item") ?></a></li>
   </ul>
-  
+
   <h1><?= $item->title_edit ?></h1>
   <div class="gDescription"><?= $item->description_edit ?></div>
 </div>
