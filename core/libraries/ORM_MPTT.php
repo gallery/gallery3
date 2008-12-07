@@ -233,7 +233,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   boolean    $locked  The called is already holding the lock
    * @return  ORM_MTPP
    */
-  function moveTo($target, $locked=false) {
+  function move_to($target, $locked=false) {
     if ($target->type != "album") {
       throw new Exception("@todo '{$target->type}' IS NOT A VALID MOVE TARGET");
     }
@@ -242,8 +242,8 @@ class ORM_MPTT_Core extends ORM {
       throw new Exception("@todo '{$this->title}' IS NOT A VALID SOURCE");
     }
 
-    $numberToMove = (int)(($this->right - $this->left) / 2 + 1);
-    $size_of_hole = $numberToMove * 2;
+    $number_to_move = (int)(($this->right - $this->left) / 2 + 1);
+    $size_of_hole = $number_to_move * 2;
     $original_parent = $this->parent;
     $original_left = $this->left;
     $original_right = $this->right;

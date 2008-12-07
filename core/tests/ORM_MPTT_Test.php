@@ -65,13 +65,21 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $album1_2->reload();
     $album1_1_1->reload();
 
-    $album1_1_1->moveTo($album1_2);
+    $album1_1_1->move_to($album1_2);
 
     $album1_1->reload();
     $album1_2->reload();
 
     $this->assert_equal(3, $album1_1->right - $album1_1->left);
-    $this->assert_equal(3, $album1_2->right - $album1_2 ->left);
+    $this->assert_equal(3, $album1_2->right - $album1_2->left);
+
+    $this->assert_equal(
+      array($album1_1_2->id => "move_to_test_1_1_2"),
+      $album1_1->children()->select_list());
+
+    $this->assert_equal(
+      array($album1_1_1->id => "move_to_test_1_1_1"),
+      $album1_2->children()->select_list());
   }
 
   public function parent_test() {

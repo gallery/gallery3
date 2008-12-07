@@ -35,7 +35,7 @@ class Rearrange_Controller extends Controller {
     $target = ORM_MPTT::factory("item", $target_id);
 
     try {
-      $source->moveTo($target);
+      $source->move_to($target);
       print "success";
     } catch (Exception $e) {
       Kohana::log("error", $e->getMessage() . "\n" + $e->getTraceAsString());
