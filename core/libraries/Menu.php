@@ -76,7 +76,7 @@ class Menu_Core {
   public function __toString() {
     $items_html = array();
     if (!empty($this->_text)) {
-      if ($this->_url[0] == "#") {
+      if ($this->_url != "#" && $this->_url[0] == "#") {
         $class = "class=\"gDialogLink\"";
         $url = substr($this->_url, 1);
       } else {
