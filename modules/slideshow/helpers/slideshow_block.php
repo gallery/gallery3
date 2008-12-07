@@ -24,7 +24,8 @@ class slideshow_block_Core {
   }
 
   private static function _piclens_link($theme) {
-    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\">" . 
+    return "<a href=\"javascript:PicLensLite.start()\" id=\"gSlideshowLink\"" . 
+      " title=\"" . _("View slideshow") . "\">" . 
       "<img src=\"" . $theme->url("images/ico-view-slideshow.png") . "\" alt=\"" . 
       _("View slideshow") . "\" /></a>";
   }
