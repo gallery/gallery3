@@ -37,14 +37,15 @@ class Welcome_Controller extends Template_Controller {
         ->where("type", "photo")->orderby("level", "desc")->find();
       $this->template->album_tree = $this->_load_album_tree();
       $this->template->rearrange_html = new View("rearrange.html");
+      $this->template->add_photo_html = $this->_get_add_photo_html();
     } catch (Exception $e) {
       $this->template->album_count = 0;
       $this->template->photo_count = 0;
       $this->template->deepest_photo = null;
       $this->template->album_tree = array();
       $this->template->rearrange_html = "";
+      $this->template->add_photo_html = "";
     }
-    $this->template->add_photo_html = $this->_get_add_photo_html();
 
     $this->_load_user_info();
     $this->_load_group_info();
@@ -93,6 +94,7 @@ class Welcome_Controller extends Template_Controller {
     if ($module_name == "core") {
       // We have to uninstall all other modules first, else their tables, etc don't
       // get cleaned up.
+      $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
       try {
         foreach (ORM::factory("module")->find_all() as $module) {
           if ($module->name != "core" && $module->version) {
@@ -104,6 +106,7 @@ class Welcome_Controller extends Template_Controller {
           }
         }
       } catch (Exception $e) { }
+      set_error_handler($old_handler);
       if (!$clean) {
         // Since we're in a state of flux, it's possible that other stuff went wrong with the
         // uninstall, so back off and nuke things from orbit.
@@ -371,7 +374,7 @@ class Welcome_Controller extends Template_Controller {
   }
 
   function _create_directories() {
-    foreach (array("logs") as $dir) {
+    foreach (array("logs", "uploads") as $dir) {
       @mkdir(VARPATH . "$dir");
     }
   }
