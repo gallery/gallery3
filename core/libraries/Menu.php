@@ -93,7 +93,6 @@ class Menu_Core {
     }
 
     if (!empty($this->_items)) {
-//      $items_html[] = "<ul class=\"gItemMenu\">";
       $items_html[] = "<ul>";
 
       foreach ($this->_items as $item) {
