@@ -229,8 +229,8 @@ class ORM_MPTT_Core extends ORM {
    * Move this item to the specified target.
    *
    * @chainable
-   * @param   Item_Model $target  Target item (must be an album
-   * @param   boolean    $locked  The called is already holding the lock
+   * @param   Item_Model $target  Target item (must be an album)
+   * @param   boolean    $locked  The caller is already holding the lock
    * @return  ORM_MTPP
    */
   function move_to($target, $locked=false) {
