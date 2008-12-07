@@ -112,23 +112,113 @@ class Access_Helper_Test extends Unit_Test_Case {
 
 
   public function can_view_item_test() {
+    $root = ORM::factory("item", 1);
+    access::allow(0, "view", $root->id);
+    $this->assert_true(access::can(0, "view", $root->id));
   }
 
   public function cant_view_child_of_hidden_parent_test() {
+    $root = ORM::factory("item", 1);
+    $album = ORM::factory("item")->add_to_parent($root);
+    access::add_item($album);
+
+    access::deny(0, "view", $root->id);
+    access::reset(0, "view", $album->id);
+    $this->assert_false(access::can(0, "view", $album->id));
   }
 
   public function view_permissions_propagate_down_test() {
+    $root = ORM::factory("item", 1);
+    $album = ORM::factory("item")->add_to_parent($root);
+    access::add_item($album);
+
+    access::allow(0, "view", $root->id);
+    access::reset(0, "view", $album->id);
+    $this->assert_true(access::can(0, "view", $album->id));
+  }
+
+  public function can_toggle_view_permissions_propagate_down_test() {
+    $root = ORM::factory("item", 1);
+    $album1 = ORM::factory("item");
+    $album1->type = "album";
+    $album1->add_to_parent($root);
+    access::add_item($album1);
+
+    $album2 = ORM::factory("item");
+    $album2->type="album";
+    $album2->add_to_parent($album1);
+    access::add_item($album2);
+
+    $album3 = ORM::factory("item");
+    $album3->type="album";
+    $album3->add_to_parent($album2);
+    access::add_item($album3);
+
+    $album4 = ORM::factory("item");
+    $album4->type="album";
+    $album4->add_to_parent($album3);
+    access::add_item($album4);
+
+    access::allow(0, "view", $root->id);
+    access::deny(0, "view", $album1->id);
+    access::reset(0, "view", $album2->id);
+    access::reset(0, "view", $album3->id);
+    access::reset(0, "view", $album4->id);
+    $this->assert_false(access::can(0, "view", $album4->id));
+
+    access::allow(0, "view", $album1->id);
+    $this->assert_true(access::can(0, "view", $album4->id));
   }
 
   public function revoked_view_permissions_cant_be_allowed_lower_down_test() {
+    $root = ORM::factory("item", 1);
+    $album = ORM::factory("item")->add_to_parent($root);
+    access::add_item($album);
+
+    access::deny(0, "view", $root->id);
+    access::allow(0, "view", $album->id);
+    $this->assert_false(access::can(0, "view", $album->id));
   }
 
   public function can_edit_item_test() {
+    $root = ORM::factory("item", 1);
+    access::allow(0, "edit", $root->id);
+    $this->assert_true(access::can(0, "edit", $root->id));
   }
 
   public function non_view_permissions_propagate_down_test() {
+    $root = ORM::factory("item", 1);
+    $album = ORM::factory("item")->add_to_parent($root);
+    access::add_item($album);
+
+    access::allow(0, "edit", $root->id);
+    access::reset(0, "edit", $album->id);
+    $this->assert_true(access::can(0, "edit", $album->id));
   }
 
   public function non_view_permissions_can_be_revoked_lower_down_test() {
+    $root = ORM::factory("item", 1);
+    $outer = ORM::factory("item");
+    $outer->type = "album";
+    $outer->add_to_parent($root);
+
+    access::add_item($outer);
+    $outer_photo = ORM::factory("item")->add_to_parent($outer);
+    access::add_item($outer_photo);
+
+    $inner = ORM::factory("item");
+    $inner->type = "album";
+    $inner->add_to_parent($outer);
+    access::add_item($inner);
+    $inner_photo = ORM::factory("item")->add_to_parent($inner);
+    access::add_item($inner_photo);
+
+    access::allow(0, "edit", $root->id);
+    access::deny(0, "edit", $outer->id);
+    access::allow(0, "edit", $inner->id);
+
+    // Outer album is not editable, inner one is.
+    $this->assert_false(access::can(0, "edit", $outer_photo->id));
+    $this->assert_true(access::can(0, "edit", $inner_photo->id));
   }
 }

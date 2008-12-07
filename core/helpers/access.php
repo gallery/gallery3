@@ -64,8 +64,6 @@
  * o In the near future, we'll be moving the "view" columns out of Access_Intent_Model and
  *   directly into Item_Model.  By doing this, we'll be able to find viewable items (the most
  *   common permission access) without doing table joins.
- *
- * o Write unit tests.
  */
 class access_Core {
   const DENY      = 0;
@@ -403,12 +401,11 @@ class access_Core {
       $query = $db->query(
         "SELECT `access_intents`.`$field`, `items`.`left`, `items`.`right` " .
         "FROM `access_intents` JOIN (`items`) ON (`access_intents`.`item_id` = `items`.`id`) " .
-        "WHERE `left` >= ? " .
-        "AND `right` <= ? " .
+        "WHERE `left` >= $item->left " .
+        "AND `right` <= $item->right " .
         "AND `type` = 'album' " .
         "AND `$field` IS NOT NULL " .
-        "ORDER BY `level` ASC ",
-        array($item->left, $item->right));
+        "ORDER BY `level` ASC");
       foreach  ($query as $row) {
         $db->query(
           "UPDATE `access_caches` SET `$field` = {$row->$field} " .
