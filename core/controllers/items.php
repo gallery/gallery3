@@ -88,7 +88,7 @@ class Items_Controller extends REST_Controller {
           $this->input->post("title", $this->input->post("name")),
           $this->input->post("description"),
           $owner_id);
-        url::redirect("{$new_item->type}s/{$new_item->id}");
+        url::redirect("photos/{$photo->id}");
       }
       break;
     }
