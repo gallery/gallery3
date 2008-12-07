@@ -17,15 +17,14 @@
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
-    <!-- this stuff will likely be integrated into lib, possibly theme css -->
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("jquery/jquery.ui.css") ?>"
-          media="screen,print,projection" />
-    <script src="<?= $theme->url("jquery/jquery.ui.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("jquery/jquery.ui.tabs.js") ?>" type="text/javascript"></script>
-    <!--script src="<?= $theme->url("jquery/jquery.ui.accordion.js") ?>" type="text/javascript"></script-->
-    <script src="<?= $theme->url("jquery/jquery.dimensions.min.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("jquery/jquery.ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
+    <script src="<?= $theme->url("jquery/ui.core.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/ui.tabs.min.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/ui.draggable.min.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/ui.resizable.min.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/ui.dialog.min.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/jquery.dimensions.min.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
   </head>
 
   <body>
