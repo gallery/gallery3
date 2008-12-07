@@ -20,18 +20,23 @@ if (!function_exists("DrawForm")) {
         print "$prefix<fieldset>\n";
         print "$prefix  <legend>$input->name</legend>\n";
         print "$prefix  <ul>\n";
+
         DrawForm($input->inputs, $level + 2);
-        DrawForm($input->hidden, $level + 2);
         print "$prefix  </ul>\n";
+
+        // Since hidden fields can only have name and value attributes lets just render it now
+        $hidden_prefix = "$prefix    ";
+        foreach ($input->hidden as $hidden) {
+          print "$prefix  {$hidden->render()}\n";
+        }
         print "$prefix</fieldset>\n";
       } else {
         if ($input->error_messages()) {
           print "$prefix<li class=\"gError\">\n";
-        } else if ($input->class) {
-          print "$prefix<li>\n";
         } else {
-          // no class means its a "hidden" so don't wrap it in <li>
+          print "$prefix<li>\n";
         }
+
         if ($input->label()) {
           print "$prefix  {$input->label()}\n";
         }
@@ -46,9 +51,7 @@ if (!function_exists("DrawForm")) {
             print "$prefix  </p>\n";
           }
         }
-        if ($input->class) {
-          print "$prefix</li>\n";
-        }
+        print "$prefix</li>\n";
       }
     }
   }
