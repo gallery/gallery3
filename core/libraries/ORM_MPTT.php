@@ -229,10 +229,9 @@ class ORM_MPTT_Core extends ORM {
    *
    * @chainable
    * @param   Item_Model $target  Target item (must be an album)
-   * @param   boolean    $locked  The caller is already holding the lock
    * @return  ORM_MTPP
    */
-  function move_to($target, $locked=false) {
+  function move_to($target) {
     if ($target->type != "album") {
       throw new Exception("@todo INVALID_MOVE_TYPE $target->type");
     }
@@ -248,9 +247,7 @@ class ORM_MPTT_Core extends ORM {
     $original_right = $this->right;
     $target_right = $target->right;
 
-    if (empty($locked)) {
-      $this->lock();
-    }
+    $this->lock();
     try {
       // Make a hole in the target for the move
       $target->db->query(
@@ -290,15 +287,11 @@ class ORM_MPTT_Core extends ORM {
         " WHERE `right` > $right");
 
     } catch (Exception $e) {
-      if (empty($locked)) {
-        $this->unlock();
-      }
+      $this->unlock();
       throw $e;
     }
 
-    if (empty($locked)) {
-      $this->_unlock();
-    }
+    $this->unlock();
 
     // Lets reload to get the changes.
     $this->reload();
