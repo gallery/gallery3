@@ -15,9 +15,9 @@ $("document").ready(function() {
     var href = $(this).attr("href");
     if (href == "#") {
       return false;
-    } else if (href.match("^#") == "#") {
-      alert("Display href: " + href.substring(1) + "in a popup");
-      return false;
+//    } else if (href.match("^#") == "#") {
+//      alert("Display href: " + href.substring(1) + "in a popup");
+//      return false;
     }
     return true;
   });

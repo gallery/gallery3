@@ -27,7 +27,7 @@ class core_menu_Core {
     if ($user) {
       $upload_menu = new Menu(_("UPLOAD"));
       $upload_menu->append(
-        new Menu(_("File Upload"), "#photo/form/file_upload/" . $theme->item()->id));
+        new Menu(_("Add Item"), "#form/add/photos/" . $theme->item()->id));
       $upload_menu->append(
         new Menu(_("Local Upload"), "#photo/form/local_upload/" . $theme->item()->id));
       $menus->append($upload_menu);

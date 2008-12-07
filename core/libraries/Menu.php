@@ -17,19 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Menu_Item {
-  protected $_text;
-  protected $_url;
-
-  function __constructor($text, $url="#") {
-    $this->_text = $text;
-    $this->_url = $url;
-  }
-
-  function __toString() {
-    return "<li><a href=\"$this->_url\">$this->_text</a></li>";
-  }
-}
 
 class Menu_Core {
   protected $_text;
@@ -89,7 +76,15 @@ class Menu_Core {
   public function __toString() {
     $items_html = array();
     if (!empty($this->_text)) {
-      $items_html[] = "<li><a href=\"$this->_url\">$this->_text</a>";
+      if ($this->_url[0] == "#") {
+        $class = "class=\"gDialogLink\"";
+        $url = substr($this->_url, 1);
+      } else {
+        $class = "";
+        $url = $this->_url;
+      }
+
+      $items_html[] = "<li><a $class href=\"$url\">$this->_text</a>";
     }
 
     if (!empty($this->_items)) {
