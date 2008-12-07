@@ -50,7 +50,8 @@ class Access_Helper_Test extends Unit_Test_Case {
   }
 
   public function adding_and_removing_items_adds_ands_removes_rows_test() {
-    $item = ORM::factory("item")->add_to_parent(1);
+    $root = ORM::factory("item", 1);
+    $item = ORM::factory("item")->add_to_parent($root);
 
     // Simulate an event
     access::add_item($item);
@@ -70,7 +71,8 @@ class Access_Helper_Test extends Unit_Test_Case {
   }
 
   public function can_allow_deny_and_reset_intent_test() {
-    $item = ORM::factory("item")->add_to_parent(1);
+    $root = ORM::factory("item", 1);
+    $item = ORM::factory("item")->add_to_parent($root);
     access::add_item($item);
     $intent = ORM::factory("access_intent")->where("item_id", $item->id)->find();
 

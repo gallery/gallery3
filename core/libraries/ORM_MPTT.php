@@ -52,12 +52,11 @@ class ORM_MPTT_Core extends ORM {
    * @param integer $parent_id the id of the parent node
    * @return ORM
    */
-  function add_to_parent($parent_id) {
+  function add_to_parent($parent) {
     $this->lock();
 
     try {
       // Make a hole in the parent for this new item
-      $parent = ORM::factory($this->model_name, $parent_id);
       $this->db->query(
         "UPDATE `{$this->table_name}` SET `left` = `left` + 2 WHERE `left` >= {$parent->right}");
       $this->db->query(

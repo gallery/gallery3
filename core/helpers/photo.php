@@ -69,7 +69,12 @@ class photo_Core {
     }
 
     // This saves the photo
-    $photo->add_to_parent($parent_id);
+    $parent = ORM::factory("item", $parent_id);
+    if (!$parent->loaded) {
+      throw new Exception("@todo INVALID_PARENT_ID");
+    }
+
+    $photo->add_to_parent($parent);
     copy($filename, $photo->file_path());
 
     // @todo: parameterize these dimensions
@@ -84,7 +89,7 @@ class photo_Core {
   }
 
   static function get_add_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post", 
+    $form = new Forge("albums/{$parent->id}", "", "post",
       array("id" => "gAddPhotoForm", "enctype" => "multipart/form-data"));
     $group = $form->group(sprintf(_("Add Photo to %s"), $parent->title));
     $group->input("name")->label(true);

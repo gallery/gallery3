@@ -47,7 +47,12 @@ class album_Core {
       $album->name = "{$name}-" . rand();
     }
 
-    $album = $album->add_to_parent($parent_id);
+    $parent = ORM::factory("item", $parent_id);
+    if (!$parent->loaded) {
+      throw new Exception("@todo INVALID_PARENT_ID");
+    }
+
+    $album = $album->add_to_parent($parent);
     mkdir($album->file_path());
     $thumbnail_dir = dirname($album->thumbnail_path());
     if (!file_exists($thumbnail_dir)) {
