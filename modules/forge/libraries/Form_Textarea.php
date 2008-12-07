@@ -13,7 +13,6 @@ class Form_Textarea_Core extends Form_Input {
 
 	protected $data = array
 	(
-	  'type' => 'textarea',
 		'class' => 'textarea',
 		'value' => '',
 	);

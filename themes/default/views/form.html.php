@@ -27,10 +27,10 @@ if (!function_exists("DrawForm")) {
       } else {
         if ($input->error_messages()) {
           print "$prefix<li class=\"gError\">\n";
-        } else if ($input->type) {
+        } else if ($input->class) {
           print "$prefix<li>\n";
         } else {
-          // no type means its a "hidden" so don't wrap it in <li>
+          // no class means its a "hidden" so don't wrap it in <li>
         }
         if ($input->label()) {
           print "$prefix  {$input->label()}\n";
@@ -46,7 +46,7 @@ if (!function_exists("DrawForm")) {
             print "$prefix  </p>\n";
           }
         }
-        if ($input->type) {
+        if ($input->class) {
           print "$prefix</li>\n";
         }
       }
