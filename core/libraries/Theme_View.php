@@ -57,6 +57,12 @@ class Theme_View_Core extends View {
     return new $view_class($page_name);
   }
 
+  public function site_navigation() {
+    $menu = menus::get_menu_items($this)->__toString();
+    Kohana::log("debug", sprintf("[%s%s] site_navigation: %s", __FILE__, __LINE__, $menu));
+    return $menu;
+  }
+
   public function pager() {
     $this->pagination = new Pagination();
     $this->pagination->initialize(

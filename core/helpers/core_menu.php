@@ -18,23 +18,33 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class core_block_Core {
-  public static function head($theme) {
-    $url = url::file("core/js/menu.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>";
-  }
+class core_menu_Core {
+  public static function items($menus, $theme) {
+    $menus->append(new Menu(_("HOME"), url::base()));
+    $menus->append(new Menu(_("BROWSE"), url::site("albums/1")));
 
-  public static function page_bottom($theme) {
-    // @todo: guard this with permissions
-    if (Session::instance()->get("user", false)) {
-      return new View("in_place_edit.html");
-    }
-  }
-
-  public static function navigation_bottom($theme) {
     $user = Session::instance()->get('user', null);
-    if ($user && $user->admin) {
-      return "<li><a href=#>" . _("ADMIN") . "</a></li>";
+    if ($user) {
+      $upload_menu = new Menu(_("UPLOAD"));
+      $upload_menu->append(
+        new Menu(_("File Upload"), "#photo/form/file_upload/" . $theme->item()->id));
+      $upload_menu->append(
+        new Menu(_("Local Upload"), "#photo/form/local_upload/" . $theme->item()->id));
+      $menus->append($upload_menu);
+
+      $admin_menu = new Menu(_("ADMIN"));
+
+      // @todo need to do a permission check here
+      $admin_menu->append(
+        new Menu(_("Edit Item"), "#photo/form/local_upload/" . $theme->item()->id));
+
+      if ($user->admin) {
+        $admin_menu->append(
+          new Menu(_("Site Admin"), url::site("admin")));
+      }
+
+      $menus->append($admin_menu);
     }
   }
+
 }

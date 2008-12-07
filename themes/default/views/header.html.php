@@ -3,13 +3,9 @@
 <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
 
 <div id="gSiteMenu" class="gClearFix">
-  <ul class="ui-tabs-nav">
-    <?= $theme->navigation_top() ?>
-    <li><a href="<?= url::base() ?>"><?= _("HOME") ?></a></li>
-    <li><a class="active" href="<?= url::site("albums/1") ?>"><?= _("BROWSE") ?></a></li>
-    <li><a href="#"><?= _("UPLOAD") ?></a></li>
-    <?= $theme->navigation_bottom() ?>
-  </ul>
+  <span class="ui-tabs-nav">
+  <?= $theme->site_navigation() ?>
+  </span>
 </div>
 
 <?= $theme->header_bottom() ?>

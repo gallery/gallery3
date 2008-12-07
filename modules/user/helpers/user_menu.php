@@ -18,23 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class core_block_Core {
-  public static function head($theme) {
-    $url = url::file("core/js/menu.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>";
-  }
-
-  public static function page_bottom($theme) {
-    // @todo: guard this with permissions
-    if (Session::instance()->get("user", false)) {
-      return new View("in_place_edit.html");
-    }
-  }
-
-  public static function navigation_bottom($theme) {
+class user_menu_Core {
+  public static function items($menus, $theme) {
     $user = Session::instance()->get('user', null);
-    if ($user && $user->admin) {
-      return "<li><a href=#>" . _("ADMIN") . "</a></li>";
+    if ($user) {
+      $admin_menu = $menus->get(_("ADMIN"));
+      $admin_menu->append( new Menu(_("Edit Profile"), "#users/form/edit/" . $user->id));
     }
   }
+
 }
