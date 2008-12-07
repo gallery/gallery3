@@ -94,7 +94,7 @@ class photo_Core {
     $group = $form->group(sprintf(_("Add Photo to %s"), $parent->title));
     $group->input("name")->label(true);
     $group->input("title")->label(true);
-    $group->input("description")->label(true)->rules("length[0, 255");
+    $group->textarea("description")->label(true)->rules("length[0, 255");
     $group->upload("file")->label(true)->rules("allow[jpg,png,gif,tiff]");
     $group->hidden("type")->value("photo");
     $group->submit(_("Upload"));

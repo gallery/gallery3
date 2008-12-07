@@ -13,6 +13,7 @@ class Form_Upload_Core extends Form_Input {
 
 	protected $data = array
 	(
+	  'type' => 'file',
 		'class' => 'upload',
 		'value' => '',
 	);
