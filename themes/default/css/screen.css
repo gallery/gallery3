@@ -760,6 +760,11 @@ span.gInPlaceEdit:hover {
 
 #gDialog {
   background-color: #fff;
+  text-align: left;
+}
+
+#gDialog form {
+	width: 450px;
 }
 
 .gDialogLink {
@@ -820,7 +825,6 @@ span.gInPlaceEdit:hover {
 
 /*dialog*/
 .ui-dialog {
-	/*resets*/margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none;
 	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
 	font-size: 1.2em;
 	background: #f3f3f3 url(../jquery/images/f3f3f3_40x100_textures_01_flat_0.png) 0 0 repeat-x;
@@ -896,7 +900,6 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 	top: -5px; 
 }
 .ui-dialog-titlebar {
-	/*resets*/margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none;
 	padding: .5em 1.5em .5em 1em;
 	color: #444444;
 	background: #e6e6e6 url(../jquery/images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
@@ -907,7 +910,6 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 }
 .ui-dialog-title {}
 .ui-dialog-titlebar-close {
-	/*resets*/margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none;
 	background: url(../jquery/images/888888_11x11_icon_close.gif) 0 0 no-repeat;
 	position: absolute;
 	right: 8px;
@@ -926,7 +928,6 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 	display: none;
 }
 .ui-dialog-content {
-	/*resets*/margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none;
 	color: #362b36;
 	padding: 1.5em 1.7em;	
 }
@@ -963,8 +964,6 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 .ui-dialog.ui-draggable .ui-dialog-titlebar {
 	cursor: move;
 }
-
-
 
 /*
 Generic ThemeRoller Classes

@@ -8,8 +8,8 @@
     	<img src="<?= $theme->url("images/ico-view-hybrid.png") ?>" 
     		alt="<?= _("View album in hybrid mode") ?>" /></a></li>
     <li><?= $theme->album_top() ?></li>
-    <li><a href="<?= url::site("photos/add") ?>" title="<?= _("Add a photo") ?>" 
-    		class="gButtonLink gDialogLink"><?= _("Add Items") ?></a></li>
+    <li><a href="<?= url::site("/form/add/photos/$item->id") ?>" title="<?= _("Add an item") ?>" 
+    		class="gButtonLink gDialogLink"><?= _("Add an item") ?></a></li>
   </ul>
   
   <h1><?= $item->title_edit ?></h1>
