@@ -56,7 +56,7 @@ function openDialog(element) {
   var dialog = '<div id="gDialog"></div>';
   $("body").append(dialog);
   $("#gDialog").dialog({
-    draggable: false,
+    draggable: true,
     height: '400px',
     modal: true,
     overlay: {
