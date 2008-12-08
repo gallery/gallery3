@@ -17,24 +17,66 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+abstract class Menu_Item {
+  protected $_data = array();
 
-class Menu_Core {
-  protected $_text;
-  protected $_url;
-  protected $_items = array();
+  protected function __construct($type, $text, $url) {
+    $this->_data["text"] = $text;
+    $this->_data["type"] = $type;
+    $this->_data["url"] = $url;
+  }
 
+  public function __get($key) {
+    if (array_key_exists($key, $this->_data)) {
+      return $this->_data[$key];
+    }
+    throw new Exception("@todo UNDEFINED PROPERTY");
+  }
+
+  public function __set($key, $value) {
+    $this->_data[$key] = $value;
+  }
+}
+
+class Menu_Link extends Menu_Item {
   public function __construct($text="", $url="#") {
-    $this->_text = $text;
-    $this->_url = $url;
+    parent::__construct("link", $text, $url);
+  }
+
+  public function __toString() {
+    return "<li><a href=\"$this->url\">$this->text</a><li>";
+  }
+}
+
+class Menu_Dialog extends Menu_Item {
+  public function __construct($text="", $url="#", $class="gDialogLink") {
+    parent::__construct("dialog", $text, $url);
+    $this->dialog_class = $class;
+    $this->title = $text;
+  }
+
+
+  public function __toString() {
+    return "<li><a class=\"$this->dialog_class\" href=\"$this->url\" " .
+           "title=\"$this->title\">$this->text</a></li>";
+  }
+}
+
+class Menu_Core extends Menu_Item {
+  public function __construct($text="", $url="#") {
+    parent::__construct("menu", $text, $url);
+    $this->_data['items'] = array();
   }
 
   public function append($menu_item) {
-    $this->_items[] = $menu_item;
+    $items = $this->items;
+    $items[] = $menu_item;
+    $this->items = $items;
   }
 
   public function get($text) {
-    foreach ($this->_items as $item) {
-      if ($item->_text == $text) {
+    foreach ($this->items as $item) {
+      if ($item->text == $text) {
         return $item;
       }
     }
@@ -42,8 +84,8 @@ class Menu_Core {
   }
 
   private function _get_index($text) {
-    foreach ($this->_items as $idx => $item) {
-      if ($item->_text == $text) {
+    foreach ($this->items as $idx => $item) {
+      if ($item->text == $text) {
         return (int)$idx;
       }
     }
@@ -52,52 +94,52 @@ class Menu_Core {
 
   public function insert_before($text, $menu_item) {
     $offset = $this->_get_index($text);
+    Kohana::log("debug", "$offset: $offset");
 
-    $front_part = ($offset == 0) ? array() : array_splice($this->_items, 0, $offset);
-    $back_part = ($offset == 0) ? $this->_items : array_splice($this->_items, $offset - 1);
-    $this->_items = array_merge($front_part, array($menu_item), $back_part);
+    $items = $this->items;
+
+    $front_part = ($offset == 0) ? array() : array_splice($items, 0, $offset);
+    $back_part = ($offset == 0) ? $this->items : array_splice($items, $offset - 1);
+    Kohana::log("debug", print_r($front_part, 1));
+    Kohana::log("debug", print_r($front_part, 1));
+    $this->items = array_merge($front_part, array($menu_item), $back_part);
   }
 
   public function insert_after($text, $menu_item) {
     $offset = $this->_get_index($text);
-    $last_offset = count($this->_items) - 1;
+    $last_offset = count($this->items) - 1;
     // If not found, then append to the end
     if ($offset == false) {
       $offset = $last_offset;
     }
 
-    $front_part = ($offset == $last_offset) ? $this->_items : array_splice($this->_items, 0, $offset + 1);
-    Kohana::log("debug", print_r($front_part, 1));
-    $back_part = ($offset == $last_offset) ? array() : array_splice($this->_items,  $offset - 1);
-    Kohana::log("debug", print_r($back_part, 1));
-    $this->_items = array_merge($front_part, array($menu_item), $back_part);
+    $items = $this->items;
+
+    $front_part = ($offset == $last_offset) ? $this->items : array_splice($items, 0, $offset + 1);
+    $back_part = ($offset == $last_offset) ? array() : array_splice($items,  $offset - 1);
+    $this->items = array_merge($front_part, array($menu_item), $back_part);
   }
 
   public function __toString() {
+    Kohana::log("debug", print_r($this, 1));
     $items_html = array();
-    if (!empty($this->_text)) {
-      if ($this->_url != "#" && $this->_url[0] == "#") {
-        $class = "class=\"gDialogLink\"";
-        $url = substr($this->_url, 1);
-      } else {
-        $class = "";
-        $url = $this->_url;
-      }
-
-      $items_html[] = "<li><a $class href=\"$url\">$this->_text</a>";
+    $item_text = $this->text;
+    if (!empty($item_text)) {
+      $items_html[] = "<li><a href=\"#\">$item_text</a>";
     }
 
-    if (!empty($this->_items)) {
+    $items = $this->items;
+    if (!empty($items)) {
       $items_html[] = "<ul>";
 
-      foreach ($this->_items as $item) {
+      foreach ($items as $item) {
         $items_html[] = $item->__toString();
       }
 
       $items_html[] = "</ul>";
     }
 
-    if (!empty($this->_text)) {
+    if (!empty($item_text)) {
       $items_html[] = "</li>";
     }
     return implode("\n", $items_html);

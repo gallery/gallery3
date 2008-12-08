@@ -23,7 +23,7 @@ class user_menu_Core {
     $user = Session::instance()->get('user', null);
     if ($user) {
       $admin_menu = $menus->get(_("ADMIN"));
-      $admin_menu->append( new Menu(_("Edit Profile"), "#users/form/edit/" . $user->id));
+      $admin_menu->append( new Menu_Dialog(_("Edit Profile"), "users/form/edit/{$user->id}"));
     }
   }
 

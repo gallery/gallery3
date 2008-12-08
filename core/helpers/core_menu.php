@@ -20,27 +20,28 @@
 
 class core_menu_Core {
   public static function items($menus, $theme) {
-    $menus->append(new Menu(_("HOME"), url::base()));
-    $menus->append(new Menu(_("BROWSE"), url::site("albums/1")));
+    $menus->append(new Menu_Link(_("HOME"), url::base()));
+    $menus->append(new Menu_Link(_("BROWSE"), url::site("albums/1")));
 
     $user = Session::instance()->get('user', null);
     if ($user) {
       $upload_menu = new Menu(_("UPLOAD"));
       $upload_menu->append(
-        new Menu(_("Add Item"), "#form/add/photos/" . $theme->item()->id));
+        new Menu_Dialog(_("Add Item"), url::site("form/add/photos/{$theme->item()->id}")));
       $upload_menu->append(
-        new Menu(_("Local Upload"), "#photo/form/local_upload/" . $theme->item()->id));
+        new Menu_Dialog(_("Local Upload"), 
+                        url::site("photo/form/local_upload/{$theme->item()->id}")));
       $menus->append($upload_menu);
 
       $admin_menu = new Menu(_("ADMIN"));
 
       // @todo need to do a permission check here
       $admin_menu->append(
-        new Menu(_("Edit Item"), "#photo/form/local_upload/" . $theme->item()->id));
+        new Menu_Dialog(_("Edit Item"), url::site("photo/form/local_upload/{$theme->item()->id}")));
 
       if ($user->admin) {
         $admin_menu->append(
-          new Menu(_("Site Admin"), url::site("admin")));
+          new Menu_Link(_("Site Admin"), url::site("admin")));
       }
 
       $menus->append($admin_menu);
