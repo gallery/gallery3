@@ -114,7 +114,7 @@ class Access_Helper_Test extends Unit_Test_Case {
   public function can_view_item_test() {
     $root = ORM::factory("item", 1);
     access::allow(0, "view", $root->id);
-    $this->assert_true(access::can(0, "view", $root->id));
+    $this->assert_true(access::group_can(0, "view", $root->id));
   }
 
   public function cant_view_child_of_hidden_parent_test() {
@@ -124,7 +124,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     access::deny(0, "view", $root->id);
     access::reset(0, "view", $album->id);
-    $this->assert_false(access::can(0, "view", $album->id));
+    $this->assert_false(access::group_can(0, "view", $album->id));
   }
 
   public function view_permissions_propagate_down_test() {
@@ -134,7 +134,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     access::allow(0, "view", $root->id);
     access::reset(0, "view", $album->id);
-    $this->assert_true(access::can(0, "view", $album->id));
+    $this->assert_true(access::group_can(0, "view", $album->id));
   }
 
   public function can_toggle_view_permissions_propagate_down_test() {
@@ -164,10 +164,10 @@ class Access_Helper_Test extends Unit_Test_Case {
     access::reset(0, "view", $album2->id);
     access::reset(0, "view", $album3->id);
     access::reset(0, "view", $album4->id);
-    $this->assert_false(access::can(0, "view", $album4->id));
+    $this->assert_false(access::group_can(0, "view", $album4->id));
 
     access::allow(0, "view", $album1->id);
-    $this->assert_true(access::can(0, "view", $album4->id));
+    $this->assert_true(access::group_can(0, "view", $album4->id));
   }
 
   public function revoked_view_permissions_cant_be_allowed_lower_down_test() {
@@ -177,13 +177,13 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     access::deny(0, "view", $root->id);
     access::allow(0, "view", $album->id);
-    $this->assert_false(access::can(0, "view", $album->id));
+    $this->assert_false(access::group_can(0, "view", $album->id));
   }
 
   public function can_edit_item_test() {
     $root = ORM::factory("item", 1);
     access::allow(0, "edit", $root->id);
-    $this->assert_true(access::can(0, "edit", $root->id));
+    $this->assert_true(access::group_can(0, "edit", $root->id));
   }
 
   public function non_view_permissions_propagate_down_test() {
@@ -193,7 +193,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     access::allow(0, "edit", $root->id);
     access::reset(0, "edit", $album->id);
-    $this->assert_true(access::can(0, "edit", $album->id));
+    $this->assert_true(access::group_can(0, "edit", $album->id));
   }
 
   public function non_view_permissions_can_be_revoked_lower_down_test() {
@@ -218,7 +218,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     access::allow(0, "edit", $inner->id);
 
     // Outer album is not editable, inner one is.
-    $this->assert_false(access::can(0, "edit", $outer_photo->id));
-    $this->assert_true(access::can(0, "edit", $inner_photo->id));
+    $this->assert_false(access::group_can(0, "edit", $outer_photo->id));
+    $this->assert_true(access::group_can(0, "edit", $inner_photo->id));
   }
 }

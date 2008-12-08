@@ -71,14 +71,14 @@ class access_Core {
   const UNKNOWN   = 2;
 
   /**
-   * Can this group have this permission on this item?
+   * Does this group have this permission on this item?
    *
    * @param  integer $group_id
    * @param  string  $perm_name
    * @param  integer $item_id
    * @return boolean
    */
-  public static function can($group_id, $perm_name, $item_id) {
+  public static function group_can($group_id, $perm_name, $item_id) {
     $access = ORM::factory("access_cache")->where("item_id", $item_id)->find();
     if (!$access) {
       throw new Exception("@todo MISSING_ACCESS for $item_id");
