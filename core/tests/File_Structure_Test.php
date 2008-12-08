@@ -35,10 +35,6 @@ class File_Structure_Test extends Unit_Test_Case {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
-      if ($file->getFilename() == 'kohana_unit_test.php') {
-        // Exception: this file must be named accordingly for the test framework
-        continue;
-      }
       if (strpos($file, "views")) {
         $this->assert_true(
           preg_match("#/views/.*?(\.html|mrss)\.php$#",
@@ -120,15 +116,18 @@ class GalleryCodeFilterIterator extends FilterIterator {
     // Skip anything that we didn't write
     $path_name = $this->getInnerIterator()->getPathName();
     $path_name = strtr($path_name, DIRECTORY_SEPARATOR, '/');
-    return !(strpos($path_name, ".svn") ||
-             substr($path_name, -1, 1) == "~" ||
-             strpos($path_name, SYSPATH) !== false ||
-             strpos($path_name, MODPATH . 'forge') !== false ||
-             strpos($path_name, MODPATH . 'unit_test') !== false ||
-             strpos($path_name, MODPATH . 'mptt') !== false ||
-             strpos($path_name, MODPATH . 'kodoc') !== false ||
-             strpos($path_name, MODPATH . 'user/libraries/PasswordHash') !== false ||
-             strpos($path_name, DOCROOT . 'var') !== false ||
-             strpos($path_name, DOCROOT . 'test') !== false);
+    return !(
+      strpos($path_name, ".svn") ||
+      substr($path_name, -1, 1) == "~" ||
+      strpos($path_name, DOCROOT . 'test') !== false ||
+      strpos($path_name, DOCROOT . 'var') !== false ||
+      strpos($path_name, MODPATH . 'forge') !== false ||
+      strpos($path_name, MODPATH . 'kodoc') !== false ||
+      strpos($path_name, MODPATH . 'mptt') !== false ||
+      strpos($path_name, MODPATH . 'unit_test') !== false ||
+      strpos($path_name, MODPATH . 'gallery_unit_test/views/kohana_error_page.php') !== false ||
+      strpos($path_name, MODPATH . 'gallery_unit_test/views/kohana_unit_test.php') !== false ||
+      strpos($path_name, MODPATH . 'user/libraries/PasswordHash') !== false ||
+      strpos($path_name, SYSPATH) !== false);
   }
 }
