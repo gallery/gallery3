@@ -33,10 +33,10 @@ class menus_Core {
     return $menu;
   }
 
-  static function _get_module_menu_items($module_name, $menu, $theme) {
+  private static function _get_module_menu_items($module_name, $menu, $theme) {
     $class = "{$module_name}_menu";
     if (method_exists($class, "items")) {
-        call_user_func_array(array($class, "items"), array(&$menu, $theme));
+      call_user_func_array(array($class, "items"), array(&$menu, $theme));
     }
   }
 }
