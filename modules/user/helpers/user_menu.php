@@ -17,14 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 class user_menu_Core {
-  public static function items($menus, $theme) {
-    $user = Session::instance()->get('user', null);
+  public static function site_navigation($menu, $theme) {
+    $user = Session::instance()->get("user", null);
     if ($user) {
-      $admin_menu = $menus->get(_("ADMIN"));
-      $admin_menu->append( new Menu_Dialog(_("Edit Profile"), "users/form/edit/{$user->id}"));
+      $menu->get("admin_menu")->append(
+        Menu::Factory("dialog")
+        ->id("edit_profile")
+        ->label(_("Edit Profile"))
+        ->url(url::site("users/form/edit/$user->id")));
     }
   }
-
 }

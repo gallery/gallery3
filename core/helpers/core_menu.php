@@ -18,31 +18,52 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class core_menu_Core {
-  public static function items($menus, $theme) {
-    $menus->append(new Menu_Link(_("HOME"), url::base()));
-    $menus->append(new Menu_Link(_("BROWSE"), url::site("albums/1")));
+  public static function site_navigation($menu, $theme) {
+    $menu->append(
+      Menu::factory("link")
+      ->id("home")
+      ->label(_("Home"))
+      ->url(url::base()));
+
+    $menu->append(
+      Menu::factory("link")
+      ->id("browse")
+      ->label(_("Browse"))
+      ->url(url::site("albums/1")));
 
     $item = $theme->item();
     $user = Session::instance()->get("user", null);
     if ($user) {
-      // @todo guard with permissions
-      $upload_menu = new Menu(_("UPLOAD"));
-      $upload_menu->append(
-        new Menu_Dialog(_("Add Photos"), url::site("form/add/photos/$item->id")));
-      $menus->append($upload_menu);
+      // @todo need to do a permission check here
+      $menu->append(
+        Menu::factory("submenu")
+        ->id("upload_menu")
+        ->label(_("Upload"))
+        ->append(
+          Menu::factory("dialog")
+          ->id("add_photos")
+          ->label(_("Add Photos"))
+          ->url(url::site("form/add/photos/$item->id"))));
 
-      $admin_menu = new Menu(_("ADMIN"));
+      $admin_menu = Menu::factory("submenu")
+        ->id("admin_menu")
+        ->label(_("Admin"));
+      $menu->append($admin_menu);
 
       // @todo need to do a permission check here
       $admin_menu->append(
-        new Menu_Dialog(_("Edit Item"), url::site("form/edit/{$item->type}s/$item->id")));
+        Menu::factory("dialog")
+        ->id("edit")
+        ->label(_("Edit"))
+        ->url(url::site("form/edit/{$item->type}s/$item->id")));
 
       if ($user->admin) {
-        $admin_menu->append(new Menu_Link(_("Site Admin"), url::site("admin")));
+        $admin_menu->append(
+          Menu::factory("link")
+          ->id("site_admin")
+          ->label(_("Site Admin"))
+          ->url(url::site("admin")));
       }
-
-      $menus->append($admin_menu);
     }
   }
-
 }

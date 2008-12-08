@@ -58,9 +58,20 @@ class Theme_View_Core extends View {
   }
 
   public function site_navigation() {
-    $menu = menus::get_menu_items($this)->__toString();
-    Kohana::log("debug", sprintf("[%s%s] site_navigation: %s", __FILE__, __LINE__, $menu));
-    return $menu;
+    $menu = new Menu(true);
+    core_menu::site_navigation($menu, $this);
+
+    foreach (module::installed() as $module) {
+      if ($module->name == "core") {
+        continue;
+      }
+      $class = "{$module->name}_menu";
+      if (method_exists($class, "site_navigation")) {
+        call_user_func_array(array($class, "site_navigation"), array(&$menu, $this));
+      }
+    }
+
+    print $menu;
   }
 
   public function pager() {

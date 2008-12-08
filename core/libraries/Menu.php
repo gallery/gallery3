@@ -17,122 +17,109 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-abstract class Menu_Item {
-  protected $text;
-  protected $type;
-  protected $url;
+class Menu_Element {
+  public $label;
+  public $url;
+  public $id;
 
-  protected function __construct($type, $text, $url) {
-    $this->text = $text;
-    $this->type = $type;
+  /**
+   * Set the id
+   * @chainable
+   */
+  public function id($id) {
+    $this->id = $id;
+    return $this;
+  }
+
+  /**
+   * Set the label
+   * @chainable
+   */
+  public function label($label) {
+    $this->label = $label;
+    return $this;
+  }
+
+  /**
+   * Set the url
+   * @chainable
+   */
+  public function url($url) {
     $this->url = $url;
+    return $this;
   }
 }
 
-class Menu_Link extends Menu_Item {
-  public function __construct($text="", $url="#") {
-    parent::__construct("link", $text, $url);
-  }
-
+/**
+ * Menu element that provides a link to a new page.
+ */
+class Menu_Element_Link extends Menu_Element {
   public function __toString() {
-    return "<li><a href=\"$this->url\">$this->text</a><li>";
+    return "<li><a href=\"$this->url\">$this->label</a><li>";
   }
 }
 
-class Menu_Dialog extends Menu_Item {
-  public function __construct($text="", $url="#", $class="gDialogLink") {
-    parent::__construct("dialog", $text, $url);
-    $this->dialog_class = $class;
-    $this->title = $text;
-  }
-
-
+/**
+ * Menu element that provides a pop-up dialog
+ */
+class Menu_Element_Dialog extends Menu_Element {
   public function __toString() {
-    return "<li><a class=\"$this->dialog_class\" href=\"$this->url\" " .
-           "title=\"$this->title\">$this->text</a></li>";
+    return "<li><a class=\"gDialogLink\" href=\"$this->url\" " .
+           "title=\"$this->label\">$this->label</a></li>";
   }
 }
 
-class Menu_Core extends Menu_Item {
-  public function __construct($text="", $url="#") {
-    parent::__construct("menu", $text, $url);
-    $this->_data['items'] = array();
-  }
+/**
+ * Root menu or submenu
+ */
+class Menu_Core extends Menu_Element {
+  public $elements;
+  public $is_root;
 
-  public function append($menu_item) {
-    $items = $this->items;
-    $items[] = $menu_item;
-    $this->items = $items;
-  }
+  /**
+   * Return an instance of a Menu_Element
+   * @chainable
+   */
+  public static function factory($type) {
+    switch($type) {
+    case "link":
+      return new Menu_Element_Link();
 
-  public function get($text) {
-    foreach ($this->items as $item) {
-      if ($item->text == $text) {
-        return $item;
-      }
+    case "dialog":
+      return new Menu_Element_Dialog();
+
+    case "submenu":
+      return new Menu();
+
+    default:
+      throw Exception("@todo UNKNOWN_MENU_TYPE");
     }
-    return false;
   }
 
-  private function _get_index($text) {
-    foreach ($this->items as $idx => $item) {
-      if ($item->text == $text) {
-        return (int)$idx;
-      }
-    }
-    return false;
+  public function __construct($is_root=false) {
+    $this->elements = array();
+    $this->is_root = $is_root;
   }
 
-  public function insert_before($text, $menu_item) {
-    $offset = $this->_get_index($text);
-    Kohana::log("debug", "$offset: $offset");
-
-    $items = $this->items;
-
-    $front_part = ($offset == 0) ? array() : array_splice($items, 0, $offset);
-    $back_part = ($offset == 0) ? $this->items : array_splice($items, $offset - 1);
-    Kohana::log("debug", print_r($front_part, 1));
-    Kohana::log("debug", print_r($front_part, 1));
-    $this->items = array_merge($front_part, array($menu_item), $back_part);
+  /**
+   * Add a new element to this menu
+   */
+  public function append($menu_element) {
+    $this->elements[$menu_element->id] = $menu_element;
+    return $this;
   }
 
-  public function insert_after($text, $menu_item) {
-    $offset = $this->_get_index($text);
-    $last_offset = count($this->items) - 1;
-    // If not found, then append to the end
-    if ($offset == false) {
-      $offset = $last_offset;
-    }
-
-    $items = $this->items;
-
-    $front_part = ($offset == $last_offset) ? $this->items : array_splice($items, 0, $offset + 1);
-    $back_part = ($offset == $last_offset) ? array() : array_splice($items,  $offset - 1);
-    $this->items = array_merge($front_part, array($menu_item), $back_part);
+  /**
+   * Retrieve a Menu_Element by id
+   */
+  public function get($id) {
+    return $this->elements[$id];
   }
 
   public function __toString() {
-    Kohana::log("debug", print_r($this, 1));
-    $items_html = array();
-    $item_text = $this->text;
-    if (!empty($item_text)) {
-      $items_html[] = "<li><a href=\"#\">$item_text</a>";
-    }
-
-    $items = $this->items;
-    if (!empty($items)) {
-      $items_html[] = "<ul>";
-
-      foreach ($items as $item) {
-        $items_html[] = $item->__toString();
-      }
-
-      $items_html[] = "</ul>";
-    }
-
-    if (!empty($item_text)) {
-      $items_html[] = "</li>";
-    }
-    return implode("\n", $items_html);
+    $html = $this->is_root ? "<ul>" : "<li><a href=#>$this->label</a><ul>";
+    $html .= implode("\n", $this->elements);
+    $html .= $this->is_root ? "</ul>" : "</ul></li>";
+    return $html;
   }
 }

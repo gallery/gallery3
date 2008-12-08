@@ -19,54 +19,14 @@
  */
 class Menu_Test extends Unit_Test_Case {
   public function find_menu_item_test() {
-    $test_menu = new Menu();
-    $test_menu->append(new Menu_Link("test1"));
-    $test_menu->append(new Menu_Link("test2"));
-    $expected = new Menu_Link("test3");
-    $test_menu->append($expected);
-    $test_menu->append(new Menu_Link("test4"));
+    $menu = new Menu(true);
+    $menu
+      ->append(Menu::factory("link")->id("element_1"))
+      ->append(Menu::factory("dialog")->id("element_2"))
+      ->append(Menu::factory("submenu")->id("element_3")
+               ->append(Menu::factory("link")->id("element_3_1")));
 
-    $menu_item = $test_menu->get("test3");
-    $this->assert_equal($expected, $menu_item);
-  }
-
-  public function insert_before_test() {
-    $expected = new Menu();
-    $expected->append(new Menu_Link("test-2"));
-    $expected->append(new Menu_Link("test0"));
-    $expected->append(new Menu_Link("test1"));
-    $expected->append(new Menu_Link("test1b"));
-    $expected->append(new Menu_Link("test2"));
-    $expected->append(new Menu_Link("test4"));
-
-    $test_menu = new Menu();
-    $test_menu->append(new Menu_Link("test1"));
-    $test_menu->append(new Menu_Link("test2"));
-    $test_menu->append(new Menu_Link("test4"));
-    $test_menu->insert_before("test2", new Menu_Link("test1b"));
-    $test_menu->insert_before("test1", new Menu_Link("test0"));
-    $test_menu->insert_before("test-1", new Menu_Link("test-2"));
-    
-    $this->assert_equal($expected, $test_menu);
-  }
-
-  public function insert_after_test() {
-    $expected = new Menu();
-    $expected->append(new Menu_Link("test1"));
-    $expected->append(new Menu_Link("test2"));
-    $expected->append(new Menu_Link("test3"));
-    $expected->append(new Menu_Link("test4"));
-    $expected->append(new Menu_Link("test5"));
-    $expected->append(new Menu_Link("test7"));
-
-    $test_menu = new Menu();
-    $test_menu->append(new Menu_Link("test1"));
-    $test_menu->append(new Menu_Link("test2"));
-    $test_menu->append(new Menu_Link("test4"));
-    $test_menu->insert_after("test2", new Menu_Link("test3"));
-    $test_menu->insert_after("test4", new Menu_Link("test5"));
-    $test_menu->insert_after("test6", new Menu_Link("test7"));
-    
-    $this->assert_equal($expected, $test_menu);
+    $this->assert_equal("element_2", $menu->get("element_2")->id);
+    $this->assert_equal("element_3_1", $menu->get("element_3")->get("element_3_1")->id);
   }
 }
