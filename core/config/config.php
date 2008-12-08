@@ -116,12 +116,13 @@ $config['extension_prefix'] = 'MY_';
  * or relative to the docroot. Modules can include any resource that can exist
  * in your application directory, configuration files, controllers, views, etc.
  */
-$config['modules'] = array
-(
-  MODPATH . 'gallery_unit_test',
-  MODPATH . 'unit_test',
+$config['modules'] = array(
   MODPATH . 'forge',
-
   THEMEPATH . 'default',
 );
 
+if (defined('TEST_MODE')) {
+  array_splice($config['modules'], 0, 0,
+               array(MODPATH . 'gallery_unit_test',
+                     MODPATH . 'unit_test'));
+}
