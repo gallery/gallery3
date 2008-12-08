@@ -20,8 +20,7 @@
 
 class core_block_Core {
   public static function head($theme) {
-    $url = url::file("core/js/menu.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>";
+    return '<script src="' . url::file("core/js/menu.js") . '" type="text/javascript"></script>';
   }
 
   public static function page_bottom($theme) {
