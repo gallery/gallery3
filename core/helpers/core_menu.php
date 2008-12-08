@@ -17,31 +17,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 class core_menu_Core {
   public static function items($menus, $theme) {
     $menus->append(new Menu_Link(_("HOME"), url::base()));
     $menus->append(new Menu_Link(_("BROWSE"), url::site("albums/1")));
 
-    $user = Session::instance()->get('user', null);
+    $item = $theme->item();
+    $user = Session::instance()->get("user", null);
     if ($user) {
+      // @todo guard with permissions
       $upload_menu = new Menu(_("UPLOAD"));
       $upload_menu->append(
-        new Menu_Dialog(_("Add Item"), url::site("form/add/photos/{$theme->item()->id}")));
-      $upload_menu->append(
-        new Menu_Dialog(_("Local Upload"), 
-                        url::site("photo/form/local_upload/{$theme->item()->id}")));
+        new Menu_Dialog(_("Add Photos"), url::site("form/add/photos/$item->id")));
       $menus->append($upload_menu);
 
       $admin_menu = new Menu(_("ADMIN"));
 
       // @todo need to do a permission check here
       $admin_menu->append(
-        new Menu_Dialog(_("Edit Item"), url::site("photo/form/local_upload/{$theme->item()->id}")));
+        new Menu_Dialog(_("Edit Item"), url::site("form/edit/{$item->type}s/$item->id")));
 
       if ($user->admin) {
-        $admin_menu->append(
-          new Menu_Link(_("Site Admin"), url::site("admin")));
+        $admin_menu->append(new Menu_Link(_("Site Admin"), url::site("admin")));
       }
 
       $menus->append($admin_menu);
