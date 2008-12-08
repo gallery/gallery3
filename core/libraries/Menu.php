@@ -18,23 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 abstract class Menu_Item {
-  protected $_data = array();
+  protected $text;
+  protected $type;
+  protected $url;
 
   protected function __construct($type, $text, $url) {
-    $this->_data["text"] = $text;
-    $this->_data["type"] = $type;
-    $this->_data["url"] = $url;
-  }
-
-  public function __get($key) {
-    if (array_key_exists($key, $this->_data)) {
-      return $this->_data[$key];
-    }
-    throw new Exception("@todo UNDEFINED PROPERTY");
-  }
-
-  public function __set($key, $value) {
-    $this->_data[$key] = $value;
+    $this->text = $text;
+    $this->type = $type;
+    $this->url = $url;
   }
 }
 
