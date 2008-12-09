@@ -33,10 +33,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     } catch (Exception $e) { }
 
     try {
-      $user = ORM::factory("user")->where("name", "access_test")->find();
-      if ($user->loaded) {
-        user::delete($user->id);
-      }
+      ORM::factory("user")->where("name", "access_test")->find()->delete();
     } catch (Exception $e) { }
   }
 

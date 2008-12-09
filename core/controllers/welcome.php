@@ -445,7 +445,7 @@ class Welcome_Controller extends Template_Controller {
   }
 
   public function delete_user($id) {
-    user::delete($id);
+    ORM::factory("user", $id)->delete();
     url::redirect("welcome");
   }
 

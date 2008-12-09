@@ -34,4 +34,12 @@ class User_Model extends ORM {
     }
     parent::__set($column, $value);
   }
+
+  /**
+   * @see ORM::delete()
+   */
+  public function delete($id=null) {
+    parent::delete($id);
+    module::event("user_deleted", $user);
+  }
 }

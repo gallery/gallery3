@@ -87,16 +87,6 @@ class user_Core {
   }
 
   /**
-   * Delete a user
-   *
-   * @param string $id the user id
-   */
-  static function delete($id) {
-    ORM::factory("user", $id)->delete();
-    module::event("user_deleted", $user);
-  }
-
-  /**
    * Is the password provided correct?
    *
    * @param user User Model
@@ -148,7 +138,7 @@ class user_Core {
     $user->last_login = time();
     $user->save();
 
-    Session::instance()->set('user', $user);
+    Session::instance()->set("user", $user);
     module::event("user_login", $user);
   }
 
@@ -158,7 +148,7 @@ class user_Core {
    * @param string $salt (optional) salt or hash containing salt (randomly generated if omitted)
    * @return string hashed password
    */
-  private static function _md5Salt($password, $salt='') {
+  private static function _md5Salt($password, $salt="") {
     if (empty($salt)) {
       for ($i = 0; $i < 4; $i++) {
         $char = mt_rand(48, 109);
