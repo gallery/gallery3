@@ -4,6 +4,18 @@
 $("document").ready(function() {
 
   /**
+   * Superfish menu options
+   */
+  $('ul.sf-menu').superfish({
+    delay: 500,
+    animation: {
+      opacity:'show',
+      height:'show'
+    },
+    speed: 'fast'
+  });
+
+  /**
    * Reduce width of sized photo if it is wider than its parent container
    * 
    * @requires jquery.dimensions
@@ -27,7 +39,7 @@ $("document").ready(function() {
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
   };
-
+  
 });
 
 /**
@@ -52,7 +64,7 @@ function handleDialogEvent(event) {
  * @todo Set dialog attributes dynamically (width, height, drag, resize)
  */
 function openDialog(element) {
-  var url = $(element).attr("href");
+  var href = $(element).attr("href");
   var dialog = '<div id="gDialog"></div>';
   $("body").append(dialog);
   $("#gDialog").dialog({
@@ -65,11 +77,11 @@ function openDialog(element) {
     },
     resizable: true,
     title: $(element).attr("title"),
-    width: '500px',
+    width: '500px'
   });
-  $("#gDialog").html(url);
-  $.get(url, function(data) {
+  $("#gDialog").html(href);
+  $.get(href, function(data) {
     $("#gDialog").html(data);
-  });	
+  });
   return false;
 }

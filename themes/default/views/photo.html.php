@@ -1,16 +1,21 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gItemHeader">
-  <ul id="gItemMenu">
-    <li><a href="#" title="<?= _("View full size image") ?>">
-        <img src="<?= $theme->url("images/ico-view-fullsize.png") ?>"
-             alt="<?= sprintf(_("View full size image (%dx%d)"), $item->width, $item->height) ?>" /></a></li>
-    <li><a href="#" title="<?= _("View album in hybrid mode") ?>">
-        <img src="<?= $theme->url("images/ico-view-hybrid.png") ?>"
-             alt="<?= _("View album in hybrid mode") ?>" /></a></li>
+  <ul id="gItemMenu" class="sf-menu">
+    <li><a href="#" id="gFullsizeLink" title="<?= _("View full size image") ?>"><?= _("View full size image") ?></a></li>
+    <li><a href="#" id="gHybridLink" title="<?= _("View album in hybrid mode") ?>"><?= _("Hybrid view") ?></a></li>
     <li><?= $theme->album_top() ?></li>
-    <li><a href="#" title="<?= _("Options for this item") ?>"
-           class="gButtonLink gDialogLink">v <?= _("Options") ?></a></li>
+    <li><a href="#">Options</a>
+      <ul>
+        <li><a href="<?= url::site("/form/add/photos/$item->id") ?>" 
+            title="<?= _("Add an item") ?>"
+            class="gDialogLink"><?= _("Add an item") ?></a></li>
+        <li><a href="<?= url::site("/form/add/albums/$item->id") ?>" 
+            title="<?= _("Add album") ?>"
+            class="gDialogLink"><?= _("Add album") ?></a></li>
+      </ul>
+    </li>
   </ul>
+
   <h1><?= $item->title_edit ?></h1>
 </div>
 

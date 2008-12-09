@@ -13,10 +13,13 @@
     </title>
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
           media="screen,print,projection" />
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("jquery/superfish.css") ?>" 
+			    media="screen" /> 
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("jquery/superfish.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
     <script src="<?= $theme->url("jquery/ui.core.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("jquery/ui.tabs.min.js") ?>" type="text/javascript"></script>

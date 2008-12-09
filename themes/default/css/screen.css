@@ -315,7 +315,7 @@ table.gBlockContent td {
 }
 
 #gAlbumGrid {
-	margin-top: 20px;
+  margin-top: 20px;
 }
 
 .gItem {
@@ -500,9 +500,30 @@ table.gMetadata td.toggle {
   top: 0;
 }
 
-#gItemMenu li {
-  float: left;
-  margin: 0 3px;
+#gItemMenu #gAlbumLink,
+#gItemMenu #gHybridLink, 
+#gItemMenu #gSlideshowLink,
+#gItemMenu #gFullsizeLink {
+  color: transparent;
+  width: 20px;
+  height: 1em;
+  overflow: hidden;
+}
+
+#gItemMenu #gAlbumLink {
+  background: url('../images/ico-view-album.png') no-repeat center center;
+}
+
+#gItemMenu #gHybridLink {
+  background: url('../images/ico-view-hybrid.png') no-repeat center center;
+}
+
+#gItemMenu #gSlideshowLink {
+  background: url('../images/ico-view-slideshow.png') no-repeat center center;
+}
+
+#gItemMenu #gFullsizeLink {
+  background: url('../images/ico-view-fullsize.png') no-repeat center center;
 }
 
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -764,7 +785,6 @@ span.gInPlaceEdit:hover {
 }
 
 #gDialog form {
-	width: 450px;
 }
 
 .gDialogLink {
@@ -825,144 +845,144 @@ span.gInPlaceEdit:hover {
 
 /*dialog*/
 .ui-dialog {
-	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
-	font-size: 1.2em;
-	background: #f3f3f3 url(../jquery/images/f3f3f3_40x100_textures_01_flat_0.png) 0 0 repeat-x;
-	color: #362b36;
-	border: 4px solid #dddddd;
-	position: relative;
+  font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+  font-size: 1.2em;
+  background: #f3f3f3 url(../jquery/images/f3f3f3_40x100_textures_01_flat_0.png) 0 0 repeat-x;
+  color: #362b36;
+  border: 4px solid #dddddd;
+  position: relative;
 }
 .ui-resizable-handle {
-	position: absolute;
-	font-size: 0.1px;
-	z-index: 99999;
+  position: absolute;
+  font-size: 0.1px;
+  z-index: 99999;
 }
 .ui-resizable .ui-resizable-handle {
-	display: block; 
+  display: block; 
 }
 body .ui-resizable-disabled .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
 body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
 .ui-resizable-n { 
-	cursor: n-resize; 
-	height: 7px; 
-	width: 100%; 
-	top: -5px; 
-	left: 0px;  
+  cursor: n-resize; 
+  height: 7px; 
+  width: 100%; 
+  top: -5px; 
+  left: 0px;  
 }
 .ui-resizable-s { 
-	cursor: s-resize; 
-	height: 7px; 
-	width: 100%; 
-	bottom: -5px; 
-	left: 0px; 
+  cursor: s-resize; 
+  height: 7px; 
+  width: 100%; 
+  bottom: -5px; 
+  left: 0px; 
 }
 .ui-resizable-e { 
-	cursor: e-resize; 
-	width: 7px; 
-	right: -5px; 
-	top: 0px; 
-	height: 100%; 
+  cursor: e-resize; 
+  width: 7px; 
+  right: -5px; 
+  top: 0px; 
+  height: 100%; 
 }
 .ui-resizable-w { 
-	cursor: w-resize; 
-	width: 7px; 
-	left: -5px; 
-	top: 0px; 
-	height: 100%;
+  cursor: w-resize; 
+  width: 7px; 
+  left: -5px; 
+  top: 0px; 
+  height: 100%;
 }
 .ui-resizable-se { 
-	cursor: se-resize; 
-	width: 18px; 
-	height: 18px; 
-	right: -5px; 
-	bottom: -5px; 
-	background: url(../jquery/images/222222_11x11_icon_resize_se.gif) no-repeat 0 0;
+  cursor: se-resize; 
+  width: 18px; 
+  height: 18px; 
+  right: -5px; 
+  bottom: -5px; 
+  background: url(../jquery/images/222222_11x11_icon_resize_se.gif) no-repeat 0 0;
 }
 .ui-resizable-sw { 
-	cursor: sw-resize; 
-	width: 9px; 
-	height: 9px; 
-	left: -5px; 
-	bottom: -5px;  
+  cursor: sw-resize; 
+  width: 9px; 
+  height: 9px; 
+  left: -5px; 
+  bottom: -5px;  
 }
 .ui-resizable-nw { 
-	cursor: nw-resize; 
-	width: 9px; 
-	height: 9px; 
-	left: -5px; 
-	top: -5px; 
+  cursor: nw-resize; 
+  width: 9px; 
+  height: 9px; 
+  left: -5px; 
+  top: -5px; 
 }
 .ui-resizable-ne { 
-	cursor: ne-resize; 
-	width: 9px; 
-	height: 9px; 
-	right: -5px; 
-	top: -5px; 
+  cursor: ne-resize; 
+  width: 9px; 
+  height: 9px; 
+  right: -5px; 
+  top: -5px; 
 }
 .ui-dialog-titlebar {
-	padding: .5em 1.5em .5em 1em;
-	color: #444444;
-	background: #e6e6e6 url(../jquery/images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
-	border-bottom: 1px solid #cccccc;
-	font-size: 1em;
-	font-weight: normal;
-	position: relative;
+  padding: .5em 1.5em .5em 1em;
+  color: #444444;
+  background: #e6e6e6 url(../jquery/images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
+  border-bottom: 1px solid #cccccc;
+  font-size: 1em;
+  font-weight: normal;
+  position: relative;
 }
 .ui-dialog-title {}
 .ui-dialog-titlebar-close {
-	background: url(../jquery/images/888888_11x11_icon_close.gif) 0 0 no-repeat;
-	position: absolute;
-	right: 8px;
-	top: .7em;
-	width: 11px;
-	height: 11px;
-	z-index: 100;
+  background: url(../jquery/images/888888_11x11_icon_close.gif) 0 0 no-repeat;
+  position: absolute;
+  right: 8px;
+  top: .7em;
+  width: 11px;
+  height: 11px;
+  z-index: 100;
 }
 .ui-dialog-titlebar-close-hover, .ui-dialog-titlebar-close:hover {
-	background: url(../jquery/images/222222_11x11_icon_close.gif) 0 0 no-repeat;
+  background: url(../jquery/images/222222_11x11_icon_close.gif) 0 0 no-repeat;
 }
 .ui-dialog-titlebar-close:active {
-	background: url(../jquery/images/ffffff_11x11_icon_close.gif) 0 0 no-repeat;
+  background: url(../jquery/images/ffffff_11x11_icon_close.gif) 0 0 no-repeat;
 }
 .ui-dialog-titlebar-close span {
-	display: none;
+  display: none;
 }
 .ui-dialog-content {
-	color: #362b36;
-	padding: 1.5em 1.7em;	
+  color: #362b36;
+  padding: 1.5em 1.7em;  
 }
 .ui-dialog-buttonpane {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	text-align: left;
-	border-top: 1px solid #dddddd;
-	background: #f3f3f3;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid #dddddd;
+  background: #f3f3f3;
 }
 .ui-dialog-buttonpane button {
-	margin: .5em 0 .5em 8px;
-	color: #444444;
-	background: #e6e6e6 url(../jquery/images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
-	font-size: 1em;
-	border: 1px solid #cccccc;
-	cursor: pointer;
-	padding: .2em .6em .3em .6em;
-	line-height: 1.4em;
+  margin: .5em 0 .5em 8px;
+  color: #444444;
+  background: #e6e6e6 url(../jquery/images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
+  font-size: 1em;
+  border: 1px solid #cccccc;
+  cursor: pointer;
+  padding: .2em .6em .3em .6em;
+  line-height: 1.4em;
 }
 .ui-dialog-buttonpane button:hover {
-	color: #111111;
-	background: #eb9300 url(../jquery/images/eb9300_40x100_textures_02_glass_90.png) 0 50% repeat-x;
-	border: 1px solid #888888;
+  color: #111111;
+  background: #eb9300 url(../jquery/images/eb9300_40x100_textures_02_glass_90.png) 0 50% repeat-x;
+  border: 1px solid #888888;
 }
 .ui-dialog-buttonpane button:active {
-	color: #000000;
-	background: #8ab9ff url(../jquery/images/8ab9ff_40x100_textures_02_glass_50.png) 0 50% repeat-x;
-	border: 1px solid #2694e8;
+  color: #000000;
+  background: #8ab9ff url(../jquery/images/8ab9ff_40x100_textures_02_glass_50.png) 0 50% repeat-x;
+  border: 1px solid #2694e8;
 }
 /* This file skins dialog */
 .ui-dialog.ui-draggable .ui-dialog-titlebar,
 .ui-dialog.ui-draggable .ui-dialog-titlebar {
-	cursor: move;
+  cursor: move;
 }
 
 /*
