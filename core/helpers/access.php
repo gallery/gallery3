@@ -84,7 +84,33 @@ class access_Core {
       throw new Exception("@todo MISSING_ACCESS for $item_id");
     }
 
-    return $access->__get("{$perm_name}_{$group_id}") == self::ALLOW;
+    return $access->__get("{$perm_name}_{$group_id}") === self::ALLOW;
+  }
+
+  /**
+   * Does the active user have this permission on this item?
+   *
+   * @param  string  $perm_name
+   * @param  integer $item_id
+   * @return boolean
+   */
+  public static function can($perm_name, $item_id) {
+    $user = Session::instance()->get("user", null);
+    if ($user) {
+      $access = ORM::factory("access_cache")->where("item_id", $item_id)->find();
+      if (!$access) {
+        throw new Exception("@todo MISSING_ACCESS for $item_id");
+      }
+
+      foreach ($user->groups as $group) {
+        if ($access->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
+          return self::ALLOW;
+        }
+      }
+      return self::DENY;
+    } else {
+      return self::group_can(group::EVERYBODY, $perm_name, $item_id);
+    }
   }
 
   /**

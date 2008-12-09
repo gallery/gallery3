@@ -31,6 +31,13 @@ class Access_Helper_Test extends Unit_Test_Case {
     try {
       access::delete_permission("access_test");
     } catch (Exception $e) { }
+
+    try {
+      $user = ORM::factory("user")->where("name", "access_test")->find();
+      if ($user->loaded) {
+        user::delete($user->id);
+      }
+    } catch (Exception $e) { }
   }
 
   public function groups_and_permissions_are_bound_to_columns_test() {
@@ -220,5 +227,26 @@ class Access_Helper_Test extends Unit_Test_Case {
     // Outer album is not editable, inner one is.
     $this->assert_false(access::group_can(0, "edit", $outer_photo->id));
     $this->assert_true(access::group_can(0, "edit", $inner_photo->id));
+  }
+
+  public function i_can_edit_test() {
+    // Create a new user that belongs to no groups
+    $user = user::create("access_test", "Access Test", "");
+    foreach ($user->groups as $group) {
+      group::remove_user($group->id, $user->id);
+    }
+    Session::instance()->set("user", $user);
+
+    // This user can't edit anything
+    $this->assert_false(access::can("edit", 1));
+
+    // Now add them to a group that has edit permission
+    $group = group::create("access_test");
+    group::add_user($group->id, $user->id);
+    access::allow($group->id, "edit", 1);
+    Session::instance()->set("user", $user->reload());
+
+    // And verify that the user can edit.
+    $this->assert_true(access::can("edit", 1));
   }
 }
