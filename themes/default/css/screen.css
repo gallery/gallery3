@@ -505,21 +505,23 @@ table.gMetadata td.toggle {
 #gItemMenu #gSlideshowLink,
 #gItemMenu #gFullsizeLink {
   color: transparent;
-  width: 20px;
   height: 1em;
   overflow: hidden;
+  text-indent: 1000px;
+  white-space: nowrap;
+  width: 20px;
 }
 
 #gItemMenu #gAlbumLink {
-  background: url('../images/ico-view-album.png') no-repeat center center;
+  background: url('../images/ico-view-album.png') no-repeat 6px center;
 }
 
 #gItemMenu #gHybridLink {
-  background: url('../images/ico-view-hybrid.png') no-repeat center center;
+  background: url('../images/ico-view-hybrid.png') no-repeat 6px center;
 }
 
 #gItemMenu #gSlideshowLink {
-  background: url('../images/ico-view-slideshow.png') no-repeat center center;
+  background: url('../images/ico-view-slideshow.png') no-repeat 6px center;
 }
 
 #gItemMenu #gFullsizeLink {
