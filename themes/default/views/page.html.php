@@ -21,11 +21,7 @@
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("jquery/superfish.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
-    <script src="<?= $theme->url("jquery/ui.core.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("jquery/ui.tabs.min.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("jquery/ui.draggable.min.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("jquery/ui.resizable.min.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("jquery/ui.dialog.min.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("lib/jquery-ui.packed.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("jquery/jquery.dimensions.min.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
   </head>
