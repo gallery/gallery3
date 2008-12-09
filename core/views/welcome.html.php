@@ -354,7 +354,7 @@
                   <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
                   &raquo;
                   <? foreach (array("view", "edit") as $perm): ?>
-                  <? if (access::can(group::EVERYBODY, $perm, $current->album->id)): ?>
+                  <? if (access::group_can(group::EVERYBODY, $perm, $current->album->id)): ?>
                   <?= html::anchor("welcome/deny_perm/0/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
                   <? else: ?>
                   <?= html::anchor("welcome/add_perm/0/$perm/{$current->album->id}", strtolower($perm), array("class" => "denied")) ?>
