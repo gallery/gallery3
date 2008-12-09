@@ -23,6 +23,10 @@ class Albums_Controller extends Items_Controller {
    *  @see Rest_Controller::_show($resource)
    */
   public function _show($item) {
+    if (!access::can("view", $item->id)) {
+      return Kohana::show_404();
+    }
+
     // @todo: these need to be pulled from the database
     $theme_name = "default";
     $page_size = 9;

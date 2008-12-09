@@ -81,22 +81,14 @@ abstract class REST_Controller extends Controller {
       return $this->_index();
     }
 
-    // @todo this needs security checks
-    $id = $function;
-    $resource = ORM::factory($this->resource_type, $id);
+    $resource = ORM::factory($this->resource_type, $function);
     if (!$resource->loaded && $request_method != "post") {
       return Kohana::show_404();
     }
 
     switch ($request_method) {
     case "get":
-      $this->_show($resource);
-
-      if (Session::instance()->get("use_profiler", false)) {
-        $profiler = new Profiler();
-        $profiler->render();
-      }
-      return;
+      return $this->_show($resource);
 
     case "put":
       return $this->_update($resource);

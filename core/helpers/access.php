@@ -102,12 +102,15 @@ class access_Core {
         throw new Exception("@todo MISSING_ACCESS for $item_id");
       }
 
+      if ($access->view_0 == self::ALLOW) {
+        return true;
+      }
       foreach ($user->groups as $group) {
         if ($access->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
-          return self::ALLOW;
+          return true;
         }
       }
-      return self::DENY;
+      return false;
     } else {
       return self::group_can(group::EVERYBODY, $perm_name, $item_id);
     }

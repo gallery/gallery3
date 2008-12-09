@@ -23,6 +23,10 @@ class Photos_Controller extends Items_Controller {
    *  @see Rest_Controller::_show($resource)
    */
   public function _show($item) {
+    if (!access::can("view", $item->id)) {
+      return Kohana::show_404();
+    }
+
     // @todo: this needs to be data-driven
     $template = new Theme_View("page.html", "photo", "default");
 
