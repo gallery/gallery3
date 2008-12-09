@@ -39,7 +39,7 @@ class User_Model extends ORM {
    * @see ORM::delete()
    */
   public function delete($id=null) {
+    module::event("user_before_delete", $this);
     parent::delete($id);
-    module::event("user_deleted", $user);
   }
 }

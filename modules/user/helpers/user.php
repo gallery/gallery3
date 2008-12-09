@@ -68,7 +68,7 @@ class user_Core {
    * @return User_Model
    */
   static function create($name, $display_name, $password, $admin=false) {
-    $user = ORM::factory("user");
+    $user = ORM::factory("user")->where("name", $name);
     if ($user->loaded) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
     }
@@ -79,10 +79,10 @@ class user_Core {
     $user->admin = $admin;
     $user->save();
 
-    group::add_user(group::REGISTERED_USERS, $user->id);
+    $group = ORM::factory("group", group::REGISTERED_USERS);
+    $group->add($user);
 
     module::event("user_created", $user);
-
     return $user;
   }
 

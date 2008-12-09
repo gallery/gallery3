@@ -200,7 +200,10 @@ class access_Core {
       self::_drop_columns($name, $group->id);
     }
     self::_drop_columns($name, 0);
-    ORM::factory("permission")->where("name", $name)->find()->delete();
+    $permission = ORM::factory("permission")->where("name", $name)->find();
+    if ($permission->loaded) {
+      $permission->delete();
+    }
   }
 
   /**

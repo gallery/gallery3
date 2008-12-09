@@ -34,7 +34,7 @@ class group_Core {
    * @return Group_Model
    */
   static function create($name) {
-    $group = ORM::factory("group");
+    $group = ORM::factory("group")->where("name", $name);
     if ($group->loaded) {
       throw new Exception("@todo GROUP_ALREADY_EXISTS $name");
     }
@@ -43,65 +43,6 @@ class group_Core {
     $group->save();
 
     module::event("group_created", $group);
-    return $group;
-  }
-
-  /**
-   * Delete a group
-   *
-   * @param string $name the group name
-   */
-  static function delete($id) {
-    $group = ORM::factory("group", $id);
-
-    if ($group->loaded) {
-      module::event("group_before_delete", $group);
-      $group->delete();
-    }
-  }
-
-  /**
-   * Remove a user from a group
-   *
-   * @param integer $group_id the id of the group
-   * @param integer $user_id the id of the user
-   * @return Group_Model
-   */
-  static function remove_user($group_id, $user_id) {
-    $group = ORM::factory("group", $group_id);
-    if (!$group->loaded) {
-      throw new Exception("@todo MISSING_GROUP $group_id");
-    }
-
-    $user = ORM::factory("user", $user_id);
-    if (!$user->loaded) {
-      throw new Exception("@todo MISSING_USER $user_id");
-    }
-
-    $group->remove($user);
-    return $group;
-  }
-
-
-  /**
-   * Add a user to a group
-   *
-   * @param integer $group_id the id of the group
-   * @param integer $user_id the id of the user
-   * @return Group_Model
-   */
-  static function add_user($group_id, $user_id) {
-    $group = ORM::factory("group", $group_id);
-    if (!$group->loaded) {
-      throw new Exception("@todo MISSING_GROUP $group_id");
-    }
-
-    $user = ORM::factory("user", $user_id);
-    if (!$user->loaded) {
-      throw new Exception("@todo MISSING_USER $user_id");
-    }
-
-    $group->add($user);
     return $group;
   }
 }

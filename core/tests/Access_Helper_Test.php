@@ -24,7 +24,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     try {
       $group = ORM::factory("group")->where("name", "access_test")->find();
       if ($group->loaded) {
-        group::delete($group->id);
+        $group->delete();
       }
     } catch (Exception $e) { }
 
@@ -33,7 +33,10 @@ class Access_Helper_Test extends Unit_Test_Case {
     } catch (Exception $e) { }
 
     try {
-      ORM::factory("user")->where("name", "access_test")->find()->delete();
+      $user = ORM::factory("user")->where("name", "access_test")->find();
+      if ($user->loaded) {
+        $user->delete();
+      }
     } catch (Exception $e) { }
   }
 
@@ -46,7 +49,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_true(array_key_exists("access_test_{$group->id}", $fields));
 
     access::delete_permission("access_test");
-    group::delete($group->id);
+    $group->delete();
 
     // Now the column has gone away
     $fields = Database::instance()->list_fields("access_caches");
@@ -230,7 +233,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     // Create a new user that belongs to no groups
     $user = user::create("access_test", "Access Test", "");
     foreach ($user->groups as $group) {
-      group::remove_user($group->id, $user->id);
+      $user->remove($group);
     }
     Session::instance()->set("user", $user);
 
@@ -239,7 +242,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     // Now add them to a group that has edit permission
     $group = group::create("access_test");
-    group::add_user($group->id, $user->id);
+    $group->add($user);
     access::allow($group->id, "edit", 1);
     Session::instance()->set("user", $user->reload());
 

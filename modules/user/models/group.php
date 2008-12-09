@@ -22,4 +22,12 @@ class Group_Model extends ORM {
 
   var $rules = array(
     "name" => "required|length[4,255]");
+
+  /**
+   * @see ORM::delete()
+   */
+  public function delete($id=null) {
+    module::event("group_before_delete", $this);
+    parent::delete($id);
+  }
 }

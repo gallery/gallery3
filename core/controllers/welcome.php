@@ -456,12 +456,13 @@ class Welcome_Controller extends Template_Controller {
   }
 
   public function delete_group($id) {
-    group::delete($id);
+    ORM::factory("group", $id)->delete();
     url::redirect("welcome");
   }
 
   public function remove_from_group($group_id, $user_id) {
-    group::remove_user($group_id, $user_id);
+    ORM::factory("group", $group_id)->remove(
+      ORM::factory("user", $user_id));
     url::redirect("welcome");
   }
 
@@ -469,7 +470,7 @@ class Welcome_Controller extends Template_Controller {
     $group_name = $this->input->post("group_name");
     $group = ORM::factory("group")->where("name", $group_name)->find();
     if ($group->loaded) {
-      group::add_user($group->id, $user_id);
+      $group->add(ORM::factory("user", $user_id));
     }
     url::redirect("welcome");
   }

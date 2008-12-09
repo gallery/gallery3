@@ -56,8 +56,8 @@ class user_installer {
       $admin = user::create("admin", "Gallery Administrator", "admin", true);
       $user = user::create("joe", "Joe User", "joe");
 
-      group::add_user($registered->id, $admin->id);
-      group::add_user($registered->id, $user->id);
+      $registered->add($admin);
+      $registered->add($user);
 
       // Let the admin own everything
       $db->query("UPDATE `items` SET `owner_id` = {$admin->id} WHERE `owner_id` IS NULL");
@@ -68,11 +68,11 @@ class user_installer {
   public static function uninstall() {
     // Delete all users and groups so that we give other modules an opportunity to clean up
     foreach (ORM::factory("user")->find_all() as $user) {
-      user::delete($user->id);
+      $user->delete();
     }
 
     foreach (ORM::factory("group")->find_all() as $group) {
-      group::delete($group->id);
+      $group->delete();
     }
 
     try {
