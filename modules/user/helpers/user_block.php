@@ -32,10 +32,4 @@ class user_block_Core {
     $view->user = Session::instance()->get('user', null);
     return $view->render();
   }
-
-  public static function navigation_bottom($theme) {
-    if (Session::instance()->get('user', null)) {
-      return "<li><a href=#>" . _("MY GALLERY") . "</a></li>";
-    }
-  }
 }

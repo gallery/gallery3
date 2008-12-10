@@ -33,11 +33,4 @@ class core_block_Core {
       return new View("in_place_edit.html");
     }
   }
-
-  public static function navigation_bottom($theme) {
-    $user = Session::instance()->get('user', null);
-    if ($user && $user->admin) {
-      return "<li><a href=#>" . _("ADMIN") . "</a></li>";
-    }
-  }
 }

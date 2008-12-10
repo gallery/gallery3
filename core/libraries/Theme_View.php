@@ -96,8 +96,6 @@ class Theme_View_Core extends View {
     case "head":
     case "header_bottom":
     case "header_top":
-    case "navigation_top":
-    case "navigation_bottom":
     case "page_bottom":
     case "page_top":
     case "photo_blocks":
