@@ -113,7 +113,7 @@ class access_Core {
       }
       return false;
     } else {
-      return self::group_can(group::EVERYBODY, $perm_name, $item->id);
+      return self::group_can(group::EVERYBODY, $perm_name, $item);
     }
   }
 
