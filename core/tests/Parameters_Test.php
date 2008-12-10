@@ -17,6 +17,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Module_Model extends ORM {
-  protected $has_many = array("parameters");
+class Parameters_Test extends Unit_Test_Case {
+  public function add_parameter_test() {
+    module::set_parameter("core", "Parameter", "original value");
+    $this->assert_equal("original value", module::get_parameter("core", "Parameter"));
+
+    module::set_parameter("core", "Parameter", "updated value");
+    $this->assert_equal("updated value", module::get_parameter("core", "Parameter"));
+
+    module::set_parameter("core", "Parameter2", "new parameter");
+    $core = module::get("core");
+
+    $expected = array("Parameter" => "updated value", "Parameter2" => "new parameter");
+    $this->assert_equal($expected, $core->parameters->select_list("name", "value"));
+  }
 }

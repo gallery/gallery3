@@ -88,4 +88,28 @@ class module_Core {
     } catch (Exception $e) {
     }
   }
+
+  public function get_parameter($module_name, $name, $default_value=null) {
+    $module = ORM::factory("module")->where("name", $module_name)->find();
+    $parameter = ORM::factory("parameter")
+      ->where("module_id", $module->id)
+      ->where("name", $name)
+      ->find();
+    return $parameter->loaded ? $parameter->value : $default_value;
+  }
+
+  public function set_parameter($module_name, $name, $value) {
+    $module = ORM::factory("module")->where("name", $module_name)->find();
+    $parameter = ORM::factory("parameter")
+      ->where("module_id", $module->id)
+      ->where("name", $name)
+      ->find();
+    if (!$parameter->loaded) {
+      $parameter = ORM::factory("parameter");
+      $parameter->module_id = $module->id;
+      $parameter->name = $name;
+    }
+    $parameter->value = $value;
+    $parameter->save();
+  }
 }

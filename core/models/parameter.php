@@ -17,6 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Module_Model extends ORM {
-  protected $has_many = array("parameters");
+class Parameter_Model extends ORM {
+  protected $belongs_to = array("module");
 }
