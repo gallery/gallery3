@@ -73,33 +73,34 @@ class access_Core {
   /**
    * Does this group have this permission on this item?
    *
-   * @param  integer $group_id
-   * @param  string  $perm_name
-   * @param  integer $item_id
+   * @param  Group_Model $group
+   * @param  string      $perm_name
+   * @param  Item_Model  $item
    * @return boolean
    */
-  public static function group_can($group_id, $perm_name, $item_id) {
-    $access = ORM::factory("access_cache")->where("item_id", $item_id)->find();
+  public static function group_can($group, $perm_name, $item) {
+    $access = ORM::factory("access_cache")->where("item_id", $item->id)->find();
     if (!$access) {
-      throw new Exception("@todo MISSING_ACCESS for $item_id");
+      throw new Exception("@todo MISSING_ACCESS for $item->id");
     }
 
-    return $access->__get("{$perm_name}_{$group_id}") === self::ALLOW;
+    $group_id = $group ? $group->id : 0;
+    return $access->__get("{$perm_name}_$group_id") === self::ALLOW;
   }
 
   /**
    * Does the active user have this permission on this item?
    *
-   * @param  string  $perm_name
-   * @param  integer $item_id
+   * @param  string     $perm_name
+   * @param  Item_Model $item
    * @return boolean
    */
-  public static function can($perm_name, $item_id) {
+  public static function can($perm_name, $item) {
     $user = Session::instance()->get("user", null);
     if ($user) {
-      $access = ORM::factory("access_cache")->where("item_id", $item_id)->find();
+      $access = ORM::factory("access_cache")->where("item_id", $item->id)->find();
       if (!$access) {
-        throw new Exception("@todo MISSING_ACCESS for $item_id");
+        throw new Exception("@todo MISSING_ACCESS for $item->id");
       }
 
       if ($access->view_0 == self::ALLOW) {
@@ -112,64 +113,69 @@ class access_Core {
       }
       return false;
     } else {
-      return self::group_can(group::EVERYBODY, $perm_name, $item_id);
+      return self::group_can(group::EVERYBODY, $perm_name, $item->id);
     }
   }
 
   /**
    * Internal method to set a permission
    *
-   * @param  integer $group_id
+   * @param  Group_Model $group
    * @param  string  $perm_name
-   * @param  integer $item_id
+   * @param  Item_Model $item
    * @param  boolean $value
    * @return boolean
    */
-  private static function _set($group_id, $perm_name, $item_id, $value) {
-    $access = ORM::factory("access_intent")->where("item_id", $item_id)->find();
+  private static function _set($group, $perm_name, $item, $value) {
+    $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
     if (!$access->loaded) {
-      throw new Exception("@todo MISSING_ACCESS for $item_id");
+      throw new Exception("@todo MISSING_ACCESS for $item->id");
     }
 
-    $access->__set("{$perm_name}_{$group_id}", $value);
+    $group_id = $group ? $group->id : 0;
+    $access->__set("{$perm_name}_$group_id", $value);
     $access->save();
 
-    self::_update_access_cache($group_id, $perm_name, $item_id);
+    self::_update_access_cache($group, $perm_name, $item);
   }
 
   /**
    * Allow a group to have a permission on an item.
    *
-   * @param  integer $group_id
+   * @param  Group_Model $group
    * @param  string  $perm_name
-   * @param  integer $item_id
+   * @param  Item_Model $item
    * @return boolean
    */
-  public static function allow($group_id, $perm_name, $item_id) {
-    self::_set($group_id, $perm_name, $item_id, self::ALLOW);
+  public static function allow($group, $perm_name, $item) {
+    self::_set($group, $perm_name, $item, self::ALLOW);
   }
 
   /**
    * Deny a group the given permission on an item.
    *
-   * @param  integer $group_id
+   * @param  Group_Model $group
    * @param  string  $perm_name
-   * @param  integer $item_id
+   * @param  Item_Model $item
    * @return boolean
    */
-  public static function deny($group_id, $perm_name, $item_id) {
-    self::_set($group_id, $perm_name, $item_id, self::DENY);
+  public static function deny($group, $perm_name, $item) {
+    self::_set($group, $perm_name, $item, self::DENY);
   }
 
   /**
    * Unset the given permission for this item and use inherited values
    *
+   * @param  Group_Model $group
+   * @param  string  $perm_name
+   * @param  Item_Model $item
+   * @return boolean
    */
-  public static function reset($group_id, $perm_name, $item_id) {
-    if ($item_id == 1) {
+  public static function reset($group, $perm_name, $item) {
+    if ($item->id == 1) {
       throw new Exception("@todo CANT_RESET_ROOT_PERMISSION");
     }
-    self::_set($group_id, $perm_name, $item_id, null);
+    self::_set($group, $perm_name, $item, null);
   }
 
   /**
@@ -187,9 +193,9 @@ class access_Core {
     $permission->save();
 
     foreach (self::_get_all_groups() as $group) {
-      self::_add_columns($perm_name, $group->id);
+      self::_add_columns($perm_name, $group);
     }
-    self::_add_columns($perm_name, 0);
+    self::_add_columns($perm_name, null);
   }
 
   /**
@@ -200,9 +206,9 @@ class access_Core {
    */
   public static function delete_permission($name) {
     foreach (self::_get_all_groups() as $group) {
-      self::_drop_columns($name, $group->id);
+      self::_drop_columns($name, $group);
     }
-    self::_drop_columns($name, 0);
+    self::_drop_columns($name, null);
     $permission = ORM::factory("permission")->where("name", $name)->find();
     if ($permission->loaded) {
       $permission->delete();
@@ -217,7 +223,7 @@ class access_Core {
    */
   public static function add_group($group) {
     foreach (ORM::factory("permission")->find_all() as $perm) {
-      self::_add_columns($perm->name, $group->id);
+      self::_add_columns($perm->name, $group);
     }
   }
 
@@ -229,7 +235,7 @@ class access_Core {
    */
   public static function delete_group($group) {
     foreach (ORM::factory("permission")->find_all() as $perm) {
-      self::_drop_columns($perm->name, $group->id);
+      self::_drop_columns($perm->name, $group);
     }
   }
 
@@ -287,13 +293,14 @@ class access_Core {
   /**
    * Internal method to  remove Permission/Group columns
    *
-   * @param  integer $group_id
-   * @param  string  $perm_name
+   * @param  Group_Model $group
+   * @param  string      $perm_name
    * @return void
    */
-  private static function _drop_columns($perm_name, $group_id) {
+  private static function _drop_columns($perm_name, $group) {
+    $group_id = $group ? $group->id : 0;
     $db = Database::instance();
-    $field = "{$perm_name}_{$group_id}";
+    $field = "{$perm_name}_$group_id";
     $db->query("ALTER TABLE `access_caches` DROP `$field`");
     $db->query("ALTER TABLE `access_intents` DROP `$field`");
   }
@@ -301,13 +308,14 @@ class access_Core {
   /**
    * Internal method to add Permission/Group columns
    *
-   * @param  integer $group_id
+   * @param  Group_Model $group
    * @param  string  $perm_name
    * @return void
    */
-  private static function _add_columns($perm_name, $group_id) {
+  private static function _add_columns($perm_name, $group) {
+    $group_id = $group ? $group->id : 0;
     $db = Database::instance();
-    $field = "{$perm_name}_{$group_id}";
+    $field = "{$perm_name}_$group_id";
     $db->query("ALTER TABLE `access_caches` ADD `$field` TINYINT(2) NOT NULL DEFAULT 0");
     $db->query("ALTER TABLE `access_intents` ADD `$field` BOOLEAN DEFAULT NULL");
   }
@@ -319,20 +327,17 @@ class access_Core {
    *
    * @todo: use database locking
    *
-   * @param  integer $group_id
+   * @param  Group_Model $group
    * @param  string  $perm_name
-   * @param  integer $item_id
+   * @param  Item_Model $item
    * @return void
    */
-  public static function _update_access_cache($group_id, $perm_name, $item_id) {
-    $item = ORM::factory("item", $item_id);
-    if (!$item->loaded) {
-      throw new Exception("@todo MISSING_ITEM for $item_id");
-    }
-    $access = ORM::factory("access_intent")->where("item_id", $item_id)->find();
+  public static function _update_access_cache($group, $perm_name, $item) {
+    $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
 
+    $group_id = $group ? $group->id : 0;
     $db = Database::instance();
-    $field = "{$perm_name}_{$group_id}";
+    $field = "{$perm_name}_$group_id";
 
     if ($perm_name == "view") {
       // With view permissions, deny values in the parent can override allow values in the child,

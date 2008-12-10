@@ -23,7 +23,7 @@ class Photos_Controller extends Items_Controller {
    *  @see Rest_Controller::_show($resource)
    */
   public function _show($item) {
-    if (!access::can("view", $item->id)) {
+    if (!access::can("view", $item)) {
       return Kohana::show_404();
     }
 

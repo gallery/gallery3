@@ -22,13 +22,11 @@ class Welcome_Controller extends Template_Controller {
 
   function index() {
     Session::instance();
-
     $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
     $this->template->syscheck->modules = array();
 
     $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
-
     try {
       $this->template->syscheck->modules = $this->_read_modules();
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
@@ -101,20 +99,18 @@ class Welcome_Controller extends Template_Controller {
             try {
               call_user_func(array("{$module->name}_installer", "uninstall"));
             } catch (Exception $e) {
-              $clean = false;
             }
           }
         }
       } catch (Exception $e) { }
-      set_error_handler($old_handler);
-      if (!$clean) {
-        // Since we're in a state of flux, it's possible that other stuff went wrong with the
-        // uninstall, so back off and nuke things from orbit.
-        $db = Database::instance();
-        foreach ($db->list_tables() as $table) {
-          $db->query("DROP TABLE `$table`");
-        }
+
+      // Since we're in a state of flux, it's possible that other stuff went wrong with the
+      // uninstall, so back off and nuke it from orbit.  It's the only way to be sure.
+      $db = Database::instance();
+      foreach ($db->list_tables() as $table) {
+        $db->query("DROP TABLE `$table`");
       }
+      set_error_handler($old_handler);
     }
     call_user_func(array("{$module_name}_installer", "uninstall"));
     url::redirect("welcome");
@@ -488,18 +484,20 @@ class Welcome_Controller extends Template_Controller {
   }
 
   public function add_perm($group_id, $perm, $item_id) {
-    access::allow($group_id, $perm, $item_id);
+    access::allow(ORM::factory("group", $group_id), $perm, ORM::factory("item", $item_id));
     url::redirect("welcome");
   }
 
   public function deny_perm($group_id, $perm, $item_id) {
-    access::deny($group_id, $perm, $item_id);
+    access::deny(ORM::factory("group", $group_id), $perm, ORM::factory("item", $item_id));
     url::redirect("welcome");
   }
 
   public function reset_all_perms($group_id, $item_id) {
+    $group = ORM::factory("group", $group_id);
+    $item = ORM::factory("item", $item_id);
     foreach (ORM::factory("permission")->find_all() as $perm) {
-      access::reset($group_id, $perm->name, $item_id);
+      access::reset($group, $perm->name, $item);
     }
     url::redirect("welcome");
   }

@@ -29,7 +29,7 @@ class core_block_Core {
       $profiler->render();
     }
 
-    if (access::can("edit", $theme->item()->id)) {
+    if (access::can("edit", $theme->item())) {
       return new View("in_place_edit.html");
     }
   }
