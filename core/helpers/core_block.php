@@ -24,8 +24,12 @@ class core_block_Core {
   }
 
   public static function page_bottom($theme) {
-    // @todo: guard this with permissions
-    if (Session::instance()->get("user", false)) {
+    if (Session::instance()->get("profiler", false)) {
+      $profiler = new Profiler();
+      $profiler->render();
+    }
+
+    if (access::can("edit", $theme->item()->id)) {
       return new View("in_place_edit.html");
     }
   }
