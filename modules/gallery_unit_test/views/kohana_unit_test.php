@@ -3,7 +3,7 @@
 foreach ($results as $class => $methods) {
   echo "+", str_repeat("-", 98), "+\n";
   printf("| %-96.96s |\n", $class);
-  echo "+", str_repeat("-", 98), "+\n";
+  echo "+", str_repeat("-", 57), "+", str_repeat("-", 40), "+\n";
 
   foreach (array("score", "total", "passed", "failed", "errors") as $key) {
     @$totals[$key] += $stats[$class][$key];
@@ -41,7 +41,7 @@ foreach ($results as $class => $methods) {
     }
   }
 
-  echo "+", str_repeat("=", 98), "+\n";
+  echo "+", str_repeat("=", 57), "+", str_repeat("=", 40), "+\n";
   printf("| %-40.40s %-13.13s %-13.13s %-13.13s %-13.13s |\n",
          $class,
          "Score: {$stats[$class]['score']}",
