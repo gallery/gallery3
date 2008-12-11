@@ -3,6 +3,9 @@
  */
 $("document").ready(function() {
 
+  $(".gMenuLink").addClass("gDialogLink");
+  $("ul.gMenu").addClass("sf-menu");
+  
   /**
    * Superfish menu options
    */

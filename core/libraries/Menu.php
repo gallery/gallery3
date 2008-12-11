@@ -55,7 +55,7 @@ class Menu_Element {
  */
 class Menu_Element_Link extends Menu_Element {
   public function __toString() {
-    return "<li><a href=\"$this->url\">$this->label</a><li>";
+    return "<li><a class=\"gMenuElement\" href=\"$this->url\">$this->label</a><li>";
   }
 }
 
@@ -64,7 +64,7 @@ class Menu_Element_Link extends Menu_Element {
  */
 class Menu_Element_Dialog extends Menu_Element {
   public function __toString() {
-    return "<li><a class=\"gDialogLink\" href=\"$this->url\" " .
+    return "<li><a class=\"gMenuLink\" href=\"$this->url\" " .
            "title=\"$this->label\">$this->label</a></li>";
   }
 }
@@ -117,7 +117,7 @@ class Menu_Core extends Menu_Element {
   }
 
   public function __toString() {
-    $html = $this->is_root ? "<ul>" : "<li><a href=#>$this->label</a><ul>";
+    $html = $this->is_root ? "<ul class=\"gMenu\">" : "<li><a href=#>$this->label</a><ul class=\"gMenu\">";
     $html .= implode("\n", $this->elements);
     $html .= $this->is_root ? "</ul>" : "</ul></li>";
     return $html;

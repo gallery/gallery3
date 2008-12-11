@@ -21,9 +21,7 @@
 class core_block_Core {
   public static function head($theme) {
     $url = url::base(true);
-    $head[] = "<script>var base_url = \"$url\";</script>";
-    $head[] = '<script src="' . url::file("core/js/menu.js") . '" type="text/javascript"></script>';
-    return implode("\n", $head);
+    return "<script>var base_url = \"$url\";</script>\n";
   }
 
   public static function page_bottom($theme) {
