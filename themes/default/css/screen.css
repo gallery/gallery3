@@ -401,21 +401,40 @@ table.gMetadata td.toggle {
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
-.gStatus {
+.gMessages {
+    border: 1px solid #ddd;
+    padding: .5em;
+}	
+.gMessages li {
+  background-position: .5em .1em;
+  background-repeat: no-repeat;
+  border: 1px solid #ccc;
+  margin-bottom: .7em; 
+  padding: .1em 5px 2px 30px;
 }
 
 .gError {
+  background-color: #fcc;
+  background-image: url('../images/ico-error.png');
   color: red;
-  padding-bottom: 0;
 }
 
 .gWarning {
+  background-color: #ff9;
+  background-image: url('../images/ico-warning.png');
 }
 
 .gSuccess {
+  background-color: #cfc;
+  background-image: url('../images/ico-success.png');
+}
+
+.gHelp {
+  background-image: url('../images/ico-help.png');
 }
 
 .gInfo {
+  background-image: url('../images/ico-info.png');
 }
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
