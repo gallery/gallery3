@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Tranisitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>G3: Admin Dashboard</title>
+    <link rel="stylesheet" href="../../lib/yui/reset-fonts-grids.css" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="../default/css/screen.css" type="text/css" media="screen,projection">
+    <script src="../../lib/jquery.js"></script>
+    <script src="../../lib/jquery-ui.packed.js"></script>
+    <link rel="stylesheet" href="../default/jquery/superfish.css" type="text/css" media="screen,projection">
+    <script src="../default/jquery/superfish.js"></script>
+    <script src="../default/js/ui.init.js"></script>
+    <style type="text/css">
+      .gBlock {
+        border: 1px solid #e7e7e7;
+      }
+      .gBlock h2 {
+        background-color: #e7e7e7;
+        padding: .1em .4em;
+      }
+      .gDraggable h2 {
+        background: #f4f4f4 url('../default/images/ico-draggable.png') no-repeat center right;
+        cursor: move;
+      }
+      #gPhotoStream .gBlockContent {
+        overflow: scroll;
+        
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="doc4" class="yui-t5 gView">
+      <div id="hd">
+        <div id="gHeader">
+          <ul id="gSiteMenu" class="sf-menu">
+            <li><a href="#">Dashboard</a><li>
+            <li><a href="#">General Settings</a><li>
+            <li><a href="#">Content</a><li>
+            <li><a href=#>Modules</a>
+              <ul>
+                <li><a class="gDialogLink" href="/index.php/form/add/photos/1" title="Add Photos">Add Photos</a></li>
+              </ul>
+            </li>
+            <li><a href=#>Presentation</a>
+              <ul>
+                <li><a class="gDialogLink" href="/index.php/form/edit/albums/1" title="Edit">Edit</a></li>
+                <li><a href="/index.php/admin">Site Admin</a><li>
+                <li><a class="gDialogLink" href="/index.php/users/form/edit/1" title="Edit Profile">Edit Profile</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Users/Groups</a><li>
+            <li><a href="#">Maintenance</a><li>
+            <li><a href="#">Logs</a><li>
+          </ul>
+          <!--ul id="gBreadcrumbs" class="gClearFix">
+            <li><a href="#">Dashboard</a></li>
+          </ul-->
+        </div>
+      </div>
+      <div id="bd">
+        <div id="yui-main">
+          <div class="yui-b">
+            <div id="gContent" class="yui-g">
+
+              <div class="gBlock gMessages">
+                <h2>Status Messages</h2>
+                <ul class="gBlockContent">
+                  <li class="gWarning"><a href="#" title="">Gallery 3.1 is available, you're running Gallery 3.0. Update now!</a></li>
+                  <li class="gError"><a href="#" title="">Unable to write to /home/username/gallery3/var</a></li>
+                  <li class="gSuccess"><a href="#" title="">Permissions issues fixed</a></li>
+                  <li class="gInfo"><a href="#" title="">Just a plain information message</a></li>
+                  <li class="gHelp"><a href="#" title="">Contextual help or tip</a></li>
+                </ul>
+              </div>
+              
+              <div id="gPhotoStream" class="gBlock gDraggable">
+                <h2>Photo Stream</h2>
+                <div class="gBlockContent">
+                  <p>Recent photos added to your Gallery</p>
+                  <img src="images/photostream.png" alt="" />
+                </div>
+              </div>
+              
+              <div id="gLogEntries" class="gBlock gDraggable">
+                <h2>Recent Comments</h2>
+                <ul class="gBlockContent">
+                  <li><a href="">username</a> 2008-12-10 23:02:23 Something happened</li>
+                  <li><a href="">username</a> 2008-12-10 23:02:23 Someone logged in</li>
+                  <li><a href="">username</a> 2008-12-10 23:02:23 New module installed</li>
+                  <li><a href="">username</a> 2008-12-10 23:02:23 Someone logged in</li>
+                  <li><a href="">username</a> 2008-12-10 23:02:23 RSS feed updated</li>
+                </ul>
+              </div>
+              
+              <div id="gLogEntries" class="gBlock gDraggable">
+                <h2>Log Entries</h2>
+                <ul class="gBlockContent">
+                  <li>2008-12-10 23:02:23 Something happened</li>
+                  <li>2008-12-10 23:02:23 Someone logged in</li>
+                  <li>2008-12-10 23:02:23 New module installed</li>
+                  <li>2008-12-10 23:02:23 Someone logged in</li>
+                  <li>2008-12-10 23:02:23 RSS feed updated</li>
+                </ul>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div id="gSidebar" class="yui-b">
+        
+          <div id="gPlatform" class="gBlock">
+            <h2>Platform Information</h2>
+            <ul class="gBlockContent">
+              <li>Version: 3.0</li>
+              <li>Platform
+                <ul>
+                  <li>Apache 2.0.24
+                    <ul>
+                      <li>mod_rewrite: active</li>
+                    </ul>
+                  </li>
+                  <li>PHP 5.2.8
+                    <ul>
+                      <li>Memory: 32MB</li>
+                      <li></li>
+                      <li></li>
+                    </ul>
+                  </li>
+                  <li>MySQL 5.0.1</li>
+                  <li>Graphics Toolkits
+                    <ul>
+                      <li>ImageMagick 1.6</li>
+                      <li>GD</li>
+                      <li>FFMPEG</li>
+                    </ul>                  
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          
+          <div id="gProjectNews" class="gBlock">
+            <h2>Gallery Project News</h2>
+            <ul class="gBlockContent">
+              <li>10-Apr <a href="#">Gallery 3.1 released!</a></li>
+              <li>26-Feb <a href="#">New theme tutorials now available</a></li>
+              <li>4-Feb <a href="#">Gallery 3.0 released!</a></li>
+            </ul>
+          </div>
+          
+        </div>
+      </div>
+      <div id="ft">
+        <div id="gFooter">
+          Footer
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
