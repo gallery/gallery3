@@ -29,6 +29,6 @@ class Var_Test extends Unit_Test_Case {
     $core = module::get("core");
 
     $expected = array("Parameter" => "updated value", "Parameter2" => "new parameter");
-    $this->assert_equal($expected, $core->parameters->select_list("name", "value"));
+    $this->assert_equal($expected, $core->vars->select_list("name", "value"));
   }
 }
