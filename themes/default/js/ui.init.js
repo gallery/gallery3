@@ -69,6 +69,7 @@ function handleDialogEvent(event) {
 function openDialog(element) {
   var href = $(element).attr("href");
   var dialog = '<div id="gDialog"></div>';
+
   $("body").append(dialog);
   $("#gDialog").dialog({
     draggable: true,
@@ -78,6 +79,10 @@ function openDialog(element) {
       opacity: 0.7,
       background: "black"
     },
+    close: function (event, ui) {
+      $("#gDialog").dialog('destroy').remove();
+    },
+
     resizable: true,
     title: $(element).attr("title"),
     width: '500px'
