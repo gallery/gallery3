@@ -401,22 +401,17 @@ table.gMetadata td.toggle {
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
-.gMessages {
-    border: 1px solid #ddd;
-    padding: .5em;
-}	
 .gMessages li {
   background-position: .5em .1em;
   background-repeat: no-repeat;
   border: 1px solid #ccc;
-  margin-bottom: .7em; 
-  padding: .1em 5px 2px 30px;
+  margin: .4em 0; 
+  padding: .1em .5em .1em 30px;
 }
 
 .gError {
   background-color: #fcc;
   background-image: url('../images/ico-error.png');
-  color: red;
 }
 
 .gWarning {
