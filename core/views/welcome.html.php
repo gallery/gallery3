@@ -148,11 +148,18 @@
         margin-left: -1.5em;
         list-style-type: none;
       }
+
+      .gHide {
+        display: none;
+      }
     </style>
     <?= html::script("lib/jquery.js") ?>
     <?= html::script("lib/jquery.form.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
     <?= html::script("lib/jquery.MultiFile.js") ?>
+    <? if (class_exists("local_import_block")): ?>
+    <?= local_import_block::head(null) ?>
+    <? endif ?>
     <? if (class_exists("rearrange_block")): ?>
     <?= rearrange_block::head(null) ?>
     <? endif ?>
@@ -256,6 +263,10 @@
               ] tags
             </p>
             <?= $add_photo_html ?>
+            <fieldset>
+              <legend>Local Server Import Admininstration</legend>
+              <?= $local_import_html ?>
+            </fieldset>
             <fieldset>
               <legend>Server Side Photos</legend>
               <form method="post" action="<?= url::site("welcome/add_photos") ?>">

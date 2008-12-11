@@ -17,14 +17,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class local_import_installer {
+  public static function install() {
+    $db = Database::instance();
+    $version = module::get_version("local_import");
+    if ($version == 0) {
+//      access::register_permission("local_import");
 
-// The abstract REST_Controller is not directly routable.
-$config["^rest\b.*"] = null;
+      module::set_version("local_import", 1);
+      module::set_var("local_import", "authorized_paths", serialize(array()));
+    }
+  }
 
-// Redirect /form/add and /form/edit to REST_Controller.
-$config["^form/(edit|add)/(\w+)/(.*)$"] = "$2/form_$1/$3";
+  public static function uninstall() {
+//    access::delete_permission("local_import");
+    $module = module::get("local_import");
 
-$config["^admin/(\w+)/(.*)$"] = "$1_admin/$2";
+    $db = Database::instance();
+    $db->query("DELETE FROM `vars` WHERE `module_id` = {$module->id};");
 
-// For now our default page is the scaffolding.
-$config["_default"] = "welcome";
+    module::delete("local_import");
+  }
+}

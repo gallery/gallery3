@@ -36,6 +36,11 @@ class Welcome_Controller extends Template_Controller {
       $this->template->album_tree = $this->_load_album_tree();
       $this->template->rearrange_html = new View("rearrange.html");
       $this->template->add_photo_html = $this->_get_add_photo_html();
+      if (module::is_installed("local_import")) {
+        $this->template->local_import_html = $this->_get_local_import_html();
+      } else {
+        $this->template->local_import_html = "";
+      }
     } catch (Exception $e) {
       $this->template->album_count = 0;
       $this->template->photo_count = 0;
@@ -43,6 +48,7 @@ class Welcome_Controller extends Template_Controller {
       $this->template->album_tree = array();
       $this->template->rearrange_html = "";
       $this->template->add_photo_html = "";
+      $this->template->local_import_html = "";
     }
 
     $this->_load_user_info();
@@ -512,5 +518,10 @@ class Welcome_Controller extends Template_Controller {
   public function _get_add_photo_html($parent_id=1) {
     $parent = ORM::factory("item", $parent_id);
     return photo::get_add_form($parent);
+  }
+
+  public function _get_local_import_html($user_name="admin") {
+    $user = ORM::factory("user")->where("name", $user_name)->find();
+    return local_import::get_admin_page($user);
   }
 }

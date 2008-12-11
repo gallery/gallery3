@@ -17,14 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class local_import_block_Core {
+  public static function head($theme) {
+    $head[] = html::script("modules/local_import/js/local_import.js");
 
-// The abstract REST_Controller is not directly routable.
-$config["^rest\b.*"] = null;
+    $url = url::file("modules/local_import/css/local_import.css");
+    $head[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$url\" " .
+      "media=\"screen,print,projection\" />";
 
-// Redirect /form/add and /form/edit to REST_Controller.
-$config["^form/(edit|add)/(\w+)/(.*)$"] = "$2/form_$1/$3";
-
-$config["^admin/(\w+)/(.*)$"] = "$1_admin/$2";
-
-// For now our default page is the scaffolding.
-$config["_default"] = "welcome";
+    return implode("\n", $head);
+  }
+}

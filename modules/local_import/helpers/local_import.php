@@ -17,14 +17,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class local_import {
+  public static function get_admin_page() {
+//    @todo check for admin permission
+//    if (!$user->admin) {
+//      throw new Exception("@todo ACCESS DENIED");
+//    }
 
-// The abstract REST_Controller is not directly routable.
-$config["^rest\b.*"] = null;
+    $template = new View("local_import_admin.html");
 
-// Redirect /form/add and /form/edit to REST_Controller.
-$config["^form/(edit|add)/(\w+)/(.*)$"] = "$2/form_$1/$3";
+    $paths = unserialize(module::get_var("local_import", "authorized_paths"));
+    if (!empty($paths)) {
+      $template->dir_list = new View("local_import_dir_list.html");
+      $template->dir_list->paths = array_keys($paths);
+    } else {
+      $template->dir_list = "";
+    }
 
-$config["^admin/(\w+)/(.*)$"] = "$1_admin/$2";
+    $template->add_form = self::get_admin_form()->render();
 
-// For now our default page is the scaffolding.
-$config["_default"] = "welcome";
+    return $template;
+  }
+
+  public static function get_admin_form() {
+    $form  = new Forge("admin/local_import/add_path", "", "post", array("id" => "gLocalImportAdminForm"));
+    $form->input("path")->label(true);
+    $form->submit(_("Add"));
+
+    return $form;
+  }
+}

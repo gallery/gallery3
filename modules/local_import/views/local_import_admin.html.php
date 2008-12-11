@@ -1,4 +1,4 @@
-<?php defined("SYSPATH") or die("No direct script access.");
+<? defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2008 Bharat Mediratta
@@ -17,14 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-// The abstract REST_Controller is not directly routable.
-$config["^rest\b.*"] = null;
-
-// Redirect /form/add and /form/edit to REST_Controller.
-$config["^form/(edit|add)/(\w+)/(.*)$"] = "$2/form_$1/$3";
-
-$config["^admin/(\w+)/(.*)$"] = "$1_admin/$2";
-
-// For now our default page is the scaffolding.
-$config["_default"] = "welcome";
+?>
+<script>
+  var base_url = "<?= url::base(true) ?>";
+</script>
+<div id="gLocalImportAdmin">
+  <div id="gImportLocalDirList">
+    <?= $dir_list ?>
+  </div>
+  <div>
+    <?= $add_form ?>
+  </div>
+</div>
