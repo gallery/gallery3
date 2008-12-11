@@ -82,7 +82,7 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `parameters` (
+      $db->query("CREATE TABLE `vars` (
                    `id` int(9) NOT NULL auto_increment,
                    `module_id` int(9),
                    `name` char(255) NOT NULL,
@@ -124,7 +124,10 @@ class core_installer {
     $db->query("DROP TABLE IF EXISTS `permissions`;");
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
+    // @todo remove before release
     $db->query("DROP TABLE IF EXISTS `parameters`;");
+    // @todo-end
+    $db->query("DROP TABLE IF EXISTS `vars`;");
     system("/bin/rm -rf " . VARPATH . "albums");
     system("/bin/rm -rf " . VARPATH . "resizes");
   }

@@ -17,15 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Parameters_Test extends Unit_Test_Case {
+class Var_Test extends Unit_Test_Case {
   public function add_parameter_test() {
-    module::set_parameter("core", "Parameter", "original value");
-    $this->assert_equal("original value", module::get_parameter("core", "Parameter"));
+    module::set_var("core", "Parameter", "original value");
+    $this->assert_equal("original value", module::get_var("core", "Parameter"));
 
-    module::set_parameter("core", "Parameter", "updated value");
-    $this->assert_equal("updated value", module::get_parameter("core", "Parameter"));
+    module::set_var("core", "Parameter", "updated value");
+    $this->assert_equal("updated value", module::get_var("core", "Parameter"));
 
-    module::set_parameter("core", "Parameter2", "new parameter");
+    module::set_var("core", "Parameter2", "new parameter");
     $core = module::get("core");
 
     $expected = array("Parameter" => "updated value", "Parameter2" => "new parameter");

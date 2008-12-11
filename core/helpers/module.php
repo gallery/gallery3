@@ -89,27 +89,27 @@ class module_Core {
     }
   }
 
-  public function get_parameter($module_name, $name, $default_value=null) {
+  public function get_var($module_name, $name, $default_value=null) {
     $module = ORM::factory("module")->where("name", $module_name)->find();
-    $parameter = ORM::factory("parameter")
+    $var = ORM::factory("var")
       ->where("module_id", $module->id)
       ->where("name", $name)
       ->find();
-    return $parameter->loaded ? $parameter->value : $default_value;
+    return $var->loaded ? $var->value : $default_value;
   }
 
-  public function set_parameter($module_name, $name, $value) {
+  public function set_var($module_name, $name, $value) {
     $module = ORM::factory("module")->where("name", $module_name)->find();
-    $parameter = ORM::factory("parameter")
+    $var = ORM::factory("var")
       ->where("module_id", $module->id)
       ->where("name", $name)
       ->find();
-    if (!$parameter->loaded) {
-      $parameter = ORM::factory("parameter");
-      $parameter->module_id = $module->id;
-      $parameter->name = $name;
+    if (!$var->loaded) {
+      $var = ORM::factory("var");
+      $var->module_id = $module->id;
+      $var->name = $name;
     }
-    $parameter->value = $value;
-    $parameter->save();
+    $var->value = $value;
+    $var->save();
   }
 }
