@@ -77,6 +77,12 @@ class module_Core {
   }
 
   public static function load_modules() {
+    // Lightweight hack to make sure that we've got a real install.
+    // @todo replace this when we have a better way of detecting that the core is installed
+    if (Kohana::config('database.default.connection.pass') == 'p@ssw0rd') {
+      return array();
+    }
+
     try {
       $modules = Kohana::config('core.modules');
 
