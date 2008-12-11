@@ -55,7 +55,7 @@ class Menu_Element {
  */
 class Menu_Element_Link extends Menu_Element {
   public function __toString() {
-    return "<li><a class=\"gMenuElement\" href=\"$this->url\">$this->label</a><li>";
+    return "<li><a class=\"gMenuElement\" href=\"$this->url\">$this->label</a></li>";
   }
 }
 
