@@ -4,16 +4,6 @@
     <li><a href="#" id="gAlbumLink" title="<?= _("View album") ?>"><?= _("Album view") ?></a></li>
     <li><a href="#" id="gHybridLink" title="<?= _("View album in hybrid mode") ?>"><?= _("Hybrid view") ?></a></li>
     <li><?= $theme->album_top() ?></li>
-    <li><a href="#">Options</a>
-      <ul>
-        <li><a href="<?= url::site("/form/add/photos/$item->id") ?>" 
-            title="<?= _("Add an item") ?>"
-            class="gDialogLink"><?= _("Add an item") ?></a></li>
-        <li><a href="<?= url::site("/form/add/albums/$item->id") ?>" 
-            title="<?= _("Add album") ?>"
-            class="gDialogLink"><?= _("Add album") ?></a></li>
-      </ul>
-    </li>
   </ul>
 
   <h1><?= $item->title_edit ?></h1>

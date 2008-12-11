@@ -37,13 +37,18 @@ class core_menu_Core {
       // @todo need to do a permission check here
       $menu->append(
         Menu::factory("submenu")
-        ->id("upload_menu")
-        ->label(_("Upload"))
+        ->id("options_menu")
+        ->label(_("Options"))
         ->append(
           Menu::factory("dialog")
-          ->id("add_photos")
-          ->label(_("Add Photos"))
-          ->url(url::site("form/add/photos/$item->id"))));
+          ->id("add_item")
+          ->label(_("Add an item"))
+          ->url(url::site("form/add/photos/$item->id")))
+        ->append(
+          Menu::factory("dialog")
+          ->id("add_album")
+          ->label(_("Add album"))
+          ->url(url::site("form/add/albums/$item->id"))));
 
       $admin_menu = Menu::factory("submenu")
         ->id("admin_menu")
