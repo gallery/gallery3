@@ -1,9 +1,9 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <script type="text/javascript">
   $(document).ready( function() {
-    $('#gRearrangeTree').RearrangeTree({}, function(file) {
-      alert(file);
-    });
+    $('#gRearrangeTree').RearrangeTree({
+      script: "<?= url::base(true) . "rearrange/show" ?>"
+    }, function(file) {});
   });
 </script>
 <div id="gRearrange">
