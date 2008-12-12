@@ -24,8 +24,7 @@
         cursor: move;
       }
       #gPhotoStream .gBlockContent {
-        overflow: scroll;
-        
+        overflow: scroll; 
       }
     </style>
   </head>
@@ -37,20 +36,30 @@
           <ul id="gSiteMenu" class="sf-menu">
             <li><a href="#">Dashboard</a><li>
             <li><a href="#">General Settings</a><li>
-            <li><a href="#">Content</a><li>
-            <li><a href=#>Modules</a>
+            <li><a href="#">Content</a>
               <ul>
-                <li><a class="gDialogLink" href="/index.php/form/add/photos/1" title="Add Photos">Add Photos</a></li>
+                <li><a href="#">Comments</a>
+                  <ul>
+                    <li><a href="#">Comment moderation</a></li>
+                  </ul>
+                </li>
+                <li><a href="#">Tags</a><li>
               </ul>
             </li>
+            <li><a href=#>Modules</a></li>
             <li><a href=#>Presentation</a>
               <ul>
-                <li><a class="gDialogLink" href="/index.php/form/edit/albums/1" title="Edit">Edit</a></li>
-                <li><a href="/index.php/admin">Site Admin</a><li>
-                <li><a class="gDialogLink" href="/index.php/users/form/edit/1" title="Edit Profile">Edit Profile</a></li>
+                <li><a href="#">Themes</a></li>
+                <li><a href="#">Image sizes</a><li>
               </ul>
             </li>
-            <li><a href="#">Users/Groups</a><li>
+            <li><a href="#">Users/Groups</a>
+              <ul>
+                <li><a href="#">List Users</a></li>
+                <li><a href="#">Create new user</a><li>
+                <li><a href="#">Edit Profile</a></li>
+              </ul>
+            </li>
             <li><a href="#">Maintenance</a><li>
             <li><a href="#">Logs</a><li>
           </ul>
@@ -71,7 +80,7 @@
                   <li class="gError"><a href="#" title="">Unable to write to /home/username/gallery3/var</a></li>
                   <li class="gSuccess"><a href="#" title="">Permissions issues fixed</a></li>
                   <li class="gInfo"><a href="#" title="">Just a plain information message</a></li>
-                  <li class="gHelp"><a href="#" title="">Contextual help or tip</a></li>
+                  <li class="gHelp"><a href="#" title="">Contextual help or tip<br/>And here's a second line</a></li>
                 </ul>
               </div>
               
@@ -111,9 +120,16 @@
         <div id="gSidebar" class="yui-b">
         
           <div id="gPlatform" class="gBlock">
-            <h2>Platform Information</h2>
+            <h2>Gallery Stats</h2>
             <ul class="gBlockContent">
               <li>Version: 3.0</li>
+              <li>Your gallery has 34 albums containing 842 photos with 26 comments.</li>
+            </ul>
+          </div>
+          
+          <div id="gPlatform" class="gBlock">
+            <h2>Platform Information</h2>
+            <ul class="gBlockContent">
               <li>Platform
                 <ul>
                   <li>Apache 2.0.24
@@ -139,6 +155,7 @@
                 </ul>
               </li>
             </ul>
+            <p class="gWarning">^ Display as a tree widget</p>
           </div>
           
           <div id="gProjectNews" class="gBlock">
