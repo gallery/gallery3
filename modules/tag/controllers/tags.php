@@ -21,9 +21,8 @@ class Tags_Controller extends REST_Controller {
   protected $resource_type = "tag";
 
   public function _show($tag) {
-    // @todo: these need to be pulled from the database
-    $theme_name = "default";
-    $page_size = 9;
+    $theme_name = module::get_var("core", "active_theme", "default");
+    $page_size = module::set_var("core", "page_size", 9);
 
     $template = new Theme_View("page.html", "tag", $theme_name);
 

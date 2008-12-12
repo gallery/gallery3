@@ -110,6 +110,10 @@ class core_installer {
         ->save();
       access::add_item($root);
 
+      module::set_var("core", "active_theme", "default");
+      module::set_var("core", "active_admin_theme", "default_admin");
+      module::set_var("core", "page_size", 9);
+
       module::set_version("core", 1);
     }
   }

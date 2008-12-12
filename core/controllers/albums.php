@@ -27,9 +27,8 @@ class Albums_Controller extends Items_Controller {
       return Kohana::show_404();
     }
 
-    // @todo: these need to be pulled from the database
-    $theme_name = "default";
-    $page_size = 9;
+    $theme_name = module::get_var("core", "active_theme", "default");
+    $page_size = module::set_var("core", "page_size", 9);
 
     $template = new Theme_View("page.html", "album", $theme_name);
 

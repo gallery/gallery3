@@ -27,8 +27,9 @@ class Photos_Controller extends Items_Controller {
       return Kohana::show_404();
     }
 
-    // @todo: this needs to be data-driven
-    $template = new Theme_View("page.html", "photo", "default");
+    $theme_name = module::get_var("core", "active_theme", "default");
+
+    $template = new Theme_View("page.html", "photo", $theme_name);
 
     $template->set_global('item', $item);
     $template->set_global('children', $item->children());
