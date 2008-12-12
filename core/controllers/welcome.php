@@ -26,7 +26,7 @@ class Welcome_Controller extends Template_Controller {
     $this->template->syscheck->errors = $this->_get_config_errors();
     $this->template->syscheck->modules = array();
 
-    $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
+    set_error_handler(array("Welcome_Controller", "_error_handler"));
     try {
       $this->template->syscheck->modules = $this->_read_modules();
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
@@ -48,7 +48,7 @@ class Welcome_Controller extends Template_Controller {
     $this->_load_comment_info();
     $this->_load_tag_info();
 
-    set_error_handler($old_handler);
+    restore_error_handler();
 
     $this->_create_directories();
 
