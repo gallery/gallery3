@@ -131,8 +131,6 @@ class module_Core {
    * @todo remove this when we have a real installer.
    */
   private static function _core_installed() {
-    if (Kohana::config('database.default.connection.pass') == 'p@ssw0rd') {
-      return array();
-    }
+    return Kohana::config('database.default.connection.pass') != 'p@ssw0rd';
   }
 }
