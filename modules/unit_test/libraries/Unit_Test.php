@@ -23,13 +23,14 @@ class Unit_Test_Core {
 	/**
 	 * Sets the test path(s), runs the tests inside and stores the results.
 	 *
-	 * @param   string(s)  test path(s)
+	 * @param   array      test path(s)
+	 * @param   string     filter (regular expression)
 	 * @return  void
 	 */
-	public function __construct()
+	public function __construct($extra_paths=array(), $filter=null)
 	{
 		// Merge possible default test path(s) from config with the rest
-		$paths = array_merge(func_get_args(), Kohana::config('unit_test.paths', FALSE, FALSE));
+		$paths = array_merge($extra_paths, Kohana::config('unit_test.paths', FALSE, FALSE));
 
 		// Normalize all test paths
 		foreach ($paths as $path)
@@ -63,10 +64,6 @@ class Unit_Test_Core {
 
 				// The class name should be the same as the file name
 				$class = substr($path, strrpos($path, '/') + 1, -(strlen(EXT)));
-
-				if (count($_SERVER['argv']) > 2 && !in_array($class, $_SERVER['argv'])) {
-					continue;
-				}
 
 				// Skip hidden files
 				if (substr($class, 0, 1) === '.')
@@ -124,6 +121,10 @@ class Unit_Test_Core {
 					// Skip invalid test methods
 					if ( ! $method->isPublic() OR $method->isStatic() OR $method->getNumberOfRequiredParameters() !== 0)
 						continue;
+
+					if ($filter && !preg_match("/$filter/i", "$class::{$method->getName()}")) {
+						continue;
+					}
 
 					// Test methods should be suffixed with "_test"
 					if (substr($method_name = $method->getName(), -5) !== '_test')
@@ -186,6 +187,11 @@ class Unit_Test_Core {
 
 					// Cleanup
 					unset($object);
+				}
+
+				if ($filter && $this->stats[$class]['total'] == 0) {
+					unset($this->results[$class]);
+					unset($this->stats[$class]);
 				}
 			}
 		}
