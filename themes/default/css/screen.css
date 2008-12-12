@@ -174,16 +174,6 @@ textarea {
 .gRequired {
 }
 
-ul.gError,
-li.gError {
-  background-color: #ffdcdc;
-}
-
-.gError label,
-.gValidationRule {
-  color: red;
-}
-
 .gValidationRule {
   font-size: 80%;
   margin-top: .5em;
@@ -402,11 +392,14 @@ table.gMetadata td.toggle {
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gMessages li {
-  background-position: .5em .1em;
-  background-repeat: no-repeat;
   border: 1px solid #ccc;
   margin: .4em 0; 
   padding: .1em .5em .1em 30px;
+}
+
+.gError, .gWarning, .gSuccess, .gHelp, .gInfo {
+  background-position: .5em .1em;
+  background-repeat: no-repeat;
 }
 
 .gError {
