@@ -76,16 +76,19 @@ class Gallery_Unit_Test_Controller extends Controller {
 
     // Install all modules
     core_installer::install();
+    $modules = array();
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
       $module_name = basename(dirname(dirname($file)));
       if ($module_name == "core") {
         continue;
       }
 
-      $modules = Kohana::config('core.modules');
-      $modules[] = MODPATH . $module_name;
-      Kohana::config_set('core.modules', $modules);
       require_once(DOCROOT . "modules/${module_name}/helpers/${module_name}_installer.php");
+
+      $test_dir = MODPATH . "$module_name/tests";
+      if (file_exists($test_dir)) {
+        $modules[] = $test_dir;
+      }
 
       $installer_class = "{$module_name}_installer";
       if (method_exists($installer_class, "install")) {
@@ -93,6 +96,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       }
     }
 
-    print new Unit_Test();
+    $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
+    print new Unit_Test($modules, $filter);
   }
 }
