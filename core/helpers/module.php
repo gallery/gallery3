@@ -24,6 +24,7 @@
  * Note: by design, this class does not do any permission checking.
  */
 class module_Core {
+  private static $module_names = array();
   private static $modules = array();
 
   public static function get_version($module_name) {
@@ -50,7 +51,7 @@ class module_Core {
   }
 
   public static function is_installed($module_name) {
-    return in_array($module_name, self::$modules);
+    return in_array($module_name, self::$module_names);
   }
 
   public static function installed() {
@@ -89,12 +90,14 @@ class module_Core {
     try {
       $kohana_modules = Kohana::config('core.modules');
       foreach (ORM::factory("module")->find_all() as $module) {
-        self::$modules[] = $module->as_array();
+        self::$module_names[] = $module->name;
+        self::$modules[] = $module;
         $kohana_modules[] = MODPATH . $module->name;
       }
 
       Kohana::config_set('core.modules', $kohana_modules);
     } catch (Exception $e) {
+      self::$module_names = array();
       self::$modules = array();
     }
 
