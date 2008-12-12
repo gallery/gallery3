@@ -182,7 +182,9 @@
         <ul class="tabs">
           <li><a href="javascript:show('config')">Configuration</a></li>
           <li><a href="javascript:show('actions')">Actions</a></li>
+          <? if (module::is_installed("user")): ?>
           <li><a href="javascript:show('access')">Access</a></li>
+          <? endif ?>
           <li><a href="javascript:show('info')">Info</a></li>
           <li><a href="javascript:show('benchmarks')">Benchmarks</a></li>
           <li><a href="javascript:show('docs')">Docs</a></li>
@@ -284,6 +286,7 @@
             <? endif ?>
           </div>
 
+          <? if (module::is_installed("user")): ?>
           <div id="access" class="activity">
             <ul class="tabs">
               <li><a href="javascript:show('access', 'access_users')">Users</a></li>
@@ -383,6 +386,7 @@
               <? endif ?>
             </div>
           </div>
+          <? endif ?>
 
           <div id="info" class="activity">
             <ul>
