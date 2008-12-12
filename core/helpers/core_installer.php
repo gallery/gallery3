@@ -108,10 +108,7 @@ class core_installer {
       $root->level = 1;
       $root->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
         ->save();
-
       access::add_item($root);
-      access::allow(0, "view", $root);
-      access::deny(0, "edit", $root);
 
       module::set_version("core", 1);
     }

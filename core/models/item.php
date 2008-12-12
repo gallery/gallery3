@@ -224,7 +224,7 @@ class Item_Model extends ORM_MPTT {
   public function __get($column) {
     if (substr($column, -5) == "_edit") {
       $real_column = substr($column, 0, strlen($column) - 5);
-      if (Session::instance()->get("user", false)) {
+      if (access::can("edit", $this)) {
         return "<span class=\"gInPlaceEdit gEditField-{$this->id}-{$real_column}\">" .
           "{$this->$real_column}</span>";
       } else {

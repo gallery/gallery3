@@ -24,9 +24,6 @@
  * Note: by design, this class does not do any permission checking.
  */
 class group_Core {
-  const EVERYBODY = 0;
-  const REGISTERED_USERS = 1;
-
   /**
    * Create a new group.
    *
@@ -44,5 +41,23 @@ class group_Core {
 
     module::event("group_created", $group);
     return $group;
+  }
+
+  /**
+   * The group of all possible visitors.  This includes the guest user.
+   *
+   * @return Group_Model
+   */
+  static function everybody() {
+    return ORM::factory("group", 1);
+  }
+
+  /**
+   * The group of all logged-in visitors.  This does not include guest users.
+   *
+   * @return Group_Model
+   */
+  static function registered_users() {
+    return ORM::factory("group", 2);
   }
 }

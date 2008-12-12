@@ -34,7 +34,6 @@ class Welcome_Controller extends Template_Controller {
       $this->template->deepest_photo = ORM::factory("item")
         ->where("type", "photo")->orderby("level", "desc")->find();
       $this->template->album_tree = $this->_load_album_tree();
-      $this->template->rearrange_html = new View("rearrange.html");
       $this->template->add_photo_html = $this->_get_add_photo_html();
       if (module::is_installed("local_import")) {
         $this->template->local_import_html = $this->_get_local_import_html();
@@ -46,7 +45,6 @@ class Welcome_Controller extends Template_Controller {
       $this->template->photo_count = 0;
       $this->template->deepest_photo = null;
       $this->template->album_tree = array();
-      $this->template->rearrange_html = "";
       $this->template->add_photo_html = "";
       $this->template->local_import_html = "";
     }
@@ -205,13 +203,7 @@ class Welcome_Controller extends Template_Controller {
   function add_albums_and_photos($count, $desired_type=null) {
     srand(time());
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
-
-    try {
-      $user = Session::instance()->get("user");
-      $owner_id = $user ? $user->id : ORM::factory("user")->find()->id;
-    } catch (Exception $e) {
-      $owner_id = null;
-    }
+    $owner_id = user::active()->id;
 
     for ($i = 0; $i < $count; $i++) {
       set_time_limit(30);
@@ -486,6 +478,7 @@ class Welcome_Controller extends Template_Controller {
       $tree[$album->id]->album = $album;
       $tree[$album->id]->children = array();
     }
+
     return $tree;
   }
 

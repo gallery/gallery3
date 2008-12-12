@@ -32,6 +32,7 @@ class user_installer {
           `last_login` int(10) unsigned NOT NULL DEFAULT 0,
           `email` varchar(255) default NULL,
           `admin` BOOLEAN default 0,
+          `guest` BOOLEAN default 0,
           PRIMARY KEY (`id`),
           UNIQUE KEY(`display_name`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
@@ -39,6 +40,7 @@ class user_installer {
       $db->query("CREATE TABLE IF NOT EXISTS `groups` (
           `id` int(9) NOT NULL auto_increment,
           `name` char(255) default NULL,
+          `special` BOOLEAN default 0,
           PRIMARY KEY (`id`),
           UNIQUE KEY(`name`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
@@ -50,18 +52,32 @@ class user_installer {
           UNIQUE KEY(`user_id`, `group_id`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $everybody = group::create("Everybody");
+      $everybody->special = true;
+      $everybody->save();
+
       $registered = group::create("Registered Users");
+      $registered->special = true;
+      $registered->save();
 
-      // @todo: get this info from the installer
-      $admin = user::create("admin", "Gallery Administrator", "admin", true);
-      $user = user::create("joe", "Joe User", "joe");
+      $guest = user::create("guest", "Guest User", "");
+      $guest->guest = true;
+      $guest->save();
+      $guest->remove($registered);
 
-      $registered->add($admin);
-      $registered->add($user);
+      $admin = user::create("admin", "Gallery Administrator", "admin");
+      $admin->admin = true;
+      $admin->save();
 
       // Let the admin own everything
       $db->query("UPDATE `items` SET `owner_id` = {$admin->id} WHERE `owner_id` IS NULL");
       module::set_version("user", 1);
+
+      $root = ORM::factory("item", 1);
+      access::allow($guest, "view", $root);
+      access::allow($guest, "view", $root);
+      access::allow($registered, "view", $root);
+      access::allow($admin, "edit", $root);
     }
   }
 

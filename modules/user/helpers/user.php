@@ -24,8 +24,6 @@
  * Note: by design, this class does not do any permission checking.
  */
 class user_Core {
-  const ADMIN = 1;
-
   /**
    * Return the form for creating / modifying users.
    */
@@ -59,15 +57,32 @@ class user_Core {
   }
 
   /**
+   * Return the active user.  If there's no active user, return the guest user.
+   *
+   * @return User_Model
+   */
+  static function active() {
+    return Session::instance()->get("user", ORM::factory("user", 1));
+  }
+
+  /**
+   * Change the active user.
+   *
+   * @return User_Model
+   */
+  static function set_active($user) {
+    return Session::instance()->set("user", $user);
+  }
+
+  /**
    * Create a new user.
    *
    * @param string  $name
    * @param string  $display_name
    * @param string  $password
-   * @param boolean $admin true if this user is a site admin
    * @return User_Model
    */
-  static function create($name, $display_name, $password, $admin=false) {
+  static function create($name, $display_name, $password) {
     $user = ORM::factory("user")->where("name", $name);
     if ($user->loaded) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
@@ -76,10 +91,14 @@ class user_Core {
     $user->name = $name;
     $user->display_name = $display_name;
     $user->password = $password;
-    $user->admin = $admin;
     $user->save();
 
-    $group = ORM::factory("group", group::REGISTERED_USERS);
+    // Everybody user
+    $group = ORM::factory("group", 1);
+    $group->add($user);
+
+    // Registered users
+    $group = ORM::factory("group", 2);
     $group->add($user);
 
     module::event("user_created", $user);
@@ -138,7 +157,7 @@ class user_Core {
     $user->last_login = time();
     $user->save();
 
-    Session::instance()->set("user", $user);
+    user::set_active($user);
     module::event("user_login", $user);
   }
 

@@ -283,10 +283,12 @@
                 <input type="hidden" name="type" value="album"/>
               </form>
             </fieldset>
+            <? if (module::is_installed("rearrange")): ?>
             <fieldset>
               <legend>Rearrange</legend>
-              <?= $rearrange_html ?>
+              <?= new View("rearrange.html") ?>
             </fieldset>
+            <? endif ?>
           </div>
 
           <div id="access" class="activity">
@@ -301,14 +303,14 @@
                 <? foreach ($users as $user): ?>
                 <li>
                   <?= $user->name ?>
-                  <? if ($user->id != user::ADMIN): ?>
+                  <? if (!$user->admin): ?>
                   <?= html::anchor("welcome/delete_user/$user->id", "[x]") ?>
                   <? endif ?>
                   <ul>
                     <? foreach ($user->groups as $group): ?>
                     <li>
                       <?= $group->name ?>
-                      <? if ($group->id != group::REGISTERED_USERS): ?>
+                      <? if (!$group->special): ?>
                       <?= html::anchor("welcome/remove_from_group/$group->id/$user->id", "[x]") ?>
                       <? endif ?>
                     </li>
@@ -337,7 +339,7 @@
                 <? foreach ($groups as $group): ?>
                 <li>
                   <?= $group->name ?>
-                  <? if ($group->id != group::REGISTERED_USERS): ?>
+                  <? if (!$group->special): ?>
                   <?= html::anchor("welcome/delete_group/$group->id", "[x]") ?>
                   <? endif ?>
                 </li>
@@ -365,15 +367,15 @@
                   <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
                   &raquo;
                   <? foreach (array("view", "edit") as $perm): ?>
-                  <? if (access::group_can(group::EVERYBODY, $perm, $current->album)): ?>
-                  <?= html::anchor("welcome/deny_perm/0/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
+                  <? if (access::group_can(group::everybody(), $perm, $current->album)): ?>
+                  <?= html::anchor("welcome/deny_perm/1/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
                   <? else: ?>
-                  <?= html::anchor("welcome/add_perm/0/$perm/{$current->album->id}", strtolower($perm), array("class" => "denied")) ?>
+                  <?= html::anchor("welcome/add_perm/1/$perm/{$current->album->id}", strtolower($perm), array("class" => "denied")) ?>
                   <? endif ?>
                   <? endforeach ?>
                   <? if ($current->album->id != 1): ?>
                   <span class="understate">
-                    (<?= html::anchor("welcome/reset_all_perms/0/{$current->album->id}", "reset") ?>)
+                    (<?= html::anchor("welcome/reset_all_perms/1/{$current->album->id}", "reset") ?>)
                   </span>
                   <? endif; ?>
                   <? $stack[] = "CLOSE"; ?>

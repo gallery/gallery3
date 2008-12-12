@@ -84,8 +84,7 @@ class access_Core {
       throw new Exception("@todo MISSING_ACCESS for $item->id");
     }
 
-    $group_id = $group ? $group->id : 0;
-    return $access->__get("{$perm_name}_$group_id") === self::ALLOW;
+    return $access->__get("{$perm_name}_{$group->id}") === self::ALLOW;
   }
 
   /**
@@ -96,25 +95,17 @@ class access_Core {
    * @return boolean
    */
   public static function can($perm_name, $item) {
-    $user = Session::instance()->get("user", null);
-    if ($user) {
-      $access = ORM::factory("access_cache")->where("item_id", $item->id)->find();
-      if (!$access) {
-        throw new Exception("@todo MISSING_ACCESS for $item->id");
-      }
+    $access = ORM::factory("access_cache")->where("item_id", $item->id)->find();
+    if (!$access) {
+      throw new Exception("@todo MISSING_ACCESS for $item->id");
+    }
 
-      if ($access->view_0 == self::ALLOW) {
+    foreach (user::active()->groups as $group) {
+      if ($access->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
       }
-      foreach ($user->groups as $group) {
-        if ($access->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
-          return true;
-        }
-      }
-      return false;
-    } else {
-      return self::group_can(group::EVERYBODY, $perm_name, $item);
     }
+    return false;
   }
 
   /**
@@ -132,8 +123,7 @@ class access_Core {
       throw new Exception("@todo MISSING_ACCESS for $item->id");
     }
 
-    $group_id = $group ? $group->id : 0;
-    $access->__set("{$perm_name}_$group_id", $value);
+    $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
 
     if ($perm_name =="view") {
@@ -199,7 +189,6 @@ class access_Core {
     foreach (self::_get_all_groups() as $group) {
       self::_add_columns($perm_name, $group);
     }
-    self::_add_columns($perm_name, null);
   }
 
   /**
@@ -212,7 +201,6 @@ class access_Core {
     foreach (self::_get_all_groups() as $group) {
       self::_drop_columns($name, $group);
     }
-    self::_drop_columns($name, null);
     $permission = ORM::factory("permission")->where("name", $name)->find();
     if ($permission->loaded) {
       $permission->delete();
@@ -264,8 +252,6 @@ class access_Core {
         $field = "{$perm->name}_{$group->id}";
         $access_cache->$field = $parent_access_cache->$field;
       }
-      $field = "{$perm->name}_0";
-      $access_cache->$field = $parent_access_cache->$field;
     }
     $access_cache->save();
   }
@@ -302,9 +288,8 @@ class access_Core {
    * @return void
    */
   private static function _drop_columns($perm_name, $group) {
-    $group_id = $group ? $group->id : 0;
     $db = Database::instance();
-    $field = "{$perm_name}_$group_id";
+    $field = "{$perm_name}_{$group->id}";
     $db->query("ALTER TABLE `access_caches` DROP `$field`");
     $db->query("ALTER TABLE `access_intents` DROP `$field`");
   }
@@ -317,11 +302,11 @@ class access_Core {
    * @return void
    */
   private static function _add_columns($perm_name, $group) {
-    $group_id = $group ? $group->id : 0;
     $db = Database::instance();
-    $field = "{$perm_name}_$group_id";
+    $field = "{$perm_name}_{$group->id}";
     $db->query("ALTER TABLE `access_caches` ADD `$field` TINYINT(2) NOT NULL DEFAULT 0");
     $db->query("ALTER TABLE `access_intents` ADD `$field` BOOLEAN DEFAULT NULL");
+    $db->query("UPDATE `access_intents` SET `$field` = 0 WHERE `item_id` = 1");
   }
 
   /**
@@ -337,9 +322,8 @@ class access_Core {
   public static function _update_access_view_cache($group, $item) {
     $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
 
-    $group_id = $group ? $group->id : 0;
     $db = Database::instance();
-    $field = "view_$group_id";
+    $field = "view_{$group->id}";
 
     // With view permissions, deny values in the parent can override allow values in the child,
     // so start from the bottom of the tree and work upwards overlaying negative on top of
@@ -430,10 +414,8 @@ class access_Core {
   public static function _update_access_non_view_cache($group, $perm_name, $item) {
     $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
 
-    $group_id = $group ? $group->id : 0;
     $db = Database::instance();
-    $field = "{$perm_name}_$group_id";
-
+    $field = "{$perm_name}_{$group->id}";
 
     // If the item's intent is DEFAULT, then we need to back up the chain to find the nearest
     // parent with an intent and propagate from there.

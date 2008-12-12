@@ -21,7 +21,7 @@ class user_block_Core {
   public static function head($theme) {
     $url = url::file("modules/user/js/user.js");
     $script[] = "<script src=\"$url\" type=\"text/javascript\"></script>";
-    $user = Session::instance()->get('user', null);
+    $user = user::active();
     $url = url::file("lib/jquery.jeditable.js");
     $script[] = empty($user) ? "" : "<script src=\"$url\" type=\"text/javascript\"></script>";
     return implode("\n", $script);
@@ -29,7 +29,7 @@ class user_block_Core {
 
   public static function header_top($theme) {
     $view = new View("login.html");
-    $view->user = Session::instance()->get('user', null);
+    $view->user = user::active();
     return $view->render();
   }
 }

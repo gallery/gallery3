@@ -33,7 +33,7 @@ class Theme_View_Core extends View {
     parent::__construct($name);
     $this->theme_name = $theme_name;
     $this->set_global('theme', $this);
-    $this->set_global('user', Session::instance()->get('user', null));
+    $this->set_global('user', user::active());
     $this->set_global("page_type", $page_type);
   }
 

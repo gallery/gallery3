@@ -25,21 +25,34 @@
 class User_Installer_Test extends Unit_Test_Case {
   public function install_creates_admin_user_test() {
     $user = ORM::factory("user", 1);
-    $this->assert_equal("Gallery Administrator", $user->display_name);
+    $this->assert_equal("guest", $user->name);
+    $this->assert_true($user->guest);
+
+    $user = ORM::factory("user", 2);
     $this->assert_equal("admin", $user->name);
-    $this->assert_true(user::is_correct_password($user, "admin"));
+    $this->assert_false($user->guest);
 
     $this->assert_equal(
-      array("Registered Users"),
+      array("Everybody", "Registered Users"),
       array_keys($user->groups->select_list("name")));
   }
 
-  public function install_creates_registered_group_test() {
+  public function install_creates_everybody_group_test() {
     $group = ORM::factory("group", 1);
+    $this->assert_equal("Everybody", $group->name);
+    $this->assert_true($group->special);
+
+    $this->assert_equal(
+      array("guest", "admin"),
+      array_keys($group->users->select_list("name")));
+  }
+
+  public function install_creates_registered_group_test() {
+    $group = ORM::factory("group", 2);
     $this->assert_equal("Registered Users", $group->name);
 
     $this->assert_equal(
-      array("admin", "joe"),
+      array("admin"),
       array_keys($group->users->select_list("name")));
   }
 }

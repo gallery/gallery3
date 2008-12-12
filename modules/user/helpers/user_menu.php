@@ -19,8 +19,8 @@
  */
 class user_menu_Core {
   public static function site_navigation($menu, $theme) {
-    $user = Session::instance()->get("user", null);
-    if ($user) {
+    $user = user::active();
+    if (!$user->guest) {
       $menu->get("admin_menu")->append(
         Menu::Factory("dialog")
         ->id("edit_profile")

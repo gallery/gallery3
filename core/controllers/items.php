@@ -51,8 +51,7 @@ class Items_Controller extends REST_Controller {
   public function _create($item) {
     // @todo Productionize this code
     // 1) Add security checks
-    $user = Session::instance()->get("user");
-    $owner_id = $user ? $user->id : $item->owner_id;
+    $owner_id = user::active()->id;
 
     switch ($this->input->post("type")) {
     case "album":
