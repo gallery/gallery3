@@ -48,10 +48,18 @@ class module_Core {
   }
 
   public static function is_installed($module_name) {
+    if (!self::_core_installed()) {
+      return false;
+    }
+
     return ORM::factory("module")->where("name", $module_name)->find()->loaded;
   }
 
   public static function installed() {
+    if (!self::_core_installed()) {
+      return array();
+    }
+
     return ORM::factory("module")->find_all();
   }
 
@@ -77,9 +85,7 @@ class module_Core {
   }
 
   public static function load_modules() {
-    // Lightweight hack to make sure that we've got a real install.
-    // @todo replace this when we have a better way of detecting that the core is installed
-    if (Kohana::config('database.default.connection.pass') == 'p@ssw0rd') {
+    if (!self::_core_installed()) {
       return array();
     }
 
@@ -117,5 +123,16 @@ class module_Core {
     }
     $var->value = $value;
     $var->save();
+  }
+
+  /**
+   * Lightweight hack to make sure that we've got a real install.
+   *
+   * @todo remove this when we have a real installer.
+   */
+  private static function _core_installed() {
+    if (Kohana::config('database.default.connection.pass') == 'p@ssw0rd') {
+      return array();
+    }
   }
 }
