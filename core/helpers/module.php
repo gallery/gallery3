@@ -133,6 +133,6 @@ class module_Core {
    *
    * @todo remove this when we have an installer.
    */
-  private static function _dummy_error_handler() {
+  public static function _dummy_error_handler() {
   }
 }
