@@ -40,6 +40,10 @@ class Access_Helper_Test extends Unit_Test_Case {
     } catch (Exception $e) { }
   }
 
+  public function setup() {
+    user::set_active(user::guest());
+  }
+
   public function groups_and_permissions_are_bound_to_columns_test() {
     access::register_permission("access_test");
     $group = group::create("access_test");
@@ -117,7 +121,6 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_true(false, "Should not be able to reset root intent");
   }
 
-
   public function can_view_item_test() {
     $root = ORM::factory("item", 1);
     access::allow(group::everybody(), "view", $root);
@@ -131,6 +134,8 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     access::deny(group::everybody(), "view", $root);
     access::reset(group::everybody(), "view", $album);
+
+    $album->reload();
     $this->assert_false(access::group_can(group::everybody(), "view", $album));
   }
 
@@ -141,6 +146,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     access::allow(group::everybody(), "view", $root);
     access::reset(group::everybody(), "view", $album);
+    $album->reload();
     $this->assert_true(access::group_can(group::everybody(), "view", $album));
   }
 
@@ -176,9 +182,12 @@ class Access_Helper_Test extends Unit_Test_Case {
     access::reset(group::everybody(), "view", $album2);
     access::reset(group::everybody(), "view", $album3);
     access::reset(group::everybody(), "view", $album4);
+
+    $album4->reload();
     $this->assert_false(access::group_can(group::everybody(), "view", $album4));
 
     access::allow(group::everybody(), "view", $album1);
+    $album4->reload();
     $this->assert_true(access::group_can(group::everybody(), "view", $album4));
   }
 
@@ -189,6 +198,8 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     access::deny(group::everybody(), "view", $root);
     access::allow(group::everybody(), "view", $album);
+
+    $album->reload();
     $this->assert_false(access::group_can(group::everybody(), "view", $album));
   }
 

@@ -46,6 +46,8 @@ class group_Core {
   /**
    * The group of all possible visitors.  This includes the guest user.
    *
+   * @todo consider caching
+   *
    * @return Group_Model
    */
   static function everybody() {
@@ -54,6 +56,8 @@ class group_Core {
 
   /**
    * The group of all logged-in visitors.  This does not include guest users.
+   *
+   * @todo consider caching
    *
    * @return Group_Model
    */

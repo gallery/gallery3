@@ -44,7 +44,7 @@
  *   inaccessible (ie: a DENY on the "view" permission to the EVERYBODY group).  Once A3 is
  *   inaccessible, A5 can never be displayed to that group.  If A1 is made inaccessible, then the
  *   entire tree is hidden.  If subsequently A1 is made accessible, then the whole tree is
- *   available again *except* A3 and below since the user's preference for A3 is maintained.
+ *   available again *except* A3 and below since the user's "intent" for A3 is maintained.
  *
  * o Intents are specified as <group_id, perm, item_id> tuples.  It would be inefficient to check
  *   these tuples every time we want to do a lookup, so we use these intents to create an entire
@@ -57,13 +57,13 @@
  *   permissions) it's especially efficient because there's a single field value for each
  *   group/permission/item combination.
  *
+ * o For efficiency, we store the cache columns for view permissions directly in the Item_Model.
+ *   This means that we can filter items by group/permission combination without doing any table
+ *   joins making for an especially efficient permission check at the expense of having to
+ *   maintain extra columns for each item.
+ *
  * o If at any time the Access_Cache_Model becomes invalid, we can rebuild the entire table from
  *   the Access_Intent_Model
- *
- * TODO
- * o In the near future, we'll be moving the "view" columns out of Access_Intent_Model and
- *   directly into Item_Model.  By doing this, we'll be able to find viewable items (the most
- *   common permission access) without doing table joins.
  */
 class access_Core {
   const DENY      = 0;
@@ -79,12 +79,16 @@ class access_Core {
    * @return boolean
    */
   public static function group_can($group, $perm_name, $item) {
-    $access = ORM::factory("access_cache")->where("item_id", $item->id)->find();
-    if (!$access) {
-      throw new Exception("@todo MISSING_ACCESS for $item->id");
+    if ($perm_name == "view") {
+      $resource = $item;
+    } else {
+      $resource = ORM::factory("access_cache")->where("item_id", $item->id)->find();
+      if (!$resource) {
+        throw new Exception("@todo MISSING_ACCESS for $item->id");
+      }
     }
 
-    return $access->__get("{$perm_name}_{$group->id}") === self::ALLOW;
+    return $resource->__get("{$perm_name}_{$group->id}") === self::ALLOW;
   }
 
   /**
@@ -95,13 +99,17 @@ class access_Core {
    * @return boolean
    */
   public static function can($perm_name, $item) {
-    $access = ORM::factory("access_cache")->where("item_id", $item->id)->find();
-    if (!$access) {
-      throw new Exception("@todo MISSING_ACCESS for $item->id");
+    if ($perm_name == "view") {
+      $resource = $item;
+    } else {
+      $resource = ORM::factory("access_cache")->where("item_id", $item->id)->find();
+      if (!$resource) {
+        throw new Exception("@todo MISSING_ACCESS for $item->id");
+      }
     }
 
     foreach (user::active()->groups as $group) {
-      if ($access->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
+      if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
       }
     }
@@ -247,10 +255,14 @@ class access_Core {
       ORM::factory("access_cache")->where("item_id", $item->parent()->id)->find();
     $access_cache = ORM::factory("access_cache");
     $access_cache->item_id = $item->id;
-    foreach (ORM::factory("permission")->find_all() as $perm) {
-      foreach (self::_get_all_groups() as $group) {
+    foreach (self::_get_all_groups() as $group) {
+      foreach (ORM::factory("permission")->find_all() as $perm) {
         $field = "{$perm->name}_{$group->id}";
-        $access_cache->$field = $parent_access_cache->$field;
+        if ($perm->name == "view") {
+          $item->$field = $item->parent()->$field;
+        } else {
+          $access_cache->$field = $parent_access_cache->$field;
+        }
       }
     }
     $access_cache->save();
@@ -290,7 +302,8 @@ class access_Core {
   private static function _drop_columns($perm_name, $group) {
     $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
-    $db->query("ALTER TABLE `access_caches` DROP `$field`");
+    $cache_table = $perm_name == "view" ? "items" : "access_caches";
+    $db->query("ALTER TABLE `$cache_table` DROP `$field`");
     $db->query("ALTER TABLE `access_intents` DROP `$field`");
   }
 
@@ -304,7 +317,8 @@ class access_Core {
   private static function _add_columns($perm_name, $group) {
     $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
-    $db->query("ALTER TABLE `access_caches` ADD `$field` TINYINT(2) NOT NULL DEFAULT 0");
+    $cache_table = $perm_name == "view" ? "items" : "access_caches";
+    $db->query("ALTER TABLE `$cache_table` ADD `$field` TINYINT(2) NOT NULL DEFAULT 0");
     $db->query("ALTER TABLE `access_intents` ADD `$field` BOOLEAN DEFAULT NULL");
     $db->query("UPDATE `access_intents` SET `$field` = 0 WHERE `item_id` = 1");
   }
@@ -335,10 +349,9 @@ class access_Core {
     // item, then its safe to propagate from here.
     if ($access->$field !== self::DENY) {
       $tmp_item = ORM::factory("item")
-        ->join("access_intents", "items.id", "access_intents.item_id")
         ->where("left <", $item->left)
         ->where("right >", $item->right)
-        ->where("$field", self::DENY)
+        ->where($field, self::DENY)
         ->orderby("left", "DESC")
         ->limit(1)
         ->find();
@@ -351,11 +364,9 @@ class access_Core {
     // access_caches table will already contain DENY values and we won't be able to overwrite
     // them according the rule above.  So mark every permission below this level as UNKNOWN so
     // that we can tell which permissions have been changed, and which ones need to be updated.
-    $db->query("UPDATE `access_caches` SET `$field` = ? " .
-               "WHERE `item_id` IN " .
-               "  (SELECT `id` FROM `items` " .
-               "  WHERE `left` >= $item->left " .
-               "  AND `right` <= $item->right)",
+    $db->query("UPDATE `items` SET `$field` = ? " .
+               "WHERE `left` >= $item->left " .
+               "AND `right` <= $item->right",
                array(self::UNKNOWN));
 
     $query = $db->query(
@@ -364,39 +375,33 @@ class access_Core {
       "WHERE `left` >= $item->left " .
       "AND `right` <= $item->right " .
       "AND `type` = 'album' " .
-      "AND `$field` IS NOT NULL " .
+      "AND `access_intents`.`$field` IS NOT NULL " .
       "ORDER BY `level` DESC ");
     foreach ($query as $row) {
       if ($row->$field == self::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
         $db->query(
-          "UPDATE `access_caches` SET `$field` = {$row->$field} " .
+          "UPDATE `items` SET `$field` = {$row->$field} " .
           "WHERE `$field` = ? " .
-          "AND `item_id` IN " .
-          "  (SELECT `id` FROM `items` " .
-          "  WHERE `left` >= $row->left " .
-          "  AND `right` <= $row->right)",
+          "AND `left` >= $row->left " .
+          "AND `right` <= $row->right",
           array(self::UNKNOWN));
       } else if ($row->$field == self::DENY) {
         // DENY overwrites everything below it
         $db->query(
-          "UPDATE `access_caches` SET `$field` = {$row->$field} " .
-          "WHERE `item_id` IN " .
-          "  (SELECT `id` FROM `items` " .
-          "  WHERE `left` >= $row->left " .
-          "  AND `right` <= $row->right)");
+          "UPDATE `items` SET `$field` = {$row->$field} " .
+          "WHERE `left` >= $row->left " .
+          "AND `right` <= $row->right");
       }
     }
 
     // Finally, if our intent is DEFAULT at this point it means that we were unable to find a
     // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
     // the hierarchy, and all of those are safe to change to ALLOW.
-    $db->query("UPDATE `access_caches` SET `$field` = ? " .
+    $db->query("UPDATE `items` SET `$field` = ? " .
                "WHERE `$field` = ? " .
-               "AND `item_id` IN " .
-               "  (SELECT `id` FROM `items` " .
-               "  WHERE `left` >= $item->left " .
-               "  AND `right` <= $item->right)",
+               "AND `left` >= $item->left " .
+               "AND `right` <= $item->right",
                array(self::ALLOW, self::UNKNOWN));
   }
 
