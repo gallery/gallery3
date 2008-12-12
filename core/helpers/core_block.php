@@ -19,11 +19,6 @@
  */
 
 class core_block_Core {
-  public static function head($theme) {
-    $url = url::base(true);
-    return "<script>var base_url = \"$url\";</script>\n";
-  }
-
   public static function page_bottom($theme) {
     if (Session::instance()->get("profiler", false)) {
       $profiler = new Profiler();
