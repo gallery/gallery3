@@ -394,12 +394,12 @@ table.gMetadata td.toggle {
 .gMessages li {
   border: 1px solid #ccc;
   margin: .4em 0; 
-  padding: .1em .5em .1em 30px;
 }
 
 .gError, .gWarning, .gSuccess, .gHelp, .gInfo {
   background-position: .5em .1em;
   background-repeat: no-repeat;
+  padding: .1em .5em .1em 30px;
 }
 
 .gError {
