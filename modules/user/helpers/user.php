@@ -62,7 +62,18 @@ class user_Core {
    * @return User_Model
    */
   static function active() {
-    return Session::instance()->get("user", ORM::factory("user", 1));
+    return Session::instance()->get("user", self::guest());
+  }
+
+  /**
+   * Return the guest user.
+   *
+   * @todo consider caching
+   *
+   * @return User_Model
+   */
+  static function guest() {
+    return ORM::factory("user", 1);
   }
 
   /**
