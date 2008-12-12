@@ -35,18 +35,12 @@ class Welcome_Controller extends Template_Controller {
         ->where("type", "photo")->orderby("level", "desc")->find();
       $this->template->album_tree = $this->_load_album_tree();
       $this->template->add_photo_html = $this->_get_add_photo_html();
-      if (module::is_installed("local_import")) {
-        $this->template->local_import_html = $this->_get_local_import_html();
-      } else {
-        $this->template->local_import_html = "";
-      }
     } catch (Exception $e) {
       $this->template->album_count = 0;
       $this->template->photo_count = 0;
       $this->template->deepest_photo = null;
       $this->template->album_tree = array();
       $this->template->add_photo_html = "";
-      $this->template->local_import_html = "";
     }
 
     $this->_load_user_info();
