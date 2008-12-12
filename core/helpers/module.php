@@ -24,6 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class module_Core {
+  private static $modules = array();
+
   public static function get_version($module_name) {
     return ORM::factory("module")->where("name", $module_name)->find()->version;
   }
@@ -48,19 +50,11 @@ class module_Core {
   }
 
   public static function is_installed($module_name) {
-    if (!self::_core_installed()) {
-      return false;
-    }
-
-    return ORM::factory("module")->where("name", $module_name)->find()->loaded;
+    return in_array($module_name, self::$modules);
   }
 
   public static function installed() {
-    if (!self::_core_installed()) {
-      return array();
-    }
-
-    return ORM::factory("module")->find_all();
+    return self::$modules;
   }
 
   public static function event($name, &$data=null) {
@@ -85,20 +79,26 @@ class module_Core {
   }
 
   public static function load_modules() {
-    if (!self::_core_installed()) {
-      return array();
-    }
+    // This is one of the first database operations that we'll do, so it may fail if there's no
+    // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
+    // Do The Right Thing.
+    //
+    // @todo get rid of this extra error checking when we have an installer.
+    set_error_handler(array("module", "_dummy_error_handler"));
 
     try {
-      $modules = Kohana::config('core.modules');
-
-      foreach (self::installed() as $module) {
-        $modules[] = MODPATH . $module->name;
+      $kohana_modules = Kohana::config('core.modules');
+      foreach (ORM::factory("module")->find_all() as $module) {
+        self::$modules[] = $module->as_array();
+        $kohana_modules[] = MODPATH . $module->name;
       }
 
-      Kohana::config_set('core.modules', $modules);
+      Kohana::config_set('core.modules', $kohana_modules);
     } catch (Exception $e) {
+      self::$modules = array();
     }
+
+    restore_error_handler();
   }
 
   public function get_var($module_name, $name, $default_value=null) {
@@ -126,11 +126,10 @@ class module_Core {
   }
 
   /**
-   * Lightweight hack to make sure that we've got a real install.
+   * Dummy error handler used in module::load_modules.
    *
-   * @todo remove this when we have a real installer.
+   * @todo remove this when we have an installer.
    */
-  private static function _core_installed() {
-    return Kohana::config('database.default.connection.pass') != 'p@ssw0rd';
+  private static function _dummy_error_handler() {
   }
 }
