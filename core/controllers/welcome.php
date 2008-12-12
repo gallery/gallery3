@@ -193,7 +193,7 @@ class Welcome_Controller extends Template_Controller {
   function add_albums_and_photos($count, $desired_type=null) {
     srand(time());
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
-    $owner_id = class_exists("user") ? user::active()->id : null;
+    $owner_id = module::is_installed("user") ? user::active()->id : null;
 
     $test_images = glob(APPPATH . "tests/images/*.[Jj][Pp][Gg]");
 
