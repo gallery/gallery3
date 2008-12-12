@@ -160,7 +160,7 @@ class Item_Model extends ORM_MPTT {
    */
   public function set_thumbnail($filename, $width, $height) {
     Image::factory($filename)
-      ->resize($width, $height, Image::WIDTH)
+      ->resize($width, $height, Image::AUTO)
       ->save($this->thumbnail_path());
 
     $dims = getimagesize($this->thumbnail_path());
@@ -181,7 +181,7 @@ class Item_Model extends ORM_MPTT {
    */
   public function set_resize($filename, $width, $height) {
     Image::factory($filename)
-      ->resize($width, $height, Image::WIDTH)
+      ->resize($width, $height, Image::AUTO)
       ->save($this->resize_path());
 
     $dims = getimagesize($this->resize_path());
