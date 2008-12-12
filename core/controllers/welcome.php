@@ -74,12 +74,7 @@ class Welcome_Controller extends Template_Controller {
       if ($module_name != "core") {
         require_once(DOCROOT . "modules/${module_name}/helpers/${module_name}_installer.php");
       }
-      $modules = Kohana::config('core.modules');
-      $modules[] = MODPATH . $module_name;
-      Kohana::config_set('core.modules', $modules);
-
-      Kohana::log("debug", "${module_name}_install (initial)");
-      call_user_func(array("${module_name}_installer", "install"));
+      module::install($module_name);
     }
 
     url::redirect("welcome");
@@ -109,8 +104,9 @@ class Welcome_Controller extends Template_Controller {
         $db->query("DROP TABLE `$table`");
       }
       set_error_handler($old_handler);
+    } else {
+      module::uninstall($module_name);
     }
-    call_user_func(array("{$module_name}_installer", "uninstall"));
     url::redirect("welcome");
   }
 

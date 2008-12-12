@@ -79,6 +79,31 @@ class module_Core {
     return $modules;
   }
 
+  public static function install($module_name) {
+    $installer_class = "{$module_name}_installer";
+    Kohana::log("debug", "$installer_class install (initial)");
+    if ($module_name != "core") {
+      require_once(DOCROOT . "modules/${module_name}/helpers/{$installer_class}.php");
+    }
+    $kohana_modules = Kohana::config('core.modules');
+    $kohana_modules[] = MODPATH . $module_name;
+    Kohana::config_set('core.modules',  $kohana_modules);
+
+    call_user_func(array($installer_class, "install"));
+
+    if (method_exists($installer_class, "install")) {
+      call_user_func_array(array($installer_class, "install"), array());
+    }
+
+    self::load_modules();
+  }
+
+  public static function uninstall($module_name) {
+    $installer_class = "{$module_name}_installer";
+    Kohana::log("debug", "$installer_class uninstall");
+    call_user_func(array($installer_class, "uninstall"));
+  }
+
   public static function load_modules() {
     // This is one of the first database operations that we'll do, so it may fail if there's no
     // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
@@ -87,8 +112,12 @@ class module_Core {
     // @todo get rid of this extra error checking when we have an installer.
     set_error_handler(array("module", "_dummy_error_handler"));
 
+    // Reload module list from the config file since we'll do a refresh after calling install()
+    $core = Kohana::config_load('core');
+    $kohana_modules = $core['modules'];
+    self::$module_names = array();
+    self::$modules = array();
     try {
-      $kohana_modules = Kohana::config('core.modules');
       foreach (ORM::factory("module")->find_all() as $module) {
         self::$module_names[] = $module->name;
         self::$modules[] = $module;

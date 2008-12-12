@@ -50,6 +50,9 @@ class Gallery_Unit_Test_Controller extends Controller {
 
         // Make this the default database for the rest of this run
         Database::$instances = array('default' => $db);
+
+        // Reset our loaded modules
+        module::load_modules();
       } catch (Exception $e) {
         print "{$e->getMessage()}\n";
         return;
@@ -75,25 +78,14 @@ class Gallery_Unit_Test_Controller extends Controller {
     @system('mkdir -p test/var/logs');
 
     // Install all modules
-    core_installer::install();
+    module::install("core");
     $modules = array();
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
       $module_name = basename(dirname(dirname($file)));
       if ($module_name == "core") {
         continue;
       }
-
-      require_once(DOCROOT . "modules/${module_name}/helpers/${module_name}_installer.php");
-
-      $test_dir = MODPATH . "$module_name/tests";
-      if (file_exists($test_dir)) {
-        $modules[] = $test_dir;
-      }
-
-      $installer_class = "{$module_name}_installer";
-      if (method_exists($installer_class, "install")) {
-        call_user_func_array(array($installer_class, "install"), array());
-      }
+      module::install($module_name);
     }
 
     $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
