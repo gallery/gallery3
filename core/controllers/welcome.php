@@ -199,6 +199,8 @@ class Welcome_Controller extends Template_Controller {
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
     $owner_id = user::active()->id;
 
+    $test_images = glob(APPPATH . "tests/images/*.[Jj][Pp][Gg]");
+
     for ($i = 0; $i < $count; $i++) {
       set_time_limit(30);
 
@@ -213,8 +215,9 @@ class Welcome_Controller extends Template_Controller {
           ->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
           ->save();
       } else {
-        photo::create($parent->id, DOCROOT . "themes/default/images/thumbnail.jpg",
-                      "thumbnail.jpg", "rnd_" . rand(), "sample thumbnail", $owner_id);
+        $photo_index = rand(0, count($test_images) - 1);
+        photo::create($parent->id, $test_images[$photo_index], basename($test_images[$photo_index]),
+                      "rnd_" . rand(), "sample thumbnail", $owner_id);
       }
     }
     url::redirect("welcome");
