@@ -54,7 +54,7 @@ class Tags_Controller extends REST_Controller {
     $form = tag::get_add_form($this->input->post('item_id'));
     if ($form->validate()) {
       $item = ORM::factory("item", $this->input->post("item_id"));
-      if ($item->loaded && access::can("edit", $item)) {
+      if (access::can("edit", $item)) {
         tag::add($item, $this->input->post("tag_name"));
         rest::http_status(rest::CREATED);
         rest::http_location(url::site("tags/{$tag->id}"));
