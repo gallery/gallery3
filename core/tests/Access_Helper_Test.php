@@ -127,6 +127,15 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_true(access::group_can(group::everybody(), "view", $root));
   }
 
+  public function can_always_fails_on_unloaded_items_test() {
+    $root = ORM::factory("item", 1);
+    access::allow(group::everybody(), "view", $root);
+    $this->assert_true(access::group_can(group::everybody(), "view", $root));
+
+    $bogus = ORM::factory("item", -1);
+    $this->assert_false(access::group_can(group::everybody(), "view", $bogus));
+  }
+
   public function cant_view_child_of_hidden_parent_test() {
     $root = ORM::factory("item", 1);
     $album = ORM::factory("item")->add_to_parent($root);

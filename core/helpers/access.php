@@ -99,6 +99,10 @@ class access_Core {
    * @return boolean
    */
   public static function can($perm_name, $item) {
+    if (!$item->loaded) {
+      return false;
+    }
+
     if ($perm_name == "view") {
       $resource = $item;
     } else {
