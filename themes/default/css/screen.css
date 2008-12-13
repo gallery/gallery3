@@ -202,7 +202,11 @@ li.gError select {
   font-size: 1em;
 }
 
-#gSidebar, #gHeader, #gFooter {
+#gSidebar {
+  font-size: .9em;
+}
+
+#gHeader, #gFooter {
   font-size: .8em;
 }
 
@@ -219,7 +223,7 @@ li.gError select {
 .gView {
   background-color: #fff;
   border: 1px solid #ccc;
-  border-width: 0 1px 1px 1px;
+  border-bottom: none;
 }
 
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
@@ -229,7 +233,7 @@ li.gError select {
 }
 
 #gContent {
-  padding: 0 0 0 20px;
+  padding-left: 20px;
 }
 
 #gSidebar {
@@ -254,27 +258,13 @@ li.gError select {
   margin-bottom: 2.5em;
 }
 
-.gBlock h3 {
+#gSidebar .gBlock h3 {
   background: #e8e8e8;
   padding: .3em .75em;
 }
 
-.gBlockContent {
-  margin: .5em 0;
-  padding-left: .3em;
-}
-
-table.gBlockContent {
-  border: 1px solid #ccc;
-  table-layout: fixed;
-}
-
-table.gBlockContent th {
-  padding: .3em .3em .3em 0;
-}
-
-table.gBlockContent td {
-  padding: .3em 0 .3em .3em;
+#gSidebar .gBlockContent {
+  padding: .5em 1em;
 }
 
 /** ****************************************************************
@@ -296,15 +286,11 @@ table.gBlockContent td {
   position: relative;
 }
 
-#gAlbumHeader .gDescription {
-  color: #999;
-}
-
 #gAlbumGrid {
   margin-top: 20px;
 }
 
-.gItem {
+#gAlbumGrid .gItem {
   float: left;
   height: 270px;
   margin-bottom: 10px;
@@ -328,49 +314,30 @@ table.gBlockContent td {
 /* Individual photo ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gItem {
-  margin: 0;
-}
-
-#gItem a.gButtonLink {
-  float: right;
-}
-
-#gItemHeader {
-  height: 40px;
-  position: relative;
-}
-
-#gItemHeaderButtons {
-  float: right;
-}
-
-#gItem img {
-  border: 1px solid #ccc;
-}
-
-#gItem h1 {
-  margin: 10px 0;
+  margin: 1em 0;
 }
 
 /* Metadata ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-table.gMetadata td,
-table.gMetadata th {
-  border: none;
+.gMetadata td,
+.gMetadata th {
+  padding: 0 1em .5em 0;
+  vertical-align: top;
 }
 
-table.gMetadata td.toggle {
+.gMetadata th,
+.gMetadata td.toggle {
   text-align: right;
 }
 
 /* Comments ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gComments {
-  margin-top: 20px;
+  margin-top: 2em;
 }
 
 #gComments ul li {
-  margin-bottom: 15px;
+  margin: 1em 0;
 }
 
 #gComments ul li p {
@@ -505,29 +472,32 @@ table.gMetadata td.toggle {
 #gViewMenu #gSlideshowLink,
 #gViewMenu #gFullsizeLink {
   background-color: #BDD2FF;
+  background-repeat: no-repeat;
+  background-position:  center center;
   color: transparent;
   display: block;
+  font-size: .9em;
   height: 22px;
   overflow: hidden;
   text-indent: 1000px;
   white-space: nowrap;
-  width: 33px;
+  width: 32px;
 }
 
 #gViewMenu #gAlbumLink {
-  background: url('../images/ico-view-album.png') no-repeat 6px center;
+  background-image: url('../images/ico-view-album.png');
 }
 
 #gViewMenu #gHybridLink {
-  background: url('../images/ico-view-hybrid.png') no-repeat 6px center;
+  background-image: url('../images/ico-view-hybrid.png');
 }
 
 #gViewMenu #gSlideshowLink {
-  background: url('../images/ico-view-slideshow.png') no-repeat 6px center;
+  background-image: url('../images/ico-view-slideshow.png');
 }
 
 #gViewMenu #gFullsizeLink {
-  background: url('../images/ico-view-fullsize.png') no-repeat center center;
+  background-image: url('../images/ico-view-fullsize.png');
 }
 
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -558,7 +528,7 @@ table.gMetadata td.toggle {
 /* Tags and cloud ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gTagCloud ul {
-  font-size: 1.2em;
+  font-size: 1.4em;
   text-align: justify;
 }
 
