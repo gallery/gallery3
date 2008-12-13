@@ -50,9 +50,6 @@ class Gallery_Unit_Test_Controller extends Controller {
 
         // Make this the default database for the rest of this run
         Database::$instances = array('default' => $db);
-
-        // Reset our loaded modules
-        module::load_modules();
       } catch (Exception $e) {
         print "{$e->getMessage()}\n";
         return;
@@ -76,6 +73,9 @@ class Gallery_Unit_Test_Controller extends Controller {
     // Clean out the filesystem
     @system("rm -rf test/var");
     @system('mkdir -p test/var/logs');
+
+    // Reset our loaded modules
+    module::load_modules();
 
     // Install all modules
     module::install("core");
