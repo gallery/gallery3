@@ -250,6 +250,10 @@ class access_Core {
    * @return void
    */
   public static function add_item($item) {
+    $access_intent = ORM::factory("access_intent", $item->id);
+    if ($access_intent->loaded) {
+      throw new Exception("@todo ITEM_ALREADY_ADDED $item->id");
+    }
     $access_intent = ORM::factory("access_intent");
     $access_intent->item_id = $item->id;
     $access_intent->save();
@@ -269,6 +273,7 @@ class access_Core {
         }
       }
     }
+    $item->save();
     $access_cache->save();
   }
 

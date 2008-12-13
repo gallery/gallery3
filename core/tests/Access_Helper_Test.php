@@ -81,6 +81,23 @@ class Access_Helper_Test extends Unit_Test_Case {
     $item->delete();
   }
 
+  public function new_photos_inherit_parent_permissions_test() {
+    $root = ORM::factory("item", 1);
+
+    $album = ORM::factory("item");
+    $album->type = "album";
+    $album->add_to_parent($root);
+    access::add_item($album);
+    access::allow(group::everybody(), "view", $album);
+
+    $photo = ORM::factory("item");
+    $photo->type = "photo";
+    $photo->add_to_parent($album);
+    access::add_item($photo);
+
+    $this->assert_true($photo->__get("view_" . group::everybody()->id));
+  }
+
   public function can_allow_deny_and_reset_intent_test() {
     $root = ORM::factory("item", 1);
     $item = ORM::factory("item")->add_to_parent($root);
