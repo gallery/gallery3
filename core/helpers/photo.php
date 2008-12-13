@@ -77,10 +77,12 @@ class photo_Core {
     $photo->add_to_parent($parent);
     copy($filename, $photo->file_path());
 
-    // @todo: parameterize these dimensions
     // This saves the photo a second time, which is unfortunate but difficult to avoid.
-    $result = $photo->set_thumbnail($filename, 200, 200)
-      ->set_resize($filename, 640, 640)
+    $thumbnail_size = module::get_var("core", "thumbnail_size");
+    $resize_size = module::get_var("core", "resize_size");
+
+    $result = $photo->set_thumbnail($filename, $thumbnail_size, $thumbnail_size)
+      ->set_resize($filename, $resize_size, $resize_size)
       ->save();
 
     module::event("photo_created", $photo);

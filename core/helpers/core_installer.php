@@ -106,15 +106,19 @@ class core_installer {
       $root->right = 2;
       $root->parent_id = 0;
       $root->level = 1;
-      $root->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
+      $root->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 200)
         ->save();
       access::add_item($root);
+
+      // Save this before setting vars so that module id is set 
+      module::set_version("core", 1);
 
       module::set_var("core", "active_theme", "default");
       module::set_var("core", "active_admin_theme", "default_admin");
       module::set_var("core", "page_size", 9);
+      module::set_var("core", "thumbnail_size", 200);
+      module::set_var("core", "resize_size", 640);
 
-      module::set_version("core", 1);
     }
   }
 

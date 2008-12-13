@@ -206,9 +206,10 @@ class Welcome_Controller extends Template_Controller {
         $type = rand(0, 10) ? "photo" : "album";
       }
       if ($type == "album") {
+        $thumbnail_size = module::get_var("core", "thumbnail_size");
         $parents[] = album::create(
           $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
-          ->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 150)
+          ->set_thumbnail(DOCROOT . "core/tests/test.jpg", $thumbnail_size, $thumbnail_size)
           ->save();
       } else {
         $photo_index = rand(0, count($test_images) - 1);
