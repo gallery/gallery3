@@ -79,8 +79,8 @@ class photo_Core {
 
     // @todo: parameterize these dimensions
     // This saves the photo a second time, which is unfortunate but difficult to avoid.
-    $result = $photo->set_thumbnail($filename, 200, 140)
-      ->set_resize($filename, 640, 480)
+    $result = $photo->set_thumbnail($filename, 200, 200)
+      ->set_resize($filename, 640, 640)
       ->save();
 
     module::event("photo_created", $photo);
