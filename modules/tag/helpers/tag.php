@@ -81,7 +81,7 @@ class tag_Core {
 
   public static function get_add_form($item_id) {
     $form = new Forge(url::site("tags"), "", "post", array("id" => "gAddTagForm"));
-    $group = $form->group(_("Add Tag"));
+    $group = $form->group("add_tag")->label(_("Add Tag"));
     $group->input("tag_name");
     $group->hidden("item_id")->value($item_id);
     $group->submit(_("Add"));

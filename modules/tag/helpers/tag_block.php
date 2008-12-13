@@ -30,7 +30,7 @@ class tag_block_Core {
     $block->content = new View("tag_block.html");
     $block->content->cloud = tag::cloud(30);
 
-    if ($theme->page_type() != "tag") {
+    if ($theme->page_type() != "tag" && access::can("edit", $theme->item())) {
       $controller = new Tags_Controller();
       $block->content->form = tag::get_add_form($theme->item());
     } else {

@@ -51,7 +51,6 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _create($tag) {
-    // @todo: check permissions
     $form = tag::get_add_form($this->input->post('item_id'));
     if ($form->validate()) {
       $item = ORM::factory("item", $this->input->post("item_id"));
@@ -63,7 +62,6 @@ class Tags_Controller extends REST_Controller {
       rest::http_location(url::site("tags/{$tag->id}"));
     }
 
-    // @todo Return appropriate HTTP status code indicating error.
     print $form;
   }
 
