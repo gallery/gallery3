@@ -194,7 +194,7 @@ li.gError select {
   border: 2px solid red;
 }
 
-/** *******************************************************************
+/** ****************************************************************
  * 2) Base text styles
  ******************************************************************/
 
@@ -225,22 +225,24 @@ li.gError select {
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #fff;
 }
 
 #gContent {
-  padding: 20px;
+  padding: 0 0 0 20px;
 }
 
 #gSidebar {
   background-color: #fff;
-  padding: 20px 20px 0 0;
+  margin-top: -20px;
+  padding: 0 20px;
   width: 220px;
 }
 
 #gFooter {
   border-top: 1px solid #ccc;
-  padding: .5em;
+  margin-top: 20px;
+  padding: 10px 20px;
 }
 
 /** ****************************************************************
@@ -248,6 +250,7 @@ li.gError select {
  ******************************************************************/
 
 .gBlock {
+  clear: both;
   margin-bottom: 2.5em;
 }
 
@@ -281,7 +284,6 @@ table.gBlockContent td {
 /* Logo  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gLogo {
-  float: left;
   margin: 5px 10px 10px 20px;
 }
 
@@ -294,14 +296,8 @@ table.gBlockContent td {
   position: relative;
 }
 
-#gAlbumHeader h1 {
-  display: inline;
-  margin-right: .6em;
-}
-
 #gAlbumHeader .gDescription {
-  color: #ccc;
-  display: inline;
+  color: #999;
 }
 
 #gAlbumGrid {
@@ -309,11 +305,12 @@ table.gBlockContent td {
 }
 
 .gItem {
-  border: 1px solid #ccc;
   float: left;
-  margin: 0 24px 10px 0;
+  height: 270px;
+  margin-bottom: 10px;
   padding: 0 0 5px 0;
   text-align: center;
+  width: 33%;
 }
 
 .gItem h2 {
@@ -356,9 +353,6 @@ table.gBlockContent td {
 }
 
 /* Metadata ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-table.gMetadata {
-}
 
 table.gMetadata td,
 table.gMetadata th {
@@ -479,7 +473,7 @@ table.gMetadata td.toggle {
 
 /** *******************************************************************
  * 6) Navigation and menus
- ******************************************************************/
+ ****************************************************************** /
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -494,51 +488,51 @@ table.gMetadata td.toggle {
 
 #gSiteMenu {
   border-bottom: 1px solid #ccc;
-  clear: both;
   font-size: 1.2em;
-  padding-left: 20px;
-  width: 100%;
+  padding: 0 20px 0;
 }
 
-#gItemMenu {
-  margin: 0 0 20px 20px;
-  position: absolute;
-  right: 0;
-  top: 0;
+#gSiteMenu ul {
+  margin-bottom: 0;
 }
 
-#gItemMenu #gAlbumLink,
-#gItemMenu #gHybridLink, 
-#gItemMenu #gSlideshowLink,
-#gItemMenu #gFullsizeLink {
+#gViewMenu li {
+  float: left;
+}
+
+#gViewMenu #gAlbumLink,
+#gViewMenu #gHybridLink, 
+#gViewMenu #gSlideshowLink,
+#gViewMenu #gFullsizeLink {
+  background-color: #BDD2FF;
   color: transparent;
-  height: 1em;
+  display: block;
+  height: 22px;
   overflow: hidden;
   text-indent: 1000px;
   white-space: nowrap;
-  width: 20px;
+  width: 33px;
 }
 
-#gItemMenu #gAlbumLink {
+#gViewMenu #gAlbumLink {
   background: url('../images/ico-view-album.png') no-repeat 6px center;
 }
 
-#gItemMenu #gHybridLink {
+#gViewMenu #gHybridLink {
   background: url('../images/ico-view-hybrid.png') no-repeat 6px center;
 }
 
-#gItemMenu #gSlideshowLink {
+#gViewMenu #gSlideshowLink {
   background: url('../images/ico-view-slideshow.png') no-repeat 6px center;
 }
 
-#gItemMenu #gFullsizeLink {
+#gViewMenu #gFullsizeLink {
   background: url('../images/ico-view-fullsize.png') no-repeat center center;
 }
 
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gBreadcrumbs {
-  height: 32px;
   padding-left: 20px;
 }
 

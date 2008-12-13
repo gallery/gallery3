@@ -28,15 +28,7 @@ class slideshow_block_Core {
       " title=\"" . _("View slideshow") . "\">" . _("View slideshow") . "</a>";
   }
 
-  public static function album_top($theme) {
+  public static function sidebar_top($theme) {
     return self::_piclens_link($theme);
-  }
-
-  public static function photo_top($theme) {
-    return self::_piclens_link($theme);
-  }
-
-  public static function tag_top($theme) {
-    return self::_piclens_link();
   }
 }

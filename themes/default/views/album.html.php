@@ -1,11 +1,6 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gAlbumHeader">
-  <ul id="gItemMenu" class="sf-menu">
-    <li><a href="#" id="gAlbumLink" title="<?= _("View album") ?>"><?= _("Album view") ?></a></li>
-    <li><a href="#" id="gHybridLink" title="<?= _("View album in hybrid mode") ?>"><?= _("Hybrid view") ?></a></li>
-    <li><?= $theme->album_top() ?></li>
-  </ul>
-
+  <?= $theme->album_top() ?>
   <h1><?= $item->title_edit ?></h1>
   <div class="gDescription"><?= $item->description_edit ?></div>
 </div>
