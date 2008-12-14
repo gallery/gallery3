@@ -19,6 +19,9 @@
  */
 class Admin_Controller extends Controller {
   public function dashboard() {
+    if (!(user::active()->admin)) {
+      throw new Exception("Unauthorized", 401);      
+    }
     // giving default is probably overkill
     $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
     // For now, in order not to duplicate js and css, keep the regular ("item")

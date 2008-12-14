@@ -65,8 +65,8 @@
       <div id="hd">
         <div id="gHeader">
           <ul id="gLoginMenu">
-            <li><a href="/index.php/album/1">View the Gallery</a></li>
-            <li id="gLoginLink"><a href="/index.php/logout">Logout</a></li>
+            <li><?= html::anchor("albums/1", "Browse Gallery") ?></li>
+            <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
           <img src="<?= $item_theme->url("images/logo.png") ?>" id="gLogo" alt="Gallery 3: Your Photos on Your Web Site" />
           <ul id="gSiteAdminMenu" class="sf-menu sf-navbar">
