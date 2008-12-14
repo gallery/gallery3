@@ -35,7 +35,7 @@ class Form_Group_Core extends Forge {
 
 	public function __get($key)
 	{
-		if ($key == 'type' || $key == 'name')
+		if ($key == 'type' || $key == 'name' || $key == 'label')
 		{
 			return $this->data[$key];
 		}

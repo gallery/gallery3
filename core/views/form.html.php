@@ -17,8 +17,9 @@ if (!function_exists("DrawForm")) {
 
     foreach ($inputs as $input) {
       if ($input->type == 'group') {
+
         print "$prefix<fieldset>\n";
-        print "$prefix  <legend>$input->name</legend>\n";
+        print "$prefix  <legend>{$input->label}</legend>\n";
         print "$prefix  <ul>\n";
 
         DrawForm($input->inputs, $level + 2);

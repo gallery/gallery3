@@ -93,11 +93,11 @@ class photo_Core {
   static function get_add_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post",
       array("id" => "gAddPhotoForm", "enctype" => "multipart/form-data"));
-    $group = $form->group(sprintf(_("Add Photo to %s"), $parent->title));
-    $group->input("name")->label(true);
-    $group->input("title")->label(true);
-    $group->textarea("description")->label(true)->rules("length[0, 255");
-    $group->upload("file")->label(true)->rules("allow[jpg,png,gif,tiff]");
+    $group = $form->group("add_photo")->label(sprintf(_("Add Photo to %s"), $parent->title));
+    $group->input("name")->label(_("Name"));
+    $group->input("title")->label(_("Title"));
+    $group->textarea("description")->label(_("Description"))->rules("length[0, 255");
+    $group->upload("file")->label(_("File"))->rules("allow[jpg,png,gif,tiff]");
     $group->hidden("type")->value("photo");
     $group->submit(_("Upload"));
     $form->add_rules_from(ORM::factory("item"));
