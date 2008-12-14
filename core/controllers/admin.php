@@ -18,22 +18,34 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Admin_Controller extends Controller {
-  public function dashboard() {
+  public $template = null;
+  
+  public function __construct() {
     if (!(user::active()->admin)) {
       throw new Exception("Unauthorized", 401);      
     }
-    // giving default is probably overkill
-    $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
     // For now, in order not to duplicate js and css, keep the regular ("item")
     // theme in addition to admin theme.
-    // Be careful, though - new Theme_View sets global theme as well!
     $item_theme_name = module::get_var("core", "active_theme", "default");
     $item_theme = new Theme_View("album.html", "album", $item_theme_name);
 
-    $template = new Theme_View("dashboard.html", "admin", $theme_name);
-    $template->item_theme = $item_theme;
-
-    print $template;
+    // giving default is probably overkill
+    $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
+    $this->template = new Theme_View("admin.html", "admin", $theme_name);
+    $this->template->item_theme = $item_theme;
+    parent::__construct();
+  }
+  
+  public function dashboard() {
+    $this->template->subpage = "dashboard.html";
+    print $this->template;
+  }
+  
+  public function list_users() {
+    $this->template->set_global('users', ORM::factory("user")->find_all());
+    
+    $this->template->subpage = "list_users.html";
+    print $this->template;    
   }
 }
 
