@@ -5,12 +5,12 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>G3: Admin Dashboard</title>
     <link rel="stylesheet" href="../../lib/yui/reset-fonts-grids.css" type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="../default/css/screen.css" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="../../themes/default/css/screen.css" type="text/css" media="screen,projection">
     <script src="../../lib/jquery.js"></script>
     <script src="../../lib/jquery-ui.packed.js"></script>
-    <link rel="stylesheet" href="../default/jquery/superfish.css" type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="../default/jquery/superfish-navbar.css" type="text/css" media="screen,projection">
-    <script src="../default/jquery/superfish.js"></script>
+    <link rel="stylesheet" href="../../themes/default/jquery/superfish.css" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="../../themes/default/jquery/superfish-navbar.css" type="text/css" media="screen,projection">
+    <script src="../../themes/default/jquery/superfish.js"></script>
     <script type="text/javascript"> 
       $(document).ready(function(){ 
         $("ul.sf-menu").superfish({ 
