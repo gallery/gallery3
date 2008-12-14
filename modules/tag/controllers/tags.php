@@ -22,7 +22,7 @@ class Tags_Controller extends REST_Controller {
 
   public function _show($tag) {
     $theme_name = module::get_var("core", "active_theme", "default");
-    $page_size = module::set_var("core", "page_size", 9);
+    $page_size = module::get_var("core", "page_size", 9);
 
     $template = new Theme_View("page.html", "tag", $theme_name);
 
