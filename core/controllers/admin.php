@@ -19,10 +19,10 @@
  */
 class Admin_Controller extends Controller {
   public $template = null;
-  
+
   public function __construct() {
     if (!(user::active()->admin)) {
-      throw new Exception("Unauthorized", 401);      
+      throw new Exception("Unauthorized", 401);
     }
     // For now, in order not to duplicate js and css, keep the regular ("item")
     // theme in addition to admin theme.
@@ -35,17 +35,17 @@ class Admin_Controller extends Controller {
     $this->template->item_theme = $item_theme;
     parent::__construct();
   }
-  
+
   public function dashboard() {
     $this->template->subpage = "dashboard.html";
     print $this->template;
   }
-  
+
   public function list_users() {
-    $this->template->set_global('users', ORM::factory("user")->find_all());
-    
+    $this->template->set_global("users", ORM::factory("user")->find_all());
+
     $this->template->subpage = "list_users.html";
-    print $this->template;    
+    print $this->template;
   }
 }
 
