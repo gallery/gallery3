@@ -35,12 +35,20 @@ class Welcome_Controller extends Template_Controller {
         ->where("type", "photo")->orderby("level", "desc")->find();
       $this->template->album_tree = $this->_load_album_tree();
       $this->template->add_photo_html = $this->_get_add_photo_html();
+      if (module::is_installed("watermark")) {
+//        $this->template->add_watermark_html = $this->_get_add_watermark_html();
+        $this->template->add_watermark_html = new View("watermark_add_form.html");
+        $this->template->add_watermark_html->fields = array("file" => "");
+      } else {
+        $this->template->add_watermark_html = "";
+      }
     } catch (Exception $e) {
       $this->template->album_count = 0;
       $this->template->photo_count = 0;
       $this->template->deepest_photo = null;
       $this->template->album_tree = array();
       $this->template->add_photo_html = "";
+      $this->template->add_watermark_html = "";
     }
 
     $this->_load_user_info();
@@ -507,8 +515,7 @@ class Welcome_Controller extends Template_Controller {
     return photo::get_add_form($parent);
   }
 
-  public function _get_local_import_html($user_name="admin") {
-    $user = ORM::factory("user")->where("name", $user_name)->find();
-    return local_import::get_admin_page($user);
+  public function _get_add_watermark_html() {
+    return watermark::get_watermark_form();
   }
 }

@@ -284,6 +284,9 @@
               <?= new View("rearrange.html") ?>
             </fieldset>
             <? endif ?>
+            <? if (module::is_installed("watermark")): ?>
+              <?= $add_watermark_html ?>
+            <? endif ?>
           </div>
 
           <? if (module::is_installed("user")): ?>
