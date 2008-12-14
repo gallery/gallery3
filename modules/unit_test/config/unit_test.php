@@ -12,4 +12,4 @@ $config['paths'] = array
 /**
  * Set to TRUE if you want to hide passed tests from the report.
  */
-$config['hide_passed'] = TRUE;
+$config['hide_passed'] = FALSE;
