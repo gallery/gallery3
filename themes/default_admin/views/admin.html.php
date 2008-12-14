@@ -13,10 +13,14 @@
     <link rel="stylesheet" href="<?= $item_theme->url("jquery/superfish-navbar.css") ?>" type="text/css" media="screen,projection">
     <script src="<?= $item_theme->url("jquery/superfish.js") ?>"></script>
     <script type="text/javascript"> 
-      $(document).ready(function(){ 
+      $(document).ready(function(){
         $("ul.sf-menu").superfish({ 
           pathClass:  'current' 
-        }); 
+        });
+        $("#gSiteAdminMenu li[id]").click(function(event) {
+            $("#gContent").load("admin/subpage", {name: this.id});
+            return false;
+        });
       }); 
     </script>
     
@@ -70,7 +74,7 @@
           </ul>
           <img src="<?= $item_theme->url("images/logo.png") ?>" id="gLogo" alt="Gallery 3: Your Photos on Your Web Site" />
           <ul id="gSiteAdminMenu" class="sf-menu sf-navbar">
-            <li><?= html::anchor("admin/dashboard", "Dashboard") ?><li>
+            <li id="dashboard"><a href="#">Dashboard</a><li>
             <li><a href="#">General Settings</a><li>
             <li class="current"><a href="#">Content</a>
               <ul>
@@ -91,7 +95,7 @@
             </li>
             <li><a href="#">Users/Groups</a>
               <ul>
-                <li><?= html::anchor("admin/list_users", "List Users") ?></li>
+                <li id="list_users"><a href="#">List Users</a></li>
                 <li><a href="#">Create new user</a><li>
                 <li><a href="#">Edit Profile</a></li>
               </ul>

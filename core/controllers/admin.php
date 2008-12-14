@@ -18,34 +18,36 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Admin_Controller extends Controller {
-  public $template = null;
+  public $theme_name = null;
 
   public function __construct() {
     if (!(user::active()->admin)) {
       throw new Exception("Unauthorized", 401);
     }
+    // giving default is probably overkill
+    $this->theme_name = module::get_var("core", "active_admin_theme", "default_admin");
+    parent::__construct();
+  }
+  
+  public function index() {
     // For now, in order not to duplicate js and css, keep the regular ("item")
     // theme in addition to admin theme.
     $item_theme_name = module::get_var("core", "active_theme", "default");
     $item_theme = new Theme_View("album.html", "album", $item_theme_name);
 
-    // giving default is probably overkill
-    $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
-    $this->template = new Theme_View("admin.html", "admin", $theme_name);
-    $this->template->item_theme = $item_theme;
-    parent::__construct();
+    $template = new Theme_View("admin.html", "admin", $this->theme_name);
+    $template->item_theme = $item_theme;
+    $template->subpage = "dashboard.html";
+    print $template;
   }
 
-  public function dashboard() {
-    $this->template->subpage = "dashboard.html";
-    print $this->template;
-  }
-
-  public function list_users() {
-    $this->template->set_global("users", ORM::factory("user")->find_all());
-
-    $this->template->subpage = "list_users.html";
-    print $this->template;
+  public function subpage() {
+    $template = new Theme_View($_REQUEST["name"] . ".html", "admin", $this->theme_name);
+    switch ($_REQUEST["name"]) {
+      case "list_users":
+      $template->set_global("users", ORM::factory("user")->find_all());
+    }
+    print $template;
   }
 }
 

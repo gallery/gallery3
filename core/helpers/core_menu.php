@@ -66,7 +66,7 @@ class core_menu_Core {
           Menu::factory("link")
           ->id("site_admin")
           ->label(_("Site Admin"))
-          ->url(url::site("admin/dashboard")));
+          ->url(url::site("admin")));
       }
     }
   }
