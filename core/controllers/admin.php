@@ -21,8 +21,14 @@ class Admin_Controller extends Controller {
   public function dashboard() {
     // giving default is probably overkill
     $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
+    // For now, in order not to duplicate js and css, keep the regular ("item")
+    // theme in addition to admin theme.
+    // Be careful, though - new Theme_View sets global theme as well!
+    $item_theme_name = module::get_var("core", "active_theme", "default");
+    $item_theme = new Theme_View("album.html", "album", $item_theme_name);
 
     $template = new Theme_View("dashboard.html", "admin", $theme_name);
+    $template->item_theme = $item_theme;
 
     print $template;
   }

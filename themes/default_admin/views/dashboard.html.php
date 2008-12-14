@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>G3: Admin Dashboard</title>
-    <link rel="stylesheet" href="../../lib/yui/reset-fonts-grids.css" type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="../../themes/default/css/screen.css" type="text/css" media="screen,projection">
-    <script src="../../lib/jquery.js"></script>
-    <script src="../../lib/jquery-ui.packed.js"></script>
-    <link rel="stylesheet" href="../../themes/default/jquery/superfish.css" type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="../../themes/default/jquery/superfish-navbar.css" type="text/css" media="screen,projection">
-    <script src="../../themes/default/jquery/superfish.js"></script>
+    <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= $item_theme->url("css/screen.css") ?>" type="text/css" media="screen,projection">
+    <script src="<?= url::file("lib/jquery.js") ?>"></script>
+    <script src="<?= url::file("lib/jquery-ui.packed.js") ?>"></script>
+    <link rel="stylesheet" href="<?= $item_theme->url("jquery/superfish.css") ?>" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= $item_theme->url("jquery/superfish-navbar.css") ?>" type="text/css" media="screen,projection">
+    <script src="<?= $item_theme->url("jquery/superfish.js") ?>"></script>
     <script type="text/javascript"> 
       $(document).ready(function(){ 
         $("ul.sf-menu").superfish({ 
@@ -38,7 +38,7 @@
         background-color: #e7e7e7;
         margin: -.4em;
         padding: .2em .6em;
-        background: #f4f4f4 url('../default/images/ico-draggable.png') no-repeat center right;
+        background: #f4f4f4 url('<?= $item_theme->url("images/ico-draggable.png") ?>') no-repeat center right;
         cursor: move;
       }
       .gClose {
@@ -68,7 +68,7 @@
             <li><a href="/index.php/album/1">View the Gallery</a></li>
             <li id="gLoginLink"><a href="/index.php/logout">Logout</a></li>
           </ul>
-          <img src="../default/images/logo.png" id="gLogo" alt="Gallery 3: Your Photos on Your Web Site" />
+          <img src="<?= $item_theme->url("images/logo.png") ?>" id="gLogo" alt="Gallery 3: Your Photos on Your Web Site" />
           <ul id="gSiteAdminMenu" class="sf-menu sf-navbar">
             <li><a href="#">Dashboard</a><li>
             <li><a href="#">General Settings</a><li>
@@ -142,7 +142,7 @@
                 <h2>Photo Stream</h2>
                 <div class="gBlockContent">
                   <p>Recent photos added to your Gallery</p>
-                  <img src="images/photostream.png" alt="" />
+                  <img src="<?= $theme->url("images/photostream.png") ?>" alt="" />
                   <p class="gWarning">Slider type of display. Show titles underneath or on hover. Draw a keyline around albums, or differentiate some how. Each will be linked to item view</p>
                 </div>
               </div>
