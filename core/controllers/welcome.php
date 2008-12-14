@@ -36,9 +36,7 @@ class Welcome_Controller extends Template_Controller {
       $this->template->album_tree = $this->_load_album_tree();
       $this->template->add_photo_html = $this->_get_add_photo_html();
       if (module::is_installed("watermark")) {
-//        $this->template->add_watermark_html = $this->_get_add_watermark_html();
-        $this->template->add_watermark_html = new View("watermark_add_form.html");
-        $this->template->add_watermark_html->fields = array("file" => "");
+        $this->template->add_watermark_html = $this->_get_add_watermark_html();
       } else {
         $this->template->add_watermark_html = "";
       }

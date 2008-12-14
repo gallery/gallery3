@@ -157,8 +157,11 @@
     <?= html::script("lib/jquery.form.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
     <?= html::script("lib/jquery.MultiFile.js") ?>
-    <? if (class_exists("rearrange_block")): ?>
+    <? if (module::is_installed("rearrange")): ?>
     <?= rearrange_block::head(null) ?>
+    <? endif ?>
+    <? if (module::is_installed("watermark")): ?>
+    <?= watermark_block::head(null) ?>
     <? endif ?>
   </head>
   <body>

@@ -17,24 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Watermark_Controller extends Controller {
-  public function load() {
-    $form = watermark::get_watermark_form();
-    if ($form->validate()) {
-        $file = $_POST["file"];
-        
-        // Format of the file is config["upload.directory"]/uploadfile-hash-filename.
-        $index = strrpos($file, "-");
-        $watermark_target = VARPATH . substr($file, strrpos($file, "-") + 1);
-        if (rename($file, $watermark_target)) {
-          module::set_var("watermark", "watermark_image_path", $watermark_target);
-
-          $form->success = _("Watermark saved");
-        } else {
-          // @todo set and error message
-        }
-    }
-
-    print $form;
+class watermark_block_Core {
+  public static function head($theme) {
+    return html::script("modules/watermark/js/watermark.js");
   }
 }
