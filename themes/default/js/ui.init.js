@@ -5,11 +5,11 @@ $("document").ready(function() {
 
   // Apply modal dialog class
   $(".gMenuLink").addClass("gDialogLink");
-  $("#gLoginLink").addClass("gDialogLink")
+  $("#gLoginLink").addClass("gDialogLink");
 
   // Add Superfish menu class
   $("ul.gMenu").addClass("sf-menu");
-  $("#gViewMenu").addClass("sf-menu");
+  $("u#gViewMenu").addClass("sf-menu");
   
   // Superfish menu options
   $('ul.sf-menu').superfish({
@@ -66,10 +66,11 @@ function handleDialogEvent(event) {
  * @todo Set dialog attributes dynamically (width, height, drag, resize)
  */
 function openDialog(element) {
-  var href = $(element).attr("href");
-  var dialog = '<div id="gDialog"></div>';
+  var sHref = $(element).attr("href");
+  var sTitle = $(element).attr("title");
+  var eDialog = '<div id="gDialog"></div>';
 
-  $("body").append(dialog);
+  $("body").append(eDialog);
   $("#gDialog").dialog({
     autoResize: false,
     draggable: true,
@@ -80,14 +81,14 @@ function openDialog(element) {
       background: "black"
     },
     resizable: true,
-    title: $(element).attr("title"),
+    title: sTitle,
     width: 600,
     close: function (event, ui) {
       $("#gDialog").dialog('destroy').remove();
-    },
+    }
   });
-  $("#gDialog").html(href);
-  $.get(href, function(data) {
+  $("#gDialog").html(sHref);
+  $.get(sHref, function(data) {
     $("#gDialog").html(data);
   });
   return false;
