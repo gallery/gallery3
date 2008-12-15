@@ -110,11 +110,11 @@ class core_installer {
         ->save();
       access::add_item($root);
 
-      // Save this before setting vars so that module id is set 
+      // Save this before setting vars so that module id is set
       module::set_version("core", 1);
 
       module::set_var("core", "active_theme", "default");
-      module::set_var("core", "active_admin_theme", "default_admin");
+      module::set_var("core", "active_admin_theme", "admin_default");
       module::set_var("core", "page_size", 9);
       module::set_var("core", "thumbnail_size", 200);
       module::set_var("core", "resize_size", 640);

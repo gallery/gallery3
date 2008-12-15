@@ -119,7 +119,7 @@ $config['extension_prefix'] = 'MY_';
 $config['modules'] = array(
   MODPATH . 'forge',
   THEMEPATH . 'default',
-  THEMEPATH . 'default_admin'
+  THEMEPATH . 'admin_default'
 );
 
 if (defined('TEST_MODE')) {
