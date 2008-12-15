@@ -24,6 +24,10 @@
     <?= $theme->head() ?>
     <?= html::script("lib/jquery-ui.packed.js") ?>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
+		<!--[if lt IE 8]>
+	  <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
+	        media="screen,print,projection" />
+		<![endif]-->
   </head>
 
   <body>
