@@ -136,14 +136,23 @@ class Unit_Test_Core {
 							$object->setup();
 						}
 
-						// Run the actual test
-						$object->$method_name();
+                                                $e = null;
+						try {
+
+							// Run the actual test
+							$object->$method_name();
+						} catch (Exception $e) { }
 
 						// Run teardown method
 						if ($teardown === TRUE)
 						{
 							$object->teardown();
 						}
+
+                                                if ($e) {
+							throw $e;
+                                                }
+
 
 						$this->stats[$class]['total']++;
 
