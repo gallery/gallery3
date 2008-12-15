@@ -1,4 +1,5 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
 /**
  * [Object Relational Mapping][ref-orm] (ORM) is a method of abstracting database
  * access to standard PHP calls. All table rows are represented as model objects,
@@ -24,7 +25,7 @@ class ORM_Core {
 	protected $has_and_belongs_to_many = array();
 
 	// Relationships that should always be joined
-	protected $load_with = NULL;
+	protected $load_with = array();
 
 	// Current object
 	protected $object  = array();
@@ -59,6 +60,9 @@ class ORM_Core {
 	// Database configuration
 	protected $db = 'default';
 	protected $db_applied = array();
+	
+	// With calls already applied
+	protected $with_applied = array();
 
 	/**
 	 * Creates and returns a new model.
@@ -91,18 +95,16 @@ class ORM_Core {
 		// Initialize database
 		$this->__initialize();
 
-		if ($id === NULL OR $id === '')
-		{
-			// Clear the object
-			$this->clear();
-		}
-		elseif (is_object($id))
+		// Clear the object
+		$this->clear();
+
+		if (is_object($id))
 		{
 			// Load an object
 			$this->load_values((array) $id);
 		}
-		else
-		{
+		elseif (!empty($id))
+		{			
 			// Find an object
 			$this->find($id);
 		}
@@ -333,7 +335,7 @@ class ORM_Core {
 				'object_name', 'object_plural', // Object
 				'primary_key', 'primary_val', 'table_name', 'table_columns', // Table
 				'loaded', 'saved', // Status
-				'has_one', 'belongs_to', 'has_many', 'has_and_belongs_to_many', // Relationships
+				'has_one', 'belongs_to', 'has_many', 'has_and_belongs_to_many', 'load_with' // Relationships
 			)))
 		{
 			// Model meta information
@@ -438,47 +440,94 @@ class ORM_Core {
 	{
 		return $this->object;
 	}
-
+	
+	/**
+	 * Binds another one-to-one object to this model.  One-to-one objects
+	 * can be nested using 'object1:object2' syntax
+	 *
+	 * @param string $object 
+	 * @return void
+	 */
 	public function with($object)
 	{
+		// Don't join anything already joined
+		if (isset($this->with_applied[$object]))
+			return $this;
+
 		$prefix = $table = $object;
 
+		// Split object parts 
+		$objects = explode(':', $object);
+		$object	 = $this;
+		foreach ($objects as $object_part)
+		{
+			// Go down the line of objects to find the given target
+			$parent = $object;
+			$object = $parent->related_object($object_part);
+			
+			if ( ! $object)
+			{
+				// Can't find related object
+				return $this;
+			}
+		}
+		
+		$table = $object_part;
+		
 		if ($this->table_names_plural)
 		{
 			$table = inflector::plural($table);
 		}
+		
+		// Pop-off top object to get the parent object (user:photo:tag's parent is user:photo)
+		array_pop($objects);
+		$parent_prefix = implode(':', $objects);
 
-		if ( ! ($object = $this->related_object($object)))
+		if (empty($parent_prefix))
 		{
-			return $this;
+			// Use this table name itself for the parent prefix
+			$parent_prefix = $this->table_name;
 		}
-
+		else
+		{
+			if( ! isset($this->with_applied[$parent_prefix]))
+			{
+				// If the parent object hasn't been joined yet, do it first (otherwise LEFT JOINs fail)
+				$this->with($parent_prefix);
+			}
+		}
+		
+		// Add to with_applied to prevent duplicate joins
+		$this->with_applied[$prefix] = TRUE;
+		
 		// Use the keys of the empty object to determine the columns
 		$select = array_keys($object->as_array());
 		foreach ($select as $i => $column)
 		{
 			// Add the prefix so that load_result can determine the relationship
-			$select[$i] = $object->table_name.'.'.$column.' AS '.$prefix.':'.$column;
+			$select[$i] = $prefix.'.'.$column.' AS '.$prefix.':'.$column;
 		}
 
 		// Select all of the prefixed keys in the object
 		$this->db->select($select);
 
-		$foreign_key = $prefix.'_'.$object->primary_key;
+		// Use last object part to generate foreign key
+		$foreign_key = $object_part.'_'.$object->primary_key;
 
-		if (array_key_exists($foreign_key, $this->object))
-		{
-			$join_col1 = $object->foreign_key(TRUE);
-			$join_col2 = $this->table_name.'.'.$foreign_key;
+		if (array_key_exists($foreign_key, $parent->object))
+		{	
+			// Foreign key exists in the joined object's parent
+			$join_col1 = $object->foreign_key(TRUE, $prefix);
+			$join_col2 = $parent_prefix.'.'.$foreign_key;
 		}
 		else
 		{
-			$join_col1 = $this->foreign_key(NULL, $table);
-			$join_col2 = $this->foreign_key(TRUE);
+			$join_col1 = $parent->foreign_key(NULL, $prefix);
+			$join_col2 = $parent_prefix.'.'.$parent->primary_key;
 		}
 
 		// Join the related object into the result
-		$this->db->join($object->table_name, $join_col1, $join_col2, 'LEFT');
+		$this->db->join($object->table_name.' AS '.$prefix, $join_col1, $join_col2, 'LEFT');
 
 		return $this;
 	}
@@ -502,7 +551,7 @@ class ORM_Core {
 			else
 			{
 				// Search for a specific column
-				$this->db->where($this->unique_key($id), $id);
+				$this->db->where($this->table_name.'.'.$this->unique_key($id), $id);
 			}
 		}
 
@@ -1044,8 +1093,16 @@ class ORM_Core {
 	{
 		if ($table === TRUE)
 		{
-			// Return the name of this table's PK
-			return $this->table_name.'.'.$this->primary_key;
+			if (is_string($prefix_table))
+			{
+				// Use prefix table name and this table's PK
+				return $prefix_table.'.'.$this->primary_key;
+			}
+			else
+			{
+				// Return the name of this table's PK
+				return $this->table_name.'.'.$this->primary_key;
+			}
 		}
 
 		if (is_string($prefix_table))
