@@ -22,7 +22,7 @@ class watermark_Core {
     $form = new Forge("watermark/load", "", "post",
       array("id" => "gUploadWatermarkForm", "enctype" => "multipart/form-data"));
     $group = $form->group("add_watermark")->label(_("Upload Watermark"));
-    $group->upload("file")->label(_("File"))->rules("allow[jpg,png,gif],size[1M]");
+    $group->upload("file")->label(_("Watermark"))->rules("allow[jpg,png,gif],size[1M]");
     $group->submit(_("Upload"));
     return $form;
   }
