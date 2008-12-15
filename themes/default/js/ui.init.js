@@ -3,12 +3,15 @@
  */
 $("document").ready(function() {
 
+  // Apply modal dialog class
   $(".gMenuLink").addClass("gDialogLink");
+  $("#gLoginLink").addClass("gDialogLink")
+
+  // Add Superfish menu class
   $("ul.gMenu").addClass("sf-menu");
+  $("#gViewMenu").addClass("sf-menu");
   
-  /**
-   * Superfish menu options
-   */
+  // Superfish menu options
   $('ul.sf-menu').superfish({
     delay: 500,
     animation: {
@@ -18,11 +21,7 @@ $("document").ready(function() {
     speed: 'fast'
   });
 
-  /**
-   * Reduce width of sized photo if it is wider than its parent container
-   * 
-   * @requires jquery.dimensions
-   */
+  // Reduce width of sized photo if it is wider than its parent container
   if ($("#gItem").length) {
     var containerWidth = $("#gItem").width();
     var oPhoto = $("#gItem img").filter(function() {
@@ -72,20 +71,20 @@ function openDialog(element) {
 
   $("body").append(dialog);
   $("#gDialog").dialog({
+    autoResize: false,
     draggable: true,
-    height: '400px',
+    height: 500,
     modal: true,
     overlay: {
       opacity: 0.7,
       background: "black"
     },
+    resizable: true,
+    title: $(element).attr("title"),
+    width: 600,
     close: function (event, ui) {
       $("#gDialog").dialog('destroy').remove();
     },
-
-    resizable: true,
-    title: $(element).attr("title"),
-    width: '500px'
   });
   $("#gDialog").html(href);
   $.get(href, function(data) {

@@ -1,39 +1,23 @@
 /**
- * Display user login form 
- * 
- * @todo Close link should be reusable
+ * Ajaxify user login form
  */
-$("document").ready(function() {
-  $("#gLoginLink").click(function() {
-    var url = $("#gLoginLink a").attr("href");
-    $.get(url, function(data) {
-      $('#gLoginLink').hide();
-      $("#gLoginMenu").append('<li><a href="#">X</a></li>');
-      $("#gLoginMenu li:last").addClass("gClose").show();
-      $("#gLoginMenu .gClose a").click(function() {
-        $("#gLoginForm").remove();
-        $("#gLoginMenu .gClose").remove();
-        $("#gLoginFormContainer").hide();
-        $("#gLoginLink").show();
-        $("input#gUsername").val("");
-        $("input#gPassword").val("");
-      });
-      $("#gLoginFormContainer").html(data).hide().fadeIn();
-      ajaxify_login_form();
-    });
-    return false;
-  });
-});
-
-function ajaxify_login_form() {
+function ajaxify_login_form(event) {
+  event.preventDefault();
   $("#gLoginForm").ajaxForm({
-    target: "#gLoginFormContainer",
+    target: "#gDialog",
     success: function(responseText, statusText) {
       if (!responseText) {
         window.location.reload();
       } else {
-        ajaxify_login_form();
+        ajaxify_login_form(event);
       }
     }
   });
+  return false;
 }
+
+$("document").ready(function() {
+    $.listen("submit", "#gLoginForm", function(event) {
+      ajaxify_login_form(event);
+    });
+});
