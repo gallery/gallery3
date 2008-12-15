@@ -1,11 +1,12 @@
+<? defined("SYSPATH") or die("No direct script access."); ?>
 <div class="gBlock">
   <a href="" class="gClose">X</a>
   <h2>Welcome to Gallery 3!</h2>
   <div class="gBlockContent">
     <p>This is your administration dashboard and it provides a quick overview of status messages,
-    recent updates, and frequently used options. Add or remove blocks and rearrange them 
+    recent updates, and frequently used options. Add or remove blocks and rearrange them
     to tailor to your needs. The admin menu provides quick access to all of Gallery 3's options
-    and settings. Here are a few of the most used options to get you started.</p> 
+    and settings. Here are a few of the most used options to get you started.</p>
     <ul>
       <li><a href="#">General Settings</a> - General configuation options for your Gallery.</li>
       <li><a href="#">Modules</a> - Manage available and installed modules.</li>

@@ -1,3 +1,4 @@
+<? defined("SYSPATH") or die("No direct script access."); ?>
 <div class="gBlock">
   <a href="" class="gClose">X</a>
   <h2>User Administration</h2>
