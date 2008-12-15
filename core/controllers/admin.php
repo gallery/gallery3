@@ -26,14 +26,14 @@ class Admin_Controller extends Controller {
   }
 
   public function index() {
-    $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
+    $theme_name = module::get_var("core", "active_admin_theme", "admin_default");
     $template = new Admin_View("admin.html", $theme_name);
     $template->content = new View("dashboard.html");
     print $template;
   }
 
   public function __call($page_name, $args) {
-    $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
+    $theme_name = module::get_var("core", "active_admin_theme", "admin_default");
     // For now, we have only two legal pages.
     // @todo get these pages from the modules
     switch($page_name) {
