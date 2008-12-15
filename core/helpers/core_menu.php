@@ -40,7 +40,7 @@ class core_menu_Core {
       $menu->append($admin_menu);
     }
 
-    if (access::can("edit", $item)) {
+    if ($item && access::can("edit", $item)) {
       $menu->append(
         Menu::factory("submenu")
         ->id("options_menu")
