@@ -24,6 +24,11 @@
     <?= $theme->head() ?>
     <script src="<?= $theme->url("lib/jquery-ui.packed.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
+    <script type="text/javascript">
+      var gallery3 = {
+        base_url: <?= url::base() ?>
+      };
+    </script>
   </head>
 
   <body>

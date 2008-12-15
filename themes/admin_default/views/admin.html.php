@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="<?= $theme->url("jquery/superfish-navbar.css") ?>" type="text/css" media="screen,projection">
     <script src="<?= $theme->url("jquery/superfish.js") ?>"></script>
     <script type="text/javascript">
+      var gallery3 = {
+        base_url: <?= url::base() ?>
+      };
+
       $(document).ready(function(){
         $("ul.sf-menu").superfish({
           pathClass:  'current'
