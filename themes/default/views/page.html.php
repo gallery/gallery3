@@ -22,7 +22,7 @@
     <script src="<?= $theme->url("js/jquery.listen-min.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/superfish.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
-    <script src="<?= $theme->url("lib/jquery-ui.packed.js") ?>" type="text/javascript"></script>
+    <?= html::script("lib/jquery-ui.packed.js") ?>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
   </head>
 

@@ -19,7 +19,6 @@
  */
 class rearrange_block_Core {
   public static function head($theme) {
-    $head[] = html::script("lib/jquery-ui.packed.js");
     $head[] = html::script("modules/rearrange/js/jquery.gallery.rearrange.tree.js");
 
     $url = url::file("modules/rearrange/css/rearrange.css");
