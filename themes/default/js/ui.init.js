@@ -9,7 +9,7 @@ $("document").ready(function() {
 
   // Add Superfish menu class
   $("ul.gMenu").addClass("sf-menu");
-  $("u#gViewMenu").addClass("sf-menu");
+  $("ul#gViewMenu").addClass("sf-menu");
   
   // Superfish menu options
   $('ul.sf-menu').superfish({
