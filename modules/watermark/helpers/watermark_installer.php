@@ -29,10 +29,6 @@ class watermark_installer {
   }
 
   public static function uninstall() {
-    $module = module::get("watermark");
-
-    $db = Database::instance();
-    $db->query("DELETE FROM vars WHERE module_id = '{$module->id}';");
     module::delete("watermark");
   }
 }

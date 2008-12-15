@@ -46,7 +46,13 @@ class module_Core {
   }
 
   public static function delete ($module_name) {
-    ORM::factory("module")->where("name", $module_name)->find()->delete();
+    $module = ORM::factory("module")->where("name", $module_name)->find();
+    $module_id = $module->id;
+    $module->delete();
+
+    $db = Database::instance();
+    $db->query("DELETE FROM vars WHERE module_id = '{$module->id}';");
+
     Kohana::log("debug", "$module_name: module deleted");
   }
 
