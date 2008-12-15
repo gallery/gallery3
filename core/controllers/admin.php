@@ -22,13 +22,13 @@ class Admin_Controller extends Controller {
 
   public function __construct() {
     if (!(user::active()->admin)) {
-      throw new Exception("Unauthorized", 401);
+      throw new Exception("@todo UNAUTHORIZED", 401);
     }
     // giving default is probably overkill
     $this->theme_name = module::get_var("core", "active_admin_theme", "default_admin");
     parent::__construct();
   }
-  
+
   public function index() {
     // For now, in order not to duplicate js and css, keep the regular ("item")
     // theme in addition to admin theme.
