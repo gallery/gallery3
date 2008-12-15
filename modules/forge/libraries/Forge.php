@@ -283,11 +283,17 @@ class Forge_Core {
 
 			$form_type = 'open';
 			// See if we need a multipart form
-			foreach ($this->inputs as $input)
-			{
-				if ($input instanceof Form_Upload)
-				{
-					$form_type = 'open_multipart';
+			$check_inputs = array($this->inputs);
+			while ($check_inputs) {
+				foreach (array_shift($check_inputs) as $input) {
+					if ($input instanceof Form_Upload)
+					{
+						$form_type = 'open_multipart';
+					}
+					if ($input instanceof Form_Group)
+					{
+						$check_inputs += array($input->inputs);
+					}
 				}
 			}
 
