@@ -14,7 +14,7 @@
     <script src="<?= $theme->url("jquery/superfish.js") ?>"></script>
     <script type="text/javascript">
       var gallery3 = {
-        base_url: <?= url::base() ?>
+        base_url: "<?= url::base() ?>"
       };
 
       $(document).ready(function(){

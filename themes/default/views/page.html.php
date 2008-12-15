@@ -26,7 +26,7 @@
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <script type="text/javascript">
       var gallery3 = {
-        base_url: <?= url::base() ?>
+        base_url: "<?= url::base() ?>"
       };
     </script>
   </head>
