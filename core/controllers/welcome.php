@@ -455,16 +455,22 @@ class Welcome_Controller extends Template_Controller {
   }
 
   public function remove_from_group($group_id, $user_id) {
-    ORM::factory("group", $group_id)->remove(
-      ORM::factory("user", $user_id));
+    $group = ORM::factory("group", $group_id);
+    $user = ORM::factory("group", $user_id);
+    if ($group->loaded && $user->loaded) {
+      $group->remove($user);
+      $group->save();
+    }
     url::redirect("welcome");
   }
 
   public function add_to_group($user_id) {
     $group_name = $this->input->post("group_name");
     $group = ORM::factory("group")->where("name", $group_name)->find();
-    if ($group->loaded) {
-      $group->add(ORM::factory("user", $user_id));
+    $user = ORM::factory("group", $user_id);
+    if ($group->loaded && $user->loaded) {
+      $group->add($user);
+      $group->save();
     }
     url::redirect("welcome");
   }

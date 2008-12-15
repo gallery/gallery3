@@ -94,7 +94,7 @@ class user_Core {
    * @return User_Model
    */
   static function create($name, $display_name, $password) {
-    $user = ORM::factory("user")->where("name", $name);
+    $user = ORM::factory("user")->where("name", $name)->find();
     if ($user->loaded) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
     }
@@ -102,16 +102,13 @@ class user_Core {
     $user->name = $name;
     $user->display_name = $display_name;
     $user->password = $password;
+
+    // Everybody group
+    $user->add(ORM::factory("group", 1));
+    // Registered Users group
+    $user->add(ORM::factory("group", 2));
+
     $user->save();
-
-    // Everybody user
-    $group = ORM::factory("group", 1);
-    $group->add($user);
-
-    // Registered users
-    $group = ORM::factory("group", 2);
-    $group->add($user);
-
     module::event("user_created", $user);
     return $user;
   }

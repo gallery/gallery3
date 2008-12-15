@@ -280,8 +280,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     foreach ($user->groups as $group) {
       $user->remove($group);
     }
-    // @todo remove this reload when http://dev.kohanaphp.com/ticket/959 is resolved
-    $user->reload();
+    $user->save();
     user::set_active($user);
 
     // This user can't edit anything
@@ -291,8 +290,11 @@ class Access_Helper_Test extends Unit_Test_Case {
     // Now add them to a group that has edit permission
     $group = group::create("access_test");
     $group->add($user);
+    $group->save();
     access::allow($group, "edit", $root);
-    user::set_active($user->reload());
+
+    $user = ORM::factory("user", $user->id);  // reload() does not flush related columns
+    user::set_active($user);
 
     // And verify that the user can edit.
     $this->assert_true(access::can("edit", $root));

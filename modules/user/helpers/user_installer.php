@@ -62,8 +62,8 @@ class user_installer {
 
       $guest = user::create("guest", "Guest User", "");
       $guest->guest = true;
-      $guest->save();
       $guest->remove($registered);
+      $guest->save();
 
       $admin = user::create("admin", "Gallery Administrator", "admin");
       $admin->admin = true;
