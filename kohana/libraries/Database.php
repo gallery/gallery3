@@ -1096,7 +1096,7 @@ class Database_Core {
 
 		$this->reset_select();
 
-		return $this->driver->list_tables();
+		return $this->driver->list_tables($this);
 	}
 
 	/**
