@@ -18,36 +18,39 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Admin_Controller extends Controller {
-  public $theme_name = null;
-
   public function __construct() {
     if (!(user::active()->admin)) {
       throw new Exception("@todo UNAUTHORIZED", 401);
     }
-    // giving default is probably overkill
-    $this->theme_name = module::get_var("core", "active_admin_theme", "default_admin");
     parent::__construct();
   }
 
   public function index() {
-    // For now, in order not to duplicate js and css, keep the regular ("item")
-    // theme in addition to admin theme.
-    $item_theme_name = module::get_var("core", "active_theme", "default");
-    $item_theme = new Theme_View("album.html", "album", $item_theme_name);
-
-    $template = new Theme_View("admin.html", "admin", $this->theme_name);
-    $template->item_theme = $item_theme;
-    $template->subpage = "dashboard.html";
+    $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
+    $template = new Admin_View("admin.html", $theme_name);
+    $template->content = new View("dashboard.html");
     print $template;
   }
 
-  public function subpage() {
-    $template = new Theme_View($_REQUEST["name"] . ".html", "admin", $this->theme_name);
-    switch ($_REQUEST["name"]) {
-      case "list_users":
-      $template->set_global("users", ORM::factory("user")->find_all());
+  public function __call($page_name, $args) {
+    $theme_name = module::get_var("core", "active_admin_theme", "default_admin");
+    // For now, we have only two legal pages.
+    // @todo get these pages from the modules
+    switch($page_name) {
+    case "users":
+      $view = new Admin_View("users.html", $theme_name);
+      $view->users = ORM::factory("user")->find_all();
+      break;
+
+    case "dashboard":
+      $view = new Admin_View("dashboard.html", $theme_name);
+      break;
+
+    default:
+      Kohana::show_404();
     }
-    print $template;
+
+    print $view;
   }
 }
 

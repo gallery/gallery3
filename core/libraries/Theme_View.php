@@ -25,7 +25,7 @@ class Theme_View_Core extends View {
    *
    * @throws  Kohana_Exception  if the requested view cannot be found
    * @param   string  $name view name
-   * @param   string  $page_type page type: album, photo, tags, admin, etc
+   * @param   string  $page_type page type: album, photo, tags, etc
    * @param   string  $theme_name view name
    * @return  void
    */

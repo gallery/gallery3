@@ -6,24 +6,24 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>G3: Admin Dashboard</title>
     <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>" type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= $item_theme->url("css/screen.css") ?>" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>" type="text/css" media="screen,projection">
     <script src="<?= url::file("lib/jquery.js") ?>"></script>
     <script src="<?= url::file("lib/jquery-ui.packed.js") ?>"></script>
-    <link rel="stylesheet" href="<?= $item_theme->url("jquery/superfish.css") ?>" type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= $item_theme->url("jquery/superfish-navbar.css") ?>" type="text/css" media="screen,projection">
-    <script src="<?= $item_theme->url("jquery/superfish.js") ?>"></script>
-    <script type="text/javascript"> 
+    <link rel="stylesheet" href="<?= $theme->url("jquery/superfish.css") ?>" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= $theme->url("jquery/superfish-navbar.css") ?>" type="text/css" media="screen,projection">
+    <script src="<?= $theme->url("jquery/superfish.js") ?>"></script>
+    <script type="text/javascript">
       $(document).ready(function(){
-        $("ul.sf-menu").superfish({ 
-          pathClass:  'current' 
+        $("ul.sf-menu").superfish({
+          pathClass:  'current'
         });
-        $("#gSiteAdminMenu li[id]").click(function(event) {
-            $("#gContent").load("admin/subpage", {name: this.id});
-            return false;
+        $("#gSiteAdminMenu li a").click(function(event) {
+          $("#gContent").load(this.href);
+          return false;
         });
-      }); 
+      });
     </script>
-    
+
     <style type="text/css">
       #gSiteAdminMenu {
       clear: both;
@@ -42,7 +42,7 @@
         background-color: #e7e7e7;
         margin: -.4em;
         padding: .2em .6em;
-        background: #f4f4f4 url('<?= $item_theme->url("images/ico-draggable.png") ?>') no-repeat center right;
+        background: #f4f4f4 url('<?= $theme->url("images/ico-draggable.png") ?>') no-repeat center right;
         cursor: move;
       }
       .gClose {
@@ -59,7 +59,7 @@
         text-decoration: none;
       }
       #gPhotoStream .gBlockContent {
-        overflow: scroll; 
+        overflow: scroll;
       }
     </style>
   </head>
@@ -72,9 +72,11 @@
             <li><?= html::anchor("albums/1", "Browse Gallery") ?></li>
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
-          <img src="<?= $item_theme->url("images/logo.png") ?>" id="gLogo" alt="Gallery 3: Your Photos on Your Web Site" />
+          <img src="<?= $theme->url("images/logo.png") ?>" id="gLogo" alt="Gallery 3: Your Photos on Your Web Site" />
           <ul id="gSiteAdminMenu" class="sf-menu sf-navbar">
-            <li id="dashboard"><a href="#">Dashboard</a><li>
+            <li id="dashboard">
+              <a href="<?= url::site("admin/dashboard") ?>">Dashboard</a>
+              <li>
             <li><a href="#">General Settings</a><li>
             <li class="current"><a href="#">Content</a>
               <ul>
@@ -95,7 +97,7 @@
             </li>
             <li><a href="#">Users/Groups</a>
               <ul>
-                <li id="list_users"><a href="#">List Users</a></li>
+                <li><a href="<?= url::site("admin/users") ?>">List Users</a></li>
                 <li><a href="#">Create new user</a><li>
                 <li><a href="#">Edit Profile</a></li>
               </ul>
@@ -112,12 +114,12 @@
         <div id="yui-main">
           <div class="yui-b">
             <div id="gContent" class="yui-g">
-              <?= $theme->display($subpage); ?>
+              <?= $content ?>
             </div>
           </div>
         </div>
         <div id="gSidebar" class="yui-b">
-        
+
           <div id="gAvailableBlocks" class="gBlock">
             <a href="" class="gClose">X</a>
             <form class="gBlockContent">
@@ -131,7 +133,7 @@
               </fieldset>
             </form>
           </div>
-          
+
           <div id="gPlatform" class="gBlock">
             <a href="" class="gClose">X</a>
             <h2>Gallery Stats</h2>
@@ -140,7 +142,7 @@
               <li>Your gallery has 34 albums containing 603 photos with 26 comments.</li>
             </ul>
           </div>
-          
+
           <div id="gPlatform" class="gBlock">
             <a href="" class="gClose">X</a>
             <h2>Platform Information</h2>
@@ -165,14 +167,14 @@
                       <li>ImageMagick 1.6</li>
                       <li>GD</li>
                       <li>FFMPEG</li>
-                    </ul>                  
+                    </ul>
                   </li>
                 </ul>
               </li>
             </ul>
             <p class="gWarning">^ Display as a tree widget</p>
           </div>
-          
+
           <div id="gProjectNews" class="gBlock">
             <a href="" class="gClose">X</a>
             <h2>Gallery Project News</h2>
@@ -182,7 +184,7 @@
               <li>4-Feb <a href="#">Gallery 3.0 released!</a></li>
             </ul>
           </div>
-          
+
         </div>
       </div>
       <div id="ft">
