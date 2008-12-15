@@ -33,6 +33,13 @@ class core_menu_Core {
 
     $item = $theme->item();
 
+    if (!user::active()->guest) {
+      $admin_menu = Menu::factory("submenu")
+        ->id("admin_menu")
+        ->label(_("Admin"));
+      $menu->append($admin_menu);
+    }
+
     if (access::can("edit", $item)) {
       $menu->append(
         Menu::factory("submenu")
@@ -49,25 +56,19 @@ class core_menu_Core {
           ->label(_("Add album"))
           ->url(url::site("form/add/albums/$item->id"))));
 
-
-      $admin_menu = Menu::factory("submenu")
-        ->id("admin_menu")
-        ->label(_("Admin"));
-      $menu->append($admin_menu);
-
-      $admin_menu->append(
-        Menu::factory("dialog")
-        ->id("edit")
-        ->label(_("Edit"))
-        ->url(url::site("form/edit/{$item->type}s/$item->id")));
-
-      if (user::active()->admin) {
         $admin_menu->append(
-          Menu::factory("link")
-          ->id("site_admin")
-          ->label(_("Site Admin"))
-          ->url(url::site("admin")));
-      }
+          Menu::factory("dialog")
+          ->id("edit")
+          ->label(_("Edit"))
+          ->url(url::site("form/edit/{$item->type}s/$item->id")));
+    }
+
+    if (user::active()->admin) {
+      $admin_menu->append(
+        Menu::factory("link")
+        ->id("site_admin")
+        ->label(_("Site Admin"))
+        ->url(url::site("admin")));
     }
   }
 }
