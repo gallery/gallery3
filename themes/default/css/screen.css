@@ -260,7 +260,10 @@ li.gError select {
 
 #gSidebar .gBlock h3 {
   background: #e8e8e8;
-  padding: .3em .75em;
+  padding: .3em 1.4em;
+  background-image: url('../images/ico-move-handle.png');
+  background-repeat: no-repeat;
+  cursor: move;
 }
 
 #gSidebar .gBlockContent {
