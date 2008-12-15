@@ -17,23 +17,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Watermark_Controller extends Controller {
-  public function load() {
-    $form = watermark::get_watermark_form();
-    if ($form->validate()) {
-        $file = $_POST["file"];
+class watermark_menu_Core {
+  // @todo this needs to get on the admin page at some point
 
-        $pathinfo = pathinfo($file);
-        $watermark_target = $pathinfo["basename"];
-        if (copy($file, VARPATH . $watermark_target)) {
-          module::set_var("watermark", "watermark_image_path", $watermark_target);
-          unlink($file);
-          $form->success = _("Watermark saved");
-        } else {
-          // @todo set and error message
-        }
+  public static function site_navigation($menu, $theme) {
+    $user = user::active();
+    if ($user->admin) {
+       Kohana::log("debug", print_r($menu, 1));
+      $menu->get("admin_menu")->append(
+        Menu::Factory("dialog")
+        ->id("watermark_position")
+        ->label(_("Set Watermark Position"))
+        ->url(url::site("admin/watermark/get_form/$user->id")));
     }
-
-    print $form;
   }
 }

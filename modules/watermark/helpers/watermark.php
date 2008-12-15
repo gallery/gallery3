@@ -26,4 +26,19 @@ class watermark_Core {
     $group->submit(_("Upload"));
     return $form;
   }
+
+  public static function get_watermark_postion_form($position="southeast") {
+    $form = new Forge("admin/watermark/position", "", "post");
+    $group = $form->group("watermark_position")->label(_("Update Position"));
+    $group->hidden("original_position")->value($position);
+    $group->dropdown("new_position")->label(_("Watermark Position"))
+      ->options(array("northwest",  "north",  "northeast",
+                      "west",       "center", "east",
+                      "southwest",  "south",  "southeast"))
+      ->selected("8");
+
+    $group->submit(_("Update"));
+    $group->submit(_("Reset"));
+    return $form;
+  }
 }

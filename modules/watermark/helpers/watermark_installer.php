@@ -24,7 +24,7 @@ class watermark_installer {
     if ($version == 0) {
       module::set_version("watermark", 1);
       module::set_var("watermark", "watermark_image_path", "");
-      module::set_var("watermark", "watermark_position", serialize(array()));
+      module::set_var("watermark", "watermark_position", "southeast");
     }
   }
 
