@@ -122,7 +122,7 @@ $config['modules'] = array(
   THEMEPATH . 'admin_default'
 );
 
-if (defined('TEST_MODE')) {
+if (TEST_MODE) {
   array_splice($config['modules'], 0, 0,
                array(MODPATH . 'gallery_unit_test',
                      MODPATH . 'unit_test'));

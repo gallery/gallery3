@@ -19,7 +19,7 @@
  */
 class Gallery_Unit_Test_Controller extends Controller {
   function Index() {
-    if (!defined('TEST_MODE')) {
+    if (!TEST_MODE) {
       print Kohana::show_404();
     }
 
