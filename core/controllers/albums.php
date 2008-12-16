@@ -28,7 +28,7 @@ class Albums_Controller extends Items_Controller {
     }
 
     $theme_name = module::get_var("core", "active_theme", "default");
-    $page_size = module::set_var("core", "page_size", 9);
+    $page_size = module::get_var("core", "page_size", 9);
 
     $template = new Theme_View("page.html", "album", $theme_name);
 
