@@ -28,11 +28,11 @@ class module_Core {
   private static $modules = array();
 
   public static function get_version($module_name) {
-    return model_cache::get("module", $module_name, "name")->version;
+    return ORM::factory("module")->where("name", $module_name)->find()->version;
   }
 
   public static function set_version($module_name, $version) {
-    $module = model_cache::get("module", $module_name, "name");
+    $module = ORM::factory("module")->where("name", $module_name)->find();
     if (!$module->loaded) {
       $module->name = $module_name;
     }
