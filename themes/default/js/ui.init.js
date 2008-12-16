@@ -74,10 +74,9 @@ function openDialog(element) {
   var buttons = {};
   buttons["Submit"] = function() {
     var form = $("#gDialog").find("form");
-    $.post(form.attr("action"), form.serialize(),
-      function(data, textStatus) {
+    form.ajaxSubmit(function(data, textStatus) {
         form.html(data);
-      }, "html");
+      });
   }
   buttons["Reset"] = function() {
     var form = $("#gDialog").find("form");
