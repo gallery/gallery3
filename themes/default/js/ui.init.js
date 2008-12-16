@@ -71,6 +71,19 @@ function openDialog(element) {
   var eDialog = '<div id="gDialog"></div>';
 
   $("body").append(eDialog);
+  var buttons = {};
+  buttons["Submit"] = function() {
+    var form = $("#gDialog").find("form");
+    $.post(form.attr("action"), form.serialize(),
+      function(data, textStatus) {
+        form.html(data);
+      }, "html");
+  }
+  buttons["Reset"] = function() {
+    var form = $("#gDialog").find("form");
+    form[0].reset();
+  }
+
   $("#gDialog").dialog({
     autoResize: false,
     draggable: true,
@@ -83,6 +96,7 @@ function openDialog(element) {
     resizable: true,
     title: sTitle,
     width: 600,
+    buttons: buttons,
     close: function (event, ui) {
       $("#gDialog").dialog('destroy').remove();
     }
