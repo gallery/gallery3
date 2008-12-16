@@ -40,7 +40,7 @@ class album_Core {
     $album->name = $name;
     $album->owner_id = $owner_id;
 
-    while (ORM::Factory("item")
+    while (ORM::factory("item")
            ->where("parent_id", $parent_id)
            ->where("name", $album->name)
            ->find()->id) {
