@@ -160,9 +160,6 @@
     <? if (module::is_installed("rearrange")): ?>
     <?= rearrange_block::head(null) ?>
     <? endif ?>
-    <? if (module::is_installed("watermark")): ?>
-    <?= watermark_block::head(null) ?>
-    <? endif ?>
   </head>
   <body>
     <div class="outer">
@@ -286,9 +283,6 @@
               <legend>Rearrange</legend>
               <?= new View("rearrange.html") ?>
             </fieldset>
-            <? endif ?>
-            <? if (module::is_installed("watermark")): ?>
-              <?= $add_watermark_html ?>
             <? endif ?>
           </div>
 

@@ -18,6 +18,27 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Watermark_admin_Controller extends Controller {
+  public function load() {
+    $form = watermark::get_watermark_form();
+    Kohana::log("debug", print_r($form, 1));
+    if ($form->validate()) {
+        $file = $_POST["file"];
+        Kohana::log("debug", $file);
+
+        $pathinfo = pathinfo($file);
+        $watermark_target = $pathinfo["basename"];
+        if (copy($file, VARPATH . $watermark_target)) {
+          module::set_var("watermark", "watermark_image_path", $watermark_target);
+          unlink($file);
+          $form->success = _("Watermark saved");
+        } else {
+          // @todo set and error message
+        }
+    }
+
+    print $form;
+  }
+
   public function get_form($user_id) {
     try {
       // @todo check for admin user

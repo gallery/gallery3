@@ -19,11 +19,10 @@
  */
 class watermark_Core {
   public static function get_watermark_form() {
-    $form = new Forge("watermark/load", "", "post",
+    $form = new Forge("admin/watermark/load", "", "post",
       array("id" => "gUploadWatermarkForm", "enctype" => "multipart/form-data"));
     $group = $form->group("add_watermark")->label(_("Upload Watermark"));
     $group->upload("file")->label(_("Watermark"))->rules("allow[jpg,png,gif],size[1M]");
-    $group->submit(_("Upload"));
     return $form;
   }
 
@@ -36,9 +35,6 @@ class watermark_Core {
                       "west",       "center", "east",
                       "southwest",  "south",  "southeast"))
       ->selected("8");
-
-    $group->submit(_("Update"));
-    $group->submit(_("Reset"));
     return $form;
   }
 }

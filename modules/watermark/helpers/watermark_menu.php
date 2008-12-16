@@ -23,12 +23,20 @@ class watermark_menu_Core {
   public static function site_navigation($menu, $theme) {
     $user = user::active();
     if ($user->admin) {
-       Kohana::log("debug", print_r($menu, 1));
       $menu->get("admin_menu")->append(
         Menu::Factory("dialog")
-        ->id("watermark_position")
-        ->label(_("Set Watermark Position"))
-        ->url(url::site("admin/watermark/get_form/$user->id")));
+        ->id("watermark_Load")
+        ->label(_("Load Watermark"))
+        ->url(url::site("admin/watermark/load")));
+
+      $path = module::get_var("watermark", "watermark_image_path");
+      if (!empty($path)) {
+        $menu->get("admin_menu")->append(
+          Menu::Factory("dialog")
+          ->id("watermark_position")
+          ->label(_("Set Watermark Position"))
+          ->url(url::site("admin/watermark/get_form/$user->id")));
+      }
     }
   }
 }

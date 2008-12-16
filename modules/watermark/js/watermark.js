@@ -1,4 +1,4 @@
-$("document").ready(function() {
+$("gUploadWatermarkForm").ready(function() {
   ajaxify_watermark_add_form();
 });
 
