@@ -44,6 +44,13 @@ class Access_Helper_Test extends Unit_Test_Case {
     user::set_active(user::guest());
   }
 
+  private function _add_album($parent) {
+    $album  = ORM::factory("item");
+    $album->type = "album";
+    $album->add_to_parent($parent);
+    return $album;
+  }
+
   public function groups_and_permissions_are_bound_to_columns_test() {
     access::register_permission("access_test");
     $group = group::create("access_test");
@@ -84,9 +91,7 @@ class Access_Helper_Test extends Unit_Test_Case {
   public function new_photos_inherit_parent_permissions_test() {
     $root = ORM::factory("item", 1);
 
-    $album = ORM::factory("item");
-    $album->type = "album";
-    $album->add_to_parent($root);
+    $album = $this->_add_album($root);
     access::add_item($album);
     access::allow(group::everybody(), "view", $album);
 
@@ -100,33 +105,31 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function can_allow_deny_and_reset_intent_test() {
     $root = ORM::factory("item", 1);
-    $item = ORM::factory("item")->add_to_parent($root);
-    access::add_item($item);
-    $intent = ORM::factory("access_intent")->where("item_id", $item)->find();
+    $album = $this->_add_album($root);
+    access::add_item($album);
+    $intent = ORM::factory("access_intent")->where("item_id", $album)->find();
 
     // Allow
-    access::allow(group::everybody(), "view", $item);
+    access::allow(group::everybody(), "view", $album);
     $this->assert_same(access::ALLOW, $intent->reload()->view_1);
 
     // Deny
-    access::deny(group::everybody(), "view", $item);
+    access::deny(group::everybody(), "view", $album);
     $this->assert_same(
       access::DENY,
-      ORM::factory("access_intent")->where("item_id", $item)->find()->view_1);
+      ORM::factory("access_intent")->where("item_id", $album)->find()->view_1);
 
     // Allow again.  If the initial value was allow, then the first Allow clause above may not
     // have actually changed any values.
-    access::allow(group::everybody(), "view", $item);
+    access::allow(group::everybody(), "view", $album);
     $this->assert_same(
       access::ALLOW,
-      ORM::factory("access_intent")->where("item_id", $item)->find()->view_1);
+      ORM::factory("access_intent")->where("item_id", $album)->find()->view_1);
 
-    access::reset(group::everybody(), "view", $item);
+    access::reset(group::everybody(), "view", $album);
     $this->assert_same(
       null,
-      ORM::factory("access_intent")->where("item_id", $item)->find()->view_1);
-
-    $item->delete();
+      ORM::factory("access_intent")->where("item_id", $album)->find()->view_1);
   }
 
   public function cant_reset_root_item_test() {
@@ -155,7 +158,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function cant_view_child_of_hidden_parent_test() {
     $root = ORM::factory("item", 1);
-    $album = ORM::factory("item")->add_to_parent($root);
+    $album = $this->_add_album($root);
     access::add_item($album);
 
     access::deny(group::everybody(), "view", $root);
@@ -167,7 +170,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function view_permissions_propagate_down_test() {
     $root = ORM::factory("item", 1);
-    $album = ORM::factory("item")->add_to_parent($root);
+    $album = $this->_add_album($root);
     access::add_item($album);
 
     access::allow(group::everybody(), "view", $root);
@@ -178,24 +181,16 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function can_toggle_view_permissions_propagate_down_test() {
     $root = ORM::factory("item", 1);
-    $album1 = ORM::factory("item");
-    $album1->type = "album";
-    $album1->add_to_parent($root);
+    $album1 = $this->_add_album($root);
     access::add_item($album1);
 
-    $album2 = ORM::factory("item");
-    $album2->type="album";
-    $album2->add_to_parent($album1);
+    $album2 = $this->_add_album($album1);
     access::add_item($album2);
 
-    $album3 = ORM::factory("item");
-    $album3->type="album";
-    $album3->add_to_parent($album2);
+    $album3 = $this->_add_album($album2);
     access::add_item($album3);
 
-    $album4 = ORM::factory("item");
-    $album4->type="album";
-    $album4->add_to_parent($album3);
+    $album4 = $this->_add_album($album3);
     access::add_item($album4);
 
     $album1->reload();
@@ -219,7 +214,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function revoked_view_permissions_cant_be_allowed_lower_down_test() {
     $root = ORM::factory("item", 1);
-    $album = ORM::factory("item")->add_to_parent($root);
+    $album = $this->_add_album($root);
     access::add_item($album);
 
     access::deny(group::everybody(), "view", $root);
@@ -237,7 +232,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function non_view_permissions_propagate_down_test() {
     $root = ORM::factory("item", 1);
-    $album = ORM::factory("item")->add_to_parent($root);
+    $album = $this->_add_album($root);
     access::add_item($album);
 
     access::allow(group::everybody(), "edit", $root);
@@ -247,18 +242,15 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function non_view_permissions_can_be_revoked_lower_down_test() {
     $root = ORM::factory("item", 1);
-    $outer = ORM::factory("item");
-    $outer->type = "album";
-    $outer->add_to_parent($root);
-
+    $outer = $this->_add_album($root);
     access::add_item($outer);
+
     $outer_photo = ORM::factory("item")->add_to_parent($outer);
     access::add_item($outer_photo);
 
-    $inner = ORM::factory("item");
-    $inner->type = "album";
-    $inner->add_to_parent($outer);
+    $inner = $this->_add_album($outer);
     access::add_item($inner);
+
     $inner_photo = ORM::factory("item")->add_to_parent($inner);
     access::add_item($inner_photo);
 

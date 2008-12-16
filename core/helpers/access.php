@@ -130,6 +130,12 @@ class access_Core {
    * @return boolean
    */
   private static function _set($group, $perm_name, $item, $value) {
+    if (!$item->loaded) {
+      throw new Exception("@todo INVALID_ITEM $item->id");
+    }
+    if ($item->type != "album") {
+      throw new Exception("@todo INVALID_ITEM_TYPE not an album");
+    }
     $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
     if (!$access->loaded) {
       throw new Exception("@todo MISSING_ACCESS for $item->id");
