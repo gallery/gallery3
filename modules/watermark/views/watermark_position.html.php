@@ -1,6 +1,5 @@
 <script>
-$("#gWatermarkAdmin").ready(function() {
-
+$("#gDialog").ready(function() {
   var container = $("#gDialog").parent().parent();
   var container_height = $(container).attr("offsetHeight");
   var container_width = $(container).attr("offsetWidth");
@@ -8,8 +7,12 @@ $("#gWatermarkAdmin").ready(function() {
   var new_height = $("#gDialog").attr("offsetHeight") +
     container.find("div.ui-dialog-titlebar").attr("offsetHeight") +
     container.find("div.ui-dialog-buttonpane").attr("offsetHeight");
-  container.css("height", Math.max(new_height, container_height) + "px");
-  container.css("width", Math.max($("#gDialog").attr("offsetWidth"), container_width) + "px");
+  var height = Math.max(new_height, container_height);
+  var width = Math.max($("#gDialog").attr("offsetWidth"), container_width);
+  container.css("height", height + "px");
+  container.css("width", width + "px");
+  container.css("top", ((document.height - height) / 2) + "px");
+  container.css("left", ((document.width - width) / 2) + "px");
 });
 </script>
 <div id="gWatermarkAdmin">
