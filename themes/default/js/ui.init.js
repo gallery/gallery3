@@ -74,9 +74,16 @@ function openDialog(element) {
   var buttons = {};
   buttons["Submit"] = function() {
     var form = $("#gDialog").find("form");
-    form.ajaxSubmit(function(data, textStatus) {
-        form.html(data);
-      });
+    var options = 
+    $(form).ajaxSubmit({
+      success: function(data, textStatus) {
+        if (data == "") {
+          window.location.reload()
+          $("#gDialog").dialog("close");
+        }
+        $("#gDialog").html(data);
+      }
+    });
   }
   buttons["Reset"] = function() {
     var form = $("#gDialog").find("form");

@@ -23,7 +23,6 @@ class Login_Controller extends Controller {
     $group = $form->group("login_form")->label(_("Login"));
     $group->input("name")->label(_("Name"))->id("gName")->class(null);
     $group->password("password")->label(_("Password"))->id("gPassword")->class(null);
-    $group->submit(_("Login"));
     $group->inputs["name"]->error_messages("invalid_login", _("Invalid name or password"));
 
     if ($form->validate()) {
