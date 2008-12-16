@@ -357,7 +357,7 @@ li.gError select {
 
 .gMessages li {
   border: 1px solid #ccc;
-  margin: .4em 0; 
+  margin: .4em 0;
 }
 
 .gError, .gWarning, .gSuccess, .gHelp, .gInfo {
@@ -455,7 +455,7 @@ li.gError select {
 }
 
 #gViewMenu #gAlbumLink,
-#gViewMenu #gHybridLink, 
+#gViewMenu #gHybridLink,
 #gViewMenu #gSlideshowLink,
 #gViewMenu #gFullsizeLink {
   background-color: #BDD2FF;
@@ -491,12 +491,13 @@ li.gError select {
 
 #gBreadcrumbs {
   padding-left: 20px;
+  font-size: 1.3em;
 }
 
 #gBreadcrumbs li {
   background: transparent url('../images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
   float: left;
-  padding: 10px 0 10px 12px;
+  padding: 10px 6px 10px 16px;
 }
 
 #gBreadcrumbs li.root {
@@ -748,7 +749,7 @@ span.gInPlaceEdit:hover {
 }
 
 .gDialogLink {
-  
+
 }
 
 /** *******************************************************************
@@ -793,7 +794,7 @@ span.gInPlaceEdit:hover {
   border: 1px solid #ccc;
   background: #f3f3f3 url(../images/f3f3f3_40x100_textures_01_flat_0.png) 0 0 repeat-x;
   color: #362b36;
-  padding: 1.5em 1.7em;  
+  padding: 1.5em 1.7em;
   min-width: 0; /* => IE7 trigger hasLayout (while maintaining valid CSS) to prevent margins pushed here from preceding elements */
 }
 * html .ui-tabs-panel {
@@ -818,66 +819,66 @@ span.gInPlaceEdit:hover {
   z-index: 99999;
 }
 .ui-resizable .ui-resizable-handle {
-  display: block; 
+  display: block;
 }
 body .ui-resizable-disabled .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
 body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
-.ui-resizable-n { 
-  cursor: n-resize; 
-  height: 7px; 
-  width: 100%; 
-  top: -5px; 
-  left: 0px;  
+.ui-resizable-n {
+  cursor: n-resize;
+  height: 7px;
+  width: 100%;
+  top: -5px;
+  left: 0px;
 }
-.ui-resizable-s { 
-  cursor: s-resize; 
-  height: 7px; 
-  width: 100%; 
-  bottom: -5px; 
-  left: 0px; 
+.ui-resizable-s {
+  cursor: s-resize;
+  height: 7px;
+  width: 100%;
+  bottom: -5px;
+  left: 0px;
 }
-.ui-resizable-e { 
-  cursor: e-resize; 
-  width: 7px; 
-  right: -5px; 
-  top: 0px; 
-  height: 100%; 
-}
-.ui-resizable-w { 
-  cursor: w-resize; 
-  width: 7px; 
-  left: -5px; 
-  top: 0px; 
+.ui-resizable-e {
+  cursor: e-resize;
+  width: 7px;
+  right: -5px;
+  top: 0px;
   height: 100%;
 }
-.ui-resizable-se { 
-  cursor: se-resize; 
-  width: 18px; 
-  height: 18px; 
-  right: -5px; 
-  bottom: -5px; 
+.ui-resizable-w {
+  cursor: w-resize;
+  width: 7px;
+  left: -5px;
+  top: 0px;
+  height: 100%;
+}
+.ui-resizable-se {
+  cursor: se-resize;
+  width: 18px;
+  height: 18px;
+  right: -5px;
+  bottom: -5px;
   background: url(../images/222222_11x11_icon_resize_se.gif) no-repeat 0 0;
 }
-.ui-resizable-sw { 
-  cursor: sw-resize; 
-  width: 9px; 
-  height: 9px; 
-  left: -5px; 
-  bottom: -5px;  
+.ui-resizable-sw {
+  cursor: sw-resize;
+  width: 9px;
+  height: 9px;
+  left: -5px;
+  bottom: -5px;
 }
-.ui-resizable-nw { 
-  cursor: nw-resize; 
-  width: 9px; 
-  height: 9px; 
-  left: -5px; 
-  top: -5px; 
+.ui-resizable-nw {
+  cursor: nw-resize;
+  width: 9px;
+  height: 9px;
+  left: -5px;
+  top: -5px;
 }
-.ui-resizable-ne { 
-  cursor: ne-resize; 
-  width: 9px; 
-  height: 9px; 
-  right: -5px; 
-  top: -5px; 
+.ui-resizable-ne {
+  cursor: ne-resize;
+  width: 9px;
+  height: 9px;
+  right: -5px;
+  top: -5px;
 }
 .ui-dialog-titlebar {
   padding: .5em 1.5em .5em 1em;
@@ -909,7 +910,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 }
 .ui-dialog-content {
   color: #362b36;
-  padding: 1.5em 1.7em;  
+  padding: 1.5em 1.7em;
 }
 .ui-dialog-buttonpane {
   position: absolute;
@@ -1067,10 +1068,10 @@ Generic ThemeRoller Classes
 }
 /*clearfix class*/
 .ui-clearfix:after {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
     visibility: hidden;
 }
 .ui-clearfix {display: inline-block;}
