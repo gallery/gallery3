@@ -66,12 +66,8 @@ class Item_Model extends ORM_MPTT {
     parent::move_to($target, true);
 
     rename($original_path, $this->file_path());
-    if (file_exists($original_resize_path)) {
-      rename($original_resize_path, $this->resize_path());
-    }
-    if (file_exists($original_thumbnail_path)) {
-      rename($original_thumbnail_path, $this->thumbnail_path());
-    }
+    rename($original_resize_path, $this->resize_path());
+    rename($original_thumbnail_path, $this->thumbnail_path());
 
     return $this;
   }
