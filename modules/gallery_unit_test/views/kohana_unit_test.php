@@ -59,6 +59,7 @@ foreach ($results as $class => $methods) {
         }
         echo "  ", $result->getFile(), " (Line ", $result->getLine(), ")\n";
         echo "\n";
+        echo $result->getTraceAsString(), "\n";
       }
     }
   }
