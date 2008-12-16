@@ -468,9 +468,16 @@ class access_Core {
    */
   private static function _create_htaccess_files($album) {
     foreach (array($album->file_path(), dirname($album->resize_path())) as $dir) {
+      $base_url = url::site("file");
       $fp = fopen("$dir/.htaccess", "w+");
-      fwrite($fp, "Order Deny,Allow\n");
-      fwrite($fp, "Deny from All\n");
+      fwrite($fp, "<IfModule mod_rewrite.c>\n");
+      fwrite($fp, "  RewriteEngine On\n");
+      fwrite($fp, "  RewriteRule (.*) $base_url/\$1 [L]\n");
+      fwrite($fp, "</IfModule>\n");
+      fwrite($fp, "<IfModule !mod_rewrite.c>\n");
+      fwrite($fp, "  Order Deny,Allow\n");
+      fwrite($fp, "  Deny from All\n");
+      fwrite($fp, "</IfModule>\n");
       fclose($fp);
     }
   }
