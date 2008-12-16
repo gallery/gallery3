@@ -33,12 +33,6 @@
  */
 class ORM_MPTT_Core extends ORM {
   private $model_name = null;
-  private $parent = null;
-  private $parents = null;
-  private $children = null;
-  private $children_count = null;
-  private $descendants = array();
-  private $descendants_count = array();
 
   function __construct($id=null) {
     parent::__construct($id);
@@ -113,10 +107,7 @@ class ORM_MPTT_Core extends ORM {
    * @return ORM
    */
   function parent() {
-    if (!isset($this->parent)) {
-      $this->parent = model_cache::get($this->model_name, $this->parent_id);
-    }
-    return $this->parent;
+    return model_cache::get($this->model_name, $this->parent_id);
   }
 
   /**
@@ -125,15 +116,12 @@ class ORM_MPTT_Core extends ORM {
    * @return array ORM
    */
   function parents() {
-    if (!isset($this->parents)) {
-      $this->parents = $this
-        ->where("`left` <= {$this->left}")
-        ->where("`right` >= {$this->right}")
-        ->where("id <> {$this->id}")
-        ->orderby("left", "ASC")
-        ->find_all();
-    }
-    return $this->parents;
+    return $this
+      ->where("`left` <= {$this->left}")
+      ->where("`right` >= {$this->right}")
+      ->where("id <> {$this->id}")
+      ->orderby("left", "ASC")
+      ->find_all();
   }
 
   /**
@@ -145,13 +133,9 @@ class ORM_MPTT_Core extends ORM {
    * @return array ORM
    */
   function children($limit=null, $offset=0) {
-    if (!isset($this->children)) {
-      $this->children =
-        $this->where("parent_id", $this->id)
-        ->orderby("id", "ASC")
-        ->find_all($limit, $offset);
-    }
-    return $this->children;
+    return $this->where("parent_id", $this->id)
+      ->orderby("id", "ASC")
+      ->find_all($limit, $offset);
   }
 
   /**
@@ -163,10 +147,7 @@ class ORM_MPTT_Core extends ORM {
    * @return array ORM
    */
   function children_count() {
-    if (!isset($this->children_count)) {
-      $this->children_count = $this->where("parent_id", $this->id)->count_all();
-    }
-    return $this->children_count;
+    return $this->where("parent_id", $this->id)->count_all();
   }
 
   /**
@@ -178,19 +159,16 @@ class ORM_MPTT_Core extends ORM {
    * @return object ORM_Iterator
    */
   function descendants($limit=null, $offset=0, $type=null) {
-    if (!isset($this->descendants[$type][$offset])) {
-      $this->where("left >", $this->left)
-        ->where("right <=", $this->right);
-      if ($type) {
-        $this->where("type", $type);
-      }
-
-      // @todo: make the order column data driven
-      $this->orderby("id", "ASC");
-
-      $this->descendants[$type][$offset] = $this->find_all($limit, $offset);
+    $this->where("left >", $this->left)
+      ->where("right <=", $this->right);
+    if ($type) {
+      $this->where("type", $type);
     }
-    return $this->descendants[$type][$offset];
+
+    // @todo: make the order column data driven
+    $this->orderby("id", "ASC");
+
+    return $this->find_all($limit, $offset);
   }
 
   /**
@@ -200,27 +178,12 @@ class ORM_MPTT_Core extends ORM {
    * @return   integer  child count
    */
   function descendants_count($type=null) {
-    if (!isset($this->descendants_count[$type])) {
-      $this->where("left >", $this->left)
-        ->where("right <=", $this->right);
-      if ($type) {
-        $this->where("type", $type);
-      }
-      $this->descendants_count[$type] = $this->count_all();
+    $this->where("left >", $this->left)
+      ->where("right <=", $this->right);
+    if ($type) {
+      $this->where("type", $type);
     }
-
-    return $this->descendants_count[$type];
-  }
-
-  /**
-   * @see ORM::reload
-   */
-  function reload() {
-    $this->parent = null;
-    $this->parents = null;
-    $this->children = null;
-    $this->children_count = null;
-    return parent::reload();
+    return $this->count_all();
   }
 
   /**
@@ -241,7 +204,6 @@ class ORM_MPTT_Core extends ORM {
 
     $number_to_move = (int)(($this->right - $this->left) / 2 + 1);
     $size_of_hole = $number_to_move * 2;
-    $original_parent = $this->parent;
     $original_left = $this->left;
     $original_right = $this->right;
     $target_right = $target->right;
@@ -269,11 +231,11 @@ class ORM_MPTT_Core extends ORM {
         $right += $size_of_hole;
       }
 
-      $newOffset = $target->right - $left;
+      $new_offset = $target->right - $left;
       $this->db->query(
         "UPDATE `{$this->table_name}`" .
-        "   SET `left` = `left` + $newOffset," .
-        "       `right` = `right` + $newOffset" .
+        "   SET `left` = `left` + $new_offset," .
+        "       `right` = `right` + $new_offset" .
       " WHERE `left` >= $left" .
         "   AND `right` <= $right");
 
