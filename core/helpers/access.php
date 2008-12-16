@@ -124,10 +124,9 @@ class access_Core {
    * Internal method to set a permission
    *
    * @param  Group_Model $group
-   * @param  string  $perm_name
-   * @param  Item_Model $item
-   * @param  boolean $value
-   * @return boolean
+   * @param  string      $perm_name
+   * @param  Item_Model  $item
+   * @param  boolean     $value
    */
   private static function _set($group, $perm_name, $item, $value) {
     if (!$item->loaded) {
@@ -157,7 +156,6 @@ class access_Core {
    * @param  Group_Model $group
    * @param  string  $perm_name
    * @param  Item_Model $item
-   * @return boolean
    */
   public static function allow($group, $perm_name, $item) {
     self::_set($group, $perm_name, $item, self::ALLOW);
@@ -169,7 +167,6 @@ class access_Core {
    * @param  Group_Model $group
    * @param  string  $perm_name
    * @param  Item_Model $item
-   * @return boolean
    */
   public static function deny($group, $perm_name, $item) {
     self::_set($group, $perm_name, $item, self::DENY);
@@ -181,7 +178,6 @@ class access_Core {
    * @param  Group_Model $group
    * @param  string  $perm_name
    * @param  Item_Model $item
-   * @return boolean
    */
   public static function reset($group, $perm_name, $item) {
     if ($item->id == 1) {
