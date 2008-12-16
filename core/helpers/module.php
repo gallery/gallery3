@@ -28,11 +28,11 @@ class module_Core {
   private static $modules = array();
 
   public static function get_version($module_name) {
-    return ORM::factory("module")->where("name", $module_name)->find()->version;
+    return model_cache::get("module", $module_name, "name")->version;
   }
 
   public static function set_version($module_name, $version) {
-    $module = ORM::factory("module")->where("name", $module_name)->find();
+    $module = model_cache::get("module", $module_name, "name");
     if (!$module->loaded) {
       $module->name = $module_name;
     }
@@ -42,7 +42,7 @@ class module_Core {
   }
 
   public static function get($module_name) {
-    return ORM::factory("module")->where("name", $module_name)->find();
+    return model_cache::get("module", $module_name, "name");
   }
 
   public static function delete ($module_name) {
@@ -140,7 +140,7 @@ class module_Core {
   }
 
   public function get_var($module_name, $name, $default_value=null) {
-    $module = ORM::factory("module")->where("name", $module_name)->find();
+    $module = model_cache::get("module", $module_name, "name");
     $var = ORM::factory("var")
       ->where("module_id", $module->id)
       ->where("name", $name)
@@ -149,7 +149,7 @@ class module_Core {
   }
 
   public function set_var($module_name, $name, $value) {
-    $module = ORM::factory("module")->where("name", $module_name)->find();
+    $module = model_cache::get("module", $module_name, "name");
     $var = ORM::factory("var")
       ->where("module_id", $module->id)
       ->where("name", $name)
