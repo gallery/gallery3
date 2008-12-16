@@ -19,7 +19,6 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-  protected $has_one = array("owner" => "user");
 
   var $rules = array();
 
@@ -224,7 +223,9 @@ class Item_Model extends ORM_MPTT {
   public function __get($column) {
     if (substr($column, -5) == "_edit") {
       $real_column = substr($column, 0, strlen($column) - 5);
-      if (access::can("edit", $this)) {
+      $editable = $this->type == "album" ?
+        access::can("edit", $this) : access::can("edit", $this->parent());
+      if ($editable) {
         return "<span class=\"gInPlaceEdit gEditField-{$this->id}-{$real_column}\">" .
           "{$this->$real_column}</span>";
       } else {
@@ -234,7 +235,7 @@ class Item_Model extends ORM_MPTT {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
       try {
-        return parent::__get($column);
+        return model_cache::get("user", $this->owner_id);
       } catch (Exception $e) {
         return null;
       }

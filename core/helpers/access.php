@@ -79,15 +79,8 @@ class access_Core {
    * @return boolean
    */
   public static function group_can($group, $perm_name, $item) {
-    if ($perm_name == "view") {
-      $resource = $item;
-    } else {
-      $resource = ORM::factory("access_cache")->where("item_id", $item->id)->find();
-      if (!$resource) {
-        throw new Exception("@todo MISSING_ACCESS for $item->id");
-      }
-    }
-
+    $resource = $perm_name == "view" ?
+      $item : model_cache::get("access_cache", $item->id, "item_id");
     return $resource->__get("{$perm_name}_{$group->id}") === self::ALLOW;
   }
 
@@ -103,15 +96,8 @@ class access_Core {
       return false;
     }
 
-    if ($perm_name == "view") {
-      $resource = $item;
-    } else {
-      $resource = ORM::factory("access_cache")->where("item_id", $item->id)->find();
-      if (!$resource) {
-        throw new Exception("@todo MISSING_ACCESS for $item->id");
-      }
-    }
-
+    $resource = $perm_name == "view" ?
+      $item : model_cache::get("access_cache", $item->id, "item_id");
     foreach (user::active()->groups as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
@@ -135,11 +121,7 @@ class access_Core {
     if ($album->type != "album") {
       throw new Exception("@todo INVALID_ALBUM_TYPE not an album");
     }
-    $access = ORM::factory("access_intent")->where("item_id", $album->id)->find();
-    if (!$access->loaded) {
-      throw new Exception("@todo MISSING_ACCESS for $album->id");
-    }
-
+    $access = model_cache::get("access_intent", $album->id, "item_id");
     $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
 
@@ -268,17 +250,19 @@ class access_Core {
     $access_intent->save();
 
     // Create a new access cache entry and copy the parents values.
-    $parent_access_cache =
-      ORM::factory("access_cache")->where("item_id", $item->parent()->id)->find();
     $access_cache = ORM::factory("access_cache");
     $access_cache->item_id = $item->id;
-    foreach (self::_get_all_groups() as $group) {
-      foreach (ORM::factory("permission")->find_all() as $perm) {
-        $field = "{$perm->name}_{$group->id}";
-        if ($perm->name == "view") {
-          $item->$field = $item->parent()->$field;
-        } else {
-          $access_cache->$field = $parent_access_cache->$field;
+    if ($item->id != 1) {
+      $parent_access_cache =
+        ORM::factory("access_cache")->where("item_id", $item->parent()->id)->find();
+      foreach (self::_get_all_groups() as $group) {
+        foreach (ORM::factory("permission")->find_all() as $perm) {
+          $field = "{$perm->name}_{$group->id}";
+          if ($perm->name == "view") {
+            $item->$field = $item->parent()->$field;
+          } else {
+            $access_cache->$field = $parent_access_cache->$field;
+          }
         }
       }
     }

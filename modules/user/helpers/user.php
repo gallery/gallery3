@@ -73,7 +73,7 @@ class user_Core {
    * @return User_Model
    */
   static function guest() {
-    return ORM::factory("user", 1);
+    return model_cache::get("user", 1);
   }
 
   /**

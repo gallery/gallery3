@@ -17,21 +17,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class user_block_Core {
-  public static function head($theme) {
-    $url = url::file("modules/user/js/user.js");
-    $script[] = "<script src=\"$url\" type=\"text/javascript\"></script>";
-    $user = user::active();
-    if (!user::active()->guest) {
-      $url = url::file("lib/jquery.jeditable.js");
-      $script[] = "<script src=\"$url\" type=\"text/javascript\"></script>";
-    }
-    return implode("\n", $script);
-  }
+class model_cache_Core {
+  private static $cache;
 
-  public static function header_top($theme) {
-    $view = new View("login.html");
-    $view->user = user::active();
-    return $view->render();
+  function get($model_name,  $id, $field_name="id") {
+    if (TEST_MODE || empty(self::$cache->$model_name->$field_name->$id)) {
+      $model = ORM::factory($model_name)->where($field_name, $id)->find();
+      if (!$model->loaded) {
+        throw new Exception("@todo MISSING_MODEL $model_name:$id");
+      }
+      self::$cache->$model_name->$field_name->$id = $model;
+    }
+
+
+    return self::$cache->$model_name->$field_name->$id;
   }
 }

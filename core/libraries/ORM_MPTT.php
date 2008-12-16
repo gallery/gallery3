@@ -114,8 +114,7 @@ class ORM_MPTT_Core extends ORM {
    */
   function parent() {
     if (!isset($this->parent)) {
-      $this->parent =
-        ORM::factory($this->model_name)->where("id", $this->parent_id)->find();
+      $this->parent = model_cache::get($this->model_name, $this->parent_id);
     }
     return $this->parent;
   }
