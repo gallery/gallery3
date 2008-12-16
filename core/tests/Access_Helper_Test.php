@@ -275,9 +275,18 @@ class Access_Helper_Test extends Unit_Test_Case {
     $album = album::create($root->id, rand(), "test album");
 
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
+
     access::deny(group::everybody(), "view", $album);
     $this->assert_true(file_exists($album->file_path() . "/.htaccess"));
+
     access::allow(group::everybody(), "view", $album);
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
+
+    access::deny(group::everybody(), "view", $album);
+    $this->assert_true(file_exists($album->file_path() . "/.htaccess"));
+
+    access::reset(group::everybody(), "view", $album);
+    $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
   }
+
 }

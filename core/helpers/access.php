@@ -146,10 +146,10 @@ class access_Core {
     if ($perm_name =="view") {
       self::_update_access_view_cache($group, $album);
       if ($group->id == 1) {
-        if ($value) {
-          self::_delete_htaccess_files($album);
-        } else {
+        if ($value === self::DENY) {
           self::_create_htaccess_files($album);
+        } else {
+          self::_delete_htaccess_files($album);
         }
       }
     } else {
