@@ -128,25 +128,32 @@ class access_Core {
    * @param  Item_Model  $item
    * @param  boolean     $value
    */
-  private static function _set($group, $perm_name, $item, $value) {
-    if (!$item->loaded) {
-      throw new Exception("@todo INVALID_ITEM $item->id");
+  private static function _set($group, $perm_name, $album, $value) {
+    if (!$album->loaded) {
+      throw new Exception("@todo INVALID_ALBUM $album->id");
     }
-    if ($item->type != "album") {
-      throw new Exception("@todo INVALID_ITEM_TYPE not an album");
+    if ($album->type != "album") {
+      throw new Exception("@todo INVALID_ALBUM_TYPE not an album");
     }
-    $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
+    $access = ORM::factory("access_intent")->where("item_id", $album->id)->find();
     if (!$access->loaded) {
-      throw new Exception("@todo MISSING_ACCESS for $item->id");
+      throw new Exception("@todo MISSING_ACCESS for $album->id");
     }
 
     $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
 
     if ($perm_name =="view") {
-      self::_update_access_view_cache($group, $item);
+      self::_update_access_view_cache($group, $album);
+      if ($group->id == 1) {
+        if ($value) {
+          self::_delete_htaccess_files($album);
+        } else {
+          self::_create_htaccess_files($album);
+        }
+      }
     } else {
-      self::_update_access_non_view_cache($group, $perm_name, $item);
+      self::_update_access_non_view_cache($group, $perm_name, $album);
     }
   }
 
@@ -344,7 +351,7 @@ class access_Core {
    * @param  Item_Model $item
    * @return void
    */
-  public static function _update_access_view_cache($group, $item) {
+  private static function _update_access_view_cache($group, $item) {
     $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
 
     $db = Database::instance();
@@ -427,7 +434,7 @@ class access_Core {
    * @param  Item_Model $item
    * @return void
    */
-  public static function _update_access_non_view_cache($group, $perm_name, $item) {
+  private static function _update_access_non_view_cache($group, $perm_name, $item) {
     $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
 
     $db = Database::instance();
@@ -470,5 +477,25 @@ class access_Core {
         "  WHERE `left` >= $row->left " .
         "  AND `right` <= $row->right)");
     }
+  }
+
+  /**
+   * Create .htaccess files to prevent direct access to the given album and its hierarchy.
+   */
+  private static function _create_htaccess_files($album) {
+    foreach (array($album->file_path(), dirname($album->resize_path())) as $dir) {
+      $fp = fopen("$dir/.htaccess", "w+");
+      fwrite($fp, "Order Deny,Allow\n");
+      fwrite($fp, "Deny from All\n");
+      fclose($fp);
+    }
+  }
+
+  /**
+   * Delete the .htaccess files that are preventing access to the given album and its hierarchy.
+   */
+  private static function _delete_htaccess_files($album) {
+    @unlink($album->file_path() . "/.htaccess");
+    @unlink(dirname($album->resize_path()) . "/.htaccess");
   }
 }
