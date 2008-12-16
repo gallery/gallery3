@@ -1,5 +1,5 @@
 <script>
-$("#gDialog").ready(watermark_dialog_initialize());
+$("#gDialog").ready(watermark_dialog_initialize);
 </script>
 <div id="gWatermarkAdmin">
   <div id="gTarget" class="droppable">
