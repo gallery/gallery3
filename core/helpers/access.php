@@ -468,7 +468,7 @@ class access_Core {
    */
   private static function _create_htaccess_files($album) {
     foreach (array($album->file_path(), dirname($album->resize_path())) as $dir) {
-      $base_url = url::site("file");
+      $base_url = url::site("file_proxy");
       $fp = fopen("$dir/.htaccess", "w+");
       fwrite($fp, "<IfModule mod_rewrite.c>\n");
       fwrite($fp, "  RewriteEngine On\n");
