@@ -113,21 +113,22 @@ class File_Structure_Test extends Unit_Test_Case {
 
 class GalleryCodeFilterIterator extends FilterIterator {
   public function accept() {
-    // Skip anything that we didn't write
+    // Skip anything that we didn"t write
     $path_name = $this->getInnerIterator()->getPathName();
-    $path_name = strtr($path_name, DIRECTORY_SEPARATOR, '/');
+    $path_name = strtr($path_name, DIRECTORY_SEPARATOR, "/");
     return !(
       strpos($path_name, ".svn") ||
-      substr($path_name, -1, 1) == "~" ||
-      strpos($path_name, DOCROOT . 'test') !== false ||
-      strpos($path_name, DOCROOT . 'var') !== false ||
-      strpos($path_name, MODPATH . 'forge') !== false ||
-      strpos($path_name, MODPATH . 'kodoc') !== false ||
-      strpos($path_name, MODPATH . 'mptt') !== false ||
-      strpos($path_name, MODPATH . 'unit_test') !== false ||
-      strpos($path_name, MODPATH . 'gallery_unit_test/views/kohana_error_page.php') !== false ||
-      strpos($path_name, MODPATH . 'gallery_unit_test/views/kohana_unit_test.php') !== false ||
-      strpos($path_name, MODPATH . 'user/libraries/PasswordHash') !== false ||
-      strpos($path_name, SYSPATH) !== false);
+      strpos($path_name, "core/views/kohana_profiler.php") !== false ||
+      strpos($path_name, DOCROOT . "test") !== false ||
+      strpos($path_name, DOCROOT . "var") !== false ||
+      strpos($path_name, MODPATH . "forge") !== false ||
+      strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_error_page.php") !== false ||
+      strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_unit_test.php") !== false ||
+      strpos($path_name, MODPATH . "kodoc") !== false ||
+      strpos($path_name, MODPATH . "mptt") !== false ||
+      strpos($path_name, MODPATH . "unit_test") !== false ||
+      strpos($path_name, MODPATH . "user/libraries/PasswordHash") !== false ||
+      strpos($path_name, SYSPATH) !== false ||
+      substr($path_name, -1, 1) == "~");
   }
 }
