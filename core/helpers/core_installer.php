@@ -82,6 +82,13 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `sessions` (
+		  `session_id` varchar(127) NOT NULL,
+		  `last_activity` int(10) UNSIGNED NOT NULL,
+		  `data` text NOT NULL,
+		  PRIMARY KEY (`session_id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $db->query("CREATE TABLE `vars` (
                    `id` int(9) NOT NULL auto_increment,
                    `module_id` int(9),

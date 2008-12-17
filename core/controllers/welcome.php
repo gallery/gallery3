@@ -21,7 +21,11 @@ class Welcome_Controller extends Template_Controller {
   public $template = "welcome.html";
 
   function index() {
-    Session::instance();
+    try {
+      $session = Session::instance();
+    } catch (Exception $e) {
+    }
+
     $this->template->syscheck = new View("welcome_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
     $this->template->syscheck->modules = array();
@@ -52,7 +56,7 @@ class Welcome_Controller extends Template_Controller {
 
     $this->_create_directories();
 
-    if (Session::instance()->get("profiler", false)) {
+    if (!empty($session) && $session->get("profiler", false)) {
       $profiler = new Profiler();
       $profiler->render();
     }

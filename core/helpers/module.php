@@ -116,9 +116,11 @@ class module_Core {
     // Do The Right Thing.
     //
     // @todo get rid of this extra error checking when we have an installer.
-    set_error_handler(array("module", "_dummy_error_handler"));
-    $modules = ORM::factory("module")->find_all();
-    restore_error_handler();
+    try {
+      $modules = ORM::factory("module")->find_all();
+    } catch (Exception $e) {
+      return;
+    }
 
     // Reload module list from the config file since we'll do a refresh after calling install()
     $core = Kohana::config_load('core');
@@ -163,13 +165,5 @@ class module_Core {
     }
     $var->value = $value;
     $var->save();
-  }
-
-  /**
-   * Dummy error handler used in module::load_modules.
-   *
-   * @todo remove this when we have an installer.
-   */
-  public static function _dummy_error_handler() {
   }
 }

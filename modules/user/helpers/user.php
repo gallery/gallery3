@@ -60,7 +60,17 @@ class user_Core {
    * Make sure that we have a session and group_ids cached in the session.
    */
   public static function load_user() {
-    $session = Session::instance();
+    // This is one of the first session operations that we'll do, so it may fail if there's no
+    // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
+    // Do The Right Thing.
+    //
+    // @todo get rid of this extra error checking when we have an installer.
+    try {
+      $session = Session::instance();
+    } catch (Exception $e) {
+      return;
+    }
+
     if (!($user = $session->get("user"))) {
       $session->set("user", $user = user::guest());
     }
