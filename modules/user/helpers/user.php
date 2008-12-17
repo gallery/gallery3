@@ -119,7 +119,9 @@ class user_Core {
    * @return User_Model
    */
   public static function set_active($user) {
-    Session::instance()->set("user", $user);
+    $session = Session::instance();
+    $session->set("user", $user);
+    $session->delete("group_ids");
     self::load_user();
   }
 
