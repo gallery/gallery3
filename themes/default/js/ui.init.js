@@ -42,6 +42,37 @@ $("document").ready(function() {
     $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
   };
   
+  // Declare which forms are short forms
+  $("#gHeader #gSearchForm").addClass("gShortForm");
+  $("#gSidebar #gAddTagForm").addClass("gShortForm");
+  
+  // Get the short forms
+  var shortForms = $(".gShortForm");
+  
+  // Set up short form behavior
+  for (var i=0; i < shortForms.length; i++) {
+    // Set variables
+    var shortFormID = "#" + $(shortForms[i]).attr("id");
+    var shortInputID = "#" + $(shortFormID + " input:first").attr("id");
+    var shortLabelValue = $(shortFormID + " label:first").html();
+    
+    // Set default input value equal to label text
+    $(shortInputID).val(shortLabelValue);
+    
+    // Attach event listeners to inputs
+    $(shortInputID).bind("focus blur", function(e){
+      var eLabelVal = $(this).siblings("label").html();
+      var eInputVal = $(this).val();
+      // Empty input value if it equals it's label
+      if (eLabelVal == eInputVal) {
+        $(this).val("");
+      // Reset the input value if it's empty
+      } else if ($(this).val() == "") {
+        $(this).val(eLabelVal);
+      }
+    });
+  };
+  
 });
 
 /**

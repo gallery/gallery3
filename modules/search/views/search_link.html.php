@@ -2,11 +2,11 @@
 <form id="gSearchForm">
   <ul>
     <li>
-      <label for="search"><?= _("Search") ?></label>
-      <input type="text" name="search" value="<?= _("Search Gallery ...") ?>"/>
+      <label for="gSearch"><?= _("Search the gallery") ?></label>
+      <input type="text" name="search" id="gSearch"/>
     </li>
     <li>
-      <input type="submit" value="<?= _("search") ?>" />
+      <input type="submit" value="<?= _("Go") ?>" />
     </li>
   </ul>
 </form>

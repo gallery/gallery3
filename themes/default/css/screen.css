@@ -391,29 +391,28 @@ li.gError select {
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
 
-#gHeader #gSearchForm li,
-#gSidebar #gAddTagForm li {
+.gShortForm li {
   float: left;
   padding: .4em .5em;
 }
 
-#gHeader #gSearchForm input[type="text"],
-#gSidebar #gAddTagForm input[type="text"] {
+.gShortForm legend,
+.gShortForm label {
+  display: none;
+}
+
+
+.gShortForm fieldset {
+  border: none;
+}
+
+.gShortForm input[type="text"] {
   width: 10em;
 }
 
 #gHeader #gSearchForm {
   float: right;
   margin-right: 20px;
-}
-
-#gHeader #gSearchForm label,
-#gSidebar #gAddTagForm legend {
-  display: none;
-}
-
-#gSidebar #gAddTagForm fieldset {
-  border: none;
 }
 
 /* Credits ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
