@@ -264,6 +264,8 @@ class Database_Mysql_Driver extends Database_Driver {
 	{
 		if (!defined('TEST_MODE')) {
 			static $tables;
+		} else {
+			$tables = array();
 		}
 
 		if (empty($tables) AND $query = $db->query('SHOW TABLES FROM '.$this->escape_table($this->db_config['connection']['database'])))
@@ -286,6 +288,8 @@ class Database_Mysql_Driver extends Database_Driver {
 	{
 		if (!defined('TEST_MODE')) {
 			static $tables;
+		} else {
+			$tables = array();
 		}
 
 		if (empty($tables[$table]))
