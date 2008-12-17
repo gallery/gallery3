@@ -1,5 +1,4 @@
-<?php
-
+<?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
  * [Object Relational Mapping][ref-orm] (ORM) is a method of abstracting database
  * access to standard PHP calls. All table rows are represented as model objects,
@@ -438,7 +437,15 @@ class ORM_Core {
 	 */
 	public function as_array()
 	{
-		return $this->object;
+		$object = array();
+
+		foreach ($this->object as $key => $val)
+		{
+			// Reconstruct the array (calls __get)
+			$object[$key] = $this->$key;
+		}
+
+		return $object;
 	}
 	
 	/**
@@ -450,9 +457,11 @@ class ORM_Core {
 	 */
 	public function with($object)
 	{
-		// Don't join anything already joined
 		if (isset($this->with_applied[$object]))
+		{
+			// Don't join anything already joined
 			return $this;
+		}
 
 		$prefix = $table = $object;
 
@@ -815,10 +824,15 @@ class ORM_Core {
 			// Delete only given ids
 			$this->db->in($this->primary_key, $ids);
 		}
-		else
+		elseif (is_null($ids))
 		{
 			// Delete all records
 			$this->db->where(TRUE);
+		}
+		else
+		{
+			// Do nothing - safeguard
+			return $this;
 		}
 
 		// Delete all objects
@@ -1167,6 +1181,29 @@ class ORM_Core {
 
 		return $table;
 	}
+	
+	/**
+	 * Outputs ORM iterator joined with given model
+	 * @param $related_model ORM Model the model related to this ORM
+	 * @return ORM iterator
+	 * @author credits to Josh Domagala
+	 */
+	public function join_model($related_model)
+	{
+		if( !in_array( $related_model->table_name, $this->has_and_belongs_to_many ) )
+		{
+			return FALSE;
+		}
+		
+		// Get the join table name
+		$join_table = $this->join_table($related_model->table_name);
+
+		// Return ORM iterator of model
+		return $this
+			->join($join_table, $this->foreign_key(NULL, $join_table), $this->foreign_key(TRUE))
+			->where($related_model->foreign_key(NULL, $join_table), $related_model->id)
+			->find_all();
+	}
 
 	/**
 	 * Returns an ORM model for the given object name;
@@ -1211,7 +1248,7 @@ class ORM_Core {
 			$this->object = $this->changed = $this->related = array();
 
 			// Set the loaded and saved object status based on the primary key
-			$this->loaded = $this->saved = ($values[$this->primary_key] > 0);
+			$this->loaded = $this->saved = (bool) $values[$this->primary_key];
 		}
 
 		// Related objects

@@ -621,6 +621,12 @@ class Database_Core {
 
 			if ($val != '')
 			{
+				// Add the table prefix if we are using table.column names
+				if(strpos($val, '.'))
+				{
+					$val = $this->config['table_prefix'].$val;
+				}
+
 				$this->groupby[] = $this->driver->escape_column($val);
 			}
 		}
@@ -674,9 +680,16 @@ class Database_Core {
 		{
 			$direction = strtoupper(trim($direction));
 
+			// Add a direction if the provided one isn't valid
 			if ( ! in_array($direction, array('ASC', 'DESC', 'RAND()', 'RANDOM()', 'NULL')))
 			{
 				$direction = 'ASC';
+			}
+
+			// Add the table prefix if a table.column was passed
+			if (strpos($column, '.'))
+			{
+				$column = $this->config['table_prefix'].$column;
 			}
 
 			$this->orderby[] = $this->driver->escape_column($column).' '.$direction;

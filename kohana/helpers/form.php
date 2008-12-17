@@ -241,6 +241,7 @@ class form_Core {
 	 */
 	public static function dropdown($data, $options = NULL, $selected = NULL, $extra = '')
 	{
+
 		if ( ! is_array($data))
 		{
 			$data = array('name' => $data);
@@ -265,6 +266,9 @@ class form_Core {
 		{
 			// Key should always be a string
 			$key = (string) $key;
+
+			// Selected must always be a string
+			$selected = (string) $selected;
 
 			if (is_array($val))
 			{

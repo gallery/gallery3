@@ -58,7 +58,9 @@ class Database_Mssql_Driver extends Database_Driver
 
 		// Build the connection info
 		$host = isset($host) ? $host : $socket;
-		$port = (isset($port) AND is_string($port)) ? ':'.$port : '';
+
+		// Windows uses a comma instead of a colon
+		$port = (isset($port) AND is_string($port)) ? (KOHANA_IS_WIN ? ',' : ':').$port : '';
 
 		// Make the connection and select the database
 		if (($this->link = $connect($host.$port, $user, $pass, TRUE)) AND mssql_select_db($database, $this->link))

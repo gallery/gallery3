@@ -307,7 +307,7 @@ class html_Core {
 
 			$length = strlen($suffix);
 
-			if (substr_compare($href, $suffix, -$length, $length, FALSE) !== 0)
+			if ( $length > 0 AND substr_compare($href, $suffix, -$length, $length, FALSE) !== 0)
 			{
 				// Add the defined suffix
 				$href .= $suffix;

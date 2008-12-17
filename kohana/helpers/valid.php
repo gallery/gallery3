@@ -87,10 +87,12 @@ class valid_Core {
 	 * @param   boolean  allow IPv6 addresses
 	 * @return  boolean
 	 */
-	public static function ip($ip, $ipv6 = FALSE)
+	public static function ip($ip, $ipv6 = FALSE, $allow_private = FALSE)
 	{
-		// Do not allow private and reserved range IPs
+		// By default do not allow private and reserved range IPs
 		$flags = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+		if ($allow_private === TRUE)
+			$flags =  FILTER_FLAG_NO_RES_RANGE;
 
 		if ($ipv6 === TRUE)
 			return (bool) filter_var($ip, FILTER_VALIDATE_IP, $flags);
@@ -264,12 +266,17 @@ class valid_Core {
 	/**
 	 * Checks whether a string is a valid number (negative and decimal numbers allowed).
 	 *
+	 * @see Uses locale conversion to allow decimal point to be locale specific.
+	 * @see http://www.php.net/manual/en/function.localeconv.php
+	 * 
 	 * @param   string   input string
 	 * @return  boolean
 	 */
 	public static function numeric($str)
 	{
-		return (is_numeric($str) AND preg_match('/^[-0-9.]++$/D', (string) $str));
+		// Use localeconv to set the decimal_point value: Usually a comma or period.
+		$locale = localeconv();
+		return (preg_match('/^[-0-9'.$locale['decimal_point'].']++$/D', (string) $str));
 	}
 
 	/**
