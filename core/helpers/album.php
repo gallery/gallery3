@@ -54,10 +54,8 @@ class album_Core {
 
     $album = $album->add_to_parent($parent);
     mkdir($album->file_path());
-    $thumbnail_dir = dirname($album->thumbnail_path());
-    if (!file_exists($thumbnail_dir)) {
-      mkdir($thumbnail_dir);
-    }
+    mkdir(dirname($album->thumb_path()));
+    mkdir(dirname($album->resize_path()));
 
     module::event("album_created", $album);
 

@@ -56,8 +56,8 @@ class core_installer {
                    `resize_height` int(9) default NULL,
                    `resize_width` int(9) default NULL,
                    `right` int(9) NOT NULL,
-                   `thumbnail_height` int(9) default NULL,
-                   `thumbnail_width` int(9) default NULL,
+                   `thumb_height` int(9) default NULL,
+                   `thumb_width` int(9) default NULL,
                    `title` char(255) default NULL,
                    `type` char(32) NOT NULL,
                    `width` int(9) default NULL,
@@ -91,7 +91,7 @@ class core_installer {
                    UNIQUE KEY(`module_id`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      foreach (array("albums", "resizes") as $dir) {
+      foreach (array("albums", "resizes", "thumbs", "uploads") as $dir) {
         @mkdir(VARPATH . $dir);
       }
 
@@ -106,8 +106,8 @@ class core_installer {
       $root->right = 2;
       $root->parent_id = 0;
       $root->level = 1;
-      $root->set_thumbnail(DOCROOT . "core/tests/test.jpg", 200, 200)
-        ->save();
+      $root->set_thumb(DOCROOT . "core/tests/test.jpg", 200, 200);
+      $root->save();
       access::add_item($root);
 
       // Save this before setting vars so that module id is set
@@ -116,9 +116,8 @@ class core_installer {
       module::set_var("core", "active_theme", "default");
       module::set_var("core", "active_admin_theme", "admin_default");
       module::set_var("core", "page_size", 9);
-      module::set_var("core", "thumbnail_size", 200);
+      module::set_var("core", "thumb_size", 200);
       module::set_var("core", "resize_size", 640);
-
     }
   }
 
@@ -129,11 +128,10 @@ class core_installer {
     $db->query("DROP TABLE IF EXISTS `permissions`;");
     $db->query("DROP TABLE IF EXISTS `items`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
-    // @todo remove before release
-    $db->query("DROP TABLE IF EXISTS `parameters`;");
-    // @todo-end
     $db->query("DROP TABLE IF EXISTS `vars`;");
     system("/bin/rm -rf " . VARPATH . "albums");
     system("/bin/rm -rf " . VARPATH . "resizes");
+    system("/bin/rm -rf " . VARPATH . "thumbs");
+    system("/bin/rm -rf " . VARPATH . "uploads");
   }
 }

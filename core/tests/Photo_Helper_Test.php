@@ -27,12 +27,12 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $photo = photo::create(1, $filename, "$rand.jpg", $rand, $rand);
 
     $this->assert_equal(VARPATH . "albums/$rand.jpg", $photo->file_path());
-    $this->assert_equal(VARPATH . "resizes/{$rand}.thumb.jpg", $photo->thumbnail_path());
-    $this->assert_equal(VARPATH . "resizes/{$rand}.resize.jpg", $photo->resize_path());
+    $this->assert_equal(VARPATH . "thumbs/{$rand}.jpg", $photo->thumb_path());
+    $this->assert_equal(VARPATH . "resizes/{$rand}.jpg", $photo->resize_path());
 
     $this->assert_true(is_file($photo->file_path()), "missing: {$photo->file_path()}");
     $this->assert_true(is_file($photo->resize_path()), "missing: {$photo->resize_path()}");
-    $this->assert_true(is_file($photo->thumbnail_path()), "missing: {$photo->thumbnail_path()}");
+    $this->assert_true(is_file($photo->thumb_path()), "missing: {$photo->thumb_path()}");
 
     $this->assert_equal(1, $photo->parent_id);  // MPTT tests will cover other hierarchy checks
     $this->assert_equal("$rand.jpg", $photo->name);
@@ -62,10 +62,10 @@ class Photo_Helper_Test extends Unit_Test_Case {
     }
   }
 
-  public function thumbnail_url_test() {
+  public function thumb_url_test() {
     $rand = rand();
     $photo = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
-    $this->assert_equal("http://./var/resizes/{$rand}.thumb.jpg", $photo->thumbnail_url());
+    $this->assert_equal("http://./var/thumbs/{$rand}.jpg", $photo->thumb_url());
   }
 
   public function resize_url_test() {
@@ -73,6 +73,6 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $album = album::create(1, $rand, $rand, $rand);
     $photo = photo::create($album->id, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
 
-    $this->assert_equal("http://./var/resizes/{$rand}/{$rand}.resize.jpg", $photo->resize_url());
+    $this->assert_equal("http://./var/resizes/{$rand}/{$rand}.jpg", $photo->resize_url());
   }
 }

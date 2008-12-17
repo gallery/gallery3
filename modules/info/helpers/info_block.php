@@ -29,7 +29,7 @@ class info_block_Core {
     }
   }
 
-  public static function thumbnail_info($theme, $item) {
+  public static function thumb_info($theme, $item) {
     $results = "<li>Views: 321</li>";
     if ($item->owner) {
       $results .= "<li>";

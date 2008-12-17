@@ -12,17 +12,17 @@
   <? $album_class = "gAlbum "; ?>
   <? endif ?>
   <li class="gItem <?= $album_class ?>">
-    <?= $theme->thumbnail_top($child) ?>
+    <?= $theme->thumb_top($child) ?>
     <a href="<?= url::site("{$child->type}s/{$child->id}") ?>">
       <img id="gPhotoID-<?= $child->id ?>" class="gThumbnail"
-           alt="photo" src="<?= $child->thumbnail_url() ?>"
-           width="<?= $child->thumbnail_width ?>"
-           height="<?= $child->thumbnail_height ?>" />
+           alt="photo" src="<?= $child->thumb_url() ?>"
+           width="<?= $child->thumb_width ?>"
+           height="<?= $child->thumb_height ?>" />
     </a>
     <h2><?= $child->title_edit ?></h2>
-    <?= $theme->thumbnail_bottom($child) ?>
+    <?= $theme->thumb_bottom($child) ?>
     <ul class="gMetadata">
-      <?= $theme->thumbnail_info($child) ?>
+      <?= $theme->thumb_info($child) ?>
     </ul>
   </li>
   <? endforeach ?>

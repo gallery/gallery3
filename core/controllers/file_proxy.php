@@ -50,20 +50,9 @@ class File_Proxy_Controller extends Controller {
     // We only handle var/resizes and var/albums
     $paths = explode("/", $file);
     $type = array_shift($paths);
-    if ($type != "resizes" && $type != "albums") {
+    if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
       kohana::show_404();
     }
-
-    // Pull the last item off of the list, explode it out to get the "resize" or "thumb" tag, then
-    // put it back together without that tag.  This will give us the matching item name.
-    $exploded_last = explode(".", array_pop($paths));
-    $extension = array_pop($exploded_last);
-    $image_type = array_pop($exploded_last);
-    if ($image_type != "resize" && $image_type != "thumb") {
-      kohana::show_404();
-    }
-    array_push($exploded_last, $extension);
-    array_push($paths, implode(".", $exploded_last));
 
     // Walk down from the root until we find the item that matches this path
     $item = ORM::factory("item", 1);
@@ -77,11 +66,8 @@ class File_Proxy_Controller extends Controller {
         kohana::show_404();
       }
 
-      // Try to detect when we're asking for an album thumbnail or resize.  In that case, the
-      // second to last element will be an album and the last element will be .thumb.jpg or
-      // .resize.jpg except we'll have stripped the .thumb and .resize parts so it'll just be .jpg
-      if ($item->type == "album" && count($paths) == 1 &&
-          $paths[0][0] == '.' && strlen($paths[0]) == 4) {
+      // If the last element is _album.jpg then we're done.
+      if (count($paths) == 1 && $paths[0] == "_album.jpg") {
         break;
       }
     }
@@ -91,7 +77,17 @@ class File_Proxy_Controller extends Controller {
       kohana::show_404();
     }
 
-    $path = $image_type == "thumb" ? $item->thumbnail_path() : $item->resize_path();
+    if ($type == "albums") {
+      if ($item->is_album()) {
+        kohana::show_404();
+      }
+      $path = $item->file_path();
+    } else if ($type == "resizes") {
+      $path = $item->resize_path();
+    } else {
+      $path = $item->thumb_path();
+    }
+
     if (!file_exists($path)) {
       kohana::show_404();
     }

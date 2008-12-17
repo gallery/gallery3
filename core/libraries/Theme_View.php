@@ -105,9 +105,9 @@ class Theme_View_Core extends View {
     case "sidebar_top":
     case "tag_bottom":
     case "tag_top":
-    case "thumbnail_bottom":
-    case "thumbnail_info":
-    case "thumbnail_top":
+    case "thumb_bottom":
+    case "thumb_info":
+    case "thumb_top":
     case "photo_bottom":
       // @todo: restrict access to this option
       $debug = Session::instance()->get("debug", false);

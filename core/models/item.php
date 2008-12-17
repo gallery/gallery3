@@ -19,6 +19,7 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
+  private $relative_path = null;
 
   var $rules = array();
 
@@ -61,13 +62,18 @@ class Item_Model extends ORM_MPTT {
   function move_to($target) {
     $original_path = $this->file_path();
     $original_resize_path = $this->resize_path();
-    $original_thumbnail_path = $this->thumbnail_path();
+    $original_thumb_path = $this->thumb_path();
 
     parent::move_to($target, true);
 
     rename($original_path, $this->file_path());
-    rename($original_resize_path, $this->resize_path());
-    rename($original_thumbnail_path, $this->thumbnail_path());
+    if ($this->is_album()) {
+      rename(dirname($original_resize_path), dirname($this->resize_path()));
+      rename(dirname($original_thumb_path), dirname($this->thumb_path()));
+    } else {
+      rename($original_resize_path, $this->resize_path());
+      rename($original_thumb_path, $this->thumb_path());
+    }
 
     return $this;
   }
@@ -77,11 +83,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/album2/photo.jpg
    */
   public function file_path() {
-    if ($this->is_album()) {
-      return $this->_relative_path(VARPATH . "albums", "", "");
-    } else {
-      return $this->_relative_path(VARPATH . "albums", "", "");
-    }
+    return VARPATH . "albums/" . $this->_relative_path();
   }
 
   /**
@@ -89,33 +91,29 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
    */
   public function file_url($full_uri=false) {
-    $func = $full_uri ? "abs_file" : "file";
-    return $this->_relative_path(url::$func("") . "var/albums", "", "");
+    return $full_uri ?
+      url::abs_file("var/albums/" . $this->_relative_path()) :
+      url::file("var/albums/" . $this->_relative_path());
   }
 
   /**
    * album: /var/resizes/album1/.thumb.jpg
    * photo: /var/albums/album1/photo.thumb.jpg
    */
-  public function thumbnail_path() {
-    if ($this->is_album()) {
-      return $this->_relative_path(VARPATH . "resizes", "", "/.thumb.jpg");
-    } else {
-      return $this->_relative_path(VARPATH . "resizes", ".thumb", "");
-    }
+  public function thumb_path() {
+    return VARPATH . "thumbs/" . $this->_relative_path() .
+      ($this->type == "album" ? "/_album.jpg" : "");
   }
 
   /**
    * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
    * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
    */
-  public function thumbnail_url($full_uri=true) {
-    $func = $full_uri ? "abs_file" : "file";
-    if ($this->is_album()) {
-      return $this->_relative_path(url::$func("") . "var/resizes", "", "/.thumb.jpg");
-    } else {
-      return $this->_relative_path(url::$func("") . "var/resizes", ".thumb", "");
-    }
+  public function thumb_url($full_uri=true) {
+    return ($full_uri ?
+            url::abs_file("var/thumbs/" . $this->_relative_path()) :
+            url::file("var/thumbs/" . $this->_relative_path()))  .
+      ($this->type == "album" ? "/_album.jpg" : "");
   }
 
   /**
@@ -123,11 +121,8 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/photo.resize.jpg
    */
   public function resize_path() {
-    if ($this->is_album()) {
-      return $this->_relative_path(VARPATH . "resizes", "", "/.resize.jpg");
-    } else {
-      return $this->_relative_path(VARPATH . "resizes", ".resize", "");
-    }
+    return VARPATH . "resizes/" . $this->_relative_path() .
+      ($this->type == "album" ? "/_album.jpg" : "");
   }
 
   /**
@@ -135,12 +130,10 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
   public function resize_url($full_uri=true) {
-    $func = $full_uri ? "abs_file" : "file";
-    if ($this->is_album()) {
-      return $this->_relative_path(url::$func("") . "var/resizes", "", "/.resize.jpg");
-    } else {
-      return $this->_relative_path(url::$func("") . "var/resizes", ".resize", "");
-    }
+    return ($full_uri ?
+            url::abs_file("var/resizes/" . $this->_relative_path()) :
+            url::file("var/resizes/" . $this->_relative_path())) .
+      ($this->type == "album" ? "/_album.jpg" : "");
   }
 
   /**
@@ -149,18 +142,18 @@ class Item_Model extends ORM_MPTT {
    *
    * @chainable
    * @param string $filename the path to an image
-   * @param integer $width the desired width of the thumbnail
-   * @param integer $height the desired height of the thumbnail
+   * @param integer $width the desired width of the thumb
+   * @param integer $height the desired height of the thumb
    * @return ORM
    */
-  public function set_thumbnail($filename, $width, $height) {
+  public function set_thumb($filename, $width, $height) {
     Image::factory($filename)
       ->resize($width, $height, Image::AUTO)
-      ->save($this->thumbnail_path());
+      ->save($this->thumb_path());
 
-    $dims = getimagesize($this->thumbnail_path());
-    $this->thumbnail_width = $dims[0];
-    $this->thumbnail_height = $dims[1];
+    $dims = getimagesize($this->thumb_path());
+    $this->thumb_width = $dims[0];
+    $this->thumb_height = $dims[1];
     return $this;
   }
 
@@ -187,30 +180,19 @@ class Item_Model extends ORM_MPTT {
 
   /**
    * Return the relative path to this item's file.
-   * @param string $prefix prefix to the path (eg "/var" or "http://foo.com/var")
-   * @param string $tag    a tag to specify before the extension (eg ".thumb", ".resize")
-   * @param string $suffix suffix to add to end of the path
-   * @return a path
+   * @return string
    */
-  private function _relative_path($prefix, $tag, $suffix) {
-    $paths = array($prefix);
-    foreach ($this->parents() as $parent) {
-      if ($parent->id > 1) {
-        $paths[] = $parent->name;
+  private function _relative_path() {
+    if (empty($this->relative_path)) {
+      foreach ($this->parents() as $parent) {
+        if ($parent->id > 1) {
+          $paths[] = $parent->name;
+        }
       }
+      $paths[] = $this->name;
+      $this->relative_path = implode($paths, "/");
     }
-    $paths[] = $this->name;
-    $path = implode($paths, "/");
-
-    if ($tag) {
-      $pi = pathinfo($path);
-      $path = "{$pi['dirname']}/{$pi['filename']}{$tag}.{$pi['extension']}";
-    }
-
-    if ($suffix) {
-      $path .= $suffix;
-    }
-    return $path;
+    return $this->relative_path;
   }
 
   /**

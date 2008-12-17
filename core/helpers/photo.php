@@ -78,10 +78,10 @@ class photo_Core {
     copy($filename, $photo->file_path());
 
     // This saves the photo a second time, which is unfortunate but difficult to avoid.
-    $thumbnail_size = module::get_var("core", "thumbnail_size");
+    $thumb_size = module::get_var("core", "thumb_size");
     $resize_size = module::get_var("core", "resize_size");
 
-    $result = $photo->set_thumbnail($filename, $thumbnail_size, $thumbnail_size)
+    $result = $photo->set_thumb($filename, $thumb_size, $thumb_size)
       ->set_resize($filename, $resize_size, $resize_size)
       ->save();
 

@@ -92,10 +92,15 @@ class Welcome_Controller extends Template_Controller {
             try {
               call_user_func(array("{$module->name}_installer", "uninstall"));
             } catch (Exception $e) {
+              print $e;
             }
           }
         }
-      } catch (Exception $e) { }
+        core_installer::uninstall();
+      } catch (Exception $e) {
+        print $e;
+      }
+
 
       // Since we're in a state of flux, it's possible that other stuff went wrong with the
       // uninstall, so back off and nuke it from orbit.  It's the only way to be sure.
@@ -206,15 +211,15 @@ class Welcome_Controller extends Template_Controller {
         $type = rand(0, 10) ? "photo" : "album";
       }
       if ($type == "album") {
-        $thumbnail_size = module::get_var("core", "thumbnail_size");
+        $thumb_size = module::get_var("core", "thumb_size");
         $parents[] = album::create(
           $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
-          ->set_thumbnail(DOCROOT . "core/tests/test.jpg", $thumbnail_size, $thumbnail_size)
+          ->set_thumb(DOCROOT . "core/tests/test.jpg", $thumb_size, $thumb_size)
           ->save();
       } else {
         $photo_index = rand(0, count($test_images) - 1);
         photo::create($parent->id, $test_images[$photo_index], basename($test_images[$photo_index]),
-                      "rnd_" . rand(), "sample thumbnail", $owner_id);
+                      "rnd_" . rand(), "sample thumb", $owner_id);
       }
     }
     url::redirect("welcome");

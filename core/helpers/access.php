@@ -467,7 +467,9 @@ class access_Core {
    * Create .htaccess files to prevent direct access to the given album and its hierarchy.
    */
   private static function _create_htaccess_files($album) {
-    foreach (array($album->file_path(), dirname($album->resize_path())) as $dir) {
+    foreach (array($album->file_path(),
+                   dirname($album->resize_path()),
+                   dirname($album->thumb_path())) as $dir) {
       $base_url = url::site("file_proxy");
       $fp = fopen("$dir/.htaccess", "w+");
       fwrite($fp, "<IfModule mod_rewrite.c>\n");
