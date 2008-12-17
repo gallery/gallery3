@@ -57,11 +57,38 @@ class user_Core {
   }
 
   /**
+   * Make sure that we have a session and group_ids cached in the session.
+   */
+  public static function load_user() {
+    $session = Session::instance();
+    if (!($user = $session->get("user"))) {
+      $session->set("user", $user = user::guest());
+    }
+
+    if (!$session->get("group_ids")) {
+      $ids = array();
+      foreach ($user->groups as $group) {
+        $ids[] = $group->id;
+      }
+      $session->set("group_ids", $ids);
+    }
+  }
+
+  /**
+   * Return the array of group ids this user belongs to
+   *
+   * @return array
+   */
+  public static function group_ids() {
+    return Session::instance()->get("group_ids", array(1));
+  }
+
+  /**
    * Return the active user.  If there's no active user, return the guest user.
    *
    * @return User_Model
    */
-  static function active() {
+  public static function active() {
     return Session::instance()->get("user", self::guest());
   }
 
@@ -72,7 +99,7 @@ class user_Core {
    *
    * @return User_Model
    */
-  static function guest() {
+  public static function guest() {
     return model_cache::get("user", 1);
   }
 
@@ -81,8 +108,9 @@ class user_Core {
    *
    * @return User_Model
    */
-  static function set_active($user) {
-    return Session::instance()->set("user", $user);
+  public static function set_active($user) {
+    Session::instance()->set("user", $user);
+    self::load_user();
   }
 
   /**
@@ -93,7 +121,7 @@ class user_Core {
    * @param string  $password
    * @return User_Model
    */
-  static function create($name, $display_name, $password) {
+  public static function create($name, $display_name, $password) {
     $user = ORM::factory("user")->where("name", $name)->find();
     if ($user->loaded) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");

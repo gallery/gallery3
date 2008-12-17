@@ -117,6 +117,8 @@ class module_Core {
     //
     // @todo get rid of this extra error checking when we have an installer.
     set_error_handler(array("module", "_dummy_error_handler"));
+    $modules = ORM::factory("module")->find_all();
+    restore_error_handler();
 
     // Reload module list from the config file since we'll do a refresh after calling install()
     $core = Kohana::config_load('core');
@@ -124,7 +126,7 @@ class module_Core {
     self::$module_names = array();
     self::$modules = array();
     try {
-      foreach (ORM::factory("module")->find_all() as $module) {
+      foreach ($modules as $module) {
         self::$module_names[] = $module->name;
         self::$modules[] = $module;
         $kohana_modules[] = MODPATH . $module->name;
@@ -136,7 +138,7 @@ class module_Core {
       self::$modules = array();
     }
 
-    restore_error_handler();
+    self::event("gallery_ready");
   }
 
   public function get_var($module_name, $name, $default_value=null) {
