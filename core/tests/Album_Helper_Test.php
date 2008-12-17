@@ -23,11 +23,11 @@ class Album_Helper_Test extends Unit_Test_Case {
     $album = album::create(1, $rand, $rand, $rand);
 
     $this->assert_equal(VARPATH . "albums/$rand", $album->file_path());
-    $this->assert_equal(VARPATH . "thumbs/$rand/_album.jpg", $album->thumb_path());
+    $this->assert_equal(VARPATH . "thumbs/$rand/.album.jpg", $album->thumb_path());
     $this->assert_true(is_dir(VARPATH . "thumbs/$rand"), "missing thumb dir");
 
     // It's unclear that a resize makes sense for an album.  But we have one.
-    $this->assert_equal(VARPATH . "resizes/$rand/_album.jpg", $album->resize_path());
+    $this->assert_equal(VARPATH . "resizes/$rand/.album.jpg", $album->resize_path());
     $this->assert_true(is_dir(VARPATH . "resizes/$rand"), "missing resizes dir");
 
     $this->assert_equal(1, $album->parent_id);  // MPTT tests will cover other hierarchy checks
@@ -46,12 +46,12 @@ class Album_Helper_Test extends Unit_Test_Case {
   public function thumb_url_test() {
     $rand = rand();
     $album = album::create(1, $rand, $rand, $rand);
-    $this->assert_equal("http://./var/thumbs/$rand/_album.jpg", $album->thumb_url());
+    $this->assert_equal("http://./var/thumbs/$rand/.album.jpg", $album->thumb_url());
   }
 
   public function resize_url_test() {
     $rand = rand();
     $album = album::create(1, $rand, $rand, $rand);
-    $this->assert_equal("http://./var/resizes/$rand/_album.jpg", $album->resize_url());
+    $this->assert_equal("http://./var/resizes/$rand/.album.jpg", $album->resize_url());
   }
 }

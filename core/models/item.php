@@ -102,7 +102,7 @@ class Item_Model extends ORM_MPTT {
    */
   public function thumb_path() {
     return VARPATH . "thumbs/" . $this->_relative_path() .
-      ($this->type == "album" ? "/_album.jpg" : "");
+      ($this->type == "album" ? "/.album.jpg" : "");
   }
 
   /**
@@ -113,7 +113,7 @@ class Item_Model extends ORM_MPTT {
     return ($full_uri ?
             url::abs_file("var/thumbs/" . $this->_relative_path()) :
             url::file("var/thumbs/" . $this->_relative_path()))  .
-      ($this->type == "album" ? "/_album.jpg" : "");
+      ($this->type == "album" ? "/.album.jpg" : "");
   }
 
   /**
@@ -122,7 +122,7 @@ class Item_Model extends ORM_MPTT {
    */
   public function resize_path() {
     return VARPATH . "resizes/" . $this->_relative_path() .
-      ($this->type == "album" ? "/_album.jpg" : "");
+      ($this->type == "album" ? "/.album.jpg" : "");
   }
 
   /**
@@ -133,7 +133,7 @@ class Item_Model extends ORM_MPTT {
     return ($full_uri ?
             url::abs_file("var/resizes/" . $this->_relative_path()) :
             url::file("var/resizes/" . $this->_relative_path())) .
-      ($this->type == "album" ? "/_album.jpg" : "");
+      ($this->type == "album" ? "/.album.jpg" : "");
   }
 
   /**

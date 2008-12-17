@@ -66,8 +66,8 @@ class File_Proxy_Controller extends Controller {
         kohana::show_404();
       }
 
-      // If the last element is _album.jpg then we're done.
-      if (count($paths) == 1 && $paths[0] == "_album.jpg") {
+      // If the last element is .album.jpg then we're done.
+      if (count($paths) == 1 && $paths[0] == ".album.jpg") {
         break;
       }
     }
