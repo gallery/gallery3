@@ -740,7 +740,6 @@ span.gInPlaceEdit:hover {
 }
 
 #gDialog {
-  background-color: #fff;
   text-align: left;
 }
 
@@ -748,7 +747,16 @@ span.gInPlaceEdit:hover {
 }
 
 .gDialogLink {
+}
 
+.gLoadingLarge {
+  background: #fff url('../images/loading-lg.gif') no-repeat center center;
+  font-size: 0;
+}
+
+.gLoadingSmall {
+  background: #fff url('../images/loading-sm.gif') no-repeat center center;
+  font-size: 0;
 }
 
 /** *******************************************************************

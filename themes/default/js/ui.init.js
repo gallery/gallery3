@@ -138,9 +138,12 @@ function openDialog(element) {
       $("#gDialog").dialog('destroy').remove();
     }
   });
+  $("#gDialog").addClass("gLoadingLarge");
+  $(".ui-dialog-content").height(400);
   $("#gDialog").html(sHref);
   $.get(sHref, function(data) {
-    $("#gDialog").html(data);
+    $("#gDialog").removeClass("gLoadingLarge");	
+    $("#gDialog").html(data).hide().fadeIn();
   });
   return false;
 }
