@@ -24,27 +24,26 @@ class Albums_Controller extends Items_Controller {
    */
   public function _show($item) {
     if (!access::can("view", $item)) {
-      return Kohana::show_404();
+      Kohana::show_404();
     }
 
     $theme_name = module::get_var("core", "active_theme", "default");
     $page_size = module::get_var("core", "page_size", 9);
-
-    $template = new Theme_View("page.html", "album", $theme_name);
-
     $page = $this->input->get("page", "1");
-
-    $template->set_global('page_size', $page_size);
-    $template->set_global('item', $item);
+    $children_count = $item->viewable()->children_count();
+    $offset = ($page-1) * $page_size;
 
     // Make sure that the page references a valid offset
-    $children_count = $item->children_count();
-    while (($offset = ($page - 1) * $page_size) > $children_count && $page != 1) {
-      $page--;
+    if ($page < 1 || $page > ceil($children_count / $page_size)) {
+      Kohana::show_404();
     }
-    $template->set_global('children', $item->children($page_size, $offset));
-    $template->set_global('children_count', $children_count);
-    $template->set_global('parents', $item->parents());
+
+    $template = new Theme_View("page.html", "album", $theme_name);
+    $template->set_global("page_size", $page_size);
+    $template->set_global("item", $item);
+    $template->set_global("children", $item->viewable()->children($page_size, $offset));
+    $template->set_global("children_count", $children_count);
+    $template->set_global("parents", $item->parents());
     $template->content = new View("album.html");
 
     print $template;

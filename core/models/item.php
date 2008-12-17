@@ -20,8 +20,24 @@
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
   private $relative_path = null;
+  private $view_restrictions = array();
 
   var $rules = array();
+
+  /**
+   * Add a set of restrictions to any following queries to restrict access only to items
+   * viewable by the active user.
+   * @chainable
+   */
+  public function viewable() {
+    if (empty($this->view_restrictions)) {
+      foreach (user::group_ids() as $id) {
+        $this->view_restrictions["view_$id"] = access::ALLOW;
+      }
+    }
+    $this->where($this->view_restrictions);
+    return $this;
+  }
 
   /**
    * Is this item an album?

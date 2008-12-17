@@ -23,15 +23,20 @@ class Tags_Controller extends REST_Controller {
   public function _show($tag) {
     $theme_name = module::get_var("core", "active_theme", "default");
     $page_size = module::get_var("core", "page_size", 9);
+    $page = $this->input->get("page", "1");
+    $children_count = $tag->items_count();
+    $offset = ($page-1) * $page_size;
+
+    // Make sure that the page references a valid offset
+    if ($page < 1 || $page > ceil($children_count / $page_size)) {
+      Kohana::show_404();
+    }
 
     $template = new Theme_View("page.html", "tag", $theme_name);
-
-    $page = $this->input->get("page", "1");
-
     $template->set_global('page_size', $page_size);
     $template->set_global('tag', $tag);
-    $template->set_global('children', $tag->items($page_size, ($page-1) * $page_size));
-    $template->set_global('children_count', $tag->count);
+    $template->set_global('children', $tag->items($page_size, $offset));
+    $template->set_global('children_count', $children_count);
     $template->content = new View("tag.html");
 
     print $template;

@@ -24,19 +24,33 @@ class Tag_Model extends ORM {
     "name" => "required|length[4,32]");
 
   /**
-   * Return all items associated with this tag.
-   * @param string   $type   the type of item (album, photo)
+   * Return all viewable items associated with this tag.
    * @param integer  $limit  number of rows to limit result to
    * @param integer  $offset offset in result to start returning rows from
+   * @param string   $type   the type of item (album, photo)
    * @return ORM_Iterator
    */
   public function items($limit=null, $offset=0, $type=null) {
     $model = ORM::factory("item")
+      ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
       ->where("items_tags.tag_id", $this->id);
     if ($type) {
       $model->where("items.type", $type);
     }
     return $model->find_all($limit, $offset);
+ }
+
+  /**
+   * Return the count of all viewable items associated with this tag.
+   * @param string   $type   the type of item (album, photo)
+   * @return integer
+   */
+  public function items_count($type=null) {
+    return ORM::factory("item")
+      ->viewable()
+      ->join("items_tags", "items.id", "items_tags.item_id")
+      ->where("items_tags.tag_id", $this->id)
+      ->count_all();
  }
 }
