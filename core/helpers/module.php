@@ -111,6 +111,12 @@ class module_Core {
   }
 
   public static function load_modules() {
+    // Reload module list from the config file since we'll do a refresh after calling install()
+    $core = Kohana::config_load('core');
+    $kohana_modules = $core['modules'];
+    self::$module_names = array();
+    self::$modules = array();
+
     // This is one of the first database operations that we'll do, so it may fail if there's no
     // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
     // Do The Right Thing.
@@ -122,11 +128,6 @@ class module_Core {
       return;
     }
 
-    // Reload module list from the config file since we'll do a refresh after calling install()
-    $core = Kohana::config_load('core');
-    $kohana_modules = $core['modules'];
-    self::$module_names = array();
-    self::$modules = array();
     try {
       foreach ($modules as $module) {
         self::$module_names[] = $module->name;
