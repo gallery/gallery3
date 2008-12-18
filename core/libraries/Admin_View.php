@@ -42,4 +42,21 @@ class Admin_View_Core extends View {
   public function display($page_name, $view_class="View") {
     return new $view_class($page_name);
   }
+
+  public function admin_menu() {
+    $menu = new Menu(true);
+    core_menu::admin($menu, $this);
+
+    foreach (module::installed() as $module) {
+      if ($module->name == "core") {
+        continue;
+      }
+      $class = "{$module->name}_menu";
+      if (method_exists($class, "admin")) {
+        call_user_func_array(array($class, "admin"), array(&$menu, $this));
+      }
+    }
+
+    print $menu;
+  }
 }

@@ -73,38 +73,9 @@
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
           <img src="<?= $theme->url("images/logo.png") ?>" id="gLogo" alt="Gallery 3: Your Photos on Your Web Site" />
-          <ul id="gSiteAdminMenu" class="sf-menu sf-navbar">
-            <li id="dashboard">
-              <a href="<?= url::site("admin/dashboard") ?>">Dashboard</a>
-              <li>
-            <li><a href="#">General Settings</a><li>
-            <li class="current"><a href="#">Content</a>
-              <ul>
-                <li><a href="#">Comments</a>
-                  <ul>
-                    <li><a href="#">Comment moderation</a></li>
-                  </ul>
-                </li>
-                <li><a href="#">Tags</a><li>
-              </ul>
-            </li>
-            <li><a href=#>Modules</a></li>
-            <li><a href=#>Presentation</a>
-              <ul>
-                <li><a href="#">Themes</a></li>
-                <li><a href="#">Image sizes</a><li>
-              </ul>
-            </li>
-            <li><a href="#">Users/Groups</a>
-              <ul>
-                <li><a href="<?= url::site("admin/users") ?>">List Users</a></li>
-                <li><a href="#">Create new user</a><li>
-                <li><a href="#">Edit Profile</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Maintenance</a><li>
-            <li><a href="#">Statistics</a><li>
-          </ul>
+          <div id="gSiteAdminMenu" class="gClearFix">
+            <?= $theme->admin_menu() ?>
+          </div>
           <!--ul id="gBreadcrumbs" class="gClearFix">
             <li><a href="#">Dashboard</a></li>
           </ul-->

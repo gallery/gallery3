@@ -17,31 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class user_menu_Core {
-  public static function site($menu, $theme) {
-    $user = user::active();
-    if (!$user->guest) {
-      $menu->get("admin_menu")->append(
-        Menu::Factory("dialog")
-        ->id("edit_profile")
-        ->label(_("Edit Profile"))
-        ->url(url::site("users/form/edit/$user->id")));
-    }
-  }
-
+class tag_menu_Core {
   public static function admin($menu, $theme) {
-    $menu->get("users_groups_menu")
+    $menu->get("content_menu")
       ->append(Menu::factory("link")
-               ->id("list_users")
-               ->label(_("List Users"))
-               ->url(url::site("admin/users")))
-      ->append(Menu::factory("link")
-               ->id("create_user")
-               ->label(_("Create new user"))
-               ->url("#"))
-      ->append(Menu::factory("link")
-               ->id("edit_user")
-               ->label(_("Edit user"))
+               ->id("tags")
+               ->label(_("Tags"))
                ->url("#"));
   }
 }

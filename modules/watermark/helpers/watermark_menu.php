@@ -20,7 +20,7 @@
 class watermark_menu_Core {
   // @todo this needs to get on the admin page at some point
 
-  public static function site_navigation($menu, $theme) {
+  public static function site($menu, $theme) {
     $user = user::active();
     if ($user->admin) {
       $menu->get("admin_menu")->append(

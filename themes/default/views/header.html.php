@@ -3,7 +3,7 @@
 <img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
 
 <div id="gSiteMenu" class="gClearFix">
-<?= $theme->site_navigation() ?>
+<?= $theme->site_menu() ?>
 </div>
 
 <?= $theme->header_bottom() ?>

@@ -57,17 +57,17 @@ class Theme_View_Core extends View {
     return new $view_class($page_name);
   }
 
-  public function site_navigation() {
+  public function site_menu() {
     $menu = new Menu(true);
-    core_menu::site_navigation($menu, $this);
+    core_menu::site($menu, $this);
 
     foreach (module::installed() as $module) {
       if ($module->name == "core") {
         continue;
       }
       $class = "{$module->name}_menu";
-      if (method_exists($class, "site_navigation")) {
-        call_user_func_array(array($class, "site_navigation"), array(&$menu, $this));
+      if (method_exists($class, "site")) {
+        call_user_func_array(array($class, "site"), array(&$menu, $this));
       }
     }
 
