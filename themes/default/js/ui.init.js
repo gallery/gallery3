@@ -95,6 +95,8 @@ function handleDialogEvent(event) {
  * @see handleDialogEvent()
  * 
  * @todo Set dialog attributes dynamically (width, height, drag, resize)
+ * @todo Set ui-dialog-buttonpane button values equal to the original form button value
+ * @todo Display loading animation on form submit
  */
 function openDialog(element) {
   var sHref = $(element).attr("href");
@@ -124,7 +126,7 @@ function openDialog(element) {
   $("#gDialog").dialog({
     autoResize: false,
     draggable: true,
-    height: 500,
+    height: $(window).height() - 40,
     modal: true,
     overlay: {
       opacity: 0.7,
@@ -144,6 +146,18 @@ function openDialog(element) {
   $.get(sHref, function(data) {
     $("#gDialog").removeClass("gLoadingLarge");	
     $("#gDialog").html(data).hide().fadeIn();
+    // Get dialog and it's contents' height
+    var contentHt =  $(".ui-dialog-titlebar").height() 
+        + $(".ui-dialog-content form").height() 
+        + $(".ui-dialog-buttonpane").height() 
+        + 60;
+    // Resize height if content's shorter than dialog        
+    if (contentHt < $("#gDialog").data("height.dialog")) {
+      $(".ui-dialog").animate({height: contentHt});
+    }
   });
+  
+  
+  
   return false;
 }

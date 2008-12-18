@@ -720,33 +720,17 @@ span.gInPlaceEdit:hover {
   color: #6b8cb7;
 }
 
-.gClose a {
-  border: 1px solid #ccc;
-  color: #ccc;
-  display: block;
-  font-weight: bold;
-  padding: 1px 3px;
-}
-
-.gClose a:hover {
-  border: 1px solid #666;
-  color: #666;
-  text-decoration: none;
-}
-
-.gHide,
-.gClose {
-  display: none;
-}
-
 #gDialog {
   text-align: left;
 }
 
-#gDialog form {
+#gDialog fieldset {
+  border: none;
 }
 
-.gDialogLink {
+#gDialog legend,
+#gDialog button.submit {
+  display: none;
 }
 
 .gLoadingLarge {
@@ -926,6 +910,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
   text-align: left;
   border-top: 1px solid #dddddd;
   background: #f3f3f3;
+  padding-left: 36px;
 }
 .ui-dialog-buttonpane button {
   margin: .5em 0 .5em 8px;
