@@ -1,7 +1,8 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <? echo "<?xml version=\"1.0\" ?>" ?>
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"
-     xmlns:atom="http://www.w3.org/2005/Atom">
+   xmlns:atom="http://www.w3.org/2005/Atom"
+   xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
     <title><? $title ?></title>
@@ -9,6 +10,7 @@
     <description><?= $description ?></description>
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed_link ?>" type="application/rss+xml" />
+    <fh:complete/>
     <? if (!empty($previous_page_link)): ?>
     <atom:link rel="previous" href="<?= $previous_page_link ?>" type="application/rss+xml" />
     <? endif ?>
