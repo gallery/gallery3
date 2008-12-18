@@ -42,9 +42,9 @@ class Media_RSS_Controller extends Controller {
 
     $view = new View("feed.mrss");
     $view->title = $item->title;
-    $view->link = url::site("albums/{$item->id}");
+    $view->link = url::abs_site("albums/{$item->id}");
     $view->description = $item->description;
-    $view->feed_link = url::site("media_rss/albums/{$item->id}");
+    $view->feed_link = url::abs_site("media_rss/albums/{$item->id}");
     $view->children = $children;
 
     if ($page > 1) {
@@ -84,9 +84,9 @@ class Media_RSS_Controller extends Controller {
 
     $view = new View("feed.mrss");
     $view->title = $tag->name;
-    $view->link = url::site("tags/{$tag->id}");
+    $view->link = url::abs_site("tags/{$tag->id}");
     $view->description = sprintf(_("Photos related to %s"), $tag->name);
-    $view->feed_link = url::site("media_rss/tags/{$tag->id}");
+    $view->feed_link = url::abs_site("media_rss/tags/{$tag->id}");
     $view->children = $children;
 
     if ($page > 1) {
