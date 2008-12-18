@@ -16,8 +16,9 @@ if (!function_exists("DrawForm")) {
     $prefix = str_repeat("  ", $level);
 
     foreach ($inputs as $input) {
-      if ($input->type == 'group') {
-
+      if ($input->type == 'hidden') {
+        print $input->render();
+      } else if ($input->type == 'group') {
         print "$prefix<fieldset>\n";
         print "$prefix  <legend>{$input->label}</legend>\n";
         print "$prefix  <ul>\n";
