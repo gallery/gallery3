@@ -3,6 +3,7 @@
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"
      xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
+    <generator>gallery3</generator>
     <title><? $title ?></title>
     <link><?= $link ?></link>
     <description><?= $description ?></description>
