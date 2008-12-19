@@ -70,7 +70,7 @@ class core_menu_Core {
       ->append(Menu::factory("link")
                ->id("dashboard")
                ->label(_("Dashboard"))
-               ->url(url::site("admin/dashboard")))
+               ->url(url::site("admin")))
       ->append(Menu::factory("link")
                ->id("general_settings")
                ->label(_("General Settings"))
