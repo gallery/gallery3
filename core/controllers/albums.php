@@ -34,7 +34,7 @@ class Albums_Controller extends Items_Controller {
     $offset = ($page-1) * $page_size;
 
     // Make sure that the page references a valid offset
-    if ($page < 1 || $page > ceil($children_count / $page_size)) {
+    if ($page < 1 || $page > max(ceil($children_count / $page_size), 1)) {
       Kohana::show_404();
     }
 
