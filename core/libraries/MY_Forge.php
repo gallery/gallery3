@@ -19,7 +19,26 @@
  */
 
 class Forge extends Forge_Core {
+  /**
+   * Force a CSRF element into every form.
+   */
+  public function __construct($action=null, $title='', $method=null, $attr=array()) {
+    parent::__construct($action, $title, $method, $attr);
+    $this->input("csrf")->type("hidden")->value("");
+  }
+
+  /**
+   * Use our own template
+   */
   public function render($template="form.html", $custom=false) {
+    $session = Session::instance();
+    $csrf = $session->get("csrf");
+    if (empty($csrf)) {
+      $csrf = md5(rand());
+      $session->set("csrf", $csrf);
+    }
+
+    $this->inputs["csrf"]->value($csrf);
     return parent::render($template, $custom);
   }
 
@@ -35,5 +54,22 @@ class Forge extends Forge_Core {
         $input->rules($model->rules[$name]);
       }
     }
+  }
+
+  /**
+   * Validate our CSRF value as a mandatory part of all form validation.
+   */
+  public function validate() {
+    $status = parent::validate();
+
+    $type = $this->type;
+    if (empty($type)) {
+      $csrf_value = $this->csrf->value;
+      if (empty($csrf_value) || $csrf_value !== Session::instance()->get("csrf")) {
+        throw new Exception("@todo SECURITY_INVALID_CSRF_TOKEN");
+      }
+    }
+
+    return $status;
   }
 }
