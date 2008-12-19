@@ -25,7 +25,7 @@ class Login_Controller extends Controller {
     $group->password("password")->label(_("Password"))->id("gPassword")->class(null);
     $group->inputs["name"]->error_messages("invalid_login", _("Invalid name or password"));
 
-    if ($form->validate()) {
+    if (request::method() == "post" && $form->validate()) {
       $user = ORM::factory("user")->where("name", $group->inputs["name"]->value)->find();
       if ($user->loaded &&
           user::is_correct_password($user, $group->password->value)) {
