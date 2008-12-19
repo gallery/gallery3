@@ -490,5 +490,6 @@ class access_Core {
   private static function _delete_htaccess_files($album) {
     @unlink($album->file_path() . "/.htaccess");
     @unlink(dirname($album->resize_path()) . "/.htaccess");
+    @unlink(dirname($album->thumb_path()) . "/.htaccess");
   }
 }
