@@ -24,33 +24,13 @@
  * Note: by design, this class does not do any permission checking.
  */
 class user_Core {
-  /**
-   * Return the form for creating / modifying users.
-   */
-  public static function get_edit_form($user) {
-    $form = new Forge(
-      url::site("users/{$user->id}?_method=put"), "", "post", array("id" => "gUserForm"));
-    $group = $form->group(_("User Info"));
-
-    $group->input("name")
-      ->label(_("Name"))
-      ->id("gName")
-      ->value($user->name);
-
-    $group->input("display_name")
-      ->label(_("Display Name"))
-      ->id("gDisplayName")
-      ->value($user->display_name);
-
-    $group->password("password")
-      ->label(_("Password"))
-      ->id("gPassword");
-
-    $group->input("email")
-      ->label(_("Email"))
-      ->id("gEmail")
-      ->value($user->email);
-
+  public static function get_edit_form($user, $action) {
+    $form = new Forge($action, "", "post", array("id" => "gUserForm"));
+    $group = $form->group("edit_user")->label(_("Edit User"));
+    $group->input("uname")->label(_("Name"))->id("gName")->value($user->name);
+    $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
+    $group->password("password")->label(_("Password"))->id("gPassword");
+    $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
     $group->submit(_("Modify"));
     $form->add_rules_from($user);
     return $form;
@@ -129,18 +109,18 @@ class user_Core {
    * Create a new user.
    *
    * @param string  $name
-   * @param string  $display_name
+   * @param string  $full_name
    * @param string  $password
    * @return User_Model
    */
-  public static function create($name, $display_name, $password) {
+  public static function create($name, $full_name, $password) {
     $user = ORM::factory("user")->where("name", $name)->find();
     if ($user->loaded) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
     }
 
     $user->name = $name;
-    $user->display_name = $display_name;
+    $user->full_name = $full_name;
     $user->password = $password;
 
     // Everybody group

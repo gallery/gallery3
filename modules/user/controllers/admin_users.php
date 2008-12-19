@@ -23,4 +23,24 @@ class Admin_Users_Controller extends Controller {
     $view->users = ORM::factory("user")->find_all();
     return $view;
   }
+
+  public function edit($id) {
+    $view = new View("admin_users_edit.html");
+    $user = ORM::factory("user", $id);
+    if (!$user->loaded) {
+      kohana::show_404();
+    }
+
+    $form = user::get_edit_form($user, "admin/users/edit/$id");
+    if (request::method() =="post" && $form->validate()) {
+      $user->name = $form->edit_user->uname->value;
+      $user->full_name = $form->edit_user->full_name->value;
+      $user->password = $form->edit_user->password->value;
+      $user->email = $form->edit_user->email->value;
+      $user->save();
+      url::redirect("admin/users/edit/$id");
+    }
+
+    return $form;
+  }
 }

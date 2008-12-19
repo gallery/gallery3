@@ -46,16 +46,19 @@ class Users_Controller extends REST_Controller {
    *  @see Rest_Controller::_update($resource)
    */
   public function _update($user) {
+    if ($user->guest || $user->id != user::active()->id) {
+      access::forbidden();
+    }
+
     $form = user::get_edit_form($user);
     if ($form->validate()) {
-      foreach ($form->as_array() as $key => $value) {
-        $user->$key = $value;
-      }
+      $user->full_name = $form->edit_user->full_name->value;
+      $user->password = $form->edit_user->password->value;
+      $user->email = $form->edit_user->email->value;
       $user->save();
       if ($continue = $this->input->get("continue")) {
         url::redirect($continue);
       }
-      return;
     }
     print $form;
   }
@@ -72,7 +75,13 @@ class Users_Controller extends REST_Controller {
    *  @see Rest_Controller::form($resource)
    */
   public function _form_edit($user) {
-    print user::get_edit_form($user);
+    if ($user->guest || user::active()->id != $user->id) {
+      access::forbidden();
+    }
+
+    print user::get_edit_form(
+      $user,
+      "users/{$user->id}?_method=put&continue=" . $this->input->get("continue"));
   }
 
   /**

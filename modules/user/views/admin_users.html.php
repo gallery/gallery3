@@ -5,9 +5,15 @@
   <div class="gBlockContent">
     <p>These are the users in your system</p>
     <table>
-    <? foreach ($users as $i => $user): ?>
-      <tr><td><?= $user->name ?></td></tr>
-    <? endforeach ?>
+      <? foreach ($users as $i => $user): ?>
+      <tr>
+        <td>
+          <a href="<?= url::site("admin/users/edit/$user->id") ?>">
+            <?= $user->name ?>
+          </a>
+        </td>
+      </tr>
+      <? endforeach ?>
     </table>
   </div>
 </div>
