@@ -268,6 +268,8 @@
                 <input type="submit" value="upload"/>
                 <input type="text" name="path" size="70"
                        value="<?= cookie::get("add_photos_path") ?>" />
+                <br>
+                Album id: <input name="parent_id" type="text" size="3" value="1"/>
               </form>
             </fieldset>
             <fieldset>
