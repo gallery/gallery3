@@ -34,7 +34,7 @@ class polar_rose_block_Core {
         "partner: 'gallery3'," .
         "rss: '$url'," .
         "insert: 'gPolarRose'," .
-        "optin: 'gThumbnail'," .
+        "optin: ''," .
         "theme: 'dark'" .
         "}</script>" .
         "<script type=\"text/javascript\" " .
