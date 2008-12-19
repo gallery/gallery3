@@ -15,3 +15,13 @@
 #gPhotoStream .gBlockContent {
   overflow: scroll;
 }
+
+#gSiteAdminMenu {
+  border-bottom: 1px solid #ccc;
+  font-size: 1.2em;
+  padding: 0 20px 0;
+}
+
+#gSiteAdminMenu ul {
+  margin-bottom: 0;
+}
