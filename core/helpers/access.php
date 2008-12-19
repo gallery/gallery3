@@ -107,6 +107,13 @@ class access_Core {
   }
 
   /**
+   * Terminate immediately with an HTTP 503 Forbidden response.
+   */
+  public static function forbidden() {
+    throw new Exception("@todo FORBIDDEN", 503);
+  }
+
+  /**
    * Internal method to set a permission
    *
    * @param  Group_Model $group
