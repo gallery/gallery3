@@ -34,7 +34,7 @@ class Admin_Controller extends Controller {
     $controller = new $controller;
 
     if ($args) {
-      $method = array_unshift($args);
+      $method = array_shift($args);
     } else {
       $method = "index";
     }
