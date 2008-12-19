@@ -1,6 +1,5 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div class="gBlock">
-  <a href="" class="gClose">X</a>
   <h2>Welcome to Gallery 3!</h2>
   <div class="gBlockContent">
     <p>This is your administration dashboard and it provides a quick overview of status messages,
@@ -16,7 +15,6 @@
 </div>
 
 <div class="gBlock">
-  <a href="" class="gClose">X</a>
   <h2>Status Messages</h2>
   <ul class="gBlockContent gMessages">
     <li class="gWarning"><a href="#" title="">Gallery 3.1 is available, you're running Gallery 3.0. Update now!</a></li>
@@ -28,7 +26,6 @@
 </div>
 
 <div id="gPhotoStream" class="gBlock">
-  <a href="" class="gClose">X</a>
   <h2>Photo Stream</h2>
   <div class="gBlockContent">
     <p>Recent photos added to your Gallery</p>
@@ -38,7 +35,6 @@
 </div>
 
 <div id="gLogEntries" class="gBlock">
-  <a href="" class="gClose">X</a>
   <h2>Recent Comments</h2>
   <ul class="gBlockContent">
     <li><a href="">hacker</a> 2008-12-10 23:02:23 Something happened</li>
@@ -50,7 +46,6 @@
 </div>
 
 <div id="gLogEntries" class="gBlock">
-  <a href="" class="gClose">X</a>
   <h2>Log Entries</h2>
   <ul class="gBlockContent">
     <li>2008-12-10 23:02:23 Something happened</li>

@@ -5,80 +5,34 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>G3: Admin Dashboard</title>
-    <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>" type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>" type="text/css" media="screen,projection">
-    <script src="<?= url::file("lib/jquery.js") ?>"></script>
-    <script src="<?= url::file("lib/jquery-ui.packed.js") ?>"></script>
-    <link rel="stylesheet" href="<?= $theme->url("jquery/superfish.css") ?>" type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= $theme->url("jquery/superfish-navbar.css") ?>" type="text/css" media="screen,projection">
-    <script src="<?= $theme->url("jquery/superfish.js") ?>"></script>
-    <script type="text/javascript">
-      $(document).ready(function(){
-        $("ul.sf-menu").superfish({
-          pathClass:  'current'
-        });
-        $("#gSiteAdminMenu li a").click(function(event) {
-          $("#gContent").load(this.href);
-          return false;
-        });
-      });
-    </script>
-
-    <style type="text/css">
-      #gSiteAdminMenu {
-      clear: both;
-      font-size: 1.2em;
-      margin: 0 20px;
-      }
-      #gContent {
-        font-size: 1.1em;
-      }
-      .gBlock {
-        border: 1px solid #e7e7e7;
-        margin-bottom: 1em;
-        padding: .4em;
-      }
-      .gBlock h2 {
-        background-color: #e7e7e7;
-        margin: -.4em;
-        padding: .2em .6em;
-        background: #f4f4f4 url('<?= $theme->url("images/ico-draggable.png") ?>') no-repeat center right;
-        cursor: move;
-      }
-      .gClose {
-        background-color: #f1f1f1;
-        border: 1px solid #ccc;
-        color: #ccc;
-        display: block;
-        float: right;
-        padding: .1em .2em;
-      }
-      a.gClose:hover {
-        border-color: #999;
-        color: #999;
-        text-decoration: none;
-      }
-      #gPhotoStream .gBlockContent {
-        overflow: scroll;
-      }
-    </style>
+    <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>" 
+        type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= url::file("themes/default/css/screen.css") ?>" 
+        type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>" 
+        type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= $theme->url("css/superfish.css") ?>" 
+        type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= $theme->url("css/superfish-navbar.css") ?>" 
+        type="text/css" media="screen,projection">
+    <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/jquery-ui.packed.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("js/superfish.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
   </head>
 
   <body>
     <div id="doc4" class="yui-t5 gView">
       <div id="hd">
         <div id="gHeader">
-          <ul id="gLoginMenu">
+          <ul id="gLoginMenu" class="gClearFix">
             <li><?= html::anchor("albums/1", "Browse Gallery") ?></li>
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
-          <img src="<?= $theme->url("images/logo.png") ?>" id="gLogo" alt="Gallery 3: Your Photos on Your Web Site" />
-          <div id="gSiteAdminMenu" class="gClearFix">
+          <img src="<?= $theme->url("images/logo.png") ?>" id="gLogo" alt="<?= _("Gallery 3: Your Photos on Your Web Site") ?>" />
+          <div id="gSiteAdminMenu">
             <?= $theme->admin_menu() ?>
           </div>
-          <!--ul id="gBreadcrumbs" class="gClearFix">
-            <li><a href="#">Dashboard</a></li>
-          </ul-->
         </div>
       </div>
       <div id="bd">
@@ -92,7 +46,6 @@
         <div id="gSidebar" class="yui-b">
 
           <div id="gAvailableBlocks" class="gBlock">
-            <a href="" class="gClose">X</a>
             <form class="gBlockContent">
               <fieldset>
                 <legend>Add Dashboard Blocks</legend>
@@ -106,7 +59,6 @@
           </div>
 
           <div id="gPlatform" class="gBlock">
-            <a href="" class="gClose">X</a>
             <h2>Gallery Stats</h2>
             <ul class="gBlockContent">
               <li>Version: 3.0</li>
@@ -115,7 +67,6 @@
           </div>
 
           <div id="gPlatform" class="gBlock">
-            <a href="" class="gClose">X</a>
             <h2>Platform Information</h2>
             <ul class="gBlockContent">
               <li>Platform
@@ -147,7 +98,6 @@
           </div>
 
           <div id="gProjectNews" class="gBlock">
-            <a href="" class="gClose">X</a>
             <h2>Gallery Project News</h2>
             <ul class="gBlockContent">
               <li>10-Apr <a href="#">Gallery 3.1 released!</a></li>
