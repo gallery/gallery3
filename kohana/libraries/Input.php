@@ -130,9 +130,9 @@ class Input_Core {
 				foreach ($_COOKIE as $key => $val)
 				{
 					// Ignore special attributes in RFC2109 compliant cookies
-					if ($key == '$Version' || $key == '$Path' || $key == '$Domain') {
+					if ($key == '$Version' OR $key == '$Path' OR $key == '$Domain')
 						continue;
-					}
+
 					// Sanitize $_COOKIE
 					$_COOKIE[$this->clean_input_keys($key)] = $this->clean_input_data($val);
 				}

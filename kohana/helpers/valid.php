@@ -85,9 +85,10 @@ class valid_Core {
 	 *
 	 * @param   string   IP address
 	 * @param   boolean  allow IPv6 addresses
+	 * @param   boolean  allow private IP networks
 	 * @return  boolean
 	 */
-	public static function ip($ip, $ipv6 = FALSE, $allow_private = FALSE)
+	public static function ip($ip, $ipv6 = FALSE, $allow_private = TRUE)
 	{
 		// By default do not allow private and reserved range IPs
 		$flags = FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;

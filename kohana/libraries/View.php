@@ -56,6 +56,17 @@ class View_Core {
 			$this->kohana_local_data = array_merge($this->kohana_local_data, $data);
 		}
 	}
+	
+	/**
+	 * Magic method access to test for view property
+	 *
+	 * @param   string   View property to test for
+	 * @return  boolean
+	 */
+	public function __isset($key = NULL)
+	{
+		return $this->is_set($key);
+	}
 
 	/**
 	 * Sets the view filename.
@@ -118,6 +129,43 @@ class View_Core {
 	}
 
 	/**
+	 * Checks for a property existence in the view locally or globally. Unlike the built in __isset(), 
+	 * this method can take an array of properties to test simultaneously.
+	 *
+	 * @param string $key property name to test for
+	 * @param array $key array of property names to test for
+	 * @return boolean property test result
+	 * @return array associative array of keys and boolean test result
+	 */
+	public function is_set( $key = FALSE )
+	{
+		// Setup result;
+		$result = FALSE;
+
+		// If key is an array
+		if (is_array($key))
+		{
+			// Set the result to an array
+			$result = array();
+			
+			// Foreach key
+			foreach ($key as $property)
+			{
+				// Set the result to an associative array
+				$result[$property] = (array_key_exists($property, $this->kohana_local_data) OR array_key_exists($property, self::$kohana_global_data)) ? TRUE : FALSE;
+			}
+		}
+		else
+		{
+			// Otherwise just check one property
+			$result = (array_key_exists($key, $this->kohana_local_data) OR array_key_exists($key, self::$kohana_global_data)) ? TRUE : FALSE;
+		}
+
+		// Return the result
+		return $result;
+	}
+
+	/**
 	 * Sets a bound variable by reference.
 	 *
 	 * @param   string   name of variable
@@ -164,10 +212,7 @@ class View_Core {
 	 */
 	public function __set($key, $value)
 	{
-		if ( ! isset($this->$key))
-		{
-			$this->kohana_local_data[$key] = $value;
-		}
+		$this->kohana_local_data[$key] = $value;
 	}
 
 	/**
@@ -255,5 +300,4 @@ class View_Core {
 
 		return $output;
 	}
-
 } // End View

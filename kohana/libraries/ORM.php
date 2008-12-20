@@ -32,7 +32,7 @@ class ORM_Core {
 	protected $related = array();
 	protected $loaded  = FALSE;
 	protected $saved   = FALSE;
-	protected $sorting = array('id' => 'asc');
+	protected $sorting;
 
 	// Related objects
 	protected $object_relations = array();
@@ -90,6 +90,12 @@ class ORM_Core {
 		// Set the object name and plural name
 		$this->object_name   = strtolower(substr(get_class($this), 0, -6));
 		$this->object_plural = inflector::plural($this->object_name);
+
+		if (!isset($this->sorting))
+		{
+			// Default sorting
+			$this->sorting = array($this->primary_key => 'asc');
+		}
 
 		// Initialize database
 		$this->__initialize();
@@ -1180,29 +1186,6 @@ class ORM_Core {
 		}
 
 		return $table;
-	}
-	
-	/**
-	 * Outputs ORM iterator joined with given model
-	 * @param $related_model ORM Model the model related to this ORM
-	 * @return ORM iterator
-	 * @author credits to Josh Domagala
-	 */
-	public function join_model($related_model)
-	{
-		if( !in_array( $related_model->table_name, $this->has_and_belongs_to_many ) )
-		{
-			return FALSE;
-		}
-		
-		// Get the join table name
-		$join_table = $this->join_table($related_model->table_name);
-
-		// Return ORM iterator of model
-		return $this
-			->join($join_table, $this->foreign_key(NULL, $join_table), $this->foreign_key(TRUE))
-			->where($related_model->foreign_key(NULL, $join_table), $related_model->id)
-			->find_all();
 	}
 
 	/**

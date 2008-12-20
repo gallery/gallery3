@@ -975,37 +975,39 @@ final class Kohana {
 			$file = $class;
 		}
 
-		if (($filepath = self::find_file($type, $file)) === FALSE)
-			return FALSE;
-
-		// Load the file
-		require $filepath;
-
-		if ($type === 'libraries' OR $type === 'helpers')
+		if ($filename = self::find_file($type, $file))
 		{
-			if ($extension = self::find_file($type, self::$configuration['core']['extension_prefix'].$class))
+			// Load the class
+			require $filename;
+		}
+		else
+		{
+			// The class could not be found
+			return FALSE;
+		}
+
+		if ($filename = self::find_file($type, self::$configuration['core']['extension_prefix'].$class))
+		{
+			// Load the class extension
+			require $filename;
+		}
+		elseif ($suffix !== 'Core' AND class_exists($class.'_Core', FALSE))
+		{
+			// Class extension to be evaluated
+			$extension = 'class '.$class.' extends '.$class.'_Core { }';
+
+			// Start class analysis
+			$core = new ReflectionClass($class.'_Core');
+
+			if ($core->isAbstract())
 			{
-				// Load the extension
-				require $extension;
+				// Make the extension abstract
+				$extension = 'abstract '.$extension;
 			}
-			elseif ($suffix !== 'Core' AND class_exists($class.'_Core', FALSE))
-			{
-				// Class extension to be evaluated
-				$extension = 'class '.$class.' extends '.$class.'_Core { }';
 
-				// Start class analysis
-				$core = new ReflectionClass($class.'_Core');
-
-				if ($core->isAbstract())
-				{
-					// Make the extension abstract
-					$extension = 'abstract '.$extension;
-				}
-
-				// Transparent class extensions are handled using eval. This is
-				// a disgusting hack, but it gets the job done.
-				eval($extension);
-			}
+			// Transparent class extensions are handled using eval. This is
+			// a disgusting hack, but it gets the job done.
+			eval($extension);
 		}
 
 		return TRUE;

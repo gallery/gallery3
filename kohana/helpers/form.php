@@ -144,9 +144,10 @@ class form_Core {
 	 * @param   string|array  input name or an array of HTML attributes
 	 * @param   string        input value, when using a name
 	 * @param   string        a string to be attached to the end of the attributes
+	 * @param   boolean       encode existing entities
 	 * @return  string
 	 */
-	public static function input($data, $value = '', $extra = '')
+	public static function input($data, $value = '', $extra = '', $double_encode = TRUE )
 	{
 		if ( ! is_array($data))
 		{
@@ -161,7 +162,7 @@ class form_Core {
 		);
 
 		// For safe form data
-		$data['value'] = html::specialchars($data['value']);
+		$data['value'] = html::specialchars($data['value'], $double_encode);
 
 		return '<input'.form::attributes($data).' '.$extra.' />';
 	}
@@ -212,9 +213,10 @@ class form_Core {
 	 * @param   string|array  input name or an array of HTML attributes
 	 * @param   string        input value, when using a name
 	 * @param   string        a string to be attached to the end of the attributes
+	 * @param   boolean       encode existing entities
 	 * @return  string
 	 */
-	public static function textarea($data, $value = '', $extra = '')
+	public static function textarea($data, $value = '', $extra = '', $double_encode = TRUE )
 	{
 		if ( ! is_array($data))
 		{
@@ -227,7 +229,7 @@ class form_Core {
 		// Value is not part of the attributes
 		unset($data['value']);
 
-		return '<textarea'.form::attributes($data, 'textarea').' '.$extra.'>'.html::specialchars($value).'</textarea>';
+		return '<textarea'.form::attributes($data, 'textarea').' '.$extra.'>'.html::specialchars($value, $double_encode).'</textarea>';
 	}
 
 	/**
