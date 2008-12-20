@@ -46,6 +46,9 @@ class Albums_Controller extends Items_Controller {
     $template->set_global("parents", $item->parents());
     $template->content = new View("album.html");
 
+    $item->view_count++;
+    $item->save();
+
     print $template;
   }
 
