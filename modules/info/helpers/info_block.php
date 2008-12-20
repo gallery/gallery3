@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 class info_block_Core {
   public static function sidebar_blocks($theme) {
     if ($theme->item()) {
@@ -30,7 +29,12 @@ class info_block_Core {
   }
 
   public static function thumb_info($theme, $item) {
-    $results = "<li>Views: 321</li>";
+    $results = "";
+    if ($item->view_count) {
+      $results .= "<li>";
+      $results .= sprintf(_("Views: %d"), $item->view_count);
+      $results .= "</li>";
+    }
     if ($item->owner) {
       $results .= "<li>";
       $results .= sprintf(_("By: %s"), "<a href=\"#\">{$item->owner->name}</a>");

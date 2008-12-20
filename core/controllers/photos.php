@@ -37,8 +37,10 @@ class Photos_Controller extends Items_Controller {
     $template->set_global('parents', $item->parents());
 
     $template->content = new View("photo.html");
-
     print $template;
+
+    $item->view_count++;
+    $item->save();
   }
 
   /**

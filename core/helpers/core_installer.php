@@ -60,6 +60,7 @@ class core_installer {
                    `thumb_width` int(9) default NULL,
                    `title` char(255) default NULL,
                    `type` char(32) NOT NULL,
+                   `view_count` int(9) default 0,
                    `width` int(9) default NULL,
                    PRIMARY KEY (`id`),
                    KEY `parent_id` (`parent_id`),
