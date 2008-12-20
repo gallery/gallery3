@@ -47,6 +47,8 @@ class core_block_Core {
     $block->id = "gPhotoStream";
     $block->title = _("Photo Stream");
     $block->content = new View("admin_block_photo_stream.html");
+    $block->content->photos =
+      ORM::factory("item")->where("type", "photo")->orderby("created", "desc")->find_all(10);
     $blocks[] = $block;
 
     $block = new Block();

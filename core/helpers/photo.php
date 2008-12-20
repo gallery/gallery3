@@ -104,4 +104,21 @@ class photo_Core {
     return $form;
   }
 
+  /**
+   * Return scaled width and height.
+   *
+   * @param Item_Model the photo
+   * @param integer    the scaling factor
+   * @param string     the output format using %d placeholders for width and height
+   */
+  static function img_dimensions($photo, $max, $format="width=\"%d\" height=\"%d\"") {
+    if ($photo->width > $photo->height) {
+      $width = $max;
+      $height = (int)$max * ($photo->height / $photo->width);
+    } else {
+      $height = $max;
+      $width = (int)$max * ($photo->width / $photo->height);
+    }
+    return sprintf($format, $width, $height);
+  }
 }

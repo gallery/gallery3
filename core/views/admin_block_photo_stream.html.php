@@ -2,7 +2,8 @@
 <p>
   Recent photos added to your Gallery
 </p>
-<img src="<?= $theme->url("images/photostream.png") ?>" alt="" />
-<p class="gWarning">
-  Slider type of display. Show titles underneath or on hover. Draw a keyline around albums, or differentiate some how. Each will be linked to item view
-</p>
+<? foreach ($photos as $photo): ?>
+<a href="<?= url::site("photos/$photo->id") ?>">
+  <img <?= photo::img_dimensions($photo, 72) ?> src="<?= $photo->thumb_url() ?>" alt="" />
+</a>
+<? endforeach ?>
