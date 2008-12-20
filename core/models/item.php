@@ -237,4 +237,17 @@ class Item_Model extends ORM_MPTT {
       return parent::__get($column);
     }
   }
+
+  /**
+   * @see ORM::save()
+   */
+  public function save() {
+    if (!empty($this->changed) && $this->changed != array("view_count" => "view_count")) {
+      $this->updated = time();
+      if (!$this->loaded) {
+        $this->created = $this->updated;
+      }
+    }
+    return parent::save();
+  }
 }

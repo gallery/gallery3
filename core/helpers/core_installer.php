@@ -44,6 +44,7 @@ class core_installer {
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE `items` (
+                   `created` int(9) default NULL,
                    `description` char(255) default NULL,
                    `height` int(9) default NULL,
                    `id` int(9) NOT NULL auto_increment,
@@ -60,6 +61,7 @@ class core_installer {
                    `thumb_width` int(9) default NULL,
                    `title` char(255) default NULL,
                    `type` char(32) NOT NULL,
+                   `updated` int(9) default NULL,
                    `view_count` int(9) default 0,
                    `width` int(9) default NULL,
                    PRIMARY KEY (`id`),
