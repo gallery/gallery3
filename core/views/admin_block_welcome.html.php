@@ -1,3 +1,4 @@
+<? defined("SYSPATH") or die("No direct script access."); ?>
 <p>
   This is your administration dashboard and it provides a quick overview of status messages,
   recent updates, and frequently used options. Add or remove blocks and rearrange them

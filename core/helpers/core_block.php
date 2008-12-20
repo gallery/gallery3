@@ -34,7 +34,15 @@ class core_block_Core {
     $block = new Block();
     $block->id = "gWelcome";
     $block->title = _("Welcome to Gallery3");
-    $block->content = new View("admin_dashboard_welcome.html");
+    $block->content = new View("admin_block_welcome.html");
+    return $block;
+  }
+
+  public static function admin_sidebar_blocks($theme) {
+    $block = new Block();
+    $block->id = "gStats";
+    $block->title = _("Gallery Stats");
+    $block->content = new View("admin_block_stats.html");
     return $block;
   }
 }

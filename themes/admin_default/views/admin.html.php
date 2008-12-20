@@ -5,15 +5,15 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>G3: Admin Dashboard</title>
-    <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>" 
+    <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
         type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= url::file("themes/default/css/screen.css") ?>" 
+    <link rel="stylesheet" href="<?= url::file("themes/default/css/screen.css") ?>"
         type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>" 
+    <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>"
         type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= $theme->url("css/superfish.css") ?>" 
+    <link rel="stylesheet" href="<?= $theme->url("css/superfish.css") ?>"
         type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= $theme->url("css/superfish-navbar.css") ?>" 
+    <link rel="stylesheet" href="<?= $theme->url("css/superfish-navbar.css") ?>"
         type="text/css" media="screen,projection">
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.packed.js") ?>" type="text/javascript"></script>
@@ -58,13 +58,7 @@
             </form>
           </div>
 
-          <div id="gPlatform" class="gBlock">
-            <h2>Gallery Stats</h2>
-            <ul class="gBlockContent">
-              <li>Version: 3.0</li>
-              <li>Your gallery has 34 albums containing 603 photos with 26 comments.</li>
-            </ul>
-          </div>
+          <?= $theme->sidebar_blocks() ?>
 
           <div id="gPlatform" class="gBlock">
             <h2>Platform Information</h2>

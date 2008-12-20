@@ -66,6 +66,7 @@ class Admin_View_Core extends View {
   public function __call($function, $args) {
     switch ($function) {
     case "dashboard_blocks":
+    case "sidebar_blocks":
       $function = "admin_$function";
       $blocks = array();
       foreach (module::installed() as $module) {
