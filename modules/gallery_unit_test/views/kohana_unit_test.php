@@ -27,7 +27,7 @@ foreach ($results as $class => $methods) {
   }
 
   if (empty($methods)) {
-    printf("| %-96.96s |\n", magenta("NO TESTS FOUND"));
+    printf("| %s%-96.96s%s |\n", magenta_start(), "NO TESTS FOUND", color_end());
   } else {
     foreach ($methods as $method => $result) {
       // Hide passed tests from report
