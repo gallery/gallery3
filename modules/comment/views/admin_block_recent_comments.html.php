@@ -1,3 +1,4 @@
+<? defined("SYSPATH") or die("No direct script access."); ?>
 <ul>
   <li>
     2008-12-10 23:02:23 <a href="#">Bob</a> said "<i>Doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi...</i>"
