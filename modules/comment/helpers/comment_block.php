@@ -27,4 +27,12 @@ class comment_block_Core {
   public static function photo_bottom($theme) {
     return comment::block($theme, true);
   }
+
+  public static function admin_dashboard_blocks($theme) {
+    $block = new Block();
+    $block->id = "gRecentComments";
+    $block->title = _("Recent Comments");
+    $block->content = new View("admin_block_recent_comments.html");
+    return $block;
+  }
 }
