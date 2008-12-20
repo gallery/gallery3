@@ -35,7 +35,15 @@ class core_block_Core {
     $block->id = "gWelcome";
     $block->title = _("Welcome to Gallery3");
     $block->content = new View("admin_block_welcome.html");
-    return $block;
+    $blocks[] = $block;
+
+    $block = new Block();
+    $block->id = "gMessages";
+    $block->title = _("Status Messages");
+    $block->content = new View("admin_block_messages.html");
+    $blocks[] = $block;
+
+    return implode("\n", $blocks);
   }
 
   public static function admin_sidebar_blocks($theme) {
