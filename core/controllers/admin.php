@@ -18,20 +18,25 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Admin_Controller extends Controller {
-  public function __construct() {
+  private $theme;
+
+  public function __construct($theme=null) {
     if (!(user::active()->admin)) {
       throw new Exception("@todo UNAUTHORIZED", 401);
     }
+    $this->theme = $theme;
     parent::__construct();
+  }
+
+  public function theme() {
+    return $this->theme;
   }
 
   public function __call($controller_name, $args) {
     if ($controller_name == "index") {
       $controller_name = "dashboard";
     }
-
-    $controller = "Admin_{$controller_name}_Controller";
-    $controller = new $controller;
+    $controller_name = "Admin_{$controller_name}_Controller";
 
     if ($args) {
       $method = array_shift($args);
@@ -40,9 +45,9 @@ class Admin_Controller extends Controller {
     }
 
     $theme_name = module::get_var("core", "active_admin_theme", "admin_default");
-    $template = new Admin_View("admin.html", $theme_name);
-    $template->content =
-      call_user_func_array(array(new $controller, $method), $args);
+    $this->template = $template = new Admin_View("admin.html", $theme_name);
+    $template->content = call_user_func_array(
+      array(new $controller_name($template), $method), $args);
     print $template;
   }
 }

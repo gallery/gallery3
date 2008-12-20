@@ -17,9 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Dashboard_Controller extends Controller {
+class Admin_Dashboard_Controller extends Admin_Controller {
   public function index() {
-    return new View("admin_dashboard.html");
+    return $this->theme()->dashboard_blocks();
   }
 }
 
