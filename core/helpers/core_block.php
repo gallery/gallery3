@@ -49,6 +49,12 @@ class core_block_Core {
     $block->content = new View("admin_block_photo_stream.html");
     $blocks[] = $block;
 
+    $block = new Block();
+    $block->id = "gLogEntries";
+    $block->title = _("Log Entries");
+    $block->content = new View("admin_block_log_entries.html");
+    $blocks[] = $block;
+
     return implode("\n", $blocks);
   }
 
