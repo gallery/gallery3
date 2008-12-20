@@ -43,6 +43,20 @@ class core_block_Core {
     $block->id = "gStats";
     $block->title = _("Gallery Stats");
     $block->content = new View("admin_block_stats.html");
-    return $block;
+    $blocks[] = $block;
+
+    $block = new Block();
+    $block->id = "gPlatform";
+    $block->title = _("Platform Information");
+    $block->content = new View("admin_block_platform.html");
+    $blocks[] = $block;
+
+    $block = new Block();
+    $block->id = "gProjectNews";
+    $block->title = _("Gallery Project News");
+    $block->content = new View("admin_block_news.html");
+    $blocks[] = $block;
+
+    return implode("\n", $blocks);
   }
 }
