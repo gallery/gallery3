@@ -144,6 +144,16 @@ class module_Core {
     self::event("gallery_ready");
   }
 
+  public static function load_themes() {
+    $modules = Kohana::config('core.modules');
+    if (Router::$controller == "admin") {
+      array_unshift($modules, THEMEPATH . 'admin_default');
+    } else {
+      array_unshift($modules, THEMEPATH . 'default');
+    }
+    Kohana::config_set('core.modules', $modules);
+  }
+
   public function get_var($module_name, $name, $default_value=null) {
     $module = model_cache::get("module", $module_name, "name");
     $var = ORM::factory("var")
