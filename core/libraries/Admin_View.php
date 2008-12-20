@@ -59,4 +59,27 @@ class Admin_View_Core extends View {
 
     print $menu;
   }
+
+ /**
+   * Handle all theme functions that insert module content.
+   */
+  public function __call($function, $args) {
+    switch ($function) {
+    case "dashboard_blocks":
+      $function = "admin_$function";
+      $blocks = array();
+      foreach (module::installed() as $module) {
+        $helper_class = "{$module->name}_block";
+        if (method_exists($helper_class, $function)) {
+          $blocks[] = call_user_func_array(
+            array($helper_class, $function),
+            array_merge(array($this), $args));
+        }
+      }
+      return implode("\n", $blocks);
+
+    default:
+      throw new Exception("@todo UNKNOWN_THEME_FUNCTION: $function");
+    }
+  }
 }

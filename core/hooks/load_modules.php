@@ -19,3 +19,4 @@
  */
 
 Event::add("system.ready", array("module", "load_modules"));
+Event::add("system.post_routing", array("module", "load_themes"));

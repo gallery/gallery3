@@ -29,4 +29,12 @@ class core_block_Core {
       return new View("in_place_edit.html");
     }
   }
+
+  public static function admin_dashboard_blocks($theme) {
+    $block = new Block();
+    $block->id = "gWelcome";
+    $block->title = _("Welcome to Gallery3");
+    $block->content = new View("admin_dashboard_welcome.html");
+    return $block;
+  }
 }
