@@ -7,7 +7,7 @@
     <? printf(_("Apache: %s"), apache_get_version()) ?>
   </li>
   <li>
-    <? printf(_("PHP %s"), phpversion()) ?>
+    <? printf(_("PHP: %s"), phpversion()) ?>
   </li>
   <li>
     <? printf(_("MySQL: %s"), mysql_get_server_info()) ?>
