@@ -30,6 +30,8 @@ class Login_Controller extends Controller {
       if ($user->loaded &&
           user::is_correct_password($user, $group->password->value)) {
         user::login($user);
+        log::add("user", "User $user->name logged in",
+                 log::INFO, html::anchor("user/$user->id", $user->name));
         if ($continue = $this->input->get("continue")) {
           url::redirect($continue);
         }
