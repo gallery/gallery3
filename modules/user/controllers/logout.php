@@ -19,12 +19,7 @@
  */
 class Logout_Controller extends Controller {
   public function index() {
-    try {
-      Session::instance()->destroy();
-      module::event("user_logout", $user);
-    } catch (Exception $e) {
-      Kohana::log("error", $e);
-    }
+    user::logout();
     if ($this->input->get("continue")) {
       url::redirect($this->input->get("continue"));
     }

@@ -17,26 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class url extends url_Core {
-  /**
-   * Just like url::file() except that it returns an absolute URI
-   */
-  public static function abs_file($path) {
-    return url::base(false, "http") . $path;
-  }
-
-  /**
-   * Just like url::site() except that it returns an absolute URI and
-   * doesn't take a protocol parameter.
-   */
-  public static function abs_site($path) {
-    return url::site($path, "http");
-  }
-
-  /**
-   * Just like url::current except that it returns an absolute URI
-   */
-  public static function abs_current($qs=false) {
-    return self::abs_site(url::current($qs));
-  }
+class Log_Model extends ORM {
 }

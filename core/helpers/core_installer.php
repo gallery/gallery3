@@ -45,13 +45,13 @@ class core_installer {
 
       $db->query("CREATE TABLE `items` (
                    `created` int(9) default NULL,
-                   `description` char(255) default NULL,
+                   `description` varchar(255) default NULL,
                    `height` int(9) default NULL,
                    `id` int(9) NOT NULL auto_increment,
                    `left` int(9) NOT NULL,
                    `level` int(9) NOT NULL,
-                   `mime_type` char(64) default NULL,
-                   `name` char(255) default NULL,
+                   `mime_type` varchar(64) default NULL,
+                   `name` varchar(255) default NULL,
                    `owner_id` int(9) default NULL,
                    `parent_id` int(9) NOT NULL,
                    `resize_height` int(9) default NULL,
@@ -59,8 +59,8 @@ class core_installer {
                    `right` int(9) NOT NULL,
                    `thumb_height` int(9) default NULL,
                    `thumb_width` int(9) default NULL,
-                   `title` char(255) default NULL,
-                   `type` char(32) NOT NULL,
+                   `title` varchar(255) default NULL,
+                   `type` varchar(32) NOT NULL,
                    `updated` int(9) default NULL,
                    `view_count` int(9) default 0,
                    `width` int(9) default NULL,
@@ -69,9 +69,21 @@ class core_installer {
                    KEY `type` (`type`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `logs` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `category` varchar(64) default NULL,
+                   `html` varchar(255) default NULL,
+                   `message` text default NULL,
+                   `referer` varchar(255) default NULL,
+                   `severity` int(9) default 0,
+                   `timestamp` int(9) default 0,
+                   `url` varchar(255) default NULL,
+                   PRIMARY KEY (`id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $db->query("CREATE TABLE `modules` (
                    `id` int(9) NOT NULL auto_increment,
-                   `name` char(255) default NULL,
+                   `name` varchar(255) default NULL,
                    `version` int(9) default NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
@@ -79,7 +91,7 @@ class core_installer {
 
       $db->query("CREATE TABLE `permissions` (
                    `id` int(9) NOT NULL auto_increment,
-                   `name` char(255) default NULL,
+                   `name` varchar(255) default NULL,
                    `version` int(9) default NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
@@ -95,7 +107,7 @@ class core_installer {
       $db->query("CREATE TABLE `vars` (
                    `id` int(9) NOT NULL auto_increment,
                    `module_id` int(9),
-                   `name` char(255) NOT NULL,
+                   `name` varchar(255) NOT NULL,
                    `value` text,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`module_id`, `name`))

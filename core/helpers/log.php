@@ -17,26 +17,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class url extends url_Core {
-  /**
-   * Just like url::file() except that it returns an absolute URI
-   */
-  public static function abs_file($path) {
-    return url::base(false, "http") . $path;
-  }
+class log_Core {
+  const INFO    = 1;
+  const WARNING = 2;
+  const ERROR   = 3;
 
   /**
-   * Just like url::site() except that it returns an absolute URI and
-   * doesn't take a protocol parameter.
+   * Add a log entry.
+   *
+   * @param string  $category  an arbitrary category we can use to filter log messages
+   * @param string  $message   a detailed log message
+   * @param integer $severity  INFO, WARNING or ERROR
+   * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  public static function abs_site($path) {
-    return url::site($path, "http");
-  }
-
-  /**
-   * Just like url::current except that it returns an absolute URI
-   */
-  public static function abs_current($qs=false) {
-    return self::abs_site(url::current($qs));
+  function add($category, $message, $severity=INFO, $html) {
+    $log = ORM::factory("log");
+    $log->category = $category;
+    $log->message = $message;
+    $log->severity = $severity;
+    $log->html = $html;
+    $log->url = url::abs_current(true);
+    $log->referer = request::referrer(null);
+    $log->timestamp = time();
+    $log->save();
   }
 }

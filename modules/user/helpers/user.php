@@ -187,6 +187,22 @@ class user_Core {
 
     user::set_active($user);
     module::event("user_login", $user);
+    log::add("user", "User $user->name logged in",
+             log::INFO, html::anchor("user/$user->id", $user->name));
+  }
+
+  public static function logout() {
+    $user = user::active();
+    if (!$user->guest) {
+      try {
+        Session::instance()->destroy();
+      } catch (Exception $e) {
+        Kohana::log("error", $e);
+      }
+      module::event("user_logout", $user);
+      log::add("user", "User $user->name logged out",
+               log::INFO, html::anchor("user/$user->id", $user->name));
+    }
   }
 
   /**
