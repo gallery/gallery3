@@ -37,6 +37,8 @@ class Login_Controller extends Controller {
         }
         return;
       } else {
+        log::add("user", sprintf(_("Failed login for %s"), $group->inputs["name"]->value),
+                 log::WARNING);
         $group->inputs["name"]->add_error("invalid_login", 1);
       }
     }

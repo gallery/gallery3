@@ -19,6 +19,7 @@
  */
 class Logout_Controller extends Controller {
   public function index() {
+    $user = user::active();
     user::logout();
     log::add("user", "User $user->name logged out",
              log::INFO, html::anchor("user/$user->id", $user->name));
