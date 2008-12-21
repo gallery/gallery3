@@ -79,6 +79,7 @@ class core_block_Core {
     $block->id = "gProjectNews";
     $block->title = _("Gallery Project News");
     $block->content = new View("admin_block_news.html");
+    $block->content->feed = feed::parse("http://gallery.menalto.com/node/feed", 3);
     $blocks[] = $block;
 
     return implode("\n", $blocks);
