@@ -30,7 +30,7 @@ class log_Core {
    * @param integer $severity  INFO, WARNING or ERROR
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  function add($category, $message, $severity=INFO, $html) {
+  function add($category, $message, $severity=log::INFO, $html="") {
     $log = ORM::factory("log");
     $log->category = $category;
     $log->message = $message;
