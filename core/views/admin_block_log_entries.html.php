@@ -1,20 +1,11 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <ul>
+  <? foreach ($entries as $entry): ?>
   <li>
-    <a href="">hacker</a> 2008-12-10 23:02:23 Something happened
+    <a href="<?= url::site("user/$entry->user_id") ?>"><?= $entry->user->name ?></a>
+    <?= date("Y-M-d H:i:s", $entry->timestamp) ?>
+    <?= $entry->message ?>
+    <?= $entry->html ?>
   </li>
-  <li>
-    <a href="">username</a> 2008-12-10 23:02:23 Someone logged in
-  </li>
-  <li>
-    <a href="">username</a> 2008-12-10 23:02:23 New module installed
-  </li>
-  <li>
-    <a href="">username</a> 2008-12-10 23:02:23 Someone logged in
-  </li>
-  <li>
-    <a href="">username</a> 2008-12-10 23:02:23 RSS feed updated
-  </li>
+  <? endforeach ?>
 </ul>
-
-

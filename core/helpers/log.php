@@ -39,6 +39,7 @@ class log_Core {
     $log->url = url::abs_current(true);
     $log->referer = request::referrer(null);
     $log->timestamp = time();
+    $log->user_id =  user::active()->id;
     $log->save();
   }
 }

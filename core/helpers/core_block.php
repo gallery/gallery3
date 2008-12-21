@@ -55,6 +55,7 @@ class core_block_Core {
     $block->id = "gLogEntries";
     $block->title = _("Log Entries");
     $block->content = new View("admin_block_log_entries.html");
+    $block->content->entries = ORM::factory("log")->orderby("timestamp", "DESC")->find_all(5);
     $blocks[] = $block;
 
     return implode("\n", $blocks);

@@ -78,6 +78,7 @@ class core_installer {
                    `severity` int(9) default 0,
                    `timestamp` int(9) default 0,
                    `url` varchar(255) default NULL,
+                   `user_id` int(9) default 0,
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
