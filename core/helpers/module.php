@@ -31,6 +31,11 @@ class module_Core {
     return ORM::factory("module")->where("name", $module_name)->find()->version;
   }
 
+  /**
+   * Set the version of the corresponding Module_Model
+   * @param string  $module_name
+   * @param integer $version
+   */
   public static function set_version($module_name, $version) {
     $module = ORM::factory("module")->where("name", $module_name)->find();
     if (!$module->loaded) {
@@ -41,11 +46,19 @@ class module_Core {
     Kohana::log("debug", "$module_name: version is now $version");
   }
 
+  /**
+   * Load the corresponding Module_Model
+   * @param string $module_name
+   */
   public static function get($module_name) {
     return model_cache::get("module", $module_name, "name");
   }
 
-  public static function delete ($module_name) {
+  /**
+   * Delete the corresponding Module_Model
+   * @param string $module_name
+   */
+  public static function delete($module_name) {
     $module = ORM::factory("module")->where("name", $module_name)->find();
     $module_id = $module->id;
     $module->delete();
@@ -56,24 +69,24 @@ class module_Core {
     Kohana::log("debug", "$module_name: module deleted");
   }
 
+  /**
+   * Check to see if a module is installed
+   * @param string $module_name
+   */
   public static function is_installed($module_name) {
     return in_array($module_name, self::$module_names);
   }
 
+  /**
+   * Return the list of installed modules.
+   */
   public static function installed() {
     return self::$modules;
   }
 
-  public static function event($name, &$data=null) {
-    foreach (self::installed() as $module) {
-      $class = "{$module->name}_event";
-      $function = str_replace(".", "_", $name);
-      if (method_exists($class, $function)) {
-        call_user_func_array(array($class, $function), array(&$data));
-      }
-    }
-  }
-
+  /**
+   * Return the list of available modules.
+   */
   public static function available() {
     $modules = array();
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
@@ -85,6 +98,9 @@ class module_Core {
     return $modules;
   }
 
+  /**
+   * Install a module.
+   */
   public static function install($module_name) {
     $installer_class = "{$module_name}_installer";
     Kohana::log("debug", "$installer_class install (initial)");
@@ -104,12 +120,18 @@ class module_Core {
     self::load_modules();
   }
 
+  /**
+   * Uninstall a module.
+   */
   public static function uninstall($module_name) {
     $installer_class = "{$module_name}_installer";
     Kohana::log("debug", "$installer_class uninstall");
     call_user_func(array($installer_class, "uninstall"));
   }
 
+  /**
+   * Load the active modules.  This is called at bootstrap time.
+   */
   public static function load_modules() {
     // Reload module list from the config file since we'll do a refresh after calling install()
     $core = Kohana::config_load('core');
@@ -144,6 +166,10 @@ class module_Core {
     self::event("gallery_ready");
   }
 
+  /**
+   * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
+   * active for any given request.
+   */
   public static function load_themes() {
     $modules = Kohana::config('core.modules');
     if (Router::$controller == "admin") {
@@ -154,6 +180,28 @@ class module_Core {
     Kohana::config_set('core.modules', $modules);
   }
 
+  /**
+   * Run a specific event on all active modules.
+   * @param string $name the event name
+   * @param mixed  $data data to pass to each event handler
+   */
+  public static function event($name, &$data=null) {
+    foreach (self::installed() as $module) {
+      $class = "{$module->name}_event";
+      $function = str_replace(".", "_", $name);
+      if (method_exists($class, $function)) {
+        call_user_func_array(array($class, $function), array(&$data));
+      }
+    }
+  }
+
+  /**
+   * Get a variable from this module
+   * @param string $module_name
+   * @param string $name
+   * @param string $default_value
+   * @return the value
+   */
   public function get_var($module_name, $name, $default_value=null) {
     $module = model_cache::get("module", $module_name, "name");
     $var = ORM::factory("var")
@@ -163,6 +211,12 @@ class module_Core {
     return $var->loaded ? $var->value : $default_value;
   }
 
+  /**
+   * Store a variable for this module
+   * @param string $module_name
+   * @param string $name
+   * @param string $value
+   */
   public function set_var($module_name, $name, $value) {
     $module = model_cache::get("module", $module_name, "name");
     $var = ORM::factory("var")
