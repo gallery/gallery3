@@ -33,6 +33,8 @@ class comment_block_Core {
     $block->id = "gRecentComments";
     $block->title = _("Recent Comments");
     $block->content = new View("admin_block_recent_comments.html");
+    $block->content->comments =
+      ORM::factory("comment")->orderby("created", "DESC")->limit(5)->find_all();
     return $block;
   }
 }
