@@ -61,12 +61,15 @@ class Items_Controller extends REST_Controller {
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
         $owner_id);
-      url::redirect("albums/{$album->id}");
+      log::add("content", "Created an album", log::INFO,
+               html::anchor("albums/$album->id", "view album"));
+      url::redirect("albums/$album->id");
       break;
 
     case "photo":
       if (is_array($_FILES["file"]["name"])) {
-        for ($i = 0; $i < count($_FILES["file"]["name"]) - 1; $i++) {
+        $count = count($_FILES["file"]["name"]);
+        for ($i = 0; $i < $count - 1; $i++) {
           if ($_FILES["file"]["error"][$i] == 0) {
             $photo = photo::create(
               $item->id,
@@ -78,7 +81,9 @@ class Items_Controller extends REST_Controller {
             throw new Exception("@todo ERROR_IN_UPLOAD_FILE");
           }
         }
-        url::redirect("albums/{$item->id}");
+        log::add("content", "Added $count photos", log::INFO,
+                 html::anchor("albums/$item->id", "view album"));
+        url::redirect("albums/$item->id");
       } else {
         $photo = photo::create(
           $item->id,
@@ -87,7 +92,9 @@ class Items_Controller extends REST_Controller {
           $this->input->post("title", $this->input->post("name")),
           $this->input->post("description"),
           $owner_id);
-        url::redirect("photos/{$photo->id}");
+        log::add("content", "Added a photo", log::INFO,
+                 html::anchor("photos/$photo->id", "view photo"));
+        url::redirect("photos/$photo->id");
       }
       break;
     }

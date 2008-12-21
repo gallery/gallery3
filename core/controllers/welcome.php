@@ -198,10 +198,18 @@ class Welcome_Controller extends Template_Controller {
 
     cookie::set("add_photos_path", $path);
 
+    $photo_count = 0;
     foreach (glob("$path/*.[Jj][Pp][Gg]") as $file) {
       set_time_limit(30);
       photo::create($parent->id, $file, basename($file), basename($file));
+      $photo_count++;
     }
+
+    if ($photo_count > 0) {
+      log::add("content", "(scaffold) Added $photo_count photos", log::INFO,
+               html::anchor("albums/$parent_id", "View album"));
+    }
+
     url::redirect("welcome");
   }
 
@@ -212,6 +220,7 @@ class Welcome_Controller extends Template_Controller {
 
     $test_images = glob(APPPATH . "tests/images/*.[Jj][Pp][Gg]");
 
+    $album_count = $photo_count = 0;
     for ($i = 0; $i < $count; $i++) {
       set_time_limit(30);
 
@@ -226,11 +235,21 @@ class Welcome_Controller extends Template_Controller {
           $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
           ->set_thumb(DOCROOT . "core/tests/test.jpg", $thumb_size, $thumb_size)
           ->save();
+        $album_count++;
       } else {
         $photo_index = rand(0, count($test_images) - 1);
         photo::create($parent->id, $test_images[$photo_index], basename($test_images[$photo_index]),
                       "rnd_" . rand(), "sample thumb", $owner_id);
+        $photo_count++;
       }
+    }
+
+    if ($photo_count > 0) {
+      log::add("content", "(scaffold) Added $photo_count photos");
+    }
+
+    if ($album_count > 0) {
+      log::add("content", "(scaffold) Added $album_count albums");
     }
     url::redirect("welcome");
   }
