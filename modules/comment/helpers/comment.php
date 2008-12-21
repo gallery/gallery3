@@ -36,20 +36,15 @@ class comment_Core {
    * @param string  $email author's email
    * @param string  $text comment body
    * @param integer $item_id id of parent item
-   * @param integer $datetime optional comment date and time in Unix format
    * @return Comment_Model
    */
-  static function create($author, $email, $text, $item_id, $datetime=NULL) {
-    if (is_null($datetime)) {
-      $datetime = time();
-    }
-
+  static function create($author, $email, $text, $item_id) {
     $comment = ORM::factory("comment");
     $comment->author = $author;
     $comment->email = $email;
     $comment->text = $text;
-    $comment->datetime = $datetime;
     $comment->item_id = $item_id;
+    $comment->created = time();
 
     $comment->save();
     module::event("comment_created", $comment);
@@ -111,7 +106,7 @@ class comment_Core {
   // @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
   static function get_comments($item_id) {
     $comments = ORM::factory('comment')->where('item_id', $item_id)
-      ->orderby('datetime', 'asc')
+      ->orderby('created', 'asc')
       ->find_all();
 
     if (!$comments->count()) {
@@ -151,7 +146,7 @@ class comment_Core {
 
   public static function get_atom_entry($comment) {
     $feed = new Gallery_Atom_Entry();
-    $feed->updated($comment->datetime)
+    $feed->updated($comment->created)
       ->title(sprintf(_("Comment #%d"), $comment->id))
       ->content($comment->text)
       ->author()
@@ -169,7 +164,7 @@ class comment_Core {
    * @todo Put proper user ID into author URI.
    */
   public static function get_atom_feed($comments) {
-    $latest_comment = $comments[0]->datetime;
+    $latest_comment = $comments[0]->created;
     $item_id = $comments[0]->item_id;
 
     /* Set up feed header. */
@@ -183,7 +178,7 @@ class comment_Core {
     foreach ($comments as $id => $comment) {
       $feed->entry()
         ->id(url::abs_site("comments/$comment->id"))
-        ->updated($comment->datetime)
+        ->updated($comment->created)
         ->title(sprintf(_("Comment #%d"), $comments->count() - $id))
         ->content($comment->text)
         ->author()
@@ -213,8 +208,8 @@ class comment_Core {
     $elapsed_days = round($time_difference / comment::SECONDS_IN_A_DAY);
     $elapsed_months = round($time_difference / comment::SECONDS_IN_A_MONTH);
     $elapsed_years = round($time_difference / comment::SECONDS_IN_A_YEAR);
-    $seconds_since_midnight = $date_info_now['hours'] * comment::SECONDS_IN_AN_HOUR
-      + $date_info_now['minutes'] * comment::SECONDS_IN_A_MINUTE + $date_info_now['seconds'];
+    $seconds_since_midnight = $date_info_now['hours'] * comment::SECONDS_IN_AN_HOUR +
+      $date_info_now['minutes'] * comment::SECONDS_IN_A_MINUTE + $date_info_now['seconds'];
 
     /* Construct message depending on how much time passed. */
     if ($elapsed_years > 0) {

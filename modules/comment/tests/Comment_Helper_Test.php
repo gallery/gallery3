@@ -26,22 +26,11 @@ class Comment_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($rand, $comment->email);
     $this->assert_equal($rand, $comment->text);
     $this->assert_equal($rand, $comment->item_id);
-    $this->assert_equal($rand, $comment->datetime);
-  }
-
-  public function create_comment_using_current_time_test() {
-    $rand = rand();
-    $comment = comment::create($rand, $rand, $rand, $rand);
-
-    $this->assert_equal($rand, $comment->author);
-    $this->assert_equal($rand, $comment->email);
-    $this->assert_equal($rand, $comment->text);
-    $this->assert_equal($rand, $comment->item_id);
-    $this->assert_true($comment->datetime > time() - 10 && $comment->datetime <= time());
+    $this->assert_true(!empty($comment->created));
   }
 
   public function format_elapsed_time_test() {
-    /* This test could be improved by using random numbers and specifically testing corner cases. */
+    // This test could be improved by using random numbers and specifically testing corner cases.
     $now = time();
 
     $yesterday = $now - comment::SECONDS_IN_A_DAY;

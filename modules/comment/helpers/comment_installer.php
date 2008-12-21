@@ -28,7 +28,7 @@ class comment_installer {
           `author` varchar(255) default NULL,
           `email` varchar(255) default NULL,
           `text` text,
-          `datetime` int(9) NOT NULL,
+          `created` int(9) NOT NULL,
           `item_id` int(9) NOT NULL,
           PRIMARY KEY (`id`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");

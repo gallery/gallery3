@@ -45,7 +45,7 @@ class Comments_Controller extends REST_Controller {
       $comment->author = $this->input->post('author');
       $comment->email = $this->input->post('email');
       $comment->text = $this->input->post('text');
-      $comment->datetime = time();
+      $comment->created = time();
       $comment->item_id = $this->input->post('item_id');
       $comment->save();
 
