@@ -23,5 +23,9 @@ class Admin_Modules_Controller extends Admin_Controller {
     $view->available = module::available();
     return $view;
   }
+
+  public function save() {
+    // Nothing yet
+  }
 }
 
