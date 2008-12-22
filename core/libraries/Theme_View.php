@@ -93,6 +93,7 @@ class Theme_View_Core extends View {
     case "album_bottom":
     case "album_top":
     case "credits";
+    case "footer":
     case "head":
     case "header_bottom":
     case "header_top":

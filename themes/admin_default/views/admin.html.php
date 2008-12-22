@@ -22,6 +22,7 @@
   </head>
 
   <body>
+    <?= $theme->admin_page_top() ?>
     <div id="doc4" class="yui-t5 gView">
       <div id="hd">
         <div id="gHeader">
@@ -58,16 +59,17 @@
             </form>
           </div>
 
-          <?= $theme->sidebar_blocks() ?>
+          <?= $theme->admin_sidebar_blocks() ?>
 
         </div>
       </div>
       <div id="ft">
         <div id="gFooter">
+          <?= $theme->admin_footer(); ?>
           Footer
         </div>
       </div>
     </div>
-
+    <?= $theme->admin_page_bottom() ?>
   </body>
 </html>

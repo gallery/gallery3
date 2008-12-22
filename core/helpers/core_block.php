@@ -30,6 +30,13 @@ class core_block_Core {
     }
   }
 
+  public static function admin_page_bottom($theme) {
+    if (Session::instance()->get("profiler", false)) {
+      $profiler = new Profiler();
+      $profiler->render();
+    }
+  }
+
   public static function admin_dashboard_blocks($theme) {
     $block = new Block();
     $block->id = "gWelcome";
