@@ -85,6 +85,13 @@ class Theme_View_Core extends View {
   }
 
   /**
+   * Print out any messages waiting for this user.
+   */
+  public function messages() {
+    return message::get();
+  }
+
+  /**
    * Handle all theme functions that insert module content.
    */
   public function __call($function, $args) {

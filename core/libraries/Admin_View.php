@@ -60,6 +60,13 @@ class Admin_View_Core extends View {
     print $menu;
   }
 
+  /**
+   * Print out any messages waiting for this user.
+   */
+  public function messages() {
+    return message::get();
+  }
+
  /**
    * Handle all theme functions that insert module content.
    */

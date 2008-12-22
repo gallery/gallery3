@@ -17,31 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class log_Core {
-  const INFO    = 1;
-  const WARNING = 2;
-  const ERROR   = 3;
+class message_Core {
+  public function add($msg) {
+    $session = Session::instance();
+    $status = $session->get("messages");
+    $status[] = $msg;
+    $session->set("messages", $status);
+  }
 
-  /**
-   * Add a log entry.
-   *
-   * @param string  $category  an arbitrary category we can use to filter log messages
-   * @param string  $message   a detailed log message
-   * @param integer $severity  INFO, WARNING or ERROR
-   * @param string  $html      an html snippet presented alongside the log message to aid the admin
-   */
-  function add($category, $message, $severity=log::INFO, $html="") {
-    $log = ORM::factory("log");
-    $log->category = $category;
-    $log->message = $message;
-    $log->severity = $severity;
-    $log->html = $html;
-    $log->url = url::abs_current(true);
-    $log->referer = request::referrer(null);
-    $log->timestamp = time();
-    if (module::is_installed("user")) {
-      $log->user_id = user::active()->id;
+  public function get() {
+    $messages = Session::instance()->get_once("messages", array());
+    if ($messages) {
+      return "<ul id=\"gMessages\"><li>" .
+        join("</li><li>", $messages) .
+        "</li>";
     }
-    $log->save();
   }
 }

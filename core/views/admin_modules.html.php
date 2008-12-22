@@ -13,7 +13,7 @@
       <tr>
         <? $data = array("name" => $module_name); ?>
         <? if ($module_info->locked) $data["disabled"] = 1; ?>
-        <td> <?= form::checkbox($data, '', module::is_installed($module_name)) ?> </td>
+        <td> <?= form::checkbox($data, '1', module::is_installed($module_name)) ?> </td>
         <td> <?= _($module_info->name) ?> </td>
         <td> <?= $module_info->version ?> </td>
         <td> <?= _($module_info->description) ?> </td>

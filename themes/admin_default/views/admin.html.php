@@ -36,6 +36,9 @@
           </div>
         </div>
       </div>
+
+      <?= $theme->messages() ?>
+
       <div id="bd">
         <div id="yui-main">
           <div class="yui-b">
