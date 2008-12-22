@@ -32,9 +32,8 @@ class message_Core {
       foreach ($messages as $msg) {
         $buf .= "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
       }
-      $buf .= "</ul>";
+      return $buf .= "</ul>";
     }
-    return $buf;
   }
 
   public function severity_class($severity) {
