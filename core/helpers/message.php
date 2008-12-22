@@ -18,19 +18,35 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class message_Core {
-  public function add($msg) {
+  public function add($msg, $severity=log::INFO) {
     $session = Session::instance();
     $status = $session->get("messages");
-    $status[] = $msg;
+    $status[] = array($msg, $severity);
     $session->set("messages", $status);
   }
 
   public function get() {
     $messages = Session::instance()->get_once("messages", array());
     if ($messages) {
-      return "<ul id=\"gMessages\"><li>" .
-        join("</li><li>", $messages) .
-        "</li>";
+      $buf = "<ul id=\"gMessages\">";
+      foreach ($messages as $msg) {
+        $buf .= "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
+      }
+      $buf .= "</ul>";
+    }
+    return $buf;
+  }
+
+  public function severity_class($severity) {
+    switch($severity) {
+    case log::INFO:
+      return "gInfo";
+
+    case log::WARNING:
+      return "gWarning";
+
+    case log::ERROR:
+      return "gError";
     }
   }
 }
