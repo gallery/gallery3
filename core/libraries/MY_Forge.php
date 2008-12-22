@@ -31,14 +31,7 @@ class Forge extends Forge_Core {
    * Use our own template
    */
   public function render($template="form.html", $custom=false) {
-    $session = Session::instance();
-    $csrf = $session->get("csrf");
-    if (empty($csrf)) {
-      $csrf = md5(rand());
-      $session->set("csrf", $csrf);
-    }
-
-    $this->inputs["csrf"]->value($csrf);
+    $this->inputs["csrf"]->value(access::csrf_token());
     return parent::render($template, $custom);
   }
 
@@ -61,15 +54,7 @@ class Forge extends Forge_Core {
    */
   public function validate() {
     $status = parent::validate();
-
-    $type = $this->type;
-    if (empty($type)) {
-      $csrf_value = $this->csrf->value;
-      if (empty($csrf_value) || $csrf_value !== Session::instance()->get("csrf")) {
-        throw new Exception("@todo SECURITY_INVALID_CSRF_TOKEN");
-      }
-    }
-
+    access::verify_csrf();
     return $status;
   }
 }

@@ -33,6 +33,10 @@ class Admin_Controller extends Controller {
   }
 
   public function __call($controller_name, $args) {
+    if (request::method() == "post") {
+      access::verify_csrf();
+    }
+
     if ($controller_name == "index") {
       $controller_name = "dashboard";
     }

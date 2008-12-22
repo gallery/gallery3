@@ -289,6 +289,37 @@ class access_Core {
   }
 
   /**
+   * Verify our Cross Site Request Forgery token is valid, else throw an exception.
+   */
+  public static function verify_csrf() {
+    if (Input::instance()->post("csrf") !== Session::instance()->get("csrf")) {
+      access::forbidden();
+    }
+  }
+
+  /**
+   * Get the Cross Site Request Forgery token for this session.
+   * @return string
+   */
+  public static function csrf_token() {
+    $session = Session::instance();
+    $csrf = $session->get("csrf");
+    if (empty($csrf)) {
+      $csrf = md5(rand());
+      $session->set("csrf", $csrf);
+    }
+    return $csrf;
+  }
+
+  /**
+   * Generate an <input> element containing the Cross Site Request Forgery token for this session.
+   * @return string
+   */
+  public static function csrf_form_field() {
+    return "<input type=\"hidden\" name=\"csrf\" value=\"" . self::csrf_token() . "\"/>";
+  }
+
+  /**
    * Internal method to get all available groups.
    *
    * @return ORM_Iterator

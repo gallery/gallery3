@@ -19,7 +19,7 @@
  */
 class Admin_Dashboard_Controller extends Admin_Controller {
   public function index() {
-    return $this->theme()->dashboard_blocks();
+    return $this->theme()->admin_dashboard_blocks();
   }
 }
 
