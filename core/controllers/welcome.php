@@ -32,7 +32,7 @@ class Welcome_Controller extends Template_Controller {
 
     set_error_handler(array("Welcome_Controller", "_error_handler"));
     try {
-      $this->template->syscheck->modules = $this->_read_modules();
+      $this->template->syscheck->modules = module::available();
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
       $this->template->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
       $this->template->deepest_photo = ORM::factory("item")
@@ -65,8 +65,8 @@ class Welcome_Controller extends Template_Controller {
   function install($module_name) {
     $to_install = array();
     if ($module_name == "*") {
-      foreach ($this->_read_modules() as $module_name => $version) {
-        if (empty($version)) {
+      foreach (module::available() as $module_name => $info) {
+        if (empty($info->installed)) {
           $to_install[] = $module_name;
         }
       }
@@ -415,24 +415,6 @@ class Welcome_Controller extends Template_Controller {
     foreach (array("logs", "uploads") as $dir) {
       @mkdir(VARPATH . "$dir");
     }
-  }
-
-  /**
-   * Create an array of all the modules that are install or available and the version number
-   * @return array(moduleId => version)
-   */
-  private function _read_modules() {
-    $modules = module::available();
-    try {
-      foreach (module::installed() as $installed_module) {
-        $modules->$installed_module->version = $installed_module->version;
-      }
-    } catch (Exception $e) {
-      // The database may not be installed
-    }
-    ksort($modules);
-
-    return $modules;
   }
 
   private function _load_group_info() {
