@@ -425,12 +425,13 @@ class Welcome_Controller extends Template_Controller {
     $modules = module::available();
     try {
       foreach (module::installed() as $installed_module) {
-        $modules[$installed_module->name] = $installed_module->version;
+        $modules->$installed_module->version = $installed_module->version;
       }
     } catch (Exception $e) {
       // The database may not be installed
     }
     ksort($modules);
+
     return $modules;
   }
 

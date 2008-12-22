@@ -74,7 +74,7 @@ class module_Core {
    * @param string $module_name
    */
   public static function is_installed($module_name) {
-    return in_array($module_name, self::$module_names);
+    return !empty(self::$module_names[$module_name]);
   }
 
   /**
@@ -88,11 +88,13 @@ class module_Core {
    * Return the list of available modules.
    */
   public static function available() {
-    $modules = array();
-    foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
-      if (empty($modules[basename(dirname(dirname($file)))])) {
-        $modules[basename(dirname(dirname($file)))] = 0;
-      }
+    $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+    foreach (array_merge(array("core/module.info"), glob(MODPATH . "*/module.info")) as $file) {
+      $module_name = basename(dirname($file));
+      $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+      $modules->$module_name->installed =
+        empty(self::$modules[$module_name]) ?
+        null : self::$modules[$module_name]->version;
     }
 
     return $modules;
@@ -152,8 +154,8 @@ class module_Core {
 
     try {
       foreach ($modules as $module) {
-        self::$module_names[] = $module->name;
-        self::$modules[] = $module;
+        self::$module_names[$module->name] = $module->name;
+        self::$modules[$module->name] = $module;
         $kohana_modules[] = MODPATH . $module->name;
       }
 

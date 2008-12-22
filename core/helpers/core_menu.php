@@ -78,7 +78,7 @@ class core_menu_Core {
       ->append(Menu::factory("link")
                ->id("modules")
                ->label(_("Modules"))
-               ->url("#"))
+               ->url("admin/modules"))
       ->append(Menu::factory("submenu")
                ->id("content_menu")
                ->label(_("Content")))

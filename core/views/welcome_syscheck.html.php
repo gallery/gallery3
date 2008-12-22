@@ -18,7 +18,7 @@
 
 <? if (empty($errors)): ?>
 <div class="block">
-  <? if (empty($modules['core'])): ?>
+  <? if (!module::is_installed("core")): ?>
   <p class="success">
     Your system is ready, but Gallery is not yet installed.
   </p>
@@ -32,25 +32,28 @@
   <table style="width: 400px">
     <tr>
       <th align="left">Name</th>
-      <th align="left">Version</th>
+      <th align="left">Installed</th>
+      <th align="left">Available</th>
       <th align="left">Action</th>
     </tr>
     <tr class="core">
       <td> <b> core </b> </td>
-      <td> <b> <?= $modules["core"] ?> </b> </td>
+      <td> <b> <?= module::get_version("core") ?> </b> </td>
+      <td> <b> <?= module::get_version("core") ?> </b> </td>
       <td> <b> <?= html::anchor("welcome/uninstall/core", "reset install") ?> </b> </td>
     </tr>
-    <? foreach ($modules as $module_name => $module_version): ?>
+    <? foreach ($modules as $module_name => $info): ?>
     <? if ($module_name == "core") continue; ?>
     <tr>
       <td><?= $module_name ?></td>
-      <td><?= empty($module_version) ? "" : $module_version ?></td>
+      <td><?= $info->installed ?></td>
+      <td><?= $info->version ?></td>
       <td>
-        <? if (empty($module_version)): ?>
-          <?= html::anchor("welcome/install/{$module_name}", "install") ?>
+        <? if ($info->installed): ?>
+        <?= html::anchor("welcome/uninstall/{$module_name}", "uninstall") ?>
         <? else: ?>
-          <?= html::anchor("welcome/uninstall/{$module_name}", "uninstall") ?>
-        <? endif; ?>
+        <?= html::anchor("welcome/install/{$module_name}", "install") ?>
+        <? endif ?>
       </td>
     </tr>
     <? endforeach; ?>
