@@ -95,7 +95,13 @@ class module_Core {
       $modules->$module_name->installed =
         empty(self::$modules[$module_name]) ?
         null : self::$modules[$module_name]->version;
+      $modules->$module_name->locked = false;
     }
+
+    // Lock certain modules
+    $modules->core->locked = true;
+    $modules->user->locked = true;
+    $modules->ksort();
 
     return $modules;
   }
