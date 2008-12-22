@@ -25,7 +25,6 @@ class Admin_Users_Controller extends Controller {
   }
 
   public function edit($id) {
-    $view = new View("admin_users_edit.html");
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
