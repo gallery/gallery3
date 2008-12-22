@@ -152,11 +152,13 @@ class module_Core {
     // Do The Right Thing.
     //
     // @todo get rid of this extra error checking when we have an installer.
+    set_error_handler(array("module", "dummy_error_handler"));
     try {
       $modules = ORM::factory("module")->find_all();
     } catch (Exception $e) {
       return;
     }
+    restore_error_handler();
 
     try {
       foreach ($modules as $module) {
@@ -173,6 +175,7 @@ class module_Core {
 
     self::event("gallery_ready");
   }
+  public static function dummy_error_handler() { }
 
   /**
    * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
