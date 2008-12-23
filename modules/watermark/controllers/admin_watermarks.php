@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Watermark_admin_Controller extends Controller {
+class Admin_Watermarks_Controller extends Admin_Controller {
   public function load() {
     $form = watermark::get_watermark_form();
     Kohana::log("debug", print_r($form, 1));

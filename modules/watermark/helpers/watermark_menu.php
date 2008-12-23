@@ -18,25 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class watermark_menu_Core {
-  // @todo this needs to get on the admin page at some point
-
-  public static function site($menu, $theme) {
-    $user = user::active();
-    if ($user->admin) {
-      $menu->get("admin_menu")->append(
-        Menu::Factory("dialog")
-        ->id("watermark_Load")
-        ->label(_("Load Watermark"))
-        ->url(url::site("admin/watermark/load")));
-
-      $path = module::get_var("watermark", "watermark_image_path");
-      if (!empty($path)) {
-        $menu->get("admin_menu")->append(
-          Menu::Factory("dialog")
-          ->id("watermark_position")
-          ->label(_("Set Watermark Position"))
-          ->url(url::site("admin/watermark/get_form/$user->id")));
-      }
-    }
+  public static function admin($menu, $theme) {
+    $menu->append(
+      Menu::factory("link")
+      ->id("watermarks")
+      ->label(_("Watermarks"))
+      ->url(url::site("admin/watermarks")));
   }
 }
