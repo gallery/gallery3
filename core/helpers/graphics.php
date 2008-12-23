@@ -74,7 +74,7 @@ class graphics_Core {
     if ($item->thumb_dirty) {
       $ops["thumb"] = $item->thumb_path();
     }
-    if ($item->resize_dirty) {
+    if ($item->resize_dirty && $item->type != "album") {
       $ops["resize"] = $item->resize_path();
     }
 
@@ -93,15 +93,19 @@ class graphics_Core {
       }
     }
 
-    $dims = getimagesize($item->thumb_path());
-    $item->thumb_width = $dims[0];
-    $item->thumb_height = $dims[1];
-    $item->thumb_dirty = 0;
+    if (!empty($ops["thumb"])) {
+      $dims = getimagesize($item->thumb_path());
+      $item->thumb_width = $dims[0];
+      $item->thumb_height = $dims[1];
+      $item->thumb_dirty = 0;
+    }
 
-    $dims = getimagesize($item->resize_path());
-    $item->resize_width = $dims[0];
-    $item->resize_height = $dims[1];
-    $item->resize_dirty = 0;
+    if (!empty($ops["resize"]))  {
+      $dims = getimagesize($item->resize_path());
+      $item->resize_width = $dims[0];
+      $item->resize_height = $dims[1];
+      $item->resize_dirty = 0;
+    }
     $item->save();
   }
 
