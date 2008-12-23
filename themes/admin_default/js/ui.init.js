@@ -14,4 +14,5 @@ $(document).ready(function(){
     speed: 'fast'
   });
 
+  $('#gEditUserContainer').accordion();
 });

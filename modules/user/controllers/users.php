@@ -46,11 +46,12 @@ class Users_Controller extends REST_Controller {
    *  @see Rest_Controller::_update($resource)
    */
   public function _update($user) {
-    if ($user->guest || $user->id != user::active()->id) {
+    if ($user->guest || (!user::active()->admin && $user->id != user::active()->id)) {
       access::forbidden();
     }
 
-    $form = user::get_edit_form($user);
+    $form = user::get_edit_form($user, "");
+    $form->edit_user->password->rules("-required");
     if ($form->validate()) {
       $user->full_name = $form->edit_user->full_name->value;
       $user->password = $form->edit_user->password->value;
