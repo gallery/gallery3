@@ -17,7 +17,7 @@ function ajaxify_login_form(event) {
 }
 
 $("document").ready(function() {
-    $.listen("submit", "#gLoginForm", function(event) {
-      ajaxify_login_form(event);
-    });
+  $.listen("submit", "#gLoginForm", function(event) {
+    ajaxify_login_form(event);
+  });
 });
