@@ -10,7 +10,7 @@ $("document").ready(function() {
   // Add Superfish menu class
   $("ul.gMenu").addClass("sf-menu");
   $("ul#gViewMenu").addClass("sf-menu");
-  
+
   // Superfish menu options
   $('ul.sf-menu').superfish({
     delay: 500,
@@ -41,24 +41,24 @@ $("document").ready(function() {
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
   };
-  
+
   // Declare which forms are short forms
   $("#gHeader #gSearchForm").addClass("gShortForm");
   $("#gSidebar #gAddTagForm").addClass("gShortForm");
-  
+
   // Get the short forms
   var shortForms = $(".gShortForm");
-  
+
   // Set up short form behavior
   for (var i=0; i < shortForms.length; i++) {
     // Set variables
     var shortFormID = "#" + $(shortForms[i]).attr("id");
     var shortInputID = "#" + $(shortFormID + " input:first").attr("id");
     var shortLabelValue = $(shortFormID + " label:first").html();
-    
+
     // Set default input value equal to label text
     $(shortInputID).val(shortLabelValue);
-    
+
     // Attach event listeners to inputs
     $(shortInputID).bind("focus blur", function(e){
       var eLabelVal = $(this).siblings("label").html();
@@ -72,12 +72,12 @@ $("document").ready(function() {
       }
     });
   };
-  
+
 });
 
 /**
  * Fire openDialog() and prevent links from opening
- * 
+ *
  * @see openDialog()
  */
 function handleDialogEvent(event) {
@@ -86,14 +86,14 @@ function handleDialogEvent(event) {
 }
 
 /**
- * Display modal dialogs, populate dialog with trigger link's title and href	
- * 
+ * Display modal dialogs, populate dialog with trigger link's title and href
+ *
  * @requires ui.core
  * @requires ui.draggable
  * @requires ui.resizable
  * @requires ui.dialog
  * @see handleDialogEvent()
- * 
+ *
  * @todo Set dialog attributes dynamically (width, height, drag, resize)
  * @todo Set ui-dialog-buttonpane button values equal to the original form button value
  * @todo Display loading animation on form submit
@@ -105,18 +105,24 @@ function openDialog(element) {
 
   $("body").append(eDialog);
   var buttons = {};
-  buttons["Submit"] = function() {
-    var form = $("#gDialog").find("form");
-    var options = 
-    $(form).ajaxSubmit({
-      success: function(data, textStatus) {
-        if (data == "") {
-          window.location.reload();
-          $("#gDialog").dialog("close");
-        }
-        $("#gDialog").html(data);
+  var form = $("#gDialog").find("form");
+  var ajaxify_dialog = function() {
+    $(form).ajaxForm({
+      complete: function(xhr, statusText) {
+	if (xhr.status == 201) {
+	  $("#gDialog").dialog("close");
+	  window.location = xhr.getResponseHeader("Location");
+	} else {
+	  $("#gDialog").replaceWith(data.responseText);
+	  ajaxify_dialog();
+	}
       }
     });
+  };
+  ajaxify_dialog();
+  buttons["Submit"] = function() {
+    var form = $("#gDialog").find("form");
+    form[0].submit();
   };
   buttons["Reset"] = function() {
     var form = $("#gDialog").find("form");
@@ -140,18 +146,18 @@ function openDialog(element) {
       $("#gDialog").dialog('destroy').remove();
     }
   });
-  loading("#gDialog")
+  loading("#gDialog");
   $(".ui-dialog-content").height(400);
   $("#gDialog").html(sHref);
   $.get(sHref, function(data) {
-    loading("#gDialog");	
+    loading("#gDialog");
     $("#gDialog").html(data).hide().fadeIn();
     // Get dialog and it's contents' height
-    var contentHt =  $(".ui-dialog-titlebar").height() 
-        + $(".ui-dialog-content form").height() 
-        + $(".ui-dialog-buttonpane").height() 
+    var contentHt =  $(".ui-dialog-titlebar").height()
+        + $(".ui-dialog-content form").height()
+        + $(".ui-dialog-buttonpane").height()
         + 60;
-    // Resize height if content's shorter than dialog        
+    // Resize height if content's shorter than dialog
     if (contentHt < $("#gDialog").data("height.dialog")) {
       $(".ui-dialog").animate({height: contentHt});
     }
@@ -161,7 +167,7 @@ function openDialog(element) {
 
 /**
  * Toggle the processing indicator, both large and small
- * 
+ *
  * @param element ID to which to apply the loading class, including #
  * @param size Either Large or Small
  */

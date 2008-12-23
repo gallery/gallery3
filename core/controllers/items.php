@@ -63,7 +63,13 @@ class Items_Controller extends REST_Controller {
         $owner_id);
       log::add("content", "Created an album", log::INFO,
                html::anchor("albums/$album->id", "view album"));
-      url::redirect("albums/$album->id");
+      message::add(_("Successfully created album"));
+      if (request::is_ajax()) {
+        rest::http_status(rest::CREATED);
+        rest::http_location(url::site("albums/$album->id"));
+      } else {
+        url::redirect("albums/$album->id");
+      }
       break;
 
     case "photo":
@@ -72,21 +78,28 @@ class Items_Controller extends REST_Controller {
         for ($i = 0; $i < $count - 1; $i++) {
           if ($_FILES["file"]["error"][$i] == 0) {
             $photo = photo::create(
-              $item->id,
+              $item,
               $_FILES["file"]["tmp_name"][$i],
               $_FILES["file"]["name"][$i],
               $_FILES["file"]["name"][$i],
               "", $owner_id);
           } else {
-            throw new Exception("@todo ERROR_IN_UPLOAD_FILE");
+            log::add("content", "Error uploading photo", log::WARNING);
+            message::add(sprintf(_("Error uploading photo %s"),
+                                 html::specialchars($_FILES["file"]["name"][$i])));
           }
         }
         log::add("content", "Added $count photos", log::INFO,
                  html::anchor("albums/$item->id", "view album"));
-        url::redirect("albums/$item->id");
+        if (request::is_ajax()) {
+          rest::http_status(rest::CREATED);
+          rest::http_location(url::site("albums/$item->id"));
+        } else {
+          url::redirect("albums/$item->id");
+        }
       } else {
         $photo = photo::create(
-          $item->id,
+          $item,
           $_FILES["file"]["tmp_name"],
           $_FILES["file"]["name"],
           $this->input->post("title", $this->input->post("name")),
@@ -94,14 +107,20 @@ class Items_Controller extends REST_Controller {
           $owner_id);
         log::add("content", "Added a photo", log::INFO,
                  html::anchor("photos/$photo->id", "view photo"));
-        url::redirect("photos/$photo->id");
+        message::add(_("Successfully added photo"));
+        if (request::is_ajax()) {
+          rest::http_status(rest::CREATED);
+          rest::http_location(url::site("photos/$photo->id"));
+        } else {
+          url::redirect("photos/$photo->id");
+        }
       }
       break;
     }
   }
 
   public function _delete($item) {
-    // @todo Production this code
+    // @todo Productionize this code
     // 1) Add security checks
     $parent = $item->parent();
     if ($parent->id) {

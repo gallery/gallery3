@@ -95,8 +95,7 @@ class photo_Core {
   }
 
   static function get_add_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post",
-      array("id" => "gAddPhotoForm", "enctype" => "multipart/form-data"));
+    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddPhotoForm"));
     $group = $form->group("add_photo")->label(sprintf(_("Add Photo to %s"), $parent->title));
     $group->input("name")->label(_("Name"));
     $group->input("title")->label(_("Title"));
