@@ -26,7 +26,7 @@ $("document").ready(function() {
     var containerWidth = $("#gItem").width();
     var oPhoto = $("#gItem img").filter(function() {
       return this.id.match(/gPhotoID-/);
-    })
+    });
     if (containerWidth < oPhoto.width()) {
       var proportion = containerWidth / oPhoto.width();
       oPhoto.width(containerWidth);
@@ -111,17 +111,17 @@ function openDialog(element) {
     $(form).ajaxSubmit({
       success: function(data, textStatus) {
         if (data == "") {
-          window.location.reload()
+          window.location.reload();
           $("#gDialog").dialog("close");
         }
         $("#gDialog").html(data);
       }
     });
-  }
+  };
   buttons["Reset"] = function() {
     var form = $("#gDialog").find("form");
     form[0].reset();
-  }
+  };
 
   $("#gDialog").dialog({
     autoResize: false,
