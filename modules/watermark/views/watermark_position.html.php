@@ -1,6 +1,6 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
-<script>
-$("#gDialog").ready(watermark_dialog_initialize);
+<script type="text/javascript">
+  $("#gDialog").ready(watermark_dialog_initialize);
 </script>
 <div id="gWatermarkAdmin">
   <div id="gTarget">
