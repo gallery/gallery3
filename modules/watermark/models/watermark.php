@@ -17,23 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class watermark_Core {
-  public static function get_watermark_form() {
-    $form = new Forge("admin/watermarks", "", "post");
-    $group = $form->group("add_watermark")->label(_("Upload Watermark"));
-    $group->upload("file")->label(_("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required");
-    $group->submit(_("Upload"));
-    return $form;
-  }
-
-  public static function get_watermark_position_form($position="southeast") {
-    $form = new Forge("admin/watermark/position", "", "post");
-    $group = $form->group("watermark_position")->label(_("Update Position"));
-    $group->dropdown("position")->label(_("Watermark Position"))
-      ->options(array("northwest",  "north",  "northeast",
-                      "west",       "center", "east",
-                      "southwest",  "south",  "southeast"))
-      ->selected("8");
-    return $form;
-  }
+class Watermark_Model extends ORM {
 }

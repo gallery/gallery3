@@ -22,13 +22,25 @@ class watermark_installer {
     $db = Database::instance();
     $version = module::get_version("watermark");
     if ($version == 0) {
+      $db->query("CREATE TABLE IF NOT EXISTS `watermarks` (
+          `id` int(9) NOT NULL auto_increment,
+          `name` varchar(32) NOT NULL,
+          `width` int(9) NOT NULL,
+          `height` int(9) NOT NULL,
+          `mime_type` varchar(64) default NULL,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY(`name`))
+        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       module::set_version("watermark", 1);
-      module::set_var("watermark", "watermark_image_path", "");
       module::set_var("watermark", "watermark_position", "southeast");
+      @mkdir(VARPATH . "modules/watermark");
     }
   }
 
   public static function uninstall() {
     module::delete("watermark");
+    Database::instance()->query("DROP TABLE `watermarks`");
+    dir::unlink(VARPATH . "modules/watermark");
   }
 }

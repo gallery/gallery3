@@ -18,31 +18,44 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Admin_Watermarks_Controller extends Admin_Controller {
-  public function load() {
+  public function index() {
     $form = watermark::get_watermark_form();
-    Kohana::log("debug", print_r($form, 1));
-    if ($form->validate()) {
-        $file = $_POST["file"];
-        Kohana::log("debug", $file);
-
-        $pathinfo = pathinfo($file);
-        $watermark_target = $pathinfo["basename"];
-        if (copy($file, VARPATH . $watermark_target)) {
-          module::set_var("watermark", "watermark_image_path", $watermark_target);
-          unlink($file);
-          $form->success = _("Watermark saved");
-        } else {
-          // @todo set and error message
+    if (request::method() == "post" && $form->validate()) {
+      $file = $_POST["file"];
+      $pathinfo = pathinfo($file);
+      $name = $pathinfo["basename"];
+      if (ORM::factory("watermark")->where("name", $name)->count_all() > 0) {
+        message::add(_("There is already a watermark with that name"), log::WARNING);
+      } else if (!($image_info = getimagesize($file))) {
+        message::add(_("An error occurred while saving this watermark"), log::WARNING);
+      } else {
+        if (empty($pathinfo["extension"])) {
+          $name .= "." . image_type_to_extension($image_info[2]);
         }
+        if (!rename($file, VARPATH . "modules/watermark/$name")) {
+          message::add(_("An error occurred while saving this watermark"), log::WARNING);
+        } else {
+          $watermark = ORM::factory("watermark");
+          $watermark->name = $name;
+          $watermark->width = $image_info[0];
+          $watermark->height = $image_info[1];
+          $watermark->mime_type = $image_info["mime"];
+          $watermark->save();
+          message::add(_("Watermark saved"));
+          url::redirect("admin/watermarks");
+        }
+      }
+      @unlink($file);
     }
 
-    print $form;
+    $view = new View("admin_watermarks.html");
+    $view->watermarks = ORM::factory("watermark")->find_all();
+    $view->form = watermark::get_watermark_form();
+    return $view;
   }
 
   public function get_form($user_id) {
     try {
-      // @todo check for admin user
-
       $path = module::get_var("watermark", "watermark_image_path");
       $view = new View("watermark_position.html");
 
@@ -55,7 +68,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         ->find_all(1, 0)->current();
 
       // @todo determine what to do if water mark is not set
-      // @todo caclulate the view sizes
+      // @todo calculate the view sizes
       $view->sample_image =  $photo->resize_url();
       $scaleWidth = $photo->resize_width / $photo->width;
       $scaleHeight = $photo->resize_height / $photo->height;

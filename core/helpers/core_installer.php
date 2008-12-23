@@ -114,7 +114,7 @@ class core_installer {
                    UNIQUE KEY(`module_id`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      foreach (array("albums", "resizes", "thumbs", "uploads") as $dir) {
+      foreach (array("albums", "resizes", "thumbs", "uploads", "modules") as $dir) {
         @mkdir(VARPATH . $dir);
       }
 
@@ -156,5 +156,6 @@ class core_installer {
     system("/bin/rm -rf " . VARPATH . "resizes");
     system("/bin/rm -rf " . VARPATH . "thumbs");
     system("/bin/rm -rf " . VARPATH . "uploads");
+    system("/bin/rm -rf " . VARPATH . "modules");
   }
 }
