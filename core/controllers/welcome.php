@@ -233,7 +233,6 @@ class Welcome_Controller extends Template_Controller {
         $thumb_size = module::get_var("core", "thumb_size");
         $parents[] = album::create(
           $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
-          ->set_thumb(DOCROOT . "core/tests/test.jpg", $thumb_size, $thumb_size)
           ->save();
         $album_count++;
       } else {

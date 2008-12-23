@@ -58,6 +58,8 @@ class photo_Core {
     $photo->width = $image_info[0];
     $photo->height = $image_info[1];
     $photo->mime_type = empty($image_info['mime']) ? "application/unknown" : $image_info['mime'];
+    $photo->thumb_dirty = 1;
+    $photo->resize_dirty = 1;
 
     // Randomize the name if there's a conflict
     while (ORM::Factory("item")
@@ -77,18 +79,18 @@ class photo_Core {
     $photo->add_to_parent($parent);
     copy($filename, $photo->file_path());
 
-    // This saves the photo a second time, which is unfortunate but difficult to avoid
-    // because the ORM_MPTT code needs to do the first save.
-    $thumb_size = module::get_var("core", "thumb_size");
-    $resize_size = module::get_var("core", "resize_size");
-
-    $result = $photo->set_thumb($filename, $thumb_size, $thumb_size)
-      ->set_resize($filename, $resize_size, $resize_size)
-      ->save();
-
     module::event("photo_created", $photo);
 
-    return $result;
+    // Build our thumbnail/resizes
+    graphics::generate($photo);
+
+    // If the parent has no cover item, make this it.
+    $parent = $photo->parent();
+    if ($parent->album_cover_item_id == null)  {
+      $parent->album_cover_item_id = $photo->id;
+      $parent->save();
+      graphics::generate($parent);
+    }
   }
 
   static function get_add_form($parent) {

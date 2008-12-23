@@ -43,7 +43,18 @@ class core_installer {
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `graphics_rules` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `priority` int(9) NOT NULL,
+                   `module_name` varchar(255) NOT NULL,
+                   `target`  varchar(32) NOT NULL,
+                   `operation` varchar(64) NOT NULL,
+                   `args` varchar(255) default NULL,
+                   PRIMARY KEY (`id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $db->query("CREATE TABLE `items` (
+                   `album_cover_item_id` int(9) default NULL,
                    `created` int(9) default NULL,
                    `description` varchar(255) default NULL,
                    `height` int(9) default NULL,
@@ -56,9 +67,11 @@ class core_installer {
                    `parent_id` int(9) NOT NULL,
                    `resize_height` int(9) default NULL,
                    `resize_width` int(9) default NULL,
+                   `resize_dirty` BOOLEAN default 1,
                    `right` int(9) NOT NULL,
                    `thumb_height` int(9) default NULL,
                    `thumb_width` int(9) default NULL,
+                   `thumb_dirty` BOOLEAN default 1,
                    `title` varchar(255) default NULL,
                    `type` varchar(32) NOT NULL,
                    `updated` int(9) default NULL,
@@ -107,11 +120,11 @@ class core_installer {
 
       $db->query("CREATE TABLE `vars` (
                    `id` int(9) NOT NULL auto_increment,
-                   `module_id` int(9),
+                   `module_name` varchar(255) NOT NULL,
                    `name` varchar(255) NOT NULL,
                    `value` text,
                    PRIMARY KEY (`id`),
-                   UNIQUE KEY(`module_id`, `name`))
+                   UNIQUE KEY(`module_name`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       foreach (array("albums", "resizes", "thumbs", "uploads", "modules") as $dir) {
@@ -129,18 +142,22 @@ class core_installer {
       $root->right = 2;
       $root->parent_id = 0;
       $root->level = 1;
-      $root->set_thumb(DOCROOT . "core/tests/test.jpg", 200, 200);
+      $root->thumb_dirty = 1;
+      $root->resize_dirty = 1;
       $root->save();
       access::add_item($root);
-
-      // Save this before setting vars so that module id is set
-      module::set_version("core", 1);
 
       module::set_var("core", "active_theme", "default");
       module::set_var("core", "active_admin_theme", "admin_default");
       module::set_var("core", "page_size", 9);
       module::set_var("core", "thumb_size", 200);
       module::set_var("core", "resize_size", 640);
+
+      // Add rules for generating our thumbnails and resizes
+      graphics::add_rule("core", "thumb", "resize", array(200, 200, Image::AUTO), 100);
+      graphics::add_rule("core", "resize", "resize", array(640, 640, Image::AUTO), 100);
+
+      module::set_version("core", 1);
     }
   }
 

@@ -32,9 +32,9 @@ class watermark_installer {
           UNIQUE KEY(`name`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      module::set_version("watermark", 1);
       module::set_var("watermark", "watermark_position", "southeast");
       @mkdir(VARPATH . "modules/watermark");
+      module::set_version("watermark", 1);
     }
   }
 

@@ -153,48 +153,6 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Build a thumbnail for this item from the image provided with the
-   * given width and height
-   *
-   * @chainable
-   * @param string $filename the path to an image
-   * @param integer $width the desired width of the thumb
-   * @param integer $height the desired height of the thumb
-   * @return ORM
-   */
-  public function set_thumb($filename, $width, $height) {
-    Image::factory($filename)
-      ->resize($width, $height, Image::AUTO)
-      ->save($this->thumb_path());
-
-    $dims = getimagesize($this->thumb_path());
-    $this->thumb_width = $dims[0];
-    $this->thumb_height = $dims[1];
-    return $this;
-  }
-
-  /**
-   * Build a resize for this item from the image provided with the
-   * given width and height
-   *
-   * @chainable
-   * @param string $filename the path to an image
-   * @param integer $width the desired width of the resize
-   * @param integer $height the desired height of the resize
-   * @return ORM
-   */
-  public function set_resize($filename, $width, $height) {
-    Image::factory($filename)
-      ->resize($width, $height, Image::AUTO)
-      ->save($this->resize_path());
-
-    $dims = getimagesize($this->resize_path());
-    $this->resize_width = $dims[0];
-    $this->resize_height = $dims[1];
-    return $this;
-  }
-
-  /**
    * Return the relative path to this item's file.
    * @return string
    */
@@ -249,5 +207,21 @@ class Item_Model extends ORM_MPTT {
       }
     }
     return parent::save();
+  }
+
+  /**
+   * Return the Item_Model representing the cover for this album.
+   * @return Item_Model or null if there's no cover
+   */
+  public function album_cover() {
+    if ($this->type != "album") {
+      return null;
+    }
+
+    if (empty($this->album_cover_item_id)) {
+      return null;
+    }
+
+    return model_cache::get("item", $this->album_cover_item_id);
   }
 }

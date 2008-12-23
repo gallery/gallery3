@@ -64,7 +64,8 @@ class module_Core {
     $module->delete();
 
     $db = Database::instance();
-    $db->query("DELETE FROM vars WHERE module_id = '{$module->id}';");
+    $db->query("DELETE FROM `vars` WHERE `module_name` = '{$module->name}';");
+    $db->query("DELETE FROM `graphics_rules` WHERE module_name = '{$module->name}';");
 
     Kohana::log("debug", "$module_name: module deleted");
   }
@@ -216,9 +217,8 @@ class module_Core {
    * @return the value
    */
   public function get_var($module_name, $name, $default_value=null) {
-    $module = model_cache::get("module", $module_name, "name");
     $var = ORM::factory("var")
-      ->where("module_id", $module->id)
+      ->where("module_name", $module_name)
       ->where("name", $name)
       ->find();
     return $var->loaded ? $var->value : $default_value;
@@ -231,14 +231,13 @@ class module_Core {
    * @param string $value
    */
   public function set_var($module_name, $name, $value) {
-    $module = model_cache::get("module", $module_name, "name");
     $var = ORM::factory("var")
-      ->where("module_id", $module->id)
+      ->where("module_name", $module_name)
       ->where("name", $name)
       ->find();
     if (!$var->loaded) {
       $var = ORM::factory("var");
-      $var->module_id = $module->id;
+      $var->module_name = $module_name;
       $var->name = $name;
     }
     $var->value = $value;

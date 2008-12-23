@@ -39,6 +39,8 @@ class album_Core {
     $album->description = $description;
     $album->name = $name;
     $album->owner_id = $owner_id;
+    $album->thumb_dirty = 1;
+    $album->resize_dirty = 1;
 
     while (ORM::factory("item")
            ->where("parent_id", $parent_id)
