@@ -20,7 +20,8 @@
 class Album_Helper_Test extends Unit_Test_Case {
   public function create_album_test() {
     $rand = rand();
-    $album = album::create(1, $rand, $rand, $rand);
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, $rand, $rand, $rand);
 
     $this->assert_equal(VARPATH . "albums/$rand", $album->file_path());
     $this->assert_equal(VARPATH . "thumbs/$rand/.album.jpg", $album->thumb_path());
@@ -38,20 +39,23 @@ class Album_Helper_Test extends Unit_Test_Case {
 
   public function create_conflicting_album_test() {
     $rand = rand();
-    $album1 = album::create(1, $rand, $rand, $rand);
-    $album2 = album::create(1, $rand, $rand, $rand);
+    $root = ORM::factory("item", 1);
+    $album1 = album::create($root, $rand, $rand, $rand);
+    $album2 = album::create($root, $rand, $rand, $rand);
     $this->assert_true($album1->name != $album2->name);
   }
 
   public function thumb_url_test() {
     $rand = rand();
-    $album = album::create(1, $rand, $rand, $rand);
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, $rand, $rand, $rand);
     $this->assert_equal("http://./var/thumbs/$rand/.album.jpg", $album->thumb_url());
   }
 
   public function resize_url_test() {
     $rand = rand();
-    $album = album::create(1, $rand, $rand, $rand);
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, $rand, $rand, $rand);
     $this->assert_equal("http://./var/resizes/$rand/.album.jpg", $album->resize_url());
   }
 }

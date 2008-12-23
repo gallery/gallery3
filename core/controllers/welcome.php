@@ -201,7 +201,7 @@ class Welcome_Controller extends Template_Controller {
     $photo_count = 0;
     foreach (glob("$path/*.[Jj][Pp][Gg]") as $file) {
       set_time_limit(30);
-      photo::create($parent->id, $file, basename($file), basename($file));
+      photo::create($parent, $file, basename($file), basename($file));
       $photo_count++;
     }
 
@@ -232,12 +232,12 @@ class Welcome_Controller extends Template_Controller {
       if ($type == "album") {
         $thumb_size = module::get_var("core", "thumb_size");
         $parents[] = album::create(
-          $parent->id, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
+          $parent, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
           ->save();
         $album_count++;
       } else {
         $photo_index = rand(0, count($test_images) - 1);
-        photo::create($parent->id, $test_images[$photo_index], basename($test_images[$photo_index]),
+        photo::create($parent, $test_images[$photo_index], basename($test_images[$photo_index]),
                       "rnd_" . rand(), "sample thumb", $owner_id);
         $photo_count++;
       }

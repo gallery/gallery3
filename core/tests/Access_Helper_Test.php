@@ -84,7 +84,7 @@ class Access_Helper_Test extends Unit_Test_Case {
   public function new_photos_inherit_parent_permissions_test() {
     $root = ORM::factory("item", 1);
 
-    $album = album::create($root->id, rand(), "test album");
+    $album = album::create($root, rand(), "test album");
     access::allow(group::everybody(), "view", $album);
 
     $photo = ORM::factory("item");
@@ -97,7 +97,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function can_allow_deny_and_reset_intent_test() {
     $root = ORM::factory("item", 1);
-    $album = album::create($root->id, rand(), "test album");
+    $album = album::create($root, rand(), "test album");
     $intent = ORM::factory("access_intent")->where("item_id", $album)->find();
 
     // Allow
@@ -149,7 +149,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function cant_view_child_of_hidden_parent_test() {
     $root = ORM::factory("item", 1);
-    $album = album::create($root->id, rand(), "test album");
+    $album = album::create($root, rand(), "test album");
 
     $root->reload();
     access::deny(group::everybody(), "view", $root);
@@ -161,7 +161,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function view_permissions_propagate_down_test() {
     $root = ORM::factory("item", 1);
-    $album = album::create($root->id, rand(), "test album");
+    $album = album::create($root, rand(), "test album");
 
     access::allow(group::everybody(), "view", $root);
     access::reset(group::everybody(), "view", $album);
@@ -171,10 +171,10 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function can_toggle_view_permissions_propagate_down_test() {
     $root = ORM::factory("item", 1);
-    $album1 = album::create($root->id, rand(), "test album");
-    $album2 = album::create($album1->id, rand(), "test album");
-    $album3 = album::create($album2->id, rand(), "test album");
-    $album4 = album::create($album3->id, rand(), "test album");
+    $album1 = album::create($root, rand(), "test album");
+    $album2 = album::create($album1, rand(), "test album");
+    $album3 = album::create($album2, rand(), "test album");
+    $album4 = album::create($album3, rand(), "test album");
 
     $album1->reload();
     $album2->reload();
@@ -197,7 +197,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function revoked_view_permissions_cant_be_allowed_lower_down_test() {
     $root = ORM::factory("item", 1);
-    $album = album::create($root->id, rand(), "test album");
+    $album = album::create($root, rand(), "test album");
 
     $root->reload();
     access::deny(group::everybody(), "view", $root);
@@ -215,7 +215,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function non_view_permissions_propagate_down_test() {
     $root = ORM::factory("item", 1);
-    $album = album::create($root->id, rand(), "test album");
+    $album = album::create($root, rand(), "test album");
 
     access::allow(group::everybody(), "edit", $root);
     access::reset(group::everybody(), "edit", $album);
@@ -224,11 +224,11 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function non_view_permissions_can_be_revoked_lower_down_test() {
     $root = ORM::factory("item", 1);
-    $outer = album::create($root->id, rand(), "test album");
+    $outer = album::create($root, rand(), "test album");
     $outer_photo = ORM::factory("item")->add_to_parent($outer);
     access::add_item($outer_photo);
 
-    $inner = album::create($outer->id, rand(), "test album");
+    $inner = album::create($outer, rand(), "test album");
     $inner_photo = ORM::factory("item")->add_to_parent($inner);
     access::add_item($inner_photo);
 
@@ -272,7 +272,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function everybody_view_permission_maintains_htaccess_files_test() {
     $root = ORM::factory("item", 1);
-    $album = album::create($root->id, rand(), "test album");
+    $album = album::create($root, rand(), "test album");
 
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
 

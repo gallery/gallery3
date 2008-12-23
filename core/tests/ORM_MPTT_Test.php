@@ -59,11 +59,12 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function move_to_test() {
-    $album1 = album::create(1, "move_to_test_1", "move_to_test_1");
-    $album1_1 = album::create($album1->id, "move_to_test_1_1", "move_to_test_1_1");
-    $album1_2 = album::create($album1->id, "move_to_test_1_2", "move_to_test_1_2");
-    $album1_1_1 = album::create($album1_1->id, "move_to_test_1_1_1", "move_to_test_1_1_1");
-    $album1_1_2 = album::create($album1_1->id, "move_to_test_1_1_2", "move_to_test_1_1_2");
+    $root = ORM::factory("item", 1);
+    $album1 = album::create($root, "move_to_test_1", "move_to_test_1");
+    $album1_1 = album::create($album1, "move_to_test_1_1", "move_to_test_1_1");
+    $album1_2 = album::create($album1, "move_to_test_1_2", "move_to_test_1_2");
+    $album1_1_1 = album::create($album1_1, "move_to_test_1_1_1", "move_to_test_1_1_1");
+    $album1_1_2 = album::create($album1_1, "move_to_test_1_1_2", "move_to_test_1_1_2");
 
     $album1_2->reload();
     $album1_1_1->reload();

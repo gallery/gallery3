@@ -33,7 +33,11 @@ class photo_Core {
    * @param string  $description (optional) the longer description of this photo
    * @return Item_Model
    */
-  static function create($parent_id, $filename, $name, $title, $description=null, $owner_id=null) {
+  static function create($parent, $filename, $name, $title, $description=null, $owner_id=null) {
+    if (!$parent->loaded || $parent->type != "album") {
+      throw new Exception("@todo INVALID_PARENT");
+    }
+
     if (!is_file($filename)) {
       throw new Exception("@todo MISSING_IMAGE_FILE");
     }
@@ -63,7 +67,7 @@ class photo_Core {
 
     // Randomize the name if there's a conflict
     while (ORM::Factory("item")
-           ->where("parent_id", $parent_id)
+           ->where("parent_id", $parent->id)
            ->where("name", $photo->name)
            ->find()->id) {
       // @todo Improve this.  Random numbers are not user friendly
@@ -71,11 +75,6 @@ class photo_Core {
     }
 
     // This saves the photo
-    $parent = ORM::factory("item", $parent_id);
-    if (!$parent->loaded) {
-      throw new Exception("@todo INVALID_PARENT_ID");
-    }
-
     $photo->add_to_parent($parent);
     copy($filename, $photo->file_path());
 
@@ -91,6 +90,8 @@ class photo_Core {
       $parent->save();
       graphics::generate($parent);
     }
+
+    return $photo;
   }
 
   static function get_add_form($parent) {

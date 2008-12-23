@@ -24,7 +24,8 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $filename = DOCROOT . "core/tests/test.jpg";
     $image_info = getimagesize($filename);
 
-    $photo = photo::create(1, $filename, "$rand.jpg", $rand, $rand);
+    $root = ORM::factory("item", 1);
+    $photo = photo::create($root, $filename, "$rand.jpg", $rand, $rand);
 
     $this->assert_equal(VARPATH . "albums/$rand.jpg", $photo->file_path());
     $this->assert_equal(VARPATH . "thumbs/{$rand}.jpg", $photo->thumb_path());
@@ -34,7 +35,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $this->assert_true(is_file($photo->resize_path()), "missing: {$photo->resize_path()}");
     $this->assert_true(is_file($photo->thumb_path()), "missing: {$photo->thumb_path()}");
 
-    $this->assert_equal(1, $photo->parent_id);  // MPTT tests will cover other hierarchy checks
+    $this->assert_equal($root, $photo->parent_id);  // MPTT tests will cover other hierarchy checks
     $this->assert_equal("$rand.jpg", $photo->name);
     $this->assert_equal($rand, $photo->title);
     $this->assert_equal($rand, $photo->description);
@@ -48,14 +49,16 @@ class Photo_Helper_Test extends Unit_Test_Case {
 
   public function create_conflicting_photo_test() {
     $rand = rand();
-    $photo1 = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
-    $photo2 = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $root = ORM::factory("item", 1);
+    $photo1 = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $photo2 = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
     $this->assert_true($photo1->name != $photo2->name);
   }
 
   public function create_photo_with_no_extension_test() {
+    $root = ORM::factory("item", 1);
     try {
-      photo::create(1, "/tmp", "name", "title", "description");
+      photo::create($root, "/tmp", "name", "title", "description");
       $this->assert_false("should fail with an exception");
     } catch (Exception $e) {
       // pass
@@ -64,14 +67,16 @@ class Photo_Helper_Test extends Unit_Test_Case {
 
   public function thumb_url_test() {
     $rand = rand();
-    $photo = photo::create(1, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $root = ORM::factory("item", 1);
+    $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
     $this->assert_equal("http://./var/thumbs/{$rand}.jpg", $photo->thumb_url());
   }
 
   public function resize_url_test() {
     $rand = rand();
-    $album = album::create(1, $rand, $rand, $rand);
-    $photo = photo::create($album->id, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, $rand, $rand, $rand);
+    $photo = photo::create($album, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
 
     $this->assert_equal("http://./var/resizes/{$rand}/{$rand}.jpg", $photo->resize_url());
   }

@@ -32,7 +32,11 @@ class album_Core {
    * @param string  $description (optional) the longer description of this album
    * @return Item_Model
    */
-  static function create($parent_id, $name, $title, $description=null, $owner_id=null) {
+  static function create($parent, $name, $title, $description=null, $owner_id=null) {
+    if (!$parent->loaded || $parent->type != "album") {
+      throw new Exception("@todo INVALID_PARENT");
+    }
+
     $album = ORM::factory("item");
     $album->type = "album";
     $album->title = $title;
@@ -43,15 +47,10 @@ class album_Core {
     $album->resize_dirty = 1;
 
     while (ORM::factory("item")
-           ->where("parent_id", $parent_id)
+           ->where("parent_id", $parent->id)
            ->where("name", $album->name)
            ->find()->id) {
       $album->name = "{$name}-" . rand();
-    }
-
-    $parent = ORM::factory("item", $parent_id);
-    if (!$parent->loaded) {
-      throw new Exception("@todo INVALID_PARENT_ID");
     }
 
     $album = $album->add_to_parent($parent);

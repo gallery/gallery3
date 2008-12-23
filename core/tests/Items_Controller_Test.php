@@ -20,7 +20,8 @@
 class Items_Controller_Test extends Unit_Test_Case {
   public function change_item_test() {
     $controller = new Items_Controller();
-    $album = album::create(1, "test", "test");
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, "test", "test");
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
 
@@ -31,7 +32,8 @@ class Items_Controller_Test extends Unit_Test_Case {
 
   public function change_item_test_with_return() {
     $controller = new Items_Controller();
-    $album = album::create(1, "test", "test");
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, "test", "test");
     $_POST["title"] = "item_title";
     $_POST["description"] = "item_description";
     $_POST["__return"] = "item_description";
