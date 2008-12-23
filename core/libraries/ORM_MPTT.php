@@ -63,6 +63,7 @@ class ORM_MPTT_Core extends ORM {
       $this->parent_id = $parent->id;
       $this->level = $parent->level + 1;
       $this->save();
+      $parent->reload();
     } catch (Exception $e) {
       $this->unlock();
       throw $e;
