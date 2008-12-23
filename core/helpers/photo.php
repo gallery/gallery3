@@ -107,18 +107,19 @@ class photo_Core {
   /**
    * Return scaled width and height.
    *
-   * @param Item_Model the photo
-   * @param integer    the scaling factor
-   * @param string     the output format using %d placeholders for width and height
+   * @param integer $width
+   * @param integer $height
+   * @param integer $max    the target size for the largest dimension
+   * @param string  $format the output format using %d placeholders for width and height
    */
-  static function img_dimensions($photo, $max, $format="width=\"%d\" height=\"%d\"") {
-    if ($photo->width > $photo->height) {
-      $width = $max;
-      $height = (int)$max * ($photo->height / $photo->width);
+  static function img_dimensions($width, $height, $max, $format="width=\"%d\" height=\"%d\"") {
+    if ($width > $height) {
+      $new_width = $max;
+      $new_height = (int)$max * ($height / $width);
     } else {
-      $height = $max;
-      $width = (int)$max * ($photo->width / $photo->height);
+      $new_height = $max;
+      $new_width = (int)$max * ($width / $height);
     }
-    return sprintf($format, $width, $height);
+    return sprintf($format, $new_width, $new_height);
   }
 }
