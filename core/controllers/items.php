@@ -56,7 +56,7 @@ class Items_Controller extends REST_Controller {
     switch ($this->input->post("type")) {
     case "album":
       $album = album::create(
-        $item->id,
+        $item,
         $this->input->post("name"),
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
