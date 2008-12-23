@@ -77,7 +77,8 @@ class photo_Core {
     $photo->add_to_parent($parent);
     copy($filename, $photo->file_path());
 
-    // This saves the photo a second time, which is unfortunate but difficult to avoid.
+    // This saves the photo a second time, which is unfortunate but difficult to avoid
+    // because the ORM_MPTT code needs to do the first save.
     $thumb_size = module::get_var("core", "thumb_size");
     $resize_size = module::get_var("core", "resize_size");
 
