@@ -105,7 +105,7 @@ function watermark_dialog_initialize() {
   $("#gWaterMark").draggable({
     helper: 'clone',
     containment: "#gTargetImage",
-    opacity: .6,
+    opacity: .6
   });
 
   $("#position").change(function() {
