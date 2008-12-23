@@ -45,6 +45,6 @@ class polar_rose_block_Core {
   }
 
   public static function page_bottom($theme) {
-    return "<div id=\"gPolarRose\"/>";
+    return "<div id=\"gPolarRose\"></div>";
   }
 }
