@@ -140,11 +140,11 @@ function openDialog(element) {
       $("#gDialog").dialog('destroy').remove();
     }
   });
-  $("#gDialog").addClass("gLoadingLarge");
+  loading("#gDialog")
   $(".ui-dialog-content").height(400);
   $("#gDialog").html(sHref);
   $.get(sHref, function(data) {
-    $("#gDialog").removeClass("gLoadingLarge");	
+    loading("#gDialog");	
     $("#gDialog").html(data).hide().fadeIn();
     // Get dialog and it's contents' height
     var contentHt =  $(".ui-dialog-titlebar").height() 
@@ -156,8 +156,24 @@ function openDialog(element) {
       $(".ui-dialog").animate({height: contentHt});
     }
   });
-  
-  
-  
   return false;
+}
+
+/**
+ * Toggle the processing indicator, both large and small
+ * 
+ * @param element ID to which to apply the loading class, including #
+ * @param size Either Large or Small
+ */
+function loading(element) {
+  var size;
+  switch (element) {
+  	case "#gDialog":
+  		size = "Large";
+  		break;
+  	default:
+		size = "Small";
+		break;
+  }
+  $(element).toggleClass("gLoading" + size);
 }
