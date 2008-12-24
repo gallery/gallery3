@@ -43,7 +43,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
           $watermark->save();
 
           message::add(_("Watermark saved"));
-          response::redirect("admin/watermarks");
+          url::redirect("admin/watermarks");
         }
       }
       @unlink($file);
