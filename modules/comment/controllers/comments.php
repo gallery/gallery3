@@ -25,14 +25,10 @@ class Comments_Controller extends REST_Controller {
    *  @see Rest_Controller::_index()
    */
   public function _index() {
-    $item_id = $this->input->get('item_id');
+    $item = ORM::factory("item", $this->input->get('item_id'));
+    access::required("view", $item);
 
-    if (empty($item_id)) {
-      /* We currently do not support getting all comments from the entire gallery. */
-      rest::http_status(rest::BAD_REQUEST);
-      return;
-    }
-    print comment::get_comments($item_id);
+    print comment::get_comments($item->id);
   }
 
   /**
@@ -81,10 +77,14 @@ class Comments_Controller extends REST_Controller {
       print comment::get_atom_entry($comment);
       break;
 
+    case "html":
+      $view = new View("comment.$output_format");
+      $view->comment = $comment;
+      print $view;
+      break;
+
     default:
-      $v = new View("comment.$output_format");
-      $v->comment = $comment;
-      print $v;
+      kohana::show_404();
     }
   }
 
