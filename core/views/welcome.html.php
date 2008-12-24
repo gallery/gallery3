@@ -327,7 +327,7 @@
                 <form method="post" action="<?= url::site("welcome/add_user") ?>">
                   <input name="user_name" type="text"/>
                   <input type="submit" value="create"/>
-                  <input type="checkbox" name="admin">Admin</input>
+                  <input type="checkbox" name="admin"/> Admin
                 </form>
               </fieldset>
             </div>
