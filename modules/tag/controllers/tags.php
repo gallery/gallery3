@@ -21,7 +21,6 @@ class Tags_Controller extends REST_Controller {
   protected $resource_type = "tag";
 
   public function _show($tag) {
-    $theme_name = module::get_var("core", "active_theme", "default");
     $page_size = module::get_var("core", "page_size", 9);
     $page = $this->input->get("page", "1");
     $children_count = $tag->items_count();
@@ -32,7 +31,7 @@ class Tags_Controller extends REST_Controller {
       Kohana::show_404();
     }
 
-    $template = new Theme_View("page.html", "tag", $theme_name);
+    $template = new Theme_View("page.html", "tag");
     $template->set_global('page_size', $page_size);
     $template->set_global('tag', $tag);
     $template->set_global('children', $tag->items($page_size, $offset));

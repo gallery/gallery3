@@ -19,9 +19,10 @@
  */
 class Admin_Modules_Controller extends Admin_Controller {
   public function index() {
-    $view = new View("admin_modules.html");
-    $view->available = module::available();
-    return $view;
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_modules.html");
+    $view->content->available = module::available();
+    print $view;
   }
 
   public function save() {

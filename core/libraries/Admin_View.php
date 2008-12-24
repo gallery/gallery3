@@ -28,9 +28,10 @@ class Admin_View_Core extends View {
    * @param   string  $theme_name view name
    * @return  void
    */
-  public function __construct($name, $theme_name="default") {
+  public function __construct($name) {
     parent::__construct($name);
-    $this->theme_name = $theme_name;
+
+    $this->theme_name = module::get_var("core", "active_admin_theme");
     $this->set_global('theme', $this);
     $this->set_global('user', user::active());
   }

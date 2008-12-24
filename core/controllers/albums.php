@@ -25,7 +25,6 @@ class Albums_Controller extends Items_Controller {
   public function _show($album) {
     access::required("view", $album);
 
-    $theme_name = module::get_var("core", "active_theme", "default");
     $page_size = module::get_var("core", "page_size", 9);
     $page = $this->input->get("page", "1");
     $children_count = $album->viewable()->children_count();
@@ -36,7 +35,7 @@ class Albums_Controller extends Items_Controller {
       Kohana::show_404();
     }
 
-    $template = new Theme_View("page.html", "album", $theme_name);
+    $template = new Theme_View("page.html", "album");
     $template->set_global("page_size", $page_size);
     $template->set_global("item", $album);
     $template->set_global("children", $album->viewable()->children($page_size, $offset));

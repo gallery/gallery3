@@ -24,12 +24,7 @@ class Admin_Controller extends Controller {
     if (!(user::active()->admin)) {
       throw new Exception("@todo UNAUTHORIZED", 401);
     }
-    $this->theme = $theme;
     parent::__construct();
-  }
-
-  public function theme() {
-    return $this->theme;
   }
 
   public function __call($controller_name, $args) {
@@ -48,11 +43,7 @@ class Admin_Controller extends Controller {
       $method = "index";
     }
 
-    $theme_name = module::get_var("core", "active_admin_theme", "admin_default");
-    $this->template = $template = new Admin_View("admin.html", $theme_name);
-    $template->content = call_user_func_array(
-      array(new $controller_name($template), $method), $args);
-    print $template;
+    call_user_func_array(array(new $controller_name, $method), $args);
   }
 }
 

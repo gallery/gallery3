@@ -25,10 +25,7 @@ class Photos_Controller extends Items_Controller {
   public function _show($photo) {
     access::required("view", $photo);
 
-    $theme_name = module::get_var("core", "active_theme", "default");
-
-    $template = new Theme_View("page.html", "photo", $theme_name);
-
+    $template = new Theme_View("page.html", "photo");
     $template->set_global('item', $photo);
     $template->set_global('children', array());
     $template->set_global('children_count', $photo->children_count());

@@ -19,7 +19,9 @@
  */
 class Admin_Dashboard_Controller extends Admin_Controller {
   public function index() {
-    return $this->theme()->admin_dashboard_blocks();
+    $view = new Admin_View("admin.html");
+    $view->content = $view->admin_dashboard_blocks();
+    print $view;
   }
 }
 

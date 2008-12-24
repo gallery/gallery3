@@ -19,9 +19,10 @@
  */
 class Admin_Users_Controller extends Controller {
   public function index() {
-    $view = new View("admin_users.html");
-    $view->users = ORM::factory("user")->find_all();
-    return $view;
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_users.html");
+    $view->content->users = ORM::factory("user")->find_all();
+    print $view;
   }
 
   public function edit($id) {
@@ -40,6 +41,8 @@ class Admin_Users_Controller extends Controller {
       url::redirect("admin/users/edit/$id");
     }
 
-    return $form;
+    $view = new Admin_View("admin.html");
+    $view->content = $form;
+    print $view;
   }
 }

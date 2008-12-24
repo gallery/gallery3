@@ -41,17 +41,19 @@ class Admin_Watermarks_Controller extends Admin_Controller {
           $watermark->height = $image_info[1];
           $watermark->mime_type = $image_info["mime"];
           $watermark->save();
+
           message::add(_("Watermark saved"));
-          url::redirect("admin/watermarks");
+          response::redirect("admin/watermarks");
         }
       }
       @unlink($file);
     }
 
-    $view = new View("admin_watermarks.html");
-    $view->watermarks = ORM::factory("watermark")->find_all();
-    $view->form = watermark::get_watermark_form();
-    return $view;
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_watermarks.html");
+    $view->content->watermarks = ORM::factory("watermark")->find_all();
+    $view->content->form = watermark::get_watermark_form();
+    print $view;
   }
 
   public function get_form($user_id) {
