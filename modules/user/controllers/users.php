@@ -32,7 +32,22 @@ class Users_Controller extends REST_Controller {
    *  @see Rest_Controller::_create($resource)
    */
   public function _create($user) {
-    throw new Exception("@todo User_Controller::_create NOT IMPLEMENTED");
+    if ($user->guest || (!user::active()->admin && $user->id != user::active()->id)) {
+      access::forbidden();
+    }
+
+    $form = user::get_add_form($user, "");
+    if ($form->validate()) {
+      $user->name = $form->edit_user->uname->value;
+      $user->full_name = $form->edit_user->full_name->value;
+      $user->password = $form->edit_user->password->value;
+      $user->email = $form->edit_user->email->value;
+      $user->save();
+      if ($continue = $this->input->get("continue")) {
+        url::redirect($continue);
+      }
+    }
+    print $form;
   }
 
   /**

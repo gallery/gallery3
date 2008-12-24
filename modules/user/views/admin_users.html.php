@@ -10,7 +10,7 @@
             <?= $user->name ?>
             <?= ($user->last_login == 0) ? "" :
             "(" . date("M j, Y", $user->last_login) . ")" ?> <br />
-          <a href="#">edit</a>    <!-- url::site("admin/users/edit/$user->id") -->
+          <a href="#">edit</a>
           <div>
           <?
             $form = user::get_edit_form($user,
@@ -25,6 +25,20 @@
           <br /><br />
         </li>
       <? endforeach ?>
+      <li><a href="#">Add user</a>
+          <div>
+          <?
+            $form = user::get_add_form($user,
+              "users/add?_method=post&continue=/admin/users");
+            $form->set_attr("id", "gEdit" . $user->id);
+            print $form;
+          ?>
+          </div>
+      </li>
     </ul>
+  </div>
+  <h2>Group Administration</h2>
+  <div class="gBlockContent">
+    <p>These are the groups in your system</p>
   </div>
 </div>

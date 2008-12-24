@@ -36,6 +36,17 @@ class user_Core {
     return $form;
   }
 
+  public static function get_add_form($user, $action) {
+    $form = new Forge($action, "", "post", array("id" => "gUserAddForm"));
+    $group = $form->group("add_user")->label(_("Add User"));
+    $group->input("uname")->label(_("Name"))->id("gName");
+    $group->input("full_name")->label(_("Full Name"))->id("gFullName");
+    $group->password("password")->label(_("Password"))->id("gPassword");
+    $group->input("email")->label(_("Email"))->id("gEmail");
+    $group->submit(_("Add"));
+    $form->add_rules_from($user);
+    return $form;
+  }
   /**
    * Make sure that we have a session and group_ids cached in the session.
    */
