@@ -23,8 +23,10 @@ class rest_Core {
   const CREATED = "201 Created";
   const ACCEPTED = "202 Accepted";
   const NO_CONTENT = "204 No Content";
+  const RESET_CONTENT = "205 Reset Content";
   const PARTIAL_CONTENT = "206 Partial Content";
   const MOVED_PERMANENTLY = "301 Moved Permanently";
+  const FOUND = "302 Found";
   const SEE_OTHER = "303 See Other";
   const NOT_MODIFIED = "304 Not Modified";
   const TEMPORARY_REDIRECT = "307 Temporary Redirect";

@@ -22,15 +22,13 @@ class Albums_Controller extends Items_Controller {
   /**
    *  @see Rest_Controller::_show($resource)
    */
-  public function _show($item) {
-    if (!access::can("view", $item)) {
-      Kohana::show_404();
-    }
+  public function _show($album) {
+    access::required("view", $album);
 
     $theme_name = module::get_var("core", "active_theme", "default");
     $page_size = module::get_var("core", "page_size", 9);
     $page = $this->input->get("page", "1");
-    $children_count = $item->viewable()->children_count();
+    $children_count = $album->viewable()->children_count();
     $offset = ($page-1) * $page_size;
 
     // Make sure that the page references a valid offset
@@ -40,25 +38,136 @@ class Albums_Controller extends Items_Controller {
 
     $template = new Theme_View("page.html", "album", $theme_name);
     $template->set_global("page_size", $page_size);
-    $template->set_global("item", $item);
-    $template->set_global("children", $item->viewable()->children($page_size, $offset));
+    $template->set_global("item", $album);
+    $template->set_global("children", $album->viewable()->children($page_size, $offset));
     $template->set_global("children_count", $children_count);
-    $template->set_global("parents", $item->parents());
+    $template->set_global("parents", $album->parents());
     $template->content = new View("album.html");
 
-    $item->view_count++;
-    $item->save();
+    $album->view_count++;
+    $album->save();
 
     print $template;
   }
 
   /**
-   *  @see Rest_Controller::_form_add($parameters)
+   * @see Rest_Controller::_create($resource)
    */
-  public function _form_add($parent_id) {
-    $parent = ORM::factory("item", $parent_id);
+  public function _create($album) {
+    access::required("edit", $album);
 
-    print album::get_add_form($parent)->render();
+    switch ($this->input->post("type")) {
+    case "album":
+      return $this->_create_album($album);
+
+    case "photo":
+      return $this->_create_photo($album);
+
+    default:
+      access::forbidden();
+    }
   }
 
+  private function _create_album($album) {
+    access::required("edit", $album);
+
+    $form = album::get_add_form($album);
+    if ($form->validate()) {
+      $new_album = album::create(
+        $album,
+        $this->input->post("name"),
+        $this->input->post("title", $this->input->post("name")),
+        $this->input->post("description"),
+        user::active()->id);
+
+      log::add("content", "Created an album", log::INFO,
+               html::anchor("albums/$new_album->id", "view album"));
+      message::add(_("Successfully created album"));
+      rest::http_status(rest::CREATED);
+      rest::http_location(url::site("albums/$new_album->id"));
+    } else {
+      print $form;
+    }
+  }
+
+  private function _create_photo($album) {
+    access::required("edit", $album);
+
+    $form = photo::get_add_form($album);
+    if ($form->validate()) {
+      $photo = photo::create(
+        $album,
+        $this->input->post("file"),
+        $_FILES["file"]["name"],
+        $this->input->post("title", $this->input->post("name")),
+        $this->input->post("description"),
+        user::active()->id);
+
+      log::add("content", "Added a photo", log::INFO,
+               html::anchor("photos/$photo->id", "view photo"));
+      message::add(_("Successfully added photo"));
+      //rest::http_status(rest::CREATED);
+      //rest::http_location(url::site("photos/$photo->id"));
+      print "<h1>this is a response</h1>";
+    } else {
+      print $form;
+    }
+  }
+
+  /**
+   * @see Rest_Controller::_update($resource)
+   */
+  public function _update($album) {
+    access::required("edit", $album);
+
+    $form = album::get_edit_form($album);
+    if ($form->validate()) {
+      // @todo implement changing the name.  This is not trivial, we have
+      // to check for conflicts and rename the album itself, etc.  Needs an
+      // api method.
+      $album->title = $form->edit_album->title->value;
+      $album->description = $form->edit_album->description->value;
+      $album->save();
+
+      module::event("album_changed", $album);
+
+      log::add("content", "Updated album", log::INFO, "<a href=\"albums/$album->id\">view</a>");
+      message::add(_("Successfully saved album"));
+      rest::http_status(rest::CREATED);
+      rest::http_location(url::site("albums/$album->id"));
+    } else {
+      rest::html($form);
+    }
+    rest::respond();
+  }
+
+  /**
+   *  @see Rest_Controller::_form_add($parameters)
+   */
+  public function _form_add($album_id) {
+    $album = ORM::factory("item", $album_id);
+    access::required("edit", $album);
+
+    switch ($this->input->get("type")) {
+    case "album":
+      print album::get_add_form($album)->render();
+      break;
+
+    case "photo":
+      print photo::get_add_form($album)->render();
+      break;
+
+    default:
+      kohana::show_404();
+    }
+  }
+
+  /**
+   *  @see Rest_Controller::_form_add($parameters)
+   */
+  public function _form_edit($album) {
+    access::required("edit", $album);
+
+    print album::get_edit_form($album);
+  }
 }

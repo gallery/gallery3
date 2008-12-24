@@ -3,16 +3,18 @@
   <tbody>
     <tr>
       <th><?= _("Title:") ?></th>
-      <td><?= $item->title_edit; ?></td>
+      <td><?= $item->title; ?></td>
     </tr>
     <tr>
       <th><?= _("Description:") ?></th>
-      <td><?= $item->description_edit; ?></td>
+      <td><?= $item->description; ?></td>
     </tr>
+    <?  if ($item->id != 1): ?>
     <tr>
       <th><?= _("Name:") ?></th>
-      <td><?= $item->name_edit; ?></td>
+      <td><?= $item->name; ?></td>
     </tr>
+    <? endif ?>
     <? if ($item->owner): ?>
     <tr>
       <th><?= _("Owner:") ?></th>

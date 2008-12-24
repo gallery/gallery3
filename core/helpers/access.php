@@ -107,6 +107,19 @@ class access_Core {
   }
 
   /**
+   * If the active user does not have this permission, failed with an access::forbidden().
+   *
+   * @param  string     $perm_name
+   * @param  Item_Model $item
+   * @return boolean
+   */
+  public static function required($perm_name, $item) {
+    if (!access::can($perm_name, $item)) {
+      access::forbidden();
+    }
+  }
+
+  /**
    * Terminate immediately with an HTTP 503 Forbidden response.
    */
   public static function forbidden() {

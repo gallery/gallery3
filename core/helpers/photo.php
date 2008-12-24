@@ -99,10 +99,22 @@ class photo_Core {
     $group = $form->group("add_photo")->label(sprintf(_("Add Photo to %s"), $parent->title));
     $group->input("name")->label(_("Name"));
     $group->input("title")->label(_("Title"));
-    $group->textarea("description")->label(_("Description"))->rules("length[0, 255");
-    $group->upload("file")->label(_("File"))->rules("allow[jpg,png,gif,tiff]");
+    $group->textarea("description")->label(_("Description"));
+    $group->upload("file")->label(_("File"))->rules("required|allow[jpg,png,gif]");
     $group->hidden("type")->value("photo");
     $group->submit(_("Upload"));
+    $form->add_rules_from(ORM::factory("item"));
+    return $form;
+  }
+
+  static function get_edit_form($photo) {
+    $form = new Forge("photos/$photo->id", "", "post", array("id" => "gEditPhotoForm"));
+    $form->hidden("_method")->value("put");
+    $group = $form->group("edit_photo")->label(_("Edit Photo"));
+    $group->input("name")->label(_("Name"))->value($photo->name);
+    $group->input("title")->label(_("Title"))->value($photo->title);
+    $group->textarea("description")->label(_("Description"))->value($photo->description);
+    $group->submit(_("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
   }

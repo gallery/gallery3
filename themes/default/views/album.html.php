@@ -1,8 +1,8 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gAlbumHeader">
   <?= $theme->album_top() ?>
-  <h1><?= $item->title_edit ?></h1>
-  <div class="gDescription"><?= $item->description_edit ?></div>
+  <h1><?= $item->title ?></h1>
+  <div class="gDescription"><?= $item->description ?></div>
 </div>
 
 <ul id="gAlbumGrid">
@@ -19,7 +19,7 @@
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />
     </a>
-    <h2><?= $child->title_edit ?></h2>
+    <h2><?= $child->title ?></h2>
     <?= $theme->thumb_bottom($child) ?>
     <ul class="gMetadata">
       <?= $theme->thumb_info($child) ?>

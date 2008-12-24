@@ -20,7 +20,7 @@
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />
     </a>
-    <h2><?= $child->title_edit ?></h2>
+    <h2><?= $child->title ?></h2>
     <?= $theme->thumb_bottom($child) ?>
     <ul class="gMetadata">
       <?= $theme->thumb_info($child) ?>

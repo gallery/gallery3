@@ -24,10 +24,6 @@ class core_block_Core {
       $profiler = new Profiler();
       $profiler->render();
     }
-
-    if ($theme->item() && access::can("edit", $theme->item())) {
-      return new View("in_place_edit.html");
-    }
   }
 
   public static function admin_page_bottom($theme) {

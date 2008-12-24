@@ -710,16 +710,6 @@ div.gAnnotatedThemeBlock div.title {
  * 10) Ajax/DOM features
  *********************************************************************/
 
-.gInPlaceEdit,
-.gInPlaceEdit form,
-.gInPlaceEdit input {
-  display: inline;
-}
-
-span.gInPlaceEdit:hover {
-  color: #6b8cb7;
-}
-
 #gDialog {
   text-align: left;
 }

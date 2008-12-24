@@ -118,7 +118,7 @@ abstract class REST_Controller extends Controller {
 
   /* We're adding a new item, pass along any additional parameters. */
   public function form_add($parameters) {
-      return $this->_form_add($parameters);
+    return $this->_form_add($parameters);
   }
 
   /**

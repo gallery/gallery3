@@ -22,7 +22,11 @@ class Item_Model extends ORM_MPTT {
   private $relative_path = null;
   private $view_restrictions = array();
 
-  var $rules = array();
+  var $rules = array(
+    "name" => "required|length[0,255]",
+    "title" => "required|length[0,255]",
+    "description" => "length[0,255]"
+  );
 
   /**
    * Add a set of restrictions to any following queries to restrict access only to items
@@ -173,17 +177,7 @@ class Item_Model extends ORM_MPTT {
    * @see ORM::__get()
    */
   public function __get($column) {
-    if (substr($column, -5) == "_edit") {
-      $real_column = substr($column, 0, strlen($column) - 5);
-      $editable = $this->type == "album" ?
-        access::can("edit", $this) : access::can("edit", $this->parent());
-      if ($editable) {
-        return "<span class=\"gInPlaceEdit gEditField-{$this->id}-{$real_column}\">" .
-          "{$this->$real_column}</span>";
-      } else {
-        return parent::__get($real_column);
-      }
-    } else if ($column == "owner") {
+    if ($column == "owner") {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
       try {

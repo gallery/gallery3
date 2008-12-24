@@ -32,24 +32,31 @@ class core_menu_Core {
     $item = $theme->item();
 
     if (!user::active()->guest) {
-      $admin_menu = Menu::factory("submenu")
-        ->id("admin_menu")
-        ->label(_("Admin"));
-      $menu->append($admin_menu);
+      $menu->append($admin_menu = Menu::factory("submenu")
+                    ->id("admin_menu")
+                    ->label(_("Admin")));
     }
 
     if ($item && access::can("edit", $item)) {
-      $menu->append(Menu::factory("submenu")
-                    ->id("options_menu")
-                    ->label(_("Options"))
-                    ->append(Menu::factory("dialog")
-                             ->id("add_item")
-                             ->label(_("Add an item"))
-                             ->url(url::site("form/add/photos/$item->id")))
-                    ->append(Menu::factory("dialog")
-                             ->id("add_album")
-                             ->label(_("Add album"))
-                             ->url(url::site("form/add/albums/$item->id"))));
+      $menu->append($options_menu = Menu::factory("submenu")
+        ->id("options_menu")
+        ->label(_("Options"))
+        ->append(Menu::factory("dialog")
+                 ->id("edit_item")
+                 ->label($item->type == "album" ? _("Edit album") : _("Edit photo"))
+                 ->url(url::site("form/edit/{$item->type}s/$item->id"))));
+
+      if ($item->type == "album") {
+        $options_menu
+          ->append(Menu::factory("dialog")
+                   ->id("add_item")
+                   ->label(_("Add a photo"))
+                   ->url(url::site("form/add/albums/$item->id?type=photo")))
+          ->append(Menu::factory("dialog")
+                   ->id("add_album")
+                   ->label(_("Add an album"))
+                   ->url(url::site("form/add/albums/$item->id?type=album")));
+      }
 
       $admin_menu->append(Menu::factory("dialog")
                           ->id("edit")

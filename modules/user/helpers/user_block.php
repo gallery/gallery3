@@ -19,14 +19,12 @@
  */
 class user_block_Core {
   public static function head($theme) {
-    $url = url::file("modules/user/js/user.js");
-    $script[] = "<script src=\"$url\" type=\"text/javascript\"></script>";
+    // @todo: move this into the theme
     $user = user::active();
     if (!user::active()->guest) {
       $url = url::file("lib/jquery.jeditable.js");
-      $script[] = "<script src=\"$url\" type=\"text/javascript\"></script>";
+      return "<script src=\"$url\" type=\"text/javascript\"></script>";
     }
-    return implode("\n", $script);
   }
 
   public static function header_top($theme) {

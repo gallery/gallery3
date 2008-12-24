@@ -45,125 +45,19 @@ class Items_Controller extends REST_Controller {
     // Redirect to the more specific resource type, since it will render
     // differently.  We could also just delegate here, but it feels more appropriate
     // to have a single canonical resource mapping.
+    access::required("view", $item);
     return url::redirect("{$item->type}s/$item->id");
   }
 
-  public function _create($item) {
-    // @todo Productionize this code
-    // 1) Add security checks
-    $owner_id = user::active()->id;
-
-    switch ($this->input->post("type")) {
-    case "album":
-      $album = album::create(
-        $item,
-        $this->input->post("name"),
-        $this->input->post("title", $this->input->post("name")),
-        $this->input->post("description"),
-        $owner_id);
-      log::add("content", "Created an album", log::INFO,
-               html::anchor("albums/$album->id", "view album"));
-      message::add(_("Successfully created album"));
-      if (request::is_ajax()) {
-        rest::http_status(rest::CREATED);
-        rest::http_location(url::site("albums/$album->id"));
-      } else {
-        url::redirect("albums/$album->id");
-      }
-      break;
-
-    case "photo":
-      if (is_array($_FILES["file"]["name"])) {
-        $count = count($_FILES["file"]["name"]);
-        for ($i = 0; $i < $count - 1; $i++) {
-          if ($_FILES["file"]["error"][$i] == 0) {
-            $photo = photo::create(
-              $item,
-              $_FILES["file"]["tmp_name"][$i],
-              $_FILES["file"]["name"][$i],
-              $_FILES["file"]["name"][$i],
-              "", $owner_id);
-          } else {
-            log::add("content", "Error uploading photo", log::WARNING);
-            message::add(sprintf(_("Error uploading photo %s"),
-                                 html::specialchars($_FILES["file"]["name"][$i])));
-          }
-        }
-        log::add("content", "Added $count photos", log::INFO,
-                 html::anchor("albums/$item->id", "view album"));
-        if (request::is_ajax()) {
-          rest::http_status(rest::CREATED);
-          rest::http_location(url::site("albums/$item->id"));
-        } else {
-          url::redirect("albums/$item->id");
-        }
-      } else {
-        $photo = photo::create(
-          $item,
-          $_FILES["file"]["tmp_name"],
-          $_FILES["file"]["name"],
-          $this->input->post("title", $this->input->post("name")),
-          $this->input->post("description"),
-          $owner_id);
-        log::add("content", "Added a photo", log::INFO,
-                 html::anchor("photos/$photo->id", "view photo"));
-        message::add(_("Successfully added photo"));
-        if (request::is_ajax()) {
-          rest::http_status(rest::CREATED);
-          rest::http_location(url::site("photos/$photo->id"));
-        } else {
-          url::redirect("photos/$photo->id");
-        }
-      }
-      break;
-    }
+  public function _delete($item) {
+    throw new Exception("@todo Item_Controller::_delete NOT IMPLEMENTED");
   }
 
-  public function _delete($item) {
-    // @todo Productionize this code
-    // 1) Add security checks
-    $parent = $item->parent();
-    if ($parent->id) {
-      module::event("{$item->type}_before_delete", $item);
-
-      $item->delete();
-    }
-
-    url::redirect("{$parent->type}s/{$parent->id}");
+  public function _create($item) {
+    throw new Exception("@todo Item_Controller::_create NOT IMPLEMENTED");
   }
 
   public function _update($item) {
-    // @todo Productionize this
-    // 1) Figure out how to do the right validation here.  Validate the form input and apply it to
-    //    the model as appropriate.
-    // 2) Figure out how to dispatch according to the needs of the client.  Ajax requests from
-    //    jeditable will want the changed field back, and possibly the whole item in json.
-    //
-    // For now let's establish a simple protocol where the client passes in a __return parameter
-    // that specifies which field it wants back from the item.  Later on we can expand that to
-    // include a data format, etc.
-
-    // These fields are safe to change
-    $post = $this->input->post();
-    foreach ($post as $key => $value) {
-      switch ($key) {
-      case "title":
-      case "description":
-        $item->$key = $value;
-        break;
-      }
-    }
-
-    // @todo Support additional fields
-    // These fields require additional work if you change them
-    // parent_id, owner_id
-
-    $item->save();
-
-    module::event("{$item->type}_changed", $item);
-
-    if (array_key_exists("_return", $post)) {
-      print $item->{$post["_return"]};
-    }
+    throw new Exception("@todo Item_Controller::_update NOT IMPLEMENTED");
   }
 }

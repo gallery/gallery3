@@ -22,34 +22,59 @@ class Photos_Controller extends Items_Controller {
   /**
    *  @see Rest_Controller::_show($resource)
    */
-  public function _show($item) {
-    if (!access::can("view", $item)) {
-      return Kohana::show_404();
-    }
+  public function _show($photo) {
+    access::required("view", $photo);
 
     $theme_name = module::get_var("core", "active_theme", "default");
 
     $template = new Theme_View("page.html", "photo", $theme_name);
 
-    $template->set_global('item', $item);
-    $template->set_global('children', $item->children());
-    $template->set_global('children_count', $item->children_count());
-    $template->set_global('parents', $item->parents());
+    $template->set_global('item', $photo);
+    $template->set_global('children', array());
+    $template->set_global('children_count', $photo->children_count());
+    $template->set_global('parents', $photo->parents());
 
     $template->content = new View("photo.html");
 
-    $item->view_count++;
-    $item->save();
+    $photo->view_count++;
+    $photo->save();
 
     print $template;
   }
 
   /**
-   *  @see Rest_Controller::_form_add($parameters)
+   * @see Rest_Controller::_update($resource)
    */
-  public function _form_add($parent_id) {
-    $parent = ORM::factory("item", $parent_id);
+  public function _update($photo) {
+    access::required("edit", $photo);
 
-    print photo::get_add_form($parent)->render();
+    $form = photo::get_edit_form($photo);
+    if ($form->validate()) {
+      // @todo implement changing the name.  This is not trivial, we have
+      // to check for conflicts and rename the album itself, etc.  Needs an
+      // api method.
+      $photo->title = $form->edit_photo->title->value;
+      $photo->description = $form->edit_photo->description->value;
+      $photo->save();
+
+      module::event("photo_changed", $photo);
+
+      log::add("content", "Updated photo", log::INFO, "<a href=\"photos/$photo->id\">view</a>");
+      message::add(_("Successfully saved photo"));
+
+      rest::http_status(rest::FOUND);
+      rest::http_location(url::site("photos/$photo->id"));
+    } else {
+      rest::html($form);
+    }
+    rest::respond();
+  }
+
+  /**
+   *  @see Rest_Controller::_form_edit($resource)
+   */
+  public function _form_edit($photo) {
+    access::required("edit", $photo);
+    print photo::get_edit_form($photo);
   }
 }

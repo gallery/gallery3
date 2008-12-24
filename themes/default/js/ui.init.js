@@ -105,28 +105,23 @@ function openDialog(element) {
 
   $("body").append(eDialog);
   var buttons = {};
-  var form = $("#gDialog").find("form");
-  var ajaxify_dialog = function() {
-    $(form).ajaxForm({
+  buttons["Submit"] = function() {
+    $("#gDialog form").ajaxForm({
       complete: function(xhr, statusText) {
 	if (xhr.status == 201) {
 	  $("#gDialog").dialog("close");
 	  window.location = xhr.getResponseHeader("Location");
+	} else if (xhr.status == 202) {
+	  $("#gDialog").dialog("close");
+	  window.location.reload();
 	} else {
-	  $("#gDialog").replaceWith(data.responseText);
-	  ajaxify_dialog();
+	  $("#gDialog form").replaceWith(xhr.responseText);
 	}
       }
-    });
-  };
-  ajaxify_dialog();
-  buttons["Submit"] = function() {
-    var form = $("#gDialog").find("form");
-    form[0].submit();
+    }).submit();
   };
   buttons["Reset"] = function() {
-    var form = $("#gDialog").find("form");
-    form[0].reset();
+    $("#gDialog form").reset();
   };
 
   $("#gDialog").dialog({
@@ -160,7 +155,7 @@ function openDialog(element) {
     // Resize height if content's shorter than dialog
     if (contentHt < $("#gDialog").data("height.dialog")) {
       $(".ui-dialog").animate({height: contentHt});
-    }
+    };
   });
   return false;
 }

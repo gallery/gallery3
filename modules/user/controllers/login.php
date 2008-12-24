@@ -32,10 +32,7 @@ class Login_Controller extends Controller {
         user::login($user);
         log::add("user", "User $user->name logged in",
                  log::INFO, html::anchor("user/$user->id", $user->name));
-        if ($continue = $this->input->get("continue")) {
-          url::redirect($continue);
-        }
-        return;
+        rest::http_status(rest::ACCEPTED);
       } else {
         log::add("user", sprintf(_("Failed login for %s"), $group->inputs["name"]->value),
                  log::WARNING);
