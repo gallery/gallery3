@@ -30,8 +30,7 @@ class Login_Controller extends Controller {
       if ($user->loaded &&
           user::is_correct_password($user, $group->password->value)) {
         user::login($user);
-        log::add("user", "User $user->name logged in",
-                 log::INFO, html::anchor("user/$user->id", $user->name));
+        log::add("user", "User $user->name logged in");
         rest::http_status(rest::ACCEPTED);
       } else {
         log::add("user", sprintf(_("Failed login for %s"), $group->inputs["name"]->value),
