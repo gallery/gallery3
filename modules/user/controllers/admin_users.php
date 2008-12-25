@@ -33,7 +33,7 @@ class Admin_Users_Controller extends Controller {
                            $form->add_user->full_name->value, $form->add_user->password->value);
       $user->email = $form->add_user->email->value;
       $user->save();
-      log::add(sprintf(_("Created user %s"), $user->name));
+      log::add("user", sprintf(_("Created user %s"), $user->name));
       message::add(sprintf(_("Created user %s"), $user->name));
       url::redirect("admin/users");
     }
