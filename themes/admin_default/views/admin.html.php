@@ -17,8 +17,6 @@
         type="text/css" media="screen,projection">
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/ui.core.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/ui.accordion.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/superfish.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
   </head>
