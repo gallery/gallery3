@@ -86,7 +86,7 @@ class Comments_Controller extends REST_Controller {
    */
   public function _show($comment) {
     if (rest::output_format() == "json") {
-      print json_encode(array("result" => "success", "data" => $comment));
+      print json_encode(array("result" => "success", "data" => $comment->as_array()));
     } else {
       $view = new View("comment.html");
       $view->comment = $comment;
