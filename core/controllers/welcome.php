@@ -225,6 +225,7 @@ class Welcome_Controller extends Template_Controller {
       set_time_limit(30);
 
       $parent = $parents[array_rand($parents)];
+      $parent->reload();
       $type = $desired_type;
       if (!$type) {
         $type = rand(0, 10) ? "photo" : "album";
