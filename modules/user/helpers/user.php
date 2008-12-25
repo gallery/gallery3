@@ -25,39 +25,50 @@
  */
 class user_Core {
   public static function get_edit_form($user, $action = NULL) {
-    $form = new Forge($action, "", "post", array("id" => "gUserForm"));
+    $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gUserForm"));
     $group = $form->group("edit_user")->label(_("Edit User"));
-    $group->input("uname")->label(_("Name"))->id("gName")->value($user->name);
+    $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
     $group->submit(_("Modify"));
     $form->add_rules_from($user);
-    $form->edit_user->uname->rules($user->rules["name"]);
     return $form;
   }
 
-  public static function get_add_form($action = NULL) {
-    $form = new Forge($action);
+  public static function get_edit_form_admin($user, $action = NULL) {
+    $form = new Forge("admin/users/edit/$user->id", "", "post", array("id" => "gUserForm"));
+    $group = $form->group("edit_user")->label(_("Edit User"));
+    $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
+    $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
+    $group->password("password")->label(_("Password"))->id("gPassword");
+    $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
+    $group->submit(_("Modify"));
+    $form->add_rules_from($user);
+    return $form;
+  }
+
+  public static function get_add_form_admin($action = NULL) {
+    $form = new Forge("admin/users/create");
     $group = $form->group("add_user")->label(_("Add User"));
-    $group->input("uname")->label(_("Name"))->id("gName");
+    $group->input("name")->label(_("Name"))->id("gName");
     $group->input("full_name")->label(_("Full Name"))->id("gFullName");
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail");
     $group->submit(_("Add"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
-    $form->add_user->uname->rules($user->rules["name"]);
     return $form;
   }
-  
-  public static function get_delete_form($user, $action = NULL) {
+
+  public static function get_delete_form_admin($user, $action = NULL) {
     $form = new Forge($action);
     $group = $form->group("delete_user")->label(_("Delete User"));
     $group->label(sprintf(_("Are you sure you want to delete %s?"), $user->name));
     $group->submit(_("Delete"));
     return $form;
   }
+
   /**
    * Make sure that we have a session and group_ids cached in the session.
    */
@@ -145,10 +156,9 @@ class user_Core {
     $user->full_name = $full_name;
     $user->password = $password;
 
-    // Everybody group
-    $user->add(ORM::factory("group", 1));
-    // Registered Users group
-    $user->add(ORM::factory("group", 2));
+    // Required groups
+    $user->add(group::everybody());
+    $user->add(group::registered_users());
 
     $user->save();
     module::event("user_created", $user);

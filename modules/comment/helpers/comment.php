@@ -52,13 +52,13 @@ class comment_Core {
     return $comment;
   }
 
-  static function get_add_form($item_id) {
+  static function get_add_form($item) {
     $form = new Forge(url::site("comments"), "", "post");
     $group = $form->group("add_comment")->label(_("Add comment"));
     $group->input("author") ->label(_("Author")) ->id("gAuthor");
     $group->input("email")  ->label(_("Email"))  ->id("gEmail");
     $group->textarea("text")->label(_("Text"))   ->id("gText");
-    $group->hidden("item_id")->value($item_id);
+    $group->hidden("item_id")->value($item->id);
     $group->submit(_("Add"));
     $form->add_rules_from(ORM::factory("comment"));
     return $form;

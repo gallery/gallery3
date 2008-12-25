@@ -55,11 +55,11 @@
  *   }
  *
  * A request to http://example.com/gallery3/comments/3 will result in a call to
- * REST_Controller::dispatch(3) which will load up the comment associated with id 3.  If there's
+ * REST_Controller::__call(3) which will load up the comment associated with id 3.  If there's
  * no such comment, it returns a 404.  Otherwise, it will then delegate to
  * Comment_Controller::get() with the ORM instance as an argument.
  */
-abstract class REST_Controller extends Controller {
+class REST_Controller extends Controller {
   protected $resource_type = null;
 
   public function __construct() {
@@ -125,41 +125,55 @@ abstract class REST_Controller extends Controller {
    * Perform a GET request on the controller root
    * (e.g. http://www.example.com/gallery3/comments)
    */
-  abstract public function _index();
+  public function _index() {
+    throw new Exception("@todo _create NOT IMPLEMENTED");
+  }
 
   /**
    * Perform a POST request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function _create($resource);
+  public function _create($resource) {
+    throw new Exception("@todo _create NOT IMPLEMENTED");
+  }
 
   /**
    * Perform a GET request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function _show($resource);
+  public function _show($resource) {
+    throw new Exception("@todo _show NOT IMPLEMENTED");
+  }
 
   /**
    * Perform a PUT request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function _update($resource);
+  public function _update($resource) {
+    throw new Exception("@todo _update NOT IMPLEMENTED");
+  }
 
   /**
    * Perform a DELETE request on this resource
    * @param ORM $resource the instance of this resource type
    */
-  abstract public function _delete($resource);
+  public function _delete($resource) {
+    throw new Exception("@todo _delete NOT IMPLEMENTED");
+  }
 
   /**
    * Present a form for adding a new resource
    * @param string part of the URI after the controller name
    */
-  abstract public function _form_add($parameter);
+  public function _form_add($parameter) {
+    throw new Exception("@todo _form_add NOT IMPLEMENTED");
+  }
 
   /**
    * Present a form for editing an existing resource
    * @param ORM $resource the resource container for instances of this resource type
    */
-  abstract public function _form_edit($resource);
+  public function _form_edit($resource) {
+    throw new Exception("@todo _form_edit NOT IMPLEMENTED");
+  }
 }

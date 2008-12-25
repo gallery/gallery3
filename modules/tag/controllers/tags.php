@@ -42,16 +42,7 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _index() {
-    // @todo: represent this in different formats
     print tag::cloud(30);
-  }
-
-  public function _form_add($item_id) {
-    return tag::get_add_form($item_id);
-  }
-
-  public function _form_edit($tag) {
-    throw new Exception("@todo Tag_Controller::_form_edit NOT IMPLEMENTED");
   }
 
   public function _create($tag) {
@@ -59,14 +50,14 @@ class Tags_Controller extends REST_Controller {
     $item = ORM::factory("item", $this->input->post("item_id"));
     access::required("edit", $item);
 
-    $form = tag::get_add_form($item->id);
+    $form = tag::get_add_form($item);
     if ($form->validate()) {
       tag::add($item, $this->input->post("tag_name"));
 
       print json_encode(
         array("result" => "success",
               "resource" => url::site("tags/{$tag->id}"),
-              "form" => tag::get_add_form($item->id)->__toString()));
+              "form" => tag::get_add_form($item)->__toString()));
     } else {
       print json_encode(
         array("result" => "error",
@@ -74,11 +65,10 @@ class Tags_Controller extends REST_Controller {
     }
   }
 
-  public function _delete($tag) {
-    throw new Exception("@todo Tag_Controller::_delete NOT IMPLEMENTED");
-  }
+  public function _form_add($item_id) {
+    $item = ORM::factory("item", $item_id);
+    access::required("view", $item);
 
-  public function _update($tag) {
-    throw new Exception("@todo Tag_Controller::_update NOT IMPLEMENTED");
+    return tag::get_add_form($item);
   }
 }

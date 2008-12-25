@@ -26,6 +26,40 @@ class Admin_Users_Controller extends Controller {
     print $view;
   }
 
+  public function create() {
+    $form = user::get_add_form();
+    if ($form->validate()) {
+      $user = user::create($form->add_user->inputs["name"]->value,
+                           $form->add_user->full_name->value, $form->add_user->password->value);
+      $user->email = $form->add_user->email->value;
+      $user->save();
+      log::add(sprintf(_("Created user %s"), $user->name));
+      message::add(sprintf(_("Created user %s"), $user->name));
+      url::redirect("admin/users");
+    }
+
+    print $form;
+  }
+
+  public function delete($id) {
+    $user = ORM::factory("user", $id);
+    if (!$user->loaded) {
+      kohana::show_404();
+    }
+
+    $form = user::get_delete_form($user);
+    if ($form->validate()) {
+      $name = $user->name;
+      $user->delete();
+
+      log::add(sprintf(_("Deleted user %s"), $name));
+      message::add(sprintf(_("Deleted user %s"), $name));
+      url::redirect("admin/users");
+    }
+
+    print $form;
+  }
+
   public function edit($id) {
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
@@ -39,6 +73,7 @@ class Admin_Users_Controller extends Controller {
       $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
       $user->save();
+      message::add(sprintf(_("Changed user %s"), $user->name));
       url::redirect("admin/users/edit/$id");
     }
 

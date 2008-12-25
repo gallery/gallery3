@@ -56,8 +56,10 @@ class Comments_Controller extends REST_Controller {
    */
   public function _create($comment) {
     rest::http_content_type(rest::JSON);
+    $item = ORM::factory("item", $this->input->post("item_id"));
+    access::required("view", $item);
 
-    $form = comment::get_add_form($this->input->post("item_id"));
+    $form = comment::get_add_form($item);
     if ($form->validate()) {
       $comment->author = $this->input->post("author");
       $comment->email = $this->input->post("email");
@@ -71,7 +73,7 @@ class Comments_Controller extends REST_Controller {
       print json_encode(
         array("result" => "success",
               "resource" => url::site("comments/{$comment->id}"),
-              "form" => comment::get_add_form($this->input->post("item_id"))->__toString()));
+              "form" => comment::get_add_form($item)->__toString()));
     } else {
       print json_encode(
         array("result" => "error",
@@ -86,7 +88,9 @@ class Comments_Controller extends REST_Controller {
    */
   public function _show($comment) {
     if (rest::output_format() == "json") {
-      print json_encode(array("result" => "success", "data" => $comment->as_array()));
+      print json_encode(
+        array("result" => "success",
+              "data" => $comment->as_array()));
     } else {
       $view = new View("comment.html");
       $view->comment = $comment;
@@ -135,8 +139,11 @@ class Comments_Controller extends REST_Controller {
    * Present a form for adding a new comment to this item or editing an existing comment.
    *  @see REST_Controller::form_add($resource)
    */
-  public function _form_add($item_id) {
-    print comment::get_add_form($item_id);
+  public function _form_add($item) {
+    $item = ORM::factory("item", $item_id);
+    access::required("view", $item);
+
+    print comment::get_add_form($item);
   }
 
   /**

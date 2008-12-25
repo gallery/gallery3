@@ -57,11 +57,6 @@ class core_menu_Core {
                    ->label(_("Add an album"))
                    ->url(url::site("form/add/albums/$item->id?type=album")));
       }
-
-      $admin_menu->append(Menu::factory("dialog")
-                          ->id("edit")
-                          ->label(_("Edit"))
-                          ->url(url::site("form/edit/{$item->type}s/$item->id")));
     }
 
     if (user::active()->admin) {

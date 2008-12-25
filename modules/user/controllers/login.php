@@ -19,26 +19,45 @@
  */
 class Login_Controller extends Controller {
   public function index() {
-    $form = new Forge(url::current(true), "", "post", array("id" => "gLoginForm"));
-    $group = $form->group("login_form")->label(_("Login"));
-    $group->input("name")->label(_("Name"))->id("gName")->class(null);
-    $group->password("password")->label(_("Password"))->id("gPassword")->class(null);
-    $group->inputs["name"]->error_messages("invalid_login", _("Invalid name or password"));
+    if (request::method() == "post") {
+      $this->_try_login();
+    } else {
+      print $this->_login_form();
+    }
+  }
 
-    if (request::method() == "post" && $form->validate()) {
-      $user = ORM::factory("user")->where("name", $group->inputs["name"]->value)->find();
-      if ($user->loaded &&
-          user::is_correct_password($user, $group->password->value)) {
-        user::login($user);
-        log::add("user", "User $user->name logged in");
-        rest::http_status(rest::ACCEPTED);
-      } else {
-        log::add("user", sprintf(_("Failed login for %s"), $group->inputs["name"]->value),
+  private function _try_login() {
+    $form = $this->_login_form();
+
+    $valid = $form->validate();
+    if ($valid) {
+      $user = ORM::factory("user")->where("name", $form->login->inputs["name"]->value)->find();
+      if (!$user->loaded || !user::is_correct_password($user, $form->login->password->value)) {
+        log::add("user", sprintf(_("Failed login for %s"), $form->login->inputs["name"]->value),
                  log::WARNING);
-        $group->inputs["name"]->add_error("invalid_login", 1);
+        $form->login->inputs["name"]->add_error("invalid_login", 1);
+        $valid = false;
       }
     }
 
-    print $form->render();
+    if ($valid) {
+      user::login($user);
+      log::add("user", "User $user->name logged in");
+      print json_encode(
+        array("result" => "success"));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
+    }
+  }
+
+  private function _login_form() {
+    $form = new Forge(url::current(true), "", "post", array("id" => "gLoginForm"));
+    $group = $form->group("login")->label(_("Login"));
+    $group->input("name")->label(_("Name"))->id("gName")->class(null);
+    $group->password("password")->label(_("Password"))->id("gPassword")->class(null);
+    $group->inputs["name"]->error_messages("invalid_login", _("Invalid name or password"));
+    return $form;
   }
 }

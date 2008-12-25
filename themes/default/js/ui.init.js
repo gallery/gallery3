@@ -107,15 +107,18 @@ function openDialog(element) {
   var buttons = {};
   buttons["Submit"] = function() {
     $("#gDialog form").ajaxForm({
-      complete: function(xhr, statusText) {
-	if (xhr.status == 201) {
-	  $("#gDialog").dialog("close");
-	  window.location = xhr.getResponseHeader("Location");
-	} else if (xhr.status == 202) {
-	  $("#gDialog").dialog("close");
-	  window.location.reload();
-	} else {
-	  $("#gDialog form").replaceWith(xhr.responseText);
+      dataType: "json",
+      success: function(data) {
+	if (data.form) {
+          $("#gDialog form").replaceWith(data.form);
+	}
+	if (data.result == "success") {
+          $("#gDialog").dialog("close");
+	  if (data.location) {
+	    window.location = data.location;
+	  } else {
+	    window.location.reload();
+	  }
 	}
       }
     }).submit();

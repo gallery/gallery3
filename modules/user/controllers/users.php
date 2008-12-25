@@ -20,101 +20,35 @@
 class Users_Controller extends REST_Controller {
   protected $resource_type = "user";
 
-  /**
-   * Display comments based on criteria.
-   *  @see REST_Controller::_index()
-   */
-  public function _index() {
-    throw new Exception("@todo User_Controller::_index NOT IMPLEMENTED");
-  }
-
-  /**
-   *  @see REST_Controller::_create($resource)
-   */
-  public function _create($resource) {
-    if (!(user::active()->admin)) {
-      access::forbidden();
-    }
-
-    $form = user::get_add_form();
-    if ($form->validate()) {
-      $user = user::create($form->add_user->uname->value,
-        $form->add_user->full_name->value, $form->add_user->password->value);
-      $user->email = $form->add_user->email->value;
-      $user->save();
-      if ($continue = $this->input->get("continue")) {
-        url::redirect($continue);
-      }
-    }
-    print $form;
-  }
-
-  /**
-   * @see REST_Controller::_show($resource)
-   */
-  public function _show($user) {
-    throw new Exception("@todo User_Controller::_show NOT IMPLEMENTED");
-  }
-
-  /**
-   *  @see REST_Controller::_update($resource)
-   */
   public function _update($user) {
-    if (!user::active()->admin && ($user->guest || $user->id != user::active()->id)) {
+    if ($user->guest || $user->id != user::active()->id) {
       access::forbidden();
     }
 
     $form = user::get_edit_form($user);
     $form->edit_user->password->rules("-required");
     if ($form->validate()) {
+      // @todo: allow the user to change their name
       $user->full_name = $form->edit_user->full_name->value;
       $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
       $user->save();
-      if ($continue = $this->input->get("continue")) {
-        url::redirect($continue);
-      }
+
+      print json_encode(
+        array("result" => "success",
+              "resource" => url::site("users/{$user->id}")));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
     }
-    print $form;
   }
 
-  /**
-   *  @see REST_Controller::_delete($resource)
-   */
-  public function _delete($user) {
-    if (!user::active()->admin || $user->id == user::active()->id ) {
-      access::forbidden();
-    }
-    // Prevent CSRF
-    $form = user::get_delete_form($user);
-    if ($form->validate()) {
-      $user->delete();
-      if ($continue = $this->input->get("continue")) {
-        url::redirect($continue);
-      }
-    }
-    print $form;
-  }
-
-  /**
-   * Present a form for editing a user
-   *  @see REST_Controller::form($resource)
-   */
   public function _form_edit($user) {
-    if (!user::active()->admin && ($user->guest || $user->id != user::active()->id)) {
+    if ($user->guest || $user->id != user::active()->id) {
       access::forbidden();
     }
 
-    print user::get_edit_form(
-      $user,
-      "users/{$user->id}?_method=put&continue=" . $this->input->get("continue"));
-  }
-
-  /**
-   * Present a form for adding a user
-   *  @see REST_Controller::form($resource)
-   */
-  public function _form_add($parameters) {
-    throw new Exception("@todo User_Controller::_form_add NOT IMPLEMENTED");
+    print user::get_edit_form($user);
   }
 }

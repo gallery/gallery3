@@ -46,50 +46,40 @@ class group_Core {
   /**
    * The group of all possible visitors.  This includes the guest user.
    *
-   * @todo consider caching
-   *
    * @return Group_Model
    */
   static function everybody() {
-    return ORM::factory("group", 1);
+    return model_cache::get("group", 1);
   }
 
   /**
    * The group of all logged-in visitors.  This does not include guest users.
    *
-   * @todo consider caching
-   *
    * @return Group_Model
    */
   static function registered_users() {
-    return ORM::factory("group", 2);
+    return model_cache::get("group", 2);
   }
-  
-  /**
-   * This is the API for handling groups.
-   * @TODO incorporate rules!
-   */
+
   public static function get_edit_form($group, $action = NULL) {
     $form = new Forge($action);
     $form_group = $form->group("edit_group")->label(_("Edit Group"));
-    $form_group->input("gname")->label(_("Name"))->id("gName")->value($group->name);
+    $form_group->input("name")->label(_("Name"))->id("gName")->value($group->name);
     $form_group->submit(_("Modify"));
     $form->add_rules_from($group);
-    $form->edit_group->gname->rules($group->rules["name"]);
     return $form;
   }
-  
+
   public static function get_add_form($action = NULL) {
     $form = new Forge($action);
     $form_group = $form->group("add_group")->label(_("Add Group"));
-    $form_group->input("gname")->label(_("Name"))->id("gName");
+    $form_group->input("name")->label(_("Name"))->id("gName");
     $form_group->submit(_("Create"));
     $group = ORM::factory("group");
     $form->add_rules_from($group);
-    $form->add_group->gname->rules($group->rules["name"]);
     return $form;
   }
-  
+
   public static function get_delete_form($group, $action = NULL) {
     $form = new Forge($action);
     $form_group = $form->group("delete_group")->label(_("Delete Group"));

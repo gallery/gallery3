@@ -5,9 +5,9 @@
          title="<?= _("Login to Gallery") ?>"
          id="gLoginLink"><?= _("Login") ?></a></li>
   <? else: ?>
-  <li><a href="<?= url::site("user/{$user->id}?continue=" . url::current(true))?>"
+  <li><a href="<?= url::site("form/edit/users/{$user->id}") ?>"
       title="<?= _("Edit Your Profile") ?>"
-      id="gUserProfileLink"><?= _("Modify Profile") ?></a></li>
+      id="gUserProfileLink" class="gDialogLink"><?= _("Modify Profile") ?></a></li>
   <li><a href="<?= url::site("logout?continue=" . url::current(true)) ?>"
          id="gLogoutLink"><?= _("Logout") ?></a></li>
   <? endif; ?>

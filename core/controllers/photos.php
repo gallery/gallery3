@@ -59,12 +59,14 @@ class Photos_Controller extends Items_Controller {
       log::add("content", "Updated photo", log::INFO, "<a href=\"photos/$photo->id\">view</a>");
       message::add(_("Successfully saved photo"));
 
-      rest::http_status(rest::FOUND);
-      rest::http_location(url::site("photos/$photo->id"));
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("photos/$photo->id")));
     } else {
-      rest::html($form);
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
     }
-    rest::respond();
   }
 
   /**

@@ -18,17 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_menu_Core {
-  public static function site($menu, $theme) {
-    $user = user::active();
-    if (!$user->guest) {
-      $menu->get("admin_menu")->append(
-        Menu::Factory("dialog")
-        ->id("edit_profile")
-        ->label(_("Edit Profile"))
-        ->url(url::site("users/form/edit/$user->id")));
-    }
-  }
-
   public static function admin($menu, $theme) {
     $menu->get("users_groups_menu")
       ->append(Menu::factory("link")

@@ -82,10 +82,15 @@ class Albums_Controller extends Items_Controller {
       log::add("content", "Created an album", log::INFO,
                html::anchor("albums/$new_album->id", "view album"));
       message::add(_("Successfully created album"));
-      rest::http_status(rest::CREATED);
-      rest::http_location(url::site("albums/$new_album->id"));
+
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("albums/$new_album->id"),
+              "resource" => url::site("albums/$new_album->id")));
     } else {
-      print $form;
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
     }
   }
 
@@ -105,11 +110,15 @@ class Albums_Controller extends Items_Controller {
       log::add("content", "Added a photo", log::INFO,
                html::anchor("photos/$photo->id", "view photo"));
       message::add(_("Successfully added photo"));
-      //rest::http_status(rest::CREATED);
-      //rest::http_location(url::site("photos/$photo->id"));
-      print "<h1>this is a response</h1>";
+
+      print json_encode(
+        array("result" => "success",
+              "resource" => url::site("photos/$photo->id"),
+              "location" => url::site("photos/$photo->id")));
     } else {
-      print $form;
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
     }
   }
 
@@ -132,12 +141,15 @@ class Albums_Controller extends Items_Controller {
 
       log::add("content", "Updated album", log::INFO, "<a href=\"albums/$album->id\">view</a>");
       message::add(_("Successfully saved album"));
-      rest::http_status(rest::CREATED);
-      rest::http_location(url::site("albums/$album->id"));
+
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("albums/$album->id")));
     } else {
-      rest::html($form);
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
     }
-    rest::respond();
   }
 
   /**
@@ -149,11 +161,11 @@ class Albums_Controller extends Items_Controller {
 
     switch ($this->input->get("type")) {
     case "album":
-      print album::get_add_form($album)->render();
+      print album::get_add_form($album);
       break;
 
     case "photo":
-      print photo::get_add_form($album)->render();
+      print photo::get_add_form($album);
       break;
 
     default:
