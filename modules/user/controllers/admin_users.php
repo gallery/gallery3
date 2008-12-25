@@ -42,7 +42,8 @@ class Admin_Users_Controller extends Controller {
         '</div></li>';
       print json_encode(
         array("result" => "success", "operation" => "create",
-              "output" => $output));
+              "output" => $output,
+              "form" => user::get_add_form_admin()));
     } else {
       print json_encode(
         array("result" => "error",
