@@ -22,7 +22,7 @@
     <script src="<?= $theme->url("js/jquery.listen-min.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/superfish.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
-    <?= html::script("lib/jquery-ui.packed.js") ?>
+    <?= html::script("lib/jquery-ui.js") ?>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <!--[if lt IE 8]>
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
