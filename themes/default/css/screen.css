@@ -210,6 +210,10 @@ li.gError select {
   font-size: .8em;
 }
 
+#gSiteMenu, #gBreadcrumbs, #gTagCloud ul {
+  font-size: 1.3em;
+}
+
 .gItem {
   font-size: .8em;
 }
@@ -355,15 +359,20 @@ li.gError select {
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
-.gMessages li {
+#gMessages {
+  margin: 0 20px 20px;
+}
+
+#gMessages li {
   border: 1px solid #ccc;
   margin: .4em 0;
 }
 
 .gError, .gWarning, .gSuccess, .gHelp, .gInfo {
-  background-position: .5em .1em;
+  background-color: #e8e8e8;
+  background-position: .4em .2em;
   background-repeat: no-repeat;
-  padding: .1em .5em .1em 30px;
+  padding: .2em .5em .2em 30px;
 }
 
 .gError {
@@ -445,7 +454,6 @@ li.gError select {
 
 #gSiteMenu {
   border-bottom: 1px solid #ccc;
-  font-size: 1.2em;
   padding: 0 20px 0;
 }
 
@@ -490,7 +498,6 @@ li.gError select {
 
 #gBreadcrumbs {
   padding-left: 20px;
-  font-size: 1.3em;
 }
 
 #gBreadcrumbs li {
@@ -515,7 +522,6 @@ li.gError select {
 /* Tags and cloud ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gTagCloud ul {
-  font-size: 1.4em;
   text-align: justify;
 }
 
