@@ -31,7 +31,7 @@ class group_Core {
    * @return Group_Model
    */
   static function create($name) {
-    $group = ORM::factory("group")->where("name", $name);
+    $group = ORM::factory("group")->where("name", $name)->find();
     if ($group->loaded) {
       throw new Exception("@todo GROUP_ALREADY_EXISTS $name");
     }
@@ -63,5 +63,38 @@ class group_Core {
    */
   static function registered_users() {
     return ORM::factory("group", 2);
+  }
+  
+  /**
+   * This is the API for handling groups.
+   * @TODO incorporate rules!
+   */
+  public static function get_edit_form($group, $action = NULL) {
+    $form = new Forge($action);
+    $form_group = $form->group("edit_group")->label(_("Edit Group"));
+    $form_group->input("gname")->label(_("Name"))->id("gName")->value($group->name);
+    $form_group->submit(_("Modify"));
+    $form->add_rules_from($group);
+    $form->edit_group->gname->rules($group->rules["name"]);
+    return $form;
+  }
+  
+  public static function get_add_form($action = NULL) {
+    $form = new Forge($action);
+    $form_group = $form->group("add_group")->label(_("Add Group"));
+    $form_group->input("gname")->label(_("Name"))->id("gName");
+    $form_group->submit(_("Create"));
+    $group = ORM::factory("group");
+    $form->add_rules_from($group);
+    $form->add_group->gname->rules($group->rules["name"]);
+    return $form;
+  }
+  
+  public static function get_delete_form($group, $action = NULL) {
+    $form = new Forge($action);
+    $form_group = $form->group("delete_group")->label(_("Delete Group"));
+    $form_group->label(_("Are you sure you want to delete " . $group->name . "?"));
+    $form_group->submit(_("Delete"));
+    return $form;
   }
 }

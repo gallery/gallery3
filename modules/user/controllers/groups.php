@@ -17,31 +17,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Users_Controller extends REST_Controller {
-  protected $resource_type = "user";
+class Groups_Controller extends REST_Controller {
+  protected $resource_type = "group";
 
   /**
    * Display comments based on criteria.
    *  @see Rest_Controller::_index()
    */
   public function _index() {
-    throw new Exception("@todo User_Controller::_index NOT IMPLEMENTED");
+    throw new Exception("@todo Group_Controller::_index NOT IMPLEMENTED");
   }
 
   /**
    *  @see Rest_Controller::_create($resource)
    */
   public function _create($resource) {
-    if (!(user::active()->admin)) {
-      access::forbidden();
-    }
-
-    $form = user::get_add_form();
+    $form = group::get_add_form();
     if ($form->validate()) {
-      $user = user::create($form->add_user->uname->value, 
-        $form->add_user->full_name->value, $form->add_user->password->value);
-      $user->email = $form->add_user->email->value;
-      $user->save();
+      group::create($form->add_group->gname->value);
       if ($continue = $this->input->get("continue")) {
         url::redirect($continue);
       }
@@ -53,24 +46,17 @@ class Users_Controller extends REST_Controller {
    * @see Rest_Controller::_show($resource)
    */
   public function _show($user) {
-    throw new Exception("@todo User_Controller::_show NOT IMPLEMENTED");
+    throw new Exception("@todo Group_Controller::_show NOT IMPLEMENTED");
   }
 
   /**
    *  @see Rest_Controller::_update($resource)
    */
-  public function _update($user) {
-    if ($user->guest || (!user::active()->admin && $user->id != user::active()->id)) {
-      access::forbidden();
-    }
-
-    $form = user::get_edit_form($user);
-    $form->edit_user->password->rules("-required");
+  public function _update($group) {
+    $form = group::get_edit_form($group);
     if ($form->validate()) {
-      $user->full_name = $form->edit_user->full_name->value;
-      $user->password = $form->edit_user->password->value;
-      $user->email = $form->edit_user->email->value;
-      $user->save();
+      $group->name = $form->edit_group->gname->value;
+      $group->save();
       if ($continue = $this->input->get("continue")) {
         url::redirect($continue);
       }
@@ -81,14 +67,14 @@ class Users_Controller extends REST_Controller {
   /**
    *  @see Rest_Controller::_delete($resource)
    */
-  public function _delete($user) {
-    if (!(user::active()->admin) || $user->id == user::active()->id) {
+  public function _delete($group) {
+    if (!(user::active()->admin) || $group->special) {
       access::forbidden();
     }
     // Prevent CSRF
-    $form = user::get_delete_form($user);
+    $form = group::get_delete_form($group);
     if ($form->validate()) {
-      $user->delete();
+      $group->delete();
       if ($continue = $this->input->get("continue")) {
         url::redirect($continue);
       }
@@ -100,14 +86,14 @@ class Users_Controller extends REST_Controller {
    * Present a form for editing a user
    *  @see Rest_Controller::form($resource)
    */
-  public function _form_edit($user) {
-    if ($user->guest || user::active()->id != $user->id) {
+  public function _form_edit($group) {
+    if ($group->guest || group::active()->id != $group->id) {
       access::forbidden();
     }
 
-    print user::get_edit_form(
-      $user,
-      "users/{$user->id}?_method=put&continue=" . $this->input->get("continue"));
+    print group::get_edit_form(
+      $group,
+      "users/{$group->id}?_method=put&continue=" . $this->input->get("continue"));
   }
 
   /**
@@ -115,6 +101,6 @@ class Users_Controller extends REST_Controller {
    *  @see Rest_Controller::form($resource)
    */
   public function _form_add($parameters) {
-    throw new Exception("@todo User_Controller::_form_add NOT IMPLEMENTED");
+    throw new Exception("@todo Group_Controller::_form_add NOT IMPLEMENTED");
   }
 }

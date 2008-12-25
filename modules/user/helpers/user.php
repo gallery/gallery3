@@ -24,7 +24,7 @@
  * Note: by design, this class does not do any permission checking.
  */
 class user_Core {
-  public static function get_edit_form($user, $action) {
+  public static function get_edit_form($user, $action = NULL) {
     $form = new Forge($action, "", "post", array("id" => "gUserForm"));
     $group = $form->group("edit_user")->label(_("Edit User"));
     $group->input("uname")->label(_("Name"))->id("gName")->value($user->name);
@@ -33,18 +33,29 @@ class user_Core {
     $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
     $group->submit(_("Modify"));
     $form->add_rules_from($user);
+    $form->edit_user->uname->rules($user->rules["name"]);
     return $form;
   }
 
-  public static function get_add_form($user, $action) {
-    $form = new Forge($action, "", "post", array("id" => "gUserAddForm"));
+  public static function get_add_form($action = NULL) {
+    $form = new Forge($action);
     $group = $form->group("add_user")->label(_("Add User"));
     $group->input("uname")->label(_("Name"))->id("gName");
     $group->input("full_name")->label(_("Full Name"))->id("gFullName");
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail");
     $group->submit(_("Add"));
+    $user = ORM::factory("user");
     $form->add_rules_from($user);
+    $form->add_user->uname->rules($user->rules["name"]);
+    return $form;
+  }
+  
+  public static function get_delete_form($user, $action = NULL) {
+    $form = new Forge($action);
+    $group = $form->group("delete_user")->label(_("Delete User"));
+    $group->label(_("Are you sure you want to delete " . $user->name . "?"));
+    $group->submit(_("Delete"));
     return $form;
   }
   /**
