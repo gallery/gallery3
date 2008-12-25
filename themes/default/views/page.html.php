@@ -19,7 +19,7 @@
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/jquery.listen-min.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/jquery.listen.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/superfish.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
     <?= html::script("lib/jquery-ui.js") ?>
