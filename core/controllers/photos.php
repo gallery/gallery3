@@ -56,8 +56,8 @@ class Photos_Controller extends Items_Controller {
 
       module::event("photo_changed", $photo);
 
-      log::add("content", "Updated photo", log::INFO, "<a href=\"photos/$photo->id\">view</a>");
-      message::add(_("Successfully saved photo"));
+      log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
+      message::success(sprintf(_("Saved photo %s"), $photo->title));
 
       print json_encode(
         array("result" => "success",

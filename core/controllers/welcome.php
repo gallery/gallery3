@@ -206,8 +206,8 @@ class Welcome_Controller extends Template_Controller {
     }
 
     if ($photo_count > 0) {
-      log::add("content", "(scaffold) Added $photo_count photos", log::INFO,
-               html::anchor("albums/$parent_id", "View album"));
+      log::success("content", "(scaffold) Added $photo_count photos"
+                   html::anchor("albums/$parent_id", "View album"));
     }
 
     url::redirect("welcome");
@@ -245,11 +245,11 @@ class Welcome_Controller extends Template_Controller {
     }
 
     if ($photo_count > 0) {
-      log::add("content", "(scaffold) Added $photo_count photos");
+      log::success("content", "(scaffold) Added $photo_count photos");
     }
 
     if ($album_count > 0) {
-      log::add("content", "(scaffold) Added $album_count albums");
+      log::success("content", "(scaffold) Added $album_count albums");
     }
     url::redirect("welcome");
   }

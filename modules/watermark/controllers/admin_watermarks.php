@@ -25,15 +25,15 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $pathinfo = pathinfo($file);
       $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
       if (ORM::factory("watermark")->where("name", $name)->count_all() > 0) {
-        message::add(_("There is already a watermark with that name"), log::WARNING);
+        message::error(_("There is already a watermark with that name"));
       } else if (!($image_info = getimagesize($file))) {
-        message::add(_("An error occurred while saving this watermark"), log::WARNING);
+        message::warning(_("An error occurred while saving this watermark"));
       } else {
         if (empty($pathinfo["extension"])) {
           $name .= "." . image_type_to_extension($image_info[2]);
         }
         if (!rename($file, VARPATH . "modules/watermark/$name")) {
-          message::add(_("An error occurred while saving this watermark"), log::WARNING);
+          message::warning(_("An error occurred while saving this watermark"));
         } else {
           $watermark = ORM::factory("watermark");
           $watermark->name = $name;
@@ -42,7 +42,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
           $watermark->mime_type = $image_info["mime"];
           $watermark->save();
 
-          message::add(_("Watermark saved"));
+          message::success(_("Watermark saved"));
           url::redirect("admin/watermarks");
         }
       }

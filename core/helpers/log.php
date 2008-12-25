@@ -18,9 +18,50 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class log_Core {
-  const INFO    = 1;
-  const WARNING = 2;
-  const ERROR   = 3;
+  const SUCCESS = 1;
+  const INFO    = 2;
+  const WARNING = 3;
+  const ERROR   = 4;
+
+  /**
+   * Report a successful event.
+   * @param string  $category  an arbitrary category we can use to filter log messages
+   * @param string  $message   a detailed log message
+   * @param string  $html      an html snippet presented alongside the log message to aid the admin
+   */
+  public static function success($category, $message, $html="") {
+    self::add($category, $message, $html, self::SUCCESS);
+  }
+
+  /**
+   * Report an informational event.
+   * @param string  $category  an arbitrary category we can use to filter log messages
+   * @param string  $message   a detailed log message
+   * @param string  $html      an html snippet presented alongside the log message to aid the admin
+   */
+  public static function info($category, $message, $html="") {
+    self::add($category, $message, $html, self::INFO);
+  }
+
+  /**
+   * Report that something went wrong, not fatal, but worth investigation.
+   * @param string  $category  an arbitrary category we can use to filter log messages
+   * @param string  $message   a detailed log message
+   * @param string  $html      an html snippet presented alongside the log message to aid the admin
+   */
+  public static function warning($category, $message, $html="") {
+    self::add($category, $message, $html, self::WARNING);
+  }
+
+  /**
+   * Report that something went wrong that should be fixed.
+   * @param string  $category  an arbitrary category we can use to filter log messages
+   * @param string  $message   a detailed log message
+   * @param string  $html      an html snippet presented alongside the log message to aid the admin
+   */
+  public static function error($category, $message, $html="") {
+    self::add($category, $message, $html, self::ERROR);
+  }
 
   /**
    * Add a log entry.
@@ -30,7 +71,7 @@ class log_Core {
    * @param integer $severity  INFO, WARNING or ERROR
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  function add($category, $message, $severity=log::INFO, $html="") {
+  private static function add($category, $message, $html, $severity) {
     $log = ORM::factory("log");
     $log->category = $category;
     $log->message = $message;
@@ -43,5 +84,27 @@ class log_Core {
       $log->user_id = user::active()->id;
     }
     $log->save();
+  }
+
+
+  /**
+   * Convert a message severity to a CSS class
+   * @param  integer $severity
+   * @return string
+   */
+  public function severity_class($severity) {
+    switch($severity) {
+    case self::SUCCESS:
+      return "gSuccess";
+
+    case self::INFO:
+      return "gInfo";
+
+    case self::WARNING:
+      return "gWarning";
+
+    case self::ERROR:
+      return "gError";
+    }
   }
 }

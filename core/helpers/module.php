@@ -127,7 +127,7 @@ class module_Core {
     }
 
     self::load_modules();
-    log::add("module", sprintf(_("Installed module %s"), $module_name));
+    log::success("module", sprintf(_("Installed module %s"), $module_name));
   }
 
   /**
@@ -137,7 +137,7 @@ class module_Core {
     $installer_class = "{$module_name}_installer";
     Kohana::log("debug", "$installer_class uninstall");
     call_user_func(array($installer_class, "uninstall"));
-    log::add("module", sprintf(_("Uninstalled module %s"), $module_name));
+    log::success("module", sprintf(_("Uninstalled module %s"), $module_name));
   }
 
   /**

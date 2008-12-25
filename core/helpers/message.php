@@ -18,33 +18,88 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class message_Core {
-  public function add($msg, $severity=log::INFO) {
+  const SUCCESS = 1;
+  const INFO    = 2;
+  const WARNING = 3;
+  const ERROR   = 4;
+
+  /**
+   * Report a successful event.
+   * @param string  $msg   a detailed message
+   */
+  public static function success($msg) {
+    self::add($msg, self::SUCCESS);
+  }
+
+  /**
+   * Report an informational event.
+   * @param string  $msg   a detailed message
+   */
+  public static function info($msg) {
+    self::add($msg, self::INFO);
+  }
+
+  /**
+   * Report that something went wrong, not fatal, but worth investigation.
+   * @param string  $msg   a detailed message
+   */
+  public static function warning($msg) {
+    self::add($msg, self::WARNING);
+  }
+
+  /**
+   * Report that something went wrong that should be fixed.
+   * @param string  $msg   a detailed message
+   */
+  public static function error($msg) {
+    self::add($msg, self::ERROR);
+  }
+
+  /**
+   * Save a message in the session for our next page load.
+   * @param string  $msg       a detailed message
+   * @param integer $severity  one of the severity constants
+   */
+  private function add($msg, $severity) {
     $session = Session::instance();
     $status = $session->get("messages");
     $status[] = array($msg, $severity);
     $session->set("messages", $status);
   }
 
+  /**
+   * Get any pending messages.  These must be displayed to the user since they can only be
+   * retrieved once.
+   * @return html text
+   */
   public function get() {
-    $messages = Session::instance()->get_once("messages", array());
-    if ($messages) {
+    $msgs = Session::instance()->get_once("messages", array());
+    if ($msgs) {
       $buf = "<ul id=\"gMessages\">";
-      foreach ($messages as $msg) {
+      foreach ($msgs as $msg) {
         $buf .= "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
       }
       return $buf .= "</ul>";
     }
   }
 
+  /**
+   * Convert a message severity to a CSS class
+   * @param  integer $severity
+   * @return string
+   */
   public function severity_class($severity) {
     switch($severity) {
-    case log::INFO:
+    case self::SUCCESS:
+      return "gSuccess";
+
+    case self::INFO:
       return "gInfo";
 
-    case log::WARNING:
+    case self::WARNING:
       return "gWarning";
 
-    case log::ERROR:
+    case self::ERROR:
       return "gError";
     }
   }

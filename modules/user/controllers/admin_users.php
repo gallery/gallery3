@@ -34,8 +34,8 @@ class Admin_Users_Controller extends Controller {
                            $form->add_user->full_name->value, $form->add_user->password->value);
       $user->email = $form->add_user->email->value;
       $user->save();
-      log::add("user", sprintf(_("Created user %s"), $user->name));
-      message::add(sprintf(_("Created user %s"), $user->name));
+      log::success("user", sprintf(_("Created user %s"), $user->name));
+      message::success(sprintf(_("Created user %s"), $user->name));
       $output = '<li>' . $user->name . ' <a href="#">edit</a><div>' .
         user::get_edit_form_admin($user) . '</div><a href="#">delete</a><div>' .
         user::get_delete_form_admin($user, "admin/users/delete/{$user->id}") .
@@ -62,8 +62,8 @@ class Admin_Users_Controller extends Controller {
       $name = $user->name;
       $user->delete();
 
-      log::add("user", sprintf(_("Deleted user %s"), $name));
-      message::add(sprintf(_("Deleted user %s"), $name));
+      log::success("user", sprintf(_("Deleted user %s"), $name));
+      message::success(sprintf(_("Deleted user %s"), $name));
       url::redirect("admin/users");
     }
 
@@ -83,7 +83,7 @@ class Admin_Users_Controller extends Controller {
       $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
       $user->save();
-      message::add(sprintf(_("Changed user %s"), $user->name));
+      message::success(sprintf(_("Changed user %s"), $user->name));
       url::redirect("admin/users");
     }
 

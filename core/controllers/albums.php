@@ -79,9 +79,9 @@ class Albums_Controller extends Items_Controller {
         $this->input->post("description"),
         user::active()->id);
 
-      log::add("content", "Created an album", log::INFO,
+      log::success("content", "Created an album",
                html::anchor("albums/$new_album->id", "view album"));
-      message::add(_("Successfully created album"));
+      message::success(sprintf(_("Created album %s"), $new_album->title));
 
       print json_encode(
         array("result" => "success",
@@ -107,9 +107,9 @@ class Albums_Controller extends Items_Controller {
         $this->input->post("description"),
         user::active()->id);
 
-      log::add("content", "Added a photo", log::INFO,
+      log::success("content", "Added a photo",
                html::anchor("photos/$photo->id", "view photo"));
-      message::add(_("Successfully added photo"));
+      message::add(sprintf(_("Added photo %s"), $photo->title));
 
       print json_encode(
         array("result" => "success",
@@ -139,8 +139,8 @@ class Albums_Controller extends Items_Controller {
 
       module::event("album_changed", $album);
 
-      log::add("content", "Updated album", log::INFO, "<a href=\"albums/$album->id\">view</a>");
-      message::add(_("Successfully saved album"));
+      log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
+      message::success(sprintf(_("Saved album %s"), $album->title));
 
       print json_encode(
         array("result" => "success",

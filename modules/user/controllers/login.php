@@ -33,8 +33,8 @@ class Login_Controller extends Controller {
     if ($valid) {
       $user = ORM::factory("user")->where("name", $form->login->inputs["name"]->value)->find();
       if (!$user->loaded || !user::is_correct_password($user, $form->login->password->value)) {
-        log::add("user", sprintf(_("Failed login for %s"), $form->login->inputs["name"]->value),
-                 log::WARNING);
+        log::warning(
+          "user", sprintf(_("Failed login for %s"), $form->login->inputs["name"]->value));
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $valid = false;
       }
@@ -42,7 +42,7 @@ class Login_Controller extends Controller {
 
     if ($valid) {
       user::login($user);
-      log::add("user", "User $user->name logged in");
+      log::success("user", sprintf(_("User %s logged in"), $user->name));
       print json_encode(
         array("result" => "success"));
     } else {
