@@ -22,14 +22,14 @@ class Users_Controller extends REST_Controller {
 
   /**
    * Display comments based on criteria.
-   *  @see Rest_Controller::_index()
+   *  @see REST_Controller::_index()
    */
   public function _index() {
     throw new Exception("@todo User_Controller::_index NOT IMPLEMENTED");
   }
 
   /**
-   *  @see Rest_Controller::_create($resource)
+   *  @see REST_Controller::_create($resource)
    */
   public function _create($resource) {
     if (!(user::active()->admin)) {
@@ -50,14 +50,14 @@ class Users_Controller extends REST_Controller {
   }
 
   /**
-   * @see Rest_Controller::_show($resource)
+   * @see REST_Controller::_show($resource)
    */
   public function _show($user) {
     throw new Exception("@todo User_Controller::_show NOT IMPLEMENTED");
   }
 
   /**
-   *  @see Rest_Controller::_update($resource)
+   *  @see REST_Controller::_update($resource)
    */
   public function _update($user) {
     if ($user->guest || (!user::active()->admin && $user->id != user::active()->id)) {
@@ -79,7 +79,7 @@ class Users_Controller extends REST_Controller {
   }
 
   /**
-   *  @see Rest_Controller::_delete($resource)
+   *  @see REST_Controller::_delete($resource)
    */
   public function _delete($user) {
     if (!(user::active()->admin) || $user->id == user::active()->id) {
@@ -98,7 +98,7 @@ class Users_Controller extends REST_Controller {
 
   /**
    * Present a form for editing a user
-   *  @see Rest_Controller::form($resource)
+   *  @see REST_Controller::form($resource)
    */
   public function _form_edit($user) {
     if ($user->guest || user::active()->id != $user->id) {
@@ -112,7 +112,7 @@ class Users_Controller extends REST_Controller {
 
   /**
    * Present a form for adding a user
-   *  @see Rest_Controller::form($resource)
+   *  @see REST_Controller::form($resource)
    */
   public function _form_add($parameters) {
     throw new Exception("@todo User_Controller::_form_add NOT IMPLEMENTED");

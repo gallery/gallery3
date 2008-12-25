@@ -20,7 +20,7 @@
 class Photos_Controller extends Items_Controller {
 
   /**
-   *  @see Rest_Controller::_show($resource)
+   *  @see REST_Controller::_show($resource)
    */
   public function _show($photo) {
     access::required("view", $photo);
@@ -40,7 +40,7 @@ class Photos_Controller extends Items_Controller {
   }
 
   /**
-   * @see Rest_Controller::_update($resource)
+   * @see REST_Controller::_update($resource)
    */
   public function _update($photo) {
     access::required("edit", $photo);
@@ -68,7 +68,7 @@ class Photos_Controller extends Items_Controller {
   }
 
   /**
-   *  @see Rest_Controller::_form_edit($resource)
+   *  @see REST_Controller::_form_edit($resource)
    */
   public function _form_edit($photo) {
     access::required("edit", $photo);

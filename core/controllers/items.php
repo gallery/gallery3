@@ -21,21 +21,21 @@ class Items_Controller extends REST_Controller {
   protected $resource_type = "item";
 
   /**
-   *  @see Rest_Controller::_index()
+   *  @see REST_Controller::_index()
    */
   public function _index() {
     throw new Exception("@todo Item_Controller::_index NOT IMPLEMENTED");
   }
 
   /**
-   *  @see Rest_Controller::_form_add($parameters)
+   *  @see REST_Controller::_form_add($parameters)
    */
   public function _form_add($parameters) {
     throw new Exception("@todo Items_Controller::_form_add NOT IMPLEMENTED");
   }
 
   /**
-   *  @see Rest_Controller::_form_edit($resource)
+   *  @see REST_Controller::_form_edit($resource)
    */
   public function _form_edit($item) {
     throw new Exception("@todo Items_Controller::_form_edit NOT IMPLEMENTED");

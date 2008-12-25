@@ -22,7 +22,7 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Display comments based on criteria.
-   *  @see Rest_Controller::_index()
+   *  @see REST_Controller::_index()
    */
   public function _index() {
     $item = ORM::factory("item", $this->input->get('item_id'));
@@ -52,7 +52,7 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Add a new comment to the collection.
-   * @see Rest_Controller::_create($resource)
+   * @see REST_Controller::_create($resource)
    */
   public function _create($comment) {
     rest::http_content_type(rest::JSON);
@@ -82,7 +82,7 @@ class Comments_Controller extends REST_Controller {
   /**
    * Display an existing comment.
    *  @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
-   *  @see Rest_Controller::_show($resource)
+   *  @see REST_Controller::_show($resource)
    */
   public function _show($comment) {
     if (rest::output_format() == "json") {
@@ -96,7 +96,7 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Change an existing comment.
-   *  @see Rest_Controller::_update($resource)
+   *  @see REST_Controller::_update($resource)
    */
   public function _update($comment) {
     rest::http_content_type(rest::JSON);
@@ -122,7 +122,7 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Delete existing comment.
-   *  @see Rest_Controller::_delete($resource)
+   *  @see REST_Controller::_delete($resource)
    */
   public function _delete($comment) {
     rest::http_content_type(rest::JSON);
@@ -133,7 +133,7 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Present a form for adding a new comment to this item or editing an existing comment.
-   *  @see Rest_Controller::form_add($resource)
+   *  @see REST_Controller::form_add($resource)
    */
   public function _form_add($item_id) {
     print comment::get_add_form($item_id);
@@ -141,7 +141,7 @@ class Comments_Controller extends REST_Controller {
 
   /**
    * Present a form for editing an existing comment.
-   *  @see Rest_Controller::form_edit($resource)
+   *  @see REST_Controller::form_edit($resource)
    */
   public function _form_edit($comment) {
     print comment::get_edit_form($comment);

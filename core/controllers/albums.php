@@ -20,7 +20,7 @@
 class Albums_Controller extends Items_Controller {
 
   /**
-   *  @see Rest_Controller::_show($resource)
+   *  @see REST_Controller::_show($resource)
    */
   public function _show($album) {
     access::required("view", $album);
@@ -50,7 +50,7 @@ class Albums_Controller extends Items_Controller {
   }
 
   /**
-   * @see Rest_Controller::_create($resource)
+   * @see REST_Controller::_create($resource)
    */
   public function _create($album) {
     access::required("edit", $album);
@@ -114,7 +114,7 @@ class Albums_Controller extends Items_Controller {
   }
 
   /**
-   * @see Rest_Controller::_update($resource)
+   * @see REST_Controller::_update($resource)
    */
   public function _update($album) {
     access::required("edit", $album);
@@ -141,7 +141,7 @@ class Albums_Controller extends Items_Controller {
   }
 
   /**
-   *  @see Rest_Controller::_form_add($parameters)
+   *  @see REST_Controller::_form_add($parameters)
    */
   public function _form_add($album_id) {
     $album = ORM::factory("item", $album_id);
@@ -162,7 +162,7 @@ class Albums_Controller extends Items_Controller {
   }
 
   /**
-   *  @see Rest_Controller::_form_add($parameters)
+   *  @see REST_Controller::_form_add($parameters)
    */
   public function _form_edit($album) {
     access::required("edit", $album);
