@@ -8,6 +8,7 @@ function ajaxify_admin_users_form() {
     success: function(data) {
       if (data.form) {
         $("#gAddUser form").replaceWith(data.form);
+        ajaxify_admin_users_form();
       }
       if (data.result == "success") {
         $(data.output).insertBefore("#gUsers li:last-child");
