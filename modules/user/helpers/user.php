@@ -54,7 +54,7 @@ class user_Core {
   public static function get_delete_form($user, $action = NULL) {
     $form = new Forge($action);
     $group = $form->group("delete_user")->label(_("Delete User"));
-    $group->label(_("Are you sure you want to delete " . $user->name . "?"));
+    $group->label(sprintf(_("Are you sure you want to delete %s?"), $user->name));
     $group->submit(_("Delete"));
     return $form;
   }

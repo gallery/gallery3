@@ -93,7 +93,7 @@ class group_Core {
   public static function get_delete_form($group, $action = NULL) {
     $form = new Forge($action);
     $form_group = $form->group("delete_group")->label(_("Delete Group"));
-    $form_group->label(_("Are you sure you want to delete " . $group->name . "?"));
+    $form_group->label(sprintf(_("Are you sure you want to delete %s?"), $group->name));
     $form_group->submit(_("Delete"));
     return $form;
   }
