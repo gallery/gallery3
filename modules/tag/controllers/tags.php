@@ -55,19 +55,23 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _create($tag) {
-    $form = tag::get_add_form($this->input->post('item_id'));
-    if ($form->validate()) {
-      $item = ORM::factory("item", $this->input->post("item_id"));
-      if (access::can("edit", $item)) {
-        tag::add($item, $this->input->post("tag_name"));
-        rest::http_status(rest::CREATED);
-        rest::http_location(url::site("tags/{$tag->id}"));
-      } else {
-        $form->inputs["add_tag"]->inputs["tag_name"]->add_error("permission denied", 1);
-      }
-    }
+    rest::http_content_type(rest::JSON);
+    $item = ORM::factory("item", $this->input->post("item_id"));
+    access::required("edit", $item);
 
-    print $form;
+    $form = tag::get_add_form($item->id);
+    if ($form->validate()) {
+      tag::add($item, $this->input->post("tag_name"));
+
+      print json_encode(
+        array("result" => "success",
+              "resource" => url::site("tags/{$tag->id}"),
+              "form" => tag::get_add_form($item->id)->__toString()));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
+    }
   }
 
   public function _delete($tag) {

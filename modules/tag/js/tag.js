@@ -3,16 +3,17 @@ $("document").ready(function() {
 });
 
 function ajaxify_tag_form() {
-  $("#gAddTagForm").ajaxForm({
-    complete: function(xhr, statusText) {
-      $("#gAddTagForm").replaceWith(xhr.responseText);
-      if (xhr.status == 201) {
+  $("#gTag form").ajaxForm({
+    dataType: "json",
+    success: function(data) {
+      $("#gTag form").replaceWith(data.form);
+      ajaxify_tag_form();
+      if (data.result == "success") {
         $.get($("#gTagCloud").attr("src"), function(data, textStatus) {
 	  $("#gTagCloud").html(data);
 	});
-	$("#gAddTagForm").clearForm();
       }
-      ajaxify_tag_form();
+      $("#gTag form").clearForm();
     }
   });
 }

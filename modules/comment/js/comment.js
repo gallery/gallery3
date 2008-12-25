@@ -4,7 +4,7 @@ $("document").ready(function() {
 
 function ajaxify_comment_form() {
   $("#gComments form").ajaxForm({
-    dataType: 'json',
+    dataType: "json",
     success: function(data) {
       $("#gComments form").replaceWith(data.form);
       ajaxify_comment_form();
