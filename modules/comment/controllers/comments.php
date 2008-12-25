@@ -86,7 +86,7 @@ class Comments_Controller extends REST_Controller {
    */
   public function _show($comment) {
     if (rest::output_format() == "json") {
-      print json_encode(array("result" => "success", "resource" => $comment));
+      print json_encode(array("result" => "success", "data" => $comment));
     } else {
       $view = new View("comment.html");
       $view->comment = $comment;
@@ -116,7 +116,7 @@ class Comments_Controller extends REST_Controller {
     } else {
       print json_encode(
         array("result" => "error",
-              "html" => $form));
+              "html" => $form->__toString()));
     }
   }
 
@@ -128,8 +128,7 @@ class Comments_Controller extends REST_Controller {
     rest::http_content_type(rest::JSON);
 
     $comment->delete();
-    print json_encode(
-      array("result" => "success"));
+    print json_encode(array("result" => "success"));
   }
 
   /**
