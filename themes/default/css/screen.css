@@ -431,12 +431,12 @@ li.gError select {
 }
 
 #gCredits li:before {
-  padding: 0 2px 0 2px;
-  content: "|"
+  padding: 0 2px;
+  content: "|";
 }
 
 #gCredits li.first:before {
-  content: ""
+  content: "";
 }
 
 /** *******************************************************************
@@ -447,6 +447,11 @@ li.gError select {
 
 #gLoginMenu {
   float: right;
+  margin-top: 7px;
+}
+
+#gLoginMenu li {
+  display: inline;
   margin-right: 20px;
 }
 
