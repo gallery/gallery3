@@ -27,7 +27,7 @@ class Admin_Users_Controller extends Controller {
   }
 
   public function create() {
-    $form = user::get_add_form();
+    $form = user::get_add_form_admin();
     if ($form->validate()) {
       $user = user::create($form->add_user->inputs["name"]->value,
                            $form->add_user->full_name->value, $form->add_user->password->value);
