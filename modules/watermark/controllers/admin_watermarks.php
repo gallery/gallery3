@@ -23,7 +23,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     if (request::method() == "post" && $form->validate()) {
       $file = $_POST["file"];
       $pathinfo = pathinfo($file);
-      $name = $pathinfo["basename"];
+      $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
       if (ORM::factory("watermark")->where("name", $name)->count_all() > 0) {
         message::add(_("There is already a watermark with that name"), log::WARNING);
       } else if (!($image_info = getimagesize($file))) {
