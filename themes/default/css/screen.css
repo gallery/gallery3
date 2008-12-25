@@ -368,16 +368,16 @@ li.gError select {
   margin: .4em 0;
 }
 
-.gFailure, .gInfo, .gSuccess, .gWarning {
+.gError, .gInfo, .gSuccess, .gWarning {
   background-color: #e8e8e8;
   background-position: .4em .2em;
   background-repeat: no-repeat;
   padding: .2em .5em .2em 30px;
 }
 
-.gFailure {
+.gError {
   background-color: #fcc;
-  background-image: url('../images/ico-failure.png');
+  background-image: url('../images/ico-error.png');
 }
 
 .gInfo {
