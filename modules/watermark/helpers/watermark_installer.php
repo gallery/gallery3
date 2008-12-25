@@ -27,12 +27,13 @@ class watermark_installer {
           `name` varchar(32) NOT NULL,
           `width` int(9) NOT NULL,
           `height` int(9) NOT NULL,
+          `active` boolean default 0,
+          `position` boolean default 0,
           `mime_type` varchar(64) default NULL,
           PRIMARY KEY (`id`),
           UNIQUE KEY(`name`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      module::set_var("watermark", "watermark_position", "southeast");
       @mkdir(VARPATH . "modules/watermark");
       module::set_version("watermark", 1);
     }

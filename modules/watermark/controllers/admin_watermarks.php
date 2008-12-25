@@ -56,6 +56,12 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     print $view;
   }
 
+  public function edit($watermark_id) {
+  }
+
+  public function delete($watermark_id) {
+  }
+
   public function get_form($user_id) {
     try {
       $path = module::get_var("watermark", "watermark_image_path");
