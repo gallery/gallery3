@@ -38,7 +38,7 @@ class Users_Controller extends REST_Controller {
 
     $form = user::get_add_form();
     if ($form->validate()) {
-      $user = user::create($form->add_user->uname->value, 
+      $user = user::create($form->add_user->uname->value,
         $form->add_user->full_name->value, $form->add_user->password->value);
       $user->email = $form->add_user->email->value;
       $user->save();
@@ -60,7 +60,7 @@ class Users_Controller extends REST_Controller {
    *  @see REST_Controller::_update($resource)
    */
   public function _update($user) {
-    if ($user->guest || (!user::active()->admin && $user->id != user::active()->id)) {
+    if (!user::active()->admin && ($user->guest || $user->id != user::active()->id)) {
       access::forbidden();
     }
 
@@ -82,7 +82,7 @@ class Users_Controller extends REST_Controller {
    *  @see REST_Controller::_delete($resource)
    */
   public function _delete($user) {
-    if (!(user::active()->admin) || $user->id == user::active()->id) {
+    if (!user::active()->admin && ($user->guest || $user->id != user::active()->id)) {
       access::forbidden();
     }
     // Prevent CSRF
@@ -101,7 +101,7 @@ class Users_Controller extends REST_Controller {
    *  @see REST_Controller::form($resource)
    */
   public function _form_edit($user) {
-    if ($user->guest || user::active()->id != $user->id) {
+    if (!user::active()->admin && ($user->guest || $user->id != user::active()->id)) {
       access::forbidden();
     }
 
