@@ -43,6 +43,10 @@ class Admin_Controller extends Controller {
       $method = "index";
     }
 
+    if (!method_exists($controller_name, $method)) {
+      return kohana::show_404();
+    }
+
     call_user_func_array(array(new $controller_name, $method), $args);
   }
 }
