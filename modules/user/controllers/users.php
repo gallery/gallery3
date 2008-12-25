@@ -82,7 +82,7 @@ class Users_Controller extends REST_Controller {
    *  @see REST_Controller::_delete($resource)
    */
   public function _delete($user) {
-    if (!user::active()->admin) {
+    if (!user::active()->admin || $user->id == user::active()->id ) {
       access::forbidden();
     }
     // Prevent CSRF
