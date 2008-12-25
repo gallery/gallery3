@@ -16,8 +16,10 @@
     <link rel="stylesheet" href="<?= $theme->url("css/superfish-navbar.css") ?>"
         type="text/css" media="screen,projection">
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/superfish.js") ?>" type="text/javascript"></script>
+    <?= $theme->admin_head() ?>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
   </head>
 

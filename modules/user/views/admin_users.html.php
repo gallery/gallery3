@@ -3,7 +3,7 @@
   <h2>User Administration</h2>
   <div class="gBlockContent">
     <p>These are the users in your system</p>
-    <ul class="ui-accordion-container">
+    <ul class="ui-accordion-container" id="gUsers">
       <? foreach ($users as $i => $user): ?>
       <li>
         <?= $user->name ?>
@@ -21,7 +21,7 @@
       </li>
       <? endforeach ?>
       <li><a href="#">Add user</a>
-        <div>
+        <div id="gAddUser">
           <?= user::get_add_form_admin(); ?>
         </div>
       </li>

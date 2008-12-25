@@ -27,6 +27,7 @@ class Admin_Users_Controller extends Controller {
   }
 
   public function create() {
+    rest::http_content_type(rest::JSON);
     $form = user::get_add_form_admin();
     if ($form->validate()) {
       $user = user::create($form->add_user->inputs["name"]->value,
@@ -35,10 +36,18 @@ class Admin_Users_Controller extends Controller {
       $user->save();
       log::add("user", sprintf(_("Created user %s"), $user->name));
       message::add(sprintf(_("Created user %s"), $user->name));
-      url::redirect("admin/users");
+      $output = '<li>' . $user->name . ' <a href="#">edit</a><div>' .
+        user::get_edit_form_admin($user) . '</div><a href="#">delete</a><div>' .
+        user::get_delete_form_admin($user, "admin/users/delete/{$user->id}") .
+        '</div></li>';
+      print json_encode(
+        array("result" => "success", "operation" => "create",
+              "output" => $output));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
     }
-
-    print $form;
   }
 
   public function delete($id) {

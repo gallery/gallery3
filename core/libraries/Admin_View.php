@@ -78,6 +78,7 @@ class Admin_View_Core extends View {
     case "admin_page_bottom":
     case "admin_page_top":
     case "admin_sidebar_blocks":
+    case "admin_head":
       $blocks = array();
       foreach (module::installed() as $module) {
         $helper_class = "{$module->name}_block";
