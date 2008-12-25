@@ -49,6 +49,9 @@ class Database_Core {
 	protected $offset     = FALSE;
 	protected $last_query = '';
 
+	// Stack of queries for push/pop
+	protected $query_history = array();
+
 	/**
 	 * Returns a singleton instance of Database.
 	 *
@@ -910,7 +913,9 @@ class Database_Core {
 			}
 			$values = implode(",", $escaped_values);
 		}
-		$this->where($this->driver->escape_column($field).' '.($not === TRUE ? 'NOT ' : '').'IN ('.$values.')');
+
+		$where = $this->driver->escape_column(((strpos($field,'.') !== FALSE) ? $this->config['table_prefix'] : ''). $field).' '.($not === TRUE ? 'NOT ' : '').'IN ('.$values.')';
+		$this->where[] = $this->driver->where($where, '', 'AND ', count($this->where), -1);
 
 		return $this;
 	}
@@ -1264,6 +1269,65 @@ class Database_Core {
 	{
 		return $this->driver->stmt_prepare($sql, $this->config);
 	}
+
+	/**
+	 * Pushes existing query space onto the query stack.  Use push
+	 * and pop to prevent queries from clashing before they are
+	 * executed
+	 *
+	 * @return Database_Core This Databaes object
+	 */
+	public function push()
+	{	
+		array_push($this->query_history, array(
+			$this->select,
+			$this->from,
+			$this->join,
+			$this->where,
+			$this->orderby,
+			$this->order,
+			$this->groupby,
+			$this->having,
+			$this->distinct,
+			$this->limit,
+			$this->offset
+		));
+
+		$this->reset_select();
+
+		return $this;
+	}
+
+	/**
+	 * Pops from query stack into the current query space.
+	 *
+	 * @return Database_Core This Databaes object
+	 */
+	public function pop()
+	{
+		if (count($this->query_history) == 0)
+		{
+			// No history
+			return $this;
+		}
+	
+		list(
+			$this->select,
+			$this->from,
+			$this->join,
+			$this->where,
+			$this->orderby,
+			$this->order,
+			$this->groupby,
+			$this->having,
+			$this->distinct,
+			$this->limit,
+			$this->offset
+		) = array_pop($this->query_history);
+
+		return $this;
+	}
+
 
 } // End Database Class
 

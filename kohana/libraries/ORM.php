@@ -1408,12 +1408,17 @@ class ORM_Core {
 	 */
 	protected function load_relations($table, ORM $model)
 	{
+		// Save the current query chain (otherwise the next call will clash)
+		$this->db->push();
+
 		$query = $this->db
 			->select($model->foreign_key(NULL).' AS id')
 			->from($table)
 			->where($this->foreign_key(NULL, $table), $this->object[$this->primary_key])
 			->get()
 			->result(TRUE);
+
+		$this->db->pop();
 
 		$relations = array();
 		foreach ($query as $row)
