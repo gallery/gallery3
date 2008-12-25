@@ -368,21 +368,20 @@ li.gError select {
   margin: .4em 0;
 }
 
-.gError, .gWarning, .gSuccess, .gHelp, .gInfo {
+.gFailure, .gInfo, .gSuccess, .gWarning {
   background-color: #e8e8e8;
   background-position: .4em .2em;
   background-repeat: no-repeat;
   padding: .2em .5em .2em 30px;
 }
 
-.gError {
+.gFailure {
   background-color: #fcc;
-  background-image: url('../images/ico-error.png');
+  background-image: url('../images/ico-failure.png');
 }
 
-.gWarning {
-  background-color: #ff9;
-  background-image: url('../images/ico-warning.png');
+.gInfo {
+  background-image: url('../images/ico-info.png');
 }
 
 .gSuccess {
@@ -390,12 +389,9 @@ li.gError select {
   background-image: url('../images/ico-success.png');
 }
 
-.gHelp {
-  background-image: url('../images/ico-help.png');
-}
-
-.gInfo {
-  background-image: url('../images/ico-info.png');
+.gWarning {
+  background-color: #ff9;
+  background-image: url('../images/ico-warning.png');
 }
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
