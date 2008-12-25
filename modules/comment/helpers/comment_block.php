@@ -25,7 +25,19 @@ class comment_block_Core {
   }
 
   public static function photo_bottom($theme) {
-    return comment::block($theme, true);
+    $block = new Block;
+    $block->id = "gComments";
+    $block->title = _("Comments");
+
+    $view = new View("comments.html");
+    $view->comments = ORM::factory("comment")
+      ->where("item_id", $theme->item()->id)
+      ->orderby("created", "ASC")
+      ->find_all();
+
+    $block->content = $view;
+    $block->content .= comment::get_add_form($theme->item())->render("form.html");
+    return $block;
   }
 
   public static function admin_dashboard_blocks($theme) {

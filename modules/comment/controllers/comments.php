@@ -28,7 +28,26 @@ class Comments_Controller extends REST_Controller {
     $item = ORM::factory("item", $this->input->get('item_id'));
     access::required("view", $item);
 
-    print comment::get_comments($item->id);
+    $comments = ORM::factory("comment")
+      ->where("item_id", $item->id)
+      ->orderby("created", "desc")
+      ->find_all();
+
+    switch (rest::output_format()) {
+    case "json":
+      rest::http_content_type(rest::JSON);
+      foreach ($comments as $comment) {
+        $data[] = $comment->as_array();
+      }
+      print json_encode($data);
+      break;
+
+    case "html":
+      $view = new View("comments.html");
+      $view->comments = $comments;
+      print $view;
+      break;
+    }
   }
 
   /**
@@ -36,22 +55,28 @@ class Comments_Controller extends REST_Controller {
    * @see Rest_Controller::_create($resource)
    */
   public function _create($comment) {
-    $form = comment::get_add_form($this->input->post('item_id'));
+    rest::http_content_type(rest::JSON);
+
+    $form = comment::get_add_form($this->input->post("item_id"));
     if ($form->validate()) {
-      $comment->author = $this->input->post('author');
-      $comment->email = $this->input->post('email');
-      $comment->text = $this->input->post('text');
+      $comment->author = $this->input->post("author");
+      $comment->email = $this->input->post("email");
+      $comment->text = $this->input->post("text");
       $comment->created = time();
-      $comment->item_id = $this->input->post('item_id');
+      $comment->item_id = $this->input->post("item_id");
       $comment->save();
 
       module::event("comment_created", $comment);
 
-      rest::http_status(rest::CREATED);
-      rest::http_location(url::site("comments/{$comment->id}"));
+      print json_encode(
+        array("result" => "success",
+              "resource" => url::site("comments/{$comment->id}"),
+              "form" => comment::get_add_form($this->input->post("item_id"))->__toString()));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
     }
-    // @todo Return appropriate HTTP status code indicating error.
-    print $form;
   }
 
   /**
@@ -60,31 +85,12 @@ class Comments_Controller extends REST_Controller {
    *  @see Rest_Controller::_show($resource)
    */
   public function _show($comment) {
-    $output_format = rest::output_format();
-    switch ($output_format) {
-    case "xml":
-      rest::http_content_type(rest::XML);
-      print xml::to_xml($comment->as_array(), array("comment"));
-      break;
-
-    case "json":
-      rest::http_content_type(rest::JSON);
-      print json_encode($comment->as_array());
-      break;
-
-    case "atom":
-      rest::http_content_type(rest::XML);
-      print comment::get_atom_entry($comment);
-      break;
-
-    case "html":
-      $view = new View("comment.$output_format");
+    if (rest::output_format() == "json") {
+      print json_encode(array("result" => "success", "resource" => $comment));
+    } else {
+      $view = new View("comment.html");
       $view->comment = $comment;
       print $view;
-      break;
-
-    default:
-      kohana::show_404();
     }
   }
 
@@ -93,19 +99,25 @@ class Comments_Controller extends REST_Controller {
    *  @see Rest_Controller::_update($resource)
    */
   public function _update($comment) {
+    rest::http_content_type(rest::JSON);
+
     $form = comment::get_edit_form($comment);
     if ($form->validate()) {
-      $comment->author = $this->input->post('author');
-      $comment->email = $this->input->post('email');
-      $comment->text = $this->input->post('text');
+      $comment->author = $this->input->post("author");
+      $comment->email = $this->input->post("email");
+      $comment->text = $this->input->post("text");
       $comment->save();
 
       module::event("comment_updated", $comment);
 
-      return;
+      print json_encode(
+        array("result" => "success",
+              "resource" => url::site("comments/{$comment->id}")));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "html" => $form));
     }
-    // @todo Return appropriate HTTP status code indicating error.
-    print $form;
   }
 
   /**
@@ -113,8 +125,11 @@ class Comments_Controller extends REST_Controller {
    *  @see Rest_Controller::_delete($resource)
    */
   public function _delete($comment) {
+    rest::http_content_type(rest::JSON);
+
     $comment->delete();
-    rest::http_status(rest::OK);
+    print json_encode(
+      array("result" => "success"));
   }
 
   /**
@@ -130,6 +145,6 @@ class Comments_Controller extends REST_Controller {
    *  @see Rest_Controller::form_edit($resource)
    */
   public function _form_edit($comment) {
-    print $form = comment::get_edit_form($comment);
+    print comment::get_edit_form($comment);
   }
 }

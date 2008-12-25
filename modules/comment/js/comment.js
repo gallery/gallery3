@@ -4,16 +4,17 @@ $("document").ready(function() {
 
 function ajaxify_comment_form() {
   $("#gComments form").ajaxForm({
-    complete: function(xhr, statusText) {
-      $("#gComments form").replaceWith(xhr.responseText);
-      if (xhr.status == 201) {
-        $.get(xhr.getResponseHeader("Location"), function(data, textStatus) {
+    dataType: 'json',
+    success: function(data) {
+      if (data.result == "success") {
+        $.get(data.resource, function(data, textStatus) {
           $("#gComments .gBlockContent ul:first").append("<li>"+data+"</li>");
           $("#gComments .gBlockContent ul:first li:last").hide().slideDown();
         });
         $("#gComments form").clearForm();
       }
+      $("#gComments form").replaceWith(data.form);
       ajaxify_comment_form();
     }
   });
-}
+};
