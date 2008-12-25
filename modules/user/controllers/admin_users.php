@@ -47,12 +47,12 @@ class Admin_Users_Controller extends Controller {
       kohana::show_404();
     }
 
-    $form = user::get_delete_form($user);
+    $form = user::get_delete_form_admin($user);
     if ($form->validate()) {
       $name = $user->name;
       $user->delete();
 
-      log::add(sprintf(_("Deleted user %s"), $name));
+      log::add("user", sprintf(_("Deleted user %s"), $name));
       message::add(sprintf(_("Deleted user %s"), $name));
       url::redirect("admin/users");
     }
@@ -74,7 +74,7 @@ class Admin_Users_Controller extends Controller {
       $user->email = $form->edit_user->email->value;
       $user->save();
       message::add(sprintf(_("Changed user %s"), $user->name));
-      url::redirect("admin/users/edit/$id");
+      url::redirect("admin/users");
     }
 
     $view = new Admin_View("admin.html");

@@ -15,7 +15,7 @@
         <? if (!(user::active()->id == $user->id || user::guest()->id == $user->id)): ?>
         <a href="#">delete</a>
         <div>
-          <?= user::get_delete_form_admin($user); ?>
+          <?= user::get_delete_form_admin($user, "admin/users/delete/{$user->id}"); ?>
         </div>
         <? endif ?>
       </li>

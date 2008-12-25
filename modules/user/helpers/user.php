@@ -27,7 +27,7 @@ class user_Core {
   public static function get_edit_form($user, $action = NULL) {
     $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gUserForm"));
     $group = $form->group("edit_user")->label(_("Edit User"));
-    $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
+    $group->input("uname")->label(_("Name"))->id("gName")->value($user->name);
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
@@ -39,7 +39,7 @@ class user_Core {
   public static function get_edit_form_admin($user, $action = NULL) {
     $form = new Forge("admin/users/edit/$user->id", "", "post", array("id" => "gUserForm"));
     $group = $form->group("edit_user")->label(_("Edit User"));
-    $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
+    $group->input("uname")->label(_("Name"))->id("gName")->value($user->name);
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
