@@ -19,7 +19,7 @@
  */
 class watermark_Core {
   public static function get_add_form() {
-    $form = new Forge("admin/watermarks/upload", "", "post");
+    $form = new Forge("admin/watermarks/add", "", "post");
     $group = $form->group("add_watermark")->label(_("Upload Watermark"));
     $group->upload("file")->label(_("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required");
     $group->dropdown("position")->label(_("Watermark Position"))
@@ -35,9 +35,7 @@ class watermark_Core {
     $form = new Forge("admin/watermarks/edit", "", "post");
     $group = $form->group("edit_watermark")->label(_("Edit Watermark"));
     $group->dropdown("position")->label(_("Watermark Position"))
-      ->options(array("northwest",  "north",  "northeast",
-                      "west",       "center", "east",
-                      "southwest",  "south",  "southeast"))
+      ->options(self::positions())
       ->selected("8");
     $group->submit(_("Modify"));
     return $form;
@@ -48,5 +46,22 @@ class watermark_Core {
     $group = $form->group("delete_watermark")->label(_("Delete Watermark"));
     $group->submit(_("Delete"));
     return $form;
+  }
+
+  public static function positions() {
+    return array("northwest" => _("Northwest"),
+                 "north" => _("North"),
+                 "northeast" => _("Northeast"),
+                 "west" => _("West"),
+                 "center" => _("Center"),
+                 "east" => _("East"),
+                 "southwest" => _("Southwest"),
+                 "south" => _("South"),
+                 "southeast" => _("Southeast"));
+  }
+
+  public static function position($key) {
+    $positions = self::positions();
+    return $positions[$key];
   }
 }

@@ -24,16 +24,13 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_watermarks.html");
     if ($name) {
-      $view->content->name = $name;
+      $view->content->name = module::get_var("watermark", "name");
       $view->content->url = url::file("var/modules/watermark/$name");
-      $view->content->width = $name;
-      $view->content->height = $name;
+      $view->content->width = module::get_var("watermark", "width");
+      $view->content->height = module::get_var("watermark", "height");
+      $view->content->position = module::get_var("watermark", "position");
     }
     print $view;
-  }
-
-  public function form_add() {
-    print watermark::get_add_form();
   }
 
   public function form_edit() {
@@ -41,6 +38,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function edit() {
+    rest::http_content_type(rest::JSON);
     $form = watermark::get_edit_form();
     if ($form->validate()) {
       module::set_var("watermark", "position", $form->edit_watermark->position->value);
@@ -59,6 +57,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function delete() {
+    rest::http_content_type(rest::JSON);
     $form = watermark::get_delete_form();
     if ($form->validate()) {
       if ($name = module::get_var("watermark", "name")) {
@@ -70,7 +69,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         module::clear_var("watermark", "mime_type");
         module::clear_var("watermark", "position");
 
-        log::success("watermark", _("Deleted watermark"));
+        log::success("watermark", _("Watermark deleted"));
         message::success(_("Watermark deleted"));
       }
       print json_encode(
@@ -83,7 +82,12 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     }
   }
 
-  public function upload() {
+  public function form_add() {
+    print watermark::get_add_form();
+  }
+
+  public function add() {
+    rest::http_content_type(rest::JSON);
     $form = watermark::get_add_form();
     if ($form->validate()) {
       $file = $_POST["file"];
@@ -105,7 +109,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       module::set_var("watermark", "mime_type", $image_info["mime"]);
       module::set_var("watermark", "position", $form->add_watermark->position->value);
       message::success(_("Watermark saved"));
-      log::success("watermark", _("Uploaded watermark"));
+      log::success("watermark", _("Watermark saved"));
       @unlink($file);
 
       print json_encode(

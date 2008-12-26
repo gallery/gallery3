@@ -7,7 +7,7 @@
 
   <? if (empty($name)): ?>
   <a href="<?= url::site("admin/watermarks/form_add") ?>"
-     title="<?= _("Add Watermark") ?>"
+     title="<?= _("Upload a watermark") ?>"
      class="gDialogLink"><?= _("Upload a watermark") ?></a>
   <? else: ?>
   <h2> <?= _("Active Watermark") ?> </h2>
@@ -17,6 +17,9 @@
   <p>
     <div class="image">
       <img width="<?= $width ?>" height="<? $height ?>" src="<?= $url ?>"/>
+      <p>
+        <?= sprintf(_("Position: %s"), watermark::position($position)) ?>
+      </p>
     </div>
     <div class="controls">
       <a href="<?= url::site("admin/watermarks/form_edit") ?>"
