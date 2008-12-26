@@ -27,67 +27,78 @@ class Admin_Users_Controller extends Controller {
 
   public function create() {
     $form = user::get_add_form_admin();
-    if (request::method() =="post" ) {
-      if($form->validate()) {
-        $user = user::create($form->add_user->inputs["name"]->value,
-                             $form->add_user->full_name->value, $form->add_user->password->value);
-        $user->email = $form->add_user->email->value;
-        $user->save();
-        message::success(sprintf(_("Created user %s"), $user->name));
-        print json_encode(array("result" => "success"));
-      } else {
-        message::error(_("Failed to create user"));
-        print json_encode(array("result" => "error",
-                                "form" => $form->__toString()));
-      }
+    rest::http_content_type(rest::JSON);
+    if($form->validate()) {
+      $user = user::create($form->add_user->inputs["name"]->value,
+                           $form->add_user->full_name->value, $form->add_user->password->value);
+      $user->email = $form->add_user->email->value;
+      $user->save();
+      message::success(sprintf(_("Created user %s"), $user->name));
+      print json_encode(array("result" => "success"));
     } else {
-      print $form;
-    }    
+      message::error(_("Failed to create user"));
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
+    }
   }
 
+  public function create_form() {
+    print user::get_add_form_admin();
+  }
+    
   public function delete($id) {
+    rest::http_content_type(rest::JSON);
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
     }
 
-    if (request::method() == "post" ) {
-      $name = $user->name;
-      $user->delete();
+    $name = $user->name;
+    $user->delete();
 
-      log::success("user", sprintf(_("Deleted user %s"), $name));
-      message::success(sprintf(_("Deleted user %s"), $name));
-      print json_encode(array("result" => "success"));
-    } else {
-      print user::get_delete_form_admin($user);
+    log::success("user", sprintf(_("Deleted user %s"), $name));
+    message::success(sprintf(_("Deleted user %s"), $name));
+    print json_encode(array("result" => "success"));
+  }
+  
+  public function delete_form($id) {
+    $user = ORM::factory("user", $id);
+    if (!$user->loaded) {
+      kohana::show_404();
     }
-
+    print user::get_delete_form_admin($user);
   }
 
   public function edit($id) {
+    rest::http_content_type(rest::JSON);
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
     }
 
-    $form = user::get_edit_form_admin($user, "admin/users/edit/$id");
-    if (request::method() =="post" ) {
-      $form->edit_user->password->rules("-required");
-      if($form->validate()) {
-        $user->name = $form->edit_user->uname->value;
-        $user->full_name = $form->edit_user->full_name->value;
-        $user->password = $form->edit_user->password->value;
-        $user->email = $form->edit_user->email->value;
-        $user->save();
-        message::success(sprintf(_("Changed user %s"), $user->name));
-        print json_encode(array("result" => "success"));
-      } else {
-        message::error(sprintf(_("Failed to change user %s"), $user->name));
-        print json_encode(array("result" => "error",
-                                "form" => $form->__toString()));
-      }
+    $form = user::get_edit_form_admin($user);
+    $form->edit_user->password->rules("-required");
+    if($form->validate()) {
+      $user->name = $form->edit_user->uname->value;
+      $user->full_name = $form->edit_user->full_name->value;
+      $user->password = $form->edit_user->password->value;
+      $user->email = $form->edit_user->email->value;
+      $user->save();
+      message::success(sprintf(_("Changed user %s"), $user->name));
+      print json_encode(array("result" => "success"));
     } else {
-      print $form;
+      message::error(sprintf(_("Failed to change user %s"), $user->name));
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
     }
+  }
+  
+  public function edit_form($id) {
+    $user = ORM::factory("user", $id);
+    if (!$user->loaded) {
+      kohana::show_404();
+    }
+
+    print user::get_edit_form_admin($user);
   }
 }

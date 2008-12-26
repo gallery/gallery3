@@ -8,13 +8,13 @@
       <li>
         <?= $user->name ?>
         <?= ($user->last_login == 0) ? "" : "(" . date("M j, Y", $user->last_login) . ")" ?>
-        <a href="users/edit/<?= $user->id ?>" class="gDialogLink">edit</a>
+        <a href="users/edit_form/<?= $user->id ?>" class="gDialogLink">edit</a>
         <? if (!(user::active()->id == $user->id || user::guest()->id == $user->id)): ?>
-        <a href="users/delete/<?= $user->id ?>" class="gDialogLink">delete</a>
+        <a href="users/delete_form/<?= $user->id ?>" class="gDialogLink">delete</a>
         <? endif ?>
       </li>
       <? endforeach ?>
-      <li><a href="users/create" class="gDialogLink">Add user</a></li>
+      <li><a href="users/create_form" class="gDialogLink">Add user</a></li>
     </ul>
   </div>
 </div>
