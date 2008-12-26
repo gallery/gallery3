@@ -57,17 +57,17 @@ class Admin_Users_Controller extends Controller {
       kohana::show_404();
     }
 
-    $form = user::get_delete_form_admin($user);
-    if ($form->validate()) {
+    if (request::method() == "post" ) {
       $name = $user->name;
       $user->delete();
 
       log::success("user", sprintf(_("Deleted user %s"), $name));
       message::success(sprintf(_("Deleted user %s"), $name));
-      url::redirect("admin/users");
+      print json_encode(array("result" => "success"));
+    } else {
+      print user::get_delete_form_admin($user, "admin/users/delete/$id");
     }
 
-    print $form;
   }
 
   public function edit($id) {

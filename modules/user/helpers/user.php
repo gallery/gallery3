@@ -43,7 +43,6 @@ class user_Core {
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
-    $group->submit(_("Modify"));
     $form->add_rules_from($user);
     return $form;
   }
@@ -62,11 +61,8 @@ class user_Core {
   }
 
   public static function get_delete_form_admin($user, $action = NULL) {
-    $form = new Forge($action);
-    $group = $form->group("delete_user")->label(_("Delete User"));
-    $group->label(sprintf(_("Are you sure you want to delete %s?"), $user->name));
-    $group->submit(_("Delete"));
-    return $form;
+    $form = new Forge($action, sprintf(_("Are you sure you want to delete %s"), $user->name));
+    return $form->render("admin_users_delete.html");
   }
 
   /**
