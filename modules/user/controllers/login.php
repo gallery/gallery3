@@ -28,6 +28,7 @@ class Login_Controller extends Controller {
 
   private function _try_login() {
     $form = $this->_login_form();
+    rest::http_content_type(rest::JSON);
 
     $valid = $form->validate();
     if ($valid) {

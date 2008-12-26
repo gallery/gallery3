@@ -70,6 +70,7 @@ class Albums_Controller extends Items_Controller {
   private function _create_album($album) {
     access::required("edit", $album);
 
+    rest::http_content_type(rest::JSON);
     $form = album::get_add_form($album);
     if ($form->validate()) {
       $new_album = album::create(
@@ -97,6 +98,7 @@ class Albums_Controller extends Items_Controller {
   private function _create_photo($album) {
     access::required("edit", $album);
 
+    rest::http_content_type(rest::JSON);
     $form = photo::get_add_form($album);
     if ($form->validate()) {
       $photo = photo::create(
@@ -128,6 +130,7 @@ class Albums_Controller extends Items_Controller {
   public function _update($album) {
     access::required("edit", $album);
 
+    rest::http_content_type(rest::JSON);
     $form = album::get_edit_form($album);
     if ($form->validate()) {
       // @todo implement changing the name.  This is not trivial, we have

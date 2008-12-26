@@ -45,6 +45,7 @@ class Photos_Controller extends Items_Controller {
   public function _update($photo) {
     access::required("edit", $photo);
 
+    rest::http_content_type(rest::JSON);
     $form = photo::get_edit_form($photo);
     if ($form->validate()) {
       // @todo implement changing the name.  This is not trivial, we have

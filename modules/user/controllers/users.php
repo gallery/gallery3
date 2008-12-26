@@ -25,6 +25,7 @@ class Users_Controller extends REST_Controller {
       access::forbidden();
     }
 
+    rest::http_content_type(rest::JSON);
     $form = user::get_edit_form($user);
     $form->edit_user->password->rules("-required");
     if ($form->validate()) {
