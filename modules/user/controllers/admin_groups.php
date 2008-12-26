@@ -26,62 +26,73 @@ class Admin_Groups_Controller extends Controller {
   }
 
   public function create() {
+    rest::http_content_type(rest::JSON);
     $form = group::get_add_form_admin();
-    if (request::method() =="post" ) {
-      if($form->validate()) {
-        $group = group::create($form->add_group->inputs["name"]->value);
-        $group->save();
-        message::success(sprintf(_("Created group %s"), $group->name));
-        print json_encode(array("result" => "success"));
-      } else {
-        message::error(_("Failed to create group"));
-        print json_encode(array("result" => "error",
-                                "form" => $form->__toString()));
-      }
+    if($form->validate()) {
+      $group = group::create($form->add_group->inputs["name"]->value);
+      $group->save();
+      message::success(sprintf(_("Created group %s"), $group->name));
+      print json_encode(array("result" => "success"));
     } else {
-      print $form;
-    }    
+      message::error(_("Failed to create group"));
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
+    }
   }
 
+  public function create_form() {
+    print group::get_add_form_admin();
+  }
+  
   public function delete($id) {
+    rest::http_content_type(rest::JSON);
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {
       kohana::show_404();
     }
 
-    if (request::method() == "post" ) {
-      $name = $group->name;
-      $group->delete();
+    $name = $group->name;
+    $group->delete();
 
-      log::success("group", sprintf(_("Deleted group %s"), $name));
-      message::success(sprintf(_("Deleted group %s"), $name));
-      print json_encode(array("result" => "success"));
-    } else {
-      print group::get_delete_form_admin($group);
-    }
-
+    log::success("group", sprintf(_("Deleted group %s"), $name));
+    message::success(sprintf(_("Deleted group %s"), $name));
+    print json_encode(array("result" => "success"));
   }
 
+  public function delete_form($id) {
+    $group = ORM::factory("group", $id);
+    if (!$group->loaded) {
+      kohana::show_404();
+    }
+    print group::get_delete_form_admin($group);
+  }
+  
   public function edit($id) {
+    rest::http_content_type(rest::JSON);
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {
       kohana::show_404();
     }
 
     $form = group::get_edit_form_admin($group);
-    if (request::method() =="post" ) {
-      if($form->validate()) {
-        $group->name = $form->edit_group->inputs["name"]->value;
-        $group->save();
-        message::success(sprintf(_("Changed group %s"), $group->name));
-        print json_encode(array("result" => "success"));
-      } else {
-        message::error(sprintf(_("Failed to change group %s"), $group->name));
-        print json_encode(array("result" => "error",
-                                "form" => $form->__toString()));
-      }
+    if($form->validate()) {
+      $group->name = $form->edit_group->inputs["name"]->value;
+      $group->save();
+      message::success(sprintf(_("Changed group %s"), $group->name));
+      print json_encode(array("result" => "success"));
     } else {
-      print $form;
+      message::error(sprintf(_("Failed to change group %s"), $group->name));
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
     }
+  }
+  
+  public function edit_form($id) {
+    $group = ORM::factory("group", $id);
+    if (!$group->loaded) {
+      kohana::show_404();
+    }
+
+    print group::get_edit_form_admin($group);
   }
 }
