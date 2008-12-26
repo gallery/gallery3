@@ -72,7 +72,7 @@ function openDialog(element) {
     }).submit();
   };
   buttons["Reset"] = function() {
-    $("#gDialog form").reset();
+    $("#gDialog form").resetForm();
   };
 
   $("#gDialog").dialog({
