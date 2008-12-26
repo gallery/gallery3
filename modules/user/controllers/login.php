@@ -42,7 +42,7 @@ class Login_Controller extends Controller {
 
     if ($valid) {
       user::login($user);
-      log::success("user", sprintf(_("User %s logged in"), $user->name));
+      log::info("user", sprintf(_("User %s logged in"), $user->name));
       print json_encode(
         array("result" => "success"));
     } else {
