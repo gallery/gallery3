@@ -94,7 +94,6 @@ function handleDialogEvent(event) {
  * @requires ui.dialog
  * @see handleDialogEvent()
  *
- * @todo Set dialog attributes dynamically (width, height, drag, resize)
  * @todo Set ui-dialog-buttonpane button values equal to the original form button value
  * @todo Display loading animation on form submit
  */
@@ -109,17 +108,17 @@ function openDialog(element) {
     $("#gDialog form").ajaxForm({
       dataType: "json",
       success: function(data) {
-	if (data.form) {
+        if (data.form) {
           $("#gDialog form").replaceWith(data.form);
-	}
-	if (data.result == "success") {
+        }
+        if (data.result == "success") {
           $("#gDialog").dialog("close");
-	  if (data.location) {
-	    window.location = data.location;
-	  } else {
-	    window.location.reload();
-	  }
-	}
+          if (data.location) {
+            window.location = data.location;
+          } else {
+            window.location.reload();
+          }
+        }
       }
     }).submit();
   };
@@ -167,17 +166,16 @@ function openDialog(element) {
  * Toggle the processing indicator, both large and small
  *
  * @param element ID to which to apply the loading class, including #
- * @param size Either Large or Small
  */
 function loading(element) {
   var size;
   switch (element) {
-  	case "#gDialog":
-  		size = "Large";
-  		break;
-  	default:
-		size = "Small";
-		break;
+    case "#gDialog":
+      size = "Large";
+      break;
+    default:
+      size = "Small";
+      break;
   }
   $(element).toggleClass("gLoading" + size);
 }
