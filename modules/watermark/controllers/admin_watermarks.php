@@ -38,10 +38,13 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function edit() {
-    rest::http_content_type(rest::JSON);
     $form = watermark::get_edit_form();
     if ($form->validate()) {
       module::set_var("watermark", "position", $form->edit_watermark->position->value);
+      graphics::mark_all_dirty();
+
+      log::success("watermark", _("Watermark changed"));
+      message::success(_("Watermark changed"));
       print json_encode(
         array("result" => "success",
               "location" => url::site("admin/watermarks")));
@@ -57,7 +60,6 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function delete() {
-    rest::http_content_type(rest::JSON);
     $form = watermark::get_delete_form();
     if ($form->validate()) {
       if ($name = module::get_var("watermark", "name")) {
@@ -68,6 +70,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         module::clear_var("watermark", "height");
         module::clear_var("watermark", "mime_type");
         module::clear_var("watermark", "position");
+        graphics::mark_all_dirty();
 
         log::success("watermark", _("Watermark deleted"));
         message::success(_("Watermark deleted"));
@@ -87,7 +90,6 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function add() {
-    rest::http_content_type(rest::JSON);
     $form = watermark::get_add_form();
     if ($form->validate()) {
       $file = $_POST["file"];
@@ -108,10 +110,11 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       module::set_var("watermark", "height", $image_info[1]);
       module::set_var("watermark", "mime_type", $image_info["mime"]);
       module::set_var("watermark", "position", $form->add_watermark->position->value);
-      message::success(_("Watermark saved"));
-      log::success("watermark", _("Watermark saved"));
+      graphics::mark_all_dirty();
       @unlink($file);
 
+      message::success(_("Watermark saved"));
+      log::success("watermark", _("Watermark saved"));
       print json_encode(
         array("result" => "success",
               "location" => url::site("admin/watermarks")));

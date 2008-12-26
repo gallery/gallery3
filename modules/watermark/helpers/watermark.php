@@ -26,7 +26,7 @@ class watermark_Core {
       ->options(array("northwest",  "north",  "northeast",
                       "west",       "center", "east",
                       "southwest",  "south",  "southeast"))
-      ->selected("8");
+      ->selected("southeast");
     $group->submit(_("Upload"));
     return $form;
   }
@@ -36,7 +36,7 @@ class watermark_Core {
     $group = $form->group("edit_watermark")->label(_("Edit Watermark"));
     $group->dropdown("position")->label(_("Watermark Position"))
       ->options(self::positions())
-      ->selected("8");
+      ->selected("southeast");
     $group->submit(_("Modify"));
     return $form;
   }

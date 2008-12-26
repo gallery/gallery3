@@ -40,6 +40,9 @@ class watermark_installer {
   }
 
   public static function uninstall() {
+    if (module::get_var("watermark", "name")) {
+      graphics::mark_all_dirty();
+    }
     module::delete("watermark");
     Database::instance()->query("DROP TABLE `watermarks`");
     dir::unlink(VARPATH . "modules/watermark");
