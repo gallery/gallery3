@@ -55,6 +55,7 @@ h3 {
 a {
   color: #6b8cb7;
   text-decoration: none;
+  -moz-outline-style: none;
 }
 
 a:hover {
@@ -198,8 +199,8 @@ li.gError select {
  * 2) Base text styles
  ******************************************************************/
 
-#gContent {
-  font-size: 1em;
+#gContent, .ui-dialog {
+  font-size: 1.2em;
 }
 
 #gSidebar {
@@ -215,7 +216,7 @@ li.gError select {
 }
 
 .gItem {
-  font-size: .8em;
+  font-size: .7em;
 }
 
 /*** ***************************************************************
@@ -744,61 +745,11 @@ div.gAnnotatedThemeBlock div.title {
  * 11) jQuery UI
  *********************************************************************/
 
-/*UI tabs*/
-.ui-tabs-nav {
-  float: left;
-  position: relative;
-  z-index: 1;
-  border-right: 1px solid #ccc;
-  bottom: -1px;
-}
-.ui-tabs-nav li {
-  float: left;
-  border: 1px solid #ccc;
-  border-right: none;
-}
-.ui-tabs-nav li a {
-  float: left;
-  font-weight: normal;
-  text-decoration: none;
-  padding: .5em 1.7em;
-  color: #444444;
-  background: #e6e6e6 url(../images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
-}
-.ui-tabs-nav li a:hover, .ui-tabs-nav li a:focus, .ui-tabs-nav li a:active { /* order: LVHFA */
-  background: #eb9300 url(../images/eb9300_40x100_textures_02_glass_90.png) 0 50% repeat-x;
-  color: #111111;
-}
-.ui-tabs-nav li.ui-tabs-selected {
-  border-bottom-color: #8ab9ff;
-}
-.ui-tabs-nav li.ui-tabs-selected a, .ui-tabs-nav li.ui-tabs-selected a:hover,
-.ui-tabs-nav li.ui-tabs-selected a:focus, .ui-tabs-nav li.ui-tabs-selected a:active {
-  background: #8ab9ff url(../images/8ab9ff_40x100_textures_02_glass_50.png) 0 50% repeat-x;
-  color: #000;
-}
-.ui-tabs-panel {
-  clear:left;
-  border: 1px solid #ccc;
-  background: #f3f3f3 url(../images/f3f3f3_40x100_textures_01_flat_0.png) 0 0 repeat-x;
-  color: #362b36;
-  padding: 1.5em 1.7em;
-  min-width: 0; /* => IE7 trigger hasLayout (while maintaining valid CSS) to prevent margins pushed here from preceding elements */
-}
-* html .ui-tabs-panel {
-  display: inline-block; /* => IE6 trigger hasLayout (while maintaining valid CSS) in IE6 to prevent margins pushed here from preceding elements */
-}
-.ui-tabs-hide {
-  display: none !important/*for accessible hiding: position: absolute; left: -99999999px;*/;
-}
-
 /*dialog*/
 .ui-dialog {
-  font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
-  font-size: 1.2em;
-  background: #f3f3f3 url(../images/f3f3f3_40x100_textures_01_flat_0.png) 0 0 repeat-x;
+  background: #f3f3f3 url('../images/bg-dialog.png') 0 0 repeat-x;
   color: #362b36;
-  border: 4px solid #dddddd;
+  border: 4px solid #ddd;
   position: relative;
 }
 .ui-resizable-handle {
@@ -845,7 +796,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
   height: 18px;
   right: -5px;
   bottom: -5px;
-  background: url(../images/222222_11x11_icon_resize_se.gif) no-repeat 0 0;
+  background: url('../images/ico-resize.gif') no-repeat 0 0;
 }
 .ui-resizable-sw {
   cursor: sw-resize;
@@ -870,16 +821,16 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 }
 .ui-dialog-titlebar {
   padding: .5em 1.5em .5em 1em;
-  color: #444444;
-  background: #e6e6e6 url(../images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
-  border-bottom: 1px solid #cccccc;
+  color: #444;
+  background: #e6e6e6 url('../images/bg-button-bars.png') 0 14% repeat-x;
+  border-bottom: 1px solid #ccc;
   font-size: 1em;
   font-weight: normal;
   position: relative;
 }
 .ui-dialog-title {}
 .ui-dialog-titlebar-close {
-  background: url(../images/888888_11x11_icon_close.gif) 0 0 no-repeat;
+  background: url('../images/ico-close.gif') 0 0 no-repeat;
   position: absolute;
   right: 8px;
   top: .7em;
@@ -888,10 +839,10 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
   z-index: 100;
 }
 .ui-dialog-titlebar-close-hover, .ui-dialog-titlebar-close:hover {
-  background: url(../images/222222_11x11_icon_close.gif) 0 0 no-repeat;
+  background-position: 0 47%;
 }
 .ui-dialog-titlebar-close:active {
-  background: url(../images/ffffff_11x11_icon_close.gif) 0 0 no-repeat;
+  background-position: 0 95%;
 }
 .ui-dialog-titlebar-close span {
   display: none;
@@ -905,29 +856,27 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
   bottom: 0;
   width: 100%;
   text-align: left;
-  border-top: 1px solid #dddddd;
+  border-top: 1px solid #ddd;
   background: #f3f3f3;
-  padding-left: 36px;
 }
 .ui-dialog-buttonpane button {
   margin: .5em 0 .5em 8px;
   color: #444444;
-  background: #e6e6e6 url(../images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
+  background: #e6e6e6 url('../images/bg-button-bars.png') 0 14% repeat-x;
   font-size: 1em;
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
   cursor: pointer;
   padding: .2em .6em .3em .6em;
   line-height: 1.4em;
 }
 .ui-dialog-buttonpane button:hover {
-  color: #111111;
-  background: #eb9300 url(../images/eb9300_40x100_textures_02_glass_90.png) 0 50% repeat-x;
-  border: 1px solid #888888;
+  color: #111;
+  background: #eb9300 url('../images/bg-button-bars.png') 0 50% repeat-x;
+  border: 1px solid #888;
 }
 .ui-dialog-buttonpane button:active {
-  color: #000000;
-  background: #8ab9ff url(../images/8ab9ff_40x100_textures_02_glass_50.png) 0 50% repeat-x;
-  border: 1px solid #2694e8;
+  color: #000;
+  background: #8ab9ff url('../images/bg-button-bars.png') 0 87% repeat-x;
 }
 /* This file skins dialog */
 .ui-dialog.ui-draggable .ui-dialog-titlebar,
@@ -935,126 +884,6 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
   cursor: move;
 }
 
-/*
-Generic ThemeRoller Classes
->> Make your jQuery Components ThemeRoller-Compatible!
-*/
-
-/*component global class*/
-.ui-component {
-}
-/*component content styles*/
-.ui-component-content {
-  border: 1px solid #dddddd;
-  background: #f3f3f3 url(../images/f3f3f3_40x100_textures_01_flat_0.png) 0 0 repeat-x;
-  color: #362b36;
-}
-.ui-component-content a {
-  color: #362b36;
-  text-decoration: underline;
-}
-/*component states*/
-.ui-default-state {
-  border: 1px solid #ccc;
-  background: #e6e6e6 url(../images/e6e6e6_40x100_textures_02_glass_80.png) 0 50% repeat-x;
-  font-weight: normal;
-  color: #444444 !important;
-}
-.ui-default-state a {
-  color: #444444;
-}
-.ui-default-state:hover, .ui-hover-state {
-  border: 1px solid #888888;
-  background: #eb9300 url(../images/eb9300_40x100_textures_02_glass_90.png) 0 50% repeat-x;
-  font-weight: normal;
-  color: #111111 !important;
-}
-.ui-hover-state a {
-  color: #111111;
-}
-.ui-default-state:active, .ui-active-state {
-  border: 1px solid #2694e8;
-  background: #8ab9ff url(../images/8ab9ff_40x100_textures_02_glass_50.png) 0 50% repeat-x;
-  font-weight: normal;
-  color: #000 !important;
-  outline: none;
-}
-.ui-active-state a {
-  color: #000;
-  outline: none;
-}
-/*icons*/
-.ui-arrow-right-default {background: url(../images/888888_7x7_arrow_right.gif) no-repeat 50% 50%;}
-.ui-arrow-right-default:hover, .ui-arrow-right-hover {background: url(../images/222222_7x7_arrow_right.gif) no-repeat 50% 50%;}
-.ui-arrow-right-default:active, .ui-arrow-right-active {background: url(../images/ffffff_7x7_arrow_right.gif) no-repeat 50% 50%;}
-.ui-arrow-right-content {background: url(../images/222222_7x7_arrow_right.gif) no-repeat 50% 50%;}
-
-.ui-arrow-left-default {background: url(../images/888888_7x7_arrow_left.gif) no-repeat 50% 50%;}
-.ui-arrow-left-default:hover, .ui-arrow-left-hover {background: url(../images/222222_7x7_arrow_left.gif) no-repeat 50% 50%;}
-.ui-arrow-left-default:active, .ui-arrow-left-active {background: url(../images/ffffff_7x7_arrow_left.gif) no-repeat 50% 50%;}
-.ui-arrow-left-content {background: url(../images/222222_7x7_arrow_left.gif) no-repeat 50% 50%;}
-
-.ui-arrow-down-default {background: url(../images/888888_7x7_arrow_down.gif) no-repeat 50% 50%;}
-.ui-arrow-down-default:hover, .ui-arrow-down-hover {background: url(../images/222222_7x7_arrow_down.gif) no-repeat 50% 50%;}
-.ui-arrow-down-default:active, .ui-arrow-down-active {background: url(../images/ffffff_7x7_arrow_down.gif) no-repeat 50% 50%;}
-.ui-arrow-down-content {background: url(../images/222222_7x7_arrow_down.gif) no-repeat 50% 50%;}
-
-.ui-arrow-up-default {background: url(../images/888888_7x7_arrow_up.gif) no-repeat 50% 50%;}
-.ui-arrow-up-default:hover, .ui-arrow-up-hover {background: url(../images/222222_7x7_arrow_up.gif) no-repeat 50% 50%;}
-.ui-arrow-up-default:active, .ui-arrow-up-active {background: url(../images/ffffff_7x7_arrow_up.gif) no-repeat 50% 50%;}
-.ui-arrow-up-content {background: url(../images/222222_7x7_arrow_up.gif) no-repeat 50% 50%;}
-
-.ui-close-default {background: url(../images/888888_11x11_icon_close.gif) no-repeat 50% 50%;}
-.ui-close-default:hover, .ui-close-hover {background: url(../images/222222_11x11_icon_close.gif) no-repeat 50% 50%;}
-.ui-close-default:active, .ui-close-active {background: url(../images/ffffff_11x11_icon_close.gif) no-repeat 50% 50%;}
-.ui-close-content {background: url(../images/ffffff_11x11_icon_close.gif) no-repeat 50% 50%;}
-
-.ui-folder-closed-default {background: url(../images/888888_11x11_icon_folder_closed.gif) no-repeat 50% 50%;}
-.ui-folder-closed-default:hover, .ui-folder-closed-hover {background: url(../images/222222_11x11_icon_folder_closed.gif) no-repeat 50% 50%;}
-.ui-folder-closed-default:active, .ui-folder-closed-active {background: url(../images/ffffff_11x11_icon_folder_closed.gif) no-repeat 50% 50%;}
-.ui-folder-closed-content {background: url(../images/888888_11x11_icon_folder_closed.gif) no-repeat 50% 50%;}
-
-.ui-folder-open-default {background: url(../images/888888_11x11_icon_folder_open.gif) no-repeat 50% 50%;}
-.ui-folder-open-default:hover, .ui-folder-open-hover {background: url(../images/222222_11x11_icon_folder_open.gif) no-repeat 50% 50%;}
-.ui-folder-open-default:active, .ui-folder-open-active {background: url(../images/ffffff_11x11_icon_folder_open.gif) no-repeat 50% 50%;}
-.ui-folder-open-content {background: url(../images/ffffff_11x11_icon_folder_open.gif) no-repeat 50% 50%;}
-
-.ui-doc-default {background: url(../images/888888_11x11_icon_doc.gif) no-repeat 50% 50%;}
-.ui-doc-default:hover, .ui-doc-hover {background: url(../images/222222_11x11_icon_doc.gif) no-repeat 50% 50%;}
-.ui-doc-default:active, .ui-doc-active {background: url(../images/ffffff_11x11_icon_doc.gif) no-repeat 50% 50%;}
-.ui-doc-content {background: url(../images/222222_11x11_icon_doc.gif) no-repeat 50% 50%;}
-
-.ui-arrows-leftright-default {background: url(../images/888888_11x11_icon_arrows_leftright.gif) no-repeat 50% 50%;}
-.ui-arrows-leftright-default:hover, .ui-arrows-leftright-hover {background: url(../images/222222_11x11_icon_arrows_leftright.gif) no-repeat 50% 50%;}
-.ui-arrows-leftright-default:active, .ui-arrows-leftright-active {background: url(../images/ffffff_11x11_icon_arrows_leftright.gif) no-repeat 50% 50%;}
-.ui-arrows-leftright-content {background: url(../images/222222_11x11_icon_arrows_leftright.gif) no-repeat 50% 50%;}
-
-.ui-arrows-updown-default {background: url(../images/888888_11x11_icon_arrows_updown.gif) no-repeat 50% 50%;}
-.ui-arrows-updown-default:hover, .ui-arrows-updown-hover {background: url(../images/222222_11x11_icon_arrows_updown.gif) no-repeat 50% 50%;}
-.ui-arrows-updown-default:active, .ui-arrows-updown-active {background: url(../images/ffffff_11x11_icon_arrows_updown.gif) no-repeat 50% 50%;}
-.ui-arrows-updown-content {background: url(../images/222222_11x11_icon_arrows_updown.gif) no-repeat 50% 50%;}
-
-.ui-minus-default {background: url(../images/888888_11x11_icon_minus.gif) no-repeat 50% 50%;}
-.ui-minus-default:hover, .ui-minus-hover {background: url(../images/222222_11x11_icon_minus.gif) no-repeat 50% 50%;}
-.ui-minus-default:active, .ui-minus-active {background: url(../images/ffffff_11x11_icon_minus.gif) no-repeat 50% 50%;}
-.ui-minus-content {background: url(../images/222222_11x11_icon_minus.gif) no-repeat 50% 50%;}
-
-.ui-plus-default {background: url(../images/888888_11x11_icon_plus.gif) no-repeat 50% 50%;}
-.ui-plus-default:hover, .ui-plus-hover {background: url(../images/222222_11x11_icon_plus.gif) no-repeat 50% 50%;}
-.ui-plus-default:active, .ui-plus-active {background: url(../images/ffffff_11x11_icon_plus.gif) no-repeat 50% 50%;}
-.ui-plus-content {background: url(../images/222222_11x11_icon_plus.gif) no-repeat 50% 50%;}
-
-/*hidden elements*/
-.ui-hidden {
-  display: none/*for accessible hiding: position: absolute; left: -99999999px;*/;
-}
-.ui-accessible-hidden {
-  position: absolute; left: -99999999px;
-}
-/*reset styles*/
-.ui-reset {
-  /*resets*/margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none;
-}
 /*clearfix class*/
 .ui-clearfix:after {
     content: ".";
@@ -1068,5 +897,3 @@ Generic ThemeRoller Classes
 * html .ui-clearfix {height: 1%;}
 .ui-clearfix {display: block;}
 /* End hide from IE-mac */
-
-/* Note: for resizable styles, use the styles listed above in the dialog section */
