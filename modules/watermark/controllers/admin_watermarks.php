@@ -19,81 +19,102 @@
  */
 class Admin_Watermarks_Controller extends Admin_Controller {
   public function index() {
-    $form = watermark::get_watermark_form();
-    if (request::method() == "post" && $form->validate()) {
-      $file = $_POST["file"];
-      $pathinfo = pathinfo($file);
-      $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
-      if (ORM::factory("watermark")->where("name", $name)->count_all() > 0) {
-        message::error(_("There is already a watermark with that name"));
-      } else if (!($image_info = getimagesize($file))) {
-        message::warning(_("An error occurred while saving this watermark"));
-      } else {
-        if (empty($pathinfo["extension"])) {
-          $name .= "." . image_type_to_extension($image_info[2]);
-        }
-        if (!rename($file, VARPATH . "modules/watermark/$name")) {
-          message::warning(_("An error occurred while saving this watermark"));
-        } else {
-          $watermark = ORM::factory("watermark");
-          $watermark->name = $name;
-          $watermark->width = $image_info[0];
-          $watermark->height = $image_info[1];
-          $watermark->mime_type = $image_info["mime"];
-          $watermark->save();
-
-          message::success(_("Watermark saved"));
-          url::redirect("admin/watermarks");
-        }
-      }
-      @unlink($file);
-    }
+    $name = module::get_var("watermark", "name");
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_watermarks.html");
-    $view->content->watermarks = ORM::factory("watermark")->find_all();
-    $view->content->form = watermark::get_watermark_form();
+    if ($name) {
+      $view->content->name = $name;
+      $view->content->url = url::file("var/modules/watermark/$name");
+      $view->content->width = $name;
+      $view->content->height = $name;
+    }
     print $view;
   }
 
-  public function edit($watermark_id) {
+  public function form_add() {
+    print watermark::get_add_form();
   }
 
-  public function delete($watermark_id) {
+  public function form_edit() {
+    print watermark::get_edit_form();
   }
 
-  public function get_form($user_id) {
-    try {
-      $path = module::get_var("watermark", "watermark_image_path");
-      $view = new View("watermark_position.html");
+  public function edit() {
+    $form = watermark::get_edit_form();
+    if ($form->validate()) {
+      module::set_var("watermark", "position", $form->edit_watermark->position->value);
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("admin/watermarks")));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
+    }
+  }
 
-      if (empty($path)) {
-        // @todo need to do something when there is no watermark
+  public function form_delete() {
+    print watermark::get_delete_form();
+  }
+
+  public function delete() {
+    $form = watermark::get_delete_form();
+    if ($form->validate()) {
+      if ($name = module::get_var("watermark", "name")) {
+        @unlink(VARPATH . "modules/watermark/$name");
+
+        module::clear_var("watermark", "name");
+        module::clear_var("watermark", "width");
+        module::clear_var("watermark", "height");
+        module::clear_var("watermark", "mime_type");
+        module::clear_var("watermark", "position");
+
+        log::success("watermark", _("Deleted watermark"));
+        message::success(_("Watermark deleted"));
+      }
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("admin/watermarks")));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
+    }
+  }
+
+  public function upload() {
+    $form = watermark::get_add_form();
+    if ($form->validate()) {
+      $file = $_POST["file"];
+      $pathinfo = pathinfo($file);
+      // Forge prefixes files with "uploadfile-xxxxxxx" for uniqueness
+      $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
+
+      if (!($image_info = getimagesize($file)) ||
+          !in_array($image_info[2], array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG))) {
+        message::error(_("Unable to identify this image file"));
+        @unlink($file);
+        return;
       }
 
-      $photo = ORM::factory("item")
-        ->where("type", "photo")
-        ->find_all(1, 0)->current();
+      rename($file, VARPATH . "modules/watermark/$name");
+      module::set_var("watermark", "name", $name);
+      module::set_var("watermark", "width", $image_info[0]);
+      module::set_var("watermark", "height", $image_info[1]);
+      module::set_var("watermark", "mime_type", $image_info["mime"]);
+      module::set_var("watermark", "position", $form->add_watermark->position->value);
+      message::success(_("Watermark saved"));
+      url::redirect("admin/watermarks");
+      @unlink($file);
 
-      // @todo determine what to do if water mark is not set
-      // @todo calculate the view sizes
-      $view->sample_image =  $photo->resize_url();
-      $scaleWidth = $photo->resize_width / $photo->width;
-      $scaleHeight = $photo->resize_height / $photo->height;
-      $scale = $scaleHeight < $scaleWidth ? $scaleHeight : $scaleWidth;
-
-      $imageinfo = getimagesize(VARPATH . $path);
-
-      $view->watermark_height = $imageinfo[1] * $scale;
-      $view->watermark_width = $imageinfo[0] * $scale;
-      $view->watermark_image = url::abs_file("var/" . $path);
-
-      $current_position = module::get_var("watermark", "watermark_position");
-      $view->watermark_position_form = watermark::get_watermark_postion_form($current_position);
-
-      print $view;
-    } catch (Exception $e) {
-      print $e;
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("admin/watermarks")));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
     }
   }
 }
