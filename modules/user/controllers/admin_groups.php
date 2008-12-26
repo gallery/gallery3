@@ -25,7 +25,7 @@ class Admin_Groups_Controller extends Controller {
     print $view;
   }
 
-  public function create() {
+  public function add() {
     rest::http_content_type(rest::JSON);
     $form = group::get_add_form_admin();
     if($form->validate()) {
@@ -40,7 +40,7 @@ class Admin_Groups_Controller extends Controller {
     }
   }
 
-  public function create_form() {
+  public function add_form() {
     print group::get_add_form_admin();
   }
   
@@ -51,8 +51,15 @@ class Admin_Groups_Controller extends Controller {
       kohana::show_404();
     }
 
-    $name = $group->name;
-    $group->delete();
+    $form = group::get_delete_form_admin($group);
+    if($form->validate()) {
+      $name = $group->name;
+      $group->delete();
+    } else {
+      message::error(_("Failed to delete group"));
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
+    }
 
     log::success("group", sprintf(_("Deleted group %s"), $name));
     message::success(sprintf(_("Deleted group %s"), $name));

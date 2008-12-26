@@ -25,7 +25,7 @@ class Admin_Users_Controller extends Controller {
     print $view;
   }
 
-  public function create() {
+  public function add() {
     $form = user::get_add_form_admin();
     rest::http_content_type(rest::JSON);
     if($form->validate()) {
@@ -42,7 +42,7 @@ class Admin_Users_Controller extends Controller {
     }
   }
 
-  public function create_form() {
+  public function add_form() {
     print user::get_add_form_admin();
   }
     
@@ -53,8 +53,15 @@ class Admin_Users_Controller extends Controller {
       kohana::show_404();
     }
 
-    $name = $user->name;
-    $user->delete();
+    $form = user::get_delete_form_admin($user);
+    if($form->validate()) {
+      $name = $user->name;
+      $user->delete();
+    } else {
+      message::error(_("Failed to delete user"));
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
+    }
 
     log::success("user", sprintf(_("Deleted user %s"), $name));
     message::success(sprintf(_("Deleted user %s"), $name));
@@ -79,7 +86,7 @@ class Admin_Users_Controller extends Controller {
     $form = user::get_edit_form_admin($user);
     $form->edit_user->password->rules("-required");
     if($form->validate()) {
-      $user->name = $form->edit_user->uname->value;
+      $user->name = $form->edit_user->inputs["name"]->value;
       $user->full_name = $form->edit_user->full_name->value;
       $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;

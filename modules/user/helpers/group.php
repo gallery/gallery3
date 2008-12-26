@@ -65,16 +65,14 @@ class group_Core {
     $form = new Forge("admin/groups/edit/$group->id");
     $form_group = $form->group("edit_group")->label(_("Edit Group"));
     $form_group->input("name")->label(_("Name"))->id("gName")->value($group->name);
-    $form_group->submit(_("Modify"));
     $form->add_rules_from($group);
     return $form;
   }
 
   public static function get_add_form_admin() {
-    $form = new Forge("admin/groups/create");
+    $form = new Forge("admin/groups/add");
     $form_group = $form->group("add_group")->label(_("Add Group"));
     $form_group->input("name")->label(_("Name"))->id("gName");
-    $form_group->submit(_("Create"));
     $group = ORM::factory("group");
     $form->add_rules_from($group);
     return $form;
