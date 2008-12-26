@@ -7,7 +7,7 @@ if ($class) {
   print "<!-- unused class in form.html.php: $class -->";
 }
 if ($title) {
-  print "<!-- unused title in form.html.php: $title -->";
+  print $title;
 }
 
 if (!function_exists("DrawForm")) {

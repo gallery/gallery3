@@ -61,8 +61,8 @@ class group_Core {
     return model_cache::get("group", 2);
   }
 
-  public static function get_edit_form($group, $action = NULL) {
-    $form = new Forge($action);
+  public static function get_edit_form_admin($group) {
+    $form = new Forge("admin/groups/edit/$group->id");
     $form_group = $form->group("edit_group")->label(_("Edit Group"));
     $form_group->input("name")->label(_("Name"))->id("gName")->value($group->name);
     $form_group->submit(_("Modify"));
@@ -70,8 +70,8 @@ class group_Core {
     return $form;
   }
 
-  public static function get_add_form($action = NULL) {
-    $form = new Forge($action);
+  public static function get_add_form_admin() {
+    $form = new Forge("admin/groups/create");
     $form_group = $form->group("add_group")->label(_("Add Group"));
     $form_group->input("name")->label(_("Name"))->id("gName");
     $form_group->submit(_("Create"));
@@ -80,11 +80,9 @@ class group_Core {
     return $form;
   }
 
-  public static function get_delete_form($group, $action = NULL) {
-    $form = new Forge($action);
-    $form_group = $form->group("delete_group")->label(_("Delete Group"));
-    $form_group->label(sprintf(_("Are you sure you want to delete %s?"), $group->name));
-    $form_group->submit(_("Delete"));
-    return $form;
+  public static function get_delete_form_admin($group) {
+    $form = new Forge("admin/groups/delete/$group->id",
+                      sprintf(_("Are you sure you want to delete %s"), $group->name));
+    print $form;
   }
 }

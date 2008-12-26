@@ -22,15 +22,15 @@ class user_menu_Core {
     $menu->get("users_groups_menu")
       ->append(Menu::factory("link")
                ->id("list_users")
-               ->label(_("List Users"))
+               ->label(_("Users"))
                ->url(url::site("admin/users")))
       ->append(Menu::factory("link")
-               ->id("create_user")
-               ->label(_("Create new user"))
-               ->url("#"))
+               ->id("list_groups")
+               ->label(_("Groups"))
+               ->url(url::site("admin/groups")))
       ->append(Menu::factory("link")
-               ->id("edit_user")
-               ->label(_("Edit user"))
+               ->id("users_groups")
+               ->label(_("Users <-> Groups"))
                ->url("#"));
   }
 }

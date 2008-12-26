@@ -63,7 +63,7 @@ class user_Core {
   public static function get_delete_form_admin($user) {
     $form = new Forge("admin/users/delete/$user->id",
                       sprintf(_("Are you sure you want to delete %s"), $user->name));
-    return $form->render("admin_users_delete.html");
+    print $form;
   }
 
   /**
