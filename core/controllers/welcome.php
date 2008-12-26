@@ -206,7 +206,7 @@ class Welcome_Controller extends Template_Controller {
     }
 
     if ($photo_count > 0) {
-      log::success("content", "(scaffold) Added $photo_count photos"
+      log::success("content", "(scaffold) Added $photo_count photos",
                    html::anchor("albums/$parent_id", "View album"));
     }
 
