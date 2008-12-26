@@ -23,9 +23,7 @@ class watermark_Core {
     $group = $form->group("add_watermark")->label(_("Upload Watermark"));
     $group->upload("file")->label(_("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required");
     $group->dropdown("position")->label(_("Watermark Position"))
-      ->options(array("northwest",  "north",  "northeast",
-                      "west",       "center", "east",
-                      "southwest",  "south",  "southeast"))
+      ->options(self::positions())
       ->selected("southeast");
     $group->submit(_("Upload"));
     return $form;
