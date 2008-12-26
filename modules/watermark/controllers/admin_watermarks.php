@@ -130,11 +130,13 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   private function _update_graphics_rules($name=null, $position=null) {
     graphics::remove_rules("watermark");
     if ($name) {
-      graphics::add_rule(
-        "watermark", "thumb", "compose",
-        array("overlay" => VARPATH . "modules/watermark/$name",
-              "position" => $position),
-        1000);
+      foreach (array("thumb", "resize") as $target) {
+        graphics::add_rule(
+          "watermark", $target, "compose",
+          array("overlay" => VARPATH . "modules/watermark/$name",
+                "position" => $position),
+          1000);
+      }
     }
   }
 }
