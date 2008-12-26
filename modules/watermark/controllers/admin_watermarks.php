@@ -105,7 +105,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       module::set_var("watermark", "mime_type", $image_info["mime"]);
       module::set_var("watermark", "position", $form->add_watermark->position->value);
       message::success(_("Watermark saved"));
-      url::redirect("admin/watermarks");
+      log::success("watermark", _("Uploaded watermark"));
       @unlink($file);
 
       print json_encode(
