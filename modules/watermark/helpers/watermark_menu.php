@@ -19,10 +19,11 @@
  */
 class watermark_menu_Core {
   public static function admin($menu, $theme) {
-    $menu->append(
-      Menu::factory("link")
-      ->id("watermarks")
-      ->label(_("Watermarks"))
-      ->url(url::site("admin/watermarks")));
+    $menu->get("content_menu")
+      ->append(
+        Menu::factory("link")
+        ->id("watermarks")
+        ->label(_("Watermarks"))
+        ->url(url::site("admin/watermarks")));
   }
 }
