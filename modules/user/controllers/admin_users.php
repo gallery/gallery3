@@ -76,19 +76,24 @@ class Admin_Users_Controller extends Controller {
       kohana::show_404();
     }
 
-    $form = user::get_edit_form($user, "admin/users/edit/$id");
-    if (request::method() =="post" && $form->validate()) {
-      $user->name = $form->edit_user->uname->value;
-      $user->full_name = $form->edit_user->full_name->value;
-      $user->password = $form->edit_user->password->value;
-      $user->email = $form->edit_user->email->value;
-      $user->save();
-      message::success(sprintf(_("Changed user %s"), $user->name));
-      url::redirect("admin/users");
+    $form = user::get_edit_form_admin($user, "admin/users/edit/$id");
+    if (request::method() =="post" ) {
+      $form->edit_user->password->rules("-required");
+      if($form->validate()) {
+        $user->name = $form->edit_user->uname->value;
+        $user->full_name = $form->edit_user->full_name->value;
+        $user->password = $form->edit_user->password->value;
+        $user->email = $form->edit_user->email->value;
+        $user->save();
+        message::success(sprintf(_("Changed user %s"), $user->name));
+        print json_encode(array("result" => "success"));
+      } else {
+        message::error(sprintf(_("Failed to change user %s"), $user->name));
+        print json_encode(array("result" => "error",
+                                "form" => $form->__toString()));
+      }
+    } else {
+      print $form;
     }
-
-    $view = new Admin_View("admin.html");
-    $view->content = $form;
-    print $view;
   }
 }

@@ -27,11 +27,6 @@ class user_block_Core {
     }
   }
 
-  public static function admin_head($theme) {
-    $url = url::file("modules/user/js/admin_users.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>";
-  }
-
   public static function header_top($theme) {
     $view = new View("login.html");
     $view->user = user::active();

@@ -14,8 +14,6 @@ $(document).ready(function(){
     speed: 'fast'
   });
 
-  $('.ui-accordion-container').accordion();
-
   /**
    * Attach event listeners to open modal dialogs
    */
