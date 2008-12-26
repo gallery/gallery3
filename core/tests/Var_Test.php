@@ -25,4 +25,12 @@ class Var_Test extends Unit_Test_Case {
     module::set_var("core", "Parameter", "updated value");
     $this->assert_equal("updated value", module::get_var("core", "Parameter"));
   }
+
+  public function clear_parameter_test() {
+    module::set_var("core", "Parameter", "original value");
+    $this->assert_equal("original value", module::get_var("core", "Parameter"));
+
+    module::clear_var("core", "Parameter");
+    $this->assert_equal(null, module::get_var("core", "Parameter"));
+  }
 }

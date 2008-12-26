@@ -243,4 +243,19 @@ class module_Core {
     $var->value = $value;
     $var->save();
   }
+
+  /**
+   * Remove a variable for this module.
+   * @param string $module_name
+   * @param string $name
+   */
+  public function clear_var($module_name, $name) {
+    $var = ORM::factory("var")
+      ->where("module_name", $module_name)
+      ->where("name", $name)
+      ->find();
+    if ($var->loaded) {
+      $var->delete();
+    }
+  }
 }
