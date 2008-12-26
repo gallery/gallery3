@@ -12,7 +12,7 @@
   <? else: ?>
   <h2> <?= _("Active Watermark") ?> </h2>
   <p>
-    <?= _("Note that changing this watermark will rebuild all of your thumbnails and resized images.") ?>
+    <?= _("Note that changing this watermark will require you to rebuild all of your thumbnails and resized images.") ?>
   </p>
   <p>
     <div class="image">

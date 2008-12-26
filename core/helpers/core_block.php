@@ -41,12 +41,6 @@ class core_block_Core {
     $blocks[] = $block;
 
     $block = new Block();
-    $block->id = "gMessages";
-    $block->title = _("Status Messages");
-    $block->content = new View("admin_block_messages.html");
-    $blocks[] = $block;
-
-    $block = new Block();
     $block->id = "gPhotoStream";
     $block->title = _("Photo Stream");
     $block->content = new View("admin_block_photo_stream.html");

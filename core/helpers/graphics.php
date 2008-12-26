@@ -44,6 +44,8 @@ class graphics_Core {
     $rule->priority = $priority;
     $rule->args = serialize($args);
     $rule->save();
+
+    self::mark_all_dirty();
   }
 
   /**
@@ -52,7 +54,10 @@ class graphics_Core {
    */
   public static function remove_rules($module_name) {
     $db = Database::instance();
-    $db->query("DELETE FROM `graphics_rules` WHERE `module_name` = '$module_name'");
+    $result = $db->query("DELETE FROM `graphics_rules` WHERE `module_name` = '$module_name'");
+    if ($result->count()) {
+      self::mark_all_dirty();
+    }
   }
 
   /**
@@ -129,5 +134,16 @@ class graphics_Core {
    */
   public static function mark_all_dirty() {
     Database::instance()->query("UPDATE `items` SET `thumb_dirty` = 1, `resize_dirty` = 1");
+
+    $count = ORM::factory("item")
+      ->where("thumb_dirty", 1)
+      ->orwhere("resize_dirty", 1)
+      ->count_all();
+    if ($count) {
+      message::warning(
+        sprintf(_("%d of your photos are out of date.  %sClick here to fix them%s"),
+                $count, "<a href=\"#\">", "</a>"),
+        "graphics_dirty");
+    }
   }
 }

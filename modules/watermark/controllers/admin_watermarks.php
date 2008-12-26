@@ -40,8 +40,9 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   public function edit() {
     $form = watermark::get_edit_form();
     if ($form->validate()) {
-      module::set_var("watermark", "position", $form->edit_watermark->position->value);
-      graphics::mark_all_dirty();
+      $position = $form->edit_watermark->position->value;
+      module::set_var("watermark", "position", $position);
+      $this->_update_graphics_rules(module::get_var("watermark", "name"), $position);
 
       log::success("watermark", _("Watermark changed"));
       message::success(_("Watermark changed"));
@@ -70,7 +71,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         module::clear_var("watermark", "height");
         module::clear_var("watermark", "mime_type");
         module::clear_var("watermark", "position");
-        graphics::mark_all_dirty();
+        $this->_update_graphics_rules();
 
         log::success("watermark", _("Watermark deleted"));
         message::success(_("Watermark deleted"));
@@ -105,12 +106,13 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       }
 
       rename($file, VARPATH . "modules/watermark/$name");
+      $position = $form->add_watermark->position->value;
       module::set_var("watermark", "name", $name);
       module::set_var("watermark", "width", $image_info[0]);
       module::set_var("watermark", "height", $image_info[1]);
       module::set_var("watermark", "mime_type", $image_info["mime"]);
-      module::set_var("watermark", "position", $form->add_watermark->position->value);
-      graphics::mark_all_dirty();
+      module::set_var("watermark", "position", $position);
+      $this->_update_graphics_rules(module::get_var("watermark", "name"), $position);
       @unlink($file);
 
       message::success(_("Watermark saved"));
@@ -122,6 +124,17 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       print json_encode(
         array("result" => "error",
               "form" => $form->__toString()));
+    }
+  }
+
+  private function _update_graphics_rules($name=null, $position=null) {
+    graphics::remove_rules("watermark");
+    if ($name) {
+      graphics::add_rule(
+        "watermark", "thumb", "compose",
+        array("overlay" => VARPATH . "modules/watermark/$name",
+              "position" => $position),
+        1000);
     }
   }
 }

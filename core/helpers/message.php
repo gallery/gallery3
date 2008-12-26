@@ -25,61 +25,86 @@ class message_Core {
 
   /**
    * Report a successful event.
-   * @param string  $msg   a detailed message
+   * @param string  $msg           a detailed message
+   * @param string  $permanent_key make this message permanent and store it under this key
    */
-  public static function success($msg) {
-    self::add($msg, self::SUCCESS);
+  public static function success($msg, $permanent_key=null) {
+    self::add($msg, self::SUCCESS, $permanent_key);
   }
 
   /**
    * Report an informational event.
-   * @param string  $msg   a detailed message
+   * @param string  $msg           a detailed message
+   * @param string  $permanent_key make this message permanent and store it under this key
    */
-  public static function info($msg) {
-    self::add($msg, self::INFO);
+  public static function info($msg, $permanent_key=null) {
+    self::add($msg, self::INFO, $permanent_key);
   }
 
   /**
    * Report that something went wrong, not fatal, but worth investigation.
-   * @param string  $msg   a detailed message
+   * @param string  $msg           a detailed message
+   * @param string  $permanent_key make this message permanent and store it under this key
    */
-  public static function warning($msg) {
-    self::add($msg, self::WARNING);
+  public static function warning($msg, $permanent_key=null) {
+    self::add($msg, self::WARNING, $permanent_key);
   }
 
   /**
    * Report that something went wrong that should be fixed.
-   * @param string  $msg   a detailed message
+   * @param string  $msg           a detailed message
+   * @param string  $permanent_key make this message permanent and store it under this key
    */
-  public static function error($msg) {
-    self::add($msg, self::ERROR);
+  public static function error($msg, $permanent_key=null) {
+    self::add($msg, self::ERROR, $permanent_key);
   }
 
   /**
    * Save a message in the session for our next page load.
-   * @param string  $msg       a detailed message
-   * @param integer $severity  one of the severity constants
+   * @param string  $msg           a detailed message
+   * @param integer $severity      one of the severity constants
+   * @param string  $permanent_key make this message permanent and store it under this key
    */
-  private function add($msg, $severity) {
-    $session = Session::instance();
-    $status = $session->get("messages");
-    $status[] = array($msg, $severity);
-    $session->set("messages", $status);
+  private function add($msg, $severity, $permanent_key=null) {
+    if ($permanent_key) {
+      $message = ORM::factory("message")
+        ->where("key", $permanent_key)
+        ->find();
+      if (!$message->loaded) {
+        $message->key = $permanent_key;
+      }
+      $message->severity = $severity;
+      $message->value = $msg;
+      $message->save();
+    } else {
+      $session = Session::instance();
+      $status = $session->get("messages");
+      $status[] = array($msg, $severity);
+      $session->set("messages", $status);
+    }
   }
 
   /**
-   * Get any pending messages.  These must be displayed to the user since they can only be
-   * retrieved once.
+   * Get any pending messages.  There are two types of messages, transient and permanent.
+   * Permanent messages are used to let the admin know that there are pending administrative
+   * issues that need to be resolved.  Transient ones are only displayed once.
    * @return html text
    */
   public function get() {
-    $msgs = Session::instance()->get_once("messages", array());
-    if ($msgs) {
-      $buf = "<ul id=\"gMessages\">";
-      foreach ($msgs as $msg) {
-        $buf .= "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
+    $buf = array();
+
+    foreach (Session::instance()->get_once("messages", array()) as $msg) {
+      $buf[] = "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
+    }
+
+    if (user::active()->admin) {
+      foreach (ORM::factory("message")->find_all() as $msg) {
+        $buf[] = "<li class=\"" . self::severity_class($msg->severity) . "\">$msg->value</li>";
       }
-      return $buf .= "</ul>";
+    }
+
+    if ($buf) {
+      return "<ul id=\"gMessages\">" . implode("", $buf) . "</ul>";
     }
   }
 

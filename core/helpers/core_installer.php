@@ -95,6 +95,15 @@ class core_installer {
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `messages` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `key` varchar(255) default NULL,
+                   `value` varchar(255) default NULL,
+                   `severity` varchar(32) default NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`key`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $db->query("CREATE TABLE `modules` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(255) default NULL,
