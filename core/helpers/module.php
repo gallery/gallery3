@@ -60,14 +60,14 @@ class module_Core {
    */
   public static function delete($module_name) {
     $module = ORM::factory("module")->where("name", $module_name)->find();
-    $module_id = $module->id;
-    $module->delete();
+    if ($module->loaded) {
+      $db = Database::instance();
+      $db->query("DELETE FROM `vars` WHERE `module_name` = '{$module->name}';");
+      $db->query("DELETE FROM `graphics_rules` WHERE module_name = '{$module->name}';");
+      $module->delete();
 
-    $db = Database::instance();
-    $db->query("DELETE FROM `vars` WHERE `module_name` = '{$module->name}';");
-    $db->query("DELETE FROM `graphics_rules` WHERE module_name = '{$module->name}';");
-
-    Kohana::log("debug", "$module_name: module deleted");
+      Kohana::log("debug", "$module_name: module deleted");
+    }
   }
 
   /**
