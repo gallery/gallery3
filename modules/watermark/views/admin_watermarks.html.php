@@ -16,7 +16,7 @@
   </p>
   <p>
     <div class="image">
-      <img width="<?= $width ?>" height="<? $height ?>" src="<?= $url ?>"/>
+      <img width="<?= $width ?>" height="<?= $height ?>" src="<?= $url ?>"/>
       <p>
         <?= sprintf(_("Position: %s"), watermark::position($position)) ?>
       </p>
