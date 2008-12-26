@@ -27,28 +27,23 @@ class Admin_Users_Controller extends Controller {
   }
 
   public function create() {
-    rest::http_content_type(rest::JSON);
     $form = user::get_add_form_admin();
-    if ($form->validate()) {
-      $user = user::create($form->add_user->inputs["name"]->value,
-                           $form->add_user->full_name->value, $form->add_user->password->value);
-      $user->email = $form->add_user->email->value;
-      $user->save();
-      log::success("user", sprintf(_("Created user %s"), $user->name));
-      message::success(sprintf(_("Created user %s"), $user->name));
-      $output = '<li>' . $user->name . ' <a href="#">edit</a><div>' .
-        user::get_edit_form_admin($user) . '</div><a href="#">delete</a><div>' .
-        user::get_delete_form_admin($user, "admin/users/delete/{$user->id}") .
-        '</div></li>';
-      print json_encode(
-        array("result" => "success", "operation" => "create",
-              "output" => $output,
-              "form" => user::get_add_form_admin()));
+    if (request::method() =="post" ) {
+      if($form->validate()) {
+        $user = user::create($form->add_user->inputs["name"]->value,
+                             $form->add_user->full_name->value, $form->add_user->password->value);
+        $user->email = $form->add_user->email->value;
+        $user->save();
+        message::success(sprintf(_("Created user %s"), $user->name));
+        print json_encode(array("result" => "success"));
+      } else {
+        message::error(_("Failed to create user"));
+        print json_encode(array("result" => "error",
+                                "form" => $form->__toString()));
+      }
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
-    }
+      print $form;
+    }    
   }
 
   public function delete($id) {
@@ -65,7 +60,7 @@ class Admin_Users_Controller extends Controller {
       message::success(sprintf(_("Deleted user %s"), $name));
       print json_encode(array("result" => "success"));
     } else {
-      print user::get_delete_form_admin($user, "admin/users/delete/$id");
+      print user::get_delete_form_admin($user);
     }
 
   }

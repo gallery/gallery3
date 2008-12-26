@@ -14,7 +14,7 @@
         <? endif ?>
       </li>
       <? endforeach ?>
-      <li><a href="users/add/<?= $user->id ?>" class="gDialogLink">Add user</a></li>
+      <li><a href="users/create" class="gDialogLink">Add user</a></li>
     </ul>
   </div>
 </div>

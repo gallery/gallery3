@@ -36,8 +36,8 @@ class user_Core {
     return $form;
   }
 
-  public static function get_edit_form_admin($user, $action = NULL) {
-    $form = new Forge("admin/users/edit/$user->id", "", "post", array("id" => "gUserForm"));
+  public static function get_edit_form_admin($user) {
+    $form = new Forge("admin/users/edit/$user->id");
     $group = $form->group("edit_user")->label(_("Edit User"));
     $group->input("uname")->label(_("Name"))->id("gName")->value($user->name);
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
@@ -47,7 +47,7 @@ class user_Core {
     return $form;
   }
 
-  public static function get_add_form_admin($action = NULL) {
+  public static function get_add_form_admin() {
     $form = new Forge("admin/users/create");
     $group = $form->group("add_user")->label(_("Add User"));
     $group->input("name")->label(_("Name"))->id("gName");
@@ -60,8 +60,9 @@ class user_Core {
     return $form;
   }
 
-  public static function get_delete_form_admin($user, $action = NULL) {
-    $form = new Forge($action, sprintf(_("Are you sure you want to delete %s"), $user->name));
+  public static function get_delete_form_admin($user) {
+    $form = new Forge("admin/users/delete/$user->id",
+                      sprintf(_("Are you sure you want to delete %s"), $user->name));
     return $form->render("admin_users_delete.html");
   }
 
