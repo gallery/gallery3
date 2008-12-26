@@ -830,7 +830,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 }
 .ui-dialog-title {}
 .ui-dialog-titlebar-close {
-  background: url('../images/ico-close.gif') 0 0 no-repeat;
+  background: url('../images/bg-close.gif') 0 0 no-repeat;
   position: absolute;
   right: 8px;
   top: .7em;
