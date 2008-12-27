@@ -602,52 +602,52 @@ li.gError select {
 }
 
 #gPager .first {
-  background-image: url('../images/first.png');
+  background-image: url('../images/ico-pg-first.png');
   background-position: left;
   padding-left: 20px;
 }
 
 #gPager .first_inactive {
-  background-image: url('../images/first_inactive.png');
+  background-image: url('../images/ico-pg-first_inactive.png');
   background-position: left;
   color: #ccc;
   padding-left: 20px;
 }
 
 #gPager .previous {
-  background-image: url('../images/previous.png');
+  background-image: url('../images/ico-pg-previous.png');
   background-position: left;
   padding-left: 17px;
 }
 
 #gPager .previous_inactive {
-  background-image: url('../images/previous_inactive.png');
+  background-image: url('../images/ico-pg-previous_inactive.png');
   background-position: left;
   color: #ccc;
   padding-left: 17px;
 }
 
 #gPager .next {
-  background-image: url('../images/next.png');
+  background-image: url('../images/ico-pg-next.png');
   background-position: right;
   padding-right: 17px;
 }
 
 #gPager .next_inactive {
-  background-image: url('../images/next_inactive.png');
+  background-image: url('../images/ico-pg-next_inactive.png');
   background-position: right;
   color: #ccc;
   padding-right: 17px;
 }
 
 #gPager .last {
-  background-image: url('../images/last.png');
+  background-image: url('../images/ico-pg-last.png');
   background-position: right;
   padding-right: 20px;
 }
 
 #gPager .last_inactive {
-  background-image: url('../images/last_inactive.png');
+  background-image: url('../images/ico-pg-last_inactive.png');
   background-position: right;
   color: #ccc;
   padding-right: 20px;
