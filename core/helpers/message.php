@@ -85,6 +85,17 @@ class message_Core {
   }
 
   /**
+   * Remove any permanent message by key.
+   * @param string $permanent_key
+   */
+  public function clear_permanent($permanent_key) {
+    $message = ORM::factory("message")->where("key", $permanent_key)->find();
+    if ($message->loaded) {
+      $message->delete();
+    }
+  }
+
+  /**
    * Get any pending messages.  There are two types of messages, transient and permanent.
    * Permanent messages are used to let the admin know that there are pending administrative
    * issues that need to be resolved.  Transient ones are only displayed once.
