@@ -133,12 +133,14 @@ class graphics_Core {
    *
    */
   public static function mark_all_dirty() {
-    Database::instance()->query("UPDATE `items` SET `thumb_dirty` = 1, `resize_dirty` = 1");
+    $db = Database::instance();
+    $db->query("UPDATE `items` SET `thumb_dirty` = 1, `resize_dirty` = 1");
 
-    $count = ORM::factory("item")
-      ->where("thumb_dirty", 1)
-      ->orwhere("resize_dirty", 1)
-      ->count_all();
+    $count = $db->query("SELECT COUNT(*) AS C FROM `items` " .
+                        "WHERE `thumb_dirty` = 1 " .
+                        "   OR (`resize_dirty` = 1 AND `type` = 'photo')")
+      ->current()
+      ->C;
     if ($count) {
       message::warning(
         sprintf(_("%d of your photos are out of date.  %sClick here to fix them%s"),
