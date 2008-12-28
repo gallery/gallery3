@@ -129,6 +129,17 @@ class graphics_Core {
   }
 
   /**
+   * Return a query result that locates all items with dirty images.
+   * @return Database_Result Query result
+   */
+  private static function _find_dirty_images_query() {
+    return Database::instance()->query(
+      "SELECT `id` FROM `items` " .
+      "WHERE (`thumb_dirty` = 1 AND (`type` <> 'album' OR `right` - `left` > 1))" .
+      "   OR (`resize_dirty` = 1 AND `type` = 'photo')");
+  }
+
+  /**
    * Mark all thumbnails and resizes as dirty.  They will have to be rebuilt.
    *
    */
@@ -136,16 +147,57 @@ class graphics_Core {
     $db = Database::instance();
     $db->query("UPDATE `items` SET `thumb_dirty` = 1, `resize_dirty` = 1");
 
-    $count = $db->query("SELECT COUNT(*) AS C FROM `items` " .
-                        "WHERE `thumb_dirty` = 1 " .
-                        "   OR (`resize_dirty` = 1 AND `type` = 'photo')")
-      ->current()
-      ->C;
+    $count = self::_find_dirty_images_query()->count();
     if ($count) {
       message::warning(
         sprintf(_("%d of your photos are out of date.  %sClick here to fix them%s"),
-                $count, "<a href=\"#\">", "</a>"),
+                $count, "<a href=\"" .
+                url::site("admin/maintenance/start/rebuild_images") .
+                "\" class=\"gDialogLink\">", "</a>"),
         "graphics_dirty");
+    }
+  }
+
+  /**
+   * Task that rebuilds all dirty images.
+   * @param Task_Model the task
+   */
+  public static function rebuild_dirty_images($task) {
+    $db = Database::instance();
+
+    $result = self::_find_dirty_images_query();
+    $remaining = $result->count();
+    $completed = $task->get("completed", 0);
+
+    $i = 0;
+    foreach ($result as $row) {
+      $item = ORM::factory("item", $row->id);
+      if ($item->loaded) {
+        self::generate($item);
+      }
+
+      $completed++;
+      $remaining--;
+
+      if ($i++ == 3) {
+        break;
+      }
+    }
+
+    $task->status = sprintf(
+      _("Updated %d out of %d images"), $completed, $remaining + $completed);
+
+    if ($completed + $remaining > 0) {
+      $task->percent_complete = (int)(100 * $completed / ($completed + $remaining));
+    } else {
+      $task->percent_complete = 100;
+    }
+
+    $task->set("completed", $completed);
+    $task->done = ($remaining == 0);
+
+    if ($task->done) {
+      message::clear_permanent("graphics_dirty");
     }
   }
 }

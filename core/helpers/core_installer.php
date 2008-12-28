@@ -67,11 +67,11 @@ class core_installer {
                    `parent_id` int(9) NOT NULL,
                    `resize_height` int(9) default NULL,
                    `resize_width` int(9) default NULL,
-                   `resize_dirty` BOOLEAN default 1,
+                   `resize_dirty` boolean default 1,
                    `right` int(9) NOT NULL,
                    `thumb_height` int(9) default NULL,
                    `thumb_width` int(9) default NULL,
-                   `thumb_dirty` BOOLEAN default 1,
+                   `thumb_dirty` boolean default 1,
                    `title` varchar(255) default NULL,
                    `type` varchar(32) NOT NULL,
                    `updated` int(9) default NULL,
@@ -125,6 +125,16 @@ class core_installer {
                   `last_activity` int(10) UNSIGNED NOT NULL,
                   `data` text NOT NULL,
                   PRIMARY KEY (`session_id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
+      $db->query("CREATE TABLE `tasks` (
+                  `context` text NOT NULL,
+                  `done` boolean DEFAULT 0,
+                  `id` int(9) NOT NULL auto_increment,
+                  `name` varchar(255) default NULL,
+                  `percent_complete` int(9) default 0,
+                  `status` varchar(255) default NULL,
+                  PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE `vars` (
