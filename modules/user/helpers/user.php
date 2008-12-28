@@ -26,7 +26,7 @@
 class user_Core {
   public static function get_edit_form($user, $action = NULL) {
     $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gUserForm"));
-    $group = $form->group("edit_user");
+    $group = $form->group("edit_user")->label(_("Edit User"));
     $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
@@ -38,7 +38,7 @@ class user_Core {
 
   public static function get_edit_form_admin($user) {
     $form = new Forge("admin/users/edit/$user->id");
-    $group = $form->group("edit_user");
+    $group = $form->group("edit_user")->label(_("Edit User"));
     $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
@@ -49,7 +49,7 @@ class user_Core {
 
   public static function get_add_form_admin() {
     $form = new Forge("admin/users/add");
-    $group = $form->group("add_user");
+    $group = $form->group("add_user")->label(_("Add User"));
     $group->input("name")->label(_("Name"))->id("gName");
     $group->input("full_name")->label(_("Full Name"))->id("gFullName");
     $group->password("password")->label(_("Password"))->id("gPassword");
@@ -61,7 +61,9 @@ class user_Core {
   }
 
   public static function get_delete_form_admin($user) {
-    return new Forge("admin/users/delete/$user->id");
+    $form = new Forge("admin/users/delete/$user->id",
+                      sprintf(_("Are you sure you want to delete %s"), $user->name));
+    print $form;
   }
 
   /**
