@@ -3,6 +3,12 @@
  */
 $("document").ready(function() {
 
+  // Vertical align thumbnails/metadata in album grid
+  if ($(".gItem").length) {
+    $(".gItem").wrapInner("<div></div>")
+    $('.gItem div').vAlign();
+  }
+  
   // Apply modal dialog class
   $(".gMenuLink").addClass("gDialogLink");
   $("#gLoginLink").addClass("gDialogLink");
@@ -74,6 +80,16 @@ $("document").ready(function() {
   };
 
 });
+
+// Vertically align a block element's content
+$.fn.vAlign = function() {
+  return this.each(function(i){
+    var ah = $(this).height();
+    var ph = $(this).parent().height();
+    var mh = (ph - ah) / 2;
+    $(this).css('margin-top', mh);
+  });
+};
 
 /**
  * Fire openDialog() and prevent links from opening

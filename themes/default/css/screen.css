@@ -295,16 +295,20 @@ li.gError select {
 }
 
 #gAlbumGrid {
+  border-right: 1px solid #e8e8e8;
   margin-top: 20px;
 }
 
 #gAlbumGrid .gItem {
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
   float: left;
-  height: 270px;
-  margin-bottom: 10px;
-  padding: 0 0 5px 0;
+  height: 240px;
+  overflow: hidden;
+  padding: 14px 8px;
   text-align: center;
-  width: 33%;
+  width: 213px;
 }
 
 .gItem h2 {
@@ -312,7 +316,7 @@ li.gError select {
 }
 
 .gAlbum {
-  background-color: #d4daff;
+  background-color: #e8e8e8;
 }
 
 .gAlbum h2 {
