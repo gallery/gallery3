@@ -128,11 +128,14 @@ class core_installer {
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE `tasks` (
+                  `callback` varchar(255) default NULL,
                   `context` text NOT NULL,
-                  `done` boolean DEFAULT 0,
+                  `done` boolean default 0,
                   `id` int(9) NOT NULL auto_increment,
+                  `updated` int(9) default NULL,
                   `name` varchar(255) default NULL,
                   `percent_complete` int(9) default 0,
+                  `state` varchar(32) default NULL,
                   `status` varchar(255) default NULL,
                   PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");

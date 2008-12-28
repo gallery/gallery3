@@ -33,4 +33,11 @@ class Task_Model extends ORM {
     $context[$key] = $value;
     $this->context = serialize($context);
   }
+
+  public function save() {
+    if (!empty($this->changed)) {
+      $this->updated = time();
+    }
+    return parent::save();
+  }
 }

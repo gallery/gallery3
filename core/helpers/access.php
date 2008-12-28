@@ -305,7 +305,8 @@ class access_Core {
    * Verify our Cross Site Request Forgery token is valid, else throw an exception.
    */
   public static function verify_csrf() {
-    if (Input::instance()->post("csrf") !== Session::instance()->get("csrf")) {
+    $input = Input::instance();
+    if ($input->post("csrf", $input->get("csrf", null)) !== Session::instance()->get("csrf")) {
       access::forbidden();
     }
   }

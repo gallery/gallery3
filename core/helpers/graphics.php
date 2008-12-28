@@ -129,10 +129,17 @@ class graphics_Core {
   }
 
   /**
+   * Stub.
+   * @todo implement this
+   */
+  public static function compose($input_file, $output_file, $other_args)  {
+  }
+
+  /**
    * Return a query result that locates all items with dirty images.
    * @return Database_Result Query result
    */
-  private static function _find_dirty_images_query() {
+  public static function find_dirty_images_query() {
     return Database::instance()->query(
       "SELECT `id` FROM `items` " .
       "WHERE (`thumb_dirty` = 1 AND (`type` <> 'album' OR `right` - `left` > 1))" .
@@ -147,12 +154,12 @@ class graphics_Core {
     $db = Database::instance();
     $db->query("UPDATE `items` SET `thumb_dirty` = 1, `resize_dirty` = 1");
 
-    $count = self::_find_dirty_images_query()->count();
+    $count = self::find_dirty_images_query()->count();
     if ($count) {
       message::warning(
         sprintf(_("%d of your photos are out of date.  %sClick here to fix them%s"),
                 $count, "<a href=\"" .
-                url::site("admin/maintenance/start/rebuild_images") .
+                url::site("admin/maintenance/start/rebuild_images?csrf=" . access::csrf_token()) .
                 "\" class=\"gDialogLink\">", "</a>"),
         "graphics_dirty");
     }
@@ -165,7 +172,7 @@ class graphics_Core {
   public static function rebuild_dirty_images($task) {
     $db = Database::instance();
 
-    $result = self::_find_dirty_images_query();
+    $result = self::find_dirty_images_query();
     $remaining = $result->count();
     $completed = $task->get("completed", 0);
 
@@ -194,9 +201,9 @@ class graphics_Core {
     }
 
     $task->set("completed", $completed);
-    $task->done = ($remaining == 0);
-
-    if ($task->done) {
+    if ($remaining == 0) {
+      $task->done = true;
+      $task->state = "success";
       message::clear_permanent("graphics_dirty");
     }
   }

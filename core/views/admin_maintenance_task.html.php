@@ -3,7 +3,7 @@
 <script type="text/javascript">
   update = function() {
     $.ajax({
-      url: "<?= url::site("admin/maintenance/run/$task->id") ?>",
+      url: "<?= url::site("admin/maintenance/run/$task->id?csrf=$csrf") ?>",
       dataType: "json",
       success: function(data) {
         $("#gStatus").html("" + data.task.status);
