@@ -156,10 +156,11 @@ class graphics_Core {
 
     $count = self::find_dirty_images_query()->count();
     if ($count) {
-      message::warning(
+      site_status::warning(
         sprintf(_("%d of your photos are out of date.  %sClick here to fix them%s"),
                 $count, "<a href=\"" .
-                url::site("admin/maintenance/start/rebuild_images?csrf=" . access::csrf_token()) .
+                url::site("admin/maintenance/start/graphics::rebuild_dirty_images?csrf=" .
+                          access::csrf_token()) .
                 "\" class=\"gDialogLink\">", "</a>"),
         "graphics_dirty");
     }
@@ -204,7 +205,7 @@ class graphics_Core {
     if ($remaining == 0) {
       $task->done = true;
       $task->state = "success";
-      message::clear_permanent("graphics_dirty");
+      site_status::clear("graphics_dirty");
     }
   }
 }

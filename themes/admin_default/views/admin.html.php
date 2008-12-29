@@ -28,6 +28,8 @@
     <div id="doc4" class="yui-t5 gView">
       <div id="hd">
         <div id="gHeader">
+          <?= $theme->site_status() ?>
+          <?= $theme->admin_header_top() ?>
           <ul id="gLoginMenu">
             <li><?= html::anchor("albums/1", "Browse Gallery") ?></li>
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
@@ -36,10 +38,9 @@
           <div id="gSiteAdminMenu" class="gClearFix">
             <?= $theme->admin_menu() ?>
           </div>
+          <?= $theme->admin_header_bottom() ?>
         </div>
       </div>
-
-      <?= $theme->messages() ?>
 
       <div id="bd">
         <div id="yui-main">
@@ -70,9 +71,10 @@
       </div>
       <div id="ft">
         <div id="gFooter">
-          <?= $theme->admin_footer(); ?>
+          <?= $theme->admin_footer() ?>
           Footer
         </div>
+        <?= $theme->admin_credits() ?>
       </div>
     </div>
     <?= $theme->admin_page_bottom() ?>

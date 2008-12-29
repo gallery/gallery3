@@ -62,6 +62,13 @@ class Admin_View_Core extends View {
   }
 
   /**
+   * Print out any site wide status information.  This is for admins only.
+   */
+  public function site_status() {
+    return site_status::get();
+  }
+
+  /**
    * Print out any messages waiting for this user.
    */
   public function messages() {
@@ -73,8 +80,11 @@ class Admin_View_Core extends View {
    */
   public function __call($function, $args) {
     switch ($function) {
+    case "admin_credits";
     case "admin_dashboard_blocks":
     case "admin_footer":
+    case "admin_header_top":
+    case "admin_header_bottom":
     case "admin_page_bottom":
     case "admin_page_top":
     case "admin_sidebar_blocks":
