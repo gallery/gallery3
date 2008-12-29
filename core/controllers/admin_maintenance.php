@@ -179,6 +179,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       }
       print json_encode(
         array("result" => "success",
+              "task" => $task->as_array(),
               "location" => url::site("admin/maintenance")));
     } else {
       print json_encode(
