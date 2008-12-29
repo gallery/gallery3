@@ -21,10 +21,10 @@ class User_Model extends ORM {
   protected $has_and_belongs_to_many = array("groups");
 
   var $rules = array(
-    "name" => "required|length[4,32]",
+    "name" => "required|length[1,32]",
     "full_name" => "length[0,255]",
-    "email" => "valid_email|length[4,255]",
-    "password" => "required|length[5,40]");
+    "email" => "valid_email|length[1,255]",
+    "password" => "required|length[1,40]");
 
   public function __set($column, $value) {
     switch ($column) {
