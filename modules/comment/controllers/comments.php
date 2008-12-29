@@ -30,6 +30,7 @@ class Comments_Controller extends REST_Controller {
 
     $comments = ORM::factory("comment")
       ->where("item_id", $item->id)
+      ->where("published", 1)
       ->orderby("created", "desc")
       ->find_all();
 
