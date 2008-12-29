@@ -255,6 +255,35 @@ class Image_Core {
 	}
 
 	/**
+         * Overlay a second image on top of this one.
+         *
+         * @throws Kohana_Exception
+         * @param  string  $overlay_file          path to an image file
+         * @param  integer $x                     x offset for the overlay
+         * @param  integer $y                     y offset for the overlay
+         * @param  integer $transparency          transparency percent
+         */
+	public function composite($overlay_file, $x, $y, $transparency)
+	{
+		$image_info = getimagesize($overlay_file);
+
+		// Check to make sure the image type is allowed
+		if ( ! isset(Image::$allowed_types[$image_info[2]]))
+			throw new Kohana_Exception('image.type_not_allowed', $overlay_file);
+
+		$this->actions['composite'] = array
+		(
+			'overlay_file'  => $overlay_file,
+			'mime'          => $image_info['mime'],
+			'x'             => $x,
+			'y'             => $y,
+			'transparency'  => $transparency
+		);
+
+		return $this;
+	}
+
+	/**
 	 * Flip an image horizontally or vertically.
 	 *
 	 * @throws  Kohana_Exception

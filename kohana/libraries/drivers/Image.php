@@ -146,4 +146,11 @@ abstract class Image_Driver {
 	 */
 	abstract public function sharpen($amount);
 
+	/**
+	 * Overlay a second image. Valid properties are: overlay_file, mime, x, y and transparency.
+	 *
+	 * @return  boolean
+	 */
+	abstract public function composite($properties);
+
 } // End Image Driver

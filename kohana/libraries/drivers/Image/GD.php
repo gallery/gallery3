@@ -331,6 +331,28 @@ class Image_GD_Driver extends Image_Driver {
 		return imageconvolution($this->tmp_image, $matrix, $amount - 8, 0);
 	}
 
+	public function composite($properties)
+	{
+		switch($properties['mime'])
+		{
+			case "image/jpeg":
+			$overlay_img = imagecreatefromjpeg($properties['overlay_file']);
+			break;
+
+			case "image/gif":
+			$overlay_img = imagecreatefromgif($properties['overlay_file']);
+			break;
+
+			case "image/png":
+			$overlay_img = imagecreatefrompng($properties['overlay_file']);
+			break;
+		}
+
+		imagecopymerge($this->tmp_image, $overlay_img, $properties['x'], $properties['y'], 0, 0, imagesx($overlay_img), imagesy($overlay_img), $properties['transparency']);
+		imagedestroy($overlay_img);
+		return TRUE;
+	}
+
 	protected function properties()
 	{
 		return array(imagesx($this->tmp_image), imagesy($this->tmp_image));

@@ -203,6 +203,16 @@ class Image_GraphicsMagick_Driver extends Image_Driver {
 		return TRUE;
 	}
 
+	public function composite($properties)
+	{
+		if ($error = exec(escapeshellcmd($this->dir.'gm'.$this->ext.' composite').' -geometry ' . escapeshellarg('+'.$properties['x'].'+'.$properties['y']).' -dissolve '.escapeshellarg($properties['transparency']).' '.escapeshellarg($properties['overlay_file']).' '.$this->cmd_image.' '.$this->cmd_image))
+		{
+			$this->errors[] = $error;
+			return FALSE;
+		}
+		return TRUE;
+	}
+
 	protected function properties()
 	{
 		return array_slice(getimagesize($this->tmp_image), 0, 2, FALSE);
