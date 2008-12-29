@@ -69,7 +69,7 @@ class Comments_Controller extends REST_Controller {
 
       print json_encode(
         array("result" => "success",
-              "resource" => $comment->visible ? url::site("comments/{$comment->id}") : NULL,
+              "resource" => $comment->published ? url::site("comments/{$comment->id}") : NULL,
               "form" => comment::get_add_form($item)->__toString()));
     } else {
       print json_encode(

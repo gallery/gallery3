@@ -31,13 +31,13 @@ class comment_installer {
           `created` int(9) NOT NULL,
           `item_id` int(9) NOT NULL,
           `url` varchar(255) default NULL,
-          `visible` tinyint(1) default 1,
-          PRIMARY KEY (`id`))
+          `published` tinyint(1) default 1,
+          `ip_addr` char(15) default NULL,
+          `user_agent` varchar(255) default NULL,
+          `spam_signature` varchar(255) default NULL,
+          `spam_type` char(15) default NULL,
+        PRIMARY KEY (`id`))
         ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
-      if (module::is_installed("spam_filter")) {
-        spam_filter_installer::add_fields();
-      }
 
       module::set_version("comment", 1);
     }

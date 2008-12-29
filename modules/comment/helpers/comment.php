@@ -46,13 +46,15 @@ class comment_Core {
     $comment->text = $text;
     $comment->item_id = $item_id;
     $comment->url = $url;
+    $comment->ip_addr = Input::instance()->ip_address();
+    $comment->user_agent = Kohana::$user_agent;
     $comment->created = time();
 
     // @todo Figure out how to mock up the test of the spam_filter
     if (module::is_installed("spam_filter") && !TEST_MODE) {
       spam_filter::verify_comment($comment);
     } else {
-      $comment->visible = true;
+      $comment->published = true;
     }
 
     $comment->save();
@@ -75,6 +77,8 @@ class comment_Core {
     $comment->email = $email;
     $comment->text = $text;
     $comment->url = $url;
+    $comment->ip_addr = Input::instance()->ip_address();
+    $comment->user_agent = Kohana::$user_agent;
 
     // @todo Figure out how to mock up the test of the spam_filter
     if (module::is_installed("spam_filter") && !TEST_MODE) {

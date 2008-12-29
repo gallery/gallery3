@@ -18,8 +18,25 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Helper_Test extends Unit_Test_Case {
+  private $_ip_address;
+  private $_user_agent;
+
+  public function setup() {
+    $this->_ip_address = Input::instance()->ip_address;
+    $this->_user_agent = Kohana::$user_agent;
+  }
+
+  public function teardown() {
+    Input::instance()->ip_address = $this->_ip_address;
+    Kohana::$user_agent = $this->_user_agent;
+  }
+
   public function create_comment_test() {
     $rand = rand();
+
+    Input::instance()->ip_address = "1.1.1.1";
+    Kohana::$user_agent = "Gallery3 Unit Test";
+
     $comment = comment::create($rand, $rand, $rand, $rand, $rand, $rand);
 
     $this->assert_equal($rand, $comment->author);
@@ -27,11 +44,15 @@ class Comment_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($rand, $comment->text);
     $this->assert_equal($rand, $comment->item_id);
     $this->assert_equal($rand, $comment->url);
+    $this->assert_equal("1.1.1.1", $comment->ip_addr);
+    $this->assert_equal("Gallery3 Unit Test", $comment->user_agent);
     $this->assert_true(!empty($comment->created));
   }
 
   public function update_comment_test() {
     $rand = rand();
+    Input::instance()->ip_address = "1.1.1.1";
+    Kohana::$user_agent = "Gallery3 Unit Test";
     $comment = comment::create($rand, $rand, $rand, $rand, $rand, $rand);
 
     $this->assert_equal($rand, $comment->author);
@@ -39,19 +60,27 @@ class Comment_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($rand, $comment->text);
     $this->assert_equal($rand, $comment->item_id);
     $this->assert_equal($rand, $comment->url);
+    $this->assert_equal("1.1.1.1", $comment->ip_addr);
+    $this->assert_equal("Gallery3 Unit Test", $comment->user_agent);
     $this->assert_true(!empty($comment->created));
 
     $rand2 = rand();
+    Input::instance()->ip_address = "1.1.1.2";
+    Kohana::$user_agent = "Gallery3 Unit Test New Agent";
     comment::update($comment, $rand2, $rand2, $rand2, $rand2, $rand2);
     $this->assert_equal($rand2, $comment->author);
     $this->assert_equal($rand2, $comment->email);
     $this->assert_equal($rand2, $comment->text);
     $this->assert_equal($rand, $comment->item_id);
+    $this->assert_equal("1.1.1.2", $comment->ip_addr);
     $this->assert_equal($rand2, $comment->url);
+    $this->assert_equal("Gallery3 Unit Test New Agent", $comment->user_agent);
   }
 
   public function update_comment_no_change_test() {
     $rand = rand();
+    Input::instance()->ip_address = "1.1.1.1";
+    Kohana::$user_agent = "Gallery3 Unit Test";
     $comment = comment::create($rand, $rand, $rand, $rand, $rand, $rand);
 
     $this->assert_equal($rand, $comment->author);
@@ -60,6 +89,8 @@ class Comment_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($rand, $comment->item_id);
     $this->assert_equal($rand, $comment->url);
     $this->assert_true(!empty($comment->created));
+    $this->assert_equal("1.1.1.1", $comment->ip_addr);
+    $this->assert_equal("Gallery3 Unit Test", $comment->user_agent);
 
     comment::update($comment, $rand, $rand, $rand, $rand, $rand);
     $this->assert_equal($rand, $comment->author);
@@ -67,5 +98,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($rand, $comment->text);
     $this->assert_equal($rand, $comment->item_id);
     $this->assert_equal($rand, $comment->url);
+    $this->assert_equal("1.1.1.1", $comment->ip_addr);
+    $this->assert_equal("Gallery3 Unit Test", $comment->user_agent);
   }
 }

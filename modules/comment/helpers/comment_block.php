@@ -32,7 +32,7 @@ class comment_block_Core {
     $view = new View("comments.html");
     $view->comments = ORM::factory("comment")
       ->where("item_id", $theme->item()->id)
-      ->where("visible", 1)
+      ->where("published", 1)
       ->orderby("created", "ASC")
       ->find_all();
 
