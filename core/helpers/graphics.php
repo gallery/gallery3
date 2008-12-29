@@ -146,10 +146,10 @@ class graphics_Core {
     $pad = 10;
     $top = $pad;
     $left = $pad;
-    $y_center = $height / 2 - $w_height / 2;
-    $x_center = $width / 2 - $w_width / 2;
-    $bottom = $height - $w_height - $pad;
-    $right = $width - $w_width - $pad;
+    $y_center = max($height / 2 - $w_height / 2, $pad);
+    $x_center = max($width / 2 - $w_width / 2, $pad);
+    $bottom = max($height - $w_height - $pad, $pad);
+    $right = max($width - $w_width - $pad, $pad);
 
     switch ($options["position"]) {
     case "northwest": $x = $left;     $y = $top;       break;
