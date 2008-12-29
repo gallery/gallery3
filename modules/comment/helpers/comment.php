@@ -96,10 +96,10 @@ class comment_Core {
   static function get_add_form($item) {
     $form = new Forge("comments", "", "post");
     $group = $form->group("add_comment")->label(_("Add comment"));
-    $group->input("author") ->label(_("Author")) ->id("gAuthor");
-    $group->input("email")  ->label(_("Email"))  ->id("gEmail");
-    $group->input("url")  ->label(_("Website"))  ->id("gUrl");
-    $group->textarea("text")->label(_("Text"))   ->id("gText");
+    $group->input("author")  ->label(_("Author"))          ->id("gAuthor");
+    $group->input("email")   ->label(_("Email"))           ->id("gEmail");
+    $group->input("url")     ->label(_("Website (hidden)"))->id("gUrl");
+    $group->textarea("text") ->label(_("Text"))            ->id("gText");
     $group->hidden("item_id")->value($item->id);
     $group->submit(_("Add"));
     $form->add_rules_from(ORM::factory("comment"));
@@ -109,10 +109,10 @@ class comment_Core {
   static function get_edit_form($comment) {
     $form = new Forge("comments/{$comment->id}?_method=put", "", "post");
     $group = $form->group("edit_comment")->label(_("Edit comment"));
-    $group->input("author") ->label(_("Author")) ->id("gAuthor") ->value($comment->author);
-    $group->input("email")  ->label(_("Email"))  ->id("gEmail")  ->value($comment->email);
-    $group->input("url")  ->label(_("Website"))  ->id("gUrl")    ->value($comment->url);
-    $group->textarea("text")->label(_("Text"))   ->id("gText")   ->value($comment->text);
+    $group->input("author") ->label(_("Author"))          ->id("gAuthor")->value($comment->author);
+    $group->input("email")  ->label(_("Email"))           ->id("gEmail") ->value($comment->email);
+    $group->input("url")    ->label(_("Website (hidden)"))->id("gUrl")   ->value($comment->url);
+    $group->textarea("text")->label(_("Text"))            ->id("gText")  ->value($comment->text);
     $group->submit(_("Edit"));
     $form->add_rules_from($comment);
     return $form;
