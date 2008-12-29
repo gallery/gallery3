@@ -98,7 +98,9 @@ class Albums_Controller extends Items_Controller {
   private function _create_photo($album) {
     access::required("edit", $album);
 
-    rest::http_content_type(rest::JSON);
+    // If we set the content type as JSON, it triggers saving the result as
+    // a document in the browser (well, in Chrome at least).
+    // @todo figure out why and fix this.
     $form = photo::get_add_form($album);
     if ($form->validate()) {
       $photo = photo::create(
