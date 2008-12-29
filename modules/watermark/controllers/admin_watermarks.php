@@ -43,7 +43,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     if ($form->validate()) {
       $position = $form->edit_watermark->position->value;
       module::set_var("watermark", "position", $position);
-      $this->_update_graphics_rules(module::get_var("watermark", "name"), $position);
+      $this->_update_graphics_rules();
 
       log::success("watermark", _("Watermark changed"));
       message::success(_("Watermark changed"));
@@ -115,7 +115,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       module::set_var("watermark", "height", $image_info[1]);
       module::set_var("watermark", "mime_type", $image_info["mime"]);
       module::set_var("watermark", "position", $position);
-      $this->_update_graphics_rules(module::get_var("watermark", "name"), $position);
+      $this->_update_graphics_rules();
       @unlink($file);
 
       message::success(_("Watermark saved"));
@@ -130,14 +130,17 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     }
   }
 
-  private function _update_graphics_rules($name=null, $position=null) {
+  private function _update_graphics_rules() {
     graphics::remove_rules("watermark");
-    if ($name) {
+    if ($name = module::get_var("watermark", "name")) {
       foreach (array("thumb", "resize") as $target) {
         graphics::add_rule(
-          "watermark", $target, "compose",
-          array("overlay" => VARPATH . "modules/watermark/$name",
-                "position" => $position),
+          "watermark", $target, "composite",
+          array("file" => VARPATH . "modules/watermark/$name",
+                "width" => module::get_var("watermark", "width"),
+                "height" => module::get_var("watermark", "height"),
+                "mime_type" => module::get_var("watermark", "mime_type"),
+                "position" => module::get_var("watermark", "position")),
           1000);
       }
     }
