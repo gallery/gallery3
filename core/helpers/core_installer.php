@@ -182,7 +182,7 @@ class core_installer {
         100);
       graphics::add_rule(
         "core", "resize", "resize",
-        array("width" => 200, "height" => 200, "master" => Image::AUTO),
+        array("width" => 640, "height" => 480, "master" => Image::AUTO),
         100);
 
       module::set_version("core", 1);
