@@ -19,22 +19,36 @@
  */
 class watermark_Core {
   public static function get_add_form() {
+    for ($i = 1; $i <= 100; $i++) {
+      $range[$i] = $i;
+    }
+
     $form = new Forge("admin/watermarks/add", "", "post");
     $group = $form->group("add_watermark")->label(_("Upload Watermark"));
     $group->upload("file")->label(_("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required");
     $group->dropdown("position")->label(_("Watermark Position"))
       ->options(self::positions())
       ->selected("southeast");
+    $group->dropdown("transparency")->label(_("Transparency Percent"))
+      ->options($range)
+      ->selected(100);
     $group->submit(_("Upload"));
     return $form;
   }
 
   public static function get_edit_form() {
+    for ($i = 1; $i <= 100; $i++) {
+      $range[$i] = $i;
+    }
+
     $form = new Forge("admin/watermarks/edit", "", "post");
     $group = $form->group("edit_watermark")->label(_("Edit Watermark"));
     $group->dropdown("position")->label(_("Watermark Position"))
       ->options(self::positions())
-      ->selected("southeast");
+      ->selected(module::get_var("watermark", "position"));
+    $group->dropdown("transparency")->label(_("Transparency Percent"))
+      ->options($range)
+      ->selected(module::get_var("watermark", "transparency"));
     $group->submit(_("Modify"));
     return $form;
   }

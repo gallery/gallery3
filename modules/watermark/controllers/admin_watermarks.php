@@ -38,11 +38,10 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function edit() {
-    rest::http_content_type(rest::JSON);
     $form = watermark::get_edit_form();
     if ($form->validate()) {
-      $position = $form->edit_watermark->position->value;
-      module::set_var("watermark", "position", $position);
+      module::set_var("watermark", "position", $form->edit_watermark->position->value);
+      module::set_var("watermark", "transparency", $form->edit_watermark->transparency->value);
       $this->_update_graphics_rules();
 
       log::success("watermark", _("Watermark changed"));
@@ -109,12 +108,12 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       }
 
       rename($file, VARPATH . "modules/watermark/$name");
-      $position = $form->add_watermark->position->value;
       module::set_var("watermark", "name", $name);
       module::set_var("watermark", "width", $image_info[0]);
       module::set_var("watermark", "height", $image_info[1]);
       module::set_var("watermark", "mime_type", $image_info["mime"]);
-      module::set_var("watermark", "position", $position);
+      module::set_var("watermark", "position", $form->add_watermark->position->value);
+      module::set_var("watermark", "transparency", $form->add_watermark->transparency->value);
       $this->_update_graphics_rules();
       @unlink($file);
 
@@ -139,8 +138,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
           array("file" => VARPATH . "modules/watermark/$name",
                 "width" => module::get_var("watermark", "width"),
                 "height" => module::get_var("watermark", "height"),
-                "mime_type" => module::get_var("watermark", "mime_type"),
-                "position" => module::get_var("watermark", "position")),
+                "position" => module::get_var("watermark", "position"),
+                "transparency" => module::get_var("watermark", "transparency")),
           1000);
       }
     }

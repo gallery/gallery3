@@ -20,6 +20,9 @@
       <p>
         <?= sprintf(_("Position: %s"), watermark::position($position)) ?>
       </p>
+      <p>
+        <?= sprintf(_("Transparency: %s%%"), module::get_var("watermark", "transparency")) ?>
+      </p>
     </div>
     <div class="controls">
       <a href="<?= url::site("admin/watermarks/form_edit") ?>"
