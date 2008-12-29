@@ -36,7 +36,7 @@ class message_Core {
    * @param string  $msg           a detailed message
    */
   public static function info($msg) {
-    self::add($msg, self::INFO, $permanent_key);
+    self::add($msg, self::INFO);
   }
 
   /**
@@ -44,7 +44,7 @@ class message_Core {
    * @param string  $msg           a detailed message
    */
   public static function warning($msg) {
-    self::add($msg, self::WARNING, $permanent_key);
+    self::add($msg, self::WARNING);
   }
 
   /**
@@ -52,7 +52,7 @@ class message_Core {
    * @param string  $msg           a detailed message
    */
   public static function error($msg) {
-    self::add($msg, self::ERROR, $permanent_key);
+    self::add($msg, self::ERROR);
   }
 
   /**
