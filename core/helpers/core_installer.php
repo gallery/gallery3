@@ -176,8 +176,14 @@ class core_installer {
       module::set_var("core", "resize_size", 640);
 
       // Add rules for generating our thumbnails and resizes
-      graphics::add_rule("core", "thumb", "resize", array(200, 200, Image::AUTO), 100);
-      graphics::add_rule("core", "resize", "resize", array(640, 640, Image::AUTO), 100);
+      graphics::add_rule(
+        "core", "thumb", "resize",
+        array("width" => 200, "height" => 200, "master" => Image::AUTO),
+        100);
+      graphics::add_rule(
+        "core", "resize", "resize",
+        array("width" => 200, "height" => 200, "master" => Image::AUTO),
+        100);
 
       module::set_version("core", 1);
     }

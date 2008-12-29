@@ -93,7 +93,7 @@ class graphics_Core {
                ->where("target", $target)
                ->orderby("priority", "asc")
                ->find_all() as $rule) {
-        $args = array_merge(array($input_file, $output_file), unserialize($rule->args));
+        $args = array($input_file, $output_file, unserialize($rule->args));
         call_user_func_array(array("graphics", $rule->operation), $args);
       }
     }
@@ -122,9 +122,9 @@ class graphics_Core {
    * @param integer $height
    * @param integer $master Master Dimension constant from the Image class
    */
-  public static function resize($input_file, $output_file, $width, $height, $master) {
+  public static function resize($input_file, $output_file, $options) {
     Image::factory($input_file)
-      ->resize($width, $height, $master)
+      ->resize($options["width"], $options["height"], $options["master"])
       ->save($output_file);
   }
 
@@ -132,7 +132,10 @@ class graphics_Core {
    * Stub.
    * @todo implement this
    */
-  public static function compose($input_file, $output_file, $other_args)  {
+  public static function composite($input_file, $output_file, $options) {
+    Image::factory($input_file)
+      ->composite($options["file"], $options["mime_type"], 100, 100)
+      ->save($output_file);
   }
 
   /**
