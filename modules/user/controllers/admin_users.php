@@ -27,7 +27,6 @@ class Admin_Users_Controller extends Controller {
 
   public function add() {
     $form = user::get_add_form_admin();
-    rest::http_content_type(rest::JSON);
     if($form->validate()) {
       $user = user::create($form->add_user->inputs["name"]->value,
                            $form->add_user->full_name->value, $form->add_user->password->value);
@@ -47,7 +46,6 @@ class Admin_Users_Controller extends Controller {
   }
     
   public function delete($id) {
-    rest::http_content_type(rest::JSON);
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
@@ -77,7 +75,6 @@ class Admin_Users_Controller extends Controller {
   }
 
   public function edit($id) {
-    rest::http_content_type(rest::JSON);
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();

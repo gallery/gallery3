@@ -35,7 +35,6 @@ class Comments_Controller extends REST_Controller {
 
     switch (rest::output_format()) {
     case "json":
-      rest::http_content_type(rest::JSON);
       foreach ($comments as $comment) {
         $data[] = $comment->as_array();
       }
@@ -55,7 +54,6 @@ class Comments_Controller extends REST_Controller {
    * @see REST_Controller::_create($resource)
    */
   public function _create($comment) {
-    rest::http_content_type(rest::JSON);
     $item = ORM::factory("item", $this->input->post("item_id"));
     access::required("view", $item);
 
@@ -100,7 +98,6 @@ class Comments_Controller extends REST_Controller {
    *  @see REST_Controller::_update($resource)
    */
   public function _update($comment) {
-    rest::http_content_type(rest::JSON);
 
     $form = comment::get_edit_form($comment);
     if ($form->validate()) {
@@ -125,7 +122,6 @@ class Comments_Controller extends REST_Controller {
    *  @see REST_Controller::_delete($resource)
    */
   public function _delete($comment) {
-    rest::http_content_type(rest::JSON);
 
     $comment->delete();
     print json_encode(array("result" => "success"));

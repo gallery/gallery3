@@ -61,7 +61,6 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function delete() {
-    rest::http_content_type(rest::JSON);
     $form = watermark::get_delete_form();
     if ($form->validate()) {
       if ($name = module::get_var("watermark", "name")) {
@@ -92,7 +91,6 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function add() {
-    rest::http_content_type(rest::JSON);
     $form = watermark::get_add_form();
     if ($form->validate()) {
       $file = $_POST["file"];

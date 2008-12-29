@@ -26,7 +26,6 @@ class Admin_Groups_Controller extends Controller {
   }
 
   public function add() {
-    rest::http_content_type(rest::JSON);
     $form = group::get_add_form_admin();
     if($form->validate()) {
       $group = group::create($form->add_group->inputs["name"]->value);
@@ -45,7 +44,6 @@ class Admin_Groups_Controller extends Controller {
   }
   
   public function delete($id) {
-    rest::http_content_type(rest::JSON);
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {
       kohana::show_404();
@@ -75,7 +73,6 @@ class Admin_Groups_Controller extends Controller {
   }
   
   public function edit($id) {
-    rest::http_content_type(rest::JSON);
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {
       kohana::show_404();

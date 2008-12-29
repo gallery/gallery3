@@ -46,7 +46,6 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _create($tag) {
-    rest::http_content_type(rest::JSON);
     $item = ORM::factory("item", $this->input->post("item_id"));
     access::required("edit", $item);
 
