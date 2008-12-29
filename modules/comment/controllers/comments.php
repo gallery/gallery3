@@ -61,18 +61,15 @@ class Comments_Controller extends REST_Controller {
 
     $form = comment::get_add_form($item);
     if ($form->validate()) {
-      $comment->author = $this->input->post("author");
-      $comment->email = $this->input->post("email");
-      $comment->text = $this->input->post("text");
-      $comment->created = time();
-      $comment->item_id = $this->input->post("item_id");
-      $comment->save();
-
-      module::event("comment_created", $comment);
+      $comment = comment::create($this->input->post("author"),
+        $this->input->post("email"),
+        $this->input->post("text"),
+        $this->input->post("item_id"),
+        $this->input->post("url"));
 
       print json_encode(
         array("result" => "success",
-              "resource" => url::site("comments/{$comment->id}"),
+              "resource" => $comment->visible ? url::site("comments/{$comment->id}") : NULL,
               "form" => comment::get_add_form($item)->__toString()));
     } else {
       print json_encode(
@@ -107,12 +104,11 @@ class Comments_Controller extends REST_Controller {
 
     $form = comment::get_edit_form($comment);
     if ($form->validate()) {
-      $comment->author = $this->input->post("author");
-      $comment->email = $this->input->post("email");
-      $comment->text = $this->input->post("text");
-      $comment->save();
-
-      module::event("comment_updated", $comment);
+      $comment = comment::update($comment,
+        $this->input->post("author"),
+        $this->input->post("email"),
+        $this->input->post("text"),
+        $this->input->post("url"));
 
       print json_encode(
         array("result" => "success",

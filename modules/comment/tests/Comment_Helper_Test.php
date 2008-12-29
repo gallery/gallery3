@@ -20,12 +20,52 @@
 class Comment_Helper_Test extends Unit_Test_Case {
   public function create_comment_test() {
     $rand = rand();
-    $comment = comment::create($rand, $rand, $rand, $rand, $rand);
+    $comment = comment::create($rand, $rand, $rand, $rand, $rand, $rand);
 
     $this->assert_equal($rand, $comment->author);
     $this->assert_equal($rand, $comment->email);
     $this->assert_equal($rand, $comment->text);
     $this->assert_equal($rand, $comment->item_id);
+    $this->assert_equal($rand, $comment->url);
     $this->assert_true(!empty($comment->created));
+  }
+
+  public function update_comment_test() {
+    $rand = rand();
+    $comment = comment::create($rand, $rand, $rand, $rand, $rand, $rand);
+
+    $this->assert_equal($rand, $comment->author);
+    $this->assert_equal($rand, $comment->email);
+    $this->assert_equal($rand, $comment->text);
+    $this->assert_equal($rand, $comment->item_id);
+    $this->assert_equal($rand, $comment->url);
+    $this->assert_true(!empty($comment->created));
+
+    $rand2 = rand();
+    comment::update($comment, $rand2, $rand2, $rand2, $rand2, $rand2);
+    $this->assert_equal($rand2, $comment->author);
+    $this->assert_equal($rand2, $comment->email);
+    $this->assert_equal($rand2, $comment->text);
+    $this->assert_equal($rand, $comment->item_id);
+    $this->assert_equal($rand2, $comment->url);
+  }
+
+  public function update_comment_no_change_test() {
+    $rand = rand();
+    $comment = comment::create($rand, $rand, $rand, $rand, $rand, $rand);
+
+    $this->assert_equal($rand, $comment->author);
+    $this->assert_equal($rand, $comment->email);
+    $this->assert_equal($rand, $comment->text);
+    $this->assert_equal($rand, $comment->item_id);
+    $this->assert_equal($rand, $comment->url);
+    $this->assert_true(!empty($comment->created));
+
+    comment::update($comment, $rand, $rand, $rand, $rand, $rand);
+    $this->assert_equal($rand, $comment->author);
+    $this->assert_equal($rand, $comment->email);
+    $this->assert_equal($rand, $comment->text);
+    $this->assert_equal($rand, $comment->item_id);
+    $this->assert_equal($rand, $comment->url);
   }
 }

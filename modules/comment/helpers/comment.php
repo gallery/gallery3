@@ -36,18 +36,55 @@ class comment_Core {
    * @param string  $email author's email
    * @param string  $text comment body
    * @param integer $item_id id of parent item
+   * @param string  $url author's url
    * @return Comment_Model
    */
-  static function create($author, $email, $text, $item_id) {
+  static function create($author, $email, $text, $item_id, $url) {
     $comment = ORM::factory("comment");
     $comment->author = $author;
     $comment->email = $email;
     $comment->text = $text;
     $comment->item_id = $item_id;
+    $comment->url = $url;
     $comment->created = time();
+
+    // @todo Figure out how to mock up the test of the spam_filter
+    if (module::is_installed("spam_filter") && !TEST_MODE) {
+      spam_filter::verify_comment($comment);
+    } else {
+      $comment->visible = true;
+    }
 
     $comment->save();
     module::event("comment_created", $comment);
+
+    return $comment;
+  }
+
+  /**
+   * Update an existing comment.
+   * @param Comment_Model $comment
+   * @param string  $author author's name
+   * @param string  $email author's email
+   * @param string  $text comment body
+   * @param string  $url author's url
+   * @return Comment_Model
+   */
+  static function update($comment, $author, $email, $text, $url) {
+    $comment->author = $author;
+    $comment->email = $email;
+    $comment->text = $text;
+    $comment->url = $url;
+
+    // @todo Figure out how to mock up the test of the spam_filter
+    if (module::is_installed("spam_filter") && !TEST_MODE) {
+      spam_filter::verify_comment($comment);
+    }
+
+    $comment->save();
+    if ($comment->saved) {
+      module::event("comment_updated", $comment);
+    }
 
     return $comment;
   }
@@ -57,6 +94,7 @@ class comment_Core {
     $group = $form->group("add_comment")->label(_("Add comment"));
     $group->input("author") ->label(_("Author")) ->id("gAuthor");
     $group->input("email")  ->label(_("Email"))  ->id("gEmail");
+    $group->input("url")  ->label(_("Website"))  ->id("gUrl");
     $group->textarea("text")->label(_("Text"))   ->id("gText");
     $group->hidden("item_id")->value($item->id);
     $group->submit(_("Add"));
@@ -69,6 +107,7 @@ class comment_Core {
     $group = $form->group("edit_comment")->label(_("Edit comment"));
     $group->input("author") ->label(_("Author")) ->id("gAuthor") ->value($comment->author);
     $group->input("email")  ->label(_("Email"))  ->id("gEmail")  ->value($comment->email);
+    $group->input("url")  ->label(_("Website"))  ->id("gUrl")    ->value($comment->url);
     $group->textarea("text")->label(_("Text"))   ->id("gText")   ->value($comment->text);
     $group->submit(_("Edit"));
     $form->add_rules_from($comment);
