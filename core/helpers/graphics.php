@@ -89,12 +89,14 @@ class graphics_Core {
 
     foreach (array("thumb" => $item->thumb_path(),
                    "resize" => $item->resize_path()) as $target => $output_file) {
+      $working_file = $input_file;
       foreach (ORM::factory("graphics_rule")
                ->where("target", $target)
                ->orderby("priority", "asc")
                ->find_all() as $rule) {
-        $args = array($input_file, $output_file, unserialize($rule->args));
+        $args = array($working_file, $output_file, unserialize($rule->args));
         call_user_func_array(array("graphics", $rule->operation), $args);
+        $working_file = $output_file;
       }
     }
 
@@ -115,12 +117,12 @@ class graphics_Core {
   }
 
   /**
-   * Wrapper around Image::resize
+   * Resize an image.  Valid options are width, height and master.  Master is one of the Image
+   * master dimension constants.
+   *
    * @param string  $input_file
    * @param string  $output_file
-   * @param integer $width
-   * @param integer $height
-   * @param integer $master Master Dimension constant from the Image class
+   * @param array   $options
    */
   public static function resize($input_file, $output_file, $options) {
     Image::factory($input_file)
@@ -129,12 +131,40 @@ class graphics_Core {
   }
 
   /**
-   * Stub.
-   * @todo implement this
+   * Overlay an image on top of the input file.  Valid options are file, mime_type, position and
+   * transparency_percent.
+   * position is one of northwest, north, northeast, west, center, east, southwest, south, southeast
+   *
+   * @param string  $input_file
+   * @param string  $output_file
+   * @param array   $options
    */
   public static function composite($input_file, $output_file, $options) {
+    list ($width, $height) = getimagesize($input_file);
+    list ($w_width, $w_height) = getimagesize($options["file"]);
+
+    $pad = 10;
+    $top = $pad;
+    $left = $pad;
+    $y_center = $height / 2 - $w_height / 2;
+    $x_center = $width / 2 - $w_width / 2;
+    $bottom = $height - $w_height - $pad;
+    $right = $width - $w_width - $pad;
+
+    switch ($options["position"]) {
+    case "northwest": $x = $left;     $y = $top;       break;
+    case "north":     $x = $x_center; $y = $top;       break;
+    case "northeast": $x = $right;    $y = $top;       break;
+    case "west":      $x = $left;     $y = $y_center;  break;
+    case "center":    $x = $x_center; $y = $y_center;  break;
+    case "east":      $x = $right;    $y = $y_center;  break;
+    case "southwest": $x = $left;     $y = $bottom;    break;
+    case "south":     $x = $x_center; $y = $bottom;    break;
+    case "southeast": $x = $right;    $y = $bottom;    break;
+    }
+
     Image::factory($input_file)
-      ->composite($options["file"], $options["mime_type"], 100, 100)
+      ->composite($options["file"], $x, $y, $options["transparency"])
       ->save($output_file);
   }
 
@@ -162,8 +192,7 @@ class graphics_Core {
       site_status::warning(
         sprintf(_("%d of your photos are out of date.  %sClick here to fix them%s"),
                 $count, "<a href=\"" .
-                url::site("admin/maintenance/start/graphics::rebuild_dirty_images?csrf=" .
-                          access::csrf_token()) .
+                url::site("admin/maintenance/start/graphics::rebuild_dirty_images?csrf=__CSRF__") .
                 "\" class=\"gDialogLink\">", "</a>"),
         "graphics_dirty");
     }
