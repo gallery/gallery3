@@ -377,7 +377,7 @@ li.gError select {
   background-color: #e8e8e8;
   background-position: .4em .2em;
   background-repeat: no-repeat;
-  padding: .2em .5em .2em 30px;
+  padding: .4em .5em .4em 30px;
 }
 
 .gError {
@@ -442,7 +442,34 @@ li.gError select {
 
 /** *******************************************************************
  * 6) Navigation and menus
- ****************************************************************** /
+ ******************************************************************/
+
+.sf-menu li {
+  background: #bdd2ff url('../images/bg-buttons.png') 0 12% repeat-x;
+}
+
+.sf-menu li:hover,
+.sf-menu a:hover {
+  background: #cfdeff url('../images/bg-buttons.png') 0 50% repeat-x;
+}
+
+.sf-menu li:active,
+.sf-menu a:active {
+  background: #8ab9ff url('../images/bg-buttons.png') 0 87% repeat-x;
+}
+
+.sf-menu a:hover {
+  text-decoration: none;
+}
+
+.sf-menu li li,
+.sf-menu li li:hover,
+.sf-menu li li a:hover,
+.sf-menu li li li,
+.sf-menu li li li:hover,
+.sf-menu li li li a:hover {
+  background: #bdd2ff;
+}
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -471,10 +498,8 @@ li.gError select {
 #gViewMenu #gHybridLink,
 #gViewMenu #gSlideshowLink,
 #gViewMenu #gFullsizeLink {
-  background-color: #BDD2FF;
   background-repeat: no-repeat;
   background-position: 10px center;
-  color: transparent;
   display: block;
   font-size: .9em;
   height: 22px;
@@ -826,7 +851,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 .ui-dialog-titlebar {
   padding: .5em 1.5em .5em 1em;
   color: #444;
-  background: #e6e6e6 url('../images/bg-button-bars.png') 0 14% repeat-x;
+  background: #e6e6e6 url('../images/bg-bars.png') 0 50% repeat-x;
   border-bottom: 1px solid #ccc;
   font-size: 1em;
   font-weight: normal;
@@ -866,7 +891,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 .ui-dialog-buttonpane button {
   margin: .5em 0 .5em 8px;
   color: #444444;
-  background: #e6e6e6 url('../images/bg-button-bars.png') 0 14% repeat-x;
+  background: #e6e6e6 url('../images/bg-bars.png') 0 50% repeat-x;
   font-size: 1em;
   border: 1px solid #ccc;
   cursor: pointer;
@@ -875,29 +900,15 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
 }
 .ui-dialog-buttonpane button:hover {
   color: #111;
-  background: #eb9300 url('../images/bg-button-bars.png') 0 50% repeat-x;
+  background: #eb9300 url('../images/bg-buttons.png') 0 50% repeat-x;
   border: 1px solid #888;
 }
 .ui-dialog-buttonpane button:active {
   color: #000;
-  background: #8ab9ff url('../images/bg-button-bars.png') 0 87% repeat-x;
+  background: #8ab9ff url('../images/bg-buttons.png') 0 87% repeat-x;
 }
 /* This file skins dialog */
 .ui-dialog.ui-draggable .ui-dialog-titlebar,
 .ui-dialog.ui-draggable .ui-dialog-titlebar {
   cursor: move;
 }
-
-/*clearfix class*/
-.ui-clearfix:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}
-.ui-clearfix {display: inline-block;}
-/* Hides from IE-mac \*/
-* html .ui-clearfix {height: 1%;}
-.ui-clearfix {display: block;}
-/* End hide from IE-mac */

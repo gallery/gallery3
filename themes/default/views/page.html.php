@@ -17,6 +17,10 @@
           media="screen" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
+          media="screen,print,projection" />
+    <![endif]-->
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.listen.js") ?>" type="text/javascript"></script>
@@ -24,10 +28,6 @@
     <?= $theme->head() ?>
     <?= html::script("lib/jquery-ui.js") ?>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
-          media="screen,print,projection" />
-    <![endif]-->
   </head>
 
   <body>
