@@ -1,6 +1,6 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="<?= $id ?>" class="gBlock">
-  <h3><?= $title ?></h3>
+  <h2><?= $title ?></h2>
   <div class="gBlockContent">
     <?= $content ?>
   </div>
