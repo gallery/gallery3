@@ -14,7 +14,6 @@
  * 8)  jQuery and jQuery UI
  *
  * @todo Group Credits and gLoginMenu seperator styles
- * @todo Drop .gShortForm in favor of styling specific IDs (gSearchForm, gAddTagForm)
  * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
  * @todo Refactor form layout styles to reserve room for validation messages in default state. This 
  *       will eliminate layout shifts when validation messages are displayed.
@@ -281,21 +280,26 @@ li.gError select {
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
 
-.gShortForm li {
+#gHeader #gSearchForm li,
+#gSidebar #gAddTagForm li {
   float: left;
   padding: .4em .5em;
 }
 
-.gShortForm legend,
-.gShortForm label {
+#gHeader #gSearchForm legend,
+#gHeader #gSearchForm  label,
+#gSidebar #gAddTagForm legend,
+#gSidebar #gAddTagForm  label {
   display: none;
 }
 
-.gShortForm fieldset {
+#gHeader #gSearchForm fieldset,
+#gSidebar #gAddTagForm fieldset {
   border: none;
 }
 
-.gShortForm input[type="text"] {
+#gHeader #gSearchForm input[type="text"],
+#gSidebar #gAddTagForm input[type="text"] {
   width: 10em;
 }
 

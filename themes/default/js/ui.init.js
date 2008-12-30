@@ -1,6 +1,14 @@
 /**
  * Initialize jQuery UI and Plugin elements
+ * 
+ * @todo Standardize how elements requiring listeners are identified (class or id)
  */
+
+var shortForms = new Array(
+  "#gSearchForm",
+  "#gAddTagForm"
+);
+
 $("document").ready(function() {
 
   // Vertical align thumbnails/metadata in album grid
@@ -49,36 +57,8 @@ $("document").ready(function() {
   };
 
   // Declare which forms are short forms
-  $("#gHeader #gSearchForm").addClass("gShortForm");
-  $("#gSidebar #gAddTagForm").addClass("gShortForm");
-
-  // Get the short forms
-  var shortForms = $(".gShortForm");
-
-  // Set up short form behavior
-  for (var i=0; i < shortForms.length; i++) {
-    // Set variables
-    var shortFormID = "#" + $(shortForms[i]).attr("id");
-    var shortInputID = "#" + $(shortFormID + " input:first").attr("id");
-    var shortLabelValue = $(shortFormID + " label:first").html();
-
-    // Set default input value equal to label text
-    $(shortInputID).val(shortLabelValue);
-
-    // Attach event listeners to inputs
-    $(shortInputID).bind("focus blur", function(e){
-      var eLabelVal = $(this).siblings("label").html();
-      var eInputVal = $(this).val();
-      // Empty input value if it equals it's label
-      if (eLabelVal == eInputVal) {
-        $(this).val("");
-      // Reset the input value if it's empty
-      } else if ($(this).val() == "") {
-        $(this).val(eLabelVal);
-      }
-    });
-  };
-
+  handleShortFormEvent(shortForms);
+  
 });
 
 // Vertically align a block element's content
@@ -176,6 +156,45 @@ function openDialog(element) {
     };
   });
   return false;
+}
+
+/**
+ * Handle initialization of all short forms
+ *
+ * @param array shortForms Array of short form IDs
+ */
+function handleShortFormEvent(shortForms) {
+  for (var i in shortForms) {      
+    shortFormInit(shortForms[i]);
+  }
+}
+ 
+/**
+ * Initialize a short form. Short forms may contain only one text input.
+ *
+ * @param string formID The form's ID, including #
+ */
+function shortFormInit(formID) {
+  // Get the input ID and it's label text
+  var labelValue = $(formID + " label:first").html();
+  var inputID = "#" + $(formID + " input[type='text']:first").attr("id");
+ 
+  // Set the input value equal to label text
+  $(inputID).val(labelValue);
+  
+  // Attach event listeners to the input
+  $(inputID).bind("focus blur", function(e){
+    var eLabelVal = $(this).siblings("label").html();
+    var eInputVal = $(this).val();
+ 
+    // Empty input value if it equals it's label
+    if (eLabelVal == eInputVal) {
+        $(this).val("");
+    // Reset the input value if it's empty
+    } else if ($(this).val() == "") {
+      $(this).val(eLabelVal);
+    }
+  });
 }
 
 /**
