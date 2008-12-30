@@ -154,6 +154,7 @@ class core_installer {
       }
 
       access::register_permission("view");
+      access::register_permission("view_full");
       access::register_permission("edit");
 
       $root = ORM::factory("item");
