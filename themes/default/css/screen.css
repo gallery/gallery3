@@ -1,27 +1,29 @@
 /**
- * Gallery 3 Default Theme Styles
+ * Gallery 3 Default Theme Screen Styles
  *
  * @requires YUI reset, font, grids CSS
  *
  * Sheet organization:
  * 1)  Basic HTML elements
- * 2)  Base text styles
- * 3)  Page layout containers
- * 4)  Reusable content containers
- * 5)  Specific content blocks
+ * 2)  Reusable classes
+ * 3)  Reusable content blocks
+ * 4)  Page layout containers
+ * 5)  Content blocks in specific layout containers
  * 6)  Navigation and menus
- * 7)  Generic styles
- * 8)  Browser hacks
- * 9)  Debugging information
- * 10) Ajax/DOM features
- * 11) jQuery UI
+ * 7)  Browser hacks
+ * 8)  jQuery and jQuery UI
+ *
+ * @todo Group Credits and gLoginMenu seperator styles
+ * @todo Drop .gShortForm in favor of styling specific IDs (gSearchForm, gAddTagForm)
+ * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
+ * @todo Refactor form layout styles to reserve room for validation messages in default state. This 
+ *       will eliminate layout shifts when validation messages are displayed.
+ * @todo Move debugging information styles into a core stylesheet.
  */
 
 /** *******************************************************************
  * 1) Basic HTML elements
- ******************************************************************/
-
-/* Basic HTML elements ~~~~~~~~~~~~~~~~ */
+ **********************************************************************/
 
 body, html {
   background-color: #ccc;
@@ -30,6 +32,14 @@ body, html {
 
 p {
   margin-bottom: 1em;
+}
+
+strong {
+  font-weight: bold;
+}
+
+em {
+  font-style: oblique;
 }
 
 /* Headings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -195,75 +205,22 @@ li.gError select {
   border: 2px solid red;
 }
 
-/** ****************************************************************
- * 2) Base text styles
- ******************************************************************/
+/** *******************************************************************
+ * 2) Reusable generic classes
+ *********************************************************************/
 
-#gContent, .ui-dialog {
-  font-size: 1.2em;
-}
+/* Not used, yet */
 
-#gSidebar {
-  font-size: .9em;
-}
-
-#gHeader, #gFooter {
-  font-size: .8em;
-}
-
-#gSiteMenu, #gBreadcrumbs, #gTagCloud ul {
-  font-size: 1.3em;
-}
-
-.gItem {
-  font-size: .7em;
-}
-
-/*** ***************************************************************
- * 3) Page layout containers
- ******************************************************************/
-
-/* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-.gView {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-bottom: none;
-}
-
-/* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
-
-#gHeader {
-  border-bottom: 1px solid #fff;
-  margin-bottom: 20px;
-}
-
-#gContent {
-  padding-left: 20px;
-}
-
-#gSidebar {
-  background-color: #fff;
-  padding: 0 20px;
-  width: 220px;
-}
-
-#gFooter {
-  border-top: 1px solid #ccc;
-  margin-top: 20px;
-  padding: 10px 20px;
-}
-
-/** ****************************************************************
- * 4) Reusable content containers
- ******************************************************************/
+/** *******************************************************************
+ * 3) Reusable content blocks
+ *********************************************************************/
 
 .gBlock {
   clear: both;
   margin-bottom: 2.5em;
 }
 
-#gSidebar .gBlock h3 {
+.gBlock h2 {
   background: #e8e8e8;
   padding: .3em 1.4em;
   background-image: url('../images/ico-move-handle.png');
@@ -271,62 +228,8 @@ li.gError select {
   cursor: move;
 }
 
-#gSidebar .gBlockContent {
+.gBlockContent {
   padding: .5em 1em;
-}
-
-/** ****************************************************************
- * 5) Specific content blocks
- ******************************************************************/
-
-/* Logo  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gLogo {
-  margin: 5px 10px 10px 20px;
-}
-
-.gThumbnail {
-}
-
-/* Album ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gAlbumHeader {
-  position: relative;
-}
-
-#gAlbumGrid {
-  border-right: 1px solid #e8e8e8;
-  margin-top: 20px;
-}
-
-#gAlbumGrid .gItem {
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
-  float: left;
-  height: 240px;
-  overflow: hidden;
-  padding: 14px 8px;
-  text-align: center;
-  width: 213px;
-}
-
-.gItem h2 {
-  margin: 5px 0;
-}
-
-.gAlbum {
-  background-color: #e8e8e8;
-}
-
-.gAlbum h2 {
-  color: #006;
-}
-
-/* Individual photo ~~~~~~~~~~~~~~~~~~~~~ */
-
-#gItem {
-  margin: 1em 0;
 }
 
 /* Metadata ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -342,40 +245,17 @@ li.gError select {
   text-align: right;
 }
 
-/* Comments ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gComments {
-  margin-top: 2em;
-}
-
-#gComments ul li {
-  margin: 1em 0;
-}
-
-#gComments ul li p {
-  background-color: #e8e8e8;
-  margin-bottom: 2px;
-  padding: 4px;
-}
-
-#gComments ul li div {
-  padding: 8px;
-}
-
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gMessages {
-  margin: 0 20px 20px;
-}
-
-#gMessages li {
+#gSiteStatus li,
+#gMessage li {
   border: 1px solid #ccc;
-  margin: .4em 0;
+  margin-bottom: .4em;
 }
 
 .gError, .gInfo, .gSuccess, .gWarning {
   background-color: #e8e8e8;
-  background-position: .4em .2em;
+  background-position: .4em 50%;
   background-repeat: no-repeat;
   padding: .4em .5em .4em 30px;
 }
@@ -411,7 +291,6 @@ li.gError select {
   display: none;
 }
 
-
 .gShortForm fieldset {
   border: none;
 }
@@ -420,55 +299,185 @@ li.gError select {
   width: 10em;
 }
 
+/* Debugging information ~~~~~~~~~~~~~~~~~ */
+
+.gAnnotatedThemeBlock {
+  position: relative;
+  padding: 1em;
+  margin: 1em;
+  border: 1px solid #C00;
+  clear: both;
+}
+
+.gAnnotatedThemeBlock_album_top {
+  float: right;
+}
+
+.gAnnotatedThemeBlock_header_bottom {
+  float: right;
+}
+
+.gAnnotatedThemeBlock div.title {
+  position: absolute;
+  top: -1em;
+  right: -1em;
+  border: 1px solid black;
+  background: #C00;
+  color: white;
+  text-align: left;
+  padding: 4px;
+  font-size: 110%;
+  -moz-border-radius: 5% 5% 5% 5%;
+}
+
+/*** ******************************************************************
+ * 4) Page layout containers
+ *********************************************************************/
+
+/* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gView {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+/* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
+
+#gHeader {
+  border-bottom: 1px solid #fff;
+  font-size: .8em;
+  margin-bottom: 20px;
+}
+
+#gContent {
+  font-size: 1.2em;
+  padding-left: 20px;
+}
+
+#gSidebar {
+  background-color: #fff;
+  font-size: .9em;
+  padding: 0 20px;
+  width: 220px;
+}
+
+#gFooter {
+  border-top: 1px solid #ccc;
+  font-size: .8em;
+  margin-top: 20px;
+  padding: 10px 20px;
+}
+
+/** *******************************************************************
+ * 5) Content blocks in specific layout containers
+ *********************************************************************/
+
+/* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gHeader #gLogo {
+  margin: 5px 10px 10px 20px;
+}
+
 #gHeader #gSearchForm {
   float: right;
   margin-right: 20px;
 }
 
-/* Credits ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gCredits li {
+#gContent #gAlbumHeader {
+}
+
+#gContent #gAlbumHeader .gDescription {
+}
+
+#gContent #gAlbumGrid {
+  border-right: 1px solid #e8e8e8;
+  margin-top: 20px;
+}
+
+#gContent #gAlbumGrid .gItem {
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  float: left;
+  font-size: .7em;
+  height: 240px;
+  overflow: hidden;
+  padding: 14px 8px;
+  text-align: center;
+  width: 213px;
+}
+
+#gContent #gAlbumGrid .gItem .gThumbnail {
+}
+
+#gContent #gAlbumGrid .gItem h2 {
+  margin: 5px 0;
+}
+
+#gContent #gAlbumGrid .gAlbum {
+  background-color: #e8e8e8;
+}
+
+#gContent #gAlbumGrid .gAlbum h2 {
+  color: #006;
+}
+
+/* Individual photo content ~~~~~~~~~~~~~~ */
+
+#gContent #gItem {
+  margin: 1em 0;
+}
+
+#gContent #gItemHeader {
+}
+
+#gContent #gItemHeader .gDescription {
+}
+
+#gContent #gComments {
+  margin-top: 2em;
+}
+
+#gContent #gComments ul li {
+  margin: 1em 0;
+}
+
+#gContent #gComments ul li p {
+  background-color: #e8e8e8;
+  margin-bottom: 2px;
+  padding: 4px;
+}
+
+#gContent #gComments ul li div {
+  padding: 8px;
+}
+
+/* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gFooter #gCredits li {
   display: inline;
 }
 
-#gCredits li:before {
+#gFooter #gCredits li:before {
   padding: 0 2px;
   content: "|";
 }
 
-#gCredits li.first:before {
+#gFooter #gCredits li.first:before {
   content: "";
 }
 
 /** *******************************************************************
- * 6) Navigation and menus
- ******************************************************************/
+ * 5) Navigation and menus
+ *********************************************************************/
 
-.sf-menu li {
-  background: #bdd2ff url('../images/bg-buttons.png') 0 12% repeat-x;
-}
-
-.sf-menu li:hover,
-.sf-menu a:hover {
-  background: #cfdeff url('../images/bg-buttons.png') 0 50% repeat-x;
-}
-
-.sf-menu li:active,
-.sf-menu a:active {
-  background: #8ab9ff url('../images/bg-buttons.png') 0 87% repeat-x;
-}
-
-.sf-menu a:hover {
-  text-decoration: none;
-}
-
-.sf-menu li li,
-.sf-menu li li:hover,
-.sf-menu li li a:hover,
-.sf-menu li li li,
-.sf-menu li li li:hover,
-.sf-menu li li li a:hover {
-  background: #bdd2ff;
+#gSiteMenu, 
+#gBreadcrumbs, 
+#gTagCloud ul {
+  font-size: 1.3em;
 }
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -683,26 +692,11 @@ li.gError select {
 }
 
 /** *******************************************************************
- * 7) Generic styles
- ******************************************************************/
-
-.gButtonLink {
-  border: 1px solid #ccc;
-  display: block;
-  height: 24px;
-  line-height: 1.7em;
-  padding: 3px 1em 0;
-}
-
-.gButtonLink:hover {
-  background-color: #f3f3f3;
-}
-
-/** *******************************************************************
- * 8) Browser hacks
+ * 6) Browser hacks
  *********************************************************************/
 
-.gClearFix:after {
+#gSiteMenu:after,
+#gBreadcrumbs:after {
   clear: both;
   content: ".";
   display: block;
@@ -711,43 +705,54 @@ li.gError select {
 }
 
 /** *******************************************************************
- * 9) Debugging information
+ * 7) jQuery and jQuery UI
  *********************************************************************/
 
-div.gAnnotatedThemeBlock {
-  position: relative;
-  padding: 1em;
-  margin: 1em;
-  border: 1px solid #C00;
-  clear: both;
+/* Restyle Superfish menus a bit ~~~~~~~~~ */
+
+.sf-menu li {
+  background: #bdd2ff url('../images/bg-buttons.png') 0 12% repeat-x;
 }
 
-div.gAnnotatedThemeBlock_album_top {
-  float: right;
+.sf-menu li:hover,
+.sf-menu a:hover {
+  background: #cfdeff url('../images/bg-buttons.png') 0 50% repeat-x;
 }
 
-div.gAnnotatedThemeBlock_header_bottom {
-  float: right;
+.sf-menu li:active,
+.sf-menu a:active {
+  background: #8ab9ff url('../images/bg-buttons.png') 0 87% repeat-x;
 }
 
-div.gAnnotatedThemeBlock div.title {
-  position: absolute;
-  top: -1em;
-  right: -1em;
-  border: 1px solid black;
-  background: #C00;
-  color: white;
-  text-align: left;
-  padding: 4px;
-  font-size: 110%;
-  -moz-border-radius: 5% 5% 5% 5%;
+.sf-menu a:hover {
+  text-decoration: none;
 }
 
-/** *******************************************************************
- * 10) Ajax/DOM features
- *********************************************************************/
+.sf-menu li li,
+.sf-menu li li:hover,
+.sf-menu li li a:hover,
+.sf-menu li li li,
+.sf-menu li li li:hover,
+.sf-menu li li li a:hover {
+  background: #bdd2ff;
+}
+
+/* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
+
+.gLoadingLarge {
+  background: #fff url('../images/loading-lg.gif') no-repeat center center;
+  font-size: 0;
+}
+
+.gLoadingSmall {
+  background: #fff url('../images/loading-sm.gif') no-repeat center center;
+  font-size: 0;
+}
+
+/* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gDialog {
+  font-size: 1.2em;
   text-align: left;
 }
 
@@ -760,21 +765,6 @@ div.gAnnotatedThemeBlock div.title {
   display: none;
 }
 
-.gLoadingLarge {
-  background: #fff url('../images/loading-lg.gif') no-repeat center center;
-  font-size: 0;
-}
-
-.gLoadingSmall {
-  background: #fff url('../images/loading-sm.gif') no-repeat center center;
-  font-size: 0;
-}
-
-/** *******************************************************************
- * 11) jQuery UI
- *********************************************************************/
-
-/*dialog*/
 .ui-dialog {
   background: #f3f3f3 url('../images/bg-dialog.png') 0 0 repeat-x;
   color: #362b36;
@@ -789,8 +779,10 @@ div.gAnnotatedThemeBlock div.title {
 .ui-resizable .ui-resizable-handle {
   display: block;
 }
-body .ui-resizable-disabled .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
-body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
+body .ui-resizable-disabled .ui-resizable-handle,
+body .ui-resizable-autohide .ui-resizable-handle { 
+  display: none;
+}
 .ui-resizable-n {
   cursor: n-resize;
   height: 7px;
@@ -867,7 +859,8 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
   height: 11px;
   z-index: 100;
 }
-.ui-dialog-titlebar-close-hover, .ui-dialog-titlebar-close:hover {
+.ui-dialog-titlebar-close-hover, 
+.ui-dialog-titlebar-close:hover {
   background-position: 0 47%;
 }
 .ui-dialog-titlebar-close:active {
