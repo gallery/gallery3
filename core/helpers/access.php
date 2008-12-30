@@ -145,7 +145,7 @@ class access_Core {
     $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
 
-    if ($perm_name =="view") {
+    if ($perm_name == "view") {
       self::_update_access_view_cache($group, $album);
       if ($group->id == 1) {
         if ($value === self::DENY) {
