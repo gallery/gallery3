@@ -185,6 +185,24 @@ class core_installer {
         array("width" => 640, "height" => 480, "master" => Image::AUTO),
         100);
 
+      // Detect a graphics toolkit
+      $toolkits = graphics::detect_toolkits();
+      foreach (array("imagemagick", "graphicsmagick", "gd") as $tk) {
+        if ($toolkits[$tk]) {
+          module::set_var("core", "graphics_toolkit", $tk);
+          if ($tk != "gd") {
+            module::set_var("core", "graphics_toolkit_path", $toolkits[$tk]);
+          }
+          break;
+        }
+      }
+      if (!module::get_var("core", "graphics_toolkit")) {
+        site_status::warning(
+          sprintf(_("Graphics toolkit missing!  Please %schoose a toolkit%s."),
+                  "<a href=\"" . url::site("admin/graphics") . "\">", "</a>"),
+          "missing_graphics_toolkit");
+      }
+
       module::set_version("core", 1);
     }
   }
@@ -193,9 +211,14 @@ class core_installer {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `access_caches`;");
     $db->query("DROP TABLE IF EXISTS `access_intents`;");
-    $db->query("DROP TABLE IF EXISTS `permissions`;");
+    $db->query("DROP TABLE IF EXISTS `graphics_rules`;");
     $db->query("DROP TABLE IF EXISTS `items`;");
+    $db->query("DROP TABLE IF EXISTS `logs`;");
+    $db->query("DROP TABLE IF EXISTS `messages`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
+    $db->query("DROP TABLE IF EXISTS `permissions`;");
+    $db->query("DROP TABLE IF EXISTS `sessions`;");
+    $db->query("DROP TABLE IF EXISTS `tasks`;");
     $db->query("DROP TABLE IF EXISTS `vars`;");
     system("/bin/rm -rf " . VARPATH . "albums");
     system("/bin/rm -rf " . VARPATH . "resizes");

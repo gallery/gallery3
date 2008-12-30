@@ -62,7 +62,7 @@ class Admin_View_Core extends View {
   }
 
   /**
-   * Print out any site wide status information.  This is for admins only.
+   * Print out any site wide status information.
    */
   public function site_status() {
     return site_status::get();

@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class graphics_Core {
+  private static $init;
+
   /**
    * Add a new graphics rule.
    *
@@ -126,6 +128,10 @@ class graphics_Core {
    * @param array   $options
    */
   public static function resize($input_file, $output_file, $options) {
+    if (!self::$init) {
+      self::init_toolkit();
+    }
+
     Image::factory($input_file)
       ->resize($options["width"], $options["height"], $options["master"])
       ->save($output_file);
@@ -141,6 +147,10 @@ class graphics_Core {
    * @param array   $options
    */
   public static function composite($input_file, $output_file, $options) {
+    if (!self::$init) {
+      self::init_toolkit();
+    }
+
     list ($width, $height) = getimagesize($input_file);
     list ($w_width, $w_height) = getimagesize($options["file"]);
 
@@ -239,5 +249,43 @@ class graphics_Core {
       $task->state = "success";
       site_status::clear("graphics_dirty");
     }
+  }
+
+  /**
+   * Detect which graphics toolkits are available on this system.  Return an array of key value
+   * pairs where the key is one of gd, imagemagick, graphicsmagick and the value is information
+   * about that toolkit.  For GD we return the version string, and for ImageMagick and
+   * GraphicsMagick we return the path to the directory containing the appropriate binaries.
+   */
+  public static function detect_toolkits() {
+    $gd_info = gd_info();
+    return array("gd" => $gd_info["GD Version"],
+                 "imagemagick" => dirname(exec("which convert")),
+                 "graphicsmagick" => dirname(exec("which gm")));
+  }
+
+  /**
+   * Choose which driver the Kohana Image library uses.
+   */
+  public static function init_toolkit() {
+    switch(module::get_var("core", "graphics_toolkit")) {
+    case "gd":
+      Kohana::config_set("image.driver", "GD");
+      break;
+
+    case "imagemagick":
+      Kohana::config_set("image.driver", "ImageMagick");
+      Kohana::config_set(
+        "image.params.directory", module::get_var("core", "graphics_toolkit_path"));
+      break;
+
+    case "graphicsmagick":
+      Kohana::config_set("image.driver", "GraphicsMagick");
+      Kohana::config_set(
+        "image.params.directory", module::get_var("core", "graphics_toolkit_path"));
+      break;
+    }
+
+    self::$init = 1;
   }
 }
