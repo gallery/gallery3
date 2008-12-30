@@ -1,5 +1,10 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <div id="gModules">
+  <h1> <?= _("Gallery Modules") ?> </h1>
+  <p>
+    <?= _("Power up your Gallery by adding more modules!   Each module provides new cool features.") ?>
+  </p>
+
   <form method="post" action="<?= url::site("admin/modules/save") ?>">
     <?= access::csrf_form_field() ?>
     <table>
