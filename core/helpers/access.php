@@ -147,16 +147,11 @@ class access_Core {
 
     if ($perm_name == "view") {
       self::_update_access_view_cache($group, $album);
-      if ($group->id == 1) {
-        if ($value === self::DENY) {
-          self::_create_htaccess_files($album);
-        } else {
-          self::_delete_htaccess_files($album);
-        }
-      }
     } else {
       self::_update_access_non_view_cache($group, $perm_name, $album);
     }
+
+    self::_update_htaccess_files($album, $group, $perm_name, $value);
   }
 
   /**
@@ -516,32 +511,34 @@ class access_Core {
   }
 
   /**
-   * Create .htaccess files to prevent direct access to the given album and its hierarchy.
+   * Maintain .htacccess files to prevent direct access to albums, resizes and thumbnails when we
+   * apply the view and view_full permissions to guest users.
    */
-  private static function _create_htaccess_files($album) {
-    foreach (array($album->file_path(),
-                   dirname($album->resize_path()),
-                   dirname($album->thumb_path())) as $dir) {
-      $base_url = url::site("file_proxy");
-      $fp = fopen("$dir/.htaccess", "w+");
-      fwrite($fp, "<IfModule mod_rewrite.c>\n");
-      fwrite($fp, "  RewriteEngine On\n");
-      fwrite($fp, "  RewriteRule (.*) $base_url/\$1 [L]\n");
-      fwrite($fp, "</IfModule>\n");
-      fwrite($fp, "<IfModule !mod_rewrite.c>\n");
-      fwrite($fp, "  Order Deny,Allow\n");
-      fwrite($fp, "  Deny from All\n");
-      fwrite($fp, "</IfModule>\n");
-      fclose($fp);
+  private static function _update_htaccess_files($album, $group, $perm_name, $value) {
+    if ($group->id != 1 || !($perm_name == "view" || $perm_name == "view_full")) {
+      return;
     }
-  }
 
-  /**
-   * Delete the .htaccess files that are preventing access to the given album and its hierarchy.
-   */
-  private static function _delete_htaccess_files($album) {
-    @unlink($album->file_path() . "/.htaccess");
-    @unlink(dirname($album->resize_path()) . "/.htaccess");
-    @unlink(dirname($album->thumb_path()) . "/.htaccess");
+    if ($value == self::DENY) {
+      foreach (array($album->file_path(),
+                     dirname($album->resize_path()),
+                     dirname($album->thumb_path())) as $dir) {
+        $base_url = url::site("file_proxy");
+        $fp = fopen("$dir/.htaccess", "w+");
+        fwrite($fp, "<IfModule mod_rewrite.c>\n");
+        fwrite($fp, "  RewriteEngine On\n");
+        fwrite($fp, "  RewriteRule (.*) $base_url/\$1 [L]\n");
+        fwrite($fp, "</IfModule>\n");
+        fwrite($fp, "<IfModule !mod_rewrite.c>\n");
+        fwrite($fp, "  Order Deny,Allow\n");
+        fwrite($fp, "  Deny from All\n");
+        fwrite($fp, "</IfModule>\n");
+        fclose($fp);
+      }
+    } else {
+      @unlink($album->file_path() . "/.htaccess");
+      @unlink(dirname($album->resize_path()) . "/.htaccess");
+      @unlink(dirname($album->thumb_path()) . "/.htaccess");
+    }
   }
 }
