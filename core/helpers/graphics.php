@@ -24,7 +24,8 @@ class graphics_Core {
    * Rules are applied to targets (thumbnails and resizes) in priority order.  Rules are functions
    * in the graphics class.  So for example, the following rule:
    *
-   *   graphics::add_rule("core", "thumb", "resize", array(200, 200, Image::AUTO), 100);
+   *   graphics::add_rule("core", "thumb", "resize",
+   *                       array("width" => 200, "height" => 200, "master" => Image::AUTO), 100);
    *
    * Specifies that "core" is adding a rule to resize thumbnails down to a max of 200px on
    * the longest side.  The core module adds default rules at a priority of 100.  You can set
