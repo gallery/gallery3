@@ -364,7 +364,7 @@
                   <span class="understate">(<?= $current->album->id ?>)</span>
                   <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
                   &raquo;
-                  <? foreach (array("view", "edit") as $perm): ?>
+                  <? foreach (array("view", "view_full", "edit") as $perm): ?>
                   <? if (access::group_can(group::everybody(), $perm, $current->album)): ?>
                   <?= html::anchor("welcome/deny_perm/1/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
                   <? else: ?>
