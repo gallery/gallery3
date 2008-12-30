@@ -519,8 +519,6 @@ class access_Core {
       return;
     }
 
-    print "[$album, $group, $perm_name, $value, " . self::DENY . "]\n";
-
     if ($value === self::DENY) {
       foreach (array($album->file_path(),
                      dirname($album->resize_path()),
