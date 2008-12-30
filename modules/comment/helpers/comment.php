@@ -39,7 +39,7 @@ class comment_Core {
    * @param string  $url author's url
    * @return Comment_Model
    */
-  static function create($author, $email, $text, $item_id, $url) {
+  static function create($author, $email, $text, $item_id, $url=null) {
     $comment = ORM::factory("comment");
     $comment->author = $author;
     $comment->email = $email;
