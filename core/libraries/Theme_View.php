@@ -86,6 +86,13 @@ class Theme_View_Core extends View {
   }
 
   /**
+   * Print out any site wide status information.
+   */
+  public function site_status() {
+    return site_status::get();
+  }
+
+  /**
    * Print out any messages waiting for this user.
    */
   public function messages() {
