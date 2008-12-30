@@ -147,11 +147,11 @@ class access_Core {
 
     if ($perm_name == "view") {
       self::_update_access_view_cache($group, $album);
+      self::_update_htaccess_files($album, $group, $perm_name, $value);
     } else {
       self::_update_access_non_view_cache($group, $perm_name, $album);
     }
 
-    self::_update_htaccess_files($album, $group, $perm_name, $value);
   }
 
   /**
@@ -519,7 +519,9 @@ class access_Core {
       return;
     }
 
-    if ($value == self::DENY) {
+    print "[$album, $group, $perm_name, $value, " . self::DENY . "]\n";
+
+    if ($value === self::DENY) {
       foreach (array($album->file_path(),
                      dirname($album->resize_path()),
                      dirname($album->thumb_path())) as $dir) {
