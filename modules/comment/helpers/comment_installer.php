@@ -24,20 +24,20 @@ class comment_installer {
 
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `comments` (
-          `id` int(9) NOT NULL auto_increment,
-          `author` varchar(255) default NULL,
-          `email` varchar(255) default NULL,
-          `text` text,
-          `created` int(9) NOT NULL,
-          `item_id` int(9) NOT NULL,
-          `url` varchar(255) default NULL,
-          `published` tinyint(1) default 1,
-          `ip_addr` char(15) default NULL,
-          `user_agent` varchar(255) default NULL,
-          `spam_signature` varchar(255) default NULL,
-          `spam_type` char(15) default NULL,
-        PRIMARY KEY (`id`))
-        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                   `id` int(9) NOT NULL auto_increment,
+                   `author` varchar(128) default NULL,
+                   `email` varchar(128) default NULL,
+                   `text` text,
+                   `created` int(9) NOT NULL,
+                   `item_id` int(9) NOT NULL,
+                   `url` varchar(255) default NULL,
+                   `published` boolean default 1,
+                   `ip_addr` char(15) default NULL,
+                   `user_agent` varchar(255) default NULL,
+                   `spam_signature` varchar(255) default NULL,
+                   `spam_type` char(15) default NULL,
+                 PRIMARY KEY (`id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       module::set_version("comment", 1);
     }

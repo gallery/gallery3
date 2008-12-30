@@ -23,21 +23,21 @@ class tag_installer {
     $version = module::get_version("tag");
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `tags` (
-          `id` int(9) NOT NULL auto_increment,
-          `name` varchar(255) NOT NULL,
-          `count` int(10) unsigned NOT NULL DEFAULT 0,
-          PRIMARY KEY (`id`),
-          UNIQUE KEY(`name`))
-        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` varchar(64) NOT NULL,
+                   `count` int(10) unsigned NOT NULL DEFAULT 0,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE IF NOT EXISTS `items_tags` (
-          `id` int(9) NOT NULL auto_increment,
-          `item_id` int(9) NOT NULL,
-          `tag_id` int(9) NOT NULL,
-          PRIMARY KEY (`id`),
-          KEY(`tag_id`, `id`),
-          KEY(`item_id`, `id`))
-        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                   `id` int(9) NOT NULL auto_increment,
+                   `item_id` int(9) NOT NULL,
+                   `tag_id` int(9) NOT NULL,
+                   PRIMARY KEY (`id`),
+                   KEY(`tag_id`, `id`),
+                   KEY(`item_id`, `id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("tag", 1);
     }
   }

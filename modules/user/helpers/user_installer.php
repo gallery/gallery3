@@ -24,33 +24,33 @@ class user_installer {
 
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `users` (
-          `id` int(9) NOT NULL auto_increment,
-          `name` varchar(32) NOT NULL,
-          `full_name` varchar(255) NOT NULL,
-          `password` varchar(128) NOT NULL,
-          `login_count` int(10) unsigned NOT NULL DEFAULT 0,
-          `last_login` int(10) unsigned NOT NULL DEFAULT 0,
-          `email` varchar(255) default NULL,
-          `admin` BOOLEAN default 0,
-          `guest` BOOLEAN default 0,
-          PRIMARY KEY (`id`),
-          UNIQUE KEY(`name`))
-        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` varchar(32) NOT NULL,
+                   `full_name` varchar(255) NOT NULL,
+                   `password` varchar(64) NOT NULL,
+                   `login_count` int(10) unsigned NOT NULL DEFAULT 0,
+                   `last_login` int(10) unsigned NOT NULL DEFAULT 0,
+                   `email` varchar(64) default NULL,
+                   `admin` BOOLEAN default 0,
+                   `guest` BOOLEAN default 0,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE IF NOT EXISTS `groups` (
-          `id` int(9) NOT NULL auto_increment,
-          `name` char(255) default NULL,
-          `special` BOOLEAN default 0,
-          PRIMARY KEY (`id`),
-          UNIQUE KEY(`name`))
-        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` char(64) default NULL,
+                   `special` BOOLEAN default 0,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE IF NOT EXISTS `groups_users` (
-          `group_id` int(9) NOT NULL,
-          `user_id` int(9) NOT NULL,
-          PRIMARY KEY (`group_id`, `user_id`),
-          UNIQUE KEY(`user_id`, `group_id`))
-        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                   `group_id` int(9) NOT NULL,
+                   `user_id` int(9) NOT NULL,
+                   PRIMARY KEY (`group_id`, `user_id`),
+                   UNIQUE KEY(`user_id`, `group_id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $everybody = group::create("Everybody");
       $everybody->special = true;

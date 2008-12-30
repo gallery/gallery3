@@ -46,7 +46,7 @@ class core_installer {
       $db->query("CREATE TABLE `graphics_rules` (
                    `id` int(9) NOT NULL auto_increment,
                    `priority` int(9) NOT NULL,
-                   `module_name` varchar(255) NOT NULL,
+                   `module_name` varchar(64) NOT NULL,
                    `target`  varchar(32) NOT NULL,
                    `operation` varchar(64) NOT NULL,
                    `args` varchar(255) default NULL,
@@ -106,7 +106,7 @@ class core_installer {
 
       $db->query("CREATE TABLE `modules` (
                    `id` int(9) NOT NULL auto_increment,
-                   `name` varchar(255) default NULL,
+                   `name` varchar(64) default NULL,
                    `version` int(9) default NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
@@ -114,7 +114,7 @@ class core_installer {
 
       $db->query("CREATE TABLE `permissions` (
                    `id` int(9) NOT NULL auto_increment,
-                   `name` varchar(255) default NULL,
+                   `name` varchar(64) default NULL,
                    `version` int(9) default NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
@@ -128,12 +128,12 @@ class core_installer {
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE `tasks` (
-                  `callback` varchar(255) default NULL,
+                  `callback` varchar(128) default NULL,
                   `context` text NOT NULL,
                   `done` boolean default 0,
                   `id` int(9) NOT NULL auto_increment,
                   `updated` int(9) default NULL,
-                  `name` varchar(255) default NULL,
+                  `name` varchar(128) default NULL,
                   `percent_complete` int(9) default 0,
                   `state` varchar(32) default NULL,
                   `status` varchar(255) default NULL,
@@ -142,8 +142,8 @@ class core_installer {
 
       $db->query("CREATE TABLE `vars` (
                    `id` int(9) NOT NULL auto_increment,
-                   `module_name` varchar(255) NOT NULL,
-                   `name` varchar(255) NOT NULL,
+                   `module_name` varchar(64) NOT NULL,
+                   `name` varchar(64) NOT NULL,
                    `value` text,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`module_name`, `name`))

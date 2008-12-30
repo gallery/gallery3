@@ -23,16 +23,16 @@ class watermark_installer {
     $version = module::get_version("watermark");
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `watermarks` (
-          `id` int(9) NOT NULL auto_increment,
-          `name` varchar(32) NOT NULL,
-          `width` int(9) NOT NULL,
-          `height` int(9) NOT NULL,
-          `active` boolean default 0,
-          `position` boolean default 0,
-          `mime_type` varchar(64) default NULL,
-          PRIMARY KEY (`id`),
-          UNIQUE KEY(`name`))
-        ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` varchar(32) NOT NULL,
+                   `width` int(9) NOT NULL,
+                   `height` int(9) NOT NULL,
+                   `active` boolean default 0,
+                   `position` boolean default 0,
+                   `mime_type` varchar(64) default NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       @mkdir(VARPATH . "modules/watermark");
       module::set_version("watermark", 1);
