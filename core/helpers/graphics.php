@@ -181,7 +181,6 @@ class graphics_Core {
 
   /**
    * Mark all thumbnails and resizes as dirty.  They will have to be rebuilt.
-   *
    */
   public static function mark_all_dirty() {
     $db = Database::instance();
