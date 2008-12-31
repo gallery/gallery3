@@ -26,10 +26,10 @@ class Photos_Controller extends Items_Controller {
     access::required("view", $photo);
 
     $template = new Theme_View("page.html", "photo");
-    $template->set_global('item', $photo);
-    $template->set_global('children', array());
-    $template->set_global('children_count', $photo->children_count());
-    $template->set_global('parents', $photo->parents());
+    $template->set_global("item", $photo);
+    $template->set_global("children", array());
+    $template->set_global("children_count", $photo->children_count());
+    $template->set_global("parents", $photo->parents());
 
     $template->content = new View("photo.html");
 
