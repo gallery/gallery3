@@ -51,8 +51,8 @@ class comment_Core {
     $comment->created = time();
 
     // @todo Figure out how to mock up the test of the spam_filter
-    if (module::is_installed("spam_filter") && !TEST_MODE) {
-      spam_filter::verify_comment($comment);
+    if (module::is_installed("spam_filter") && TEST_MODE == 0) {
+      Spam_Filter::instance()->check_comment($comment);
     } else {
       $comment->published = true;
     }
@@ -81,8 +81,8 @@ class comment_Core {
     $comment->user_agent = Kohana::$user_agent;
 
     // @todo Figure out how to mock up the test of the spam_filter
-    if (module::is_installed("spam_filter") && !TEST_MODE) {
-      spam_filter::verify_comment($comment);
+    if (module::is_installed("spam_filter") && TEST_MODE == 0) {
+      Spam_Filter::instance()->check_comment($comment);
     }
 
     $comment->save();

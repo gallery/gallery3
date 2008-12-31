@@ -1,0 +1,3 @@
+name = Spam Filter
+description = Flag comments based on whether they are spam or not.
+version = 1
