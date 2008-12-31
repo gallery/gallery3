@@ -45,7 +45,7 @@ class Permissions_Controller extends Controller {
     print $this->_get_form($item);
   }
 
-  function allow($group_id, $perm_id, $item_id) {
+  function change($command, $group_id, $perm_id, $item_id) {
     access::verify_csrf();
     $group = ORM::factory("group", $group_id);
     $perm = ORM::factory("permission", $perm_id);
@@ -53,19 +53,19 @@ class Permissions_Controller extends Controller {
     access::required("edit", $item);
 
     if ($group->loaded && $perm->loaded && $item->loaded) {
-      access::allow($group, $perm->name, $item);
-    }
-  }
+      switch($command) {
+      case "allow":
+        access::allow($group, $perm->name, $item);
+        break;
 
-  function deny($group_id, $perm_id, $item_id) {
-    access::verify_csrf();
-    $group = ORM::factory("group", $group_id);
-    $perm = ORM::factory("permission", $perm_id);
-    $item = ORM::factory("item", $item_id);
-    access::required("edit", $item);
+      case "deny":
+        access::deny($group, $perm->name, $item);
+        break;
 
-    if ($group->loaded && $perm->loaded && $item->loaded) {
-      access::deny($group, $perm->name, $item);
+      case "reset":
+        access::reset($group, $perm->name, $item);
+        break;
+      }
     }
   }
 

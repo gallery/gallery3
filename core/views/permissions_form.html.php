@@ -15,20 +15,35 @@
       <td> <?= _($permission->display_name) ?> </td>
       <? foreach ($groups as $group): ?>
       <td>
-        <? $locked = access::locking_items($group, $permission->name, $item) ?>
+        <? $intent = access::group_intent($group, $permission->name, $item) ?>
         <? $allowed = access::group_can($group, $permission->name, $item) ?>
-        <? if ($locked && $allowed): ?>
-        allowed <a href="#">locked</a>
-        <? elseif ($locked && !$allowed): ?>
-        denied <a href="#">locked</a>
-        <? elseif ($allowed): ?>
-        <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">
-          <?= _("allowed") ?>
-        </a>
-        <? elseif (!$allowed): ?>
-        <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">
-          <?= _("denied") ?>
-        </a>
+        <? $lock = access::locked_by($group, $permission->name, $item) ?>
+
+        <? if ($lock): ?>
+
+        <? if ($allowed): ?>
+        allowed
+        <? else: ?>
+        denied
+        <? endif ?>
+
+        <a href="javascript:show(<?= $lock->id ?>)">(parental lock)</a>
+        <? else: ?>
+
+        <? if ($allowed): ?>
+        <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">allowed</a>
+        <? else: ?>
+        <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">denied</a>
+        <? endif ?>
+
+        <? if ($intent === null): ?>
+        (from parent)
+        <? else: ?>
+        <? if ($item->id != 1): ?>
+        <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">(reset to parent)</a>
+        <? endif ?>
+        <? endif ?>
+
         <? endif ?>
       </td>
       <? endforeach ?>

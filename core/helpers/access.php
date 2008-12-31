@@ -71,43 +71,6 @@ class access_Core {
   const UNKNOWN   = 2;
 
   /**
-   * Does this group have this permission on this item?
-   *
-   * @param  Group_Model $group
-   * @param  string      $perm_name
-   * @param  Item_Model  $item
-   * @return boolean
-   */
-  public static function group_can($group, $perm_name, $item) {
-    $resource = $perm_name == "view" ?
-      $item : model_cache::get("access_cache", $item->id, "item_id");
-    return $resource->__get("{$perm_name}_{$group->id}") === self::ALLOW;
-  }
-
-  /**
-   * Can this permission be changed for this item?
-   *
-   * @param  Group_Model $group
-   * @param  string      $perm_name
-   * @param  Item_Model  $item
-   * @return ORM_Model   item that locks this one
-   */
-  public static function locking_items($group, $perm_name, $item) {
-    if ($perm_name != "view") {
-      return null;
-    }
-
-    // For view permissions, if any parent is self::DENY, then those parents lock this one.
-    return ORM::factory("item")
-      ->where("`left` <= $item->left")
-      ->where("`right` >= $item->right")
-      ->where("`id` <> $item->id")
-      ->where("view_$group->id", 0)
-      ->find_all()
-      ->as_array();
-  }
-
-  /**
    * Does the active user have this permission on this item?
    *
    * @param  string     $perm_name
@@ -139,6 +102,66 @@ class access_Core {
   public static function required($perm_name, $item) {
     if (!self::can($perm_name, $item)) {
       self::forbidden();
+    }
+  }
+
+  /**
+   * Does this group have this permission on this item?
+   *
+   * @param  Group_Model $group
+   * @param  string      $perm_name
+   * @param  Item_Model  $item
+   * @return boolean
+   */
+  public static function group_can($group, $perm_name, $item) {
+    $resource = $perm_name == "view" ?
+      $item : model_cache::get("access_cache", $item->id, "item_id");
+    return $resource->__get("{$perm_name}_{$group->id}") === self::ALLOW;
+  }
+
+  /**
+   * Return this group's intent for this permission on this item.
+   *
+   * @param  Group_Model $group
+   * @param  string      $perm_name
+   * @param  Item_Model  $item
+   * @return integer     access::ALLOW, access::DENY or null for no intent
+   */
+  public static function group_intent($group, $perm_name, $item) {
+    $intent = model_cache::get("access_intent", $item->id, "item_id");
+    return $intent->__get("{$perm_name}_{$group->id}");
+  }
+
+  /**
+   * Is the permission on this item locked by a parent?  If so return the nearest parent that
+   * locks it.
+   *
+   * @param  Group_Model $group
+   * @param  string      $perm_name
+   * @param  Item_Model  $item
+   * @return ORM_Model   item that locks this one
+   */
+  public static function locked_by($group, $perm_name, $item) {
+    if ($perm_name != "view") {
+      return null;
+    }
+
+    // For view permissions, if any parent is self::DENY, then those parents lock this one.
+    // Return
+    $lock = ORM::factory("item")
+      ->where("`left` <= $item->left")
+      ->where("`right` >= $item->right")
+      ->where("`items`.`id` <> $item->id")
+      ->join("access_intents", "items.id", "access_intents.item_id")
+      ->where("access_intents.view_$group->id", 0)
+      ->orderby("level", "desc")
+      ->limit(1)
+      ->find();
+
+    if ($lock->loaded) {
+      return $lock;
+    } else {
+      return null;
     }
   }
 
