@@ -152,6 +152,14 @@
       .gHide {
         display: none;
       }
+
+      div#browse {
+        border: 1px solid black;
+        background: #eee;
+        width: 450px;
+        padding: 2px;
+        margin: 5px 0px 0px 1em;
+      }
     </style>
     <?= html::script("lib/jquery.js") ?>
     <?= html::script("lib/jquery.form.js") ?>
@@ -179,8 +187,18 @@
           meantime, here are some useful links to get you started.
         </p>
 
+        <? if ($album_count > 0): ?>
+        <div id="browse">
+          <p>
+            <?= html::anchor("albums/1", "Browse Gallery") ?>
+            <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos, <?= $comment_count ?> comments, <?= $tag_count ?> tags)</i>
+          </p>
+        </div>
+        <? endif ?>
+
         <ul class="tabs">
           <li><a href="javascript:show('config')">Configuration</a></li>
+          <? if ($album_count > 0): ?>
           <li><a href="javascript:show('actions')">Actions</a></li>
           <? if (module::is_installed("user")): ?>
           <li><a href="javascript:show('access')">Access</a></li>
@@ -188,6 +206,7 @@
           <li><a href="javascript:show('info')">Info</a></li>
           <li><a href="javascript:show('benchmarks')">Benchmarks</a></li>
           <li><a href="javascript:show('docs')">Docs</a></li>
+          <? endif ?>
         </ul>
 
         <div id="activities">
@@ -229,10 +248,6 @@
           </div>
 
           <div id="actions" class="activity">
-            <p>
-              <?= html::anchor("albums/1", "Browse Gallery") ?>
-              <i>(<?= $album_count ?> albums, <?= $photo_count ?> photos, <?= $comment_count ?> comments, <?= $tag_count ?> tags)</i>
-            </p>
             <p>
               add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
