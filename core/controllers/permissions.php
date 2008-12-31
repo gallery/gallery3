@@ -26,7 +26,7 @@ class Permissions_Controller extends Controller {
       access::forbidden();
     }
 
-    $view = new View("permissions_edit.html");
+    $view = new View("permissions_browse.html");
     $view->item = $item;
     $view->parents = $item->parents();
     $view->form = $this->_get_form($item);
