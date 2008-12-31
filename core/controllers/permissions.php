@@ -26,7 +26,7 @@ class Permissions_Controller extends Controller {
       access::forbidden();
     }
 
-    $view = new View("permission_edit.html");
+    $view = new View("permissions_edit.html");
     $view->item = $item;
     $view->parents = $item->parents();
     $view->form = $this->_get_form($item);
@@ -46,7 +46,7 @@ class Permissions_Controller extends Controller {
   }
 
   function _get_form($item) {
-    $view = new View("permission_form.html");
+    $view = new View("permissions_form.html");
     $view->item = $item;
     $view->groups = ORM::factory("group")->find_all();
     $view->permissions = ORM::factory("permission")->find_all();
