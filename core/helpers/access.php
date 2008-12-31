@@ -400,7 +400,8 @@ class access_Core {
       $tmp_item = ORM::factory("item")
         ->where("left <", $item->left)
         ->where("right >", $item->right)
-        ->where($field, self::DENY)
+        ->join("access_intents", "access_intents.item_id", "items.id")
+        ->where("access_intents.$field", self::DENY)
         ->orderby("left", "DESC")
         ->limit(1)
         ->find();

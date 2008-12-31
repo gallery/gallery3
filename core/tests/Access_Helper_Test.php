@@ -197,14 +197,18 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function revoked_view_permissions_cant_be_allowed_lower_down_test() {
     $root = ORM::factory("item", 1);
-    $album = album::create($root, rand(), "test album");
+    $album1 = album::create($root, rand(), "test album");
+    $album2 = album::create($album1, rand(), "test album");
 
     $root->reload();
     access::deny(group::everybody(), "view", $root);
-    access::allow(group::everybody(), "view", $album);
+    access::allow(group::everybody(), "view", $album2);
 
-    $album->reload();
-    $this->assert_false(access::group_can(group::everybody(), "view", $album));
+    $album1->reload();
+    $this->assert_false(access::group_can(group::everybody(), "view", $album1));
+
+    $album2->reload();
+    $this->assert_false(access::group_can(group::everybody(), "view", $album2));
   }
 
   public function can_edit_item_test() {
