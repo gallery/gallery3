@@ -13,12 +13,13 @@
   <?= $theme->photo_bottom() ?>
 </div>
 
-<? if ($position > 1): ?>
+<? if ($previous_item): ?>
 <a href="<?= $previous_item->url() ?>"><?= _("previous") ?></a>
 <? endif ?>
+
 <?= sprintf(_("Viewing photo %d of %d"), $position, $sibling_count) ?>
 
-<? if ($position < $sibling_count): ?>
+<? if ($next_item): ?>
 <a href="<?= $next_item->url() ?>"><?= _("next") ?></a>
 <? endif ?>
 
