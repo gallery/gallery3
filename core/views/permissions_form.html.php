@@ -22,9 +22,13 @@
         <? elseif ($locked && !$allowed): ?>
         denied <a href="#">locked</a>
         <? elseif ($allowed): ?>
-        <a href="#">allowed</a>
+        <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">
+          <?= _("allowed") ?>
+        </a>
         <? elseif (!$allowed): ?>
-        <a href="#">denied</a>
+        <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">
+          <?= _("denied") ?>
+        </a>
         <? endif ?>
       </td>
       <? endforeach ?>

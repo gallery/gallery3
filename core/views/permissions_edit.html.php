@@ -6,8 +6,19 @@
       url: form_url,
       success: function(data) {
         $("div.form").slideUp();
-        var el = $("div#edit-" + id);
-        el.html(data).slideDown();
+        $("div#edit-" + id).html(data).slideDown();
+      }
+    });
+  }
+
+  var action_url = "<?= url::site("permissions/__CMD__/__GROUP__/__PERM__/__ITEM__?csrf=" . access::csrf_token()) ?>";
+  var form_url = "<?= url::site("permissions/form/__ITEM__") ?>";
+  set = function(cmd, group_id, perm_id, item_id) {
+    $.ajax({
+      url: action_url.replace("__CMD__", cmd).replace("__GROUP__", group_id).
+           replace("__PERM__", perm_id).replace("__ITEM__", item_id),
+      success: function(data) {
+        $("div#edit-" + item_id).load(form_url.replace("__ITEM__", item_id));
       }
     });
   }

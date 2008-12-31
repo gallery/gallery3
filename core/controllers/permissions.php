@@ -45,6 +45,30 @@ class Permissions_Controller extends Controller {
     print $this->_get_form($item);
   }
 
+  function allow($group_id, $perm_id, $item_id) {
+    access::verify_csrf();
+    $group = ORM::factory("group", $group_id);
+    $perm = ORM::factory("permission", $perm_id);
+    $item = ORM::factory("item", $item_id);
+    access::required("edit", $item);
+
+    if ($group->loaded && $perm->loaded && $item->loaded) {
+      access::allow($group, $perm->name, $item);
+    }
+  }
+
+  function deny($group_id, $perm_id, $item_id) {
+    access::verify_csrf();
+    $group = ORM::factory("group", $group_id);
+    $perm = ORM::factory("permission", $perm_id);
+    $item = ORM::factory("item", $item_id);
+    access::required("edit", $item);
+
+    if ($group->loaded && $perm->loaded && $item->loaded) {
+      access::deny($group, $perm->name, $item);
+    }
+  }
+
   function _get_form($item) {
     $view = new View("permissions_form.html");
     $view->item = $item;
