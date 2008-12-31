@@ -14,7 +14,7 @@
   <? endif ?>
   <li class="gItem <?= $album_class ?>">
     <?= $theme->thumb_top($child) ?>
-    <a href="<?= url::site("{$child->type}s/{$child->id}") ?>">
+    <a href="<?= $child->url() ?>">
       <img id="gPhotoID-<?= $child->id ?>" class="gThumbnail"
            alt="photo" src="<?= $child->thumb_url() ?>"
            width="<?= $child->thumb_width ?>"

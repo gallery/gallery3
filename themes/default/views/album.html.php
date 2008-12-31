@@ -13,13 +13,13 @@
   <? endif ?>
   <li id="g<?= $child->id ?>" class="gItem <?= $album_class ?>">
     <?= $theme->thumb_top($child) ?>
-    <a href="<?= url::site("{$child->type}s/{$child->id}") ?>">
+    <a href="<?= $child->url() ?>">
       <img id="gPhotoID-<?= $child->id ?>" class="gThumbnail"
            alt="photo" src="<?= $child->thumb_url() ?>"
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />
     </a>
-    <h2><a href="<?= url::site("{$child->type}s/{$child->id}") ?>"><?= $child->title ?></a></h2>
+    <h2><a href="<?= $child->url() ?>"><?= $child->title ?></a></h2>
     <?= $theme->thumb_bottom($child) ?>
     <ul class="gMetadata">
       <?= $theme->thumb_info($child) ?>

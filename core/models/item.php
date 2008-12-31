@@ -103,6 +103,18 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * album: url::site("albums/2")
+   * photo: url::site("photos/3")
+   */
+  public function url() {
+    if ($this->is_album()) {
+      return url::site("albums/$this->id");
+    } else {
+      return url::site("photos/$this->id");
+    }
+  }
+
+  /**
    * album: /var/albums/album1/album2
    * photo: /var/albums/album1/album2/photo.jpg
    */

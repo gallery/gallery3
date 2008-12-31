@@ -25,6 +25,6 @@ class Items_Controller extends REST_Controller {
     // differently.  We could also just delegate here, but it feels more appropriate
     // to have a single canonical resource mapping.
     access::required("view", $item);
-    return url::redirect("{$item->type}s/$item->id");
+    return url::redirect($item->url());
   }
 }
