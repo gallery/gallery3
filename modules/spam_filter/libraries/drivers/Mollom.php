@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Mollon_Driver extends SpamFilter_Driver {
+class Mollom_Driver extends SpamFilter_Driver {
   // Lets not send everything to Akismet
   private $ignore = array("HTTP_COOKIE",
               "HTTP_USER_AGENT",
