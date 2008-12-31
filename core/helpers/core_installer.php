@@ -115,7 +115,7 @@ class core_installer {
       $db->query("CREATE TABLE `permissions` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(64) default NULL,
-                   `version` int(9) default NULL,
+                   `display_name` varchar(64) default NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
@@ -153,9 +153,9 @@ class core_installer {
         @mkdir(VARPATH . $dir);
       }
 
-      access::register_permission("view");
-      access::register_permission("view_full");
-      access::register_permission("edit");
+      access::register_permission("view", "View");
+      access::register_permission("view_full", "View Full Size");
+      access::register_permission("edit", "Edit");
 
       $root = ORM::factory("item");
       $root->type = 'album';

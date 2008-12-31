@@ -20,7 +20,7 @@
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
   private $relative_path = null;
-  private $view_restrictions = array();
+  private $view_restrictions = null;
 
   var $rules = array(
     "name" => "required|length[0,255]",
@@ -34,9 +34,13 @@ class Item_Model extends ORM_MPTT {
    * @chainable
    */
   public function viewable() {
-    if (empty($this->view_restrictions)) {
-      foreach (user::group_ids() as $id) {
-        $this->view_restrictions["view_$id"] = access::ALLOW;
+    if (is_null($this->view_restrictions)) {
+      if (user::active()->admin) {
+        $this->view_restrictions = array();
+      } else {
+        foreach (user::group_ids() as $id) {
+          $this->view_restrictions["view_$id"] = access::ALLOW;
+        }
       }
     }
     $this->where($this->view_restrictions);

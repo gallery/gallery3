@@ -55,7 +55,11 @@ class core_menu_Core {
           ->append(Menu::factory("dialog")
                    ->id("add_album")
                    ->label(_("Add an album"))
-                   ->url(url::site("form/add/albums/$item->id?type=album")));
+                   ->url(url::site("form/add/albums/$item->id?type=album")))
+          ->append(Menu::factory("dialog")
+                   ->id("edit_permissions")
+                   ->label(_("Edit permissions"))
+                   ->url(url::site("form/edit/permissions/$item->id")));
       }
     }
 

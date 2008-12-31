@@ -85,6 +85,29 @@ class access_Core {
   }
 
   /**
+   * Can this permission be changed for this item?
+   *
+   * @param  Group_Model $group
+   * @param  string      $perm_name
+   * @param  Item_Model  $item
+   * @return ORM_Model   item that locks this one
+   */
+  public static function locking_items($group, $perm_name, $item) {
+    if ($perm_name != "view") {
+      return null;
+    }
+
+    // For view permissions, if any parent is self::DENY, then those parents lock this one.
+    return ORM::factory("item")
+      ->where("`left` <= $item->left")
+      ->where("`right` >= $item->right")
+      ->where("`id` <> $item->id")
+      ->where("view_$group->id", 0)
+      ->find_all()
+      ->as_array();
+  }
+
+  /**
    * Does the active user have this permission on this item?
    *
    * @param  string     $perm_name
@@ -193,19 +216,21 @@ class access_Core {
   /**
    * Register a permission so that modules can use it.
    *
-   * @param  string $perm_name
+   * @param  string $name           The internal name for for this permission
+   * @param  string $display_name   The internationalized version of the displayable name
    * @return void
   */
-  public static function register_permission($perm_name) {
-    $permission = ORM::factory("permission", $perm_name);
+  public static function register_permission($name, $display_name) {
+    $permission = ORM::factory("permission", $name);
     if ($permission->loaded) {
       throw new Exception("@todo PERMISSION_ALREADY_EXISTS $name");
     }
-    $permission->name = $perm_name;
+    $permission->name = $name;
+    $permission->display_name = $display_name;
     $permission->save();
 
     foreach (self::_get_all_groups() as $group) {
-      self::_add_columns($perm_name, $group);
+      self::_add_columns($name, $group);
     }
   }
 
