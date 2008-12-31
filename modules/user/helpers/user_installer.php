@@ -75,8 +75,13 @@ class user_installer {
 
       $root = ORM::factory("item", 1);
       access::allow($guest, "view", $root);
-      access::allow($guest, "view", $root);
+      access::allow($guest, "view_full", $root);
+
       access::allow($registered, "view", $root);
+      access::allow($registered, "view_full", $root);
+
+      access::allow($admin, "view", $root);
+      access::allow($admin, "view_full", $root);
       access::allow($admin, "edit", $root);
     }
   }

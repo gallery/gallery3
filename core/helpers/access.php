@@ -114,8 +114,8 @@ class access_Core {
    * @return boolean
    */
   public static function required($perm_name, $item) {
-    if (!access::can($perm_name, $item)) {
-      access::forbidden();
+    if (!self::can($perm_name, $item)) {
+      self::forbidden();
     }
   }
 
@@ -147,11 +147,11 @@ class access_Core {
 
     if ($perm_name == "view") {
       self::_update_access_view_cache($group, $album);
-      self::_update_htaccess_files($album, $group, $perm_name, $value);
     } else {
       self::_update_access_non_view_cache($group, $perm_name, $album);
     }
 
+    self::_update_htaccess_files($album, $group, $perm_name, $value);
   }
 
   /**
@@ -302,7 +302,7 @@ class access_Core {
   public static function verify_csrf() {
     $input = Input::instance();
     if ($input->post("csrf", $input->get("csrf", null)) !== Session::instance()->get("csrf")) {
-      access::forbidden();
+      self::forbidden();
     }
   }
 
@@ -519,11 +519,15 @@ class access_Core {
       return;
     }
 
-    if ($value === self::DENY) {
-      foreach (array($album->file_path(),
-                     dirname($album->resize_path()),
-                     dirname($album->thumb_path())) as $dir) {
-        $base_url = url::site("file_proxy");
+    $dirs = array($album->file_path());
+    if ($perm_name == "view") {
+      $dirs[] = dirname($album->resize_path());
+      $dirs[] = dirname($album->thumb_path());
+    }
+
+    $base_url = url::site("file_proxy");
+    foreach ($dirs as $dir) {
+      if ($value === self::DENY) {
         $fp = fopen("$dir/.htaccess", "w+");
         fwrite($fp, "<IfModule mod_rewrite.c>\n");
         fwrite($fp, "  RewriteEngine On\n");
@@ -534,11 +538,9 @@ class access_Core {
         fwrite($fp, "  Deny from All\n");
         fwrite($fp, "</IfModule>\n");
         fclose($fp);
+      } else {
+        @unlink($dir . "/.htaccess");
       }
-    } else {
-      @unlink($album->file_path() . "/.htaccess");
-      @unlink(dirname($album->resize_path()) . "/.htaccess");
-      @unlink(dirname($album->thumb_path()) . "/.htaccess");
     }
   }
 }

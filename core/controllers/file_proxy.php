@@ -95,6 +95,11 @@ class File_Proxy_Controller extends Controller {
       kohana::show_404();
     }
 
+    // Make sure we have view_full access to the original
+    if ($type == "albums" && !access::can("view_full", $item)) {
+      kohana::show_404();
+    }
+
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
       kohana::show_404();

@@ -293,7 +293,7 @@
             <ul class="tabs">
               <li><a href="javascript:show('access', 'access_users')">Users</a></li>
               <li><a href="javascript:show('access', 'access_groups')">Groups</a></li>
-              <li><a href="javascript:show('access', 'access_permissions')">Permissions</a></li>
+              <li><a href="javascript:show('access', 'access_permissions')">Guest Permissions</a></li>
             </ul>
 
             <div id="access_users" class="activity">
@@ -365,6 +365,7 @@
                   <?= html::anchor("albums/{$current->album->id}", $current->album->title) ?>
                   &raquo;
                   <? foreach (array("view", "view_full", "edit") as $perm): ?>
+                  <?= $perm != "view" ? " ---- " : "" ?>
                   <? if (access::group_can(group::everybody(), $perm, $current->album)): ?>
                   <?= html::anchor("welcome/deny_perm/1/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
                   <? else: ?>

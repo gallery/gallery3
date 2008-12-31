@@ -289,4 +289,32 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
   }
 
+  public function everybody_view_full_permission_maintains_htaccess_files_test() {
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, rand(), "test album");
+
+    $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
+
+    access::deny(group::everybody(), "view_full", $album);
+    $this->assert_true(file_exists($album->file_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
+
+    access::allow(group::everybody(), "view_full", $album);
+    $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
+
+    access::deny(group::everybody(), "view_full", $album);
+    $this->assert_true(file_exists($album->file_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
+
+    access::reset(group::everybody(), "view_full", $album);
+    $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
+    $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
+  }
 }
