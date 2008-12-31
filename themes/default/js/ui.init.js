@@ -11,17 +11,19 @@ var shortForms = new Array(
 
 $("document").ready(function() {
 
-  // Vertical align thumbnails/metadata in album grid
+  // Album view only
   if ($(".gItem").length) {
+    // Vertical align thumbnails/metadata in album grid
     $(".gItem").wrapInner("<div></div>")
     $('.gItem div').vAlign();
   }
   
-  // Apply modal dialog class
-  $(".gMenuLink").addClass("gDialogLink");
-  $("#gLoginLink").addClass("gDialogLink");
+  // Photo/Item item view only
+  if ($("#gItem").length) {
+    sizedImage();
+  }
 
-  // Add Superfish menu class
+  // Apply Superfish menus
   $("ul.gMenu").addClass("sf-menu");
   $("ul#gViewMenu").addClass("sf-menu");
 
@@ -35,28 +37,15 @@ $("document").ready(function() {
     speed: 'fast'
   });
 
-  // Reduce width of sized photo if it is wider than its parent container
-  if ($("#gItem").length) {
-    var containerWidth = $("#gItem").width();
-    var oPhoto = $("#gItem img").filter(function() {
-      return this.id.match(/gPhotoID-/);
-    });
-    if (containerWidth < oPhoto.width()) {
-      var proportion = containerWidth / oPhoto.width();
-      oPhoto.width(containerWidth);
-      oPhoto.height(proportion * oPhoto.height());
-    }
-  }
-
-  /**
-   * Attach event listeners to open modal dialogs
-   */
+  // Apply modal dialogs
+  $(".gMenuLink").addClass("gDialogLink");
+  $("#gLoginLink").addClass("gDialogLink");
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
   };
 
-  // Declare which forms are short forms
+  // Short forms
   handleShortFormEvent(shortForms);
   
 });
@@ -70,6 +59,21 @@ $.fn.vAlign = function() {
     $(this).css('margin-top', mh);
   });
 };
+
+/**
+ * Reduce width of sized photo if it's wider than its parent container
+ */
+function sizedImage() {
+  var containerWidth = $("#gItem").width();
+  var oPhoto = $("#gItem img").filter(function() {
+    return this.id.match(/gPhotoID-/);
+  });
+  if (containerWidth < oPhoto.width()) {
+    var proportion = containerWidth / oPhoto.width();
+    oPhoto.width(containerWidth);
+    oPhoto.height(proportion * oPhoto.height());
+  }
+}
 
 /**
  * Fire openDialog() and prevent links from opening
