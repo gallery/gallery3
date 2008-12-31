@@ -15,7 +15,7 @@
   <li class="gItem <?= $album_class ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
-      <img id="gPhotoID-<?= $child->id ?>" class="gThumbnail"
+      <img id="gPhotoId-<?= $child->id ?>" class="gThumbnail"
            alt="photo" src="<?= $child->thumb_url() ?>"
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />

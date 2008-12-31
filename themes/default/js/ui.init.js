@@ -1,6 +1,6 @@
 /**
  * Initialize jQuery UI and Plugin elements
- * 
+ *
  * @todo Standardize how elements requiring listeners are identified (class or id)
  */
 
@@ -17,7 +17,7 @@ $("document").ready(function() {
     $(".gItem").wrapInner("<div></div>")
     $('.gItem div').vAlign();
   }
-  
+
   // Photo/Item item view only
   if ($("#gItem").length) {
     sizedImage();
@@ -47,7 +47,7 @@ $("document").ready(function() {
 
   // Short forms
   handleShortFormEvent(shortForms);
-  
+
 });
 
 // Vertically align a block element's content
@@ -66,7 +66,7 @@ $.fn.vAlign = function() {
 function sizedImage() {
   var containerWidth = $("#gItem").width();
   var oPhoto = $("#gItem img").filter(function() {
-    return this.id.match(/gPhotoID-/);
+    return this.id.match(/gPhotoId-/);
   });
   if (containerWidth < oPhoto.width()) {
     var proportion = containerWidth / oPhoto.width();
@@ -168,11 +168,11 @@ function openDialog(element) {
  * @param array shortForms Array of short form IDs
  */
 function handleShortFormEvent(shortForms) {
-  for (var i in shortForms) {      
+  for (var i in shortForms) {
     shortFormInit(shortForms[i]);
   }
 }
- 
+
 /**
  * Initialize a short form. Short forms may contain only one text input.
  *
@@ -182,15 +182,15 @@ function shortFormInit(formID) {
   // Get the input ID and it's label text
   var labelValue = $(formID + " label:first").html();
   var inputID = "#" + $(formID + " input[type='text']:first").attr("id");
- 
+
   // Set the input value equal to label text
   $(inputID).val(labelValue);
-  
+
   // Attach event listeners to the input
   $(inputID).bind("focus blur", function(e){
     var eLabelVal = $(this).siblings("label").html();
     var eInputVal = $(this).val();
- 
+
     // Empty input value if it equals it's label
     if (eLabelVal == eInputVal) {
         $(this).val("");
