@@ -16,18 +16,16 @@
         <td> <?= _($permission->display_name) ?> </td>
         <? foreach ($groups as $group): ?>
         <td>
-          <? $locks = access::locking_items($group, $permission->name, $item) ?>
-          <input type="checkbox"
-                 name="<?= "{$permission->name}_$group->id" ?>"
-                 value="1"
-                 <? if (access::group_can($group, $permission->name, $item)): ?> checked="checked" <? endif ?>
-            <? if ($locks): ?> disabled="disabled" <? endif ?>
-            />
-          <? if ($locks): ?>
-          Locked by: <!-- Not internationalized because its hard and this is prob. the wrong UI anyway -->
-          <? foreach ($locks as $lock): ?>
-          <a href="<?= url::site("{$lock->type}s/$lock->id") ?>"><?= $lock->title ?></a>
-          <? endforeach ?>
+          <? $locked = access::locking_items($group, $permission->name, $item) ?>
+          <? $allowed = access::group_can($group, $permission->name, $item) ?>
+          <? if ($locked && $allowed): ?>
+          allowed <a href="#">locked</a>
+          <? elseif ($locked && !$allowed): ?>
+          denied <a href="#">locked</a>
+          <? elseif ($allowed): ?>
+          <a href="#">allowed</a>
+          <? elseif (!$allowed): ?>
+          <a href="#">denied</a>
           <? endif ?>
         </td>
         <? endforeach ?>
