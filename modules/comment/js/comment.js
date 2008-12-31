@@ -7,8 +7,8 @@ function ajaxify_comment_form() {
     dataType: "json",
     success: function(data) {
       if (data.form) {
-	$("#gComments form").replaceWith(data.form);
-	ajaxify_comment_form();
+        $("#gComments form").replaceWith(data.form);
+        ajaxify_comment_form();
       }
       if (data.result == "success") {
         $.get(data.resource, function(data, textStatus) {
