@@ -1,7 +1,7 @@
 <? defined("SYSPATH") or die("No direct script access."); ?>
 <? // See http://docs.kohanaphp.com/libraries/pagination ?>
 <ul id="gPager">
-  <li><?= sprintf(_("Items %d - %d of %d"), $current_first_item, $current_last_item, $total_items) ?></li>
+  <li><?= sprintf(_("Photos %d - %d of %d"), $current_first_item, $current_last_item, $total_items) ?></li>
   <? if ($first_page): ?>
   <li class="first"><a href="<?= str_replace('{page}', 1, $url) ?>"><?= _("first") ?></a></li>
   <? else: ?>

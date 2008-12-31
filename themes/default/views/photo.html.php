@@ -12,3 +12,14 @@
 
   <?= $theme->photo_bottom() ?>
 </div>
+
+<? if ($position > 1): ?>
+<a href="<?= url::site("{$previous_item->type}s/$previous_item->id") ?>"><?= _("previous") ?></a>
+<? endif ?>
+<?= sprintf(_("Viewing photo %d of %d"), $position, $sibling_count) ?>
+
+<? if ($position < $sibling_count): ?>
+<a href="<?= url::site("{$next_item->type}s/$next_item->id") ?>"><?= _("next") ?></a>
+<? endif ?>
+
+
