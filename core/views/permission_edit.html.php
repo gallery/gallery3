@@ -1,37 +1,38 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
+<script type="text/javascript">
+  show = function(id, form_url) {
+    $.ajax({
+      url: form_url,
+      success: function(data) {
+        $("div.form").slideUp();
+        var el = $("div#edit-" + id);
+        el.html(data).slideDown();
+      }
+    });
+  }
+</script>
 <div id="gPermissions">
-  <form method="post" action="<?= url::site("permissions/edit/$item->id") ?>">
-    <?= access::csrf_form_field() ?>
-
-    <table border=1>
-      <tr>
-        <th> </th>
-        <? foreach ($groups as $group): ?>
-        <th> <?= $group->name ?> </th>
+  <ul>
+    <? foreach ($parents as $parent): ?>
+    <li>
+      <a href="javascript:show(<?= $parent->id ?>,'<?= url::site("permissions/form/$parent->id") ?>')">
+        <?= $parent->title ?>
+      </a>
+      <div class="form" id="edit-<?= $parent->id ?>"></div>
+      <ul>
         <? endforeach ?>
-      </tr>
-
-      <? foreach ($permissions as $permission): ?>
-      <tr>
-        <td> <?= _($permission->display_name) ?> </td>
-        <? foreach ($groups as $group): ?>
-        <td>
-          <? $locked = access::locking_items($group, $permission->name, $item) ?>
-          <? $allowed = access::group_can($group, $permission->name, $item) ?>
-          <? if ($locked && $allowed): ?>
-          allowed <a href="#">locked</a>
-          <? elseif ($locked && !$allowed): ?>
-          denied <a href="#">locked</a>
-          <? elseif ($allowed): ?>
-          <a href="#">allowed</a>
-          <? elseif (!$allowed): ?>
-          <a href="#">denied</a>
-          <? endif ?>
-        </td>
-        <? endforeach ?>
-      </tr>
-      <? endforeach ?>
-    </table>
-    <input type="submit" value="<?= _("Save") ?>"/>
-  </form>
+        <li>
+          <a href="javascript:show(<?= $item->id ?>,'<?= url::site("permissions/form/$item->id") ?>')">
+            <?= $item->title ?>
+          </a>
+          <div class="form" id="edit-<?= $item->id ?>">
+            <?= $form ?>
+          </div>
+        </li>
+        <? foreach ($parents as $parent): ?>
+      </ul>
+    </li>
+  </ul>
+  <? endforeach ?>
 </div>

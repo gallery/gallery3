@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Permissions_Controller extends Controller {
-  function form_edit($id) {
+  function browse($id) {
     $item = ORM::factory("item", $id);
     access::required("edit", $item);
 
@@ -28,25 +28,28 @@ class Permissions_Controller extends Controller {
 
     $view = new View("permission_edit.html");
     $view->item = $item;
-    $view->groups = ORM::factory("group")->find_all();
-    $view->permissions = ORM::factory("permission")->find_all();
+    $view->parents = $item->parents();
+    $view->form = $this->_get_form($item);
+
     print $view;
   }
 
-  function edit($id)  {
-    access::verify_csrf();
-
+  function form($id) {
     $item = ORM::factory("item", $id);
     access::required("edit", $item);
 
-    foreach (ORM::factory("group")->find_all() as $group) {
-      foreach (ORM::factory("permission")->find_all() as $permission) {
-        $perm_name = "{$permission->name}_$group->id";
-        $value = $this->input->post($perm_name);
-
-        // Set permissions here
-      }
+    if ($item->type != "album") {
+      access::forbidden();
     }
-    url::redirect("form/edit/permissions/$item->id");
+
+    print $this->_get_form($item);
+  }
+
+  function _get_form($item) {
+    $view = new View("permission_form.html");
+    $view->item = $item;
+    $view->groups = ORM::factory("group")->find_all();
+    $view->permissions = ORM::factory("permission")->find_all();
+    return $view;
   }
 }
