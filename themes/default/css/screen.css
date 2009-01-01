@@ -356,17 +356,19 @@ li.gError select {
   margin-right: 20px;
 }
 
+/* Album/Photo information ~~~~~~~~~~~~~~~ */
+
+#gContent #gInfo {
+}
+
+#gContent #gInfo .gDescription {
+}
+
 /* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gContent #gAlbumHeader {
-}
-
-#gContent #gAlbumHeader .gDescription {
-}
 
 #gContent #gAlbumGrid {
   border-right: 1px solid #e8e8e8;
-  margin-top: 20px;
+  margin: 1em 0;
 }
 
 #gContent #gAlbumGrid .gItem {
@@ -382,9 +384,6 @@ li.gError select {
   width: 213px;
 }
 
-#gContent #gAlbumGrid .gItem .gThumbnail {
-}
-
 #gContent #gAlbumGrid .gItem h2 {
   margin: 5px 0;
 }
@@ -393,20 +392,9 @@ li.gError select {
   background-color: #e8e8e8;
 }
 
-#gContent #gAlbumGrid .gAlbum h2 {
-  color: #006;
-}
-
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
 #gContent #gItem {
-  margin: 1em 0;
-}
-
-#gContent #gItemHeader {
-}
-
-#gContent #gItemHeader .gDescription {
 }
 
 #gContent #gComments {
@@ -602,7 +590,6 @@ li.gError select {
 
 #gPager {
   clear: both;
-  padding-top: 2em;
 }
 
 #gPager li {
@@ -668,7 +655,9 @@ li.gError select {
  *********************************************************************/
 
 #gSiteMenu:after,
-#gBreadcrumbs:after {
+#gBreadcrumbs:after,
+#gAlbumGrid:after,
+#gPager:after {
   clear: both;
   content: ".";
   display: block;
