@@ -419,6 +419,12 @@
                 <i>(<?= $deepest_photo->level ?> levels deep)</i>
               </li>
               <? endif ?>
+              <? if ($deepest_album): ?>
+              <li>
+                <?= html::anchor("albums/{$deepest_album->id}", "Deepest album") ?>
+                <i>(<?= $deepest_album->level ?> levels deep)</i>
+              </li>
+              <? endif ?>
               <? if ($most_tagged): ?>
               <li>
                 <?= html::anchor("items/{$most_tagged->id}", "Most tagged item") ?>
