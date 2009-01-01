@@ -9,10 +9,10 @@ var shortForms = new Array(
   "#gAddTagForm"
 );
 
-$("document").ready(function() {
+$(document).ready(function() {
 
   // Album view only
-  if ($(".gItem").length) {
+  if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
     $(".gItem").wrapInner("<div></div>")
     $('.gItem div').vAlign();
