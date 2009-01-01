@@ -15,9 +15,8 @@
  *
  * @todo Group Credits and gLoginMenu seperator styles
  * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
- * @todo Refactor form layout styles to reserve room for validation messages in default state. This 
+ * @todo Refactor form layout styles to reserve room for validation messages in default state. This
  *       will eliminate layout shifts when validation messages are displayed.
- * @todo Move debugging information styles into a core stylesheet.
  */
 
 /** *******************************************************************
@@ -303,37 +302,6 @@ li.gError select {
   width: 10em;
 }
 
-/* Debugging information ~~~~~~~~~~~~~~~~~ */
-
-.gAnnotatedThemeBlock {
-  position: relative;
-  padding: 1em;
-  margin: 1em;
-  border: 1px solid #C00;
-  clear: both;
-}
-
-.gAnnotatedThemeBlock_album_top {
-  float: right;
-}
-
-.gAnnotatedThemeBlock_header_bottom {
-  float: right;
-}
-
-.gAnnotatedThemeBlock div.title {
-  position: absolute;
-  top: -1em;
-  right: -1em;
-  border: 1px solid black;
-  background: #C00;
-  color: white;
-  text-align: left;
-  padding: 4px;
-  font-size: 110%;
-  -moz-border-radius: 5% 5% 5% 5%;
-}
-
 /*** ******************************************************************
  * 4) Page layout containers
  *********************************************************************/
@@ -478,8 +446,8 @@ li.gError select {
  * 5) Navigation and menus
  *********************************************************************/
 
-#gSiteMenu, 
-#gBreadcrumbs, 
+#gSiteMenu,
+#gBreadcrumbs,
 #gTagCloud ul {
   font-size: 1.3em;
 }
@@ -784,7 +752,7 @@ li.gError select {
   display: block;
 }
 body .ui-resizable-disabled .ui-resizable-handle,
-body .ui-resizable-autohide .ui-resizable-handle { 
+body .ui-resizable-autohide .ui-resizable-handle {
   display: none;
 }
 .ui-resizable-n {
@@ -863,7 +831,7 @@ body .ui-resizable-autohide .ui-resizable-handle {
   height: 11px;
   z-index: 100;
 }
-.ui-dialog-titlebar-close-hover, 
+.ui-dialog-titlebar-close-hover,
 .ui-dialog-titlebar-close:hover {
   background-position: 0 47%;
 }

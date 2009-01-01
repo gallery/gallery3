@@ -125,9 +125,6 @@ class Theme_View_Core extends View {
     case "thumb_info":
     case "thumb_top":
     case "photo_bottom":
-      // @todo: restrict access to this option
-      $debug = Session::instance()->get("debug", false);
-
       $blocks = array();
       foreach (module::installed() as $module) {
         $helper_class = "{$module->name}_block";
@@ -137,7 +134,7 @@ class Theme_View_Core extends View {
             array_merge(array($this), $args));
         }
       }
-      if ($debug) {
+      if (Session::instance()->get("debug")) {
         if ($function != "head") {
           array_unshift(
             $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function gClearFix\">" .

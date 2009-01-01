@@ -98,6 +98,16 @@ class Admin_View_Core extends View {
             array_merge(array($this), $args));
         }
       }
+
+      if (Session::instance()->get("debug")) {
+        if ($function != "admin_head") {
+          array_unshift(
+            $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function\">" .
+            "<div class=\"title\">$function</div>");
+          $blocks[] = "</div>";
+        }
+      }
+
       return implode("\n", $blocks);
 
     default:

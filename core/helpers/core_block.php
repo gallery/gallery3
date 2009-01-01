@@ -19,6 +19,20 @@
  */
 
 class core_block_Core {
+  public static function head($theme) {
+    if (Session::instance()->get("debug")) {
+      return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
+        url::file("core/css/debug.css") . "\" />";
+    }
+  }
+
+  public static function admin_head($theme) {
+    if (Session::instance()->get("debug")) {
+      return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
+        url::file("core/css/debug.css") . "\" />";
+    }
+  }
+
   public static function page_bottom($theme) {
     if (Session::instance()->get("profiler", false)) {
       $profiler = new Profiler();
