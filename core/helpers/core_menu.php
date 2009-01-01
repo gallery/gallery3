@@ -97,7 +97,7 @@ class core_menu_Core {
                ->append(Menu::factory("link")
                         ->id("themes")
                         ->label(_("Themes"))
-                        ->url("#"))
+                        ->url(url::site("admin/themes")))
                ->append(Menu::factory("link")
                         ->id("image_sizes")
                         ->label(_("Image Sizes"))
