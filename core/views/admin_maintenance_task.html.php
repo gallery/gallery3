@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
 <script type="text/javascript">
   update = function() {

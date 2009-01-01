@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <li id="gComment-<?= $comment->id; ?>">
   <p>
     <a href="#" class="gAuthor"><?= $comment->author ?></a>

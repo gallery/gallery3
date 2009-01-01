@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul id="gLoginMenu">
   <? if ($user->guest): ?>
   <li><a href="<?= url::site("login") ?>"

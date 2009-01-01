@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
   <? foreach ($entries as $entry): ?>
   <li class="<?= log::severity_class($entry->severity) ?>">

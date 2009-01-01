@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gAlbumHeader">
   <?= $theme->album_top() ?>
   <h1><?= $item->title ?></h1>

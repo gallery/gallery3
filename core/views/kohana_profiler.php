@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<? defined("SYSPATH") or die("No direct script access.") ?>
 <style type="text/css">
   #kohana-profiler {
     font-family: Monaco, 'Courier New';

@@ -66,7 +66,7 @@ class File_Structure_Test extends Unit_Test_Case {
         // The preamble for views is a single line that prevents direct script access
         $lines = file($file->getPathname());
         $this->assert_equal(
-          "<? defined(\"SYSPATH\") or die(\"No direct script access.\"); ?>\n",
+          "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n",
           $lines[0],
           "in file: {$file->getPathname()}");
       } else if (preg_match("|\.php$|", $file->getPathname())) {

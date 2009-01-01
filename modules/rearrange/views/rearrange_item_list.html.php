@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul class="jqueryFileTree" style="display: none">
   <? foreach ($children as $item): ?>
   <? if ($item->type == "album"): ?>

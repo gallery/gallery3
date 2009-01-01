@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
   <li>
     <? printf(_("Version: %s"), "3.0") ?>

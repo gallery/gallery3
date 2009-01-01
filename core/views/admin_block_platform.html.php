@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
   <li>
     <? printf(_("Operating System: %s"), PHP_OS) ?>

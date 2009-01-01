@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <? foreach ($errors as $error): ?>
 <div class="block">
   <p class="error">

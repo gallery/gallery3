@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gModules">
   <h1> <?= _("Gallery Modules") ?> </h1>
   <p>

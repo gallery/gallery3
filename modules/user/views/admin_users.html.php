@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <div class="gBlock">
   <h2><?= _("User Administration") ?></h2>
   <div class="gBlockContent">

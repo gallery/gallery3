@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<? defined("SYSPATH") or die("No direct script access.") ?>
 <?php
 
 function green_start() {
