@@ -82,6 +82,10 @@ class access_Core {
       return false;
     }
 
+    if (user::active()->admin) {
+      return true;
+    }
+
     $resource = $perm_name == "view" ?
       $item : model_cache::get("access_cache", $item->id, "item_id");
     foreach (user::group_ids() as $id) {
