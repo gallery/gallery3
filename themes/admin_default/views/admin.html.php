@@ -5,6 +5,7 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>G3: Admin Dashboard</title>
+    <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
         type="text/css" media="screen,projection">
     <link rel="stylesheet" href="<?= url::file("themes/default/css/screen.css") ?>"
@@ -29,14 +30,14 @@
         <div id="gHeader">
           <?= $theme->site_status() ?>
           <?= $theme->admin_header_top() ?>
+          <a href="http://gallery.menalto.com/"><img src="<?= $theme->url("images/logo-sm.png") ?>" id="gLogo" alt="<?= _("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
+          <div id="gSiteAdminMenu">
+            <?= $theme->admin_menu() ?>
+          </div>
           <ul id="gLoginMenu">
             <li><?= html::anchor("albums/1", "Browse the Gallery") ?></li>
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
-          <img src="<?= $theme->url("images/logo.png") ?>" id="gLogo" alt="<?= _("Gallery 3: Your Photos on Your Web Site") ?>" />
-          <div id="gSiteAdminMenu">
-            <?= $theme->admin_menu() ?>
-          </div>
           <?= $theme->admin_header_bottom() ?>
         </div>
       </div>

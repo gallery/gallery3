@@ -11,6 +11,7 @@
       <?= _("Browse Photos") ?> :: <?= $item->title ?>
       <? endif ?>
     </title>
+    <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
           media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/superfish.css") ?>"

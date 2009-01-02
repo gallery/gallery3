@@ -30,8 +30,9 @@
  **********************************************************************/
 
 #gHeader {
+	background-color: #e8e8e8;
 	border-bottom: 1px solid #ccc;
-	min-width: 1000px;
+	min-width: 1024px;
 	padding: 0 20px;
 }
 
@@ -46,18 +47,25 @@
 
 #gHeader #gLogo {
   float: left;
-  margin: 11px 10px 0 0;
+  margin: 0 10px 0 0;
 }
 
 #gHeader #gSiteAdminMenu {
-  clear: none;
   float: left;
   font-size: 1.2em;
-  margin-top: 12px;
 }
 
 #gHeader #gSiteAdminMenu ul {
   margin-bottom: 0;
+}
+
+#gHeader #gLoginMenu {
+	float: right;
+  margin: 1em 0 0 1em;	
+}
+
+#gHeader #gLoginMenu li {
+  margin: 0 0 0 1em;
 }
 
 #gContent .gBlock h2 {
