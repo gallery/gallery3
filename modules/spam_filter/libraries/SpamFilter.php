@@ -56,7 +56,7 @@ class SpamFilter_Core {
     $this->_is_initialized();
 
     $is_valid = $this->driver->check_comment($comment);
-    $comment->published = $is_valid;
+    $comment->state = $is_valid ? "published" : "spam";
     return $is_valid;
   }
 

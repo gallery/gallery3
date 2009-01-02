@@ -54,7 +54,7 @@ class comment_Core {
     if (module::is_installed("spam_filter") && TEST_MODE == 0) {
       SpamFilter::instance()->check_comment($comment);
     } else {
-      $comment->published = true;
+      $comment->state = "published";
     }
 
     $comment->save();

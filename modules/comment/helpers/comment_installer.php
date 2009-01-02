@@ -23,10 +23,6 @@ class comment_installer {
     $version = module::get_version("comment");
 
     if ($version == 0) {
-      /**
-       * @todo change published flag to char(xx) with values published, unpublished, moderation
-       * unreviewed, spam
-       */
       $db->query("CREATE TABLE IF NOT EXISTS `comments` (
                    `id` int(9) NOT NULL auto_increment,
                    `author` varchar(128) default NULL,
@@ -35,7 +31,7 @@ class comment_installer {
                    `created` int(9) NOT NULL,
                    `item_id` int(9) NOT NULL,
                    `url` varchar(255) default NULL,
-                   `published` boolean default 1,
+                   `state` char(15) default 'unpublished',
                    `ip_addr` char(15) default NULL,
                    `user_agent` varchar(255) default NULL,
                    `spam_signature` varchar(255) default NULL,

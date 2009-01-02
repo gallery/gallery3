@@ -19,11 +19,11 @@
  */
 class SpamFilter_Helper_Test extends Unit_Test_Case {
   public function get_driver_names_test() {
-    $current_driver = module::get_var("spam_filter", "driver");
+    $expected[] = _("Select Driver");
     foreach (glob(MODPATH . "spam_filter/libraries/drivers/*.php") as $file) {
       if (preg_match("#spam_filter/libraries/drivers/(.*).php$#", $file, $matches)) {
         if ($matches[1] != "SpamFilter") {
-          $expected[$matches[1]] = $matches[1] === $current_driver;
+          $expected[] = $matches[1];
         }
       }
     }

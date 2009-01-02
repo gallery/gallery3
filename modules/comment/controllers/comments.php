@@ -30,7 +30,7 @@ class Comments_Controller extends REST_Controller {
 
     $comments = ORM::factory("comment")
       ->where("item_id", $item->id)
-      ->where("published", 1)
+      ->where("state", "published")
       ->orderby("created", "desc")
       ->find_all();
 
@@ -68,7 +68,8 @@ class Comments_Controller extends REST_Controller {
 
       print json_encode(
         array("result" => "success",
-              "resource" => $comment->published ? url::site("comments/{$comment->id}") : NULL,
+              "resource" => $comment->state == "published" ? url::site("comments/{$comment->id}") :
+                 NULL,
               "form" => comment::get_add_form($item)->__toString()));
     } else {
       print json_encode(
