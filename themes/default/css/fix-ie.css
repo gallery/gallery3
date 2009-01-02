@@ -1,6 +1,9 @@
 /**
  * Fix display in IE 7 and earlier
  */
-.gClearFix {
+#gSiteMenu,
+#gBreadcrumbs,
+#gAlbumGrid,
+#gPager {
   zoom: 1;
 }
