@@ -37,6 +37,7 @@
 
 #gContent {
   font-size: 1.1em;
+  width: 97%;
 }
 
 /** *******************************************************************
@@ -59,10 +60,6 @@
   margin-bottom: 0;
 }
 
-#gContent .gBlock {
-  margin-right: 1em;
-}
-
 #gContent .gBlock h2 {
   cursor: move;
   margin: -.8em -.3em 0 -.3em;
@@ -74,14 +71,7 @@
 }
 
 #gPhotoStream .gBlockContent {
-  overflow: scroll;
-}
-
-.gBlockContent .gError,
-.gBlockContent .gInfo,
-.gBlockContent .gSuccess,
-.gBlockContent .gWarning {
-  background-color: transparent;
+  overflow: auto;
 }
 
 /** *******************************************************************

@@ -13,6 +13,7 @@
  * 7)  Browser hacks
  * 8)  jQuery and jQuery UI
  *
+ * @todo Default user icon (user w/ camera) 
  * @todo Group Credits and gLoginMenu seperator styles
  * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
  * @todo Refactor form layout styles to reserve room for validation messages in default state. This
@@ -77,13 +78,31 @@ a:hover {
 
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-caption {
+table {
+	width: 100%;
+}
+
+#gContent table {
+	margin: 1em 0;
+}
+
+caption, 
+th {
   text-align: left;
 }
 
 th {
   font-weight: bold;
-  text-align: left;
+}
+
+td {
+}
+
+th, 
+td {
+  border: 1px solid #ccc;
+	padding: .3em;
+  vertical-align: top;
 }
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -92,9 +111,19 @@ fieldset {
   border: 1px solid #ccc;
 }
 
+#gHeader fieldset,
+#gSidebar fieldset {
+	border: none;
+}
+
 legend {
   font-weight: bold;
   margin-left: 1em;
+}
+
+#gHeader legend,
+#gSidebar legend {
+  display: none;
 }
 
 label {
@@ -103,7 +132,6 @@ label {
 
 input[type="text"],
 input[type="password"],
-textarea,
 select {
   width: 50%;
 }
@@ -123,6 +151,10 @@ input[type="checkbox"] {
 input[type="file"] {
 }
 
+input[type="hidden"] {
+	display: none;
+}
+
 input[type="password"] {
 }
 
@@ -135,7 +167,9 @@ input[type="reset"] {
 input[type="submit"] {
 }
 
-input[type="text"] {
+#gHeader input[type="text"],
+#gSidebar input[type="text"] {
+  color: #999;
 }
 
 option {
@@ -148,7 +182,7 @@ select {
 }
 
 textarea {
-  width: 99%;
+  width: 100%;
   height: 12em;
 }
 
@@ -159,6 +193,7 @@ input:focus,
 textarea:focus,
 option:focus {
   background-color: #ffc;
+  color: #000;
 }
 
 /* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -181,12 +216,10 @@ select,
 textarea {
   display: block;
   clear: both;
+  padding: .2em;
 }
 
 /* Form validation ~~~~~~~~~~~~~~~~~~~~~~~ */
-
-.gRequired {
-}
 
 .gValidationRule {
   font-size: 80%;
@@ -235,19 +268,6 @@ li.gError select {
   padding: .5em 1em;
 }
 
-/* Metadata ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-.gMetadata td,
-.gMetadata th {
-  padding: 0 1em .5em 0;
-  vertical-align: top;
-}
-
-.gMetadata th,
-.gMetadata td.toggle {
-  text-align: right;
-}
-
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSiteStatus li,
@@ -256,29 +276,48 @@ li.gError select {
   margin-bottom: .4em;
 }
 
-.gError, .gInfo, .gSuccess, .gWarning {
-  background-color: #e8e8e8;
+.gError, 
+.gInfo, 
+.gSuccess, 
+.gWarning {
   background-position: .4em 50%;
   background-repeat: no-repeat;
   padding: .4em .5em .4em 30px;
 }
 
-.gError {
+#gSiteStatus .gError,
+#gMessage .gError {
   background-color: #fcc;
+}
+
+.gError {
   background-image: url('../images/ico-error.png');
+}
+
+#gSiteStatus .gInfo,
+#gMessage .gInfo {
+  background-color: #e8e8e8;
 }
 
 .gInfo {
   background-image: url('../images/ico-info.png');
 }
 
-.gSuccess {
+#gSiteStatus .gSuccess,
+#gMessage .gSuccess {
   background-color: #cfc;
+}
+
+.gSuccess {
   background-image: url('../images/ico-success.png');
 }
 
-.gWarning {
+#gSiteStatus .gWarning,
+#gMessage .gWarning {
   background-color: #ff9;
+}
+
+.gWarning {
   background-image: url('../images/ico-warning.png');
 }
 
@@ -290,16 +329,9 @@ li.gError select {
   padding: .4em .5em;
 }
 
-#gHeader #gSearchForm legend,
-#gHeader #gSearchForm  label,
-#gSidebar #gAddTagForm legend,
-#gSidebar #gAddTagForm  label {
+#gHeader #gSearchForm label,
+#gSidebar #gAddTagForm label {
   display: none;
-}
-
-#gHeader #gSearchForm fieldset,
-#gSidebar #gAddTagForm fieldset {
-  border: none;
 }
 
 #gHeader #gSearchForm input[type="text"],
