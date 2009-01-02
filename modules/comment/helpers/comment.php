@@ -52,7 +52,7 @@ class comment_Core {
 
     // @todo Figure out how to mock up the test of the spam_filter
     if (module::is_installed("spam_filter") && TEST_MODE == 0) {
-      Spam_Filter::instance()->check_comment($comment);
+      SpamFilter::instance()->check_comment($comment);
     } else {
       $comment->published = true;
     }
@@ -82,7 +82,7 @@ class comment_Core {
 
     // @todo Figure out how to mock up the test of the spam_filter
     if (module::is_installed("spam_filter") && TEST_MODE == 0) {
-      Spam_Filter::instance()->check_comment($comment);
+      SpamFilter::instance()->check_comment($comment);
     }
 
     $comment->save();

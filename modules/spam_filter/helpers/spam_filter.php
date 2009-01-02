@@ -19,6 +19,7 @@
  */
 class spam_filter {
   public static function get_driver_names() {
+    $drivers = array(_("Select Driver"));
     foreach (glob(MODPATH . "spam_filter/libraries/drivers/*.php") as $file) {
       if (preg_match("#spam_filter/libraries/drivers/(.*).php$#", $file, $matches)) {
         if ($matches[1] != "SpamFilter") {

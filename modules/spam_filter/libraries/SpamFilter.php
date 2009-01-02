@@ -17,25 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Spam_Filter_Core {
+class SpamFilter_Core {
 
   private static $spam_filter;
 
   protected $driver;
 
-  public static function instance() {
+  public static function instance($driver=null) {
     if (empty(self::$spam_filter)) {
-      self::$spam_filter = new Spam_Filter();
+      self::$spam_filter = new SpamFilter($driver);
     }
     return self::$spam_filter;
   }
 
-  protected function __construct() {
-    $driver = module::get_var("spam_filter", "driver", null);
-    $api_key = module::get_var("spam_filter", "api_key", null);
-
-    if (empty($api_key)) {
-      throw new Exception("@todo SPAM FILTER NOT INITIALIZED");
+  protected function __construct($driver=null) {
+    if (empty($driver)) {
+      $driver = module::get_var("spam_filter", "driver", null);
     }
 
     // Set driver name
@@ -55,26 +52,49 @@ class Spam_Filter_Core {
     }
   }
 
-  public function verify_key($api_key) {
-    return $this->driver->verify_key($api_key);
-  }
-
   public function check_comment($comment) {
+    $this->_is_initialized();
+
     $is_valid = $this->driver->check_comment($comment);
     $comment->published = $is_valid;
     return $is_valid;
   }
 
   public function submit_spam($comment) {
+    $this->_is_initialized();
+
     return $this->driver->submit_spam($comment);
   }
 
   public function submit_ham($comment) {
+    $this->_is_initialized();
+
     return $this->driver->submit_ham($comment);
   }
 
   public function get_statistics() {
+    $this->_is_initialized();
     return $this->driver->get_statistics();
+  }
+
+  public function get_admin_fields($post=null) {
+    return $this->driver->get_admin_fields($post);
+  }
+
+  public function get_validation_rules($post) {
+    $this->driver->get_validation_rules($post);
+  }
+
+  public function set_api_data($post) {
+    $this->driver->set_api_data($post);
+    module::set_var("spam_filter", "key_verified", true);
+  }
+
+  private function _is_initialized() {
+    $key_verified = module::get_var("spam_filter", "key_verified", null);
+    if (empty($key_verified)) {
+      throw new Exception("@todo SPAM FILTER NOT INITIALIZED");
+    }
   }
 }
 

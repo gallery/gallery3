@@ -18,28 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Mollom_Driver extends SpamFilter_Driver {
-  // Lets not send everything to Akismet
-  private $ignore = array("HTTP_COOKIE",
-              "HTTP_USER_AGENT",
-              "HTTP_X_FORWARDED_FOR",
-              "HTTP_X_FORWARDED_HOST",
-              "HTTP_MAX_FORWARDS",
-              "HTTP_X_FORWARDED_SERVER",
-              "REDIRECT_STATUS",
-              "SERVER_PORT",
-              "PATH",
-              "DOCUMENT_ROOT",
-              "REMOTE_ADDR",
-              "SERVER_ADMIN",
-              "QUERY_STRING",
-              "PHP_SELF" );
-
-  protected $_api_key;
-
-  public function verify_key($api_key) {
-    return true;
-  }
-
   public function check_comment($comment_data) {
     return true;
   }
@@ -53,6 +31,35 @@ class Mollom_Driver extends SpamFilter_Driver {
 
   public function get_statistics() {
     throw new Exception("@todo GET_STATISTICS NOT IMPLEMENTED");
+  }
+
+  public function get_admin_fields($post) {
+    $view = new View("spam_filter_admin_mollom.html");
+    $view->private_key = empty($post) ? module::get_var("spam_filter", "private_key") :
+      $post->private_key;
+    $view->public_key = empty($post) ? module::get_var("spam_filter", "public_key") :
+      $post->private_key;
+
+    $view->errors = $post ? $post->errors() : null;
+    return $view;
+  }
+
+  public function get_validation_rules($post) {
+    $post->add_rules("private_key", "required");
+    $post->add_rules("public_key", "required");
+    $post->add_callbacks("private_key", array($this, "validate_key"));
+  }
+
+  public function validate_key(Validation $array, $field) {
+    // @todo verify key values
+    Kohana::log("debug", "Mollom::validate_key");
+    Kohana::log("debug", print_r($array, 1));
+    Kohana::log("debug", "field: $field");
+  }
+
+  public function set_api_data($post) {
+    module::set_var("spam_filter", "private_key", $post->private_key);
+    module::set_var("spam_filter", "public_key", $post->public_key);
   }
 
   private function _build_request($function, $host,$comment_data) {

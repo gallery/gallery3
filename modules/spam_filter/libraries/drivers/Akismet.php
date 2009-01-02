@@ -19,6 +19,7 @@
  */
 class Akismet_Driver extends SpamFilter_Driver {
   // Lets not send everything to Akismet
+  // @todo change to a white list
   private $ignore = array("HTTP_COOKIE",
               "HTTP_USER_AGENT",
               "HTTP_X_FORWARDED_FOR",
@@ -34,14 +35,14 @@ class Akismet_Driver extends SpamFilter_Driver {
               "QUERY_STRING",
               "PHP_SELF" );
 
-  public function verify_key($api_key) {
-//    $url = url::base();
-//    $response = $this->_http_post("rest.akismet.com", "key={$api_key}&blog=$url");
-//    if ("valid" != $response[1]) {
-//      throw new Exception("@todo INVALID AKISMET KEY");
-//    }
-    return true;
-  }
+//  public function verify_key($api_key) {
+////    $url = url::base();
+////    $response = $this->_http_post("rest.akismet.com", "key={$api_key}&blog=$url");
+////    if ("valid" != $response[1]) {
+////      throw new Exception("@todo INVALID AKISMET KEY");
+////    }
+//    return true;
+//  }
 
   public function check_comment($comment) {
 //    $request = $this->_build_request("comment-check", $comment);
@@ -66,6 +67,31 @@ class Akismet_Driver extends SpamFilter_Driver {
 
   public function get_statistics() {
     throw new Exception("@todo GET_STATISTICS NOT SUPPORTED");
+  }
+
+  public function get_admin_fields($post) {
+    $view = new View("spam_filter_admin_akismet.html");
+    $view->api_key = empty($post) ? module::get_var("spam_filter", "api_key") :
+      $post->api_key;
+
+    $view->errors = $post ? $post->errors() : null;
+    return $view;
+  }
+
+  public function get_validation_rules($post) {
+    $post->add_rules("api_key", "required");
+    $post->add_callbacks("api_key", array($this, "validate_key"));
+  }
+
+  public function validate_key(Validation $array, $field) {
+    // @todo verify key values
+    Kohana::log("debug", "Akismet::validate_key");
+    Kohana::log("debug", print_r($array, 1));
+    Kohana::log("debug", "field: $field");
+  }
+
+  public function set_api_data($post) {
+    module::set_var("spam_filter", "api_key", $post->api_key);
   }
 
   private function _build_request($function, $comment) {

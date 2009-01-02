@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 abstract class SpamFilter_Driver {
-  public abstract function verify_key($api_key);
-
   public abstract function check_comment($comment);
 
   public abstract function submit_spam($comment);
@@ -27,6 +25,12 @@ abstract class SpamFilter_Driver {
   public abstract function submit_ham($comment);
 
   public abstract function get_statistics();
+
+  public abstract function get_admin_fields($post);
+
+  public abstract function get_validation_rules($post);
+
+  public abstract function set_api_data($post);
 
   protected function _http_post($host, $http_request, $port=80, $timeout=5) {
     $response = "";

@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Spam_Filter_Helper_Test extends Unit_Test_Case {
+class SpamFilter_Helper_Test extends Unit_Test_Case {
   public function get_driver_names_test() {
     $current_driver = module::get_var("spam_filter", "driver");
     foreach (glob(MODPATH . "spam_filter/libraries/drivers/*.php") as $file) {
       if (preg_match("#spam_filter/libraries/drivers/(.*).php$#", $file, $matches)) {
-        if ($matches[1] != "Spam_Filter") {
+        if ($matches[1] != "SpamFilter") {
           $expected[$matches[1]] = $matches[1] === $current_driver;
         }
       }
