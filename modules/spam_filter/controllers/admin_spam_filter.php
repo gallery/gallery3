@@ -78,43 +78,6 @@ class Admin_Spam_Filter_Controller extends Admin_Controller {
         array("result" => "continue",
               "form" => $form->__toString()));
     }
-//    $selected = Input::instance()->post("selected");
-//    $new_driver_idx = Input::instance()->post("drivers");
-//
-//    if ($selected != $new_driver_idx) {
-//      $drivers = spam_filter::get_driver_names();
-//      $form = $this->get_edit_form($drivers[$new_driver_idx]);
-//      $form->edit_spam_filter->selected = $new_driver_idx;
-//      unset($_POST["drivers"])
-//      print json_encode(
-//        array("result" => "continue",
-//              "form" => $form->__toString()));
-//    } else {
-//      Kohana::log("debug", "validate form");
-//      $form = $this->get_edit_form();
-//      if ($form->validate()) {
-//        $driver_index = $form->edit_spam_filter->drivers->value;
-//        $drivers = spam_filter::get_driver_names();
-//        module::set_var("spam_filter", "driver", $drivers[$driver_index]);
-//
-//        if (SpamFilter::instance()->set_admin_fields($form->edit_spam_filter->api_data)) {
-//          $key_verified = module::set_var("spam_filter", "key_verified", true);
-//          log::success("spam_filter", _("Spam Filter configured"));
-//          message::success(_("Spam Filter configured"));
-//          print json_encode(
-//            array("result" => "success",
-//                  "location" => url::site("admin/spam_filter")));
-//        } else {
-//          print json_encode(
-//          array("result" => "error",
-//                "form" => $form->__toString()));
-//        }
-//      } else {
-//        print json_encode(
-//          array("result" => "error",
-//                "form" => $form->__toString()));
-//      }
-//    }
   }
 
   public function callback() {
