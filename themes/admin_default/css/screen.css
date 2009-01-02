@@ -1,17 +1,27 @@
 #gContent {
   font-size: 1.1em;
 }
+
 .gBlock {
   border: 1px solid #e7e7e7;
   margin-bottom: 1em;
-  padding: .4em;
+  padding: 1em .4em;
 }
-.gBlock h2 {
-  background-color: #e7e7e7;
-  margin: -.4em;
-  padding: .2em .6em;
+
+#gContent .gBlock h2 {
+  margin: -.8em -.3em 0 -.3em;
   cursor: move;
 }
+
+#gSidebar .gBlock h2 {
+  margin: -.9em -.4em 0 -.3em;
+  cursor: move;
+}
+
+.gBlockContent {
+  padding-top: 1em;
+}
+
 #gPhotoStream .gBlockContent {
   overflow: scroll;
 }
@@ -19,9 +29,29 @@
 #gSiteAdminMenu {
   border-bottom: 1px solid #ccc;
   font-size: 1.2em;
-  padding: 0 20px 0;
+  padding: 0 20px;
 }
 
 #gSiteAdminMenu ul {
   margin-bottom: 0;
 }
+
+.gBlockContent .gError,
+.gBlockContent .gInfo,
+.gBlockContent .gSuccess,
+.gBlockContent .gWarning {
+  background-color: transparent;
+}
+
+/** *******************************************************************
+ * N) Browser hacks
+ *********************************************************************/
+
+#gSiteAdminMenu:after {
+  clear: both;
+  content: ".";
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+

@@ -47,15 +47,19 @@ h1, h2, h3, h4, h5 {
 }
 
 h1 {
-  font-size: 1.7em
+  font-size: 1.7em;
 }
 
 h2 {
-  font-size: 1.4em
+  font-size: 1.4em;
+}
+
+#gSidebar .gBlock h2 {
+  font-size: 1.2em;
 }
 
 h3 {
-  font-size: 1.2em
+  font-size: 1.2em;
 }
 
 /* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -173,6 +177,7 @@ form ul ul li {
 }
 
 input,
+select,
 textarea {
   display: block;
   clear: both;

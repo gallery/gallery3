@@ -36,19 +36,17 @@
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
           <img src="<?= $theme->url("images/logo.png") ?>" id="gLogo" alt="<?= _("Gallery 3: Your Photos on Your Web Site") ?>" />
-          <div id="gSiteAdminMenu" class="gClearFix">
+          <div id="gSiteAdminMenu">
             <?= $theme->admin_menu() ?>
           </div>
           <?= $theme->admin_header_bottom() ?>
         </div>
       </div>
-
-      <?= $theme->messages() ?>
-
       <div id="bd">
         <div id="yui-main">
           <div class="yui-b">
             <div id="gContent" class="yui-g">
+              <?= $theme->messages() ?>
               <?= $content ?>
             </div>
           </div>
