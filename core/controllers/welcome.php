@@ -191,7 +191,7 @@ class Welcome_Controller extends Template_Controller {
   }
 
   function add_photos() {
-    $path = $this->input->post("path");
+    $path = trim($this->input->post("path"));
     $parent_id = (int)$this->input->post("parent_id");
     $parent = ORM::factory("item", $parent_id);
     if (!$parent->loaded) {
@@ -199,7 +199,6 @@ class Welcome_Controller extends Template_Controller {
     }
 
     cookie::set("add_photos_path", $path);
-
     $photo_count = 0;
     foreach (glob("$path/*.[Jj][Pp][Gg]") as $file) {
       set_time_limit(30);
