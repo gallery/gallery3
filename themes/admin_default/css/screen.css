@@ -1,16 +1,71 @@
-#gContent {
-  font-size: 1.1em;
-}
+/**
+ * Gallery 3 Default Admin Theme Screen Styles
+ *
+ * Extends themes/default/css/screen.css
+ *
+ *
+ * @todo Default user icon (user w/ camera) 
+ * @todo Group Credits and gLoginMenu seperator styles
+ * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
+ * @todo Refactor form layout styles to reserve room for validation messages in default state. This
+ *       will eliminate layout shifts when validation messages are displayed.
+ */
 
+/** *******************************************************************
+ *  Reusable content blocks
+ **********************************************************************/
+ 
 .gBlock {
   border: 1px solid #e7e7e7;
   margin-bottom: 1em;
   padding: 1em .4em;
 }
 
+.gBlockContent {
+  padding-top: 1em;
+}
+
+/** *******************************************************************
+ *  Page layout containers
+ **********************************************************************/
+
+#gHeader {
+	border-bottom: 1px solid #ccc;
+	min-width: 1000px;
+	padding: 0 20px;
+}
+
+#gContent {
+  font-size: 1.1em;
+}
+
+/** *******************************************************************
+ *  Content blocks in specific layout containers
+ *********************************************************************/
+
+#gHeader #gLogo {
+  float: left;
+  margin: 11px 10px 0 0;
+}
+
+#gHeader #gSiteAdminMenu {
+  clear: none;
+  float: left;
+  font-size: 1.2em;
+  margin-top: 12px;
+}
+
+#gHeader #gSiteAdminMenu ul {
+  margin-bottom: 0;
+}
+
+#gContent .gBlock {
+  margin-right: 1em;
+}
+
 #gContent .gBlock h2 {
-  margin: -.8em -.3em 0 -.3em;
   cursor: move;
+  margin: -.8em -.3em 0 -.3em;
 }
 
 #gSidebar .gBlock h2 {
@@ -18,22 +73,8 @@
   cursor: move;
 }
 
-.gBlockContent {
-  padding-top: 1em;
-}
-
 #gPhotoStream .gBlockContent {
   overflow: scroll;
-}
-
-#gSiteAdminMenu {
-  border-bottom: 1px solid #ccc;
-  font-size: 1.2em;
-  padding: 0 20px;
-}
-
-#gSiteAdminMenu ul {
-  margin-bottom: 0;
 }
 
 .gBlockContent .gError,
@@ -44,14 +85,13 @@
 }
 
 /** *******************************************************************
- * N) Browser hacks
+ *  Browser hacks
  *********************************************************************/
 
-#gSiteAdminMenu:after {
+#gHeader:after {
   clear: both;
   content: ".";
   display: block;
   height: 0;
   visibility: hidden;
 }
-

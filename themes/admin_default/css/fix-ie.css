@@ -1,0 +1,6 @@
+/**
+ * Fix display in IE 7 and earlier
+ */
+#gHeader {
+  zoom: 1;
+}
