@@ -19,10 +19,10 @@
  */
 class spam_filter_menu_Core {
   public static function admin($menu, $theme) {
-    $menu->get("content_menu")
+    $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("spam_filter")
-               ->label(_("Configure Spam Filter"))
+               ->label(_("Spam Filtering"))
                ->url(url::site("admin/spam_filter")));
   }
 }

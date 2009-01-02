@@ -22,7 +22,7 @@ class comment_menu_Core {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
                ->id("comments")
-               ->label(_("Comment Moderation"))
+               ->label(_("Comments"))
                ->url("#"));
   }
 }
