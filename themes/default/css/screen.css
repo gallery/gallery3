@@ -358,6 +358,7 @@ li.gError select {
 #gContent {
   font-size: 1.2em;
   padding-left: 20px;
+  width: 696px;
 }
 
 #gSidebar {
@@ -439,6 +440,9 @@ li.gError select {
 #gContent #gItem {
 }
 
+#gContent #gItem #gPager {
+}
+
 #gContent #gComments {
   margin-top: 2em;
 }
@@ -510,7 +514,8 @@ li.gError select {
 #gViewMenu #gAlbumLink,
 #gViewMenu #gHybridLink,
 #gViewMenu #gSlideshowLink,
-#gViewMenu #gFullsizeLink {
+#gViewMenu #gFullsizeLink,
+#gViewMenu #gCommentsLink {
   background-repeat: no-repeat;
   background-position: 10px center;
   display: block;
@@ -536,6 +541,10 @@ li.gError select {
 
 #gViewMenu #gFullsizeLink {
   background-image: url('../images/ico-view-fullsize.png');
+}
+
+#gViewMenu #gCommentsLink {
+  background-image: url('../images/ico-view-comments.png');
 }
 
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

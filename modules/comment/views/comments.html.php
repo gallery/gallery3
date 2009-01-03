@@ -1,5 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<ul>
+<a name="comments"></a>
+<ul id="gComments">
   <? foreach ($comments as $comment): ?>
   <li id="gComment-<?= $comment->id; ?>">
     <? $avatar = $theme->url("images/avatar.jpg") ?>

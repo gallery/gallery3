@@ -20,7 +20,16 @@ $(document).ready(function() {
 
   // Photo/Item item view only
   if ($("#gItem").length) {
-    sizedImage();
+    // Ensure that sized image versions 
+	// fit inside their container
+	sizedImage();
+    
+    // Add scroll effect for links to named anchors
+    $.localScroll({
+      queue: true,
+      duration: 1000,
+      hash: true
+    });
   }
 
   // Apply Superfish menus
