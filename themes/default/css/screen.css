@@ -14,7 +14,6 @@
  * 8)  jQuery and jQuery UI
  *
  * @todo Default user icon (user w/ camera) 
- * @todo Group Credits and gLoginMenu seperator styles
  * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
  * @todo Refactor form layout styles to reserve room for validation messages in default state. This
  *       will eliminate layout shifts when validation messages are displayed.
@@ -257,15 +256,12 @@ li.gError select {
 }
 
 .gBlock h2 {
-  background: #e8e8e8;
-  padding: .3em 1.4em;
-  background-image: url('../images/ico-move-handle.png');
-  background-repeat: no-repeat;
-  cursor: move;
+  background-color: #e8e8e8;
+  padding: .3em .8em;
 }
 
 .gBlockContent {
-  padding: .5em 1em;
+  margin-top: 1em;
 }
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -393,6 +389,15 @@ li.gError select {
   margin-right: 20px;
 }
 
+#gContent .gBlock h2 {
+  background-color: transparent;
+  padding-left: 0;
+}
+
+#gSidebar .gBlockContent {
+	padding-left: 1em;
+}
+
 /* Album/Photo information ~~~~~~~~~~~~~~~ */
 
 #gContent #gInfo {
@@ -442,27 +447,34 @@ li.gError select {
   margin: 1em 0;
 }
 
-#gContent #gComments ul li p {
+#gContent #gComments .gAuthor {
   background-color: #e8e8e8;
-  margin-bottom: 2px;
-  padding: 4px;
+  height: 32px;
+  line-height: 32px;
 }
 
 #gContent #gComments ul li div {
-  padding: 8px;
+  padding: 0 8px 8px 32px;
+}
+
+#gContent #gComments .gAvatar {
+	margin-right: .4em;
 }
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+#gHeader #gLoginMenu li,
 #gFooter #gCredits li {
   display: inline;
 }
 
+#gHeader #gLoginMenu li:before,
 #gFooter #gCredits li:before {
-  padding: 0 2px;
+  padding: 0 .6em 0 .4em;
   content: "|";
 }
 
+#gHeader #gLoginMenu li.first:before,
 #gFooter #gCredits li.first:before {
   content: "";
 }
@@ -479,14 +491,9 @@ li.gError select {
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gLoginMenu {
+#gHeader #gLoginMenu {
   float: right;
-  margin-top: 7px;
-}
-
-#gLoginMenu li {
-  display: inline;
-  margin-right: 20px;
+  margin: 9px 20px 0 0;
 }
 
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -745,6 +752,13 @@ li.gError select {
 .gLoadingSmall {
   background: #fff url('../images/loading-sm.gif') no-repeat center center;
   font-size: 0;
+}
+
+.gDraggable {
+  background-image: url('../images/ico-move-handle.png');
+  background-repeat: no-repeat;
+  cursor: move;
+  padding: .3em 1.4em;
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */

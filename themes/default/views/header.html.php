@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <?= $theme->site_status() ?>
 <?= $theme->header_top() ?>
-<img id="gLogo" width="107" height="48" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
+<img id="gLogo" alt="<?= _("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
 
 <div id="gSiteMenu">
 <?= $theme->site_menu() ?>

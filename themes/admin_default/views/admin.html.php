@@ -35,7 +35,7 @@
             <?= $theme->admin_menu() ?>
           </div>
           <ul id="gLoginMenu">
-            <li><?= html::anchor("albums/1", "Browse the Gallery") ?></li>
+            <li class="first"><?= html::anchor("albums/1", "Browse the Gallery") ?></li>
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
           <?= $theme->admin_header_bottom() ?>
