@@ -25,7 +25,8 @@ class core_block_Core {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/debug.css") . "\" />";
     }
-    if ($theme->page_type == "album" && access::can("edit", $theme->item())) {
+    if ($theme->page_type == "album" && $theme->item()->type == "photo" &&
+        access::can("edit", $theme->item())) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/quickedit.css") . "\" />";
       $buf .= html::script("core/js/quickedit.js");
