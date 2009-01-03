@@ -1,0 +1,45 @@
+div.gQuickEdit {
+  margin: 0px !important;
+  padding: 0px !important;
+  border: none !important;
+}
+
+#gQuickEditPane {
+  background: white;
+  opacity: 0.8;
+  border-bottom: 1px dashed black;
+}
+
+#gQuickEditPane div {
+  background: red;
+  float: right;
+  display: inline;
+  cursor: pointer;
+  margin: 8px;
+}
+
+#gQuickEditPane div.rotate-clockwise {
+  background: url(../images/arrow_rotate_clockwise.png);
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+#gQuickEditPane div.rotate-clockwise span {
+  display: none;
+}
+
+#gQuickEditPane div.rotate-counter-clockwise {
+  background: url(../images/arrow_rotate_anticlockwise.png);
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+#gQuickEditPane div.rotate-counter-clockwise span {
+  display: none;
+}

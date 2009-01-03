@@ -16,7 +16,7 @@
     <a href="<?= $child->url() ?>">
       <img class="gThumbnail"
            src="<?= $child->thumb_url() ?>"
-           alt="<?= $child->title ?>" 
+           alt="<?= $child->title ?>"
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />
     </a>

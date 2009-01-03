@@ -20,9 +20,29 @@
 
 class core_block_Core {
   public static function head($theme) {
+    $buf = "";
     if (Session::instance()->get("debug")) {
-      return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
+      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/debug.css") . "\" />";
+    }
+    if ($theme->page_type == "album" && access::can("edit", $theme->item())) {
+      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
+        url::file("core/css/quickedit.css") . "\" />";
+      $buf .= html::script("core/js/quickedit.js");
+    }
+    return $buf;
+  }
+
+  public static function thumb_top($theme, $child) {
+    if (access::can("edit", $child)) {
+      $edit_link = url::site("quick/edit/$child->id");
+      return "<div class=\"gQuickEdit\" quickedit_link=\"$edit_link\">";
+    }
+  }
+
+  public static function thumb_bottom($theme, $child) {
+    if (access::can("edit", $child)) {
+      return "</div>";
     }
   }
 
