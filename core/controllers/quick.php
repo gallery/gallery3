@@ -58,6 +58,14 @@ class Quick_Controller extends Controller {
       $item->save();
 
       graphics::generate($item);
+
+      $parent = $item->parent();
+      if ($parent->album_cover_item_id == $item->id) {
+        copy($item->thumb_path(), $parent->thumb_path());
+        $parent->thumb_width = $item->thumb_width;
+        $parent->thumb_height = $item->thumb_height;
+        $parent->save();
+      }
     }
 
     print json_encode(
