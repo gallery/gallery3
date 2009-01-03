@@ -36,6 +36,14 @@ var quickedit = function(url, img) {
       img.attr("width", data.width);
       img.attr("height", data.height);
       img.attr("src", data.src);
+      var pos = img.position();
+      $("#gQuickEditPane").css({
+	"position": "absolute",
+	"top": pos.top,
+	"left": pos.left,
+	"width": img.innerWidth() + 1,
+	"height": 32
+      });
     }
   });
 };
