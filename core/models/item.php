@@ -234,4 +234,17 @@ class Item_Model extends ORM_MPTT {
 
     return model_cache::get("item", $this->album_cover_item_id);
   }
+
+  /**
+   * Find the position of the given child id in this album.  The resulting value is 1-indexed, so
+   * the first child in the album is at position 1.
+   */
+  public function get_position($child_id) {
+    // Right now we only sort by id ascending, so bake that assumption in here.
+    // @todo fix this when we introduce sort orders.
+    return ORM::factory("item")
+      ->where("parent_id", $this->id)
+      ->where("id <=", $child_id)
+      ->count_all();
+  }
 }

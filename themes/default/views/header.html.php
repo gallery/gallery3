@@ -12,7 +12,7 @@
 <? if ($page_type != "tag"): ?>
 <ul id="gBreadcrumbs">
   <? foreach ($parents as $parent): ?>
-  <li><a href="<?= url::site("albums/{$parent->id}") ?>"><?= $parent->title ?></a></li>
+  <li><a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>"><?= $parent->title ?></a></li>
   <? endforeach ?>
   <li class="active"><?= $item->title ?></li>
 </ul>

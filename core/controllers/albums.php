@@ -26,6 +26,18 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
 
     $page_size = module::get_var("core", "page_size", 9);
+    $show = $this->input->get("show");
+
+    if ($show) {
+      $index = $album->get_position($show);
+      $page = ceil($index / $page_size);
+      if ($page == 1) {
+        url::redirect("albums/$album->id");
+      } else {
+        url::redirect("albums/$album->id?page=$page");
+      }
+    }
+
     $page = $this->input->get("page", "1");
     $children_count = $album->viewable()->children_count();
     $offset = ($page-1) * $page_size;
