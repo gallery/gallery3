@@ -138,6 +138,23 @@ class graphics_Core {
   }
 
   /**
+   * Rotate an image.  Valid options are degrees
+   *
+   * @param string  $input_file
+   * @param string  $output_file
+   * @param array   $options
+   */
+  public static function rotate($input_file, $output_file, $options) {
+    if (!self::$init) {
+      self::init_toolkit();
+    }
+
+    Image::factory($input_file)
+      ->rotate($options["degrees"])
+      ->save($output_file);
+  }
+
+  /**
    * Overlay an image on top of the input file.  Valid options are file, mime_type, position and
    * transparency_percent.
    * position is one of northwest, north, northeast, west, center, east, southwest, south, southeast
@@ -258,8 +275,7 @@ class graphics_Core {
    * GraphicsMagick we return the path to the directory containing the appropriate binaries.
    */
   public static function detect_toolkits() {
-    $gd_info = gd_info();
-    return array("gd" => $gd_info["GD Version"],
+    return array("gd" => gd_info(),
                  "imagemagick" => dirname(exec("which convert")),
                  "graphicsmagick" => dirname(exec("which gm")));
   }
