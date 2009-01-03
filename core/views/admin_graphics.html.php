@@ -23,9 +23,13 @@
           <p>
             <? printf(_("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the %sGD website%s for more information."), "<a href=\"http://www.boutell.com/gd/\">", "</a>") ?>
           </p>
-          <? if ($tk->gd): ?>
+          <? if ($tk->gd["GD Version"] && function_exists('imagerotate')): ?>
           <p class="gSuccess">
-            <? printf(_("You have GD version %s."), $tk->gd) ?>
+            <? printf(_("You have GD version %s."), $tk->gd["GD Version"]) ?>
+          </p>
+          <? elseif ($tk->gd["GD Version"]): ?>
+          <p class="gWarning">
+            <? printf(_("You have GD version %s, but it lacks image rotation."), $tk->gd["GD Version"]) ?>
           </p>
           <? else: ?>
           <p class="gInfo">
