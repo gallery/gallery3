@@ -756,9 +756,10 @@ li.gError select {
 
 .gDraggable {
   background-image: url('../images/ico-move-handle.png');
+  background-position: left .1em;
   background-repeat: no-repeat;
   cursor: move;
-  padding: .3em 1.4em;
+  padding: .3em 1.4em !important;
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */

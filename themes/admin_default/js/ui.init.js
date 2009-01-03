@@ -13,12 +13,7 @@ $(document).ready(function(){
     pathClass:  'current',
     speed: 'fast'
   });
+  
+  $(".gBlock h2").addClass("gDraggable");
 
-  /**
-   * Attach event listeners to open modal dialogs
-   */
-  var dialogLinks = $(".gDialogLink");
-  for (var i=0; i < dialogLinks.length; i++) {
-    $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
-  };
 });

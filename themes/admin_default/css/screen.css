@@ -22,7 +22,7 @@
 }
 
 .gBlockContent {
-  padding-top: 1em;
+  padding: 0 1em 1em 1em;
 }
 
 /** *******************************************************************
@@ -38,7 +38,7 @@
 
 #gContent {
   font-size: 1.1em;
-  width: 97%;
+  width: 96%;
 }
 
 /** *******************************************************************
@@ -64,7 +64,7 @@
 }
 
 #gContent .gBlock h2 {
-  cursor: move;
+  background-color: #e8e8e8;
   margin: -.8em -.3em 0 -.3em;
 }
 
