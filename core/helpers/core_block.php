@@ -25,8 +25,7 @@ class core_block_Core {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/debug.css") . "\" />";
     }
-    if ($theme->page_type == "album" && $theme->item()->type == "photo" &&
-        access::can("edit", $theme->item())) {
+    if ($theme->page_type == "album" && access::can("edit", $theme->item())) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/quickedit.css") . "\" />";
       $buf .= html::script("core/js/quickedit.js");
@@ -35,14 +34,14 @@ class core_block_Core {
   }
 
   public static function thumb_top($theme, $child) {
-    if (access::can("edit", $child)) {
+    if ($child->type == "photo" && access::can("edit", $child)) {
       $edit_link = url::site("quick/edit/$child->id");
       return "<div class=\"gQuickEdit\" quickedit_link=\"$edit_link\">";
     }
   }
 
   public static function thumb_bottom($theme, $child) {
-    if (access::can("edit", $child)) {
+    if ($child->type == "photo" && access::can("edit", $child)) {
       return "</div>";
     }
   }
