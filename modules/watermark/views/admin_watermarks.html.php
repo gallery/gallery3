@@ -14,7 +14,7 @@
   <p>
     <?= _("Note that changing this watermark will require you to rebuild all of your thumbnails and resized images.") ?>
   </p>
-  <p>
+  <div>
     <div class="image">
       <img width="<?= $width ?>" height="<?= $height ?>" src="<?= $url ?>"/>
       <p>
@@ -32,6 +32,6 @@
          title="<?= _("Delete Watermark") ?>"
          class="gDialogLink"><?= _("delete") ?></a>
     </div>
-  </p>
+  </div>
   <? endif ?>
 </div>
