@@ -90,7 +90,7 @@ class core_menu_Core {
       ->append(Menu::factory("link")
                ->id("album")
                ->label(_("Return to album"))
-               ->url("{$theme->item()->parent()->url()}?show={$theme->item->id}")
+               ->url($theme->item()->parent()->url("show={$theme->item->id}"))
                ->css_id("gAlbumLink"));
   }
 
