@@ -81,9 +81,19 @@ class Admin_Tags_Controller extends Admin_Controller {
     }
 
     $form = tag::get_rename_form($tag);
-    if ($form->validate()) {
+    $valid = $form->validate();
+    if ($valid) {
+      $new_name = $form->rename_tag->inputs["name"]->value;
+      $new_tag = ORM::factory("tag")->where("name", $new_name)->find();
+      if ($new_tag->loaded) {
+        $form->rename_tag->inputs["name"]->add_error("in_use", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
       $old_name = $tag->name;
-      $tag->name = $form->rename_tag->inputs["name"]->value;
+      $tag->name = $new_name;
       $tag->save();
 
       message::success(sprintf(_("Renamed tag %s to %s"), $old_name, $tag->name));

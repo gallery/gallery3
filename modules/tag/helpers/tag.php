@@ -89,6 +89,7 @@ class tag_Core {
     $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "gRenameTagForm"));
     $group = $form->group("rename_tag")->label(_("Rename Tag"));
     $group->input("name")->label(_("Tag name"))->value($tag->name);
+    $group->inputs["name"]->error_messages("in_use", _("There is already a tag with that name"));
     $group->submit(_("Rename"));
     $form->add_rules_from(ORM::factory("tag"));
     return $form;
