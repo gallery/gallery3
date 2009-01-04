@@ -17,9 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class slideshow_block_Core {
-  public static function head($theme) {
-    return "<script src=\"http://lite.piclens.com/current/piclens.js\" type=\"text/javascript\">" .
-      "</script>";
+class slideshow_menu_Core {
+  public static function album($menu, $theme) {
+    $menu
+      ->append(Menu::factory("link")
+               ->id("slideshow")
+               ->label(_("View slideshow"))
+               ->url("javascript:PicLensLite.start()")
+               ->css_id("gSlideshowLink"));
+  }
+
+  public static function photo($menu, $theme) {
+    $menu
+      ->append(Menu::factory("link")
+               ->id("slideshow")
+               ->label(_("View slideshow"))
+               ->url("javascript:PicLensLite.start()")
+               ->css_id("gSlideshowLink"));
   }
 }
