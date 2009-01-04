@@ -1,16 +1,16 @@
-.gQuickEdit {
+.gQuick {
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
 }
 
-#gQuickEditPane {
+#gQuickPane {
   background: #fff;
   opacity: 0.8;
   border-bottom: 1px dashed #000;
 }
 
-#gQuickEditPane div {
+#gQuickPane div {
   background-color: red;
   float: right;
   display: inline;
@@ -18,7 +18,7 @@
   margin: 8px;
 }
 
-#gQuickEditPane .rotate-clockwise {
+#gQuickPane .rotate-clockwise {
   background: url('../images/arrow_rotate_clockwise.png');
   width: 16px;
   height: 16px;
@@ -27,11 +27,11 @@
   right: 0px;
 }
 
-#gQuickEditPane .rotate-clockwise span {
+#gQuickPane .rotate-clockwise span {
   display: none;
 }
 
-#gQuickEditPane .rotate-counter-clockwise {
+#gQuickPane .rotate-counter-clockwise {
   background: url('../images/arrow_rotate_anticlockwise.png');
   width: 16px;
   height: 16px;
@@ -40,6 +40,6 @@
   left: 0px;
 }
 
-#gQuickEditPane .rotate-counter-clockwise span {
+#gQuickPane .rotate-counter-clockwise span {
   display: none;
 }
