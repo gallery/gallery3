@@ -33,14 +33,10 @@ class tag_Core {
     if (!$tag->loaded) {
       $tag->name = $tag_name;
       $tag->count = 0;
-      // Need to save it now to get an id assigned.
       $tag->save();
     }
 
     if (!$tag->has($item)) {
-      // Note: ORM::has() causes a database lookup.  ORM::add() calls ORM::has() a second time,
-      // so we're doing an extra database lookup just to make sure that we don't increment the
-      // count value if the tag already existed.
       if (!$tag->add($item, $tag)) {
         throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
       }
