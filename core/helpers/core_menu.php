@@ -79,7 +79,7 @@ class core_menu_Core {
                ->url("#")
                ->css_id("gHybridLink"));
   }
-  
+
   public static function photo($menu, $theme) {
     $menu
       ->append(Menu::factory("link")
@@ -88,17 +88,12 @@ class core_menu_Core {
                ->url("#")
                ->css_id("gFullsizeLink"))
       ->append(Menu::factory("link")
-               ->id("comments")
-               ->label(_("View comments on this item"))
-               ->url("#comments")
-               ->css_id("gCommentsLink"))
-      ->append(Menu::factory("link")
                ->id("album")
                ->label(_("View album hybrid mode"))
                ->url("#")
                ->css_id("gAlbumLink"));
   }
-  
+
   public static function admin($menu, $theme) {
     $menu
       ->append(Menu::factory("link")

@@ -79,12 +79,32 @@ class Theme_View_Core extends View {
     $menu = new Menu(true);
     core_menu::album($menu, $this);
 
+    foreach (module::installed() as $module) {
+      if ($module->name == "core") {
+        continue;
+      }
+      $class = "{$module->name}_menu";
+      if (method_exists($class, "album")) {
+        call_user_func_array(array($class, "album"), array(&$menu, $this));
+      }
+    }
+
     print $menu;
   }
 
   public function photo_menu() {
     $menu = new Menu(true);
     core_menu::photo($menu, $this);
+
+    foreach (module::installed() as $module) {
+      if ($module->name == "core") {
+        continue;
+      }
+      $class = "{$module->name}_menu";
+      if (method_exists($class, "photo")) {
+        call_user_func_array(array($class, "photo"), array(&$menu, $this));
+      }
+    }
 
     print $menu;
   }
