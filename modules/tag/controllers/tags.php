@@ -51,7 +51,7 @@ class Tags_Controller extends REST_Controller {
 
     $form = tag::get_add_form($item);
     if ($form->validate()) {
-      tag::add($item, $this->input->post("tag_name"));
+      tag::add($item, $form->add_tag->inputs["name"]->value);
 
       print json_encode(
         array("result" => "success",

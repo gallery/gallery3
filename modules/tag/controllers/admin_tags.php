@@ -33,18 +33,70 @@ class Admin_Tags_Controller extends Admin_Controller {
     print $view;
   }
 
+  public function form_delete($id) {
+    $tag = ORM::factory("tag", $id);
+    if ($tag->loaded) {
+      print tag::get_delete_form($tag);
+    }
+  }
+
   public function delete($id) {
     access::verify_csrf();
     $tag = ORM::factory("tag", $id);
-    if ($tag->loaded) {
+    if (!$tag->loaded) {
+      kohana::show_404();
+    }
+
+    $form = tag::get_delete_form($tag);
+    if ($form->validate()) {
       $name = $tag->name;
       Database::instance()->query("DELETE from `items_tags` where `tag_id` = $tag->id");
       $tag->delete();
       message::success(sprintf(_("Deleted tag %s"), $name));
       log::success("tags", sprintf(_("Deleted tag %s"), $name));
+
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("admin/tags")));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
+    }
+  }
+
+  public function form_rename($id) {
+    $tag = ORM::factory("tag", $id);
+    if ($tag->loaded) {
+      print tag::get_rename_form($tag);
+    }
+  }
+
+  public function rename($id) {
+    access::verify_csrf();
+
+    $tag = ORM::factory("tag", $id);
+    if (!$tag->loaded) {
+      kohana::show_404();
     }
 
-    url::redirect("admin/tags");
+    $form = tag::get_rename_form($tag);
+    if ($form->validate()) {
+      $old_name = $tag->name;
+      $tag->name = $form->rename_tag->inputs["name"]->value;
+      $tag->save();
+
+      message::success(sprintf(_("Renamed tag %s to %s"), $old_name, $tag->name));
+      log::success("tags", sprintf(_("Renamed tag %s to %s"), $old_name, $tag->name));
+
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("admin/tags")));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
+    }
   }
 }
 

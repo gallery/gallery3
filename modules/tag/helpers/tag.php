@@ -78,9 +78,26 @@ class tag_Core {
   public static function get_add_form($item) {
     $form = new Forge("tags", "", "post", array("id" => "gAddTagForm"));
     $group = $form->group("add_tag")->label(_("Add Tag"));
-    $group->input("tag_name")->label(_("Add tag"));
+    $group->input("name")->label(_("Add tag"));
     $group->hidden("item_id")->value($item->id);
     $group->submit(_("Add"));
+    $form->add_rules_from(ORM::factory("tag"));
+    return $form;
+  }
+
+  public static function get_rename_form($tag) {
+    $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "gRenameTagForm"));
+    $group = $form->group("rename_tag")->label(_("Rename Tag"));
+    $group->input("name")->label(_("Tag name"))->value($tag->name);
+    $group->submit(_("Rename"));
+    $form->add_rules_from(ORM::factory("tag"));
+    return $form;
+  }
+
+  public static function get_delete_form($tag) {
+    $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "gDeleteTagForm"));
+    $group = $form->group("delete_tag")->label(_("Delete Tag"));
+    $group->submit(_("Delete"));
     $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }

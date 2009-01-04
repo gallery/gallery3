@@ -21,7 +21,7 @@ class Tag_Model extends ORM {
   protected $has_and_belongs_to_many = array("items");
 
   var $rules = array(
-    "name" => "required|length[4,32]");
+    "name" => "required|length[1,64]");
 
   /**
    * Return all viewable items associated with this tag.
