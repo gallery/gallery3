@@ -26,7 +26,7 @@ class Admin_Spam_Filter_Controller extends Admin_Controller {
   }
 
   public function get_edit_form($driver_name=null, $post=null) {
-    $form = new View("spam_filter_admin.html");
+    $form = new View("admin_spam_filter.html");
 
     $drivers = spam_filter::get_driver_names();
     $current_driver = empty($driver_name) ? module::get_var("spam_filter", "driver") : $driver_name;
