@@ -21,6 +21,7 @@ class REST_Controller_Test extends Unit_Test_Case {
   public function setup() {
     $this->mock_controller = new Mock_RESTful_Controller("mock");
     $this->mock_not_loaded_controller = new Mock_RESTful_Controller("mock_not_loaded");
+    $_POST = array();
   }
 
   public function dispatch_index_test() {
@@ -41,17 +42,41 @@ class REST_Controller_Test extends Unit_Test_Case {
   public function dispatch_update_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["_method"] = "PUT";
+    $_POST["csrf"] = access::csrf_token();
     $this->mock_controller->__call("3", "");
     $this->assert_equal("update", $this->mock_controller->method_called);
     $this->assert_equal("Mock_Model", get_class($this->mock_controller->resource));
   }
 
+  public function dispatch_update_fails_without_csrf_test() {
+    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_POST["_method"] = "PUT";
+    try {
+      $this->mock_controller->__call("3", "");
+      $this->assert_false(true, "this should fail with a forbidden exception");
+    } catch (Exception $e) {
+      // pass
+    }
+  }
+
   public function dispatch_delete_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["_method"] = "DELETE";
+    $_POST["csrf"] = access::csrf_token();
     $this->mock_controller->__call("3", "");
     $this->assert_equal("delete", $this->mock_controller->method_called);
     $this->assert_equal("Mock_Model", get_class($this->mock_controller->resource));
+  }
+
+  public function dispatch_delete_fails_without_csrf_test() {
+    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_POST["_method"] = "DELETE";
+    try {
+      $this->mock_controller->__call("3", "");
+      $this->assert_false(true, "this should fail with a forbidden exception");
+    } catch (Exception $e) {
+      // pass
+    }
   }
 
   public function dispatch_404_test() {
@@ -77,10 +102,22 @@ class REST_Controller_Test extends Unit_Test_Case {
   public function dispatch_create_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["_method"] = "";
+    $_POST["csrf"] = access::csrf_token();
     $this->mock_not_loaded_controller->__call("", "");
     $this->assert_equal("create", $this->mock_not_loaded_controller->method_called);
     $this->assert_equal(
       "Mock_Not_Loaded_Model", get_class($this->mock_not_loaded_controller->resource));
+  }
+
+  public function dispatch_create_fails_without_csrf_test() {
+    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_POST["_method"] = "";
+    try {
+      $this->mock_not_loaded_controller->__call("", "");
+      $this->assert_false(true, "this should fail with a forbidden exception");
+    } catch (Exception $e) {
+      // pass
+    }
   }
 
   public function dispatch_form_test_add() {
