@@ -86,6 +86,10 @@ class REST_Controller extends Controller {
       return Kohana::show_404();
     }
 
+    if ($request_method != "get") {
+      access::verify_csrf();
+    }
+
     switch ($request_method) {
     case "get":
       return $this->_show($resource);
