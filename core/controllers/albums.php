@@ -122,9 +122,8 @@ class Albums_Controller extends Items_Controller {
         $this->input->post("description"),
         user::active()->id);
 
-      log::success("content", "Added a photo",
-               html::anchor("photos/$photo->id", "view photo"));
-      message::add(sprintf(_("Added photo %s"), $photo->title));
+      log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
+      message::success(sprintf(_("Added photo %s"), $photo->title));
 
       print json_encode(
         array("result" => "success",
