@@ -479,6 +479,9 @@
               <li>
                 <a href="http://docs.kohanaphp.com/">Kohana Documentation</a>
               </li>
+              <li>
+                <a href="http://jkwebs.de/gallery/gx_admin/">Admin wireframes</a>
+              </li>
             </ul>
           </div>
         </div>
