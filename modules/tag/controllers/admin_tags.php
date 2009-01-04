@@ -17,12 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tag_menu_Core {
-  public static function admin($menu, $theme) {
-    $menu->get("content_menu")
-      ->append(Menu::factory("link")
-               ->id("tags")
-               ->label(_("Tags"))
-               ->url(url::site("admin/tags")));
+class Admin_Tags_Controller extends Admin_Controller {
+  public function index() {
+    $filter = $this->input->get("filter");
+
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_tags.html");
+    $view->content->filter = $filter;
+
+    $query = ORM::factory("tag");
+    if ($filter) {
+      $query->like("name", $filter);
+    }
+    $view->content->tags = $query->orderby("name", "ASC")->find_all();
+    print $view;
+  }
+
+  public function delete($id) {
+    access::verify_csrf();
+    $tag = ORM::factory("tag", $id);
+    if ($tag->loaded) {
+      $name = $tag->name;
+      Database::instance()->query("DELETE from `items_tags` where `tag_id` = $tag->id");
+      $tag->delete();
+      message::success(sprintf(_("Deleted tag %s"), $name));
+      log::success("tags", sprintf(_("Deleted tag %s"), $name));
+    }
+
+    url::redirect("admin/tags");
   }
 }
+
