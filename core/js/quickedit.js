@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $("div.gQuickEdit").hover(show_quickedit, function() { });
+  $(".gQuickEdit").hover(show_quickedit, function() {});
 });
 
 var show_quickedit = function() {
@@ -43,11 +43,11 @@ var quickedit = function(quick_edit, pane, img) {
       var pos = img.position();
       quick_edit.removeClass("gLoadingLarge");
       $("#gQuickEditPane").css({
-	"position": "absolute",
-	"top": pos.top,
-	"left": pos.left,
-	"width": img.innerWidth() + 1,
-	"height": 32
+        "position": "absolute",
+        "top": pos.top,
+        "left": pos.left,
+        "width": img.innerWidth() + 1,
+        "height": 32
       });
     }
   });
