@@ -84,13 +84,13 @@ class core_menu_Core {
     $menu
       ->append(Menu::factory("link")
                ->id("fullsize")
-               ->label(_("View full size image"))
+               ->label(_("View full size"))
                ->url("#")
                ->css_id("gFullsizeLink"))
       ->append(Menu::factory("link")
                ->id("album")
-               ->label(_("View album hybrid mode"))
-               ->url("#")
+               ->label(_("Return to album"))
+               ->url("{$theme->item()->parent()->url()}?show={$theme->item->id}")
                ->css_id("gAlbumLink"));
   }
 
