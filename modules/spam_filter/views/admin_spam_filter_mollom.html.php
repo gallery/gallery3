@@ -1,4 +1,4 @@
-<?php defined("SYSPATH") or die("No direct script access.");?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <li <? if (!empty($errors["public_key"])): ?> class="gError" <? endif ?>>
   <label for="public_key"><?= _("Public Key")?></label>
   <input name="public_key" id="gPublicKey" class="textbox" type="text" value="<?= $public_key ?>" size="72" />

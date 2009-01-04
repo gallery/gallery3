@@ -1,4 +1,4 @@
-<?php defined("SYSPATH") or die("No direct script access.");?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <li <? if (!empty($errors["api_key"])): ?> class="gError" <? endif ?>>
   <label for="api_key"><?= _("Api Key")?></label>
   <input name="api_key" id="gApiKey" class="textbox" type="text" value="<?= $api_key ?>" />

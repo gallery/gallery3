@@ -1,4 +1,4 @@
-<?php defined("SYSPATH") or die("No direct script access.");?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   $("document").ready(function() {
     ajaxify_spam_filter_form();
