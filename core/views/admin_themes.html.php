@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access.") ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gThemes">
   <h1><?= _("Theme Administration") ?></h2>
     <p>
