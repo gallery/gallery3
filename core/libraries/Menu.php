@@ -20,8 +20,9 @@
 class Menu_Element {
   public $label;
   public $url;
+  public $css_id;
   public $id;
-
+  
   /**
    * Set the id
    * @chainable
@@ -48,6 +49,16 @@ class Menu_Element {
     $this->url = $url;
     return $this;
   }
+
+  /**
+   * Set the css id
+   * @chainable
+   */
+  public function css_id($css_id) {
+    $this->css_id = $css_id;
+    return $this;
+  }
+
 }
 
 /**
@@ -55,7 +66,12 @@ class Menu_Element {
  */
 class Menu_Element_Link extends Menu_Element {
   public function __toString() {
-    return "<li><a class=\"gMenuElement\" href=\"$this->url\">$this->label</a></li>";
+  	if (isset($this->css_id) && !empty($this->css_id)) {
+  		$css_id = " id=\"$this->css_id\"";
+  	} else {
+  		$css_id = "";
+  	}
+    return "<li><a$css_id class=\"gMenuElement\" href=\"$this->url\">$this->label</a></li>";
   }
 }
 

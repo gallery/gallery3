@@ -34,7 +34,7 @@ $(document).ready(function() {
 
   // Apply Superfish menus
   $("ul.gMenu").addClass("sf-menu");
-  $("ul#gViewMenu").addClass("sf-menu");
+  $("#gViewMenu ul.gMenu").addClass("sf-menu");
 
   // Superfish menu options
   $('ul.sf-menu').superfish({

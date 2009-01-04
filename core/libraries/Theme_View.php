@@ -75,6 +75,20 @@ class Theme_View_Core extends View {
     print $menu;
   }
 
+  public function album_menu() {
+    $menu = new Menu(true);
+    core_menu::album($menu, $this);
+
+    print $menu;
+  }
+
+  public function photo_menu() {
+    $menu = new Menu(true);
+    core_menu::photo($menu, $this);
+
+    print $menu;
+  }
+
   public function pager() {
     $this->pagination = new Pagination();
     $this->pagination->initialize(
