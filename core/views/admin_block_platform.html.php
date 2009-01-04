@@ -4,7 +4,7 @@
     <? printf(_("Operating System: %s"), PHP_OS) ?>
   </li>
   <li>
-    <? printf(_("Apache: %s"), apache_get_version()) ?>
+    <? printf(_("Apache: %s"), function_exists("apache_get_version") ? apache_get_version() : _("Unknown")) ?>
   </li>
   <li>
     <? printf(_("PHP: %s"), phpversion()) ?>
