@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gThemes">
-  <h1><?= _("Theme Administration") ?></h2>
+  <h1><?= _("Theme Administration") ?></h1>
     <p>
       <?= _("These are the themes in your system") ?>
     </p>
