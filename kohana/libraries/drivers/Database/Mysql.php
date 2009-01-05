@@ -262,7 +262,7 @@ class Database_Mysql_Driver extends Database_Driver {
 
 	public function list_tables(Database $db)
 	{
-		if (!defined('TEST_MODE')) {
+		if (!TEST_MODE) {
 			static $tables;
 		} else {
 			$tables = array();
@@ -286,7 +286,7 @@ class Database_Mysql_Driver extends Database_Driver {
 
 	public function list_fields($table)
 	{
-		if (!defined('TEST_MODE')) {
+		if (!TEST_MODE) {
 			static $tables;
 		} else {
 			$tables = array();
