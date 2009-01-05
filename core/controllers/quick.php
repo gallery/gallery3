@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Quick_Controller extends Controller {
-  public function edit($id) {
+  public function pane($id) {
     $item = ORM::factory("item", $id);
     if (!$item->loaded) {
       return "";
     }
 
     if ($item->type == "photo") {
-      $view = new View("quick_edit.html");
+      $view = new View("quick_pane.html");
       $view->item = $item;
       print $view;
     }
@@ -72,5 +72,12 @@ class Quick_Controller extends Controller {
       array("src" => $item->thumb_url() . "?rnd=" . rand(),
             "width" => $item->thumb_width,
             "height" => $item->thumb_height));
+  }
+
+  public function form_edit($id) {
+    $item = ORM::factory("item", $id);
+    access::required("edit", $item);
+    $form = photo::get_edit_form($item);
+    print $form;
   }
 }

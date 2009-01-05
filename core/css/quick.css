@@ -43,3 +43,16 @@
 #gQuickPane .rotate-counter-clockwise span {
   display: none;
 }
+
+#gQuickPane .edit {
+  background: url('../images/image_edit.png');
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 0px;
+  left: 50%;
+}
+
+#gQuickPane .edit span {
+  display: none;
+}

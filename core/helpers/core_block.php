@@ -35,8 +35,8 @@ class core_block_Core {
 
   public static function thumb_top($theme, $child) {
     if ($child->type == "photo" && access::can("edit", $child)) {
-      $edit_link = url::site("quick/edit/$child->id");
-      return "<div class=\"gQuick\" quick_link=\"$edit_link\">";
+      $edit_link = url::site("quick/pane/$child->id");
+      return "<div class=\"gQuick\" href=\"$edit_link\">";
     }
   }
 
