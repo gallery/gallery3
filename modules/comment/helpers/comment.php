@@ -52,7 +52,12 @@ class comment_Core {
 
     // @todo Figure out how to mock up the test of the spam_filter
     if (module::is_installed("spam_filter") && TEST_MODE == 0) {
-      SpamFilter::instance()->check_comment($comment);
+      try {
+        SpamFilter::instance()->check_comment($comment);
+      } catch (Exception $e) {
+        Kohana::log("error", print_r($e, 1));
+        $comment->state = "unpublished";
+      }
     } else {
       $comment->state = "published";
     }
