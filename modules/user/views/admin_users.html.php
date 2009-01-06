@@ -8,11 +8,9 @@
       <li>
         <?= $user->name ?>
         <?= ($user->last_login == 0) ? "" : "(" . date("M j, Y", $user->last_login) . ")" ?>
-        <a href="users/edit_form/<?= $user->id ?>" class="gDialogLink"
-          title="<?= _("Edit user") ?>"><?= _("edit") ?></a>
+        <a href="users/edit_form/<?= $user->id ?>" class="gDialogLink"><?= _("edit") ?></a>
         <? if (!(user::active()->id == $user->id || user::guest()->id == $user->id)): ?>
-        <a href="users/delete_form/<?= $user->id ?>" class="gDialogLink"
-          title="<?= sprintf(_("Do you really want to delete %s"), $user->name) ?>">
+        <a href="users/delete_form/<?= $user->id ?>" class="gDialogLink">
           <?= _("delete") ?></a>
         <? endif ?>
       </li>

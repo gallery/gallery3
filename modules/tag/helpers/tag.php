@@ -80,7 +80,7 @@ class tag_Core {
     $group = $form->group("add_tag")->label(_("Add Tag"));
     $group->input("name")->label(_("Add tag"));
     $group->hidden("item_id")->value($item->id);
-    $group->submit(_("Add"));
+    $group->submit(_("Add Tag"));
     $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }
@@ -90,15 +90,15 @@ class tag_Core {
     $group = $form->group("rename_tag")->label(_("Rename Tag"));
     $group->input("name")->label(_("Tag name"))->value($tag->name);
     $group->inputs["name"]->error_messages("in_use", _("There is already a tag with that name"));
-    $group->submit(_("Rename"));
+    $group->submit(_("Save"));
     $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }
 
   public static function get_delete_form($tag) {
     $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "gDeleteTagForm"));
-    $group = $form->group("delete_tag")->label(_("Delete Tag"));
-    $group->submit(_("Delete"));
+    $group = $form->group("delete_tag")->label(sprintf(_("Really delete tag %s?"), $tag->name));
+    $group->submit(_("Delete Tag"));
     $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }

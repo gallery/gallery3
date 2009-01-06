@@ -31,7 +31,7 @@ class user_Core {
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
-    $group->submit(_("Modify"));
+    $group->submit(_("Save"));
     $form->add_rules_from($user);
     return $form;
   }
@@ -43,6 +43,7 @@ class user_Core {
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
+    $group->submit(_("Modify User"));
     $form->add_rules_from($user);
     return $form;
   }
@@ -54,16 +55,18 @@ class user_Core {
     $group->input("full_name")->label(_("Full Name"))->id("gFullName");
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail");
-    $group->submit(_("Add"));
+    $group->submit(_("Add User"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
     return $form;
   }
 
   public static function get_delete_form_admin($user) {
-    $form = new Forge("admin/users/delete/$user->id",
-                      sprintf(_("Are you sure you want to delete %s"), $user->name));
-    print $form;
+    $form = new Forge("admin/users/delete/$user->id", "", "post");
+    $group = $form->group("delete_user")->label(
+      sprintf(_("Are you sure you want to delete user %s?"), $user->name));
+    $group->submit(sprintf(_("Delete user %s"), $user->name));
+    return $form;
   }
 
   /**

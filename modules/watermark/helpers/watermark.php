@@ -49,13 +49,13 @@ class watermark_Core {
     $group->dropdown("transparency")->label(_("Transparency Percent"))
       ->options($range)
       ->selected(module::get_var("watermark", "transparency"));
-    $group->submit(_("Modify"));
+    $group->submit(_("Save"));
     return $form;
   }
 
   public static function get_delete_form() {
     $form = new Forge("admin/watermarks/delete", "", "post");
-    $group = $form->group("delete_watermark")->label(_("Delete Watermark"));
+    $group = $form->group("delete_watermark")->label(_("Really delete Watermark?"));
     $group->submit(_("Delete"));
     return $form;
   }
