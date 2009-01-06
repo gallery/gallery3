@@ -1,5 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
 <script type="text/javascript">
   var form_url = "<?= url::site("permissions/form/__ITEM__") ?>";
   show = function(id) {
