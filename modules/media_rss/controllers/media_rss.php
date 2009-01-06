@@ -28,7 +28,7 @@ class Media_RSS_Controller extends Controller {
 
     $page = $this->input->get("page", 1);
     if ($page < 1) {
-      url::redirect("media_rss/photos/{$item->id}");
+      url::redirect("media_rss/albums/{$item->id}");
     }
 
     $children = $item
@@ -37,7 +37,7 @@ class Media_RSS_Controller extends Controller {
     $max_pages = ceil($item->viewable()->descendants_count("photo") / self::$page_size);
 
     if ($page > $max_pages) {
-      url::redirect("media_rss/photos/{$item->id}?page=$max_pages");
+      url::redirect("media_rss/albums/{$item->id}?page=$max_pages");
     }
 
     $view = new View("feed.mrss");
