@@ -304,4 +304,19 @@ class graphics_Core {
 
     self::$init = 1;
   }
+
+  /**
+   * Verify that a specific graphics function is available with the active toolkit.
+   * @param  string  $function the function name (eg rotate, resize)
+   * @return boolean
+   */
+  function can($function) {
+    if (module::get_var("core", "graphics_toolkit") == "gd" &&
+        $function == "rotate" &&
+        !function_exists("imagerotate")) {
+      return false;
+    }
+
+    return true;
+  }
 }
