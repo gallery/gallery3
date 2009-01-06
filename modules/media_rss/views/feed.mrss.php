@@ -26,17 +26,20 @@
       <guid isPermaLink="true"><?= url::abs_site("photos/$child->id") ?></guid>
       <description><?= htmlspecialchars($child->description) ?></description>
       <media:thumbnail url="<?= $child->thumb_url(true) ?>"
+                       fileSize="<?= filesize($child->thumb_path()) ?>"
                        height="<?= $child->thumb_height ?>"
                        width="<?= $child->thumb_width ?>"
                        />
       <media:group>
         <media:content url="<?= $child->resize_url(true) ?>"
+                       fileSize="<?= filesize($child->resize_path()) ?>"
                        type="<?= $child->mime_type ?>"
                        height="<?= $child->resize_height ?>"
                        width="<?= $child->resize_width ?>"
                        isDefault="true"
                        />
         <media:content url="<?= $child->file_url(true) ?>"
+                       fileSize="<?= filesize($child->file_path()) ?>"
                        type="<?= $child->mime_type ?>"
                        height="<?= $child->height ?>"
                        width="<?= $child->width ?>"
