@@ -22,7 +22,7 @@ class Menu_Element {
   public $url;
   public $css_id;
   public $id;
-  
+
   /**
    * Set the id
    * @chainable
@@ -66,11 +66,11 @@ class Menu_Element {
  */
 class Menu_Element_Link extends Menu_Element {
   public function __toString() {
-  	if (isset($this->css_id) && !empty($this->css_id)) {
-  		$css_id = " id=\"$this->css_id\"";
-  	} else {
-  		$css_id = "";
-  	}
+    if (isset($this->css_id) && !empty($this->css_id)) {
+      $css_id = " id=\"$this->css_id\"";
+    } else {
+      $css_id = "";
+    }
     return "<li><a$css_id class=\"gMenuElement\" href=\"$this->url\">$this->label</a></li>";
   }
 }
