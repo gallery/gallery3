@@ -40,6 +40,8 @@ class user_Core {
     $form = new Forge("admin/users/edit/$user->id");
     $group = $form->group("edit_user")->label(_("Edit User"));
     $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
+    $group->inputs["name"]->error_messages(
+      "in_use", _("There is already a user with that name"));
     $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
@@ -52,6 +54,8 @@ class user_Core {
     $form = new Forge("admin/users/add");
     $group = $form->group("add_user")->label(_("Add User"));
     $group->input("name")->label(_("Name"))->id("gName");
+    $group->inputs["name"]->error_messages(
+      "in_use", _("There is already a user with that name"));
     $group->input("full_name")->label(_("Full Name"))->id("gFullName");
     $group->password("password")->label(_("Password"))->id("gPassword");
     $group->input("email")->label(_("Email"))->id("gEmail");

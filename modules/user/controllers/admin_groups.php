@@ -27,8 +27,18 @@ class Admin_Groups_Controller extends Controller {
 
   public function add() {
     $form = group::get_add_form_admin();
-    if($form->validate()) {
-      $group = group::create($form->add_group->inputs["name"]->value);
+    $valid = $form->validate();
+    if ($valid) {
+      $new_name = $form->add_group->inputs["name"]->value;
+      $group = ORM::factory("group")->where("name", $new_name)->find();
+      if ($group->loaded) {
+        $form->add_group->inputs["name"]->add_error("in_use", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
+      $group = group::create($new_name);
       $group->save();
       message::success(sprintf(_("Created group %s"), $group->name));
       print json_encode(array("result" => "success"));
@@ -42,7 +52,7 @@ class Admin_Groups_Controller extends Controller {
   public function add_form() {
     print group::get_add_form_admin();
   }
-  
+
   public function delete($id) {
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {
@@ -71,7 +81,7 @@ class Admin_Groups_Controller extends Controller {
     }
     print group::get_delete_form_admin($group);
   }
-  
+
   public function edit($id) {
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {
@@ -79,7 +89,18 @@ class Admin_Groups_Controller extends Controller {
     }
 
     $form = group::get_edit_form_admin($group);
-    if($form->validate()) {
+    $valid = $form->validate();
+
+    if ($valid) {
+      $new_name = $form->edit_group->inputs["name"]->value;
+      $group = ORM::factory("group")->where("name", $new_name)->find();
+      if ($group->loaded) {
+        $form->edit_group->inputs["name"]->add_error("in_use", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
       $group->name = $form->edit_group->inputs["name"]->value;
       $group->save();
       message::success(sprintf(_("Changed group %s"), $group->name));
@@ -90,7 +111,7 @@ class Admin_Groups_Controller extends Controller {
                               "form" => $form->__toString()));
     }
   }
-  
+
   public function edit_form($id) {
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {

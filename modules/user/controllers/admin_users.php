@@ -27,9 +27,18 @@ class Admin_Users_Controller extends Controller {
 
   public function add() {
     $form = user::get_add_form_admin();
-    if($form->validate()) {
-      $user = user::create($form->add_user->inputs["name"]->value,
-                           $form->add_user->full_name->value, $form->add_user->password->value);
+
+    $valid = $form->validate();
+    $name = $form->add_user->inputs["name"]->value;
+    $user = ORM::factory("user")->where("name", $name)->find();
+    if ($user->loaded) {
+      $form->add_user->inputs["name"]->add_error("in_use", 1);
+      $valid = false;
+    }
+
+    if ($valid) {
+      $user = user::create(
+        $name, $form->add_user->full_name->value, $form->add_user->password->value);
       $user->email = $form->add_user->email->value;
       $user->save();
       message::success(sprintf(_("Created user %s"), $user->name));
@@ -44,7 +53,7 @@ class Admin_Users_Controller extends Controller {
   public function add_form() {
     print user::get_add_form_admin();
   }
-    
+
   public function delete($id) {
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
@@ -65,7 +74,7 @@ class Admin_Users_Controller extends Controller {
     message::success(sprintf(_("Deleted user %s"), $name));
     print json_encode(array("result" => "success"));
   }
-  
+
   public function delete_form($id) {
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
@@ -82,8 +91,18 @@ class Admin_Users_Controller extends Controller {
 
     $form = user::get_edit_form_admin($user);
     $form->edit_user->password->rules("-required");
-    if($form->validate()) {
-      $user->name = $form->edit_user->inputs["name"]->value;
+    $valid = $form->validate();
+    if ($valid) {
+      $new_name = $form->edit_user->inputs["name"]->value;
+      $user = ORM::factory("user")->where("name", $new_name)->find();
+      if ($user->loaded) {
+        $form->edit_user->inputs["name"]->add_error("in_use", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
+      $user->name = $new_name;
       $user->full_name = $form->edit_user->full_name->value;
       $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
@@ -96,7 +115,7 @@ class Admin_Users_Controller extends Controller {
                               "form" => $form->__toString()));
     }
   }
-  
+
   public function edit_form($id) {
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {

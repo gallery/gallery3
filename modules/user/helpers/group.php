@@ -65,6 +65,8 @@ class group_Core {
     $form = new Forge("admin/groups/edit/$group->id");
     $form_group = $form->group("edit_group")->label(_("Edit Group"));
     $form_group->input("name")->label(_("Name"))->id("gName")->value($group->name);
+    $form_group->inputs["name"]->error_messages(
+      "in_use", _("There is already a group with that name"));
     $form_group->submit(_("Save"));
     $form->add_rules_from($group);
     return $form;
@@ -74,6 +76,8 @@ class group_Core {
     $form = new Forge("admin/groups/add");
     $form_group = $form->group("add_group")->label(_("Add Group"));
     $form_group->input("name")->label(_("Name"))->id("gName");
+    $form_group->inputs["name"]->error_messages(
+      "in_use", _("There is already a group with that name"));
     $form_group->submit(_("Add Group"));
     $group = ORM::factory("group");
     $form->add_rules_from($group);
