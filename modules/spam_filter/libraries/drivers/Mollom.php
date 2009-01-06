@@ -34,7 +34,7 @@ class Mollom_Driver extends SpamFilter_Driver {
   }
 
   public function get_admin_fields($post) {
-    $view = new View("spam_filter_admin_mollom.html");
+    $view = new View("admin_spam_filter_mollom.html");
     $view->private_key = empty($post) ? module::get_var("spam_filter", "private_key") :
       $post->private_key;
     $view->public_key = empty($post) ? module::get_var("spam_filter", "public_key") :
@@ -62,7 +62,22 @@ class Mollom_Driver extends SpamFilter_Driver {
     module::set_var("spam_filter", "public_key", $post->public_key);
   }
 
-  private function _build_request($function, $host,$comment_data) {
+  private function _build_request($function, $host, $comment_data) {
     return "";
+  }
+
+  public function _retrieve_serverList() {
+    $server_list = module::get_var("spam_filter", "server_list");
+    if (empty($server_list)) {
+      $servers = array("http://xmlrpc1.mollom.com", "http://xmlrpc2.mollom.com", "http://xmlrpc1.mollom.com");
+      foreach (array("http://xmlrpc1.mollom.com", "http://xmlrpc2.mollom.com", "http://xmlrpc1.mollom.com") as $server) {
+        $result = xmlrpc($server . "/1.0");
+        if (!xmplrpc_errno()) {
+          module::set_var("spam_filter", "server_list", $result);
+          $server_list = $result;
+        }
+      }
+    }
+    return $server_list;
   }
 }
