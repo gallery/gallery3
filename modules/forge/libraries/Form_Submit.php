@@ -29,7 +29,7 @@ class Form_Submit_Core extends Form_Input {
 		$data = $this->data;
 		unset($data['label']);
 
-		return form::button($data);
+		return form::submit($data);
 	}
 
 	public function validate()
