@@ -29,10 +29,10 @@ var show_quick = function() {
 };
 
 var quick_do = function(quick, pane, img) {
-  img.css("opacity", "0.2");
   if (pane.hasClass("gDialogLink")) {
     openDialog(pane, function() { window.location.reload(); });
   } else {
+    img.css("opacity", "0.2");
     quick.addClass("gLoadingLarge");
     $.ajax({
       type: "GET",
