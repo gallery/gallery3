@@ -13,7 +13,7 @@
  * 7)  Browser hacks
  * 8)  jQuery and jQuery UI
  *
- * @todo Default user icon (user w/ camera) 
+ * @todo Default user icon (user w/ camera)
  * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
  * @todo Refactor form layout styles to reserve room for validation messages in default state. This
  *       will eliminate layout shifts when validation messages are displayed.
@@ -85,7 +85,7 @@ table {
 	margin: 1em 0;
 }
 
-caption, 
+caption,
 th {
   text-align: left;
 }
@@ -97,7 +97,7 @@ th {
 td {
 }
 
-th, 
+th,
 td {
   border: 1px solid #ccc;
 	padding: .3em;
@@ -272,9 +272,9 @@ li.gError select {
   margin-bottom: .4em;
 }
 
-.gError, 
-.gInfo, 
-.gSuccess, 
+.gError,
+.gInfo,
+.gSuccess,
 .gWarning {
   background-position: .4em 50%;
   background-repeat: no-repeat;
@@ -782,8 +782,7 @@ li.gError select {
   border: none;
 }
 
-#gDialog legend,
-#gDialog button.submit {
+#gDialog legend {
   display: none;
 }
 
