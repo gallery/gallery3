@@ -5,9 +5,9 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
-    <title><? $title ?></title>
+    <title><?= htmlspecialchars($title) ?></title>
     <link><?= $link ?></link>
-    <description><?= $description ?></description>
+    <description><?= htmlspecialchars($description) ?></description>
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed_link ?>" type="application/rss+xml" />
     <fh:complete/>
@@ -21,10 +21,10 @@
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($children as $child): ?>
     <item>
-      <title><?= $child->title ?></title>
+      <title><?= htmlspecialchars($child->title) ?></title>
       <link><?= url::abs_site("photos/$child->id") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("photos/$child->id") ?></guid>
-      <description><?= $child->description ?></description>
+      <description><?= htmlspecialchars($child->description) ?></description>
       <media:thumbnail url="<?= $child->thumb_url(true) ?>"
                        height="<?= $child->thumb_height ?>"
                        width="<?= $child->thumb_width ?>"
