@@ -19,9 +19,19 @@
  */
 class akismet_event_Core {
   public static function comment_created($comment) {
-    if (akismet::check_comment($comment)) {
+    switch(akismet::check_comment($comment)) {
+    case "spam":
       $comment->state = "spam";
-      $comment->save();
+      break;
+
+    case "ham":
+      $comment->state = "published";
+      break;
+
+    case "unknown":
+      $comment->state = "unpublished";
+      break;
     }
+    $comment->save();
   }
 }

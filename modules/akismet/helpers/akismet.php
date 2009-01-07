@@ -35,24 +35,47 @@ class akismet_Core {
     return $form;
   }
 
+  /**
+   * Check a comment against Akismet and return "spam", "ham" or "unknown".
+   * @param  Comment_Model  $comment  A comment to check
+   * @return $string "spam", "ham" or "unknown"
+   */
   public static function check_comment($comment) {
     $request = self::_build_request("comment-check", $comment);
     $response = self::_http_post($request);
-    return "true" == $response->body[0];
+    $answer = $response->body[0];
+    if ($answer == "true") {
+      return "spam";
+    } else if ($answer == "false") {
+      return "ham";
+    } else {
+      return "unknown";
+    }
   }
 
+  /**
+   * Tell Akismet that this comment is spam
+   * @param  Comment_Model  $comment  A comment to check
+   */
   public static function submit_spam($comment) {
     $request = self::_build_request("submit-spam", $comment);
-    $response = self::_http_post($request);
-    return "true" == $response->body[0];
+    self::_http_post($request);
   }
 
+  /**
+   * Tell Akismet that this comment is ham
+   * @param  Comment_Model  $comment  A comment to check
+   */
   public static function submit_ham($comment) {
     $request = self::_build_request("submit-ham", $comment);
-    $response = self::_http_post($request);
-    return "true" == $response->body[0];
+    self::_http_post($request);
   }
 
+  /**
+   * Check an API Key against Akismet to make sure that it's valid
+   * @param  string   $api_key the API key
+   * @return boolean
+   */
   public static function validate_key($api_key) {
     $request = self::_build_verify_request($api_key);
     $response = self::_http_post($request, "rest.akismet.com");
