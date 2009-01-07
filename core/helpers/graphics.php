@@ -246,7 +246,7 @@ class graphics_Core {
       $completed++;
       $remaining--;
 
-      if ($i++ == 3) {
+      if (++$i == 2) {
         break;
       }
     }
