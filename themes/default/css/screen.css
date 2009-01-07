@@ -266,6 +266,7 @@ li.gError select {
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
+#gAdminAkismet .gSuccess,
 #gSiteStatus li,
 #gMessage li {
   border: 1px solid #ccc;
@@ -299,6 +300,7 @@ li.gError select {
   background-image: url('../images/ico-info.png');
 }
 
+#gAdminAkismet .gSuccess,
 #gSiteStatus .gSuccess,
 #gMessage .gSuccess {
   background-color: #cfc;

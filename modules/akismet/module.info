@@ -1,0 +1,3 @@
+name = Akismet
+description = "Filter comments through the <a href="http://akismet.com">Akismet web service</a> to detect and eliminate spam.  You'll need a <a href="http://wordpress.com/api-keys/">WordPress.com API</a> key to use it."
+version = 1
