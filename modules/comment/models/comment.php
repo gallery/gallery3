@@ -20,7 +20,7 @@
 class Comment_Model extends ORM {
   var $rules = array(
     "author" => "required",
-    "email" => "required|valid_email",
+    "email" => "valid_email",
     "url" => "valid_url",
     "text" => "required");
 }
