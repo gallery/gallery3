@@ -132,8 +132,8 @@ class core_menu_Core {
                ->id("maintenance")
                ->label(_("Maintenance"))
                ->url(url::site("admin/maintenance")))
-      ->append(Menu::factory("link")
-               ->id("statistics")
+      ->append(Menu::factory("submenu")
+               ->id("statistics_menu")
                ->label(_("Statistics"))
                ->url("#"));
   }
