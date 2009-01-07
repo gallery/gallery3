@@ -89,7 +89,7 @@ class Comments_Controller extends REST_Controller {
         array("result" => "success",
               "data" => $comment->as_array()));
     } else {
-      $view = new View("comment.html");
+      $view = new Theme_View("comment.html", "fragment");
       $view->comment = $comment;
       print $view;
     }
