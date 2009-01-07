@@ -23,4 +23,8 @@ class Comment_Model extends ORM {
     "email" => "valid_email",
     "url" => "valid_url",
     "text" => "required");
+
+  function item() {
+    return ORM::factory("item", $this->item_id);
+  }
 }

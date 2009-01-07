@@ -23,7 +23,7 @@ class comment_menu_Core {
       ->append(Menu::factory("link")
                ->id("comments")
                ->label(_("Comments"))
-               ->url("#"));
+               ->url(url::site("admin/comments")));
   }
 
   public static function photo($menu, $theme) {
