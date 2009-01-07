@@ -104,6 +104,7 @@ class Menu_Core extends Menu_Element {
     case "dialog":
       return new Menu_Element_Dialog();
 
+    case "root":
     case "submenu":
       return new Menu();
 
