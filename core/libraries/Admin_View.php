@@ -45,7 +45,7 @@ class Admin_View_Core extends View {
   }
 
   public function admin_menu() {
-    $menu = new Menu(true);
+    $menu = Menu::factory("root");
     core_menu::admin($menu, $this);
 
     foreach (module::installed() as $module) {

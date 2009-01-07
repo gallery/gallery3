@@ -90,7 +90,7 @@ class Menu_Element_Dialog extends Menu_Element {
  */
 class Menu_Core extends Menu_Element {
   public $elements;
-  public $is_root;
+  public $is_root = false;
 
   /**
    * Return an instance of a Menu_Element
@@ -105,6 +105,10 @@ class Menu_Core extends Menu_Element {
       return new Menu_Element_Dialog();
 
     case "root":
+      $menu = new Menu();
+      $menu->is_root = true;
+      return $menu;
+
     case "submenu":
       return new Menu();
 
@@ -113,9 +117,8 @@ class Menu_Core extends Menu_Element {
     }
   }
 
-  public function __construct($is_root=false) {
+  public function __construct() {
     $this->elements = array();
-    $this->is_root = $is_root;
   }
 
   /**

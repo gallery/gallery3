@@ -59,7 +59,7 @@ class Theme_View_Core extends View {
   }
 
   public function site_menu() {
-    $menu = new Menu(true);
+    $menu = Menu::factory("root");
     core_menu::site($menu, $this);
 
     foreach (module::installed() as $module) {
@@ -76,7 +76,7 @@ class Theme_View_Core extends View {
   }
 
   public function album_menu() {
-    $menu = new Menu(true);
+    $menu = Menu::factory("root");
     core_menu::album($menu, $this);
 
     foreach (module::installed() as $module) {
@@ -93,7 +93,7 @@ class Theme_View_Core extends View {
   }
 
   public function photo_menu() {
-    $menu = new Menu(true);
+    $menu = Menu::factory("root");
     core_menu::photo($menu, $this);
 
     foreach (module::installed() as $module) {
