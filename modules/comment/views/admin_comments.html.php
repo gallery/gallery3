@@ -9,7 +9,7 @@
 
   var delete_url =
     "<?= url::site("admin/comments/delete/__ID__?csrf=" . access::csrf_token()) ?>";
-  function delete(id) {
+  function del(id) {
     $.get(delete_url.replace("__ID__", id));
     $("#gComment-" + id).slideUp();
   }
@@ -122,7 +122,7 @@
             <? endif ?>
 
             <li>
-              <a href="javascript:delete(<?=$comment->id?>)">
+              <a href="javascript:del(<?=$comment->id?>)">
                 <?= _("Delete") ?>
               </a>
             </li>
