@@ -120,6 +120,18 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `translations_incomings` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `key` char(32) NOT NULL,
+                   `locale` char(10) NOT NULL,
+                   `message` text NOT NULL,
+                   `translation` text,
+                   `revision` int(9) DEFAULT NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`key`, `locale`),
+                   KEY `locale_key` (`locale`, `key`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $db->query("CREATE TABLE `sessions` (
                   `session_id` varchar(127) NOT NULL,
                   `last_activity` int(10) UNSIGNED NOT NULL,
@@ -217,14 +229,13 @@ class core_installer {
     $db->query("DROP TABLE IF EXISTS `logs`;");
     $db->query("DROP TABLE IF EXISTS `messages`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
+    $db->query("DROP TABLE IF EXISTS `translations_incoming`;");
     $db->query("DROP TABLE IF EXISTS `permissions`;");
     $db->query("DROP TABLE IF EXISTS `sessions`;");
     $db->query("DROP TABLE IF EXISTS `tasks`;");
     $db->query("DROP TABLE IF EXISTS `vars`;");
-    system("/bin/rm -rf " . VARPATH . "albums");
-    system("/bin/rm -rf " . VARPATH . "resizes");
-    system("/bin/rm -rf " . VARPATH . "thumbs");
-    system("/bin/rm -rf " . VARPATH . "uploads");
-    system("/bin/rm -rf " . VARPATH . "modules");
+    foreach (array("albums", "resizes", "thumbs", "uploads", "modules") as $dir) {
+      system("/bin/rm -rf " . VARPATH . $dir);
+    }
   }
 }

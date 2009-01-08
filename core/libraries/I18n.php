@@ -19,33 +19,39 @@
  */
 
 /**
- * @todo Add caching: e.g. keep all translation data in memory during the request.
- *       Remember the locale fallback, cache by locale
- * @todo Might compile l10n files such that no fallbacks have to be performed.
- * @todo Might keep all l10n data in the database instead of php files.
+ * @see I18n_Core::translate($message, $options)
  */
+function t($message, $options=array()) {
+  return I18n::instance()->translate($message, $options);
+}
+
 class I18n_Core {
   private $_config = array();
-  private $_data = array();
-  
+
   private static $_instance;
-  
-  public $missing_placeholder_strategy;
-  
+
   private function __construct($config) {
     $this->_config = $config;
   }
-  
+
   public static function instance($config=null) {
     if (self::$_instance == NULL || isset($config)) {
       $config = isset($config) ? $config : Kohana::config('locale');
       self::$_instance = new I18n_Core($config);
-      self::$_instance->missing_placeholder_strategy = new Ignore_Missing_Placeholder();
     }
 
     return self::$_instance;
   }
 
+  /**
+   * Translates a localizable message.
+   * @param $message String|array The message to be translated. E.g. "Hello world"
+   *                 or array("one" => "One album", "other" => "{{count}} albums")
+   * @param $options array (optional) Options array for key value pairs which are used
+   *        for pluralization and interpolation. Special keys are "count" and "locale",
+   *        the latter to override the currently configured locale.
+   * @return String The translated message string.
+   */
   public function translate($message, $options=array() /** @todo , $hint=null */) {
     $locale = empty($options['locale']) ? $this->_config['default_locale'] : $options['locale'];
     $count = empty($options['count']) ? null : $options['count'];
@@ -53,95 +59,63 @@ class I18n_Core {
     unset($values['locale']);
 
     $entry = $this->lookup($locale, $message);
-    
+
     if (empty($entry)) {
-      $entry = $this->default_entry($message);
+      // Default to the root locale.
+      $entry = $message;
+      $locale = $this->_config['root_locale'];
     }
 
     $entry = $this->pluralize($locale, $entry, $count);
-    
+
     $entry = $this->interpolate($locale, $entry, $values);
-    
+
     return $entry;
   }
 
-  private function get_fallbacks_for_locale($locale) {
-    $fallbacks = array();
-    $fallbacks[$locale] = true;
-    /** @todo add proper / robust locale string handling */
-    /** @todo add smart locale fallback handling, e.g. en_US -> en -> en_* -> root */
-    $locale_parts = explode('_', $locale);
-    if (count($locale_parts) == 2) {
-      $fallbacks[$locale_parts[0]] = true;
-    }
-    $fallbacks[$this->_config['default_locale']] = true;
-    
-    return array_keys($fallbacks);
-  }
-  
   private function lookup($locale, $message) {
-    $entry = null;
-    $locales = $this->get_fallbacks_for_locale($locale);
+    // TODO: Load data from locale file instead of the DB.
+
     // If message is an array (plural forms), use the first form as message id.
-    // TODO: Might rather use hash of message as msgid.
     $key = is_array($message) ? array_shift($message) : $message;
+    $entry = Database::instance()
+        ->select("translation")
+        ->from("translations_incomings")
+        ->where(array("key" => md5($key),
+                      "locale" => $locale))
+        ->limit(1)
+        ->get()
+        ->current();
 
-    while (!empty($locales) && $entry == null) {
-      $locale = array_shift($locales);
-
-      if ($this->has_l10n_for_locale($locale)) {
-        $entry = $this->get_entry_from_locale_data($locale, $key);
-      }
-    }    
-    
-    return $entry;
-  }
-  
-  private function default_entry($message) {
-    return $message;
-  }
-  
-  private function get_entry_from_locale_data($locale, $key) {
-    if (!isset($this->_data[$locale])) {
-      $this->load_l10n_data_for_locale($locale);
+    if ($entry) {
+      return unserialize($entry->translation);
+    } else {
+      return null;
     }
-    
-    if (isset($this->_data[$locale][$key])) {
-      return $this->_data[$locale][$key];
-    }
-    
-    return null;
   }
-  
-  private function load_l10n_data_for_locale($locale) {
-    $data = array();
-    include($this->_config['locale_dir'] . $locale . '.php');
 
-    $this->_data[$locale] = $data;
-  }
-  
   private function interpolate($locale, $string, $values) {
-    // TODO: Benchmark whether {{stuff}} type syntax is prohibitively slow compared to sprintf()/
-    // TODO: Benchmark whether str_replace() is much faster (no handling of escape syntax)
-    // TODO: Benchmark whether nested vs. outer function is significantly slower.
-    $callback = new I18n_Placeholder_Replacer($values, $locale, $string);
-    // TODO: Benchmark with pattern string as class constant
-    $string = preg_replace_callback("/(\\\\)?\{\{([^\}]+)\}\}/S", array($callback, 'replace'), $string);
-    
-    return $string;
-  }
-  
-  private function pluralize($locale, $entry, $count) {
-    if ($count == NULL || !is_array($entry)) {
-      return $entry;
+    // TODO: Handle locale specific number formatting.
+    $keys = array();
+    foreach (array_keys($values) as $key) {
+      $keys[] = "{{" . $key . "}}";
     }
+    return str_replace($keys, array_values($values), $string);
+  }
+
+  private function pluralize($locale, $entry, $count) {
+    if (!is_array($entry)) {
+      return $entry;
+    } else if ($count == null) {
+      $count = 1;
+    }
+
     $plural_key = self::get_plural_key($locale, $count);
-    
     if (!isset($entry[$plural_key])) {
       // Fallback to the default plural form.
       $plural_key = 'other';
     }
-    
+
     if (isset($entry[$plural_key])) {
       return $entry[$plural_key];
     } else {
@@ -150,15 +124,11 @@ class I18n_Core {
       return $string;
     }
   }
-  
-  private function has_l10n_for_locale($locale) {
-    return file_exists($this->_config['locale_dir'] . $locale . '.php');
-  }
-  
+
   private static function get_plural_key($locale, $count) {
     $parts = explode('_', $locale);
     $language = $parts[0];
-    
+
     // Data from CLDR 1.6 (http://unicode.org/cldr/data/common/supplemental/plurals.xml).
     // Docs: http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html
     switch ($language) {
@@ -292,7 +262,7 @@ class I18n_Core {
           return 'few';
         } else {
           return 'other';
-        }      
+        }
 
       case 'pl':
         if ($count == 1) {
@@ -302,7 +272,7 @@ class I18n_Core {
           return 'few';
         } else {
           return 'other';
-        } 
+        }
 
       case 'sl':
         if ($count % 100 == 1) {
@@ -313,7 +283,7 @@ class I18n_Core {
           return 'few';
         } else {
           return 'other';
-        }      
+        }
 
       case 'mt':
         if ($count == 1) {
@@ -324,14 +294,14 @@ class I18n_Core {
           return 'many';
         } else {
           return 'other';
-        }      
+        }
 
       case 'mk':
         if ($count % 10 == 1) {
           return 'one';
         } else {
           return 'other';
-        }      
+        }
 
       case 'cy':
         if ($count == 1) {
@@ -347,49 +317,5 @@ class I18n_Core {
       default: // en, de, etc.
         return $count == 1 ? 'one' : 'other';
     }
-  }
-}
-
-class I18n_Placeholder_Replacer {
-  private $_values;
-  private $_locale;
-  private $_string;
-
-  public function __construct($values, $locale, $string) {
-    $this->_values = $values;
-    $this->_locale = $locale;
-    $this->_string = $string;
-  }
-
-  function replace($matches) {
-    list ($full_match, $escaped, $placeholder) = $matches;
-
-    if ($escaped) {
-      return $full_match;
-    } else if (!isset($this->_values[$placeholder])) {
-      return I18n::instance()->missing_placeholder_strategy
-          ->replace($this->_locale, $this->_string, $this->_values, $placeholder, $full_match);
-    } else {
-      return $this->_values[$placeholder];
-    }
-  }
-}
-
-interface Missing_Placeholder_Strategy {
-  /**
-   * Handle the case where a localization requests a placeholder which is not provided in the translate() call.
-   * @param $locale The locale for this localization.
-   * @param String $string The complete message string.
-   * @param array $values All available replacement key value pairs.
-   * @param String $placeholder The placeholder for which there is no replacement value, e.g. "name"
-   * @param String $full_match The placeholder including its surrounding placeholder syntax, e.g. "{{name}}"
-   * @return String The replacement for the placeholder.
-   */
-  public function replace($locale, $string, $values, $placeholder, $full_match);
-}
-
-class Ignore_Missing_Placeholder implements Missing_Placeholder_Strategy {
-  function replace($locale, $string, $values, $placeholder, $full_match) {
-    return $full_match;
   }
 }

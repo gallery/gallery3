@@ -24,24 +24,33 @@ class I18n_Test extends Unit_Test_Case {
   public function setup() {
     $config = array(
         'root_locale' => 'en',
-        'default_locale' => 'de_DE',
+        'default_locale' => 'te_ST',
         'locale_dir' => VARPATH . 'locale/');
     $this->i18n = I18n::instance($config);
-    
-    $locale_file_contents = <<<EOT
-<?php defined("SYSPATH") or die("No direct script access.");
 
-\$data = array(
-    'Hello world' => 'Hallo Welt',
-    'One item has been added' =>
-        array('one' => 'Ein Element wurde hinzugefuegt.',
-              'other' => '{{count}} Elemente wurden hinzugefuegt.'),
-    'Hello {{name}}, how are you today?' => 'Hallo {{name}}, wie geht es Dir heute?'
-);
-EOT;
+    $db = Database::instance();
+    $db->query("DELETE FROM `translations_incomings` WHERE `locale` = 'te_ST'");
 
-    @mkdir(VARPATH . 'locale');
-    $fp = file_put_contents(VARPATH . 'locale/de_DE.php', $locale_file_contents);
+    $messages_de_DE = array(
+        array('Hello world', 'Hallo Welt'),
+        array(array('one' => 'One item has been added',
+                    'other' => '{{count}} elements have been added'),
+              array('one' => 'Ein Element wurde hinzugefuegt.',
+                    'other' => '{{count}} Elemente wurden hinzugefuegt.')),
+        array('Hello {{name}}, how are you today?', 'Hallo {{name}}, wie geht es Dir heute?'));
+
+    foreach ($messages_de_DE as $data) {
+      list ($message, $translation) = $data;
+      $key = $message;
+      $key = is_array($key) ? array_shift($key) : $key;
+      $entry = ORM::factory("translations_incoming");
+      $entry->key = md5($key);
+      $entry->message = serialize($message);
+      $entry->translation = serialize($translation);
+      $entry->locale = 'te_ST';
+      $entry->revision = null;
+      $entry->save();
+    }
   }
 
   public function translate_simple_test() {
