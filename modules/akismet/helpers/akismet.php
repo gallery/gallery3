@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class akismet_Core {
+  public static $test_mode = TEST_MODE;
+
   // Lets not send everything to Akismet
   private static $white_list = array(
     "HTTP_USER_AGENT",
@@ -41,6 +43,10 @@ class akismet_Core {
    * @return $string "spam", "ham" or "unknown"
    */
   public static function check_comment($comment) {
+    if (akismet::$test_mode) {
+      return;
+    }
+
     $request = self::_build_request("comment-check", $comment);
     $response = self::_http_post($request);
     $answer = $response->body[0];
@@ -58,6 +64,10 @@ class akismet_Core {
    * @param  Comment_Model  $comment  A comment to check
    */
   public static function submit_spam($comment) {
+    if (akismet::$test_mode) {
+      return;
+    }
+
     $request = self::_build_request("submit-spam", $comment);
     self::_http_post($request);
   }
@@ -67,6 +77,10 @@ class akismet_Core {
    * @param  Comment_Model  $comment  A comment to check
    */
   public static function submit_ham($comment) {
+    if (akismet::$test_mode) {
+      return;
+    }
+
     $request = self::_build_request("submit-ham", $comment);
     self::_http_post($request);
   }

@@ -19,10 +19,6 @@
  */
 class akismet_event_Core {
   public static function comment_created($comment) {
-    if (TEST_MODE) {
-      return;
-    }
-
     switch(akismet::check_comment($comment)) {
     case "spam":
       $comment->state = "spam";
@@ -41,10 +37,6 @@ class akismet_event_Core {
   }
 
   public static function comment_changed($old, $new) {
-    if (TEST_MODE) {
-      return;
-    }
-
     if ($old->state != "spam" && $new->state == "spam") {
       akismet::submit_spam($new);
     } else if ($old->state == "spam" && $new->state != "spam") {
