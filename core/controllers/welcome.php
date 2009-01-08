@@ -298,7 +298,9 @@ class Welcome_Controller extends Template_Controller {
       url::redirect("welcome");
     }
 
-    akismet::$test_mode = 1;
+    if (module::is_installed("akismet")) {
+      akismet::$test_mode = 1;
+    }
     for ($i = 0; $i < $count; $i++) {
       $photo = $photos[array_rand($photos)];
       comment::create(
@@ -306,7 +308,6 @@ class Welcome_Controller extends Template_Controller {
         "johndoe@example.com",
         $this->random_phrase(rand(8, 500)), $photo->id);
     }
-    akismet::$test_mode = 0;
 
     url::redirect("welcome");
   }
