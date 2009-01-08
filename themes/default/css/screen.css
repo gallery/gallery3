@@ -13,10 +13,11 @@
  * 7)  Browser hacks
  * 8)  jQuery and jQuery UI
  *
- * @todo Default user icon (user w/ camera)
- * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
+ * @todo Fix gError and other message types in forms
  * @todo Refactor form layout styles to reserve room for validation messages in default state. This
  *       will eliminate layout shifts when validation messages are displayed.
+ * @todo Update default user avatar (user w/ camera)
+ * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
  */
 
 /** *******************************************************************
