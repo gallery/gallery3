@@ -72,7 +72,7 @@ class Gallery_Unit_Test_Controller extends Controller {
 
     // Clean out the filesystem
     @system("rm -rf test/var");
-    @system('mkdir -p test/var/logs');
+    @mkdir('test/var/logs', 0777, true);
 
     // Reset our loaded modules
     module::load_modules();
