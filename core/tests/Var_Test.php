@@ -33,4 +33,17 @@ class Var_Test extends Unit_Test_Case {
     module::clear_var("core", "Parameter");
     $this->assert_equal(null, module::get_var("core", "Parameter"));
   }
+
+  public function incr_parameter_test() {
+    module::set_var("core", "Parameter", "original value");
+    module::incr_var("core", "Parameter");
+    $this->assert_equal("1", module::get_var("core", "Parameter"));
+
+    module::set_var("core", "Parameter", "2");
+    module::incr_var("core", "Parameter", "9");
+    $this->assert_equal("11", module::get_var("core", "Parameter"));
+
+    module::incr_var("core", "NonExistent", "9");
+    $this->assert_equal(null, module::get_var("core", "NonExistent"));
+  }
 }

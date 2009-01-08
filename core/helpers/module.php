@@ -204,7 +204,9 @@ class module_Core {
       $class = "{$module->name}_event";
       $function = str_replace(".", "_", $name);
       if (method_exists($class, $function)) {
-        call_user_func_array(array($class, $function), array(&$data));
+        $args = func_get_args();
+        array_shift($args);
+        call_user_func_array(array($class, $function), $args);
       }
     }
   }
@@ -245,6 +247,19 @@ class module_Core {
   }
 
   /**
+   * Increment the value of a variable for this module
+   * @param string $module_name
+   * @param string $name
+   * @param string $increment (optional, default is 1)
+   */
+  public function incr_var($module_name, $name, $increment=1) {
+    Database::instance()->query(
+      "UPDATE `vars` SET `value` = `value` + $increment " .
+      "WHERE `module_name` = '$module_name' " .
+      "AND `name` = '$name'");
+  }
+
+ /**
    * Remove a variable for this module.
    * @param string $module_name
    * @param string $name
