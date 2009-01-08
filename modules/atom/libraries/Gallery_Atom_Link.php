@@ -21,7 +21,7 @@
 class Gallery_Atom_Link_Core extends Atom_Link {
   public function related_atom($relative_uri, $title="") {
     if (empty($title)) {
-      $title = _("Get related meta data");
+      $title = t("Get related meta data");
     }
 
     $this->rel("related")
@@ -33,7 +33,7 @@ class Gallery_Atom_Link_Core extends Atom_Link {
 
   public function related_image($relative_uri, $title="", $image_type="jpeg") {
     if (empty($title)) {
-      $title = _("Get related image");
+      $title = t("Get related image");
     }
 
     $this->rel("related")

@@ -1,22 +1,22 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gMaintenance">
-  <h1> <?= _("Maintenance Tasks") ?> </h1>
+  <h1> <?= t("Maintenance Tasks") ?> </h1>
   <p>
-    <?= _("Occasionally your Gallery will require some maintenance.  Here are some tasks you can use to keep it running smoothly.") ?>
+    <?= t("Occasionally your Gallery will require some maintenance.  Here are some tasks you can use to keep it running smoothly.") ?>
   </p>
 
   <div id="gAvailableTasks">
-    <h2> <?= _("Available Tasks") ?> </h2>
+    <h2> <?= t("Available Tasks") ?> </h2>
     <table style="width: 680px" border="1">
       <tr>
         <th>
-          <?= _("Name") ?>
+          <?= t("Name") ?>
         </th>
         <th>
-          <?= _("Description") ?>
+          <?= t("Description") ?>
         </th>
         <th>
-          <?= _("Action") ?>
+          <?= t("Action") ?>
         </th>
       </tr>
       <? foreach ($task_definitions as $task) ?>
@@ -30,7 +30,7 @@
         <td>
           <a href="<?= url::site("admin/maintenance/start/$task->callback?csrf=$csrf") ?>"
             class="gDialogLink">
-            <?= _("run") ?>
+            <?= t("run") ?>
           </a>
         </td>
       </tr>
@@ -38,24 +38,24 @@
   </div>
 
   <div id="gRunningTasks">
-    <h2> <?= _("Running Tasks") ?> </h2>
+    <h2> <?= t("Running Tasks") ?> </h2>
 
     <table style="width: 680px" border="1">
       <tr>
         <th>
-          <?= _("Last Updated") ?>
+          <?= t("Last Updated") ?>
         </th>
         <th>
-          <?= _("Name") ?>
+          <?= t("Name") ?>
         </th>
         <th>
-          <?= _("Status") ?>
+          <?= t("Status") ?>
         </th>
         <th>
-          <?= _("Info") ?>
+          <?= t("Info") ?>
         </th>
         <th>
-          <?= _("Action") ?>
+          <?= t("Action") ?>
         </th>
       </tr>
       <? foreach ($running_tasks as $task): ?>
@@ -69,13 +69,13 @@
         <td>
           <? if ($task->done): ?>
           <? if ($task->state == "cancelled"): ?>
-          <?= _("Cancelled") ?>
+          <?= t("Cancelled") ?>
           <? endif ?>
-          <?= _("Done") ?>
+          <?= t("Done") ?>
           <? elseif ($task->state == "stalled"): ?>
-          <?= _("Stalled") ?>
+          <?= t("Stalled") ?>
           <? else: ?>
-          <?= sprintf(_("%d%% Complete"), $task->percent_complete) ?>
+          <?= t("{{percent_complete}}% Complete", array("percent_complete" => $task->percent_complete)) ?>
           <? endif ?>
         </td>
         <td>
@@ -84,11 +84,11 @@
         <td>
           <? if ($task->state == "stalled"): ?>
           <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>" class="gDialogLink">
-            <?= _("resume") ?>
+            <?= t("resume") ?>
           </a>
           <? endif ?>
           <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>">
-            <?= _("cancel") ?>
+            <?= t("cancel") ?>
           </a>
         </td>
       </tr>
@@ -97,24 +97,24 @@
   </div>
 
   <div id="gFinishedTasks">
-    <h2> <?= _("Finished Tasks") ?> </h2>
+    <h2> <?= t("Finished Tasks") ?> </h2>
 
     <table style="width: 680px" border="1">
       <tr>
         <th>
-          <?= _("Last Updated") ?>
+          <?= t("Last Updated") ?>
         </th>
         <th>
-          <?= _("Name") ?>
+          <?= t("Name") ?>
         </th>
         <th>
-          <?= _("Status") ?>
+          <?= t("Status") ?>
         </th>
         <th>
-          <?= _("Info") ?>
+          <?= t("Info") ?>
         </th>
         <th>
-          <?= _("Action") ?>
+          <?= t("Action") ?>
         </th>
       </tr>
       <? foreach ($finished_tasks as $task): ?>
@@ -127,11 +127,11 @@
         </td>
         <td>
           <? if ($task->state == "success"): ?>
-          <?= _("Success") ?>
+          <?= t("Success") ?>
           <? elseif ($task->state == "error"): ?>
-          <?= _("Failed") ?>
+          <?= t("Failed") ?>
           <? elseif ($task->state == "cancelled"): ?>
-          <?= _("Cancelled") ?>
+          <?= t("Cancelled") ?>
           <? endif ?>
         </td>
         <td>
@@ -140,14 +140,14 @@
         <td>
           <? if ($task->done): ?>
           <a href="<?= url::site("admin/maintenance/remove/$task->id?csrf=$csrf") ?>">
-            <?= _("remove") ?>
+            <?= t("remove") ?>
           </a>
           <? else: ?>
           <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
-            <?= _("resume") ?>
+            <?= t("resume") ?>
           </a>
           <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>">
-            <?= _("cancel") ?>
+            <?= t("cancel") ?>
           </a>
           <? endif ?>
         </td>

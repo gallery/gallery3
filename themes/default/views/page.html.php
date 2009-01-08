@@ -6,9 +6,9 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>
       <? if ($page_type == "tag"): ?>
-      <?= _("Browse Tags") ?> :: <?= $tag->name ?>
+      <?= t("Browse Tags") ?> :: <?= $tag->name ?>
       <? else: ?>
-      <?= _("Browse Photos") ?> :: <?= $item->title ?>
+      <?= t("Browse Photos") ?> :: <?= $item->title ?>
       <? endif ?>
     </title>
     <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />

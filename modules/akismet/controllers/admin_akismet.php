@@ -35,14 +35,14 @@ class Admin_Akismet_Controller extends Admin_Controller {
       if ($valid) {
         $old_key = module::get_var("akismet", "api_key");
         if ($old_key && !$new_key) {
-          message::success(_("Your Akismet key has been cleared."));
+          message::success(t("Your Akismet key has been cleared."));
         } else if ($old_key && $new_key && $old_key != $new_key) {
-          message::success(_("Your Akismet key has been changed."));
+          message::success(t("Your Akismet key has been changed."));
         } else if (!$old_key && $new_key) {
-          message::success(_("Your Akismet key has been saved."));
+          message::success(t("Your Akismet key has been saved."));
         }
 
-        log::success("akismet", _("Akismet key changed to $new_key"));
+        log::success("akismet", t("Akismet key changed to $new_key"));
         module::set_var("akismet", "api_key", $new_key);
         url::redirect("admin/akismet");
       } else {

@@ -17,20 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class akismet_menu_Core {
-  public static function admin($menu, $theme) {
-    $menu->get("settings_menu")
-      ->append(Menu::factory("link")
-               ->id("akismet")
-               ->label(t("Akismet"))
-               ->url(url::site("admin/akismet")));
 
-    if (module::get_var("akismet", "api_key")) {
-      $menu->get("statistics_menu")
-        ->append(Menu::factory("link")
-                 ->id("akismet")
-                 ->label(t("Akismet"))
-                 ->url(url::site("admin/akismet/stats")));
-    }
-  }
-}
+Event::add("system.ready", array("I18n", "instance"));

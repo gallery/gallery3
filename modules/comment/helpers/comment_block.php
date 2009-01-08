@@ -27,7 +27,7 @@ class comment_block_Core {
   public static function photo_bottom($theme) {
     $block = new Block;
     $block->id = "gComments";
-    $block->title = _("Comments");
+    $block->title = t("Comments");
 
     $view = new View("comments.html");
     $view->comments = ORM::factory("comment")
@@ -44,7 +44,7 @@ class comment_block_Core {
   public static function admin_dashboard_blocks($theme) {
     $block = new Block();
     $block->id = "gRecentComments";
-    $block->title = _("Recent Comments");
+    $block->title = t("Recent Comments");
     $block->content = new View("admin_block_recent_comments.html");
     $block->content->comments =
       ORM::factory("comment")->orderby("created", "DESC")->limit(5)->find_all();

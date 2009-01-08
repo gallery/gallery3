@@ -63,22 +63,22 @@ class group_Core {
 
   public static function get_edit_form_admin($group) {
     $form = new Forge("admin/groups/edit/$group->id");
-    $form_group = $form->group("edit_group")->label(_("Edit Group"));
-    $form_group->input("name")->label(_("Name"))->id("gName")->value($group->name);
+    $form_group = $form->group("edit_group")->label(t("Edit Group"));
+    $form_group->input("name")->label(t("Name"))->id("gName")->value($group->name);
     $form_group->inputs["name"]->error_messages(
-      "in_use", _("There is already a group with that name"));
-    $form_group->submit(_("Save"));
+      "in_use", t("There is already a group with that name"));
+    $form_group->submit(t("Save"));
     $form->add_rules_from($group);
     return $form;
   }
 
   public static function get_add_form_admin() {
     $form = new Forge("admin/groups/add");
-    $form_group = $form->group("add_group")->label(_("Add Group"));
-    $form_group->input("name")->label(_("Name"))->id("gName");
+    $form_group = $form->group("add_group")->label(t("Add Group"));
+    $form_group->input("name")->label(t("Name"))->id("gName");
     $form_group->inputs["name"]->error_messages(
-      "in_use", _("There is already a group with that name"));
-    $form_group->submit(_("Add Group"));
+      "in_use", t("There is already a group with that name"));
+    $form_group->submit(t("Add Group"));
     $group = ORM::factory("group");
     $form->add_rules_from($group);
     return $form;
@@ -87,8 +87,8 @@ class group_Core {
   public static function get_delete_form_admin($group) {
     $form = new Forge("admin/groups/delete/$group->id", "", "post");
     $form_group = $form->group("delete_group")->label(
-      sprintf(_("Are you sure you want to delete group %s?"), $group->name));
-    $form_group->submit(_("Delete"));
+      t("Are you sure you want to delete group {{group_name}}?", array("group_name" => $group->name)));
+    $form_group->submit(t("Delete"));
     return $form;
   }
 }

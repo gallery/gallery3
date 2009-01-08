@@ -38,8 +38,8 @@ class Admin_Graphics_Controller extends Admin_Controller {
       }
 
       site_status::clear("missing_graphics_toolkit");
-      message::success(_("Updated Graphics Toolkit"));
-      log::success("graphics", sprintf(_("Changed graphics toolkit to %s"), $toolkit));
+      message::success(t("Updated Graphics Toolkit"));
+      log::success("graphics", t("Changed graphics toolkit to: {{toolkit}}", array("toolkit" => $toolkit)));
     }
 
     url::redirect("admin/graphics");

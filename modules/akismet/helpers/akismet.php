@@ -30,10 +30,10 @@ class akismet_Core {
 
   public static function get_configure_form() {
     $form = new Forge("admin/akismet", "", "post");
-    $group = $form->group("configure_akismet")->label(_("Configure Akismet"));
-    $group->input("api_key")->label(_("API Key"))->value(module::get_var("akismet", "api_key"));
-    $group->api_key->error_messages("invalid", _("The API key you provided is invalid."));
-    $group->submit(_("Save"));
+    $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
+    $group->input("api_key")->label(t("API Key"))->value(module::get_var("akismet", "api_key"));
+    $group->api_key->error_messages("invalid", t("The API key you provided is invalid."));
+    $group->submit(t("Save"));
     return $form;
   }
 

@@ -26,7 +26,7 @@
   <br/>
   percent_complete: <span id="gPercentComplete"></span>
   <div>
-    <button id="gPauseButton" onclick="dismiss()"><?= _("Pause") ?></button>
-    <button id="gDoneButton" style="display: none" onclick="dismiss()"><?= _("Done") ?></button>
+    <button id="gPauseButton" onclick="dismiss()"><?= t("Pause") ?></button>
+    <button id="gDoneButton" style="display: none" onclick="dismiss()"><?= t("Done") ?></button>
   </div>
 </div>

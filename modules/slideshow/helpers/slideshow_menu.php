@@ -22,7 +22,7 @@ class slideshow_menu_Core {
     $menu
       ->append(Menu::factory("link")
                ->id("slideshow")
-               ->label(_("View slideshow"))
+               ->label(t("View slideshow"))
                ->url("javascript:PicLensLite.start()")
                ->css_id("gSlideshowLink"));
   }
@@ -31,7 +31,7 @@ class slideshow_menu_Core {
     $menu
       ->append(Menu::factory("link")
                ->id("slideshow")
-               ->label(_("View slideshow"))
+               ->label(t("View slideshow"))
                ->url("javascript:PicLensLite.start()")
                ->css_id("gSlideshowLink"));
   }

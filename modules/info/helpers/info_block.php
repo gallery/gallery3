@@ -22,7 +22,7 @@ class info_block_Core {
     if ($theme->item()) {
       $block = new Block();
       $block->id = "gMetadata";
-      $block->title = _("Item Info");
+      $block->title = t("Item Info");
       $block->content = new View("info_block.html");
       return $block;
     }
@@ -32,12 +32,12 @@ class info_block_Core {
     $results = "";
     if ($item->view_count) {
       $results .= "<li>";
-      $results .= sprintf(_("Views: %d"), $item->view_count);
+      $results .= t("Views: {{view_count}}", array("view_count" => $item->view_count));
       $results .= "</li>";
     }
     if ($item->owner) {
       $results .= "<li>";
-      $results .= sprintf(_("By: %s"), "<a href=\"#\">{$item->owner->name}</a>");
+      $results .= t("By: {{owner_name}}", array("owner_name" => "<a href=\"#\">{$item->owner->name}</a>"));
       $results .= "</li>";
     }
     return $results;

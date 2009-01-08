@@ -65,12 +65,12 @@ class album_Core {
 
   static function get_add_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddAlbumForm"));
-    $group = $form->group("add_album")->label(sprintf(_("Add Album to %s"), $parent->title));
-    $group->input("name")->label(_("Name"));
-    $group->input("title")->label(_("Title"));
-    $group->textarea("description")->label(_("Description"));
+    $group = $form->group("add_album")->label(t("Add Album to {{album_title}}", array("album_title" => $parent->title)));
+    $group->input("name")->label(t("Name"));
+    $group->input("title")->label(t("Title"));
+    $group->textarea("description")->label(t("Description"));
     $group->hidden("type")->value("album");
-    $group->submit(_("Create"));
+    $group->submit(t("Create"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
   }
@@ -78,14 +78,14 @@ class album_Core {
   static function get_edit_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gEditAlbumForm"));
     $form->hidden("_method")->value("put");
-    $group = $form->group("edit_album")->label(_("Edit Album"));
+    $group = $form->group("edit_album")->label(t("Edit Album"));
     if ($parent->id != 1) {
-      $group->input("name")->label(_("Name"))->value($parent->name);
+      $group->input("name")->label(t("Name"))->value($parent->name);
     }
-    $group->input("title")->label(_("Title"))->value($parent->title);
-    $group->textarea("description")->label(_("Description"))->value($parent->description);
+    $group->input("title")->label(t("Title"))->value($parent->title);
+    $group->textarea("description")->label(t("Description"))->value($parent->description);
     $group->hidden("type")->value("album");
-    $group->submit(_("Modify"));
+    $group->submit(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
   }

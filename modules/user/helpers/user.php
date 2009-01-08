@@ -26,40 +26,40 @@
 class user_Core {
   public static function get_edit_form($user, $action = NULL) {
     $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gUserForm"));
-    $group = $form->group("edit_user")->label(_("Edit User"));
-    $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
-    $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
-    $group->password("password")->label(_("Password"))->id("gPassword");
-    $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
-    $group->submit(_("Save"));
+    $group = $form->group("edit_user")->label(t("Edit User"));
+    $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
+    $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
+    $group->password("password")->label(t("Password"))->id("gPassword");
+    $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
+    $group->submit(t("Save"));
     $form->add_rules_from($user);
     return $form;
   }
 
   public static function get_edit_form_admin($user) {
     $form = new Forge("admin/users/edit/$user->id");
-    $group = $form->group("edit_user")->label(_("Edit User"));
-    $group->input("name")->label(_("Name"))->id("gName")->value($user->name);
+    $group = $form->group("edit_user")->label(t("Edit User"));
+    $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
     $group->inputs["name"]->error_messages(
-      "in_use", _("There is already a user with that name"));
-    $group->input("full_name")->label(_("Full Name"))->id("gFullName")->value($user->full_name);
-    $group->password("password")->label(_("Password"))->id("gPassword");
-    $group->input("email")->label(_("Email"))->id("gEmail")->value($user->email);
-    $group->submit(_("Modify User"));
+      "in_use", t("There is already a user with that name"));
+    $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
+    $group->password("password")->label(t("Password"))->id("gPassword");
+    $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
+    $group->submit(t("Modify User"));
     $form->add_rules_from($user);
     return $form;
   }
 
   public static function get_add_form_admin() {
     $form = new Forge("admin/users/add");
-    $group = $form->group("add_user")->label(_("Add User"));
-    $group->input("name")->label(_("Name"))->id("gName");
+    $group = $form->group("add_user")->label(t("Add User"));
+    $group->input("name")->label(t("Name"))->id("gName");
     $group->inputs["name"]->error_messages(
-      "in_use", _("There is already a user with that name"));
-    $group->input("full_name")->label(_("Full Name"))->id("gFullName");
-    $group->password("password")->label(_("Password"))->id("gPassword");
-    $group->input("email")->label(_("Email"))->id("gEmail");
-    $group->submit(_("Add User"));
+      "in_use", t("There is already a user with that name"));
+    $group->input("full_name")->label(t("Full Name"))->id("gFullName");
+    $group->password("password")->label(t("Password"))->id("gPassword");
+    $group->input("email")->label(t("Email"))->id("gEmail");
+    $group->submit(t("Add User"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
     return $form;
@@ -68,8 +68,8 @@ class user_Core {
   public static function get_delete_form_admin($user) {
     $form = new Forge("admin/users/delete/$user->id", "", "post");
     $group = $form->group("delete_user")->label(
-      sprintf(_("Are you sure you want to delete user %s?"), $user->name));
-    $group->submit(sprintf(_("Delete user %s"), $user->name));
+      t("Are you sure you want to delete user {{name}}?", array("name" => $user->name)));
+    $group->submit(t("Delete user {{name}}", array("name" => $user->name)));
     return $form;
   }
 

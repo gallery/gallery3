@@ -16,7 +16,7 @@
 </script>
 
 <div id="gAdminComments">
-  <h1> <?= _("Manage Comments") ?> </h1>
+  <h1> <?= t("Manage Comments") ?> </h1>
 
   <div id="gAdminCommentsMenu">
     <?= $menu ?>
@@ -33,18 +33,22 @@
   <? if ($queue == "spam"): ?>
   <div>
     <p>
-      <? printf(_("Gallery has caught %d spam for you since you installed spam filtering."), $spam_caught) ?>
+      <?= t(array("one" => "Gallery has caught {{count}} spam for you since you installed spam filtering.",
+                  "other" => "Gallery has caught {{count}} spam for you since you installed spam filtering."),
+            array("count" => $spam_caught)) ?>
     </p>
     <p>
       <? if ($spam->count()): ?>
-      <? printf(_("There are currently %d comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam."), $spam->count()) ?>
+      <?= t(array("one" => "There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
+                  "other" => "There are currently {{count}} comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam."),
+            array("count" => $spam->count())) ?>
     </p>
     <p>
       <a href="<?= url::site("admin/comments/delete_all_spam?csrf=" . access::csrf_token()) ?>">
-        <?= _("Delete all spam") ?>
+        <?= t("Delete all spam") ?>
       </a>
       <? else: ?>
-      <?= _("Your spam queue is empty!") ?>
+      <?= t("Your spam queue is empty!") ?>
       <? endif ?>
     </p>
   </div>
@@ -58,13 +62,13 @@
     <table>
       <tr>
         <th>
-          <?= _("Comment") ?>
+          <?= t("Comment") ?>
         </th>
         <th style="width: 100px">
-          <?= _("Date") ?>
+          <?= t("Date") ?>
         </th>
         <th>
-          <?= _("Actions") ?>
+          <?= t("Actions") ?>
         </th>
       </tr>
       <? foreach ($comments as $comment): ?>
@@ -89,7 +93,8 @@
                  <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
             />
             </a>
-            <?= sprintf(_("Comment left on <a href=\"%s\">%s</a>"), $item->url(), $item->title) ?>
+            <?= t("Comment left on {{item_title}}",
+                  array("item_title" => sprintf("<a href=\"%s\">%s</a>", $item->url(), $item->title))) ?>
           </div>
         </td>
         <td>
@@ -100,7 +105,7 @@
             <? if ($comment->state != "unpublished"): ?>
             <li>
               <a href="javascript:set_state('unpublished',<?=$comment->id?>)">
-                <?= _("Unapprove") ?>
+                <?= t("Unapprove") ?>
               </a>
             </li>
             <? endif ?>
@@ -108,7 +113,7 @@
             <? if ($comment->state != "published"): ?>
             <li>
               <a href="javascript:set_state('published',<?=$comment->id?>)">
-                <?= _("Approve") ?>
+                <?= t("Approve") ?>
               </a>
             </li>
             <? endif ?>
@@ -116,14 +121,14 @@
             <? if ($comment->state != "spam"): ?>
             <li>
               <a href="javascript:set_state('spam',<?=$comment->id?>)">
-                <?= _("Spam") ?>
+                <?= t("Spam") ?>
               </a>
             </li>
             <? endif ?>
 
             <li>
               <a href="javascript:del(<?=$comment->id?>)">
-                <?= _("Delete") ?>
+                <?= t("Delete") ?>
               </a>
             </li>
           </ul>

@@ -1,12 +1,12 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
   <li>
-    <? printf(_("Version: %s"), "3.0") ?>
+    <?= t("Version: {{version}}", array("version" => "3.0")) ?>
   </li>
   <li>
-    <? printf(_("Albums: %d"), $album_count) ?>
+    <?= t("Albums: {{count}}", array("count" => $album_count)) ?>
   </li>
   <li>
-    <? printf(_("Photos: %d"), $photo_count) ?>
+    <?= t("Photos: {{count}}", array("count" => $photo_count)) ?>
   </li>
 </ul>

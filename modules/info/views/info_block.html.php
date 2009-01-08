@@ -2,22 +2,22 @@
 <table class="gMetadata">
   <tbody>
     <tr>
-      <th><?= _("Title:") ?></th>
+      <th><?= t("Title:") ?></th>
       <td><?= $item->title; ?></td>
     </tr>
     <tr>
-      <th><?= _("Description:") ?></th>
+      <th><?= t("Description:") ?></th>
       <td><?= $item->description; ?></td>
     </tr>
     <?  if ($item->id != 1): ?>
     <tr>
-      <th><?= _("Name:") ?></th>
+      <th><?= t("Name:") ?></th>
       <td><?= $item->name; ?></td>
     </tr>
     <? endif ?>
     <? if ($item->owner): ?>
     <tr>
-      <th><?= _("Owner:") ?></th>
+      <th><?= t("Owner:") ?></th>
       <td><a href="#"><?= $item->owner->name ?></a></td>
     </tr>
     <? endif ?>

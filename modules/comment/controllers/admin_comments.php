@@ -33,42 +33,47 @@ class Admin_Comments_Controller extends Admin_Controller {
     $view->content->menu = Menu::factory("root")
       ->append(Menu::factory("link")
                ->id("all")
-               ->label(sprintf(_("All Comments (%d)"),
-                               $view->content->all->count()))
+               ->label(t(array("one" => "All Comments ({{count}})",
+                               "other" => "All Comments ({{count}})"),
+                         array("count" => $view->content->all->count())))
                ->url(url::site("admin/comments/queue/all")))
       ->append(Menu::factory("link")
                ->id("unpublished")
-               ->label(sprintf(_("Awaiting Moderation (%d)"),
-                               $view->content->unpublished->count()))
+               ->label(t(array("one" => "Awaiting Moderation ({{count}})",
+                               "other" => "Awaiting Moderation ({{count}})"),
+                         array("count" => $view->content->unpublished->count())))
                ->url(url::site("admin/comments/queue/unpublished")))
       ->append(Menu::factory("link")
                ->id("published")
-               ->label(sprintf(_("Approved (%d)"),
-                               $view->content->published->count()))
+               ->label(t(array("one" => "Approved ({{count}})",
+                               "other" => "Approved ({{count}})"),
+                         array("count" => $view->content->published->count())))
                ->url(url::site("admin/comments/queue/published")))
       ->append(Menu::factory("link")
                ->id("spam")
-               ->label(sprintf(_("Spam (%d)"), $view->content->spam->count()))
+               ->label(t(array("one" => "Spam ({{count}})",
+                               "other" => "Spam ({{count}})"),
+                         array("count" => $view->content->spam->count())))
                ->url(url::site("admin/comments/queue/spam")));
 
     switch ($state) {
     case "all":
       $view->content->comments = $view->content->all;
-      $view->content->title = _("All Comments");
+      $view->content->title = t("All Comments");
       break;
 
     case "published":
       $view->content->comments = $view->content->published;
-      $view->content->title = _("Approved Comments");
+      $view->content->title = t("Approved Comments");
       break;
 
     case "unpublished":
       $view->content->comments = $view->content->unpublished;
-      $view->content->title = _("Comments Awaiting Moderation");
+      $view->content->title = t("Comments Awaiting Moderation");
       break;
 
     case "spam":
-      $view->content->title = _("Spam Comments");
+      $view->content->title = t("Spam Comments");
       $view->content->comments = $view->content->spam;
       $view->content->spam_caught = module::get_var("comment", "spam_caught");
       break;

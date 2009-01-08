@@ -70,13 +70,13 @@ class core_block_Core {
   public static function admin_dashboard_blocks($theme) {
     $block = new Block();
     $block->id = "gWelcome";
-    $block->title = _("Welcome to Gallery3");
+    $block->title = t("Welcome to Gallery3");
     $block->content = new View("admin_block_welcome.html");
     $blocks[] = $block;
 
     $block = new Block();
     $block->id = "gPhotoStream";
-    $block->title = _("Photo Stream");
+    $block->title = t("Photo Stream");
     $block->content = new View("admin_block_photo_stream.html");
     $block->content->photos =
       ORM::factory("item")->where("type", "photo")->orderby("created", "desc")->find_all(10);
@@ -84,7 +84,7 @@ class core_block_Core {
 
     $block = new Block();
     $block->id = "gLogEntries";
-    $block->title = _("Log Entries");
+    $block->title = t("Log Entries");
     $block->content = new View("admin_block_log_entries.html");
     $block->content->entries = ORM::factory("log")->orderby("timestamp", "DESC")->find_all(5);
     $blocks[] = $block;
@@ -95,7 +95,7 @@ class core_block_Core {
   public static function admin_sidebar_blocks($theme) {
     $block = new Block();
     $block->id = "gStats";
-    $block->title = _("Gallery Stats");
+    $block->title = t("Gallery Stats");
     $block->content = new View("admin_block_stats.html");
     $block->content->album_count = ORM::factory("item")->where("type", "album")->count_all();
     $block->content->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
@@ -103,13 +103,13 @@ class core_block_Core {
 
     $block = new Block();
     $block->id = "gPlatform";
-    $block->title = _("Platform Information");
+    $block->title = t("Platform Information");
     $block->content = new View("admin_block_platform.html");
     $blocks[] = $block;
 
     $block = new Block();
     $block->id = "gProjectNews";
-    $block->title = _("Gallery Project News");
+    $block->title = t("Gallery Project News");
     $block->content = new View("admin_block_news.html");
     $block->content->feed = feed::parse("http://gallery.menalto.com/node/feed", 3);
     $blocks[] = $block;

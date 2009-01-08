@@ -2,7 +2,7 @@
 <form method="post" action="<?= url::site("permissions/edit/$item->id") ?>">
   <?= access::csrf_form_field() ?>
   <fieldset>
-    <legend><?= _("Edit Permissions") ?> </legend>
+    <legend><?= t("Edit Permissions") ?> </legend>
 
     <table>
       <tr>
@@ -14,7 +14,7 @@
 
       <? foreach ($permissions as $permission): ?>
       <tr>
-        <td> <?= _($permission->display_name) ?> </td>
+        <td> <?= t($permission->display_name) ?> </td>
         <? foreach ($groups as $group): ?>
         <td>
           <? $intent = access::group_intent($group, $permission->name, $item) ?>
@@ -22,7 +22,7 @@
           <? $lock = access::locked_by($group, $permission->name, $item) ?>
 
           <? if ($lock): ?>
-            <?= _("denied and locked by") ?> <a href="javascript:show(<?= $lock->id ?>)"><?= _("parent") ?></a>
+            <?= t("denied and locked by") ?> <a href="javascript:show(<?= $lock->id ?>)"><?= t("parent") ?></a>
           <? else: ?>
             <? if ($intent === null): ?>
               <? if ($allowed): ?>

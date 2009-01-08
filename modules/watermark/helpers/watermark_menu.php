@@ -23,7 +23,7 @@ class watermark_menu_Core {
       ->append(
         Menu::factory("link")
         ->id("watermarks")
-        ->label(_("Watermarks"))
+        ->label(t("Watermarks"))
         ->url(url::site("admin/watermarks")));
   }
 }

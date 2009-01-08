@@ -22,11 +22,11 @@ class core_menu_Core {
     $menu
       ->append(Menu::factory("link")
                ->id("home")
-               ->label(_("Home"))
+               ->label(t("Home"))
                ->url(url::base()))
       ->append(Menu::factory("link")
                ->id("browse")
-               ->label(_("Browse"))
+               ->label(t("Browse"))
                ->url(url::site("albums/1")));
 
     $item = $theme->item();
@@ -34,31 +34,31 @@ class core_menu_Core {
     if (!user::active()->guest) {
       $menu->append($admin_menu = Menu::factory("submenu")
                     ->id("admin_menu")
-                    ->label(_("Admin")));
+                    ->label(t("Admin")));
     }
 
     if ($item && access::can("edit", $item)) {
       $menu->append($options_menu = Menu::factory("submenu")
         ->id("options_menu")
-        ->label(_("Options"))
+        ->label(t("Options"))
         ->append(Menu::factory("dialog")
                  ->id("edit_item")
-                 ->label($item->type == "album" ? _("Edit album") : _("Edit photo"))
+                 ->label($item->type == "album" ? t("Edit album") : t("Edit photo"))
                  ->url(url::site("form/edit/{$item->type}s/$item->id"))));
 
       if ($item->type == "album") {
         $options_menu
           ->append(Menu::factory("dialog")
                    ->id("add_item")
-                   ->label(_("Add a photo"))
+                   ->label(t("Add a photo"))
                    ->url(url::site("form/add/albums/$item->id?type=photo")))
           ->append(Menu::factory("dialog")
                    ->id("add_album")
-                   ->label(_("Add an album"))
+                   ->label(t("Add an album"))
                    ->url(url::site("form/add/albums/$item->id?type=album")))
           ->append(Menu::factory("dialog")
                    ->id("edit_permissions")
-                   ->label(_("Edit permissions"))
+                   ->label(t("Edit permissions"))
                    ->url(url::site("permissions/browse/$item->id")));
       }
     }
@@ -66,7 +66,7 @@ class core_menu_Core {
     if (user::active()->admin) {
       $admin_menu->append(Menu::factory("link")
                           ->id("site_admin")
-                          ->label(_("Site Admin"))
+                          ->label(t("Site Admin"))
                           ->url(url::site("admin")));
     }
   }
@@ -75,7 +75,7 @@ class core_menu_Core {
     $menu
       ->append(Menu::factory("link")
                ->id("hybrid")
-               ->label(_("View album hybrid mode"))
+               ->label(t("View album hybrid mode"))
                ->url("#")
                ->css_id("gHybridLink"));
   }
@@ -84,12 +84,12 @@ class core_menu_Core {
     $menu
       ->append(Menu::factory("link")
                ->id("fullsize")
-               ->label(_("View full size"))
+               ->label(t("View full size"))
                ->url("#")
                ->css_id("gFullsizeLink"))
       ->append(Menu::factory("link")
                ->id("album")
-               ->label(_("Return to album"))
+               ->label(t("Return to album"))
                ->url($theme->item()->parent()->url("show={$theme->item->id}"))
                ->css_id("gAlbumLink"));
   }
@@ -98,43 +98,43 @@ class core_menu_Core {
     $menu
       ->append(Menu::factory("link")
                ->id("dashboard")
-               ->label(_("Dashboard"))
+               ->label(t("Dashboard"))
                ->url(url::site("admin")))
       ->append(Menu::factory("submenu")
                ->id("settings_menu")
-               ->label(_("Settings"))
+               ->label(t("Settings"))
                ->append(Menu::factory("link")
                         ->id("graphics_toolkits")
-                        ->label(_("Graphics"))
+                        ->label(t("Graphics"))
                         ->url(url::site("admin/graphics"))))
       ->append(Menu::factory("link")
                ->id("modules")
-               ->label(_("Modules"))
+               ->label(t("Modules"))
                ->url(url::site("admin/modules")))
       ->append(Menu::factory("submenu")
                ->id("content_menu")
-               ->label(_("Content")))
+               ->label(t("Content")))
       ->append(Menu::factory("submenu")
                ->id("presentation_menu")
-               ->label(_("Presentation"))
+               ->label(t("Presentation"))
                ->append(Menu::factory("link")
                         ->id("themes")
-                        ->label(_("Themes"))
+                        ->label(t("Themes"))
                         ->url(url::site("admin/themes")))
                ->append(Menu::factory("link")
                         ->id("image_sizes")
-                        ->label(_("Image Sizes"))
+                        ->label(t("Image Sizes"))
                         ->url("#")))
       ->append(Menu::factory("submenu")
                ->id("users_groups_menu")
-               ->label(_("Users/Groups")))
+               ->label(t("Users/Groups")))
       ->append(Menu::factory("link")
                ->id("maintenance")
-               ->label(_("Maintenance"))
+               ->label(t("Maintenance"))
                ->url(url::site("admin/maintenance")))
       ->append(Menu::factory("submenu")
                ->id("statistics_menu")
-               ->label(_("Statistics"))
+               ->label(t("Statistics"))
                ->url("#"));
   }
 }

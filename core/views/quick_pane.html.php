@@ -4,7 +4,7 @@
 <div class="rotate-counter-clockwise"
      href="<?= url::site("quick/rotate/$item->id/ccw?csrf=" . access::csrf_token()) ?>">
   <span>
-    <?= _("Rotate CCW") ?>
+    <?= t("Rotate CCW") ?>
   </span>
 </div>
 <? endif ?>
@@ -12,7 +12,7 @@
 <div class="edit gDialogLink"
      href="<?= url::site("quick/form_edit/$item->id") ?>">
   <span>
-    <?= _("Edit") ?>
+    <?= t("Edit") ?>
   </span>
 </div>
 
@@ -20,7 +20,7 @@
 <div class="rotate-clockwise"
      href="<?= url::site("quick/rotate/$item->id/cw?csrf=" . access::csrf_token()) ?>">
   <span>
-    <?= _("Rotate CCW") ?>
+    <?= t("Rotate CCW") ?>
   </span>
 </div>
 <? endif ?>

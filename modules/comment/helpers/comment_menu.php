@@ -22,7 +22,7 @@ class comment_menu_Core {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
                ->id("comments")
-               ->label(_("Comments"))
+               ->label(t("Comments"))
                ->url(url::site("admin/comments")));
   }
 
@@ -30,7 +30,7 @@ class comment_menu_Core {
     $menu
       ->append(Menu::factory("link")
                ->id("comments")
-               ->label(_("View comments on this item"))
+               ->label(t("View comments on this item"))
                ->url("#comments")
                ->css_id("gCommentsLink"));
   }

@@ -23,7 +23,7 @@ class gmaps_block_Core {
     if ($theme->item()) {
       $block = new Block();
       $block->id = "gMaps";
-      $block->title = _("Location");
+      $block->title = t("Location");
       $block->content = new View("gmaps_block.html");
       return $block;
     }

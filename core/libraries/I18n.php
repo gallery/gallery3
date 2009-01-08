@@ -81,7 +81,7 @@ class I18n_Core {
     $entry = Database::instance()
         ->select("translation")
         ->from("translations_incomings")
-        ->where(array("key" => md5($key),
+        ->where(array("key" => md5($key, true),
                       "locale" => $locale))
         ->limit(1)
         ->get()

@@ -44,7 +44,7 @@ class I18n_Test extends Unit_Test_Case {
       $key = $message;
       $key = is_array($key) ? array_shift($key) : $key;
       $entry = ORM::factory("translations_incoming");
-      $entry->key = md5($key);
+      $entry->key = md5($key, true);
       $entry->message = serialize($message);
       $entry->translation = serialize($translation);
       $entry->locale = 'te_ST';

@@ -26,14 +26,14 @@ class Admin_Themes_Controller extends Admin_Controller {
     $view->content->active = module::get_var("core", "active_theme");
     print $view;
   }
-  
+
   public function save() {
     access::verify_csrf();
     $theme = $this->input->post("theme");
     if ($theme != module::get_var("core", "active_theme")) {
       module::set_var("core", "active_theme", $theme);
-      message::success(_("Updated Theme"));
-      log::success("graphics", sprintf(_("Changed theme to %s"), $theme));
+      message::success(t("Updated Theme"));
+      log::success("graphics", t("Changed theme to {{theme_name}}", array("theme_name" => $theme)));
     }
     url::redirect("admin/themes");
   }

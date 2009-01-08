@@ -21,7 +21,7 @@ class Logout_Controller extends Controller {
   public function index() {
     $user = user::active();
     user::logout();
-    log::info("user", sprintf(_("User %s logged out"), $user->name),
+    log::info("user", t("User {{name}} logged out", array("name" => $user->name)),
               html::anchor("user/$user->id", $user->name));
     if ($this->input->get("continue")) {
       url::redirect($this->input->get("continue"));

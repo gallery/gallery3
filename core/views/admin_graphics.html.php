@@ -1,13 +1,13 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gGraphics">
-  <h1> <?= _("Graphics Settings") ?> </h1>
+  <h1> <?= t("Graphics Settings") ?> </h1>
   <p>
-    <?= _("Gallery needs a graphics toolkit in order to manipulate your photos.  Please choose one from the list below.") ?>
+    <?= t("Gallery needs a graphics toolkit in order to manipulate your photos.  Please choose one from the list below.") ?>
   </p>
 
   <form method="post" action="<?= url::site("admin/graphics/save") ?>">
     <?= access::csrf_form_field() ?>
-    <h2> <?= _("Graphics Toolkits") ?> </h2>
+    <h2> <?= t("Graphics Toolkits") ?> </h2>
     <table>
       <tr>
         <td valign="top" style="width: 100px">
@@ -19,21 +19,23 @@
           </center>
         </td>
         <td>
-          <h3> <?= _("GD") ?> </h3>
+          <h3> <?= t("GD") ?> </h3>
           <p>
-            <? printf(_("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the %sGD website%s for more information."), "<a href=\"http://www.boutell.com/gd/\">", "</a>") ?>
+            <?= t("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the {{link_start}}GD website{{link_end}} for more information.",
+                  array("link_start" => "<a href=\"http://www.boutell.com/gd/\">", "link_end" => "</a>")) ?>
           </p>
           <? if ($tk->gd["GD Version"] && function_exists('imagerotate')): ?>
           <p class="gSuccess">
-            <? printf(_("You have GD version %s."), $tk->gd["GD Version"]) ?>
+            <?= t("You have GD version {{version}}.", array("version" => $tk->gd["GD Version"])) ?>
           </p>
           <? elseif ($tk->gd["GD Version"]): ?>
           <p class="gWarning">
-            <? printf(_("You have GD version %s, but it lacks image rotation."), $tk->gd["GD Version"]) ?>
+            <?= t("You have GD version {{version}}, but it lacks image rotation.",
+                  array("version" => $tk->gd["GD Version"])) ?>
           </p>
           <? else: ?>
           <p class="gInfo">
-            <?= _("You do not have GD installed.") ?>
+            <?= t("You do not have GD installed.") ?>
           </p>
           <? endif ?>
         </td>
@@ -49,17 +51,18 @@
           </center>
         </td>
         <td>
-          <h3> <?= _("ImageMagick") ?> </h3>
+          <h3> <?= t("ImageMagick") ?> </h3>
           <p>
-            <? printf(_("ImageMagick is a standalone graphics program available on most Linux systems.  Please refer to the %sImageMagick website%s for more information."), "<a href=\"http://www.imagemagick.org/\">", "</a>") ?>
+            <?= t("ImageMagick is a standalone graphics program available on most Linux systems.  Please refer to the {{link_start}}ImageMagick website{{link_end}} for more information.",
+                  array("link_start" => "<a href=\"http://www.imagemagick.org/\">", "link_end" => "</a>")) ?>
           </p>
           <? if ($tk->imagemagick): ?>
           <p class="gSuccess">
-            <? printf(_("You have ImageMagick installed in %s"), $tk->imagemagick) ?>
+            <?= t("You have ImageMagick installed in {{path}}", array("path" => $tk->imagemagick)) ?>
           </p>
           <? else: ?>
           <p class="gInfo">
-            <?= _("ImageMagick is not available on your system.") ?>
+            <?= t("ImageMagick is not available on your system.") ?>
           </p>
           <? endif ?>
         </td>
@@ -75,22 +78,23 @@
           </center>
         </td>
         <td>
-          <h3> <?= _("GraphicsMagick") ?> </h3>
+          <h3> <?= t("GraphicsMagick") ?> </h3>
           <p>
-            <? printf(_("GraphicsMagick is a standalone graphics program available on most Linux systems.  Please refer to the %sGraphicsMagick website%s for more information."), "<a href=\"http://www.graphicsmagick.org/\">", "</a>") ?>
+            <?= t("GraphicsMagick is a standalone graphics program available on most Linux systems.  Please refer to the {{link_start}}GraphicsMagick website{{link_end}} for more information.",
+                  array("link_start" => "<a href=\"http://www.graphicsmagick.org/\">", "link_end" => "</a>")) ?>
           </p>
           <? if ($tk->graphicsmagick): ?>
           <p class="gSuccess">
-            <? printf(_("You have GraphicsMagick installed in %s"), $tk->graphicsmagick) ?>
+            <?= t("You have GraphicsMagick installed in {{path}}", array("path" => $tk->graphicsmagick)) ?>
           </p>
           <? else: ?>
           <p class="gInfo">
-            <?= _("GraphicsMagick is not available on your system.") ?>
+            <?= t("GraphicsMagick is not available on your system.") ?>
           </p>
           <? endif ?>
         </td>
       </tr>
     </table>
-    <input type="submit" value="<?= _("Save") ?>"/>
+    <input type="submit" value="<?= t("Save") ?>"/>
   </form>
 </div>

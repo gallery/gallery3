@@ -22,7 +22,7 @@ class tag_menu_Core {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
                ->id("tags")
-               ->label(_("Tags"))
+               ->label(t("Tags"))
                ->url(url::site("admin/tags")));
   }
 }

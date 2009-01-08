@@ -1,15 +1,15 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
   <li>
-    <? printf(_("Operating System: %s"), PHP_OS) ?>
+    <?= t("Operating System: {{operating_system}}", array("operating_system" => PHP_OS)) ?>
   </li>
   <li>
-    <? printf(_("Apache: %s"), function_exists("apache_get_version") ? apache_get_version() : _("Unknown")) ?>
+    <?= t("Apache: {{apache_version}}", array("apache_version" => function_exists("apache_get_version") ? apache_get_version() : t("Unknown"))) ?>
   </li>
   <li>
-    <? printf(_("PHP: %s"), phpversion()) ?>
+    <?= t("PHP: {{php_version}}", array("php_version" => phpversion())) ?>
   </li>
   <li>
-    <? printf(_("MySQL: %s"), mysql_get_server_info()) ?>
+    <?= t("MySQL: {{mysql_version}}", array("mysql_version" => mysql_get_server_info())) ?>
   </li>
 </ul>

@@ -24,15 +24,15 @@ class watermark_Core {
     }
 
     $form = new Forge("admin/watermarks/add", "", "post");
-    $group = $form->group("add_watermark")->label(_("Upload Watermark"));
-    $group->upload("file")->label(_("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required");
-    $group->dropdown("position")->label(_("Watermark Position"))
+    $group = $form->group("add_watermark")->label(t("Upload Watermark"));
+    $group->upload("file")->label(t("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required");
+    $group->dropdown("position")->label(t("Watermark Position"))
       ->options(self::positions())
       ->selected("southeast");
-    $group->dropdown("transparency")->label(_("Transparency Percent"))
+    $group->dropdown("transparency")->label(t("Transparency Percent"))
       ->options($range)
       ->selected(100);
-    $group->submit(_("Upload"));
+    $group->submit(t("Upload"));
     return $form;
   }
 
@@ -42,34 +42,34 @@ class watermark_Core {
     }
 
     $form = new Forge("admin/watermarks/edit", "", "post");
-    $group = $form->group("edit_watermark")->label(_("Edit Watermark"));
-    $group->dropdown("position")->label(_("Watermark Position"))
+    $group = $form->group("edit_watermark")->label(t("Edit Watermark"));
+    $group->dropdown("position")->label(t("Watermark Position"))
       ->options(self::positions())
       ->selected(module::get_var("watermark", "position"));
-    $group->dropdown("transparency")->label(_("Transparency Percent"))
+    $group->dropdown("transparency")->label(t("Transparency Percent"))
       ->options($range)
       ->selected(module::get_var("watermark", "transparency"));
-    $group->submit(_("Save"));
+    $group->submit(t("Save"));
     return $form;
   }
 
   public static function get_delete_form() {
     $form = new Forge("admin/watermarks/delete", "", "post");
-    $group = $form->group("delete_watermark")->label(_("Really delete Watermark?"));
-    $group->submit(_("Delete"));
+    $group = $form->group("delete_watermark")->label(t("Really delete Watermark?"));
+    $group->submit(t("Delete"));
     return $form;
   }
 
   public static function positions() {
-    return array("northwest" => _("Northwest"),
-                 "north" => _("North"),
-                 "northeast" => _("Northeast"),
-                 "west" => _("West"),
-                 "center" => _("Center"),
-                 "east" => _("East"),
-                 "southwest" => _("Southwest"),
-                 "south" => _("South"),
-                 "southeast" => _("Southeast"));
+    return array("northwest" => t("Northwest"),
+                 "north" => t("North"),
+                 "northeast" => t("Northeast"),
+                 "west" => t("West"),
+                 "center" => t("Center"),
+                 "east" => t("East"),
+                 "southwest" => t("Southwest"),
+                 "south" => t("South"),
+                 "southeast" => t("Southeast"));
   }
 
   public static function position($key) {

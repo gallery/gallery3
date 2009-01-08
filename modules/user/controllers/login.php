@@ -34,7 +34,7 @@ class Login_Controller extends Controller {
       $user = ORM::factory("user")->where("name", $form->login->inputs["name"]->value)->find();
       if (!$user->loaded || !user::is_correct_password($user, $form->login->password->value)) {
         log::warning(
-          "user", sprintf(_("Failed login for %s"), $form->login->inputs["name"]->value));
+          "user", t("Failed login for {{name}}", array("username" => $form->login->inputs["name"]->value)));
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $valid = false;
       }
@@ -42,7 +42,7 @@ class Login_Controller extends Controller {
 
     if ($valid) {
       user::login($user);
-      log::info("user", sprintf(_("User %s logged in"), $user->name));
+      log::info("user", t("User {{name}} logged in", array("name" => $user->name)));
       print json_encode(
         array("result" => "success"));
     } else {
@@ -54,11 +54,11 @@ class Login_Controller extends Controller {
 
   private function _login_form() {
     $form = new Forge(url::current(true), "", "post", array("id" => "gLoginForm"));
-    $group = $form->group("login")->label(_("Login"));
-    $group->input("name")->label(_("Name"))->id("gName")->class(null);
-    $group->password("password")->label(_("Password"))->id("gPassword")->class(null);
-    $group->inputs["name"]->error_messages("invalid_login", _("Invalid name or password"));
-    $group->submit(_("Login"));
+    $group = $form->group("login")->label(t("Login"));
+    $group->input("name")->label(t("Name"))->id("gName")->class(null);
+    $group->password("password")->label(t("Password"))->id("gPassword")->class(null);
+    $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
+    $group->submit(t("Login"));
     return $form;
   }
 }

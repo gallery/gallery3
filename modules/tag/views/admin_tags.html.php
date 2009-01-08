@@ -1,21 +1,21 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<h1> <?= _("Tags") ?> </h1>
+<h1> <?= t("Tags") ?> </h1>
 
 <div id="gTagSearch">
   <form method="get" action="<?= url::site("admin/tags") ?>">
     <fieldset>
-      <legend> <?= _("Search Tags") ?> </legend>
+      <legend> <?= t("Search Tags") ?> </legend>
       <input name="filter" value="<?= $filter ?>"/>
-      <input type="submit" value="<?= _("Search Tags") ?>"/>
+      <input type="submit" value="<?= t("Search Tags") ?>"/>
     </fieldset>
   </form>
 </div>
 
 <table>
   <tr>
-    <th> <?= _("Tag") ?> </th>
-    <th> <?= _("Photos") ?> </th>
-    <th> <?= _("Actions") ?> </th>
+    <th> <?= t("Tag") ?> </th>
+    <th> <?= t("Photos") ?> </th>
+    <th> <?= t("Actions") ?> </th>
   </tr>
   <? foreach ($tags as $tag): ?>
   <tr>
@@ -25,14 +25,14 @@
       <ul>
         <li>
           <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>" class="gDialogLink"
-            title="<?= sprintf(_("Delete tag %s"), $tag->name) ?>">
-            <?= _("delete") ?>
+            title="<?= t("Delete tag {{tag_name}}", array("tag_name" => $tag->name)) ?>">
+            <?= t("delete") ?>
           </a>
         </li>
         <li>
           <a href="<?= url::site("admin/tags/form_rename/$tag->id") ?>" class="gDialogLink"
-            title="<?= sprintf(_("Rename tag %s"), $tag->name) ?>">
-            <?= _("rename") ?>
+            title="<?= t("Rename tag {{tag_name}}", array("tag_name" => $tag->name)) ?>">
+            <?= t("rename") ?>
           </a>
         </li>
       </ul>

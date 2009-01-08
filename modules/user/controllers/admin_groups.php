@@ -40,10 +40,10 @@ class Admin_Groups_Controller extends Controller {
     if ($valid) {
       $group = group::create($new_name);
       $group->save();
-      message::success(sprintf(_("Created group %s"), $group->name));
+      message::success(t("Created group {{group_name}}", array("group_name" => $group->name)));
       print json_encode(array("result" => "success"));
     } else {
-      message::error(_("Failed to create group"));
+      message::error(t("Failed to create group"));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }
@@ -64,13 +64,14 @@ class Admin_Groups_Controller extends Controller {
       $name = $group->name;
       $group->delete();
     } else {
-      message::error(_("Failed to delete group"));
+      message::error(t("Failed to delete group"));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }
 
-    log::success("group", sprintf(_("Deleted group %s"), $name));
-    message::success(sprintf(_("Deleted group %s"), $name));
+    $message = t("Deleted group {{group_name}}", array("group_name" => $name));
+    log::success("group", $message);
+    message::success($message);
     print json_encode(array("result" => "success"));
   }
 
@@ -103,10 +104,10 @@ class Admin_Groups_Controller extends Controller {
     if ($valid) {
       $group->name = $form->edit_group->inputs["name"]->value;
       $group->save();
-      message::success(sprintf(_("Changed group %s"), $group->name));
+      message::success(t("Changed group {{group_name}}", array("group_name" => $group->name)));
       print json_encode(array("result" => "success"));
     } else {
-      message::error(sprintf(_("Failed to change group %s"), $group->name));
+      message::error(t("Failed to change group {{group_name}}", array("group_name" => $group->name)));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }

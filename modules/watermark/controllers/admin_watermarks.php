@@ -44,8 +44,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       module::set_var("watermark", "transparency", $form->edit_watermark->transparency->value);
       $this->_update_graphics_rules();
 
-      log::success("watermark", _("Watermark changed"));
-      message::success(_("Watermark changed"));
+      log::success("watermark", t("Watermark changed"));
+      message::success(t("Watermark changed"));
       print json_encode(
         array("result" => "success",
               "location" => url::site("admin/watermarks")));
@@ -73,8 +73,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         module::clear_var("watermark", "position");
         $this->_update_graphics_rules();
 
-        log::success("watermark", _("Watermark deleted"));
-        message::success(_("Watermark deleted"));
+        log::success("watermark", t("Watermark deleted"));
+        message::success(t("Watermark deleted"));
       }
       print json_encode(
         array("result" => "success",
@@ -100,7 +100,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
 
       if (!($image_info = getimagesize($file)) ||
           !in_array($image_info[2], array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG))) {
-        message::error(_("Unable to identify this image file"));
+        message::error(t("Unable to identify this image file"));
         @unlink($file);
         return;
       }
@@ -115,8 +115,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $this->_update_graphics_rules();
       @unlink($file);
 
-      message::success(_("Watermark saved"));
-      log::success("watermark", _("Watermark saved"));
+      message::success(t("Watermark saved"));
+      log::success("watermark", t("Watermark saved"));
       print json_encode(
         array("result" => "success",
               "location" => url::site("admin/watermarks")));

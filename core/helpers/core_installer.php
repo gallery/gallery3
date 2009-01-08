@@ -122,7 +122,7 @@ class core_installer {
 
       $db->query("CREATE TABLE `translations_incomings` (
                    `id` int(9) NOT NULL auto_increment,
-                   `key` char(32) NOT NULL,
+                   `key` binary(16) NOT NULL,
                    `locale` char(10) NOT NULL,
                    `message` text NOT NULL,
                    `translation` text,
@@ -211,8 +211,8 @@ class core_installer {
       }
       if (!module::get_var("core", "graphics_toolkit")) {
         site_status::warning(
-          sprintf(_("Graphics toolkit missing!  Please %schoose a toolkit%s."),
-                  "<a href=\"" . url::site("admin/graphics") . "\">", "</a>"),
+          t("Graphics toolkit missing!  Please {{link_start}}choose a toolkit{{link_start}}.",
+            array("link_start" => "<a href=\"" . url::site("admin/graphics") . "\">", "link_end" => "</a>")),
           "missing_graphics_toolkit");
       }
 

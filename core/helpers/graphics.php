@@ -217,10 +217,13 @@ class graphics_Core {
     $count = self::find_dirty_images_query()->count();
     if ($count) {
       site_status::warning(
-        sprintf(_("%d of your photos are out of date.  %sClick here to fix them%s"),
-                $count, "<a href=\"" .
-                url::site("admin/maintenance/start/graphics::rebuild_dirty_images?csrf=__CSRF__") .
-                "\" class=\"gDialogLink\">", "</a>"),
+        t(array("one" => "One of your photos is out of date. {{link_start}}Click here to fix it{{link_end}}",
+                "other" => "{{count}} of your photos are out of date. {{link_start}}Click here to fix them{{link_end}}"),
+          array("count" => $count,
+                "link_start" => "<a href=\"" .
+                    url::site("admin/maintenance/start/graphics::rebuild_dirty_images?csrf=__CSRF__") .
+                    "\" class=\"gDialogLink\">",
+                "link_end" => "</a>")),
         "graphics_dirty");
     }
   }
@@ -251,8 +254,10 @@ class graphics_Core {
       }
     }
 
-    $task->status = sprintf(
-      _("Updated %d out of %d images"), $completed, $remaining + $completed);
+    $task->status = t(array("one" => "Updated: 1 image. Total: {{total_count}}.",
+                            "other" => "Updated: {{count}} images. Total: {{total_count}}."),
+                      array("count" => $completed,
+                            "total_count" => ($remaining + $completed)));
 
     if ($completed + $remaining > 0) {
       $task->percent_complete = (int)(100 * $completed / ($completed + $remaining));

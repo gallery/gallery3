@@ -6,8 +6,8 @@
   <? //endif ?>
   <p class="gAuthor">
     <a href="#"><img src="<?= $avatar ?>" class="gAvatar" alt="<?= $comment->author ?>" /></a>
-    <?= _("on ") . date("Y-M-d H:i:s", $comment->created) ?>
-    <a href="#"><?= $comment->author ?></a> <?= _("said") ?>
+    <?= t("on ") . date("Y-M-d H:i:s", $comment->created) ?>
+    <a href="#"><?= $comment->author ?></a> <?= t("said") ?>
   </p>
   <div>
     <?= $comment->text ?>

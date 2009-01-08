@@ -41,10 +41,10 @@ class Admin_Users_Controller extends Controller {
         $name, $form->add_user->full_name->value, $form->add_user->password->value);
       $user->email = $form->add_user->email->value;
       $user->save();
-      message::success(sprintf(_("Created user %s"), $user->name));
+      message::success(t("Created user {{user_name}}", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
-      message::error(_("Failed to create user"));
+      message::error(t("Failed to create user"));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }
@@ -65,13 +65,14 @@ class Admin_Users_Controller extends Controller {
       $name = $user->name;
       $user->delete();
     } else {
-      message::error(_("Failed to delete user"));
+      message::error(t("Failed to delete user"));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }
 
-    log::success("user", sprintf(_("Deleted user %s"), $name));
-    message::success(sprintf(_("Deleted user %s"), $name));
+    $message = t("Deleted user {{user_name}}", array("user_name" => $name));
+    log::success("user", $message);
+    message::success($message);
     print json_encode(array("result" => "success"));
   }
 
@@ -107,10 +108,10 @@ class Admin_Users_Controller extends Controller {
       $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
       $user->save();
-      message::success(sprintf(_("Changed user %s"), $user->name));
+      message::success(t("Changed user {{user_name}}", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
-      message::error(sprintf(_("Failed to change user %s"), $user->name));
+      message::error(t("Failed to change user {{user_name}}", array("user_name" => $user->name)));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }

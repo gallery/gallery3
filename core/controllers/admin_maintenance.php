@@ -26,13 +26,14 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $dirty_count = graphics::find_dirty_images_query()->count();
     return array(
       "graphics::rebuild_dirty_images" => new ArrayObject(
-        array("name" => _("Rebuild Images"),
+        array("name" => t("Rebuild Images"),
               "callback" => "graphics::rebuild_dirty_images",
               "description" => (
                 $dirty_count ?
-                sprintf(
-                  _("You have %d out-of-date images"), $dirty_count)
-                : _("All your images are up to date")),
+                  t(array("one" => "You have one image which is out of date",
+                          "other" => "You have {{count}} out-of-date images"),
+                    array("count" => $dirty_count))
+                : t("All your images are up to date")),
               "severity" => $dirty_count ? log::WARNING : log::SUCCESS),
         ArrayObject::ARRAY_AS_PROPS));
   }
@@ -49,10 +50,12 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $stalled_count = $query->count();
     if ($stalled_count) {
       log::warning("tasks",
-                   sprintf(_("%d tasks are stalled"), $stalled_count),
-                   sprintf(_("%sview%s"),
-                           "<a href=\"" . url::site("admin/maintenance") . "\">",
-                           "</a>"));
+                   t(array("one" => "One task is stalled",
+                           "other" => "{{count}} tasks are stalled"),
+                     array("count" => $stalled_count)),
+                   t("{{link_start}}view{{link_end}}",
+                     array("link_start" => "<a href=\"" . url::site("admin/maintenance") . "\">",
+                           "link_start" => "</a>")));
     }
 
     $view = new Admin_View("admin.html");
@@ -86,8 +89,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->csrf = access::csrf_token();
     $view->task = $task;
 
-    log::info("tasks", sprintf(_("Task %s started (task id %d)"), $task->name,  $task->id),
-              html::anchor(url::site("admin/maintenance"), _("maintenance")));
+    log::info("tasks", t("Task {{task_name}} started (task id {{task_id}})",
+                         array("task_name" => $task->name, "task_id" => $task->id)),
+              html::anchor(url::site("admin/maintenance"), t("maintenance")));
     print $view;
   }
 
@@ -106,8 +110,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->csrf = access::csrf_token();
     $view->task = $task;
 
-    log::info("tasks", sprintf(_("Task %s resumed (task id %d)"), $task->name,  $task->id),
-              html::anchor(url::site("admin/maintenance"), _("maintenance")));
+    log::info("tasks", t("Task {{task_name}} resumed (task id {{task_id}})",
+                         array("task_name" => $task->name, "task_id" => $task->id)),
+              html::anchor(url::site("admin/maintenance"), t("maintenance")));
     print $view;
   }
 
@@ -126,7 +131,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $task->state = "cancelled";
     $task->save();
 
-    message::success(_("Task cancelled"));
+    message::success(t("Task cancelled"));
     url::redirect("admin/maintenance");
   }
 
@@ -142,7 +147,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       throw new Exception("@todo MISSING_TASK");
     }
     $task->delete();
-    message::success(_("Task removed"));
+    message::success(t("Task removed"));
     url::redirect("admin/maintenance");
   }
 
@@ -166,15 +171,17 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     if ($task->done) {
       switch ($task->state) {
       case "success":
-        log::success("tasks", sprintf(_("Task %s completed (task id %d)"), $task->name,  $task->id),
-                     html::anchor(url::site("admin/maintenance"), _("maintenance")));
-        message::success(_("Task completed successfully"));
+        log::success("tasks", t("Task {{task_name}} completed (task id {{task_id}})",
+                                array("task_name" => $task->name, "task_id" => $task->id)),
+                     html::anchor(url::site("admin/maintenance"), t("maintenance")));
+        message::success(t("Task completed successfully"));
         break;
 
       case "error":
-        log::error("tasks", sprintf(_("Task %s failed (task id %d)"), $task->name,  $task->id),
-                   html::anchor(url::site("admin/maintenance"), _("maintenance")));
-        message::success(_("Task failed"));
+        log::error("tasks", t("Task {{task_name}} failed (task id {{task_id}})",
+                              array("task_name" => $task->name, "task_id" => $task->id)),
+                   html::anchor(url::site("admin/maintenance"), t("maintenance")));
+        message::success(t("Task failed"));
         break;
       }
       print json_encode(

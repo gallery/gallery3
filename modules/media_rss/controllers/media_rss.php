@@ -85,7 +85,7 @@ class Media_RSS_Controller extends Controller {
     $view = new View("feed.mrss");
     $view->title = $tag->name;
     $view->link = url::abs_site("tags/{$tag->id}");
-    $view->description = sprintf(_("Photos related to %s"), $tag->name);
+    $view->description = t("Photos related to {{tag_name}}", array("tag_name" => $tag->name));
     $view->feed_link = url::abs_site("media_rss/tags/{$tag->id}");
     $view->children = $children;
 

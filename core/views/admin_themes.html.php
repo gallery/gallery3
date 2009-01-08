@@ -1,8 +1,8 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gThemes">
-  <h1><?= _("Theme Administration") ?></h1>
+  <h1><?= t("Theme Administration") ?></h1>
     <p>
-      <?= _("These are the themes in your system") ?>
+      <?= t("These are the themes in your system") ?>
     </p>
     <form method="post" action="<?= url::site("admin/themes/save") ?>">
       <?= access::csrf_form_field() ?>
@@ -12,6 +12,6 @@
              />
       <?= $theme ?>
       <? endforeach ?>
-      <input type="submit" value="<?= _("Save") ?>"/>
+      <input type="submit" value="<?= t("Save") ?>"/>
     </form>
 </div>
