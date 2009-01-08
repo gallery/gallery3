@@ -147,11 +147,12 @@ class Albums_Controller extends Items_Controller {
       // @todo implement changing the name.  This is not trivial, we have
       // to check for conflicts and rename the album itself, etc.  Needs an
       // api method.
+      $orig = clone $album;
       $album->title = $form->edit_album->title->value;
       $album->description = $form->edit_album->description->value;
       $album->save();
 
-      module::event("album_changed", $album);
+      module::event("album_changed", $orig, $album);
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
       message::success(sprintf(_("Saved album %s"), $album->title));

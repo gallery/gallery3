@@ -73,11 +73,12 @@ class Photos_Controller extends Items_Controller {
       // @todo implement changing the name.  This is not trivial, we have
       // to check for conflicts and rename the album itself, etc.  Needs an
       // api method.
+      $orig = clone $photo;
       $photo->title = $form->edit_photo->title->value;
       $photo->description = $form->edit_photo->description->value;
       $photo->save();
 
-      module::event("photo_changed", $photo);
+      module::event("photo_changed", $orig, $photo);
 
       log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
       message::success(sprintf(_("Saved photo %s"), $photo->title));
