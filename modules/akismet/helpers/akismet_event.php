@@ -19,9 +19,14 @@
  */
 class akismet_event_Core {
   public static function comment_created($comment) {
+    if (TEST_MODE) {
+      return;
+    }
+
     switch(akismet::check_comment($comment)) {
     case "spam":
       $comment->state = "spam";
+      module::incr_var("comment", "spam_caught");
       break;
 
     case "ham":
@@ -33,5 +38,17 @@ class akismet_event_Core {
       break;
     }
     $comment->save();
+  }
+
+  public static function comment_changed($old, $new) {
+    if (TEST_MODE) {
+      return;
+    }
+
+    if ($old->state != "spam" && $new->state == "spam") {
+      akismet::submit_spam($new);
+    } else if ($old->state == "spam" && $new->state != "spam") {
+      akismet::submit_ham($new);
+    }
   }
 }

@@ -39,6 +39,7 @@ class comment_installer {
                  PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      module::set_var("comment", "spam_caught", 0);
       module::set_version("comment", 1);
     }
   }

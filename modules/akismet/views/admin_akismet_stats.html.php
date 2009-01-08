@@ -1,6 +1,11 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<iframe width="100%"
-        height="100%"
-        style="border: 0px"
-        src="http://<?= $api_key ?>.web.akismet.com/1.0/user-stats.php?blog=<?= urlencode($blog_url) ?>">
-</iframe>
+<script type="text/javscript">
+  $(document).ready(function() {
+    $("#gAkismetExternalStats").css("height", "600");
+  });
+</script>
+<div id="gAkismetStats">
+  <iframe id="gAkismetExternalStats" width="100%" height="100%" frameborder="0"
+          src="http://<?= $api_key ?>.web.akismet.com/1.0/user-stats.php?blog=<?= urlencode($blog_url) ?>">
+  </iframe>
+</div>

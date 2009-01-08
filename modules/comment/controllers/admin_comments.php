@@ -19,44 +19,107 @@
  */
 class Admin_Comments_Controller extends Admin_Controller {
 
-  private function _get_base_view($state) {
+  public function index() {
+     $this->queue("all");
+  }
+
+  public function queue($state) {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_comments.html");
+    $view->content->all = $this->_query(array("published", "unpublished"));
+    $view->content->published = $this->_query(array("published"));
+    $view->content->unpublished = $this->_query(array("unpublished"));
+    $view->content->spam = $this->_query(array("spam"));
     $view->content->menu = Menu::factory("root")
       ->append(Menu::factory("link")
-               ->id("published")
-               ->label(_("Published"))
-               ->url(url::site("admin/comments/published")))
+               ->id("all")
+               ->label(sprintf(_("All Comments (%d)"),
+                               $view->content->all->count()))
+               ->url(url::site("admin/comments/queue/all")))
       ->append(Menu::factory("link")
                ->id("unpublished")
-               ->label(_("Unpublished"))
-               ->url(url::site("admin/comments/unpublished")))
+               ->label(sprintf(_("Awaiting Moderation (%d)"),
+                               $view->content->unpublished->count()))
+               ->url(url::site("admin/comments/queue/unpublished")))
+      ->append(Menu::factory("link")
+               ->id("published")
+               ->label(sprintf(_("Approved (%d)"),
+                               $view->content->published->count()))
+               ->url(url::site("admin/comments/queue/published")))
       ->append(Menu::factory("link")
                ->id("spam")
-               ->label(_("Spam"))
-               ->url(url::site("admin/comments/spam")));
-    $view->content->comments = ORM::factory("comment")
-      ->where("state", $state)
-      ->orderby("created", "DESC")
-      ->find_all();
+               ->label(sprintf(_("Spam (%d)"), $view->content->spam->count()))
+               ->url(url::site("admin/comments/queue/spam")));
 
-    return $view;
+    switch ($state) {
+    case "all":
+      $view->content->comments = $view->content->all;
+      $view->content->title = _("All Comments");
+      break;
+
+    case "published":
+      $view->content->comments = $view->content->published;
+      $view->content->title = _("Approved Comments");
+      break;
+
+    case "unpublished":
+      $view->content->comments = $view->content->unpublished;
+      $view->content->title = _("Comments Awaiting Moderation");
+      break;
+
+    case "spam":
+      $view->content->title = _("Spam Comments");
+      $view->content->comments = $view->content->spam;
+      $view->content->spam_caught = module::get_var("comment", "spam_caught");
+      break;
+    }
+
+    $view->content->queue = $state;
+    $view->content->pager = new Pagination();
+    $view->content->pager->initialize(
+      array('query_string' => 'page',
+            'total_items' => $view->content->comments->count(),
+            'items_per_page' => 20,
+            'style' => 'classic'));
+
+    print $view;
   }
 
-  public function index() {
-    return $this->published();
+  private function _query($states) {
+    $query = ORM::factory("comment")
+      ->orderby("created", "DESC");
+    if ($states) {
+      $query->in("state", $states);
+    }
+    return $query->find_all();
   }
 
-  public function published() {
-    print $this->_get_base_view("published");
+  public function set_state($id, $state) {
+    access::verify_csrf();
+    $comment = ORM::factory("comment", $id);
+    $orig = clone $comment;
+    if ($comment->loaded) {
+      $comment->state = $state;
+      $comment->save();
+      module::event("comment_changed", $orig, $comment);
+    }
   }
 
-  public function unpublished() {
-    print $this->_get_base_view("unpublished");
+  public function delete($id) {
+    access::verify_csrf();
+    $comment = ORM::factory("comment", $id);
+    if ($comment->loaded) {
+      module::event("comment_before_delete", $comment);
+      $comment->delete();
+    }
   }
 
-  public function spam() {
-    print $this->_get_base_view("spam");
+  public function delete_all_spam() {
+    access::verify_csrf();
+    ORM::factory("comment")
+      ->where("state", "spam")
+      ->delete_all();
+    url::redirect("admin/comments/queue/spam");
   }
 }
 

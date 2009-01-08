@@ -104,7 +104,7 @@ class akismet_Core {
     $comment_data["permalink"] = url::site("comments/{$comment->id}");
     $comment_data["blog"] = url::base(false, "http");
     $comment_data["user_agent"] = $comment->user_agent;
-    $comment_data["referrer"] = $_SERVER["HTTP_REFERER"];
+    $comment_data["referrer"] = !empty($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "";
     $comment_data["comment_type"] = "comment";
     $comment_data["comment_author"] = $comment->author;
     $comment_data["comment_author_email"] = $comment->email;
