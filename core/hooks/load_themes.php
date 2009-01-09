@@ -18,5 +18,4 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-Event::add("system.ready", array("module", "load_modules"));
-
+Event::add("system.post_routing", array("theme", "load_themes"));

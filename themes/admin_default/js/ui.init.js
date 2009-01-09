@@ -22,4 +22,11 @@ $(document).ready(function(){
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
   };
+  
+  $("#gThemeAdmin :radio").click(function(event) {
+      console.log("clicked radio " + event.target.value);
+      $("#gThemeDetails").load("themes/edit/" + event.target.value);
+  });
+  
+  $("#gThemeDetails").load("themes/edit/default");
 });

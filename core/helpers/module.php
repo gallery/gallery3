@@ -184,20 +184,6 @@ class module_Core {
   public static function dummy_error_handler() { }
 
   /**
-   * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
-   * active for any given request.
-   */
-  public static function load_themes() {
-    $modules = Kohana::config('core.modules');
-    if (Router::$controller == "admin") {
-      array_unshift($modules, THEMEPATH . 'admin_default');
-    } else {
-      array_unshift($modules, THEMEPATH . 'default');
-    }
-    Kohana::config_set('core.modules', $modules);
-  }
-
-  /**
    * Run a specific event on all active modules.
    * @param string $name the event name
    * @param mixed  $data data to pass to each event handler

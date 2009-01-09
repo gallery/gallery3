@@ -112,6 +112,14 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `themes` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` varchar(64) default NULL,
+                   `version` int(9) default NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $db->query("CREATE TABLE `permissions` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(64) default NULL,
@@ -216,6 +224,15 @@ class core_installer {
           "missing_graphics_toolkit");
       }
 
+      // Instantiate default themes (regular and admin)
+      foreach (array("default", "admin_default") as $theme_name) {
+        $theme_info = new ArrayObject(parse_ini_file(THEMEPATH . $theme_name . "/theme.info"),
+                                      ArrayObject::ARRAY_AS_PROPS);
+        $theme = ORM::factory("theme");
+        $theme->name = $theme_name;
+        $theme->version = $theme_info->version;
+        $theme->save();
+      }
       module::set_version("core", 1);
     }
   }
@@ -229,6 +246,7 @@ class core_installer {
     $db->query("DROP TABLE IF EXISTS `logs`;");
     $db->query("DROP TABLE IF EXISTS `messages`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
+    $db->query("DROP TABLE IF EXISTS `themes`;");
     $db->query("DROP TABLE IF EXISTS `translations_incoming`;");
     $db->query("DROP TABLE IF EXISTS `permissions`;");
     $db->query("DROP TABLE IF EXISTS `sessions`;");
