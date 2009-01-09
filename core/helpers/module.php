@@ -150,14 +150,15 @@ class module_Core {
     $core = Kohana::config_load('core');
     $kohana_modules = $core['modules'];
 
-    // Check that we are installed.  If not then head over to the installer.
-    $installed = Kohana::config("gallery.installed", false, false);
-    if (empty($installed)) {
-      $kohana_modules[] = DOCROOT . "installer";
-      Kohana::config_set('core.modules', $kohana_modules);
-      $routes = Kohana::config("routes");
-      $routes["_default"] = "installer";
-      Kohana::config_set("routes", $routes);                                                     
+    // This is one of the first database operations that we'll do, so it may fail if there's no
+    // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
+    // Do The Right Thing.
+    // Reverting from installer stage 1.
+    // @todo get rid of this extra error checking when we have an installer.
+    set_error_handler(array("module", "dummy_error_handler"));
+    try {
+      $modules = ORM::factory("module")->find_all();
+    } catch (Exception $e) {
       return;
     }
     self::$module_names = array();
