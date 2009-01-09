@@ -30,7 +30,6 @@
               <? else: ?>
                 <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">denied by parent</a>
               <? endif ?>
-            </a>
             <? elseif ($intent === access::DENY): ?>
               <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">denied</a>
             <? elseif ($intent === access::ALLOW): ?>
@@ -46,5 +45,5 @@
       </tr>
       <? endforeach ?>
     </table>
-  <fieldset>
+  </fieldset>
 </form>
