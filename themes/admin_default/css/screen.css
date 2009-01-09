@@ -2,13 +2,6 @@
  * Gallery 3 Default Admin Theme Screen Styles
  *
  * Extends themes/default/css/screen.css
- *
- *
- * @todo Default user icon (user w/ camera) 
- * @todo Group Credits and gLoginMenu seperator styles
- * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
- * @todo Refactor form layout styles to reserve room for validation messages in default state. This
- *       will eliminate layout shifts when validation messages are displayed.
  */
 
 /** *******************************************************************
@@ -87,4 +80,10 @@
   display: block;
   height: 0;
   visibility: hidden;
+}
+
+#gBulkAction label,
+#gBulkAction input[type="submit"],
+#gBulkAction select {
+	display: inline;
 }

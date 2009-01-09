@@ -131,8 +131,7 @@ label {
 }
 
 input[type="text"],
-input[type="password"],
-select {
+input[type="password"] {
   width: 50%;
 }
 
@@ -173,9 +172,6 @@ input[type="submit"] {
 }
 
 option {
-}
-
-optgroup {
 }
 
 select {
