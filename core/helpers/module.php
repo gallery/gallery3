@@ -1,3 +1,4 @@
+
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
@@ -132,6 +133,7 @@ class module_Core {
 
   /**
    * Uninstall a module.
+
    */
   public static function uninstall($module_name) {
     $installer_class = "{$module_name}_installer";
@@ -147,21 +149,21 @@ class module_Core {
     // Reload module list from the config file since we'll do a refresh after calling install()
     $core = Kohana::config_load('core');
     $kohana_modules = $core['modules'];
+
+    // Check that we are installed.  If not then head over to the installer.
+    $installed = Kohana::config("gallery.installed", false, false);
+    if (empty($installed)) {
+      $kohana_modules[] = DOCROOT . "installer";
+      Kohana::config_set('core.modules', $kohana_modules);
+      $routes = Kohana::config("routes");
+      $routes["_default"] = "installer";
+      Kohana::config_set("routes", $routes);                                                     
+      return;
+    }
     self::$module_names = array();
     self::$modules = array();
 
-    // This is one of the first database operations that we'll do, so it may fail if there's no
-    // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
-    // Do The Right Thing.
-    //
-    // @todo get rid of this extra error checking when we have an installer.
-    set_error_handler(array("module", "dummy_error_handler"));
-    try {
-      $modules = ORM::factory("module")->find_all();
-    } catch (Exception $e) {
-      return;
-    }
-    restore_error_handler();
+    $modules = ORM::factory("module")->find_all();
 
     try {
       foreach ($modules as $module) {

@@ -45,6 +45,14 @@ define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
 define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
 define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 
+if (!file_exists('var')) {
+  include DOCROOT . "installer/helpers/system_check.php";
+  if (system_check::failed()) {
+    system_check::display_requirements();
+    die;
+  }
+}
+
 // Force a test run if we're in command line mode.
 if (PHP_SAPI == 'cli') {
   array_splice($_SERVER['argv'], 1, 0, 'gallery_unit_test');
@@ -54,11 +62,7 @@ if (PHP_SAPI == 'cli') {
   @copy("var/database.php", VARPATH . "database.php");
 } else {
   define('TEST_MODE', 0);
-  if (file_exists('var')) {
-    define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
-  } else {
-    define('VARPATH', strtr(getcwd() . '/var/', DIRECTORY_SEPARATOR, '/'));
-  }
+  define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
 }
 
 // Initialize.
