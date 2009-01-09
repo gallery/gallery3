@@ -25,6 +25,8 @@
       </tr></tbody></table>
       <input type="submit" value="<?= t("Save") ?>"/>
     </form>
-    <div id="gThemeDetails"></div>
+    <div id="gThemeDetails">
+      <?= $themes[$active]->details ?>  
+    </div>
     
 </div>

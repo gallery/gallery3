@@ -27,6 +27,4 @@ $(document).ready(function(){
       console.log("clicked radio " + event.target.value);
       $("#gThemeDetails").load("themes/edit/" + event.target.value);
   });
-  
-  $("#gThemeDetails").load("themes/edit/default");
 });

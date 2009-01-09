@@ -44,7 +44,7 @@ class Admin_Themes_Controller extends Admin_Controller {
   
   public function save() {
     access::verify_csrf();
-    $theme = $this->input->post("theme");
+    $theme = $this->input->post("themes");
     if ($theme != module::get_var("core", "active_theme")) {
       module::set_var("core", "active_theme", $theme);
       message::success(t("Updated Theme"));

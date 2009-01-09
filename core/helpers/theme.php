@@ -39,8 +39,7 @@ class theme_Core {
   }
   
   public static function get_edit_form_admin($theme) {
-    $form = new Forge("admin/themes/edit/$theme->name", "Theme Parameters", "GET");
-//                      array("id" => "gThemeDetails"));
+    $form = new Forge("admin/themes/edit/$theme->name");
     $group = $form->group("edit_theme")->label($theme->description);
     $group->input("name")->label(t("Name"))->id("gName")->value($theme->name);
     $group->submit(t("Modify Theme"));
