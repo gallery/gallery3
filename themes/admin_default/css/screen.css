@@ -74,7 +74,8 @@
  *  Browser hacks
  *********************************************************************/
 
-#gHeader:after {
+#gHeader:after,
+#gAdminCommentsMenu:after {
   clear: both;
   content: ".";
   display: block;

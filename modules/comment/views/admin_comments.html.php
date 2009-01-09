@@ -18,17 +18,15 @@
 <div id="gAdminComments">
   <h1> <?= t("Manage Comments") ?> </h1>
 
+  <!-- @todo: Highlight active menu option -->
   <div id="gAdminCommentsMenu">
     <?= $menu ?>
   </div>
 
-  <!-- @todo: fix this with CSS -->
-  <div style="clear: both"></div>
-
+  <!-- @todo: Remove after setting active option? -->
   <h2>
     <?= $title ?>
   </h2>
-
 
   <? if ($queue == "spam"): ?>
   <div>
