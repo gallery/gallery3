@@ -25,6 +25,7 @@ class Admin_Comments_Controller extends Admin_Controller {
     $view->content->published = $this->_query(array("published"));
     $view->content->unpublished = $this->_query(array("unpublished"));
     $view->content->spam = $this->_query(array("spam"));
+    $view->content->deleted = $this->_query(array("deleted"));
     $view->content->menu = Menu::factory("root")
       ->append(Menu::factory("link")
                ->id("unpublished")
@@ -43,7 +44,13 @@ class Admin_Comments_Controller extends Admin_Controller {
                ->label(t(array("one" => "Spam ({{count}})",
                                "other" => "Spam ({{count}})"),
                          array("count" => $view->content->spam->count())))
-               ->url(url::site("admin/comments/queue/spam")));
+               ->url(url::site("admin/comments/queue/spam")))
+      ->append(Menu::factory("link")
+               ->id("deleted")
+               ->label(t(array("one" => "Recently Deleted ({{count}})",
+                               "other" => "Recently Deleted ({{count}})"),
+                         array("count" => $view->content->deleted->count())))
+               ->url(url::site("admin/comments/queue/deleted")));
     return $view;
   }
 
@@ -55,7 +62,8 @@ class Admin_Comments_Controller extends Admin_Controller {
     $view = $this->_get_base_view();
     print json_encode(array($view->content->menu->get("unpublished")->label,
                             $view->content->menu->get("published")->label,
-                            $view->content->menu->get("spam")->label));
+                            $view->content->menu->get("spam")->label,
+                            $view->content->menu->get("deleted")->label));
   }
 
   public function queue($state) {
@@ -77,15 +85,20 @@ class Admin_Comments_Controller extends Admin_Controller {
       $view->content->comments = $view->content->spam;
       $view->content->spam_caught = module::get_var("comment", "spam_caught");
       break;
+
+    case "deleted":
+      $view->content->title = t("Recently Deleted Comments");
+      $view->content->comments = $view->content->deleted;
+      break;
     }
 
     $view->content->queue = $state;
     $view->content->pager = new Pagination();
     $view->content->pager->initialize(
-      array('query_string' => 'page',
-            'total_items' => $view->content->comments->count(),
-            'items_per_page' => 20,
-            'style' => 'classic'));
+      array("query_string" => "page",
+            "total_items" => $view->content->comments->count(),
+            "items_per_page" => 20,
+            "style" => "classic"));
 
     print $view;
   }
@@ -107,15 +120,6 @@ class Admin_Comments_Controller extends Admin_Controller {
       $comment->state = $state;
       $comment->save();
       module::event("comment_changed", $orig, $comment);
-    }
-  }
-
-  public function delete($id) {
-    access::verify_csrf();
-    $comment = ORM::factory("comment", $id);
-    if ($comment->loaded) {
-      module::event("comment_before_delete", $comment);
-      $comment->delete();
     }
   }
 

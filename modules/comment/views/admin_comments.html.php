@@ -155,13 +155,15 @@ function update_menu() {
 	            <?= t("Reply") ?>
 	            </a>
 	          </li>
+
 	          <li>
 	            <a href="javascript:Edit(<?=$comment->id?>)">
 	            <?= t("Edit") ?>
 	            </a>
 	          </li>
+
 	          <li>
-	            <a href="javascript:del(<?=$comment->id?>)">
+	            <a href="javascript:set_state('deleted',<?=$comment->id?>)">
 	            <?= t("Delete") ?>
 	            </a>
 	          </li>
