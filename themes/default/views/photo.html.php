@@ -5,10 +5,10 @@
   <ul id="gPager">
     <li><?= t("{{position}} of {{total}}", array("position" => $position, "total" => $sibling_count)) ?></li>
     <? if ($previous_item): ?>
-    <li class="previous"><a href="<?= $previous_item->url() ?>"><?= t("previous") ?></a></li>
+    <li><span class="ui-icon ui-icon-seek-prev"></span><a href="<?= $previous_item->url() ?>"><?= t("previous") ?></a></li>
     <? endif ?>
     <? if ($next_item): ?>
-    <li class="next"><a href="<?= $next_item->url() ?>"><?= t("next") ?></a></li>
+    <li><a href="<?= $next_item->url() ?>"><?= t("next") ?></a><span class="ui-icon ui-icon-seek-next"></span></li>
     <? endif ?>
   </ul>
 
