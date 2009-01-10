@@ -773,8 +773,22 @@ li.gError select {
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gDialog {
+  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   font-size: 1.2em;
   text-align: left;
+}
+
+#gDialog form {
+	width: 500px;
+}
+
+#gDialog form input[type="text"],
+#gDialog form input[type="password"] {
+	width: 100%;
+}
+
+#gDialog #gLoginForm {
+  width: 300px;
 }
 
 #gDialog fieldset {
@@ -783,145 +797,4 @@ li.gError select {
 
 #gDialog legend {
   display: none;
-}
-
-.ui-dialog {
-  background: #f3f3f3 url('../images/bg-dialog.png') 0 0 repeat-x;
-  color: #362b36;
-  border: 4px solid #ddd;
-  position: relative;
-}
-.ui-resizable-handle {
-  position: absolute;
-  font-size: 0.1px;
-  z-index: 99999;
-}
-.ui-resizable .ui-resizable-handle {
-  display: block;
-}
-body .ui-resizable-disabled .ui-resizable-handle,
-body .ui-resizable-autohide .ui-resizable-handle {
-  display: none;
-}
-.ui-resizable-n {
-  cursor: n-resize;
-  height: 7px;
-  width: 100%;
-  top: -5px;
-  left: 0px;
-}
-.ui-resizable-s {
-  cursor: s-resize;
-  height: 7px;
-  width: 100%;
-  bottom: -5px;
-  left: 0px;
-}
-.ui-resizable-e {
-  cursor: e-resize;
-  width: 7px;
-  right: -5px;
-  top: 0px;
-  height: 100%;
-}
-.ui-resizable-w {
-  cursor: w-resize;
-  width: 7px;
-  left: -5px;
-  top: 0px;
-  height: 100%;
-}
-.ui-resizable-se {
-  cursor: se-resize;
-  width: 18px;
-  height: 18px;
-  right: -5px;
-  bottom: -5px;
-  background: url('../images/ico-resize.gif') no-repeat 0 0;
-}
-.ui-resizable-sw {
-  cursor: sw-resize;
-  width: 9px;
-  height: 9px;
-  left: -5px;
-  bottom: -5px;
-}
-.ui-resizable-nw {
-  cursor: nw-resize;
-  width: 9px;
-  height: 9px;
-  left: -5px;
-  top: -5px;
-}
-.ui-resizable-ne {
-  cursor: ne-resize;
-  width: 9px;
-  height: 9px;
-  right: -5px;
-  top: -5px;
-}
-.ui-dialog-titlebar {
-  padding: .5em 1.5em .5em 1em;
-  color: #444;
-  background: #e6e6e6 url('../images/bg-bars.png') 0 50% repeat-x;
-  border-bottom: 1px solid #ccc;
-  font-size: 1em;
-  font-weight: normal;
-  position: relative;
-}
-.ui-dialog-title {}
-.ui-dialog-titlebar-close {
-  background: url('../images/bg-close.gif') 0 0 no-repeat;
-  position: absolute;
-  right: 8px;
-  top: .7em;
-  width: 11px;
-  height: 11px;
-  z-index: 100;
-}
-.ui-dialog-titlebar-close-hover,
-.ui-dialog-titlebar-close:hover {
-  background-position: 0 47%;
-}
-.ui-dialog-titlebar-close:active {
-  background-position: 0 95%;
-}
-.ui-dialog-titlebar-close span {
-  display: none;
-}
-.ui-dialog-content {
-  color: #362b36;
-  padding: 1.5em 1.7em;
-}
-.ui-dialog-buttonpane {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  text-align: left;
-  border-top: 1px solid #ddd;
-  background: #f3f3f3;
-}
-.ui-dialog-buttonpane button {
-  margin: .5em 0 .5em 8px;
-  color: #444444;
-  background: #e6e6e6 url('../images/bg-bars.png') 0 50% repeat-x;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  padding: .2em .6em .3em .6em;
-  line-height: 1.4em;
-}
-.ui-dialog-buttonpane button:hover {
-  color: #111;
-  background: #eb9300 url('../images/bg-buttons.png') 0 50% repeat-x;
-  border: 1px solid #888;
-}
-.ui-dialog-buttonpane button:active {
-  color: #000;
-  background: #8ab9ff url('../images/bg-buttons.png') 0 87% repeat-x;
-}
-/* This file skins dialog */
-.ui-dialog.ui-draggable .ui-dialog-titlebar,
-.ui-dialog.ui-draggable .ui-dialog-titlebar {
-  cursor: move;
 }

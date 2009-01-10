@@ -16,6 +16,8 @@
           media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/superfish.css") ?>"
           media="screen" />
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/ui.theme.css") ?>"
+          media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />
     <!--[if lt IE 8]>

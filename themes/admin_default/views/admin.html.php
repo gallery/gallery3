@@ -12,6 +12,8 @@
         type="text/css" media="screen,projection">
     <link rel="stylesheet" href="<?= url::file("themes/default/css/superfish.css") ?>"
         type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="<?= url::file("themes/default/css/ui.theme.css") ?>"
+        type="text/css" media="screen,projection">
     <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>"
         type="text/css" media="screen,projection">
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
