@@ -17,9 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class system_check {
+class installer {
   private static $messages = array();
- 
+  private static $config = array();
+  
   public function failed() {
     $failed = false;
     if (version_compare(PHP_VERSION, "5.2", "<")) {
@@ -154,6 +155,55 @@ class system_check {
     }
   }
 
+/* -h     Database host          (default: localhost)
+ * -u     Database user          (default: root)
+ * -p     Database user password (default: )
+ * -d     Database name          (default: gallery3)
+ * -t     Table prefix           (default: )
+ * -f     Response file          (default: not used)
+ *        The response file is a php file that contains the following syntax;
+ *        $config[key] = value;
+ *        Where key is one of "host", "user", "password", "dbname", "prefix".  Values specified
+ *        on the command line will override values contained in this file
+ */
+  public function parse_cli_parms($argv) {
+    for ($i=0; $i < count($argv); $i++) {
+      switch (strtolower($argv[$i])) {
+      case "-d":
+        $arguments["dbname"] = $argv[++$i];
+        break;
+      case "-h":
+        $arguments["host"] = $argv[++$i];
+        break;
+      case "-u":
+        $arguments["user"] = $argv[++$i];
+        break;
+      case "-p":
+        $arguments["password"] = $argv[++$i];
+        break;
+      case "-t":
+        $arguments["prefix"] = $argv[++$i];
+        break;
+      case "-f":
+        $arguments["file"] = $argv[++$i];
+        break;
+      }
+    }
+
+    $config = array("host" => "localhost", "user" => "root", "password" => "",
+                    "dbname" => "gallery3", "prefix" => "");
+
+    if (!empty($arguments["file"])) {
+      if (file_exists($arguments["file"])) {
+        include $arguments["file"];
+      }
+      unset($arguments["file"]);
+    }
+    self::$config = array_merge($config, $arguments);
+                                     
+    var_dump(self::$config);
+  }
+  
   private static function _render($view) {
     if ($view == '')
       return;

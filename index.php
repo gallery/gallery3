@@ -46,9 +46,9 @@ define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
 define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 
 if (!file_exists('var')) {
-  include DOCROOT . "installer/helpers/system_check.php";
-  if (system_check::failed()) {
-    system_check::display_requirements();
+  include DOCROOT . "installer/helpers/installer.php";
+  if (installer::failed()) {
+    installer::display_requirements();
     die;
   }
 }
