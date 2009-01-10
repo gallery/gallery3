@@ -60,7 +60,7 @@ function update_menu() {
     <p>
       <? if ($spam->count()): ?>
       <?= t(array("one" => "There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
-                  "other" => "There are currently {{count}} comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam."),
+                  "other" => "There are currently {{count}} comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically."),
             array("count" => $spam->count())) ?>
     </p>
     <p>
@@ -73,6 +73,15 @@ function update_menu() {
     </p>
   </div>
   <? endif ?>
+
+  <? if ($queue == "deleted"): ?>
+  <div>
+    <p>
+      <?= t("These are messages that have been recently deleted.  They will be permanently erased automatically after 7 days.") ?>
+    </p>
+  </div>
+  <? endif ?>
+
 
   <form id="gBulkAction" action="#" method="post">
     <label for="bulk_actions"><?= t("Bulk actions")?></label>

@@ -52,4 +52,17 @@ class Comment_Model extends ORM {
       return $author->url;
     }
   }
+
+  /**
+   * @see ORM::save()
+   */
+  public function save() {
+    if (!empty($this->changed)) {
+      $this->updated = time();
+      if (!$this->loaded) {
+        $this->created = $this->updated;
+      }
+    }
+    return parent::save();
+  }
 }

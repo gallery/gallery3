@@ -45,6 +45,7 @@ class comment_installer {
                    `server_remote_port` varchar(16) default NULL,
                    `state` char(15) default 'unpublished',
                    `text` text,
+                   `updated` int(9) NOT NULL,
                  PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 

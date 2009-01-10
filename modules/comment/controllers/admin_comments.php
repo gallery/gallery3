@@ -55,7 +55,13 @@ class Admin_Comments_Controller extends Admin_Controller {
   }
 
   public function index() {
-     $this->queue("unpublished");
+    // Get rid of old deleted/spam comments
+    Database::instance()->query(
+      "DELETE FROM `comments` " .
+      "WHERE state IN ('deleted', 'spam') " .
+      "AND unix_timestamp(now()) - updated > 86400 * 7");
+
+    $this->queue("unpublished");
   }
 
   public function menu_labels($state) {

@@ -38,7 +38,6 @@ class comment_Core {
                          $guest_email=ull, $guest_url=null) {
     $comment = ORM::factory("comment");
     $comment->author_id = $author->id;
-    $comment->created = time();
     $comment->guest_email = $guest_email;
     $comment->guest_name = $guest_name;
     $comment->guest_url = $guest_url;
