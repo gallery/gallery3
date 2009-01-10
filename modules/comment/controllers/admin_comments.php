@@ -19,24 +19,13 @@
  */
 class Admin_Comments_Controller extends Admin_Controller {
 
-  public function index() {
-     $this->queue("all");
-  }
-
-  public function queue($state) {
+  private function _get_base_view() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_comments.html");
-    $view->content->all = $this->_query(array("published", "unpublished"));
     $view->content->published = $this->_query(array("published"));
     $view->content->unpublished = $this->_query(array("unpublished"));
     $view->content->spam = $this->_query(array("spam"));
     $view->content->menu = Menu::factory("root")
-      ->append(Menu::factory("link")
-               ->id("all")
-               ->label(t(array("one" => "All Comments ({{count}})",
-                               "other" => "All Comments ({{count}})"),
-                         array("count" => $view->content->all->count())))
-               ->url(url::site("admin/comments/queue/all")))
       ->append(Menu::factory("link")
                ->id("unpublished")
                ->label(t(array("one" => "Awaiting Moderation ({{count}})",
@@ -55,13 +44,24 @@ class Admin_Comments_Controller extends Admin_Controller {
                                "other" => "Spam ({{count}})"),
                          array("count" => $view->content->spam->count())))
                ->url(url::site("admin/comments/queue/spam")));
+    return $view;
+  }
+
+  public function index() {
+     $this->queue("unpublished");
+  }
+
+  public function menu_labels($state) {
+    $view = $this->_get_base_view();
+    print json_encode(array($view->content->menu->get("unpublished")->label,
+                            $view->content->menu->get("published")->label,
+                            $view->content->menu->get("spam")->label));
+  }
+
+  public function queue($state) {
+    $view = $this->_get_base_view();
 
     switch ($state) {
-    case "all":
-      $view->content->comments = $view->content->all;
-      $view->content->title = t("All Comments");
-      break;
-
     case "published":
       $view->content->comments = $view->content->published;
       $view->content->title = t("Approved Comments");

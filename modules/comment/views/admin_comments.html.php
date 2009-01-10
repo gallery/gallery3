@@ -3,16 +3,36 @@
   var set_state_url =
     "<?= url::site("admin/comments/set_state/__ID__/__STATE__?csrf=" . access::csrf_token()) ?>";
   function set_state(state, id) {
-    $.get(set_state_url.replace("__STATE__", state).replace("__ID__", id));
-    $("#gComment-" + id).slideUp();
+    $.get(set_state_url.replace("__STATE__", state).replace("__ID__", id),
+          {},
+          function() {
+            $("#gComment-" + id).slideUp();
+            update_menu();
+          });
   }
 
   var delete_url =
     "<?= url::site("admin/comments/delete/__ID__?csrf=" . access::csrf_token()) ?>";
-  function del(id) {
-    $.get(delete_url.replace("__ID__", id));
-    $("#gComment-" + id).slideUp();
-  }
+
+function del(id) {
+  $.get(delete_url.replace("__ID__", id),
+        {},
+        function() {
+          $("#gComment-" + id).slideUp();
+          update_menu();
+        });
+}
+
+function update_menu() {
+  $.get("<?= url::site("admin/comments/menu_labels") ?>", {},
+        function(data) {
+          for (var i = 0; i < data.length; i++) {
+            $("#gAdminCommentsMenu li:eq(" + i + ") a").html(data[i]);
+          }
+        },
+        "json");
+}
+
 </script>
 
 <div id="gAdminComments">
