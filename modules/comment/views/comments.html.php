@@ -5,7 +5,8 @@
   <li id="gComment-<?= $comment->id ?>">
     <p class="gAuthor">
       <a href="#">
-        <img width="40" height="40" src="<?= $user->avatar_url(40) ?>"
+        <img width="40" height="40"
+             src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
              class="gAvatar" alt="<?= $comment->author_name() ?>" />
       </a>
       <?= t("on {{date}} <a href=#>{{name}}</a> said",

@@ -38,8 +38,9 @@ class Theme_View_Core extends View {
     $this->set_global("page_type", $page_type);
   }
 
-  public function url($path) {
-    return url::file("themes/{$this->theme_name}/$path");
+  public function url($path, $absolute_url=false) {
+    $arg = "themes/{$this->theme_name}/$path";
+    return $absolute_url ? url::abs_file($arg) : url::file($arg);
   }
 
   public function item() {
