@@ -25,15 +25,15 @@
 
   </head>
   <body>
-    <h1>Environment Tests</h1>
+  <? foreach (self::$messages as $section) : ?>
+    <h1><?php print $section["header"] ?></h1>
 	
-    <p>The following tests have been run to determine if Gallery3 will work in your environment. If any of the tests have failed, consult the
-    <a href="http://gallery.menalto.com">documentation</a> for more information on how to correct the problem.</p>
+    <p><?php print $section["description"] ?></p>
 
    <div id="tests">
 
    <table cellspacing="0">
-     <?php foreach (self::$messages as $header => $msg): ?>
+     <?php foreach ($section["msgs"] as $header => $msg): ?>
       
      <tr>
        <th><?php echo $header ?></th>
@@ -44,5 +44,6 @@
      <?php endforeach ?>
    </table>
  </div>
+ <? endforeach ?>
  </body>
  </html>

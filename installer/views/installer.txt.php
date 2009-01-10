@@ -27,17 +27,17 @@ function print_msg($header, $msg, $error) {
   }
 }
 
-echo "+", str_repeat("-", 98), "+\n";
-printf("| %-96.96s |\n", "Environment Tests");
-printf("| %-96.96s |\n", "The following tests have been run to determine if Gallery3 will work " .
-       "in your environment.");
-printf("| %-96.96s |\n", "If any of the tests have failed, consult the documention on " .
-       "http://gallery.menalto.com");
-printf("| %-96.96s |\n", "for more information on how to correct the problem.");
-echo "+", str_repeat("-", 98), "+\n";
+foreach (self::$messages as $section) {
+  echo "+", str_repeat("-", 98), "+\n";
+  printf("| %-96.96s |\n", $section["header"]);
+  foreach (explode("\n", wordwrap($section["description"], 92)) as $text) {
+    printf("| %-96.96s |\n", $text);
+  }
+  echo "+", str_repeat("-", 98), "+\n";
 
-foreach (self::$messages as $header => $msg) {
-  print_msg($header, $msg["text"], $msg["error"]);  
+  foreach ($section["msgs"] as $header => $msg) {
+    print_msg($header, $msg["text"], $msg["error"]);  
+  }
 }
 
 echo "+", str_repeat("-", 98), "+\n";

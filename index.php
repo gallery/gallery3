@@ -47,7 +47,7 @@ define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 
 if (!file_exists('var')) {
   include DOCROOT . "installer/helpers/installer.php";
-  if (installer::failed()) {
+  if (!installer::environment_check()) {
     installer::display_requirements();
     die;
   }

@@ -58,12 +58,13 @@ define('EXT', ".php");
 include DOCROOT . "/installer/helpers/installer.php";
 
 // @todo Log the results of failed call
-if (installer::failed()) {
+if (!installer::environment_check()) {
   installer::display_requirements();
   die;
 }
-installer::display_requirements();
 
-$install_config = installer::parse_cli_parms($argv);
+installer::parse_cli_parms($argv);
+
+installer::display_requirements();
 
 
