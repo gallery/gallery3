@@ -42,4 +42,14 @@ class User_Model extends ORM {
     module::event("user_before_delete", $this);
     parent::delete($id);
   }
+
+  /**
+   * Return a url to the user's avatar image.
+   * @param integer $size the target size of the image (default 80px)
+   * @return string a url
+   */
+  public function avatar_url($size=80) {
+    return sprintf("http://www.gravatar.com/avatar/%s.jpg?s=%d&r=pg",
+                   md5($this->email), $size);
+  }
 }

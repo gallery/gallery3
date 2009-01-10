@@ -5,10 +5,12 @@
   <li id="gComment-<?= $comment->id ?>">
     <p class="gAuthor">
       <a href="#">
-        <img src="<?= $theme->url("images/avatar.jpg") ?>"
+        <img width="40" height="40" src="<?= $user->avatar_url(40) ?>"
              class="gAvatar" alt="<?= $comment->author_name() ?>" />
       </a>
-      <? printf(t("on %s <a href=#>%s</a> said"), date("Y-M-d H:i:s", $comment->created), $comment->author_name()) ?>
+      <?= t("on {{date}} <a href=#>{{name}}</a> said",
+            array("date" => date("Y-M-d H:i:s", $comment->created),
+                  "name" => $comment->author_name())); ?>
     </p>
     <div>
       <?= $comment->text ?>

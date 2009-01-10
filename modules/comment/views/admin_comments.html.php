@@ -91,8 +91,9 @@
 	        <input type="checkbox" name="delete_comments[]" value="<?= $comment->id ?>" />
 	      </td>
 	      <td>
-	        <a href="#"><img src="<?= $theme->url("images/avatar.jpg") ?>"
-	            alt="<?= $comment->author_name() ?>"/></a><br/>
+	        <a href="#"><img width="40" height="40" src="<?= $user->avatar_url(40) ?>"
+                                 class="gAvatar" alt="<?= $comment->author_name() ?>" /></a>
+                <br/>
 	        <a href="mailto:<?= $comment->author_email() ?>"
 	            title="<?= $comment->author_email() ?>"> <?= $comment->author_name() ?> </a>
 	      </td>

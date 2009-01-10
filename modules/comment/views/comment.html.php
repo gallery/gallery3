@@ -2,7 +2,7 @@
 <li id="gComment-<?= $comment->id; ?>">
   <p class="gAuthor">
     <a href="#">
-      <img src="<?= $theme->url("images/avatar.jpg") ?>"
+      <img width="40" height="40" src="<?= $user->avatar_url(40) ?>"
            class="gAvatar" alt="<?= $comment->author_name() ?>" />
     </a>
     <?= t("on ") . date("Y-M-d H:i:s", $comment->created) ?>
