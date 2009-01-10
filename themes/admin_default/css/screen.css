@@ -22,10 +22,14 @@
  *  Page layout containers
  **********************************************************************/
 
+#gView {
+}
+
 #gHeader {
 	background-color: #e8e8e8;
 	border-bottom: 1px solid #ccc;
-	min-width: 1024px;
+	margin-top: 0;
+  min-width: 944px;
 	padding: 0 20px;
 }
 
@@ -40,7 +44,17 @@
 
 #gHeader #gLogo {
   float: left;
-  margin: 0 10px 0 0;
+  margin: -22px 10px 0 0;
+}
+
+#gHeader #gLoginMenu {
+  float: none;
+  margin: 0;
+  padding: 5px 0 10px 0;
+}
+
+#gHeader #gLoginMenu {
+  text-align: right;
 }
 
 #gHeader #gSiteAdminMenu {
@@ -50,10 +64,6 @@
 
 #gHeader #gSiteAdminMenu ul {
   margin-bottom: 0;
-}
-
-#gHeader #gLoginMenu {
-  margin-right: 0;
 }
 
 #gContent .gBlock h2 {

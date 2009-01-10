@@ -17,8 +17,8 @@
     <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>"
         type="text/css" media="screen,projection">
     <!-- This is temporary, to support tabview -->
-    <link rel="stylesheet" href="http://ui.jquery.com/latest/themes/flora/flora.all.css" type="text/css" media="screen" title="Flora (Default)">
-        
+    <link rel="stylesheet" href="http://ui.jquery.com/latest/themes/flora/flora.all.css"
+        type="text/css" media="screen" title="Flora (Default)">
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
@@ -35,14 +35,14 @@
       <div id="hd">
         <div id="gHeader">
           <?= $theme->admin_header_top() ?>
-          <a href="http://gallery.menalto.com/"><img src="<?= $theme->url("images/logo-sm.png") ?>" id="gLogo" alt="<?= t("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
-          <div id="gSiteAdminMenu">
-            <?= $theme->admin_menu() ?>
-          </div>
           <ul id="gLoginMenu">
             <li class="first"><?= html::anchor("albums/1", "Browse the Gallery") ?></li>
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
+          <a href="http://gallery.menalto.com/"><img src="<?= url::file("themes/default/images/logo.png") ?>" id="gLogo" alt="<?= t("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
+          <div id="gSiteAdminMenu">
+            <?= $theme->admin_menu() ?>
+          </div>
           <?= $theme->admin_header_bottom() ?>
         </div>
       </div>
