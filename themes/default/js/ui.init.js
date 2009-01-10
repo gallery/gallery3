@@ -14,16 +14,16 @@ $(document).ready(function() {
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
-    $(".gItem").wrapInner("<div></div>")
+    $(".gItem").wrapInner("<div></div>");
     $('.gItem div').vAlign();
   }
 
   // Photo/Item item view only
   if ($("#gItem").length) {
-    // Ensure that sized image versions 
+    // Ensure that sized image versions
 	// fit inside their container
 	sizedImage();
-    
+
     // Add scroll effect for links to named anchors
     $.localScroll({
       queue: true,
