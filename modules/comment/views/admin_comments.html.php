@@ -82,120 +82,93 @@ function update_menu() {
   </div>
   <? endif ?>
 
-
-  <form id="gBulkAction" action="#" method="post">
-    <label for="bulk_actions"><?= t("Bulk actions")?></label>
-    <select id="bulk_actions">
-      <option></option>
-      <option><?= t("Unapprove")?></option>
-      <option><?= t("Spam")?></option>
-      <option><?= t("Delete")?></option>
-    </select>
-    <input type="submit" value="Apply" />
-
-	  <table id="gAdminCommentsList">
-	    <tr>
-	      <th>
-	        <input type="checkbox" />
-	      </th>
-	      <th>
-	        <?= t("Author") ?>
-	      </th>
-	      <th>
-	        <?= t("Comment") ?>
-	      </th>
-	      <th>
-	        <?= t("Date") ?>
-	      </th>
-	      <th>
-	        <?= t("Actions") ?>
-	      </th>
-	      <th>
-	        <?= t("Subject")?>
-	      </th>
-	    </tr>
-	    <? foreach ($comments as $comment): ?>
-	    <tr id="gComment-<?= $comment->id ?>">
-	      <td>
-	        <input type="checkbox" name="delete_comments[]" value="<?= $comment->id ?>" />
-	      </td>
-	      <td>
-	        <a href="#">
-	          <img src="<?= $user->avatar_url(40, $theme->url("images/avatar.jpg")) ?>"
+  <table id="gAdminCommentsList">
+    <tr>
+      <th>
+        <?= t("Author") ?>
+      </th>
+      <th>
+        <?= t("Comment") ?>
+      </th>
+      <th>
+        <?= t("Actions") ?>
+      </th>
+    </tr>
+    <? foreach ($comments as $comment): ?>
+    <tr id="gComment-<?= $comment->id ?>">
+      <td>
+        <a href="#">
+          <img src="<?= $user->avatar_url(40, $theme->url("images/avatar.jpg")) ?>"
                  class="gAvatar"
                  alt="<?= $comment->author_name() ?>"
                  width="40"
                  height="40" />
           </a><br/>
-	        <a href="mailto:<?= $comment->author_email() ?>"
-	           title="<?= $comment->author_email() ?>"> <?= $comment->author_name() ?> </a>
-	      </td>
-	      <td>
-	        <?= $comment->text ?>
-	      </td>
-	      <td>
-	        <?= date("Y-M-d", $comment->created); ?>
-	      </td>
-	      <td>
-	        <ul>
-	          <? if ($comment->state != "unpublished"): ?>
-	          <li>
-	            <a href="javascript:set_state('unpublished',<?=$comment->id?>)">
-	            <?= t("Unapprove") ?>
-	            </a>
-	          </li>
-	          <? endif ?>
-
-	          <? if ($comment->state != "published"): ?>
-	          <li>
-	            <a href="javascript:set_state('published',<?=$comment->id?>)">
-	            <?= t("Approve") ?>
-	            </a>
-	          </li>
-	          <? endif ?>
-
-	          <? if ($comment->state != "spam"): ?>
-	          <li>
-	            <a href="javascript:set_state('spam',<?=$comment->id?>)">
-	            <?= t("Spam") ?>
-	            </a>
-	          </li>
-	          <? endif ?>
-
-	          <li>
-	            <a href="javascript:reply(<?=$comment->id?>)">
-	            <?= t("Reply") ?>
-	            </a>
-	          </li>
-
-	          <li>
-	            <a href="javascript:Edit(<?=$comment->id?>)">
-	            <?= t("Edit") ?>
-	            </a>
-	          </li>
-
-	          <li>
-	            <a href="javascript:set_state('deleted',<?=$comment->id?>)">
-	            <?= t("Delete") ?>
-	            </a>
-	          </li>
-	        </ul>
-	      </td>
-	      <td>
+        <a href="mailto:<?= $comment->author_email() ?>"
+           title="<?= $comment->author_email() ?>"> <?= $comment->author_name() ?> </a>
+      </td>
+      <td>
+	      <div class="right">
 	        <? $item = $comment->item(); ?>
 	        <a href="<?= $item->url() ?>">
 	        <img src="<?= $item->thumb_url() ?>"
 	             alt="<?= $item->title ?>"
 	             <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
 	        />
-	        </a>
+	        </a><br/>
 	        <a href="<?= $item->url() ?>"> <?= $item->title ?> </a>
-	      </td>
-	    </tr>
-	    <? endforeach ?>
-	  </table>
-  </form>
+	      </div>
+        <p><?= date("Y-M-d", $comment->created); ?></p>
+        <?= $comment->text ?>
+      </td>
+      <td>
+        <ul>
+          <? if ($comment->state != "unpublished"): ?>
+          <li>
+            <a href="javascript:set_state('unpublished',<?=$comment->id?>)">
+            <?= t("Unapprove") ?>
+            </a>
+          </li>
+          <? endif ?>
 
+          <? if ($comment->state != "published"): ?>
+          <li>
+            <a href="javascript:set_state('published',<?=$comment->id?>)">
+            <?= t("Approve") ?>
+            </a>
+          </li>
+          <? endif ?>
+
+          <? if ($comment->state != "spam"): ?>
+          <li>
+            <a href="javascript:set_state('spam',<?=$comment->id?>)">
+            <?= t("Spam") ?>
+            </a>
+          </li>
+          <? endif ?>
+
+          <li>
+            <a href="javascript:reply(<?=$comment->id?>)">
+            <?= t("Reply") ?>
+            </a>
+          </li>
+
+          <li>
+            <a href="javascript:Edit(<?=$comment->id?>)">
+            <?= t("Edit") ?>
+            </a>
+          </li>
+
+          <li>
+            <a href="javascript:set_state('deleted',<?=$comment->id?>)">
+            <?= t("Delete") ?>
+            </a>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <? endforeach ?>
+  </table>
 
   <div class="pager">
     <?= $pager ?>

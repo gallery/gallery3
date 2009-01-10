@@ -245,6 +245,16 @@ li.gError select {
 	color: #ccc;
 }
 
+.left {
+  float: left;
+  margin: 1em 1em 1em 0;
+}
+
+.right {
+	float: right;
+  margin: 1em 0 1em 1em;
+}
+
 /** *******************************************************************
  * 3) Reusable content blocks
  *********************************************************************/

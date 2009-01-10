@@ -21,18 +21,20 @@
 /** *******************************************************************
  *  Page layout containers
  **********************************************************************/
+.gView {
+	min-width: 974px !important;
+}
 
 #gHeader {
 	background-color: #e8e8e8;
 	border-bottom: 1px solid #ccc;
 	margin-top: 0;
-  min-width: 944px;
 	padding: 0 20px;
 }
 
 #gContent {
   font-size: 1.1em;
-  width: 98%;
+  width: 96%;
 }
 
 /** *******************************************************************
