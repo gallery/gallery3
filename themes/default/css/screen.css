@@ -559,7 +559,7 @@ li.gError select {
 }
 
 #gBreadcrumbs li {
-  background: transparent url('../images/icon_breadcrumb_separator.gif') no-repeat scroll left center;
+  background: transparent url('../images/ico-separator.gif') no-repeat scroll left center;
   float: left;
   padding: 10px 6px 10px 16px;
 }
@@ -766,14 +766,6 @@ li.gError select {
 .gLoadingSmall {
   background: #fff url('../images/loading-sm.gif') no-repeat center center;
   font-size: 0;
-}
-
-.gDraggable {
-  background-image: url('../images/ico-move-handle.png');
-  background-position: left .1em;
-  background-repeat: no-repeat;
-  cursor: move;
-  padding: .3em 1.4em !important;
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
