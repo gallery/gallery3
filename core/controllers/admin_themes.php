@@ -61,6 +61,13 @@ class Admin_Themes_Controller extends Admin_Controller {
     $form = theme::get_edit_form_admin($theme_info);
     $valid = $form->validate();
     if ($valid) {
+      foreach (array("page_size", "thumb_size", "resize_size") as $param) {
+        $val = theme::get_var($theme_name, $param);
+        $input_val = $form->edit_theme->{$param}->value;
+        if ($val != $input_val) {
+          module::set_var($theme_name, $param, $input_val);
+        }
+      }
       print json_encode(array("result" => "success",
                               "message" => t("Theme was successfully updated")));
     } else {

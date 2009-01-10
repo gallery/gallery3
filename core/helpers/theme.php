@@ -43,11 +43,14 @@ class theme_Core {
                       '', null, array("id" =>"gThemeDetailsForm"));
     $group = $form->group("edit_theme")->label($theme->description);
     $group->input("page_size")->label(t("Items per page"))->id("gPageSize")->
-      value(self::_get_var($theme->id, "page_size", 90));
+      rules('required|valid_digit')->
+      value(self::get_var($theme->id, "page_size", 90));
     $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("gThumbSize")->
-      value(self::_get_var($theme->id, "thumb_size", 300));
+      rules('required|valid_digit')->
+      value(self::get_var($theme->id, "thumb_size", 300));
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("gResizeSize")->
-      value(self::_get_var($theme->id, "resize_size", 600));
+      rules('required|valid_digit')->
+      value(self::get_var($theme->id, "resize_size", 600));
     $group->submit(t("Modify Theme"));
     return $form;
   }
@@ -57,7 +60,7 @@ class theme_Core {
     $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);  
   }
   
-  public static function _get_var($theme_id, $name, $default_value = null) {
+  public static function get_var($theme_id, $name, $default_value = null) {
     return module::get_var($theme_id, $name, module::get_var("core", $name, $default_value));
   }
 }
