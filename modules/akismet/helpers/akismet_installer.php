@@ -24,6 +24,8 @@ class akismet_installer {
     if ($version == 0) {
       module::set_version("akismet", 1);
     }
+
+    akismet::check_config();
   }
 
   public static function uninstall() {

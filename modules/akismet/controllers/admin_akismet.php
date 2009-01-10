@@ -44,6 +44,7 @@ class Admin_Akismet_Controller extends Admin_Controller {
 
         log::success("akismet", t("Akismet key changed to $new_key"));
         module::set_var("akismet", "api_key", $new_key);
+        akismet::check_config();
         url::redirect("admin/akismet");
       } else {
         $valid_key = false;
@@ -52,6 +53,7 @@ class Admin_Akismet_Controller extends Admin_Controller {
       $valid_key = module::get_var("akismet", "api_key") ? 1 : 0;
     }
 
+    akismet::check_config();
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_akismet.html");
     $view->content->valid_key = $valid_key;

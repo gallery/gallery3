@@ -24,18 +24,27 @@ class comment_installer {
 
     if ($version == 0) {
       $db->query("CREATE TABLE IF NOT EXISTS `comments` (
-                   `id` int(9) NOT NULL auto_increment,
-                   `author` varchar(128) default NULL,
-                   `email` varchar(128) default NULL,
-                   `text` text,
+                   `author_id` int(9) default NULL,
                    `created` int(9) NOT NULL,
+                   `guest_email` varchar(128) default NULL,
+                   `guest_name` varchar(128) default NULL,
+                   `guest_url` varchar(255) default NULL,
+                   `id` int(9) NOT NULL auto_increment,
                    `item_id` int(9) NOT NULL,
-                   `url` varchar(255) default NULL,
+                   `server_http_accept_charset` varchar(64) default NULL,
+                   `server_http_accept_encoding` varchar(64) default NULL,
+                   `server_http_accept_language` varchar(64) default NULL,
+                   `server_http_accept` varchar(64) default NULL,
+                   `server_http_connection` varchar(64) default NULL,
+                   `server_http_host` varchar(64) default NULL,
+                   `server_http_referer` varchar(255) default NULL,
+                   `server_http_user_agent` varchar(64) default NULL,
+                   `server_query_string` varchar(64) default NULL,
+                   `server_remote_addr` varchar(32) default NULL,
+                   `server_remote_host` varchar(64) default NULL,
+                   `server_remote_port` varchar(16) default NULL,
                    `state` char(15) default 'unpublished',
-                   `ip_addr` char(15) default NULL,
-                   `user_agent` varchar(255) default NULL,
-                   `spam_signature` varchar(255) default NULL,
-                   `spam_type` char(15) default NULL,
+                   `text` text,
                  PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 

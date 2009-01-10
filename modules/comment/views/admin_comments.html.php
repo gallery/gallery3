@@ -30,11 +30,13 @@
 
   <? if ($queue == "spam"): ?>
   <div>
+    <? if ($spam_caught > 0): ?>
     <p>
       <?= t(array("one" => "Gallery has caught {{count}} spam for you since you installed spam filtering.",
                   "other" => "Gallery has caught {{count}} spam for you since you installed spam filtering."),
             array("count" => $spam_caught)) ?>
     </p>
+    <? endif ?>
     <p>
       <? if ($spam->count()): ?>
       <?= t(array("one" => "There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
@@ -51,7 +53,7 @@
     </p>
   </div>
   <? endif ?>
-  
+
   <form id="gBulkAction" action="#" method="post">
     <label for="bulk_actions"><?= t("Bulk actions")?></label>
     <select id="bulk_actions">
@@ -61,7 +63,7 @@
       <option><?= t("Delete")?></option>
     </select>
     <input type="submit" value="Apply" />
-    
+
 	  <table id="gAdminCommentsList">
 	    <tr>
 	      <th>
@@ -90,9 +92,9 @@
 	      </td>
 	      <td>
 	        <a href="#"><img src="<?= $theme->url("images/avatar.jpg") ?>"
-	            alt="<?= $comment->author ?>"/></a><br/>
-	        <a href="mailto:<?= $comment->email ?>"
-	            title="<?= $comment->email ?>"> <?= $comment->author ?> </a>
+	            alt="<?= $comment->author_name() ?>"/></a><br/>
+	        <a href="mailto:<?= $comment->author_email() ?>"
+	            title="<?= $comment->author_email() ?>"> <?= $comment->author_name() ?> </a>
 	      </td>
 	      <td>
 	        <?= $comment->text ?>
@@ -109,7 +111,7 @@
 	            </a>
 	          </li>
 	          <? endif ?>
-	
+
 	          <? if ($comment->state != "published"): ?>
 	          <li>
 	            <a href="javascript:set_state('published',<?=$comment->id?>)">
@@ -117,7 +119,7 @@
 	            </a>
 	          </li>
 	          <? endif ?>
-	
+
 	          <? if ($comment->state != "spam"): ?>
 	          <li>
 	            <a href="javascript:set_state('spam',<?=$comment->id?>)">
@@ -125,7 +127,7 @@
 	            </a>
 	          </li>
 	          <? endif ?>
-	
+
 	          <li>
 	            <a href="javascript:reply(<?=$comment->id?>)">
 	            <?= t("Reply") ?>
@@ -157,8 +159,8 @@
 	    <? endforeach ?>
 	  </table>
   </form>
-  
-  
+
+
   <div class="pager">
     <?= $pager ?>
   </div>

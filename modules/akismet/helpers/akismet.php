@@ -20,14 +20,6 @@
 class akismet_Core {
   public static $test_mode = TEST_MODE;
 
-  // Lets not send everything to Akismet
-  private static $white_list = array(
-    "HTTP_USER_AGENT",
-    "HTTP_ACCEPT", "HTTP_ACCEPT_CHARSET", "HTTP_ACCEPT_ENCODING",
-    "HTTP_ACCEPT_LANGUAGE", "HTTP_CONNECTION", "HTTP_HOST",
-    "HTTP_KEEP_ALIVE", "HTTP_REFERER", "HTTP_USER_AGENT", "QUERY_STRING",
-    "REMOTE_ADDR", "REMOTE_HOST", "REMOTE_PORT" );
-
   public static function get_configure_form() {
     $form = new Forge("admin/akismet", "", "post");
     $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
@@ -96,6 +88,20 @@ class akismet_Core {
     return "valid" == $response->body[0];
   }
 
+
+  public static function check_config() {
+    $api_key = module::get_var("akismet", "api_key");
+    if (empty($api_key)) {
+      site_status::warning(
+        t("Akismet is not quite ready!  Please provide an <a href=\"{{url}}\">API Key</a>",
+          array("url" => url::site("admin/akismet"))),
+        "akismet_config");
+    } else {
+      site_status::clear("akismet_config");
+    }
+  }
+
+
   public static function _build_verify_request($api_key) {
     $base_url = url::base(false, "http");
     $query_string = "key={$api_key}&blog=$base_url";
@@ -114,28 +120,31 @@ class akismet_Core {
 
   public static function _build_request($function, $comment) {
     $comment_data = array();
-    $comment_data["user_ip"] = $comment->ip_addr;
-    $comment_data["permalink"] = url::site("comments/{$comment->id}");
+    $comment_data["HTTP_ACCEPT"] = $comment->server_http_accept;
+    $comment_data["HTTP_ACCEPT_ENCODING"] = $comment->server_http_accept_encoding;
+    $comment_data["HTTP_ACCEPT_LANGUAGE"] = $comment->server_http_accept_language;
+    $comment_data["HTTP_CONNECTION"] = $comment->server_http_connection;
+    $comment_data["HTTP_HOST"] = $comment->server_http_host;
+    $comment_data["HTTP_USER_AGENT"] = $comment->server_http_user_agent;
+    $comment_data["QUERY_STRING"] = $comment->server_query_string;
+    $comment_data["REMOTE_ADDR"] = $comment->server_remote_addr;
+    $comment_data["REMOTE_HOST"] = $comment->server_remote_host;
+    $comment_data["REMOTE_PORT"] = $comment->server_remote_port;
+    $comment_data["SERVER_HTTP_ACCEPT_CHARSET"] = $comment->server_http_accept_charset;
     $comment_data["blog"] = url::base(false, "http");
-    $comment_data["user_agent"] = $comment->user_agent;
-    $comment_data["referrer"] = !empty($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "";
-    $comment_data["comment_type"] = "comment";
-    $comment_data["comment_author"] = $comment->author;
-    $comment_data["comment_author_email"] = $comment->email;
-    $comment_data["comment_author_url"] = $comment->url;
+    $comment_data["comment_author"] = $comment->author_name();
+    $comment_data["comment_author_email"] = $comment->author_email();
+    $comment_data["comment_author_url"] = $comment->author_url();
     $comment_data["comment_content"] = $comment->text;
-
-    foreach (self::$white_list as $key) {
-      if (array_key_exists($key, $_SERVER)) {
-        $comment_data[$key] = $_SERVER[$key];
-      }
-    }
+    $comment_data["comment_type"] = "comment";
+    $comment_data["permalink"] = url::site("comments/{$comment->id}");
+    $comment_data["referrer"] = $comment->server_http_referer;
+    $comment_data["user_agent"] = $comment->server_http_user_agent;
+    $comment_data["user_ip"] = $comment->server_remote_addr;
 
     $query_string = array();
     foreach ($comment_data as $key => $data) {
-      if (!is_array($data)) {
-        $query_string[] = "$key=" . urlencode($data);
-      }
+      $query_string[] = "$key=" . urlencode($data);
     }
     $query_string = join("&", $query_string);
 

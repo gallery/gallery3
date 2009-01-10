@@ -18,13 +18,38 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Model extends ORM {
-  var $rules = array(
-    "author" => "required",
-    "email" => "valid_email",
-    "url" => "valid_url",
-    "text" => "required");
-
   function item() {
     return ORM::factory("item", $this->item_id);
+  }
+
+  function author() {
+    return user::lookup($this->author_id);
+  }
+
+  function author_name() {
+    $author = $this->author();
+    if ($author->guest) {
+      return $this->guest_name;
+    } else {
+      return $author->full_name;
+    }
+  }
+
+  function author_email() {
+    $author = $this->author();
+    if ($author->guest) {
+      return $this->guest_email;
+    } else {
+      return $author->email;
+    }
+  }
+
+  function author_url() {
+    $author = $this->author();
+    if ($author->guest) {
+      return $this->guest_url;
+    } else {
+      return $author->url;
+    }
   }
 }

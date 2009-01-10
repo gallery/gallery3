@@ -29,9 +29,13 @@ class Users_Controller extends REST_Controller {
     $form->edit_user->password->rules("-required");
     if ($form->validate()) {
       // @todo: allow the user to change their name
+      // @todo: handle password changing gracefully
       $user->full_name = $form->edit_user->full_name->value;
-      $user->password = $form->edit_user->password->value;
+      if ($form->edit_user->password->value) {
+        $user->password = $form->edit_user->password->value;
+      }
       $user->email = $form->edit_user->email->value;
+      $user->url = $form->edit_user->url->value;
       $user->save();
 
       print json_encode(

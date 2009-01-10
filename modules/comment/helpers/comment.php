@@ -24,102 +24,95 @@
  * Note: by design, this class does not do any permission checking.
  */
 class comment_Core {
-  const SECONDS_IN_A_MINUTE = 60;
-  const SECONDS_IN_AN_HOUR = 3600;
-  const SECONDS_IN_A_DAY = 86400;
-  const SECONDS_IN_A_MONTH = 2629744;
-  const SECONDS_IN_A_YEAR = 31556926;
-
   /**
    * Create a new comment.
-   * @param string  $author author's name
-   * @param string  $email author's email
-   * @param string  $text comment body
-   * @param integer $item_id id of parent item
-   * @param string  $url author's url
+   * @param Item_MOdel $item         the parent item
+   * @param User_Model $author       the author User_Model
+   * @param string     $text         comment body
+   * @param string     $guest_name   guest's name (if the author is a guest user, default empty)
+   * @param string     $guest_email  guest's email (if the author is a guest user, default empty)
+   * @param string     $guest_url    guest's url (if the author is a guest user, default empty)
    * @return Comment_Model
    */
-  static function create($author, $email, $text, $item_id, $url=null) {
+  static function create($item, $author, $text, $guest_name=null,
+                         $guest_email=ull, $guest_url=null) {
     $comment = ORM::factory("comment");
-    $comment->author = $author;
-    $comment->email = $email;
-    $comment->text = $text;
-    $comment->item_id = $item_id;
-    $comment->url = $url;
-    $comment->ip_addr = Input::instance()->ip_address();
-    $comment->user_agent = Kohana::$user_agent;
+    $comment->author_id = $author->id;
     $comment->created = time();
+    $comment->guest_email = $guest_email;
+    $comment->guest_name = $guest_name;
+    $comment->guest_url = $guest_url;
+    $comment->item_id = $item->id;
+    $comment->text = $text;
+    $comment->state = "published";
 
-    // @todo Figure out how to mock up the test of the spam_filter
-    if (module::is_installed("spam_filter") && TEST_MODE == 0) {
-      try {
-        SpamFilter::instance()->check_comment($comment);
-      } catch (Exception $e) {
-        Kohana::log("error", print_r($e, 1));
-        $comment->state = "unpublished";
-      }
-    } else {
-      $comment->state = "published";
-    }
+    // These values are useful for spam fighting, so save them with the comment.
+    $input = Input::instance();
+    $comment->server_http_accept = $input->server("HTTP_ACCEPT");
+    $comment->server_http_accept_charset = $input->server("SERVER_HTTP_ACCEPT_CHARSET");
+    $comment->server_http_accept_encoding = $input->server("HTTP_ACCEPT_ENCODING");
+    $comment->server_http_accept_language = $input->server("HTTP_ACCEPT_LANGUAGE");
+    $comment->server_http_connection = $input->server("HTTP_CONNECTION");
+    $comment->server_http_host = $input->server("HTTP_HOST");
+    $comment->server_http_referer = $input->server("HTTP_REFERER");
+    $comment->server_http_user_agent = $input->server("HTTP_USER_AGENT");
+    $comment->server_query_string = $input->server("QUERY_STRING");
+    $comment->server_remote_addr = $input->server("REMOTE_ADDR");
+    $comment->server_remote_host = $input->server("REMOTE_HOST");
+    $comment->server_remote_port = $input->server("REMOTE_PORT");
 
     $comment->save();
     module::event("comment_created", $comment);
-
-    return $comment;
-  }
-
-  /**
-   * Update an existing comment.
-   * @param Comment_Model $comment
-   * @param string  $author author's name
-   * @param string  $email author's email
-   * @param string  $text comment body
-   * @param string  $url author's url
-   * @return Comment_Model
-   */
-  static function update($comment, $author, $email, $text, $url) {
-    $comment->author = $author;
-    $comment->email = $email;
-    $comment->text = $text;
-    $comment->url = $url;
-    $comment->ip_addr = Input::instance()->ip_address();
-    $comment->user_agent = Kohana::$user_agent;
-
-    // @todo Figure out how to mock up the test of the spam_filter
-    if (module::is_installed("spam_filter") && TEST_MODE == 0) {
-      SpamFilter::instance()->check_comment($comment);
-    }
-
-    $comment->save();
-    if ($comment->saved) {
-      module::event("comment_updated", $comment);
-    }
-
     return $comment;
   }
 
   static function get_add_form($item) {
     $form = new Forge("comments", "", "post");
     $group = $form->group("add_comment")->label(t("Add comment"));
-    $group->input("author")  ->label(t("Author"))          ->id("gAuthor");
-    $group->input("email")   ->label(t("Email"))           ->id("gEmail");
-    $group->input("url")     ->label(t("Website (hidden)"))->id("gUrl");
-    $group->textarea("text") ->label(t("Text"))            ->id("gText");
+    $group->input("name")   ->label(t("Name"))            ->id("gAuthor");
+    $group->input("email")  ->label(t("Email (hidden)"))  ->id("gEmail");
+    $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl");
+    $group->textarea("text")->label(t("Comment"))         ->id("gText");
     $group->hidden("item_id")->value($item->id);
     $group->submit(t("Add"));
-    $form->add_rules_from(ORM::factory("comment"));
+
+    // Forge will try to reload any pre-seeded values upon validation if it's a post request, so
+    // force validation before seeding values.
+    // @todo make that an option in Forge
+    if (request::method() == "post") {
+      $form->validate();
+    }
+
+    $active = user::active();
+    if (!$active->guest) {
+      $group->inputs["name"]->value($active->full_name)->disabled("disabled");
+      $group->email->value($active->email)->disabled("disabled");
+      $group->url->value($active->url)->disabled("disabled");
+    }
+
     return $form;
   }
 
   static function get_edit_form($comment) {
     $form = new Forge("comments/{$comment->id}?_method=put", "", "post");
     $group = $form->group("edit_comment")->label(t("Edit comment"));
-    $group->input("author") ->label(t("Author"))          ->id("gAuthor")->value($comment->author);
-    $group->input("email")  ->label(t("Email"))           ->id("gEmail") ->value($comment->email);
-    $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl")   ->value($comment->url);
-    $group->textarea("text")->label(t("Text"))            ->id("gText")  ->value($comment->text);
+    $group->input("name")   ->label(t("Author"))          ->id("gAuthor");
+    $group->input("email")  ->label(t("Email (hidden)"))  ->id("gEmail");
+    $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl");
+    $group->textarea("text")->label(t("Comment"))         ->id("gText");
     $group->submit(t("Edit"));
-    $form->add_rules_from($comment);
+
+    $group->text = $comment->text;
+    $author = $comment->author();
+    if ($author->guest) {
+      $group->inputs["name"]->value = $comment->guest_name;
+      $group->email = $comment->guest_email;
+      $group->url = $comment->guest_url;
+    } else {
+      $group->inputs["name"]->value($author->full_name)->disabled("disabled");
+      $group->email->value($author->email)->disabled("disabled");
+      $group->url->value($author->url)->disabled("disabled");
+    }
     return $form;
   }
 }

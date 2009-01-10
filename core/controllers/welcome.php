@@ -293,6 +293,7 @@ class Welcome_Controller extends Template_Controller {
   function add_comments($count) {
     srand(time());
     $photos = ORM::factory("item")->where("type", "photo")->find_all()->as_array();
+    $users = ORM::factory("user")->find_all()->as_array();
 
     if (empty($photos)) {
       url::redirect("welcome");
@@ -303,10 +304,12 @@ class Welcome_Controller extends Template_Controller {
     }
     for ($i = 0; $i < $count; $i++) {
       $photo = $photos[array_rand($photos)];
-      comment::create(
-        ucfirst($this->random_phrase(rand(1, 3))),
-        "johndoe@example.com",
-        $this->random_phrase(rand(8, 500)), $photo->id);
+      $author = $users[array_rand($users)];
+      $guest_name = ucfirst($this->random_phrase(rand(1, 3)));
+      $guest_email = sprintf("%s@%s.com", $this->random_phrase(1), $this->random_phrase(1));
+      $guest_url = sprintf("http://www.%s.com", $this->random_phrase(1));
+      comment::create($photo, $author, $this->random_phrase(rand(8, 500)),
+                      $guest_name, $guest_email, $guest_url);
     }
 
     url::redirect("welcome");

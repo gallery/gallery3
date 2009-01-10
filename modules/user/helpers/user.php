@@ -31,6 +31,7 @@ class user_Core {
     $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
+    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
     $group->submit(t("Save"));
     $form->add_rules_from($user);
     return $form;
@@ -45,6 +46,7 @@ class user_Core {
     $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
+    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
     $group->submit(t("Modify User"));
     $form->add_rules_from($user);
     return $form;
@@ -59,6 +61,7 @@ class user_Core {
     $group->input("full_name")->label(t("Full Name"))->id("gFullName");
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->input("email")->label(t("Email"))->id("gEmail");
+    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
     $group->submit(t("Add User"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
@@ -213,7 +216,7 @@ class user_Core {
   }
 
   /**
-   * Perform the post authentication processing
+   * Log in as a given user.
    * @param object $user the user object.
    */
   public static function login($user) {
@@ -225,6 +228,10 @@ class user_Core {
     module::event("user_login", $user);
   }
 
+  /**
+   * Log out the active user and destroy the session.
+   * @param object $user the user object.
+   */
   public static function logout() {
     $user = user::active();
     if (!$user->guest) {
@@ -235,6 +242,19 @@ class user_Core {
       }
       module::event("user_logout", $user);
     }
+  }
+
+  /**
+   * Look up a user by id.
+   * @param integer      $id the user id
+   * @return User_Model  the user object, or null if the id was invalid.
+   */
+  public static function lookup($id) {
+    $user = model_cache::get("user", $id);
+    if ($user->loaded) {
+      return $user;
+    }
+    return null;
   }
 
   /**

@@ -60,11 +60,12 @@ class Comments_Controller extends REST_Controller {
 
     $form = comment::get_add_form($item);
     if ($form->validate()) {
-      $comment = comment::create($this->input->post("author"),
-        $this->input->post("email"),
-        $this->input->post("text"),
-        $this->input->post("item_id"),
-        $this->input->post("url"));
+      $comment = comment::create(
+        $item, user::active(),
+        $form->add_comment->text->value,
+        $form->add_comment->inputs["name"]->value,
+        $form->add_comment->email->value,
+        $form->add_comment->url->value);
 
       print json_encode(
         array("result" => "success",
@@ -111,11 +112,12 @@ class Comments_Controller extends REST_Controller {
 
     $form = comment::get_edit_form($comment);
     if ($form->validate()) {
-      $comment = comment::update($comment,
-        $this->input->post("author"),
-        $this->input->post("email"),
-        $this->input->post("text"),
-        $this->input->post("url"));
+      $comment->guest_name = $form->edit_comment->inputs["name"]->value;
+      $comment->guest_email = $form->edit_comment->email->value;
+      $comment->url = $form->edit_comment->url->value;
+      $comment->text = $form->edit_comment->text->value;
+      $comment->save();
+      module::event("comment_updated", $comment);
 
       print json_encode(
         array("result" => "success",
