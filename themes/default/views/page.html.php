@@ -40,6 +40,7 @@
     <?= $theme->page_top() ?>
     <div id="doc4" class="yui-t5 gView">
       <div id="hd">
+        <?= $theme->site_status() ?>
         <div id="gHeader">
           <?= $theme->display("header.html") ?>
         </div>

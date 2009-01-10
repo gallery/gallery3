@@ -31,8 +31,8 @@
   <body>
     <?= $theme->admin_page_top() ?>
     <div id="doc3" class="yui-t5 gView">
-      <?= $theme->site_status() ?>
       <div id="hd">
+        <?= $theme->site_status() ?>
         <div id="gHeader">
           <?= $theme->admin_header_top() ?>
           <ul id="gLoginMenu">
@@ -56,7 +56,6 @@
           </div>
         </div>
         <div id="gSidebar" class="yui-b">
-
           <div id="gAvailableBlocks" class="gBlock">
             <form class="gBlockContent">
               <fieldset>
@@ -69,9 +68,7 @@
               </fieldset>
             </form>
           </div>
-
           <?= $theme->admin_sidebar_blocks() ?>
-
         </div>
       </div>
       <div id="ft">

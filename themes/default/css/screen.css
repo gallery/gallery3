@@ -270,6 +270,12 @@ li.gError select {
   margin-bottom: .4em;
 }
 
+#gSiteStatus li {
+	margin-bottom: 0;
+	border: none;
+  border-bottom: 1px solid #ccc;
+}
+
 .gError,
 .gInfo,
 .gSuccess,

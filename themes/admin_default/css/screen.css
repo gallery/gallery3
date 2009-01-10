@@ -22,9 +22,6 @@
  *  Page layout containers
  **********************************************************************/
 
-#gView {
-}
-
 #gHeader {
 	background-color: #e8e8e8;
 	border-bottom: 1px solid #ccc;
@@ -35,7 +32,7 @@
 
 #gContent {
   font-size: 1.1em;
-  width: 96%;
+  width: 98%;
 }
 
 /** *******************************************************************
@@ -78,6 +75,10 @@
 
 #gPhotoStream .gBlockContent {
   overflow: auto;
+}
+
+#gSiteStatus {
+	margin-bottom: 0;
 }
 
 /** *******************************************************************
