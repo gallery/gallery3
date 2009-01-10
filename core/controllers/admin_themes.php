@@ -29,6 +29,7 @@ class Admin_Themes_Controller extends Admin_Controller {
       $file = THEMEPATH . $theme_name . "/theme.info";
       $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
       $details = theme::get_edit_form_admin($theme_info);
+      $theme_info['id'] = $theme_name;
       $theme_info['details'] = $details;
       if ($theme_info->admin) {
         $admin_themes[$theme_name] = $theme_info;
@@ -46,12 +47,24 @@ class Admin_Themes_Controller extends Admin_Controller {
     print $view;
   }
 
-  public function edit($theme_name) {
+  public function edit_form($theme_name) {
     $file = THEMEPATH . $theme_name . "/theme.info";
     $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+    $theme_info['id'] = $theme_name;
     print theme::get_edit_form_admin($theme_info);
   }
 
+  public function edit($theme_name) {
+    $file = THEMEPATH . $theme_name . "/theme.info"; 
+    $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+    $theme_info['id'] = $theme_name;
+    $form = theme::get_edit_form_admin($theme_info);
+    $valid = $form->validate();
+    if ($valid) {
+      ;
+    }
+  }
+  
   public function save() {
     access::verify_csrf();
     $theme = $this->input->post("themes");
@@ -61,6 +74,6 @@ class Admin_Themes_Controller extends Admin_Controller {
       log::success("graphics", t("Changed theme to {{theme_name}}", array("theme_name" => $theme)));
     }
     url::redirect("admin/themes");
-  }
+  }  
 }
 

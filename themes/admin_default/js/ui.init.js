@@ -24,7 +24,7 @@ $(document).ready(function(){
   };
   
   $("#gThemeAdmin :radio").click(function(event) {
-      $("#gThemeDetails").load("themes/edit/" + event.target.value);
+      $("#gThemeDetails").load("themes/edit_form/" + event.target.value);
   });
   
   $("#gThemeTabs > ul").tabs({ select: updateThemeDetails });
@@ -37,5 +37,5 @@ function updateThemeDetails(evt, ui) {
   } else {
     themeName = $("#gtAdmin :checked").val();
   }
-  $("#gThemeDetails").load("themes/edit/" + themeName);
+  $("#gThemeDetails").load("themes/edit_form/" + themeName);
 }
