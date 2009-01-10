@@ -75,5 +75,6 @@
   </form>
 </div>
 <div id="gThemeDetails">
+  <p id="gMessage"></p>
   <?= $themes[$active]->details ?>
 </div>

@@ -28,8 +28,8 @@ class Admin_Themes_Controller extends Admin_Controller {
 
       $file = THEMEPATH . $theme_name . "/theme.info";
       $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-      $details = theme::get_edit_form_admin($theme_info);
       $theme_info['id'] = $theme_name;
+      $details = theme::get_edit_form_admin($theme_info);
       $theme_info['details'] = $details;
       if ($theme_info->admin) {
         $admin_themes[$theme_name] = $theme_info;
@@ -61,7 +61,11 @@ class Admin_Themes_Controller extends Admin_Controller {
     $form = theme::get_edit_form_admin($theme_info);
     $valid = $form->validate();
     if ($valid) {
-      ;
+      print json_encode(array("result" => "success",
+                              "message" => t("Theme was successfully updated")));
+    } else {
+      print json_encode(array("result" => "error",
+                              "message" => t("Error saving theme values")));
     }
   }
   

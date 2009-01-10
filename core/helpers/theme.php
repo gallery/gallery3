@@ -39,7 +39,8 @@ class theme_Core {
   }
   
   public static function get_edit_form_admin($theme) {
-    $form = new Forge("admin/themes/edit/{$theme->id}/bogus");
+    $form = new Forge("admin/themes/edit/{$theme->id}",
+                      '', null, array("id" =>"gThemeDetailsForm"));
     $group = $form->group("edit_theme")->label($theme->description);
     $group->input("page_size")->label(t("Items per page"))->id("gPageSize")->
       value(self::_get_var($theme->id, "page_size", 90));

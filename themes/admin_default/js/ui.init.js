@@ -28,6 +28,16 @@ $(document).ready(function(){
   });
   
   $("#gThemeTabs > ul").tabs({ select: updateThemeDetails });
+  
+  $("#gThemeDetailsForm").ajaxForm( {
+    dataType: "json",
+    success: function(body, result, set) {
+      if (body.result == "success") {
+        $("#gMessage").append("<span class='gSuccess'>" + body.message + "</span>");
+      } else {
+        $("#gMessage").append("<span class='gError'>" + body.message + "</span>");
+      }
+  }});
 });
 
 function updateThemeDetails(evt, ui) {
