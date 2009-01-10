@@ -24,7 +24,18 @@ $(document).ready(function(){
   };
   
   $("#gThemeAdmin :radio").click(function(event) {
-      console.log("clicked radio " + event.target.value);
       $("#gThemeDetails").load("themes/edit/" + event.target.value);
   });
+  
+  $("#gThemeTabs > ul").tabs({ select: updateThemeDetails });
 });
+
+function updateThemeDetails(evt, ui) {
+  var themeName;
+  if (ui.index == 0) {
+    themeName = $("#gtRegular :checked").val();
+  } else {
+    themeName = $("#gtAdmin :checked").val();
+  }
+  $("#gThemeDetails").load("themes/edit/" + themeName);
+}

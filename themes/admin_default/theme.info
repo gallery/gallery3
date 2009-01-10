@@ -2,3 +2,5 @@ name = Default Admin
 description = Default Gallery theme to administer
 version = 1
 author = Gallery Team
+admin = 1
+regular = 1

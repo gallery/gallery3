@@ -22,17 +22,24 @@ class Admin_Themes_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_themes.html");
     $themeDir = scandir(THEMEPATH);
-    $themes = array();
+    $themes = $admin_themes = array();
     foreach ($themeDir as $theme_name) {
       if (substr($theme_name, 0, 1) == ".") continue;
       $file = THEMEPATH . $theme_name . "/theme.info"; 
       $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
       $details = theme::get_edit_form_admin($theme_info);
       $theme_info['details'] = $details;
-      $themes[$theme_name] = $theme_info;
+      if ($theme_info->regular) {
+        $themes[$theme_name] = $theme_info;        
+      }
+      if ($theme_info->admin) {
+        $admin_themes[$theme_name] = $theme_info;        
+      }
     }
     $view->content->themes = $themes;
+    $view->content->admin_themes = $admin_themes;
     $view->content->active = module::get_var("core", "active_theme");
+    $view->content->active_admin = module::get_var("core", "active_admin_theme");
     print $view;
   }
 

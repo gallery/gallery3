@@ -2,3 +2,5 @@ name = Default
 description = Default Gallery theme to view photos and albums
 version = 1
 author = Gallery Team
+regular = 1
+admin = 0
