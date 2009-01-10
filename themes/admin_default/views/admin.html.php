@@ -26,9 +26,9 @@
   <body>
     <?= $theme->admin_page_top() ?>
     <div id="doc3" class="yui-t5 gView">
+      <?= $theme->site_status() ?>
       <div id="hd">
         <div id="gHeader">
-          <?= $theme->site_status() ?>
           <?= $theme->admin_header_top() ?>
           <a href="http://gallery.menalto.com/"><img src="<?= $theme->url("images/logo-sm.png") ?>" id="gLogo" alt="<?= t("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
           <div id="gSiteAdminMenu">
