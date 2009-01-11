@@ -297,6 +297,7 @@ li.gError select {
   padding: .4em .5em .4em 30px;
 }
 
+#gAdminMaintenance tr.gError,
 #gSiteStatus .gError,
 #gMessage .gError {
   background-color: #fcc;
@@ -306,6 +307,7 @@ li.gError select {
   background-image: url('../images/ico-error.png');
 }
 
+#gAdminMaintenance tr.gInfo,
 #gSiteStatus .gInfo,
 #gMessage .gInfo {
   background-color: #e8e8e8;
@@ -315,6 +317,7 @@ li.gError select {
   background-image: url('../images/ico-info.png');
 }
 
+#gAdminMaintenance tr.gSuccess,
 #gAdminAkismet .gSuccess,
 #gSiteStatus .gSuccess,
 #gMessage .gSuccess {
@@ -325,6 +328,7 @@ li.gError select {
   background-image: url('../images/ico-success.png');
 }
 
+#gAdminMaintenance tr.gWarning,
 #gSiteStatus .gWarning,
 #gMessage .gWarning {
   background-color: #ff9;
@@ -332,6 +336,13 @@ li.gError select {
 
 .gWarning {
   background-image: url('../images/ico-warning.png');
+}
+
+#gAdminMaintenance tr.gError,
+#gAdminMaintenance tr.gInfo,
+#gAdminMaintenance tr.gWarning,
+#gAdminMaintenance tr.gSuccess {
+  background-image: none;
 }
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */

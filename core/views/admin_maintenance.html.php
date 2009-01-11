@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gMaintenance">
+<div id="gAdminMaintenance">
   <h1> <?= t("Maintenance Tasks") ?> </h1>
   <p>
     <?= t("Occasionally your Gallery will require some maintenance.  Here are some tasks you can use to keep it running smoothly.") ?>
