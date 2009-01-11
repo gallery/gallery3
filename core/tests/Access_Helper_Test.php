@@ -62,7 +62,9 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function adding_and_removing_items_adds_ands_removes_rows_test() {
     $root = ORM::factory("item", 1);
-    $item = ORM::factory("item")->add_to_parent($root);
+    $item = ORM::factory("item");
+    $item->type = "album";
+    $item->add_to_parent($root);
 
     // Simulate an event
     access::add_item($item);
@@ -229,11 +231,15 @@ class Access_Helper_Test extends Unit_Test_Case {
   public function non_view_permissions_can_be_revoked_lower_down_test() {
     $root = ORM::factory("item", 1);
     $outer = album::create($root, rand(), "test album");
-    $outer_photo = ORM::factory("item")->add_to_parent($outer);
+    $outer_photo = ORM::factory("item");
+    $outer_photo->type = "photo";
+    $outer_photo->add_to_parent($outer);
     access::add_item($outer_photo);
 
     $inner = album::create($outer, rand(), "test album");
-    $inner_photo = ORM::factory("item")->add_to_parent($inner);
+    $inner_photo = ORM::factory("item");
+    $inner_photo->type = "photo";
+    $inner_photo->add_to_parent($inner);
     access::add_item($inner_photo);
 
     $outer->reload();
