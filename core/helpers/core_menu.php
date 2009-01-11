@@ -64,10 +64,16 @@ class core_menu_Core {
     }
 
     if (user::active()->admin) {
-      $admin_menu->append(Menu::factory("link")
-                          ->id("site_admin")
-                          ->label(t("Site Admin"))
-                          ->url(url::site("admin")));
+      self::admin($admin_menu, $theme);
+      foreach (module::installed() as $module) {
+        if ($module->name == "core") {
+          continue;
+        }
+        $class = "{$module->name}_menu";
+        if (method_exists($class, "admin")) {
+          call_user_func_array(array($class, "admin"), array(&$admin_menu, $this));
+        }
+      }
     }
   }
 
