@@ -152,6 +152,9 @@ class module_Core {
     $core = Kohana::config_load('core');
     $kohana_modules = $core['modules'];
 
+    self::$module_names = array();
+    self::$modules = array();
+
     // This is one of the first database operations that we'll do, so it may fail if there's no
     // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
     // Do The Right Thing.
@@ -163,10 +166,6 @@ class module_Core {
     } catch (Exception $e) {
       return;
     }
-    self::$module_names = array();
-    self::$modules = array();
-
-    $modules = ORM::factory("module")->find_all();
 
     try {
       foreach ($modules as $module) {
