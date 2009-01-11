@@ -47,18 +47,18 @@ class comment_Core {
 
     // These values are useful for spam fighting, so save them with the comment.
     $input = Input::instance();
-    $comment->server_http_accept = $input->server("HTTP_ACCEPT");
-    $comment->server_http_accept_charset = $input->server("HTTP_ACCEPT_CHARSET");
-    $comment->server_http_accept_encoding = $input->server("HTTP_ACCEPT_ENCODING");
-    $comment->server_http_accept_language = $input->server("HTTP_ACCEPT_LANGUAGE");
-    $comment->server_http_connection = $input->server("HTTP_CONNECTION");
-    $comment->server_http_host = $input->server("HTTP_HOST");
-    $comment->server_http_referer = $input->server("HTTP_REFERER");
-    $comment->server_http_user_agent = $input->server("HTTP_USER_AGENT");
-    $comment->server_query_string = $input->server("QUERY_STRING");
-    $comment->server_remote_addr = $input->server("REMOTE_ADDR");
-    $comment->server_remote_host = $input->server("REMOTE_HOST");
-    $comment->server_remote_port = $input->server("REMOTE_PORT");
+    $comment->server_http_accept = substr($input->server("HTTP_ACCEPT"), 0, 128);
+    $comment->server_http_accept_charset = substr($input->server("HTTP_ACCEPT_CHARSET"), 0, 64);
+    $comment->server_http_accept_encoding = substr($input->server("HTTP_ACCEPT_ENCODING"), 0, 64);
+    $comment->server_http_accept_language = substr($input->server("HTTP_ACCEPT_LANGUAGE"), 0, 64);
+    $comment->server_http_connection = substr($input->server("HTTP_CONNECTION"), 0, 64);
+    $comment->server_http_host = substr($input->server("HTTP_HOST"), 0, 64);
+    $comment->server_http_referer = substr($input->server("HTTP_REFERER"), 0, 255);
+    $comment->server_http_user_agent = substr($input->server("HTTP_USER_AGENT"), 0, 128);
+    $comment->server_query_string = substr($input->server("QUERY_STRING"), 0, 64);
+    $comment->server_remote_addr = substr($input->server("REMOTE_ADDR"), 0, 32);
+    $comment->server_remote_host = substr($input->server("REMOTE_HOST"), 0, 64);
+    $comment->server_remote_port = substr($input->server("REMOTE_PORT"), 0, 16);
 
     $comment->save();
     module::event("comment_created", $comment);
