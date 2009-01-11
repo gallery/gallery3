@@ -37,9 +37,9 @@ class File_Structure_Test extends Unit_Test_Case {
     foreach ($dir as $file) {
       if (strpos($file, "views")) {
         $this->assert_true(
-          preg_match("#/views/.*?(\.html|mrss)\.php$#",
+          preg_match("#/views/.*?(\.html|mrss|txt)\.php$#",
                      strtr($file->getPathname(), DIRECTORY_SEPARATOR, '/')),
-          "{$file->getPathname()} should end in .html.php or mrss.php");
+          "{$file->getPathname()} should end in .{html,mrss,txt}.php");
       }
     }
   }
