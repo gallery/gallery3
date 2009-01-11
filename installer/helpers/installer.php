@@ -189,21 +189,46 @@ class installer {
       case "-f":
         $arguments["file"] = $argv[++$i];
         break;
+      case "-m":
+        $arguments["modules"] = $argv[++$i];
+        break;
       }
     }
 
     $config = array("host" => "localhost", "user" => "root", "password" => "",
+                    "modules" => array("core" => 1, "user" => 1),
                     "dbname" => "gallery3", "prefix" => "");
 
     if (!empty($arguments["file"])) {
       if (file_exists($arguments["file"])) {
+        $save_modules = $config["modules"];
         include $arguments["file"];
+        if (!is_array($config["modules"])) {
+          $modules = explode(",", $config["modules"]);
+          $config["modules"] = array_merge($save_modules, array_fill_keys($modules, 1));
+        }
       }
       unset($arguments["file"]);
     }
+
+    if (!empty($arguments["modules"])) {
+      $modules = explode(",", $arguments["modules"]);
+    
+      $config["modules"] = array_merge($config["modules"], array_fill_keys($modules, 1));
+      unset($arguments["modules"]);
+    }                                    
+
+    foreach (array_keys($config["modules"]) as $module) {
+      unset($config["modules"][$module]);
+      $config["modules"][trim($module)] = 1;
+    }
+    
     self::$config = array_merge($config, $arguments);
 
     foreach (self::$config as $key => $value) {
+      if ($key == "modules") {
+        $value = implode(", ", array_keys($value));
+      }
       $section["msgs"][$key] = array("text" => $value, "error" => false);
     }
     self::$messages[] = $section;
