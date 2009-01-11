@@ -48,7 +48,7 @@ class comment_Core {
     // These values are useful for spam fighting, so save them with the comment.
     $input = Input::instance();
     $comment->server_http_accept = $input->server("HTTP_ACCEPT");
-    $comment->server_http_accept_charset = $input->server("SERVER_HTTP_ACCEPT_CHARSET");
+    $comment->server_http_accept_charset = $input->server("HTTP_ACCEPT_CHARSET");
     $comment->server_http_accept_encoding = $input->server("HTTP_ACCEPT_ENCODING");
     $comment->server_http_accept_language = $input->server("HTTP_ACCEPT_LANGUAGE");
     $comment->server_http_connection = $input->server("HTTP_CONNECTION");
