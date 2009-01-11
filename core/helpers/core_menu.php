@@ -21,21 +21,15 @@ class core_menu_Core {
   public static function site($menu, $theme) {
     $menu
       ->append(Menu::factory("link")
+               ->id("browse")
+               ->label("Scaffold")
+               ->url(url::site("welcome")))
+      ->append(Menu::factory("link")
                ->id("home")
                ->label(t("Home"))
-               ->url(url::base()))
-      ->append(Menu::factory("link")
-               ->id("browse")
-               ->label(t("Browse"))
                ->url(url::site("albums/1")));
 
     $item = $theme->item();
-
-    if (!user::active()->guest) {
-      $menu->append($admin_menu = Menu::factory("submenu")
-                    ->id("admin_menu")
-                    ->label(t("Admin")));
-    }
 
     if ($item && access::can("edit", $item)) {
       $menu->append($options_menu = Menu::factory("submenu")
@@ -64,6 +58,9 @@ class core_menu_Core {
     }
 
     if (user::active()->admin) {
+      $menu->append($admin_menu = Menu::factory("submenu")
+                    ->id("admin_menu")
+                    ->label(t("Admin")));
       self::admin($admin_menu, $theme);
       foreach (module::installed() as $module) {
         if ($module->name == "core") {
