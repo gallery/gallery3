@@ -190,7 +190,7 @@ class installer {
         $arguments["file"] = $argv[++$i];
         break;
       case "-i":
-        $arguments["type"] = $argv[++i];
+        $arguments["type"] = $argv[++$i];
         break;
       case "-m":
         $arguments["modules"] = $argv[++$i];
@@ -236,11 +236,6 @@ class installer {
     }
     self::$messages[] = $section;
  
-  }
-
-  public static function get_database() {
-    $db_config = array();
-    return 
   }
 
   private static function _render($view) {
