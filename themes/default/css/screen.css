@@ -759,3 +759,23 @@ li.gError select {
 #gDialog legend {
   display: none;
 }
+
+
+/* stuff that needs a home */
+#gAdminThemes div.theme_block {
+  background: white;
+}
+#gAdminThemes div.active {
+  padding: 10px;
+}
+#gAdminThemes div.available div.theme_block:hover {
+  background: #eee;
+}
+#gAdminThemes div.available div {
+  padding: 10px;
+  cursor: pointer;
+}
+#gAdminThemes div.available div {
+  width: 250px;
+  float: left;
+}

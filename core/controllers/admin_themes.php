@@ -19,32 +19,88 @@
  */
 class Admin_Themes_Controller extends Admin_Controller {
   public function index() {
-    $theme_dir = scandir(THEMEPATH);
-    $themes = $admin_themes = array();
-    foreach ($theme_dir as $theme_name) {
-      if (substr($theme_name, 0, 1) == ".") {
+    $this->regular();
+  }
+
+  public function regular() {
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_themes.html");
+    $view->content->menu = $this->_get_menu();
+    $view->content->title = _("Regular Themes");
+    $view->content->type = "regular";
+    $view->content->active = module::get_var("core", "active_theme");
+    $view->content->themes = $this->_get_themes();
+    print $view;
+  }
+
+  public function admin() {
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_themes.html");
+    $view->content->menu = $this->_get_menu();
+    $view->content->title = _("Admin Themes");
+    $view->content->type = "admin";
+    $view->content->active = module::get_var("core", "active_admin_theme");
+    $view->content->themes = $this->_get_themes();
+    print $view;
+  }
+
+  private function _get_menu() {
+    return Menu::factory("root")
+      ->append(Menu::factory("link")
+               ->id("regular")
+               ->label(t("Regular Theme"))
+               ->url(url::site("admin/themes/regular")))
+      ->append(Menu::factory("link")
+               ->id("admin")
+               ->label(t("Admin Theme"))
+               ->url(url::site("admin/themes/admin")));
+  }
+
+  private function _get_themes() {
+    $themes = array();
+    foreach (scandir(THEMEPATH) as $theme_name) {
+      if ($theme_name[0] == ".") {
         continue;
       }
 
-      $file = THEMEPATH . $theme_name . "/theme.info";
+      $file = THEMEPATH . "$theme_name/theme.info";
       $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-      $theme_info['id'] = $theme_name;
-      $details = theme::get_edit_form_admin($theme_info);
-      $theme_info['details'] = $details;
-      if ($theme_info->admin) {
-        $admin_themes[$theme_name] = $theme_info;
-      } else {
-        $themes[$theme_name] = $theme_info;
-      }
+      $themes[$theme_name] = $theme_info;
+    }
+    return $themes;
+  }
+
+  public function preview($type, $theme_name) {
+    $view = new View("admin_themes_preview.html");
+    $view->info = new ArrayObject(
+      parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
+    $view->theme_name = $theme_name;
+    $view->type = $type;
+    if ($type == "admin") {
+      $view->url = url::site("admin?theme=$theme_name");
+    } else {
+      $view->url = url::site("albums/1?theme=$theme_name");
+    }
+    print $view;
+  }
+
+  public function choose($type, $theme_name) {
+    access::verify_csrf();
+
+    $info = new ArrayObject(
+      parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
+
+    if ($type == "admin" && $info->admin) {
+      module::set_var("core", "active_admin_theme", $theme_name);
+      message::success(t("Successfully changed your site theme to <b>{{theme_name}}</b>",
+                         array("theme_name" => $info->name)));
+    } else if ($type == "regular" && $info->regular) {
+      module::set_var("core", "active_theme", $theme_name);
+      message::success(t("Successfully changed your admin theme to <b>{{theme_name}}</b>",
+                         array("theme_name" => $info->name)));
     }
 
-    $view = new Admin_View("admin.html");
-    $view->content = new View("admin_themes.html");
-    $view->content->themes = $themes;
-    $view->content->admin_themes = $admin_themes;
-    $view->content->active = module::get_var("core", "active_theme");
-    $view->content->active_admin = module::get_var("core", "active_admin_theme");
-    print $view;
+    url::redirect("admin/themes/$type");
   }
 
   public function edit_form($theme_name) {
@@ -55,7 +111,7 @@ class Admin_Themes_Controller extends Admin_Controller {
   }
 
   public function edit($theme_name) {
-    $file = THEMEPATH . $theme_name . "/theme.info"; 
+    $file = THEMEPATH . $theme_name . "/theme.info";
     $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
     $theme_info['id'] = $theme_name;
     $form = theme::get_edit_form_admin($theme_info);
@@ -75,7 +131,7 @@ class Admin_Themes_Controller extends Admin_Controller {
                               "message" => t("Error saving theme values")));
     }
   }
-  
+
   public function save() {
     access::verify_csrf();
     $theme = $this->input->post("themes");
@@ -85,6 +141,6 @@ class Admin_Themes_Controller extends Admin_Controller {
       log::success("graphics", t("Changed theme to {{theme_name}}", array("theme_name" => $theme)));
     }
     url::redirect("admin/themes");
-  }  
+  }
 }
 

@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
   // Add Superfish menu class
   $("#gSiteAdminMenu ul.gMenu").addClass("sf-menu");
   $("ul.gMenu").addClass("sf-menu");
@@ -23,12 +22,6 @@ $(document).ready(function(){
     $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
   };
   
-  $("#gThemeAdmin :radio").click(function(event) {
-      $("#gThemeDetails").load("themes/edit_form/" + event.target.value);
-  });
-  
-  $("#gThemeTabs > ul").tabs({ select: updateThemeDetails });
-  
   $("#gThemeDetailsForm").ajaxForm( {
     dataType: "json",
     success: function(body, result, set) {
@@ -39,13 +32,3 @@ $(document).ready(function(){
       }
   }});
 });
-
-function updateThemeDetails(evt, ui) {
-  var themeName;
-  if (ui.index == 0) {
-    themeName = $("#gtRegular :checked").val();
-  } else {
-    themeName = $("#gtAdmin :checked").val();
-  }
-  $("#gThemeDetails").load("themes/edit_form/" + themeName);
-}
