@@ -35,6 +35,19 @@
  *        on the command line will override values contained in this file
  */
 
+function exception_handler($exception) {
+  $code     = $exception->getCode();
+  $type     = get_class($exception);
+  $message  = $exception->getMessage();
+  $file     = $exception->getFile();
+  $line     = $exception->getLine();
+
+  var_dump($exception);
+  // Turn off error reporting
+  error_reporting(0);
+  exit;
+}
+
 if (PHP_SAPI != 'cli') {
   $redirect = str_replace("install.php", "index.php", $_SERVER["REQUEST_URI"]);
 
@@ -56,6 +69,12 @@ define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
 define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 define('EXT', ".php");
 
+//set_error_handler(array('Kohana', 'exception_handler'));
+set_error_handler(create_function('$x, $y', 'throw new Exception($y, $x);'));
+
+// Set exception handler
+set_exception_handler('exception_handler');
+
 include DOCROOT . "/installer/helpers/installer.php";
 
 // @todo Log the results of failed call
@@ -66,6 +85,19 @@ if (!installer::environment_check()) {
 
 installer::parse_cli_parms($argv);
 
-installer::display_requirements();
+$config_valid = true;
+
+try {
+  $config_valid = installer::check_database_authorization();
+} catch (Exception $e) {
+  die("Specifed User does not have sufficient authority to install Gallery3\n");
+}
+var_dump($config_valid);
+
+installer::display_requirements(!$config_valid);
+
+if ($config_valid) {
+  // @todo do the install
+}
 
 

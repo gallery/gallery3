@@ -20,8 +20,10 @@
 class installer {
   private static $messages = array();
   private static $config = array();
+  private static $database = null;
+  private static $config_errors = false;
   
-  public function environment_check() {
+  public static function environment_check() {
     $failed = false;
     $section = array("header" => "Environment Test",
                      "description" => "The following tests have been run to determine if " .
@@ -156,7 +158,8 @@ class installer {
     return !$failed;
   }
 
-  public static function display_requirements() {
+  public static function display_requirements($errors=false) {
+    self::$config_errors = $errors;
     if (PHP_SAPI == 'cli') {
       print self::_render("installer/views/installer.txt");
     } else {
@@ -229,13 +232,46 @@ class installer {
     self::$config = array_merge($config, $arguments);
 
     foreach (self::$config as $key => $value) {
+      if ($key == "type") {
+        $value = ucfirst(self::$config["type"]);
+        self::$config[$key] = $value;
+        $class = "Install_{$value}_Driver";
+        if (!class_exists($class)) {
+          require_once(DOCROOT . "/installer/libraries/$class" . EXT);
+        }
+      }
       if ($key == "modules") {
         $value = implode(", ", array_keys($value));
       }
       $section["msgs"][$key] = array("text" => $value, "error" => false);
     }
     self::$messages[] = $section;
- 
+  }
+
+  public static function check_database_authorization() {
+    $section = array("header" => "Database Configuration",
+                     "description" => "The Gallery3 requires the following database configuration.",
+                     "msgs" => array());
+    $class = self::$config["type"];
+    $class = "Install_{$class}_Driver";
+    self::$database =
+      new $class(self::$config["host"], self::$config["user"], self::$config["password"]);
+
+    $databases = self::$database->list_dbs();
+    $dbname = self::$config["dbname"];
+    $db_config_valid = true;
+    if (empty($databases[$dbname])) {
+      $db_config_valid = false;
+      $section["msgs"]["Database"] = array("text" => "Database '$dbname' is not defined",
+                                           "error" => true);
+    } else {
+      $section["msgs"]["Database"] = array("text" => "Database '$dbname' is defined",
+                                           "error" => false);
+    }
+    
+    self::$messages[] = $section;
+
+    return $db_config_valid;
   }
 
   private static function _render($view) {

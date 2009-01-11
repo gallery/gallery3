@@ -42,4 +42,10 @@ foreach (self::$messages as $section) {
 }
 
 echo "+", str_repeat("-", 98), "+\n";
+
+if (self::$config_errors) {
+  printf("| %-96.96s |\n", magenta_start() .
+         "Please fix the identified issues before attempting the install" . color_end());
+  echo "+", str_repeat("-", 98), "+\n";
+}
 flush();
