@@ -1,4 +1,3 @@
-
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
@@ -119,9 +118,9 @@ class module_Core {
     if ($module_name != "core") {
       require_once(DOCROOT . "modules/${module_name}/helpers/{$installer_class}.php");
     }
-    $kohana_modules = Kohana::config('core.modules');
+    $kohana_modules = Kohana::config("core.modules");
     $kohana_modules[] = MODPATH . $module_name;
-    Kohana::config_set('core.modules',  $kohana_modules);
+    Kohana::config_set("core.modules",  $kohana_modules);
 
     call_user_func(array($installer_class, "install"));
 
@@ -149,8 +148,8 @@ class module_Core {
    */
   public static function load_modules() {
     // Reload module list from the config file since we'll do a refresh after calling install()
-    $core = Kohana::config_load('core');
-    $kohana_modules = $core['modules'];
+    $core = Kohana::config_load("core");
+    $kohana_modules = $core["modules"];
 
     self::$module_names = array();
     self::$modules = array();
@@ -174,7 +173,7 @@ class module_Core {
         $kohana_modules[] = MODPATH . $module->name;
       }
 
-      Kohana::config_set('core.modules', $kohana_modules);
+      Kohana::config_set("core.modules", $kohana_modules);
     } catch (Exception $e) {
       self::$module_names = array();
       self::$modules = array();
