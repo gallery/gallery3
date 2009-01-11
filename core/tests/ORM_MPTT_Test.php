@@ -18,9 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class ORM_MPTT_Test extends Unit_Test_Case {
+
+  private function create_item_and_add_to_parent($parent) {
+    $album = ORM::factory("item");
+    $album->type = "album";
+    $album->add_to_parent($parent);
+    return $album;
+  }
+
   public function add_to_parent_test() {
     $root = ORM::factory("item", 1);
-    $album = ORM::factory("item")->add_to_parent($root);
+    $album = ORM::factory("item");
+    $album->type = "album";
+    $album->add_to_parent($root);
 
     $this->assert_equal($album->parent()->right - 2, $album->left);
     $this->assert_equal($album->parent()->right - 1, $album->right);
@@ -30,11 +40,11 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function add_hierarchy_test() {
     $root = ORM::factory("item", 1);
-    $album1 = ORM::factory("item")->add_to_parent($root);
-    $album1_1 = ORM::factory("item")->add_to_parent($album1);
-    $album1_2 = ORM::factory("item")->add_to_parent($album1);
-    $album1_1_1 = ORM::factory("item")->add_to_parent($album1_1);
-    $album1_1_2 = ORM::factory("item")->add_to_parent($album1_1);
+    $album1 = self::create_item_and_add_to_parent($root);
+    $album1_1 = self::create_item_and_add_to_parent($album1);
+    $album1_2 = self::create_item_and_add_to_parent($album1);
+    $album1_1_1 = self::create_item_and_add_to_parent($album1_1);
+    $album1_1_2 = self::create_item_and_add_to_parent($album1_1);
 
     $album1->reload();
     $this->assert_equal(9, $album1->right - $album1->left);
@@ -45,11 +55,11 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function delete_hierarchy_test() {
     $root = ORM::factory("item", 1);
-    $album1 = ORM::factory("item")->add_to_parent($root);
-    $album1_1 = ORM::factory("item")->add_to_parent($album1);
-    $album1_2 = ORM::factory("item")->add_to_parent($album1);
-    $album1_1_1 = ORM::factory("item")->add_to_parent($album1_1);
-    $album1_1_2 = ORM::factory("item")->add_to_parent($album1_1);
+    $album1 = self::create_item_and_add_to_parent($root);
+    $album1_1 = self::create_item_and_add_to_parent($album1);
+    $album1_2 = self::create_item_and_add_to_parent($album1);
+    $album1_1_1 = self::create_item_and_add_to_parent($album1_1);
+    $album1_1_2 = self::create_item_and_add_to_parent($album1_1);
 
     $album1_1->delete();
     $album1->reload();
@@ -88,7 +98,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function parent_test() {
     $root = ORM::factory("item", 1);
-    $album = ORM::factory("item")->add_to_parent($root);
+    $album = self::create_item_and_add_to_parent($root);
 
     $parent = ORM::factory("item", 1);
     $this->assert_equal($parent->id, $album->parent()->id);
@@ -96,8 +106,8 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function parents_test() {
     $root = ORM::factory("item", 1);
-    $outer = ORM::factory("item")->add_to_parent($root);
-    $inner = ORM::factory("item")->add_to_parent($outer);
+    $outer = self::create_item_and_add_to_parent($root);
+    $inner = self::create_item_and_add_to_parent($outer);
 
     $parent_ids = array();
     foreach ($inner->parents() as $parent) {
@@ -108,9 +118,9 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function children_test() {
     $root = ORM::factory("item", 1);
-    $outer = ORM::factory("item")->add_to_parent($root);
-    $inner1 = ORM::factory("item")->add_to_parent($outer);
-    $inner2 = ORM::factory("item")->add_to_parent($outer);
+    $outer = self::create_item_and_add_to_parent($root);
+    $inner1 = self::create_item_and_add_to_parent($outer);
+    $inner2 = self::create_item_and_add_to_parent($outer);
 
     $child_ids = array();
     foreach ($outer->children() as $child) {
@@ -121,18 +131,18 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
   public function children_limit_test() {
     $root = ORM::factory("item", 1);
-    $outer = ORM::factory("item")->add_to_parent($root);
-    $inner1 = ORM::factory("item")->add_to_parent($outer);
-    $inner2 = ORM::factory("item")->add_to_parent($outer);
+    $outer = self::create_item_and_add_to_parent($root);
+    $inner1 = self::create_item_and_add_to_parent($outer);
+    $inner2 = self::create_item_and_add_to_parent($outer);
 
     $this->assert_equal(array($inner2->id => null), $outer->children(1, 1)->select_list('id'));
   }
 
   public function children_count_test() {
     $root = ORM::factory("item", 1);
-    $outer = ORM::factory("item")->add_to_parent($root);
-    $inner1 = ORM::factory("item")->add_to_parent($outer);
-    $inner2 = ORM::factory("item")->add_to_parent($outer);
+    $outer = self::create_item_and_add_to_parent($root);
+    $inner1 = self::create_item_and_add_to_parent($outer);
+    $inner2 = self::create_item_and_add_to_parent($outer);
 
     $this->assert_equal(2, $outer->children_count());
   }
@@ -166,10 +176,10 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   public function descendant_limit_test() {
     $root = ORM::factory("item", 1);
 
-    $parent = ORM::factory("item")->add_to_parent($root);
-    $album1 = ORM::factory("item")->add_to_parent($parent);
-    $album2 = ORM::factory("item")->add_to_parent($parent);
-    $album3 = ORM::factory("item")->add_to_parent($parent);
+    $parent = self::create_item_and_add_to_parent($root);
+    $album1 = self::create_item_and_add_to_parent($parent);
+    $album2 = self::create_item_and_add_to_parent($parent);
+    $album3 = self::create_item_and_add_to_parent($parent);
 
     $parent->reload();
     $this->assert_equal(2, $parent->descendants(2)->count());
