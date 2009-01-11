@@ -37,8 +37,7 @@ class File_Structure_Test extends Unit_Test_Case {
     foreach ($dir as $file) {
       if (strpos($file, "views")) {
         $this->assert_true(
-          preg_match("#/views/.*?(\.html|mrss|txt)\.php$#",
-                     strtr($file->getPathname(), DIRECTORY_SEPARATOR, '/')),
+          preg_match("#/views/.*?(\.html|mrss|txt)\.php$#", $file->getPathname()),
           "{$file->getPathname()} should end in .{html,mrss,txt}.php");
       }
     }
@@ -62,7 +61,7 @@ class File_Structure_Test extends Unit_Test_Case {
 
     $expected = $this->_get_preamble(__FILE__);
     foreach ($dir as $file) {
-      if (preg_match("/views/", strtr($file->getPathname(), DIRECTORY_SEPARATOR, '/'))) {
+      if (preg_match("/views/", $file->getPathname())) {
         // The preamble for views is a single line that prevents direct script access
         $lines = file($file->getPathname());
         $this->assert_equal(
@@ -71,8 +70,8 @@ class File_Structure_Test extends Unit_Test_Case {
           "in file: {$file->getPathname()}");
       } else if (preg_match("|\.php$|", $file->getPathname())) {
         $actual = $this->_get_preamble($file->getPathname());
-        if (strtr($file->getPathName(), DIRECTORY_SEPARATOR, '/') == DOCROOT . "index.php" ||
-            strtr($file->getPathName(), DIRECTORY_SEPARATOR, '/') == DOCROOT . "installer/install.php") {
+        if ($file->getPathName() == DOCROOT . "index.php" ||
+            $file->getPathName() == DOCROOT . "installer/install.php") {
           // index.php and installer.php allow direct access, so modify our expectations for them
           $index_expected = $expected;
           $index_expected[0] = "<?php";
@@ -116,7 +115,6 @@ class GalleryCodeFilterIterator extends FilterIterator {
   public function accept() {
     // Skip anything that we didn"t write
     $path_name = $this->getInnerIterator()->getPathName();
-    $path_name = strtr($path_name, DIRECTORY_SEPARATOR, "/");
     return !(
       strpos($path_name, ".svn") ||
       strpos($path_name, "core/views/kohana_profiler.php") !== false ||
