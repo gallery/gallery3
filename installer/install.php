@@ -25,7 +25,9 @@
  * -u     Database user          (default: root)
  * -p     Database user password (default: )
  * -d     Database name          (default: gallery3)
+ * -i     Database type          (default: mysqli)
  * -t     Table prefix           (default: )
+ * -m     Modules to install     (default: core, user)
  * -f     Response file          (default: not used)
  *        The response file is a php file that contains the following syntax;
  *        $config[key] = value;

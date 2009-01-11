@@ -189,6 +189,9 @@ class installer {
       case "-f":
         $arguments["file"] = $argv[++$i];
         break;
+      case "-i":
+        $arguments["type"] = $argv[++i];
+        break;
       case "-m":
         $arguments["modules"] = $argv[++$i];
         break;
@@ -196,7 +199,7 @@ class installer {
     }
 
     $config = array("host" => "localhost", "user" => "root", "password" => "",
-                    "modules" => array("core" => 1, "user" => 1),
+                    "modules" => array("core" => 1, "user" => 1), "type" => "mysqli",
                     "dbname" => "gallery3", "prefix" => "");
 
     if (!empty($arguments["file"])) {
@@ -234,7 +237,12 @@ class installer {
     self::$messages[] = $section;
  
   }
-  
+
+  public static function get_database() {
+    $db_config = array();
+    return 
+  }
+
   private static function _render($view) {
     if ($view == '')
       return;
