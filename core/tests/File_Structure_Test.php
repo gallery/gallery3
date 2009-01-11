@@ -71,8 +71,9 @@ class File_Structure_Test extends Unit_Test_Case {
           "in file: {$file->getPathname()}");
       } else if (preg_match("|\.php$|", $file->getPathname())) {
         $actual = $this->_get_preamble($file->getPathname());
-        if (strtr($file->getPathName(), DIRECTORY_SEPARATOR, '/') == DOCROOT . "index.php") {
-          // index.php allows direct access, so modify our expectations for the first line
+        if (strtr($file->getPathName(), DIRECTORY_SEPARATOR, '/') == DOCROOT . "index.php" ||
+            strtr($file->getPathName(), DIRECTORY_SEPARATOR, '/') == DOCROOT . "installer/install.php") {
+          // index.php and installer.php allow direct access, so modify our expectations for them
           $index_expected = $expected;
           $index_expected[0] = "<?php";
           $this->assert_equal($index_expected, $actual, "in file: {$file->getPathname()}");

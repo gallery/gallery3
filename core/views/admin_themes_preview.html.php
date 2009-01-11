@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <h1> <?= t("Theme Preview: {{theme_name}}", array("theme_name" => $info->name)) ?> </h1>
 <iframe src="<?= $url ?>" style="width: 600px; height: 500px"></iframe>
 <p>

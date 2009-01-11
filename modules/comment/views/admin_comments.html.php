@@ -14,25 +14,24 @@
   var delete_url =
     "<?= url::site("admin/comments/delete/__ID__?csrf=" . access::csrf_token()) ?>";
 
-function del(id) {
-  $.get(delete_url.replace("__ID__", id),
-        {},
-        function() {
-          $("#gComment-" + id).slideUp();
-          update_menu();
-        });
-}
+  function del(id) {
+    $.get(delete_url.replace("__ID__", id),
+          {},
+          function() {
+            $("#gComment-" + id).slideUp();
+            update_menu();
+          });
+  }
 
-function update_menu() {
-  $.get("<?= url::site("admin/comments/menu_labels") ?>", {},
-        function(data) {
-          for (var i = 0; i < data.length; i++) {
-            $("#gAdminCommentsMenu li:eq(" + i + ") a").html(data[i]);
-          }
-        },
-        "json");
-}
-
+  function update_menu() {
+    $.get("<?= url::site("admin/comments/menu_labels") ?>", {},
+          function(data) {
+            for (var i = 0; i < data.length; i++) {
+              $("#gAdminCommentsMenu li:eq(" + i + ") a").html(data[i]);
+            }
+          },
+          "json");
+  }
 </script>
 
 <div id="gAdminComments">
@@ -53,15 +52,15 @@ function update_menu() {
     <? if ($spam_caught > 0): ?>
     <p>
       <?= t(array("one" => "Gallery has caught {{count}} spam for you since you installed spam filtering.",
-                  "other" => "Gallery has caught {{count}} spam for you since you installed spam filtering."),
-            array("count" => $spam_caught)) ?>
+      "other" => "Gallery has caught {{count}} spam for you since you installed spam filtering."),
+      array("count" => $spam_caught)) ?>
     </p>
     <? endif ?>
     <p>
       <? if ($spam->count()): ?>
       <?= t(array("one" => "There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
-                  "other" => "There are currently {{count}} comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically."),
-            array("count" => $spam->count())) ?>
+      "other" => "There are currently {{count}} comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically."),
+      array("count" => $spam->count())) ?>
     </p>
     <p>
       <a href="<?= url::site("admin/comments/delete_all_spam?csrf=" . access::csrf_token()) ?>">
@@ -99,25 +98,25 @@ function update_menu() {
       <td>
         <a href="#">
           <img src="<?= $user->avatar_url(40, $theme->url("images/avatar.jpg")) ?>"
-                 class="gAvatar"
-                 alt="<?= $comment->author_name() ?>"
-                 width="40"
-                 height="40" />
-          </a><br/>
+               class="gAvatar"
+               alt="<?= $comment->author_name() ?>"
+               width="40"
+               height="40" />
+        </a><br/>
         <a href="mailto:<?= $comment->author_email() ?>"
            title="<?= $comment->author_email() ?>"> <?= $comment->author_name() ?> </a>
       </td>
       <td>
-	      <div class="right">
-	        <? $item = $comment->item(); ?>
-	        <a href="<?= $item->url() ?>">
-	        <img src="<?= $item->thumb_url() ?>"
-	             alt="<?= $item->title ?>"
-	             <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
-	        />
-	        </a><br/>
-	        <a href="<?= $item->url() ?>"> <?= $item->title ?> </a>
-	      </div>
+        <div class="right">
+          <? $item = $comment->item(); ?>
+          <a href="<?= $item->url() ?>">
+            <img src="<?= $item->thumb_url() ?>"
+                 alt="<?= $item->title ?>"
+                 <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
+              />
+          </a><br/>
+          <a href="<?= $item->url() ?>"> <?= $item->title ?> </a>
+        </div>
         <p><?= date("Y-M-d", $comment->created); ?></p>
         <?= $comment->text ?>
       </td>
@@ -126,7 +125,7 @@ function update_menu() {
           <? if ($comment->state != "unpublished"): ?>
           <li>
             <a href="javascript:set_state('unpublished',<?=$comment->id?>)">
-            <?= t("Unapprove") ?>
+              <?= t("Unapprove") ?>
             </a>
           </li>
           <? endif ?>
@@ -134,7 +133,7 @@ function update_menu() {
           <? if ($comment->state != "published"): ?>
           <li>
             <a href="javascript:set_state('published',<?=$comment->id?>)">
-            <?= t("Approve") ?>
+              <?= t("Approve") ?>
             </a>
           </li>
           <? endif ?>
@@ -142,26 +141,26 @@ function update_menu() {
           <? if ($comment->state != "spam"): ?>
           <li>
             <a href="javascript:set_state('spam',<?=$comment->id?>)">
-            <?= t("Spam") ?>
+              <?= t("Spam") ?>
             </a>
           </li>
           <? endif ?>
 
           <li>
             <a href="javascript:reply(<?=$comment->id?>)">
-            <?= t("Reply") ?>
+              <?= t("Reply") ?>
             </a>
           </li>
 
           <li>
             <a href="javascript:Edit(<?=$comment->id?>)">
-            <?= t("Edit") ?>
+              <?= t("Edit") ?>
             </a>
           </li>
 
           <li>
             <a href="javascript:set_state('deleted',<?=$comment->id?>)">
-            <?= t("Delete") ?>
+              <?= t("Delete") ?>
             </a>
           </li>
         </ul>

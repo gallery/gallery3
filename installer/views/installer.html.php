@@ -1,15 +1,15 @@
-<?php defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
   <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
    <head>
-	
+
      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	
+
      <title>Gallery3 Requirements Verification</title>
-	
+
      <style type="text/css">
        body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
-	
+
        #tests table { border-collapse: collapse; width: 100%; }
        #tests table th,
        #tests table td { padding: 0.2em 0.4em; text-align: left; vertical-align: top; }
@@ -27,14 +27,14 @@
   <body>
   <? foreach (self::$messages as $section) : ?>
     <h1><?php print $section["header"] ?></h1>
-	
+
     <p><?php print $section["description"] ?></p>
 
    <div id="tests">
 
    <table cellspacing="0">
      <?php foreach ($section["msgs"] as $header => $msg): ?>
-      
+
      <tr>
        <th><?php echo $header ?></th>
        <td class="<?php echo empty($msg["error"]) ? "pass" : "fail" ?>">

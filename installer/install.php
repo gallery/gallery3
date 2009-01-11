@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 /**
  * Batch Install program this is to only be run from the command line. The web interface uses
  * a different approach to invoking the installer
@@ -36,7 +35,7 @@
 
 if (PHP_SAPI != 'cli') {
   $redirect = str_replace("install.php", "index.php", $_SERVER["REQUEST_URI"]);
- 
+
   header("Location: $redirect");
   return;
 }
