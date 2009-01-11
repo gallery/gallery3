@@ -97,7 +97,7 @@
     <tr id="gComment-<?= $comment->id ?>">
       <td>
         <a href="#">
-          <img src="<?= $user->avatar_url(40, $theme->url("images/avatar.jpg")) ?>"
+          <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
                class="gAvatar"
                alt="<?= $comment->author_name() ?>"
                width="40"
