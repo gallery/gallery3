@@ -19,17 +19,26 @@
  */
 class Item_Model_Test extends Unit_Test_Case {
   public function saving_sets_created_and_updated_dates_test() {
-    $item = ORM::factory("item");
-    $item->name = rand();
-    $item->save();
+    $item = self::create_random_item();
     $this->assert_true(!empty($item->created));
     $this->assert_true(!empty($item->updated));
   }
 
-  public function updating_doesnt_change_created_date_test() {
+  private function create_random_item() {
     $item = ORM::factory("item");
+    /* Set all required fields (values are irrelevant) */
     $item->name = rand();
+    $item->type = "photo";
+    $item->left = 1;
+    $item->right = 1;
+    $item->level = 1;
+    $item->parent_id = 1;
     $item->save();
+    return $item;
+  }
+
+  public function updating_doesnt_change_created_date_test() {
+    $item = self::create_random_item();
 
     // Force the creation date to something well known
     $db = Database::instance();
@@ -44,9 +53,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function updating_view_count_only_doesnt_change_updated_date_test() {
-    $item = ORM::factory("item");
-    $item->name = rand();
-    $item->save();
+    $item = self::create_random_item();
     $item->reload();
     $this->assert_same(0, $item->view_count);
 
