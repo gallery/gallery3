@@ -96,8 +96,31 @@
   visibility: hidden;
 }
 
-#gBulkAction label,
-#gBulkAction input[type="submit"],
-#gBulkAction select {
-	display: inline;
+/* stuff that needs a home */
+#gAdminThemes .theme_block {
+  background: white;
+}
+#gAdminThemes .active {
+  padding: 10px;
+}
+#gAdminThemes .available .theme_block:hover {
+  background: #eee;
+}
+#gAdminThemes .available div {
+  padding: 10px;
+  cursor: pointer;
+}
+#gAdminThemes .available div {
+  width: 250px;
+  float: left;
+}
+#gAdminGraphics tr {
+  cursor: pointer;
+}
+#gAdminGraphics tr.selected {
+  background-color: #cfc !important;
+  cursor: default;
+}
+#gAdminGraphics tr:hover {
+  background-color: #eee;
 }

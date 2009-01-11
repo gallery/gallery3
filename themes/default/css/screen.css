@@ -79,11 +79,11 @@ a:hover {
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 table {
-	width: 100%;
+  width: 100%;
 }
 
 #gContent table {
-	margin: 1em 0;
+  margin: 1em 0;
 }
 
 caption,
@@ -101,7 +101,7 @@ td {
 th,
 td {
   border: 1px solid #ccc;
-	padding: .3em;
+  padding: .3em;
   vertical-align: top;
 }
 
@@ -113,7 +113,7 @@ fieldset {
 
 #gHeader fieldset,
 #gSidebar fieldset {
-	border: none;
+  border: none;
 }
 
 legend {
@@ -151,7 +151,7 @@ input[type="file"] {
 }
 
 input[type="hidden"] {
-	display: none;
+  display: none;
 }
 
 input[type="password"] {
@@ -242,7 +242,7 @@ li.gError select {
  *********************************************************************/
 
 .inactive {
-	color: #ccc;
+  color: #ccc;
 }
 
 .left {
@@ -251,7 +251,7 @@ li.gError select {
 }
 
 .right {
-	float: right;
+  float: right;
   margin: 1em 0 1em 1em;
 }
 
@@ -283,8 +283,8 @@ li.gError select {
 }
 
 #gSiteStatus li {
-	margin-bottom: 0;
-	border: none;
+  margin-bottom: 0;
+  border: none;
   border-bottom: 1px solid #ccc;
 }
 
@@ -413,7 +413,7 @@ li.gError select {
 }
 
 #gSidebar .gBlockContent {
-	padding-left: 1em;
+  padding-left: 1em;
 }
 
 /* Album/Photo information ~~~~~~~~~~~~~~~ */
@@ -476,7 +476,7 @@ li.gError select {
 }
 
 #gContent #gComments .gAvatar {
-	margin-right: .4em;
+  margin-right: .4em;
 }
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -690,35 +690,6 @@ li.gError select {
  * 7) jQuery and jQuery UI
  *********************************************************************/
 
-/* Restyle Superfish menus a bit ~~~~~~~~~ */
-
-.sf-menu li {
-  background: #bdd2ff url('../images/bg-buttons.png') 0 12% repeat-x;
-}
-
-.sf-menu li:hover,
-.sf-menu a:hover {
-  background: #cfdeff url('../images/bg-buttons.png') 0 50% repeat-x;
-}
-
-.sf-menu li:active,
-.sf-menu a:active {
-  background: #8ab9ff url('../images/bg-buttons.png') 0 87% repeat-x;
-}
-
-.sf-menu a:hover {
-  text-decoration: none;
-}
-
-.sf-menu li li,
-.sf-menu li li:hover,
-.sf-menu li li a:hover,
-.sf-menu li li li,
-.sf-menu li li li:hover,
-.sf-menu li li li a:hover {
-  background: #bdd2ff;
-}
-
 /* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
 
 .gLoadingLarge {
@@ -740,12 +711,12 @@ li.gError select {
 }
 
 #gDialog form {
-	width: 500px;
+  width: 500px;
 }
 
 #gDialog form input[type="text"],
 #gDialog form input[type="password"] {
-	width: 100%;
+  width: 100%;
 }
 
 #gDialog #gLoginForm {
@@ -758,34 +729,4 @@ li.gError select {
 
 #gDialog legend {
   display: none;
-}
-
-
-/* stuff that needs a home */
-#gAdminThemes div.theme_block {
-  background: white;
-}
-#gAdminThemes div.active {
-  padding: 10px;
-}
-#gAdminThemes div.available div.theme_block:hover {
-  background: #eee;
-}
-#gAdminThemes div.available div {
-  padding: 10px;
-  cursor: pointer;
-}
-#gAdminThemes div.available div {
-  width: 250px;
-  float: left;
-}
-#gAdminGraphics tr {
-  cursor: pointer;
-}
-#gAdminGraphics tr.selected {
-  background-color: #cfc !important;
-  cursor: default;
-}
-#gAdminGraphics tr:hover {
-  background-color: #eee;
 }
