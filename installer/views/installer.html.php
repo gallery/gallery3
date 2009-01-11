@@ -25,7 +25,7 @@
 
   </head>
   <body>
-  <? foreach (self::$messages as $section) : ?>
+  <?php foreach (self::$messages as $section) : ?>
     <h1><?php print $section["header"] ?></h1>
 
     <p><?php print $section["description"] ?></p>
@@ -44,6 +44,6 @@
      <?php endforeach ?>
    </table>
  </div>
- <? endforeach ?>
+ <?php endforeach ?>
  </body>
  </html>

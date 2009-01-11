@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<?
+<?php
 function green_start() {
   return "\x1B[32m";
 }
@@ -17,7 +17,7 @@ function magenta_start() {
 }
 
 function print_msg($header, $msg, $error) {
-  $format = "| %-21.21s | %-81.81s |\n";
+  $format = "| %-21.21s | %-81.81s |\n"; 
   foreach (explode("\n", wordwrap($msg, 72)) as $text) {
     if ($error) {
       printf($format, $header, red_start() . $text . color_end());
@@ -37,7 +37,7 @@ foreach (self::$messages as $section) {
   echo "+", str_repeat("-", 98), "+\n";
 
   foreach ($section["msgs"] as $header => $msg) {
-    print_msg($header, $msg["text"], $msg["error"]);
+    print_msg($header, $msg["text"], $msg["error"]);  
   }
 }
 
