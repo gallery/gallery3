@@ -38,6 +38,8 @@ class User_Groups_Test extends Unit_Test_Case {
   public function add_user_to_group_test() {
     $user = ORM::factory("user");
     $user->name = "user_groups_test";
+    $user->full_name = "user groups test";
+    $user->password = "test password";
     $user->save();
 
     $group = ORM::factory("group");
