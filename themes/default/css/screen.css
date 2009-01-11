@@ -779,3 +779,13 @@ li.gError select {
   width: 250px;
   float: left;
 }
+#gAdminGraphics tr {
+  cursor: pointer;
+}
+#gAdminGraphics tr.selected {
+  background-color: #cfc !important;
+  cursor: default;
+}
+#gAdminGraphics tr:hover {
+  background-color: #eee;
+}

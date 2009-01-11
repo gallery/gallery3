@@ -26,9 +26,8 @@ class Admin_Graphics_Controller extends Admin_Controller {
     print $view;
   }
 
-  public function save() {
+  public function choose($toolkit) {
     access::verify_csrf();
-    $toolkit = $this->input->post("graphics_toolkit");
     if ($toolkit != module::get_var("core", "graphics_toolkit")) {
       module::set_var("core", "graphics_toolkit", $toolkit);
 
