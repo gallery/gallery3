@@ -222,7 +222,7 @@ class View_Core {
 	 * @return mixed   variable value if the key is found
 	 * @return void    if the key is not found
 	 */
-	public function __get($key)
+	public function &__get($key)
 	{
 		if (isset($this->kohana_local_data[$key]))
 			return $this->kohana_local_data[$key];

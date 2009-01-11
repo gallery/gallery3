@@ -419,7 +419,7 @@ class html_Core {
 		$compiled = '';
 		foreach ($attrs as $key => $val)
 		{
-			$compiled .= ' '.$key.'="'.$val.'"';
+			$compiled .= ' '.$key.'="'.html::specialchars($val).'"';
 		}
 
 		return $compiled;

@@ -53,4 +53,5 @@ $config['irregular'] = array
 	'goose' => 'geese',
 	'ox' => 'oxen',
 	'leaf' => 'leaves',
+	'course' => 'courses',
 );
