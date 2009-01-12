@@ -2,7 +2,7 @@
 <div id="gModules">
   <h1> <?= t("Gallery Modules") ?> </h1>
   <p>
-    <?= t("Power up your Gallery by adding more modules!   Each module provides new cool features.") ?>
+    <?= t("Power up your Gallery by adding more modules! Each module provides new cool features.") ?>
   </p>
 
   <form method="post" action="<?= url::site("admin/modules/save") ?>">

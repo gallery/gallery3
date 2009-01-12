@@ -10,44 +10,45 @@
     $("#gAdminGraphics table tr").click(select_toolkit);
   });
 </script>
-<div id="gAdminGraphics">
-  <h1> <?= t("Graphics Settings") ?> </h1>
-  <p>
-    <?= t("Gallery needs a graphics toolkit in order to manipulate your photos.  Please choose one from the list below.") ?>
-  </p>
 
-  <h2> <?= t("Graphics Toolkits") ?> </h2>
-  <table>
-    <tr id="gd" <?= ($active == "gd") ? "class=\"selected\"" : "" ?>>
-      <td valign="top">
-        <img width="170" height="110" src="http://www.libgd.org/skins/libgd/gdlogosmall.png">
-      </td>
-      <td>
-        <h3> <?= t("GD") ?> </h3>
-        <p>
-          <?= t("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the {{link_start}}GD website{{link_end}} for more information.",
-              array("link_start" => "<a href=\"http://www.boutell.com/gd/\">", "link_end" => "</a>")) ?>
-        </p>
-        <? if ($tk->gd["GD Version"] && function_exists('imagerotate')): ?>
-        <p class="gSuccess">
-          <?= t("You have GD version {{version}}.", array("version" => $tk->gd["GD Version"])) ?>
-        </p>
-        <? elseif ($tk->gd["GD Version"]): ?>
-        <p class="gWarning">
-          <?= t("You have GD version {{version}}, but it lacks image rotation.",
-              array("version" => $tk->gd["GD Version"])) ?>
-        </p>
-        <? else: ?>
-        <p class="gInfo">
-          <?= t("You do not have GD installed.") ?>
-        </p>
-        <? endif ?>
-      </td>
-    </tr>
+<h1> <?= t("Graphics Settings") ?> </h1>
+<p>
+  <?= t("Gallery needs a graphics toolkit in order to manipulate your photos.  Please choose one from the list below.") ?>
+</p>
+
+<h2> <?= t("Graphics Toolkits") ?> </h2>
+
+<table id="gAdminGraphics">
+  <tr id="gd" <?= ($active == "gd") ? "class=\"selected\"" : "" ?>>
+    <td valign="top">
+      <img width="170" height="110" src="http://www.libgd.org/skins/libgd/gdlogosmall.png" alt="<? t("Visit the GD lib project site") ?>" />
+    </td>
+    <td>
+      <h3> <?= t("GD") ?> </h3>
+      <p>
+        <?= t("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the {{link_start}}GD website{{link_end}} for more information.",
+            array("link_start" => "<a href=\"http://www.boutell.com/gd/\">", "link_end" => "</a>")) ?>
+      </p>
+      <? if ($tk->gd["GD Version"] && function_exists('imagerotate')): ?>
+      <p class="gSuccess">
+        <?= t("You have GD version {{version}}.", array("version" => $tk->gd["GD Version"])) ?>
+      </p>
+      <? elseif ($tk->gd["GD Version"]): ?>
+      <p class="gWarning">
+        <?= t("You have GD version {{version}}, but it lacks image rotation.",
+            array("version" => $tk->gd["GD Version"])) ?>
+      </p>
+      <? else: ?>
+      <p class="gInfo">
+        <?= t("You do not have GD installed.") ?>
+      </p>
+      <? endif ?>
+    </td>
+  </tr>
 
     <tr id="imagemagick" <?= ($active == "imagemagick") ? "class=\"selected\"" : "" ?>>
       <td valign="top">
-        <img width="114" height="118" src="http://www.imagemagick.org/image/logo.jpg">
+        <img width="114" height="118" src="http://www.imagemagick.org/image/logo.jpg" alt="<? t("Visit the ImageMagick project site") ?>" />
       </td>
       <td>
         <h3> <?= t("ImageMagick") ?> </h3>
@@ -69,7 +70,7 @@
 
     <tr id="graphicsmagick" <?= ($active == "graphicsmagick") ? "class=\"selected\"" : "" ?>>
       <td valign="top">
-        <img width="107" height="76" src="http://www.graphicsmagick.org/images/gm-107x76.png">
+        <img width="107" height="76" src="http://www.graphicsmagick.org/images/gm-107x76.png" alt="<? t("Visit the GraphicsMagick project site") ?>" />
       </td>
       <td>
         <h3> <?= t("GraphicsMagick") ?> </h3>
@@ -86,7 +87,6 @@
           <?= t("GraphicsMagick is not available on your system.") ?>
         </p>
         <? endif ?>
-      </td>
-    </tr>
-  </table>
-</div>
+    </td>
+  </tr>
+</table>

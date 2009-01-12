@@ -2,7 +2,7 @@
 <form method="post" action="<?= url::site("permissions/edit/$item->id") ?>">
   <?= access::csrf_form_field() ?>
   <fieldset>
-    <legend><?= t("Edit Permissions") ?> </legend>
+    <legend> <?= t("Edit Permissions") ?> </legend>
 
     <table>
       <tr>
