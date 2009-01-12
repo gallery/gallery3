@@ -88,7 +88,9 @@
  *********************************************************************/
 
 #gHeader:after,
-#gAdminCommentsMenu:after {
+#gAdminCommentsMenu:after,
+#gThemeTabs:after,
+#gSelectedTheme .gBlock:after {
   clear: both;
   content: ".";
   display: block;
@@ -96,31 +98,46 @@
   visibility: hidden;
 }
 
-/* stuff that needs a home */
-#gAdminThemes .theme_block {
-  background: white;
+/** *******************************************************************
+ *  Stuff that needs a home or needs to be organized
+ *********************************************************************/
+
+#gAdminThemes #gSelectedTheme img {
+  float: left;
+  margin-right: 1em;
 }
-#gAdminThemes .active {
-  padding: 10px;
+
+#gAdminThemes .gBlock {
+  background: #fff;
+  padding: 1em;
 }
-#gAdminThemes .available .theme_block:hover {
+
+#gAdminThemes #gAvailableThemes .gBlock {
+  clear: none;
+  cursor: pointer;
+  float: left;
+  margin-right: 1em;
+  text-align: center;
+  width: 250px;
+}
+
+#gAdminThemes #gAvailableThemes .gBlock:hover {
   background: #eee;
 }
-#gAdminThemes .available div {
-  padding: 10px;
-  cursor: pointer;
+
+#gAdminThemes a {
+  color: #333;
 }
-#gAdminThemes .available div {
-  width: 250px;
-  float: left;
-}
+
 #gAdminGraphics tr {
   cursor: pointer;
 }
+
 #gAdminGraphics tr.selected {
   background-color: #cfc !important;
   cursor: default;
 }
+
 #gAdminGraphics tr:hover {
   background-color: #eee;
 }
