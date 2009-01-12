@@ -274,6 +274,15 @@ class installer {
                                            "error" => false);
     }
 
+    $tables = self::$database->list_tables(self::$config["dbname"]);
+
+    $valid = count($tables) == 0;
+    if (!$valid) {
+      $db_config_valid = false;
+      $section["msgs"]["Database Empty"] = array("text" => "Database '$dbname' is not empty",
+                                           "error" => true);
+    }
+    
     $missing = array();
     $rights = self::$database->get_access_rights($dbname);
 
@@ -291,7 +300,6 @@ class installer {
       $section["msgs"]["Privileges"] = array("text" => "Required priviledges defined.",
                                              "error" => false);
     }
-    
     
     self::$messages[] = $section;
 
@@ -314,7 +322,7 @@ class installer {
               "error" => true);
     }
     self::$messages[] = $section;
-    return $writable;
+    return !$writable;
   }
   
   private static function _render($view) {

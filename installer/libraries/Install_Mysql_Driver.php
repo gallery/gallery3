@@ -61,4 +61,19 @@ class Install_Mysql_Driver {
     return $permissions;
   }
   
+  public function select_db($dbname) {
+    mysql_select_db($dbname);
+  }
+
+  public function list_tables($dbname) {
+    $select = "SHOW TABLES FROM $dbname;";
+    $db_tables = mysql_query($select, $this->_link);
+    $tables = array();
+    if ($db_tables) {
+      while ($row = mysql_fetch_assoc($db_tables)) {
+        $tables[$row["Tables_in_$dbname"]] = 1;
+      }
+    }
+    return $tables;
+  }
 }

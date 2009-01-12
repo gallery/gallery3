@@ -69,8 +69,8 @@ define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
 define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 define('EXT', ".php");
 
-//set_error_handler(array('Kohana', 'exception_handler'));
-set_error_handler(create_function('$x, $y', 'throw new Exception($y, $x);'));
+set_error_handler(create_function('$errno, $errstr, $errfile, $errline',
+  'throw new ErrorException($errstr, 0, $errno, $errfile, $errline);'));
 
 // Set exception handler
 set_exception_handler('exception_handler');
@@ -93,7 +93,7 @@ try {
   die("Specifed User does not have sufficient authority to install Gallery3\n");
 }
 
-$config_valid = installer::check_docroot_writable();
+$config_valid &= installer::check_docroot_writable();
 
 installer::display_requirements(!$config_valid);
 

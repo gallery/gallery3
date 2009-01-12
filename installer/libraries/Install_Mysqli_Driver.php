@@ -66,5 +66,20 @@ class Install_Mysqli_Driver {
     return $permissions;
   }
   
+  public function select_db($dbname) {
+    $this->_mysqli->select_db($dbname);
+  }
+
+  public function list_tables($dbname) {
+    $select = "SHOW TABLES FROM $dbname;";
+    $db_tables = $this->_mysqli->query($select);
+    $tables = array();
+    if ($db_tables) {
+      while ($row = $db_tables->fetch_row()) {
+        $tables[strtolower($row[0])] = 1;
+      }
+    }
+    return $tables;
+  }
 }
 
