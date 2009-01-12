@@ -12,13 +12,10 @@
         type="text/css" media="screen,projection">
     <link rel="stylesheet" href="<?= url::file("themes/default/css/superfish.css") ?>"
         type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= url::file("themes/default/css/ui.theme.css") ?>"
+    <link rel="stylesheet" href="<?= url::file("themes/default/css/ui.all.css") ?>"
         type="text/css" media="screen,projection">
     <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>"
         type="text/css" media="screen,projection">
-    <!-- This is temporary, to support tabview -->
-    <link rel="stylesheet" href="http://ui.jquery.com/latest/themes/flora/flora.all.css"
-        type="text/css" media="screen" title="Flora (Default)">
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
