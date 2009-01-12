@@ -18,27 +18,47 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Install_Mysql_Driver {
-  private $link;
+  private $_link;
+  private $_server;
+  private $_user;
   
   public function __construct($server, $user, $password) {
-    $this->link = @mysql_connect($server, $user, $password);
-    if (!$this->link) {
+    $this->_link = @mysql_connect($server, $user, $password);
+    if (!$this->_link) {
       throw new Exception(mysql_error());
     }
+    $this->_server = $server;
+    $this->_user = $user;
   }
 
   public function __destruct() {
-    if (!empty($this->link)) {
-      @mysql_close($this->link);
+    if (!empty($this->_link)) {
+      @mysql_close($this->_link);
     }
   }
 
   public function list_dbs() {
-    $db_list = mysql_list_dbs($this->link);
+    $db_list = mysql_list_dbs($this->_link);
     $databases = array();
     while ($row = mysql_fetch_object($db_list)) {
       $databases[$row->Database] = 1;
     }
     return $databases;
   }
+
+  public function get_access_rights($dbname) {
+    $select = "SELECT PRIVILEGE_TYPE " .
+              "  FROM `information_schema`.`schema_privileges`" .
+              " WHERE `GRANTEE` = '\\'{$this->_user}\\'@\\'{$this->_server}\\''" .
+              "   AND `TABLE_SCHEMA` = '$dbname';";
+    $privileges = mysql_query($select, $this->_link);
+    $permissions = array();
+    if ($privileges) {
+      while ($row = mysql_fetch_assoc($privileges)) {
+        $permissions[strtolower($row["PRIVILEGE_TYPE"])] = 1;
+      }
+    }
+    return $permissions;
+  }
+  
 }

@@ -257,6 +257,11 @@ class installer {
     self::$database =
       new $class(self::$config["host"], self::$config["user"], self::$config["password"]);
 
+    /*
+     * If we got this far, then the user/password combination is valid and we can now
+     * a little more information for the individual that is running the script. We can also
+     * connect to the database and ask for more information
+     */
     $databases = self::$database->list_dbs();
     $dbname = self::$config["dbname"];
     $db_config_valid = true;
@@ -268,6 +273,25 @@ class installer {
       $section["msgs"]["Database"] = array("text" => "Database '$dbname' is defined",
                                            "error" => false);
     }
+
+    $missing = array();
+    $rights = self::$database->get_access_rights($dbname);
+
+    foreach (array("create", "delete", "insert", "select", "update", "alter") as $priviledge) {
+      if (empty($rights[$priviledge])) {
+        $missing[] = $priviledge;
+      }
+    }
+    if (!empty($missing)) {
+      $db_config_valid = false;
+      $section["msgs"]["Privileges"] =
+        array("text" => "The following required priviledges have not been granted: " .
+              implode(", ", $missing), "error" => true);
+    } else {
+      $section["msgs"]["Privileges"] = array("text" => "Required priviledges defined.",
+                                             "error" => false);
+    }
+    
     
     self::$messages[] = $section;
 

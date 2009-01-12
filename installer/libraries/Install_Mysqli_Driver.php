@@ -20,24 +20,28 @@
 
 // Convienence wrapper around the Php mysqli class
 class Install_Mysqli_Driver {
-  private $mysqli;
+  private $_mysqli;
+  private $_server;
+  private $_user;
   
   public function __construct($server, $user, $password) {
-    $this->mysqli = @mysqli_connect($server, $user, $password);
-    if (!$this->mysqli) {
+    $this->_mysqli = @mysqli_connect($server, $user, $password);
+    if (!$this->_mysqli) {
       throw new Exception(mysqli_connect_error());
     }
+    $this->_server = $server;
+    $this->_user = $user;
   }
 
   public function __destruct() {
-    if (!empty($this->mysqli)) {
-      @$this->mysqli->close();
-      $this->mysqli = null;
+    if (!empty($this->_mysqli)) {
+      @$this->_mysqli->close();
+      $this->_mysqli = null;
     }
   }
   
   public function list_dbs() {
-    $db_list = $this->mysqli->query("SHOW DATABASES");
+    $db_list = $this->_mysqli->query("SHOW DATABASES");
     $databases = array();
     if ($db_list) {
       while ($row = $db_list->fetch_row()) {
@@ -46,5 +50,21 @@ class Install_Mysqli_Driver {
     }
     return $databases;
   }
+
+  public function get_access_rights($dbname) {
+    $select = "SELECT PRIVILEGE_TYPE " .
+              "  FROM `information_schema`.`schema_privileges`" .
+              " WHERE `GRANTEE` = '\\'{$this->_user}\\'@\\'{$this->_server}\\''" .
+              "   AND `TABLE_SCHEMA` = '$dbname';";
+    $privileges = $this->_mysqli->query($select);
+    $permissions = array();
+    if ($privileges) {
+      while ($row = $privileges->fetch_row()) {
+        $permissions[strtolower($row[0])] = 1;
+      }
+    }
+    return $permissions;
+  }
+  
 }
 

@@ -92,7 +92,6 @@ try {
 } catch (Exception $e) {
   die("Specifed User does not have sufficient authority to install Gallery3\n");
 }
-var_dump($config_valid);
 
 installer::display_requirements(!$config_valid);
 
