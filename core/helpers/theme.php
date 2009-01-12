@@ -37,7 +37,7 @@ class theme_Core {
     }
     Kohana::config_set('core.modules', $modules);
   }
-  
+
   public static function get_edit_form_admin($theme) {
     $form = new Forge("admin/themes/edit/{$theme->id}",
                       '', null, array("id" =>"gThemeDetailsForm"));
@@ -51,15 +51,15 @@ class theme_Core {
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("gResizeSize")->
       rules('required|valid_digit')->
       value(self::get_var($theme->id, "resize_size", 600));
-    $group->submit(t("Modify Theme"));
+    $group->submit("")->value(t("Modify Theme"));
     return $form;
   }
-  
+
   public static function get_edit_form_content($theme_name) {
-    $file = THEMEPATH . $theme_name . "/theme.info"; 
-    $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);  
+    $file = THEMEPATH . $theme_name . "/theme.info";
+    $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
   }
-  
+
   public static function get_var($theme_id, $name, $default_value = null) {
     return module::get_var($theme_id, $name, module::get_var("core", $name, $default_value));
   }

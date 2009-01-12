@@ -25,7 +25,7 @@ class akismet_Core {
     $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
     $group->input("api_key")->label(t("API Key"))->value(module::get_var("akismet", "api_key"));
     $group->api_key->error_messages("invalid", t("The API key you provided is invalid."));
-    $group->submit(t("Save"));
+    $group->submit("")->value(t("Save"));
     return $form;
   }
 

@@ -67,7 +67,7 @@ class group_Core {
     $form_group->input("name")->label(t("Name"))->id("gName")->value($group->name);
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
-    $form_group->submit(t("Save"));
+    $form_group->submit("")->value(t("Save"));
     $form->add_rules_from($group);
     return $form;
   }
@@ -78,7 +78,7 @@ class group_Core {
     $form_group->input("name")->label(t("Name"))->id("gName");
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
-    $form_group->submit(t("Add Group"));
+    $form_group->submit("")->value(t("Add Group"));
     $group = ORM::factory("group");
     $form->add_rules_from($group);
     return $form;
@@ -88,7 +88,7 @@ class group_Core {
     $form = new Forge("admin/groups/delete/$group->id", "", "post");
     $form_group = $form->group("delete_group")->label(
       t("Are you sure you want to delete group {{group_name}}?", array("group_name" => $group->name)));
-    $form_group->submit(t("Delete"));
+    $form_group->submit("")->value(t("Delete"));
     return $form;
   }
 }

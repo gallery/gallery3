@@ -102,7 +102,7 @@ class photo_Core {
     $group->textarea("description")->label(t("Description"));
     $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif]");
     $group->hidden("type")->value("photo");
-    $group->submit(t("Upload"));
+    $group->submit("")->value(t("Upload"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
   }
@@ -114,7 +114,7 @@ class photo_Core {
     $group->input("name")->label(t("Name"))->value($photo->name);
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
-    $group->submit(t("Modify"));
+    $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
   }

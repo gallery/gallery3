@@ -73,7 +73,7 @@ class comment_Core {
     $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl");
     $group->textarea("text")->label(t("Comment"))         ->id("gText");
     $group->hidden("item_id")->value($item->id);
-    $group->submit(t("Add"));
+    $group->submit("")->value(t("Add"));
 
     // Forge will try to reload any pre-seeded values upon validation if it's a post request, so
     // force validation before seeding values.
@@ -99,7 +99,7 @@ class comment_Core {
     $group->input("email")  ->label(t("Email (hidden)"))  ->id("gEmail");
     $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl");
     $group->textarea("text")->label(t("Comment"))         ->id("gText");
-    $group->submit(t("Edit"));
+    $group->submit("")->value(t("Edit"));
 
     $group->text = $comment->text;
     $author = $comment->author();

@@ -32,7 +32,7 @@ class user_Core {
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    $group->submit(t("Save"));
+    $group->submit("")->value(t("Save"));
     $form->add_rules_from($user);
     return $form;
   }
@@ -47,7 +47,7 @@ class user_Core {
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    $group->submit(t("Modify User"));
+    $group->submit("")->value(t("Modify User"));
     $form->add_rules_from($user);
     return $form;
   }
@@ -62,7 +62,7 @@ class user_Core {
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->input("email")->label(t("Email"))->id("gEmail");
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    $group->submit(t("Add User"));
+    $group->submit("")->value(t("Add User"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
     return $form;
@@ -72,7 +72,7 @@ class user_Core {
     $form = new Forge("admin/users/delete/$user->id", "", "post");
     $group = $form->group("delete_user")->label(
       t("Are you sure you want to delete user {{name}}?", array("name" => $user->name)));
-    $group->submit(t("Delete user {{name}}", array("name" => $user->name)));
+    $group->submit("")->value(t("Delete user {{name}}", array("name" => $user->name)));
     return $form;
   }
 

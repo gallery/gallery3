@@ -70,7 +70,7 @@ class album_Core {
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
     $group->hidden("type")->value("album");
-    $group->submit(t("Create"));
+    $group->submit("")->value(t("Create"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
   }
@@ -85,7 +85,7 @@ class album_Core {
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     $group->hidden("type")->value("album");
-    $group->submit(t("Modify"));
+    $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
   }
