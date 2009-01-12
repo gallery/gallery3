@@ -14,8 +14,6 @@ $(document).ready(function(){
     speed: 'fast'
   });
 
-  $(".gBlock h2").addClass("gDraggable");
-
   // Apply modal dialogs
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
