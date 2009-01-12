@@ -1,30 +1,30 @@
 .gQuick {
-  margin: 0 !important;
-  padding: 0 !important;
   border: none !important;
+	  margin: 0 !important;
+  padding: 0 !important;
 }
 
 #gQuickPane {
   background: #fff;
-  opacity: 0.8;
   border-bottom: 1px dashed #000;
+  opacity: 0.8;
 }
 
 #gQuickPane div {
   background-color: red;
-  float: right;
-  display: inline;
   cursor: pointer;
+  display: inline;
+  float: right;
   margin: 8px;
 }
 
 #gQuickPane .rotate-clockwise {
   background: url('../images/arrow_rotate_clockwise.png');
-  width: 16px;
   height: 16px;
   position: absolute;
-  top: 0px;
   right: 0px;
+  top: 0px;
+  width: 16px;
 }
 
 #gQuickPane .rotate-clockwise span {
@@ -33,11 +33,11 @@
 
 #gQuickPane .rotate-counter-clockwise {
   background: url('../images/arrow_rotate_anticlockwise.png');
-  width: 16px;
   height: 16px;
+  left: 0px;
   position: absolute;
   top: 0px;
-  left: 0px;
+  width: 16px;
 }
 
 #gQuickPane .rotate-counter-clockwise span {
@@ -46,11 +46,11 @@
 
 #gQuickPane .edit {
   background: url('../images/image_edit.png');
-  width: 16px;
   height: 16px;
+  left: 50%;
   position: absolute;
   top: 0px;
-  left: 50%;
+  width: 16px;
 }
 
 #gQuickPane .edit span {

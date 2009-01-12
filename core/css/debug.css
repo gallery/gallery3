@@ -1,9 +1,9 @@
 .gAnnotatedThemeBlock {
-  position: relative;
-  padding: 1em;
-  margin: 1em;
   border: 1px solid #C00;
   clear: both;
+  margin: 1em;
+  padding: 1em;
+  position: relative;
 }
 
 .gAnnotatedThemeBlock_album_top {
@@ -15,14 +15,14 @@
 }
 
 .gAnnotatedThemeBlock div.title {
-  position: absolute;
-  top: -1em;
-  right: -1em;
-  border: 1px solid black;
   background: #C00;
+  border: 1px solid black;
   color: white;
-  text-align: left;
-  padding: 4px;
   font-size: 110%;
+  padding: 4px;
+  position: absolute;
+  right: -1em;
+  top: -1em;
+  text-align: left;
   -moz-border-radius: 5%;
 }
