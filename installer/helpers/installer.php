@@ -250,7 +250,7 @@ class installer {
 
   public static function check_database_authorization() {
     $section = array("header" => "Database Configuration",
-                     "description" => "The Gallery3 requires the following database configuration.",
+                     "description" => "Gallery3 requires the following database configuration.",
                      "msgs" => array());
     $class = self::$config["type"];
     $class = "Install_{$class}_Driver";
@@ -298,6 +298,25 @@ class installer {
     return $db_config_valid;
   }
 
+  public static function check_docroot_writable() {
+    $section = array("header" => "File System Access",
+                     "description" => "The requires the following file system configuration.",
+                     "msgs" => array());
+    if (is_writable(DOCROOT)) {
+      $writable = true;
+      $section["msgs"]["Permissions"] =
+        array("text" => "The installation directory '" . DOCROOT . "' is writable.",
+              "error" => false);
+    } else {
+      $writable = false;
+      $section["msgs"]["Permissions"] =
+        array("text" => "The current user is unable to write to '" . DOCROOT . "'.",
+              "error" => true);
+    }
+    self::$messages[] = $section;
+    return $writable;
+  }
+  
   private static function _render($view) {
     if ($view == '')
       return;

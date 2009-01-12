@@ -93,6 +93,8 @@ try {
   die("Specifed User does not have sufficient authority to install Gallery3\n");
 }
 
+$config_valid = installer::check_docroot_writable();
+
 installer::display_requirements(!$config_valid);
 
 if ($config_valid) {
