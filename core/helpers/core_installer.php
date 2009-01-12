@@ -234,14 +234,12 @@ class core_installer {
         $theme->save();
       }
 
-      module::set_var(
-        "core", "dashboard_blocks", serialize(
-          array("sidebar" => array(rand() => array("core", "stats"),
-                                   rand() => array("core", "platform_info"),
-                                   rand() => array("core", "project_news")),
-                "main" => array(rand() => array("core", "welcome"),
-                                rand() => array("core", "photo_stream"),
-                                rand() => array("core", "log_entries")))));
+      dashboard::add_block("sidebar", "core", "stats");
+      dashboard::add_block("sidebar", "core", "platform_info");
+      dashboard::add_block("sidebar", "core", "project_news");
+      dashboard::add_block("main", "core", "welcome");
+      dashboard::add_block("main", "core", "photo_stream");
+      dashboard::add_block("main", "core", "log_entries");
 
       module::set_version("core", 1);
       module::set_var("core", "version", "3.0");
