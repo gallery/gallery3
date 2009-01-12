@@ -17,26 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class comment_block_Core {
-  public static function head($theme) {
-    $url = url::file("modules/comment/js/comment.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>\n";
+class comment_dashboard_Core {
+  public static function get_list() {
+    return array("recent_comments" => t("Recent Comments"));
   }
 
-  public static function photo_bottom($theme) {
-    $block = new Block;
-    $block->id = "gComments";
-    $block->title = t("Comments");
+  public static function get_block($block_id) {
+    $block = new Block();
+    switch ($block_id) {
+    case "recent_comments":
+      $block->id = "gRecentComments";
+      $block->title = t("Recent Comments");
+      $block->content = new View("admin_block_recent_comments.html");
+      $block->content->comments =
+        ORM::factory("comment")->orderby("created", "DESC")->limit(5)->find_all();
+      break;
+    }
 
-    $view = new View("comments.html");
-    $view->comments = ORM::factory("comment")
-      ->where("item_id", $theme->item()->id)
-      ->where("state", "published")
-      ->orderby("created", "ASC")
-      ->find_all();
-
-    $block->content = $view;
-    $block->content .= comment::get_add_form($theme->item())->render("form.html");
     return $block;
   }
 }

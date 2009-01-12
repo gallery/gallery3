@@ -49,6 +49,10 @@ class comment_installer {
                  PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+
+      $dashboard_blocks = unserialize(module::get_var("core", "dashboard_blocks"));
+      $dashboard_blocks["main"][] = array("comment", "recent_comments");
+      module::set_var("core", "dashboard_blocks", serialize($dashboard_blocks));
       module::set_var("comment", "spam_caught", 0);
       module::set_version("comment", 1);
     }

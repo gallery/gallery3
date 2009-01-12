@@ -85,13 +85,11 @@ class Admin_View_Core extends View {
   public function __call($function, $args) {
     switch ($function) {
     case "admin_credits";
-    case "admin_dashboard_blocks":
     case "admin_footer":
     case "admin_header_top":
     case "admin_header_bottom":
     case "admin_page_bottom":
     case "admin_page_top":
-    case "admin_sidebar_blocks":
     case "admin_head":
       $blocks = array();
       foreach (module::installed() as $module) {
