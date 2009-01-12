@@ -32,13 +32,13 @@ class core_dashboard_Core {
     $block = new Block();
     switch($block_id) {
     case "welcome":
-      $block->id = "gWelcome";
+      $block->css_id = "gWelcome";
       $block->title = t("Welcome to Gallery3");
       $block->content = new View("admin_block_welcome.html");
       break;
 
     case "photo_stream":
-      $block->id = "gPhotoStream";
+      $block->css_id = "gPhotoStream";
       $block->title = t("Photo Stream");
       $block->content = new View("admin_block_photo_stream.html");
       $block->content->photos =
@@ -46,14 +46,14 @@ class core_dashboard_Core {
       break;
 
     case "log_entries":
-      $block->id = "gLogEntries";
+      $block->css_id = "gLogEntries";
       $block->title = t("Log Entries");
       $block->content = new View("admin_block_log_entries.html");
       $block->content->entries = ORM::factory("log")->orderby("timestamp", "desc")->find_all(5);
         break;
 
     case "stats":
-      $block->id = "gStats";
+      $block->css_id = "gStats";
       $block->title = t("Gallery Stats");
       $block->content = new View("admin_block_stats.html");
       $block->content->album_count = ORM::factory("item")->where("type", "album")->count_all();
@@ -61,13 +61,13 @@ class core_dashboard_Core {
       break;
 
     case "platform_info":
-      $block->id = "gPlatform";
+      $block->css_id = "gPlatform";
       $block->title = t("Platform Information");
       $block->content = new View("admin_block_platform.html");
       break;
 
     case "project_news":
-      $block->id = "gProjectNews";
+      $block->css_id = "gProjectNews";
       $block->title = t("Gallery Project News");
       $block->content = new View("admin_block_news.html");
       $block->content->feed = feed::parse("http://gallery.menalto.com/node/feed", 3);

@@ -22,6 +22,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     $blocks = unserialize(module::get_var("core", "dashboard_blocks"));
 
     $block_adder = new Block();
+    $block_adder->id = "core:block_adder";
     $block_adder->title = t("Dashboard Content");
     $block_adder->content = $this->get_add_block_form();
 
@@ -54,11 +55,35 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     url::redirect("admin/dashboard");
   }
 
+  public function remove_block($id) {
+    access::verify_csrf();
+    $blocks = unserialize(module::get_var("core", "dashboard_blocks"));
+
+    if (array_key_exists($id, $blocks["sidebar"])) {
+      $deleted = $blocks["sidebar"][$id];
+      unset($blocks["sidebar"][$id]);
+    } else if (array_key_exists($id, $blocks["main"])) {
+      $deleted = $blocks["main"][$id];
+      unset($blocks["main"][$id]);
+    }
+
+    if (!empty($deleted)) {
+      module::set_var("core", "dashboard_blocks", serialize($blocks));
+      $available = $this->get_block_list();
+      $title = $available[join(":", $deleted)];
+      message::success(t("Removed <b>{{title}}</b> block", array("title" => $title)));
+    }
+
+    url::redirect("admin");
+  }
+
   private function get_blocks($blocks) {
     $result = "";
-    foreach ($blocks as $desc) {
+    foreach ($blocks as $id => $desc) {
       if (method_exists("$desc[0]_dashboard", "get_block")) {
-        $result .= call_user_func(array("$desc[0]_dashboard", "get_block"), $desc[1]);
+        $block = call_user_func(array("$desc[0]_dashboard", "get_block"), $desc[1]);
+        $block->id = $id;
+        $result .= $block;
       }
     }
     return $result;

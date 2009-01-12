@@ -22,7 +22,7 @@ class gmaps_block_Core {
   public static function sidebar_blocks($theme) {
     if ($theme->item()) {
       $block = new Block();
-      $block->id = "gMaps";
+      $block->css_id = "gMaps";
       $block->title = t("Location");
       $block->content = new View("gmaps_block.html");
       return $block;

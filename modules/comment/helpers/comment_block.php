@@ -25,7 +25,7 @@ class comment_block_Core {
 
   public static function photo_bottom($theme) {
     $block = new Block;
-    $block->id = "gComments";
+    $block->css_id = "gComments";
     $block->title = t("Comments");
 
     $view = new View("comments.html");

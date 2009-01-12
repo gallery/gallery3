@@ -26,7 +26,7 @@ class comment_dashboard_Core {
     $block = new Block();
     switch ($block_id) {
     case "recent_comments":
-      $block->id = "gRecentComments";
+      $block->css_id = "gRecentComments";
       $block->title = t("Recent Comments");
       $block->content = new View("admin_block_recent_comments.html");
       $block->content->comments =

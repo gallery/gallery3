@@ -18,9 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Block_Core {
+  public $content = null;
+  public $css_id = null;
   public $id = null;
   public $title = null;
-  public $content = null;
 
   public function __toString() {
     return View::factory("block.html", get_object_vars($this))->__toString();

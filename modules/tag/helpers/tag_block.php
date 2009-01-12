@@ -25,7 +25,7 @@ class tag_block_Core {
 
   public static function sidebar_blocks($theme) {
     $block = new Block();
-    $block->id = "gTag";
+    $block->css_id = "gTag";
     $block->title = t("Popular Tags");
     $block->content = new View("tag_block.html");
     $block->content->cloud = tag::cloud(30);

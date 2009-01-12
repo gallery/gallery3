@@ -21,7 +21,7 @@ class info_block_Core {
   public static function sidebar_blocks($theme) {
     if ($theme->item()) {
       $block = new Block();
-      $block->id = "gMetadata";
+      $block->css_id = "gMetadata";
       $block->title = t("Item Info");
       $block->content = new View("info_block.html");
       return $block;

@@ -236,12 +236,12 @@ class core_installer {
 
       module::set_var(
         "core", "dashboard_blocks", serialize(
-          array("sidebar" => array(array("core", "stats"),
-                                   array("core", "platform_info"),
-                                   array("core", "project_news")),
-                "main" => array(array("core", "welcome"),
-                                array("core", "photo_stream"),
-                                array("core", "log_entries")))));
+          array("sidebar" => array(rand() => array("core", "stats"),
+                                   rand() => array("core", "platform_info"),
+                                   rand() => array("core", "project_news")),
+                "main" => array(rand() => array("core", "welcome"),
+                                rand() => array("core", "photo_stream"),
+                                rand() => array("core", "log_entries")))));
 
       module::set_version("core", 1);
       module::set_var("core", "version", "3.0");

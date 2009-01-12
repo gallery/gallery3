@@ -51,7 +51,7 @@ class comment_installer {
 
 
       $dashboard_blocks = unserialize(module::get_var("core", "dashboard_blocks"));
-      $dashboard_blocks["main"][] = array("comment", "recent_comments");
+      $dashboard_blocks["main"][rand()] = array("comment", "recent_comments");
       module::set_var("core", "dashboard_blocks", serialize($dashboard_blocks));
       module::set_var("comment", "spam_caught", 0);
       module::set_version("comment", 1);
