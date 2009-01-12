@@ -36,7 +36,7 @@
             <li class="first"><?= html::anchor("albums/1", "Browse the Gallery") ?></li>
             <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1") ?>">Logout</a></li>
           </ul>
-          <a href="http://gallery.menalto.com/"><img src="<?= url::file("themes/default/images/logo.png") ?>" id="gLogo" alt="<?= t("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
+          <a href="<?= url::site("albums/1") ?>"><img src="<?= url::file("themes/default/images/logo.png") ?>" id="gLogo" alt="<?= t("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
           <div id="gSiteAdminMenu">
             <?= $theme->admin_menu() ?>
           </div>

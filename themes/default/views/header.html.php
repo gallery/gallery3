@@ -1,6 +1,8 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <?= $theme->header_top() ?>
-<img id="gLogo" alt="<?= t("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
+<a href="<?= url::site("albums/1") ?>">
+  <img id="gLogo" alt="<?= t("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
+</a>
 
 <div id="gSiteMenu">
 <?= $theme->site_menu() ?>
