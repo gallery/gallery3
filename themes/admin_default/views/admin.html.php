@@ -27,7 +27,11 @@
 
   <body>
     <?= $theme->admin_page_top() ?>
+    <? if ($sidebar): ?>
     <div id="doc3" class="yui-t5 gView">
+    <? else: ?>
+    <div id="doc3" class="yui-t7 gView">
+    <? endif; ?>
       <div id="hd">
         <?= $theme->site_status() ?>
         <div id="gHeader">
