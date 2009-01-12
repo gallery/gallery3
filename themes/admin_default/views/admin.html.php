@@ -52,21 +52,11 @@
             </div>
           </div>
         </div>
+        <? if ($sidebar): ?>
         <div id="gSidebar" class="yui-b">
-          <div id="gAvailableBlocks" class="gBlock">
-            <form class="gBlockContent">
-              <fieldset>
-                <legend>Add Dashboard Blocks</legend>
-                <label for="">Available blocks</label>
-                <select name="" id="">
-                  <option>Somthing</option>
-                  <option>Somthing else</option>
-                </select>
-              </fieldset>
-            </form>
-          </div>
-          <?= $theme->admin_sidebar_blocks() ?>
+          <?= $sidebar ?>
         </div>
+        <? endif ?>
       </div>
       <div id="ft">
         <div id="gFooter">

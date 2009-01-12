@@ -20,7 +20,8 @@
 class Admin_Dashboard_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
-    $view->content = $view->admin_dashboard_blocks();
+    $view->content = new View("admin_dashboard_main.html");
+    $view->sidebar = new View("admin_dashboard_sidebar.html");
     print $view;
   }
 }
