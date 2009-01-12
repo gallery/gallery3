@@ -42,7 +42,7 @@ class Forge_demo_Controller extends Controller {
 		$form->checklist('foods')->label('Favorite Foods')->options($foods)->rules('required');
 		$form->dropdown('state')->label('Home State')->options(locale_US::states())->rules('required');
 		$form->dateselect('birthday')->label(TRUE)->minutes(15)->years(1950, date('Y'));
-		$form->submit('Save');
+		$form->submit('save')->value('Save');
 
 		if ($form->validate())
 		{
@@ -70,7 +70,7 @@ class Forge_demo_Controller extends Controller {
 		$form = new Forge;
 		$form->input('hello')->label(TRUE);
 		$form->upload('file', TRUE)->label(TRUE)->rules('required|size[200KB]|allow[jpg,png,gif]');
-		$form->submit('Upload');
+		$form->submit('upload')->value('Upload');
 
 		if ($form->validate())
 		{
