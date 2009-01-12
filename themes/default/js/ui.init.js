@@ -10,32 +10,16 @@ var shortForms = new Array(
 );
 
 $(document).ready(function() {
-
-  // Album view only
-  if ($("#gAlbumGrid").length) {
-    // Vertical align thumbnails/metadata in album grid
-    $(".gItem").wrapInner("<div></div>");
-    $('.gItem div').vAlign();
-  }
-
-  // Photo/Item item view only
-  if ($("#gItem").length) {
-    // Ensure that sized image versions
-	// fit inside their container
-	sizedImage();
-
-    // Add scroll effect for links to named anchors
-    $.localScroll({
-      queue: true,
-      duration: 1000,
-      hash: true
-    });
-  }
-
-  // Apply Superfish menus
+  
+  // Initilize menus
+  //http://docs.jquery.com/UI/Menu
+  //http://docs.jquery.com/UI/Menu/menu < options
+  // http://jquery-ui.googlecode.com/svn/branches/dev/menu/ui/ui.menu.js
+  //$("#gSiteMenu").menu();
+  
   $("ul.gMenu").addClass("sf-menu");
   $("#gViewMenu ul.gMenu").addClass("sf-menu");
-
+  
   // Superfish menu options
   $('ul.sf-menu').superfish({
     delay: 500,
@@ -45,6 +29,26 @@ $(document).ready(function() {
     },
     speed: 'fast'
   });
+
+  // Album view only
+  if ($("#gAlbumGrid").length) {
+    // Vertical align thumbnails/metadata in album grid
+    $('.gItem div').vAlign();
+  }
+
+  // Photo/Item item view only
+  if ($("#gItem").length) {
+    // Ensure that sized image versions
+    // fit inside their container
+    sizedImage();
+
+    // Add scroll effect for links to named anchors
+    $.localScroll({
+      queue: true,
+      duration: 1000,
+      hash: true
+    });
+  }
 
   // Apply modal dialogs
   $(".gMenuLink").addClass("gDialogLink");
@@ -60,14 +64,26 @@ $(document).ready(function() {
 });
 
 // Vertically align a block element's content
-$.fn.vAlign = function() {
-  return this.each(function(i){
-    var ah = $(this).height();
-    var ph = $(this).parent().height();
-    var mh = (ph - ah) / 2;
-    $(this).css('margin-top', mh);
-  });
-};
+(function ($) {
+  $.fn.vAlign = function(container) {
+    return this.each(function(i){
+     if(container == null) {
+       container = 'div';
+      }
+      var paddingPx = 10; //change this value as you need (It is the extra height for the parent element)
+      $(this).html("<" + container + ">" + $(this).html() + "</" + container + ">");
+      var el = $(this).children(container + ":first");
+      var elh = $(el).height(); //new element height
+      var ph = $(this).height(); //parent height
+      if(elh > ph) { //if new element height is larger apply this to parent
+        $(this).height(elh + paddingPx);
+       ph = elh + paddingPx;
+      }
+      var nh = (ph - elh) / 2; //new margin to apply
+      $(el).css('margin-top', nh);
+    });
+  };
+})(jQuery);
 
 /**
  * Reduce width of sized photo if it's wider than its parent container
