@@ -27,10 +27,4 @@ class Form_Submit_Core extends Form_Input {
 		return form::submit($data);
 	}
 
-	public function validate()
-	{
-		// Submit buttons do not need to be validated
-		return $this->is_valid = TRUE;
-	}
-
 } // End Form Submit
