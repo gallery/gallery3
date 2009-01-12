@@ -19,11 +19,6 @@ class Form_Submit_Core extends Form_Input {
 
 	protected $protect = array('type');
 
-	public function __construct($value)
-	{
-		$this->data['value'] = $value;
-	}
-
 	public function render()
 	{
 		$data = $this->data;
