@@ -241,8 +241,9 @@ li.gError select {
  * 2) Reusable generic classes
  *********************************************************************/
 
-.inactive {
+.inactive, .understate {
   color: #ccc;
+  font-weight: normal;
 }
 
 .left {
