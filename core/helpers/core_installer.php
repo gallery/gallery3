@@ -128,7 +128,7 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `translations_incomings` (
+      $db->query("CREATE TABLE `incoming_translations` (
                    `id` int(9) NOT NULL auto_increment,
                    `key` binary(16) NOT NULL,
                    `locale` char(10) NOT NULL,
@@ -256,7 +256,7 @@ class core_installer {
     $db->query("DROP TABLE IF EXISTS `messages`;");
     $db->query("DROP TABLE IF EXISTS `modules`;");
     $db->query("DROP TABLE IF EXISTS `themes`;");
-    $db->query("DROP TABLE IF EXISTS `translations_incoming`;");
+    $db->query("DROP TABLE IF EXISTS `incoming_translations`;");
     $db->query("DROP TABLE IF EXISTS `permissions`;");
     $db->query("DROP TABLE IF EXISTS `sessions`;");
     $db->query("DROP TABLE IF EXISTS `tasks`;");

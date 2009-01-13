@@ -80,7 +80,7 @@ class I18n_Core {
     $key = is_array($message) ? array_shift($message) : $message;
     $entry = Database::instance()
         ->select("translation")
-        ->from("translations_incomings")
+        ->from("incoming_translations")
         ->where(array("key" => md5($key, true),
                       "locale" => $locale))
         ->limit(1)

@@ -29,7 +29,7 @@ class I18n_Test extends Unit_Test_Case {
     $this->i18n = I18n::instance($config);
 
     $db = Database::instance();
-    $db->query("DELETE FROM `translations_incomings` WHERE `locale` = 'te_ST'");
+    $db->query("DELETE FROM `incoming_translations` WHERE `locale` = 'te_ST'");
 
     $messages_de_DE = array(
         array('Hello world', 'Hallo Welt'),
@@ -43,7 +43,7 @@ class I18n_Test extends Unit_Test_Case {
       list ($message, $translation) = $data;
       $key = $message;
       $key = is_array($key) ? array_shift($key) : $key;
-      $entry = ORM::factory("translations_incoming");
+      $entry = ORM::factory("incoming_translation");
       $entry->key = md5($key, true);
       $entry->message = serialize($message);
       $entry->translation = serialize($translation);
