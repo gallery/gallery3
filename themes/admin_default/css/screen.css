@@ -7,7 +7,7 @@
 /** *******************************************************************
  *  Reusable content blocks
  **********************************************************************/
- 
+
 .gBlock {
   border: 1px solid #e7e7e7;
   margin-bottom: 1em;
@@ -102,16 +102,25 @@
  *  Stuff that needs a home or needs to be organized
  *********************************************************************/
 
+#gAdminGraphics #gSelectedToolkit img,
 #gAdminThemes #gSelectedTheme img {
-  float: left;
+  float: right;
   margin-right: 1em;
 }
 
+#gAdminGraphics #gSelectedToolkit div.gBlock {
+  width: 700px;
+  height: 140px;
+  background: #cfc;
+}
+
+#gAdminGraphics .gBlock,
 #gAdminThemes .gBlock {
   background: #fff;
   padding: 1em;
 }
 
+#gAdminGraphics #gAvailableToolkits .gBlock,
 #gAdminThemes #gAvailableThemes .gBlock {
   clear: none;
   cursor: pointer;
@@ -121,23 +130,26 @@
   width: 250px;
 }
 
+#gAdminGraphics #gAvailableToolkits .gBlock {
+  width: 328px;
+  height: 300px;
+}
+
+#gAdminGraphics #gAvailableToolkits .unavailable {
+  background-color: #fee !important;
+  cursor: default !important;
+}
+
+#gAdminGraphics #gAvailableToolkits .gBlock:hover,
 #gAdminThemes #gAvailableThemes .gBlock:hover {
   background: #eee;
 }
 
+#gAdminGraphics a,
 #gAdminThemes a {
   color: #333;
 }
 
-#gAdminGraphics tr {
+#gAdminGraphics #gAvailableToolkits .gBlock {
   cursor: pointer;
-}
-
-#gAdminGraphics tr.selected {
-  background-color: #cfc !important;
-  cursor: default;
-}
-
-#gAdminGraphics tr:hover {
-  background-color: #eee;
 }

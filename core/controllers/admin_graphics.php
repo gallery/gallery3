@@ -21,8 +21,20 @@ class Admin_Graphics_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_graphics.html");
-    $view->content->tk = new ArrayObject(graphics::detect_toolkits(), ArrayObject::ARRAY_AS_PROPS);
-    $view->content->active = module::get_var("core", "graphics_toolkit");
+
+    $tk = new ArrayObject(graphics::detect_toolkits(), ArrayObject::ARRAY_AS_PROPS);
+    $active = module::get_var("core", "graphics_toolkit");
+    foreach (array("gd", "imagemagick", "graphicsmagick") as $id) {
+      if ($id == $active) {
+        $view->content->active = new View("admin_graphics_$id.html");
+        $view->content->active->tk = $tk;
+      } else {
+        $v = new View("admin_graphics_$id.html");
+        $v->tk = $tk;
+        $view->content->available .= $v;
+      }
+    }
+
     print $view;
   }
 
@@ -38,7 +50,8 @@ class Admin_Graphics_Controller extends Admin_Controller {
 
       site_status::clear("missing_graphics_toolkit");
       message::success(t("Updated Graphics Toolkit"));
-      log::success("graphics", t("Changed graphics toolkit to: {{toolkit}}", array("toolkit" => $toolkit)));
+      log::success("graphics", t("Changed graphics toolkit to: {{toolkit}}",
+                                 array("toolkit" => $toolkit)));
     }
 
     url::redirect("admin/graphics");
