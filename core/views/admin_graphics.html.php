@@ -26,8 +26,8 @@
     <td>
       <h3> <?= t("GD") ?> </h3>
       <p>
-        <?= t("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the {{link_start}}GD website{{link_end}} for more information.",
-            array("link_start" => "<a href=\"http://www.boutell.com/gd/\">", "link_end" => "</a>")) ?>
+        <?= t("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the <a href=\"{{url}}\">GD website</a> for more information.",
+            array("url" => "http://www.boutell.com/gd")) ?>
       </p>
       <? if ($tk->gd["GD Version"] && function_exists('imagerotate')): ?>
       <p class="gSuccess">
@@ -53,8 +53,8 @@
       <td>
         <h3> <?= t("ImageMagick") ?> </h3>
         <p>
-          <?= t("ImageMagick is a standalone graphics program available on most Linux systems.  Please refer to the {{link_start}}ImageMagick website{{link_end}} for more information.",
-              array("link_start" => "<a href=\"http://www.imagemagick.org/\">", "link_end" => "</a>")) ?>
+          <?= t("ImageMagick is a standalone graphics program available on most Linux systems.  Please refer to the <a href=\"{{url}}\">ImageMagick website</a> for more information.",
+              array("url" => "http://www.imagemagick.org")) ?>
         </p>
         <? if ($tk->imagemagick): ?>
         <p class="gSuccess">
@@ -75,8 +75,8 @@
       <td>
         <h3> <?= t("GraphicsMagick") ?> </h3>
         <p>
-          <?= t("GraphicsMagick is a standalone graphics program available on most Linux systems.  Please refer to the {{link_start}}GraphicsMagick website{{link_end}} for more information.",
-              array("link_start" => "<a href=\"http://www.graphicsmagick.org/\">", "link_end" => "</a>")) ?>
+          <?= t("GraphicsMagick is a standalone graphics program available on most Linux systems.  Please refer to the <a href=\"{{url}}\">GraphicsMagick website</a> for more information.",
+              array("url" => "http://www.graphicsmagick.org")) ?>
         </p>
         <? if ($tk->graphicsmagick): ?>
         <p class="gSuccess">
