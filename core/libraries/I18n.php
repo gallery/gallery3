@@ -98,7 +98,7 @@ class I18n_Core {
     // TODO: Handle locale specific number formatting.
     $keys = array();
     foreach (array_keys($values) as $key) {
-      $keys[] = "{{" . $key . "}}";
+      $keys[] = "{{$key}}";
     }
     return str_replace($keys, array_values($values), $string);
   }
