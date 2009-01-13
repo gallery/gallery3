@@ -190,7 +190,7 @@ class core_installer {
       $root->save();
       access::add_item($root);
 
-      module::set_var("core", "active_theme", "default");
+      module::set_var("core", "active_site_theme", "default");
       module::set_var("core", "active_admin_theme", "admin_default");
       module::set_var("core", "page_size", 9);
       module::set_var("core", "thumb_size", 200);
@@ -224,7 +224,7 @@ class core_installer {
           "missing_graphics_toolkit");
       }
 
-      // Instantiate default themes (regular and admin)
+      // Instantiate default themes (site and admin)
       foreach (array("default", "admin_default") as $theme_name) {
         $theme_info = new ArrayObject(parse_ini_file(THEMEPATH . $theme_name . "/theme.info"),
                                       ArrayObject::ARRAY_AS_PROPS);

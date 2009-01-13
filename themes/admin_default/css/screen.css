@@ -107,26 +107,18 @@
   margin-right: 1em;
 }
 
-#gAdminThemes #gSelectedTheme img {
-  float: left;
-  margin-right: 1em;
-}
-
-#gAdminThemes #gSelectedTheme div.gBlock,
 #gAdminGraphics #gSelectedToolkit div.gBlock {
   width: 700px;
   height: 140px;
   background: #cfc;
 }
 
-#gAdminGraphics .gBlock,
-#gAdminThemes .gBlock {
+#gAdminGraphics .gBlock {
   background: #fff;
   padding: 1em;
 }
 
-#gAdminGraphics #gAvailableToolkits .gBlock,
-#gAdminThemes #gAvailableThemes .gBlock {
+#gAdminGraphics #gAvailableToolkits .gBlock {
   clear: none;
   cursor: pointer;
   float: left;
@@ -145,16 +137,63 @@
   cursor: default !important;
 }
 
-#gAdminGraphics #gAvailableToolkits .gBlock:hover,
-#gAdminThemes #gAvailableThemes .gBlock:hover {
+#gAdminGraphics #gAvailableToolkits .gBlock:hover {
   background: #eee;
 }
 
-#gAdminGraphics a,
-#gAdminThemes a {
+#gAdminGraphics a {
   color: #333;
 }
 
 #gAdminGraphics #gAvailableToolkits .gBlock {
   cursor: pointer;
 }
+
+
+#gAdminThemes #gAdminTheme,
+#gAdminThemes #gSiteTheme {
+  width: 400px;
+  float: left;
+}
+
+#gAdminThemes #gAdminTheme {
+  padding-left: 40px;
+}
+
+
+#gAdminThemes #gSelectedTheme img {
+  float: left;
+  margin-right: 1em;
+}
+
+#gAdminThemes .selected {
+  background: #cfc !important;
+}
+
+#gAdminThemes .gBlock {
+  width: 328px;
+  height: 140px;
+  background: #fff;
+  padding: 1em;
+  text-align: center;
+}
+
+#gAdminThemes .gBlock {
+  clear: none;
+  cursor: pointer;
+  float: left;
+  text-align: center;
+  width: 328px;
+  height: 200px;
+}
+
+#gAvailableSiteThemes .gBlock:hover,
+#gAvailableAdminThemes .gBlock:hover {
+  background: #eee;
+}
+
+#gAdminThemes a {
+  color: #333;
+  text-decoration: none;
+}
+

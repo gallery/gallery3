@@ -3,4 +3,4 @@ description = A crisp Site Administration theme with soft colors and drop down m
 version = 1
 author = Gallery Team
 admin = 1
-regular = 0
+site = 0

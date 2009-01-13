@@ -19,41 +19,12 @@
  */
 class Admin_Themes_Controller extends Admin_Controller {
   public function index() {
-    $this->regular();
-  }
-
-  public function regular() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_themes.html");
-    $view->content->menu = $this->_get_menu();
-    $view->content->title = _("Regular Themes");
-    $view->content->type = "regular";
-    $view->content->active = module::get_var("core", "active_theme");
+    $view->content->admin = module::get_var("core", "active_admin_theme");
+    $view->content->site = module::get_var("core", "active_site_theme");
     $view->content->themes = $this->_get_themes();
     print $view;
-  }
-
-  public function admin() {
-    $view = new Admin_View("admin.html");
-    $view->content = new View("admin_themes.html");
-    $view->content->menu = $this->_get_menu();
-    $view->content->title = _("Admin Themes");
-    $view->content->type = "admin";
-    $view->content->active = module::get_var("core", "active_admin_theme");
-    $view->content->themes = $this->_get_themes();
-    print $view;
-  }
-
-  private function _get_menu() {
-    return Menu::factory("root")
-      ->append(Menu::factory("link")
-               ->id("regular")
-               ->label(t("Regular Theme"))
-               ->url(url::site("admin/themes/regular")))
-      ->append(Menu::factory("link")
-               ->id("admin")
-               ->label(t("Admin Theme"))
-               ->url(url::site("admin/themes/admin")));
   }
 
   private function _get_themes() {
@@ -94,13 +65,13 @@ class Admin_Themes_Controller extends Admin_Controller {
       module::set_var("core", "active_admin_theme", $theme_name);
       message::success(t("Successfully changed your site theme to <b>{{theme_name}}</b>",
                          array("theme_name" => $info->name)));
-    } else if ($type == "regular" && $info->regular) {
-      module::set_var("core", "active_theme", $theme_name);
+    } else if ($type == "site" && $info->site) {
+      module::set_var("core", "active_site_theme", $theme_name);
       message::success(t("Successfully changed your admin theme to <b>{{theme_name}}</b>",
                          array("theme_name" => $info->name)));
     }
 
-    url::redirect("admin/themes/$type");
+    url::redirect("admin/themes");
   }
 
   public function edit_form($theme_name) {

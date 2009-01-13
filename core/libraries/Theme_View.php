@@ -32,7 +32,7 @@ class Theme_View_Core extends View {
   public function __construct($name, $page_type) {
     parent::__construct($name);
 
-    $this->theme_name = module::get_var("core", "active_theme");
+    $this->theme_name = module::get_var("core", "active_site_theme");
     if (user::active()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
