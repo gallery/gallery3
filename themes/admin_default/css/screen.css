@@ -102,12 +102,17 @@
  *  Stuff that needs a home or needs to be organized
  *********************************************************************/
 
-#gAdminGraphics #gSelectedToolkit img,
-#gAdminThemes #gSelectedTheme img {
+#gAdminGraphics #gSelectedToolkit img {
   float: right;
   margin-right: 1em;
 }
 
+#gAdminThemes #gSelectedTheme img {
+  float: left;
+  margin-right: 1em;
+}
+
+#gAdminThemes #gSelectedTheme div.gBlock,
 #gAdminGraphics #gSelectedToolkit div.gBlock {
   width: 700px;
   height: 140px;
