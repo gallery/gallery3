@@ -46,47 +46,47 @@
     </td>
   </tr>
 
-    <tr id="imagemagick" <?= ($active == "imagemagick") ? "class=\"selected\"" : "" ?>>
-      <td valign="top">
-        <img width="114" height="118" src="http://www.imagemagick.org/image/logo.jpg" alt="<? t("Visit the ImageMagick project site") ?>" />
-      </td>
-      <td>
-        <h3> <?= t("ImageMagick") ?> </h3>
-        <p>
-          <?= t("ImageMagick is a standalone graphics program available on most Linux systems.  Please refer to the <a href=\"{{url}}\">ImageMagick website</a> for more information.",
-              array("url" => "http://www.imagemagick.org")) ?>
-        </p>
-        <? if ($tk->imagemagick): ?>
-        <p class="gSuccess">
-          <?= t("You have ImageMagick installed in {{path}}", array("path" => $tk->imagemagick)) ?>
-        </p>
-        <? else: ?>
-        <p class="gInfo">
-          <?= t("ImageMagick is not available on your system.") ?>
-        </p>
-        <? endif ?>
-      </td>
-    </tr>
+  <tr id="imagemagick" <?= ($active == "imagemagick") ? "class=\"selected\"" : "" ?>>
+    <td valign="top">
+      <img width="114" height="118" src="http://www.imagemagick.org/image/logo.jpg" alt="<? t("Visit the ImageMagick project site") ?>" />
+    </td>
+    <td>
+      <h3> <?= t("ImageMagick") ?> </h3>
+      <p>
+        <?= t("ImageMagick is a standalone graphics program available on most Linux systems.  Please refer to the <a href=\"{{url}}\">ImageMagick website</a> for more information.",
+            array("url" => "http://www.imagemagick.org")) ?>
+      </p>
+      <? if ($tk->imagemagick): ?>
+      <p class="gSuccess">
+        <?= t("You have ImageMagick installed in {{path}}", array("path" => $tk->imagemagick)) ?>
+      </p>
+      <? else: ?>
+      <p class="gInfo">
+        <?= t("ImageMagick is not available on your system.") ?>
+      </p>
+      <? endif ?>
+    </td>
+  </tr>
 
-    <tr id="graphicsmagick" <?= ($active == "graphicsmagick") ? "class=\"selected\"" : "" ?>>
-      <td valign="top">
-        <img width="107" height="76" src="http://www.graphicsmagick.org/images/gm-107x76.png" alt="<? t("Visit the GraphicsMagick project site") ?>" />
-      </td>
-      <td>
-        <h3> <?= t("GraphicsMagick") ?> </h3>
-        <p>
-          <?= t("GraphicsMagick is a standalone graphics program available on most Linux systems.  Please refer to the <a href=\"{{url}}\">GraphicsMagick website</a> for more information.",
-              array("url" => "http://www.graphicsmagick.org")) ?>
-        </p>
-        <? if ($tk->graphicsmagick): ?>
-        <p class="gSuccess">
-          <?= t("You have GraphicsMagick installed in {{path}}", array("path" => $tk->graphicsmagick)) ?>
-        </p>
-        <? else: ?>
-        <p class="gInfo">
-          <?= t("GraphicsMagick is not available on your system.") ?>
-        </p>
-        <? endif ?>
+  <tr id="graphicsmagick" <?= ($active == "graphicsmagick") ? "class=\"selected\"" : "" ?>>
+    <td valign="top">
+      <img width="107" height="76" src="http://www.graphicsmagick.org/images/gm-107x76.png" alt="<? t("Visit the GraphicsMagick project site") ?>" />
+    </td>
+    <td>
+      <h3> <?= t("GraphicsMagick") ?> </h3>
+      <p>
+        <?= t("GraphicsMagick is a standalone graphics program available on most Linux systems.  Please refer to the <a href=\"{{url}}\">GraphicsMagick website</a> for more information.",
+            array("url" => "http://www.graphicsmagick.org")) ?>
+      </p>
+      <? if ($tk->graphicsmagick): ?>
+      <p class="gSuccess">
+        <?= t("You have GraphicsMagick installed in {{path}}", array("path" => $tk->graphicsmagick)) ?>
+      </p>
+      <? else: ?>
+      <p class="gInfo">
+        <?= t("GraphicsMagick is not available on your system.") ?>
+      </p>
+      <? endif ?>
     </td>
   </tr>
 </table>
