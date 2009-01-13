@@ -10,11 +10,11 @@
 <div id="gAdminThemes">
   <h1> <?= t("Theme Administration") ?> </h1>
   <p>
-    <?= t("Gallery allows you to choose a theme for your site, as well as a theme for the administration interface.  Click a theme to preview and activate it.") ?>
+    <?= t("Gallery allows you to choose a theme for browsing your Gallery, as well as a special theme for the administration interface.  Click a theme to preview and activate it.") ?>
   </p>
 
   <div id="gSiteTheme">
-    <h2> <?= t("Site theme") ?> </h2>
+    <h2> <?= t("Gallery theme") ?> </h2>
     <div class="gBlock selected">
       <img src="<?= url::file("themes/{$site}/thumbnail.png") ?>"
            alt="<?= $themes[$active]->name ?>" />
@@ -24,7 +24,7 @@
       </p>
     </div>
 
-    <h2> <?= t("Available site themes") ?> </h2>
+    <h2> <?= t("Available Gallery themes") ?> </h2>
     <div id="gAvailableSiteThemes">
       <? $count = 0 ?>
       <? foreach ($themes as $id => $info): ?>
