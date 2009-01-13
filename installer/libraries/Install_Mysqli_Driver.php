@@ -1,4 +1,4 @@
-<?php
+<?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2008 Bharat Mediratta
@@ -23,7 +23,7 @@ class Install_Mysqli_Driver {
   private $_mysqli;
   private $_server;
   private $_user;
-  
+
   public function __construct($server, $user, $password) {
     $this->_mysqli = @mysqli_connect($server, $user, $password);
     if (!$this->_mysqli) {
@@ -39,7 +39,7 @@ class Install_Mysqli_Driver {
       $this->_mysqli = null;
     }
   }
-  
+
   public function list_dbs() {
     $db_list = $this->_mysqli->query("SHOW DATABASES");
     $databases = array();
@@ -65,7 +65,7 @@ class Install_Mysqli_Driver {
     }
     return $permissions;
   }
-  
+
   public function select_db($dbname) {
     $this->_mysqli->select_db($dbname);
   }
