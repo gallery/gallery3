@@ -11,12 +11,7 @@ var shortForms = new Array(
 
 $(document).ready(function() {
   
-  // Initilize menus
-  //http://docs.jquery.com/UI/Menu
-  //http://docs.jquery.com/UI/Menu/menu < options
-  // http://jquery-ui.googlecode.com/svn/branches/dev/menu/ui/ui.menu.js
-  //$("#gSiteMenu").menu();
-  
+  // Initilize menus  
   $("ul.gMenu").addClass("sf-menu");
   $("#gViewMenu ul.gMenu").addClass("sf-menu");
   
@@ -33,7 +28,7 @@ $(document).ready(function() {
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
-    $('.gItem div').vAlign();
+    $('.gItem').vAlign();
   }
 
   // Photo/Item item view only
@@ -67,19 +62,14 @@ $(document).ready(function() {
 (function ($) {
   $.fn.vAlign = function(container) {
     return this.each(function(i){
-     if(container == null) {
-       container = 'div';
+      if (container == null) {
+        container = 'div';
       }
-      var paddingPx = 10; //change this value as you need (It is the extra height for the parent element)
       $(this).html("<" + container + ">" + $(this).html() + "</" + container + ">");
       var el = $(this).children(container + ":first");
-      var elh = $(el).height(); //new element height
-      var ph = $(this).height(); //parent height
-      if(elh > ph) { //if new element height is larger apply this to parent
-        $(this).height(elh + paddingPx);
-       ph = elh + paddingPx;
-      }
-      var nh = (ph - elh) / 2; //new margin to apply
+      var elh = $(el).height();
+      var ph = $(this).height();
+      var nh = (ph - elh) / 2;
       $(el).css('margin-top', nh);
     });
   };
@@ -138,4 +128,3 @@ function shortFormInit(formID) {
     }
   });
 }
-
