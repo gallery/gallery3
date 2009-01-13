@@ -26,6 +26,7 @@
 
     <h2> <?= t("Available site themes") ?> </h2>
     <div id="gAvailableSiteThemes">
+      <? $count = 0 ?>
       <? foreach ($themes as $id => $info): ?>
       <? if (!$info->site) continue ?>
       <? if ($id == $site) continue ?>
@@ -39,7 +40,14 @@
           </p>
         </a>
       </div>
+      <? $count++ ?>
       <? endforeach ?>
+
+      <? if (!$count): ?>
+      <p>
+        <?= t("There are no other site themes available.") ?>
+      </p>
+      <? endif ?>
     </div>
   </div>
 
@@ -56,6 +64,7 @@
 
     <h2> <?= t("Available admin themes") ?> </h2>
     <div id="gAvailableAdminThemes">
+      <? $count = 0 ?>
       <? foreach ($themes as $id => $info): ?>
       <? if (!$info->admin) continue ?>
       <? if ($id == $admin) continue ?>
@@ -69,7 +78,14 @@
           </p>
         </a>
       </div>
+      <? $count++ ?>
       <? endforeach ?>
+
+      <? if (!$count): ?>
+      <p>
+        <?= t("There are no other admin themes available.") ?>
+      </p>
+      <? endif ?>
     </div>
   </div>
 </div>
