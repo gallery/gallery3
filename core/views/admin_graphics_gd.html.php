@@ -1,5 +1,5 @@
 <div id="gd" class="gBlock  <?= $tk->gd["GD Version"] ? "" : "unavailable" ?>">
-  <img class="logo" width="170" height="110" src="http://www.libgd.org/skins/libgd/gdlogosmall.png" alt="<? t("Visit the GD lib project site") ?>" />
+  <img class="logo" width="170" height="110" src="<?= url::file("core/images/gd.png"); ?>" alt="<? t("Visit the GD lib project site") ?>" />
   <h3> <?= t("GD") ?> </h3>
   <p>
     <?= t("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the <a href=\"{{url}}\">GD website</a> for more information.",
