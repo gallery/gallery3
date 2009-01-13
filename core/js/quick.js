@@ -12,7 +12,7 @@ var show_quick = function() {
     "position": "absolute",
     "top": pos.top,
     "left": pos.left,
-    "width": img.innerWidth() + 1,
+    "width": img.innerWidth(),
     "height": 32
   });
   quick.hover(function() { }, hide_quick);
@@ -21,7 +21,8 @@ var show_quick = function() {
     {},
     function(data, textStatus) {
       $("#gQuickPane").html(data);
-      $("#gQuickPane div").click(function() {
+      $("#gQuickPane a").click(function(e) {
+        e.preventDefault();
         quick_do(quick, $(this), img);
       });
     }
@@ -55,6 +56,7 @@ var quick_do = function(quick, pane, img) {
       }
     });
   }
+  return false;
 };
 
 var hide_quick = function() {
