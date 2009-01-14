@@ -19,7 +19,7 @@
  */
 class dashboard_Core {
   public static function get_active() {
-    return unserialize(module::get_var("core", "dashboard_blocks", "a:{}"));
+    return unserialize(module::get_var("core", "dashboard_blocks", "a:0:{}"));
   }
 
   public static function add_block($location, $module_name, $block_id) {
