@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="graphicsmagick" class="gBlock <?= $tk->graphicsmagick ? "" : "unavailable" ?>">
   <h3> <?= t("GraphicsMagick") ?> </h3>
   <img class="logo" width="107" height="76" src="<?= url::file("core/images/graphicsmagick.png"); ?>" alt="<? t("Visit the GraphicsMagick project site") ?>" />
