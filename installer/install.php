@@ -48,7 +48,7 @@ if (PHP_SAPI != "cli") {
 }
 
 if (file_exists("var/installed")) {
-  dir("Gallery3 is already installed... exiting");
+  die("Gallery3 is already installed... exiting");
 }
 
 array_shift($argv);          // remove the script name from the arguments
