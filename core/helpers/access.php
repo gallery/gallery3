@@ -77,7 +77,7 @@ class access_Core {
    * @param  Item_Model $item
    * @return boolean
    */
-  public static function can($perm_name, $item) {
+  static function can($perm_name, $item) {
     if (!$item->loaded) {
       return false;
     }
@@ -103,7 +103,7 @@ class access_Core {
    * @param  Item_Model $item
    * @return boolean
    */
-  public static function required($perm_name, $item) {
+  static function required($perm_name, $item) {
     if (!self::can($perm_name, $item)) {
       self::forbidden();
     }
@@ -117,7 +117,7 @@ class access_Core {
    * @param  Item_Model  $item
    * @return boolean
    */
-  public static function group_can($group, $perm_name, $item) {
+  static function group_can($group, $perm_name, $item) {
     $resource = $perm_name == "view" ?
       $item : model_cache::get("access_cache", $item->id, "item_id");
     return $resource->__get("{$perm_name}_{$group->id}") === self::ALLOW;
@@ -131,7 +131,7 @@ class access_Core {
    * @param  Item_Model  $item
    * @return integer     access::ALLOW, access::DENY or null for no intent
    */
-  public static function group_intent($group, $perm_name, $item) {
+  static function group_intent($group, $perm_name, $item) {
     $intent = model_cache::get("access_intent", $item->id, "item_id");
     return $intent->__get("{$perm_name}_{$group->id}");
   }
@@ -145,7 +145,7 @@ class access_Core {
    * @param  Item_Model  $item
    * @return ORM_Model   item that locks this one
    */
-  public static function locked_by($group, $perm_name, $item) {
+  static function locked_by($group, $perm_name, $item) {
     if ($perm_name != "view") {
       return null;
     }
@@ -172,7 +172,7 @@ class access_Core {
   /**
    * Terminate immediately with an HTTP 503 Forbidden response.
    */
-  public static function forbidden() {
+  static function forbidden() {
     throw new Exception("@todo FORBIDDEN", 503);
   }
 
@@ -211,7 +211,7 @@ class access_Core {
    * @param  string  $perm_name
    * @param  Item_Model $item
    */
-  public static function allow($group, $perm_name, $item) {
+  static function allow($group, $perm_name, $item) {
     self::_set($group, $perm_name, $item, self::ALLOW);
   }
 
@@ -222,7 +222,7 @@ class access_Core {
    * @param  string  $perm_name
    * @param  Item_Model $item
    */
-  public static function deny($group, $perm_name, $item) {
+  static function deny($group, $perm_name, $item) {
     self::_set($group, $perm_name, $item, self::DENY);
   }
 
@@ -233,7 +233,7 @@ class access_Core {
    * @param  string  $perm_name
    * @param  Item_Model $item
    */
-  public static function reset($group, $perm_name, $item) {
+  static function reset($group, $perm_name, $item) {
     if ($item->id == 1) {
       throw new Exception("@todo CANT_RESET_ROOT_PERMISSION");
     }
@@ -247,7 +247,7 @@ class access_Core {
    * @param  string $display_name   The internationalized version of the displayable name
    * @return void
   */
-  public static function register_permission($name, $display_name) {
+  static function register_permission($name, $display_name) {
     $permission = ORM::factory("permission", $name);
     if ($permission->loaded) {
       throw new Exception("@todo PERMISSION_ALREADY_EXISTS $name");
@@ -267,7 +267,7 @@ class access_Core {
    * @param  string $perm_name
    * @return void
    */
-  public static function delete_permission($name) {
+  static function delete_permission($name) {
     foreach (self::_get_all_groups() as $group) {
       self::_drop_columns($name, $group);
     }
@@ -283,7 +283,7 @@ class access_Core {
    * @param Group_Model $group
    * @return void
    */
-  public static function add_group($group) {
+  static function add_group($group) {
     foreach (ORM::factory("permission")->find_all() as $perm) {
       self::_add_columns($perm->name, $group);
     }
@@ -295,7 +295,7 @@ class access_Core {
    * @param Group_Model $group
    * @return void
    */
-  public static function delete_group($group) {
+  static function delete_group($group) {
     foreach (ORM::factory("permission")->find_all() as $perm) {
       self::_drop_columns($perm->name, $group);
     }
@@ -307,7 +307,7 @@ class access_Core {
    * @param Item_Model $item
    * @return void
    */
-  public static function add_item($item) {
+  static function add_item($item) {
     $access_intent = ORM::factory("access_intent", $item->id);
     if ($access_intent->loaded) {
       throw new Exception("@todo ITEM_ALREADY_ADDED $item->id");
@@ -343,7 +343,7 @@ class access_Core {
    * @param Item_Model $item
    * @return void
    */
-  public static function delete_item($item) {
+  static function delete_item($item) {
     ORM::factory("access_intent")->where("item_id", $item->id)->find()->delete();
     ORM::factory("access_cache")->where("item_id", $item->id)->find()->delete();
   }
@@ -351,7 +351,7 @@ class access_Core {
   /**
    * Verify our Cross Site Request Forgery token is valid, else throw an exception.
    */
-  public static function verify_csrf() {
+  static function verify_csrf() {
     $input = Input::instance();
     if ($input->post("csrf", $input->get("csrf", null)) !== Session::instance()->get("csrf")) {
       self::forbidden();
@@ -362,7 +362,7 @@ class access_Core {
    * Get the Cross Site Request Forgery token for this session.
    * @return string
    */
-  public static function csrf_token() {
+  static function csrf_token() {
     $session = Session::instance();
     $csrf = $session->get("csrf");
     if (empty($csrf)) {
@@ -376,7 +376,7 @@ class access_Core {
    * Generate an <input> element containing the Cross Site Request Forgery token for this session.
    * @return string
    */
-  public static function csrf_form_field() {
+  static function csrf_form_field() {
     return "<input type=\"hidden\" name=\"csrf\" value=\"" . self::csrf_token() . "\"/>";
   }
 

@@ -24,7 +24,7 @@
  * Note: by design, this class does not do any permission checking.
  */
 class user_Core {
-  public static function get_edit_form($user, $action = NULL) {
+  static function get_edit_form($user, $action = NULL) {
     $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gUserForm"));
     $group = $form->group("edit_user")->label(t("Edit User"));
     $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
@@ -37,7 +37,7 @@ class user_Core {
     return $form;
   }
 
-  public static function get_edit_form_admin($user) {
+  static function get_edit_form_admin($user) {
     $form = new Forge("admin/users/edit/$user->id");
     $group = $form->group("edit_user")->label(t("Edit User"));
     $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
@@ -52,7 +52,7 @@ class user_Core {
     return $form;
   }
 
-  public static function get_add_form_admin() {
+  static function get_add_form_admin() {
     $form = new Forge("admin/users/add");
     $group = $form->group("add_user")->label(t("Add User"));
     $group->input("name")->label(t("Name"))->id("gName");
@@ -68,7 +68,7 @@ class user_Core {
     return $form;
   }
 
-  public static function get_delete_form_admin($user) {
+  static function get_delete_form_admin($user) {
     $form = new Forge("admin/users/delete/$user->id", "", "post");
     $group = $form->group("delete_user")->label(
       t("Are you sure you want to delete user {{name}}?", array("name" => $user->name)));
@@ -79,7 +79,7 @@ class user_Core {
   /**
    * Make sure that we have a session and group_ids cached in the session.
    */
-  public static function load_user() {
+  static function load_user() {
     // This is one of the first session operations that we'll do, so it may fail if there's no
     // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
     // Do The Right Thing.
@@ -109,7 +109,7 @@ class user_Core {
    *
    * @return array
    */
-  public static function group_ids() {
+  static function group_ids() {
     return Session::instance()->get("group_ids", array(1));
   }
 
@@ -118,7 +118,7 @@ class user_Core {
    *
    * @return User_Model
    */
-  public static function active() {
+  static function active() {
     return Session::instance()->get("user", self::guest());
   }
 
@@ -129,7 +129,7 @@ class user_Core {
    *
    * @return User_Model
    */
-  public static function guest() {
+  static function guest() {
     return model_cache::get("user", 1);
   }
 
@@ -138,7 +138,7 @@ class user_Core {
    *
    * @return User_Model
    */
-  public static function set_active($user) {
+  static function set_active($user) {
     $session = Session::instance();
     $session->set("user", $user);
     $session->delete("group_ids");
@@ -153,7 +153,7 @@ class user_Core {
    * @param string  $password
    * @return User_Model
    */
-  public static function create($name, $full_name, $password) {
+  static function create($name, $full_name, $password) {
     $user = ORM::factory("user")->where("name", $name)->find();
     if ($user->loaded) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
@@ -179,7 +179,7 @@ class user_Core {
    * @param string $password a plaintext password
    * @return boolean true if the password is correct
    */
-  public static function is_correct_password($user, $password) {
+  static function is_correct_password($user, $password) {
     $valid = $user->password;
 
     $salt = substr($valid, 0, 4);
@@ -211,7 +211,7 @@ class user_Core {
    * @param string $password a plaintext password
    * @return string hashed password
    */
-  public static function hash_password($password) {
+  static function hash_password($password) {
     return user::_md5Salt($password);
   }
 
@@ -219,7 +219,7 @@ class user_Core {
    * Log in as a given user.
    * @param object $user the user object.
    */
-  public static function login($user) {
+  static function login($user) {
     $user->login_count += 1;
     $user->last_login = time();
     $user->save();
@@ -232,7 +232,7 @@ class user_Core {
    * Log out the active user and destroy the session.
    * @param object $user the user object.
    */
-  public static function logout() {
+  static function logout() {
     $user = user::active();
     if (!$user->guest) {
       try {
@@ -249,7 +249,7 @@ class user_Core {
    * @param integer      $id the user id
    * @return User_Model  the user object, or null if the id was invalid.
    */
-  public static function lookup($id) {
+  static function lookup($id) {
     $user = model_cache::get("user", $id);
     if ($user->loaded) {
       return $user;

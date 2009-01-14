@@ -33,7 +33,8 @@ class photo_Core {
    * @param string  $description (optional) the longer description of this photo
    * @return Item_Model
    */
-  static function create($parent, $filename, $name, $title, $description=null, $owner_id=null) {
+  static function create($parent, $filename, $name, $title,
+                                $description=null, $owner_id=null) {
     if (!$parent->loaded || $parent->type != "album") {
       throw new Exception("@todo INVALID_PARENT");
     }

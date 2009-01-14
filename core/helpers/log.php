@@ -29,8 +29,8 @@ class log_Core {
    * @param string  $message   a detailed log message
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  public static function success($category, $message, $html="") {
-    self::add($category, $message, $html, self::SUCCESS);
+  static function success($category, $message, $html="") {
+    self::_add($category, $message, $html, self::SUCCESS);
   }
 
   /**
@@ -39,8 +39,8 @@ class log_Core {
    * @param string  $message   a detailed log message
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  public static function info($category, $message, $html="") {
-    self::add($category, $message, $html, self::INFO);
+  static function info($category, $message, $html="") {
+    self::_add($category, $message, $html, self::INFO);
   }
 
   /**
@@ -49,8 +49,8 @@ class log_Core {
    * @param string  $message   a detailed log message
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  public static function warning($category, $message, $html="") {
-    self::add($category, $message, $html, self::WARNING);
+  static function warning($category, $message, $html="") {
+    self::_add($category, $message, $html, self::WARNING);
   }
 
   /**
@@ -59,8 +59,8 @@ class log_Core {
    * @param string  $message   a detailed log message
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  public static function error($category, $message, $html="") {
-    self::add($category, $message, $html, self::ERROR);
+  static function error($category, $message, $html="") {
+    self::_add($category, $message, $html, self::ERROR);
   }
 
   /**
@@ -71,7 +71,7 @@ class log_Core {
    * @param integer $severity  INFO, WARNING or ERROR
    * @param string  $html      an html snippet presented alongside the log message to aid the admin
    */
-  private static function add($category, $message, $html, $severity) {
+  private static function _add($category, $message, $html, $severity) {
     $log = ORM::factory("log");
     $log->category = $category;
     $log->message = $message;
@@ -92,7 +92,7 @@ class log_Core {
    * @param  integer $severity
    * @return string
    */
-  public function severity_class($severity) {
+  static function severity_class($severity) {
     switch($severity) {
     case self::SUCCESS:
       return "gSuccess";

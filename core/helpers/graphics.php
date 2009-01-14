@@ -37,9 +37,9 @@ class graphics_Core {
    * @param string  $target      the target for this operation ("thumb" or "resize")
    * @param string  $operation   the name of the operation
    * @param array   $args        arguments to the operation
-   * @param integer $priority    the priority for this function (lower priorities are run first)
+   * @param integer $priority    the priority for this rule (lower priorities are run first)
    */
-  public static function add_rule($module_name, $target, $operation, $args, $priority) {
+  static function add_rule($module_name, $target, $operation, $args, $priority) {
     $rule = ORM::factory("graphics_rule");
     $rule->module_name = $module_name;
     $rule->target = $target;
@@ -55,7 +55,7 @@ class graphics_Core {
    * Remove all rules for this module
    * @param string $module_name
    */
-  public static function remove_rules($module_name) {
+  static function remove_rules($module_name) {
     $db = Database::instance();
     $result = $db->query("DELETE FROM `graphics_rules` WHERE `module_name` = '$module_name'");
     if ($result->count()) {
@@ -67,7 +67,7 @@ class graphics_Core {
    * Rebuild the thumb and resize for the given item.
    * @param Item_Model $item
    */
-  public static function generate($item) {
+  static function generate($item) {
     if ($item->type == "album") {
       $cover = $item->album_cover();
       if (!$cover) {
@@ -127,7 +127,7 @@ class graphics_Core {
    * @param string  $output_file
    * @param array   $options
    */
-  public static function resize($input_file, $output_file, $options) {
+  static function resize($input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }
@@ -144,7 +144,7 @@ class graphics_Core {
    * @param string  $output_file
    * @param array   $options
    */
-  public static function rotate($input_file, $output_file, $options) {
+  static function rotate($input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }
@@ -163,7 +163,7 @@ class graphics_Core {
    * @param string  $output_file
    * @param array   $options
    */
-  public static function composite($input_file, $output_file, $options) {
+  static function composite($input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }
@@ -200,7 +200,7 @@ class graphics_Core {
    * Return a query result that locates all items with dirty images.
    * @return Database_Result Query result
    */
-  public static function find_dirty_images_query() {
+  static function find_dirty_images_query() {
     return Database::instance()->query(
       "SELECT `id` FROM `items` " .
       "WHERE (`thumb_dirty` = 1 AND (`type` <> 'album' OR `right` - `left` > 1))" .
@@ -210,7 +210,7 @@ class graphics_Core {
   /**
    * Mark all thumbnails and resizes as dirty.  They will have to be rebuilt.
    */
-  public static function mark_all_dirty() {
+  static function mark_all_dirty() {
     $db = Database::instance();
     $db->query("UPDATE `items` SET `thumb_dirty` = 1, `resize_dirty` = 1");
 
@@ -232,7 +232,7 @@ class graphics_Core {
    * Task that rebuilds all dirty images.
    * @param Task_Model the task
    */
-  public static function rebuild_dirty_images($task) {
+  static function rebuild_dirty_images($task) {
     $db = Database::instance();
 
     $result = self::find_dirty_images_query();
@@ -279,7 +279,7 @@ class graphics_Core {
    * about that toolkit.  For GD we return the version string, and for ImageMagick and
    * GraphicsMagick we return the path to the directory containing the appropriate binaries.
    */
-  public static function detect_toolkits() {
+  static function detect_toolkits() {
     return array("gd" => gd_info(),
                  "imagemagick" => dirname(exec("which convert")),
                  "graphicsmagick" => dirname(exec("which gm")));
@@ -288,7 +288,7 @@ class graphics_Core {
   /**
    * Choose which driver the Kohana Image library uses.
    */
-  public static function init_toolkit() {
+  static function init_toolkit() {
     switch(module::get_var("core", "graphics_toolkit")) {
     case "gd":
       Kohana::config_set("image.driver", "GD");
@@ -312,12 +312,12 @@ class graphics_Core {
 
   /**
    * Verify that a specific graphics function is available with the active toolkit.
-   * @param  string  $function the function name (eg rotate, resize)
+   * @param  string  $func (eg rotate, resize)
    * @return boolean
    */
-  function can($function) {
+  static function can($func) {
     if (module::get_var("core", "graphics_toolkit") == "gd" &&
-        $function == "rotate" &&
+        $func == "rotate" &&
         !function_exists("imagerotate")) {
       return false;
     }

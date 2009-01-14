@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_menu_Core {
-  public static function admin($menu, $theme) {
+  static function admin($menu, $theme) {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
                ->id("comments")
@@ -26,7 +26,7 @@ class comment_menu_Core {
                ->url(url::site("admin/comments")));
   }
 
-  public static function photo($menu, $theme) {
+  static function photo($menu, $theme) {
     $menu
       ->append(Menu::factory("link")
                ->id("comments")

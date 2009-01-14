@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class slideshow_menu_Core {
-  public static function album($menu, $theme) {
+  static function album($menu, $theme) {
     $menu
       ->append(Menu::factory("link")
                ->id("slideshow")
@@ -27,7 +27,7 @@ class slideshow_menu_Core {
                ->css_id("gSlideshowLink"));
   }
 
-  public static function photo($menu, $theme) {
+  static function photo($menu, $theme) {
     $menu
       ->append(Menu::factory("link")
                ->id("slideshow")

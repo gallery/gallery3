@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_block_Core {
-  public static function head($theme) {
+  static function head($theme) {
     $url = url::file("modules/comment/js/comment.js");
     return "<script src=\"$url\" type=\"text/javascript\"></script>\n";
   }
 
-  public static function photo_bottom($theme) {
+  static function photo_bottom($theme) {
     $block = new Block;
     $block->css_id = "gComments";
     $block->title = t("Comments");

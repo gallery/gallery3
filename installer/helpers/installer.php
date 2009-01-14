@@ -22,8 +22,8 @@ class installer {
   private static $config = array();
   private static $database = null;
   private static $config_errors = false;
-  
-  public static function environment_check() {
+
+  static function environment_check() {
     $failed = false;
     $section = array("header" => "Environment Test",
                      "description" => "The following tests have been run to determine if " .
@@ -31,7 +31,7 @@ class installer {
                      "failed, consult the documention on http://gallery.menalto.com for " .
                      "more information on how to correct the problem.",
                      "msgs" => array());
-    
+
     if (version_compare(PHP_VERSION, "5.2", "<")) {
       $section["msgs"]["PHP Version"] = array("error" => true,
        "text" => sprintf("Gallery3 requires PHP 5.2 or newer, current version: %s.", PHP_VERSION));
@@ -41,16 +41,16 @@ class installer {
         "text" => PHP_VERSION);
     }
 
-    
-    if (!(is_dir(SYSPATH) AND is_file(SYSPATH.'core/Bootstrap'.EXT))) {     
+
+    if (!(is_dir(SYSPATH) AND is_file(SYSPATH.'core/Bootstrap'.EXT))) {
       $section["msgs"]["Kohana Directory"] = array("error" => true,
         "text" => "The configured Kohana directory does not exist or does not contain the required files.");
     } else {
       $section["msgs"]["Kohana Directory"] = array("error" => false,
         "text" => SYSPATH);
     }
-                                                                       
-    if (!(is_dir(APPPATH) AND is_file(APPPATH.'config/config'.EXT))) {     
+
+    if (!(is_dir(APPPATH) AND is_file(APPPATH.'config/config'.EXT))) {
       $section["msgs"]["Application Directory"] = array("error" => true,
         "text" => "The configured Gallery3 application directory does not exist or does not contain the required files.");
       $failed = true;
@@ -58,8 +58,8 @@ class installer {
       $section["msgs"]["Application Directory"] = array("error" => false,
         "text" => APPPATH);
     }
-                                                                            
-    if (!(is_dir(MODPATH))) {     
+
+    if (!(is_dir(MODPATH))) {
       $section["msgs"]["Modules Directory"] = array("error" => true,
         "text" => "The configured Gallery3 modules directory does not exist or does not contain the required files.");
       $failed = true;
@@ -67,8 +67,8 @@ class installer {
       $section["msgs"]["Modules Directory"] = array("error" => false,
         "text" => MODPATH);
     }
-                                                                            
-    if (!(is_dir(THEMEPATH))) {     
+
+    if (!(is_dir(THEMEPATH))) {
       $section["msgs"]["Theme Directory"] = array("error" => true,
         "text" => "The configured Gallery3 themes directory does not exist or does not contain the required files.");
       $failed = true;
@@ -76,13 +76,13 @@ class installer {
       $section["msgs"]["Themes Directory"] = array("error" => false,
         "text" => THEMEPATH);
     }
-                                                                            
+
     if (!@preg_match("/^.$/u", utf8_encode("\xF1"))) {
       $section["msgs"]["PCRE UTF-8"] = array("error" => true,
         "text" => "Perl-Compatible Regular Expressions has not been compiled with UTF-8 support.",
         "html" => "<a href=\"http://php.net/pcre\">PCRE</a> has not been compiled with UTF-8 support.");
       $failed = true;
-    } else if (!@preg_match("/^\pL$/u", utf8_encode("\xF1"))) {             
+    } else if (!@preg_match("/^\pL$/u", utf8_encode("\xF1"))) {
       $section["msgs"]["PCRE UTF-8"] = array("error" => true,
         "text" => "Perl-Compatible Regular Expressions has not been compiled with Unicode support.",
         "html" => "<a href=\"http://php.net/pcre\">PCRE</a> has not been compiled with Unicode property support.");
@@ -101,7 +101,7 @@ class installer {
       $section["msgs"]["Reflection Enabled"] = array("error" => false,
         "text" => "Pass");
     }
-                                                                            
+
     if (!(function_exists("filter_list"))) {
       $section["msgs"]["Filters Enabled"] = array("error" => true,
         "text" => "The filter extension is either not loaded or not compiled in.",
@@ -154,11 +154,11 @@ class installer {
         "text" => "Pass");
     }
     self::$messages[] = $section;
- 
+
     return !$failed;
   }
 
-  public static function display_requirements($errors=false) {
+  static function display_requirements($errors=false) {
     self::$config_errors = $errors;
     if (PHP_SAPI == 'cli') {
       print self::_render("installer/views/installer.txt");
@@ -167,7 +167,7 @@ class installer {
     }
   }
 
-  public static function parse_cli_parms($argv) {
+  static function parse_cli_parms($argv) {
     $section = array("header" => "Installation Parameters",
                      "description" => "The following parameters will be used to install and " .
                      "configure your Gallery3 installation.",
@@ -219,16 +219,16 @@ class installer {
 
     if (!empty($arguments["modules"])) {
       $modules = explode(",", $arguments["modules"]);
-    
+
       $config["modules"] = array_merge($config["modules"], array_fill_keys($modules, 1));
       unset($arguments["modules"]);
-    }                                    
+    }
 
     foreach (array_keys($config["modules"]) as $module) {
       unset($config["modules"][$module]);
       $config["modules"][trim($module)] = 1;
     }
-    
+
     self::$config = array_merge($config, $arguments);
 
     foreach (self::$config as $key => $value) {
@@ -248,7 +248,7 @@ class installer {
     self::$messages[] = $section;
   }
 
-  public static function check_database_authorization() {
+  static function check_database_authorization() {
     $section = array("header" => "Database Configuration",
                      "description" => "Gallery3 requires the following database configuration.",
                      "msgs" => array());
@@ -282,7 +282,7 @@ class installer {
       $section["msgs"]["Database Empty"] = array("text" => "Database '$dbname' is not empty",
                                            "error" => true);
     }
-    
+
     $missing = array();
     $rights = self::$database->get_access_rights($dbname);
 
@@ -300,13 +300,13 @@ class installer {
       $section["msgs"]["Privileges"] = array("text" => "Required priviledges defined.",
                                              "error" => false);
     }
-    
+
     self::$messages[] = $section;
 
     return $db_config_valid;
   }
 
-  public static function check_docroot_writable() {
+  static function check_docroot_writable() {
     $section = array("header" => "File System Access",
                      "description" => "The requires the following file system configuration.",
                      "msgs" => array());
@@ -325,7 +325,7 @@ class installer {
     return $writable;
   }
 
-  public static function setup_kohana() {
+  static function setup_kohana() {
     define('KOHANA_VERSION',  '2.3');
     define('KOHANA_CODENAME', 'accipiter');
 
@@ -352,7 +352,7 @@ class installer {
     Kohana::config("locale.language");
   }
 
-  public static function install() {
+  static function install() {
     ob_start();
     $step = 0;
     $modules[] = array();
@@ -405,7 +405,7 @@ class installer {
           $step = -1;
         }
       }
-          
+
     } catch (Exception $e) {
       self::print_exception($e);
     }
@@ -414,7 +414,7 @@ class installer {
     return $return;
   }
 
-  public static function print_exception($exception) {
+  static function print_exception($exception) {
     // Beautify backtrace
     try {
     $trace = self::_backtrace($exception);
@@ -426,7 +426,7 @@ class installer {
     $message  = $exception->getMessage();
     $file     = $exception->getFile();
     $line     = $exception->getLine();
-    
+
     print "$type Occurred: $message \nin {$file}[$line]\n$trace";
     // Turn off error reporting
     error_reporting(0);
@@ -486,7 +486,7 @@ class installer {
    * @param   array   backtrace generated by an exception or debug_backtrace
    * @return  string
    */
-  public static function _backtrace($exception) {
+  private static function _backtrace($exception) {
     $trace = $exception->getTrace();
     if ( ! is_array($trace)) {
       return;
@@ -501,8 +501,8 @@ class installer {
     if ($exception instanceof ErrorException) {
       $last = array_shift($trace);
       $args = !empty($last["args"]) ? $last["args"] : $args;
-    } 
-    
+    }
+
     foreach ($trace as $entry) {
       $temp = $cli ? "" : "<li>";
 

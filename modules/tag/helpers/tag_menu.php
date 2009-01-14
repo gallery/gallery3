@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class tag_menu_Core {
-  public static function admin($menu, $theme) {
+  static function admin($menu, $theme) {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
                ->id("tags")

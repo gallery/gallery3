@@ -28,7 +28,7 @@ class theme_Core {
    * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
    * active for any given request.
    */
-  public static function load_themes() {
+  static function load_themes() {
     $modules = Kohana::config('core.modules');
     if (Router::$controller == "admin") {
       array_unshift($modules, THEMEPATH . 'admin_default');
@@ -38,7 +38,7 @@ class theme_Core {
     Kohana::config_set('core.modules', $modules);
   }
 
-  public static function get_edit_form_admin($theme) {
+  static function get_edit_form_admin($theme) {
     $form = new Forge("admin/themes/edit/{$theme->id}",
                       '', null, array("id" =>"gThemeDetailsForm"));
     $group = $form->group("edit_theme")->label($theme->description);
@@ -55,12 +55,12 @@ class theme_Core {
     return $form;
   }
 
-  public static function get_edit_form_content($theme_name) {
+  static function get_edit_form_content($theme_name) {
     $file = THEMEPATH . $theme_name . "/theme.info";
     $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
   }
 
-  public static function get_var($theme_id, $name, $default_value = null) {
+  static function get_var($theme_id, $name, $default_value = null) {
     return module::get_var($theme_id, $name, module::get_var("core", $name, $default_value));
   }
 }

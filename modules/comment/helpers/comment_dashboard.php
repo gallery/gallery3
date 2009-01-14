@@ -18,11 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_dashboard_Core {
-  public static function get_list() {
+  static function get_list() {
     return array("recent_comments" => t("Recent Comments"));
   }
 
-  public static function get_block($block_id) {
+  static function get_block($block_id) {
     $block = new Block();
     switch ($block_id) {
     case "recent_comments":

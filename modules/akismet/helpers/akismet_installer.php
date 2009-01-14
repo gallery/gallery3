@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class akismet_installer {
-  public static function install() {
+  static function install() {
     $version = module::get_version("akismet");
 
     if ($version == 0) {
@@ -28,7 +28,7 @@ class akismet_installer {
     akismet::check_config();
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     module::delete("akismet");
   }
 }

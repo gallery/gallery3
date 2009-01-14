@@ -21,7 +21,7 @@ class user_event_Core {
   /**
    * Initialization.
    */
-  public static function gallery_ready() {
+  static function gallery_ready() {
     user::load_user();
   }
 }

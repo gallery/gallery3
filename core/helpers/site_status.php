@@ -28,8 +28,8 @@ class site_status_Core {
    * @param string  $msg           a detailed message
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  public static function success($msg, $permanent_key) {
-    self::add($msg, self::SUCCESS, $permanent_key);
+  static function success($msg, $permanent_key) {
+    self::_add($msg, self::SUCCESS, $permanent_key);
   }
 
   /**
@@ -37,8 +37,8 @@ class site_status_Core {
    * @param string  $msg           a detailed message
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  public static function info($msg, $permanent_key) {
-    self::add($msg, self::INFO, $permanent_key);
+  static function info($msg, $permanent_key) {
+    self::_add($msg, self::INFO, $permanent_key);
   }
 
   /**
@@ -46,8 +46,8 @@ class site_status_Core {
    * @param string  $msg           a detailed message
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  public static function warning($msg, $permanent_key) {
-    self::add($msg, self::WARNING, $permanent_key);
+  static function warning($msg, $permanent_key) {
+    self::_add($msg, self::WARNING, $permanent_key);
   }
 
   /**
@@ -55,8 +55,8 @@ class site_status_Core {
    * @param string  $msg           a detailed message
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  public static function error($msg, $permanent_key) {
-    self::add($msg, self::ERROR, $permanent_key);
+  static function error($msg, $permanent_key) {
+    self::_add($msg, self::ERROR, $permanent_key);
   }
 
   /**
@@ -65,7 +65,7 @@ class site_status_Core {
    * @param integer $severity      one of the severity constants
    * @param string  $permanent_key make this message permanent and store it under this key
    */
-  private function add($msg, $severity, $permanent_key) {
+  private static function _add($msg, $severity, $permanent_key) {
     $message = ORM::factory("message")
       ->where("key", $permanent_key)
       ->find();
@@ -81,7 +81,7 @@ class site_status_Core {
    * Remove any permanent message by key.
    * @param string $permanent_key
    */
-  public function clear($permanent_key) {
+  static function clear($permanent_key) {
     $message = ORM::factory("message")->where("key", $permanent_key)->find();
     if ($message->loaded) {
       $message->delete();
@@ -94,7 +94,7 @@ class site_status_Core {
    * issues that need to be resolved.  Transient ones are only displayed once.
    * @return html text
    */
-  public function get() {
+  static function get() {
     if (!user::active()->admin) {
       return;
     }
@@ -114,7 +114,7 @@ class site_status_Core {
    * @param  integer $severity
    * @return string
    */
-  public function severity_class($severity) {
+  static function severity_class($severity) {
     switch($severity) {
     case self::SUCCESS:
       return "gSuccess";

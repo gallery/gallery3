@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class rearrange_block_Core {
-  public static function head($theme) {
+  static function head($theme) {
     $head[] = html::script("modules/rearrange/js/jquery.gallery.rearrange.tree.js");
 
     $url = url::file("modules/rearrange/css/rearrange.css");

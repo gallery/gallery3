@@ -27,7 +27,7 @@ class module_Core {
   private static $module_names = array();
   private static $modules = array();
 
-  public static function get_version($module_name) {
+  static function get_version($module_name) {
     return ORM::factory("module")->where("name", $module_name)->find()->version;
   }
 
@@ -36,7 +36,7 @@ class module_Core {
    * @param string  $module_name
    * @param integer $version
    */
-  public static function set_version($module_name, $version) {
+  static function set_version($module_name, $version) {
     $module = ORM::factory("module")->where("name", $module_name)->find();
     if (!$module->loaded) {
       $module->name = $module_name;
@@ -50,7 +50,7 @@ class module_Core {
    * Load the corresponding Module_Model
    * @param string $module_name
    */
-  public static function get($module_name) {
+  static function get($module_name) {
     return model_cache::get("module", $module_name, "name");
   }
 
@@ -58,7 +58,7 @@ class module_Core {
    * Delete the corresponding Module_Model
    * @param string $module_name
    */
-  public static function delete($module_name) {
+  static function delete($module_name) {
     $module = ORM::factory("module")->where("name", $module_name)->find();
     if ($module->loaded) {
       $db = Database::instance();
@@ -76,21 +76,21 @@ class module_Core {
    * Check to see if a module is installed
    * @param string $module_name
    */
-  public static function is_installed($module_name) {
+  static function is_installed($module_name) {
     return !empty(self::$module_names[$module_name]);
   }
 
   /**
    * Return the list of installed modules.
    */
-  public static function installed() {
+  static function installed() {
     return self::$modules;
   }
 
   /**
    * Return the list of available modules.
    */
-  public static function available() {
+  static function available() {
     $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
     foreach (array_merge(array("core/module.info"), glob(MODPATH . "*/module.info")) as $file) {
       $module_name = basename(dirname($file));
@@ -112,7 +112,7 @@ class module_Core {
   /**
    * Install a module.
    */
-  public static function install($module_name) {
+  static function install($module_name) {
     $installer_class = "{$module_name}_installer";
     Kohana::log("debug", "$installer_class install (initial)");
     if ($module_name != "core") {
@@ -136,7 +136,7 @@ class module_Core {
    * Uninstall a module.
 
    */
-  public static function uninstall($module_name) {
+  static function uninstall($module_name) {
     $installer_class = "{$module_name}_installer";
     Kohana::log("debug", "$installer_class uninstall");
     call_user_func(array($installer_class, "uninstall"));
@@ -146,7 +146,7 @@ class module_Core {
   /**
    * Load the active modules.  This is called at bootstrap time.
    */
-  public static function load_modules() {
+  static function load_modules() {
     // Reload module list from the config file since we'll do a refresh after calling install()
     $core = Kohana::config_load("core");
     $kohana_modules = $core["modules"];
@@ -181,14 +181,14 @@ class module_Core {
 
     self::event("gallery_ready");
   }
-  public static function dummy_error_handler() { }
+  static function dummy_error_handler() { }
 
   /**
    * Run a specific event on all active modules.
    * @param string $name the event name
    * @param mixed  $data data to pass to each event handler
    */
-  public static function event($name, &$data=null) {
+  static function event($name, &$data=null) {
     foreach (self::installed() as $module) {
       $class = "{$module->name}_event";
       $function = str_replace(".", "_", $name);
@@ -207,7 +207,7 @@ class module_Core {
    * @param string $default_value
    * @return the value
    */
-  public static function get_var($module_name, $name, $default_value=null) {
+  static function get_var($module_name, $name, $default_value=null) {
     $var = ORM::factory("var")
       ->where("module_name", $module_name)
       ->where("name", $name)
@@ -221,7 +221,7 @@ class module_Core {
    * @param string $name
    * @param string $value
    */
-  public static function set_var($module_name, $name, $value) {
+  static function set_var($module_name, $name, $value) {
     $var = ORM::factory("var")
       ->where("module_name", $module_name)
       ->where("name", $name)
@@ -241,7 +241,7 @@ class module_Core {
    * @param string $name
    * @param string $increment (optional, default is 1)
    */
-  public static function incr_var($module_name, $name, $increment=1) {
+  static function incr_var($module_name, $name, $increment=1) {
     Database::instance()->query(
       "UPDATE `vars` SET `value` = `value` + $increment " .
       "WHERE `module_name` = '$module_name' " .
@@ -253,7 +253,7 @@ class module_Core {
    * @param string $module_name
    * @param string $name
    */
-  public static function clear_var($module_name, $name) {
+  static function clear_var($module_name, $name) {
     $var = ORM::factory("var")
       ->where("module_name", $module_name)
       ->where("name", $name)

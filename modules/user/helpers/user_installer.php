@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_installer {
-  public static function install() {
+  static function install() {
     $db = Database::instance();
     $version = module::get_version("user");
 
@@ -87,7 +87,7 @@ class user_installer {
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     // Delete all users and groups so that we give other modules an opportunity to clean up
     foreach (ORM::factory("user")->find_all() as $user) {
       $user->delete();

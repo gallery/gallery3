@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class watermark_installer {
-  public static function install() {
+  static function install() {
     $db = Database::instance();
     $version = module::get_version("watermark");
     if ($version == 0) {
@@ -39,7 +39,7 @@ class watermark_installer {
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     graphics::remove_rules("watermark");
     module::delete("watermark");
     Database::instance()->query("DROP TABLE `watermarks`");

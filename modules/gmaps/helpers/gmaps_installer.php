@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gmaps_installer {
-  public static function install() {
+  static function install() {
     $version = module::get_version("gmaps");
     if ($version == 0) {
       module::set_version("gmaps", 1);
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     module::delete("gmaps");
   }
 }

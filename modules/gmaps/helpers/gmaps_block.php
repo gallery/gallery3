@@ -19,7 +19,7 @@
  */
 
 class gmaps_block_Core {
-  public static function sidebar_blocks($theme) {
+  static function sidebar_blocks($theme) {
     if ($theme->item()) {
       $block = new Block();
       $block->css_id = "gMaps";

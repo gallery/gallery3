@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_installer {
-  public static function install() {
+  static function install() {
     $db = Database::instance();
     $version = module::get_version("comment");
 
@@ -56,7 +56,7 @@ class comment_installer {
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `comments`;");
     module::delete("comment");

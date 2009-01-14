@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_block_Core {
-  public static function head($theme) {
+  static function head($theme) {
     // @todo: move this into the theme
     $user = user::active();
     if (!user::active()->guest) {
@@ -27,7 +27,7 @@ class user_block_Core {
     }
   }
 
-  public static function header_top($theme) {
+  static function header_top($theme) {
     $view = new View("login.html");
     $view->user = user::active();
     return $view->render();

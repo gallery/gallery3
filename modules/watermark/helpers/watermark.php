@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class watermark_Core {
-  public static function get_add_form() {
+  static function get_add_form() {
     for ($i = 1; $i <= 100; $i++) {
       $range[$i] = $i;
     }
@@ -36,7 +36,7 @@ class watermark_Core {
     return $form;
   }
 
-  public static function get_edit_form() {
+  static function get_edit_form() {
     for ($i = 1; $i <= 100; $i++) {
       $range[$i] = $i;
     }
@@ -53,14 +53,14 @@ class watermark_Core {
     return $form;
   }
 
-  public static function get_delete_form() {
+  static function get_delete_form() {
     $form = new Forge("admin/watermarks/delete", "", "post");
     $group = $form->group("delete_watermark")->label(t("Really delete Watermark?"));
     $group->submit("")->value(t("Delete"));
     return $form;
   }
 
-  public static function positions() {
+  static function positions() {
     return array("northwest" => t("Northwest"),
                  "north" => t("North"),
                  "northeast" => t("Northeast"),
@@ -72,7 +72,7 @@ class watermark_Core {
                  "southeast" => t("Southeast"));
   }
 
-  public static function position($key) {
+  static function position($key) {
     $positions = self::positions();
     return $positions[$key];
   }

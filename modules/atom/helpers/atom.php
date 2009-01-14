@@ -30,7 +30,7 @@ class atom_Core {
    * @param int Unix timestamp
    * @return string Internet timestamp
    */
-  public static function unix_to_internet_timestamp($timestamp) {
+  static function unix_to_internet_timestamp($timestamp) {
     return sprintf("%sZ", date("Y-m-d\TH:i:s", $timestamp));
   }
 }

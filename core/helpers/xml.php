@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class xml_Core {
-  public static function to_xml($array, $element_names) {
+  static function to_xml($array, $element_names) {
     $xml = "<$element_names[0]>\n";
     foreach ($array as $key => $value) {
       if (is_array($value)) {

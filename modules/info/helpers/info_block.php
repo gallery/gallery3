@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class info_block_Core {
-  public static function sidebar_blocks($theme) {
+  static function sidebar_blocks($theme) {
     if ($theme->item()) {
       $block = new Block();
       $block->css_id = "gMetadata";
@@ -28,7 +28,7 @@ class info_block_Core {
     }
   }
 
-  public static function thumb_info($theme, $item) {
+  static function thumb_info($theme, $item) {
     $results = "";
     if ($item->view_count) {
       $results .= "<li>";

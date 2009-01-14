@@ -58,7 +58,7 @@ class rest_Core {
    * Returns the HTTP request method taking into consideration PUT/DELETE tunneling.
    * @return string HTTP request method
    */
-  public static function request_method() {
+  static function request_method() {
     Kohana::log("debug", "request::method: " . request::method());
     if (request::method() == "get") {
       return "get";
@@ -76,7 +76,7 @@ class rest_Core {
    * Choose an output format based on what the client prefers to accept.
    * @return string "html", "xml" or "json"
    */
-  public static function output_format() {
+  static function output_format() {
     // Pick a format, but let it be overridden.
     $input = Input::instance();
     $fmt = $input->get(
@@ -95,7 +95,7 @@ class rest_Core {
    * Set HTTP response code.
    * @param string Use one of the status code constants defined in this class.
    */
-  public static function http_status($status_code) {
+  static function http_status($status_code) {
     header("HTTP/1.1 " . $status_code);
   }
 
@@ -103,7 +103,7 @@ class rest_Core {
    * Set HTTP Location header.
    * @param string URL
    */
-  public static function http_location($url) {
+  static function http_location($url) {
     header("Location: " . $url);
   }
 
@@ -111,7 +111,7 @@ class rest_Core {
    * Set HTTP Content-Type header.
    * @param string content type
    */
-  public static function http_content_type($type) {
+  static function http_content_type($type) {
     header("Content-Type: " . $type);
   }
 }

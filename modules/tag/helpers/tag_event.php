@@ -24,7 +24,7 @@ class tag_event_Core {
    *
    * @param Item_Model $photo
    */
-  public static function photo_created($photo) {
+  static function photo_created($photo) {
     $path = $photo->file_path();
     $tags = array();
     $size = getimagesize($photo->file_path(), $info);

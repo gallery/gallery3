@@ -27,32 +27,32 @@ class message_Core {
    * Report a successful event.
    * @param string  $msg           a detailed message
    */
-  public static function success($msg) {
-    self::add($msg, self::SUCCESS);
+  static function success($msg) {
+    self::_add($msg, self::SUCCESS);
   }
 
   /**
    * Report an informational event.
    * @param string  $msg           a detailed message
    */
-  public static function info($msg) {
-    self::add($msg, self::INFO);
+  static function info($msg) {
+    self::_add($msg, self::INFO);
   }
 
   /**
    * Report that something went wrong, not fatal, but worth investigation.
    * @param string  $msg           a detailed message
    */
-  public static function warning($msg) {
-    self::add($msg, self::WARNING);
+  static function warning($msg) {
+    self::_add($msg, self::WARNING);
   }
 
   /**
    * Report that something went wrong that should be fixed.
    * @param string  $msg           a detailed message
    */
-  public static function error($msg) {
-    self::add($msg, self::ERROR);
+  static function error($msg) {
+    self::_add($msg, self::ERROR);
   }
 
   /**
@@ -60,7 +60,7 @@ class message_Core {
    * @param string  $msg           a detailed message
    * @param integer $severity      one of the severity constants
    */
-  private function add($msg, $severity) {
+  private static function _add($msg, $severity) {
     $session = Session::instance();
     $status = $session->get("messages");
     $status[] = array($msg, $severity);
@@ -73,7 +73,7 @@ class message_Core {
    * issues that need to be resolved.  Transient ones are only displayed once.
    * @return html text
    */
-  public function get() {
+  static function get() {
     $buf = array();
 
     $messages = Session::instance()->get_once("messages", array());
@@ -90,7 +90,7 @@ class message_Core {
    * @param  integer $severity
    * @return string
    */
-  public function severity_class($severity) {
+  static function severity_class($severity) {
     switch($severity) {
     case self::SUCCESS:
       return "gSuccess";

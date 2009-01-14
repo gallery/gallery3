@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class tag_installer {
-  public static function install() {
+  static function install() {
     $db = Database::instance();
     $version = module::get_version("tag");
     if ($version == 0) {
@@ -42,7 +42,7 @@ class tag_installer {
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `tags`;");
     $db->query("DROP TABLE IF EXISTS `items_tags`;");

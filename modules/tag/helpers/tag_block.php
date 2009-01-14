@@ -18,12 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class tag_block_Core {
-  public static function head($theme) {
+  static function head($theme) {
     $url = url::file("modules/tag/js/tag.js");
     return "<script src=\"$url\" type=\"text/javascript\"></script>";
   }
 
-  public static function sidebar_blocks($theme) {
+  static function sidebar_blocks($theme) {
     $block = new Block();
     $block->css_id = "gTag";
     $block->title = t("Popular Tags");
@@ -40,7 +40,7 @@ class tag_block_Core {
     return $block;
   }
 
-  public static function sort_by_name($tag1, $tag2) {
+  static function sort_by_name($tag1, $tag2) {
     return strcasecmp($tag1->name, $tag2->name);
   }
 }

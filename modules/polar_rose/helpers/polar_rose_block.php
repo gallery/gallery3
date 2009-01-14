@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class polar_rose_block_Core {
-  public static function head($theme) {
+  static function head($theme) {
     if (module::is_installed("media_rss")) {
       if ($theme->item()) {
         $url = media_rss::item_feed($theme->item());
@@ -44,7 +44,7 @@ class polar_rose_block_Core {
     }
   }
 
-  public static function page_bottom($theme) {
+  static function page_bottom($theme) {
     return "<div id=\"gPolarRose\"></div>";
   }
 }

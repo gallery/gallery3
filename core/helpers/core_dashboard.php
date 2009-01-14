@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class core_dashboard_Core {
-  public static function get_list() {
+  static function get_list() {
     return array(
       "welcome" => t("Welcome to Gallery 3!"),
       "photo_stream" => t("Photo Stream"),
@@ -28,7 +28,7 @@ class core_dashboard_Core {
       "project_news" => t("Gallery Project News"));
   }
 
-  public static function get_block($block_id) {
+  static function get_block($block_id) {
     $block = new Block();
     switch($block_id) {
     case "welcome":

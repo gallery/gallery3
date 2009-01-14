@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class akismet_event_Core {
-  public static function comment_created($comment) {
+  static function comment_created($comment) {
     switch(akismet::check_comment($comment)) {
     case "spam":
       $comment->state = "spam";
@@ -36,7 +36,7 @@ class akismet_event_Core {
     $comment->save();
   }
 
-  public static function comment_changed($old, $new) {
+  static function comment_changed($old, $new) {
     if ($old->state != "spam" && $new->state == "spam") {
       akismet::submit_spam($new);
     } else if ($old->state == "spam" && $new->state != "spam") {

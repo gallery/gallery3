@@ -19,12 +19,12 @@
  */
 
 class media_rss_Core {
-  public static function item_feed($item) {
+  static function item_feed($item) {
     $id = $item->type == "album" ? $item->id : $item->parent_id;
     return url::site("media_rss/albums/$id");
   }
 
-  public static function tag_feed($tag) {
+  static function tag_feed($tag) {
     return url::site("media_rss/tags/$tag->id}");
   }
 }

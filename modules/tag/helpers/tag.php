@@ -28,7 +28,7 @@ class tag_Core {
    * @return Tag_Model
    * @throws Exception("@todo {$tag_name} WAS_NOT_ADDED_TO {$item->id}")
    */
-  public static function add($item, $tag_name) {
+  static function add($item, $tag_name) {
     $tag = ORM::factory("tag")->where("name", $tag_name)->find();
     if (!$tag->loaded) {
       $tag->name = $tag_name;
@@ -51,7 +51,7 @@ class tag_Core {
    *
    * @return ORM_Iterator of Tag_Model in descending tag count order
    */
-  public static function popular_tags($count) {
+  static function popular_tags($count) {
     return ORM::factory("tag")
       ->orderby("count", "DESC")
       ->limit($count)
@@ -64,7 +64,7 @@ class tag_Core {
    * @param integer $count the number of tags
    * @return View
    */
-  public static function cloud($count) {
+  static function cloud($count) {
     $tags = tag::popular_tags($count)->as_array();
     if ($tags) {
       $cloud = new View("tag_cloud.html");
@@ -75,7 +75,7 @@ class tag_Core {
     }
   }
 
-  public static function get_add_form($item) {
+  static function get_add_form($item) {
     $form = new Forge("tags", "", "post", array("id" => "gAddTagForm"));
     $group = $form->group("add_tag")->label(t("Add Tag"));
     $group->input("name")->label(t("Add tag"));
@@ -85,7 +85,7 @@ class tag_Core {
     return $form;
   }
 
-  public static function get_rename_form($tag) {
+  static function get_rename_form($tag) {
     $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "gRenameTagForm"));
     $group = $form->group("rename_tag")->label(t("Rename Tag"));
     $group->input("name")->label(t("Tag name"))->value($tag->name);
@@ -95,7 +95,7 @@ class tag_Core {
     return $form;
   }
 
-  public static function get_delete_form($tag) {
+  static function get_delete_form($tag) {
     $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "gDeleteTagForm"));
     $group = $form->group("delete_tag")->label(t("Really delete tag {{tag_name}}?", array("tag_name" => $tag->name)));
     $group->submit("")->value(t("Delete Tag"));

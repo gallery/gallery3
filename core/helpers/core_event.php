@@ -19,27 +19,27 @@
  */
 
 class core_event_Core {
-  public static function group_created($group) {
+  static function group_created($group) {
     access::add_group($group);
   }
 
-  public static function group_before_delete($group) {
+  static function group_before_delete($group) {
     access::delete_group($group);
   }
 
-  public static function photo_created($photo) {
+  static function photo_created($photo) {
     access::add_item($photo);
   }
 
-  public static function photo_before_delete($photo) {
+  static function photo_before_delete($photo) {
     access::delete_item($photo);
   }
 
-  public static function album_created($album) {
+  static function album_created($album) {
     access::add_item($album);
   }
 
-  public static function album_before_delete($album) {
+  static function album_before_delete($album) {
     access::delete_item($album);
   }
 }

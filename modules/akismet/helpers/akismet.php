@@ -20,7 +20,7 @@
 class akismet_Core {
   public static $test_mode = TEST_MODE;
 
-  public static function get_configure_form() {
+  static function get_configure_form() {
     $form = new Forge("admin/akismet", "", "post");
     $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
     $group->input("api_key")->label(t("API Key"))->value(module::get_var("akismet", "api_key"));
@@ -34,7 +34,7 @@ class akismet_Core {
    * @param  Comment_Model  $comment  A comment to check
    * @return $string "spam", "ham" or "unknown"
    */
-  public static function check_comment($comment) {
+  static function check_comment($comment) {
     if (akismet::$test_mode) {
       return;
     }
@@ -55,7 +55,7 @@ class akismet_Core {
    * Tell Akismet that this comment is spam
    * @param  Comment_Model  $comment  A comment to check
    */
-  public static function submit_spam($comment) {
+  static function submit_spam($comment) {
     if (akismet::$test_mode) {
       return;
     }
@@ -68,7 +68,7 @@ class akismet_Core {
    * Tell Akismet that this comment is ham
    * @param  Comment_Model  $comment  A comment to check
    */
-  public static function submit_ham($comment) {
+  static function submit_ham($comment) {
     if (akismet::$test_mode) {
       return;
     }
@@ -82,14 +82,14 @@ class akismet_Core {
    * @param  string   $api_key the API key
    * @return boolean
    */
-  public static function validate_key($api_key) {
+  static function validate_key($api_key) {
     $request = self::_build_verify_request($api_key);
     $response = self::_http_post($request, "rest.akismet.com");
     return "valid" == $response->body[0];
   }
 
 
-  public static function check_config() {
+  static function check_config() {
     $api_key = module::get_var("akismet", "api_key");
     if (empty($api_key)) {
       site_status::warning(
@@ -102,7 +102,7 @@ class akismet_Core {
   }
 
 
-  public static function _build_verify_request($api_key) {
+  static function _build_verify_request($api_key) {
     $base_url = url::base(false, "http");
     $query_string = "key={$api_key}&blog=$base_url";
 
@@ -118,7 +118,7 @@ class akismet_Core {
     return $http_request;
   }
 
-  public static function _build_request($function, $comment) {
+  static function _build_request($function, $comment) {
     $comment_data = array();
     $comment_data["HTTP_ACCEPT"] = $comment->server_http_accept;
     $comment_data["HTTP_ACCEPT_ENCODING"] = $comment->server_http_accept_encoding;

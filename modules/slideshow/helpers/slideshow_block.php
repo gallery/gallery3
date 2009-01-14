@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class slideshow_block_Core {
-  public static function head($theme) {
+  static function head($theme) {
     return "<script src=\"http://lite.piclens.com/current/piclens.js\" type=\"text/javascript\">" .
       "</script>";
   }

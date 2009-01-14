@@ -21,7 +21,6 @@ class File_Structure_Test extends Unit_Test_Case {
   public function no_trailing_closing_php_tag_test() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
-    $incorrect = array();
     foreach ($dir as $file) {
       if (!preg_match("|\.html\.php$|", $file->getPathname())) {
         $this->assert_false(
@@ -86,15 +85,14 @@ class File_Structure_Test extends Unit_Test_Case {
   }
 
   public function no_tabs_in_our_code_test() {
-    $dir = new GalleryCodeFilterIterator(
-      new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
-    $incorrect = array();
+    $dir = new PhpCodeFilterIterator(
+      new GalleryCodeFilterIterator(
+        new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator(DOCROOT))));
     foreach ($dir as $file) {
-      if (substr($file->getFilename(), -4) == ".php") {
-        $this->assert_false(
-          preg_match('/\t/', file_get_contents($file)),
-          "{$file->getPathname()} has tabs in it");
-      }
+      $this->assert_false(
+        preg_match('/\t/', file_get_contents($file)),
+        "{$file->getPathname()} has tabs in it");
     }
   }
 
@@ -108,6 +106,30 @@ class File_Structure_Test extends Unit_Test_Case {
       }
     }
     return $copy;
+  }
+
+  public function helpers_are_static_test() {
+    $dir = new PhpCodeFilterIterator(
+      new GalleryCodeFilterIterator(
+        new RecursiveIteratorIterator(
+          new RecursiveDirectoryIterator(DOCROOT))));
+    foreach ($dir as $file) {
+      if (basename(dirname($file)) == "helpers") {
+        foreach (file($file) as $line) {
+          $this->assert_true(
+            !preg_match("/\sfunction\s.*\(/", $line) ||
+            preg_match("/^\s*(private static function _|static function)/", $line),
+            "should be \"static function foo\" or \"private static function _foo\":\n" .
+            "$file\n$line\n");
+        }
+      }
+    }
+  }
+}
+
+class PhpCodeFilterIterator extends FilterIterator {
+  public function accept() {
+    return substr($this->getInnerIterator()->getPathName(), -4) == ".php";
   }
 }
 

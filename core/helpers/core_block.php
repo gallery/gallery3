@@ -19,7 +19,7 @@
  */
 
 class core_block_Core {
-  public static function head($theme) {
+  static function head($theme) {
     $buf = "";
     if (Session::instance()->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
@@ -33,34 +33,34 @@ class core_block_Core {
     return $buf;
   }
 
-  public static function thumb_top($theme, $child) {
+  static function thumb_top($theme, $child) {
     if ($child->type == "photo" && access::can("edit", $child)) {
       $edit_link = url::site("quick/pane/$child->id");
       return "<div class=\"gQuick\" href=\"$edit_link\">";
     }
   }
 
-  public static function thumb_bottom($theme, $child) {
+  static function thumb_bottom($theme, $child) {
     if ($child->type == "photo" && access::can("edit", $child)) {
       return "</div>";
     }
   }
 
-  public static function admin_head($theme) {
+  static function admin_head($theme) {
     if (Session::instance()->get("debug")) {
       return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/debug.css") . "\" />";
     }
   }
 
-  public static function page_bottom($theme) {
+  static function page_bottom($theme) {
     if (Session::instance()->get("profiler", false)) {
       $profiler = new Profiler();
       $profiler->render();
     }
   }
 
-  public static function admin_page_bottom($theme) {
+  static function admin_page_bottom($theme) {
     if (Session::instance()->get("profiler", false)) {
       $profiler = new Profiler();
       $profiler->render();

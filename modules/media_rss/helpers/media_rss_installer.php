@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class media_rss_installer {
-  public static function install() {
+  static function install() {
     $version = module::get_version("media_rss");
     if ($version == 0) {
       module::set_version("media_rss", 1);
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     module::delete("media_rss");
   }
 }

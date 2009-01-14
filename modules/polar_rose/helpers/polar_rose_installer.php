@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class polar_rose_installer {
-  public static function install() {
+  static function install() {
     $db = Database::instance();
     $version = module::get_version("polar_rose");
     if ($version == 0) {
@@ -26,7 +26,7 @@ class polar_rose_installer {
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     module::delete("polar_rose");
   }
 }

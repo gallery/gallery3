@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class akismet_menu_Core {
-  public static function admin($menu, $theme) {
+  static function admin($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("akismet")

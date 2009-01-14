@@ -21,7 +21,7 @@ class url extends url_Core {
   /**
    * Just like url::file() except that it returns an absolute URI
    */
-  public static function abs_file($path) {
+  static function abs_file($path) {
     return url::base(false, "http") . $path;
   }
 
@@ -29,14 +29,14 @@ class url extends url_Core {
    * Just like url::site() except that it returns an absolute URI and
    * doesn't take a protocol parameter.
    */
-  public static function abs_site($path) {
+  static function abs_site($path) {
     return url::site($path, "http");
   }
 
   /**
    * Just like url::current except that it returns an absolute URI
    */
-  public static function abs_current($qs=false) {
+  static function abs_current($qs=false) {
     return self::abs_site(url::current($qs));
   }
 }

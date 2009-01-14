@@ -18,24 +18,24 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class dashboard_Core {
-  public static function get_active() {
+  static function get_active() {
     return unserialize(module::get_var("core", "dashboard_blocks", "a:0:{}"));
   }
 
-  public static function add_block($location, $module_name, $block_id) {
+  static function add_block($location, $module_name, $block_id) {
     $blocks = self::get_active();
     $blocks[$location][rand()] = array($module_name, $block_id);
     module::set_var("core", "dashboard_blocks", serialize($blocks));
   }
 
-  public static function remove_block($location, $block_id) {
+  static function remove_block($location, $block_id) {
     $blocks = self::get_active();
     unset($blocks[$location][$block_id]);
     unset($blocks[$location][$block_id]);
     module::set_var("core", "dashboard_blocks", serialize($blocks));
   }
 
-  public static function get_available() {
+  static function get_available() {
     $blocks = array();
 
     foreach (module::installed() as $module) {
@@ -48,7 +48,7 @@ class dashboard_Core {
     return $blocks;
   }
 
-  public static function get_blocks($blocks) {
+  static function get_blocks($blocks) {
     $result = "";
     foreach ($blocks as $id => $desc) {
       if (method_exists("$desc[0]_dashboard", "get_block")) {

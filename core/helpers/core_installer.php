@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class core_installer {
-  public static function install() {
+  static function install() {
     $db = Database::instance();
     $version = 0;
     try {
@@ -246,7 +246,7 @@ class core_installer {
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS `access_caches`;");
     $db->query("DROP TABLE IF EXISTS `access_intents`;");

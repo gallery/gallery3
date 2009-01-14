@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class dir_Core {
-  public static function unlink($path) {
+  static function unlink($path) {
     if (is_dir($path) && is_writable($path)) {
       foreach (new DirectoryIterator($path) as $resource) {
         if ($resource->isDot()) {
