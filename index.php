@@ -45,11 +45,6 @@ define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
 define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
 define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 
-if (!file_exists('var/installed')) {
-  // Run the installer
-  header("Location: installer/index.php");
-}
-
 // Force a test run if we're in command line mode.
 if (PHP_SAPI == 'cli') {
   array_splice($_SERVER['argv'], 1, 0, 'gallery_unit_test');
