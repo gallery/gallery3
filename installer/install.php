@@ -55,11 +55,11 @@ array_shift($argv);          // remove the script name from the arguments
 
 define("DOCROOT", dirname(dirname(__FILE__)) . "/");
 chdir(DOCROOT);
-define('APPPATH', strtr(realpath('core') . '/', DIRECTORY_SEPARATOR, '/'));
-define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
-define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
-define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
-define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
+define('APPPATH', realpath('core') . '/');
+define('MODPATH', realpath('modules') . '/');
+define('THEMEPATH', realpath('themes') . '/');
+define('SYSPATH', realpath('kohana') . '/');
+define('VARPATH', realpath('var') . '/');
 define('TEST_MODE', 0);
 define('EXT', ".php");
 
