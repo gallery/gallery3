@@ -286,18 +286,18 @@ class installer {
     $missing = array();
     $rights = self::$database->get_access_rights($dbname);
 
-    foreach (array("create", "delete", "insert", "select", "update", "alter") as $priviledge) {
-      if (empty($rights[$priviledge])) {
-        $missing[] = $priviledge;
+    foreach (array("create", "delete", "insert", "select", "update", "alter") as $privilege) {
+      if (empty($rights[$privilege])) {
+        $missing[] = $privilege;
       }
     }
     if (!empty($missing)) {
       $db_config_valid = false;
       $section["msgs"]["Privileges"] =
-        array("text" => "The following required priviledges have not been granted: " .
+        array("text" => "The following required privileges have not been granted: " .
               implode(", ", $missing), "error" => true);
     } else {
-      $section["msgs"]["Privileges"] = array("text" => "Required priviledges defined.",
+      $section["msgs"]["Privileges"] = array("text" => "Required privileges defined.",
                                              "error" => false);
     }
 
