@@ -1,21 +1,22 @@
 $(document).ready(function() {
-  $(".gQuick").hover(show_quick, function() {});
+  $(".gItem").hover(show_quick, function() {});
 });
 
 var show_quick = function() {
-  var quick = $(this);
+  var cont = $(this);
+  var quick = $(this).find(".gQuick");
   $("#gQuickPane").remove();
-  quick.append("<div id=\"gQuickPane\"></div>");
-  var img = quick.find("img");
-  var pos = img.position();
+  cont.append("<div id=\"gQuickPane\"></div>");
+  var img = cont.find(".gThumbnail");
+  var pos = cont.position();
   $("#gQuickPane").css({
     "position": "absolute",
     "top": pos.top,
     "left": pos.left,
-    "width": img.innerWidth(),
+    "width": cont.innerWidth(),
     "height": 32
   });
-  quick.hover(function() { }, hide_quick);
+  cont.hover(function() { }, hide_quick);
   $.get(
     quick.attr("href"),
     {},
@@ -23,36 +24,33 @@ var show_quick = function() {
       $("#gQuickPane").html(data);
       $("#gQuickPane a").click(function(e) {
         e.preventDefault();
-        quick_do(quick, $(this), img);
+        quick_do(cont, $(this), img);
       });
     }
   );
 };
 
-var quick_do = function(quick, pane, img) {
+var quick_do = function(cont, pane, img) {
   if (pane.hasClass("gDialogLink")) {
     openDialog(pane, function() { window.location.reload(); });
   } else {
-    img.css("opacity", "0.2");
-    quick.addClass("gLoadingLarge");
+    img.css("opacity", "0.1");
+    cont.addClass("gLoadingLarge");
     $.ajax({
       type: "GET",
       url: pane.attr("href"),
       dataType: "json",
       success: function(data) {
-	img.css("opacity", "1");
-	img.attr("width", data.width);
-	img.attr("height", data.height);
-	img.attr("src", data.src);
-	var pos = img.position();
-	quick.removeClass("gLoadingLarge");
-	$("#gQuickPane").css({
-	  "position": "absolute",
-	  "top": pos.top,
-	  "left": pos.left,
-	  "width": img.innerWidth() + 1,
-	  "height": 32
-	});
+		img.css("opacity", "1");
+		img.attr("width", data.width);
+		img.attr("height", data.height);
+		img.attr("src", data.src);
+		if (data.height > data.width) {
+		  img.css("margin-top", -$("#gQuickPane").height());
+		} else {
+		  img.css("margin-top", 0);			
+		}
+		cont.removeClass("gLoadingLarge");
       }
     });
   }

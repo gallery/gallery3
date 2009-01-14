@@ -6,7 +6,7 @@
 
 #gQuickPane {
   background: #000;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #ccc;
   opacity: 0.8;
 }
 
@@ -16,10 +16,9 @@
   background-repeat: no-repeat;
   cursor: pointer;
   display: block;
-  float: right;
+  float: left;
   height: 16px;
   margin: 8px;
-  top: 0px;
   width: 16px;
 }
 
@@ -31,20 +30,34 @@
   display: none;
 }
 
+#gQuickPane .edit {
+  background-position: 0 0;
+}
+
 #gQuickPane .clockwise {
   background-position: -16px 0;
-  position: absolute;
-  right: 0px;
 }
 
 #gQuickPane .counter-clockwise {
-  background-position: 0 0;
-  left: 0px;
-  position: absolute;
+  background-position: -32px 0;
 }
 
-#gQuickPane .edit {
-  background-position: 0 -16px;
-  left: 42%;
-  position: absolute;
+#gQuickPane .delete {
+  background-position: -48px 0;
+}
+
+#gQuickPane .move {
+  background-position: -64px 0;
+}
+
+#gQuickPane .tag {
+  background-position: -80px 0;
+}
+
+#gQuickPane .cover {
+  background-position: -96px 0;
+}
+
+#gQuickPane .options {
+  background-position: -112px 0;
 }

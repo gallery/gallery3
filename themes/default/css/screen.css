@@ -705,12 +705,12 @@ li.gError select {
 /* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
 
 .gLoadingLarge {
-  background: #fff url('../images/loading-lg.gif') no-repeat center center;
+  background: #e8e8e8 url('../images/loading-lg.gif') no-repeat center center;
   font-size: 0;
 }
 
 .gLoadingSmall {
-  background: #fff url('../images/loading-sm.gif') no-repeat center center;
+  background: #e8e8e8 url('../images/loading-sm.gif') no-repeat center center;
   font-size: 0;
 }
 
