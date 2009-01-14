@@ -207,7 +207,7 @@ class module_Core {
    * @param string $default_value
    * @return the value
    */
-  public function get_var($module_name, $name, $default_value=null) {
+  public static function get_var($module_name, $name, $default_value=null) {
     $var = ORM::factory("var")
       ->where("module_name", $module_name)
       ->where("name", $name)
@@ -221,7 +221,7 @@ class module_Core {
    * @param string $name
    * @param string $value
    */
-  public function set_var($module_name, $name, $value) {
+  public static function set_var($module_name, $name, $value) {
     $var = ORM::factory("var")
       ->where("module_name", $module_name)
       ->where("name", $name)
@@ -241,7 +241,7 @@ class module_Core {
    * @param string $name
    * @param string $increment (optional, default is 1)
    */
-  public function incr_var($module_name, $name, $increment=1) {
+  public static function incr_var($module_name, $name, $increment=1) {
     Database::instance()->query(
       "UPDATE `vars` SET `value` = `value` + $increment " .
       "WHERE `module_name` = '$module_name' " .
@@ -253,7 +253,7 @@ class module_Core {
    * @param string $module_name
    * @param string $name
    */
-  public function clear_var($module_name, $name) {
+  public static function clear_var($module_name, $name) {
     $var = ORM::factory("var")
       ->where("module_name", $module_name)
       ->where("name", $name)
