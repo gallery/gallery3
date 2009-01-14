@@ -172,6 +172,7 @@ class installer {
                      "description" => "The following parameters will be used to install and " .
                      "configure your Gallery3 installation.",
                      "msgs" => array());
+    $arguments = array();
     for ($i=0; $i < count($argv); $i++) {
       switch (strtolower($argv[$i])) {
       case "-d":
