@@ -237,7 +237,7 @@ class installer {
         self::$config[$key] = $value;
         $class = "Install_{$value}_Driver";
         if (!class_exists($class)) {
-          require_once(DOCROOT . "/installer/libraries/$class" . EXT);
+          require_once(DOCROOT . "installer/libraries/$class" . EXT);
         }
       }
       if ($key == "modules") {
@@ -322,30 +322,231 @@ class installer {
               "error" => true);
     }
     self::$messages[] = $section;
-    return !$writable;
+    return $writable;
   }
-  
-  private static function _render($view) {
+
+  public static function setup_kohana() {
+    define('KOHANA_VERSION',  '2.3');
+    define('KOHANA_CODENAME', 'accipiter');
+
+    // Test of Kohana is running in Windows
+    define('KOHANA_IS_WIN', DIRECTORY_SEPARATOR === '\\');
+
+    // Load core files
+    require SYSPATH.'core/utf8'.EXT;
+    require SYSPATH.'core/Event'.EXT;
+    require SYSPATH.'core/Kohana'.EXT;
+
+    // Define Kohana error constant
+    define('E_KOHANA', 42);
+
+    // Define 404 error constant
+    define('E_PAGE_NOT_FOUND', 43);
+
+    // Define database error constant
+    define('E_DATABASE_ERROR', 44);
+
+    // Set autoloader
+    spl_autoload_register(array('Kohana', 'auto_load'));
+
+    Kohana::config("locale.language");
+  }
+
+  public static function install() {
+    ob_start();
+    $step = 0;
+    $modules[] = array();
+    try {
+      while ($step >= 0) {
+        switch ($step) {
+        case 0:
+          if (file_exists("var")) {
+            $step = 1;
+          } else if (mkdir("var", 0774)) {
+            print "'var' directory created\n";
+            $step = 1;
+          } else {
+            $step = -1;
+            print "'var' directory was not created\n";
+          }
+          break;
+        case 1:
+          $db_config = realpath("var/database.php");
+          $data = array("type" => strtolower(self::$config["type"]),
+                        "user" => self::$config["user"],
+                        "password" => self::$config["password"],
+                        "host" => self::$config["host"],
+                        "database" => self::$config["dbname"],
+                        "prefix" => self::$config["prefix"]);
+
+          $config = self::_render("installer/views/database.php", $data);
+          if (file_put_contents($db_config, $config) !== false) {
+            print "'var/database.php' created\n";
+            $step = 2;
+          } else {
+            print "'var/database.php' was not created\n";
+            $step = -1;
+          }
+          break;
+        case 2:
+          foreach (array_keys(self::$config["modules"]) as $module_name) {
+            self::_module_install($module_name);
+            $version = module::get_version($module_name);
+            $modules[] = "$module_name: $version";
+          }
+          $step = 3;
+          break;
+        case 3:
+          if (file_put_contents("var/installed", implode("\n", $modules))) {
+            print "Gallery3 installed\n";
+          } else {
+            print "Unable to write 'var/installed'";
+          }
+          $step = -1;
+        }
+      }
+          
+    } catch (Exception $e) {
+      self::print_exception($e);
+    }
+    $return = ob_get_contents();
+    ob_clean();
+    return $return;
+  }
+
+  public static function print_exception($exception) {
+    // Beautify backtrace
+    try {
+    $trace = self::_backtrace($exception);
+    } catch(Exception $e) {
+      print_r($e);
+    }
+
+    $type     = get_class($exception);
+    $message  = $exception->getMessage();
+    $file     = $exception->getFile();
+    $line     = $exception->getLine();
+    
+    print "$type Occurred: $message \nin {$file}[$line]\n$trace";
+    // Turn off error reporting
+    error_reporting(0);
+  }
+
+  /**
+   * Install a module.
+   */
+  private static function _module_install($module_name) {
+    $installer_class = "{$module_name}_installer";
+    print "$installer_class install (initial)\n";
+    if ($module_name != "core") {
+      require_once(DOCROOT . "modules/${module_name}/helpers/{$installer_class}.php");
+    } else {
+      require_once(DOCROOT . "core/helpers/core_installer.php");
+    }
+
+    $core_config = Kohana::config_load("core");
+    $kohana_modules = $core_config["modules"];
+    $kohana_modules[] = MODPATH . $module_name;
+    Kohana::config_set("core.modules", $kohana_modules);
+
+
+    call_user_func(array($installer_class, "install"));
+
+    //if (method_exists($installer_class, "install")) {
+    //  call_user_func_array(array($installer_class, "install"), array());
+    //}
+    print "Installed module $module_name\n";
+  }
+
+  private static function _render($view, $data=null) {
     if ($view == '')
       return;
 
     // Buffering on
     ob_start();
 
-    try
-      {
-        // Views are straight HTML pages with embedded PHP, so importing them
-        // this way insures that $this can be accessed as if the user was in
-        // the controller, which gives the easiest access to libraries in views
-        include realpath($view . EXT);
-      }
-    catch (Exception $e)
-      {
-        // Display the exception using its internal __toString method
-        echo $e;
-      }
+    try {
+      // Views are straight HTML pages with embedded PHP, so importing them
+      // this way insures that $this can be accessed as if the user was in
+      // the controller, which gives the easiest access to libraries in views
+      include realpath($view . EXT);
+    } catch (Exception $e) {
+      // Display the exception using its internal __toString method
+      echo $e;
+    }
 
     // Fetch the output and close the buffer
     return ob_get_clean();
+  }
+
+  /**
+   * Displays nice backtrace information.
+   * @see http://php.net/debug_backtrace
+   *
+   * @param   array   backtrace generated by an exception or debug_backtrace
+   * @return  string
+   */
+  public static function _backtrace($exception) {
+    $trace = $exception->getTrace();
+    if ( ! is_array($trace)) {
+      return;
+    }
+
+    // Final output
+    $output = array();
+    $cli = PHP_SAPI == "cli";
+
+    $args = array();
+    // Remove the first entry of debug_backtrace(), it is the exception_handler call
+    if ($exception instanceof ErrorException) {
+      $last = array_shift($trace);
+      $args = !empty($last["args"]) ? $last["args"] : $args;
+    } 
+    
+    foreach ($trace as $entry) {
+      $temp = $cli ? "" : "<li>";
+
+      if (isset($entry["file"])) {
+        $format = $cli ? "%s[%s]" : "<tt>%s <strong>[%s]:</strong></tt>";
+        $temp .= sprintf($format, preg_replace("!^".preg_quote(DOCROOT)."!", "",
+                                               $entry["file"]), $entry["line"]);
+      }
+
+      $temp .= $cli ? "\n\t" : "<pre>";
+
+      if (isset($entry["class"])) {
+        // Add class and call type
+        $temp .= $entry["class"].$entry["type"];
+      }
+
+      // Add function
+      $temp .= $entry["function"]."(";
+
+      // Add function args
+      if (isset($entry["args"]) AND is_array($entry["args"])) {
+        // Separator starts as nothing
+        $sep = "";
+
+        while ($arg = array_shift($args)) {
+          if (is_string($arg) AND is_file($arg)) {
+            // Remove docroot from filename
+            $arg = preg_replace("!^".preg_quote(DOCROOT)."!", "", $arg);
+          }
+
+          $temp .= $sep . ($cli ? print_r($arg, TRUE) : html::specialchars(print_r($arg, TRUE)));
+
+          // Change separator to a comma
+          $sep = ", ";
+        }
+        $args = $entry["args"];
+      }
+
+      $temp .= ")" . ($cli ? "\n" : "</pre></li>");
+
+      $output[] = $temp;
+    }
+
+    $output = implode("\n", $output);
+    return $cli ? $output : "<ul class=\"backtrace\">" . $output . "</ul>";
   }
 }

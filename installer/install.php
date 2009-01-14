@@ -36,38 +36,35 @@
  */
 
 function exception_handler($exception) {
-  $code     = $exception->getCode();
-  $type     = get_class($exception);
-  $message  = $exception->getMessage();
-  $file     = $exception->getFile();
-  $line     = $exception->getLine();
-
-  var_dump($exception);
-  // Turn off error reporting
-  error_reporting(0);
+  installer::print_exception($exception);
   exit;
 }
 
-if (PHP_SAPI != 'cli') {
+if (PHP_SAPI != "cli") {
   $redirect = str_replace("install.php", "index.php", $_SERVER["REQUEST_URI"]);
 
   header("Location: $redirect");
   return;
 }
 
-if (file_exists('var')) {
+if (file_exists("var/installed")) {
   dir("Gallery3 is already installed... exiting");
 }
 
 array_shift($argv);          // remove the script name from the arguments
 
-define("DOCROOT", dirname(dirname(__FILE__)));
+define("DOCROOT", dirname(dirname(__FILE__)) . "/");
 chdir(DOCROOT);
 define('APPPATH', strtr(realpath('core') . '/', DIRECTORY_SEPARATOR, '/'));
 define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
 define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
 define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
+define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
+define('TEST_MODE', 0);
 define('EXT', ".php");
+
+$_SERVER["HTTP_USER_AGENT"] = phpversion();
+date_default_timezone_set('America/Los_Angeles');
 
 set_error_handler(create_function('$errno, $errstr, $errfile, $errline',
   'throw new ErrorException($errstr, 0, $errno, $errfile, $errline);'));
@@ -75,7 +72,7 @@ set_error_handler(create_function('$errno, $errstr, $errfile, $errline',
 // Set exception handler
 set_exception_handler('exception_handler');
 
-include DOCROOT . "/installer/helpers/installer.php";
+include DOCROOT . "installer/helpers/installer.php";
 
 // @todo Log the results of failed call
 if (!installer::environment_check()) {
@@ -90,6 +87,7 @@ $config_valid = true;
 try {
   $config_valid = installer::check_database_authorization();
 } catch (Exception $e) {
+  installer::print_exception($e);
   die("Specifed User does not have sufficient authority to install Gallery3\n");
 }
 
@@ -98,7 +96,8 @@ $config_valid &= installer::check_docroot_writable();
 installer::display_requirements(!$config_valid);
 
 if ($config_valid) {
-  // @todo do the install
+  installer::setup_kohana();
+  print installer::install();
 }
 
 

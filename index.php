@@ -45,9 +45,9 @@ define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
 define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
 define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
 
-if (!file_exists('var')) {
+if (!file_exists('var/installed')) {
   // Run the installer
-  header("Location: installer/install.php");
+  header("Location: installer/index.php");
 }
 
 // Force a test run if we're in command line mode.
