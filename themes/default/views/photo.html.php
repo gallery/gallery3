@@ -12,11 +12,7 @@
     <? endif ?>
   </ul>
 
-  <img id="gPhotoId-<?= $item->id ?>"
-      src="<?= $item->resize_url() ?>"
-      alt="<?= $item->title ?>"
-      width="<?= $item->resize_width ?>"
-      height="<?= $item->resize_height ?>" />
+  <?= $item->resize_tag(array("id" => "gPhotoId-{$item->id}")) ?>
 
   <div id="gInfo">
     <h1><?= $item->title ?></h1>

@@ -253,4 +253,30 @@ class Item_Model extends ORM_MPTT {
       ->where("id <=", $child_id)
       ->count_all();
   }
+
+  /**
+   * Return an <img> tag for the thumbnail.
+   * @param array $extra_attrs  Extra attributes to add to the img tag
+   * @return string
+   */
+  public function thumb_tag($extra_attrs) {
+    return html::image(array("src" => $this->thumb_url(),
+                             "alt" => $this->title,
+                             "width" => $this->thumb_width,
+                             "height" => $this->thumb_height),
+                       $extra_attrs);
+  }
+
+  /**
+   * Return an <img> tag for the thumbnail.
+   * @param array $extra_attrs  Extra attributes to add to the img tag
+   * @return string
+   */
+  public function resize_tag($extra_attrs) {
+    return html::image(array("src" => $this->resize_url(),
+                             "alt" => $this->title,
+                             "width" => $this->resize_width,
+                             "height" => $this->resize_height),
+                       $extra_attrs);
+  }
 }
