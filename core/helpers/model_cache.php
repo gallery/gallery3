@@ -20,7 +20,7 @@
 class model_cache_Core {
   private static $cache;
 
-  function get($model_name,  $id, $field_name="id") {
+  static function get($model_name,  $id, $field_name="id") {
     if (TEST_MODE || empty(self::$cache->$model_name->$field_name->$id)) {
       $model = ORM::factory($model_name)->where($field_name, $id)->find();
       if (!$model->loaded) {
@@ -28,7 +28,6 @@ class model_cache_Core {
       }
       self::$cache->$model_name->$field_name->$id = $model;
     }
-
 
     return self::$cache->$model_name->$field_name->$id;
   }
