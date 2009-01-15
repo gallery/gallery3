@@ -1,3 +1,7 @@
+.gItem:hover {
+	background-color: #cfdeff;
+}
+
 .gQuick {
   border: none !important;
 	margin: 0 !important;
@@ -7,7 +11,7 @@
 #gQuickPane {
   background: #000;
   border-bottom: 1px solid #ccc;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 #gQuickPane a {

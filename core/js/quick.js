@@ -13,15 +13,15 @@ var show_quick = function() {
     "position": "absolute",
     "top": pos.top,
     "left": pos.left,
-    "width": cont.innerWidth(),
+    "width": cont.innerWidth() + 1,
     "height": 32
-  });
-  cont.hover(function() { }, hide_quick);
+  }).hide();
+  cont.hover(function() {}, hide_quick);
   $.get(
     quick.attr("href"),
     {},
     function(data, textStatus) {
-      $("#gQuickPane").html(data);
+      $("#gQuickPane").html(data).slideDown("fast");
       $("#gQuickPane a").click(function(e) {
         e.preventDefault();
         quick_do(cont, $(this), img);
@@ -46,7 +46,7 @@ var quick_do = function(cont, pane, img) {
 		img.attr("height", data.height);
 		img.attr("src", data.src);
 		if (data.height > data.width) {
-		  img.css("margin-top", -$("#gQuickPane").height());
+		  img.css("margin-top", -32);
 		} else {
 		  img.css("margin-top", 0);			
 		}
