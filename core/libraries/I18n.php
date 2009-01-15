@@ -68,7 +68,7 @@ class I18n_Core {
   /**
    * Translates a localizable message.
    * @param $message String|array The message to be translated. E.g. "Hello world"
-   *                 or array("one" => "One album", "other" => "{{count}} albums")
+   *                 or array("one" => "One album", "other" => "%count albums")
    * @param $options array (optional) Options array for key value pairs which are used
    *        for pluralization and interpolation. Special keys are "count" and "locale",
    *        the latter to override the currently configured locale.
@@ -118,9 +118,13 @@ class I18n_Core {
 
   private function interpolate($locale, $string, $values) {
     // TODO: Handle locale specific number formatting.
+
+    // Replace x_y before replacing x.
+    krsort($values, SORT_STRING);
+
     $keys = array();
     foreach (array_keys($values) as $key) {
-      $keys[] = "{{" . $key . "}}";
+      $keys[] = "%$key";
     }
     return str_replace($keys, array_values($values), $string);
   }

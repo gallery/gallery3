@@ -8,7 +8,7 @@
          width="40"
          height="40" />
     <?= date("Y-M-d H:i:s", $comment->created) ?>
-    <?= t("<a href=#>{{author_name}}</a> said <em>{{comment_text}}</em>",
+    <?= t("<a href=#>%author_name</a> said <em>%comment_text</em>",
           array("author_name" => $comment->author_name(),
                 "comment_text" => text::limit_words($comment->text, 50))); ?>
   </li>

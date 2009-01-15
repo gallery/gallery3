@@ -129,7 +129,7 @@ class module_Core {
     }
 
     self::load_modules();
-    log::success("module", t("Installed module {{module_name}}", array("module_name" => $module_name)));
+    log::success("module", t("Installed module %module_name", array("module_name" => $module_name)));
   }
 
   /**
@@ -140,7 +140,7 @@ class module_Core {
     $installer_class = "{$module_name}_installer";
     Kohana::log("debug", "$installer_class uninstall");
     call_user_func(array($installer_class, "uninstall"));
-    log::success("module", t("Uninstalled module {{module_name}}", array("module_name" => $module_name)));
+    log::success("module", t("Uninstalled module %module_name", array("module_name" => $module_name)));
   }
 
   /**

@@ -34,10 +34,10 @@ class I18n_Test extends Unit_Test_Case {
     $messages_de_DE = array(
         array('Hello world', 'Hallo Welt'),
         array(array('one' => 'One item has been added',
-                    'other' => '{{count}} elements have been added'),
+                    'other' => '%count elements have been added'),
               array('one' => 'Ein Element wurde hinzugefuegt.',
-                    'other' => '{{count}} Elemente wurden hinzugefuegt.')),
-        array('Hello {{name}}, how are you today?', 'Hallo {{name}}, wie geht es Dir heute?'));
+                    'other' => '%count Elemente wurden hinzugefuegt.')),
+        array('Hello %name, how are you today?', 'Hallo %name, wie geht es Dir heute?'));
 
     foreach ($messages_de_DE as $data) {
       list ($message, $translation) = $data;
@@ -65,25 +65,25 @@ class I18n_Test extends Unit_Test_Case {
 
   public function translate_plural_other_test() {
     $result = $this->i18n->translate(array('one' => 'One item has been added',
-                                     'other' => '{{count}} items have been added.'),
+                                     'other' => '%count items have been added.'),
                                array('count' => 5));
     $this->assert_equal('5 Elemente wurden hinzugefuegt.', $result);
   }
 
   public function translate_plural_one_test() {
     $result = $this->i18n->translate(array('one' => 'One item has been added',
-                                     'other' => '{{count}} items have been added.'),
+                                     'other' => '%count items have been added.'),
                                array('count' => 1));
     $this->assert_equal('Ein Element wurde hinzugefuegt.', $result);
   }
 
   public function translate_interpolate_test() {
-    $result = $this->i18n->translate('Hello {{name}}, how are you today?', array('name' => 'John'));
+    $result = $this->i18n->translate('Hello %name, how are you today?', array('name' => 'John'));
     $this->assert_equal('Hallo John, wie geht es Dir heute?', $result);
   }
 
   public function translate_interpolate_missing_value_test() {
-    $result = $this->i18n->translate('Hello {{name}}, how are you today?', array('foo' => 'bar'));
-    $this->assert_equal('Hallo {{name}}, wie geht es Dir heute?', $result);
+    $result = $this->i18n->translate('Hello %name, how are you today?', array('foo' => 'bar'));
+    $this->assert_equal('Hallo %name, wie geht es Dir heute?', $result);
   }
 }

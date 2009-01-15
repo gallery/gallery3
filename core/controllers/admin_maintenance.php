@@ -31,7 +31,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
               "description" => (
                 $dirty_count ?
                   t2("You have one image which is out of date",
-                     "You have {{count}} out-of-date images",
+                     "You have %count out-of-date images",
                      $dirty_count)
                 : t("All your images are up to date")),
               "severity" => $dirty_count ? log::WARNING : log::SUCCESS),
@@ -51,9 +51,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     if ($stalled_count) {
       log::warning("tasks",
                    t2("One task is stalled",
-                      "{{count}} tasks are stalled",
+                      "%count tasks are stalled",
                       $stalled_count),
-                   t("{{link_start}}view{{link_end}}",
+                   t("%link_startview%link_end",
                      array("link_start" => "<a href=\"" . url::site("admin/maintenance") . "\">",
                            "link_start" => "</a>")));
     }
@@ -89,7 +89,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->csrf = access::csrf_token();
     $view->task = $task;
 
-    log::info("tasks", t("Task {{task_name}} started (task id {{task_id}})",
+    log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor(url::site("admin/maintenance"), t("maintenance")));
     print $view;
@@ -110,7 +110,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->csrf = access::csrf_token();
     $view->task = $task;
 
-    log::info("tasks", t("Task {{task_name}} resumed (task id {{task_id}})",
+    log::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor(url::site("admin/maintenance"), t("maintenance")));
     print $view;
@@ -171,14 +171,14 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     if ($task->done) {
       switch ($task->state) {
       case "success":
-        log::success("tasks", t("Task {{task_name}} completed (task id {{task_id}})",
+        log::success("tasks", t("Task %task_name completed (task id %task_id)",
                                 array("task_name" => $task->name, "task_id" => $task->id)),
                      html::anchor(url::site("admin/maintenance"), t("maintenance")));
         message::success(t("Task completed successfully"));
         break;
 
       case "error":
-        log::error("tasks", t("Task {{task_name}} failed (task id {{task_id}})",
+        log::error("tasks", t("Task %task_name failed (task id %task_id)",
                               array("task_name" => $task->name, "task_id" => $task->id)),
                    html::anchor(url::site("admin/maintenance"), t("maintenance")));
         message::success(t("Task failed"));

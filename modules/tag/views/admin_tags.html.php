@@ -25,13 +25,13 @@
       <ul>
         <li>
           <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>" class="gDialogLink"
-            title="<?= t("Delete tag {{tag_name}}", array("tag_name" => $tag->name)) ?>">
+            title="<?= t("Delete tag %tag_name", array("tag_name" => $tag->name)) ?>">
             <?= t("delete") ?>
           </a>
         </li>
         <li>
           <a href="<?= url::site("admin/tags/form_rename/$tag->id") ?>" class="gDialogLink"
-            title="<?= t("Rename tag {{tag_name}}", array("tag_name" => $tag->name)) ?>">
+            title="<?= t("Rename tag %tag_name", array("tag_name" => $tag->name)) ?>">
             <?= t("rename") ?>
           </a>
         </li>

@@ -11,7 +11,7 @@
              width="40"
              height="40" />
       </a>
-      <?= t("on {{date}} <a href=#>{{name}}</a> said",
+      <?= t("on %date <a href=#>%name</a> said",
             array("date" => date("Y-M-d H:i:s", $comment->created),
                   "name" => $comment->author_name())); ?>
     </p>

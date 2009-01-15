@@ -63,11 +63,11 @@ class Admin_Themes_Controller extends Admin_Controller {
 
     if ($type == "admin" && $info->admin) {
       module::set_var("core", "active_admin_theme", $theme_name);
-      message::success(t("Successfully changed your admin theme to <b>{{theme_name}}</b>",
+      message::success(t("Successfully changed your admin theme to <b>%theme_name</b>",
                          array("theme_name" => $info->name)));
     } else if ($type == "site" && $info->site) {
       module::set_var("core", "active_site_theme", $theme_name);
-      message::success(t("Successfully changed your Gallery theme to <b>{{theme_name}}</b>",
+      message::success(t("Successfully changed your Gallery theme to <b>%theme_name</b>",
                          array("theme_name" => $info->name)));
     }
 
@@ -109,7 +109,7 @@ class Admin_Themes_Controller extends Admin_Controller {
     if ($theme != module::get_var("core", "active_theme")) {
       module::set_var("core", "active_theme", $theme);
       message::success(t("Updated Theme"));
-      log::success("graphics", t("Changed theme to {{theme_name}}", array("theme_name" => $theme)));
+      log::success("graphics", t("Changed theme to %theme_name", array("theme_name" => $theme)));
     }
     url::redirect("admin/themes");
   }

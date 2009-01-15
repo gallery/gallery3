@@ -51,15 +51,15 @@
   <div>
     <? if ($spam_caught > 0): ?>
     <p>
-      <?= t2("Gallery has caught {{count}} spam for you since you installed spam filtering.",
-             "Gallery has caught {{count}} spam for you since you installed spam filtering.",
+      <?= t2("Gallery has caught %count spam for you since you installed spam filtering.",
+             "Gallery has caught %count spam for you since you installed spam filtering.",
              $spam_caught) ?>
     </p>
     <? endif ?>
     <p>
       <? if ($spam->count()): ?>
       <?= t2("There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
-             "There are currently {{count}} comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically.",
+             "There are currently %count comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically.",
              $spam->count()) ?>
     </p>
     <p>

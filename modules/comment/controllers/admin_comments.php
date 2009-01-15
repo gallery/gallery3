@@ -29,26 +29,26 @@ class Admin_Comments_Controller extends Admin_Controller {
     $view->content->menu = Menu::factory("root")
       ->append(Menu::factory("link")
                ->id("unpublished")
-               ->label(t2("Awaiting Moderation ({{count}})",
-                          "Awaiting Moderation ({{count}})",
+               ->label(t2("Awaiting Moderation (%count)",
+                          "Awaiting Moderation (%count)",
                           $view->content->unpublished->count()))
                ->url(url::site("admin/comments/queue/unpublished")))
       ->append(Menu::factory("link")
                ->id("published")
-               ->label(t2("Approved ({{count}})",
-                          "Approved ({{count}})",
+               ->label(t2("Approved (%count)",
+                          "Approved (%count)",
                           $view->content->published->count()))
                ->url(url::site("admin/comments/queue/published")))
       ->append(Menu::factory("link")
                ->id("spam")
-               ->label(t2("Spam ({{count}})",
-                          "Spam ({{count}})",
+               ->label(t2("Spam (%count)",
+                          "Spam (%count)",
                           $view->content->spam->count()))
                ->url(url::site("admin/comments/queue/spam")))
       ->append(Menu::factory("link")
                ->id("deleted")
-               ->label(t2("Recently Deleted ({{count}})",
-                          "Recently Deleted ({{count}})",
+               ->label(t2("Recently Deleted (%count)",
+                          "Recently Deleted (%count)",
                           $view->content->deleted->count()))
                ->url(url::site("admin/comments/queue/deleted")));
     return $view;

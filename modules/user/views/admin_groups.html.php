@@ -12,7 +12,7 @@
         title="<?= t("Edit group") ?>"><?= t("edit") ?></a>
       <? if (!$group->special): ?>
         <a href="groups/delete_form/<?= $group->id ?>" class="gDialogLink"
-          title="<?= t("Do you really want to delete {{group_name}}", array("group_name" => $group->name)) ?>">
+          title="<?= t("Do you really want to delete %group_name", array("group_name" => $group->name)) ?>">
         <?= t("delete") ?></a>
       <? endif ?>
     </li>

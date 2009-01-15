@@ -34,10 +34,10 @@ class Admin_Modules_Controller extends Admin_Controller {
       $desired = $this->input->post($module_name) == 1;
       if ($info->installed && !$desired) {
         module::uninstall($module_name);
-        message::success(t("Uninstalled {{module_name}} module", array("module_name" => $info->name)));
+        message::success(t("Uninstalled %module_name module", array("module_name" => $info->name)));
       } else if (!$info->installed && $desired) {
         module::install($module_name);
-        message::success(t("Installed {{module_name}} module", array("module_name" => $info->name)));
+        message::success(t("Installed %module_name module", array("module_name" => $info->name)));
       }
     }
     url::redirect("admin/modules");

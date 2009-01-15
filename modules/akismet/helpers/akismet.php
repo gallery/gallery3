@@ -93,7 +93,7 @@ class akismet_Core {
     $api_key = module::get_var("akismet", "api_key");
     if (empty($api_key)) {
       site_status::warning(
-        t("Akismet is not quite ready!  Please provide an <a href=\"{{url}}\">API Key</a>",
+        t("Akismet is not quite ready!  Please provide an <a href=\"%url\">API Key</a>",
           array("url" => url::site("admin/akismet"))),
         "akismet_config");
     } else {

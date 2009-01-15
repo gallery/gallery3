@@ -3,7 +3,7 @@
   <?= $theme->photo_top() ?>
 
   <ul id="gPager">
-    <li><?= t("{{position}} of {{total}}", array("position" => $position, "total" => $sibling_count)) ?></li>
+    <li><?= t("%position of %total", array("position" => $position, "total" => $sibling_count)) ?></li>
     <? if ($previous_item): ?>
     <li><span class="ui-icon ui-icon-seek-prev"></span><a href="<?= $previous_item->url() ?>"><?= t("previous") ?></a></li>
     <? endif ?>

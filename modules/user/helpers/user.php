@@ -71,8 +71,8 @@ class user_Core {
   static function get_delete_form_admin($user) {
     $form = new Forge("admin/users/delete/$user->id", "", "post");
     $group = $form->group("delete_user")->label(
-      t("Are you sure you want to delete user {{name}}?", array("name" => $user->name)));
-    $group->submit("")->value(t("Delete user {{name}}", array("name" => $user->name)));
+      t("Are you sure you want to delete user %name?", array("name" => $user->name)));
+    $group->submit("")->value(t("Delete user %name", array("name" => $user->name)));
     return $form;
   }
 

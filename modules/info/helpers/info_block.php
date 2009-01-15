@@ -32,12 +32,12 @@ class info_block_Core {
     $results = "";
     if ($item->view_count) {
       $results .= "<li>";
-      $results .= t("Views: {{view_count}}", array("view_count" => $item->view_count));
+      $results .= t("Views: %view_count", array("view_count" => $item->view_count));
       $results .= "</li>";
     }
     if ($item->owner) {
       $results .= "<li>";
-      $results .= t("By: {{owner_name}}", array("owner_name" => "<a href=\"#\">{$item->owner->name}</a>"));
+      $results .= t("By: %owner_name", array("owner_name" => "<a href=\"#\">{$item->owner->name}</a>"));
       $results .= "</li>";
     }
     return $results;

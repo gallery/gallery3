@@ -217,8 +217,8 @@ class graphics_Core {
     $count = self::find_dirty_images_query()->count();
     if ($count) {
       site_status::warning(
-          t2("One of your photos is out of date. {{link_start}}Click here to fix it{{link_end}}",
-             "{{count}} of your photos are out of date. {{link_start}}Click here to fix them{{link_end}}",
+          t2("One of your photos is out of date. %link_startClick here to fix it%link_end",
+             "%count of your photos are out of date. %link_startClick here to fix them%link_end",
              $count,
              array("link_start" => "<a href=\"" .
                    url::site("admin/maintenance/start/graphics::rebuild_dirty_images?csrf=__CSRF__") .
@@ -254,8 +254,8 @@ class graphics_Core {
       }
     }
 
-    $task->status = t2("Updated: 1 image. Total: {{total_count}}.",
-                       "Updated: {{count}} images. Total: {{total_count}}.",
+    $task->status = t2("Updated: 1 image. Total: %total_count.",
+                       "Updated: %count images. Total: %total_count.",
                        $completed,
                        array("total_count" => ($remaining + $completed)));
 

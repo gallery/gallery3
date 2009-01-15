@@ -97,7 +97,7 @@ class tag_Core {
 
   static function get_delete_form($tag) {
     $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "gDeleteTagForm"));
-    $group = $form->group("delete_tag")->label(t("Really delete tag {{tag_name}}?", array("tag_name" => $tag->name)));
+    $group = $form->group("delete_tag")->label(t("Really delete tag %tag_name?", array("tag_name" => $tag->name)));
     $group->submit("")->value(t("Delete Tag"));
     $form->add_rules_from(ORM::factory("tag"));
     return $form;

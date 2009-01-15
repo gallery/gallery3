@@ -87,7 +87,7 @@ class group_Core {
   static function get_delete_form_admin($group) {
     $form = new Forge("admin/groups/delete/$group->id", "", "post");
     $form_group = $form->group("delete_group")->label(
-      t("Are you sure you want to delete group {{group_name}}?", array("group_name" => $group->name)));
+      t("Are you sure you want to delete group %group_name?", array("group_name" => $group->name)));
     $form_group->submit("")->value(t("Delete"));
     return $form;
   }

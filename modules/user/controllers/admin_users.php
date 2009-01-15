@@ -41,7 +41,7 @@ class Admin_Users_Controller extends Controller {
         $name, $form->add_user->full_name->value, $form->add_user->password->value);
       $user->email = $form->add_user->email->value;
       $user->save();
-      message::success(t("Created user {{user_name}}", array("user_name" => $user->name)));
+      message::success(t("Created user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
       message::error(t("Failed to create user"));
@@ -70,7 +70,7 @@ class Admin_Users_Controller extends Controller {
                               "form" => $form->__toString()));
     }
 
-    $message = t("Deleted user {{user_name}}", array("user_name" => $name));
+    $message = t("Deleted user %user_name", array("user_name" => $name));
     log::success("user", $message);
     message::success($message);
     print json_encode(array("result" => "success"));
@@ -108,10 +108,10 @@ class Admin_Users_Controller extends Controller {
       $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
       $user->save();
-      message::success(t("Changed user {{user_name}}", array("user_name" => $user->name)));
+      message::success(t("Changed user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
-      message::error(t("Failed to change user {{user_name}}", array("user_name" => $user->name)));
+      message::error(t("Failed to change user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }
