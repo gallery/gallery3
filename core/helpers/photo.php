@@ -79,7 +79,7 @@ class photo_Core {
     $photo->add_to_parent($parent);
     copy($filename, $photo->file_path());
 
-    module::event("photo_created", $photo);
+    module::event("item_created", $photo);
 
     // Build our thumbnail/resizes
     graphics::generate($photo);

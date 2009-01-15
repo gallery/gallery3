@@ -152,7 +152,7 @@ class Albums_Controller extends Items_Controller {
       $album->description = $form->edit_album->description->value;
       $album->save();
 
-      module::event("album_changed", $orig, $album);
+      module::event("item_changed", $orig, $album);
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
       message::success(t("Saved album {{album_title}}", array("album_title" => $album->title)));

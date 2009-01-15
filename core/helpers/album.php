@@ -58,7 +58,7 @@ class album_Core {
     mkdir(dirname($album->thumb_path()));
     mkdir(dirname($album->resize_path()));
 
-    module::event("album_created", $album);
+    module::event("item_created", $album);
 
     return $album;
   }

@@ -78,7 +78,7 @@ class Photos_Controller extends Items_Controller {
       $photo->description = $form->edit_photo->description->value;
       $photo->save();
 
-      module::event("photo_changed", $orig, $photo);
+      module::event("item_changed", $orig, $photo);
 
       log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
       message::success(t("Saved photo {{photo_title}}", array("photo_title" => $photo->title)));
