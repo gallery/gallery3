@@ -36,7 +36,7 @@ class akismet_event_Core {
     $comment->save();
   }
 
-  static function comment_changed($old, $new) {
+  static function comment_updated($old, $new) {
     if ($old->state != "spam" && $new->state == "spam") {
       akismet::submit_spam($new);
     } else if ($old->state == "spam" && $new->state != "spam") {
