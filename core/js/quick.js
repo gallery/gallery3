@@ -1,5 +1,12 @@
 $(document).ready(function() {
-  $(".gItem").hover(show_quick, function() {});
+  if ($("#gAlbumGrid").length) {
+	// @todo Add quick edit pane for album (meta, move, permissions, delete)
+	//$("#gInfo").hover(show_quick, function() {});
+	$(".gItem").hover(show_quick, function() {});
+  }
+  if ($("#gItem").length) {
+	// @todo Apply quick edit to resize view
+  }
 });
 
 var show_quick = function() {

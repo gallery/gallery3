@@ -33,6 +33,13 @@ class core_block_Core {
     return $buf;
   }
 
+  static function album_top($theme, $child) {
+    if (access::can("edit", $album)) {
+      $edit_link = url::site("quick/pane/$album->id");
+      return "<div class=\"gQuick\" href=\"$edit_link\"></div>";
+    }
+  }
+  
   static function thumb_top($theme, $child) {
     if ($child->type == "photo" && access::can("edit", $child)) {
       $edit_link = url::site("quick/pane/$child->id");
