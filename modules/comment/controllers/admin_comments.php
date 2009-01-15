@@ -29,27 +29,27 @@ class Admin_Comments_Controller extends Admin_Controller {
     $view->content->menu = Menu::factory("root")
       ->append(Menu::factory("link")
                ->id("unpublished")
-               ->label(t(array("one" => "Awaiting Moderation ({{count}})",
-                               "other" => "Awaiting Moderation ({{count}})"),
-                         array("count" => $view->content->unpublished->count())))
+               ->label(t2("Awaiting Moderation ({{count}})",
+                          "Awaiting Moderation ({{count}})",
+                          $view->content->unpublished->count()))
                ->url(url::site("admin/comments/queue/unpublished")))
       ->append(Menu::factory("link")
                ->id("published")
-               ->label(t(array("one" => "Approved ({{count}})",
-                               "other" => "Approved ({{count}})"),
-                         array("count" => $view->content->published->count())))
+               ->label(t2("Approved ({{count}})",
+                          "Approved ({{count}})",
+                          $view->content->published->count()))
                ->url(url::site("admin/comments/queue/published")))
       ->append(Menu::factory("link")
                ->id("spam")
-               ->label(t(array("one" => "Spam ({{count}})",
-                               "other" => "Spam ({{count}})"),
-                         array("count" => $view->content->spam->count())))
+               ->label(t2("Spam ({{count}})",
+                          "Spam ({{count}})",
+                          $view->content->spam->count()))
                ->url(url::site("admin/comments/queue/spam")))
       ->append(Menu::factory("link")
                ->id("deleted")
-               ->label(t(array("one" => "Recently Deleted ({{count}})",
-                               "other" => "Recently Deleted ({{count}})"),
-                         array("count" => $view->content->deleted->count())))
+               ->label(t2("Recently Deleted ({{count}})",
+                          "Recently Deleted ({{count}})",
+                          $view->content->deleted->count()))
                ->url(url::site("admin/comments/queue/deleted")));
     return $view;
   }

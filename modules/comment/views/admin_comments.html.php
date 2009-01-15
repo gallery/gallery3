@@ -51,16 +51,16 @@
   <div>
     <? if ($spam_caught > 0): ?>
     <p>
-      <?= t(array("one" => "Gallery has caught {{count}} spam for you since you installed spam filtering.",
-      "other" => "Gallery has caught {{count}} spam for you since you installed spam filtering."),
-      array("count" => $spam_caught)) ?>
+      <?= t2("Gallery has caught {{count}} spam for you since you installed spam filtering.",
+             "Gallery has caught {{count}} spam for you since you installed spam filtering.",
+             $spam_caught) ?>
     </p>
     <? endif ?>
     <p>
       <? if ($spam->count()): ?>
-      <?= t(array("one" => "There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
-      "other" => "There are currently {{count}} comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically."),
-      array("count" => $spam->count())) ?>
+      <?= t2("There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
+             "There are currently {{count}} comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically.",
+             $spam->count()) ?>
     </p>
     <p>
       <a href="<?= url::site("admin/comments/delete_all_spam?csrf=" . access::csrf_token()) ?>">

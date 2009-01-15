@@ -19,10 +19,32 @@
  */
 
 /**
- * @see I18n_Core::translate($message, $options)
+ * Translates a localizable message.
+ * @param $message String The message to be translated. E.g. "Hello world"
+ * @param $options array (optional) Options array for key value pairs which are used
+ *        for pluralization and interpolation. Special key: "locale" to override the
+ *        currently configured locale.
+ * @return String The translated message string.
  */
 function t($message, $options=array()) {
   return I18n::instance()->translate($message, $options);
+}
+
+/**
+ * Translates a localizable message with plural forms.
+ * @param $singular String The message to be translated. E.g. "There is one album."
+ * @param $plural String The plural message to be translated. E.g.
+ *        "There are %count albums."
+ * @param $count Number The number which is inserted for the %count placeholder and
+ *        which is used to select the proper plural form ($singular or $plural).
+ * @param $options array (optional) Options array for key value pairs which are used
+ *        for pluralization and interpolation. Special key: "locale" to override the
+ *        currently configured locale.
+ * @return String The translated message string.
+ */
+function t2($singular, $plural, $count, $options=array()) {
+  return I18n::instance()->translate(array("one" => $singular, "other" => $plural),
+                                     array_merge($options, array("count" => $count)));
 }
 
 class I18n_Core {
@@ -52,7 +74,7 @@ class I18n_Core {
    *        the latter to override the currently configured locale.
    * @return String The translated message string.
    */
-  public function translate($message, $options=array() /** @todo , $hint=null */) {
+  public function translate($message, $options=array()) {
     $locale = empty($options['locale']) ? $this->_config['default_locale'] : $options['locale'];
     $count = empty($options['count']) ? null : $options['count'];
     $values = $options;

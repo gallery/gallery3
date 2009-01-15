@@ -30,9 +30,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
               "callback" => "graphics::rebuild_dirty_images",
               "description" => (
                 $dirty_count ?
-                  t(array("one" => "You have one image which is out of date",
-                          "other" => "You have {{count}} out-of-date images"),
-                    array("count" => $dirty_count))
+                  t2("You have one image which is out of date",
+                     "You have {{count}} out-of-date images",
+                     $dirty_count)
                 : t("All your images are up to date")),
               "severity" => $dirty_count ? log::WARNING : log::SUCCESS),
         ArrayObject::ARRAY_AS_PROPS));
@@ -50,9 +50,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $stalled_count = $query->count();
     if ($stalled_count) {
       log::warning("tasks",
-                   t(array("one" => "One task is stalled",
-                           "other" => "{{count}} tasks are stalled"),
-                     array("count" => $stalled_count)),
+                   t2("One task is stalled",
+                      "{{count}} tasks are stalled",
+                      $stalled_count),
                    t("{{link_start}}view{{link_end}}",
                      array("link_start" => "<a href=\"" . url::site("admin/maintenance") . "\">",
                            "link_start" => "</a>")));
