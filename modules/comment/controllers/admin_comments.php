@@ -125,7 +125,7 @@ class Admin_Comments_Controller extends Admin_Controller {
     if ($comment->loaded) {
       $comment->state = $state;
       $comment->save();
-      module::event("comment_changed", $orig, $comment);
+      module::event("comment_updated", $orig, $comment);
     }
   }
 
