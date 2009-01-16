@@ -23,19 +23,17 @@ class Admin_Maintenance_Controller extends Admin_Controller {
    * @todo move task definition out into the modules
    */
   private function _get_task_definitions() {
-    $dirty_count = graphics::find_dirty_images_query()->count();
-    return array(
-      "graphics::rebuild_dirty_images" => new ArrayObject(
-        array("name" => t("Rebuild Images"),
-              "callback" => "graphics::rebuild_dirty_images",
-              "description" => (
-                $dirty_count ?
-                  t2("You have one image which is out of date",
-                     "You have %count out-of-date images",
-                     $dirty_count)
-                : t("All your images are up to date")),
-              "severity" => $dirty_count ? log::WARNING : log::SUCCESS),
-        ArrayObject::ARRAY_AS_PROPS));
+    $tasks = array();
+    foreach (module::installed() as $module_name => $module_info) {
+      $class_name = "{$module_name}_task";
+      if (method_exists($class_name, "available")) {
+        foreach (call_user_func(array($class_name, "available")) as $task) {
+          $tasks[$task->callback] = $task;
+        }
+      }
+    }
+
+    return $tasks;
   }
 
   /**
