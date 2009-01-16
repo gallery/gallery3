@@ -7,10 +7,10 @@ $(document).ready(function(){
   $('ul.sf-menu').superfish({
     delay: 500,
     animation: {
-      opacity:'show',
-      height:'show'
+      opacity: 'show',
+      height: 'show'
     },
-    pathClass:  'current',
+    pathClass: 'current',
     speed: 'fast'
   });
 
@@ -18,8 +18,8 @@ $(document).ready(function(){
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
-  };
-  
+  }
+
   $("#gThemeDetailsForm").ajaxForm( {
     dataType: "json",
     success: function(body, result, set) {
@@ -29,17 +29,17 @@ $(document).ready(function(){
         $("#gMessage").append("<span class='gError'>" + body.message + "</span>");
       }
   }});
-  
+
   // Sortable dashboard blocks
   if ($(".ui-dialog-titlebar-close").length) {
     $(".gBlock *:first").addClass("gDraggable");
-	$("#gContent").sortable({
+	  $("#gContent").sortable({
       connectWith: ["#gSidebar"],
       cursor: "move",
       handle: $("div:first"),
       opacity: 0.6,
       placeholder: "gDropTarget",
-	  update: function() { console.log($(this).sortable("serialize")); }
+	    update: function() { console.log($(this).sortable("serialize")); }
       // @todo stop: function() { .ajax() }
     });
     $("#gSidebar").sortable({

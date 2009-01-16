@@ -51,7 +51,7 @@ $(document).ready(function() {
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
-  };
+  }
 
   // Short forms
   handleShortFormEvent(shortForms);
@@ -93,7 +93,7 @@ function sizedImage() {
 /**
  * Handle initialization of all short forms
  *
- * @param array shortForms Array of short form IDs
+ * @param shortForms array Array of short form IDs
  */
 function handleShortFormEvent(shortForms) {
   for (var i in shortForms) {
@@ -104,7 +104,7 @@ function handleShortFormEvent(shortForms) {
 /**
  * Initialize a short form. Short forms may contain only one text input.
  *
- * @param string formID The form's ID, including #
+ * @param formID string The form's ID, including #
  */
 function shortFormInit(formID) {
   // Get the input ID and it's label text
