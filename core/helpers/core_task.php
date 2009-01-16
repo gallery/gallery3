@@ -21,7 +21,7 @@ class core_task_Core {
   static function available() {
     $dirty_count = graphics::find_dirty_images_query()->count();
     return array(Task::factory()
-                 ->callback("graphics::rebuild_dirty_images")
+                 ->callback("core_task::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
                  ->description($dirty_count ?
                                t2("You have one image which is out of date",
@@ -29,5 +29,48 @@ class core_task_Core {
                                   $dirty_count)
                                : t("All your images are up to date"))
                  ->severity($dirty_count ? log::WARNING : log::SUCCESS));
+  }
+
+  /**
+   * Task that rebuilds all dirty images.
+   * @param Task_Model the task
+   */
+  static function rebuild_dirty_images($task) {
+    $result = graphics::find_dirty_images_query();
+    $remaining = $result->count();
+    $completed = $task->get("completed", 0);
+
+    $i = 0;
+    foreach ($result as $row) {
+      $item = ORM::factory("item", $row->id);
+      if ($item->loaded) {
+        graphics::generate($item);
+      }
+
+      $completed++;
+      $remaining--;
+
+      if (++$i == 2) {
+        break;
+      }
+    }
+
+    $task->status = t2("Updated: 1 image. Total: %total_count.",
+                       "Updated: %count images. Total: %total_count.",
+                       $completed,
+                       array("total_count" => ($remaining + $completed)));
+
+    if ($completed + $remaining > 0) {
+      $task->percent_complete = (int)(100 * $completed / ($completed + $remaining));
+    } else {
+      $task->percent_complete = 100;
+    }
+
+    $task->set("completed", $completed);
+    if ($remaining == 0) {
+      $task->done = true;
+      $task->state = "success";
+      site_status::clear("graphics_dirty");
+    }
   }
 }

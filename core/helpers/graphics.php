@@ -221,55 +221,11 @@ class graphics_Core {
              "%count of your photos are out of date. %link_startClick here to fix them%link_end",
              $count,
              array("link_start" => "<a href=\"" .
-                   url::site("admin/maintenance/start/graphics::rebuild_dirty_images?csrf=__CSRF__") .
+                   url::site(
+                     "admin/maintenance/start/core_task::rebuild_dirty_images?csrf=__CSRF__") .
                    "\" class=\"gDialogLink\">",
                    "link_end" => "</a>")),
           "graphics_dirty");
-    }
-  }
-
-  /**
-   * Task that rebuilds all dirty images.
-   * @param Task_Model the task
-   */
-  static function rebuild_dirty_images($task) {
-    $db = Database::instance();
-
-    $result = self::find_dirty_images_query();
-    $remaining = $result->count();
-    $completed = $task->get("completed", 0);
-
-    $i = 0;
-    foreach ($result as $row) {
-      $item = ORM::factory("item", $row->id);
-      if ($item->loaded) {
-        self::generate($item);
-      }
-
-      $completed++;
-      $remaining--;
-
-      if (++$i == 2) {
-        break;
-      }
-    }
-
-    $task->status = t2("Updated: 1 image. Total: %total_count.",
-                       "Updated: %count images. Total: %total_count.",
-                       $completed,
-                       array("total_count" => ($remaining + $completed)));
-
-    if ($completed + $remaining > 0) {
-      $task->percent_complete = (int)(100 * $completed / ($completed + $remaining));
-    } else {
-      $task->percent_complete = 100;
-    }
-
-    $task->set("completed", $completed);
-    if ($remaining == 0) {
-      $task->done = true;
-      $task->state = "success";
-      site_status::clear("graphics_dirty");
     }
   }
 
