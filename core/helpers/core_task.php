@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class core_task_Core {
-  static function available() {
+  static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count();
     return array(Task::factory()
                  ->callback("core_task::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
                  ->description($dirty_count ?
-                               t2("You have one image which is out of date",
-                                  "You have %count out-of-date images",
+                               t2("You have one out-of-date photo",
+                                  "You have %count out-of-date photo",
                                   $dirty_count)
                                : t("All your images are up to date"))
                  ->severity($dirty_count ? log::WARNING : log::SUCCESS));

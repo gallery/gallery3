@@ -26,8 +26,8 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $tasks = array();
     foreach (module::installed() as $module_name => $module_info) {
       $class_name = "{$module_name}_task";
-      if (method_exists($class_name, "available")) {
-        foreach (call_user_func(array($class_name, "available")) as $task) {
+      if (method_exists($class_name, "available_tasks")) {
+        foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
           $tasks[$task->callback] = $task;
         }
       }

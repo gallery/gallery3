@@ -19,7 +19,7 @@
           <?= t("Action") ?>
         </th>
       </tr>
-      <? foreach ($task_definitions as $task) ?>
+      <? foreach ($task_definitions as $task): ?>
       <tr class="<?= log::severity_class($task->severity) ?>">
         <td>
           <?= $task->name ?>
@@ -34,6 +34,7 @@
           </a>
         </td>
       </tr>
+      <? endforeach ?>
     </table>
   </div>
 
