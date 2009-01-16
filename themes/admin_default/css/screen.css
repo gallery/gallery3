@@ -65,13 +65,12 @@
   margin-bottom: 0;
 }
 
-#gContent .gBlock .ui-dialog-titlebar {
-  margin: -.8em -.3em 0 -.3em;
+.gBlock .ui-dialog-titlebar {
+  margin: -1em -.4em 0 ;
 }
 
 #gSidebar .gBlock h2 {
   background: none;
-  margin: -.9em -.4em 0 -.3em;
   cursor: move;
 }
 

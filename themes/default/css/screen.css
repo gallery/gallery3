@@ -714,6 +714,17 @@ li.gError select {
   font-size: 0;
 }
 
+.gDraggable {
+	cursor: move;
+}
+
+.gDropTarget {
+	background-color: #cfdeff;
+	border: 1px dotted #999;
+	height: 100px;
+	margin: 1em 0;
+}
+
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gDialog {

@@ -31,23 +31,26 @@ $(document).ready(function(){
   }});
   
   // Sortable dashboard blocks
-  $("#gContent").sortable({
-    connectWith: ["#gSidebar"],
-    cursor: "move",
-    opacity: 0.7,
-    placeholder: "gBlock",
-    update: function(){
-        console.log($(this).sortable("serialize"));
-      }
-  });
-  $("#gSidebar").sortable({
-    connectWith: ["#gContent"],
-    containment: "document",
-    cursor: "move",
-    opacity: 0.7,
-    placeholder: "gBlock",
-    update: function(){
-        console.log($(this).sortable("serialize"));
-      }
-  });  
+  if ($(".ui-dialog-titlebar-close").length) {
+    $(".gBlock *:first").addClass("gDraggable");
+	$("#gContent").sortable({
+      connectWith: ["#gSidebar"],
+      cursor: "move",
+      handle: $("div:first"),
+      opacity: 0.6,
+      placeholder: "gDropTarget",
+	  update: function() { console.log($(this).sortable("serialize")); }
+      // @todo stop: function() { .ajax() }
+    });
+    $("#gSidebar").sortable({
+      connectWith: ["#gContent"],
+      containment: "document",
+      cursor: "move",
+      handle: $("div:first"),
+      opacity: 0.6,
+      placeholder: "gDropTarget",
+      update: function() { console.log($(this).sortable("serialize")); }
+      // @todo stop: function() { .ajax() }
+    });
+  }
 });
