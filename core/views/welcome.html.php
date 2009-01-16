@@ -9,7 +9,7 @@
       }
 
       div.outer {
-        width: 600px;
+        width: 650px;
         background: white;
         border: 1px solid black;
         margin: 0 auto;
@@ -206,6 +206,7 @@
           <li><a href="javascript:show('info')">Info</a></li>
           <li><a href="javascript:show('benchmarks')">Benchmarks</a></li>
           <li><a href="javascript:show('docs')">Docs</a></li>
+          <li><a href="javascript:show('package')">Packaging</a></li>
           <? endif ?>
         </ul>
 
@@ -483,6 +484,10 @@
                 <a href="http://jkwebs.de/gallery/gx_admin/">Admin wireframes</a>
               </li>
             </ul>
+          </div>
+                      
+          <div id="package" class="activity">
+            <?= $package ?>
           </div>
         </div>
       </div>

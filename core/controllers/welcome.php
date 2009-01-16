@@ -53,7 +53,7 @@ class Welcome_Controller extends Template_Controller {
     $this->_load_group_info();
     $this->_load_comment_info();
     $this->_load_tag_info();
-
+    $this->_load_table_info();
     restore_error_handler();
 
     $this->_create_directories();
@@ -462,6 +462,73 @@ class Welcome_Controller extends Template_Controller {
     } else {
       $this->template->tag_count = 0;
       $this->template->most_tagged = 0;
+    }
+  }
+
+  private function _load_table_info() {
+    //$db = Database::instance();
+    //$tables = $db->list_tables();
+    //foreach ($tables as $table) {
+    //$this->template->tables[$table] = $table == "logs" || $table == "sessions";
+    //}
+    //foreach (array_merge(glob(APPPATH . "models/*.php"), glob(MODPATH . "*/models/*.php")) as $file) {
+    //  print $file . "<br/>";
+    //}
+    $this->template->package = new View("welcome_package.html");
+    module::load_modules();
+    $modules = module::installed();
+    $this->template->package->installed = array();
+    foreach (array_keys($modules) as $module_name) {
+      $this->template->package->installed[$module_name] = $module_name == "core" || $module_name == "user";
+    }
+  }
+
+  public function package() {
+    try {
+      $tables = array("sessions");      // The sessions table doesn't have a module so include it
+      $modules = array_fill_keys($_POST["include"], 1);
+      $modules["user"] = 1;
+
+      foreach (glob(APPPATH . "models/*.php") as $file) {
+        if (preg_match("#/models/(.*)\.php$#", $file, $matches)) {
+          $tables[] = "{$matches[1]}s";
+        }
+      }
+      foreach (glob(MODPATH . "*/models/*.php") as $file) {
+        if (preg_match("#/modules/(.*)/models/(.*)\.php$#", $file, $matches)) {
+          if (!empty($modules[$matches[1]])) {
+            $tables[] = "{$matches[2]}s";
+          }
+        }
+      }
+
+      $temp_dir = VARPATH;
+      foreach (array("packaging", "sql") as $dir) {
+        $temp_dir .= "$dir/";
+        if (!file_exists($temp_dir)) {
+          mkdir($temp_dir);
+          chmod($temp_dir, 0777);
+        }
+      }
+
+      $dbconfig = Kohana::config('database.default');
+      $dbconfig = $dbconfig["connection"];
+      foreach ($tables as $table) {
+        $backupfile = "$temp_dir$table.sql";
+        $no_data = ($table == "sessions" || $table == "logs") ? " -d" : "";
+        $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
+          "-u{$dbconfig['user']} -p{$dbconfig['pass']} $no_data {$dbconfig['database']} " .
+          "$table > \"$backupfile\"";
+        system($command);
+      }
+                                                       
+      print json_encode(
+        array("result" => "success",
+              "message" => "Gallery3 packaged to var/packaging/gallery3.tar.gz"));
+    } catch(Exception $e) {
+      print json_encode(
+        array("result" => "error",
+              "message" => $e->getMessage()));
     }
   }
 
