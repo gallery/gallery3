@@ -20,7 +20,7 @@
 class core_task_Core {
   static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count();
-    return array(Task::factory()
+    return array(Task_Definition::factory()
                  ->callback("core_task::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
                  ->description($dirty_count ?

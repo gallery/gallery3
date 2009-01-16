@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class Task_Core {
+class Task_Definition_Core {
   public $callback;
   public $description;
   public $name;
   public $severity;
 
-  static function factory($id) {
-    return new Task();
+  static function factory() {
+    return new Task_Definition();
   }
 
   function callback($callback) {
