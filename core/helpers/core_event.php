@@ -27,19 +27,11 @@ class core_event_Core {
     access::delete_group($group);
   }
 
-  static function photo_created($photo) {
-    access::add_item($photo);
+  static function item_created($item) {
+    access::add_item($item);
   }
 
-  static function photo_before_delete($photo) {
-    access::delete_item($photo);
-  }
-
-  static function album_created($album) {
-    access::add_item($album);
-  }
-
-  static function album_before_delete($album) {
-    access::delete_item($album);
+  static function item_before_delete($item) {
+    access::delete_item($item);
   }
 }
