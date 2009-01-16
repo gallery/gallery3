@@ -59,7 +59,20 @@ class Comments_Controller extends REST_Controller {
     access::required("view", $item);
 
     $form = comment::get_add_form($item);
-    if ($form->validate()) {
+    $valid = $form->validate();
+    if ($valid) {
+      if (user::active()->guest && !$form->add_comment->inputs["name"]->value) {
+        $form->add_comment->inputs["name"]->add_error("missing", 1);
+        $valid = false;
+      }
+
+      if (!$form->add_comment->text->value) {
+        $form->add_comment->text->add_error("missing", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
       $comment = comment::create(
         $item, user::active(),
         $form->add_comment->text->value,

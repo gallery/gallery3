@@ -59,9 +59,13 @@ class comment_Core {
     $comment->server_remote_addr = substr($input->server("REMOTE_ADDR"), 0, 32);
     $comment->server_remote_host = substr($input->server("REMOTE_HOST"), 0, 64);
     $comment->server_remote_port = substr($input->server("REMOTE_PORT"), 0, 16);
-
     $comment->save();
+
     module::event("comment_created", $comment);
+    if ($comment->state == "published") {
+      module::event("item_related_update", $comment->item());
+    }
+
     return $comment;
   }
 
@@ -87,7 +91,10 @@ class comment_Core {
       $group->inputs["name"]->value($active->full_name)->disabled("disabled");
       $group->email->value($active->email)->disabled("disabled");
       $group->url->value($active->url)->disabled("disabled");
+    } else {
+      $group->inputs["name"]->error_messages("missing", t("You must provide a name"));
     }
+    $group->text->error_messages("missing", t("You must provide a comment"));
 
     return $form;
   }
