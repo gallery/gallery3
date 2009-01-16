@@ -10,7 +10,7 @@
 
 <?= $theme->header_bottom() ?>
 
-<? if ($page_type != "tag"): ?>
+<? if (!empty($parents)): ?>
 <ul id="gBreadcrumbs">
   <? foreach ($parents as $parent): ?>
   <li><a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>"><?= $parent->title ?></a></li>
