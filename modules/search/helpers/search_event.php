@@ -17,32 +17,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class search_installer {
-  static function install() {
-    $version = module::get_version("search");
-    $db = Database::instance();
-    if ($version == 0) {
-      $db->query("CREATE TABLE `search_records` (
-                   `id` int(9) NOT NULL auto_increment,
-                   `item_id` int(9),
-                   `dirty` boolean default 1,
-                   `data` LONGTEXT default NULL,
-                   PRIMARY KEY (`id`),
-                   FULLTEXT INDEX (`data`))
-                 ENGINE=MyISAM DEFAULT CHARSET=utf8;");
-
-      // populate the index with dirty records
-      $db->query("insert into `search_records` (`item_id`) SELECT `id` FROM `items`");
-      module::set_version("search", 1);
-
-      search::check_index();
-    }
+class search_event_Core {
+  static function item_created($item) {
+    ORM::factory("search_record")->item_id($item->id)->save();
   }
 
-  static function uninstall() {
+  static function item_updated($old_item, $new_item) {
+    Database::instance()
+      ->from("search_records")
+      ->set("dirty", 1)
+      ->where("item_id", $new_item->id)
+      ->update();
+  }
+
+  static function item_before_delete($item) {
+    ORM::factory("item_id", $item->id)->delete_all();
+  }
+
+  static function item_related_update($item) {
+    Database::instance()
+      ->from("search_records")
+      ->set("dirty", 1)
+      ->where("item_id", $item->id)
+      ->update();
+  }
+
+  static function item_related_update_batch($sql) {
     $db = Database::instance();
-    $db->query("DROP TABLE `search_records`");
-    site_status::clear("search_index_out_of_date");
-    module::delete("search");
+    $db->query("UPDATE `search_records` SET `dirty` = 1 WHERE item_id IN ($sql)");
   }
 }
