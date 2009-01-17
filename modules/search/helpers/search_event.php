@@ -19,7 +19,9 @@
  */
 class search_event_Core {
   static function item_created($item) {
-    ORM::factory("search_record")->item_id($item->id)->save();
+    $record = ORM::factory("search_record");
+    $record->item_id = $item->id;
+    $record->save();
   }
 
   static function item_updated($old_item, $new_item) {
