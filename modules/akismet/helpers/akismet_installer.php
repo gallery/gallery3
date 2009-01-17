@@ -29,6 +29,7 @@ class akismet_installer {
   }
 
   static function uninstall() {
+    site_status::clear("akismet_config");
     module::delete("akismet");
   }
 }
