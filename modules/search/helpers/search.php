@@ -55,7 +55,7 @@ class search_Core {
       site_status::warning(
         t("Your search index needs to be updated.  %link_startFix this now%link_end",
           array("link_start" => "<a href=\"" .
-                url::site("admin/maintenance/start/search_task::rebuild_index?csrf=__CSRF__") .
+                url::site("admin/maintenance/start/search_task::update_index?csrf=__CSRF__") .
                    "\" class=\"gDialogLink\">",
                    "link_end" => "</a>")),
         "search_index_out_of_date");
