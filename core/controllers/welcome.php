@@ -495,7 +495,9 @@ class Welcome_Controller extends Template_Controller {
         }
       }
 
+
       $temp_dir = VARPATH;
+      system("rm -rf $temp_dir/packaging/*");
       foreach (array("packaging/", "gallery3/") as $dir) {
         $temp_dir .= $dir;
         if (!file_exists($temp_dir)) {
@@ -516,52 +518,62 @@ class Welcome_Controller extends Template_Controller {
         system($command);
       }
 
-      $ignore = array("var" => 1, "test" => 1, ".svn" => 1, "installer" => 1, "modules" => 1);
+      $this->ignore_dir = array(DOCROOT . "var" => 1, DOCROOT . "test" => 1, DOCROOT . "installer" => 1);
+      foreach (array_keys(module::installed()) as $module_name) {
+        if ($module_name != "core" && empty($modules[$module_name])) {
+          $this->ignore_dir[DOCROOT . "modules/$module_name"] = 1;
+        }
+      }
 
       // Copy the Gallery 3 installation to the packaging directory.
-      $dh = opendir(DOCROOT);
-      while (($file = readdir($dh)) !== false) {
-        if($file != "." && $file != ".." && empty($ignore[$file])) {
-          $source = DOCROOT . $file;
-          $dest = "{$temp_dir}/$file";
-          if (is_dir($file)) {
-            system("cp -rf $source $dest");
-          } else {
-            copy($source, $dest);
-          }
-        }
-      }
-      closedir($dh);
+      $this->_copy_dir(DOCROOT, $temp_dir);
 
-      // Copy the specified modules to the packing directory.
-      $dh = opendir(MODPATH);
-      $modules_dest = "$temp_dir/modules";
-      if (!file_exists($modules_dest)) {
-        mkdir($modules_dest);
-        chmod($modules_dest, 0775);
-      }
-      while (($file = readdir($dh)) !== false) {
-        if($file != "." && $file != ".." && !empty($modules[$file])) {
-          $source = MODPATH . $file;
-          system("cp -rf $source $modules_dest/$file");
-        }
-      }
-      closedir($dh);
-
+      $cwd = getcwd();
+      chdir($temp_dir);
       $archive_file = VARPATH . "packaging/gallery3.tar.gz";
-      system("tar -zcf $archive_file $temp_dir");
+      system("tar -zcf $archive_file *");
+      chdir($cwd);
 
       print json_encode(
         array("result" => "success",
               "message" => "Gallery3 packaged. Press <a href='" .
               url::file("var/packaging/gallery3.tar.gz") . "'>Download</a> to download"));
     } catch(Exception $e) {
+      Kohana::log("alert", $e->getMessage() . "\n" . $e->getTraceAsString());
       print json_encode(
         array("result" => "error",
               "message" => $e->getMessage()));
     }
   }
 
+  private function _copy_dir($source, $dest) {
+    try {
+      if (!file_exists($dest)) {
+        mkdir($dest);
+        chmod($dest, 0775);
+      }
+      $dir = dir($source);
+      while (($file = $dir->read()) !== false) {
+        if ($file != "." && $file != ".." && $file != ".svn") {
+          $full_source = "{$source}$file";
+          if (is_dir($full_source)) {
+            if ($dest !== $full_source &&
+              empty($this->ignore_dir[$full_source])) {
+              $this->_copy_dir("$full_source/", "{$dest}$file/");
+            }
+          } else {
+            copy($full_source, "{$dest}$file");
+          }
+        }
+      }
+    } catch (Exception $e) {
+      if (!empty($dir)) {
+        $dir->close();
+      }
+      throw $e;
+    }
+  }
+  
   public function add_user() {
     $name = $this->input->post("user_name");
     $isAdmin = (bool)$this->input->post("admin");
