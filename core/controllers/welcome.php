@@ -495,15 +495,19 @@ class Welcome_Controller extends Template_Controller {
         }
       }
 
-      $temp_dir = VARPATH . "packaging";
-      if (!file_exists($temp_dir)) {
-        mkdir($temp_dir);
-        chmod($temp_dir, 0777);
+      $temp_dir = VARPATH;
+      foreach (array("packaging/", "gallery3/") as $dir) {
+        $temp_dir .= $dir;
+        if (!file_exists($temp_dir)) {
+          mkdir($temp_dir);
+          chmod($temp_dir, 0775);
+        }
       }
 
+      // Dump the database tables and data.
       $dbconfig = Kohana::config('database.default');
       $dbconfig = $dbconfig["connection"];
-      $db_install = "{$temp_dir}/install.sql";
+      $db_install = "{$temp_dir}install.sql";
       foreach ($tables as $table) {
         $no_data = ($table == "sessions" || $table == "logs") ? " -d" : "";
         $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
@@ -511,10 +515,46 @@ class Welcome_Controller extends Template_Controller {
           "$table >> \"$db_install\"";
         system($command);
       }
-                                                       
+
+      $ignore = array("var" => 1, "test" => 1, ".svn" => 1, "installer" => 1, "modules" => 1);
+
+      // Copy the Gallery 3 installation to the packaging directory.
+      $dh = opendir(DOCROOT);
+      while (($file = readdir($dh)) !== false) {
+        if($file != "." && $file != ".." && empty($ignore[$file])) {
+          $source = DOCROOT . $file;
+          $dest = "{$temp_dir}/$file";
+          if (is_dir($file)) {
+            system("cp -rf $source $dest");
+          } else {
+            copy($source, $dest);
+          }
+        }
+      }
+      closedir($dh);
+
+      // Copy the specified modules to the packing directory.
+      $dh = opendir(MODPATH);
+      $modules_dest = "$temp_dir/modules";
+      if (!file_exists($modules_dest)) {
+        mkdir($modules_dest);
+        chmod($modules_dest, 0775);
+      }
+      while (($file = readdir($dh)) !== false) {
+        if($file != "." && $file != ".." && !empty($modules[$file])) {
+          $source = MODPATH . $file;
+          system("cp -rf $source $modules_dest/$file");
+        }
+      }
+      closedir($dh);
+
+      $archive_file = VARPATH . "packaging/gallery3.tar.gz";
+      system("tar -zcf $archive_file $temp_dir");
+
       print json_encode(
         array("result" => "success",
-              "message" => "Gallery3 packaged to $db_install"));
+              "message" => "Gallery3 packaged. Press <a href='" .
+              url::file("var/packaging/gallery3.tar.gz") . "'>Download</a> to download"));
     } catch(Exception $e) {
       print json_encode(
         array("result" => "error",
