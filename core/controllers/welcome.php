@@ -484,6 +484,7 @@ class Welcome_Controller extends Template_Controller {
   }
 
   public function package() {
+    $this->auto_render = false;
     try {
       $tables = array("sessions");      // The sessions table doesn't have a module so include it
       $modules = array_fill_keys($_POST["include"], 1);
