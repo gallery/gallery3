@@ -466,14 +466,6 @@ class Welcome_Controller extends Template_Controller {
   }
 
   private function _load_table_info() {
-    //$db = Database::instance();
-    //$tables = $db->list_tables();
-    //foreach ($tables as $table) {
-    //$this->template->tables[$table] = $table == "logs" || $table == "sessions";
-    //}
-    //foreach (array_merge(glob(APPPATH . "models/*.php"), glob(MODPATH . "*/models/*.php")) as $file) {
-    //  print $file . "<br/>";
-    //}
     $this->template->package = new View("welcome_package.html");
     module::load_modules();
     $modules = module::installed();
@@ -503,29 +495,26 @@ class Welcome_Controller extends Template_Controller {
         }
       }
 
-      $temp_dir = VARPATH;
-      foreach (array("packaging", "sql") as $dir) {
-        $temp_dir .= "$dir/";
-        if (!file_exists($temp_dir)) {
-          mkdir($temp_dir);
-          chmod($temp_dir, 0777);
-        }
+      $temp_dir = VARPATH . "packaging";
+      if (!file_exists($temp_dir)) {
+        mkdir($temp_dir);
+        chmod($temp_dir, 0777);
       }
 
       $dbconfig = Kohana::config('database.default');
       $dbconfig = $dbconfig["connection"];
+      $db_install = "{$temp_dir}/install.sql";
       foreach ($tables as $table) {
-        $backupfile = "$temp_dir$table.sql";
         $no_data = ($table == "sessions" || $table == "logs") ? " -d" : "";
         $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
           "-u{$dbconfig['user']} -p{$dbconfig['pass']} $no_data {$dbconfig['database']} " .
-          "$table > \"$backupfile\"";
+          "$table >> \"$db_install\"";
         system($command);
       }
                                                        
       print json_encode(
         array("result" => "success",
-              "message" => "Gallery3 packaged to var/packaging/gallery3.tar.gz"));
+              "message" => "Gallery3 packaged to $db_install"));
     } catch(Exception $e) {
       print json_encode(
         array("result" => "error",
