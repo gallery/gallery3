@@ -23,6 +23,45 @@ class installer {
   private static $database = null;
   private static $config_errors = false;
 
+  static function command_line() {
+    // remove the script name from the arguments
+    array_shift($_SERVER["argv"]);         
+
+    //$_SERVER["HTTP_USER_AGENT"] = phpversion();
+    //date_default_timezone_set('America/Los_Angeles');
+
+    set_error_handler(create_function('$errno, $errstr, $errfile, $errline',
+        'throw new ErrorException($errstr, 0, $errno, $errfile, $errline);'));
+
+    // Set exception handler
+    set_exception_handler(array("installer", "print_exception"));
+
+    // @todo Log the results of failed call
+    if (!installer::environment_check()) {
+      self::display_requirements();
+      die;
+    }
+
+    self::parse_cli_parms($_SERVER["argv"]);
+
+    $config_valid = true;
+
+    try {
+      $config_valid = self::check_database_authorization();
+    } catch (Exception $e) {
+      self::print_exception($e);
+      die("Specifed User does not have sufficient authority to install Gallery3\n");
+    }
+
+    $config_valid &= self::check_docroot_writable();
+
+    self::display_requirements(!$config_valid);
+
+    if ($config_valid) {
+      print self::install();
+    }
+  }
+  
   static function environment_check() {
     $failed = false;
     $section = array("header" => "Environment Test",

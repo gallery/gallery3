@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /**
- * Batch Install program this is to only be run from the command line. The web interface uses
- * a different approach to invoking the installer
+ * The main install program to install Gallery3.
  * Command line parameters:
  * -h     Database host          (default: localhost)
  * -u     Database user          (default: root)
@@ -35,44 +34,35 @@
  *        on the command line will override values contained in this file
  */
 
-function exception_handler($exception) {
-  installer::print_exception($exception);
-  exit;
-}
+define("DOCROOT", dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 
-if (PHP_SAPI != "cli") {
-  $redirect = str_replace("install.php", "index.php", $_SERVER["REQUEST_URI"]);
+// Define application and system paths
+define('APPPATH', DOCROOT . 'core' . DIRECTORY_SEPARATOR);
+define('MODPATH', DOCROOT . 'modules' . DIRECTORY_SEPARATOR);
+define('THEMEPATH', DOCROOT . 'themes' . DIRECTORY_SEPARATOR);
+define('SYSPATH', DOCROOT . 'kohana' . DIRECTORY_SEPARATOR);
 
-  header("Location: $redirect");
-  return;
-}
-
-if (file_exists("var/installed")) {
-  die("Gallery3 is already installed... exiting\n");
-}
-
-array_shift($argv);          // remove the script name from the arguments
-
-define("DOCROOT", dirname(dirname(__FILE__)) . "/");
-chdir(DOCROOT);
-define('APPPATH', realpath('core') . '/');
-define('MODPATH', realpath('modules') . '/');
-define('THEMEPATH', realpath('themes') . '/');
-define('SYSPATH', realpath('kohana') . '/');
-define('VARPATH', realpath('var') . '/');
+define('VARPATH', DOCROOT . 'var' . DIRECTORY_SEPARATOR);
 define('TEST_MODE', 0);
 define('EXT', ".php");
 
-$_SERVER["HTTP_USER_AGENT"] = phpversion();
-date_default_timezone_set('America/Los_Angeles');
+include DOCROOT . "installer/helpers/installer.php";
+
+if (PHP_SAPI == "cli") {
+  installer::command_line();
+  exit;
+}
+
+if (file_exists(VARPATH . "installed")) {
+  header("Location: ../index.php/albums/1");
+  exit;
+}
 
 set_error_handler(create_function('$errno, $errstr, $errfile, $errline',
   'throw new ErrorException($errstr, 0, $errno, $errfile, $errline);'));
 
 // Set exception handler
-set_exception_handler('exception_handler');
-
-include DOCROOT . "installer/helpers/installer.php";
+set_exception_handler(array("installer", "print_exception"));
 
 // @todo Log the results of failed call
 if (!installer::environment_check()) {
