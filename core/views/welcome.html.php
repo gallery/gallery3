@@ -166,7 +166,7 @@
     <?= html::script("lib/jquery.cookie.js") ?>
     <?= html::script("lib/jquery.MultiFile.js") ?>
     <? if (module::is_installed("rearrange")): ?>
-    <?= rearrange_block::head(null) ?>
+    <?= rearrange_theme::head(null) ?>
     <? endif ?>
   </head>
   <body>
@@ -485,7 +485,7 @@
               </li>
             </ul>
           </div>
-                      
+
           <div id="package" class="activity">
             <?= $package ?>
           </div>

@@ -27,8 +27,8 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     $block_adder->content = $this->get_add_block_form();
 
     $view = new Admin_View("admin.html");
-    $view->content = dashboard::get_blocks($blocks["main"]);
-    $view->sidebar = $block_adder . dashboard::get_blocks($blocks["sidebar"]);
+    $view->content = block_manager::get_html("dashboard_center");
+    $view->sidebar = $block_adder . block_manager::get_html("dashboard_sidebar");
     print $view;
   }
 
@@ -36,16 +36,16 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     $form = $this->get_add_block_form();
     if ($form->validate()) {
       list ($module_name, $block_id) = explode(":", $form->add_block->id->value);
-      $blocks = dashboard::get_active();
-      $available = dashboard::get_available();
+      $blocks = block_manager::get_active();
+      $available = block_manager::get_available();
 
       if ($form->add_block->center->value) {
-        dashboard::add_block("main", $module_name, $block_id);
+        block_manager::add("dashboard_center", $module_name, $block_id);
         message::success(
-          t("Added <b>%title</b> block to the main dashboard area",
+          t("Added <b>%title</b> block to the dashboard center",
             array("title" => $available["$module_name:$id"])));
       } else {
-        dashboard::add_block("sidebar", $module_name, $block_id);
+        block_manager::add("dashboard_sidebar", $module_name, $block_id);
         message::success(
           t("Added <b>%title</b> to the dashboard sidebar",
             array("title" => $available["$module_name:$id"])));
@@ -56,17 +56,17 @@ class Admin_Dashboard_Controller extends Admin_Controller {
 
   public function remove_block($id) {
     access::verify_csrf();
-    $blocks = dashboard::get_active();
+    $blocks = block_manager::get_active();
     if (array_key_exists($id, $blocks["sidebar"])) {
       $deleted = $blocks["sidebar"][$id];
-      dashboard::remove_block("sidebar", $id);
+      block_manager::remove("dashboard_sidebar", $id);
     } else if (array_key_exists($id, $blocks["main"])) {
       $deleted = $blocks["main"][$id];
-      dashboard::remove_block("main", $id);
+      block_manager::remove("dashboard_main", $id);
     }
 
     if (!empty($deleted)) {
-      $available = dashboard::get_available();
+      $available = block_manager::get_available();
       $title = $available[join(":", $deleted)];
       message::success(t("Removed <b>%title</b> block", array("title" => $title)));
     }
@@ -77,10 +77,9 @@ class Admin_Dashboard_Controller extends Admin_Controller {
   public function get_add_block_form() {
     $form = new Forge("admin/dashboard/add_block", "", "post");
     $group = $form->group("add_block")->label(t("Add Block"));
-    $group->dropdown("id")->label("Available Blocks")->options(dashboard::get_available());
+    $group->dropdown("id")->label("Available Blocks")->options(block_manager::get_available());
     $group->submit("center")->value(t("Add to center"));
     $group->submit("sidebar")->value(t("Add to sidebar"));
     return $form;
   }
 }
-

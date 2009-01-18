@@ -50,7 +50,7 @@ class comment_installer {
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
 
-      dashboard::add_block("main", "comment", "recent_comments");
+      block_manager::add("dashboard_center", "comment", "recent_comments");
       module::set_var("comment", "spam_caught", 0);
       module::set_version("comment", 1);
     }

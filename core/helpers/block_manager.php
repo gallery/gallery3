@@ -17,30 +17,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class dashboard_Core {
+class block_manager_Core {
   static function get_active() {
-    return unserialize(module::get_var("core", "dashboard_blocks", "a:0:{}"));
+    return unserialize(module::get_var("core", "blocks", "a:0:{}"));
   }
 
-  static function add_block($location, $module_name, $block_id) {
+  static function add($location, $module_name, $block_id) {
     $blocks = self::get_active();
     $blocks[$location][rand()] = array($module_name, $block_id);
-    module::set_var("core", "dashboard_blocks", serialize($blocks));
+    module::set_var("core", "blocks", serialize($blocks));
   }
 
-  static function remove_block($location, $block_id) {
+  static function remove($location, $block_id) {
     $blocks = self::get_active();
     unset($blocks[$location][$block_id]);
-    unset($blocks[$location][$block_id]);
-    module::set_var("core", "dashboard_blocks", serialize($blocks));
+    module::set_var("core", "blocks", serialize($blocks));
   }
 
   static function get_available() {
     $blocks = array();
 
     foreach (module::installed() as $module) {
-      if (method_exists("{$module->name}_dashboard", "get_list")) {
-        foreach (call_user_func(array("{$module->name}_dashboard", "get_list")) as $id => $title) {
+      $class_name = "{$module->name}_block";
+      if (method_exists($class_name, "get_list")) {
+        foreach (call_user_func(array($class_name, "get_list")) as $id => $title) {
           $blocks["{$module->name}:$id"] = $title;
         }
       }
@@ -48,11 +48,15 @@ class dashboard_Core {
     return $blocks;
   }
 
-  static function get_blocks($blocks) {
-    $result = "";
-    foreach ($blocks as $id => $desc) {
-      if (method_exists("$desc[0]_dashboard", "get_block")) {
-        $block = call_user_func(array("$desc[0]_dashboard", "get_block"), $desc[1]);
+  static function get_html($location) {
+    $active = self::get_active();
+    if (empty($active[$location])) {
+      return;
+    }
+
+    foreach ($active[$location] as $id => $desc) {
+      if (method_exists("$desc[0]_block", "get")) {
+        $block = call_user_func(array("$desc[0]_block", "get"), $desc[1]);
         $block->id = $id;
         $result .= $block;
       }
