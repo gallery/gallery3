@@ -1,50 +1,33 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script>
-$("#package").ready(function() {
+$("document").ready(function() {
   ajaxify_package_form();
 });
 
 function ajaxify_package_form() {
-  $("#package form").ajaxForm({
+  $("#gPackageSQL").ajaxForm({
     dataType: "json",
     success: function(data) {
       if (data.result == "success") {
-        $("#package .success").html(data.message);
-        $("#package .success").removeClass("gHide");
-        $("#package .error").addClass("gHide");
+        $("#gSuccessMsg").html(data.message);
+        $("#gSuccessMsg").removeClass("gHide");
+        $("#gFailMsg").addClass("gHide");
       } else {
-        $("#package .error").html(data.message);
-        $("#package .error").removeClass("gHide");
-        $("#package .success").addClass("gHide");
+        $("#gFailMsg").html(data.message);
+        $("#gFailMsg").removeClass("gHide");
+        $("#gSuccessMsg").addClass("gHide");
       }
     }
   });
 };
 
 </script>
-<p>Press the button to extract the initial database configuration.</p>
-<form action="<?= url::site("welcome/package") ?>" method="POST">
- <table style="width: 400px">
-   <tr>
-     <th align="left">Include</th>
-     <th align="left">Module</th>
-   </tr>
-   <? foreach ($installed as $module_name => $required): ?>
-   <tr>
-     <td>
-       <input type="checkbox" name="include[]" value="<?= $module_name ?>" checked
-         <? if (!empty($required)): ?> disabled="disabled"<? endif ?>
-       />
-     </td>
-     <td><?= $module_name ?></td>
-   </tr>
-   <? endforeach ?>
-   <tr>
-     <td colspan="2" align="center">
-       <input type="Submit" value="Package" />
-      </td>
-   </tr>
- </table>
- <div id="SuccessMsg" class="success gHide"></div>
- <div id="FailMsg" class="error gHide"></div>
-</form>
+<fieldset>
+  <legend>Create install.sql</legend>
+  <p>Press the button to extract the initial database configuration.</p>
+  <form id="gPackageSQL" action="<?= url::site("welcome/package") ?>" method="POST">
+    <input type="Submit" value="Package" />
+    <div id="gSuccessMsg" class="success gHide"></div>
+    <div id="gFailMsg" class="error gHide"></div>
+  </form>
+</fieldset>

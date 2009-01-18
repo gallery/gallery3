@@ -206,7 +206,6 @@
           <li><a href="javascript:show('info')">Info</a></li>
           <li><a href="javascript:show('benchmarks')">Benchmarks</a></li>
           <li><a href="javascript:show('docs')">Docs</a></li>
-          <li><a href="javascript:show('package')">Packaging</a></li>
           <? endif ?>
         </ul>
 
@@ -296,6 +295,7 @@
                 <input type="hidden" name="type" value="album"/>
               </form>
             </fieldset>
+            <?= $package ?>
             <? if (module::is_installed("rearrange")): ?>
             <fieldset>
               <legend>Rearrange</legend>
@@ -484,10 +484,6 @@
                 <a href="http://jkwebs.de/gallery/gx_admin/">Admin wireframes</a>
               </li>
             </ul>
-          </div>
-
-          <div id="package" class="activity">
-            <?= $package ?>
           </div>
         </div>
       </div>
