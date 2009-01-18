@@ -46,7 +46,7 @@ define('VARPATH', DOCROOT . 'var' . DIRECTORY_SEPARATOR);
 define('TEST_MODE', 0);
 define('EXT', ".php");
 
-include DOCROOT . "installer/helpers/installer.php";
+include DOCROOT . "installer/installer.php";
 
 if (PHP_SAPI == "cli") {
   installer::command_line();
