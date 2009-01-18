@@ -1,24 +1,12 @@
 <?php defined("SYSPATH") or die("No direct script access.");
-function create_var_directories() {
-  if (!@mkdir("resizes");) {
-    throw new Exception("Unable to create directory 'resizes'");
+if (!file_exists(VARPATH)) {
+  if (!mkdir(VARPATH)) {
+    throw new Exception("Unable to create directory '" . VARPATH . "'");
   }
-  if (!@mkdir("g3_installer");) {
-    throw new Exception("Unable to create directory 'g3_installer'");
-  }
-  if (!@mkdir("modules");) {
-    throw new Exception("Unable to create directory 'modules'");
-  }
-  if (!@mkdir("uploads");) {
-    throw new Exception("Unable to create directory 'uploads'");
-  }
-  if (!@mkdir("logs");) {
-    throw new Exception("Unable to create directory 'logs'");
-  }
-  if (!@mkdir("albums");) {
-    throw new Exception("Unable to create directory 'albums'");
-  }
-  if (!@mkdir("thumbs");) {
-    throw new Exception("Unable to create directory 'thumbs'");
+  chmod(VARPATH, 0777);
+}
+foreach (array("resizes", "modules", "uploads", "logs", "albums", "thumbs") as $dir) {
+  if (!@mkdir($dir)) {
+    throw new Exception("Unable to create directory '$dir'");
   }
 }

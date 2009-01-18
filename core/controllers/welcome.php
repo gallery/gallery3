@@ -492,22 +492,33 @@ class Welcome_Controller extends Template_Controller {
       }
 
       $var_dir = dir(VARPATH);
-      $init_g3 = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");",
-                       "function create_var_directories() {");
+      $init_g3 = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");");
 
-      // @todo generate a check for the existance of the var directory
+      $init_g3 = array_merge($init_g3, array(
+          "if (!file_exists(VARPATH)) {",
+          "  if (!mkdir(VARPATH)) {",
+          "    throw new Exception(\"Unable to create directory '\" . VARPATH . \"'\");",
+          "  }",
+          "  chmod(VARPATH, 0777);",
+          "}"));
+
+      $sub_dirs = array();
       while (false !== $entry = $var_dir->read()) {
         if ($entry == "." || $entry == "..") {
           continue;
         }
-        if (is_dir(VARPATH . $entry)) { 
-          $init_g3[] = "  if (!@mkdir(\"$entry\");) {";
-          $init_g3[] = "    throw new Exception(\"Unable to create directory '$entry'\");";
-          $init_g3[] = "  }";
+        if (is_dir(VARPATH . $entry)  & $entry != "g3_installer") { 
+          $sub_dirs[] = "\"$entry\"";
         }
-      } 
-      $init_g3[] = "}";
+      }
       $var_dir->close();
+      
+      $init_g3 = array_merge($init_g3, array(
+                                               "foreach (array(" . implode(", ", $sub_dirs) . ") as \$dir) {",
+                                               "  if (!@mkdir(\$dir)) {",
+                                               "    throw new Exception(\"Unable to create directory '\$dir'\");",
+                                               "  }",
+                                               "}"));
 
       $install_data = VARPATH . "g3_installer/";
       if (!file_exists($install_data)) {
