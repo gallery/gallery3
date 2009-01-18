@@ -56,6 +56,7 @@ class Install_Mysqli_Driver {
               "  FROM `information_schema`.`schema_privileges`" .
               " WHERE `GRANTEE` = '\\'{$this->_user}\\'@\\'{$this->_server}\\''" .
               "   AND `TABLE_SCHEMA` = '$dbname';";
+    print $select;
     $privileges = $this->_mysqli->query($select);
     $permissions = array();
     if ($privileges) {

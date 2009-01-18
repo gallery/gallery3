@@ -25,7 +25,7 @@ class installer {
 
   static function command_line() {
     // remove the script name from the arguments
-    array_shift($_SERVER["argv"]);         
+    array_shift($_SERVER["argv"]);
 
     //$_SERVER["HTTP_USER_AGENT"] = phpversion();
     //date_default_timezone_set('America/Los_Angeles');
@@ -61,7 +61,7 @@ class installer {
       print self::install();
     }
   }
-  
+
   static function environment_check() {
     $failed = false;
     $section = array("header" => "Environment Test",
@@ -323,24 +323,6 @@ class installer {
                                            "error" => true);
     }
 
-    $missing = array();
-    $rights = self::$database->get_access_rights($dbname);
-
-    foreach (array("create", "delete", "insert", "select", "update", "alter") as $privilege) {
-      if (empty($rights[$privilege])) {
-        $missing[] = $privilege;
-      }
-    }
-    if (!empty($missing)) {
-      $db_config_valid = false;
-      $section["msgs"]["Privileges"] =
-        array("text" => "The following required privileges have not been granted: " .
-              implode(", ", $missing), "error" => true);
-    } else {
-      $section["msgs"]["Privileges"] = array("text" => "Required privileges defined.",
-                                             "error" => false);
-    }
-
     self::$messages[] = $section;
 
     return $db_config_valid;
@@ -372,7 +354,7 @@ class installer {
     try {
       include(DOCROOT . "installer/data/init_var.php");
 
-      $db_config_file = realpath("var/database.php");
+      $db_config_file = realpath("var") . "/database.php";
       $data = array("type" => strtolower(self::$config["type"]),
                     "user" => self::$config["user"],
                     "password" => self::$config["password"],
@@ -381,6 +363,7 @@ class installer {
                     "prefix" => self::$config["prefix"]);
 
       $config = self::_render("installer/views/database.php", $data);
+      printf("<pre>%s</pre>",print_r($db_config_file,1));flush();
       if (file_put_contents($db_config_file, $config) !== false) {
         print "'var/database.php' created\n";
       } else {
