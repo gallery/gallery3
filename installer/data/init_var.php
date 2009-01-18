@@ -9,4 +9,5 @@ foreach (array("resizes", "modules", "uploads", "logs", "albums", "thumbs") as $
   if (!@mkdir($dir)) {
     throw new Exception("Unable to create directory '$dir'");
   }
+  chmod("var/$dir", 0777);
 }

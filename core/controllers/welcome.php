@@ -514,11 +514,12 @@ class Welcome_Controller extends Template_Controller {
       $var_dir->close();
       
       $init_g3 = array_merge($init_g3, array(
-                                               "foreach (array(" . implode(", ", $sub_dirs) . ") as \$dir) {",
-                                               "  if (!@mkdir(\$dir)) {",
-                                               "    throw new Exception(\"Unable to create directory '\$dir'\");",
-                                               "  }",
-                                               "}"));
+         "foreach (array(" . implode(", ", $sub_dirs) . ") as \$dir) {",
+         "  if (!@mkdir(\$dir)) {",
+         "    throw new Exception(\"Unable to create directory '\$dir'\");",
+         "  }",
+         "  chmod(\"var/\$dir\", 0777);",
+         "}"));
 
       $install_data = VARPATH . "g3_installer/";
       if (!file_exists($install_data)) {
@@ -532,12 +533,13 @@ class Welcome_Controller extends Template_Controller {
       $dbconfig = Kohana::config('database.default');
       $dbconfig = $dbconfig["connection"];
       $db_install_sql = "{$install_data}install.sql";
-      foreach ($tables as $table) {
-        $no_data = ($table == "sessions" || $table == "logs") ? " -d" : "";
-        $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
+      $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
           "-u{$dbconfig['user']} -p{$dbconfig['pass']} $no_data {$dbconfig['database']} " .
-          "$table >> \"$db_install_sql\"";
-        system($command);
+          "> \"$db_install_sql\"";
+      exec($command, $output, $status);
+      if ($status) {
+        Kohana::log("alert", implode("\n", $output));
+        throw new Exception("@TODO FAILED TO DUMP DATABASE SEE LOGS");
       }
 
       $installer_path = DOCROOT . "installer/data";
