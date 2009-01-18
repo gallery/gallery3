@@ -79,13 +79,6 @@ class comment_Core {
     $group->hidden("item_id")->value($item->id);
     $group->submit("")->value(t("Add"));
 
-    // Forge will try to reload any pre-seeded values upon validation if it's a post request, so
-    // force validation before seeding values.
-    // @todo make that an option in Forge
-    if (request::method() == "post") {
-      $form->validate();
-    }
-
     $active = user::active();
     if (!$active->guest) {
       $group->inputs["name"]->value($active->full_name)->disabled("disabled");
