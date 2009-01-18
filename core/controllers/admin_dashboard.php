@@ -19,24 +19,19 @@
  */
 class Admin_Dashboard_Controller extends Admin_Controller {
   public function index() {
-    $blocks = unserialize(module::get_var("core", "dashboard_blocks"));
-
-    $block_adder = new Block();
-    $block_adder->id = "core:block_adder";
-    $block_adder->title = t("Dashboard Content");
-    $block_adder->content = $this->get_add_block_form();
-
     $view = new Admin_View("admin.html");
-    $view->content = block_manager::get_html("dashboard_center");
-    $view->sidebar = $block_adder . block_manager::get_html("dashboard_sidebar");
+    $view->content = new View("admin_dashboard.html");
+    $view->content->blocks = block_manager::get_html("dashboard_center");
+    $view->sidebar = "<div id=\"gAdminDashboardSidebar\">" .
+      $block_adder . block_manager::get_html("dashboard_sidebar") .
+      "</div>";
     print $view;
   }
 
   public function add_block() {
-    $form = $this->get_add_block_form();
+    $form = core_block::get_add_block_form();
     if ($form->validate()) {
       list ($module_name, $block_id) = explode(":", $form->add_block->id->value);
-      $blocks = block_manager::get_active();
       $available = block_manager::get_available();
 
       if ($form->add_block->center->value) {
@@ -56,13 +51,15 @@ class Admin_Dashboard_Controller extends Admin_Controller {
 
   public function remove_block($id) {
     access::verify_csrf();
-    $blocks = block_manager::get_active();
-    if (array_key_exists($id, $blocks["sidebar"])) {
-      $deleted = $blocks["sidebar"][$id];
+    $blocks_center = block_manager::get_active("dashboard_center");
+    $blocks_sidebar = block_manager::get_active("dashboard_sidebar");
+
+    if (array_key_exists($id, $blocks_sidebar)) {
+      $deleted = $blocks_sidebar[$id];
       block_manager::remove("dashboard_sidebar", $id);
-    } else if (array_key_exists($id, $blocks["main"])) {
-      $deleted = $blocks["main"][$id];
-      block_manager::remove("dashboard_main", $id);
+    } else if (array_key_exists($id, $blocks_center)) {
+      $deleted = $blocks_center[$id];
+      block_manager::remove("dashboard_center", $id);
     }
 
     if (!empty($deleted)) {
@@ -74,12 +71,23 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     url::redirect("admin");
   }
 
-  public function get_add_block_form() {
-    $form = new Forge("admin/dashboard/add_block", "", "post");
-    $group = $form->group("add_block")->label(t("Add Block"));
-    $group->dropdown("id")->label("Available Blocks")->options(block_manager::get_available());
-    $group->submit("center")->value(t("Add to center"));
-    $group->submit("sidebar")->value(t("Add to sidebar"));
-    return $form;
+  public function reorder() {
+    access::verify_csrf();
+    $active_set = array();
+    foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
+      foreach (block_manager::get_active($location) as $id => $info) {
+        $active_set[$id] = $info;
+      }
+    }
+
+    foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
+      $new_blocks = array();
+      foreach ($this->input->get($location, array()) as $id) {
+        $new_blocks[$id] = $active_set[$id];
+      }
+      block_manager::set_active($location, $new_blocks);
+    }
+
+    $this->_force_block_adder();
   }
 }

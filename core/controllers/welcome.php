@@ -507,12 +507,12 @@ class Welcome_Controller extends Template_Controller {
         if ($entry == "." || $entry == "..") {
           continue;
         }
-        if (is_dir(VARPATH . $entry)  & $entry != "g3_installer") { 
+        if (is_dir(VARPATH . $entry)  & $entry != "g3_installer") {
           $sub_dirs[] = "\"$entry\"";
         }
       }
       $var_dir->close();
-      
+
       $init_g3 = array_merge($init_g3, array(
          "foreach (array(" . implode(", ", $sub_dirs) . ") as \$dir) {",
          "  if (!@mkdir(\"var/\$dir\")) {",
@@ -528,7 +528,7 @@ class Welcome_Controller extends Template_Controller {
       }
 
       file_put_contents("$install_data/init_var.php", implode("\n", $init_g3));
-      
+
       // Dump the database tables and data.
       $dbconfig = Kohana::config('database.default');
       $dbconfig = $dbconfig["connection"];

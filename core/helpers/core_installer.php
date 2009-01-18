@@ -234,6 +234,7 @@ class core_installer {
         $theme->save();
       }
 
+      block_manager::add("dashboard_sidebar", "core", "block_adder");
       block_manager::add("dashboard_sidebar", "core", "stats");
       block_manager::add("dashboard_sidebar", "core", "platform_info");
       block_manager::add("dashboard_sidebar", "core", "project_news");

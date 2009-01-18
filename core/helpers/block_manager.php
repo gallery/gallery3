@@ -18,20 +18,24 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class block_manager_Core {
-  static function get_active() {
-    return unserialize(module::get_var("core", "blocks", "a:0:{}"));
+  static function get_active($location) {
+    return unserialize(module::get_var("core", "blocks_$location", "a:0:{}"));
+  }
+
+  static function set_active($location, $blocks) {
+    module::set_var("core", "blocks_$location", serialize($blocks));
   }
 
   static function add($location, $module_name, $block_id) {
-    $blocks = self::get_active();
-    $blocks[$location][rand()] = array($module_name, $block_id);
-    module::set_var("core", "blocks", serialize($blocks));
+    $blocks = self::get_active($location);
+    $blocks[rand()] = array($module_name, $block_id);
+    self::set_active($location, $blocks);
   }
 
   static function remove($location, $block_id) {
-    $blocks = self::get_active();
-    unset($blocks[$location][$block_id]);
-    module::set_var("core", "blocks", serialize($blocks));
+    $blocks = self::get_active($location);
+    unset($blocks[$block_id]);
+    self::set_active($location, $blocks);
   }
 
   static function get_available() {
@@ -49,12 +53,8 @@ class block_manager_Core {
   }
 
   static function get_html($location) {
-    $active = self::get_active();
-    if (empty($active[$location])) {
-      return;
-    }
-
-    foreach ($active[$location] as $id => $desc) {
+    $active = self::get_active($location);
+    foreach ($active as $id => $desc) {
       if (method_exists("$desc[0]_block", "get")) {
         $block = call_user_func(array("$desc[0]_block", "get"), $desc[1]);
         $block->id = $id;
@@ -64,4 +64,3 @@ class block_manager_Core {
     return $result;
   }
 }
-

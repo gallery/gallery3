@@ -72,8 +72,22 @@ class core_block_Core {
       $block->content = new View("admin_block_news.html");
       $block->content->feed = feed::parse("http://gallery.menalto.com/node/feed", 3);
       break;
+
+    case "block_adder":
+      $block->css_id = "gBlockAdder";
+      $block->title = t("Dashboard Content");
+      $block->content = self::get_add_block_form();
     }
 
     return $block;
+  }
+
+  public function get_add_block_form() {
+    $form = new Forge("admin/dashboard/add_block", "", "post");
+    $group = $form->group("add_block")->label(t("Add Block"));
+    $group->dropdown("id")->label("Available Blocks")->options(block_manager::get_available());
+    $group->submit("center")->value(t("Add to center"));
+    $group->submit("sidebar")->value(t("Add to sidebar"));
+    return $form;
   }
 }
