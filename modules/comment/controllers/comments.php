@@ -80,11 +80,16 @@ class Comments_Controller extends REST_Controller {
         $form->add_comment->email->value,
         $form->add_comment->url->value);
 
+      $form->add_comment->inputs["name"]->value("");
+      $form->add_comment->text->value("");
+      $form->add_comment->email->value("");
+      $form->add_comment->url->value("");
       print json_encode(
         array("result" => "success",
-              "resource" => $comment->state == "published" ? url::site("comments/{$comment->id}") :
-                 NULL,
-              "form" => comment::get_add_form($item)->__toString()));
+              "resource" => ($comment->state == "published"
+                             ? url::site("comments/{$comment->id}")
+                             : null),
+              "form" => $form->__toString()));
     } else {
       print json_encode(
         array("result" => "error",
