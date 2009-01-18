@@ -96,7 +96,6 @@ $config_valid &= installer::check_docroot_writable();
 installer::display_requirements(!$config_valid);
 
 if ($config_valid) {
-  installer::setup_kohana();
   print installer::install();
 }
 

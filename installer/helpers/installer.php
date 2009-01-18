@@ -326,87 +326,42 @@ class installer {
     return $writable;
   }
 
-  static function setup_kohana() {
-    define('KOHANA_VERSION',  '2.3');
-    define('KOHANA_CODENAME', 'accipiter');
-
-    // Test of Kohana is running in Windows
-    define('KOHANA_IS_WIN', DIRECTORY_SEPARATOR === '\\');
-
-    // Load core files
-    require SYSPATH.'core/utf8'.EXT;
-    require SYSPATH.'core/Event'.EXT;
-    require SYSPATH.'core/Kohana'.EXT;
-
-    // Define Kohana error constant
-    define('E_KOHANA', 42);
-
-    // Define 404 error constant
-    define('E_PAGE_NOT_FOUND', 43);
-
-    // Define database error constant
-    define('E_DATABASE_ERROR', 44);
-
-    // Set autoloader
-    spl_autoload_register(array('Kohana', 'auto_load'));
-
-    Kohana::config("locale.language");
-  }
-
   static function install() {
     ob_start();
     $step = 0;
     $modules[] = array();
     try {
-      while ($step >= 0) {
-        switch ($step) {
-        case 0:
-          if (file_exists("var")) {
-            $step = 1;
-          } else if (mkdir("var", 0774)) {
-            print "'var' directory created\n";
-            $step = 1;
-          } else {
-            $step = -1;
-            print "'var' directory was not created\n";
-          }
-          break;
-        case 1:
-          $db_config = realpath("var/database.php");
-          $data = array("type" => strtolower(self::$config["type"]),
-                        "user" => self::$config["user"],
-                        "password" => self::$config["password"],
-                        "host" => self::$config["host"],
-                        "database" => self::$config["dbname"],
-                        "prefix" => self::$config["prefix"]);
+      include(DOCROOT . "installer/data/init_var.php");
 
-          $config = self::_render("installer/views/database.php", $data);
-          if (file_put_contents($db_config, $config) !== false) {
-            print "'var/database.php' created\n";
-            $step = 2;
-          } else {
-            print "'var/database.php' was not created\n";
-            $step = -1;
-          }
-          break;
-        case 2:
-          foreach (array_keys(self::$config["modules"]) as $module_name) {
-            self::_module_install($module_name);
-            $version = module::get_version($module_name);
-            $modules[] = "$module_name: $version";
-          }
-          $step = 3;
-          break;
-        case 3:
-          if (file_put_contents("var/installed", implode("\n", $modules))) {
-            print "Gallery3 installed\n";
-          } else {
-            print "Unable to write 'var/installed'";
-          }
-          $step = -1;
-        }
+      $db_config_file = realpath("var/database.php");
+      $data = array("type" => strtolower(self::$config["type"]),
+                    "user" => self::$config["user"],
+                    "password" => self::$config["password"],
+                    "host" => self::$config["host"],
+                    "database" => self::$config["dbname"],
+                    "prefix" => self::$config["prefix"]);
+
+      $config = self::_render("installer/views/database.php", $data);
+      if (file_put_contents($db_config_file, $config) !== false) {
+        print "'var/database.php' created\n";
+      } else {
+        throw new Exception("'var/database.php' was not created");
       }
 
+      $command = "mysql -h{$data['host']} " .
+          "-u{$data['user']} -p{$data['password']} {$data['database']} <" .
+          "\"installer/data/install.sql\"";
+      exec($command, $output, $status);
+      if ($status) {
+        print implode("\n", $output);
+        throw new Exception("Database initialization failed");
+      }
+
+      if (file_put_contents("var/installed", "installed")) {
+        print "Gallery3 installed\n";
+      } else {
+        throw new Exception("Unable to write 'var/installed'");
+      }
     } catch (Exception $e) {
       self::print_exception($e);
     }
