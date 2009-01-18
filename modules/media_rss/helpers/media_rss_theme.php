@@ -17,26 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class comment_block_Core {
+class media_rss_theme_Core {
   static function head($theme) {
-    $url = url::file("modules/comment/js/comment.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>\n";
-  }
+    if ($theme->item()) {
+      $url = media_rss::item_feed($theme->item());
+    } else if ($theme->tag()) {
+      $url = media_rss::tag_feed($theme->tag());
+    }
 
-  static function photo_bottom($theme) {
-    $block = new Block;
-    $block->css_id = "gComments";
-    $block->title = t("Comments");
-
-    $view = new View("comments.html");
-    $view->comments = ORM::factory("comment")
-      ->where("item_id", $theme->item()->id)
-      ->where("state", "published")
-      ->orderby("created", "ASC")
-      ->find_all();
-
-    $block->content = $view;
-    $block->content .= comment::get_add_form($theme->item())->render("form.html");
-    return $block;
+    if (!empty($url)) {
+      return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
+    }
   }
 }

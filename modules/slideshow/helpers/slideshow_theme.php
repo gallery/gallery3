@@ -17,16 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class media_rss_block_Core {
+class slideshow_theme_Core {
   static function head($theme) {
-    if ($theme->item()) {
-      $url = media_rss::item_feed($theme->item());
-    } else if ($theme->tag()) {
-      $url = media_rss::tag_feed($theme->tag());
-    }
-
-    if (!empty($url)) {
-      return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
-    }
+    return "<script src=\"http://lite.piclens.com/current/piclens.js\" type=\"text/javascript\">" .
+      "</script>";
   }
 }

@@ -17,14 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class rearrange_block_Core {
-  static function head($theme) {
-    $head[] = html::script("modules/rearrange/js/jquery.gallery.rearrange.tree.js");
-
-    $url = url::file("modules/rearrange/css/rearrange.css");
-    $head[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$url\" " .
-      "media=\"screen,print,projection\" />";
-
-    return implode("\n", $head);
+class search_theme_Core {
+  static function header_top($theme) {
+    $view = new View("search_link.html");
+    return $view->render();
   }
 }

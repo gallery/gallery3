@@ -17,30 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tag_block_Core {
-  static function head($theme) {
-    $url = url::file("modules/tag/js/tag.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>";
-  }
-
+class gmaps_theme_Core {
   static function sidebar_blocks($theme) {
-    $block = new Block();
-    $block->css_id = "gTag";
-    $block->title = t("Popular Tags");
-    $block->content = new View("tag_block.html");
-    $block->content->cloud = tag::cloud(30);
-
-    if ($theme->page_type() != "tag" && access::can("edit", $theme->item())) {
-      $controller = new Tags_Controller();
-      $block->content->form = tag::get_add_form($theme->item());
-    } else {
-      $block->content->form = "";
+    if ($theme->item()) {
+      $block = new Block();
+      $block->css_id = "gMaps";
+      $block->title = t("Location");
+      $block->content = new View("gmaps_block.html");
+      return $block;
     }
-
-    return $block;
-  }
-
-  static function sort_by_name($tag1, $tag2) {
-    return strcasecmp($tag1->name, $tag2->name);
   }
 }

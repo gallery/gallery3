@@ -165,7 +165,7 @@ class Theme_View_Core extends View {
     case "photo_bottom":
       $blocks = array();
       foreach (module::installed() as $module) {
-        $helper_class = "{$module->name}_block";
+        $helper_class = "{$module->name}_theme";
         if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),

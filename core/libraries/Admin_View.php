@@ -93,7 +93,7 @@ class Admin_View_Core extends View {
     case "admin_head":
       $blocks = array();
       foreach (module::installed() as $module) {
-        $helper_class = "{$module->name}_block";
+        $helper_class = "{$module->name}_theme";
         if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
             array($helper_class, $function),

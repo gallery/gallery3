@@ -17,9 +17,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class slideshow_block_Core {
-  static function head($theme) {
-    return "<script src=\"http://lite.piclens.com/current/piclens.js\" type=\"text/javascript\">" .
-      "</script>";
+class info_theme_Core {
+  static function sidebar_blocks($theme) {
+    if ($theme->item()) {
+      $block = new Block();
+      $block->css_id = "gMetadata";
+      $block->title = t("Item Info");
+      $block->content = new View("info_block.html");
+      return $block;
+    }
+  }
+
+  static function thumb_info($theme, $item) {
+    $results = "";
+    if ($item->view_count) {
+      $results .= "<li>";
+      $results .= t("Views: %view_count", array("view_count" => $item->view_count));
+      $results .= "</li>";
+    }
+    if ($item->owner) {
+      $results .= "<li>";
+      $results .= t("By: %owner_name", array("owner_name" => "<a href=\"#\">{$item->owner->name}</a>"));
+      $results .= "</li>";
+    }
+    return $results;
   }
 }

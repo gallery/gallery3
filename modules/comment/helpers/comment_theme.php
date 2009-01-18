@@ -17,15 +17,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class comment_theme_Core {
+  static function head($theme) {
+    $url = url::file("modules/comment/js/comment.js");
+    return "<script src=\"$url\" type=\"text/javascript\"></script>\n";
+  }
 
-class gmaps_block_Core {
-  static function sidebar_blocks($theme) {
-    if ($theme->item()) {
-      $block = new Block();
-      $block->css_id = "gMaps";
-      $block->title = t("Location");
-      $block->content = new View("gmaps_block.html");
-      return $block;
-    }
+  static function photo_bottom($theme) {
+    $block = new Block;
+    $block->css_id = "gComments";
+    $block->title = t("Comments");
+
+    $view = new View("comments.html");
+    $view->comments = ORM::factory("comment")
+      ->where("item_id", $theme->item()->id)
+      ->where("state", "published")
+      ->orderby("created", "ASC")
+      ->find_all();
+
+    $block->content = $view;
+    $block->content .= comment::get_add_form($theme->item())->render("form.html");
+    return $block;
   }
 }
