@@ -496,7 +496,7 @@ class Welcome_Controller extends Template_Controller {
 
       $init_g3 = array_merge($init_g3, array(
           "if (!file_exists(VARPATH)) {",
-          "  if (!mkdir(VARPATH)) {",
+          "  if (!@mkdir(VARPATH)) {",
           "    throw new Exception(\"Unable to create directory '\" . VARPATH . \"'\");",
           "  }",
           "  chmod(VARPATH, 0777);",
@@ -515,7 +515,7 @@ class Welcome_Controller extends Template_Controller {
       
       $init_g3 = array_merge($init_g3, array(
          "foreach (array(" . implode(", ", $sub_dirs) . ") as \$dir) {",
-         "  if (!@mkdir(\$dir)) {",
+         "  if (!@mkdir(\"var/\$dir\")) {",
          "    throw new Exception(\"Unable to create directory '\$dir'\");",
          "  }",
          "  chmod(\"var/\$dir\", 0777);",
