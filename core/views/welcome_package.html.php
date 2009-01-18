@@ -22,7 +22,7 @@ function ajaxify_package_form() {
 };
 
 </script>
-<p>Press the button to package this the modules as an installation package.</p>
+<p>Press the button to extract the initial database configuration.</p>
 <form action="<?= url::site("welcome/package") ?>" method="POST">
  <table style="width: 400px">
    <tr>

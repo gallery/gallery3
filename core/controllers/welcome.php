@@ -479,65 +479,61 @@ class Welcome_Controller extends Template_Controller {
     $this->auto_render = false;
     try {
       $tables = array("sessions");      // The sessions table doesn't have a module so include it
-      $modules = array_fill_keys($_POST["include"], 1);
-      $modules["user"] = 1;
+      $modules = array_fill_keys(array_merge(array("core", "user"), $_POST["include"]), 1);
 
-      foreach (glob(APPPATH . "models/*.php") as $file) {
-        if (preg_match("#/models/(.*)\.php$#", $file, $matches)) {
-          $tables[] = "{$matches[1]}s";
-        }
-      }
-      foreach (glob(MODPATH . "*/models/*.php") as $file) {
-        if (preg_match("#/modules/(.*)/models/(.*)\.php$#", $file, $matches)) {
-          if (!empty($modules[$matches[1]])) {
-            $tables[] = "{$matches[2]}s";
+      foreach (array(APPPATH . "models/*.php", MODPATH . "*/models/*.php") as $path) {
+        foreach (glob($path) as $file) {
+          if (preg_match("#.*/(.*)/models/(.*)\.php$#", $file, $matches)) {
+            if (!empty($modules[$matches[1]])) {
+              $tables[] = "{$matches[2]}s";
+            }
           }
         }
       }
 
+      $var_dir = dir(VARPATH);
+      $init_g3 = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");",
+                       "function create_var_directories() {");
 
-      $temp_dir = VARPATH;
-      system("rm -rf $temp_dir/packaging/*");
-      foreach (array("packaging/", "gallery3/") as $dir) {
-        $temp_dir .= $dir;
-        if (!file_exists($temp_dir)) {
-          mkdir($temp_dir);
-          chmod($temp_dir, 0775);
+      // @todo generate a check for the existance of the var directory
+      while (false !== $entry = $var_dir->read()) {
+        if ($entry == "." || $entry == "..") {
+          continue;
         }
+        if (is_dir(VARPATH . $entry)) { 
+          $init_g3[] = "  if (!@mkdir(\"$entry\");) {";
+          $init_g3[] = "    throw new Exception(\"Unable to create directory '$entry'\");";
+          $init_g3[] = "  }";
+        }
+      } 
+      $init_g3[] = "}";
+      $var_dir->close();
+
+      $install_data = VARPATH . "g3_installer/";
+      if (!file_exists($install_data)) {
+        mkdir($install_data);
+        chmod($install_data, 0775);
       }
 
+      file_put_contents("$install_data/init_var.php", implode("\n", $init_g3));
+      
       // Dump the database tables and data.
       $dbconfig = Kohana::config('database.default');
       $dbconfig = $dbconfig["connection"];
-      $db_install = "{$temp_dir}install.sql";
+      $db_install_sql = "{$install_data}install.sql";
       foreach ($tables as $table) {
         $no_data = ($table == "sessions" || $table == "logs") ? " -d" : "";
         $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
           "-u{$dbconfig['user']} -p{$dbconfig['pass']} $no_data {$dbconfig['database']} " .
-          "$table >> \"$db_install\"";
+          "$table >> \"$db_install_sql\"";
         system($command);
       }
 
-      $this->ignore_dir = array(DOCROOT . "var" => 1, DOCROOT . "test" => 1, DOCROOT . "installer" => 1);
-      foreach (array_keys(module::installed()) as $module_name) {
-        if ($module_name != "core" && empty($modules[$module_name])) {
-          $this->ignore_dir[DOCROOT . "modules/$module_name"] = 1;
-        }
-      }
-
-      // Copy the Gallery 3 installation to the packaging directory.
-      $this->_copy_dir(DOCROOT, $temp_dir);
-
-      $cwd = getcwd();
-      chdir($temp_dir);
-      $archive_file = VARPATH . "packaging/gallery3.tar.gz";
-      system("tar -zcf $archive_file *");
-      chdir($cwd);
-
+      $installer_path = DOCROOT . "installer/data";
       print json_encode(
         array("result" => "success",
-              "message" => "Gallery3 packaged. Press <a href='" .
-              url::file("var/packaging/gallery3.tar.gz") . "'>Download</a> to download"));
+              "message" => "Gallery3 initial sql created. <br/>Copy the files from " .
+              "'$install_data' to <br/>'$installer_path'."));
     } catch(Exception $e) {
       Kohana::log("alert", $e->getMessage() . "\n" . $e->getTraceAsString());
       print json_encode(
@@ -546,34 +542,6 @@ class Welcome_Controller extends Template_Controller {
     }
   }
 
-  private function _copy_dir($source, $dest) {
-    try {
-      if (!file_exists($dest)) {
-        mkdir($dest);
-        chmod($dest, 0775);
-      }
-      $dir = dir($source);
-      while (($file = $dir->read()) !== false) {
-        if ($file != "." && $file != ".." && $file != ".svn") {
-          $full_source = "{$source}$file";
-          if (is_dir($full_source)) {
-            if ($dest !== $full_source &&
-              empty($this->ignore_dir[$full_source])) {
-              $this->_copy_dir("$full_source/", "{$dest}$file/");
-            }
-          } else {
-            copy($full_source, "{$dest}$file");
-          }
-        }
-      }
-    } catch (Exception $e) {
-      if (!empty($dir)) {
-        $dir->close();
-      }
-      throw $e;
-    }
-  }
-  
   public function add_user() {
     $name = $this->input->post("user_name");
     $isAdmin = (bool)$this->input->post("admin");
