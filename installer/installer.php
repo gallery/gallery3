@@ -114,9 +114,6 @@ class installer {
       case "-p":
         $config["password"] = $argv[++$i];
         break;
-      case "-t":
-        $config["prefix"] = $argv[++$i];
-        break;
       }
     }
 
@@ -140,7 +137,7 @@ class installer {
         $config["dbname"]);
     }
 
-    if (mysql_num_rows(mysql_query("SHOW TABLES FROM {$config['dbname']}"))) {
+    if (empty($errors) && mysql_num_rows(mysql_query("SHOW TABLES FROM {$config['dbname']}"))) {
       $errors["Database"] = sprintf(
         "Database '%s' exists and has tables in it, continuing may overwrite an existing install",
         $config["dbname"]);
