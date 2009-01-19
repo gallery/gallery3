@@ -1,0 +1,21 @@
+body {
+    background: #eee;
+    font-family: Trebuchet MS;
+}
+
+div#outer {
+    width: 650px;
+    background: white;
+    border: 1px solid #999;
+    margin: 0 auto;
+    padding: -10px;
+}
+
+div#inner {
+    padding: 0 1em 0 1em;
+    margin: 0px;
+}
+
+h1, h2, h3 {
+    margin-bottom: .1em;
+}

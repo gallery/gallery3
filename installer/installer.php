@@ -31,7 +31,6 @@ class installer {
 
     $config = self::parse_cli_params();
     try {
-      self::environment_check();
       self::setup_database($config);
       self::setup_var();
       self::install($config);
@@ -81,54 +80,6 @@ class installer {
 
   static function already_installed() {
     return file_exists(VARPATH . "database.php");
-  }
-
-  static function environment_check() {
-    $errors = array();
-
-    if (version_compare(PHP_VERSION, "5.2", "<")) {
-      $errors["PHP Version"] = sprintf(
-        "Gallery3 requires PHP 5.2 or newer, current version: %s.", PHP_VERSION);
-    }
-
-    if (!@preg_match("/^.$/u", utf8_encode("\xF1"))) {
-      $errors["PCRE UTF-8"] =
-        "PHP is missing Perl-Compatible Regular Expression support  (http://php.net/pcre)";
-    }
-
-    if (!(class_exists("ReflectionClass"))) {
-      $errors["PHP Reflection"] = "PHP is missing Reflection support (http://php.net/reflection)";
-    }
-
-    if (!(function_exists("filter_list"))) {
-      $errors["Filters"] = "PHP is missing the filter extension (http://php.net/filter)";
-    }
-
-    if (!(extension_loaded("iconv"))) {
-      $errors["iconv"] = "PHP is missing the iconv extension (http://php.net/iconv)";
-    }
-
-    if (extension_loaded("mbstring") &&
-        (ini_get("mbstring.func_overload") & MB_OVERLOAD_STRING)) {
-      $errors["Multibyte Strings"] =
-        "The mbstring extension is overloading PHP's native string functions " .
-        "(http://php.net/mbstring)";
-    }
-
-    if (!(isset($_SERVER["REQUEST_URI"]) || isset($_SERVER["PHP_SELF"]))) {
-      $errors["URL Detection"] =
-        "Neither \$_SERVER['REQUEST_URI'] or \$_SERVER['PHP_SELF'] is available";
-    }
-
-    $short_tags = ini_get("short_open_tag");
-    if (empty($short_tags)) {
-      $errors["Short Tags"] =
-        "PHP short tag support is disabled.  (http://php.net/manual/en/ini.core.php)";
-    }
-
-    if ($errors) {
-      throw new InstallException($errors);
-    }
   }
 
   static function parse_cli_params() {

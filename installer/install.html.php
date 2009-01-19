@@ -2,30 +2,7 @@
 <html>
   <head>
     <title>Gallery3 Installer</title>
-    <style>
-      body {
-        background: #eee;
-        font-family: Trebuchet MS;
-      }
-
-      div#outer {
-        width: 650px;
-        background: white;
-        border: 1px solid #999;
-        margin: 0 auto;
-        padding: -10px;
-      }
-
-      div#inner {
-        padding: 0 1em 0 1em;
-        margin: 0px;
-        height: 400px;
-      }
-
-      h1, h2, h3 {
-        margin-bottom: .1em;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="install.css"/>
   </head>
   <body>
     <div id="outer">
@@ -79,6 +56,11 @@
         </form>
         <?php endif ?>
       </div>
+      <p>
+        Did something go wrong? Run
+        a <a href="index.php?page=check">system check</a> to make sure
+        that it's not an issue with your web host.
+      </p>
       <p>
         Questions or problems?  Visit the <a href="http://gallery.menalto.com">Gallery Website</a>.
       </p>

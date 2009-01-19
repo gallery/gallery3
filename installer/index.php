@@ -34,6 +34,10 @@ require(DOCROOT . "installer/installer.php");
 if (php_sapi_name() == "cli") {
   installer::command_line();
 } else {
-  installer::web();
+  if ($_GET["page"] == "check") {
+    include("check.html.php");
+  } else {
+    installer::web();
+  }
 }
 
