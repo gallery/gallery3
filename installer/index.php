@@ -33,4 +33,7 @@ define("SYSPATH", "DEFINED_TO_SOMETHING_SO_THAT_WE_CAN_KEEP_CONSISTENT_PREAMBLES
 require(DOCROOT . "installer/installer.php");
 if (php_sapi_name() == "cli") {
   installer::command_line();
+} else {
+  installer::web();
 }
+

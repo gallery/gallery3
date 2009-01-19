@@ -43,6 +43,14 @@ class installer {
     }
   }
 
+  static function web() {
+    if (self::already_installed()) {
+      print self::_render(
+        "install.html.php", array("content" =>  "Gallery 3 is already installed."));
+      return;
+    }
+  }
+
   static function already_installed() {
     return file_exists(VARPATH . "database.php");
   }
