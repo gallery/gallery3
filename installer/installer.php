@@ -24,11 +24,16 @@ class installer {
         'throw new ErrorException($errstr, 0, $errno, $errfile, $errline);'));
     set_exception_handler(array("installer", "print_exception"));
 
+    if (self::already_installed()) {
+      print "Gallery 3 is already installed.\n";
+      return;
+    }
+
     $config = self::parse_cli_params();
     try {
       self::environment_check();
       self::setup_database($config);
-      self::setup_varpath();
+      self::setup_var();
       self::install($config);
       list ($user, $password) = self::create_admin($config);
       print "Successfully installed your Gallery 3!\n";
@@ -148,7 +153,7 @@ class installer {
     }
   }
 
-  static function setup_varpath() {
+  static function setup_var() {
     $errors = array();
     if (is_writable(VARPATH)) {
       return;
