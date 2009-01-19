@@ -31,4 +31,6 @@ define("VARPATH", DOCROOT . "var/");
 define("SYSPATH", "DEFINED_TO_SOMETHING_SO_THAT_WE_CAN_KEEP_CONSISTENT_PREAMBLES_IN_THE_INSTALLER");
 
 require(DOCROOT . "installer/installer.php");
-installer::command_line();
+if (php_sapi_name() == "cli") {
+  installer::command_line();
+}
