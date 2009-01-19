@@ -45,10 +45,38 @@ class installer {
 
   static function web() {
     if (self::already_installed()) {
-      print self::_render(
-        "install.html.php", array("content" =>  "Gallery 3 is already installed."));
+      $state = "already_installed";
+      include("install.html.php");
       return;
     }
+
+    switch ($step = $_GET["step"]) {
+    default:
+      $step = "welcome";
+      break;
+
+    case "get_info":
+      break;
+
+    case "save_info":
+      $config = array("host" => $_GET["dbhost"],
+                      "user" => $_GET["dbuser"],
+                      "password" => $_GET["dbpass"],
+                      "dbname" => $_GET["dbname"],
+                      "prefix" => "",
+                      "type" => function_exists("mysqli_init") ? "mysqli" : "mysql");
+      try {
+        self::setup_database($config);
+        self::setup_var();
+        self::install($config);
+        list ($user, $password) = self::create_admin($config);
+      } catch (Exception $e) {
+        $step = "database_failure";
+      }
+      break;
+    }
+
+    include("install.html.php");
   }
 
   static function already_installed() {
@@ -187,31 +215,31 @@ class installer {
 
     include(DOCROOT . "installer/init_var.php");
 
-    $db_config_file = VARPATH . "database.php";
-    $output = self::_render("installer/database_config.php", $config);
-
-    if (!file_put_contents($db_config_file, $output) !== false) {
-      $errors["Config"] = "Unable to create " . VARPATH . "database.php";
-    }
-
     $buf = "";
     foreach (file("installer/install.sql") as $line) {
       $buf .= $line;
       if (preg_match("/;$/", $buf)) {
         if (!mysql_query($buf)) {
-          $errors["Database"] = "Unable to install database tables.  Error details:\n" .
-            mysql_error();
+          throw new InstallException(
+            array("Database" => "Unable to install database tables.  Error details:\n" .
+                  mysql_error()));
           break;
         }
         $buf = "";
       }
     }
 
-    system("chmod -R 777 " . VARPATH);
+    $db_config_file = VARPATH . "database.php";
+    ob_start();
+    extract($config);
+    include("installer/database_config.php");
+    $output = ob_get_clean();
 
-    if ($errors) {
-      throw new InstallException($errors);
+    if (!file_put_contents($db_config_file, $output) !== false) {
+      throw new InstallException(array("Config" => "Unable to create " . VARPATH . "database.php"));
     }
+
+    system("chmod -R 777 " . VARPATH);
   }
 
   static function create_admin($config) {
@@ -234,13 +262,6 @@ class installer {
     }
 
     return array("admin", $password);
-  }
-
-  private static function _render($view, $data) {
-    extract($data);
-    ob_start();
-    include($view);
-    return ob_get_clean();
   }
 
   static function print_exception($exception) {
