@@ -26,66 +26,13 @@
  * -d     Database name          (default: gallery3)
  * -t     Table prefix           (default: )
  * -m     Modules to install     (default: core, user)
- * -f     Response file          (default: not used)
- *        The response file is a php file that contains the following syntax;
- *        $config[key] = value;
- *        Where key is one of "host", "user", "password", "dbname", "prefix".  Values specified
- *        on the command line will override values contained in this file
  */
+define("DOCROOT", dirname(dirname(__FILE__)) . "/");
+define("VARPATH", DOCROOT . "var/");
 
-define("DOCROOT", dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
+// Define this to get the preamable to pass
+// @todo: change all preambles to key off of VARPATH instead
+define("SYSPATH", "anything");
 
-// Define application and system paths
-define('APPPATH', DOCROOT . 'core' . DIRECTORY_SEPARATOR);
-define('MODPATH', DOCROOT . 'modules' . DIRECTORY_SEPARATOR);
-define('THEMEPATH', DOCROOT . 'themes' . DIRECTORY_SEPARATOR);
-define('SYSPATH', DOCROOT . 'kohana' . DIRECTORY_SEPARATOR);
-
-define('VARPATH', DOCROOT . 'var' . DIRECTORY_SEPARATOR);
-define('TEST_MODE', 0);
-define('EXT', ".php");
-
-include DOCROOT . "installer/installer.php";
-
-if (PHP_SAPI == "cli") {
-  installer::command_line();
-  exit;
-}
-
-if (file_exists(VARPATH . "installed")) {
-  header("Location: ../index.php/albums/1");
-  exit;
-}
-
-set_error_handler(create_function('$errno, $errstr, $errfile, $errline',
-  'throw new ErrorException($errstr, 0, $errno, $errfile, $errline);'));
-
-// Set exception handler
-set_exception_handler(array("installer", "print_exception"));
-
-// @todo Log the results of failed call
-if (!installer::environment_check()) {
-  installer::display_requirements();
-  die;
-}
-
-installer::parse_cli_parms($argv);
-
-$config_valid = true;
-
-try {
-  $config_valid = installer::check_database_authorization();
-} catch (Exception $e) {
-  installer::print_exception($e);
-  die("Specifed User does not have sufficient authority to install Gallery3\n");
-}
-
-$config_valid &= installer::check_docroot_writable();
-
-installer::display_requirements(!$config_valid);
-
-if ($config_valid) {
-  print installer::install();
-}
-
-
+require(DOCROOT . "installer/installer.php");
+installer::command_line();

@@ -18,496 +18,237 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class installer {
-  private static $messages = array();
-  private static $config = array();
-  private static $database = null;
-  private static $config_errors = false;
-
   static function command_line() {
-    // remove the script name from the arguments
-    array_shift($_SERVER["argv"]);
-
-    //$_SERVER["HTTP_USER_AGENT"] = phpversion();
-    //date_default_timezone_set('America/Los_Angeles');
-
+    // Set error handlers
     set_error_handler(create_function('$errno, $errstr, $errfile, $errline',
         'throw new ErrorException($errstr, 0, $errno, $errfile, $errline);'));
-
-    // Set exception handler
     set_exception_handler(array("installer", "print_exception"));
 
-    // @todo Log the results of failed call
-    if (!installer::environment_check()) {
-      self::display_requirements();
-      die;
-    }
-
-    self::parse_cli_parms($_SERVER["argv"]);
-
-    $config_valid = true;
-
+    $config = self::parse_cli_params();
     try {
-      $config_valid = self::check_database_authorization();
-    } catch (Exception $e) {
-      self::print_exception($e);
-      die("Specifed User does not have sufficient authority to install Gallery3\n");
-    }
-
-    $config_valid &= self::check_docroot_writable();
-
-    self::display_requirements(!$config_valid);
-
-    if ($config_valid) {
-      print self::install();
+      self::environment_check();
+      self::setup_database($config);
+      self::setup_varpath();
+      self::install($config);
+      list ($user, $password) = self::create_admin($config);
+      print "Successfully installed your Gallery 3!\n";
+      print "Log in with:\n  username: admin\n  password: $password\n";
+    } catch (InstallException $e) {
+      self::display_errors($e->errors());
     }
   }
 
   static function environment_check() {
-    $failed = false;
-    $section = array("header" => "Environment Test",
-                     "description" => "The following tests have been run to determine if " .
-                     "Gallery3 will work in your environment. If any of the tests have " .
-                     "failed, consult the documention on http://gallery.menalto.com for " .
-                     "more information on how to correct the problem.",
-                     "msgs" => array());
+    $errors = array();
 
     if (version_compare(PHP_VERSION, "5.2", "<")) {
-      $section["msgs"]["PHP Version"] = array("error" => true,
-       "text" => sprintf("Gallery3 requires PHP 5.2 or newer, current version: %s.", PHP_VERSION));
-      $failed = true;
-    } else {
-      $section["msgs"]["PHP Version"] = array("error" => false,
-        "text" => PHP_VERSION);
-    }
-
-
-    if (!(is_dir(SYSPATH) AND is_file(SYSPATH.'core/Bootstrap'.EXT))) {
-      $section["msgs"]["Kohana Directory"] = array("error" => true,
-        "text" => "The configured Kohana directory does not exist or does not contain the required files.");
-    } else {
-      $section["msgs"]["Kohana Directory"] = array("error" => false,
-        "text" => SYSPATH);
-    }
-
-    if (!(is_dir(APPPATH) AND is_file(APPPATH.'config/config'.EXT))) {
-      $section["msgs"]["Application Directory"] = array("error" => true,
-        "text" => "The configured Gallery3 application directory does not exist or does not contain the required files.");
-      $failed = true;
-    } else {
-      $section["msgs"]["Application Directory"] = array("error" => false,
-        "text" => APPPATH);
-    }
-
-    if (!(is_dir(MODPATH))) {
-      $section["msgs"]["Modules Directory"] = array("error" => true,
-        "text" => "The configured Gallery3 modules directory does not exist or does not contain the required files.");
-      $failed = true;
-    } else {
-      $section["msgs"]["Modules Directory"] = array("error" => false,
-        "text" => MODPATH);
-    }
-
-    if (!(is_dir(THEMEPATH))) {
-      $section["msgs"]["Theme Directory"] = array("error" => true,
-        "text" => "The configured Gallery3 themes directory does not exist or does not contain the required files.");
-      $failed = true;
-    } else {
-      $section["msgs"]["Themes Directory"] = array("error" => false,
-        "text" => THEMEPATH);
+      $errors["PHP Version"] = sprintf(
+        "Gallery3 requires PHP 5.2 or newer, current version: %s.", PHP_VERSION);
     }
 
     if (!@preg_match("/^.$/u", utf8_encode("\xF1"))) {
-      $section["msgs"]["PCRE UTF-8"] = array("error" => true,
-        "text" => "Perl-Compatible Regular Expressions has not been compiled with UTF-8 support.",
-        "html" => "<a href=\"http://php.net/pcre\">PCRE</a> has not been compiled with UTF-8 support.");
-      $failed = true;
-    } else if (!@preg_match("/^\pL$/u", utf8_encode("\xF1"))) {
-      $section["msgs"]["PCRE UTF-8"] = array("error" => true,
-        "text" => "Perl-Compatible Regular Expressions has not been compiled with Unicode support.",
-        "html" => "<a href=\"http://php.net/pcre\">PCRE</a> has not been compiled with Unicode property support.");
-      $failed = true;
-    } else {
-      $section["msgs"]["PCRE UTF-8"] = array("error" => false,
-        "text" => "Pass");
+      $errors["PCRE UTF-8"] =
+        "PHP is missing Perl-Compatible Regular Expression support  (http://php.net/pcre)";
     }
 
     if (!(class_exists("ReflectionClass"))) {
-      $section["msgs"]["Reflection Enabled"] = array("error" => true,
-        "text" => "PHP relection is either not loaded or not compiled in.",
-        "html" => "PHP <a href=\"http://php.net/reflection\">relection<a> is either not loaded or not compiled in.");
-      $failed = true;
-    } else {
-      $section["msgs"]["Reflection Enabled"] = array("error" => false,
-        "text" => "Pass");
+      $errors["PHP Reflection"] = "PHP is missing Reflection support (http://php.net/reflection)";
     }
 
     if (!(function_exists("filter_list"))) {
-      $section["msgs"]["Filters Enabled"] = array("error" => true,
-        "text" => "The filter extension is either not loaded or not compiled in.",
-        "html" => "The <a href=\"http://php.net/filter\">filter</a> extension is either not loaded or not compiled in.");
-      $failed = true;
-    } else {
-      $section["msgs"]["Filters Enabled"] = array("error" => false,
-        "text" => "Pass");
+      $errors["Filters"] = "PHP is missing the filter extension (http://php.net/filter)";
     }
 
     if (!(extension_loaded("iconv"))) {
-      $section["msgs"]["Iconv Loaded"] = array("error" => true,
-        "text" => "The iconv extension is not loaded.",
-        "html" => "The <a href=\"http://php.net/iconv\">iconv</a> extension is not loaded.");
-      $failed = true;
-    } else {
-      $section["msgs"]["Iconv Enabled"] = array("error" => false,
-        "text" => "Pass");
+      $errors["iconv"] = "PHP is missing the iconv extension (http://php.net/iconv)";
     }
 
     if (extension_loaded("mbstring") &&
         (ini_get("mbstring.func_overload") & MB_OVERLOAD_STRING)) {
-      $section["msgs"]["Mbstring Overloaded"] = array("error" => true,
-        "text" => "The mbstring extension is overloading PHP's native string functions.",
-        "html" => "The <a href=\"http://php.net/mbstring\">mbstring</a> extension is overloading PHP's native string functions.");
-      $failed = true;
-    } else {
-      $section["msgs"]["MbString Overloaded"] = array("error" => false,
-        "text" => "Pass");
+      $errors["Multibyte Strings"] =
+        "The mbstring extension is overloading PHP's native string functions " .
+        "(http://php.net/mbstring)";
     }
 
     if (!(isset($_SERVER["REQUEST_URI"]) || isset($_SERVER["PHP_SELF"]))) {
-      $section["msgs"]["URI Determination"] = array("error" => true,
-        "text" => "Neither \$_SERVER['REQUEST_URI'] or \$_SERVER['PHP_SELF'] is available.",
-        "html" => "Neither <code>\$_SERVER['REQUEST_URI']</code> or <code>\$_SERVER['PHP_SELF']<code> is available.");
-      $failed = true;
-    } else {
-      $section["msgs"]["URI Determination"] = array("error" => false,
-        "text" => "Pass");
+      $errors["URL Detection"] =
+        "Neither \$_SERVER['REQUEST_URI'] or \$_SERVER['PHP_SELF'] is available";
     }
 
     $short_tags = ini_get("short_open_tag");
     if (empty($short_tags)) {
-      $section["msgs"]["Short Tags"] = array("error" => true,
-        "text" => "Gallery3 requires that PHP short tags be enabled.",
-        "html" => "Gallery3 requires that PHP <a href=\"http://ca2.php.net/manual/en/ini.core.php\">short tags</a> be enabled");
-      $failed = true;
-    } else {
-      $section["msgs"]["Short Tags"] = array("error" => false,
-        "text" => "Pass");
+      $errors["Short Tags"] =
+        "PHP short tag support is disabled.  (http://php.net/manual/en/ini.core.php)";
     }
-    self::$messages[] = $section;
 
-    return !$failed;
-  }
-
-  static function display_requirements($errors=false) {
-    self::$config_errors = $errors;
-    if (PHP_SAPI == 'cli') {
-      print self::_render("installer/views/installer.txt");
-    } else {
-      print self::_render("installer/views/installer.html");
+    if ($errors) {
+      throw new InstallException($errors);
     }
   }
 
-  static function parse_cli_parms($argv) {
-    $section = array("header" => "Installation Parameters",
-                     "description" => "The following parameters will be used to install and " .
-                     "configure your Gallery3 installation.",
-                     "msgs" => array());
-    $arguments = array();
-    for ($i=0; $i < count($argv); $i++) {
+  static function parse_cli_params() {
+    $config = array("host" => "localhost",
+                    "user" => "root",
+                    "password" => "",
+                    "dbname" => "gallery3",
+                    "prefix" => "");
+
+    if (function_exists("mysqli")) {
+      $config["type"] = "mysqli";
+    } else {
+      $config["type"] = "mysql";
+    }
+
+    $argv = $_SERVER["argv"];
+    for ($i = 1; $i < count($argv); $i++) {
       switch (strtolower($argv[$i])) {
       case "-d":
-        $arguments["dbname"] = $argv[++$i];
+        $config["dbname"] = $argv[++$i];
         break;
       case "-h":
-        $arguments["host"] = $argv[++$i];
+        $config["host"] = $argv[++$i];
         break;
       case "-u":
-        $arguments["user"] = $argv[++$i];
+        $config["user"] = $argv[++$i];
         break;
       case "-p":
-        $arguments["password"] = $argv[++$i];
+        $config["password"] = $argv[++$i];
         break;
       case "-t":
-        $arguments["prefix"] = $argv[++$i];
-        break;
-      case "-f":
-        $arguments["file"] = $argv[++$i];
-        break;
-      case "-i":
-        $arguments["type"] = $argv[++$i];
-        break;
-      case "-m":
-        $arguments["modules"] = $argv[++$i];
+        $config["prefix"] = $argv[++$i];
         break;
       }
     }
 
-    $config = array("host" => "localhost", "user" => "root", "password" => "",
-                    "modules" => array("core" => 1, "user" => 1), "type" => "mysqli",
-                    "dbname" => "gallery3", "prefix" => "");
-
-    if (!empty($arguments["file"])) {
-      if (file_exists($arguments["file"])) {
-        $save_modules = $config["modules"];
-        include $arguments["file"];
-        if (!is_array($config["modules"])) {
-          $modules = explode(",", $config["modules"]);
-          $config["modules"] = array_merge($save_modules, array_fill_keys($modules, 1));
-        }
-      }
-      unset($arguments["file"]);
-    }
-
-    if (!empty($arguments["modules"])) {
-      $modules = explode(",", $arguments["modules"]);
-
-      $config["modules"] = array_merge($config["modules"], array_fill_keys($modules, 1));
-      unset($arguments["modules"]);
-    }
-
-    foreach (array_keys($config["modules"]) as $module) {
-      unset($config["modules"][$module]);
-      $config["modules"][trim($module)] = 1;
-    }
-
-    self::$config = array_merge($config, $arguments);
-
-    foreach (self::$config as $key => $value) {
-      if ($key == "modules") {
-        $value = implode(", ", array_keys($value));
-      }
-      $section["msgs"][$key] = array("text" => $value, "error" => false);
-    }
-    self::$messages[] = $section;
+    return $config;
   }
 
-  static function check_database_authorization() {
-    $section = array("header" => "Database Configuration",
-                     "description" => "Gallery3 requires the following database configuration.",
-                     "msgs" => array());
-    if (!mysql_connect(self::$config["host"], self::$config["user"], self::$config["password"])) {
-      throw new Exception(mysql_error());
-    }
-
-    /*
-     * If we got this far, then the user/password combination is valid and we can now
-     * a little more information for the individual that is running the script. We can also
-     * connect to the database and ask for more information
-     */
-
-    $db_config_valid = true;
-    if (!mysql_select_db(self::$config["dbname"]) && !mysql_create_db(self::$config["dbname"])) {
-      $db_config_valid = false;
-      $section["msgs"]["Database"] = array(
-        "text" => "Database '$dbname' is not defined and can't be created",
-        "error" => true);
-    }
-
-    if (mysql_num_rows(mysql_query("SHOW TABLES FROM " . self::$config["dbname"]))) {
-      $db_config_valid = false;
-      $section["msgs"]["Database Empty"] = array("text" => "Database '$dbname' is not empty",
-                                                 "error" => true);
-    }
-
-    self::$messages[] = $section;
-    return $db_config_valid;
-  }
-
-  static function check_docroot_writable() {
-    $section = array("header" => "File System Access",
-                     "description" => "The requires the following file system configuration.",
-                     "msgs" => array());
-    if (is_writable(DOCROOT)) {
-      $writable = true;
-      $section["msgs"]["Permissions"] =
-        array("text" => "The installation directory '" . DOCROOT . "' is writable.",
-              "error" => false);
-    } else {
-      $writable = false;
-      $section["msgs"]["Permissions"] =
-        array("text" => "The current user is unable to write to '" . DOCROOT . "'.",
-              "error" => true);
-    }
-    self::$messages[] = $section;
-    return $writable;
-  }
-
-  static function install() {
-    ob_start();
-    $step = 0;
-    $modules[] = array();
-    try {
-      include(DOCROOT . "installer/data/init_var.php");
-
-      $db_config_file = realpath("var") . "/database.php";
-      $data = array("type" => strtolower(self::$config["type"]),
-                    "user" => self::$config["user"],
-                    "password" => self::$config["password"],
-                    "host" => self::$config["host"],
-                    "database" => self::$config["dbname"],
-                    "prefix" => self::$config["prefix"]);
-
-      $config = self::_render("installer/views/database.php", $data);
-      if (file_put_contents($db_config_file, $config) !== false) {
-        print "'var/database.php' created\n";
-      } else {
-        throw new Exception("'var/database.php' was not created");
-      }
-
-      $buf = "";
-      foreach (file("installer/data/install.sql") as $line) {
-        $buf .= $line;
-        if (preg_match("/;$/", $buf)) {
-          mysql_query($buf);
-          $buf = "";
-        }
-      }
-
-      if (file_put_contents("var/installed", "installed")) {
-        print "Gallery3 installed\n";
-      } else {
-        throw new Exception("Unable to write 'var/installed'");
-      }
-    } catch (Exception $e) {
-      self::print_exception($e);
-    }
-    $return = ob_get_contents();
-    ob_clean();
-    return $return;
-  }
-
-  static function print_exception($exception) {
-    // Beautify backtrace
-    try {
-    $trace = self::_backtrace($exception);
-    } catch(Exception $e) {
-      print_r($e);
-    }
-
-    $type     = get_class($exception);
-    $message  = $exception->getMessage();
-    $file     = $exception->getFile();
-    $line     = $exception->getLine();
-
-    print "$type Occurred: $message \nin {$file}[$line]\n$trace";
-    // Turn off error reporting
-    error_reporting(0);
-  }
-
-  /**
-   * Install a module.
-   */
-  private static function _module_install($module_name) {
-    $installer_class = "{$module_name}_installer";
-    print "$installer_class install (initial)\n";
-    if ($module_name != "core") {
-      require_once(DOCROOT . "modules/${module_name}/helpers/{$installer_class}.php");
-    } else {
-      require_once(DOCROOT . "core/helpers/core_installer.php");
-    }
-
-    $core_config = Kohana::config_load("core");
-    $kohana_modules = $core_config["modules"];
-    $kohana_modules[] = MODPATH . $module_name;
-    Kohana::config_set("core.modules", $kohana_modules);
-
-
-    call_user_func(array($installer_class, "install"));
-
-    //if (method_exists($installer_class, "install")) {
-    //  call_user_func_array(array($installer_class, "install"), array());
-    //}
-    print "Installed module $module_name\n";
-  }
-
-  private static function _render($view, $data=null) {
-    if ($view == '')
+  static function setup_database($config) {
+    $errors = array();
+    if (!mysql_connect($config["host"], $config["user"], $config["password"])) {
+      $errors["Database"] =
+        "Unable to connect to your database with the credentials provided.  Error details:\n" .
+        mysql_error();
       return;
-
-    // Buffering on
-    ob_start();
-
-    try {
-      // Views are straight HTML pages with embedded PHP, so importing them
-      // this way insures that $this can be accessed as if the user was in
-      // the controller, which gives the easiest access to libraries in views
-      include realpath($view . EXT);
-    } catch (Exception $e) {
-      // Display the exception using its internal __toString method
-      echo $e;
     }
 
-    // Fetch the output and close the buffer
+    if (!mysql_select_db($config["dbname"]) && !mysql_create_db($config["dbname"])) {
+      $errors["Database"] = sprintf(
+        "Database '%s' is not defined and can't be created",
+        $config["dbname"]);
+    }
+
+    if (mysql_num_rows(mysql_query("SHOW TABLES FROM {$config['dbname']}"))) {
+      $errors["Database"] = sprintf(
+        "Database '%s' exists and has tables in it, continuing may overwrite an existing install",
+        $config["dbname"]);
+    }
+
+    if ($errors) {
+      throw new InstallException($errors);
+    }
+  }
+
+  static function setup_varpath() {
+    $errors = array();
+    if (is_writable(VARPATH)) {
+      return;
+    }
+
+    if (is_writable(dirname(VARPATH)) && !mkdir(VARPATH)) {
+      $errors["Filesystem"] =
+        sprintf("The %s directory doesn't exist and can't be created", VARPATH);
+    }
+
+    if ($errors) {
+      throw new InstallException($errors);
+    }
+  }
+
+  static function install($config) {
+    $errors = array();
+
+    include(DOCROOT . "installer/init_var.php");
+
+    $db_config_file = VARPATH . "database.php";
+    $output = self::_render("installer/database_config.php", $config);
+
+    if (!file_put_contents($db_config_file, $output) !== false) {
+      $errors["Config"] = "Unable to create " . VARPATH . "database.php";
+    }
+
+    $buf = "";
+    foreach (file("installer/install.sql") as $line) {
+      $buf .= $line;
+      if (preg_match("/;$/", $buf)) {
+        if (!mysql_query($buf)) {
+          $errors["Database"] = "Unable to install database tables.  Error details:\n" .
+            mysql_error();
+          break;
+        }
+        $buf = "";
+      }
+    }
+
+    system("chmod -R 777 " . VARPATH);
+
+    if ($errors) {
+      throw new InstallException($errors);
+    }
+  }
+
+  static function create_admin($config) {
+    $errors = array();
+    $salt = "";
+    for ($i = 0; $i < 4; $i++) {
+      $char = mt_rand(48, 109);
+      $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
+      $salt .= chr($char);
+    }
+    $password = substr(md5(time() * rand()), 0, 6);
+    $hashed_password = $salt . md5($salt . $password);
+    if (mysql_query("UPDATE `users` SET `password` = '$hashed_password' WHERE `id` = 2")) {
+    } else {
+      $errors["Database"] = "Unable to set admin password.  Error details:\n" . mysql_error();
+    }
+
+    if ($errors) {
+      throw new InstallException($errors);
+    }
+
+    return array("admin", $password);
+  }
+
+  private static function _render($view, $data) {
+    extract($data);
+    ob_start();
+    include($view);
     return ob_get_clean();
   }
 
-  /**
-   * Displays nice backtrace information.
-   * @see http://php.net/debug_backtrace
-   *
-   * @param   array   backtrace generated by an exception or debug_backtrace
-   * @return  string
-   */
-  private static function _backtrace($exception) {
-    $trace = $exception->getTrace();
-    if ( ! is_array($trace)) {
-      return;
+  static function print_exception($exception) {
+    print $exception->getMessage() . "\n";
+    print $exception->getTraceAsString();
+  }
+
+  static function display_errors($errors) {
+    print "Errors\n";
+    foreach ($errors as $title => $error) {
+      print "$title\n";
+      print "  $error\n\n";
     }
+  }
+}
 
-    // Final output
-    $output = array();
-    $cli = PHP_SAPI == "cli";
+class InstallException extends Exception {
+  var $errors;
 
-    $args = array();
-    // Remove the first entry of debug_backtrace(), it is the exception_handler call
-    if ($exception instanceof ErrorException) {
-      $last = array_shift($trace);
-      $args = !empty($last["args"]) ? $last["args"] : $args;
-    }
+  function __construct($errors) {
+    parent::__construct();
+    $this->errors = $errors;
+  }
 
-    foreach ($trace as $entry) {
-      $temp = $cli ? "" : "<li>";
-
-      if (isset($entry["file"])) {
-        $format = $cli ? "%s[%s]" : "<tt>%s <strong>[%s]:</strong></tt>";
-        $temp .= sprintf($format, preg_replace("!^".preg_quote(DOCROOT)."!", "",
-                                               $entry["file"]), $entry["line"]);
-      }
-
-      $temp .= $cli ? "\n\t" : "<pre>";
-
-      if (isset($entry["class"])) {
-        // Add class and call type
-        $temp .= $entry["class"].$entry["type"];
-      }
-
-      // Add function
-      $temp .= $entry["function"]."(";
-
-      // Add function args
-      if (isset($entry["args"]) AND is_array($entry["args"])) {
-        // Separator starts as nothing
-        $sep = "";
-
-        while ($arg = array_shift($args)) {
-          if (is_string($arg) AND is_file($arg)) {
-            // Remove docroot from filename
-            $arg = preg_replace("!^".preg_quote(DOCROOT)."!", "", $arg);
-          }
-
-          $temp .= $sep . ($cli ? print_r($arg, TRUE) : html::specialchars(print_r($arg, TRUE)));
-
-          // Change separator to a comma
-          $sep = ", ";
-        }
-        $args = $entry["args"];
-      }
-
-      $temp .= ")" . ($cli ? "\n" : "</pre></li>");
-
-      $output[] = $temp;
-    }
-
-    $output = implode("\n", $output);
-    return $cli ? $output : "<ul class=\"backtrace\">" . $output . "</ul>";
+  function errors() {
+    return $this->errors;
   }
 }
