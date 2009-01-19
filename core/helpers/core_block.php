@@ -82,7 +82,7 @@ class core_block_Core {
     return $block;
   }
 
-  public function get_add_block_form() {
+  static function get_add_block_form() {
     $form = new Forge("admin/dashboard/add_block", "", "post");
     $group = $form->group("add_block")->label(t("Add Block"));
     $group->dropdown("id")->label("Available Blocks")->options(block_manager::get_available());
