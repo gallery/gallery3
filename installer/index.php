@@ -25,7 +25,6 @@
  * -p     Database user password (default: )
  * -d     Database name          (default: gallery3)
  * -t     Table prefix           (default: )
- * -m     Modules to install     (default: core, user)
  */
 define("DOCROOT", dirname(dirname(__FILE__)) . "/");
 define("VARPATH", DOCROOT . "var/");
