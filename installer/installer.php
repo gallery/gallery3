@@ -146,12 +146,13 @@ class installer {
       return;
     }
 
-    if (!mysql_select_db($config["dbname"]) &&
-        !function_exists("mysql_create_db") ||
-        !mysql_create_db($config["dbname"])) {
-      $errors["Database"] = sprintf(
-        "Database '%s' is not defined and can't be created",
-        $config["dbname"]);
+    if (!mysql_select_db($config["dbname"])) {
+      if (!(mysql_query("CREATE DATABASE {$config['dbname']}") &&
+            mysql_select_db($config["dbname"]))) {
+        $errors["Database"] = sprintf(
+          "Database '%s' is not defined and can't be created",
+          $config["dbname"]);
+      }
     }
 
     if (empty($errors) && mysql_num_rows(mysql_query("SHOW TABLES FROM {$config['dbname']}"))) {
