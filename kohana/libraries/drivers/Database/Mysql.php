@@ -22,6 +22,12 @@ class Database_Mysql_Driver extends Database_Driver {
 	protected $db_config;
 
 	/**
+	 * Performance caches.
+	 */
+	private $tables_cache;
+	private $fields_cache;
+
+	/**
 	 * Sets the config for the class.
 	 *
 	 * @param  array  database configuration
@@ -29,6 +35,8 @@ class Database_Mysql_Driver extends Database_Driver {
 	public function __construct($config)
 	{
 		$this->db_config = $config;
+		$this->tables_cache = array();
+		$this->fields_cache = array();
 
 		Kohana::log('debug', 'MySQL Database Driver Initialized');
 	}
@@ -262,11 +270,7 @@ class Database_Mysql_Driver extends Database_Driver {
 
 	public function list_tables(Database $db)
 	{
-		if (!TEST_MODE) {
-			static $tables;
-		} else {
-			$tables = array();
-		}
+		$tables =& $this->tables_cache;
 
 		if (empty($tables) AND $query = $db->query('SHOW TABLES FROM '.$this->escape_table($this->db_config['connection']['database'])))
 		{
@@ -286,11 +290,7 @@ class Database_Mysql_Driver extends Database_Driver {
 
 	public function list_fields($table)
 	{
-		if (!TEST_MODE) {
-			static $tables;
-		} else {
-			$tables = array();
-		}
+		$tables =& $this->fields_cache;
 
 		if (empty($tables[$table]))
 		{
@@ -335,6 +335,18 @@ class Database_Mysql_Driver extends Database_Driver {
 		}
 
 		return $columns;
+	}
+
+	/**
+	 * Clears the internal query cache.
+	 *
+	 * @param  string  SQL query
+	 */
+	public function clear_cache($sql = NULL)
+	{
+		parent::clear_cache($sql);
+		$this->tables_cache = array();
+		$this->fields_cache = array();
 	}
 
 } // End Database_Mysql_Driver Class

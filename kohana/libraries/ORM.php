@@ -890,7 +890,7 @@ class ORM_Core {
 	{
 		if ($force === TRUE OR empty($this->table_columns))
 		{
-			if (!TEST_MODE && isset(self::$column_cache[$this->object_name]))
+			if (isset(self::$column_cache[$this->object_name]))
 			{
 				// Use cached column information
 				$this->table_columns = self::$column_cache[$this->object_name];
@@ -1104,6 +1104,8 @@ class ORM_Core {
 	{
 		// Proxy to database
 		$this->db->clear_cache($sql);
+
+		self::$column_cache = array();
 
 		return $this;
 	}
