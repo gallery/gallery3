@@ -43,6 +43,10 @@ class installer {
     }
   }
 
+  static function already_installed() {
+    return file_exists(VARPATH . "database.php");
+  }
+
   static function environment_check() {
     $errors = array();
 
