@@ -219,8 +219,8 @@ class core_installer {
       }
       if (!module::get_var("core", "graphics_toolkit")) {
         site_status::warning(
-          t("Graphics toolkit missing!  Please %link_startchoose a toolkit%link_start.",
-            array("link_start" => "<a href=\"" . url::site("admin/graphics") . "\">", "link_end" => "</a>")),
+          t("Graphics toolkit missing!  Please <a href=\"%url\">choose a toolkit</a>",
+            array("url" => url::site("admin/graphics"))),
           "missing_graphics_toolkit");
       }
 
