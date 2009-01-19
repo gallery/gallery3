@@ -11,7 +11,7 @@ CREATE TABLE `access_caches` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `access_caches` VALUES (1,1,0,0,0,0);
+INSERT INTO `access_caches` VALUES (1,1,1,0,1,1);
 DROP TABLE IF EXISTS `access_intents`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -27,7 +27,7 @@ CREATE TABLE `access_intents` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `access_intents` VALUES (1,1,0,0,0,0,0,0);
+INSERT INTO `access_intents` VALUES (1,1,1,1,0,1,1,1);
 DROP TABLE IF EXISTS `comments`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -143,7 +143,7 @@ CREATE TABLE `items` (
   KEY `type` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `items` VALUES (NULL,1232341626,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1232341626,0,NULL,0,0);
+INSERT INTO `items` VALUES (NULL,1232344901,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1232344901,0,NULL,1,1);
 DROP TABLE IF EXISTS `items_tags`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -288,7 +288,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `users` VALUES (1,'guest','Guest User','qb9ta17514f489c7c0d46c6832c678849e47',0,0,NULL,0,1,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL);
+INSERT INTO `users` VALUES (1,'guest','Guest User','V_i04ead11e8b0559700d2d9b0a7e4e507d2',0,0,NULL,0,1,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL);
 DROP TABLE IF EXISTS `vars`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -301,4 +301,4 @@ CREATE TABLE `vars` (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `vars` VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','graphics_toolkit','imagemagick'),(7,'core','graphics_toolkit_path','/usr/bin'),(8,'core','blocks_dashboard_sidebar','a:4:{i:296985161;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:226504839;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:603830327;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1728549679;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(9,'core','blocks_dashboard_center','a:4:{i:1086295926;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:55717447;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:1368963415;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:2029466538;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(10,'core','version','3.0'),(11,'comment','spam_caught','0');
+INSERT INTO `vars` VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','graphics_toolkit','imagemagick'),(7,'core','graphics_toolkit_path','/usr/bin'),(8,'core','blocks_dashboard_sidebar','a:4:{i:666455058;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:662067510;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:1187917317;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1162793167;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(9,'core','blocks_dashboard_center','a:4:{i:1599027539;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:2012846555;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:569442894;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:1370023749;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(10,'core','version','3.0'),(11,'comment','spam_caught','0');

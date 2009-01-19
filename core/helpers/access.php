@@ -406,6 +406,7 @@ class access_Core {
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     $db->query("ALTER TABLE `$cache_table` DROP `$field`");
     $db->query("ALTER TABLE `access_intents` DROP `$field`");
+    ORM::factory("access_intent")->clear_cache();
   }
 
   /**
@@ -422,6 +423,7 @@ class access_Core {
     $db->query("ALTER TABLE `$cache_table` ADD `$field` TINYINT(2) NOT NULL DEFAULT 0");
     $db->query("ALTER TABLE `access_intents` ADD `$field` BOOLEAN DEFAULT NULL");
     $db->query("UPDATE `access_intents` SET `$field` = 0 WHERE `item_id` = 1");
+    ORM::factory("access_intent")->clear_cache();
   }
 
   /**
