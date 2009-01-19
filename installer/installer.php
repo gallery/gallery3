@@ -353,13 +353,13 @@ class installer {
         throw new Exception("'var/database.php' was not created");
       }
 
-      $command = "mysql -h{$data['host']} " .
-          "-u{$data['user']} -p{$data['password']} {$data['database']} <" .
-          "\"installer/data/install.sql\"";
-      exec($command, $output, $status);
-      if ($status) {
-        print implode("\n", $output);
-        throw new Exception("Database initialization failed");
+      $buf = "";
+      foreach (file("installer/data/install.sql") as $line) {
+        $buf .= $line;
+        if (preg_match("/;$/", $buf)) {
+          mysql_query($buf);
+          $buf = "";
+        }
       }
 
       if (file_put_contents("var/installed", "installed")) {
