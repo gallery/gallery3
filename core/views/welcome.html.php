@@ -295,7 +295,10 @@
                 <input type="hidden" name="type" value="album"/>
               </form>
             </fieldset>
-            <?= $package ?>
+            <fieldset>
+              <legend>Packaging</legend>
+              <a href="<?= url::site("welcome/package") ?>">Make Package</a>
+            </fieldset>
             <? if (module::is_installed("rearrange")): ?>
             <fieldset>
               <legend>Rearrange</legend>

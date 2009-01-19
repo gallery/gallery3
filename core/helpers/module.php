@@ -24,8 +24,8 @@
  * Note: by design, this class does not do any permission checking.
  */
 class module_Core {
-  private static $module_names = array();
-  private static $modules = array();
+  public static $module_names = array();
+  public static $modules = array();
 
   static function get_version($module_name) {
     return ORM::factory("module")->where("name", $module_name)->find()->version;

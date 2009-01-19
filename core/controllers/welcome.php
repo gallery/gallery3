@@ -53,7 +53,6 @@ class Welcome_Controller extends Template_Controller {
     $this->_load_group_info();
     $this->_load_comment_info();
     $this->_load_tag_info();
-    $this->_load_table_info();
     restore_error_handler();
 
     $this->_create_directories();
@@ -64,7 +63,7 @@ class Welcome_Controller extends Template_Controller {
     }
   }
 
-  function install($module_name) {
+  function install($module_name, $redirect=true) {
     $to_install = array();
     if ($module_name == "*") {
       foreach (module::available() as $module_name => $info) {
@@ -83,10 +82,12 @@ class Welcome_Controller extends Template_Controller {
       module::install($module_name);
     }
 
-    url::redirect("welcome");
+    if ($redirect) {
+      url::redirect("welcome");
+    }
   }
 
-  function uninstall($module_name) {
+  function uninstall($module_name, $redirect=true) {
     $clean = true;
     if ($module_name == "core") {
       // We have to uninstall all other modules first, else their tables, etc don't
@@ -118,7 +119,9 @@ class Welcome_Controller extends Template_Controller {
     } else {
       module::uninstall($module_name);
     }
-    url::redirect("welcome");
+    if ($redirect) {
+      url::redirect("welcome");
+    }
   }
 
   function mptt() {
@@ -465,94 +468,87 @@ class Welcome_Controller extends Template_Controller {
     }
   }
 
-  private function _load_table_info() {
-    $this->template->package = new View("welcome_package.html");
-    module::load_modules();
-    $modules = module::installed();
-    $this->template->package->installed = array();
-    foreach (array_keys($modules) as $module_name) {
-      $this->template->package->installed[$module_name] = $module_name == "core" || $module_name == "user";
-    }
-  }
-
   public function package() {
     $this->auto_render = false;
-    try {
-      $tables = array("sessions");      // The sessions table doesn't have a module so include it
-      $modules = array_fill_keys(array_merge(array("core", "user"), $_POST["include"]), 1);
 
-      foreach (array(APPPATH . "models/*.php", MODPATH . "*/models/*.php") as $path) {
-        foreach (glob($path) as $file) {
-          if (preg_match("#.*/(.*)/models/(.*)\.php$#", $file, $matches)) {
-            if (!empty($modules[$matches[1]])) {
-              $tables[] = "{$matches[2]}s";
-            }
-          }
-        }
-      }
-
-      $var_dir = dir(VARPATH);
-      $init_g3 = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");");
-
-      $init_g3 = array_merge($init_g3, array(
-          "if (!file_exists(VARPATH)) {",
-          "  if (!@mkdir(VARPATH)) {",
-          "    throw new Exception(\"Unable to create directory '\" . VARPATH . \"'\");",
-          "  }",
-          "  chmod(VARPATH, 0777);",
-          "}"));
-
-      $sub_dirs = array();
-      while (false !== $entry = $var_dir->read()) {
-        if ($entry == "." || $entry == "..") {
-          continue;
-        }
-        if (is_dir(VARPATH . $entry)  & $entry != "g3_installer") {
-          $sub_dirs[] = "\"$entry\"";
-        }
-      }
-      $var_dir->close();
-
-      $init_g3 = array_merge($init_g3, array(
-         "foreach (array(" . implode(", ", $sub_dirs) . ") as \$dir) {",
-         "  if (!@mkdir(\"var/\$dir\")) {",
-         "    throw new Exception(\"Unable to create directory '\$dir'\");",
-         "  }",
-         "  chmod(\"var/\$dir\", 0777);",
-         "}"));
-
-      $install_data = VARPATH . "g3_installer/";
-      if (!file_exists($install_data)) {
-        mkdir($install_data);
-        chmod($install_data, 0775);
-      }
-
-      file_put_contents("$install_data/init_var.php", implode("\n", $init_g3));
-
-      // Dump the database tables and data.
-      $dbconfig = Kohana::config('database.default');
-      $dbconfig = $dbconfig["connection"];
-      $db_install_sql = "{$install_data}install.sql";
-      $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
-          "-u{$dbconfig['user']} -p{$dbconfig['pass']} $no_data {$dbconfig['database']} " .
-          "> \"$db_install_sql\"";
-      exec($command, $output, $status);
-      if ($status) {
-        Kohana::log("alert", implode("\n", $output));
-        throw new Exception("@TODO FAILED TO DUMP DATABASE SEE LOGS");
-      }
-
-      $installer_path = DOCROOT . "installer/data";
-      print json_encode(
-        array("result" => "success",
-              "message" => "Gallery3 initial sql created. <br/>Copy the files from " .
-              "'$install_data' to <br/>'$installer_path'."));
-    } catch(Exception $e) {
-      Kohana::log("alert", $e->getMessage() . "\n" . $e->getTraceAsString());
-      print json_encode(
-        array("result" => "error",
-              "message" => $e->getMessage()));
+    // Cleanly uninstalling and reinstalling within the same request requires us to do the "cache
+    // invalidation" cha-cha.  It's a dance of many steps.
+    $this->uninstall("core", false);
+    module::$module_names = array();
+    module::$modules = array();
+    Database::instance()->clear_cache();
+    $this->install("core", false);
+    module::load_modules();
+    foreach (array("core", "user", "comment", "info",
+                   "media_rss", "search", "slideshow", "tag") as $module_name) {
+      $this->install($module_name, false);
     }
+    url::redirect("welcome/dump_database");
+  }
+
+  public function dump_database() {
+    $this->auto_render = false;
+
+    // We now have a clean install with just the packages that we want.  Make sure that the
+    // database is clean too.
+    $db = Database::instance();
+    $db->query("TRUNCATE `sessions`");
+    $db->query("TRUNCATE `logs`");
+    $db->query("UPDATE `users` SET `password` = ''  WHERE `id` = 2");
+
+    $dbconfig = Kohana::config('database.default');
+    $dbconfig = $dbconfig["connection"];
+    $pass = $dbconfig["pass"] ? "-p{$dbconfig['pass']}" : "";
+    $sql_file = DOCROOT . "installer/install.sql";
+    if (!is_writable($sql_file)) {
+      print "$sql_file is not writeable";
+      return;
+    }
+    $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
+      "-u{$dbconfig['user']} $pass {$dbconfig['database']} > $sql_file";
+    exec($command, $output, $status);
+    if ($status) {
+      print "<pre>";
+      print "$command\n";
+      print "Failed to dump database\n";
+      print implode("\n", $output);
+      return;
+    }
+    url::redirect("welcome/dump_var");
+  }
+
+  public function dump_var() {
+    $this->auto_render = false;
+
+    $objects = new RecursiveIteratorIterator(
+      new RecursiveDirectoryIterator(VARPATH),
+      RecursiveIteratorIterator::SELF_FIRST);
+
+    $var_file = DOCROOT . "installer/init_var.php";
+    if (!is_writable($var_file)) {
+      print "$var_file is not writeable";
+      return;
+    }
+
+    $fd = fopen($var_file, "w");
+    fwrite($fd, "<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
+    foreach($objects as $name => $file){
+      if ($file->getBasename() == "database.php") {
+        continue;
+      } else if (basename($file->getPath()) == "logs") {
+        continue;
+      }
+
+      if ($file->isDir()) {
+        fwrite($fd, "mkdir(\"var/" . substr($name, strlen(VARPATH)) . "\");\n");
+      } else {
+        // @todo: serialize non-directories
+        print "Unknown file: $name";
+        return;
+      }
+    }
+    fclose($fd);
+    url::redirect("welcome");
   }
 
   public function add_user() {
