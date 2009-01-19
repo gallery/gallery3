@@ -93,7 +93,7 @@ class installer {
                     "dbname" => "gallery3",
                     "prefix" => "");
 
-    if (function_exists("mysqli")) {
+    if (function_exists("mysqli_init")) {
       $config["type"] = "mysqli";
     } else {
       $config["type"] = "mysql";
