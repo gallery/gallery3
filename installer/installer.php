@@ -132,7 +132,9 @@ class installer {
       return;
     }
 
-    if (!mysql_select_db($config["dbname"]) && !mysql_create_db($config["dbname"])) {
+    if (!mysql_select_db($config["dbname"]) &&
+        !function_exists("mysql_create_db") ||
+        !mysql_create_db($config["dbname"])) {
       $errors["Database"] = sprintf(
         "Database '%s' is not defined and can't be created",
         $config["dbname"]);
