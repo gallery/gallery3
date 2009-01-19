@@ -28,10 +28,7 @@
  */
 define("DOCROOT", dirname(dirname(__FILE__)) . "/");
 define("VARPATH", DOCROOT . "var/");
-
-// Define this to get the preamable to pass
-// @todo: change all preambles to key off of VARPATH instead
-define("SYSPATH", "anything");
+define("SYSPATH", "DEFINED_TO_SOMETHING_SO_THAT_WE_CAN_KEEP_CONSISTENT_PREAMBLES_IN_THE_INSTALLER");
 
 require(DOCROOT . "installer/installer.php");
 installer::command_line();

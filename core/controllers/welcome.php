@@ -531,7 +531,8 @@ class Welcome_Controller extends Template_Controller {
     }
 
     $fd = fopen($var_file, "w");
-    fwrite($fd, "<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
+    fwrite($fd, "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n");
+    fwrite($fd, "<?php\n");
     foreach($objects as $name => $file){
       if ($file->getBasename() == "database.php") {
         continue;

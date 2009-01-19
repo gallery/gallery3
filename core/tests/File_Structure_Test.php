@@ -60,7 +60,9 @@ class File_Structure_Test extends Unit_Test_Case {
 
     $expected = $this->_get_preamble(__FILE__);
     foreach ($dir as $file) {
-      if (preg_match("/views/", $file->getPathname())) {
+      if (preg_match("/views/", $file->getPathname()) ||
+          $file->getPathName() == DOCROOT . "installer/database_config.php" ||
+          $file->getPathName() == DOCROOT . "installer/init_var.php") {
         // The preamble for views is a single line that prevents direct script access
         $lines = file($file->getPathname());
         $this->assert_equal(
@@ -70,8 +72,8 @@ class File_Structure_Test extends Unit_Test_Case {
       } else if (preg_match("|\.php$|", $file->getPathname())) {
         $actual = $this->_get_preamble($file->getPathname());
         if ($file->getPathName() == DOCROOT . "index.php" ||
-            $file->getPathName() == DOCROOT . "installer/install.php") {
-          // index.php and installer.php allow direct access, so modify our expectations for them
+            $file->getPathName() == DOCROOT . "installer/index.php") {
+          // index.php and installer/index.php allow direct access; modify our expectations for them
           $index_expected = $expected;
           $index_expected[0] = "<?php";
           $this->assert_equal($index_expected, $actual, "in file: {$file->getPathname()}");
