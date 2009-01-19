@@ -272,14 +272,6 @@ class installer {
     self::$config = array_merge($config, $arguments);
 
     foreach (self::$config as $key => $value) {
-      if ($key == "type") {
-        $value = ucfirst(self::$config["type"]);
-        self::$config[$key] = $value;
-        $class = "Install_{$value}_Driver";
-        if (!class_exists($class)) {
-          require_once(DOCROOT . "installer/libraries/$class" . EXT);
-        }
-      }
       if ($key == "modules") {
         $value = implode(", ", array_keys($value));
       }
@@ -292,39 +284,31 @@ class installer {
     $section = array("header" => "Database Configuration",
                      "description" => "Gallery3 requires the following database configuration.",
                      "msgs" => array());
-    $class = self::$config["type"];
-    $class = "Install_{$class}_Driver";
-    self::$database =
-      new $class(self::$config["host"], self::$config["user"], self::$config["password"]);
+    if (!mysql_connect(self::$config["host"], self::$config["user"], self::$config["password"])) {
+      throw new Exception(mysql_error());
+    }
 
     /*
      * If we got this far, then the user/password combination is valid and we can now
      * a little more information for the individual that is running the script. We can also
      * connect to the database and ask for more information
      */
-    $databases = self::$database->list_dbs();
-    $dbname = self::$config["dbname"];
+
     $db_config_valid = true;
-    if (empty($databases[$dbname])) {
+    if (!mysql_select_db(self::$config["dbname"]) && !mysql_create_db(self::$config["dbname"])) {
       $db_config_valid = false;
-      $section["msgs"]["Database"] = array("text" => "Database '$dbname' is not defined",
-                                           "error" => true);
-    } else {
-      $section["msgs"]["Database"] = array("text" => "Database '$dbname' is defined",
-                                           "error" => false);
+      $section["msgs"]["Database"] = array(
+        "text" => "Database '$dbname' is not defined and can't be created",
+        "error" => true);
     }
 
-    $tables = self::$database->list_tables(self::$config["dbname"]);
-
-    $valid = count($tables) == 0;
-    if (!$valid) {
+    if (mysql_num_rows(mysql_query("SHOW TABLES FROM " . self::$config["dbname"]))) {
       $db_config_valid = false;
       $section["msgs"]["Database Empty"] = array("text" => "Database '$dbname' is not empty",
-                                           "error" => true);
+                                                 "error" => true);
     }
 
     self::$messages[] = $section;
-
     return $db_config_valid;
   }
 
@@ -363,7 +347,6 @@ class installer {
                     "prefix" => self::$config["prefix"]);
 
       $config = self::_render("installer/views/database.php", $data);
-      printf("<pre>%s</pre>",print_r($db_config_file,1));flush();
       if (file_put_contents($db_config_file, $config) !== false) {
         print "'var/database.php' created\n";
       } else {
