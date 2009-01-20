@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <h1> Oops! </h1>
 <p>
   Something unexpected happened and we can't finish your install.

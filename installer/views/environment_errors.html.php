@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <h1> Whoa there! </h1>
 
 <p class="error">

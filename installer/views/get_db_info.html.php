@@ -1,3 +1,5 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
+<h1> Welcome! </h1>
 <p>
   Installing Gallery is very easy.  We just need to know how to talk
   to your MySQL database, and we need a place to store your photos on
