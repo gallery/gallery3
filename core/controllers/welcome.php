@@ -541,7 +541,8 @@ class Welcome_Controller extends Template_Controller {
       }
 
       if ($file->isDir()) {
-        fwrite($fd, "mkdir(\"var/" . substr($name, strlen(VARPATH)) . "\");\n");
+        $path = "VARPATH . \"" . substr($name, strlen(VARPATH)) . "\"";
+        fwrite($fd, "!file_exists($path) && mkdir($path);\n");
       } else {
         // @todo: serialize non-directories
         print "Unknown file: $name";

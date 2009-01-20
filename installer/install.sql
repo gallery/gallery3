@@ -143,7 +143,7 @@ CREATE TABLE `items` (
   KEY `type` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `items` VALUES (NULL,1232345987,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1232345987,0,NULL,1,1);
+INSERT INTO `items` VALUES (NULL,1232411356,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1232411356,0,NULL,1,1);
 DROP TABLE IF EXISTS `items_tags`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -288,7 +288,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `users` VALUES (1,'guest','Guest User','iEkC795166ec7ac8c7acced8d31a8421906b',0,0,NULL,0,1,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL);
+INSERT INTO `users` VALUES (1,'guest','Guest User','QYV8187262d4349b69c82675f8378185a61c',0,0,NULL,0,1,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL);
 DROP TABLE IF EXISTS `vars`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -301,4 +301,4 @@ CREATE TABLE `vars` (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `vars` VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','graphics_toolkit','imagemagick'),(7,'core','graphics_toolkit_path','/usr/bin'),(8,'core','blocks_dashboard_sidebar','a:4:{i:949042169;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:1377548023;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:1576910954;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:201768872;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(9,'core','blocks_dashboard_center','a:4:{i:754436234;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:1128952603;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:1021381592;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:1986335277;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(10,'core','version','3.0'),(11,'comment','spam_caught','0');
+INSERT INTO `vars` VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','graphics_toolkit','imagemagick'),(7,'core','graphics_toolkit_path','/usr/bin'),(8,'core','blocks_dashboard_sidebar','a:4:{i:1876961917;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:924956900;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:8006564;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1576448242;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(9,'core','blocks_dashboard_center','a:4:{i:1489461869;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:2076717831;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:706100302;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:1064064430;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(10,'core','version','3.0'),(11,'comment','spam_caught','0');

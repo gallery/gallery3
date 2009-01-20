@@ -1,6 +1,11 @@
+h1, h2, h3 {
+    margin-bottom: .1em;
+}
+
 body {
     background: #eee;
     font-family: Trebuchet MS;
+    font-size: 1.1em;
 }
 
 div#outer {
@@ -16,6 +21,48 @@ div#inner {
     margin: 0px;
 }
 
-h1, h2, h3 {
-    margin-bottom: .1em;
+div#footer {
+    border-top: 1px solid #ccc;
+    margin: 1em;
+}
+
+.error {
+    border: 1px solid red;
+    background: #fcc;
+    padding: 4px;
+}
+
+.success {
+    border: 1px solid green;
+    background: #cfc;
+    padding: 4px;
+}
+
+p {
+    margin: 0px;
+    padding: 0px;
+}
+
+fieldset {
+    border: 0px;
+    padding-left: 0px;
+    margin-top: 1em;
+}
+
+fieldset legend {
+    font-weight: bold;
+    padding-left: 0px;
+}
+
+table#db_info {
+  padding-left: 2em;
+}
+
+table td {
+  padding-right: 1em;
+}
+
+code {
+  background: #eee;
+  padding: 2px;
 }
