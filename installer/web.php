@@ -18,16 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 if (installer::already_installed()) {
-  $content = render("pages/success.html.php");
+  $content = render("success.html.php");
 } else {
   switch ($_GET["step"]) {
   default:
   case "welcome":
     $errors = check_environment();
     if ($errors) {
-      $content = render("pages/environment_errors.html.php", array("errors" => $errors));
+      $content = render("environment_errors.html.php", array("errors" => $errors));
     } else {
-      $content = render("pages/get_db_info.html.php");
+      $content = render("get_db_info.html.php");
     }
     break;
 
@@ -40,11 +40,11 @@ if (installer::already_installed()) {
                     "type" => function_exists("mysqli_init") ? "mysqli" : "mysql");
 
     if (!installer::connect($config)) {
-      $content = render("pages/invalid_db_info.html.php");
+      $content = render("invalid_db_info.html.php");
     } else if (!installer::select_db($config)) {
-      $content = render("pages/missing_db.html.php");
+      $content = render("missing_db.html.php");
     } else if (!installer::db_empty($config)) {
-      $content = render("pages/db_not_empty.html.php");
+      $content = render("db_not_empty.html.php");
     } else if (!installer::unpack_var()) {
       $content = oops("Unable to create files inside the <code>var</code> directory");
     } else if (!installer::unpack_sql()) {
@@ -53,7 +53,7 @@ if (installer::already_installed()) {
       $content = oops("Couldn't create var/database.php");
     } else {
       list ($user, $password) = installer::create_admin($config);
-      $content = render("pages/success.html.php", array("user" => $user, "password" => $password));
+      $content = render("success.html.php", array("user" => $user, "password" => $password));
     }
     break;
   }
@@ -61,15 +61,15 @@ if (installer::already_installed()) {
 
 include("install.html.php");
 
-function render($page, $args=array()) {
+function render($view, $args=array()) {
   ob_start();
   extract($args);
-  include($page);
+  include(DOCROOT . "installer/views/" . $view);
   return ob_get_clean();
 }
 
 function oops($error) {
-  return render("pages/oops.html.php", array("error" => $error));
+  return render("oops.html.php", array("error" => $error));
 }
 
 function check_environment() {
