@@ -1,6 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<? if ($item->type == "photo"): ?>
-
 <a class="edit gDialogLink" href="<?= url::site("quick/form_edit/$item->id") ?>"
       title="<?= t("Edit this item's metadata") ?>">
   <span>
@@ -8,7 +6,7 @@
   </span>
 </a>
 
-<? if (graphics::can("rotate")): ?>
+<? if ($item->type == "photo" && graphics::can("rotate")): ?>
 <a class="clockwise" href="<?= url::site("quick/rotate/$item->id/cw?csrf=" . access::csrf_token()) ?>"
       title="<?= t("Rotate 90 degrees clockwise") ?>">
   <span>
@@ -30,12 +28,14 @@
   </span>
 </a>
 
+<? if ($item->type == "photo"): ?>
 <a class="cover" href="#"
       title="<?= t("Select as album cover") ?>">
   <span>
     <?= t("Select as album cover") ?>
   </span>
 </a>
+<? endif ?>
 
 <a class="delete" href="#"
       title="<?= t("Delete this item") ?>">
@@ -50,5 +50,3 @@
     <?= t("Additional options") ?>
   </span>
 </a>
-
-<? endif ?>

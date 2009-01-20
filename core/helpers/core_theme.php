@@ -40,14 +40,14 @@ class core_theme_Core {
   }
 
   static function thumb_top($theme, $child) {
-    if ($child->type == "photo" && access::can("edit", $child)) {
+    if (access::can("edit", $child)) {
       $edit_link = url::site("quick/pane/$child->id");
       return "<div class=\"gQuick\" href=\"$edit_link\">";
     }
   }
 
   static function thumb_bottom($theme, $child) {
-    if ($child->type == "photo" && access::can("edit", $child)) {
+    if (access::can("edit", $child)) {
       return "</div>";
     }
   }

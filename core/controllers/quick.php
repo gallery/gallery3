@@ -24,11 +24,9 @@ class Quick_Controller extends Controller {
       return "";
     }
 
-    if ($item->type == "photo") {
-      $view = new View("quick_pane.html");
-      $view->item = $item;
-      print $view;
-    }
+    $view = new View("quick_pane.html");
+    $view->item = $item;
+    print $view;
   }
 
   public function rotate($id, $dir) {
