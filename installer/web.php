@@ -59,7 +59,7 @@ if (installer::already_installed()) {
   }
 }
 
-include("install.html.php");
+include("views/install.html.php");
 
 function render($view, $args=array()) {
   ob_start();
