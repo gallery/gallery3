@@ -1,8 +1,17 @@
-To get started, point your browser at the gallery3 dir.  That should
-take you to the scaffolding page which will walk you through the
-process of getting installed.  Questions, problems?  
+INSTALLING VIA THE WEB
+- Point your web browser at gallery3/installer and follow the instructions
 
-Check out the gallery3 FAQ http://codex.gallery2.org/Gallery3:FAQ, or
-Send an email to gallery-devel@lists.sourceforge.net.
+INSTALLING FROM THE COMMAND LINE
+- php installer/index.php [-h host] [-u user] [-p pass] [-d dbname]
+
+ Command line parameters:
+ -h     Database host          (default: localhost)
+ -u     Database user          (default: root)
+ -p     Database user password (default: )
+ -d     Database name          (default: gallery3)
+
+Questions, problems:
+  - Check out the gallery3 FAQ http://codex.gallery2.org/Gallery3:FAQ
+  - Email gallery-devel@lists.sourceforge.net
 
 

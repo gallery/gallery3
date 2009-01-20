@@ -17,7 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
+/**
+ * Command line parameters:
+ * -h     Database host          (default: localhost)
+ * -u     Database user          (default: root)
+ * -p     Database user password (default: )
+ * -d     Database name          (default: gallery3)
+ */
 if (installer::already_installed()) {
   print "Gallery 3 is already installed.\n";
   return;

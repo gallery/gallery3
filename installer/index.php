@@ -17,15 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-/**
- * The main install program to install Gallery3.
- * Command line parameters:
- * -h     Database host          (default: localhost)
- * -u     Database user          (default: root)
- * -p     Database user password (default: )
- * -d     Database name          (default: gallery3)
- * -t     Table prefix           (default: )
- */
 define("DOCROOT", dirname(dirname(__FILE__)) . "/");
 define("VARPATH", DOCROOT . "var/");
 define("SYSPATH", "DEFINED_TO_SOMETHING_SO_THAT_WE_CAN_KEEP_CONSISTENT_PREAMBLES_IN_THE_INSTALLER");
