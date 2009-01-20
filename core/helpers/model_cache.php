@@ -18,17 +18,17 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class model_cache_Core {
-  private static $cache = array();
+  private static $cache;
 
   static function get($model_name,  $id, $field_name="id") {
-    if (TEST_MODE || empty(self::$cache[$model_name][$field_name][$id])) {
+    if (TEST_MODE || empty(self::$cache->$model_name->$field_name->$id)) {
       $model = ORM::factory($model_name)->where($field_name, $id)->find();
       if (!$model->loaded) {
         throw new Exception("@todo MISSING_MODEL $model_name:$id");
       }
-      self::$cache[$model_name][$field_name][$id] = $model;
-
+      self::$cache->$model_name->$field_name->$id = $model;
     }
-    return self::$cache[$model_name][$field_name][$id];
+
+    return self::$cache->$model_name->$field_name->$id;
   }
 }
