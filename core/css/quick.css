@@ -1,10 +1,10 @@
 .gItem:hover {
-	background-color: #cfdeff;
+  background-color: #cfdeff;
 }
 
 .gQuick {
   border: none !important;
-	margin: 0 !important;
+  margin: 0 !important;
   padding: 0 !important;
 }
 
@@ -29,7 +29,7 @@
 #gQuickPane a:hover {
   background-color: #666;
 }
-  
+
 #gQuickPane a span {
   display: none;
 }
