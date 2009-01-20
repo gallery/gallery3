@@ -28,8 +28,8 @@
   </span>
 </a>
 
-<? if ($item->type == "photo"): ?>
-<a class="cover" href="#"
+<? if ($item->type == "photo" && access::can("edit", $item->parent())): ?>
+<a class="cover" href="<?= url::site("quick/make_album_cover/$item->id?csrf=" . access::csrf_token()) ?>"
    title="<?= t("Select as album cover") ?>">
   <span>
     <?= t("Select as album cover") ?>

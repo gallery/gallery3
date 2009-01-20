@@ -48,16 +48,18 @@ var quick_do = function(cont, pane, img) {
       url: pane.attr("href"),
       dataType: "json",
       success: function(data) {
-		img.css("opacity", "1");
-		img.attr("width", data.width);
-		img.attr("height", data.height);
-		img.attr("src", data.src);
-		if (data.height > data.width) {
-		  img.css("margin-top", -32);
-		} else {
-		  img.css("margin-top", 0);			
-		}
-		cont.removeClass("gLoadingLarge");
+	img.css("opacity", "1");
+	if (data.src) {
+	  img.attr("width", data.width);
+	  img.attr("height", data.height);
+	  img.attr("src", data.src);
+	  if (data.height > data.width) {
+	    img.css("margin-top", -32);
+	  } else {
+	    img.css("margin-top", 0);
+	  }
+	}
+	cont.removeClass("gLoadingLarge");
       }
     });
   }

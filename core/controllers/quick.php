@@ -72,6 +72,22 @@ class Quick_Controller extends Controller {
             "height" => $item->thumb_height));
   }
 
+  public function make_album_cover($id) {
+    access::verify_csrf();
+    $item = ORM::factory("item", $id);
+    access::required("edit", $item);
+
+    $parent = $item->parent();
+    access::required("edit", $parent);
+
+    $parent->album_cover_item_id = $item->id;
+    $parent->thumb_dirty = 1;
+    $parent->save();
+    graphics::generate($parent);
+
+    print json_encode(array("result" => "success"));
+  }
+
   public function form_edit($id) {
     $item = ORM::factory("item", $id);
     access::required("edit", $item);
