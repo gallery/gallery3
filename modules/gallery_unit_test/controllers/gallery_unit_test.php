@@ -27,20 +27,33 @@ class Gallery_Unit_Test_Controller extends Controller {
     $test_config = VARPATH . "database.php";
     if (!file_exists($original_config)) {
       print "Please copy kohana/config/database.php to $original_config.\n";
-      print "Then, add a \$config['unit_test'] database configuration in $original_config.\n";
       return;
     } else {
       copy($original_config, $test_config);
       $db_config = Kohana::config('database');
       if (empty($db_config['unit_test'])) {
-        print "Please create a \$config['unit_test'] database configuration in $test_config.\n";
-        return;
+        $default = $db_config['default'];
+        $conn = $default['connection'];
+        Kohana::config_set('database.unit_test.benchmark', $default['benchmark']);
+        Kohana::config_set('database.unit_test.persistent', $default['persistent']);
+        Kohana::config_set('database.unit_test.connection.type', $conn['type']);
+        Kohana::config_set('database.unit_test.connection.user', $conn['user']);
+        Kohana::config_set('database.unit_test.connection.pass', $conn['pass']);
+        Kohana::config_set('database.unit_test.connection.host', $conn['host']);
+        Kohana::config_set('database.unit_test.connection.port', $conn['port']);
+        Kohana::config_set('database.unit_test.connection.socket', $conn['socket']);
+        Kohana::config_set('database.unit_test.connection.database', "{$conn['database']}_test");
+        Kohana::config_set('database.unit_test.character_set', $default['character_set']);
+        Kohana::config_set('database.unit_test.table_prefix', $default['table_prefix']);
+        Kohana::config_set('database.unit_test.object', $default['object']);
+        Kohana::config_set('database.unit_test.cache', $default['cache']);
+        Kohana::config_set('database.unit_test.escape', $default['escape']);
+        $db_config = Kohana::config('database');
       }
 
       if ($db_config['default']['connection']['database'] ==
           $db_config['unit_test']['connection']['database']) {
         print "Don't use the default database for your unit tests or you'll lose all your data.\n";
-        print "Try using '{$db_config['default']['connection']['database']}_test' in $test_config\n";
         return;
       }
 
