@@ -54,4 +54,5 @@ $config['irregular'] = array
 	'ox' => 'oxen',
 	'leaf' => 'leaves',
 	'course' => 'courses',
+	'size' => 'sizes',
 );

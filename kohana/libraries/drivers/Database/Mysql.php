@@ -325,7 +325,7 @@ class Database_Mysql_Driver extends Database_Driver {
 
 		if ($query = mysql_query('SHOW COLUMNS FROM '.$this->escape_table($table), $this->link))
 		{
-			if (mysql_num_rows($query) > 0)
+			if (mysql_num_rows($query))
 			{
 				while ($row = mysql_fetch_object($query))
 				{

@@ -205,7 +205,7 @@ class Validation_Core extends ArrayObject {
 	{
 		if (is_string($callback))
 		{
-			if (strpos('::', $callback) !== FALSE)
+			if (strpos($callback, '::') !== FALSE)
 			{
 				$callback = explode('::', $callback);
 			}

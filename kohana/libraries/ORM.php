@@ -323,7 +323,7 @@ class ORM_Core {
 			// Load the remote model, always singular
 			$model = ORM::factory(inflector::singular($column));
 
-			if ($this->has($model))
+			if ($this->has($model, TRUE))
 			{
 				// many<>many relationship
 				return $this->related[$column] = $model
@@ -909,19 +909,12 @@ class ORM_Core {
 	 * Tests if this object has a relationship to a different model.
 	 *
 	 * @param   object   related ORM model
+	 * @param   boolean  check for any relations to given model
 	 * @return  boolean
 	 */
-	public function has(ORM $model)
+	public function has(ORM $model, $any = FALSE)
 	{
-		if ($model->table_names_plural)
-		{
-			// Get the plural object name as the related name
-			$related = $model->object_plural;
-		}
-		else
-		{
-			$related = $model->object_name;
-		}
+		$related = $model->object_plural;
 
 		if (($join_table = array_search($related, $this->has_and_belongs_to_many)) === FALSE)
 			return FALSE;
@@ -938,14 +931,19 @@ class ORM_Core {
 			$this->changed_relations[$related] = $this->object_relations[$related] = $this->load_relations($join_table, $model);
 		}
 
-		if ($model->loaded)
+		if ( ! $model->empty_primary_key())
 		{
 			// Check if a specific object exists
 			return in_array($model->primary_key_value, $this->changed_relations[$related]);
 		}
+		elseif ($any)
+		{
+			// Check if any relations to given model exist
+			return ! empty($this->changed_relations[$related]);
+		}
 		else
 		{
-			return ! empty($this->changed_relations[$related]);
+			return FALSE;
 		}
 	}
 
@@ -989,19 +987,11 @@ class ORM_Core {
 		// Get the faked column name
 		$column = $model->object_plural;
 
-		if ($model->loaded)
-		{
-			if (($key = array_search($model->primary_key_value, $this->changed_relations[$column])) === FALSE)
-				return FALSE;
+		if (($key = array_search($model->primary_key_value, $this->changed_relations[$column])) === FALSE)
+			return FALSE;
 
-			// Remove the relationship
-			unset($this->changed_relations[$column][$key]);
-		}
-		else
-		{
-			// Clear all of this objects relationships
-			$this->changed_relations[$column] = array();
-		}
+		// Remove the relationship
+		unset($this->changed_relations[$column][$key]);
 
 		if (isset($this->related[$column]))
 		{
@@ -1251,7 +1241,7 @@ class ORM_Core {
 			$this->object = $this->changed = $this->related = array();
 
 			// Set the loaded and saved object status based on the primary key
-			$this->loaded = $this->saved = (bool) $values[$this->primary_key];
+			$this->loaded = $this->saved = ($values[$this->primary_key] !== NULL);
 		}
 
 		// Related objects
@@ -1447,6 +1437,16 @@ class ORM_Core {
 		}
 
 		return $relations;
+	}
+
+	/**
+	 * Returns whether or not primary key is empty
+	 *
+	 * @return bool
+	 */
+	protected function empty_primary_key()
+	{
+		return (empty($this->object[$this->primary_key]) AND $this->object[$this->primary_key] !== '0');
 	}
 
 } // End ORM
