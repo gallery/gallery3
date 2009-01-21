@@ -73,8 +73,8 @@ function oops($error) {
 }
 
 function check_environment() {
-  if (version_compare(PHP_VERSION, "5.2", "<")) {
-    $errors[] = "Gallery 3 requires PHP 5.2 or newer, current version: " . PHP_VERSION;
+  if (version_compare(PHP_VERSION, "5.2.3", "<")) {
+    $errors[] = "Gallery 3 requires PHP 5.2.3 or newer, current version: " . PHP_VERSION;
   }
 
   if (!function_exists("mysql_query") && !function_exists("mysqli_init")) {
