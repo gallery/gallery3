@@ -582,7 +582,7 @@ class Welcome_Controller extends Template_Controller {
 
   public function remove_from_group($group_id, $user_id) {
     $group = ORM::factory("group", $group_id);
-    $user = ORM::factory("group", $user_id);
+    $user = ORM::factory("user", $user_id);
     if ($group->loaded && $user->loaded) {
       $group->remove($user);
       $group->save();
@@ -593,7 +593,7 @@ class Welcome_Controller extends Template_Controller {
   public function add_to_group($user_id) {
     $group_name = $this->input->post("group_name");
     $group = ORM::factory("group")->where("name", $group_name)->find();
-    $user = ORM::factory("group", $user_id);
+    $user = ORM::factory("user", $user_id);
     if ($group->loaded && $user->loaded) {
       $group->add($user);
       $group->save();
