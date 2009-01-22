@@ -35,7 +35,11 @@ class Admin_Themedetails_Controller extends Admin_Controller {
           module::set_var("core", $key, $value);
         }
       }
+      message::success(t("Updated theme details"));
+    } else {
+      message::error(t("Error updating theme details"));      
     }
+    url::redirect("admin/themedetails");
   }
 }
 
