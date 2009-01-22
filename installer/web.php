@@ -37,7 +37,7 @@ if (installer::already_installed()) {
                     "password" => $_POST["dbpass"],
                     "dbname" => $_POST["dbname"],
                     "prefix" => "",
-                    "type" => function_exists("mysqli_init") ? "mysqli" : "mysql");
+                    "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
 
     if (!installer::connect($config)) {
       $content = render("invalid_db_info.html.php");
@@ -73,11 +73,7 @@ function oops($error) {
 }
 
 function check_environment() {
-  if (version_compare(PHP_VERSION, "5.2.3", "<")) {
-    $errors[] = "Gallery 3 requires PHP 5.2.3 or newer, current version: " . PHP_VERSION;
-  }
-
-  if (!function_exists("mysql_query") && !function_exists("mysqli_init")) {
+  if (!function_exists("mysql_query") && !function_exists("mysqli_set_charset")) {
     $errors[] = "Gallery 3 requires a MySQL database, but PHP doesn't have either the the <a href=\"http://php.net/mysql\">MySQL</a> or the  <a href=\"http://php.net/mysqli\">MySQLi</a> extension.";
   }
 

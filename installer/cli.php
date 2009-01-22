@@ -73,7 +73,7 @@ function parse_cli_params() {
                   "password" => "",
                   "dbname" => "gallery3",
                   "prefix" => "",
-                  "type" => function_exists("mysqli_init") ? "mysqli" : "mysql");
+                  "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
 
   $argv = $_SERVER["argv"];
   for ($i = 1; $i < count($argv); $i++) {
