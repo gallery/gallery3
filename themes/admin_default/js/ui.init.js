@@ -30,22 +30,34 @@ $(document).ready(function(){
       }
     }
   });
-
+	
+	// Apply hide/show functionality on user admin view
   var panelLinks = $(".gPanelLink");
   for (i=0; i<panelLinks.length; i++) {
     $(panelLinks[i]).bind("click", {element: panelLinks[i]}, handlePanelEvent);
   }
 
+	function handlePanelEvent(event) {
+	  togglePanel(event.data.element);
+	  event.preventDefault();
+	}
+	
+	function togglePanel(element) {
+		var parent = $(element).parent().parent();
+		if (parent.hasClass("gPanel")) {
+			var panel = parent;
+		} else {
+			var panel = $(parent).children(".gPanel");
+		}
+		
+	  panel.slideToggle("slow");
+		
+//		if ($(element).href.search(/edit_form/)) {
+//			$(element).replaceWith("<span>"+$(element).text()+"</span>");
+//		}
+		
+		return false;
+	}
+	
+	// Remove users from group functionality
 });
-
-function handlePanelEvent(event) {
-  openPanel(event.data.element);
-  event.preventDefault();
-}
-
-function openPanel(element) {
-  var parent = $(element).parent().parent();
-  var panel = $(parent).children(".gPanel");
-  panel.slideDown("slow");
-  return false;
-}
