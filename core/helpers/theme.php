@@ -38,22 +38,22 @@ class theme_Core {
     Kohana::config_set('core.modules', $modules);
   }
 
-  static function get_edit_form_admin($theme) {
-    $form = new Forge("admin/themes/edit/{$theme->id}",
+  static function get_edit_form_admin() {
+    $form = new Forge("admin/themes/edit/",
                       '', null, array("id" =>"gThemeDetailsForm"));
-    $group = $form->group("edit_theme")->label($theme->description);
+    $group = $form->group("edit_theme");
     $group->input("page_size")->label(t("Items per page"))->id("gPageSize")->
       rules('required|valid_digit')->
-      value(self::get_var($theme->id, "page_size", 90));
+      value(module::get_var("core", "page_size"));
     $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("gThumbSize")->
       rules('required|valid_digit')->
-      value(self::get_var($theme->id, "thumb_size", 300));
+      value(module::get_var("core", "thumb_size"));
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("gResizeSize")->
       rules('required|valid_digit')->
-      value(self::get_var($theme->id, "resize_size", 600));
+      value(module::get_var("core", "resize_size"));
     $group->submit("")->value(t("Modify Theme"));
-    return $form;
-  }
+    return $form->render();
+  }  
 
   static function get_edit_form_content($theme_name) {
     $file = THEMEPATH . $theme_name . "/theme.info";
