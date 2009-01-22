@@ -25,7 +25,17 @@ class Admin_Themedetails_Controller extends Admin_Controller {
   }
 
   public function save() {
-    access::verify_csrf();
+    $form = theme::get_edit_form_admin();
+    $init_array = $form->as_array();
+    if ($form->validate()) {
+      $form_array = $form->as_array();
+      $intersect = array_diff_key($form_array, array('csrf' => 0));
+      foreach ($intersect as $key => $value) {
+        if ($init_array[$key] != $value) {
+          module::set_var("core", $key, $value);
+        }
+      }
+    }
   }
 }
 

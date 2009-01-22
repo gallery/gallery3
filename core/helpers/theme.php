@@ -39,7 +39,7 @@ class theme_Core {
   }
 
   static function get_edit_form_admin() {
-    $form = new Forge("admin/themes/edit/",
+    $form = new Forge("admin/themedetails/save/",
                       '', null, array("id" =>"gThemeDetailsForm"));
     $group = $form->group("edit_theme");
     $group->input("page_size")->label(t("Items per page"))->id("gPageSize")->
@@ -52,7 +52,7 @@ class theme_Core {
       rules('required|valid_digit')->
       value(module::get_var("core", "resize_size"));
     $group->submit("")->value(t("Modify Theme"));
-    return $form->render();
+    return $form;
   }  
 
   static function get_edit_form_content($theme_name) {
