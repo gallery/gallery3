@@ -289,10 +289,15 @@ li.gError select {
   border-bottom: 1px solid #ccc;
 }
 
-.gError,
-.gInfo,
-.gSuccess,
-.gWarning {
+#gSiteStatus .gError,
+#gMessage .gError,
+form p.gError,
+#gSiteStatus .gInfo,
+#gMessage .gInfo,
+#gSiteStatus .gSuccess,
+#gMessage .gSuccess,
+#gSiteStatus .gWarning,
+#gMessage .gWarning {
   background-position: .4em 50%;
   background-repeat: no-repeat;
   padding: .4em .5em .4em 30px;
@@ -304,7 +309,9 @@ li.gError select {
   background-color: #fcc;
 }
 
-.gError {
+#gSiteStatus .gError,
+#gMessage .gError,
+form p.gError {
   background-image: url('../images/ico-error.png');
 }
 
@@ -314,7 +321,8 @@ li.gError select {
   background-color: #e8e8e8;
 }
 
-.gInfo {
+#gSiteStatus .gInfo,
+#gMessage .gInfo{
   background-image: url('../images/ico-info.png');
 }
 
@@ -325,7 +333,8 @@ li.gError select {
   background-color: #cfc;
 }
 
-.gSuccess {
+#gSiteStatus .gSuccess,
+#gMessage .gSuccess {
   background-image: url('../images/ico-success.png');
 }
 
@@ -335,7 +344,8 @@ li.gError select {
   background-color: #ff9;
 }
 
-.gWarning {
+#gSiteStatus .gWarning,
+#gMessage .gWarning {
   background-image: url('../images/ico-warning.png');
 }
 
