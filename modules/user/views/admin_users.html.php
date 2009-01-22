@@ -5,7 +5,7 @@
 		border-style: solid;
 		border-color: #ececec #c8c8c8 #c8c8c8 #ececec;
 		background-image: url('/gallery3/themes/admin_default/images/backg-buttonlink.png');
-		padding: .2em .3em .2em .3em;
+		padding: .2em .3em;
 		font-weight: bold;
 	}
 	.gButtonLink:hover {
@@ -23,7 +23,7 @@
 		position: relative;
 	}
 	.gUserAdminList li img {
-		width: 20px
+		width: 20px;
 		height: 20px;
 		cursor: move;
 	}
@@ -42,7 +42,7 @@
 	.gActions a {
 		margin-right: 40px;
 	}
-	.gUserEdit {
+	.gPanel {
 		display: none;
 	}
 </style>
@@ -73,16 +73,14 @@
 					</span>
 					
 					<span class="gActions">
-						<a href="#" onclick="$('gUserEdit-<?= $user->id ?>').slideDown('slow');"><?= t("edit") ?></a>
+						<a href="users/edit_form/<?= $user->id ?>" class="gPanelLink"><?= t("edit") ?></a>
 		        <!--<a href="users/edit_form/<?= $user->id ?>" class="gDialogLink"><?= t("edit") ?></a>-->
 		        <? if (!(user::active()->id == $user->id || user::guest()->id == $user->id)): ?>
 		        	<a href="users/delete_form/<?= $user->id ?>" class="gDialogLink"><?= t("delete") ?></a>
 		        <? endif ?>
 					</span>
-	      </li>
-				
-				<li id="gUserEdit-<?= $user->id ?>" class="gUserEdit">
-					<form>
+          
+					<form id="gUserEdit-<?= $user->id ?>" class="gPanel">
 						<fieldset>
 							<label>Username</label>
 							<input type="text" />

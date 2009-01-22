@@ -30,4 +30,22 @@ $(document).ready(function(){
       }
     }
   });
+
+  var panelLinks = $(".gPanelLink");
+  for (i=0; i<panelLinks.length; i++) {
+    $(panelLinks[i]).bind("click", {element: panelLinks[i]}, handlePanelEvent);
+  }
+
 });
+
+function handlePanelEvent(event) {
+  openPanel(event.data.element);
+  event.preventDefault();
+}
+
+function openPanel(element) {
+  var parent = $(element).parent().parent();
+  var panel = $(parent).children(".gPanel");
+  panel.slideDown("slow");
+  return false;
+}
