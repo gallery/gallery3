@@ -39,8 +39,7 @@ class theme_Core {
   }
 
   static function get_edit_form_admin() {
-    $form = new Forge("admin/themedetails/save/",
-                      '', null, array("id" =>"gThemeDetailsForm"));
+    $form = new Forge("admin/themedetails/save/", "", null, array("id" =>"gThemeDetailsForm"));
     $group = $form->group("edit_theme");
     $group->input("page_size")->label(t("Items per page"))->id("gPageSize")->
       rules('required|valid_digit')->
@@ -51,9 +50,9 @@ class theme_Core {
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("gResizeSize")->
       rules('required|valid_digit')->
       value(module::get_var("core", "resize_size"));
-    $group->submit("")->value(t("Modify Theme"));
+    $group->submit("")->value(t("Save"));
     return $form;
-  }  
+  }
 
   static function get_edit_form_content($theme_name) {
     $file = THEMEPATH . $theme_name . "/theme.info";
