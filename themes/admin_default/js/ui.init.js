@@ -42,20 +42,43 @@ $(document).ready(function(){
 	  event.preventDefault();
 	}
 	
-	function togglePanel(element) {
-		var parent = $(element).parent().parent();
-		if (parent.hasClass("gPanel")) {
-			var panel = parent;
-		} else {
-			var panel = $(parent).children(".gPanel");
-		}
-		
-	  panel.slideToggle("slow");
-		
-//		if ($(element).href.search(/edit_form/)) {
-//			$(element).replaceWith("<span>"+$(element).text()+"</span>");
-//		}
-		
+	function togglePanel(element, on_success) {
+    var parent = $(element).parent().parent();
+    var sHref = $(element).attr("href");
+    var ePanel = '<div class="gPanel"></div>';
+    if ($(parent).children(".gPanel").length) {
+      console.log("In here");
+      $(parent).children(".gPanel").slideToggle("slow");
+    } else {
+      $(parent).append(ePanel);
+      var panel = $(parent).children(".gPanel");
+      $(panel).html(sHref);
+      panel.show().slideDown("slow");
+      $.get(sHref, function(data) {
+        $(panel).html(data);
+        ajaxify_panel = function() {
+          $(".gPanel form").ajaxForm({
+            dataType: "json",
+            success: function(data) {
+              if (data.form) {
+                $(".gPanel form").replaceWith(data.form);
+                ajaxify_panel();
+              }
+              if (data.result == "success") {
+                if (on_success) {
+                  on_success();
+                } else if (data.location) {
+                  window.location = data.location;
+                } else {
+                  window.location.reload();
+                }
+              }
+            }
+          });
+        };
+        ajaxify_panel();
+      });
+    }
 		return false;
 	}
 	
