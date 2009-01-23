@@ -1,0 +1,3 @@
+name = Recaptcha
+description = "<a href="http://recaptcha.net">Recaptcha</a> displays a graphical verification that protects the input form from abuse from "bots," or automated programs usually written to generate spam."
+version = 1
