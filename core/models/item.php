@@ -39,11 +39,32 @@ class Item_Model extends ORM_MPTT {
         $this->view_restrictions = array();
       } else {
         foreach (user::group_ids() as $id) {
-          $this->view_restrictions["view_$id"] = access::ALLOW;
+          // Separate the first restriction from the rest to make it easier for us to formulate
+          // our where clause below
+          if (empty($this->view_restrictions)) {
+            $this->view_restrictions[0] = "view_$id";
+          } else {
+            $this->view_restrictions[1]["view_$id"] = access::ALLOW;
+          }
         }
       }
     }
-    $this->where($this->view_restrictions);
+    switch (count($this->view_restrictions)) {
+    case 0:
+      break;
+
+    case 1:
+      $this->where($this->view_restrictions);
+      break;
+
+    default:
+      $this->open_paren();
+      $this->where($this->view_restrictions[0], access::ALLOW);
+      $this->orwhere($this->view_restrictions[1]);
+      $this->close_paren();
+      break;
+    }
+
     return $this;
   }
 
@@ -259,11 +280,22 @@ class Item_Model extends ORM_MPTT {
    * @param array $extra_attrs  Extra attributes to add to the img tag
    * @return string
    */
-  public function thumb_tag($extra_attrs) {
+  public function thumb_tag($extra_attrs, $max=null) {
+    $width = $this->thumb_width;
+    $height = $this->thumb_height;
+    if (isset($max)) {
+      if ($width > $height) {
+        $height = (int)($max * ($height / $width));
+        $width = $max;
+      } else {
+        $width = (int)($max * ($width / $height));
+        $height = $max;
+      }
+    }
     return html::image(array("src" => $this->thumb_url(),
                              "alt" => $this->title,
-                             "width" => $this->thumb_width,
-                             "height" => $this->thumb_height),
+                             "width" => $width,
+                             "height" => $height),
                        $extra_attrs);
   }
 
