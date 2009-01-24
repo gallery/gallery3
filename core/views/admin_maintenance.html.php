@@ -7,7 +7,7 @@
 
   <div id="gAvailableTasks">
     <h2> <?= t("Available Tasks") ?> </h2>
-    <table style="width: 680px" border="1">
+    <table>
       <tr>
         <th>
           <?= t("Name") ?>
@@ -41,7 +41,7 @@
   <div id="gRunningTasks">
     <h2> <?= t("Running Tasks") ?> </h2>
 
-    <table style="width: 680px" border="1">
+    <table>
       <tr>
         <th>
           <?= t("Last Updated") ?>
@@ -100,7 +100,7 @@
   <div id="gFinishedTasks">
     <h2> <?= t("Finished Tasks") ?> </h2>
 
-    <table style="width: 680px" border="1">
+    <table>
       <tr>
         <th>
           <?= t("Last Updated") ?>

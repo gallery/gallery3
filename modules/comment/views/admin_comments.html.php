@@ -93,8 +93,8 @@
         <?= t("Actions") ?>
       </th>
     </tr>
-    <? foreach ($comments as $comment): ?>
-    <tr id="gComment-<?= $comment->id ?>">
+    <? foreach ($comments as $i => $comment): ?>
+    <tr id="gComment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
       <td>
         <a href="#">
           <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"

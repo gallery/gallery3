@@ -17,8 +17,8 @@
     <th> <?= t("Photos") ?> </th>
     <th> <?= t("Actions") ?> </th>
   </tr>
-  <? foreach ($tags as $tag): ?>
-  <tr>
+  <? foreach ($tags as $i => $tag): ?>
+  <tr class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
     <td> <?= $tag->name ?> </td>
     <td> <?= $tag->count ?> </td>
     <td>

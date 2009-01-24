@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
-  <? foreach ($comments as $comment): ?>
-  <li>
+  <? foreach ($comments as $i => $comment): ?>
+  <li class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
     <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
          class="gAvatar"
          alt="<?= $comment->author_name() ?>"

@@ -14,8 +14,9 @@
         <th> <?= t("Version") ?> </th>
         <th> <?= t("Description") ?> </th>
       </tr>
+      <? $i = 0 ?>
       <? foreach ($available as $module_name => $module_info):  ?>
-      <tr>
+      <tr class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
         <? $data = array("name" => $module_name); ?>
         <? if ($module_info->locked) $data["disabled"] = 1; ?>
         <td> <?= form::checkbox($data, '1', module::is_installed($module_name)) ?> </td>
@@ -23,6 +24,7 @@
         <td> <?= $module_info->version ?> </td>
         <td> <?= t($module_info->description) ?> </td>
       </tr>
+      <? $i++ ?>
       <? endforeach ?>
     </table>
     <input type="submit" value="<?= t("Update") ?>"/>

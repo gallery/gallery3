@@ -9,18 +9,62 @@
  **********************************************************************/
 
 .gBlock {
+  background-color: #fff;
   border: 1px solid #e7e7e7;
   margin-bottom: 1em;
-  padding: 1em .4em;
+  padding: 1em;
 }
 
 .gBlockContent {
   padding: 0 1em 1em 1em;
 }
 
+.gSelected img,
+.gAvailable img {
+  float: left;
+  margin-right: 1em;
+}
+
+.gSelected {
+  background: #cfc;
+}
+
+.gAvailable .gBlock {
+  cursor: pointer;
+}
+
+.gAvailable .gBlock:hover {
+  background: #eee;
+}
+
+.gUnavailable {
+  border-color: #ccc;
+  cursor: default;
+  opacity: 0.4;
+}
+
+.gUnavailable:hover {
+  opacity: 1;
+}
+
+.gFirstRow {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: .5em;
+  padding-left: 30px !important;
+}
+
+.gOddRow {
+  background-color: #eee;
+}
+
+.gEvenRow {
+  background-color: #fff;
+}
+
 /** *******************************************************************
  *  Page layout containers
  **********************************************************************/
+
 .gView {
 	min-width: 974px !important;
 }
@@ -82,118 +126,80 @@
 	margin-bottom: 0;
 }
 
+.gButtonLink {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ececec #c8c8c8 #c8c8c8 #ececec;
+  background-image: url('/gallery3/themes/admin_default/images/backg-buttonlink.png');
+  padding: .2em .3em;
+  font-weight: bold;
+}
+
+.gButtonLink:hover {
+  border-color: #c8c8c8 #ececec #ececec #c8c8c8;
+}
+
+.gBlock h2 a {
+  font-size: .7em;
+  float: right;
+  position: relative;
+  top: -1.69em;
+}
+
+.gUserAdminList li {
+  padding: .4em .4em .3em .4em;
+  position: relative;
+}
+
+.gUserAdminList li img {
+  width: 20px;
+  height: 20px;
+  cursor: move;
+}
+
+.gActions {
+  position: absolute;
+  left: 400px;
+}
+
+.gActions a,
+.gActions span {
+  margin-right: 40px;
+}
+
+#gPanel {
+  display: none;
+  padding: 1em;
+}
+
+#gPanel legend {
+  display: none;
+}
+
+#gPanel fieldset {
+  border: none;
+}
+
+li.gGroup {
+  float: left;
+  display: block;
+  width: 200px;
+  height: 200px;
+  border: 1px solid gray;
+  padding: .5em;
+  margin-right: 1em;
+}
+
 /** *******************************************************************
  *  Browser hacks
  *********************************************************************/
 
 #gHeader:after,
 #gAdminCommentsMenu:after,
-#gThemeTabs:after,
-#gSelectedTheme .gBlock:after {
+.gSelected:after {
   clear: both;
   content: ".";
   display: block;
   height: 0;
   visibility: hidden;
 }
-
-/** *******************************************************************
- *  Stuff that needs a home or needs to be organized
- *********************************************************************/
-
-#gAdminGraphics #gSelectedToolkit img {
-  float: right;
-  margin-right: 1em;
-}
-
-#gAdminGraphics #gSelectedToolkit div.gBlock {
-  width: 700px;
-  height: 140px;
-  background: #cfc;
-}
-
-#gAdminGraphics .gBlock {
-  background: #fff;
-  padding: 1em;
-}
-
-#gAdminGraphics #gAvailableToolkits .gBlock {
-  clear: none;
-  cursor: pointer;
-  float: left;
-  margin-right: 1em;
-  text-align: center;
-  width: 250px;
-}
-
-#gAdminGraphics #gAvailableToolkits .gBlock {
-  width: 328px;
-  height: 300px;
-}
-
-#gAdminGraphics #gAvailableToolkits .unavailable {
-  background-color: #fee !important;
-  cursor: default !important;
-}
-
-#gAdminGraphics #gAvailableToolkits .gBlock:hover {
-  background: #eee;
-}
-
-#gAdminGraphics a {
-  color: #333;
-}
-
-#gAdminGraphics #gAvailableToolkits .gBlock {
-  cursor: pointer;
-}
-
-
-#gAdminThemes #gAdminTheme,
-#gAdminThemes #gSiteTheme {
-  width: 400px;
-  float: left;
-}
-
-#gAdminThemes #gAdminTheme {
-  padding-left: 40px;
-}
-
-
-#gAdminThemes #gSelectedTheme img {
-  float: left;
-  margin-right: 1em;
-}
-
-#gAdminThemes .selected {
-  background: #cfc !important;
-  cursor: default !important;
-}
-
-#gAdminThemes .gBlock {
-  width: 328px;
-  height: 140px;
-  background: #fff;
-  padding: 1em;
-  text-align: center;
-}
-
-#gAdminThemes .gBlock {
-  clear: none;
-  cursor: pointer;
-  float: left;
-  text-align: center;
-  width: 328px;
-  height: 200px;
-}
-
-#gAvailableSiteThemes .gBlock:hover,
-#gAvailableAdminThemes .gBlock:hover {
-  background: #eee;
-}
-
-#gAdminThemes a {
-  color: #333;
-  text-decoration: none;
-}
-

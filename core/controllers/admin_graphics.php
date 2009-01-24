@@ -28,6 +28,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
       if ($id == $active) {
         $view->content->active = new View("admin_graphics_$id.html");
         $view->content->active->tk = $tk;
+        $view->content->active->is_active = true;
       } else {
         $v = new View("admin_graphics_$id.html");
         $v->tk = $tk;

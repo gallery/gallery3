@@ -2,12 +2,12 @@
 <script type="text/javascript">
   $(document).ready(function() {
     select_toolkit = function(el) {
-      if (!$(this).hasClass("unavailable")) {
+      if (!$(this).hasClass("gUnavailable")) {
         window.location = '<?= url::site("admin/graphics/choose/__TK__?csrf=" . access::csrf_token()) ?>'
           .replace("__TK__", $(this).attr("id"));
       }
     };
-    $("#gAvailableToolkits div.gBlock").click(select_toolkit);
+    $("#gAvailableToolkits .gBlock").click(select_toolkit);
   });
 
 </script>
@@ -17,12 +17,10 @@
     <?= t("Gallery needs a graphics toolkit in order to manipulate your photos.  Please choose one from the list below.") ?>
   </p>
 
-  <div id="gSelectedToolkit">
-    <h2> <?= t("Active Toolkit") ?> </h2>
-    <?= $active ?>
-  </div>
+  <h2> <?= t("Active Toolkit") ?> </h2>
+  <?= $active ?>
 
-  <div id="gAvailableToolkits">
+  <div class="gAvailable">
     <h2> <?= t("Available Toolkits") ?> </h2>
     <?= $available ?>
   </div>

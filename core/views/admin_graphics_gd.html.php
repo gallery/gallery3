@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gd" class="gBlock  <?= $tk->gd["GD Version"] ? "" : "unavailable" ?>">
+<div id="gd" class="gBlock<?= $is_active ? " gSelected" : "" ?><?= $tk->gd["GD Version"] ? "" : " gUnavailable" ?>">
   <img class="logo" width="170" height="110" src="<?= url::file("core/images/gd.png"); ?>" alt="<? t("Visit the GD lib project site") ?>" />
   <h3> <?= t("GD") ?> </h3>
   <p>

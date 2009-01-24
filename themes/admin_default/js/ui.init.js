@@ -26,48 +26,57 @@ $(document).ready(function(){
     $(panelLinks[i]).bind("click", {element: panelLinks[i]}, handlePanelEvent);
   }
 
-  function handlePanelEvent(event) {
-    togglePanel(event.data.element);
-    event.preventDefault();
+});
+
+function handlePanelEvent(event) {
+  togglePanel(event.data.element);
+  event.preventDefault();
+}
+
+function togglePanel(element, on_success) {
+  var parent = $(element).parent().parent();
+  var sHref = $(element).attr("href");
+  var ePanel = '<div id="gPanel"></div>';
+
+  if ($("#gPanel").length) {
+    $("#gPanel").slideUp("slow");
+    $("#gPanel *").remove();
+    $("#gPanel").remove();
   }
 
-  function togglePanel(element, on_success) {
-    var parent = $(element).parent().parent();
-    var sHref = $(element).attr("href");
-    var ePanel = '<div class="gPanel"></div>';
-    if ($(parent).children(".gPanel").length) {
-      console.log("In here");
-      $(parent).children(".gPanel").slideToggle("slow");
-    } else {
-      $(parent).append(ePanel);
-      var panel = $(parent).children(".gPanel");
-      $(panel).html(sHref);
-      panel.show().slideDown("slow");
-      $.get(sHref, function(data) {
-	$(panel).html(data);
-	ajaxify_panel = function() {
-	  $(".gPanel form").ajaxForm({
-	    dataType: "json",
-	    success: function(data) {
-	      if (data.form) {
-		$(".gPanel form").replaceWith(data.form);
-		ajaxify_panel();
-	      }
-	      if (data.result == "success") {
-		if (on_success) {
-		  on_success();
-		} else if (data.location) {
-		  window.location = data.location;
-		} else {
-		  window.location.reload();
-		}
-	      }
-	    }
-	  });
-	};
-	ajaxify_panel();
+  $(parent).append(ePanel);
+
+  var panel = $(parent).children("#gPanel");
+
+  showLoading("#gPanel");
+
+  $(panel).html(sHref);
+  panel.show().slideDown("slow");
+  
+  $.get(sHref, function(data) {
+    $(panel).html(data);
+    ajaxify_panel = function() {
+      $("#gPanel form").ajaxForm({
+        dataType: "json",
+        success: function(data) {
+          if (data.form) {
+            $("#gPanel form").replaceWith(data.form);
+            ajaxify_panel();
+          }
+          if (data.result == "success") {
+            if (on_success) {
+              on_success();
+            } else if (data.location) {
+              window.location = data.location;
+            } else {
+              window.location.reload();
+            }
+          }
+        }
       });
-    }
-    return false;
-  }
-});
+      showLoading("#gPanel");
+    };
+    ajaxify_panel();
+  });
+  return false;
+}

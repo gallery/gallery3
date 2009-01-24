@@ -6,7 +6,7 @@
   </div>
   <ul>
     <? foreach ($groups as $i => $group): ?>
-    <li>
+    <li class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
       <?= $group->name ?>
       <a href="groups/edit_form/<?= $group->id ?>" class="gDialogLink"
         title="<?= t("Edit group") ?>"><?= t("edit") ?></a>
