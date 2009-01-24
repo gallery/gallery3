@@ -31,7 +31,7 @@ class recaptcha_Core {
   private $options = array(); 
 
   static function get_configure_form() {
-    $form = new Forge("admin/recaptcha", "", "post");
+    $form = new Forge("admin/recaptcha", "", "post", array("id" => "gConfigure_Recaptcha_Form"));
     $group = $form->group("configure_recaptcha")
       ->label(t("Configure Recaptcha"));
     $group->hidden("orig_public_key")

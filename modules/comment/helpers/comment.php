@@ -70,7 +70,7 @@ class comment_Core {
   }
 
   static function get_add_form($item) {
-    $form = new Forge("comments", "", "post");
+    $form = new Forge("comments", "", "post", array("id" => "gAdd_Comment_Form"));
     $group = $form->group("add_comment")->label(t("Add comment"));
     $group->input("name")   ->label(t("Name"))            ->id("gAuthor");
     $group->input("email")  ->label(t("Email (hidden)"))  ->id("gEmail");
@@ -93,7 +93,8 @@ class comment_Core {
   }
 
   static function get_edit_form($comment) {
-    $form = new Forge("comments/{$comment->id}?_method=put", "", "post");
+    $form = new Forge("comments/{$comment->id}?_method=put", "", "post",
+                      array("id" => "gEdit_Comment_Form"));
     $group = $form->group("edit_comment")->label(t("Edit comment"));
     $group->input("name")   ->label(t("Author"))          ->id("gAuthor");
     $group->input("email")  ->label(t("Email (hidden)"))  ->id("gEmail");

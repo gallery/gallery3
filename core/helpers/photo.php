@@ -96,7 +96,7 @@ class photo_Core {
   }
 
   static function get_add_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddPhotoForm"));
+    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAdd_Photo_Form"));
     $group = $form->group("add_photo")->label(t("Add Photo to %album_title", array("album_title" =>$parent->title)));
     $group->input("name")->label(t("Name"));
     $group->input("title")->label(t("Title"));
@@ -109,7 +109,7 @@ class photo_Core {
   }
 
   static function get_edit_form($photo) {
-    $form = new Forge("photos/$photo->id", "", "post", array("id" => "gEditPhotoForm"));
+    $form = new Forge("photos/$photo->id", "", "post", array("id" => "gEdit_Photo_Form"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_photo")->label(t("Edit Photo"));
     $group->input("name")->label(t("Name"))->value($photo->name);

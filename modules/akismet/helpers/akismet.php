@@ -21,7 +21,7 @@ class akismet_Core {
   public static $test_mode = TEST_MODE;
 
   static function get_configure_form() {
-    $form = new Forge("admin/akismet", "", "post");
+    $form = new Forge("admin/akismet", "", "post", array("id" => "gConfigure_Akismet_Form"));
     $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
     $group->input("api_key")->label(t("API Key"))->value(module::get_var("akismet", "api_key"));
     $group->api_key->error_messages("invalid", t("The API key you provided is invalid."));

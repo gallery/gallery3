@@ -53,7 +53,7 @@ class Login_Controller extends Controller {
   }
 
   private function _login_form() {
-    $form = new Forge(url::current(true), "", "post", array("id" => "gLoginForm"));
+    $form = new Forge(url::current(true), "", "post", array("id" => "gLogin_Form"));
     $group = $form->group("login")->label(t("Login"));
     $group->input("name")->label(t("Name"))->id("gName")->class(null);
     $group->password("password")->label(t("Password"))->id("gPassword")->class(null);

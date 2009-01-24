@@ -62,7 +62,7 @@ class group_Core {
   }
 
   static function get_edit_form_admin($group) {
-    $form = new Forge("admin/groups/edit/$group->id");
+    $form = new Forge("admin/groups/edit/$group->id", "", "post", array("id" => "gEdit_Group_Form"));
     $form_group = $form->group("edit_group")->label(t("Edit Group"));
     $form_group->input("name")->label(t("Name"))->id("gName")->value($group->name);
     $form_group->inputs["name"]->error_messages(
@@ -73,7 +73,7 @@ class group_Core {
   }
 
   static function get_add_form_admin() {
-    $form = new Forge("admin/groups/add");
+    $form = new Forge("admin/groups/add", "", "post", array("id" => "gAdd_Group_Form"));
     $form_group = $form->group("add_group")->label(t("Add Group"));
     $form_group->input("name")->label(t("Name"))->id("gName");
     $form_group->inputs["name"]->error_messages(
@@ -85,7 +85,8 @@ class group_Core {
   }
 
   static function get_delete_form_admin($group) {
-    $form = new Forge("admin/groups/delete/$group->id", "", "post");
+    $form = new Forge("admin/groups/delete/$group->id", "", "post",
+                      array("id" => "gDelete_Group_Form"));
     $form_group = $form->group("delete_group")->label(
       t("Are you sure you want to delete group %group_name?", array("group_name" => $group->name)));
     $form_group->submit("")->value(t("Delete"));
