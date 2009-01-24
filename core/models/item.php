@@ -110,6 +110,7 @@ class Item_Model extends ORM_MPTT {
     $original_thumb_path = $this->thumb_path();
 
     parent::move_to($target, true);
+    $this->relative_path = null;
 
     rename($original_path, $this->file_path());
     if ($this->is_album()) {

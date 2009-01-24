@@ -763,3 +763,16 @@ form p.gError {
 #gDialog legend {
   display: none;
 }
+
+
+
+
+/* STUFF THAT NEEDS A HOME */
+
+#gMove ul {
+  padding-left: 1em;
+}
+
+#gMove .selected {
+  background: #999;
+}

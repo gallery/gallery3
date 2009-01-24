@@ -103,6 +103,15 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
+   * Return true if the target is descendant of this item.
+   * @param ORM $target
+   * @return boolean
+   */
+  function is_descendant($target) {
+    return ($this->left <= $target->left && $this->right >= $target->right);
+  }
+
+  /**
    * Return the parent of this node
    *
    * @return ORM
@@ -201,6 +210,11 @@ class ORM_MPTT_Core extends ORM {
 
     if ($this->id == 1) {
       throw new Exception("@todo INVALID_SOURCE root album");
+    }
+
+    if ($this->left <= $target->left &&
+        $this->right >= $target->right) {
+      throw new Exception("@todo INVALID_TARGET can't move item inside itself");
     }
 
     $number_to_move = (int)(($this->right - $this->left) / 2 + 1);

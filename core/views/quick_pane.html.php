@@ -21,7 +21,7 @@
 </a>
 <? endif ?>
 
-<a class="move" href="<?= url::site("quick/form_edit/$item->id") ?>"
+<a class="move gDialogLink" href="<?= url::site("move/browse/$item->id") ?>"
   title="<?= t("Move this item to another album") ?>">
   <span>
     <?= t("Move this item to another album") ?>
