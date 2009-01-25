@@ -7,7 +7,7 @@
           .replace("__TK__", $(this).attr("id"));
       }
     };
-    $("#gAvailableToolkits .gBlock").click(select_toolkit);
+    $("#gAdminGraphics div.gAvailable .gBlock").click(select_toolkit);
   });
 
 </script>
