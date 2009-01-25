@@ -2,10 +2,16 @@
  * Gallery 3 Default Admin Theme Screen Styles
  *
  * Extends themes/default/css/screen.css
+ *
+ * 1) Reusable content blocks
+ * 2) Page layout containers
+ * 3) Content blocks in specific layout containers
+ * 4) Browser hacks
+ * 5) jQuery and jQuery UI
  */
 
 /** *******************************************************************
- *  Reusable content blocks
+ * 1) Reusable content blocks
  **********************************************************************/
 
 .gBlock {
@@ -20,13 +26,13 @@
 }
 
 .gSelected img,
-.gAvailable img {
+.gAvailable .gBlock img {
   float: left;
   margin-right: 1em;
 }
 
 .gSelected {
-  background: #cfc;
+  background: #e8e8e8;
 }
 
 .gAvailable .gBlock {
@@ -38,16 +44,17 @@
 }
 
 .gUnavailable {
-  border-color: #ccc;
+  border-color: #999;
   cursor: default;
   opacity: 0.4;
 }
 
 .gUnavailable:hover {
+  border-color: #ccc;
   opacity: 1;
 }
 
-.gFirstRow {
+.gHeaderRow {
   border-bottom: 1px solid #ccc;
   padding-bottom: .5em;
   padding-left: 30px !important;
@@ -62,7 +69,7 @@
 }
 
 /** *******************************************************************
- *  Page layout containers
+ * 2) Page layout containers
  **********************************************************************/
 
 .gView {
@@ -82,7 +89,7 @@
 }
 
 /** *******************************************************************
- *  Content blocks in specific layout containers
+ * 3) Content blocks in specific layout containers
  *********************************************************************/
 
 #gHeader #gLogo {
@@ -129,9 +136,9 @@
 #gAdminGraphics .gAvailable .gBlock {
   clear: none;
   float: left;
-  height: 190px;
+  height: 200px;
   margin-right: 1em;
-  width: 33%;
+  width: 30%;
 }
 
 #gSiteTheme,
@@ -157,38 +164,28 @@
   border-color: #c8c8c8 #ececec #ececec #c8c8c8;
 }
 
-.gUserAdminList li {
-  padding: .4em .4em .3em .4em;
-  position: relative;
+#gUserAdminList {
+  margin-bottom: 1em;
 }
 
-.gUserAdminList li img {
-  width: 20px;
-  height: 20px;
+#gUserAdminList li {
+  display: block;
+  padding: .4em .4em .3em .4em !important;
+}
+
+#gUserAdminList li img {
   cursor: move;
+  margin-right: .8em;
 }
 
 .gActions {
   position: absolute;
-  left: 400px;
+  left: 450px;
 }
 
 .gActions a,
 .gActions span {
-  margin-right: 40px;
-}
-
-#gPanel {
-  display: none;
-  padding: 1em;
-}
-
-#gPanel legend {
-  display: none;
-}
-
-#gPanel fieldset {
-  border: none;
+  margin-right: 3em;
 }
 
 li.gGroup {
@@ -202,7 +199,7 @@ li.gGroup {
 }
 
 /** *******************************************************************
- *  Browser hacks
+ * 4) Browser hacks
  *********************************************************************/
 
 #gHeader:after,
@@ -214,4 +211,21 @@ li.gGroup {
   display: block;
   height: 0;
   visibility: hidden;
+}
+
+/** *******************************************************************
+ * 5) jQuery and jQuery UI
+ *********************************************************************/
+
+#gPanel {
+  display: none;
+  padding: 1em;
+}
+
+#gPanel legend {
+  display: none;
+}
+
+#gPanel fieldset {
+  border: none;
 }
