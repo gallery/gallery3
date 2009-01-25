@@ -2,10 +2,10 @@
 <script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
 <script>
 var site = (document.location.protocol == "http:") ? "<?= $form->recaptcha_site ?>" : "<?= $form->recaptcha_ssl_site ?>";
-var RecaptchaOptions = {lang: 'en'};
+var RecaptchaOptions = {lang: 'en', theme: "white"};
 
-$("#gAdminRecaptcha form").ready(function() {
-  $("#gAdminRecaptcha form ul li:last-child").before("<li id=recaptcha_div />");
+$("#gConfigureRecaptchaForm").ready(function() {
+  $("#gConfigureRecaptchaForm :submit").before("<ul><li id=recaptcha_div /></ul>");
   $("#public_key").change(function() {
     showRecaptcha($(this).val());
   });
@@ -22,15 +22,15 @@ function showRecaptcha(public_key) {
           dataType: "json",
           cache: false,
           error: function(request, textStatus, errorThrown) {
-            var public_key = $("#gAdminRecaptcha form ul li:first-child");
+            var public_key = $("#gConfigureRecaptchaForm ul li:first-child");
             public_key.addClass("gError");
-            $("#gAdminRecaptcha form ul li:first-child p").replaceWith("");
+            $("#gConfigureRecaptchaForm ul li:first-child p").replaceWith("");
             public_key.append('<p class="gError">' + request.responseText + "</p>");
           },
           success: function(data, textStatus) {
-            var public_key = $("#gAdminRecaptcha form ul li:first-child");
+            var public_key = $("#gConfigureRecaptchaForm ul li:first-child");
             public_key.removeClass("gError");
-            $("#gAdminRecaptcha form ul li:first-child p").replaceWith("");
+            $("#gConfigureRecaptchaForm ul li:first-child p").replaceWith("");
             $("#recaptcha_div").html("<script type='text/javascript'>" + data.script + "</script" + ">");
           }
     });

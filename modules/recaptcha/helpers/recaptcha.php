@@ -31,7 +31,7 @@ class recaptcha_Core {
   private $options = array(); 
 
   static function get_configure_form() {
-    $form = new Forge("admin/recaptcha", "", "post", array("id" => "gConfigure_Recaptcha_Form"));
+    $form = new Forge("admin/recaptcha", "", "post", array("id" => "gConfigureRecaptchaForm"));
     $group = $form->group("configure_recaptcha")
       ->label(t("Configure Recaptcha"));
     $group->hidden("orig_public_key")
@@ -46,6 +46,11 @@ class recaptcha_Core {
       ->value(module::get_var("recaptcha", "private_key"))
       ->rules("required|length[40]");
     $group->private_key->error_messages("invalid", t("The private key you provided is invalid."));
+
+    $forms_list = self::_get_form_list();
+    $group->checklist("activated_forms")
+      ->label(t("Recaptcha Activated on:"))
+      ->options($forms_list);
     $group->submit("")->value(t("Save"));
     $site_domain = urlencode(stripslashes($_SERVER["HTTP_HOST"]));
     $form->recaptcha_site = self::API_SERVER;
@@ -106,7 +111,6 @@ class recaptcha_Core {
     if (empty($private_key)) {
       $private_key = module::get_var("recaptcha", "private_key");
     }
-    Kohana::log("debug", $private_key);
     $remoteip = $_SERVER["REMOTE_ADDR"] ;
     $challenge = $input->post("recaptcha_challenge_field", "", true);
     $response = $input->post("recaptcha_response_field", "", true);
@@ -173,5 +177,33 @@ class recaptcha_Core {
     fclose($fs); 
     $response = explode("\r\n\r\n", $response, 2); 
     return $response; 
+  }
+
+  function _get_form_list() {
+    $forms = unserialize(module::get_var("recaptcha", "form_list", "a:0:{}"));
+    Kohana::log("debug", print_r($forms, 1));
+    $form_list = array();
+    
+    // @todo Ignore administrative forms
+    foreach (array_merge(glob(APPPATH . "helpers/*"), glob(MODPATH . "*/helpers/*")) as $path) {
+      if (preg_match("#.*/(.*)/helpers/(.*).*\.php$#", $path, $matches)) {
+        Kohana::log("debug", "$path => $matches[1]");
+        if ("recaptcha" == $matches[1]) {
+          continue;
+        }
+        $content = file_get_contents($path);
+        
+        $preg_match_all = preg_match_all("#.*\"(g([A-Za-z]*)Form)\"#m",
+                                         $content, $matches, PREG_SET_ORDER);
+        if ($preg_match_all !== false) {
+          foreach ($matches as $match) {
+            $label = trim(preg_replace("/([A-Z])/", " $1", $match[2]));
+            $form_id = $match[1];
+            $form_list[$form_id] = array($label, !empty($forms[$form_id]));
+          }
+        }
+      }
+    }
+    return $form_list;
   }
 }
