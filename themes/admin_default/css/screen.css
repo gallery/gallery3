@@ -10,7 +10,7 @@
 
 .gBlock {
   background-color: #fff;
-  border: 1px solid #e7e7e7;
+  border: 1px solid #ccc;
   margin-bottom: 1em;
   padding: 1em;
 }
@@ -110,7 +110,7 @@
 }
 
 .gBlock .ui-dialog-titlebar {
-  margin: -1em -.4em 0 ;
+  margin: -1em -1em 0;
 }
 
 #gSidebar .gBlock h2 {
@@ -126,6 +126,24 @@
 	margin-bottom: 0;
 }
 
+#gAdminGraphics .gAvailable .gBlock {
+  clear: none;
+  float: left;
+  height: 190px;
+  margin-right: 1em;
+  width: 33%;
+}
+
+#gSiteTheme,
+#gAdminTheme {
+  float: left;
+  width: 48%;
+}
+
+#gSiteTheme {
+  margin-right: 1em;
+}
+
 .gButtonLink {
   border-width: 1px;
   border-style: solid;
@@ -137,13 +155,6 @@
 
 .gButtonLink:hover {
   border-color: #c8c8c8 #ececec #ececec #c8c8c8;
-}
-
-.gBlock h2 a {
-  font-size: .7em;
-  float: right;
-  position: relative;
-  top: -1.69em;
 }
 
 .gUserAdminList li {
@@ -196,6 +207,7 @@ li.gGroup {
 
 #gHeader:after,
 #gAdminCommentsMenu:after,
+#gGroupAdmin:after,
 .gSelected:after {
   clear: both;
   content: ".";

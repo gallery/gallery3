@@ -21,6 +21,7 @@
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("themes/default/js/superfish.js") ?>" type="text/javascript"></script>
+    <script src="<?= $theme->url("js/jquery.dropshadow.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->admin_head() ?>
   </head>

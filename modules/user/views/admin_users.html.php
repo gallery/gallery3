@@ -1,11 +1,14 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div class="gBlock">
-  <h2>
-    <?= t("User Admin") ?>
-    <a class="gDialogLink gButtonLink" href="<?= url::site("admin/users/add_form") ?>"
-       title="<?= t("Create a new user") ?>">+ <?= t("Add user") ?></a>
-  </h2>
+	<a href="users/add_form" class="gDialogLink gButtonLink right"
+      title="<?= t("Create a new user") ?>">
+  	+ <?= t("Add a new user") ?>
+	</a>
 
+  <h2>
+  	<?= t("User Admin") ?>
+	</h2>
+	
   <div class="gBlockContent">
     <ul class="gUserAdminList">
       <li class="gFirstRow">
@@ -16,8 +19,10 @@
       <? foreach ($users as $i => $user): ?>
       <li class="<?= text::alternate("gOddRow", "gEvenRow") ?>">
         <img src="<?= $theme->url("images/avatar.jpg") ?>"
-             title="<?= t("Drag user onto group below to add as a new member") ?>"
-             width="20" height="20" />
+          title="<?= t("Drag user onto group below to add as a new member") ?>"
+          alt="<?= $user->name ?>" 
+          width="20"
+          height="20" />
         <strong><?= $user->name ?></strong>
         (<?= $user->full_name ?>)
         <span class="understate">
@@ -43,35 +48,30 @@
   </div>
 </div>
 
-<div class="gBlock">
-  <h2>
-    <?= t("Group Admin") ?>
-    <a class="gDialogLink gButtonLink" href="<?= url::site("admin/groups/add_form") ?>"
-       title="<?= t("Create a new group") ?>">+ <?= t("Add group") ?></a>
-  </h2>
-
-  <div id="gGroupAdmin" class="gBlockContent">
-    <ul>
-      <? foreach ($groups as $i => $group): ?>
-      <li class="gGroup">
-	<strong><?= $group->name?></strong><br />
-	<ul>
-	  <? foreach ($group->users as $i => $user): ?>
-	  <li class="gUser">
-	    <?= $user->name ?>
-	    <a href="groups/remove_users/<?= $user->id ?>">X</a>
-	  </li>
-	  <? endforeach ?>
-	</ul>
-      </li>
-      <? endforeach ?>
-
-      <li class="gGroup">
-	<a class="gDialogLink" href="<?= url::site("admin/groups/add_form") ?>"
-           title="<?= t("Create a new group") ?>">
-  	  + <?= t("Add a new group") ?>
+<div id="gGroupAdmin" class="gBlock">
+  <a href="groups/add_form" title="<?= t("Create a new group") ?>" class="gDialogLink gButtonLink right">
+  	+ <?= t("Add a new group") ?>
 	</a>
-      </li>
-    </ul>
+
+  <h2>
+  	<?= t("Group Admin") ?>
+	</h2>
+
+  <div class="gBlockContent">
+  	<ul>
+  		<? foreach ($groups as $i => $group): ?>
+			<li class="gGroup">
+				<strong><?= $group->name?></strong><br />
+				<ul>
+					<? foreach ($group->users as $i => $user): ?>
+					<li class="gUser">
+						<?= $user->name ?>
+						<a href="groups/remove_users/<?= $user->id ?>">X</a>
+					</li>
+					<? endforeach ?>
+				</ul>
+			</li>
+			<? endforeach ?>
+		</ul>
   </div>
 </div>

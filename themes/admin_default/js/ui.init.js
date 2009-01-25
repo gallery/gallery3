@@ -26,6 +26,14 @@ $(document).ready(function(){
     $(panelLinks[i]).bind("click", {element: panelLinks[i]}, handlePanelEvent);
   }
 
+  // Round corners
+  $(".gSelected").addClass("ui-corner-all");
+  $(".gAvailable").addClass("ui-corner-all");
+  $(".gUnavailable").addClass("ui-corner-all");
+
+  // Add drop shadows
+  $(".gSelected").dropShadow();
+
 });
 
 function handlePanelEvent(event) {
