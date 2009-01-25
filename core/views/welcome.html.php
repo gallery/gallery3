@@ -165,9 +165,6 @@
     <?= html::script("lib/jquery.form.js") ?>
     <?= html::script("lib/jquery.cookie.js") ?>
     <?= html::script("lib/jquery.MultiFile.js") ?>
-    <? if (module::is_installed("rearrange")): ?>
-    <?= rearrange_theme::head(null) ?>
-    <? endif ?>
   </head>
   <body>
     <div class="outer">
@@ -299,12 +296,6 @@
               <legend>Packaging</legend>
               <a href="<?= url::site("welcome/package") ?>">Make Package</a>
             </fieldset>
-            <? if (module::is_installed("rearrange")): ?>
-            <fieldset>
-              <legend>Rearrange</legend>
-              <?= new View("rearrange.html") ?>
-            </fieldset>
-            <? endif ?>
           </div>
 
           <? if (module::is_installed("user")): ?>
