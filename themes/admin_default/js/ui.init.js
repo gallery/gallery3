@@ -28,7 +28,7 @@ $(document).ready(function(){
 
   // Round corners
   $(".gSelected").addClass("ui-corner-all");
-  $(".gAvailable").addClass("ui-corner-all");
+  $(".gAvailable .gBlock").addClass("ui-corner-all");
   $(".gUnavailable").addClass("ui-corner-all");
 
   // Add drop shadows
