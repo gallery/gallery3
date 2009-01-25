@@ -2,7 +2,8 @@
 <div class="gBlock">
   <h2>
     <?= t("User Admin") ?>
-    <a class="gButtonLink" href="#" title="<?= t("Create a new user") ?>">+ <?= t("Add user") ?></a>
+    <a class="gDialogLink gButtonLink" href="<?= url::site("admin/users/add_form") ?>"
+       title="<?= t("Create a new user") ?>">+ <?= t("Add user") ?></a>
   </h2>
 
   <div class="gBlockContent">
@@ -35,7 +36,8 @@
       <? endforeach ?>
     </ul>
     <br />
-    <a href="users/add_form" class="gDialogLink gButtonLink" title="<?= t("Create a new user") ?>">
+    <a href="<?= url::site("admin/users/add_form") ?>" class="gDialogLink gButtonLink"
+       title="<?= t("Create a new user") ?>">
       + <?= t("Add a new user") ?>
     </a>
   </div>
@@ -44,7 +46,7 @@
 <div class="gBlock">
   <h2>
     <?= t("Group Admin") ?>
-    <a class="gButtonLink" href="<?= url::site("groups/add_form") ?>"
+    <a class="gDialogLink gButtonLink" href="<?= url::site("admin/groups/add_form") ?>"
        title="<?= t("Create a new group") ?>">+ <?= t("Add group") ?></a>
   </h2>
 
@@ -65,7 +67,8 @@
       <? endforeach ?>
 
       <li class="gGroup">
-	<a href="groups/add_form" title="<?= t("Create a new group") ?>">
+	<a class="gDialogLink" href="<?= url::site("admin/groups/add_form") ?>"
+           title="<?= t("Create a new group") ?>">
   	  + <?= t("Add a new group") ?>
 	</a>
       </li>
