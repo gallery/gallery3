@@ -37,17 +37,12 @@ class Admin_Recaptcha_Controller extends Admin_Controller {
         $new_public_key = $form->configure_recaptcha->public_key->value;
         $new_private_key = $form->configure_recaptcha->private_key->value;
 
-        $this->_update_key("public_key", $old_public_key, $new_public_key);
-        $this->_update_key("private_key", $old_private_key, $new_private_key);
+        $update = $this->_update_key("public_key", $old_public_key, $new_public_key);
+        $update |= $this->_update_key("private_key", $old_private_key, $new_private_key);
 
-        $add_recaptcha_to = array();
-        foreach ($form->configure_recaptcha->activated_forms->value as $name) {
-          $add_recaptcha_to[$name] = 1;
+        if ($update) {
+          message::success(t("Recaptcha Configured"));
         }
-        module::set_var("recaptcha", "form_list", serialize($add_recaptcha_to));
-        log::success(t("Recaptcha active forms have changed."));
-
-        message::success(t("Recaptcha Configured"));
         recaptcha::check_config();
       }
     } else {
@@ -76,6 +71,7 @@ class Admin_Recaptcha_Controller extends Admin_Controller {
     if ($changed) {
       module::set_var("recaptcha", $type, $new_key);
     }
+    return $changed;
   }
 
   public function gethtml($public_key, $error=null) {
