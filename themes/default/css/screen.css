@@ -359,18 +359,18 @@ form p.gError {
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
 
 #gHeader #gSearchForm li,
-#gSidebar #gAdd_Tag_Form li {
+#gSidebar #gAddTagForm li {
   float: left;
   padding: .4em .5em;
 }
 
 #gHeader #gSearchForm label,
-#gSidebar #gAdd_Tag_Form label {
+#gSidebar #gAddTagForm label {
   display: none;
 }
 
 #gHeader #gSearchForm input[type="text"],
-#gSidebar #gAdd_Tag_Form input[type="text"] {
+#gSidebar #gAddTagForm input[type="text"] {
   width: 10em;
 }
 
@@ -752,7 +752,7 @@ form p.gError {
   width: 100%;
 }
 
-#gDialog #gLogin_Form {
+#gDialog #gLoginForm {
   width: 300px;
 }
 
