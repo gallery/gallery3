@@ -35,6 +35,15 @@ class Move_Controller extends Controller {
     $target = ORM::factory("item", $this->input->post("target_id"));
     access::required("edit", $target);
     $source->move_to($target);
+
+    // If the target has no cover item, make this it.
+    if ($target->album_cover_item_id == null)  {
+      $target->album_cover_item_id =
+        $source->type == "album" ? $source->album_cover_item_id : $source->id;
+      $target->save();
+      graphics::generate($target);
+    }
+
     print json_encode(
       array("result" => "success",
             "location" => url::site("albums/{$target->id}")));
