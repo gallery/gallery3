@@ -497,6 +497,14 @@ form p.gError {
   padding: 0 8px 8px 32px;
 }
 
+#gContent #gComments ul li #gRecaptcha {
+  padding: 0;
+}
+
+#gContent #gComments ul li #gRecaptcha div {
+  padding: 0;
+}
+
 #gContent #gComments .gAvatar {
   margin-right: .4em;
 }

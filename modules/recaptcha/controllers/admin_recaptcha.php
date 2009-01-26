@@ -26,7 +26,10 @@ class Admin_Recaptcha_Controller extends Admin_Controller {
 
       $valid_key = $form->validate();
       if ($valid_key) {
-        $valid_key = recaptcha::is_recaptcha_valid($form,
+        $input = Input::instance();
+        $challenge = $input->post("recaptcha_challenge_field", "", true);
+        $response = $input->post("recaptcha_response_field", "", true);
+        $valid_key = recaptcha::is_recaptcha_valid($challenge, $response,
                                                    $form->configure_recaptcha->private_key->value);
         if (empty($valid_key) && $form->captcha_error == "invalid-site-private-key") {
           $form->configure_recaptcha->private_key->add_error("invalid", 1);

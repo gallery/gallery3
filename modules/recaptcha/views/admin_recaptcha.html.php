@@ -1,7 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
 <script>
-var site = (document.location.protocol == "http:") ? "<?= $form->recaptcha_site ?>" : "<?= $form->recaptcha_ssl_site ?>";
 var RecaptchaOptions = {lang: 'en', theme: "white"};
 
 $("#gConfigureRecaptchaForm").ready(function() {

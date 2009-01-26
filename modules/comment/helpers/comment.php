@@ -77,6 +77,9 @@ class comment_Core {
     $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl");
     $group->textarea("text")->label(t("Comment"))         ->id("gText");
     $group->hidden("item_id")->value($item->id);
+    if (module::is_installed("recaptcha")) {
+      $group->recaptcha("recaptcha")->label("")->id("gRecaptcha");
+    }
     $group->submit("")->value(t("Add"));
 
     $active = user::active();
@@ -100,6 +103,9 @@ class comment_Core {
     $group->input("email")  ->label(t("Email (hidden)"))  ->id("gEmail");
     $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl");
     $group->textarea("text")->label(t("Comment"))         ->id("gText");
+    if (module::is_installed("recaptcha")) {
+      $group->recaptcha("recaptcha")->label("")->id("gRecaptcha");
+    }
     $group->submit("")->value(t("Edit"));
 
     $group->text = $comment->text;
