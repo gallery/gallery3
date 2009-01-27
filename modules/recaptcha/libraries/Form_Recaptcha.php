@@ -27,26 +27,28 @@ class Form_Recaptcha_Core extends Form_Input {
 
   public function __construct($name) {
     parent::__construct($name);
-    $this->error_messages("incorrect-captcha-sol", t("The values supplied to recaptcha are incorrect."));
+    $this->error_messages("incorrect-captcha-sol",
+                          t("The values supplied to recaptcha are incorrect."));
     $this->error_messages("invalid-site-private-key", t("The site private key is incorrect."));
   }
 
   public function render() {
     $public_key = module::get_var("recaptcha", "public_key");
-    if (empty($public_key)) { 
+    if (empty($public_key)) {
       throw new Exception("@todo NEED KEY <a href=\"http://recaptcha.net/api/getkey\">" .
-                          "http://recaptcha.net/api/getkey</a>"); 
-    } 
+                          "http://recaptcha.net/api/getkey</a>");
+    }
 
-    $server = "http://api.recaptcha.net"; 
+    $server = "http://api.recaptcha.net";
 
     $options[] = "callback: Recaptcha.focus_response_field";
     $options[] = "lang: \"" . Kohana::config("locale.root_locale") . "\"";
     $options[] = "theme: \"white\"";
     $options = implode(", ", $options);
-    
+
     $html = "<div id=\"gRecaptcha\" />";
-    $html .= "<script type=\"text/javascript\"  src=\"http://api.recaptcha.net/js/recaptcha_ajax.js\"></script>";
+    $html .= "<script type=\"text/javascript\" ";
+    $html .= "src=\"http://api.recaptcha.net/js/recaptcha_ajax.js\"></script>";
     $html .= "<script type=\"text/javascript\">";
     $html .= "Recaptcha.create(\"$public_key\", \"gRecaptcha\", {" . $options . "});";
     $html .= "</script>";
@@ -72,4 +74,4 @@ class Form_Recaptcha_Core extends Form_Input {
     return empty($this->_error);
   }
 
-} 
+}
