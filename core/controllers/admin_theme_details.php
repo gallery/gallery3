@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Themedetails_Controller extends Admin_Controller {
+class Admin_Theme_Details_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = theme::get_edit_form_admin();
@@ -31,7 +31,7 @@ class Admin_Themedetails_Controller extends Admin_Controller {
       module::set_var("core", "thumb_size", $form->edit_theme->thumb_size->value);
       module::set_var("core", "resize_size", $form->edit_theme->resize_size->value);
       message::success(t("Updated theme details"));
-      url::redirect("admin/themedetails");
+      url::redirect("admin/theme_details");
     } else {
       $view = new Admin_View("admin.html");
       $view->content = $form;

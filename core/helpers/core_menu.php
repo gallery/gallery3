@@ -39,7 +39,7 @@ class core_menu_Core {
                  ->id("edit_item")
                  ->label($item->type == "album" ? t("Edit album") : t("Edit photo"))
                  ->url(url::site("form/edit/{$item->type}s/$item->id"))));
-      
+
       // @todo Move album options menu to the album quick edit pane
       // @todo Create resized item quick edit pane menu
       if ($item->type == "album") {
@@ -129,7 +129,7 @@ class core_menu_Core {
                ->append(Menu::factory("link")
                         ->id("theme_details")
                         ->label(t("Theme Details"))
-                        ->url(url::site("admin/themedetails"))))
+                        ->url(url::site("admin/theme_details"))))
       ->append(Menu::factory("submenu")
                ->id("users_groups_menu")
                ->label(t("Users/Groups")))
