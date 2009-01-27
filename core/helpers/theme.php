@@ -29,13 +29,13 @@ class theme_Core {
    * active for any given request.
    */
   static function load_themes() {
-    $modules = Kohana::config('core.modules');
+    $modules = Kohana::config("core.modules");
     if (Router::$controller == "admin") {
-      array_unshift($modules, THEMEPATH . 'admin_default');
+      array_unshift($modules, THEMEPATH . "admin_default");
     } else {
-      array_unshift($modules, THEMEPATH . 'default');
+      array_unshift($modules, THEMEPATH . "default");
     }
-    Kohana::config_set('core.modules', $modules);
+    Kohana::config_set("core.modules", $modules);
   }
 
   static function get_edit_form_admin() {
@@ -52,15 +52,6 @@ class theme_Core {
       value(module::get_var("core", "resize_size"));
     $group->submit("")->value(t("Save"));
     return $form;
-  }
-
-  static function get_edit_form_content($theme_name) {
-    $file = THEMEPATH . $theme_name . "/theme.info";
-    $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-  }
-
-  static function get_var($theme_id, $name, $default_value = null) {
-    return module::get_var($theme_id, $name, module::get_var("core", $name, $default_value));
   }
 }
 

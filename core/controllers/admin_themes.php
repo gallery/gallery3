@@ -43,6 +43,7 @@ class Admin_Themes_Controller extends Admin_Controller {
 
   public function preview($type, $theme_name) {
     $view = new View("admin_themes_preview.html");
+    $theme_name = preg_replace("/[^\w]/", "", $theme_name);
     $view->info = new ArrayObject(
       parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
     $view->theme_name = $theme_name;
@@ -58,6 +59,7 @@ class Admin_Themes_Controller extends Admin_Controller {
   public function choose($type, $theme_name) {
     access::verify_csrf();
 
+    $theme_name = preg_replace("/[^\w]/", "", $theme_name);
     $info = new ArrayObject(
       parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
 
@@ -71,46 +73,6 @@ class Admin_Themes_Controller extends Admin_Controller {
                          array("theme_name" => $info->name)));
     }
 
-    url::redirect("admin/themes");
-  }
-
-  public function edit_form($theme_name) {
-    $file = THEMEPATH . $theme_name . "/theme.info";
-    $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-    $theme_info['id'] = $theme_name;
-    print theme::get_edit_form_admin($theme_info);
-  }
-
-  public function edit($theme_name) {
-    $file = THEMEPATH . $theme_name . "/theme.info";
-    $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-    $theme_info['id'] = $theme_name;
-    $form = theme::get_edit_form_admin($theme_info);
-    $valid = $form->validate();
-    if ($valid) {
-      foreach (array("page_size", "thumb_size", "resize_size") as $param) {
-        $val = theme::get_var($theme_name, $param);
-        $input_val = $form->edit_theme->{$param}->value;
-        if ($val != $input_val) {
-          module::set_var($theme_name, $param, $input_val);
-        }
-      }
-      print json_encode(array("result" => "success",
-                              "message" => t("Theme was successfully updated")));
-    } else {
-      print json_encode(array("result" => "error",
-                              "message" => t("Error saving theme values")));
-    }
-  }
-
-  public function save() {
-    access::verify_csrf();
-    $theme = $this->input->post("themes");
-    if ($theme != module::get_var("core", "active_theme")) {
-      module::set_var("core", "active_theme", $theme);
-      message::success(t("Updated Theme"));
-      log::success("graphics", t("Changed theme to %theme_name", array("theme_name" => $theme)));
-    }
     url::redirect("admin/themes");
   }
 }
