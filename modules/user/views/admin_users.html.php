@@ -19,7 +19,7 @@
 
       <? foreach ($users as $i => $user): ?>
       <li class="<?= text::alternate("gOddRow", "gEvenRow") ?>">
-        <img src="<?= $theme->url("images/avatar.jpg") ?>"
+        <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
              title="<?= t("Drag user onto group below to add as a new member") ?>"
              alt="<?= $user->name ?>"
              width="20"
