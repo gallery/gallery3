@@ -53,7 +53,7 @@ class user_Core {
   }
 
   static function get_add_form_admin() {
-    $form = new Forge("admin/users/add", "", "post", array("id" => "gAddUserForm"));
+    $form = new Forge("admin/users/add_user", "", "post", array("id" => "gAddUserForm"));
     $group = $form->group("add_user")->label(t("Add User"));
     $group->input("name")->label(t("Name"))->id("gName");
     $group->inputs["name"]->error_messages(

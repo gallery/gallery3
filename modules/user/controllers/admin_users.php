@@ -26,7 +26,7 @@ class Admin_Users_Controller extends Controller {
     print $view;
   }
 
-  public function add() {
+  public function add_user() {
     $form = user::get_add_form_admin();
 
     $valid = $form->validate();
@@ -51,11 +51,11 @@ class Admin_Users_Controller extends Controller {
     }
   }
 
-  public function add_form() {
+  public function add_user_form() {
     print user::get_add_form_admin();
   }
 
-  public function delete($id) {
+  public function delete_user($id) {
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
@@ -77,7 +77,7 @@ class Admin_Users_Controller extends Controller {
     print json_encode(array("result" => "success"));
   }
 
-  public function delete_form($id) {
+  public function delete_user_form($id) {
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
@@ -85,7 +85,7 @@ class Admin_Users_Controller extends Controller {
     print user::get_delete_form_admin($user);
   }
 
-  public function edit($id) {
+  public function edit_user($id) {
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
@@ -118,12 +118,34 @@ class Admin_Users_Controller extends Controller {
     }
   }
 
-  public function edit_form($id) {
+  public function edit_user_form($id) {
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
     }
 
     print user::get_edit_form_admin($user);
+  }
+
+  public function add_user_to_group($user_id, $group_id) {
+    access::verify_csrf();
+    $group = ORM::factory("group", $group_id);
+    $user = ORM::factory("user", $user_id);
+    $group->add($user);
+    $group->save();
+  }
+
+  public function remove_user_from_group($user_id, $group_id) {
+    access::verify_csrf();
+    $group = ORM::factory("group", $group_id);
+    $user = ORM::factory("user", $user_id);
+    $group->remove($user);
+    $group->save();
+  }
+
+  public function group($group_id) {
+    $view = new View("admin_users_group.html");
+    $view->group = ORM::factory("group", $group_id);
+    print $view;
   }
 }
