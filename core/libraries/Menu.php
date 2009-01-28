@@ -130,6 +130,21 @@ class Menu_Core extends Menu_Element {
   }
 
   /**
+   * Add a new element to this menu
+   */
+  public function add_after($target_id, $new_menu_element) {
+    $copy = array();
+    foreach ($this->elements as $id => $menu_element) {
+      $copy[$id] = $menu_element;
+      if ($id == $target_id) {
+        $copy[$target_id] = $new_menu_element;
+      }
+    }
+    $this->elements = $copy;
+    return $this;
+  }
+
+  /**
    * Retrieve a Menu_Element by id
    */
   public function get($id) {
