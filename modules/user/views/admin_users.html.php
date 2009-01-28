@@ -73,9 +73,9 @@
           <?= ($user->last_login == 0) ? "" : date("m j, y", $user->last_login) ?>
         </span>
         <span class="gActions">
-          <a href="users/edit_form/<?= $user->id ?>" class="gPanelLink"><?= t("edit") ?></a>
+          <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>" class="gPanelLink"><?= t("edit") ?></a>
           <? if (user::active()->id != $user->id && !$user->guest): ?>
-          <a href="users/delete_form/<?= $user->id ?>" class="gDialogLink"><?= t("delete") ?></a>
+          <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>" class="gDialogLink"><?= t("delete") ?></a>
           <? else: ?>
           <span class="inactive" title="<?= t("This user cannot be deleted") ?>">
             <?= t("delete") ?>
@@ -96,7 +96,7 @@
 </div>
 
 <div id="gGroupAdmin" class="gBlock">
-  <a href="groups/add_form"
+  <a href="<?= url::site("admin/users/add_group_form") ?>"
      class="gDialogLink gButtonLink right"
      title="<?= t("Create a new group") ?>">
     + <?= t("Add a new group") ?>

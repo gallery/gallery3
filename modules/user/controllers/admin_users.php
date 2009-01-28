@@ -27,8 +27,8 @@ class Admin_Users_Controller extends Controller {
   }
 
   public function add_user() {
+    access::verify_csrf();
     $form = user::get_add_form_admin();
-
     $valid = $form->validate();
     $name = $form->add_user->inputs["name"]->value;
     $user = ORM::factory("user")->where("name", $name)->find();
@@ -45,7 +45,6 @@ class Admin_Users_Controller extends Controller {
       message::success(t("Created user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
-      message::error(t("Failed to create user"));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }
@@ -56,6 +55,7 @@ class Admin_Users_Controller extends Controller {
   }
 
   public function delete_user($id) {
+    access::verify_csrf();
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
@@ -66,7 +66,6 @@ class Admin_Users_Controller extends Controller {
       $name = $user->name;
       $user->delete();
     } else {
-      message::error(t("Failed to delete user"));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }
@@ -86,6 +85,7 @@ class Admin_Users_Controller extends Controller {
   }
 
   public function edit_user($id) {
+    access::verify_csrf();
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
@@ -96,8 +96,11 @@ class Admin_Users_Controller extends Controller {
     $valid = $form->validate();
     if ($valid) {
       $new_name = $form->edit_user->inputs["name"]->value;
-      $user = ORM::factory("user")->where("name", $new_name)->find();
-      if ($user->loaded) {
+      if (ORM::factory("user")
+          ->where("name", $new_name)
+          ->where("id !=", $id)
+          ->find()
+          ->loaded) {
         $form->edit_user->inputs["name"]->add_error("in_use", 1);
         $valid = false;
       }
@@ -112,7 +115,6 @@ class Admin_Users_Controller extends Controller {
       message::success(t("Changed user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
-      message::error(t("Failed to change user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }
@@ -148,4 +150,103 @@ class Admin_Users_Controller extends Controller {
     $view->group = ORM::factory("group", $group_id);
     print $view;
   }
+
+  public function add_group() {
+    access::verify_csrf();
+    $form = group::get_add_form_admin();
+    $valid = $form->validate();
+    if ($valid) {
+      $new_name = $form->add_group->inputs["name"]->value;
+      $group = ORM::factory("group")->where("name", $new_name)->find();
+      if ($group->loaded) {
+        $form->add_group->inputs["name"]->add_error("in_use", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
+      $group = group::create($new_name);
+      $group->save();
+      message::success(t("Created group %group_name", array("group_name" => $group->name)));
+      print json_encode(array("result" => "success"));
+    } else {
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
+    }
+  }
+
+  public function add_group_form() {
+    print group::get_add_form_admin();
+  }
+
+  public function delete_group($id) {
+    access::verify_csrf();
+    $group = ORM::factory("group", $id);
+    if (!$group->loaded) {
+      kohana::show_404();
+    }
+
+    $form = group::get_delete_form_admin($group);
+    if($form->validate()) {
+      $name = $group->name;
+      $group->delete();
+    } else {
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
+    }
+
+    $message = t("Deleted group %group_name", array("group_name" => $name));
+    log::success("group", $message);
+    message::success($message);
+    print json_encode(array("result" => "success"));
+  }
+
+  public function delete_group_form($id) {
+    $group = ORM::factory("group", $id);
+    if (!$group->loaded) {
+      kohana::show_404();
+    }
+    print group::get_delete_form_admin($group);
+  }
+
+  public function edit_group($id) {
+    access::verify_csrf();
+    $group = ORM::factory("group", $id);
+    if (!$group->loaded) {
+      kohana::show_404();
+    }
+
+    $form = group::get_edit_form_admin($group);
+    $valid = $form->validate();
+
+    if ($valid) {
+      $new_name = $form->edit_group->inputs["name"]->value;
+      $group = ORM::factory("group")->where("name", $new_name)->find();
+      if ($group->loaded) {
+        $form->edit_group->inputs["name"]->add_error("in_use", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
+      $group->name = $form->edit_group->inputs["name"]->value;
+      $group->save();
+      message::success(t("Changed group %group_name", array("group_name" => $group->name)));
+      print json_encode(array("result" => "success"));
+    } else {
+      message::error(t("Failed to change group %group_name", array("group_name" => $group->name)));
+      print json_encode(array("result" => "error",
+                              "form" => $form->__toString()));
+    }
+  }
+
+  public function edit_group_form($id) {
+    $group = ORM::factory("group", $id);
+    if (!$group->loaded) {
+      kohana::show_404();
+    }
+
+    print group::get_edit_form_admin($group);
+  }
+
 }

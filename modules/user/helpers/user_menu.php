@@ -19,18 +19,10 @@
  */
 class user_menu_Core {
   static function admin($menu, $theme) {
-    $menu->get("users_groups_menu")
-      ->append(Menu::factory("link")
-               ->id("list_users")
-               ->label(t("Users"))
-               ->url(url::site("admin/users")))
-      ->append(Menu::factory("link")
-               ->id("list_groups")
-               ->label(t("Groups"))
-               ->url(url::site("admin/groups")))
-      ->append(Menu::factory("link")
-               ->id("users_groups")
-               ->label(t("Users <-> Groups"))
-               ->url("#"));
+    $menu->add_after("presentation_menu",
+                     Menu::factory("link")
+                     ->id("users_groups")
+                     ->label(t("Users/Groups"))
+                     ->url(url::site("admin/users")));
   }
 }

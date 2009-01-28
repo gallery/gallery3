@@ -38,7 +38,8 @@ class user_Core {
   }
 
   static function get_edit_form_admin($user) {
-    $form = new Forge("admin/users/edit/$user->id", "", "post", array("id" => "gEditUserForm"));
+    $form = new Forge(
+      "admin/users/edit_user/$user->id", "", "post", array("id" => "gEditUserForm"));
     $group = $form->group("edit_user")->label(t("Edit User"));
     $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
     $group->inputs["name"]->error_messages(
@@ -69,7 +70,7 @@ class user_Core {
   }
 
   static function get_delete_form_admin($user) {
-    $form = new Forge("admin/users/delete/$user->id", "", "post", array("id" => "gDeleteUserForm"));
+    $form = new Forge("admin/users/delete_user/$user->id", "", "post", array("id" => "gDeleteUserForm"));
     $group = $form->group("delete_user")->label(
       t("Are you sure you want to delete user %name?", array("name" => $user->name)));
     $group->submit("")->value(t("Delete user %name", array("name" => $user->name)));
