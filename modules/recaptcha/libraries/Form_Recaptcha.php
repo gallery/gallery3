@@ -65,7 +65,8 @@ class Form_Recaptcha_Core extends Form_Input {
     $challenge = $input->post("recaptcha_challenge_field", "", true);
     $response = $input->post("recaptcha_response_field", "", true);
     if (!empty($challenge)) {
-      $this->_error = recaptcha::is_recaptcha_valid($challenge, $response);
+      $this->_error = recaptcha::is_recaptcha_valid(
+        $challenge, $response, module::get_var("recaptcha", "private_key"));
       if (!empty($this->_error)) {
         $this->add_error($this->_error, 1);
       }

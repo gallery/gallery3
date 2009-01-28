@@ -26,13 +26,11 @@ class recaptcha_Core {
       ->value(module::get_var());
     $group->input("public_key")
       ->label(t("Public Key"))
-      ->value(module::get_var("recaptcha", "public_key"))
-      ->rules("required|length[40]");
+      ->value(module::get_var("recaptcha", "public_key"));
     $group->public_key->error_messages("invalid", t("The public key you provided is invalid."));
     $group->input("private_key")
       ->label(t("Private Key"))
-      ->value(module::get_var("recaptcha", "private_key"))
-      ->rules("required|length[40]");
+      ->value(module::get_var("recaptcha", "private_key"));
     $group->private_key->error_messages("invalid", t("The private key you provided is invalid."));
 
     $group->submit("")->value(t("Save"));
@@ -55,14 +53,24 @@ class recaptcha_Core {
   }
 
   /** 
-   * Gets the challenge HTML (javascript and non-javascript version). 
-   * This is called from the browser, and the resulting reCAPTCHA HTML widget 
-   * is embedded within the HTML form it was called from. 
-   * @param string $error The error given by reCAPTCHA (optional, default is null) 
-   * @param string $pubkey The public key to use in the challenge (optional, default is null)
-   * @return string - The HTML to be embedded in the user"s form. 
+   * Verify that the recaptcha key is valid.
+   * @param string $private_key
+   * @return boolean
    */ 
-  static function get_challenge_html($id, $error=null, $public_key=null ) {
+  static function verify_key($private_key) {
+    $remote_ip = Input::instance()->server("REMOTE_ADDR");
+    $response = self::_http_post("api-verify.recaptcha.net", "/verify",
+                                 array("privatekey" => $private_key,
+                                       "remoteip" => $remote_ip,
+                                       "challenge" => "right",
+                                       "response" => "wrong"));
+
+    $answers = explode("\n", $response[1]);
+    if (trim($answers[0]) == "true") {
+      return null;
+    } else {
+      return $answers[1];
+    }
   }
   
   /** 
@@ -70,29 +78,21 @@ class recaptcha_Core {
    * @param string $form
    * @return string error message or null
    */ 
-  static function is_recaptcha_valid($challenge, $response, $private_key=null) { 
-    if (!module::installed("recaptcha")) {
-      return null;
-    }
+  static function is_recaptcha_valid($challenge, $response, $private_key) {
     $input = Input::instance();
-
-    if (empty($private_key)) {
-      $private_key = module::get_var("recaptcha", "private_key");
-    }
-    $remoteip = $input->server("REMOTE_ADDR");
+    $remote_ip = $input->server("REMOTE_ADDR");
 
     //discard spam submissions 
     if (empty($challenge) || empty($response)) { 
       return  "incorrect-captcha-sol";
     } 
+
     $response = self::_http_post("api-verify.recaptcha.net", "/verify", 
                               array ("privatekey" => $private_key, 
-                                     "remoteip" => $remoteip, 
+                                        "remoteip" => $remote_ip,
                                      "challenge" => $challenge, 
                                      "response" => $response)); 
 
-    Kohana::log("debug", print_r($response, 1));
-    Kohana::log("debug", print_r(debug_backtrace(), 1));
     $answers = explode ("\n", $response [1]); 
     if (trim ($answers [0]) == "true") { 
       return null; 
