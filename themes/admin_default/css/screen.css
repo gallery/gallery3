@@ -155,7 +155,7 @@
   border-width: 1px;
   border-style: solid;
   border-color: #ececec #c8c8c8 #c8c8c8 #ececec;
-  background-image: url('/gallery3/themes/admin_default/images/backg-buttonlink.png');
+  background-image: url('../images/backg-buttonlink.png');
   padding: .2em .3em;
   font-weight: bold;
 }
