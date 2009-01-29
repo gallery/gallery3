@@ -54,8 +54,8 @@
   <div class="gBlockContent">
     <ul id="gUserAdminList">
       <li class="gHeaderRow">
-    	<strong><?= t("Username") ?></strong> <?= t("(Full name)") ?>
-	<span class="understate"><?= t("last login") ?></span>
+        <strong><?= t("Username") ?></strong> <?= t("(Full name)") ?>
+        <span class="understate"><?= t("last login") ?></span>
       </li>
 
       <? foreach ($users as $i => $user): ?>

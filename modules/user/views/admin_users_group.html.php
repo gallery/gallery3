@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <strong><?= $group->name?></strong>
 <? if (!$group->special): ?>
 <a href="<?= url::site("admin/users/delete_group_form/$group->id") ?>" class="gDialogLink"><?= t("delete") ?></a>

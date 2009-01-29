@@ -19,24 +19,24 @@
 
 	The left and top parameters specify the distance and direction, in	pixels, to
 	offset the shadow. Zero values position the shadow directly behind the element.
-	Positive values shift the shadow to the right and down, while negative values 
+	Positive values shift the shadow to the right and down, while negative values
 	shift the shadow to the left and up.
-	
-	The blur parameter specifies the spread, or dispersion, of the shadow. Zero 
+
+	The blur parameter specifies the spread, or dispersion, of the shadow. Zero
 	produces a sharp shadow, one or two produces a normal shadow, and	three or four
 	produces a softer shadow. Higher values increase the processing load.
-	
+
 	The opacity parameter	should be a decimal value, usually less than one. You can
-	use a value	higher than one in special situations, e.g. with extreme blurring. 
-	
+	use a value	higher than one in special situations, e.g. with extreme blurring.
+
 	Color is specified in the usual manner, with a color name or hex value. The
 	color parameter	does not apply with transparent images.
-	
+
 	The swap parameter reverses the stacking order of the original and the shadow.
 	This can be used for special effects, like an embossed or engraved look.
 
 	EXPLANATION:
-	
+
 	This jQuery plug-in adds soft drop shadows behind page elements. It is only
 	intended for adding a few drop shadows to mostly stationary objects, like a
 	page heading, a photo, or content containers.
@@ -49,7 +49,7 @@
 	or removed with the removeShadow() method. The redrawShadow() method uses the
 	same options used to create the original shadow. If you want to change the
 	options, you should remove the shadow first and then create a new shadow.
-	
+
 	The dropShadow method returns a jQuery collection of the new shadow(s). If
 	further manipulation is required, you can store it in a variable like this:
 
@@ -63,7 +63,7 @@
 		var myShadowId = $("#myElement").shadowId();
 
 	If the original element does not already have an ID assigned, a random ID will
-	be generated for the shadow. However, if the original does have an ID, the 
+	be generated for the shadow. However, if the original does have an ID, the
 	shadow's ID will be the original ID and "_dropShadow". For example, if the
 	element's ID is "myElement", the shadow's ID would be "myElement_dropShadow".
 
@@ -83,33 +83,33 @@
 	background-image style. If the element has a solid background it will create a
 	rectangular	shadow around the outside box.
 
-	The shadow elements are positioned absolutely one layer below the original 
+	The shadow elements are positioned absolutely one layer below the original
 	element, which is positioned relatively (unless it's already absolute).
 
 	*** All shadows have the "dropShadow" class, for selecting with CSS or jQuery.
 
 	ISSUES:
-	
+
 		1)	Limited styling of shadowed elements by ID. Because IDs must be unique,
 				and the shadows have their own ID, styles applied by ID won't transfer
 				to the shadows. Instead, style elements by class or use inline styles.
 		2)	Sometimes shadows don't align properly. Elements may need to be wrapped
-				in container elements, margins or floats changed, etc. or you may just 
+				in container elements, margins or floats changed, etc. or you may just
 				have to tweak the left and top offsets to get them to align. For example,
-				with draggable objects, you have to wrap them inside two divs. Make the 
-				outer div draggable and set the inner div's position to relative. Then 
+				with draggable objects, you have to wrap them inside two divs. Make the
+				outer div draggable and set the inner div's position to relative. Then
 				you can create a shadow on the element inside the inner div.
-		3)	If the user changes font sizes it will throw the shadows off. Browsers 
-				do not expose an event for font size changes. The only known way to 
+		3)	If the user changes font sizes it will throw the shadows off. Browsers
+				do not expose an event for font size changes. The only known way to
 				detect a user font size change is to embed an invisible text element and
 				then continuously poll for changes in size.
 		4)	Safari support is shaky, and may require even more tweaks/wrappers, etc.
-		
+
 		The bottom line is that this is a gimick effect, not PFM, and if you push it
 		too hard or expect it to work in every possible situation on every browser,
-		you will be disappointed. Use it sparingly, and don't use it for anything 
+		you will be disappointed. Use it sparingly, and don't use it for anything
 		critical. Otherwise, have fun with it!
-				
+
 	AUTHOR: Larry Stevens (McLars@eyebulb.com) This work is in the public domain,
 					and it is not supported in any way. Use it at your own risk.
 */
@@ -131,7 +131,7 @@
 			swap: false
 			}, options);
 		var jShadows = $([]);  //empty jQuery collection
-		
+
 		// Loop through original elements
 		this.not(".dropShadow").each(function()
 		{
@@ -141,7 +141,7 @@
 			var opacity = (blur == 0) ? opt.opacity : opt.opacity / (blur * 8);
 			var zOriginal = (opt.swap) ? dropShadowZindex : dropShadowZindex + 1;
 			var zShadow = (opt.swap) ? dropShadowZindex + 1 : dropShadowZindex;
-			
+
 			// Create ID for shadow
 			var shadowId;
 			if (this.id) {
@@ -167,12 +167,12 @@
 			// Create first shadow layer
 			bgColor = jthis.css("backgroundColor");
 			if (bgColor == "rgba(0, 0, 0, 0)") bgColor = "transparent";  //Safari
-			if (bgColor != "transparent" || jthis.css("backgroundImage") != "none" 
-					|| this.nodeName == "SELECT" 
+			if (bgColor != "transparent" || jthis.css("backgroundImage") != "none"
+					|| this.nodeName == "SELECT"
 					|| this.nodeName == "INPUT"
-					|| this.nodeName == "TEXTAREA") {		
+					|| this.nodeName == "TEXTAREA") {
 				shadows[0] = $("<div></div>")
-					.css("background", opt.color);								
+					.css("background", opt.color);
 			}
 			else {
 				shadows[0] = jthis
@@ -193,7 +193,7 @@
 					width: jthis.outerWidth(),
 					zIndex: zShadow
 				});
-				
+
 			// Create other shadow layers
 			var layers = (8 * blur) + 1;
 			for (i = 1; i < layers; i++) {
@@ -201,7 +201,7 @@
 			}
 
 			// Position layers
-			var i = 1;			
+			var i = 1;
 			var j = blur;
 			while (j > 0) {
 				shadows[i].css({left: j * 2, top: 0});           //top
@@ -218,7 +218,7 @@
 
 			// Create container
 			var divShadow = $("<div></div>")
-				.attr("id", shadowId) 
+				.attr("id", shadowId)
 				.addClass("dropShadow")
 				.css({
 					left: jthis.position().left + opt.left - blur,
@@ -231,11 +231,11 @@
 					zIndex: zShadow
 				});
 
-			// Add layers to container	
+			// Add layers to container
 			for (i = 0; i < layers; i++) {
 				divShadow.append(shadows[i]);
 			}
-			
+
 			// Add container to DOM
 			jthis.after(divShadow);
 
@@ -253,12 +253,12 @@
 				}
 				catch(e){}
 			});
-			
+
 			// Increment z-index counter
 			dropShadowZindex += 2;
 
 		});  //end each
-		
+
 		return this.pushStack(jShadows);
 	};
 
@@ -267,7 +267,7 @@
 	{
 		// Remove existing shadows
 		this.removeShadow();
-		
+
 		// Draw new shadows
 		return this.each(function()
 		{
@@ -293,7 +293,7 @@
 	};
 
 
-	$(function()  
+	$(function()
 	{
 		// Suppress printing of shadows
 		var noPrint = "<style type='text/css' media='print'>";
