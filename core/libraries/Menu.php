@@ -80,7 +80,12 @@ class Menu_Element_Link extends Menu_Element {
  */
 class Menu_Element_Dialog extends Menu_Element {
   public function __toString() {
-    return "<li><a class=\"gMenuLink\" href=\"$this->url\" " .
+    if (isset($this->css_id) && !empty($this->css_id)) {
+      $css_id = " id=\"$this->css_id\"";
+    } else {
+      $css_id = "";
+    }
+    return "<li><a$css_id class=\"gMenuLink\" href=\"$this->url\" " .
            "title=\"$this->label\">$this->label</a></li>";
   }
 }
