@@ -222,9 +222,17 @@ class ORM_MPTT_Core extends ORM {
     $original_left = $this->left;
     $original_right = $this->right;
     $target_right = $target->right;
+    $level_delta = $target->level - $this->level;
 
     $this->lock();
     try {
+      if ($level_delta) {
+        // Update the levels for the to-be-moved items
+        $this->db->query(
+          "UPDATE `{$this->table_name}` SET `level` = `level` + $level_delta" .
+          " WHERE `left` >= $original_left AND `right` <= $original_right");
+      }
+
       // Make a hole in the target for the move
       $target->db->query(
         "UPDATE `{$this->table_name}` SET `left` = `left` + $size_of_hole" .
@@ -261,7 +269,6 @@ class ORM_MPTT_Core extends ORM {
       $this->db->query(
         "UPDATE `{$this->table_name}` SET `right` = `right` - $size_of_hole" .
         " WHERE `right` > $right");
-
     } catch (Exception $e) {
       $this->unlock();
       throw $e;
