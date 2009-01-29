@@ -122,8 +122,6 @@ class module_Core {
     $kohana_modules[] = MODPATH . $module_name;
     Kohana::config_set("core.modules",  $kohana_modules);
 
-    call_user_func(array($installer_class, "install"));
-
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     }
