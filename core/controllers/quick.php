@@ -80,7 +80,12 @@ class Quick_Controller extends Controller {
     $parent = $item->parent();
     access::required("edit", $parent);
 
-    $parent->album_cover_item_id = $item->id;
+    if ($item->type == "photo") {
+      $parent->album_cover_item_id = $item->id;
+    } else if ($item->type == "album") {
+      $parent->album_cover_item_id = $item->album_cover_item_id;
+    }
+
     $parent->thumb_dirty = 1;
     $parent->save();
     graphics::generate($parent);
