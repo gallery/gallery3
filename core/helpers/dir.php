@@ -27,7 +27,7 @@ class dir_Core {
         } else if ($resource->isFile()) {
           unlink($resource->getPathName());
         } else if ($resource->isDir()) {
-          directory::unlink($resource->getRealPath());
+          dir::unlink($resource->getRealPath());
         }
         unset($resource);
       }

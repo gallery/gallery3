@@ -93,6 +93,25 @@ class Quick_Controller extends Controller {
     print json_encode(array("result" => "success"));
   }
 
+  public function delete($id) {
+    access::verify_csrf();
+    $item = ORM::factory("item", $id);
+    access::required("edit", $item);
+
+    $parent = $item->parent();
+
+    if ($item->type == "album") {
+      $msg = t("Deleted album <b>%title</b>", array("title" => $item->title));
+    } else {
+      $msg = t("Deleted photo <b>%title</b>", array("title" => $item->title));
+    }
+
+    $item->delete();
+    message::success($msg);
+
+    print json_encode(array("result" => "success", "reload" => 1));
+  }
+
   public function form_edit($id) {
     $item = ORM::factory("item", $id);
     access::required("edit", $item);

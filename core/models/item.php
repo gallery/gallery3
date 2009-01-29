@@ -85,16 +85,23 @@ class Item_Model extends ORM_MPTT {
   }
 
   public function delete() {
-    $path = $this->file_path();
-    parent::delete();
+    $original_path = $this->file_path();
+    $original_resize_path = $this->resize_path();
+    $original_thumb_path = $this->thumb_path();
+
     // If there is no name, the path is invalid so don't try to delete
     if (!empty($this->name)) {
       if ($this->is_album()) {
-        dir::unlink($path);
+        dir::unlink(dirname($original_path));
+        dir::unlink(dirname($original_resize_path));
+        dir::unlink(dirname($original_thumb_path));
       } else {
-        unlink($path);
+        unlink($original_path);
+        unlink($original_resize_path);
+        unlink($original_thumb_path);
       }
     }
+    parent::delete();
   }
 
   /**

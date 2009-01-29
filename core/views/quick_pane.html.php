@@ -35,14 +35,14 @@
     <?= t("Select as album cover") ?>
   </span>
 </a>
-<? endif ?>
 
-<a class="delete" href="#"
+<a class="delete" href="<?= url::site("quick/delete/$item->id?csrf=" . access::csrf_token()) ?>"
    title="<?= t("Delete this item") ?>">
   <span>
     <?= t("Delete this item") ?>
   </span>
 </a>
+<? endif ?>
 
 <a class="options" href="#"
    title="<?= t("Additional options") ?>">

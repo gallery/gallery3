@@ -49,6 +49,7 @@ var quick_do = function(cont, pane, img) {
       dataType: "json",
       success: function(data) {
 	img.css("opacity", "1");
+	cont.removeClass("gLoadingLarge");
 	if (data.src) {
 	  img.attr("width", data.width);
 	  img.attr("height", data.height);
@@ -58,8 +59,11 @@ var quick_do = function(cont, pane, img) {
 	  } else {
 	    img.css("margin-top", 0);
 	  }
+        } else if (data.location) {
+          window.location = data.location;
+	} else if (data.reload) {
+          window.location.reload();
 	}
-	cont.removeClass("gLoadingLarge");
       }
     });
   }
