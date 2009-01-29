@@ -40,8 +40,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     ob_end_clean();
 
     $this->assert_equal(
-      json_encode(array("result" => "success",
-                        "location" => "http://./index.php/albums/$album->id")),
+      json_encode(array("result" => "success", "location" => "http://./index.php/test")),
       $results);
     $this->assert_equal("new title", $album->title);
     $this->assert_equal("new description", $album->description);

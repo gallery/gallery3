@@ -18,6 +18,36 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class url extends url_Core {
+  static function site($uri, $protocol=false) {
+    list($controller, $arg1, $args) = explode("/", $uri, 3);
+    if ($controller == "albums" || $controller == "photos") {
+      $uri = ORM::factory("item", $arg1)->relative_path();
+    }
+    return parent::site($uri, $protocol);
+  }
+
+  static function parse_url() {
+    if (Router::$controller) {
+      return;
+    }
+
+    $count = count(Router::$segments);
+    foreach (ORM::factory("item")
+             ->where("name", Router::$segments[$count - 1])
+             ->where("level", $count + 1)
+             ->find_all() as $match) {
+      if ($match->relative_path() == Router::$current_uri) {
+        $item = $match;
+      }
+    }
+
+    if (!empty($item)) {
+      Router::$controller = "{$item->type}s";
+      Router::$controller_path = APPPATH . "controllers/{$item->type}s.php";
+      Router::$method = $item->id;
+    }
+  }
+
   /**
    * Just like url::file() except that it returns an absolute URI
    */

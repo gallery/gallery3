@@ -20,3 +20,4 @@
 Event::add("system.ready", array("I18n", "instance"));
 Event::add("system.post_routing", array("theme", "load_themes"));
 Event::add("system.ready", array("module", "load_modules"));
+Event::add("system.post_routing", array("url", "parse_url"));

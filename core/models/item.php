@@ -147,7 +147,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/album2/photo.jpg
    */
   public function file_path() {
-    return VARPATH . "albums/" . $this->_relative_path();
+    return VARPATH . "albums/" . $this->relative_path();
   }
 
   /**
@@ -156,8 +156,8 @@ class Item_Model extends ORM_MPTT {
    */
   public function file_url($full_uri=false) {
     return $full_uri ?
-      url::abs_file("var/albums/" . $this->_relative_path()) :
-      url::file("var/albums/" . $this->_relative_path());
+      url::abs_file("var/albums/" . $this->relative_path()) :
+      url::file("var/albums/" . $this->relative_path());
   }
 
   /**
@@ -165,7 +165,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/photo.thumb.jpg
    */
   public function thumb_path() {
-    return VARPATH . "thumbs/" . $this->_relative_path() .
+    return VARPATH . "thumbs/" . $this->relative_path() .
       ($this->type == "album" ? "/.album.jpg" : "");
   }
 
@@ -175,8 +175,8 @@ class Item_Model extends ORM_MPTT {
    */
   public function thumb_url($full_uri=true) {
     return ($full_uri ?
-            url::abs_file("var/thumbs/" . $this->_relative_path()) :
-            url::file("var/thumbs/" . $this->_relative_path()))  .
+            url::abs_file("var/thumbs/" . $this->relative_path()) :
+            url::file("var/thumbs/" . $this->relative_path()))  .
       ($this->type == "album" ? "/.album.jpg" : "");
   }
 
@@ -185,7 +185,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/photo.resize.jpg
    */
   public function resize_path() {
-    return VARPATH . "resizes/" . $this->_relative_path() .
+    return VARPATH . "resizes/" . $this->relative_path() .
       ($this->type == "album" ? "/.album.jpg" : "");
   }
 
@@ -195,8 +195,8 @@ class Item_Model extends ORM_MPTT {
    */
   public function resize_url($full_uri=true) {
     return ($full_uri ?
-            url::abs_file("var/resizes/" . $this->_relative_path()) :
-            url::file("var/resizes/" . $this->_relative_path())) .
+            url::abs_file("var/resizes/" . $this->relative_path()) :
+            url::file("var/resizes/" . $this->relative_path())) .
       ($this->type == "album" ? "/.album.jpg" : "");
   }
 
@@ -204,7 +204,7 @@ class Item_Model extends ORM_MPTT {
    * Return the relative path to this item's file.
    * @return string
    */
-  private function _relative_path() {
+  public function relative_path() {
     if (empty($this->relative_path)) {
       foreach ($this->parents() as $parent) {
         if ($parent->id > 1) {

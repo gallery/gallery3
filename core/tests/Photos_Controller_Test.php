@@ -41,7 +41,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("result" => "success",
-                        "location" => "http://./index.php/photos/$photo->id")),
+                        "location" => "http://./index.php/test.jpeg")),
       $results);
     $this->assert_equal("new title", $photo->title);
     $this->assert_equal("new description", $photo->description);
