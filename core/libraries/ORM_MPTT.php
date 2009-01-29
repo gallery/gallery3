@@ -222,7 +222,7 @@ class ORM_MPTT_Core extends ORM {
     $original_left = $this->left;
     $original_right = $this->right;
     $target_right = $target->right;
-    $level_delta = $target->level - $this->level;
+    $level_delta = ($target->level + 1) - $this->level;
 
     $this->lock();
     try {
