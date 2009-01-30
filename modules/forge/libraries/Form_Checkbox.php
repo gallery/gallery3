@@ -68,7 +68,7 @@ class Form_Checkbox_Core extends Form_Input {
 			$label = ' '.ltrim($label);
 		}
 
-		return '<label>'.form::input($data).$label.'</label>';
+		return '<label>'.$label.'</label>'.form::input($data);
 	}
 
 	protected function load_value()
