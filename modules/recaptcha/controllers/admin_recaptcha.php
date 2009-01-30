@@ -21,8 +21,8 @@ class Admin_Recaptcha_Controller extends Admin_Controller {
   public function index() {
     $form = recaptcha::get_configure_form();
     if (request::method() == "post") {
-    $old_public_key = module::get_var("recaptcha", "public_key");
-    $old_private_key = module::get_var("recaptcha", "private_key");
+      $old_public_key = module::get_var("recaptcha", "public_key");
+      $old_private_key = module::get_var("recaptcha", "private_key");
       if ($form->validate()) {
         $public_key = $form->configure_recaptcha->public_key->value;
         $private_key = $form->configure_recaptcha->private_key->value;
