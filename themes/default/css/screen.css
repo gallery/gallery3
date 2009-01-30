@@ -556,6 +556,7 @@ form p.gError {
 }
 
 #gViewMenu #gAlbumLink,
+#gViewMenu #gWatchLink,
 #gViewMenu #gHybridLink,
 #gViewMenu #gSlideshowLink,
 #gViewMenu #gFullsizeLink,
@@ -573,6 +574,10 @@ form p.gError {
 
 #gViewMenu #gAlbumLink {
   background-image: url('../images/ico-view-album.png');
+}
+
+#gViewMenu #gWatchLink {
+  background-image: url('../images/ico-add-watch.png');
 }
 
 #gViewMenu #gHybridLink {

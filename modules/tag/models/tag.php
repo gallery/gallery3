@@ -39,7 +39,7 @@ class Tag_Model extends ORM {
       $model->where("items.type", $type);
     }
     return $model->find_all($limit, $offset);
- }
+  }
 
   /**
    * Return the count of all viewable items associated with this tag.
@@ -52,5 +52,5 @@ class Tag_Model extends ORM {
       ->join("items_tags", "items.id", "items_tags.item_id")
       ->where("items_tags.tag_id", $this->id)
       ->count_all();
- }
+  }
 }
