@@ -24,15 +24,17 @@ class tag_event_Core {
    *
    * @param Item_Model $photo
    */
-  static function photo_created($photo) {
-    $path = $photo->file_path();
-    $tags = array();
-    $size = getimagesize($photo->file_path(), $info);
-    if (is_array($info) && !empty($info["APP13"])) {
-      $iptc = iptcparse($info["APP13"]);
-      if (!empty($iptc["2#025"])) {
-        foreach($iptc["2#025"] as $tag) {
-          $tags[$tag]= 1;
+  static function item_created($photo) {
+    if ($photo->is_photo()) {
+      $path = $photo->file_path();
+      $tags = array();
+      $size = getimagesize($photo->file_path(), $info);
+      if (is_array($info) && !empty($info["APP13"])) {
+        $iptc = iptcparse($info["APP13"]);
+        if (!empty($iptc["2#025"])) {
+          foreach($iptc["2#025"] as $tag) {
+            $tags[$tag]= 1;
+          }
         }
       }
     }
