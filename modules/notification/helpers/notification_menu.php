@@ -32,19 +32,4 @@ class notification_menu_Core {
       }
     }
   }
-
-  static function photo($menu, $theme) {
-    if (!user::active()->guest) {
-      $item = $theme->item();
-
-      if ($item) {
-        $menu
-          ->append(Menu::factory("dialog")
-               ->id("watch")
-               ->label(t("Enable notifications for this photo"))
-               ->url(url::site("notification/watch/$item->id"))
-               ->css_id("gWatchLink"));
-      }
-    }
-  }
 }

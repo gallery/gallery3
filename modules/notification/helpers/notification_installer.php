@@ -26,7 +26,6 @@ class notification_installer {
       $db->query("CREATE TABLE IF NOT EXISTS `subscriptions` (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9) NOT NULL,
-                 `apply_to_children` tinyint(1) NOT NULL,
                  `user_id` int(9) NOT NULL,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY (`item_id`, `user_id`),

@@ -22,17 +22,16 @@ class Notification_Controller extends Controller {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
 
-    $watching = notification::is_watching($item->id);
+    $watching = notification::is_watching($item);
     $form = $this->_get_form($item, $watching);
     if (request::method() == "post") {
       if ($form->validate()) {
-        $watch_children = $form->watch->inputs["apply_to_children"]->value;
         if (!$watching) {
-          notification::add_watch($item, $watch_children);
+          notification::add_watch($item);
           message::success(sprintf(t("Watch Enabled on %s!"), $item->title));
           $response = json_encode(array("result" => "success"));
         } else {
-          notification::remove_watch($item, $watch_children);
+          notification::remove_watch($item);
           $response = json_encode(array("result" => "success"));
           message::success(sprintf(t("Watch Removed on %s!"), $item->title));
         }
@@ -48,19 +47,10 @@ class Notification_Controller extends Controller {
 
   function _get_form($item, $watching) {
     $button_text = $watching ? t("Remove Watch") : t("Add Watch");
-    if ($item->is_album()) {
-      $label = $watching ? t("Remove Watch from Album") : t("Add Watch to Album");
-    } else {
-      $label = $watching ? t("Remove Watch from Photo") : t("Add Watch to Photo");
-    }
+    $label = $watching ? t("Remove Watch from Album") : t("Add Watch to Album");
+
     $form = new Forge("notification/watch/$item->id", "", "post", array("id" => "gAddWatchForm"));
     $group = $form->group("watch")->label($label);
-    $checkbox = $group->checkbox("apply_to_children")
-      ->label(t("Apply to Children"))
-      ->checked($item->is_album());
-    if (!$item->is_album()) {
-      $checkbox->disabled("disabled");
-    }
     $group->submit("")->value($button_text);
 
     return $form;

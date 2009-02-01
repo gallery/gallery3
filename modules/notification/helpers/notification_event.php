@@ -18,9 +18,27 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class notification_event_Core {
+  static function item_updated($old, $new) {
+    notification::send_item_changed($old, $new);
+  }
+
+  static function item_created($item) {
+      notification::send_item_add($item);
+  }
+
+  static function item_before_delete($item) {
+    notification::send_item_deleted($item);
+ 
+    if (notification::is_watching($item)) {
+      notification::remove_watch($item);
+    }
+  }
+
   static function comment_created($comment) {
+    notification::send_comment_added($comment);
   }
 
   static function comment_updated($old, $new) {
+    notification::send_comment_changed($old, $new);
   }
 }
