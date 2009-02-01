@@ -3,15 +3,28 @@
  *
  * Extends themes/default/css/screen.css
  *
- * 1) Reusable content blocks
- * 2) Page layout containers
- * 3) Content blocks in specific layout containers
- * 4) Browser hacks
- * 5) jQuery and jQuery UI
+ * 1)  Basic HTML elements
+ * 2) Reusable content blocks
+ * 3) Page layout containers
+ * 4) Content blocks in specific layout containers
+ * 5) Browser hacks
+ * 6) jQuery and jQuery UI
  */
 
 /** *******************************************************************
- * 1) Reusable content blocks
+ * 1) Basic HTML elements
+ **********************************************************************/
+
+th,
+td {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding-right: .5em;
+}
+
+
+/** *******************************************************************
+ * 2) Reusable content blocks
  **********************************************************************/
 
 .gBlock {
@@ -45,19 +58,12 @@
 
 .gUnavailable {
   border-color: #999;
-  cursor: default;
   opacity: 0.4;
 }
 
 .gUnavailable:hover {
   border-color: #ccc;
   opacity: 1;
-}
-
-.gHeaderRow {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: .5em;
-  padding-left: 30px !important;
 }
 
 .gOddRow {
@@ -69,7 +75,7 @@
 }
 
 /** *******************************************************************
- * 2) Page layout containers
+ * 3) Page layout containers
  **********************************************************************/
 
 .gView {
@@ -89,7 +95,7 @@
 }
 
 /** *******************************************************************
- * 3) Content blocks in specific layout containers
+ * 4) Content blocks in specific layout containers
  *********************************************************************/
 
 #gHeader #gLogo {
@@ -122,7 +128,6 @@
 
 #gSidebar .gBlock h2 {
   background: none;
-  cursor: move;
 }
 
 #gPhotoStream .gBlockContent {
@@ -168,21 +173,6 @@
   margin-bottom: 1em;
 }
 
-#gUserAdminList li {
-  display: block;
-  padding: .4em .4em .3em .4em !important;
-}
-
-#gUserAdminList li img {
-  cursor: move;
-  margin-right: .8em;
-}
-
-.gActions {
-  position: absolute;
-  left: 450px;
-}
-
 .gActions a,
 .gActions span {
   margin-right: 3em;
@@ -199,7 +189,7 @@ li.gGroup {
 }
 
 /** *******************************************************************
- * 4) Browser hacks
+ * 5) Browser hacks
  *********************************************************************/
 
 #gHeader:after,
@@ -214,7 +204,7 @@ li.gGroup {
 }
 
 /** *******************************************************************
- * 5) jQuery and jQuery UI
+ * 6) jQuery and jQuery UI
  *********************************************************************/
 
 #gPanel {
@@ -228,4 +218,9 @@ li.gGroup {
 
 #gPanel fieldset {
   border: none;
+}
+
+.ui-draggable,
+.ui-sortable {
+  cursor: move;
 }

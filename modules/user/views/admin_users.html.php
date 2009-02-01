@@ -52,27 +52,34 @@
   </h2>
 
   <div class="gBlockContent">
-    <ul id="gUserAdminList">
-      <li class="gHeaderRow">
-        <strong><?= t("Username") ?></strong> <?= t("(Full name)") ?>
-        <span class="understate"><?= t("last login") ?></span>
-      </li>
+    <table id="gUserAdminList">
+      <tr>
+        <th></th>
+        <th><?= t("Username") ?></th>
+        <th><?= t("Full name") ?></th>
+        <th class="understate"><?= t("last login") ?></th>
+        <th>Actions</th>
+      </tr>
 
       <? foreach ($users as $i => $user): ?>
-      <li class="<?= text::alternate("gOddRow", "gEvenRow") ?> user">
-        <div id="user-<?= $user->id ?>" class="core-info" style="display: inline">
+      <tr class="<?= text::alternate("gOddRow", "gEvenRow") ?> user">
+        <td id="user-<?= $user->id ?>" class="core-info">
           <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                title="<?= t("Drag user onto group below to add as a new member") ?>"
                alt="<?= $user->name ?>"
                width="20"
                height="20" />
-          <strong><?= $user->name ?></strong>
-        </div>
-        (<?= $user->full_name ?>)
-        <span class="understate">
+        </td>
+        <td>
+          <?= $user->name ?>
+        </td>
+        <td>
+          <?= $user->full_name ?>
+        </td>
+        <td class="understate">
           <?= ($user->last_login == 0) ? "" : date("m j, y", $user->last_login) ?>
-        </span>
-        <span class="gActions">
+        </td>
+        <td class="gActions">
           <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>" class="gPanelLink"><?= t("edit") ?></a>
           <? if (user::active()->id != $user->id && !$user->guest): ?>
           <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>" class="gDialogLink"><?= t("delete") ?></a>
@@ -81,10 +88,10 @@
             <?= t("delete") ?>
           </span>
           <? endif ?>
-        </span>
-      </li>
+        </td>
+      </tr>
       <? endforeach ?>
-    </ul>
+    </table>
     <p>
       <a href="<?= url::site("admin/users/add_user_form") ?>"
          class="gDialogLink gButtonLink"
