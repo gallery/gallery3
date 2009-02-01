@@ -20,9 +20,9 @@
 /**
  * PHP Mail Configuration parameters
  * from        => email address that appears as the from address
- * line-length => word wrap length
+ * line-length => word wrap length (PHP documentations suggest no larger tha 70 characters
  * reply-to    => what goes into the reply to header
  */
 $config["from"] = "admin@gallery3.com";
-$config["line_length"] = 75;
+$config["line_length"] = 70;
 $config["reply_to"] = "public@gallery3.com";

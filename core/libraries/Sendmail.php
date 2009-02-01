@@ -55,7 +55,7 @@ class Sendmail_Core {
   public function __call($key, $value) {
     switch ($key) {
     case "to":
-      $this->to = is_array($value) ? $value : array($value);
+      $this->to = is_array($value[0]) ? $value[0] : array($value[0]);
       break;
     case  "header":
       if (count($value) != 2) {
@@ -86,7 +86,7 @@ class Sendmail_Core {
       $headers[] = "$key: $value";
     }
     $headers = implode("\r\n", $headers);
-    $message = wordwrap($this->message, $this->line_length, "\r\n");
+    $message = wordwrap($this->message, $this->line_length, "\n");
 
     if (!TEST_MODE) {
       if (!mail($to, $this->subject, $this->message, $headers)) {
