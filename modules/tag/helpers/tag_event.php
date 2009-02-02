@@ -47,4 +47,25 @@ class tag_event_Core {
 
     return;
   }
+
+  static function item_before_delete($item) {
+    $tags = ORM::factory("tag")
+      ->join("items_tags", "tags.id", "items_tags.tag_id")
+      ->join("items", "items.id", "items_tags.item_id")
+      ->where("items_tags.item_id", $item->id)
+      ->find_all();
+
+    foreach($tags as $tag) {
+      $tag->count--;
+      if ($tag->count > 0) {
+        $tag->save();
+      } else {
+        $tag->delete();
+      }
+    }
+    
+    $db = Database::instance();
+    $db->query("DELETE FROM `items_tags` WHERE `item_id` = $item->id;");
+  }
+
 }
