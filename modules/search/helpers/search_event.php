@@ -32,7 +32,9 @@ class search_event_Core {
   }
 
   static function item_before_delete($item) {
-    ORM::factory("item_id", $item->id)->delete_all();
+    ORM::factory("search_record")
+      ->where("item_id", $item->id)
+      ->delete_all();
   }
 
   static function item_related_update($item) {

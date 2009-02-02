@@ -106,6 +106,7 @@ class Quick_Controller extends Controller {
       $msg = t("Deleted photo <b>%title</b>", array("title" => $item->title));
     }
 
+    module::event("item_before_delete", $item);
     $item->delete();
     message::success($msg);
 
