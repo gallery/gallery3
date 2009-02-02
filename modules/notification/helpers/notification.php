@@ -119,20 +119,22 @@ class notification {
     self::_send_message($item, $body);
   }
 
-  static function send_comment_added($comment) {
-    $body = new View("comment_added.html");
-    $body->subject = sprintf(t("Comment added to %s"), $comment->item()->title);
+  static function send_comment_published($comment) {
+    $item = $comment->item();
+    $body = new View("comment_published.html");
+    $body->subject = sprintf(t("A new comment for %s was published"), $item->title);
+    $body->text = $comment->text;
+    if (!empty($comment->author_id)) {
+      $author = ORM::factory("user", $comment->author_id);
+      $body->author = empty($author->full_name) ? $author->name : $author->full_name;
+    } else {
+      $body->author = $comment->guest_name;
+    }
+    $body->url = url::site("albums/$item->id#comments", "http");
 
-    self::_send_message($comment->item(), $body);
+    self::_send_message($item, $body);
   }
-
-  static function send_comment_changed($old, $new) {
-    $body = new View("comment_changed.html");
-    $body->subject = sprintf(t("Comment changed on %s"), $old->item()->title);
-
-    self::_send_message($old->item(), $body);
-  }
-
+  
   private static function _send_message($item, $body) {
     $users = self::get_subscribers($item);
     if (!empty($users)) {

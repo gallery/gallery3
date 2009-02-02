@@ -35,10 +35,14 @@ class notification_event_Core {
   }
 
   static function comment_created($comment) {
-    notification::send_comment_added($comment);
+    if ($comment->state == "published") {
+      notification::send_comment_published($comment);
+    }
   }
 
   static function comment_updated($old, $new) {
-    notification::send_comment_changed($old, $new);
+    if ($new->state == "published" && $old->state != "published") {
+      notification::send_comment_published($new);
+    }
   }
 }
