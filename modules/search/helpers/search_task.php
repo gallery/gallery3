@@ -32,6 +32,13 @@ class search_task_Core {
 
   static function update_index($task) {
     $completed = $task->get("completed", 0);
+    if ($completed == 0) {
+      Database::instance()->query(
+        "DELETE `search_records`.* FROM `search_records` " .
+        "LEFT JOIN `items` ON (`search_records`.`item_id` = `items`.`id`) " .
+        "WHERE `items`.`id` IS NULL");
+    }
+
     foreach (ORM::factory("search_record")->where("dirty", 1)->limit(2)->find_all() as $record) {
       search::update_record($record);
       $completed++;
