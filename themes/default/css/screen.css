@@ -556,7 +556,8 @@ form p.gError {
 }
 
 #gViewMenu #gAlbumLink,
-#gViewMenu #gWatchLink,
+#gViewMenu #gRemoveWatchLink,
+#gViewMenu #gAddWatchLink,
 #gViewMenu #gHybridLink,
 #gViewMenu #gSlideshowLink,
 #gViewMenu #gFullsizeLink,
@@ -576,8 +577,12 @@ form p.gError {
   background-image: url('../images/ico-view-album.png');
 }
 
-#gViewMenu #gWatchLink {
+#gViewMenu #gAddWatchLink {
   background-image: url('../images/ico-add-watch.png');
+}
+
+#gViewMenu #gRemoveWatchLink {
+  background-image: url('../images/ico-remove-watch.png');
 }
 
 #gViewMenu #gHybridLink {

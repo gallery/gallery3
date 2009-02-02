@@ -24,12 +24,14 @@ class notification_menu_Core {
       $item = $theme->item();
 
       if ($item) {
+        $watching = notification::is_watching($item);
+
         $menu
           ->append(Menu::factory("link")
                ->id("watch")
                ->label(t("Enable notifications for this album"))
                ->url(url::site("notification/watch/$item->id"))
-               ->css_id("gWatchLink"));
+                   ->css_id($watching ? "gRemoveWatchLink" : "gAddWatchLink"));
       }
     }
   }
