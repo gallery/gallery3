@@ -19,7 +19,7 @@
  */
 class notification_event_Core {
   static function item_updated($old, $new) {
-    notification::send_item_changed($old, $new);
+    notification::send_item_updated($old, $new);
   }
 
   static function item_created($item) {

@@ -82,48 +82,60 @@ class notification {
     return $subscribers;
   }
     
-  static function send_item_changed($old, $new=null) {
-    $users = self::get_subscribers($item);
+  static function send_item_updated($old, $new) {
+    $body = new View("item_updated.html");
+    $body->subject = sprintf(t("Item %s updated"), $old->title);
+    $body->type = ucfirst($old->type);
+    $body->item_title = $old->title;
+    $body->description = $item->description;
+    $body->new_title = $old->title != $new->title ? $new->title : null;
+    $body->new_description = $old->title != $new->description ? $new->description : null;
+    $body->url = url::site("{$old->type}s/$old->id", "http");
+    
+    self::_send_message($old, $body);
   }
 
   static function send_item_add($item) {
-    $users = self::get_subscribers($item);
-    Sendmail::factory()
-      ->to($users)
-      ->from("from@gallery3.com")
-      ->subject(t("Item added to Gallery3"))
-      ->message($item->title)
-      ->send();
+    $body = new View("item_added.html");
+    $body->subject = sprintf(t("Item added to %s"), $item->parent()->title);
+    $body->parent_title = $item->parent()->title;
+    $body->type = $item->type;
+    $body->item_title = $item->title;
+    $body->description = $item->description;
+    $body->url = url::site("{$item->type}s/$item->id", "http");
+
+    self::_send_message($item, $body);
   }
 
   static function send_item_delete($item) {
-    $users = self::get_subscribers($item);
-    Sendmail::factory()
-      ->to($users)
-      ->from("from@gallery3.com")
-      ->subject("Item deleted: $item->title")
-      ->message("It was deleted")
-      ->send();
+    $body = new View("item_deleted.html");
+    $body->subject = sprintf(t("Item deleted from %s"), $item->parent()->title);
+    
+    self::_send_message($item, $body);
   }
 
   static function send_comment_added($comment) {
-    $users = self::get_subscribers($comment->item());
-    Sendmail::factory()
-      ->to($users)
-      ->from("from@gallery3.com")
-      ->subject("Comment added to $comment->$item->title")
-      ->message($comment->text)
-      ->send();
+    $body = new View("comment_added.html");
+    $body->subject = sprintf(t("Comment added to %s"), $comment->item()->title);
+    
+    self::_send_message($comment->item(), $body);
   }
 
   static function send_comment_changed($old, $new) {
-    $users = self::get_subscribers($comment->item());
-    Sendmail::factory()
-      ->to($users)
-      ->from("from@gallery3.com")
-      ->subject("Comment updated on item: $comment->$item-title")
-      ->message($new->text)
-      ->send();
+    $body = new View("comment_changed.html");
+    $body->subject = sprintf(t("Comment changed on %s"), $old->item()->title);
+
+    self::_send_message($old->item(), $body);
   }
 
+  private function _send_message($item, $body) {
+    $users = self::get_subscribers($item);
+    Sendmail::factory()
+      ->to($users)
+      ->subject($body->subject)
+      ->header("Mime-Version", "1.0")
+      ->header("Content-type", "text/html; charset=iso-8859-1")
+      ->message($body->render())
+      ->send();
+  }
 }
