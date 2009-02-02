@@ -24,11 +24,11 @@ extensions and designing new themes.
 Please send your feedback to gallery-devel@lists.sourceforge.net.
 
 
-SYSTEM REQUIREMENTS:
+SUPPORTED CONFIGURATION:
  - Platform: Linux / Unix.
  - Web server: Apache 2.2 and newer.
  - PHP 5.2 and newer (PHP's safe_mode must be disabled).
- - Database: MySQL 4.1 and newer.
+ - Database: MySQL 5 and newer.
 
 
 INSTALLATION VIA THE WEB:
