@@ -23,36 +23,13 @@ class Notification_Controller extends Controller {
     access::required("view", $item);
 
     $watching = notification::is_watching($item);
-    $form = $this->_get_form($item, $watching);
-    if (request::method() == "post") {
-      if ($form->validate()) {
-        if (!$watching) {
-          notification::add_watch($item);
-          message::success(sprintf(t("Watch Enabled on %s!"), $item->title));
-          $response = json_encode(array("result" => "success"));
-        } else {
-          notification::remove_watch($item);
-          $response = json_encode(array("result" => "success"));
-          message::success(sprintf(t("Watch Removed on %s!"), $item->title));
-        }
-      } else {
-        $response = json_encode(array("result" => "error", "form" => $form->__toString()));
-      }
+    if (!$watching) {
+      notification::add_watch($item);
+      message::success(sprintf(t("Watch Enabled on %s!"), $item->title));
     } else {
-      $response = $form;
+      notification::remove_watch($item);
+      message::success(sprintf(t("Watch Removed on %s!"), $item->title));
     }
-
-    print $response;
-  }
-
-  function _get_form($item, $watching) {
-    $button_text = $watching ? t("Remove Watch") : t("Add Watch");
-    $label = $watching ? t("Remove Watch from Album") : t("Add Watch to Album");
-
-    $form = new Forge("notification/watch/$item->id", "", "post", array("id" => "gAddWatchForm"));
-    $group = $form->group("watch")->label($label);
-    $group->submit("")->value($button_text);
-
-    return $form;
+    url::redirect($item->url());
   }
 }

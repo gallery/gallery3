@@ -1,3 +1,4 @@
+
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
@@ -24,7 +25,7 @@ class notification_menu_Core {
 
       if ($item) {
         $menu
-          ->append(Menu::factory("dialog")
+          ->append(Menu::factory("link")
                ->id("watch")
                ->label(t("Enable notifications for this album"))
                ->url(url::site("notification/watch/$item->id"))
