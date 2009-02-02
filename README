@@ -36,7 +36,7 @@ INSTALLATION VIA THE WEB:
   instructions.
 
 
-INSTALLTION FROM THE COMMAND LINE:
+INSTALLATION FROM THE COMMAND LINE:
 - php installer/index.php [-h host] [-u user] [-p pass] [-d dbname]
 
  Command line parameters:
