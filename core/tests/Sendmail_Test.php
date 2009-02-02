@@ -26,7 +26,7 @@ class Sendmail_Test extends Unit_Test_Case {
 
   public function sendmail_test() {
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: from@gallery3.com\r\n" .
+                "From: from@gallery3.com\n" .
                 "Reply-To: public@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "The mail message body";
@@ -47,7 +47,7 @@ class Sendmail_Test extends Unit_Test_Case {
 
   public function sendmail_reply_to_test() {
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: from@gallery3.com\r\n" .
+                "From: from@gallery3.com\n" .
                 "Reply-To: reply-to@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "The mail message body";
@@ -62,9 +62,9 @@ class Sendmail_Test extends Unit_Test_Case {
 
   public function sendmail_html_message_test() {
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: from@gallery3.com\r\n" .
-                "Reply-To: public@gallery3.com\r\n" .
-                "MIME-Version: 1.0\r\n" .
+                "From: from@gallery3.com\n" .
+                "Reply-To: public@gallery3.com\n" .
+                "MIME-Version: 1.0\n" .
                 "Content-type: text/html; charset=iso-8859-1\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "<html><body><p>This is an html msg</p></body></html>";
@@ -80,12 +80,12 @@ class Sendmail_Test extends Unit_Test_Case {
 
   public function sendmail_wrapped_message_test() {
     $expected = "To: receiver@someemail.com\r\n" .
-                "From: from@gallery3.com\r\n" .
+                "From: from@gallery3.com\n" .
                 "Reply-To: public@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
-                "This is a long message that needs to go\r\n" .
-                "over forty characters If we get lucky we\r\n" .
-                "might make it long enought to wrap a\r\n" .
+                "This is a long message that needs to go\n" .
+                "over forty characters If we get lucky we\n" .
+                "might make it long enought to wrap a\n" .
                 "couple of times.";
     $result = Sendmail::factory()
       ->to("receiver@someemail.com")
