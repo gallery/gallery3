@@ -19,6 +19,19 @@
  */
 class search_task_Core {
   static function available_tasks() {
+      // Delete extra search_records
+      Database::instance()->query(
+        "DELETE `search_records`.* FROM `search_records` " .
+        "LEFT JOIN `items` ON (`search_records`.`item_id` = `items`.`id`) " .
+        "WHERE `items`.`id` IS NULL");
+
+      // Insert missing search_records
+      Database::instance()->query(
+        "INSERT INTO `search_records`(`item_id`) (" .
+        " SELECT `items`.`id` FROM `items` " .
+        " LEFT JOIN `search_records` ON (`search_records`.`item_id` = `items`.`id`) " .
+        " WHERE `search_records`.`id` IS NULL)");
+
     list ($remaining, $total, $percent) = self::_get_stats();
     return array(Task_Definition::factory()
                  ->callback("search_task::update_index")
@@ -32,12 +45,6 @@ class search_task_Core {
 
   static function update_index($task) {
     $completed = $task->get("completed", 0);
-    if ($completed == 0) {
-      Database::instance()->query(
-        "DELETE `search_records`.* FROM `search_records` " .
-        "LEFT JOIN `items` ON (`search_records`.`item_id` = `items`.`id`) " .
-        "WHERE `items`.`id` IS NULL");
-    }
 
     foreach (ORM::factory("search_record")->where("dirty", 1)->limit(2)->find_all() as $record) {
       search::update_record($record);
