@@ -81,7 +81,7 @@ class notification {
     }
     return $subscribers;
   }
-    
+
   static function send_item_updated($old, $new) {
     $body = new View("item_updated.html");
     $body->subject = sprintf(t("Item %s updated"), $old->title);
@@ -91,7 +91,7 @@ class notification {
     $body->new_title = $old->title != $new->title ? $new->title : null;
     $body->new_description = $old->title != $new->description ? $new->description : null;
     $body->url = url::site("{$old->type}s/$old->id", "http");
-    
+
     self::_send_message($old, $body);
   }
 
@@ -115,14 +115,14 @@ class notification {
     $body->type = $item->type;
     $body->item_title = $item->title;
     $body->url = url::site("albums/$parent->id", "http");
-    
+
     self::_send_message($item, $body);
   }
 
   static function send_comment_added($comment) {
     $body = new View("comment_added.html");
     $body->subject = sprintf(t("Comment added to %s"), $comment->item()->title);
-    
+
     self::_send_message($comment->item(), $body);
   }
 
@@ -133,14 +133,16 @@ class notification {
     self::_send_message($old->item(), $body);
   }
 
-  private function _send_message($item, $body) {
+  private static function _send_message($item, $body) {
     $users = self::get_subscribers($item);
-    Sendmail::factory()
-      ->to($users)
-      ->subject($body->subject)
-      ->header("Mime-Version", "1.0")
-      ->header("Content-type", "text/html; charset=iso-8859-1")
-      ->message($body->render())
-      ->send();
+    if (!empty($users)) {
+      Sendmail::factory()
+        ->to($users)
+        ->subject($body->subject)
+        ->header("Mime-Version", "1.0")
+        ->header("Content-type", "text/html; charset=iso-8859-1")
+        ->message($body->render())
+        ->send();
+    }
   }
 }
