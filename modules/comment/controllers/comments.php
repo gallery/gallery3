@@ -80,10 +80,18 @@ class Comments_Controller extends REST_Controller {
         $form->add_comment->email->value,
         $form->add_comment->url->value);
 
-      $form->add_comment->inputs["name"]->value("");
+      $active = user::active();
+      if ($active->guest) {
+        $form->add_comment->inputs["name"]->value("");
+        $form->add_comment->email->value("");
+        $form->add_comment->url->value("");
+      } else {
+        $form->add_comment->inputs["name"]->value($active->full_name);
+        $form->add_comment->email->value($active->email);
+        $form->add_comment->url->value($active->url);
+      }
+
       $form->add_comment->text->value("");
-      $form->add_comment->email->value("");
-      $form->add_comment->url->value("");
       print json_encode(
         array("result" => "success",
               "resource" => ($comment->state == "published"
