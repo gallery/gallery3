@@ -50,6 +50,8 @@ function t2($singular, $plural, $count, $options=array()) {
 class I18n_Core {
   private $_config = array();
 
+  private $_cache = array();
+
   private static $_instance;
 
   private function __construct($config) {
@@ -96,21 +98,25 @@ class I18n_Core {
   }
 
   private function lookup($locale, $message) {
-    // TODO: Load data from locale file instead of the DB.
+    if (!isset($this->_cache[$locale])) {
+      $this->_cache[$locale] = array();
+      // TODO: Load data from locale file instead of the DB.
+      foreach (Database::instance()
+               ->select("key", "translation")
+               ->from("incoming_translations")
+               ->where(array("locale" => $locale))
+               ->get()
+               ->as_array() as $row) {
+        $this->_cache[$locale][$row->key] = unserialize($row->translation);
+      }
+    }
 
     // If message is an array (plural forms), use the first form as message id.
     $key = is_array($message) ? array_shift($message) : $message;
-    $entry = Database::instance()
-        ->select("translation")
-        ->from("incoming_translations")
-        ->where(array("key" => md5($key, true),
-                      "locale" => $locale))
-        ->limit(1)
-        ->get()
-        ->current();
+    $key = md5($key, true);
 
-    if ($entry) {
-      return unserialize($entry->translation);
+    if (isset($this->_cache[$locale][$key])) {
+      return $this->_cache[$locale][$key];
     } else {
       return null;
     }
