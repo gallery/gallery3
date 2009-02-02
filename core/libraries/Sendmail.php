@@ -23,6 +23,7 @@ class Sendmail_Core {
   protected $message;
   protected $headers;
   protected $line_length = 70;
+  protected $header_separator = "\r\n";
 
   /**
    * In test mode this gets the message that would have been set
@@ -85,7 +86,12 @@ class Sendmail_Core {
       $key = ucfirst($key);
       $headers[] = "$key: $value";
     }
-    $headers = implode("\r\n", $headers);
+
+    /*
+     * The docs say headers should be separated by \r\n, but occasionaly that doesn't work and you
+     * need to use a single \n.  This can be set in config/sendmail.php
+     */
+    $headers = implode($this->header_separator, $headers);
     $message = wordwrap($this->message, $this->line_length, "\n");
 
     if (!TEST_MODE) {

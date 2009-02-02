@@ -26,3 +26,4 @@
 $config["from"] = "admin@gallery3.com";
 $config["line_length"] = 70;
 $config["reply_to"] = "public@gallery3.com";
+$config["header_separator"] = "\n";
