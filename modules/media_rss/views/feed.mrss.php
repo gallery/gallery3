@@ -25,6 +25,10 @@
       <link><?= url::abs_site("photos/$child->id") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("photos/$child->id") ?></guid>
       <description><?= htmlspecialchars($child->description) ?></description>
+      <enclosure url="<?= $child->file_url(true) ?>"
+                 type="<?= $child->mime_type ?>"
+                 height="<?= $child->height ?>"
+                 width="<?= $child->width ?>"/>
       <media:thumbnail url="<?= $child->thumb_url(true) ?>"
                        fileSize="<?= filesize($child->thumb_path()) ?>"
                        height="<?= $child->thumb_height ?>"
