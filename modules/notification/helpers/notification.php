@@ -107,9 +107,14 @@ class notification {
     self::_send_message($item, $body);
   }
 
-  static function send_item_delete($item) {
+  static function send_item_deleted($item) {
+    $parent = $item->parent();
     $body = new View("item_deleted.html");
-    $body->subject = sprintf(t("Item deleted from %s"), $item->parent()->title);
+    $body->subject = sprintf(t("Item %s deleted from %s"), $item->title, $parent->title);
+    $body->parent_title = $parent->title;
+    $body->type = $item->type;
+    $body->item_title = $item->title;
+    $body->url = url::site("albums/$parent->id", "http");
     
     self::_send_message($item, $body);
   }
