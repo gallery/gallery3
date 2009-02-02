@@ -19,6 +19,8 @@
  */
 class Notification_Controller extends Controller {
   function watch($id) {
+    access::verify_csrf();
+
     $item = ORM::factory("item", $id);
     access::required("view", $item);
 

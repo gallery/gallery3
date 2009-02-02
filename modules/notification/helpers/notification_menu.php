@@ -27,10 +27,10 @@ class notification_menu_Core {
 
         $menu
           ->append(Menu::factory("link")
-               ->id("watch")
-               ->label(t("Enable notifications for this album"))
-               ->url(url::site("notification/watch/$item->id"))
-                   ->css_id($watching ? "gRemoveWatchLink" : "gAddWatchLink"));
+            ->id("watch")
+            ->label(t("Enable notifications for this album"))
+            ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token()))
+            ->css_id($watching ? "gRemoveWatchLink" : "gAddWatchLink"));
       }
     }
   }
