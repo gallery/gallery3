@@ -44,49 +44,48 @@ function handlePanelEvent(event) {
 function togglePanel(element, on_success) {
   var parent = $(element).parent().parent();
   var sHref = $(element).attr("href");
-  var ePanel = '<div id="gPanel"></div>';
+  var parentClass = $(parent).attr("class");
+  var ePanel = '<tr id="gPanel"><td colspan="6"></td></tr>';
 
   if ($("#gPanel").length) {
     $("#gPanel").slideUp("slow");
     $("#gPanel *").remove();
     $("#gPanel").remove();
-  }
-
-  $(parent).append(ePanel);
-
-  var panel = $(parent).children("#gPanel");
-
-  showLoading("#gPanel");
-
-  $(panel).html(sHref);
-  panel.show().slideDown("slow");
-  
-  $.get(sHref, function(data) {
-    $(panel).html(data);
-    ajaxify_panel = function() {
-      $("#gPanel form").ajaxForm({
-        dataType: "json",
-        success: function(data) {
-          if (data.form) {
-            $("#gPanel form").replaceWith(data.form);
-            ajaxify_panel();
-          }
-          if (data.result == "success") {
-            if (on_success) {
-              on_success();
-            } else if (data.location) {
-              window.location = data.location;
-            } else {
-              window.location.reload();
+    console.log("Removing existing #gPanel");
+    //togglePanel(element, on_success);
+  } else {
+    console.log("Adding #gPanel");
+    $(parent).after(ePanel);
+    //showLoading("#here");
+    $("#gPanel td").html(sHref);
+    $("#gPanel").addClass(parentClass).show().slideDown("slow");
+    $.get(sHref, function(data) {
+      $("#gPanel td").html(data);
+      ajaxify_panel = function() {
+        $("#gPanel td form").ajaxForm({
+          dataType: "json",
+          success: function(data) {
+            if (data.form) {
+              $("#gPanel td form").replaceWith(data.form);
+              ajaxify_panel();
+            }
+            if (data.result == "success") {
+              if (on_success) {
+                on_success();
+              } else if (data.location) {
+                window.location = data.location;
+              } else {
+                window.location.reload();
+              }
             }
           }
+        });
+        if ($("#gPanel td").hasClass("gLoadingLarge")) {
+          showLoading("#gPanel td");
         }
-      });
-      if ($("#gPanel").hasClass("gLoadingLarge")) {
-	showLoading("#gPanel");
-      }
-    };
-    ajaxify_panel();
-  });
+      };
+      ajaxify_panel();
+    });
+  }
   return false;
 }

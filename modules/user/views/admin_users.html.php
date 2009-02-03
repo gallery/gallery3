@@ -57,12 +57,13 @@
         <th></th>
         <th><?= t("Username") ?></th>
         <th><?= t("Full name") ?></th>
-        <th class="understate"><?= t("last login") ?></th>
+        <th><?= t("Email") ?></th>
+        <th><?= t("Last login") ?></th>
         <th>Actions</th>
       </tr>
 
       <? foreach ($users as $i => $user): ?>
-      <tr class="<?= text::alternate("gOddRow", "gEvenRow") ?> user">
+      <tr id="gUser-<?= $user->id ?>" class="<?= text::alternate("gOddRow", "gEvenRow") ?> user">
         <td id="user-<?= $user->id ?>" class="core-info">
           <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                title="<?= t("Drag user onto group below to add as a new member") ?>"
@@ -76,8 +77,11 @@
         <td>
           <?= $user->full_name ?>
         </td>
-        <td class="understate">
-          <?= ($user->last_login == 0) ? "" : date("m j, y", $user->last_login) ?>
+        <td>
+          <?= $user->email ?>
+        </td>
+        <td>
+          <?= ($user->last_login == 0) ? "" : date("j-M-y", $user->last_login) ?>
         </td>
         <td class="gActions">
           <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>" class="gPanelLink"><?= t("edit") ?></a>
