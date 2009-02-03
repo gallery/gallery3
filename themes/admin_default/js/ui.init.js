@@ -82,7 +82,9 @@ function togglePanel(element, on_success) {
           }
         }
       });
-      showLoading("#gPanel");
+      if ($("#gPanel").hasClass("gLoadingLarge")) {
+	showLoading("#gPanel");
+      }
     };
     ajaxify_panel();
   });
