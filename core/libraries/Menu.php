@@ -142,7 +142,7 @@ class Menu_Core extends Menu_Element {
     foreach ($this->elements as $id => $menu_element) {
       $copy[$id] = $menu_element;
       if ($id == $target_id) {
-        $copy[$target_id] = $new_menu_element;
+        $copy[$new_menu_element->id] = $new_menu_element;
       }
     }
     $this->elements = $copy;
