@@ -19,15 +19,16 @@
  */
 class core_menu_Core {
   static function site($menu, $theme) {
-    $menu
-      ->append(Menu::factory("link")
-               ->id("browse")
-               ->label("Scaffold")
-               ->url(url::site("welcome")))
-      ->append(Menu::factory("link")
-               ->id("home")
-               ->label(t("Home"))
-               ->url(url::site("albums/1")));
+    if (file_exists(APPPATH . "controllers/welcome.php")) {
+      $menu->append(Menu::factory("link")
+                    ->id("browse")
+                    ->label("Scaffold")
+                    ->url(url::site("welcome")));
+    }
+    $menu->append(Menu::factory("link")
+                  ->id("home")
+                  ->label(t("Home"))
+                  ->url(url::site("albums/1")));
 
     $item = $theme->item();
 
