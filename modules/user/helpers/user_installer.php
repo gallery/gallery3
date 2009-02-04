@@ -33,8 +33,10 @@ class user_installer {
                    `email` varchar(64) default NULL,
                    `admin` BOOLEAN default 0,
                    `guest` BOOLEAN default 0,
+                   `hash` char(32) default NULL,
                    `url` varchar(255) default NULL,
                    PRIMARY KEY (`id`),
+                   UNIQUE KEY(`hash`),
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 

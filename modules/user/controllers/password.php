@@ -22,7 +22,6 @@ class Password_Controller extends Controller {
     if (request::method() == "post") {
       $this->_send_reset();
     } else {
-      // @todo validate the query key parmeter
       print $this->_reset_form();
     }
   }
@@ -31,13 +30,19 @@ class Password_Controller extends Controller {
     if (request::method() == "post") {
       $this->_change_password();
     } else {
-      print $this->_new_password_form();
+      $user = ORM::factory("user")
+        ->where("hash", Input::instance()->get("key"))
+        ->find();
+      if ($user->loaded) {
+        print $this->_new_password_form($user->hash);
+      } else {
+        throw new Exception("@todo FORBIDDEN", 503);
+      }
     }
   }
 
   private function _send_reset() {
     $form = $this->_reset_form();
-    
 
     $valid = $form->validate();
     if ($valid) {
@@ -49,10 +54,10 @@ class Password_Controller extends Controller {
     }
 
     if ($valid) {
-      try {
-      $md5 = md5("$user->name; $user->full_name; $user->login_count; $user->last_login");
+      $user->hash = md5("$user->id; $user->name; $user->full_name; $user->login_count; $user->last_login");
+      $user->save();
       $message = new View("reset_password.html");
-      $message->url = url::abs_site("password/do_reset?key=$md5");
+      $message->url = url::abs_site("password/do_reset?key=$user->hash");
       $message->name = $user->full_name;
       $message->title = t("Password Reset Request");
       
@@ -63,11 +68,8 @@ class Password_Controller extends Controller {
         ->header("Content-type", "text/html; charset=iso-8859-1")
         ->message($message->render())
         ->send();
-      } catch (Exception $e) {
-        Kohana::log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
-      }
 
-      message::success(t("Password reset email sent"), null);
+      message::success(t("Password reset email sent"));
       print json_encode(
         array("result" => "success"));
     } else {
@@ -87,15 +89,45 @@ class Password_Controller extends Controller {
     return $form;
   }
 
-  private function _new_password_form() {
+  private function _new_password_form($hash=null) {
+    $template = new Theme_View("page.html", "reset");
+
     $form = new Forge("password/do_reset", "", "post", array("id" => "gChangePasswordForm"));
     $group = $form->group("reset")->label(t("Change Password"));
-    $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2");
+    $hidden = $group->hidden("hash");
+    if (!empty($hash)) {
+      $hidden->value($hash);
+    }
+    $group->password("password")->label(t("Password"))->id("gPassword")
+      ->rules("required|length[1,40]");
+    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+      ->matches($group->password);
     $group->inputs["password2"]->error_messages(
       "mistyped", t("The password and the confirm password must match"));
     $group->submit("")->value(t("Update"));
 
-    return $form;
+    $template->content = $form;
+    return $template;
+  }
+
+  private function _change_password() {
+    $view = $this->_new_password_form();
+    if ($view->content->validate()) {
+      $user = ORM::factory("user")
+        ->where("hash", $view->content->reset->hash->value)
+        ->find();
+
+      if (!$user->loaded) {
+        throw new Exception("@todo FORBIDDEN", 503);
+      }
+
+      $user->password = $view->content->reset->password->value;
+      $user->hash = null;
+      $user->save();
+      message::success(t("Password reset successfully"));
+      url::redirect("albums/1");
+    } else {
+      print $view;
+    }
   }
 }
