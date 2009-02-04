@@ -45,4 +45,9 @@ class notification_event_Core {
       notification::send_comment_published($new);
     }
   }
+
+  static function user_before_delete($user) {
+    $db = Database::instance();
+    $db->query("DELETE FROM subscriptions WHERE `user_id` = $user->id;");
+  }
 }
