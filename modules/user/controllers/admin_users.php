@@ -37,12 +37,6 @@ class Admin_Users_Controller extends Controller {
       $valid = false;
     }
 
-    if ($form->add_user->password->value &&
-        $form->add_user->password->value != $form->add_user->password2->value) {
-      $form->add_user->password2->add_error("mistyped", 1);
-      $valid = false;
-    }
-
     if ($valid) {
       $user = user::create(
         $name, $form->add_user->full_name->value, $form->add_user->password->value);
@@ -110,12 +104,6 @@ class Admin_Users_Controller extends Controller {
         $form->edit_user->inputs["name"]->add_error("in_use", 1);
         $valid = false;
       }
-    }
-
-    if ($form->edit_user->password->value &&
-        $form->edit_user->password->value != $form->edit_user->password2->value) {
-      $form->edit_user->password2->add_error("mistyped", 1);
-      $valid = false;
     }
 
     if ($valid) {

@@ -28,26 +28,18 @@ class Users_Controller extends REST_Controller {
     $form = user::get_edit_form($user);
     $form->edit_user->password->rules("-required");
     if ($form->validate()) {
-      if ($form->edit_user->password->value &&
-          $form->edit_user->password->value != $form->edit_user->password2->value) {
-        $form->edit_user->password2->add_error("mistyped", 1);
-        print json_encode(
-          array("result" => "error",
-                "form" => $form->__toString()));
-      } else {
-        // @todo: allow the user to change their name
-        $user->full_name = $form->edit_user->full_name->value;
-        if ($form->edit_user->password->value) {
-          $user->password = $form->edit_user->password->value;
-        }
-        $user->email = $form->edit_user->email->value;
-        $user->url = $form->edit_user->url->value;
-        $user->save();
-
-        print json_encode(
-          array("result" => "success",
-                "resource" => url::site("users/{$user->id}")));
+      // @todo: allow the user to change their name
+      $user->full_name = $form->edit_user->full_name->value;
+      if ($form->edit_user->password->value) {
+        $user->password = $form->edit_user->password->value;
       }
+      $user->email = $form->edit_user->email->value;
+      $user->url = $form->edit_user->url->value;
+      $user->save();
+      
+      print json_encode(
+        array("result" => "success",
+              "resource" => url::site("users/{$user->id}")));
     } else {
       print json_encode(
         array("result" => "error",

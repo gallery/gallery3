@@ -30,9 +30,8 @@ class user_Core {
     $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
     $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2");
-    $group->inputs["password2"]->error_messages(
-      "mistyped", t("The password and the confirm password must match"));
+    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+      ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
     $group->submit("")->value(t("Save"));
@@ -49,9 +48,8 @@ class user_Core {
       "in_use", t("There is already a user with that name"));
     $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
     $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2");
-    $group->inputs["password2"]->error_messages(
-      "mistyped", t("The password and the confirm password must match"));
+    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+      ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
     $group->submit("")->value(t("Modify User"));
@@ -67,9 +65,8 @@ class user_Core {
       "in_use", t("There is already a user with that name"));
     $group->input("full_name")->label(t("Full Name"))->id("gFullName");
     $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2");
-    $group->inputs["password2"]->error_messages(
-      "mistyped", t("The password and the confirm password must match"));
+    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+      ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("gEmail");
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
     $group->submit("")->value(t("Add User"));
