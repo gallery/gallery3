@@ -27,7 +27,7 @@ class Login_Controller extends Controller {
   }
 
   private function _try_login() {
-    $form = $this->_login_form();
+    $form = $this->_login_form()->form;
 
     $valid = $form->validate();
     if ($valid) {
@@ -53,12 +53,15 @@ class Login_Controller extends Controller {
   }
 
   private function _login_form() {
-    $form = new Forge(url::current(true), "", "post", array("id" => "gLoginForm"));
-    $group = $form->group("login")->label(t("Login"));
+    $view = new View("login_prompt.html");
+
+    $view->form = new Forge(url::current(true), "", "post", array("id" => "gLoginForm"));
+    $group = $view->form->group("login")->label(t("Login"));
     $group->input("name")->label(t("Name"))->id("gName")->class(null);
     $group->password("password")->label(t("Password"))->id("gPassword")->class(null);
     $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
     $group->submit("")->value(t("Login"));
-    return $form;
+
+    return $view;
   }
 }
