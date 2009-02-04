@@ -17,13 +17,13 @@ $(document).ready(function(){
   // Apply modal dialogs
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
-    $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
+    $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
 
   // Apply hide/show functionality on user admin view
   var panelLinks = $(".gPanelLink");
   for (i=0; i<panelLinks.length; i++) {
-    $(panelLinks[i]).bind("click", {element: panelLinks[i]}, handlePanelEvent);
+    $(panelLinks[i]).bind("click", handlePanelEvent);
   }
 
   // Round corners
@@ -33,11 +33,35 @@ $(document).ready(function(){
 
   // Add drop shadows
   $(".gSelected").dropShadow();
-
+	
+  // In-place editing for tag admin
+  $(".gEditable").bind("click", editInplace);
 });
 
+function editInplace(element){
+	// close already open inplace edit forms
+	if ($("#gRenameTagForm").length) {
+		var li = $("#gRenameTagForm").parent();
+		$("#gRenameTagForm").parent().html($("#gRenameTagForm").parent().data("revert"));
+		//li.$(".gEditable"); // TODO: would be good if below statements could only execute within li
+    $(".gEditable").bind("click", editInplace);
+    $(".dialogLink").bind("click", handleDialogEvent);
+  }
+	
+	var tag_id = $(this).attr('id').substr(5);
+	$(this).parent().data("revert", $(this).parent().html());
+	var form = '<form id="gRenameTagForm" method="post" action="/gallery3/index.php/admin/tags/rename/' + tag_id + '">';
+	form += '<input id="name" name="name" type="text" class="textbox" value="' + tag_name + '" />';
+	form += '<input type="submit" class="submit" value="Save" />';
+	form += '<span>or</span> <a href="#">cancel</a>';
+	form += '</form>';
+	
+	$(this).parent().html(form);
+	$("#gRenameTagForm .textbox").focus();
+}
+
 function handlePanelEvent(event) {
-  togglePanel(event.data.element);
+  togglePanel(event.currentTarget);
   event.preventDefault();
 }
 
@@ -89,3 +113,5 @@ function togglePanel(element, on_success) {
   }
   return false;
 }
+
+

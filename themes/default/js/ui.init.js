@@ -50,7 +50,7 @@ $(document).ready(function() {
   $("#gLoginLink").addClass("gDialogLink");
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
-    $(dialogLinks[i]).bind("click", {element: dialogLinks[i]}, handleDialogEvent);
+    $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
 
   // Short forms
