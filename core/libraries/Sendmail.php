@@ -40,7 +40,7 @@ class Sendmail_Core {
 
   public function __construct() {
     $this->headers = array();
-    $config = Kohana::config('sendmail');
+    $config = Kohana::config("sendmail");
     foreach ($config as $key => $value) {
       $this->$key($value);
     }
@@ -87,10 +87,8 @@ class Sendmail_Core {
       $headers[] = "$key: $value";
     }
 
-    /*
-     * The docs say headers should be separated by \r\n, but occasionaly that doesn't work and you
-     * need to use a single \n.  This can be set in config/sendmail.php
-     */
+    // The docs say headers should be separated by \r\n, but occasionaly that doesn't work and you
+    // need to use a single \n.  This can be set in config/sendmail.php
     $headers = implode($this->header_separator, $headers);
     $message = wordwrap($this->message, $this->line_length, "\n");
 
