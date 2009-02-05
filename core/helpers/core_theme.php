@@ -29,6 +29,16 @@ class core_theme_Core {
         url::file("core/css/quick.css") . "\" />";
       $buf .= html::script("core/js/quick.js");
     }
+    if ($theme->page_type == "photo" && access::can("view_full", $theme->item())) {
+      $buf .= "<script type=\"text/javascript\" >" .
+              "  var fullsize_detail = { " .
+              "    close: \"" . url::file("core/images/ico-close.png") . "\", " . 
+              "    url: \"" . $theme->item()->file_url() . "\", " . 
+              "    width: " . $theme->item()->width . ", " . 
+              "    height: " . $theme->item()->height . "};" . 
+              "</script>";
+      $buf .= html::script("core/js/fullsize.js");
+    }
     return $buf;
   }
 

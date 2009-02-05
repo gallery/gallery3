@@ -87,12 +87,15 @@ class core_menu_Core {
   }
 
   static function photo($menu, $theme) {
-    $menu
-      ->append(Menu::factory("link")
+    if (access::can("view_full", $theme->item())) {
+      $menu
+        ->append(Menu::factory("link")
                ->id("fullsize")
                ->label(t("View full size"))
                ->url("#")
-               ->css_id("gFullsizeLink"))
+               ->css_id("gFullsizeLink"));
+    }
+    $menu
       ->append(Menu::factory("link")
                ->id("album")
                ->label(t("Return to album"))
