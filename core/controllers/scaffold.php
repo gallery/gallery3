@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Welcome_Controller extends Template_Controller {
-  public $template = "welcome.html";
+class Scaffold_Controller extends Template_Controller {
+  public $template = "scaffold.html";
 
   function index() {
     try {
@@ -26,11 +26,11 @@ class Welcome_Controller extends Template_Controller {
     } catch (Exception $e) {
     }
 
-    $this->template->syscheck = new View("welcome_syscheck.html");
+    $this->template->syscheck = new View("scaffold_syscheck.html");
     $this->template->syscheck->errors = $this->_get_config_errors();
     $this->template->syscheck->modules = array();
 
-    set_error_handler(array("Welcome_Controller", "_error_handler"));
+    set_error_handler(array("Scaffold_Controller", "_error_handler"));
     try {
       $this->template->syscheck->modules = module::available();
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
@@ -83,7 +83,7 @@ class Welcome_Controller extends Template_Controller {
     }
 
     if ($redirect) {
-      url::redirect("welcome");
+      url::redirect("scaffold");
     }
   }
 
@@ -92,7 +92,7 @@ class Welcome_Controller extends Template_Controller {
     if ($module_name == "core") {
       // We have to uninstall all other modules first, else their tables, etc don't
       // get cleaned up.
-      $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
+      $old_handler = set_error_handler(array("scaffold_Controller", "_error_handler"));
       try {
         foreach (ORM::factory("module")->find_all() as $module) {
           if ($module->name != "core" && $module->version) {
@@ -120,7 +120,7 @@ class Welcome_Controller extends Template_Controller {
       module::uninstall($module_name);
     }
     if ($redirect) {
-      url::redirect("welcome");
+      url::redirect("scaffold");
     }
   }
 
@@ -167,7 +167,7 @@ class Welcome_Controller extends Template_Controller {
       fwrite($fp, var_export($t, 1));
       fwrite($fp, ";");
       fclose($fp);
-      url::redirect("welcome");
+      url::redirect("scaffold");
       break;
 
     case "run":
@@ -214,7 +214,7 @@ class Welcome_Controller extends Template_Controller {
                    html::anchor("albums/$parent_id", "View album"));
     }
 
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   function add_albums_and_photos($count, $desired_type=null) {
@@ -255,7 +255,7 @@ class Welcome_Controller extends Template_Controller {
     if ($album_count > 0) {
       log::success("content", "(scaffold) Added $album_count albums");
     }
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   function random_phrase($count) {
@@ -299,7 +299,7 @@ class Welcome_Controller extends Template_Controller {
     $users = ORM::factory("user")->find_all()->as_array();
 
     if (empty($photos)) {
-      url::redirect("welcome");
+      url::redirect("scaffold");
     }
 
     if (module::is_installed("akismet")) {
@@ -315,7 +315,7 @@ class Welcome_Controller extends Template_Controller {
                       $guest_name, $guest_email, $guest_url);
     }
 
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   function add_tags($count) {
@@ -332,7 +332,7 @@ class Welcome_Controller extends Template_Controller {
       }
     }
 
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   private function _generateTags($number){
@@ -364,7 +364,7 @@ class Welcome_Controller extends Template_Controller {
   public function session($key) {
     Session::instance()->set($key, $this->input->get("value", false));
     $this->auto_render = false;
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   private function _get_config_errors() {
@@ -397,7 +397,7 @@ class Welcome_Controller extends Template_Controller {
       $error->message2 = "Then edit this file and enter your database configuration settings.";
       $errors[] = $error;
     } else {
-      $old_handler = set_error_handler(array("Welcome_Controller", "_error_handler"));
+      $old_handler = set_error_handler(array("Scaffold_Controller", "_error_handler"));
       try {
         Database::instance()->connect();
       } catch (Exception $e) {
@@ -483,7 +483,7 @@ class Welcome_Controller extends Template_Controller {
                    "media_rss", "search", "slideshow", "tag") as $module_name) {
       $this->install($module_name, false);
     }
-    url::redirect("welcome/dump_database");
+    url::redirect("scaffold/dump_database");
   }
 
   public function dump_database() {
@@ -514,7 +514,7 @@ class Welcome_Controller extends Template_Controller {
       print implode("\n", $output);
       return;
     }
-    url::redirect("welcome/dump_var");
+    url::redirect("scaffold/dump_var");
   }
 
   public function dump_var() {
@@ -550,7 +550,7 @@ class Welcome_Controller extends Template_Controller {
       }
     }
     fclose($fd);
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function add_user() {
@@ -561,23 +561,23 @@ class Welcome_Controller extends Template_Controller {
       $user->admin = true;
       $user->save();
     }
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function delete_user($id) {
     ORM::factory("user", $id)->delete();
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function add_group() {
     $name = $this->input->post("group_name");
     group::create($name);
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function delete_group($id) {
     ORM::factory("group", $id)->delete();
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function remove_from_group($group_id, $user_id) {
@@ -587,7 +587,7 @@ class Welcome_Controller extends Template_Controller {
       $group->remove($user);
       $group->save();
     }
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function add_to_group($user_id) {
@@ -598,7 +598,7 @@ class Welcome_Controller extends Template_Controller {
       $group->add($user);
       $group->save();
     }
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   private function _load_album_tree() {
@@ -616,12 +616,12 @@ class Welcome_Controller extends Template_Controller {
 
   public function add_perm($group_id, $perm, $item_id) {
     access::allow(ORM::factory("group", $group_id), $perm, ORM::factory("item", $item_id));
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function deny_perm($group_id, $perm, $item_id) {
     access::deny(ORM::factory("group", $group_id), $perm, ORM::factory("item", $item_id));
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function reset_all_perms($group_id, $item_id) {
@@ -630,7 +630,7 @@ class Welcome_Controller extends Template_Controller {
     foreach (ORM::factory("permission")->find_all() as $perm) {
       access::reset($group, $perm->name, $item);
     }
-    url::redirect("welcome");
+    url::redirect("scaffold");
   }
 
   public function form($arg1, $arg2) {

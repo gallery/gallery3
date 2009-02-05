@@ -23,7 +23,7 @@
     Your system is ready, but Gallery is not yet installed.
   </p>
   <p>
-    <?= html::anchor("welcome/install/core", "install gallery") ?>
+    <?= html::anchor("scaffold/install/core", "install gallery") ?>
   </p>
   <? else: ?>
   <p class="success">
@@ -40,7 +40,7 @@
       <td> <b> core </b> </td>
       <td> <b> <?= module::get_version("core") ?> </b> </td>
       <td> <b> <?= module::get_version("core") ?> </b> </td>
-      <td> <b> <?= html::anchor("welcome/uninstall/core", "reset install") ?> </b> </td>
+      <td> <b> <?= html::anchor("scaffold/uninstall/core", "reset install") ?> </b> </td>
     </tr>
     <? foreach ($modules as $module_name => $info): ?>
     <? if ($module_name == "core") continue; ?>
@@ -50,16 +50,16 @@
       <td><?= $info->version ?></td>
       <td>
         <? if ($info->installed): ?>
-        <?= html::anchor("welcome/uninstall/{$module_name}", "uninstall") ?>
+        <?= html::anchor("scaffold/uninstall/{$module_name}", "uninstall") ?>
         <? else: ?>
-        <?= html::anchor("welcome/install/{$module_name}", "install") ?>
+        <?= html::anchor("scaffold/install/{$module_name}", "install") ?>
         <? endif ?>
       </td>
     </tr>
     <? endforeach; ?>
     <tr>
       <td colspan="3" align="center">
-        <button onclick="document.location.href='<?= url::site("welcome/install/*") ?>'">Install All Plugins</button>
+        <button onclick="document.location.href='<?= url::site("scaffold/install/*") ?>'">Install All Plugins</button>
       </td>
     </tr>
   </table>

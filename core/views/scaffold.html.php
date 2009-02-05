@@ -248,35 +248,35 @@
             <p>
               add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
-                <?= html::anchor("welcome/add_albums_and_photos/$count", "$count") ?>
+                <?= html::anchor("scaffold/add_albums_and_photos/$count", "$count") ?>
               <? endforeach ?>
               ] photos and albums
             </p>
             <p>
               add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
-                <?= html::anchor("welcome/add_albums_and_photos/$count/album", "$count") ?>
+                <?= html::anchor("scaffold/add_albums_and_photos/$count/album", "$count") ?>
               <? endforeach ?>
               ] albums only
             </p>
             <p>
               add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
-                <?= html::anchor("welcome/add_comments/$count", "$count") ?>
+                <?= html::anchor("scaffold/add_comments/$count", "$count") ?>
               <? endforeach ?>
               ] comments
             </p>
             <p>
               add: [
               <? foreach (array(1, 10, 50, 100, 500, 1000) as $count): ?>
-                <?= html::anchor("welcome/add_tags/$count", "$count") ?>
+                <?= html::anchor("scaffold/add_tags/$count", "$count") ?>
               <? endforeach ?>
               ] tags
             </p>
             <?= $add_photo_html ?>
             <fieldset>
               <legend>Server Side Photos</legend>
-              <form method="post" action="<?= url::site("welcome/add_photos") ?>">
+              <form method="post" action="<?= url::site("scaffold/add_photos") ?>">
                 <input type="submit" value="upload"/>
                 <input type="text" name="path" size="70"
                        value="<?= cookie::get("add_photos_path") ?>" />
@@ -294,7 +294,7 @@
             </fieldset>
             <fieldset>
               <legend>Packaging</legend>
-              <a href="<?= url::site("welcome/package") ?>">Make Package</a>
+              <a href="<?= url::site("scaffold/package") ?>">Make Package</a>
             </fieldset>
           </div>
 
@@ -312,19 +312,19 @@
                 <li>
                   <?= $user->name ?>
                   <? if (!$user->admin): ?>
-                  <?= html::anchor("welcome/delete_user/$user->id", "[x]") ?>
+                  <?= html::anchor("scaffold/delete_user/$user->id", "[x]") ?>
                   <? endif ?>
                   <ul>
                     <? foreach ($user->groups as $group): ?>
                     <li>
                       <?= $group->name ?>
                       <? if (!$group->special): ?>
-                      <?= html::anchor("welcome/remove_from_group/$group->id/$user->id", "[x]") ?>
+                      <?= html::anchor("scaffold/remove_from_group/$group->id/$user->id", "[x]") ?>
                       <? endif ?>
                     </li>
                     <? endforeach ?>
                     <li>
-                      <form method="post" action="<?= url::site("welcome/add_to_group/$user->id") ?>">
+                      <form method="post" action="<?= url::site("scaffold/add_to_group/$user->id") ?>">
                         <input type="text" name="group_name"/>
                       </form>
                     </li>
@@ -334,7 +334,7 @@
               </ul>
               <fieldset>
                 <legend>Add User</legend>
-                <form method="post" action="<?= url::site("welcome/add_user") ?>">
+                <form method="post" action="<?= url::site("scaffold/add_user") ?>">
                   <input name="user_name" type="text"/>
                   <input type="submit" value="create"/>
                   <input type="checkbox" name="admin"/> Admin
@@ -348,14 +348,14 @@
                 <li>
                   <?= $group->name ?>
                   <? if (!$group->special): ?>
-                  <?= html::anchor("welcome/delete_group/$group->id", "[x]") ?>
+                  <?= html::anchor("scaffold/delete_group/$group->id", "[x]") ?>
                   <? endif ?>
                 </li>
                 <? endforeach ?>
               </ul>
               <fieldset>
                 <legend>Add Group</legend>
-                <form method="post" action="<?= url::site("welcome/add_group") ?>">
+                <form method="post" action="<?= url::site("scaffold/add_group") ?>">
                   <input name="group_name" type="text"/>
                   <input type="submit" value="create"/>
                 </form>
@@ -377,14 +377,14 @@
                   <? foreach (array("view", "view_full", "edit") as $perm): ?>
                   <?= $perm != "view" ? " ---- " : "" ?>
                   <? if (access::group_can(group::everybody(), $perm, $current->album)): ?>
-                  <?= html::anchor("welcome/deny_perm/1/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
+                  <?= html::anchor("scaffold/deny_perm/1/$perm/{$current->album->id}", strtoupper($perm), array("class" => "allowed")) ?>
                   <? else: ?>
-                  <?= html::anchor("welcome/add_perm/1/$perm/{$current->album->id}", strtolower($perm), array("class" => "denied")) ?>
+                  <?= html::anchor("scaffold/add_perm/1/$perm/{$current->album->id}", strtolower($perm), array("class" => "denied")) ?>
                   <? endif ?>
                   <? endforeach ?>
                   <? if ($current->album->id != 1): ?>
                   <span class="understate">
-                    (<?= html::anchor("welcome/reset_all_perms/1/{$current->album->id}", "reset") ?>)
+                    (<?= html::anchor("scaffold/reset_all_perms/1/{$current->album->id}", "reset") ?>)
                   </span>
                   <? endif; ?>
                   <? $stack[] = "CLOSE"; ?>
@@ -403,9 +403,9 @@
 
           <div id="info" class="activity">
             <ul>
-              <li> <?= html::anchor("welcome/mptt?type=text", "MPTT tree (text)") ?> </li>
+              <li> <?= html::anchor("scaffold/mptt?type=text", "MPTT tree (text)") ?> </li>
               <li>
-                <?= html::anchor("welcome/mptt", "MPTT tree (graph)") ?>
+                <?= html::anchor("scaffold/mptt", "MPTT tree (graph)") ?>
                 <i>(requires /usr/bin/dot from the graphviz package)</i>
               </li>
               <? if ($deepest_photo): ?>
@@ -428,16 +428,16 @@
               <? endif ?>
               <li> Profiling:
                 <? if (Session::instance()->get("profiler", false)): ?>
-                <b>on</b> <?= html::anchor("welcome/session/profiler?value=0", "off") ?>
+                <b>on</b> <?= html::anchor("scaffold/session/profiler?value=0", "off") ?>
                 <? else: ?>
-                <?= html::anchor("welcome/session/profiler?value=1", "on") ?> <b>off</b>
+                <?= html::anchor("scaffold/session/profiler?value=1", "on") ?> <b>off</b>
                 <? endif ?>
               </li>
               <li> Debug:
                 <? if (Session::instance()->get("debug", false)): ?>
-                <b>on</b> <?= html::anchor("welcome/session/debug?value=0", "off") ?>
+                <b>on</b> <?= html::anchor("scaffold/session/debug?value=0", "off") ?>
                 <? else: ?>
-                <?= html::anchor("welcome/session/debug?value=1", "on") ?> <b>off</b>
+                <?= html::anchor("scaffold/session/debug?value=1", "on") ?> <b>off</b>
                 <? endif ?>
               </li>
             </ul>
@@ -446,10 +446,10 @@
           <div id="benchmarks" class="activity">
             <ul>
               <li>
-                <?= html::anchor("welcome/i18n/build", "Make Translation") ?>
+                <?= html::anchor("scaffold/i18n/build", "Make Translation") ?>
               </li>
               <li>
-                <?= html::anchor("welcome/i18n/run", "Run Translation") ?>
+                <?= html::anchor("scaffold/i18n/run", "Run Translation") ?>
               </li>
             </ul>
           </div>

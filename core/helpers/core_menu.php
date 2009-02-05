@@ -19,11 +19,11 @@
  */
 class core_menu_Core {
   static function site($menu, $theme) {
-    if (file_exists(APPPATH . "controllers/welcome.php")) {
+    if (file_exists(APPPATH . "controllers/scaffold.php")) {
       $menu->append(Menu::factory("link")
                     ->id("browse")
                     ->label("Scaffold")
-                    ->url(url::site("welcome")));
+                    ->url(url::site("scaffold")));
     }
     $menu->append(Menu::factory("link")
                   ->id("home")
