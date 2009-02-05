@@ -48,22 +48,14 @@ td {
   background: #e8e8e8;
 }
 
-.gAvailable .gBlock {
+.gAvailable .gInstalledToolkit:hover {
   cursor: pointer;
-}
-
-.gAvailable .gBlock:hover {
   background: #eee;
 }
 
 .gUnavailable {
   border-color: #999;
   opacity: 0.4;
-}
-
-.gUnavailable:hover {
-  border-color: #ccc;
-  opacity: 1;
 }
 
 .gOddRow {
