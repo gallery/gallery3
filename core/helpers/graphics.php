@@ -236,7 +236,7 @@ class graphics_Core {
    * GraphicsMagick we return the path to the directory containing the appropriate binaries.
    */
   static function detect_toolkits() {
-    return array("gd" => gd_info(),
+    return array("gd" => function_exists("gd_info") ? gd_info() : array(),
                  "imagemagick" => dirname(exec("which convert")),
                  "graphicsmagick" => dirname(exec("which gm")));
   }
