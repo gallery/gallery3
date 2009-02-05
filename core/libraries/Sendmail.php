@@ -26,11 +26,6 @@ class Sendmail_Core {
   protected $header_separator = "\r\n";
 
   /**
-   * In test mode this gets the message that would have been set
-   */
-  private $_send_text;
-
-  /**
    * Return an instance of a Menu_Element
    * @chainable
    */
@@ -47,9 +42,6 @@ class Sendmail_Core {
   }
 
   public function __get($key) {
-    if (TEST_MODE && $key == "send_text") {
-      return $this->_send_text;
-    }
     return null;
   }
 
@@ -91,16 +83,15 @@ class Sendmail_Core {
     // need to use a single \n.  This can be set in config/sendmail.php
     $headers = implode($this->header_separator, $headers);
     $message = wordwrap($this->message, $this->line_length, "\n");
-
-    if (!TEST_MODE) {
-      if (!mail($to, $this->subject, $this->message, $headers)) {
-        Kohana::log("error", wordwrap("Sending mail failed:\nTo: $to\n $this->subject\n" .
-                                      "Headers: $headers\n $this->message"));
-        throw new Exception("@todo SEND MAIL FAILED");
-      }
-    } else {
-      $this->_send_text = "To: $to\r\n{$headers}\r\nSubject: $this->subject\r\n\r\n$message";
+    if ($this->mail($to, $this->subject, $message, $headers)) {
+      Kohana::log("error", wordwrap("Sending mail failed:\nTo: $to\n $this->subject\n" .
+                                    "Headers: $headers\n $this->message"));
+      throw new Exception("@todo SEND MAIL FAILED");
     }
     return $this;
+  }
+
+  public function mail($to, $subject, $message, $headers) {
+    return mail($to, $subject, $message, $headers);
   }
 }

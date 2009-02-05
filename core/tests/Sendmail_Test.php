@@ -30,7 +30,7 @@ class Sendmail_Test extends Unit_Test_Case {
                 "Reply-To: public@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "The mail message body";
-    $result = Sendmail::factory()
+    $result = Sendmail_For_Test::factory()
       ->to("receiver@someemail.com")
       /*
        * @todo figure out why this test fails so badly, when the following
@@ -40,7 +40,8 @@ class Sendmail_Test extends Unit_Test_Case {
       ->from("from@gallery3.com")
       ->subject("Test Email Unit test")
       ->message("The mail message body")
-      ->send()->send_text;
+      ->send()
+      ->send_text;
 
     $this->assert_equal($expected, $result);
   }
@@ -51,12 +52,13 @@ class Sendmail_Test extends Unit_Test_Case {
                 "Reply-To: reply-to@gallery3.com\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "The mail message body";
-    $result = Sendmail::factory()
+    $result = Sendmail_For_Test::factory()
       ->to("receiver@someemail.com")
       ->subject("Test Email Unit test")
       ->reply_to("reply-to@gallery3.com")
       ->message("The mail message body")
-      ->send()->send_text;
+      ->send()
+      ->send_text;
     $this->assert_equal($expected, $result);
   }
 
@@ -68,13 +70,14 @@ class Sendmail_Test extends Unit_Test_Case {
                 "Content-type: text/html; charset=iso-8859-1\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "<html><body><p>This is an html msg</p></body></html>";
-    $result = Sendmail::factory()
+    $result = Sendmail_For_Test::factory()
       ->to("receiver@someemail.com")
       ->subject("Test Email Unit test")
       ->header("MIME-Version", "1.0")
       ->header("Content-type", "text/html; charset=iso-8859-1")
       ->message("<html><body><p>This is an html msg</p></body></html>")
-      ->send()->send_text;
+      ->send()
+      ->send_text;
     $this->assert_equal($expected, $result);
   }
 
@@ -87,14 +90,25 @@ class Sendmail_Test extends Unit_Test_Case {
                 "over forty characters If we get lucky we\n" .
                 "might make it long enought to wrap a\n" .
                 "couple of times.";
-    $result = Sendmail::factory()
+    $result = Sendmail_For_Test::factory()
       ->to("receiver@someemail.com")
       ->subject("Test Email Unit test")
       ->line_length(40)
       ->message("This is a long message that needs to go over forty characters " .
                 "If we get lucky we might make it long enought to wrap a couple " .
                 "of times.")
-      ->send()->send_text;
+      ->send()
+      ->send_text;
     $this->assert_equal($expected, $result);
+  }
+}
+
+class Sendmail_For_Test extends Sendmail {
+  static function factory() {
+    return new Sendmail_For_Test();
+  }
+
+  public function mail($to, $subject, $message, $headers) {
+    $this->send_text = "To: $to\r\n{$headers}\r\nSubject: $this->subject\r\n\r\n$message";
   }
 }
