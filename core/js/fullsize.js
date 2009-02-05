@@ -27,6 +27,17 @@ $(document).ready(function() {
       $("#gFullsizeOverlay*").remove();
       $("#gFullsize").remove();
     });
+			      $(window).resize(function() {
+						 $("#gFullsizeOverlay").width($(document).width());
+						 $("#gFullsizeOverlay").height($(document).height());
+						 image_size = _auto_fit(fullsize_detail.width, fullsize_detail.height);
+						 $("#gFullsize").height(image_size.height);
+						 $("#gFullsize").width(image_size.width);
+						 $("#gFullsize").css("top", image_size.top);
+						 $("#gFullsize").css("left", image_size.left);
+						 $("#gFullSizeImage").height(image_size.height);
+						 $("#gFullSizeImage").width(image_size.width);
+					       });
   });
 });
 
@@ -52,6 +63,8 @@ function _auto_fit(imageWidth, imageHeight) {
     imageHeight *= ratio;
   }
 
-  return {top: (windowHeight - imageHeight) / 2, left: (windowWidth - imageWidth) / 2,
-	  width: imageWidth, height: imageHeight};
+  // handle the case where the calculation is almost zero (2.14e-14)
+  return {top: ((windowHeight - imageHeight) / 2).toFixed(2),
+	  left: ((windowWidth - imageWidth) / 2).toFixed(2),
+	  width: imageWidth.toFixed(2), height: imageHeight.toFixed(2)};
 }
