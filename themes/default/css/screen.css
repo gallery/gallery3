@@ -65,16 +65,24 @@ h3 {
 
 /* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-a {
+a,
+#gDialog a {
   color: #6b8cb7;
   text-decoration: none;
   -moz-outline-style: none;
 }
 
-a:hover {
+a:hover,
+#gDialog a:hover {
   color: #f30;
   text-decoration: underline;
 }
+
+#gForgotPasswordLink {
+  float: right;
+  font-size: .9em;
+}
+
 
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
