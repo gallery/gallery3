@@ -134,7 +134,7 @@ class notification {
 
     self::_send_message($item, $body);
   }
-  
+
   private static function _send_message($item, $body) {
     $users = self::get_subscribers($item);
     if (!empty($users)) {
@@ -142,7 +142,7 @@ class notification {
         ->to($users)
         ->subject($body->subject)
         ->header("Mime-Version", "1.0")
-        ->header("Content-type", "text/html; charset=iso-8859-1")
+        ->header("Content-type", "text/html; charset=utf-8")
         ->message($body->render())
         ->send();
     }
