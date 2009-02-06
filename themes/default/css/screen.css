@@ -568,7 +568,7 @@ form p.gError {
 #gViewMenu #gAddWatchLink,
 #gViewMenu #gHybridLink,
 #gViewMenu #gSlideshowLink,
-#gViewMenu #gFullsizeLink,
+#gViewMenu .gFullSizeLink,
 #gViewMenu #gCommentsLink {
   background-repeat: no-repeat;
   background-position: 10px 50%;
@@ -601,7 +601,7 @@ form p.gError {
   background-image: url('../images/ico-view-slideshow.png');
 }
 
-#gViewMenu #gFullsizeLink {
+#gViewMenu .gFullSizeLink {
   background-image: url('../images/ico-view-fullsize.png');
 }
 

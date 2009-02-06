@@ -12,7 +12,7 @@
     <? endif ?>
   </ul>
 
-  <?= $item->resize_tag(array("id" => "gPhotoId-{$item->id}")) ?>
+  <a href="#" class="gFullSizeLink" title="<?= t("View full size") ?>"><?= $item->resize_tag(array("id" => "gPhotoId-{$item->id}")) ?></a>
 
   <div id="gInfo">
     <h1><?= $item->title ?></h1>

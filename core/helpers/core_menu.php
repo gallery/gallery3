@@ -93,7 +93,7 @@ class core_menu_Core {
                ->id("fullsize")
                ->label(t("View full size"))
                ->url("#")
-               ->css_id("gFullsizeLink"));
+               ->css_class("gFullSizeLink"));
     }
     $menu
       ->append(Menu::factory("link")

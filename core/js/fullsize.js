@@ -2,7 +2,7 @@
  * @todo Move inline CSS out to external style sheet (theme style sheet)
  */
 $(document).ready(function() {
-  $("#gFullsizeLink").click(function() {
+  $(".gFullSizeLink").click(function() {
     var width = $(document).width();
     var height = $(document).height();
 

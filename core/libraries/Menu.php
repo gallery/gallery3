@@ -21,6 +21,7 @@ class Menu_Element {
   public $label;
   public $url;
   public $css_id;
+  public $css_class;
   public $id;
 
   /**
@@ -59,6 +60,15 @@ class Menu_Element {
     return $this;
   }
 
+  /**
+   * Set the css class
+   * @chainable
+   */
+  public function css_class($css_class) {
+    $this->css_class = $css_class;
+    return $this;
+  }
+
 }
 
 /**
@@ -71,7 +81,12 @@ class Menu_Element_Link extends Menu_Element {
     } else {
       $css_id = "";
     }
-    return "<li><a$css_id class=\"gMenuElement\" href=\"$this->url\">$this->label</a></li>";
+    if (isset($this->css_class) && !empty($this->css_class)) {
+      $css_class = " $this->css_class";
+    } else {
+      $css_class = "";
+    }
+    return "<li><a$css_id class=\"gMenuElement$css_class\" href=\"$this->url\">$this->label</a></li>";
   }
 }
 
@@ -85,7 +100,12 @@ class Menu_Element_Dialog extends Menu_Element {
     } else {
       $css_id = "";
     }
-    return "<li><a$css_id class=\"gMenuLink\" href=\"$this->url\" " .
+    if (isset($this->css_class) && !empty($this->css_class)) {
+      $css_class = " $this->css_class";
+    } else {
+      $css_class = "";
+    }
+    return "<li><a$css_id class=\"gMenuLink$css_class\" href=\"$this->url\" " .
            "title=\"$this->label\">$this->label</a></li>";
   }
 }
