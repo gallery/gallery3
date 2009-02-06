@@ -103,15 +103,15 @@ th {
   font-weight: bold;
 }
 
-td {
-}
-
 th,
 td {
-  border: 1px solid #ccc;
-  padding: .3em;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: .5em;
   vertical-align: top;
 }
+
+
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
