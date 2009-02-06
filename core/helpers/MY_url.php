@@ -19,9 +19,9 @@
  */
 class url extends url_Core {
   static function site($uri, $protocol=false) {
-    list($controller, $arg1, $args) = explode("/", $uri, 3);
-    if ($controller == "albums" || $controller == "photos") {
-      $uri = ORM::factory("item", $arg1)->relative_path();
+    $parts = explode("/", $uri, 3);
+    if ($parts[0] == "albums" || $parts[0] == "photos") {
+      $uri = ORM::factory("item", empty($parts[1]) ? 1 : $parts[1])->relative_path();
     }
     return parent::site($uri, $protocol);
   }
@@ -33,7 +33,7 @@ class url extends url_Core {
 
     $count = count(Router::$segments);
     foreach (ORM::factory("item")
-             ->where("name", Router::$segments[$count - 1])
+             ->where("path", Router::$segments[$count - 1])
              ->where("level", $count + 1)
              ->find_all() as $match) {
       if ($match->relative_path() == Router::$current_uri) {

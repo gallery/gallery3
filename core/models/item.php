@@ -215,10 +215,10 @@ class Item_Model extends ORM_MPTT {
     if (empty($this->relative_path)) {
       foreach ($this->parents() as $parent) {
         if ($parent->id > 1) {
-          $paths[] = $parent->name;
+          $paths[] = $parent->path;
         }
       }
-      $paths[] = $this->name;
+      $paths[] = $this->path;
       $this->relative_path = implode($paths, "/");
     }
     return $this->relative_path;
@@ -239,6 +239,16 @@ class Item_Model extends ORM_MPTT {
     } else {
       return parent::__get($column);
     }
+  }
+
+  /**
+   * @see ORM::__get()
+   */
+  public function __set($column, $value) {
+    if ($column == "name") {
+      parent::__set("path", preg_replace("/[^A-Za-z0-9\.\-_]/", "_", $value));
+    }
+    parent::__set($column, $value);
   }
 
   /**
