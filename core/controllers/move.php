@@ -39,7 +39,7 @@ class Move_Controller extends Controller {
     // If the target has no cover item, make this it.
     if ($target->album_cover_item_id == null)  {
       $target->album_cover_item_id =
-        $source->type == "album" ? $source->album_cover_item_id : $source->id;
+        $source->is_album() ? $source->album_cover_item_id : $source->id;
       $target->save();
       graphics::generate($target);
     }

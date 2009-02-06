@@ -173,7 +173,7 @@ class Item_Model extends ORM_MPTT {
    */
   public function thumb_path() {
     return VARPATH . "thumbs/" . $this->relative_path() .
-      ($this->type == "album" ? "/.album.jpg" : "");
+      ($this->is_album() ? "/.album.jpg" : "");
   }
 
   /**
@@ -184,7 +184,7 @@ class Item_Model extends ORM_MPTT {
     return ($full_uri ?
             url::abs_file("var/thumbs/" . $this->relative_path()) :
             url::file("var/thumbs/" . $this->relative_path()))  .
-      ($this->type == "album" ? "/.album.jpg" : "");
+      ($this->is_album() ? "/.album.jpg" : "");
   }
 
   /**
@@ -193,7 +193,7 @@ class Item_Model extends ORM_MPTT {
    */
   public function resize_path() {
     return VARPATH . "resizes/" . $this->relative_path() .
-      ($this->type == "album" ? "/.album.jpg" : "");
+      ($this->is_album() ? "/.album.jpg" : "");
   }
 
   /**
@@ -204,7 +204,7 @@ class Item_Model extends ORM_MPTT {
     return ($full_uri ?
             url::abs_file("var/resizes/" . $this->relative_path()) :
             url::file("var/resizes/" . $this->relative_path())) .
-      ($this->type == "album" ? "/.album.jpg" : "");
+      ($this->is_album() ? "/.album.jpg" : "");
   }
 
   /**
@@ -259,7 +259,7 @@ class Item_Model extends ORM_MPTT {
    * @return Item_Model or null if there's no cover
    */
   public function album_cover() {
-    if ($this->type != "album") {
+    if (!$this->is_album()) {
       return null;
     }
 

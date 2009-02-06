@@ -68,7 +68,7 @@ class graphics_Core {
    * @param Item_Model $item
    */
   static function generate($item) {
-    if ($item->type == "album") {
+    if ($item->is_album()) {
       $cover = $item->album_cover();
       if (!$cover) {
         return;
@@ -82,7 +82,7 @@ class graphics_Core {
     if ($item->thumb_dirty) {
       $ops["thumb"] = $item->thumb_path();
     }
-    if ($item->resize_dirty && $item->type != "album") {
+    if ($item->resize_dirty && !$item->is_album()) {
       $ops["resize"] = $item->resize_path();
     }
 

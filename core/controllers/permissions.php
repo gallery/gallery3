@@ -22,7 +22,7 @@ class Permissions_Controller extends Controller {
     $item = ORM::factory("item", $id);
     access::required("edit", $item);
 
-    if ($item->type != "album") {
+    if (!$item->is_album()) {
       access::forbidden();
     }
 
@@ -38,7 +38,7 @@ class Permissions_Controller extends Controller {
     $item = ORM::factory("item", $id);
     access::required("edit", $item);
 
-    if ($item->type != "album") {
+    if (!$item->is_album()) {
       access::forbidden();
     }
 

@@ -204,7 +204,7 @@ class ORM_MPTT_Core extends ORM {
    * @return  ORM_MTPP
    */
   function move_to($target) {
-    if ($target->type != "album") {
+    if (!$target->is_album()) {
       throw new Exception("@todo INVALID_MOVE_TYPE $target->type");
     }
 

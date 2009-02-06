@@ -20,7 +20,7 @@
 
 class media_rss_Core {
   static function item_feed($item) {
-    $id = $item->type == "album" ? $item->id : $item->parent_id;
+    $id = $item->is_album() ? $item->id : $item->parent_id;
     return url::site("media_rss/albums/$id");
   }
 

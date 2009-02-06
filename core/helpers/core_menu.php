@@ -38,12 +38,12 @@ class core_menu_Core {
         ->label(t("Options"))
         ->append(Menu::factory("dialog")
                  ->id("edit_item")
-                 ->label($item->type == "album" ? t("Edit album") : t("Edit photo"))
+                 ->label($item->is_album() ? t("Edit album") : t("Edit photo"))
                  ->url(url::site("form/edit/{$item->type}s/$item->id"))));
 
       // @todo Move album options menu to the album quick edit pane
       // @todo Create resized item quick edit pane menu
-      if ($item->type == "album") {
+      if ($item->is_album()) {
         $options_menu
           ->append(Menu::factory("dialog")
                    ->id("add_item")

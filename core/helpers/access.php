@@ -188,7 +188,7 @@ class access_Core {
     if (!$album->loaded) {
       throw new Exception("@todo INVALID_ALBUM $album->id");
     }
-    if ($album->type != "album") {
+    if (!$album->is_album()) {
       throw new Exception("@todo INVALID_ALBUM_TYPE not an album");
     }
     $access = model_cache::get("access_intent", $album->id, "item_id");

@@ -80,9 +80,9 @@ class Quick_Controller extends Controller {
     $parent = $item->parent();
     access::required("edit", $parent);
 
-    if ($item->type == "photo") {
+    if ($item->is_photo()) {
       $parent->album_cover_item_id = $item->id;
-    } else if ($item->type == "album") {
+    } else if ($item->is_album()) {
       $parent->album_cover_item_id = $item->album_cover_item_id;
     }
 
@@ -100,7 +100,7 @@ class Quick_Controller extends Controller {
 
     $parent = $item->parent();
 
-    if ($item->type == "album") {
+    if ($item->is_album()) {
       $msg = t("Deleted album <b>%title</b>", array("title" => $item->title));
     } else {
       $msg = t("Deleted photo <b>%title</b>", array("title" => $item->title));
