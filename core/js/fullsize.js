@@ -25,7 +25,7 @@ $(document).ready(function() {
       '<img id="gFullSizeImage" src="' + fullsize_detail.url + '"' +
       'height="' + image_size.height + '" width="' + image_size.width + '"/></div>');
 
-    $("#gFullsize").append('<span id="gFullsizeClose" class="ui-icon ' +
+    $("#gFullsize").append('<span id="gFullsizeClose" class="fg-button ui-icon ui-state-default ' +
       'ui-icon-closethick ui-corner-all" style="z-index: 1003; position: absolute; ' +
       'right: 1em; top: 1em;"></span>');
     $("#gFullsizeClose").click(function() {

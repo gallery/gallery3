@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gSearch">
+<div id="gSearchForm">
   <form action="<?= url::site("/search") ?>">
     <fieldset>
       <legend>

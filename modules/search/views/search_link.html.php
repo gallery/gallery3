@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<form action="<?= url::site("search") ?>" id="gSearchForm">
+<form action="<?= url::site("search") ?>" id="gQuickSearchForm">
   <ul>
     <li>
       <label for="gSearch"><?= t("Search the gallery") ?></label>

@@ -14,6 +14,9 @@ $(document).ready(function(){
     speed: 'fast'
   });
 
+  $(".gButtonLink").addClass("fg-button fg-button-icon-left ui-state-default ui-corner-all");
+  $(".gButtonLink").prepend('<span class="ui-icon ui-icon-circle-plus"></span>');
+
   // Apply modal dialogs
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {

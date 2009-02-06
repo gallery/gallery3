@@ -145,44 +145,15 @@ input[type="password"] {
 
 input[type="text"],
 input[type="password"],
-textarea,
-.gValidationRule {
-}
-
-input[type="button"] {
-}
-
-input[type="checkbox"] {
-}
-
-input[type="file"] {
+textarea {
+  border: 1px solid #e8e8e8;
+  border-top-color: #ccc;
+  border-left-color: #ccc;
+  color: #333;
 }
 
 input[type="hidden"] {
   display: none;
-}
-
-input[type="password"] {
-}
-
-input[type="radio"] {
-}
-
-input[type="reset"] {
-}
-
-input[type="submit"] {
-}
-
-#gHeader input[type="text"],
-#gSidebar input[type="text"] {
-  color: #999;
-}
-
-option {
-}
-
-select {
 }
 
 textarea {
@@ -190,14 +161,11 @@ textarea {
   height: 12em;
 }
 
-button {
-}
-
 input:focus,
 textarea:focus,
 option:focus {
   background-color: #ffc;
-  color: #000;
+  color: #000 !important;
 }
 
 /* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -366,20 +334,19 @@ form p.gError {
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
 
-#gHeader #gSearchForm li,
-#gSidebar #gAddTagForm li {
+.gShortForm li {
   float: left;
-  padding: .4em .5em;
+  padding: .4em 0;
 }
 
-#gHeader #gSearchForm label,
-#gSidebar #gAddTagForm label {
+.gShortForm label {
   display: none;
 }
 
-#gHeader #gSearchForm input[type="text"],
-#gSidebar #gAddTagForm input[type="text"] {
-  width: 10em;
+.gShortForm input[type="text"] {
+  color: #666;
+  padding: .3em .6em;
+  width: 11em;
 }
 
 /*** ******************************************************************
@@ -432,9 +399,14 @@ form p.gError {
   margin: 5px 10px 10px 20px;
 }
 
-#gHeader #gSearchForm {
+#gHeader #gQuickSearchForm {
+  clear: right;
   float: right;
-  margin-right: 20px;
+  margin: 1.4em 20px;
+}
+
+#gHeader #gQuickSearchForm input[type='text'] {
+  width: 17em;
 }
 
 #gContent .gBlock h2 {
@@ -563,22 +535,12 @@ form p.gError {
   margin-bottom: 0;
 }
 
-#gViewMenu #gAlbumLink,
-#gViewMenu #gRemoveWatchLink,
-#gViewMenu #gAddWatchLink,
-#gViewMenu #gHybridLink,
-#gViewMenu #gSlideshowLink,
-#gViewMenu .gFullSizeLink,
-#gViewMenu #gCommentsLink {
+#gViewMenu a {
   background-repeat: no-repeat;
   background-position: 10px 50%;
   display: block;
-  font-size: .9em;
   height: 22px;
-  overflow: hidden;
-  text-indent: 1000px;
-  white-space: nowrap;
-  width: 32px;
+  width: 29px;
 }
 
 #gViewMenu #gAlbumLink {

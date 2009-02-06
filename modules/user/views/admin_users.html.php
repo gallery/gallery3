@@ -44,7 +44,7 @@
   <a href="<?= url::site("admin/users/add_user_form") ?>"
      class="gDialogLink gButtonLink right"
      title="<?= t("Create a new user") ?>">
-    + <?= t("Add a new user") ?>
+     <?= t("Add a new user") ?>
   </a>
 
   <h2>
@@ -100,7 +100,7 @@
       <a href="<?= url::site("admin/users/add_user_form") ?>"
          class="gDialogLink gButtonLink"
          title="<?= t("Create a new user") ?>">
-        + <?= t("Add a new user") ?>
+         <?= t("Add a new user") ?>
       </a>
     </p>
   </div>
@@ -110,7 +110,7 @@
   <a href="<?= url::site("admin/users/add_group_form") ?>"
      class="gDialogLink gButtonLink right"
      title="<?= t("Create a new group") ?>">
-    + <?= t("Add a new group") ?>
+     <?= t("Add a new group") ?>
   </a>
 
   <h2>

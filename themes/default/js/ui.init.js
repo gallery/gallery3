@@ -5,16 +5,16 @@
  */
 
 var shortForms = new Array(
-  "#gSearchForm",
-  "#gAddTagForm"
+  "#gQuickSearchForm",
+  "#gAddTagForm",
+  "#gSearchForm"
 );
 
 $(document).ready(function() {
   
   // Initilize menus  
   $("ul.gMenu").addClass("sf-menu");
-  $("#gViewMenu ul.gMenu").addClass("sf-menu");
-  
+
   // Superfish menu options
   $('ul.sf-menu').superfish({
     delay: 500,
@@ -24,6 +24,18 @@ $(document).ready(function() {
     },
     speed: 'fast'
   });
+
+  // Apply jQuery UI button css
+  $("input[type=submit]").addClass("fg-button ui-state-default");
+  $("#gViewMenu ul.gMenu").addClass("fg-buttonset");
+  $("#gViewMenu ul.gMenu li a").addClass("fg-button ui-state-default ui-icon");
+  $("#gViewMenu ul.gMenu li:first a").addClass("ui-corner-left");
+  $("#gViewMenu ul.gMenu li:last a").addClass("ui-corner-right");
+
+  // Short forms
+  handleShortFormEvent(shortForms);
+  $(".gShortForm input[type=text]").addClass("ui-corner-left");
+  $(".gShortForm input[type=submit]").addClass("ui-corner-right");
 
   // Album view only
   if ($("#gAlbumGrid").length) {
@@ -52,9 +64,6 @@ $(document).ready(function() {
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
-
-  // Short forms
-  handleShortFormEvent(shortForms);
 
 });
 
@@ -107,6 +116,8 @@ function handleShortFormEvent(shortForms) {
  * @param formID string The form's ID, including #
  */
 function shortFormInit(formID) {
+  $(formID).addClass("gShortForm");
+
   // Get the input ID and it's label text
   var labelValue = $(formID + " label:first").html();
   var inputID = "#" + $(formID + " input[type='text']:first").attr("id");

@@ -140,19 +140,6 @@
   margin-right: 1em;
 }
 
-.gButtonLink {
-  border-width: 1px;
-  border-style: solid;
-  border-color: #ececec #c8c8c8 #c8c8c8 #ececec;
-  background-image: url('../images/backg-buttonlink.png');
-  padding: .2em .3em;
-  font-weight: bold;
-}
-
-.gButtonLink:hover {
-  border-color: #c8c8c8 #ececec #ececec #c8c8c8;
-}
-
 #gUserAdminList {
   margin-bottom: 1em;
 }
