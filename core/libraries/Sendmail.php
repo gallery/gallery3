@@ -26,7 +26,7 @@ class Sendmail_Core {
   protected $header_separator = "\r\n";
 
   /**
-   * Return an instance of a Menu_Element
+   * Return an instance of Sendmail
    * @chainable
    */
   static function factory() {
