@@ -53,6 +53,18 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $photo1 = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
     $photo2 = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
     $this->assert_true($photo1->name != $photo2->name);
+    $this->assert_true($photo1->path != $photo2->path);
+  }
+
+  public function create_special_characters_in_name_test() {
+    $rand = rand();
+    $rand2 = rand();
+    $name = "$rand & $rand's.jpg";
+    $path = !empty($path) ? $path : preg_replace("/[^A-Za-z0-9\.\-_]/", "_", $name);
+    $root = ORM::factory("item", 1);
+    $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", $name, $rand, $rand);
+    $this->assert_equal($name, $photo->name);
+    $this->assert_equal($path, $photo->path);
   }
 
   public function create_photo_with_no_extension_test() {

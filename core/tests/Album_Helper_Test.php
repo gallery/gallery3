@@ -43,6 +43,7 @@ class Album_Helper_Test extends Unit_Test_Case {
     $album1 = album::create($root, $rand, $rand, $rand);
     $album2 = album::create($root, $rand, $rand, $rand);
     $this->assert_true($album1->name != $album2->name);
+    $this->assert_true($album1->path != $album2->path);
   }
 
   public function thumb_url_test() {
