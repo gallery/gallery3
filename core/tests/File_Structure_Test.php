@@ -150,6 +150,7 @@ class GalleryCodeFilterIterator extends FilterIterator {
       strpos($path_name, MODPATH . "kodoc") !== false ||
       strpos($path_name, MODPATH . "mptt") !== false ||
       strpos($path_name, MODPATH . "unit_test") !== false ||
+      strpos($path_name, MODPATH . "exif/lib") !== false ||
       strpos($path_name, MODPATH . "user/libraries/PasswordHash") !== false ||
       strpos($path_name, SYSPATH) !== false ||
       substr($path_name, -1, 1) == "~");

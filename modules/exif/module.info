@@ -1,0 +1,3 @@
+name = Exif Data
+description = "Extract Exif data and display it on photo pages."
+version = 1
