@@ -32,6 +32,7 @@ class photo_Core {
    * @param integer $title the title of the new photo
    * @param string  $description (optional) the longer description of this photo
    * @param string  $path (optional) the name to use as the file system path component 
+   * @param integer $owner_id(optional) explicitly set the owner of this photo
    * @return Item_Model
    */
   static function create($parent, $filename, $name, $title, $description=null, $path=null,
