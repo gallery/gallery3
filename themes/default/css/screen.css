@@ -12,12 +12,6 @@
  * 6)  Navigation and menus
  * 7)  Browser hacks
  * 8)  jQuery and jQuery UI
- *
- * @todo Fix gError and other message types in forms
- * @todo Refactor form layout styles to reserve room for validation messages in default state. This
- *       will eliminate layout shifts when validation messages are displayed.
- * @todo Update default user avatar (user w/ camera)
- * @todo Apply :hover bg image to #gViewMenu (will clear fix correct this?)
  */
 
 /** *******************************************************************
@@ -165,7 +159,7 @@ input:focus,
 textarea:focus,
 option:focus {
   background-color: #ffc;
-  color: #000 !important;
+  color: #000;
 }
 
 /* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -279,7 +273,7 @@ form p.gError,
   padding: .4em .5em .4em 30px;
 }
 
-#gAdminMaintenance tr.gError,
+#gAdminMaintenance .gError,
 #gSiteStatus .gError,
 #gMessage .gError {
   background-color: #fcc;
@@ -291,7 +285,7 @@ form p.gError {
   background-image: url('../images/ico-error.png');
 }
 
-#gAdminMaintenance tr.gInfo,
+#gAdminMaintenance .gInfo,
 #gSiteStatus .gInfo,
 #gMessage .gInfo {
   background-color: #e8e8e8;
@@ -302,7 +296,7 @@ form p.gError {
   background-image: url('../images/ico-info.png');
 }
 
-#gAdminMaintenance tr.gSuccess,
+#gAdminMaintenance .gSuccess,
 #gAdminAkismet .gSuccess,
 #gSiteStatus .gSuccess,
 #gMessage .gSuccess {
@@ -314,7 +308,7 @@ form p.gError {
   background-image: url('../images/ico-success.png');
 }
 
-#gAdminMaintenance tr.gWarning,
+#gAdminMaintenance .gWarning,
 #gSiteStatus .gWarning,
 #gMessage .gWarning {
   background-color: #ff9;
@@ -325,10 +319,10 @@ form p.gError {
   background-image: url('../images/ico-warning.png');
 }
 
-#gAdminMaintenance tr.gError,
-#gAdminMaintenance tr.gInfo,
-#gAdminMaintenance tr.gWarning,
-#gAdminMaintenance tr.gSuccess {
+#gAdminMaintenance .gError,
+#gAdminMaintenance .gInfo,
+#gAdminMaintenance .gWarning,
+#gAdminMaintenance .gSuccess {
   background-image: none;
 }
 
@@ -751,9 +745,6 @@ form p.gError {
 #gDialog legend {
   display: none;
 }
-
-
-
 
 /* STUFF THAT NEEDS A HOME */
 
