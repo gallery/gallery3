@@ -242,16 +242,6 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * @see ORM::__get()
-   */
-  public function __set($column, $value) {
-    if ($column == "name") {
-      parent::__set("path", preg_replace("/[^A-Za-z0-9\.\-_]/", "_", $value));
-    }
-    parent::__set($column, $value);
-  }
-
-  /**
    * @see ORM::save()
    */
   public function save() {

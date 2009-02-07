@@ -31,10 +31,11 @@ class photo_Core {
    * @param string  $name the filename to use for this photo in the album
    * @param integer $title the title of the new photo
    * @param string  $description (optional) the longer description of this photo
+   * @param string  $path (optional) the name to use as the file system path component 
    * @return Item_Model
    */
-  static function create($parent, $filename, $name, $title,
-                                $description=null, $owner_id=null) {
+  static function create($parent, $filename, $name, $title, $description=null, $path=null,
+                         $owner_id=null) {
     if (!$parent->loaded || !$parent->is_album()) {
       throw new Exception("@todo INVALID_PARENT");
     }
@@ -59,6 +60,7 @@ class photo_Core {
     $photo->title = $title;
     $photo->description = $description;
     $photo->name = $name;
+    $photo->path = !empty($path) ? $path : preg_replace("/[^A-Za-z0-9\.\-_]/", "_", $name);
     $photo->owner_id = $owner_id;
     $photo->width = $image_info[0];
     $photo->height = $image_info[1];
