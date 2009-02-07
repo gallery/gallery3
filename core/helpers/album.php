@@ -31,6 +31,7 @@ class album_Core {
    * @param integer $title the title of the new album
    * @param string  $description (optional) the longer description of this album
    * @param string  $path (optional) the name to use as the filesystem path component 
+   * @param integer $owner_id(optional) explicitly set the owner of this album
    * @return Item_Model
    */
   static function create($parent, $name, $title, $description=null, $path=null, $owner_id=null) {
