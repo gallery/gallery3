@@ -22,7 +22,7 @@ class info_theme_Core {
     if ($theme->item()) {
       $block = new Block();
       $block->css_id = "gMetadata";
-      $block->title = t("Item Info");
+      $block->title = $theme->item()->is_album() ? t("Album Info") : t("Photo Info");
       $block->content = new View("info_block.html");
       return $block;
     }
