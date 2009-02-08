@@ -10,7 +10,7 @@
         type="text/css" media="screen,projection">
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
         type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= url::file("themes/default/css/superfish.css") ?>"
+    <link rel="stylesheet" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
         type="text/css" media="screen,projection">
     <link rel="stylesheet" href="<?= url::file("themes/default/css/screen.css") ?>"
         type="text/css" media="screen,projection">
@@ -20,7 +20,7 @@
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("themes/default/js/superfish.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/jquery.dropshadow.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->admin_head() ?>
