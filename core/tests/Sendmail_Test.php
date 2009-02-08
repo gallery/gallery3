@@ -110,5 +110,6 @@ class Sendmail_For_Test extends Sendmail {
 
   public function mail($to, $subject, $message, $headers) {
     $this->send_text = "To: $to\r\n{$headers}\r\nSubject: $this->subject\r\n\r\n$message";
+    return true;
   }
 }

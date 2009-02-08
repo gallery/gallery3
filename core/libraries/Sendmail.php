@@ -83,7 +83,7 @@ class Sendmail_Core {
     // need to use a single \n.  This can be set in config/sendmail.php
     $headers = implode($this->header_separator, $headers);
     $message = wordwrap($this->message, $this->line_length, "\n");
-    if ($this->mail($to, $this->subject, $message, $headers)) {
+    if (!$this->mail($to, $this->subject, $message, $headers)) {
       Kohana::log("error", wordwrap("Sending mail failed:\nTo: $to\n $this->subject\n" .
                                     "Headers: $headers\n $this->message"));
       throw new Exception("@todo SEND MAIL FAILED");
