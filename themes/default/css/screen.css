@@ -682,7 +682,8 @@ form p.gError {
 #gSiteMenu:after,
 #gBreadcrumbs:after,
 #gAlbumGrid:after,
-#gPager:after {
+#gPager:after,
+.gButtonLink:after {
   clear: both;
   content: ".";
   display: block;
@@ -750,6 +751,22 @@ form p.gError {
 
 #gDialog legend {
   display: none;
+}
+
+/* jQuery UI ThemeRoller butttons */
+
+.gButtonLink {
+  padding: .1em .6em;
+}
+
+.ui-icon-left .ui-icon {
+  float: left;
+  margin-right: .4em;
+}
+
+.ui-icon-right .ui-icon {
+  float: right;
+  margin-left: .4em;
 }
 
 /* STUFF THAT NEEDS A HOME */

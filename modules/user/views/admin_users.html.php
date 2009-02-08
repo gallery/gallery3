@@ -42,9 +42,10 @@
 </script>
 <div class="gBlock">
   <a href="<?= url::site("admin/users/add_user_form") ?>"
-     class="gDialogLink gButtonLink right"
-     title="<?= t("Create a new user") ?>">
-     <?= t("Add a new user") ?>
+      class="gDialogLink gButtonLink right ui-icon-left ui-state-default ui-corner-all"
+      title="<?= t("Create a new user") ?>">
+    <span class="ui-icon ui-icon-circle-plus"></span>
+    <?= t("Add a new user") ?>
   </a>
 
   <h2>
@@ -96,21 +97,21 @@
       </tr>
       <? endforeach ?>
     </table>
-    <p>
-      <a href="<?= url::site("admin/users/add_user_form") ?>"
-         class="gDialogLink gButtonLink"
-         title="<?= t("Create a new user") ?>">
-         <?= t("Add a new user") ?>
-      </a>
-    </p>
+    <a href="<?= url::site("admin/users/add_user_form") ?>"
+        class="gDialogLink gButtonLink ui-icon-left ui-state-default ui-corner-all"
+        title="<?= t("Create a new user") ?>">
+      <span class="ui-icon ui-icon-circle-plus"></span>
+      <?= t("Add a new user") ?>
+    </a>
   </div>
 </div>
 
 <div id="gGroupAdmin" class="gBlock">
   <a href="<?= url::site("admin/users/add_group_form") ?>"
-     class="gDialogLink gButtonLink right"
-     title="<?= t("Create a new group") ?>">
-     <?= t("Add a new group") ?>
+      class="gDialogLink gButtonLink right ui-icon-left ui-state-default ui-corner-all"
+      title="<?= t("Create a new group") ?>">
+    <span class="ui-icon ui-icon-circle-plus"></span>
+    <?= t("Add a new group") ?>
   </a>
 
   <h2>
