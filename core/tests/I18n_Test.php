@@ -28,8 +28,9 @@ class I18n_Test extends Unit_Test_Case {
         'locale_dir' => VARPATH . 'locale/');
     $this->i18n = I18n::instance($config);
 
-    $db = Database::instance();
-    $db->query("DELETE FROM `incoming_translations` WHERE `locale` = 'te_ST'");
+    ORM::factory("incoming_translation")
+      ->where("locale", "te_ST")
+      ->delete_all();
 
     $messages_de_DE = array(
         array('Hello world', 'Hallo Welt'),
