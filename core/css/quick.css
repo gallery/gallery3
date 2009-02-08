@@ -65,3 +65,20 @@
 #gQuickPane .options {
   background-position: -112px 0;
 }
+
+#gQuickPaneOptions {
+  background: #000;
+  float: left;
+  width: 100%;
+}
+
+#gQuickPaneOptions a {
+  display: block;
+  background: none;
+  width: auto;
+}
+
+#gQuickPaneOptions a:hover {
+  color: #999;
+  background: none;
+}

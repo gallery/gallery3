@@ -1,7 +1,6 @@
 $(document).ready(function() {
   if ($("#gAlbumGrid").length) {
     // @todo Add quick edit pane for album (meta, move, permissions, delete)
-    //$("#gInfo").hover(show_quick, function() {});
     $(".gItem").hover(show_quick, function() {});
   }
   if ($("#gItem").length) {
@@ -29,9 +28,13 @@ var show_quick = function() {
     {},
     function(data, textStatus) {
       $("#gQuickPane").html(data).slideDown("fast");
-      $("#gQuickPane a").click(function(e) {
+      $("#gQuickPane a:not(.options)").click(function(e) {
         e.preventDefault();
         quick_do(cont, $(this), img);
+      });
+      $("#gQuickPane a.options").click(function(e) {
+        e.preventDefault();
+        $("#gQuickPaneOptions").slideToggle("fast");
       });
     }
   );

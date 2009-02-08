@@ -32,21 +32,14 @@ class core_theme_Core {
     if ($theme->page_type == "photo" && access::can("view_full", $theme->item())) {
       $buf .= "<script type=\"text/javascript\" >" .
               "  var fullsize_detail = { " .
-              "    close: \"" . url::file("core/images/ico-close.png") . "\", " . 
-              "    url: \"" . $theme->item()->file_url() . "\", " . 
-              "    width: " . $theme->item()->width . ", " . 
-              "    height: " . $theme->item()->height . "};" . 
+              "    close: \"" . url::file("core/images/ico-close.png") . "\", " .
+              "    url: \"" . $theme->item()->file_url() . "\", " .
+              "    width: " . $theme->item()->width . ", " .
+              "    height: " . $theme->item()->height . "};" .
               "</script>";
       $buf .= html::script("core/js/fullsize.js");
     }
     return $buf;
-  }
-
-  static function album_top($theme, $child) {
-    if (access::can("edit", $album)) {
-      $edit_link = url::site("quick/pane/$album->id");
-      return "<div class=\"gQuick\" href=\"$edit_link\"></div>";
-    }
   }
 
   static function thumb_top($theme, $child) {
