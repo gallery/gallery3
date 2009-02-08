@@ -725,6 +725,12 @@ form p.gError {
   text-align: left;
 }
 
+.ui-widget-overlay {
+  background: #000;
+  opacity: .7;
+  filter: Alpha(Opacity=70);
+}
+
 #gDialog form {
   width: 500px;
 }
