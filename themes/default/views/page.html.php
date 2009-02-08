@@ -16,7 +16,7 @@
           media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/superfish.css") ?>"
           media="screen" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/ui.all.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
           media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />

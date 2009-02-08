@@ -8,11 +8,11 @@
     <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
         type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= url::file("themes/default/css/screen.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
         type="text/css" media="screen,projection">
     <link rel="stylesheet" href="<?= url::file("themes/default/css/superfish.css") ?>"
         type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= url::file("themes/default/css/ui.all.css") ?>"
+    <link rel="stylesheet" href="<?= url::file("themes/default/css/screen.css") ?>"
         type="text/css" media="screen,projection">
     <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>"
         type="text/css" media="screen,projection">
