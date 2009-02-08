@@ -48,7 +48,21 @@ class graphics_Core {
     $rule->args = serialize($args);
     $rule->save();
 
-    self::mark_dirty(true, true);
+    self::mark_dirty($target == "thumb", $target == "resize");
+  }
+
+  /**
+   * Remove any matching graphics rules
+   * @param string  $module_name the module that added the rule
+   * @param string  $target      the target for this operation ("thumb" or "resize")
+   * @param string  $operation   the name of the operation
+   */
+  static function remove_rule($module_name, $target, $operation) {
+    ORM::factory("graphics_rule")
+      ->where("module_name", $module_name)
+      ->where("target", $target)
+      ->where("operation", $operation)
+      ->delete_all();
   }
 
   /**

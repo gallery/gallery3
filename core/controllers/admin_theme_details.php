@@ -28,8 +28,29 @@ class Admin_Theme_Details_Controller extends Admin_Controller {
     $form = theme::get_edit_form_admin();
     if ($form->validate()) {
       module::set_var("core", "page_size", $form->edit_theme->page_size->value);
-      module::set_var("core", "thumb_size", $form->edit_theme->thumb_size->value);
-      module::set_var("core", "resize_size", $form->edit_theme->resize_size->value);
+
+      $thumb_size = $form->edit_theme->thumb_size->value;
+      $thumb_dirty = false;
+      if (module::get_var("core", "thumb_size") != $thumb_size) {
+        graphics::remove_rule("core", "thumb", "resize");
+        graphics::add_rule(
+          "core", "thumb", "resize",
+          array("width" => $thumb_size, "height" => $thumb_size, "master" => Image::AUTO),
+          100);
+        module::set_var("core", "thumb_size", $thumb_size);
+      }
+
+      $resize_size = $form->edit_theme->resize_size->value;
+      $resize_dirty = false;
+      if (module::get_var("core", "resize_size") != $resize_size) {
+        graphics::remove_rule("core", "resize", "resize");
+        graphics::add_rule(
+          "core", "resize", "resize",
+          array("width" => $resize_size, "height" => $resize_size, "master" => Image::AUTO),
+          100);
+        module::set_var("core", "resize_size", $resize_size);
+      }
+
       message::success(t("Updated theme details"));
       url::redirect("admin/theme_details");
     } else {
