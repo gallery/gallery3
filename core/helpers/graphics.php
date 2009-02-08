@@ -48,7 +48,7 @@ class graphics_Core {
     $rule->args = serialize($args);
     $rule->save();
 
-    self::mark_all_dirty();
+    self::mark_dirty(true, true);
   }
 
   /**
@@ -59,7 +59,7 @@ class graphics_Core {
     $db = Database::instance();
     $result = $db->query("DELETE FROM `graphics_rules` WHERE `module_name` = '$module_name'");
     if ($result->count()) {
-      self::mark_all_dirty();
+      self::mark_dirty(true, true);
     }
   }
 
@@ -208,11 +208,16 @@ class graphics_Core {
   }
 
   /**
-   * Mark all thumbnails and resizes as dirty.  They will have to be rebuilt.
+   * Mark thumbnails and resizes as dirty.  They will have to be rebuilt.
    */
-  static function mark_all_dirty() {
+  static function mark_dirty($thumbs, $resizes) {
     $db = Database::instance();
-    $db->query("UPDATE `items` SET `thumb_dirty` = 1, `resize_dirty` = 1");
+    if ($thumbs) {
+      $db->query("UPDATE `items` SET `thumb_dirty` = 1");
+    }
+    if ($resizes) {
+      $db->query("UPDATE `items` SET `resize_dirty` = 1");
+    }
 
     $count = self::find_dirty_images_query()->count();
     if ($count) {
