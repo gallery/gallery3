@@ -47,7 +47,8 @@ class notification_event_Core {
   }
 
   static function user_before_delete($user) {
-    $db = Database::instance();
-    $db->query("DELETE FROM subscriptions WHERE `user_id` = $user->id;");
+    ORM::factory("subscription")
+      ->where("user_id", $user->id)
+      ->delete_all();
   }
 }
