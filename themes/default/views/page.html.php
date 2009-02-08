@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
           media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/superfish.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
           media="screen" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
           media="screen,print,projection" />
@@ -28,7 +28,7 @@
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/superfish.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/jquery.scrollTo.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/jquery.localscroll.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
