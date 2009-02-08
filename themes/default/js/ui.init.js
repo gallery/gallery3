@@ -11,8 +11,7 @@ var shortForms = new Array(
 );
 
 $(document).ready(function() {
-  
-  // Initilize menus  
+  // Initialize menus
   $("ul.gMenu").addClass("sf-menu");
 
   // Superfish menu options
