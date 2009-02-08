@@ -63,7 +63,6 @@ class core_installer {
                    `level` int(9) NOT NULL,
                    `mime_type` varchar(64) default NULL,
                    `name` varchar(255) default NULL,
-                   `path` varchar(255) default NULL,
                    `owner_id` int(9) default NULL,
                    `parent_id` int(9) NOT NULL,
                    `resize_height` int(9) default NULL,

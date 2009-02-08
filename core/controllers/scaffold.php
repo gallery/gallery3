@@ -112,11 +112,8 @@ class Scaffold_Controller extends Template_Controller {
       // Since we're in a state of flux, it's possible that other stuff went wrong with the
       // uninstall, so back off and nuke it from orbit.  It's the only way to be sure.
       $db = Database::instance();
-      $tables = $db->list_tables();
-      if (!empty($tables)) {
-        foreach ($db->list_tables() as $table) {
-          $db->query("DROP TABLE `$table`");
-        }
+      foreach ($db->list_tables() as $table) {
+        $db->query("DROP TABLE `$table`");
       }
       set_error_handler($old_handler);
     } else {
@@ -426,9 +423,7 @@ class Scaffold_Controller extends Template_Controller {
 
   function _create_directories() {
     foreach (array("logs", "uploads") as $dir) {
-      if (!file_exists(VARPATH . "$dir")) {
-        @mkdir(VARPATH . "$dir");
-      }
+      @mkdir(VARPATH . "$dir");
     }
   }
 

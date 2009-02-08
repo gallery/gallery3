@@ -30,41 +30,28 @@ class album_Core {
    * @param string  $name the name of this new album (it will become the directory name on disk)
    * @param integer $title the title of the new album
    * @param string  $description (optional) the longer description of this album
-   * @param string  $path (optional) the name to use as the filesystem path component 
-   * @param integer $owner_id(optional) explicitly set the owner of this album
    * @return Item_Model
    */
-  static function create($parent, $name, $title, $description=null, $path=null, $owner_id=null) {
+  static function create($parent, $name, $title, $description=null, $owner_id=null) {
     if (!$parent->loaded || !$parent->is_album()) {
       throw new Exception("@todo INVALID_PARENT");
     }
-
-    // Randomize the name if there's a conflict
-    $name_count = ORM::factory("item")
-      ->where("parent_id", $parent->id)
-      ->where("name", $name)
-      ->count_all();
-    $name = $name_count == 0 ? $name : sprintf("%s_%03d", $name, $name_count);
-
-    $path = !empty($path) ? $path : preg_replace("/[^A-Za-z0-9\.\-_]/", "_", $name);
-
-    // Randomize the path if there's a conflict
-    $path_count = ORM::factory("item")
-      ->where("parent_id", $parent->id)
-      ->where("path", $path)
-      ->count_all();
-    $path = $path_count == 0 ? $path : sprintf("%s_%03d", $path, $path_count);
 
     $album = ORM::factory("item");
     $album->type = "album";
     $album->title = $title;
     $album->description = $description;
     $album->name = $name;
-    $album->path = $path;
     $album->owner_id = $owner_id;
     $album->thumb_dirty = 1;
     $album->resize_dirty = 1;
 
+    while (ORM::factory("item")
+           ->where("parent_id", $parent->id)
+           ->where("name", $album->name)
+           ->find()->id) {
+      $album->name = "{$name}-" . rand();
+    }
 
     $album = $album->add_to_parent($parent);
     mkdir($album->file_path());

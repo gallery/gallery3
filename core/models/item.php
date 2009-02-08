@@ -215,10 +215,10 @@ class Item_Model extends ORM_MPTT {
     if (empty($this->relative_path)) {
       foreach ($this->parents() as $parent) {
         if ($parent->id > 1) {
-          $paths[] = $parent->path;
+          $paths[] = $parent->name;
         }
       }
-      $paths[] = $this->path;
+      $paths[] = $this->name;
       $this->relative_path = implode($paths, "/");
     }
     return $this->relative_path;

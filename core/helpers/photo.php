@@ -31,12 +31,10 @@ class photo_Core {
    * @param string  $name the filename to use for this photo in the album
    * @param integer $title the title of the new photo
    * @param string  $description (optional) the longer description of this photo
-   * @param string  $path (optional) the name to use as the file system path component 
-   * @param integer $owner_id(optional) explicitly set the owner of this photo
    * @return Item_Model
    */
-  static function create($parent, $filename, $name, $title, $description=null, $path=null,
-                         $owner_id=null) {
+  static function create($parent, $filename, $name, $title,
+                                $description=null, $owner_id=null) {
     if (!$parent->loaded || !$parent->is_album()) {
       throw new Exception("@todo INVALID_PARENT");
     }
@@ -56,35 +54,26 @@ class photo_Core {
       $name .= "." . $pi["extension"];
     }
 
-    // Randomize the name if there's a conflict
-    $name_count = ORM::factory("item")
-      ->where("parent_id", $parent->id)
-      ->where("name", $name)
-      ->count_all();
-    $name = $name_count == 0 ? $name :
-      sprintf("%s_%03d.%s", $pi["filename"], $name_count, $pi["extension"]);
-
-    $path = !empty($path) ? $path : preg_replace("/[^A-Za-z0-9\.\-_]/", "_", $name);
-
-    // Randomize the path if there's a conflict
-    $path_count = ORM::factory("item")
-      ->where("parent_id", $parent->id)
-      ->where("path", $path)
-      ->count_all();
-    $path = $path_count == 0 ? $path : sprintf("%s_%03d", $path, $path_count);
-
     $photo = ORM::factory("item");
     $photo->type = "photo";
     $photo->title = $title;
     $photo->description = $description;
     $photo->name = $name;
-    $photo->path = $path;
     $photo->owner_id = $owner_id;
     $photo->width = $image_info[0];
     $photo->height = $image_info[1];
     $photo->mime_type = empty($image_info['mime']) ? "application/unknown" : $image_info['mime'];
     $photo->thumb_dirty = 1;
     $photo->resize_dirty = 1;
+
+    // Randomize the name if there's a conflict
+    while (ORM::Factory("item")
+           ->where("parent_id", $parent->id)
+           ->where("name", $photo->name)
+           ->find()->id) {
+      // @todo Improve this.  Random numbers are not user friendly
+      $photo->name = rand() . "." . $pi["extension"];
+    }
 
     // This saves the photo
     $photo->add_to_parent($parent);
