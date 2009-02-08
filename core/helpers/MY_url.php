@@ -33,10 +33,10 @@ class url extends url_Core {
 
     $count = count(Router::$segments);
     foreach (ORM::factory("item")
-             ->where("name", Router::$segments[$count - 1])
+             ->where("name", html_entity_decode(Router::$segments[$count - 1], ENT_QUOTES))
              ->where("level", $count + 1)
              ->find_all() as $match) {
-      if ($match->relative_path() == Router::$current_uri) {
+      if ($match->relative_path() == html_entity_decode(Router::$current_uri, ENT_QUOTES)) {
         $item = $match;
       }
     }
