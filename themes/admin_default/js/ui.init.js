@@ -36,6 +36,17 @@ $(document).ready(function(){
 	
   // In-place editing for tag admin
   $(".gEditable").bind("click", editInplace);
+
+  // Add hover state for buttons
+  $(".ui-state-default").hover(
+	  function(){
+		  $(this).addClass("ui-state-hover");
+	  },
+	  function(){
+		  $(this).removeClass("ui-state-hover");
+	  }
+  );
+
 });
 
 function editInplace(element){

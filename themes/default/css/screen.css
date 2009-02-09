@@ -60,7 +60,9 @@ h3 {
 /* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 a,
-#gDialog a {
+#gDialog a,
+.gButtonLink,
+.gButtonLink:hover {
   color: #6b8cb7;
   text-decoration: none;
   -moz-outline-style: none;
@@ -76,7 +78,6 @@ a:hover,
   float: right;
   font-size: .9em;
 }
-
 
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -759,6 +760,10 @@ form p.gError {
   display: inline-block;
   margin-bottom: 0;
   padding: .1em .3em;
+}
+
+.gButtonLink:hover {
+
 }
 
 .ui-icon-left .ui-icon {

@@ -68,6 +68,16 @@ $(document).ready(function() {
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
+  
+  // Add hover state for buttons
+  $(".ui-state-default").hover(
+	  function(){
+		  $(this).addClass("ui-state-hover");
+	  },
+	  function(){
+		  $(this).removeClass("ui-state-hover");
+	  }
+  );
 
 });
 
