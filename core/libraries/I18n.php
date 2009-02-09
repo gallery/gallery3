@@ -101,6 +101,10 @@ class I18n_Core {
     return $entry;
   }
 
+  public function getLocale() {
+    return $this->_config['default_locale'];
+  }
+
   private function lookup($locale, $message) {
     if (!isset($this->_cache[$locale])) {
       $this->_cache[$locale] = array();
@@ -108,6 +112,16 @@ class I18n_Core {
       foreach (Database::instance()
                ->select("key", "translation")
                ->from("incoming_translations")
+               ->where(array("locale" => $locale))
+               ->get()
+               ->as_array() as $row) {
+        $this->_cache[$locale][$row->key] = unserialize($row->translation);
+      }
+
+      // Override incoming with outgoing...
+      foreach (Database::instance()
+               ->select("key", "translation")
+               ->from("outgoing_translations")
                ->where(array("locale" => $locale))
                ->get()
                ->as_array() as $row) {

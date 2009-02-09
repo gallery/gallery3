@@ -140,6 +140,18 @@ class core_installer {
                    KEY `locale_key` (`locale`, `key`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE `outgoing_translations` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `key` binary(16) NOT NULL,
+                   `locale` char(10) NOT NULL,
+                   `message` text NOT NULL,
+                   `translation` text,
+                   `base_revision` int(9) DEFAULT NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`key`, `locale`),
+                   KEY `locale_key` (`locale`, `key`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $db->query("CREATE TABLE `sessions` (
                   `session_id` varchar(127) NOT NULL,
                   `last_activity` int(10) UNSIGNED NOT NULL,
@@ -258,6 +270,7 @@ class core_installer {
     $db->query("DROP TABLE IF EXISTS `modules`;");
     $db->query("DROP TABLE IF EXISTS `themes`;");
     $db->query("DROP TABLE IF EXISTS `incoming_translations`;");
+    $db->query("DROP TABLE IF EXISTS `outgoing_translations`;");
     $db->query("DROP TABLE IF EXISTS `permissions`;");
     $db->query("DROP TABLE IF EXISTS `sessions`;");
     $db->query("DROP TABLE IF EXISTS `tasks`;");

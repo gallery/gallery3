@@ -21,12 +21,44 @@ class L10n_Client_Controller extends Controller {
   public function save($string) {
     access::verify_csrf();
 
+    $input = Input::instance();
+    $message = $input->post("l10n-message-source");
+    $translation = $input->post("l10n-edit-target");
+    $key = I18n::getMessageKey($message);
+    $locale = I18n::instance()->getLocale();
+
+    $entry = ORM::factory("outgoing_translation")
+      ->where(array("key" => $key,
+                    "locale" => $locale))
+      ->find();
+
+    if (!$entry->loaded) {
+      $entry->key = $key;
+      $entry->locale = $locale;
+      $entry->message = serialize($message);
+      $entry->base_revision = null;
+    }
+
+    $entry->translation = serialize($translation);
+
+    $entry_from_incoming = ORM::factory("incoming_translation")
+      ->where(array("key" => $key,
+                    "locale" => $locale))
+      ->find();
+
+    if (!$entry_from_incoming->loaded) {
+      $entry->base_revision = $entry_from_incoming->revision;
+    }
+
+    $entry->save();
+
     print json_encode(new stdClass());
   }
 
   private static function _l10n_client_form() {
     $form = new Forge("/l10n_client/save", "", "post", array("id" => "gL10nClientSaveForm"));
     $group = $form->group("l10n_message");
+    $group->hidden("l10n-message-source")->value("");
     $group->textarea("l10n-edit-target");
     $group->submit("l10n-edit-save")->value(t("Save translation"));
     // TODO(andy_st): Avoiding multiple submit buttons for now (hassle with jQuery form plugin).
@@ -53,16 +85,15 @@ class L10n_Client_Controller extends Controller {
       foreach ($calls as $call) {
         list ($message, $options) = $call;
         if (is_array($message)) {
-          // TODO: Translate each message. If it has a plural form, get
-          // the current locale's plural rules and all plural translations.
-          $options['count'] = 1;
-          $source = $message['one'];
-        } else {
-          $source = $message;
+          // TODO: Handle plural forms.
+          //   Translate each message. If it has a plural form, get
+          //   the current locale's plural rules and all plural translations.
+          continue;
         }
+        $source = $message;
         $translation = '';
         if (I18n::instance()->hasTranslation($message, $options)) {
-          $translation = I18n::instance()->hasTtranslation($message, $options);
+          $translation = I18n::instance()->translate($message, $options);
         }
         $string_list[] = array('source' => $source,
                                'translation' => $translation);

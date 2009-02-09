@@ -128,6 +128,7 @@ Gallery.behaviors.l10nClient = function(context) {
     var index = $('#l10n-client-string-select li').index(this);
 
     $('#l10n-client-string-editor .source-text').text(Gallery.l10nClient.getString(index, 'source'));
+    $("#gL10nClientSaveForm input[name='l10n-message-source']").val(Gallery.l10nClient.getString(index, 'source'));
     $('#gL10nClientSaveForm #l10n-edit-target').val(Gallery.l10nClient.getString(index, 'translation'));
 
     Gallery.l10nClient.selected = index;
@@ -173,6 +174,7 @@ Gallery.behaviors.l10nClient = function(context) {
         // Empty input fields.
         $('#l10n-client-string-editor .source-text').html('');
         $('#gL10nClientSaveForm #l10n-edit-target').val('');
+        $("#gL10nClientSaveForm input[name='l10n-message-source']").val('');
       },
       error: function(xmlhttp) {
         // TODO: Localize this message
