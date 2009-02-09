@@ -26,16 +26,21 @@ $(document).ready(function() {
 
   // Apply jQuery UI button css
   $("input[type=submit]").addClass("fg-button ui-state-default");
-  $("#gViewMenu ul.gMenu").addClass("fg-buttonset");
-  $("#gViewMenu ul.gMenu li a").addClass("fg-button ui-state-default ui-icon");
-  $("#gViewMenu ul.gMenu li:first a").addClass("ui-corner-left");
-  $("#gViewMenu ul.gMenu li:last a").addClass("ui-corner-right");
+  // Round view menu buttons
+  if ($("#gViewMenu").length) {
+    $("#gViewMenu ul.gMenu").addClass("fg-buttonset");
+    $("#gViewMenu ul.gMenu li a").addClass("fg-button ui-state-default ui-icon");
+    $("#gViewMenu ul.gMenu li:first a").addClass("ui-corner-left");
+    $("#gViewMenu ul.gMenu li:last a").addClass("ui-corner-right");
+  }
 
   // Short forms
   handleShortFormEvent(shortForms);
-  $(".gShortForm input[type=text]").addClass("ui-corner-left");
-  $(".gShortForm input[type=submit]").addClass("ui-corner-right");
-
+  if ($(".gShortForm").length) {
+    $(".gShortForm input[type=text]").addClass("ui-corner-left");
+    $(".gShortForm input[type=submit]").addClass("ui-corner-right");
+  }
+  
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
