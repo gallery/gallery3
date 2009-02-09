@@ -756,17 +756,19 @@ form p.gError {
 /* jQuery UI ThemeRoller butttons */
 
 .gButtonLink {
-  padding: .1em .6em;
+  display: inline-block;
+  margin-bottom: 0;
+  padding: .1em .3em;
 }
 
 .ui-icon-left .ui-icon {
   float: left;
-  margin-right: .4em;
+  margin-right: .3em;
 }
 
 .ui-icon-right .ui-icon {
   float: right;
-  margin-left: .4em;
+  margin-left: .3em;
 }
 
 /* STUFF THAT NEEDS A HOME */
