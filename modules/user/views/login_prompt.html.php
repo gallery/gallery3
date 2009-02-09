@@ -38,7 +38,7 @@
       </div>
     </li>
     <li>
-  <a href="#" id="gForgotPasswordLink"><?= t("Forgot your Password?") ?></a>
+      <a href="#" id="gForgotPasswordLink"><?= t("Forgot your Password?") ?></a>
     </li>
   </ul>
 </div>
