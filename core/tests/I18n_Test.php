@@ -32,7 +32,7 @@ class I18n_Test extends Unit_Test_Case {
       ->where("locale", "te_ST")
       ->delete_all();
 
-    $messages_de_DE = array(
+    $messages_te_ST = array(
         array('Hello world', 'Hallo Welt'),
         array(array('one' => 'One item has been added',
                     'other' => '%count elements have been added'),
@@ -40,12 +40,11 @@ class I18n_Test extends Unit_Test_Case {
                     'other' => '%count Elemente wurden hinzugefuegt.')),
         array('Hello %name, how are you today?', 'Hallo %name, wie geht es Dir heute?'));
 
-    foreach ($messages_de_DE as $data) {
+    foreach ($messages_te_ST as $data) {
       list ($message, $translation) = $data;
       $key = $message;
-      $key = is_array($key) ? array_shift($key) : $key;
       $entry = ORM::factory("incoming_translation");
-      $entry->key = md5($key, true);
+      $entry->key = I18n::getMessageKey($message);
       $entry->message = serialize($message);
       $entry->translation = serialize($translation);
       $entry->locale = 'te_ST';

@@ -48,11 +48,14 @@ function t2($singular, $plural, $count, $options=array()) {
 }
 
 class I18n_Core {
+  private static $_instance;
+
   private $_config = array();
+
+  private $_call_log = array();
 
   private $_cache = array();
 
-  private static $_instance;
 
   private function __construct($config) {
     $this->_config = $config;
@@ -81,10 +84,11 @@ class I18n_Core {
     $count = empty($options['count']) ? null : $options['count'];
     $values = $options;
     unset($values['locale']);
+    $this->log($message, $options);
 
     $entry = $this->lookup($locale, $message);
 
-    if (empty($entry)) {
+    if (null === $entry) {
       // Default to the root locale.
       $entry = $message;
       $locale = $this->_config['root_locale'];
@@ -111,15 +115,40 @@ class I18n_Core {
       }
     }
 
-    // If message is an array (plural forms), use the first form as message id.
-    $key = is_array($message) ? array_shift($message) : $message;
-    $key = md5($key, true);
+    $key = self::getMessageKey($message);
 
     if (isset($this->_cache[$locale][$key])) {
       return $this->_cache[$locale][$key];
     } else {
       return null;
     }
+  }
+
+  public function hasTranslation($message, $options=null) {
+    $locale = empty($options['locale']) ? $this->_config['default_locale'] : $options['locale'];
+    $count = empty($options['count']) ? null : $options['count'];
+    $values = $options;
+    unset($values['locale']);
+    $this->log($message, $options);
+
+    $entry = $this->lookup($locale, $message);
+
+    if (null === $entry) {
+      return false;
+    } else if (!is_array($entry)) {
+      return $entry !== '';
+    } else {
+      $plural_key = self::get_plural_key($locale, $count);
+      return isset($entry[$plural_key])
+        && $entry[$plural_key] !== null
+        && $entry[$plural_key] !== '';
+    }
+  }
+
+  public static function getMessageKey($message) {
+    // If message is an array (plural forms), use the first form as message id.
+    $key = is_array($message) ? array_shift($message) : $message;
+    return md5($key, true);
   }
 
   private function interpolate($locale, $string, $values) {
@@ -155,6 +184,15 @@ class I18n_Core {
       list ($plural_key, $string) = each($entry);
       return $string;
     }
+  }
+
+  private function log($message, $options) {
+    $key = self::getMessageKey($message);
+    isset($this->_call_log[$key]) or $this->_call_log[$key] = array($message, $options);
+  }
+
+  public function getCallLog() {
+    return $this->_call_log;
   }
 
   private static function get_plural_key($locale, $count) {

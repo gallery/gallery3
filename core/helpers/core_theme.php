@@ -39,6 +39,14 @@ class core_theme_Core {
               "</script>";
       $buf .= html::script("core/js/fullsize.js");
     }
+
+    if (Session::instance()->get("l10n_mode", false)) {
+      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
+        url::file("core/css/l10n_client.css") . "\" />";
+      $buf .= html::script("lib/jquery.cookie.js");
+      $buf .= html::script("core/js/l10n_client.js");
+    }
+
     return $buf;
   }
 
@@ -63,10 +71,15 @@ class core_theme_Core {
   }
 
   static function page_bottom($theme) {
+    $output = '';
+    if (Session::instance()->get("l10n_mode", false)) {
+      $output .= L10n_Client_Controller::l10n_form();
+    }
     if (Session::instance()->get("profiler", false)) {
       $profiler = new Profiler();
       $profiler->render();
     }
+    return $output;
   }
 
   static function admin_page_bottom($theme) {
