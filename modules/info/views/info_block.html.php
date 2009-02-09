@@ -21,12 +21,5 @@
       <td><a href="#"><?= $item->owner->name ?></a></td>
     </tr>
     <? endif ?>
-    <tr>
-      <td colspan="2" class="toggle">
-        <a href="#">more \/</a>
-      </td>
-    </tr>
   </tbody>
 </table>
-
-
