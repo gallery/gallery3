@@ -43,7 +43,7 @@ class I18n_Test extends Unit_Test_Case {
     foreach ($messages_te_ST as $data) {
       list ($message, $translation) = $data;
       $entry = ORM::factory("incoming_translation");
-      $entry->key = I18n::getMessageKey($message);
+      $entry->key = I18n::get_message_key($message);
       $entry->message = serialize($message);
       $entry->translation = serialize($translation);
       $entry->locale = 'te_ST';

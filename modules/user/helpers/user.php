@@ -29,7 +29,7 @@ class user_Core {
     $group = $form->group("edit_user")->label(t("Edit User"));
     $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
     $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
-    self::add_locale_dropdown($group, $user);
+    self::_add_locale_dropdown($group, $user);
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
       ->matches($group->password);
@@ -48,7 +48,7 @@ class user_Core {
     $group->inputs["name"]->error_messages(
       "in_use", t("There is already a user with that name"));
     $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
-    self::add_locale_dropdown($group, $user);
+    self::_add_locale_dropdown($group, $user);
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
       ->matches($group->password);
@@ -71,14 +71,14 @@ class user_Core {
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("gEmail");
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    self::add_locale_dropdown($group);
+    self::_add_locale_dropdown($group);
     $group->submit("")->value(t("Add User"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
     return $form;
   }
 
-  private static function add_locale_dropdown(&$form, $user=null) {
+  private static function _add_locale_dropdown(&$form, $user=null) {
     $available_locales = locale::available();
     asort($available_locales, SORT_LOCALE_STRING);
     $locales['none'] = t("Language Preference");

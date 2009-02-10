@@ -24,8 +24,8 @@ class L10n_Client_Controller extends Controller {
     $input = Input::instance();
     $message = $input->post("l10n-message-source");
     $translation = $input->post("l10n-edit-target");
-    $key = I18n::getMessageKey($message);
-    $locale = I18n::instance()->getLocale();
+    $key = I18n::get_message_key($message);
+    $locale = I18n::instance()->locale();
 
     $entry = ORM::factory("outgoing_translation")
       ->where(array("key" => $key,
@@ -78,7 +78,7 @@ class L10n_Client_Controller extends Controller {
   }
 
   public static function l10n_form() {
-    $calls = I18n::instance()->getCallLog();
+    $calls = I18n::instance()->call_log();
 
     if ($calls) {
       $string_list = array();
@@ -92,7 +92,7 @@ class L10n_Client_Controller extends Controller {
         }
         $source = $message;
         $translation = '';
-        if (I18n::instance()->hasTranslation($message, $options)) {
+        if (I18n::instance()->has_translation($message, $options)) {
           $translation = I18n::instance()->translate($message, $options);
         }
         $string_list[] = array('source' => $source,

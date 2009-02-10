@@ -55,7 +55,7 @@ class I18n_Core {
 
   private function __construct($config) {
     $this->_config = $config;
-    $this->setLocale($config['default_locale']);
+    $this->locale($config['default_locale']);
   }
 
   public static function instance($config=null) {
@@ -70,13 +70,16 @@ class I18n_Core {
     return self::$_instance;
   }
 
-  public function setLocale($locale) {
-    $this->_config['default_locale'] = $locale;
-    // Attempt to set PHP's locale as well (for number formatting, collation, etc.)
-    // TODO: See G2 for better fallack code.
-    $locale_prefs = array($locale);
-    $locale_prefs[] = 'en_US';
-    setlocale(LC_ALL, $locale_prefs);
+  public function locale($locale=null) {
+    if ($locale) {
+      $this->_config['default_locale'] = $locale;
+      // Attempt to set PHP's locale as well (for number formatting, collation, etc.)
+      // TODO: See G2 for better fallack code.
+      $locale_prefs = array($locale);
+      $locale_prefs[] = 'en_US';
+      setlocale(LC_ALL, $locale_prefs);
+    }
+    return $this->_config['default_locale'];
   }
 
   /**
@@ -110,10 +113,6 @@ class I18n_Core {
     return $entry;
   }
 
-  public function getLocale() {
-    return $this->_config['default_locale'];
-  }
-
   private function lookup($locale, $message) {
     if (!isset($this->_cache[$locale])) {
       $this->_cache[$locale] = array();
@@ -138,7 +137,7 @@ class I18n_Core {
       }
     }
 
-    $key = self::getMessageKey($message);
+    $key = self::get_message_key($message);
 
     if (isset($this->_cache[$locale][$key])) {
       return $this->_cache[$locale][$key];
@@ -147,7 +146,7 @@ class I18n_Core {
     }
   }
 
-  public function hasTranslation($message, $options=null) {
+  public function has_translation($message, $options=null) {
     $locale = empty($options['locale']) ? $this->_config['default_locale'] : $options['locale'];
     $count = empty($options['count']) ? null : $options['count'];
     $values = $options;
@@ -168,7 +167,7 @@ class I18n_Core {
     }
   }
 
-  public static function getMessageKey($message) {
+  public static function get_message_key($message) {
     // If message is an array (plural forms), use the first form as message id.
     $key = is_array($message) ? array_shift($message) : $message;
     return md5($key, true);
@@ -210,11 +209,11 @@ class I18n_Core {
   }
 
   private function log($message, $options) {
-    $key = self::getMessageKey($message);
+    $key = self::get_message_key($message);
     isset($this->_call_log[$key]) or $this->_call_log[$key] = array($message, $options);
   }
 
-  public function getCallLog() {
+  public function call_log() {
     return $this->_call_log;
   }
 

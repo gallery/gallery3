@@ -27,7 +27,7 @@ class user_event_Core {
     $locale = user::active()->locale;
     if (!empty($locale)) {
       // TODO(andy_st): Check session data as well.
-      I18n::instance()->setLocale($locale);
+      I18n::instance()->locale($locale);
     }
   }
 }
