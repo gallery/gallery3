@@ -30,7 +30,7 @@ class Admin_Languages_Controller extends Admin_Controller {
       ->label(t("Please select a language"));
     $group->dropdown("locale_selection")
       ->options($locales)
-      ->selected(module::get_var('core', 'default_locale'));
+      ->selected(module::get_var("core", "default_locale"));
     $group->submit("save")->value(t("Save settings"));
 
     $view->content->form = $form;
@@ -40,7 +40,7 @@ class Admin_Languages_Controller extends Admin_Controller {
 
   public function save() {
     $locales = locale::available();
-    $selected_locale = $this->input->post('locale_selection');
+    $selected_locale = $this->input->post("locale_selection");
     if (!isset($locales[$selected_locale])) {
       message::error(t("Invalid selection"));
     } else {
