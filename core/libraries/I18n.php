@@ -55,6 +55,7 @@ class I18n_Core {
 
   private function __construct($config) {
     $this->_config = $config;
+    $this->setLocale($config['default_locale']);
   }
 
   public static function instance($config=null) {
@@ -71,6 +72,11 @@ class I18n_Core {
 
   public function setLocale($locale) {
     $this->_config['default_locale'] = $locale;
+    // Attempt to set PHP's locale as well (for number formatting, collation, etc.)
+    // TODO: See G2 for better fallack code.
+    $locale_prefs = array($locale);
+    $locale_prefs[] = 'en_US';
+    setlocale(LC_ALL, $locale_prefs);
   }
 
   /**

@@ -36,7 +36,6 @@ class Admin_Controller extends Controller {
       $controller_name = "dashboard";
     }
     $controller_name = "Admin_{$controller_name}_Controller";
-
     if ($args) {
       $method = array_shift($args);
     } else {
