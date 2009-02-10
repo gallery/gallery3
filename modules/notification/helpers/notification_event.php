@@ -23,12 +23,12 @@ class notification_event_Core {
   }
 
   static function item_created($item) {
-      notification::send_item_add($item);
+    notification::send_item_add($item);
   }
 
   static function item_before_delete($item) {
     notification::send_item_deleted($item);
- 
+
     if (notification::is_watching($item)) {
       notification::remove_watch($item);
     }
