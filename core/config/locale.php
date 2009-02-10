@@ -40,15 +40,7 @@ $config['timezone'] = '';
  * The locale of the built-in localization messages (locale of strings in translate() calls).
  * This can't be changed easily, unless all localization strings are replaced in all source files
  * as well.
+ * Although the actual root is "en_US", the configured root is "en" that all en locales inherit the
+ * built-in strings.
  */
 $config['root_locale'] = 'en';
-
-/**
- * The default locale of this installation.
- */
-$config['default_locale'] = 'en_US';
-
-/**
- * The path to the folder with translation files.
- */
-$config['locale_dir'] = VARPATH . 'locale/';

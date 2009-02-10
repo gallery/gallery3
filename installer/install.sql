@@ -143,7 +143,7 @@ CREATE TABLE `items` (
   KEY `type` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `items` VALUES (NULL,1234166308,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1234166308,0,NULL,1,1);
+INSERT INTO `items` VALUES (NULL,1234232381,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1234232381,0,NULL,1,1);
 DROP TABLE IF EXISTS `items_tags`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -300,12 +300,13 @@ CREATE TABLE `users` (
   `guest` tinyint(1) default '0',
   `hash` char(32) default NULL,
   `url` varchar(255) default NULL,
+  `locale` char(10) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `users` VALUES (1,'guest','Guest User','MGLY6511e6a900d20a0d74e270e059120353',0,0,NULL,0,1,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL);
+INSERT INTO `users` VALUES (1,'guest','Guest User','[oS\\615de701682051a9970409c02c94ca94',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
 DROP TABLE IF EXISTS `vars`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -316,6 +317,6 @@ CREATE TABLE `vars` (
   `value` text,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `vars` VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','graphics_toolkit','imagemagick'),(7,'core','graphics_toolkit_path','/usr/bin'),(8,'core','blocks_dashboard_sidebar','a:4:{i:1010288539;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:1869509477;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:695550396;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1828086635;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(9,'core','blocks_dashboard_center','a:4:{i:184470340;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:111465099;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:1801799843;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:1081490389;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(10,'core','version','3.0'),(11,'comment','spam_caught','0');
+INSERT INTO `vars` VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:4:{i:373668224;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:838141216;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:26528;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1914449606;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:4:{i:551308471;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:412910748;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:1418841915;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:690142318;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');

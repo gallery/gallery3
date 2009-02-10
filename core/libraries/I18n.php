@@ -56,7 +56,6 @@ class I18n_Core {
 
   private $_cache = array();
 
-
   private function __construct($config) {
     $this->_config = $config;
   }
@@ -64,10 +63,17 @@ class I18n_Core {
   public static function instance($config=null) {
     if (self::$_instance == NULL || isset($config)) {
       $config = isset($config) ? $config : Kohana::config('locale');
+      if (empty($config['default_locale'])) {
+        $config['default_locale'] = module::get_var('core', 'default_locale');
+      }
       self::$_instance = new I18n_Core($config);
     }
 
     return self::$_instance;
+  }
+
+  public function setLocale($locale) {
+    $this->_config['default_locale'] = $locale;
   }
 
   /**

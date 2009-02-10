@@ -35,6 +35,7 @@ class user_installer {
                    `guest` BOOLEAN default 0,
                    `hash` char(32) default NULL,
                    `url` varchar(255) default NULL,
+                   `locale` char(10) default NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`hash`),
                    UNIQUE KEY(`name`))

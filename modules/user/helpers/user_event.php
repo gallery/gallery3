@@ -23,5 +23,11 @@ class user_event_Core {
    */
   static function gallery_ready() {
     user::load_user();
+
+    $locale = user::active()->locale;
+    if (!empty($locale)) {
+      // TODO(andy_st): Check session data as well.
+      I18n::instance()->setLocale($locale);
+    }
   }
 }
