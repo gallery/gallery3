@@ -64,28 +64,39 @@ class core_theme_Core {
   }
 
   static function admin_head($theme) {
+    $buf = "";
     if (Session::instance()->get("debug")) {
-      return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
+      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/debug.css") . "\" />";
     }
+
+    if (Session::instance()->get("l10n_mode", false)) {
+      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
+        url::file("core/css/l10n_client.css") . "\" />";
+      $buf .= html::script("lib/jquery.cookie.js");
+      $buf .= html::script("core/js/l10n_client.js");
+    }
+
+    return $buf;
   }
 
   static function page_bottom($theme) {
-    $output = '';
-    if (Session::instance()->get("l10n_mode", false)) {
-      $output .= L10n_Client_Controller::l10n_form();
-    }
     if (Session::instance()->get("profiler", false)) {
       $profiler = new Profiler();
       $profiler->render();
     }
-    return $output;
+    if (Session::instance()->get("l10n_mode", false)) {
+      return L10n_Client_Controller::l10n_form();
+    }
   }
 
   static function admin_page_bottom($theme) {
     if (Session::instance()->get("profiler", false)) {
       $profiler = new Profiler();
       $profiler->render();
+    }
+    if (Session::instance()->get("l10n_mode", false)) {
+      return L10n_Client_Controller::l10n_form();
     }
   }
 }
