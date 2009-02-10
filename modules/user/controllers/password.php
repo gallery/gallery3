@@ -54,13 +54,14 @@ class Password_Controller extends Controller {
     }
 
     if ($valid) {
-      $user->hash = md5("$user->id; $user->name; $user->full_name; $user->login_count; $user->last_login");
+      $user->hash = md5("$user->id; $user->name; $user->full_name; " .
+                        "$user->login_count; $user->last_login");
       $user->save();
       $message = new View("reset_password.html");
       $message->url = url::abs_site("password/do_reset?key=$user->hash");
       $message->name = $user->full_name;
       $message->title = t("Password Reset Request");
-      
+
       Sendmail::factory()
         ->to($user->email)
         ->subject(t("Password Reset Request"))
