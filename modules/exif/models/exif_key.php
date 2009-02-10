@@ -17,28 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class exif_installer {
-  static function install() {
-    $version = module::get_version("exif");
-
-    if ($version == 0) {
-      $db = Database::instance();
-      $db->query("CREATE TABLE IF NOT EXISTS `exif_keys` (
-                   `id` int(9) NOT NULL auto_increment,
-                   `item_id` int(9) NOT NULL,
-                   `name` varchar(64) NOT NULL,
-                   `summary` boolean NOT NULL,
-                   `value` varchar(255) NOT NULL,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`item_id`, `summary`, `name`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-      module::set_version("exif", 1);
-    }
-  }
-
-  static function uninstall() {
-    $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `exif_keys`;");
-    module::delete("exif");
-  }
+class Exif_Key_Model extends ORM {
 }
