@@ -22,192 +22,69 @@
  * This is the API for handling locales.
  */
 class locale_Core {
+  private static $locales;
+
   /**
    * Return the list of available locales.
    */
   static function available() {
-    $locales = array();
-    list ($supported_languages, $default_Country) = self::_get_language_data();
-    foreach ($supported_languages as $language_tag => $country_locales) {
-      foreach ($country_locales as $country_tag => $entry) {
-        $locales[$language_tag . '_' . $country_tag] =
-          $entry['description'];
-      }
+    if (empty(self::$locales)) {
+      self::_init_language_data();
     }
 
-    return $locales;
+    return self::$locales;
   }
 
-  private static function _get_language_data() {
-    static $supported_languages = array();
-    static $default_country = array();
+  // TODO(andy_st): Might want to add a localizable language name as well.
+  private static function _init_language_data() {
+    $l->af_ZA = 'Afrikaans';                            // Afrikaans
+    $l->ar_SA = '&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;'; // Arabic
+    $l->bg_BG = '&#x0411;&#x044a;&#x043b;&#x0433;&#x0430;&#x0440;&#x0441;&#x043a;&#x0438;'; // Bulgarian
+    $l->ca_ES = 'Catalan';                              // Catalan
+    $l->cs_CZ = '&#x010c;esky';                         // Czech
+    $l->da_DK = 'Dansk';                                // Danish
+    $l->de_DE = 'Deutsch';                              // German
+    $l->el_GR = 'Greek';                                // Greek
+    $l->en_GB = 'English (UK)';                         // English (UK)
+    $l->en_US = 'English (US)';                         // English (US)
+    $l->es_AR = 'Espa&#241;ol (AR)';                    // Spanish (AR)
+    $l->es_ES = 'Espa&#241;ol';                         // Spanish (ES)
+    $l->es_MX = 'Espa&#241;ol (MX)';                    // Spanish (MX)
+    $l->et_EE = 'Eesti';                                // Estonian
+    $l->eu_ES = 'Euskara';                              // Basque
+    $l->fa_IR = '&#1601;&#1575;&#1585;&#1587;&#1610;';  // Farsi
+    $l->fi_FI = 'Suomi';                                // Finnish
+    $l->fr_FR = 'Fran&#231;ais';                        // French
+    $l->ga_IE = 'Gaeilge';                              // Irish
+    $l->he_IL = '&#1506;&#1489;&#1512;&#1497;&#1514;';  // Hebrew
+    $l->hu_HU = 'Magyar';                               // Hungarian
+    $l->is_IS = 'Icelandic';                            // Icelandic
+    $l->it_IT = 'Italiano';                             // Italian
+    $l->ja_JP = '&#x65e5;&#x672c;&#x8a9e;';             // Japanese
+    $l->ko_KR = '&#xd55c;&#xad6d;&#xb9d0;';             // Korean
+    $l->lt_LT = 'Lietuvi&#371;';                        // Lithuanian
+    $l->lv_LV = 'Latvie&#353;u';                        // Latvian
+    $l->nl_NL = 'Nederlands';                           // Dutch
+    $l->no_NO = 'Norsk bokm&#229;l';                    // Norwegian
+    $l->pl_PL = 'Polski';                               // Polish
+    $l->pt_BR = 'Portugu&#234;s Brasileiro';            // Portuguese (BR)
+    $l->pt_PT = 'Portugu&#234;s';                       // Portuguese (PT)
+    $l->ro_RO = 'Rom&#226;n&#259;';                     // Romanian
+    $l->ru_RU = '&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;'; // Russian
+    $l->sk_SK = 'Sloven&#269;ina';                      // Slovak
+    $l->sl_SI = 'Sloven&#353;&#269;ina';                // Slovenian
+    $l->sr_CS = 'Srpski';                               // Serbian
+    $l->sv_SE = 'Svenska';                              // Swedish
+    $l->tr_TR = 'T&#252;rk&#231;e';                     // Turkish
+    $l->uk_UA = 'Ð£ÐºÑÐ°ÑÐ½ÑÑÐºÐ°';     // Ukrainian
+    $l->vi_VN = 'Ti&#7871;ng Vi&#7879;t';               // Vietnamese
+    $l->zh_CN = '&#31616;&#20307;&#20013;&#25991;';     // Chinese (CN)
+    $l->zh_TW = '&#32321;&#39636;&#20013;&#25991;';     // Chinese (TW)
+    asort($l, SORT_LOCALE_STRING);
+    self::$locales = $l;
+  }
 
-    // TODO(andy_st): Might want to add a localizable language name as well.
-    if (empty($supported_languages)) {
-      /* English */
-      $supported_languages['en']['US']['description'] = 'English (US)';
-      $supported_languages['en']['GB']['description'] = 'English (UK)';
-      $default_country['en'] = 'US';
-
-      /* Afrikaans */
-      $supported_languages['af']['ZA']['description'] = 'Afrikaans';
-      $default_country['af'] = 'ZA';
-
-      /* Catalan */
-      $supported_languages['ca']['ES']['description'] = 'Catalan';
-      $default_country['ca'] = 'ES';
-
-      /* Czech */
-      $supported_languages['cs']['CZ']['description'] = '&#x010c;esky';
-      $default_country['cs'] = 'CZ';
-
-      /* Danish */
-      $supported_languages['da']['DK']['description'] = 'Dansk';
-      $default_country['da'] = 'DK';
-
-      /* German */
-      $supported_languages['de']['DE']['description'] = 'Deutsch';
-      $default_country['de'] = 'DE';
-
-      /* Spanish */
-      $supported_languages['es']['ES']['description'] = 'Espa&#241;ol';
-      $supported_languages['es']['MX']['description'] = 'Espa&#241;ol (MX)';
-      $supported_languages['es']['AR']['description'] = 'Espa&#241;ol (AR)';
-      $default_country['es'] = 'ES';
-
-      /* Estonian */
-      $supported_languages['et']['EE']['description'] = 'Eesti';
-      $default_country['et'] = 'EE';
-
-      /* Basque */
-      $supported_languages['eu']['ES']['description'] = 'Euskara';
-      $default_country['eu'] = 'ES';
-
-      /* French */
-      $supported_languages['fr']['FR']['description'] = 'Fran&#231;ais';
-      $default_country['fr'] = 'FR';
-
-      /* Irish */
-      $supported_languages['ga']['IE']['description'] = 'Gaeilge';
-      $default_country['ga'] = 'IE';
-
-      /* Greek */
-      $supported_languages['el']['GR']['description'] = 'Greek';
-      $default_country['el'] = 'GR';
-
-      /* Icelandic */
-      $supported_languages['is']['IS']['description'] = 'Icelandic';
-      $default_country['is'] = 'IS';
-
-      /* Italian */
-      $supported_languages['it']['IT']['description'] = 'Italiano';
-      $default_country['it'] = 'IT';
-
-      /* Latvian */
-      $supported_languages['lv']['LV']['description'] = 'Latvie&#353;u';
-      $default_country['lv'] = 'LV';
-
-      /* Lithuanian */
-      $supported_languages['lt']['LT']['description'] = 'Lietuvi&#371;';
-      $default_country['lt'] = 'LT';
-
-      /* Hungarian */
-      $supported_languages['hu']['HU']['description'] = 'Magyar';
-      $default_country['hu'] = 'HU';
-
-      /* Dutch */
-      $supported_languages['nl']['NL']['description'] = 'Nederlands';
-      $default_country['nl'] = 'NL';
-
-      /* Norwegian */
-      $supported_languages['no']['NO']['description'] = 'Norsk bokm&#229;l';
-      $default_country['no'] = 'NO';
-
-      /* Polish */
-      $supported_languages['pl']['PL']['description'] = 'Polski';
-      $default_country['pl'] = 'PL';
-
-      /* Portuguese */
-      $supported_languages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
-      $supported_languages['pt']['PT']['description'] = 'Portugu&#234;s';
-      $default_country['pt'] = 'PT';
-
-      /* Romanian */
-      $supported_languages['ro']['RO']['description'] = 'Rom&#226;n&#259;';
-      $default_country['ro'] = 'RO';
-
-      /* Slovak */
-      $supported_languages['sk']['SK']['description'] = 'Sloven&#269;ina';
-      $default_country['sk'] = 'SK';
-
-      /* Slovenian */
-      $supported_languages['sl']['SI']['description'] = 'Sloven&#353;&#269;ina';
-      $default_country['sl'] = 'SI';
-
-      /* Serbian */
-      $supported_languages['sr']['CS']['description'] = 'Srpski';
-      $default_country['sr'] = 'CS';
-
-      /* Finnish */
-      $supported_languages['fi']['FI']['description'] = 'Suomi';
-      $default_country['fi'] = 'FI';
-
-      /* Swedish */
-      $supported_languages['sv']['SE']['description'] = 'Svenska';
-      $default_country['sv'] = 'SE';
-
-      /* Ukrainian */
-      $supported_languages['uk']['UA']['description'] = 'Ð£ÐºÑÐ°ÑÐ½ÑÑÐºÐ°';
-      $default_country['uk'] = 'UA';
-
-      /* Vietnamese */
-      $supported_languages['vi']['VN']['description'] = 'Ti&#7871;ng Vi&#7879;t';
-      $default_country['vi'] = 'VN';
-
-      /* Turkish */
-      $supported_languages['tr']['TR']['description'] = 'T&#252;rk&#231;e';
-      $default_country['tr'] = 'TR';
-
-      /* Bulgarian */
-      $supported_languages['bg']['BG']['description'] =
-        '&#x0411;&#x044a;&#x043b;&#x0433;&#x0430;&#x0440;&#x0441;&#x043a;&#x0438;';
-      $default_country['bg'] = 'BG';
-
-      /* Russian */
-      $supported_languages['ru']['RU']['description'] =
-        '&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;';
-      $default_country['ru'] = 'RU';
-
-      /* Chinese */
-      $supported_languages['zh']['CN']['description'] = '&#31616;&#20307;&#20013;&#25991;';
-      $supported_languages['zh']['TW']['description'] = '&#32321;&#39636;&#20013;&#25991;';
-      $default_country['zh'] = 'CN';
-
-      /* Korean */
-      $supported_languages['ko']['KR']['description'] = '&#xd55c;&#xad6d;&#xb9d0;';
-      $default_country['ko'] = 'KR';
-
-      /* Japanese */
-      $supported_languages['ja']['JP']['description'] = '&#x65e5;&#x672c;&#x8a9e;';
-      $default_country['ja'] = 'JP';
-
-      /* Arabic */
-      $supported_languages['ar']['SA']['description'] =
-        '&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;';
-      $supported_languages['ar']['SA']['right-to-left'] = true;
-      $default_country['ar'] = 'SA';
-
-      /* Hebrew */
-      $supported_languages['he']['IL']['description'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
-      $supported_languages['he']['IL']['right-to-left'] = true;
-      $default_country['he'] = 'IL';
-
-      /* Farsi */
-      $supported_languages['fa']['IR']['description'] = '&#1601;&#1575;&#1585;&#1587;&#1610;';
-      $supported_languages['fa']['IR']['right-to-left'] = true;
-      $default_country['fa'] = 'IR';
-    }
-
-    return array($supported_languages, $default_country);
+  static function is_rtl($locale) {
+    return in_array($locale, array("he_IL", "fa_IR", "ar_SA"));
   }
 }

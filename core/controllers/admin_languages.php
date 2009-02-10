@@ -19,35 +19,31 @@
  */
 class Admin_Languages_Controller extends Admin_Controller {
   public function index() {
-    $view = new Admin_View("admin.html");
-    $view->content = new View("admin_languages.html");
-
-    $locales = locale::available();
-    asort($locales, SORT_LOCALE_STRING);
-
-    $form = new Forge("admin/languages/save", "", "post", array("id" => "gLanguageSettingsForm"));
-    $group = $form->group("settings")
-      ->label(t("Please select a language"));
-    $group->dropdown("locale_selection")
-      ->options($locales)
-      ->selected(module::get_var("core", "default_locale"));
-    $group->submit("save")->value(t("Save settings"));
-
-    $view->content->form = $form;
-
-    print $view;
+    $v = new Admin_View("admin.html");
+    $v->content = new View("admin_languages.html");
+    $v->content->form = $this->_languages_form();
+    print $v;
   }
 
   public function save() {
-    $locales = locale::available();
-    $selected_locale = $this->input->post("locale_selection");
-    if (!isset($locales[$selected_locale])) {
-      message::error(t("Invalid selection"));
-    } else {
-      module::set_var("core", "default_locale", $selected_locale);
+    $form = $this->_languages_form();
+    if ($form->validate()) {
+      module::set_var("core", "default_locale", $form->choose_language->locale->value);
       message::success(t("Settings saved"));
     }
     url::redirect("admin/languages");
+  }
+
+  private function _languages_form() {
+    $locales = locale::available();
+    $form = new Forge("admin/languages/save", "", "post", array("id" => "gLanguageSettingsForm"));
+    $group = $form->group("choose_language")
+      ->label(t("Please select a language"));
+    $group->dropdown("locale")
+      ->options($locales)
+      ->selected(module::get_var("core", "default_locale"));
+    $group->submit("save")->value(t("Save settings"));
+    return $form;
   }
 }
 
