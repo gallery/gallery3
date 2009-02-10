@@ -49,11 +49,8 @@ function t2($singular, $plural, $count, $options=array()) {
 
 class I18n_Core {
   private static $_instance;
-
   private $_config = array();
-
   private $_call_log = array();
-
   private $_cache = array();
 
   private function __construct($config) {
