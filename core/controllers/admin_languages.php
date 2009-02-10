@@ -25,14 +25,14 @@ class Admin_Languages_Controller extends Admin_Controller {
     $locales = locale::available();
     asort($locales, SORT_LOCALE_STRING);
 
-    $form = new Forge("/admin/languages/save", "", "post", array("id" => "gLanguageSettingsForm"));
+    $form = new Forge("admin/languages/save", "", "post", array("id" => "gLanguageSettingsForm"));
     $group = $form->group("settings")
       ->label(t("Please select a language"));
     $group->dropdown("locale_selection")
       ->options($locales)
       ->selected(module::get_var('core', 'default_locale'));
     $group->submit("save")->value(t("Save settings"));
-    
+
     $view->content->form = $form;
 
     print $view;
