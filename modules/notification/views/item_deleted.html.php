@@ -4,7 +4,7 @@
   <title><?= $subject ?> </title>
 </head>
 <body>
-  <h2><?= sprintf(t("%s: %s was deleted from %s"), $type, $item_title, $parent_title) ?></h2>
+  <h2><?= sprintf(t("%s: %s was removed from %s"), $type, $item_title, $parent_title) ?></h2>
   <table>
     <tr>
     <td colspan="2"><?= sprintf(t("To view the changed album %s use the link below."), $parent_title) ?></td>

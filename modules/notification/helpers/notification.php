@@ -84,7 +84,9 @@ class notification {
 
   static function send_item_updated($old, $new) {
     $body = new View("item_updated.html");
-    $body->subject = sprintf(t("Item %s updated"), $old->title);
+    $body->subject = $old->is_album() ?
+      t("Album %title updated", array("title" => $old->title)) :
+      t("Photo %title updated", array("title" => $old->title));
     $body->type = ucfirst($old->type);
     $body->item_title = $old->title;
     $body->description = $item->description;
@@ -97,7 +99,11 @@ class notification {
 
   static function send_item_add($item) {
     $body = new View("item_added.html");
-    $body->subject = sprintf(t("Item added to %s"), $item->parent()->title);
+    $body->subject = $item->is_album() ?
+      t("Album %title added to %parent_title",
+        array("title" => $item->title, "parent_title" => $item->parent()->title)) :
+      t("Photo %title added to %parent_title",
+        array("title" => $item->title, "parent_title" => $item->parent()->title));
     $body->parent_title = $item->parent()->title;
     $body->type = $item->type;
     $body->item_title = $item->title;
@@ -110,7 +116,12 @@ class notification {
   static function send_item_deleted($item) {
     $parent = $item->parent();
     $body = new View("item_deleted.html");
-    $body->subject = sprintf(t("Item %s deleted from %s"), $item->title, $parent->title);
+    $body->subject =
+      $item->is_album() ?
+      t("Album %title removed from %parent_title",
+        array("title" => $item->title, "parent_title" => $item->parent()->title)) :
+      t("Photo %title removed from %parent_title",
+        array("title" => $item->title, "parent_title" => $item->parent()->title));
     $body->parent_title = $parent->title;
     $body->type = $item->type;
     $body->item_title = $item->title;
@@ -122,7 +133,9 @@ class notification {
   static function send_comment_published($comment) {
     $item = $comment->item();
     $body = new View("comment_published.html");
-    $body->subject = sprintf(t("A new comment for %s was published"), $item->title);
+    $body->subject = $item->is_album() ?
+      t("A new comment was published for album %title", array("title" => $item->title)) :
+      t("A new comment was published for photo %title", array("title" => $item->title));
     $body->text = $comment->text;
     if (!empty($comment->author_id)) {
       $author = ORM::factory("user", $comment->author_id);
