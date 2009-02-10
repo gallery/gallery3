@@ -721,20 +721,20 @@ form p.gError {
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gDialog {
-  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  font-size: 1.2em;
-  text-align: left;
-}
-
 .ui-widget-overlay {
   background: #000;
   opacity: .7;
   filter: Alpha(Opacity=70);
 }
 
-#gDialog form {
-  width: 500px;
+#gDialog {
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+}
+
+#gDialog li {
+	padding-left: 0;
 }
 
 #gDialog form input[type="text"],
@@ -742,8 +742,11 @@ form p.gError {
   width: 100%;
 }
 
-#gDialog #gLoginForm {
-  width: 300px;
+#gDialog #gLoginForm,
+#gDialog #gAddUserForm,
+#gDialog #gAddGroupForm {
+  margin: 0 auto;
+  width: 270px;
 }
 
 #gDialog fieldset {
@@ -760,10 +763,6 @@ form p.gError {
   display: inline-block;
   margin-bottom: 0;
   padding: .1em .3em;
-}
-
-.gButtonLink:hover {
-
 }
 
 .ui-icon-left .ui-icon {
