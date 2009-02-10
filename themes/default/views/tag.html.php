@@ -8,11 +8,7 @@
 
 <ul id="gAlbumGrid">
   <? foreach ($children as $i => $child): ?>
-  <? $album_class = ""; ?>
-  <? if ($child->is_album()): ?>
-  <? $album_class = "gAlbum "; ?>
-  <? endif ?>
-  <li class="gItem <?= $album_class ?>">
+  <li class="gItem <?= $child->is_album() ? "gAlbum" : "" ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
       <img id="gPhotoId-<?= $child->id ?>" class="gThumbnail"
