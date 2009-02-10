@@ -118,7 +118,7 @@ class core_menu_Core {
                         ->url(url::site("admin/graphics")))
                ->append(Menu::factory("link")
                         ->id("languages")
-                        ->label(t("Language Settings"))
+                        ->label(t("Languages"))
                         ->url(url::site("admin/languages"))))
       ->append(Menu::factory("link")
                ->id("modules")
