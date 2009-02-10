@@ -56,7 +56,7 @@ class L10n_Client_Controller extends Controller {
   }
 
   private static function _l10n_client_form() {
-    $form = new Forge("/l10n_client/save", "", "post", array("id" => "gL10nClientSaveForm"));
+    $form = new Forge("l10n_client/save", "", "post", array("id" => "gL10nClientSaveForm"));
     $group = $form->group("l10n_message");
     $group->hidden("l10n-message-source")->value("");
     $group->textarea("l10n-edit-target");
@@ -69,7 +69,7 @@ class L10n_Client_Controller extends Controller {
   }
 
   private static function _l10n_client_search_form() {
-    $form = new Forge("/l10n_client/search", "", "post", array("id" => "gL10nSearchForm"));
+    $form = new Forge("l10n_client/search", "", "post", array("id" => "gL10nSearchForm"));
     $group = $form->group("l10n_search");
     $group->input("l10n-search")->id("gL10nSearch");
     $group->submit("l10n-search-filter-clear")->value(t("X"));
@@ -99,11 +99,11 @@ class L10n_Client_Controller extends Controller {
                                'translation' => $translation);
       }
 
-      return View::factory('l10n_client.html',
-                           array('string_list' => $string_list,
-                                 'l10n_form' => self::_l10n_client_form(),
-                                 'l10n_search_form' => self::_l10n_client_search_form()))
-        ->render();
+      $v = new View('l10n_client.html');
+      $v->string_list = $string_list;
+      $v->l10n_form = self::_l10n_client_form();
+      $v->l10n_search_form = self::_l10n_client_search_form();
+      return $v;
     }
 
     return '';
