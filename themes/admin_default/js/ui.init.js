@@ -49,26 +49,38 @@ $(document).ready(function(){
 
 });
 
-function editInplace(element){
-	// close already open inplace edit forms
+function closeEditInPlaceForms() {
+  // closes currently open inplace edit forms
 	if ($("#gRenameTagForm").length) {
 		var li = $("#gRenameTagForm").parent();
 		$("#gRenameTagForm").parent().html($("#gRenameTagForm").parent().data("revert"));
-		//li.$(".gEditable"); // TODO: would be good if below statements could only execute within li
-    $(".gEditable").bind("click", editInplace);
-    $(".dialogLink").bind("click", handleDialogEvent);
+    li.height("");
+    $(".gEditable", li).bind("click", editInplace);
+    $(".gDialogLink", li).bind("click", handleDialogEvent);
   }
+}
+
+function editInplace(element){
+	closeEditInPlaceForms();
 	
+  // creat edit form
 	var tag_id = $(this).attr('id').substr(5);
+  var tag_name = $(this).text();
+  var tag_width = $(this).width();
 	$(this).parent().data("revert", $(this).parent().html());
 	var form = '<form id="gRenameTagForm" method="post" action="/gallery3/index.php/admin/tags/rename/' + tag_id + '">';
 	form += '<input id="name" name="name" type="text" class="textbox" value="' + tag_name + '" />';
 	form += '<input type="submit" class="submit" value="Save" />';
 	form += '<span>or</span> <a href="#">cancel</a>';
 	form += '</form>';
-	
+  
+  // add edit form
 	$(this).parent().html(form);
-	$("#gRenameTagForm .textbox").focus();
+  $("#gRenameTagForm #name")
+    .width(tag_width+30)
+    .focus();
+  $("#gRenameTagForm").parent().height('1.6em');
+  $("#gRenameTagForm a").bind("click", closeEditInPlaceForms);
 }
 
 function handlePanelEvent(event) {
