@@ -683,8 +683,7 @@ form p.gError {
 #gSiteMenu:after,
 #gBreadcrumbs:after,
 #gAlbumGrid:after,
-#gPager:after,
-.gButtonLink:after {
+#gPager:after {
   clear: both;
   content: ".";
   display: block;
