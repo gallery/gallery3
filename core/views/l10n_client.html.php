@@ -5,7 +5,7 @@
     <div class="label strings"><h2><?= t("Page Text") ?></h2></div>
     <div class="label source"><h2><?= t("Source") ?></div>
     <div class="label translation"><h2><?= t("Translation to %language",
-                                             array("%language" => "TODO")) ?></h2></div>
+                                             array("language" => locale::display_name())) ?></h2></div>
   </div>
   <div id="l10n-client-string-select">
     <ul class="string-list">

@@ -84,6 +84,15 @@ class locale_Core {
     self::$locales = $l;
   }
 
+  static function display_name($locale=null) {
+    if (empty(self::$locales)) {
+      self::_init_language_data();
+    }
+    $locale or $locale = I18n::instance()->locale();
+
+    return self::$locales->$locale;
+  }
+
   static function is_rtl($locale) {
     return in_array($locale, array("he_IL", "fa_IR", "ar_SA"));
   }
