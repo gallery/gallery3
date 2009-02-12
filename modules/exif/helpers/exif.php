@@ -26,7 +26,7 @@ class exif_Core {
   protected static $exif_keys;
   
   public static function extract($item) {
-    // Only try to extract exif from photos
+    // Only try to extract EXIF from photos
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {
       require_once(MODPATH . "exif/lib/exif.php");
       $exif_raw = read_exif_data_raw($item->file_path(), false);

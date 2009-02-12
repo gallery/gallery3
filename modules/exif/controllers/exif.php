@@ -19,7 +19,7 @@
  */
 class Exif_Controller extends Controller {
   /**
-   * Display the Exif data an existing comment.
+   * Display the EXIF data for an item.
    */
   public function show($item_id) {
     $item = ORM::factory("item", $item_id);
