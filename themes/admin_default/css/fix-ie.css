@@ -1,7 +1,10 @@
 /**
- * Fix display in IE 7 and earlier
+ * Fix display in IE
  */
-#gHeader {
+#gHeader,
+#gAdminMenu,
+#gGroupAdmin,
+.gAvailable .gBlock {
   zoom: 1;
 }
 

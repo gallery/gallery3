@@ -166,7 +166,8 @@ li.gGroup {
 #gHeader:after,
 #gAdminCommentsMenu:after,
 #gGroupAdmin:after,
-.gSelected:after {
+.gSelected:after,
+.gAvailable .gBlock:after {
   clear: both;
   content: ".";
   display: block;

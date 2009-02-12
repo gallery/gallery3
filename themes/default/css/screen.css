@@ -397,7 +397,7 @@ form p.gError {
 #gHeader #gQuickSearchForm {
   clear: right;
   float: right;
-  margin: 1.4em 20px;
+  margin: 1em 20px 0 0;
 }
 
 #gHeader #gQuickSearchForm input[type='text'] {
@@ -523,6 +523,7 @@ form p.gError {
 
 #gSiteMenu {
   border-bottom: 1px solid #ccc;
+  clear: none;
   padding: 0 20px 0;
 }
 
@@ -530,12 +531,15 @@ form p.gError {
   margin-bottom: 0;
 }
 
+#gViewMenu {
+  margin-bottom: 1em;
+}
+
 #gViewMenu a {
   background-repeat: no-repeat;
-  background-position: 10px 50%;
-  display: block;
-  height: 22px;
-  width: 29px;
+  background-position: 50% 50%;
+  height: 28px !important;
+  width: 43px !important;
 }
 
 #gViewMenu #gAlbumLink {
@@ -683,7 +687,8 @@ form p.gError {
 #gSiteMenu:after,
 #gBreadcrumbs:after,
 #gAlbumGrid:after,
-#gPager:after {
+#gPager:after,
+#gViewMenu:after {
   clear: both;
   content: ".";
   display: block;
@@ -756,22 +761,40 @@ form p.gError {
   display: none;
 }
 
-/* jQuery UI ThemeRoller butttons */
+/* jQuery UI ThemeRoller buttons */
 
 .gButtonLink {
   display: inline-block;
-  margin-bottom: 0;
-  padding: .1em .3em;
+  margin: 0 4px 0 0;
+  padding: .2em .4em;
+  position: relative;
+  outline: 0;
+  zoom: 1;
 }
+
+.gToolbar {
+}
+
+.gToolbar .gButtonSet {
+  padding-left: 1px;
+}
+
+.gToolbar .gButtonSet li {
+  float: left;
+}
+
+.gToolbar .gButtonLink {
+  margin: 0;
+ }
 
 .ui-icon-left .ui-icon {
   float: left;
-  margin-right: .3em;
+  margin-right: .2em;
 }
 
 .ui-icon-right .ui-icon {
   float: right;
-  margin-left: .3em;
+  margin-left: .2em;
 }
 
 /* STUFF THAT NEEDS A HOME */

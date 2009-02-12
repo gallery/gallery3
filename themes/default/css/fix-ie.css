@@ -1,9 +1,14 @@
 /**
- * Fix display in IE 7 and earlier
+ * Fix display in IE
  */
 #gSiteMenu,
 #gBreadcrumbs,
 #gAlbumGrid,
-#gPager {
+#gPager,
+#gViewMenu {
   zoom: 1;
+}
+
+#gViewMenu a {
+  width: 52px !important;
 }

@@ -24,15 +24,26 @@ $(document).ready(function() {
     speed: 'fast'
   });
 
-  // Apply jQuery UI button css
-  $("input[type=submit]").addClass("fg-button ui-state-default");
+  // Apply jQuery UI button css to submit inputs
+  $("input[type=submit]").addClass("ui-state-default");
+  
   // Round view menu buttons
   if ($("#gViewMenu").length) {
-    $("#gViewMenu ul.gMenu").addClass("fg-buttonset");
-    $("#gViewMenu ul.gMenu li a").addClass("fg-button ui-state-default ui-icon");
-    $("#gViewMenu ul.gMenu li:first a").addClass("ui-corner-left");
-    $("#gViewMenu ul.gMenu li:last a").addClass("ui-corner-right");
+    $("#gViewMenu ul").removeClass("gMenu").removeClass("sf-menu");
+    $("#gViewMenu a").addClass("ui-icon ui-state-default");
+    $("#gViewMenu ul li:first a").addClass("ui-corner-left");
+    $("#gViewMenu ul li:last a").addClass("ui-corner-right");
   }
+
+    // Add hover state for buttons
+  $(".ui-state-default").hover(
+	  function(){
+		  $(this).addClass("ui-state-hover");
+	  },
+	  function(){
+		  $(this).removeClass("ui-state-hover");
+	  }
+  );
 
   // Short forms
   handleShortFormEvent(shortForms);
@@ -68,16 +79,6 @@ $(document).ready(function() {
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
-  
-  // Add hover state for buttons
-  $(".ui-state-default").hover(
-	  function(){
-		  $(this).addClass("ui-state-hover");
-	  },
-	  function(){
-		  $(this).removeClass("ui-state-hover");
-	  }
-  );
 
 });
 

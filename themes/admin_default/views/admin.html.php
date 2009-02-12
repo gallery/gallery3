@@ -6,16 +6,20 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>G3: Admin Dashboard</title>
     <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
-    <link rel="stylesheet" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
-        type="text/css" media="screen,projection">
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
-        type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
-        type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= url::file("themes/default/css/screen.css") ?>"
-        type="text/css" media="screen,projection">
-    <link rel="stylesheet" href="<?= $theme->url("css/screen.css") ?>"
-        type="text/css" media="screen,projection">
+    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
+        media="screen,projection" />
+    <link rel="stylesheet" type="text/css" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
+        media="screen,projection" />
+    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
+        media="screen,projection" />
+    <link rel="stylesheet" type="text/css" href="<?= url::file("themes/default/css/screen.css") ?>"
+        media="screen,projection" />
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
+        media="screen,projection" />
+		<!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
+        media="screen,print,projection" />
+   <![endif]-->
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
