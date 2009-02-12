@@ -25,7 +25,7 @@ $(document).ready(function() {
   });
 
   // Apply jQuery UI button css to submit inputs
-  $("input[type=submit]").addClass("ui-state-default");
+  $("input[type=submit]").addClass("ui-state-default ui-corner-all");
   
   // Round view menu buttons
   if ($("#gViewMenu").length) {
@@ -34,16 +34,6 @@ $(document).ready(function() {
     $("#gViewMenu ul li:first a").addClass("ui-corner-left");
     $("#gViewMenu ul li:last a").addClass("ui-corner-right");
   }
-
-    // Add hover state for buttons
-  $(".ui-state-default").hover(
-	  function(){
-		  $(this).addClass("ui-state-hover");
-	  },
-	  function(){
-		  $(this).removeClass("ui-state-hover");
-	  }
-  );
 
   // Short forms
   handleShortFormEvent(shortForms);
@@ -64,12 +54,23 @@ $(document).ready(function() {
     // fit inside their container
     sizedImage();
 
+    // Collapse comments form, insert button to expand
+    if ($("#gAddCommentForm").length) {
+      var showCommentForm = '<a href="#add_comment_form" id="showCommentForm" class="gButtonLink ui-corner-all ui-icon-left ui-state-default right"><span class="ui-icon ui-icon-comment"></span>Add a comment</a>';
+      $("#gAddCommentForm").hide();
+      $("#gComments").prepend(showCommentForm);
+      $("#showCommentForm").click(function(){
+        $("#gAddCommentForm").show(1000);
+      });
+    }
+
     // Add scroll effect for links to named anchors
     $.localScroll({
       queue: true,
       duration: 1000,
       hash: true
     });
+
   }
 
   // Apply modal dialogs
@@ -79,6 +80,16 @@ $(document).ready(function() {
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
+
+  // Add hover state for buttons
+  $(".ui-state-default").hover(
+	  function(){
+		  $(this).addClass("ui-state-hover");
+	  },
+	  function(){
+		  $(this).removeClass("ui-state-hover");
+	  }
+  );
 
 });
 

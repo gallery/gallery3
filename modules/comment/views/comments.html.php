@@ -1,5 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<a name="comments"></a>
 <ul id="gComments">
   <? foreach ($comments as $comment): ?>
   <li id="gComment-<?= $comment->id ?>">
@@ -21,3 +20,4 @@
   </li>
   <? endforeach ?>
 </ul>
+<a name="add_comment_form"></a>

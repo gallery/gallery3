@@ -22,6 +22,7 @@ class Block_Core {
   public $css_id = null;
   public $id = null;
   public $title = null;
+  public $anchor = null;
 
   public function __toString() {
     return View::factory("block.html", get_object_vars($this))->__toString();

@@ -13,9 +13,10 @@ function ajaxify_comment_form() {
       if (data.result == "success") {
         $.get(data.resource, function(data, textStatus) {
           $("#gComments .gBlockContent ul:first").append("<li>"+data+"</li>");
-          $("#gComments .gBlockContent ul:first li:last").hide().slideDown();
+          $("#gComments .gBlockContent ul:first li:last").effect("highlight", {color: "#cfc"}, 8000);
+          $("#gAddCommentForm").hide(2000);
         });
       }
     }
   });
-};
+}

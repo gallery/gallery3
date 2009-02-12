@@ -27,6 +27,7 @@ class comment_theme_Core {
     $block = new Block;
     $block->css_id = "gComments";
     $block->title = t("Comments");
+    $block->anchor = t("comments");
 
     $view = new View("comments.html");
     $view->comments = ORM::factory("comment")

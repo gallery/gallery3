@@ -463,13 +463,14 @@ form p.gError {
 }
 
 #gContent #gComments .gAuthor {
-  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  color: #999;
   height: 32px;
   line-height: 32px;
 }
 
 #gContent #gComments ul li div {
-  padding: 0 8px 8px 32px;
+  padding: 0 8px 8px 43px;
 }
 
 #gContent #gComments ul li #gRecaptcha {
@@ -481,7 +482,13 @@ form p.gError {
 }
 
 #gContent #gComments .gAvatar {
+  height: 32px;
   margin-right: .4em;
+  width: 32px;
+}
+
+#gContent #gAddCommentForm {
+  margin-top: 2em;
 }
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
