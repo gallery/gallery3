@@ -32,31 +32,46 @@ class core_menu_Core {
 
     $item = $theme->item();
 
-    if ($item && access::can("edit", $item)) {
+    if (user::active()->admin || ($item && access::can("edit", $item))) {
       $menu->append($options_menu = Menu::factory("submenu")
-        ->id("options_menu")
-        ->label(t("Options"))
-        ->append(Menu::factory("dialog")
-                 ->id("edit_item")
-                 ->label($item->is_album() ? t("Edit album") : t("Edit photo"))
-                 ->url(url::site("form/edit/{$item->type}s/$item->id"))));
+                    ->id("options_menu")
+                    ->label(t("Options")));
 
-      // @todo Move album options menu to the album quick edit pane
-      // @todo Create resized item quick edit pane menu
-      if ($item->is_album()) {
+      if ($item && access::can("edit", $item)) {
         $options_menu
           ->append(Menu::factory("dialog")
-                   ->id("add_item")
-                   ->label(t("Add a photo"))
-                   ->url(url::site("form/add/albums/$item->id?type=photo")))
-          ->append(Menu::factory("dialog")
-                   ->id("add_album")
-                   ->label(t("Add an album"))
-                   ->url(url::site("form/add/albums/$item->id?type=album")))
-          ->append(Menu::factory("dialog")
-                   ->id("edit_permissions")
-                   ->label(t("Edit permissions"))
-                   ->url(url::site("permissions/browse/$item->id")));
+                   ->id("edit_item")
+                   ->label($item->is_album() ? t("Edit album") : t("Edit photo"))
+                   ->url(url::site("form/edit/{$item->type}s/$item->id")));
+        
+        // @todo Move album options menu to the album quick edit pane
+        // @todo Create resized item quick edit pane menu
+        if ($item->is_album()) {
+          $options_menu
+            ->append(Menu::factory("dialog")
+                     ->id("add_item")
+                     ->label(t("Add a photo"))
+                     ->url(url::site("form/add/albums/$item->id?type=photo")))
+            ->append(Menu::factory("dialog")
+                     ->id("add_album")
+                     ->label(t("Add an album"))
+                     ->url(url::site("form/add/albums/$item->id?type=album")))
+            ->append(Menu::factory("dialog")
+                     ->id("edit_permissions")
+                     ->label(t("Edit permissions"))
+                     ->url(url::site("permissions/browse/$item->id")));
+        }
+      }
+
+      if (user::active()->admin) {
+        $options_menu
+          ->append(Menu::factory("link")
+                   ->id("l10n_mode")
+                   ->label(Session::instance()->get("l10n_mode", false)
+                           ? t("Disable translation mode")
+                           : t("Enable translation mode"))
+                   ->url(url::site("l10n_client/toggle_l10n_mode?csrf=" .
+                                   access::csrf_token())));
       }
     }
 

@@ -20,6 +20,7 @@
 class L10n_Client_Controller extends Controller {
   public function save($string) {
     access::verify_csrf();
+    user::active()->admin or access::forbidden();
 
     $input = Input::instance();
     $message = $input->post("l10n-message-source");
@@ -53,6 +54,16 @@ class L10n_Client_Controller extends Controller {
     $entry->save();
 
     print json_encode(new stdClass());
+  }
+
+  public function toggle_l10n_mode() {
+    access::verify_csrf();
+    
+    $session = Session::instance();
+    $session->set("l10n_mode",
+                  !$session->get("l10n_mode", false));
+
+    url::redirect(url::site("albums/1"));
   }
 
   private static function _l10n_client_form() {

@@ -440,13 +440,6 @@
                 <?= html::anchor("scaffold/session/debug?value=1", "on") ?> <b>off</b>
                 <? endif ?>
               </li>
-              <li> Translation Mode:
-                <? if (Session::instance()->get("l10n_mode", false)): ?>
-                <b>on</b> <?= html::anchor("scaffold/session/l10n_mode?value=0", "off") ?>
-                <? else: ?>
-                <?= html::anchor("scaffold/session/l10n_mode?value=1", "on") ?> <b>off</b>
-                <? endif ?>
-              </li>
             </ul>
           </div>
 
