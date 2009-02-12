@@ -71,8 +71,8 @@ class graphics_Core {
    */
   static function remove_rules($module_name) {
     $db = Database::instance();
-    $result = $db->query("DELETE FROM `graphics_rules` WHERE `module_name` = '$module_name'");
-    if ($result->count()) {
+    $status = $db->delete("graphics_rules", array("module_name" => $module_name));
+    if (count($status)) {
       self::mark_dirty(true, true);
     }
   }
@@ -225,12 +225,16 @@ class graphics_Core {
    * Mark thumbnails and resizes as dirty.  They will have to be rebuilt.
    */
   static function mark_dirty($thumbs, $resizes) {
-    $db = Database::instance();
-    if ($thumbs) {
-      $db->query("UPDATE `items` SET `thumb_dirty` = 1");
-    }
-    if ($resizes) {
-      $db->query("UPDATE `items` SET `resize_dirty` = 1");
+    if ($thumbs || $resizes) {
+      $db = Database::instance();
+      $fields = array();
+      if ($thumbs) {
+        $fields["thumb_dirty"] = 1;
+      }
+      if ($resizes) {
+        $fields["resize_dirty"] = 1;
+      }
+      $db->update("items", $fields, true);
     }
 
     $count = self::find_dirty_images_query()->count();
