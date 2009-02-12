@@ -168,9 +168,8 @@ class I18n_Core {
   }
 
   public static function get_message_key($message) {
-    // If message is an array (plural forms), use the first form as message id.
-    $key = is_array($message) ? array_shift($message) : $message;
-    return md5($key, true);
+    $as_string = is_array($message) ? implode('|', $message) : $message;
+    return md5($as_string, true);
   }
 
   private function interpolate($locale, $string, $values) {

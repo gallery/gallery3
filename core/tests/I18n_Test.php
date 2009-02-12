@@ -64,15 +64,15 @@ class I18n_Test extends Unit_Test_Case {
 
   public function translate_plural_other_test() {
     $result = $this->i18n->translate(array('one' => 'One item has been added',
-                                     'other' => '%count items have been added.'),
-                               array('count' => 5));
+                                           'other' => '%count elements have been added'),
+                                     array('count' => 5));
     $this->assert_equal('5 Elemente wurden hinzugefuegt.', $result);
   }
 
   public function translate_plural_one_test() {
     $result = $this->i18n->translate(array('one' => 'One item has been added',
-                                     'other' => '%count items have been added.'),
-                               array('count' => 1));
+                                           'other' => '%count elements have been added'),
+                                     array('count' => 1));
     $this->assert_equal('Ein Element wurde hinzugefuegt.', $result);
   }
 
