@@ -24,9 +24,6 @@ $(document).ready(function() {
     speed: 'fast'
   });
 
-  // Apply jQuery UI button css to submit inputs
-  $("input[type=submit]").addClass("ui-state-default ui-corner-all");
-  
   // Round view menu buttons
   if ($("#gViewMenu").length) {
     $("#gViewMenu ul").removeClass("gMenu").removeClass("sf-menu");
@@ -39,9 +36,12 @@ $(document).ready(function() {
   handleShortFormEvent(shortForms);
   if ($(".gShortForm").length) {
     $(".gShortForm input[type=text]").addClass("ui-corner-left");
-    $(".gShortForm input[type=submit]").addClass("ui-corner-right");
+    $(".gShortForm input[type=submit]").addClass("ui-state-default ui-corner-right");
   }
   
+  // Apply jQuery UI button css to submit inputs
+  $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
+
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
