@@ -19,11 +19,12 @@
  */
 class exif_theme_Core {
   static function sidebar_bottom($theme) {
-    if ($theme->item()->is_photo()) {
+    $item = $theme->item();
+    if ($item && $item->is_photo()) {
       $view = new View("exif_sidebar.html");
       
       $csrf = access::csrf_token();
-      $view->url = url::site("exif/show/{$theme->item()->id}?csrf=$csrf");
+      $view->url = url::site("exif/show/{$item->id}?csrf=$csrf");
       return $view;
     }
     return null;
