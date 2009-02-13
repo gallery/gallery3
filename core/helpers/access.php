@@ -422,7 +422,7 @@ class access_Core {
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     $db->query("ALTER TABLE `$cache_table` ADD `$field` TINYINT(2) NOT NULL DEFAULT 0");
     $db->query("ALTER TABLE `access_intents` ADD `$field` BOOLEAN DEFAULT NULL");
-    $db->query("UPDATE `access_intents` SET `$field` = 0 WHERE `item_id` = 1");
+    $db->update("access_intents", array($field => 0), array("item_id" => 1));
     ORM::factory("access_intent")->clear_cache();
   }
 
@@ -468,45 +468,35 @@ class access_Core {
     // access_caches table will already contain DENY values and we won't be able to overwrite
     // them according the rule above.  So mark every permission below this level as UNKNOWN so
     // that we can tell which permissions have been changed, and which ones need to be updated.
-    $db->query("UPDATE `items` SET `$field` = ? " .
-               "WHERE `left` >= $item->left " .
-               "AND `right` <= $item->right",
-               array(self::UNKNOWN));
+    $db->update("items", array($field => self::UNKNOWN),
+                array("left >=" => $item->left, "right <=" => $item->right));
 
-    $query = $db->query(
-      "SELECT `access_intents`.`$field`, `items`.`left`, `items`.`right`, `items`.`id` " .
-      "FROM `access_intents` JOIN (`items`) ON (`access_intents`.`item_id` = `items`.`id`) " .
-      "WHERE `left` >= $item->left " .
-      "AND `right` <= $item->right " .
-      "AND `type` = 'album' " .
-      "AND `access_intents`.`$field` IS NOT NULL " .
-      "ORDER BY `level` DESC ");
+    $query = ORM::factory("access_intent")
+      ->select(array("access_intents.$field", "items.left", "items.right", "items.id"))
+      ->join("items", "items.id", "access_intents.item_id")
+      ->where("left >=", $item->left)
+      ->where("right <=", $item->right)
+      ->where("type", "album")
+      ->where("access_intents.$field IS NOT", null)
+      ->orderby("level", "DESC")
+      ->find_all();
     foreach ($query as $row) {
       if ($row->$field == self::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
-        $db->query(
-          "UPDATE `items` SET `$field` = {$row->$field} " .
-          "WHERE `$field` = ? " .
-          "AND `left` >= $row->left " .
-          "AND `right` <= $row->right",
-          array(self::UNKNOWN));
+        $db->update("items", array($field => $row->$field),
+          array($field => self::UNKNOWN, "left >=" => $row->left, "right <=" => $row->right));
       } else if ($row->$field == self::DENY) {
         // DENY overwrites everything below it
-        $db->query(
-          "UPDATE `items` SET `$field` = {$row->$field} " .
-          "WHERE `left` >= $row->left " .
-          "AND `right` <= $row->right");
+        $db->update("items", array($field => $row->$field),
+                    array("left >=" => $row->left, "right <=" => $row->right));
       }
     }
 
     // Finally, if our intent is DEFAULT at this point it means that we were unable to find a
     // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
     // the hierarchy, and all of those are safe to change to ALLOW.
-    $db->query("UPDATE `items` SET `$field` = ? " .
-               "WHERE `$field` = ? " .
-               "AND `left` >= $item->left " .
-               "AND `right` <= $item->right",
-               array(self::ALLOW, self::UNKNOWN));
+    $db->update("items", array($field => self::ALLOW),
+                array($field => self::UNKNOWN, "left >=" => $item->left, "right <=" => $item->right));
   }
 
   /**
@@ -547,14 +537,14 @@ class access_Core {
 
     // With non-view permissions, each level can override any permissions that came above it
     // so start at the top and work downwards, overlaying permissions as we go.
-    $query = $db->query(
-      "SELECT `access_intents`.`$field`, `items`.`left`, `items`.`right` " .
-      "FROM `access_intents` JOIN (`items`) ON (`access_intents`.`item_id` = `items`.`id`) " .
-      "WHERE `left` >= $item->left " .
-      "AND `right` <= $item->right " .
-      "AND `type` = 'album' " .
-      "AND `$field` IS NOT NULL " .
-      "ORDER BY `level` ASC");
+    $query = ORM::factory("access_intent")
+      ->select(array("access_intents.$field", "items.left", "items.right"))
+      ->join("items", "items.id", "access_intents.item_id")
+      ->where("left >=", $item->left)
+      ->where("right <=", $item->right)
+      ->where("$field IS NOT", null)
+      ->orderby("level", "ASC")
+      ->find_all();
     foreach  ($query as $row) {
       $db->query(
         "UPDATE `access_caches` SET `$field` = {$row->$field} " .

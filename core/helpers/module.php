@@ -62,7 +62,7 @@ class module_Core {
     $module = ORM::factory("module")->where("name", $module_name)->find();
     if ($module->loaded) {
       $db = Database::instance();
-      $db->query("DELETE FROM `graphics_rules` WHERE module_name = '{$module->name}';");
+      $db->delete("graphics_rules", array("module_name" => $module->name));
       $module->delete();
 
       // We could delete the module vars here too, but it's nice to leave them around in case the
