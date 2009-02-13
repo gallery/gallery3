@@ -1,4 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<? // @todo Set hover on AlbumGrid list items for guest users ?>
 <div id="gInfo">
   <?= $theme->album_top() ?>
   <h1><?= $item->title ?></h1>

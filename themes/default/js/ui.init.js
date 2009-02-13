@@ -34,10 +34,8 @@ $(document).ready(function() {
 
   // Short forms
   handleShortFormEvent(shortForms);
-  if ($(".gShortForm").length) {
-    $(".gShortForm input[type=text]").addClass("ui-corner-left");
-    $(".gShortForm input[type=submit]").addClass("ui-state-default ui-corner-right");
-  }
+  $(".gShortForm input[type=text]").addClass("ui-corner-left");
+  $(".gShortForm input[type=submit]").addClass("ui-state-default ui-corner-right");
   
   // Apply jQuery UI button css to submit inputs
   $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
@@ -146,10 +144,12 @@ function shortFormInit(formID) {
 
   // Get the input ID and it's label text
   var labelValue = $(formID + " label:first").html();
-  var inputID = "#" + $(formID + " input[type='text']:first").attr("id");
+  var inputID = "#" + $(formID + " input[type=text]:first").attr("id");
 
   // Set the input value equal to label text
-  $(inputID).val(labelValue);
+  if ($(inputID).val() == "") {
+    $(inputID).val(labelValue);
+  }
 
   // Attach event listeners to the input
   $(inputID).bind("focus blur", function(e){

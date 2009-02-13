@@ -45,6 +45,10 @@ h1 {
   font-size: 1.7em;
 }
 
+#gSearchResults h1 {
+  margin-bottom: 1em;
+}
+
 h2 {
   font-size: 1.4em;
 }
@@ -115,7 +119,8 @@ fieldset {
 }
 
 #gHeader fieldset,
-#gSidebar fieldset {
+#gSidebar fieldset,
+.gShortForm fieldset {
   border: none;
 }
 
@@ -125,7 +130,8 @@ legend {
 }
 
 #gHeader legend,
-#gSidebar legend {
+#gSidebar legend,
+#gContent #gSearchForm legend {
   display: none;
 }
 
@@ -451,9 +457,6 @@ form p.gError {
 
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
-#gContent #gItem {
-}
-
 #gContent #gComments {
   margin-top: 2em;
 }
@@ -507,6 +510,11 @@ form p.gError {
 #gHeader #gLoginMenu li.first:before,
 #gFooter #gCredits li.first:before {
   content: "";
+}
+
+#gContent #gSearchResults {
+  margin-top: 1em;
+  padding-top: 1em;
 }
 
 /** *******************************************************************
