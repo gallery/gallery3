@@ -21,3 +21,14 @@ Event::add("system.ready", array("I18n", "instance"));
 Event::add("system.post_routing", array("theme", "load_themes"));
 Event::add("system.ready", array("module", "load_modules"));
 Event::add("system.post_routing", array("url", "parse_url"));
+
+// Override the cookie if we have a session id in the URL.
+// @todo This should probably be an event callback
+$input = Input::instance();
+if ($g3sid = $input->post("g3sid", $input->get("g3sid"))) {
+  $_COOKIE["g3sid"] = $g3sid;
+}
+
+if ($user_agent = $input->post("user_agent", $input->get("user_agent"))) {
+  Kohana::$user_agent = $user_agent;
+}
