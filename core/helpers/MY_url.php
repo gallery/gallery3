@@ -19,11 +19,18 @@
  */
 class url extends url_Core {
   static function site($uri, $protocol=false) {
+    if (($pos = strpos($uri, "?")) !== false) {
+      list ($uri, $query) = explode("?", $uri, 2);
+      $query = "?$query";
+    } else {
+      $query = "";
+    }
+
     list($controller, $arg1, $args) = explode("/", $uri, 3);
     if ($controller == "albums" || $controller == "photos") {
       $uri = ORM::factory("item", $arg1)->relative_path();
     }
-    return parent::site($uri, $protocol);
+    return parent::site($uri . $query, $protocol);
   }
 
   static function parse_url() {
