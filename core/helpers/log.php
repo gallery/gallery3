@@ -77,7 +77,7 @@ class log_Core {
     $log->message = $message;
     $log->severity = $severity;
     $log->html = $html;
-    $log->url = url::abs_current(true);
+    $log->url = substr(url::abs_current(true), 0, 255);
     $log->referer = request::referrer(null);
     $log->timestamp = time();
     if (module::is_installed("user")) {
