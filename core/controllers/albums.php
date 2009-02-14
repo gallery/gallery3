@@ -41,10 +41,13 @@ class Albums_Controller extends Items_Controller {
     $page = $this->input->get("page", "1");
     $children_count = $album->viewable()->children_count();
     $offset = ($page - 1) * $page_size;
+    $max_pages = max(ceil($children_count / $page_size), 1);
 
     // Make sure that the page references a valid offset
-    if ($page < 1 || $page > max(ceil($children_count / $page_size), 1)) {
-      Kohana::show_404();
+    if ($page < 1) {
+      url::redirect("albums/$album->id");
+    } else if ($page > $max_pages) {
+      url::redirect("albums/$album->id?page=$max_pages");
     }
 
     $template = new Theme_View("page.html", "album");
