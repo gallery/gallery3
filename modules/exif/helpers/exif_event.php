@@ -23,7 +23,7 @@ class exif_event_Core {
   }
 
   static function item_before_delete($item) {
-    ORM::factory("exif_data")
+    ORM::factory("exif_key")
       ->where("item_id", $item->id)
       ->delete_all();
   }
