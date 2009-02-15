@@ -121,49 +121,44 @@
         <?= $comment->text ?>
       </td>
       <td>
-        <ul>
-          <? if ($comment->state != "unpublished"): ?>
-          <li>
-            <a href="javascript:set_state('unpublished',<?=$comment->id?>)">
-              <?= t("Unapprove") ?>
-            </a>
-          </li>
-          <? endif ?>
-
-          <? if ($comment->state != "published"): ?>
-          <li>
-            <a href="javascript:set_state('published',<?=$comment->id?>)">
-              <?= t("Approve") ?>
-            </a>
-          </li>
-          <? endif ?>
-
-          <? if ($comment->state != "spam"): ?>
-          <li>
-            <a href="javascript:set_state('spam',<?=$comment->id?>)">
-              <?= t("Spam") ?>
-            </a>
-          </li>
-          <? endif ?>
-
-          <li>
-            <a href="javascript:reply(<?=$comment->id?>)">
-              <?= t("Reply") ?>
-            </a>
-          </li>
-
-          <li>
-            <a href="javascript:Edit(<?=$comment->id?>)">
-              <?= t("Edit") ?>
-            </a>
-          </li>
-
-          <li>
-            <a href="javascript:set_state('deleted',<?=$comment->id?>)">
-              <?= t("Delete") ?>
-            </a>
-          </li>
-        </ul>
+        <div class="gButtonSetVertical">
+        <? if ($comment->state != "unpublished"): ?>
+          <a href="javascript:set_state('unpublished',<?=$comment->id?>)"
+              class="gButtonLink ui-state-default ui-icon-left">
+            <span class="ui-icon ui-icon-check"></span>
+            <?= t("Unapprove") ?>
+          </a>
+        <? endif ?>
+        <? if ($comment->state != "published"): ?>
+          <a href="javascript:set_state('published',<?=$comment->id?>)"
+              class="gButtonLink ui-state-default ui-icon-left">
+            <span class="ui-icon ui-icon-check"></span>
+            <?= t("Approve") ?>
+          </a>
+        <? endif ?>
+        <? if ($comment->state != "spam"): ?>
+          <a href="javascript:set_state('spam',<?=$comment->id?>)"
+              class="gButtonLink ui-state-default ui-icon-left">
+            <span class="ui-icon ui-icon-cancel"></span>
+            <?= t("Spam") ?>
+          </a>
+        <? endif ?>
+          <a href="javascript:reply(<?=$comment->id?>)"
+              class="gButtonLink ui-state-default ui-icon-left">
+            <span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>
+            <?= t("Reply") ?>
+          </a>
+          <a href="javascript:Edit(<?=$comment->id?>)"
+              class="gButtonLink ui-state-default ui-icon-left">
+            <span class="ui-icon ui-icon-pencil"></span>
+            <?= t("Edit") ?>
+          </a>
+          <a href="javascript:set_state('deleted',<?=$comment->id?>)"
+              class="gButtonLink ui-state-default ui-icon-left">
+            <span class="ui-icon ui-icon-trash"></span>
+            <?= t("Delete") ?>
+          </a>
+        </div>
       </td>
     </tr>
     <? endforeach ?>

@@ -69,7 +69,7 @@
 #gHeader {
 	background-color: #e8e8e8;
 	border-bottom: 1px solid #ccc;
-	margin-top: 0;
+  margin-bottom: 20px;
 	padding: 0 20px;
 }
 
@@ -114,12 +114,50 @@
   background: none;
 }
 
+#gPhotoStream {
+  background-color: #e8e8e8;
+}
+
 #gPhotoStream .gBlockContent {
-  overflow: auto;
+
+}
+
+#gPhotoStream .gBlockContent ul {
+  border-right: 1px solid #e8e8e8;
+  height: 92px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+#gContent #gPhotoStream .gItem {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  float: left;
+  font-size: .7em;
+  height: 90px;
+  overflow: hidden;
+  text-align: center;
+  width: 90px;
 }
 
 #gSiteStatus {
 	margin-bottom: 0;
+}
+
+#gAdminCommentsMenu {
+  margin: 1em 0;
+}
+
+#gAdminCommentsMenu li {
+  float: left;
+}
+
+#gAdminCommentsMenu a {
+  margin: 0;
+  padding: .2em .6em;
 }
 
 #gAdminGraphics .gAvailable .gBlock {
@@ -195,4 +233,8 @@ li.gGroup {
 .ui-draggable,
 .ui-sortable {
   cursor: move;
+}
+
+.gButtonSetVertical a {
+  width: 8em;
 }

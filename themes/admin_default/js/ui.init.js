@@ -20,6 +20,21 @@ $(document).ready(function(){
     $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
 
+  if ($("#gPhotoStream").length) {
+    // Vertically align thumbs in photostream
+    $('.gItem').vAlign();
+  }
+
+    // Round view menu buttons
+  if ($("#gAdminCommentsMenu").length) {
+    $("#gAdminCommentsMenu ul").removeClass("gMenu").removeClass("sf-menu");
+    $("#gAdminCommentsMenu").addClass("gToolBar");
+    $("#gAdminCommentsMenu ul").addClass("gButtonSet");
+    $("#gAdminCommentsMenu a").addClass("gButtonLink ui-state-default");
+    $("#gAdminCommentsMenu ul li:first a").addClass("ui-corner-left");
+    $("#gAdminCommentsMenu ul li:last a").addClass("ui-corner-right");
+  }
+
   // Apply hide/show functionality on user admin view
   var panelLinks = $(".gPanelLink");
   for (i=0; i<panelLinks.length; i++) {
@@ -136,5 +151,23 @@ function togglePanel(element, on_success) {
   }
   return false;
 }
+
+// Vertically align a block element's content
+(function ($) {
+  $.fn.vAlign = function(container) {
+    return this.each(function(i){
+      if (container == null) {
+        container = 'div';
+      }
+      $(this).html("<" + container + ">" + $(this).html() + "</" + container + ">");
+      var el = $(this).children(container + ":first");
+      var elh = $(el).height();
+      var ph = $(this).height();
+      var nh = (ph - elh) / 2;
+      $(el).css('margin-top', nh);
+    });
+  };
+})(jQuery);
+
 
 
