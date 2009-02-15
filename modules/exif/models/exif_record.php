@@ -17,17 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class exif_event_Core {
-  static function item_created($item) {
-    exif::extract($item);
-  }
-
-  static function item_before_delete($item) {
-    ORM::factory("exif_key")
-      ->where("item_id", $item->id)
-      ->delete_all();
-    ORM::factory("exif_info")
-      ->where("item_id", $item->id)
-      ->delete_all();
-  }
+class Exif_Record_Model extends ORM {
 }

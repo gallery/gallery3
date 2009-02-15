@@ -32,6 +32,12 @@ class exif_installer {
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`item_id`, `summary`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+      $db->query("CREATE TABLE IF NOT EXISTS `exif_records` (
+                   `id` int(9) NOT NULL auto_increment,
+                   `item_id` int(9) NOT NULL,
+                   `dirty` BOOLEAN default 1,
+                   PRIMARY KEY (`id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("exif", 1);
     }
   }

@@ -19,12 +19,28 @@
  */
 class exif_task_Core {
   static function available_tasks() {
+    $db = Database::instance();
+
+    // Delete extra exif_records
+    $db->query(
+      "DELETE `exif_records`.* FROM `exif_records` " .
+      "LEFT JOIN `items` ON (`exif_records`.`item_id` = `items`.`id`) " .
+      "WHERE `items`.`id` IS NULL");
+
+    // Insert missing exif_records
+    $db->query(
+      "INSERT INTO `exif_records`(`item_id`) (" .
+      " SELECT `items`.`id` FROM `items` " .
+      " LEFT JOIN `exif_records` ON (`exif_records`.`item_id` = `items`.`id`) " .
+      " WHERE `exif_records`.`id` IS NULL)");
+
     list ($remaining, $total, $percent) = self::_get_stats();
     return array(Task_Definition::factory()
                  ->callback("exif_task::extract_exif")
                  ->name(t("Extract EXIF data"))
-                 ->description($remaining ?
-                               sprintf(t("EXIF data is available for %d%% of the images"), $percent)
+                 ->description($remaining
+                               ? t("%percent% of your photos need to be scanned for EXIF data",
+                                   array("percent" => $percent))
                                : t("EXIF data is up-to-date"))
                  ->severity($remaining ? log::WARNING : log::SUCCESS));
   }
@@ -33,9 +49,8 @@ class exif_task_Core {
     $completed = $task->get("completed", 0);
 
     $work = ORM::factory("item")
-      ->join("exif_keys", "items.id", "item_id", "LEFT")
-      ->where("items.type", "photo")
-      ->where("exif_keys.id", null)
+      ->join("exif_records", "items.id", "exif_records.item_id")
+      ->where("exif_records.dirty", 1)
       ->find();
     exif::extract($work);
     $completed++;
@@ -55,15 +70,9 @@ class exif_task_Core {
   }
 
   private static function _get_stats() {
-    $exif_count = ORM::factory("exif_key")
-      ->select("DISTINCT item_id")
-      ->find_all()
-      ->count();
-
-    $items_count = ORM::factory("item")
-      ->where("type", "photo")
-      ->count_all();
-    return array($exif_count -  $items_count, $items_count,
-                 round(100 * ($exif_count / $items_count)));
+    $missing_exif = ORM::factory("exif_record")->where("dirty", 1)->count_all();
+    $total_items = ORM::factory("item")->count_all();
+    return array($missing_exif, $total_items,
+                 round(100 * (($total_items - $missing_exif) / $total_items)));
   }
 }

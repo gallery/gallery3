@@ -22,10 +22,12 @@
  * This is the API for handling exif data.
  */
 class exif_Core {
- 
+
   protected static $exif_keys;
-  
+
   public static function extract($item) {
+    ORM::factory("exif_key")->where("item_id", $item->id)->delete_all();
+
     // Only try to extract EXIF from photos
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {
       require_once(MODPATH . "exif/lib/exif.php");
@@ -57,6 +59,13 @@ class exif_Core {
         }
       }
     }
+
+    $record = ORM::factory("exif_record")->where("item_id", $item->id)->find();
+    if (!$record->loaded) {
+      $record->item_id = $item->id;
+    }
+    $record->dirty = 0;
+    $record->save();
   }
 
   public static function get($item, $summary=true) {
@@ -71,10 +80,10 @@ class exif_Core {
     foreach ($keys as $key) {
       $exif[] = array("caption" => $definitions[$key->name][2], "value" => $key->value);
     }
-    
+
     return $exif;
   }
-  
+
 
   private static function _keys() {
     if (!isset(self::$exif_keys)) {
