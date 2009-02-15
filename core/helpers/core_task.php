@@ -24,10 +24,10 @@ class core_task_Core {
                  ->callback("core_task::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
                  ->description($dirty_count ?
-                               t2("You have one out-of-date photo",
-                                  "You have %count out-of-date photo",
+                               t2("You have one out of date photo",
+                                  "You have %count out of date photos",
                                   $dirty_count)
-                               : t("All your images are up to date"))
+                               : t("All your photos are up to date"))
                  ->severity($dirty_count ? log::WARNING : log::SUCCESS));
   }
 
