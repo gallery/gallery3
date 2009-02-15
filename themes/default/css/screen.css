@@ -365,9 +365,10 @@ form p.gError {
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
+	background-color: #e8e8e8;
   border-bottom: 1px solid #fff;
   font-size: .8em;
-  margin-bottom: 20px;
+  padding: 1em 20px 0 20px;
 }
 
 #gContent {
@@ -384,6 +385,7 @@ form p.gError {
 }
 
 #gFooter {
+	background-color: #e8e8e8;
   border-top: 1px solid #ccc;
   font-size: .8em;
   margin-top: 20px;
@@ -397,13 +399,14 @@ form p.gError {
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader #gLogo {
-  margin: 5px 10px 10px 20px;
+  float: left;
+  margin: -4px 10px 0 0;
 }
 
 #gHeader #gQuickSearchForm {
   clear: right;
   float: right;
-  margin: 1em 20px 0 0;
+  margin: 1em 0;
 }
 
 #gHeader #gQuickSearchForm input[type='text'] {
@@ -524,22 +527,21 @@ form p.gError {
 #gSiteMenu,
 #gBreadcrumbs,
 #gTagCloud ul {
-  font-size: 1.3em;
+  font-size: 1.2em;
 }
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader #gLoginMenu {
   float: right;
-  margin: 9px 20px 0 0;
 }
 
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSiteMenu {
-  border-bottom: 1px solid #ccc;
-  clear: none;
-  padding: 0 20px 0;
+  float: left;
+  margin-top: 20px;
+  padding: 0 20px 0 0;
 }
 
 #gSiteMenu ul {
@@ -588,6 +590,10 @@ form p.gError {
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gBreadcrumbs {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+  clear: both;
+  margin: 0 -20px;
   padding-left: 20px;
 }
 

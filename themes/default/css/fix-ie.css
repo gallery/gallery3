@@ -1,12 +1,26 @@
 /**
  * Fix display in IE
  */
+#gHeader,
 #gSiteMenu,
 #gBreadcrumbs,
 #gAlbumGrid,
 #gPager,
 #gViewMenu {
   zoom: 1;
+}
+
+#gHeader #gLogo {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+#gHeader #gSiteMenu {
+  margin-top: 28px;
+}
+
+#gHeader #gQuickSearchForm {
+  margin-bottom: 0;
 }
 
 #gViewMenu a {
