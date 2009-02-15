@@ -44,7 +44,9 @@
   <? $column_tag_count = 0 ?>
 
   <table id="gTagAdmin" class="gBlockContent">
-    <caption class="understate"><?= t("There are ".$tags->count()." tags") ?></caption>
+    <caption class="understate">
+      <?= t2("There is one tag", "There are %count tags", $tags->count()) ?>
+    </caption>
     <tr>
       <td>
         <? foreach ($tags as $i => $tag): ?>
@@ -59,12 +61,12 @@
               <td>
               <? $column_tag_count = 0 ?>
             <? endif ?>
-            
+
             </ul>
             <strong><?= $current_letter ?></strong>
             <ul>
           <? endif ?>
-    
+
           <li>
             <span id="gTag-<?= $tag->id ?>" class="gEditable"
                   title="<?= t("Click to edit this tag") ?>"><?= $tag->name ?></span>
@@ -72,7 +74,7 @@
             <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>" class="gDialogLink"
               title="<?= t("Delete this tag") ?>">X</a>
           </li>
-    
+
           <? $column_tag_count++ ?>
           <? $last_letter = $current_letter ?>
         <? endforeach /* $tags */ ?>
