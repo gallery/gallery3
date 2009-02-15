@@ -6,7 +6,7 @@
   </span>
 </a>
 
-<? if ($item->is_album() && graphics::can("rotate")): ?>
+<? if ($item->is_photo() && graphics::can("rotate")): ?>
 <a class="clockwise" href="<?= url::site("quick/rotate/$item->id/cw?csrf=" . access::csrf_token()) ?>"
   title="<?= t("Rotate 90 degrees clockwise") ?>">
   <span>
