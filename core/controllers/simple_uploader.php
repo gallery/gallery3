@@ -44,11 +44,12 @@ class Simple_Uploader_Controller extends Controller {
     $file_validation->add_rules("file", "upload::valid", "upload::type[gif,jpg,png]");
     if ($file_validation->validate()) {
       $temp_filename  = upload::save("file");
+      $title = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
       $photo = photo::create(
         $album,
         $temp_filename,
-        basename($temp_filename),
-        basename($temp_filename));
+        $title,
+        $title);
       log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
     }
   }
