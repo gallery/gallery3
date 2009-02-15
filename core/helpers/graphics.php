@@ -83,7 +83,11 @@ class graphics_Core {
    */
   static function generate($item) {
     if ($item->is_album()) {
-      $cover = $item->album_cover();
+      try {
+        $cover = $item->album_cover();
+      } catch (Exception $e) {
+        return;
+      }
       if (!$cover) {
         return;
       }
@@ -217,7 +221,7 @@ class graphics_Core {
   static function find_dirty_images_query() {
     return Database::instance()->query(
       "SELECT `id` FROM `items` " .
-      "WHERE (`thumb_dirty` = 1 AND (`type` <> 'album' OR `right` - `left` > 1))" .
+      "WHERE (`thumb_dirty` = 1 AND (`type` <> 'album' OR `album_cover_item_id` IS NOT NULL))" .
       "   OR (`resize_dirty` = 1 AND `type` = 'photo')");
   }
 
