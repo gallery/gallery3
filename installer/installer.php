@@ -34,22 +34,6 @@ class installer {
     return false;
   }
 
-  static function setup_var() {
-    $errors = array();
-    if (is_writable(VARPATH)) {
-      return;
-    }
-
-    if (is_writable(dirname(VARPATH)) && !mkdir(VARPATH)) {
-      $errors["Filesystem"] =
-        sprintf("The %s directory doesn't exist and can't be created", VARPATH);
-    }
-
-    if ($errors) {
-      throw new InstallException($errors);
-    }
-  }
-
   static function create_database_config($config) {
     $db_config_file = VARPATH . "database.php";
     ob_start();
@@ -95,7 +79,6 @@ class installer {
   }
 
   static function create_admin($config) {
-    $errors = array();
     $salt = "";
     for ($i = 0; $i < 4; $i++) {
       $char = mt_rand(48, 109);
@@ -106,11 +89,7 @@ class installer {
     $hashed_password = $salt . md5($salt . $password);
     if (mysql_query("UPDATE `users` SET `password` = '$hashed_password' WHERE `id` = 2")) {
     } else {
-      $errors["Database"] = "Unable to set admin password.  Error details:\n" . mysql_error();
-    }
-
-    if ($errors) {
-      throw new InstallException($errors);
+      throw new Exception(mysql_error());
     }
 
     return array("admin", $password);

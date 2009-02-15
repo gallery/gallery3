@@ -52,8 +52,12 @@ if (installer::already_installed()) {
     } else if (!installer::create_database_config($config)) {
       $content = oops("Couldn't create var/database.php");
     } else {
-      list ($user, $password) = installer::create_admin($config);
-      $content = render("success.html.php", array("user" => $user, "password" => $password));
+      try {
+        list ($user, $password) = installer::create_admin($config);
+        $content = render("success.html.php", array("user" => $user, "password" => $password));
+      } catch (Exception $e) {
+        $content = oops($e->getMessage());
+      }
     }
     break;
   }

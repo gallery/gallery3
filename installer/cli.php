@@ -46,13 +46,17 @@ if (!installer::connect($config)) {
   oops("Couldn't create var/database.php");
 } else {
   system("chmod -R 777 " . VARPATH);
-  list ($user, $password) = installer::create_admin($config);
-  print "Your Gallery has been successfully installed!\n";
-  print "We've created an account for you to use:\n";
-  print "  username: $user\n";
-  print "  password: $password\n";
-  print "\n";
-  exit(0);
+  try {
+    list ($user, $password) = installer::create_admin($config);
+    print "Your Gallery has been successfully installed!\n";
+    print "We've created an account for you to use:\n";
+    print "  username: $user\n";
+    print "  password: $password\n";
+    print "\n";
+    exit(0);
+  } catch (Exception $e) {
+    oops($e->getMessage());
+  }
 }
 
 function oops($message) {
