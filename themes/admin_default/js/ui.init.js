@@ -13,6 +13,7 @@ $(document).ready(function(){
     pathClass: 'current',
     speed: 'fast'
   });
+  $("#gSiteAdminMenu").css("display", "block");
 
   // Apply modal dialogs
   var dialogLinks = $(".gDialogLink");
@@ -48,7 +49,7 @@ $(document).ready(function(){
 
   // Add drop shadows
   $(".gSelected").dropShadow();
-	
+
   // In-place editing for tag admin
   $(".gEditable").bind("click", editInplace);
 
@@ -77,7 +78,7 @@ function closeEditInPlaceForms() {
 
 function editInplace(element){
 	closeEditInPlaceForms();
-	
+
   // creat edit form
 	var tag_id = $(this).attr('id').substr(5);
   var tag_name = $(this).text();
@@ -88,7 +89,7 @@ function editInplace(element){
 	form += '<input type="submit" class="submit" value="Save" />';
 	form += '<span>or</span> <a href="#">cancel</a>';
 	form += '</form>';
-  
+
   // add edit form
 	$(this).parent().html(form);
   $("#gRenameTagForm #name")

@@ -23,6 +23,7 @@ $(document).ready(function() {
     },
     speed: 'fast'
   });
+  $("#gSiteMenu").css("display", "block");
 
   // Round view menu buttons
   if ($("#gViewMenu").length) {
@@ -36,7 +37,7 @@ $(document).ready(function() {
   handleShortFormEvent(shortForms);
   $(".gShortForm input[type=text]").addClass("ui-corner-left");
   $(".gShortForm input[type=submit]").addClass("ui-state-default ui-corner-right");
-  
+
   // Apply jQuery UI button css to submit inputs
   $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
 
@@ -81,12 +82,12 @@ $(document).ready(function() {
 
   // Add hover state for buttons
   $(".ui-state-default").hover(
-	  function(){
-		  $(this).addClass("ui-state-hover");
-	  },
-	  function(){
-		  $(this).removeClass("ui-state-hover");
-	  }
+    function(){
+      $(this).addClass("ui-state-hover");
+    },
+    function(){
+      $(this).removeClass("ui-state-hover");
+    }
   );
 
 });

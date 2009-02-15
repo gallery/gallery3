@@ -4,7 +4,7 @@
   <img id="gLogo" alt="<?= t("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
 </a>
 
-<div id="gSiteMenu">
+<div id="gSiteMenu" style="display: none">
 <?= $theme->site_menu() ?>
 </div>
 
