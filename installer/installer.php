@@ -94,4 +94,12 @@ class installer {
 
     return array("admin", $password);
   }
+
+  static function create_private_key() {
+    $key = md5(uniqid(mt_rand(), true)) . md5(uniqid(mt_rand(), true));
+    if (mysql_query("INSERT INTO `vars` VALUES(NULL, 'core', 'private_key', '$key')")) {
+    } else {
+      throw new Exception(mysql_error());
+    }
+  }
 }

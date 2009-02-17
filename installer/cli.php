@@ -53,6 +53,8 @@ if (!installer::connect($config)) {
     print "  username: $user\n";
     print "  password: $password\n";
     print "\n";
+
+    installer::create_private_key();
     exit(0);
   } catch (Exception $e) {
     oops($e->getMessage());

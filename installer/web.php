@@ -55,6 +55,8 @@ if (installer::already_installed()) {
       try {
         list ($user, $password) = installer::create_admin($config);
         $content = render("success.html.php", array("user" => $user, "password" => $password));
+
+        installer::create_private_key();
       } catch (Exception $e) {
         $content = oops($e->getMessage());
       }
