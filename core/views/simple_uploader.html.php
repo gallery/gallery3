@@ -9,7 +9,7 @@
         width="470px"
         height="400px"
 	codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
-  <param name="movie" value="UploaderShell.swf" />
+  <param name="movie" value="<?= url::file("core/SimpleUploader.swf") ?>" />
   <param name="flashVars" value="<?= $flash_vars ?>" />
   <param name="quality" value="high" />
   <param name="bgcolor" value="#ffffff" />
