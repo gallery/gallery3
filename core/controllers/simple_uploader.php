@@ -31,7 +31,12 @@ class Simple_Uploader_Controller extends Controller {
                   "&g3sid=" . Session::instance()->id() .
                   "&user_agent=" . Input::instance()->server("HTTP_USER_AGENT"))) .
       "&title=" . urlencode(t("Add photos")) .
-      "&addLabel=" . urlencode(t("Choose photos to add..."));
+      "&addLabel=" . urlencode(t("Choose photos to add...")) .
+      "&pendingText=" . urlencode(t("Pending")) .
+      "&completeText=" . urlencode(t("Complete")) .
+      "&fileHeader=" . urlencode(t("File")) .
+      "&statusHeader=" . urlencode(t("Status")) .
+      "&sizeHeader=" . urlencode(t("Size"));
     print $v;
   }
 
