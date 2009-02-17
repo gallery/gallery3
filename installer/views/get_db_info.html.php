@@ -12,7 +12,7 @@
   <?php if (!installer::var_writable()): ?>
   <p class="error">
     We're having trouble creating a place for your photos.  Can you
-    help?  Please create a directory called <code>var</code> in your
+    help?  Please create a directory called "var" using <code>mkdir var</code> in your
     gallery3 directory, then run <code>chmod 777 var</code>.  That
     should fix it.
     <br/><br/>
