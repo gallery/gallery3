@@ -35,11 +35,11 @@ class polar_rose_theme_Core {
         "rss: '$url'," .
         "insert: 'gPolarRose'," .
         "optin: ''," .
-        "theme: 'dark'" .
+        "theme: 'dark'," .
+        "progress: 'true'" .
         "}</script>" .
         "<script type=\"text/javascript\" " .
-        "src=\"http://cdn.widget.polarrose.com/widgetanddashboard/" .
-        "polarrosewidgetanddashboard.js\">" .
+        "src=\"http://cdn.widget.polarrose.com/polarrosewidget.js\">" .
         "</script>";
     }
   }
