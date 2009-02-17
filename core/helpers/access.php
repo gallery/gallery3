@@ -588,4 +588,12 @@ class access_Core {
       }
     }
   }
+
+  static function private_key() {
+    if (!($key = module::get_var('core', 'private_key'))) {
+      $key = md5(uniqid(mt_rand(), true)) . md5(uniqid(mt_rand(), true));
+      module::set_var('core', 'private_key', $key);
+    }
+    return $key;
+  }
 }
