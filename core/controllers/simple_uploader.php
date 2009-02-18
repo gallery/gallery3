@@ -58,4 +58,8 @@ class Simple_Uploader_Controller extends Controller {
       log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
     }
   }
+
+  public function finish() {
+    print json_encode(array("result" => "success"));
+  }
 }
