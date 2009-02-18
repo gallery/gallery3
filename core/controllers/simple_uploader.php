@@ -29,7 +29,7 @@ class Simple_Uploader_Controller extends Controller {
         url::site("simple_uploader/add_photo/$item->id" .
                   "?csrf=" . access::csrf_token() .
                   "&g3sid=" . Session::instance()->id() .
-                  "&user_agent=" . Input::instance()->server("HTTP_USER_AGENT"))) .
+                  "&user_agent=" . urlencode(Input::instance()->server("HTTP_USER_AGENT")))) .
       "&title=" . urlencode(t("Add photos")) .
       "&addLabel=" . urlencode(t("Choose photos to add...")) .
       "&pendingText=" . urlencode(t("Pending")) .
