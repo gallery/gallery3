@@ -29,19 +29,30 @@ class Admin_Languages_Controller extends Admin_Controller {
     $form = $this->_languages_form();
     if ($form->validate()) {
       module::set_var("core", "default_locale", $form->choose_language->locale->value);
+      locale::update_installed($form->choose_language->installed_locales->value);
       message::success(t("Settings saved"));
     }
     url::redirect("admin/languages");
   }
 
   private function _languages_form() {
-    $locales = locale::available();
+    $all_locales = locale::available();
+    $installed_locales = locale::installed();
     $form = new Forge("admin/languages/save", "", "post", array("id" => "gLanguageSettingsForm"));
     $group = $form->group("choose_language")
       ->label(t("Please select a language"));
     $group->dropdown("locale")
-      ->options($locales)
-      ->selected(module::get_var("core", "default_locale"));
+      ->options($installed_locales)
+      ->selected(module::get_var("core", "default_locale"))
+      ->rules('required');
+    $installation_options = array();
+    foreach ($all_locales as $code => $display_name) {
+      $installation_options[$code] = array($display_name, isset($installed_locales->$code));
+    }
+    $group->checklist('installed_locales')
+      ->label('Installed Languages')
+      ->options($installation_options)
+      ->rules('required');
     $group->submit("save")->value(t("Save settings"));
     return $form;
   }

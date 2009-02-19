@@ -79,13 +79,16 @@ class user_Core {
   }
 
   private static function _add_locale_dropdown(&$form, $user=null) {
-    $locales = locale::available();
-    $locales->none = t("&laquo; none &raquo;");
-    $selected_locale = ($user && $user->locale) ? $user->locale : "none";
-    $form->dropdown("locale")
-      ->label(t("Language Preference"))
-      ->options($locales)
-      ->selected($selected_locale);
+    $locales = locale::installed();
+    $locales_array = (array) $locales;
+    if (count($locales_array) > 1) {
+      $locales->none = t("&laquo; none &raquo;");
+      $selected_locale = ($user && $user->locale) ? $user->locale : "none";
+      $form->dropdown("locale")
+        ->label(t("Language Preference"))
+        ->options($locales)
+        ->selected($selected_locale);
+    }
   }
 
   static function get_delete_form_admin($user) {

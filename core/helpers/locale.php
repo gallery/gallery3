@@ -35,6 +35,26 @@ class locale_Core {
     return self::$locales;
   }
 
+  static function installed() {
+    $available = self::available();
+    $default = module::get_var("core", "default_locale");
+    $codes = explode("|", module::get_var("core", "installed_locales", $default));
+    foreach ($codes as $code) {
+      if (isset($available->$code)) {
+        $installed->$code = $available->$code;
+      }
+    }
+    return $installed;
+  }
+
+  static function update_installed($locales) {
+    // Ensure that the default is included...
+    $default = module::get_var("core", "default_locale");
+    $locales = array_merge($locales, array($default));
+
+    module::set_var('core', 'installed_locales', join("|", $locales));
+  }
+  
   // TODO(andy_st): Might want to add a localizable language name as well.
   private static function _init_language_data() {
     $l->af_ZA = 'Afrikaans';                            // Afrikaans
