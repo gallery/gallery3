@@ -17,15 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class media_rss_installer {
-  static function install() {
-    $version = module::get_version("media_rss");
-    if ($version == 0) {
-      module::set_version("media_rss", 1);
+class rss_theme_Core {
+  static function head($theme) {
+    if ($theme->item()) {
+      $url = rss::item_feed($theme->item());
+    } else if ($theme->tag()) {
+      $url = rss::tag_feed($theme->tag());
     }
-  }
 
-  static function uninstall() {
-    module::delete("media_rss");
+    if (!empty($url)) {
+      return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
+    }
   }
 }

@@ -480,7 +480,7 @@ class Scaffold_Controller extends Template_Controller {
     $this->install("core", false);
     module::load_modules();
     foreach (array("core", "user", "comment", "info",
-                   "media_rss", "search", "slideshow", "tag") as $module_name) {
+                   "rss", "search", "slideshow", "tag") as $module_name) {
       $this->install($module_name, false);
     }
     url::redirect("scaffold/dump_database");

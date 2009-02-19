@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class media_rss_Core {
+class rss_Core {
   static function item_feed($item) {
     $id = $item->is_album() ? $item->id : $item->parent_id;
-    return url::site("media_rss/albums/$id");
+    return url::site("rss/albums/$id");
   }
 
   static function tag_feed($tag) {
-    return url::site("media_rss/tags/$tag->id}");
+    return url::site("rss/tags/$tag->id}");
   }
 }

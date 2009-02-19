@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Media_RSS_Controller extends Controller {
+class Rss_Controller extends Controller {
   public static $page_size = 30;
 
   public function albums($id) {
@@ -28,7 +28,7 @@ class Media_RSS_Controller extends Controller {
 
     $page = $this->input->get("page", 1);
     if ($page < 1) {
-      url::redirect("media_rss/albums/{$item->id}");
+      url::redirect("rss/albums/{$item->id}");
     }
 
     $children = $item
@@ -37,24 +37,24 @@ class Media_RSS_Controller extends Controller {
     $max_pages = ceil($item->viewable()->descendants_count("photo") / self::$page_size);
 
     if ($page > $max_pages) {
-      url::redirect("media_rss/albums/{$item->id}?page=$max_pages");
+      url::redirect("rss/albums/{$item->id}?page=$max_pages");
     }
 
     $view = new View("feed.mrss");
     $view->title = $item->title;
     $view->link = url::abs_site("albums/{$item->id}");
     $view->description = $item->description;
-    $view->feed_link = url::abs_site("media_rss/albums/{$item->id}");
+    $view->feed_link = url::abs_site("rss/albums/{$item->id}");
     $view->children = $children;
 
     if ($page > 1) {
       $previous_page = $page - 1;
-      $view->previous_page_link = url::site("media_rss/albums/{$item->id}?page={$previous_page}");
+      $view->previous_page_link = url::site("rss/albums/{$item->id}?page={$previous_page}");
     }
 
     if ($page < $max_pages) {
       $next_page = $page + 1;
-      $view->next_page_link = url::site("media_rss/albums/{$item->id}?page={$next_page}");
+      $view->next_page_link = url::site("rss/albums/{$item->id}?page={$next_page}");
     }
 
     // @todo do we want to add an upload date to the items table?
@@ -72,31 +72,31 @@ class Media_RSS_Controller extends Controller {
 
     $page = $this->input->get("page", 1);
     if ($page < 1) {
-      url::redirect("media_rss/tags/{$tag->id}");
+      url::redirect("rss/tags/{$tag->id}");
     }
 
     $children = $tag->items(self::$page_size, ($page - 1) * self::$page_size, "photo");
     $max_pages = ceil($tag->count / self::$page_size);
 
     if ($page > $max_pages) {
-      url::redirect("media_rss/tags/{$tag->id}?page=$max_pages");
+      url::redirect("rss/tags/{$tag->id}?page=$max_pages");
     }
 
     $view = new View("feed.mrss");
     $view->title = $tag->name;
     $view->link = url::abs_site("tags/{$tag->id}");
     $view->description = t("Photos related to %tag_name", array("tag_name" => $tag->name));
-    $view->feed_link = url::abs_site("media_rss/tags/{$tag->id}");
+    $view->feed_link = url::abs_site("rss/tags/{$tag->id}");
     $view->children = $children;
 
     if ($page > 1) {
       $previous_page = $page - 1;
-      $view->previous_page_link = url::site("media_rss/tags/{$tag->id}?page={$previous_page}");
+      $view->previous_page_link = url::site("rss/tags/{$tag->id}?page={$previous_page}");
     }
 
     if ($page < $max_pages) {
       $next_page = $page + 1;
-      $view->next_page_link = url::site("media_rss/tags/{$tag->id}?page={$next_page}");
+      $view->next_page_link = url::site("rss/tags/{$tag->id}?page={$next_page}");
     }
 
     // @todo do we want to add an upload date to the items table?
