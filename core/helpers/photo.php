@@ -97,7 +97,8 @@ class photo_Core {
 
   static function get_add_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddPhotoForm"));
-    $group = $form->group("add_photo")->label(t("Add Photo to %album_title", array("album_title" =>$parent->title)));
+    $group = $form->group("add_photo")->label(
+      t("Add Photo to %album_title", array("album_title" =>$parent->title)));
     $group->input("name")->label(t("Name"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
