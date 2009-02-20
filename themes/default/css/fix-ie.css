@@ -3,7 +3,7 @@
  */
 #gHeader,
 #gSiteMenu,
-#gBreadcrumbs,
+.gBreadcrumbs,
 #gAlbumGrid,
 #gPager,
 #gViewMenu {

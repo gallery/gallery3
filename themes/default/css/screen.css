@@ -525,7 +525,7 @@ form p.gError {
  *********************************************************************/
 
 #gSiteMenu,
-#gBreadcrumbs,
+.gBreadcrumbs,
 #gTagCloud ul {
   font-size: 1.2em;
 }
@@ -589,7 +589,7 @@ form p.gError {
 
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gBreadcrumbs {
+.gBreadcrumbs {
   background-color: #fff;
   border-top: 1px solid #ccc;
   clear: both;
@@ -597,22 +597,22 @@ form p.gError {
   padding-left: 20px;
 }
 
-#gBreadcrumbs li {
+.gBreadcrumbs li {
   background: transparent url('../images/ico-separator.gif') no-repeat scroll left center;
   float: left;
   padding: 10px 6px 10px 16px;
 }
 
-#gBreadcrumbs li.root {
+.gBreadcrumbs li.root {
   background: transparent;
 }
 
-#gBreadcrumbs li a,
-#gBreadcrumbs li span {
+.gBreadcrumbs li a,
+.gBreadcrumbs li span {
   display: block;
 }
 
-#gBreadcrumbs li.active span {
+.gBreadcrumbs li.active span {
   font-weight: bold;
 }
 
@@ -706,7 +706,7 @@ form p.gError {
  *********************************************************************/
 
 #gSiteMenu:after,
-#gBreadcrumbs:after,
+.gBreadcrumbs:after,
 #gAlbumGrid:after,
 #gPager:after,
 #gViewMenu:after {

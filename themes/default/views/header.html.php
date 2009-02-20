@@ -11,7 +11,7 @@
 <?= $theme->header_bottom() ?>
 
 <? if (!empty($parents)): ?>
-<ul id="gBreadcrumbs">
+<ul class="gBreadcrumbs">
   <? foreach ($parents as $parent): ?>
   <li><a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>"><?= $parent->title ?></a></li>
   <? endforeach ?>
