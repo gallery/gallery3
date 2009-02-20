@@ -793,20 +793,17 @@ form p.gError {
   zoom: 1;
 }
 
-.gToolbar {
-}
-
-.gToolbar .gButtonSet {
+.gButtonSet {
   padding-left: 1px;
 }
 
-.gToolbar .gButtonSet li {
+.gButtonSet li {
   float: left;
 }
 
-.gToolbar .gButtonLink {
+.gButtonSet .gButtonLink {
   margin: 0;
- }
+}
 
 .ui-icon-left .ui-icon {
   float: left;

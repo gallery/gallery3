@@ -118,16 +118,14 @@
   background-color: #e8e8e8;
 }
 
-#gPhotoStream .gBlockContent {
-
-}
-
 #gPhotoStream .gBlockContent ul {
   border-right: 1px solid #e8e8e8;
   height: 92px;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
+  overflow: auto;
+  overflow: -moz-scrollbars-horizontal; /* for FF */
+  overflow-x: scroll; /* scroll horizontal */
+  overflow-y: hidden; /* Hide vertical*/
+  position: absolute;
 }
 
 #gContent #gPhotoStream .gItem {
@@ -136,7 +134,6 @@
   border-right-color: #ccc;
   border-bottom-color: #ccc;
   float: left;
-  font-size: .7em;
   height: 90px;
   overflow: hidden;
   text-align: center;
@@ -147,12 +144,19 @@
 	margin-bottom: 0;
 }
 
-#gAdminCommentsMenu {
-  margin: 1em 0;
+#gContent .gItem {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  height: 90px;
+  padding: 14px 8px;
+  text-align: center;
+  width: 90px;
 }
 
-#gAdminCommentsMenu li {
-  float: left;
+#gAdminCommentsMenu {
+  margin: 1em 0;
 }
 
 #gAdminCommentsMenu a {
@@ -205,7 +209,8 @@ li.gGroup {
 #gAdminCommentsMenu:after,
 #gGroupAdmin:after,
 .gSelected:after,
-.gAvailable .gBlock:after {
+.gAvailable .gBlock:after,
+#gPhotoStream .gItem:after {
   clear: both;
   content: ".";
   display: block;
@@ -236,5 +241,5 @@ li.gGroup {
 }
 
 .gButtonSetVertical a {
-  width: 8em;
+  width: 8em !important;
 }

@@ -29,8 +29,7 @@ $(document).ready(function(){
     // Round view menu buttons
   if ($("#gAdminCommentsMenu").length) {
     $("#gAdminCommentsMenu ul").removeClass("gMenu").removeClass("sf-menu");
-    $("#gAdminCommentsMenu").addClass("gToolBar");
-    $("#gAdminCommentsMenu ul").addClass("gButtonSet");
+    $("#gAdminCommentsMenu").addClass("gButtonSet");
     $("#gAdminCommentsMenu a").addClass("gButtonLink ui-state-default");
     $("#gAdminCommentsMenu ul li:first a").addClass("ui-corner-left");
     $("#gAdminCommentsMenu ul li:last a").addClass("ui-corner-right");
