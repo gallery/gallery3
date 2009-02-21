@@ -1,0 +1,3 @@
+name = Local Import
+description = Allows authorized users to load images from the local server
+version = 1

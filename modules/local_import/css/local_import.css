@@ -1,0 +1,53 @@
+.gCheckboxTree input {
+  display: inline;
+}
+
+.gCheckboxTree li {
+  padding: 0;
+  float: none;
+}
+
+.gCheckboxTree .ui-icon {
+  cursor: pointer;
+}
+
+.gFile {
+  padding-left: 2.5em;
+}
+
+#gImportProgress {
+  visibility: hidden;
+  height: 1em;
+}
+
+#gLocalImport #gLocalImportTree {
+  border: 1px solid #CCCCCC;
+  height: 25em;
+  overflow: auto;
+  margin-bottom: .5em;
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+
+#gLocalImport ul ul li {
+  padding-left: 1.2em;
+}
+
+#gLocalImport ul li .gFile {
+  padding-left: 2.5em;
+}
+
+#gLocalImport .gBreadcrumbs {
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  border-top-width: 0px;
+}
+
+#gLocalImport p {
+  margin: 0;
+}
+
+#gLocalImport .gBreadcrumbs li {
+  padding: 10px 6px 10px 16px;
+}
