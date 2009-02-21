@@ -2,7 +2,7 @@
 <? echo "<?xml version=\"1.0\" ?>" ?>
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"
    xmlns:atom="http://www.w3.org/2005/Atom"
-   xmlns:content="http://purl.org/rss/1.0/modules/content"
+   xmlns:content="http://purl.org/rss/1.0/modules/content/"
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
@@ -24,8 +24,17 @@
     <item>
       <title><?= htmlspecialchars($child->title) ?></title>
       <link><?= url::abs_site("photos/$child->id") ?></link>
-      <guid isPermaLink="true"><?= url::abs_site("photos/$child->id") ?></guid>
       <description><?= htmlspecialchars($child->description) ?></description>
+      <guid isPermaLink="true"><?= url::abs_site("photos/$child->id") ?></guid>
+       <content:encoded>
+         <![CDATA[<p>
+              <img alt="" src="<?= $child->resize_url(true) ?>"
+                   title="<?= htmlspecialchars($child->title) ?>"
+                   height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
+              <?= $child->description ?>
+            </p>
+        ]]>
+       </content:encoded>
       <enclosure url="<?= $child->file_url(true) ?>"
                  type="<?= $child->mime_type ?>"
                  height="<?= $child->height ?>"
@@ -35,16 +44,6 @@
                        height="<?= $child->thumb_height ?>"
                        width="<?= $child->thumb_width ?>"
                        />
-       <content:encoded>
-         <![CDATA[
-           <p>
-              <img alt="" src="<?= $child->resize_url(true) ?>"
-                   title="<?= htmlspecialchars($child->title) ?>"
-                   height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
-              <?= $child->description ?>
-            </p>
-         ]]>
-       </content:encoded>
       <media:group>
         <media:content url="<?= $child->resize_url(true) ?>"
                        fileSize="<?= filesize($child->resize_path()) ?>"
