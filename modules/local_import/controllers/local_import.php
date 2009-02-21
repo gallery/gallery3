@@ -23,7 +23,7 @@ class Local_Import_Controller extends Controller {
 
     $item = ORM::factory("item", $id);
     access::can("local_import", $item);
-    
+
     $view = new View("local_import_tree_dialog.html");
     $view->action = url::site("local_import/add/$id");
     $view->hidden = array("csrf" => access::csrf_token(), "base_url" => url::base(true));
@@ -47,7 +47,7 @@ class Local_Import_Controller extends Controller {
     if (!is_readable($path)) {
       kohana::show_404();
     }
-    
+
     $tree = new View("local_import_tree.html");
     $tree->data = $this->_get_children($path);
     $tree->uid = "tree_" . md5($path);
@@ -62,7 +62,7 @@ class Local_Import_Controller extends Controller {
     if (!$parent->loaded) {
       throw new Exception("@todo BAD_ALBUM");
     }
-    
+
     $path = $this->input->post("path");
 
     set_time_limit(30);
@@ -85,7 +85,7 @@ class Local_Import_Controller extends Controller {
           $extension = strtolower(substr(strrchr($file, '.'), 1));
           // Make sure the file is readable
           if (is_readable($full_path) &&
-              in_array($extension, Image::$allowed_types)) {
+              in_array($extension, array("gif", "jpg", "jpeg", "png"))) {
             $file_list[$file] = array("path" => $full_path);
           }
         }

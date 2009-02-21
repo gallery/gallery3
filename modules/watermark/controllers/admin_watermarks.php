@@ -99,7 +99,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       $name = preg_replace("/uploadfile-[^-]+-(.*)/", '$1', $pathinfo["basename"]);
 
       if (!($image_info = getimagesize($file)) ||
-          !in_array($image_info[2], Image::$allowed_types)) {
+          !in_array($image_info[2], array("gif", "jpg", "jpeg", "png"))) {
         message::error(t("Unable to identify this image file"));
         @unlink($file);
         return;
