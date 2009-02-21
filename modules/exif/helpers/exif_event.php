@@ -26,7 +26,7 @@ class exif_event_Core {
     ORM::factory("exif_key")
       ->where("item_id", $item->id)
       ->delete_all();
-    ORM::factory("exif_info")
+    ORM::factory("exif_record")
       ->where("item_id", $item->id)
       ->delete_all();
   }
