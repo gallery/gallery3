@@ -15,7 +15,7 @@
   padding-left: 2.5em;
 }
 
-#gImportProgress {
+#gProgressBar {
   visibility: hidden;
   height: 1em;
 }

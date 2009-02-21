@@ -4,7 +4,7 @@ $("#gLocalImport").ready(function() {
   $("#gLocalImport :submit").click(function(event) {
     do_import(this, event);
   });
-  $("#gImportProgress").progressbar({value:50});
+  $("#gProgressBar").progressbar();
 });</script>
 <div id="gLocalImport">
   <h1 style="display: none;"><?= sprintf(t("Import Photos to '%s'"), $album_title) ?></h1>
@@ -23,6 +23,6 @@ $("#gLocalImport").ready(function() {
     </div>
     <?= form::submit(array("id" => "gImportButton", "name" => "import", "disabled" => true),
                      t("Import")) ?>
-    <div id="gImportProgress"></div>
+    <div id="gProgressBar"></div>
   <?= form::close() ?> 
 </div>

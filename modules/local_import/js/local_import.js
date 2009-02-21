@@ -42,8 +42,8 @@ function load_children(path, callback) {
 
 function do_import(submit, event) {
   event.preventDefault();
-  $("#gImportProgress").progressbar('value', 0);
-  $("#gImportProgress").css("visibility", "visible");
+  $("#gProgressBar").progressbar('value', 0);
+  $("#gProgressBar").css("visibility", "visible");
   var check_list = $("#gLocalImport .gFile :checkbox[checked]");
   var current = 0;
   var csrf = $("#gLocalImport form :hidden[name='csrf']")[0].value;
@@ -53,7 +53,7 @@ function do_import(submit, event) {
     $.post(url, {csrf: csrf, path: path}, function(data, status) {
     });
     current++;
-    $("#gImportProgress").progressbar('value', current / check_list.length * 100);
+    $("#gProgressBar").progressbar('value', current / check_list.length * 100);
   });
   document.location.reload();
   return false;
