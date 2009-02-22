@@ -110,8 +110,6 @@ td {
   vertical-align: top;
 }
 
-
-
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 fieldset {
@@ -231,6 +229,10 @@ li.gError select {
 .right {
   float: right;
   margin: 1em 0 1em 1em;
+}
+
+.txtright {
+  text-align: right;
 }
 
 /** *******************************************************************
@@ -460,6 +462,15 @@ form p.gError {
 
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
+#gContent #gItem {
+  width: 99%;
+}
+
+#gContent #gItem .gFullSizeLink img {
+  display: block;
+  margin: 1em auto !important;
+}
+
 #gContent #gComments {
   margin-top: 2em;
 }
@@ -685,20 +696,22 @@ form p.gError {
 
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gPager {
+  #gPager {
   clear: both;
-  padding: 5px;
+  margin: 0;
+  padding: 5px 0 !important;
+  width: 100%;
 }
 
 #gPager li {
   float: left;
-  margin-right: 1em;
+  margin: 0;
+  width: 25%;
 }
 
-#gPager li span {
-  display: inline-block;
-  height: 1em;
-  width: 16px;
+#gPager .gInfo {
+  text-align: center;
+  width: 50%;
 }
 
 /** *******************************************************************

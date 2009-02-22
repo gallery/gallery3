@@ -6,25 +6,37 @@
                       array("from_number" => $current_first_item,
                             "to_number" => $current_last_item,
                             "total" => $total_items)) ?>
-  <li><?= $from_to_msg ?></li>
+  <li>
   <? if ($first_page): ?>
-  <li><span class="ui-icon ui-icon-seek-first"></span><a href="<?= str_replace('{page}', 1, $url) ?>"><?= t("first") ?></a></li>
+    <a href="<?= str_replace('{page}', 1, $url) ?>" class="gButtonLink ui-icon-left ui-state-default ui-corner-all">
+      <span class="ui-icon ui-icon-seek-first"></span><?= t("first") ?></a>
   <? else: ?>
-  <li class="inactive"><span class="ui-icon ui-icon-seek-first"></span><?= t("first") ?></li>
+    <a class="gButtonLink ui-icon-left ui-state-disabled ui-corner-all">
+      <span class="ui-icon ui-icon-seek-first"></span><?= t("first") ?></a>
   <? endif ?>
   <? if ($previous_page): ?>
-  <li><span class="ui-icon ui-icon-seek-prev"></span><a href="<?= str_replace('{page}', $previous_page, $url) ?>"><?= t("previous") ?></a></li>
+    <a href="<?= str_replace('{page}', $previous_page, $url) ?>" class="gButtonLink ui-icon-left ui-state-default ui-corner-all">
+      <span class="ui-icon ui-icon-seek-prev"></span><?= t("previous") ?></a>
   <? else: ?>
-  <li class="inactive"><span class="ui-icon ui-icon-seek-prev"></span><?= t("previous") ?></li>
+    <a class="gButtonLink ui-icon-left ui-state-disabled ui-corner-all">
+      <span class="ui-icon ui-icon-seek-prev"></span><?= t("previous") ?></a>
   <? endif ?>
+  </li>
+  <li class="gInfo"><?= $from_to_msg ?></li>
+  <li class="txtright">
   <? if ($next_page): ?>
-  <li><a href="<?= str_replace('{page}', $next_page, $url) ?>"><?= t("next") ?></a><span class="ui-icon ui-icon-seek-next"></span></li>
+    <a href="<?= str_replace('{page}', $next_page, $url) ?>" class="gButtonLink ui-icon-right ui-state-default ui-corner-all">
+      <span class="ui-icon ui-icon-seek-next"></span><?= t("next") ?></a>
   <? else: ?>
-  <li class="inactive"><?= t("next") ?><span class="ui-icon ui-icon-seek-next"></span></li>
+    <a class="gButtonLink ui-state-disabled ui-icon-right ui-corner-all">
+      <span class="ui-icon ui-icon-seek-next"></span><?= t("next") ?></a>
   <? endif ?>
   <? if ($last_page): ?>
-  <li><a href="<?= str_replace('{page}', $last_page, $url) ?>"><?= t("last") ?></a><span class="ui-icon ui-icon-seek-end"></span></li>
+    <a href="<?= str_replace('{page}', $last_page, $url) ?>" class="gButtonLink ui-icon-right ui-state-default ui-corner-all">
+      <span class="ui-icon ui-icon-seek-end"></span><?= t("last") ?></a>
   <? else: ?>
-  <li class="inactive"><?= t("last") ?><span class="ui-icon ui-icon-seek-end"></span></li>
+    <a class="gButtonLink ui-state-disabled ui-icon-right ui-corner-all">
+      <span class="ui-icon ui-icon-seek-end"></span><?= t("last") ?></a>
   <? endif ?>
+  </li>
 </ul>
