@@ -27,6 +27,7 @@ class comment_theme_Core {
     $block = new Block;
     $block->css_id = "gComments";
     $block->anchor = t("comments");
+    $block->title = t("Comments");
 
     $view = new View("comments.html");
     $view->comments = ORM::factory("comment")
@@ -35,8 +36,6 @@ class comment_theme_Core {
       ->orderby("created", "ASC")
       ->find_all();
 
-    $block->title = $view->comments->count() ?
-      t("Comments") : t("No comments yet. Be the first to comment!");
     $block->content = $view;
     $block->content .= comment::get_add_form($theme->item())->render("form.html");
     return $block;

@@ -20,4 +20,7 @@
   </li>
   <? endforeach ?>
 </ul>
+<? if (!$comments->count()): ?>
+<?= t("No comments yet. Be the first to comment!") ?>
+<? endif ?>
 <a name="add_comment_form"></a>
