@@ -60,7 +60,7 @@ class movie_Core {
     $movie->owner_id = $owner_id;
     $movie->width = $movie_info[0];
     $movie->height = $movie_info[1];
-    $movie->mime_type = empty($image_info["mime"]) ? "application/unknown" : $image_info["mime"];
+    $movie->mime_type = "video/x-flv";
     $movie->thumb_dirty = 1;
     $movie->resize_dirty = 1;
 
