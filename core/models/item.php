@@ -275,7 +275,12 @@ class Item_Model extends ORM_MPTT {
       return null;
     }
 
-    return model_cache::get("item", $this->album_cover_item_id);
+    try {
+      return model_cache::get("item", $this->album_cover_item_id);
+    } catch (Exception $e) {
+      // It's possible (unlikely) that the item was deleted, if so keep going.
+      return null;
+    }
   }
 
   /**
