@@ -78,6 +78,11 @@ a:hover,
   text-decoration: underline;
 }
 
+#gDialog .gCancel {
+  float: left;
+  margin: .3em 1em;
+}
+
 #gForgotPasswordLink {
   float: right;
   font-size: .9em;
@@ -188,6 +193,12 @@ textarea {
   display: block;
   clear: both;
   padding: .2em;
+}
+
+input[type="submit"],
+input[type="reset"] {
+  clear: none !important;
+  float: left;
 }
 
 /* Form validation ~~~~~~~~~~~~~~~~~~~~~~~ */
