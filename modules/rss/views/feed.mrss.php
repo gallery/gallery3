@@ -26,19 +26,16 @@
       <link><?= url::abs_site("photos/$child->id") ?></link>
       <description><?= htmlspecialchars($child->description) ?></description>
       <guid isPermaLink="true"><?= url::abs_site("photos/$child->id") ?></guid>
-       <content:encoded>
-         <![CDATA[<p>
-              <img alt="" src="<?= $child->resize_url(true) ?>"
-                   title="<?= htmlspecialchars($child->title) ?>"
-                   height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
-              <?= $child->description ?>
-            </p>
+      <content:encoded>
+        <![CDATA[
+          <p>
+            <img alt="" src="<?= $child->resize_url(true) ?>"
+                 title="<?= htmlspecialchars($child->title) ?>"
+                 height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
+            <?= $child->description ?>
+          </p>
         ]]>
-       </content:encoded>
-      <enclosure url="<?= $child->file_url(true) ?>"
-                 type="<?= $child->mime_type ?>"
-                 height="<?= $child->height ?>"
-                 width="<?= $child->width ?>"/>
+      </content:encoded>
       <media:thumbnail url="<?= $child->thumb_url(true) ?>"
                        fileSize="<?= filesize($child->thumb_path()) ?>"
                        height="<?= $child->thumb_height ?>"
