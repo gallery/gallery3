@@ -435,7 +435,6 @@ form p.gError {
 /* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gContent #gAlbumGrid {
-  border-right: 1px solid #e8e8e8;
   margin: 1em 0;
 }
 
@@ -696,7 +695,7 @@ form p.gError {
 
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-  #gPager {
+#gPager {
   clear: both;
   margin: 0;
   padding: 5px 0 !important;
@@ -706,12 +705,12 @@ form p.gError {
 #gPager li {
   float: left;
   margin: 0;
-  width: 25%;
+  width: 30%;
 }
 
 #gPager .gInfo {
   text-align: center;
-  width: 50%;
+  width: 40%;
 }
 
 /** *******************************************************************
