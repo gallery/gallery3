@@ -20,6 +20,23 @@
 class Scaffold_Controller extends Template_Controller {
   public $template = "scaffold.html";
 
+  function test() {
+    $this->auto_render = false;
+    $source = ORM::factory("item", 3);
+    $target = ORM::factory("item", 4);
+
+    printf("<pre>%s</pre>",print_r($source->as_array(),1));flush();
+    printf("<pre>%s</pre>",print_r($target->as_array(),1));flush();
+
+    // If the target has no cover item, make this it.
+    if ($target->album_cover_item_id == null)  {
+      $target->album_cover_item_id =
+        $source->is_album() ? $source->album_cover_item_id : $source->id;
+      $target->save();
+    }
+    graphics::generate($target);
+  }
+
   function index() {
     try {
       $session = Session::instance();

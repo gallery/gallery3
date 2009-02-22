@@ -83,39 +83,43 @@ class graphics_Core {
    */
   static function generate($item) {
     if ($item->is_album()) {
-      try {
-        $cover = $item->album_cover();
-      } catch (Exception $e) {
-        return;
-      }
-      if (!$cover) {
+      if (!$cover = $item->album_cover()) {
         return;
       }
       $input_file = $cover->file_path();
+      $input_item = $cover;
     } else {
       $input_file = $item->file_path();
+      $input_item = $item;
     }
 
-    $ops = array();
     if ($item->thumb_dirty) {
       $ops["thumb"] = $item->thumb_path();
     }
-    if ($item->resize_dirty && !$item->is_album()) {
+    if ($item->resize_dirty && !$item->is_album() && !$item->is_movie()) {
       $ops["resize"] = $item->resize_path();
     }
 
-    if (!$ops) {
+    if (empty($ops)) {
       return;
     }
 
     foreach (array("thumb" => $item->thumb_path(),
                    "resize" => $item->resize_path()) as $target => $output_file) {
-      $working_file = $input_file;
+
+      if ($input_item->is_movie()) {
+        // Convert the movie to a JPG first
+        movie::extract_frame($input_file, $output_file);
+        $working_file = $output_file;
+      } else {
+        $working_file = $input_file;
+      }
+
       foreach (ORM::factory("graphics_rule")
                ->where("target", $target)
                ->orderby("priority", "asc")
                ->find_all() as $rule) {
-        $args = array($item, $working_file, $output_file, unserialize($rule->args));
+        $args = array($working_file, $output_file, unserialize($rule->args));
         call_user_func_array(array("graphics", $rule->operation), $args);
         $working_file = $output_file;
       }
@@ -141,43 +145,37 @@ class graphics_Core {
    * Resize an image.  Valid options are width, height and master.  Master is one of the Image
    * master dimension constants.
    *
-   * @param Item_Model $item
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
    */
-  static function resize($item, $input_file, $output_file, $options) {
+  static function resize($input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }
 
-    if ($item->is_movie()) {
-      movie::extract_frame($input_file, $output_file);
-    } else if ($item->is_photo()) {
-      Image::factory($input_file)
-        ->resize($options["width"], $options["height"], $options["master"])
-        ->save($output_file);
-    }
+    printf("<pre>%s</pre>",print_r(array($input_file, $output_file, $options),1));flush();
+
+    Image::factory($input_file)
+      ->resize($options["width"], $options["height"], $options["master"])
+      ->save($output_file);
   }
 
   /**
    * Rotate an image.  Valid options are degrees
    *
-   * @param Item_Model $item
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
    */
-  static function rotate($item, $input_file, $output_file, $options) {
+  static function rotate($input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }
 
-    if ($item->is_photo()) {
-      Image::factory($input_file)
-        ->rotate($options["degrees"])
-        ->save($output_file);
-    }
+    Image::factory($input_file)
+      ->rotate($options["degrees"])
+      ->save($output_file);
   }
 
   /**
@@ -185,12 +183,11 @@ class graphics_Core {
    * transparency_percent.
    * position is one of northwest, north, northeast, west, center, east, southwest, south, southeast
    *
-   * @param Item_Model $item
    * @param string     $input_file
    * @param string     $output_file
    * @param array      $options
    */
-  static function composite($item, $input_file, $output_file, $options) {
+  static function composite($input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }
