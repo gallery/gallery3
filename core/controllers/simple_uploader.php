@@ -53,10 +53,12 @@ class Simple_Uploader_Controller extends Controller {
       $path_info = pathinfo($temp_filename);
       if ($path_info["extension"] == "flv") {
         $movie = movie::create($album, $temp_filename, $title, $title);
-        log::success("content", "Added a movie", html::anchor("movies/$movie->id", "view movie"));
+        log::success("content", t("Added a movie"), html::anchor("movies/$movie->id",
+                                                                 t("view movie")));
       } else {
         $photo = photo::create($album, $temp_filename, $title, $title);
-        log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
+        log::success("content", t("Added a photo"), html::anchor("photos/$photo->id",
+                                                                 t("view photo")));
       }
     }
   }
