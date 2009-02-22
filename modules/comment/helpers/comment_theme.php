@@ -26,7 +26,6 @@ class comment_theme_Core {
   static function photo_bottom($theme) {
     $block = new Block;
     $block->css_id = "gComments";
-    $block->title = t("Comments");
     $block->anchor = t("comments");
 
     $view = new View("comments.html");
@@ -36,6 +35,8 @@ class comment_theme_Core {
       ->orderby("created", "ASC")
       ->find_all();
 
+    $block->title = $view->comments->count() ?
+      t("Comments") : t("No comments yet. Be the first to comment!");
     $block->content = $view;
     $block->content .= comment::get_add_form($theme->item())->render("form.html");
     return $block;
