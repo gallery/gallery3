@@ -60,9 +60,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->content = new View("admin_maintenance.html");
     $view->content->task_definitions = $this->_get_task_definitions();
     $view->content->running_tasks =
-      ORM::factory("task")->where("done", 0)->orderby("updated", "desc")->find_all();
+      ORM::factory("task")->where("done", 0)->orderby("updated", "DESC")->find_all();
     $view->content->finished_tasks =
-      ORM::factory("task")->where("done", 1)->orderby("updated", "desc")->find_all();
+      ORM::factory("task")->where("done", 1)->orderby("updated", "DESC")->find_all();
     $view->content->csrf = access::csrf_token();
     print $view;
   }

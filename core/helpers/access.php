@@ -158,7 +158,7 @@ class access_Core {
       ->where("`items`.`id` <> $item->id")
       ->join("access_intents", "items.id", "access_intents.item_id")
       ->where("access_intents.view_$group->id", 0)
-      ->orderby("level", "desc")
+      ->orderby("level", "DESC")
       ->limit(1)
       ->find();
 

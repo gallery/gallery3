@@ -42,14 +42,14 @@ class core_block_Core {
       $block->title = t("Photo Stream");
       $block->content = new View("admin_block_photo_stream.html");
       $block->content->photos =
-        ORM::factory("item")->where("type", "photo")->orderby("created", "desc")->find_all(10);
+        ORM::factory("item")->where("type", "photo")->orderby("created", "DESC")->find_all(10);
       break;
 
     case "log_entries":
       $block->css_id = "gLogEntries";
       $block->title = t("Log Entries");
       $block->content = new View("admin_block_log_entries.html");
-      $block->content->entries = ORM::factory("log")->orderby("timestamp", "desc")->find_all(5);
+      $block->content->entries = ORM::factory("log")->orderby("timestamp", "DESC")->find_all(5);
         break;
 
     case "stats":

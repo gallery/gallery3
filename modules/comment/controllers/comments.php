@@ -31,7 +31,7 @@ class Comments_Controller extends REST_Controller {
     $comments = ORM::factory("comment")
       ->where("item_id", $item->id)
       ->where("state", "published")
-      ->orderby("created", "desc")
+      ->orderby("created", "DESC")
       ->find_all();
 
     switch (rest::output_format()) {
