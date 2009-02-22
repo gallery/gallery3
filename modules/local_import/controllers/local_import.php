@@ -64,12 +64,19 @@ class Local_Import_Controller extends Controller {
     }
 
     $path = $this->input->post("path");
-
+    $pathinfo = pathinfo($path);
     set_time_limit(30);
-    $photo = photo::create($parent, $path, basename($path), basename($path));
-    log::success("content", t("Added photo"),
-                   html::anchor("photos/{$photo->id}", "View photo"));
-    message::success(t("Added photo %photo_title", array("photo_title" => $photo->title)));
+    if ($path_info["extension"] == "flv") {
+      $movie = movie::create($parent, $path, basename($path), basename($path));
+      log::success("content", t("Added a movie"),
+                   html::anchor("photos/{$photo->id}", t("view photo")));
+      message::success(t("Added movie %movie_title", array("movie_title" => $movie->title)));
+    } else {
+      $photo = photo::create($parent, $path, basename($path), basename($path));
+      log::success("content", t("Added a photo"),
+                   html::anchor("photos/{$photo->id}", t("view photo")));
+      message::success(t("Added photo %photo_title", array("photo_title" => $photo->title)));
+    }
   }
 
   private function _get_children($path) {
@@ -85,7 +92,7 @@ class Local_Import_Controller extends Controller {
           $extension = strtolower(substr(strrchr($file, '.'), 1));
           // Make sure the file is readable
           if (is_readable($full_path) &&
-              in_array($extension, array("gif", "jpg", "jpeg", "png"))) {
+              in_array($extension, array("gif", "jpg", "jpeg", "png", "flv"))) {
             $file_list[$file] = array("path" => $full_path);
           }
         }
