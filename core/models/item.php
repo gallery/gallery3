@@ -84,6 +84,14 @@ class Item_Model extends ORM_MPTT {
     return $this->type == 'photo';
   }
 
+  /**
+   * Is this item a movie?
+   * @return true if it's a movie
+   */
+  public function is_movie() {
+    return $this->type == 'movie';
+  }
+
   public function delete() {
     $original_path = $this->file_path();
     $original_resize_path = $this->resize_path();
@@ -308,7 +316,7 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Return an <img> tag for the thumbnail.
+   * Return an <img> tag for the resize.
    * @param array $extra_attrs  Extra attributes to add to the img tag
    * @return string
    */
@@ -318,5 +326,16 @@ class Item_Model extends ORM_MPTT {
                              "width" => $this->resize_width,
                              "height" => $this->resize_height),
                        $extra_attrs);
+  }
+
+  public function movie_tag($extra_attrs) {
+    return html::anchor($this->file_url(true), "",
+                        array_merge(
+                          $extra_attrs,
+                          array("id" => "player",
+                                "style" => "display:block;width:400px;height:300px"))) .
+      "<script>flowplayer('player', '" .
+      url::abs_file("lib/flowplayer-3.0.5.swf") .
+      "'); </script>";
   }
 }

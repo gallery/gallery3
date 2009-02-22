@@ -115,7 +115,7 @@ class graphics_Core {
                ->where("target", $target)
                ->orderby("priority", "asc")
                ->find_all() as $rule) {
-        $args = array($working_file, $output_file, unserialize($rule->args));
+        $args = array($item, $working_file, $output_file, unserialize($rule->args));
         call_user_func_array(array("graphics", $rule->operation), $args);
         $working_file = $output_file;
       }
@@ -141,35 +141,43 @@ class graphics_Core {
    * Resize an image.  Valid options are width, height and master.  Master is one of the Image
    * master dimension constants.
    *
-   * @param string  $input_file
-   * @param string  $output_file
-   * @param array   $options
+   * @param Item_Model $item
+   * @param string     $input_file
+   * @param string     $output_file
+   * @param array      $options
    */
-  static function resize($input_file, $output_file, $options) {
+  static function resize($item, $input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }
 
-    Image::factory($input_file)
-      ->resize($options["width"], $options["height"], $options["master"])
-      ->save($output_file);
+    if ($item->is_movie()) {
+      movie::extract_frame($input_file, $output_file);
+    } else if ($item->is_photo()) {
+      Image::factory($input_file)
+        ->resize($options["width"], $options["height"], $options["master"])
+        ->save($output_file);
+    }
   }
 
   /**
    * Rotate an image.  Valid options are degrees
    *
-   * @param string  $input_file
-   * @param string  $output_file
-   * @param array   $options
+   * @param Item_Model $item
+   * @param string     $input_file
+   * @param string     $output_file
+   * @param array      $options
    */
-  static function rotate($input_file, $output_file, $options) {
+  static function rotate($item, $input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }
 
-    Image::factory($input_file)
-      ->rotate($options["degrees"])
-      ->save($output_file);
+    if ($item->is_photo()) {
+      Image::factory($input_file)
+        ->rotate($options["degrees"])
+        ->save($output_file);
+    }
   }
 
   /**
@@ -177,11 +185,12 @@ class graphics_Core {
    * transparency_percent.
    * position is one of northwest, north, northeast, west, center, east, southwest, south, southeast
    *
-   * @param string  $input_file
-   * @param string  $output_file
-   * @param array   $options
+   * @param Item_Model $item
+   * @param string     $input_file
+   * @param string     $output_file
+   * @param array      $options
    */
-  static function composite($input_file, $output_file, $options) {
+  static function composite($item, $input_file, $output_file, $options) {
     if (!self::$init) {
       self::init_toolkit();
     }

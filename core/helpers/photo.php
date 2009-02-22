@@ -43,8 +43,13 @@ class photo_Core {
       throw new Exception("@todo MISSING_IMAGE_FILE");
     }
 
-    if (!($image_info = getimagesize($filename))) {
-      throw new Exception("@todo INVALID_IMAGE_FILE");
+    $image_info = getimagesize($filename);
+    if ($image_info) {
+      $type = "photo";
+    } else {
+      $movie_info = movie::getmoviesize($filename);
+      $image_info = array(200, 200, 'mime' => 'video/x-flv');
+      $type = "movie";
     }
 
     // Force an extension onto the name
@@ -55,7 +60,7 @@ class photo_Core {
     }
 
     $photo = ORM::factory("item");
-    $photo->type = "photo";
+    $photo->type = $type;
     $photo->title = $title;
     $photo->description = $description;
     $photo->name = $name;
@@ -81,15 +86,17 @@ class photo_Core {
 
     module::event("item_created", $photo);
 
-    // Build our thumbnail/resizes
-    graphics::generate($photo);
+    if ($type == "photo") {
+      // Build our thumbnail/resizes
+      graphics::generate($photo);
 
-    // If the parent has no cover item, make this it.
-    $parent = $photo->parent();
-    if ($parent->album_cover_item_id == null)  {
-      $parent->album_cover_item_id = $photo->id;
-      $parent->save();
-      graphics::generate($parent);
+      // If the parent has no cover item, make this it.
+      $parent = $photo->parent();
+      if ($parent->album_cover_item_id == null)  {
+        $parent->album_cover_item_id = $photo->id;
+        $parent->save();
+        graphics::generate($parent);
+      }
     }
 
     return $photo;
@@ -102,7 +109,7 @@ class photo_Core {
     $group->input("name")->label(t("Name"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
-    $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif]");
+    $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif,flv]");
     $group->hidden("type")->value("photo");
     $group->submit("")->value(t("Upload"));
     $form->add_rules_from(ORM::factory("item"));
