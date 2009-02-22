@@ -31,9 +31,9 @@ class theme_Core {
   static function load_themes() {
     $modules = Kohana::config("core.modules");
     if (Router::$controller == "admin") {
-      array_unshift($modules, THEMEPATH . "admin_default");
+      array_unshift($modules, THEMEPATH . module::get_var("core", "active_admin_theme"));
     } else {
-      array_unshift($modules, THEMEPATH . "default");
+      array_unshift($modules, THEMEPATH . module::get_var("core", "active_site_theme"));
     }
     Kohana::config_set("core.modules", $modules);
   }
