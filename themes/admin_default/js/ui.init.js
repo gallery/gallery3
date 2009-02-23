@@ -26,7 +26,10 @@ $(document).ready(function(){
     $('.gItem').vAlign();
   }
 
-    // Round view menu buttons
+  // Apply jQuery UI button css to submit inputs
+  $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
+
+  // Round view menu buttons
   if ($("#gAdminCommentsMenu").length) {
     $("#gAdminCommentsMenu ul").removeClass("gMenu").removeClass("sf-menu");
     $("#gAdminCommentsMenu").addClass("gButtonSet");

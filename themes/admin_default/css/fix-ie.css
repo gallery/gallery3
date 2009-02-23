@@ -1,6 +1,7 @@
 /**
  * Fix display in IE
  */
+
 #gHeader,
 #gAdminMenu,
 #gGroupAdmin,
@@ -15,4 +16,3 @@
 .gUnavailable:hover {
   filter: alpha(opacity=100);
 }
-

@@ -26,8 +26,8 @@
   padding: 1em;
 }
 
-.gBlockContent {
-  padding: 0 1em 1em 1em;
+#gSidebar .gBlockContent {
+  padding: 0;
 }
 
 .gSelected img,
@@ -120,12 +120,11 @@
 
 #gPhotoStream .gBlockContent ul {
   border-right: 1px solid #e8e8e8;
-  height: 92px;
+  height: 135px;
   overflow: auto;
   overflow: -moz-scrollbars-horizontal; /* for FF */
   overflow-x: scroll; /* scroll horizontal */
   overflow-y: hidden; /* Hide vertical*/
-  position: absolute;
 }
 
 #gContent #gPhotoStream .gItem {
@@ -210,7 +209,7 @@ li.gGroup {
 #gGroupAdmin:after,
 .gSelected:after,
 .gAvailable .gBlock:after,
-#gPhotoStream .gItem:after {
+#gPhotoStream:after {
   clear: both;
   content: ".";
   display: block;
@@ -242,4 +241,9 @@ li.gGroup {
 
 .gButtonSetVertical a {
   width: 8em !important;
+}
+
+#gAdminDashboard .ui-dialog-titlebar,
+#gAdminDashboardSidebar .ui-dialog-titlebar {
+  padding: .2em .4em;
 }
