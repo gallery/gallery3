@@ -154,8 +154,6 @@ class graphics_Core {
       self::init_toolkit();
     }
 
-    printf("<pre>%s</pre>",print_r(array($input_file, $output_file, $options),1));flush();
-
     Image::factory($input_file)
       ->resize($options["width"], $options["height"], $options["master"])
       ->save($output_file);

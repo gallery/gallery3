@@ -115,7 +115,6 @@ class movie_Core {
 
     $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
       " -t 0.001 -y -f mjpeg " . escapeshellarg($output_file);
-    printf("<pre>%s</pre>",print_r($cmd,1));flush();
     exec($cmd);
   }
 }
