@@ -137,7 +137,6 @@ class graphics_Core {
       $item->resize_dirty = 0;
     }
     $item->save();
-    print "exiting generate\n";
   }
 
   /**
