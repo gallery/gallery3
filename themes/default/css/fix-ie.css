@@ -26,3 +26,13 @@
 #gViewMenu a {
   width: 52px !important;
 }
+
+#gPager li.gInfo {
+  width: 39%;
+}
+
+#gPager .txtright a.gButtonLink {
+  clear: none !important;
+  float: right !important;
+  width: 45% !important;
+}
