@@ -1,4 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<? if (!$comments->count()): ?>
+<p>
+  <?= t("No comments yet. Be the first to") ?>
+  <a href="#add_comment_form" class="showCommentForm"><?= t("comment") ?></a>!
+</p>
+<? endif ?>
 <ul id="gComments">
   <? foreach ($comments as $comment): ?>
   <li id="gComment-<?= $comment->id ?>">
@@ -20,7 +26,4 @@
   </li>
   <? endforeach ?>
 </ul>
-<? if (!$comments->count()): ?>
-<?= t("No comments yet. Be the first to comment!") ?>
-<? endif ?>
 <a name="add_comment_form"></a>

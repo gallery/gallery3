@@ -55,10 +55,10 @@ $(document).ready(function() {
 
     // Collapse comments form, insert button to expand
     if ($("#gAddCommentForm").length) {
-      var showCommentForm = '<a href="#add_comment_form" id="showCommentForm" class="gButtonLink ui-corner-all ui-icon-left ui-state-default right"><span class="ui-icon ui-icon-comment"></span>Add a comment</a>';
+      var showCommentForm = '<a href="#add_comment_form" class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right"><span class="ui-icon ui-icon-comment"></span>Add a comment</a>';
       $("#gAddCommentForm").hide();
       $("#gComments").prepend(showCommentForm);
-      $("#showCommentForm").click(function(){
+      $(".showCommentForm").click(function(){
         $("#gAddCommentForm").show(1000);
       });
     }
