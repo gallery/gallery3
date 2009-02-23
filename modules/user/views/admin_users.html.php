@@ -101,12 +101,6 @@
       </tr>
       <? endforeach ?>
     </table>
-    <a href="<?= url::site("admin/users/add_user_form") ?>"
-        class="gDialogLink gButtonLink ui-icon-left ui-state-default ui-corner-all"
-        title="<?= t("Create a new user") ?>">
-      <span class="ui-icon ui-icon-circle-plus"></span>
-      <?= t("Add a new user") ?>
-    </a>
   </div>
 </div>
 
