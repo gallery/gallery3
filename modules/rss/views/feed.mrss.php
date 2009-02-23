@@ -35,9 +35,10 @@
                  title="<?= htmlspecialchars($child->title) ?>"
                  height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
           <? else: ?>
+            <a href="<?= url::abs_site("{$child->type}s/{$child->id}") ?>">
             <img alt="" src="<?= $child->thumb_url(true) ?>"
                  title="<?= htmlspecialchars($child->title) ?>"
-                 height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" /><br />
+                 height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" /></a><br />
           <? endif ?>
             <?= $child->description ?>
           </p>
@@ -67,7 +68,11 @@
           <? endif ?>
         <? else: ?>
           <media:content url="<?= $child->file_url(true) ?>"
-                         type="video/x-flv" />
+                         fileSize="<?= filesize($child->file_path()) ?>"
+                         height="<?= $child->height ?>"
+                         width="<?= $child->width ?>"
+                         type="<?= $child->mime_type ?>"
+                         />
         <? endif ?>
       </media:group>
     </item>
