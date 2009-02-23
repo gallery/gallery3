@@ -19,7 +19,7 @@
  */
 class local_import_menu_Core {
   static function admin($menu, $theme) {
-    $menu->get("content_menu")
+    $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("local_import")
                ->label(t("Local Import"))
@@ -31,8 +31,9 @@ class local_import_menu_Core {
 
     $paths = unserialize(module::get_var("local_import", "authorized_paths"));
 
-    if ($item && access::can("local_import", $item) && $item->is_album() &&!empty($paths)) {
-      $menu->get("options_menu")
+    if ($item && access::can("edit", $item) && access::can("local_import", $item) &&
+        $item->is_album() && !empty($paths)) {
+      $options_menu = $menu->get("options_menu")
         ->append(Menu::factory("dialog")
                  ->id("local_import")
                  ->label(t("Import from server"))
