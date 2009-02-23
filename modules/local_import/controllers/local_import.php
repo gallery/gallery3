@@ -66,10 +66,10 @@ class Local_Import_Controller extends Controller {
     $path = $this->input->post("path");
     $pathinfo = pathinfo($path);
     set_time_limit(30);
-    if ($path_info["extension"] == "flv") {
+    if ($pathinfo["extension"] == "flv") {
       $movie = movie::create($parent, $path, basename($path), basename($path));
       log::success("content", t("Added a movie"),
-                   html::anchor("photos/{$photo->id}", t("view photo")));
+                   html::anchor("movies/{$movie->id}", t("view movie")));
       message::success(t("Added movie %movie_title", array("movie_title" => $movie->title)));
     } else {
       $photo = photo::create($parent, $path, basename($path), basename($path));
