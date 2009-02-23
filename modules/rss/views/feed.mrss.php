@@ -23,11 +23,12 @@
     <? foreach ($children as $child): ?>
     <item>
       <title><?= htmlspecialchars($child->title) ?></title>
-      <link><?= url::abs_site("photos/$child->id") ?></link>
-      <description><?= htmlspecialchars($child->description) ?></description>
-      <guid isPermaLink="true"><?= url::abs_site("photos/$child->id") ?></guid>
+      <link><?= url::abs_site("{$child->type}s/{$child->id}") ?></link>
+      <guid isPermaLink="true"><?= url::abs_site("{$child->type}s/{$child->id}") ?></guid>
+       <pubDate><?= date("D, d M Y H:i:s T", $child->createdb); ?></pubDate>
       <content:encoded>
         <![CDATA[
+          <span><?= $child->description ?></span>
           <p>
             <img alt="" src="<?= $child->resize_url(true) ?>"
                  title="<?= htmlspecialchars($child->title) ?>"
@@ -51,6 +52,7 @@
                        />
        <? if (access::can("view_full", $child)): ?>
        <media:content url="<?= $child->file_url(true) ?>"
+          
                        fileSize="<?= filesize($child->file_path()) ?>"
                        type="<?= $child->mime_type ?>"
                        height="<?= $child->height ?>"
