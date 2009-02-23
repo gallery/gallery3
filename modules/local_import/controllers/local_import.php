@@ -92,7 +92,7 @@ class Local_Import_Controller extends Controller {
           $extension = strtolower(substr(strrchr($file, '.'), 1));
           // Make sure the file is readable
           if (is_readable($full_path) &&
-              in_array($extension, array("gif", "jpg", "jpeg", "png", "flv"))) {
+              in_array($extension, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, "flv"))) {
             $file_list[$file] = array("path" => $full_path);
           }
         }
