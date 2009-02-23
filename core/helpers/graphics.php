@@ -104,9 +104,7 @@ class graphics_Core {
       return;
     }
 
-    foreach (array("thumb" => $item->thumb_path(),
-                   "resize" => $item->resize_path()) as $target => $output_file) {
-
+    foreach ($ops as $target => $output_file) {
       if ($input_item->is_movie()) {
         // Convert the movie to a JPG first
         movie::extract_frame($input_file, $output_file);
@@ -139,6 +137,7 @@ class graphics_Core {
       $item->resize_dirty = 0;
     }
     $item->save();
+    print "exiting generate\n";
   }
 
   /**
