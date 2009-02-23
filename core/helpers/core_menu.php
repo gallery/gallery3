@@ -93,12 +93,6 @@ class core_menu_Core {
   }
 
   static function album($menu, $theme) {
-    $menu
-      ->append(Menu::factory("link")
-               ->id("hybrid")
-               ->label(t("View album hybrid mode"))
-               ->url("#")
-               ->css_id("gHybridLink"));
   }
 
   static function photo($menu, $theme) {
