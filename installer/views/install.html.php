@@ -6,7 +6,7 @@
   </head>
   <body>
     <div id="outer">
-      <img src="http://www.gallery2.org/gallery2.png"/>
+      <img src="../core/images/gallery2.png" />
       <div id="inner">
         <?php print $content ?>
       </div>
