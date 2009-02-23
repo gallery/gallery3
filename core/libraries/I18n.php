@@ -169,7 +169,7 @@ class I18n_Core {
 
   public static function get_message_key($message) {
     $as_string = is_array($message) ? implode('|', $message) : $message;
-    return md5($as_string, true);
+    return md5($as_string);
   }
 
   private function interpolate($locale, $string, $values) {

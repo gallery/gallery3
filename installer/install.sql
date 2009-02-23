@@ -99,7 +99,7 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `incoming_translations` (
   `id` int(9) NOT NULL auto_increment,
-  `key` binary(16) NOT NULL,
+  `key` char(32) NOT NULL,
   `locale` char(10) NOT NULL,
   `message` text NOT NULL,
   `translation` text,
@@ -201,7 +201,7 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `outgoing_translations` (
   `id` int(9) NOT NULL auto_increment,
-  `key` binary(16) NOT NULL,
+  `key` char(32) NOT NULL,
   `locale` char(10) NOT NULL,
   `message` text NOT NULL,
   `translation` text,
