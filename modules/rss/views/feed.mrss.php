@@ -67,11 +67,7 @@
           <? endif ?>
         <? else: ?>
           <media:content url="<?= $child->file_url(true) ?>"
-                         fileSize="<?= filesize($child->file_path()) ?>"
-                         type="<?= $child->mime_type ?>"
-                         height="<?= $child->height ?>"
-                         width="<?= $child->width ?>"
-                         />
+                         type="video/x-flv" />
         <? endif ?>
       </media:group>
     </item>
