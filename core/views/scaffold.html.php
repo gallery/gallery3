@@ -169,7 +169,7 @@
   <body>
     <div class="outer">
       <center>
-        <img src="http://www.gallery2.org/gallery2.png"/>
+        <img src="<?= url::file("core/images/gallery.png") ?>"/>
       </center>
       <div class="inner">
         <h1>Gallery3 Scaffold</h1>
