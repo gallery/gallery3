@@ -25,14 +25,20 @@
       <title><?= htmlspecialchars($child->title) ?></title>
       <link><?= url::abs_site("{$child->type}s/{$child->id}") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("{$child->type}s/{$child->id}") ?></guid>
-       <pubDate><?= date("D, d M Y H:i:s T", $child->createdb); ?></pubDate>
+      <pubDate><?= date("D, d M Y H:i:s T", $child->created); ?></pubDate>
       <content:encoded>
         <![CDATA[
           <span><?= $child->description ?></span>
           <p>
+          <? if ($child->type == "photo" || $child->type == "album"): ?>
             <img alt="" src="<?= $child->resize_url(true) ?>"
                  title="<?= htmlspecialchars($child->title) ?>"
                  height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
+          <? else: ?>
+            <img alt="" src="<?= $child->thumb_url(true) ?>"
+                 title="<?= htmlspecialchars($child->title) ?>"
+                 height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" /><br />
+          <? endif ?>
             <?= $child->description ?>
           </p>
         ]]>
@@ -43,22 +49,30 @@
                        width="<?= $child->thumb_width ?>"
                        />
       <media:group>
-        <media:content url="<?= $child->resize_url(true) ?>"
-                       fileSize="<?= filesize($child->resize_path()) ?>"
-                       type="<?= $child->mime_type ?>"
-                       height="<?= $child->resize_height ?>"
-                       width="<?= $child->resize_width ?>"
-                       isDefault="true"
-                       />
-       <? if (access::can("view_full", $child)): ?>
-       <media:content url="<?= $child->file_url(true) ?>"
-          
-                       fileSize="<?= filesize($child->file_path()) ?>"
-                       type="<?= $child->mime_type ?>"
-                       height="<?= $child->height ?>"
-                       width="<?= $child->width ?>"
-                       />
-       <? endif ?>
+        <? if ($child->type == "photo" || $child->type == "album"): ?>
+          <media:content url="<?= $child->resize_url(true) ?>"
+                         fileSize="<?= filesize($child->resize_path()) ?>"
+                         type="<?= $child->mime_type ?>"
+                         height="<?= $child->resize_height ?>"
+                         width="<?= $child->resize_width ?>"
+                         isDefault="true"
+                         />
+          <? if (access::can("view_full", $child)): ?>
+            <media:content url="<?= $child->file_url(true) ?>"
+                           fileSize="<?= filesize($child->file_path()) ?>"
+                           type="<?= $child->mime_type ?>"
+                           height="<?= $child->height ?>"
+                           width="<?= $child->width ?>"
+                           />
+          <? endif ?>
+        <? else: ?>
+          <media:content url="<?= $child->file_url(true) ?>"
+                         fileSize="<?= filesize($child->file_path()) ?>"
+                         type="<?= $child->mime_type ?>"
+                         height="<?= $child->height ?>"
+                         width="<?= $child->width ?>"
+                         />
+        <? endif ?>
       </media:group>
     </item>
     <? endforeach ?>
