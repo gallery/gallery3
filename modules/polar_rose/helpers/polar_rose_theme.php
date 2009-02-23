@@ -19,11 +19,11 @@
  */
 class polar_rose_theme_Core {
   static function head($theme) {
-    if (module::is_installed("media_rss")) {
+    if (module::is_installed("rss")) {
       if ($theme->item()) {
-        $url = media_rss::item_feed($theme->item());
+        $url = rss::item_feed($theme->item());
       } else if ($theme->tag()) {
-        $url = media_rss::tag_feed($theme->tag());
+        $url = rss::tag_feed($theme->tag());
       }
 
       // Polar Rose doesn't understand relative URLs.  Hack around that until they fix it.
