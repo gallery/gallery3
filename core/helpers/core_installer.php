@@ -130,7 +130,7 @@ class core_installer {
 
       $db->query("CREATE TABLE `incoming_translations` (
                    `id` int(9) NOT NULL auto_increment,
-                   `key` binary(16) NOT NULL,
+                   `key` char(32) NOT NULL,
                    `locale` char(10) NOT NULL,
                    `message` text NOT NULL,
                    `translation` text,
@@ -142,7 +142,7 @@ class core_installer {
 
       $db->query("CREATE TABLE `outgoing_translations` (
                    `id` int(9) NOT NULL auto_increment,
-                   `key` binary(16) NOT NULL,
+                   `key` char(32) NOT NULL,
                    `locale` char(10) NOT NULL,
                    `message` text NOT NULL,
                    `translation` text,

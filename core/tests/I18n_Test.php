@@ -52,6 +52,17 @@ class I18n_Test extends Unit_Test_Case {
     }
   }
 
+  public function get_locale_test() {
+    $locale = $this->i18n->locale();
+    $this->assert_equal("te_ST", $locale);
+  }
+
+  public function set_locale_test() {
+    $this->i18n->locale("de_DE");
+    $locale = $this->i18n->locale();
+    $this->assert_equal("de_DE", $locale);
+  }
+  
   public function translate_simple_test() {
     $result = $this->i18n->translate('Hello world');
     $this->assert_equal('Hallo Welt', $result);
