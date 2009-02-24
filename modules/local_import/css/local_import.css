@@ -1,3 +1,7 @@
+.gCheckboxTree {
+  display: none;
+}
+
 .gCheckboxTree input {
   display: inline;
 }
@@ -18,6 +22,9 @@
 #gProgressBar {
   visibility: hidden;
   height: 1em;
+  width: 100%;
+  margin-top: 0.5em;
+  display: inline-block;
 }
 
 #gLocalImport #gLocalImportTree {

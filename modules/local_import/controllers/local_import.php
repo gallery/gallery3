@@ -44,6 +44,7 @@ class Local_Import_Controller extends Controller {
     access::verify_csrf();
 
     $path = $this->input->post("path");
+    $path =  implode("/", $this->input->post("path"));
     if (!is_readable($path)) {
       kohana::show_404();
     }
@@ -64,18 +65,40 @@ class Local_Import_Controller extends Controller {
     }
 
     $path = $this->input->post("path");
-    $pathinfo = pathinfo($path);
-    set_time_limit(30);
-    if ($pathinfo["extension"] == "flv") {
-      $movie = movie::create($parent, $path, basename($path), basename($path));
-      log::success("content", t("Added a movie"),
-                   html::anchor("movies/{$movie->id}", t("view movie")));
-      message::success(t("Added movie %movie_title", array("movie_title" => $movie->title)));
-    } else {
-      $photo = photo::create($parent, $path, basename($path), basename($path));
-      log::success("content", t("Added a photo"),
-                   html::anchor("photos/{$photo->id}", t("view photo")));
-      message::success(t("Added photo %photo_title", array("photo_title" => $photo->title)));
+
+    $base_path = $parent->file_path();
+    $source_path = $path[0];
+    for ($i = 1; $i < count($path); $i++) {  // skip the first path
+      $base_path .= "/$path[$i]";
+      $source_path .= "/$path[$i]";
+      $pathinfo = pathinfo($source_path);
+      set_time_limit(30);
+      if (is_dir($source_path)) {
+        $album = ORM::factory("item")
+          ->where("name", $path[$i])
+          ->where("parent_id", $parent->id)
+          ->find();
+        if (!$album->loaded) {
+          $parent = album::create($parent, $path[$i], $path[$i]);
+          log::success("content", t("Added album"),
+                       html::anchor("albums/{$parent->id}", t("view album")));
+          message::success(t("Added album %album_title", array("album_title" => $parent->title)));
+        } else {
+          $parent = $album;
+        }
+      } else if ($pathinfo["extension"] == "flv") {
+        $movie =
+          movie::create($parent, $source_path, basename($source_path), basename($source_path));
+        log::success("content", t("Added a movie"),
+                     html::anchor("movies/{$movie->id}", t("view movie")));
+        message::success(t("Added movie %movie_title", array("movie_title" => $movie->title)));
+      } else {
+        $photo =
+          photo::create($parent, $source_path, basename($source_path), basename($source_path));
+        log::success("content", t("Added a photo"),
+                     html::anchor("photos/{$photo->id}", t("view photo")));
+        message::success(t("Added photo %photo_title", array("photo_title" => $photo->title)));
+      }
     }
   }
 
@@ -92,8 +115,8 @@ class Local_Import_Controller extends Controller {
           $extension = strtolower(substr(strrchr($file, '.'), 1));
           // Make sure the file is readable
           if (is_readable($full_path) &&
-              in_array($extension, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, "jpg", IMAGETYPE_PNG, "flv"))) {
-            $file_list[$file] = array("path" => $full_path);
+              in_array($extension, array("IMAGETYPE_GIF", "JPEG", "jpg", "PNG", "flv"))) {
+            $file_list[$file] = array("path" => $full_path, "is_dir" => false);
           }
         }
       }

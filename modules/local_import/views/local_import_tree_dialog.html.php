@@ -5,6 +5,7 @@ $("#gLocalImport").ready(function() {
     do_import(this, event);
   });
   $("#gProgressBar").progressbar();
+  $("#gLocalImport ul").css("display", "block");
 });</script>
 <div id="gLocalImport">
   <h1 style="display: none;"><?= sprintf(t("Import Photos to '%s'"), $album_title) ?></h1>
@@ -21,8 +22,10 @@ $("#gLocalImport").ready(function() {
     <div id="gLocalImportTree" >
       <?= $tree ?>
     </div>
-    <?= form::submit(array("id" => "gImportButton", "name" => "import", "disabled" => true),
+    <span>
+    <?= form::submit(array("id" => "gImportButton", "name" => "import", "disabled" => true, "class" => "submit"),
                      t("Import")) ?>
-    <div id="gProgressBar"></div>
+    </span>
   <?= form::close() ?> 
+  <div id="gProgressBar" ></div>
 </div>
