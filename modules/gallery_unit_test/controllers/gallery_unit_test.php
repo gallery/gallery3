@@ -91,11 +91,13 @@ class Gallery_Unit_Test_Controller extends Controller {
     module::load_modules();
 
     // Install all modules
+    // Force core and user to be installed first to resolve dependencies.
     module::install("core");
+    module::install("user");
     $modules = array();
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
       $module_name = basename(dirname(dirname($file)));
-      if ($module_name == "core") {
+      if (in_array($module_name, array("core", "user"))) {
         continue;
       }
       module::install($module_name);
