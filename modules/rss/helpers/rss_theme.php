@@ -29,4 +29,18 @@ class rss_theme_Core {
       return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
     }
   }
+
+  static function sidebar_blocks($theme) {
+    $block = new Block();
+    $block->css_id = "gRss";
+    $block->title = t("Available RSS Feeds");
+    $block->content = new View("rss_block.html");
+    $block->content->feeds = array(
+      t("New photos or movies") => url::abs_site("rss/updates"),
+      t("All new comments") => url::abs_site("rss/comments"),
+      sprintf(t("Comments on %s"),
+              $theme->item()->title) => url::abs_site("rss/comments/{$theme->item()->id}")
+    );
+    return $block;
+  }
 }

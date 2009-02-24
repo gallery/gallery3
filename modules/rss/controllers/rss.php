@@ -164,7 +164,7 @@ class Rss_Controller extends Controller {
     $comments = $orm->find_all(self::$page_size, ($page - 1) * self::$page_size);
     $max_pages = ceil($orm->count_last_query() / self::$page_size);
 
-    if ($page > $max_pages) {
+    if ($max_pages && $page > $max_pages) {
       url::redirect("rss/comments/{$item->id}?page=$max_pages");
     }
 
@@ -202,6 +202,6 @@ class Rss_Controller extends Controller {
     }
 
     rest::http_content_type(rest::RSS);
-        print $view;
+    print $view;
   }
 }
