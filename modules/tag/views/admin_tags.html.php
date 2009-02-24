@@ -57,7 +57,7 @@
             <ul>
           <? elseif ($last_letter != $current_letter): /* new letter */ ?>
             <? if ($column_tag_count > $tags_per_column): /* new column */ ?>
-            	</td>
+               </td>
               <td>
               <? $column_tag_count = 0 ?>
             <? endif ?>

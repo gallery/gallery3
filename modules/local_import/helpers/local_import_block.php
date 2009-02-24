@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class local_import_block_Core {
-  public static function head($theme) {
+  static function head($theme) {
     $head[] = html::script("modules/local_import/js/local_import.js");
 
     $url = url::file("modules/local_import/css/local_import.css");

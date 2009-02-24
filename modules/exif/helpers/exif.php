@@ -25,7 +25,7 @@ class exif_Core {
 
   protected static $exif_keys;
 
-  public static function extract($item) {
+  static function extract($item) {
     ORM::factory("exif_key")->where("item_id", $item->id)->delete_all();
 
     // Only try to extract EXIF from photos
@@ -68,7 +68,7 @@ class exif_Core {
     $record->save();
   }
 
-  public static function get($item, $summary=true) {
+  static function get($item, $summary=true) {
     $exif = array();
     $exif_key = ORM::factory("exif_key")
       ->where("item_id", $item->id);

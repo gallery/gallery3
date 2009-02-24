@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
 $("#<?= $uid ?>").ready(function() {
   $("#<?= $uid ?> span.ui-icon").click(function(event) {

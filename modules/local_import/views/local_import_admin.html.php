@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gLocalImportAdmin">
   <h2>
     <?= t("Local Import Admininstration") ?>

@@ -16,7 +16,7 @@
         media="screen,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
         media="screen,projection" />
-		<!--[if IE]>
+   <!--[if IE]>
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
         media="screen,print,projection" />
    <![endif]-->

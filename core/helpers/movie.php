@@ -108,7 +108,7 @@ class movie_Core {
     return array($width, $height);
   }
 
-  function extract_frame($input_file, $output_file) {
+  static function extract_frame($input_file, $output_file) {
     if (!$ffmpeg = exec("which ffmpeg")) {
       throw new Exception("@todo MISSING_FFMPEG");
     }

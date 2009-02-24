@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <span><?= t("Authorized Paths") ?></span>
 <ul id="gPathList">
 <? foreach ($paths as $id => $path): ?>

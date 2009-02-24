@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access."); ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
 $("#gLocalImport").ready(function() {
   $("#gLocalImport :submit").click(function(event) {

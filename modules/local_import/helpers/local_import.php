@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class local_import {
-  public static function get_admin_page() {
+  static function get_admin_page() {
     $template = new View("local_import_admin.html");
 
     $paths = unserialize(module::get_var("local_import", "authorized_paths", "a:0:{}"));
@@ -30,7 +30,7 @@ class local_import {
     return $template;
   }
 
-  public static function get_admin_form() {
+  static function get_admin_form() {
     $form  = new Forge("admin/local_import/add_path", "", "post", array("id" => "gLocalImportAdminForm"));
     $add_path = $form->group("add_path");
     $add_path->input("path")->label(t("Path"))->rules("required")

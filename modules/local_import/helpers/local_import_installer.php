@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class local_import_installer {
-  public static function install() {
+  static function install() {
     $db = Database::instance();
     $version = module::get_version("local_import");
     if ($version == 0) {
@@ -31,7 +31,7 @@ class local_import_installer {
     }
   }
 
-  public static function uninstall() {
+  static function uninstall() {
     access::delete_permission("local_import");
     $module = module::get("local_import");
 
