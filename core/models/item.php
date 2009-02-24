@@ -100,9 +100,9 @@ class Item_Model extends ORM_MPTT {
     // If there is no name, the path is invalid so don't try to delete
     if (!empty($this->name)) {
       if ($this->is_album()) {
-        dir::unlink(dirname($original_path));
-        dir::unlink(dirname($original_resize_path));
-        dir::unlink(dirname($original_thumb_path));
+        dir::unlink($original_path);
+        dir::unlink($original_resize_path);
+        dir::unlink($original_thumb_path);
       } else {
         unlink($original_path);
         unlink($original_resize_path);
