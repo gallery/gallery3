@@ -86,7 +86,7 @@ class Local_Import_Controller extends Controller {
         } else {
           $parent = $album;
         }
-      } else if (in_array($pathinfo["extension"], array("flv", "mp4")) {
+      } else if (in_array($pathinfo["extension"], array("flv", "mp4"))) {
         $movie =
           movie::create($parent, $source_path, basename($source_path), basename($source_path));
         log::success("content", t("Added a movie"),
