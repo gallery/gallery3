@@ -1,4 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<?= $theme->sidebar_top() ?>
 <div class="gToolbar">
   <div id="gViewMenu" class="gButtonSet">
     <? if ($page_type == "album"):?>
