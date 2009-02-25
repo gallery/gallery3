@@ -86,7 +86,7 @@ class Local_Import_Controller extends Controller {
         } else {
           $parent = $album;
         }
-      } else if ($pathinfo["extension"] == "flv") {
+      } else if (in_array($pathinfo["extension"], array("flv", "mp4")) {
         $movie =
           movie::create($parent, $source_path, basename($source_path), basename($source_path));
         log::success("content", t("Added a movie"),
@@ -115,7 +115,7 @@ class Local_Import_Controller extends Controller {
           $extension = strtolower(substr(strrchr($file, '.'), 1));
           // Make sure the file is readable
           if (is_readable($full_path) &&
-              in_array($extension, array("IMAGETYPE_GIF", "JPEG", "jpg", "PNG", "flv"))) {
+              in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
             $file_list[$file] = array("path" => $full_path, "is_dir" => false);
           }
         }

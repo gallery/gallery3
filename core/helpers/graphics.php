@@ -107,6 +107,7 @@ class graphics_Core {
     foreach ($ops as $target => $output_file) {
       if ($input_item->is_movie()) {
         // Convert the movie to a JPG first
+        $output_file = preg_replace("/...$/", "jpg", $output_file);
         movie::extract_frame($input_file, $output_file);
         $working_file = $output_file;
       } else {

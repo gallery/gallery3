@@ -46,19 +46,19 @@ class Simple_Uploader_Controller extends Controller {
     access::verify_csrf();
 
     $file_validation = new Validation($_FILES);
-    $file_validation->add_rules("file", "upload::valid", "upload::type[gif,jpg,png,flv]");
+    $file_validation->add_rules("file", "upload::valid", "upload::type[gif,jpg,png,flv,mp4]");
     if ($file_validation->validate()) {
-      $temp_filename  = upload::save("file");
+      $temp_filename = upload::save("file");
       $title = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
       $path_info = pathinfo($temp_filename);
-      if ($path_info["extension"] == "flv") {
+      if (in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
         $movie = movie::create($album, $temp_filename, $title, $title);
-        log::success("content", t("Added a movie"), html::anchor("movies/$movie->id",
-                                                                 t("view movie")));
+        log::success("content", t("Added a movie"),
+                     html::anchor("movies/$movie->id", t("view movie")));
       } else {
         $photo = photo::create($album, $temp_filename, $title, $title);
-        log::success("content", t("Added a photo"), html::anchor("photos/$photo->id",
-                                                                 t("view photo")));
+        log::success("content", t("Added a photo"),
+                     html::anchor("photos/$photo->id", t("view photo")));
       }
     }
   }

@@ -17,7 +17,13 @@
      href="<?= $item->file_url(true) ?>"
      style="display: block; width: <?= $item->width ?>px; height: <?= $item->height ?>px">
   </a>
-  <script>flowplayer("gMovieId-<?= $item->id ?>", "<?= url::abs_file("lib/flowplayer.swf") ?>")</script>
+  <script>
+    flowplayer("gMovieId-<?= $item->id ?>", "<?= url::abs_file("lib/flowplayer.swf") ?>", {
+      plugins: {
+        h264streaming: { url: "<?= url::abs_file("lib/flowplayer.h264streaming.swf") ?>" }
+      }
+    })
+  </script>
 
   <div id="gInfo">
     <h1><?= $item->title ?></h1>

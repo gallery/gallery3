@@ -180,8 +180,15 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/photo.thumb.jpg
    */
   public function thumb_path() {
-    return VARPATH . "thumbs/" . $this->relative_path() .
-      ($this->is_album() ? "/.album.jpg" : "");
+    $base = VARPATH . "thumbs/" . $this->relative_path();
+    if ($this->is_photo()) {
+      return $base;
+    } else if ($this->is_album()) {
+      return $base . "/.album.jpg";
+    } else if ($this->is_movie()) {
+      // Replace the extension with jpg
+      return preg_replace("/...$/", "jpg", $base);
+    }
   }
 
   /**
@@ -189,10 +196,17 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
    */
   public function thumb_url($full_uri=true) {
-    return ($full_uri ?
-            url::abs_file("var/thumbs/" . $this->relative_path()) :
-            url::file("var/thumbs/" . $this->relative_path()))  .
-      ($this->is_album() ? "/.album.jpg" : "");
+    $base = ($full_uri ?
+             url::abs_file("var/thumbs/" . $this->relative_path()) :
+             url::file("var/thumbs/" . $this->relative_path()));
+    if ($this->is_photo()) {
+      return $base;
+    } else if ($this->is_album()) {
+      return $base . "/.album.jpg";
+    } else if ($this->is_movie()) {
+      // Replace the extension with jpg
+      return preg_replace("/...$/", "jpg", $base);
+    }
   }
 
   /**

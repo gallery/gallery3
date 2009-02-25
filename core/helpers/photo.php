@@ -44,13 +44,6 @@ class photo_Core {
     }
 
     $image_info = getimagesize($filename);
-    if ($image_info) {
-      $type = "photo";
-    } else {
-      $movie_info = movie::getmoviesize($filename);
-      $image_info = array(200, 200, 'mime' => 'video/x-flv');
-      $type = "movie";
-    }
 
     // Force an extension onto the name
     $pi = pathinfo($name);
@@ -60,7 +53,7 @@ class photo_Core {
     }
 
     $photo = ORM::factory("item");
-    $photo->type = $type;
+    $photo->type = "photo";
     $photo->title = $title;
     $photo->description = $description;
     $photo->name = $name;
@@ -109,7 +102,7 @@ class photo_Core {
     $group->input("name")->label(t("Name"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
-    $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif,flv]");
+    $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif,flv,mp4]");
     $group->hidden("type")->value("photo");
     $group->submit("")->value(t("Upload"));
     $form->add_rules_from(ORM::factory("item"));
