@@ -60,16 +60,14 @@ class Local_Import_Controller extends Controller {
 
     $parent = ORM::factory("item", $id);
     access::can("local_import", $item);
-    if (!$parent->loaded) {
+    if (!$parent->is_album() && !$parent->loaded ) {
       throw new Exception("@todo BAD_ALBUM");
     }
 
     $path = $this->input->post("path");
 
-    $base_path = $parent->file_path();
     $source_path = $path[0];
     for ($i = 1; $i < count($path); $i++) {  // skip the first path
-      $base_path .= "/$path[$i]";
       $source_path .= "/$path[$i]";
       $pathinfo = pathinfo($source_path);
       set_time_limit(30);
@@ -79,25 +77,15 @@ class Local_Import_Controller extends Controller {
           ->where("parent_id", $parent->id)
           ->find();
         if (!$album->loaded) {
-          $parent = album::create($parent, $path[$i], $path[$i]);
-          log::success("content", t("Added album"),
-                       html::anchor("albums/{$parent->id}", t("view album")));
-          message::success(t("Added album %album_title", array("album_title" => $parent->title)));
-        } else {
-          $parent = $album;
+          $album = album::create($parent, $path[$i], $path[$i], null, user::active()->id);
         }
+        $parent = $album;
       } else if (in_array($pathinfo["extension"], array("flv", "mp4"))) {
-        $movie =
-          movie::create($parent, $source_path, basename($source_path), basename($source_path));
-        log::success("content", t("Added a movie"),
-                     html::anchor("movies/{$movie->id}", t("view movie")));
-        message::success(t("Added movie %movie_title", array("movie_title" => $movie->title)));
+        $movie = movie::create($parent, $source_path, basename($source_path),
+                               basename($source_path), null, user::active()->id);
       } else {
-        $photo =
-          photo::create($parent, $source_path, basename($source_path), basename($source_path));
-        log::success("content", t("Added a photo"),
-                     html::anchor("photos/{$photo->id}", t("view photo")));
-        message::success(t("Added photo %photo_title", array("photo_title" => $photo->title)));
+        $photo = photo::create($parent, $source_path, basename($source_path),
+                        basename($source_path), null, user::active()->id);
       }
     }
   }

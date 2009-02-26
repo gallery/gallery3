@@ -1,12 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<script type="text/javascript">
-$("#gLocalImport").ready(function() {
-  $("#gLocalImport :submit").click(function(event) {
-    do_import(this, event);
-  });
-  $("#gProgressBar").progressbar();
-  $("#gLocalImport ul").css("display", "block");
-});</script>
+<link media="screen, projection" rel="stylesheet" type="text/css" href="<?= url::file("modules/local_import/css/local_import.css") ?>" />
+<?= html::script("modules/local_import/js/local_import.js"); ?>
+    
 <div id="gLocalImport">
   <h1 style="display: none;"><?= sprintf(t("Import Photos to '%s'"), $album_title) ?></h1>
 

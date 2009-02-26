@@ -1,3 +1,11 @@
+$("#gLocalImport").ready(function() {
+  $("#gLocalImport :submit").click(function(event) {
+    do_import(this, event);
+  });
+  $("#gProgressBar").progressbar();
+  $("#gLocalImport ul").css("display", "block");
+});
+
 function open_close_branch(icon, event) {
   var parent = icon.parentNode;
   var children = $(parent).find(".gCheckboxTree");
@@ -15,8 +23,8 @@ function open_close_branch(icon, event) {
     } else {
       $(icon).addClass("ui-icon-minus");
       $(icon).removeClass("ui-icon-plus");
-      $(parent).children("ul").slideDown("fast");
     }
+    $(parent).children("ul").slideDown("fast");
   } else {
     $(icon).addClass("ui-icon-plus");
     $(icon).removeClass("ui-icon-minus");
@@ -96,8 +104,13 @@ function process_checkbox(checkbox) {
 }
 
 function process_file(li_element, parms) {
-  var url = $("#gLocalImport form").attr("action");
-  $.post(url, parms, function(data, status) {
+  $.ajax({async: false,
+          success:  function(data, status) {
+          },
+          data: parms,
+          dataType: "html",
+          type: "POST",
+          url: $("#gLocalImport form").attr("action")
   });
   current++;
   $("#gProgressBar").progressbar('value', current / process_length * 100);
