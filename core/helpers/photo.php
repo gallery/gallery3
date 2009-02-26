@@ -85,17 +85,15 @@ class photo_Core {
 
     module::event("item_created", $photo);
 
-    if ($type == "photo") {
-      // Build our thumbnail/resizes
-      graphics::generate($photo);
+    // Build our thumbnail/resizes
+    graphics::generate($photo);
 
-      // If the parent has no cover item, make this it.
-      $parent = $photo->parent();
-      if ($parent->album_cover_item_id == null)  {
-        $parent->album_cover_item_id = $photo->id;
-        $parent->save();
-        graphics::generate($parent);
-      }
+    // If the parent has no cover item, make this it.
+    $parent = $photo->parent();
+    if ($parent->album_cover_item_id == null)  {
+      $parent->album_cover_item_id = $photo->id;
+      $parent->save();
+      graphics::generate($parent);
     }
 
     return $photo;
