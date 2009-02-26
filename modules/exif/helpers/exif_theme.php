@@ -21,11 +21,18 @@ class exif_theme_Core {
   static function sidebar_bottom($theme) {
     $item = $theme->item();
     if ($item && $item->is_photo()) {
-      $view = new View("exif_sidebar.html");
+      $exif_key = ORM::factory("exif_key")
+        ->select("COUNT(*) AS C")
+        ->where("item_id", $item->id)
+        ->find();
+
+      if (!empty($exif_key->C)) {
+        $view = new View("exif_sidebar.html");
       
-      $csrf = access::csrf_token();
-      $view->url = url::site("exif/show/{$item->id}?csrf=$csrf");
-      return $view;
+        $csrf = access::csrf_token();
+        $view->url = url::site("exif/show/{$item->id}?csrf=$csrf");
+        return $view;
+      } 
     }
     return null;
   }
