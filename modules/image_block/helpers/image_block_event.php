@@ -21,7 +21,5 @@ class image_block_event_Core {
   static function item_created($item) {
     $db = Database::instance();
     $db->query("UPDATE `items` SET `rand_key` = RAND() WHERE id = {$item->id}");
-    Kohana::log("debug", Database::instance()->last_query());
   }
-
 }
