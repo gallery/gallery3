@@ -44,11 +44,11 @@ class L10n_Scanner_Core {
     // Load the current index into memory
     $this->_index_keys = array();
     foreach (Database::instance()
-               ->select("key")
-               ->from("incoming_translations")
-               ->where(array("locale" => "root"))
-               ->get()
-               ->as_array() as $row) {
+             ->select("key")
+             ->from("incoming_translations")
+             ->where(array("locale" => "root"))
+             ->get()
+             ->as_array() as $row) {
       $this->_index_keys[$row->key] = true;
     }
 
@@ -68,7 +68,7 @@ class L10n_Scanner_Core {
       $entry = ORM::factory("incoming_translation");
       $entry->key = $key;
       $entry->message = serialize($message);
-      $entry->locale = 'root';
+      $entry->locale = "root";
       $entry->save();
 
       $this->_index_keys[$key] = true;
@@ -140,8 +140,7 @@ class L10n_Scanner_Core {
             && is_array($second_param) && $second_param[0] == T_CONSTANT_ENCAPSED_STRING) {
           $singular = self::_escape_quoted_string($first_param[1]);
           $plural = self::_escape_quoted_string($first_param[1]);
-          $message_handler->process_message(array("one" => $singular,
-                                                  "other" => $plural));
+          $message_handler->process_message(array("one" => $singular, "other" => $plural));
         } else {
           // t2() found, but inside is something which is not a string literal.
           // TODO(andy_st): Call status callback with error filename/line.
