@@ -75,6 +75,13 @@ class movie_Core {
 
     // This saves the photo
     $movie->add_to_parent($parent);
+
+    // If the thumb or resize already exists then rename it
+    if (file_exists($movie->resize_path()) || file_exists($movie->thumb_path())) {
+      $movie->name = $pi["filename"] . "-" . rand() . "." . $pi["extension"];
+      $movie->save();
+    }
+
     copy($filename, $movie->file_path());
 
     module::event("item_created", $movie);
@@ -83,7 +90,7 @@ class movie_Core {
     graphics::generate($movie);
 
     // If the parent has no cover item, make this it.
-    $parent = $movie->parent();
+    //$parent = $movie->parent();
     if ($parent->album_cover_item_id == null)  {
       $parent->album_cover_item_id = $movie->id;
       $parent->save();

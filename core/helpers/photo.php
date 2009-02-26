@@ -72,9 +72,15 @@ class photo_Core {
       // @todo Improve this.  Random numbers are not user friendly
       $photo->name = rand() . "." . $pi["extension"];
     }
-
     // This saves the photo
     $photo->add_to_parent($parent);
+
+    // If the thumb or resize already exists then rename it
+    if (file_exists($photo->resize_path()) || file_exists($photo->thumb_path())) {
+      $photo->name = $pi["filename"] . "-" . rand() . "." . $pi["extension"];
+      $photo->save();
+    }
+
     copy($filename, $photo->file_path());
 
     module::event("item_created", $photo);
