@@ -251,3 +251,39 @@ li.gGroup {
 #gAdminDashboardSidebar .ui-dialog-titlebar {
   padding: .2em .4em;
 }
+
+/**** Stuff that needs a home! ****/
+#gTagAdmin td {
+  border: 0;
+}
+#gTagAdmin ul {
+  padding-bottom: .3em;
+}
+#gTagAdmin li {
+  padding: .1em 0 .2em .3em;
+}
+#gTagAdmin .gColumn {
+  float: left;
+  width: 200px;
+}
+.gEditable {
+  padding: .1em .3em .2em .3em;
+}
+.gEditable:hover {
+  background-color: #ffc;
+  cursor: text;
+}
+#gRenameTagForm input {
+  padding: 0 .2em 0 .2em;
+  clear: none;
+  float: left;
+  margin: 0 .2em 0 0;
+}
+#gRenameTagForm input[type="submit"] {
+  height: 25px;
+}
+#gRenameTagForm a, #gRenameTagForm span {
+  display: block;
+  float: left;
+  padding: .2em .2em 0 .1em;
+}

@@ -1,40 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<style>
-  #gTagAdmin td {
-    border: 0;
-  }
-  #gTagAdmin ul {
-    padding-bottom: .3em;
-  }
-  #gTagAdmin li {
-    padding: .1em 0 .2em .3em;
-  }
-  #gTagAdmin .gColumn {
-    float: left;
-    width: 200px;
-  }
-  .gEditable {
-    padding: .1em .3em .2em .3em;
-  }
-  .gEditable:hover {
-    background-color: #ffc;
-    cursor: text;
-  }
-  #gRenameTagForm input {
-    padding: 0 .2em 0 .2em;
-    clear: none;
-    float: left;
-    margin: 0 .2em 0 0;
-  }
-  #gRenameTagForm input[type="submit"] {
-    height: 25px;
-  }
-  #gRenameTagForm a, #gRenameTagForm span {
-    display: block;
-    float: left;
-    padding: .2em .2em 0 .1em;
-  }
-</style>
+<script>
+  $("document").ready(function() {
+    $("#gTagAdmin .tag-name").attr("title", "<?= t("Click to edit this tag") ?>");
+    $("#gTagAdmin .delete-link").attr("title", "<?= t("Delete this tag") ?>");
+  });
+</script>
 <div class="gBlock">
   <h2>
     <?= t("Tag Admin") ?>
@@ -68,11 +38,9 @@
           <? endif ?>
 
           <li>
-            <span id="gTag-<?= $tag->id ?>" class="gEditable"
-                  title="<?= t("Click to edit this tag") ?>"><?= $tag->name ?></span>
+            <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= $tag->name ?></span>
             <span class="understate">(<?= $tag->count ?>)</span>
-            <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>" class="gDialogLink"
-              title="<?= t("Delete this tag") ?>">X</a>
+            <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>" class="gDialogLink delete-link">X</a>
           </li>
 
           <? $column_tag_count++ ?>
