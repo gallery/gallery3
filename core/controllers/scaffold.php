@@ -511,7 +511,7 @@ class Scaffold_Controller extends Template_Controller {
     $db = Database::instance();
     $db->query("TRUNCATE `sessions`");
     $db->query("TRUNCATE `logs`");
-    $db->query("UPDATE `users` SET `password` = ''  WHERE `id` = 2");
+    $db->update("users", array("password" => ""), array("id" => 2));
 
     $dbconfig = Kohana::config('database.default');
     $dbconfig = $dbconfig["connection"];
