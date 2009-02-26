@@ -44,15 +44,15 @@ class Admin_Languages_Controller extends Admin_Controller {
     $group->dropdown("locale")
       ->options($installed_locales)
       ->selected(module::get_var("core", "default_locale"))
-      ->rules('required');
+      ->rules("required");
     $installation_options = array();
     foreach ($all_locales as $code => $display_name) {
       $installation_options[$code] = array($display_name, isset($installed_locales->$code));
     }
-    $group->checklist('installed_locales')
-      ->label('Installed Languages')
+    $group->checklist("installed_locales")
+      ->label(t("Installed Languages"))
       ->options($installation_options)
-      ->rules('required');
+      ->rules("required");
     $group->submit("save")->value(t("Save settings"));
     return $form;
   }
