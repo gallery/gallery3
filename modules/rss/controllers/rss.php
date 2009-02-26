@@ -70,13 +70,12 @@ class Rss_Controller extends Controller {
       url::redirect("rss/updates");
     }
 
-    $orm = ORM::factory(item)
+    $items = ORM::factory(item)
       ->viewable()
       ->where("type !=", "album")
-      ->orderby("created", DESC);
-    $items = $orm
+      ->orderby("created", DESC)
       ->find_all(self::$page_size, ($page - 1) * self::$page_size);
-    $max_pages = ceil($orm->count_last_query() / self::$page_size);
+    $max_pages = ceil($items->count() / self::$page_size);
 
     if ($page > $max_pages) {
       url::redirect("rss/updates?page=$max_pages");
@@ -160,7 +159,7 @@ class Rss_Controller extends Controller {
     if (!empty($id)) {
       $orm->where("item_id", $id);
     }
-                       
+
     $comments = $orm->find_all(self::$page_size, ($page - 1) * self::$page_size);
     $max_pages = ceil($orm->count_last_query() / self::$page_size);
 
@@ -174,7 +173,7 @@ class Rss_Controller extends Controller {
     $view->description = t("Recent Comments");
     $view->feed_link = url::abs_site("rss/comments");
     $view->pub_date = date("D, d M Y H:i:s T");
-   
+
     $view->children = array();
     foreach ($comments as $comment) {
       $item = $comment->item();
