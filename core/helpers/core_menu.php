@@ -20,11 +20,15 @@
 class core_menu_Core {
   static function site($menu, $theme) {
     if (file_exists(APPPATH . "controllers/scaffold.php")) {
-      $menu->append(Menu::factory("link")
-                    ->id("browse")
-                    ->label("Scaffold")
-                    ->url(url::site("scaffold")));
+      $menu->append($scaffold_menu = Menu::factory("submenu")
+                    ->id("scaffold")
+                    ->label("Scaffold"));
+      $scaffold_menu->append(Menu::factory("link")
+                             ->id("scaffold_home")
+                             ->label("Dashboard")
+                             ->url(url::site("scaffold")));
     }
+
     $menu->append(Menu::factory("link")
                   ->id("home")
                   ->label(t("Home"))
@@ -64,12 +68,12 @@ class core_menu_Core {
       }
 
       if (user::active()->admin) {
-        $options_menu
+        $scaffold_menu
           ->append(Menu::factory("link")
                    ->id("l10n_mode")
                    ->label(Session::instance()->get("l10n_mode", false)
-                           ? t("Disable translation mode")
-                           : t("Enable translation mode"))
+                           ? t("Stop translating")
+                           : t("Start translating"))
                    ->url(url::site("l10n_client/toggle_l10n_mode?csrf=" .
                                    access::csrf_token())));
       }
