@@ -90,9 +90,9 @@ class movie_Core {
     graphics::generate($movie);
 
     // If the parent has no cover item, make this it.
-    //$parent = $movie->parent();
     if ($parent->album_cover_item_id == null)  {
       $parent->album_cover_item_id = $movie->id;
+      
       $parent->save();
       graphics::generate($parent);
     }
