@@ -32,13 +32,4 @@ class local_import_theme_Core {
     
     return implode("\n", $head);
   }
-
-  //static function head($theme) {
-    //$head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-    //  url::file("modules/local_import/css/local_import.css") . "\" />";
-
-    //$head[] = html::script("modules/local_import/js/local_import.js");
-    
-    //return implode("\n", $head);
-  //}
 }
