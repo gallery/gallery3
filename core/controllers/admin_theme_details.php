@@ -52,6 +52,9 @@ class Admin_Theme_Details_Controller extends Admin_Controller {
         module::set_var("core", "resize_size", $resize_size);
       }
 
+      module::set_var("core", "header_text", $form->edit_theme->header_text->value);
+      module::set_var("core", "footer_text", $form->edit_theme->footer_text->value);
+
       message::success(t("Updated theme details"));
       url::redirect("admin/theme_details");
     } else {

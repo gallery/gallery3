@@ -41,15 +41,19 @@ class theme_Core {
   static function get_edit_form_admin() {
     $form = new Forge("admin/theme_details/save/", "", null, array("id" =>"gThemeDetailsForm"));
     $group = $form->group("edit_theme");
-    $group->input("page_size")->label(t("Items per page"))->id("gPageSize")->
-      rules('required|valid_digit')->
-      value(module::get_var("core", "page_size"));
-    $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("gThumbSize")->
-      rules('required|valid_digit')->
-      value(module::get_var("core", "thumb_size"));
-    $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("gResizeSize")->
-      rules('required|valid_digit')->
-      value(module::get_var("core", "resize_size"));
+    $group->input("page_size")->label(t("Items per page"))->id("gPageSize")
+      ->rules("required|valid_digit")
+      ->value(module::get_var("core", "page_size"));
+    $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("gThumbSize")
+      ->rules("required|valid_digit")
+      ->value(module::get_var("core", "thumb_size"));
+    $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("gResizeSize")
+      ->rules("required|valid_digit")
+      ->value(module::get_var("core", "resize_size"));
+    $group->textarea("header_text")->label(t("Header text"))->id("gHeaderText")
+      ->value(module::get_var("core", "header_text"));
+    $group->textarea("footer_text")->label(t("Footer text"))->id("gFooterText")
+      ->value(module::get_var("core", "footer_text"));
     $group->submit("")->value(t("Save"));
     return $form;
   }
