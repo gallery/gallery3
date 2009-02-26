@@ -185,6 +185,10 @@
   margin-bottom: 1em;
 }
 
+#gUserAdminList .gDraggable:hover {
+  border: 1px dashed black;
+}
+
 .gActions a,
 .gActions span {
   margin-right: 3em;
