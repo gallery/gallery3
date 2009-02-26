@@ -20,7 +20,8 @@
 class Admin_Theme_Details_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
-    $view->content = theme::get_edit_form_admin();
+    $view->content = new View("admin_theme_details.html");
+    $view->content->form = theme::get_edit_form_admin();
     print $view;
   }
 
