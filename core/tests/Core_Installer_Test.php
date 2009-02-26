@@ -37,9 +37,12 @@ class Core_Installer_Test extends Unit_Test_Case {
   }
 
   public function install_creates_root_item_test() {
-    $max_right =
-      Database::instance()->query("SELECT MAX(`right`) AS `right` FROM items")->current()->right;
+    //$max_right =
+    //  Database::instance()->query("SELECT MAX(`right`) AS `right` FROM items")->current()->right;
 
+    $max_right = ORM::factory("item")
+      ->select("MAX(`right`) AS `right`")
+      ->find()->right;
     $root = ORM::factory('item')->find(1);
     $this->assert_equal("Gallery", $root->title);
     $this->assert_equal(1, $root->left);

@@ -42,8 +42,7 @@ class Item_Model_Test extends Unit_Test_Case {
 
     // Force the creation date to something well known
     $db = Database::instance();
-    $db->query("UPDATE `items` SET `created` = 0 WHERE `id` = $item->id");
-    $db->query("UPDATE `items` SET `updated` = 0 WHERE `id` = $item->id");
+    $db->update("items", array("created" => 0, "updated" => 0), array("id" => $item->id));
     $item->reload();
     $item->title = "foo";  // force a change
     $item->save();
@@ -59,7 +58,7 @@ class Item_Model_Test extends Unit_Test_Case {
 
     // Force the updated date to something well known
     $db = Database::instance();
-    $db->query("UPDATE `items` SET `updated` = 0 WHERE `id` = $item->id");
+    $db->update("items", array("updated" => 0), array("id" => $item->id));
     $item->reload();
     $item->view_count++;
     $item->save();
