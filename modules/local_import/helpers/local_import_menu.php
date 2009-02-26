@@ -36,7 +36,7 @@ class local_import_menu_Core {
       $options_menu = $menu->get("options_menu")
         ->append(Menu::factory("dialog")
                  ->id("local_import")
-                 ->label(t("Import from server"))
+                 ->label(t("Add from server"))
                  ->url(url::site("local_import/index/$item->id")));
     }
   }
