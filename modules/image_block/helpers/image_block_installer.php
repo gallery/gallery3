@@ -24,18 +24,12 @@ class image_block_installer {
     if ($version == 0) {
       $db = Database::instance();
       
-      $db->query("ALTER TABLE `items` ADD `rand_key` FLOAT DEFAULT NULL");
-      $db->query("UPDATE `items` SET `rand_key` = RAND()");
-      $db->query("CREATE INDEX `random_index` ON `items` (rand_key DESC)");
-
       module::set_version("image_block", 1);
     }
   }
 
   static function uninstall() {
     $db = Database::instance();
-    // Dropping the column should drop the index as well.
-    $db->query("ALTER TABLE `items` DROP `rand_key`");
 
     module::delete("image_block");
   }

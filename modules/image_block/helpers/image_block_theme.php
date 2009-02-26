@@ -19,11 +19,12 @@
  */
 class image_block_theme_Core {
   static function sidebar_blocks($theme) {
-    $result = ORM::factory("item")
+    // Leave as a count so we can filter based on viewable items.
+    $viewable_items = ORM::factory("item")
       ->viewable()
       ->select("COUNT(*) AS C")
-      ->find();
-    if (empty($result->C)) {
+      ->find()->C;
+    if (empty($viewable_items)) {
       return "";
     }
 
@@ -32,18 +33,12 @@ class image_block_theme_Core {
     $block->title = t("Random Image");
     $block->content = new View("image_block_block.html");
 
-    $result = ORM::factory("item")
-      ->viewable()
-      ->select("MAX(rand_key) AS max_random")
-      ->find();
-
-    $max_rand = $result->max_random;
     $random = ((float)mt_rand()) / (float)mt_getrandmax();
 
     $items = ORM::factory("item")
       ->viewable()
       ->where("type !=", "album")
-      ->where("rand_key < ", $max_rand * $random)
+      ->where("rand_key < ", $random)
       ->orderby(array("rand_key" => "DESC"))
       ->find_all(1);
 
@@ -51,10 +46,9 @@ class image_block_theme_Core {
       $items = ORM::factory("item")
         ->viewable()
         ->where("type !=", "album")
-        ->where("rand_key > ", $max_rand * $random)
+        ->where("rand_key >= ", $random)
         ->orderby(array("rand_key" => "DESC"))
         ->find_all(1);
-     
     }
  
     $block->content->item = $items->current();

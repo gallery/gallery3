@@ -77,9 +77,11 @@ class core_installer {
                    `updated` int(9) default NULL,
                    `view_count` int(9) default 0,
                    `width` int(9) default NULL,
+                   `rand_key` float default NULL,
                    PRIMARY KEY (`id`),
                    KEY `parent_id` (`parent_id`),
-                   KEY `type` (`type`))
+                   KEY `type` (`type`),
+                   KEY `random` (`rand_key` DESC))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE `logs` (
@@ -119,7 +121,7 @@ class core_installer {
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
+      
       $db->query("CREATE TABLE `permissions` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(64) default NULL,

@@ -45,6 +45,7 @@ class album_Core {
     $album->owner_id = $owner_id;
     $album->thumb_dirty = 1;
     $album->resize_dirty = 1;
+    $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
     while (ORM::factory("item")
            ->where("parent_id", $parent->id)
