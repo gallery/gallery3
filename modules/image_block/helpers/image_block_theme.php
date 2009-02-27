@@ -19,15 +19,6 @@
  */
 class image_block_theme_Core {
   static function sidebar_blocks($theme) {
-    // Leave as a count so we can filter based on viewable items.
-    $viewable_items = ORM::factory("item")
-      ->viewable()
-      ->select("COUNT(*) AS C")
-      ->find()->C;
-    if (empty($viewable_items)) {
-      return "";
-    }
-
     $block = new Block();
     $block->css_id = "gImageBlock";
     $block->title = t("Random Image");
@@ -43,6 +34,7 @@ class image_block_theme_Core {
       ->find_all(1);
 
     if ($items->count() == 0) {
+      // Try once more.  If this fails, just ditch the block altogether
       $items = ORM::factory("item")
         ->viewable()
         ->where("type !=", "album")
@@ -50,7 +42,7 @@ class image_block_theme_Core {
         ->orderby(array("rand_key" => "DESC"))
         ->find_all(1);
     }
- 
+
     $block->content->item = $items->current();
 
     return $items->count() == 0 ? "" : $block;
