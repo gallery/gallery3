@@ -83,4 +83,37 @@ class Database_Test extends Unit_Test_Case {
       "SELECT * WHERE `outer1` = 1 OR ( `inner1` NOT LIKE '%1%')",
       $sql);
   }
+
+  function prefix_replacement_test() {
+    $db = Database_For_Test::instance();
+    $sql = "UPDATE `[access_caches]` SET `edit_1` = 1 " .
+        "WHERE `item_id` IN " .
+        "  (SELECT `id` FROM `[items]` " .
+        "  WHERE `left` >= 1 " .
+        "  AND `right` <= 6)";
+    $sql = $db->add_table_prefixes($sql);
+
+    $expected = "UPDATE `g3test_access_caches` SET `edit_1` = 1 " .
+        "WHERE `item_id` IN " .
+        "  (SELECT `id` FROM `g3test_items` " .
+        "  WHERE `left` >= 1 " .
+        "  AND `right` <= 6)";
+
+    $this->assert_same($expected, $sql);
+  }
+
+  public function setup() {
+  }
+
+  public function teardown() {
+  }
+
+}
+
+class Database_For_Test extends Database {
+  static function instance() {
+    $db = new Database_For_Test();
+    $db->config["table_prefix"] = "g3test_";
+    return $db;
+  }
 }

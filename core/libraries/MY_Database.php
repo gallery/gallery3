@@ -42,4 +42,20 @@ class Database extends Database_Core {
 
     throw new Kohana_Database_Exception('database.missing_open_paren');
   }
+
+  /**
+   * Parse the query string and convert any strings of the form `\([a-zA-Z0-9_]*?)\]
+   * table prefix . $1
+   */
+  public function query($sql = '') {
+    if (!empty($sql)) {
+      $sql = $this->add_table_prefixes($sql);
+    }
+    return parent::query($sql);
+  }
+
+  public function add_table_prefixes($sql) {
+    $prefix = $this->config["table_prefix"];
+    return preg_replace("#\[([a-zA-Z0-9_]+)\]#", "{$prefix}$1", $sql);
+  }
 }
