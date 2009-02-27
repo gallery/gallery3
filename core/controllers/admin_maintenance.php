@@ -19,24 +19,6 @@
  */
 class Admin_Maintenance_Controller extends Admin_Controller {
   /**
-   * Get all available tasks
-   * @todo move task definition out into the modules
-   */
-  private function _get_task_definitions() {
-    $tasks = array();
-    foreach (module::installed() as $module_name => $module_info) {
-      $class_name = "{$module_name}_task";
-      if (method_exists($class_name, "available_tasks")) {
-        foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
-          $tasks[$task->callback] = $task;
-        }
-      }
-    }
-
-    return $tasks;
-  }
-
-  /**
    * Show a list of all available, running and finished tasks.
    */
   public function index() {
@@ -58,11 +40,15 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_maintenance.html");
-    $view->content->task_definitions = $this->_get_task_definitions();
-    $view->content->running_tasks =
-      ORM::factory("task")->where("done", 0)->orderby("updated", "DESC")->find_all();
-    $view->content->finished_tasks =
-      ORM::factory("task")->where("done", 1)->orderby("updated", "DESC")->find_all();
+    $view->content->task_definitions = task::get_task_definitions();
+    $view->content->running_tasks = ORM::factory("task")
+      ->select("tasks.*", "users.name as user_name")
+      ->join("users", "tasks.owner_id", "users.id")
+      ->where("done", 0)->orderby("updated", "DESC")->find_all();
+    $view->content->finished_tasks = ORM::factory("task")
+      ->select("tasks.*", "users.name as user_name")
+      ->join("users", "tasks.owner_id", "users.id")
+      ->where("done", 1)->orderby("updated", "DESC")->find_all();
     $view->content->csrf = access::csrf_token();
     print $view;
   }
@@ -74,16 +60,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
   public function start($task_callback) {
     access::verify_csrf();
 
-    $task_definitions = $this->_get_task_definitions();
-
-    $task = ORM::factory("task");
-    $task->callback = $task_callback;
-    $task->name = $task_definitions[$task_callback]->name;
-    $task->percent_complete = 0;
-    $task->status = "";
-    $task->state = "started";
-    $task->context = serialize(array());
-    $task->save();
+    $task = task::create($task_callback);
 
     $view = new View("admin_maintenance_task.html");
     $view->csrf = access::csrf_token();
@@ -123,13 +100,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
   public function cancel($task_id) {
     access::verify_csrf();
 
-    $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
-      throw new Exception("@todo MISSING_TASK");
-    }
-    $task->done = 1;
-    $task->state = "cancelled";
-    $task->save();
+    task::cancel($task_id);
 
     message::success(t("Task cancelled"));
     url::redirect("admin/maintenance");
@@ -142,11 +113,8 @@ class Admin_Maintenance_Controller extends Admin_Controller {
   public function remove($task_id) {
     access::verify_csrf();
 
-    $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
-      throw new Exception("@todo MISSING_TASK");
-    }
-    $task->delete();
+    task::remove($task_id);
+
     message::success(t("Task removed"));
     url::redirect("admin/maintenance");
   }
@@ -159,14 +127,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
   public function run($task_id) {
     access::verify_csrf();
 
-    $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
-      throw new Exception("@todo MISSING_TASK");
-    }
-
-    $task->state = "running";
-    call_user_func_array($task->callback, array(&$task));
-    $task->save();
+    $task = task::run($task_id);
 
     if ($task->done) {
       switch ($task->state) {
@@ -184,14 +145,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
         message::success(t("Task failed"));
         break;
       }
-      print json_encode(
-        array("result" => "success",
-              "task" => $task->as_array(),
-              "location" => url::site("admin/maintenance")));
+      print task::success($task, url::site("admin/maintenance"));
     } else {
-      print json_encode(
-        array("result" => "in_progress",
-              "task" => $task->as_array()));
+      print task::in_progress($task);
     }
   }
 }

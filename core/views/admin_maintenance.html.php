@@ -56,6 +56,9 @@
           <?= t("Info") ?>
         </th>
         <th>
+          <?= t("Owner") ?>
+        </th>
+        <th>
           <?= t("Action") ?>
         </th>
       </tr>
@@ -81,6 +84,9 @@
         </td>
         <td>
           <?= $task->status ?>
+        </td>
+        <td>
+          <?= $task->user_name ?>
         </td>
         <td>
           <? if ($task->state == "stalled"): ?>
@@ -115,6 +121,9 @@
           <?= t("Info") ?>
         </th>
         <th>
+          <?= t("Owner") ?>
+        </th>
+        <th>
           <?= t("Action") ?>
         </th>
       </tr>
@@ -137,6 +146,9 @@
         </td>
         <td>
           <?= $task->status ?>
+        </td>
+        <td>
+          <?= $task->user_name ?>
         </td>
         <td>
           <? if ($task->done): ?>

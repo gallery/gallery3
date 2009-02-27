@@ -23,6 +23,7 @@ class Task_Definition_Core {
   public $description;
   public $name;
   public $severity;
+  public $type = "admin";           // admin, general, both
 
   static function factory() {
     return new Task_Definition();
@@ -48,4 +49,8 @@ class Task_Definition_Core {
     return $this;
   }
 
+  function type($type) {
+    $this->type = $type;
+    return $this;
+  }
 }

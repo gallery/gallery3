@@ -171,7 +171,9 @@ class core_installer {
                   `percent_complete` int(9) default 0,
                   `state` varchar(32) default NULL,
                   `status` varchar(255) default NULL,
-                  PRIMARY KEY (`id`))
+                  `owner_id` int(9) default NULL,
+                  PRIMARY KEY (`id`),
+                  KEY (`owner_id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE `vars` (
