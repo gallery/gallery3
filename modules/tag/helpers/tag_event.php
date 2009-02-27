@@ -54,7 +54,7 @@ class tag_event_Core {
                "AND `id` IN (SELECT `tag_id` from `items_tags` WHERE `item_id` = $item->id)");
     $db->query("DELETE FROM `tags` WHERE `count` = 0 AND `id` IN (" .
                "SELECT `tag_id` from `items_tags` WHERE `item_id` = $item->id)");
-    $db->query("DELETE FROM `items_tags` WHERE `item_id` = $item->id;");
+    $db->delete("items_tags", array("item_id" => "$item->id"));
   }
 
 }
