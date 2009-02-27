@@ -22,7 +22,7 @@ class watermark_installer {
     $db = Database::instance();
     $version = module::get_version("watermark");
     if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS `watermarks` (
+      $db->query("CREATE TABLE IF NOT EXISTS `[watermarks]` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(32) NOT NULL,
                    `width` int(9) NOT NULL,
@@ -42,7 +42,7 @@ class watermark_installer {
   static function uninstall() {
     graphics::remove_rules("watermark");
     module::delete("watermark");
-    Database::instance()->query("DROP TABLE `watermarks`");
+    Database::instance()->query("DROP TABLE `[watermarks]`");
     dir::unlink(VARPATH . "modules/watermark");
   }
 }
