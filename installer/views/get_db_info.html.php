@@ -67,6 +67,14 @@
         </td>
       </tr>
       <tr>
+        <td>
+          Table Prefix
+        </td>
+        <td>
+          <input name="prefix" value=""/>
+        </td>
+      </tr>
+      <tr>
         <td colspan="2">
           <?php if (installer::var_writable()): ?>
           <input type="submit" value="Continue"/>

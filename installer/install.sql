@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS `access_caches`;
+DROP TABLE IF EXISTS `[access_caches]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `access_caches` (
+CREATE TABLE `[access_caches]` (
   `id` int(9) NOT NULL auto_increment,
   `item_id` int(9) default NULL,
   `view_full_1` tinyint(2) NOT NULL default '0',
@@ -11,11 +11,11 @@ CREATE TABLE `access_caches` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `access_caches` VALUES (1,1,1,0,1,1);
-DROP TABLE IF EXISTS `access_intents`;
+INSERT INTO `[access_caches]` VALUES (1,1,1,0,1,1);
+DROP TABLE IF EXISTS `[access_intents]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `access_intents` (
+CREATE TABLE `[access_intents]` (
   `id` int(9) NOT NULL auto_increment,
   `item_id` int(9) default NULL,
   `view_1` tinyint(1) default NULL,
@@ -27,11 +27,11 @@ CREATE TABLE `access_intents` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `access_intents` VALUES (1,1,1,1,0,1,1,1);
-DROP TABLE IF EXISTS `comments`;
+INSERT INTO `[access_intents]` VALUES (1,1,1,1,0,1,1,1);
+DROP TABLE IF EXISTS `[comments]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `comments` (
+CREATE TABLE `[comments]` (
   `author_id` int(9) default NULL,
   `created` int(9) NOT NULL,
   `guest_email` varchar(128) default NULL,
@@ -57,10 +57,10 @@ CREATE TABLE `comments` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `graphics_rules`;
+DROP TABLE IF EXISTS `[graphics_rules]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `graphics_rules` (
+CREATE TABLE `[graphics_rules]` (
   `id` int(9) NOT NULL auto_increment,
   `priority` int(9) NOT NULL,
   `module_name` varchar(64) NOT NULL,
@@ -70,11 +70,11 @@ CREATE TABLE `graphics_rules` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `graphics_rules` VALUES (1,100,'core','thumb','resize','a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:2;}'),(2,100,'core','resize','resize','a:3:{s:5:\"width\";i:640;s:6:\"height\";i:480;s:6:\"master\";i:2;}');
-DROP TABLE IF EXISTS `groups`;
+INSERT INTO `[graphics_rules]` VALUES (1,100,'core','thumb','resize','a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:2;}'),(2,100,'core','resize','resize','a:3:{s:5:\"width\";i:640;s:6:\"height\";i:480;s:6:\"master\";i:2;}');
+DROP TABLE IF EXISTS `[groups]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `groups` (
+CREATE TABLE `[groups]` (
   `id` int(9) NOT NULL auto_increment,
   `name` char(64) default NULL,
   `special` tinyint(1) default '0',
@@ -82,22 +82,22 @@ CREATE TABLE `groups` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `groups` VALUES (1,'Everybody',1),(2,'Registered Users',1);
-DROP TABLE IF EXISTS `groups_users`;
+INSERT INTO `[groups]` VALUES (1,'Everybody',1),(2,'Registered Users',1);
+DROP TABLE IF EXISTS `[groups_users]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `groups_users` (
+CREATE TABLE `[groups_users]` (
   `group_id` int(9) NOT NULL,
   `user_id` int(9) NOT NULL,
   PRIMARY KEY  (`group_id`,`user_id`),
   UNIQUE KEY `user_id` (`user_id`,`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `groups_users` VALUES (1,1),(1,2),(2,2);
-DROP TABLE IF EXISTS `incoming_translations`;
+INSERT INTO `[groups_users]` VALUES (1,1),(1,2),(2,2);
+DROP TABLE IF EXISTS `[incoming_translations]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `incoming_translations` (
+CREATE TABLE `[incoming_translations]` (
   `id` int(9) NOT NULL auto_increment,
   `key` char(32) NOT NULL,
   `locale` char(10) NOT NULL,
@@ -109,10 +109,10 @@ CREATE TABLE `incoming_translations` (
   KEY `locale_key` (`locale`,`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `items`;
+DROP TABLE IF EXISTS `[items]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `items` (
+CREATE TABLE `[items]` (
   `album_cover_item_id` int(9) default NULL,
   `created` int(9) default NULL,
   `description` varchar(255) default NULL,
@@ -145,11 +145,11 @@ CREATE TABLE `items` (
   KEY `random` (`rand_key` DESC)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `items` VALUES (NULL,1234232381,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1234232381,0,NULL,1,1,NULL);
+INSERT INTO `[items]` VALUES (NULL,1234232381,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1234232381,0,NULL,1,1,NULL);
 DROP TABLE IF EXISTS `items_tags`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `items_tags` (
+CREATE TABLE `[items_tags]` (
   `id` int(9) NOT NULL auto_increment,
   `item_id` int(9) NOT NULL,
   `tag_id` int(9) NOT NULL,
@@ -158,10 +158,10 @@ CREATE TABLE `items_tags` (
   KEY `item_id` (`item_id`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `logs`;
+DROP TABLE IF EXISTS `[logs]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `logs` (
+CREATE TABLE `[logs]` (
   `id` int(9) NOT NULL auto_increment,
   `category` varchar(64) default NULL,
   `html` varchar(255) default NULL,
@@ -174,10 +174,10 @@ CREATE TABLE `logs` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `messages`;
+DROP TABLE IF EXISTS `[messages]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `messages` (
+CREATE TABLE `[messages]` (
   `id` int(9) NOT NULL auto_increment,
   `key` varchar(255) default NULL,
   `value` varchar(255) default NULL,
@@ -186,10 +186,10 @@ CREATE TABLE `messages` (
   UNIQUE KEY `key` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `modules`;
+DROP TABLE IF EXISTS `[modules]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `modules` (
+CREATE TABLE `[modules]` (
   `id` int(9) NOT NULL auto_increment,
   `name` varchar(64) default NULL,
   `version` int(9) default NULL,
@@ -197,11 +197,11 @@ CREATE TABLE `modules` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `modules` VALUES (1,'core',1),(2,'user',1),(3,'comment',1),(4,'info',1),(5,'rss',1),(6,'search',1),(7,'slideshow',1),(8,'tag',1);
-DROP TABLE IF EXISTS `outgoing_translations`;
+INSERT INTO `[modules]` VALUES (1,'core',1),(2,'user',1),(3,'comment',1),(4,'info',1),(5,'rss',1),(6,'search',1),(7,'slideshow',1),(8,'tag',1);
+DROP TABLE IF EXISTS `[outgoing_translations]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `outgoing_translations` (
+CREATE TABLE `[outgoing_translations]` (
   `id` int(9) NOT NULL auto_increment,
   `key` char(32) NOT NULL,
   `locale` char(10) NOT NULL,
@@ -213,10 +213,10 @@ CREATE TABLE `outgoing_translations` (
   KEY `locale_key` (`locale`,`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `permissions`;
+DROP TABLE IF EXISTS `[permissions]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `permissions` (
+CREATE TABLE `[permissions]` (
   `id` int(9) NOT NULL auto_increment,
   `name` varchar(64) default NULL,
   `display_name` varchar(64) default NULL,
@@ -224,11 +224,11 @@ CREATE TABLE `permissions` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `permissions` VALUES (1,'view','View'),(2,'view_full','View Full Size'),(3,'edit','Edit');
-DROP TABLE IF EXISTS `search_records`;
+INSERT INTO `[permissions]` VALUES (1,'view','View'),(2,'view_full','View Full Size'),(3,'edit','Edit');
+DROP TABLE IF EXISTS `[search_records]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `search_records` (
+CREATE TABLE `[search_records]` (
   `id` int(9) NOT NULL auto_increment,
   `item_id` int(9) default NULL,
   `dirty` tinyint(1) default '1',
@@ -237,21 +237,21 @@ CREATE TABLE `search_records` (
   FULLTEXT KEY `data` (`data`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `search_records` VALUES (1,1,0,'Welcome to your Gallery3  Gallery ');
+INSERT INTO `[search_records]` VALUES (1,1,0,'Welcome to your Gallery3  Gallery ');
 DROP TABLE IF EXISTS `sessions`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `sessions` (
+CREATE TABLE `[sessions]` (
   `session_id` varchar(127) NOT NULL,
   `last_activity` int(10) unsigned NOT NULL,
   `data` text NOT NULL,
   PRIMARY KEY  (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `tags`;
+DROP TABLE IF EXISTS `[tags]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `tags` (
+CREATE TABLE `[tags]` (
   `id` int(9) NOT NULL auto_increment,
   `name` varchar(64) NOT NULL,
   `count` int(10) unsigned NOT NULL default '0',
@@ -259,10 +259,10 @@ CREATE TABLE `tags` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `tasks`;
+DROP TABLE IF EXISTS `[tasks]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `tasks` (
+CREATE TABLE `[tasks]` (
   `callback` varchar(128) default NULL,
   `context` text NOT NULL,
   `done` tinyint(1) default '0',
@@ -277,10 +277,10 @@ CREATE TABLE `tasks` (
   KEY (`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `themes`;
+DROP TABLE IF EXISTS `[themes]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `themes` (
+CREATE TABLE `[themes]` (
   `id` int(9) NOT NULL auto_increment,
   `name` varchar(64) default NULL,
   `version` int(9) default NULL,
@@ -288,11 +288,11 @@ CREATE TABLE `themes` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `themes` VALUES (1,'default',1),(2,'admin_default',1);
-DROP TABLE IF EXISTS `users`;
+INSERT INTO `[themes]` VALUES (1,'default',1),(2,'admin_default',1);
+DROP TABLE IF EXISTS `[users]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `users` (
+CREATE TABLE `[users]` (
   `id` int(9) NOT NULL auto_increment,
   `name` varchar(32) NOT NULL,
   `full_name` varchar(255) NOT NULL,
@@ -310,11 +310,11 @@ CREATE TABLE `users` (
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `users` VALUES (1,'guest','Guest User','[oS\\615de701682051a9970409c02c94ca94',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
-DROP TABLE IF EXISTS `vars`;
+INSERT INTO `[users]` VALUES (1,'guest','Guest User','[oS\\615de701682051a9970409c02c94ca94',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
+DROP TABLE IF EXISTS `[vars]`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `vars` (
+CREATE TABLE `[vars]` (
   `id` int(9) NOT NULL auto_increment,
   `module_name` varchar(64) NOT NULL,
   `name` varchar(64) NOT NULL,
@@ -323,4 +323,4 @@ CREATE TABLE `vars` (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO `vars` VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:4:{i:373668224;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:838141216;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:26528;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1914449606;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:4:{i:551308471;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:412910748;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:1418841915;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:690142318;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');
+INSERT INTO `[vars]` VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:4:{i:373668224;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:838141216;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:26528;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1914449606;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:4:{i:551308471;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:412910748;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:1418841915;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:690142318;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');

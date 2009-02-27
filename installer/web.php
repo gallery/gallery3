@@ -36,7 +36,7 @@ if (installer::already_installed()) {
                     "user" => $_POST["dbuser"],
                     "password" => $_POST["dbpass"],
                     "dbname" => $_POST["dbname"],
-                    "prefix" => "",
+                    "prefix" => $_POST["prefix"],
                     "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
 
     if (!installer::connect($config)) {
@@ -47,7 +47,7 @@ if (installer::already_installed()) {
       $content = render("db_not_empty.html.php");
     } else if (!installer::unpack_var()) {
       $content = oops("Unable to create files inside the <code>var</code> directory");
-    } else if (!installer::unpack_sql()) {
+    } else if (!installer::unpack_sql($config)) {
       $content = oops("Failed to create tables in your database:" . mysql_error());
     } else if (!installer::create_database_config($config)) {
       $content = oops("Couldn't create var/database.php");
@@ -56,7 +56,7 @@ if (installer::already_installed()) {
         list ($user, $password) = installer::create_admin($config);
         $content = render("success.html.php", array("user" => $user, "password" => $password));
 
-        installer::create_private_key();
+        installer::create_private_key($config);
       } catch (Exception $e) {
         $content = oops($e->getMessage());
       }

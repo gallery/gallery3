@@ -40,7 +40,7 @@ if (!installer::connect($config)) {
        "Please specify an empty database.\n");
 } else if (!installer::unpack_var()) {
   oops("Unable to create files inside the 'var' directory");
-} else if (!installer::unpack_sql()) {
+} else if (!installer::unpack_sql($config)) {
   oops("Failed to create database tables\n" . mysql_error());
 } else if (!installer::create_database_config($config)) {
   oops("Couldn't create var/database.php");
@@ -54,7 +54,7 @@ if (!installer::connect($config)) {
     print "  password: $password\n";
     print "\n";
 
-    installer::create_private_key();
+    installer::create_private_key($config);
     exit(0);
   } catch (Exception $e) {
     oops($e->getMessage());
@@ -95,6 +95,9 @@ function parse_cli_params() {
       break;
     case "-p":
       $config["password"] = $argv[++$i];
+      break;
+    case "-x":
+      $config["prefix"] = $argv[++$i];
       break;
     }
   }
