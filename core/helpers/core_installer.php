@@ -31,19 +31,19 @@ class core_installer {
     }
 
     if ($version == 0) {
-      $db->query("CREATE TABLE `access_caches` (
+      $db->query("CREATE TABLE `[access_caches]` (
                    `id` int(9) NOT NULL auto_increment,
                    `item_id` int(9),
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `access_intents` (
+      $db->query("CREATE TABLE `[access_intents]` (
                    `id` int(9) NOT NULL auto_increment,
                    `item_id` int(9),
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `graphics_rules` (
+      $db->query("CREATE TABLE `[graphics_rules]` (
                    `id` int(9) NOT NULL auto_increment,
                    `priority` int(9) NOT NULL,
                    `module_name` varchar(64) NOT NULL,
@@ -53,7 +53,7 @@ class core_installer {
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `items` (
+      $db->query("CREATE TABLE `[items]` (
                    `album_cover_item_id` int(9) default NULL,
                    `created` int(9) default NULL,
                    `description` varchar(255) default NULL,
@@ -84,7 +84,7 @@ class core_installer {
                    KEY `random` (`rand_key` DESC))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `logs` (
+      $db->query("CREATE TABLE `[logs]` (
                    `id` int(9) NOT NULL auto_increment,
                    `category` varchar(64) default NULL,
                    `html` varchar(255) default NULL,
@@ -97,7 +97,7 @@ class core_installer {
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `messages` (
+      $db->query("CREATE TABLE `[messages]` (
                    `id` int(9) NOT NULL auto_increment,
                    `key` varchar(255) default NULL,
                    `value` varchar(255) default NULL,
@@ -106,7 +106,7 @@ class core_installer {
                    UNIQUE KEY(`key`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `modules` (
+      $db->query("CREATE TABLE `[modules]` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(64) default NULL,
                    `version` int(9) default NULL,
@@ -114,7 +114,7 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `themes` (
+      $db->query("CREATE TABLE `[themes]` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(64) default NULL,
                    `version` int(9) default NULL,
@@ -122,7 +122,7 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       
-      $db->query("CREATE TABLE `permissions` (
+      $db->query("CREATE TABLE `[permissions]` (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(64) default NULL,
                    `display_name` varchar(64) default NULL,
@@ -130,7 +130,7 @@ class core_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `incoming_translations` (
+      $db->query("CREATE TABLE `[incoming_translations]` (
                    `id` int(9) NOT NULL auto_increment,
                    `key` char(32) NOT NULL,
                    `locale` char(10) NOT NULL,
@@ -142,7 +142,7 @@ class core_installer {
                    KEY `locale_key` (`locale`, `key`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `outgoing_translations` (
+      $db->query("CREATE TABLE `[outgoing_translations]` (
                    `id` int(9) NOT NULL auto_increment,
                    `key` char(32) NOT NULL,
                    `locale` char(10) NOT NULL,
@@ -154,14 +154,14 @@ class core_installer {
                    KEY `locale_key` (`locale`, `key`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `sessions` (
+      $db->query("CREATE TABLE `[sessions]` (
                   `session_id` varchar(127) NOT NULL,
                   `last_activity` int(10) UNSIGNED NOT NULL,
                   `data` text NOT NULL,
                   PRIMARY KEY (`session_id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `tasks` (
+      $db->query("CREATE TABLE `[tasks]` (
                   `callback` varchar(128) default NULL,
                   `context` text NOT NULL,
                   `done` boolean default 0,
@@ -176,7 +176,7 @@ class core_installer {
                   KEY (`owner_id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE `vars` (
+      $db->query("CREATE TABLE `[vars]` (
                    `id` int(9) NOT NULL auto_increment,
                    `module_name` varchar(64) NOT NULL,
                    `name` varchar(64) NOT NULL,
@@ -266,20 +266,20 @@ class core_installer {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `access_caches`;");
-    $db->query("DROP TABLE IF EXISTS `access_intents`;");
-    $db->query("DROP TABLE IF EXISTS `graphics_rules`;");
-    $db->query("DROP TABLE IF EXISTS `items`;");
-    $db->query("DROP TABLE IF EXISTS `logs`;");
-    $db->query("DROP TABLE IF EXISTS `messages`;");
-    $db->query("DROP TABLE IF EXISTS `modules`;");
-    $db->query("DROP TABLE IF EXISTS `themes`;");
-    $db->query("DROP TABLE IF EXISTS `incoming_translations`;");
-    $db->query("DROP TABLE IF EXISTS `outgoing_translations`;");
-    $db->query("DROP TABLE IF EXISTS `permissions`;");
-    $db->query("DROP TABLE IF EXISTS `sessions`;");
-    $db->query("DROP TABLE IF EXISTS `tasks`;");
-    $db->query("DROP TABLE IF EXISTS `vars`;");
+    $db->query("DROP TABLE IF EXISTS `[access_caches]`;");
+    $db->query("DROP TABLE IF EXISTS `[access_intents]`;");
+    $db->query("DROP TABLE IF EXISTS `[graphics_rules]`;");
+    $db->query("DROP TABLE IF EXISTS `[items`;");
+    $db->query("DROP TABLE IF EXISTS `[logs]`;");
+    $db->query("DROP TABLE IF EXISTS `[messages]`;");
+    $db->query("DROP TABLE IF EXISTS `[modules]`;");
+    $db->query("DROP TABLE IF EXISTS `[themes]`;");
+    $db->query("DROP TABLE IF EXISTS `[incoming_translations]`;");
+    $db->query("DROP TABLE IF EXISTS `[outgoing_translations]`;");
+    $db->query("DROP TABLE IF EXISTS `[permissions]`;");
+    $db->query("DROP TABLE IF EXISTS `[sessions]`;");
+    $db->query("DROP TABLE IF EXISTS `[tasks]`;");
+    $db->query("DROP TABLE IF EXISTS `[vars]`;");
     foreach (array("albums", "resizes", "thumbs", "uploads", "modules") as $dir) {
       system("/bin/rm -rf " . VARPATH . $dir);
     }

@@ -241,7 +241,7 @@ class module_Core {
    */
   static function incr_var($module_name, $name, $increment=1) {
     Database::instance()->query(
-      "UPDATE `vars` SET `value` = `value` + $increment " .
+      "UPDATE `[vars]` SET `value` = `value` + $increment " .
       "WHERE `module_name` = '$module_name' " .
       "AND `name` = '$name'");
   }

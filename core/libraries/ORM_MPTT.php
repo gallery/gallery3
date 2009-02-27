@@ -52,9 +52,9 @@ class ORM_MPTT_Core extends ORM {
     try {
       // Make a hole in the parent for this new item
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `left` = `left` + 2 WHERE `left` >= {$parent->right}");
+        "UPDATE `[{$this->table_name}]` SET `left` = `left` + 2 WHERE `left` >= {$parent->right}");
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `right` = `right` + 2 WHERE `right` >= {$parent->right}");
+        "UPDATE `[{$this->table_name}]` SET `right` = `right` + 2 WHERE `right` >= {$parent->right}");
       $parent->right += 2;
 
       // Insert this item into the hole
@@ -90,9 +90,9 @@ class ORM_MPTT_Core extends ORM {
     $this->lock();
     try {
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `left` = `left` - 2 WHERE `left` > {$this->right}");
+        "UPDATE `[{$this->table_name}]` SET `left` = `left` - 2 WHERE `left` > {$this->right}");
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `right` = `right` - 2 WHERE `right` > {$this->right}");
+        "UPDATE `[{$this->table_name}]` SET `right` = `right` - 2 WHERE `right` > {$this->right}");
     } catch (Exception $e) {
       $this->unlock();
       throw $e;
@@ -229,21 +229,21 @@ class ORM_MPTT_Core extends ORM {
       if ($level_delta) {
         // Update the levels for the to-be-moved items
         $this->db->query(
-          "UPDATE `{$this->table_name}` SET `level` = `level` + $level_delta" .
+          "UPDATE `[{$this->table_name}]` SET `level` = `level` + $level_delta" .
           " WHERE `left` >= $original_left AND `right` <= $original_right");
       }
 
       // Make a hole in the target for the move
       $target->db->query(
-        "UPDATE `{$this->table_name}` SET `left` = `left` + $size_of_hole" .
+        "UPDATE `[{$this->table_name}]` SET `left` = `left` + $size_of_hole" .
         " WHERE `left` >= $target_right");
       $target->db->query(
-        "UPDATE `{$this->table_name}` SET `right` = `right` + $size_of_hole" .
+        "UPDATE `[{$this->table_name}]` SET `right` = `right` + $size_of_hole" .
         " WHERE `right` >= $target_right");
 
       // Change the parent.
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `parent_id` = {$target->id}" .
+        "UPDATE `[{$this->table_name}]` SET `parent_id` = {$target->id}" .
         " WHERE `id` = {$this->id}");
 
       // If the source is to the right of the target then we just adjusted its left and right above.
@@ -256,7 +256,7 @@ class ORM_MPTT_Core extends ORM {
 
       $new_offset = $target->right - $left;
       $this->db->query(
-        "UPDATE `{$this->table_name}`" .
+        "UPDATE `[{$this->table_name}]`" .
         "   SET `left` = `left` + $new_offset," .
         "       `right` = `right` + $new_offset" .
       " WHERE `left` >= $left" .
@@ -264,10 +264,10 @@ class ORM_MPTT_Core extends ORM {
 
       // Close the hole in the source's parent after the move
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `left` = `left` - $size_of_hole" .
+        "UPDATE `[{$this->table_name}]` SET `left` = `left` - $size_of_hole" .
         " WHERE `left` > $right");
       $this->db->query(
-        "UPDATE `{$this->table_name}` SET `right` = `right` - $size_of_hole" .
+        "UPDATE `[{$this->table_name}]` SET `right` = `right` - $size_of_hole" .
         " WHERE `right` > $right");
     } catch (Exception $e) {
       $this->unlock();

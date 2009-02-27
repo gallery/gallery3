@@ -404,8 +404,8 @@ class access_Core {
     $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
-    $db->query("ALTER TABLE `$cache_table` DROP `$field`");
-    $db->query("ALTER TABLE `access_intents` DROP `$field`");
+    $db->query("ALTER TABLE `[$cache_table]` DROP `$field`");
+    $db->query("ALTER TABLE `[access_intents]` DROP `$field`");
     ORM::factory("access_intent")->clear_cache();
   }
 
@@ -420,8 +420,8 @@ class access_Core {
     $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
-    $db->query("ALTER TABLE `$cache_table` ADD `$field` TINYINT(2) NOT NULL DEFAULT 0");
-    $db->query("ALTER TABLE `access_intents` ADD `$field` BOOLEAN DEFAULT NULL");
+    $db->query("ALTER TABLE `[$cache_table]` ADD `$field` TINYINT(2) NOT NULL DEFAULT 0");
+    $db->query("ALTER TABLE `[access_intents]` ADD `$field` BOOLEAN DEFAULT NULL");
     $db->update("access_intents", array($field => 0), array("item_id" => 1));
     ORM::factory("access_intent")->clear_cache();
   }
@@ -547,9 +547,9 @@ class access_Core {
       ->find_all();
     foreach  ($query as $row) {
       $db->query(
-        "UPDATE `access_caches` SET `$field` = {$row->$field} " .
+        "UPDATE `[access_caches]` SET `$field` = {$row->$field} " .
         "WHERE `item_id` IN " .
-        "  (SELECT `id` FROM `items` " .
+        "  (SELECT `id` FROM `[items]` " .
         "  WHERE `left` >= $row->left " .
         "  AND `right` <= $row->right)");
     }

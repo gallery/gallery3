@@ -509,8 +509,8 @@ class Scaffold_Controller extends Template_Controller {
     // We now have a clean install with just the packages that we want.  Make sure that the
     // database is clean too.
     $db = Database::instance();
-    $db->query("TRUNCATE `sessions`");
-    $db->query("TRUNCATE `logs`");
+    $db->query("TRUNCATE `[sessions]`");
+    $db->query("TRUNCATE `[logs]`");
     $db->update("users", array("password" => ""), array("id" => 2));
 
     $dbconfig = Kohana::config('database.default');
