@@ -74,7 +74,7 @@ class user_installer {
       $admin->save();
 
       // Let the admin own everything
-      $db->update("items", array("owner_id" => $admin->id), array("owner_id" => "IS NULL");
+      $db->update("items", array("owner_id" => $admin->id), array("owner_id" => "IS NULL"));
       module::set_version("user", 1);
 
       $root = ORM::factory("item", 1);
