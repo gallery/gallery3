@@ -19,18 +19,12 @@
  */
 class image_block_installer {
   static function install() {
-    $db = Database::instance();
-    $version = module::get_version("image_block");
-    if ($version == 0) {
-      $db = Database::instance();
-      
+    if (module::get_version("image_block") == 0) {
       module::set_version("image_block", 1);
     }
   }
 
   static function uninstall() {
-    $db = Database::instance();
-
     module::delete("image_block");
   }
 }
