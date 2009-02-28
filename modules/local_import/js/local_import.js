@@ -45,7 +45,7 @@ function load_children(icon, callback) {
   var base_url = $("#gLocalImport form :hidden[name='base_url']")[0].value;
   var parms = "&csrf=" + csrf;
   var parents = $(icon).parents("li");
-  for (i=parents.length - 1; i >= 0; i--) {
+  for (var i=parents.length - 1; i >= 0; i--) {
     parms += "&path[]=" +  $(parents[i]).children("span").attr("ref");
   }
   $.ajax({async: false,
@@ -69,7 +69,15 @@ function do_import(submit, event) {
   $.each(check_list, function () {
     process_checkbox(this);
   });
-  document.location.reload();
+  var base_url = $("#gLocalImport form :hidden[name='base_url']")[0].value;
+  $.ajax({async: false,
+    success: function(data, textStatus) {
+      document.location.reload();
+    },
+    dataType: "json",
+    type: "POST",
+    url: base_url + "local_import/finish"
+  });
   return false;
 }
 
@@ -77,7 +85,7 @@ function process_checkbox(checkbox) {
   var parents = $(checkbox).parents("li");
   var csrf = $("#gLocalImport form :hidden[name='csrf']")[0].value;
   var parms = "&csrf=" + csrf;
-  for (i=parents.length - 1; i > 0; i--) {
+  for (var i=parents.length - 1; i > 0; i--) {
     parms += "&path[]=" +  $(parents[i]).children("span").attr("ref");
   }
   parms += "&path[]=" + $(checkbox).val();

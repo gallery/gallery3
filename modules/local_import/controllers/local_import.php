@@ -25,7 +25,7 @@ class Local_Import_Controller extends Controller {
     access::can("local_import", $item);
 
     $view = new View("local_import_tree_dialog.html");
-    $view->action = url::site("local_import/add/$id");
+    $view->action = url::site("local_import/add_photo/$id");
     $view->hidden = array("csrf" => access::csrf_token(), "base_url" => url::base(true));
     $view->parents = $item->parents();
     $view->album_title = $item->title;
@@ -55,7 +55,7 @@ class Local_Import_Controller extends Controller {
     print $tree;
   }
 
-  function add($id) {
+  function add_photo($id) {
     access::verify_csrf();
 
     $parent = ORM::factory("item", $id);
@@ -65,6 +65,12 @@ class Local_Import_Controller extends Controller {
     }
 
     $path = $this->input->post("path");
+    $batch_id = Session::instance()->get("batch_id");
+    if (empty($batch_id)) {
+      $batch_id = mt_rand();
+      module::event("start_add_batch", $batch_id);
+      Session::instance()->set("batch_id", $batch_id);
+    }
 
     $source_path = $path[0];
     for ($i = 1; $i < count($path); $i++) {  // skip the first path
@@ -88,6 +94,14 @@ class Local_Import_Controller extends Controller {
                         basename($source_path), null, user::active()->id);
       }
     }
+  }
+
+  public function finish() {
+    $batch_id = Session::instance()->get_once("batch_id");
+    if (!empty($batch_id)) {
+      module::event("end_add_batch", $batch_id);
+    }
+    print json_encode(array("result" => "success"));
   }
 
   private function _get_children($path) {
