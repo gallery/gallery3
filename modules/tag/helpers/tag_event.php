@@ -52,7 +52,7 @@ class tag_event_Core {
     $db = Database::instance();
     $db->query("UPDATE `[tags]` SET `count` = `count` - 1 WHERE `count` > 0 " .
                "AND `id` IN (SELECT `tag_id` from `[items_tags]` WHERE `item_id` = $item->id)");
-    $dbs->query("DELETE FROM `tags` WHERE `count` = 0 AND `id` IN (" .
+    $db->query("DELETE FROM `[tags]` WHERE `count` = 0 AND `id` IN (" .
                "SELECT `tag_id` from `[items_tags]` WHERE `item_id` = $item->id)");
     $db->delete("items_tags", array("item_id" => "$item->id"));
   }
