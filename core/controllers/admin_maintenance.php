@@ -23,7 +23,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
    */
   public function index() {
     $query = Database::instance()->query(
-      "UPDATE `tasks` SET `state` = 'stalled' " .
+      "UPDATE {tasks} SET `state` = 'stalled' " .
       "WHERE done = 0 " .
       "AND   state <> 'stalled' " .
       "AND   unix_timestamp(now()) - updated > 120");

@@ -21,16 +21,16 @@ class search_task_Core {
   static function available_tasks() {
     // Delete extra search_records
     Database::instance()->query(
-      "DELETE `[search_records]`.* FROM `[search_records]` " .
-      "LEFT JOIN `[items]` ON (`[search_records]`.`item_id` = `[items]`.`id`) " .
-      "WHERE `[items]`.`id` IS NULL");
+      "DELETE {search_records}.* FROM {search_records} " .
+      "LEFT JOIN {items} ON ({search_records}.`item_id` = {items}.`id`) " .
+      "WHERE {items}.`id` IS NULL");
 
     // Insert missing search_records
     Database::instance()->query(
-      "INSERT INTO `[search_records]`(`item_id`) (" .
-      " SELECT `[items]`.`id` FROM `[items]` " .
-      " LEFT JOIN `[search_records]` ON (`[search_records]`.`item_id` = `[items]`.`id`) " .
-      " WHERE `[search_records]`.`id` IS NULL)");
+      "INSERT INTO {search_records}(`item_id`) (" .
+      " SELECT {items}.`id` FROM {items} " .
+      " LEFT JOIN {search_records} ON ({search_records}.`item_id` = {items}.`id`) " .
+      " WHERE {search_records}.`id` IS NULL)");
 
     list ($remaining, $total, $percent) = self::_get_stats();
     return array(Task_Definition::factory()

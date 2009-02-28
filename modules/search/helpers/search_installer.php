@@ -22,7 +22,7 @@ class search_installer {
     $version = module::get_version("search");
     $db = Database::instance();
     if ($version == 0) {
-      $db->query("CREATE TABLE `[search_records]` (
+      $db->query("CREATE TABLE {search_records} (
                    `id` int(9) NOT NULL auto_increment,
                    `item_id` int(9),
                    `dirty` boolean default 1,
@@ -32,7 +32,7 @@ class search_installer {
                  ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
       // populate the index with dirty records
-      $db->query("INSERT INTO `[search_records]` (`item_id`) SELECT `id` FROM `[items]`");
+      $db->query("INSERT INTO {search_records} (`item_id`) SELECT `id` FROM {items}");
       module::set_version("search", 1);
 
       if (ORM::factory("search_record")->count_all() < 10) {
@@ -47,7 +47,7 @@ class search_installer {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE `[search_records]`");
+    $db->query("DROP TABLE {search_records}");
     site_status::clear("search_index_out_of_date");
     module::delete("search");
   }

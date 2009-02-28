@@ -86,16 +86,16 @@ class Database_Test extends Unit_Test_Case {
 
   function prefix_replacement_test() {
     $db = Database_For_Test::instance();
-    $sql = "UPDATE `[access_caches]` SET `edit_1` = 1 " .
+    $sql = "UPDATE {access_caches} SET `edit_1` = 1 " .
         "WHERE `item_id` IN " .
-        "  (SELECT `id` FROM `[items]` " .
+        "  (SELECT `id` FROM {items} " .
         "  WHERE `left` >= 1 " .
         "  AND `right` <= 6)";
     $sql = $db->add_table_prefixes($sql);
 
-    $expected = "UPDATE `g3test_access_caches` SET `edit_1` = 1 " .
+    $expected = "UPDATE g3test_access_caches SET `edit_1` = 1 " .
         "WHERE `item_id` IN " .
-        "  (SELECT `id` FROM `g3test_items` " .
+        "  (SELECT `id` FROM g3test_items " .
         "  WHERE `left` >= 1 " .
         "  AND `right` <= 6)";
 

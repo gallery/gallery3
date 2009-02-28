@@ -22,7 +22,7 @@ class tag_installer {
     $db = Database::instance();
     $version = module::get_version("tag");
     if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS `[tags]` (
+      $db->query("CREATE TABLE IF NOT EXISTS {tags} (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(64) NOT NULL,
                    `count` int(10) unsigned NOT NULL DEFAULT 0,
@@ -30,7 +30,7 @@ class tag_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE IF NOT EXISTS `[items_tags]` (
+      $db->query("CREATE TABLE IF NOT EXISTS {items_tags} (
                    `id` int(9) NOT NULL auto_increment,
                    `item_id` int(9) NOT NULL,
                    `tag_id` int(9) NOT NULL,
@@ -44,8 +44,8 @@ class tag_installer {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `[tags]`;");
-    $db->query("DROP TABLE IF EXISTS `[items_tags]`;");
+    $db->query("DROP TABLE IF EXISTS {tags};");
+    $db->query("DROP TABLE IF EXISTS {items_tags};");
     module::delete("tag");
   }
 }

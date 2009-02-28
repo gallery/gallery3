@@ -23,7 +23,7 @@ class notification_installer {
     $version = module::get_version("notification");
 
     if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS `[subscriptions]` (
+      $db->query("CREATE TABLE IF NOT EXISTS {subscriptions} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9) NOT NULL,
                  `user_id` int(9) NOT NULL,
@@ -38,7 +38,7 @@ class notification_installer {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `[subscriptions]`;");
+    $db->query("DROP TABLE IF EXISTS {subscriptions};");
     
     module::delete("notification");
   }

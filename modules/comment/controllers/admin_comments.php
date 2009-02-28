@@ -57,7 +57,7 @@ class Admin_Comments_Controller extends Admin_Controller {
   public function index() {
     // Get rid of old deleted/spam comments
     Database::instance()->query(
-      "DELETE FROM `[comments]` " .
+      "DELETE FROM {comments} " .
       "WHERE state IN ('deleted', 'spam') " .
       "AND unix_timestamp(now()) - updated > 86400 * 7");
 

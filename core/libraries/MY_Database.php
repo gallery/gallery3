@@ -56,6 +56,6 @@ class Database extends Database_Core {
 
   public function add_table_prefixes($sql) {
     $prefix = $this->config["table_prefix"];
-    return preg_replace("#\[([a-zA-Z0-9_]+)\]#", "{$prefix}$1", $sql);
+    return preg_replace("#{([a-zA-Z0-9_]+)}#", "{$prefix}$1", $sql);
   }
 }

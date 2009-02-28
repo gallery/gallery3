@@ -50,10 +50,10 @@ class tag_event_Core {
 
   static function item_before_delete($item) {
     $db = Database::instance();
-    $db->query("UPDATE `[tags]` SET `count` = `count` - 1 WHERE `count` > 0 " .
-               "AND `id` IN (SELECT `tag_id` from `[items_tags]` WHERE `item_id` = $item->id)");
-    $db->query("DELETE FROM `[tags]` WHERE `count` = 0 AND `id` IN (" .
-               "SELECT `tag_id` from `[items_tags]` WHERE `item_id` = $item->id)");
+    $db->query("UPDATE {tags} SET `count` = `count` - 1 WHERE `count` > 0 " .
+               "AND `id` IN (SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
+    $db->query("DELETE FROM {tags} WHERE `count` = 0 AND `id` IN (" .
+               "SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
     $db->delete("items_tags", array("item_id" => "$item->id"));
   }
 

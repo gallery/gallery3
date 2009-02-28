@@ -23,7 +23,7 @@ class user_installer {
     $version = module::get_version("user");
 
     if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS `[users]` (
+      $db->query("CREATE TABLE IF NOT EXISTS {users} (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(32) NOT NULL,
                    `full_name` varchar(255) NOT NULL,
@@ -41,7 +41,7 @@ class user_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE IF NOT EXISTS `[groups]` (
+      $db->query("CREATE TABLE IF NOT EXISTS {groups} (
                    `id` int(9) NOT NULL auto_increment,
                    `name` char(64) default NULL,
                    `special` BOOLEAN default 0,
@@ -49,7 +49,7 @@ class user_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE IF NOT EXISTS `[groups_users]` (
+      $db->query("CREATE TABLE IF NOT EXISTS {groups_users} (
                    `group_id` int(9) NOT NULL,
                    `user_id` int(9) NOT NULL,
                    PRIMARY KEY (`group_id`, `user_id`),
@@ -105,9 +105,9 @@ class user_installer {
     } catch (Exception $e) {
     }
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS `[users]`;");
-    $db->query("DROP TABLE IF EXISTS `[groups]`;");
-    $db->query("DROP TABLE IF EXISTS `[groups_users]`;");
+    $db->query("DROP TABLE IF EXISTS {users};");
+    $db->query("DROP TABLE IF EXISTS {groups};");
+    $db->query("DROP TABLE IF EXISTS {groups_users};");
     module::delete("user");
   }
 }

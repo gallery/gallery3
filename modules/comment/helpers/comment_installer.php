@@ -23,7 +23,7 @@ class comment_installer {
     $version = module::get_version("comment");
 
     if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS `[comments]` (
+      $db->query("CREATE TABLE IF NOT EXISTS {comments} (
                    `author_id` int(9) default NULL,
                    `created` int(9) NOT NULL,
                    `guest_email` varchar(128) default NULL,
@@ -58,10 +58,10 @@ class comment_installer {
 
   static function uninstall() {
     $db = Database::instance();
-    $sql = "SELECT `item_id` FROM `[comments]`";
+    $sql = "SELECT `item_id` FROM {comments}";
     module::event("item_related_update_batch", $sql);
 
-    $db->query("DROP TABLE IF EXISTS `[comments]
+    $db->query("DROP TABLE IF EXISTS {comments]
 `;");
     module::delete("comment");
   }

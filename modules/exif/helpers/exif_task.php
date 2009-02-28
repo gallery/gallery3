@@ -23,16 +23,16 @@ class exif_task_Core {
 
     // Delete extra exif_records
     $db->query(
-      "DELETE `[exif_records]`.* FROM `exif_records` " .
-      "LEFT JOIN `[items]` ON (`[exif_records]`.`item_id` = `[items]`.`id`) " .
-      "WHERE `[items]`.`id` IS NULL");
+      "DELETE {exif_records}.* FROM `exif_records` " .
+      "LEFT JOIN {items} ON ({exif_records}.`item_id` = {items}.`id`) " .
+      "WHERE {items}.`id` IS NULL");
 
     // Insert missing exif_records
     $db->query(
-      "INSERT INTO `[exif_record]`(`item_id`) (" .
-      " SELECT `[items]`.`id` FROM `[items]` " .
-      " LEFT JOIN `[exif_records]` ON (`[exif_records]`.`item_id` = `[items]`.`id`) " .
-      " WHERE `[exif_records]`.`id` IS NULL)");
+      "INSERT INTO {exif_record}(`item_id`) (" .
+      " SELECT {items}.`id` FROM {items} " .
+      " LEFT JOIN {exif_records} ON ({exif_records}.`item_id` = {items}.`id`) " .
+      " WHERE {exif_records}.`id` IS NULL)");
 
     list ($remaining, $total, $percent) = self::_get_stats();
     return array(Task_Definition::factory()

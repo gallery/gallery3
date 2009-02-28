@@ -89,7 +89,7 @@ class installer {
     $password = substr(md5(time() * rand()), 0, 6);
     $hashed_password = $salt . md5($salt . $password);
     $sql = self::prepend_prefix($config["prefix"],
-       "UPDATE `[users]` SET `password` = '$hashed_password' WHERE `id` = 2");
+       "UPDATE {users} SET `password` = '$hashed_password' WHERE `id` = 2");
     if (mysql_query($sql)) {
     } else {
       throw new Exception(mysql_error());
@@ -101,7 +101,7 @@ class installer {
   static function create_private_key($config) {
     $key = md5(uniqid(mt_rand(), true)) . md5(uniqid(mt_rand(), true));
     $sql = self::prepend_prefix($config["prefix"],
-       "INSERT INTO `[vars]` VALUES(NULL, 'core', 'private_key', '$key')");
+       "INSERT INTO {vars} VALUES(NULL, 'core', 'private_key', '$key')");
     if (mysql_query($sql)) {
     } else {
       throw new Exception(mysql_error());
@@ -109,6 +109,6 @@ class installer {
   }
 
   static function prepend_prefix($prefix, $sql) {
-    return  preg_replace("#\[([a-zA-Z0-9_]+)\]#", "{$prefix}$1", $sql);
+    return  preg_replace("#{([a-zA-Z0-9_]+)}#", "{$prefix}$1", $sql);
   }
 }
