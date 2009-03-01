@@ -219,7 +219,7 @@ class Scaffold_Controller extends Template_Controller {
     }
 
     $batch_id = mt_rand();
-    module::event("start_add_batch", $batch_id);
+    module::event("start_batch");
     cookie::set("add_photos_path", $path);
     $photo_count = 0;
     foreach (glob("$path/*.[Jj][Pp][Gg]") as $file) {
@@ -227,7 +227,7 @@ class Scaffold_Controller extends Template_Controller {
       photo::create($parent, $file, basename($file), basename($file));
       $photo_count++;
     }
-    module::event("end_add_batch", $batch_id);
+    module::event("end_batch");
 
     if ($photo_count > 0) {
       log::success("content", "(scaffold) Added $photo_count photos",
@@ -245,7 +245,7 @@ class Scaffold_Controller extends Template_Controller {
     $test_images = glob(APPPATH . "tests/images/*.[Jj][Pp][Gg]");
 
     $batch_id = mt_rand();
-    module::event("start_add_batch", $batch_id);
+    module::event("start_batch");
     $album_count = $photo_count = 0;
     for ($i = 0; $i < $count; $i++) {
       set_time_limit(30);
@@ -269,7 +269,7 @@ class Scaffold_Controller extends Template_Controller {
         $photo_count++;
       }
     }
-    module::event("end_add_batch", $batch_id);
+    module::event("end_batch");
 
     if ($photo_count > 0) {
       log::success("content", "(scaffold) Added $photo_count photos");

@@ -65,12 +65,7 @@ class Local_Import_Controller extends Controller {
     }
 
     $path = $this->input->post("path");
-    $batch_id = Session::instance()->get("batch_id");
-    if (empty($batch_id)) {
-      $batch_id = mt_rand();
-      module::event("start_add_batch", $batch_id);
-      Session::instance()->set("batch_id", $batch_id);
-    }
+    module::event("start_batch");
 
     $source_path = $path[0];
     for ($i = 1; $i < count($path); $i++) {  // skip the first path
@@ -97,10 +92,8 @@ class Local_Import_Controller extends Controller {
   }
 
   public function finish() {
-    $batch_id = Session::instance()->get_once("batch_id");
-    if (!empty($batch_id)) {
-      module::event("end_add_batch", $batch_id);
-    }
+    module::event("end_batch");
+
     print json_encode(array("result" => "success"));
   }
 

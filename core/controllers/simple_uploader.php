@@ -48,12 +48,7 @@ class Simple_Uploader_Controller extends Controller {
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules("file", "upload::valid", "upload::type[gif,jpg,png,flv,mp4]");
     if ($file_validation->validate()) {
-      $batch_id = Session::instance()->get("batch_id");
-      if (empty($batch_id)) {
-        $batch_id = mt_rand();
-        module::event("start_add_batch", $batch_id);
-        Session::instance()->set("batch_id", $batch_id);
-      }
+      module::event("start_batch");
       $temp_filename = upload::save("file");
       $title = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
       $path_info = pathinfo($temp_filename);
@@ -70,10 +65,8 @@ class Simple_Uploader_Controller extends Controller {
   }
 
   public function finish() {
-    $batch_id = Session::instance()->get_once("batch_id");
-    if (!empty($batch_id)) {
-      module::event("end_add_batch", $batch_id);
-    }
+    module::event("end_batch");
+
     print json_encode(array("result" => "success"));
   }
 }
