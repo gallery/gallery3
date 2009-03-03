@@ -63,6 +63,12 @@ class Local_Import_Controller extends Controller {
     }
 
     $path = $this->input->post("path");
+
+    $paths = unserialize(module::get_var("local_import", "authorized_paths"));
+    if (empty($paths[$path[0]])) {
+      throw new Exception("@todo BAD_PATH");
+    }
+
     batch::operation("add", $parent);
 
     $source_path = $path[0];

@@ -66,7 +66,7 @@ class Admin_Local_Import_Controller extends Admin_Controller {
     $view = new View("local_import_dir_list.html");
     $view->paths = array_keys($paths);
 
-    print $view->render();
+    print $view;
   }
 
   public function autocomplete() {

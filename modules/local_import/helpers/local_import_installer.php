@@ -28,6 +28,9 @@ class local_import_installer {
 
       module::set_version("local_import", 1);
       module::set_var("local_import", "authorized_paths", serialize(array()));
+      message::warning(
+        t("You have no upload directories, click <a href='%url'>here</a> to configure one",
+          array("url" => url::site("/admin/local_import"))));
     }
   }
 
