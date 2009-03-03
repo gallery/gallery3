@@ -22,7 +22,7 @@ class Local_Import_Controller extends Controller {
     $paths = unserialize(module::get_var("local_import", "authorized_paths"));
 
     $item = ORM::factory("item", $id);
-    access::can("local_import", $item);
+    access::required("local_import", $item);
 
     $view = new View("local_import_tree_dialog.html");
     $view->action = url::site("local_import/add_photo/$id");
@@ -57,7 +57,7 @@ class Local_Import_Controller extends Controller {
     access::verify_csrf();
 
     $parent = ORM::factory("item", $id);
-    access::can("local_import", $item);
+    access::required("local_import", $parent);
     if (!$parent->is_album() && !$parent->loaded ) {
       throw new Exception("@todo BAD_ALBUM");
     }
@@ -66,7 +66,8 @@ class Local_Import_Controller extends Controller {
     batch::operation("add", $parent);
 
     $source_path = $path[0];
-    for ($i = 1; $i < count($path); $i++) {  // skip the first path
+    // The first path corresponds to the source directory so we can just skip it.
+    for ($i = 1; $i < count($path); $i++) {  
       $source_path .= "/$path[$i]";
       $pathinfo = pathinfo($source_path);
       set_time_limit(30);
