@@ -35,14 +35,14 @@ class search_Core {
     // limit statement.  It's possible that if we get rid of the limit (but keep the offset) on
     // the 2nd query and combine the two, it might be faster than making 2 separate queries.
     $count_query = "SELECT COUNT(*) AS C " .
-      "FROM `items` JOIN `search_records` ON (`items`.`id` = `search_records`.`item_id`) " .
-      "WHERE MATCH(`search_records`.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
+      "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
+      "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
       $access_sql;
     $count = $db->query($count_query)->current()->C;
 
-    $query = "SELECT `items`.*, MATCH(`search_records`.`data`) AGAINST ('$q') AS `score` " .
-      "FROM `items` JOIN `search_records` ON (`items`.`id` = `search_records`.`item_id`) " .
-      "WHERE MATCH(`search_records`.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
+    $query = "SELECT {items}.*, MATCH({search_records}.`data`) AGAINST ('$q') AS `score` " .
+      "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
+      "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
       $access_sql .
       "ORDER BY `score` DESC " .
       "LIMIT $offset, $limit";
