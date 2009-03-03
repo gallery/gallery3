@@ -165,27 +165,13 @@ class module_Core {
     }
 
     try {
-      $hooks = array();
       foreach ($modules as $module) {
         self::$module_names[$module->name] = $module->name;
         self::$modules[$module->name] = $module;
         $kohana_modules[] = MODPATH . $module->name;
-        $module_path = MODPATH . $module->name;
-        $kohana_modules[] = $module_path;
-        if (file_exists("$module_path/hooks") &&
-            ($hook_files = glob("$module_path/hooks/*.php")) !== false) {
-            $hooks = array_merge($hooks, $hook_files);
-        }
       }
 
       Kohana::config_set("core.modules", $kohana_modules);
-      /*
-       * Kohana loads the hooks before all the installed module paths are defined, so lets call
-       * any module hooks now
-       */
-      foreach($hooks as $hook) {
-        include($hook);
-      }
     } catch (Exception $e) {
       self::$module_names = array();
       self::$modules = array();
@@ -210,6 +196,17 @@ class module_Core {
         call_user_func_array(array($class, $function), $args);
       }
     }
+  }
+
+  /**
+   * Kohana shutdown event handler
+   * @param string $module_name
+   * @param string $name
+   * @param string $default_value
+   * @return the value
+   */
+  static function shutdown() {
+    self::event("gallery_shutdown");
   }
 
   /**
