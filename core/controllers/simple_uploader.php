@@ -48,7 +48,7 @@ class Simple_Uploader_Controller extends Controller {
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules("file", "upload::valid", "upload::type[gif,jpg,png,flv,mp4]");
     if ($file_validation->validate()) {
-      module::event("start_batch");
+      batch::operation("add", $album);
       $temp_filename = upload::save("file");
       $title = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
       $path_info = pathinfo($temp_filename);
@@ -65,7 +65,7 @@ class Simple_Uploader_Controller extends Controller {
   }
 
   public function finish() {
-    module::event("end_batch");
+    batch::end_operation("add");
 
     print json_encode(array("result" => "success"));
   }

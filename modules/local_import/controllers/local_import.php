@@ -65,8 +65,8 @@ class Local_Import_Controller extends Controller {
     }
 
     $path = $this->input->post("path");
-    module::event("start_batch");
-
+    batch::operation("add", $parent);
+ 
     $source_path = $path[0];
     for ($i = 1; $i < count($path); $i++) {  // skip the first path
       $source_path .= "/$path[$i]";
@@ -92,7 +92,7 @@ class Local_Import_Controller extends Controller {
   }
 
   public function finish() {
-    module::event("end_batch");
+    batch::end_operation("add");
 
     print json_encode(array("result" => "success"));
   }
