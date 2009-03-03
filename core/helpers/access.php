@@ -155,7 +155,7 @@ class access_Core {
     $lock = ORM::factory("item")
       ->where("`left` <= $item->left")
       ->where("`right` >= $item->right")
-      ->where("`items`.`id` <> $item->id")
+      ->where("items.id <> $item->id")
       ->join("access_intents", "items.id", "access_intents.item_id")
       ->where("access_intents.view_$group->id", 0)
       ->orderby("level", "DESC")
