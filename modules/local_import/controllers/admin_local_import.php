@@ -70,8 +70,6 @@ class Admin_Local_Import_Controller extends Admin_Controller {
   }
 
   public function autocomplete() {
-    access::verify_csrf();
-    
     $directories = array();
     $path_prefix = $this->input->get("q");
     foreach (glob("{$path_prefix}*") as $file) {
