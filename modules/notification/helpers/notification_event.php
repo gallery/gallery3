@@ -23,11 +23,7 @@ class notification_event_Core {
   }
 
   static function item_created($item) {
-    $batch_id = Session::instance()->get("batch_id");
-    if (!batch::in_progress("add") {
-      notification::send_item_add($item);
-    } else {
-    }
+    notification::send_item_add($item);
   }
 
   static function item_before_delete($item) {
