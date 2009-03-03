@@ -20,14 +20,14 @@
 
 class batch_Core {
   static function operation($name, $item) {
-    if (self::in_progress($name) === false) {
+    if (!self::in_progress($name)) {
       Session::instance()->set("operation_$name", "1");
       module::event("operation", $name, $item);
     }
   }
 
   static function end_operation($name) {
-    if (self::in_progress($name) === true) {
+    if (self::in_progress($name)) {
       module::event("end_operation", $name);
       Session::instance()->set("operation_$name", null);
     }
