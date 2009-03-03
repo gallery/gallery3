@@ -19,16 +19,19 @@
  */
 class local_import_theme_Core {
   static function admin_head($theme) {
-    $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-      url::file("modules/local_import/css/jquery.autocomplete.css") . "\" />";
-    $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-      url::file("modules/local_import/css/admin.css") . "\" />";
-    $base = url::base(true);
-    $csrf = access::csrf_token();
-    $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
+    $head = array();
+    if (Router::$current_uri == "admin/local_import") {
+      $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
+        url::file("modules/local_import/css/jquery.autocomplete.css") . "\" />";
+      $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
+        url::file("modules/local_import/css/admin.css") . "\" />";
+      $base = url::base(true);
+      $csrf = access::csrf_token();
+      $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
-    $head[] = html::script("modules/local_import/js/jquery.autocomplete.pack.js");
-    $head[] = html::script("modules/local_import/js/admin.js");
+      $head[] = html::script("modules/local_import/js/jquery.autocomplete.pack.js");
+      $head[] = html::script("modules/local_import/js/admin.js");
+    }
     
     return implode("\n", $head);
   }
