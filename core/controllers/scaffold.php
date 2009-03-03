@@ -244,7 +244,7 @@ class Scaffold_Controller extends Template_Controller {
 
     $test_images = glob(APPPATH . "tests/images/*.[Jj][Pp][Gg]");
 
-    batch::operation("add", null);
+    batch::operation("add", ORM::factory("item", 1));
 
     $album_count = $photo_count = 0;
     for ($i = 0; $i < $count; $i++) {
