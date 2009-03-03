@@ -20,7 +20,11 @@
 class Admin_Local_Import_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
-    $view->content = local_import::get_admin_page();
+    $view->content = new View("local_import_admin.html");
+    $view->content->add_form = $this->_get_admin_form()->render();
+    $view->content->path_list = new View("local_import_dir_list.html");
+    $paths = unserialize(module::get_var("local_import", "authorized_paths", "a:0:{}"));
+    $view->content->path_list->paths = array_keys($paths);
 
     print $view;
   }
@@ -28,19 +32,18 @@ class Admin_Local_Import_Controller extends Admin_Controller {
   public function add_path() {
     access::verify_csrf();
     
-    $form = local_import::get_admin_form();
+    $form = $this->_get_admin_form();
     $paths = unserialize(module::get_var("local_import", "authorized_paths", "a:0:{}"));
     if ($form->validate()) {
       if (is_readable($form->add_path->path->value)) {
         $paths[$form->add_path->path->value] = 1;
         module::set_var("local_import", "authorized_paths", serialize($paths));
-        $path_count = count($paths) - 1;
-        $path_view = new View("local_import_dir_list.html");
-        $path_view->paths = array_keys($paths);
+        $view = new View("local_import_dir_list.html");
+        $view->paths = array_keys($paths);
         $form->add_path->inputs["path"]->value("");
         print json_encode(
           array("result" => "success",
-                "paths" => $path_view->__toString(),
+                "paths" => $view->__toString(),
                 "form" => $form->__toString()));
       } else {
         $form->add_path->inputs["path"]->error("not_readable");
@@ -52,7 +55,7 @@ class Admin_Local_Import_Controller extends Admin_Controller {
 
   }
 
-  public function remove() {
+  public function remove_path() {
     access::verify_csrf();
 
     $path = $this->input->post("path");
@@ -78,5 +81,15 @@ class Admin_Local_Import_Controller extends Admin_Controller {
     }
 
     print implode("\n", $directories);
+  }
+
+  private function _get_admin_form() {
+    $form  = new Forge("admin/local_import/add_path", "", "post", array("id" => "gLocalImportAdminForm"));
+    $add_path = $form->group("add_path");
+    $add_path->input("path")->label(t("Path"))->rules("required")
+      ->error_messages("not_readable", t("The directory is not readable by the webserver"));
+    $add_path->submit("add")->value(t("Add Path"));
+
+    return $form;
   }
 }

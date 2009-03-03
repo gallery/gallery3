@@ -36,7 +36,7 @@ function add_onclick() {
   $(".gRemoveDir").click(function() {
     var parent = $(this).parent();
     $.post(
-      base_url + "admin/local_import/remove",
+      base_url + "admin/local_import/remove_path",
       {csrf: csrf,
        path: parent.text().replace(/^\s\s*/, "").replace(/\s\s*$/, "")},
       function(data, textStatus) {
