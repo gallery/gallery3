@@ -41,10 +41,8 @@ class Local_Import_Controller extends Controller {
   }
 
   public function children() {
-    access::verify_csrf();
-
     $path = $this->input->post("path");
-    $path =  implode("/", $this->input->post("path"));
+    $path = implode("/", $this->input->post("path"));
     if (!is_readable($path)) {
       kohana::show_404();
     }
@@ -66,7 +64,7 @@ class Local_Import_Controller extends Controller {
 
     $path = $this->input->post("path");
     batch::operation("add", $parent);
- 
+
     $source_path = $path[0];
     for ($i = 1; $i < count($path); $i++) {  // skip the first path
       $source_path .= "/$path[$i]";
