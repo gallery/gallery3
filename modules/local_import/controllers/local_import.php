@@ -103,20 +103,22 @@ class Local_Import_Controller extends Controller {
   }
 
   private function _get_children($path) {
+    print $path . "\n";
     $file_list = array();
-    $files = scandir($path);
+    $files = new DirectoryIterator($path);
     foreach ($files as $file) {
-      if ($file[0] != ".") {
-        $full_path = "$path/$file";
-        if (is_dir($full_path)) {
-          $file_list[$file] =
-            array("path" => $full_path, "is_dir" => true);
+      if ($file->isDot()) {
+        continue;
+      }
+      $filename = $file->getFilename();
+      if ($filename[0] != ".") {
+        if ($file->isDir()) {
+          $file_list[$filename] = array("path" => $file->getPathname(), "is_dir" => true);
         } else {
-          $extension = strtolower(substr(strrchr($file, '.'), 1));
-          // Make sure the file is readable
-          if (is_readable($full_path) &&
+          $extension = strtolower(substr(strrchr($filename, '.'), 1));
+          if ($file->isReadable() &&
               in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
-            $file_list[$file] = array("path" => $full_path, "is_dir" => false);
+            $file_list[$filename] = array("path" => $file->getPathname(), "is_dir" => false);
           }
         }
       }
