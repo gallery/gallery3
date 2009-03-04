@@ -9,10 +9,8 @@ $("document").ready(function() {
 });
 
 function add_autocomplete() {
-  $("#gServerAddAdmin input:text").autocomplete(base_url + "admin/server_add/autocomplete", {
-    extraParams: {csrf: csrf},
-    mustMatch: true,
-    max: 256});
+  $("#gServerAddAdmin input:text").autocomplete(base_url + "admin/server_add/autocomplete",
+                                                {max: 256});
 }
 function ajaxify_add_form(options) {
   $("#gServerAddAdmin form").ajaxForm({
