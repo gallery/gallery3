@@ -21,7 +21,7 @@ class Admin_Local_Import_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("local_import_admin.html");
-    $view->content->add_form = $this->_get_admin_form()->render();
+    $view->content->add_form = $this->_get_admin_form();
     $view->content->path_list = new View("local_import_dir_list.html");
     $paths = unserialize(module::get_var("local_import", "authorized_paths", "a:0:{}"));
     $view->content->path_list->paths = array_keys($paths);
@@ -31,7 +31,7 @@ class Admin_Local_Import_Controller extends Admin_Controller {
 
   public function add_path() {
     access::verify_csrf();
-    
+
     $form = $this->_get_admin_form();
     $paths = unserialize(module::get_var("local_import", "authorized_paths", "a:0:{}"));
     if ($form->validate()) {
