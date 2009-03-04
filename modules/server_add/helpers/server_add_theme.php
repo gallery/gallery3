@@ -22,14 +22,14 @@ class server_add_theme_Core {
     $head = array();
     if (Router::$current_uri == "admin/server_add") {
       $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/server_add/css/jquery.autocomplete.css") . "\" />";
+        url::file("lib/jquery.autocomplete.css") . "\" />";
       $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("modules/server_add/css/admin.css") . "\" />";
       $base = url::base(true);
       $csrf = access::csrf_token();
       $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
-      $head[] = html::script("modules/server_add/js/jquery.autocomplete.pack.js");
+      $head[] = html::script("lib/jquery.autocomplete.pack.js");
       $head[] = html::script("modules/server_add/js/admin.js");
     }
     
