@@ -23,7 +23,9 @@ class notification_event_Core {
   }
 
   static function item_created($item) {
-    notification::send_item_add($item);
+    if (!batch::in_progress("add")) {
+      notification::send_item_add($item);
+    }
   }
 
   static function item_before_delete($item) {
@@ -51,4 +53,24 @@ class notification_event_Core {
       ->where("user_id", $user->id)
       ->delete_all();
   }
+
+  static function operation($name, $item) {
+    if ($name == "add") {
+      $id = Session::instance()->get("notification_batch_item_id");
+      if ($id && $item->id != $id) {
+        notification::send_batch_add($id);
+      }
+      Session::instance()->set("notification_batch_item_id", $item->id);
+    }
+  }
+
+  static function end_operation($name) {
+    if ($name == "add") {
+      $id = Session::instance()->get_once("notification_batch_item_id");
+      if ($id) {
+        notification::send_batch_add($id);
+      }
+    }
+  }
+
 }

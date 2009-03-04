@@ -71,7 +71,7 @@ class notification {
       ->join("subscriptions", "users.id", "subscriptions.user_id")
       ->join("items", "subscriptions.item_id", "items.id")
       ->where("email IS NOT", null)
-      ->where("items.left <", $item->left)
+      ->where("items.left <=", $item->left)
       ->where("items.right >", $item->right)
       ->find_all();
 
@@ -113,6 +113,19 @@ class notification {
     self::_send_message($item, $body);
   }
 
+  static function send_batch_add($parent_id) {
+    $parent = ORM::factory("item", $parent_id);
+    if ($parent->loaded) {
+      $body = new View("batch_add.html");
+      $body->subject = t("%parent_title Updated",
+          array("parent_title" => $parent->title));
+      $body->parent_title = $parent->title;
+      $body->url = url::site("{$parent->type}s/$parent->id", "http");
+
+      self::_send_message($parent, $body);
+    }
+  }
+
   static function send_item_deleted($item) {
     $parent = $item->parent();
     $body = new View("item_deleted.html");
@@ -148,6 +161,10 @@ class notification {
     self::_send_message($item, $body);
   }
 
+  static function process_notifications() {
+    Kohana::log("error", "processing notifications in shutdown");
+  }
+  
   private static function _send_message($item, $body) {
     $users = self::get_subscribers($item);
     if (!empty($users)) {
