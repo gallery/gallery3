@@ -32,7 +32,7 @@ class Server_Add_Controller extends Controller {
 
     $tree = new View("server_add_tree.html");
     $tree->data = array();
-    $tree->uid = "tree_$id";
+    $tree->tree_id = "tree_$id";
     foreach (array_keys($paths) as $path) {
       $tree->data[$path] = array("path" => $path, "is_dir" => true);
     }
@@ -49,7 +49,7 @@ class Server_Add_Controller extends Controller {
 
     $tree = new View("server_add_tree.html");
     $tree->data = $this->_get_children($path);
-    $tree->uid = "tree_" . md5($path);
+    $tree->tree_id = "tree_" . md5($path);
     print $tree;
   }
 
