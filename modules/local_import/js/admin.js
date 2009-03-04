@@ -16,18 +16,18 @@ function add_autocomplete() {
 }
 function ajaxify_import_form(options) {
   $("#gLocalImportAdmin form").ajaxForm({
-			     dataType: "json",
-			     success: function(data) {
-			       if (data.form) {
-				 $("#gLocalImportAdmin form").replaceWith(data.form);
-				 ajaxify_import_form();
-				 add_autocomplete();
-			       }
-			       if (data.result == "success") {
-      $("#gNoImportPaths").css("display", "none");
+    dataType: "json",
+    success: function(data) {
+      if (data.form) {
+	$("#gLocalImportAdmin form").replaceWith(data.form);
+	ajaxify_import_form();
+	add_autocomplete();
+      }
+      if (data.result == "success") {
+	$("#gNoImportPaths").css("display", "none");
 	$("#gAuthorizedPath").html(data.paths);
-        add_onclick();
-			       }
+	add_onclick();
+      }
     }
   });
 }

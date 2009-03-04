@@ -61,7 +61,7 @@ var current = 0;
 var process_length = 0;
 function do_import(submit, event) {
   event.preventDefault();
-  $("#gProgressBar").progressbar('value', 0);
+  $("#gProgressBar").progressbar("value", 0);
   $("#gProgressBar").css("visibility", "visible");
   var check_list = $("#gLocalImport :checkbox[checked]");
   process_length = check_list.length;
@@ -107,7 +107,7 @@ function process_checkbox(checkbox) {
       });
     });
     current++;
-    $("#gProgressBar").progressbar('value', current / process_length * 100);
+    $("#gProgressBar").progressbar("value", current / process_length * 100);
   }
 }
 
@@ -121,6 +121,6 @@ function process_file(li_element, parms) {
           url: $("#gLocalImport form").attr("action")
   });
   current++;
-  $("#gProgressBar").progressbar('value', current / process_length * 100);
+  $("#gProgressBar").progressbar("value", current / process_length * 100);
 }
 
