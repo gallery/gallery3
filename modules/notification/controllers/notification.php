@@ -24,13 +24,12 @@ class Notification_Controller extends Controller {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
 
-    $watching = notification::is_watching($item);
-    if (!$watching) {
-      notification::add_watch($item);
-      message::success(sprintf(t("Watch Enabled on %s!"), $item->title));
-    } else {
+    if (notification::is_watching($item)) {
       notification::remove_watch($item);
-      message::success(sprintf(t("Watch Removed on %s!"), $item->title));
+      message::success(sprintf(t("You are no longer watching %s"), $item->title));
+    } else {
+      notification::add_watch($item);
+      message::success(sprintf(t("You are now watching %s"), $item->title));
     }
     url::redirect($item->url());
   }
