@@ -16,7 +16,7 @@ $("#<?= $uid ?>").ready(function() {
     <? if (!empty($file_info["is_dir"])): ?>
       <span class="ui-icon ui-icon-plus" ref="<?= $file ?>"></span>
     <? endif ?>
-    <?= "<label>" . form::checkbox("checkbox", $file) . " $file</label>" ?>
+    <label> <?= form::checkbox("checkbox", $file) . " $file" ?> </label>
   </li>
   <? endforeach ?>
 </ul>
