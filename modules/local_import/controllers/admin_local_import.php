@@ -82,7 +82,8 @@ class Admin_Local_Import_Controller extends Admin_Controller {
   }
 
   private function _get_admin_form() {
-    $form  = new Forge("admin/local_import/add_path", "", "post", array("id" => "gLocalImportAdminForm"));
+    $form = new Forge("admin/local_import/add_path", "", "post",
+                      array("id" => "gLocalImportAdminForm"));
     $add_path = $form->group("add_path");
     $add_path->input("path")->label(t("Path"))->rules("required")
       ->error_messages("not_readable", t("The directory is not readable by the webserver"));
