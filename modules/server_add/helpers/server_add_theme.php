@@ -27,7 +27,7 @@ class server_add_theme_Core {
       $csrf = access::csrf_token();
       $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
-      $head[] = html::script("lib/jquery.autocomplete.pack.js");
+      $head[] = html::script("lib/jquery.autocomplete.js");
       $head[] = html::script("modules/server_add/js/admin.js");
     }
     
