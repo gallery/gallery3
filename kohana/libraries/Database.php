@@ -299,7 +299,9 @@ class Database_Core {
 			{
 				if (preg_match('/^DISTINCT\s++(.+)$/i', $val, $matches))
 				{
+                                        /* ****** Begin Gallery 3 Local Change *********** */
                                         $val = (strpos($matches[1], '.') !== FALSE) ? $this->config['table_prefix'].$matches[1] : $matches[1];
+                                        /* ****** End Gallery 3 Local Change *********** */
 					$this->distinct = TRUE;
 				}
 				else
