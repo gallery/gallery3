@@ -40,13 +40,13 @@ class Admin_Server_Add_Controller extends Admin_Controller {
         module::set_var("server_add", "authorized_paths", serialize($paths));
         $view = new View("server_add_dir_list.html");
         $view->paths = array_keys($paths);
-        $form->add_path->inputs["path"]->value("");
+        $form->add_path->inputs->path->value = "";
         print json_encode(
           array("result" => "success",
                 "paths" => $view->__toString(),
                 "form" => $form->__toString()));
       } else {
-        $form->add_path->inputs["path"]->error("not_readable");
+        $form->add_path->inputs->path->error("not_readable");
         print json_encode(array("result" => "error", "form" => $form->__toString()));
       }
     } else {

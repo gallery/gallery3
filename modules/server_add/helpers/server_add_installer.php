@@ -29,8 +29,8 @@ class server_add_installer {
       module::set_version("server_add", 1);
       module::set_var("server_add", "authorized_paths", serialize(array()));
       message::warning(
-        t("You have no upload directories, click <a href='%url'>here</a> to configure one",
-          array("url" => url::site("/admin/server_add"))));
+        t("You have no upload directories, click <a href='%url'>Configure them now</a> " .
+          "to configure one", array("url" => url::site("/admin/server_add"))));
     }
   }
 
@@ -38,9 +38,7 @@ class server_add_installer {
     access::delete_permission("server_add");
     $module = module::get("server_add");
 
-    $db = Database::instance();
-    $db->delete("vars", array("module_name" => $module->name));
-
+    // @todo remove this after the next alpha
     module::delete("local_import");
     module::delete("server_add");
   }

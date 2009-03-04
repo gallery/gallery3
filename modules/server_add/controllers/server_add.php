@@ -41,9 +41,16 @@ class Server_Add_Controller extends Controller {
   }
 
   public function children() {
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+
+    $path_valid = false;
     $path = $this->input->post("path");
+
+    if (empty($paths[$path[0]])) {
+      throw new Exception("@todo BAD_PATH");
+    }
     $path = implode("/", $this->input->post("path"));
-    if (!is_readable($path)) {
+    if (!is_readable($path) || is_link($path)) {
       kohana::show_404();
     }
 
@@ -62,7 +69,7 @@ class Server_Add_Controller extends Controller {
 
     $parent = ORM::factory("item", $id);
     access::required("server_add", $parent);
-    if (!$parent->is_album() && !$parent->loaded ) {
+    if (!$parent->is_album()) {
       throw new Exception("@todo BAD_ALBUM");
     }
 
@@ -77,6 +84,9 @@ class Server_Add_Controller extends Controller {
     // The first path corresponds to the source directory so we can just skip it.
     for ($i = 1; $i < count($path); $i++) {
       $source_path .= "/$path[$i]";
+      if (is_link($source_path) || !is_readable($source_path)) {
+        kohana::show_404();
+      }
       $pathinfo = pathinfo($source_path);
       set_time_limit(30);
       if (is_dir($source_path)) {
@@ -107,7 +117,7 @@ class Server_Add_Controller extends Controller {
     $file_list = array();
     $files = new DirectoryIterator($path);
     foreach ($files as $file) {
-      if ($file->isDot()) {
+      if ($file->isDot() || $file->isLink()) {
         continue;
       }
       $filename = $file->getFilename();
