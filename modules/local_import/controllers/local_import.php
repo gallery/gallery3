@@ -103,7 +103,6 @@ class Local_Import_Controller extends Controller {
   }
 
   private function _get_children($path) {
-    print $path . "\n";
     $file_list = array();
     $files = new DirectoryIterator($path);
     foreach ($files as $file) {
