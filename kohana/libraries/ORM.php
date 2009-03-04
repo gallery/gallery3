@@ -278,15 +278,15 @@ class ORM_Core {
 		{
 			// This handles the has_one and belongs_to relationships
 
-			if (array_key_exists($column.'_'.$model->primary_key, $this->object))
+			if (in_array($model->object_name, $this->belongs_to) OR ! isset($model->object[$this->foreign_key($column)]))
 			{
-				// Use the FK that exists in this model as the PK
-				$where = array($model->table_name.'.'.$model->primary_key => $this->object[$column.'_'.$model->primary_key]);
+				// Foreign key lies in this table (this model belongs_to target model) OR an invalid has_one relationship
+				$where = array($model->table_name.'.'.$model->primary_key => $this->object[$this->foreign_key($column)]);
 			}
 			else
 			{
-				// Use this model PK as the FK
-				$where = array($this->foreign_key() => $this->object[$this->primary_key]);
+				// Foreign key lies in the target table (this model has_one target model)
+				$where = array($this->foreign_key($column, $model->table_name) => $this->primary_key_value);
 			}
 
 			// one<>alias:one relationship
@@ -300,22 +300,23 @@ class ORM_Core {
 			// Load the "end" model
 			$model = ORM::factory(inflector::singular($column));
 
-			// Load JOIN info
+			// Join ON target model's primary key set to 'through' model's foreign key
+			// User-defined foreign keys must be defined in the 'through' model
 			$join_table = $through->table_name;
-			$join_col1  = $model->foreign_key(NULL, $join_table);
-			$join_col2  = $model->foreign_key(TRUE);
+			$join_col1  = $through->foreign_key($model->object_name, $join_table);
+			$join_col2  = $model->table_name.'.'.$model->primary_key;
 
 			// one<>alias:many relationship
 			return $this->related[$column] = $model
 				->join($join_table, $join_col1, $join_col2)
-				->where($this->foreign_key(NULL, $join_table), $this->object[$this->primary_key])
+				->where($through->foreign_key($this->object_name, $join_table), $this->object[$this->primary_key])
 				->find_all();
 		}
 		elseif (in_array($column, $this->has_many))
 		{
 			// one<>many relationship
 			return $this->related[$column] = ORM::factory(inflector::singular($column))
-				->where($this->foreign_key($column), $this->object[$this->primary_key])
+				->where($this->foreign_key($column, $column), $this->object[$this->primary_key])
 				->find_all();
 		}
 		elseif (in_array($column, $this->has_and_belongs_to_many))
@@ -461,91 +462,83 @@ class ORM_Core {
 	 * Binds another one-to-one object to this model.  One-to-one objects
 	 * can be nested using 'object1:object2' syntax
 	 *
-	 * @param string $object
+	 * @param string $target_path
 	 * @return void
 	 */
-	public function with($object)
+	public function with($target_path)
 	{
-		if (isset($this->with_applied[$object]))
+		if (isset($this->with_applied[$target_path]))
 		{
 			// Don't join anything already joined
 			return $this;
 		}
 
-		$prefix = $table = $object;
-
 		// Split object parts
-		$objects = explode(':', $object);
-		$object	 = $this;
-		foreach ($objects as $object_part)
+		$objects = explode(':', $target_path);
+		$target	 = $this;
+		foreach ($objects as $object)
 		{
 			// Go down the line of objects to find the given target
-			$parent = $object;
-			$object = $parent->related_object($object_part);
+			$parent = $target;
+			$target = $parent->related_object($object);
 
-			if ( ! $object)
+			if ( ! $target)
 			{
 				// Can't find related object
 				return $this;
 			}
 		}
 
-		$table = $object_part;
+		$target_name = $object;
 
-		if ($this->table_names_plural)
-		{
-			$table = inflector::plural($table);
-		}
-
-		// Pop-off top object to get the parent object (user:photo:tag's parent is user:photo)
+		// Pop-off top object to get the parent object (user:photo:tag becomes user:photo - the parent table prefix)
 		array_pop($objects);
-		$parent_prefix = implode(':', $objects);
+		$parent_path = implode(':', $objects);
 
-		if (empty($parent_prefix))
+		if (empty($parent_path))
 		{
-			// Use this table name itself for the parent prefix
-			$parent_prefix = $this->table_name;
+			// Use this table name itself for the parent object
+			$parent_path = $this->table_name;
 		}
 		else
 		{
-			if( ! isset($this->with_applied[$parent_prefix]))
+			if( ! isset($this->with_applied[$parent_path]))
 			{
 				// If the parent object hasn't been joined yet, do it first (otherwise LEFT JOINs fail)
-				$this->with($parent_prefix);
+				$this->with($parent_path);
 			}
 		}
 
 		// Add to with_applied to prevent duplicate joins
-		$this->with_applied[$prefix] = TRUE;
+		$this->with_applied[$target_path] = TRUE;
 
 		// Use the keys of the empty object to determine the columns
-		$select = array_keys($object->as_array());
+		$select = array_keys($target->as_array());
 		foreach ($select as $i => $column)
 		{
 			// Add the prefix so that load_result can determine the relationship
-			$select[$i] = $prefix.'.'.$column.' AS '.$prefix.':'.$column;
+			$select[$i] = $target_path.'.'.$column.' AS '.$target_path.':'.$column;
 		}
+
 
 		// Select all of the prefixed keys in the object
 		$this->db->select($select);
-
-		// Use last object part to generate foreign key
-		$foreign_key = $object_part.'_'.$object->primary_key;
-
-		if (array_key_exists($foreign_key, $parent->object))
+		
+		if (in_array($target->object_name, $parent->belongs_to) OR ! isset($target->object[$parent->foreign_key($target_name)]))
 		{
-			// Foreign key exists in the joined object's parent
-			$join_col1 = $object->foreign_key(TRUE, $prefix);
-			$join_col2 = $parent_prefix.'.'.$foreign_key;
+			// Parent belongs_to target, use target's primary key as join column
+			$join_col1 = $target->foreign_key(TRUE, $target_path);
+			$join_col2 = $parent->foreign_key($target_name, $parent_path);
 		}
 		else
 		{
-			$join_col1 = $parent->foreign_key(NULL, $prefix);
-			$join_col2 = $parent_prefix.'.'.$parent->primary_key;
+			// Parent has_one target, use parent's primary key as join column
+			$join_col2 = $parent->foreign_key(TRUE, $parent_path);
+			$join_col1 = $parent->foreign_key($target_name, $target_path);
 		}
 
 		// Join the related object into the result
-		$this->db->join($object->table_name.' AS '.$this->db->table_prefix().$prefix, $join_col1, $join_col2, 'LEFT');
+		$this->db->join($target->table_name.' AS '.$this->db->table_prefix().$target_path, $join_col1, $join_col2, 'LEFT');
 
 		return $this;
 	}
@@ -1360,10 +1353,19 @@ class ORM_Core {
 
 		if ( ! empty($this->load_with))
 		{
-			foreach ($this->load_with as $object)
+			foreach ($this->load_with as $alias => $object)
 			{
 				// Join each object into the results
-				$this->with($object);
+				if (is_string($alias))
+				{
+					// Use alias
+					$this->with($alias);
+				}
+				else
+				{
+					// Use object
+					$this->with($object);
+				}
 			}
 		}
 

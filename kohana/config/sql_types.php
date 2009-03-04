@@ -18,9 +18,11 @@ $config = array
 	'float unsigned'	=> array('type' => 'float', 'min' => 0),
 	'boolean'			=> array('type' => 'boolean'),
 	'time'				=> array('type' => 'string', 'format' => '00:00:00'),
+	'time with time zone' => array('type' => 'string'),
 	'date'				=> array('type' => 'string', 'format' => '0000-00-00'),
 	'year'				=> array('type' => 'string', 'format' => '0000'),
 	'datetime'			=> array('type' => 'string', 'format' => '0000-00-00 00:00:00'),
+	'timestamp with time zone' => array('type' => 'string'),
 	'char'				=> array('type' => 'string', 'exact' => TRUE),
 	'binary'			=> array('type' => 'string', 'binary' => TRUE, 'exact' => TRUE),
 	'varchar'			=> array('type' => 'string'),
@@ -36,7 +38,7 @@ $config['double'] = $config['double unsigned'] = $config['decimal'] = $config['r
 $config['bit'] = $config['boolean'];
 
 // TIMESTAMP
-$config['timestamp'] = $config['datetime'];
+$config['timestamp'] = $config['timestamp without time zone'] = $config['datetime'];
 
 // ENUM
 $config['enum'] = $config['set'] = $config['varchar'];
@@ -45,4 +47,11 @@ $config['enum'] = $config['set'] = $config['varchar'];
 $config['tinytext'] = $config['mediumtext'] = $config['longtext'] = $config['text'];
 
 // BLOB
-$config['tinyblob'] = $config['mediumblob'] = $config['longblob'] = $config['clob'] = $config['blob'];
+$config['tinyblob'] = $config['mediumblob'] = $config['longblob'] = $config['clob'] = $config['bytea'] = $config['blob'];
+
+// CHARACTER
+$config['character'] = $config['char'];
+$config['character varying'] = $config['varchar'];
+
+// TIME
+$config['time without time zone'] = $config['time'];

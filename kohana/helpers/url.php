@@ -243,6 +243,9 @@ class url_Core {
 			header('Location: '.$uri);
 		}
 
+		// We are about to exit, so run the send_headers event
+		Event::run('system.send_headers');
+
 		exit('<h1>'.$method.' - '.$codes[$method].'</h1>'.$output);
 	}
 

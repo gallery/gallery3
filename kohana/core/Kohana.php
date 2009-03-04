@@ -105,7 +105,7 @@ final class Kohana {
 		$ER = error_reporting(~E_NOTICE & ~E_STRICT);
 
 		// Set the user agent
-		self::$user_agent = trim($_SERVER['HTTP_USER_AGENT']);
+		self::$user_agent = ( ! empty($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '');
 
 		if (function_exists('date_default_timezone_set'))
 		{
@@ -694,14 +694,14 @@ final class Kohana {
 	 */
 	public static function render($output)
 	{
-		// Fetch memory usage in MB
-		$memory = function_exists('memory_get_usage') ? (memory_get_usage() / 1024 / 1024) : 0;
-
-		// Fetch benchmark for page execution time
-		$benchmark = Benchmark::get(SYSTEM_BENCHMARK.'_total_execution');
-
 		if (self::config('core.render_stats') === TRUE)
 		{
+			// Fetch memory usage in MB
+			$memory = function_exists('memory_get_usage') ? (memory_get_usage() / 1024 / 1024) : 0;
+
+			// Fetch benchmark for page execution time
+			$benchmark = Benchmark::get(SYSTEM_BENCHMARK.'_total_execution');
+
 			// Replace the global template variables
 			$output = str_replace(
 				array

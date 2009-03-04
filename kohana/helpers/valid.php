@@ -203,7 +203,7 @@ class valid_Core {
 	 * @param   string   date to check
 	 * @return  boolean
 	 */
-	public function date($str)
+	public static function date($str)
 	{
 		return (strtotime($str) !== FALSE);
 	}

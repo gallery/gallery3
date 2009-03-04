@@ -212,10 +212,10 @@ final class Event {
 			// Do this to prevent data from getting 'stuck'
 			$clear_data = '';
 			self::$data =& $clear_data;
-
-			// The event has been run!
-			self::$has_run[$name] = $name;
 		}
+
+		// The event has been run!
+		self::$has_run[$name] = $name;
 	}
 
 	/**

@@ -13,10 +13,10 @@
 class ORM_Tree_Core extends ORM {
 
 	// Name of the child
-	protected $children;
+	protected $ORM_Tree_children;
 
 	// Parent keyword name
-	protected $parent_key = 'parent_id';
+	protected $ORM_Tree_parent_key = 'parent_id';
 
 	/**
 	 * Overload ORM::__get to support "parent" and "children" properties.
@@ -31,12 +31,12 @@ class ORM_Tree_Core extends ORM {
 			if (empty($this->related[$column]))
 			{
 				// Load child model
-				$model = ORM::factory(inflector::singular($this->children));
+				$model = ORM::factory(inflector::singular($this->ORM_Tree_children));
 
-				if (array_key_exists($this->parent_key, $this->object))
+				if (array_key_exists($this->ORM_Tree_parent_key, $this->object))
 				{
 					// Find children of this parent
-					$model->where($model->primary_key, $this->object[$this->parent_key])->find();
+					$model->where($model->primary_key, $this->object[$this->ORM_Tree_parent_key])->find();
 				}
 
 				$this->related[$column] = $model;
@@ -48,13 +48,13 @@ class ORM_Tree_Core extends ORM {
 		{
 			if (empty($this->related[$column]))
 			{
-				$model = ORM::factory(inflector::singular($this->children));
+				$model = ORM::factory(inflector::singular($this->ORM_Tree_children));
 
-				if ($this->children === $this->table_name)
+				if ($this->ORM_Tree_children === $this->table_name)
 				{
 					// Load children within this table
 					$this->related[$column] = $model
-						->where($this->parent_key, $this->object[$this->primary_key])
+						->where($this->ORM_Tree_parent_key, $this->object[$this->primary_key])
 						->find_all();
 				}
 				else
@@ -62,7 +62,7 @@ class ORM_Tree_Core extends ORM {
 					// Find first selection of children
 					$this->related[$column] = $model
 						->where($this->foreign_key(), $this->object[$this->primary_key])
-						->where($this->parent_key, NULL)
+						->where($this->ORM_Tree_parent_key, NULL)
 						->find_all();
 				}
 			}

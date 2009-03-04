@@ -341,7 +341,20 @@ class Database_Core {
 		{
 			if (($val = trim($val)) === '') continue;
 
-			$this->from[] = $this->config['table_prefix'].$val;
+			// TODO: Temporary solution, this should be moved to database driver (AS is checked for twice)
+			if (stripos($val, ' AS ') !== FALSE)
+			{
+				$val = str_ireplace(' AS ', ' AS ', $val);
+
+				list($table, $alias) = explode(' AS ', $val);
+
+				// Attach prefix to both sides of the AS
+				$this->from[] = $this->config['table_prefix'].$table.' AS '.$this->config['table_prefix'].$alias;
+			}
+			else
+			{
+				$this->from[] = $this->config['table_prefix'].$val;
+			}
 		}
 
 		return $this;
@@ -379,14 +392,36 @@ class Database_Core {
 		foreach ($keys as $key => $value)
 		{
 			$key    = (strpos($key, '.') !== FALSE) ? $this->config['table_prefix'].$key : $key;
-			$cond[] = $this->driver->where($key, $this->driver->escape_column($this->config['table_prefix'].$value), 'AND ', count($cond), FALSE);
+
+			if (is_string($value))
+			{
+				// Only escape if it's a string
+				$value = $this->driver->escape_column($this->config['table_prefix'].$value);
+			}
+
+			$cond[] = $this->driver->where($key, $value, 'AND ', count($cond), FALSE);
 		}
 
 		if( ! is_array($this->join)) { $this->join = array(); }
 
 		foreach ((array) $table as $t)
 		{
-			$join['tables'][] = $this->driver->escape_column($this->config['table_prefix'].$t);
+			// TODO: Temporary solution, this should be moved to database driver (AS is checked for twice)
+			if (stripos($t, ' AS ') !== FALSE)
+			{
+				$t = str_ireplace(' AS ', ' AS ', $t);
+
+				list($table, $alias) = explode(' AS ', $t);
+
+				// Attach prefix to both sides of the AS
+				$t = $this->config['table_prefix'].$table.' AS '.$this->config['table_prefix'].$alias;
+			}
+			else
+			{
+				$t = $this->config['table_prefix'].$t;
+			}
+
+			$join['tables'][] = $this->driver->escape_column($t);
 		}
 
 		$join['conditions'] = '('.trim(implode(' ', $cond)).')';
@@ -1278,7 +1313,7 @@ class Database_Core {
 	 * @return Database_Core This Databaes object
 	 */
 	public function push()
-	{	
+	{
 		array_push($this->query_history, array(
 			$this->select,
 			$this->from,
@@ -1310,7 +1345,7 @@ class Database_Core {
 			// No history
 			return $this;
 		}
-	
+
 		list(
 			$this->select,
 			$this->from,

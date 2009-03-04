@@ -144,10 +144,9 @@ class form_Core {
 	 * @param   string|array  input name or an array of HTML attributes
 	 * @param   string        input value, when using a name
 	 * @param   string        a string to be attached to the end of the attributes
-	 * @param   boolean       encode existing entities
 	 * @return  string
 	 */
-	public static function input($data, $value = '', $extra = '', $double_encode = TRUE )
+	public static function input($data, $value = '', $extra = '')
 	{
 		if ( ! is_array($data))
 		{
@@ -160,9 +159,6 @@ class form_Core {
 			'type'  => 'text',
 			'value' => $value
 		);
-
-		// For safe form data
-		$data['value'] = html::specialchars($data['value'], $double_encode);
 
 		return '<input'.form::attributes($data).' '.$extra.' />';
 	}
@@ -216,7 +212,7 @@ class form_Core {
 	 * @param   boolean       encode existing entities
 	 * @return  string
 	 */
-	public static function textarea($data, $value = '', $extra = '', $double_encode = TRUE )
+	public static function textarea($data, $value = '', $extra = '', $double_encode = TRUE)
 	{
 		if ( ! is_array($data))
 		{
@@ -243,7 +239,6 @@ class form_Core {
 	 */
 	public static function dropdown($data, $options = NULL, $selected = NULL, $extra = '')
 	{
-
 		if ( ! is_array($data))
 		{
 			$data = array('name' => $data);
@@ -263,14 +258,22 @@ class form_Core {
 			}
 		}
 
+		if (is_array($selected))
+		{
+			// Multi-select box
+			$data['multiple'] = 'multiple';
+		}
+		else
+		{
+			// Single selection (but converted to an array)
+			$selected = array($selected);
+		}
+
 		$input = '<select'.form::attributes($data, 'select').' '.$extra.'>'."\n";
 		foreach ((array) $options as $key => $val)
 		{
 			// Key should always be a string
 			$key = (string) $key;
-
-			// Selected must always be a string
-			$selected = (string) $selected;
 
 			if (is_array($val))
 			{
@@ -280,23 +283,14 @@ class form_Core {
 					// Inner key should always be a string
 					$inner_key = (string) $inner_key;
 
-					if (is_array($selected))
-					{
-						$sel = in_array($inner_key, $selected, TRUE);
-					}
-					else
-					{
-						$sel = ($selected === $inner_key);
-					}
-
-					$sel = ($sel === TRUE) ? ' selected="selected"' : '';
+					$sel = in_array($inner_key, $selected) ? ' selected="selected"' : '';
 					$input .= '<option value="'.$inner_key.'"'.$sel.'>'.$inner_val.'</option>'."\n";
 				}
 				$input .= '</optgroup>'."\n";
 			}
 			else
 			{
-				$sel = ($selected === $key) ? ' selected="selected"' : '';
+				$sel = in_array($key, $selected) ? ' selected="selected"' : '';
 				$input .= '<option value="'.$key.'"'.$sel.'>'.$val.'</option>'."\n";
 			}
 		}

@@ -53,7 +53,7 @@ class Database_Pgsql_Driver extends Database_Driver {
 			}
 
 			// Clear password after successful connect
-			$this->config['connection']['pass'] = NULL;
+			$this->db_config['connection']['pass'] = NULL;
 
 			return $this->link;
 		}
@@ -72,6 +72,11 @@ class Database_Pgsql_Driver extends Database_Driver {
 			{
 				// Set the cached object
 				self::$query_cache[$hash] = new Pgsql_Result(pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
+			}
+			else
+			{
+				// Rewind cached result
+				self::$query_cache[$hash]->rewind();
 			}
 
 			return self::$query_cache[$hash];
@@ -137,14 +142,14 @@ class Database_Pgsql_Driver extends Database_Driver {
 		return $column;
 	}
 
-	public function regex($field, $match = '', $type = 'AND ', $num_regexs)
+	public function regex($field, $match, $type, $num_regexs)
 	{
 		$prefix = ($num_regexs == 0) ? '' : $type;
 
 		return $prefix.' '.$this->escape_column($field).' REGEXP \''.$this->escape_str($match).'\'';
 	}
 
-	public function notregex($field, $match = '', $type = 'AND ', $num_regexs)
+	public function notregex($field, $match, $type, $num_regexs)
 	{
 		$prefix = $num_regexs == 0 ? '' : $type;
 
@@ -244,84 +249,57 @@ class Database_Pgsql_Driver extends Database_Driver {
 		return pg_last_error($this->link);
 	}
 
-	public function list_fields($table, $query = FALSE)
+	public function list_fields($table)
 	{
 		static $tables;
 
-		if (is_object($query))
+		if (empty($tables[$table]))
 		{
-			if (empty($tables[$table]))
+			foreach ($this->field_data($table) as $row)
 			{
-				$tables[$table] = array();
+				// Make an associative array
+				$tables[$table][$row->column_name] = $this->sql_type($row->data_type);
 
-				foreach ($query as $row)
+				if (!strncmp($row->column_default, 'nextval(', 8))
 				{
-					$tables[$table][] = $row->Field;
+					$tables[$table][$row->column_name]['sequenced'] = TRUE;
+				}
+
+				if ($row->is_nullable === 'YES')
+				{
+					$tables[$table][$row->column_name]['null'] = TRUE;
 				}
 			}
-
-			return $tables[$table];
 		}
 
-		// WOW...REALLY?!?
-		// Taken from http://www.postgresql.org/docs/7.4/interactive/catalogs.html
-		$query = $this->query('SELECT
-  -- Field
-  pg_attribute.attname AS "Field",
-  -- Type
-  CASE pg_type.typname
-    WHEN \'int2\' THEN \'smallint\'
-    WHEN \'int4\' THEN \'int\'
-    WHEN \'int8\' THEN \'bigint\'
-    WHEN \'varchar\' THEN \'varchar(\' || pg_attribute.atttypmod-4 || \')\'
-    ELSE pg_type.typname
-  END AS "Type",
-  -- Null
-  CASE WHEN pg_attribute.attnotnull THEN \'NO\'
-    ELSE \'YES\'
-  END AS "Null",
-  -- Default
-  CASE pg_type.typname
-    WHEN \'varchar\' THEN substring(pg_attrdef.adsrc from \'^(.*).*$\')
-    ELSE pg_attrdef.adsrc
-  END AS "Default"
-FROM pg_class
-  INNER JOIN pg_attribute
-    ON (pg_class.oid=pg_attribute.attrelid)
-  INNER JOIN pg_type
-    ON (pg_attribute.atttypid=pg_type.oid)
-  LEFT JOIN pg_attrdef
-    ON (pg_class.oid=pg_attrdef.adrelid AND pg_attribute.attnum=pg_attrdef.adnum)
-WHERE pg_class.relname=\''.$this->escape_str($table).'\' AND pg_attribute.attnum>=1 AND NOT pg_attribute.attisdropped
-ORDER BY pg_attribute.attnum');
+		if (!isset($tables[$table]))
+			throw new Kohana_Database_Exception('database.table_not_found', $table);
 
-				// Load the result as objects
-				$query->result(TRUE);
-
-				$fields = array();
-				foreach ($query as $row)
-				{
-					$fields[$row->Field] = $row->Type;
-				}
-
-				return $fields;
+		return $tables[$table];
 	}
 
 	public function field_data($table)
 	{
-		// TODO: This whole function needs to be debugged.
-		$query  = pg_query('SELECT * FROM '.$this->escape_table($table).' LIMIT 1', $this->link);
-		$fields = pg_num_fields($query);
-		$table  = array();
+		$columns = array();
 
-		for ($i=0; $i < $fields; $i++)
+		// http://www.postgresql.org/docs/8.3/static/infoschema-columns.html
+		$result = pg_query($this->link, '
+			SELECT column_name, column_default, is_nullable, data_type, udt_name,
+				character_maximum_length, numeric_precision, numeric_precision_radix, numeric_scale
+			FROM information_schema.columns
+			WHERE table_name = \''. $this->escape_str($table) .'\'
+			ORDER BY ordinal_position
+		');
+
+		if ($result)
 		{
-			$table[$i]['type']  = pg_field_type($query, $i);
-			$table[$i]['name']  = pg_field_name($query, $i);
-			$table[$i]['len']   = pg_field_prtlen($query, $i);
+			while ($row = pg_fetch_object($result))
+			{
+				$columns[] = $row;
+			}
 		}
 
-		return $table;
+		return $columns;
 	}
 
 } // End Database_Pgsql_Driver Class
@@ -463,7 +441,7 @@ class Pgsql_Result extends Database_Result {
 			// tables that have no serial column.
 			$ER = error_reporting(0);
 
-			$result = pg_query($query);
+			$result = pg_query($this->link, $query);
 			$insert_id = pg_fetch_array($result, NULL, PGSQL_ASSOC);
 
 			$this->insert_id = $insert_id['insert_id'];
@@ -486,9 +464,11 @@ class Pgsql_Result extends Database_Result {
 	public function list_fields()
 	{
 		$field_names = array();
-		while ($field = pg_field_name($this->result))
+
+		$fields = pg_num_fields($this->result);
+		for ($i = 0; $i < $fields; ++$i)
 		{
-			$field_names[] = $field->name;
+			$field_names[] = pg_field_name($this->result, $i);
 		}
 
 		return $field_names;

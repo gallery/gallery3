@@ -57,7 +57,7 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver {
 			}
 
 			// Clear password after successful connect
-			$this->config['connection']['pass'] = NULL;
+			$this->db_config['connection']['pass'] = NULL;
 
 			return $this->link;
 		}
@@ -76,6 +76,11 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver {
 			{
 				// Set the cached object
 				self::$query_cache[$hash] = new Kohana_Mysqli_Result($this->link, $this->db_config['object'], $sql);
+			}
+			else
+			{
+				// Rewind cached result
+				self::$query_cache[$hash]->rewind();
 			}
 
 			// Return the cached query

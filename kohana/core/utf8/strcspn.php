@@ -16,7 +16,7 @@ function _strcspn($str, $mask, $offset = NULL, $length = NULL)
 	if (utf8::is_ascii($str) AND utf8::is_ascii($mask))
 		return ($offset === NULL) ? strcspn($str, $mask) : (($length === NULL) ? strcspn($str, $mask, $offset) : strcspn($str, $mask, $offset, $length));
 
-	if ($start !== NULL OR $length !== NULL)
+	if ($str !== NULL OR $length !== NULL)
 	{
 		$str = utf8::substr($str, $offset, $length);
 	}

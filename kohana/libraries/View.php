@@ -56,7 +56,7 @@ class View_Core {
 			$this->kohana_local_data = array_merge($this->kohana_local_data, $data);
 		}
 	}
-	
+
 	/**
 	 * Magic method access to test for view property
 	 *
@@ -129,7 +129,7 @@ class View_Core {
 	}
 
 	/**
-	 * Checks for a property existence in the view locally or globally. Unlike the built in __isset(), 
+	 * Checks for a property existence in the view locally or globally. Unlike the built in __isset(),
 	 * this method can take an array of properties to test simultaneously.
 	 *
 	 * @param string $key property name to test for
@@ -147,7 +147,7 @@ class View_Core {
 		{
 			// Set the result to an array
 			$result = array();
-			
+
 			// Foreach key
 			foreach ($key as $property)
 			{
@@ -184,9 +184,9 @@ class View_Core {
 	 *
 	 * @param   string|array  name of variable or an array of variables
 	 * @param   mixed         value when using a named variable
-	 * @return  object
+	 * @return  void
 	 */
-	public function set_global($name, $value = NULL)
+	public static function set_global($name, $value = NULL)
 	{
 		if (is_array($name))
 		{
@@ -199,8 +199,6 @@ class View_Core {
 		{
 			self::$kohana_global_data[$name] = $value;
 		}
-
-		return $this;
 	}
 
 	/**
@@ -241,7 +239,15 @@ class View_Core {
 	 */
 	public function __toString()
 	{
-		return $this->render();
+		try
+		{
+			return $this->render();
+		}
+		catch (Exception $e)
+		{
+			// Display the exception using its internal __toString method
+			return (string) $e;
+		}
 	}
 
 	/**

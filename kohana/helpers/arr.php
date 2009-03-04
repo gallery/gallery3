@@ -84,7 +84,7 @@ class arr_Core {
 		return $val;
 	}
 
-	
+
 	/**
 	 * Extract one or more keys from an array. Each key given after the first
 	 * argument (the array) will be extracted. Keys that do not exist in the
@@ -251,13 +251,18 @@ class arr_Core {
 	 * @param   array   input array(s) that will overwrite key array values
 	 * @return  array
 	 */
-	public static function overwrite($array1)
+	public static function overwrite($array1, $array2)
 	{
-		foreach (array_slice(func_get_args(), 1) as $array2)
+		foreach (array_intersect_key($array2, $array1) as $key => $value)
 		{
-			foreach ($array2 as $key => $value)
+			$array1[$key] = $value;
+		}
+
+		if (func_num_args() > 2)
+		{
+			foreach (array_slice(func_get_args(), 2) as $array2)
 			{
-				if (array_key_exists($key, $array1))
+				foreach (array_intersect_key($array2, $array1) as $key => $value)
 				{
 					$array1[$key] = $value;
 				}
