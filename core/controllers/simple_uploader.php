@@ -52,6 +52,12 @@ class Simple_Uploader_Controller extends Controller {
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules("file", "upload::valid", "upload::type[gif,jpg,png,flv,mp4]");
     if ($file_validation->validate()) {
+
+      // SimpleUploader.swf does not yet call /start directly, so simulate it here for now.
+      if (!batch::in_progress()) {
+        batch::start();
+      }
+
       $temp_filename = upload::save("file");
       $title = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
       $path_info = pathinfo($temp_filename);
