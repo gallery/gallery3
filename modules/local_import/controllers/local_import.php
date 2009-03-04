@@ -53,6 +53,10 @@ class Local_Import_Controller extends Controller {
     print $tree;
   }
 
+  function start() {
+    batch::start();
+  }
+
   function add_photo($id) {
     access::verify_csrf();
 
@@ -69,11 +73,9 @@ class Local_Import_Controller extends Controller {
       throw new Exception("@todo BAD_PATH");
     }
 
-    batch::operation("add", $parent);
-
     $source_path = $path[0];
     // The first path corresponds to the source directory so we can just skip it.
-    for ($i = 1; $i < count($path); $i++) {  
+    for ($i = 1; $i < count($path); $i++) {
       $source_path .= "/$path[$i]";
       $pathinfo = pathinfo($source_path);
       set_time_limit(30);
@@ -97,8 +99,7 @@ class Local_Import_Controller extends Controller {
   }
 
   public function finish() {
-    batch::end_operation("add");
-
+    batch::stop();
     print json_encode(array("result" => "success"));
   }
 

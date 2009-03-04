@@ -52,23 +52,7 @@ class notification_event_Core {
       ->delete_all();
   }
 
-  static function operation($name, $item) {
-    if ($name == "add") {
-      $id = Session::instance()->get("notification_batch_item_id");
-      if ($id && $item->id != $id) {
-        notification::send_batch_add($id);
-      }
-      Session::instance()->set("notification_batch_item_id", $item->id);
-    }
+  static function batch_complete() {
+    notification::send_pending_notifications();
   }
-
-  static function end_operation($name) {
-    if ($name == "add") {
-      $id = Session::instance()->get_once("notification_batch_item_id");
-      if ($id) {
-        notification::send_batch_add($id);
-      }
-    }
-  }
-
 }

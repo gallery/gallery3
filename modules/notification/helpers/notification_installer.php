@@ -31,6 +31,13 @@ class notification_installer {
                  UNIQUE KEY (`item_id`, `user_id`),
                  UNIQUE KEY (`user_id`, `item_id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+      $db->query("CREATE TABLE IF NOT EXISTS {pending_notifications} (
+                 `id` int(9) NOT NULL auto_increment,
+                 `email` varchar(128) NOT NULL,
+                 `subject` varchar(255) NOT NULL,
+                 `text` text,
+                 PRIMARY KEY (`id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       module::set_version("notification", 1);
     }
@@ -39,7 +46,8 @@ class notification_installer {
   static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {subscriptions};");
-    
+    $db->query("DROP TABLE IF EXISTS {pending_notifications};");
+
     module::delete("notification");
   }
 }

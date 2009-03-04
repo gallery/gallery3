@@ -66,10 +66,18 @@ function do_import(submit, event) {
   var check_list = $("#gLocalImport :checkbox[checked]");
   process_length = check_list.length;
   current = 0;
+  var base_url = $("#gLocalImport form :hidden[name='base_url']")[0].value;
+  $.ajax({async: false,
+    success: function(data, textStatus) {
+      document.location.reload();
+    },
+    dataType: "json",
+    type: "POST",
+    url: base_url + "local_import/start"
+  });
   $.each(check_list, function () {
     process_checkbox(this);
   });
-  var base_url = $("#gLocalImport form :hidden[name='base_url']")[0].value;
   $.ajax({async: false,
     success: function(data, textStatus) {
       document.location.reload();

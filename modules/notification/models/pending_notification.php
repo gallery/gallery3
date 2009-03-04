@@ -17,24 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class batch_Core {
-  static function start() {
-    $session = Session::instance();
-    $session->set("batch_level", $session->get("batch_level", 0) + 1);
-  }
-
-  static function stop($name) {
-    $session = Session::instance();
-    $batch_level = $session->get("batch_level", 0) - 1;
-    if ($batch_level > 0) {
-      $session->set("batch_level", $batch_level);
-    } else {
-      $session->delete("batch_level");
-      module::event("batch_complete");
-    }
-  }
-
-  static function in_progress($name) {
-    return Session::instance()->get("batch_level", 0) > 0;
-  }
+class Pending_Notification_Model extends ORM {
 }

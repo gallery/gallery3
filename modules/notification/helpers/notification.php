@@ -83,24 +83,23 @@ class notification {
   }
 
   static function send_item_updated($old, $new) {
-    $body = new View("item_updated.html");
-    $body->old = $old;
-    $body->new = $new;
-    $body->subject = $old->is_album() ?
+    $v = new View("item_updated.html");
+    $v->old = $old;
+    $v->new = $new;
+    $v->subject = $old->is_album() ?
       t("Album %title updated", array("title" => $old->title)) :
       ($old->is_photo() ?
        t("Photo %title updated", array("title" => $old->title))
        : t("Movie %title updated", array("title" => $old->title)));
 
-    self::_notify_subscribers($old, $body, $body->subject);
+    self::_notify_subscribers($old, $v->render(), $v->subject);
   }
 
   static function send_item_add($item) {
-    $body = new View("item_added.html");
-    $body->item = $item;
-
     $parent = $item->parent();
-    $subject = $item->is_album() ?
+    $v = new View("item_added.html");
+    $v->item = $item;
+    $v->subject = $item->is_album() ?
       t("Album %title added to %parent_title",
         array("title" => $item->title, "parent_title" => $parent->title)) :
       ($item->is_photo() ?
@@ -109,25 +108,14 @@ class notification {
        : t("Movie %title added to %parent_title",
            array("title" => $item->title, "parent_title" => $parent->title)));
 
-    self::_notify_subscribers($item, $body, $subject);
-  }
-
-  static function send_batch_add($parent_id) {
-    $parent = ORM::factory("item", $parent_id);
-    if ($parent->loaded) {
-      $body = new View("batch_add.html");
-      $body->item = $parent;
-
-      $subject = t("Album %title updated", array("title" => $parent->title));
-      self::_notify_subscribers($parent, $body, $subject);
-    }
+    self::_notify_subscribers($item, $v->render(), $v->subject);
   }
 
   static function send_item_deleted($item) {
-    $body = new View("item_deleted.html");
-    $body->item = $item;
     $parent = $item->parent();
-    $subject = $item->is_album() ?
+    $v = new View("item_deleted.html");
+    $v->item = $item;
+    $v->subject = $item->is_album() ?
       t("Album %title removed from %parent_title",
         array("title" => $item->title, "parent_title" => $parent->title)) :
       ($item->is_photo() ?
@@ -136,37 +124,78 @@ class notification {
        : t("Movie %title removed from %parent_title",
            array("title" => $item->title, "parent_title" => $parent->title)));
 
-    self::_notify_subscribers($item, $body, $subject);
+    self::_notify_subscribers($item, $v->render(), $v->subject);
   }
 
   static function send_comment_published($comment) {
-    $body = new View("comment_published.html");
-    $body->comment = $comment;
-
     $item = $comment->item();
-    $subject = $item->is_album() ?
+    $v = new View("comment_published.html");
+    $v->comment = $comment;
+    $v->subject = $item->is_album() ?
       t("A new comment was published for album %title", array("title" => $item->title)) :
       ($item->is_photo() ?
        t("A new comment was published for photo %title", array("title" => $item->title))
        : t("A new comment was published for movie %title", array("title" => $item->title)));
 
-    self::_notify_subscribers($item, $body, $subject);
+    self::_notify_subscribers($item, $v->render(), $v->subject);
   }
 
-  static function process_notifications() {
-    Kohana::log("error", "processing notifications in shutdown");
+  static function send_pending_notifications() {
+    foreach (Database::instance()
+             ->select("DISTINCT email")
+             ->from("pending_notifications")
+             ->get() as $row) {
+      $email = $row->email;
+      $result = ORM::factory("pending_notification")
+        ->where("email", $email)
+        ->find_all();
+      if ($result->count == 1) {
+        $pending = $result->get();
+        Sendmail::factory()
+          ->to($email)
+          ->subject($pending->subject)
+          ->header("Mime-Version", "1.0")
+          ->header("Content-type", "text/html; charset=utf-8")
+          ->message($pending->body)
+          ->send();
+        $pending->delete();
+      } else {
+        $text = "";
+        foreach ($result as $pending) {
+          $text .= $pending->text;
+          $pending->delete();
+        }
+        Sendmail::factory()
+          ->to($email)
+          ->subject(t("Multiple events have occurred")) // @todo fix this terrible subject line
+          ->header("Mime-Version", "1.0")
+          ->header("Content-type", "text/html; charset=utf-8")
+          ->message($text)
+          ->send();
+      }
+    }
   }
 
-  private static function _notify_subscribers($item, $body, $subject) {
+  private static function _notify_subscribers($item, $text, $subject) {
     $users = self::get_subscribers($item);
     if (!empty($users)) {
-      Sendmail::factory()
-        ->to($users)
-        ->subject($subject)
-        ->header("Mime-Version", "1.0")
-        ->header("Content-type", "text/html; charset=utf-8")
-        ->message($body->render())
-        ->send();
+      if (!batch::in_progress()) {
+        Sendmail::factory()
+          ->to($users)
+          ->subject($subject)
+          ->header("Mime-Version", "1.0")
+          ->header("Content-type", "text/html; charset=utf-8")
+          ->message($text)
+          ->send();
+      } else {
+        foreach ($users as $user) {
+          $pending = ORM::factory("pending_notification");
+          $pending->subject = $subject;
+          $pending->text = $text;
+          $pending->email = $user;
+          $pending->save();
+        }
+      }
     }
   }
 }

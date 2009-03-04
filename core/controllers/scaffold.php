@@ -201,8 +201,7 @@ class Scaffold_Controller extends Template_Controller {
       throw new Exception("@todo BAD_ALBUM");
     }
 
-    batch::operation("add", $parent);
-
+    batch::start();
     cookie::set("add_photos_path", $path);
     $photo_count = 0;
     foreach (glob("$path/*.[Jj][Pp][Gg]") as $file) {
@@ -210,7 +209,7 @@ class Scaffold_Controller extends Template_Controller {
       photo::create($parent, $file, basename($file), basename($file));
       $photo_count++;
     }
-    batch::end_operation("add");
+    batch::stop();
 
     if ($photo_count > 0) {
       log::success("content", "(scaffold) Added $photo_count photos",
@@ -227,8 +226,7 @@ class Scaffold_Controller extends Template_Controller {
 
     $test_images = glob(APPPATH . "tests/images/*.[Jj][Pp][Gg]");
 
-    batch::operation("add", ORM::factory("item", 1));
-
+    batch::start();
     $album_count = $photo_count = 0;
     for ($i = 0; $i < $count; $i++) {
       set_time_limit(30);
@@ -252,7 +250,7 @@ class Scaffold_Controller extends Template_Controller {
         $photo_count++;
       }
     }
-    batch::end_operation("add");
+    batch::stop();
 
     if ($photo_count > 0) {
       log::success("content", "(scaffold) Added $photo_count photos");
