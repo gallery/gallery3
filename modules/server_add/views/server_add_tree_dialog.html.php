@@ -1,6 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<link media="screen, projection" rel="stylesheet" type="text/css"
-      href="<?= url::file("modules/server_add/css/server_add.css") ?>" />
 <?= html::script("modules/server_add/js/server_add.js"); ?>
 
 <div id="gServerAdd">

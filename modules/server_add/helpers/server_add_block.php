@@ -19,12 +19,6 @@
  */
 class server_add_block_Core {
   static function head($theme) {
-    $head[] = html::script("modules/server_add/js/server_add.js");
-
-    $url = url::file("modules/server_add/css/server_add.css");
-    $head[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$url\" " .
-      "media=\"screen,print,projection\" />";
-
-    return implode("\n", $head);
+    return html::script("modules/server_add/js/server_add.js");
   }
 }

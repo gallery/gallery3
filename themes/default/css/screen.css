@@ -847,3 +847,67 @@ form p.gError {
 #gMove .selected {
   background: #999;
 }
+
+/** *******************************************************************
+ * 8) Server Add
+ *********************************************************************/
+.gCheckboxTree {
+  display: none;
+}
+
+.gCheckboxTree input {
+  display: inline;
+}
+
+.gCheckboxTree li {
+  padding: 0;
+  float: none;
+}
+
+.gCheckboxTree .ui-icon {
+  cursor: pointer;
+}
+
+.gFile {
+  padding-left: 2.5em;
+}
+
+#gProgressBar {
+  visibility: hidden;
+  height: 1em;
+  width: 100%;
+  margin-top: 0.5em;
+  display: inline-block;
+}
+
+#gServerAdd #gServerAddTree {
+  border: 1px solid #CCCCCC;
+  height: 25em;
+  overflow: auto;
+  margin-bottom: .5em;
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+
+#gServerAdd ul ul li {
+  padding-left: 1.2em;
+}
+
+#gServerAdd ul li .gFile {
+  padding-left: 2.5em;
+}
+
+#gServerAdd .gBreadcrumbs {
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  border-top-width: 0px;
+}
+
+#gServerAdd p {
+  margin: 0;
+}
+
+#gServerAdd .gBreadcrumbs li {
+  padding: 10px 6px 10px 16px;
+}

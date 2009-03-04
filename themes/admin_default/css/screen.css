@@ -287,3 +287,37 @@ li.gGroup {
   float: left;
   padding: .2em .2em 0 .1em;
 }
+
+/** *******************************************************************
+ * 7) Server Add 
+ *********************************************************************/
+#gServerAddAdmin {
+  margin:auto;
+  text-align: left;
+}
+
+#gServerAddAdmin form fieldset {
+  border: medium none;
+}
+
+#gServerAddAdmin legend {
+  display: none;
+}
+
+#gServerAddAdmin .gWarning {
+  background-color: #FFFF99;
+}
+
+#gAuthorizedPath {
+  margin: 0 !important;
+  padding: 0.3em 1.5em 0.3em 1em;
+}
+
+#gServerAdd Admin #path {
+  width: 80%;
+}
+
+.gRemoveDir:hover {
+  cursor: pointer;
+}
+
