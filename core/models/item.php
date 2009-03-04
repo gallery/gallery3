@@ -145,12 +145,9 @@ class Item_Model extends ORM_MPTT {
    *
    * @param string $query the query string (eg "show=3")
    */
-  public function url($query=array()) {
-    if ($this->is_album()) {
-      $url = url::site("albums/$this->id");
-    } else {
-      $url = url::site("photos/$this->id");
-    }
+  public function url($query=array(), $full_uri=false) {
+    $url = ($full_uri ? url::abs_site("{$this->type}s/$this->id")
+            : url::site("{$this->type}s/$this->id"));
     if ($query) {
       $url .= "?$query";
     }
