@@ -84,93 +84,85 @@ class notification {
 
   static function send_item_updated($old, $new) {
     $body = new View("item_updated.html");
+    $body->old = $old;
+    $body->new = $new;
     $body->subject = $old->is_album() ?
       t("Album %title updated", array("title" => $old->title)) :
-      t("Photo %title updated", array("title" => $old->title));
-    $body->type = ucfirst($old->type);
-    $body->item_title = $old->title;
-    $body->description = $item->description;
-    $body->new_title = $old->title != $new->title ? $new->title : null;
-    $body->new_description = $old->title != $new->description ? $new->description : null;
-    $body->url = url::site("{$old->type}s/$old->id", "http");
+      ($old->is_photo() ?
+       t("Photo %title updated", array("title" => $old->title))
+       : t("Movie %title updated", array("title" => $old->title)));
 
-    self::_send_message($old, $body);
+    self::_notify_subscribers($old, $body, $body->subject);
   }
 
   static function send_item_add($item) {
     $body = new View("item_added.html");
-    $body->subject = $item->is_album() ?
-      t("Album %title added to %parent_title",
-        array("title" => $item->title, "parent_title" => $item->parent()->title)) :
-      t("Photo %title added to %parent_title",
-        array("title" => $item->title, "parent_title" => $item->parent()->title));
-    $body->parent_title = $item->parent()->title;
-    $body->type = $item->type;
-    $body->item_title = $item->title;
-    $body->description = $item->description;
-    $body->url = url::site("{$item->type}s/$item->id", "http");
+    $body->item = $item;
 
-    self::_send_message($item, $body);
+    $parent = $item->parent();
+    $subject = $item->is_album() ?
+      t("Album %title added to %parent_title",
+        array("title" => $item->title, "parent_title" => $parent->title)) :
+      ($item->is_photo() ?
+       t("Photo %title added to %parent_title",
+         array("title" => $item->title, "parent_title" => $parent->title))
+       : t("Movie %title added to %parent_title",
+           array("title" => $item->title, "parent_title" => $parent->title)));
+
+    self::_notify_subscribers($item, $body, $subject);
   }
 
   static function send_batch_add($parent_id) {
     $parent = ORM::factory("item", $parent_id);
     if ($parent->loaded) {
       $body = new View("batch_add.html");
-      $body->subject = t("%parent_title Updated",
-          array("parent_title" => $parent->title));
-      $body->parent_title = $parent->title;
-      $body->url = url::site("{$parent->type}s/$parent->id", "http");
+      $body->item = $parent;
 
-      self::_send_message($parent, $body);
+      $subject = t("Album %title updated", array("title" => $parent->title));
+      self::_notify_subscribers($parent, $body, $subject);
     }
   }
 
   static function send_item_deleted($item) {
-    $parent = $item->parent();
     $body = new View("item_deleted.html");
-    $body->subject =
-      $item->is_album() ?
+    $body->item = $item;
+    $parent = $item->parent();
+    $subject = $item->is_album() ?
       t("Album %title removed from %parent_title",
-        array("title" => $item->title, "parent_title" => $item->parent()->title)) :
-      t("Photo %title removed from %parent_title",
-        array("title" => $item->title, "parent_title" => $item->parent()->title));
-    $body->parent_title = $parent->title;
-    $body->type = $item->type;
-    $body->item_title = $item->title;
-    $body->url = url::site("albums/$parent->id", "http");
+        array("title" => $item->title, "parent_title" => $parent->title)) :
+      ($item->is_photo() ?
+       t("Photo %title removed from %parent_title",
+         array("title" => $item->title, "parent_title" => $parent->title))
+       : t("Movie %title removed from %parent_title",
+           array("title" => $item->title, "parent_title" => $parent->title)));
 
-    self::_send_message($item, $body);
+    self::_notify_subscribers($item, $body, $subject);
   }
 
   static function send_comment_published($comment) {
-    $item = $comment->item();
     $body = new View("comment_published.html");
-    $body->subject = $item->is_album() ?
-      t("A new comment was published for album %title", array("title" => $item->title)) :
-      t("A new comment was published for photo %title", array("title" => $item->title));
-    $body->text = $comment->text;
-    if (!empty($comment->author_id)) {
-      $author = ORM::factory("user", $comment->author_id);
-      $body->author = empty($author->full_name) ? $author->name : $author->full_name;
-    } else {
-      $body->author = $comment->guest_name;
-    }
-    $body->url = url::site("albums/$item->id#comments", "http");
+    $body->comment = $comment;
 
-    self::_send_message($item, $body);
+    $item = $comment->item();
+    $subject = $item->is_album() ?
+      t("A new comment was published for album %title", array("title" => $item->title)) :
+      ($item->is_photo() ?
+       t("A new comment was published for photo %title", array("title" => $item->title))
+       : t("A new comment was published for movie %title", array("title" => $item->title)));
+
+    self::_notify_subscribers($item, $body, $subject);
   }
 
   static function process_notifications() {
     Kohana::log("error", "processing notifications in shutdown");
   }
-  
-  private static function _send_message($item, $body) {
+
+  private static function _notify_subscribers($item, $body, $subject) {
     $users = self::get_subscribers($item);
     if (!empty($users)) {
       Sendmail::factory()
         ->to($users)
-        ->subject($body->subject)
+        ->subject($subject)
         ->header("Mime-Version", "1.0")
         ->header("Content-type", "text/html; charset=utf-8")
         ->message($body->render())
