@@ -8,6 +8,6 @@
   </li>
   <? endforeach ?>
 </ul>
-<div id="gNoImportPaths" <? if (!empty($paths)): ?>style="display:none"<? endif ?>>
-  <span class="gWarning"><?= t("No Authorized upload paths defined") ?></span>
+<div id="gNoAuthorizedPaths" <? if (!empty($paths)): ?>style="display:none"<? endif ?>>
+  <span class="gWarning"><?= t("No Authorized image source paths defined") ?></span>
 </div>

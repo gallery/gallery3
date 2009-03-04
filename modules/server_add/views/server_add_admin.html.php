@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gLocalImportAdmin">
+<div id="gServerAddAdmin">
   <h2>
-    <?= t("Local Import Admininstration") ?>
+    <?= t("Add From Server Admininstration") ?>
   </h2>
   <div id="gAuthorizedPath">
     <?= $path_list ?>

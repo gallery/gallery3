@@ -1,9 +1,9 @@
-$("#gLocalImport").ready(function() {
-  $("#gLocalImport :submit").click(function(event) {
-    do_import(this, event);
+$("#gServerAdd").ready(function() {
+  $("#gServerAdd :submit").click(function(event) {
+    do_add(this, event);
   });
   $("#gProgressBar").progressbar();
-  $("#gLocalImport ul").css("display", "block");
+  $("#gServerAdd ul").css("display", "block");
 });
 
 function open_close_branch(icon, event) {
@@ -36,13 +36,13 @@ function checkbox_click(checkbox, event) {
   var parents = $(checkbox).parents("li");
   var parent = parents.get(0);
   $(parent).find(".gCheckboxTree :checkbox").attr("checked", checkbox.checked);
-  var checked = $("#gLocalImport :checkbox[checked]");
-  $("#gLocalImport form :submit").attr("disabled", checked.length == 0);
+  var checked = $("#gServerAdd :checkbox[checked]");
+  $("#gServerAdd form :submit").attr("disabled", checked.length == 0);
 }
 
 function load_children(icon, callback) {
-  var csrf = $("#gLocalImport form :hidden[name='csrf']")[0].value;
-  var base_url = $("#gLocalImport form :hidden[name='base_url']")[0].value;
+  var csrf = $("#gServerAdd form :hidden[name='csrf']")[0].value;
+  var base_url = $("#gServerAdd form :hidden[name='base_url']")[0].value;
   var parms = "&csrf=" + csrf;
   var parents = $(icon).parents("li");
   for (var i=parents.length - 1; i >= 0; i--) {
@@ -53,27 +53,24 @@ function load_children(icon, callback) {
           data: parms,
           dataType: "html",
           type: "POST",
-          url: base_url + "local_import/children"
+          url: base_url + "server_add/children"
   });
 }
 
 var current = 0;
 var process_length = 0;
-function do_import(submit, event) {
+function do_add(submit, event) {
   event.preventDefault();
   $("#gProgressBar").progressbar("value", 0);
   $("#gProgressBar").css("visibility", "visible");
-  var check_list = $("#gLocalImport :checkbox[checked]");
+  var check_list = $("#gServerAdd :checkbox[checked]");
   process_length = check_list.length;
   current = 0;
-  var base_url = $("#gLocalImport form :hidden[name='base_url']")[0].value;
+  var base_url = $("#gServerAdd form :hidden[name='base_url']")[0].value;
   $.ajax({async: false,
-    success: function(data, textStatus) {
-      document.location.reload();
-    },
     dataType: "json",
     type: "POST",
-    url: base_url + "local_import/start"
+    url: base_url + "server_add/start"
   });
   $.each(check_list, function () {
     process_checkbox(this);
@@ -84,14 +81,14 @@ function do_import(submit, event) {
     },
     dataType: "json",
     type: "POST",
-    url: base_url + "local_import/finish"
+    url: base_url + "server_add/finish"
   });
   return false;
 }
 
 function process_checkbox(checkbox) {
   var parents = $(checkbox).parents("li");
-  var csrf = $("#gLocalImport form :hidden[name='csrf']")[0].value;
+  var csrf = $("#gServerAdd form :hidden[name='csrf']")[0].value;
   var parms = "&csrf=" + csrf;
   for (var i=parents.length - 1; i > 0; i--) {
     parms += "&path[]=" +  $(parents[i]).children("span").attr("ref");
@@ -126,7 +123,7 @@ function process_file(li_element, parms) {
           data: parms,
           dataType: "html",
           type: "POST",
-          url: $("#gLocalImport form").attr("action")
+          url: $("#gServerAdd form").attr("action")
   });
   current++;
   $("#gProgressBar").progressbar("value", current / process_length * 100);

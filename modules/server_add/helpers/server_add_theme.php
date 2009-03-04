@@ -17,20 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class local_import_theme_Core {
+class server_add_theme_Core {
   static function admin_head($theme) {
     $head = array();
-    if (Router::$current_uri == "admin/local_import") {
+    if (Router::$current_uri == "admin/server_add") {
       $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/local_import/css/jquery.autocomplete.css") . "\" />";
+        url::file("modules/server_add/css/jquery.autocomplete.css") . "\" />";
       $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/local_import/css/admin.css") . "\" />";
+        url::file("modules/server_add/css/admin.css") . "\" />";
       $base = url::base(true);
       $csrf = access::csrf_token();
       $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
-      $head[] = html::script("modules/local_import/js/jquery.autocomplete.pack.js");
-      $head[] = html::script("modules/local_import/js/admin.js");
+      $head[] = html::script("modules/server_add/js/jquery.autocomplete.pack.js");
+      $head[] = html::script("modules/server_add/js/admin.js");
     }
     
     return implode("\n", $head);

@@ -17,20 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Local_Import_Controller extends Controller {
+class Server_Add_Controller extends Controller {
   public function index($id) {
-    $paths = unserialize(module::get_var("local_import", "authorized_paths"));
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
     $item = ORM::factory("item", $id);
-    access::required("local_import", $item);
+    access::required("server_add", $item);
 
-    $view = new View("local_import_tree_dialog.html");
-    $view->action = url::site("local_import/add_photo/$id");
+    $view = new View("server_add_tree_dialog.html");
+    $view->action = url::site("server_add/add_photo/$id");
     $view->hidden = array("csrf" => access::csrf_token(), "base_url" => url::base(true));
     $view->parents = $item->parents();
     $view->album_title = $item->title;
 
-    $tree = new View("local_import_tree.html");
+    $tree = new View("server_add_tree.html");
     $tree->data = array();
     $tree->uid = "tree_$id";
     foreach (array_keys($paths) as $path) {
@@ -47,7 +47,7 @@ class Local_Import_Controller extends Controller {
       kohana::show_404();
     }
 
-    $tree = new View("local_import_tree.html");
+    $tree = new View("server_add_tree.html");
     $tree->data = $this->_get_children($path);
     $tree->uid = "tree_" . md5($path);
     print $tree;
@@ -61,14 +61,14 @@ class Local_Import_Controller extends Controller {
     access::verify_csrf();
 
     $parent = ORM::factory("item", $id);
-    access::required("local_import", $parent);
+    access::required("server_add", $parent);
     if (!$parent->is_album() && !$parent->loaded ) {
       throw new Exception("@todo BAD_ALBUM");
     }
 
     $path = $this->input->post("path");
 
-    $paths = unserialize(module::get_var("local_import", "authorized_paths"));
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     if (empty($paths[$path[0]])) {
       throw new Exception("@todo BAD_PATH");
     }

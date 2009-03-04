@@ -1,17 +1,17 @@
-#gLocalImportAdmin {
+#gServerAddAdmin {
   margin:auto;
   text-align: left;
 }
 
-#gLocalImportAdmin form fieldset {
+#gServerAddAdmin form fieldset {
   border: medium none;
 }
 
-#gLocalImportAdmin legend {
+#gServerAddAdmin legend {
   display: none;
 }
 
-#gLocalImportAdmin .gWarning {
+#gServerAddAdmin .gWarning {
   background-color: #FFFF99;
 }
 
@@ -20,7 +20,7 @@
   padding: 0.3em 1.5em 0.3em 1em;
 }
 
-#gLocalImportAdmin #path {
+#gServerAdd Admin #path {
   width: 80%;
 }
 

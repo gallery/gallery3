@@ -17,30 +17,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class local_import_installer {
-  static function install() {
-    $db = Database::instance();
-    $version = module::get_version("local_import");
-    if ($version == 0) {
-      access::register_permission("local_import", t("Import Local Files"));
-
-      access::allow(user::lookup(2), "view", ORM::factory("item", 1));
-
-      module::set_version("local_import", 1);
-      module::set_var("local_import", "authorized_paths", serialize(array()));
-      message::warning(
-        t("You have no upload directories, click <a href='%url'>here</a> to configure one",
-          array("url" => url::site("/admin/local_import"))));
-    }
+class server_add_menu_Core {
+  static function admin($menu, $theme) {
+    $menu->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("server_add")
+               ->label(t("Server Add"))
+               ->url(url::site("admin/server_add")));
   }
 
-  static function uninstall() {
-    access::delete_permission("local_import");
-    $module = module::get("local_import");
+  static function site($menu, $theme) {
+    $item = $theme->item();
 
-    $db = Database::instance();
-    $db->delete("vars", array("module_name" => $module->name));
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
-    module::delete("local_import");
+    if ($item && access::can("edit", $item) && access::can("server_add", $item) &&
+        $item->is_album() && !empty($paths)) {
+      $options_menu = $menu->get("options_menu")
+        ->append(Menu::factory("dialog")
+                 ->id("server_add")
+                 ->label(t("Add from server"))
+                 ->url(url::site("server_add/index/$item->id")));
+    }
   }
 }

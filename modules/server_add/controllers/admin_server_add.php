@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Local_Import_Controller extends Admin_Controller {
+class Admin_Server_Add_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
-    $view->content = new View("local_import_admin.html");
+    $view->content = new View("server_add_admin.html");
     $view->content->add_form = $this->_get_admin_form();
-    $view->content->path_list = new View("local_import_dir_list.html");
-    $paths = unserialize(module::get_var("local_import", "authorized_paths", "a:0:{}"));
+    $view->content->path_list = new View("server_add_dir_list.html");
+    $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
     $view->content->path_list->paths = array_keys($paths);
 
     print $view;
@@ -33,12 +33,12 @@ class Admin_Local_Import_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $form = $this->_get_admin_form();
-    $paths = unserialize(module::get_var("local_import", "authorized_paths", "a:0:{}"));
+    $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
     if ($form->validate()) {
       if (is_readable($form->add_path->path->value)) {
         $paths[$form->add_path->path->value] = 1;
-        module::set_var("local_import", "authorized_paths", serialize($paths));
-        $view = new View("local_import_dir_list.html");
+        module::set_var("server_add", "authorized_paths", serialize($paths));
+        $view = new View("server_add_dir_list.html");
         $view->paths = array_keys($paths);
         $form->add_path->inputs["path"]->value("");
         print json_encode(
@@ -59,11 +59,11 @@ class Admin_Local_Import_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $path = $this->input->post("path");
-    $paths = unserialize(module::get_var("local_import", "authorized_paths"));
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     unset($paths[$path]);
-    module::set_var("local_import", "authorized_paths", serialize($paths));
+    module::set_var("server_add", "authorized_paths", serialize($paths));
 
-    $view = new View("local_import_dir_list.html");
+    $view = new View("server_add_dir_list.html");
     $view->paths = array_keys($paths);
 
     print $view;
@@ -82,8 +82,8 @@ class Admin_Local_Import_Controller extends Admin_Controller {
   }
 
   private function _get_admin_form() {
-    $form = new Forge("admin/local_import/add_path", "", "post",
-                      array("id" => "gLocalImportAdminForm"));
+    $form = new Forge("admin/server_add/add_path", "", "post",
+                      array("id" => "gServerAddAdminForm"));
     $add_path = $form->group("add_path");
     $add_path->input("path")->label(t("Path"))->rules("required")
       ->error_messages("not_readable", t("The directory is not readable by the webserver"));

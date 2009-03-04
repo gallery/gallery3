@@ -27,7 +27,7 @@
   display: inline-block;
 }
 
-#gLocalImport #gLocalImportTree {
+#gServerAdd #gServerAddTree {
   border: 1px solid #CCCCCC;
   height: 25em;
   overflow: auto;
@@ -36,25 +36,25 @@
   padding-bottom: .5em;
 }
 
-#gLocalImport ul ul li {
+#gServerAdd ul ul li {
   padding-left: 1.2em;
 }
 
-#gLocalImport ul li .gFile {
+#gServerAdd ul li .gFile {
   padding-left: 2.5em;
 }
 
-#gLocalImport .gBreadcrumbs {
+#gServerAdd .gBreadcrumbs {
   font-size: 1em;
   padding: 0;
   margin: 0;
   border-top-width: 0px;
 }
 
-#gLocalImport p {
+#gServerAdd p {
   margin: 0;
 }
 
-#gLocalImport .gBreadcrumbs li {
+#gServerAdd .gBreadcrumbs li {
   padding: 10px 6px 10px 16px;
 }

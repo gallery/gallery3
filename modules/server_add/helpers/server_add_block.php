@@ -17,11 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class local_import_block_Core {
+class server_add_block_Core {
   static function head($theme) {
-    $head[] = html::script("modules/local_import/js/local_import.js");
+    $head[] = html::script("modules/server_add/js/server_add.js");
 
-    $url = url::file("modules/local_import/css/local_import.css");
+    $url = url::file("modules/server_add/css/server_add.css");
     $head[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$url\" " .
       "media=\"screen,print,projection\" />";
 
