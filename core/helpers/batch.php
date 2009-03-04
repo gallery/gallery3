@@ -23,7 +23,7 @@ class batch_Core {
     $session->set("batch_level", $session->get("batch_level", 0) + 1);
   }
 
-  static function stop($name) {
+  static function stop() {
     $session = Session::instance();
     $batch_level = $session->get("batch_level", 0) - 1;
     if ($batch_level > 0) {
@@ -34,7 +34,7 @@ class batch_Core {
     }
   }
 
-  static function in_progress($name) {
+  static function in_progress() {
     return Session::instance()->get("batch_level", 0) > 0;
   }
 }
