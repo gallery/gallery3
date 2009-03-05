@@ -40,7 +40,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_maintenance.html");
-    $view->content->task_definitions = task::get_definitions(array("admin", "both"));
+    $view->content->task_definitions = task::get_definitions("admin");
     $view->content->running_tasks = ORM::factory("task")
       ->select("tasks.*", "users.name as user_name")
       ->join("users", "tasks.owner_id", "users.id")
