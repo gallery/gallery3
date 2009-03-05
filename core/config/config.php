@@ -126,3 +126,10 @@ if (TEST_MODE) {
                array(MODPATH . 'gallery_unit_test',
                      MODPATH . 'unit_test'));
 }
+
+/**
+ * Setting the maintenance_mode to block all non administrative access.  In
+ * this mode a user can attempt to logon, but will be unable to access anything.
+ * The application will be have normally if an adminstrator logs on.
+ */
+//$config["maintenance_mode"] = true;

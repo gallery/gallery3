@@ -17,20 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-Event::add("system.ready", array("I18n", "instance"));
-Event::add("system.post_routing", array("theme", "load_themes"));
-Event::add("system.ready", array("module", "load_modules"));
-Event::add("system.post_routing", array("url", "parse_url"));
-Event::add("system.shutdown", array("module", "shutdown"));
-Event::add("system.post_routing", array("core", "maintenance_mode"));
+class core_Core {
+  static function maintenance_mode() {
+    $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
 
-// Override the cookie if we have a session id in the URL.
-// @todo This should probably be an event callback
-$input = Input::instance();
-if ($g3sid = $input->post("g3sid", $input->get("g3sid"))) {
-  $_COOKIE["g3sid"] = $g3sid;
-}
-
-if ($user_agent = $input->post("user_agent", $input->get("user_agent"))) {
-  Kohana::$user_agent = $user_agent;
+    if (Router::$controller != "login" && !empty($maintenance_mode) && !user::active()->admin) {
+      Router::$controller = "maintenance";
+      Router::$controller_path = APPPATH . "controllers/maintenance.php";
+      Router::$method = "index";
+    }
+  }
 }

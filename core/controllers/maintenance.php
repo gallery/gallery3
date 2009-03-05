@@ -17,20 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-Event::add("system.ready", array("I18n", "instance"));
-Event::add("system.post_routing", array("theme", "load_themes"));
-Event::add("system.ready", array("module", "load_modules"));
-Event::add("system.post_routing", array("url", "parse_url"));
-Event::add("system.shutdown", array("module", "shutdown"));
-Event::add("system.post_routing", array("core", "maintenance_mode"));
-
-// Override the cookie if we have a session id in the URL.
-// @todo This should probably be an event callback
-$input = Input::instance();
-if ($g3sid = $input->post("g3sid", $input->get("g3sid"))) {
-  $_COOKIE["g3sid"] = $g3sid;
-}
-
-if ($user_agent = $input->post("user_agent", $input->get("user_agent"))) {
-  Kohana::$user_agent = $user_agent;
+class Maintenance_Controller extends Controller {
+  function index() {
+    $album = ORM::factory("item", 1);
+    $v = new Theme_View("maintenance.html", "reset");
+    $v->title = t("%title Unavailable", array("title" => $album->title));
+    $v->content = t("%title is currently unavailable as it is undergoing maintenance",
+                    array("title" => $album->title));
+    
+    print $v;
+  }
 }

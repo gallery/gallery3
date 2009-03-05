@@ -39,6 +39,14 @@ class Theme_View_Core extends View {
     $this->set_global('theme', $this);
     $this->set_global('user', user::active());
     $this->set_global("page_type", $page_type);
+
+    $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
+    if (!empty($maintenance_mode)) {
+      $album = ORM::factory("item", 1);
+      message::warning(t("%title is currently unavailable as it is undergoing maintenance",
+                         array("title" => $album->title)));
+    }
+
   }
 
   public function url($path, $absolute_url=false) {
