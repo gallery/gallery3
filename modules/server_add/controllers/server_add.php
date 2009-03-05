@@ -26,7 +26,7 @@ class Server_Add_Controller extends Controller {
 
     $view = new View("server_add_tree_dialog.html");
     $view->action = url::site("server_add/add_photo/$id");
-    $view->hidden = array("csrf" => access::csrf_token(), "base_url" => url::base(true));
+    $view->hidden = array("csrf" => access::csrf_token(), "base_url" => url::site("__ARGS__"));
     $view->parents = $item->parents();
     $view->album_title = $item->title;
 

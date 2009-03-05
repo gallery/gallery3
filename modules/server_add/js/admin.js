@@ -9,8 +9,8 @@ $("document").ready(function() {
 });
 
 function add_autocomplete() {
-  $("#gServerAddAdmin input:text").autocomplete(base_url + "admin/server_add/autocomplete",
-                                                {max: 256});
+  $("#gServerAddAdmin input:text").autocomplete(
+    base_url.replace("__ARGS__", "admin/server_add/autocomplete"), {max: 256});
 }
 function ajaxify_add_form(options) {
   $("#gServerAddAdmin form").ajaxForm({
@@ -34,7 +34,7 @@ function add_onclick() {
   $(".gRemoveDir").click(function() {
     var parent = $(this).parent();
     $.post(
-      base_url + "admin/local_import/remove_path",
+      base_url.replace("__ARGS__", "admin/local_import/remove_path"),
       {csrf: csrf,
        path: parent.text().replace(/^\s\s*/, "").replace(/\s\s*$/, "")},
       function(data, textStatus) {

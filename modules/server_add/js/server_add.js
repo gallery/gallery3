@@ -53,7 +53,7 @@ function load_children(icon, callback) {
           data: parms,
           dataType: "html",
           type: "POST",
-          url: base_url + "server_add/children"
+          url: base_url.replace("__ARGS__", "server_add/children")
   });
 }
 
@@ -70,7 +70,7 @@ function do_add(submit, event) {
   $.ajax({async: false,
     dataType: "json",
     type: "POST",
-    url: base_url + "server_add/start"
+          url: base_url.replace("__ARGS__", "server_add/start")
   });
   $.each(check_list, function () {
     process_checkbox(this);
@@ -81,7 +81,7 @@ function do_add(submit, event) {
     },
     dataType: "json",
     type: "POST",
-    url: base_url + "server_add/finish"
+    url: base_url.replace("__ARGS__", "server_add/finish")
   });
   return false;
 }

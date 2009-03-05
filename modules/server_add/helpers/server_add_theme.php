@@ -23,7 +23,7 @@ class server_add_theme_Core {
     if (Router::$current_uri == "admin/server_add") {
       $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("lib/jquery.autocomplete.css") . "\" />";
-      $base = url::base(true);
+      $base = url::site("__ARGS__");
       $csrf = access::csrf_token();
       $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
