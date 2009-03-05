@@ -54,7 +54,7 @@ class Item_Model extends ORM_MPTT {
       break;
 
     case 1:
-      $this->where($this->view_restrictions);
+      $this->where($this->view_restrictions[0], access::ALLOW);
       break;
 
     default:
