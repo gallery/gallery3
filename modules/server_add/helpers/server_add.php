@@ -17,25 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class server_add_installer {
-  static function install() {
-    $db = Database::instance();
-    $version = module::get_version("server_add");
-    if ($version == 0) {
-      access::register_permission("server_add", t("Add files from server"));
-
-      access::allow(user::lookup(2), "view", ORM::factory("item", 1));
-
-      module::set_version("server_add", 1);
-      module::set_var("server_add", "authorized_paths", serialize(array()));
-
-      server_add::check_config();
+class server_add_Core {
+  static function check_config() {
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    if (empty($paths)) {
+      site_status::warning(
+        t("Server Add needs configuration. <a href=\"%url\">Configure it now!</a>",
+          array("url" => url::site("/admin/server_add"))),
+        "server_add_configuration");
+    } else {
+      site_status::clear("server_add_configuration");
     }
-  }
-
-  static function uninstall() {
-    access::delete_permission("server_add");
-    module::delete("server_add");
-    site_status::clear("server_add_configuration");
   }
 }

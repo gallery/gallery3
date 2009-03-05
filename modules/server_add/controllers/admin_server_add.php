@@ -20,11 +20,10 @@
 class Admin_Server_Add_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
-    $view->content = new View("server_add_admin.html");
-    $view->content->add_form = $this->_get_admin_form();
-    $view->content->path_list = new View("server_add_dir_list.html");
+    $view->content = new View("admin_server_add.html");
+    $view->content->form = $this->_get_admin_form();
     $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
-    $view->content->path_list->paths = array_keys($paths);
+    $view->content->paths = array_keys($paths);
 
     print $view;
   }
@@ -36,37 +35,39 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
     if ($form->validate()) {
       if (is_readable($form->add_path->path->value)) {
-        $paths[$form->add_path->path->value] = 1;
+        $path = $form->add_path->path->value;
+        $paths[$path] = 1;
         module::set_var("server_add", "authorized_paths", serialize($paths));
         $view = new View("server_add_dir_list.html");
         $view->paths = array_keys($paths);
         $form->add_path->inputs->path->value = "";
-        print json_encode(
-          array("result" => "success",
-                "paths" => $view->__toString(),
-                "form" => $form->__toString()));
+
+        message::success(t("Added path %path", array("path" => $path)));
+        server_add::check_config();
+        url::redirect("admin/server_add");
       } else {
-        $form->add_path->inputs->path->error("not_readable");
-        print json_encode(array("result" => "error", "form" => $form->__toString()));
+        $form->add_path->path->add_error("not_readable", 1);
       }
-    } else {
-      print json_encode(array("result" => "error", "form" => $form->__toString()));
     }
 
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_server_add.html");
+    $view->content->form = $form->render();
+    $view->content->paths = array_keys($paths);
+    print $view;
   }
 
   public function remove_path() {
     access::verify_csrf();
 
-    $path = $this->input->post("path");
+    $path = $this->input->get("path");
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     unset($paths[$path]);
+    message::success(t("Removed path %path", array("path" => $path)));
     module::set_var("server_add", "authorized_paths", serialize($paths));
+    server_add::check_config();
 
-    $view = new View("server_add_dir_list.html");
-    $view->paths = array_keys($paths);
-
-    print $view;
+    url::redirect("admin/server_add");
   }
 
   public function autocomplete() {
@@ -86,7 +87,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
                       array("id" => "gServerAddAdminForm"));
     $add_path = $form->group("add_path");
     $add_path->input("path")->label(t("Path"))->rules("required")
-      ->error_messages("not_readable", t("The directory is not readable by the webserver"));
+      ->error_messages("not_readable", t("This directory is not readable by the webserver"));
     $add_path->submit("add")->value(t("Add Path"));
 
     return $form;
