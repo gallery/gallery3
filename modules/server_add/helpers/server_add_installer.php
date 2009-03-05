@@ -23,14 +23,10 @@ class server_add_installer {
     $version = module::get_version("server_add");
     if ($version == 0) {
       access::register_permission("server_add", t("Add files from server"));
-
       access::allow(user::lookup(2), "view", ORM::factory("item", 1));
-
       module::set_version("server_add", 1);
-      module::set_var("server_add", "authorized_paths", serialize(array()));
-
-      server_add::check_config();
     }
+    server_add::check_config();
   }
 
   static function uninstall() {
