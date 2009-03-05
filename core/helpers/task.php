@@ -21,7 +21,7 @@ class task_Core {
   /**
    * Get all available tasks
    */
-  static function get_task_definitions($type=array("admin", "both")) {
+  static function get_definitions($type) {
     $tasks = array();
     foreach (module::installed() as $module_name => $module_info) {
       $class_name = "{$module_name}_task";
@@ -38,7 +38,7 @@ class task_Core {
   }
 
   static function create($task_callback) {
-    $task_definitions = self::get_task_definitions(array("admin", "general", "both"));
+    $task_definitions = self::get_definitions(array("admin", "general", "both"));
 
     $task = ORM::factory("task");
     $task->callback = $task_callback;
@@ -83,19 +83,5 @@ class task_Core {
     $task->save();
 
     return $task;
-  }
-
-  static function success($task, $location=null) {
-    $result = array("result" => "success", "task" => $task->as_array());
-    if (!empty($location)) {
-      $result["location"] = $location;
-    }
-    return json_encode($result);
-  }
-
-  static function in_progress($task) {
-    return json_encode(
-        array("result" => "in_progress",
-              "task" => $task->as_array()));
   }
 }

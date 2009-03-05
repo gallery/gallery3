@@ -40,7 +40,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_maintenance.html");
-    $view->content->task_definitions = task::get_task_definitions();
+    $view->content->task_definitions = task::get_definitions(array("admin", "both"));
     $view->content->running_tasks = ORM::factory("task")
       ->select("tasks.*", "users.name as user_name")
       ->join("users", "tasks.owner_id", "users.id")
@@ -145,9 +145,13 @@ class Admin_Maintenance_Controller extends Admin_Controller {
         message::success(t("Task failed"));
         break;
       }
-      print task::success($task, url::site("admin/maintenance"));
+      print json_encode(array("result" => "success",
+                              "task" => $task->as_array(),
+                              "location" => url::site("admin/maintenance")));
+
     } else {
-      print task::in_progress($task);
+      print json_encode(array("result" => "in_progress",
+                              "task" => $task->as_array()));
     }
   }
 }
