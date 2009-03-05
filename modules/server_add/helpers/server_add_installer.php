@@ -29,9 +29,8 @@ class server_add_installer {
       module::set_version("server_add", 1);
       module::set_var("server_add", "authorized_paths", serialize(array()));
       message::warning(
-        t("You have no upload directories, %link_startConfigure them now%link_end to configure one",
-          array("link_start" => "<a href='" . url::site("/admin/server_add") . "'>",
-                "link_end" => "</a>")));
+        t("Server Add needs configuration. <a href=\"%url\">Configure it now!</a>",
+          array("url" => url::site("/admin/server_add"))));
     }
   }
 
