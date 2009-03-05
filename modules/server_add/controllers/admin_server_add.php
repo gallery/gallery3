@@ -38,8 +38,6 @@ class Admin_Server_Add_Controller extends Admin_Controller {
         $path = $form->add_path->path->value;
         $paths[$path] = 1;
         module::set_var("server_add", "authorized_paths", serialize($paths));
-        $view = new View("server_add_dir_list.html");
-        $view->paths = array_keys($paths);
         $form->add_path->inputs->path->value = "";
 
         message::success(t("Added path %path", array("path" => $path)));
