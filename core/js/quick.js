@@ -28,6 +28,15 @@ var show_quick = function() {
     {},
     function(data, textStatus) {
       $("#gQuickPane").html(data).slideDown("fast");
+      // @todo Move hover to a function
+      $(".ui-state-default").hover(
+        function(){
+          $(this).addClass("ui-state-hover");
+        },
+        function(){
+          $(this).removeClass("ui-state-hover");
+        }
+      );
       $("#gQuickPane a:not(.options)").click(function(e) {
         e.preventDefault();
         quick_do(cont, $(this), img);

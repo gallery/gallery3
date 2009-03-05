@@ -15,55 +15,9 @@
 }
 
 #gQuickPane a {
-  background-color: #333;
-  background-image: url(../images/d8e7f3_edit_icons.png);
-  background-repeat: no-repeat;
   cursor: pointer;
-  display: block;
   float: left;
-  height: 16px;
-  margin: 8px;
-  width: 16px;
-}
-
-#gQuickPane a:hover {
-  background-color: #666;
-}
-
-#gQuickPane a span {
-  display: none;
-}
-
-#gQuickPane .edit {
-  background-position: 0 0;
-}
-
-#gQuickPane .clockwise {
-  background-position: -16px 0;
-}
-
-#gQuickPane .counter-clockwise {
-  background-position: -32px 0;
-}
-
-#gQuickPane .delete {
-  background-position: -48px 0;
-}
-
-#gQuickPane .move {
-  background-position: -64px 0;
-}
-
-#gQuickPane .tag {
-  background-position: -80px 0;
-}
-
-#gQuickPane .cover {
-  background-position: -96px 0;
-}
-
-#gQuickPane .options {
-  background-position: -112px 0;
+  margin: 4px;
 }
 
 #gQuickPaneOptions {
@@ -74,11 +28,5 @@
 
 #gQuickPaneOptions a {
   display: block;
-  background: none;
   width: auto;
-}
-
-#gQuickPaneOptions a:hover {
-  color: #999;
-  background: none;
 }

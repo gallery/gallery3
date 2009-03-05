@@ -6,24 +6,24 @@
 <? elseif ($item->type == "album"): ?>
 <? $title = t("Edit this album") ?>
 <? endif ?>
-<a class="edit gDialogLink" href="<?= url::site("quick/form_edit/$item->id") ?>"
+<a class="gDialogLink gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/form_edit/$item->id") ?>"
   title="<?= $title ?>">
-  <span>
+  <span class="ui-icon ui-icon-pencil">
     <?= $title ?>
   </span>
 </a>
 
 <? if ($item->is_photo() && graphics::can("rotate")): ?>
-<a class="counter-clockwise" href="<?= url::site("quick/rotate/$item->id/ccw?csrf=" . access::csrf_token()) ?>"
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/ccw?csrf=" . access::csrf_token()) ?>"
   title="<?= t("Rotate 90 degrees counter clockwise") ?>">
-  <span>
+  <span class="ui-icon ui-icon-arrowthick-1-w">
     <?= t("Rotate 90 degrees counter clockwise") ?>
   </span>
 </a>
 
-<a class="clockwise" href="<?= url::site("quick/rotate/$item->id/cw?csrf=" . access::csrf_token()) ?>"
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/cw?csrf=" . access::csrf_token()) ?>"
   title="<?= t("Rotate 90 degrees clockwise") ?>">
-  <span>
+  <span class="ui-icon ui-icon-arrowthick-1-e">
     <?= t("Rotate 90 degrees clockwise") ?>
   </span>
 </a>
@@ -36,9 +36,9 @@
 <? elseif ($item->type == "album"): ?>
 <? $title = t("Move this album to another album") ?>
 <? endif ?>
-<a class="move gDialogLink" href="<?= url::site("move/browse/$item->id") ?>"
+<a class="gDialogLink gButtonLink ui-corner-all ui-state-default" href="<?= url::site("move/browse/$item->id") ?>"
   title="<?= $title ?>">
-  <span>
+  <span class="ui-icon ui-icon-folder-open">
     <?= $title ?>
   </span>
 </a>
@@ -51,9 +51,9 @@
 <? elseif ($item->type == "album"): ?>
 <? $title = t("Choose this album as the album cover") ?>
 <? endif ?>
-<a class="cover" href="<?= url::site("quick/make_album_cover/$item->id?csrf=" . access::csrf_token()) ?>"
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/make_album_cover/$item->id?csrf=" . access::csrf_token()) ?>"
    title="<?= $title ?>">
-  <span>
+  <span class="ui-icon ui-icon-star">
     <?= $title ?>
   </span>
 </a>
@@ -65,17 +65,17 @@
 <? elseif ($item->type == "album"): ?>
 <? $title = t("Delete this album") ?>
 <? endif ?>
-<a class="delete" href="<?= url::site("quick/delete/$item->id?csrf=" . access::csrf_token()) ?>"
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/delete/$item->id?csrf=" . access::csrf_token()) ?>"
    title="<?= $title ?>">
-  <span>
+  <span class="ui-icon ui-icon-trash">
     <?= $title ?>
   </span>
 </a>
 <? endif ?>
 
 <? if ($item->is_album()): ?>
-<a class="options" href="#" title="<?= t("additional options") ?>">
-  <span>
+<a class="gButtonLink ui-corner-all ui-state-default" href="#" title="<?= t("additional options") ?>">
+  <span class="ui-icon ui-icon-triangle-1-s">
     <?= t("Additional options") ?>
   </span>
 </a>
