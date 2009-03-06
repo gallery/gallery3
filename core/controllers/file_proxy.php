@@ -27,7 +27,7 @@
  * input is sanitized against the database before we perform any file I/O.
  */
 class File_Proxy_Controller extends Controller {
-    public function __call($function, $args) {
+  public function __call($function, $args) {
     // request_uri: http://example.com/gallery3/var/trunk/albums/foo/bar.jpg
     $request_uri = $this->input->server("REQUEST_URI");
 
