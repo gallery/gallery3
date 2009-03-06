@@ -24,9 +24,7 @@ class form_Core {
 		// Make sure that the method is always set
 		empty($attr['method']) and $attr['method'] = 'post';
 
-                /* ******* Begin Local Fix for Kohana ticket: 1170 *********/
-		if (!in_array($attr['method'], array('post', 'get', 'put')))
-                /* ******* End Local Fix for Kohana ticket: 1170 *********/
+		if ($attr['method'] !== 'post' and $attr['method'] !== 'get')
 		{
 			// If the method is invalid, use post
 			$attr['method'] = 'post';
