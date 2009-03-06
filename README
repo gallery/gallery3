@@ -27,7 +27,8 @@ Please send your feedback to gallery-devel@lists.sourceforge.net.
 SUPPORTED CONFIGURATION:
  - Platform: Linux / Unix.
  - Web server: Apache 2.2 and newer.
- - PHP 5.2 and newer (PHP's safe_mode must be disabled).
+ - PHP 5.2 and newer (PHP's safe_mode must be disabled and simplexml
+   must be installed).
  - Database: MySQL 5 and newer.
 
 
