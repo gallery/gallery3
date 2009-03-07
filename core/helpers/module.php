@@ -26,6 +26,7 @@
 class module_Core {
   public static $module_names = array();
   public static $modules = array();
+  public static $var_cache = array();
 
   static function get_version($module_name) {
     return ORM::factory("module")->where("name", $module_name)->find()->version;
@@ -217,11 +218,17 @@ class module_Core {
    * @return the value
    */
   static function get_var($module_name, $name, $default_value=null) {
+    if (isset(self::$var_cache[$module_name][$name])) {
+      return self::$var_cache[$module_name][$name];
+    }
+
     $var = ORM::factory("var")
       ->where("module_name", $module_name)
       ->where("name", $name)
       ->find();
-    return $var->loaded ? $var->value : $default_value;
+
+    self::$var_cache[$module_name][$name] = $var->loaded ? $var->value : $default_value;
+    return self::$var_cache[$module_name][$name];
   }
 
   /**
