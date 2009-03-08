@@ -87,8 +87,12 @@ class album_Core {
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
       ->label(t("Sort Order"));
-    if (empty($parent->sort_order)) {
-      list ($sort_column, $sort_direction) = explode(" ", $parent->sort_column);
+    $sort_column = $parent->sort_column;
+    if (!empty($sort_column)) {
+      $sort_column = unserialize($sort_column);
+      $columns = array_keys($sort_column);
+      $sort_direction = $sort_column[$columns[0]];
+      $sort_column = $columns[0];
     } else {
       list ($sort_column, $sort_direction) = array("", "ASC");
     }
@@ -96,9 +100,7 @@ class album_Core {
       ->label(t("Sort by"))
       ->options(array("" => t("select a column"),
                       "created" => t("Creation Date"),
-                      "mime_type" => t("Mime Type"),
                       "title" => t("Title"),
-                      "type" => t("Type"),
                       "updated" => t("Updated Date"),
                       "view_count" => t("Number of views"),
                       "rand_key" => t("Random")))

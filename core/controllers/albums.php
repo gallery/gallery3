@@ -51,10 +51,7 @@ class Albums_Controller extends Items_Controller {
     }
 
     $sort_order = $album->sort_column;
-    if (!empty($sort_order)) {
-      list ($sort_column, $sort_direction) = explode(" ", $sort_order);
-      $sort_order = array($sort_column => $sort_direction);
-    }
+    $sort_order = !empty($sort_order) ? unserialize($sort_order) : $sort_order;
     
     $template = new Theme_View("page.html", "album");
     $template->set_global("page_size", $page_size);
@@ -161,7 +158,8 @@ class Albums_Controller extends Items_Controller {
       $album->description = $form->edit_album->description->value;
       $sort_column = $form->edit_album->sort_order->column->value;
       if (!empty($sort_column)) {
-        $album->sort_column = $sort_column . " " . $form->edit_album->sort_order->direction->value;
+        $album->sort_column = serialize(array($sort_column =>
+                                              $form->edit_album->sort_order->direction->value));
       } else {
         $album->sort_column = null;
       }
