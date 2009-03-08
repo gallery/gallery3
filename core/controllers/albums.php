@@ -50,10 +50,16 @@ class Albums_Controller extends Items_Controller {
       url::redirect("albums/$album->id?page=$max_pages");
     }
 
+    $sort_order = $album->sort_column;
+    if (!empty($sort_order)) {
+      list ($sort_column, $sort_direction) = explode(" ", $sort_order);
+      $sort_order = array($sort_column => $sort_direction);
+    }
+    
     $template = new Theme_View("page.html", "album");
     $template->set_global("page_size", $page_size);
     $template->set_global("item", $album);
-    $template->set_global("children", $album->viewable()->children($page_size, $offset));
+    $template->set_global("children", $album->viewable()->children($page_size, $offset, $sort_order));
     $template->set_global("children_count", $children_count);
     $template->set_global("parents", $album->parents());
     $template->content = new View("album.html");
@@ -153,6 +159,12 @@ class Albums_Controller extends Items_Controller {
       $orig = clone $album;
       $album->title = $form->edit_album->title->value;
       $album->description = $form->edit_album->description->value;
+      $sort_column = $form->edit_album->sort_order->column->value;
+      if (!empty($sort_column)) {
+        $album->sort_column = $sort_column . " " . $form->edit_album->sort_order->direction->value;
+      } else {
+        $album->sort_column = null;
+      }
       $album->save();
 
       module::event("item_updated", $orig, $album);

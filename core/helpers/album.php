@@ -85,6 +85,29 @@ class album_Core {
     }
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
+    $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
+      ->label(t("Sort Order"));
+    if (empty($parent->sort_order)) {
+      list ($sort_column, $sort_direction) = explode(" ", $parent->sort_column);
+    } else {
+      list ($sort_column, $sort_direction) = array("", "ASC");
+    }
+    $sort_order->dropdown("column", array("id" => "gAlbumSortColumn"))
+      ->label(t("Sort by"))
+      ->options(array("" => t("select a column"),
+                      "created" => t("Creation Date"),
+                      "mime_type" => t("Mime Type"),
+                      "title" => t("Title"),
+                      "type" => t("Type"),
+                      "updated" => t("Updated Date"),
+                      "view_count" => t("Number of views"),
+                      "rand_key" => t("Random")))
+      ->selected($sort_column);
+    $sort_order->dropdown("direction", array("id" => "gAlbumSortDirection"))
+      ->label(t("Order"))
+      ->options(array("ASC" => t("Ascending"),
+                      "DESC" => t("Descending")))
+      ->selected($sort_direction);
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));

@@ -139,13 +139,14 @@ CREATE TABLE {items} (
   `view_1` tinyint(2) NOT NULL default '0',
   `view_2` tinyint(2) NOT NULL default '0',
   `rand_key` float default NULL,
+  `sort_column` varchar(255) default NULL,
   PRIMARY KEY  (`id`),
   KEY `parent_id` (`parent_id`),
   KEY `type` (`type`),
   KEY `random` (`rand_key` DESC)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (NULL,1234232381,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1234232381,0,NULL,1,1,NULL);
+INSERT INTO {items} VALUES (NULL,1234232381,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1234232381,0,NULL,1,1,NULL,NULL);
 DROP TABLE IF EXISTS `items_tags`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;

@@ -142,10 +142,14 @@ class ORM_MPTT_Core extends ORM {
    * @param   integer  SQL offset
    * @return array ORM
    */
-  function children($limit=null, $offset=0) {
-    return $this->where("parent_id", $this->id)
-      ->orderby("id", "ASC")
-      ->find_all($limit, $offset);
+  function children($limit=null, $offset=0, $orderby=null) {
+    $this->where("parent_id", $this->id);
+    if (empty($orderby)) {
+      $this->orderby("id", "ASC");
+    } else {
+      $this->orderby($orderby);
+    }
+    return $this->find_all($limit, $offset);
   }
 
   /**
