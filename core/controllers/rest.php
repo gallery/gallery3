@@ -106,7 +106,7 @@ class REST_Controller extends Controller {
   }
 
   /* We're editing an existing item, load it from the database. */
-  public function form_edit($resource_id) {
+  public function form_edit($resource_id, $args=null) {
     if ($this->resource_type == null) {
       throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
     }
@@ -117,7 +117,7 @@ class REST_Controller extends Controller {
       return Kohana::show_404();
     }
 
-    return $this->_form_edit($resource);
+    return $this->_form_edit($resource, $args);
   }
 
   /* We're adding a new item, pass along any additional parameters. */
