@@ -118,6 +118,13 @@ class user_Core {
       $session->set("user", $user = user::guest());
     }
 
+    // The installer cannot set a user into the session, so it just sets an id which we should
+    // upconvert into a user.
+    if ($user === 2) {
+      $user = model_cache::get("user", 2);
+      $session->set("user", $user);
+    }
+
     if (!$session->get("group_ids")) {
       $ids = array();
       foreach ($user->groups as $group) {
@@ -142,7 +149,9 @@ class user_Core {
    * @return User_Model
    */
   static function active() {
-    return Session::instance()->get("user", self::guest());
+    // @todo (maybe) cache this object so we're not always doing session lookups.
+    $user = Session::instance()->get("user", self::guest());
+    return $user;
   }
 
   /**

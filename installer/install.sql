@@ -136,18 +136,18 @@ CREATE TABLE {items} (
   `updated` int(9) default NULL,
   `view_count` int(9) default '0',
   `width` int(9) default NULL,
+  `rand_key` float default NULL,
+  `sort_column` varchar(64) default NULL,
   `view_1` tinyint(2) NOT NULL default '0',
   `view_2` tinyint(2) NOT NULL default '0',
-  `rand_key` float default NULL,
-  `sort_column` varchar(255) default NULL,
   PRIMARY KEY  (`id`),
   KEY `parent_id` (`parent_id`),
   KEY `type` (`type`),
-  KEY `random` (`rand_key` DESC)
+  KEY `random` (`rand_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (NULL,1234232381,'Welcome to your Gallery3',NULL,1,1,1,NULL,NULL,2,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1234232381,0,NULL,1,1,NULL,NULL);
-DROP TABLE IF EXISTS `items_tags`;
+INSERT INTO {items} VALUES (NULL,1236547219,'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1236547219,0,NULL,NULL,NULL,1,1);
+DROP TABLE IF EXISTS {items_tags};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE {items_tags} (
@@ -238,8 +238,8 @@ CREATE TABLE {search_records} (
   FULLTEXT KEY `data` (`data`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {search_records} VALUES (1,1,0,'Welcome to your Gallery3  Gallery ');
-DROP TABLE IF EXISTS `sessions`;
+INSERT INTO {search_records} VALUES (1,1,0,'  Gallery ');
+DROP TABLE IF EXISTS {sessions};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE {sessions} (
@@ -275,7 +275,7 @@ CREATE TABLE {tasks} (
   `status` varchar(255) default NULL,
   `owner_id` int(9) default NULL,
   PRIMARY KEY  (`id`),
-  KEY (`owner_id`)
+  KEY `owner_id` (`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {themes};
@@ -311,7 +311,7 @@ CREATE TABLE {users} (
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {users} VALUES (1,'guest','Guest User','[oS\\615de701682051a9970409c02c94ca94',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
+INSERT INTO {users} VALUES (1,'guest','Guest User','ep^Of48514725fd40c706ceb2565ccceacb3',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
 DROP TABLE IF EXISTS {vars};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -324,4 +324,4 @@ CREATE TABLE {vars} (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:4:{i:373668224;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:838141216;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:26528;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1914449606;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:4:{i:551308471;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:412910748;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:1418841915;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:690142318;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:1:{i:1792454813;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:1:{i:295582972;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');

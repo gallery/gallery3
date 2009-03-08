@@ -88,6 +88,10 @@ class core_theme_Core {
     if (Session::instance()->get("l10n_mode", false)) {
       return L10n_Client_Controller::l10n_form();
     }
+
+    if (Input::instance()->get("after_install")) {
+      return new View("after_install_loader.html");
+    }
   }
 
   static function admin_page_bottom($theme) {

@@ -98,6 +98,25 @@ class installer {
     return array("admin", $password);
   }
 
+  static function create_admin_session($config) {
+    $session_id = md5(time() * rand());
+    $user_agent = $_SERVER["HTTP_USER_AGENT"];
+    $user_agent_len = strlen($user_agent);
+    $now = time();
+    $data = "session_id|s:32:\"$session_id\"";
+    $data .= ";user_agent|s:{$user_agent_len}:\"$user_agent\"";
+    $data .= ";user|i:2";
+    $data .= ";last_activity|i:$now";
+    $data = base64_encode($data);
+    $sql = "INSERT INTO {sessions} VALUES('$session_id', $now, '$data')";
+    $sql = self::prepend_prefix($config["prefix"], $sql);
+    if (mysql_query($sql)) {
+      setcookie("g3sid", $session_id, 0, "/", "", false, false);
+    } else {
+      throw new Exception(mysql_error());
+    }
+  }
+
   static function create_private_key($config) {
     $key = md5(uniqid(mt_rand(), true)) . md5(uniqid(mt_rand(), true));
     $sql = self::prepend_prefix($config["prefix"],

@@ -82,7 +82,7 @@ class core_installer {
                    PRIMARY KEY (`id`),
                    KEY `parent_id` (`parent_id`),
                    KEY `type` (`type`),
-                   KEY `random` (`rand_key` DESC))
+                   KEY `random` (`rand_key`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE {logs} (
@@ -122,7 +122,7 @@ class core_installer {
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-      
+
       $db->query("CREATE TABLE {permissions} (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(64) default NULL,
@@ -195,9 +195,9 @@ class core_installer {
       access::register_permission("edit", "Edit");
 
       $root = ORM::factory("item");
-      $root->type = 'album';
+      $root->type = "album";
       $root->title = "Gallery";
-      $root->description = "Welcome to your Gallery3";
+      $root->description = "";
       $root->left = 1;
       $root->right = 2;
       $root->parent_id = 0;
