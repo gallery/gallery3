@@ -122,13 +122,15 @@ class Theme_View_Core extends View {
   }
 
   public function pager() {
-    $this->pagination = new Pagination();
-    $this->pagination->initialize(
-      array('query_string' => 'page',
-            'total_items' => $this->children_count,
-            'items_per_page' => $this->page_size,
-            'style' => 'classic'));
-    return $this->pagination->render();
+    if ($this->children_count) {
+      $this->pagination = new Pagination();
+      $this->pagination->initialize(
+        array('query_string' => 'page',
+              'total_items' => $this->children_count,
+              'items_per_page' => $this->page_size,
+              'style' => 'classic'));
+      return $this->pagination->render();
+    }
   }
 
   /**
