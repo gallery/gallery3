@@ -518,6 +518,15 @@ class Scaffold_Controller extends Template_Controller {
       print implode("\n", $output);
       return;
     }
+
+    // Post-process the sql file to support prefixes
+    foreach (file($sql_file) as $line) {
+      $buf .= preg_replace("/(CREATE TABLE|IF EXISTS|INSERT INTO) `(\w+)`/", "\\1 {\\2}", $line);
+    }
+    $fd = fopen($sql_file, "wb");
+    fwrite($fd, $buf);
+    fclose($fd);
+
     url::redirect("scaffold/dump_var");
   }
 
