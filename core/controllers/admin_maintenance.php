@@ -102,6 +102,16 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     url::redirect("admin/maintenance");
   }
 
+  public function cancel_running_tasks() {
+    access::verify_csrf();
+    Database::instance()->update(
+      "tasks",
+      array("done" => 1, "state" => "cancelled"),
+      array("done" => 0));
+    message::success(t("All running tasks cancelled"));
+    url::redirect("admin/maintenance");
+  }
+
   /**
    * Remove a task.
    * @param string $task_id
