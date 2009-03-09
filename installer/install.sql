@@ -115,7 +115,7 @@ SET character_set_client = utf8;
 CREATE TABLE {items} (
   `album_cover_item_id` int(9) default NULL,
   `created` int(9) default NULL,
-  `description` text,
+  `description` varchar(2048) default NULL,
   `height` int(9) default NULL,
   `id` int(9) NOT NULL auto_increment,
   `left` int(9) NOT NULL,
@@ -146,7 +146,7 @@ CREATE TABLE {items} (
   KEY `random` (`rand_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (NULL,1236569100,'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1236569100,0,NULL,NULL,NULL,1,1);
+INSERT INTO {items} VALUES (NULL,1236569573,'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1236569573,0,NULL,NULL,NULL,1,1);
 DROP TABLE IF EXISTS {items_tags};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -311,7 +311,7 @@ CREATE TABLE {users} (
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {users} VALUES (1,'guest','Guest User','F[]bd25d1cd14a1925529059b832d6a0cb0a',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
+INSERT INTO {users} VALUES (1,'guest','Guest User','5aLTa63b51ea433382249bc5e16d0ecbe6c5',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
 DROP TABLE IF EXISTS {vars};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -324,4 +324,4 @@ CREATE TABLE {vars} (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:1:{i:671640821;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:1:{i:400718391;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:1:{i:1796642454;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:1:{i:666854679;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');
