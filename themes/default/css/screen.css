@@ -873,7 +873,6 @@ form p.gError {
 }
 
 #gProgressBar {
-  visibility: hidden;
   height: 1em;
   width: 100%;
   margin-top: 0.5em;
