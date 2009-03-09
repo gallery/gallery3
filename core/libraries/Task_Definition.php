@@ -23,7 +23,6 @@ class Task_Definition_Core {
   public $description;
   public $name;
   public $severity;
-  public $type;
 
   static function factory() {
     return new Task_Definition();
@@ -46,11 +45,6 @@ class Task_Definition_Core {
 
   function severity($severity) {
     $this->severity = $severity;
-    return $this;
-  }
-
-  function type($type) {
-    $this->type = $type;
     return $this;
   }
 }

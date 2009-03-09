@@ -38,7 +38,6 @@ class exif_task_Core {
     return array(Task_Definition::factory()
                  ->callback("exif_task::extract_exif")
                  ->name(t("Extract EXIF data"))
-                 ->type("admin")
                  ->description($remaining
                                ? t("%percent% of your photos need to be scanned for EXIF data",
                                    array("percent" => $percent))

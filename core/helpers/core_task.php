@@ -23,7 +23,6 @@ class core_task_Core {
     return array(Task_Definition::factory()
                  ->callback("core_task::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
-                 ->type("admin")
                  ->description($dirty_count ?
                                t2("You have one out of date photo",
                                   "You have %count out of date photos",

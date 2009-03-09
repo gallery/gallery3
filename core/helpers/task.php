@@ -21,15 +21,13 @@ class task_Core {
   /**
    * Get all available tasks
    */
-  static function get_definitions($type) {
+  static function get_definitions() {
     $tasks = array();
     foreach (module::installed() as $module_name => $module_info) {
       $class_name = "{$module_name}_task";
       if (method_exists($class_name, "available_tasks")) {
         foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
-          if ($task->type == $type) {
-            $tasks[$task->callback] = $task;
-          }
+          $tasks[$task->callback] = $task;
         }
       }
     }
@@ -37,8 +35,8 @@ class task_Core {
     return $tasks;
   }
 
-  static function create($type, $task_callback) {
-    $task_definitions = self::get_definitions($type);
+  static function create($task_callback) {
+    $task_definitions = self::get_definitions();
 
     $task = ORM::factory("task");
     $task->callback = $task_callback;

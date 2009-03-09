@@ -36,7 +36,6 @@ class search_task_Core {
     return array(Task_Definition::factory()
                  ->callback("search_task::update_index")
                  ->name(t("Update Search Index"))
-                 ->type("admin")
                  ->description($remaining ?
                                t("Search index is %percent% up-to-date",
                                  array("percent" => $percent))
