@@ -299,11 +299,10 @@ class Item_Model extends ORM_MPTT {
    * the first child in the album is at position 1.
    */
   public function get_position($child_id) {
-    // Right now we only sort by id ascending, so bake that assumption in here.
-    // @todo fix this when we introduce sort orders.
     return ORM::factory("item")
       ->where("parent_id", $this->id)
       ->where("id <=", $child_id)
+      ->orderby(array($this->sort_column => $this->sort_order))
       ->count_all();
   }
 
