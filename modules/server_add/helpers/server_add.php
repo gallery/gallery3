@@ -18,8 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class server_add_Core {
-  static function check_config() {
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+  static function check_config($paths=null) {
+    if ($paths === null) {
+      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    }
     if (empty($paths)) {
       site_status::warning(
         t("Server Add needs configuration. <a href=\"%url\">Configure it now!</a>",

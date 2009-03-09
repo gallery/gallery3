@@ -41,7 +41,8 @@ class Admin_Server_Add_Controller extends Admin_Controller {
         $form->add_path->inputs->path->value = "";
 
         message::success(t("Added path %path", array("path" => $path)));
-        server_add::check_config();
+
+        server_add::check_config($paths);
         url::redirect("admin/server_add");
       } else {
         $form->add_path->path->add_error("not_readable", 1);
@@ -63,7 +64,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     unset($paths[$path]);
     message::success(t("Removed path %path", array("path" => $path)));
     module::set_var("server_add", "authorized_paths", serialize($paths));
-    server_add::check_config();
+    server_add::check_config($paths);
 
     url::redirect("admin/server_add");
   }
