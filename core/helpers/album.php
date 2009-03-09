@@ -46,6 +46,8 @@ class album_Core {
     $album->thumb_dirty = 1;
     $album->resize_dirty = 1;
     $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
+    $album->sort_column = "id";
+    $album->sort_order = "ASC";
 
     while (ORM::factory("item")
            ->where("parent_id", $parent->id)
@@ -85,31 +87,24 @@ class album_Core {
     }
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
+
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
       ->label(t("Sort Order"));
-    $sort_column = $parent->sort_column;
-    if (!empty($sort_column)) {
-      $sort_column = unserialize($sort_column);
-      $columns = array_keys($sort_column);
-      $sort_direction = $sort_column[$columns[0]];
-      $sort_column = $columns[0];
-    } else {
-      list ($sort_column, $sort_direction) = array("", "ASC");
-    }
+
     $sort_order->dropdown("column", array("id" => "gAlbumSortColumn"))
       ->label(t("Sort by"))
-      ->options(array("" => t("select a column"),
+      ->options(array("id" => t("select a column"),
                       "created" => t("Creation Date"),
                       "title" => t("Title"),
                       "updated" => t("Updated Date"),
                       "view_count" => t("Number of views"),
                       "rand_key" => t("Random")))
-      ->selected($sort_column);
+      ->selected($parent->sort_column);
     $sort_order->dropdown("direction", array("id" => "gAlbumSortDirection"))
       ->label(t("Order"))
       ->options(array("ASC" => t("Ascending"),
                       "DESC" => t("Descending")))
-      ->selected($sort_direction);
+      ->selected($parent->sort_order);
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));

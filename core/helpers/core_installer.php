@@ -79,6 +79,7 @@ class core_installer {
                    `width` int(9) default NULL,
                    `rand_key` float default NULL,
                    `sort_column` varchar(64) default NULL,
+                   `sort_order` char(4) default 'ASC',
                    PRIMARY KEY (`id`),
                    KEY `parent_id` (`parent_id`),
                    KEY `type` (`type`),

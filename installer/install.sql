@@ -138,6 +138,7 @@ CREATE TABLE {items} (
   `width` int(9) default NULL,
   `rand_key` float default NULL,
   `sort_column` varchar(64) default NULL,
+  `sort_order` char(4) default 'ASC',
   `view_1` tinyint(2) NOT NULL default '0',
   `view_2` tinyint(2) NOT NULL default '0',
   PRIMARY KEY  (`id`),
@@ -146,7 +147,7 @@ CREATE TABLE {items} (
   KEY `random` (`rand_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (NULL,1236569573,'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1236569573,0,NULL,NULL,NULL,1,1);
+INSERT INTO {items} VALUES (NULL,1236569573,'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1236569573,0,NULL,NULL,'id','ASC',1,1);
 DROP TABLE IF EXISTS {items_tags};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
