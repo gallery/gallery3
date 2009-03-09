@@ -53,8 +53,7 @@ class Albums_Controller extends Items_Controller {
     $template = new Theme_View("page.html", "album");
     $template->set_global("page_size", $page_size);
     $template->set_global("item", $album);
-    $template->set_global("children", $album->viewable()->children($page_size, $offset,
-                                                  array($album->sort_column => $album->sort_order)));
+    $template->set_global("children", $album->viewable()->children($page_size, $offset));
     $template->set_global("children_count", $children_count);
     $template->set_global("parents", $album->parents());
     $template->content = new View("album.html");

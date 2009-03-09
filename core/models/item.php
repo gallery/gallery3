@@ -353,4 +353,29 @@ class Item_Model extends ORM_MPTT {
       url::abs_file("lib/flowplayer-3.0.5.swf") .
       "'); </script>";
   }
+
+  /**
+   * Return all of the children of this node, ordered by id.
+   *
+   * @chainable
+   * @param   integer  SQL limit
+   * @param   integer  SQL offset
+   * @return array ORM
+   */
+  function children($limit=null, $offset=0) {
+    return parent::children($limit, $offset, array($this->sort_column => $this->sort_order));
+  }
+
+  /**
+   * Return all of the children of the specified type, ordered by id.
+   *
+   * @param   integer  SQL limit
+   * @param   integer  SQL offset
+   * @param   string   type to return
+   * @return object ORM_Iterator
+   */
+  function descendants($limit=null, $offset=0, $type=null) {
+    return parent::descendants($limit, $offset, $type,
+                               array($this->sort_column => $this->sort_order));
+  }
 }

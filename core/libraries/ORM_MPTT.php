@@ -140,6 +140,7 @@ class ORM_MPTT_Core extends ORM {
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
+   * @param   array    orderby
    * @return array ORM
    */
   function children($limit=null, $offset=0, $orderby=null) {
@@ -170,17 +171,21 @@ class ORM_MPTT_Core extends ORM {
    * @param   integer  SQL limit
    * @param   integer  SQL offset
    * @param   string   type to return
+   * @param   array    orderby
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $type=null) {
+  function descendants($limit=null, $offset=0, $type=null, $orderby=null) {
     $this->where("left >", $this->left)
       ->where("right <=", $this->right);
     if ($type) {
       $this->where("type", $type);
     }
 
-    // @todo: make the order column data driven
-    $this->orderby("id", "ASC");
+    if (empty($orderby)) {
+      $this->orderby("id", "ASC");
+    } else {
+      $this->orderby($orderby);
+    }
 
     return $this->find_all($limit, $offset);
   }
