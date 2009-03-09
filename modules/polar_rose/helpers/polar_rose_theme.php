@@ -36,7 +36,7 @@ class polar_rose_theme_Core {
         "insert: 'gPolarRose'," .
         "optin: ''," .
         "theme: 'dark'," .
-        "progress: 'true'" .
+        "progress: true" .
         "}</script>" .
         "<script type=\"text/javascript\" " .
         "src=\"http://cdn.widget.polarrose.com/polarrosewidget.js\">" .
