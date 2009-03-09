@@ -25,7 +25,7 @@ class Item_Model extends ORM_MPTT {
   var $rules = array(
     "name" => "required|length[0,255]",
     "title" => "required|length[0,255]",
-    "description" => "length[0,255]"
+    "description" => "length[0,65535]"
   );
 
   /**
