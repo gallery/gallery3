@@ -106,6 +106,7 @@ class installer {
     $data = "session_id|s:32:\"$session_id\"";
     $data .= ";user_agent|s:{$user_agent_len}:\"$user_agent\"";
     $data .= ";user|i:2";
+    $data .= ";after_install|i:1";
     $data .= ";last_activity|i:$now";
     $data = base64_encode($data);
     $sql = "INSERT INTO {sessions} VALUES('$session_id', $now, '$data')";

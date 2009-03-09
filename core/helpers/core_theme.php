@@ -19,8 +19,9 @@
  */
 class core_theme_Core {
   static function head($theme) {
+    $session = Session::instance();
     $buf = "";
-    if (Session::instance()->get("debug")) {
+    if ($session->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/debug.css") . "\" />";
     }
@@ -40,7 +41,7 @@ class core_theme_Core {
       $buf .= html::script("core/js/fullsize.js");
     }
 
-    if (Session::instance()->get("l10n_mode", false)) {
+    if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/l10n_client.css") . "\" />";
       $buf .= html::script("lib/jquery.cookie.js");
@@ -64,13 +65,14 @@ class core_theme_Core {
   }
 
   static function admin_head($theme) {
+    $session = Session::instance();
     $buf = "";
-    if (Session::instance()->get("debug")) {
+    if ($session->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/debug.css") . "\" />";
     }
 
-    if (Session::instance()->get("l10n_mode", false)) {
+    if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/l10n_client.css") . "\" />";
       $buf .= html::script("lib/jquery.cookie.js");
@@ -81,25 +83,28 @@ class core_theme_Core {
   }
 
   static function page_bottom($theme) {
-    if (Session::instance()->get("profiler", false)) {
+    $session = Session::instance();
+    if ($session->get("profiler", false)) {
       $profiler = new Profiler();
       $profiler->render();
     }
-    if (Session::instance()->get("l10n_mode", false)) {
+    if ($session->get("l10n_mode", false)) {
       return L10n_Client_Controller::l10n_form();
     }
 
-    if (Input::instance()->get("after_install")) {
+    if ($session->get("after_install")) {
+      $session->delete("after_install");
       return new View("after_install_loader.html");
     }
   }
 
   static function admin_page_bottom($theme) {
-    if (Session::instance()->get("profiler", false)) {
+    $session = Session::instance();
+    if ($session->get("profiler", false)) {
       $profiler = new Profiler();
       $profiler->render();
     }
-    if (Session::instance()->get("l10n_mode", false)) {
+    if ($session->get("l10n_mode", false)) {
       return L10n_Client_Controller::l10n_form();
     }
   }

@@ -19,5 +19,5 @@
 </p>
 <?php endif ?>
 
-<h2> <a href="..?after_install=1">Start using Gallery</a> </h2>
+<h2> <a href="..">Start using Gallery</a> </h2>
 

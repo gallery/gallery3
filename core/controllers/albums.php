@@ -52,7 +52,7 @@ class Albums_Controller extends Items_Controller {
 
     $sort_order = $album->sort_column;
     $sort_order = !empty($sort_order) ? unserialize($sort_order) : $sort_order;
-    
+
     $template = new Theme_View("page.html", "album");
     $template->set_global("page_size", $page_size);
     $template->set_global("item", $album);
