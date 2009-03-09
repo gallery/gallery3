@@ -34,7 +34,7 @@ class Task_Model extends ORM {
       return parent::__get($column);
     }
   }
-  
+
   public function get($key, $default=null) {
     $context = unserialize($this->context);
     if (array_key_exists($key, $context)) {
@@ -55,5 +55,9 @@ class Task_Model extends ORM {
       $this->updated = time();
     }
     return parent::save();
+  }
+
+  public function owner() {
+    return user::lookup($this->owner_id);
   }
 }

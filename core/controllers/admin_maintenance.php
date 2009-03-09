@@ -42,12 +42,8 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->content = new View("admin_maintenance.html");
     $view->content->task_definitions = task::get_definitions("admin");
     $view->content->running_tasks = ORM::factory("task")
-      ->select("tasks.*", "users.name as user_name")
-      ->join("users", "tasks.owner_id", "users.id")
       ->where("done", 0)->orderby("updated", "DESC")->find_all();
     $view->content->finished_tasks = ORM::factory("task")
-      ->select("tasks.*", "users.name as user_name")
-      ->join("users", "tasks.owner_id", "users.id")
       ->where("done", 1)->orderby("updated", "DESC")->find_all();
     $view->content->csrf = access::csrf_token();
     print $view;
@@ -116,6 +112,13 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     task::remove($task_id);
 
     message::success(t("Task removed"));
+    url::redirect("admin/maintenance");
+  }
+
+  public function remove_finished_tasks() {
+    access::verify_csrf();
+    Database::instance()->delete("tasks", array("done" => 1));
+    message::success(t("All finished tasks removed"));
     url::redirect("admin/maintenance");
   }
 

@@ -38,6 +38,7 @@
     </table>
   </div>
 
+  <? if ($running_tasks->count()): ?>
   <div id="gRunningTasks">
     <h2> <?= t("Running Tasks") ?> </h2>
 
@@ -86,7 +87,7 @@
           <?= $task->status ?>
         </td>
         <td>
-          <?= $task->user_name ?>
+          <?= $task->owner()->name ?>
         </td>
         <td>
           <? if ($task->state == "stalled"): ?>
@@ -102,9 +103,12 @@
       <? endforeach ?>
     </table>
   </div>
+  <? endif ?>
 
+  <? if ($finished_tasks->count()): ?>
   <div id="gFinishedTasks">
     <h2> <?= t("Finished Tasks") ?> </h2>
+    <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"><?= t("remove all") ?></a>
 
     <table>
       <tr>
@@ -148,7 +152,7 @@
           <?= $task->status ?>
         </td>
         <td>
-          <?= $task->user_name ?>
+          <?= $task->owner()->name ?>
         </td>
         <td>
           <? if ($task->done): ?>
@@ -168,4 +172,5 @@
       <? endforeach ?>
     </table>
   </div>
+  <? endif ?>
 </div>
