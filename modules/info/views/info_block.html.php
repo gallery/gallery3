@@ -5,11 +5,13 @@
       <th><?= t("Title:") ?></th>
       <td><?= $item->title; ?></td>
     </tr>
+    <? if ($item->description): ?>
     <tr>
       <th><?= t("Description:") ?></th>
       <td><?= $item->description; ?></td>
     </tr>
-    <?  if ($item->id != 1): ?>
+    <? endif ?>
+    <? if ($item->id != 1): ?>
     <tr>
       <th><?= t("Name:") ?></th>
       <td><?= $item->name; ?></td>
