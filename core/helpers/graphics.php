@@ -153,9 +153,15 @@ class graphics_Core {
       self::init_toolkit();
     }
 
-    Image::factory($input_file)
-      ->resize($options["width"], $options["height"], $options["master"])
-      ->save($output_file);
+    $dims = getimagesize($input_file);
+    if (max($dims[0], $dims[1]) < min($options["width"], $options["height"])) {
+      // Image would get upscaled; do nothing
+      copy($input_file, $output_file);
+    } else {
+      Image::factory($input_file)
+        ->resize($options["width"], $options["height"], $options["master"])
+        ->save($output_file);
+    }
   }
 
   /**
