@@ -25,8 +25,7 @@ class Server_Add_Controller extends Controller {
     access::required("server_add", $item);
 
     $view = new View("server_add_tree_dialog.html");
-    $view->action = url::site("server_add/add_photo/$id");
-    $view->hidden = array("csrf" => access::csrf_token(), "base_url" => url::site("__ARGS__"));
+    $view->action = url::site("__ARGS__/{$id}__TASK_ID__?csrf=" . access::csrf_token());
     $view->parents = $item->parents();
     $view->album_title = $item->title;
 
@@ -46,10 +45,15 @@ class Server_Add_Controller extends Controller {
     $path_valid = false;
     $path = $this->input->post("path");
 
-    if (empty($paths[$path[0]])) {
+    foreach (array_keys($paths) as $valid_path) {
+      if ($path_valid = strpos($path, $valid_path) === 0) {
+        break;
+      }
+    }
+    if (empty($path_valid)) {
       throw new Exception("@todo BAD_PATH");
     }
-    $path = implode("/", $this->input->post("path"));
+
     if (!is_readable($path) || is_link($path)) {
       kohana::show_404();
     }
@@ -60,55 +64,60 @@ class Server_Add_Controller extends Controller {
     print $tree;
   }
 
-  function start() {
+  function start($id) {
+    access::verify_csrf();
+    $files = array();
+    foreach ($this->input->post("path") as $path) {
+      if (is_dir($path)) {
+        $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), true);
+        foreach ($dir as $file) {
+          $extension = strtolower(substr(strrchr($file->getFilename(), '.'), 1));
+          if ($file->isReadable() &&
+              in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+            $files[] = $file->getPathname();
+          }
+        }
+      } else {
+        $files[] = $path;
+      }
+    }
+
+    $task = task::create("server_add_task::add_from_server", t("Add from server"),
+                         array("item_id" => $id,
+                               "next" => 0,
+                               "paths" => $files));
     batch::start();
+    print json_encode(array("result" => "started",
+                            "url" => url::site("server_add/add_photo/{$task->id}?csrf=" .
+                                               access::csrf_token()),
+                            "task" => $task->as_array()));
   }
 
-  function add_photo($id) {
+  function add_photo($task_id) {
     access::verify_csrf();
 
-    $parent = ORM::factory("item", $id);
-    access::required("server_add", $parent);
-    if (!$parent->is_album()) {
-      throw new Exception("@todo BAD_ALBUM");
-    }
+    $task = task::run($task_id);
 
-    $path = $this->input->post("path");
+    if ($task->done) {
+      switch ($task->state) {
+      case "success":
+        message::success(t("Add from server completed"));
+        break;
 
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
-    if (empty($paths[$path[0]])) {
-      throw new Exception("@todo BAD_PATH");
-    }
-
-    $source_path = $path[0];
-    // The first path corresponds to the source directory so we can just skip it.
-    for ($i = 1; $i < count($path); $i++) {
-      $source_path .= "/$path[$i]";
-      if (is_link($source_path) || !is_readable($source_path)) {
-        kohana::show_404();
+      case "error":
+        message::success(t("Add from server completed with errors"));
+        break;
       }
-      $pathinfo = pathinfo($source_path);
-      set_time_limit(30);
-      if (is_dir($source_path)) {
-        $album = ORM::factory("item")
-          ->where("name", $path[$i])
-          ->where("parent_id", $parent->id)
-          ->find();
-        if (!$album->loaded) {
-          $album = album::create($parent, $path[$i], $path[$i], null, user::active()->id);
-        }
-        $parent = $album;
-      } else if (in_array($pathinfo["extension"], array("flv", "mp4"))) {
-        $movie = movie::create($parent, $source_path, basename($source_path),
-                               basename($source_path), null, user::active()->id);
-      } else {
-        $photo = photo::create($parent, $source_path, basename($source_path),
-                        basename($source_path), null, user::active()->id);
-      }
+      print json_encode(array("result" => "success",
+                              "task" => $task->as_array()));
+
+    } else {
+      print json_encode(array("result" => "in_progress",
+                              "task" => $task->as_array()));
     }
   }
 
-  public function finish() {
+  public function finish($id, $task_id) {
     batch::stop();
     print json_encode(array("result" => "success"));
   }

@@ -3,7 +3,7 @@ $("#gServerAdd").ready(function() {
     do_add(this, event);
   });
   $("#gProgressBar").progressbar();
-  $("#gServerAdd ul").css("display", "block");
+  $("#gServerAddTree ul").css("display", "block");
 });
 
 function open_close_branch(icon, event) {
@@ -13,7 +13,7 @@ function open_close_branch(icon, event) {
 
   if (closed) {
     if (children.length == 0) {
-      load_children(icon, function(data, textStatus) {
+      load_children(parent, function(data, textStatus) {
         $(parent).append(data);
         $(icon).addClass("ui-icon-minus");
         $(icon).removeClass("ui-icon-plus");
@@ -32,6 +32,13 @@ function open_close_branch(icon, event) {
   }
 }
 
+function get_url(uri, task_id) {
+  var url = $("#gServerAdd form").attr("action");
+  url = url.replace("__ARGS__", uri);
+  url = url.replace("__TASK_ID__", !task_id ? "" : "/" + task_id);
+  return url;
+}
+
 function checkbox_click(checkbox, event) {
   var parents = $(checkbox).parents("li");
   var parent = parents.get(0);
@@ -40,92 +47,63 @@ function checkbox_click(checkbox, event) {
   $("#gServerAdd form :submit").attr("disabled", checked.length == 0);
 }
 
-function load_children(icon, callback) {
-  var csrf = $("#gServerAdd form :hidden[name='csrf']")[0].value;
-  var base_url = $("#gServerAdd form :hidden[name='base_url']")[0].value;
-  var parms = "&csrf=" + csrf;
-  var parents = $(icon).parents("li");
-  for (var i=parents.length - 1; i >= 0; i--) {
-    parms += "&path[]=" +  $(parents[i]).children("span").attr("ref");
-  }
+function load_children(parent, callback) {
+  var parms = "&path=" +  $(parent).find(":checkbox").attr("value");
   $.ajax({async: false,
           success: callback,
           data: parms,
           dataType: "html",
           type: "POST",
-          url: base_url.replace("__ARGS__", "server_add/children")
+          url: get_url("server_add/children")
   });
 }
 
-var current = 0;
-var process_length = 0;
 function do_add(submit, event) {
   event.preventDefault();
   $("#gProgressBar").progressbar("value", 0);
   $("#gProgressBar").css("visibility", "visible");
   var check_list = $("#gServerAdd :checkbox[checked]");
-  process_length = check_list.length;
-  current = 0;
-  var base_url = $("#gServerAdd form :hidden[name='base_url']")[0].value;
-  $.ajax({async: false,
-    dataType: "json",
-    type: "POST",
-          url: base_url.replace("__ARGS__", "server_add/start")
-  });
+
+  var parms = "";
   $.each(check_list, function () {
-    process_checkbox(this);
+    var parent = $(this).parents("li")[0];
+    // If its a file or a directory with no children
+    if ($(parent).hasClass("gFile") ||
+        ($(parent).hasClass("gDirectory") && $(parent).find(".gCheckboxTree").length == 0)) {
+      parms += "&path[]=" + this.value;
+    }
   });
   $.ajax({async: false,
-    success: function(data, textStatus) {
-      document.location.reload();
-    },
+    data: parms,
     dataType: "json",
-    type: "POST",
-    url: base_url.replace("__ARGS__", "server_add/finish")
-  });
-  return false;
-}
-
-function process_checkbox(checkbox) {
-  var parents = $(checkbox).parents("li");
-  var csrf = $("#gServerAdd form :hidden[name='csrf']")[0].value;
-  var parms = "&csrf=" + csrf;
-  for (var i=parents.length - 1; i > 0; i--) {
-    parms += "&path[]=" +  $(parents[i]).children("span").attr("ref");
-  }
-  parms += "&path[]=" + $(checkbox).val();
-
-  var parent = parents[0];
-  if ($(parent).hasClass("gFile")) {
-    process_file(parents[0], parms);
-  } else if ($(parent).hasClass("gDirectory") && $(parents[0]).find(".gCheckboxTree").length == 0) {
-    // If it is a directory and retrieve the children and process them
-    var icon = $(parent).children("span")[0];
-    load_children(icon, function(data, textStatus) {
-      $(parent).append(data);
-      $(icon).addClass("ui-icon-plus");
-      checkbox_click(checkbox, null);
-      var boxes = $(parent).find(".gCheckboxTree :checkbox[checked]");
-      process_length += boxes.length;
-      $.each(boxes, function () {
-        process_checkbox(this);
-      });
-    });
-    current++;
-    $("#gProgressBar").progressbar("value", current / process_length * 100);
-  }
-}
-
-function process_file(li_element, parms) {
-  $.ajax({async: false,
-          success:  function(data, status) {
+    success: function(data, textStatus) {
+      var task = data.task;
+      var url = data.url;
+      var done = false;
+      while (!done) {
+        $.ajax({async: false,
+          success: function(data, textStatus) {
+            $("#gProgressBar").progressbar("value", data.task.percent_complete);
+            done = data.task.done;
           },
-          data: parms,
-          dataType: "html",
+          dataType: "json",
           type: "POST",
-          url: $("#gServerAdd form").attr("action")
+          url: url
+        });
+      }
+      $.ajax({async: false,
+        success: function(data, textStatus) {
+          document.location.reload();
+        },
+        dataType: "json",
+        type: "POST",
+        url: get_url("server_add/finish", task.id)
+      });
+    },
+    type: "POST",
+    url: get_url("server_add/start")
   });
-  current++;
-  $("#gProgressBar").progressbar("value", current / process_length * 100);
+
+  return false;
 }
 

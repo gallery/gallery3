@@ -1,6 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <?= html::script("modules/server_add/js/server_add.js"); ?>
-
 <div id="gServerAdd">
   <h1 style="display: none;"><?= sprintf(t("Add Photos to '%s'"), $album_title) ?></h1>
 
@@ -20,5 +19,5 @@
     <?= form::submit(array("id" => "gServerAddButton", "name" => "add", "disabled" => true, "class" => "submit"), t("Add")) ?>
   </span>
   <?= form::close() ?>
-  <div id="gProgressBar" ></div>
+  <div id="gProgressBar" style="visibility:hidden;" ></div>
 </div>

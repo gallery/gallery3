@@ -14,9 +14,9 @@ $("#<?= $tree_id ?>").ready(function() {
   <? foreach ($data as $file => $file_info): ?>
   <li class="<?= empty($file_info["is_dir"]) ? "gFile" : "gDirectory gCollapsed ui-icon-left" ?>">
     <? if (!empty($file_info["is_dir"])): ?>
-    <span class="ui-icon ui-icon-plus" ref="<?= $file ?>"></span>
+    <span class="ui-icon ui-icon-plus"></span>
     <? endif ?>
-    <label> <?= form::checkbox("checkbox", $file) . " $file" ?> </label>
+    <label> <?= form::checkbox("checkbox[]", $file_info["path"]) . " $file" ?> </label>
   </li>
   <? endforeach ?>
 </ul>
