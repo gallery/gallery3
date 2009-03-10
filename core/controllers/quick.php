@@ -122,7 +122,11 @@ class Quick_Controller extends Controller {
   public function form_edit($id) {
     $item = ORM::factory("item", $id);
     access::required("edit", $item);
-    $form = photo::get_edit_form($item);
+    if ($item->is_album()) {
+      $form = album::get_edit_form($item);
+    } else {
+      $form = photo::get_edit_form($item);
+    }
     print $form;
   }
 }
