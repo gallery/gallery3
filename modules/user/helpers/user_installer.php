@@ -78,15 +78,11 @@ class user_installer {
       module::set_version("user", 1);
 
       $root = ORM::factory("item", 1);
-      access::allow($guest, "view", $root);
-      access::allow($guest, "view_full", $root);
+      access::allow($everybody, "view", $root);
+      access::allow($everybody, "view_full", $root);
 
       access::allow($registered, "view", $root);
       access::allow($registered, "view_full", $root);
-
-      access::allow($admin, "view", $root);
-      access::allow($admin, "view_full", $root);
-      access::allow($admin, "edit", $root);
     }
   }
 
