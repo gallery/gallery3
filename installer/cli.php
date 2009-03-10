@@ -23,6 +23,7 @@
  * -u     Database user          (default: root)
  * -p     Database user password (default: )
  * -d     Database name          (default: gallery3)
+ * -x     Table prefix           (default: )
  */
 if (installer::already_installed()) {
   print "Gallery 3 is already installed.\n";
