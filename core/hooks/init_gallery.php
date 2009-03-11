@@ -19,7 +19,7 @@
  */
 
 if (!file_exists(VARPATH . "database.php")) {
-  header("Location: ../installer");
+  header("Location: installer");
   exit();
 }
 
