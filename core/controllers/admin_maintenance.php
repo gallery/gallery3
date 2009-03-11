@@ -40,7 +40,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_maintenance.html");
-    $view->content->task_definitions = task::get_definitions("admin");
+    $view->content->task_definitions = task::get_definitions();
     $view->content->running_tasks = ORM::factory("task")
       ->where("done", 0)->orderby("updated", "DESC")->find_all();
     $view->content->finished_tasks = ORM::factory("task")
