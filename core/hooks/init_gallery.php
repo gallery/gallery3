@@ -19,8 +19,7 @@
  */
 
 if (!file_exists(VARPATH . "database.php")) {
-  header("Location: installer");
-  exit();
+  url::redirect(url::abs_file("installer"));
 }
 
 Event::add("system.ready", array("I18n", "instance"));
