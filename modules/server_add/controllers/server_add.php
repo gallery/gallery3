@@ -82,10 +82,12 @@ class Server_Add_Controller extends Controller {
       }
     }
 
-    $task = task::create("server_add_task::add_from_server", t("Add from server"),
-                         array("item_id" => $id,
-                               "next" => 0,
-                               "paths" => $files));
+    $task_def = Task_Definition::factory()
+      ->callback("server_add_task::add_from_server")
+      ->description(t("Add photos or movies from the local server"))
+      ->name(t("Add from server"));
+    $task = task::create($task_def, array("item_id" => $id, "next" => 0, "paths" => $files));
+
     batch::start();
     print json_encode(array("result" => "started",
                             "url" => url::site("server_add/add_photo/{$task->id}?csrf=" .

@@ -35,18 +35,10 @@ class task_Core {
     return $tasks;
   }
 
-  static function create($task_callback, $task_name=null, $context=array()) {
+  static function create($task_definitions, $context) {
     $task = ORM::factory("task");
-    $task->callback = $task_callback;
-    if (empty($task_name)) {
-      $task_definitions = self::get_definitions();
-      $task->name = $task_definitions[$task_callback]->name;
-    } else {
-      $task->name = $task_name;
-    }
-    if (empty($task->name)) {
-      $task_name = $task_callback;
-    }
+    $task->callback = $task_definitions->callback;
+    $task->name = $task_definitions->name;
     $task->percent_complete = 0;
     $task->status = "";
     $task->state = "started";
