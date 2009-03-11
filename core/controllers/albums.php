@@ -23,7 +23,15 @@ class Albums_Controller extends Items_Controller {
    *  @see REST_Controller::_show($resource)
    */
   public function _show($album) {
-    access::required("view", $album);
+    try {
+      access::required("view", $album);
+    } catch (Exception $e) {
+      if ($album->id != 1) {
+        throw $e;
+      } else {
+        url::redirect("login/page");
+      }
+    }
 
     $page_size = module::get_var("core", "page_size", 9);
     $show = $this->input->get("show");

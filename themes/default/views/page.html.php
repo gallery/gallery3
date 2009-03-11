@@ -5,7 +5,9 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>
-      <? if ($page_type == "tag"): ?>
+      <? if ($page_type == "login"): ?>
+      <?= t("Please Logon to Gallery") ?>
+      <? elseif ($page_type == "tag"): ?>
       <?= t("Browse Tags") ?> :: <?= $tag->name ?>
       <? else: ?>
       <?= t("Browse Photos") ?> :: <?= $item->title ?>

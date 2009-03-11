@@ -26,6 +26,13 @@ class Login_Controller extends Controller {
     }
   }
 
+  public function page() {
+    $view = new Theme_View("page.html");
+    $view->page_type = "login";
+    $view->content = "<script>\$(\"#gLoginLink\").ready(function() {\$(\"#gLoginLink\").click();});</script>";
+    print $view;
+  }
+
   private function _try_login() {
     $form = $this->_login_form()->form;
 
@@ -44,7 +51,8 @@ class Login_Controller extends Controller {
       user::login($user);
       log::info("user", t("User %name logged in", array("name" => $user->name)));
       print json_encode(
-        array("result" => "success"));
+        array("result" => "success",
+              "location" => url::site("")));
     } else {
       print json_encode(
         array("result" => "error",
