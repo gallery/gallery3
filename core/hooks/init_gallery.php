@@ -17,6 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
+if (!file_exists(VARPATH . "database.php")) {
+  header("Location: ../installer");
+  exit();
+}
+
 Event::add("system.ready", array("I18n", "instance"));
 Event::add("system.post_routing", array("theme", "load_themes"));
 Event::add("system.ready", array("module", "load_modules"));
