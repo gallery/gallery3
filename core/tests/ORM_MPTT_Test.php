@@ -22,6 +22,9 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   private function create_item_and_add_to_parent($parent) {
     $album = ORM::factory("item");
     $album->type = "album";
+    $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
+    $album->sort_column = "id";
+    $album->sort_order = "ASC";
     $album->add_to_parent($parent);
     return $album;
   }
@@ -30,6 +33,9 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $album = ORM::factory("item");
     $album->type = "album";
+    $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
+    $album->sort_column = "id";
+    $album->sort_order = "ASC";
     $album->add_to_parent($root);
 
     $this->assert_equal($album->parent()->right - 2, $album->left);
@@ -152,6 +158,9 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
     $parent = ORM::factory("item");
     $parent->type = "album";
+    $parent->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
+    $parent->sort_column = "id";
+    $parent->sort_order = "ASC";
     $parent->add_to_parent($root);
 
     $photo = ORM::factory("item");
@@ -160,6 +169,9 @@ class ORM_MPTT_Test extends Unit_Test_Case {
 
     $album1 = ORM::factory("item");
     $album1->type = "album";
+    $album1->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
+    $album1->sort_column = "id";
+    $album1->sort_order = "ASC";
     $album1->add_to_parent($parent);
 
     $photo1 = ORM::factory("item");

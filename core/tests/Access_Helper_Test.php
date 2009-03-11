@@ -64,6 +64,10 @@ class Access_Helper_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $item = ORM::factory("item");
     $item->type = "album";
+    $item->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
+    $item->sort_column = "id";
+    $item->sort_order = "ASC";
+    
     $item->add_to_parent($root);
 
     // Simulate an event
