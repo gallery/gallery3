@@ -5,7 +5,8 @@
       title="<?= t("Login to Gallery") ?>"
       id="gLoginLink"><?= t("Login") ?></a></li>
   <? else: ?>
-  <li class="first"><a href="<?= url::site("form/edit/users/{$user->id}") ?>"
+     <li class="first"><?= t("Logged in as %name", array("name" => $user->full_name)) ?></li>
+  <li><a href="<?= url::site("form/edit/users/{$user->id}") ?>"
       title="<?= t("Edit Your Profile") ?>"
       id="gUserProfileLink" class="gDialogLink"><?= t("Modify Profile") ?></a></li>
   <li><a href="<?= url::site("logout?continue=" . url::current(true)) ?>"
