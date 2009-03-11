@@ -248,8 +248,9 @@ class module_Core {
       $var->name = $name;
     }
     $var->value = $value;
-    $var->save();
-  }
+    $var->save(); 
+    self::$var_cache[$module_name][$name] = $value;
+ }
 
   /**
    * Increment the value of a variable for this module
@@ -262,6 +263,7 @@ class module_Core {
       "UPDATE {vars} SET `value` = `value` + $increment " .
       "WHERE `module_name` = '$module_name' " .
       "AND `name` = '$name'");
+    unset(self::$var_cache[$module_name][$name]);
   }
 
  /**
@@ -277,5 +279,6 @@ class module_Core {
     if ($var->loaded) {
       $var->delete();
     }
+    unset(self::$var_cache[$module_name][$name]);
   }
 }
