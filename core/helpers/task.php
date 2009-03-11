@@ -35,10 +35,10 @@ class task_Core {
     return $tasks;
   }
 
-  static function create($task_definitions, $context) {
+  static function create($task_def, $context) {
     $task = ORM::factory("task");
-    $task->callback = $task_definitions->callback;
-    $task->name = $task_definitions->name;
+    $task->callback = $task_def->callback;
+    $task->name = $task_def->name;
     $task->percent_complete = 0;
     $task->status = "";
     $task->state = "started";
