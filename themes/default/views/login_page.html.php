@@ -5,11 +5,7 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>
-      <? if ($page_type == "tag"): ?>
-      <?= t("Browse Tags") ?> :: <?= $tag->name ?>
-      <? else: ?>
-      <?= t("Browse Photos") ?> :: <?= $item->title ?>
-      <? endif ?>
+      <?= t("Please Login to Gallery") ?>
     </title>
     <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
@@ -33,6 +29,12 @@
     <script src="<?= $theme->url("js/jquery.localscroll.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
+    <script>
+      $("#gLoginLink").ready(function() {
+        $("#gLoginLink").click();
+      });
+    </script>
+ 
   </head>
 
   <body>
@@ -49,13 +51,10 @@
           <div class="yui-b">
             <div id="gContent" class="yui-g">
               <?= $theme->messages() ?>
-              <?= $content ?>
             </div>
           </div>
         </div>
-        <div id="gSidebar" class="yui-b">
-          <?= $theme->display("sidebar.html") ?>
-        </div>
+        <div id="gSidebar" class="yui-b">&nbsp;</div>
       </div>
       <div id="ft">
         <div id="gFooter">

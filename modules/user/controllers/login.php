@@ -27,9 +27,8 @@ class Login_Controller extends Controller {
   }
 
   public function page() {
-    $view = new Theme_View("page.html");
+    $view = new Theme_View("login_page.html");
     $view->page_type = "login";
-    $view->content = "<script>\$(\"#gLoginLink\").ready(function() {\$(\"#gLoginLink\").click();});</script>";
     print $view;
   }
 
