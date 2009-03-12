@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Database extends Database_Core {
+  protected $_table_names;
+  
   public function open_paren() {
     $this->where[] = "(";
     return $this;
@@ -56,6 +58,30 @@ class Database extends Database_Core {
 
   public function add_table_prefixes($sql) {
     $prefix = $this->config["table_prefix"];
-    return preg_replace("#{([a-zA-Z0-9_]+)}#", "{$prefix}$1", $sql);
+    if (strpos($sql, "SHOW TABLES") === 0) {
+      /*
+       * Don't ignore "show tables", otherwise we could have a infinite
+       * @todo this may have to be changed if we support more than mysql
+       */
+      return $sql;
+    } else if (strpos($sql, "CREATE TABLE") === 0) {
+      // Creating a new table add it to the table cache.
+      $open_brace = strpos($sql, "{") + 1;
+      $close_brace = strpos($sql, "}", $open_brace);
+      $name = substr($sql, $open_brace, $close_brace - $open_brace);
+      $this->_table_names["{{$name}}"] = "{$prefix}$name";
+    }
+
+    if (!isset($this->_table_names)) {
+      // This should only run once on the first query
+      $this->_table_names =array();
+      $len = strlen($prefix);
+      foreach($this->list_tables() as $table_name) {
+        $naked_name = strpos($table_name, $prefix) !== 0 ? $table_name : substr($table_name, $len);
+        $this->_table_names["{{$naked_name}}"] = $table_name;
+      }
+    }
+    
+    return empty($this->_table_names) ? $sql : strtr($sql, $this->_table_names);
   }
 }

@@ -86,14 +86,28 @@ class Database_Test extends Unit_Test_Case {
 
   function prefix_replacement_test() {
     $db = Database_For_Test::instance();
-    $sql = "UPDATE {access_caches} SET `edit_1` = 1 " .
+    $converted = $db->add_table_prefixes("CREATE TABLE IF NOT EXISTS {test_tables} (
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` varchar(32) NOT NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8");
+    $expected = "CREATE TABLE IF NOT EXISTS g3test_test_tables (
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` varchar(32) NOT NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8";
+    $this->assert_same($expected, $converted);
+   
+    $sql = "UPDATE {test_tables} SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
         "  (SELECT `id` FROM {items} " .
         "  WHERE `left` >= 1 " .
         "  AND `right` <= 6)";
     $sql = $db->add_table_prefixes($sql);
 
-    $expected = "UPDATE g3test_access_caches SET `edit_1` = 1 " .
+    $expected = "UPDATE g3test_test_tables SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
         "  (SELECT `id` FROM g3test_items " .
         "  WHERE `left` >= 1 " .
@@ -113,6 +127,7 @@ class Database_Test extends Unit_Test_Case {
 class Database_For_Test extends Database {
   static function instance() {
     $db = new Database_For_Test();
+    $db->_table_names["{items}"] = "g3test_items";
     $db->config["table_prefix"] = "g3test_";
     return $db;
   }
