@@ -34,16 +34,4 @@ class core_event_Core {
   static function item_before_delete($item) {
     access::delete_item($item);
   }
-
-  static function start_batch() {
-    $batch_id = Session::instance()->get("batch_id");
-    if (empty($batch_id)) {
-      $batch_id = mt_rand();
-      Session::instance()->set("batch_id", $batch_id);
-    }
-  }
-
-  static function end_batch() {
-    Session::instance()->delete("batch_id");
-  }
 }
