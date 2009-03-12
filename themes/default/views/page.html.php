@@ -5,10 +5,13 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>
-      <? if ($page_type == "tag"): ?>
-      <?= t("Browse Tags") ?> :: <?= $tag->name ?>
+      <? if (empty($page_title)): ?>
+        <?= t("Browse Photos") ?>
+        <? if (!empty($item)): ?>
+        :: <?= $item->title ?>
+        <? endif ?>
       <? else: ?>
-      <?= t("Browse Photos") ?> :: <?= $item->title ?>
+        <?= $page_title ?>
       <? endif ?>
     </title>
     <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />

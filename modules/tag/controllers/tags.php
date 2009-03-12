@@ -33,6 +33,7 @@ class Tags_Controller extends REST_Controller {
 
     $template = new Theme_View("page.html", "tag");
     $template->set_global('page_size', $page_size);
+    $template->set_global('page_title', t("Browse Tag::%name", array("name" => $tag->name)));
     $template->set_global('tag', $tag);
     $template->set_global('children', $tag->items($page_size, $offset));
     $template->set_global('children_count', $children_count);
