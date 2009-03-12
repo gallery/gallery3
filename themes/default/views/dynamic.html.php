@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gAlbumHeader">
   <div id="gAlbumHeaderButtons">
-    <?= $theme->tag_top() ?>
+    <?= $theme->dynamic_top() ?>
   </div>
   <h1><?= $tag->name ?></h1>
 </div>
@@ -24,6 +24,6 @@
   </li>
   <? endforeach ?>
 </ul>
-<?= $theme->tag_bottom() ?>
+<?= $theme->dynamic_bottom() ?>
 
 <?= $theme->pager() ?>

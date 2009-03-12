@@ -158,6 +158,8 @@ class Theme_View_Core extends View {
     case "album_bottom":
     case "album_top":
     case "credits";
+    case "dynamic_bottom":
+    case "dynamic_top":
     case "footer":
     case "head":
     case "header_bottom":
@@ -165,16 +167,14 @@ class Theme_View_Core extends View {
     case "page_bottom":
     case "page_top":
     case "photo_blocks":
+    case "photo_bottom":
     case "photo_top":
     case "sidebar_blocks":
     case "sidebar_bottom":
     case "sidebar_top":
-    case "tag_bottom":
-    case "tag_top":
     case "thumb_bottom":
     case "thumb_info":
     case "thumb_top":
-    case "photo_bottom":
       $blocks = array();
       foreach (module::installed() as $module) {
         $helper_class = "{$module->name}_theme";
