@@ -13,16 +13,16 @@
 <p>
   <a href="<?= url::site("form/edit/users/{$user->id}") ?>"
     title="<?= t("Edit Your Profile") ?>"
-    id="gAfterInstallChangePasswordLink"><?= t("Change Password Now") ?></a>
+    id="gAfterInstallChangePasswordLink" class="gButtonLink ui-state-default ui-corners-all"><?= t("Change Password Now") ?></a>
   <script>
     $("#gAfterInstallChangePasswordLink").bind("click", handleDialogEvent);
   </script>
 </p>
 
 <p>
-  <?= t("Want to learn more about Gallery? The <a href=\"%url\">Gallery website</a> has news and information about Gallery and the Gallery community.", array("url" => "http://gallery.menalto.com")) ?>
+  <?= t("Want to learn more? The <a href=\"%url\">Gallery website</a> has news and information about Gallery Project and community.", array("url" => "http://gallery.menalto.com")) ?>
 </p>
 
 <p>
-  <?= t("Having problems? We've got lots of information in our <a href=\"%codex_url\">documentation site</a> or you can <a href=\"%forum_url\">ask for help in the forums!</a>", array("codex_url" => "http://codex.gallery2.org/Main_Page", "forum_url" => "http://gallery.menalto.com/forum")) ?>
+  <?= t("Having problems? There's lots of information in our <a href=\"%codex_url\">documentation site</a> or you can <a href=\"%forum_url\">ask for help in the forums!</a>", array("codex_url" => "http://codex.gallery2.org/Main_Page", "forum_url" => "http://gallery.menalto.com/forum")) ?>
 </ul>

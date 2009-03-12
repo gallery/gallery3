@@ -4,7 +4,7 @@
 <?= $header_text ?>
 <? else: ?>
 <a href="<?= url::site("albums/1") ?>">
-  <img id="gLogo" alt="<?= t("Logo") ?>" src="<?= $theme->url("images/logo.png") ?>" />
+  <img id="gLogo" alt="<?= t("Gallery: Your photos on your web site") ?>" src="<?= $theme->url("images/logo.png") ?>" />
 </a>
 <? endif ?>
 
