@@ -554,6 +554,7 @@ form p.gError {
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader #gLoginMenu {
+  color: #999;
   float: right;
 }
 
