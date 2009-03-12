@@ -19,7 +19,11 @@
  */
 class search_theme_Core {
   static function header_top($theme) {
-    $view = new View("search_link.html");
-    return $view->render();
+    if ($theme->page_type() != "login") {
+      $view = new View("search_link.html");
+      return $view->render();
+    }else {
+      return "";
+    }
   }
 }

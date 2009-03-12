@@ -72,15 +72,17 @@ class Theme_View_Core extends View {
 
   public function site_menu() {
     $menu = Menu::factory("root");
-    core_menu::site($menu, $this);
+    if ($this->page_type != "login") {
+      core_menu::site($menu, $this);
 
-    foreach (module::installed() as $module) {
-      if ($module->name == "core") {
-        continue;
-      }
-      $class = "{$module->name}_menu";
-      if (method_exists($class, "site")) {
-        call_user_func_array(array($class, "site"), array(&$menu, $this));
+      foreach (module::installed() as $module) {
+        if ($module->name == "core") {
+          continue;
+        }
+        $class = "{$module->name}_menu";
+        if (method_exists($class, "site")) {
+          call_user_func_array(array($class, "site"), array(&$menu, $this));
+        }
       }
     }
 

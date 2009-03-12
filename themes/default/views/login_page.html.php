@@ -25,8 +25,6 @@
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/jquery.scrollTo.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/jquery.localscroll.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
     <script>
@@ -34,14 +32,12 @@
         $("#gLoginLink").click();
       });
     </script>
- 
   </head>
 
   <body>
     <?= $theme->page_top() ?>
     <div id="doc4" class="yui-t5 gView">
       <div id="hd">
-        <?= $theme->site_status() ?>
         <div id="gHeader">
           <?= $theme->display("header.html") ?>
         </div>
@@ -49,9 +45,7 @@
       <div id="bd">
         <div id="yui-main">
           <div class="yui-b">
-            <div id="gContent" class="yui-g">
-              <?= $theme->messages() ?>
-            </div>
+            <div id="gContent" class="yui-g">&nbsp; </div>
           </div>
         </div>
         <div id="gSidebar" class="yui-b">&nbsp;</div>
