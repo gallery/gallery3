@@ -28,7 +28,7 @@ class exif_installer {
                    `item_id` int(9) NOT NULL,
                    `name` varchar(64) NOT NULL,
                    `summary` boolean NOT NULL,
-                   `value` varchar(255) NOT NULL,
+                   `value` varchar(1024) NOT NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`item_id`, `summary`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
