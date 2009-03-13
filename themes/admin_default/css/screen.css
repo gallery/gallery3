@@ -213,6 +213,8 @@ li.gGroup {
 #gGroupAdmin:after,
 .gSelected:after,
 .gAvailable .gBlock:after,
+#gModuleCreateForm ul li ul:after,
+#gDeveloperTools:after,
 #gPhotoStream:after {
   clear: both;
   content: ".";
