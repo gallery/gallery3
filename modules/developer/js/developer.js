@@ -3,7 +3,6 @@ $("#gDeveloperTools").ready(function() {
 });
 
 var module_success = function(data) {
-  //alert(data);
   $("#gGenerateModule").after('<div id="moduleProgress" style="margin-left: 5em;"></div>');
   $("#moduleProgress").progressbar();
 
