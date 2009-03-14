@@ -323,11 +323,14 @@ class Item_Model extends ORM_MPTT {
         $height = $max;
       }
     }
-    return html::image(array("src" => $this->thumb_url(),
-                             "alt" => $this->title,
-                             "width" => $width,
-                             "height" => $height),
-                       $extra_attrs);
+
+    // html::image forces an absolute url which we don't want
+    return "<img" . html::attributes(
+      array("src" => $this->thumb_url(),
+            "alt" => $this->title,
+            "width" => $width,
+            "height" => $height)) .
+      "/>";
   }
 
   /**
@@ -336,11 +339,13 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function resize_tag($extra_attrs) {
-    return html::image(array("src" => $this->resize_url(),
-                             "alt" => $this->title,
-                             "width" => $this->resize_width,
-                             "height" => $this->resize_height),
-                       $extra_attrs);
+    // html::image forces an absolute url which we don't want
+    return "<img" . html::attributes(
+      array("src" => $this->resize_url(),
+            "alt" => $this->title,
+            "width" => $resize_width,
+            "height" => $resize_height)) .
+      "/>";
   }
 
   public function movie_tag($extra_attrs) {
