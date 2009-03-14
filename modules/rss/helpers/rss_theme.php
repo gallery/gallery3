@@ -36,10 +36,10 @@ class rss_theme_Core {
     $block->title = t("Available RSS Feeds");
     $block->content = new View("rss_block.html");
     $block->content->feeds = array(
-      t("New photos or movies") => url::abs_site("rss/updates"),
-      t("All new comments") => url::abs_site("rss/comments"),
+      t("New photos or movies") => url::site("rss/updates"),
+      t("All new comments") => url::site("rss/comments"),
       sprintf(t("Comments on %s"),
-              $theme->item()->title) => url::abs_site("rss/comments/{$theme->item()->id}")
+              $theme->item()->title) => url::site("rss/comments/{$theme->item()->id}")
     );
     return $block;
   }
