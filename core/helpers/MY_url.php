@@ -59,7 +59,8 @@ class url extends url_Core {
    * Just like url::file() except that it returns an absolute URI
    */
   static function abs_file($path) {
-    return url::base(false, (empty($_SERVER['HTTPS']) OR $_SERVER['HTTPS'] === 'off') ? 'http' : 'https') . $path;
+    return url::base(
+      false, (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? 'http' : 'https') . $path;
   }
 
   /**
@@ -67,7 +68,8 @@ class url extends url_Core {
    * doesn't take a protocol parameter.
    */
   static function abs_site($path) {
-    return url::site($path, (empty($_SERVER['HTTPS']) OR $_SERVER['HTTPS'] === 'off') ? 'http' : 'https');
+    return url::site(
+      $path, (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? 'http' : 'https');
   }
 
   /**
