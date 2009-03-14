@@ -25,7 +25,7 @@ class developer_task_Core {
 
   static function create_module($task) {
     $context = unserialize($task->context);
-    $module_path = (MODPATH . "{$context['name']}");
+    $module_path = (MODPATH . "{$context['path_part']}");
 
     switch ($context["step"]) {
     case 0:               // Create directory tree

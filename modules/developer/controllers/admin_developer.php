@@ -36,18 +36,18 @@ class Admin_Developer_Controller extends Admin_Controller {
     list ($form, $errors) = $this->_get_module_form();
 
     $post = new Validation($_POST);
-    $post->pre_filter("strtolower", "name");
     $post->add_rules("name", "required");
     $post->add_rules("description", "required");
     $post->add_callbacks("name", array($this, "_is_module_defined"));
     
     if ($post->validate()) {
-
       $task_def = Task_Definition::factory()
         ->callback("developer_task::create_module")
         ->description(t("Create a new module"))
         ->name(t("Create Module"));
-      $task = task::create($task_def, array_merge(array("step" => 0), $post->as_array()));
+      $path_part = strtr(strtolower($post->name), " ", "_");
+      $task = task::create($task_def, array_merge(array("step" => 0, "path_part" => $path_part),
+                                                  $post->as_array()));
 
       print json_encode(array("result" => "started",
                             "url" => url::site("admin/developer/run_create/{$task->id}?csrf=" .
