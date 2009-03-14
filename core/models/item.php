@@ -192,7 +192,7 @@ class Item_Model extends ORM_MPTT {
    * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
    * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
    */
-  public function thumb_url($full_uri=true) {
+  public function thumb_url($full_uri=false) {
     $base = ($full_uri ?
              url::abs_file("var/thumbs/" . $this->relative_path()) :
              url::file("var/thumbs/" . $this->relative_path()));
@@ -219,7 +219,7 @@ class Item_Model extends ORM_MPTT {
    * album: http://example.com/gallery3/var/resizes/album1/.resize.jpg
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
-  public function resize_url($full_uri=true) {
+  public function resize_url($full_uri=false) {
     return ($full_uri ?
             url::abs_file("var/resizes/" . $this->relative_path()) :
             url::file("var/resizes/" . $this->relative_path())) .
