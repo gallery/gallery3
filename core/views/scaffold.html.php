@@ -426,20 +426,6 @@
                 <i>(<?= $most_tagged->count ?> tags)</i>
               </li>
               <? endif ?>
-              <li> Profiling:
-                <? if (Session::instance()->get("profiler", false)): ?>
-                <b>on</b> <?= html::anchor("scaffold/session/profiler?value=0", "off") ?>
-                <? else: ?>
-                <?= html::anchor("scaffold/session/profiler?value=1", "on") ?> <b>off</b>
-                <? endif ?>
-              </li>
-              <li> Debug:
-                <? if (Session::instance()->get("debug", false)): ?>
-                <b>on</b> <?= html::anchor("scaffold/session/debug?value=0", "off") ?>
-                <? else: ?>
-                <?= html::anchor("scaffold/session/debug?value=1", "on") ?> <b>off</b>
-                <? endif ?>
-              </li>
             </ul>
           </div>
 
