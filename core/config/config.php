@@ -117,7 +117,6 @@ $config['extension_prefix'] = 'MY_';
  * in your application directory, configuration files, controllers, views, etc.
  */
 $config['modules'] = array(
-  MODPATH . 'atom',
   MODPATH . 'forge',
 );
 
