@@ -32,12 +32,8 @@ $("#gModuleCreateForm").ready(function() {
               <?= form::dropdown(array("name" => "theme[]", "multiple" => true, "size" => 6), $theme, $form["theme[]"]) ?>
            </li>
            <li>
-              <?= form::label("block[]", t("Block Callbacks")) ?>
-              <?= form::dropdown(array("name" => "block[]", "multiple" => true, "size" => 6), $block, $form["block[]"]) ?>
-           </li>
-           <li>
               <?= form::label("menu[]", t("Menu Callback")) ?>
-              <?= form::dropdown(array("name" => "menu[]", "multiple" => true, "size" => 6), $menu, $form["block[]"]) ?>
+              <?= form::dropdown(array("name" => "menu[]", "multiple" => true, "size" => 6), $menu, $form["menu[]"]) ?>
            </li>
            <li>
               <?= form::label("event[]", t("Gallery Event Handlers")) ?>

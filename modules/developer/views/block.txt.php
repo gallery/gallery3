@@ -18,17 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class <?= $module ?>_installer {
-  static function install() {
-    $version = module::get_version("<?= $module ?>");
-    if ($version == 0) {
-      /* @todo Put database creation here */
-      module::set_version("<?= $module ?>", 1);
-    }
+class <?= $module ?>_block {
+  static function get($block_id) {
   }
-
-  static function uninstall() {
-    /* @todo Put database table drops here */
-    module::delete("<?= $module ?>");
+  static function get_list() {
   }
 }

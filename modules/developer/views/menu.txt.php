@@ -1,4 +1,5 @@
-<?php defined("SYSPATH") or die("No direct script access.");
+<?php defined("SYSPATH") or die("No direct script access."); ?>
+<?= "<?php defined(\"SYSPATH\") or die(\"No direct script access.\");" ?>
 /**
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2008 Bharat Mediratta
@@ -17,9 +18,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class developer_theme_Core {
-  static function admin_head($theme) {
-    $url = url::file("modules/developer/js/developer.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>";
+class <?= $module ?>_menu {
+  static function admin($menu, $theme) {
+    $menu->get("settings_menu")
+      ->append(Menu::factory("link")
+        ->id("<?= $module ?>_menu")
+        ->label(t("<?= $module_name ?> Administration"))
+        ->url(url::site("admin/<?= $module ?>")));
+  }
+  
+<? if (!empty($callbacks["album"])): ?>
+  static function album($menu, $theme) {
+  }
+  
+<? endif ?>
+<? if (!empty($callbacks["photo"])): ?>
+  static function photo($menu, $theme) {
+  }
+  
+<? endif ?>
+  static function site($menu, $theme) {
   }
 }

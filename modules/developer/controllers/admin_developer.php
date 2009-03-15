@@ -45,9 +45,7 @@ class Admin_Developer_Controller extends Admin_Controller {
         ->callback("developer_task::create_module")
         ->description(t("Create a new module"))
         ->name(t("Create Module"));
-      $path_part = strtr(strtolower($post->name), " ", "_");
-      $task = task::create($task_def, array_merge(array("step" => 0, "path_part" => $path_part),
-                                                  $post->as_array()));
+      $task = task::create($task_def, array_merge(array("step" => 0), $post->as_array()));
 
       print json_encode(array("result" => "started",
                             "url" => url::site("admin/developer/run_create/{$task->id}?csrf=" .
@@ -94,10 +92,9 @@ class Admin_Developer_Controller extends Admin_Controller {
     $v = new View("developer_module.html");
     $v->action = "admin/developer/module_create";
     $v->hidden = array("csrf" => access::csrf_token());
-    $v->theme = array_combine(array_keys($config["theme"]), array_keys($config["theme"]));
-    $v->block = array_combine(array_keys($config["block"]), array_keys($config["block"]));
-    $v->event = array_combine(array_keys($config["event"]), array_keys($config["event"]));
-    $v->menu = array_combine(array_keys($config["menu"]), array_keys($config["menu"]));
+    $v->theme = $config["theme"];
+    $v->event = $config["event"];
+    $v->menu = $config["menu"];
     $v->form = $form;
     $v->errors = $errors;
     return $v;
@@ -112,7 +109,7 @@ class Admin_Developer_Controller extends Admin_Controller {
   
   private function _get_module_form($name="", $description="") {
     $form = array("name" => "", "description" => "", "theme[]" => array(), "menu[]" => array(),
-                  "block[]" => array(), "event[]" => array());
+                  "event[]" => array());
     $errors = array_fill_keys(array_keys($form), "");
     
     return array($form, $errors);
