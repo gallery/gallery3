@@ -27,30 +27,6 @@ class core_menu_Core {
                              ->id("scaffold_home")
                              ->label("Dashboard")
                              ->url(url::site("scaffold")));
-
-      if (Session::instance()->get("profiler", false)) {
-        $scaffold_menu->append(Menu::factory("link")
-                               ->id("scaffold_profiler")
-                               ->label("Profiling off")
-                               ->url(url::site("scaffold/session/profiler?value=0")));
-      } else {
-        $scaffold_menu->append(Menu::factory("link")
-                               ->id("scaffold_profiler")
-                               ->label("Profiling on")
-                               ->url(url::site("scaffold/session/profiler?value=1")));
-      }
-
-      if (Session::instance()->get("debug", false)) {
-        $scaffold_menu->append(Menu::factory("link")
-                               ->id("scaffold_debugger")
-                               ->label("Debugging off")
-                               ->url(url::site("scaffold/session/debug?value=0")));
-      } else {
-        $scaffold_menu->append(Menu::factory("link")
-                               ->id("scaffold_debugger")
-                               ->label("Debugging on")
-                               ->url(url::site("scaffold/session/debug?value=1")));
-      }
     }
 
     $menu->append(Menu::factory("link")

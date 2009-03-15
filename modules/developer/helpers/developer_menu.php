@@ -19,10 +19,38 @@
  */
 class developer_menu_Core {
   static function admin($menu, $theme) {
-    $menu
-      ->append(Menu::factory("link")
+    $developer_menu = Menu::factory("submenu")
         ->id("developer_menu")
-        ->label(t("Developer Tools"))
-        ->url(url::site("admin/developer")));
+      ->label(t("Developer Tools"));
+    $menu->append($developer_menu);
+    
+    $developer_menu
+      ->append(Menu::factory("link")
+          ->id("generate_menu")
+          ->label(t("Generate"))
+          ->url(url::site("admin/developer")));
+    if (Session::instance()->get("profiler", false)) {
+      $developer_menu->append(Menu::factory("link")
+                              ->id("scaffold_profiler")
+                              ->label("Profiling off")
+                              ->url(url::site("admin/developer/session/profiler?value=0")));
+    } else {
+      $developer_menu->append(Menu::factory("link")
+                              ->id("scaffold_profiler")
+                              ->label("Profiling on")
+                              ->url(url::site("admin/developer/session/profiler?value=1")));
+    }
+
+    if (Session::instance()->get("debug", false)) {
+      $developer_menu->append(Menu::factory("link")
+                              ->id("scaffold_debugger")
+                              ->label("Debugging off")
+                              ->url(url::site("admin/developer/session/debug?value=0")));
+    } else {
+      $developer_menu->append(Menu::factory("link")
+                              ->id("scaffold_debugger")
+                              ->label("Debugging on")
+                              ->url(url::site("admin/developer/session/debug?value=1")));
+    }
   }
 }

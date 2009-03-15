@@ -86,6 +86,16 @@ class Admin_Developer_Controller extends Admin_Controller {
     }
   }
 
+  public function session($key) {
+    if (!(user::active()->admin)) {
+      throw new Exception("@todo UNAUTHORIZED", 401);
+    }
+
+    Session::instance()->set($key, $this->input->get("value", false));
+    $this->auto_render = false;
+    url::redirect($_SERVER["HTTP_REFERER"]);
+  }
+
   private function _get_module_create_content($form, $errors) {
     $config = Kohana::config("developer.methods");
 

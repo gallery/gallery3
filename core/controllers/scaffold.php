@@ -365,12 +365,6 @@ class Scaffold_Controller extends Template_Controller {
     return $results;
   }
 
-  public function session($key) {
-    Session::instance()->set($key, $this->input->get("value", false));
-    $this->auto_render = false;
-    url::redirect($_SERVER["HTTP_REFERER"]);
-  }
-
   private function _get_config_errors() {
     $errors = array();
     if (!file_exists(VARPATH)) {
