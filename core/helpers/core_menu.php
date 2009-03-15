@@ -66,17 +66,6 @@ class core_menu_Core {
                      ->url(url::site("permissions/browse/$item->id")));
         }
       }
-
-      if (user::active()->admin) {
-        $scaffold_menu
-          ->append(Menu::factory("link")
-                   ->id("l10n_mode")
-                   ->label(Session::instance()->get("l10n_mode", false)
-                           ? t("Stop translating")
-                           : t("Start translating"))
-                   ->url(url::site("l10n_client/toggle_l10n_mode?csrf=" .
-                                   access::csrf_token())));
-      }
     }
 
     if (user::active()->admin) {
@@ -132,7 +121,13 @@ class core_menu_Core {
                ->append(Menu::factory("link")
                         ->id("languages")
                         ->label(t("Languages"))
-                        ->url(url::site("admin/languages"))))
+                        ->url(url::site("admin/languages")))
+               ->append(Menu::factory("link")
+                   ->id("l10n_mode")
+                   ->label(Session::instance()->get("l10n_mode", false)
+                           ? t("Stop translating") : t("Start translating"))
+                   ->url(url::site("l10n_client/toggle_l10n_mode?csrf=" .
+                                   access::csrf_token()))))
       ->append(Menu::factory("link")
                ->id("modules")
                ->label(t("Modules"))
