@@ -213,14 +213,6 @@ class ORM_MPTT_Core extends ORM {
    * @return  ORM_MTPP
    */
   function move_to($target) {
-    if (!$target->is_album()) {
-      throw new Exception("@todo INVALID_MOVE_TYPE $target->type");
-    }
-
-    if ($this->id == 1) {
-      throw new Exception("@todo INVALID_SOURCE root album");
-    }
-
     if ($this->left <= $target->left &&
         $this->right >= $target->right) {
       throw new Exception("@todo INVALID_TARGET can't move item inside itself");

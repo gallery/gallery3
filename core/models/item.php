@@ -120,6 +120,14 @@ class Item_Model extends ORM_MPTT {
    * @return  ORM_MTPP
    */
   function move_to($target) {
+    if (!$target->is_album()) {
+      throw new Exception("@todo INVALID_MOVE_TYPE $target->type");
+    }
+
+    if ($this->id == 1) {
+      throw new Exception("@todo INVALID_SOURCE root album");
+    }
+
     $original_path = $this->file_path();
     $original_resize_path = $this->resize_path();
     $original_thumb_path = $this->thumb_path();
