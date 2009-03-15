@@ -209,7 +209,7 @@ class ORM_MPTT_Core extends ORM {
    * Move this item to the specified target.
    *
    * @chainable
-   * @param   Item_Model $target  Target item (must be an album)
+   * @param   Item_Model $target Target node
    * @return  ORM_MTPP
    */
   function move_to($target) {
