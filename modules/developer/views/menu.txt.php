@@ -38,5 +38,14 @@ class <?= $module ?>_menu {
   
 <? endif ?>
   static function site($menu, $theme) {
+    $item = $theme->item();
+
+    if ($item && access::can("edit", $item)) {
+      $options_menu = $menu->get("options_menu")
+        ->append(Menu::factory("dialog")
+          ->id("<?= $module ?>")
+          ->label(t("Peform <?= $module_name ?> Processing"))
+          ->url(url::site("<?= $module ?>/index/$item->id")));
+    }
   }
 }

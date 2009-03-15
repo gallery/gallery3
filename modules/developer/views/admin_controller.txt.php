@@ -20,17 +20,13 @@
  */
 class Admin_<?= $class_name ?>_Controller extends Admin_Controller {
   public function index() {
-    $view = new Admin_View("admin.html");
-    $view->content = new View("admin_<?=$module ?>.html");
-    $view->content->form = $this->_get_admin_form();
-
-    print $view;
+    print $this->_get_view();
   }
 
   public function handler() {
     access::verify_csrf();
 
-    $form = $this->_get_admin_form();
+    $form = $this->_get_form();
     if ($form->validate()) {
       // @todo process the admin form
 
@@ -38,17 +34,18 @@ class Admin_<?= $class_name ?>_Controller extends Admin_Controller {
 
       url::redirect("admin/<?= $module ?>");
     }
-    $view = new Admin_View("admin.html");
-    $view->content = new View("admin_<?=$module ?>.html");
-    $view->content->form = $form;
 
-    print $view;
+    print $this->_get_view($form);
   }
 
-  private function _get_admin_view($form=null) {
+  private function _get_view($form=null) {
+    $v = new Admin_View("admin.html");
+    $v->content = new View("admin_<?=$module ?>.html");
+    $v->content->form = empty($form) ? $this->_get_form() : $form;
+    return $v;
   }
   
-  private function _get_admin_form() {
+  private function _get_form() {
     $form = new Forge("admin/<?= $module ?>/handler", "", "post",
                       array("id" => "gAdminForm"));
     $group = $form->group("group");

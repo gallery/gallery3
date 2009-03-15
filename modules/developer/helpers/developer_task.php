@@ -48,6 +48,7 @@ class developer_task_Core {
       self::_render_helper_file($context, "installer");
       break;
     case 2:               // Generate theme helper
+      $context["theme"] = 1;
       self::_render_helper_file($context, "theme");
       break;
     case 3:               // Generate block helper
@@ -74,18 +75,40 @@ class developer_task_Core {
       break;
     case 7:               // Generate admin form
       $file = "{$context['module_path']}/views/admin_{$context['module']}.html.php";
-      Kohana::log("debug", $file);
       ob_start();
       $v = new View("admin_html.txt");
       $v->name = $context["name"];
       $v->module = $context["module"];
-      $v->class = strtr($context["name"], " ", "");
-      Kohana::log("debug", Kohana::debug($v->render()));
+      $v->css_id = preg_replace("#\s+#", "", $context["name"]);
       print $v->render();
       file_put_contents($file, ob_get_contents());
       ob_end_clean();
       break;
-    case 8:               // Generate module.info (do last)
+    case 8:               // Generate controller
+      $file = "{$context['module_path']}/controllers/{$context['module']}.php";
+      ob_start();
+      $v = new View("controller.txt");
+      $v->name = $context["name"];
+      $v->module = $context["module"];
+      $v->class_name = $context["class_name"];
+      $v->css_id = preg_replace("#\s+#", "", $context["name"]);
+      print $v->render();
+      file_put_contents($file, ob_get_contents());
+      ob_end_clean();
+      break;
+    case 9:               // Generate sidebar block view
+      $file = "{$context['module_path']}/views/{$context['module']}_block.html.php";
+      ob_start();
+      $v = new View("block_html.txt");
+      $v->name = $context["name"];
+      $v->module = $context["module"];
+      $v->class_name = $context["class_name"];
+      $v->css_id = preg_replace("#\s+#", "", $context["name"]);
+      print $v->render();
+      file_put_contents($file, ob_get_contents());
+      ob_end_clean();
+      break;
+    case 10:              // Generate module.info (do last)
       $file = "{$context["module_path"]}/module.info";
       ob_start();
       $v = new View("module_info.txt");
@@ -96,10 +119,10 @@ class developer_task_Core {
       ob_end_clean();
       break;
     }
-    $task->done = (++$context["step"]) >= 9;
+    $task->done = (++$context["step"]) >= 11;
     $task->context = serialize($context);
     $task->state = "success";
-    $task->percent_complete = ($context["step"] / 9.0) * 100;
+    $task->percent_complete = ($context["step"] / 11.0) * 100;
   }
 
   private static function _render_helper_file($context, $helper) {
@@ -111,8 +134,11 @@ class developer_task_Core {
       ob_start();
       $v = new View("$helper.txt");
       $v->helper = $helper;
+      $v->name = $context["name"];
       $v->module = $context["module"];
       $v->module_name = $context["name"];
+      $v->css_id = strtr($context["name"], " ", "");
+      $v->css_id = preg_replace("#\s#", "", $context["name"]);
       $v->callbacks = empty($context[$helper]) ? array() : array_fill_keys($context[$helper], 1);
       print $v->render();
       file_put_contents($file, ob_get_contents());

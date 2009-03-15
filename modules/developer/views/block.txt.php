@@ -20,7 +20,19 @@
  */
 class <?= $module ?>_block {
   static function get($block_id) {
+    $block = new Block();
+    if ($block_id == "<?= $module ?>") {
+      $block->css_id = "g<?= $css_id ?>Admin";
+      $block->title = t("<?= $module ?> Dashboard Block");
+      $block->content = new View("<?= $module ?>block.html");
+
+      $block->content->item = ORM::factory("item", 1);
+    }
+    return $block;
   }
+  
   static function get_list() {
+    return array(
+      "<?= $module ?>" => t("<?= $name ?> Dashboard Block"));
   }
 }

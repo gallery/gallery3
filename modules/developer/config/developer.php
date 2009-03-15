@@ -44,7 +44,6 @@ $config["methods"] = array(
                    "photo_blocks" => t("Photo block"),
                    "photo_bottom" => t("Bottom of photo content"),
                    "photo_top" => t("Top of photo content"),
-                   "sidebar_blocks" => t("Sidebar block"),
                    "sidebar_bottom" => t("Bottom of sidebar"),
                    "sidebar_top" => t("Top of sidebar"),
                    "thumb_bottom" => t("Bottom of thumbnail"),

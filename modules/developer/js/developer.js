@@ -9,7 +9,6 @@ var module_success = function(data) {
   var task = data.task;
   var url = data.url;
   var done = false;
-  var counter = 0;
   while (!done) {
     $.ajax({async: false,
       success: function(data, textStatus) {
@@ -20,7 +19,6 @@ var module_success = function(data) {
       type: "POST",
       url: url
     });
-    done = done || ++counter >= 10;
   }
   document.location.reload();
 };

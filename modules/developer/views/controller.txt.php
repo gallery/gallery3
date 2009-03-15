@@ -18,9 +18,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class <?= $module_name ?>_<?= $helper ?> {
-<? foreach ($callbacks as $callback => $args): ?>
-  static function <?= $callback ?>(<?= $args ?>) {
+class <?= $class_name ?>_Controller extends Controller {
+  public function index() {
+    print $this->_get_form();
   }
-<? endforeach ?>
+
+  public function handler() {
+    access::verify_csrf();
+
+    $form = $this->_get_form();
+    if ($form->validate()) {
+      // @todo process the admin form
+
+      message::success(t("<?= $name ?> Processing Successfully"));
+
+      print json_encode(
+        array("result" => "success"));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
+    }
+  }
+ 
+  private function _get_form() {
+    $form = new Forge("<?= $module ?>/handler", "", "post",
+                      array("id" => "g<?= $css_id ?>Form"));
+    $group = $form->group("group")->label(t("<?= $name ?> Handler"));
+    $group->input("text")->label(t("Text"))->rules("required");
+    $group->submit("submit")->value(t("Submit"));
+
+    return $form;
+  }
 }
