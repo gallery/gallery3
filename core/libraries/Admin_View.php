@@ -34,7 +34,8 @@ class Admin_View_Core extends View {
     $this->theme_name = module::get_var("core", "active_admin_theme");
     if (user::active()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
-   }
+    }
+    $this->sidebar = "";
     $this->set_global('theme', $this);
     $this->set_global('user', user::active());
   }
