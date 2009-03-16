@@ -19,7 +19,7 @@
  */
 class core_menu_Core {
   static function site($menu, $theme) {
-    if (file_exists(APPPATH . "controllers/scaffold.php")) {
+    if (file_exists(APPPATH . "controllers/scaffold.php") && user::active()->admin) {
       $menu->append($scaffold_menu = Menu::factory("submenu")
                     ->id("scaffold")
                     ->label("Scaffold"));

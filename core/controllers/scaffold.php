@@ -26,19 +26,14 @@ class Scaffold_Controller extends Template_Controller {
     } catch (Exception $e) {
     }
 
-    $this->template->syscheck = new View("scaffold_syscheck.html");
-    $this->template->syscheck->errors = $this->_get_config_errors();
-    $this->template->syscheck->modules = array();
-
+    if (!user::active()->admin) {
+      throw new Exception("@todo FORBIDDEN", 503);
+    }
+    
     set_error_handler(array("Scaffold_Controller", "_error_handler"));
     try {
-      $this->template->syscheck->modules = module::available();
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
       $this->template->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
-      $this->template->deepest_photo = ORM::factory("item")
-        ->where("type", "photo")->orderby("level", "desc")->find();
-      $this->template->deepest_album = ORM::factory("item")
-        ->where("type", "album")->orderby("level", "desc")->find();
       $this->template->album_tree = $this->_load_album_tree();
       $this->template->add_photo_html = $this->_get_add_photo_html();
     } catch (Exception $e) {
@@ -49,13 +44,10 @@ class Scaffold_Controller extends Template_Controller {
       $this->template->add_photo_html = "";
     }
 
-    $this->_load_user_info();
-    $this->_load_group_info();
     $this->_load_comment_info();
     $this->_load_tag_info();
-    restore_error_handler();
 
-    $this->_create_directories();
+    restore_error_handler();
 
     if (!empty($session) && $session->get("profiler", false)) {
       $profiler = new Profiler();
@@ -63,135 +55,6 @@ class Scaffold_Controller extends Template_Controller {
     }
   }
 
-  function install($module_name, $redirect=true) {
-    $to_install = array();
-    if ($module_name == "*") {
-      foreach (module::available() as $module_name => $info) {
-        if (empty($info->installed)) {
-          $to_install[] = $module_name;
-        }
-      }
-    } else {
-      $to_install[] = $module_name;
-    }
-
-    foreach ($to_install as $module_name) {
-      if ($module_name != "core") {
-        require_once(DOCROOT . "modules/${module_name}/helpers/${module_name}_installer.php");
-      }
-      module::install($module_name);
-    }
-
-    if ($redirect) {
-      url::redirect("scaffold");
-    }
-  }
-
-  function uninstall($module_name, $redirect=true) {
-    $clean = true;
-    if ($module_name == "core") {
-      // We have to uninstall all other modules first, else their tables, etc don't
-      // get cleaned up.
-      $old_handler = set_error_handler(array("scaffold_Controller", "_error_handler"));
-      try {
-        foreach (ORM::factory("module")->find_all() as $module) {
-          if ($module->name != "core" && $module->version) {
-            try {
-              call_user_func(array("{$module->name}_installer", "uninstall"));
-            } catch (Exception $e) {
-              print $e;
-            }
-          }
-        }
-        core_installer::uninstall();
-      } catch (Exception $e) {
-        print $e;
-      }
-
-
-      // Since we're in a state of flux, it's possible that other stuff went wrong with the
-      // uninstall, so back off and nuke it from orbit.  It's the only way to be sure.
-      $db = Database::instance();
-      foreach ($db->list_tables() as $table) {
-        $db->query("DROP TABLE `$table`");
-      }
-      set_error_handler($old_handler);
-    } else {
-      module::uninstall($module_name);
-    }
-    if ($redirect) {
-      url::redirect("scaffold");
-    }
-  }
-
-  function mptt() {
-    $this->auto_render = false;
-    $items = ORM::factory("item")->orderby("id")->find_all();
-    $data = "digraph G {\n";
-    foreach ($items as $item) {
-      $data .= "  $item->parent_id -> $item->id\n";
-      $data .= "  $item->id [label=\"$item->id [$item->level] <$item->left, $item->right>\"]\n";
-    }
-    $data .= "}\n";
-
-    if ($this->input->get("type") == "text") {
-      print "<pre>$data";
-    } else {
-      $proc = proc_open("/usr/bin/dot -Tsvg",
-                        array(array("pipe", "r"),
-                              array("pipe", "w")),
-                        $pipes,
-                        VARPATH . "tmp");
-      fwrite($pipes[0], $data);
-      fclose($pipes[0]);
-
-      header("Content-Type: image/svg+xml");
-      print(stream_get_contents($pipes[1]));
-      fclose($pipes[1]);
-      proc_close($proc);
-    }
-  }
-
-  function i18n($action) {
-    $translation_file = VARPATH . "translation.php";
-
-    switch($action) {
-    case "build":
-      $t = array();
-      for ($i = 0; $i < 500; $i++) {
-        $t["this is message $i of many"] = "localized version of $i";
-      }
-
-      $fp = fopen($translation_file, "wb");
-      fwrite($fp, "<? \$t = ");
-      fwrite($fp, var_export($t, 1));
-      fwrite($fp, ";");
-      fclose($fp);
-      url::redirect("scaffold");
-      break;
-
-    case "run":
-      Benchmark::start("load_translation");
-      include $translation_file;
-      Benchmark::stop("load_translation");
-
-      $count = 500;
-      Benchmark::start("loop_overhead_$count");
-      for ($i = 0; $i < $count; $i++) {
-      }
-      Benchmark::stop("loop_overhead_$count");
-
-      $count = 500;
-      Benchmark::start("translations_$count");
-      for ($i = 0; $i < $count; $i++) {
-        $value = $t["this is message $i of many"];
-      }
-      Benchmark::stop("loop_overhead_$count");
-
-      $profiler = new Profiler();
-      $this->auto_render = false;
-    }
-  }
 
   function add_photos() {
     $path = trim($this->input->post("path"));
@@ -365,80 +228,7 @@ class Scaffold_Controller extends Template_Controller {
     return $results;
   }
 
-  private function _get_config_errors() {
-    $errors = array();
-    if (!file_exists(VARPATH)) {
-      $error = new stdClass();
-      $error->message = "Missing: " . VARPATH;
-      $error->instructions[] = "mkdir " . VARPATH;
-      $error->instructions[] = "chmod 777 " . VARPATH;
-      $errors[] = $error;
-    } else if (!is_writable(VARPATH)) {
-      $error = new stdClass();
-      $error->message = "Not writable: " . VARPATH;
-      $error->instructions[] = "chmod 777 " . VARPATH;
-      $errors[] = $error;
-    }
-
-    $db_php = VARPATH . "database.php";
-    if (!file_exists($db_php)) {
-      $error = new stdClass();
-      $error->message = "Missing: $db_php <br/> Run the following commands...";
-      $error->instructions[] = "cp " . DOCROOT . "kohana/config/database.php $db_php";
-      $error->instructions[] = "chmod 644 $db_php";
-      $error->message2 = "...then edit this file and enter your database configuration settings.";
-      $errors[] = $error;
-    } else if (!is_readable($db_php)) {
-      $error = new stdClass();
-      $error->message = "Not readable: $db_php";
-      $error->instructions[] = "chmod 644 $db_php";
-      $error->message2 = "Then edit this file and enter your database configuration settings.";
-      $errors[] = $error;
-    } else {
-      $old_handler = set_error_handler(array("Scaffold_Controller", "_error_handler"));
-      try {
-        Database::instance()->connect();
-      } catch (Exception $e) {
-        $error = new stdClass();
-        $error->message = "Database error: {$e->getMessage()}";
-        $db_name = Kohana::config("database.default.connection.database");
-        if (strchr($error->message, "Unknown database")) {
-          $error->instructions[] = "mysqladmin -uroot create $db_name";
-        } else {
-          $error->instructions = array();
-          $error->message2 = "Check " . VARPATH . "database.php";
-        }
-        $errors[] = $error;
-      }
-      set_error_handler($old_handler);
-    }
-
-    return $errors;
-  }
-
   function _error_handler($x) {
-  }
-
-  function _create_directories() {
-    foreach (array("logs", "uploads") as $dir) {
-      @mkdir(VARPATH . "$dir");
-    }
-  }
-
-  private function _load_group_info() {
-    if (class_exists("Group_Model")) {
-      $this->template->groups = ORM::factory("group")->find_all();
-    } else {
-      $this->template->groups = array();
-    }
-  }
-
-  private function _load_user_info() {
-    if (class_exists("User_Model")) {
-      $this->template->users = ORM::factory("user")->find_all();
-    } else {
-      $this->template->users = array();
-    }
   }
 
   private function _load_comment_info() {
@@ -465,6 +255,7 @@ class Scaffold_Controller extends Template_Controller {
       $this->template->most_tagged = 0;
     }
   }
+
 
   public function package() {
     $this->auto_render = false;
@@ -560,54 +351,6 @@ class Scaffold_Controller extends Template_Controller {
     url::redirect("scaffold");
   }
 
-  public function add_user() {
-    $name = $this->input->post("user_name");
-    $isAdmin = (bool)$this->input->post("admin");
-    $user = user::create($name, $name, $name);
-    if ($isAdmin) {
-      $user->admin = true;
-      $user->save();
-    }
-    url::redirect("scaffold");
-  }
-
-  public function delete_user($id) {
-    ORM::factory("user", $id)->delete();
-    url::redirect("scaffold");
-  }
-
-  public function add_group() {
-    $name = $this->input->post("group_name");
-    group::create($name);
-    url::redirect("scaffold");
-  }
-
-  public function delete_group($id) {
-    ORM::factory("group", $id)->delete();
-    url::redirect("scaffold");
-  }
-
-  public function remove_from_group($group_id, $user_id) {
-    $group = ORM::factory("group", $group_id);
-    $user = ORM::factory("user", $user_id);
-    if ($group->loaded && $user->loaded) {
-      $group->remove($user);
-      $group->save();
-    }
-    url::redirect("scaffold");
-  }
-
-  public function add_to_group($user_id) {
-    $group_name = $this->input->post("group_name");
-    $group = ORM::factory("group")->where("name", $group_name)->find();
-    $user = ORM::factory("user", $user_id);
-    if ($group->loaded && $user->loaded) {
-      $group->add($user);
-      $group->save();
-    }
-    url::redirect("scaffold");
-  }
-
   private function _load_album_tree() {
     $tree = array();
     foreach (ORM::factory("item")->where("type", "album")->find_all() as $album) {
@@ -619,25 +362,6 @@ class Scaffold_Controller extends Template_Controller {
     }
 
     return $tree;
-  }
-
-  public function add_perm($group_id, $perm, $item_id) {
-    access::allow(ORM::factory("group", $group_id), $perm, ORM::factory("item", $item_id));
-    url::redirect("scaffold");
-  }
-
-  public function deny_perm($group_id, $perm, $item_id) {
-    access::deny(ORM::factory("group", $group_id), $perm, ORM::factory("item", $item_id));
-    url::redirect("scaffold");
-  }
-
-  public function reset_all_perms($group_id, $item_id) {
-    $group = ORM::factory("group", $group_id);
-    $item = ORM::factory("item", $item_id);
-    foreach (ORM::factory("permission")->find_all() as $perm) {
-      access::reset($group, $perm->name, $item);
-    }
-    url::redirect("scaffold");
   }
 
   public function form($arg1, $arg2) {
