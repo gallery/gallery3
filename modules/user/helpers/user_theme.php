@@ -18,15 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_theme_Core {
-  static function head($theme) {
-    // @todo: move this into the theme
-    $user = user::active();
-    if (!user::active()->guest) {
-      $url = url::file("lib/jquery.jeditable.js");
-      return "<script src=\"$url\" type=\"text/javascript\"></script>";
-    }
-  }
-
   static function header_top($theme) {
     $view = new View("login.html");
     $view->user = user::active();
