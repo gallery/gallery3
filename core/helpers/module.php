@@ -149,38 +149,17 @@ class module_Core {
     // Reload module list from the config file since we'll do a refresh after calling install()
     $core = Kohana::config_load("core");
     $kohana_modules = $core["modules"];
+    $modules = ORM::factory("module")->find_all();
 
-    self::$module_names = array();
-    self::$modules = array();
-
-    // This is one of the first database operations that we'll do, so it may fail if there's no
-    // install yet.  Try to handle this situation gracefully expecting that the scaffolding will
-    // Do The Right Thing.
-    // Reverting from installer stage 1.
-    // @todo get rid of this extra error checking when we have an installer.
-    set_error_handler(array("module", "dummy_error_handler"));
-    try {
-      $modules = ORM::factory("module")->find_all();
-    } catch (Exception $e) {
-      return;
+    foreach ($modules as $module) {
+      self::$module_names[$module->name] = $module->name;
+      self::$modules[$module->name] = $module;
+      $kohana_modules[] = MODPATH . $module->name;
     }
-
-    try {
-      foreach ($modules as $module) {
-        self::$module_names[$module->name] = $module->name;
-        self::$modules[$module->name] = $module;
-        $kohana_modules[] = MODPATH . $module->name;
-      }
-
-      Kohana::config_set("core.modules", $kohana_modules);
-    } catch (Exception $e) {
-      self::$module_names = array();
-      self::$modules = array();
-    }
+    Kohana::config_set("core.modules", $kohana_modules);
 
     self::event("gallery_ready");
   }
-  static function dummy_error_handler() { }
 
   /**
    * Run a specific event on all active modules.
@@ -248,7 +227,7 @@ class module_Core {
       $var->name = $name;
     }
     $var->value = $value;
-    $var->save(); 
+    $var->save();
     self::$var_cache[$module_name][$name] = $value;
  }
 
