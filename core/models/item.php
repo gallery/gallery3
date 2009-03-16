@@ -351,8 +351,8 @@ class Item_Model extends ORM_MPTT {
     return "<img" . html::attributes(
       array("src" => $this->resize_url(),
             "alt" => $this->title,
-            "width" => $resize_width,
-            "height" => $resize_height)) .
+            "width" => $this->resize_width,
+            "height" => $this->resize_height)) .
       "/>";
   }
 
