@@ -30,5 +30,5 @@
     </embed>
   </object>
 
-  <input type="submit" value="<?= t("Finish") ?>">
+  <input type="submit" class="ui-state-default ui-corner-all" value="<?= t("Finish") ?>"/>
 </form>

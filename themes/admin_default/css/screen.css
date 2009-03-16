@@ -289,6 +289,10 @@ li.gGroup {
   float: left;
   padding: .2em .2em 0 .1em;
 }
+#gProgress button {
+  float: right;
+  margin-top: 1em;
+}
 
 /** *******************************************************************
  * 7) Server Add 

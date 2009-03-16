@@ -119,6 +119,7 @@ td {
 
 fieldset {
   border: 1px solid #ccc;
+  padding-bottom: .8em;
 }
 
 #gHeader fieldset,

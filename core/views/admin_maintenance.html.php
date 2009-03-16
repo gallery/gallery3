@@ -92,7 +92,7 @@
         </td>
         <td>
           <? if ($task->state == "stalled"): ?>
-          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>" class="gDialogLink">
+          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
             <?= t("resume") ?>
           </a>
           <? endif ?>
@@ -108,9 +108,11 @@
 
   <? if ($finished_tasks->count()): ?>
   <div id="gFinishedTasks">
-    <h2> <?= t("Finished Tasks") ?> </h2>
-    <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"><?= t("remove all") ?></a>
+    <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"
+         class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
+       <span class="ui-icon ui-icon-trash"></span><?= t("remove all finished") ?></a>
 
+    <h2> <?= t("Finished Tasks") ?> </h2>
     <table>
       <tr>
         <th>
