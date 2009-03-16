@@ -80,10 +80,10 @@ class user_Core {
 
   private static function _add_locale_dropdown(&$form, $user=null) {
     $locales = locale::installed();
-    $locales_array = (array) $locales;
-    if (count($locales_array) > 1) {
-      $locales->none = t("&laquo; none &raquo;");
-      $selected_locale = ($user && $user->locale) ? $user->locale : "none";
+    if (count($locales) > 1) {
+      // Put "none" at the first position in the array
+      $locales = array_merge(array("" => t("&laquo; none &raquo;")), $locales);
+      $selected_locale = ($user && $user->locale) ? $user->locale : "";
       $form->dropdown("locale")
         ->label(t("Language Preference"))
         ->options($locales)
