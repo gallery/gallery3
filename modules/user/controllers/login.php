@@ -26,7 +26,7 @@ class Login_Controller extends Controller {
   }
 
   public function auth_ajax() {
-    list ($valid, $form) = $this->_auth();
+    list ($valid, $form) = $this->_auth("login/auth_ajax");
     if ($valid) {
       print json_encode(
         array("result" => "success",
@@ -43,7 +43,7 @@ class Login_Controller extends Controller {
   }
 
   public function auth_html() {
-    list ($valid, $form) = $this->_auth();
+    list ($valid, $form) = $this->_auth("login/auth_html");
     if ($valid) {
       url::redirect("albums/1");
     } else {
@@ -51,8 +51,8 @@ class Login_Controller extends Controller {
     }
   }
 
-  private function _auth() {
-    $form = user::get_login_form();
+  private function _auth($url) {
+    $form = user::get_login_form($url);
     $valid = $form->validate();
     if ($valid) {
       $user = ORM::factory("user")->where("name", $form->login->inputs["name"]->value)->find();
