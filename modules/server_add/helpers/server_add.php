@@ -25,7 +25,7 @@ class server_add_Core {
     if (empty($paths)) {
       site_status::warning(
         t("Server Add needs configuration. <a href=\"%url\">Configure it now!</a>",
-          array("url" => url::site("/admin/server_add"))),
+          array("url" => url::site("admin/server_add"))),
         "server_add_configuration");
     } else {
       site_status::clear("server_add_configuration");
