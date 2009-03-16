@@ -26,9 +26,9 @@ class url extends url_Core {
       $query = "";
     }
 
-    list($controller, $arg1, $args) = explode("/", $uri, 3);
-    if ($controller == "albums" || $controller == "photos") {
-      $uri = ORM::factory("item", $arg1)->relative_path();
+    $parts = explode("/", $uri, 3);
+    if ($parts[0] == "albums" || $parts[0] == "photos") {
+      $uri = ORM::factory("item", $parts[1])->relative_path();
     }
     return parent::site($uri . $query, $protocol);
   }
