@@ -24,6 +24,11 @@ class tag_theme_Core {
   }
 
   static function sidebar_blocks($theme) {
+    // @todo this needs to be data driven
+    if (!$theme->item()) {
+      return;
+    }
+
     $block = new Block();
     $block->css_id = "gTag";
     $block->title = t("Popular Tags");

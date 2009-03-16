@@ -36,6 +36,8 @@ class Theme_View_Core extends View {
     if (user::active()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
+    $this->item = null;
+    $this->tag = null;
     $this->set_global("theme", $this);
     $this->set_global("user", user::active());
     $this->set_global("page_type", $page_type);

@@ -31,6 +31,11 @@ class rss_theme_Core {
   }
 
   static function sidebar_blocks($theme) {
+    // @todo this needs to be data driven
+    if (!$theme->item()) {
+      return;
+    }
+
     $block = new Block();
     $block->css_id = "gRss";
     $block->title = t("Available RSS Feeds");
