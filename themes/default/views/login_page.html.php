@@ -26,7 +26,6 @@
     <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
-    <?= $theme->head() ?>
     <script>
       $("#gLoginLink").ready(function() {
         $("#gLoginLink").click();
@@ -35,27 +34,6 @@
   </head>
 
   <body>
-    <?= $theme->page_top() ?>
-    <div id="doc4" class="yui-t5 gView">
-      <div id="hd">
-        <div id="gHeader">
-          <?= $theme->display("header.html") ?>
-        </div>
-      </div>
-      <div id="bd">
-        <div id="yui-main">
-          <div class="yui-b">
-            <div id="gContent" class="yui-g">&nbsp; </div>
-          </div>
-        </div>
-        <div id="gSidebar" class="yui-b">&nbsp;</div>
-      </div>
-      <div id="ft">
-        <div id="gFooter">
-          <?= $theme->display("footer.html") ?>
-        </div>
-      </div>
-    </div>
-    <?= $theme->page_bottom() ?>
+    <a id="gLoginLink" href="<?= url::site("login/ajax") ?>">Log in</a>
   </body>
 </html>

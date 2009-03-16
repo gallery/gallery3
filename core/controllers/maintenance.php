@@ -19,12 +19,6 @@
  */
 class Maintenance_Controller extends Controller {
   function index() {
-    $album = ORM::factory("item", 1);
-    $v = new Theme_View("maintenance.html", "reset");
-    $v->title = t("%title Unavailable", array("title" => $album->title));
-    $v->content = t("%title is currently unavailable as it is undergoing maintenance",
-                    array("title" => $album->title));
-    
-    print $v;
-  }
+    print new View("maintenance.html");
+ }
 }

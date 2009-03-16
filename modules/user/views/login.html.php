@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul id="gLoginMenu">
   <? if ($user->guest): ?>
-  <li class="first"><a href="<?= url::site("login") ?>"
+  <li class="first"><a href="<?= url::site("login/ajax") ?>"
       title="<?= t("Login to Gallery") ?>"
       id="gLoginLink"><?= t("Login") ?></a></li>
   <? else: ?>

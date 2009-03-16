@@ -23,13 +23,12 @@ class Albums_Controller extends Items_Controller {
    *  @see REST_Controller::_show($resource)
    */
   public function _show($album) {
-    try {
-      access::required("view", $album);
-    } catch (Exception $e) {
+    if (!access::can("view", $album)) {
       if ($album->id != 1) {
-        throw $e;
+        access::forbidden();
       } else {
-        url::redirect("login/page");
+        print new Theme_View("login_page.html");
+        return;
       }
     }
 
@@ -163,7 +162,7 @@ class Albums_Controller extends Items_Controller {
       $album->description = $form->edit_album->description->value;
       $album->sort_column = $form->edit_album->sort_order->column->value;
       $album->sort_order = $form->edit_album->sort_order->direction->value;
-      
+
       $album->save();
 
       module::event("item_updated", $orig, $album);

@@ -18,23 +18,41 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Login_Controller extends Controller {
-  public function index() {
-    if (request::method() == "post") {
-      $this->_try_login();
-    } else {
-      print $this->_login_form();
-    }
-  }
 
-  public function page() {
-    $view = new Theme_View("login_page.html");
-    $view->page_type = "login";
+  public function ajax() {
+    $view = new View("login_ajax.html");
+    $view->form = user::get_login_form("login/auth_ajax");
     print $view;
   }
 
-  private function _try_login() {
-    $form = $this->_login_form()->form;
+  public function auth_ajax() {
+    list ($valid, $form) = $this->_auth();
+    if ($valid) {
+      print json_encode(
+        array("result" => "success",
+              "location" => url::site("")));
+    } else {
+      print json_encode(
+        array("result" => "error",
+              "form" => $form->__toString()));
+    }
+  }
 
+  public function html() {
+    print user::get_login_form("login/auth_html");
+  }
+
+  public function auth_html() {
+    list ($valid, $form) = $this->_auth();
+    if ($valid) {
+      url::redirect("albums/1");
+    } else {
+      print $form;
+    }
+  }
+
+  private function _auth() {
+    $form = user::get_login_form();
     $valid = $form->validate();
     if ($valid) {
       $user = ORM::factory("user")->where("name", $form->login->inputs["name"]->value)->find();
@@ -49,26 +67,8 @@ class Login_Controller extends Controller {
     if ($valid) {
       user::login($user);
       log::info("user", t("User %name logged in", array("name" => $user->name)));
-      print json_encode(
-        array("result" => "success",
-              "location" => url::site("")));
-    } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
     }
-  }
 
-  private function _login_form() {
-    $view = new View("login_prompt.html");
-
-    $view->form = new Forge(url::current(true), "", "post", array("id" => "gLoginForm"));
-    $group = $view->form->group("login")->label(t("Login"));
-    $group->input("name")->label(t("Name"))->id("gName")->class(null);
-    $group->password("password")->label(t("Password"))->id("gPassword")->class(null);
-    $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
-    $group->submit("")->value(t("Login"));
-
-    return $view;
+    return array($valid, $form);
   }
 }
