@@ -11,7 +11,7 @@ CREATE TABLE {access_caches} (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {access_caches} VALUES (1,1,1,0,1,1);
+INSERT INTO {access_caches} VALUES (1,1,1,0,1,0);
 DROP TABLE IF EXISTS {access_intents};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -27,7 +27,7 @@ CREATE TABLE {access_intents} (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {access_intents} VALUES (1,1,1,1,0,1,1,1);
+INSERT INTO {access_intents} VALUES (1,1,1,1,0,1,1,0);
 DROP TABLE IF EXISTS {comments};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -147,7 +147,7 @@ CREATE TABLE {items} (
   KEY `random` (`rand_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (NULL,1236569573,'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1236569573,0,NULL,NULL,'id','ASC',1,1);
+INSERT INTO {items} VALUES (NULL,1237193225,'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',1237193225,0,NULL,NULL,'id','ASC',1,1);
 DROP TABLE IF EXISTS {items_tags};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -312,7 +312,7 @@ CREATE TABLE {users} (
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {users} VALUES (1,'guest','Guest User','5aLTa63b51ea433382249bc5e16d0ecbe6c5',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
+INSERT INTO {users} VALUES (1,'guest','Guest User','jZstacc6b8aca100c7d53663c65ef1e3428c',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
 DROP TABLE IF EXISTS {vars};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -325,4 +325,4 @@ CREATE TABLE {vars} (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:1:{i:1796642454;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:1:{i:666854679;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:4:{i:757340436;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:454213168;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:1443307249;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:997696381;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:4:{i:1396928874;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:454790507;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:902866042;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:276132468;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0'),(12,'comment','spam_caught','0');

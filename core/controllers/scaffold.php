@@ -20,13 +20,6 @@
 class Scaffold_Controller extends Template_Controller {
   public $template = "scaffold.html";
 
-  public function __construct($theme=null) {
-    if (!(user::active()->admin)) {
-      throw new Exception("@todo UNAUTHORIZED", 401);
-    }
-    parent::__construct();
-  }
-
   function index() {
     $session = Session::instance();
 
@@ -256,6 +249,66 @@ class Scaffold_Controller extends Template_Controller {
     }
   }
 
+  function install($module_name, $redirect=true) {
+    $to_install = array();
+    if ($module_name == "*") {
+      foreach (module::available() as $module_name => $info) {
+        if (empty($info->installed)) {
+          $to_install[] = $module_name;
+        }
+      }
+    } else {
+      $to_install[] = $module_name;
+    }
+
+    foreach ($to_install as $module_name) {
+      if ($module_name != "core") {
+        require_once(DOCROOT . "modules/${module_name}/helpers/${module_name}_installer.php");
+      }
+      module::install($module_name);
+    }
+
+    if ($redirect) {
+      url::redirect("scaffold");
+    }
+  }
+
+  function uninstall($module_name, $redirect=true) {
+    $clean = true;
+    if ($module_name == "core") {
+      // We have to uninstall all other modules first, else their tables, etc don't
+      // get cleaned up.
+      $old_handler = set_error_handler(array("scaffold_Controller", "_error_handler"));
+      try {
+        foreach (ORM::factory("module")->find_all() as $module) {
+          if ($module->name != "core" && $module->version) {
+            try {
+              call_user_func(array("{$module->name}_installer", "uninstall"));
+            } catch (Exception $e) {
+              print $e;
+            }
+          }
+        }
+        core_installer::uninstall();
+      } catch (Exception $e) {
+        print $e;
+      }
+
+
+      // Since we're in a state of flux, it's possible that other stuff went wrong with the
+      // uninstall, so back off and nuke it from orbit.  It's the only way to be sure.
+      $db = Database::instance();
+      foreach ($db->list_tables() as $table) {
+        $db->query("DROP TABLE IF EXISTS `$table`");
+      }
+      set_error_handler($old_handler);
+    } else {
+      module::uninstall($module_name);
+    }
+    if ($redirect) {
+      url::redirect("scaffold");
+    }
+  }
 
   public function package() {
     $this->auto_render = false;
@@ -286,15 +339,15 @@ class Scaffold_Controller extends Template_Controller {
     $db->update("users", array("password" => ""), array("id" => 2));
 
     $dbconfig = Kohana::config('database.default');
-    $dbconfig = $dbconfig["connection"];
-    $pass = $dbconfig["pass"] ? "-p{$dbconfig['pass']}" : "";
+    $conn = $dbconfig["connection"];
+    $pass = $conn["pass"] ? "-p{$conn['pass']}" : "";
     $sql_file = DOCROOT . "installer/install.sql";
     if (!is_writable($sql_file)) {
       print "$sql_file is not writeable";
       return;
     }
-    $command = "mysqldump --compact --add-drop-table -h{$dbconfig['host']} " .
-      "-u{$dbconfig['user']} $pass {$dbconfig['database']} > $sql_file";
+    $command = "mysqldump --compact --add-drop-table -h{$conn['host']} " .
+      "-u{$conn['user']} $pass {$conn['database']} > $sql_file";
     exec($command, $output, $status);
     if ($status) {
       print "<pre>";
@@ -305,8 +358,11 @@ class Scaffold_Controller extends Template_Controller {
     }
 
     // Post-process the sql file to support prefixes
+    $buf = "";
     foreach (file($sql_file) as $line) {
-      $buf .= preg_replace("/(CREATE TABLE|IF EXISTS|INSERT INTO) `(\w+)`/", "\\1 {\\2}", $line);
+      $buf .= preg_replace(
+        "/(CREATE TABLE|IF EXISTS|INSERT INTO) `{$dbconfig['table_prefix']}(\w+)`/", "\\1 {\\2}",
+        $line);
     }
     $fd = fopen($sql_file, "wb");
     fwrite($fd, $buf);
