@@ -205,6 +205,8 @@ class core_installer {
       $root->level = 1;
       $root->thumb_dirty = 1;
       $root->resize_dirty = 1;
+      $root->sort_column = "id";
+      $root->sort_order = "ASC";
       $root->save();
       access::add_item($root);
 
