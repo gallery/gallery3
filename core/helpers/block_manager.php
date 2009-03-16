@@ -54,6 +54,7 @@ class block_manager_Core {
 
   static function get_html($location) {
     $active = self::get_active($location);
+    $result = "";
     foreach ($active as $id => $desc) {
       if (method_exists("$desc[0]_block", "get")) {
         $block = call_user_func(array("$desc[0]_block", "get"), $desc[1]);
