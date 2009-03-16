@@ -18,23 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Task_Model extends ORM {
-  /**
-   * @see ORM::__get()
-   */
-  public function __get($column) {
-    if ($column == "owner") {
-      // This relationship depends on an outside module, which may not be present so handle
-      // failures gracefully.
-      try {
-        return model_cache::get("user", $this->owner_id);
-      } catch (Exception $e) {
-        return null;
-      }
-    } else {
-      return parent::__get($column);
-    }
-  }
-
   public function get($key, $default=null) {
     $context = unserialize($this->context);
     if (array_key_exists($key, $context)) {
