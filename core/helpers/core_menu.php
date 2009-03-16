@@ -79,7 +79,7 @@ class core_menu_Core {
         }
         $class = "{$module->name}_menu";
         if (method_exists($class, "admin")) {
-          call_user_func_array(array($class, "admin"), array(&$admin_menu, $this));
+          call_user_func_array(array($class, "admin"), array(&$admin_menu, $theme));
         }
       }
     }
