@@ -11,7 +11,7 @@
     <li class="active"><?= $album_title ?></li>
   </ul>
 
-  <?= form::open($action, array("method" => "post"), $hidden) ?>
+  <?= form::open($action, array("method" => "post")) ?>
   <div id="gServerAddTree" >
     <?= $tree ?>
   </div>
