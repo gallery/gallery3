@@ -16,7 +16,7 @@
   <h2> <?= t("Gallery theme") ?> </h2>
   <div class="gBlock gSelected">
     <img src="<?= url::file("themes/{$site}/thumbnail.png") ?>"
-         alt="<?= $themes[$active]->name ?>" />
+         alt="<?= $themes[$site]->name ?>" />
     <h3> <?= $themes[$site]->name ?> </h3>
     <p>
       <?= $themes[$site]->description ?>
