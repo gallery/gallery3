@@ -184,7 +184,7 @@ class access_Core {
    * @param  Item_Model  $item
    * @param  boolean     $value
    */
-  private static function _set(Controller $group, $perm_name, $album, $value) {
+  private static function _set(Group_Model $group, $perm_name, $album, $value) {
     if (get_class($group) != "Group_Model") {
       throw new Exception("@todo PERMISSIONS_ONLY_WORK_ON_GROUPS");
     }
