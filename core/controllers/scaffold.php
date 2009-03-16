@@ -20,16 +20,16 @@
 class Scaffold_Controller extends Template_Controller {
   public $template = "scaffold.html";
 
-  function index() {
-    try {
-      $session = Session::instance();
-    } catch (Exception $e) {
+  public function __construct($theme=null) {
+    if (!(user::active()->admin)) {
+      throw new Exception("@todo UNAUTHORIZED", 401);
     }
+    parent::__construct();
+  }
 
-    if (!user::active()->admin) {
-      throw new Exception("@todo FORBIDDEN", 503);
-    }
-    
+  function index() {
+    $session = Session::instance();
+
     set_error_handler(array("Scaffold_Controller", "_error_handler"));
     try {
       $this->template->album_count = ORM::factory("item")->where("type", "album")->count_all();
