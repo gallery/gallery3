@@ -21,6 +21,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_graphics.html");
+    $view->content->available = "";
 
     $tk = new ArrayObject(graphics::detect_toolkits(), ArrayObject::ARRAY_AS_PROPS);
     $active = module::get_var("core", "graphics_toolkit");
@@ -32,6 +33,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
       } else {
         $v = new View("admin_graphics_$id.html");
         $v->tk = $tk;
+        $v->is_active = false;
         $view->content->available .= $v;
       }
     }
