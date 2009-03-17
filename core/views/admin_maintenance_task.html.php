@@ -5,7 +5,7 @@
       url: "<?= url::site("admin/maintenance/run/$task->id?csrf=$csrf") ?>",
       dataType: "json",
       success: function(data) {
-        $("#gProgressBar").progressbar("value", data.task.percent_complete);
+        $(".gProgressBar").progressbar("value", data.task.percent_complete);
         $("#gStatus").html("" + data.task.status);
         if (data.task.done) {
           $("#gPauseButton").hide();
@@ -16,14 +16,14 @@
       }
     });
   }
-  $("#gProgressBar").progressbar({value: 0});
+  $(".gProgressBar").progressbar({value: 0});
   update();
   dismiss = function() {
     window.location.reload();
   }
 </script>
 <div id="gProgress">
-  <div id="gProgressBar"></div>
+  <div class="gProgressBar"></div>
   <div id="gStatus"></div>
   <div>
     <button id="gPauseButton" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Pause") ?></button>

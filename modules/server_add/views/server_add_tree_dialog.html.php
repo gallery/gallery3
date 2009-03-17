@@ -19,5 +19,5 @@
     <?= form::submit(array("id" => "gServerAddButton", "name" => "add", "disabled" => true, "class" => "submit"), t("Add")) ?>
   </span>
   <?= form::close() ?>
-  <div id="gProgressBar" style="visibility: hidden" ></div>
+  <div class="gProgressBar" style="visibility: hidden" ></div>
 </div>

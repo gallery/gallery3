@@ -24,19 +24,6 @@ class Simple_Uploader_Controller extends Controller {
 
     $v = new View("simple_uploader.html");
     $v->item = $item;
-    $v->flash_vars =
-      "uploadUrl=" . urlencode(
-        url::site("simple_uploader/add_photo/$item->id" .
-                  "?csrf=" . access::csrf_token() .
-                  "&g3sid=" . Session::instance()->id() .
-                  "&user_agent=" . urlencode(Input::instance()->server("HTTP_USER_AGENT")))) .
-      "&title=" . urlencode(t("Add photos")) .
-      "&addLabel=" . urlencode(t("Choose photos to add...")) .
-      "&pendingText=" . urlencode(t("Pending")) .
-      "&completeText=" . urlencode(t("Complete")) .
-      "&fileHeader=" . urlencode(t("File")) .
-      "&statusHeader=" . urlencode(t("Status")) .
-      "&sizeHeader=" . urlencode(t("Size"));
     print $v;
   }
 
@@ -50,7 +37,7 @@ class Simple_Uploader_Controller extends Controller {
     access::verify_csrf();
 
     $file_validation = new Validation($_FILES);
-    $file_validation->add_rules("file", "upload::valid", "upload::type[gif,jpg,png,flv,mp4]");
+    $file_validation->add_rules("Filedata", "upload::valid", "upload::type[gif,jpg,png,flv,mp4]");
     if ($file_validation->validate()) {
 
       // SimpleUploader.swf does not yet call /start directly, so simulate it here for now.
@@ -58,7 +45,7 @@ class Simple_Uploader_Controller extends Controller {
         batch::start();
       }
 
-      $temp_filename = upload::save("file");
+      $temp_filename = upload::save("Filedata");
       try {
         $title = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
         $path_info = pathinfo($temp_filename);
@@ -77,6 +64,7 @@ class Simple_Uploader_Controller extends Controller {
       }
       unlink($temp_filename);
     }
+    print "File Received";
   }
 
   public function finish() {

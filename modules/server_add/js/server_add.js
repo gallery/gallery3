@@ -2,7 +2,7 @@ $("#gServerAdd").ready(function() {
   $("#gServerAdd :submit").click(function(event) {
     do_add(this, event);
   });
-  $("#gProgressBar").progressbar();
+  $(".gProgressBar").progressbar();
   $("#gServerAddTree ul").css("display", "block");
 });
 
@@ -60,8 +60,8 @@ function load_children(parent, callback) {
 
 function do_add(submit, event) {
   event.preventDefault();
-  $("#gProgressBar").progressbar("value", 0);
-  $("#gProgressBar").css("visibility", "visible");
+  $(".gProgressBar").progressbar("value", 0);
+  $(".gProgressBar").css("visibility", "visible");
   var check_list = $("#gServerAdd :checkbox[checked]");
 
   var parms = "";
@@ -83,7 +83,7 @@ function do_add(submit, event) {
       while (!done) {
         $.ajax({async: false,
           success: function(data, textStatus) {
-            $("#gProgressBar").progressbar("value", data.task.percent_complete);
+            $(".gProgressBar").progressbar("value", data.task.percent_complete);
             done = data.task.done;
           },
           dataType: "json",

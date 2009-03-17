@@ -874,13 +874,6 @@ form .gError,
   padding-left: 2.5em;
 }
 
-#gProgressBar {
-  height: 1em;
-  width: 100%;
-  margin-top: 0.5em;
-  display: inline-block;
-}
-
 #gServerAdd #gServerAddTree {
   border: 1px solid #CCCCCC;
   height: 25em;
@@ -911,4 +904,85 @@ form .gError,
 
 #gServerAdd .gBreadcrumbs li {
   padding: 10px 6px 10px 16px;
+}
+
+
+/*************** STUFF THAT NEEDS A HOME ****************/
+.gProgressBar {
+  height: 1em;
+  width: 100%;
+  margin-top: 0.5em;
+  display: inline-block;
+}
+
+#gAddPhotos p {
+  margin: 0px;
+  padding: 0px;
+}
+
+#gAddPhotos ul li {
+  margin: 0px;
+  padding: 0px;
+  padding-right: 4px;
+}
+
+#gAddPhotos ul li.active {
+  font-weight: bold;
+}
+
+#gAddPhotos ul {
+  margin: 0px;
+  padding: 0px;
+}
+
+#gAddPhotos ul li:after {
+  content: ">";
+}
+
+#gAddPhotos ul li.active:after {
+  content: "";
+}
+
+#gAddPhotosCanvas {
+  height: 325px;
+  width: 400px;
+  overflow: auto;
+}
+
+#gAddPhotosQueue .progressbar {
+  height: 4px;
+}
+
+#gAddPhotosQueue .title {
+  font-size: 1.25em;
+}
+
+#gAddPhotosQueue .status {
+  font-size: .75em;
+}
+
+#gAddPhotosQueue .box {
+  margin-bottom: 8px;
+  padding-left: 4px;
+  padding-bottom: 4px;
+}
+
+#gAddPhotosQueue .pending {
+  background-color: #e8e8e8;
+  border: 1px solid #d7d7d7;
+}
+
+#gAddPhotosQueue .error {
+  background-color: #fcc;
+  border: 1px solid #ebb;
+}
+
+#gAddPhotosQueue .uploading {
+  background-color: #ff9;
+  border: 1px solid #ee8;
+}
+
+#gAddPhotosQueue .complete {
+  background-color: #cfc;
+  border: 1px solid #beb;
 }
