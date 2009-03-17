@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <h1 style="display: none">
   <?= t("Welcome to Gallery 3!") ?>
 </h1>
