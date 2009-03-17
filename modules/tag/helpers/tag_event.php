@@ -25,9 +25,9 @@ class tag_event_Core {
    * @param Item_Model $photo
    */
   static function item_created($photo) {
+    $tags = array();
     if ($photo->is_photo()) {
       $path = $photo->file_path();
-      $tags = array();
       $size = getimagesize($photo->file_path(), $info);
       if (is_array($info) && !empty($info["APP13"])) {
         $iptc = iptcparse($info["APP13"]);
@@ -40,7 +40,6 @@ class tag_event_Core {
     }
 
     // @todo figure out how to read the keywords from xmp
-
     foreach(array_keys($tags) as $tag) {
       tag::add($photo, $tag);
     }
