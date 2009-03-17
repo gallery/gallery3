@@ -29,6 +29,10 @@ class tag_Core {
    * @throws Exception("@todo {$tag_name} WAS_NOT_ADDED_TO {$item->id}")
    */
   static function add($item, $tag_name) {
+    if (empty($tag_name)) {
+      throw new exception("@todo MISSING_TAG_NAME");
+    }
+
     $tag = ORM::factory("tag")->where("name", $tag_name)->find();
     if (!$tag->loaded) {
       $tag->name = $tag_name;
