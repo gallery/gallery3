@@ -943,8 +943,7 @@ form .gError,
 
 #gAddPhotosQueue .box {
   margin-bottom: 8px;
-  padding-left: 4px;
-  padding-bottom: 4px;
+  padding: 4px;
 }
 
 #gAddPhotosQueue .pending {
