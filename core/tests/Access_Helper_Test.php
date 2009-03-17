@@ -45,7 +45,7 @@ class Access_Helper_Test extends Unit_Test_Case {
   }
 
   public function groups_and_permissions_are_bound_to_columns_test() {
-    access::register_permission("access_test");
+    access::register_permission("access_test", "Access Test");
     $group = group::create("access_test");
 
     // We have a new column for this perm / group combo
@@ -67,7 +67,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     $item->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
     $item->sort_column = "id";
     $item->sort_order = "ASC";
-    
+
     $item->add_to_parent($root);
 
     // Simulate an event

@@ -35,7 +35,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $this->assert_true(is_file($photo->resize_path()), "missing: {$photo->resize_path()}");
     $this->assert_true(is_file($photo->thumb_path()), "missing: {$photo->thumb_path()}");
 
-    $this->assert_equal($root, $photo->parent_id);  // MPTT tests will cover other hierarchy checks
+    $this->assert_equal($root->id, $photo->parent_id); // MPTT tests cover other hierarchy checks
     $this->assert_equal("$rand.jpg", $photo->name);
     $this->assert_equal($rand, $photo->title);
     $this->assert_equal($rand, $photo->description);
