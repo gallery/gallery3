@@ -20,14 +20,10 @@
 class core_installer {
   static function install() {
     $db = Database::instance();
-    $version = 0;
-    try {
+    if (TEST_MODE) {
+      $version = 0;
+    } else {
       $version = module::get_version("core");
-    } catch (Exception $e) {
-      if ($e->getCode() != E_DATABASE_ERROR) {
-        Kohana::log("error", $e);
-        throw $e;
-      }
     }
 
     if ($version == 0) {
