@@ -294,10 +294,12 @@ form p.gError,
   padding: .4em .5em .4em 30px;
 }
 
-#gAdminMaintenance .gError,
-#gSiteStatus .gError,
-#gMessage .gError {
+.gError {
   background-color: #fcc;
+}
+
+form .gError {
+	color: #f00;
 }
 
 #gSiteStatus .gError,
@@ -306,21 +308,16 @@ form p.gError {
   background-image: url('../images/ico-error.png');
 }
 
-#gAdminMaintenance .gInfo,
-#gSiteStatus .gInfo,
-#gMessage .gInfo {
+.gInfo {
   background-color: #e8e8e8;
 }
 
 #gSiteStatus .gInfo,
-#gMessage .gInfo{
+#gMessage .gInfo {
   background-image: url('../images/ico-info.png');
 }
 
-#gAdminMaintenance .gSuccess,
-#gAdminAkismet .gSuccess,
-#gSiteStatus .gSuccess,
-#gMessage .gSuccess {
+.gSuccess {
   background-color: #cfc;
 }
 
@@ -329,15 +326,18 @@ form p.gError {
   background-image: url('../images/ico-success.png');
 }
 
-#gAdminMaintenance .gWarning,
-#gSiteStatus .gWarning,
-#gMessage .gWarning {
+.gWarning {
   background-color: #ff9;
 }
 
 #gSiteStatus .gWarning,
 #gMessage .gWarning {
   background-image: url('../images/ico-warning.png');
+}
+
+form .gError,
+#gPager .gInfo {
+	background-color: #fff;
 }
 
 #gAdminMaintenance .gError,
