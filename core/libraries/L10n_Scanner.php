@@ -58,7 +58,11 @@ class L10n_Scanner_Core {
         new L10n_Scanner_Directory_Filter_Iterator(
           new RecursiveDirectoryIterator(DOCROOT))));
     foreach ($dir as $file) {
-      $this->_scan_file($file, $this);
+      if (strtolower(substr(strrchr($file->getFilename(), '.'), 1)) == "php") {
+        $this->_scan_php_file($file, $this);
+      } else {
+        $this->_scan_info_file($file, $this);
+      }
     }
   }
 
@@ -75,7 +79,7 @@ class L10n_Scanner_Core {
     }
   }
 
-  private function _scan_file($file, &$message_handler) {
+  private function _scan_php_file($file, &$message_handler) {
     $code = file_get_contents($file);
     $raw_tokens = token_get_all($code);
     unset($code);
@@ -102,6 +106,15 @@ class L10n_Scanner_Core {
     }
     if (!empty($func_token_list["t2"])) {
       $this->_parse_plural_calls($tokens, $func_token_list["t2"], $message_handler);
+    }
+  }
+
+  private function _scan_info_file($file, &$message_handler) {
+    $code = file_get_contents($file);
+    print $code . "\n";
+    if (preg_match("#description\s*?=\s*(.*)\n#", $code, $matches)) {
+    print $matches[1] . "\n";
+      $message_handler->process_message($matches[1]);
     }
   }
 
@@ -188,6 +201,7 @@ class L10n_Scanner_File_Filter_Iterator extends FilterIterator {
   function accept() {
     // Skip anything that doesn't need to be localized.
     $filename = $this->getInnerIterator()->getFilename();
-    return substr($filename, -4, 4) == ".php";
+    $ext = strtolower(substr(strrchr($filename, '.'), 1));
+    return in_array($ext, array("php", "info"));
   }
 }
