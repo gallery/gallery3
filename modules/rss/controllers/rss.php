@@ -34,7 +34,7 @@ class Rss_Controller extends Controller {
       ->descendants(self::$page_size, ($page - 1) * self::$page_size, "photo");
     $max_pages = ceil($item->viewable()->descendants_count("photo") / self::$page_size);
 
-    if ($max_page && $page > $max_pages) {
+    if ($max_pages && $page > $max_pages) {
       url::redirect("rss/albums/{$item->id}?page=$max_pages");
     }
 
@@ -75,7 +75,7 @@ class Rss_Controller extends Controller {
       ->find_all(self::$page_size, ($page - 1) * self::$page_size);
     $max_pages = ceil($items->count() / self::$page_size);
 
-    if ($max_page && $page > $max_pages) {
+    if ($max_pages && $page > $max_pages) {
       url::redirect("rss/updates?page=$max_pages");
     }
 
@@ -117,7 +117,7 @@ class Rss_Controller extends Controller {
     $children = $tag->items(self::$page_size, ($page - 1) * self::$page_size, "photo");
     $max_pages = ceil($tag->count / self::$page_size);
 
-    if ($max_page && $page > $max_pages) {
+    if ($max_pages && $page > $max_pages) {
       url::redirect("rss/tags/{$tag->id}?page=$max_pages");
     }
 
