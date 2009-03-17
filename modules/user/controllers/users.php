@@ -35,8 +35,10 @@ class Users_Controller extends REST_Controller {
       }
       $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
-      $desired_locale = $form->edit_user->locale->value;
-      $user->locale = $desired_locale == "none" ? null : $desired_locale;
+      if (isset($form->edit_user->locale)) {
+        $desired_locale = $form->edit_user->locale->value;
+        $user->locale = $desired_locale == "none" ? null : $desired_locale;
+      }
       $user->save();
       
       print json_encode(
