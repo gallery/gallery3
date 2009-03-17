@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script>
   $("document").ready(function() {
-    $("#gTagAdmin .tag-name").attr("title", "<?= t("Click to edit this tag") ?>");
+    // $("#gTagAdmin .tag-name").attr("title", "<?= t("Click to edit this tag") ?>");
     $("#gTagAdmin .delete-link").attr("title", $(".delete-link:first span").html());
   });
 </script>
@@ -40,7 +40,8 @@
           <li>
             <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= $tag->name ?></span>
             <span class="understate">(<?= $tag->count ?>)</span>
-            <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>" class="gDialogLink delete-link gButtonLink">
+            <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
+               class="gDialogLink delete-link gButtonLink">
                 <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
           </li>
 

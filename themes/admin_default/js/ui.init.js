@@ -52,54 +52,16 @@ $(document).ready(function(){
   // Add drop shadows
   $(".gSelected").dropShadow();
 
-  // In-place editing for tag admin
-  $(".gEditable").bind("click", editInplace);
-
   // Add hover state for buttons
   $(".ui-state-default").hover(
-	  function(){
-		  $(this).addClass("ui-state-hover");
-	  },
-	  function(){
-		  $(this).removeClass("ui-state-hover");
-	  }
+    function() {
+      $(this).addClass("ui-state-hover");
+    },
+    function() {
+      $(this).removeClass("ui-state-hover");
+    }
   );
-
 });
-
-function closeEditInPlaceForms() {
-  // closes currently open inplace edit forms
-	if ($("#gRenameTagForm").length) {
-		var li = $("#gRenameTagForm").parent();
-		$("#gRenameTagForm").parent().html($("#gRenameTagForm").parent().data("revert"));
-    li.height("");
-    $(".gEditable", li).bind("click", editInplace);
-    $(".gDialogLink", li).bind("click", handleDialogEvent);
-  }
-}
-
-function editInplace(element){
-	closeEditInPlaceForms();
-
-  // creat edit form
-	var tag_id = $(this).attr('id').substr(5);
-  var tag_name = $(this).text();
-  var tag_width = $(this).width();
-	$(this).parent().data("revert", $(this).parent().html());
-	var form = '<form id="gRenameTagForm" method="post" action="/gallery3/index.php/admin/tags/rename/' + tag_id + '">';
-	form += '<input id="name" name="name" type="text" class="textbox" value="' + tag_name + '" />';
-	form += '<input type="submit" class="submit" value="Save" />';
-	form += '<span>or</span> <a href="#">cancel</a>';
-	form += '</form>';
-
-  // add edit form
-	$(this).parent().html(form);
-  $("#gRenameTagForm #name")
-    .width(tag_width+30)
-    .focus();
-  $("#gRenameTagForm").parent().height('1.6em');
-  $("#gRenameTagForm a").bind("click", closeEditInPlaceForms);
-}
 
 function handlePanelEvent(event) {
   togglePanel(event.currentTarget);
