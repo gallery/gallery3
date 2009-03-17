@@ -45,14 +45,14 @@
         ]]>
       </content:encoded>
       <media:thumbnail url="<?= $child->thumb_url(true) ?>"
-                       fileSize="<?= filesize($child->thumb_path()) ?>"
+                       fileSize="<?= @filesize($child->thumb_path()) ?>"
                        height="<?= $child->thumb_height ?>"
                        width="<?= $child->thumb_width ?>"
                        />
       <media:group>
         <? if ($child->type == "photo" || $child->type == "album"): ?>
           <media:content url="<?= $child->resize_url(true) ?>"
-                         fileSize="<?= filesize($child->resize_path()) ?>"
+                         fileSize="<?= @filesize($child->resize_path()) ?>"
                          type="<?= $child->mime_type ?>"
                          height="<?= $child->resize_height ?>"
                          width="<?= $child->resize_width ?>"
@@ -60,7 +60,7 @@
                          />
           <? if (access::can("view_full", $child)): ?>
             <media:content url="<?= $child->file_url(true) ?>"
-                           fileSize="<?= filesize($child->file_path()) ?>"
+                           fileSize="<?= @filesize($child->file_path()) ?>"
                            type="<?= $child->mime_type ?>"
                            height="<?= $child->height ?>"
                            width="<?= $child->width ?>"
@@ -68,7 +68,7 @@
           <? endif ?>
         <? else: ?>
           <media:content url="<?= $child->file_url(true) ?>"
-                         fileSize="<?= filesize($child->file_path()) ?>"
+                         fileSize="<?= @filesize($child->file_path()) ?>"
                          height="<?= $child->height ?>"
                          width="<?= $child->width ?>"
                          type="<?= $child->mime_type ?>"
