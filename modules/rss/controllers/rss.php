@@ -68,10 +68,10 @@ class Rss_Controller extends Controller {
       url::redirect("rss/updates");
     }
 
-    $items = ORM::factory(item)
+    $items = ORM::factory("item")
       ->viewable()
       ->where("type !=", "album")
-      ->orderby("created", DESC)
+      ->orderby("created", "DESC")
       ->find_all(self::$page_size, ($page - 1) * self::$page_size);
     $max_pages = ceil($items->count() / self::$page_size);
 
@@ -82,7 +82,7 @@ class Rss_Controller extends Controller {
     $view = new View("feed.mrss");
     $view->title = t("Recent Updates");
     $view->link = url::abs_site("albums/1");
-    $view->description = $item->description;
+    $view->description = t("Recent Updates");
     $view->feed_link = url::abs_site("rss/updates");
     $view->children = $items;
 
