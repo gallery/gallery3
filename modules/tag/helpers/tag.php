@@ -69,7 +69,7 @@ class tag_Core {
     if ($tags) {
       $cloud = new View("tag_cloud.html");
       $cloud->max_count = $tags[0]->count;
-      usort($tags, array("tag_block", "sort_by_name"));
+      usort($tags, array("tag_theme", "sort_by_name"));
       $cloud->tags = $tags;
       return $cloud;
     }
