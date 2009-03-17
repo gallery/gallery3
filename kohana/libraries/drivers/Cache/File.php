@@ -35,25 +35,25 @@ class Cache_File_Driver implements Cache_Driver {
 	 * @param  string  cache id or tag
 	 * @param  bool    search for tags
 	 * @return array   of filenames matching the id or tag
-	 * @return void    if no matching files are found
 	 */
 	public function exists($id, $tag = FALSE)
 	{
 		if ($id === TRUE)
 		{
 			// Find all the files
-			$files = glob($this->directory.'*~*~*');
+			return glob($this->directory.'*~*~*');
 		}
-		elseif ($tag == TRUE)
+		elseif ($tag === TRUE)
 		{
 			// Find all the files that have the tag name
-			$files = glob($this->directory.'*~*'.$id.'*~*');
+			$paths = glob($this->directory.'*~*'.$id.'*~*');
 
 			// Find all tags matching the given tag
-			foreach ($files as $i => $file)
+			$files = array();
+			foreach ($paths as $path)
 			{
 				// Split the files
-				$tags = explode('~', $file);
+				$tags = explode('~', basename($path));
 
 				// Find valid tags
 				if (count($tags) !== 3 OR empty($tags[1]))
@@ -62,20 +62,20 @@ class Cache_File_Driver implements Cache_Driver {
 				// Split the tags by plus signs, used to separate tags
 				$tags = explode('+', $tags[1]);
 
-				if ( ! in_array($tag, $tags))
+				if (in_array($tag, $tags))
 				{
-					// This entry does not match the tag
-					unset($files[$i]);
+					// Add the file to the array, it has the requested tag
+					$files[] = $path;
 				}
 			}
+
+			return $files;
 		}
 		else
 		{
-			// Find all the files matching the given id
-			$files = glob($this->directory.$id.'~*');
+			// Find the file matching the given id
+			return glob($this->directory.$id.'~*');
 		}
-
-		return empty($files) ? NULL : $files;
 	}
 
 	/**
@@ -87,7 +87,7 @@ class Cache_File_Driver implements Cache_Driver {
 	 * @param   integer  lifetime
 	 * @return  bool
 	 */
-	public function set($id, $data, $tags, $lifetime)
+	public function set($id, $data, array $tags = NULL, $lifetime)
 	{
 		// Remove old cache files
 		$this->delete($id);
@@ -98,11 +98,14 @@ class Cache_File_Driver implements Cache_Driver {
 			$lifetime += time();
 		}
 
-		// Construct the filename
-		$filename = $id.'~'.implode('+', $tags).'~'.$lifetime;
+		if ( ! empty($tags))
+		{
+			// Convert the tags into a string list
+			$tags = implode('+', $tags);
+		}
 
-		// Write the file, appending the sha1 signature to the beginning of the data
-		return (bool) file_put_contents($this->directory.$filename, sha1($data).$data);
+		// Write out a serialized cache
+		return (bool) file_put_contents($this->directory.$id.'~'.$tags.'~'.$lifetime, serialize($data));
 	}
 
 	/**
@@ -113,23 +116,29 @@ class Cache_File_Driver implements Cache_Driver {
 	 */
 	public function find($tag)
 	{
-		if ($files = $this->exists($tag, TRUE))
+		// An array will always be returned
+		$result = array();
+
+		if ($paths = $this->exists($tag, TRUE))
 		{
 			// Length of directory name
 			$offset = strlen($this->directory);
 
 			// Find all the files with the given tag
-			$array = array();
-			foreach ($files as $file)
+			foreach ($paths as $path)
 			{
 				// Get the id from the filename
-				$array[] = substr(current(explode('~', $file)), $offset);
-			}
+				list($id, $junk) = explode('~', basename($path), 2);
 
-			return $array;
+				if (($data = $this->get($id)) !== FALSE)
+				{
+					// Add the result to the array
+					$result[$id] = $data;
+				}
+			}
 		}
 
-		return FALSE;
+		return $result;
 	}
 
 	/**
@@ -143,7 +152,7 @@ class Cache_File_Driver implements Cache_Driver {
 	{
 		if ($file = $this->exists($id))
 		{
-			// Always process the first result
+			// Use the first file
 			$file = current($file);
 
 			// Validate that the cache has not expired
@@ -154,22 +163,22 @@ class Cache_File_Driver implements Cache_Driver {
 			}
 			else
 			{
-				$data = file_get_contents($file);
+				// Turn off errors while reading the file
+				$ER = error_reporting(0);
 
-				// Find the hash of the data
-				$hash = substr($data, 0, 40);
-
-				// Remove the hash from the data
-				$data = substr($data, 40);
-
-				if ($hash !== sha1($data))
+				if (($data = file_get_contents($file)) !== FALSE)
 				{
-					// Remove this cache, it doesn't validate
-					$this->delete($id);
-
-					// Unset data to prevent it from being returned
+					// Unserialize the data
+					$data = unserialize($data);
+				}
+				else
+				{
+					// Delete the data
 					unset($data);
 				}
+
+				// Turn errors back on
+				error_reporting($ER);
 			}
 		}
 
@@ -216,14 +225,21 @@ class Cache_File_Driver implements Cache_Driver {
 	{
 		if ($files = $this->exists(TRUE))
 		{
+			// Disable all error reporting while deleting
+			$ER = error_reporting(0);
+
 			foreach ($files as $file)
 			{
 				if ($this->expired($file))
 				{
 					// The cache file has already expired, delete it
-					@unlink($file) or Kohana::log('error', 'Cache: Unable to delete cache file: '.$file);
+					if ( ! unlink($file))
+						Kohana::log('error', 'Cache: Unable to delete cache file: '.$file);
 				}
 			}
+
+			// Turn on error reporting again
+			error_reporting($ER);
 		}
 	}
 

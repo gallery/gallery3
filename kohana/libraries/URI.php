@@ -40,7 +40,7 @@ class URI_Core extends Router {
 	{
 		if (is_string($index))
 		{
-			if (($key = array_search($index, self::$segments)) === FALSE)
+			if (($key = array_search($index, URI::$segments)) === FALSE)
 				return $default;
 
 			$index = $key + 2;
@@ -48,7 +48,7 @@ class URI_Core extends Router {
 
 		$index = (int) $index - 1;
 
-		return isset(self::$segments[$index]) ? self::$segments[$index] : $default;
+		return isset(URI::$segments[$index]) ? URI::$segments[$index] : $default;
 	}
 
 	/**
@@ -62,7 +62,7 @@ class URI_Core extends Router {
 	{
 		if (is_string($index))
 		{
-			if (($key = array_search($index, self::$rsegments)) === FALSE)
+			if (($key = array_search($index, URI::$rsegments)) === FALSE)
 				return $default;
 
 			$index = $key + 2;
@@ -70,7 +70,7 @@ class URI_Core extends Router {
 
 		$index = (int) $index - 1;
 
-		return isset(self::$rsegments[$index]) ? self::$rsegments[$index] : $default;
+		return isset(URI::$rsegments[$index]) ? URI::$rsegments[$index] : $default;
 	}
 
 	/**
@@ -85,7 +85,7 @@ class URI_Core extends Router {
 	{
 		if (is_string($index))
 		{
-			if (($key = array_search($index, self::$arguments)) === FALSE)
+			if (($key = array_search($index, URI::$arguments)) === FALSE)
 				return $default;
 
 			$index = $key + 2;
@@ -93,7 +93,7 @@ class URI_Core extends Router {
 
 		$index = (int) $index - 1;
 
-		return isset(self::$arguments[$index]) ? self::$arguments[$index] : $default;
+		return isset(URI::$arguments[$index]) ? URI::$arguments[$index] : $default;
 	}
 
 	/**
@@ -105,7 +105,7 @@ class URI_Core extends Router {
 	 */
 	public function segment_array($offset = 0, $associative = FALSE)
 	{
-		return $this->build_array(self::$segments, $offset, $associative);
+		return $this->build_array(URI::$segments, $offset, $associative);
 	}
 
 	/**
@@ -117,7 +117,7 @@ class URI_Core extends Router {
 	 */
 	public function rsegment_array($offset = 0, $associative = FALSE)
 	{
-		return $this->build_array(self::$rsegments, $offset, $associative);
+		return $this->build_array(URI::$rsegments, $offset, $associative);
 	}
 
 	/**
@@ -129,7 +129,7 @@ class URI_Core extends Router {
 	 */
 	public function argument_array($offset = 0, $associative = FALSE)
 	{
-		return $this->build_array(self::$arguments, $offset, $associative);
+		return $this->build_array(URI::$arguments, $offset, $associative);
 	}
 
 	/**
@@ -171,7 +171,7 @@ class URI_Core extends Router {
 	 */
 	public function string()
 	{
-		return self::$current_uri;
+		return URI::$current_uri;
 	}
 
 	/**
@@ -181,7 +181,7 @@ class URI_Core extends Router {
 	 */
 	public function __toString()
 	{
-		return self::$current_uri;
+		return URI::$current_uri;
 	}
 
 	/**
@@ -191,7 +191,7 @@ class URI_Core extends Router {
 	 */
 	public function total_segments()
 	{
-		return count(self::$segments);
+		return count(URI::$segments);
 	}
 
 	/**
@@ -201,7 +201,7 @@ class URI_Core extends Router {
 	 */
 	public function total_rsegments()
 	{
-		return count(self::$rsegments);
+		return count(URI::$rsegments);
 	}
 
 	/**
@@ -211,7 +211,7 @@ class URI_Core extends Router {
 	 */
 	public function total_arguments()
 	{
-		return count(self::$arguments);
+		return count(URI::$arguments);
 	}
 
 	/**
@@ -225,7 +225,7 @@ class URI_Core extends Router {
 		if (($end = $this->total_segments()) < 1)
 			return $default;
 
-		return self::$segments[$end - 1];
+		return URI::$segments[$end - 1];
 	}
 
 	/**
@@ -239,7 +239,7 @@ class URI_Core extends Router {
 		if (($end = $this->total_segments()) < 1)
 			return $default;
 
-		return self::$rsegments[$end - 1];
+		return URI::$rsegments[$end - 1];
 	}
 
 	/**
@@ -251,7 +251,7 @@ class URI_Core extends Router {
 	 */
 	public function controller_path($full = TRUE)
 	{
-		return ($full) ? url::site(self::$controller_path) : self::$controller_path;
+		return ($full) ? url::site(URI::$controller_path) : URI::$controller_path;
 	}
 
 	/**
@@ -262,7 +262,7 @@ class URI_Core extends Router {
 	 */
 	public function controller($full = TRUE)
 	{
-		return ($full) ? url::site(self::$controller_path.self::$controller) : self::$controller;
+		return ($full) ? url::site(URI::$controller_path.URI::$controller) : URI::$controller;
 	}
 
 	/**
@@ -273,7 +273,7 @@ class URI_Core extends Router {
 	 */
 	public function method($full = TRUE)
 	{
-		return ($full) ? url::site(self::$controller_path.self::$controller.'/'.self::$method) : self::$method;
+		return ($full) ? url::site(URI::$controller_path.URI::$controller.'/'.URI::$method) : URI::$method;
 	}
 
 } // End URI Class

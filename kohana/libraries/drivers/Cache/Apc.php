@@ -22,27 +22,38 @@ class Cache_Apc_Driver implements Cache_Driver {
 		return (($return = apc_fetch($id)) === FALSE) ? NULL : $return;
 	}
 
-	public function set($id, $data, $tags, $lifetime)
+	public function set($id, $data, array $tags = NULL, $lifetime)
 	{
-		count($tags) and Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
+		if ( ! empty($tags))
+		{
+			Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
+		}
 
 		return apc_store($id, $data, $lifetime);
 	}
 
 	public function find($tag)
 	{
-		return FALSE;
+		Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
+
+		return array();
 	}
 
 	public function delete($id, $tag = FALSE)
 	{
-		if ($id === TRUE)
+		if ($tag === TRUE)
+		{
+			Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
+			return FALSE;
+		}
+		elseif ($id === TRUE)
+		{
 			return apc_clear_cache('user');
-
-		if ($tag == FALSE)
+		}
+		else
+		{
 			return apc_delete($id);
-
-		return TRUE;
+		}
 	}
 
 	public function delete_expired()

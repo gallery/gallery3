@@ -12,7 +12,7 @@
 class Session_Core {
 
 	// Session singleton
-	private static $instance;
+	protected static $instance;
 
 	// Protected key names (cannot be set by the user)
 	protected static $protect = array('session_id', 'user_agent', 'last_activity', 'ip_address', 'total_hits', '_kf_flash_');
@@ -32,13 +32,13 @@ class Session_Core {
 	 */
 	public static function instance()
 	{
-		if (self::$instance == NULL)
+		if (Session::$instance == NULL)
 		{
 			// Create a new instance
 			new Session;
 		}
 
-		return self::$instance;
+		return Session::$instance;
 	}
 
 	/**
@@ -49,23 +49,23 @@ class Session_Core {
 		$this->input = Input::instance();
 
 		// This part only needs to be run once
-		if (self::$instance === NULL)
+		if (Session::$instance === NULL)
 		{
 			// Load config
-			self::$config = Kohana::config('session');
+			Session::$config = Kohana::config('session');
 
 			// Makes a mirrored array, eg: foo=foo
-			self::$protect = array_combine(self::$protect, self::$protect);
+			Session::$protect = array_combine(Session::$protect, Session::$protect);
 
 			// Configure garbage collection
-			ini_set('session.gc_probability', (int) self::$config['gc_probability']);
+			ini_set('session.gc_probability', (int) Session::$config['gc_probability']);
 			ini_set('session.gc_divisor', 100);
-			ini_set('session.gc_maxlifetime', (self::$config['expiration'] == 0) ? 86400 : self::$config['expiration']);
+			ini_set('session.gc_maxlifetime', (Session::$config['expiration'] == 0) ? 86400 : Session::$config['expiration']);
 
 			// Create a new session
 			$this->create();
 
-			if (self::$config['regenerate'] > 0 AND ($_SESSION['total_hits'] % self::$config['regenerate']) === 0)
+			if (Session::$config['regenerate'] > 0 AND ($_SESSION['total_hits'] % Session::$config['regenerate']) === 0)
 			{
 				// Regenerate session id and update session cookie
 				$this->regenerate();
@@ -73,7 +73,7 @@ class Session_Core {
 			else
 			{
 				// Always update session cookie to keep the session alive
-				cookie::set(self::$config['name'], $_SESSION['session_id'], self::$config['expiration']);
+				cookie::set(Session::$config['name'], $_SESSION['session_id'], Session::$config['expiration']);
 			}
 
 			// Close the session just before sending the headers, so that
@@ -84,7 +84,7 @@ class Session_Core {
 			register_shutdown_function(array($this, 'write_close'));
 
 			// Singleton instance
-			self::$instance = $this;
+			Session::$instance = $this;
 		}
 
 		Kohana::log('debug', 'Session Library initialized');
@@ -111,45 +111,45 @@ class Session_Core {
 		// Destroy any current sessions
 		$this->destroy();
 
-		if (self::$config['driver'] !== 'native')
+		if (Session::$config['driver'] !== 'native')
 		{
 			// Set driver name
-			$driver = 'Session_'.ucfirst(self::$config['driver']).'_Driver';
+			$driver = 'Session_'.ucfirst(Session::$config['driver']).'_Driver';
 
 			// Load the driver
 			if ( ! Kohana::auto_load($driver))
-				throw new Kohana_Exception('core.driver_not_found', self::$config['driver'], get_class($this));
+				throw new Kohana_Exception('core.driver_not_found', Session::$config['driver'], get_class($this));
 
 			// Initialize the driver
-			self::$driver = new $driver();
+			Session::$driver = new $driver();
 
 			// Validate the driver
-			if ( ! (self::$driver instanceof Session_Driver))
-				throw new Kohana_Exception('core.driver_implements', self::$config['driver'], get_class($this), 'Session_Driver');
+			if ( ! (Session::$driver instanceof Session_Driver))
+				throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], get_class($this), 'Session_Driver');
 
 			// Register non-native driver as the session handler
 			session_set_save_handler
 			(
-				array(self::$driver, 'open'),
-				array(self::$driver, 'close'),
-				array(self::$driver, 'read'),
-				array(self::$driver, 'write'),
-				array(self::$driver, 'destroy'),
-				array(self::$driver, 'gc')
+				array(Session::$driver, 'open'),
+				array(Session::$driver, 'close'),
+				array(Session::$driver, 'read'),
+				array(Session::$driver, 'write'),
+				array(Session::$driver, 'destroy'),
+				array(Session::$driver, 'gc')
 			);
 		}
 
 		// Validate the session name
-		if ( ! preg_match('~^(?=.*[a-z])[a-z0-9_]++$~iD', self::$config['name']))
-			throw new Kohana_Exception('session.invalid_session_name', self::$config['name']);
+		if ( ! preg_match('~^(?=.*[a-z])[a-z0-9_]++$~iD', Session::$config['name']))
+			throw new Kohana_Exception('session.invalid_session_name', Session::$config['name']);
 
 		// Name the session, this will also be the name of the cookie
-		session_name(self::$config['name']);
+		session_name(Session::$config['name']);
 
 		// Set the session cookie parameters
 		session_set_cookie_params
 		(
-			self::$config['expiration'],
+			Session::$config['expiration'],
 			Kohana::config('cookie.path'),
 			Kohana::config('cookie.domain'),
 			Kohana::config('cookie.secure'),
@@ -173,7 +173,7 @@ class Session_Core {
 		}
 
 		// Set up flash variables
-		self::$flash =& $_SESSION['_kf_flash_'];
+		Session::$flash =& $_SESSION['_kf_flash_'];
 
 		// Increase total hits
 		$_SESSION['total_hits'] += 1;
@@ -182,7 +182,7 @@ class Session_Core {
 		if ($_SESSION['total_hits'] > 1)
 		{
 			// Validate the session
-			foreach (self::$config['validate'] as $valid)
+			foreach (Session::$config['validate'] as $valid)
 			{
 				switch ($valid)
 				{
@@ -214,17 +214,17 @@ class Session_Core {
 		$_SESSION['last_activity'] = time();
 
 		// Set the new data
-		self::set($vars);
+		Session::set($vars);
 	}
 
 	/**
 	 * Regenerates the global session id.
-	 * 
+	 *
 	 * @return  void
 	 */
 	public function regenerate()
 	{
-		if (self::$config['driver'] === 'native')
+		if (Session::$config['driver'] === 'native')
 		{
 			// Generate a new session id
 			// Note: also sets a new session cookie with the updated id
@@ -236,7 +236,7 @@ class Session_Core {
 		else
 		{
 			// Pass the regenerating off to the driver in case it wants to do anything special
-			$_SESSION['session_id'] = self::$driver->regenerate();
+			$_SESSION['session_id'] = Session::$driver->regenerate();
 		}
 
 		// Get the session name
@@ -315,7 +315,7 @@ class Session_Core {
 
 		foreach ($keys as $key => $val)
 		{
-			if (isset(self::$protect[$key]))
+			if (isset(Session::$protect[$key]))
 				continue;
 
 			// Set the key
@@ -345,8 +345,8 @@ class Session_Core {
 			if ($key == FALSE)
 				continue;
 
-			self::$flash[$key] = 'new';
-			self::set($key, $val);
+			Session::$flash[$key] = 'new';
+			Session::set($key, $val);
 		}
 	}
 
@@ -358,13 +358,13 @@ class Session_Core {
 	 */
 	public function keep_flash($keys = NULL)
 	{
-		$keys = ($keys === NULL) ? array_keys(self::$flash) : func_get_args();
+		$keys = ($keys === NULL) ? array_keys(Session::$flash) : func_get_args();
 
 		foreach ($keys as $key)
 		{
-			if (isset(self::$flash[$key]))
+			if (isset(Session::$flash[$key]))
 			{
-				self::$flash[$key] = 'new';
+				Session::$flash[$key] = 'new';
 			}
 		}
 	}
@@ -382,19 +382,19 @@ class Session_Core {
 		if ($run === TRUE)
 			return;
 
-		if ( ! empty(self::$flash))
+		if ( ! empty(Session::$flash))
 		{
-			foreach (self::$flash as $key => $state)
+			foreach (Session::$flash as $key => $state)
 			{
 				if ($state === 'old')
 				{
 					// Flash has expired
-					unset(self::$flash[$key], $_SESSION[$key]);
+					unset(Session::$flash[$key], $_SESSION[$key]);
 				}
 				else
 				{
 					// Flash will expire
-					self::$flash[$key] = 'old';
+					Session::$flash[$key] = 'old';
 				}
 			}
 		}
@@ -429,8 +429,8 @@ class Session_Core {
 	 */
 	public function get_once($key, $default = FALSE)
 	{
-		$return = self::get($key, $default);
-		self::delete($key);
+		$return = Session::get($key, $default);
+		Session::delete($key);
 
 		return $return;
 	}
@@ -447,7 +447,7 @@ class Session_Core {
 
 		foreach ($args as $key)
 		{
-			if (isset(self::$protect[$key]))
+			if (isset(Session::$protect[$key]))
 				continue;
 
 			// Unset the key

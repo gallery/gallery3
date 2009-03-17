@@ -91,16 +91,16 @@ class Cache_Sqlite_Driver implements Cache_Driver {
 	 * @param   integer  lifetime
 	 * @return  bool
 	 */
-	public function set($id, $data, $tags, $lifetime)
+	public function set($id, $data, array $tags = NULL, $lifetime)
 	{
-		// Find the data hash
-		$hash = sha1($data);
+		// Serialize and escape the data
+		$data = sqlite_escape_string(serialize($data));
 
-		// Escape the data
-		$data = sqlite_escape_string($data);
-
-		// Escape the tags
-		$tags = sqlite_escape_string(implode(',', $tags));
+		if ( ! empty($tags))
+		{
+			// Escape the tags, adding brackets so the tag can be explicitly matched
+			$tags = sqlite_escape_string('<'.implode('>,<', $tags).'>');
+		}
 
 		// Cache Sqlite driver expects unix timestamp
 		if ($lifetime !== 0)
@@ -109,15 +109,21 @@ class Cache_Sqlite_Driver implements Cache_Driver {
 		}
 
 		$query = $this->exists($id)
-			? "UPDATE caches SET hash = '$hash', tags = '$tags', expiration = '$lifetime', cache = '$data' WHERE id = '$id'"
-			: "INSERT INTO caches VALUES('$id', '$hash', '$tags', '$lifetime', '$data')";
+			? "UPDATE caches SET tags = '$tags', expiration = '$lifetime', cache = '$data' WHERE id = '$id'"
+			: "INSERT INTO caches VALUES('$id', '$tags', '$lifetime', '$data')";
 
 		// Run the query
 		$this->db->unbufferedQuery($query, SQLITE_BOTH, $error);
 
-		empty($error) or self::log_error($error);
-
-		return empty($error);
+		if ( ! empty($error))
+		{
+			self::log_error($error);
+			return FALSE;
+		}
+		else
+		{
+			return TRUE;
+		}
 	}
 
 	/**
@@ -128,23 +134,32 @@ class Cache_Sqlite_Driver implements Cache_Driver {
 	 */
 	public function find($tag)
 	{
-		$query = "SELECT id FROM caches WHERE tags LIKE '%{$tag}%'";
+		$query = "SELECT id,cache FROM caches WHERE tags LIKE '%<{$tag}>%'";
 		$query = $this->db->query($query, SQLITE_BOTH, $error);
 
-		empty($error) or self::log_error($error);
+		// An array will always be returned
+		$result = array();
 
-		if (empty($error) AND $query->numRows() > 0)
+		if ( ! empty($error))
 		{
-			$array = array();
+			self::log_error($error);
+		}
+		elseif ($query->numRows() > 0)
+		{
+			// Disable notices for unserializing
+			$ER = error_reporting(~E_NOTICE);
+
 			while ($row = $query->fetchObject())
 			{
-				// Add each id to the array
-				$array[] = $row->id;
+				// Add each cache to the array
+				$result[$row->id] = unserialize($row->cache);
 			}
-			return $array;
+
+			// Turn notices back on
+			error_reporting($ER);
 		}
 
-		return FALSE;
+		return $result;
 	}
 
 	/**
@@ -156,23 +171,31 @@ class Cache_Sqlite_Driver implements Cache_Driver {
 	 */
 	public function get($id)
 	{
-		$query = "SELECT id, hash, expiration, cache FROM caches WHERE id = '{$id}' LIMIT 0, 1";
+		$query = "SELECT id, expiration, cache FROM caches WHERE id = '$id' LIMIT 0, 1";
 		$query = $this->db->query($query, SQLITE_BOTH, $error);
 
-		empty($error) or self::log_error($error);
-
-		if (empty($error) AND $cache = $query->fetchObject())
+		if ( ! empty($error))
+		{
+			self::log_error($error);
+		}
+		elseif ($cache = $query->fetchObject())
 		{
 			// Make sure the expiration is valid and that the hash matches
-			if (($cache->expiration != 0 AND $cache->expiration <= time()) OR $cache->hash !== sha1($cache->cache))
+			if ($cache->expiration != 0 AND $cache->expiration <= time())
 			{
 				// Cache is not valid, delete it now
 				$this->delete($cache->id);
 			}
 			else
 			{
+				// Disable notices for unserializing
+				$ER = error_reporting(~E_NOTICE);
+				
 				// Return the valid cache data
-				return $cache->cache;
+				$data = $cache->cache;
+
+				// Turn notices back on
+				error_reporting($ER);
 			}
 		}
 
@@ -184,7 +207,7 @@ class Cache_Sqlite_Driver implements Cache_Driver {
 	 * Deletes a cache item by id or tag
 	 *
 	 * @param  string  cache id or tag, or TRUE for "all items"
-	 * @param  bool    use tags
+	 * @param  bool    delete a tag
 	 * @return bool
 	 */
 	public function delete($id, $tag = FALSE)
@@ -194,22 +217,28 @@ class Cache_Sqlite_Driver implements Cache_Driver {
 			// Delete all caches
 			$where = '1';
 		}
-		elseif ($tag == FALSE)
+		elseif ($tag === TRUE)
 		{
-			// Delete by id
-			$where = "id = '{$id}'";
+			// Delete by tag
+			$where = "tags LIKE '%<{$id}>%'";
 		}
 		else
 		{
-			// Delete by tag
-			$where = "tags LIKE '%{$tag}%'";
+			// Delete by id
+			$where = "id = '$id'";
 		}
 
 		$this->db->unbufferedQuery('DELETE FROM caches WHERE '.$where, SQLITE_BOTH, $error);
 
-		empty($error) or self::log_error($error);
-
-		return empty($error);
+		if ( ! empty($error))
+		{
+			self::log_error($error);
+			return FALSE;
+		}
+		else
+		{
+			return TRUE;
+		}
 	}
 
 	/**

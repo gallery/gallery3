@@ -25,9 +25,12 @@ class Cache_Xcache_Driver implements Cache_Driver {
 		return NULL;
 	}
 
-	public function set($id, $data, $tags, $lifetime)
+	public function set($id, $data, array $tags = NULL, $lifetime)
 	{
-		count($tags) and Kohana::log('error', 'Cache: tags are unsupported by the Xcache driver');
+		if ( ! empty($tags))
+		{
+			Kohana::log('error', 'Cache: tags are unsupported by the Xcache driver');
+		}
 
 		return xcache_set($id, $data, $lifetime);
 	}

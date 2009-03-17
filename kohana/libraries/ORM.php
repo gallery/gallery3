@@ -258,11 +258,7 @@ class ORM_Core {
 	 */
 	public function __get($column)
 	{
-		if (isset($this->ignored_columns[$column]))
-		{
-			return NULL;
-		}
-		elseif (array_key_exists($column, $this->object))
+		if (array_key_exists($column, $this->object))
 		{
 			return $this->object[$column];
 		}
@@ -278,7 +274,7 @@ class ORM_Core {
 		{
 			// This handles the has_one and belongs_to relationships
 
-			if (in_array($model->object_name, $this->belongs_to) OR ! isset($model->object[$this->foreign_key($column)]))
+			if (in_array($model->object_name, $this->belongs_to) OR ! array_key_exists($this->foreign_key($column), $model->object))
 			{
 				// Foreign key lies in this table (this model belongs_to target model) OR an invalid has_one relationship
 				$where = array($model->table_name.'.'.$model->primary_key => $this->object[$this->foreign_key($column)]);
@@ -338,6 +334,10 @@ class ORM_Core {
 					->where($model->table_name.'.'.$model->primary_key, NULL)
 					->find_all();
 			}
+		}
+		elseif (isset($this->ignored_columns[$column]))
+		{
+			return NULL;
 		}
 		elseif (in_array($column, array
 			(
@@ -513,7 +513,7 @@ class ORM_Core {
 		$this->with_applied[$target_path] = TRUE;
 
 		// Use the keys of the empty object to determine the columns
-		$select = array_keys($target->as_array());
+		$select = array_keys($target->object);
 		foreach ($select as $i => $column)
 		{
 			// Add the prefix so that load_result can determine the relationship
@@ -523,7 +523,7 @@ class ORM_Core {
 
 		// Select all of the prefixed keys in the object
 		$this->db->select($select);
-		
+
 		if (in_array($target->object_name, $parent->belongs_to) OR ! isset($target->object[$parent->foreign_key($target_name)]))
 		{
 			// Parent belongs_to target, use target's primary key as join column
@@ -537,8 +537,11 @@ class ORM_Core {
 			$join_col1 = $parent->foreign_key($target_name, $target_path);
 		}
 
+		// This allows for models to use different table prefixes (sharing the same database)
+		$join_table = new Database_Expression($target->db->table_prefix().$target->table_name.' AS '.$this->db->table_prefix().$target_path);
+
 		// Join the related object into the result
-		$this->db->join($target->table_name.' AS '.$this->db->table_prefix().$target_path, $join_col1, $join_col2, 'LEFT');
+		$this->db->join($join_table, $join_col1, $join_col2, 'LEFT');
 
 		return $this;
 	}
@@ -883,15 +886,15 @@ class ORM_Core {
 	{
 		if ($force === TRUE OR empty($this->table_columns))
 		{
-			if (isset(self::$column_cache[$this->object_name]))
+			if (isset(ORM::$column_cache[$this->object_name]))
 			{
 				// Use cached column information
-				$this->table_columns = self::$column_cache[$this->object_name];
+				$this->table_columns = ORM::$column_cache[$this->object_name];
 			}
 			else
 			{
 				// Load table columns
-				self::$column_cache[$this->object_name] = $this->table_columns = $this->db->list_fields($this->table_name, TRUE);
+				ORM::$column_cache[$this->object_name] = $this->table_columns = $this->db->list_fields($this->table_name, TRUE);
 			}
 		}
 
@@ -907,7 +910,8 @@ class ORM_Core {
 	 */
 	public function has(ORM $model, $any = FALSE)
 	{
-		$related = $model->object_plural;
+		// Determine plural or singular relation name
+		$related = ($model->table_names_plural === TRUE) ? $model->object_plural : $model->object_name;
 
 		if (($join_table = array_search($related, $this->has_and_belongs_to_many)) === FALSE)
 			return FALSE;
@@ -1141,7 +1145,7 @@ class ORM_Core {
 		}
 		else
 		{
-			if ( ! is_string($table) OR ! isset($this->object[$table.'_'.$this->primary_key]))
+			if ( ! is_string($table) OR ! array_key_exists($table.'_'.$this->primary_key, $this->object))
 			{
 				// Use this table
 				$table = $this->table_name;

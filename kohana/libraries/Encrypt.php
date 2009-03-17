@@ -96,34 +96,34 @@ class Encrypt_Core {
 	public function encode($data)
 	{
 		// Set the rand type if it has not already been set
-		if (self::$rand === NULL)
+		if (Encrypt::$rand === NULL)
 		{
 			if (KOHANA_IS_WIN)
 			{
 				// Windows only supports the system random number generator
-				self::$rand = MCRYPT_RAND;
+				Encrypt::$rand = MCRYPT_RAND;
 			}
 			else
 			{
 				if (defined('MCRYPT_DEV_URANDOM'))
 				{
 					// Use /dev/urandom
-					self::$rand = MCRYPT_DEV_URANDOM;
+					Encrypt::$rand = MCRYPT_DEV_URANDOM;
 				}
 				elseif (defined('MCRYPT_DEV_RANDOM'))
 				{
 					// Use /dev/random
-					self::$rand = MCRYPT_DEV_RANDOM;
+					Encrypt::$rand = MCRYPT_DEV_RANDOM;
 				}
 				else
 				{
 					// Use the system random number generator
-					self::$rand = MCRYPT_RAND;
+					Encrypt::$rand = MCRYPT_RAND;
 				}
 			}
 		}
 
-		if (self::$rand === MCRYPT_RAND)
+		if (Encrypt::$rand === MCRYPT_RAND)
 		{
 			// The system random number generator must always be seeded each
 			// time it is used, or it will not produce true random results
@@ -131,7 +131,7 @@ class Encrypt_Core {
 		}
 
 		// Create a random initialization vector of the proper size for the current cipher
-		$iv = mcrypt_create_iv($this->config['iv_size'], self::$rand);
+		$iv = mcrypt_create_iv($this->config['iv_size'], Encrypt::$rand);
 
 		// Encrypt the data using the configured options and generated iv
 		$data = mcrypt_encrypt($this->config['cipher'], $this->config['key'], $data, $this->config['mode'], $iv);

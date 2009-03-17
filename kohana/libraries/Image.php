@@ -292,7 +292,7 @@ class Image_Core {
 	 */
 	public function flip($direction)
 	{
-		if ($direction !== self::HORIZONTAL AND $direction !== self::VERTICAL)
+		if ($direction !== Image::HORIZONTAL AND $direction !== Image::VERTICAL)
 			throw new Kohana_Exception('image.invalid_flip');
 
 		$this->actions['flip'] = $direction;

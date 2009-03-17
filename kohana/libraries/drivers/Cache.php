@@ -14,7 +14,7 @@ interface Cache_Driver {
 	/**
 	 * Set a cache item.
 	 */
-	public function set($id, $data, $tags, $lifetime);
+	public function set($id, $data, array $tags = NULL, $lifetime);
 
 	/**
 	 * Find all of the cache ids for a given tag.

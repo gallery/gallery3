@@ -83,7 +83,7 @@ class request_Core {
 	{
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
 
-		if ( ! in_array($method, self::$http_methods))
+		if ( ! in_array($method, request::$http_methods))
 			throw new Kohana_Exception('request.unknown_method', $method);
 
 		return $method;
@@ -101,7 +101,7 @@ class request_Core {
 		request::parse_accept_header();
 
 		if ($type === NULL)
-			return self::$accept_types;
+			return request::$accept_types;
 
 		return (request::accepts_at_quality($type, $explicit_check) > 0);
 	}
@@ -175,16 +175,16 @@ class request_Core {
 		$type = explode('/', $type, 2);
 
 		// Exact match
-		if (isset(self::$accept_types[$type[0]][$type[1]]))
-			return self::$accept_types[$type[0]][$type[1]];
-        
+		if (isset(request::$accept_types[$type[0]][$type[1]]))
+			return request::$accept_types[$type[0]][$type[1]];
+
 		// Wildcard match (if not checking explicitly)
-		if ($explicit_check === FALSE AND isset(self::$accept_types[$type[0]]['*']))
-			return self::$accept_types[$type[0]]['*'];
+		if ($explicit_check === FALSE AND isset(request::$accept_types[$type[0]]['*']))
+			return request::$accept_types[$type[0]]['*'];
 
 		// Catch-all wildcard match (if not checking explicitly)
-		if ($explicit_check === FALSE AND isset(self::$accept_types['*']['*']))
-			return self::$accept_types['*']['*'];
+		if ($explicit_check === FALSE AND isset(request::$accept_types['*']['*']))
+			return request::$accept_types['*']['*'];
 
 		// Content type not accepted
 		return 0;
@@ -198,17 +198,17 @@ class request_Core {
 	protected static function parse_accept_header()
 	{
 		// Run this function just once
-		if (self::$accept_types !== NULL)
+		if (request::$accept_types !== NULL)
 			return;
 
 		// Initialize accept_types array
-		self::$accept_types = array();
+		request::$accept_types = array();
 
 		// No HTTP Accept header found
 		if (empty($_SERVER['HTTP_ACCEPT']))
 		{
 			// Accept everything
-			self::$accept_types['*']['*'] = 1;
+			request::$accept_types['*']['*'] = 1;
 			return;
 		}
 
@@ -229,9 +229,9 @@ class request_Core {
 			$q = (isset($accept_entry[1]) AND preg_match('~\bq\s*+=\s*+([.0-9]+)~', $accept_entry[1], $match)) ? (float) $match[1] : 1;
 
 			// Populate accept_types array
-			if ( ! isset(self::$accept_types[$type[0]][$type[1]]) OR $q > self::$accept_types[$type[0]][$type[1]])
+			if ( ! isset(request::$accept_types[$type[0]][$type[1]]) OR $q > request::$accept_types[$type[0]][$type[1]])
 			{
-				self::$accept_types[$type[0]][$type[1]] = $q;
+				request::$accept_types[$type[0]][$type[1]] = $q;
 			}
 		}
 	}

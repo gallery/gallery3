@@ -31,13 +31,13 @@ class Input_Core {
 	 */
 	public static function instance()
 	{
-		if (self::$instance === NULL)
+		if (Input::$instance === NULL)
 		{
 			// Create a new instance
 			return new Input;
 		}
 
-		return self::$instance;
+		return Input::$instance;
 	}
 
 	/**
@@ -51,7 +51,7 @@ class Input_Core {
 		// Use XSS clean?
 		$this->use_xss_clean = (bool) Kohana::config('core.global_xss_filtering');
 
-		if (self::$instance === NULL)
+		if (Input::$instance === NULL)
 		{
 			// magic_quotes_runtime is enabled
 			if (get_magic_quotes_runtime())
@@ -140,7 +140,7 @@ class Input_Core {
 			}
 
 			// Create a singleton
-			self::$instance = $this;
+			Input::$instance = $this;
 
 			Kohana::log('debug', 'Global GET, POST and COOKIE data sanitized');
 		}
