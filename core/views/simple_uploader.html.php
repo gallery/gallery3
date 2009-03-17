@@ -13,7 +13,7 @@
   <p>
     <?= t("Photos will be uploaded to album: ") ?>
   </p>
-  <ul>
+  <ul class="gBreadcrumbs">
     <? foreach ($item->parents() as $parent): ?>
     <li> <?= $parent->title ?> </li>
     <? endforeach ?>
@@ -26,14 +26,14 @@
     <div id="gEditPhotosQueue"></div>
   </div>
   <span id="gChooseFilesButtonPlaceholder"></span>
-  <button id="gUploadCancel" type="button"
+  <button id="gUploadCancel" class="ui-state-default ui-corner-all" type="button"
           onclick="swfu.cancelQueue();"
           disabled="disabled">
     <?= t("Cancel all") ?>
   </button>
 
   <!-- Proxy the done request back to our form, since its been ajaxified -->
-  <button onclick="$('#gAddPhotosForm').submit()">
+  <button class="ui-state-default ui-corner-all" onclick="$('#gAddPhotosForm').submit()">
     <?= t("Done") ?>
   </button>
 </div>
@@ -61,7 +61,7 @@
     button_height: "29",
     button_placeholder_id: "gChooseFilesButtonPlaceholder",
     button_text: '<span class="swfUploadFont">Select photos...</span>',
-    button_text_style: ".swfUploadFont { font-size: 18; }",
+    button_text_style: ".swfUploadFont { font-size: 16; font-family: Arial; }",
     button_text_left_padding: 12,
     button_text_top_padding: 3,
 

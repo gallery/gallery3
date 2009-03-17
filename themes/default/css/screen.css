@@ -623,7 +623,7 @@ form .gError,
 .gBreadcrumbs li {
   background: transparent url('../images/ico-separator.gif') no-repeat scroll left center;
   float: left;
-  padding: 10px 6px 10px 16px;
+  padding: 10px 6px 10px 16px !important;
 }
 
 .gBreadcrumbs li.root {
@@ -635,8 +635,13 @@ form .gError,
   display: block;
 }
 
+.gBreadcrumbs li.active,
 .gBreadcrumbs li.active span {
   font-weight: bold;
+}
+
+#gAddPhotos .gBreadcrumbs {
+	font-size: .9em;
 }
 
 /* Tags and cloud ~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -850,9 +855,7 @@ form .gError,
   background: #999;
 }
 
-/** *******************************************************************
- * 8) Server Add
- *********************************************************************/
+/* Server Add */
 .gCheckboxTree {
   display: none;
 }
@@ -918,29 +921,6 @@ form .gError,
 #gAddPhotos p {
   margin: 0px;
   padding: 0px;
-}
-
-#gAddPhotos ul li {
-  margin: 0px;
-  padding: 0px;
-  padding-right: 4px;
-}
-
-#gAddPhotos ul li.active {
-  font-weight: bold;
-}
-
-#gAddPhotos ul {
-  margin: 0px;
-  padding: 0px;
-}
-
-#gAddPhotos ul li:after {
-  content: ">";
-}
-
-#gAddPhotos ul li.active:after {
-  content: "";
 }
 
 #gAddPhotosCanvas {
