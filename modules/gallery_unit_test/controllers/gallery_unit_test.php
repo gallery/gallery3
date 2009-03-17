@@ -79,8 +79,10 @@ class Gallery_Unit_Test_Controller extends Controller {
     Kohana::config_set('unit_test.paths', $paths);
 
     // Clean out the database
-    foreach ($db->list_tables() as $table) {
-      $db->query("DROP TABLE $table");
+    if ($tables = $db->list_tables()) {
+      foreach ($db->list_tables() as $table) {
+        $db->query("DROP TABLE $table");
+      }
     }
 
     // Clean out the filesystem
@@ -88,7 +90,9 @@ class Gallery_Unit_Test_Controller extends Controller {
     @mkdir('test/var/logs', 0777, true);
 
     // Reset our loaded modules
-    module::load_modules();
+    module::$module_names = array();
+    module::$modules = array();
+    module::$var_cache = array();
 
     // Install all modules
     // Force core and user to be installed first to resolve dependencies.
