@@ -382,6 +382,7 @@ form .gError,
 	background-color: #e8e8e8;
   border-bottom: 1px solid #fff;
   font-size: .8em;
+  margin-bottom: 1em;
   padding: 1em 20px 0 20px;
 }
 
@@ -736,6 +737,7 @@ form .gError,
  *********************************************************************/
 
 #gSiteMenu:after,
+#gHeader:after,
 .gBreadcrumbs:after,
 #gAlbumGrid:after,
 #gPager:after,
