@@ -58,7 +58,7 @@ class L10n_Scanner_Core {
         new L10n_Scanner_Directory_Filter_Iterator(
           new RecursiveDirectoryIterator(DOCROOT))));
     foreach ($dir as $file) {
-      if (strtolower(substr(strrchr($file->getFilename(), '.'), 1)) == "php") {
+      if substr(strrchr($file->getFilename(), '.'), 1) == "php") {
         $this->_scan_php_file($file, $this);
       } else {
         $this->_scan_info_file($file, $this);
@@ -111,10 +111,11 @@ class L10n_Scanner_Core {
 
   private function _scan_info_file($file, &$message_handler) {
     $code = file_get_contents($file);
-    print $code . "\n";
-    if (preg_match("#description\s*?=\s*(.*)\n#", $code, $matches)) {
-    print $matches[1] . "\n";
-      $message_handler->process_message($matches[1]);
+    if (preg_match("#name\s*?=\s*(.*?)\ndescription\s*?=\s*(.*)\n#", $code, $matches)) {
+      unset($matches[0]);
+      foreach ($matches as $string) {
+        $message_handler->process_message($string);
+      }
     }
   }
 
@@ -127,7 +128,7 @@ class L10n_Scanner_Core {
 
       if ($parens == "(") {
         if (in_array($next_token, array(")", ","))
-            && (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING))) {
+            && (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING))) {x
           $message = self::_escape_quoted_string($first_param[1]);
           $message_handler->process_message($message);
         } else {
@@ -201,7 +202,6 @@ class L10n_Scanner_File_Filter_Iterator extends FilterIterator {
   function accept() {
     // Skip anything that doesn't need to be localized.
     $filename = $this->getInnerIterator()->getFilename();
-    $ext = strtolower(substr(strrchr($filename, '.'), 1));
-    return in_array($ext, array("php", "info"));
+    return in_array(substr(strrchr($filename, '.'), 1), array("php", "info"));
   }
 }
