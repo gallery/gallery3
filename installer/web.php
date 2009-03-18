@@ -88,6 +88,10 @@ function check_environment() {
     $errors[] = "PHP is missing <a href=\"http://php.net/pcre\">Perl-Compatible Regular Expression</a> support.";
   }
 
+  if (!(function_exists("spl_autoload_register"))) {
+    $errors[] = "PHP is missing <a href=\"http://php.net/spl\">Standard PHP Library (SPL)</a> support";
+  }
+
   if (!(class_exists("ReflectionClass"))) {
     $errors[] = "PHP is missing <a href=\"http://php.net/reflection\">reflection</a> support";
   }
