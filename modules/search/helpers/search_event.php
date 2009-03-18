@@ -46,6 +46,6 @@ class search_event_Core {
 
   static function item_related_update_batch($sql) {
     $db = Database::instance();
-    $db->query("UPDATE `search_records` SET `dirty` = 1 WHERE item_id IN ($sql)");
+    $db->query("UPDATE `{search_records}` SET `dirty` = 1 WHERE item_id IN ($sql)");
   }
 }
