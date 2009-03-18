@@ -63,6 +63,7 @@ class photo_Core {
     $photo->mime_type = empty($image_info['mime']) ? "application/unknown" : $image_info['mime'];
     $photo->thumb_dirty = 1;
     $photo->resize_dirty = 1;
+    $photo->sort_column = "id";
     $photo->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
     // Randomize the name if there's a conflict
