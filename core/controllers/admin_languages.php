@@ -132,9 +132,7 @@ class Admin_Languages_Controller extends Admin_Controller {
   }
 
   private function _outgoing_translations_count() {
-    return Database::instance()
-      ->query("SELECT COUNT(*) AS `C` FROM outgoing_translations")
-      ->current()->C;
+    return ORM("outgoing_translation")->count_all();
   }
 
   private function _share_translations_form() {
