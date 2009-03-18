@@ -93,7 +93,7 @@ class I18n_Core {
    */
   public function translate($message, $options=array()) {
     $locale = empty($options['locale']) ? $this->_config['default_locale'] : $options['locale'];
-    $count = empty($options['count']) ? null : $options['count'];
+    $count = isset($options['count']) ? $options['count'] : null;
     $values = $options;
     unset($values['locale']);
     $this->log($message, $options);
@@ -188,8 +188,6 @@ class I18n_Core {
   private function pluralize($locale, $entry, $count) {
     if (!is_array($entry)) {
       return $entry;
-    } else if ($count == null) {
-      $count = $locale == "en" ? 0 : 1;
     }
 
     $plural_key = self::get_plural_key($locale, $count);

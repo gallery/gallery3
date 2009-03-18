@@ -96,4 +96,13 @@ class I18n_Test extends Unit_Test_Case {
     $result = $this->i18n->translate('Hello %name, how are you today?', array('foo' => 'bar'));
     $this->assert_equal('Hallo %name, wie geht es Dir heute?', $result);
   }
+
+  public function translate_plural_zero_test() {
+    // te_ST has the same plural rules as en and de.
+    // For count 0, plural form "other" should be used.
+    $result = $this->i18n->translate(array('one' => 'One item has been added',
+                                           'other' => '%count elements have been added'),
+                                     array('count' => 0));
+    $this->assert_equal('0 Elemente wurden hinzugefuegt.', $result);
+  }
 }
