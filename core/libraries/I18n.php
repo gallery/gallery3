@@ -189,7 +189,7 @@ class I18n_Core {
     if (!is_array($entry)) {
       return $entry;
     } else if ($count == null) {
-      $count = 1;
+      $count = $locale == "en" ? 0 : 1;
     }
 
     $plural_key = self::get_plural_key($locale, $count);
