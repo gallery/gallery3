@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class L10n_Client_Controller extends Controller {
-  public function save($string) {
+  public function save() {
     access::verify_csrf();
     user::active()->admin or access::forbidden();
 
