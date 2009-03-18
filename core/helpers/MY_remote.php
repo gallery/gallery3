@@ -160,4 +160,4 @@ class remote extends remote_Core {
     return $url_components;
   }
 }
-?>
+
