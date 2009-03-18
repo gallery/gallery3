@@ -132,7 +132,7 @@ class Admin_Languages_Controller extends Admin_Controller {
   }
 
   private function _outgoing_translations_count() {
-    return ORM("outgoing_translation")->count_all();
+    return ORM::factory("outgoing_translation")->count_all();
   }
 
   private function _share_translations_form() {
