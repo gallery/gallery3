@@ -16,14 +16,14 @@
 <? if ($item->is_photo() && graphics::can("rotate")): ?>
 <a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/ccw?csrf=" . access::csrf_token()) ?>"
   title="<?= t("Rotate 90 degrees counter clockwise") ?>">
-  <span class="ui-icon ui-icon-arrowthick-1-w">
+  <span class="ui-icon ui-icon-rotate-ccw">
     <?= t("Rotate 90 degrees counter clockwise") ?>
   </span>
 </a>
 
 <a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/cw?csrf=" . access::csrf_token()) ?>"
   title="<?= t("Rotate 90 degrees clockwise") ?>">
-  <span class="ui-icon ui-icon-arrowthick-1-e">
+  <span class="ui-icon ui-icon-rotate-cw">
     <?= t("Rotate 90 degrees clockwise") ?>
   </span>
 </a>

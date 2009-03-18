@@ -847,6 +847,14 @@ form .gError,
   margin-left: .2em;
 }
 
+.ui-icon-rotate-ccw {
+  background-position: -192px -64px;
+}
+
+.ui-icon-rotate-cw {
+  background-position: -208px -64px;
+}
+
 /* STUFF THAT NEEDS A HOME */
 
 #gMove ul {
