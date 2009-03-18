@@ -266,20 +266,20 @@ class core_installer {
 
   static function uninstall() {
     $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {access_caches};");
-    $db->query("DROP TABLE IF EXISTS {access_intents};");
-    $db->query("DROP TABLE IF EXISTS {graphics_rules};");
-    $db->query("DROP TABLE IF EXISTS {items`;");
-    $db->query("DROP TABLE IF EXISTS {logs};");
-    $db->query("DROP TABLE IF EXISTS {messages};");
-    $db->query("DROP TABLE IF EXISTS {modules};");
-    $db->query("DROP TABLE IF EXISTS {themes};");
-    $db->query("DROP TABLE IF EXISTS {incoming_translations};");
-    $db->query("DROP TABLE IF EXISTS {outgoing_translations};");
-    $db->query("DROP TABLE IF EXISTS {permissions};");
-    $db->query("DROP TABLE IF EXISTS {sessions};");
-    $db->query("DROP TABLE IF EXISTS {tasks};");
-    $db->query("DROP TABLE IF EXISTS {vars};");
+    $db->query("DROP TABLE IF EXISTS {access_caches}");
+    $db->query("DROP TABLE IF EXISTS {access_intents}");
+    $db->query("DROP TABLE IF EXISTS {graphics_rules}");
+    $db->query("DROP TABLE IF EXISTS {items}");
+    $db->query("DROP TABLE IF EXISTS {logs}");
+    $db->query("DROP TABLE IF EXISTS {messages}");
+    $db->query("DROP TABLE IF EXISTS {modules}");
+    $db->query("DROP TABLE IF EXISTS {themes}");
+    $db->query("DROP TABLE IF EXISTS {incoming_translations}");
+    $db->query("DROP TABLE IF EXISTS {outgoing_translations}");
+    $db->query("DROP TABLE IF EXISTS {permissions}");
+    $db->query("DROP TABLE IF EXISTS {sessions}");
+    $db->query("DROP TABLE IF EXISTS {tasks}");
+    $db->query("DROP TABLE IF EXISTS {vars}");
     foreach (array("albums", "resizes", "thumbs", "uploads", "modules") as $dir) {
       system("/bin/rm -rf " . VARPATH . $dir);
     }
