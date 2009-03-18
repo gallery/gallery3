@@ -20,12 +20,12 @@
 
 class l10n_client_Core {
 
-  private static function server_url() {
+  private static function _server_url() {
     return "http://gallery.menalto.com/index.php";
   }
   
   static function server_api_key_url() {
-    return self::server_url() . "?q=translations/userkey/"
+    return self::_server_url() . "?q=translations/userkey/"
       . self::client_token();
   }
 
@@ -53,7 +53,7 @@ class l10n_client_Core {
   
   static function validate_api_key($api_key) {
     $version = "1.0";
-    $url = self::server_url() . "?q=translations/status";
+    $url = self::_server_url() . "?q=translations/status";
     $signature = self::_sign($version, $api_key);
 
     list ($response_data, $response_status) = remote::post($url, array("version" => $version,
@@ -95,7 +95,7 @@ class l10n_client_Core {
     // TODO: Include messages from outgoing_translations?
 
     $request_data = json_encode($request);
-    $url = self::server_url() . "?q=translations/fetch";
+    $url = self::_server_url() . "?q=translations/fetch";
     list ($response_data, $response_status) = remote::post($url, array("data" => $request_data));
     if (!remote::success($response_status)) {
       throw new Exception("Translations fetch request failed with: " . $response_status);
@@ -180,7 +180,7 @@ class l10n_client_Core {
 
     // TODO: reduce memory consumpotion, e.g. free $request
     $request_data = json_encode($request);
-    $url = self::server_url() . "?q=translations/submit";
+    $url = self::_server_url() . "?q=translations/submit";
     $signature = self::_sign($request_data);
 
     list ($response_data, $response_status) = remote::post($url, array("data" => $request_data,
