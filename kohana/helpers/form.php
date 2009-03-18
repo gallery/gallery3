@@ -24,7 +24,7 @@ class form_Core {
 		// Make sure that the method is always set
 		empty($attr['method']) and $attr['method'] = 'post';
 
-		if ($attr['method'] !== 'post' and $attr['method'] !== 'get')
+		if ($attr['method'] !== 'post' AND $attr['method'] !== 'get')
 		{
 			// If the method is invalid, use post
 			$attr['method'] = 'post';
