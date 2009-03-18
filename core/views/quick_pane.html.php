@@ -74,7 +74,7 @@
 <? endif ?>
 
 <? if ($item->is_album()): ?>
-<a class="gButtonLink ui-corner-all ui-state-default" href="#" title="<?= t("additional options") ?>">
+<a class="gButtonLink ui-corner-all ui-state-default options" href="#" title="<?= t("additional options") ?>">
   <span class="ui-icon ui-icon-triangle-1-s">
     <?= t("Additional options") ?>
   </span>

@@ -28,5 +28,6 @@
 
 #gQuickPaneOptions a {
   display: block;
+  clear: both;
   width: auto;
 }
