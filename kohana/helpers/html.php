@@ -116,7 +116,7 @@ class html_Core {
 	 * @param   array   HTML anchor attributes
 	 * @return  string
 	 */
-	public static function panchor($protocol, $uri, $title = FALSE, $attributes = FALSE)
+	public static function panchor($protocol, $uri, $title = NULL, $attributes = FALSE)
 	{
 		return html::anchor($uri, $title, $attributes, $protocol);
 	}
