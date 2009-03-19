@@ -41,11 +41,9 @@
   <body>
     <?= $theme->page_top() ?>
     <div id="doc4" class="yui-t5 gView">
-      <div id="hd">
-        <?= $theme->site_status() ?>
-        <div id="gHeader">
-          <?= $theme->display("header.html") ?>
-        </div>
+      <?= $theme->site_status() ?>
+      <div id="gHeader">
+        <?= $theme->display("header.html") ?>
       </div>
       <div id="bd">
         <div id="yui-main">
@@ -60,10 +58,8 @@
           <?= $theme->display("sidebar.html") ?>
         </div>
       </div>
-      <div id="ft">
-        <div id="gFooter">
-          <?= $theme->display("footer.html") ?>
-        </div>
+      <div id="gFooter">
+        <?= $theme->display("footer.html") ?>
       </div>
     </div>
     <?= $theme->page_bottom() ?>
