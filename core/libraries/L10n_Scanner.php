@@ -58,7 +58,7 @@ class L10n_Scanner_Core {
         new L10n_Scanner_Directory_Filter_Iterator(
           new RecursiveDirectoryIterator(DOCROOT))));
     foreach ($dir as $file) {
-      if substr(strrchr($file->getFilename(), '.'), 1) == "php") {
+      if (substr(strrchr($file->getFilename(), '.'), 1) == "php") {
         $this->_scan_php_file($file, $this);
       } else {
         $this->_scan_info_file($file, $this);
@@ -128,7 +128,7 @@ class L10n_Scanner_Core {
 
       if ($parens == "(") {
         if (in_array($next_token, array(")", ","))
-            && (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING))) {x
+            && (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING))) {
           $message = self::_escape_quoted_string($first_param[1]);
           $message_handler->process_message($message);
         } else {
