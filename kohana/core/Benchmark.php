@@ -22,18 +22,20 @@ final class Benchmark {
 	 */
 	public static function start($name)
 	{
-		if ( ! isset(self::$marks[$name])) {
+		if ( ! isset(self::$marks[$name]))
+		{
 			self::$marks[$name] = array();
 		}
 
-		array_unshift(self::$marks[$name], array
-			(
-				'start'	       => microtime(TRUE),
-				'stop'	       => FALSE,
-				'memory_start' => function_exists('memory_get_usage') ? memory_get_usage() : 0,
-				'memory_stop'  => FALSE
-			)
+		$mark = array
+		(
+			'start'        => microtime(TRUE),
+			'stop'         => FALSE,
+			'memory_start' => self::memory_usage(),
+			'memory_stop'  => FALSE
 		);
+
+		array_unshift(self::$marks[$name], $mark);
 	}
 
 	/**
@@ -47,7 +49,7 @@ final class Benchmark {
 		if (isset(self::$marks[$name]) AND self::$marks[$name][0]['stop'] === FALSE)
 		{
 			self::$marks[$name][0]['stop'] = microtime(TRUE);
-			self::$marks[$name][0]['memory_stop'] = function_exists('memory_get_usage') ? memory_get_usage() : 0;
+			self::$marks[$name][0]['memory_stop'] = self::memory_usage();
 		}
 	}
 
@@ -97,8 +99,27 @@ final class Benchmark {
 		(
 			'time'   => number_format($time, $decimals),
 			'memory' => $memory,
-                        'count' => count(self::$marks[$name])
+			'count'  => count(self::$marks[$name])
 		);
+	}
+
+	/**
+	 * Returns the current memory usage. This is only possible if the
+	 * memory_get_usage function is supported in PHP.
+	 *
+	 * @return  integer
+	 */
+	private function memory_usage()
+	{
+		static $func;
+
+		if ($func === NULL)
+		{
+			// Test if memory usage can be seen
+			$func = function_exists('memory_get_usage');
+		}
+
+		return $func ? memory_get_usage() : 0;
 	}
 
 } // End Benchmark

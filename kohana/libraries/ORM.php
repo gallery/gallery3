@@ -1092,7 +1092,7 @@ class ORM_Core {
 		// Proxy to database
 		$this->db->clear_cache($sql);
 
-		self::$column_cache = array();
+		ORM::$column_cache = array();
 
 		return $this;
 	}
