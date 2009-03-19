@@ -89,14 +89,16 @@ class Gallery_Unit_Test_Controller extends Controller {
     @system("rm -rf test/var");
     @mkdir('test/var/logs', 0777, true);
 
-    // Reset our loaded modules
+    // Reset our caches
     module::$module_names = array();
     module::$modules = array();
     module::$var_cache = array();
+    $db->clear_cache();
 
     // Install all modules
     // Force core and user to be installed first to resolve dependencies.
-    module::install("core");
+    core_installer::install(true);
+    module::load_modules();
     module::install("user");
     $modules = array();
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {

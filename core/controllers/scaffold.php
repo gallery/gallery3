@@ -273,57 +273,26 @@ class Scaffold_Controller extends Template_Controller {
     }
   }
 
-  function uninstall($module_name, $redirect=true) {
-    $clean = true;
-    if ($module_name == "core") {
-      // We have to uninstall all other modules first, else their tables, etc don't
-      // get cleaned up.
-      $old_handler = set_error_handler(array("scaffold_Controller", "_error_handler"));
-      try {
-        foreach (ORM::factory("module")->find_all() as $module) {
-          if ($module->name != "core" && $module->version) {
-            try {
-              call_user_func(array("{$module->name}_installer", "uninstall"));
-            } catch (Exception $e) {
-              print $e;
-            }
-          }
-        }
-        core_installer::uninstall();
-      } catch (Exception $e) {
-        print $e;
-      }
-
-
-      // Since we're in a state of flux, it's possible that other stuff went wrong with the
-      // uninstall, so back off and nuke it from orbit.  It's the only way to be sure.
-      $db = Database::instance();
-      foreach ($db->list_tables() as $table) {
-        $db->query("DROP TABLE IF EXISTS `$table`");
-      }
-      set_error_handler($old_handler);
-    } else {
-      module::uninstall($module_name);
-    }
-    if ($redirect) {
-      url::redirect("scaffold");
-    }
-  }
 
   public function package() {
     $this->auto_render = false;
+    $db = Database::instance();
 
-    // Cleanly uninstalling and reinstalling within the same request requires us to do the "cache
-    // invalidation" cha-cha.  It's a dance of many steps.
-    $this->uninstall("core", false);
+    // Drop all tables
+    foreach ($db->list_tables() as $table) {
+        $db->query("DROP TABLE IF EXISTS `$table`");
+    }
+
     module::$module_names = array();
     module::$modules = array();
-    Database::instance()->clear_cache();
-    $this->install("core", false);
+    $db->clear_cache();
+
+    core_installer::install(true);
     module::load_modules();
-    foreach (array("core", "user", "comment", "info",
-                   "rss", "search", "slideshow", "tag") as $module_name) {
-      $this->install($module_name, false);
+
+    foreach (array("user", "comment", "info", "rss",
+                   "search", "slideshow", "tag") as $module_name) {
+      module::install($module_name);
     }
     url::redirect("scaffold/dump_database");
   }

@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class core_installer {
-  static function install() {
+  static function install($initial_install=false) {
     $db = Database::instance();
-    if (TEST_MODE) {
+    if ($initial_install) {
       $version = 0;
     } else {
       $version = module::get_version("core");
@@ -280,8 +280,9 @@ class core_installer {
     $db->query("DROP TABLE IF EXISTS {sessions}");
     $db->query("DROP TABLE IF EXISTS {tasks}");
     $db->query("DROP TABLE IF EXISTS {vars}");
-    foreach (array("albums", "resizes", "thumbs", "uploads", "modules") as $dir) {
-      system("/bin/rm -rf " . VARPATH . $dir);
+    foreach (array("albums", "resizes", "thumbs", "uploads",
+                   "modules", "logs", "database.php") as $entry) {
+      system("/bin/rm -rf " . VARPATH . $entry);
     }
   }
 }
