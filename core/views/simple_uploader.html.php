@@ -21,11 +21,11 @@
   </ul>
 
   <p><?= t("Upload Queue") ?></p>
-  <div id="gAddPhotosCanvas">
+  <div id="gAddPhotosCanvas" style="text-align: center;">
     <div id="gAddPhotosQueue"></div>
     <div id="gEditPhotosQueue"></div>
+    <span id="gChooseFilesButtonPlaceholder"></span>
   </div>
-  <span id="gChooseFilesButtonPlaceholder"></span>
   <button id="gUploadCancel" class="ui-state-default ui-corner-all" type="button"
           onclick="swfu.cancelQueue();"
           disabled="disabled">
@@ -37,6 +37,29 @@
     <?= t("Done") ?>
   </button>
 </div>
+
+<style>
+  #SWFUpload_0 {
+    margin-top: 100px;
+  }
+  #gAddPhotos .gBreadcrumbs {
+    border: 0;
+    margin: 0;
+    padding-left:10px;
+  }
+  #gAddPhotosCanvas {
+    border: 1px solid  #CCCCCC;
+    margin: .5em 0 .5em 0;
+    width: 469px;
+  }
+  #gAddPhotos button {
+    margin-bottom: .5em;
+    float: right;
+  }
+  #gAddPhotos #gUploadCancel {
+    float: left;
+  }
+</style>
 
 <script type="text/javascript">
   var swfu = new SWFUpload({
@@ -56,14 +79,14 @@
     debug: false,
 
     // Button settings
-    // button_image_url: "...",
-    button_width: "130",
-    button_height: "29",
+    button_image_url: "<?= url::file("themes/default/images/select-photos-backg.png") ?>",
+    button_width: "202",
+    button_height: "45",
     button_placeholder_id: "gChooseFilesButtonPlaceholder",
     button_text: '<span class="swfUploadFont">Select photos...</span>',
-    button_text_style: ".swfUploadFont { font-size: 16; font-family: Arial; }",
-    button_text_left_padding: 12,
-    button_text_top_padding: 3,
+    button_text_style: ".swfUploadFont { color: #2E6E9E; font-size: 16px; font-family: Lucida Grande,Lucida Sans,Arial,sans-serif; font-weight: bold; }",
+    button_text_left_padding: 30,
+    button_text_top_padding: 10,
 
     // The event handler functions are defined in handlers.js
     file_queued_handler : file_queued,
