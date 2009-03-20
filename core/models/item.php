@@ -328,14 +328,22 @@ class Item_Model extends ORM_MPTT {
   public function thumb_tag($extra_attrs, $max=null) {
     $width = $this->thumb_width;
     $height = $this->thumb_height;
-    if (isset($max)) {
-      if ($width > $height) {
-        $height = (int)($max * ($height / $width));
-        $width = $max;
-      } else {
-        $width = (int)($max * ($width / $height));
-        $height = $max;
+
+    if ($height) {
+      if (isset($max)) {
+	if ($width > $height) {
+	  $height = (int)($max * ($height / $width));
+	  $width = $max;
+	} else {
+	  $width = (int)($max * ($width / $height));
+	  $height = $max;
+	}
       }
+    } else {
+      // Missing thumbnail, can happen on albums with no photos yet.
+      // @todo we should enforce a placeholder for those albums.
+      $width = 0;
+      $height = 0;
     }
     $attrs = array_merge($extra_attrs,
             array(
