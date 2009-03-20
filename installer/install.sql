@@ -147,7 +147,7 @@ CREATE TABLE {items} (
   KEY `random` (`rand_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (NULL,NOW(),'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',NOW(),0,NULL,NULL,'id','ASC',1,1);
+INSERT INTO {items} VALUES (NULL,UNIX_TIMESTAMP(),'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',UNIX_TIMESTAMP(),0,NULL,NULL,'id','ASC',1,1);
 DROP TABLE IF EXISTS {items_tags};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;

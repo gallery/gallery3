@@ -342,7 +342,7 @@ class Scaffold_Controller extends Template_Controller {
         $line);
 
       // Normalize dates
-      $line = preg_replace("/,$root_timestamp,/", ",NOW(),", $line);
+      $line = preg_replace("/,$root_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
       $buf .= $line;
     }
     $fd = fopen($sql_file, "wb");
