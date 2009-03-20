@@ -287,6 +287,10 @@ class Scaffold_Controller extends Template_Controller {
     module::$modules = array();
     $db->clear_cache();
 
+    // Use a known random seed so that subsequent packaging runs will reuse the same random
+    // numbers, keeping our install.sql file more stable.
+    srand(0);
+
     core_installer::install(true);
     module::load_modules();
 
@@ -294,6 +298,7 @@ class Scaffold_Controller extends Template_Controller {
                    "search", "slideshow", "tag") as $module_name) {
       module::install($module_name);
     }
+
     url::redirect("scaffold/dump_database");
   }
 
@@ -305,6 +310,7 @@ class Scaffold_Controller extends Template_Controller {
     $db = Database::instance();
     $db->query("TRUNCATE {sessions}");
     $db->query("TRUNCATE {logs}");
+    $db->update("users", array("password" => ""), array("id" => 1));
     $db->update("users", array("password" => ""), array("id" => 2));
 
     $dbconfig = Kohana::config('database.default');
@@ -326,12 +332,18 @@ class Scaffold_Controller extends Template_Controller {
       return;
     }
 
-    // Post-process the sql file to support prefixes
+    // Post-process the sql file
     $buf = "";
+    $root_timestamp = ORM::factory("item", 1)->created;
     foreach (file($sql_file) as $line) {
-      $buf .= preg_replace(
+      // Prefix tables
+      $line = preg_replace(
         "/(CREATE TABLE|IF EXISTS|INSERT INTO) `{$dbconfig['table_prefix']}(\w+)`/", "\\1 {\\2}",
         $line);
+
+      // Normalize dates
+      $line = preg_replace("/,$root_timestamp,/", ",NOW(),", $line);
+      $buf .= $line;
     }
     $fd = fopen($sql_file, "wb");
     fwrite($fd, $buf);
@@ -353,9 +365,7 @@ class Scaffold_Controller extends Template_Controller {
       return;
     }
 
-    $fd = fopen($var_file, "w");
-    fwrite($fd, "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n");
-    fwrite($fd, "<?php\n");
+    $paths = array();
     foreach($objects as $name => $file){
       if ($file->getBasename() == "database.php") {
         continue;
@@ -364,13 +374,21 @@ class Scaffold_Controller extends Template_Controller {
       }
 
       if ($file->isDir()) {
-        $path = "VARPATH . \"" . substr($name, strlen(VARPATH)) . "\"";
-        fwrite($fd, "!file_exists($path) && mkdir($path);\n");
+        $paths[] = "VARPATH . \"" . substr($name, strlen(VARPATH)) . "\"";
       } else {
         // @todo: serialize non-directories
         print "Unknown file: $name";
         return;
       }
+    }
+    // Sort the paths so that the var file is stable
+    sort($paths);
+
+    $fd = fopen($var_file, "w");
+    fwrite($fd, "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n");
+    fwrite($fd, "<?php\n");
+    foreach ($paths as $path) {
+      fwrite($fd, "!file_exists($path) && mkdir($path);\n");
     }
     fclose($fd);
     url::redirect("scaffold");
