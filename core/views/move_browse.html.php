@@ -24,6 +24,15 @@
    }
  }
 </script>
+<h1 style="display: none">
+  <? if ($source->type == "photo"): ?>
+  <? t("Move this photo to a new album") ?>
+  <? elseif ($source->type == "movie"): ?>
+  <? t("Move this movie to a new album") ?>
+  <? elseif ($source->type == "album"): ?>
+  <? t("Move this album to a new album") ?>
+  <? endif ?>
+</h1>
 <div id="gMove">
   <ul id="tree_0">
     <li id="node_1" class="node">
