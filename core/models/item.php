@@ -337,14 +337,15 @@ class Item_Model extends ORM_MPTT {
         $height = $max;
       }
     }
-
+    $attrs = array_merge($extra_attrs,
+            array(
+              "src" => $this->thumb_url(),
+              "alt" => $this->title,
+              "width" => $width,
+              "height" => $height)
+            );
     // html::image forces an absolute url which we don't want
-    return "<img" . html::attributes(
-      array("src" => $this->thumb_url(),
-            "alt" => $this->title,
-            "width" => $width,
-            "height" => $height)) .
-      "/>";
+    return "<img" . html::attributes($attrs) . "/>";
   }
 
   /**
@@ -353,21 +354,22 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function resize_tag($extra_attrs) {
+    $attrs = array_merge($extra_attrs,
+            array("src" => $this->resize_url(),
+              "alt" => $this->title,
+              "width" => $this->resize_width,
+              "height" => $this->resize_height)
+            );
     // html::image forces an absolute url which we don't want
-    return "<img" . html::attributes(
-      array("src" => $this->resize_url(),
-            "alt" => $this->title,
-            "width" => $this->resize_width,
-            "height" => $this->resize_height)) .
-      "/>";
+    return "<img" . html::attributes($attrs) . "/>";
   }
 
   public function movie_tag($extra_attrs) {
-    return html::anchor($this->file_url(true), "",
-                        array_merge(
-                          $extra_attrs,
-                          array("id" => "player",
-                                "style" => "display:block;width:400px;height:300px"))) .
+    $attrs = array_merge($extra_attrs,
+            array("id" => "player",
+              "style" => "display:block;width:400px;height:300px")
+      );
+    return html::anchor($this->file_url(true), "", $attrs) .
       "<script>flowplayer('player', '" .
       url::abs_file("lib/flowplayer-3.0.5.swf") .
       "'); </script>";
