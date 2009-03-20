@@ -183,7 +183,7 @@ class core_installer {
                    UNIQUE KEY(`module_name`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      foreach (array("albums", "resizes", "thumbs", "uploads", "modules") as $dir) {
+      foreach (array("albums", "logs", "modules", "resizes", "thumbs", "uploads") as $dir) {
         @mkdir(VARPATH . $dir);
       }
 
@@ -260,7 +260,7 @@ class core_installer {
       block_manager::add("dashboard_center", "core", "log_entries");
 
       module::set_version("core", 1);
-      module::set_var("core", "version", "3.0");
+      module::set_var("core", "version", "3.0 Alpha 3");
     }
   }
 
