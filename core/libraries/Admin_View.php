@@ -29,6 +29,12 @@ class Admin_View_Core extends View {
    * @return  void
    */
   public function __construct($name) {
+    $theme_name = module::get_var("core", "active_site_theme");
+    if (!file_exists("themes/$theme_name")) {
+      module::set_var("core", "active_site_theme", "admin_default");
+      theme::load_themes();
+      Kohana::log("error", "Unable to locate theme '$theme_name', switching to default theme.");
+    }
     parent::__construct($name);
 
     $this->theme_name = module::get_var("core", "active_admin_theme");
