@@ -46,6 +46,7 @@ class Theme_View_Core extends View {
     if ($maintenance_mode) {
       message::warning(t("This site is currently in maintenance mode"));
     }
+
   }
 
   public function url($path, $absolute_url=false) {
@@ -53,11 +54,6 @@ class Theme_View_Core extends View {
     return $absolute_url ? url::abs_file($arg) : url::file($arg);
   }
 
-  public function file($path) {
-    $theme_path = "themes/{$this->theme_name}/$path";
-    return url::file(file_exists($theme_path) ? $theme_path : $path);
-  }
-  
   public function item() {
     return $this->item;
   }
