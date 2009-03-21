@@ -253,14 +253,10 @@ class graphics_Core {
     $count = self::find_dirty_images_query()->count();
     if ($count) {
       site_status::warning(
-          t2("One of your photos is out of date. %link_startClick here to fix it%link_end",
-             "%count of your photos are out of date. %link_startClick here to fix them%link_end",
+          t2('One of your photos is out of date. <a href="%url" class="gDialogLink">Click here to fix it</a>',
+             '%count of your photos are out of date. <a href="%url" class="gDialogLink">Click here to fix them</a>',
              $count,
-             array("link_start" => "<a href=\"" .
-                   url::site(
-                     "admin/maintenance/start/core_task::rebuild_dirty_images?csrf=__CSRF__") .
-                   "\" class=\"gDialogLink\">",
-                   "link_end" => "</a>")),
+             array("url" => url::site("admin/maintenance/start/core_task::rebuild_dirty_images?csrf=__CSRF__"))),
           "graphics_dirty");
     }
   }

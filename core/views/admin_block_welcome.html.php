@@ -4,15 +4,15 @@
 </p>
 <ul>
   <li>
-    <?= t("%link_startGeneral Settings%link_end - General configuation options for your Gallery.",
-          array("link_start" => "<a href=\"#\">", "link_end" => "</a>")) ?>
+    <?= t('<a href="%url">General Settings</a> - General configuration options for your Gallery.',
+          array("url" => "#")) ?>
   </li>
   <li>
-    <?= t("%link_startModules%link_end - Manage available and installed modules.",
-          array("link_start" => "<a href=\"" . url::site("admin/modules") . "\">", "link_end" => "</a>")) ?>
+    <?= t('<a href="%url">Modules</a> - Manage available and installed modules.',
+          array("url" => url::site("admin/modules"))) ?>
   </li>
   <li>
-    <?= t("%link_startPresentation%link_end - Choose a theme, set image sizes.",
-          array("link_start" => "<a href=\"#\">", "link_end" => "</a>")) ?>
+    <?= t('<a href="">Presentation</a> - Choose a theme, set image sizes.',
+          array("url" => "#")) ?>
   </li>
 </ul>

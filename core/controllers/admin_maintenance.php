@@ -33,9 +33,8 @@ class Admin_Maintenance_Controller extends Admin_Controller {
                    t2("One task is stalled",
                       "%count tasks are stalled",
                       $stalled_count),
-                   t("%link_startview%link_end",
-                     array("link_start" => "<a href=\"" . url::site("admin/maintenance") . "\">",
-                           "link_start" => "</a>")));
+                   t('<a href="%url">view</a>',
+                     array("url" => url::site("admin/maintenance"))));
     }
 
     $view = new Admin_View("admin.html");
