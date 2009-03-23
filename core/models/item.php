@@ -325,7 +325,7 @@ class Item_Model extends ORM_MPTT {
    * @param array $extra_attrs  Extra attributes to add to the img tag
    * @return string
    */
-  public function thumb_tag($extra_attrs, $max=null) {
+  public function thumb_tag($extra_attrs=array(), $max=null) {
     $width = $this->thumb_width;
     $height = $this->thumb_height;
 
