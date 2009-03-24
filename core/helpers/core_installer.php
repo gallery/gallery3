@@ -260,7 +260,7 @@ class core_installer {
       block_manager::add("dashboard_center", "core", "log_entries");
 
       module::set_version("core", 1);
-      module::set_var("core", "version", "3.0 Alpha 3");
+      module::set_var("core", "version", "3.0 pre-beta svn");
     }
   }
 
