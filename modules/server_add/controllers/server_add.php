@@ -107,7 +107,7 @@ class Server_Add_Controller extends Controller {
         break;
 
       case "error":
-        message::success(t("Add from server completed with errors"));
+        message::warning(t("Add from server completed with errors"));
         break;
       }
       print json_encode(array("result" => "success",
@@ -119,7 +119,15 @@ class Server_Add_Controller extends Controller {
     }
   }
 
-  public function finish($id, $task_id) {
+  public function finish($id, $task_id, $cancelled=false) {
+    access::verify_csrf();
+
+    $task = task::run($task_id);
+
+    if (!$task->done && $cancelled) {
+      message::warning(t("Add from server was cancelled prior to completion"));
+    }
+    
     batch::stop();
     print json_encode(array("result" => "success"));
   }

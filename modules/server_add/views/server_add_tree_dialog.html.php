@@ -16,6 +16,7 @@
     <?= $tree ?>
   </div>
   <span>
+    <?= form::submit(array("id" => "gServerPauseButton", "name" => "add", "disabled" => true, "class" => "submit", "style" => "display:none"), t("Pause")) ?>
     <?= form::submit(array("id" => "gServerAddButton", "name" => "add", "disabled" => true, "class" => "submit"), t("Add")) ?>
   </span>
   <?= form::close() ?>
