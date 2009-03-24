@@ -122,7 +122,7 @@ class Server_Add_Controller extends Controller {
   public function finish($id, $task_id, $cancelled=false) {
     access::verify_csrf();
 
-    $task = task::run($task_id);
+    $task = ORM::factory("task", $task_id);
 
     if (!$task->done && $cancelled) {
       message::warning(t("Add from server was cancelled prior to completion"));
