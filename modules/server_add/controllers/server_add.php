@@ -133,7 +133,7 @@ class Server_Add_Controller extends Controller {
   }
 
   private function _get_children($path) {
-    $file_list = array();
+    $directory_list = $file_list = array();
     $files = new DirectoryIterator($path);
     foreach ($files as $file) {
       if ($file->isDot() || $file->isLink()) {
@@ -142,7 +142,7 @@ class Server_Add_Controller extends Controller {
       $filename = $file->getFilename();
       if ($filename[0] != ".") {
         if ($file->isDir()) {
-          $file_list[$filename] = array("path" => $file->getPathname(), "is_dir" => true);
+          $directory_list[$filename] = array("path" => $file->getPathname(), "is_dir" => true);
         } else {
           $extension = strtolower(substr(strrchr($filename, '.'), 1));
           if ($file->isReadable() &&
@@ -152,6 +152,9 @@ class Server_Add_Controller extends Controller {
         }
       }
     }
-    return $file_list;
+
+    ksort($directory_list);
+    ksort($file_list);
+    return array_merge($directory_list, $file_list);
   }
 }
