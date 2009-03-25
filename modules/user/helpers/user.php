@@ -70,7 +70,7 @@ class user_Core {
     $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("gEmail");
-    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
+    $group->input("url")->label(t("URL"))->id("gUrl");
     self::_add_locale_dropdown($group);
     $group->submit("")->value(t("Add User"));
     $user = ORM::factory("user");

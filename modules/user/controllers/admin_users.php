@@ -41,8 +41,10 @@ class Admin_Users_Controller extends Controller {
       $user = user::create(
         $name, $form->add_user->full_name->value, $form->add_user->password->value);
       $user->email = $form->add_user->email->value;
-      $desired_locale = $form->add_user->locale->value;
-      $user->locale = $desired_locale == "none" ? null : $desired_locale;
+
+      // @todo Add locale to the user add form
+      $user->locale = null;
+
       $user->save();
       message::success(t("Created user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
