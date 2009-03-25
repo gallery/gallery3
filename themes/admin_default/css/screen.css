@@ -255,6 +255,9 @@ li.gGroup {
 }
 
 /**** Stuff that needs a home! ****/
+#gTagAdmin {
+  table-layout: fixed;
+}
 #gTagAdmin td {
   border: 0;
 }

@@ -1,9 +1,19 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<script src="<?= url::file("modules/tag/js/tag.js") ?>" type="text/javascript"></script>
 <script>
   $("document").ready(function() {
-    // $("#gTagAdmin .tag-name").attr("title", "<?= t("Click to edit this tag") ?>");
+    // using JS for adding link titles to avoid running t() for each tag
+    $("#gTagAdmin .tag-name").attr("title", "<?= t("Click to edit this tag") ?>");
     $("#gTagAdmin .delete-link").attr("title", $(".delete-link:first span").html());
+    
+    // In-place editing for tag admin
+    $(".gEditable").bind("click", editInplace);
   });
+  // make some values available within tag.js
+  var csrf_token = "<?= access::csrf_token() ?>";
+  var save_i18n = '<?= t("save") ?>';
+  var or_i18n = '<?= t("or") ?>';
+  var cancel_i18n = '<?= t("cancel") ?>';
 </script>
 <div class="gBlock">
   <h2>
