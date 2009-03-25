@@ -62,29 +62,18 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function adding_and_removing_items_adds_ands_removes_rows_test() {
     $root = ORM::factory("item", 1);
-    $item = ORM::factory("item");
-    $item->type = "album";
-    $item->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $item->sort_column = "id";
-    $item->sort_order = "ASC";
-
-    $item->add_to_parent($root);
-
-    // Simulate an event
-    access::add_item($item);
+    $item = album::create($root,  rand(), "test album");
 
     // New rows exist
     $this->assert_true(ORM::factory("access_cache")->where("item_id", $item->id)->find()->loaded);
     $this->assert_true(ORM::factory("access_intent")->where("item_id", $item->id)->find()->loaded);
 
-    // Simulate a delete event
-    access::delete_item($item);
+    // Delete the item
+    $item->delete();
 
     // Rows are gone
     $this->assert_false(ORM::factory("access_cache")->where("item_id", $item->id)->find()->loaded);
     $this->assert_false(ORM::factory("access_intent")->where("item_id", $item->id)->find()->loaded);
-
-    $item->delete();
   }
 
   public function new_photos_inherit_parent_permissions_test() {

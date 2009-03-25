@@ -20,12 +20,7 @@
 class ORM_MPTT_Test extends Unit_Test_Case {
 
   private function create_item_and_add_to_parent($parent) {
-    $album = ORM::factory("item");
-    $album->type = "album";
-    $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $album->sort_column = "id";
-    $album->sort_order = "ASC";
-    $album->add_to_parent($parent);
+    $album = album::create($parent,  rand(), "test album");
     return $album;
   }
 
@@ -141,7 +136,8 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $inner1 = self::create_item_and_add_to_parent($outer);
     $inner2 = self::create_item_and_add_to_parent($outer);
 
-    $this->assert_equal(array($inner2->id => null), $outer->children(1, 1)->select_list('id'));
+    $this->assert_equal(array($inner2->id => $inner2->name),
+                        $outer->children(1, 1)->select_list('id'));
   }
 
   public function children_count_test() {
