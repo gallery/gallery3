@@ -59,7 +59,6 @@ class rest_Core {
    * @return string HTTP request method
    */
   static function request_method() {
-    Kohana::log("debug", "request::method: " . request::method());
     if (request::method() == "get") {
       return "get";
     } else {
