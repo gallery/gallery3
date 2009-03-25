@@ -344,13 +344,13 @@ class Item_Model extends ORM_MPTT {
 
     if ($height) {
       if (isset($max)) {
-	if ($width > $height) {
-	  $height = (int)($max * ($height / $width));
-	  $width = $max;
-	} else {
-	  $width = (int)($max * ($width / $height));
-	  $height = $max;
-	}
+        if ($width > $height) {
+          $height = (int)($max * ($height / $width));
+          $width = $max;
+        } else {
+          $width = (int)($max * ($width / $height));
+          $height = $max;
+        }
       }
     } else {
       // Missing thumbnail, can happen on albums with no photos yet.

@@ -68,8 +68,8 @@
       <div id="gFooter">
         <?= $theme->admin_footer() ?>
         <div>
-		  <?= $theme->admin_credits() ?>
-		</div>
+          <?= $theme->admin_credits() ?>
+        </div>
       </div>
     </div>
     <?= $theme->admin_page_bottom() ?>
