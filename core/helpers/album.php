@@ -46,7 +46,7 @@ class album_Core {
     $album->thumb_dirty = 1;
     $album->resize_dirty = 1;
     $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $album->sort_column = "title";
+    $album->sort_column = "id";
     $album->sort_order = "ASC";
 
     while (ORM::factory("item")
