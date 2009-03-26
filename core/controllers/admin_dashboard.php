@@ -31,16 +31,16 @@ class Admin_Dashboard_Controller extends Admin_Controller {
   public function add_block() {
     $form = core_block::get_add_block_form();
     if ($form->validate()) {
-      list ($module_name, $block_id) = explode(":", $form->add_block->id->value);
+      list ($module_name, $id) = explode(":", $form->add_block->id->value);
       $available = block_manager::get_available();
 
       if ($form->add_block->center->value) {
-        block_manager::add("dashboard_center", $module_name, $block_id);
+        block_manager::add("dashboard_center", $module_name, $id);
         message::success(
           t("Added <b>%title</b> block to the dashboard center",
             array("title" => $available["$module_name:$id"])));
       } else {
-        block_manager::add("dashboard_sidebar", $module_name, $block_id);
+        block_manager::add("dashboard_sidebar", $module_name, $id);
         message::success(
           t("Added <b>%title</b> to the dashboard sidebar",
             array("title" => $available["$module_name:$id"])));
