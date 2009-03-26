@@ -397,7 +397,7 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Return all of the children of this node, ordered by id.
+   * Return all of the children of this node, ordered by the defined sort order.
    *
    * @chainable
    * @param   integer  SQL limit
@@ -409,7 +409,7 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Return all of the children of the specified type, ordered by id.
+   * Return all of the children of the specified type, ordered by the defined sort order.
    *
    * @param   integer  SQL limit
    * @param   integer  SQL offset
