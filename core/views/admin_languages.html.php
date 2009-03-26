@@ -4,7 +4,11 @@
 
   <?= $settings_form ?>
 
-  <?= $update_translations_form ?>
+  <h2> <?= t("Download translations") ?> </h2>
+  <a href="<?= url::site("admin/maintenance/start/core_task::update_l10n?csrf=$csrf") ?>"
+     class="gDialogLink">
+    <?= t("Get updates") ?>
+  </a>
 
   <h2> <?= t("Your Own Translations") ?> </h2>
   <?= $share_translations_form ?>

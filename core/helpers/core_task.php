@@ -28,7 +28,12 @@ class core_task_Core {
                                   "You have %count out of date photos",
                                   $dirty_count)
                                : t("All your photos are up to date"))
-                 ->severity($dirty_count ? log::WARNING : log::SUCCESS));
+                 ->severity($dirty_count ? log::WARNING : log::SUCCESS),
+                 Task_Definition::factory()
+                 ->callback("core_task::update_l10n")
+                 ->name(t("Update translations"))
+                 ->description(t("Download new and updated translated strings"))
+                 ->severity(log::SUCCESS));
   }
 
   /**
@@ -72,5 +77,14 @@ class core_task_Core {
       $task->state = "success";
       site_status::clear("graphics_dirty");
     }
+  }
+
+  static function update_l10n($task) {
+    l10n_scanner::update_index();
+    l10n_client::fetch_updates();
+    $task->done = true;
+    $task->state = "success";
+    $task->percent_complete = 100;
+    $task->status = t("Translations installed/updated");
   }
 }

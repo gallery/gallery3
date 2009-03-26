@@ -22,7 +22,6 @@ class Admin_Languages_Controller extends Admin_Controller {
     $v = new Admin_View("admin.html");
     $v->content = new View("admin_languages.html");
     $v->content->settings_form = $this->_languages_form();
-    $v->content->update_translations_form = $this->_translation_updates_form();
     if (empty($share_translations_form)) {
       $share_translations_form = $this->_share_translations_form();
     }
@@ -37,16 +36,6 @@ class Admin_Languages_Controller extends Admin_Controller {
       module::set_var("core", "default_locale", $form->choose_language->locale->value);
       locale::update_installed($form->choose_language->installed_locales->value);
       message::success(t("Settings saved"));
-    }
-    url::redirect("admin/languages");
-  }
-
-  public function fetch_updates() {
-    $form = $this->_translation_updates_form();
-    if ($form->validate()) {
-      l10n_scanner::update_index();
-      l10n_client::fetch_updates();
-      message::success(t("Translations installed/updated"));
     }
     url::redirect("admin/languages");
   }
@@ -116,17 +105,6 @@ class Admin_Languages_Controller extends Admin_Controller {
       ->options($installation_options)
       ->rules("required");
     $group->submit("save")->value(t("Save settings"));
-    return $form;
-  }
-
-  private function _translation_updates_form() {
-    // TODO: Show a timestamp of the last update.
-    // TODO: Show a note if you've changed the language settings but not fetched translations for
-    //       the selected languages yet.
-    $form = new Forge("admin/languages/fetch_updates", "", "post", array("id" => "gLanguageUpdatesForm"));
-    $group = $form->group("updates")
-      ->label(t("Download translations for all selected languages from the Gallery Translation Server:"));
-    $group->submit("update")->value(t("Get updates"));
     return $form;
   }
 
