@@ -23,7 +23,7 @@ class l10n_client_Core {
   private static function _server_url() {
     return "http://gallery.menalto.com/index.php";
   }
-  
+
   static function server_api_key_url() {
     return self::_server_url() . "?q=translations/userkey/"
       . self::client_token();
@@ -50,7 +50,7 @@ class l10n_client_Core {
     $api_key = $api_key == null ? self::api_key() : $api_key;
     return md5($api_key . $payload . self::client_token());
   }
-  
+
   static function validate_api_key($api_key) {
     $version = "1.0";
     $url = self::_server_url() . "?q=translations/status";
@@ -69,7 +69,7 @@ class l10n_client_Core {
   static function fetch_updates() {
     $request->locales = array();
     $request->messages = new stdClass();
-    
+
     $locales = locale::installed();
     foreach ($locales as $locale => $locale_data) {
       $request->locales[] = $locale;
@@ -101,7 +101,7 @@ class l10n_client_Core {
       throw new Exception("Translations fetch request failed with: " . $response_status);
     }
     if (empty($response_data)) {
-      log::info(t("translations"), t("Translations fetch request resulted in an emptyu response."));
+      log::info(t("translations"), t("Translations fetch request resulted in an empty response."));
       return;
     }
 
@@ -163,7 +163,7 @@ class l10n_client_Core {
      *      <key_2>: {...}
      *     }
      */
-    
+
     // TODO: Batch requests (max request size)
     // TODO: include base_revision in submission / how to handle resubmissions / edit fights?
     foreach (Database::instance()
