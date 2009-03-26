@@ -25,12 +25,12 @@ class l10n_client_Core {
   }
 
   static function server_api_key_url() {
-    return self::_server_url() . "?q=translations/userkey/"
-      . self::client_token();
+    return self::_server_url() . "?q=translations/userkey/" .
+      self::client_token();
   }
 
   static function client_token() {
-    return md5('l10n_client_client_token' . access::private_key());
+    return md5("l10n_client_client_token" . access::private_key());
   }
 
   static function api_key($api_key=null) {
@@ -56,10 +56,11 @@ class l10n_client_Core {
     $url = self::_server_url() . "?q=translations/status";
     $signature = self::_sign($version, $api_key);
 
-    list ($response_data, $response_status) = remote::post($url, array("version" => $version,
-                                                                       "client_token" => self::client_token(),
-                                                                       "signature" => $signature,
-                                                                       "uid" => self::server_uid($api_key)));
+    list ($response_data, $response_status) = remote::post(
+      $url, array("version" => $version,
+                  "client_token" => self::client_token(),
+                  "signature" => $signature,
+                  "uid" => self::server_uid($api_key)));
     if (!remote::success($response_status)) {
       return false;
     }
@@ -75,8 +76,7 @@ class l10n_client_Core {
       $request->locales[] = $locale;
     }
 
-    // TODO: Batch requests (max request size)
-
+    // @todo Batch requests (max request size)
     foreach (Database::instance()
              ->select("key", "locale", "revision", "translation")
              ->from("incoming_translations")
@@ -92,7 +92,7 @@ class l10n_client_Core {
         $request->messages->{$row->key}->{$row->locale} = $row->revision;
       }
     }
-    // TODO: Include messages from outgoing_translations?
+    // @todo Include messages from outgoing_translations?
 
     $request_data = json_encode($request);
     $url = self::_server_url() . "?q=translations/fetch";
@@ -101,24 +101,21 @@ class l10n_client_Core {
       throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED " . $response_status);
     }
     if (empty($response_data)) {
-      log::info(t("translations"), t("Translations fetch request resulted in an empty response."));
+      log::info("translations", "Translations fetch request resulted in an empty response");
       return;
     }
 
     $response = json_decode($response_data);
 
-    /*
-     * Response format (JSON payload):
-     *   [{key:<key_1>, translation: <JSON encoded translation>, rev:<rev>, locale:<locale>},
-     *    {key:<key_2>, ...}
-     *   ]
-     */
-    log::info(t("translations"), t2("Installed 1 new / updated translation message.",
-                                    "Installed %count new / updated translation messages.",
-                                    count($response)));
+    // Response format (JSON payload):
+    //   [{key:<key_1>, translation: <JSON encoded translation>, rev:<rev>, locale:<locale>},
+    //    {key:<key_2>, ...}
+    //   ]
+    $count = count($response);
+    log::info("translations", "Installed $count new / updated translation messages");
 
     foreach ($response as $message_data) {
-      // TODO: Better input validation
+      // @todo Better input validation
       if (empty($message_data->key) || empty($message_data->translation) ||
           empty($message_data->locale) || empty($message_data->rev)) {
         throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED: Invalid response data");
@@ -127,15 +124,16 @@ class l10n_client_Core {
       $locale = $message_data->locale;
       $revision = $message_data->rev;
       $translation = serialize(json_decode($message_data->translation));
-      // TODO: Should we normalize the incoming_translations table into messages(id, key, message)
-      // and incoming_translations(id, translation, locale, revision)?
-      // Or just allow incoming_translations.message to be NULL?
+
+      // @todo Should we normalize the incoming_translations table into messages(id, key, message)
+      // and incoming_translations(id, translation, locale, revision)? Or just allow
+      // incoming_translations.message to be NULL?
       $locale = $message_data->locale;
       $entry = ORM::factory("incoming_translation")
         ->where(array("key" => $key, "locale" => $locale))
         ->find();
       if (!$entry->loaded) {
-        // TODO: Load a message key -> message (text) dict into memory outside of this loop
+        // @todo Load a message key -> message (text) dict into memory outside of this loop
         $root_entry = ORM::factory("incoming_translation")
           ->where(array("key" => $key, "locale" => "root"))
           ->find();
@@ -150,27 +148,24 @@ class l10n_client_Core {
   }
 
   static function submit_translations() {
-    /*
-     * Request format (HTTP POST):
-     *   client_token = <client_token>
-     *   uid = <l10n server user id>
-     *   signature = md5(user_api_key($uid, $client_token) . $data . $client_token))
-     *   data = // JSON payload
-     *
-     *     {<key_1>: {message: <JSON encoded message>
-     *                translations: {<locale_1>: <JSON encoded translation>,
-     *                               <locale_2>: ...}},
-     *      <key_2>: {...}
-     *     }
-     */
+    // Request format (HTTP POST):
+    //   client_token = <client_token>
+    //   uid = <l10n server user id>
+    //   signature = md5(user_api_key($uid, $client_token) . $data . $client_token))
+    //   data = // JSON payload
+    //
+    //     {<key_1>: {message: <JSON encoded message>
+    //                translations: {<locale_1>: <JSON encoded translation>,
+    //                               <locale_2>: ...}},
+    //      <key_2>: {...}
+    //     }
 
-    // TODO: Batch requests (max request size)
-    // TODO: include base_revision in submission / how to handle resubmissions / edit fights?
+    // @todo Batch requests (max request size)
+    // @todo include base_revision in submission / how to handle resubmissions / edit fights?
     foreach (Database::instance()
              ->select("key", "message", "locale", "base_revision", "translation")
              ->from("outgoing_translations")
-             ->get()
-             ->as_array() as $row) {
+             ->get() as $row) {
       $key = $row->key;
       if (!isset($request->{$key})) {
         $request->{$key}->message = json_encode(unserialize($row->message));
@@ -178,15 +173,16 @@ class l10n_client_Core {
       $request->{$key}->translations->{$row->locale} = json_encode(unserialize($row->translation));
     }
 
-    // TODO: reduce memory consumpotion, e.g. free $request
+    // @todo reduce memory consumpotion, e.g. free $request
     $request_data = json_encode($request);
     $url = self::_server_url() . "?q=translations/submit";
     $signature = self::_sign($request_data);
 
-    list ($response_data, $response_status) = remote::post($url, array("data" => $request_data,
-                                                                       "client_token" => self::client_token(),
-                                                                       "signature" => $signature,
-                                                                       "uid" => self::server_uid()));
+    list ($response_data, $response_status) = remote::post(
+      $url, array("data" => $request_data,
+                  "client_token" => self::client_token(),
+                  "signature" => $signature,
+                  "uid" => self::server_uid()));
 
     if (!remote::success($response_status)) {
       throw new Exception("@todo TRANSLATIONS_SUBMISSION_FAILED " . $response_status);
@@ -196,14 +192,12 @@ class l10n_client_Core {
     }
 
     $response = json_decode($response_data);
-    /*
-     * Response format (JSON payload):
-     *   [{key:<key_1>, locale:<locale_1>, rev:<rev_1>, status:<rejected|accepted|pending>},
-     *    {key:<key_2>, ...}
-     *   ]
-     *
-     */
-    // TODO: Move messages out of outgoing into incoming, using new rev?
-    // TODO: show which messages have been rejected / are pending?
+    // Response format (JSON payload):
+    //   [{key:<key_1>, locale:<locale_1>, rev:<rev_1>, status:<rejected|accepted|pending>},
+    //    {key:<key_2>, ...}
+    //   ]
+
+    // @todo Move messages out of outgoing into incoming, using new rev?
+    // @todo show which messages have been rejected / are pending?
   }
 }

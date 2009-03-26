@@ -25,7 +25,7 @@ class l10n_scanner_Core {
   // Based on Drupal's potx module, originally written by:
   // Gbor Hojtsy http://drupal.org/user/4166
 
-  // TODO(andy_st): Report progress via callback
+  // @todo Report progress via callback
   static function update_index() {
     // Index all files
     $dir = new L10n_Scanner_File_Filter_Iterator(
@@ -108,7 +108,7 @@ class l10n_scanner_Core {
           l10n_scanner::process_message($message);
         } else {
           // t() found, but inside is something which is not a string literal.
-          // TODO(andy_st): Call status callback with error filename/line.
+          // @todo Call status callback with error filename/line.
         }
       }
     }
@@ -132,7 +132,7 @@ class l10n_scanner_Core {
           l10n_scanner::process_message(array("one" => $singular, "other" => $plural));
         } else {
           // t2() found, but inside is something which is not a string literal.
-          // TODO(andy_st): Call status callback with error filename/line.
+          // @todo Call status callback with error filename/line.
         }
       }
     }

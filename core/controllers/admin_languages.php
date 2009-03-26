@@ -42,7 +42,6 @@ class Admin_Languages_Controller extends Admin_Controller {
   }
 
   public function fetch_updates() {
-    // @todo Convert this to AJAX / progress bar.
     $form = $this->_translation_updates_form();
     if ($form->validate()) {
       l10n_scanner::update_index();

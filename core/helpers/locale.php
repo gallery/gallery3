@@ -55,7 +55,7 @@ class locale_Core {
     module::set_var("core", "installed_locales", join("|", $locales));
   }
 
-  // TODO(andy_st): Might want to add a localizable language name as well.
+  // @todo Might want to add a localizable language name as well.
   private static function _init_language_data() {
     $l["af_ZA"] = "Afrikaans";                            // Afrikaans
     $l["ar_SA"] = "&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;"; // Arabic
