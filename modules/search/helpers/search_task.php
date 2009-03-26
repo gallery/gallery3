@@ -53,10 +53,14 @@ class search_task_Core {
     $task->set("completed", $completed);
 
     list ($remaining, $total, $percent) = self::_get_stats();
-    $task->percent_complete = round(100 * $completed / ($remaining + $completed));
+    if ($remaining + $completed) {
+      $task->percent_complete = round(100 * $completed / ($remaining + $completed));
 
-    $task->status = t("%done records records updated, index is %percent% up-to-date",
-                      array("done" => $completed, "percent" => $percent));
+      $task->status = t("%done records records updated, index is %percent% up-to-date",
+                        array("done" => $completed, "percent" => $percent));
+    } else {
+      $task->percent_complete = 100;
+    }
 
     if ($remaining == 0) {
       $task->done = true;
