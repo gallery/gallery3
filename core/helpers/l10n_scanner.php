@@ -27,17 +27,31 @@ class l10n_scanner_Core {
 
   // @todo Report progress via callback
   static function update_index() {
-    // Index all files
-    $dir = new L10n_Scanner_File_Filter_Iterator(
-      new RecursiveIteratorIterator(
-        new L10n_Scanner_Directory_Filter_Iterator(
-          new RecursiveDirectoryIterator(DOCROOT))));
-    foreach ($dir as $file) {
-      if (pathinfo($file->getFilename(), PATHINFO_EXTENSION) == "php") {
-        l10n_scanner::_scan_php_file($file);
-      } else {
-        l10n_scanner::_scan_info_file($file);
+    $stack = array(DOCROOT . "core",
+                   DOCROOT . "modules",
+                   DOCROOT . "themes",
+                   DOCROOT . "installer");
+
+    while ($stack) {
+      $path = array_pop($stack);
+      if (basename($path) == "tests") {
+        continue;
       }
+
+      if (is_dir($path)) {
+        $stack = array_merge($stack, glob("$path/*"));
+      } else {
+        switch (pathinfo($path, PATHINFO_EXTENSION)) {
+        case "php":
+          l10n_scanner::_scan_php_file($path);
+          break;
+
+        case "info":
+          l10n_scanner::_scan_info_file($path);
+          break;
+        }
+      }
+      flush();
     }
   }
 
@@ -153,30 +167,5 @@ class l10n_scanner_Core {
       $str = strtr($str, array("\\'" => "'", "\\\\" => "\\"));
     }
     return addcslashes($str, "\0..\37\\\"");
-  }
-}
-
-class L10n_Scanner_Directory_Filter_Iterator extends RecursiveFilterIterator {
-  function accept() {
-    if ($this->getInnerIterator()->isFile()) {
-      return true;
-    }
-
-    // Skip anything that doesn't need to be localized.
-    $folder = $this->getInnerIterator()->getFilename();
-    $path_name = $this->getInnerIterator()->getPathName();
-    return !(
-      $folder == ".svn" ||
-      $folder == "tests" ||
-      strpos($path_name, DOCROOT . "var") !== false ||
-      strpos($path_name . "/", SYSPATH) !== false);
-  }
-}
-
-class L10n_Scanner_File_Filter_Iterator extends FilterIterator {
-  function accept() {
-    // Skip anything that doesn't need to be localized.
-    $filename = $this->getInnerIterator()->getFilename();
-    return in_array(pathinfo($filename, PATHINFO_EXTENSION), array("php", "info"));
   }
 }
