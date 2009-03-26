@@ -42,10 +42,10 @@ class Admin_Languages_Controller extends Admin_Controller {
   }
 
   public function fetch_updates() {
-    // TODO: Convert this to AJAX / progress bar.
+    // @todo Convert this to AJAX / progress bar.
     $form = $this->_translation_updates_form();
     if ($form->validate()) {
-      L10n_Scanner::instance()->update_index();
+      l10n_scanner::update_index();
       l10n_client::fetch_updates();
       message::success(t("Translations installed/updated"));
     }
@@ -95,7 +95,7 @@ class Admin_Languages_Controller extends Admin_Controller {
       $this->index($form);
     }
   }
-  
+
   private function _languages_form() {
     $all_locales = locale::available();
     $installed_locales = locale::installed();
