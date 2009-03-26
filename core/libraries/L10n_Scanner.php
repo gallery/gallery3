@@ -57,7 +57,7 @@ class L10n_Scanner_Core {
         new L10n_Scanner_Directory_Filter_Iterator(
           new RecursiveDirectoryIterator(DOCROOT))));
     foreach ($dir as $file) {
-      if (substr(strrchr($file->getFilename(), '.'), 1) == "php") {
+      if (pathinfo($file->getFilename(), PATHINFO_EXTENSION) == "php") {
         $this->_scan_php_file($file, $this);
       } else {
         $this->_scan_info_file($file, $this);
@@ -160,7 +160,7 @@ class L10n_Scanner_Core {
         }
       }
     }
-  }
+ }
 
   /**
    * Escape quotes in a strings depending on the surrounding
@@ -201,6 +201,6 @@ class L10n_Scanner_File_Filter_Iterator extends FilterIterator {
   function accept() {
     // Skip anything that doesn't need to be localized.
     $filename = $this->getInnerIterator()->getFilename();
-    return in_array(substr(strrchr($filename, '.'), 1), array("php", "info"));
+    return in_array(pathinfo($filename, PATHINFO_EXTENSION), array("php", "info"));
   }
 }
