@@ -46,13 +46,11 @@ class L10n_Scanner_Core {
     foreach (Database::instance()
              ->select("key")
              ->from("incoming_translations")
-             ->where(array("locale" => "root"))
-             ->get()
-             ->as_array() as $row) {
+             ->where("locale", "root")
+             ->get() as $row) {
       $this->_index_keys[$row->key] = true;
     }
 
-    Kohana::log("debug", microtime());
     // Index all files
     $dir = new L10n_Scanner_File_Filter_Iterator(
       new RecursiveIteratorIterator(
@@ -65,7 +63,6 @@ class L10n_Scanner_Core {
         $this->_scan_info_file($file, $this);
       }
     }
-    Kohana::log("debug", microtime());
   }
 
   function process_message($message) {
