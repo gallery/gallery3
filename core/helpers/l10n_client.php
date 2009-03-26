@@ -98,7 +98,7 @@ class l10n_client_Core {
     $url = self::_server_url() . "?q=translations/fetch";
     list ($response_data, $response_status) = remote::post($url, array("data" => $request_data));
     if (!remote::success($response_status)) {
-      throw new Exception("Translations fetch request failed with: " . $response_status);
+      throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED " . $response_status);
     }
     if (empty($response_data)) {
       log::info(t("translations"), t("Translations fetch request resulted in an empty response."));
@@ -121,7 +121,7 @@ class l10n_client_Core {
       // TODO: Better input validation
       if (empty($message_data->key) || empty($message_data->translation) ||
           empty($message_data->locale) || empty($message_data->rev)) {
-        throw new Exception("Translations fetch request resulted in Invalid response data");
+        throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED: Invalid response data");
       }
       $key = $message_data->key;
       $locale = $message_data->locale;
@@ -189,7 +189,7 @@ class l10n_client_Core {
                                                                        "uid" => self::server_uid()));
 
     if (!remote::success($response_status)) {
-      throw new Exception("Translations submission failed with: " . $response_status);
+      throw new Exception("@todo TRANSLATIONS_SUBMISSION_FAILED " . $response_status);
     }
     if (empty($response_data)) {
       return;
