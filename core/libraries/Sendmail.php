@@ -52,7 +52,7 @@ class Sendmail_Core {
       break;
     case  "header":
       if (count($value) != 2) {
-        throw new Exception("@todo INVALID HEADER PARAMETERS");
+        throw new Exception("@todo INVALID_HEADER_PARAMETERS");
       }
       $this->headers[$value[0]] = $value[1];
       break;
@@ -70,7 +70,7 @@ class Sendmail_Core {
 
   public function send() {
     if (empty($this->to)) {
-      throw new Exception("@todo TO IS REQUIRED FOR MAIL");
+      throw new Exception("@todo TO_IS_REQUIRED_FOR_MAIL");
     }
     $to = implode(", ", $this->to);
     $headers = array();
@@ -86,7 +86,7 @@ class Sendmail_Core {
     if (!$this->mail($to, $this->subject, $message, $headers)) {
       Kohana::log("error", wordwrap("Sending mail failed:\nTo: $to\n $this->subject\n" .
                                     "Headers: $headers\n $this->message"));
-      throw new Exception("@todo SEND MAIL FAILED");
+      throw new Exception("@todo SEND_MAIL_FAILED");
     }
     return $this;
   }
