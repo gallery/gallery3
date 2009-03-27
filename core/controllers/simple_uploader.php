@@ -24,6 +24,7 @@ class Simple_Uploader_Controller extends Controller {
 
     $v = new View("simple_uploader.html");
     $v->item = $item;
+    $v->csrf = access::csrf_token();
     print $v;
   }
 
