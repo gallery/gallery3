@@ -336,9 +336,52 @@ class Item_Model extends ORM_MPTT {
   /**
    * Return an <img> tag for the thumbnail.
    * @param array $extra_attrs  Extra attributes to add to the img tag
+   * @param int (optional) $max Maximum size of the thumbnail (default: null)
    * @return string
    */
   public function thumb_tag($extra_attrs=array(), $max=null) {
+    list ($height, $width) = $this->_adjust_thumb_size($max);
+    $attrs = array_merge($extra_attrs,
+            array(
+              "src" => $this->thumb_url(),
+              "alt" => $this->title,
+              "width" => $width,
+              "height" => $height)
+            );
+    // html::image forces an absolute url which we don't want
+    return "<img" . html::attributes($attrs) . "/>";
+  }
+
+  /**
+   * Return an <img> tag for a micro thumbnail. Use margins to center within the specified size
+   * @param array $extra_attrs  Extra attributes to add to the img tag
+   * @param int (optional) $max Maximum size of the thumbnail (default: null)
+   * @return string
+   */
+  public function micro_thumb_tag($extra_attrs=array(), $max=null) {
+    list ($height, $width) = $this->_adjust_thumb_size($max);
+    // The constant is divide by 2 to calcuate the file and 10 to convert to em
+    $margin_top = ($max - $height) / 20;
+    $extra_attrs["style"] = "margin-top: {$margin_top}em";
+    
+    $attrs = array_merge($extra_attrs,
+            array(
+              "src" => $this->thumb_url(),
+              "alt" => $this->title,
+              "title" => $this->title,
+               "width" => $width,
+              "height" => $height)
+            );
+    // html::image forces an absolute url which we don't want
+    return "<img" . html::attributes($attrs) . "/>";
+  }
+
+  /**
+   * Adjust the height based on the input maximum size or zero if not thumbnail
+   * @param int $max  Maximum size of the thumbnail
+   * @return array
+   */
+  private function _adjust_thumb_size($max) {
     $width = $this->thumb_width;
     $height = $this->thumb_height;
 
@@ -358,17 +401,9 @@ class Item_Model extends ORM_MPTT {
       $width = 0;
       $height = 0;
     }
-    $attrs = array_merge($extra_attrs,
-            array(
-              "src" => $this->thumb_url(),
-              "alt" => $this->title,
-              "width" => $width,
-              "height" => $height)
-            );
-    // html::image forces an absolute url which we don't want
-    return "<img" . html::attributes($attrs) . "/>";
+    return array($height, $width);
   }
-
+  
   /**
    * Return an <img> tag for the resize.
    * @param array $extra_attrs  Extra attributes to add to the img tag
