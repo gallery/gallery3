@@ -68,7 +68,7 @@
     post_params: {
       "g3sid": "<?= Session::instance()->id() ?>",
       "user_agent": "<?= Input::instance()->server("HTTP_USER_AGENT") ?>",
-      "csrf": "<?= access::csrf_token() ?>"
+      "csrf": "<?= $csrf ?>"
     },
     file_size_limit : "100 MB",
     file_types : "*.gif;*.jpg;*.png;*.flv;*.mp4",

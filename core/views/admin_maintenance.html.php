@@ -92,7 +92,7 @@
         </td>
         <td>
           <? if ($task->state == "stalled"): ?>
-          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
+          <a class="gDialogLink" href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
             <?= t("resume") ?>
           </a>
           <? endif ?>
@@ -163,7 +163,7 @@
             <?= t("remove") ?>
           </a>
           <? else: ?>
-          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
+          <a class="gDialogLink" href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
             <?= t("resume") ?>
           </a>
           <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>">

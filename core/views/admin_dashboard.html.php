@@ -2,7 +2,7 @@
 <script type="text/javascript">
   update_blocks = function() {
     $.get("<?= url::site("admin/dashboard/reorder") ?>",
-          {"csrf": "<?= access::csrf_token() ?>",
+          {"csrf": "<?= $csrf ?>",
            "dashboard_center[]": $("#gAdminDashboard").sortable(
              "toArray", {attribute: "block_id"}),
            "dashboard_sidebar[]": $("#gAdminDashboardSidebar").sortable(

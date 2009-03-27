@@ -12,7 +12,7 @@
     });
   }
 
-  var action_url = "<?= url::site("permissions/change/__CMD__/__GROUP__/__PERM__/__ITEM__?csrf=" . access::csrf_token()) ?>";
+  var action_url = "<?= url::site("permissions/change/__CMD__/__GROUP__/__PERM__/__ITEM__?csrf=$csrf") ?>";
   set = function(cmd, group_id, perm_id, item_id) {
     $.ajax({
       url: action_url.replace("__CMD__", cmd).replace("__GROUP__", group_id).

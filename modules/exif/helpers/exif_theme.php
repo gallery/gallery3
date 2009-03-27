@@ -26,11 +26,9 @@ class exif_theme_Core {
 
       if (!empty($exif_count)) {
         $view = new View("exif_sidebar.html");
-      
-        $csrf = access::csrf_token();
-        $view->url = url::site("exif/show/{$item->id}?csrf=$csrf");
+        $view->item = $item;
         return $view;
-      } 
+      }
     }
     return null;
   }

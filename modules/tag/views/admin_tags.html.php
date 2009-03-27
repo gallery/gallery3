@@ -5,12 +5,12 @@
     // using JS for adding link titles to avoid running t() for each tag
     $("#gTagAdmin .tag-name").attr("title", "<?= t("Click to edit this tag") ?>");
     $("#gTagAdmin .delete-link").attr("title", $(".delete-link:first span").html());
-    
+
     // In-place editing for tag admin
     $(".gEditable").bind("click", editInplace);
   });
   // make some values available within tag.js
-  var csrf_token = "<?= access::csrf_token() ?>";
+  var csrf_token = "<?= $csrf ?>";
   var save_i18n = '<?= t("save") ?>';
   var or_i18n = '<?= t("or") ?>';
   var cancel_i18n = '<?= t("cancel") ?>';

@@ -26,6 +26,7 @@ class Quick_Controller extends Controller {
 
     $view = new View("quick_pane.html");
     $view->item = $item;
+    $view->csrf = access::csrf_token();
     print $view;
   }
 

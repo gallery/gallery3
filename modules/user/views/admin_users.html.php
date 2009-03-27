@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-  var add_user_to_group_url = "<?= url::site("admin/users/add_user_to_group/__USERID__/__GROUPID__?csrf=" . access::csrf_token()) ?>";
+  var add_user_to_group_url = "<?= url::site("admin/users/add_user_to_group/__USERID__/__GROUPID__?csrf=$csrf") ?>";
   $(document).ready(function(){
     $("#gUserAdminList .core-info").draggable({
       helper: "clone"
@@ -32,7 +32,7 @@
   }
 
   var remove_user = function(user_id, group_id) {
-    var remove_user_url = "<?= url::site("admin/users/remove_user_from_group/__USERID__/__GROUPID__?csrf=" . access::csrf_token()) ?>";
+    var remove_user_url = "<?= url::site("admin/users/remove_user_from_group/__USERID__/__GROUPID__?csrf=$csrf") ?>";
     $.get(remove_user_url.replace("__USERID__", user_id).replace("__GROUPID__", group_id),
           {},
           function() {

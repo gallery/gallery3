@@ -53,6 +53,7 @@ class Admin_Themes_Controller extends Admin_Controller {
     } else {
       $view->url = url::site("albums/1?theme=$theme_name");
     }
+    $view->csrf = access::csrf_token();
     print $view;
   }
 

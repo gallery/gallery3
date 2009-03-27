@@ -14,14 +14,14 @@
 </a>
 
 <? if ($item->is_photo() && graphics::can("rotate")): ?>
-<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/ccw?csrf=" . access::csrf_token()) ?>"
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/ccw?csrf=$csrf") ?>"
   title="<?= t("Rotate 90 degrees counter clockwise") ?>">
   <span class="ui-icon ui-icon-rotate-ccw">
     <?= t("Rotate 90 degrees counter clockwise") ?>
   </span>
 </a>
 
-<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/cw?csrf=" . access::csrf_token()) ?>"
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/cw?csrf=$csrf") ?>"
   title="<?= t("Rotate 90 degrees clockwise") ?>">
   <span class="ui-icon ui-icon-rotate-cw">
     <?= t("Rotate 90 degrees clockwise") ?>
@@ -51,7 +51,7 @@
 <? elseif ($item->type == "album"): ?>
 <? $title = t("Choose this album as the album cover") ?>
 <? endif ?>
-<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/make_album_cover/$item->id?csrf=" . access::csrf_token()) ?>"
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/make_album_cover/$item->id?csrf=$csrf") ?>"
    title="<?= $title ?>">
   <span class="ui-icon ui-icon-star">
     <?= $title ?>
@@ -65,7 +65,7 @@
 <? elseif ($item->type == "album"): ?>
 <? $title = t("Delete this album") ?>
 <? endif ?>
-<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/delete/$item->id?csrf=" . access::csrf_token()) ?>"
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/delete/$item->id?csrf=$csrf") ?>"
    title="<?= $title ?>">
   <span class="ui-icon ui-icon-trash">
     <?= $title ?>

@@ -44,7 +44,6 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       ->where("done", 0)->orderby("updated", "DESC")->find_all();
     $view->content->finished_tasks = ORM::factory("task")
       ->where("done", 1)->orderby("updated", "DESC")->find_all();
-    $view->content->csrf = access::csrf_token();
     print $view;
   }
 

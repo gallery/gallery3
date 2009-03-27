@@ -47,6 +47,7 @@ class Theme_View_Core extends View {
     $this->set_global("theme", $this);
     $this->set_global("user", user::active());
     $this->set_global("page_type", $page_type);
+    $this->set_global("csrf", access::csrf_token());
 
     $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
     if ($maintenance_mode) {

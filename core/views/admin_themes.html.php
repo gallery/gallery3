@@ -2,7 +2,7 @@
 <script type="text/javascript">
   var select_url = "<?= url::site("admin/themes/choose") ?>";
   select = function(type, id) {
-    $.post(select_url, {"type": type, "id": id, "csrf": '<?= access::csrf_token() ?>'},
+    $.post(select_url, {"type": type, "id": id, "csrf": '<?= $csrf ?>'},
       function() { load(type) });
   }
 </script>

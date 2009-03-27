@@ -8,7 +8,7 @@
     <ul id="gPathList">
       <? foreach ($paths as $id => $path): ?>
       <li class="ui-icon-left">
-        <a href="<?= url::site("admin/server_add/remove_path?path=$path&csrf=" . access::csrf_token()) ?>"
+        <a href="<?= url::site("admin/server_add/remove_path?path=$path&csrf=$csrf") ?>"
            id="icon_<?= $id?>"
            class="gRemoveDir ui-icon ui-icon-trash">
           X
