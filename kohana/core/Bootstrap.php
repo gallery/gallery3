@@ -10,8 +10,8 @@
  * @license    http://kohanaphp.com/license.html
  */
 
-define('KOHANA_VERSION',  '2.3.2');
-define('KOHANA_CODENAME', 'accipiter');
+define('KOHANA_VERSION',  '2.3.3');
+define('KOHANA_CODENAME', 'aegolius');
 
 // Test of Kohana is running in Windows
 define('KOHANA_IS_WIN', DIRECTORY_SEPARATOR === '\\');

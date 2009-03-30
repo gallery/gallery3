@@ -96,12 +96,6 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver {
 			throw new Kohana_Database_Exception('database.error', $this->show_error());
 	}
 
-	public function stmt_prepare($sql = '')
-	{
-		is_object($this->link) or $this->connect();
-		return new Kohana_Mysqli_Statement($sql, $this->link);
-	}
-
 	public function escape_str($str)
 	{
 		if (!$this->db_config['escape'])

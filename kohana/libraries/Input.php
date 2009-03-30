@@ -237,17 +237,18 @@ class Input_Core {
 		if ($this->ip_address !== NULL)
 			return $this->ip_address;
 
-		if ($ip = $this->server('HTTP_CLIENT_IP'))
+		// Server keys that could contain the client IP address
+		$keys = array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR');
+
+		foreach ($keys as $key)
 		{
-			 $this->ip_address = $ip;
-		}
-		elseif ($ip = $this->server('REMOTE_ADDR'))
-		{
-			 $this->ip_address = $ip;
-		}
-		elseif ($ip = $this->server('HTTP_X_FORWARDED_FOR'))
-		{
-			 $this->ip_address = $ip;
+			if ($ip = $this->server($key))
+			{
+				$this->ip_address = $ip;
+
+				// An IP address has been found
+				break;
+			}
 		}
 
 		if ($comma = strrpos($this->ip_address, ',') !== FALSE)

@@ -220,8 +220,16 @@ class ORM_Core {
 				switch ($num_args)
 				{
 					case 0:
-						// Support for things like reset_select, reset_write, list_tables
-						return $this->db->$method();
+						if (in_array($method, array('open_paren', 'close_paren', 'enable_cache', 'disable_cache')))
+						{
+							// Should return ORM, not Database
+							$this->db->$method();
+						}
+						else
+						{
+							// Support for things like reset_select, reset_write, list_tables
+							return $this->db->$method();
+						}
 					break;
 					case 1:
 						$this->db->$method($args[0]);
@@ -1011,41 +1019,6 @@ class ORM_Core {
 	}
 
 	/**
-	 * Count the number of records in the last query, without LIMIT or OFFSET applied.
-	 *
-	 * @return  integer
-	 */
-	public function count_last_query()
-	{
-		if ($sql = $this->db->last_query())
-		{
-			if (stripos($sql, 'LIMIT') !== FALSE)
-			{
-				// Remove LIMIT from the SQL
-				$sql = preg_replace('/\sLIMIT\s+[^a-z]+/i', ' ', $sql);
-			}
-
-			if (stripos($sql, 'OFFSET') !== FALSE)
-			{
-				// Remove OFFSET from the SQL
-				$sql = preg_replace('/\sOFFSET\s+\d+/i', '', $sql);
-			}
-
-			// Get the total rows from the last query executed
-			$result = $this->db->query
-			(
-				'SELECT COUNT(*) AS '.$this->db->escape_column('total_rows').' '.
-				'FROM ('.trim($sql).') AS '.$this->db->escape_table('counted_results')
-			);
-
-			// Return the total number of rows from the query
-			return (int) $result->current()->total_rows;
-		}
-
-		return FALSE;
-	}
-
-	/**
 	 * Proxy method to Database list_fields.
 	 *
 	 * @param   string  table name
@@ -1067,17 +1040,6 @@ class ORM_Core {
 	{
 		// Proxy to database
 		return $this->db->field_data($table);
-	}
-
-	/**
-	 * Proxy method to Database last_query.
-	 *
-	 * @return  string
-	 */
-	public function last_query()
-	{
-		// Proxy to database
-		return $this->db->last_query();
 	}
 
 	/**

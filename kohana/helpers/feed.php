@@ -20,6 +20,10 @@ class feed_Core {
 	 */
 	public static function parse($feed, $limit = 0)
 	{
+		// Check if SimpleXML is installed
+		if( ! function_exists('simplexml_load_file'))
+			throw new Kohana_User_Exception('Feed Error', 'SimpleXML must be installed!');
+		
 		// Make limit an integer
 		$limit = (int) $limit;
 

@@ -277,7 +277,7 @@ class valid_Core {
 	{
 		// Use localeconv to set the decimal_point value: Usually a comma or period.
 		$locale = localeconv();
-		return (preg_match('/^[-0-9'.$locale['decimal_point'].']++$/D', (string) $str));
+		return (preg_match('/^-?[0-9'.$locale['decimal_point'].']++$/D', (string) $str));
 	}
 
 	/**

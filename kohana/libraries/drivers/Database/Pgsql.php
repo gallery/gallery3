@@ -82,7 +82,8 @@ class Database_Pgsql_Driver extends Database_Driver {
 			return self::$query_cache[$hash];
 		}
 
-		return new Pgsql_Result(pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
+		// Suppress warning triggered when a database error occurs (e.g., a constraint violation)
+		return new Pgsql_Result(@pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
 	}
 
 	public function set_charset($charset)
@@ -159,12 +160,6 @@ class Database_Pgsql_Driver extends Database_Driver {
 	public function limit($limit, $offset = 0)
 	{
 		return 'LIMIT '.$limit.' OFFSET '.$offset;
-	}
-
-	public function stmt_prepare($sql = '')
-	{
-		is_object($this->link) or $this->connect();
-		return new Kohana_Mysqli_Statement($sql, $this->link);
 	}
 
 	public function compile_select($database)

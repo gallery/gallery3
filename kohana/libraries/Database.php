@@ -462,7 +462,18 @@ class Database_Core {
 	public function where($key, $value = NULL, $quote = TRUE)
 	{
 		$quote = (func_num_args() < 2 AND ! is_array($key)) ? -1 : $quote;
-		$keys  = is_array($key) ? $key : array($key => $value);
+		if (is_object($key))
+		{
+			$keys = array((string) $key => '');
+		}
+		elseif ( ! is_array($key))
+		{
+			$keys = array($key => $value);
+		}
+		else
+		{
+			$keys = $key;
+		}
 
 		foreach ($keys as $key => $value)
 		{
@@ -484,7 +495,18 @@ class Database_Core {
 	public function orwhere($key, $value = NULL, $quote = TRUE)
 	{
 		$quote = (func_num_args() < 2 AND ! is_array($key)) ? -1 : $quote;
-		$keys  = is_array($key) ? $key : array($key => $value);
+		if (is_object($key))
+		{
+			$keys = array((string) $key => '');
+		}
+		elseif ( ! is_array($key))
+		{
+			$keys = array($key => $value);
+		}
+		else
+		{
+			$keys = $key;
+		}
 
 		foreach ($keys as $key => $value)
 		{
@@ -1172,11 +1194,15 @@ class Database_Core {
 	 * See if a table exists in the database.
 	 *
 	 * @param   string   table name
+	 * @param   boolean  True to attach table prefix
 	 * @return  boolean
 	 */
-	public function table_exists($table_name)
+	public function table_exists($table_name, $prefix = TRUE)
 	{
-		return in_array($this->config['table_prefix'].$table_name, $this->list_tables());
+		if ($prefix)
+			return in_array($this->config['table_prefix'].$table_name, $this->list_tables());
+		else
+			return in_array($table_name, $this->list_tables());
 	}
 
 	/**
@@ -1313,17 +1339,6 @@ class Database_Core {
 	}
 
 	/**
-	 * Create a prepared statement (experimental).
-	 *
-	 * @param   string  SQL query
-	 * @return  object
-	 */
-	public function stmt_prepare($sql)
-	{
-		return $this->driver->stmt_prepare($sql, $this->config);
-	}
-
-	/**
 	 * Pushes existing query space onto the query stack.  Use push
 	 * and pop to prevent queries from clashing before they are
 	 * executed
@@ -1381,6 +1396,40 @@ class Database_Core {
 		return $this;
 	}
 
+	/**
+	 * Count the number of records in the last query, without LIMIT or OFFSET applied.
+	 *
+	 * @return  integer
+	 */
+	public function count_last_query()
+	{
+		if ($sql = $this->last_query())
+		{
+			if (stripos($sql, 'LIMIT') !== FALSE)
+			{
+				// Remove LIMIT from the SQL
+				$sql = preg_replace('/\sLIMIT\s+[^a-z]+/i', ' ', $sql);
+			}
+
+			if (stripos($sql, 'OFFSET') !== FALSE)
+			{
+				// Remove OFFSET from the SQL
+				$sql = preg_replace('/\sOFFSET\s+\d+/i', '', $sql);
+			}
+
+			// Get the total rows from the last query executed
+			$result = $this->query
+			(
+				'SELECT COUNT(*) AS '.$this->escape_column('total_rows').' '.
+				'FROM ('.trim($sql).') AS '.$this->escape_table('counted_results')
+			);
+
+			// Return the total number of rows from the query
+			return (int) $result->current()->total_rows;
+		}
+
+		return FALSE;
+	}
 
 } // End Database Class
 
