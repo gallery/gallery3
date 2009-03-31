@@ -478,6 +478,10 @@ form .gError,
   width: 99%;
 }
 
+#gContent #gPhoto {
+  
+}
+
 #gContent #gItem .gFullSizeLink img {
   display: block;
   margin: 1em auto !important;

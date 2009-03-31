@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<? if ($item->type == "photo"): ?>
+<? if ($item->type == "photo" || $item->type == "resize"): ?>
 <? $title = t("Edit this photo") ?>
 <? elseif ($item->type == "movie"): ?>
 <? $title = t("Edit this movie") ?>
@@ -13,7 +13,7 @@
   </span>
 </a>
 
-<? if ($item->is_photo() && graphics::can("rotate")): ?>
+<? if (($item->is_photo() || $item->type == "resize") && graphics::can("rotate")): ?>
 <a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/rotate/$item->id/ccw?csrf=$csrf") ?>"
   title="<?= t("Rotate 90 degrees counter clockwise") ?>">
   <span class="ui-icon ui-icon-rotate-ccw">
@@ -29,7 +29,7 @@
 </a>
 <? endif ?>
 
-<? if ($item->type == "photo"): ?>
+<? if ($item->type == "photo" || $item->type == "resize"): ?>
 <? $title = t("Move this photo to another album") ?>
 <? elseif ($item->type == "movie"): ?>
 <? $title = t("Move this movie to another album") ?>
@@ -44,7 +44,7 @@
 </a>
 
 <? if (access::can("edit", $item->parent())): ?>
-<? if ($item->type == "photo"): ?>
+<? if ($item->type == "photo" || $item->type == "resize"): ?>
 <? $title = t("Choose this photo as the album cover") ?>
 <? elseif ($item->type == "movie"): ?>
 <? $title = t("Choose this movie as the album cover") ?>
@@ -58,7 +58,7 @@
   </span>
 </a>
 
-<? if ($item->type == "photo"): ?>
+<? if ($item->type == "photo" || $item->type == "resize"): ?>
 <? $title = t("Delete this photo") ?>
 <? elseif ($item->type == "movie"): ?>
 <? $title = t("Delete this movie") ?>

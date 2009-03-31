@@ -3,8 +3,8 @@ $(document).ready(function() {
     // @todo Add quick edit pane for album (meta, move, permissions, delete)
     $(".gItem").hover(show_quick, function() {});
   }
-  if ($("#gItem").length) {
-    // @todo Apply quick edit to resize view
+  if ($("#gPhoto").length) {
+    $("#gPhoto").hover(show_quick, function() {});
   }
 });
 
@@ -19,8 +19,9 @@ var show_quick = function() {
     "position": "absolute",
     "top": pos.top,
     "left": pos.left,
+    "text-align": "center",
     "width": cont.innerWidth() + 1,
-    "height": 32
+    "height": "auto"
   }).hide();
   cont.hover(function() {}, hide_quick);
   $.get(
@@ -28,7 +29,6 @@ var show_quick = function() {
     {},
     function(data, textStatus) {
       $("#gQuickPane").html(data).slideDown("fast");
-      // @todo Move hover to a function
       $(".ui-state-default").hover(
         function(){
           $(this).addClass("ui-state-hover");

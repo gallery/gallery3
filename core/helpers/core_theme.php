@@ -25,7 +25,8 @@ class core_theme_Core {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/debug.css") . "\" />";
     }
-    if ($theme->page_type == "album" && access::can("edit", $theme->item())) {
+    if (($theme->page_type == "album" || $theme->page_type == "photo")
+        && access::can("edit", $theme->item())) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("core/css/quick.css") . "\" />";
       $buf .= html::script("core/js/quick.js");
@@ -49,6 +50,19 @@ class core_theme_Core {
     }
 
     return $buf;
+  }
+
+  static function resize_top($theme, $item) {
+    if (access::can("edit", $item)) {
+      $edit_link = url::site("quick/pane/$item->id");
+      return "<div class=\"gQuick\" href=\"$edit_link\">";
+    }
+  }
+
+  static function resize_bottom($theme, $item) {
+    if (access::can("edit", $item)) {
+      return "</div>";
+    }
   }
 
   static function thumb_top($theme, $child) {

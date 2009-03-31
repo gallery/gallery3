@@ -176,6 +176,8 @@ class Theme_View_Core extends View {
     case "photo_blocks":
     case "photo_bottom":
     case "photo_top":
+    case "resize_bottom":
+    case "resize_top":
     case "sidebar_blocks":
     case "sidebar_bottom":
     case "sidebar_top":

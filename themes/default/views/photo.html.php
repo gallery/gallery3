@@ -24,7 +24,12 @@
     </li>
   </ul>
 
-  <a href="#" class="gFullSizeLink" title="<?= t("View full size") ?>"><?= $item->resize_tag(array("id" => "gPhotoId-{$item->id}")) ?></a>
+  <div id="gPhoto">
+    <?= $theme->resize_top($item) ?>
+    <a href="#" class="gFullSizeLink" title="<?= t("View full size") ?>">
+    <?= $item->resize_tag(array("id" => "gPhotoId-{$item->id}")) ?></a>
+    <?= $theme->resize_bottom($item) ?>
+  </div>
 
   <div id="gInfo">
     <h1><?= $item->title ?></h1>
