@@ -27,7 +27,7 @@ class Albums_Controller extends Items_Controller {
       if ($album->id != 1) {
         access::forbidden();
       } else {
-        print new Theme_View("login_page.html");
+        print new Theme_View("login_page.html", "album");
         return;
       }
     }
