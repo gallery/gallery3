@@ -19,6 +19,16 @@
  */
 class View extends View_Core {
   /**
+   * Override View_Core::__construct so that we can set the csrf value into all views.
+   *
+   * @see View_Core::__construct
+   */
+  public function __construct($name = NULL, $data = NULL, $type = NULL) {
+    parent::__construct($name, $data, $type);
+    $this->set_global("csrf", access::csrf_token());
+  }
+  
+  /**
    * Override View_Core::render so that we trap errors stemming from bad PHP includes and show a
    * visible stack trace to help developers.
    *
