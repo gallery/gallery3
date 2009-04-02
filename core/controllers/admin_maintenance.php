@@ -59,7 +59,6 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $task = task::create($tasks[$task_callback], array());
 
     $view = new View("admin_maintenance_task.html");
-    $view->csrf = access::csrf_token();
     $view->task = $task;
 
     log::info("tasks", t("Task %task_name started (task id %task_id)",
@@ -80,7 +79,6 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       throw new Exception("@todo MISSING_TASK");
     }
     $view = new View("admin_maintenance_task.html");
-    $view->csrf = access::csrf_token();
     $view->task = $task;
 
     log::info("tasks", t("Task %task_name resumed (task id %task_id)",

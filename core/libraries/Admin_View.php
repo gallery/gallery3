@@ -44,7 +44,6 @@ class Admin_View_Core extends View {
     $this->sidebar = "";
     $this->set_global("theme", $this);
     $this->set_global("user", user::active());
-    $this->set_global("csrf", access::csrf_token());
   }
 
   public function url($path, $absolute_url=false) {
