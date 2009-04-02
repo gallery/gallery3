@@ -20,7 +20,8 @@
 class core_task_Core {
   static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count();
-    return array(Task_Definition::factory()
+    $tasks = array();
+    $tasks[] = Task_Definition::factory()
                  ->callback("core_task::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
                  ->description($dirty_count ?
@@ -28,12 +29,15 @@ class core_task_Core {
                                   "You have %count out of date photos",
                                   $dirty_count)
                                : t("All your photos are up to date"))
-                 ->severity($dirty_count ? log::WARNING : log::SUCCESS),
-                 Task_Definition::factory()
+      ->severity($dirty_count ? log::WARNING : log::SUCCESS);
+
+    $tasks[] = Task_Definition::factory()
                  ->callback("core_task::update_l10n")
                  ->name(t("Update translations"))
                  ->description(t("Download new and updated translated strings"))
-                 ->severity(log::SUCCESS));
+      ->severity(log::SUCCESS);
+
+    return $tasks;
   }
 
   /**
@@ -79,12 +83,84 @@ class core_task_Core {
     }
   }
 
-  static function update_l10n($task) {
-    l10n_scanner::update_index();
-    l10n_client::fetch_updates();
-    $task->done = true;
-    $task->state = "success";
-    $task->percent_complete = 100;
-    $task->status = t("Translations installed/updated");
+  static function update_l10n(&$task) {
+    $start = microtime(true);
+    $dirs = $task->get("dirs");
+    $files = $task->get("files");
+    $cache = $task->get("cache", array());
+    $i = 0;
+
+    switch ($task->get("mode", "init")) {
+    case "init":  // 0%
+      $dirs = array("core", "modules", "themes", "installer");
+      $files = array();
+      $task->set("mode", "find_files");
+      $task->status = t("Finding files");
+      break;
+
+    case "find_files":  // 0% - 10%
+      while (($dir = array_pop($dirs)) && microtime(true) - $start < 0.5) {
+        if (basename($dir) == "tests") {
+          continue;
+        }
+
+        foreach (glob(DOCROOT . "$dir/*") as $path) {
+          $relative_path = str_replace(DOCROOT, "", $path);
+          if (is_dir($path)) {
+            $dirs[] = $relative_path;
+          } else {
+            $files[] = $relative_path;
+          }
+        }
+      }
+
+      $task->status = t2("Finding files: found 1 file",
+                         "Finding files: found %count files", count($files));
+
+      if (!$dirs) {
+        $task->set("mode", "scan_files");
+        $task->set("total_files", count($files));
+        $task->status = t("Scanning files");
+        $task->percent_complete = 10;
+      }
+      break;
+
+    case "scan_files": // 10% - 90%
+      while (($file = array_pop($files)) && microtime(true) - $start < 0.5) {
+        $file = DOCROOT . $file;
+        switch (pathinfo($file, PATHINFO_EXTENSION)) {
+        case "php":
+          l10n_scanner::scan_php_file($file, $cache);
+          break;
+
+        case "info":
+          l10n_scanner::scan_info_file($file, $cache);
+          break;
+        }
+      }
+
+      $total_files = $task->get("total_files");
+      $task->status = t2("Scanning files: scanned 1 file",
+                         "Scanning files: scanned %count files", $total_files - count($files));
+
+      $task->percent_complete = 10 + 80 * ($total_files - count($files)) / $total_files;
+      if (empty($files)) {
+        $task->set("mode", "fetch_updates");
+        $task->status = t("Fetching updates");
+        $task->percent_complete = 90;
+      }
+      break;
+
+    case "fetch_updates":  // 90% - 100%
+      l10n_client::fetch_updates();
+      $task->done = true;
+      $task->state = "success";
+      $task->status = t("Translations installed/updated");
+      $task->percent_complete = 100;
+    }
+
+    $task->set("files", $files);
+    $task->set("dirs", $dirs);
+    $task->set("cache", $cache);
   }
 }

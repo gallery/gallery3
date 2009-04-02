@@ -157,12 +157,18 @@ class Admin_Maintenance_Controller extends Admin_Controller {
         break;
       }
       print json_encode(array("result" => "success",
-                              "task" => $task->as_array(),
+                              "task" => array(
+                                "percent_complete" => $task->percent_complete,
+                                "status" => $task->status,
+                                "done" => $task->done),
                               "location" => url::site("admin/maintenance")));
 
     } else {
       print json_encode(array("result" => "in_progress",
-                              "task" => $task->as_array()));
+                              "task" => array(
+                                "percent_complete" => $task->percent_complete,
+                                "status" => $task->status,
+                                "done" => $task->done)));
     }
   }
 }

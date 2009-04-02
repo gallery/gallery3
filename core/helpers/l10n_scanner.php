@@ -24,41 +24,24 @@
 class l10n_scanner_Core {
   // Based on Drupal's potx module, originally written by:
   // Gbor Hojtsy http://drupal.org/user/4166
+  public static $cache;
 
-  // @todo Report progress via callback
-  static function update_index() {
-    $stack = array(DOCROOT . "core",
-                   DOCROOT . "modules",
-                   DOCROOT . "themes",
-                   DOCROOT . "installer");
-
-    while ($stack) {
-      $path = array_pop($stack);
-      if (basename($path) == "tests") {
-        continue;
+  static function process_message($message, &$cache) {
+    if (empty($cache)) {
+      foreach (Database::instance()
+               ->select("key")
+               ->from("incoming_translations")
+               ->where("locale", "root")
+               ->get() as $row) {
+        $cache[$row->key] = true;
       }
-
-      if (is_dir($path)) {
-        $stack = array_merge($stack, glob("$path/*"));
-      } else {
-        switch (pathinfo($path, PATHINFO_EXTENSION)) {
-        case "php":
-          l10n_scanner::_scan_php_file($path);
-          break;
-
-        case "info":
-          l10n_scanner::_scan_info_file($path);
-          break;
-        }
-      }
-      flush();
     }
-  }
 
-  static function process_message($message) {
-    // @todo this is O(N) queries over the number of messages.  Precache all message keys
-    // in the task context and then do lookups over that to get it down to O(1).
     $key = I18n::get_message_key($message);
+    if (array_key_exists($key, $cache)) {
+      return $cache[$key];
+    }
+
     $entry = ORM::factory("incoming_translation", array("key" => $key));
     if (!$entry->loaded) {
       $entry->key = $key;
@@ -68,7 +51,7 @@ class l10n_scanner_Core {
     }
   }
 
-  private static function _scan_php_file($file) {
+  static function scan_php_file($file, &$cache) {
     $code = file_get_contents($file);
     $raw_tokens = token_get_all($code);
     unset($code);
@@ -91,24 +74,24 @@ class l10n_scanner_Core {
     unset($raw_tokens);
 
     if (!empty($func_token_list["t"])) {
-      l10n_scanner::_parse_t_calls($tokens, $func_token_list["t"]);
+      l10n_scanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
     }
     if (!empty($func_token_list["t2"])) {
-      l10n_scanner::_parse_plural_calls($tokens, $func_token_list["t2"]);
+      l10n_scanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
     }
   }
 
-  private static function _scan_info_file($file) {
+  static function scan_info_file($file, &$cache) {
     $code = file_get_contents($file);
     if (preg_match("#name\s*?=\s*(.*?)\ndescription\s*?=\s*(.*)\n#", $code, $matches)) {
       unset($matches[0]);
       foreach ($matches as $string) {
-        l10n_scanner::process_message($string);
+        l10n_scanner::process_message($string, $cache);
       }
     }
   }
 
-  private static function _parse_t_calls(&$tokens, &$call_list) {
+  private static function _parse_t_calls(&$tokens, &$call_list, &$cache) {
     foreach ($call_list as $index) {
       $function_name = $tokens[$index++];
       $parens = $tokens[$index++];
@@ -119,7 +102,7 @@ class l10n_scanner_Core {
         if (in_array($next_token, array(")", ","))
             && (is_array($first_param) && ($first_param[0] == T_CONSTANT_ENCAPSED_STRING))) {
           $message = self::_escape_quoted_string($first_param[1]);
-          l10n_scanner::process_message($message);
+          l10n_scanner::process_message($message, $cache);
         } else {
           // t() found, but inside is something which is not a string literal.
           // @todo Call status callback with error filename/line.
@@ -128,7 +111,7 @@ class l10n_scanner_Core {
     }
   }
 
-  private static function _parse_plural_calls(&$tokens, &$call_list) {
+  private static function _parse_plural_calls(&$tokens, &$call_list, &$cache) {
     foreach ($call_list as $index) {
       $function_name = $tokens[$index++];
       $parens = $tokens[$index++];
@@ -143,7 +126,7 @@ class l10n_scanner_Core {
             && is_array($second_param) && $second_param[0] == T_CONSTANT_ENCAPSED_STRING) {
           $singular = self::_escape_quoted_string($first_param[1]);
           $plural = self::_escape_quoted_string($first_param[1]);
-          l10n_scanner::process_message(array("one" => $singular, "other" => $plural));
+          l10n_scanner::process_message(array("one" => $singular, "other" => $plural), $cache);
         } else {
           // t2() found, but inside is something which is not a string literal.
           // @todo Call status callback with error filename/line.
