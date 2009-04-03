@@ -73,7 +73,7 @@
     file_size_limit : "100 MB",
     file_types : "*.gif;*.jpg;*.png;*.flv;*.mp4",
     file_types_description : "<?= t("Photos and Movies") ?>",
-    file_upload_limit : 100,
+    file_upload_limit : 1000,
     file_queue_limit : 0,
     custom_settings : { },
     debug: false,
