@@ -51,7 +51,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_server_add.html");
-    $view->content->form = $form->render();
+    $view->content->form = $form;
     $view->content->paths = array_keys($paths);
     print $view;
   }

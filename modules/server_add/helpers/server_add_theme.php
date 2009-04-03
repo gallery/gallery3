@@ -20,7 +20,7 @@
 class server_add_theme_Core {
   static function admin_head($theme) {
     $head = array();
-    if (Router::$current_uri == "admin/server_add") {
+    if (strpos(Router::$current_uri, "admin/server_add") !== false) {
       $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("lib/jquery.autocomplete.css") . "\" />";
       $base = url::site("__ARGS__");
