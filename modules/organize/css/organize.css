@@ -1,0 +1,98 @@
+/* @todo move to theme css */
+#gOrganizeTreeContainer,
+#gMicroThumbContainer {
+  overflow-y: auto;
+}
+
+#gMicroThumbContainer #gMicroThumbGrid {
+  margin: 0;
+}
+
+#gMicroThumbContainer #gMicroThumbGrid .gMicroThumb {
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  float: left;
+  font-size: .7em;
+  height: 9em;
+  margin-left: .5em;
+  margin-top: .5em;
+  overflow: hidden;
+  padding: .5em;
+  text-align: center;
+  width: 9em;
+}
+
+#gOrganizeAlbumDescription {
+  height: 2em;
+  overflow-y: auto;
+}
+
+#gMicroThumbContainer #gMicroThumbGrid .gAlbum {
+  background-color: #e8e8e8;
+}
+
+#gMicroThumbContainer #gMicroThumbGrid :hover {
+  background-color: #09F !important;
+  opacity: .3;
+}
+
+.gThumbSelected {
+  border: 0.2em solid #0099FF !important;
+}
+
+.gBranchSelected {
+  background-color: #6CF !important;
+}
+
+.gBranchText {
+  cursor: pointer;
+}
+
+.gBranchCollapsed {
+  display: none;
+}
+
+.gBranchEmpty {
+  visibility: hidden;
+}
+
+#gOrganizeTreeContainer ul ul li {
+  padding-left: 1.2em;
+}
+
+#gOrganizeFormButtons {
+  bottom: 0.5em;
+  position: absolute;
+}
+
+#gOrganizeFormButtons .submit {
+  display: inline;
+  float: none;
+  left: 0.5em;
+  position: relative;
+}
+
+#gOrganizeFormThumbs {
+  padding: .5em;
+  height: 7em; 
+  width: 100%; 
+  overflow: hidden;
+}
+
+#gOrganizeFormThumbs div {
+  margin: 0 auto;
+  text-align: center;
+}
+
+#gOrganizeButtonPane {
+  padding: .5em;
+  text-align: center;
+}
+
+#gOrganizeFormInfo td {
+  border: thin none;
+  padding: 0;
+}
+
+
