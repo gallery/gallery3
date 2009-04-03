@@ -1,18 +1,18 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script src="<?= url::file("modules/tag/js/tag.js") ?>" type="text/javascript"></script>
 <script>
+  var TAG_RENAME_URL = "<?= url::site("admin/tags/rename/__ID__") ?>";
   $("document").ready(function() {
     // using JS for adding link titles to avoid running t() for each tag
     $("#gTagAdmin .tag-name").attr("title", "<?= t("Click to edit this tag") ?>");
     $("#gTagAdmin .delete-link").attr("title", $(".delete-link:first span").html());
 
     // In-place editing for tag admin
-    $(".gEditable").bind("click", editInplace);
+    $(".gEditable").bind("click", editInPlace);
   });
   // make some values available within tag.js
   var csrf_token = "<?= $csrf ?>";
   var save_i18n = '<?= t("save") ?>';
-  var or_i18n = '<?= t("or") ?>';
   var cancel_i18n = '<?= t("cancel") ?>';
 </script>
 <div class="gBlock">
