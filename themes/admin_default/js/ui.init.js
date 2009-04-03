@@ -78,6 +78,9 @@ function togglePanel(element, on_success) {
     $("#gPanel").slideUp("slow");
     $("#gPanel *").remove();
     $("#gPanel").remove();
+    if ($(element).attr("orig_text")) {
+       $(element).children(".gButtonText").text($(element).attr("orig_text"));
+    }
     console.log("Removing existing #gPanel");
     //togglePanel(element, on_success);
   } else {
@@ -112,6 +115,10 @@ function togglePanel(element, on_success) {
         }
       };
       ajaxify_panel();
+      if ($(element).attr("open_text")) {
+        $(element).attr("orig_text", $(element).children(".gButtonText").text());
+        $(element).children(".gButtonText").text($(element).attr("open_text"));
+      }
     });
   }
   return false;
