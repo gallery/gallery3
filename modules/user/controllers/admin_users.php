@@ -96,28 +96,12 @@ class Admin_Users_Controller extends Controller {
     }
 
     $form = user::get_edit_form_admin($user);
-    $form->edit_user->password->rules("-required");
     $valid = $form->validate();
     if ($valid) {
-      $new_name = $form->edit_user->inputs["name"]->value;
-      if (ORM::factory("user")
-          ->where("name", $new_name)
-          ->where("id !=", $id)
-          ->find()
-          ->loaded) {
-        $form->edit_user->inputs["name"]->add_error("in_use", 1);
-        $valid = false;
-      }
+      $valid = user::update($user, $form);
     }
 
     if ($valid) {
-      $user->name = $new_name;
-      $user->full_name = $form->edit_user->full_name->value;
-      $user->password = $form->edit_user->password->value;
-      $user->email = $form->edit_user->email->value;
-      $desired_locale = $form->edit_user->locale->value;
-      $user->locale = $desired_locale == "none" ? null : $desired_locale;
-      $user->save();
       message::success(t("Changed user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
@@ -159,7 +143,6 @@ class Admin_Users_Controller extends Controller {
 
   public function add_group() {
     access::verify_csrf();
-    $form = group::get_add_form_admin();
     $valid = $form->validate();
     if ($valid) {
       $new_name = $form->add_group->inputs["name"]->value;
