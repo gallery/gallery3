@@ -46,7 +46,7 @@ class album_Core {
     $album->thumb_dirty = 1;
     $album->resize_dirty = 1;
     $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $album->sort_column = "id";
+    $album->sort_column = "weight";
     $album->sort_order = "ASC";
 
     while (ORM::factory("item")
@@ -93,7 +93,7 @@ class album_Core {
 
     $sort_order->dropdown("column", array("id" => "gAlbumSortColumn"))
       ->label(t("Sort by"))
-      ->options(array("id" => t("select a column"),
+      ->options(array("weight" => t("Default"),
                       "created" => t("Creation Date"),
                       "title" => t("Title"),
                       "updated" => t("Updated Date"),

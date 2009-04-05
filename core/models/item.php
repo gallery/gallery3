@@ -295,6 +295,11 @@ class Item_Model extends ORM_MPTT {
       $this->updated = time();
       if (!$this->loaded) {
         $this->created = $this->updated;
+        // let albums have a weight of zero so they come first
+        if (!$this->is_album()) {
+          $r = ORM::factory("item")->select("MAX(weight) as max_weight")->find();
+          $this->weight = $r->max_weight + 1;
+        }
       }
     }
     return parent::save();

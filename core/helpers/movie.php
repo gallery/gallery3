@@ -63,7 +63,7 @@ class movie_Core {
     $movie->mime_type = strtolower($pi["extension"]) == "mp4" ? "video/mp4" : "video/x-flv";
     $movie->thumb_dirty = 1;
     $movie->resize_dirty = 1;
-    $movie->sort_column = "id";
+    $movie->sort_column = "weight";
     $movie->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
     // Randomize the name if there's a conflict

@@ -83,8 +83,9 @@
         </td>
         <td class="gActions">
           <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"
+              open_text="<?= t("close") ?>"
               class="gPanelLink gButtonLink ui-state-default ui-corner-all ui-icon-left">
-            <span class="ui-icon ui-icon-pencil"></span><?= t("edit") ?></a>
+            <span class="ui-icon ui-icon-pencil"></span><span class="gButtonText"><?= t("edit") ?></span></a>
           <? if (user::active()->id != $user->id && !$user->guest): ?>
           <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
               class="gDialogLink gButtonLink ui-state-default ui-corner-all ui-icon-left">

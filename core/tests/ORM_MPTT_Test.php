@@ -29,7 +29,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $album = ORM::factory("item");
     $album->type = "album";
     $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $album->sort_column = "id";
+    $album->sort_column = "weight";
     $album->sort_order = "ASC";
     $album->add_to_parent($root);
 
@@ -155,7 +155,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $parent = ORM::factory("item");
     $parent->type = "album";
     $parent->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $parent->sort_column = "id";
+    $parent->sort_column = "weight";
     $parent->sort_order = "ASC";
     $parent->add_to_parent($root);
 
@@ -166,7 +166,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $album1 = ORM::factory("item");
     $album1->type = "album";
     $album1->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $album1->sort_column = "id";
+    $album1->sort_column = "weight";
     $album1->sort_order = "ASC";
     $album1->add_to_parent($parent);
 

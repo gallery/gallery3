@@ -139,6 +139,7 @@ CREATE TABLE {items} (
   `rand_key` float default NULL,
   `sort_column` varchar(64) default NULL,
   `sort_order` char(4) default 'ASC',
+  `weight` int(9) NOT NULL default '0',
   `view_1` tinyint(2) NOT NULL default '0',
   `view_2` tinyint(2) NOT NULL default '0',
   PRIMARY KEY  (`id`),
@@ -147,7 +148,7 @@ CREATE TABLE {items} (
   KEY `random` (`rand_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (NULL,UNIX_TIMESTAMP(),'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',UNIX_TIMESTAMP(),0,NULL,NULL,'id','ASC',1,1);
+INSERT INTO {items} VALUES (NULL,UNIX_TIMESTAMP(),'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',UNIX_TIMESTAMP(),0,NULL,NULL,'weight','ASC',0,1,1);
 DROP TABLE IF EXISTS {items_tags};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -325,4 +326,4 @@ CREATE TABLE {vars} (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:4:{i:1804289383;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:846930886;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:1681692777;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1714636915;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:4:{i:1957747793;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:424238335;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:719885386;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:1649760492;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0 Alpha 3'),(12,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','graphics_toolkit','imagemagick'),(8,'core','graphics_toolkit_path','/usr/bin'),(9,'core','blocks_dashboard_sidebar','a:4:{i:1804289383;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:846930886;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:1681692777;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1714636915;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(10,'core','blocks_dashboard_center','a:4:{i:1957747793;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:424238335;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:719885386;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:1649760492;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(11,'core','version','3.0 pre-beta svn'),(12,'comment','spam_caught','0');

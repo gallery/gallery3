@@ -76,6 +76,7 @@ class core_installer {
                    `rand_key` float default NULL,
                    `sort_column` varchar(64) default NULL,
                    `sort_order` char(4) default 'ASC',
+                   `weight` int(9) NOT NULL default 0,
                    PRIMARY KEY (`id`),
                    KEY `parent_id` (`parent_id`),
                    KEY `type` (`type`),
@@ -201,7 +202,7 @@ class core_installer {
       $root->level = 1;
       $root->thumb_dirty = 1;
       $root->resize_dirty = 1;
-      $root->sort_column = "id";
+      $root->sort_column = "weight";
       $root->sort_order = "ASC";
       $root->save();
       access::add_item($root);
