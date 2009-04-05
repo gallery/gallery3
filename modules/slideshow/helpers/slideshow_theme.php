@@ -19,7 +19,7 @@
  */
 class slideshow_theme_Core {
   static function head($theme) {
-    return "<script src=\"http://lite.piclens.com/current/piclens.js\" type=\"text/javascript\">" .
-      "</script>";
+    return "<script src=\"http://lite.piclens.com/current/piclens_optimized.js\"" .
+      "type=\"text/javascript\"></script>";
   }
 }
