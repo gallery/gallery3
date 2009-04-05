@@ -22,8 +22,6 @@ class rss_installer {
     $version = module::get_version("rss");
     if ($version == 0) {
       module::set_version("rss", 1);
-      // @todo remove this before the final or after the next intermin release
-      module::delete("media_rss");
     }
   }
 
