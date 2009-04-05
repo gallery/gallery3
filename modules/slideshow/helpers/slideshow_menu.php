@@ -23,7 +23,8 @@ class slideshow_menu_Core {
       ->append(Menu::factory("link")
                ->id("slideshow")
                ->label(t("View slideshow"))
-               ->url("javascript:PicLensLite.start()")
+               ->url("javascript:PicLensLite.start(" .
+                     "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
                ->css_id("gSlideshowLink"));
   }
 
@@ -32,7 +33,8 @@ class slideshow_menu_Core {
       ->append(Menu::factory("link")
                ->id("slideshow")
                ->label(t("View slideshow"))
-               ->url("javascript:PicLensLite.start()")
+               ->url("javascript:PicLensLite.start(" .
+                     "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
                ->css_id("gSlideshowLink"));
   }
 }
