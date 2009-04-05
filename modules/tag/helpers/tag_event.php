@@ -33,6 +33,7 @@ class tag_event_Core {
         $iptc = iptcparse($info["APP13"]);
         if (!empty($iptc["2#025"])) {
           foreach($iptc["2#025"] as $tag) {
+            $tag = str_replace("\0",  "", $tag);
             $tags[$tag]= 1;
           }
         }
