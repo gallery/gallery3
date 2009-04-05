@@ -27,10 +27,9 @@ class exif_installer {
                    `id` int(9) NOT NULL auto_increment,
                    `item_id` int(9) NOT NULL,
                    `name` varchar(64) NOT NULL,
-                   `summary` boolean NOT NULL,
                    `value` varchar(1024) NOT NULL,
                    PRIMARY KEY (`id`),
-                   UNIQUE KEY(`item_id`, `summary`, `name`))
+                   UNIQUE KEY(`item_id`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       $db->query("CREATE TABLE IF NOT EXISTS {exif_records} (
                    `id` int(9) NOT NULL auto_increment,
@@ -45,6 +44,7 @@ class exif_installer {
   static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {exif_keys};");
+    $db->query("DROP TABLE IF EXISTS {exif_records};");
     module::delete("exif");
   }
 }

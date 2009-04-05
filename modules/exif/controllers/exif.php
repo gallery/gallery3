@@ -26,8 +26,8 @@ class Exif_Controller extends Controller {
     access::required("view", $item);
 
     $view = new View("exif_dialog.html");
-    $view->details = exif::get($item, false);
-    
+    $view->details = exif::get($item);
+
     print $view;
   }
 }

@@ -30,17 +30,17 @@ class exif_Core {
 
     // Only try to extract EXIF from photos
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {
+      $db = Database::instance();
+      $data = array();
       require_once(MODPATH . "exif/lib/exif.php");
       $exif_raw = read_exif_data_raw($item->file_path(), false);
       if (isset($exif_raw['ValidEXIFData'])) {
         foreach(self::_keys() as $field => $exifvar) {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
-            $exif_key = ORM::factory("exif_key");
-            $exif_key->item_id = $item->id;
-            $exif_key->name = $field;
-            $exif_key->value = $exif_raw[$exifvar[0]][$exifvar[1]];
-            $exif_key->summary = $exifvar[3];
-            $exif_key->save();
+            $data[] = sprintf(
+              "(%d, '%s', '%s')",
+              $item->id, $db->escape_str($field),
+              $db->escape_str($exif_raw[$exifvar[0]][$exifvar[1]]));
           }
         }
       }
@@ -49,15 +49,19 @@ class exif_Core {
         $iptc = iptcparse($info["APP13"]);
         foreach (array("Keywords" => "2#025", "Caption" => "2#120") as $keyword => $iptc_key) {
           if (!empty($iptc[$iptc_key])) {
-            $exif_key = ORM::factory("exif_key");
-            $exif_key->item_id = $item->id;
-            $exif_key->name = $keyword;
-            $exif_key->value = implode(" ", $iptc[$iptc_key]);
-            $exif_key->summary = false;
-            $exif_key->save();
+            $data[] = sprintf(
+              "(%d, '%s', '%s')",
+              $item->id, $db->escape_str($keyword),
+              $db->escape_str(implode(" ", $iptc[$iptc_key])));
           }
         }
       }
+
+      // ORM and Database::insert() do not handle inserting multiple rows at once, so do it
+      // the hard way.
+      $query = "INSERT INTO {exif_keys} (`item_id`, `name`, `value`) VALUES" .
+        join(",", $data);
+      $db->query($query);
     }
 
     $record = ORM::factory("exif_record")->where("item_id", $item->id)->find();
@@ -68,14 +72,11 @@ class exif_Core {
     $record->save();
   }
 
-  static function get($item, $summary=true) {
+  static function get($item) {
     $exif = array();
-    $exif_key = ORM::factory("exif_key")
-      ->where("item_id", $item->id);
-    if ($summary) {
-      $exif_key->where("summary", $summary);
-    }
-    $keys = $exif_key->find_all();
+    $keys = ORM::factory("exif_key")
+      ->where("item_id", $item->id)
+      ->find_all();
     $definitions = self::_keys();
     foreach ($keys as $key) {
       $exif[] = array("caption" => $definitions[$key->name][2], "value" => $key->value);
@@ -83,7 +84,6 @@ class exif_Core {
 
     return $exif;
   }
-
 
   private static function _keys() {
     if (!isset(self::$exif_keys)) {

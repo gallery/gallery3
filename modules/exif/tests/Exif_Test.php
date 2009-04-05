@@ -21,9 +21,9 @@ class Exif_Test extends Unit_Test_Case {
   public function exif_extract_test() {
     $rand = rand();
     $root = ORM::factory("item", 1);
-    $photo = photo::create($root, dirname(__FILE__) . "/data/image.jpg", "$rand.jpg", $rand, $rand);
-    
-    $exif = exif::get($photo);
+    $photo = photo::create(
+      $root, DOCROOT . "modules/exif/tests/data/image.jpg", "$rand.jpg", $rand, $rand);
+
     $expected = array(
       array("caption" => "Camera Maker", "value" => "Pentax Corporation"),
       array("caption" => "Camera Model", "value" => "PENTAX K10D"),
@@ -36,12 +36,7 @@ class Exif_Test extends Unit_Test_Case {
       array("caption" => "ISO", "value" => "6553700"),
       array("caption" => "Metering Mode", "value" => "Multi-Segment"),
       array("caption" => "Shutter Speed", "value" => "1/60 sec"),
-      array("caption" => "Date/Time", "value" => "2008:03:17 17:41:25")
-    );
-    $this->assert_equal($expected, $exif);
-
-    $exif = exif::get($photo, false);
-    $expected = array_merge($expected, array(
+      array("caption" => "Date/Time", "value" => "2008:03:17 17:41:25"),
       array("caption" => "Copyright", "value" => "(C) 2008 -  T. Almdal"),
       array("caption" => "Orientation", "value" => "1: Normal (0 deg)"),
       array("caption" => "Resolution Unit", "value" => "Inch"),
@@ -50,7 +45,7 @@ class Exif_Test extends Unit_Test_Case {
       array("caption" => "Brightness Value", "value" => "0"),
       array("caption" => "Scene Type", "value" => "0"),
       array("caption" => "Subject Distance", "value" => "0"),
-    ));
-    $this->assert_equal($expected, $exif);
+    );
+    $this->assert_equal($expected, exif::get($photo));
   }
 }
