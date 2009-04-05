@@ -59,9 +59,11 @@ class exif_Core {
 
       // ORM and Database::insert() do not handle inserting multiple rows at once, so do it
       // the hard way.
-      $query = "INSERT INTO {exif_keys} (`item_id`, `name`, `value`) VALUES" .
-        join(",", $data);
-      $db->query($query);
+      if ($data) {
+        $query = "INSERT INTO {exif_keys} (`item_id`, `name`, `value`) VALUES" .
+          join(",", $data);
+        $db->query($query);
+      }
     }
 
     $record = ORM::factory("exif_record")->where("item_id", $item->id)->find();
