@@ -275,6 +275,29 @@ class graphics_Core {
   }
 
   /**
+   * This needs to be run once, after the initial install, to choose a graphics toolkit.
+   */
+  static function choose_default_toolkit() {
+    // Detect a graphics toolkit
+    $toolkits = graphics::detect_toolkits();
+    foreach (array("imagemagick", "graphicsmagick", "gd") as $tk) {
+      if ($toolkits[$tk]) {
+        module::set_var("core", "graphics_toolkit", $tk);
+        if ($tk != "gd") {
+          module::set_var("core", "graphics_toolkit_path", $toolkits[$tk]);
+        }
+        break;
+      }
+    }
+    if (!module::get_var("core", "graphics_toolkit")) {
+      site_status::warning(
+        t("Graphics toolkit missing!  Please <a href=\"%url\">choose a toolkit</a>",
+          array("url" => url::site("admin/graphics"))),
+        "missing_graphics_toolkit");
+    }
+  }
+
+  /**
    * Choose which driver the Kohana Image library uses.
    */
   static function init_toolkit() {

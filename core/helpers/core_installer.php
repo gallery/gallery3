@@ -224,24 +224,6 @@ class core_installer {
         array("width" => 640, "height" => 480, "master" => Image::AUTO),
         100);
 
-      // Detect a graphics toolkit
-      $toolkits = graphics::detect_toolkits();
-      foreach (array("imagemagick", "graphicsmagick", "gd") as $tk) {
-        if ($toolkits[$tk]) {
-          module::set_var("core", "graphics_toolkit", $tk);
-          if ($tk != "gd") {
-            module::set_var("core", "graphics_toolkit_path", $toolkits[$tk]);
-          }
-          break;
-        }
-      }
-      if (!module::get_var("core", "graphics_toolkit")) {
-        site_status::warning(
-          t("Graphics toolkit missing!  Please <a href=\"%url\">choose a toolkit</a>",
-            array("url" => url::site("admin/graphics"))),
-          "missing_graphics_toolkit");
-      }
-
       // Instantiate default themes (site and admin)
       foreach (array("default", "admin_default") as $theme_name) {
         $theme_info = new ArrayObject(parse_ini_file(THEMEPATH . $theme_name . "/theme.info"),
@@ -262,6 +244,7 @@ class core_installer {
 
       module::set_version("core", 1);
       module::set_var("core", "version", "3.0 pre-beta svn");
+      module::set_var("core", "choose_default_tookit", 1);
     }
   }
 

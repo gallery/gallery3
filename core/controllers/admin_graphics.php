@@ -24,8 +24,8 @@ class Admin_Graphics_Controller extends Admin_Controller {
     $view->content->available = "";
 
     $tk = new ArrayObject(graphics::detect_toolkits(), ArrayObject::ARRAY_AS_PROPS);
-    $active = module::get_var("core", "graphics_toolkit");
-    foreach (array("gd", "imagemagick", "graphicsmagick") as $id) {
+    $active = module::get_var("core", "graphics_toolkit", "none");
+    foreach (array("gd", "imagemagick", "graphicsmagick", "none") as $id) {
       if ($id == $active) {
         $view->content->active = new View("admin_graphics_$id.html");
         $view->content->active->tk = $tk;

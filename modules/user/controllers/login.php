@@ -58,7 +58,8 @@ class Login_Controller extends Controller {
       $user = ORM::factory("user")->where("name", $form->login->inputs["name"]->value)->find();
       if (!$user->loaded || !user::is_correct_password($user, $form->login->password->value)) {
         log::warning(
-          "user", t("Failed login for %name", array("name" => $form->login->inputs["name"]->value)));
+          "user",
+          t("Failed login for %name", array("name" => $form->login->inputs["name"]->value)));
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $valid = false;
       }
@@ -67,6 +68,13 @@ class Login_Controller extends Controller {
     if ($valid) {
       user::login($user);
       log::info("user", t("User %name logged in", array("name" => $user->name)));
+
+      // If this user is an admin, check to see if there are any post-install tasks that we need
+      // to run and take care of those now.
+      if ($user->admin && module::get_var("core", "choose_default_tookit", null)) {
+        graphics::choose_default_toolkit();
+        module::clear_var("core", "choose_default_tookit");
+      }
     }
 
     return array($valid, $form);
