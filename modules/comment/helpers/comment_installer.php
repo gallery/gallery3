@@ -49,7 +49,6 @@ class comment_installer {
                  PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-
       block_manager::add("dashboard_center", "comment", "recent_comments");
       module::set_var("comment", "spam_caught", 0);
       module::set_version("comment", 1);
