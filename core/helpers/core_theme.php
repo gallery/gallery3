@@ -54,7 +54,7 @@ class core_theme_Core {
 
   static function resize_top($theme, $item) {
     if (access::can("edit", $item)) {
-      $edit_link = url::site("quick/pane/$item->id");
+      $edit_link = url::site("quick/pane/$item->id?page_type=photo");
       return "<div class=\"gQuick\" href=\"$edit_link\">";
     }
   }
@@ -67,7 +67,7 @@ class core_theme_Core {
 
   static function thumb_top($theme, $child) {
     if (access::can("edit", $child)) {
-      $edit_link = url::site("quick/pane/$child->id");
+      $edit_link = url::site("quick/pane/$child->id?page_type=album");
       return "<div class=\"gQuick\" href=\"$edit_link\">";
     }
   }

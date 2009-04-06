@@ -26,6 +26,7 @@ class Quick_Controller extends Controller {
 
     $view = new View("quick_pane.html");
     $view->item = $item;
+    $view->page_type = Input::instance()->get("page_type");
     print $view;
   }
 
@@ -66,10 +67,17 @@ class Quick_Controller extends Controller {
       }
     }
 
-    print json_encode(
-      array("src" => $item->thumb_url() . "?rnd=" . rand(),
-            "width" => $item->thumb_width,
-            "height" => $item->thumb_height));
+    if (Input::instance()->get("page_type") == "album") {
+      print json_encode(
+        array("src" => $item->thumb_url() . "?rnd=" . rand(),
+              "width" => $item->thumb_width,
+              "height" => $item->thumb_height));
+    } else {
+      print json_encode(
+        array("src" => $item->resize_url() . "?rnd=" . rand(),
+              "width" => $item->resize_width,
+              "height" => $item->resize_height));
+    }
   }
 
   public function make_album_cover($id) {
@@ -116,7 +124,12 @@ class Quick_Controller extends Controller {
     $item->delete();
     message::success($msg);
 
-    print json_encode(array("result" => "success", "reload" => 1));
+    if (Input::instance()->get("page_type") == "album") {
+      print json_encode(array("result" => "success", "reload" => 1));
+    } else {
+      print json_encode(array("result" => "success",
+                              "location" => url::site("albums/$parent->id")));
+    }
   }
 
   public function form_edit($id) {

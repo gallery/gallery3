@@ -13,7 +13,7 @@ var show_quick = function() {
   var quick = $(this).find(".gQuick");
   $("#gQuickPane").remove();
   cont.append("<div id=\"gQuickPane\"></div>");
-  var img = cont.find(".gThumbnail");
+  var img = cont.find(".gThumbnail,.gResize");
   var pos = cont.position();
   $("#gQuickPane").css({
     "position": "absolute",
