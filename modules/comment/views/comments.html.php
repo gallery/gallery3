@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? if (!$comments->count()): ?>
-<p>
+<p id="gNoCommentsYet">
   <?= t("No comments yet. Be the first to <a %attrs>comment</a>!",
       array("attrs" => "href=\"#add_comment_form\" class=\"showCommentForm\"")) ?>
 </p>

@@ -15,6 +15,7 @@ function ajaxify_comment_form() {
           $("#gComments .gBlockContent ul:first").append("<li>"+data+"</li>");
           $("#gComments .gBlockContent ul:first li:last").effect("highlight", {color: "#cfc"}, 8000);
           $("#gAddCommentForm").hide(2000);
+	  $("#gNoCommentsYet").hide(2000);
         });
       }
     }
