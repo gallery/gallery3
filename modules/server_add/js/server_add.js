@@ -117,6 +117,10 @@ function do_add(submit, event) {
             $(".gProgressBar").progressbar("value", data.task.percent_complete);
             done = data.task.done;
           },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            paused = true;
+            display_upload_error(XMLHttpRequest.responseText);
+          },
           dataType: "json",
           type: "POST",
           url: url
@@ -141,5 +145,17 @@ function do_add(submit, event) {
   });
 
   return false;
+}
+
+function display_upload_error(error) {
+  $("body").append("<div id=\"gServerAddError\" title=\"Fatal Error\">" + error + "</div>");
+  $("#gServerAddError").dialog({
+      autoOpen: true,
+      autoResize: false,
+      modal: true,
+      resizable: true,
+      width: 610,
+      height: $("#gDialog").height()
+    });
 }
 
