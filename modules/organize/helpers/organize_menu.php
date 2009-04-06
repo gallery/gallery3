@@ -1,4 +1,5 @@
-<?php defined("SYSPATH") or die("No direct script access.");/**
+<?php defined("SYSPATH") or die("No direct script access.");
+/**
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2008 Bharat Mediratta
  *
@@ -28,5 +29,5 @@ class organize_menu {
         ->css_id("gOrganizeLink")
         ->url(url::site("organize/index/{$item->id}")));
     }
-  } 
+  }
 }
