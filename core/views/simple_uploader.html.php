@@ -71,7 +71,7 @@
       "csrf": "<?= $csrf ?>"
     },
     file_size_limit : "100 MB",
-    file_types : "*.gif;*.jpg;*.png;*.flv;*.mp4",
+    file_types : "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
     file_types_description : "<?= t("Photos and Movies") ?>",
     file_upload_limit : 1000,
     file_queue_limit : 0,
