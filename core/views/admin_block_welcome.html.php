@@ -4,15 +4,17 @@
 </p>
 <ul>
   <li>
-    <?= t('<a href="%url">General Settings</a> - General configuration options for your Gallery.',
-          array("url" => "#")) ?>
+    <?= t("General Settings - choose your <a href=\"%graphics_url\">graphics</a> and <a \"%language_url\">language</a> settings.",
+        array("graphics_url" => url::site("admin/graphics"),
+              "language_url" => url::site("admin/languages"))) ?>
   </li>
   <li>
-    <?= t('<a href="%url">Modules</a> - Manage available and installed modules.',
-          array("url" => url::site("admin/modules"))) ?>
+    <?= t("Appearance - <a href=\"%theme_url\">choose a theme</a>, or <a href=\"%theme_details_url\">customize the way it looks</a>.",
+        array("theme_url" => url::site("admin/theme"),
+              "theme_details_url" => url::site("admin/theme_details"))) ?>
   </li>
   <li>
-    <?= t('<a href="">Presentation</a> - Choose a theme, set image sizes.',
-          array("url" => "#")) ?>
+    <?= t("Customize - <a href=\"%modules_url\">install modules</a> to add cool features!",
+          array("modules_url" => url::site("admin/modules"))) ?>
   </li>
 </ul>
