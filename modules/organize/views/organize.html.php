@@ -20,8 +20,8 @@
   </div>
 
   <div id="bd" role="main">
-	  <div id="yui-main">
-	    <div class="yui-b">
+    <div id="yui-main">
+      <div class="yui-b">
         <div class="yui-ge">
           <div id="gMicroThumbContainer" class="yui-u first"
                ref="<?= url::site("organize/content/__ITEM_ID__?width=__WIDTH__&height=__HEIGHT__&offset=__OFFSET__") ?>">
@@ -33,14 +33,11 @@
           </div>
         </div>
       </div>
-	  </div>
-	  <div id="gOrganizeTreeContainer" class="yui-b">
+    </div>
+    <div id="gOrganizeTreeContainer" class="yui-b">
       <?= $album_tree ?>
     </div>
-	</div>
-
-
-
+  </div>
 
   <div id="ft">
     <div class="gProgressBar" style="visibility: hidden"></div>
