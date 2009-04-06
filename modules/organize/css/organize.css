@@ -2,6 +2,16 @@
 #gOrganizeTreeContainer,
 #gMicroThumbContainer {
   overflow-y: auto;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#gMicroThumbContainer {
+  background-color: #cfdeff;
+  border: 1px solid #999 !important;
+  border-top: none !important;
+  border-left: none !important;
+  margin-left: -1em !important;
 }
 
 #gMicroThumbContainer #gMicroThumbGrid {
@@ -9,7 +19,8 @@
 }
 
 #gMicroThumbContainer #gMicroThumbGrid .gMicroThumb {
-  border: 1px solid #e8e8e8;
+  background-color: #fff;
+  border: 2px solid #e8e8e8;
   border-right-color: #ccc;
   border-bottom-color: #ccc;
   float: left;
@@ -17,6 +28,7 @@
   height: 9em;
   margin-left: .5em;
   margin-top: .5em;
+  opacity: .4;
   overflow: hidden;
   padding: .5em;
   text-align: center;
@@ -33,16 +45,19 @@
 }
 
 #gMicroThumbContainer #gMicroThumbGrid :hover {
-  background-color: #09F !important;
-  opacity: .3;
+  opacity: 1;
 }
 
-.gThumbSelected {
-  border: 0.2em solid #0099FF !important;
+#gMicroThumbContainer #gMicroThumbGrid .gThumbSelected {
+  border: 0.2em solid #09f;
+  opacity: 1;
 }
 
 .gBranchSelected {
-  background-color: #6CF !important;
+  background-color: #cfdeff !important;
+  border-bottom: 1px solid #999 !important;
+  display: block;
+  padding: .3em 0;
 }
 
 .gBranchText {
@@ -76,12 +91,11 @@
 #gOrganizeFormThumbs {
   padding: .5em;
   height: 7em; 
-  width: 100%; 
   overflow: hidden;
 }
 
 #gOrganizeFormThumbs div {
-  margin: 0 auto;
+  margin: 0;
   text-align: center;
 }
 
@@ -94,5 +108,3 @@
   border: thin none;
   padding: 0;
 }
-
-
