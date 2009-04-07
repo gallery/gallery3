@@ -26,8 +26,15 @@
   width: 100%;
 }
 
-#gQuickPaneOptions a {
+#gQuickPaneOptions li a {
   display: block;
-  clear: both;
+  float: none;
   width: auto;
+  margin: 0;
+  padding: .5em .5em .5em .8em;
+  text-align: left;
+}
+
+#gQuickPaneOptions li a:hover {
+  background-color: #4d4d4d;
 }

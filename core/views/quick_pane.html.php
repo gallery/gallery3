@@ -83,20 +83,20 @@
   </span>
 </a>
 
-<div id="gQuickPaneOptions" style="display: none">
-  <a class="add_item gDialogLink" href="<?= url::site("form/add/albums/$item->id?type=photo") ?>"
+<ul id="gQuickPaneOptions" style="display: none">
+  <li><a class="add_item gDialogLink" href="<?= url::site("form/add/albums/$item->id?type=photo") ?>"
     title="<?= t("Add a photo") ?>">
     <?= t("Add a photo") ?>
-  </a>
+  </a></li>
 
-  <a class="add_album gDialogLink" href="<?= url::site("form/add/albums/$item->id?type=album") ?>"
+  <li><a class="add_album gDialogLink" href="<?= url::site("form/add/albums/$item->id?type=album") ?>"
     title="<?= t("Add an album") ?>">
     <?= t("Add an album") ?>
-  </a>
+  </a></li>
 
-  <a class="permissions gDialogLink" href="<?= url::site("permissions/browse/$item->id") ?>"
+  <li><a class="permissions gDialogLink" href="<?= url::site("permissions/browse/$item->id") ?>"
     title="<?= t("Edit permissions") ?>">
     <?= t("Edit permissions") ?>
-  </a>
-</div>
+  </a></li>
+</ul>
 <? endif ?>
