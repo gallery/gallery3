@@ -288,6 +288,17 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * @see ORM::__set()
+   */
+  public function __set($column, $value) {
+    if ($column == "name") {
+      // Clear the relative path as it is no longer valid.
+      $this->relative_path = null;
+    }
+    parent::__set($column, $value);
+  }
+  
+  /**
    * @see ORM::save()
    */
   public function save() {

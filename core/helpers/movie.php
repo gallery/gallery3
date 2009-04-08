@@ -79,7 +79,8 @@ class movie_Core {
     $movie->add_to_parent($parent);
 
     // If the thumb or resize already exists then rename it
-    if (file_exists($movie->resize_path()) || file_exists($movie->thumb_path())) {
+    if (file_exists($movie->resize_path()) ||
+        file_exists($movie->thumb_path())) {
       $movie->name = $pi["filename"] . "-" . rand() . "." . $pi["extension"];
       $movie->save();
     }

@@ -74,11 +74,17 @@ class photo_Core {
       // @todo Improve this.  Random numbers are not user friendly
       $photo->name = rand() . "." . $pi["extension"];
     }
+
     // This saves the photo
     $photo->add_to_parent($parent);
 
-    // If the thumb or resize already exists then rename it
-    if (file_exists($photo->resize_path()) || file_exists($photo->thumb_path())) {
+    /*
+     * If the thumb or resize already exists then rename it. We need to do this after the save
+     * because the resize_path and thumb_path both call relative_path which caches the
+     * path. Before add_to_parent the relative path will be incorrect.
+     */
+    if (file_exists($photo->resize_path()) ||
+        file_exists($photo->thumb_path())) {
       $photo->name = $pi["filename"] . "-" . rand() . "." . $pi["extension"];
       $photo->save();
     }
@@ -91,7 +97,6 @@ class photo_Core {
     graphics::generate($photo);
 
     // If the parent has no cover item, make this it.
-    $parent = $photo->parent();
     if ($parent->album_cover_item_id == null)  {
       $parent->album_cover_item_id = $photo->id;
       $parent->save();

@@ -40,8 +40,6 @@ function open_close_branch(icon, event) {
         $(parent).append(data);
         $(icon).addClass("ui-icon-minus");
         $(icon).removeClass("ui-icon-plus");
-        var checkbox = $(parent).find(":checkbox")[0];
-        checkbox_click(checkbox, null);
       });
     } else {
       $(icon).addClass("ui-icon-minus");
@@ -63,9 +61,15 @@ function get_url(uri, task_id) {
 }
 
 function checkbox_click(checkbox, event) {
+  var _this = this;
   var parents = $(checkbox).parents("li");
   var parent = parents.get(0);
-  $(parent).find(".gCheckboxTree :checkbox").attr("checked", checkbox.checked);
+  if ($(parent).hasClass("gDirectory") &&  $(parent).find(".gCheckboxTree").length == 0) {
+      load_children(parent, function(data, textStatus) {
+        $(parent).append(data);
+      });
+  }
+  $(parent).find(".gCheckboxTree :checkbox").click();
   var checked = $("#gServerAdd :checkbox[checked]");
   $("#gServerAdd form :submit").attr("disabled", checked.length == 0);
 }
@@ -95,11 +99,7 @@ function do_add(submit, event) {
     var parms = "";
     $.each(check_list, function () {
       var parent = $(this).parents("li")[0];
-      // If its a file or a directory with no children
-      if ($(parent).hasClass("gFile") ||
-          ($(parent).hasClass("gDirectory") && $(parent).find(".gCheckboxTree").length == 0)) {
-        parms += "&path[]=" + this.value;
-      }
+      parms += "&path[]=" + this.value;
     });
   }
   paused = false;

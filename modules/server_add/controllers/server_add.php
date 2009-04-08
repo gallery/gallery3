@@ -66,19 +66,22 @@ class Server_Add_Controller extends Controller {
 
   function start($id) {
     access::verify_csrf();
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    $input_files = $this->input->post("path");
     $files = array();
-    foreach ($this->input->post("path") as $path) {
-      if (is_dir($path)) {
-        $dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), true);
-        foreach ($dir as $file) {
-          $extension = strtolower(substr(strrchr($file->getFilename(), '.'), 1));
-          if ($file->isReadable() &&
-              in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
-            $files[] = $file->getPathname();
-          }
+    $total_count = 0;
+    foreach (array_keys($paths) as $valid_path) {
+      $path_length = strlen($valid_path);
+      foreach ($input_files as $key => $path) {
+        if ($path_valid = strpos($path, $valid_path) === 0) {
+          $relative_path = substr(dirname($path), $path_length);
+          $name = basename($path);
+          $files[$valid_path][] = array("path" => $relative_path,
+                                        "parent_id" => $id, "name" => basename($path),
+                                        "type" => is_dir($path) ? "album" : "file");
+          $total_count++;
+          unset($input_files[$key]);
         }
-      } else {
-        $files[] = $path;
       }
     }
 
@@ -86,13 +89,18 @@ class Server_Add_Controller extends Controller {
       ->callback("server_add_task::add_from_server")
       ->description(t("Add photos or movies from the local server"))
       ->name(t("Add from server"));
-    $task = task::create($task_def, array("item_id" => $id, "next" => 0, "paths" => $files));
+    $task = task::create($task_def, array("item_id" => $id, "next_path" => 0, "files" => $files,
+      "counter" => 0, "position" => 0, "total" => $total_count));
 
     batch::start();
     print json_encode(array("result" => "started",
                             "url" => url::site("server_add/add_photo/{$task->id}?csrf=" .
                                                access::csrf_token()),
-                            "task" => $task->as_array()));
+                            "task" => array(
+                              "id" => $task->id,
+                              "percent_complete" => $task->percent_complete,
+                              "status" => $task->status,
+                              "done" => $task->done)));
   }
 
   function add_photo($task_id) {
@@ -111,11 +119,19 @@ class Server_Add_Controller extends Controller {
         break;
       }
       print json_encode(array("result" => "success",
-                              "task" => $task->as_array()));
+                              "task" => array(
+                                "id" => $task->id,
+                                "percent_complete" => $task->percent_complete,
+                                "status" => $task->status,
+                                "done" => $task->done)));
 
     } else {
       print json_encode(array("result" => "in_progress",
-                              "task" => $task->as_array()));
+                              "task" => array(
+                                "id" => $task->id,
+                                "percent_complete" => $task->percent_complete,
+                                "status" => $task->status,
+                                "done" => $task->done)));
     }
   }
 

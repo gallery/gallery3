@@ -26,60 +26,57 @@ class server_add_task_Core {
   static function add_from_server($task) {
     $context = unserialize($task->context);
     try {
-      $parent = ORM::factory("item", $context["item_id"]);
+      $paths = array_keys(unserialize(module::get_var("server_add", "authorized_paths")));
+      $path = $paths[$context["next_path"]];
+      $file = $context["files"][$path][$context["position"]];
+      $parent = ORM::factory("item", $file["parent_id"]);
       access::required("server_add", $parent);
       if (!$parent->is_album()) {
         throw new Exception("@todo BAD_ALBUM");
       }
 
-      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
-      $path = $context["paths"][$context["next"]];
-
-      $path_valid = false;
-      $item_path = "";
-      foreach (array_keys($paths) as $valid_path) {
-        if ($path_valid = strpos($path, $valid_path) === 0) {
-          $item_path = substr($path, strlen($valid_path));
-          $item_path = explode("/", ltrim($item_path,"/"));
-          $source_path = $valid_path;
-          break;
+      $name = $file["name"];
+      if ($file["type"] == "album") {
+        $album = ORM::factory("item")
+          ->where("name", $name)
+          ->where("parent_id", $parent->id)
+          ->find();
+        if (!$album->loaded) {
+          $album = album::create($parent, $name, $name, null, user::active()->id);
         }
-      }
-      if (empty($path_valid)) {
-        throw new Exception("@todo BAD_PATH");
-      }
-      for ($i = 0; $i < count($item_path); $i++) {
-        $name = $item_path[$i];
-        $source_path .= "/$name";
-        if (is_link($source_path) || !is_readable($source_path)) {
-          kohana::show_404();
-        }
-        $pathinfo = pathinfo($source_path);
-        set_time_limit(30);
-        if (is_dir($source_path)) {
-          $album = ORM::factory("item")
-            ->where("name", $name)
-            ->where("parent_id", $parent->id)
-            ->find();
-          if (!$album->loaded) {
-            $album = album::create($parent, $name, $name, null, user::active()->id);
+        /*
+         * Now that we have a new album. Go through the remaining files to import and change the
+         * parent_id of any file that has the same relative path as this album's path.
+         */
+        $album_path = "{$file['path']}/$name";
+        for ($idx = $context["position"] + 1; $idx < count($context["files"][$path]); $idx++) {
+          if (strpos($context["files"][$path][$idx]["path"], $album_path) === 0) {
+            $context["files"][$path][$idx]["parent_id"] = $album->id;
           }
-          $parent = $album;
-        } else if (in_array($pathinfo["extension"], array("flv", "mp4"))) {
-          $movie = movie::create($parent, $source_path, basename($source_path),
-                                 basename($source_path), null, user::active()->id);
-        } else {
-          $photo = photo::create($parent, $source_path, basename($source_path),
-                                 basename($source_path), null, user::active()->id);
         }
+      } else {
+        $extension = strtolower(substr(strrchr($name, '.'), 1));
+        $source_path = "$path{$file['path']}/$name";
+        if (in_array($extension, array("flv", "mp4"))) {
+          $movie = movie::create($parent, $source_path, $name, $name,
+                                 null, user::active()->id);
+        } else {
+          $photo = photo::create($parent, $source_path, $name, $name,
+                                 null, user::active()->id);
+        }
+      }
+
+      $context["counter"]++;
+      if (++$context["position"] >= count($context["files"][$path])) {
+        $context["next_path"]++;
+        $context["position"] = 0;
       }
     } catch(Exception $e) {
       $context["errors"][$path] = $e->getMessage();
     }
-    $task->done = (++$context["next"]) >= count($context["paths"]);
     $task->context = serialize($context);
     $task->state = "success";
-    $task->percent_complete = ($context["next"] / (float)count($context["paths"])) * 100;
+    $task->percent_complete = ($context["counter"] / (float)$context["total"]) * 100;
+    $task->done = $context["counter"] == (float)$context["total"];
   }
-
 }
