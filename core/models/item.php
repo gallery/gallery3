@@ -353,39 +353,22 @@ class Item_Model extends ORM_MPTT {
    * Return an <img> tag for the thumbnail.
    * @param array $extra_attrs  Extra attributes to add to the img tag
    * @param int (optional) $max Maximum size of the thumbnail (default: null)
+   * @param boolean (optional) $micro_thumb Center vertically (default: false)
    * @return string
    */
-  public function thumb_tag($extra_attrs=array(), $max=null) {
+  public function thumb_tag($extra_attrs=array(), $max=null, $micro_thumb=false) {
     list ($height, $width) = $this->_adjust_thumb_size($max);
+    if ($micro_thumb && $max) {
+      // The constant is divide by 2 to calcuate the file and 10 to convert to em
+      $margin_top = ($max - $height) / 20;
+      $extra_attrs["style"] = "margin-top: {$margin_top}em";
+      $extra_attrs["title"] = $this->title;      
+    }
     $attrs = array_merge($extra_attrs,
             array(
               "src" => $this->thumb_url(),
               "alt" => $this->title,
               "width" => $width,
-              "height" => $height)
-            );
-    // html::image forces an absolute url which we don't want
-    return "<img" . html::attributes($attrs) . "/>";
-  }
-
-  /**
-   * Return an <img> tag for a micro thumbnail. Use margins to center within the specified size
-   * @param array $extra_attrs  Extra attributes to add to the img tag
-   * @param int (optional) $max Maximum size of the thumbnail (default: null)
-   * @return string
-   */
-  public function micro_thumb_tag($extra_attrs=array(), $max=null) {
-    list ($height, $width) = $this->_adjust_thumb_size($max);
-    // The constant is divide by 2 to calcuate the file and 10 to convert to em
-    $margin_top = ($max - $height) / 20;
-    $extra_attrs["style"] = "margin-top: {$margin_top}em";
-    
-    $attrs = array_merge($extra_attrs,
-            array(
-              "src" => $this->thumb_url(),
-              "alt" => $this->title,
-              "title" => $this->title,
-               "width" => $width,
               "height" => $height)
             );
     // html::image forces an absolute url which we don't want
