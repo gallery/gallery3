@@ -99,12 +99,22 @@
   text-align: center;
 }
 
-#gOrganizeButtonPane {
-  padding: .5em;
-  text-align: center;
+#gMicroThumbUnselectAll,
+#gMicroThumbSelectAll {
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
-#gOrganizeFormInfo td {
-  border: thin none;
-  padding: 0;
+.gOrganizeReorderDropTarget {
+  visibility: hidden;
+  background-color: #5C9CCC;
+  float: none;
+  width: .5em;
+  height: 9em;
 }
+
+.gOrganizeReorderDropTargetHover {
+  visibility: visible;
+}
+
+

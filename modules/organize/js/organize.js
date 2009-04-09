@@ -41,45 +41,12 @@ function get_more_data() {
 }
 
 function toggle_select(event) {
-  var clone = null;
-  var id = $(this).attr("id").replace(/[^0-9]/g, "");
-
   if ($(this).hasClass("gThumbSelected")) {
     $(this).removeClass("gThumbSelected");
-    var newSelect = $(".gThumbSelected");
-    if (newSelect.size() == 1) {
-      clone = $(".gThumbSelected").children("img").clone(true);
-      id = $(".gThumbSelected").attr("id").replace(/[^0-9]/g, "");
-    } else {
-      clone = null;
-    }
+    $(this).draggable("destroy");
   } else {
-    clone = $(this).children("img").clone(true);
     $(this).addClass("gThumbSelected");
-  }
-  switch ($(".gThumbSelected").size()) {
-  case 0:
-    reset_edit_select();
-    break;
-  case 1:
-    $("#gOrganizeFormThumb").empty();
-    $("#gOrganizeFormThumb").append(clone);
-    $("#gOrganizeFormNoImage").hide();
-    $("#gOrganizeFormMultipleImages").hide();
-    $("#gOrganizeFormThumb").show();
-    $("#gOrganizeButtonPane").show();
-    $.getJSON($("#gOrganizeFormInfo").attr("ref").replace("__ITEM_ID__", id), function(data) {
-      $("#gOrganizeFormTitle").text(data.title);
-      $("#gOrganizeFormOwner").text(data.owner);
-      $("#gOrganizeFormDate").text(data.date);
-      $("#gOrganizeFormDescription").text(data.description);
-      $("#gOrganizeFormInfo").show();
-    });
-    break;
-  default:
-    $("#gOrganizeFormThumb").hide();
-    $("#gOrganizeFormInfo").hide();
-    $("#gOrganizeFormMultipleImages").show();
+    $(this).draggable({containment: "#gDialog"});
   }
   event.preventDefault();
 }
@@ -89,7 +56,7 @@ function reset_edit_select() {
   $("#gOrganizeFormThumb").hide();
   $("#gOrganizeFormMultipleImages").hide();
   $("#gOrganizeButtonPane").hide();
-  $("#gOrganizeFormInfo").hide();
+  select_all(false);
 }
 
 function organize_toggle_children(event) {
@@ -114,11 +81,6 @@ function organize_open_folder(event) {
     $(this).addClass("gBranchSelected");
     item_id = $(this).attr("ref");
     $("#gMicroThumbGrid").empty();
-    var url_header = $("#gDialog #hd").attr("ref").replace("__ITEM_ID__", item_id);
-    $.getJSON(url_header, function(data) {
-      $("#gOrganizeAlbumTitle").text(data.title);
-      $("#gOrganizeAlbumDescription").text(data.description);
-    });
     reset_edit_select();
     retrieve_micro_thumbs();
   }
@@ -154,6 +116,49 @@ function organize_dialog_init() {
   $(".gBranchText").click(organize_open_folder);
   retrieve_micro_thumbs(item_id);
   //showLoading("#gDialog");
+
+  $("#gMicroThumbContainer").scroll(function() {
+    get_more_data();
+  });
+
+  $("#gMicroThumbSelectAll").click(function(event) {
+    select_all(true);
+    event.preventDefault();
+  });
+  $("#gMicroThumbUnselectAll").click(function(event) {
+    select_all(false);
+    event.preventDefault();
+  });
+
+  // Drag and Drop Initialization
+  $(".gOrganizeReorderDropTarget").droppable({
+    hoverClass: "gOrganizeReorderDropTargetHover",
+    accept: ".gThumbSelected",
+    drop: function(event, ui) {
+      // Ajax call to start task for rearrange
+    }
+  });
+
+  $(".gOrganizeBranch").droppable({
+    greedy: true,
+    accept: ".gThumbSelected",
+    drop: function(event, ui) {
+      // Ajax call to start task for move
+    }
+  });
+}
+
+function select_all(select) {
+  $(".gMicroThumb").click();
+  if (select) {
+//    $("#gMicroThumbGrid li").addClass("gThumbSelected");
+    $("#gMicroThumbSelectAll").hide();
+    $("#gMicroThumbUnselectAll").show();
+  } else {
+//    $("#gMicroThumbGrid li").removeClass("gThumbSelected");
+    $("#gMicroThumbSelectAll").show();
+    $("#gMicroThumbUnselectAll").hide();
+  }
 }
 
 function viewport_size() {

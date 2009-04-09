@@ -7,8 +7,14 @@
 <? if ($child->is_album()): ?>
   <? $item_class = "gAlbum"; ?>
 <? endif ?>
-<li id="gMicroThumb-<?= $child->id ?>" class="gMicroThumb <?= $item_class ?>">
-  <?= $child->micro_thumb_tag(array("class" => "gThumbnail"), $thumbsize) ?>
+<li>
+  <div>
+  <div class="gOrganizeReorderDropTarget" ref="<?= $child->id ?>">&nbsp;
+  </div>
+  <div id="gMicroThumb-<?= $child->id ?>" class="gMicroThumb <?= $item_class ?>">
+    <?= $child->thumb_tag(array("class" => "gThumbnail"), $thumbsize, true) ?>
+  </div>
+    </div>
 </li>
 <? endforeach ?>
 
