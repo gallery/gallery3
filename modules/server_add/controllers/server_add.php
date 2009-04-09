@@ -73,7 +73,7 @@ class Server_Add_Controller extends Controller {
     foreach (array_keys($paths) as $valid_path) {
       $path_length = strlen($valid_path);
       foreach ($input_files as $key => $path) {
-        if ($path_valid = strpos($path, $valid_path) === 0) {
+        if ($valid_path != $path && strpos($path, $valid_path) === 0) {
           $relative_path = substr(dirname($path), $path_length);
           $name = basename($path);
           $files[$valid_path][] = array("path" => $relative_path,
