@@ -28,48 +28,52 @@ class server_add_task_Core {
     try {
       $paths = array_keys(unserialize(module::get_var("server_add", "authorized_paths")));
       $path = $paths[$context["next_path"]];
-      $file = $context["files"][$path][$context["position"]];
-      $parent = ORM::factory("item", $file["parent_id"]);
-      access::required("server_add", $parent);
-      if (!$parent->is_album()) {
-        throw new Exception("@todo BAD_ALBUM");
-      }
-
-      $name = $file["name"];
-      if ($file["type"] == "album") {
-        $album = ORM::factory("item")
-          ->where("name", $name)
-          ->where("parent_id", $parent->id)
-          ->find();
-        if (!$album->loaded) {
-          $album = album::create($parent, $name, $name, null, user::active()->id);
+      if (!empty($context["files"][$path])) {
+        $file = $context["files"][$path][$context["position"]];
+        $parent = ORM::factory("item", $file["parent_id"]);
+        access::required("server_add", $parent);
+        if (!$parent->is_album()) {
+          throw new Exception("@todo BAD_ALBUM");
         }
-        /*
-         * Now that we have a new album. Go through the remaining files to import and change the
-         * parent_id of any file that has the same relative path as this album's path.
-         */
-        $album_path = "{$file['path']}/$name";
-        for ($idx = $context["position"] + 1; $idx < count($context["files"][$path]); $idx++) {
-          if (strpos($context["files"][$path][$idx]["path"], $album_path) === 0) {
-            $context["files"][$path][$idx]["parent_id"] = $album->id;
+
+        $name = $file["name"];
+        if ($file["type"] == "album") {
+          $album = ORM::factory("item")
+            ->where("name", $name)
+            ->where("parent_id", $parent->id)
+            ->find();
+          if (!$album->loaded) {
+            $album = album::create($parent, $name, $name, null, user::active()->id);
+          }
+          /*
+           * Now that we have a new album. Go through the remaining files to import and change the
+           * parent_id of any file that has the same relative path as this album's path.
+           */
+          $album_path = "{$file['path']}/$name";
+          for ($idx = $context["position"] + 1; $idx < count($context["files"][$path]); $idx++) {
+            if (strpos($context["files"][$path][$idx]["path"], $album_path) === 0) {
+              $context["files"][$path][$idx]["parent_id"] = $album->id;
+            }
+          }
+        } else {
+          $extension = strtolower(substr(strrchr($name, '.'), 1));
+          $source_path = "$path{$file['path']}/$name";
+          if (in_array($extension, array("flv", "mp4"))) {
+            $movie = movie::create($parent, $source_path, $name, $name,
+                                   null, user::active()->id);
+          } else {
+            $photo = photo::create($parent, $source_path, $name, $name,
+                                   null, user::active()->id);
           }
         }
-      } else {
-        $extension = strtolower(substr(strrchr($name, '.'), 1));
-        $source_path = "$path{$file['path']}/$name";
-        if (in_array($extension, array("flv", "mp4"))) {
-          $movie = movie::create($parent, $source_path, $name, $name,
-                                 null, user::active()->id);
-        } else {
-          $photo = photo::create($parent, $source_path, $name, $name,
-                                 null, user::active()->id);
+        
+        $context["counter"]++;
+        if (++$context["position"] >= count($context["files"][$path])) {
+          $context["next_path"]++;
+          $context["position"] = 0;
         }
-      }
-
-      $context["counter"]++;
-      if (++$context["position"] >= count($context["files"][$path])) {
-        $context["next_path"]++;
-        $context["position"] = 0;
+      } else {
+          $context["next_path"]++;
       }
     } catch(Exception $e) {
       $context["errors"][$path] = $e->getMessage();
