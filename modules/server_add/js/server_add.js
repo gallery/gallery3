@@ -148,7 +148,7 @@ function do_add(submit, event) {
 }
 
 function display_upload_error(error) {
-  $("body").append("<div id=\"gServerAddError\" title=\"Fatal Error\">" + error + "</div>");
+  $("body").append("<div id=\"gServerAddError\" title=\"" + FATAL_ERROR + "\">" + error + "</div>");
   $("#gServerAddError").dialog({
       autoOpen: true,
       autoResize: false,
