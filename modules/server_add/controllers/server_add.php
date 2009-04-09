@@ -135,15 +135,25 @@ class Server_Add_Controller extends Controller {
     }
   }
 
-  public function finish($id, $task_id, $cancelled=false) {
+  public function finish($id, $task_id) {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
 
-    if (!$task->done && $cancelled) {
+    if (!$task->done) {
       message::warning(t("Add from server was cancelled prior to completion"));
     }
     
+    batch::stop();
+    print json_encode(array("result" => "success"));
+  }
+
+  public function pause($id, $task_id) {
+    access::verify_csrf();
+
+    $task = ORM::factory("task", $task_id);
+
+    message::warning(t("Add from server was cancelled prior to completion"));
     batch::stop();
     print json_encode(array("result" => "success"));
   }

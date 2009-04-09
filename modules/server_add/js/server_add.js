@@ -23,7 +23,7 @@ function init_server_add_form() {
         },
         dataType: "json",
         type: "POST",
-        url: get_url("server_add/finish", task.id + "/true")
+        url: get_url("server_add/pause", task.id)
       });
     }
   });
