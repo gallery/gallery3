@@ -293,7 +293,7 @@ class Item_Model extends ORM_MPTT {
         $this->weight = $r->max_weight + 1;
         // Let albums have a weight of based on the largest -ve number so they come first.
         if ($this->is_album()) {
-          $this->weight = -(0x7FFFFFFF - $this->weight;
+          $this->weight = -(0x7FFFFFFF - $this->weight);
         }
       }
     }
