@@ -99,35 +99,18 @@ class Item_Model extends ORM_MPTT {
 
     parent::delete();
     if (is_dir($original_path)) {
-      if (file_exists($original_path)) {
-        dir::unlink($original_path);
-      }
+      @dir::unlink($original_path);
+      @dir::unlink(dirname($original_resize_path));
       /*
-       * Both the thumb path and the resize path contain a path to .album.jpg
-       * So we need to try to delete both the path (may not exist) and its directory.
+       * The thumb path is a  path to .album.jpg not the actual directory.
+       * So we need to first try to delete the path (may not exist) and then its directory.
        */
-      if (file_exists($original_resize_path)) {
-        unlink($original_resize_path);
-      }
-      if (file_exists(dirname($original_resize_path))) {
-        dir::unlink(dirname($original_resize_path));
-      }
-      if (file_exists($original_thumb_path)) {
-        unlink($original_thumb_path);
-      }
-      if (file_exists(dirname($original_thumb_path))) {
-        dir::unlink(dirname($original_thumb_path));
-      }
+      @unlink($original_thumb_path);
+      @dir::unlink(dirname($original_thumb_path));
     } else {
-      if (file_exists($original_path)) {
-        unlink($original_path);
-      }
-      if (file_exists($original_resize_path)) {
-        unlink($original_resize_path);
-      }
-      if (file_exists($original_thumb_path)) {
-        unlink($original_thumb_path);
-      }
+      @unlink($original_path);
+      @unlink($original_resize_path);
+      @unlink($original_thumb_path);
     }
   }
 
