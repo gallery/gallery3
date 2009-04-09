@@ -136,7 +136,7 @@ class core_menu_Core {
                ->id("content_menu")
                ->label(t("Content")))
       ->append(Menu::factory("submenu")
-               ->id("appareance_menu")
+               ->id("appearance_menu")
                ->label(t("Appearance"))
                ->append(Menu::factory("link")
                         ->id("themes")

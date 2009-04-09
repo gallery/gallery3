@@ -19,7 +19,7 @@
  */
 class user_menu_Core {
   static function admin($menu, $theme) {
-    $menu->add_after("presentation_menu",
+    $menu->add_after("appearance_menu",
                      Menu::factory("link")
                      ->id("users_groups")
                      ->label(t("Users/Groups"))
