@@ -15,7 +15,7 @@
     <div id="yui-main">
       <div class="yui-b">
         <a id="gMicroThumbSelectAll" href="#"><?= t("select all") ?></a>
-        <a id="gMicroThumbUnselectAll" href="#" style="display: none"><?= t("unselect all") ?></a>
+        <a id="gMicroThumbUnselectAll" href="#" style="display: none"><?= t("deselect all") ?></a>
         <div id="gMicroThumbContainer" class="yui-u first"
              ref="<?= url::site("organize/content/__ITEM_ID__?width=__WIDTH__&height=__HEIGHT__&offset=__OFFSET__") ?>">
             <ul id="gMicroThumbGrid">

@@ -14,6 +14,10 @@
   margin-left: -1em !important;
 }
 
+#gMicroThumbGrid li div div {
+  float: left;
+}
+
 #gMicroThumbContainer #gMicroThumbGrid {
   margin: 0;
 }
@@ -90,7 +94,7 @@
 
 #gOrganizeFormThumbs {
   padding: .5em;
-  height: 7em; 
+  height: 7em;
   overflow: hidden;
 }
 
@@ -116,5 +120,3 @@
 .gOrganizeReorderDropTargetHover {
   visibility: visible;
 }
-
-
