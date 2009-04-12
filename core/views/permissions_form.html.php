@@ -22,21 +22,21 @@
           <? $lock = access::locked_by($group, $permission->name, $item) ?>
 
           <? if ($lock): ?>
-            <?= t("denied and locked by") ?> <a href="javascript:show(<?= $lock->id ?>)"><?= t("parent") ?></a>
+            <span class="gDenied"><?= t("denied and locked by") ?> <a href="javascript:show(<?= $lock->id ?>)"><?= t("parent") ?></a></span>
           <? else: ?>
             <? if ($intent === null): ?>
               <? if ($allowed): ?>
-                <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">allowed by parent</a>
+                <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" class="gAllowed">allowed by parent</a>
               <? else: ?>
-                <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">denied by parent</a>
+                <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" class="gDenied">denied by parent</a>
               <? endif ?>
             <? elseif ($intent === access::DENY): ?>
-              <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">denied</a>
+              <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" class="gDenied">denied</a>
             <? elseif ($intent === access::ALLOW): ?>
               <? if ($item->id == 1): ?>
-              <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">allowed</a>
+              <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" class="gAllowed">allowed</a>
               <? else: ?>
-              <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)">allowed</a>
+              <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" class="gAllowed">allowed</a>
               <? endif ?>
             <? endif ?>
           <? endif ?>

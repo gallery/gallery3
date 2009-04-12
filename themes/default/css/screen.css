@@ -979,3 +979,17 @@ form .gError,
   background-color: #cfc;
   border: 1px solid #beb;
 }
+
+/* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gPermissions .gDenied, #gPermissions .gAllowed {
+  padding-left: 20px;
+  background-position: left;
+  background-repeat: no-repeat;
+}
+#gPermissions .gDenied {
+  background-image: url('../images/ico-denied.png');
+}
+#gPermissions .gAllowed {
+  background-image: url('../images/ico-success.png');
+}
