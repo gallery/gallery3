@@ -69,9 +69,9 @@ class album_Core {
   static function get_add_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddAlbumForm"));
     $group = $form->group("add_album")->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
-    $group->input("name")->label(t("Name"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
+    $group->input("name")->label(t("Directory Name"));
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Create"));
     $form->add_rules_from(ORM::factory("item"));
@@ -82,11 +82,12 @@ class album_Core {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gEditAlbumForm"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_album")->label(t("Edit Album"));
-    if ($parent->id != 1) {
-      $group->input("name")->label(t("Name"))->value($parent->name);
-    }
+    
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
+    if ($parent->id != 1) {
+      $group->input("name")->label(t("Directory Name"))->value($parent->name);
+    }
 
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
       ->label(t("Sort Order"));

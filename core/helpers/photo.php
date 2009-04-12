@@ -110,9 +110,9 @@ class photo_Core {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddPhotoForm"));
     $group = $form->group("add_photo")->label(
       t("Add Photo to %album_title", array("album_title" =>$parent->title)));
-    $group->input("name")->label(t("Name"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
+    $group->input("name")->label(t("Filename"));
     $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif,flv,mp4]");
     $group->hidden("type")->value("photo");
     $group->submit("")->value(t("Upload"));
@@ -124,9 +124,9 @@ class photo_Core {
     $form = new Forge("photos/$photo->id", "", "post", array("id" => "gEditPhotoForm"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_photo")->label(t("Edit Photo"));
-    $group->input("name")->label(t("Name"))->value($photo->name);
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
+    $group->input("name")->label(t("Filename"))->value($photo->name);
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
