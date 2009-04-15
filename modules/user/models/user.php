@@ -29,9 +29,13 @@ class User_Model extends ORM {
 
   public function __set($column, $value) {
     switch ($column) {
-      case "password":
-        $value = user::hash_password($value);
-        break;
+    case "hashed_password":
+      $column = "password";
+      break;
+
+    case "password":
+      $value = user::hash_password($value);
+      break;
     }
     parent::__set($column, $value);
   }
