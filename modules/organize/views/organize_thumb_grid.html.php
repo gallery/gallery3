@@ -1,7 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<script>
-  //$(".gMicroThumb").click(toggle_select);
-</script>
 <? foreach ($children as $i => $child): ?>
 <? $item_class = "gPhoto"; ?>
 <? if ($child->is_album()): ?>

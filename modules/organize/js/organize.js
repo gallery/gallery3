@@ -4,6 +4,9 @@
 var url;
 var height;
 
+/**
+ * Dynamically initialize the organize dialog when it is displayed
+ */
 function organize_dialog_init() {
   var size = viewport_size();
   height = size.height() - 100;
@@ -35,10 +38,6 @@ function organize_dialog_init() {
   $(".gBranchText").click(organize_open_folder);
   retrieve_micro_thumbs(item_id);
   //showLoading("#gDialog");
-
-  $("#gMicroThumbPanel").scroll(function() {
-    get_more_data();
-  });
 
   $("#gMicroThumbSelectAll").click(function(event) {
     select_all(true);
@@ -90,10 +89,13 @@ function retrieve_micro_thumbs() {
     url = url.replace("__HEIGHT__", height);
   }
   var url_data = url.replace("__OFFSET__", offset);
-  url_data = url.replace("__ITEM_ID__", item_id);
-  $.get(url_data, function(data) {
-    $("#gMicroThumbGrid").append(data);
-    get_more_data();
+  url_data = url_data.replace("__ITEM_ID__", item_id);
+  $.getJSON(url_data, function(json, textStatus) {
+    $("#gMicroThumbGrid").append(json.data);
+    if (json.count == 0) {
+      return;
+    }
+    retrieve_micro_thumbs();
     $(".gMicroThumbContainer").click(function(event) {
       if ($(this).hasClass("gSelecting")) {
         $(this).removeClass("gSelecting");
@@ -106,7 +108,7 @@ function retrieve_micro_thumbs() {
       handle: ".gMicroThumbContainer.ui-selected",
       zindex: 2000,
       helper: function(event, ui) {
-        $("body").append("<div id=\"gDragHelper\"><ul></ul></div>");
+        $("#gMicroThumbPanel").append("<div id=\"gDragHelper\"><ul></ul></div>");
         var beginTop = event.pageY;
         var beginLeft = event.pageX;
         var zindex = $(".gMicroThumbContainer").draggable("option", "zindex");
@@ -143,10 +145,7 @@ function retrieve_micro_thumbs() {
         });
         return $("#gDragHelper");
       },
-      stop: function(event, ui) {
-        $("#gDragHelper li").each(function(i) {
-	  $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
-        });
+      stop: function(event) {
         $(".gMicroThumbContainer.ui-selected").css("z-index", null);
         $("#gDragHelper").remove();
         $("#gPlaceHolder").remove();
@@ -156,28 +155,45 @@ function retrieve_micro_thumbs() {
       tolerance: "pointer",
       over: function(event, ui) {
         $(this).after($("#gPlaceHolder"));
-      },
+      }
+    });
+    $("#gMicroThumbPanel").droppable( {
+      tolerance: "pointer",
       drop: function(event, ui) {
+        $("#gDragHelper").hide();
+        var dropTarget;
+        if (event.pageX < $("#gMicroThumbGrid li:visible:first").offset().left ||
+            event.pageY < $("#gMicroThumbGrid li:visible:first").offset().top) {
+          dropTarget = 1;
+        } else if (event.pageX > $("#gMicroThumbGrid li:visible:last").offset().left + 100 ||
+                   event.pageY > $("#gMicroThumbGrid li:visible:last").offset().top + 100) {
+          dropTarget = 2;
+        } else {
+          dropTarget = 0;
+        }
         $("#gDragHelper li").each(function(i) {
-	  $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
+          switch (dropTarget) {
+          case 0:
+            $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
+            break;
+          case 1:
+            $("#gMicroThumbGrid").prepend($("#thumb_" + $(this).attr("ref")).show());
+            break;
+          case 2:
+            $("#gMicroThumbGrid").append($("#thumb_" + $(this).attr("ref")).show());
+            break;
+          }
         });
-        $(".gMicroThumbContainer.ui-selected").css("z-index", null);
-        $("#gDragHelper").remove();
-        $("#gPlaceHolder").remove();
       }
     });
   });
 }
 
-function get_more_data() {
-  var element = $("#gMicroThumbPanel").get(0);
-  var scrollHeight = element.scrollHeight;
-  var scrollTop = element.scrollTop;
-  var height = $("#gMicroThumbPanel").height();
-  var scrollPosition = scrollHeight - (scrollTop + height);
-  if (scrollPosition > 0 && scrollPosition <= 100) {
-    retrieve_micro_thumbs();
-  }
+function isOver(selector, pageX, pageY) {
+  var top = $(selector).offset().top;
+  var left = $(selector).offset().left;
+  return this.left <= pageX && pageX <= this.left + 100 &&
+    this.top <= pageY && pageY <= this.top + 100;
 }
 
 function organize_toggle_children(event) {

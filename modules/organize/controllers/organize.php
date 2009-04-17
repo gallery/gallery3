@@ -42,14 +42,15 @@ class Organize_Controller extends Controller {
     $height = $this->input->get("height");
     $offset = $this->input->get("offset", 0);
     $thumbsize = self::$_MICRO_THUMB_SIZE + 2 * self::$_MICRO_THUMB_PADDING;
-    $page_size = ((int)($width / $thumbsize)) * ceil($height / $thumbsize);
+    $page_size = ceil($width / $thumbsize) * ceil($height / $thumbsize);
  
     $v = new View("organize_thumb_grid.html");
     $v->children = $item->children($page_size, $offset);
     $v->thumbsize = self::$_MICRO_THUMB_SIZE;
     $v->padding = self::$_MICRO_THUMB_PADDING;
 
-    print $v;
+    print json_encode(array("count" => $v->children->count(),
+                            "data" => $v->__toString()));
   }
 
   public function header($item_id) {
