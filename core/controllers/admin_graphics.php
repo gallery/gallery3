@@ -30,7 +30,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
         $view->content->active = new View("admin_graphics_$id.html");
         $view->content->active->tk = $tk;
         $view->content->active->is_active = true;
-      } else {
+      } else if ($id != "none") {
         $v = new View("admin_graphics_$id.html");
         $v->tk = $tk;
         $v->is_active = false;
