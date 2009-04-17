@@ -59,15 +59,6 @@ class Organize_Controller extends Controller {
                             "description" => empty($item->description) ? "" : $item->description));
   }
 
-  public function detail($item_id) {
-    $item = ORM::factory("item", $item_id);
-
-    print json_encode(array("title" => $item->title,
-                            "owner" => $item->owner->name,
-                            "date" => date("j-M-Y", $item->updated),
-                            "description" => empty($item->description) ? "" : $item->description));
-  }
-
   public function tree($item, $parent) {
     $albums = ORM::factory("item")
       ->where(array("parent_id" => $parent->id, "type" => "album"))
