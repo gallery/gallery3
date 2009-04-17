@@ -48,11 +48,10 @@ class g2_import_task_Core {
 
     $modes = array("groups", "users", "albums", "photos", "comments", "done");
     while (!$task->done && microtime(true) - $start < 1) {
-      if ($i >= $stats[$modes[$mode]]) {
+      if ($i >= ($stats[$modes[$mode]] - 1)) {
         $i = 0;
         $mode++;
       }
-      $i++;
 
       switch($modes[$mode]) {
       case "groups":
@@ -68,6 +67,18 @@ class g2_import_task_Core {
         break;
 
       case "albums":
+        if (!$i) {
+          $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
+          $task->set(
+            "album_map", $album_map = array(g2(GalleryCoreApi::getDefaultAlbumId()) => 1));
+        } else {
+          $queue = $task->get("queue");
+          $album_map = $task->get("album_map");
+        }
+
+        g2_import::import_album($queue, $album_map);
+        $task->set("queue", $queue);
+        $task->set("album_map", $album_map);
         $task->status = t(
           "Importing albums %count / %total", array("count" => $i, "total" => $stats["albums"]));
         break;
@@ -89,6 +100,7 @@ class g2_import_task_Core {
         break;
       }
 
+      $i++;
       if (!$task->done) {
         $completed++;
       }

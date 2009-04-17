@@ -97,7 +97,7 @@ class g2_import_Core {
   }
 
   static function import_group($i) {
-    $map = g2(GalleryCoreApi::fetchGroupNames(1, $i - 1));
+    $map = g2(GalleryCoreApi::fetchGroupNames(1, $i));
     $g2_group_id = current(array_keys($map));
     $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
     if ($g2_group->getGroupType() != GROUP_NORMAL) {
@@ -113,7 +113,7 @@ class g2_import_Core {
   }
 
   static function import_user($i) {
-    $map = g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY, 1, $i - 1));
+    $map = g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY, 1, $i));
     $g2_user_id = current(array_keys($map));
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
       return;
@@ -126,9 +126,45 @@ class g2_import_Core {
       $user->email = $g2_user->getEmail();
       $user->language = $g2_user->getLanguage();
       $user->save();
+
+      // @todo put the user into the appropriate groups
     } catch (Exception $e) {
       // @todo For now we assume this is a "duplicate user" exception
       // which we will ignore.
     }
+  }
+
+  static function import_album(&$queue, &$album_map) {
+    // The queue is a set of nested associative arrays where the key is the album id and the
+    // value is an array of similar arrays.  We'll do a breadth first tree traversal using the
+    // queue to keep our state.  Doing it breadth first means that the parent will be created by
+    // the time we get to the child.
+
+    // Grab the current album off the queue and enqueue its children at the end of the line
+    list($g2_id, $children) = each($queue);
+    unset($queue[$g2_id]);
+    foreach ($children as $key => $value) {
+      $queue[$key] = $value;
+    }
+
+    // Load the G2 album item, and figure out its parent in G3.
+    $g2_album = g2(GalleryCoreApi::loadEntitiesById($g2_id));
+    if ($g2_album->getParentId() == null) {
+      return;
+    }
+
+    $g3_parent_album = ORM::factory("item", $album_map[$g2_album->getParentId()]);
+    $g3_album = album::create(
+      $g3_parent_album,
+      $g2_album->getPathComponent(),
+      $g2_album->getTitle(),
+      $g2_album->getDescription());
+    $album_map[$g2_album->getId()] = $g3_album->id;
+
+    // @todo import owners
+    // @todo figure out how to import summary vs. description
+    // @todo import view counts
+    // @todo import origination timestamp
+    // @todo import keywords as tags
   }
 }
