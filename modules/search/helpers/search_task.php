@@ -46,22 +46,24 @@ class search_task_Core {
   static function update_index($task) {
     $completed = $task->get("completed", 0);
 
-    foreach (ORM::factory("search_record")->where("dirty", 1)->limit(2)->find_all() as $record) {
-      search::update_record($record);
-      $completed++;
+    $start = microtime(true);
+    while (!$task->done && microtime(true) - $start < .5) {
+      foreach (ORM::factory("search_record")->where("dirty", 1)->limit(5)->find_all() as $record) {
+        search::update_record($record);
+        $completed++;
+      }
+
+      list ($remaining, $total, $percent) = self::_get_stats();
+      if ($remaining + $completed) {
+        $task->percent_complete = round(100 * $completed / ($remaining + $completed));
+        $task->status = t("%done records records updated, index is %percent% up-to-date",
+                          array("done" => $completed, "percent" => $percent));
+      } else {
+        $task->percent_complete = 100;
+      }
     }
+
     $task->set("completed", $completed);
-
-    list ($remaining, $total, $percent) = self::_get_stats();
-    if ($remaining + $completed) {
-      $task->percent_complete = round(100 * $completed / ($remaining + $completed));
-
-      $task->status = t("%done records records updated, index is %percent% up-to-date",
-                        array("done" => $completed, "percent" => $percent));
-    } else {
-      $task->percent_complete = 100;
-    }
-
     if ($remaining == 0) {
       $task->done = true;
       $task->state = "success";
