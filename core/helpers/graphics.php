@@ -269,9 +269,10 @@ class graphics_Core {
    */
   static function detect_toolkits() {
     $gd = function_exists("gd_info") ? gd_info() : array();
+    $exec = function_exists("exec");
     return array("gd" => $gd,
-                 "imagemagick" => dirname(exec("which convert")),
-                 "graphicsmagick" => dirname(exec("which gm")));
+                 "imagemagick" => $exec ? dirname(exec("which convert")) : false,
+                 "graphicsmagick" => $exec ? dirname(exec("which gm")) : false);
   }
 
   /**
