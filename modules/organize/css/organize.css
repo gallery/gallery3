@@ -1,60 +1,16 @@
 /* @todo move to theme css */
-#gOrganizeTreeContainer,
-#gMicroThumbContainer {
+/*******************************************************************
+ * Album Tree styling
+ */
+#gOrganizeTreeContainer {
   overflow-y: auto;
   margin: 0 !important;
   padding: 0 !important;
 }
 
-#gMicroThumbContainer {
-  background-color: #cfdeff;
-  border: 1px solid #999 !important;
-  border-top: none !important;
-  border-left: none !important;
-  margin-left: -1em !important;
-}
-
-#gMicroThumbGrid li div div {
-  float: left;
-}
-
-#gMicroThumbContainer #gMicroThumbGrid {
-  margin: 0;
-}
-
-#gMicroThumbContainer #gMicroThumbGrid .gMicroThumb {
-  background-color: #fff;
-  border: 2px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
-  float: left;
-  font-size: .7em;
-  height: 9em;
-  margin-left: .5em;
-  margin-top: .5em;
-  opacity: .4;
-  overflow: hidden;
-  padding: .5em;
-  text-align: center;
-  width: 9em;
-}
-
 #gOrganizeAlbumDescription {
   height: 2em;
   overflow-y: auto;
-}
-
-#gMicroThumbContainer #gMicroThumbGrid .gAlbum {
-  background-color: #e8e8e8;
-}
-
-#gMicroThumbContainer #gMicroThumbGrid :hover {
-  opacity: 1;
-}
-
-#gMicroThumbContainer #gMicroThumbGrid .gThumbSelected {
-  border: 0.2em solid #09f;
-  opacity: 1;
 }
 
 .gBranchSelected {
@@ -80,6 +36,80 @@
   padding-left: 1.2em;
 }
 
+/*******************************************************************
+ * Album Panel Styles
+ */
+#gMicroThumbPanel {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #cfdeff;
+  border: 1px solid #999 !important;
+  border-top: none !important;
+  border-left: none !important;
+  margin-left: -1em !important;
+  overflow: auto;
+}
+
+#gMicroThumbGrid {
+  padding: .5em;
+}
+
+.gMicroThumbContainer {
+  display: block;
+  //border: 2px solid #e8e8e8;
+  //border-right-color: #ccc;
+  //border-bottom-color: #ccc;
+  float: left;
+  font-size: .7em;
+  height: 9em;
+  margin-bottom: 1em;
+  opacity: .4;
+  padding: 0 .5em;
+}
+
+.gMicroThumb {
+  height: 9em;
+  width: 9em;
+  background-color: #fff;
+  display: block;
+  float: left;
+  text-align: center;
+}
+
+#gMicroThumbPanel #gMicroThumbGrid .gAlbum {
+  background-color: #e8e8e8;
+}
+
+#gMicroThumbPanel #gMicroThumbGrid :hover {
+  opacity: 1;
+}
+
+.gMicroThumbContainer.ui-selected {
+  opacity: 1;
+}
+
+#gDragHelper .gMicroThumbGrid {
+  background-color: transparent;
+  padding: 0;
+  overflow: visible;
+}
+			
+#gDragHelper .gMicroThumbContainer {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+#gDragHelper .gMicroThumb {
+  background-color: transparent;
+  height: auto;
+  width: auto;
+}
+			
+
+/****************************************************************
+ * Organize Edit styling
+ */
 #gOrganizeFormButtons {
   bottom: 0.5em;
   position: absolute;
@@ -101,22 +131,4 @@
 #gOrganizeFormThumbs div {
   margin: 0;
   text-align: center;
-}
-
-#gMicroThumbUnselectAll,
-#gMicroThumbSelectAll {
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-.gOrganizeReorderDropTarget {
-  visibility: hidden;
-  background-color: #5C9CCC;
-  float: none;
-  width: .5em;
-  height: 9em;
-}
-
-.gOrganizeReorderDropTargetHover {
-  visibility: visible;
 }

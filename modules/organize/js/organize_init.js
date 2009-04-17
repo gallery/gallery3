@@ -10,7 +10,8 @@ $("document").ready(function() {
       autoResize: false,
       modal: true,
       resizable: true,
-      close: closeDialog
+      close: closeDialog,
+      zIndex: 75
     });
 
     //showLoading("#gDialog");
