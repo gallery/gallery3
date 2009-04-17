@@ -95,6 +95,8 @@ class L10n_Client_Controller extends Controller {
       $string_list = array();
       foreach ($calls as $call) {
         list ($message, $options) = $call;
+        // Note: Don't interpolate placeholders for the actual translation input field.
+        // TODO: Use $options to generate a preview.
         if (is_array($message)) {
           // TODO: Handle plural forms.
           //   Translate each message. If it has a plural form, get
@@ -103,8 +105,12 @@ class L10n_Client_Controller extends Controller {
         }
         $source = $message;
         $translation = '';
-        if (I18n::instance()->has_translation($message, $options)) {
-          $translation = I18n::instance()->translate($message, $options);
+        $options_for_raw_translation = array();
+        if (isset($options['count'])) {
+          $options_for_raw_translation['count'] = $options['count'];
+        }
+        if (I18n::instance()->has_translation($message, $options_for_raw_translation)) {
+          $translation = I18n::instance()->translate($message, $options_for_raw_translation);
         }
         $string_list[] = array('source' => $source,
                                'translation' => $translation);
