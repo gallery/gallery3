@@ -282,6 +282,19 @@ class user_Core {
   }
 
   /**
+   * Look up a user by id.
+   * @param integer      $id the user id
+   * @return User_Model  the user object, or null if the id was invalid.
+   */
+  static function lookup_by_name($name) {
+    $user = model_cache::get("user", $name, "name");
+    if ($user->loaded) {
+      return $user;
+    }
+    return null;
+  }
+
+  /**
    * Create a hashed password using md5 plus salt.
    * @param string $password plaintext password
    * @param string $salt (optional) salt or hash containing salt (randomly generated if omitted)
