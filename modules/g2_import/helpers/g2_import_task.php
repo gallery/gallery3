@@ -50,8 +50,8 @@ class g2_import_task_Core {
       $root_g2_id = g2(GalleryCoreApi::getDefaultAlbumId());
       $root = ORM::factory("g2_map")->where("g2_id", $root_g2_id)->find();
       if (!$root->loaded) {
-        $root->id = 1;
         $root->g2_id = $root_g2_id;
+        $root->g3_id = 1;
         $root->save();
       }
 

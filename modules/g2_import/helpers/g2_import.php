@@ -103,22 +103,28 @@ class g2_import_Core {
     }
 
     $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
-    if ($g2_group->getGroupType() != GROUP_NORMAL) {
-      return;
-    }
-
-    try {
+    switch ($g2_group->getGroupType()) {
+    case GROUP_NORMAL:
       $group = group::create($g2_group->getGroupName());
+      break;
 
-      $map[$g2_group->getId()] = $group->id;
-      $g2_map = ORM::factory("g2_map");
-      $g2_map->id = $group->id;
-      $g2_map->g2_id = $g2_group->getId();
-      $g2_map->save();
-    } catch (Exception $e) {
-      // @todo For now we assume this is a "duplicate group" exception
-      // which we will ignore.
+    case GROUP_ALL_USERS:
+      $group = group::registered_users();
+      break;
+
+    case GROUP_SITE_ADMINS:
+      break;  // This is not a group in G3
+
+    case GROUP_EVERYBODY:
+      $group = group::everybody();
+      break;
     }
+
+    $map[$g2_group->getId()] = $group->id;
+    $g2_map = ORM::factory("g2_map");
+    $g2_map->g3_id = $group->id;
+    $g2_map->g2_id = $g2_group->getId();
+    $g2_map->save();
   }
 
   static function import_user(&$queue, &$map) {
@@ -131,26 +137,35 @@ class g2_import_Core {
       return;
     }
 
+    $g2_admin_group_id =
+      g2(GalleryCoreApi::getPluginParameter("module", "core", "id.adminGroup"));;
     $g2_user = g2(GalleryCoreApi::loadEntitiesById($g2_user_id));
+    $g2_groups = g2(GalleryCoreApi::fetchGroupsForUser($g2_user->getId()));
+
     try {
-      $user = user::create($g2_user->getUserName(), $g2_user->getFullName(), "");
-      $user->hashed_password = $g2_user->getHashedPassword();
-      $user->email = $g2_user->getEmail();
-      $user->language = $g2_user->getLanguage();
-      $user->save();
-      $user_map[$g2_user->getId()] = $user->id;
-
-      $map[$g2_user->getId()] = $user->id;
-      $g2_map = ORM::factory("g2_map");
-      $g2_map->id = $user->id;
-      $g2_map->g2_id = $g2_user->getId();
-      $g2_map->save();
-
-      // @todo put the user into the appropriate groups
+      $user = user::create($g2_user->getUsername(), $g2_user->getfullname(), "");
     } catch (Exception $e) {
       // @todo For now we assume this is a "duplicate user" exception
-      // which we will ignore.
+      $user = user::lookup_by_name($g2_user->getUsername());
     }
+
+    $user->hashed_password = $g2_user->getHashedPassword();
+    $user->email = $g2_user->getEmail();
+    $user->locale = $g2_user->getLanguage();
+    foreach ($g2_groups as $g2_group_id => $g2_group_name) {
+      if ($g2_group_id == $g2_admin_group_id) {
+        $user->admin = true;
+      } else {
+        $user->add(ORM::factory("group", $map[$g2_group_id]));
+      }
+    }
+    $user->save();
+
+    $map[$g2_user->getId()] = $user->id;
+    $g2_map = ORM::factory("g2_map");
+    $g2_map->g3_id = $user->id;
+    $g2_map->g2_id = $g2_user->getId();
+    $g2_map->save();
   }
 
   static function import_album(&$queue, &$map) {
@@ -185,7 +200,7 @@ class g2_import_Core {
 
     $map[$g2_album->getId()] = $album->id;
     $g2_map = ORM::factory("g2_map");
-    $g2_map->id = $album->id;
+    $g2_map->g3_id = $album->id;
     $g2_map->g2_id = $g2_album->getId();
     $g2_map->save();
 
