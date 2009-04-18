@@ -36,14 +36,29 @@ class g2_import_task_Core {
     $stats = $task->get("stats");
     $total = $task->get("total");
     $completed = $task->get("completed");
+    $map = $task->get("map");
     $i = $task->get("i");
     $mode = $task->get("mode");
+    $queue = $task->get("queue");
     if (!isset($mode)) {
       $task->set("stats", $stats = g2_import::stats());
       $task->set("total", $total = array_sum(array_values($stats)));
       $completed = 0;
       $i = 0;
       $mode = 0;
+
+      $root_g2_id = g2(GalleryCoreApi::getDefaultAlbumId());
+      $root = ORM::factory("g2_map")->where("g2_id", $root_g2_id)->find();
+      if (!$root->loaded) {
+        $root->id = 1;
+        $root->g2_id = $root_g2_id;
+        $root->save();
+      }
+
+      $map = array();
+      foreach (ORM::factory("g2_map")->find_all() as $row) {
+        $map[$row->g2_id] = $row->id;
+      }
     }
 
     $modes = array("groups", "users", "albums", "photos", "comments", "done");
@@ -55,13 +70,20 @@ class g2_import_task_Core {
 
       switch($modes[$mode]) {
       case "groups":
-        g2_import::import_group($i);
+        if (!$i) {
+          $task->set("queue", $queue = array_keys(g2(GalleryCoreApi::fetchGroupNames())));
+        }
+        g2_import::import_group($queue, $map);
         $task->status = t(
           "Importing groups %count / %total", array("count" => $i, "total" => $stats["groups"]));
         break;
 
       case "users":
-        g2_import::import_user($i);
+        if (!$i) {
+          $task->set(
+            "queue", $queue = array_keys(g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY))));
+        }
+        g2_import::import_user($queue, $map);
         $task->status = t(
           "Importing users %count / %total", array("count" => $i, "total" => $stats["users"]));
         break;
@@ -69,16 +91,9 @@ class g2_import_task_Core {
       case "albums":
         if (!$i) {
           $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
-          $task->set(
-            "album_map", $album_map = array(g2(GalleryCoreApi::getDefaultAlbumId()) => 1));
-        } else {
-          $queue = $task->get("queue");
-          $album_map = $task->get("album_map");
         }
-
-        g2_import::import_album($queue, $album_map);
+        g2_import::import_album($queue, $map);
         $task->set("queue", $queue);
-        $task->set("album_map", $album_map);
         $task->status = t(
           "Importing albums %count / %total", array("count" => $i, "total" => $stats["albums"]));
         break;
@@ -110,5 +125,7 @@ class g2_import_task_Core {
     $task->set("completed", $completed);
     $task->set("mode", $mode);
     $task->set("i", $i);
+    $task->set("map", $map);
+    $task->set("queue", $queue);
   }
 }

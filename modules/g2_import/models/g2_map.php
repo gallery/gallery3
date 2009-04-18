@@ -17,23 +17,5 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class g2_import_installer {
-  static function install() {
-    $db = Database::instance();
-    $version = module::get_version("g2_import");
-    if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS {g2_maps} (
-                   `id` int(9) NOT NULL,
-                   `g2_id` int(9) NOT NULL,
-                 PRIMARY KEY (`id`),
-                 KEY (`g2_id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
-      module::set_version("g2_import", 1);
-    }
-  }
-
-  static function uninstall() {
-    module::delete("g2_import");
-  }
+class G2_Map_Model extends ORM {
 }

@@ -96,9 +96,12 @@ class g2_import_Core {
     return $stats;
   }
 
-  static function import_group($i) {
-    $map = g2(GalleryCoreApi::fetchGroupNames(1, $i));
-    $g2_group_id = current(array_keys($map));
+  static function import_group(&$queue, &$map) {
+    $g2_group_id = array_shift($queue);
+    if (array_key_exists($g2_group_id, $map)) {
+      return;
+    }
+
     $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
     if ($g2_group->getGroupType() != GROUP_NORMAL) {
       return;
@@ -106,15 +109,24 @@ class g2_import_Core {
 
     try {
       $group = group::create($g2_group->getGroupName());
+
+      $map[$g2_group->getId()] = $group->id;
+      $g2_map = ORM::factory("g2_map");
+      $g2_map->id = $group->id;
+      $g2_map->g2_id = $g2_group->getId();
+      $g2_map->save();
     } catch (Exception $e) {
       // @todo For now we assume this is a "duplicate group" exception
       // which we will ignore.
     }
   }
 
-  static function import_user($i) {
-    $map = g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY, 1, $i));
-    $g2_user_id = current(array_keys($map));
+  static function import_user(&$queue, &$map) {
+    $g2_user_id = array_shift($queue);
+    if (array_key_exists($g2_user_id, $map)) {
+      return;
+    }
+
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
       return;
     }
@@ -126,6 +138,13 @@ class g2_import_Core {
       $user->email = $g2_user->getEmail();
       $user->language = $g2_user->getLanguage();
       $user->save();
+      $user_map[$g2_user->getId()] = $user->id;
+
+      $map[$g2_user->getId()] = $user->id;
+      $g2_map = ORM::factory("g2_map");
+      $g2_map->id = $user->id;
+      $g2_map->g2_id = $g2_user->getId();
+      $g2_map->save();
 
       // @todo put the user into the appropriate groups
     } catch (Exception $e) {
@@ -134,32 +153,41 @@ class g2_import_Core {
     }
   }
 
-  static function import_album(&$queue, &$album_map) {
+  static function import_album(&$queue, &$map) {
     // The queue is a set of nested associative arrays where the key is the album id and the
     // value is an array of similar arrays.  We'll do a breadth first tree traversal using the
     // queue to keep our state.  Doing it breadth first means that the parent will be created by
     // the time we get to the child.
 
-    // Grab the current album off the queue and enqueue its children at the end of the line
-    list($g2_id, $children) = each($queue);
-    unset($queue[$g2_id]);
+    // Dequeue the current album  and enqueue its children
+    list($g2_album_id, $children) = each($queue);
+    unset($queue[$g2_album_id]);
     foreach ($children as $key => $value) {
       $queue[$key] = $value;
     }
 
+    if (array_key_exists($g2_album_id, $map)) {
+      return;
+    }
+
     // Load the G2 album item, and figure out its parent in G3.
-    $g2_album = g2(GalleryCoreApi::loadEntitiesById($g2_id));
+    $g2_album = g2(GalleryCoreApi::loadEntitiesById($g2_album_id));
     if ($g2_album->getParentId() == null) {
       return;
     }
 
-    $g3_parent_album = ORM::factory("item", $album_map[$g2_album->getParentId()]);
-    $g3_album = album::create(
-      $g3_parent_album,
+    $parent_album = ORM::factory("item", $map[$g2_album->getParentId()]);
+    $album = album::create(
+      $parent_album,
       $g2_album->getPathComponent(),
       $g2_album->getTitle(),
       $g2_album->getDescription());
-    $album_map[$g2_album->getId()] = $g3_album->id;
+
+    $map[$g2_album->getId()] = $album->id;
+    $g2_map = ORM::factory("g2_map");
+    $g2_map->id = $album->id;
+    $g2_map->g2_id = $g2_album->getId();
+    $g2_map->save();
 
     // @todo import owners
     // @todo figure out how to import summary vs. description
