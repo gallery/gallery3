@@ -4,7 +4,7 @@
 </p>
 <ul>
   <li>
-    <?= t("General Settings - choose your <a href=\"%graphics_url\">graphics</a> and <a \"%language_url\">language</a> settings.",
+    <?= t("General Settings - choose your <a href=\"%graphics_url\">graphics</a> and <a href=\"%language_url\">language</a> settings.",
         array("graphics_url" => url::site("admin/graphics"),
               "language_url" => url::site("admin/languages"))) ?>
   </li>
