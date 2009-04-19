@@ -74,13 +74,11 @@ var droppable =  {
     $("#gDragHelper li").each(function(i) {
       switch (dropTarget) {
       case 0:
-        $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
-        break;
       case 1:
-        $("#gMicroThumbGrid").prepend($("#thumb_" + $(this).attr("ref")).show());
+        $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
       break;
       case 2:
-        $("#gMicroThumbGrid").append($("#thumb_" + $(this).attr("ref")).show());
+       $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
       break;
       }
     });
