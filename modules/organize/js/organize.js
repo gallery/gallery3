@@ -4,124 +4,10 @@
 var url;
 var height;
 
-/**
- * Dynamically initialize the organize dialog when it is displayed
- */
-function organize_dialog_init() {
-  var size = viewport_size();
-  height = size.height() - 100;
-  var width = size.width() - 100;
-
-  // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475
-  $(".sf-menu li.sfHover ul").css("z-index", 70);
-
-  $("#gDialog").dialog("option", "width", width);
-  $("#gDialog").dialog("option", "height", height);
-
-  $("#gDialog").dialog("open");
-  if ($("#gDialog h1").length) {
-    $("#gDialog").dialog('option', 'title', $("#gDialog h1:eq(0)").html());
-  } else if ($("#gDialog fieldset legend").length) {
-    $("#gDialog").dialog('option', 'title', $("#gDialog fieldset legend:eq(0)").html());
-  }
-
-  height -= 2 * parseFloat($("#gDialog").css("padding-top"));
-  height -= 2 * parseFloat($("#gDialog").css("padding-bottom"));
-  height -= $("#gMicroThumbPanel").position().top;
-  height -= $("#gDialog #ft").height();
-  height = Math.round(height);
-
-  $("#gMicroThumbPanel").height(height);
-  $("#gOrganizeTreeContainer").height(height);
-
-  $(".gOrganizeBranch .ui-icon").click(organize_toggle_children);
-  $(".gBranchText").click(organize_open_folder);
-  retrieve_micro_thumbs(item_id);
-  //showLoading("#gDialog");
-
-  $("#gMicroThumbSelectAll").click(function(event) {
-    select_all(true);
-    event.preventDefault();
-  });
-  $("#gMicroThumbUnselectAll").click(function(event) {
-    select_all(false);
-    event.preventDefault();
-  });
-
-  $("#gMicroThumbGrid").selectable({
-    count: 0,
-    filter: ".gMicroThumbContainer",
-    selected: function(event, ui) {
-      /*
-       * Count the number of selected items if it is greater than 1,
-       * then click won't be called so we need to remove the gSelecting
-       * class in the stop event.
-       */
-      var count = $("#gMicroThumbGrid").selectable("option", "count") + 1;
-      $("#gMicroThumbGrid").selectable("option", "count", count);
-      $(ui.selected).addClass("gSelecting");
-    },
-    stop: function(event) {
-      var count = $("#gMicroThumbGrid").selectable("option", "count");
-      if (count > 1) {
-        $(".gMicroThumbContainer.gSelecting").removeClass("gSelecting");
-      }
-      $("#gMicroThumbGrid").selectable("option", "count", 0);
-    }
-  });
-}
-
-function get_album_content() {
-  var grid_width = $("#.gMicroThumbPanel").width();
-  url = $("#gMicroThumbPanel").attr("ref");
-  url = url.replace("__WIDTH__", grid_width);
-  url = url.replace("__HEIGHT__", height);
-
-  retrieve_micro_thumbs(url);
-}
-
-function retrieve_micro_thumbs() {
-  var offset = $("#gMicroThumbGrid li").length;
-  if (url == null) {
-    var grid_width = $("#gMicroThumbPanel").width();
-    url = $("#gMicroThumbPanel").attr("ref");
-    url = url.replace("__WIDTH__", grid_width);
-    url = url.replace("__HEIGHT__", height);
-  }
-  var url_data = url.replace("__OFFSET__", offset);
-  url_data = url_data.replace("__ITEM_ID__", item_id);
-  $.getJSON(url_data, function(json, textStatus) {
-    $("#gMicroThumbGrid").append(json.data);
-    if (json.count == 0) {
-      return;
-    }
-    retrieve_micro_thumbs();
-    $(".gMicroThumbContainer").click(function(event) {
-      if ($(this).hasClass("gSelecting")) {
-        $(this).removeClass("gSelecting");
-      } else {
-        $(this).removeClass("ui-selected");
-      }
-    });
-    $(".gMicroThumbContainer").mousemove(function(event) {
-      if ($("#gDragHelper").length > 0 && $(this).attr("id") != "gPlaceHolder") {
-        if (event.pageX < this.offsetLeft + this.offsetWidth / 2) {
-          $(this).before($("#gPlaceHolder"));
-        } else {
-          $(this).after($("#gPlaceHolder"));
-        }
-        var container = $("#gMicroThumbPanel").get(0);
-        var scrollHeight = container.scrollHeight;
-        var scrollTop = container.scrollTop;
-        var height = $(container).height();
-        if (event.pageY > height + scrollTop) {
-          container.scrollTop = this.offsetTop;
-        } else if (event.pageY < scrollTop) {
-         container.scrollTop -= height;
-        }
-      }
-    });
-   $(".gMicroThumbContainer").draggable({
+// **************************************************************************
+// JQuery UI Widgets
+// Draggable
+var draggable = {
       cancel: ".gMicroThumbContainer:not(.ui-selected)",
       handle: ".gMicroThumbContainer.ui-selected",
       zindex: 2000,
@@ -168,8 +54,10 @@ function retrieve_micro_thumbs() {
         $("#gDragHelper").remove();
         $("#gPlaceHolder").remove();
       }
-    });
-    $("#gMicroThumbPanel").droppable( {
+  };
+
+// Droppable
+var droppable =  {
       tolerance: "pointer",
       drop: function(event, ui) {
         $("#gDragHelper").hide();
@@ -197,8 +85,136 @@ function retrieve_micro_thumbs() {
           }
         });
       }
-    });
+    };
+
+// Selectable
+var selectable = {
+    count: 0,
+    filter: ".gMicroThumbContainer",
+    selected: function(event, ui) {
+      /*
+       * Count the number of selected items if it is greater than 1,
+       * then click won't be called so we need to remove the gSelecting
+       * class in the stop event.
+       */
+      var count = $("#gMicroThumbGrid").selectable("option", "count") + 1;
+      $("#gMicroThumbGrid").selectable("option", "count", count);
+      $(ui.selected).addClass("gSelecting");
+    },
+    stop: function(event) {
+      var count = $("#gMicroThumbGrid").selectable("option", "count");
+      if (count > 1) {
+        $(".gMicroThumbContainer.gSelecting").removeClass("gSelecting");
+      }
+      $("#gMicroThumbGrid").selectable("option", "count", 0);
+    }
+  };
+
+// **************************************************************************
+// Event Handlers
+// MicroThumbContainer click
+var onMicroThumbContainerClick = function(event) {
+      if ($(this).hasClass("gSelecting")) {
+        $(this).removeClass("gSelecting");
+      } else {
+        $(this).removeClass("ui-selected");
+      }
+    };
+
+// MicroThumbContainer mousemove
+var onMicroThumbContainerMousemove = function(event) {
+      if ($("#gDragHelper").length > 0 && $(this).attr("id") != "gPlaceHolder") {
+        if (event.pageX < this.offsetLeft + this.offsetWidth / 2) {
+          $(this).before($("#gPlaceHolder"));
+        } else {
+          $(this).after($("#gPlaceHolder"));
+        }
+        var container = $("#gMicroThumbPanel").get(0);
+        var scrollHeight = container.scrollHeight;
+        var scrollTop = container.scrollTop;
+        var height = $(container).height();
+        if (event.pageY > height + scrollTop) {
+          container.scrollTop = this.offsetTop;
+        } else if (event.pageY < scrollTop) {
+         container.scrollTop -= height;
+        }
+      }
+    };
+
+// **************************************************************************
+// AJAX Callbacks
+// MicroThumbContainer click
+var getMicroThumbsCallback = function(json, textStatus) {
+    $("#gMicroThumbGrid").append(json.data);
+    if (json.count == 0) {
+      return;
+    }
+    retrieveMicroThumbs();
+    $(".gMicroThumbContainer").click(onMicroThumbContainerClick);
+    $(".gMicroThumbContainer").mousemove(onMicroThumbContainerMousemove);
+   $(".gMicroThumbContainer").draggable(draggable);
+    $("#gMicroThumbPanel").droppable(droppable);
+  };
+// **************************************************************************
+
+/**
+ * Dynamically initialize the organize dialog when it is displayed
+ */
+function organize_dialog_init() {
+  var size = getViewportSize();
+  height = size.height() - 100;
+  var width = size.width() - 100;
+
+  // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475
+  $(".sf-menu li.sfHover ul").css("z-index", 70);
+
+  $("#gDialog").dialog("option", "width", width);
+  $("#gDialog").dialog("option", "height", height);
+
+  $("#gDialog").dialog("open");
+  if ($("#gDialog h1").length) {
+    $("#gDialog").dialog('option', 'title', $("#gDialog h1:eq(0)").html());
+  } else if ($("#gDialog fieldset legend").length) {
+    $("#gDialog").dialog('option', 'title', $("#gDialog fieldset legend:eq(0)").html());
+  }
+
+  height -= 2 * parseFloat($("#gDialog").css("padding-top"));
+  height -= 2 * parseFloat($("#gDialog").css("padding-bottom"));
+  height -= $("#gMicroThumbPanel").position().top;
+  height -= $("#gDialog #ft").height();
+  height = Math.round(height);
+
+  $("#gMicroThumbPanel").height(height);
+  $("#gOrganizeTreeContainer").height(height);
+
+  $(".gOrganizeBranch .ui-icon").click(organizeToggleChildren);
+  $(".gBranchText").click(organizeOpenFolder);
+  retrieveMicroThumbs(item_id);
+  //showLoading("#gDialog");
+
+  $("#gMicroThumbSelectAll").click(function(event) {
+    selectAll(true);
+    event.preventDefault();
   });
+  $("#gMicroThumbUnselectAll").click(function(event) {
+    selectAll(false);
+    event.preventDefault();
+  });
+
+  $("#gMicroThumbGrid").selectable(selectable);
+}
+
+function retrieveMicroThumbs() {
+  var offset = $("#gMicroThumbGrid li").length;
+  if (url == null) {
+    var grid_width = $("#gMicroThumbPanel").width();
+    url = $("#gMicroThumbPanel").attr("ref");
+    url = url.replace("__WIDTH__", grid_width);
+    url = url.replace("__HEIGHT__", height);
+  }
+  var url_data = url.replace("__OFFSET__", offset);
+  url_data = url_data.replace("__ITEM_ID__", item_id);
+  $.getJSON(url_data, getMicroThumbsCallback);
 }
 
 function isOver(selector, pageX, pageY) {
@@ -208,7 +224,7 @@ function isOver(selector, pageX, pageY) {
     this.top <= pageY && pageY <= this.top + 100;
 }
 
-function organize_toggle_children(event) {
+function organizeToggleChildren(event) {
   var id = $(this).attr("ref");
   var span_children = $("#gOrganizeChildren-" + id);
   if ($(this).hasClass("ui-icon-plus")) {
@@ -223,19 +239,19 @@ function organize_toggle_children(event) {
   event.preventDefault();
 }
 
-function organize_open_folder(event) {
+function organizeOpenFolder(event) {
   var selected = $(".gBranchSelected");
   if ($(selected).attr("id") != $(this).attr("id")) {
     $(selected).removeClass("gBranchSelected");
     $(this).addClass("gBranchSelected");
     item_id = $(this).attr("ref");
     $("#gMicroThumbGrid").empty();
-    retrieve_micro_thumbs();
+    retrieveMicroThumbs();
   }
   event.preventDefault();
 }
 
-function select_all(select) {
+function selectAll(select) {
   if (select) {
     $(".gMicroThumbContainer").addClass("ui-selected");
     $("#gMicroThumbSelectAll").hide();
@@ -247,7 +263,7 @@ function select_all(select) {
   }
 }
 
-function viewport_size() {
+function getViewportSize() {
   return {
       width : function() {
         return window.innerWidth
@@ -261,3 +277,4 @@ function viewport_size() {
       }
   };
 }
+
