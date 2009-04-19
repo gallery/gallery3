@@ -103,7 +103,25 @@ function retrieve_micro_thumbs() {
         $(this).removeClass("ui-selected");
       }
     });
-    $(".gMicroThumbContainer").draggable({
+    $(".gMicroThumbContainer").mousemove(function(event) {
+      if ($("#gDragHelper").length > 0 && $(this).attr("id") != "gPlaceHolder") {
+        if (event.pageX < this.offsetLeft + this.offsetWidth / 2) {
+          $(this).before($("#gPlaceHolder"));
+        } else {
+          $(this).after($("#gPlaceHolder"));
+        }
+        var container = $("#gMicroThumbPanel").get(0);
+        var scrollHeight = container.scrollHeight;
+        var scrollTop = container.scrollTop;
+        var height = $(container).height();
+        if (event.pageY > height + scrollTop) {
+          container.scrollTop = this.offsetTop;
+        } else if (event.pageY < scrollTop) {
+         container.scrollTop -= height;
+        }
+      }
+    });
+   $(".gMicroThumbContainer").draggable({
       cancel: ".gMicroThumbContainer:not(.ui-selected)",
       handle: ".gMicroThumbContainer.ui-selected",
       zindex: 2000,
@@ -149,12 +167,6 @@ function retrieve_micro_thumbs() {
         $(".gMicroThumbContainer.ui-selected").css("z-index", null);
         $("#gDragHelper").remove();
         $("#gPlaceHolder").remove();
-      }
-    });
-    $(".gMicroThumbContainer").droppable( {
-      tolerance: "pointer",
-      over: function(event, ui) {
-        $(this).after($("#gPlaceHolder"));
       }
     });
     $("#gMicroThumbPanel").droppable( {

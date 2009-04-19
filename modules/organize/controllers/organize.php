@@ -48,6 +48,7 @@ class Organize_Controller extends Controller {
     $v->children = $item->children($page_size, $offset);
     $v->thumbsize = self::$_MICRO_THUMB_SIZE;
     $v->padding = self::$_MICRO_THUMB_PADDING;
+    $v->offset = $offset;
 
     print json_encode(array("count" => $v->children->count(),
                             "data" => $v->__toString()));
