@@ -190,13 +190,29 @@ class g2_import_Core {
     if ($g2_album->getParentId() == null) {
       return;
     }
-
     $parent_album = ORM::factory("item", $map[$g2_album->getParentId()]);
+
+    // If the summary is a subset of the description just import the description, else import both.
+    $g2_summary = $g2_album->getSummary();
+    $g2_description = $g2_album->getDescription();
+    if (!$g2_summary ||
+        $g2_summary == $g2_description ||
+        strstr($g2_description, $g2_summary) !== false) {
+      $description = $g2_description;
+    } else {
+      $description = $g2_summary . " " . $g2_description;
+    }
+
     $album = album::create(
       $parent_album,
       $g2_album->getPathComponent(),
       $g2_album->getTitle(),
-      $g2_album->getDescription());
+      $description,
+      $map[$g2_album->getOwnerId()]);
+
+    $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+    $album->created = $g2_album->getCreationTimestamp();
+    $album->save();
 
     $map[$g2_album->getId()] = $album->id;
     $g2_map = ORM::factory("g2_map");
@@ -204,10 +220,8 @@ class g2_import_Core {
     $g2_map->g2_id = $g2_album->getId();
     $g2_map->save();
 
-    // @todo import owners
-    // @todo figure out how to import summary vs. description
-    // @todo import view counts
     // @todo import origination timestamp
+    // @todo import sort order
     // @todo import keywords as tags
   }
 }
