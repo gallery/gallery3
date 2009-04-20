@@ -1,8 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <!-- ?= html::script("modules/organize/js/organize.js") ? -->
 <script>
+  var FATAL_ERROR = "<?= t("Fatal Error") ?>";
   var item_id = <?= $item->id ?>;
   var csrf = "<?= $csrf ?>";
+  var rearrangeUrl = "<?= url::site("__URI__/{$item->id}__TASK_ID__?csrf=$csrf") ?>";
   $("#doc3").ready(function() {
     organize_dialog_init();
   });

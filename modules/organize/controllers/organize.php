@@ -83,4 +83,62 @@ class Organize_Controller extends Controller {
     }
     return $v->__toString();
   }
+
+  function rearrangeStart($id) {
+    access::verify_csrf();
+    $items = $this->input->post("item");
+
+    $task_def = Task_Definition::factory()
+      ->callback("organize_task::rearrange")
+      ->description(t("Rearrange the order of albums and photos"))
+      ->name(t("Rearrange"));
+    $task = task::create($task_def, array("items" => $items, "position" => 0, "batch" =>
+                                          ceil(count($items) * .1)));
+
+    batch::start();
+    print json_encode(array("result" => "started",
+                            "task" => array(
+                              "id" => $task->id,
+                              "percent_complete" => $task->percent_complete,
+                              "status" => $task->status,
+                              "done" => $task->done)));
+  }
+
+  function rearrangeRun($id, $task_id) {
+    access::verify_csrf();
+
+    $task = task::run($task_id);
+
+    print json_encode(array("result" => $task->done ? $task->state : "in_progress",
+                            "task" => array(
+                              "id" => $task->id,
+                              "percent_complete" => $task->percent_complete,
+                              "status" => $task->status,
+                              "done" => $task->done)));
+  }
+
+  function rearrangeFinish($id, $task_id) {
+    access::verify_csrf();
+
+    $task = ORM::factory("task", $task_id);
+
+    if (!$task->done) {
+      message::warning(t("Rearrange album was was cancelled prior to completion"));
+    } else {
+      // @todo set the sort order to weight;
+    }
+    
+    batch::stop();
+    print json_encode(array("result" => "success"));
+  }
+
+  function rearrangePause($id, $task_id) {
+    access::verify_csrf();
+
+    $task = ORM::factory("task", $task_id);
+
+    message::warning(t("Rearrange album was cancelled prior to completion"));
+    batch::stop();
+    print json_encode(array("result" => "success"));
+  }
 }

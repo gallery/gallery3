@@ -10,7 +10,10 @@ $("document").ready(function() {
       autoResize: false,
       modal: true,
       resizable: true,
-      close: closeDialog,
+      close: function () {
+        $("#gDialog").trigger("organize_close");
+        $("#gDialog").dialog("destroy").remove();
+      },
       zIndex: 75
     });
 
@@ -22,4 +25,5 @@ $("document").ready(function() {
     return false;
   });
 });
+
 

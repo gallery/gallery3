@@ -4,7 +4,7 @@
 <? if ($child->is_album()): ?>
   <? $item_class = "gAlbum"; ?>
 <? endif ?>
-<li id="thumb_<?= $child->id ?>" class="gMicroThumbContainer" ref="<?= $child->id ?>" ordinal="<?= $offset + $i ?>">
+<li id="thumb_<?= $child->id ?>" class="gMicroThumbContainer" ref="<?= $child->id ?>">
   <div id="gMicroThumb-<?= $child->id ?>" class="gMicroThumb <?= $item_class ?>">
     <?= $child->thumb_tag(array("class" => "gThumbnail"), $thumbsize, true) ?>
   </div>

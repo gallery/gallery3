@@ -1,8 +1,11 @@
 /*
  * @todo Trap resize of dialog and resize the child areas (tree, grid and edit form)
+ * @todo create the dialog close method and reload the page on exit.
  */
 var url;
 var height;
+var paused = false;
+var task = null;
 
 // **************************************************************************
 // JQuery UI Widgets
@@ -10,8 +13,10 @@ var height;
 var draggable = {
   cancel: ".gMicroThumbContainer:not(.ui-selected)",
   handle: ".gMicroThumbContainer.ui-selected",
+  revert: true,
   zindex: 2000,
   helper: function(event, ui) {
+    console.dir(ui);
     $("#gMicroThumbPanel").append("<div id=\"gDragHelper\"><ul></ul></div>");
     var beginTop = event.pageY;
     var beginLeft = event.pageX;
@@ -49,7 +54,10 @@ var draggable = {
     });
     return $("#gDragHelper");
   },
-  stop: function(event) {
+  stop: function(event, ui) {
+    $("#gDragHelper li").each(function(i) {
+      $("#thumb_" + $(this).attr("ref")).show();
+    });
     $(".gMicroThumbContainer.ui-selected").css("z-index", null);
     $("#gDragHelper").remove();
     $("#gPlaceHolder").remove();
@@ -61,26 +69,28 @@ var droppable =  {
   tolerance: "pointer",
   drop: function(event, ui) {
     $("#gDragHelper").hide();
-    var dropTarget;
-    if (event.pageX < $("#gMicroThumbGrid li:visible:first").offset().left ||
-        event.pageY < $("#gMicroThumbGrid li:visible:first").offset().top) {
-      dropTarget = 1;
-    } else if (event.pageX > $("#gMicroThumbGrid li:visible:last").offset().left + 100 ||
-               event.pageY > $("#gMicroThumbGrid li:visible:last").offset().top + 100) {
-      dropTarget = 2;
-    } else {
-      dropTarget = 0;
-    }
-    $("#gDragHelper li").each(function(i) {
-      switch (dropTarget) {
-      case 0:
-      case 1:
-        $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
-      break;
-      case 2:
-       $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
-      break;
+    $("#gPlaceHolder").hide();
+    var newOrder = "";
+    $("#gMicroThumbGrid .gMicroThumbContainer").each(function(i) {
+      if ($(this).attr("id") == "gPlaceHolder") {
+        $("#gDragHelper li").each(function(i) {
+          newOrder += "&item[]=" + $(this).attr("ref");
+        });
+      } else if ($(this).css("display") != "none") {
+        newOrder += "&item[]=" + $(this).attr("ref");
+      } else  {
+        // If its not displayed then its one of the ones being moved so ignore.
       }
+    });
+    $("#gDragHelper li").each(function(i) {
+      $("#gPlaceHolder").before($("#thumb_" + $(this).attr("ref")).show());
+    });
+    $.ajax({
+      data: newOrder,
+      dataType: "json",
+      success: startRearrangeCallback,
+      type: "POST",
+      url: get_url("organize/rearrangeStart")
     });
   }
 };
@@ -122,7 +132,7 @@ var onMicroThumbContainerClick = function(event) {
 // MicroThumbContainer mousemove
 var onMicroThumbContainerMousemove = function(event) {
   if ($("#gDragHelper").length > 0 && $(this).attr("id") != "gPlaceHolder") {
-    if (event.pageX < this.offsetLeft + this.offsetWidth / 2) {
+    if (event.pageX < $(this).offset().left + $(this).width() / 2) {
       $(this).before($("#gPlaceHolder"));
     } else {
       $(this).after($("#gPlaceHolder"));
@@ -164,6 +174,40 @@ var getMicroThumbsCallback = function(json, textStatus) {
     $(".gMicroThumbContainer").draggable(draggable);
   }
 };
+
+var startRearrangeCallback = function (data, textStatus) {
+  // @todo Show progressbar and pause/cancel
+  task = data.task;
+  var done = false;
+  while (!done && !paused) {
+    $.ajax({async: false,
+      success: function(data, textStatus) {
+        //$(".gProgressBar").progressbar("value", data.task.percent_complete);
+          done = data.task.done;
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        paused = true;
+        displayAjaxError(XMLHttpRequest.responseText);
+      },
+      dataType: "json",
+      type: "POST",
+      url: get_url("organize/rearrangeRun", task.id)
+    });
+  }
+  if (!paused) {
+    $.ajax({async: false,
+      success: function(data, textStatus) {
+      },
+      dataType: "json",
+      type: "POST",
+      url: get_url("organize/rearrangeFinish", task.id)
+    });
+  } else {
+    //$("#gServerAdd #gServerAddButton").show(); @todo change to continue button.
+    //$("#gServerAdd #gServerPauseButton").hide();
+  }
+};
+
 // **************************************************************************
 
 /**
@@ -186,6 +230,10 @@ function organize_dialog_init() {
   } else if ($("#gDialog fieldset legend").length) {
     $("#gDialog").dialog('option', 'title', $("#gDialog fieldset legend:eq(0)").html());
   }
+
+  $("#gDialog").bind("organize_close", function(target) {
+    document.location.reload();
+  });
 
   height -= 2 * parseFloat($("#gDialog").css("padding-top"));
   height -= 2 * parseFloat($("#gDialog").css("padding-bottom"));
@@ -255,6 +303,15 @@ function organizeOpenFolder(event) {
   event.preventDefault();
 }
 
+function get_url(uri, task_id) {
+  var url = rearrangeUrl;
+  url = url.replace("__URI__", uri);
+  url = url.replace("__TASK_ID__", !task_id ? "" : "/" + task_id);
+  return url;
+}
+
+// **************************************************************************
+// Functions that should probably be in a gallery namespace
 function getViewportSize() {
   return {
       width : function() {
@@ -270,3 +327,14 @@ function getViewportSize() {
   };
 }
 
+function displayAjaxError(error) {
+  $("body").append("<div id=\"gAjaxError\" title=\"" + FATAL_ERROR + "\">" + error + "</div>");
+  $("#gAjaxError").dialog({
+      autoOpen: true,
+      autoResize: false,
+      modal: true,
+      resizable: true,
+      width: 610,
+      height: $("#gDialog").height()
+    });
+}
