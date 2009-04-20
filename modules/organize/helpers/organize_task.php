@@ -34,9 +34,7 @@ class organize_task_Core {
         $sql .= "Update {items} set weight = {$context["position"]} where id=$id;";
       }
       if (!empty($sql)) {
-        Kohana::log("debug", $sql);
         $db = Database::instance()->query($sql);
-        Kohana::log("debug", Kohana::debug($db));
       }
       $task->state = "success";
     } catch(Exception $e) {
