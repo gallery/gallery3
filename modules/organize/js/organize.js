@@ -181,6 +181,7 @@ var startRearrangeCallback = function (data, textStatus) {
     $(".gProgressBar").progressbar("value", 0);
     task = data.task;
   }
+  $(".gMicroThumbContainer").draggable("disable");
   var done = false;
   paused = false;
   while (!done && !paused) {
@@ -208,6 +209,7 @@ var startRearrangeCallback = function (data, textStatus) {
       url: get_url("organize/rearrangeFinish", task.id)
     });
   }
+  $(".gMicroThumbContainer").draggable("enable");
 };
 
 // **************************************************************************

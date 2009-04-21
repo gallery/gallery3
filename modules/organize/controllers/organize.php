@@ -87,11 +87,13 @@ class Organize_Controller extends Controller {
   function rearrangeStart($id) {
     access::verify_csrf();
     $items = $this->input->post("item");
+    
+    $item = ORM::factory("item", $id);
 
     $task_def = Task_Definition::factory()
       ->callback("organize_task::rearrange")
       ->description(t("Rearrange the order of albums and photos"))
-      ->name(t("Rearrange"));
+      ->name(t("Rearrange: %name", array("name" => $item->title)));
     $task = task::create($task_def, array("items" => $items, "position" => 0, "batch" =>
                                           ceil(count($items) * .1)));
 
@@ -125,9 +127,15 @@ class Organize_Controller extends Controller {
     $task = ORM::factory("task", $task_id);
 
     if ($task->done) {
-      $item = ORM::factory("item", $id);
-      $item->sort_column = "weight";
-      $item->save();
+      try {
+        $item = ORM::factory("item", $id);
+        $item->sort_column = "weight";
+        $item->save();
+        $task->status = t("Rearrange for '%album' completed", array("album" => $item->title));
+      } catch (Exception $e) {
+        $task->state = "error";
+        $task->status = $e->getMessage();
+      }
     }
     
     batch::stop();
