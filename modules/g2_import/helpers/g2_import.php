@@ -32,6 +32,7 @@ function g2() {
 
 class g2_import_Core {
   public static $init = false;
+  public static $map = array();
 
   static function is_configured() {
     return module::get_var("g2_import", "embed_path");
@@ -96,9 +97,9 @@ class g2_import_Core {
     return $stats;
   }
 
-  static function import_group(&$queue, &$map) {
+  static function import_group(&$queue) {
     $g2_group_id = array_shift($queue);
-    if (array_key_exists($g2_group_id, $map)) {
+    if (self::map($g2_group_id)) {
       return;
     }
 
@@ -120,20 +121,17 @@ class g2_import_Core {
       break;
     }
 
-    $map[$g2_group->getId()] = $group->id;
-    $g2_map = ORM::factory("g2_map");
-    $g2_map->g3_id = $group->id;
-    $g2_map->g2_id = $g2_group->getId();
-    $g2_map->save();
+    self::set_map($g2_group->getId(), $group->id);
   }
 
-  static function import_user(&$queue, &$map) {
+  static function import_user(&$queue) {
     $g2_user_id = array_shift($queue);
-    if (array_key_exists($g2_user_id, $map)) {
+    if (self::map($g2_user_id)) {
       return;
     }
 
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
+      self::set_map($g2_user_id, user::guest()->id);
       return;
     }
 
@@ -156,19 +154,15 @@ class g2_import_Core {
       if ($g2_group_id == $g2_admin_group_id) {
         $user->admin = true;
       } else {
-        $user->add(ORM::factory("group", $map[$g2_group_id]));
+        $user->add(ORM::factory("group", self::map($g2_group_id)));
       }
     }
     $user->save();
 
-    $map[$g2_user->getId()] = $user->id;
-    $g2_map = ORM::factory("g2_map");
-    $g2_map->g3_id = $user->id;
-    $g2_map->g2_id = $g2_user->getId();
-    $g2_map->save();
+    self::set_map($g2_user->getId(), $user->id);
   }
 
-  static function import_album(&$queue, &$map) {
+  static function import_album(&$queue) {
     // The queue is a set of nested associative arrays where the key is the album id and the
     // value is an array of similar arrays.  We'll do a breadth first tree traversal using the
     // queue to keep our state.  Doing it breadth first means that the parent will be created by
@@ -181,7 +175,7 @@ class g2_import_Core {
       $queue[$key] = $value;
     }
 
-    if (array_key_exists($g2_album_id, $map)) {
+    if (self::map($g2_album_id)) {
       return;
     }
 
@@ -190,11 +184,90 @@ class g2_import_Core {
     if ($g2_album->getParentId() == null) {
       return;
     }
-    $parent_album = ORM::factory("item", $map[$g2_album->getParentId()]);
+    $parent_album = ORM::factory("item", self::map($g2_album->getParentId()));
 
+    $album = album::create(
+      $parent_album,
+      $g2_album->getPathComponent(),
+      $g2_album->getTitle(),
+      self::extract_description($g2_album),
+      self::map($g2_album->getOwnerId()));
+
+    $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+    $album->created = $g2_album->getCreationTimestamp();
+
+    // @todo supported "keywords", "originationTimestamp", and "random" sort orders.
+    $order_map = array(
+      "creationTimestamp" => "created",
+      "description" => "description",
+      "modificationTimestamp" => "updated",
+      "orderWeight" => "weight",
+      "pathComponent" => "name",
+      "summary" => "description",
+      "title" => "title",
+      "viewCount" => "view_count");
+    $direction_map = array(
+      ORDER_ASCENDING => "asc",
+      ORDER_DESCENDING => "desc");
+    if (array_key_exists($g2_order = $g2_album->getOrderBy(), $order_map)) {
+      $album->sort_column = $order_map[$g2_order];
+      $album->sort_order = $direction_map[$g2_album->getOrderDirection()];
+    }
+    $album->save();
+
+    self::set_map($g2_album_id, $album->id);
+
+    // @todo import origination timestamp
+    // @todo import keywords as tags
+  }
+
+  static function import_item(&$queue) {
+    $g2_item_id = array_shift($queue);
+
+    if (self::map($g2_item_id)) {
+      return;
+    }
+
+    $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
+    $parent = ORM::factory("item", self::map($g2_item->getParentId()));
+    switch ($g2_item->getEntityType()) {
+    case "GalleryPhotoItem":
+      $item = photo::create(
+        $parent,
+        g2($g2_item->fetchPath()),
+        $g2_item->getPathComponent(),
+        $g2_item->getTitle(),
+        self::extract_description($g2_item),
+        self::map($g2_item->getOwnerId()));
+      break;
+
+    case "GalleryMovieItem":
+      // @todo we should transcode other types into FLV
+      if (in_array($g2_item->getMimeType(), array("video/mp4", "video/x-flv"))) {
+        $item = movie::create(
+          $parent,
+          g2($g2_item->fetchPath()),
+          $g2_item->getPathComponent(),
+          $g2_item->getTitle(),
+          self::extract_description($g2_item),
+          self::map($g2_item->getOwnerId()));
+      }
+      break;
+
+    default:
+      // Ignore
+      break;
+    }
+
+    if (isset($item)) {
+      self::set_map($g2_item_id, $item->id);
+    }
+  }
+
+  static function extract_description($g2_item) {
     // If the summary is a subset of the description just import the description, else import both.
-    $g2_summary = $g2_album->getSummary();
-    $g2_description = $g2_album->getDescription();
+    $g2_summary = $g2_item->getSummary();
+    $g2_description = $g2_item->getDescription();
     if (!$g2_summary ||
         $g2_summary == $g2_description ||
         strstr($g2_description, $g2_summary) !== false) {
@@ -202,26 +275,41 @@ class g2_import_Core {
     } else {
       $description = $g2_summary . " " . $g2_description;
     }
+    return $description;
+  }
 
-    $album = album::create(
-      $parent_album,
-      $g2_album->getPathComponent(),
-      $g2_album->getTitle(),
-      $description,
-      $map[$g2_album->getOwnerId()]);
+  static function get_item_ids($min_id) {
+    global $gallery;
 
-    $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
-    $album->created = $g2_album->getCreationTimestamp();
-    $album->save();
+    $ids = array();
+    $results = g2($gallery->search(
+      "SELECT [GalleryItem::id] " .
+      "FROM [GalleryEntity], [GalleryItem] " .
+      "WHERE [GalleryEntity::id] = [GalleryItem::id] " .
+      "AND [GalleryEntity::entityType] IN ('GalleryPhotoItem', 'GalleryMovieItem') " .
+      "AND [GalleryItem::id] > ? " .
+      "ORDER BY [GalleryItem::id] ASC",
+      array($min_id),
+      array("limit" => array("count" => 100))));
+    while ($result = $results->nextResult()) {
+      $ids[] = $result[0];
+    }
+    return $ids;
+  }
 
-    $map[$g2_album->getId()] = $album->id;
+  static function map($g2_id) {
+    if (!array_key_exists($g2_id, self::$map)) {
+      $g2_map = ORM::factory("g2_map")->where("g2_id", $g2_id)->find();
+      self::$map[$g2_id] = $g2_map->loaded ? $g2_map->g3_id : null;
+    }
+
+    return self::$map[$g2_id];
+  }
+
+  static function set_map($g2_id, $g3_id) {
     $g2_map = ORM::factory("g2_map");
-    $g2_map->g3_id = $album->id;
-    $g2_map->g2_id = $g2_album->getId();
+    $g2_map->g3_id = $g3_id;
+    $g2_map->g2_id = $g2_id;
     $g2_map->save();
-
-    // @todo import origination timestamp
-    // @todo import sort order
-    // @todo import keywords as tags
   }
 }

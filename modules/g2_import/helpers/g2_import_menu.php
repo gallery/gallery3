@@ -20,7 +20,7 @@
 class g2_import_menu_Core {
   static function admin($menu, $theme) {
     $menu
-      ->get("content_menu")
+      ->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("g2_import")
                ->label(t("Gallery 2 Import"))

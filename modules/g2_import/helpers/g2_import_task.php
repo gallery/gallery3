@@ -33,10 +33,10 @@ class g2_import_task_Core {
   static function import($task) {
     $start = microtime(true);
     g2_import::init();
+
     $stats = $task->get("stats");
     $total = $task->get("total");
     $completed = $task->get("completed");
-    $map = $task->get("map");
     $i = $task->get("i");
     $mode = $task->get("mode");
     $queue = $task->get("queue");
@@ -54,11 +54,6 @@ class g2_import_task_Core {
         $root->g3_id = 1;
         $root->save();
       }
-
-      $map = array();
-      foreach (ORM::factory("g2_map")->find_all() as $row) {
-        $map[$row->g2_id] = $row->id;
-      }
     }
 
     $modes = array("groups", "users", "albums", "photos", "comments", "done");
@@ -66,6 +61,7 @@ class g2_import_task_Core {
       if ($i >= ($stats[$modes[$mode]] - 1)) {
         $i = 0;
         $mode++;
+        $queue = array();
       }
 
       switch($modes[$mode]) {
@@ -73,7 +69,7 @@ class g2_import_task_Core {
         if (!$i) {
           $task->set("queue", $queue = array_keys(g2(GalleryCoreApi::fetchGroupNames())));
         }
-        g2_import::import_group($queue, $map);
+        g2_import::import_group($queue);
         $task->status = t(
           "Importing groups %count / %total", array("count" => $i, "total" => $stats["groups"]));
         break;
@@ -83,7 +79,7 @@ class g2_import_task_Core {
           $task->set(
             "queue", $queue = array_keys(g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY))));
         }
-        g2_import::import_user($queue, $map);
+        g2_import::import_user($queue);
         $task->status = t(
           "Importing users %count / %total", array("count" => $i, "total" => $stats["users"]));
         break;
@@ -92,13 +88,19 @@ class g2_import_task_Core {
         if (!$i) {
           $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
         }
-        g2_import::import_album($queue, $map);
+        g2_import::import_album($queue);
         $task->set("queue", $queue);
         $task->status = t(
           "Importing albums %count / %total", array("count" => $i, "total" => $stats["albums"]));
         break;
 
       case "photos":
+        if (empty($queue)) {
+          $task->set("queue", $queue = g2_import::get_item_ids($task->get("last_id", 0)));
+          $task->set("last_id", end($queue));
+        }
+
+        g2_import::import_item($queue);
         $task->status = t(
           "Importing photos %count / %total", array("count" => $i, "total" => $stats["photos"]));
         break;
@@ -125,7 +127,6 @@ class g2_import_task_Core {
     $task->set("completed", $completed);
     $task->set("mode", $mode);
     $task->set("i", $i);
-    $task->set("map", $map);
     $task->set("queue", $queue);
   }
 }

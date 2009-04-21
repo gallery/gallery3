@@ -12,9 +12,10 @@
 <div id="gAdminG2Import">
   <h1> <?= t("Import") ?> </h1>
   <div class="gSuccess">
-    <?= t("We've detected Gallery version: %version", array("version" => g2_import::version())) ?>
+    <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
   </div>
-  <a href="<?= url::site("admin/maintenance/start/g2_import::import?csrf=$csrf") ?>"
-     class="gPanelLink"><?= t("Begin Import") ?></a>
+
+  <?= t("You can perform an import on the <a href=\"%url\">maintenance page</a>",
+        array("url" => url::site("admin/maintenance"))) ?>
 </div>
 <? endif ?>
