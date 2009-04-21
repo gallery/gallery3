@@ -28,6 +28,7 @@ class search_installer {
                    `dirty` boolean default 1,
                    `data` LONGTEXT default NULL,
                    PRIMARY KEY (`id`),
+                   KEY(`item_id`),
                    FULLTEXT INDEX (`data`))
                  ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
