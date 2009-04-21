@@ -60,7 +60,7 @@ class exif_task_Core {
     list ($remaining, $total, $percent) = self::_get_stats();
     $task->percent_complete = round(100 * $completed / ($remaining + $completed));
 
-    $task->status = t("%done records records updated, index is %percent% up-to-date",
+    $task->status = t("%done records updated, index is %percent% up-to-date",
                       array("done" => $completed, "percent" => $percent));
 
     if ($remaining == 0) {
