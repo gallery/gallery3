@@ -47,7 +47,7 @@ class search_task_Core {
     $completed = $task->get("completed", 0);
 
     $start = microtime(true);
-    while (!$task->done && microtime(true) - $start < .5) {
+    while (!$task->done && microtime(true) - $start < 1) {
       foreach (ORM::factory("search_record")->where("dirty", 1)->limit(5)->find_all() as $record) {
         search::update_record($record);
         $completed++;
