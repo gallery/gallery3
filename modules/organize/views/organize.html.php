@@ -33,7 +33,10 @@
       <?= $album_tree ?>
     </div>
   </div>
-  <!-- div id="ft">
-    <div class="gProgressBar" style="visibility: hidden"></div>
-  </div -->
+  <div id="ft" style="visibility: hidden">
+    <a id="gOrganizeTaskPause" href="#" class="submit"><?= t("Pause") ?></a>
+    <a id="gOrganizeTaskResume" href="#" style="display: none" class="submit"><?= t("Resume") ?></a>
+    <div class="gProgressBar">
+    </div>
+  </div>
 </div>

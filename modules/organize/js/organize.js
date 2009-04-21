@@ -176,14 +176,18 @@ var getMicroThumbsCallback = function(json, textStatus) {
 };
 
 var startRearrangeCallback = function (data, textStatus) {
-  // @todo Show progressbar and pause/cancel
-  task = data.task;
+  if (!paused) {
+    $("#gDialog #ft").css("visibility", "visible");
+    $(".gProgressBar").progressbar("value", 0);
+    task = data.task;
+  }
   var done = false;
+  paused = false;
   while (!done && !paused) {
     $.ajax({async: false,
       success: function(data, textStatus) {
-        //$(".gProgressBar").progressbar("value", data.task.percent_complete);
-          done = data.task.done;
+        $(".gProgressBar").progressbar("value", data.task.percent_complete);
+         done = data.task.done;
       },
       error: function(XMLHttpRequest, textStatus, errorThrown) {
         paused = true;
@@ -195,6 +199,7 @@ var startRearrangeCallback = function (data, textStatus) {
     });
   }
   if (!paused) {
+    $("#gDialog #ft").css("visibility", "hidden");
     $.ajax({async: false,
       success: function(data, textStatus) {
       },
@@ -202,9 +207,6 @@ var startRearrangeCallback = function (data, textStatus) {
       type: "POST",
       url: get_url("organize/rearrangeFinish", task.id)
     });
-  } else {
-    //$("#gServerAdd #gServerAddButton").show(); @todo change to continue button.
-    //$("#gServerAdd #gServerPauseButton").hide();
   }
 };
 
@@ -254,6 +256,18 @@ function organize_dialog_init() {
 
   $("#gMicroThumbPanel").droppable(droppable);
   $("#gMicroThumbGrid").selectable(selectable);
+
+  $(".gProgressBar").progressbar();
+  $("#gOrganizeTaskPause").click(function(event) {
+    pause = true;
+    $("#gOrganizeTaskPause").hide();
+    $("#gOrganizeTaskResume").show();
+  });
+  $("#gOrganizeTaskResume").click(function(event) {
+    $("#gOrganizeTaskPause").show();
+    $("#gOrganizeTaskResume").hide();
+    startRearrangeCallback();
+  });
 }
 
 function retrieveMicroThumbs() {
@@ -267,13 +281,6 @@ function retrieveMicroThumbs() {
   var url_data = url.replace("__OFFSET__", offset);
   url_data = url_data.replace("__ITEM_ID__", item_id);
   $.getJSON(url_data, getMicroThumbsCallback);
-}
-
-function isOver(selector, pageX, pageY) {
-  var top = $(selector).offset().top;
-  var left = $(selector).offset().left;
-  return this.left <= pageX && pageX <= this.left + 100 &&
-    this.top <= pageY && pageY <= this.top + 100;
 }
 
 function organizeToggleChildren(event) {

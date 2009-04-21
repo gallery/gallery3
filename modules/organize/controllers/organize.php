@@ -21,7 +21,7 @@ class Organize_Controller extends Controller {
   private static $_MICRO_THUMB_SIZE = 90;
   private static $_MICRO_THUMB_PADDING = 5;
 
-  public function index($item_id=1) {
+  function index($item_id=1) {
     $item = ORM::factory("item", $item_id);
     $root = ($item->id == 1) ? $item : ORM::factory("item", 1);
 
@@ -36,7 +36,7 @@ class Organize_Controller extends Controller {
     print $v;
   }
 
-  public function content($item_id) {
+  function content($item_id) {
     $item = ORM::factory("item", $item_id);
     $width = $this->input->get("width");
     $height = $this->input->get("height");
@@ -54,14 +54,14 @@ class Organize_Controller extends Controller {
                             "data" => $v->__toString()));
   }
 
-  public function header($item_id) {
+  function header($item_id) {
     $item = ORM::factory("item", $item_id);
 
     print json_encode(array("title" => $item->title,
                             "description" => empty($item->description) ? "" : $item->description));
   }
 
-  public function tree($item, $parent) {
+  function tree($item, $parent) {
     $albums = ORM::factory("item")
       ->where(array("parent_id" => $parent->id, "type" => "album"))
       ->orderby(array("title" => "ASC"))
@@ -105,6 +105,7 @@ class Organize_Controller extends Controller {
   }
 
   function rearrangeRun($id, $task_id) {
+    Kohana::log("debug", "rearrangeRun($id, $task_id)");
     access::verify_csrf();
 
     $task = task::run($task_id);
@@ -118,14 +119,15 @@ class Organize_Controller extends Controller {
   }
 
   function rearrangeFinish($id, $task_id) {
+    Kohana::log("debug", "rearrangeFinish($id, $task_id)");
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
 
-    if (!$task->done) {
-      message::warning(t("Rearrange album was was cancelled prior to completion"));
-    } else {
-      // @todo set the sort order to weight;
+    if ($task->done) {
+      $item = ORM::factory("item", $id);
+      $item->sort_column = "weight";
+      $item->save();
     }
     
     batch::stop();

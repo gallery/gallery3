@@ -28,13 +28,10 @@ class organize_task_Core {
 
     try {
       $stop = $context["position"] + $context["batch"];
-      $sql = "";
       for (; $context["position"] < $stop; $context["position"]++ ) {
         $id = $context["items"][$context["position"]];
-        $sql .= "Update {items} set weight = {$context["position"]} where id=$id;";
-      }
-      if (!empty($sql)) {
-        $db = Database::instance()->query($sql);
+        Database::instance()
+          ->query("Update {items} set weight = {$context["position"]} where id=$id;");
       }
       $task->state = "success";
     } catch(Exception $e) {
