@@ -41,7 +41,9 @@
   <? if ($running_tasks->count()): ?>
   <div id="gRunningTasks">
     <h2> <?= t("Running Tasks") ?> </h2>
-    <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"><?= t("cancel all") ?></a>
+    <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
+       class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
+      <?= t("cancel all") ?></a>
 
     <table>
       <tr>
