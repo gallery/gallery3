@@ -259,7 +259,7 @@ function organize_dialog_init() {
 
   $(".gProgressBar").progressbar();
   $("#gOrganizeTaskPause").click(function(event) {
-    pause = true;
+    paused = true;
     $("#gOrganizeTaskPause").hide();
     $("#gOrganizeTaskResume").show();
   });
