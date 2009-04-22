@@ -84,6 +84,94 @@ class Organize_Controller extends Controller {
     return $v->__toString();
   }
 
+
+  function runTask($task_id) {
+    access::verify_csrf();
+
+    $task = task::run($task_id);
+
+    print json_encode(array("result" => $task->done ? $task->state : "in_progress",
+                            "task" => array(
+                              "id" => $task->id,
+                              "percent_complete" => $task->percent_complete,
+                              "status" => $task->status,
+                              "state" => $task->state,
+                              "done" => $task->done)));
+  }
+
+  function finishTask($task_id) {
+    access::verify_csrf();
+
+    $task = ORM::factory("task", $task_id);
+
+    if ($task->done) {
+      switch ($task->context["type"]) {
+      case "moveTo":
+        $task->status = t("Move to '%album' completed", array("album" => $item->title));
+        break;
+      case "rearrange":
+        try {
+          $item = ORM::factory("item", $task->context["target"]);
+          $item->sort_column = "weight";
+          $item->save();
+          $task->status = t("Rearrange for '%album' completed", array("album" => $item->title));
+        } catch (Exception $e) {
+          $task->state = "error";
+          $task->status = $e->getMessage();
+        }
+        break;
+      }
+      $task->save();
+    }
+
+    batch::stop();
+    print json_encode(array("result" => "success"));
+  }
+  
+  function cancelTask($task_id) {
+    access::verify_csrf();
+
+    $task = ORM::factory("task", $task_id);
+
+    if ($task->done) {
+      switch ($task->context["type"]) {
+      case "moveTo":
+        message::warning(t("Move to album was cancelled prior to completion"));
+        break;
+      case "rearrange":
+        message::warning(t("Rearrange album was cancelled prior to completion"));
+        break;
+      }
+    }
+
+    batch::stop();
+    print json_encode(array("result" => "success"));
+  }
+  
+  function moveStart($id) {
+    access::verify_csrf();
+    $items = $this->input->post("item");
+    
+    $item = ORM::factory("item", $id);
+
+    $task_def = Task_Definition::factory()
+      ->callback("organize_task::move")
+      ->description(t("Move albums and photos to '%name'", array("name" => $item->title)))
+      ->name(t("Move to '%name'", array("name" => $item->title)));
+    $task = task::create($task_def, array("items" => $items, "position" => 0, "target" => $id,
+                                          "type" => "moveTo",
+                                          "batch" => ceil(count($items) * .1)));
+
+    batch::start();
+    print json_encode(array("result" => "started",
+                            "task" => array(
+                              "id" => $task->id,
+                              "percent_complete" => $task->percent_complete,
+                              "status" => $task->status,
+                              "state" => $task->state,
+                              "done" => $task->done)));
+  }
+  
   function rearrangeStart($id) {
     access::verify_csrf();
     $items = $this->input->post("item");
@@ -94,8 +182,9 @@ class Organize_Controller extends Controller {
       ->callback("organize_task::rearrange")
       ->description(t("Rearrange the order of albums and photos"))
       ->name(t("Rearrange: %name", array("name" => $item->title)));
-    $task = task::create($task_def, array("items" => $items, "position" => 0, "batch" =>
-                                          ceil(count($items) * .1)));
+    $task = task::create($task_def, array("items" => $items, "position" => 0, "target" => $id,
+                                          "type" => "rearrange",
+                                          "batch" => ceil(count($items) * .1)));
 
     batch::start();
     print json_encode(array("result" => "started",
@@ -103,52 +192,7 @@ class Organize_Controller extends Controller {
                               "id" => $task->id,
                               "percent_complete" => $task->percent_complete,
                               "status" => $task->status,
+                              "state" => $task->state,
                               "done" => $task->done)));
-  }
-
-  function rearrangeRun($id, $task_id) {
-    Kohana::log("debug", "rearrangeRun($id, $task_id)");
-    access::verify_csrf();
-
-    $task = task::run($task_id);
-
-    print json_encode(array("result" => $task->done ? $task->state : "in_progress",
-                            "task" => array(
-                              "id" => $task->id,
-                              "percent_complete" => $task->percent_complete,
-                              "status" => $task->status,
-                              "done" => $task->done)));
-  }
-
-  function rearrangeFinish($id, $task_id) {
-    Kohana::log("debug", "rearrangeFinish($id, $task_id)");
-    access::verify_csrf();
-
-    $task = ORM::factory("task", $task_id);
-
-    if ($task->done) {
-      try {
-        $item = ORM::factory("item", $id);
-        $item->sort_column = "weight";
-        $item->save();
-        $task->status = t("Rearrange for '%album' completed", array("album" => $item->title));
-      } catch (Exception $e) {
-        $task->state = "error";
-        $task->status = $e->getMessage();
-      }
-    }
-    
-    batch::stop();
-    print json_encode(array("result" => "success"));
-  }
-
-  function rearrangePause($id, $task_id) {
-    access::verify_csrf();
-
-    $task = ORM::factory("task", $task_id);
-
-    message::warning(t("Rearrange album was cancelled prior to completion"));
-    batch::stop();
-    print json_encode(array("result" => "success"));
   }
 }

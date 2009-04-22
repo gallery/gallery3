@@ -27,7 +27,7 @@ class organize_task_Core {
     $context = unserialize($task->context);
 
     try {
-      $stop = $context["position"] + $context["batch"];
+      $stop = min(count($context["items"]), $context["position"] + $context["batch"]);
       for (; $context["position"] < $stop; $context["position"]++ ) {
         $id = $context["items"][$context["position"]];
         Database::instance()
@@ -35,12 +35,37 @@ class organize_task_Core {
       }
       $task->state = "success";
     } catch(Exception $e) {
-      $tast->status = $e->getMessage();
+      $task->status = $e->getMessage();
       $task->state = "error";
+      $task->save();
+      throw $e;
     }
     $task->context = serialize($context);
     $total = count($context["items"]);
     $task->percent_complete = $context["position"] / (float)$total * 100;
-    $task->done = $context["position"] == $total;
+    $task->done = $context["position"] == $total || $task->state == "error";
+  }
+
+  static function move($task) {
+    $context = unserialize($task->context);
+
+    try {
+      $target = ORM::factory("item", $context["target"]);
+      $stop = min(count($context["items"]), $context["position"] + $context["batch"]);
+      for (; $context["position"] < $stop; $context["position"]++ ) {
+        $source = ORM::factory("item", $context["items"][$context["position"]]);
+        core::move_item($source, $target);
+      }
+      $task->state = "success";
+    } catch(Exception $e) {
+      $task->status = $e->getMessage();
+      $task->state = "error";
+      $task->save();
+      throw $e;
+    }
+    $task->context = serialize($context);
+    $total = count($context["items"]);
+    $task->percent_complete = $context["position"] / (float)$total * 100;
+    $task->done = $context["position"] == $total || $task->state == "error";
   }
 }

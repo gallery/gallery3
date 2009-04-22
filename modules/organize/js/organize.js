@@ -1,11 +1,14 @@
 /*
  * @todo Trap resize of dialog and resize the child areas (tree, grid and edit form)
- * @todo create the dialog close method and reload the page on exit.
+ * @todo Create a cancel button that leaves the task in pending but clears the task info
+ * and resets the paused.
+ * @todo Create a message area in the footer for all the organize messages
  */
 var url;
 var height;
 var paused = false;
 var task = null;
+var transitItems = [];
 
 // **************************************************************************
 // JQuery UI Widgets
@@ -64,9 +67,15 @@ var draggable = {
   }
 };
 
-// Droppable
-var droppable =  {
+// Thumbnail Grid Droppable
+var thumbDroppable =  {
   tolerance: "pointer",
+  over: function(event, ui) {
+    $("#gPlaceHolder").show();
+  },
+  out:  function(event, ui) {
+    $("#gPlaceHolder").hide();
+  },
   drop: function(event, ui) {
     $("#gDragHelper").hide();
     $("#gPlaceHolder").hide();
@@ -90,7 +99,40 @@ var droppable =  {
       dataType: "json",
       success: startRearrangeCallback,
       type: "POST",
-      url: get_url("organize/rearrangeStart")
+      url: get_url("organize/rearrangeStart", {item_id: item_id})
+    });
+  }
+};
+
+// Album Tree Droppable
+var treeDroppable =  {
+  tolerance: "pointer",
+  greedy: true,
+  hoverClass: "gBranchDroppable",
+  drop: function(event, ui) {
+    $("#gDragHelper").hide();
+    var moveItems = "";
+    var targetItemId = $(this).attr("ref");
+    if ($(this).hasClass("gBranchSelected")) {
+      // @todo Error message for moving onto self
+      return false;
+    }
+    var okToMove = true;
+    $("#gDragHelper li").each(function(i) {
+      moveItems += "&item[]=" + $(this).attr("ref");
+      okToMove &= targetItemId != $(this).attr("ref");
+      $("#thumb_" + $(this).attr("ref")).remove();
+    });
+    if (!okToMove) {
+      // @todo Error message for moving onto self
+      return false;
+    }
+    $.ajax({
+      data: moveItems,
+      dataType: "json",
+      success: startMoveCallback,
+      type: "POST",
+      url: get_url("organize/moveStart", {item_id: targetItemId})
     });
   }
 };
@@ -175,6 +217,45 @@ var getMicroThumbsCallback = function(json, textStatus) {
   }
 };
 
+// @todo see if we can combine the next two callbacks into an object
+// as they are basically the same.
+var startMoveCallback = function (data, textStatus) {
+  if (!paused) {
+    $("#gDialog #ft").css("visibility", "visible");
+    $(".gProgressBar").progressbar("value", 0);
+    task = data.task;
+  }
+  $(".gMicroThumbContainer").draggable("disable");
+  var done = false;
+  paused = false;
+  while (!done && !paused) {
+    $.ajax({async: false,
+      success: function(data, textStatus) {
+        $(".gProgressBar").progressbar("value", data.task.percent_complete);
+         done = data.task.done;
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        paused = true;
+        displayAjaxError(XMLHttpRequest.responseText);
+      },
+      dataType: "json",
+      type: "POST",
+      url: get_url("organize/runTask", {task_id: task.id})
+    });
+  }
+  if (!paused) {
+    $("#gDialog #ft").css("visibility", "hidden");
+    $.ajax({async: false,
+      success: function(data, textStatus) {
+      },
+      dataType: "json",
+      type: "POST",
+      url: get_url("organize/finishTask", {task_id: task.id})
+    });
+  }
+  $(".gMicroThumbContainer").draggable("enable");
+};
+
 var startRearrangeCallback = function (data, textStatus) {
   if (!paused) {
     $("#gDialog #ft").css("visibility", "visible");
@@ -196,7 +277,7 @@ var startRearrangeCallback = function (data, textStatus) {
       },
       dataType: "json",
       type: "POST",
-      url: get_url("organize/rearrangeRun", task.id)
+      url: get_url("organize/runTask", {task_id: task.id})
     });
   }
   if (!paused) {
@@ -206,7 +287,7 @@ var startRearrangeCallback = function (data, textStatus) {
       },
       dataType: "json",
       type: "POST",
-      url: get_url("organize/rearrangeFinish", task.id)
+      url: get_url("organize/finishTask", {task_id: task.id})
     });
   }
   $(".gMicroThumbContainer").draggable("enable");
@@ -249,6 +330,7 @@ function organize_dialog_init() {
   $("#gOrganizeTreeContainer").height(height);
 
   $(".gOrganizeBranch .ui-icon").click(organizeToggleChildren);
+  $(".gBranchText").droppable(treeDroppable);
   $(".gBranchText").click(organizeOpenFolder);
   retrieveMicroThumbs(item_id);
   //showLoading("#gDialog");
@@ -256,7 +338,7 @@ function organize_dialog_init() {
   $("#gMicroThumbSelectAll").click(toggleSelectAll);
   $("#gMicroThumbUnselectAll").click(toggleSelectAll);
 
-  $("#gMicroThumbPanel").droppable(droppable);
+  $("#gMicroThumbPanel").droppable(thumbDroppable);
   $("#gMicroThumbGrid").selectable(selectable);
 
   $(".gProgressBar").progressbar();
@@ -312,10 +394,12 @@ function organizeOpenFolder(event) {
   event.preventDefault();
 }
 
-function get_url(uri, task_id) {
+function get_url(uri, parms) {
   var url = rearrangeUrl;
   url = url.replace("__URI__", uri);
-  url = url.replace("__TASK_ID__", !task_id ? "" : "/" + task_id);
+  url = url.replace("__ITEM_ID__", !parms.item_id ? "" : parms.item_id);
+  url += (parms.item_id && parms.task_id) ? "/" : "";
+  url = url.replace("__TASK_ID__", !parms.task_id ? "" : parms.task_id);
   return url;
 }
 

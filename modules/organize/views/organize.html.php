@@ -4,7 +4,7 @@
   var FATAL_ERROR = "<?= t("Fatal Error") ?>";
   var item_id = <?= $item->id ?>;
   var csrf = "<?= $csrf ?>";
-  var rearrangeUrl = "<?= url::site("__URI__/{$item->id}__TASK_ID__?csrf=$csrf") ?>";
+  var rearrangeUrl = "<?= url::site("__URI__/__ITEM_ID____TASK_ID__?csrf=$csrf") ?>";
   $("#doc3").ready(function() {
     organize_dialog_init();
   });

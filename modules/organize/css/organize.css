@@ -20,8 +20,13 @@
   padding: .3em 0;
 }
 
+.gBranchDroppable {
+  border: 1px dotted;
+}
+
 .gBranchText {
   cursor: pointer;
+  width: auto;
 }
 
 .gBranchCollapsed {
