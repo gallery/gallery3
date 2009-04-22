@@ -153,6 +153,10 @@ class graphics_Core {
       self::init_toolkit();
     }
 
+    if (filesize($input_file) == 0) {
+      throw new Exception("@todo MALFORMED_INPUT_FILE");
+    }
+
     $dims = getimagesize($input_file);
     if (max($dims[0], $dims[1]) < min($options["width"], $options["height"])) {
       // Image would get upscaled; do nothing
