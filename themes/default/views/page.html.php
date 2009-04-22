@@ -13,6 +13,7 @@
       <? else: ?>
         <?= $page_title ?>
       <? endif ?>
+      <?= $theme->page_type ?>
     </title>
     <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
@@ -27,6 +28,19 @@
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
+    <? if ($theme->page_type == 'album'): ?>
+      <? if ($thumb_proportion != 1): ?>
+        <? $new_width = $thumb_proportion * 213 ?>
+        <? $new_height = $thumb_proportion * 240 ?>
+    <style type="text/css">
+    #gContent #gAlbumGrid .gItem {
+      width: <?= $new_width ?>px;
+      height: <?= $new_height ?>px;
+      /* <?= $thumb_proportion ?> */
+    }
+    </style>
+      <? endif ?>
+    <? endif ?>
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
