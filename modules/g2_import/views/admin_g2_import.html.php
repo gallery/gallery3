@@ -3,8 +3,8 @@
   <h1> <?= t("Gallery 2 Import") ?> </h1>
   <p>
     <?= t("Import your Gallery 2 users, photos, movies, comments and tags into your new Gallery 3 installation.") ?>
-  </p>
-
+    <?= t("<b>Note: The importer is a work in progress and does not currently support comments, tags, permissions, capture dates and movies (other than Flash video)</b>") ?>
+ </p>
   <?= $form ?>
 </div>
 

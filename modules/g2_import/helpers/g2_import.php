@@ -196,7 +196,7 @@ class g2_import_Core {
     $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
     $album->created = $g2_album->getCreationTimestamp();
 
-    // @todo supported "keywords", "originationTimestamp", and "random" sort orders.
+    // @todo support "keywords", "originationTimestamp", and "random" sort orders.
     $order_map = array(
       "creationTimestamp" => "created",
       "description" => "description",
