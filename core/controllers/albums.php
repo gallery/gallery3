@@ -216,7 +216,7 @@ class Albums_Controller extends Items_Controller {
    * @return int
    */
   public function thumb_proportion() {
-    return module::get_var("core", "thumb_size", 150) / 150;
+    return module::get_var("core", "thumb_size", 200) / 200;
   }
 
 }
