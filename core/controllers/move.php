@@ -31,18 +31,9 @@ class Move_Controller extends Controller {
   public function save($source_id) {
     access::verify_csrf();
     $source = ORM::factory("item", $source_id);
-    access::required("edit", $source);
     $target = ORM::factory("item", $this->input->post("target_id"));
-    access::required("edit", $target);
-    $source->move_to($target);
 
-    // If the target has no cover item, make this it.
-    if ($target->album_cover_item_id == null)  {
-      $target->album_cover_item_id =
-        $source->is_album() ? $source->album_cover_item_id : $source->id;
-      $target->save();
-      graphics::generate($target);
-    }
+    core::move_item($source, $target);
 
     print json_encode(
       array("result" => "success",

@@ -27,4 +27,18 @@ class core_Core {
       Router::$method = "index";
     }
   }
+
+  static function move_item($source, $target) {
+    access::required("edit", $source);
+    access::required("edit", $target);
+    $source->move_to($target);
+
+    // If the target has no cover item, make this it.
+    if ($target->album_cover_item_id == null)  {
+      $target->album_cover_item_id =
+        $source->is_album() ? $source->album_cover_item_id : $source->id;
+      $target->save();
+      graphics::generate($target);
+    }
+  }
 }
