@@ -27,12 +27,15 @@ class organize_task_Core {
     $context = unserialize($task->context);
 
     try {
-      $stop = min(count($context["items"]), $context["position"] + $context["batch"]);
-      for (; $context["position"] < $stop; $context["position"]++ ) {
-        $id = $context["items"][$context["position"]];
+      $total = count($context["items"]);
+      $stop = min($total - $context["position"], $context["batch"]);
+      for ($offset = 0; $offset < $stop; $offset++) {
+        $current_id = $context["position"] + $offset;
+        $id = $context["items"][$current_id];
         Database::instance()
           ->query("Update {items} set weight = {$context["position"]} where id=$id;");
       }
+      $context["position"] += $stop;
       $task->state = "success";
     } catch(Exception $e) {
       $task->status = $e->getMessage();
@@ -51,11 +54,14 @@ class organize_task_Core {
 
     try {
       $target = ORM::factory("item", $context["target"]);
-      $stop = min(count($context["items"]), $context["position"] + $context["batch"]);
-      for (; $context["position"] < $stop; $context["position"]++ ) {
-        $source = ORM::factory("item", $context["items"][$context["position"]]);
+      $total = count($context["items"]);
+      $stop = min($total - $context["position"], $context["batch"]);
+      for ($offset = 0; $offset < $stop; $offset++) {
+        $current_id = $context["position"] + $offset;
+        $source = ORM::factory("item", $context["items"][$current_id]);
         core::move_item($source, $target);
       }
+      $context["position"] += $stop;
       $task->state = "success";
     } catch(Exception $e) {
       $task->status = $e->getMessage();

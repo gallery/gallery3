@@ -115,18 +115,22 @@ var treeDroppable =  {
     var targetItemId = $(this).attr("ref");
     if ($(this).hasClass("gBranchSelected")) {
       // @todo Error message for moving onto self
+      ui.draggable.trigger("stop", event);
       return false;
     }
     var okToMove = true;
     $("#gDragHelper li").each(function(i) {
       moveItems += "&item[]=" + $(this).attr("ref");
       okToMove &= targetItemId != $(this).attr("ref");
-      $("#thumb_" + $(this).attr("ref")).remove();
     });
     if (!okToMove) {
       // @todo Error message for moving onto self
+      ui.draggable.trigger("stop", event);
       return false;
     }
+    $("#gDragHelper li").each(function(i) {
+      $("#thumb_" + $(this).attr("ref")).remove();
+    });
     $.ajax({
       data: moveItems,
       dataType: "json",
