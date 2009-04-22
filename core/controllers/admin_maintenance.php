@@ -26,7 +26,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       "UPDATE {tasks} SET `state` = 'stalled' " .
       "WHERE done = 0 " .
       "AND   state <> 'stalled' " .
-      "AND   unix_timestamp(now()) - updated > 120");
+      "AND   unix_timestamp(now()) - updated > 15");
     $stalled_count = $query->count();
     if ($stalled_count) {
       log::warning("tasks",
