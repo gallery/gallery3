@@ -85,6 +85,15 @@ class Server_Add_Controller extends Controller {
       }
     }
 
+    if ($total_count == 0) {
+      print json_encode(array("result" => "success",
+                              "url" => "",
+                              "task" => array(
+                                "id" => -1, "done" => 1, "percent_complete" => 100,
+                                "status" => t("No Eligible files, import cancelled"))));
+      return;
+    }
+    
     $task_def = Task_Definition::factory()
       ->callback("server_add_task::add_from_server")
       ->description(t("Add photos or movies from the local server"))

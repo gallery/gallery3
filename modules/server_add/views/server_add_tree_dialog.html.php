@@ -1,6 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script>
   var FATAL_ERROR = "<?= t("Fatal Error") ?>";
+  var FILE_IMPORT_WARNING = "<?= t("Add from server warning") ?>";
 </script>
 <?= html::script("modules/server_add/js/server_add.js"); ?>
 <div id="gServerAdd">

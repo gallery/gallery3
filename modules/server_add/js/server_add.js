@@ -108,9 +108,21 @@ function do_add(submit, event) {
     data: parms,
     dataType: "json",
     success: function(data, textStatus) {
+      var done = data.task.done;
+      if (done) {
+        task = null;
+        $("body").append("<div id='gNoFilesDialog'>" + data.task.status + "</div>");
+
+        $("#gNoFilesDialog").dialog({modal: true,
+                                    autoOpen: true,
+                                    title: FILE_IMPORT_WARNING});
+        $(".gProgressBar").css("visibility", "hidden");
+        $("#gServerAdd #gServerAddButton").show();
+        $("#gServerAdd #gServerPauseButton").hide();
+        return;
+      }
       task = data.task;
       var url = data.url;
-      var done = false;
       while (!done && !paused) {
         $.ajax({async: false,
           success: function(data, textStatus) {
