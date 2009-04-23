@@ -20,7 +20,13 @@
   <script>
     flowplayer("gMovieId-<?= $item->id ?>", "<?= url::abs_file("lib/flowplayer.swf") ?>", {
       plugins: {
-        h264streaming: { url: "<?= url::abs_file("lib/flowplayer.h264streaming.swf") ?>" }
+        h264streaming: {
+          url: "<?= url::abs_file("lib/flowplayer.h264streaming.swf") ?>"
+        },
+        controls: {
+          autoHide: 'always',
+          hideDelay: 2000,
+        }
       }
     })
   </script>
