@@ -105,11 +105,9 @@ class Organize_Controller extends Controller {
     $task = ORM::factory("task", $task_id);
 
     if ($task->done) {
-      switch ($task->context["type"]) {
-      case "moveTo":
+      if ($task->context["type"] == "moveTo") {
         $task->status = t("Move to '%album' completed", array("album" => $item->title));
-        break;
-      case "rearrange":
+      } else if ($task->context["type"] == "rearrange") {
         try {
           $item = ORM::factory("item", $task->context["target"]);
           $item->sort_column = "weight";
@@ -119,7 +117,6 @@ class Organize_Controller extends Controller {
           $task->state = "error";
           $task->status = $e->getMessage();
         }
-        break;
       }
       $task->save();
     }
@@ -133,16 +130,16 @@ class Organize_Controller extends Controller {
 
     $task = ORM::factory("task", $task_id);
 
-    if ($task->done) {
-      switch ($task->context["type"]) {
-      case "moveTo":
-        message::warning(t("Move to album was cancelled prior to completion"));
-        break;
-      case "rearrange":
-        message::warning(t("Rearrange album was cancelled prior to completion"));
-        break;
+    if (!$task->done) {
+      $task->done = 1;
+      $task->state = "cancelled";
+      if ($task->context["type"] == "moveTo") {
+        $task->status = t("Move to album was cancelled prior to completion");
+      } else if ($task->context["type"] == "rearrange") {
+        $task->status = t("Rearrange album was cancelled prior to completion");
       }
-    }
+      $task->save();     
+   }
 
     batch::stop();
     print json_encode(array("result" => "success"));

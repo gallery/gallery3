@@ -1,7 +1,5 @@
 /*
  * @todo Trap resize of dialog and resize the child areas (tree, grid and edit form)
- * @todo Create a cancel button that leaves the task in pending but clears the task info
- * and resets the paused.
  * @todo Create a message area in the footer for all the organize messages
  */
 var url;
@@ -350,11 +348,30 @@ function organize_dialog_init() {
     paused = true;
     $("#gOrganizeTaskPause").hide();
     $("#gOrganizeTaskResume").show();
+    $("#gOrganizeTaskCancel").show();
   });
   $("#gOrganizeTaskResume").click(function(event) {
     $("#gOrganizeTaskPause").show();
     $("#gOrganizeTaskResume").hide();
+    $("#gOrganizeTaskCancel").hide();
     startRearrangeCallback();
+  });
+  $("#gOrganizeTaskCancel").click(function(event) {
+    $("#gDialog #ft").css("visibility", "hidden");
+    $("#gOrganizeTaskPause").show();
+    $("#gOrganizeTaskResume").hide();
+    $("#gOrganizeTaskCancel").hide();
+    // @todo reset the state (i.e pause, do ajax call pause to delete task)
+    $.ajax({async: false,
+      success: function(data, textStatus) {
+        task = null;
+        paused = false;
+        transitItems = [];
+      },
+      dataType: "json",
+      type: "POST",
+      url: get_url("organize/cancelTask", {task_id: task.id})
+    });
   });
 }
 

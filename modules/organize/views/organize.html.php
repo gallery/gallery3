@@ -36,6 +36,7 @@
   <div id="ft" style="visibility: hidden">
     <a id="gOrganizeTaskPause" href="#" class="submit"><?= t("Pause") ?></a>
     <a id="gOrganizeTaskResume" href="#" style="display: none" class="submit"><?= t("Resume") ?></a>
+    <a id="gOrganizeTaskCancel" href="#" style="display: none" class="submit"><?= t("Cancel") ?></a>
     <div class="gProgressBar">
     </div>
   </div>
