@@ -25,21 +25,21 @@
  *  cache         - Enable or disable query caching
  *  escape        - Enable automatic query builder escaping
  */
-$config["default"] = array(
-  "benchmark"     => false,
-  "persistent"    => false,
-  "connection"    => array(
-    "type"     => "<?php print $type ?>",
-    "user"     => "<?php print $user ?>",
-    "pass"     => "<?php print $password ?>",
-    "host"     => "<?php print $host ?>",
-    "port"     => false,
-    "socket"   => false,
-    "database" => "<?php print $dbname ?>"
+$config['default'] = array(
+  'benchmark'     => false,
+  'persistent'    => false,
+  'connection'    => array(
+    'type'     => '<?php print $type ?>',
+    'user'     => '<?php print $user ?>',
+    'pass'     => '<?php print $password ?>',
+    'host'     => '<?php print $host ?>',
+    'port'     => false,
+    'socket'   => false,
+    'database' => '<?php print $dbname ?>'
   ),
-  "character_set" => "utf8",
-  "table_prefix"  => "<?php print $prefix ?>",
-  "object"        => true,
-  "cache"         => false,
-  "escape"        => true
+  'character_set' => 'utf8',
+  'table_prefix'  => '<?php print $prefix ?>',
+  'object'        => true,
+  'cache'         => false,
+  'escape'        => true
 );
