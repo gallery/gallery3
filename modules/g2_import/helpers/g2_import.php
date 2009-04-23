@@ -219,6 +219,7 @@ class g2_import_Core {
 
     // @todo import origination timestamp
     // @todo import keywords as tags
+    // @todo import album highlights
   }
 
   static function import_item(&$queue) {
