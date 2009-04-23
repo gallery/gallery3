@@ -105,11 +105,12 @@ class Organize_Controller extends Controller {
     $task = ORM::factory("task", $task_id);
 
     if ($task->done) {
-      if ($task->context["type"] == "moveTo") {
+      $item = ORM::factory("item", (int)$task->get("target"));
+      $type = $task->get("type");
+      if ($type == "moveTo") {
         $task->status = t("Move to '%album' completed", array("album" => $item->title));
-      } else if ($task->context["type"] == "rearrange") {
+      } else if ($type == "rearrange") {
         try {
-          $item = ORM::factory("item", $task->context["target"]);
           $item->sort_column = "weight";
           $item->save();
           $task->status = t("Rearrange for '%album' completed", array("album" => $item->title));
@@ -119,10 +120,16 @@ class Organize_Controller extends Controller {
         }
       }
       $task->save();
-    }
+   }
 
     batch::stop();
-    print json_encode(array("result" => "success"));
+    print json_encode(array("result" => "success",
+                            "task" => array(
+                              "id" => $task->id,
+                              "percent_complete" => $task->percent_complete,
+                              "status" => $task->status,
+                              "state" => $task->state,
+                              "done" => $task->done)));
   }
   
   function cancelTask($task_id) {
@@ -133,16 +140,23 @@ class Organize_Controller extends Controller {
     if (!$task->done) {
       $task->done = 1;
       $task->state = "cancelled";
-      if ($task->context["type"] == "moveTo") {
+      $type = $task->get("type");
+      if ($type == "moveTo") {
         $task->status = t("Move to album was cancelled prior to completion");
-      } else if ($task->context["type"] == "rearrange") {
+      } else if ($type == "rearrange") {
         $task->status = t("Rearrange album was cancelled prior to completion");
       }
       $task->save();     
-   }
+    }
 
     batch::stop();
-    print json_encode(array("result" => "success"));
+    print json_encode(array("result" => "success",
+                            "task" => array(
+                              "id" => $task->id,
+                              "percent_complete" => $task->percent_complete,
+                              "status" => $task->status,
+                              "state" => $task->state,
+                              "done" => $task->done)));
   }
   
   function moveStart($id) {

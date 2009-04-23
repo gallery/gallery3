@@ -1,5 +1,20 @@
 /* @todo move to theme css */
 /*******************************************************************
+ * Dialog wide stylings
+ */
+#gOrganizeStatus {
+  height: 6em;
+  border: 1px solid #999;
+  margin-top: .5em;
+  margin-bottom: .5em;
+  overflow-y: auto;
+}
+
+#gOrganizeProgressDialog {
+  text-align: left;
+}
+
+/*******************************************************************
  * Album Tree styling
  */
 #gOrganizeTreeContainer {

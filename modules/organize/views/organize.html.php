@@ -2,7 +2,18 @@
 <!-- ?= html::script("modules/organize/js/organize.js") ? -->
 <script>
   var FATAL_ERROR = "<?= t("Fatal Error") ?>";
+  var PAUSE_BUTTON = "<?= t("Pause") ?>";
+  var RESUME_BUTTON = "<?= t("Resume") ?>";
+  var CANCEL_BUTTON = "<?= t("Cancel") ?>";
+  var OPERATION_RUNNING = "<?= t("Operation in Progress") ?>";
+  var INVALID_DROP_TARGET = "<div class=\"gError\"><?= t("Drop cancelled as it would result in a recursive move") ?></div>";
+  var MOVE_PAUSED = "<div class=\"gWarning\"><?= t("The move operation was paused") ?></div>";
+  var MOVE_RESUMED = "<div class=\"gWarning\"><?= t("The move operation was resumed") ?></div>";
+  var REARRANGE_PAUSED = "<div class=\"gWarning\"><?= t("The rearrange operation was paused") ?></div>";
+  var REARRANGE_RESUMED = "<div class=\"gWarning\"><?= t("The rearrange operation was resumed") ?></div>";
+
   var item_id = <?= $item->id ?>;
+
   var csrf = "<?= $csrf ?>";
   var rearrangeUrl = "<?= url::site("__URI__/__ITEM_ID____TASK_ID__?csrf=$csrf") ?>";
   $("#doc3").ready(function() {
@@ -33,11 +44,7 @@
       <?= $album_tree ?>
     </div>
   </div>
-  <div id="ft" style="visibility: hidden">
-    <a id="gOrganizeTaskPause" href="#" class="submit"><?= t("Pause") ?></a>
-    <a id="gOrganizeTaskResume" href="#" style="display: none" class="submit"><?= t("Resume") ?></a>
-    <a id="gOrganizeTaskCancel" href="#" style="display: none" class="submit"><?= t("Cancel") ?></a>
-    <div class="gProgressBar">
-    </div>
+  <div id="ft">
+    <div id="gOrganizeStatus"></div>
   </div>
 </div>

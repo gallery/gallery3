@@ -112,7 +112,7 @@ var treeDroppable =  {
     var moveItems = "";
     var targetItemId = $(this).attr("ref");
     if ($(this).hasClass("gBranchSelected")) {
-      // @todo Error message for moving onto self
+      $("#gOrganizeStatus").append(INVALID_DROP_TARGET);
       ui.draggable.trigger("stop", event);
       return false;
     }
@@ -122,7 +122,7 @@ var treeDroppable =  {
       okToMove &= targetItemId != $(this).attr("ref");
     });
     if (!okToMove) {
-      // @todo Error message for moving onto self
+      $("#gOrganizeStatus").append(INVALID_DROP_TARGET);
       ui.draggable.trigger("stop", event);
       return false;
     }
@@ -223,9 +223,10 @@ var getMicroThumbsCallback = function(json, textStatus) {
 // as they are basically the same.
 var startMoveCallback = function (data, textStatus) {
   if (!paused) {
-    $("#gDialog #ft").css("visibility", "visible");
-    $(".gProgressBar").progressbar("value", 0);
+    createProgressDialog(OPERATION_RUNNING);
     task = data.task;
+    task.pauseMsg = MOVE_PAUSED;
+    task.resumeMSg = MOVE_RESUMED;
   }
   $(".gMicroThumbContainer").draggable("disable");
   var done = false;
@@ -246,9 +247,12 @@ var startMoveCallback = function (data, textStatus) {
     });
   }
   if (!paused) {
-    $("#gDialog #ft").css("visibility", "hidden");
+    $("#gOrganizeProgressDialog").dialog("destroy").remove();
     $.ajax({async: false,
       success: function(data, textStatus) {
+        task = null;
+        transitItems = [];
+        $("#gOrganizeStatus").append("<div class='gSuccess'>" + data.task.status + "</div>");
       },
       dataType: "json",
       type: "POST",
@@ -260,9 +264,10 @@ var startMoveCallback = function (data, textStatus) {
 
 var startRearrangeCallback = function (data, textStatus) {
   if (!paused) {
-    $("#gDialog #ft").css("visibility", "visible");
-    $(".gProgressBar").progressbar("value", 0);
+    createProgressDialog(OPERATION_RUNNING);
     task = data.task;
+    task.pauseMsg = REARRANGE_PAUSED;
+    task.resumeMsg = REARRANGE_RESUMED;
   }
   $(".gMicroThumbContainer").draggable("disable");
   var done = false;
@@ -283,9 +288,11 @@ var startRearrangeCallback = function (data, textStatus) {
     });
   }
   if (!paused) {
-    $("#gDialog #ft").css("visibility", "hidden");
+    $("#gOrganizeProgressDialog").dialog("destroy").remove();
     $.ajax({async: false,
       success: function(data, textStatus) {
+        task = null;
+        $("#gOrganizeStatus").append("<div class='gSuccess'>" + data.task.status + "</div>");
       },
       dataType: "json",
       type: "POST",
@@ -342,37 +349,6 @@ function organize_dialog_init() {
 
   $("#gMicroThumbPanel").droppable(thumbDroppable);
   $("#gMicroThumbGrid").selectable(selectable);
-
-  $(".gProgressBar").progressbar();
-  $("#gOrganizeTaskPause").click(function(event) {
-    paused = true;
-    $("#gOrganizeTaskPause").hide();
-    $("#gOrganizeTaskResume").show();
-    $("#gOrganizeTaskCancel").show();
-  });
-  $("#gOrganizeTaskResume").click(function(event) {
-    $("#gOrganizeTaskPause").show();
-    $("#gOrganizeTaskResume").hide();
-    $("#gOrganizeTaskCancel").hide();
-    startRearrangeCallback();
-  });
-  $("#gOrganizeTaskCancel").click(function(event) {
-    $("#gDialog #ft").css("visibility", "hidden");
-    $("#gOrganizeTaskPause").show();
-    $("#gOrganizeTaskResume").hide();
-    $("#gOrganizeTaskCancel").hide();
-    // @todo reset the state (i.e pause, do ajax call pause to delete task)
-    $.ajax({async: false,
-      success: function(data, textStatus) {
-        task = null;
-        paused = false;
-        transitItems = [];
-      },
-      dataType: "json",
-      type: "POST",
-      url: get_url("organize/cancelTask", {task_id: task.id})
-    });
-  });
 }
 
 function retrieveMicroThumbs() {
@@ -422,6 +398,56 @@ function get_url(uri, parms) {
   url += (parms.item_id && parms.task_id) ? "/" : "";
   url = url.replace("__TASK_ID__", !parms.task_id ? "" : parms.task_id);
   return url;
+}
+
+function createProgressDialog(title) {
+  $("body").append("<div id='gOrganizeProgressDialog'>" +
+      "<div class='gProgressBar'></div>" +
+      "<button id='gOrganizeTaskPause' class='ui-state-default ui-corner-all'>" + PAUSE_BUTTON + "</button>" +
+      "<button id='gOrganizeTaskResume' class='ui-state-default ui-corner-all' style='display: none'>" + RESUME_BUTTON + "</button>" +
+      "<button id='gOrganizeTaskCancel' class='ui-state-default ui-corner-all' style='display: none'>" + CANCEL_BUTTON + "</button>" +
+    "</div>");
+  $("#gOrganizeProgressDialog").dialog({
+    autoOpen: true,
+    autoResize: false,
+    modal: true,
+    resizable: false,
+    title: title
+  });
+
+  $(".gProgressBar").progressbar();
+  $("#gOrganizeTaskPause").click(function(event) {
+    paused = true;
+    $("#gOrganizeTaskPause").hide();
+    $("#gOrganizeTaskResume").show();
+    $("#gOrganizeTaskCancel").show();
+    $("#gOrganizeStatus").append(task.pauseMsg);
+  });
+  $("#gOrganizeTaskResume").click(function(event) {
+    $("#gOrganizeTaskPause").show();
+    $("#gOrganizeTaskResume").hide();
+    $("#gOrganizeTaskCancel").hide();
+    $("#gOrganizeStatus").append(task.resumeMsg);
+    startRearrangeCallback();
+  });
+  $("#gOrganizeTaskCancel").click(function(event) {
+    $("#gOrganizeTaskPause").show();
+    $("#gOrganizeTaskResume").hide();
+    $("#gOrganizeTaskCancel").hide();
+
+    $.ajax({async: false,
+      success: function(data, textStatus) {
+        task = null;
+        paused = false;
+        transitItems = [];
+        $("#gOrganizeStatus").append("<div class='gWarning'>" + data.task.status + "</div>");
+        $("#gOrganizeProgressDialog").dialog("destroy").remove();
+      },
+      dataType: "json",
+      type: "POST",
+      url: get_url("organize/cancelTask", {task_id: task.id})
+    });
+  });
 }
 
 // **************************************************************************
