@@ -116,7 +116,6 @@ class Item_Model extends ORM_MPTT {
 
   /**
    * Move this item to the specified target.
-   *
    * @chainable
    * @param   Item_Model $target  Target item (must be an album
    * @return  ORM_MTPP
@@ -339,7 +338,7 @@ class Item_Model extends ORM_MPTT {
   public function thumb_tag($extra_attrs=array(), $max=null, $micro_thumb=false) {
     list ($height, $width) = $this->_adjust_thumb_size($max);
     if ($micro_thumb && $max) {
-      // The constant is divide by 2 to calcuate the file and 10 to convert to em
+      // The constant is divide by 2 to calculate the file and 10 to convert to em
       $margin_top = ($max - $height) / 20;
       $extra_attrs["style"] = "margin-top: {$margin_top}em";
       $extra_attrs["title"] = $this->title;      
@@ -399,6 +398,11 @@ class Item_Model extends ORM_MPTT {
     return "<img" . html::attributes($attrs) . "/>";
   }
 
+  /**
+   * Return a flowplayer <script> tag for movies
+   * @param array $extra_attrs
+   * @return string 
+   */
   public function movie_tag($extra_attrs) {
     $attrs = array_merge($extra_attrs,
             array("id" => "player",
@@ -424,7 +428,6 @@ class Item_Model extends ORM_MPTT {
 
   /**
    * Return all of the children of the specified type, ordered by the defined sort order.
-   *
    * @param   integer  SQL limit
    * @param   integer  SQL offset
    * @param   string   type to return
