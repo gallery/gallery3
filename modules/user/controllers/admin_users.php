@@ -145,6 +145,7 @@ class Admin_Users_Controller extends Controller {
 
   public function add_group() {
     access::verify_csrf();
+    $form = group::get_add_form_admin();
     $valid = $form->validate();
     if ($valid) {
       $new_name = $form->add_group->inputs["name"]->value;
