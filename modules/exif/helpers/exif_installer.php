@@ -31,8 +31,7 @@ class exif_installer {
                    `item_id` int(9) NOT NULL,
                    `name` varchar(64) NOT NULL,
                    `value` varbinary(1024) NOT NULL,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`item_id`, `name`))
+                   PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       $db->query("CREATE TABLE IF NOT EXISTS {exif_records} (
                    `id` int(9) NOT NULL auto_increment,
