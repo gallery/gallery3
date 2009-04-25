@@ -23,11 +23,14 @@ class exif_installer {
 
     if ($version == 0) {
       $db = Database::instance();
+      // we use blob as the data type for the value column because occasionally there's binary
+      // data embedded in the caption field for photos.  This preserves the binary data at the
+      // expense of natural language collation (which we don't use anyway).
       $db->query("CREATE TABLE IF NOT EXISTS {exif_keys} (
                    `id` int(9) NOT NULL auto_increment,
                    `item_id` int(9) NOT NULL,
                    `name` varchar(64) NOT NULL,
-                   `value` varchar(1024) NOT NULL,
+                   `value` varbinary(1024) NOT NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`item_id`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
