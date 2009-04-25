@@ -48,21 +48,31 @@ class exif_task_Core {
   static function extract_exif($task) {
     $completed = $task->get("completed", 0);
 
-    $work = ORM::factory("item")
-      ->join("exif_records", "items.id", "exif_records.item_id")
-      ->where("exif_records.dirty", 1)
-      ->find();
-    exif::extract($work);
-    $completed++;
+    $start = microtime(true);
+    foreach (ORM::factory("item")
+             ->join("exif_records", "items.id", "exif_records.item_id")
+             ->where("exif_records.dirty", 1)
+             ->limit(10)
+             ->find_all() as $item) {
+      if (microtime(true) - $start > 1) {
+        break;
+      }
 
-    $task->set("completed", $completed);
+      $completed++;
+      exif::extract($item);
+    }
 
     list ($remaining, $total, $percent) = self::_get_stats();
-    $task->percent_complete = round(100 * $completed / ($remaining + $completed));
+    if ($remaining + $completed) {
+      $task->percent_complete = round(100 * $completed / ($remaining + $completed));
+      $task->status = t2("one record updated, index is %percent% up-to-date",
+                         "%count records updated, index is %percent% up-to-date",
+                         $completed, array("percent" => $percent));
+    } else {
+      $task->percent_complete = 100;
+    }
 
-    $task->status = t("%done records updated, index is %percent% up-to-date",
-                      array("done" => $completed, "percent" => $percent));
-
+    $task->set("completed", $completed);
     if ($remaining == 0) {
       $task->done = true;
       $task->state = "success";
