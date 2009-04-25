@@ -39,8 +39,9 @@ class exif_task_Core {
                  ->callback("exif_task::extract_exif")
                  ->name(t("Extract EXIF data"))
                  ->description($remaining
-                               ? t("%percent% of your photos need to be scanned for EXIF data",
-                                   array("percent" => $percent))
+                               ? t2("1 photo needs to be scanned",
+                                    "%count (%percent%) of your photos need to be scanned",
+                                    $remaining, array("percent" => (100 - $percent)))
                                : t("EXIF data is up-to-date"))
                  ->severity($remaining ? log::WARNING : log::SUCCESS));
   }
