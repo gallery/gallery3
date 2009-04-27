@@ -23,28 +23,50 @@
 <fieldset style="display: none">
   <legend><?= t("Organize %name", array("name" => $item->title)) ?></legend>
 </fieldset>
-<div id="doc3" class="yui-t1">
-  <div id="bd" role="main">
-    <div id="yui-main">
-      <div class="yui-b">
-        <a id="gMicroThumbSelectAll" href="#"><?= t("select all") ?></a>
-        <a id="gMicroThumbUnselectAll" href="#" style="display: none"><?= t("deselect all") ?></a>
-        <div id="gMicroThumbPanel" class="yui-u first"
-             ref="<?= url::site("organize/content/__ITEM_ID__?width=__WIDTH__&height=__HEIGHT__&offset=__OFFSET__") ?>">
-            <ul id="gMicroThumbGrid">
-            </ul>
-        </div>
-          <!-- div id="gOrganizeEditContainer"  class="yui-u">
-            < ?= $edit_form ? >
-          </div -->
+<div id="doc3" class="yui-t7">
+  <div id="bd">
+    <div class="yui-gf">
+      <div class="yui-u first">
+        <h3><?= t("Albums") ?></h3>
+      </div>
+      <div id="gOrganizeStatus" class="yui-u">
+    <div class="gInfo"><?= t("Select one or more items to edit; drag and drop items to re-order or move between albums") ?></div>
       </div>
     </div>
-    <div id="gOrganizeTreeContainer" class="yui-b">
-      <h3><?= t("Albums") ?></h3>
-      <?= $album_tree ?>
+    <div class="yui-gf">
+      <div id="gOrganizeTreeContainer" class="yui-u first">
+        <?= $album_tree ?>
+      </div>
+      <div id="gMicroThumbPanel" class="yui-u"
+           ref="<?= url::site("organize/content/__ITEM_ID__?width=__WIDTH__&height=__HEIGHT__&offset=__OFFSET__") ?>">
+        <div id="gOrganizeEditDrawer">
+          <div id="gOrganizeEditDrawerPanel" class="yui-gf" style="display: none">
+            <div id="gOrganizeFormThumbs" class="yui-u first">
+              <div id="gOrganizeFormNoImage">
+                <h3><?= t("No Image Selected") ?></h3>
+              </div>
+              <div id="gOrganizeFormThumb" style="display: none"></div>
+              <div id="gOrganizeFormMultipleImages" style="display:none">
+                <h3><?= t("Multiple Images Selected") ?></h3>
+              </div>
+            </div>
+            <?= $edit_form ?>
+          </div>
+          <div id="gOrganizeEditDrawerHandle">
+            <div id="gOrganizeEditHandleLeft"></div>
+            <div id="gOrganizeEditHandleButtonsLeft">
+              <?= $button_pane ?>
+            </div>
+            <div id="gOrganizeEditHandleRight"></div>            
+            <div id="gOrganizeEditHandleButtonsRight">
+              <a id="gMicroThumbSelectAll" href="#" ref="select-all" class="gButtonLink ui-corner-all ui-state-default"><?= t("Select all") ?></a>
+              <a id="gMicroThumbUnselectAll" href="#" ref="unselect-all" style="display: none" class="gButtonLink ui-corner-all ui-state-default"><?= t("Deselect all") ?></a>
+              <a id="gMicroThumbDone" href="#" ref="close" class="gButtonLink ui-corner-all ui-state-default"><?= t("Done") ?></a>
+            </div>
+          </div>
+        </div>
+        <ul id="gMicroThumbGrid"></ul>
+      </div>
     </div>
-  </div>
-  <div id="ft">
-    <div id="gOrganizeStatus"></div>
   </div>
 </div>

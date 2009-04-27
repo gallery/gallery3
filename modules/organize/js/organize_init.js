@@ -9,7 +9,7 @@ $("document").ready(function() {
       autoOpen: false,
       autoResize: false,
       modal: true,
-      resizable: true,
+      resizable: false,
       close: function () {
         $("#gDialog").trigger("organize_close");
         $("#gDialog").dialog("destroy").remove();

@@ -112,7 +112,7 @@ var treeDroppable =  {
     var moveItems = "";
     var targetItemId = $(this).attr("ref");
     if ($(this).hasClass("gBranchSelected")) {
-      $("#gOrganizeStatus").append(INVALID_DROP_TARGET);
+      $("#gOrganizeStatus").empty().append(INVALID_DROP_TARGET);
       ui.draggable.trigger("stop", event);
       return false;
     }
@@ -122,7 +122,7 @@ var treeDroppable =  {
       okToMove &= targetItemId != $(this).attr("ref");
     });
     if (!okToMove) {
-      $("#gOrganizeStatus").append(INVALID_DROP_TARGET);
+      $("#gOrganizeStatus").empty().append(INVALID_DROP_TARGET);
       ui.draggable.trigger("stop", event);
       return false;
     }
@@ -193,18 +193,33 @@ var onMicroThumbContainerMousemove = function(event) {
   }
 };
 
-// Select All and Deselect All click
-function toggleSelectAll(event) {
-  if ($(this).attr("id") == "gMicroThumbSelectAll") {
-    $(".gMicroThumbContainer").addClass("ui-selected");
-    $("#gMicroThumbSelectAll").hide();
-    $("#gMicroThumbUnselectAll").show();
-  } else {
-    $(".gMicroThumbContainer").removeClass("ui-selected");
-    $("#gMicroThumbSelectAll").show();
-    $("#gMicroThumbUnselectAll").hide();
+// Handle click events on the buttons on the drawer handle
+function drawerHandleButtonsClick(event) {
+  event.preventDefault();
+  if (!$(this).attr("disabled")) {
+    var operation = $(this).attr("ref");
+    switch (operation) {
+    case "edit":
+      $("#gOrganizeEditDrawerPanel").slideToggle("normal");
+      break;
+    case "select-all":
+      $(".gMicroThumbContainer").addClass("ui-selected");
+      $("#gMicroThumbSelectAll").hide();
+      $("#gMicroThumbUnselectAll").show();
+      break;
+    case "unselect-all":
+      $(".gMicroThumbContainer").removeClass("ui-selected");
+      $("#gMicroThumbSelectAll").show();
+      $("#gMicroThumbUnselectAll").hide();
+      break;
+    case "close":
+      $("#gDialog").dialog("close");
+      break;
+    default:
+      console.log(operation);
+    }
   }
-}
+};
 
 // **************************************************************************
 // AJAX Callbacks
@@ -252,7 +267,7 @@ var startMoveCallback = function (data, textStatus) {
       success: function(data, textStatus) {
         task = null;
         transitItems = [];
-        $("#gOrganizeStatus").append("<div class='gSuccess'>" + data.task.status + "</div>");
+        $("#gOrganizeStatus").empty().append("<div class='gSuccess'>" + data.task.status + "</div>");
       },
       dataType: "json",
       type: "POST",
@@ -292,7 +307,7 @@ var startRearrangeCallback = function (data, textStatus) {
     $.ajax({async: false,
       success: function(data, textStatus) {
         task = null;
-        $("#gOrganizeStatus").append("<div class='gSuccess'>" + data.task.status + "</div>");
+        $("#gOrganizeStatus").empty().append("<div class='gSuccess'>" + data.task.status + "</div>");
       },
       dataType: "json",
       type: "POST",
@@ -344,11 +359,9 @@ function organize_dialog_init() {
   retrieveMicroThumbs(item_id);
   //showLoading("#gDialog");
 
-  $("#gMicroThumbSelectAll").click(toggleSelectAll);
-  $("#gMicroThumbUnselectAll").click(toggleSelectAll);
-
   $("#gMicroThumbPanel").droppable(thumbDroppable);
   $("#gMicroThumbGrid").selectable(selectable);
+  $("#gOrganizeEditDrawerHandle a").click(drawerHandleButtonsClick);
 }
 
 function retrieveMicroThumbs() {
@@ -421,13 +434,13 @@ function createProgressDialog(title) {
     $("#gOrganizeTaskPause").hide();
     $("#gOrganizeTaskResume").show();
     $("#gOrganizeTaskCancel").show();
-    $("#gOrganizeStatus").append(task.pauseMsg);
+    $("#gOrganizeStatus").empty().append(task.pauseMsg);
   });
   $("#gOrganizeTaskResume").click(function(event) {
     $("#gOrganizeTaskPause").show();
     $("#gOrganizeTaskResume").hide();
     $("#gOrganizeTaskCancel").hide();
-    $("#gOrganizeStatus").append(task.resumeMsg);
+    $("#gOrganizeStatus").empty().append(task.resumeMsg);
     startRearrangeCallback();
   });
   $("#gOrganizeTaskCancel").click(function(event) {
@@ -440,7 +453,7 @@ function createProgressDialog(title) {
         task = null;
         paused = false;
         transitItems = [];
-        $("#gOrganizeStatus").append("<div class='gWarning'>" + data.task.status + "</div>");
+        $("#gOrganizeStatus").empty().append("<div class='gWarning'>" + data.task.status + "</div>");
         $("#gOrganizeProgressDialog").dialog("destroy").remove();
       },
       dataType: "json",

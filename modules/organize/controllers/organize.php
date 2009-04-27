@@ -31,7 +31,7 @@ class Organize_Controller extends Controller {
     $v->album_tree = $this->tree($item, $root);
 
     $v->edit_form = new View("organize_edit.html");
-    $v->edit_form->button_pane = new View("organize_button_pane.html");
+    $v->button_pane = new View("organize_button_pane.html");
  
     print $v;
   }
