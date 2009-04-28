@@ -294,7 +294,7 @@ class Scaffold_Controller extends Template_Controller {
     core_installer::install(true);
     module::load_modules();
 
-    foreach (array("user", "comment", "info", "rss",
+    foreach (array("user", "comment", "organize", "info", "rss",
                    "search", "slideshow", "tag") as $module_name) {
       module::install($module_name);
     }
