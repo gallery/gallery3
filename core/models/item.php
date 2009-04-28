@@ -336,7 +336,7 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function thumb_tag($extra_attrs=array(), $max=null, $micro_thumb=false) {
-    list ($height, $width) = $this->_adjust_thumb_size($max);
+    list ($height, $width) = $this->adjust_thumb_size($max);
     if ($micro_thumb && $max) {
       // The constant is divide by 2 to calculate the file and 10 to convert to em
       $margin_top = ($max - $height) / 20;
@@ -359,7 +359,7 @@ class Item_Model extends ORM_MPTT {
    * @param int $max  Maximum size of the thumbnail
    * @return array
    */
-  private function _adjust_thumb_size($max) {
+  public function adjust_thumb_size($max) {
     $width = $this->thumb_width;
     $height = $this->thumb_height;
 
