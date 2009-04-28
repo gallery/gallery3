@@ -148,7 +148,7 @@ CREATE TABLE {items} (
   KEY `random` (`rand_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (NULL,UNIX_TIMESTAMP(),'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',UNIX_TIMESTAMP(),0,NULL,NULL,'weight','ASC',0,1,1);
+INSERT INTO {items} VALUES (NULL,UNIX_TIMESTAMP(),'',NULL,1,1,1,NULL,NULL,NULL,0,NULL,NULL,1,2,NULL,NULL,1,'Gallery','album',UNIX_TIMESTAMP(),0,NULL,NULL,'weight','ASC',1,1,1);
 DROP TABLE IF EXISTS {items_tags};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -198,9 +198,9 @@ CREATE TABLE {modules} (
   `version` int(9) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,'core',1),(2,'user',1),(3,'comment',1),(4,'info',1),(5,'rss',1),(6,'search',1),(7,'slideshow',1),(8,'tag',1);
+INSERT INTO {modules} VALUES (1,'core',1),(2,'user',1),(3,'comment',1),(4,'organize',1),(5,'info',1),(6,'rss',1),(7,'search',1),(8,'slideshow',1),(9,'tag',1);
 DROP TABLE IF EXISTS {outgoing_translations};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -237,6 +237,7 @@ CREATE TABLE {search_records} (
   `dirty` tinyint(1) default '1',
   `data` longtext,
   PRIMARY KEY  (`id`),
+  KEY `item_id` (`item_id`),
   FULLTEXT KEY `data` (`data`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
