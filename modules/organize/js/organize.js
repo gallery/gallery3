@@ -17,7 +17,6 @@ var draggable = {
   revert: true,
   zindex: 2000,
   helper: function(event, ui) {
-    console.dir(ui);
     $("#gMicroThumbPanel").append("<div id=\"gDragHelper\"><ul></ul></div>");
     var beginTop = event.pageY;
     var beginLeft = event.pageX;
@@ -95,9 +94,9 @@ var thumbDroppable =  {
     $.ajax({
       data: newOrder,
       dataType: "json",
-      success: startRearrangeCallback,
+      success: operationCallback,
       type: "POST",
-      url: get_url("organize/rearrangeStart", {item_id: item_id})
+      url: get_url("organize/startTask/rearrange", {item_id: item_id})
     });
   }
 };
@@ -109,16 +108,15 @@ var treeDroppable =  {
   hoverClass: "gBranchDroppable",
   drop: function(event, ui) {
     $("#gDragHelper").hide();
-    var moveItems = "";
     var targetItemId = $(this).attr("ref");
     if ($(this).hasClass("gBranchSelected")) {
       $("#gOrganizeStatus").empty().append(INVALID_DROP_TARGET);
       ui.draggable.trigger("stop", event);
       return false;
     }
+    var postData = serializeItemIds("#gDragHelper li");
     var okToMove = true;
     $("#gDragHelper li").each(function(i) {
-      moveItems += "&item[]=" + $(this).attr("ref");
       okToMove &= targetItemId != $(this).attr("ref");
     });
     if (!okToMove) {
@@ -130,35 +128,26 @@ var treeDroppable =  {
       $("#thumb_" + $(this).attr("ref")).remove();
     });
     $.ajax({
-      data: moveItems,
+      data: postData,
       dataType: "json",
-      success: startMoveCallback,
+      success: operationCallback,
       type: "POST",
-      url: get_url("organize/moveStart", {item_id: targetItemId})
+      url: get_url("organize/startTask/move", {item_id: targetItemId})
     });
   }
 };
 
 // Selectable
 var selectable = {
-  count: 0,
   filter: ".gMicroThumbContainer",
   selected: function(event, ui) {
-    /*
-     * Count the number of selected items if it is greater than 1,
-     * then click won't be called so we need to remove the gSelecting
-     * class in the stop event.
-     */
-    var count = $("#gMicroThumbGrid").selectable("option", "count") + 1;
-    $("#gMicroThumbGrid").selectable("option", "count", count);
     $(ui.selected).addClass("gSelecting");
+    setDrawerButtonState();
+  },
+  unselected: function(event, ui) {
+    setDrawerButtonState();
   },
   stop: function(event) {
-    var count = $("#gMicroThumbGrid").selectable("option", "count");
-    if (count > 1) {
-      $(".gMicroThumbContainer.gSelecting").removeClass("gSelecting");
-    }
-    $("#gMicroThumbGrid").selectable("option", "count", 0);
   }
 };
 
@@ -166,11 +155,12 @@ var selectable = {
 // Event Handlers
 // MicroThumbContainer click
 var onMicroThumbContainerClick = function(event) {
-  if ($(this).hasClass("gSelecting")) {
-    $(this).removeClass("gSelecting");
-  } else {
+  if (!$(this).hasClass("gSelecting") && $(this).hasClass("ui-selected")) {
     $(this).removeClass("ui-selected");
   }
+  $(this).removeClass("gSelecting");
+
+  setDrawerButtonState();
 };
 
 // MicroThumbContainer mousemove
@@ -216,7 +206,15 @@ function drawerHandleButtonsClick(event) {
       $("#gDialog").dialog("close");
       break;
     default:
-      console.log(operation);
+      var postData = serializeItemIds("#gMicroThumbPanel li.ui-selected");
+      $.ajax({
+        data: postData,
+        dataType: "json",
+        success: operationCallback,
+        type: "POST",
+        url: get_url("organize/startTask/" + operation, {item_id: item_id})
+      });
+      break;
     }
   }
 };
@@ -234,23 +232,29 @@ var getMicroThumbsCallback = function(json, textStatus) {
   }
 };
 
-// @todo see if we can combine the next two callbacks into an object
-// as they are basically the same.
-var startMoveCallback = function (data, textStatus) {
+var operationCallback = function (data, textStatus) {
+  var done = false;
   if (!paused) {
-    createProgressDialog(OPERATION_RUNNING);
+    createProgressDialog(data.runningMsg);
     task = data.task;
-    task.pauseMsg = MOVE_PAUSED;
-    task.resumeMSg = MOVE_RESUMED;
+    task.pauseMsg = data.pauseMsg;
+    task.resumeMsg = data.resumeMsg;
+    done = data.task.done;
   }
   $(".gMicroThumbContainer").draggable("disable");
-  var done = false;
   paused = false;
   while (!done && !paused) {
     $.ajax({async: false,
       success: function(data, textStatus) {
         $(".gProgressBar").progressbar("value", data.task.percent_complete);
-         done = data.task.done;
+        done = data.task.done;
+        if (data.task.reload) {
+          var selector = "#gMicroThumb-" + data.task.reload.id + " img";
+          $(selector).attr("height", data.task.reload.height);
+          $(selector).attr("width", data.task.reload.width);
+          $(selector).attr("src", data.task.reload.src);
+          $(selector).css("margin-top", data.task.reload.marginTop);
+       }
       },
       error: function(XMLHttpRequest, textStatus, errorThrown) {
         paused = true;
@@ -265,47 +269,7 @@ var startMoveCallback = function (data, textStatus) {
     $("#gOrganizeProgressDialog").dialog("destroy").remove();
     $.ajax({async: false,
       success: function(data, textStatus) {
-        task = null;
-        transitItems = [];
-        $("#gOrganizeStatus").empty().append("<div class='gSuccess'>" + data.task.status + "</div>");
-      },
-      dataType: "json",
-      type: "POST",
-      url: get_url("organize/finishTask", {task_id: task.id})
-    });
-  }
-  $(".gMicroThumbContainer").draggable("enable");
-};
-
-var startRearrangeCallback = function (data, textStatus) {
-  if (!paused) {
-    createProgressDialog(OPERATION_RUNNING);
-    task = data.task;
-    task.pauseMsg = REARRANGE_PAUSED;
-    task.resumeMsg = REARRANGE_RESUMED;
-  }
-  $(".gMicroThumbContainer").draggable("disable");
-  var done = false;
-  paused = false;
-  while (!done && !paused) {
-    $.ajax({async: false,
-      success: function(data, textStatus) {
-        $(".gProgressBar").progressbar("value", data.task.percent_complete);
-         done = data.task.done;
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-        paused = true;
-        displayAjaxError(XMLHttpRequest.responseText);
-      },
-      dataType: "json",
-      type: "POST",
-      url: get_url("organize/runTask", {task_id: task.id})
-    });
-  }
-  if (!paused) {
-    $("#gOrganizeProgressDialog").dialog("destroy").remove();
-    $.ajax({async: false,
-      success: function(data, textStatus) {
+        setDrawerButtonState();
         task = null;
         $("#gOrganizeStatus").empty().append("<div class='gSuccess'>" + data.task.status + "</div>");
       },
@@ -413,6 +377,35 @@ function get_url(uri, parms) {
   return url;
 }
 
+/**
+ * Set the enabled/disabled state of the buttons.  The album cover is only enabled if
+ * there is only 1 image selected
+ */
+function setDrawerButtonState() {
+  switch ($("#gMicroThumbGrid li.ui-selected").length) {
+  case 0:
+    $("#gOrganizeEditHandleButtonsLeft a").attr("disabled", true);
+    $("#gOrganizeEditHandleButtonsLeft a").addClass("ui-state-disabled");
+    break;
+  case 1:
+    $("#gOrganizeEditHandleButtonsLeft a").removeAttr("disabled");
+    $("#gOrganizeEditHandleButtonsLeft a").removeClass("ui-state-disabled");
+   break;
+  default:
+    $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").attr("disabled", true);
+    $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").addClass("ui-state-disabled");
+  }
+}
+
+function serializeItemIds(selector) {
+  var postData = "";
+  $(selector).each(function(i) {
+    postData += "&item[]=" + $(this).attr("ref");
+  });
+
+  return postData;
+}
+
 function createProgressDialog(title) {
   $("body").append("<div id='gOrganizeProgressDialog'>" +
       "<div class='gProgressBar'></div>" +
@@ -441,7 +434,8 @@ function createProgressDialog(title) {
     $("#gOrganizeTaskResume").hide();
     $("#gOrganizeTaskCancel").hide();
     $("#gOrganizeStatus").empty().append(task.resumeMsg);
-    startRearrangeCallback();
+    operationCallback();
+    //startRearrangeCallback();
   });
   $("#gOrganizeTaskCancel").click(function(event) {
     $("#gOrganizeTaskPause").show();

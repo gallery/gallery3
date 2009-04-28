@@ -84,6 +84,35 @@ class Organize_Controller extends Controller {
     return $v->__toString();
   }
 
+  function startTask($operation, $id) {
+    access::verify_csrf();
+    $items = $this->input->post("item");
+    
+    $item = ORM::factory("item", $id);
+
+    $definition = $this->_getOperationDefinition($item, $operation);
+
+    $task_def = Task_Definition::factory()
+      ->callback("organize_task::run")
+      ->description($definition["description"])
+      ->name($definition["name"]);
+    $task = task::create($task_def, array("items" => $items, "position" => 0, "target" => $id,
+                                          "type" => $definition["type"],
+                                          "batch" => ceil(count($items) * .1)));
+    // @todo If there is only one item then call task_run($task->id); Maybe even change js so
+    // we can call finish as well.
+    batch::start();
+    print json_encode(array("result" => "started",
+                            "runningMsg" => $definition["runningMsg"],
+                            "pauseMsg" => "<div class=\"gWarning\">{$definition['pauseMsg']}</div>",
+                            "resumeMsg" => "<div class=\"gWarning\">{$definition['resumeMsg']}</div>",
+                            "task" => array("id" => $task->id,
+                                            "percent_complete" => $task->percent_complete,
+                                            "type" => $task->get("type"),
+                                            "status" => $task->status,
+                                            "state" => $task->state,
+                                            "done" => $task->done)));
+  }
 
   function runTask($task_id) {
     access::verify_csrf();
@@ -91,12 +120,13 @@ class Organize_Controller extends Controller {
     $task = task::run($task_id);
 
     print json_encode(array("result" => $task->done ? $task->state : "in_progress",
-                            "task" => array(
-                              "id" => $task->id,
-                              "percent_complete" => $task->percent_complete,
-                              "status" => $task->status,
-                              "state" => $task->state,
-                              "done" => $task->done)));
+                            "task" => array("id" => $task->id,
+                                            "percent_complete" => $task->percent_complete,
+                                            "type" => $task->get("type"),
+                                            "reload" => $task->get("refresh"),
+                                            "status" => $task->status,
+                                            "state" => $task->state,
+                                            "done" => $task->done)));
   }
 
   function finishTask($task_id) {
@@ -107,9 +137,11 @@ class Organize_Controller extends Controller {
     if ($task->done) {
       $item = ORM::factory("item", (int)$task->get("target"));
       $type = $task->get("type");
-      if ($type == "moveTo") {
+      switch ($type) {
+      case "move":
         $task->status = t("Move to '%album' completed", array("album" => $item->title));
-      } else if ($type == "rearrange") {
+        break;
+      case "rearrange":
         try {
           $item->sort_column = "weight";
           $item->save();
@@ -118,6 +150,11 @@ class Organize_Controller extends Controller {
           $task->state = "error";
           $task->status = $e->getMessage();
         }
+        break;
+      case "rotateCcw":
+      case "rotateCw":
+        $task->status = t("Rotation completed");
+        break;
       }
       $task->save();
    }
@@ -141,10 +178,16 @@ class Organize_Controller extends Controller {
       $task->done = 1;
       $task->state = "cancelled";
       $type = $task->get("type");
-      if ($type == "moveTo") {
+      switch ($type) {
+      case "move":
         $task->status = t("Move to album was cancelled prior to completion");
-      } else if ($type == "rearrange") {
-        $task->status = t("Rearrange album was cancelled prior to completion");
+        break;
+      case "rearrange":
+         $task->status = t("Rearrange album was cancelled prior to completion");
+      case "rotateCcw":
+      case "rotateCw":
+        $task->status = t("Rotation was cancelled prior to completion");
+        break;
       }
       $task->save();     
     }
@@ -159,51 +202,51 @@ class Organize_Controller extends Controller {
                               "done" => $task->done)));
   }
   
-  function moveStart($id) {
-    access::verify_csrf();
-    $items = $this->input->post("item");
-    
-    $item = ORM::factory("item", $id);
-
-    $task_def = Task_Definition::factory()
-      ->callback("organize_task::move")
-      ->description(t("Move albums and photos to '%name'", array("name" => $item->title)))
-      ->name(t("Move to '%name'", array("name" => $item->title)));
-    $task = task::create($task_def, array("items" => $items, "position" => 0, "target" => $id,
-                                          "type" => "moveTo",
-                                          "batch" => ceil(count($items) * .1)));
-
-    batch::start();
-    print json_encode(array("result" => "started",
-                            "task" => array(
-                              "id" => $task->id,
-                              "percent_complete" => $task->percent_complete,
-                              "status" => $task->status,
-                              "state" => $task->state,
-                              "done" => $task->done)));
-  }
-  
-  function rearrangeStart($id) {
-    access::verify_csrf();
-    $items = $this->input->post("item");
-    
-    $item = ORM::factory("item", $id);
-
-    $task_def = Task_Definition::factory()
-      ->callback("organize_task::rearrange")
-      ->description(t("Rearrange the order of albums and photos"))
-      ->name(t("Rearrange: %name", array("name" => $item->title)));
-    $task = task::create($task_def, array("items" => $items, "position" => 0, "target" => $id,
-                                          "type" => "rearrange",
-                                          "batch" => ceil(count($items) * .1)));
-
-    batch::start();
-    print json_encode(array("result" => "started",
-                            "task" => array(
-                              "id" => $task->id,
-                              "percent_complete" => $task->percent_complete,
-                              "status" => $task->status,
-                              "state" => $task->state,
-                              "done" => $task->done)));
+  private function _getOperationDefinition($item, $operation) {
+    switch ($operation) {
+    case "move":
+      return array("description" =>
+                     t("Move albums and photos to '%name'", array("name" => $item->title)),
+                   "name" => t("Move to '%name'", array("name" => $item->title)),
+                   "type" => "move",
+                   "runningMsg" => t("Move in progress"),
+                   "pauseMsg" => t("The move operation was paused"),
+                   "resumeMsg" => t("The move operation was resumed"));
+      break;
+    case "rearrange":
+      return array("description" => t("Rearrange the order of albums and photos"),
+                   "name" => t("Rearrange: %name", array("name" => $item->title)),
+                   "type" => "rearrange",
+                   "runningMsg" => t("Rearrange in progress"),
+                   "pauseMsg" => t("The rearrange operation was paused"),
+                   "resumeMsg" => t("The rearrange operation was resumed"));
+      break;
+    case "rotateCcw":
+      return array("description" => t("Rotate the selected photos counter clockwise"),
+                   "name" => t("Rotate images in %name", array("name" => $item->title)),
+                   "type" => "rotateCcw",
+                   "runningMsg" => t("Rotate Counter Clockwise in progress"),
+                   "pauseMsg" => t("The rotate operation was paused"),
+                   "resumeMsg" => t("The rotate operation was resumed"));
+      break;
+    case "rotateCw":
+      return array("description" => t("Rotate the selected photos clockwise"),
+                   "name" => t("Rotate images in %name", array("name" => $item->title)),
+                   "type" => "rotateCw",
+                   "runningMsg" => t("Rotate Clockwise in progress"),
+                   "pauseMsg" => t("The rotate operation was paused"),
+                   "resumeMsg" => t("The rotate operation was resumed"));
+      break;
+    case "delete":
+      return array("description" => t("Delete selected photos and albums"),
+                   "name" => t("`Delete images in %name", array("name" => $item->title)),
+                   "type" => "delete",
+                   "runningMsg" => t("Delete images in progress"),
+                   "pauseMsg" => t("The delete operation was paused"),
+                   "resumeMsg" => t("The delete operation was resumed"));
+      break;
+    default:
+      throw new Exception("Operation '$operation' is not implmented");
+    }
   }
 }

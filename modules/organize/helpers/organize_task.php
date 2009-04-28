@@ -23,17 +23,37 @@ class organize_task_Core {
     return array();
   }
 
-  static function rearrange($task) {
+  static function run($task) {
     $context = unserialize($task->context);
+    $taskType = $context["type"];
 
     try {
+      $target = ORM::factory("item", $context["target"]);
       $total = count($context["items"]);
       $stop = min($total - $context["position"], $context["batch"]);
+      $context["refresh"] = null;
       for ($offset = 0; $offset < $stop; $offset++) {
         $current_id = $context["position"] + $offset;
         $id = $context["items"][$current_id];
-        Database::instance()
-          ->query("Update {items} set weight = {$context["position"]} where id=$id;");
+        switch ($taskType) {
+        case "move":
+          $source = ORM::factory("item", $id);
+          core::move_item($source, $target);
+          break;
+        case "rearrange":
+          Database::instance()
+            ->query("Update {items} set weight = {$context["position"]} where id=$id;");
+          break;
+        case "rotateCcw":
+        case "rotateCw":
+          $item = ORM::factory("item", $id);
+          if ($item->is_photo()) {
+            $context["refresh"] = self:: _do_rotation($item, $taskType == "rotateCcw" ? -90 : 90);
+          }
+          break;
+        default:
+          throw new Exception("Task '$taskType' is not implmented");
+        }
       }
       $context["position"] += $stop;
       $task->state = "success";
@@ -49,29 +69,30 @@ class organize_task_Core {
     $task->done = $context["position"] == $total || $task->state == "error";
   }
 
-  static function move($task) {
-    $context = unserialize($task->context);
+  private static function _do_rotation($item, $degrees) {
+    // This code is copied from Quick_Controller::rotate
+    graphics::rotate($item->file_path(), $item->file_path(), array("degrees" => $degrees));
 
-    try {
-      $target = ORM::factory("item", $context["target"]);
-      $total = count($context["items"]);
-      $stop = min($total - $context["position"], $context["batch"]);
-      for ($offset = 0; $offset < $stop; $offset++) {
-        $current_id = $context["position"] + $offset;
-        $source = ORM::factory("item", $context["items"][$current_id]);
-        core::move_item($source, $target);
-      }
-      $context["position"] += $stop;
-      $task->state = "success";
-    } catch(Exception $e) {
-      $task->status = $e->getMessage();
-      $task->state = "error";
-      $task->save();
-      throw $e;
+    list($item->width, $item->height) = getimagesize($item->file_path());
+    $item->resize_dirty= 1;
+    $item->thumb_dirty= 1;
+    $item->save();
+
+    graphics::generate($item);
+
+    $parent = $item->parent();
+    if ($parent->album_cover_item_id == $item->id) {
+      copy($item->thumb_path(), $parent->thumb_path());
+      $parent->thumb_width = $item->thumb_width;
+      $parent->thumb_height = $item->thumb_height;
+      $parent->save();
     }
-    $task->context = serialize($context);
-    $total = count($context["items"]);
-    $task->percent_complete = $context["position"] / (float)$total * 100;
-    $task->done = $context["position"] == $total || $task->state == "error";
+    list ($height, $width) = $item->adjust_thumb_size(90);
+    $margin_top = (90 - $height) / 20;
+
+    return array("src" => $item->thumb_url() . "?rnd=" . rand(),
+                 "id" => $item->id, "marginTop" => "{$margin_top}em",
+                 "width" => $width, "height" => $height);
+
   }
 }

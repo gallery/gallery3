@@ -5,12 +5,7 @@
   var PAUSE_BUTTON = "<?= t("Pause") ?>";
   var RESUME_BUTTON = "<?= t("Resume") ?>";
   var CANCEL_BUTTON = "<?= t("Cancel") ?>";
-  var OPERATION_RUNNING = "<?= t("Operation in Progress") ?>";
   var INVALID_DROP_TARGET = "<div class=\"gError\"><?= t("Drop cancelled as it would result in a recursive move") ?></div>";
-  var MOVE_PAUSED = "<div class=\"gWarning\"><?= t("The move operation was paused") ?></div>";
-  var MOVE_RESUMED = "<div class=\"gWarning\"><?= t("The move operation was resumed") ?></div>";
-  var REARRANGE_PAUSED = "<div class=\"gWarning\"><?= t("The rearrange operation was paused") ?></div>";
-  var REARRANGE_RESUMED = "<div class=\"gWarning\"><?= t("The rearrange operation was resumed") ?></div>";
 
   var item_id = <?= $item->id ?>;
 
