@@ -120,7 +120,6 @@ class Quick_Controller extends Controller {
       $parent->save();
     }
 
-    module::event("item_before_delete", $item);
     $item->delete();
     message::success($msg);
 

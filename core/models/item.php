@@ -93,6 +93,8 @@ class Item_Model extends ORM_MPTT {
   }
 
   public function delete() {
+    module::event("item_before_delete", $this);
+
     $original_path = $this->file_path();
     $original_resize_path = $this->resize_path();
     $original_thumb_path = $this->thumb_path();
