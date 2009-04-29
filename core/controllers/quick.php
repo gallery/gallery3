@@ -83,20 +83,7 @@ class Quick_Controller extends Controller {
   public function make_album_cover($id) {
     access::verify_csrf();
     $item = ORM::factory("item", $id);
-    access::required("edit", $item);
-
-    $parent = $item->parent();
-    access::required("edit", $parent);
-
-    if ($item->is_photo()) {
-      $parent->album_cover_item_id = $item->id;
-    } else if ($item->is_album()) {
-      $parent->album_cover_item_id = $item->album_cover_item_id;
-    }
-
-    $parent->thumb_dirty = 1;
-    $parent->save();
-    graphics::generate($parent);
+    $item->make_album_cover();
 
     print json_encode(array("result" => "success"));
   }

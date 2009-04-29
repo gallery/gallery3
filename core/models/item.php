@@ -98,9 +98,7 @@ class Item_Model extends ORM_MPTT {
     $parent = $this->parent();
 
     if ($parent->album_cover_item_id == $this->id) {
-      // @todo change the album cover to some other random image inside the album
-      $parent->album_cover_item_id = null;
-      $parent->save();
+      $parent->remove_album_cover();
     }
 
     $original_path = $this->file_path();
@@ -156,6 +154,26 @@ class Item_Model extends ORM_MPTT {
     }
 
     return $this;
+  }
+
+  function make_album_cover() {
+    $parent = $this->parent();
+    access::required("edit", $parent);
+    
+    $parent->album_cover_item_id = $this->is_photo() ? $this->id : $this->album_cover_item_id;
+    $parent->thumb_dirty = 1;
+    $parent->save();
+    graphics::generate($parent);
+  }
+
+  function remove_album_cover() {
+    @unlink($this->thumb_path());
+ 
+    // @todo change the album cover to some other random image inside the album
+    $this->album_cover_item_id = null;
+    $this->thumb_dirty = 1;
+    $this->save();
+    graphics::generate($this);
   }
 
   /**
