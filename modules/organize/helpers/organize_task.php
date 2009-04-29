@@ -52,6 +52,20 @@ class organize_task_Core {
               self:: _do_rotation($item, $taskType == "rotateCcw" ? -90 : 90);
           }
           break;
+        case "albumCover":
+          $item = ORM::factory("item", $id);
+          $parent = $item->parent();
+
+          if ($item->is_photo()) {
+            $parent->album_cover_item_id = $item->id;
+          } else if ($item->is_album()) {
+            $parent->album_cover_item_id = $item->album_cover_item_id;
+          }
+
+          $parent->thumb_dirty = 1;
+          $parent->save();
+          graphics::generate($parent);
+          break;
         case "delete":
           $item = ORM::factory("item", $id);
           $item->delete();

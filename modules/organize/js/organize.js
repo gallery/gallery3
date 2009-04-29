@@ -1,6 +1,5 @@
 /*
  * @todo Trap resize of dialog and resize the child areas (tree, grid and edit form)
- * @todo Create a message area in the footer for all the organize messages
  */
 var url;
 var height;

@@ -239,11 +239,19 @@ class Organize_Controller extends Controller {
       break;
     case "delete":
       return array("description" => t("Delete selected photos and albums"),
-                   "name" => t("`Delete images in %name", array("name" => $item->title)),
+                   "name" => t("Delete images in %name", array("name" => $item->title)),
                    "type" => "delete",
                    "runningMsg" => t("Delete images in progress"),
                    "pauseMsg" => t("The delete operation was paused"),
                    "resumeMsg" => t("The delete operation was resumed"));
+      break;
+    case "albumCover":
+      return array("description" => t("Reset Album Cover"),
+                   "name" => t("Reset Album cover for %name", array("name" => $item->title)),
+                   "type" => "albumCover",
+                   "runningMsg" => t("Reset Album Cover in progress"),
+                   "pauseMsg" => t("Reset album cover was paused"),
+                   "resumeMsg" => t("Reset album cover was resumed"));
       break;
     default:
       throw new Exception("Operation '$operation' is not implmented");
