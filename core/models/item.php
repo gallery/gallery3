@@ -95,6 +95,14 @@ class Item_Model extends ORM_MPTT {
   public function delete() {
     module::event("item_before_delete", $this);
 
+    $parent = $this->parent();
+
+    if ($parent->album_cover_item_id == $this->id) {
+      // @todo change the album cover to some other random image inside the album
+      $parent->album_cover_item_id = null;
+      $parent->save();
+    }
+
     $original_path = $this->file_path();
     $original_resize_path = $this->resize_path();
     $original_thumb_path = $this->thumb_path();

@@ -106,18 +106,10 @@ class Quick_Controller extends Controller {
     $item = ORM::factory("item", $id);
     access::required("edit", $item);
 
-    $parent = $item->parent();
-
     if ($item->is_album()) {
       $msg = t("Deleted album <b>%title</b>", array("title" => $item->title));
     } else {
       $msg = t("Deleted photo <b>%title</b>", array("title" => $item->title));
-    }
-
-    if ($parent->album_cover_item_id == $item->id) {
-      // @todo change the album cover to some other random image inside the album
-      $parent->album_cover_item_id = null;
-      $parent->save();
     }
 
     $item->delete();
