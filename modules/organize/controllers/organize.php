@@ -123,7 +123,7 @@ class Organize_Controller extends Controller {
                             "task" => array("id" => $task->id,
                                             "percent_complete" => $task->percent_complete,
                                             "type" => $task->get("type"),
-                                            "reload" => $task->get("refresh"),
+                                            "post_process" => $task->get("post_process"),
                                             "status" => $task->status,
                                             "state" => $task->state,
                                             "done" => $task->done)));

@@ -31,7 +31,7 @@ class organize_task_Core {
       $target = ORM::factory("item", $context["target"]);
       $total = count($context["items"]);
       $stop = min($total - $context["position"], $context["batch"]);
-      $context["refresh"] = null;
+      $context["post_process"] = array();
       for ($offset = 0; $offset < $stop; $offset++) {
         $current_id = $context["position"] + $offset;
         $id = $context["items"][$current_id];
@@ -48,8 +48,14 @@ class organize_task_Core {
         case "rotateCw":
           $item = ORM::factory("item", $id);
           if ($item->is_photo()) {
-            $context["refresh"] = self:: _do_rotation($item, $taskType == "rotateCcw" ? -90 : 90);
+            $context["post_process"]["reload"][] =
+              self:: _do_rotation($item, $taskType == "rotateCcw" ? -90 : 90);
           }
+          break;
+        case "delete":
+          $item = ORM::factory("item", $id);
+          $item->delete();
+          $context["post_process"]["remove"][] = array("id" => $id);
           break;
         default:
           throw new Exception("Task '$taskType' is not implmented");
@@ -91,8 +97,7 @@ class organize_task_Core {
     $margin_top = (90 - $height) / 20;
 
     return array("src" => $item->thumb_url() . "?rnd=" . rand(),
-                 "id" => $item->id, "marginTop" => "{$margin_top}em",
-                 "width" => $width, "height" => $height);
+                 "id" => $item->id, "marginTop" => "{$margin_top}em", "width" => $width, "height" => $height);
 
   }
 }

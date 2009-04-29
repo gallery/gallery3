@@ -248,13 +248,20 @@ var operationCallback = function (data, textStatus) {
       success: function(data, textStatus) {
         $(".gProgressBar").progressbar("value", data.task.percent_complete);
         done = data.task.done;
-        if (data.task.reload) {
-          var selector = "#gMicroThumb-" + data.task.reload.id + " img";
-          $(selector).attr("height", data.task.reload.height);
-          $(selector).attr("width", data.task.reload.width);
-          $(selector).attr("src", data.task.reload.src);
-          $(selector).css("margin-top", data.task.reload.marginTop);
-       }
+        if (data.task.post_process.reload) {
+          $.each(data.task.post_process.reload, function() {
+            var selector = "#gMicroThumb-" + this.id + " img";
+            $(selector).attr("height", this.height);
+            $(selector).attr("width", this.width);
+            $(selector).attr("src", this.src);
+            $(selector).css("margin-top", this.marginTop);
+          });
+        }
+        if (data.task.post_process.remove) {
+          $.each(data.task.post_process.remove, function() {
+            $("#thumb_" + this.id).remove();
+          });
+        }
       },
       error: function(XMLHttpRequest, textStatus, errorThrown) {
         paused = true;
