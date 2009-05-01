@@ -109,7 +109,7 @@ var treeDroppable =  {
     $("#gDragHelper").hide();
     var targetItemId = $(this).attr("ref");
     if ($(this).hasClass("gBranchSelected")) {
-      $("#gOrganizeStatus").empty().append(INVALID_DROP_TARGET);
+      $("#gMessage").empty().append(INVALID_DROP_TARGET);
       ui.draggable.trigger("stop", event);
       return false;
     }
@@ -119,7 +119,7 @@ var treeDroppable =  {
       okToMove &= targetItemId != $(this).attr("ref");
     });
     if (!okToMove) {
-      $("#gOrganizeStatus").empty().append(INVALID_DROP_TARGET);
+      $("#gMessage").empty().append(INVALID_DROP_TARGET);
       ui.draggable.trigger("stop", event);
       return false;
     }
@@ -277,7 +277,7 @@ var operationCallback = function (data, textStatus) {
       success: function(data, textStatus) {
         setDrawerButtonState();
         task = null;
-        $("#gOrganizeStatus").empty().append("<div class='gSuccess'>" + data.task.status + "</div>");
+        $("#gMessage").empty().append("<div class='gSuccess'>" + data.task.status + "</div>");
       },
       dataType: "json",
       type: "POST",
@@ -433,13 +433,13 @@ function createProgressDialog(title) {
     $("#gOrganizeTaskPause").hide();
     $("#gOrganizeTaskResume").show();
     $("#gOrganizeTaskCancel").show();
-    $("#gOrganizeStatus").empty().append(task.pauseMsg);
+    $("#gMessage").empty().append(task.pauseMsg);
   });
   $("#gOrganizeTaskResume").click(function(event) {
     $("#gOrganizeTaskPause").show();
     $("#gOrganizeTaskResume").hide();
     $("#gOrganizeTaskCancel").hide();
-    $("#gOrganizeStatus").empty().append(task.resumeMsg);
+    $("#gMessage").empty().append(task.resumeMsg);
     operationCallback();
     //startRearrangeCallback();
   });
@@ -453,7 +453,7 @@ function createProgressDialog(title) {
         task = null;
         paused = false;
         transitItems = [];
-        $("#gOrganizeStatus").empty().append("<div class='gWarning'>" + data.task.status + "</div>");
+        $("#gMessage").empty().append("<div class='gWarning'>" + data.task.status + "</div>");
         $("#gOrganizeProgressDialog").dialog("destroy").remove();
       },
       dataType: "json",

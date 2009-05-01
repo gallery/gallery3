@@ -2,9 +2,14 @@
 /*******************************************************************
  * Dialog wide stylings
  */
-#gOrganizeStatus {
-  height: 1.2em;
-  font-weight: bold;
+#gMessage {
+  margin-bottom: .4em;
+}
+
+#gMessage .gInfo {
+  background-color: transparent;
+  background-image: none;
+  padding-left: .4em;
 }
 
 #gOrganizeProgressDialog {
@@ -148,7 +153,7 @@
 }
 
 #gOrganizeEditDrawerPanel {
-  background-color: #CFDEFF;
+  background-color: #fff;
   border: 1px solid #13A;
   display: none;
   min-height: 150px; 

@@ -138,6 +138,9 @@ class Organize_Controller extends Controller {
       $item = ORM::factory("item", (int)$task->get("target"));
       $type = $task->get("type");
       switch ($type) {
+      case "albumCover":
+        $task->status = t("Album cover set");
+        break;
       case "move":
         $task->status = t("Move to '%album' completed", array("album" => $item->title));
         break;

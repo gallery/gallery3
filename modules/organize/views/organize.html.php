@@ -24,7 +24,7 @@
       <div class="yui-u first">
         <h3><?= t("Albums") ?></h3>
       </div>
-      <div id="gOrganizeStatus" class="yui-u">
+      <div id="gMessage" class="yui-u">
     <div class="gInfo"><?= t("Select one or more items to edit; drag and drop items to re-order or move between albums") ?></div>
       </div>
     </div>
