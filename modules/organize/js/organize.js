@@ -133,6 +133,7 @@ var treeDroppable =  {
       type: "POST",
       url: get_url("organize/startTask/move", {item_id: targetItemId})
     });
+    return true;
   }
 };
 
