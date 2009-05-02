@@ -101,7 +101,7 @@ class organize_task_Core {
     $margin_top = (90 - $height) / 20;
 
     return array("src" => $item->thumb_url() . "?rnd=" . rand(),
-                 "id" => $item->id, "marginTop" => "{$margin_top}em", "width" => $width, "height" => $height);
-
+                 "id" => $item->id,
+                 "marginTop" => "{$margin_top}em", "width" => $width, "height" => $height);
   }
 }
