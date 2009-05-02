@@ -147,8 +147,8 @@
  */
 #gOrganizeEditDrawer {
   background-color: #13A;
-  float: left;
-  margin: 0 5% 10px;
+  //float: left;
+  //margin: 0 5% 10px;
   width: 90%;
 }
 
@@ -156,15 +156,18 @@
   background-color: #fff;
   border: 1px solid #13A;
   display: none;
-  min-height: 150px; 
+}
+
+#gOrganizeEditDrawerHandle {
+  height: 30px;
 }
 
 #gOrganizeEditHandleLeft {
   background-image: url(organize_edit_drawer.png);
-  background-color: #CFDEFF;
+  background-color: #FFF;
   float: left;
   height: 30px;
-  margin: 2px 0 0;
+  //margin: 2px 0 0;
   width: 15px;
 }
 
@@ -191,12 +194,12 @@
 }
 
 #gOrganizeEditHandleRight {
-  background-color: #CFDEFF;
+  background-color: #FFF;
   background-image: url(organize_edit_drawer.png);
   background-position: -15px 0;
   float: right;
   height: 30px;
-  margin: 2px 0 0;
+  //margin: 2px 0 0;
   width: 15px;
 }
 

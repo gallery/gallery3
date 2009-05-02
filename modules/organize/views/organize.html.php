@@ -25,7 +25,7 @@
         <h3><?= t("Albums") ?></h3>
       </div>
       <div id="gMessage" class="yui-u">
-    <div class="gInfo"><?= t("Select one or more items to edit; drag and drop items to re-order or move between albums") ?></div>
+        <div class="gInfo"><?= t("Select one or more items to edit; drag and drop items to re-order or move between albums") ?></div>
       </div>
     </div>
     <div class="yui-gf">
@@ -34,8 +34,10 @@
       </div>
       <div id="gMicroThumbPanel" class="yui-u"
            ref="<?= url::site("organize/content/__ITEM_ID__?width=__WIDTH__&height=__HEIGHT__&offset=__OFFSET__") ?>">
-        <div id="gOrganizeEditDrawer">
-          <div id="gOrganizeEditDrawerPanel" class="yui-gf" style="display: none">
+        <ul id="gMicroThumbGrid"></ul>
+      </div>
+        <div id="gOrganizeEditDrawer" class="yui-u">
+          <div id="gOrganizeEditDrawerPanel" class="yui-gf">
             <div id="gOrganizeFormThumbs" class="yui-u first">
               <div id="gOrganizeFormNoImage">
                 <h3><?= t("No Image Selected") ?></h3>
@@ -60,8 +62,6 @@
             </div>
           </div>
         </div>
-        <ul id="gMicroThumbGrid"></ul>
-      </div>
     </div>
   </div>
 </div>

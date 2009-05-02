@@ -2,10 +2,10 @@
  * @todo Trap resize of dialog and resize the child areas (tree, grid and edit form)
  */
 var url;
-var height;
 var paused = false;
 var task = null;
 var transitItems = [];
+var heightMicroThumbPanel;
 
 // **************************************************************************
 // JQuery UI Widgets
@@ -41,7 +41,7 @@ var draggable = {
 
       var children = $(clone).find(".gMicroThumb .gThumbnail");
       var width = new String(children.css("width")).replace(/[^0-9]/g,"") * .5;
-      height = new String(children.css("height")).replace(/[^0-9]/g,"") * .5;
+      var height = new String(children.css("height")).replace(/[^0-9]/g,"") * .5;
       var marginTop = new String(children.css("margin-top")).replace(/[^\.0-9]/g,"") * .5;
       children.attr("width", width);
       children.attr("height", height);
@@ -189,7 +189,13 @@ function drawerHandleButtonsClick(event) {
     var operation = $(this).attr("ref");
     switch (operation) {
     case "edit":
-      $("#gOrganizeEditDrawerPanel").slideToggle("normal");
+      $("#gOrganizeEditDrawerPanel").animate(
+        {"height": "toggle", "display": "block"},
+        {duration: "fast",
+          step: function() {
+            $("#gMicroThumbPanel").height(heightMicroThumbPanel - $(this).height());
+          }
+      });
       break;
     case "select-all":
       $(".gMicroThumbContainer").addClass("ui-selected");
@@ -294,14 +300,14 @@ var operationCallback = function (data, textStatus) {
  */
 function organize_dialog_init() {
   var size = getViewportSize();
-  height = size.height() - 100;
+  heightMicroThumbPanel = size.height() - 100;
   var width = size.width() - 100;
 
   // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475
   $(".sf-menu li.sfHover ul").css("z-index", 70);
 
   $("#gDialog").dialog("option", "width", width);
-  $("#gDialog").dialog("option", "height", height);
+  $("#gDialog").dialog("option", "height", heightMicroThumbPanel);
 
   $("#gDialog").dialog("open");
   if ($("#gDialog h1").length) {
@@ -314,14 +320,15 @@ function organize_dialog_init() {
     document.location.reload();
   });
 
-  height -= 2 * parseFloat($("#gDialog").css("padding-top"));
-  height -= 2 * parseFloat($("#gDialog").css("padding-bottom"));
-  height -= $("#gMicroThumbPanel").position().top;
-  height -= $("#gDialog #ft").height();
-  height = Math.round(height);
+  heightMicroThumbPanel -= 2 * parseFloat($("#gDialog").css("padding-top"));
+  heightMicroThumbPanel -= 2 * parseFloat($("#gDialog").css("padding-bottom"));
+  heightMicroThumbPanel -= $("#gMicroThumbPanel").position().top;
+  heightMicroThumbPanel -= $("#gDialog #ft").height();
+  heightMicroThumbPanel -= $("#gOrganizeEditDrawerHandle").height();
+  heightMicroThumbPanel = Math.round(heightMicroThumbPanel);
 
-  $("#gMicroThumbPanel").height(height);
-  $("#gOrganizeTreeContainer").height(height);
+  $("#gMicroThumbPanel").height(heightMicroThumbPanel);
+  $("#gOrganizeTreeContainer").height(heightMicroThumbPanel);
 
   $(".gOrganizeBranch .ui-icon").click(organizeToggleChildren);
   $(".gBranchText").droppable(treeDroppable);
@@ -340,7 +347,7 @@ function retrieveMicroThumbs() {
     var grid_width = $("#gMicroThumbPanel").width();
     url = $("#gMicroThumbPanel").attr("ref");
     url = url.replace("__WIDTH__", grid_width);
-    url = url.replace("__HEIGHT__", height);
+    url = url.replace("__HEIGHT__", heightMicroThumbPanel);
   }
   var url_data = url.replace("__OFFSET__", offset);
   url_data = url_data.replace("__ITEM_ID__", item_id);
