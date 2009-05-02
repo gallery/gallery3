@@ -55,9 +55,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $tasks = task::get_definitions();
-
     $task = task::create($tasks[$task_callback], array());
-
     $view = new View("admin_maintenance_task.html");
     $view->task = $task;
 
