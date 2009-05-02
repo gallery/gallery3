@@ -139,7 +139,10 @@ class Organize_Controller extends Controller {
       $type = $task->get("type");
       switch ($type) {
       case "albumCover":
-        $task->status = t("Album cover set");
+        $task->status = t("Album cover set for '%album'", array("album" => $item->title));
+        break;
+      case "delete":
+        $task->status = t("Selection deleted");
         break;
       case "move":
         $task->status = t("Move to '%album' completed", array("album" => $item->title));

@@ -50,11 +50,9 @@
             <?= $edit_form ?>
           </div>
           <div id="gOrganizeEditDrawerHandle">
-            <div id="gOrganizeEditHandleLeft"></div>
             <div id="gOrganizeEditHandleButtonsLeft">
               <?= $button_pane ?>
             </div>
-            <div id="gOrganizeEditHandleRight"></div>            
             <div id="gOrganizeEditHandleButtonsRight">
               <a id="gMicroThumbSelectAll" href="#" ref="select-all" class="gButtonLink ui-corner-all ui-state-default"><?= t("Select all") ?></a>
               <a id="gMicroThumbUnselectAll" href="#" ref="unselect-all" style="display: none" class="gButtonLink ui-corner-all ui-state-default"><?= t("Deselect all") ?></a>

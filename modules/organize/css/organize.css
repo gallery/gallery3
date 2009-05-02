@@ -147,8 +147,6 @@
  */
 #gOrganizeEditDrawer {
   background-color: #13A;
-  //float: left;
-  //margin: 0 5% 10px;
   width: 90%;
 }
 
@@ -167,7 +165,6 @@
   background-color: #FFF;
   float: left;
   height: 30px;
-  //margin: 2px 0 0;
   width: 15px;
 }
 
@@ -199,7 +196,6 @@
   background-position: -15px 0;
   float: right;
   height: 30px;
-  //margin: 2px 0 0;
   width: 15px;
 }
 
