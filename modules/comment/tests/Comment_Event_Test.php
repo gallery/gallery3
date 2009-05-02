@@ -24,7 +24,6 @@ class Comment_Event_Test extends Unit_Test_Case {
     $comment = comment::create(
       $album, user::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
 
-    comment_event::item_before_delete($album);
     $album->delete();
 
     $deleted_comment = ORM::factory("comment", $comment->id);
