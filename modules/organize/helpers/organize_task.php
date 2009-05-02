@@ -97,7 +97,7 @@ class organize_task_Core {
       $parent->thumb_height = $item->thumb_height;
       $parent->save();
     }
-    list ($height, $width) = $item->adjust_thumb_size(90);
+    list ($height, $width) = $item->scale_dimensions(90);
     $margin_top = (90 - $height) / 20;
 
     return array("src" => $item->thumb_url() . "?rnd=" . rand(),

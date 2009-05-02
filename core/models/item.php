@@ -159,7 +159,7 @@ class Item_Model extends ORM_MPTT {
   function make_album_cover() {
     $parent = $this->parent();
     access::required("edit", $parent);
-    
+
     $parent->album_cover_item_id = $this->is_photo() ? $this->id : $this->album_cover_item_id;
     $parent->thumb_dirty = 1;
     $parent->save();
@@ -168,7 +168,7 @@ class Item_Model extends ORM_MPTT {
 
   function remove_album_cover() {
     @unlink($this->thumb_path());
- 
+
     // @todo change the album cover to some other random image inside the album
     $this->album_cover_item_id = null;
     $this->thumb_dirty = 1;
@@ -307,7 +307,7 @@ class Item_Model extends ORM_MPTT {
     }
     parent::__set($column, $value);
   }
-  
+
   /**
    * @see ORM::save()
    */
@@ -360,16 +360,16 @@ class Item_Model extends ORM_MPTT {
    * Return an <img> tag for the thumbnail.
    * @param array $extra_attrs  Extra attributes to add to the img tag
    * @param int (optional) $max Maximum size of the thumbnail (default: null)
-   * @param boolean (optional) $micro_thumb Center vertically (default: false)
+   * @param boolean (optional) $center_vertically Center vertically (default: false)
    * @return string
    */
-  public function thumb_tag($extra_attrs=array(), $max=null, $micro_thumb=false) {
-    list ($height, $width) = $this->adjust_thumb_size($max);
-    if ($micro_thumb && $max) {
+  public function thumb_tag($extra_attrs=array(), $max=null, $center_vertically=false) {
+    list ($height, $width) = $this->scale_dimensions($max);
+    if ($center_vertically && $max) {
       // The constant is divide by 2 to calculate the file and 10 to convert to em
       $margin_top = ($max - $height) / 20;
       $extra_attrs["style"] = "margin-top: {$margin_top}em";
-      $extra_attrs["title"] = $this->title;      
+      $extra_attrs["title"] = $this->title;
     }
     $attrs = array_merge($extra_attrs,
             array(
@@ -383,11 +383,12 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Adjust the height based on the input maximum size or zero if not thumbnail
-   * @param int $max  Maximum size of the thumbnail
+   * Calculate the largest width/height that fits inside the given maximum, while preserving the
+   * aspect ratio.
+   * @param int $max Maximum size of the largest dimension
    * @return array
    */
-  public function adjust_thumb_size($max) {
+  public function scale_dimensions($max) {
     $width = $this->thumb_width;
     $height = $this->thumb_height;
 
@@ -409,7 +410,7 @@ class Item_Model extends ORM_MPTT {
     }
     return array($height, $width);
   }
-  
+
   /**
    * Return an <img> tag for the resize.
    * @param array $extra_attrs  Extra attributes to add to the img tag
@@ -429,7 +430,7 @@ class Item_Model extends ORM_MPTT {
   /**
    * Return a flowplayer <script> tag for movies
    * @param array $extra_attrs
-   * @return string 
+   * @return string
    */
   public function movie_tag($extra_attrs) {
     $attrs = array_merge($extra_attrs,
