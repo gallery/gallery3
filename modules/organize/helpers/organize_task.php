@@ -53,8 +53,7 @@ class organize_task_Core {
           }
           break;
         case "albumCover":
-          $item = ORM::factory("item", $id);
-          $item->make_album_cover();
+          core::make_album_cover(ORM::factory("item", $id));
           break;
         case "delete":
           $item = ORM::factory("item", $id);

@@ -34,14 +34,46 @@ class core_Core {
 
     $parent = $source->parent();
     if ($parent->album_cover_item_id == $source->id) {
-      $parent->remove_album_cover();
+      if ($parent->children_count() > 1) {
+        foreach ($parent->children(2) as $child) {
+          if ($child->id != $source->id) {
+            $new_cover_item = $child;
+            break;
+          }
+        }
+        core::make_album_cover($new_cover_item);
+      } else {
+        core::remove_album_cover($parent);
+      }
     }
 
     $source->move_to($target);
 
     // If the target has no cover item, make this it.
     if ($target->album_cover_item_id == null)  {
-      $source->make_album_cover();
+      core::make_album_cover($source);
     }
+  }
+
+  function make_album_cover($item) {
+    $parent = $item->parent();
+    access::required("edit", $parent);
+
+    $parent->album_cover_item_id = $item->is_album() ? $item->album_cover_item_id : $item->id;
+    $parent->thumb_dirty = 1;
+    $parent->save();
+    graphics::generate($parent);
+  }
+
+  function remove_album_cover($album) {
+    access::required("edit", $album);
+    @unlink($album->thumb_path());
+
+    $album->album_cover_item_id = null;
+    $album->thumb_width = 0;
+    $album->thumb_height = 0;
+    $album->thumb_dirty = 1;
+    $album->save();
+    graphics::generate($album);
   }
 }

@@ -98,7 +98,7 @@ class Item_Model extends ORM_MPTT {
     $parent = $this->parent();
 
     if ($parent->album_cover_item_id == $this->id) {
-      $parent->remove_album_cover();
+      item::remove_album_cover($parent);
     }
 
     $original_path = $this->file_path();
@@ -109,10 +109,8 @@ class Item_Model extends ORM_MPTT {
     if (is_dir($original_path)) {
       @dir::unlink($original_path);
       @dir::unlink(dirname($original_resize_path));
-      /*
-       * The thumb path is a  path to .album.jpg not the actual directory.
-       * So we need to first try to delete the path (may not exist) and then its directory.
-       */
+      // The thumb path is a  path to .album.jpg not the actual directory.
+      // So we need to first try to delete the path (may not exist) and then its directory.
       @unlink($original_thumb_path);
       @dir::unlink(dirname($original_thumb_path));
     } else {
@@ -146,34 +144,14 @@ class Item_Model extends ORM_MPTT {
 
     rename($original_path, $this->file_path());
     if ($this->is_album()) {
-      rename(dirname($original_resize_path), dirname($this->resize_path()));
-      rename(dirname($original_thumb_path), dirname($this->thumb_path()));
+      @rename(dirname($original_resize_path), dirname($this->resize_path()));
+      @rename(dirname($original_thumb_path), dirname($this->thumb_path()));
     } else {
-      rename($original_resize_path, $this->resize_path());
-      rename($original_thumb_path, $this->thumb_path());
+      @rename($original_resize_path, $this->resize_path());
+      @rename($original_thumb_path, $this->thumb_path());
     }
 
     return $this;
-  }
-
-  function make_album_cover() {
-    $parent = $this->parent();
-    access::required("edit", $parent);
-
-    $parent->album_cover_item_id = $this->is_photo() ? $this->id : $this->album_cover_item_id;
-    $parent->thumb_dirty = 1;
-    $parent->save();
-    graphics::generate($parent);
-  }
-
-  function remove_album_cover() {
-    @unlink($this->thumb_path());
-
-    // @todo change the album cover to some other random image inside the album
-    $this->album_cover_item_id = null;
-    $this->thumb_dirty = 1;
-    $this->save();
-    graphics::generate($this);
   }
 
   /**
