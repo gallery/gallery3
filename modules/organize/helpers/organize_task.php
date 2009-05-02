@@ -49,7 +49,7 @@ class organize_task_Core {
           $item = ORM::factory("item", $id);
           if ($item->is_photo()) {
             $context["post_process"]["reload"][] =
-              self:: _do_rotation($item, $taskType == "rotateCcw" ? -90 : 90);
+              self::_do_rotation($item, $taskType == "rotateCcw" ? -90 : 90);
           }
           break;
         case "albumCover":
