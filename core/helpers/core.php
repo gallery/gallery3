@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class gallery_Core {
+class core_Core {
   static function maintenance_mode() {
     $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
 
