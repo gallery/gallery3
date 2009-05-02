@@ -66,14 +66,14 @@ class server_add_task_Core {
                                    null, user::active()->id);
           }
         }
-        
+
         $context["counter"]++;
         if (++$context["position"] >= count($context["files"][$path])) {
           $context["next_path"]++;
           $context["position"] = 0;
         }
       } else {
-          $context["next_path"]++;
+        $context["next_path"]++;
       }
     } catch(Exception $e) {
       $context["errors"][$path] = $e->getMessage();
