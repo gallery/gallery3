@@ -33,7 +33,7 @@ class Move_Controller extends Controller {
     $source = ORM::factory("item", $source_id);
     $target = ORM::factory("item", $this->input->post("target_id"));
 
-    core::move_item($source, $target);
+    item::move($source, $target);
 
     print json_encode(
       array("result" => "success",

@@ -98,7 +98,7 @@ class photo_Core {
 
     // If the parent has no cover item, make this it.
     if ($parent->album_cover_item_id == null)  {
-      core::make_album_cover($photo);
+      item::make_album_cover($photo);
     }
 
     return $photo;

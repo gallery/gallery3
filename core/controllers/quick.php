@@ -82,7 +82,7 @@ class Quick_Controller extends Controller {
 
   public function make_album_cover($id) {
     access::verify_csrf();
-    core::make_album_cover(ORM::factory("item", $id));
+    item::make_album_cover(ORM::factory("item", $id));
 
     print json_encode(array("result" => "success"));
   }

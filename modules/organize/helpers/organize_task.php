@@ -38,7 +38,7 @@ class organize_task_Core {
         switch ($taskType) {
         case "move":
           $source = ORM::factory("item", $id);
-          core::move_item($source, $target);
+          item::move($source, $target);
           break;
         case "rearrange":
           Database::instance()
@@ -53,7 +53,7 @@ class organize_task_Core {
           }
           break;
         case "albumCover":
-          core::make_album_cover(ORM::factory("item", $id));
+          item::make_album_cover(ORM::factory("item", $id));
           break;
         case "delete":
           $item = ORM::factory("item", $id);
