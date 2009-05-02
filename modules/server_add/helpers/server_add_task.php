@@ -45,10 +45,8 @@ class server_add_task_Core {
           if (!$album->loaded) {
             $album = album::create($parent, $name, $name, null, user::active()->id);
           }
-          /*
-           * Now that we have a new album. Go through the remaining files to import and change the
-           * parent_id of any file that has the same relative path as this album's path.
-           */
+          // Now that we have a new album. Go through the remaining files to import and change the
+          // parent_id of any file that has the same relative path as this album's path.
           $album_path = "{$file['path']}/$name";
           for ($idx = $context["position"] + 1; $idx < count($context["files"][$path]); $idx++) {
             if (strpos($context["files"][$path][$idx]["path"], $album_path) === 0) {
