@@ -45,7 +45,7 @@ class item_Core {
     }
   }
 
-  function make_album_cover($item) {
+  static function make_album_cover($item) {
     $parent = $item->parent();
     access::required("edit", $parent);
 
@@ -55,7 +55,7 @@ class item_Core {
     graphics::generate($parent);
   }
 
-  function remove_album_cover($album) {
+  static function remove_album_cover($album) {
     access::required("edit", $album);
     @unlink($album->thumb_path());
 
