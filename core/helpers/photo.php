@@ -97,7 +97,7 @@ class photo_Core {
     graphics::generate($photo);
 
     // If the parent has no cover item, make this it.
-    if ($parent->album_cover_item_id == null)  {
+    if (access::can("edit", $parent) && $parent->album_cover_item_id == null)  {
       item::make_album_cover($photo);
     }
 
