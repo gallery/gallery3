@@ -1,28 +1,28 @@
 ABOUT:
-Gallery 3 is a web based software product that lets you manage
-your photos on your own website.  You must have your own website
-with PHP and database support in order to install and use it.
-With Gallery you can easily create and share albums of photos
-via an intuitive interface.
+Gallery 3 is a web based software product that lets you manage your
+photos on your own website.  You must have your own website with PHP
+and database support in order to install and use it.  With Gallery you
+can easily create and share albums of photos via an intuitive
+interface.
 
 
 SECURITY (& INTENDED AUDIENCE):
-This is the second technology preview of Gallery 3.0 and as such
+This is the fourth technology preview of Gallery 3.0 and as such
 it is not intended to be installed on public websites yet.
 Note:
- - The application has not undergone a professional security audit
-   yet and may have serious security vulnerabilities.
+ - We've contracted a professional security audit, but not all issues
+   have been resolved in this release.  There may be serious security
+   vulnerabilities.
  - A series of key features are yet to be added (e.g. a way to
-   reset a forgotten password).
- - There is no guaranteed upgrade path yet. You might be forced to
+ - There is no guaranteed upgrade path yet. You *will* be forced to
    reinstall Gallery 3 to use the next public release.
 
-The intended audience of this release are enthusiasts, designers
-and module developers. This is the right time to do a test drive
-with the improved user interface and to start developing feature
-extensions and designing new themes.
-Please send your feedback to gallery-devel@lists.sourceforge.net.
+The intended audience of this release are enthusiasts, designers and
+module developers. This is the right time to do a test drive with the
+improved user interface and to start developing feature extensions and
+designing new themes.
 
+Please send your feedback to gallery-devel@lists.sourceforge.net.
 
 SUPPORTED CONFIGURATION:
  - Platform: Linux / Unix.
