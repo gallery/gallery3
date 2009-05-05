@@ -34,7 +34,10 @@ class tag_event_Core {
         if (!empty($iptc["2#025"])) {
           foreach($iptc["2#025"] as $tag) {
             $tag = str_replace("\0",  "", $tag);
-            $tags[$tag]= 1;
+            if (mb_detect_encoding($tag) != "UTF-8") {
+              $tag = utf8_encode($tag);
+            }
+            $tags[$tag] = 1;
           }
         }
       }

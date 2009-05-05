@@ -37,10 +37,11 @@ class exif_Core {
       if (isset($exif_raw['ValidEXIFData'])) {
         foreach(self::_keys() as $field => $exifvar) {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
-            $data[] = sprintf(
-              "(%d, '%s', '%s')",
-              $item->id, $db->escape_str($field),
-              $db->escape_str($exif_raw[$exifvar[0]][$exifvar[1]]));
+            $value = $exif_raw[$exifvar[0]][$exifvar[1]];
+            if (mb_detect_encoding($value) != "UTF-8") {
+              $value = utf8_encode($value);
+            }
+            $data[] = sprintf("(%d, '%s', '%s')", $item->id, $field, $db->escape_str($value));
           }
         }
       }
@@ -49,10 +50,14 @@ class exif_Core {
         $iptc = iptcparse($info["APP13"]);
         foreach (array("Keywords" => "2#025", "Caption" => "2#120") as $keyword => $iptc_key) {
           if (!empty($iptc[$iptc_key])) {
+            $value = implode(" ", $iptc[$iptc_key]);
+            if (mb_detect_encoding($value) != "UTF-8") {
+              $value = utf8_encode($value);
+            }
             $data[] = sprintf(
               "(%d, '%s', '%s')",
-              $item->id, $db->escape_str($keyword),
-              $db->escape_str(implode(" ", $iptc[$iptc_key])));
+              $item->id, $keyword,
+              $db->escape_str($value));
           }
         }
       }
