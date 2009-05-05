@@ -27,6 +27,8 @@ class g2_import_task_Core {
                    ->description(
                      t("Gallery %version detected", array("version" => g2_import::version())))
                    ->severity(log::SUCCESS));
+    } else {
+      return array();
     }
   }
 
