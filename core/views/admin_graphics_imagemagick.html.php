@@ -10,6 +10,9 @@
   <p class="gSuccess">
     <?= t("ImageMagick is available in %path", array("path" => $tk->imagemagick)) ?>
   </p>
+  <p>
+    <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate ImageMagick") ?></a>
+  </p>
   <? else: ?>
   <p class="gInfo">
     <?= t("ImageMagick is not available on your system.") ?>

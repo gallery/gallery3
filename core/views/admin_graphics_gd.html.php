@@ -10,6 +10,9 @@
   <p class="gSuccess">
     <?= t("You have GD version %version.", array("version" => $tk->gd["GD Version"])) ?>
   </p>
+  <p>
+    <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
+  </p>
   <? elseif ($tk->gd["GD Version"]): ?>
   <p class="gWarning">
     <?= t("You have GD version %version, but it lacks image rotation.",

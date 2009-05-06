@@ -45,6 +45,14 @@
   background: #eee;
 }
 
+.gAvailable .gButtonLink {
+  width: 96%;
+}
+
+.gSelected .gButtonLink {
+  display: none;
+}
+
 .gUnavailable {
   border-color: #999;
   opacity: 0.4;
@@ -166,7 +174,7 @@
 #gAdminGraphics .gAvailable .gBlock {
   clear: none;
   float: left;
-  height: 200px;
+  height: 16em;
   margin-right: 1em;
   width: 30%;
 }

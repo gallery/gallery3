@@ -10,6 +10,9 @@
   <p class="gSuccess">
     <?= t("GraphicsMagick is available in %path", array("path" => $tk->graphicsmagick)) ?>
   </p>
+  <p>
+    <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate Graphics Magic") ?></a>
+  </p>
   <? else: ?>
   <p class="gInfo">
     <?= t("GraphicsMagick is not available on your system.") ?>
