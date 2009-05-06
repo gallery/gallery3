@@ -14,11 +14,19 @@ if (!function_exists("DrawForm")) {
   function DrawForm($inputs, $level=1) {
     $error_messages = array();
     $prefix = str_repeat("  ", $level);
+    $haveGroup = false;
+    // On the first level, make sure we have a group if not add the <ul> tag now
+    if ($level == 1) {
+      foreach ($inputs as $input) {
+        $haveGroup |= $input->type == 'group';
+      }
+      if (!$haveGroup) {
+        print "$prefix<ul>\n";
+      }
+    }
 
     foreach ($inputs as $input) {
-      if ($input->type == 'hidden') {
-        print $input->render();
-      } else if ($input->type == 'group') {
+      if ($input->type == 'group') {
         print "$prefix<fieldset>\n";
         print "$prefix  <legend>{$input->label}</legend>\n";
         print "$prefix  <ul>\n";
@@ -55,6 +63,9 @@ if (!function_exists("DrawForm")) {
         }
         print "$prefix</li>\n";
       }
+    }
+    if ($level == 1 && !$haveGroup) {
+      print "$prefix</ul>\n";
     }
   }
 }
