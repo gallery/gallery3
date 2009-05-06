@@ -121,7 +121,9 @@ class g2_import_Core {
       break;
     }
 
-    self::set_map($g2_group->getId(), $group->id);
+    if (isset($group)) {
+      self::set_map($g2_group->getId(), $group->id);
+    }
   }
 
   static function import_user(&$queue) {
