@@ -141,24 +141,20 @@ var treeDroppable =  {
 var selectable = {
   filter: ".gMicroThumbContainer",
   selected: function(event, ui) {
-    $(ui.selected).addClass("gSelecting");
     setDrawerButtonState();
   },
   unselected: function(event, ui) {
     setDrawerButtonState();
-  },
-  stop: function(event) {
   }
 };
 
 // **************************************************************************
 // Event Handlers
-// MicroThumbContainer click
-var onMicroThumbContainerClick = function(event) {
-  if (!$(this).hasClass("gSelecting") && $(this).hasClass("ui-selected")) {
-    $(this).removeClass("ui-selected");
-  }
-  $(this).removeClass("gSelecting");
+// MicroThumbContainer mouseup
+var onMicroThumbContainerMouseup = function(event) {
+  // For simplicity always remove the ui-selected class.  If it was unselected
+  // it will get added back
+  $(this).removeClass("ui-selected");
 
   setDrawerButtonState();
 };
@@ -232,7 +228,7 @@ var getMicroThumbsCallback = function(json, textStatus) {
   if (json.count > 0) {
     $("#gMicroThumbGrid").append(json.data);
     retrieveMicroThumbs();
-    $(".gMicroThumbContainer").click(onMicroThumbContainerClick);
+    $(".gMicroThumbContainer").mouseup(onMicroThumbContainerMouseup);
     $(".gMicroThumbContainer").mousemove(onMicroThumbContainerMousemove);
     $(".gMicroThumbContainer").draggable(draggable);
   }
@@ -338,7 +334,7 @@ function organize_dialog_init() {
   //showLoading("#gDialog");
 
   $("#gMicroThumbPanel").droppable(thumbDroppable);
-  $("#gMicroThumbGrid").selectable(selectable);
+  $("#gMicroThumbPanel").selectable(selectable);
   $("#gOrganizeEditDrawerHandle a").click(drawerHandleButtonsClick);
 }
 
@@ -398,6 +394,9 @@ function get_url(uri, parms) {
 function setDrawerButtonState() {
   switch ($("#gMicroThumbGrid li.ui-selected").length) {
   case 0:
+    if ($("#gOrganizeEditDrawerPanel::visible").length) {
+      $("#gOrganizeEditHandleButtonsLeft a[ref='edit']").trigger("click");
+    }
     $("#gOrganizeEditHandleButtonsLeft a").attr("disabled", true);
     $("#gOrganizeEditHandleButtonsLeft a").addClass("ui-state-disabled");
     break;
