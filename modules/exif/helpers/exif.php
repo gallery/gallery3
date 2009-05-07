@@ -42,12 +42,12 @@ class exif_Core {
               $value = utf8_encode($value);
             }
             $data[] = sprintf("(%d, '%s', '%s')", $item->id, $field, $db->escape_str($value));
-          }
 
-          if ($field == "DateTime") {
-            $item->captured = strtotime($value);
-          } else if ($field == "Caption" && !$item->description) {
-            $item->description = $value;
+            if ($field == "DateTime") {
+              $item->captured = strtotime($value);
+            } else if ($field == "Caption" && !$item->description) {
+              $item->description = $value;
+            }
           }
         }
       }
@@ -65,10 +65,10 @@ class exif_Core {
               "(%d, '%s', '%s')",
               $item->id, $keyword,
               $db->escape_str($value));
-          }
 
-          if ($keyword == "Caption" && !$item->description) {
-            $item->description = $value;
+            if ($keyword == "Caption" && !$item->description) {
+              $item->description = $value;
+            }
           }
         }
       }
