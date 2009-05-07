@@ -39,13 +39,7 @@
         <div id="gOrganizeEditDrawer" class="yui-u">
           <div id="gOrganizeEditDrawerPanel" class="yui-gf">
             <div id="gOrganizeFormThumbs" class="yui-u first">
-              <div id="gOrganizeFormNoImage">
-                <h3><?= t("No Image Selected") ?></h3>
-              </div>
-              <div id="gOrganizeFormThumb" style="display: none"></div>
-              <div id="gOrganizeFormMultipleImages" style="display:none">
-                <h3><?= t("Multiple Images Selected") ?></h3>
-              </div>
+              <ul id="gOrganizeFormThumbStack" />
             </div>
             <?= $edit_form ?>
           </div>

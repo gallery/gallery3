@@ -192,9 +192,12 @@ function drawerHandleButtonsClick(event) {
       $("#gOrganizeEditDrawerPanel").animate(
         {"height": "toggle", "display": "block"},
         {duration: "fast",
-          step: function() {
-            $("#gMicroThumbPanel").height(heightMicroThumbPanel - $(this).height());
-          }
+         complete: function() {
+           setSelectedThumbs();
+         },
+         step: function() {
+           $("#gMicroThumbPanel").height(heightMicroThumbPanel - $(this).height());
+         }
       });
       break;
     case "select-all":
@@ -411,6 +414,33 @@ function setDrawerButtonState() {
     $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").attr("disabled", true);
     $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").addClass("ui-state-disabled");
   }
+  setSelectedThumbs();
+}
+
+function setSelectedThumbs() {
+  $("#gOrganizeFormThumbStack").empty();
+  if (!$("#gOrganizeEditDrawerPanel::visible").length) {
+    return;
+  }
+  var position = $("#gOrganizeFormThumbStack").position();
+  var beginLeft = position.left;
+  var beginTop = 50;
+  var zindex = 2000;
+  $("li.ui-selected").each(function(i) {
+    var clone = $(this).clone();
+    $(clone).attr("id", "edit_clone_" + $(this).attr("ref"));
+    $("#gOrganizeFormThumbStack").append(clone);
+    $(clone).removeClass("ui-draggable");
+    $(clone).removeClass("ui-selected");
+    $(clone).css("margin-top", beginTop);
+    $(clone).css("left", beginLeft);
+    $(clone).css("z-index", zindex--);
+
+    if (i < 9) {
+      beginTop -= 5;
+      beginLeft += 5;
+    }
+  });
 }
 
 function serializeItemIds(selector) {

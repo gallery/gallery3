@@ -212,12 +212,19 @@
 }
 
 #gOrganizeFormThumbs {
-  padding: .5em;
-  height: 7em;
   overflow: hidden;
+  min-height: 150px;
 }
 
 #gOrganizeFormThumbs div {
   margin: 0;
   text-align: center;
+  background: transparent none repeat scroll 0 0;
+}
+
+#gOrganizeFormThumbs .gMicroThumbContainer {
+  display: block;
+  float: left;
+  opacity: 1;
+  position: absolute;
 }
