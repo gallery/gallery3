@@ -82,7 +82,7 @@ class album_Core {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gEditAlbumForm"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_album")->label(t("Edit Album"));
-    
+
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
@@ -95,6 +95,7 @@ class album_Core {
     $sort_order->dropdown("column", array("id" => "gAlbumSortColumn"))
       ->label(t("Sort by"))
       ->options(array("weight" => t("Default"),
+                      "captured" => t("Capture Date"),
                       "created" => t("Creation Date"),
                       "title" => t("Title"),
                       "updated" => t("Updated Date"),
