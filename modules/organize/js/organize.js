@@ -157,7 +157,7 @@ var selectable = {
 var onMicroThumbContainerMouseup = function(event) {
   // For simplicity always remove the ui-selected class.  If it was unselected
   // it will get added back
-  $(this).removeClass("ui-selected");
+  $(this).toggleClass("ui-selected");
 
   setDrawerButtonState();
 };

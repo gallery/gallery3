@@ -18,11 +18,11 @@
 
 #gDialog .yui-gf div.first {
   width: 20%;
-} 
+}
 
 #gDialog .yui-gf .yui-u {
   width: 80%;
-} 
+}
 
 /*******************************************************************
  * Album Tree styling
@@ -98,6 +98,7 @@
   font-size: .7em;
   height: 9em;
   margin-bottom: 1em;
+  margin-left: 1em;
   opacity: .4;
   padding: 0 .5em;
 }
@@ -128,7 +129,7 @@
   padding: 0;
   overflow: visible;
 }
-			
+
 #gDragHelper .gMicroThumbContainer {
   display: block;
   margin: 0;
@@ -140,7 +141,7 @@
   height: auto;
   width: auto;
 }
-			
+
 
 /****************************************************************
  * Organize Edit Drawer styling
