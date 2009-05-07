@@ -11,11 +11,14 @@ var heightMicroThumbPanel;
 // JQuery UI Widgets
 // Draggable
 var draggable = {
-  cancel: ".gMicroThumbContainer:not(.ui-selected)",
   handle: ".gMicroThumbContainer.ui-selected",
   revert: true,
   zindex: 2000,
   helper: function(event, ui) {
+    if (!$(event.currentTarget).hasClass("ui-selected")) {
+      $(event.currentTarget).addClass("ui-selected");
+      setDrawerButtonState();
+    }
     $("#gMicroThumbPanel").append("<div id=\"gDragHelper\"><ul></ul></div>");
     var beginTop = event.pageY;
     var beginLeft = event.pageX;
