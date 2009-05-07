@@ -87,7 +87,7 @@ $config['log_threshold'] = 3;
  * Message logging directory.
  */
 $config['log_directory'] = VARPATH . "logs";
-if (!is_writable($config['log_directory'])) {
+if (@!is_writable($config['log_directory'])) {
   $config['log_threshold'] = 0;
 }
 
