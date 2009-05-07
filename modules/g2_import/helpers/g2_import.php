@@ -21,6 +21,7 @@ function g2() {
   $args = func_get_arg(0);
   $ret = array_shift($args);
   if ($ret) {
+    Kohana::log("error", "Gallery2 function failed with: " . $ret->getAsText());
     throw new Exception("@todo G2_FUNCTION_FAILED");
   }
   if (count($args) == 1) {
