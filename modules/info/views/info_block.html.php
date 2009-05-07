@@ -17,6 +17,12 @@
       <td><?= $item->name; ?></td>
     </tr>
     <? endif ?>
+    <? if ($item->captured): ?>
+    <tr>
+      <th><?= t("Captured:") ?></th>
+      <td><?= date("M j, Y H:i:s", $item->captured)?></td>
+    </tr>
+    <? endif ?>
     <? if ($item->owner): ?>
     <tr>
       <th><?= t("Owner:") ?></th>

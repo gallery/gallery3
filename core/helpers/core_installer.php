@@ -51,6 +51,7 @@ class core_installer {
 
       $db->query("CREATE TABLE {items} (
                    `album_cover_item_id` int(9) default NULL,
+                   `captured` int(9) default NULL,
                    `created` int(9) default NULL,
                    `description` varchar(2048) default NULL,
                    `height` int(9) default NULL,

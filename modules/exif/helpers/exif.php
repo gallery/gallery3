@@ -43,8 +43,15 @@ class exif_Core {
             }
             $data[] = sprintf("(%d, '%s', '%s')", $item->id, $field, $db->escape_str($value));
           }
+
+          if ($field == "DateTime") {
+            $item->captured = strtotime($value);
+          } else if ($field == "Caption" && !$item->description) {
+            $item->description = $value;
+          }
         }
       }
+
       $size = getimagesize($item->file_path(), $info);
       if (is_array($info) && !empty($info["APP13"])) {
         $iptc = iptcparse($info["APP13"]);
@@ -59,6 +66,10 @@ class exif_Core {
               $item->id, $keyword,
               $db->escape_str($value));
           }
+
+          if ($keyword == "Caption" && !$item->description) {
+            $item->description = $value;
+          }
         }
       }
 
@@ -70,6 +81,7 @@ class exif_Core {
         $db->query($query);
       }
     }
+    $item->save();
 
     $record = ORM::factory("exif_record")->where("item_id", $item->id)->find();
     if (!$record->loaded) {
