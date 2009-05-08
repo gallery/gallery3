@@ -38,7 +38,7 @@ class exif_Core {
         foreach(self::_keys() as $field => $exifvar) {
           if (isset($exif_raw[$exifvar[0]][$exifvar[1]])) {
             $value = $exif_raw[$exifvar[0]][$exifvar[1]];
-            if (mb_detect_encoding($value) != "UTF-8") {
+            if (function_exists("mb_detect_encoding") && mb_detect_encoding($value) != "UTF-8") {
               $value = utf8_encode($value);
             }
             $data[] = sprintf("(%d, '%s', '%s')", $item->id, $field, $db->escape_str($value));
