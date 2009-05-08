@@ -81,7 +81,7 @@ class REST_Controller extends Controller {
       return $this->_index();
     }
 
-    $resource = ORM::factory($this->resource_type, $function);
+    $resource = ORM::factory($this->resource_type, (int)$function);
     if (!$resource->loaded && $request_method != "post") {
       return Kohana::show_404();
     }
