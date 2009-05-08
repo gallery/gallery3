@@ -19,7 +19,7 @@
  */
 class Database extends Database_Core {
   protected $_table_names;
-  
+
   public function open_paren() {
     $this->where[] = "(";
     return $this;
@@ -78,14 +78,15 @@ class Database extends Database_Core {
       $len = strlen($prefix);
       foreach($this->list_tables() as $table_name) {
         if ($len > 0) {
-          $naked_name = strpos($table_name, $prefix) !== 0 ? $table_name : substr($table_name, $len);
+          $naked_name = strpos($table_name, $prefix) !== 0 ?
+            $table_name : substr($table_name, $len);
         } else {
           $naked_name = $table_name;
         }
         $this->_table_names["{{$naked_name}}"] = $table_name;
       }
     }
-    
+
     return empty($this->_table_names) ? $sql : strtr($sql, $this->_table_names);
   }
 }
