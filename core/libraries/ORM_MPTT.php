@@ -286,8 +286,8 @@ class ORM_MPTT_Core extends ORM {
    * Lock the tree to prevent concurrent modification.
    */
   protected function lock() {
-    $result = $this->db->query("SELECT GET_LOCK('{$this->table_name}', 1) AS L")->current();
-    if (empty($result->L)) {
+    $result = $this->db->query("SELECT GET_LOCK('{$this->table_name}', 1) AS l")->current();
+    if (empty($result->l)) {
       throw new Exception("@todo UNABLE_TO_LOCK_EXCEPTION");
     }
   }

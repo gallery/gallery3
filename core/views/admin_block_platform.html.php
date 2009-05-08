@@ -10,6 +10,6 @@
     <?= t("PHP: %php_version", array("php_version" => phpversion())) ?>
   </li>
   <li>
-    <?= t("MySQL: %mysql_version", array("mysql_version" => Database::instance()->query("SELECT version() as V")->current()->V)) ?>
+    <?= t("MySQL: %mysql_version", array("mysql_version" => Database::instance()->query("SELECT version() as v")->current()->v)) ?>
   </li>
 </ul>
