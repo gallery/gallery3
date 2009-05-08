@@ -49,7 +49,8 @@ class Simple_Uploader_Controller extends Controller {
       try {
         $title = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
         $path_info = pathinfo($temp_filename);
-        if (in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
+        if (array_key_exists("extension", $path_info) &&
+            in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
           $movie = movie::create($album, $temp_filename, $title, $title);
           log::success("content", t("Added a movie"),
                        html::anchor("movies/$movie->id", t("view movie")));
