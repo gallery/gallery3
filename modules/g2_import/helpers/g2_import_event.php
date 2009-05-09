@@ -21,4 +21,8 @@ class g2_import_event_Core {
   static function item_before_delete($item) {
     Database::instance()->delete("g2_maps", array("g3_id" => $item->id));
   }
+
+  static function item_created($item) {
+    g2_import::copy_matching_thumbnails_and_resizes($item);
+  }
 }

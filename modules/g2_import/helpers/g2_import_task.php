@@ -59,7 +59,7 @@ class g2_import_task_Core {
     }
 
     $modes = array("groups", "users", "albums", "photos", "comments", "done");
-    while (!$task->done && microtime(true) - $start < 1) {
+    while (!$task->done && microtime(true) - $start < 1.5) {
       if ($i >= ($stats[$modes[$mode]] - 1)) {
         $i = 0;
         $mode++;

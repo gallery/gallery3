@@ -21,11 +21,17 @@ class Admin_g2_import_Controller extends Admin_Controller {
   public function index() {
     if (g2_import::is_configured()) {
       g2_import::init();
+      $g2_stats = g2_import::stats();
+      $g2_sizes = g2_import::common_sizes();
     }
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_g2_import.html");
     $view->content->form = $this->_get_import_form();
+    $view->content->g2_stats = $g2_stats;
+    $view->content->g2_sizes = $g2_sizes;
+    $view->content->thumb_size = module::get_var("core", "thumb_size");
+    $view->content->resize_size = module::get_var("core", "resize_size");
     print $view;
   }
 

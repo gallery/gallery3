@@ -35,6 +35,8 @@ class g2_import_Core {
   public static $init = false;
   public static $map = array();
 
+  private static $current_g2_item = null;
+
   static function is_configured() {
     return module::get_var("g2_import", "embed_path");
   }
@@ -94,6 +96,7 @@ class g2_import_Core {
     $stats["groups"] = g2(GalleryCoreApi::fetchGroupCount());
     $stats["albums"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryAlbumItem"));
     $stats["photos"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryPhotoItem"));
+    $stats["movies"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryMovieItem"));
     list (, $stats["comments"]) = g2(GalleryCommentHelper::fetchAllComments($root_album_id, 1));
     return $stats;
   }
@@ -232,7 +235,7 @@ class g2_import_Core {
       return;
     }
 
-    $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
+    self::$current_g2_item = $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
     $parent = ORM::factory("item", self::map($g2_item->getParentId()));
     switch ($g2_item->getEntityType()) {
     case "GalleryPhotoItem":
@@ -266,6 +269,101 @@ class g2_import_Core {
     if (isset($item)) {
       self::set_map($g2_item_id, $item->id);
     }
+  }
+
+  // If the thumbnails and resizes created for the Gallery2 photo match the dimensions of the
+  // ones we expect to create for Gallery3, then copy the files over instead of recreating them.
+  static function copy_matching_thumbnails_and_resizes($item) {
+    // Precaution: if the Gallery2 item was watermarked, or we have the Gallery3 watermark module
+    // active then we'd have to do something a lot more sophisticated here.  For now, just skip
+    // this step in those cases.
+    if (module::is_installed("watermark")) {
+      return;
+    }
+
+    // For now just do the copy for photos and movies.  Albums are tricky because we're may not
+    // yet be setting their album cover properly.
+    // @todo implement this for albums also
+    if (!$item->is_movie() && !$item->is_photo()) {
+      return;
+    }
+
+    $g2_item_id = self::$current_g2_item->getId();
+    $derivatives = g2(GalleryCoreApi::fetchDerivativesByItemIds(array($g2_item_id)));
+
+    $target_thumb_size = module::get_var("core", "thumb_size");
+    $target_resize_size = module::get_var("core", "resize_size");
+    foreach ($derivatives[$g2_item_id] as $derivative) {
+      if ($derivative->getPostFilterOperations()) {
+        // Let's assume for now that this is a watermark operation, which we can't handle.
+        continue;
+      }
+
+      if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
+          $item->thumb_dirty &&
+          ($derivative->getWidth() == $target_thumb_size ||
+           $derivative->getHeight() == $target_thumb_size)) {
+        copy(g2($derivative->fetchPath()), $item->thumb_path());
+        $item->thumb_dirty = false;
+      }
+
+      if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_RESIZE &&
+          $item->resize_dirty &&
+          ($derivative->getWidth() == $target_resize_size ||
+           $derivative->getHeight() == $target_resize_size)) {
+        copy(g2($derivative->fetchPath()), $item->resize_path());
+        $item->resize_dirty = false;
+      }
+    }
+    $item->save();
+  }
+
+  static function common_sizes() {
+    global $gallery;
+    foreach (array("resize" => DERIVATIVE_TYPE_IMAGE_RESIZE,
+                   "thumb" => DERIVATIVE_TYPE_IMAGE_THUMBNAIL) as $type => $g2_enum) {
+      $results = g2($gallery->search(
+        "SELECT COUNT(*) AS c, [GalleryDerivativeImage::width] " .
+        "FROM [GalleryDerivativeImage], [GalleryDerivative] " .
+        "WHERE [GalleryDerivativeImage::id] = [GalleryDerivative::id] " .
+        "  AND [GalleryDerivative::derivativeType] = ? " .
+        "  AND [GalleryDerivativeImage::width] >= [GalleryDerivativeImage::height] " .
+        "GROUP BY [GalleryDerivativeImage::width] " .
+        "ORDER by c DESC",
+        array($g2_enum),
+        array("limit" => array(1))));
+      $row = $results->nextResult();
+      $sizes[$type] = array("size" => $row[1], "count" => $row[0]);
+
+      $results = g2($gallery->search(
+        "SELECT COUNT(*) AS c, [GalleryDerivativeImage::height] " .
+        "FROM [GalleryDerivativeImage], [GalleryDerivative] " .
+        "WHERE [GalleryDerivativeImage::id] = [GalleryDerivative::id] " .
+        "  AND [GalleryDerivative::derivativeType] = ? " .
+        "  AND [GalleryDerivativeImage::height] >= [GalleryDerivativeImage::width] " .
+        "GROUP BY [GalleryDerivativeImage::height] " .
+        "ORDER by c DESC",
+        array($g2_enum),
+        array("limit" => array(1))));
+      $row = $results->nextResult();
+      // Compare the counts.  If the best fitting height does not match the best fitting width,
+      // then pick the one with the largest count.  Otherwise, sum them.
+      if ($sizes[$type]["size"] != $row[1]) {
+        if ($row[0] > $sizes[$type["count"]]) {
+          $sizes[$type] = array("size" => $row[1], "count" => $row[0]);
+        }
+      } else {
+        $sizes[$type]["count"] += $row[0];
+      }
+
+      $results = g2($gallery->search(
+        "SELECT COUNT(*) FROM [GalleryDerivative] WHERE [GalleryDerivative::derivativeType] = ?",
+        array($g2_enum)));
+      $row = $results->nextResult();
+      $sizes[$type]["total"] = $row[0];
+    }
+
+    return $sizes;
   }
 
   static function extract_description($g2_item) {

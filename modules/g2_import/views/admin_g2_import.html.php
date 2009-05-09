@@ -12,10 +12,56 @@
 <div id="gAdminG2Import">
   <h1> <?= t("Import") ?> </h1>
   <div class="gSuccess">
-    <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
+    <p>
+      <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
+    </p>
   </div>
 
-  <?= t("You can perform an import on the <a href=\"%url\">maintenance page</a>",
+  <div class="gInfo">
+    <p>
+      <?= t("Your Gallery 2 has the following importable data in it") ?>
+    </p>
+    <ul>
+      <li>
+        <?= t2("1 user", "%count users", $g2_stats["users"]) ?>
+      </li>
+      <li>
+        <?= t2("1 group", "%count groups", $g2_stats["groups"]) ?>
+      </li>
+      <li>
+        <?= t2("1 album", "%count albums", $g2_stats["albums"]) ?>
+      </li>
+      <li>
+        <?= t2("1 photo", "%count photos", $g2_stats["photos"]) ?>
+      </li>
+      <li>
+        <?= t2("1 movie", "%count movies", $g2_stats["movies"]) ?>
+      </li>
+      <li>
+        <?= t2("1 comment", "%count comments", $g2_stats["comments"]) ?>
+      </li>
+    </ul>
+  </div>
+
+  <? if ($thumb_size != $g2_sizes["thumb"]["size"]): ?>
+  <div class="gWarning">
+    <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
+        array("g2_pixels" => $g2_sizes["thumb"]["size"],
+              "g3_pixels" => $thumb_size,
+              "url" => url::site("admin/theme_details"))) ?>
+  </div>
+  <? endif ?>
+
+  <? if ($resize_size != $g2_sizes["resize"]["size"]): ?>
+  <div class="gWarning">
+    <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
+        array("g2_pixels" => $g2_sizes["resize"]["size"],
+              "g3_pixels" => $resize_size,
+              "url" => url::site("admin/theme_details"))) ?>
+  </div>
+  <? endif ?>
+
+  <?= t("You can begin your import on the <a href=\"%url\">maintenance page</a>",
         array("url" => url::site("admin/maintenance"))) ?>
 </div>
 <? endif ?>
