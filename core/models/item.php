@@ -334,7 +334,7 @@ class Item_Model extends ORM_MPTT {
                                         FROM {items} WHERE id = $child_id)
        ORDER BY {$this->sort_column} {$this->sort_order}");
 
-    return $result->position;
+    return $result->current()->position;
   }
 
   /**
