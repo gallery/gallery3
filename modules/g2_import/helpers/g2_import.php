@@ -349,7 +349,7 @@ class g2_import_Core {
       // Compare the counts.  If the best fitting height does not match the best fitting width,
       // then pick the one with the largest count.  Otherwise, sum them.
       if ($sizes[$type]["size"] != $row[1]) {
-        if ($row[0] > $sizes[$type]["count"]]) {
+        if ($row[0] > $sizes[$type]["count"]) {
           $sizes[$type] = array("size" => $row[1], "count" => $row[0]);
         }
       } else {
