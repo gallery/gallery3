@@ -267,6 +267,10 @@ li.gError select {
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
+#gMessage {
+  width: 99%;
+}
+
 #gAdminAkismet .gSuccess,
 #gSiteStatus li,
 #gMessage li {
@@ -318,7 +322,7 @@ form p.gError {
 }
 
 .gSuccess {
-  background-color: #cfc;
+  background-color: #96EF95;
 }
 
 #gSiteStatus .gSuccess,

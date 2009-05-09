@@ -44,8 +44,10 @@ $(document).ready(function() {
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
-    $('.gItem').vAlign();
+    $(".gItem").vAlign();
   }
+
+  $("#gMessage li").showMessage();
 
   // Photo/Item item view only
   if ($("#gItem").length) {
@@ -93,7 +95,7 @@ $(document).ready(function() {
 });
 
 // Vertically align a block element's content
-(function ($) {
+(function () {
   $.fn.vAlign = function(container) {
     return this.each(function(i){
       if (container == null) {
@@ -165,4 +167,14 @@ function shortFormInit(formID) {
       $(this).val(eLabelVal);
     }
   });
+
+  (function () {
+    $.fn.showMessage = function(message) {
+      return this.each(function(i){
+        $(this).effect("highlight", {"color": "white"}, 3000);
+        $(this).animate({opacity: 1.0}, 6000);
+        $(this).fadeOut("slow");
+      });
+    };
+  })(jQuery);
 }
