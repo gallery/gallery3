@@ -4,14 +4,14 @@ $(document).ready(function(){
   $("ul.gMenu").addClass("sf-menu");
 
   // Superfish menu options
-  $('ul.sf-menu').superfish({
+  $("ul.sf-menu").superfish({
     delay: 500,
     animation: {
-      opacity: 'show',
-      height: 'show'
+      opacity: "show",
+      height: "show"
     },
-    pathClass: 'current',
-    speed: 'fast'
+    pathClass: "current",
+    speed: "fast"
   });
   $("#gSiteAdminMenu").css("display", "block");
 
@@ -23,8 +23,11 @@ $(document).ready(function(){
 
   if ($("#gPhotoStream").length) {
     // Vertically align thumbs in photostream
-    $('.gItem').vAlign();
+    $(".gItem").vAlign();
   }
+
+  // Apply status message effect
+  $("#gMessage li").showMessage();
 
   // Apply jQuery UI button css to submit inputs
   $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
@@ -72,7 +75,7 @@ function togglePanel(element, on_success) {
   var parent = $(element).parent().parent();
   var sHref = $(element).attr("href");
   var parentClass = $(parent).attr("class");
-  var ePanel = '<tr id="gPanel"><td colspan="6"></td></tr>';
+  var ePanel = "<tr id=\"gPanel\"><td colspan=\"6\"></td></tr>";
 
   if ($("#gPanel").length) {
     $("#gPanel").slideUp("slow");
@@ -125,21 +128,28 @@ function togglePanel(element, on_success) {
 }
 
 // Vertically align a block element's content
-(function ($) {
+(function () {
   $.fn.vAlign = function(container) {
     return this.each(function(i){
       if (container == null) {
-        container = 'div';
+        container = "div";
       }
       $(this).html("<" + container + ">" + $(this).html() + "</" + container + ">");
       var el = $(this).children(container + ":first");
       var elh = $(el).height();
       var ph = $(this).height();
       var nh = (ph - elh) / 2;
-      $(el).css('margin-top', nh);
+      $(el).css("margin-top", nh);
     });
   };
 })(jQuery);
 
-
-
+(function () {
+  $.fn.showMessage = function(message) {
+    return this.each(function(i){
+      $(this).effect("highlight", {"color": "white"}, 3000);
+      $(this).animate({opacity: 1.0}, 6000);
+      $(this).fadeOut("slow");
+    });
+  };
+})(jQuery);

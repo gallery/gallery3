@@ -47,6 +47,7 @@ $(document).ready(function() {
     $(".gItem").vAlign();
   }
 
+  // Apply status message effect
   $("#gMessage li").showMessage();
 
   // Photo/Item item view only
