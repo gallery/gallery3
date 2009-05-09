@@ -177,12 +177,12 @@ class Server_Add_Controller extends Controller {
       $filename = $file->getFilename();
       if ($filename[0] != ".") {
         if ($file->isDir()) {
-          $directory_list["$filename"] = array("path" => $file->getPathname(), "is_dir" => true);
+          $directory_list[$filename] = array("path" => $file->getPathname(), "is_dir" => true);
         } else {
           $extension = strtolower(substr(strrchr($filename, '.'), 1));
           if ($file->isReadable() &&
               in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
-            $file_list["$filename"] = array("path" => $file->getPathname(), "is_dir" => false);
+            $file_list[$filename] = array("path" => $file->getPathname(), "is_dir" => false);
           }
         }
       }
@@ -192,7 +192,7 @@ class Server_Add_Controller extends Controller {
     ksort($file_list);
 
     // We can't use array_merge here because if a file name is numeric, it will
-    // get renumbered, so lets do it our selves
+    // get renumbered, so lets do it ourselves
     foreach ($file_list as $file => $fileinfo) {
       $directory_list[$file] = $fileinfo;
     }
