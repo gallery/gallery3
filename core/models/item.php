@@ -327,11 +327,14 @@ class Item_Model extends ORM_MPTT {
    * the first child in the album is at position 1.
    */
   public function get_position($child_id) {
-    return ORM::factory("item")
-      ->where("parent_id", $this->id)
-      ->where("id <=", $child_id)
-      ->orderby(array($this->sort_column => $this->sort_order))
-      ->count_all();
+    $result = Database::instance()->query("
+      SELECT COUNT(*) AS position FROM {items}
+       WHERE parent_id = {$this->parent_id}
+         AND {$this->sort_column} <= (SELECT {$this->sort_column}
+                                        FROM {items} WHERE id = $child_id)
+       ORDER BY {$this->sort_column} {$this->sort_order}");
+
+    return $result->position;
   }
 
   /**
