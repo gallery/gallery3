@@ -63,7 +63,6 @@ class Albums_Controller extends Items_Controller {
     $template->set_global("children", $album->viewable()->children($page_size, $offset));
     $template->set_global("children_count", $children_count);
     $template->set_global("parents", $album->parents());
-    $template->set_global("thumb_proportion", $this->thumb_proportion());
     $template->content = new View("album.html");
 
     $album->view_count++;
@@ -210,13 +209,4 @@ class Albums_Controller extends Items_Controller {
 
     print album::get_edit_form($album);
   }
-
-  /**
-   * Proportion of the current thumb_size's to default
-   * @return int
-   */
-  public function thumb_proportion() {
-    return module::get_var("core", "thumb_size", 200) / 200;
-  }
-
 }

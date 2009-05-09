@@ -47,11 +47,24 @@ class Theme_View_Core extends View {
     $this->set_global("theme", $this);
     $this->set_global("user", user::active());
     $this->set_global("page_type", $page_type);
+    if ($page_type == "album") {
+      $this->set_global("thumb_proportion", $this->thumb_proportion());
+    }
 
     $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
     if ($maintenance_mode) {
       message::warning(t("This site is currently in maintenance mode"));
     }
+  }
+
+  /**
+   * Proportion of the current thumb_size's to default
+   * @return int
+   */
+  public function thumb_proportion() {
+    // @TODO change the 200 to a theme supplied value when and if we come up with an
+    // API to allow the theme to set defaults.
+    return module::get_var("core", "thumb_size", 200) / 200;
   }
 
   public function url($path, $absolute_url=false) {
