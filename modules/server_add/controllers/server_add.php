@@ -93,7 +93,7 @@ class Server_Add_Controller extends Controller {
                                 "status" => t("No Eligible files, import cancelled"))));
       return;
     }
-    
+
     $task_def = Task_Definition::factory()
       ->callback("server_add_task::add_from_server")
       ->description(t("Add photos or movies from the local server"))
@@ -152,7 +152,7 @@ class Server_Add_Controller extends Controller {
     if (!$task->done) {
       message::warning(t("Add from server was cancelled prior to completion"));
     }
-    
+
     batch::stop();
     print json_encode(array("result" => "success"));
   }
@@ -177,12 +177,12 @@ class Server_Add_Controller extends Controller {
       $filename = $file->getFilename();
       if ($filename[0] != ".") {
         if ($file->isDir()) {
-          $directory_list[$filename] = array("path" => $file->getPathname(), "is_dir" => true);
+          $directory_list["$filename"] = array("path" => $file->getPathname(), "is_dir" => true);
         } else {
           $extension = strtolower(substr(strrchr($filename, '.'), 1));
           if ($file->isReadable() &&
               in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
-            $file_list[$filename] = array("path" => $file->getPathname(), "is_dir" => false);
+            $file_list["$filename"] = array("path" => $file->getPathname(), "is_dir" => false);
           }
         }
       }
@@ -190,6 +190,12 @@ class Server_Add_Controller extends Controller {
 
     ksort($directory_list);
     ksort($file_list);
-    return array_merge($directory_list, $file_list);
+
+    // We can't use array_merge here because if a file name is numeric, it will
+    // get renumbered, so lets do it our selves
+    foreach ($file_list as $file => $fileinfo) {
+      $directory_list[$file] = $fileinfo;
+    }
+    return $directory_list;
   }
 }
