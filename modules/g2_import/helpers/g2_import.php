@@ -303,20 +303,22 @@ class g2_import_Core {
           $item->thumb_dirty &&
           ($derivative->getWidth() == $target_thumb_size ||
            $derivative->getHeight() == $target_thumb_size)) {
-        copy(g2($derivative->fetchPath()), $item->thumb_path());
-        $item->thumb_height = $derivative->getHeight();
-        $item->thumb_width = $derivative->getWidth();
-        $item->thumb_dirty = false;
+        if (@copy(g2($derivative->fetchPath()), $item->thumb_path())) {
+          $item->thumb_height = $derivative->getHeight();
+          $item->thumb_width = $derivative->getWidth();
+          $item->thumb_dirty = false;
+        }
       }
 
       if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_RESIZE &&
           $item->resize_dirty &&
           ($derivative->getWidth() == $target_resize_size ||
            $derivative->getHeight() == $target_resize_size)) {
-        copy(g2($derivative->fetchPath()), $item->resize_path());
-        $item->resize_height = $derivative->getHeight();
-        $item->resize_width = $derivative->getWidth();
-        $item->resize_dirty = false;
+        if (@copy(g2($derivative->fetchPath()), $item->resize_path())) {
+          $item->resize_height = $derivative->getHeight();
+          $item->resize_width = $derivative->getWidth();
+          $item->resize_dirty = false;
+        }
       }
     }
     $item->save();
