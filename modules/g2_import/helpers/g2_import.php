@@ -204,6 +204,7 @@ class g2_import_Core {
 
     // @todo support "keywords", "originationTimestamp", and "random" sort orders.
     $order_map = array(
+      "originationTimestamp" => "captured",
       "creationTimestamp" => "created",
       "description" => "description",
       "modificationTimestamp" => "updated",
@@ -223,7 +224,6 @@ class g2_import_Core {
 
     self::set_map($g2_album_id, $album->id);
 
-    // @todo import origination timestamp
     // @todo import keywords as tags
     // @todo import album highlights
   }
@@ -304,6 +304,8 @@ class g2_import_Core {
           ($derivative->getWidth() == $target_thumb_size ||
            $derivative->getHeight() == $target_thumb_size)) {
         copy(g2($derivative->fetchPath()), $item->thumb_path());
+        $item->thumb_height = $derivative->getHeight();
+        $item->thumb_width = $derivative->getWidth();
         $item->thumb_dirty = false;
       }
 
@@ -312,6 +314,8 @@ class g2_import_Core {
           ($derivative->getWidth() == $target_resize_size ||
            $derivative->getHeight() == $target_resize_size)) {
         copy(g2($derivative->fetchPath()), $item->resize_path());
+        $item->resize_height = $derivative->getHeight();
+        $item->resize_width = $derivative->getWidth();
         $item->resize_dirty = false;
       }
     }
