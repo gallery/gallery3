@@ -29,8 +29,7 @@ class Login_Controller extends Controller {
     list ($valid, $form) = $this->_auth("login/auth_ajax");
     if ($valid) {
       print json_encode(
-        array("result" => "success",
-              "location" => url::site("")));
+        array("result" => "success"));
     } else {
       print json_encode(
         array("result" => "error",
