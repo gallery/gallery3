@@ -33,6 +33,8 @@
             <? elseif ($intent === access::DENY): ?>
               <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" class="gDenied">denied</a>
             <? elseif ($intent === access::ALLOW): ?>
+              <? // skip over the "allowed/denied by parent" state when we're setting permissions on ?>
+              <? // the root album, since it has no parent. ?>
               <? if ($item->id == 1): ?>
               <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" class="gAllowed">allowed</a>
               <? else: ?>
