@@ -26,8 +26,13 @@
 
   <div id="gPhoto">
     <?= $theme->resize_top($item) ?>
+    <? if (access::can("view_full", $item)): ?>
     <a href="#" class="gFullSizeLink" title="<?= t("View full size") ?>">
-<?= $item->resize_tag(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?></a>
+      <? endif ?>
+      <?= $item->resize_tag(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?>
+      <? if (access::can("view_full", $item)): ?>
+    </a>
+    <? endif ?>
     <?= $theme->resize_bottom($item) ?>
   </div>
 
