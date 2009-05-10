@@ -269,11 +269,18 @@ class g2_import_Core {
     if (isset($item)) {
       self::set_map($g2_item_id, $item->id);
     }
+
+    self::$current_g2_item = null;
   }
 
   // If the thumbnails and resizes created for the Gallery2 photo match the dimensions of the
   // ones we expect to create for Gallery3, then copy the files over instead of recreating them.
   static function copy_matching_thumbnails_and_resizes($item) {
+    // We only operate on items that are being imported
+    if (empty(self::$current_g2_item)) {
+      return;
+    }
+
     // Precaution: if the Gallery2 item was watermarked, or we have the Gallery3 watermark module
     // active then we'd have to do something a lot more sophisticated here.  For now, just skip
     // this step in those cases.
