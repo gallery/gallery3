@@ -63,6 +63,8 @@ class graphics_Core {
       ->where("target", $target)
       ->where("operation", $operation)
       ->delete_all();
+
+    self::mark_dirty($target == "thumb", $target == "resize");
   }
 
   /**
