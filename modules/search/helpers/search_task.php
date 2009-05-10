@@ -21,9 +21,9 @@ class search_task_Core {
   static function available_tasks() {
     // Delete extra search_records
     Database::instance()->query(
-      "DELETE {search_records}.* FROM {search_records} " .
-      "LEFT JOIN {items} ON ({search_records}.`item_id` = {items}.`id`) " .
-      "WHERE {items}.`id` IS NULL");
+      "DELETE FROM {search_records} " .
+      "WHERE {search_records}.`item_id` NOT IN " .
+      "(SELECT `id` FROM {items})");
 
     // Insert missing search_records
     Database::instance()->query(
