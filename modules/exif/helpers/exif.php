@@ -26,11 +26,11 @@ class exif_Core {
   protected static $exif_keys;
 
   static function extract($item) {
-    ORM::factory("exif_key")->where("item_id", $item->id)->delete_all();
+    $db = Database::instance();
+    $db->delete("exif_keys", array("item_id" => $item->id));
 
     // Only try to extract EXIF from photos
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {
-      $db = Database::instance();
       $data = array();
       require_once(MODPATH . "exif/lib/exif.php");
       $exif_raw = read_exif_data_raw($item->file_path(), false);
