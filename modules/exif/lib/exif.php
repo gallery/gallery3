@@ -767,9 +767,9 @@ if ($result['ValidJpeg'] == 1) {
 	$size = bin2hex(fread( $in, 2 ));
 
 	// LOOP THROUGH MARKERS TILL YOU GET TO FFE1  (exif marker)
-	//$abortCount = 0;
-	//while(!feof($in) && $data!='ffe1' && $data!='ffc0' && $data!='ffd9' && ++$abortCount < 200) {
-        while(!feof($in) && $data!='ffe1' && $data!='ffc0' && $data!='ffd9') {
+	$abortCount = 0;
+	while(!feof($in) && $data!='ffe1' && $data!='ffc0' && $data!='ffd9' && ++$abortCount < 200) {
+        //while(!feof($in) && $data!='ffe1' && $data!='ffc0' && $data!='ffd9') {
 		if ($data == 'ffe0') { // JFIF Marker
 			$result['ValidJFIFData'] = 1;
 			$result['JFIF']['Size'] = hexdec($size);
