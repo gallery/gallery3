@@ -106,7 +106,7 @@ class g2_import_Core {
     $stats["photos"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryPhotoItem"));
     $stats["movies"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryMovieItem"));
 
-    if (g2_import::g2_module_active("comment")) {
+    if (g2_import::g2_module_active("comment") && module::is_installed("comment")) {
       list (, $stats["comments"]) = g2(GalleryCommentHelper::fetchAllComments($root_album_id, 1));
     } else {
       $stats["comments"] = 0;
@@ -301,6 +301,14 @@ class g2_import_Core {
   }
 
   /**
+   * Import a single comment.
+   */
+  static function import_comment(&$queue) {
+    $g2_comment_id = array_shift($queue);
+    $g2_comment = g2(GalleryCoreApi::loadEntitiesById($g2_comment_id));
+  }
+
+  /**
    * If the thumbnails and resizes created for the Gallery2 photo match the dimensions of the
    * ones we expect to create for Gallery3, then copy the files over instead of recreating them.
    */
@@ -432,7 +440,7 @@ class g2_import_Core {
 
   /**
    * Get a set of photo and movie ids from Gallery 2 greater than $min_id.  We use this to get the
-   * next chunk of photo/movie ids to import.
+   * next chunk of photos/movies to import.
    */
   static function get_item_ids($min_id) {
     global $gallery;
@@ -445,6 +453,27 @@ class g2_import_Core {
       "AND [GalleryEntity::entityType] IN ('GalleryPhotoItem', 'GalleryMovieItem') " .
       "AND [GalleryItem::id] > ? " .
       "ORDER BY [GalleryItem::id] ASC",
+      array($min_id),
+      array("limit" => array("count" => 100))));
+    while ($result = $results->nextResult()) {
+      $ids[] = $result[0];
+    }
+    return $ids;
+  }
+
+  /**
+   * Get a set of comment ids from Gallery 2 greater than $min_id.  We use this to get the
+   * next chunk of comments to import.
+   */
+  static function get_comment_ids($min_id) {
+    global $gallery;
+
+    $ids = array();
+    $results = g2($gallery->search(
+      "SELECT [GalleryComment::id] " .
+      "FROM [GalleryComment] " .
+      "WHERE [GalleryComment::publishStatus] = 0 " . // 0 == COMMENT_PUBLISH_STATUS_PUBLISHED
+      "AND   [GalleryComment::id] > ?",
       array($min_id),
       array("limit" => array("count" => 100))));
     while ($result = $results->nextResult()) {

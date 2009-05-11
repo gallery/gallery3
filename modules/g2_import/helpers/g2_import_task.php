@@ -58,11 +58,16 @@ class g2_import_task_Core {
       }
     }
 
-    $modes = array("groups", "users", "albums", "photos", "comments", "done");
+    $modes = array("groups", "users", "albums", "photos");
+    if (g2_import::g2_module_active("comment") && module::is_installed("comment")) {
+      $modes[] = "comments";
+    }
+    $modes[] = "done";
     while (!$task->done && microtime(true) - $start < 1.5) {
       if ($i >= ($stats[$modes[$mode]] - 1)) {
         $i = 0;
         $mode++;
+        $task->set("last_id", 0);
         $queue = array();
       }
 
@@ -91,7 +96,6 @@ class g2_import_task_Core {
           $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
         }
         g2_import::import_album($queue);
-        $task->set("queue", $queue);
         $task->status = t(
           "Importing albums %count / %total", array("count" => $i, "total" => $stats["albums"]));
         break;
@@ -108,8 +112,14 @@ class g2_import_task_Core {
         break;
 
       case "comments":
+        if (empty($queue)) {
+          $task->set("queue", $queue = g2_import::get_comment_ids($task->get("last_id", 0)));
+          $task->set("last_id", end($queue));
+        }
+        g2_import::import_comment($queue);
         $task->status = t("Importing comments %count / %total",
                           array("count" => $i, "total" => $stats["comments"]));
+
         break;
 
       case "done":
