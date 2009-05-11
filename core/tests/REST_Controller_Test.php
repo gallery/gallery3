@@ -19,9 +19,14 @@
  */
 class REST_Controller_Test extends Unit_Test_Case {
   public function setup() {
+    $this->_post = $_POST;
     $this->mock_controller = new Mock_RESTful_Controller("mock");
     $this->mock_not_loaded_controller = new Mock_RESTful_Controller("mock_not_loaded");
     $_POST = array();
+  }
+
+  public function teardown() {
+    $_POST = $this->_post;
   }
 
   public function dispatch_index_test() {

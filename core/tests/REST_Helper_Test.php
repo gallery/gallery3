@@ -18,6 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class REST_Helper_Test extends Unit_Test_Case {
+  public function setup() {
+    $this->_post = $_POST;
+  }
+
+  public function teardown() {
+    $_POST = $this->_post;
+  }
+
   public function request_method_test() {
     foreach (array("GET", "POST") as $method) {
       foreach (array("", "PUT", "DELETE") as $tunnel) {
