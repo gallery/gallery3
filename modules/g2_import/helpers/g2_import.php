@@ -88,6 +88,15 @@ class g2_import_Core {
     return $versions["gallery"];
   }
 
+  static function g2_module_active($module) {
+    static $plugin_list;
+    if (!$plugin_list) {
+      $plugin_list = g2(GalleryCoreApi::fetchPluginList("module"));
+    }
+
+    return @$plugin_list[$module]["active"];
+  }
+
   static function stats() {
     GalleryCoreApi::requireOnce("modules/comment/classes/GalleryCommentHelper.class");
 
@@ -97,7 +106,12 @@ class g2_import_Core {
     $stats["albums"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryAlbumItem"));
     $stats["photos"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryPhotoItem"));
     $stats["movies"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryMovieItem"));
-    list (, $stats["comments"]) = g2(GalleryCommentHelper::fetchAllComments($root_album_id, 1));
+
+    if (g2_import::g2_module_active("comment")) {
+      list (, $stats["comments"]) = g2(GalleryCommentHelper::fetchAllComments($root_album_id, 1));
+    } else {
+      $stats["comments"] = 0;
+    }
     return $stats;
   }
 

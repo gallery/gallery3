@@ -11,11 +11,11 @@
 <? if (g2_import::is_initialized()): ?>
 <div id="gAdminG2Import">
   <h1> <?= t("Import") ?> </h1>
-  <div class="gSuccess">
-    <p>
+  <ul id="gMessage">
+    <li class="gSuccess">
       <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
-    </p>
-  </div>
+    </li>
+  </ul>
 
   <div class="gInfo">
     <p>
