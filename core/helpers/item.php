@@ -53,6 +53,10 @@ class item_Core {
     $parent->thumb_dirty = 1;
     $parent->save();
     graphics::generate($parent);
+    $grand_parent = $parent->parent();
+    if ($grand_parent && $grand_parent->album_cover_item_id == null)  {
+      item::make_album_cover($parent);
+    }
   }
 
   static function remove_album_cover($album) {
