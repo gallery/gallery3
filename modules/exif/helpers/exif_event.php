@@ -23,6 +23,6 @@ class exif_event_Core {
   }
 
   static function item_before_delete($item) {
-    Database::instance()->delete("exif_records", array("item_id" => $item_id));
+    Database::instance()->delete("exif_records", array("item_id" => $item->id));
   }
 }
