@@ -42,7 +42,10 @@ class exif_Core {
             $keys[$field] = utf8::clean($value);
 
             if ($field == "DateTime") {
-              $item->captured = strtotime($value);
+              $time = strtotime($value);
+              if ($time > 0) {
+                $item->captured = $time;
+              }
             } else if ($field == "Caption" && !$item->description) {
               $item->description = $value;
             }
