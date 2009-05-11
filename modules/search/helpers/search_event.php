@@ -21,7 +21,7 @@ class search_event_Core {
   static function item_created($item) {
     $record = ORM::factory("search_record");
     $record->item_id = $item->id;
-    $record->save();
+    search::update_record($record);
   }
 
   static function item_updated($old_item, $new_item) {
