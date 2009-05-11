@@ -248,12 +248,17 @@ class Item_Model extends ORM_MPTT {
    */
   public function relative_path() {
     if (empty($this->relative_path)) {
-      foreach ($this->parents() as $parent) {
-        if ($parent->id > 1) {
-          $paths[] = $parent->name;
-        }
+      $paths = array();
+      foreach (Database::instance()
+               ->select("name")
+               ->from("items")
+               ->where("`left` <= {$this->left}")
+               ->where("`right` >= {$this->right}")
+               ->where("id <> 1")
+               ->orderby("left", "ASC")
+               ->get() as $row) {
+        $paths[] = $row->name;
       }
-      $paths[] = $this->name;
       $this->relative_path = implode($paths, "/");
     }
     return $this->relative_path;
