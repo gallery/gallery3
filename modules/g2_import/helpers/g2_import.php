@@ -17,20 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-function g2() {
-  $args = func_get_arg(0);
-  $ret = array_shift($args);
-  if ($ret) {
-    Kohana::log("error", "Gallery2 call failed with: " . $ret->getAsText());
-    throw new Exception("@todo G2_FUNCTION_FAILED");
-  }
-  if (count($args) == 1) {
-    return $args[0];
-  } else {
-    return $args;
-  }
-}
-
 class g2_import_Core {
   public static $init = false;
   public static $map = array();
@@ -62,6 +48,9 @@ class g2_import_Core {
     return file_exists($embed_path) && g2_import::init_embed($embed_path);
   }
 
+  /**
+   * Initialize the embedded Gallery2 instance.  Call this before any other Gallery2 calls.
+   */
   static function init_embed($embed_path) {
     require($embed_path);
     if (!class_exists("GalleryEmbed")) {
@@ -82,12 +71,18 @@ class g2_import_Core {
     return true;
   }
 
+  /**
+   * Return the version of Gallery 2 (eg "2.3")
+   */
   static function version() {
     $core = g2(GalleryCoreApi::loadPlugin("module", "core"));
     $versions = $core->getInstalledVersions();
     return $versions["gallery"];
   }
 
+  /**
+   * Return true if the given Gallery 2 module is active.
+   */
   static function g2_module_active($module) {
     static $plugin_list;
     if (!$plugin_list) {
@@ -97,6 +92,10 @@ class g2_import_Core {
     return @$plugin_list[$module]["active"];
   }
 
+  /**
+   * Return a set of statistics about the number of users, groups, albums, photos, movies and
+   * comments available for import from the Gallery 2 instance.
+   */
   static function stats() {
     GalleryCoreApi::requireOnce("modules/comment/classes/GalleryCommentHelper.class");
 
@@ -115,6 +114,9 @@ class g2_import_Core {
     return $stats;
   }
 
+  /**
+   * Import a single group.
+   */
   static function import_group(&$queue) {
     $g2_group_id = array_shift($queue);
     if (self::map($g2_group_id)) {
@@ -144,6 +146,9 @@ class g2_import_Core {
     }
   }
 
+  /**
+   * Import a single user.
+   */
   static function import_user(&$queue) {
     $g2_user_id = array_shift($queue);
     if (self::map($g2_user_id)) {
@@ -182,13 +187,17 @@ class g2_import_Core {
     self::set_map($g2_user->getId(), $user->id);
   }
 
+
+  /**
+   * Import a single album.
+   */
   static function import_album(&$queue) {
     // The queue is a set of nested associative arrays where the key is the album id and the
     // value is an array of similar arrays.  We'll do a breadth first tree traversal using the
     // queue to keep our state.  Doing it breadth first means that the parent will be created by
     // the time we get to the child.
 
-    // Dequeue the current album  and enqueue its children
+    // Dequeue the current album and enqueue its children
     list($g2_album_id, $children) = each($queue);
     unset($queue[$g2_album_id]);
     foreach ($children as $key => $value) {
@@ -242,6 +251,10 @@ class g2_import_Core {
     // @todo import album highlights
   }
 
+
+  /**
+   * Import a single photo or movie.
+   */
   static function import_item(&$queue) {
     $g2_item_id = array_shift($queue);
 
@@ -287,8 +300,10 @@ class g2_import_Core {
     self::$current_g2_item = null;
   }
 
-  // If the thumbnails and resizes created for the Gallery2 photo match the dimensions of the
-  // ones we expect to create for Gallery3, then copy the files over instead of recreating them.
+  /**
+   * If the thumbnails and resizes created for the Gallery2 photo match the dimensions of the
+   * ones we expect to create for Gallery3, then copy the files over instead of recreating them.
+   */
   static function copy_matching_thumbnails_and_resizes($item) {
     // We only operate on items that are being imported
     if (empty(self::$current_g2_item)) {
@@ -345,6 +360,11 @@ class g2_import_Core {
     $item->save();
   }
 
+  /**
+   * Figure out the most common resize and thumb sizes in Gallery 2 so that we can tell the admin
+   * what theme settings to set to make the import go faster.  If we match up the sizes then we
+   * can just copy over derivatives instead of running graphics toolkit operations.
+   */
   static function common_sizes() {
     global $gallery;
     foreach (array("resize" => DERIVATIVE_TYPE_IMAGE_RESIZE,
@@ -393,6 +413,9 @@ class g2_import_Core {
     return $sizes;
   }
 
+  /**
+   * Sensibly concatenate Gallery 2 summary and descriptions into a single field.
+   */
   static function extract_description($g2_item) {
     // If the summary is a subset of the description just import the description, else import both.
     $g2_summary = $g2_item->getSummary();
@@ -407,6 +430,10 @@ class g2_import_Core {
     return $description;
   }
 
+  /**
+   * Get a set of photo and movie ids from Gallery 2 greater than $min_id.  We use this to get the
+   * next chunk of photo/movie ids to import.
+   */
   static function get_item_ids($min_id) {
     global $gallery;
 
@@ -426,6 +453,9 @@ class g2_import_Core {
     return $ids;
   }
 
+  /**
+   * Look in our map to find the corresponding Gallery 3 id for the given Gallery 2 id.
+   */
   static function map($g2_id) {
     if (!array_key_exists($g2_id, self::$map)) {
       $g2_map = ORM::factory("g2_map")->where("g2_id", $g2_id)->find();
@@ -435,6 +465,9 @@ class g2_import_Core {
     return self::$map[$g2_id];
   }
 
+  /**
+   * Associate a Gallery 2 id with a Gallery 3 item id.
+   */
   static function set_map($g2_id, $g3_id) {
     $g2_map = ORM::factory("g2_map");
     $g2_map->g3_id = $g3_id;
@@ -443,3 +476,29 @@ class g2_import_Core {
     self::$map[$g2_id] = $g3_id;
   }
 }
+
+/**
+ * Wrapper around Gallery 2 calls.  We expect the first response to be a GalleryStatus object.  If
+ * it's not null, then throw an exception.  Strip the GalleryStatus object out of the result and
+ * if there's only an array of 1 return value, turn it into a scalar.  This allows us to simplify
+ * this pattern:
+ *   list ($ret, $foo) = GalleryCoreApi::someCall();
+ *   if ($ret) { handle_error(); }
+ *
+ * to:
+ *   $foo = g2(GalleryCoreApi::someCall());
+ */
+function g2() {
+  $args = func_get_arg(0);
+  $ret = array_shift($args);
+  if ($ret) {
+    Kohana::log("error", "Gallery2 call failed with: " . $ret->getAsText());
+    throw new Exception("@todo G2_FUNCTION_FAILED");
+  }
+  if (count($args) == 1) {
+    return $args[0];
+  } else {
+    return $args;
+  }
+}
+
