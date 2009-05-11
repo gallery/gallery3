@@ -306,6 +306,25 @@ class g2_import_Core {
   static function import_comment(&$queue) {
     $g2_comment_id = array_shift($queue);
     $g2_comment = g2(GalleryCoreApi::loadEntitiesById($g2_comment_id));
+
+    $text = $g2_comment->getSubject();
+    if ($text) {
+      $text .= " ";
+    }
+    $text .= $g2_comment->getComment();
+
+    // Just import the fields we know about.  Do this outside of the comment API for now so that
+    // we don't trigger spam filtering events
+    $comment = ORM::factory("comment");
+    $comment->author_id = self::map($g2_comment->getCommenterId());
+    $comment->guest_name = $g2_comment->getAuthor();
+    $comment->item_id = self::map($g2_comment->getParentId());
+    $comment->text = $text;
+    $comment->state = "published";
+    $comment->server_http_host = $g2_comment->getHost();
+    $comment->save();
+
+    self::map($g2_comment->getId(), $comment->id);
   }
 
   /**
