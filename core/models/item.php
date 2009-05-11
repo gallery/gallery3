@@ -205,6 +205,13 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * Return true if there is a thumbnail for this item.
+   */
+  public function has_thumb() {
+    return $this->thumb_width && $this->thumb_height;
+  }
+
+  /**
    * album: http://example.com/gallery3/var/resizes/album1/.thumb.jpg
    * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
    */
