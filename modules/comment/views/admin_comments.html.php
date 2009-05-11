@@ -44,11 +44,20 @@
 
   <!-- @todo: Remove after setting active option? -->
   <h2>
-    <?= $title ?>
+    <? if ($state == "published"): ?>
+    <?= t("Approved Comments") ?>
+    <? elseif ($state == "unpublished"): ?>
+    <?= t("Comments Awaiting Moderation") ?>
+    <? elseif ($state == "spam"): ?>
+    <?= t("Spam Comments") ?>
+    <? elseif ($state == "deleted"): ?>
+    <?= t("Recently Deleted Comments") ?>
+    <? endif ?>
   </h2>
 
-  <? if ($queue == "spam"): ?>
+  <? if ($state == "spam"): ?>
   <div>
+    <? $spam_caught = module::get_var("comment", "spam_caught") ?>
     <? if ($spam_caught > 0): ?>
     <p>
       <?= t2("Gallery has caught %count spam for you since you installed spam filtering.",
@@ -57,10 +66,10 @@
     </p>
     <? endif ?>
     <p>
-      <? if ($spam->count()): ?>
+      <? if ($counts->spam): ?>
       <?= t2("There is currently one comment in your spam queue.  You can delete it with a single click, but there is no undo operation so you may want to check the message first to make sure that it really is spam.",
              "There are currently %count comments in your spam queue.  You can delete them all with a single click, but there is no undo operation so you may want to check the messages first to make sure that they really are spam.  All spam messages will be deleted after 7 days automatically.",
-             $spam->count()) ?>
+             $counts->spam) ?>
     </p>
     <p>
       <a href="<?= url::site("admin/comments/delete_all_spam?csrf=$csrf") ?>">
@@ -73,7 +82,7 @@
   </div>
   <? endif ?>
 
-  <? if ($queue == "deleted"): ?>
+  <? if ($state == "deleted"): ?>
   <div>
     <p>
       <?= t("These are messages that have been recently deleted.  They will be permanently erased automatically after 7 days.") ?>
@@ -111,10 +120,14 @@
           <? $item = $comment->item(); ?>
           <div class="gItem gPhoto">
             <a href="<?= $item->url() ?>">
+              <? if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
                  alt="<?= $item->title ?>"
                  <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
               />
+              <? else: ?>
+              <?= t("No thumbnail") ?>
+              <? endif ?>
             </a>
           </div>
         </div>
