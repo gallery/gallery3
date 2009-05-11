@@ -26,9 +26,7 @@ class exif_Core {
   protected static $exif_keys;
 
   static function extract($item) {
-    $db = Database::instance();
-    $db->delete("exif_keys", array("item_id" => $item->id));
-
+    $keys = array();
     // Only try to extract EXIF from photos
     if ($item->is_photo() && $item->mime_type == "image/jpeg") {
       $data = array();
@@ -41,7 +39,7 @@ class exif_Core {
             if (function_exists("mb_detect_encoding") && mb_detect_encoding($value) != "UTF-8") {
               $value = utf8_encode($value);
             }
-            $data[] = sprintf("(%d, '%s', '%s')", $item->id, $field, $db->escape_str($value));
+            $keys[$field] = utf8::clean($value);
 
             if ($field == "DateTime") {
               $item->captured = strtotime($value);
@@ -58,27 +56,16 @@ class exif_Core {
         foreach (array("Keywords" => "2#025", "Caption" => "2#120") as $keyword => $iptc_key) {
           if (!empty($iptc[$iptc_key])) {
             $value = implode(" ", $iptc[$iptc_key]);
-            if (mb_detect_encoding($value) != "UTF-8") {
+            if (function_exists("mb_detect_encoding") && mb_detect_encoding($value) != "UTF-8") {
               $value = utf8_encode($value);
             }
-            $data[] = sprintf(
-              "(%d, '%s', '%s')",
-              $item->id, $keyword,
-              $db->escape_str($value));
+            $keys[$keyword] = utf8::clean($value);
 
             if ($keyword == "Caption" && !$item->description) {
               $item->description = $value;
             }
           }
         }
-      }
-
-      // ORM and Database::insert() do not handle inserting multiple rows at once, so do it
-      // the hard way.
-      if ($data) {
-        $query = "INSERT INTO {exif_keys} (`item_id`, `name`, `value`) VALUES" .
-          join(",", $data);
-        $db->query($query);
       }
     }
     $item->save();
@@ -87,18 +74,21 @@ class exif_Core {
     if (!$record->loaded) {
       $record->item_id = $item->id;
     }
+    $record->data = serialize($keys);
+    $record->key_count = count($keys);
     $record->dirty = 0;
     $record->save();
   }
 
   static function get($item) {
     $exif = array();
-    $keys = ORM::factory("exif_key")
+    $record = ORM::factory("exif_record")
       ->where("item_id", $item->id)
-      ->find_all();
+      ->find();
     $definitions = self::_keys();
-    foreach ($keys as $key) {
-      $exif[] = array("caption" => $definitions[$key->name][2], "value" => $key->value);
+    $keys = unserialize($record->data);
+    foreach ($keys as $key => $value) {
+      $exif[] = array("caption" => $definitions[$key][2], "value" => $value);
     }
 
     return $exif;
