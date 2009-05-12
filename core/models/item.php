@@ -97,27 +97,23 @@ class Item_Model extends ORM_MPTT {
     module::event("item_before_delete", $this);
 
     $parent = $this->parent();
-
     if ($parent->album_cover_item_id == $this->id) {
       item::remove_album_cover($parent);
     }
 
-    $original_path = $this->file_path();
-    $original_resize_path = $this->resize_path();
-    $original_thumb_path = $this->thumb_path();
+    $path = $this->file_path();
+    $resize_path = $this->resize_path();
+    $thumb_path = $this->thumb_path();
 
     parent::delete();
-    if (is_dir($original_path)) {
-      @dir::unlink($original_path);
-      @dir::unlink(dirname($original_resize_path));
-      // The thumb path is a path to .album.jpg not the actual directory.
-      // So we need to first try to delete the path (may not exist) and then its directory.
-      @unlink($original_thumb_path);
-      @dir::unlink(dirname($original_thumb_path));
+    if (is_dir($path)) {
+      @dir::unlink($path);
+      @dir::unlink(dirname($resize_path));
+      @dir::unlink(dirname($thumb_path));
     } else {
-      @unlink($original_path);
-      @unlink($original_resize_path);
-      @unlink($original_thumb_path);
+      @unlink($path);
+      @unlink($resize_path);
+      @unlink($thumb_path);
     }
   }
 
