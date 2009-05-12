@@ -83,6 +83,9 @@ class exif_task_Core {
   private static function _get_stats() {
     $missing_exif = ORM::factory("exif_record")->where("dirty", 1)->count_all();
     $total_items = ORM::factory("item")->where("type", "photo")->count_all();
+    if (!$total_items) {
+      return array(0, 0, 0);
+    }
     return array($missing_exif, $total_items,
                  round(100 * (($total_items - $missing_exif) / $total_items)));
   }
