@@ -61,6 +61,19 @@ class group_Core {
     return model_cache::get("group", 2);
   }
 
+  /**
+   * Look up a group by name.
+   * @param integer      $id the group name
+   * @return Group_Model  the group object, or null if the name was invalid.
+   */
+  static function lookup_by_name($name) {
+    $group = model_cache::get("group", $name, "name");
+    if ($group->loaded) {
+      return $group;
+    }
+    return null;
+  }
+
   static function get_edit_form_admin($group) {
     $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "gEditGroupForm"));
     $form_group = $form->group("edit_group")->label(t("Edit Group"));

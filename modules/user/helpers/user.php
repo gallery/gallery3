@@ -284,7 +284,7 @@ class user_Core {
   /**
    * Look up a user by name.
    * @param integer      $id the user name
-   * @return User_Model  the user object, or null if the id was invalid.
+   * @return User_Model  the user object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
     $user = model_cache::get("user", $name, "name");
