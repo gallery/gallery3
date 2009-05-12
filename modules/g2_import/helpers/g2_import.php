@@ -384,7 +384,7 @@ class g2_import_Core {
     // Precaution: if the Gallery2 item was watermarked, or we have the Gallery3 watermark module
     // active then we'd have to do something a lot more sophisticated here.  For now, just skip
     // this step in those cases.
-    if (module::is_installed("watermark")) {
+    if (module::is_installed("watermark") && module::get_var("watermark", "name")) {
       return;
     }
 
