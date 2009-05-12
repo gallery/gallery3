@@ -141,7 +141,13 @@ class g2_import_Core {
     $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
     switch ($g2_group->getGroupType()) {
     case GROUP_NORMAL:
-      $group = group::create($g2_group->getGroupName());
+      try {
+        $group = group::create($g2_group->getGroupName());
+      } catch (Exception $e) {
+        // @todo For now we assume this is a "duplicate group" exception
+        $group = group::lookup_by_name($g2_group->getGroupname());
+      }
+
       break;
 
     case GROUP_ALL_USERS:
