@@ -26,6 +26,8 @@ class Admin_Modules_Controller extends Admin_Controller {
   }
 
   public function save() {
+    $changes->install = array();
+    $changes->uninstall = array();
     foreach (module::available() as $module_name => $info) {
       if ($info->locked) {
         continue;
@@ -33,13 +35,17 @@ class Admin_Modules_Controller extends Admin_Controller {
 
       $desired = $this->input->post($module_name) == 1;
       if ($info->installed && !$desired) {
+        $changes->uninstall[] = $module_name;
         module::uninstall($module_name);
         message::success(t("Uninstalled %module_name module", array("module_name" => $info->name)));
       } else if (!$info->installed && $desired) {
+        $changes->install[] = $module_name;
         module::install($module_name);
         message::success(t("Installed %module_name module", array("module_name" => $info->name)));
       }
     }
+
+    module::event("module_change", $changes);
     url::redirect("admin/modules");
   }
 }
