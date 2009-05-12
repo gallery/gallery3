@@ -42,6 +42,10 @@ class Admin_g2_import_Controller extends Admin_Controller {
     $form = $this->_get_import_form();
     if ($form->validate()) {
       $embed_path = $form->configure_g2_import->embed_path->value;
+      if (!is_file($embed_path) && file_exists("$embed_path/embed.php")) {
+        $embed_path = "$embed_path/embed.php";
+      }
+
       if (g2_import::is_valid_embed_path($embed_path)) {
         message::success("Gallery 2 path saved.");
         module::set_var("g2_import", "embed_path", $embed_path);
