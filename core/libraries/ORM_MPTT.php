@@ -117,6 +117,9 @@ class ORM_MPTT_Core extends ORM {
    * @return ORM
    */
   function parent() {
+    if (!$this->parent_id) {
+      return null;
+    }
     return model_cache::get($this->model_name, $this->parent_id);
   }
 
