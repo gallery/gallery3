@@ -414,7 +414,7 @@ class g2_import_Core {
         "FROM [GalleryDerivativeImage], [GalleryDerivative] " .
         "WHERE [GalleryDerivativeImage::id] = [GalleryDerivative::id] " .
         "  AND [GalleryDerivative::derivativeType] = ? " .
-        "  AND [GalleryDerivativeImage::height] >= [GalleryDerivativeImage::width] " .
+        "  AND [GalleryDerivativeImage::height] > [GalleryDerivativeImage::width] " .
         "GROUP BY [GalleryDerivativeImage::height] " .
         "ORDER by c DESC",
         array($g2_enum),

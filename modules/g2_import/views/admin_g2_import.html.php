@@ -43,7 +43,7 @@
     </ul>
   </div>
 
-  <? if ($thumb_size != $g2_sizes["thumb"]["size"]): ?>
+  <? if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
   <div class="gWarning">
     <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
         array("g2_pixels" => $g2_sizes["thumb"]["size"],
@@ -52,7 +52,7 @@
   </div>
   <? endif ?>
 
-  <? if ($resize_size != $g2_sizes["resize"]["size"]): ?>
+  <? if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
   <div class="gWarning">
     <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
         array("g2_pixels" => $g2_sizes["resize"]["size"],
