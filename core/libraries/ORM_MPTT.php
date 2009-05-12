@@ -80,7 +80,10 @@ class ORM_MPTT_Core extends ORM {
     $children = $this->children();
     if ($children) {
       foreach ($this->children() as $item) {
-        $item->delete();
+        // Deleting children affects the MPTT tree, so we have to reload each child before we
+        // delete it so that we have current left/right pointers.  This is inefficient.
+        // @todo load each child once, not twice.
+        $item->reload()->delete();
       }
 
       // Deleting children has affected this item
