@@ -236,7 +236,6 @@ class g2_import_Core {
     $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
     $album->created = $g2_album->getCreationTimestamp();
 
-    // @todo support "keywords", "originationTimestamp", and "random" sort orders.
     $order_map = array(
       "originationTimestamp" => "captured",
       "creationTimestamp" => "created",
@@ -256,9 +255,9 @@ class g2_import_Core {
     }
     $album->save();
 
+    self::import_keywords_as_tags($g2_album->getKeywords(), $album);
     self::set_map($g2_album_id, $album->id);
 
-    // @todo import keywords as tags
     // @todo import album highlights
   }
 
@@ -302,6 +301,10 @@ class g2_import_Core {
     default:
       // Ignore
       break;
+    }
+
+    if (!empty($item)) {
+      self::import_keywords_as_tags($g2_item->getKeywords(), $item);
     }
 
     if (isset($item)) {
@@ -353,6 +356,19 @@ class g2_import_Core {
 
     // Tag operations are idempotent so we don't need to map them.  Which is good because we don't
     // have an id for each individual tag mapping anyway so it'd be hard to set up the mapping.
+  }
+
+  static function import_keywords_as_tags($keywords, $item) {
+    if (!module::is_installed("tag")) {
+      return;
+    }
+
+    foreach (preg_split("/[,;]/", $keywords) as $keyword) {
+      $keyword = trim($keyword);
+      if ($keyword) {
+        tag::add($item, $keyword);
+      }
+    }
   }
 
   /**

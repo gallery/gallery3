@@ -37,17 +37,27 @@ class g2_import_task_Core {
     g2_import::init();
 
     $stats = $task->get("stats");
+    $done = $task->get("done");
     $total = $task->get("total");
     $completed = $task->get("completed");
-    $i = $task->get("i");
     $mode = $task->get("mode");
     $queue = $task->get("queue");
     if (!isset($mode)) {
-      $task->set("stats", $stats = g2_import::stats());
+      $stats = g2_import::stats();
+      $stats["items"] = $stats["photos"] + $stats["movies"];
+      unset($stats["photos"]);
+      unset($stats["movies"]);
+      $task->set("stats", $stats);
+
       $task->set("total", $total = array_sum(array_values($stats)));
       $completed = 0;
-      $i = 0;
       $mode = 0;
+
+      $done = array();
+      foreach (array_keys($stats) as $key) {
+        $done[$key] = 0;
+      }
+      $task->set("done", $done);
 
       $root_g2_id = g2(GalleryCoreApi::getDefaultAlbumId());
       $root = ORM::factory("g2_map")->where("g2_id", $root_g2_id)->find();
@@ -58,17 +68,10 @@ class g2_import_task_Core {
       }
     }
 
-    $modes = array("groups", "users", "albums", "photos");
-    if (g2_import::g2_module_active("comment") && module::is_installed("comment")) {
-      $modes[] = "comments";
-    }
-    if (g2_import::g2_module_active("tags") && module::is_installed("tag")) {
-      $modes[] = "tags";
-    }
-    $modes[] = "done";
+    $modes = array("groups", "users", "albums", "items", "comments", "tags", "done");
     while (!$task->done && microtime(true) - $start < 1.5) {
-      if ($i >= ($stats[$modes[$mode]] - 1)) {
-        $i = 0;
+      if ($done[$modes[$mode]] == $stats[$modes[$mode]]) {
+        // Nothing left to do for this mode.  Advance.
         $mode++;
         $task->set("last_id", 0);
         $queue = array();
@@ -76,34 +79,37 @@ class g2_import_task_Core {
 
       switch($modes[$mode]) {
       case "groups":
-        if (!$i) {
+        if (empty($queue)) {
           $task->set("queue", $queue = array_keys(g2(GalleryCoreApi::fetchGroupNames())));
         }
         g2_import::import_group($queue);
         $task->status = t(
-          "Importing groups %count / %total", array("count" => $i, "total" => $stats["groups"]));
+          "Importing groups %count / %total",
+          array("count" => $done["groups"] + 1, "total" => $stats["groups"]));
         break;
 
       case "users":
-        if (!$i) {
+        if (empty($queue)) {
           $task->set(
             "queue", $queue = array_keys(g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY))));
         }
         g2_import::import_user($queue);
         $task->status = t(
-          "Importing users %count / %total", array("count" => $i, "total" => $stats["users"]));
+          "Importing users %count / %total",
+          array("count" => $done["users"] + 1, "total" => $stats["users"]));
         break;
 
       case "albums":
-        if (!$i) {
+        if (empty($queue)) {
           $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
         }
         g2_import::import_album($queue);
         $task->status = t(
-          "Importing albums %count / %total", array("count" => $i, "total" => $stats["albums"]));
+          "Importing albums %count / %total",
+          array("count" => $done["albums"] + 1, "total" => $stats["albums"]));
         break;
 
-      case "photos":
+      case "items":
         if (empty($queue)) {
           $task->set("queue", $queue = g2_import::get_item_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
@@ -111,7 +117,8 @@ class g2_import_task_Core {
 
         g2_import::import_item($queue);
         $task->status = t(
-          "Importing photos %count / %total", array("count" => $i, "total" => $stats["photos"]));
+          "Importing photos/movies %count / %total",
+          array("count" => $done["items"] + 1, "total" => $stats["items"]));
         break;
 
       case "comments":
@@ -120,8 +127,9 @@ class g2_import_task_Core {
           $task->set("last_id", end($queue));
         }
         g2_import::import_comment($queue);
-        $task->status = t("Importing comments %count / %total",
-                          array("count" => $i, "total" => $stats["comments"]));
+        $task->status = t(
+          "Importing comments %count / %total",
+          array("count" => $done["comments"] + 1, "total" => $stats["comments"]));
 
         break;
 
@@ -131,8 +139,9 @@ class g2_import_task_Core {
           $task->set("last_id", end($queue));
         }
         g2_import::import_tags_for_item($queue);
-        $task->status = t("Importing tags %count / %total",
-                          array("count" => $i, "total" => $stats["tags"]));
+        $task->status = t(
+          "Importing tags %count / %total",
+          array("count" => $done["tags"] + 1, "total" => $stats["tags"]));
 
         break;
 
@@ -143,8 +152,8 @@ class g2_import_task_Core {
         break;
       }
 
-      $i++;
       if (!$task->done) {
+        $done[$modes[$mode]]++;
         $completed++;
       }
     }
@@ -152,7 +161,7 @@ class g2_import_task_Core {
     $task->percent_complete = 100 * ($completed / $total);
     $task->set("completed", $completed);
     $task->set("mode", $mode);
-    $task->set("i", $i);
     $task->set("queue", $queue);
+    $task->set("done", $done);
   }
 }
