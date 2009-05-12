@@ -110,7 +110,7 @@ class Item_Model extends ORM_MPTT {
     if (is_dir($original_path)) {
       @dir::unlink($original_path);
       @dir::unlink(dirname($original_resize_path));
-      // The thumb path is a  path to .album.jpg not the actual directory.
+      // The thumb path is a path to .album.jpg not the actual directory.
       // So we need to first try to delete the path (may not exist) and then its directory.
       @unlink($original_thumb_path);
       @dir::unlink(dirname($original_thumb_path));
