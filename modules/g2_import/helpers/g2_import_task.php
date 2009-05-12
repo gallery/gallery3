@@ -84,7 +84,7 @@ class g2_import_task_Core {
         }
         g2_import::import_group($queue);
         $task->status = t(
-          "Importing groups %count / %total",
+          "Importing groups (%count of %total)",
           array("count" => $done["groups"] + 1, "total" => $stats["groups"]));
         break;
 
@@ -95,7 +95,7 @@ class g2_import_task_Core {
         }
         g2_import::import_user($queue);
         $task->status = t(
-          "Importing users %count / %total",
+          "Importing users (%count of %total)",
           array("count" => $done["users"] + 1, "total" => $stats["users"]));
         break;
 
@@ -105,7 +105,7 @@ class g2_import_task_Core {
         }
         g2_import::import_album($queue);
         $task->status = t(
-          "Importing albums %count / %total",
+          "Importing albums (%count of %total)",
           array("count" => $done["albums"] + 1, "total" => $stats["albums"]));
         break;
 
@@ -117,7 +117,7 @@ class g2_import_task_Core {
 
         g2_import::import_item($queue);
         $task->status = t(
-          "Importing photos/movies %count / %total",
+          "Importing photos (%count of %total)",
           array("count" => $done["items"] + 1, "total" => $stats["items"]));
         break;
 
@@ -128,7 +128,7 @@ class g2_import_task_Core {
         }
         g2_import::import_comment($queue);
         $task->status = t(
-          "Importing comments %count / %total",
+          "Importing comments (%count of %total)",
           array("count" => $done["comments"] + 1, "total" => $stats["comments"]));
 
         break;
@@ -140,7 +140,7 @@ class g2_import_task_Core {
         }
         g2_import::import_tags_for_item($queue);
         $task->status = t(
-          "Importing tags %count / %total",
+          "Importing tags (%count of %total)",
           array("count" => $done["tags"] + 1, "total" => $stats["tags"]));
 
         break;
