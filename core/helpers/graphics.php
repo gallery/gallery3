@@ -188,9 +188,15 @@ class graphics_Core {
   }
 
   /**
-   * Overlay an image on top of the input file.  Valid options are file, mime_type, position and
-   * transparency_percent.
-   * position is one of northwest, north, northeast, west, center, east, southwest, south, southeast
+   * Overlay an image on top of the input file.
+   *
+   * Valid options are: file, mime_type, position, transparency_percent, padding
+   *
+   * Valid positions: northwest, north, northeast,
+   *                  west, center, east,
+   *                  southwest, south, southeast
+   *
+   * padding is in pixels
    *
    * @param string     $input_file
    * @param string     $output_file
@@ -204,7 +210,7 @@ class graphics_Core {
     list ($width, $height) = getimagesize($input_file);
     list ($w_width, $w_height) = getimagesize($options["file"]);
 
-    $pad = 10;
+    $pad = isset($options["padding"]) ? $options["padding"] : 10;
     $top = $pad;
     $left = $pad;
     $y_center = max($height / 2 - $w_height / 2, $pad);
