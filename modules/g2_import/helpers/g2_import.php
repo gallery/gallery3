@@ -97,6 +97,7 @@ class g2_import_Core {
    * comments available for import from the Gallery 2 instance.
    */
   static function stats() {
+    global $gallery;
     GalleryCoreApi::requireOnce("modules/comment/classes/GalleryCommentHelper.class");
 
     $root_album_id = g2(GalleryCoreApi::getDefaultAlbumId());
@@ -111,6 +112,16 @@ class g2_import_Core {
     } else {
       $stats["comments"] = 0;
     }
+
+    if (g2_import::g2_module_active("tags") && module::is_installed("tag")) {
+      $result =
+        g2($gallery->search("SELECT COUNT(DISTINCT([TagItemMap::itemId])) FROM [TagItemMap]"))
+        ->nextResult();
+      $stats["tags"] = $result[0];
+    } else {
+      $stats["tags"] = 0;
+    }
+
     return $stats;
   }
 
@@ -328,6 +339,23 @@ class g2_import_Core {
   }
 
   /**
+   * Import all the tags for a single item
+   */
+  static function import_tags_for_item(&$queue) {
+    GalleryCoreApi::requireOnce("modules/tags/classes/TagsHelper.class");
+    $g2_item_id = array_shift($queue);
+    $g3_item = ORM::factory("item", self::map($g2_item_id));
+    $tag_names = array_values(g2(TagsHelper::getTagsByItemId($g2_item_id)));
+
+    foreach ($tag_names as $tag_name) {
+      $tag = tag::add($g3_item, $tag_name);
+    }
+
+    // Tag operations are idempotent so we don't need to map them.  Which is good because we don't
+    // have an id for each individual tag mapping anyway so it'd be hard to set up the mapping.
+  }
+
+  /**
    * If the thumbnails and resizes created for the Gallery2 photo match the dimensions of the
    * ones we expect to create for Gallery3, then copy the files over instead of recreating them.
    */
@@ -493,6 +521,25 @@ class g2_import_Core {
       "FROM [GalleryComment] " .
       "WHERE [GalleryComment::publishStatus] = 0 " . // 0 == COMMENT_PUBLISH_STATUS_PUBLISHED
       "AND   [GalleryComment::id] > ?",
+      array($min_id),
+      array("limit" => array("count" => 100))));
+    while ($result = $results->nextResult()) {
+      $ids[] = $result[0];
+    }
+    return $ids;
+  }
+
+  /**
+   * Get a set of comment ids from Gallery 2 greater than $min_id.  We use this to get the
+   * next chunk of comments to import.
+   */
+  static function get_tag_item_ids($min_id) {
+    global $gallery;
+
+    $ids = array();
+    $results = g2($gallery->search(
+      "SELECT DISTINCT([TagItemMap::itemId]) FROM [TagItemMap] " .
+      "WHERE [TagItemMap::itemId] > ?",
       array($min_id),
       array("limit" => array("count" => 100))));
     while ($result = $results->nextResult()) {

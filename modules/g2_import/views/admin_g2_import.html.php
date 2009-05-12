@@ -40,6 +40,10 @@
       <li>
         <?= t2("1 comment", "%count comments", $g2_stats["comments"]) ?>
       </li>
+      <li>
+        <?= t2("1 tagged photo/movie/album",
+               "%count tagged photos/movies/albums", $g2_stats["tags"]) ?>
+      </li>
     </ul>
   </div>
 

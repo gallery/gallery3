@@ -62,6 +62,9 @@ class g2_import_task_Core {
     if (g2_import::g2_module_active("comment") && module::is_installed("comment")) {
       $modes[] = "comments";
     }
+    if (g2_import::g2_module_active("tags") && module::is_installed("tag")) {
+      $modes[] = "tags";
+    }
     $modes[] = "done";
     while (!$task->done && microtime(true) - $start < 1.5) {
       if ($i >= ($stats[$modes[$mode]] - 1)) {
@@ -119,6 +122,17 @@ class g2_import_task_Core {
         g2_import::import_comment($queue);
         $task->status = t("Importing comments %count / %total",
                           array("count" => $i, "total" => $stats["comments"]));
+
+        break;
+
+      case "tags":
+        if (empty($queue)) {
+          $task->set("queue", $queue = g2_import::get_tag_item_ids($task->get("last_id", 0)));
+          $task->set("last_id", end($queue));
+        }
+        g2_import::import_tags_for_item($queue);
+        $task->status = t("Importing tags %count / %total",
+                          array("count" => $i, "total" => $stats["tags"]));
 
         break;
 
