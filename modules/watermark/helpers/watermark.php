@@ -31,7 +31,7 @@ class watermark_Core {
       ->selected("southeast");
     $group->dropdown("transparency")->label(t("Transparency (100% = completely transparent)"))
       ->options($range)
-      ->selected(100);
+      ->selected(1);
     $group->submit("")->value(t("Upload"));
     return $form;
   }
