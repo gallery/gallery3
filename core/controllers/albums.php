@@ -112,7 +112,7 @@ class Albums_Controller extends Items_Controller {
     } else {
       print json_encode(
         array("result" => "error",
-              "form" => $form->__toString()));
+              "form" => $form->__toString() . html::script("core/js/albums_form_add.js")));
     }
   }
 
@@ -189,7 +189,8 @@ class Albums_Controller extends Items_Controller {
 
     switch ($this->input->get("type")) {
     case "album":
-      print album::get_add_form($album);
+      print album::get_add_form($album) .
+        html::script("core/js/albums_form_add.js");
       break;
 
     case "photo":
