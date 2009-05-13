@@ -52,7 +52,12 @@ class Tags_Controller extends REST_Controller {
 
     $form = tag::get_add_form($item);
     if ($form->validate()) {
-      tag::add($item, $form->add_tag->inputs["name"]->value);
+      foreach (split("[\,\ \;]", $form->add_tag->inputs["name"]->value) as $tag_name) {
+        $tag_name = trim($tag_name);
+        if ($tag_name) {
+          $tag = tag::add($item, $tag_name);
+        }
+      }
 
       print json_encode(
         array("result" => "success",

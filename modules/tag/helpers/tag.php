@@ -82,20 +82,18 @@ class tag_Core {
   static function get_add_form($item) {
     $form = new Forge("tags", "", "post", array("id" => "gAddTagForm"));
     $group = $form->group("add_tag")->label(t("Add Tag"));
-    $group->input("name")->label(t("Add tag"));
+    $group->input("name")->label(t("Add tag"))->rules("required|length[1,64]");
     $group->hidden("item_id")->value($item->id);
     $group->submit("")->value(t("Add Tag"));
-    $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }
 
   static function get_rename_form($tag) {
     $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "gRenameTagForm"));
     $group = $form->group("rename_tag")->label(t("Rename Tag"));
-    $group->input("name")->label(t("Tag name"))->value($tag->name);
+    $group->input("name")->label(t("Tag name"))->value($tag->name)->rules("required|length[1,64]");
     $group->inputs["name"]->error_messages("in_use", t("There is already a tag with that name"));
     $group->submit("")->value(t("Save"));
-    $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }
 
@@ -104,7 +102,6 @@ class tag_Core {
     $group = $form->group("delete_tag")
       ->label(t("Really delete tag %tag_name?", array("tag_name" => $tag->name)));
     $group->submit("")->value(t("Delete Tag"));
-    $form->add_rules_from(ORM::factory("tag"));
     return $form;
   }
 }
