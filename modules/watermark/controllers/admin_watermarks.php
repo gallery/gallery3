@@ -137,7 +137,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
                 "width" => module::get_var("watermark", "width"),
                 "height" => module::get_var("watermark", "height"),
                 "position" => module::get_var("watermark", "position"),
-                "transparency" => module::get_var("watermark", "transparency")),
+                "transparency" => 101 - module::get_var("watermark", "transparency")),
           1000);
       }
     }

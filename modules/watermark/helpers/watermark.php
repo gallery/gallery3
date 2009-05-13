@@ -20,7 +20,7 @@
 class watermark_Core {
   static function get_add_form() {
     for ($i = 1; $i <= 100; $i++) {
-      $range[$i] = $i;
+      $range[$i] = "$i%";
     }
 
     $form = new Forge("admin/watermarks/add", "", "post", array("id" => "gAddWatermarkForm"));
@@ -29,7 +29,7 @@ class watermark_Core {
     $group->dropdown("position")->label(t("Watermark Position"))
       ->options(self::positions())
       ->selected("southeast");
-    $group->dropdown("transparency")->label(t("Transparency Percent"))
+    $group->dropdown("transparency")->label(t("Transparency (100% = completely transparent)"))
       ->options($range)
       ->selected(100);
     $group->submit("")->value(t("Upload"));
@@ -38,7 +38,7 @@ class watermark_Core {
 
   static function get_edit_form() {
     for ($i = 1; $i <= 100; $i++) {
-      $range[$i] = $i;
+      $range[$i] = "$i%";
     }
 
     $form = new Forge("admin/watermarks/edit", "", "post", array("id" => "gEditWatermarkForm"));
@@ -46,7 +46,7 @@ class watermark_Core {
     $group->dropdown("position")->label(t("Watermark Position"))
       ->options(self::positions())
       ->selected(module::get_var("watermark", "position"));
-    $group->dropdown("transparency")->label(t("Transparency Percent"))
+    $group->dropdown("transparency")->label(t("Transparency (100% = completely transparent)"))
       ->options($range)
       ->selected(module::get_var("watermark", "transparency"));
     $group->submit("")->value(t("Save"));
