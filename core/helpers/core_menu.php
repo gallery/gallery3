@@ -131,7 +131,7 @@ class core_menu_Core {
                ->append(Menu::factory("link")
                         ->id("advanced")
                         ->label("Advanced")
-                        ->url("admin_advanced_settings")))
+                        ->url("admin/advanced_settings")))
       ->append(Menu::factory("link")
                ->id("modules")
                ->label(t("Modules"))
