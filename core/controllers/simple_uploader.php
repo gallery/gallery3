@@ -48,6 +48,7 @@ class Simple_Uploader_Controller extends Controller {
       $temp_filename = upload::save("Filedata");
       try {
         $title = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
+        $title = $this->convert_filename_to_title($title);
         $path_info = pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
             in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
@@ -66,6 +67,16 @@ class Simple_Uploader_Controller extends Controller {
       unlink($temp_filename);
     }
     print "File Received";
+  }
+
+  /**
+   * We should move this into a helper somewhere.. but where is appropriate?
+   */
+  private function convert_filename_to_title($filename) {
+    $title = strtr($filename, "_", " ");
+    $title = preg_replace("/\..*?$/", "", $title);
+    $title = preg_replace("/ +/", " ", $title);
+    return $title;
   }
 
   public function finish() {
