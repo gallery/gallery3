@@ -58,12 +58,12 @@ class L10n_Client_Controller extends Controller {
 
   public function toggle_l10n_mode() {
     access::verify_csrf();
-    
+
     $session = Session::instance();
     $session->set("l10n_mode",
                   !$session->get("l10n_mode", false));
 
-    url::redirect(url::site("albums/1"));
+    url::redirect("albums/1");
   }
 
   private static function _l10n_client_form() {
