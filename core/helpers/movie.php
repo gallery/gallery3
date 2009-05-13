@@ -101,9 +101,11 @@ class movie_Core {
   }
 
   static function getmoviesize($filename) {
-    if (!$ffmpeg = exec("which ffmpeg")) {
+    $ffmpeg = self::find_ffmpeg();
+    if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
     }
+
     $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($filename) . " 2>&1";
     $result = `$cmd`;
     if (preg_match("/Stream.*?Video:.*?(\d+)x(\d+).*\ +([0-9\.]+) (fps|tb).*/",
@@ -116,7 +118,8 @@ class movie_Core {
   }
 
   static function extract_frame($input_file, $output_file) {
-    if (!$ffmpeg = exec("which ffmpeg")) {
+    $ffmpeg = self::find_ffmpeg();
+    if (empty($ffmpeg)) {
       throw new Exception("@todo MISSING_FFMPEG");
     }
 
@@ -124,5 +127,17 @@ class movie_Core {
       " -an -ss 00:00:03 -an -r 1 -vframes 1" .
       " -y -f mjpeg " . escapeshellarg($output_file);
     exec($cmd);
+  }
+
+  static function find_ffmpeg() {
+    if (!$ffmpeg_path = module::get_var("core", "ffmpeg_path")) {
+      if (function_exists("exec")) {
+        $ffmpeg_path = exec("which ffmpeg");
+        if ($ffmpeg_path) {
+          module::set_var("core", "ffmpeg_path", $ffmpeg_path);
+        }
+      }
+    }
+    return $ffmpeg_path;
   }
 }
