@@ -41,6 +41,7 @@ class Admin_Users_Controller extends Controller {
       $user = user::create(
         $name, $form->add_user->full_name->value, $form->add_user->password->value);
       $user->email = $form->add_user->email->value;
+      $user->admin = $form->add_user->admin->checked;
 
       if ($form->add_user->locale) {
         $desired_locale = $form->add_user->locale->value;
@@ -62,6 +63,10 @@ class Admin_Users_Controller extends Controller {
 
   public function delete_user($id) {
     access::verify_csrf();
+    if ($id == user::active()->id) {
+      access::forbidden();
+    }
+
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
@@ -100,10 +105,37 @@ class Admin_Users_Controller extends Controller {
     $form = user::get_edit_form_admin($user);
     $valid = $form->validate();
     if ($valid) {
-      $valid = user::update($user, $form);
+      $new_name = $form->edit_user->inputs["name"]->value;
+      if ($new_name != $user->name &&
+          ORM::factory("user")
+          ->where("name", $new_name)
+          ->where("id !=", $user->id)
+          ->find()
+          ->loaded) {
+        $form->edit_user->inputs["name"]->add_error("in_use", 1);
+        $valid = false;
+      } else {
+        $user->name = $new_name;
+      }
     }
 
     if ($valid) {
+      $user->full_name = $form->edit_user->full_name->value;
+      if ($form->edit_user->password->value) {
+        $user->password = $form->edit_user->password->value;
+      }
+      $user->email = $form->edit_user->email->value;
+      if ($form->edit_user->locale) {
+        $desired_locale = $form->edit_user->locale->value;
+        $user->locale = $desired_locale == "none" ? null : $desired_locale;
+      }
+
+      // An admin can change the admin status for any user but themselves
+      if ($user->id != user::active()->id) {
+        $user->admin = $form->edit_user->admin->checked;
+      }
+      $user->save();
+
       message::success(t("Changed user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
@@ -118,7 +150,12 @@ class Admin_Users_Controller extends Controller {
       kohana::show_404();
     }
 
-    print user::get_edit_form_admin($user);
+    $form = user::get_edit_form_admin($user);
+    // Don't allow the user to control their own admin bit, else you can lock yourself out
+    if ($user->id == user::active()->id) {
+      $form->edit_user->admin->disabled(1);
+    }
+    print $form;
   }
 
   public function add_user_to_group($user_id, $group_id) {

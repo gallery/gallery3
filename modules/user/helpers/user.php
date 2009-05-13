@@ -25,15 +25,22 @@
  */
 class user_Core {
   static function get_edit_form($user) {
-    return self::_get_edit_form($user, "users/$user->id?_method=put", t("Save"));
+    $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gEditUserForm"));
+    $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
+    $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
+    self::_add_locale_dropdown($group, $user);
+    $group->password("password")->label(t("Password"))->id("gPassword");
+    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+      ->matches($group->password);
+    $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
+    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
+    $group->submit("")->value(t("Save"));
+    $form->add_rules_from($user);
+    return $form;
   }
 
   static function get_edit_form_admin($user) {
-    return self::_get_edit_form($user, "admin/users/edit_user/$user->id", t("Modify User"));
-  }
-
-  private static function _get_edit_form($user, $action, $save_text) {
-    $form = new Forge($action, "", "post", array("id" => "gEditUserForm"));
+    $form = new Forge("admin/users/edit_user/$user->id", "", "post", array("id" => "gEditUserForm"));
     $group = $form->group("edit_user")->label(t("Edit User"));
     $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
     $group->inputs["name"]->error_messages(
@@ -45,7 +52,8 @@ class user_Core {
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    $group->submit("")->value($save_text);
+    $group->checkbox("admin")->label(t("Admin"))->id("gAdmin")->checked($user->admin);
+    $group->submit("")->value(t("Modify User"));
     $form->add_rules_from($user);
     $form->edit_user->password->rules("-required");
     return $form;
@@ -54,9 +62,8 @@ class user_Core {
   static function get_add_form_admin() {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "gAddUserForm"));
     $group = $form->group("add_user")->label(t("Add User"));
-    $group->input("name")->label(t("Name"))->id("gName");
-    $group->inputs["name"]->error_messages(
-      "in_use", t("There is already a user with that name"));
+    $group->input("name")->label(t("Name"))->id("gName")
+      ->error_messages("in_use", t("There is already a user with that name"));
     $group->input("full_name")->label(t("Full Name"))->id("gFullName");
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
@@ -64,6 +71,7 @@ class user_Core {
     $group->input("email")->label(t("Email"))->id("gEmail");
     $group->input("url")->label(t("URL"))->id("gUrl");
     self::_add_locale_dropdown($group);
+    $group->checkbox("admin")->label(t("Admin"))->id("gAdmin");
     $group->submit("")->value(t("Add User"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
@@ -311,35 +319,5 @@ class user_Core {
       $salt = substr($salt, 0, 4);
     }
     return $salt . md5($salt . $password);
-  }
-
-  /**
-   *
-   */
-  static function update($user, $form) {
-    $valid = true;
-    $new_name = $form->edit_user->inputs["name"]->value;
-    if ($new_name != $user->name &&
-        ORM::factory("user")
-               ->where("name", $new_name)
-               ->where("id !=", $user->id)
-               ->find()
-               ->loaded) {
-      $form->edit_user->inputs["name"]->add_error("in_use", 1);
-      $valid = false;
-    } else {
-      $user->name = $new_name;
-      $user->full_name = $form->edit_user->full_name->value;
-      if ($form->edit_user->password->value) {
-        $user->password = $form->edit_user->password->value;
-      }
-      $user->email = $form->edit_user->email->value;
-      if ($form->edit_user->locale) {
-        $desired_locale = $form->edit_user->locale->value;
-        $user->locale = $desired_locale == "none" ? null : $desired_locale;
-      }
-      $user->save();
-   }
-    return $valid;
   }
 }

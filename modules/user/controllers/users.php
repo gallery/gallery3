@@ -28,10 +28,17 @@ class Users_Controller extends REST_Controller {
     $form = user::get_edit_form($user);
     $valid = $form->validate();
     if ($valid) {
-      $valid = user::update($user, $form);
-    }
+      $user->full_name = $form->edit_user->full_name->value;
+      if ($form->edit_user->password->value) {
+        $user->password = $form->edit_user->password->value;
+      }
+      $user->email = $form->edit_user->email->value;
+      if ($form->edit_user->locale) {
+        $desired_locale = $form->edit_user->locale->value;
+        $user->locale = $desired_locale == "none" ? null : $desired_locale;
+      }
+      $user->save();
 
-    if ($valid) {
       print json_encode(
         array("result" => "success",
               "resource" => url::site("users/{$user->id}")));
