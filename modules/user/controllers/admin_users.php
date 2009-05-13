@@ -63,7 +63,7 @@ class Admin_Users_Controller extends Controller {
 
   public function delete_user($id) {
     access::verify_csrf();
-    if ($id == user::active()->id) {
+    if ($id == user::active()->id || $id == user::guest()->id) {
       access::forbidden();
     }
 
