@@ -91,9 +91,9 @@
               class="gDialogLink gButtonLink ui-state-default ui-corner-all ui-icon-left">
             <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
           <? else: ?>
-          <a title="<?= t("This user cannot be deleted") ?>"
-              class="gDialogLink gButtonLink ui-state-disabled ui-corner-all ui-icon-left">
-            <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
+          <span title="<?= t("This user cannot be deleted") ?>"
+              class="gButtonLink ui-state-disabled ui-corner-all ui-icon-left">
+            <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></span>
           <? endif ?>
         </td>
       </tr>
