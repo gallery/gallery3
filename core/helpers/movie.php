@@ -46,7 +46,7 @@ class movie_Core {
     $movie_info = movie::getmoviesize($filename);
 
     // Force an extension onto the name
-    $pi = pathinfo($name);
+    $pi = pathinfo($filename);
     if (empty($pi["extension"])) {
       $pi["extension"] = image_type_to_extension($movie_info[2], false);
       $name .= "." . $pi["extension"];
