@@ -21,7 +21,41 @@ class Admin_Advanced_Settings_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_advanced_settings.html");
-    $view->content->vars = ORM::factory("var")->find_all();
+    $view->content->vars = ORM::factory("var")->orderby("module_name", "name")->find_all();
     print $view;
+  }
+
+  public function edit($module_name, $var_name) {
+    $value = module::get_var($module_name, $var_name);
+    $form = new Forge("admin/advanced_settings/save/$module_name/$var_name", "", "post");
+    $group = $form->group("edit_var")->label(
+      t("Edit %var (%module_name)",
+        array("module_name" => $module_name, "var" => $var_name)));
+    $group->input("module_name")->label(t("Module"))->value($module_name)->disabled(1);
+    $group->input("var_name")->label(t("Setting"))->value($var_name)->disabled(1);
+    $group->textarea("value")->label(t("Value"))->value($value);
+    $group->submit("")->value(t("Save"));
+    print $form;
+  }
+
+  public function save($module_name, $var_name) {
+    access::verify_csrf();
+
+    $var = ORM::factory("var")
+      ->where("module_name", $module_name)
+      ->where("name", $var_name)
+      ->find();
+    if (!$var->loaded) {
+      kohana::show_404();
+    }
+
+    $var->value = Input::instance()->post("value");
+    $var->save();
+
+    message::success(
+      t("Saved value for %var (%module_name)",
+        array("var" => $var->name, "module_name" => $var->module_name)));
+
+    print json_encode(array("result" => "success"));
   }
 }
