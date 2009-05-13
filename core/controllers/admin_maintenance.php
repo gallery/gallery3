@@ -136,7 +136,16 @@ class Admin_Maintenance_Controller extends Admin_Controller {
   public function run($task_id) {
     access::verify_csrf();
 
-    $task = task::run($task_id);
+    try {
+      $task = task::run($task_id);
+    } catch (Exception $e) {
+      Kohana::log(
+        "error",
+        sprintf(
+          "%s in %s at line %s:\n%s", $e->getMessage(), $e->getFile(),
+          $e->getLine(), $e->getTraceAsString()));
+      throw $e;
+    }
 
     if ($task->done) {
       switch ($task->state) {
