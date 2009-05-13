@@ -46,15 +46,19 @@
 </a>
 <? endif ?>
 
+<? $disabledState = "" ?>
 <? if (access::can("edit", $item->parent())): ?>
 <? if ($item->type == "photo"): ?>
 <? $title = t("Choose this photo as the album cover") ?>
 <? elseif ($item->type == "movie"): ?>
 <? $title = t("Choose this movie as the album cover") ?>
 <? elseif ($item->type == "album"): ?>
+<? if (empty($item->album_cover_item_id)): ?>
+<? $disabledState = empty($item->album_cover_item_id) ? " ui-state-disabled" : "" ?>
+<? endif ?>
 <? $title = t("Choose this album as the album cover") ?>
 <? endif ?>
-<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/make_album_cover/$item->id?csrf=$csrf&page_type=$page_type") ?>"
+<a class="gButtonLink ui-corner-all ui-state-default<?= $disabledState ?>" href="<?= url::site("quick/make_album_cover/$item->id?csrf=$csrf&page_type=$page_type") ?>"
    title="<?= $title ?>">
   <span class="ui-icon ui-icon-star">
     <?= $title ?>

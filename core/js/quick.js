@@ -50,6 +50,9 @@ var show_quick = function() {
 };
 
 var quick_do = function(cont, pane, img) {
+  if (pane.hasClass("ui-state-disabled")) {
+    return false;
+  }
   if (pane.hasClass("gDialogLink")) {
     openDialog(pane, function() { window.location.reload(); });
   } else {
