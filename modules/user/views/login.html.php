@@ -11,7 +11,7 @@
                 '<a href="' . url::site("form/edit/users/{$user->id}") .
                 '" title="' . t("Edit Your Profile") .
                 '" id="gUserProfileLink" class="gDialogLink">' .
-                $user->full_name . '</a>')) ?></li>
+                (empty($user->full_name) ? $user->name : $user->full_name) . '</a>')) ?></li>
   <li><a href="<?= url::site("logout?continue=" . url::current(true)) ?>"
       id="gLogoutLink"><?= t("Logout") ?></a></li>
   <? endif; ?>
