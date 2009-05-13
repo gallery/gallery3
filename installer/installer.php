@@ -76,7 +76,8 @@ class installer {
   }
 
   static function db_empty($config) {
-    return mysql_num_rows(mysql_query("SHOW TABLES FROM {$config['dbname']}")) == 0;
+    $query = "SHOW TABLES IN {$config[dbname]} LIKE '{$config[prefix]}items'";
+    return mysql_num_rows(mysql_query($query)) == 0;
   }
 
   static function create_admin($config) {

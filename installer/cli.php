@@ -37,8 +37,9 @@ if (!installer::connect($config)) {
   oops("Database {$config['dbname']} doesn't exist and can't be created.  " .
        "Please create the database by hand.");
 } else if (!installer::db_empty($config)) {
-  oops("Database {$config['dbname']} already has tables in it. " .
-       "Please specify an empty database.\n");
+  oops("Database {$config['dbname']} already has Gallery 3 tables in it. \n" .
+       "    Please remove the Gallery 3 tables, change your prefix,\n" .
+       "    or specify an empty database.\n");
 } else if (!installer::unpack_var()) {
   oops("Unable to create files inside the 'var' directory");
 } else if (!installer::unpack_sql($config)) {
