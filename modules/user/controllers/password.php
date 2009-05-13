@@ -70,14 +70,16 @@ class Password_Controller extends Controller {
         ->message($message->render())
         ->send();
 
-      message::success(t("Password reset email sent"));
-      print json_encode(
-        array("result" => "success"));
+      log::success("user", "Password reset email sent for user $user->name");
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      // Don't include the username here until you're sure that it's XSS safe
+      log::warning(
+        "user", "Password reset email requested for bogus user");
     }
+
+    message::success(t("Password reset email sent"));
+    print json_encode(
+      array("result" => "success"));
   }
 
   private function _reset_form() {
