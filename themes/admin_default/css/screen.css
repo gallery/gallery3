@@ -217,6 +217,10 @@ li.gGroup {
   margin-right: 1em;
 }
 
+#gAdminAdvancedSettings tr.setting:hover {
+  background: #ffc;
+}
+
 /** *******************************************************************
  * 5) Browser hacks
  *********************************************************************/
