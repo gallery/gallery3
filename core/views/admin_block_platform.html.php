@@ -12,4 +12,7 @@
   <li>
     <?= t("MySQL: %mysql_version", array("mysql_version" => Database::instance()->query("SELECT version() as v")->current()->v)) ?>
   </li>
+  <li>
+    <?= t("Server load: %load_average", array("load_average" => $load_average)) ?>
+  </li>
 </ul>
