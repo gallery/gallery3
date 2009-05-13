@@ -197,6 +197,11 @@
   border: 1px dashed black;
 }
 
+#gUserAdminList .admin {
+  color: #55f;
+  font-weight: bold;
+}
+
 .gActions a,
 .gActions span {
   margin-right: 3em;
@@ -306,7 +311,7 @@ li.gGroup {
 }
 
 /** *******************************************************************
- * 7) Server Add 
+ * 7) Server Add
  *********************************************************************/
 #gServerAddAdmin {
   margin:auto;

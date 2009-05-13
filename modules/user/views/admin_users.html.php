@@ -63,7 +63,7 @@
       </tr>
 
       <? foreach ($users as $i => $user): ?>
-      <tr id="gUser-<?= $user->id ?>" class="<?= text::alternate("gOddRow", "gEvenRow") ?> user">
+      <tr id="gUser-<?= $user->id ?>" class="<?= text::alternate("gOddRow", "gEvenRow") ?> user <?= $user->admin ? "admin" : "" ?>">
         <td id="user-<?= $user->id ?>" class="core-info gDraggable">
           <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                title="<?= t("Drag user onto group below to add as a new member") ?>"
