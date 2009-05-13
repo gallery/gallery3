@@ -283,6 +283,12 @@ class Scaffold_Controller extends Template_Controller {
         $db->query("DROP TABLE IF EXISTS `$table`");
     }
 
+    // Clean out data
+    dir::unlink(VARPATH . "uploads");
+    dir::unlink(VARPATH . "albums");
+    dir::unlink(VARPATH . "resizes");
+    dir::unlink(VARPATH . "thumbs");
+
     module::$module_names = array();
     module::$modules = array();
     $db->clear_cache();
