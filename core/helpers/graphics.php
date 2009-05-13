@@ -242,8 +242,9 @@ class graphics_Core {
   static function find_dirty_images_query() {
     return Database::instance()->query(
       "SELECT `id` FROM {items} " .
-      "WHERE (`thumb_dirty` = 1 AND (`type` <> 'album' OR `album_cover_item_id` IS NOT NULL))" .
-      "   OR (`resize_dirty` = 1 AND `type` = 'photo')");
+      "WHERE ((`thumb_dirty` = 1 AND (`type` <> 'album' OR `album_cover_item_id` IS NOT NULL))" .
+      "   OR (`resize_dirty` = 1 AND `type` = 'photo')) " .
+      "   AND `id` != 1");
   }
 
   /**
@@ -265,10 +266,12 @@ class graphics_Core {
     $count = self::find_dirty_images_query()->count();
     if ($count) {
       site_status::warning(
-          t2('One of your photos is out of date. <a href="%url" class="gDialogLink">Click here to fix it</a>',
-             '%count of your photos are out of date. <a href="%url" class="gDialogLink">Click here to fix them</a>',
+          t2("One of your photos is out of date. <a %attrs>Click here to fix it</a>",
+             "%count of your photos are out of date. <a %attrs>Click here to fix them</a>",
              $count,
-             array("url" => url::site("admin/maintenance/start/core_task::rebuild_dirty_images?csrf=__CSRF__"))),
+             array("attrs" => sprintf(
+               'href="%s" class="gDialogLink"',
+               url::site("admin/maintenance/start/core_task::rebuild_dirty_images?csrf=__CSRF__")))),
           "graphics_dirty");
     }
   }
