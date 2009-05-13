@@ -20,7 +20,7 @@
 if (installer::already_installed()) {
   $content = render("success.html.php");
 } else {
-  switch ($_GET["step"]) {
+  switch (@$_GET["step"]) {
   default:
   case "welcome":
     $errors = check_environment();
@@ -108,5 +108,5 @@ function check_environment() {
     $errors[] = "The <a href=\"http://php.net/mbstring\">mbstring extension</a> is overloading PHP's native string functions.  Please disable it.";
   }
 
-  return $errors;
+  return @$errors;
 }

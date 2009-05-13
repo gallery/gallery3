@@ -76,7 +76,7 @@ class installer {
   }
 
   static function db_empty($config) {
-    $query = "SHOW TABLES IN {$config[dbname]} LIKE '{$config[prefix]}items'";
+    $query = "SHOW TABLES IN {$config['dbname']} LIKE '{$config['prefix']}items'";
     return mysql_num_rows(mysql_query($query)) == 0;
   }
 

@@ -30,7 +30,7 @@ require(DOCROOT . "installer/installer.php");
 if (php_sapi_name() == "cli") {
   include("cli.php");
 } else {
-  if ($_GET["page"] == "check") {
+  if (@$_GET["page"] == "check") {
     include("check.html.php");
   } else {
     include("web.php");
