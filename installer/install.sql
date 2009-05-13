@@ -6,12 +6,14 @@ CREATE TABLE {access_caches} (
   `item_id` int(9) default NULL,
   `view_full_1` smallint(6) NOT NULL default '0',
   `edit_1` smallint(6) NOT NULL default '0',
+  `add_1` smallint(6) NOT NULL default '0',
   `view_full_2` smallint(6) NOT NULL default '0',
   `edit_2` smallint(6) NOT NULL default '0',
+  `add_2` smallint(6) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {access_caches} VALUES (1,1,1,0,1,0);
+INSERT INTO {access_caches} VALUES (1,1,1,0,0,1,0,0);
 DROP TABLE IF EXISTS {access_intents};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -21,13 +23,15 @@ CREATE TABLE {access_intents} (
   `view_1` tinyint(1) default NULL,
   `view_full_1` tinyint(1) default NULL,
   `edit_1` tinyint(1) default NULL,
+  `add_1` tinyint(1) default NULL,
   `view_2` tinyint(1) default NULL,
   `view_full_2` tinyint(1) default NULL,
   `edit_2` tinyint(1) default NULL,
+  `add_2` tinyint(1) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {access_intents} VALUES (1,1,1,1,0,1,1,0);
+INSERT INTO {access_intents} VALUES (1,1,1,1,0,0,1,1,0,0);
 DROP TABLE IF EXISTS {comments};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -226,9 +230,9 @@ CREATE TABLE {permissions} (
   `display_name` varchar(64) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {permissions} VALUES (1,'view','View'),(2,'view_full','View Full Size'),(3,'edit','Edit');
+INSERT INTO {permissions} VALUES (1,'view','View'),(2,'view_full','View Full Size'),(3,'edit','Edit'),(4,'add','Add');
 DROP TABLE IF EXISTS {search_records};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -328,4 +332,4 @@ CREATE TABLE {vars} (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','blocks_dashboard_sidebar','a:4:{i:531020499;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:1479562888;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:1168271687;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1586054560;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(8,'core','blocks_dashboard_center','a:4:{i:691719060;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:540620474;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:1948724228;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:1518099168;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(9,'core','version','3.0 pre-beta svn'),(10,'core','choose_default_tookit','1'),(11,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (1,'core','active_site_theme','default'),(2,'core','active_admin_theme','admin_default'),(3,'core','page_size','9'),(4,'core','thumb_size','200'),(5,'core','resize_size','640'),(6,'core','default_locale','en_US'),(7,'core','blocks_dashboard_sidebar','a:4:{i:1712034437;a:2:{i:0;s:4:\"core\";i:1;s:11:\"block_adder\";}i:283628656;a:2:{i:0;s:4:\"core\";i:1;s:5:\"stats\";}i:1436662733;a:2:{i:0;s:4:\"core\";i:1;s:13:\"platform_info\";}i:1831514378;a:2:{i:0;s:4:\"core\";i:1;s:12:\"project_news\";}}'),(8,'core','blocks_dashboard_center','a:4:{i:186640350;a:2:{i:0;s:4:\"core\";i:1;s:7:\"welcome\";}i:1060186635;a:2:{i:0;s:4:\"core\";i:1;s:12:\"photo_stream\";}i:769529551;a:2:{i:0;s:4:\"core\";i:1;s:11:\"log_entries\";}i:1182339620;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(9,'core','version','3.0 pre-beta svn'),(10,'core','choose_default_tookit','1'),(11,'comment','spam_caught','0');

@@ -32,6 +32,7 @@ class server_add_task_Core {
         $file = $context["files"][$path][$context["position"]];
         $parent = ORM::factory("item", $file["parent_id"]);
         access::required("server_add", $parent);
+        access::required("add", $parent);
         if (!$parent->is_album()) {
           throw new Exception("@todo BAD_ALBUM");
         }

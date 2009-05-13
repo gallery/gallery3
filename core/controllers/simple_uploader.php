@@ -33,7 +33,7 @@ class Simple_Uploader_Controller extends Controller {
 
   public function add_photo($id) {
     $album = ORM::factory("item", $id);
-    access::required("edit", $album);
+    access::required("add", $album);
     access::verify_csrf();
 
     $file_validation = new Validation($_FILES);

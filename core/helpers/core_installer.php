@@ -192,6 +192,7 @@ class core_installer {
       access::register_permission("view", "View");
       access::register_permission("view_full", "View Full Size");
       access::register_permission("edit", "Edit");
+      access::register_permission("add", "Add");
 
       $root = ORM::factory("item");
       $root->type = "album";

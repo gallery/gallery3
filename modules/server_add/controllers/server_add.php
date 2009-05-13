@@ -23,6 +23,7 @@ class Server_Add_Controller extends Controller {
 
     $item = ORM::factory("item", $id);
     access::required("server_add", $item);
+    access::required("add", $item);
 
     $view = new View("server_add_tree_dialog.html");
     $view->action = url::site("__ARGS__/{$id}__TASK_ID__?csrf=" . access::csrf_token());

@@ -75,7 +75,7 @@ class Albums_Controller extends Items_Controller {
    * @see REST_Controller::_create($resource)
    */
   public function _create($album) {
-    access::required("edit", $album);
+    access::required("add", $album);
 
     switch ($this->input->post("type")) {
     case "album":
@@ -90,7 +90,7 @@ class Albums_Controller extends Items_Controller {
   }
 
   private function _create_album($album) {
-    access::required("edit", $album);
+    access::required("add", $album);
 
     $form = album::get_add_form($album);
     if ($form->validate()) {
@@ -117,7 +117,7 @@ class Albums_Controller extends Items_Controller {
   }
 
   private function _create_photo($album) {
-    access::required("edit", $album);
+    access::required("add", $album);
 
     // If we set the content type as JSON, it triggers saving the result as
     // a document in the browser (well, in Chrome at least).
@@ -185,7 +185,7 @@ class Albums_Controller extends Items_Controller {
    */
   public function _form_add($album_id) {
     $album = ORM::factory("item", $album_id);
-    access::required("edit", $album);
+    access::required("add", $album);
 
     switch ($this->input->get("type")) {
     case "album":
