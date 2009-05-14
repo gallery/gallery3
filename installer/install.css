@@ -64,5 +64,13 @@ table td {
 
 code {
   background: #eee;
+  border: 1px solid #bbb;
   padding: 2px;
+}
+
+code.location {
+  display: block;
+  margin: 4px;
+  padding: 4px;
+  width: auto;
 }

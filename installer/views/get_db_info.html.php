@@ -20,7 +20,8 @@
   </p>
   <?php else: ?>
   <p class="success">
-    We've found a place to store your photos.
+    We've found a place to store your photos:
+    <code class="location"> <?= VARPATH ?> </code>
   </p>
   <?php endif ?>
 </fieldset>
