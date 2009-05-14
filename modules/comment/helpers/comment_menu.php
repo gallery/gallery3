@@ -25,13 +25,4 @@ class comment_menu_Core {
                ->label(t("Comments"))
                ->url(url::site("admin/comments")));
   }
-
-  static function photo($menu, $theme) {
-    $menu
-      ->append(Menu::factory("link")
-               ->id("comments")
-               ->label(t("View comments on this item"))
-               ->url("#comments")
-               ->css_id("gCommentsLink"));
-  }
 }
