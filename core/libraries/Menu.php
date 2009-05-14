@@ -86,7 +86,8 @@ class Menu_Element_Link extends Menu_Element {
     } else {
       $css_class = "";
     }
-    return "<li><a$css_id class=\"gMenuElement$css_class\" href=\"$this->url\">$this->label</a></li>";
+    return "<li><a$css_id class=\"gMenuElement$css_class\" href=\"$this->url\" " .
+      "title=\"$this->label\">$this->label</a></li>";
   }
 }
 
@@ -177,7 +178,8 @@ class Menu_Core extends Menu_Element {
   }
 
   public function __toString() {
-    $html = $this->is_root ? "<ul class=\"gMenu\">" : "<li><a href=#>$this->label</a><ul class=\"gMenu\">";
+    $html = $this->is_root ? "<ul class=\"gMenu\">" :
+      "<li><a href=#>$this->label</a><ul class=\"gMenu\">";
     $html .= implode("\n", $this->elements);
     $html .= $this->is_root ? "</ul>" : "</ul></li>";
     return $html;
