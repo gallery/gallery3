@@ -75,6 +75,7 @@ class core_installer {
                    `view_count` int(9) default 0,
                    `width` int(9) default NULL,
                    `rand_key` float default NULL,
+                   `relative_path_cache` varchar(255) default NULL,
                    `sort_column` varchar(64) default NULL,
                    `sort_order` char(4) default 'ASC',
                    `weight` int(9) NOT NULL default 0,

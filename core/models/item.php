@@ -19,7 +19,6 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-  private $relative_path = null;
   private $view_restrictions = null;
   protected $sorting = array();
 
@@ -137,12 +136,16 @@ class Item_Model extends ORM_MPTT {
     $original_thumb_path = $this->thumb_path();
 
     parent::move_to($target, true);
-    $this->relative_path = null;
+    $this->relative_path_cache = null;
 
     rename($original_path, $this->file_path());
     if ($this->is_album()) {
       @rename(dirname($original_resize_path), dirname($this->resize_path()));
       @rename(dirname($original_thumb_path), dirname($this->thumb_path()));
+      Database::instance()
+        ->update("items",
+                 array("relative_path_cache" => null),
+                 array("left >" => $this->left, "right <" => $this->right));
     } else {
       @rename($original_resize_path, $this->resize_path());
       @rename($original_thumb_path, $this->thumb_path());
@@ -250,21 +253,22 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function relative_path() {
-    if (empty($this->relative_path)) {
+    if (!isset($this->relative_path_cache)) {
       $paths = array();
       foreach (Database::instance()
                ->select("name")
                ->from("items")
-               ->where("`left` <= {$this->left}")
-               ->where("`right` >= {$this->right}")
-               ->where("id <> 1")
+               ->where("left <=", $this->left)
+               ->where("right >=", $this->right)
+               ->where("id <>", 1)
                ->orderby("left", "ASC")
                ->get() as $row) {
         $paths[] = $row->name;
       }
-      $this->relative_path = implode($paths, "/");
+      $this->relative_path_cache = implode($paths, "/");
+      $this->save();
     }
-    return $this->relative_path;
+    return $this->relative_path_cache;
   }
 
   /**
@@ -290,7 +294,7 @@ class Item_Model extends ORM_MPTT {
   public function __set($column, $value) {
     if ($column == "name") {
       // Clear the relative path as it is no longer valid.
-      $this->relative_path = null;
+      $this->relative_path_cache = null;
     }
     parent::__set($column, $value);
   }
