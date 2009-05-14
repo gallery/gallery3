@@ -65,8 +65,10 @@ class Albums_Controller extends Items_Controller {
     $template->set_global("parents", $album->parents());
     $template->content = new View("album.html");
 
-    $album->view_count++;
-    $album->save();
+    // We can't use math in ORM or the query builder, so do this by hand.  It's important
+    // that we do this with math, otherwise concurrent accesses will damage accuracy.
+    Database::instance()->query(
+      "UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $album->id");
 
     print $template;
   }
