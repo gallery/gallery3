@@ -31,4 +31,10 @@ class model_cache_Core {
 
     return self::$cache->$model_name->$field_name->$id;
   }
+
+  static function set($model) {
+    self::$cache->{$model->object_name}
+      ->{$model->primary_key}
+      ->{$model->{$model->primary_key}} = $model;
+  }
 }

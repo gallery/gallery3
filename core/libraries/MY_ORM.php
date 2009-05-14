@@ -28,3 +28,17 @@ class ORM extends ORM_Core {
     return $this;
   }
 }
+
+/**
+ * Slide this in here for convenience.  We won't ever be overloading ORM_Iterator without ORM.
+ */
+class ORM_Iterator extends ORM_Iterator_Core {
+  /**
+   * Cache the result row
+   */
+  public function current() {
+    $row = parent::current();
+    model_cache::set($row);
+    return $row;
+  }
+}
