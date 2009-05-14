@@ -57,7 +57,7 @@ class movie_Core {
     $movie->title = $title;
     $movie->description = $description;
     $movie->name = $name;
-    $movie->owner_id = $owner_id;
+    $movie->owner_id = $owner_id ? $owner_id : user::active();
     $movie->width = $movie_info[0];
     $movie->height = $movie_info[1];
     $movie->mime_type = strtolower($pi["extension"]) == "mp4" ? "video/mp4" : "video/x-flv";
