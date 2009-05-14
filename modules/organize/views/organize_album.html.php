@@ -2,13 +2,15 @@
 <ul>
   <li class="gOrganizeBranch ui-icon-left" ref="<?= $album->id ?>">
     <span id="gOrganizeIcon-<?= $album->id ?>" ref="<?= $album->id ?>"
-          class="ui-icon <?= $album_icon ?><? if (empty($album_icon)): ?> gBranchEmpty<? endif ?>">> </span>
+          class="ui-icon <?= $album_icon ?> <?= $album_icon ? "" : "gBranchEmpty" ?>">
+    </span>
+
     <div id="gOrganizeBranch-<?= $album->id ?>" ref="<?= $album->id ?>"
-          class="<? if ($selected): ?>gBranchSelected <? endif ?>gBranchText">
+          class="<?= $selected ? "gBranchSelected" : "" ?> gBranchText">
       <?= $album->title ?>
     </div>
     <div id="gOrganizeChildren-<?= $album->id ?>"
-          class="<? if ($album_icon == "ui-icon-plus"): ?>gBranchCollapsed<? endif ?>">
+          class="<?= $album_icon == "ui-icon-plus" ? "gBranchCollapsed" : "" ?>">
       <?= $children ?>
     <div>
   </li>
