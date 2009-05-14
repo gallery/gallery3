@@ -46,7 +46,7 @@ class Admin_Advanced_Settings_Controller extends Admin_Controller {
     module::set_var($module_name, $var_name, Input::instance()->post("value"));
     message::success(
       t("Saved value for %var (%module_name)",
-        array("var" => $var->name, "module_name" => $var->module_name)));
+        array("var" => $var_name, "module_name" => $module_name)));
 
     print json_encode(array("result" => "success"));
   }
