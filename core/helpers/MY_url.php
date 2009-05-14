@@ -28,7 +28,7 @@ class url extends url_Core {
 
     $parts = explode("/", $uri, 3);
     if ($parts[0] == "albums" || $parts[0] == "photos") {
-      $uri = ORM::factory("item", $parts[1])->relative_path();
+      $uri = model_cache::get("item", $parts[1])->relative_path();
     }
     return parent::site($uri . $query, $protocol);
   }
