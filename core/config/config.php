@@ -50,6 +50,7 @@ $config['url_suffix'] = '';
  * can give significant speed improvements at the expense of delayed updating.
  */
 $config['internal_cache'] = FALSE;
+$config['internal_cache_path'] = VARPATH . "tmp/";
 
 /**
  * Enable or disable gzip output compression. This can dramatically decrease
