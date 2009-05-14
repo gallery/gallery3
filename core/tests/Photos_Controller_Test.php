@@ -29,7 +29,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
   public function change_photo_test() {
     $controller = new Photos_Controller();
     $root = ORM::factory("item", 1);
-    $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "test", "test", "test");
+    $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "test.jpeg", "test", "test");
     $orig_name = $photo->name;
 
     $_POST["name"] = "new name";
