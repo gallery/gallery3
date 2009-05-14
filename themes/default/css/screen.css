@@ -987,13 +987,12 @@ form .gError,
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gPermissions .gDenied, #gPermissions .gAllowed {
-  padding-left: 20px;
-  background-position: left;
-  background-repeat: no-repeat;
+  text-align: center;
+  vertical-align: middle;
 }
 #gPermissions .gDenied {
-  background-image: url('../images/ico-denied.png');
+  background-color: #FFCCCC;
 }
 #gPermissions .gAllowed {
-  background-image: url('../images/ico-success.png');
+  background-color: #CCFFCC;
 }
