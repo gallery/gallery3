@@ -49,6 +49,7 @@ class item_Core {
     $parent = $item->parent();
     access::required("edit", $parent);
 
+    model_cache::clear("item", $parent->album_cover_item_id);
     $parent->album_cover_item_id = $item->is_album() ? $item->album_cover_item_id : $item->id;
     $parent->thumb_dirty = 1;
     $parent->save();
@@ -63,6 +64,7 @@ class item_Core {
     access::required("edit", $album);
     @unlink($album->thumb_path());
 
+    model_cache::clear("item", $album->album_cover_item_id)  ;
     $album->album_cover_item_id = null;
     $album->thumb_width = 0;
     $album->thumb_height = 0;

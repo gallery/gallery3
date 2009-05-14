@@ -32,6 +32,12 @@ class model_cache_Core {
     return self::$cache->$model_name->$field_name->$id;
   }
 
+  static function clear($model_name, $id, $field_name="id") {
+    if (!empty(self::$cache->$model_name->$field_name->$id)) {
+      unset(self::$cache->$model_name->$field_name->$id);
+    }
+  }
+
   static function set($model) {
     self::$cache->{$model->object_name}
       ->{$model->primary_key}
