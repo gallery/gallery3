@@ -317,6 +317,7 @@ class Scaffold_Controller extends Template_Controller {
     $db = Database::instance();
     $db->query("TRUNCATE {sessions}");
     $db->query("TRUNCATE {logs}");
+    $db->query("DELETE FROM {vars} WHERE `module_name` = 'core' AND `name` = '_cache'");
     $db->update("users", array("password" => ""), array("id" => 1));
     $db->update("users", array("password" => ""), array("id" => 2));
 

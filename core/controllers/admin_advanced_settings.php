@@ -21,7 +21,9 @@ class Admin_Advanced_Settings_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_advanced_settings.html");
-    $view->content->vars = ORM::factory("var")->orderby("module_name", "name")->find_all();
+    $view->content->vars = ORM::factory("var")
+      ->orderby("module_name", "name")
+      ->find_all();
     print $view;
   }
 
@@ -41,17 +43,7 @@ class Admin_Advanced_Settings_Controller extends Admin_Controller {
   public function save($module_name, $var_name) {
     access::verify_csrf();
 
-    $var = ORM::factory("var")
-      ->where("module_name", $module_name)
-      ->where("name", $var_name)
-      ->find();
-    if (!$var->loaded) {
-      kohana::show_404();
-    }
-
-    $var->value = Input::instance()->post("value");
-    $var->save();
-
+    module::set_var($module_name, $var_name, Input::instance()->post("value"));
     message::success(
       t("Saved value for %var (%module_name)",
         array("var" => $var->name, "module_name" => $var->module_name)));

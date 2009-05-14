@@ -17,6 +17,7 @@
       <th> <?= t("Value") ?></th>
     </tr>
     <? foreach ($vars as $var): ?>
+    <? if ($var->module_name == "core" && $var->name == "_cache") continue ?>
     <tr class="setting">
       <td> <?= $var->module_name ?> </td>
       <td> <?= $var->name ?> </td>

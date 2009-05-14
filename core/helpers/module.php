@@ -26,7 +26,7 @@
 class module_Core {
   public static $module_names = array();
   public static $modules = array();
-  public static $var_cache = array();
+  public static $var_cache = null;
 
   static function get_version($module_name) {
     return ORM::factory("module")->where("name", $module_name)->find()->version;
@@ -199,17 +199,43 @@ class module_Core {
    * @return the value
    */
   static function get_var($module_name, $name, $default_value=null) {
-    if (isset(self::$var_cache[$module_name][$name])) {
-      return self::$var_cache[$module_name][$name];
+    // We cache all vars in core._cache so that we can load all vars at once for
+    // performance.
+    if (empty(self::$var_cache)) {
+      $row = Database::instance()
+        ->select("value")
+        ->from("vars")
+        ->where(array("module_name" => "core", "name" => "_cache"))
+        ->get()
+        ->current();
+      if ($row) {
+        self::$var_cache = unserialize($row->value);
+      } else {
+        // core._cache doesn't exist.  Create it now.
+        foreach (Database::instance()
+                 ->select("module_name", "name", "value")
+                 ->from("vars")
+                 ->orderby("module_name", "name")
+                 ->get() as $row) {
+          if ($row->module_name == "core" && $row->name == "_cache") {
+            // This could happen if there's a race condition
+            continue;
+          }
+          self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
+        }
+        $cache = ORM::factory("var");
+        $cache->module_name = "core";
+        $cache->name = "_cache";
+        $cache->value = serialize(self::$var_cache);
+        $cache->save();
+      }
     }
 
-    $var = ORM::factory("var")
-      ->where("module_name", $module_name)
-      ->where("name", $name)
-      ->find();
-
-    self::$var_cache[$module_name][$name] = $var->loaded ? $var->value : $default_value;
-    return self::$var_cache[$module_name][$name];
+    if (isset(self::$var_cache->$module_name->$name)) {
+      return self::$var_cache->$module_name->$name;
+    } else {
+      return $default_value;
+    }
   }
 
   /**
@@ -230,7 +256,9 @@ class module_Core {
     }
     $var->value = $value;
     $var->save();
-    self::$var_cache[$module_name][$name] = $value;
+
+    Database::instance()->delete("vars", array("module_name" => "core", "name" => "_cache"));
+    self::$var_cache = null;
  }
 
   /**
@@ -244,7 +272,9 @@ class module_Core {
       "UPDATE {vars} SET `value` = `value` + $increment " .
       "WHERE `module_name` = '$module_name' " .
       "AND `name` = '$name'");
-    unset(self::$var_cache[$module_name][$name]);
+
+    Database::instance()->delete("vars", array("module_name" => "core", "name" => "_cache"));
+    self::$var_cache = null;
   }
 
  /**
@@ -260,6 +290,8 @@ class module_Core {
     if ($var->loaded) {
       $var->delete();
     }
-    unset(self::$var_cache[$module_name][$name]);
+
+    Database::instance()->delete("vars", array("module_name" => "core", "name" => "_cache"));
+    self::$var_cache = null;
   }
 }
