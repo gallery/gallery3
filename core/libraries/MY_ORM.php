@@ -38,7 +38,9 @@ class ORM_Iterator extends ORM_Iterator_Core {
    */
   public function current() {
     $row = parent::current();
-    model_cache::set($row);
+    if (is_object($row)) {
+      model_cache::set($row);
+    }
     return $row;
   }
 }
