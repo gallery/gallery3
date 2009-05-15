@@ -52,42 +52,37 @@
                   </a>
                 </td>
               <? endif ?>
-              
+
             <? elseif ($intent === access::DENY): ?>
               <td class="gDenied">
-              <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
-                title="<?= t('click to allow') ?>">
-                <img src="<?= url::file('themes/default/images/ico-success-gray.png') ?>" alt="<?= t('inactive allowed icon') ?>" />
-              </a>
-              <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
-                title="<?= t('denied, click to reset') ?>">
-                <img src="<?= url::file('themes/default/images/ico-denied.png') ?>" alt="<?= t('denied icon') ?>" />
-              </a>
-            <? elseif ($intent === access::ALLOW): ?>
-              <? // skip over the "allowed/denied by parent" state when we're setting permissions on ?>
-              <? // the root album, since it has no parent. ?>
-              <? if ($item->id == 1): ?>
-                <td class="gAllowed">
-                  <span>
-                    <img src="<?= url::file('themes/default/images/ico-success.png') ?>" title="allowed" alt="<?= t('allowed icon') ?>" />
-                  </span>
-                  <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
-                    title="<?= t('click to deny') ?>">
-                    <img src="<?= url::file('themes/default/images/ico-denied-gray.png') ?>" alt="<?= t('inactive denied icon') ?>" />
+                <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
+                  title="<?= t('click to allow') ?>">
+                  <img src="<?= url::file('themes/default/images/ico-success-gray.png') ?>" alt="<?= t('inactive allowed icon') ?>" />
+                </a>
+                <? if ($item->id == 1): ?>
+                  <img src="<?= url::file('themes/default/images/ico-denied.png') ?>" alt="<?= t('denied icon') ?>" title="<?= t('denied') ?>"/>
+                <? else: ?>
+                  <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
+                    title="<?= t('denied, click to reset') ?>">
+                    <img src="<?= url::file('themes/default/images/ico-denied.png') ?>" alt="<?= t('denied icon') ?>" />
                   </a>
-                </td>
-              <? else: ?>
-                <td class="gAllowed">
+                <? endif ?>
+              </td>
+            <? elseif ($intent === access::ALLOW): ?>
+              <td class="gAllowed">
+                <? if ($item->id == 1): ?>
+                  <img src="<?= url::file('themes/default/images/ico-success.png') ?>" title="allowed" alt="<?= t('allowed icon') ?>" />
+                <? else: ?>
                   <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                     title="<?= t('allowed, click to reset') ?>">
                     <img src="<?= url::file('themes/default/images/ico-success.png') ?>" alt="<?= t('allowed icon') ?>" />
                   </a>
-                  <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
-                    title="<?= t('click to deny') ?>">
-                    <img src="<?= url::file('themes/default/images/ico-denied-gray.png') ?>" alt="<?= t('inactive denied icon') ?>" />
-                  </a>
-                </td>
-              <? endif ?>
+                <? endif ?>
+                <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
+                  title="<?= t('click to deny') ?>">
+                  <img src="<?= url::file('themes/default/images/ico-denied-gray.png') ?>" alt="<?= t('inactive denied icon') ?>" />
+                </a>
+              </td>
             <? endif ?>
           <? endif ?>
         </td>
