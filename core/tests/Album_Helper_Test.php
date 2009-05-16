@@ -58,4 +58,17 @@ class Album_Helper_Test extends Unit_Test_Case {
     $album = album::create($root, $rand, $rand, $rand);
     $this->assert_equal("http://./var/resizes/$rand/.album.jpg", $album->resize_url());
   }
+
+  public function create_album_shouldnt_allow_names_with_slash_test() {
+    $rand = rand();
+    $root = ORM::factory("item", 1);
+    try {
+      $album = album::create($root, $rand . "/", $rand, $rand);
+    } catch (Exception $e) {
+      // pass
+      return;
+    }
+
+    $this->assert_true(false, "Shouldn't create an album with / in the name");
+  }
 }

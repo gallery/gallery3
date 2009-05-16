@@ -43,6 +43,10 @@ class photo_Core {
       throw new Exception("@todo MISSING_IMAGE_FILE");
     }
 
+    if (strpos($name, "/")) {
+      throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
+    }
+
     $image_info = getimagesize($filename);
 
     // Force an extension onto the name
@@ -124,7 +128,8 @@ class photo_Core {
     $group = $form->group("edit_photo")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
-    $group->input("name")->label(t("Filename"))->value($photo->name);
+    $group->input("filename")->label(t("Filename"))->value($photo->name)
+      ->error_messages("conflict", t("There is already a file with this name"));
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;

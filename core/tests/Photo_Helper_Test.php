@@ -80,4 +80,18 @@ class Photo_Helper_Test extends Unit_Test_Case {
 
     $this->assert_equal("http://./var/resizes/{$rand}/{$rand}.jpg", $photo->resize_url());
   }
+
+  public function create_photo_shouldnt_allow_names_with_slash_test() {
+    $rand = rand();
+    $root = ORM::factory("item", 1);
+    try {
+      $filename = DOCROOT . "core/tests/test.jpg";
+      $photo = photo::create($root, $filename, "$rand/.jpg", $rand, $rand);
+    } catch (Exception $e) {
+      // pass
+      return;
+    }
+
+    $this->assert_true(false, "Shouldn't create a photo with / in the name");
+  }
 }

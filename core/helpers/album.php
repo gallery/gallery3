@@ -37,6 +37,10 @@ class album_Core {
       throw new Exception("@todo INVALID_PARENT");
     }
 
+    if (strpos($name, "/")) {
+      throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
+    }
+
     $album = ORM::factory("item");
     $album->type = "album";
     $album->title = $title;
@@ -68,7 +72,8 @@ class album_Core {
 
   static function get_add_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddAlbumForm"));
-    $group = $form->group("add_album")->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
+    $group = $form->group("add_album")
+      ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
     $group->input("name")->label(t("Directory Name"));
@@ -86,7 +91,7 @@ class album_Core {
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
-      $group->input("name")->label(t("Directory Name"))->value($parent->name);
+      $group->dirname->label(t("Directory Name"))->value($parent->name);
     }
 
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
