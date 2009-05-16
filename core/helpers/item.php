@@ -72,4 +72,10 @@ class item_Core {
     $album->save();
     graphics::generate($album);
   }
+
+  static function validate_no_slashes($input) {
+    if (strpos($input->value, "/") !== false) {
+      $input->add_error("no_slashes", 1);
+    }
+  }
 }

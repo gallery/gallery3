@@ -69,13 +69,26 @@ class Photos_Controller extends Items_Controller {
     access::required("edit", $photo);
 
     $form = photo::get_edit_form($photo);
-    if ($form->validate()) {
-      // @todo implement changing the name.  This is not trivial, we have
-      // to check for conflicts and rename the album itself, etc.  Needs an
-      // api method.
+    if ($valid = $form->validate()) {
+      if ($form->edit_photo->filename->value != $photo->name) {
+        // Make sure that there's not a conflict
+        if (Database::instance()
+            ->from("items")
+            ->where("parent_id", $photo->parent_id)
+            ->where("id <>", $photo->id)
+            ->where("name", $form->edit_photo->filename->value)
+            ->count_records()) {
+          $form->edit_photo->filename->add_error("conflict", 1);
+          $valid = false;
+        }
+      }
+    }
+
+    if ($valid) {
       $orig = clone $photo;
       $photo->title = $form->edit_photo->title->value;
       $photo->description = $form->edit_photo->description->value;
+      $photo->rename($form->edit_photo->filename->value);
       $photo->save();
 
       module::event("item_updated", $orig, $photo);

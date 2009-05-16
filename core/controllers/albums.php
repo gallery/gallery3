@@ -155,16 +155,30 @@ class Albums_Controller extends Items_Controller {
     access::required("edit", $album);
 
     $form = album::get_edit_form($album);
-    if ($form->validate()) {
-      // @todo implement changing the name.  This is not trivial, we have
-      // to check for conflicts and rename the album itself, etc.  Needs an
-      // api method.
+    if ($valid = $form->validate()) {
+      // Make sure that there's not a conflict
+      if (Database::instance()
+          ->from("items")
+          ->where("parent_id", $album->parent_id)
+          ->where("id <>", $album->id)
+          ->where("name", $form->edit_album->dirname->value)
+          ->count_records()) {
+        $form->edit_album->dirname->add_error("conflict", 1);
+        $valid = false;
+      }
+    }
+
+    // @todo
+    // @todo we need to make sure that filename / dirname components can't contain a /
+    // @todo
+
+    if ($valid) {
       $orig = clone $album;
       $album->title = $form->edit_album->title->value;
       $album->description = $form->edit_album->description->value;
       $album->sort_column = $form->edit_album->sort_order->column->value;
       $album->sort_order = $form->edit_album->sort_order->direction->value;
-
+      $album->rename($form->edit_album->dirname->value);
       $album->save();
 
       module::event("item_updated", $orig, $album);

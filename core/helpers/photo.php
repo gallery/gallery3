@@ -129,7 +129,9 @@ class photo_Core {
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("filename")->label(t("Filename"))->value($photo->name)
-      ->error_messages("conflict", t("There is already a file with this name"));
+      ->callback("item::validate_no_slashes")
+      ->error_messages("conflict", t("There is already a file with this name"))
+      ->error_messages("no_slashes", t("The directory name can't contain the \"/\" character"));
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;

@@ -76,7 +76,9 @@ class album_Core {
       ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
-    $group->input("name")->label(t("Directory Name"));
+    $group->input("name")->label(t("Directory Name"))
+      ->callback("item::validate_no_slashes")
+      ->error_messages("no_slashes", t("The directory name can't contain the \"/\" character"));
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Create"));
     $form->add_rules_from(ORM::factory("item"));
@@ -91,7 +93,9 @@ class album_Core {
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
-      $group->dirname->label(t("Directory Name"))->value($parent->name);
+      $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
+        ->callback("item::validate_no_slashes")
+        ->error_messages("no_slashes", t("The directory name can't contain the \"/\" character"));
     }
 
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
