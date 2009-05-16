@@ -165,6 +165,10 @@ class Item_Model extends ORM_MPTT {
       return;
     }
 
+    if (strpos($new_name, "/")) {
+      throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
+    }
+
     $old_relative_path = $this->relative_path();
     $new_relative_path = dirname($old_relative_path) . "/" . $new_name;
     @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$new_relative_path");

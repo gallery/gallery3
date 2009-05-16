@@ -125,4 +125,19 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_equal("resize", file_get_contents($photo->resize_path()));
     $this->assert_equal("file", file_get_contents($photo->file_path()));
   }
+
+  public function item_rename_wont_accept_slash_test() {
+    // Create a test photo
+    $item = self::create_random_item();
+
+    $new_name = rand() . "/";
+
+    try {
+      $item->rename($new_name)->save();
+    } catch (Exception $e) {
+      // pass
+      return;
+    }
+    $this->assert_false(true, "Item_Model::rename should not accept / characters");
+  }
 }
