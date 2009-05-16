@@ -155,6 +155,34 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * Rename the underlying file for this item to a new name.  Move all the files.  This requires a
+   * save.
+   *
+   * @chainable
+   */
+  public function rename($new_name) {
+    if ($new_name == $this->name) {
+      return;
+    }
+
+    $old_relative_path = $this->relative_path();
+    $new_relative_path = dirname($old_relative_path) . "/" . $new_name;
+    @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$new_relative_path");
+    @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$new_relative_path");
+    @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$new_relative_path");
+    $this->name = $new_name;
+
+    if ($this->is_album()) {
+      Database::instance()
+        ->update("items",
+                 array("relative_path_cache" => null),
+                 array("left >" => $this->left, "right <" => $this->right));
+    }
+
+    return $this;
+  }
+
+  /**
    * album: url::site("albums/2")
    * photo: url::site("photos/3")
    *
