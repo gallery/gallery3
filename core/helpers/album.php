@@ -101,7 +101,9 @@ class album_Core {
     if ($parent->id != 1) {
       $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
         ->callback("item::validate_no_slashes")
-        ->error_messages("no_slashes", t("The directory name can't contain the \"/\" character"));
+        ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
+        ->callback("item::validate_no_trailing_period")
+        ->error_messages("no_trailing_period", t("The directory name can't end in \".\""));
     }
 
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))

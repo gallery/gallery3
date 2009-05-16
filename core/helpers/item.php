@@ -78,4 +78,10 @@ class item_Core {
       $input->add_error("no_slashes", 1);
     }
   }
+
+ static function validate_no_trailing_period($input) {
+    if (rtrim($input->value, ".") !== $input->value) {
+      $input->add_error("no_trailing_period", 1);
+    }
+  }
 }
