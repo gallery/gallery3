@@ -41,6 +41,12 @@ class album_Core {
       throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
     }
 
+    // We don't allow trailing periods as a security measure
+    // ref: http://dev.kohanaphp.com/issues/684
+    if (rtrim($name, ".") != $name) {
+      throw new Exception("@todo NAME_CANNOT_END_IN_PERIOD");
+    }
+
     $album = ORM::factory("item");
     $album->type = "album";
     $album->title = $title;

@@ -43,6 +43,16 @@ class movie_Core {
       throw new Exception("@todo MISSING_MOVIE_FILE");
     }
 
+    if (strpos($name, "/")) {
+      throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
+    }
+
+    // We don't allow trailing periods as a security measure
+    // ref: http://dev.kohanaphp.com/issues/684
+    if (rtrim($name, ".") != $name) {
+      throw new Exception("@todo NAME_CANNOT_END_IN_PERIOD");
+    }
+
     $movie_info = movie::getmoviesize($filename);
 
     // Force an extension onto the name
@@ -93,7 +103,7 @@ class movie_Core {
     graphics::generate($movie);
 
     // If the parent has no cover item, make this it.
-    if ($parent->album_cover_item_id == null)  {
+    if (access::can("edit", $parent) && $parent->album_cover_item_id == null)  {
       item::make_album_cover($movie);
     }
 

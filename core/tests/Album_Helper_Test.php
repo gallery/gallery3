@@ -71,4 +71,17 @@ class Album_Helper_Test extends Unit_Test_Case {
 
     $this->assert_true(false, "Shouldn't create an album with / in the name");
   }
+
+  public function create_album_silently_trims_trailing_periods_test() {
+    $rand = rand();
+    $root = ORM::factory("item", 1);
+    try {
+      $album = album::create($root, $rand . "..", $rand, $rand);
+    } catch (Exception $e) {
+      $this->assert_equal("@todo NAME_CANNOT_END_IN_PERIOD", $e->getMessage());
+      return;
+    }
+
+    $this->assert_true(false, "Shouldn't create an album with trailing . in the name");
+  }
 }

@@ -85,13 +85,25 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     try {
-      $filename = DOCROOT . "core/tests/test.jpg";
-      $photo = photo::create($root, $filename, "$rand/.jpg", $rand, $rand);
+      $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand/.jpg", $rand, $rand);
     } catch (Exception $e) {
       // pass
       return;
     }
 
     $this->assert_true(false, "Shouldn't create a photo with / in the name");
+  }
+
+  public function create_photo_silently_trims_trailing_periods_test() {
+    $rand = rand();
+    $root = ORM::factory("item", 1);
+    try {
+      $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg.", $rand, $rand);
+    } catch (Exception $e) {
+      $this->assert_equal("@todo NAME_CANNOT_END_IN_PERIOD", $e->getMessage());
+      return;
+    }
+
+    $this->assert_true(false, "Shouldn't create a photo with trailing . in the name");
   }
 }
