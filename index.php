@@ -56,6 +56,7 @@ if (PHP_SAPI == 'cli') {
   define('TEST_MODE', 0);
   define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
 }
+define('TMPPATH', VARPATH . '/tmp');
 
 // Initialize.
 require SYSPATH . 'core/Bootstrap' . EXT;
