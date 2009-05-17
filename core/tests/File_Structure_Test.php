@@ -59,16 +59,17 @@ class File_Structure_Test extends Unit_Test_Case {
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
 
     $expected = $this->_get_preamble(__FILE__);
+    $errors = array();
     foreach ($dir as $file) {
       if (preg_match("/views/", $file->getPathname()) ||
           $file->getPathName() == DOCROOT . "installer/database_config.php" ||
           $file->getPathName() == DOCROOT . "installer/init_var.php") {
         // The preamble for views is a single line that prevents direct script access
         $lines = file($file->getPathname());
-        $this->assert_equal(
-          "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n",
-          $lines[0],
-          "in file: {$file->getPathname()}");
+        $view_expected = "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n";
+        if ($view_expected != $lines[0]) {
+          $errors[] = "{$file->getPathName()} line 1 expected $view_expected";
+        }
       } else if (preg_match("|\.php$|", $file->getPathname())) {
         $actual = $this->_get_preamble($file->getPathname());
         if ($file->getPathName() == DOCROOT . "index.php" ||
@@ -76,13 +77,21 @@ class File_Structure_Test extends Unit_Test_Case {
           // index.php and installer/index.php allow direct access; modify our expectations for them
           $index_expected = $expected;
           $index_expected[0] = "<?php";
-          $this->assert_equal($index_expected, $actual, "in file: {$file->getPathname()}");
+          if ($index_expected != $actual) {
+            $errors[] = "{$file->getPathName()} line 1 expected $index_expected";
+          }
         } else {
           // We expect the full preamble in regular PHP files
           $actual = $this->_get_preamble($file->getPathname());
-          $this->assert_equal($expected, $actual, "in file: {$file->getPathname()}");
+          if ($expected != $actual) {
+            $errors[] = "{$file->getPathName()} line 1 expected $expected";
+          }
         }
       }
+    }
+
+    if ($errors) {
+      $this->assert_false(true, "Preamble errors:\n" . join("\n", $errors));
     }
   }
 
