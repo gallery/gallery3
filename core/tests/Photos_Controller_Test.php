@@ -32,6 +32,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "test.jpeg", "test", "test");
     $orig_name = $photo->name;
 
+    $_POST["filename"] = "test.jpeg";
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";

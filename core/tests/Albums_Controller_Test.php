@@ -32,6 +32,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $album = album::create($root, "test", "test", "test");
     $orig_name = $album->name;
 
+    $_POST["dirname"] = "test";
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
