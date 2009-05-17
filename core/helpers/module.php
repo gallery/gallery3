@@ -167,10 +167,10 @@ class module_Core {
    * Run a specific event on all active modules.
    * @param string $name the event name
    * @param mixed  $data data to pass to each event handler
-   * @param mixed  $data2 data to pass to each event handler
    */
-  static function event($name, &$data=null, &$data2=null) {
-    $args = empty($data2) ? array(&$data) : array(&$data, &$data2);
+  static function event($name, &$data=null) {
+    $args = func_get_args();
+    array_shift($args);
     $function = str_replace(".", "_", $name);
 
     foreach (self::installed() as $module) {
