@@ -186,7 +186,7 @@ class core_installer {
                    UNIQUE KEY(`module_name`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      foreach (array("albums", "logs", "modules", "resizes", "thumbs", "uploads") as $dir) {
+      foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {
         @mkdir(VARPATH . $dir);
       }
 
