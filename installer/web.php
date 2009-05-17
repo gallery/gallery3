@@ -108,5 +108,9 @@ function check_environment() {
     $errors[] = "The <a href=\"http://php.net/mbstring\">mbstring extension</a> is overloading PHP's native string functions.  Please disable it.";
   }
 
+  if (!function_exists("json_encode")) {
+    $errors[] = "PHP is missing the <a href=\"http://php.net/manual/en/book.json.php\">JavaScript Object Notation (JSON) extension</a>.  Please install it.";
+  }
+
   return @$errors;
 }
