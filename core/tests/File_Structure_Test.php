@@ -54,38 +54,100 @@ class File_Structure_Test extends Unit_Test_Case {
     }
   }
 
-  public function code_files_start_with_gallery_preamble_test() {
-    $dir = new GalleryCodeFilterIterator(
+  private function _check_view_preamble($path, &$errors) {
+    // The preamble for views is a single line that prevents direct script access
+    if (strpos($path, SYSPATH) === 0) {
+      // Kohana preamble
+      $expected = "<?php defined('SYSPATH') OR die('No direct access allowed.'); ?>\n";
+    } else {
+      // Gallery preamble
+      // @todo use the same preamble for both!
+      $expected = "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n";
+    }
+
+    $fp = fopen($path, "r");
+    $actual = fgets($fp);
+    fclose($fp);
+
+    if ($expected != $actual) {
+      $errors[] = "$path:1\n  expected:\n\t$expected\n  actual:\n\t$actual";
+    }
+  }
+
+  private function _check_php_preamble($path, &$errors) {
+    if (strpos($path, SYSPATH) === 0 ||
+        strpos($path, MODPATH . "unit_test") === 0) {
+      // Kohana: we only care about the first line
+      $fp = fopen($path, "r");
+      $actual = array(fgets($fp));
+      fclose($fp);
+      $expected = array("<?php defined('SYSPATH') OR die('No direct access allowed.');\n");
+    } else if (strpos($path, MODPATH . "forge") === 0 ||
+               strpos($path, MODPATH . "exif/lib") === 0 ||
+               $path == MODPATH . "user/lib/PasswordHash.php" ||
+               $path == DOCROOT . "var/database.php") {
+      // 3rd party module security-only preambles, similar to Gallery's
+      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
+      $fp = fopen($path, "r");
+      $actual = array(fgets($fp));
+      fclose($fp);
+    } else {
+      // Gallery: we care about the entire copyright
+      $actual = $this->_get_preamble($path);
+      $expected = array(
+        "<?php defined(\"SYSPATH\") or die(\"No direct script access.\");",
+        "/**",
+        " * Gallery - a web based photo album viewer and editor",
+        " * Copyright (C) 2000-2009 Bharat Mediratta",
+        " *",
+        " * This program is free software; you can redistribute it and/or modify",
+        " * it under the terms of the GNU General Public License as published by",
+        " * the Free Software Foundation; either version 2 of the License, or (at",
+        " * your option) any later version.",
+        " *",
+        " * This program is distributed in the hope that it will be useful, but",
+        " * WITHOUT ANY WARRANTY; without even the implied warranty of",
+        " * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU",
+        " * General Public License for more details.",
+        " *",
+        " * You should have received a copy of the GNU General Public License",
+        " * along with this program; if not, write to the Free Software",
+        " * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.",
+        " */",
+      );
+    }
+    if ($expected != $actual) {
+      $errors[] = "$path:1\n  expected\n\t" . join("\n\t", $expected) .
+        "\n  actual:\n\t" . join("\n\t", $actual);
+    }
+  }
+
+  public function code_files_start_with_preamble_test() {
+    $dir = new PhpCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
 
-    $expected = $this->_get_preamble(__FILE__);
     $errors = array();
     foreach ($dir as $file) {
-      if (preg_match("/views/", $file->getPathname()) ||
-          $file->getPathName() == DOCROOT . "installer/database_config.php" ||
-          $file->getPathName() == DOCROOT . "installer/init_var.php") {
-        // The preamble for views is a single line that prevents direct script access
-        $lines = file($file->getPathname());
-        $view_expected = "<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n";
-        if ($view_expected != $lines[0]) {
-          $errors[] = "{$file->getPathName()} line 1 expected $view_expected";
-        }
-      } else if (preg_match("|\.php$|", $file->getPathname())) {
-        $actual = $this->_get_preamble($file->getPathname());
-        if ($file->getPathName() == DOCROOT . "index.php" ||
-            $file->getPathName() == DOCROOT . "installer/index.php") {
-          // index.php and installer/index.php allow direct access; modify our expectations for them
-          $index_expected = $expected;
-          $index_expected[0] = "<?php";
-          if ($index_expected != $actual) {
-            $errors[] = "{$file->getPathName()} line 1 expected $index_expected";
-          }
+      $path = $file->getPathname();
+      switch ($path) {
+      case DOCROOT . "installer/database_config.php":
+      case DOCROOT . "installer/init_var.php":
+        // Special case views
+        $this->_check_view_preamble($path, $errors);
+        break;
+
+      case DOCROOT . "index.php":
+      case DOCROOT . "installer/index.php":
+        // Front controllers
+        break;
+
+      default:
+        if (strpos($path, DOCROOT . "var/logs") === 0) {
+          continue;
+        } else if (preg_match("/views/", $path)) {
+          $this->_check_view_preamble($path, $errors);
         } else {
-          // We expect the full preamble in regular PHP files
-          $actual = $this->_get_preamble($file->getPathname());
-          if ($expected != $actual) {
-            $errors[] = "{$file->getPathName()} line 1 expected $expected";
-          }
+          $this->_check_php_preamble($path, $errors);
         }
       }
     }
@@ -140,7 +202,9 @@ class File_Structure_Test extends Unit_Test_Case {
 
 class PhpCodeFilterIterator extends FilterIterator {
   public function accept() {
-    return substr($this->getInnerIterator()->getPathName(), -4) == ".php";
+    $path_name = $this->getInnerIterator()->getPathName();
+    return (substr($path_name, -4) == ".php" &&
+            !(strpos($path_name, VARPATH) === 0));
   }
 }
 
@@ -156,8 +220,6 @@ class GalleryCodeFilterIterator extends FilterIterator {
       strpos($path_name, MODPATH . "forge") !== false ||
       strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_error_page.php") !== false ||
       strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_unit_test.php") !== false ||
-      strpos($path_name, MODPATH . "kodoc") !== false ||
-      strpos($path_name, MODPATH . "mptt") !== false ||
       strpos($path_name, MODPATH . "unit_test") !== false ||
       strpos($path_name, MODPATH . "exif/lib") !== false ||
       strpos($path_name, MODPATH . "user/libraries/PasswordHash") !== false ||
