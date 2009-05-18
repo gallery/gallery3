@@ -209,12 +209,6 @@ final class Kohana {
 		{
 			Benchmark::start(SYSTEM_BENCHMARK.'_controller_setup');
 
-			if (Router::$method[0] === '_')
-			{
-				// Do not allow access to hidden methods
-				Event::run('system.404');
-			}
-
 			// Include the Controller file
 			require Router::$controller_path;
 
@@ -248,6 +242,13 @@ final class Kohana {
 			{
 				// Load the controller method
 				$method = $class->getMethod(Router::$method);
+
+				// Method exists
+				if (Router::$method[0] === '_')
+				{
+					// Do not allow access to hidden methods
+					Event::run('system.404');
+				}
 
 				if ($method->isProtected() or $method->isPrivate())
 				{
@@ -806,126 +807,140 @@ final class Kohana {
 	 */
 	public static function exception_handler($exception, $message = NULL, $file = NULL, $line = NULL)
 	{
-		// PHP errors have 5 args, always
-		$PHP_ERROR = (func_num_args() === 5);
-
-		// Test to see if errors should be displayed
-		if ($PHP_ERROR AND (error_reporting() & $exception) === 0)
-			return;
-
-		// This is useful for hooks to determine if a page has an error
-		self::$has_error = TRUE;
-
-		// Error handling will use exactly 5 args, every time
-		if ($PHP_ERROR)
+		try
 		{
-			$code     = $exception;
-			$type     = 'PHP Error';
-			$template = 'kohana_error_page';
-		}
-		else
-		{
-			$code     = $exception->getCode();
-			$type     = get_class($exception);
-			$message  = $exception->getMessage();
-			$file     = $exception->getFile();
-			$line     = $exception->getLine();
-			$template = ($exception instanceof Kohana_Exception) ? $exception->getTemplate() : 'kohana_error_page';
-		}
-
-		if (is_numeric($code))
-		{
-			$codes = self::lang('errors');
-
-			if ( ! empty($codes[$code]))
+			// PHP errors have 5 args, always
+			$PHP_ERROR = (func_num_args() === 5);
+	
+			// Test to see if errors should be displayed
+			if ($PHP_ERROR AND (error_reporting() & $exception) === 0)
+				return;
+	
+			// This is useful for hooks to determine if a page has an error
+			self::$has_error = TRUE;
+	
+			// Error handling will use exactly 5 args, every time
+			if ($PHP_ERROR)
 			{
-				list($level, $error, $description) = $codes[$code];
+				$code     = $exception;
+				$type     = 'PHP Error';
+				$template = 'kohana_error_page';
 			}
 			else
 			{
-				$level = 1;
-				$error = $PHP_ERROR ? 'Unknown Error' : get_class($exception);
+				$code     = $exception->getCode();
+				$type     = get_class($exception);
+				$message  = $exception->getMessage();
+				$file     = $exception->getFile();
+				$line     = $exception->getLine();
+				$template = ($exception instanceof Kohana_Exception) ? $exception->getTemplate() : 'kohana_error_page';
+			}
+	
+			if (is_numeric($code))
+			{
+				$codes = self::lang('errors');
+	
+				if ( ! empty($codes[$code]))
+				{
+					list($level, $error, $description) = $codes[$code];
+				}
+				else
+				{
+					$level = 1;
+					$error = $PHP_ERROR ? 'Unknown Error' : get_class($exception);
+					$description = '';
+				}
+			}
+			else
+			{
+				// Custom error message, this will never be logged
+				$level = 5;
+				$error = $code;
 				$description = '';
 			}
-		}
-		else
-		{
-			// Custom error message, this will never be logged
-			$level = 5;
-			$error = $code;
-			$description = '';
-		}
-
-		// Remove the DOCROOT from the path, as a security precaution
-		$file = str_replace('\\', '/', realpath($file));
-		$file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
-
-		if ($level <= self::$configuration['core']['log_threshold'])
-		{
-			// Log the error
-			self::log('error', self::lang('core.uncaught_exception', $type, $message, $file, $line));
-		}
-
-		if ($PHP_ERROR)
-		{
-			$description = self::lang('errors.'.E_RECOVERABLE_ERROR);
-			$description = is_array($description) ? $description[2] : '';
-
-			if ( ! headers_sent())
+	
+			// Remove the DOCROOT from the path, as a security precaution
+			$file = str_replace('\\', '/', realpath($file));
+			$file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
+	
+			if ($level <= self::$configuration['core']['log_threshold'])
 			{
-				// Send the 500 header
-				header('HTTP/1.1 500 Internal Server Error');
+				// Log the error
+				self::log('error', self::lang('core.uncaught_exception', $type, $message, $file, $line));
+			}
+	
+			if ($PHP_ERROR)
+			{
+				$description = self::lang('errors.'.E_RECOVERABLE_ERROR);
+				$description = is_array($description) ? $description[2] : '';
+	
+				if ( ! headers_sent())
+				{
+					// Send the 500 header
+					header('HTTP/1.1 500 Internal Server Error');
+				}
+			}
+			else
+			{
+				if (method_exists($exception, 'sendHeaders') AND ! headers_sent())
+				{
+					// Send the headers if they have not already been sent
+					$exception->sendHeaders();
+				}
+			}
+	
+			while (ob_get_level() > self::$buffer_level)
+			{
+				// Close open buffers
+				ob_end_clean();
+			}
+	
+			// Test if display_errors is on
+			if (self::$configuration['core']['display_errors'] === TRUE)
+			{
+				if ( ! IN_PRODUCTION AND $line != FALSE)
+				{
+					// Remove the first entry of debug_backtrace(), it is the exception_handler call
+					$trace = $PHP_ERROR ? array_slice(debug_backtrace(), 1) : $exception->getTrace();
+	
+					// Beautify backtrace
+					$trace = self::backtrace($trace);
+				}
+	
+				// Load the error
+				require self::find_file('views', empty($template) ? 'kohana_error_page' : $template);
+			}
+			else
+			{
+				// Get the i18n messages
+				$error   = self::lang('core.generic_error');
+				$message = self::lang('core.errors_disabled', url::site(), url::site(Router::$current_uri));
+	
+				// Load the errors_disabled view
+				require self::find_file('views', 'kohana_error_disabled');
+			}
+	
+			if ( ! Event::has_run('system.shutdown'))
+			{
+				// Run the shutdown even to ensure a clean exit
+				Event::run('system.shutdown');
+			}
+	
+			// Turn off error reporting
+			error_reporting(0);
+			exit;
+		}
+		catch (Exception $e)
+		{
+			if (IN_PRODUCTION)
+			{
+				die('Fatal Error');
+			}
+			else
+			{
+				die('Fatal Error: '.$e->getMessage().' File: '.$e->getFile().' Line: '.$e->getLine());
 			}
 		}
-		else
-		{
-			if (method_exists($exception, 'sendHeaders') AND ! headers_sent())
-			{
-				// Send the headers if they have not already been sent
-				$exception->sendHeaders();
-			}
-		}
-
-		while (ob_get_level() > self::$buffer_level)
-		{
-			// Close open buffers
-			ob_end_clean();
-		}
-
-		// Test if display_errors is on
-		if (self::$configuration['core']['display_errors'] === TRUE)
-		{
-			if ( ! IN_PRODUCTION AND $line != FALSE)
-			{
-				// Remove the first entry of debug_backtrace(), it is the exception_handler call
-				$trace = $PHP_ERROR ? array_slice(debug_backtrace(), 1) : $exception->getTrace();
-
-				// Beautify backtrace
-				$trace = self::backtrace($trace);
-			}
-
-			// Load the error
-			require self::find_file('views', empty($template) ? 'kohana_error_page' : $template);
-		}
-		else
-		{
-			// Get the i18n messages
-			$error   = self::lang('core.generic_error');
-			$message = self::lang('core.errors_disabled', url::site(), url::site(Router::$current_uri));
-
-			// Load the errors_disabled view
-			require self::find_file('views', 'kohana_error_disabled');
-		}
-
-		if ( ! Event::has_run('system.shutdown'))
-		{
-			// Run the shutdown even to ensure a clean exit
-			Event::run('system.shutdown');
-		}
-
-		// Turn off error reporting
-		error_reporting(0);
-		exit;
 	}
 
 	/**
@@ -1027,7 +1042,7 @@ final class Kohana {
 	 *
 	 * @throws  Kohana_Exception  if file is required and not found
 	 * @param   string   directory to search in
-	 * @param   string   filename to look for (including extension only if 4th parameter is TRUE)
+	 * @param   string   filename to look for (without extension)
 	 * @param   boolean  file required
 	 * @param   string   file extension
 	 * @return  array    if the type is config, i18n or l10n

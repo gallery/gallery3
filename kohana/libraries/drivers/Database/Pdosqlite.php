@@ -43,7 +43,7 @@ class Database_Pdosqlite_Driver extends Database_Driver {
 				array(PDO::ATTR_PERSISTENT => $this->db_config['persistent']));
 
 			$this->link->setAttribute(PDO::ATTR_CASE, PDO::CASE_NATURAL);
-			$this->link->query('PRAGMA count_changes=1;');
+			//$this->link->query('PRAGMA count_changes=1;');
 
 			if ($charset = $this->db_config['character_set'])
 			{
@@ -63,7 +63,7 @@ class Database_Pdosqlite_Driver extends Database_Driver {
 
 	public function query($sql)
 	{
-		try
+        try
 		{
 			$sth = $this->link->prepare($sql);
 		}
@@ -92,8 +92,21 @@ class Database_Pdosqlite_Driver extends Database_Driver {
 		if ( ! $this->db_config['escape'])
 			return $column;
 
-		if (strtolower($column) == 'count(*)' OR $column == '*')
+		if ($column == '*')
 			return $column;
+
+		// This matches any functions we support to SELECT.
+		if ( preg_match('/(avg|count|sum|max|min)\(\s*(.*)\s*\)(\s*as\s*(.+)?)?/i', $column, $matches))
+		{
+			if ( count($matches) == 3)
+			{
+				return $matches[1].'('.$this->escape_column($matches[2]).')';
+			}
+			else if ( count($matches) == 5)
+			{
+				return $matches[1].'('.$this->escape_column($matches[2]).') AS '.$this->escape_column($matches[2]);
+			}
+		}
 
 		// This matches any modifiers we support to SELECT.
 		if ( ! preg_match('/\b(?:rand|all|distinct(?:row)?|high_priority|sql_(?:small_result|b(?:ig_result|uffer_result)|no_cache|ca(?:che|lc_found_rows)))\s/i', $column))
@@ -205,12 +218,12 @@ class Database_Pdosqlite_Driver extends Database_Driver {
 		return $res;
 	}
 
-	public function list_tables(Database $db)
+	public function list_tables()
 	{
 		$sql = "SELECT `name` FROM `sqlite_master` WHERE `type`='table' ORDER BY `name`;";
 		try
 		{
-			$result = $db->query($sql)->result(FALSE, PDO::FETCH_ASSOC);
+			$result = $this->query($sql)->result(FALSE, PDO::FETCH_ASSOC);
 			$tables = array();
 			foreach ($result as $row)
 			{
@@ -298,14 +311,12 @@ class Pdosqlite_Result extends Database_Result {
 	{
 		if (is_object($result) OR $result = $link->prepare($sql))
 		{
-			// run the query
-			try
+			// run the query. Return true if success, false otherwise
+			if( ! $result->execute())
 			{
-				$result->execute();
-			}
-			catch (PDOException $e)
-			{
-				throw new Kohana_Database_Exception('database.error', $e->getMessage());
+				// Throw Kohana Exception with error message. See PDOStatement errorInfo() method
+				$arr_infos = $result->errorInfo();
+				throw new Kohana_Database_Exception('database.error', $arr_infos[2]);
 			}
 
 			if (preg_match('/^SELECT|PRAGMA|EXPLAIN/i', $sql))
@@ -320,6 +331,8 @@ class Pdosqlite_Result extends Database_Result {
 			elseif (preg_match('/^DELETE|INSERT|UPDATE/i', $sql))
 			{
 				$this->insert_id  = $link->lastInsertId();
+
+				$this->total_rows = $result->rowCount();
 			}
 		}
 		else

@@ -135,13 +135,13 @@ class Cache_Core {
 	 * Set a cache item by id. Tags may also be added and a custom lifetime
 	 * can be set. Non-string data is automatically serialized.
 	 *
-	 * @param   string   unique cache id
-	 * @param   mixed    data to cache
-	 * @param   array    tags for this item
-	 * @param   integer  number of seconds until the cache expires
+	 * @param   string        unique cache id
+	 * @param   mixed         data to cache
+	 * @param   array|string  tags for this item
+	 * @param   integer       number of seconds until the cache expires
 	 * @return  boolean
 	 */
-	function set($id, $data, array $tags = NULL, $lifetime = NULL)
+	function set($id, $data, $tags = NULL, $lifetime = NULL)
 	{
 		if (is_resource($data))
 			throw new Kohana_Exception('cache.resources');
@@ -155,7 +155,7 @@ class Cache_Core {
 			$lifetime = $this->config['lifetime'];
 		}
 
-		return $this->driver->set($id, $data, $tags, $lifetime);
+		return $this->driver->set($id, $data, (array) $tags, $lifetime);
 	}
 
 	/**

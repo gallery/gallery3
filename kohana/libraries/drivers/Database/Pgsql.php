@@ -68,18 +68,18 @@ class Database_Pgsql_Driver extends Database_Driver {
 		{
 			$hash = $this->query_hash($sql);
 
-			if ( ! isset(self::$query_cache[$hash]))
+			if ( ! isset($this->query_cache[$hash]))
 			{
 				// Set the cached object
-				self::$query_cache[$hash] = new Pgsql_Result(pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
+				$this->query_cache[$hash] = new Pgsql_Result(pg_query($this->link, $sql), $this->link, $this->db_config['object'], $sql);
 			}
 			else
 			{
 				// Rewind cached result
-				self::$query_cache[$hash]->rewind();
+				$this->query_cache[$hash]->rewind();
 			}
 
-			return self::$query_cache[$hash];
+			return $this->query_cache[$hash];
 		}
 
 		// Suppress warning triggered when a database error occurs (e.g., a constraint violation)
@@ -104,8 +104,21 @@ class Database_Pgsql_Driver extends Database_Driver {
 		if (!$this->db_config['escape'])
 			return $column;
 
-		if (strtolower($column) == 'count(*)' OR $column == '*')
+		if ($column == '*')
 			return $column;
+
+		// This matches any functions we support to SELECT.
+		if ( preg_match('/(avg|count|sum|max|min)\(\s*(.*)\s*\)(\s*as\s*(.+)?)?/i', $column, $matches))
+		{
+			if ( count($matches) == 3)
+			{
+				return $matches[1].'('.$this->escape_column($matches[2]).')';
+			}
+			else if ( count($matches) == 5)
+			{
+				return $matches[1].'('.$this->escape_column($matches[2]).') AS '.$this->escape_column($matches[2]);
+			}
+		}
 
 		// This matches any modifiers we support to SELECT.
 		if ( ! preg_match('/\b(?:all|distinct)\s/i', $column))
@@ -147,14 +160,14 @@ class Database_Pgsql_Driver extends Database_Driver {
 	{
 		$prefix = ($num_regexs == 0) ? '' : $type;
 
-		return $prefix.' '.$this->escape_column($field).' REGEXP \''.$this->escape_str($match).'\'';
+		return $prefix.' '.$this->escape_column($field).' ~* \''.$this->escape_str($match).'\'';
 	}
 
 	public function notregex($field, $match, $type, $num_regexs)
 	{
 		$prefix = $num_regexs == 0 ? '' : $type;
 
-		return $prefix.' '.$this->escape_column($field).' NOT REGEXP \''.$this->escape_str($match) . '\'';
+		return $prefix.' '.$this->escape_column($field).' !~* \''.$this->escape_str($match) . '\'';
 	}
 
 	public function limit($limit, $offset = 0)
@@ -225,10 +238,10 @@ class Database_Pgsql_Driver extends Database_Driver {
 		return pg_escape_string($this->link, $str);
 	}
 
-	public function list_tables(Database $db)
+	public function list_tables()
 	{
 		$sql    = 'SELECT table_schema || \'.\' || table_name FROM information_schema.tables WHERE table_schema NOT IN (\'pg_catalog\', \'information_schema\')';
-		$result = $db->query($sql)->result(FALSE, PGSQL_ASSOC);
+		$result = $this->query($sql)->result(FALSE, PGSQL_ASSOC);
 
 		$retval = array();
 		foreach ($result as $row)
@@ -246,39 +259,34 @@ class Database_Pgsql_Driver extends Database_Driver {
 
 	public function list_fields($table)
 	{
-		static $tables;
+		$result = NULL;
 
-		if (empty($tables[$table]))
+		foreach ($this->field_data($table) as $row)
 		{
-			foreach ($this->field_data($table) as $row)
+			// Make an associative array
+			$result[$row->column_name] = $this->sql_type($row->data_type);
+
+			if (!strncmp($row->column_default, 'nextval(', 8))
 			{
-				// Make an associative array
-				$tables[$table][$row->column_name] = $this->sql_type($row->data_type);
+				$result[$row->column_name]['sequenced'] = TRUE;
+			}
 
-				if (!strncmp($row->column_default, 'nextval(', 8))
-				{
-					$tables[$table][$row->column_name]['sequenced'] = TRUE;
-				}
-
-				if ($row->is_nullable === 'YES')
-				{
-					$tables[$table][$row->column_name]['null'] = TRUE;
-				}
+			if ($row->is_nullable === 'YES')
+			{
+				$result[$row->column_name]['null'] = TRUE;
 			}
 		}
 
-		if (!isset($tables[$table]))
+		if (!isset($result))
 			throw new Kohana_Database_Exception('database.table_not_found', $table);
 
-		return $tables[$table];
+		return $result;
 	}
 
 	public function field_data($table)
 	{
-		$columns = array();
-
 		// http://www.postgresql.org/docs/8.3/static/infoschema-columns.html
-		$result = pg_query($this->link, '
+		$result = $this->query('
 			SELECT column_name, column_default, is_nullable, data_type, udt_name,
 				character_maximum_length, numeric_precision, numeric_precision_radix, numeric_scale
 			FROM information_schema.columns
@@ -286,15 +294,7 @@ class Database_Pgsql_Driver extends Database_Driver {
 			ORDER BY ordinal_position
 		');
 
-		if ($result)
-		{
-			while ($row = pg_fetch_object($result))
-			{
-				$columns[] = $row;
-			}
-		}
-
-		return $columns;
+		return $result->result_array(TRUE);
 	}
 
 } // End Database_Pgsql_Driver Class
@@ -318,6 +318,7 @@ class Pgsql_Result extends Database_Result {
 	 */
 	public function __construct($result, $link, $object = TRUE, $sql)
 	{
+		$this->link = $link;
 		$this->result = $result;
 
 		// If the query is a resource, it was a SELECT, SHOW, DESCRIBE, EXPLAIN query
@@ -418,9 +419,14 @@ class Pgsql_Result extends Database_Result {
 			}
 		}
 
-		while ($row = $fetch($this->result, NULL, $type))
+		if ($this->total_rows)
 		{
-			$rows[] = $row;
+			pg_result_seek($this->result, 0);
+
+			while ($row = $fetch($this->result, NULL, $type))
+			{
+				$rows[] = $row;
+			}
 		}
 
 		return $rows;
@@ -450,10 +456,15 @@ class Pgsql_Result extends Database_Result {
 
 	public function seek($offset)
 	{
-		if ( ! $this->offsetExists($offset))
-			return FALSE;
+		if ($this->offsetExists($offset) AND pg_result_seek($this->result, $offset))
+		{
+			// Set the current row to the offset
+			$this->current_row = $offset;
 
-		return pg_result_seek($this->result, $offset);
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 
 	public function list_fields()

@@ -11,7 +11,7 @@
  */
 abstract class Database_Driver {
 
-	static $query_cache;
+	protected $query_cache;
 
 	/**
 	 * Connect to our database.
@@ -124,7 +124,7 @@ abstract class Database_Driver {
 			}
 			else
 			{
-				if ( ! $this->has_operator($key))
+				if ( ! $this->has_operator($key) AND ! empty($key))
 				{
 					$key = $this->escape_column($key).' =';
 				}
@@ -290,7 +290,7 @@ abstract class Database_Driver {
 	 */
 	public function has_operator($str)
 	{
-		return (bool) preg_match('/[<>!=]|\sIS(?:\s+NOT\s+)?\b/i', trim($str));
+		return (bool) preg_match('/[<>!=]|\sIS(?:\s+NOT\s+)?\b|BETWEEN/i', trim($str));
 	}
 
 	/**
@@ -337,7 +337,7 @@ abstract class Database_Driver {
 	 *
 	 * @return  array
 	 */
-	abstract public function list_tables(Database $db);
+	abstract public function list_tables();
 
 	/**
 	 * Lists all fields in a table.
@@ -431,11 +431,11 @@ abstract class Database_Driver {
 	{
 		if (empty($sql))
 		{
-			self::$query_cache = array();
+			$this->query_cache = array();
 		}
 		else
 		{
-			unset(self::$query_cache[$this->query_hash($sql)]);
+			unset($this->query_cache[$this->query_hash($sql)]);
 		}
 
 		Kohana::log('debug', 'Database cache cleared: '.get_class($this));

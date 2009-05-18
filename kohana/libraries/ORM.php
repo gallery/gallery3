@@ -319,8 +319,9 @@ class ORM_Core {
 		elseif (in_array($column, $this->has_many))
 		{
 			// one<>many relationship
-			return $this->related[$column] = ORM::factory(inflector::singular($column))
-				->where($this->foreign_key($column, $column), $this->object[$this->primary_key])
+			$model = ORM::factory(inflector::singular($column));
+			return $this->related[$column] = $model
+				->where($this->foreign_key($column, $model->table_name), $this->object[$this->primary_key])
 				->find_all();
 		}
 		elseif (in_array($column, $this->has_and_belongs_to_many))
@@ -638,10 +639,10 @@ class ORM_Core {
 	 */
 	public function validate(Validation $array, $save = FALSE)
 	{
+		$safe_array = $array->safe_array();
+
 		if ( ! $array->submitted())
 		{
-			$safe_array = $array->safe_array();
-
 			foreach ($safe_array as $key => $value)
 			{
 				// Get the value from this object
@@ -661,12 +662,16 @@ class ORM_Core {
 		// Validate the array
 		if ($status = $array->validate())
 		{
-			$safe_array = $array->safe_array();
+			// Grab only set fields (excludes missing data, unlike safe_array)
+			$fields = $array->as_array();
 
-			foreach ($safe_array as $key => $value)
+			foreach ($fields as $key => $value)
 			{
-				// Set new data
-				$this->$key = $value;
+				if (isset($safe_array[$key]))
+				{
+					// Set new data, ignoring any missing fields or fields without rules
+					$this->$key = $value;
+				}
 			}
 
 			if ($save === TRUE OR is_string($save))
@@ -840,7 +845,7 @@ class ORM_Core {
 		elseif (is_null($ids))
 		{
 			// Delete all records
-			$this->db->where(TRUE);
+			$this->db->where('1=1');
 		}
 		else
 		{
@@ -902,7 +907,7 @@ class ORM_Core {
 			else
 			{
 				// Load table columns
-				ORM::$column_cache[$this->object_name] = $this->table_columns = $this->db->list_fields($this->table_name, TRUE);
+				ORM::$column_cache[$this->object_name] = $this->table_columns = $this->list_fields();
 			}
 		}
 
@@ -1021,11 +1026,16 @@ class ORM_Core {
 	/**
 	 * Proxy method to Database list_fields.
 	 *
-	 * @param   string  table name
+	 * @param   string  table name or NULL to use this table
 	 * @return  array
 	 */
-	public function list_fields($table)
+	public function list_fields($table = NULL)
 	{
+		if ($table === NULL)
+		{
+			$table = $this->table_name;
+		}
+
 		// Proxy to database
 		return $this->db->list_fields($table);
 	}

@@ -68,23 +68,23 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver {
 	public function query($sql)
 	{
 		// Only cache if it's turned on, and only cache if it's not a write statement
-		if ($this->db_config['cache'] AND ! preg_match('#\b(?:INSERT|UPDATE|REPLACE|SET)\b#i', $sql))
+		if ($this->db_config['cache'] AND ! preg_match('#\b(?:INSERT|UPDATE|REPLACE|SET|DELETE|TRUNCATE)\b#i', $sql))
 		{
 			$hash = $this->query_hash($sql);
 
-			if ( ! isset(self::$query_cache[$hash]))
+			if ( ! isset($this->query_cache[$hash]))
 			{
 				// Set the cached object
-				self::$query_cache[$hash] = new Kohana_Mysqli_Result($this->link, $this->db_config['object'], $sql);
+				$this->query_cache[$hash] = new Kohana_Mysqli_Result($this->link, $this->db_config['object'], $sql);
 			}
 			else
 			{
 				// Rewind cached result
-				self::$query_cache[$hash]->rewind();
+				$this->query_cache[$hash]->rewind();
 			}
 
 			// Return the cached query
-			return self::$query_cache[$hash];
+			return $this->query_cache[$hash];
 		}
 
 		return new Kohana_Mysqli_Result($this->link, $this->db_config['object'], $sql);
@@ -109,22 +109,6 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver {
 	public function show_error()
 	{
 		return $this->link->error;
-	}
-
-	public function field_data($table)
-	{
-		$columns = array();
-		$query = $this->link->query('SHOW COLUMNS FROM '.$this->escape_table($table));
-
-		if (is_object($query))
-		{
-			while ($row = $query->fetch_object())
-			{
-				$columns[] = $row;
-			}
-		}
-
-		return $columns;
 	}
 
 } // End Database_Mysqli_Driver Class
@@ -299,12 +283,15 @@ class Kohana_Mysqli_Result extends Database_Result {
 
 	public function seek($offset)
 	{
-		if ( ! $this->offsetExists($offset))
-			return FALSE;
+		if ($this->offsetExists($offset) AND $this->result->data_seek($offset))
+		{
+			// Set the current row to the offset
+			$this->current_row = $offset;
 
-		$this->result->data_seek($offset);
+			return TRUE;
+		}
 
-		return TRUE;
+		return FALSE;
 	}
 
 	public function offsetGet($offset)

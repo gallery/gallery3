@@ -341,10 +341,10 @@ class Database_Core {
 
 		foreach ($sql as $val)
 		{
-			if (($val = trim($val)) === '') continue;
-
 			if (is_string($val))
 			{
+				if (($val = trim($val)) === '') continue;
+
 				// TODO: Temporary solution, this should be moved to database driver (AS is checked for twice)
 				if (stripos($val, ' AS ') !== FALSE)
 				{
@@ -1187,7 +1187,7 @@ class Database_Core {
 	{
 		$this->link or $this->connect();
 
-		return $this->driver->list_tables($this);
+		return $this->driver->list_tables();
 	}
 
 	/**

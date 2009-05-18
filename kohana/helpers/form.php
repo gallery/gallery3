@@ -233,7 +233,7 @@ class form_Core {
 	 *
 	 * @param   string|array  input name or an array of HTML attributes
 	 * @param   array         select options, when using a name
-	 * @param   string        option key that should be selected by default
+	 * @param   string|array  option key(s) that should be selected by default
 	 * @param   string        a string to be attached to the end of the attributes
 	 * @return  string
 	 */

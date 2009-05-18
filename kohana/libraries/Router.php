@@ -213,15 +213,12 @@ class Router_Core {
 		elseif (isset($_SERVER['PHP_SELF']) AND $_SERVER['PHP_SELF'])
 		{
 			Router::$current_uri = $_SERVER['PHP_SELF'];
-		}
 
-		// The front controller directory and filename
-		$fc = substr(realpath($_SERVER['SCRIPT_FILENAME']), strlen(DOCROOT));
-
-		if (($strpos_fc = strpos(Router::$current_uri, $fc)) !== FALSE)
-		{
-			// Remove the front controller from the current uri
-			Router::$current_uri = substr(Router::$current_uri, $strpos_fc + strlen($fc));
+			if (($strpos_fc = strpos(Router::$current_uri, KOHANA)) !== FALSE)
+			{
+				// Remove the front controller from the current uri
+				Router::$current_uri = substr(Router::$current_uri, $strpos_fc + strlen(KOHANA));
+			}
 		}
 
 		// Remove slashes from the start and end of the URI

@@ -65,13 +65,15 @@ class feed_Core {
 	 *
 	 * @param   array   feed information
 	 * @param   array   items to add to the feed
+	 * @param   string  define which format to use
+	 * @param   string  define which encoding to use
 	 * @return  string
 	 */
-	public static function create($info, $items, $format = 'rss2')
+	public static function create($info, $items, $format = 'rss2', $encoding = 'UTF-8')
 	{
 		$info += array('title' => 'Generated Feed', 'link' => '', 'generator' => 'KohanaPHP');
 
-		$feed = '<?xml version="1.0"?><rss version="2.0"><channel></channel></rss>';
+		$feed = '<?xml version="1.0" encoding="'.$encoding.'"?><rss version="2.0"><channel></channel></rss>';
 		$feed = simplexml_load_string($feed);
 
 		foreach ($info as $name => $value)

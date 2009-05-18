@@ -211,13 +211,21 @@ class Unit_Test_Core {
 
 		// Hide passed tests from the report?
 		$hide_passed = (bool) (($hide_passed !== NULL) ? $hide_passed : Kohana::config('unit_test.hide_passed', FALSE, FALSE));
-
+		
+		
+		if (PHP_SAPI == 'cli')
+		{
+			$report = View::factory('kohana_unit_test_cli');
+		}
+		else
+		{
+			$report = View::factory('kohana_unit_test');
+		}
 		// Render unit_test report
-		return View::factory('kohana_unit_test')
-			->set('results', $this->results)
-			->set('stats', $this->stats)
-			->set('hide_passed', $hide_passed)
-			->render();
+		return $report->set('results', $this->results)
+					  ->set('stats', $this->stats)
+					  ->set('hide_passed', $hide_passed)
+					  ->render();
 	}
 
 	/**

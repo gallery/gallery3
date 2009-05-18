@@ -32,7 +32,8 @@ $config = array
 );
 
 // DOUBLE
-$config['double'] = $config['double unsigned'] = $config['decimal'] = $config['real'] = $config['numeric'] = $config['float'];
+$config['double'] = $config['double precision'] = $config['decimal'] = $config['real'] = $config['numeric'] = $config['float'];
+$config['double unsigned'] = $config['float unsigned'];
 
 // BIT
 $config['bit'] = $config['boolean'];

@@ -88,7 +88,8 @@ class expires_Core {
 	{
 		foreach (headers_list() as $header)
 		{
-			if (stripos($header, 'Last-Modified:') === 0 OR stripos($header, 'Expires:') === 0)
+			if ((session_cache_limiter() == '' AND stripos($header, 'Last-Modified:') === 0)
+			    OR stripos($header, 'Expires:') === 0)
 			{
 				return FALSE;
 			}

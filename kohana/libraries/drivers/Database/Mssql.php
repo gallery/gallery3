@@ -89,19 +89,19 @@ class Database_Mssql_Driver extends Database_Driver
 		{
 			$hash = $this->query_hash($sql);
 
-			if ( ! isset(self::$query_cache[$hash]))
+			if ( ! isset($this->query_cache[$hash]))
 			{
 				// Set the cached object
-				self::$query_cache[$hash] = new Mssql_Result(mssql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
+				$this->query_cache[$hash] = new Mssql_Result(mssql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
 			}
 			else
 			{
 				// Rewind cached result
-				self::$query_cache[$hash]->rewind();
+				$this->query_cache[$hash]->rewind();
 			}
 
 			// Return the cached query
-			return self::$query_cache[$hash];
+			return $this->query_cache[$hash];
 		}
 
 		return new Mssql_Result(mssql_query($sql, $this->link), $this->link, $this->db_config['object'], $sql);
@@ -128,8 +128,21 @@ class Database_Mssql_Driver extends Database_Driver
 		if (!$this->db_config['escape'])
 			return $column;
 
-		if (strtolower($column) == 'count(*)' OR $column == '*')
+		if ($column == '*')
 			return $column;
+
+		// This matches any functions we support to SELECT.
+		if ( preg_match('/(avg|count|sum|max|min)\(\s*(.*)\s*\)(\s*as\s*(.+)?)?/i', $column, $matches))
+		{
+			if ( count($matches) == 3)
+			{
+				return $matches[1].'('.$this->escape_column($matches[2]).')';
+			}
+			else if ( count($matches) == 5)
+			{
+				return $matches[1].'('.$this->escape_column($matches[2]).') AS '.$this->escape_column($matches[2]);
+			}
+		}
 
 		// This matches any modifiers we support to SELECT.
 		if ( ! preg_match('/\b(?:rand|all|distinct(?:row)?|high_priority|sql_(?:small_result|b(?:ig_result|uffer_result)|no_cache|ca(?:che|lc_found_rows)))\s/i', $column))
@@ -251,7 +264,7 @@ class Database_Mssql_Driver extends Database_Driver
 		return preg_replace($characters, $replace, $str);
 	}
 
-	public function list_tables(Database $db)
+	public function list_tables()
 	{
 		$sql    = 'SHOW TABLES FROM ['.$this->db_config['connection']['database'].']';
 		$result = $this->query($sql)->result(FALSE, MSSQL_ASSOC);
@@ -272,36 +285,22 @@ class Database_Mssql_Driver extends Database_Driver
 
 	public function list_fields($table)
 	{
-		static $tables;
+		$result = array();
 
-		if (empty($tables[$table]))
+		foreach ($this->field_data($table) as $row)
 		{
-			foreach ($this->field_data($table) as $row)
-			{
-				// Make an associative array
-				$tables[$table][$row->Field] = $this->sql_type($row->Type);
-			}
+			// Make an associative array
+			$result[$row->Field] = $this->sql_type($row->Type);
 		}
 
-		return $tables[$table];
+		return $result;
 	}
 
 	public function field_data($table)
 	{
-		$columns = array();
+		$query = $this->query('SHOW COLUMNS FROM '.$this->escape_table($table), $this->link);
 
-		if ($query = MSSQL_query('SHOW COLUMNS FROM '.$this->escape_table($table), $this->link))
-		{
-			if (MSSQL_num_rows($query) > 0)
-			{
-				while ($row = MSSQL_fetch_object($query))
-				{
-					$columns[] = $row;
-				}
-			}
-		}
-
-		return $columns;
+		return $query->result_array(TRUE);
 	}
 }
 

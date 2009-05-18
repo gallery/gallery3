@@ -33,7 +33,7 @@ class request_Core {
 			if (strpos($ref, url::base(FALSE)) === 0)
 			{
 				// Remove the base URL from the referrer
-				$ref = substr($ref, strlen(url::base(TRUE)));
+				$ref = substr($ref, strlen(url::base(FALSE)));
 			}
 		}
 
