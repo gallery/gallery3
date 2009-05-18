@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 // Set this to true to disable demo/debugging controllers
-define('IN_PRODUCTION', false);
+define('IN_PRODUCTION', true);
 
 // Gallery requires PHP 5.2+
 version_compare(PHP_VERSION, '5.2', '<') and exit('Gallery requires PHP 5.2 or newer.');

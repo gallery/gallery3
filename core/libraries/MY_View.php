@@ -27,7 +27,7 @@ class View extends View_Core {
     parent::__construct($name, $data, $type);
     $this->set_global("csrf", access::csrf_token());
   }
-  
+
   /**
    * Override View_Core::render so that we trap errors stemming from bad PHP includes and show a
    * visible stack trace to help developers.
@@ -38,11 +38,6 @@ class View extends View_Core {
     try {
       return parent::render($print, $renderer);
     } catch (Exception $e) {
-      if (!IN_PRODUCTION) {
-        print $e->getTraceAsString();
-        return $e->getMessage();
-      }
-
       Kohana::Log('error', $e->getTraceAsString());
       Kohana::Log('debug', $e->getMessage());
       return "";
