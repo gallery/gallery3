@@ -1,4 +1,4 @@
-<?php defined("SYSPATH") or die("No direct script access."); 
+<?php defined("SYSPATH") or die("No direct script access.");
 #
 # Portable PHP password hashing framework.
 #
