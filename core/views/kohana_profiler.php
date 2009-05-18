@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access.") ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <style type="text/css">
   #kohana-profiler {
     background-color: #F8FFF8;
