@@ -289,6 +289,7 @@ class Scaffold_Controller extends Template_Controller {
     dir::unlink(VARPATH . "resizes");
     dir::unlink(VARPATH . "thumbs");
     dir::unlink(VARPATH . "modules");
+    dir::unlink(VARPATH . "tmp");
 
     module::$module_names = array();
     module::$modules = array();
