@@ -1,5 +1,4 @@
-<?php defined("SYSPATH") or die("No direct script access."); ?>
-<?php
+<?php defined("SYSPATH") or die("No direct script access.");
 /*
 	Exifer 1.6
 	Extracts EXIF information from digital photos.
