@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
  * Object Relational Mapping (ORM) "versioned" extension. Allows ORM objects to
  * be revisioned instead of updated.
