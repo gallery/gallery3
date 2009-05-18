@@ -26,6 +26,8 @@ class Admin_Modules_Controller extends Admin_Controller {
   }
 
   public function save() {
+    access::verify_csrf();
+
     $changes->install = array();
     $changes->uninstall = array();
     foreach (module::available() as $module_name => $info) {
