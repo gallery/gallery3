@@ -1,4 +1,5 @@
-<?php
+<?php defined("SYSPATH") or die("No direct script access.") ?>
+<?
 echo $error, "\n\n";
 echo wordwrap($description, 80), "\n\n";
 if (!empty($line) && !empty($file)) {
