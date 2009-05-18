@@ -35,6 +35,7 @@ ini_set('display_errors', true);
 
 define('EXT', '.php');
 define('DOCROOT', strtr(getcwd() . '/', DIRECTORY_SEPARATOR, '/'));
+define('KOHANA',  'index.php');
 
 // If the front controller is a symlink, change to the real docroot
 is_link(basename(__FILE__)) and chdir(dirname(realpath(__FILE__)));
