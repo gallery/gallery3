@@ -60,4 +60,37 @@ class tag_event_Core {
     $db->delete("items_tags", array("item_id" => "$item->id"));
   }
 
+  static function organize_form_creation($event_parms) {
+    $v = new View("tag_organize.html");
+    $v->tags = array();
+
+    $ids = implode(", ", $event_parms->itemids);
+    $db = Database::instance();
+    $tags = $db->query("SELECT it.tag_id, t.name,
+                               COUNT(DISTINCT it.item_id) as item_count,
+                               UPPER(SUBSTR(t.name, 1, 1)) as first_letter
+                          FROM {items_tags} it, {tags} t
+                         WHERE it.tag_id = t.id
+                           AND it.item_id in($ids)
+                        GROUP BY it.tag_id
+                        ORDER BY first_letter ASC, t.name ASC");
+    foreach ($tags as $tag) {
+      $v->tags[$tag->first_letter]["taglist"][] =
+        array("id" => $tag->tag_id, "tag" => $tag->name, "count" => $tag->item_count);
+    }
+    $v->tag_count = $tags->count();
+
+    $letters = $db->query("SELECT COUNT(DISTINCT it.item_id) as letter_count,
+                               UPPER(SUBSTR(t.name, 1, 1)) as first_letter
+                          FROM {items_tags} it, {tags} t
+                         WHERE it.tag_id = t.id
+                           AND it.item_id in($ids)
+                        GROUP BY first_letter
+                        ORDER BY first_letter ASC");
+    foreach ($letters as $letter) {
+      $v->tags[$letter->first_letter]["count"] = $letter->letter_count;
+    }
+
+    $event_parms->panes[] = array("label" => t("Manage Tags"), "content" => $v);
+  }
 }

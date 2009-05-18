@@ -41,7 +41,8 @@
             <div id="gOrganizeFormThumbs" class="yui-u first">
               <ul id="gOrganizeFormThumbStack" />
             </div>
-            <?= $edit_form ?>
+            <div id="gOrganizeEditForm">
+            </div>
           </div>
           <div id="gOrganizeEditDrawerHandle">
             <div id="gOrganizeEditHandleButtonsLeft">

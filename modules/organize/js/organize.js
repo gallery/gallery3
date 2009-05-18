@@ -148,6 +148,11 @@ var selectable = {
   },
   unselected: function(event, ui) {
     setDrawerButtonState();
+  },
+  stop: function(event, ui) {
+    if ($("#gMicroThumbGrid li.ui-selected").length > 0) {
+      getEditForm();
+    }
   }
 };
 
@@ -160,6 +165,9 @@ var onMicroThumbContainerMouseup = function(event) {
   $(this).toggleClass("ui-selected");
 
   setDrawerButtonState();
+  if ($("#gMicroThumbGrid li.ui-selected").length > 0) {
+    getEditForm();
+  }
 };
 
 // MicroThumbContainer mousemove
@@ -398,6 +406,8 @@ function get_url(uri, parms) {
  * there is only 1 image selected
  */
 function setDrawerButtonState() {
+  $("#gOrganizeFormThumbStack").empty();
+  $("#gOrganizeEditForm").empty();
   switch ($("#gMicroThumbGrid li.ui-selected").length) {
   case 0:
     if ($("#gOrganizeEditDrawerPanel::visible").length) {
@@ -409,16 +419,18 @@ function setDrawerButtonState() {
   case 1:
     $("#gOrganizeEditHandleButtonsLeft a").removeAttr("disabled");
     $("#gOrganizeEditHandleButtonsLeft a").removeClass("ui-state-disabled");
+    setSelectedThumbs();
+//    getEditForm();
    break;
   default:
     $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").attr("disabled", true);
     $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").addClass("ui-state-disabled");
+    setSelectedThumbs();
+//    getEditForm();
   }
-  setSelectedThumbs();
 }
 
 function setSelectedThumbs() {
-  $("#gOrganizeFormThumbStack").empty();
   if (!$("#gOrganizeEditDrawerPanel::visible").length) {
     return;
   }
@@ -440,6 +452,20 @@ function setSelectedThumbs() {
       beginTop -= 5;
       beginLeft += 5;
     }
+  });
+}
+
+function getEditForm() {
+  var postData = "";
+  $("li.ui-selected").each(function(i) {
+    postData += "&item[]=" + $(this).attr("ref");
+  });
+  var url_data = get_url("organize/editForm", {}) + postData;
+  $.get(url_data, function(data, textStatus) {
+    $("#gOrganizeEditForm").tabs("destroy");
+    //$("#gOrganizeEditForm").empty();
+    $("#gOrganizeEditForm").html(data);
+    $("#gOrganizeEditForm").tabs();
   });
 }
 

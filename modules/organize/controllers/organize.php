@@ -30,9 +30,8 @@ class Organize_Controller extends Controller {
     $v->item = $item;
     $v->album_tree = $this->tree($item, $root);
 
-    $v->edit_form = new View("organize_edit.html");
     $v->button_pane = new View("organize_button_pane.html");
- 
+
     print $v;
   }
 
@@ -43,7 +42,7 @@ class Organize_Controller extends Controller {
     $offset = $this->input->get("offset", 0);
     $thumbsize = self::$_MICRO_THUMB_SIZE + 2 * self::$_MICRO_THUMB_PADDING;
     $page_size = ceil($width / $thumbsize) * ceil($height / $thumbsize);
- 
+
     $v = new View("organize_thumb_grid.html");
     $v->children = $item->children($page_size, $offset);
     $v->thumbsize = self::$_MICRO_THUMB_SIZE;
@@ -70,7 +69,7 @@ class Organize_Controller extends Controller {
     $v = new View("organize_album.html");
     $v->album = $parent;
     $v->selected = $parent->id == $item->id;
-    
+
     if ($albums->count()) {
       $v->album_icon = $parent->id == 1 || $v->selected ? "ui-icon-minus" : "ui-icon-plus";
     } else {
@@ -87,7 +86,7 @@ class Organize_Controller extends Controller {
   function startTask($operation, $id) {
     access::verify_csrf();
     $items = $this->input->post("item");
-    
+
     $item = ORM::factory("item", $id);
 
     $definition = $this->_getOperationDefinition($item, $operation);
@@ -174,7 +173,7 @@ class Organize_Controller extends Controller {
                               "state" => $task->state,
                               "done" => $task->done)));
   }
-  
+
   function cancelTask($task_id) {
     access::verify_csrf();
 
@@ -195,7 +194,7 @@ class Organize_Controller extends Controller {
         $task->status = t("Rotation was cancelled prior to completion");
         break;
       }
-      $task->save();     
+      $task->save();
     }
 
     batch::stop();
@@ -207,7 +206,19 @@ class Organize_Controller extends Controller {
                               "state" => $task->state,
                               "done" => $task->done)));
   }
-  
+
+  function editForm() {
+    $event_parms = new stdClass();
+    $event_parms->panes = array();
+    $event_parms->itemids = $this->input->get("item");;
+
+    module::event("organize_form_creation", $event_parms);
+
+    $v = new View("organize_edit.html");
+    $v->panes = $event_parms->panes;
+    print $v->render();
+  }
+
   private function _getOperationDefinition($item, $operation) {
     switch ($operation) {
     case "move":

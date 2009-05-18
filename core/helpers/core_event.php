@@ -34,4 +34,29 @@ class core_event_Core {
   static function item_before_delete($item) {
     access::delete_item($item);
   }
+
+  static function organize_form_creation($event_parms) {
+    if (count($event_parms->itemids) > 1) {
+      return ;
+    }
+
+    $item = ORM::factory("item")
+      ->in("id", $event_parms->itemids[0])
+      ->find();
+
+    $generalPane = new View("organize_edit_general.html");
+    $generalPane->item = $item;
+
+    $event_parms->panes[] = array("label" => $item->is_album() ? t("Edit Album") : t("Edit Photo"),
+                                  "content" => $generalPane);
+
+    if ($item->is_album()) {
+      $sortPane = new View("organize_edit_sort.html");
+      $sortPane->sort_by = $item->sort_column;
+      $sortPane->sort_order =
+        empty($item->sort_order) || $item->sort_order == "ASC" ? t("Ascending") : t("Descending");
+
+      $event_parms->panes[] = array("label" => t("Sort Order"),  "content" => $sortPane);
+    }
+  }
 }

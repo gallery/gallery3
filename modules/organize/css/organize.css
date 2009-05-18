@@ -155,6 +155,7 @@
   background-color: #fff;
   border: 1px solid #13A;
   display: none;
+  height: 195px;
 }
 
 #gOrganizeEditDrawerHandle {
@@ -211,9 +212,15 @@
   position: relative;
 }
 
+/* yui-u gives 80% width, but then we wrap so do it ourselves */
+#gOrganizeEditForm {
+  float: right;
+  width: 79%;
+//  height: 100px;
+}
+
 #gOrganizeFormThumbs {
   overflow: hidden;
-  min-height: 150px;
 }
 
 #gOrganizeFormThumbs div {
@@ -227,4 +234,45 @@
   float: left;
   opacity: 1;
   position: absolute;
+}
+
+/****************************************************************
+ * Organize Edit From tabs styling
+ */
+#gOrganizeEditForm.ui-tabs .ui-tabs-hide {
+  display: block !important;
+  left: -10000px;
+  position: absolute;
+}
+
+#gOrganizeEditForm.ui-widget {
+  font-size: .75em;
+}
+
+.gOrganizeEditPane {
+  height: 135px;
+  overflow-y: auto;
+}
+
+.textbox,
+.textarea {
+  border: 1px solid #e8e8e8;
+  border-top-color: #ccc;
+  border-left-color: #ccc;
+  color: #333;
+  width: 100%;
+}
+
+.textarea {
+  height: 6em;
+}
+
+.textbox  {
+  height: 1.3em;
+  width: 50%
+}
+
+.gTagGroup {
+  float:left;
+  margin: .5em;
 }
