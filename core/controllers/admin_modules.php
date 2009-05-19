@@ -36,18 +36,26 @@ class Admin_Modules_Controller extends Admin_Controller {
       }
 
       $desired = $this->input->post($module_name) == 1;
-      if ($info->installed && !$desired) {
+      if ($info->installed && !$desired && module::is_installed($module_name)) {
         $changes->uninstall[] = $module_name;
+        $uninstalled_names[] = $info->name;
         module::uninstall($module_name);
-        message::success(t("Uninstalled %module_name module", array("module_name" => $info->name)));
-      } else if (!$info->installed && $desired) {
+      } else if (!$info->installed && $desired && !module::is_installed($module_name)) {
         $changes->install[] = $module_name;
+        $installed_names[] = $info->name;
         module::install($module_name);
-        message::success(t("Installed %module_name module", array("module_name" => $info->name)));
       }
     }
 
     module::event("module_change", $changes);
+
+    // @todo this type of collation is questionable from a i18n perspective
+    if (isset($installed_names)) {
+      message::success(t("Installed: %names", array("names" => join(", ", $uninstalled_names))));
+    }
+    if (isset($uninstalled_names)) {
+      message::success(t("Uninstalled: %names", array("names" => join(", ", $installed_names))));
+    }
     url::redirect("admin/modules");
   }
 }
