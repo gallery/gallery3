@@ -271,6 +271,40 @@ class g2_import_Core {
     // @todo import album highlights
   }
 
+  /**
+   * Set the highlight properly for a single album
+   */
+  static function set_album_highlight(&$queue) {
+    // Dequeue the current album and enqueue its children
+    list($g2_album_id, $children) = each($queue);
+    unset($queue[$g2_album_id]);
+    foreach ($children as $key => $value) {
+      $queue[$key] = $value;
+    }
+
+    $g3_album_id = self::map($g2_album_id);
+    if (!$g3_album_id) {
+      return;
+    }
+
+    $table = g2(GalleryCoreApi::fetchThumbnailsByItemIds(array($g2_album_id)));
+    if (isset($table[$g2_album_id])) {
+      // Backtrack the source id to an item
+      $g2_source = $table[$g2_album_id];
+      while (GalleryUtilities::isA($g2_source, "GalleryDerivative")) {
+        $g2_source = g2(GalleryCoreApi::loadEntitiesById($g2_source->getDerivativeSourceId()));
+      }
+      $item_id = self::map($g2_source->getId());
+      if ($item_id) {
+        $item = ORM::factory("item", $item_id);
+        $g2_album = ORM::factory("item", $g3_album_id);
+        $g2_album->album_cover_item_id = $item->id;
+        $g2_album->thumb_dirty = 1;
+        $g2_album->save();
+        graphics::generate($g2_album);
+      }
+    }
+  }
 
   /**
    * Import a single photo or movie.

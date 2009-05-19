@@ -47,6 +47,7 @@ class g2_import_task_Core {
       $stats["items"] = $stats["photos"] + $stats["movies"];
       unset($stats["photos"]);
       unset($stats["movies"]);
+      $stats["highlights"] = $stats["albums"];
       $task->set("stats", $stats);
 
       $task->set("total", $total = array_sum(array_values($stats)));
@@ -68,7 +69,7 @@ class g2_import_task_Core {
       }
     }
 
-    $modes = array("groups", "users", "albums", "items", "comments", "tags", "done");
+    $modes = array("groups", "users", "albums", "items", "comments", "tags", "highlights", "done");
     while (!$task->done && microtime(true) - $start < 1.5) {
       if ($done[$modes[$mode]] == $stats[$modes[$mode]]) {
         // Nothing left to do for this mode.  Advance.
@@ -149,6 +150,17 @@ class g2_import_task_Core {
         $task->status = t(
           "Importing tags (%count of %total)",
           array("count" => $done["tags"] + 1, "total" => $stats["tags"]));
+
+        break;
+
+      case "highlights":
+        if (empty($queue)) {
+          $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
+        }
+        g2_import::set_album_highlight($queue);
+        $task->status = t(
+          "Album highlights (%count of %total)",
+          array("count" => $done["tags"] + 1, "total" => $stats["albums"]));
 
         break;
 
