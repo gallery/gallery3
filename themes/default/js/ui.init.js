@@ -28,9 +28,7 @@ $(document).ready(function() {
   // Round view menu buttons
   if ($("#gViewMenu").length) {
     $("#gViewMenu ul").removeClass("gMenu").removeClass("sf-menu");
-    $("#gViewMenu a").addClass("ui-icon ui-state-default");
-    $("#gViewMenu ul li:first a").addClass("ui-corner-left");
-    $("#gViewMenu ul li:last a").addClass("ui-corner-right");
+    $("#gViewMenu a").addClass("ui-icon");
   }
 
   // Short forms
