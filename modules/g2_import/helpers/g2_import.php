@@ -284,11 +284,30 @@ class g2_import_Core {
 
     self::$current_g2_item = $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
     $parent = ORM::factory("item", self::map($g2_item->getParentId()));
-    switch ($g2_item->getEntityType()) {
+
+    $g2_path = g2($g2_item->fetchPath());
+    $g2_type = $g2_item->getEntityType();
+    $corrupt = 0;
+    if (!file_exists($g2_path)) {
+      // If the Gallery2 source image isn't available, this operation is going to fail.  That can
+      // happen in cases where there's corruption in the source Gallery 2.  In that case, fall
+      // back on using a broken image.  It's important that we import *something* otherwise
+      // anything that refers to this item in Gallery 2 will have a dangling pointer in Gallery 3
+      //
+      // Note that this will change movies to be photos, if there's a broken movie.  Hopefully
+      // this case is rare enough that we don't need to take any heroic action here.
+
+      Kohana::log("alert", "$g2_path missing in import; replacing it");
+      $g2_path = MODPATH . "g2_import/data/broken-image.gif";
+      $g2_type = "GalleryPhotoItem";
+      $corrupt = 1;
+    }
+
+    switch ($g2_type) {
     case "GalleryPhotoItem":
       $item = photo::create(
         $parent,
-        g2($g2_item->fetchPath()),
+        $g2_path,
         $g2_item->getPathComponent(),
         $g2_item->getTitle(),
         self::extract_description($g2_item),
@@ -300,7 +319,7 @@ class g2_import_Core {
       if (in_array($g2_item->getMimeType(), array("video/mp4", "video/x-flv"))) {
         $item = movie::create(
           $parent,
-          g2($g2_item->fetchPath()),
+          $g2_path,
           $g2_item->getPathComponent(),
           $g2_item->getTitle(),
           self::extract_description($g2_item),
@@ -319,6 +338,20 @@ class g2_import_Core {
 
     if (isset($item)) {
       self::set_map($g2_item_id, $item->id);
+    }
+
+    if ($corrupt) {
+      $url_generator = $GLOBALS["gallery"]->getUrlGenerator();
+      // @todo we need a more persistent
+      $warning =
+        t("<a href=\"%g2_url\">%title</a> corrupt in Gallery 2; " .
+          "(imported as <a href=\"%g3_url\">%title</a>)",
+          array("g2_url" => $url_generator->generateUrl(array("itemId" => $g2_item->getId())),
+                "g3_url" => $item->url(),
+                "title" => $g2_item->getTitle()));
+      message::warning($warning);
+      log::warning("g2_import", $warning);
+      Kohana::log("alert", $warning);
     }
 
     self::$current_g2_item = null;
