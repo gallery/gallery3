@@ -305,9 +305,7 @@ class graphics_Core {
     foreach (array("imagemagick", "graphicsmagick", "gd") as $tk) {
       if ($toolkits[$tk]) {
         module::set_var("core", "graphics_toolkit", $tk);
-        if ($tk != "gd") {
-          module::set_var("core", "graphics_toolkit_path", $toolkits[$tk]);
-        }
+        module::set_var("core", "graphics_toolkit_path", $tk == "gd" ? "" : $toolkits[$tk]);
         break;
       }
     }
