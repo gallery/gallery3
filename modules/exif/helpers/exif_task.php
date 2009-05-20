@@ -19,20 +19,11 @@
  */
 class exif_task_Core {
   static function available_tasks() {
-    $db = Database::instance();
-
     // Delete extra exif_records
-    $db->query(
+    Database::instance()->query(
       "DELETE FROM {exif_records} " .
       "WHERE {exif_records}.`item_id` NOT IN " .
       "(SELECT `id` FROM {items} WHERE {items}.`type` = 'photo')");
-
-    // Insert missing exif_records
-    $db->query(
-      "INSERT INTO {exif_records}(`item_id`) " .
-      "(SELECT {items}.`id` FROM {items} " .
-      " LEFT JOIN {exif_records} ON ({exif_records}.`item_id` = {items}.`id`) " .
-      " WHERE {items}.`type` = 'photo' AND {exif_records}.`id` IS NULL)");
 
     list ($remaining, $total, $percent) = self::_get_stats();
     return array(Task_Definition::factory()
@@ -51,9 +42,12 @@ class exif_task_Core {
 
     $start = microtime(true);
     foreach (ORM::factory("item")
-             ->join("exif_records", "items.id", "exif_records.item_id")
-             ->where("exif_records.dirty", 1)
-             ->limit(100)
+             ->join("exif_records", "items.id", "exif_records.item_id", "left")
+             ->where("type", "photo")
+             ->open_paren()
+             ->where("exif_records.item_id", null)
+             ->orwhere("exif_records.dirty", 1)
+             ->close_paren()
              ->find_all() as $item) {
       if (microtime(true) - $start > 1.5) {
         break;
@@ -81,7 +75,18 @@ class exif_task_Core {
   }
 
   private static function _get_stats() {
-    $missing_exif = ORM::factory("exif_record")->where("dirty", 1)->count_all();
+    $missing_exif = Database::instance()
+      ->select("items.id")
+      ->from("items")
+      ->join("exif_records", "items.id", "exif_records.item_id", "left")
+      ->where("type", "photo")
+      ->open_paren()
+      ->where("exif_records.item_id", null)
+      ->orwhere("exif_records.dirty", 1)
+      ->close_paren()
+      ->get()
+      ->count();
+
     $total_items = ORM::factory("item")->where("type", "photo")->count_all();
     if (!$total_items) {
       return array(0, 0, 0);
