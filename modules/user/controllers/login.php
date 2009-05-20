@@ -67,13 +67,6 @@ class Login_Controller extends Controller {
     if ($valid) {
       user::login($user);
       log::info("user", t("User %name logged in", array("name" => $user->name)));
-
-      // If this user is an admin, check to see if there are any post-install tasks that we need
-      // to run and take care of those now.
-      if ($user->admin && module::get_var("core", "choose_default_tookit", null)) {
-        graphics::choose_default_toolkit();
-        module::clear_var("core", "choose_default_tookit");
-      }
     }
 
     return array($valid, $form);

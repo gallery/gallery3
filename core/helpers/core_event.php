@@ -59,4 +59,13 @@ class core_event_Core {
       $event_parms->panes[] = array("label" => t("Sort Order"),  "content" => $sortPane);
     }
   }
+
+  static function user_login($user) {
+    // If this user is an admin, check to see if there are any post-install tasks that we need
+    // to run and take care of those now.
+    if ($user->admin && module::get_var("core", "choose_default_tookit", null)) {
+      graphics::choose_default_toolkit();
+      module::clear_var("core", "choose_default_tookit");
+    }
+  }
 }
