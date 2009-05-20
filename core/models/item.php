@@ -247,16 +247,18 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.thumb.jpg
    */
   public function thumb_url($full_uri=false) {
+    $cache_buster = "?m=" . $this->updated;
     $base = ($full_uri ?
              url::abs_file("var/thumbs/" . $this->relative_path()) :
              url::file("var/thumbs/" . $this->relative_path()));
     if ($this->is_photo()) {
-      return $base;
+      return $base . $cache_buster;
     } else if ($this->is_album()) {
-      return $base . "/.album.jpg";
+      return $base . "/.album.jpg" . $cache_buster;
     } else if ($this->is_movie()) {
       // Replace the extension with jpg
-      return preg_replace("/...$/", "jpg", $base);
+      $base = preg_replace("/...$/", "jpg", $base);
+      return $base . $cache_buster;
     }
   }
 
