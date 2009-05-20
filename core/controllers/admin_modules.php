@@ -51,10 +51,10 @@ class Admin_Modules_Controller extends Admin_Controller {
 
     // @todo this type of collation is questionable from a i18n perspective
     if (isset($installed_names)) {
-      message::success(t("Installed: %names", array("names" => join(", ", $uninstalled_names))));
+      message::success(t("Installed: %names", array("names" => join(", ", $installed_names))));
     }
     if (isset($uninstalled_names)) {
-      message::success(t("Uninstalled: %names", array("names" => join(", ", $installed_names))));
+      message::success(t("Uninstalled: %names", array("names" => join(", ", $uninstalled_names))));
     }
     url::redirect("admin/modules");
   }
