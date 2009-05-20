@@ -88,7 +88,7 @@
 </a>
 
 <ul id="gQuickPaneOptions" style="display: none">
-  <li><a class="add_item gDialogLink" href="<?= url::site("form/add/albums/$item->id?type=photo") ?>"
+  <li><a class="add_item gDialogLink" href="<?= url::site("simple_uploader/app/$item->id") ?>"
     title="<?= t("Add a photo") ?>">
     <?= t("Add a photo") ?>
   </a></li>
