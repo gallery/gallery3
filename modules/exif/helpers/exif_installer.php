@@ -33,12 +33,14 @@ class exif_installer {
                    KEY(`item_id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("exif", 1);
+      exif::check_index();
     }
   }
 
   static function uninstall() {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {exif_records};");
+    site_status::clear("exif_index_out_of_date");
     module::delete("exif");
   }
 }

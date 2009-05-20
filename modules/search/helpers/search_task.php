@@ -25,21 +25,16 @@ class search_task_Core {
       "WHERE {search_records}.`item_id` NOT IN " .
       "(SELECT `id` FROM {items})");
 
-    // Insert missing search_records
-    Database::instance()->query(
-      "INSERT INTO {search_records}(`item_id`) (" .
-      " SELECT {items}.`id` FROM {items} " .
-      " LEFT JOIN {search_records} ON ({search_records}.`item_id` = {items}.`id`) " .
-      " WHERE {search_records}.`id` IS NULL)");
-
-    list ($remaining, $total, $percent) = self::_get_stats();
+    list ($remaining, $total, $percent) = search::stats();
     return array(Task_Definition::factory()
                  ->callback("search_task::update_index")
                  ->name(t("Update Search Index"))
-                 ->description($remaining ?
-                               t("Search index is %percent% up-to-date",
-                                 array("percent" => $percent))
-                               : t("Search index is up to date"))
+                 ->description(
+                   $remaining
+                   ? t2("1 photo or album needs to be scanned",
+                        "%count (%percent%) of your photos and albums need to be scanned",
+                        $remaining, array("percent" => (100 - $percent)))
+                   : t("Search data is up-to-date"))
                  ->severity($remaining ? log::WARNING : log::SUCCESS));
   }
 
@@ -47,34 +42,31 @@ class search_task_Core {
     $completed = $task->get("completed", 0);
 
     $start = microtime(true);
-    while (!$task->done && microtime(true) - $start < 1) {
-      foreach (ORM::factory("search_record")->where("dirty", 1)->limit(5)->find_all() as $record) {
-        search::update_record($record);
-        $completed++;
+    foreach (ORM::factory("item")
+             ->join("search_records", "items.id", "search_records.item_id", "left")
+             ->where("search_records.item_id", null)
+             ->orwhere("search_records.dirty", 1)
+             ->find_all() as $item) {
+      if (microtime(true) - $start > 1.5) {
+        break;
       }
 
-      list ($remaining, $total, $percent) = self::_get_stats();
-      if ($remaining + $completed) {
-        $task->percent_complete = round(100 * $completed / ($remaining + $completed));
-        $task->status = t("%done records updated, index is %percent% up-to-date",
-                          array("done" => $completed, "percent" => $percent));
-      } else {
-        $task->percent_complete = 100;
-      }
+      search::update($item);
+      $completed++;
     }
 
+    list ($remaining, $total, $percent) = search::stats();
     $task->set("completed", $completed);
-    if ($remaining == 0) {
+    if ($remaining == 0 || !($remaining + $completed)) {
       $task->done = true;
       $task->state = "success";
       site_status::clear("search_index_out_of_date");
+      $task->percent_complete = 100;
+    } else {
+      $task->percent_complete = round(100 * $completed / ($remaining + $completed));
     }
-  }
-
-  private static function _get_stats() {
-    $remaining = ORM::factory("search_record")->where("dirty", 1)->count_all();
-    $total = ORM::factory("search_record")->count_all();
-    $percent = round(100 * ($total - $remaining) / $total);
-    return array($remaining, $total, $percent);
+    $task->status = t2("one record updated, index is %percent% up-to-date",
+                       "%count records updated, index is %percent% up-to-date",
+                       $completed, array("percent" => $percent));
   }
 }

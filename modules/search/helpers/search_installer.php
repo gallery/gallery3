@@ -35,14 +35,7 @@ class search_installer {
       // populate the index with dirty records
       $db->query("INSERT INTO {search_records} (`item_id`) SELECT `id` FROM {items}");
       module::set_version("search", 1);
-
-      if (ORM::factory("search_record")->count_all() < 10) {
-        foreach (ORM::factory("search_record")->where("dirty", 1)->find_all() as $record) {
-          search::update_record($record);
-        }
-      } else {
-        search::check_index();
-      }
+      search::check_index();
     }
   }
 

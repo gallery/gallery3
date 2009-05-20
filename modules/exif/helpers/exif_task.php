@@ -25,9 +25,9 @@ class exif_task_Core {
       "WHERE {exif_records}.`item_id` NOT IN " .
       "(SELECT `id` FROM {items} WHERE {items}.`type` = 'photo')");
 
-    list ($remaining, $total, $percent) = self::_get_stats();
+    list ($remaining, $total, $percent) = exif::stats();
     return array(Task_Definition::factory()
-                 ->callback("exif_task::extract_exif")
+                 ->callback("exif_task::update_index")
                  ->name(t("Extract EXIF data"))
                  ->description($remaining
                                ? t2("1 photo needs to be scanned",
@@ -37,7 +37,7 @@ class exif_task_Core {
                  ->severity($remaining ? log::WARNING : log::SUCCESS));
   }
 
-  static function extract_exif($task) {
+  static function update_index($task) {
     $completed = $task->get("completed", 0);
 
     $start = microtime(true);
@@ -57,41 +57,18 @@ class exif_task_Core {
       exif::extract($item);
     }
 
-    list ($remaining, $total, $percent) = self::_get_stats();
-    if ($remaining + $completed) {
-      $task->percent_complete = round(100 * $completed / ($remaining + $completed));
-      $task->status = t2("one record updated, index is %percent% up-to-date",
-                         "%count records updated, index is %percent% up-to-date",
-                         $completed, array("percent" => $percent));
-    } else {
-      $task->percent_complete = 100;
-    }
-
+    list ($remaining, $total, $percent) = exif::stats();
     $task->set("completed", $completed);
-    if ($remaining == 0) {
+    if ($remaining == 0 || !($remaining + $completed)) {
       $task->done = true;
       $task->state = "success";
+      site_status::clear("exif_index_out_of_date");
+      $task->percent_complete = 100;
+    } else {
+      $task->percent_complete = round(100 * $completed / ($remaining + $completed));
     }
-  }
-
-  private static function _get_stats() {
-    $missing_exif = Database::instance()
-      ->select("items.id")
-      ->from("items")
-      ->join("exif_records", "items.id", "exif_records.item_id", "left")
-      ->where("type", "photo")
-      ->open_paren()
-      ->where("exif_records.item_id", null)
-      ->orwhere("exif_records.dirty", 1)
-      ->close_paren()
-      ->get()
-      ->count();
-
-    $total_items = ORM::factory("item")->where("type", "photo")->count_all();
-    if (!$total_items) {
-      return array(0, 0, 0);
-    }
-    return array($missing_exif, $total_items,
-                 round(100 * (($total_items - $missing_exif) / $total_items)));
+    $task->status = t2("one record updated, index is %percent% up-to-date",
+                       "%count records updated, index is %percent% up-to-date",
+                       $completed, array("percent" => $percent));
   }
 }

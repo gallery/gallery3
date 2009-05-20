@@ -133,4 +133,35 @@ class exif_Core {
     }
     return self::$exif_keys;
   }
+
+  static function stats() {
+    $missing_exif = Database::instance()
+      ->select("items.id")
+      ->from("items")
+      ->join("exif_records", "items.id", "exif_records.item_id", "left")
+      ->where("type", "photo")
+      ->open_paren()
+      ->where("exif_records.item_id", null)
+      ->orwhere("exif_records.dirty", 1)
+      ->close_paren()
+      ->get()
+      ->count();
+
+    $total_items = ORM::factory("item")->where("type", "photo")->count_all();
+    if (!$total_items) {
+      return array(0, 0, 0);
+    }
+    return array($missing_exif, $total_items,
+                 round(100 * (($total_items - $missing_exif) / $total_items)));
+  }
+
+  static function check_index() {
+    list ($remaining) = exif::stats();
+    if ($remaining) {
+      site_status::warning(
+        t('Your EXIF index needs to be updated.  <a href="%url" class="gDialogLink">Fix this now</a>',
+          array("url" => url::site("admin/maintenance/start/exif_task::update_index?csrf=__CSRF__"))),
+        "exif_index_out_of_date");
+    }
+  }
 }

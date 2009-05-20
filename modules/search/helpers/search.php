@@ -51,7 +51,8 @@ class search_Core {
   }
 
   static function check_index() {
-    if ($count = ORM::factory("search_record")->where("dirty", 1)->count_all()) {
+    list ($remaining) = search::stats();
+    if ($remaining) {
       site_status::warning(
         t('Your search index needs to be updated.  <a href="%url" class="gDialogLink">Fix this now</a>',
           array("url" => url::site("admin/maintenance/start/search_task::update_index?csrf=__CSRF__"))),
@@ -59,8 +60,13 @@ class search_Core {
     }
   }
 
-  static function update_record($record) {
+  static function update($item) {
     $data = array();
+    $record = ORM::factory("search_record")->where("item_id", $item->id)->find();
+    if (!$record->loaded) {
+      $record->item_id = $item->id;
+    }
+
     foreach (module::installed() as $module_name => $module_info) {
       $class_name = "{$module_name}_search";
       if (method_exists($class_name, "item_index_data")) {
@@ -70,5 +76,19 @@ class search_Core {
     $record->data = join(" ", $data);
     $record->dirty = 0;
     $record->save();
+  }
+
+  static function stats() {
+    $remaining = Database::instance()
+      ->select("items.id")
+      ->from("items")
+      ->join("search_records", "items.id", "search_records.item_id", "left")
+      ->where("search_records.item_id", null)
+      ->orwhere("search_records.dirty", 1)
+      ->get()
+      ->count();
+    $total = ORM::factory("item")->count_all();
+    $percent = round(100 * ($total - $remaining) / $total);
+    return array($remaining, $total, $percent);
   }
 }
