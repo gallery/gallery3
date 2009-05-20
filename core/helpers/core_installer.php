@@ -216,6 +216,7 @@ class core_installer {
       module::set_var("core", "thumb_size", 200);
       module::set_var("core", "resize_size", 640);
       module::set_var("core", "default_locale", "en_US");
+      module::set_var("core", "image_quality", 75);
 
       // Add rules for generating our thumbnails and resizes
       graphics::add_rule(

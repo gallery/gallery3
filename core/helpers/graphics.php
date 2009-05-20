@@ -166,6 +166,7 @@ class graphics_Core {
     } else {
       Image::factory($input_file)
         ->resize($options["width"], $options["height"], $options["master"])
+        ->quality(module::get_var("core", "image_quality"))
         ->save($output_file);
     }
   }
@@ -183,6 +184,7 @@ class graphics_Core {
     }
 
     Image::factory($input_file)
+      ->quality(module::get_var("core", "image_quality"))
       ->rotate($options["degrees"])
       ->save($output_file);
   }
@@ -232,6 +234,7 @@ class graphics_Core {
 
     Image::factory($input_file)
       ->composite($options["file"], $x, $y, $options["transparency"])
+      ->quality(module::get_var("core", "image_quality"))
       ->save($output_file);
   }
 
