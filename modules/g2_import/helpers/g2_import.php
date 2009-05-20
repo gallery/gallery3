@@ -339,6 +339,11 @@ class g2_import_Core {
 
     switch ($g2_type) {
     case "GalleryPhotoItem":
+      if (!in_array($g2_item->getMimeType(), array("image/jpeg", "image/gif", "image/png"))) {
+        $g2_path = MODPATH . "g2_import/data/broken-image.gif";
+        Kohana::log("alert", "$g2_path unsupported image type; using a placeholder gif");
+        $corrupt = 1;
+      }
       $item = photo::create(
         $parent,
         $g2_path,
@@ -378,7 +383,7 @@ class g2_import_Core {
       $url_generator = $GLOBALS["gallery"]->getUrlGenerator();
       // @todo we need a more persistent
       $warning =
-        t("<a href=\"%g2_url\">%title</a> corrupt in Gallery 2; " .
+        t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
           "(imported as <a href=\"%g3_url\">%title</a>)",
           array("g2_url" => $url_generator->generateUrl(array("itemId" => $g2_item->getId())),
                 "g3_url" => $item->url(),
