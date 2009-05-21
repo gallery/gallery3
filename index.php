@@ -27,7 +27,7 @@ version_compare(PHP_VERSION, '5.2', '<') and exit('Gallery requires PHP 5.2 or n
 !ini_get('short_open_tag') and exit('Gallery requires short_open_tag to be on.');
 
 // Set the error reporting level.  Use E_ALL unless you have a special need.
-error_reporting(E_ALL);
+error_reporting(E_NONE);
 
 // Disabling display_errors will  effectively disable Kohana error display
 // and logging. You can turn off Kohana errors in application/config/config.php
