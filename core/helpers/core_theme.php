@@ -122,4 +122,12 @@ class core_theme_Core {
       return L10n_Client_Controller::l10n_form();
     }
   }
+
+  static function credits() {
+    return "<li class=\"first\">" .
+      t("Powered by <a href=\"%url\">Gallery %version</a>",
+        array("url" => "http://gallery.menalto.com",
+              "version" => module::get_var("core", "version"))) .
+      "</li>";
+  }
 }
