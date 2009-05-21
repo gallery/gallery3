@@ -27,6 +27,7 @@ class Permissions_Controller extends Controller {
     }
 
     $view = new View("permissions_browse.html");
+    $view->htaccess_works = access::htaccess_works();
     $view->item = $item;
     $view->parents = $item->parents();
     $view->form = $this->_get_form($item);

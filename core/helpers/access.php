@@ -595,4 +595,32 @@ class access_Core {
   static function private_key() {
     return module::get_var("core", "private_key");
   }
+
+  /**
+   * Verify that our htaccess based permission system actually works.  Create a temporary
+   * directory containing an .htaccess file that uses mod_rewrite to redirect /verify to
+   * /success.  Then request that url.  If we retrieve it successfully, then our redirects are
+   * working and our permission system works.
+   */
+  static function htaccess_works() {
+    $success_url = url::file("var/tmp/security_test/success");
+
+    @mkdir(VARPATH . "tmp/security_test");
+    if ($fp = @fopen(VARPATH . "tmp/security_test/.htaccess", "w+")) {
+      fwrite($fp, "RewriteEngine On\n");
+      fwrite($fp, "RewriteRule verify $success_url [L]\n");
+      fclose($fp);
+    }
+
+    if ($fp = @fopen(VARPATH . "tmp/security_test/success", "w+")) {
+      fwrite($fp, "success");
+      fclose($fp);
+    }
+
+    list ($response) = remote::do_request(url::abs_file("var/tmp/security_test/verify"));
+    $works = $response == "HTTP/1.1 200 OK";
+    @dir::unlink(VARPATH . "tmp/security_test");
+
+    return $works;
+  }
 }

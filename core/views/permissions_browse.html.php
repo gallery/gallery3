@@ -24,6 +24,13 @@
   }
 </script>
 <div id="gPermissions">
+  <? if (!$htaccess_works): ?>
+  <ul id="gMessage">
+    <li class="gError">
+      <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to set <a href=\"%url\"><i>AllowOverride FileInfo Options</i></a> to fix this.", array("url" => "http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride")) ?>
+    </li>
+  </ul>
+  <? endif ?>
   <ul>
     <? foreach ($parents as $parent): ?>
     <li>
