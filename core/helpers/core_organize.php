@@ -19,7 +19,7 @@
  */
 
 class core_organize_Core {
-  static function getGeneralEditForm($item) {
+  static function get_general_edit_form($item) {
     $generalPane = new Forge("core_organize/__FUNCTION__", "", "post",
                              array("id" => "gEditGeneral", "ref" => "general"));
     // In this case we know there is only 1 item, but in general we should loop
@@ -38,7 +38,7 @@ class core_organize_Core {
     return $generalPane;
   }
 
-  static function getSortEditForm($item) {
+  static function get_sort_edit_form($item) {
     $sortPane = new Forge("core_organize/__FUNCTION__", "", "post",
                           array("id" => "gEditSort", "ref" => "sort"));
     $sortPane->hidden("item[]")->value($item->id);

@@ -45,11 +45,11 @@ class core_event_Core {
       ->find();
 
     $event_parms->panes[] = array("label" => $item->is_album() ? t("Edit Album") : t("Edit Photo"),
-                                  "content" => core_organize::getGeneralEditForm($item));
+                                  "content" => core_organize::get_general_edit_form($item));
 
     if ($item->is_album()) {
       $event_parms->panes[] = array("label" => t("Sort Order"),
-                                    "content" => core_organize::getSortEditForm($item));
+                                    "content" => core_organize::get_sort_edit_form($item));
     }
   }
 

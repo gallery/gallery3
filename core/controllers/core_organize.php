@@ -27,7 +27,7 @@ class Core_Organize_Controller extends Controller {
       ->find();
     access::required("edit", $item);
 
-    $form = core_organize::getGeneralEditForm($item);
+    $form = core_organize::get_general_edit_form($item);
     if ($form->validate()) {
       $orig = clone $item;
       $item->title = $form->title->value;
@@ -59,7 +59,7 @@ class Core_Organize_Controller extends Controller {
       ->find();
     access::required("edit", $item);
 
-    $form = core_organize::getSortEditForm($item);
+    $form = core_organize::get_sort_edit_form($item);
     if ($form->validate()) {
       $orig = clone $item;
       $item->sort_column = $form->column->value;
@@ -83,7 +83,7 @@ class Core_Organize_Controller extends Controller {
       ->find();
     access::required("edit", $item);
 
-    print core_organize::getGeneralEditForm($item);
+    print core_organize::get_general_edit_form($item);
   }
 
   public function reset_sort() {
@@ -93,7 +93,7 @@ class Core_Organize_Controller extends Controller {
       ->find();
     access::required("edit", $item);
 
-    print core_organize::getSortEditForm($item);
+    print core_organize::get_sort_edit_form($item);
   }
 
 }
