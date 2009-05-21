@@ -267,6 +267,10 @@ function drawerHandleButtonsClick(event) {
         url: $(form).attr("action").replace("__FUNCTION__", "reset_" + $(form).attr("ref"))
       });
       break;
+    case "delete":
+      if (!confirm(CONFIRM_DELETE)) {
+        break;
+      }
     default:
       $.ajax({
         data: serializeItemIds("#gMicroThumbPanel li.ui-selected"),

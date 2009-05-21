@@ -67,13 +67,15 @@
 
 <? if ($item->type == "photo"): ?>
 <? $title = t("Delete this photo") ?>
+<? $message = t("Do you really want to delete this photo") ?>
 <? elseif ($item->type == "movie"): ?>
 <? $title = t("Delete this movie") ?>
+<? $message = t("Do you really want to delete this movie") ?>
 <? elseif ($item->type == "album"): ?>
 <? $title = t("Delete this album") ?>
+<? $message = t("Do you really want to delete this album") ?>
 <? endif ?>
-<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/delete/$item->id?csrf=$csrf&page_type=$page_type") ?>"
-   title="<?= $title ?>">
+<a class="gButtonLink ui-corner-all ui-state-default" href="<?= url::site("quick/delete/$item->id?csrf=$csrf&page_type=$page_type") ?>" ref="<?= $message ?>" id="gQuickDelete" title="<?= $title ?>">
   <span class="ui-icon ui-icon-trash">
     <?= $title ?>
   </span>

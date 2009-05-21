@@ -6,7 +6,7 @@
   var RESUME_BUTTON = "<?= t("Resume") ?>";
   var CANCEL_BUTTON = "<?= t("Cancel") ?>";
   var INVALID_DROP_TARGET = "<div class=\"gError\"><?= t("Drop cancelled as it would result in a recursive move") ?></div>";
-
+var CONFIRM_DELETE = "<?= t("Do you really want to delete the selected albums and/or photos") ?>"
   var item_id = <?= $item->id ?>;
 
   var csrf = "<?= $csrf ?>";
