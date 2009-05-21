@@ -30,6 +30,7 @@ class File_Proxy_Controller extends Controller {
   public function __call($function, $args) {
     // request_uri: http://example.com/gallery3/var/trunk/albums/foo/bar.jpg
     $request_uri = $this->input->server("REQUEST_URI");
+    $request_uri = preg_replace("/\?.*/", "", $request_uri);
 
     // var_uri: http://example.com/gallery3/var/
     $var_uri = url::file("var/");
