@@ -79,9 +79,27 @@ class item_Core {
     }
   }
 
- static function validate_no_trailing_period($input) {
+  static function validate_no_trailing_period($input) {
     if (rtrim($input->value, ".") !== $input->value) {
       $input->add_error("no_trailing_period", 1);
+    }
+  }
+
+  static function validate_no_name_conflict($input) {
+    $itemid = Input::instance()->post("item");
+    if (is_array($itemid)) {
+      $itemid = $itemid[0];
+    }
+    $item = ORM::factory("item")
+      ->in("id", $itemid)
+      ->find();
+    if (Database::instance()
+        ->from("items")
+        ->where("parent_id", $item->parent_id)
+        ->where("id <>", $item->id)
+        ->where("name", $input->value)
+        ->count_records()) {
+      $input->add_error("conflict", 1);
     }
   }
 }

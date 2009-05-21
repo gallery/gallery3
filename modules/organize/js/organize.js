@@ -150,9 +150,7 @@ var selectable = {
     setDrawerButtonState();
   },
   stop: function(event, ui) {
-    if ($("#gMicroThumbGrid li.ui-selected").length > 0) {
-      getEditForm();
-    }
+    getEditForm();
   }
 };
 
@@ -197,11 +195,21 @@ function drawerHandleButtonsClick(event) {
     var operation = $(this).attr("ref");
     switch (operation) {
     case "edit":
+    case "close":
       $("#gOrganizeEditDrawerPanel").animate(
         {"height": "toggle", "display": "block"},
         {duration: "fast",
          complete: function() {
            setSelectedThumbs();
+           if (operation == "close") {
+             $("#gOrganizeEditHandleButtonsLeft a[ref='edit']").css("display", "inline-block");
+             $("#gOrganizeEditHandleButtonsLeft a[ref='close']").css("display", "none");
+             $("#gOrganizeEditHandleButtonsMiddle a").css("display", "none");
+           } else {
+             $("#gOrganizeEditHandleButtonsLeft a[ref='edit']").css("display", "none");
+             $("#gOrganizeEditHandleButtonsLeft a[ref='close']").css("display", "inline-block");
+             $("#gOrganizeEditHandleButtonsMiddle a").css("display", "inline-block");
+           }
          },
          step: function() {
            $("#gMicroThumbPanel").height(heightMicroThumbPanel - $(this).height());
@@ -209,22 +217,59 @@ function drawerHandleButtonsClick(event) {
       });
       break;
     case "select-all":
-      $(".gMicroThumbContainer").addClass("ui-selected");
+      $("#gMicroThumbGrid li").addClass("ui-selected");
       $("#gMicroThumbSelectAll").hide();
       $("#gMicroThumbUnselectAll").show();
+      setDrawerButtonState();
+      getEditForm();
       break;
     case "unselect-all":
-      $(".gMicroThumbContainer").removeClass("ui-selected");
+      $("#gMicroThumbGrid li").removeClass("ui-selected");
       $("#gMicroThumbSelectAll").show();
       $("#gMicroThumbUnselectAll").hide();
+      setDrawerButtonState();
       break;
-    case "close":
+    case "done":
       $("#gDialog").dialog("close");
       break;
-    default:
-      var postData = serializeItemIds("#gMicroThumbPanel li.ui-selected");
+    case "submit":
+      var currentTab = $("#gOrganizeEditForm").tabs("option", "selected");
+      var form = $("#pane-"+currentTab+" form");
+      var url = $(form).attr("action")
+        .replace("__FUNCTION__", $(form).attr("ref"));
       $.ajax({
-        data: postData,
+        data: $(form).serialize(),
+        dataType: "json",
+        success: function (data, textStatus) {
+          if (data.task) {
+            // @todo if task is sent then create a progress bar and run the task
+          } else {
+            $("#pane-"+currentTab).children("form").replaceWith(data.form);
+            if (data.message) {
+              $("#pane-"+currentTab + " form").before("<div class=\"gSuccess\">" + data.message +"</div>");
+            }
+         }
+        },
+        type: "POST",
+        url: url
+      });
+      break;
+    case "reset":
+      currentTab = $("#gOrganizeEditForm").tabs("option", "selected");
+      form = $("#pane-"+currentTab+" form");
+      $.ajax({
+        data: serializeItemIds("#gMicroThumbPanel li.ui-selected"),
+        dataType: "html",
+        success: function (data, textStatus) {
+          $("#pane-"+currentTab + " form").replaceWith(data);
+        },
+        type: "GET",
+        url: $(form).attr("action").replace("__FUNCTION__", "reset_" + $(form).attr("ref"))
+      });
+      break;
+    default:
+      $.ajax({
+        data: serializeItemIds("#gMicroThumbPanel li.ui-selected"),
         dataType: "json",
         success: operationCallback,
         type: "POST",
@@ -408,25 +453,22 @@ function get_url(uri, parms) {
 function setDrawerButtonState() {
   $("#gOrganizeFormThumbStack").empty();
   $("#gOrganizeEditForm").empty();
-  switch ($("#gMicroThumbGrid li.ui-selected").length) {
-  case 0:
+  var selectedCount = $("#gMicroThumbGrid li.ui-selected").length;
+  if (selectedCount) {
+    $("#gOrganizeEditHandleButtonsLeft a").removeAttr("disabled");
+    $("#gOrganizeEditHandleButtonsLeft a").removeClass("ui-state-disabled");
+
+    if (selectedCount > 1) {
+      $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").attr("disabled", true);
+      $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").addClass("ui-state-disabled");
+    }
+    setSelectedThumbs();
+  } else {
     if ($("#gOrganizeEditDrawerPanel::visible").length) {
-      $("#gOrganizeEditHandleButtonsLeft a[ref='edit']").trigger("click");
+      $("#gOrganizeEditHandleButtonsLeft a[ref='close']").trigger("click");
     }
     $("#gOrganizeEditHandleButtonsLeft a").attr("disabled", true);
     $("#gOrganizeEditHandleButtonsLeft a").addClass("ui-state-disabled");
-    break;
-  case 1:
-    $("#gOrganizeEditHandleButtonsLeft a").removeAttr("disabled");
-    $("#gOrganizeEditHandleButtonsLeft a").removeClass("ui-state-disabled");
-    setSelectedThumbs();
-//    getEditForm();
-   break;
-  default:
-    $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").attr("disabled", true);
-    $("#gOrganizeEditHandleButtonsLeft a[ref='albumCover']").addClass("ui-state-disabled");
-    setSelectedThumbs();
-//    getEditForm();
   }
 }
 
@@ -456,17 +498,25 @@ function setSelectedThumbs() {
 }
 
 function getEditForm() {
-  var postData = "";
-  $("li.ui-selected").each(function(i) {
-    postData += "&item[]=" + $(this).attr("ref");
-  });
-  var url_data = get_url("organize/editForm", {}) + postData;
-  $.get(url_data, function(data, textStatus) {
+  if ($("#gMicroThumbGrid li.ui-selected").length > 0) {
+    var postData = serializeItemIds("li.ui-selected");
+    var url_data = get_url("organize/editForm", {}) + postData;
+    $.get(url_data, function(data, textStatus) {
+      $("#gOrganizeEditForm").tabs("destroy");
+      $("#gOrganizeEditForm").html(data);
+      if ($("#gOrganizeEditForm ul li").length) {
+        $("#gOrganizeEditForm").tabs();
+        $("#gOrganizeEditHandleButtonsMiddle a").removeAttr("disabled");
+        $("#gOrganizeEditHandleButtonsMiddle a").removeClass("ui-state-disabled");
+      } else {
+        $("#gOrganizeEditHandleButtonsMiddle a").attr("disabled", true);
+        $("#gOrganizeEditHandleButtonsMiddle a").addClass("ui-state-disabled");
+      }
+    });
+  } else {
     $("#gOrganizeEditForm").tabs("destroy");
-    //$("#gOrganizeEditForm").empty();
-    $("#gOrganizeEditForm").html(data);
-    $("#gOrganizeEditForm").tabs();
-  });
+    $("#gOrganizeEditForm").empty();
+  }
 }
 
 function serializeItemIds(selector) {
@@ -476,6 +526,16 @@ function serializeItemIds(selector) {
   });
 
   return postData;
+}
+
+function submitCurrentForm(event) {
+  console.log("submitCurrentForm");
+  return false;
+}
+
+function resetCurrentForm(event) {
+  console.log("resetCurrentForm");
+  return false;
 }
 
 function createProgressDialog(title) {
@@ -548,12 +608,13 @@ function getViewportSize() {
 
 function displayAjaxError(error) {
   $("body").append("<div id=\"gAjaxError\" title=\"" + FATAL_ERROR + "\">" + error + "</div>");
+
   $("#gAjaxError").dialog({
-      autoOpen: true,
-      autoResize: false,
-      modal: true,
-      resizable: true,
-      width: 610,
-      height: $("#gDialog").height()
-    });
+    autoOpen: true,
+    autoResize: false,
+    modal: true,
+    resizable: true,
+    width: 610,
+    height: $("#gDialog").height()
+  });
 }

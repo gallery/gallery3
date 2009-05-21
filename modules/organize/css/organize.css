@@ -170,12 +170,18 @@
   width: 15px;
 }
 
+#gOrganizeEditHandleButtonsMiddle,
 #gOrganizeEditHandleButtonsLeft {
   float: left;
   height: 20px;
   padding: 2px 10px;
 }
 
+#gOrganizeEditHandleButtonsMiddle {
+  margin-left: 20px;
+}
+
+#gOrganizeEditHandleButtonsMiddle a,
 #gOrganizeEditHandleButtonsLeft a {
   float: left;
   margin: 0 2.5px;

@@ -36,25 +36,18 @@
            ref="<?= url::site("organize/content/__ITEM_ID__?width=__WIDTH__&height=__HEIGHT__&offset=__OFFSET__") ?>">
         <ul id="gMicroThumbGrid"></ul>
       </div>
-        <div id="gOrganizeEditDrawer" class="yui-u">
-          <div id="gOrganizeEditDrawerPanel" class="yui-gf">
-            <div id="gOrganizeFormThumbs" class="yui-u first">
-              <ul id="gOrganizeFormThumbStack" />
-            </div>
-            <div id="gOrganizeEditForm">
-            </div>
+      <div id="gOrganizeEditDrawer" class="yui-u">
+        <div id="gOrganizeEditDrawerPanel" class="yui-gf">
+          <div id="gOrganizeFormThumbs" class="yui-u first">
+            <ul id="gOrganizeFormThumbStack" />
           </div>
-          <div id="gOrganizeEditDrawerHandle">
-            <div id="gOrganizeEditHandleButtonsLeft">
-              <?= $button_pane ?>
-            </div>
-            <div id="gOrganizeEditHandleButtonsRight">
-              <a id="gMicroThumbSelectAll" href="#" ref="select-all" class="gButtonLink ui-corner-all ui-state-default"><?= t("Select all") ?></a>
-              <a id="gMicroThumbUnselectAll" href="#" ref="unselect-all" style="display: none" class="gButtonLink ui-corner-all ui-state-default"><?= t("Deselect all") ?></a>
-              <a id="gMicroThumbDone" href="#" ref="close" class="gButtonLink ui-corner-all ui-state-default"><?= t("Done") ?></a>
-            </div>
+          <div id="gOrganizeEditForm">
           </div>
         </div>
+        <div id="gOrganizeEditDrawerHandle">
+          <?= $button_pane ?>
+        </div>
+      </div>
     </div>
   </div>
 </div>
