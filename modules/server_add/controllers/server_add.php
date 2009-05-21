@@ -26,7 +26,7 @@ class Server_Add_Controller extends Controller {
     access::required("add", $item);
 
     $view = new View("server_add_tree_dialog.html");
-    $view->action = url::site("__ARGS__/{$id}__TASK_ID__?csrf=" . access::csrf_token());
+    $view->action = url::abs_site("__ARGS__/{$id}__TASK_ID__?csrf=" . access::csrf_token());
     $view->parents = $item->parents();
     $view->album_title = $item->title;
 
