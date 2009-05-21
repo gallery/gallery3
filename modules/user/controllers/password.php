@@ -85,7 +85,7 @@ class Password_Controller extends Controller {
   private function _reset_form() {
     $form = new Forge(url::current(true), "", "post", array("id" => "gResetForm"));
     $group = $form->group("reset")->label(t("Reset Password"));
-    $group->input("name")->label(t("Name"))->id("gName")->class(null)->rules("required");
+    $group->input("name")->label(t("Username"))->id("gName")->class(null)->rules("required");
     $group->inputs["name"]->error_messages("no_email", t("No email, unable to reset password"));
     $group->submit("")->value(t("Reset"));
 
