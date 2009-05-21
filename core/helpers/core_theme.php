@@ -130,4 +130,8 @@ class core_theme_Core {
               "version" => module::get_var("core", "version"))) .
       "</li>";
   }
+
+  static function admin_credits() {
+    return core_theme::credits();
+  }
 }

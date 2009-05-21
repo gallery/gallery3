@@ -5,6 +5,5 @@
 <? else: ?>
 <ul id="gCredits">
   <?= $theme->credits() ?>
-  <li> <a href="#">About this Gallery</a> </li>
 </ul>
 <? endif ?>
