@@ -596,11 +596,11 @@ form .gError,
 }
 
 #gViewMenu #gAddWatchLink {
-  background-image: url('../images/ico-add-watch.png');
+  background-image: url('../images/ico-watch-add.png');
 }
 
 #gViewMenu #gRemoveWatchLink {
-  background-image: url('../images/ico-remove-watch.png');
+  background-image: url('../images/ico-watch-remove.png');
 }
 
 #gViewMenu #gHybridLink {
