@@ -31,7 +31,7 @@ error_reporting(E_ALL);
 
 // Disabling display_errors will  effectively disable Kohana error display
 // and logging. You can turn off Kohana errors in application/config/config.php
-ini_set('display_errors', true);
+ini_set('display_errors', false);
 
 define('EXT', '.php');
 define('DOCROOT', strtr(getcwd() . '/', DIRECTORY_SEPARATOR, '/'));
