@@ -1,6 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-  <!--
   var form_url = "<?= url::site("permissions/form/__ITEM__") ?>";
   show = function(id) {
     $.ajax({
@@ -12,7 +11,8 @@
     });
   }
 
-  var action_url = "<?= url::site("permissions/change/__CMD__/__GROUP__/__PERM__/__ITEM__?csrf=$csrf") ?>";
+  var action_url =
+    "<?= url::site("permissions/change/__CMD__/__GROUP__/__PERM__/__ITEM__?csrf=$csrf") ?>";
   set = function(cmd, group_id, perm_id, item_id) {
     $.ajax({
       url: action_url.replace("__CMD__", cmd).replace("__GROUP__", group_id).
@@ -22,7 +22,6 @@
       }
     });
   }
-  //-->
 </script>
 <div id="gPermissions">
   <ul>
