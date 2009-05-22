@@ -476,6 +476,14 @@ form .gError,
   background-color: #e8e8e8;
 }
 
+#gContent #gAlbumGrid .gAlbum h2 span {
+  background: transparent url('../images/ico-album.png') no-repeat top left !important;
+  display: inline-block;
+  height: 16px;
+  margin-right: 5px;
+  width: 16px;
+}
+
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
 #gContent #gItem {
