@@ -14,6 +14,7 @@ var draggable = {
   handle: ".gMicroThumbContainer.ui-selected",
   revert: true,
   zindex: 2000,
+  distance: 10,
   helper: function(event, ui) {
     if (!$(event.currentTarget).hasClass("ui-selected")) {
       $(event.currentTarget).addClass("ui-selected");
@@ -241,14 +242,10 @@ function drawerHandleButtonsClick(event) {
         data: $(form).serialize(),
         dataType: "json",
         success: function (data, textStatus) {
-          if (data.task) {
-            // @todo if task is sent then create a progress bar and run the task
-          } else {
-            $("#pane-"+currentTab).children("form").replaceWith(data.form);
-            if (data.message) {
-              $("#pane-"+currentTab + " form").before("<div class=\"gSuccess\">" + data.message +"</div>");
-            }
-         }
+          $("#pane-"+currentTab).children("form").replaceWith(data.form);
+          if (data.message) {
+            $("#gMessage").empty().append("<div class='gSuccess'>" + data.message + "</div>");
+          }
         },
         type: "POST",
         url: url
