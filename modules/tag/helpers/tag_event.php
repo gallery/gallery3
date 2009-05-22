@@ -59,4 +59,9 @@ class tag_event_Core {
                "SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
     $db->delete("items_tags", array("item_id" => "$item->id"));
   }
+
+  static function organize_form_creation($event_parms) {
+    $event_parms->panes[] = array("label" => t("Manage Tags"),
+                                  "content" => tag::get_organize_form($event_parms->itemids));
+  }
 }
