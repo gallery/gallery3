@@ -151,7 +151,7 @@ class module_Core {
     // Reload module list from the config file since we'll do a refresh after calling install()
     $core = Kohana::config_load("core");
     $kohana_modules = $core["modules"];
-    $modules = ORM::factory("module")->find_all();
+    $modules = ORM::factory("module")->where("name <>", "core")->find_all();
 
     foreach ($modules as $module) {
       self::$module_names[$module->name] = $module->name;
