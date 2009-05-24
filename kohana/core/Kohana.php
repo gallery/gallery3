@@ -298,8 +298,7 @@ final class Kohana {
 	{
 		if ($process === TRUE)
 		{
-			// Add APPPATH as the first path
-			self::$include_paths = array(APPPATH);
+			self::$include_paths = array();
 
 			foreach (self::$configuration['core']['modules'] as $path)
 			{
@@ -309,6 +308,9 @@ final class Kohana {
 					self::$include_paths[] = $path.'/';
 				}
 			}
+
+			// Add APPPATH after all modules
+			self::$include_paths[] = APPPATH;
 
 			// Add SYSPATH as the last path
 			self::$include_paths[] = SYSPATH;
@@ -811,14 +813,14 @@ final class Kohana {
 		{
 			// PHP errors have 5 args, always
 			$PHP_ERROR = (func_num_args() === 5);
-	
+
 			// Test to see if errors should be displayed
 			if ($PHP_ERROR AND (error_reporting() & $exception) === 0)
 				return;
-	
+
 			// This is useful for hooks to determine if a page has an error
 			self::$has_error = TRUE;
-	
+
 			// Error handling will use exactly 5 args, every time
 			if ($PHP_ERROR)
 			{
@@ -835,11 +837,11 @@ final class Kohana {
 				$line     = $exception->getLine();
 				$template = ($exception instanceof Kohana_Exception) ? $exception->getTemplate() : 'kohana_error_page';
 			}
-	
+
 			if (is_numeric($code))
 			{
 				$codes = self::lang('errors');
-	
+
 				if ( ! empty($codes[$code]))
 				{
 					list($level, $error, $description) = $codes[$code];
@@ -858,22 +860,22 @@ final class Kohana {
 				$error = $code;
 				$description = '';
 			}
-	
+
 			// Remove the DOCROOT from the path, as a security precaution
 			$file = str_replace('\\', '/', realpath($file));
 			$file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
-	
+
 			if ($level <= self::$configuration['core']['log_threshold'])
 			{
 				// Log the error
 				self::log('error', self::lang('core.uncaught_exception', $type, $message, $file, $line));
 			}
-	
+
 			if ($PHP_ERROR)
 			{
 				$description = self::lang('errors.'.E_RECOVERABLE_ERROR);
 				$description = is_array($description) ? $description[2] : '';
-	
+
 				if ( ! headers_sent())
 				{
 					// Send the 500 header
@@ -888,13 +890,13 @@ final class Kohana {
 					$exception->sendHeaders();
 				}
 			}
-	
+
 			while (ob_get_level() > self::$buffer_level)
 			{
 				// Close open buffers
 				ob_end_clean();
 			}
-	
+
 			// Test if display_errors is on
 			if (self::$configuration['core']['display_errors'] === TRUE)
 			{
@@ -902,11 +904,11 @@ final class Kohana {
 				{
 					// Remove the first entry of debug_backtrace(), it is the exception_handler call
 					$trace = $PHP_ERROR ? array_slice(debug_backtrace(), 1) : $exception->getTrace();
-	
+
 					// Beautify backtrace
 					$trace = self::backtrace($trace);
 				}
-	
+
 				// Load the error
 				require self::find_file('views', empty($template) ? 'kohana_error_page' : $template);
 			}
@@ -915,17 +917,17 @@ final class Kohana {
 				// Get the i18n messages
 				$error   = self::lang('core.generic_error');
 				$message = self::lang('core.errors_disabled', url::site(), url::site(Router::$current_uri));
-	
+
 				// Load the errors_disabled view
 				require self::find_file('views', 'kohana_error_disabled');
 			}
-	
+
 			if ( ! Event::has_run('system.shutdown'))
 			{
 				// Run the shutdown even to ensure a clean exit
 				Event::run('system.shutdown');
 			}
-	
+
 			// Turn off error reporting
 			error_reporting(0);
 			exit;
