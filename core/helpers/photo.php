@@ -155,6 +155,10 @@ class photo_Core {
    * @param string  $format the output format using %d placeholders for width and height
    */
   static function img_dimensions($width, $height, $max, $format="width=\"%d\" height=\"%d\"") {
+    if (!$width || !$height) {
+      return "";
+    }
+
     if ($width > $height) {
       $new_width = $max;
       $new_height = (int)$max * ($height / $width);
