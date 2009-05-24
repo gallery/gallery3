@@ -59,5 +59,9 @@ if (PHP_SAPI == 'cli') {
 }
 define('TMPPATH', VARPATH . '/tmp');
 
+if (file_exists("index.local.php")) {
+  include("index.local.php");
+}
+
 // Initialize.
 require SYSPATH . 'core/Bootstrap' . EXT;
