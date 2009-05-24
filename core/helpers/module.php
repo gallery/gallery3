@@ -151,12 +151,17 @@ class module_Core {
     // Reload module list from the config file since we'll do a refresh after calling install()
     $core = Kohana::config_load("core");
     $kohana_modules = $core["modules"];
-    $modules = ORM::factory("module")->where("name <>", "core")->find_all();
+    $modules = ORM::factory("module")->find_all();
 
     foreach ($modules as $module) {
       self::$module_names[$module->name] = $module->name;
       self::$modules[$module->name] = $module;
-      $kohana_modules[] = MODPATH . $module->name;
+
+      // @todo For some reason if we don't load the core module here, the test framework fails.
+      // This requires some investigation.
+      if ($module->name != "core") {
+        $kohana_modules[] = MODPATH . $module->name;
+      }
     }
     Kohana::config_set("core.modules", $kohana_modules);
 
