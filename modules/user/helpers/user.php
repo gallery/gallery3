@@ -42,9 +42,9 @@ class user_Core {
   static function get_edit_form_admin($user) {
     $form = new Forge("admin/users/edit_user/$user->id", "", "post", array("id" => "gEditUserForm"));
     $group = $form->group("edit_user")->label(t("Edit User"));
-    $group->input("name")->label(t("Name"))->id("gName")->value($user->name);
+    $group->input("name")->label(t("Username"))->id("gUsername")->value($user->name);
     $group->inputs["name"]->error_messages(
-      "in_use", t("There is already a user with that name"));
+      "in_use", t("There is already a user with that username"));
     $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
     $group->password("password")->label(t("Password"))->id("gPassword");
@@ -62,8 +62,8 @@ class user_Core {
   static function get_add_form_admin() {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "gAddUserForm"));
     $group = $form->group("add_user")->label(t("Add User"));
-    $group->input("name")->label(t("Name"))->id("gName")
-      ->error_messages("in_use", t("There is already a user with that name"));
+    $group->input("name")->label(t("Username"))->id("gUsername")
+      ->error_messages("in_use", t("There is already a user with that username"));
     $group->input("full_name")->label(t("Full Name"))->id("gFullName");
     $group->password("password")->label(t("Password"))->id("gPassword");
     $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
@@ -102,7 +102,7 @@ class user_Core {
   static function get_login_form($url) {
     $form = new Forge($url, "", "post", array("id" => "gLoginForm"));
     $group = $form->group("login")->label(t("Login"));
-    $group->input("name")->label(t("Username"))->id("gName")->class(null);
+    $group->input("name")->label(t("Username"))->id("gUsername")->class(null);
     $group->password("password")->label(t("Password"))->id("gPassword")->class(null);
     $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
     $group->submit("")->value(t("Login"));
