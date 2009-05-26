@@ -141,6 +141,10 @@ class File_Structure_Test extends Unit_Test_Case {
         // Front controllers
         break;
 
+      case DOCROOT . "index.local.php":
+        // Special case optional file, not part of the codebase
+        break;
+
       default:
         if (strpos($path, DOCROOT . "var/logs") === 0) {
           continue;
