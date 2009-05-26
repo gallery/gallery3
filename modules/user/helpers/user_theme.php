@@ -23,4 +23,13 @@ class user_theme_Core {
     $view->user = user::active();
     return $view->render();
   }
+
+  static function admin_head($theme) {
+    $head = array();
+    if (strpos(Router::$current_uri, "admin/users") !== false) {
+      $head[] = html::script("lib/gallery.panel.js");
+    }
+
+    return implode("\n", $head);
+  }
 }

@@ -1,5 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<script src="<?= url::file("lib/gallery.panel.js") ?>" type="text/javascript"></script>
 <script type="text/javascript">
   var add_user_to_group_url = "<?= url::site("admin/users/add_user_to_group/__USERID__/__GROUPID__?csrf=$csrf") ?>";
   $(document).ready(function(){
