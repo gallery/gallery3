@@ -1,9 +1,8 @@
 $(document).ready(function(){
-  // Add Superfish menu class
+  
+  // Initialize Superfish menus
   $("#gSiteAdminMenu ul.gMenu").addClass("sf-menu");
   $("ul.gMenu").addClass("sf-menu");
-
-  // Superfish menu options
   $("ul.sf-menu").superfish({
     delay: 500,
     animation: {
@@ -15,19 +14,25 @@ $(document).ready(function(){
   });
   $("#gSiteAdminMenu").css("display", "block");
 
-  // Apply modal dialogs
+  // Initialize status message effects
+  $("#gMessage li").showMessage();
+
+  // Initialize modal dialogs
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", handleDialogEvent);
+  }
+
+  // Initialize panels
+  var panelLinks = $(".gPanelLink");
+  for (i=0; i<panelLinks.length; i++) {
+    $(panelLinks[i]).bind("click", handlePanelEvent);
   }
 
   if ($("#gPhotoStream").length) {
     // Vertically align thumbs in photostream
     $(".gItem").vAlign();
   }
-
-  // Apply status message effect
-  $("#gMessage li").showMessage();
 
   // Apply jQuery UI button css to submit inputs
   $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
@@ -39,12 +44,6 @@ $(document).ready(function(){
     $("#gAdminCommentsMenu a").addClass("gButtonLink ui-state-default");
     $("#gAdminCommentsMenu ul li:first a").addClass("ui-corner-left");
     $("#gAdminCommentsMenu ul li:last a").addClass("ui-corner-right");
-  }
-
-  // Apply hide/show functionality on user admin view
-  var panelLinks = $(".gPanelLink");
-  for (i=0; i<panelLinks.length; i++) {
-    $(panelLinks[i]).bind("click", handlePanelEvent);
   }
 
   // Round corners
@@ -65,91 +64,3 @@ $(document).ready(function(){
     }
   );
 });
-
-function handlePanelEvent(event) {
-  togglePanel(event.currentTarget);
-  event.preventDefault();
-}
-
-function togglePanel(element, on_success) {
-  var parent = $(element).parent().parent();
-  var sHref = $(element).attr("href");
-  var parentClass = $(parent).attr("class");
-  var ePanel = "<tr id=\"gPanel\"><td colspan=\"6\"></td></tr>";
-
-  if ($("#gPanel").length) {
-    $("#gPanel").slideUp("slow");
-    $("#gPanel *").remove();
-    $("#gPanel").remove();
-    if ($(element).attr("orig_text")) {
-       $(element).children(".gButtonText").text($(element).attr("orig_text"));
-    }
-    console.log("Removing existing #gPanel");
-    //togglePanel(element, on_success);
-  } else {
-    console.log("Adding #gPanel");
-    $(parent).after(ePanel);
-    //showLoading("#here");
-    $("#gPanel td").html(sHref);
-    $("#gPanel").addClass(parentClass).show().slideDown("slow");
-    $.get(sHref, function(data) {
-      $("#gPanel td").html(data);
-      ajaxify_panel = function() {
-        $("#gPanel td form").ajaxForm({
-          dataType: "json",
-          success: function(data) {
-            if (data.form) {
-              $("#gPanel td form").replaceWith(data.form);
-              ajaxify_panel();
-            }
-            if (data.result == "success") {
-              if (on_success) {
-                on_success();
-              } else if (data.location) {
-                window.location = data.location;
-              } else {
-                window.location.reload();
-              }
-            }
-          }
-        });
-        if ($("#gPanel td").hasClass("gLoadingLarge")) {
-          showLoading("#gPanel td");
-        }
-      };
-      ajaxify_panel();
-      if ($(element).attr("open_text")) {
-        $(element).attr("orig_text", $(element).children(".gButtonText").text());
-        $(element).children(".gButtonText").text($(element).attr("open_text"));
-      }
-    });
-  }
-  return false;
-}
-
-// Vertically align a block element's content
-(function () {
-  $.fn.vAlign = function(container) {
-    return this.each(function(i){
-      if (container == null) {
-        container = "div";
-      }
-      $(this).html("<" + container + ">" + $(this).html() + "</" + container + ">");
-      var el = $(this).children(container + ":first");
-      var elh = $(el).height();
-      var ph = $(this).height();
-      var nh = (ph - elh) / 2;
-      $(el).css("margin-top", nh);
-    });
-  };
-})(jQuery);
-
-(function () {
-  $.fn.showMessage = function(message) {
-    return this.each(function(i){
-      $(this).effect("highlight", {"color": "white"}, 3000);
-      $(this).animate({opacity: 1.0}, 6000);
-      $(this).fadeOut("slow");
-    });
-  };
-})(jQuery);

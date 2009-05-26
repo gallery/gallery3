@@ -1,7 +1,8 @@
 /**
  * Initialize jQuery UI and Plugin elements
  *
- * @todo Standardize how elements requiring listeners are identified (class or id)
+ * @todo Standardize how elements requiring listeners are handled
+ *        http://docs.jquery.com/Events/live
  */
 
 var shortForms = new Array(
@@ -11,10 +12,9 @@ var shortForms = new Array(
 );
 
 $(document).ready(function() {
-  // Initialize menus
+  
+  // Initialize Superfish menus
   $("ul.gMenu").addClass("sf-menu");
-
-  // Superfish menu options
   $('ul.sf-menu').superfish({
     delay: 500,
     animation: {
@@ -25,13 +25,24 @@ $(document).ready(function() {
   });
   $("#gSiteMenu").css("display", "block");
 
-  // Round view menu buttons
+  // Initialize status message effects
+  $("#gMessage li").showMessage();
+
+  // Initialize dialogs
+  $(".gMenuLink").addClass("gDialogLink");
+  $("#gLoginLink").addClass("gDialogLink");
+  var dialogLinks = $(".gDialogLink");
+  for (var i=0; i < dialogLinks.length; i++) {
+    $(dialogLinks[i]).bind("click", handleDialogEvent);
+  }
+
+  // Initialize view menu
   if ($("#gViewMenu").length) {
     $("#gViewMenu ul").removeClass("gMenu").removeClass("sf-menu");
     $("#gViewMenu a").addClass("ui-icon");
   }
 
-  // Short forms
+  // Initialize short forms
   handleShortFormEvent(shortForms);
   $(".gShortForm input[type=text]").addClass("ui-corner-left");
   $(".gShortForm input[type=submit]").addClass("ui-state-default ui-corner-right");
@@ -44,9 +55,6 @@ $(document).ready(function() {
     // Vertical align thumbnails/metadata in album grid
     $(".gItem").vAlign();
   }
-
-  // Apply status message effect
-  $("#gMessage li").showMessage();
 
   // Photo/Item item view only
   if ($("#gItem").length) {
@@ -73,14 +81,6 @@ $(document).ready(function() {
 
   }
 
-  // Apply modal dialogs
-  $(".gMenuLink").addClass("gDialogLink");
-  $("#gLoginLink").addClass("gDialogLink");
-  var dialogLinks = $(".gDialogLink");
-  for (var i=0; i < dialogLinks.length; i++) {
-    $(dialogLinks[i]).bind("click", handleDialogEvent);
-  }
-
   // Add hover state for buttons
   $(".ui-state-default").hover(
     function(){
@@ -92,23 +92,6 @@ $(document).ready(function() {
   );
 
 });
-
-// Vertically align a block element's content
-(function () {
-  $.fn.vAlign = function(container) {
-    return this.each(function(i){
-      if (container == null) {
-        container = 'div';
-      }
-      $(this).html("<" + container + ">" + $(this).html() + "</" + container + ">");
-      var el = $(this).children(container + ":first");
-      var elh = $(el).height();
-      var ph = $(this).height();
-      var nh = (ph - elh) / 2;
-      $(el).css('margin-top', nh);
-    });
-  };
-})(jQuery);
 
 /**
  * Reduce width of sized photo if it's wider than its parent container
@@ -123,57 +106,4 @@ function sizedImage() {
     oPhoto.width(containerWidth);
     oPhoto.height(proportion * oPhoto.height());
   }
-}
-
-/**
- * Handle initialization of all short forms
- *
- * @param shortForms array Array of short form IDs
- */
-function handleShortFormEvent(shortForms) {
-  for (var i in shortForms) {
-    shortFormInit(shortForms[i]);
-  }
-}
-
-/**
- * Initialize a short form. Short forms may contain only one text input.
- *
- * @param formID string The form's ID, including #
- */
-function shortFormInit(formID) {
-  $(formID).addClass("gShortForm");
-
-  // Get the input ID and it's label text
-  var labelValue = $(formID + " label:first").html();
-  var inputID = "#" + $(formID + " input[type=text]:first").attr("id");
-
-  // Set the input value equal to label text
-  if ($(inputID).val() == "") {
-    $(inputID).val(labelValue);
-  }
-
-  // Attach event listeners to the input
-  $(inputID).bind("focus blur", function(e){
-    var eLabelVal = $(this).siblings("label").html();
-    var eInputVal = $(this).val();
-
-    // Empty input value if it equals it's label
-    if (eLabelVal == eInputVal) {
-        $(this).val("");
-    // Reset the input value if it's empty
-    } else if ($(this).val() == "") {
-      $(this).val(eLabelVal);
-    }
-  });
-
-  (function () {
-    $.fn.showMessage = function(message) {
-      return this.each(function(i){
-        $(this).effect("highlight", {"color": "white"}, 3000);
-        $(this).animate({opacity: 1.0}, 6000);
-        $(this).fadeOut("slow");
-      });
-    };
-  })(jQuery);
 }

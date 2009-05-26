@@ -44,7 +44,9 @@
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/gallery.common.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/gallery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/jquery.scrollTo.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/jquery.localscroll.js") ?>" type="text/javascript"></script>
