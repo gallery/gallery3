@@ -22,7 +22,7 @@ class Admin_Users_Controller extends Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_users.html");
     $view->content->users = ORM::factory("user")->orderby("name")->find_all();
-                $view->content->groups = ORM::factory("group")->orderby("name")->find_all();
+    $view->content->groups = ORM::factory("group")->orderby("name")->find_all();
     print $view;
   }
 
@@ -216,7 +216,7 @@ class Admin_Users_Controller extends Controller {
     }
 
     $form = group::get_delete_form_admin($group);
-    if($form->validate()) {
+    if ($form->validate()) {
       $name = $group->name;
       $group->delete();
     } else {
