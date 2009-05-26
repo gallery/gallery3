@@ -104,27 +104,4 @@ class tag_Core {
     $group->submit("")->value(t("Delete Tag"));
     return $form;
   }
-
-  static function get_organize_form($itemids) {
-    $tagPane = new Forge("tags/__FUNCTION__", "", "post",
-                             array("id" => "gEditTags", "ref" => "organize"));
-    $tagPane->hidden("item")->value(implode("|", $itemids));
-    $item_count = count($itemids);
-    $ids = implode(", ", $itemids);
-    $tags = Database::instance()->query(
-      "SELECT t.name, COUNT(it.item_id) as count
-         FROM {items_tags} it, {tags} t
-        WHERE it.tag_id = t.id
-          AND it.item_id in($ids)
-       GROUP BY it.tag_id
-       ORDER BY t.name ASC");
-    $taglist = array();
-    foreach ($tags as $tag) {
-      $taglist[] = $tag->name . ($item_count > $tag->count ? "*" : "");
-    }
-    $taglist = implode("; ", $taglist);
-    $tagPane->textarea("tags")->label(t("Tags"))->value($taglist);
-
-    return $tagPane;
-  }
 }

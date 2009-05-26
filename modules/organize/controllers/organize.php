@@ -212,11 +212,222 @@ class Organize_Controller extends Controller {
     $event_parms->panes = array();
     $event_parms->itemids = $this->input->get("item");;
 
-    module::event("organize_form_creation", $event_parms);
+    // The following code should be done more dynamically i.e. use the event mechanism
+    if (count($event_parms->itemids) == 1) {
+      $item = ORM::factory("item")
+        ->in("id", $event_parms->itemids[0])
+        ->find();
+
+      $event_parms->panes[] = array("label" => $item->is_album() ? t("Edit Album") : t("Edit Photo"),
+                                    "content" => organize::get_general_edit_form($item));
+
+      if ($item->is_album()) {
+        $event_parms->panes[] = array("label" => t("Sort Order"),
+                                      "content" => organize::get_sort_edit_form($item));
+      }
+    }
+
+    $event_parms->panes[] = array("label" => t("Manage Tags"),
+                                  "content" => organize::get_tag_form($event_parms->itemids));
 
     $v = new View("organize_edit.html");
     $v->panes = $event_parms->panes;
     print $v->render();
+  }
+
+  // Handlers for the album/photo edit.  Probably should be in core
+  public function general() {
+    access::verify_csrf();
+
+    $itemids = $this->input->post("item");
+    $item = ORM::factory("item")
+      ->in("id", $itemids[0])
+      ->find();
+    access::required("edit", $item);
+
+    $form = organize::get_general_edit_form($item);
+    if ($form->validate()) {
+      $orig = clone $item;
+      $item->title = $form->title->value;
+      $item->description = $form->description->value;
+      $item->rename($form->dirname->value);
+      $item->save();
+
+      module::event("item_updated", $orig, $item);
+
+      if ($item->is_album()) {
+        log::success("content", "Updated album", "<a href=\"albums/$item->id\">view</a>");
+        $message = t("Saved album %album_title", array("album_title" => $item->title));
+      } else {
+        log::success("content", "Updated photo", "<a href=\"photos/$item->id\">view</a>");
+        $message = t("Saved photo %photo_title", array("photo_title" => $item->title));
+      }
+      print json_encode(array("form" => $form->__toString(), "message" => $message));
+    } else {
+      print json_encode(array("form" => $form->__toString()));
+    }
+  }
+
+  public function reset_general() {
+    $itemids = Input::instance()->get("item");
+    $item = ORM::factory("item")
+      ->in("id", $itemids[0])
+      ->find();
+    access::required("edit", $item);
+
+    print organize::get_general_edit_form($item);
+  }
+
+  public function sort() {
+    access::verify_csrf();
+
+    $itemids = $this->input->post("item");
+    $item = ORM::factory("item")
+      ->in("id", $itemids[0])
+      ->find();
+    access::required("edit", $item);
+
+    $form = organize::get_sort_edit_form($item);
+    if ($form->validate()) {
+      $orig = clone $item;
+      $item->sort_column = $form->column->value;
+      $item->sort_order = $form->direction->value;
+      $item->save();
+
+      module::event("item_updated", $orig, $item);
+
+      log::success("content", "Updated album", "<a href=\"albums/$item->id\">view</a>");
+      $message = t("Saved album %album_title", array("album_title" => $item->title));
+      print json_encode(array("form" => $form->__toString(), "message" => $message));
+    } else {
+      print json_encode(array("form" => $form->__toString()));
+    }
+  }
+
+  public function reset_sort() {
+    $itemids = Input::instance()->get("item");
+    $item = ORM::factory("item")
+      ->in("id", $itemids[0])
+      ->find();
+    access::required("edit", $item);
+
+    print organize::get_sort_edit_form($item);
+  }
+
+  public function edit_tags() {
+    access::verify_csrf();
+
+    $itemids = explode("|", $this->input->post("item"));
+    $form = organize::get_tag_form($itemids);
+    $old_tags = $form->tags->value;
+    if ($form->validate()) {
+
+      $old_tags = preg_split("/[;,\s]+/", $old_tags);
+      sort($old_tags);
+      $new_tags = preg_split("/[;,\s]+/", $form->tags->value);
+      sort($new_tags);
+
+      $HIGH_VALUE_STRING = "\256";
+      for ($old_index = $new_index = 0;;) {
+        $old_tag = $old_index >= count($old_tags) ? $HIGH_VALUE_STRING : $old_tags[$old_index];
+        $new_tag = $new_index >= count($new_tags) ? $HIGH_VALUE_STRING : $new_tags[$new_index];
+        if ($old_tag == $HIGH_VALUE_STRING && $new_tag == $HIGH_VALUE_STRING) {
+          break;
+        }
+        $matches = array();
+        $old_star = false;
+        if (preg_match("/(.*)(\*)$/", $old_tag, $matches)) {
+          $old_star = true;
+          $old_tag = $matches[1];
+        }
+        $new_star = false;
+        if (preg_match("/(.*)(\*)$/", $new_tag, $matches)) {
+          $new_star = true;
+          $new_tag = $matches[1];
+        }
+        if ($old_tag > $new_tag) {
+          // Its missing in the old list so add it
+          $this->_add_tag($new_tag, $itemids);
+          $new_index++;
+        } else if ($old_tag < $new_tag) {
+          // Its missing in the new list so its been removed
+          $this->_delete_tag($old_tag, $itemids);
+          $old_index++;
+        } else {
+          if ($old_star && !$new_star) {
+            // User wants tag to apply to all items, originally only on some of selected
+            $this->_update_tag($old_tag, $itemids);
+          } // Not changed ignore
+          $old_index++;
+          $new_index++;
+        }
+      }
+    }
+    print json_encode(array("form" => $form->__toString(), "message" => t("Tags updated")));
+  }
+
+  public function reset_edit_tags() {
+    $itemids = $this->input->get("item");
+
+    print organize::get_tag_form($itemids);
+  }
+
+  private function _add_tag($new_tag, $itemids) {
+    $tag = ORM::factory("tag")
+      ->where("name", $new_tag)
+      ->find();
+    if ($tag->loaded) {
+      $tag->count += count($itemids);
+    } else {
+      $tag->name = $new_tag;
+      $tag->count = count($itemids);
+    }
+    $tag->save();
+
+    $db = Database::instance();
+    foreach ($itemids as $item_id) {
+      $db->query("INSERT INTO {items_tags} SET item_id = $item_id, tag_id = {$tag->id};");
+    }
+  }
+
+  private function _delete_tag($new_tag, $itemids) {
+    $tag = ORM::factory("tag")
+      ->where("name", $new_tag)
+      ->find();
+    $tag->count -= count($itemids);
+    if ($tag->count > 0) {
+      $tag->save();
+    } else {
+      $tag->delete();
+    }
+
+    $ids = implode(", ", $itemids);
+    Database::instance()->query(
+      "DELETE FROM {items_tags} WHERE tag_id = {$tag->id} AND item_id IN ($ids);");
+  }
+
+  private function _update_tag($new_tag, $itemids) {
+    $tag = ORM::factory("tag")
+      ->where("name", $new_tag)
+      ->find();
+
+    $db = Database::instance();
+    $ids = implode(", ", $itemids);
+    $result = $db->query(
+      "SELECT item_id FROM {items_tags}
+        WHERE tag_id = {$tag->id}
+          AND item_id IN ($ids)");
+
+    $add_items = array_fill_keys($itemids, 1);
+    foreach($result as $row) {
+      unset($add_items[$row->item_id]);
+    }
+    $add_items = array_keys($add_items);
+    $tag->count += count($add_items);
+    $tag->save();
+    foreach ($add_items as $item_id) {
+      $db->query("INSERT INTO {items_tags} SET item_id = $item_id, tag_id = {$tag->id};");
+    }
   }
 
   private function _getOperationDefinition($item, $operation) {

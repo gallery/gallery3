@@ -35,24 +35,6 @@ class core_event_Core {
     access::delete_item($item);
   }
 
-  static function organize_form_creation($event_parms) {
-    if (count($event_parms->itemids) > 1) {
-      return ;
-    }
-
-    $item = ORM::factory("item")
-      ->in("id", $event_parms->itemids[0])
-      ->find();
-
-    $event_parms->panes[] = array("label" => $item->is_album() ? t("Edit Album") : t("Edit Photo"),
-                                  "content" => core_organize::get_general_edit_form($item));
-
-    if ($item->is_album()) {
-      $event_parms->panes[] = array("label" => t("Sort Order"),
-                                    "content" => core_organize::get_sort_edit_form($item));
-    }
-  }
-
   static function user_login($user) {
     // If this user is an admin, check to see if there are any post-install tasks that we need
     // to run and take care of those now.

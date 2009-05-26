@@ -17,10 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-class core_organize_Core {
+class organize_Core {
   static function get_general_edit_form($item) {
-    $generalPane = new Forge("core_organize/__FUNCTION__", "", "post",
+    $generalPane = new Forge("organize/__FUNCTION__", "", "post",
                              array("id" => "gEditGeneral", "ref" => "general"));
     // In this case we know there is only 1 item, but in general we should loop
     // and create multiple hidden items.
@@ -39,7 +38,7 @@ class core_organize_Core {
   }
 
   static function get_sort_edit_form($item) {
-    $sortPane = new Forge("core_organize/__FUNCTION__", "", "post",
+    $sortPane = new Forge("organize/__FUNCTION__", "", "post",
                           array("id" => "gEditSort", "ref" => "sort"));
     $sortPane->hidden("item[]")->value($item->id);
     $sortPane->dropdown("column", array("id" => "gAlbumSortColumn"))
@@ -60,4 +59,28 @@ class core_organize_Core {
 
     return $sortPane;
   }
+
+  static function get_tag_form($itemids) {
+    $tagPane = new Forge("organize/__FUNCTION__", "", "post",
+                             array("id" => "gEditTags", "ref" => "edit_tags"));
+    $tagPane->hidden("item")->value(implode("|", $itemids));
+    $item_count = count($itemids);
+    $ids = implode(", ", $itemids);
+    $tags = Database::instance()->query(
+      "SELECT t.name, COUNT(it.item_id) as count
+         FROM {items_tags} it, {tags} t
+        WHERE it.tag_id = t.id
+          AND it.item_id in($ids)
+       GROUP BY it.tag_id
+       ORDER BY t.name ASC");
+    $taglist = array();
+    foreach ($tags as $tag) {
+      $taglist[] = $tag->name . ($item_count > $tag->count ? "*" : "");
+    }
+    $taglist = implode("; ", $taglist);
+    $tagPane->textarea("tags")->label(t("Tags"))->value($taglist);
+
+    return $tagPane;
+  }
+
 }
