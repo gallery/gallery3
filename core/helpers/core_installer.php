@@ -180,12 +180,12 @@ class core_installer {
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE {vars} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `module_name` varchar(64) NOT NULL,
-                   `name` varchar(64) NOT NULL,
-                   `value` text,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`module_name`, `name`))
+                  `id` int(9) NOT NULL auto_increment,
+                  `module_name` varchar(64) NOT NULL,
+                  `name` varchar(64) NOT NULL,
+                  `value` text,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY(`module_name`, `name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {

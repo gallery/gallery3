@@ -40,8 +40,8 @@ class search_installer {
     // of the official install, so this way we don't start off with a "your index is out of date"
     // banner.
     search::update(model_cache::get("item", 1));
-      search::check_index();
-    }
+    search::check_index();
+  }
 
   static function deactivate() {
     site_status::clear("search_index_out_of_date");

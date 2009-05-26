@@ -280,7 +280,7 @@ class Scaffold_Controller extends Template_Controller {
 
     // Drop all tables
     foreach ($db->list_tables() as $table) {
-        $db->query("DROP TABLE IF EXISTS `$table`");
+      $db->query("DROP TABLE IF EXISTS `$table`");
     }
 
     // Clean out data
@@ -300,12 +300,12 @@ class Scaffold_Controller extends Template_Controller {
     srand(0);
 
     try {
-    core_installer::install(true);
-    module::load_modules();
+      core_installer::install(true);
+      module::load_modules();
 
-    foreach (array("user", "comment", "organize", "info", "rss",
-                   "search", "slideshow", "tag") as $module_name) {
-      module::install($module_name);
+      foreach (array("user", "comment", "organize", "info", "rss",
+                     "search", "slideshow", "tag") as $module_name) {
+        module::install($module_name);
         module::activate($module_name);
       }
     } catch (Exception $e) {

@@ -127,41 +127,41 @@ class graphics_Core {
     }
 
     try {
-    foreach ($ops as $target => $output_file) {
-      if ($input_item->is_movie()) {
-        // Convert the movie to a JPG first
-        $output_file = preg_replace("/...$/", "jpg", $output_file);
-        movie::extract_frame($input_file, $output_file);
-        $working_file = $output_file;
-      } else {
-        $working_file = $input_file;
-      }
+      foreach ($ops as $target => $output_file) {
+        if ($input_item->is_movie()) {
+          // Convert the movie to a JPG first
+          $output_file = preg_replace("/...$/", "jpg", $output_file);
+          movie::extract_frame($input_file, $output_file);
+          $working_file = $output_file;
+        } else {
+          $working_file = $input_file;
+        }
 
-      foreach (ORM::factory("graphics_rule")
-               ->where("target", $target)
+        foreach (ORM::factory("graphics_rule")
+                 ->where("target", $target)
                  ->where("active", true)
-               ->orderby("priority", "asc")
-               ->find_all() as $rule) {
-        $args = array($working_file, $output_file, unserialize($rule->args));
-        call_user_func_array(array("graphics", $rule->operation), $args);
-        $working_file = $output_file;
+                 ->orderby("priority", "asc")
+                 ->find_all() as $rule) {
+          $args = array($working_file, $output_file, unserialize($rule->args));
+          call_user_func_array(array("graphics", $rule->operation), $args);
+          $working_file = $output_file;
+        }
       }
-    }
 
-    if (!empty($ops["thumb"])) {
-      $dims = getimagesize($item->thumb_path());
-      $item->thumb_width = $dims[0];
-      $item->thumb_height = $dims[1];
-      $item->thumb_dirty = 0;
-    }
+      if (!empty($ops["thumb"])) {
+        $dims = getimagesize($item->thumb_path());
+        $item->thumb_width = $dims[0];
+        $item->thumb_height = $dims[1];
+        $item->thumb_dirty = 0;
+      }
 
-    if (!empty($ops["resize"]))  {
-      $dims = getimagesize($item->resize_path());
-      $item->resize_width = $dims[0];
-      $item->resize_height = $dims[1];
-      $item->resize_dirty = 0;
-    }
-    $item->save();
+      if (!empty($ops["resize"]))  {
+        $dims = getimagesize($item->resize_path());
+        $item->resize_width = $dims[0];
+        $item->resize_height = $dims[1];
+        $item->resize_dirty = 0;
+      }
+      $item->save();
     } catch (Kohana_Exception $e) {
       // Something went wrong rebuilding the image.  Leave it dirty and move on.
       // @todo we should handle this better.

@@ -37,8 +37,8 @@ class exif_installer {
   }
 
   static function activate() {
-      exif::check_index();
-    }
+    exif::check_index();
+  }
 
   static function deactivate() {
     site_status::clear("exif_index_out_of_date");

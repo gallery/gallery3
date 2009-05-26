@@ -97,7 +97,7 @@ class module_Core {
    */
   static function active() {
     return self::$active;
-    }
+  }
 
   /**
    * Install a module.  This will call <module>_installer::install(), which is responsible for
@@ -182,7 +182,7 @@ class module_Core {
   static function uninstall($module_name) {
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "uninstall")) {
-    call_user_func(array($installer_class, "uninstall"));
+      call_user_func(array($installer_class, "uninstall"));
     }
 
     graphics::remove_rule($module_name);
