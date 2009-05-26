@@ -23,12 +23,13 @@ class akismet_installer {
     if ($version == 0) {
       module::set_version("akismet", 1);
     }
+  }
 
+  static function activate() {
     akismet::check_config();
   }
 
-  static function uninstall() {
+  static function deactivate() {
     site_status::clear("akismet_config");
-    module::delete("akismet");
   }
 }

@@ -78,7 +78,7 @@ class Scaffold_Controller extends Template_Controller {
   function add_albums_and_photos($count, $desired_type=null) {
     srand(time());
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
-    $owner_id = module::is_installed("user") ? user::active()->id : null;
+    $owner_id = user::active()->id;
 
     $test_images = glob(APPPATH . "tests/images/*.[Jj][Pp][Gg]");
 
@@ -162,7 +162,7 @@ class Scaffold_Controller extends Template_Controller {
       url::redirect("scaffold");
     }
 
-    if (module::is_installed("akismet")) {
+    if (module::is_active("akismet")) {
       akismet::$test_mode = 1;
     }
     for ($i = 0; $i < $count; $i++) {
@@ -291,20 +291,27 @@ class Scaffold_Controller extends Template_Controller {
     dir::unlink(VARPATH . "modules");
     dir::unlink(VARPATH . "tmp");
 
-    module::$module_names = array();
-    module::$modules = array();
     $db->clear_cache();
+    module::$modules = array();
+    module::$active = array();
 
     // Use a known random seed so that subsequent packaging runs will reuse the same random
     // numbers, keeping our install.sql file more stable.
     srand(0);
 
+    try {
     core_installer::install(true);
     module::load_modules();
 
     foreach (array("user", "comment", "organize", "info", "rss",
                    "search", "slideshow", "tag") as $module_name) {
       module::install($module_name);
+        module::activate($module_name);
+      }
+    } catch (Exception $e) {
+      Kohana::log("error", $e->getTraceAsString());
+      print $e->getTrace();
+      throw $e;
     }
 
     url::redirect("scaffold/dump_database");

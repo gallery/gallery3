@@ -61,6 +61,5 @@ class comment_installer {
     module::event("item_related_update_batch", $sql);
 
     $db->query("DROP TABLE IF EXISTS {comments};");
-    module::delete("comment");
   }
 }

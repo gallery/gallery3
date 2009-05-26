@@ -18,6 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class core_Core {
+  /**
+   * If Gallery is in maintenance mode, then force all non-admins to get routed to a "This site is
+   * down for maintenance" page.
+   */
   static function maintenance_mode() {
     $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
 
@@ -26,5 +30,23 @@ class core_Core {
       Router::$controller_path = APPPATH . "controllers/maintenance.php";
       Router::$method = "index";
     }
+  }
+
+  /**
+   * This function is called when the Gallery is fully initialized.  We relay it to modules as the
+   * "gallery_ready" event.  Any module that wants to perform an action at the start of every
+   * request should implement the <module>_event::gallery_ready() handler.
+   */
+  static function ready() {
+    module::event("gallery_ready");
+  }
+
+  /**
+   * This function is called right before the Kohana framework shuts down.  We relay it to modules
+   * as the "gallery_shutdown" event.  Any module that wants to perform an action at the start of
+   * every request should implement the <module>_event::gallery_shutdown() handler.
+   */
+  static function shutdown() {
+    module::event("gallery_shutdown");
   }
 }

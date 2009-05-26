@@ -111,13 +111,13 @@ class g2_import_Core {
     $stats["photos"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryPhotoItem"));
     $stats["movies"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryMovieItem"));
 
-    if (g2_import::g2_module_active("comment") && module::is_installed("comment")) {
+    if (g2_import::g2_module_active("comment") && module::is_active("comment")) {
       list (, $stats["comments"]) = g2(GalleryCommentHelper::fetchAllComments($root_album_id, 1));
     } else {
       $stats["comments"] = 0;
     }
 
-    if (g2_import::g2_module_active("tags") && module::is_installed("tag")) {
+    if (g2_import::g2_module_active("tags") && module::is_active("tag")) {
       $result =
         g2($gallery->search("SELECT COUNT(DISTINCT([TagItemMap::itemId])) FROM [TagItemMap]"))
         ->nextResult();
@@ -441,7 +441,7 @@ class g2_import_Core {
   }
 
   static function import_keywords_as_tags($keywords, $item) {
-    if (!module::is_installed("tag")) {
+    if (!module::is_active("tag")) {
       return;
     }
 
@@ -466,7 +466,8 @@ class g2_import_Core {
     // Precaution: if the Gallery2 item was watermarked, or we have the Gallery3 watermark module
     // active then we'd have to do something a lot more sophisticated here.  For now, just skip
     // this step in those cases.
-    if (module::is_installed("watermark") && module::get_var("watermark", "name")) {
+    // @todo we should probably use an API here, eventually.
+    if (module::is_active("watermark") && module::get_var("watermark", "name")) {
       return;
     }
 

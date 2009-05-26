@@ -389,7 +389,9 @@ class access_Core {
    * @return ORM_Iterator
    */
   private static function _get_all_groups() {
-    if (module::is_installed("user")) {
+    // When we build the core package, it's possible that the user module is not installed yet.
+    // This is ok at packaging time, so work around it.
+    if (module::is_active("user")) {
       return ORM::factory("group")->find_all();
     } else {
       return array();

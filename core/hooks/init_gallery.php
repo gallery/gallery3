@@ -18,16 +18,19 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+// If var/database.php doesn't exist, then we assume that the Gallery is not properly installed
+// and send users to the installer.
 if (!file_exists(VARPATH . "database.php")) {
   url::redirect(url::abs_file("installer"));
 }
 
 Event::add("system.ready", array("I18n", "instance"));
-Event::add("system.post_routing", array("theme", "load_themes"));
 Event::add("system.ready", array("module", "load_modules"));
+Event::add("system.ready", array("core", "ready"));
+Event::add("system.post_routing", array("theme", "load_themes"));
 Event::add("system.post_routing", array("url", "parse_url"));
-Event::add("system.shutdown", array("module", "shutdown"));
 Event::add("system.post_routing", array("core", "maintenance_mode"));
+Event::add("system.shutdown", array("core", "shutdown"));
 
 // Override the cookie if we have a session id in the URL.
 // @todo This should probably be an event callback

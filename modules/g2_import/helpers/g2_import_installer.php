@@ -33,8 +33,4 @@ class g2_import_installer {
       module::set_version("g2_import", 1);
     }
   }
-
-  static function uninstall() {
-    module::delete("g2_import");
-  }
 }

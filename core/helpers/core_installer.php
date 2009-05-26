@@ -41,44 +41,45 @@ class core_installer {
 
       $db->query("CREATE TABLE {graphics_rules} (
                    `id` int(9) NOT NULL auto_increment,
-                   `priority` int(9) NOT NULL,
-                   `module_name` varchar(64) NOT NULL,
-                   `target`  varchar(32) NOT NULL,
-                   `operation` varchar(64) NOT NULL,
+                   `active` BOOLEAN default 0,
                    `args` varchar(255) default NULL,
+                   `module_name` varchar(64) NOT NULL,
+                   `operation` varchar(64) NOT NULL,
+                   `priority` int(9) NOT NULL,
+                   `target`  varchar(32) NOT NULL,
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE {items} (
+                   `id` int(9) NOT NULL auto_increment,
                    `album_cover_item_id` int(9) default NULL,
                    `captured` int(9) default NULL,
                    `created` int(9) default NULL,
                    `description` varchar(2048) default NULL,
                    `height` int(9) default NULL,
-                   `id` int(9) NOT NULL auto_increment,
                    `left` int(9) NOT NULL,
                    `level` int(9) NOT NULL,
                    `mime_type` varchar(64) default NULL,
                    `name` varchar(255) default NULL,
                    `owner_id` int(9) default NULL,
                    `parent_id` int(9) NOT NULL,
+                   `rand_key` float default NULL,
+                   `relative_path_cache` varchar(255) default NULL,
+                   `resize_dirty` boolean default 1,
                    `resize_height` int(9) default NULL,
                    `resize_width` int(9) default NULL,
-                   `resize_dirty` boolean default 1,
                    `right` int(9) NOT NULL,
+                   `sort_column` varchar(64) default NULL,
+                   `sort_order` char(4) default 'ASC',
+                   `thumb_dirty` boolean default 1,
                    `thumb_height` int(9) default NULL,
                    `thumb_width` int(9) default NULL,
-                   `thumb_dirty` boolean default 1,
                    `title` varchar(255) default NULL,
                    `type` varchar(32) NOT NULL,
                    `updated` int(9) default NULL,
                    `view_count` int(9) default 0,
-                   `width` int(9) default NULL,
-                   `rand_key` float default NULL,
-                   `relative_path_cache` varchar(255) default NULL,
-                   `sort_column` varchar(64) default NULL,
-                   `sort_order` char(4) default 'ASC',
                    `weight` int(9) NOT NULL default 0,
+                   `width` int(9) default NULL,
                    PRIMARY KEY (`id`),
                    KEY `parent_id` (`parent_id`),
                    KEY `type` (`type`),
@@ -101,14 +102,15 @@ class core_installer {
       $db->query("CREATE TABLE {messages} (
                    `id` int(9) NOT NULL auto_increment,
                    `key` varchar(255) default NULL,
-                   `value` varchar(255) default NULL,
                    `severity` varchar(32) default NULL,
+                   `value` varchar(255) default NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`key`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE {modules} (
                    `id` int(9) NOT NULL auto_increment,
+                   `active` BOOLEAN default 0,
                    `name` varchar(64) default NULL,
                    `version` int(9) default NULL,
                    PRIMARY KEY (`id`),
@@ -125,8 +127,8 @@ class core_installer {
 
       $db->query("CREATE TABLE {permissions} (
                    `id` int(9) NOT NULL auto_increment,
-                   `name` varchar(64) default NULL,
                    `display_name` varchar(64) default NULL,
+                   `name` varchar(64) default NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
@@ -136,8 +138,8 @@ class core_installer {
                    `key` char(32) NOT NULL,
                    `locale` char(10) NOT NULL,
                    `message` text NOT NULL,
-                   `translation` text,
                    `revision` int(9) DEFAULT NULL,
+                   `translation` text,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`key`, `locale`),
                    KEY `locale_key` (`locale`, `key`))
@@ -145,11 +147,11 @@ class core_installer {
 
       $db->query("CREATE TABLE {outgoing_translations} (
                    `id` int(9) NOT NULL auto_increment,
+                   `base_revision` int(9) DEFAULT NULL,
                    `key` char(32) NOT NULL,
                    `locale` char(10) NOT NULL,
                    `message` text NOT NULL,
                    `translation` text,
-                   `base_revision` int(9) DEFAULT NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`key`, `locale`),
                    KEY `locale_key` (`locale`, `key`))
@@ -157,22 +159,22 @@ class core_installer {
 
       $db->query("CREATE TABLE {sessions} (
                   `session_id` varchar(127) NOT NULL,
-                  `last_activity` int(10) UNSIGNED NOT NULL,
                   `data` text NOT NULL,
+                  `last_activity` int(10) UNSIGNED NOT NULL,
                   PRIMARY KEY (`session_id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE {tasks} (
+                  `id` int(9) NOT NULL auto_increment,
                   `callback` varchar(128) default NULL,
                   `context` text NOT NULL,
                   `done` boolean default 0,
-                  `id` int(9) NOT NULL auto_increment,
-                  `updated` int(9) default NULL,
                   `name` varchar(128) default NULL,
+                  `owner_id` int(9) default NULL,
                   `percent_complete` int(9) default 0,
                   `state` varchar(32) default NULL,
                   `status` varchar(255) default NULL,
-                  `owner_id` int(9) default NULL,
+                  `updated` int(9) default NULL,
                   PRIMARY KEY (`id`),
                   KEY (`owner_id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");

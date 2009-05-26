@@ -59,7 +59,7 @@ class Admin_View_Core extends View {
     $menu = Menu::factory("root");
     core_menu::admin($menu, $this);
 
-    foreach (module::installed() as $module) {
+    foreach (module::active() as $module) {
       if ($module->name == "core") {
         continue;
       }
@@ -99,7 +99,7 @@ class Admin_View_Core extends View {
     case "admin_page_top":
     case "admin_head":
       $blocks = array();
-      foreach (module::installed() as $module) {
+      foreach (module::active() as $module) {
         $helper_class = "{$module->name}_theme";
         if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(

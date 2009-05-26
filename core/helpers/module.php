@@ -24,13 +24,9 @@
  * Note: by design, this class does not do any permission checking.
  */
 class module_Core {
-  public static $module_names = array();
+  public static $active = array();
   public static $modules = array();
   public static $var_cache = null;
-
-  static function get_version($module_name) {
-    return ORM::factory("module")->where("name", $module_name)->find()->version;
-  }
 
   /**
    * Set the version of the corresponding Module_Model
@@ -38,9 +34,10 @@ class module_Core {
    * @param integer $version
    */
   static function set_version($module_name, $version) {
-    $module = ORM::factory("module")->where("name", $module_name)->find();
+    $module = self::get($module_name);
     if (!$module->loaded) {
       $module->name = $module_name;
+      $module->active = $module_name == "core";  // only core is active by default
     }
     $module->version = 1;
     $module->save();
@@ -52,25 +49,8 @@ class module_Core {
    * @param string $module_name
    */
   static function get($module_name) {
-    return model_cache::get("module", $module_name, "name");
-  }
-
-  /**
-   * Delete the corresponding Module_Model
-   * @param string $module_name
-   */
-  static function delete($module_name) {
-    $module = ORM::factory("module")->where("name", $module_name)->find();
-    if ($module->loaded) {
-      $db = Database::instance();
-      $db->delete("graphics_rules", array("module_name" => $module->name));
-      $module->delete();
-
-      // We could delete the module vars here too, but it's nice to leave them around in case the
-      // module gets reinstalled.
-
-      Kohana::log("debug", "$module_name: module deleted");
-    }
+    // @todo can't easily use model_cache here because it throw an exception on missing models.
+    return ORM::factory("module", array("name" => $module_name));
   }
 
   /**
@@ -78,27 +58,29 @@ class module_Core {
    * @param string $module_name
    */
   static function is_installed($module_name) {
-    return !empty(self::$module_names[$module_name]);
+    return array_key_exists($module_name, self::$modules);
   }
 
   /**
-   * Return the list of installed modules.
+   * Check to see if a module is active
+   * @param string $module_name
    */
-  static function installed() {
-    return self::$modules;
+  static function is_active($module_name) {
+    return array_key_exists($module_name, self::$modules) &&
+      self::$modules[$module_name]->active;
   }
 
   /**
-   * Return the list of available modules.
+   * Return the list of available modules, including uninstalled modules.
    */
   static function available() {
     $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
     foreach (array_merge(array("core/module.info"), glob(MODPATH . "*/module.info")) as $file) {
       $module_name = basename(dirname($file));
       $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-      $modules->$module_name->installed =
-        empty(self::$modules[$module_name]) ?
-        null : self::$modules[$module_name]->version;
+      $modules->$module_name->installed = self::is_installed($module_name);
+      $modules->$module_name->active = self::is_active($module_name);
+      $modules->$module_name->version = self::get_version($module_name);
       $modules->$module_name->locked = false;
     }
 
@@ -111,35 +93,108 @@ class module_Core {
   }
 
   /**
-   * Install a module.
+   * Return a list of all the active modules in no particular order.
+   */
+  static function active() {
+    return self::$active;
+    }
+
+  /**
+   * Install a module.  This will call <module>_installer::install(), which is responsible for
+   * creating database tables, setting module variables and and calling module::set_version().
+   * Note that after installing, the module must be activated before it is available for use.
+   * @param string $module_name
    */
   static function install($module_name) {
-    $installer_class = "{$module_name}_installer";
-    Kohana::log("debug", "$installer_class install (initial)");
-    if ($module_name != "core") {
-      require_once(DOCROOT . "modules/${module_name}/helpers/{$installer_class}.php");
-    }
     $kohana_modules = Kohana::config("core.modules");
     $kohana_modules[] = MODPATH . $module_name;
     Kohana::config_set("core.modules",  $kohana_modules);
 
+    $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     }
 
-    self::load_modules();
+    // Now the module is installed but inactive, so don't leave it in the active path
+    array_pop($kohana_modules);
+    Kohana::config_set("core.modules",  $kohana_modules);
+
     log::success(
       "module", t("Installed module %module_name", array("module_name" => $module_name)));
   }
 
   /**
-   * Uninstall a module.
+   * Activate an installed module.  This will call <module>_installer::activate() which should take
+   * any steps to make sure that the module is ready for use.  This will also activate any
+   * existing graphics rules for this module.
+   * @param string $module_name
+   */
+  static function activate($module_name) {
+    $kohana_modules = Kohana::config("core.modules");
+    $kohana_modules[] = MODPATH . $module_name;
+    Kohana::config_set("core.modules",  $kohana_modules);
 
+    $installer_class = "{$module_name}_installer";
+    if (method_exists($installer_class, "activate")) {
+      call_user_func_array(array($installer_class, "activate"), array());
+    }
+
+    $module = self::get($module_name);
+    if ($module->loaded) {
+      $module->active = true;
+      $module->save();
+    }
+
+    self::load_modules();
+    graphics::activate_rules($module_name);
+    log::success(
+      "module", t("Activated module %module_name", array("module_name" => $module_name)));
+  }
+
+  /**
+   * Deactivate an installed module.  This will call <module>_installer::deactivate() which
+   * should take any cleanup steps to make sure that the module isn't visible in any way.
+   * @param string $module_name
+   */
+  static function deactivate($module_name) {
+    $installer_class = "{$module_name}_installer";
+    if (method_exists($installer_class, "deactivate")) {
+      call_user_func_array(array($installer_class, "deactivate"), array());
+    }
+
+    $module = self::get($module_name);
+    if ($module->loaded) {
+      $module->active = false;
+      $module->save();
+    }
+
+    self::load_modules();
+    graphics::deactivate_rules($module_name);
+    log::success(
+      "module", t("Deactivated module %module_name", array("module_name" => $module_name)));
+  }
+
+  /**
+   * Uninstall a deactivated module.  This will call <module>_installer::uninstall() which should
+   * take whatever steps necessary to make sure that all traces of a module are gone.
+   * @param string $module_name
    */
   static function uninstall($module_name) {
     $installer_class = "{$module_name}_installer";
-    Kohana::log("debug", "$installer_class uninstall");
+    if (method_exists($installer_class, "uninstall")) {
     call_user_func(array($installer_class, "uninstall"));
+    }
+
+    graphics::remove_rule($module_name);
+    $module = self::get($module_name);
+    if ($module->loaded) {
+      $module->delete();
+    }
+
+    // We could delete the module vars here too, but it's nice to leave them around
+    // in case the module gets reinstalled.
+
+    self::load_modules();
     log::success(
       "module", t("Uninstalled module %module_name", array("module_name" => $module_name)));
   }
@@ -153,19 +208,18 @@ class module_Core {
     $kohana_modules = $core["modules"];
     $modules = ORM::factory("module")->find_all();
 
+    self::$modules = array();
+    self::$active = array();
     foreach ($modules as $module) {
-      self::$module_names[$module->name] = $module->name;
       self::$modules[$module->name] = $module;
-
-      // @todo For some reason if we don't load the core module here, the test framework fails.
-      // This requires some investigation.
+      if ($module->active) {
+        self::$active[] = $module;
+      }
       if ($module->name != "core") {
         $kohana_modules[] = MODPATH . $module->name;
       }
     }
     Kohana::config_set("core.modules", $kohana_modules);
-
-    self::event("gallery_ready");
   }
 
   /**
@@ -178,23 +232,16 @@ class module_Core {
     array_shift($args);
     $function = str_replace(".", "_", $name);
 
-    foreach (self::installed() as $module) {
+    foreach (self::$modules as $module) {
+      if (!$module->active) {
+        continue;
+      }
+
       $class = "{$module->name}_event";
       if (method_exists($class, $function)) {
         call_user_func_array(array($class, $function), $args);
       }
     }
-  }
-
-  /**
-   * Kohana shutdown event handler
-   * @param string $module_name
-   * @param string $name
-   * @param string $default_value
-   * @return the value
-   */
-  static function shutdown() {
-    self::event("gallery_shutdown");
   }
 
   /**
@@ -256,7 +303,6 @@ class module_Core {
       ->where("name", $name)
       ->find();
     if (!$var->loaded) {
-      $var = ORM::factory("var");
       $var->module_name = $module_name;
       $var->name = $name;
     }
@@ -299,5 +345,13 @@ class module_Core {
 
     Database::instance()->delete("vars", array("module_name" => "core", "name" => "_cache"));
     self::$var_cache = null;
+  }
+
+  /**
+   * Return the version of the installed module.
+   * @param string $module_name
+   */
+  static function get_version($module_name) {
+    return self::get($module_name)->version;
   }
 }

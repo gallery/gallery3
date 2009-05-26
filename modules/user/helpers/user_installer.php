@@ -99,11 +99,11 @@ class user_installer {
     try {
       Session::instance()->destroy();
     } catch (Exception $e) {
+      // We don't care if there was a problem destroying the session.
     }
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {users};");
     $db->query("DROP TABLE IF EXISTS {groups};");
     $db->query("DROP TABLE IF EXISTS {groups_users};");
-    module::delete("user");
   }
 }

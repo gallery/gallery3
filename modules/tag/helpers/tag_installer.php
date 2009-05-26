@@ -46,6 +46,5 @@ class tag_installer {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {tags};");
     $db->query("DROP TABLE IF EXISTS {items_tags};");
-    module::delete("tag");
   }
 }

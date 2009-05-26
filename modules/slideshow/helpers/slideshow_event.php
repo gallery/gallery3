@@ -19,10 +19,10 @@
  */
 class slideshow_event_Core {
   static function module_change($changes) {
-    if (!module::is_installed("rss") || in_array("rss", $changes->uninstall)) {
+    if (!module::is_active("rss") || in_array("rss", $changes->deactivate)) {
       site_status::warning(
         t("The Slideshow module requires the RSS module.  " .
-          "<a href=\"%url\">Install the RSS module now</a>",
+          "<a href=\"%url\">Activate the RSS module now</a>",
           array("url" => url::site("admin/modules"))),
         "slideshow_needs_rss");
     } else {

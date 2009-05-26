@@ -25,8 +25,7 @@ class slideshow_installer {
     }
   }
 
-  static function uninstall() {
-    module::delete("slideshow");
+  static function deactivate() {
     site_status::clear("slideshow_needs_rss");
   }
 }

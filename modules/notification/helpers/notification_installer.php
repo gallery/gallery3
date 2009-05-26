@@ -47,7 +47,5 @@ class notification_installer {
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {subscriptions};");
     $db->query("DROP TABLE IF EXISTS {pending_notifications};");
-
-    module::delete("notification");
   }
 }

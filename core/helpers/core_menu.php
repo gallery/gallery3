@@ -73,7 +73,7 @@ class core_menu_Core {
                     ->id("admin_menu")
                     ->label(t("Admin")));
       self::admin($admin_menu, $theme);
-      foreach (module::installed() as $module) {
+      foreach (module::active() as $module) {
         if ($module->name == "core") {
           continue;
         }

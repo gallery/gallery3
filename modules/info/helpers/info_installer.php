@@ -24,8 +24,4 @@ class info_installer {
       module::set_version("info", 1);
     }
   }
-
-  static function uninstall() {
-    module::delete("info");
-  }
 }

@@ -90,8 +90,8 @@ class Gallery_Unit_Test_Controller extends Controller {
     @mkdir('test/var/logs', 0777, true);
 
     // Reset our caches
-    module::$module_names = array();
     module::$modules = array();
+    module::$active = array();
     module::$var_cache = array();
     $db->clear_cache();
 
@@ -100,6 +100,7 @@ class Gallery_Unit_Test_Controller extends Controller {
     core_installer::install(true);
     module::load_modules();
     module::install("user");
+    module::activate("user");
     $modules = array();
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
       $module_name = basename(dirname(dirname($file)));
@@ -107,6 +108,7 @@ class Gallery_Unit_Test_Controller extends Controller {
         continue;
       }
       module::install($module_name);
+      module::activate($module_name);
     }
 
     $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;

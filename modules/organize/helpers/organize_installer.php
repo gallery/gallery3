@@ -24,8 +24,4 @@ class organize_installer {
       module::set_version("organize", 1);
     }
   }
-
-  static function uninstall() {
-    module::delete("organize");
-  }
 }

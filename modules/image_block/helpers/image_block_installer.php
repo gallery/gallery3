@@ -23,8 +23,4 @@ class image_block_installer {
       module::set_version("image_block", 1);
     }
   }
-
-  static function uninstall() {
-    module::delete("image_block");
-  }
 }

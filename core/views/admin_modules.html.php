@@ -19,7 +19,7 @@
       <tr class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
         <? $data = array("name" => $module_name); ?>
         <? if ($module_info->locked) $data["disabled"] = 1; ?>
-        <td> <?= form::checkbox($data, '1', module::is_installed($module_name)) ?> </td>
+        <td> <?= form::checkbox($data, '1', module::is_active($module_name)) ?> </td>
         <td> <?= t($module_info->name) ?> </td>
         <td> <?= $module_info->version ?> </td>
         <td> <?= t($module_info->description) ?> </td>

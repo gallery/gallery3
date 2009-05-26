@@ -23,8 +23,8 @@ class task_Core {
    */
   static function get_definitions() {
     $tasks = array();
-    foreach (module::installed() as $module_name => $module_info) {
-      $class_name = "{$module_name}_task";
+    foreach (module::active() as $module) {
+      $class_name = "{$module->name}_task";
       if (method_exists($class_name, "available_tasks")) {
         foreach (call_user_func(array($class_name, "available_tasks")) as $task) {
           $tasks[$task->callback] = $task;

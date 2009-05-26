@@ -41,7 +41,7 @@ class block_manager_Core {
   static function get_available() {
     $blocks = array();
 
-    foreach (module::installed() as $module) {
+    foreach (module::active() as $module) {
       $class_name = "{$module->name}_block";
       if (method_exists($class_name, "get_list")) {
         foreach (call_user_func(array($class_name, "get_list")) as $id => $title) {

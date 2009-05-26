@@ -80,9 +80,7 @@ class log_Core {
     $log->url = substr(url::abs_current(true), 0, 255);
     $log->referer = request::referrer(null);
     $log->timestamp = time();
-    if (module::is_installed("user")) {
       $log->user_id = user::active()->id;
-    }
     $log->save();
   }
 

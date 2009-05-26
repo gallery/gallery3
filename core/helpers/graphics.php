@@ -46,6 +46,7 @@ class graphics_Core {
     $rule->operation = $operation;
     $rule->priority = $priority;
     $rule->args = serialize($args);
+    $rule->active = true;
     $rule->save();
 
     self::mark_dirty($target == "thumb", $target == "resize");
@@ -72,11 +73,30 @@ class graphics_Core {
    * @param string $module_name
    */
   static function remove_rules($module_name) {
-    $db = Database::instance();
-    $status = $db->delete("graphics_rules", array("module_name" => $module_name));
+    $status = Database::instance()->delete("graphics_rules", array("module_name" => $module_name));
     if (count($status)) {
       self::mark_dirty(true, true);
     }
+  }
+
+  /**
+   * Activate the rules for this module, typically done when the module itself is deactivated.
+   * Note that this does not mark images as dirty so that if you deactivate and reactivate a
+   * module it won't cause all of your images to suddenly require a rebuild.
+   */
+  static function activate_rules($module_name) {
+    Database::instance()
+      ->update("graphics_rules",array("active" => true), array("module_name" => $module_name));
+  }
+
+  /**
+   * Deactivate the rules for this module, typically done when the module itself is deactivated.
+   * Note that this does not mark images as dirty so that if you deactivate and reactivate a
+   * module it won't cause all of your images to suddenly require a rebuild.
+   */
+  static function deactivate_rules($module_name) {
+    Database::instance()
+      ->update("graphics_rules",array("active" => false), array("module_name" => $module_name));
   }
 
   /**
@@ -106,6 +126,7 @@ class graphics_Core {
       return;
     }
 
+    try {
     foreach ($ops as $target => $output_file) {
       if ($input_item->is_movie()) {
         // Convert the movie to a JPG first
@@ -118,6 +139,7 @@ class graphics_Core {
 
       foreach (ORM::factory("graphics_rule")
                ->where("target", $target)
+                 ->where("active", true)
                ->orderby("priority", "asc")
                ->find_all() as $rule) {
         $args = array($working_file, $output_file, unserialize($rule->args));
@@ -140,6 +162,12 @@ class graphics_Core {
       $item->resize_dirty = 0;
     }
     $item->save();
+    } catch (Kohana_Exception $e) {
+      // Something went wrong rebuilding the image.  Leave it dirty and move on.
+      // @todo we should handle this better.
+      Kohana::log("error", "Caught exception rebuilding image: {$item->title}\n" .
+                  $e->getTraceAsString());
+    }
   }
 
   /**

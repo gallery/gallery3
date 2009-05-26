@@ -67,8 +67,8 @@ class search_Core {
       $record->item_id = $item->id;
     }
 
-    foreach (module::installed() as $module_name => $module_info) {
-      $class_name = "{$module_name}_search";
+    foreach (module::active() as $module) {
+      $class_name = "{$module->name}_search";
       if (method_exists($class_name, "item_index_data")) {
         $data[] = call_user_func(array($class_name, "item_index_data"), $record->item());
       }
@@ -83,12 +83,16 @@ class search_Core {
       ->select("items.id")
       ->from("items")
       ->join("search_records", "items.id", "search_records.item_id", "left")
+      ->open_paren()
       ->where("search_records.item_id", null)
       ->orwhere("search_records.dirty", 1)
+      ->close_paren()
       ->get()
       ->count();
+
     $total = ORM::factory("item")->count_all();
     $percent = round(100 * ($total - $remaining) / $total);
+
     return array($remaining, $total, $percent);
   }
 }

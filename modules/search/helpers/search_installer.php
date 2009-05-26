@@ -31,18 +31,23 @@ class search_installer {
                    KEY(`item_id`),
                    FULLTEXT INDEX (`data`))
                  ENGINE=MyISAM DEFAULT CHARSET=utf8;");
-
-      // populate the index with dirty records
-      $db->query("INSERT INTO {search_records} (`item_id`) SELECT `id` FROM {items}");
       module::set_version("search", 1);
-      search::check_index();
     }
   }
 
-  static function uninstall() {
-    $db = Database::instance();
-    $db->query("DROP TABLE {search_records}");
+  static function activate() {
+    // Update the root item.  This is a quick hack because the search module is activated as part
+    // of the official install, so this way we don't start off with a "your index is out of date"
+    // banner.
+    search::update(model_cache::get("item", 1));
+      search::check_index();
+    }
+
+  static function deactivate() {
     site_status::clear("search_index_out_of_date");
-    module::delete("search");
+  }
+
+  static function uninstall() {
+    Database::instance()->query("DROP TABLE {search_records}");
   }
 }

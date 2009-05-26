@@ -93,7 +93,7 @@ class Theme_View_Core extends View {
     if ($this->page_type != "login") {
       core_menu::site($menu, $this);
 
-      foreach (module::installed() as $module) {
+      foreach (module::active() as $module) {
         if ($module->name == "core") {
           continue;
         }
@@ -111,7 +111,7 @@ class Theme_View_Core extends View {
     $menu = Menu::factory("root");
     core_menu::album($menu, $this);
 
-    foreach (module::installed() as $module) {
+    foreach (module::active() as $module) {
       if ($module->name == "core") {
         continue;
       }
@@ -128,7 +128,7 @@ class Theme_View_Core extends View {
     $menu = Menu::factory("root");
     core_menu::photo($menu, $this);
 
-    foreach (module::installed() as $module) {
+    foreach (module::active() as $module) {
       if ($module->name == "core") {
         continue;
       }
@@ -196,7 +196,7 @@ class Theme_View_Core extends View {
     case "thumb_info":
     case "thumb_top":
       $blocks = array();
-      foreach (module::installed() as $module) {
+      foreach (module::active() as $module) {
         $helper_class = "{$module->name}_theme";
         if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(

@@ -28,9 +28,11 @@ class server_add_installer {
     server_add::check_config();
   }
 
+  static function deactivate() {
+    site_status::clear("server_add_configuration");
+  }
+
   static function uninstall() {
     access::delete_permission("server_add");
-    module::delete("server_add");
-    site_status::clear("server_add_configuration");
   }
 }

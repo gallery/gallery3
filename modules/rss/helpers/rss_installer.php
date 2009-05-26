@@ -24,8 +24,4 @@ class rss_installer {
       module::set_version("rss", 1);
     }
   }
-
-  static function uninstall() {
-    module::delete("rss");
-  }
 }

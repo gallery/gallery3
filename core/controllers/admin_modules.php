@@ -28,33 +28,36 @@ class Admin_Modules_Controller extends Admin_Controller {
   public function save() {
     access::verify_csrf();
 
-    $changes->install = array();
-    $changes->uninstall = array();
+    $changes->activate = array();
+    $changes->deactivate = array();
+    $activated_names = array();
+    $deactivated_names = array();
     foreach (module::available() as $module_name => $info) {
       if ($info->locked) {
         continue;
       }
 
       $desired = $this->input->post($module_name) == 1;
-      if ($info->installed && !$desired && module::is_installed($module_name)) {
-        $changes->uninstall[] = $module_name;
-        $uninstalled_names[] = $info->name;
-        module::uninstall($module_name);
-      } else if (!$info->installed && $desired && !module::is_installed($module_name)) {
-        $changes->install[] = $module_name;
-        $installed_names[] = $info->name;
+      if ($info->active && !$desired && module::is_active($module_name)) {
+        $changes->deactivate[] = $module_name;
+        $deactivated_names[] = $info->name;
+        module::deactivate($module_name);
+      } else if (!$info->active && $desired && !module::is_active($module_name)) {
+        $changes->activate[] = $module_name;
+        $activated_names[] = $info->name;
         module::install($module_name);
+        module::activate($module_name);
       }
     }
 
     module::event("module_change", $changes);
 
     // @todo this type of collation is questionable from a i18n perspective
-    if (isset($installed_names)) {
-      message::success(t("Installed: %names", array("names" => join(", ", $installed_names))));
+    if ($activated_names) {
+      message::success(t("Activated: %names", array("names" => join(", ", $activated_names))));
     }
-    if (isset($uninstalled_names)) {
-      message::success(t("Uninstalled: %names", array("names" => join(", ", $uninstalled_names))));
+    if ($deactivated_names) {
+      message::success(t("Deactivated: %names", array("names" => join(", ", $deactivated_names))));
     }
     url::redirect("admin/modules");
   }
