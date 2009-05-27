@@ -1,5 +1,9 @@
+# Ignore the var subdirectory
 var
 index.local.php
 
 
+
+# Ignore the index.local.php
+index.local.php
 
