@@ -50,7 +50,7 @@ class url extends url_Core {
 
     if (!empty($item)) {
       Router::$controller = "{$item->type}s";
-      Router::$controller_path = APPPATH . "controllers/{$item->type}s.php";
+      Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
       Router::$method = $item->id;
     }
   }
