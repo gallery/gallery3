@@ -44,7 +44,7 @@ is_link(basename(__FILE__)) and chdir(dirname(realpath(__FILE__)));
 define('APPPATH', strtr(realpath('application') . '/', DIRECTORY_SEPARATOR, '/'));
 define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
 define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
-define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
+define('SYSPATH', strtr(realpath('system') . '/', DIRECTORY_SEPARATOR, '/'));
 
 // Force a test run if we're in command line mode.
 if (PHP_SAPI == 'cli') {
