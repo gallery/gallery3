@@ -119,6 +119,7 @@ $config['extension_prefix'] = 'MY_';
  */
 $config['modules'] = array(
   MODPATH . 'forge',
+  MODPATH . 'gallery',
 );
 
 if (TEST_MODE) {
