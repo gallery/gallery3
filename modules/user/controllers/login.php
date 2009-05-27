@@ -69,6 +69,9 @@ class Login_Controller extends Controller {
       log::info("user", t("User %name logged in", array("name" => $user->name)));
     }
 
+    // Either way, regenerate the session id to avoid session trapping
+    Session::instance()->regenerate();
+
     return array($valid, $form);
   }
 }
