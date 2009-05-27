@@ -45,6 +45,7 @@ INSTALLATION FROM THE COMMAND LINE:
  -u     Database user          (default: root)
  -p     Database user password (default: )
  -d     Database name          (default: gallery3)
+ -x     Table prefix           (default: )
 
 
 Questions, problems:
