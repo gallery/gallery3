@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <?= $theme->header_top() ?>
-<? if ($header_text = module::get_var("core", "header_text")): ?>
+<? if ($header_text = module::get_var("gallery", "header_text")): ?>
 <?= $header_text ?>
 <? else: ?>
 <a href="<?= url::site("albums/1") ?>">

@@ -30,15 +30,15 @@ class Theme_View_Core extends View {
    * @return  void
    */
   public function __construct($name, $page_type) {
-    $theme_name = module::get_var("core", "active_site_theme");
+    $theme_name = module::get_var("gallery", "active_site_theme");
     if (!file_exists("themes/$theme_name")) {
-      module::set_var("core", "active_site_theme", "default");
+      module::set_var("gallery", "active_site_theme", "default");
       theme::load_themes();
       Kohana::log("error", "Unable to locate theme '$theme_name', switching to default theme.");
     }
     parent::__construct($name);
 
-    $this->theme_name = module::get_var("core", "active_site_theme");
+    $this->theme_name = module::get_var("gallery", "active_site_theme");
     if (user::active()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
@@ -64,7 +64,7 @@ class Theme_View_Core extends View {
   public function thumb_proportion() {
     // @TODO change the 200 to a theme supplied value when and if we come up with an
     // API to allow the theme to set defaults.
-    return module::get_var("core", "thumb_size", 200) / 200;
+    return module::get_var("gallery", "thumb_size", 200) / 200;
   }
 
   public function url($path, $absolute_url=false) {
@@ -91,10 +91,10 @@ class Theme_View_Core extends View {
   public function site_menu() {
     $menu = Menu::factory("root");
     if ($this->page_type != "login") {
-      core_menu::site($menu, $this);
+      gallery_menu::site($menu, $this);
 
       foreach (module::active() as $module) {
-        if ($module->name == "core") {
+        if ($module->name == "gallery") {
           continue;
         }
         $class = "{$module->name}_menu";
@@ -109,10 +109,10 @@ class Theme_View_Core extends View {
 
   public function album_menu() {
     $menu = Menu::factory("root");
-    core_menu::album($menu, $this);
+    gallery_menu::album($menu, $this);
 
     foreach (module::active() as $module) {
-      if ($module->name == "core") {
+      if ($module->name == "gallery") {
         continue;
       }
       $class = "{$module->name}_menu";
@@ -126,10 +126,10 @@ class Theme_View_Core extends View {
 
   public function photo_menu() {
     $menu = Menu::factory("root");
-    core_menu::photo($menu, $this);
+    gallery_menu::photo($menu, $this);
 
     foreach (module::active() as $module) {
-      if ($module->name == "core") {
+      if ($module->name == "gallery") {
         continue;
       }
       $class = "{$module->name}_menu";

@@ -19,11 +19,11 @@
  */
 class block_manager_Core {
   static function get_active($location) {
-    return unserialize(module::get_var("core", "blocks_$location", "a:0:{}"));
+    return unserialize(module::get_var("gallery", "blocks_$location", "a:0:{}"));
   }
 
   static function set_active($location, $blocks) {
-    module::set_var("core", "blocks_$location", serialize($blocks));
+    module::set_var("gallery", "blocks_$location", serialize($blocks));
   }
 
   static function add($location, $module_name, $block_id) {

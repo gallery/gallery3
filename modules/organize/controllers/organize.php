@@ -235,7 +235,7 @@ class Organize_Controller extends Controller {
     print $v->render();
   }
 
-  // Handlers for the album/photo edit.  Probably should be in core
+  // Handlers for the album/photo edit.  Probably should be in modules/gallery
   public function general() {
     access::verify_csrf();
 

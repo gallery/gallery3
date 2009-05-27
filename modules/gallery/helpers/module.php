@@ -37,7 +37,7 @@ class module_Core {
     $module = self::get($module_name);
     if (!$module->loaded) {
       $module->name = $module_name;
-      $module->active = $module_name == "core";  // only core is active by default
+      $module->active = $module_name == "gallery";  // only gallery is active by default
     }
     $module->version = 1;
     $module->save();
@@ -75,7 +75,7 @@ class module_Core {
    */
   static function available() {
     $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-    foreach (array_merge(array("core/module.info"), glob(MODPATH . "*/module.info")) as $file) {
+    foreach (array_merge(array("gallery/module.info"), glob(MODPATH . "*/module.info")) as $file) {
       $module_name = basename(dirname($file));
       $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
       $modules->$module_name->installed = self::is_installed($module_name);
@@ -85,7 +85,7 @@ class module_Core {
     }
 
     // Lock certain modules
-    $modules->core->locked = true;
+    $modules->gallery->locked = true;
     $modules->user->locked = true;
     $modules->ksort();
 
@@ -215,10 +215,10 @@ class module_Core {
       if ($module->active) {
         self::$active[] = $module;
       }
-      if ($module->name != "core") {
-        $kohana_modules[] = MODPATH . $module->name;
-      }
+      $kohana_modules[] = MODPATH . $module->name;
+      // @todo: force 'gallery' to be at the end
     }
+
     Kohana::config_set("core.modules", $kohana_modules);
   }
 
@@ -252,32 +252,32 @@ class module_Core {
    * @return the value
    */
   static function get_var($module_name, $name, $default_value=null) {
-    // We cache all vars in core._cache so that we can load all vars at once for
+    // We cache all vars in gallery._cache so that we can load all vars at once for
     // performance.
     if (empty(self::$var_cache)) {
       $row = Database::instance()
         ->select("value")
         ->from("vars")
-        ->where(array("module_name" => "core", "name" => "_cache"))
+        ->where(array("module_name" => "gallery", "name" => "_cache"))
         ->get()
         ->current();
       if ($row) {
         self::$var_cache = unserialize($row->value);
       } else {
-        // core._cache doesn't exist.  Create it now.
+        // gallery._cache doesn't exist.  Create it now.
         foreach (Database::instance()
                  ->select("module_name", "name", "value")
                  ->from("vars")
                  ->orderby("module_name", "name")
                  ->get() as $row) {
-          if ($row->module_name == "core" && $row->name == "_cache") {
+          if ($row->module_name == "gallery" && $row->name == "_cache") {
             // This could happen if there's a race condition
             continue;
           }
           self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
         }
         $cache = ORM::factory("var");
-        $cache->module_name = "core";
+        $cache->module_name = "gallery";
         $cache->name = "_cache";
         $cache->value = serialize(self::$var_cache);
         $cache->save();
@@ -309,7 +309,7 @@ class module_Core {
     $var->value = $value;
     $var->save();
 
-    Database::instance()->delete("vars", array("module_name" => "core", "name" => "_cache"));
+    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
     self::$var_cache = null;
  }
 
@@ -325,7 +325,7 @@ class module_Core {
       "WHERE `module_name` = '$module_name' " .
       "AND `name` = '$name'");
 
-    Database::instance()->delete("vars", array("module_name" => "core", "name" => "_cache"));
+    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
     self::$var_cache = null;
   }
 
@@ -343,7 +343,7 @@ class module_Core {
       $var->delete();
     }
 
-    Database::instance()->delete("vars", array("module_name" => "core", "name" => "_cache"));
+    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
     self::$var_cache = null;
   }
 

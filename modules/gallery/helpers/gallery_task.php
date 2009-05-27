@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class core_task_Core {
+class gallery_task_Core {
   static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count();
     $tasks = array();
     $tasks[] = Task_Definition::factory()
-                 ->callback("core_task::rebuild_dirty_images")
+                 ->callback("gallery_task::rebuild_dirty_images")
                  ->name(t("Rebuild Images"))
                  ->description($dirty_count ?
                                t2("You have one out of date photo",
@@ -32,7 +32,7 @@ class core_task_Core {
       ->severity($dirty_count ? log::WARNING : log::SUCCESS);
 
     $tasks[] = Task_Definition::factory()
-                 ->callback("core_task::update_l10n")
+                 ->callback("gallery_task::update_l10n")
                  ->name(t("Update translations"))
                  ->description(t("Download new and updated translated strings"))
       ->severity(log::SUCCESS);
@@ -92,7 +92,7 @@ class core_task_Core {
 
     switch ($task->get("mode", "init")) {
     case "init":  // 0%
-      $dirs = array("core", "modules", "themes", "installer");
+      $dirs = array("gallery", "modules", "themes", "installer");
       $files = array();
       $task->set("mode", "find_files");
       $task->status = t("Finding files");

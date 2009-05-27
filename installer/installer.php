@@ -122,7 +122,7 @@ class installer {
   static function create_private_key($config) {
     $key = md5(uniqid(mt_rand(), true)) . md5(uniqid(mt_rand(), true));
     $sql = self::prepend_prefix($config["prefix"],
-       "INSERT INTO {vars} VALUES(NULL, 'core', 'private_key', '$key')");
+       "INSERT INTO {vars} VALUES(NULL, 'gallery', 'private_key', '$key')");
     if (mysql_query($sql)) {
     } else {
       throw new Exception(mysql_error());

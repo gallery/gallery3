@@ -481,8 +481,8 @@ class g2_import_Core {
     $g2_item_id = self::$current_g2_item->getId();
     $derivatives = g2(GalleryCoreApi::fetchDerivativesByItemIds(array($g2_item_id)));
 
-    $target_thumb_size = module::get_var("core", "thumb_size");
-    $target_resize_size = module::get_var("core", "resize_size");
+    $target_thumb_size = module::get_var("gallery", "thumb_size");
+    $target_resize_size = module::get_var("gallery", "resize_size");
     foreach ($derivatives[$g2_item_id] as $derivative) {
       if ($derivative->getPostFilterOperations()) {
         // Let's assume for now that this is a watermark operation, which we can't handle.

@@ -26,11 +26,11 @@ class graphics_Core {
    * Rules are applied to targets (thumbnails and resizes) in priority order.  Rules are functions
    * in the graphics class.  So for example, the following rule:
    *
-   *   graphics::add_rule("core", "thumb", "resize",
+   *   graphics::add_rule("gallery", "thumb", "resize",
    *                       array("width" => 200, "height" => 200, "master" => Image::AUTO), 100);
    *
-   * Specifies that "core" is adding a rule to resize thumbnails down to a max of 200px on
-   * the longest side.  The core module adds default rules at a priority of 100.  You can set
+   * Specifies that "gallery" is adding a rule to resize thumbnails down to a max of 200px on
+   * the longest side.  The gallery module adds default rules at a priority of 100.  You can set
    * higher and lower priorities to perform operations before or after this fires.
    *
    * @param string  $module_name the module that added the rule
@@ -194,7 +194,7 @@ class graphics_Core {
     } else {
       Image::factory($input_file)
         ->resize($options["width"], $options["height"], $options["master"])
-        ->quality(module::get_var("core", "image_quality"))
+        ->quality(module::get_var("gallery", "image_quality"))
         ->save($output_file);
     }
   }
@@ -212,7 +212,7 @@ class graphics_Core {
     }
 
     Image::factory($input_file)
-      ->quality(module::get_var("core", "image_quality"))
+      ->quality(module::get_var("gallery", "image_quality"))
       ->rotate($options["degrees"])
       ->save($output_file);
   }
@@ -262,7 +262,7 @@ class graphics_Core {
 
     Image::factory($input_file)
       ->composite($options["file"], $x, $y, $options["transparency"])
-      ->quality(module::get_var("core", "image_quality"))
+      ->quality(module::get_var("gallery", "image_quality"))
       ->save($output_file);
   }
 
@@ -302,7 +302,7 @@ class graphics_Core {
              $count,
              array("attrs" => sprintf(
                'href="%s" class="gDialogLink"',
-               url::site("admin/maintenance/start/core_task::rebuild_dirty_images?csrf=__CSRF__")))),
+               url::site("admin/maintenance/start/gallery_task::rebuild_dirty_images?csrf=__CSRF__")))),
           "graphics_dirty");
     }
   }
@@ -332,12 +332,12 @@ class graphics_Core {
     $toolkits = graphics::detect_toolkits();
     foreach (array("imagemagick", "graphicsmagick", "gd") as $tk) {
       if ($toolkits[$tk]) {
-        module::set_var("core", "graphics_toolkit", $tk);
-        module::set_var("core", "graphics_toolkit_path", $tk == "gd" ? "" : $toolkits[$tk]);
+        module::set_var("gallery", "graphics_toolkit", $tk);
+        module::set_var("gallery", "graphics_toolkit_path", $tk == "gd" ? "" : $toolkits[$tk]);
         break;
       }
     }
-    if (!module::get_var("core", "graphics_toolkit")) {
+    if (!module::get_var("gallery", "graphics_toolkit")) {
       site_status::warning(
         t("Graphics toolkit missing!  Please <a href=\"%url\">choose a toolkit</a>",
           array("url" => url::site("admin/graphics"))),
@@ -349,7 +349,7 @@ class graphics_Core {
    * Choose which driver the Kohana Image library uses.
    */
   static function init_toolkit() {
-    switch(module::get_var("core", "graphics_toolkit")) {
+    switch(module::get_var("gallery", "graphics_toolkit")) {
     case "gd":
       Kohana::config_set("image.driver", "GD");
       break;
@@ -357,13 +357,13 @@ class graphics_Core {
     case "imagemagick":
       Kohana::config_set("image.driver", "ImageMagick");
       Kohana::config_set(
-        "image.params.directory", module::get_var("core", "graphics_toolkit_path"));
+        "image.params.directory", module::get_var("gallery", "graphics_toolkit_path"));
       break;
 
     case "graphicsmagick":
       Kohana::config_set("image.driver", "GraphicsMagick");
       Kohana::config_set(
-        "image.params.directory", module::get_var("core", "graphics_toolkit_path"));
+        "image.params.directory", module::get_var("gallery", "graphics_toolkit_path"));
       break;
     }
 
@@ -376,7 +376,7 @@ class graphics_Core {
    * @return boolean
    */
   static function can($func) {
-    if (module::get_var("core", "graphics_toolkit") == "gd" &&
+    if (module::get_var("gallery", "graphics_toolkit") == "gd" &&
         $func == "rotate" &&
         !function_exists("imagerotate")) {
       return false;

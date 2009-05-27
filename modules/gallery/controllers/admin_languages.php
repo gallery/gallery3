@@ -33,7 +33,7 @@ class Admin_Languages_Controller extends Admin_Controller {
   public function save() {
     $form = $this->_languages_form();
     if ($form->validate()) {
-      module::set_var("core", "default_locale", $form->choose_language->locale->value);
+      module::set_var("gallery", "default_locale", $form->choose_language->locale->value);
       locale::update_installed($form->choose_language->installed_locales->value);
       message::success(t("Settings saved"));
     }
@@ -76,7 +76,7 @@ class Admin_Languages_Controller extends Admin_Controller {
           message::success(t("Your API key has been saved."));
         }
 
-        log::success(t("core"), t("l10n_client API key changed."));
+        log::success(t("gallery"), t("l10n_client API key changed."));
         url::redirect("admin/languages");
     } else {
       // Show the page with form errors
@@ -92,7 +92,7 @@ class Admin_Languages_Controller extends Admin_Controller {
       ->label(t("Language settings"));
     $group->dropdown("locale")
       ->options($installed_locales)
-      ->selected(module::get_var("core", "default_locale"))
+      ->selected(module::get_var("gallery", "default_locale"))
       ->label(t("Default language"))
       ->rules('required');
 

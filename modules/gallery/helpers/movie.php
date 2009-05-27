@@ -140,11 +140,11 @@ class movie_Core {
   }
 
   static function find_ffmpeg() {
-    if (!$ffmpeg_path = module::get_var("core", "ffmpeg_path")) {
+    if (!$ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) {
       if (function_exists("exec")) {
         $ffmpeg_path = exec("which ffmpeg");
         if ($ffmpeg_path) {
-          module::set_var("core", "ffmpeg_path", $ffmpeg_path);
+          module::set_var("gallery", "ffmpeg_path", $ffmpeg_path);
         }
       }
     }

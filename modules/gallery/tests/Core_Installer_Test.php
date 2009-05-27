@@ -19,21 +19,21 @@
  */
 
 /**
- * This test case operates under the assumption that core_installer::install() is called by the
+ * This test case operates under the assumption that gallery_installer::install() is called by the
  * test controller before it starts.
  */
-class Core_Installer_Test extends Unit_Test_Case {
+class Gallery_Installer_Test extends Unit_Test_Case {
   public function install_creates_dirs_test() {
     $this->assert_true(file_exists(VARPATH . "albums"));
     $this->assert_true(file_exists(VARPATH . "resizes"));
   }
 
-  public function install_registers_core_module_test() {
-    $core = ORM::factory("module")->where("name", "core")->find();
-    $this->assert_equal("core", $core->name);
+  public function install_registers_gallery_module_test() {
+    $gallery = ORM::factory("module")->where("name", "gallery")->find();
+    $this->assert_equal("gallery", $gallery->name);
 
     // This is probably too volatile to keep for long
-    $this->assert_equal(1, $core->version);
+    $this->assert_equal(1, $gallery->version);
   }
 
   public function install_creates_root_item_test() {

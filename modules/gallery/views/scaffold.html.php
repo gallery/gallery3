@@ -102,7 +102,7 @@
   <body>
     <div class="outer">
       <center>
-        <img src="<?= url::file("core/images/gallery.png") ?>"/>
+        <img src="<?= url::file("modules/gallery/images/gallery.png") ?>"/>
       </center>
       <div class="inner">
         <h1>Gallery3 Scaffold</h1>

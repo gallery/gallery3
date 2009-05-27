@@ -29,7 +29,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
   }
 
   public function add_block() {
-    $form = core_block::get_add_block_form();
+    $form = gallery_block::get_add_block_form();
     if ($form->validate()) {
       list ($module_name, $id) = explode(":", $form->add_block->id->value);
       $available = block_manager::get_available();

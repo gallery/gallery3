@@ -218,11 +218,11 @@ class GalleryCodeFilterIterator extends FilterIterator {
     $path_name = $this->getInnerIterator()->getPathName();
     return !(
       strpos($path_name, ".svn") ||
-      strpos($path_name, "core/views/kohana_profiler.php") !== false ||
       strpos($path_name, DOCROOT . "test") !== false ||
       strpos($path_name, DOCROOT . "var") !== false ||
       strpos($path_name, MODPATH . "forge") !== false ||
       strpos($path_name, APPPATH . "views/kohana_error_page.php") !== false ||
+      strpos($path_name, MODPATH . "gallery/views/kohana_profiler.php") !== false ||
       strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_error_page.php") !== false ||
       strpos($path_name, MODPATH . "gallery_unit_test/views/kohana_unit_test_cli.php") !== false ||
       strpos($path_name, MODPATH . "unit_test") !== false ||

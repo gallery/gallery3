@@ -5,7 +5,7 @@
   <?= $settings_form ?>
 
   <h2> <?= t("Download translations") ?> </h2>
-  <a href="<?= url::site("admin/maintenance/start/core_task::update_l10n?csrf=$csrf") ?>"
+  <a href="<?= url::site("admin/maintenance/start/gallery_task::update_l10n?csrf=$csrf") ?>"
      class="gDialogLink">
     <?= t("Get updates") ?>
   </a>

@@ -29,15 +29,15 @@ class Admin_View_Core extends View {
    * @return  void
    */
   public function __construct($name) {
-    $theme_name = module::get_var("core", "active_site_theme");
+    $theme_name = module::get_var("gallery", "active_site_theme");
     if (!file_exists("themes/$theme_name")) {
-      module::set_var("core", "active_site_theme", "admin_default");
+      module::set_var("gallery", "active_site_theme", "admin_default");
       theme::load_themes();
       Kohana::log("error", "Unable to locate theme '$theme_name', switching to default theme.");
     }
     parent::__construct($name);
 
-    $this->theme_name = module::get_var("core", "active_admin_theme");
+    $this->theme_name = module::get_var("gallery", "active_admin_theme");
     if (user::active()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
@@ -57,10 +57,10 @@ class Admin_View_Core extends View {
 
   public function admin_menu() {
     $menu = Menu::factory("root");
-    core_menu::admin($menu, $this);
+    gallery_menu::admin($menu, $this);
 
     foreach (module::active() as $module) {
-      if ($module->name == "core") {
+      if ($module->name == "gallery") {
         continue;
       }
       $class = "{$module->name}_menu";

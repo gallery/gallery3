@@ -21,8 +21,8 @@ class Admin_Themes_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_themes.html");
-    $view->content->admin = module::get_var("core", "active_admin_theme");
-    $view->content->site = module::get_var("core", "active_site_theme");
+    $view->content->admin = module::get_var("gallery", "active_admin_theme");
+    $view->content->site = module::get_var("gallery", "active_site_theme");
     $view->content->themes = $this->_get_themes();
     print $view;
   }
@@ -64,11 +64,11 @@ class Admin_Themes_Controller extends Admin_Controller {
       parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
 
     if ($type == "admin" && $info->admin) {
-      module::set_var("core", "active_admin_theme", $theme_name);
+      module::set_var("gallery", "active_admin_theme", $theme_name);
       message::success(t("Successfully changed your admin theme to <b>%theme_name</b>",
                          array("theme_name" => $info->name)));
     } else if ($type == "site" && $info->site) {
-      module::set_var("core", "active_site_theme", $theme_name);
+      module::set_var("gallery", "active_site_theme", $theme_name);
       message::success(t("Successfully changed your Gallery theme to <b>%theme_name</b>",
                          array("theme_name" => $info->name)));
     }
