@@ -2,7 +2,7 @@
 /**
  * Simple benchmarking.
  *
- * $Id$
+ * $Id: Benchmark.php 4149 2009-04-01 13:32:50Z Shadowhand $
  *
  * @package    Core
  * @author     Kohana Team

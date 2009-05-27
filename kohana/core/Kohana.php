@@ -2,7 +2,7 @@
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
  *
- * $Id$
+ * $Id: Kohana.php 4352 2009-05-14 20:26:53Z zombor $
  *
  * @package    Core
  * @author     Kohana Team

@@ -3,7 +3,7 @@
  * Manipulate images using standard methods such as resize, crop, rotate, etc.
  * This class must be re-initialized for every image you wish to manipulate.
  *
- * $Id$
+ * $Id: Image.php 4072 2009-03-13 17:20:38Z jheathco $
  *
  * @package    Image
  * @author     Kohana Team

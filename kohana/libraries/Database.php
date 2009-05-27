@@ -2,7 +2,7 @@
 /**
  * Provides database access in a platform agnostic way, using simple query building blocks.
  *
- * $Id$
+ * $Id: Database.php 4342 2009-05-08 16:56:01Z jheathco $
  *
  * @package    Core
  * @author     Kohana Team

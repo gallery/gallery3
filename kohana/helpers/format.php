@@ -2,7 +2,7 @@
 /**
  * Format helper class.
  *
- * $Id$
+ * $Id: format.php 4070 2009-03-11 20:37:38Z Geert $
  *
  * @package    Core
  * @author     Kohana Team

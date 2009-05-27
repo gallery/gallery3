@@ -2,7 +2,7 @@
 /**
  * Input library.
  *
- * $Id$
+ * $Id: Input.php 4346 2009-05-11 17:08:15Z zombor $
  *
  * @package    Core
  * @author     Kohana Team

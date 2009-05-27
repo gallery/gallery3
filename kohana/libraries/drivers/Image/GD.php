@@ -2,7 +2,7 @@
 /**
  * GD Image Driver.
  *
- * $Id$
+ * $Id: GD.php 3769 2008-12-15 00:48:56Z zombor $
  *
  * @package    Image
  * @author     Kohana Team

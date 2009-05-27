@@ -8,7 +8,7 @@
  * [ref-orm]: http://wikipedia.org/wiki/Object-relational_mapping
  * [ref-act]: http://wikipedia.org/wiki/Active_record
  *
- * $Id$
+ * $Id: ORM.php 4354 2009-05-15 16:51:37Z kiall $
  *
  * @package    ORM
  * @author     Kohana Team

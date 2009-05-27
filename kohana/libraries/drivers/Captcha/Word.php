@@ -2,7 +2,7 @@
 /**
  * Captcha driver for "word" style.
  *
- * $Id$
+ * $Id: Word.php 3769 2008-12-15 00:48:56Z zombor $
  *
  * @package    Captcha
  * @author     Kohana Team

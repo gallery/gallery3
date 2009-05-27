@@ -2,7 +2,7 @@
 /**
  * Router
  *
- * $Id$
+ * $Id: Router.php 4350 2009-05-14 18:58:18Z zombor $
  *
  * @package    Core
  * @author     Kohana Team

@@ -2,7 +2,7 @@
 /**
  * Date helper class.
  *
- * $Id$
+ * $Id: date.php 4316 2009-05-04 01:03:54Z kiall $
  *
  * @package    Core
  * @author     Kohana Team

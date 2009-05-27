@@ -2,7 +2,7 @@
 /**
  * Validation helper class.
  *
- * $Id$
+ * $Id: valid.php 4187 2009-04-08 04:01:23Z zombor $
  *
  * @package    Core
  * @author     Kohana Team

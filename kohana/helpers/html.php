@@ -2,7 +2,7 @@
 /**
  * HTML helper class.
  *
- * $Id$
+ * $Id: html.php 4141 2009-03-29 03:30:06Z zombor $
  *
  * @package    Core
  * @author     Kohana Team

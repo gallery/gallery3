@@ -2,7 +2,7 @@
 /**
  * Session library.
  *
- * $Id$
+ * $Id: Session.php 4073 2009-03-13 17:53:58Z Shadowhand $
  *
  * @package    Core
  * @author     Kohana Team

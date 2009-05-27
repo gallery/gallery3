@@ -2,7 +2,7 @@
 /**
  * Captcha driver class.
  *
- * $Id$
+ * $Id: Captcha.php 3769 2008-12-15 00:48:56Z zombor $
  *
  * @package    Captcha
  * @author     Kohana Team

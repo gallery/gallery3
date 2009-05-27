@@ -2,7 +2,7 @@
 /**
  * PostgreSQL 8.1+ Database Driver
  *
- * $Id$
+ * $Id: Pgsql.php 4344 2009-05-11 16:41:39Z zombor $
  *
  * @package    Core
  * @author     Kohana Team

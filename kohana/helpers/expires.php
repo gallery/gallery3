@@ -2,7 +2,7 @@
 /**
  * Controls headers that effect client caching of pages
  *
- * $Id$
+ * $Id: expires.php 4272 2009-04-25 21:47:26Z zombor $
  *
  * @package    Core
  * @author     Kohana Team

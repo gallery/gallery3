@@ -2,7 +2,7 @@
 /**
  * Database expression class to allow for explicit joins and where expressions.
  *
- * $Id$
+ * $Id: Database_Expression.php 4037 2009-03-04 23:35:53Z jheathco $
  *
  * @package    Core
  * @author     Kohana Team

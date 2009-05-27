@@ -3,7 +3,7 @@
  * Object Relational Mapping (ORM) "tree" extension. Allows ORM objects to act
  * as trees, with parents and children.
  *
- * $Id$
+ * $Id: ORM_Tree.php 3923 2009-01-22 15:37:04Z samsoir $
  *
  * @package    ORM
  * @author     Kohana Team

@@ -2,7 +2,7 @@
 /**
  * Database API driver
  *
- * $Id$
+ * $Id: Database.php 4343 2009-05-08 17:04:48Z jheathco $
  *
  * @package    Core
  * @author     Kohana Team
