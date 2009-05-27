@@ -41,7 +41,7 @@ define('KOHANA',  'index.php');
 is_link(basename(__FILE__)) and chdir(dirname(realpath(__FILE__)));
 
 // Define application and system paths
-define('APPPATH', strtr(realpath('core') . '/', DIRECTORY_SEPARATOR, '/'));
+define('APPPATH', strtr(realpath('application') . '/', DIRECTORY_SEPARATOR, '/'));
 define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
 define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
 define('SYSPATH', strtr(realpath('kohana') . '/', DIRECTORY_SEPARATOR, '/'));
