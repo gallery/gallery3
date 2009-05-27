@@ -37,8 +37,8 @@ class locale_Core {
 
   static function installed() {
     $available = self::available();
-    $default = module::get_var("core", "default_locale");
-    $codes = explode("|", module::get_var("core", "installed_locales", $default));
+    $default = module::get_var("gallery", "default_locale");
+    $codes = explode("|", module::get_var("gallery", "installed_locales", $default));
     foreach ($codes as $code) {
       if (isset($available->$code)) {
         $installed[$code] = $available[$code];
@@ -49,10 +49,10 @@ class locale_Core {
 
   static function update_installed($locales) {
     // Ensure that the default is included...
-    $default = module::get_var("core", "default_locale");
+    $default = module::get_var("gallery", "default_locale");
     $locales = array_merge($locales, array($default));
 
-    module::set_var("core", "installed_locales", join("|", $locales));
+    module::set_var("gallery", "installed_locales", join("|", $locales));
   }
 
   // @todo Might want to add a localizable language name as well.

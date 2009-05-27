@@ -35,9 +35,9 @@ class l10n_client_Core {
 
   static function api_key($api_key=null) {
     if ($api_key !== null) {
-      module::set_var("core", "l10n_client_key", $api_key);
+      module::set_var("gallery", "l10n_client_key", $api_key);
     }
-    return module::get_var("core", "l10n_client_key", "");
+    return module::get_var("gallery", "l10n_client_key", "");
   }
 
   static function server_uid($api_key=null) {

@@ -22,7 +22,7 @@ class Movie_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     try {
-      $movie = movie::create($root, DOCROOT . "core/tests/test.jpg", "$rand/.jpg", $rand, $rand);
+      $movie = movie::create($root, MODPATH . "gallery/tests/test.jpg", "$rand/.jpg", $rand, $rand);
     } catch (Exception $e) {
       // pass
       return;
@@ -35,7 +35,7 @@ class Movie_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     try {
-      $movie = movie::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg.", $rand, $rand);
+      $movie = movie::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg.", $rand, $rand);
     } catch (Exception $e) {
       $this->assert_equal("@todo NAME_CANNOT_END_IN_PERIOD", $e->getMessage());
       return;

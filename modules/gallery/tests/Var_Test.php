@@ -19,31 +19,31 @@
  */
 class Var_Test extends Unit_Test_Case {
   public function add_parameter_test() {
-    module::set_var("core", "Parameter", "original value");
-    $this->assert_equal("original value", module::get_var("core", "Parameter"));
+    module::set_var("gallery", "Parameter", "original value");
+    $this->assert_equal("original value", module::get_var("gallery", "Parameter"));
 
-    module::set_var("core", "Parameter", "updated value");
-    $this->assert_equal("updated value", module::get_var("core", "Parameter"));
+    module::set_var("gallery", "Parameter", "updated value");
+    $this->assert_equal("updated value", module::get_var("gallery", "Parameter"));
   }
 
   public function clear_parameter_test() {
-    module::set_var("core", "Parameter", "original value");
-    $this->assert_equal("original value", module::get_var("core", "Parameter"));
+    module::set_var("gallery", "Parameter", "original value");
+    $this->assert_equal("original value", module::get_var("gallery", "Parameter"));
 
-    module::clear_var("core", "Parameter");
-    $this->assert_equal(null, module::get_var("core", "Parameter"));
+    module::clear_var("gallery", "Parameter");
+    $this->assert_equal(null, module::get_var("gallery", "Parameter"));
   }
 
   public function incr_parameter_test() {
-    module::set_var("core", "Parameter", "original value");
-    module::incr_var("core", "Parameter");
-    $this->assert_equal("1", module::get_var("core", "Parameter"));
+    module::set_var("gallery", "Parameter", "original value");
+    module::incr_var("gallery", "Parameter");
+    $this->assert_equal("1", module::get_var("gallery", "Parameter"));
 
-    module::set_var("core", "Parameter", "2");
-    module::incr_var("core", "Parameter", "9");
-    $this->assert_equal("11", module::get_var("core", "Parameter"));
+    module::set_var("gallery", "Parameter", "2");
+    module::incr_var("gallery", "Parameter", "9");
+    $this->assert_equal("11", module::get_var("gallery", "Parameter"));
 
-    module::incr_var("core", "NonExistent", "9");
-    $this->assert_equal(null, module::get_var("core", "NonExistent"));
+    module::incr_var("gallery", "NonExistent", "9");
+    $this->assert_equal(null, module::get_var("gallery", "NonExistent"));
   }
 }

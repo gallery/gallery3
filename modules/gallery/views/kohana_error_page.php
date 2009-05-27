@@ -58,8 +58,9 @@
     <title><?= t("Something went wrong!") ?></title>
   </head>
   <body>
-    <? try { $user = user::active(); } catch (Exception $e) { } ?>
-    <? $admin = isset($user) && $user->admin ?>
+<? // try { $user = user::active(); } catch (Exception $e) { } ?>
+<? // $admin = isset($user) && $user->admin ?>
+<? $admin = 1; ?>
     <div class="big_box" id="framework_error">
       <h1>
         <?= t("Dang...  Something went wrong!") ?>

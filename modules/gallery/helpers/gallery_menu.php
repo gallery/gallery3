@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class core_menu_Core {
+class gallery_menu_Core {
   static function site($menu, $theme) {
     if (file_exists(APPPATH . "controllers/scaffold.php") && user::active()->admin) {
       $menu->append($scaffold_menu = Menu::factory("submenu")
@@ -74,7 +74,7 @@ class core_menu_Core {
                     ->label(t("Admin")));
       self::admin($admin_menu, $theme);
       foreach (module::active() as $module) {
-        if ($module->name == "core") {
+        if ($module->name == "gallery") {
           continue;
         }
         $class = "{$module->name}_menu";

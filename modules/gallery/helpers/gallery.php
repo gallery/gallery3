@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class core_Core {
+class gallery_Core {
   /**
    * If Gallery is in maintenance mode, then force all non-admins to get routed to a "This site is
    * down for maintenance" page.
    */
   static function maintenance_mode() {
-    $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
+    $maintenance_mode = Kohana::config("gallery.maintenance_mode", false, false);
 
     if (Router::$controller != "login" && !empty($maintenance_mode) && !user::active()->admin) {
       Router::$controller = "maintenance";

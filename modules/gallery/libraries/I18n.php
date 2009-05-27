@@ -62,7 +62,7 @@ class I18n_Core {
     if (self::$_instance == NULL || isset($config)) {
       $config = isset($config) ? $config : Kohana::config('locale');
       if (empty($config['default_locale'])) {
-        $config['default_locale'] = module::get_var('core', 'default_locale');
+        $config['default_locale'] = module::get_var('gallery', 'default_locale');
       }
       self::$_instance = new I18n_Core($config);
     }

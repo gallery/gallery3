@@ -94,7 +94,7 @@ class Scaffold_Controller extends Template_Controller {
         $type = rand(0, 10) ? "photo" : "album";
       }
       if ($type == "album") {
-        $thumb_size = module::get_var("core", "thumb_size");
+        $thumb_size = module::get_var("gallery", "thumb_size");
         $parents[] = album::create(
           $parent, "rnd_" . rand(), "Rnd $i", "random album $i", $owner_id)
           ->save();
@@ -262,7 +262,7 @@ class Scaffold_Controller extends Template_Controller {
     }
 
     foreach ($to_install as $module_name) {
-      if ($module_name != "core") {
+      if ($module_name != "gallery") {
         require_once(DOCROOT . "modules/${module_name}/helpers/${module_name}_installer.php");
       }
       module::install($module_name);
@@ -300,7 +300,7 @@ class Scaffold_Controller extends Template_Controller {
     srand(0);
 
     try {
-      core_installer::install(true);
+      gallery_installer::install(true);
       module::load_modules();
 
       foreach (array("user", "comment", "organize", "info", "rss",
@@ -325,7 +325,7 @@ class Scaffold_Controller extends Template_Controller {
     $db = Database::instance();
     $db->query("TRUNCATE {sessions}");
     $db->query("TRUNCATE {logs}");
-    $db->query("DELETE FROM {vars} WHERE `module_name` = 'core' AND `name` = '_cache'");
+    $db->query("DELETE FROM {vars} WHERE `module_name` = 'gallery' AND `name` = '_cache'");
     $db->update("users", array("password" => ""), array("id" => 1));
     $db->update("users", array("password" => ""), array("id" => 2));
 

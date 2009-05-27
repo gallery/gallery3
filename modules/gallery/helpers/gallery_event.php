@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class core_event_Core {
+class gallery_event_Core {
   static function group_created($group) {
     access::add_group($group);
   }
@@ -38,9 +38,9 @@ class core_event_Core {
   static function user_login($user) {
     // If this user is an admin, check to see if there are any post-install tasks that we need
     // to run and take care of those now.
-    if ($user->admin && module::get_var("core", "choose_default_tookit", null)) {
+    if ($user->admin && module::get_var("gallery", "choose_default_tookit", null)) {
       graphics::choose_default_toolkit();
-      module::clear_var("core", "choose_default_tookit");
+      module::clear_var("gallery", "choose_default_tookit");
     }
   }
 }

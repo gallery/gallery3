@@ -31,10 +31,11 @@ class theme_Core {
   static function load_themes() {
     $modules = Kohana::config("core.modules");
     if (Router::$controller == "admin") {
-      array_unshift($modules, THEMEPATH . module::get_var("core", "active_admin_theme"));
+      array_unshift($modules, THEMEPATH . module::get_var("gallery", "active_admin_theme"));
     } else {
-      array_unshift($modules, THEMEPATH . module::get_var("core", "active_site_theme"));
+      array_unshift($modules, THEMEPATH . module::get_var("gallery", "active_site_theme"));
     }
+
     Kohana::config_set("core.modules", $modules);
   }
 
@@ -43,17 +44,17 @@ class theme_Core {
     $group = $form->group("edit_theme");
     $group->input("page_size")->label(t("Items per page"))->id("gPageSize")
       ->rules("required|valid_digit")
-      ->value(module::get_var("core", "page_size"));
+      ->value(module::get_var("gallery", "page_size"));
     $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("gThumbSize")
       ->rules("required|valid_digit")
-      ->value(module::get_var("core", "thumb_size"));
+      ->value(module::get_var("gallery", "thumb_size"));
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("gResizeSize")
       ->rules("required|valid_digit")
-      ->value(module::get_var("core", "resize_size"));
+      ->value(module::get_var("gallery", "resize_size"));
     $group->textarea("header_text")->label(t("Header text"))->id("gHeaderText")
-      ->value(module::get_var("core", "header_text"));
+      ->value(module::get_var("gallery", "header_text"));
     $group->textarea("footer_text")->label(t("Footer text"))->id("gFooterText")
-      ->value(module::get_var("core", "footer_text"));
+      ->value(module::get_var("gallery", "footer_text"));
     $group->submit("")->value(t("Save"));
     return $form;
   }

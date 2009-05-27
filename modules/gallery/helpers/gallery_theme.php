@@ -17,36 +17,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class core_theme_Core {
+class gallery_theme_Core {
   static function head($theme) {
     $session = Session::instance();
     $buf = "";
     if ($session->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("core/css/debug.css") . "\" />";
+        url::file("gallery/css/debug.css") . "\" />";
     }
     if (($theme->page_type == "album" || $theme->page_type == "photo")
         && access::can("edit", $theme->item())) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("core/css/quick.css") . "\" />";
-      $buf .= html::script("core/js/quick.js");
+        url::file("gallery/css/quick.css") . "\" />";
+      $buf .= html::script("gallery/js/quick.js");
     }
     if ($theme->page_type == "photo" && access::can("view_full", $theme->item())) {
       $buf .= "<script type=\"text/javascript\" >" .
               "  var fullsize_detail = { " .
-              "    close: \"" . url::file("core/images/ico-close.png") . "\", " .
+              "    close: \"" . url::file("gallery/images/ico-close.png") . "\", " .
               "    url: \"" . $theme->item()->file_url() . "\", " .
               "    width: " . $theme->item()->width . ", " .
               "    height: " . $theme->item()->height . "};" .
               "</script>";
-      $buf .= html::script("core/js/fullsize.js");
+      $buf .= html::script("gallery/js/fullsize.js");
     }
 
     if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("core/css/l10n_client.css") . "\" />";
+        url::file("gallery/css/l10n_client.css") . "\" />";
       $buf .= html::script("lib/jquery.cookie.js");
-      $buf .= html::script("core/js/l10n_client.js");
+      $buf .= html::script("gallery/js/l10n_client.js");
     }
 
     return $buf;
@@ -83,14 +83,14 @@ class core_theme_Core {
     $buf = "";
     if ($session->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("core/css/debug.css") . "\" />";
+        url::file("gallery/css/debug.css") . "\" />";
     }
 
     if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("core/css/l10n_client.css") . "\" />";
+        url::file("gallery/css/l10n_client.css") . "\" />";
       $buf .= html::script("lib/jquery.cookie.js");
-      $buf .= html::script("core/js/l10n_client.js");
+      $buf .= html::script("gallery/js/l10n_client.js");
     }
 
     return $buf;
@@ -127,11 +127,11 @@ class core_theme_Core {
     return "<li class=\"first\">" .
       t("Powered by <a href=\"%url\">Gallery %version</a>",
         array("url" => "http://gallery.menalto.com",
-              "version" => module::get_var("core", "version"))) .
+              "version" => module::get_var("gallery", "version"))) .
       "</li>";
   }
 
   static function admin_credits() {
-    return core_theme::credits();
+    return gallery_theme::credits();
   }
 }

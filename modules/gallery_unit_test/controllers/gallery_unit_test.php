@@ -96,15 +96,15 @@ class Gallery_Unit_Test_Controller extends Controller {
     $db->clear_cache();
 
     // Install all modules
-    // Force core and user to be installed first to resolve dependencies.
-    core_installer::install(true);
+    // Force gallery and user to be installed first to resolve dependencies.
+    gallery_installer::install(true);
     module::load_modules();
     module::install("user");
     module::activate("user");
     $modules = array();
     foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
       $module_name = basename(dirname(dirname($file)));
-      if (in_array($module_name, array("core", "user"))) {
+      if (in_array($module_name, array("gallery", "user"))) {
         continue;
       }
       module::install($module_name);

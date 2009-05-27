@@ -21,7 +21,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
   public function create_photo_test() {
     $rand = rand();
 
-    $filename = DOCROOT . "core/tests/test.jpg";
+    $filename = MODPATH . "gallery/tests/test.jpg";
     $image_info = getimagesize($filename);
 
     $root = ORM::factory("item", 1);
@@ -50,8 +50,8 @@ class Photo_Helper_Test extends Unit_Test_Case {
   public function create_conflicting_photo_test() {
     $rand = rand();
     $root = ORM::factory("item", 1);
-    $photo1 = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
-    $photo2 = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $photo1 = photo::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $photo2 = photo::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
     $this->assert_true($photo1->name != $photo2->name);
   }
 
@@ -68,7 +68,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
   public function thumb_url_test() {
     $rand = rand();
     $root = ORM::factory("item", 1);
-    $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $photo = photo::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
     $this->assert_equal("http://./var/thumbs/{$rand}.jpg", $photo->thumb_url());
   }
 
@@ -76,7 +76,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     $album = album::create($root, $rand, $rand, $rand);
-    $photo = photo::create($album, DOCROOT . "core/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    $photo = photo::create($album, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
 
     $this->assert_equal("http://./var/resizes/{$rand}/{$rand}.jpg", $photo->resize_url());
   }
@@ -85,7 +85,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     try {
-      $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand/.jpg", $rand, $rand);
+      $photo = photo::create($root, MODPATH . "gallery/tests/test.jpg", "$rand/.jpg", $rand, $rand);
     } catch (Exception $e) {
       // pass
       return;
@@ -98,7 +98,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     try {
-      $photo = photo::create($root, DOCROOT . "core/tests/test.jpg", "$rand.jpg.", $rand, $rand);
+      $photo = photo::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg.", $rand, $rand);
     } catch (Exception $e) {
       $this->assert_equal("@todo NAME_CANNOT_END_IN_PERIOD", $e->getMessage());
       return;

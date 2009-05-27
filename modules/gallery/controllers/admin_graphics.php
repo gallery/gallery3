@@ -24,7 +24,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
     $view->content->available = "";
 
     $tk = new ArrayObject(graphics::detect_toolkits(), ArrayObject::ARRAY_AS_PROPS);
-    $active = module::get_var("core", "graphics_toolkit", "none");
+    $active = module::get_var("gallery", "graphics_toolkit", "none");
     foreach (array("gd", "imagemagick", "graphicsmagick", "none") as $id) {
       if ($id == $active) {
         $view->content->active = new View("admin_graphics_$id.html");
@@ -43,12 +43,12 @@ class Admin_Graphics_Controller extends Admin_Controller {
 
   public function choose($toolkit) {
     access::verify_csrf();
-    if ($toolkit != module::get_var("core", "graphics_toolkit")) {
-      module::set_var("core", "graphics_toolkit", $toolkit);
+    if ($toolkit != module::get_var("gallery", "graphics_toolkit")) {
+      module::set_var("gallery", "graphics_toolkit", $toolkit);
 
       $toolkit_info = graphics::detect_toolkits();
       if ($toolkit == "graphicsmagick" || $toolkit == "imagemagick") {
-        module::set_var("core", "graphics_toolkit_path", $toolkit_info[$toolkit]);
+        module::set_var("gallery", "graphics_toolkit_path", $toolkit_info[$toolkit]);
       }
 
       site_status::clear("missing_graphics_toolkit");

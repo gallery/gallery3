@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class core_installer {
+class gallery__installer {
   static function install($initial_install=false) {
     $db = Database::instance();
     if ($initial_install) {
       $version = 0;
     } else {
-      $version = module::get_version("core");
+      $version = module::get_version("gallery");
     }
 
     if ($version == 0) {
@@ -212,21 +212,21 @@ class core_installer {
       $root->save();
       access::add_item($root);
 
-      module::set_var("core", "active_site_theme", "default");
-      module::set_var("core", "active_admin_theme", "admin_default");
-      module::set_var("core", "page_size", 9);
-      module::set_var("core", "thumb_size", 200);
-      module::set_var("core", "resize_size", 640);
-      module::set_var("core", "default_locale", "en_US");
-      module::set_var("core", "image_quality", 75);
+      module::set_var("gallery", "active_site_theme", "default");
+      module::set_var("gallery", "active_admin_theme", "admin_default");
+      module::set_var("gallery", "page_size", 9);
+      module::set_var("gallery", "thumb_size", 200);
+      module::set_var("gallery", "resize_size", 640);
+      module::set_var("gallery", "default_locale", "en_US");
+      module::set_var("gallery", "image_quality", 75);
 
       // Add rules for generating our thumbnails and resizes
       graphics::add_rule(
-        "core", "thumb", "resize",
+        "gallery", "thumb", "resize",
         array("width" => 200, "height" => 200, "master" => Image::AUTO),
         100);
       graphics::add_rule(
-        "core", "resize", "resize",
+        "gallery", "resize", "resize",
         array("width" => 640, "height" => 480, "master" => Image::AUTO),
         100);
 
@@ -240,17 +240,17 @@ class core_installer {
         $theme->save();
       }
 
-      block_manager::add("dashboard_sidebar", "core", "block_adder");
-      block_manager::add("dashboard_sidebar", "core", "stats");
-      block_manager::add("dashboard_sidebar", "core", "platform_info");
-      block_manager::add("dashboard_sidebar", "core", "project_news");
-      block_manager::add("dashboard_center", "core", "welcome");
-      block_manager::add("dashboard_center", "core", "photo_stream");
-      block_manager::add("dashboard_center", "core", "log_entries");
+      block_manager::add("dashboard_sidebar", "gallery", "block_adder");
+      block_manager::add("dashboard_sidebar", "gallery", "stats");
+      block_manager::add("dashboard_sidebar", "gallery", "platform_info");
+      block_manager::add("dashboard_sidebar", "gallery", "project_news");
+      block_manager::add("dashboard_center", "gallery", "welcome");
+      block_manager::add("dashboard_center", "gallery", "photo_stream");
+      block_manager::add("dashboard_center", "gallery", "log_entries");
 
-      module::set_version("core", 1);
-      module::set_var("core", "version", "3.0 pre-beta svn");
-      module::set_var("core", "choose_default_tookit", 1);
+      module::set_version("gallery", 1);
+      module::set_var("gallery", "version", "3.0 pre-beta git");
+      module::set_var("gallery", "choose_default_tookit", 1);
     }
   }
 
