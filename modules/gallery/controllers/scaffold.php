@@ -80,7 +80,7 @@ class Scaffold_Controller extends Template_Controller {
     $parents = ORM::factory("item")->where("type", "album")->find_all()->as_array();
     $owner_id = user::active()->id;
 
-    $test_images = glob(APPPATH . "tests/images/*.[Jj][Pp][Gg]");
+    $test_images = glob(MODPATH . "gallery/tests/images/*.[Jj][Pp][Gg]");
 
     batch::start();
     $album_count = $photo_count = 0;

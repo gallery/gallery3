@@ -27,7 +27,7 @@ class gallery_Core {
 
     if (Router::$controller != "login" && !empty($maintenance_mode) && !user::active()->admin) {
       Router::$controller = "maintenance";
-      Router::$controller_path = APPPATH . "controllers/maintenance.php";
+      Router::$controller_path = MODPATH . "gallery/controllers/maintenance.php";
       Router::$method = "index";
     }
   }

@@ -70,7 +70,6 @@ class Gallery_Unit_Test_Controller extends Controller {
     }
 
     // Find all tests, excluding sample tests that come with the unit_test module.
-    $paths = array(APPPATH . "tests");
     foreach (glob(MODPATH . "*/tests") as $path) {
       if ($path != MODPATH . "unit_test/tests") {
         $paths[] = $path;
