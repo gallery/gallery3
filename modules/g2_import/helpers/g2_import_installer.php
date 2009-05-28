@@ -31,6 +31,11 @@ class g2_import_installer {
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       module::set_version("g2_import", 1);
+      mkdir(VARPATH . "modules/g2_import");
     }
+  }
+
+  static function uninstall() {
+    @dir::unlink(VARPATH . "modules/g2_import");
   }
 }
