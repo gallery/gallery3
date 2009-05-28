@@ -350,7 +350,9 @@ class Scaffold_Controller extends Template_Controller {
 
     // Post-process the sql file
     $buf = "";
-    $root_timestamp = ORM::factory("item", 1)->created;
+    $root = ORM::factory("item", 1);
+    $root_created_timestamp = $root->created;
+    $root_updated_timestamp = $root->updated;
     foreach (file($sql_file) as $line) {
       // Prefix tables
       $line = preg_replace(
@@ -358,7 +360,8 @@ class Scaffold_Controller extends Template_Controller {
         $line);
 
       // Normalize dates
-      $line = preg_replace("/,$root_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
+      $line = preg_replace("/,$root_created_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
+      $line = preg_replace("/,$root_updated_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
       $buf .= $line;
     }
     $fd = fopen($sql_file, "wb");
