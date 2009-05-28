@@ -443,7 +443,8 @@ class g2_import_Core {
       // @todo we need a more persistent warning
       $g2_item_url = $url_generator->generateUrl(array("itemId" => $g2_item->getId()));
       // Why oh why did I ever approve the session id placeholder idea in G2?
-      $g2_item_url = str_replace('TMP_SESSION_ID_DI_NOISSES_PMT', '', $g2_item_url);
+      $g2_item_url =
+        str_replace('&amp;g2_GALLERYSID=TMP_SESSION_ID_DI_NOISSES_PMT', '', $g2_item_url);
       $warning =
         t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
           "(imported as <a href=\"%g3_url\">%title</a>)",
