@@ -79,7 +79,8 @@ class g2_import_Core {
           array(
             "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
             "require('$base_dir/modules/core/classes/GalleryEmbed.class');"),
-          file("$base_dir/embed.php")));
+          array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
+                      file("$base_dir/embed.php"))));
 
       file_put_contents(
         "$mod_path/main.php",
@@ -90,7 +91,8 @@ class g2_import_Core {
           array(
             "include(dirname(__FILE__) . '/bootstrap.inc');",
             "require_once('$base_dir/init.inc');"),
-          file("$base_dir/main.php")));
+          array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
+                      file("$base_dir/main.php"))));
 
       file_put_contents(
         "$mod_path/bootstrap.inc",
@@ -103,7 +105,8 @@ class g2_import_Core {
                 "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
                 "define('GALLERY_CONFIG_DIR', '$base_dir');",
                 "\$gallery =& new G2_Gallery();"),
-          file("$base_dir/bootstrap.inc")));
+          array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
+                      file("$base_dir/bootstrap.inc"))));
 
       file_put_contents(
         "$mod_path/Gallery.class",
@@ -112,7 +115,8 @@ class g2_import_Core {
                 "function Gallery"),
           array("class G2_Gallery",
                 "function G2_Gallery"),
-          file("$base_dir/modules/core/classes/Gallery.class")));
+          array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
+                      file("$base_dir/modules/core/classes/Gallery.class"))));
     }
 
     require("$mod_path/embed.php");

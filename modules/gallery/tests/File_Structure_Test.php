@@ -91,6 +91,18 @@ class File_Structure_Test extends Unit_Test_Case {
       $fp = fopen($path, "r");
       $actual = array(fgets($fp));
       fclose($fp);
+    } else if (strpos($path, DOCROOT . "var/logs") === 0) {
+      // var/logs has the kohana one-liner preamble
+      $expected = array("<?php defined('SYSPATH') or die('No direct script access.'); ?>\n");
+      $fp = fopen($path, "r");
+      $actual = array(fgets($fp));
+      fclose($fp);
+    } else if (strpos($path, DOCROOT . "var") === 0) {
+      // Anything else under var has the Gallery one-liner
+      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n");
+      $fp = fopen($path, "r");
+      $actual = array(fgets($fp));
+      fclose($fp);
     } else {
       // Gallery: we care about the entire copyright
       $actual = $this->_get_preamble($path);
@@ -141,14 +153,12 @@ class File_Structure_Test extends Unit_Test_Case {
         // Front controllers
         break;
 
-      case DOCROOT . "index.local.php":
+      case DOCROOT . "local.php":
         // Special case optional file, not part of the codebase
         break;
 
       default:
-        if (strpos($path, DOCROOT . "var/logs") === 0) {
-          continue;
-        } else if (preg_match("/views/", $path)) {
+        if (preg_match("/views/", $path)) {
           $this->_check_view_preamble($path, $errors);
         } else {
           $this->_check_php_preamble($path, $errors);
@@ -207,8 +217,7 @@ class File_Structure_Test extends Unit_Test_Case {
 class PhpCodeFilterIterator extends FilterIterator {
   public function accept() {
     $path_name = $this->getInnerIterator()->getPathName();
-    return (substr($path_name, -4) == ".php" &&
-            !(strpos($path_name, VARPATH) === 0));
+    return substr($path_name, -4) == ".php";
   }
 }
 
