@@ -69,7 +69,7 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     $photo = photo::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
-    $this->assert_equal("http://./var/thumbs/{$rand}.jpg", $photo->thumb_url());
+    $this->assert_equal("http://./var/thumbs/{$rand}.jpg?m={$photo->updated}", $photo->thumb_url());
   }
 
   public function resize_url_test() {

@@ -49,7 +49,8 @@ class Album_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     $album = album::create($root, $rand, $rand, $rand);
-    $this->assert_equal("http://./var/thumbs/$rand/.album.jpg", $album->thumb_url());
+    $this->assert_equal(
+      "http://./var/thumbs/$rand/.album.jpg?m={$album->updated}", $album->thumb_url());
   }
 
   public function resize_url_test() {
