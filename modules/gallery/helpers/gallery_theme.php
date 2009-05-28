@@ -23,30 +23,30 @@ class gallery_theme_Core {
     $buf = "";
     if ($session->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("gallery/css/debug.css") . "\" />";
+        url::file("modules/gallery/css/debug.css") . "\" />";
     }
     if (($theme->page_type == "album" || $theme->page_type == "photo")
         && access::can("edit", $theme->item())) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("gallery/css/quick.css") . "\" />";
-      $buf .= html::script("gallery/js/quick.js");
+        url::file("modules/gallery/css/quick.css") . "\" />";
+      $buf .= html::script("modules/gallery/js/quick.js");
     }
     if ($theme->page_type == "photo" && access::can("view_full", $theme->item())) {
       $buf .= "<script type=\"text/javascript\" >" .
               "  var fullsize_detail = { " .
-              "    close: \"" . url::file("gallery/images/ico-close.png") . "\", " .
+              "    close: \"" . url::file("modules/gallery/images/ico-close.png") . "\", " .
               "    url: \"" . $theme->item()->file_url() . "\", " .
               "    width: " . $theme->item()->width . ", " .
               "    height: " . $theme->item()->height . "};" .
               "</script>";
-      $buf .= html::script("gallery/js/fullsize.js");
+      $buf .= html::script("modules/gallery/js/fullsize.js");
     }
 
     if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("gallery/css/l10n_client.css") . "\" />";
+        url::file("modules/gallery/css/l10n_client.css") . "\" />";
       $buf .= html::script("lib/jquery.cookie.js");
-      $buf .= html::script("gallery/js/l10n_client.js");
+      $buf .= html::script("modules/gallery/js/l10n_client.js");
     }
 
     return $buf;
@@ -83,14 +83,14 @@ class gallery_theme_Core {
     $buf = "";
     if ($session->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("gallery/css/debug.css") . "\" />";
+        url::file("modules/gallery/css/debug.css") . "\" />";
     }
 
     if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("gallery/css/l10n_client.css") . "\" />";
+        url::file("modules/gallery/css/l10n_client.css") . "\" />";
       $buf .= html::script("lib/jquery.cookie.js");
-      $buf .= html::script("gallery/js/l10n_client.js");
+      $buf .= html::script("modules/gallery/js/l10n_client.js");
     }
 
     return $buf;

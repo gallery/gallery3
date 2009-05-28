@@ -27,6 +27,11 @@ class ORM extends ORM_Core {
     $this->db->close_paren();
     return $this;
   }
+
+  public function save() {
+    model_cache::clear($this->object_name, $this->{$this->primary_key}, $this->primary_key);
+    return parent::save();
+  }
 }
 
 /**
