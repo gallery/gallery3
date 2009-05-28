@@ -113,8 +113,9 @@ class Albums_Controller extends Items_Controller {
               "resource" => url::site("albums/$new_album->id")));
     } else {
       print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString() . html::script("gallery/js/albums_form_add.js")));
+        array(
+          "result" => "error",
+          "form" => $form->__toString() . html::script("modules/gallery/js/albums_form_add.js")));
     }
   }
 
@@ -206,7 +207,7 @@ class Albums_Controller extends Items_Controller {
     switch ($this->input->get("type")) {
     case "album":
       print album::get_add_form($album) .
-        html::script("gallery/js/albums_form_add.js");
+        html::script("modules/gallery/js/albums_form_add.js");
       break;
 
     case "photo":
