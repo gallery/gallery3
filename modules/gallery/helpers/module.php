@@ -75,7 +75,7 @@ class module_Core {
    */
   static function available() {
     $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-    foreach (array_merge(array("gallery/module.info"), glob(MODPATH . "*/module.info")) as $file) {
+    foreach (glob(MODPATH . "*/module.info") as $file) {
       $module_name = basename(dirname($file));
       $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
       $modules->$module_name->installed = self::is_installed($module_name);

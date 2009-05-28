@@ -56,7 +56,66 @@ class g2_import_Core {
       return false;
     }
 
-    require($embed_path);
+    // Gallery2 defines a class called Gallery.  So does Gallery 3.  They don't get along.  So do
+    // a total hack here and copy over a few critical files (embed.php, main.php, bootstrap.inc
+    // and Gallery.class) and munge them so that we can rename the Gallery class to be
+    // G2_Gallery.   Is this retarded?  Why yes it is.
+    //
+    // Store the munged files in a directory that's the md5 hash of the embed path so that
+    // multiple import sources don't interfere with each other.
+
+    $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
+    if (!file_exists($mod_path) || !file_exists("$mod_path/embed.php")) {
+      @dir::unlink($mod_path);
+      mkdir($mod_path);
+
+      $base_dir = dirname($embed_path);
+      file_put_contents(
+        "$mod_path/embed.php",
+        str_replace(
+          array(
+            "require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');",
+            "require(dirname(__FILE__) . '/modules/core/classes/GalleryEmbed.class');"),
+          array(
+            "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
+            "require('$base_dir/modules/core/classes/GalleryEmbed.class');"),
+          file("$base_dir/embed.php")));
+
+      file_put_contents(
+        "$mod_path/main.php",
+        str_replace(
+          array(
+            "include(dirname(__FILE__) . '/bootstrap.inc');",
+            "require_once(dirname(__FILE__) . '/init.inc');"),
+          array(
+            "include(dirname(__FILE__) . '/bootstrap.inc');",
+            "require_once('$base_dir/init.inc');"),
+          file("$base_dir/main.php")));
+
+      file_put_contents(
+        "$mod_path/bootstrap.inc",
+        str_replace(
+          array("require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');",
+                "require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');",
+                "define('GALLERY_CONFIG_DIR', dirname(__FILE__));",
+                "\$gallery =& new Gallery();"),
+          array("require_once(dirname(__FILE__) . '/Gallery.class');",
+                "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
+                "define('GALLERY_CONFIG_DIR', '$base_dir');",
+                "\$gallery =& new G2_Gallery();"),
+          file("$base_dir/bootstrap.inc")));
+
+      file_put_contents(
+        "$mod_path/Gallery.class",
+        str_replace(
+          array("class Gallery",
+                "function Gallery"),
+          array("class G2_Gallery",
+                "function G2_Gallery"),
+          file("$base_dir/modules/core/classes/Gallery.class")));
+    }
+
+    require("$mod_path/embed.php");
     if (!class_exists("GalleryEmbed")) {
       return false;
     }
@@ -381,11 +440,14 @@ class g2_import_Core {
 
     if ($corrupt) {
       $url_generator = $GLOBALS["gallery"]->getUrlGenerator();
-      // @todo we need a more persistent
+      // @todo we need a more persistent warning
+      $g2_item_url = $url_generator->generateUrl(array("itemId" => $g2_item->getId()));
+      // Why oh why did I ever approve the session id placeholder idea in G2?
+      $g2_item_url = str_replace('TMP_SESSION_ID_DI_NOISSES_PMT', '', $g2_item_url);
       $warning =
         t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
           "(imported as <a href=\"%g3_url\">%title</a>)",
-          array("g2_url" => $url_generator->generateUrl(array("itemId" => $g2_item->getId())),
+          array("g2_url" => $g2_item_url,
                 "g3_url" => $item->url(),
                 "title" => $g2_item->getTitle()));
       message::warning($warning);
