@@ -2,5 +2,5 @@
 var
 
 # Ignore the index.local.php
-index.local.php
+local.php
 
