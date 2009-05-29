@@ -107,16 +107,17 @@ class module_Core {
    */
   static function install($module_name) {
     $kohana_modules = Kohana::config("core.modules");
-    $kohana_modules[] = MODPATH . $module_name;
+    array_unshift($kohana_modules, MODPATH . $module_name);
     Kohana::config_set("core.modules",  $kohana_modules);
 
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     }
+    module::load_modules();
 
     // Now the module is installed but inactive, so don't leave it in the active path
-    array_pop($kohana_modules);
+    array_shift($kohana_modules);
     Kohana::config_set("core.modules",  $kohana_modules);
 
     log::success(
@@ -131,7 +132,7 @@ class module_Core {
    */
   static function activate($module_name) {
     $kohana_modules = Kohana::config("core.modules");
-    $kohana_modules[] = MODPATH . $module_name;
+    array_unshift($kohana_modules, MODPATH . $module_name);
     Kohana::config_set("core.modules",  $kohana_modules);
 
     $installer_class = "{$module_name}_installer";
@@ -144,16 +145,17 @@ class module_Core {
       $module->active = true;
       $module->save();
     }
+    module::load_modules();
 
-    self::load_modules();
     graphics::activate_rules($module_name);
     log::success(
       "module", t("Activated module %module_name", array("module_name" => $module_name)));
   }
 
   /**
-   * Deactivate an installed module.  This will call <module>_installer::deactivate() which
-   * should take any cleanup steps to make sure that the module isn't visible in any way.
+   * Deactivate an installed module.  This will call <module>_installer::deactivate() which should
+   * take any cleanup steps to make sure that the module isn't visible in any way.  Note that the
+   * module remains available in Kohana's cascading file system until the end of the request!
    * @param string $module_name
    */
   static function deactivate($module_name) {
@@ -167,8 +169,8 @@ class module_Core {
       $module->active = false;
       $module->save();
     }
+    module::load_modules();
 
-    self::load_modules();
     graphics::deactivate_rules($module_name);
     log::success(
       "module", t("Deactivated module %module_name", array("module_name" => $module_name)));
@@ -190,11 +192,11 @@ class module_Core {
     if ($module->loaded) {
       $module->delete();
     }
+    module::load_modules();
 
     // We could delete the module vars here too, but it's nice to leave them around
     // in case the module gets reinstalled.
 
-    self::load_modules();
     log::success(
       "module", t("Uninstalled module %module_name", array("module_name" => $module_name)));
   }
@@ -203,23 +205,25 @@ class module_Core {
    * Load the active modules.  This is called at bootstrap time.
    */
   static function load_modules() {
-    // Reload module list from the config file since we'll do a refresh after calling install()
-    $core = Kohana::config_load("core");
-    $kohana_modules = $core["modules"];
-    $modules = ORM::factory("module")->find_all();
-
     self::$modules = array();
     self::$active = array();
-    foreach ($modules as $module) {
+    $kohana_modules = array();
+    foreach (ORM::factory("module")->find_all() as $module) {
       self::$modules[$module->name] = $module;
-      if ($module->active) {
-        self::$active[] = $module;
+      if (!$module->active) {
+        continue;
       }
-      $kohana_modules[] = MODPATH . $module->name;
-      // @todo: force 'gallery' to be at the end
-    }
 
-    Kohana::config_set("core.modules", $kohana_modules);
+      if ($module->name == "gallery") {
+        $gallery = $module;
+      } else {
+        self::$active[] = $module;
+        $kohana_modules[] = MODPATH . $module->name;
+      }
+    }
+    self::$active[] = $gallery;  // put gallery last in the module list to match core.modules
+    Kohana::config_set(
+      "core.modules", array_merge($kohana_modules, Kohana::config("core.modules")));
   }
 
   /**

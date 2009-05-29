@@ -22,7 +22,7 @@ class Exif_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     $photo = photo::create(
-      $root, DOCROOT . "modules/exif/tests/data/image.jpg", "$rand.jpg", $rand, $rand);
+      $root, MODPATH . "exif/tests/data/image.jpg", "$rand.jpg", $rand, $rand);
 
     $expected = array(
       array("caption" => "Camera Maker", "value" => "Pentax Corporation"),
