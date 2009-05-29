@@ -114,6 +114,7 @@ class module_Core {
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
     }
+    module::load_modules();
 
     // Now the module is installed but inactive, so don't leave it in the active path
     array_shift($kohana_modules);
@@ -144,6 +145,7 @@ class module_Core {
       $module->active = true;
       $module->save();
     }
+    module::load_modules();
 
     graphics::activate_rules($module_name);
     log::success(
@@ -167,6 +169,7 @@ class module_Core {
       $module->active = false;
       $module->save();
     }
+    module::load_modules();
 
     graphics::deactivate_rules($module_name);
     log::success(
@@ -189,6 +192,7 @@ class module_Core {
     if ($module->loaded) {
       $module->delete();
     }
+    module::load_modules();
 
     // We could delete the module vars here too, but it's nice to leave them around
     // in case the module gets reinstalled.
