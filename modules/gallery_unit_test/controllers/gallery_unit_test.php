@@ -95,10 +95,14 @@ class Gallery_Unit_Test_Controller extends Controller {
       module::$var_cache = array();
       $db->clear_cache();
 
+      // Rest the cascading class path
+      Kohana::config_set("core", Kohana::config_load("core"));
+
       // Install all modules
       // Force gallery and user to be installed first to resolve dependencies.
       gallery_installer::install(true);
       module::load_modules();
+
       module::install("user");
       module::activate("user");
       $modules = array();
