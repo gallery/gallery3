@@ -69,48 +69,53 @@ class Gallery_Unit_Test_Controller extends Controller {
       }
     }
 
-    // Find all tests, excluding sample tests that come with the unit_test module.
-    foreach (glob(MODPATH . "*/tests") as $path) {
-      if ($path != MODPATH . "unit_test/tests") {
-        $paths[] = $path;
+    try {
+      // Find all tests, excluding sample tests that come with the unit_test module.
+      foreach (glob(MODPATH . "*/tests") as $path) {
+        if ($path != MODPATH . "unit_test/tests") {
+          $paths[] = $path;
+        }
       }
-    }
-    Kohana::config_set('unit_test.paths', $paths);
+      Kohana::config_set('unit_test.paths', $paths);
 
-    // Clean out the database
-    if ($tables = $db->list_tables()) {
-      foreach ($db->list_tables() as $table) {
-        $db->query("DROP TABLE $table");
+      // Clean out the database
+      if ($tables = $db->list_tables()) {
+        foreach ($db->list_tables() as $table) {
+          $db->query("DROP TABLE $table");
+        }
       }
-    }
 
-    // Clean out the filesystem
-    @system("rm -rf test/var");
-    @mkdir('test/var/logs', 0777, true);
+      // Clean out the filesystem
+      @system("rm -rf test/var");
+      @mkdir('test/var/logs', 0777, true);
 
-    // Reset our caches
-    module::$modules = array();
-    module::$active = array();
-    module::$var_cache = array();
-    $db->clear_cache();
+      // Reset our caches
+      module::$modules = array();
+      module::$active = array();
+      module::$var_cache = array();
+      $db->clear_cache();
 
-    // Install all modules
-    // Force gallery and user to be installed first to resolve dependencies.
-    gallery_installer::install(true);
-    module::load_modules();
-    module::install("user");
-    module::activate("user");
-    $modules = array();
-    foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
-      $module_name = basename(dirname(dirname($file)));
-      if (in_array($module_name, array("gallery", "user"))) {
-        continue;
+      // Install all modules
+      // Force gallery and user to be installed first to resolve dependencies.
+      gallery_installer::install(true);
+      module::load_modules();
+      module::install("user");
+      module::activate("user");
+      $modules = array();
+      foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
+        $module_name = basename(dirname(dirname($file)));
+        if (in_array($module_name, array("gallery", "user"))) {
+          continue;
+        }
+        module::install($module_name);
+        module::activate($module_name);
       }
-      module::install($module_name);
-      module::activate($module_name);
-    }
 
-    $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
-    print new Unit_Test($modules, $filter);
+      $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
+      print new Unit_Test($modules, $filter);
+    } catch (Exception $e) {
+      print "Exception: {$e->getMessage()}\n";
+      print $e->getTraceAsString() . "\n";
+    }
   }
 }
