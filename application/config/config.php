@@ -119,7 +119,7 @@ $config['extension_prefix'] = 'MY_';
  */
 $config['modules'] = array(
   MODPATH . 'forge',
-  MODPATH . 'gallery',
+  MODPATH . 'gallery',  // gallery must be *last* in the order
 );
 
 if (TEST_MODE) {
