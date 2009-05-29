@@ -88,6 +88,10 @@ class exif_Core {
     $record = ORM::factory("exif_record")
       ->where("item_id", $item->id)
       ->find();
+    if (!$record->loaded) {
+      return array();
+    }
+
     $definitions = self::_keys();
     $keys = unserialize($record->data);
     foreach ($keys as $key => $value) {
