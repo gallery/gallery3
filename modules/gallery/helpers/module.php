@@ -204,14 +204,20 @@ class module_Core {
     self::$modules = array();
     self::$active = array();
     $kohana_modules = array();
-    foreach (ORM::factory("module")->where("name <>", "gallery")->find_all() as $module) {
+    foreach (ORM::factory("module")->find_all() as $module) {
       self::$modules[$module->name] = $module;
-      if ($module->active) {
-        self::$active[] = $module;
+      if (!$module->active) {
+        continue;
       }
-      $kohana_modules[] = MODPATH . $module->name;
-    }
 
+      if ($module->name == "gallery") {
+        $gallery = $module;
+      } else {
+        self::$active[] = $module;
+        $kohana_modules[] = MODPATH . $module->name;
+      }
+    }
+    self::$active[] = $gallery;  // put gallery last in the module list to match core.modules
     Kohana::config_set(
       "core.modules", array_merge($kohana_modules, Kohana::config("core.modules")));
   }
