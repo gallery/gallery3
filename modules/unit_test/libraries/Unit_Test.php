@@ -2,7 +2,7 @@
 /**
  * Unit_Test library.
  *
- * $Id: Unit_Test.php 4158 2009-04-07 20:40:44Z zombor $
+ * $Id: Unit_Test.php 4367 2009-05-27 21:23:57Z samsoir $
  *
  * @package    Unit_Test
  * @author     Kohana Team
@@ -66,7 +66,7 @@ class Unit_Test_Core {
 				$class = substr($path, strrpos($path, '/') + 1, -(strlen(EXT)));
 
 				// Skip hidden files
-				if (substr($class, 0, 1) === '.')
+				if ($class[0] === '.')
 					continue;
 
 				// Check for duplicate test class name

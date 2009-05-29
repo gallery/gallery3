@@ -48,7 +48,7 @@ $config['enum'] = $config['set'] = $config['varchar'];
 $config['tinytext'] = $config['mediumtext'] = $config['longtext'] = $config['text'];
 
 // BLOB
-$config['tinyblob'] = $config['mediumblob'] = $config['longblob'] = $config['clob'] = $config['bytea'] = $config['blob'];
+$config['tsvector'] = $config['tinyblob'] = $config['mediumblob'] = $config['longblob'] = $config['clob'] = $config['bytea'] = $config['blob'];
 
 // CHARACTER
 $config['character'] = $config['char'];
