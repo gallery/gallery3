@@ -2,7 +2,7 @@
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
  *
- * $Id: Kohana.php 4352 2009-05-14 20:26:53Z zombor $
+ * $Id: Kohana.php 4372 2009-05-28 17:00:34Z ixmatus $
  *
  * @package    Core
  * @author     Kohana Team
@@ -54,6 +54,8 @@ final class Kohana {
 	private static $internal_cache = array();
 	private static $write_cache;
 	private static $internal_cache_path;
+	private static $internal_cache_key;
+	private static $internal_cache_encrypt;
 
 	/**
 	 * Sets up the PHP environment. Adds error/exception handling, output
@@ -91,6 +93,17 @@ final class Kohana {
 
 		if (self::$cache_lifetime = self::config('core.internal_cache'))
 		{
+			// Are we using encryption for caches?
+			self::$internal_cache_encrypt	= self::config('core.internal_cache_encrypt');
+			
+			if(self::$internal_cache_encrypt===TRUE)
+			{
+				self::$internal_cache_key = self::config('core.internal_cache_key');
+				
+				// Be sure the key is of acceptable length for the mcrypt algorithm used
+				self::$internal_cache_key = substr(self::$internal_cache_key, 0, 24);
+			}
+			
 			// Set the directory to be used for the internal cache
 			if ( ! self::$internal_cache_path = self::config('core.internal_cache_path'))
 			{
@@ -585,8 +598,29 @@ final class Kohana {
 				// Check the file modification time
 				if ((time() - filemtime($path)) < $lifetime)
 				{
-					// Cache is valid
-					return unserialize(file_get_contents($path));
+					// Cache is valid! Now, do we need to decrypt it?
+					if(self::$internal_cache_encrypt===TRUE)
+					{
+						$data		= file_get_contents($path);
+						
+						$iv_size	= mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+						$iv			= mcrypt_create_iv($iv_size, MCRYPT_RAND);
+						
+						$decrypted_text	= mcrypt_decrypt(MCRYPT_RIJNDAEL_256, self::$internal_cache_key, $data, MCRYPT_MODE_ECB, $iv);
+						
+						$cache	= unserialize($decrypted_text);
+						
+						// If the key changed, delete the cache file
+						if(!$cache)
+							unlink($path);
+
+						// If cache is false (as above) return NULL, otherwise, return the cache
+						return ($cache ? $cache : NULL);
+					}
+					else
+					{
+						return unserialize(file_get_contents($path));
+					}
 				}
 				else
 				{
@@ -623,35 +657,50 @@ final class Kohana {
 		}
 		else
 		{
-			// Write data to cache file
-			return (bool) file_put_contents($path, serialize($data));
+			// Using encryption? Encrypt the data when we write it
+			if(self::$internal_cache_encrypt===TRUE)
+			{
+				// Encrypt and write data to cache file
+				$iv_size	= mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+				$iv			= mcrypt_create_iv($iv_size, MCRYPT_RAND);
+				
+				// Serialize and encrypt!
+				$encrypted_text	= mcrypt_encrypt(MCRYPT_RIJNDAEL_256, self::$internal_cache_key, serialize($data), MCRYPT_MODE_ECB, $iv);
+				
+				return (bool) file_put_contents($path, $encrypted_text);
+			}
+			else
+			{
+				// Write data to cache file
+				return (bool) file_put_contents($path, serialize($data));
+			}
 		}
 	}
 
 	/**
-	 * Kohana output handler.
+	 * Kohana output handler. Called during ob_clean, ob_flush, and their variants.
 	 *
 	 * @param   string  current output buffer
 	 * @return  string
 	 */
 	public static function output_buffer($output)
 	{
+		// Could be flushing, so send headers first
 		if ( ! Event::has_run('system.send_headers'))
 		{
-			// Run the send_headers event, specifically for cookies being set
+			// Run the send_headers event
 			Event::run('system.send_headers');
 		}
-
-		// Set final output
-		self::$output = $output;
-
+		
+		self::$output	= $output;
+		
 		// Set and return the final output
-		return $output;
+		return self::$output;
 	}
 
 	/**
-	 * Closes all open output buffers, either by flushing or cleaning all
-	 * open buffers, including the Kohana output buffer.
+	 * Closes all open output buffers, either by flushing or cleaning, and stores the Kohana
+	 * output buffer for display during shutdown.
 	 *
 	 * @param   boolean  disable to clear buffers, rather than flushing
 	 * @return  void
@@ -669,11 +718,8 @@ final class Kohana {
 				$close();
 			}
 
-			// This will flush the Kohana buffer, which sets self::$output
+			// Store the Kohana output buffer
 			ob_end_clean();
-
-			// Reset the buffer level
-			self::$buffer_level = ob_get_level();
 		}
 	}
 
@@ -889,9 +935,9 @@ final class Kohana {
 				}
 			}
 	
+			// Close all output buffers except for Kohana
 			while (ob_get_level() > self::$buffer_level)
 			{
-				// Close open buffers
 				ob_end_clean();
 			}
 	

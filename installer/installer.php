@@ -110,7 +110,8 @@ class installer {
     $data .= ";after_install|i:1";
     $data .= ";last_activity|i:$now";
     $data = base64_encode($data);
-    $sql = "INSERT INTO {sessions} VALUES('$session_id', $now, '$data')";
+    $sql = "INSERT INTO {sessions}(`session_id`, `last_activity`, `data`) " .
+      "VALUES('$session_id', $now, '$data')";
     $sql = self::prepend_prefix($config["prefix"], $sql);
     if (mysql_query($sql)) {
       setcookie("g3sid", $session_id, 0, "/", "", false, false);

@@ -19,7 +19,8 @@
  */
 class gallery_menu_Core {
   static function site($menu, $theme) {
-    if (file_exists(MODPATH . "gallery/controllers/scaffold.php") && user::active()->admin) {
+    $is_admin = user::active()->admin;
+    if (file_exists(MODPATH . "gallery/controllers/scaffold.php") && $is_admin) {
       $menu->append($scaffold_menu = Menu::factory("submenu")
                     ->id("scaffold")
                     ->label("Scaffold"));
@@ -36,21 +37,25 @@ class gallery_menu_Core {
 
     $item = $theme->item();
 
-    if (user::active()->admin || ($item && access::can("edit", $item))) {
+    $can_edit = access::can("edit", $item) || $is_admin;
+    $can_add = access::can("add", $item) || $is_admin;
+
+    if ($item && $can_edit || $can_add) {
       $menu->append($options_menu = Menu::factory("submenu")
                     ->id("options_menu")
                     ->label(t("Options")));
 
-      if ($item && access::can("edit", $item)) {
+      if ($can_edit) {
         $options_menu
           ->append(Menu::factory("dialog")
                    ->id("edit_item")
                    ->label($item->is_album() ? t("Edit album") : t("Edit photo"))
                    ->url(url::site("form/edit/{$item->type}s/$item->id")));
+      }
 
-        // @todo Move album options menu to the album quick edit pane
-        // @todo Create resized item quick edit pane menu
-        if ($item->is_album()) {
+      // @todo Move album options menu to the album quick edit pane
+      if ($item->is_album()) {
+        if ($can_add) {
           $options_menu
             ->append(Menu::factory("dialog")
                      ->id("add_item")
@@ -59,7 +64,11 @@ class gallery_menu_Core {
             ->append(Menu::factory("dialog")
                      ->id("add_album")
                      ->label(t("Add an album"))
-                     ->url(url::site("form/add/albums/$item->id?type=album")))
+                     ->url(url::site("form/add/albums/$item->id?type=album")));
+        }
+
+        if ($can_edit) {
+          $options_menu
             ->append(Menu::factory("dialog")
                      ->id("edit_permissions")
                      ->label(t("Edit permissions"))
@@ -68,7 +77,7 @@ class gallery_menu_Core {
       }
     }
 
-    if (user::active()->admin) {
+    if ($is_admin) {
       $menu->append($admin_menu = Menu::factory("submenu")
                     ->id("admin_menu")
                     ->label(t("Admin")));

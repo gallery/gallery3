@@ -2,7 +2,7 @@
 /**
  * Captcha driver for "alpha" style.
  *
- * $Id: Alpha.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: Alpha.php 4367 2009-05-27 21:23:57Z samsoir $
  *
  * @package    Captcha
  * @author     Kohana Team
@@ -81,7 +81,7 @@ class Captcha_Alpha_Driver extends Captcha_Driver {
 
 			// Draw "ghost" alphabetic character
 			$text_color = imagecolorallocatealpha($this->image, mt_rand($color_limit + 8, 255), mt_rand($color_limit + 8, 255), mt_rand($color_limit + 8, 255), mt_rand(70, 120));
-			$char = substr($chars, mt_rand(0, 14), 1);
+			$char = $chars[mt_rand(0, 14)];
 			imagettftext($this->image, $size * 2, mt_rand(-45, 45), ($x - (mt_rand(5, 10))), ($y + (mt_rand(5, 10))), $text_color, $font, $char);
 		}
 

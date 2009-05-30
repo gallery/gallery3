@@ -249,7 +249,7 @@ CREATE TABLE {search_records} (
   FULLTEXT KEY `data` (`data`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {search_records} VALUES (1,1,0,'  Gallery ');
+INSERT INTO {search_records} VALUES (1,1,0,'   Gallery');
 DROP TABLE IF EXISTS {sessions};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -333,6 +333,6 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','default'),(2,'gallery','active_admin_theme','admin_default'),(3,'gallery','page_size','9'),(4,'gallery','thumb_size','200'),(5,'gallery','resize_size','640'),(6,'gallery','default_locale','en_US'),(7,'gallery','image_quality','75'),(9,'gallery','blocks_dashboard_sidebar','a:4:{i:809046100;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:517357050;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:864881363;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:375523668;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}'),(14,'gallery','blocks_dashboard_center','a:4:{i:306281171;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:636407494;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:1735763319;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}i:1348141451;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(17,'gallery','version','3.0 pre-beta git'),(18,'gallery','choose_default_tookit','1'),(20,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','default'),(2,'gallery','active_admin_theme','admin_default'),(3,'gallery','page_size','9'),(4,'gallery','thumb_size','200'),(5,'gallery','resize_size','640'),(6,'gallery','default_locale','en_US'),(7,'gallery','image_quality','75'),(9,'gallery','blocks_dashboard_sidebar','a:4:{i:1021536970;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:62586177;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:1314474428;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:2072050158;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}'),(14,'gallery','blocks_dashboard_center','a:4:{i:2103644216;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:1234407127;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:1844887955;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}i:1497904257;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(17,'gallery','version','3.0 pre-beta git'),(18,'gallery','choose_default_tookit','1'),(19,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>'),(21,'comment','spam_caught','0');
