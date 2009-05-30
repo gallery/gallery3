@@ -49,7 +49,6 @@ class gallery_menu_Core {
                    ->url(url::site("form/edit/{$item->type}s/$item->id")));
 
         // @todo Move album options menu to the album quick edit pane
-        // @todo Create resized item quick edit pane menu
         if ($item->is_album()) {
           $options_menu
             ->append(Menu::factory("dialog")
