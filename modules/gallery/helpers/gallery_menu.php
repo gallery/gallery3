@@ -54,24 +54,26 @@ class gallery_menu_Core {
       }
 
       // @todo Move album options menu to the album quick edit pane
-      if ($item->is_album() && $can_add) {
-        $options_menu
-          ->append(Menu::factory("dialog")
-                   ->id("add_item")
-                   ->label(t("Add a photo"))
-                   ->url(url::site("simple_uploader/app/$item->id")))
-          ->append(Menu::factory("dialog")
-                   ->id("add_album")
-                   ->label(t("Add an album"))
-                   ->url(url::site("form/add/albums/$item->id?type=album")));
-      }
+      if ($item->is_album()) {
+        if ($can_add) {
+          $options_menu
+            ->append(Menu::factory("dialog")
+                     ->id("add_item")
+                     ->label(t("Add a photo"))
+                     ->url(url::site("simple_uploader/app/$item->id")))
+            ->append(Menu::factory("dialog")
+                     ->id("add_album")
+                     ->label(t("Add an album"))
+                     ->url(url::site("form/add/albums/$item->id?type=album")));
+        }
 
-      if ($can_edit) {
-        $options_menu
-          ->append(Menu::factory("dialog")
-                   ->id("edit_permissions")
-                   ->label(t("Edit permissions"))
-                   ->url(url::site("permissions/browse/$item->id")));
+        if ($can_edit) {
+          $options_menu
+            ->append(Menu::factory("dialog")
+                     ->id("edit_permissions")
+                     ->label(t("Edit permissions"))
+                     ->url(url::site("permissions/browse/$item->id")));
+        }
       }
     }
 
