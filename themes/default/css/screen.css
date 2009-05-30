@@ -64,21 +64,27 @@ h3 {
 /* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 a,
+.gMenu a,
 #gDialog a,
 .gButtonLink,
 .gButtonLink:hover {
-  color: #6b8cb7;
+  color: #5382BF !important;
   text-decoration: none;
   -moz-outline-style: none;
 }
 
 a:hover,
 #gDialog a:hover {
-  color: #f30;
+  color: #00377F !important;
   text-decoration: underline;
 }
 
+.gMenu a:hover {
+  text-decoration: none;
+}
+
 #gDialog .gCancel {
+  clear: none;
   float: left;
   margin: .3em 1em;
 }
@@ -198,7 +204,8 @@ textarea {
 
 input[type="submit"],
 input[type="reset"] {
-  clear: none !important;
+  display: inline;
+  clear: none;
   float: left;
 }
 
