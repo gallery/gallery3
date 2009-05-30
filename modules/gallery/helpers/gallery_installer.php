@@ -251,6 +251,9 @@ class gallery_installer {
       module::set_version("gallery", 1);
       module::set_var("gallery", "version", "3.0 pre-beta git");
       module::set_var("gallery", "choose_default_tookit", 1);
+
+      // @todo this string needs to be picked up by l10n_scanner
+      module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
     }
   }
 
