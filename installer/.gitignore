@@ -1,0 +1,2 @@
+# ignore the tmp directory if it is present
+tmp

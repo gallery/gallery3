@@ -20,15 +20,6 @@
 class gallery_menu_Core {
   static function site($menu, $theme) {
     $is_admin = user::active()->admin;
-    if (file_exists(MODPATH . "gallery/controllers/scaffold.php") && $is_admin) {
-      $menu->append($scaffold_menu = Menu::factory("submenu")
-                    ->id("scaffold")
-                    ->label("Scaffold"));
-      $scaffold_menu->append(Menu::factory("link")
-                             ->id("scaffold_home")
-                             ->label("Dashboard")
-                             ->url(url::site("scaffold")));
-    }
 
     $menu->append(Menu::factory("link")
                   ->id("home")
