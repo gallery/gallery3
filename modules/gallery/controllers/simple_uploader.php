@@ -20,7 +20,7 @@
 class Simple_Uploader_Controller extends Controller {
   public function app($id) {
     $item = ORM::factory("item", $id);
-    access::required("edit", $item);
+    access::required("add", $item);
 
     $v = new View("simple_uploader.html");
     $v->item = $item;
