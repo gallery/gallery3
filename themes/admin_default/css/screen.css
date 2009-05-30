@@ -214,7 +214,8 @@ li.gGroup {
   height: 200px;
   border: 1px solid gray;
   padding: .5em;
-  margin-right: 1em;
+  margin-right: 0 1em 1em 0;
+  overflow: auto;
 }
 
 #gAdminAdvancedSettings tr.setting:hover {
