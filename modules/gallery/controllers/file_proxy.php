@@ -41,54 +41,53 @@ class File_Proxy_Controller extends Controller {
       kohana::show_404();
     }
 
-    $file = substr($request_uri, strlen($var_uri));
+    $file_uri = substr($request_uri, strlen($var_uri));
 
     // Make sure that we don't leave the var dir
-    if (strpos($file, "..") !== false) {
+    if (strpos($file_uri, "..") !== false) {
       kohana::show_404();
     }
 
-    // We only handle var/resizes and var/albums
-    $paths = explode("/", $file);
-    $type = $paths[0];
+    list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
       kohana::show_404();
     }
 
     // If the last element is .album.jpg, pop that off since it's not a real item
-    if ($paths[count($paths)-1] == ".album.jpg") {
-      array_pop($paths);
-    }
-    if ($paths[count($paths)-1] == "") {
-      array_pop($paths);
-    }
+    $path = preg_replace("|/.album.jpg$|", "", $path);
 
-    // Find all items that match the level and name, then iterate over those to find a match.
-    // In most cases we'll get it in one.  Note that for the level calculation, we just count the
-    // size of $paths.  $paths includes the type ("thumbs", etc) but it doesn't include the root,
-    // so it's a wash.
-    $count = count($paths);
-    $compare_file = VARPATH . $file;
-    $item = null;
-    foreach (ORM::factory("item")
-             ->where("name", $paths[$count - 1])
-             ->where("level", $count)
-             ->find_all() as $match) {
-      if ($type == "albums") {
-        $match_file = $match->file_path();
-      } else if ($type == "resizes") {
-        $match_file = $match->resize_path();
-      } else {
-        $match_file = $match->thumb_path();
-      }
-      if ($match_file == $compare_file) {
-        $item = $match;
-        break;
+    // We now have the relative path to the item.  Search for it in the path cache
+    $item = ORM::factory("item")->where("relative_path_cache", $path)->find();
+    if (!$item->loaded) {
+      // We didn't turn it up.  This may mean that the path cache is out of date, so look it up
+      // the hard way.
+      //
+      // Find all items that match the level and name, then iterate over those to find a match.
+      // In most cases we'll get it in one.  Note that for the level calculation, we just count the
+      // size of $paths.
+      $paths = explode("/", $path);
+      $count = count($paths);
+      foreach (ORM::factory("item")
+               ->where("name", $paths[$count - 1])
+               ->where("level", $count + 1)
+               ->find_all() as $match) {
+        if ($match->relative_path() == $path) {
+          $item = $match;
+          break;
+        }
       }
     }
 
-    if (!$item) {
+    if (!$item->loaded) {
       kohana::show_404();
+    }
+
+    if ($type == "albums") {
+      $file = $item->file_path();
+    } else if ($type == "resizes") {
+      $file = $item->resize_path();
+    } else {
+      $file = $item->thumb_path();
     }
 
     // Make sure we have access to the item
@@ -106,14 +105,14 @@ class File_Proxy_Controller extends Controller {
       kohana::show_404();
     }
 
-    if (!file_exists($match_file)) {
+    if (!file_exists($file)) {
       kohana::show_404();
     }
 
     // Dump out the image
     header("Content-Type: $item->mime_type");
     Kohana::close_buffers(false);
-    $fd = fopen($match_file, "rb");
+    $fd = fopen($file, "rb");
     fpassthru($fd);
     fclose($fd);
   }

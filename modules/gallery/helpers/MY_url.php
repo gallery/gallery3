@@ -38,13 +38,19 @@ class url extends url_Core {
       return;
     }
 
-    $count = count(Router::$segments);
-    foreach (ORM::factory("item")
-             ->where("name", html_entity_decode(Router::$segments[$count - 1], ENT_QUOTES))
-             ->where("level", $count + 1)
-             ->find_all() as $match) {
-      if ($match->relative_path() == html_entity_decode(Router::$current_uri, ENT_QUOTES)) {
-        $item = $match;
+    $current_uri = html_entity_decode(Router::$current_uri, ENT_QUOTES);
+    $item = ORM::factory("item")->where("relative_path_cache", $current_uri)->find();
+    if (!$item->loaded) {
+      // It's possible that the relative path cache for the item we're looking for is out of date,
+      // so find it the hard way.
+      $count = count(Router::$segments);
+      foreach (ORM::factory("item")
+               ->where("name", html_entity_decode(Router::$segments[$count - 1], ENT_QUOTES))
+               ->where("level", $count + 1)
+               ->find_all() as $match) {
+        if ($match->relative_path() == $current_uri) {
+          $item = $match;
+        }
       }
     }
 
