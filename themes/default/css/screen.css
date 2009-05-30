@@ -911,7 +911,7 @@ form .gError,
 }
 
 #gServerAdd #gServerAddTree {
-  border: 1px solid #CCCCCC;
+  border: 1px solid #ccc;
   height: 25em;
   overflow: auto;
   margin-bottom: .5em;
@@ -1006,8 +1006,8 @@ form .gError,
   vertical-align: middle;
 }
 #gPermissions .gDenied {
-  background-color: #FFCCCC;
+  background-color: #fcc;
 }
 #gPermissions .gAllowed {
-  background-color: #CCFFCC;
+  background-color: #cfc;
 }
