@@ -8,7 +8,7 @@
       <? if (empty($page_title)): ?>
         <?= t("Browse Photos") ?>
         <? if (!empty($item)): ?>
-        :: <?= $item->title ?>
+        :: <?= p::clean($item->title) ?>
         <? endif ?>
       <? else: ?>
         <?= $page_title ?>

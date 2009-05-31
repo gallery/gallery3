@@ -17,8 +17,12 @@
 <? if (!empty($parents)): ?>
 <ul class="gBreadcrumbs">
   <? foreach ($parents as $parent): ?>
-  <li><a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>"><?= $parent->title ?></a></li>
+  <li>
+    <a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>">
+      <?= p::clean($parent->title) ?>
+    </a>
+  </li>
   <? endforeach ?>
-  <li class="active"><?= $item->title ?></li>
+  <li class="active"><?= p::clean($item->title) ?></li>
 </ul>
 <? endif ?>

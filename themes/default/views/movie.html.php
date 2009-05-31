@@ -32,8 +32,8 @@
   </script>
 
   <div id="gInfo">
-    <h1><?= $item->title ?></h1>
-    <div><?= $item->description ?></div>
+    <h1><?= p::clean($item->title) ?></h1>
+    <div><?= p::clean($item->description) ?></div>
   </div>
 
   <?= $theme->photo_bottom() ?>
