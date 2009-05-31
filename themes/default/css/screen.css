@@ -75,7 +75,6 @@ a,
 
 a:hover,
 #gDialog a:hover {
-  color: #00377F !important;
   text-decoration: underline;
 }
 
@@ -347,7 +346,7 @@ form p.gError {
 }
 
 form .gError,
-#gPager .gInfo {
+.gPager .gInfo {
 	background-color: #fff;
 }
 
@@ -737,20 +736,20 @@ form .gError,
 
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gPager {
+.gPager {
   clear: both;
   margin: 0;
   padding: 5px 0 !important;
   width: 100%;
 }
 
-#gPager li {
+.gPager li {
   float: left;
   margin: 0;
   width: 30%;
 }
 
-#gPager .gInfo {
+.gPager .gInfo {
   text-align: center;
   width: 40%;
 }
@@ -763,7 +762,7 @@ form .gError,
 #gHeader:after,
 .gBreadcrumbs:after,
 #gAlbumGrid:after,
-#gPager:after,
+.gPager:after,
 #gViewMenu:after {
   clear: both;
   content: ".";
@@ -843,9 +842,7 @@ form .gError,
   display: inline-block;
   margin: 0 4px 0 0;
   padding: .2em .4em;
-  position: relative;
   outline: 0;
-  zoom: 1;
 }
 
 .gButtonSet {
