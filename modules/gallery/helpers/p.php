@@ -18,16 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class p_Core {
-  static function attr($dirty_html) {
-    // return $dirty_html;
-    return htmlentities($dirty_html, ENT_QUOTES);
-    // return str_replace('"', '&quot;', $dirty_html);
-    // return str_replace('"', '&quot;', Purify::instance()->purify($dirty_html));
-  }
-
   function clean($dirty_html) {
-    // return $dirty_html;
-    return htmlentities($dirty_html, ENT_QUOTES);
-    // return Purify::instance()->purify($dirty_html);
+    return html::specialchars($dirty_html);
   }
 }
