@@ -118,7 +118,7 @@
   <div class="gBlockContent">
     <ul>
       <? foreach ($groups as $i => $group): ?>
-      <li id="group-<?= $group->id ?>" class="gGroup">
+      <li id="group-<?= $group->id ?>" class="gGroup <?= ($group->special ? "gDefaultGroup" : "") ?>" />
         <? $v = new View("admin_users_group.html"); $v->group = $group; ?>
         <?= $v ?>
       </li>
