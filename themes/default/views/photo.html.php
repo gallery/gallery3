@@ -2,7 +2,7 @@
 <div id="gItem">
   <?= $theme->photo_top() ?>
 
-  <ul id="gPager">
+  <ul class="gPager">
     <li>
       <? if ($previous_item): ?>
       <a href="<?= $previous_item->url() ?>" class="gButtonLink ui-icon-left ui-state-default ui-corner-all">

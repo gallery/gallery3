@@ -7,9 +7,9 @@ $(document).ready(function() {
     var height = $(document).height();
 
     $("body").append('<div id="gFullsizeOverlay" class="ui-dialog-overlay" ' +
-      'style="border: none; margin: 0; padding: 0; background: #000 ' +
-      'none repeat scroll 0% 0%; position: absolute; top: 0px; left: 0px; ' +
-      'width: ' + width + 'px; height: ' + height + 'px; opacity: 0.7; '  +
+      'style="border: none; margin: 0; padding: 0; background-color: #000; ' +
+      'position: absolute; top: 0px; left: 0px; ' +
+      'width: ' + width + 'px; height: ' + height + 'px; opacity: 0.7; filter: alpha(opacity=70);' +
       '-moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; ' +
       '-moz-background-inline-policy: -moz-initial; z-index: 1001;"> </div>');
 

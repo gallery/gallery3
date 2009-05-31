@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // See http://docs.kohanaphp.com/libraries/pagination ?>
-<ul id="gPager">
+<ul class="gPager">
   <? /* XXX: This message isn't easily localizable */
      $from_to_msg = t("Photos %from_number - %to_number of %total",
                       array("from_number" => $current_first_item,
