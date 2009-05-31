@@ -68,16 +68,16 @@
         <td id="user-<?= $user->id ?>" class="core-info gDraggable">
           <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                title="<?= t("Drag user onto group below to add as a new member") ?>"
-               alt="<?= $user->name ?>"
+               alt="<?= p::clean($user->name) ?>"
                width="20"
                height="20" />
-          <?= $user->name ?>
+          <?= p::clean($user->name) ?>
         </td>
         <td>
-          <?= $user->full_name ?>
+          <?= p::clean($user->full_name) ?>
         </td>
         <td>
-          <?= $user->email ?>
+          <?= p::clean($user->email) ?>
         </td>
         <td>
           <?= ($user->last_login == 0) ? "" : date("j-M-y", $user->last_login) ?>

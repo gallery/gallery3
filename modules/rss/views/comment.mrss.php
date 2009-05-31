@@ -6,9 +6,9 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
-    <title><?= $title ?></title>
+    <title><?= p::clean($title) ?></title>
     <link><?= $link ?></link>
-    <description><?= htmlspecialchars($description) ?></description>
+    <description><?= p::clean($description) ?></description>
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed_link ?>" type="application/rss+xml" />
     <fh:complete/>
@@ -22,17 +22,17 @@
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($children as $child): ?>
     <item>
-      <title><?= $child["title"]?></title>
-      <link><?= $child["item_link"] ?></link>
-      <author><?= $child["author"] ?></author>
+      <title><?= p::clean($child["title"]) ?></title>
+      <link><?= p::clean($child["item_link"]) ?></link>
+      <author><?= p::clean($child["author"]) ?></author>
       <guid isPermaLink="true"><?= $child["item_link"] ?></guid>
       <pubDate><?= $child["pub_date"] ?></pubDate>
       <content:encoded>
         <![CDATA[
-          <p><?= $child["text"] ?></p>
+          <p><?= p::clean($child["text"]) ?></p>
           <p>
             <img alt="" src="<?= $child["thumb_url"] ?>"
-                        height="<?= $child["thumb_height"] ?>" width="<?= $child["thumb_width"] ?>" />
+                 height="<?= $child["thumb_height"] ?>" width="<?= $child["thumb_width"] ?>" />
             <br />
           </p>
         ]]>

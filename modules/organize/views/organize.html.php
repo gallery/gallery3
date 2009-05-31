@@ -16,7 +16,7 @@ var CONFIRM_DELETE = "<?= t("Do you really want to delete the selected albums an
   });
 </script>
 <fieldset style="display: none">
-  <legend><?= t("Organize %name", array("name" => $item->title)) ?></legend>
+  <legend><?= t("Organize %name", array("name" => p::clean($item->title))) ?></legend>
 </fieldset>
 <div id="doc3" class="yui-t7">
   <div id="bd">

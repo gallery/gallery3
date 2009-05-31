@@ -6,9 +6,9 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
-    <title><?= htmlspecialchars($title) ?></title>
+    <title><?= p::clean($title) ?></title>
     <link><?= $link ?></link>
-    <description><?= htmlspecialchars($description) ?></description>
+    <description><?= p::clean($description) ?></description>
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed_link ?>" type="application/rss+xml" />
     <fh:complete/>
@@ -22,25 +22,25 @@
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($children as $child): ?>
     <item>
-      <title><?= htmlspecialchars($child->title) ?></title>
+      <title><?= p::clean($child->title) ?></title>
       <link><?= url::abs_site("{$child->type}s/{$child->id}") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("{$child->type}s/{$child->id}") ?></guid>
       <pubDate><?= date("D, d M Y H:i:s T", $child->created); ?></pubDate>
       <content:encoded>
         <![CDATA[
-          <span><?= $child->description ?></span>
+          <span><?= p::clean($child->description) ?></span>
           <p>
           <? if ($child->type == "photo" || $child->type == "album"): ?>
             <img alt="" src="<?= $child->resize_url(true) ?>"
-                 title="<?= htmlspecialchars($child->title) ?>"
+                 title="<?= p::clean($child->title) ?>"
                  height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
           <? else: ?>
             <a href="<?= url::abs_site("{$child->type}s/{$child->id}") ?>">
             <img alt="" src="<?= $child->thumb_url(true) ?>"
-                 title="<?= htmlspecialchars($child->title) ?>"
+                 title="<?= p::clean($child->title) ?>"
                  height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" /></a><br />
           <? endif ?>
-            <?= $child->description ?>
+            <?= p::clean($child->description) ?>
           </p>
         ]]>
       </content:encoded>
