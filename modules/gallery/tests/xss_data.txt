@@ -402,7 +402,7 @@ modules/rss/views/feed.mrss.php                              72  DIRTY $child->h
 modules/rss/views/feed.mrss.php                              73  DIRTY $child->width
 modules/rss/views/feed.mrss.php                              74  DIRTY $child->mime_type
 modules/rss/views/rss_block.html.php                         6   DIRTY $url
-modules/rss/views/rss_block.html.php                         8   DIRTY $text
+modules/rss/views/rss_block.html.php                         8   DIRTY $title
 modules/search/views/search.html.php                         11  CLEAN $q
 modules/search/views/search.html.php                         30  DIRTY $item_class
 modules/search/views/search.html.php                         31  DIRTY $item->id
