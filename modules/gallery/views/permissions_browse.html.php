@@ -35,14 +35,14 @@
     <? foreach ($parents as $parent): ?>
     <li>
       <a href="javascript:show(<?= $parent->id ?>)">
-        <?= $parent->title ?>
+        <?= p::clean($parent->title) ?>
       </a>
       <div class="form" id="edit-<?= $parent->id ?>"></div>
       <ul>
         <? endforeach ?>
         <li>
           <a href="javascript:show(<?= $item->id ?>)">
-            <?= $item->title ?>
+            <?= p::clean($item->title) ?>
           </a>
           <div class="form" id="edit-<?= $item->id ?>">
             <?= $form ?>

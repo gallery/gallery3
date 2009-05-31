@@ -2,7 +2,7 @@
 <ul>
   <? foreach ($entries as $entry): ?>
   <li class="<?= log::severity_class($entry->severity) ?>">
-    <a href="<?= url::site("user/$entry->user_id") ?>"><?= $entry->user->name ?></a>
+    <a href="<?= url::site("user/$entry->user_id") ?>"><?= p::clean($entry->user->name) ?></a>
     <?= date("Y-M-d H:i:s", $entry->timestamp) ?>
     <?= $entry->message ?>
     <?= $entry->html ?>

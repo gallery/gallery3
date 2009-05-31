@@ -20,12 +20,12 @@
     <? if ($var->module_name == "gallery" && $var->name == "_cache") continue ?>
     <tr class="setting">
       <td> <?= $var->module_name ?> </td>
-      <td> <?= $var->name ?> </td>
+      <td> <?= p::clean($var->name) ?> </td>
       <td>
-        <a href="<?= url::site("admin/advanced_settings/edit/$var->module_name/$var->name") ?>"
+        <a href="<?= url::site("admin/advanced_settings/edit/$var->module_name/" . p::clean($var->name)) ?>"
           class="gDialogLink"
-          title="<?= t("Edit %var (%module_name)", array("var" => $var->name, "module_name" => $var->module_name)) ?>">
-          <?= $var->value ?>
+          title="<?= t("Edit %var (%module_name)", array("var" => p::clean($var->name), "module_name" => $var->module_name)) ?>">
+          <?= p::clean($var->value) ?>
       </a>
       </td>
     </tr>
