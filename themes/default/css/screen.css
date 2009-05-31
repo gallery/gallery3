@@ -549,15 +549,12 @@ form .gError,
   display: inline;
 }
 
-#gHeader #gLoginMenu li:before,
-#gFooter #gCredits li:before {
-  padding: 0 .6em 0 .4em;
-  content: "|";
+#gHeader #gLoginMenu li {
+  padding-left: 1.2em;
 }
 
-#gHeader #gLoginMenu li.first:before,
-#gFooter #gCredits li.first:before {
-  content: "";
+#gFooter #gCredits li {
+  padding-right: 1.2em;
 }
 
 #gContent #gSearchResults {
