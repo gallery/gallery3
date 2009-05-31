@@ -57,9 +57,8 @@ class Password_Controller extends Controller {
       $user->hash = md5(rand());
       $user->save();
       $message = new View("reset_password.html");
-      $message->url = url::abs_site("password/do_reset?key=$user->hash");
-      $message->name = $user->full_name;
-      $message->title = t("Password Reset Request");
+      $message->confirm_url = url::abs_site("password/do_reset?key=$user->hash");
+      $message->user = $user;
 
       Sendmail::factory()
         ->to($user->email)
