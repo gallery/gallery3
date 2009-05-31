@@ -40,3 +40,7 @@ input.submit {
 .gPager .ui-icon-right {
   width: 60px;
 }
+
+#gQuickPane {
+  height: 32px !important;
+}
