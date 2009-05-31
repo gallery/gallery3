@@ -50,8 +50,7 @@ class Xss_Security_Test extends Unit_Test_Case {
   }
 
   public function find_unescaped_variables_in_views_test() {
-    // foreach (glob("*/*/views/*.php") as $view) {
-    foreach (array("modules/search/views/search.html.php") as $view) {
+    foreach (glob("*/*/views/*.php") as $view) {
       $expr = null;
       $line = null;
       $level = 0;
@@ -125,8 +124,8 @@ class Xss_Security_Test extends Unit_Test_Case {
     foreach ($found as $view => $entries) {
       foreach ($entries as $entry) {
         fwrite($fd,
-               sprintf("%-60s %-3s %-9s %s\n",
-                       $view, $entry[0], $entry[1] ? "CLEAN" : "NOT_CLEAN", $entry[2]));
+               sprintf("%-60s %-3s %-5s %s\n",
+                       $view, $entry[0], $entry[1] ? "CLEAN" : "DIRTY", $entry[2]));
       }
     }
     fclose($fd);
