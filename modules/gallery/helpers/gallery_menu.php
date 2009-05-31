@@ -28,8 +28,8 @@ class gallery_menu_Core {
 
     $item = $theme->item();
 
-    $can_edit = access::can("edit", $item) || $is_admin;
-    $can_add = access::can("add", $item) || $is_admin;
+    $can_edit = $item && access::can("edit", $item) || $is_admin;
+    $can_add = $item && (access::can("add", $item) || $is_admin);
 
     if ($item && $can_edit || $can_add) {
       $menu->append($options_menu = Menu::factory("submenu")
