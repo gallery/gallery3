@@ -64,21 +64,26 @@ h3 {
 /* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 a,
+.gMenu a,
 #gDialog a,
 .gButtonLink,
 .gButtonLink:hover {
-  color: #6b8cb7;
+  color: #5382BF !important;
   text-decoration: none;
   -moz-outline-style: none;
 }
 
 a:hover,
 #gDialog a:hover {
-  color: #f30;
   text-decoration: underline;
 }
 
+.gMenu a:hover {
+  text-decoration: none;
+}
+
 #gDialog .gCancel {
+  clear: none;
   float: left;
   margin: .3em 1em;
 }
@@ -198,7 +203,8 @@ textarea {
 
 input[type="submit"],
 input[type="reset"] {
-  clear: none !important;
+  display: inline;
+  clear: none;
   float: left;
 }
 
@@ -340,7 +346,7 @@ form p.gError {
 }
 
 form .gError,
-#gPager .gInfo {
+.gPager .gInfo {
 	background-color: #fff;
 }
 
@@ -543,15 +549,12 @@ form .gError,
   display: inline;
 }
 
-#gHeader #gLoginMenu li:before,
-#gFooter #gCredits li:before {
-  padding: 0 .6em 0 .4em;
-  content: "|";
+#gHeader #gLoginMenu li {
+  padding-left: 1.2em;
 }
 
-#gHeader #gLoginMenu li.first:before,
-#gFooter #gCredits li.first:before {
-  content: "";
+#gFooter #gCredits li {
+  padding-right: 1.2em;
 }
 
 #gContent #gSearchResults {
@@ -730,20 +733,20 @@ form .gError,
 
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gPager {
+.gPager {
   clear: both;
   margin: 0;
   padding: 5px 0 !important;
   width: 100%;
 }
 
-#gPager li {
+.gPager li {
   float: left;
   margin: 0;
   width: 30%;
 }
 
-#gPager .gInfo {
+.gPager .gInfo {
   text-align: center;
   width: 40%;
 }
@@ -756,7 +759,7 @@ form .gError,
 #gHeader:after,
 .gBreadcrumbs:after,
 #gAlbumGrid:after,
-#gPager:after,
+.gPager:after,
 #gViewMenu:after {
   clear: both;
   content: ".";
@@ -836,9 +839,7 @@ form .gError,
   display: inline-block;
   margin: 0 4px 0 0;
   padding: .2em .4em;
-  position: relative;
   outline: 0;
-  zoom: 1;
 }
 
 .gButtonSet {
@@ -904,7 +905,7 @@ form .gError,
 }
 
 #gServerAdd #gServerAddTree {
-  border: 1px solid #CCCCCC;
+  border: 1px solid #ccc;
   height: 25em;
   overflow: auto;
   margin-bottom: .5em;
@@ -999,8 +1000,8 @@ form .gError,
   vertical-align: middle;
 }
 #gPermissions .gDenied {
-  background-color: #FFCCCC;
+  background-color: #fcc;
 }
 #gPermissions .gAllowed {
-  background-color: #CCFFCC;
+  background-color: #cfc;
 }

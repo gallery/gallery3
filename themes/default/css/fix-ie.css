@@ -1,5 +1,5 @@
 /**
- * Fix display in IE
+ * Fix display in IE 6, 7
  */
 #gHeader,
 #gSiteMenu,
@@ -23,16 +23,28 @@
   margin-bottom: 0;
 }
 
-#gViewMenu a {
-  width: 52px !important;
-}
-
-#gPager li.gInfo {
-  width: 39%;
-}
-
-#gPager .txtright a.gButtonLink {
+input.submit {
   clear: none !important;
-  float: right !important;
-  width: 45% !important;
+  display: inline !important;
+}
+
+#gAddTagForm input.textbox {
+  width: 110px;
+}
+
+#gDialog a.gCancel {
+  display: inline-block !important;
+  float: none !important;
+}
+
+.gPager .txtright {
+  width: 29%;
+}
+
+.gPager .ui-icon-right {
+  width: 60px;
+}
+
+#gQuickPane {
+  height: 32px !important;
 }
