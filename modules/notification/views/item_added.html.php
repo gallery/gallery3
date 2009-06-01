@@ -1,23 +1,27 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title><?= $subject ?> </title>
+    <title><?= p::clean($subject) ?> </title>
   </head>
   <body>
-    <h2><?= $subject ?></h2>
+    <h2><?= p::clean($subject) ?></h2>
     <table>
       <tr>
         <td><?= t("Title:") ?></td>
-        <td><?= $item->title ?></td>
+        <td><?= p::clean($item->title) ?></td>
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>
-        <td><a href="<?= $item->url(array(), true) ?>"><?= $item->url(array(), true) ?></a></td>
+        <td>
+          <a href="<?= $item->url(array(), true) ?>">
+            <?= $item->url(array(), true) ?>
+          </a>
+        </td>
       </tr>
       <? if ($item->description): ?>
       <tr>
         <td><?= t("Description:") ?></td>
-        <td><?= $item->description ?></td>
+        <td><?= p::clean($item->description) ?></td>
       </tr>
       <? endif ?>
     </table>

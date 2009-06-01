@@ -50,6 +50,7 @@ class installer {
 
   static function unpack_sql($config) {
     $prefix = $config["prefix"];
+    $buf = null;
     foreach (file(DOCROOT . "installer/install.sql") as $line) {
       $buf .= $line;
       if (preg_match("/;$/", $buf)) {

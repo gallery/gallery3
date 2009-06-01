@@ -23,34 +23,34 @@
  * then a full URL will be used, eg: http://localhost/kohana/. If it only includes
  * the path, and a site_protocol is specified, the domain will be auto-detected.
  */
-$config['site_domain'] = dirname($_SERVER['SCRIPT_NAME']);
+$config["site_domain"] = dirname($_SERVER["SCRIPT_NAME"]);
 
 /**
  * Force a default protocol to be used by the site. If no site_protocol is
  * specified, then the current protocol is used, or when possible, only an
  * absolute path (with no protocol/domain) is used.
  */
-$config['site_protocol'] = '';
+$config["site_protocol"] = "";
 
 /**
  * Name of the front controller for this application. Default: index.php
  *
  * This can be removed by using URL rewriting.
  */
-$config['index_page'] = 'index.php';
+$config["index_page"] = "index.php";
 
 /**
  * Fake file extension that will be added to all generated URLs. Example: .html
  */
-$config['url_suffix'] = '';
+$config["url_suffix"] = "";
 
 /**
  * Length of time of the internal cache in seconds. 0 or FALSE means no caching.
  * The internal cache stores file paths and config entries across requests and
  * can give significant speed improvements at the expense of delayed updating.
  */
-$config['internal_cache'] = FALSE;
-$config['internal_cache_path'] = VARPATH . "tmp/";
+$config["internal_cache"] = FALSE;
+$config["internal_cache_path"] = VARPATH . "tmp/";
 
 /**
  * Enable or disable gzip output compression. This can dramatically decrease
@@ -59,20 +59,20 @@ $config['internal_cache_path'] = VARPATH . "tmp/";
  *
  * Do not enable this option if you are using output compression in php.ini!
  */
-$config['output_compression'] = FALSE;
+$config["output_compression"] = FALSE;
 
 /**
  * Enable or disable global XSS filtering of GET, POST, and SERVER data. This
  * option also accepts a string to specify a specific XSS filtering tool.
  */
-$config['global_xss_filtering'] = TRUE;
+$config["global_xss_filtering"] = TRUE;
 
 /**
  * Enable or disable hooks. Setting this option to TRUE will enable
  * all hooks. By using an array of hook filenames, you can control
  * which hooks are enabled. Setting this option to FALSE disables hooks.
  */
-$config['enable_hooks'] = TRUE;
+$config["enable_hooks"] = TRUE;
 
 /**
  * Log thresholds:
@@ -82,21 +82,21 @@ $config['enable_hooks'] = TRUE;
  *  3 - Notices
  *  4 - Debugging
  */
-$config['log_threshold'] = 3;
+$config["log_threshold"] = 3;
 
 /**
  * Message logging directory.
  */
-$config['log_directory'] = VARPATH . "logs";
-if (@!is_writable($config['log_directory'])) {
-  $config['log_threshold'] = 0;
+$config["log_directory"] = VARPATH . "logs";
+if (@!is_writable($config["log_directory"])) {
+  $config["log_threshold"] = 0;
 }
 
 /**
  * Enable or disable displaying of Kohana error pages. This will not affect
  * logging. Turning this off will disable ALL error pages.
  */
-$config['display_errors'] = TRUE;
+$config["display_errors"] = TRUE;
 
 /**
  * Enable or disable statistics in the final output. Stats are replaced via
@@ -104,33 +104,33 @@ $config['display_errors'] = TRUE;
  *
  * @see http://docs.kohanaphp.com/general/configuration
  */
-$config['render_stats'] = TRUE;
+$config["render_stats"] = TRUE;
 
 /**
  * Filename prefixed used to determine extensions. For example, an
  * extension to the Controller class would be named MY_Controller.php.
  */
-$config['extension_prefix'] = 'MY_';
+$config["extension_prefix"] = "MY_";
 
 /**
  * Additional resource paths, or "modules". Each path can either be absolute
  * or relative to the docroot. Modules can include any resource that can exist
  * in your application directory, configuration files, controllers, views, etc.
  */
-$config['modules'] = array(
-  MODPATH . 'forge',
-  MODPATH . 'gallery',  // gallery must be *last* in the order
+$config["modules"] = array(
+  MODPATH . "forge",
+  MODPATH . "gallery",  // gallery must be *last* in the order
 );
 
 if (TEST_MODE) {
-  array_splice($config['modules'], 0, 0,
-               array(MODPATH . 'gallery_unit_test',
-                     MODPATH . 'unit_test'));
+  array_splice($config["modules"], 0, 0,
+               array(MODPATH . "gallery_unit_test",
+                     MODPATH . "unit_test"));
 }
 
 /**
  * Setting the maintenance_mode to block all non administrative access.  In
  * this mode a user can attempt to logon, but will be unable to access anything.
- * The application will be have normally if an adminstrator logs on.
+ * The application will behave normally if an adminstrator logs on.
  */
 //$config["maintenance_mode"] = true;

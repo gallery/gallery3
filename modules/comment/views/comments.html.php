@@ -12,16 +12,16 @@
       <a href="#">
         <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
              class="gAvatar"
-             alt="<?= $comment->author_name() ?>"
+             alt="<?= p::clean($comment->author_name()) ?>"
              width="40"
              height="40" />
       </a>
       <?= t("on %date <a href=#>%name</a> said",
             array("date" => date("Y-M-d H:i:s", $comment->created),
-                  "name" => $comment->author_name())); ?>
+                  "name" => p::clean($comment->author_name()))); ?>
     </p>
     <div>
-      <?= $comment->text ?>
+      <?= p::clean($comment->text) ?>
     </div>
   </li>
   <? endforeach ?>

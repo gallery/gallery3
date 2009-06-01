@@ -8,7 +8,7 @@
     <ul>
       <li>
         <label for="q"><?= t("Search the gallery") ?></label>
-        <input name="q" id="q" type="text" value="<?= $q ?>"/>
+        <input name="q" id="q" type="text" value="<?= p::clean($q) ?>"/>
       </li>
       <li>
         <input type="submit" value="<?= t("Search") ?>" />
@@ -31,10 +31,10 @@
       <a href="<?= url::site("items/$item->id") ?>">
         <?= $item->thumb_tag() ?>
         <p>
-          <?= $item->title ?>
+          <?= p::clean($item->title) ?>
         </p>
         <div>
-          <?= $item->description ?>
+          <?= p::clean($item->description) ?>
         </div>
       </a>
     </li>
@@ -43,7 +43,9 @@
   <?= $theme->pager() ?>
 
   <? else: ?>
-  <p><?= t("No results found for '") . $q . "'" ?></p>
+  <p>
+    <?= t("No results found for <b>%term</b>", array("term" => p::clean($q))) ?>
+  </p>
 
   <? endif; ?>
 </div>

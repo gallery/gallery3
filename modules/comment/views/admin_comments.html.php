@@ -108,12 +108,12 @@
         <a href="#">
           <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
                class="gAvatar"
-               alt="<?= $comment->author_name() ?>"
+               alt="<?= p::clean($comment->author_name()) ?>"
                width="40"
                height="40" />
         </a>
-        <p><a href="mailto:<?= $comment->author_email() ?>"
-           title="<?= $comment->author_email() ?>"> <?= $comment->author_name() ?> </a></p>
+        <p><a href="mailto:<?= p::clean($comment->author_email()) ?>"
+              title="<?= p::clean($comment->author_email()) ?>"> <?= p::clean($comment->author_name()) ?> </a></p>
       </td>
       <td>
         <div class="right">
@@ -122,7 +122,7 @@
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
-                 alt="<?= $item->title ?>"
+                 alt="<?= p::clean($item->title) ?>"
                  <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
               />
               <? else: ?>
@@ -132,7 +132,7 @@
           </div>
         </div>
         <p><?= date("Y-M-d", $comment->created); ?></p>
-        <?= $comment->text ?>
+        <?= p::clean($comment->text) ?>
       </td>
       <td>
         <ul class="gButtonSetVertical">

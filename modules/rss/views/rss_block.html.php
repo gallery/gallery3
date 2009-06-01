@@ -1,11 +1,11 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul id="gFeeds">
-<? foreach($feeds as $text => $url): ?>
+<? foreach($feeds as $title => $url): ?>
   <li style="clear: both;">
     <span class="ui-icon-left">
     <a href="<?= $url ?>">
       <span class="ui-icon ui-icon-signal-diag"></span>
-      <?= $text ?>
+      <?= $title ?>
     </a>
     </span>
   </li>

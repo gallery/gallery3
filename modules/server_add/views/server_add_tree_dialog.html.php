@@ -5,14 +5,14 @@
 </script>
 <?= html::script("modules/server_add/js/server_add.js"); ?>
 <div id="gServerAdd">
-  <h1 style="display: none;"><?= sprintf(t("Add Photos to '%s'"), $album_title) ?></h1>
+  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::clean($album_title))) ?></h1>
 
   <p id="gDescription"><?= t("Photos will be added to album:") ?></p>
   <ul class="gBreadcrumbs">
     <? foreach ($parents as $parent): ?>
-    <li><?= $parent->title ?></li>
+    <li><?= p::clean($parent->title) ?></li>
     <? endforeach ?>
-    <li class="active"><?= $album_title ?></li>
+    <li class="active"><?= p::clean($album_title) ?></li>
   </ul>
 
   <?= form::open($action, array("method" => "post")) ?>

@@ -16,7 +16,7 @@ $("#<?= $tree_id ?>").ready(function() {
     <? if (!empty($file_info["is_dir"])): ?>
     <span class="ui-icon ui-icon-plus"></span>
     <? endif ?>
-    <label> <?= form::checkbox("checkbox[]", $file_info["path"]) . " $file" ?> </label>
+    <label> <?= form::checkbox("checkbox[]", p::clean($file_info["path"])) . " " . p::clean($file) ?> </label>
   </li>
   <? endforeach ?>
 </ul>
