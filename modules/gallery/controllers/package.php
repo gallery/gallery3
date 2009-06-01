@@ -72,6 +72,15 @@ class Package_Controller extends Controller {
   private function _dump_database() {
     // We now have a clean install with just the packages that we want.  Make sure that the
     // database is clean too.
+    $i = 1;
+    foreach (array("blocks_dashboard_sidebar", "blocks_dashboard_center") as $key) {
+      $blocks = array();
+      foreach (unserialize(module::get_var("gallery", $key)) as $rnd => $value) {
+        $blocks[++$i] = $value;
+      }
+      module::set_var("gallery", $key, serialize($blocks));
+    }
+
     $db = Database::instance();
     $db->query("TRUNCATE {sessions}");
     $db->query("TRUNCATE {logs}");
