@@ -30,5 +30,9 @@
   <? endforeach ?>
 </ul>
 <? else: ?>
-<div><p>Drag &amp; drop users from the User Admin above into this group box to add group members.</p></div>
+<div>
+  <p>
+    <?= t("Drag &amp; drop users from the User Admin above into this group box to add group members.") ?>
+  </p>
+</div>
 <? endif ?>
