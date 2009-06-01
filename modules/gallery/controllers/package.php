@@ -23,14 +23,16 @@ class Package_Controller extends Controller {
       Kohana::show_404();
     }
 
-    $this->auto_render = false;
+    try {
+      $this->_reset();                // empty and reinstall the standard modules
+      $this->_dump_database();        // Dump the database
+      $this->_dump_var();             // Dump the var directory
+    } catch (Exception $e) {
+      print $e->getTraceAsString();
+      return;
+    }
 
-    $this->_reset();                // empty and reinstall the standard modules
-
-    $this->_dump_database();        // Dump the database
-
-    $this->_dump_var();             // Dump the var directory
-    print t("Successfully wrote install.sql and init_var.php\n");
+    print "Successfully wrote install.sql and init_var.php\n";
   }
 
   private function _reset() {
@@ -57,19 +59,13 @@ class Package_Controller extends Controller {
     // numbers, keeping our install.sql file more stable.
     srand(0);
 
-    try {
-      gallery_installer::install(true);
-      module::load_modules();
+    gallery_installer::install(true);
+    module::load_modules();
 
-      foreach (array("user", "comment", "organize", "info", "rss",
-                     "search", "slideshow", "tag") as $module_name) {
-        module::install($module_name);
-        module::activate($module_name);
-      }
-    } catch (Exception $e) {
-      Kohana::log("error", $e->getTraceAsString());
-      print $e->getTrace();
-      throw $e;
+    foreach (array("user", "comment", "organize", "info", "rss",
+                   "search", "slideshow", "tag") as $module_name) {
+      module::install($module_name);
+      module::activate($module_name);
     }
   }
 
@@ -104,7 +100,9 @@ class Package_Controller extends Controller {
 
     // Post-process the sql file
     $buf = "";
-    $root_timestamp = ORM::factory("item", 1)->created;
+    $root = ORM::factory("item", 1);
+    $root_created_timestamp = $root->created;
+    $root_updated_timestamp = $root->updated;
     foreach (file($sql_file) as $line) {
       // Prefix tables
       $line = preg_replace(
@@ -112,7 +110,8 @@ class Package_Controller extends Controller {
         $line);
 
       // Normalize dates
-      $line = preg_replace("/,$root_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
+      $line = preg_replace("/,$root_created_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
+      $line = preg_replace("/,$root_updated_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
       $buf .= $line;
     }
     $fd = fopen($sql_file, "wb");
@@ -121,8 +120,6 @@ class Package_Controller extends Controller {
   }
 
   private function _dump_var() {
-    $this->auto_render = false;
-
     $objects = new RecursiveIteratorIterator(
       new RecursiveDirectoryIterator(VARPATH),
       RecursiveIteratorIterator::SELF_FIRST);
