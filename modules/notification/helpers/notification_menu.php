@@ -30,7 +30,7 @@ class notification_menu_Core {
             ->id("watch")
             ->label(t("Enable notifications for this album"))
             ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token()))
-            ->css_id($watching ? "gRemoveWatchLink" : "gAddWatchLink"));
+            ->css_id($watching ? "gRemoveNotifyLink" : "gAddNotifyLink"));
       }
     }
   }

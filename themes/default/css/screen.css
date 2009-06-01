@@ -606,12 +606,12 @@ form .gError,
   background-image: url('../images/ico-view-album.png');
 }
 
-#gViewMenu #gAddWatchLink {
-  background-image: url('../images/ico-watch-add.png');
+#gViewMenu #gAddNotifyLink {
+  background-image: url('../images/ico-notify-add.png');
 }
 
-#gViewMenu #gRemoveWatchLink {
-  background-image: url('../images/ico-watch-remove.png');
+#gViewMenu #gRemoveNotifyLink {
+  background-image: url('../images/ico-notify-remove.png');
 }
 
 #gViewMenu #gHybridLink {
