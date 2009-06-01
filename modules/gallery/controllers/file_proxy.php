@@ -38,7 +38,6 @@ class File_Proxy_Controller extends Controller {
     // var_uri: http://example.com/gallery3/var/
     $var_uri = url::file("var/");
 
-
     // Make sure that the request is for a file inside var
     $offset = strpos($request_uri, $var_uri);
     if ($offset === false) {
