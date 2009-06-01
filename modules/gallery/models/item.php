@@ -287,6 +287,10 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function relative_path() {
+    if (!$this->loaded) {
+      return;
+    }
+
     if (!isset($this->relative_path_cache)) {
       $paths = array();
       foreach (Database::instance()
