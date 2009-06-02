@@ -23,7 +23,7 @@ class gallery_Core {
    * down for maintenance" page.
    */
   static function maintenance_mode() {
-    $maintenance_mode = Kohana::config("gallery.maintenance_mode", false, false);
+    $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
 
     if (Router::$controller != "login" && !empty($maintenance_mode) && !user::active()->admin) {
       Router::$controller = "maintenance";

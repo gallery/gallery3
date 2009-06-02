@@ -27,7 +27,7 @@ if (version_compare(PHP_VERSION, "5.2.3", "<")) {
 }
 
 require(DOCROOT . "installer/installer.php");
-if (php_sapi_name() == "cli") {
+if (PHP_SAPI == "cli") {
   include("cli.php");
 } else {
   if (@$_GET["page"] == "check") {

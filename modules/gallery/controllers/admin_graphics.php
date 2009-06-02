@@ -43,6 +43,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
 
   public function choose($toolkit) {
     access::verify_csrf();
+
     if ($toolkit != module::get_var("gallery", "graphics_toolkit")) {
       module::set_var("gallery", "graphics_toolkit", $toolkit);
 

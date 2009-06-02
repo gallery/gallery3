@@ -123,6 +123,7 @@ class user_Core {
     // upconvert into a user.
     if ($user === 2) {
       $user = model_cache::get("user", 2);
+      user::login($user);
       $session->set("user", $user);
     }
 

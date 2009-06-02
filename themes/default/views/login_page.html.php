@@ -7,33 +7,11 @@
     <title>
       <?= t("Please Login to Gallery") ?>
     </title>
-    <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
-          media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
-          media="screen" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
-          media="screen,print,projection" />
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
           media="screen,print,projection" />
-    <!--[if IE]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
-          media="screen,print,projection" />
-    <![endif]-->
-    <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
-    <script>
-      $("#gLoginLink").ready(function() {
-        $("#gLoginLink").click();
-      });
-    </script>
   </head>
 
   <body>
-    <a id="gLoginLink" href="<?= url::site("login/ajax") ?>">Log in</a>
+    <?= user::get_login_form("login/auth_html") ?>
   </body>
 </html>

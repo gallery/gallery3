@@ -192,6 +192,9 @@
 #gUserAdminList {
   margin-bottom: 1em;
 }
+#gUserAdminList td {
+  vertical-align: bottom;
+}
 
 #gUserAdminList .gDraggable:hover {
   border: 1px dashed black;
@@ -211,11 +214,38 @@ li.gGroup {
   float: left;
   display: block;
   width: 200px;
-  height: 200px;
   border: 1px solid gray;
-  padding: .5em;
-  margin-right: 0 1em 1em 0;
+  padding: 0;
+  margin: 0 1em 1em 0;
+}
+li.gGroup h4 {
+  background-color: #EEEEEE;
+  border-bottom: 1px dashed #CCCCCC;
+  padding: .5em 0 .5em .5em;
+}
+li.gGroup .gButtonLink {
+  padding: 0;
+}
+li.gGroup ul, li.gGroup div {
+  height: 180px;
+  margin: 1px;
   overflow: auto;
+  padding-top: .2em;
+}
+li.gGroup div p {
+  color: gray;
+  text-align: center;
+  padding: 2em .5em 0 .5em
+}
+li.gGroup .gUser {
+  padding: .2em 0 0 .5em;
+}
+li.gGroup .gUser .gButtonLink {
+  vertical-align: middle;
+}
+
+li.gDefaultGroup h4, li.gDefaultGroup .gUser {
+  color: gray;
 }
 
 #gAdminAdvancedSettings tr.setting:hover {

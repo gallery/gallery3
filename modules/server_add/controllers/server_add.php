@@ -21,10 +21,11 @@ class Server_Add_Controller extends Controller {
   public function index($id) {
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
-    $item = ORM::factory("item", $id);
-    access::required("server_add", $item);
-    access::required("add", $item);
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
 
+    $item = ORM::factory("item", $id);
     $view = new View("server_add_tree_dialog.html");
     $view->action = url::abs_site("__ARGS__/{$id}__TASK_ID__?csrf=" . access::csrf_token());
     $view->parents = $item->parents();
@@ -41,8 +42,11 @@ class Server_Add_Controller extends Controller {
   }
 
   public function children() {
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
 
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     $path_valid = false;
     $path = $this->input->post("path");
 
@@ -66,7 +70,12 @@ class Server_Add_Controller extends Controller {
   }
 
   function start($id) {
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
     access::verify_csrf();
+
+    $item = ORM::factory("item", $id);
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     $input_files = $this->input->post("path");
     $files = array();
@@ -114,9 +123,15 @@ class Server_Add_Controller extends Controller {
   }
 
   function add_photo($task_id) {
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
     access::verify_csrf();
 
     $task = task::run($task_id);
+    if (!$task->loaded || $task->owner_id != user::active()->id) {
+      access::forbidden();
+    }
 
     if ($task->done) {
       switch ($task->state) {
@@ -146,9 +161,15 @@ class Server_Add_Controller extends Controller {
   }
 
   public function finish($id, $task_id) {
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
     access::verify_csrf();
-
     $task = ORM::factory("task", $task_id);
+
+    if (!$task->loaded || $task->owner_id != user::active()->id) {
+      access::forbidden();
+    }
 
     if (!$task->done) {
       message::warning(t("Add from server was cancelled prior to completion"));
@@ -159,9 +180,14 @@ class Server_Add_Controller extends Controller {
   }
 
   public function pause($id, $task_id) {
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
     access::verify_csrf();
-
     $task = ORM::factory("task", $task_id);
+    if (!$task->loaded || $task->owner_id != user::active()->id) {
+      access::forbidden();
+    }
 
     message::warning(t("Add from server was cancelled prior to completion"));
     batch::stop();

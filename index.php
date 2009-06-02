@@ -27,7 +27,7 @@ version_compare(PHP_VERSION, '5.2.3', '<') and exit('Gallery requires PHP 5.2.3 
 !ini_get('short_open_tag') and exit('Gallery requires short_open_tag to be on.');
 
 // Set the error reporting level.  Use E_ALL unless you have a special need.
-error_reporting(E_NONE);
+error_reporting(0);
 
 // Disabling display_errors will  effectively disable Kohana error display
 // and logging. You can turn off Kohana errors in application/config/config.php
@@ -48,11 +48,16 @@ define('SYSPATH', strtr(realpath('system') . '/', DIRECTORY_SEPARATOR, '/'));
 
 // Force a test run if we're in command line mode.
 if (PHP_SAPI == 'cli') {
-  array_splice($_SERVER['argv'], 1, 0, 'gallery_unit_test');
-  define('TEST_MODE', 1);
-  @mkdir('test/var/logs', 0777, true);
-  define('VARPATH', strtr(realpath('test/var') . '/', DIRECTORY_SEPARATOR, '/'));
-  @copy("var/database.php", VARPATH . "database.php");
+  if ($_SERVER['argv'][1] != "package") {
+    array_splice($_SERVER['argv'], 1, 0, 'gallery_unit_test');
+    define('TEST_MODE', 1);
+    @mkdir('test/var/logs', 0777, true);
+    define('VARPATH', strtr(realpath('test/var') . '/', DIRECTORY_SEPARATOR, '/'));
+    @copy("var/database.php", VARPATH . "database.php");
+  } else {
+    define('TEST_MODE', 0);
+    define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
+  }
 } else {
   define('TEST_MODE', 0);
   define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));

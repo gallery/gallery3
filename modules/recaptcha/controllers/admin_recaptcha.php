@@ -21,6 +21,8 @@ class Admin_Recaptcha_Controller extends Admin_Controller {
   public function index() {
     $form = recaptcha::get_configure_form();
     if (request::method() == "post") {
+      // @todo move the "save" part of this into a separate controller function
+      access::verify_csrf();
       $old_public_key = module::get_var("recaptcha", "public_key");
       $old_private_key = module::get_var("recaptcha", "private_key");
       if ($form->validate()) {
@@ -53,12 +55,6 @@ class Admin_Recaptcha_Controller extends Admin_Controller {
     $view->content->public_key = module::get_var("recaptcha", "public_key");
     $view->content->private_key = module::get_var("recaptcha", "private_key");
     $view->content->form = $form;
-    print $view;
-  }
-
-  public function test() {
-    $view = new View("admin_recaptcha_test.html");
-    $view->public_key = module::get_var("recaptcha", "public_key");
     print $view;
   }
 }

@@ -38,6 +38,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function edit() {
+    access::verify_csrf();
+
     $form = watermark::get_edit_form();
     if ($form->validate()) {
       module::set_var("watermark", "position", $form->edit_watermark->position->value);
@@ -61,6 +63,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function delete() {
+    access::verify_csrf();
+
     $form = watermark::get_delete_form();
     if ($form->validate()) {
       if ($name = module::get_var("watermark", "name")) {
@@ -91,6 +95,8 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function add() {
+    access::verify_csrf();
+
     $form = watermark::get_add_form();
     if ($form->validate()) {
       $file = $_POST["file"];

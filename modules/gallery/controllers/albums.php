@@ -24,11 +24,11 @@ class Albums_Controller extends Items_Controller {
    */
   public function _show($album) {
     if (!access::can("view", $album)) {
-      if ($album->id != 1) {
-        access::forbidden();
-      } else {
+      if ($album->id == 1) {
         print new Theme_View("login_page.html", "album");
         return;
+      } else {
+        access::forbidden();
       }
     }
 
@@ -77,6 +77,8 @@ class Albums_Controller extends Items_Controller {
    * @see REST_Controller::_create($resource)
    */
   public function _create($album) {
+    access::verify_csrf();
+    access::required("view", $album);
     access::required("add", $album);
 
     switch ($this->input->post("type")) {
@@ -92,6 +94,7 @@ class Albums_Controller extends Items_Controller {
   }
 
   private function _create_album($album) {
+    access::required("view", $album);
     access::required("add", $album);
 
     $form = album::get_add_form($album);
@@ -120,6 +123,7 @@ class Albums_Controller extends Items_Controller {
   }
 
   private function _create_photo($album) {
+    access::required("view", $album);
     access::required("add", $album);
 
     // If we set the content type as JSON, it triggers saving the result as
@@ -153,6 +157,8 @@ class Albums_Controller extends Items_Controller {
    * @see REST_Controller::_update($resource)
    */
   public function _update($album) {
+    access::verify_csrf();
+    access::required("view", $album);
     access::required("edit", $album);
 
     $form = album::get_edit_form($album);
@@ -202,6 +208,7 @@ class Albums_Controller extends Items_Controller {
    */
   public function _form_add($album_id) {
     $album = ORM::factory("item", $album_id);
+    access::required("view", $album);
     access::required("add", $album);
 
     switch ($this->input->get("type")) {
@@ -223,6 +230,7 @@ class Albums_Controller extends Items_Controller {
    *  @see REST_Controller::_form_add($parameters)
    */
   public function _form_edit($album) {
+    access::required("view", $album);
     access::required("edit", $album);
 
     print album::get_edit_form($album);

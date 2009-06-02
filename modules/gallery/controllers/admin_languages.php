@@ -31,6 +31,8 @@ class Admin_Languages_Controller extends Admin_Controller {
   }
 
   public function save() {
+    access::verify_csrf();
+
     $form = $this->_languages_form();
     if ($form->validate()) {
       module::set_var("gallery", "default_locale", $form->choose_language->locale->value);
@@ -41,6 +43,8 @@ class Admin_Languages_Controller extends Admin_Controller {
   }
 
   public function share() {
+    access::verify_csrf();
+
     $form = $this->_share_translations_form();
     if (!$form->validate()) {
       // Show the page with form errors
