@@ -32,8 +32,8 @@ class File_Proxy_Controller extends Controller {
     $request_uri = $this->input->server("REQUEST_URI");
     $request_uri = preg_replace("/\?.*/", "", $request_uri);
 
-    // Firefox converts ~ to %7E breaking our url comparison, below.  Convert that back here.
-    $request_uri = str_replace("%7E", "~", $request_uri);
+    // Unescape %7E ("~") and %20 (" ")
+    $request_uri = str_replace(array("%7E", "%20"), array("~", " "), $request_uri);
 
     // var_uri: http://example.com/gallery3/var/
     $var_uri = url::file("var/");
