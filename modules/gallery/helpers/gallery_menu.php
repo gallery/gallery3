@@ -30,7 +30,14 @@ class gallery_menu_Core {
 
     $can_edit = $item && access::can("edit", $item) || $is_admin;
     $can_add = $item && (access::can("add", $item) || $is_admin);
-
+    
+    if ($can_add) {
+      $menu->append(Menu::factory("dialog")
+                    ->id("add_photos_item")
+                    ->label(t("Add photos"))
+                    ->url(url::site("simple_uploader/app/$item->id")));
+    }
+    
     if ($item && $can_edit || $can_add) {
       $menu->append($options_menu = Menu::factory("submenu")
                     ->id("options_menu")
@@ -48,10 +55,6 @@ class gallery_menu_Core {
       if ($item->is_album()) {
         if ($can_add) {
           $options_menu
-            ->append(Menu::factory("dialog")
-                     ->id("add_item")
-                     ->label(t("Add a photo"))
-                     ->url(url::site("simple_uploader/app/$item->id")))
             ->append(Menu::factory("dialog")
                      ->id("add_album")
                      ->label(t("Add an album"))

@@ -40,22 +40,25 @@ class server_add_menu_Core {
         ->label(t("Add from server"))
         ->url(url::site("server_add/index/$item->id"));
       $options_menu = $menu->get("options_menu");
-      $add_item = $options_menu->get("add_item");
-      $add_menu = $options_menu->get("add_menu");
+      $add_photos_item = $menu->get("add_photos_item");
+      $add_photos_menu = $menu->get("add_photos_menu");
 
-      if ($add_item && !$add_menu) {
+      if ($add_photos_item && !$add_photos_menu) {
         // Assuming that $add_menu is unset, create add_menu and add our item
-        $options_menu->add_after(
-          "add_item",
+        $menu->add_after(
+          "home",
           Menu::factory("submenu")
-          ->id("add_menu")
-          ->label(t("Add"))
-          ->append($add_item)
+          ->id("add_photos_menu")
+          ->label(t("Add Photos"))
+          ->append(Menu::factory("dialog")
+                   ->id("add_photos_submenu_item")
+                   ->label(t("via Simple Uploader"))
+                   ->url(url::site("simple_uploader/app/$item->id")))
           ->append($server_add));
-        $options_menu->remove("add_item");
-      } else if ($add_menu) {
+        $menu->remove("add_photos_item");
+      } else if ($add_photos_menu) {
         // Append to the existing sub-menu
-        $add_menu->append($server_add);
+        $add_photos_menu->append($server_add);
       } else {
         // Else just add it in at the end of Options
         $options_menu->append($server_add);
