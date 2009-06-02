@@ -1,3 +1,4 @@
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gRecaptcha"></div>
 <script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
 <script type="text/javascript">
