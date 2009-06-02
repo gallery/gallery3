@@ -29,6 +29,8 @@ class Admin_Dashboard_Controller extends Admin_Controller {
   }
 
   public function add_block() {
+    access::verify_csrf();
+
     $form = gallery_block::get_add_block_form();
     if ($form->validate()) {
       list ($module_name, $id) = explode(":", $form->add_block->id->value);
@@ -51,6 +53,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
 
   public function remove_block($id) {
     access::verify_csrf();
+
     $blocks_center = block_manager::get_active("dashboard_center");
     $blocks_sidebar = block_manager::get_active("dashboard_sidebar");
 
@@ -73,6 +76,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
 
   public function reorder() {
     access::verify_csrf();
+
     $active_set = array();
     foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
       foreach (block_manager::get_active($location) as $id => $info) {

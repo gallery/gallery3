@@ -22,7 +22,6 @@ class server_add_installer {
     $db = Database::instance();
     $version = module::get_version("server_add");
     if ($version == 0) {
-      access::register_permission("server_add", t("Add files from server"));
       module::set_version("server_add", 1);
     }
     server_add::check_config();
@@ -30,9 +29,5 @@ class server_add_installer {
 
   static function deactivate() {
     site_status::clear("server_add_configuration");
-  }
-
-  static function uninstall() {
-    access::delete_permission("server_add");
   }
 }

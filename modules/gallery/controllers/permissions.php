@@ -20,6 +20,7 @@
 class Permissions_Controller extends Controller {
   function browse($id) {
     $item = ORM::factory("item", $id);
+    access::required("view", $item);
     access::required("edit", $item);
 
     if (!$item->is_album()) {
@@ -37,6 +38,7 @@ class Permissions_Controller extends Controller {
 
   function form($id) {
     $item = ORM::factory("item", $id);
+    access::required("view", $item);
     access::required("edit", $item);
 
     if (!$item->is_album()) {
@@ -48,9 +50,11 @@ class Permissions_Controller extends Controller {
 
   function change($command, $group_id, $perm_id, $item_id) {
     access::verify_csrf();
+
     $group = ORM::factory("group", $group_id);
     $perm = ORM::factory("permission", $perm_id);
     $item = ORM::factory("item", $item_id);
+    access::required("view", $item);
     access::required("edit", $item);
 
     if ($group->loaded && $perm->loaded && $item->loaded) {

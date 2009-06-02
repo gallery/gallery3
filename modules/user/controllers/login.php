@@ -26,6 +26,8 @@ class Login_Controller extends Controller {
   }
 
   public function auth_ajax() {
+    access::verify_csrf();
+
     list ($valid, $form) = $this->_auth("login/auth_ajax");
     if ($valid) {
       print json_encode(
@@ -42,6 +44,8 @@ class Login_Controller extends Controller {
   }
 
   public function auth_html() {
+    access::verify_csrf();
+
     list ($valid, $form) = $this->_auth("login/auth_html");
     if ($valid) {
       url::redirect("albums/1");

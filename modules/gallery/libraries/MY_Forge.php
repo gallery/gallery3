@@ -26,6 +26,7 @@ class Forge extends Forge_Core {
     parent::__construct($action, $title, $method, $attr);
     $this->hidden("csrf")->value("");
   }
+
   /**
    * Use our own template
    */

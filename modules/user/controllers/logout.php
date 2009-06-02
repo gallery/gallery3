@@ -19,6 +19,8 @@
  */
 class Logout_Controller extends Controller {
   public function index() {
+    access::verify_csrf();
+
     $user = user::active();
     user::logout();
     log::info("user", t("User %name logged out", array("name" => $user->name)),

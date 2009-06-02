@@ -3,7 +3,7 @@
 <script type="text/javascript" src="<?= url::file("lib/swfupload/swfupload.queue.js") ?>"></script>
 
 <!-- hack to set the title for the dialog -->
-<form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish") ?>">
+<form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
   <fieldset>
     <legend> <?= t("Add photos to %album_title", array("album_title" => p::clean($item->title))) ?> </legend>
   </fieldset>

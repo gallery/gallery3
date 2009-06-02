@@ -48,6 +48,7 @@ class Tags_Controller extends REST_Controller {
 
   public function _create($tag) {
     $item = ORM::factory("item", $this->input->post("item_id"));
+    access::required("view", $item);
     access::required("edit", $item);
 
     $form = tag::get_add_form($item);
@@ -73,6 +74,7 @@ class Tags_Controller extends REST_Controller {
   public function _form_add($item_id) {
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
+    access::required("edit", $item);
 
     return tag::get_add_form($item);
   }

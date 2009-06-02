@@ -22,8 +22,9 @@ class Admin_Controller extends Controller {
 
   public function __construct($theme=null) {
     if (!(user::active()->admin)) {
-      throw new Exception("@todo UNAUTHORIZED", 401);
+      access::forbidden();
     }
+
     parent::__construct();
   }
 

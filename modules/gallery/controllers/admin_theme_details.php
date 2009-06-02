@@ -26,6 +26,8 @@ class Admin_Theme_Details_Controller extends Admin_Controller {
   }
 
   public function save() {
+    access::verify_csrf();
+
     $form = theme::get_edit_form_admin();
     if ($form->validate()) {
       module::set_var("gallery", "page_size", $form->edit_theme->page_size->value);

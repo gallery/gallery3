@@ -20,7 +20,9 @@
 class L10n_Client_Controller extends Controller {
   public function save() {
     access::verify_csrf();
-    user::active()->admin or access::forbidden();
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
 
     $input = Input::instance();
     $message = $input->post("l10n-message-source");
@@ -58,6 +60,9 @@ class L10n_Client_Controller extends Controller {
 
   public function toggle_l10n_mode() {
     access::verify_csrf();
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
 
     $session = Session::instance();
     $session->set("l10n_mode",
@@ -89,6 +94,10 @@ class L10n_Client_Controller extends Controller {
   }
 
   public static function l10n_form() {
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
+
     $calls = I18n::instance()->call_log();
 
     if ($calls) {

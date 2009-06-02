@@ -19,8 +19,8 @@
  */
 class Quick_Controller extends Controller {
   public function pane($id) {
-    $item = ORM::factory("item", $id);
-    if (!$item->loaded) {
+    $item = model_cache::get("item", $id);
+    if (!access::can("view", $item) || !access::can("edit", $item)) {
       return "";
     }
 
@@ -32,10 +32,9 @@ class Quick_Controller extends Controller {
 
   public function rotate($id, $dir) {
     access::verify_csrf();
-    $item = ORM::factory("item", $id);
-    if (!$item->loaded) {
-      return "";
-    }
+    $item = model_cache::get("item", $id);
+    access::required("view", $item);
+    access::required("edit", $item);
 
     $degrees = 0;
     switch($dir) {
@@ -82,14 +81,21 @@ class Quick_Controller extends Controller {
 
   public function make_album_cover($id) {
     access::verify_csrf();
-    item::make_album_cover(ORM::factory("item", $id));
+
+    $item = model_cache::get("item", $id);
+    access::required("view", $item);
+    access::required("view", $item->parent());
+    access::required("edit", $item->parent());
+
+    item::make_album_cover($item);
 
     print json_encode(array("result" => "success"));
   }
 
   public function delete($id) {
     access::verify_csrf();
-    $item = ORM::factory("item", $id);
+    $item = model_cache::get("item", $id);
+    access::required("view", $item);
     access::required("edit", $item);
 
     if ($item->is_album()) {
@@ -110,8 +116,10 @@ class Quick_Controller extends Controller {
   }
 
   public function form_edit($id) {
-    $item = ORM::factory("item", $id);
+    $item = model_cache::get("item", $id);
+    access::required("view", $item);
     access::required("edit", $item);
+
     if ($item->is_album()) {
       $form = album::get_edit_form($item);
     } else {

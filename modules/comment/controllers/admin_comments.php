@@ -107,6 +107,7 @@ class Admin_Comments_Controller extends Admin_Controller {
 
   public function set_state($id, $state) {
     access::verify_csrf();
+
     $comment = ORM::factory("comment", $id);
     $orig = clone $comment;
     if ($comment->loaded) {
@@ -121,6 +122,7 @@ class Admin_Comments_Controller extends Admin_Controller {
 
   public function delete_all_spam() {
     access::verify_csrf();
+
     ORM::factory("comment")
       ->where("state", "spam")
       ->delete_all();

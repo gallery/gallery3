@@ -28,6 +28,7 @@ class Admin_Users_Controller extends Controller {
 
   public function add_user() {
     access::verify_csrf();
+
     $form = user::get_add_form_admin();
     $valid = $form->validate();
     $name = $form->add_user->inputs["name"]->value;
@@ -63,6 +64,7 @@ class Admin_Users_Controller extends Controller {
 
   public function delete_user($id) {
     access::verify_csrf();
+
     if ($id == user::active()->id || $id == user::guest()->id) {
       access::forbidden();
     }
@@ -97,6 +99,7 @@ class Admin_Users_Controller extends Controller {
 
   public function edit_user($id) {
     access::verify_csrf();
+
     $user = ORM::factory("user", $id);
     if (!$user->loaded) {
       kohana::show_404();
@@ -182,6 +185,7 @@ class Admin_Users_Controller extends Controller {
 
   public function add_group() {
     access::verify_csrf();
+
     $form = group::get_add_form_admin();
     $valid = $form->validate();
     if ($valid) {
@@ -210,6 +214,7 @@ class Admin_Users_Controller extends Controller {
 
   public function delete_group($id) {
     access::verify_csrf();
+
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {
       kohana::show_404();
@@ -240,6 +245,7 @@ class Admin_Users_Controller extends Controller {
 
   public function edit_group($id) {
     access::verify_csrf();
+
     $group = ORM::factory("group", $id);
     if (!$group->loaded) {
       kohana::show_404();

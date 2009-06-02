@@ -42,6 +42,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
   public function delete($id) {
     access::verify_csrf();
+
     $tag = ORM::factory("tag", $id);
     if (!$tag->loaded) {
       kohana::show_404();

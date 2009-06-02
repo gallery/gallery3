@@ -28,11 +28,9 @@ class server_add_menu_Core {
 
   static function site($menu, $theme) {
     $item = $theme->item();
-
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
-    if ($item && access::can("edit", $item) && access::can("server_add", $item) &&
-        $item->is_album() && !empty($paths)) {
+    if (user::active()->admin && $item->is_album() && !empty($paths)) {
       $options_menu = $menu->get("options_menu")
         ->append(Menu::factory("dialog")
                  ->id("server_add")
