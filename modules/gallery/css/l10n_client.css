@@ -145,7 +145,6 @@ how it wants to round. */
       margin:0em;
     }
 
-
 #l10n-client-string-editor {
   display:none;
   float:left;
@@ -168,18 +167,13 @@ how it wants to round. */
 #gL10nClientSaveForm {
   padding:0em;}
 
-  #gL10nClientSaveForm .form-textarea {
-    height:13em;
-    font-size:1em; line-height:1.25em;
-    width:95%;}
-
-  #gL10nClientSaveForm .form-submit {
-    margin-top: 0em;}
-
-
 #l10n-client form ul,
 #l10n-client form li,
 #l10n-client form input[type=submit],
 #l10n-client form input[type=text] {
   display: inline ! important ;
+}
+
+#l10n-client form .hidden {
+  display: none;
 }

@@ -195,14 +195,14 @@ modules/gallery/views/l10n_client.html.php                   29  DIRTY $string_l
 modules/gallery/views/move_browse.html.php                   4   DIRTY $source->id
 modules/gallery/views/move_browse.html.php                   39  DIRTY $tree
 modules/gallery/views/move_browse.html.php                   42  DIRTY $source->id
-modules/gallery/views/move_tree.html.php                     2   DIRTY $parent->thumb_tag(array(), 25)
+modules/gallery/views/move_tree.html.php                     2   DIRTY $parent->thumb_img(array(), 25)
 modules/gallery/views/move_tree.html.php                     4   DIRTY $parent->id
 modules/gallery/views/move_tree.html.php                     4   CLEAN $parent->title
 modules/gallery/views/move_tree.html.php                     6   DIRTY $parent->id
 modules/gallery/views/move_tree.html.php                     6   CLEAN $parent->title
 modules/gallery/views/move_tree.html.php                     8   DIRTY $parent->id
 modules/gallery/views/move_tree.html.php                     10  DIRTY $child->id
-modules/gallery/views/move_tree.html.php                     11  DIRTY $child->thumb_tag(array(), 25)
+modules/gallery/views/move_tree.html.php                     11  DIRTY $child->thumb_img(array(), 25)
 modules/gallery/views/move_tree.html.php                     13  DIRTY $child->id
 modules/gallery/views/move_tree.html.php                     13  CLEAN $child->title
 modules/gallery/views/move_tree.html.php                     15  DIRTY $child->id
@@ -335,7 +335,7 @@ modules/organize/views/organize_thumb_grid.html.php          7   DIRTY $child->i
 modules/organize/views/organize_thumb_grid.html.php          7   DIRTY $child->id
 modules/organize/views/organize_thumb_grid.html.php          8   DIRTY $child->id
 modules/organize/views/organize_thumb_grid.html.php          8   DIRTY $item_class
-modules/organize/views/organize_thumb_grid.html.php          9   DIRTY $child->thumb_tag(array("class" => "gThumbnail"), $thumbsize, true)
+modules/organize/views/organize_thumb_grid.html.php          9   DIRTY $child->thumb_img(array("class" => "gThumbnail"), $thumbsize, true)
 modules/recaptcha/views/admin_recaptcha.html.php             5   DIRTY $form->get_key_url
 modules/recaptcha/views/admin_recaptcha.html.php             8   DIRTY $form
 modules/recaptcha/views/admin_recaptcha.html.php             21  DIRTY $public_key
@@ -406,7 +406,7 @@ modules/rss/views/rss_block.html.php                         8   DIRTY $title
 modules/search/views/search.html.php                         11  CLEAN $q
 modules/search/views/search.html.php                         30  DIRTY $item_class
 modules/search/views/search.html.php                         31  DIRTY $item->id
-modules/search/views/search.html.php                         32  DIRTY $item->thumb_tag()
+modules/search/views/search.html.php                         32  DIRTY $item->thumb_img()
 modules/search/views/search.html.php                         34  CLEAN $item->title
 modules/search/views/search.html.php                         37  CLEAN $item->description
 modules/search/views/search.html.php                         43  DIRTY $theme->pager()
@@ -518,7 +518,7 @@ themes/default/views/album.html.php                          15  DIRTY $child->i
 themes/default/views/album.html.php                          15  DIRTY $item_class
 themes/default/views/album.html.php                          16  DIRTY $theme->thumb_top($child)
 themes/default/views/album.html.php                          17  DIRTY $child->url()
-themes/default/views/album.html.php                          18  DIRTY $child->thumb_tag(array("class" => "gThumbnail"))
+themes/default/views/album.html.php                          18  DIRTY $child->thumb_img(array("class" => "gThumbnail"))
 themes/default/views/album.html.php                          20  DIRTY $theme->thumb_bottom($child)
 themes/default/views/album.html.php                          21  DIRTY $child->url()
 themes/default/views/album.html.php                          21  CLEAN $child->title
@@ -607,7 +607,7 @@ themes/default/views/photo.html.php                          15  DIRTY $position
 themes/default/views/photo.html.php                          15  DIRTY $sibling_count
 themes/default/views/photo.html.php                          18  DIRTY $next_item->url()
 themes/default/views/photo.html.php                          28  DIRTY $theme->resize_top($item)
-themes/default/views/photo.html.php                          32  DIRTY $item->resize_tag(array("id" => "gPhotoId-{$item->id}", "class" => "gResize"))
+themes/default/views/photo.html.php                          32  DIRTY $item->resize_img(array("id" => "gPhotoId-{$item->id}", "class" => "gResize"))
 themes/default/views/photo.html.php                          36  DIRTY $theme->resize_bottom($item)
 themes/default/views/photo.html.php                          40  CLEAN $item->title
 themes/default/views/photo.html.php                          41  CLEAN $item->description
