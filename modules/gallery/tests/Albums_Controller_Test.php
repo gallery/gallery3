@@ -20,17 +20,21 @@
 class Albums_Controller_Test extends Unit_Test_Case {
   public function setup() {
     $this->_post = $_POST;
+    $this->_album = null;
   }
 
   public function teardown() {
     $_POST = $this->_post;
+    if ($this->_album) {
+      $this->_album->delete();
+    }
   }
 
   public function change_album_test() {
     $controller = new Albums_Controller();
     $root = ORM::factory("item", 1);
-    $album = album::create($root, "test", "test", "test");
-    $orig_name = $album->name;
+    $this->_album = album::create($root, "test", "test", "test");
+    $orig_name = $this->_album->name;
 
     $_POST["dirname"] = "test";
     $_POST["name"] = "new name";
@@ -43,31 +47,31 @@ class Albums_Controller_Test extends Unit_Test_Case {
     access::allow(group::everybody(), "edit", $root);
 
     ob_start();
-    $controller->_update($album);
+    $controller->_update($this->_album);
     $results = ob_get_contents();
     ob_end_clean();
 
     $this->assert_equal(
       json_encode(array("result" => "success", "location" => "http://./index.php/test")),
       $results);
-    $this->assert_equal("new title", $album->title);
-    $this->assert_equal("new description", $album->description);
+    $this->assert_equal("new title", $this->_album->title);
+    $this->assert_equal("new description", $this->_album->description);
 
     // We don't change the name, yet.
-    $this->assert_equal($orig_name, $album->name);
+    $this->assert_equal($orig_name, $this->_album->name);
   }
 
   public function change_album_no_csrf_fails_test() {
     $controller = new Albums_Controller();
     $root = ORM::factory("item", 1);
-    $album = album::create($root, "test", "test", "test");
+    $this->_album = album::create($root, "test", "test", "test");
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
     access::allow(group::everybody(), "edit", $root);
 
     try {
-      $controller->_update($album);
+      $controller->_update($this->_album);
       $this->assert_true(false, "This should fail");
     } catch (Exception $e) {
       // pass
