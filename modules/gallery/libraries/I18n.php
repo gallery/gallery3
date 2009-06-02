@@ -148,30 +148,37 @@ class I18n_Core {
 
   public function has_translation($message, $options=null) {
     $locale = empty($options['locale']) ? $this->_config['default_locale'] : $options['locale'];
-    $count = empty($options['count']) ? null : $options['count'];
-    $values = $options;
-    unset($values['locale']);
-    $this->log($message, $options);
 
     $entry = $this->lookup($locale, $message);
 
     if (null === $entry) {
       return false;
-    } else if (!is_array($entry)) {
+    } else if (!is_array($message)) {
       return $entry !== '';
     } else {
-      $plural_key = self::get_plural_key($locale, $count);
-      return isset($entry[$plural_key])
-        && $entry[$plural_key] !== null
-        && $entry[$plural_key] !== '';
+      if (!is_array($entry) || empty($entry)) {
+        return false;
+      }
+      // It would be better to verify that all the locale's plural forms have a non-empty
+      // translation, but this is fine for now.
+      foreach ($entry as $value) {
+        if ($value === '') {
+          return false;
+        }
+      }
+      return true;
     }
   }
 
-  public static function get_message_key($message) {
+  static function get_message_key($message) {
     $as_string = is_array($message) ? implode('|', $message) : $message;
     return md5($as_string);
   }
 
+  static function is_plural_message($message) {
+    return is_array($message);
+  }
+  
   private function interpolate($locale, $string, $values) {
     // TODO: Handle locale specific number formatting.
 

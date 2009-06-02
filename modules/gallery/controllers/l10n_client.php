@@ -24,11 +24,36 @@ class L10n_Client_Controller extends Controller {
       access::forbidden();
     }
 
-    $input = Input::instance();
-    $message = $input->post("l10n-message-source");
-    $translation = $input->post("l10n-edit-target");
-    $key = I18n::get_message_key($message);
     $locale = I18n::instance()->locale();
+    $input = Input::instance();
+    $key = $input->post("l10n-message-key");
+
+    $root_message = ORM::factory("incoming_translation")
+        ->where(array("key" => $key,
+                      "locale" => "root"))
+        ->find();
+
+    if (!$root_message->loaded) {
+      throw new Exception("@todo bad request data / illegal state");
+    }
+    $is_plural = I18n::is_plural_message(unserialize($root_message->message));
+
+    if ($is_plural) {
+      $plural_forms = l10n_client::plural_forms($locale);
+      $translation = array();
+      foreach($plural_forms as $plural_form) {
+        $value = $input->post("l10n-edit-plural-translation-$plural_form");
+        if (null === $value || !is_string($value)) {
+          throw new Exception("@todo bad request data");
+        }
+        $translation[$plural_form] = $value;
+      }
+    } else {
+      $translation = $input->post("l10n-edit-translation");
+      if (null === $translation || !is_string($translation)) {
+        throw new Exception("@todo bad request data");
+      }
+    }
 
     $entry = ORM::factory("outgoing_translation")
       ->where(array("key" => $key,
@@ -38,7 +63,7 @@ class L10n_Client_Controller extends Controller {
     if (!$entry->loaded) {
       $entry->key = $key;
       $entry->locale = $locale;
-      $entry->message = serialize($message);
+      $entry->message = $root_message->message;
       $entry->base_revision = null;
     }
 
@@ -71,19 +96,6 @@ class L10n_Client_Controller extends Controller {
     url::redirect("albums/1");
   }
 
-  private static function _l10n_client_form() {
-    $form = new Forge("l10n_client/save", "", "post", array("id" => "gL10nClientSaveForm"));
-    $group = $form->group("l10n_message");
-    $group->hidden("l10n-message-source")->value("");
-    $group->textarea("l10n-edit-target");
-    $group->submit("l10n-edit-save")->value(t("Save translation"));
-    // TODO(andy_st): Avoiding multiple submit buttons for now (hassle with jQuery form plugin).
-    // $group->submit("l10n-edit-copy")->value(t("Copy source"));
-    // $group->submit("l10n-edit-clear")->value(t("Clear"));
-
-    return $form;
-  }
-
   private static function _l10n_client_search_form() {
     $form = new Forge("l10n_client/search", "", "post", array("id" => "gL10nSearchForm"));
     $group = $form->group("l10n_search");
@@ -94,41 +106,47 @@ class L10n_Client_Controller extends Controller {
   }
 
   public static function l10n_form() {
-    if (!user::active()->admin) {
-      access::forbidden();
-    }
-
     $calls = I18n::instance()->call_log();
+    $locale = I18n::instance()->locale();
 
     if ($calls) {
+      $translations = array();
+      foreach (Database::instance()
+               ->select("key", "translation")
+               ->from("incoming_translations")
+               ->where(array("locale" => $locale))
+               ->get()
+               ->as_array() as $row) {
+        $translations[$row->key] = unserialize($row->translation);
+      }
+      // Override incoming with outgoing...
+      foreach (Database::instance()
+               ->select("key", "translation")
+               ->from("outgoing_translations")
+               ->where(array("locale" => $locale))
+               ->get()
+               ->as_array() as $row) {
+        $translations[$row->key] = unserialize($row->translation);
+      }
+
       $string_list = array();
-      foreach ($calls as $call) {
+      $cache = array();
+      foreach ($calls as $key => $call) {
         list ($message, $options) = $call;
-        // Note: Don't interpolate placeholders for the actual translation input field.
-        // TODO: Use $options to generate a preview.
-        if (is_array($message)) {
-          // TODO: Handle plural forms.
-          //   Translate each message. If it has a plural form, get
-          //   the current locale's plural rules and all plural translations.
-          continue;
-        }
-        $source = $message;
-        $translation = '';
-        $options_for_raw_translation = array();
-        if (isset($options['count'])) {
-          $options_for_raw_translation['count'] = $options['count'];
-        }
-        if (I18n::instance()->has_translation($message, $options_for_raw_translation)) {
-          $translation = I18n::instance()->translate($message, $options_for_raw_translation);
-        }
-        $string_list[] = array('source' => $source,
+        // Ensure that the message is in the DB
+        l10n_scanner::process_message($message, $cache);
+        // Note: Not interpolating placeholders for the actual translation input field.
+        // TODO: Might show a preview w/ interpolations (using $options)
+        $translation = isset($translations[$key]) ? $translations[$key] : '';
+        $string_list[] = array('source' => $message,
+                               'key' => $key,
                                'translation' => $translation);
       }
 
       $v = new View('l10n_client.html');
       $v->string_list = $string_list;
-      $v->l10n_form = self::_l10n_client_form();
       $v->l10n_search_form = self::_l10n_client_search_form();
+      $v->plural_forms = l10n_client::plural_forms($locale);
       return $v;
     }
 
