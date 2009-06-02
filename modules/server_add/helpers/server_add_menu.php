@@ -31,11 +31,35 @@ class server_add_menu_Core {
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
     if (user::active()->admin && $item->is_album() && !empty($paths)) {
-      $options_menu = $menu->get("options_menu")
-        ->append(Menu::factory("dialog")
-                 ->id("server_add")
-                 ->label(t("Add from server"))
-                 ->url(url::site("server_add/index/$item->id")));
+      // This is a little tricky.  Normally there's an "Add Photo" menu option, but we want to
+      // turn that into a dropdown if there are two different ways to add things.  Do that in a
+      // portable way for now.  If we find ourselves duplicating this pattern, we should make an
+      // API method for this.
+      $server_add = Menu::factory("dialog")
+        ->id("server_add")
+        ->label(t("Add from server"))
+        ->url(url::site("server_add/index/$item->id"));
+      $options_menu = $menu->get("options_menu");
+      $add_item = $options_menu->get("add_item");
+      $add_menu = $options_menu->get("add_menu");
+
+      if ($add_item && !$add_menu) {
+        // Assuming that $add_menu is unset, create add_menu and add our item
+        $options_menu->add_after(
+          "add_item",
+          Menu::factory("submenu")
+          ->id("add_menu")
+          ->label(t("Add"))
+          ->append($add_item)
+          ->append($server_add));
+        $options_menu->remove("add_item");
+      } else if ($add_menu) {
+        // Append to the existing sub-menu
+        $add_menu->append($server_add);
+      } else {
+        // Else just add it in at the end of Options
+        $options_menu->append($server_add);
+      }
     }
   }
 }
