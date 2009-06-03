@@ -28,16 +28,41 @@ class server_add_menu_Core {
 
   static function site($menu, $theme) {
     $item = $theme->item();
-
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
-    if ($item && access::can("edit", $item) && access::can("server_add", $item) &&
-        $item->is_album() && !empty($paths)) {
-      $options_menu = $menu->get("options_menu")
-        ->append(Menu::factory("dialog")
-                 ->id("server_add")
-                 ->label(t("Add from server"))
-                 ->url(url::site("server_add/index/$item->id")));
+    if (user::active()->admin && $item->is_album() && !empty($paths)) {
+      // This is a little tricky.  Normally there's an "Add Photo" menu option, but we want to
+      // turn that into a dropdown if there are two different ways to add things.  Do that in a
+      // portable way for now.  If we find ourselves duplicating this pattern, we should make an
+      // API method for this.
+      $server_add = Menu::factory("dialog")
+        ->id("server_add")
+        ->label(t("Add from server"))
+        ->url(url::site("server_add/index/$item->id"));
+      $options_menu = $menu->get("options_menu");
+      $add_photos_item = $menu->get("add_photos_item");
+      $add_photos_menu = $menu->get("add_photos_menu");
+
+      if ($add_photos_item && !$add_photos_menu) {
+        // Assuming that $add_menu is unset, create add_menu and add our item
+        $menu->add_after(
+          "home",
+          Menu::factory("submenu")
+          ->id("add_photos_menu")
+          ->label(t("Add Photos"))
+          ->append(Menu::factory("dialog")
+                   ->id("add_photos_submenu_item")
+                   ->label(t("via Simple Uploader"))
+                   ->url(url::site("simple_uploader/app/$item->id")))
+          ->append($server_add));
+        $menu->remove("add_photos_item");
+      } else if ($add_photos_menu) {
+        // Append to the existing sub-menu
+        $add_photos_menu->append($server_add);
+      } else {
+        // Else just add it in at the end of Options
+        $options_menu->append($server_add);
+      }
     }
   }
 }

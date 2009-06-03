@@ -149,7 +149,7 @@ class notification {
       $result = ORM::factory("pending_notification")
         ->where("email", $email)
         ->find_all();
-      if ($result->count == 1) {
+      if ($result->count() == 1) {
         $pending = $result->get();
         Sendmail::factory()
           ->to($email)

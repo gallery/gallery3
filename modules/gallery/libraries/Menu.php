@@ -171,10 +171,21 @@ class Menu_Core extends Menu_Element {
   }
 
   /**
+   * Remove an element from the menu
+   */
+  public function remove($target_id) {
+    unset($this->elements[$target_id]);
+  }
+
+  /**
    * Retrieve a Menu_Element by id
    */
   public function get($id) {
-    return $this->elements[$id];
+    if (array_key_exists($id, $this->elements)) {
+      return $this->elements[$id];
+    }
+
+    return null;
   }
 
   public function __toString() {

@@ -39,6 +39,8 @@ class Admin_g2_import_Controller extends Admin_Controller {
   }
 
   public function save() {
+    access::verify_csrf();
+
     $form = $this->_get_import_form();
     if ($form->validate()) {
       $embed_path = $form->configure_g2_import->embed_path->value;

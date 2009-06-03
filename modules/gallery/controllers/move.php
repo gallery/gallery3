@@ -20,6 +20,7 @@
 class Move_Controller extends Controller {
   public function browse($source_id) {
     $source = ORM::factory("item", $source_id);
+    access::required("view", $source);
     access::required("edit", $source);
 
     $view = new View("move_browse.html");
@@ -33,6 +34,11 @@ class Move_Controller extends Controller {
     $source = ORM::factory("item", $source_id);
     $target = ORM::factory("item", $this->input->post("target_id"));
 
+    access::required("view", $source);
+    access::required("edit", $source);
+    access::required("view", $target);
+    access::required("edit", $target);
+
     item::move($source, $target);
 
     print json_encode(
@@ -43,8 +49,11 @@ class Move_Controller extends Controller {
   public function show_sub_tree($source_id, $target_id) {
     $source = ORM::factory("item", $source_id);
     $target = ORM::factory("item", $target_id);
+    access::required("view", $source);
     access::required("edit", $source);
     access::required("view", $target);
+    // show targets even if they're not editable because they may contain children which *are*
+    // editable
 
     print $this->_get_tree_html($source, $target);
   }

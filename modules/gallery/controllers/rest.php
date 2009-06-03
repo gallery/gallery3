@@ -86,21 +86,20 @@ class REST_Controller extends Controller {
       return Kohana::show_404();
     }
 
-    if ($request_method != "get") {
-      access::verify_csrf();
-    }
-
     switch ($request_method) {
     case "get":
       return $this->_show($resource);
 
     case "put":
+      access::verify_csrf();
       return $this->_update($resource);
 
     case "delete":
+      access::verify_csrf();
       return $this->_delete($resource);
 
     case "post":
+      access::verify_csrf();
       return $this->_create($resource);
     }
   }
@@ -111,17 +110,18 @@ class REST_Controller extends Controller {
       throw new Exception("@todo ERROR_MISSING_RESOURCE_TYPE");
     }
 
-    // @todo this needs security checks
     $resource = ORM::factory($this->resource_type, $resource_id);
     if (!$resource->loaded) {
       return Kohana::show_404();
     }
 
+    // Security checks must be performed in _form_edit
     return $this->_form_edit($resource);
   }
 
   /* We're adding a new item, pass along any additional parameters. */
   public function form_add($parameters) {
+    // Security checks must be performed in _form_add
     return $this->_form_add($parameters);
   }
 

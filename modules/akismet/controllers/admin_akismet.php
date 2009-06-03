@@ -22,6 +22,9 @@ class Admin_Akismet_Controller extends Admin_Controller {
     $form = akismet::get_configure_form();
 
     if (request::method() == "post") {
+      // @todo move the "post" handler part of this code into a separate function
+      access::verify_csrf();
+
       $valid = $form->validate();
 
       if ($valid) {

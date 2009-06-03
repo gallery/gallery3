@@ -19,6 +19,8 @@
  */
 class item_Core {
   static function move($source, $target) {
+    access::required("view", $source);
+    access::required("view", $target);
     access::required("edit", $source);
     access::required("edit", $target);
 
@@ -47,6 +49,8 @@ class item_Core {
 
   static function make_album_cover($item) {
     $parent = $item->parent();
+    access::required("view", $item);
+    access::required("view", $parent);
     access::required("edit", $parent);
 
     model_cache::clear("item", $parent->album_cover_item_id);
@@ -61,6 +65,7 @@ class item_Core {
   }
 
   static function remove_album_cover($album) {
+    access::required("view", $album);
     access::required("edit", $album);
     @unlink($album->thumb_path());
 
@@ -101,5 +106,17 @@ class item_Core {
         ->count_records()) {
       $input->add_error("conflict", 1);
     }
+  }
+
+  /**
+   * Sanitize a filename into something presentable as an item title
+   * @param string $filename
+   * @return string title
+   */
+  static function convert_filename_to_title($filename) {
+    $title = strtr($filename, "_", " ");
+    $title = preg_replace("/\..*?$/", "", $title);
+    $title = preg_replace("/ +/", " ", $title);
+    return $title;
   }
 }

@@ -48,11 +48,16 @@ define('SYSPATH', strtr(realpath('system') . '/', DIRECTORY_SEPARATOR, '/'));
 
 // Force a test run if we're in command line mode.
 if (PHP_SAPI == 'cli') {
-  array_splice($_SERVER['argv'], 1, 0, 'gallery_unit_test');
-  define('TEST_MODE', 1);
-  @mkdir('test/var/logs', 0777, true);
-  define('VARPATH', strtr(realpath('test/var') . '/', DIRECTORY_SEPARATOR, '/'));
-  @copy("var/database.php", VARPATH . "database.php");
+  if ($_SERVER['argv'][1] != "package") {
+    array_splice($_SERVER['argv'], 1, 0, 'gallery_unit_test');
+    define('TEST_MODE', 1);
+    @mkdir('test/var/logs', 0777, true);
+    define('VARPATH', strtr(realpath('test/var') . '/', DIRECTORY_SEPARATOR, '/'));
+    @copy("var/database.php", VARPATH . "database.php");
+  } else {
+    define('TEST_MODE', 0);
+    define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
+  }
 } else {
   define('TEST_MODE', 0);
   define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));

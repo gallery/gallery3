@@ -12,7 +12,7 @@
                 '" title="' . t("Edit Your Profile") .
                 '" id="gUserProfileLink" class="gDialogLink">' .
                 p::clean(empty($user->full_name) ? $user->name : $user->full_name) . '</a>')) ?></li>
-  <li><a href="<?= url::site("logout?continue=" . url::current(true)) ?>"
+  <li><a href="<?= url::site("logout?csrf=$csrf&continue=" . url::current(true)) ?>"
       id="gLogoutLink"><?= t("Logout") ?></a></li>
   <? endif; ?>
 </ul>

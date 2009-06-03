@@ -90,6 +90,40 @@ jQuery.extend(Gallery, {
     this.setString = function(index, data) {
       l10n_client_data[index]['translation'] = data;
     }
+    // Display the source message
+    this.showSourceMessage = function(source, is_plural) {
+      if (is_plural) {
+        var pretty_source = '[one] - ' + source['one'] + "\n";
+        pretty_source += '[other] - ' + source['other'];
+      } else {
+        var pretty_source = source;
+      }
+      $('#l10n-client-string-editor .source-text').text(pretty_source);
+    }
+    this.isPluralMessage = function(message) {
+      return typeof(message) == 'object';
+    }
+    this.updateTranslationForm = function(translation, is_plural) {
+      $('.translationField').addClass('hidden');
+      if (is_plural) {
+        if (typeof(translation) != 'object') {
+          translation = {};
+        }
+        var num_plural_forms = plural_forms.length;
+        for (var i = 0; i < num_plural_forms; i++) {
+          var form = plural_forms[i];
+          if (translation[form] == undefined) {
+            translation[form] = '';
+          }
+          $('#l10n-edit-plural-translation-' + form)
+              .attr('value', translation[form]);
+          $('#plural-' + form).removeClass('hidden');
+        }
+      } else {
+          $('#l10n-edit-translation').attr('value', translation);
+        $('#l10n-edit-translation').removeClass('hidden');
+      }
+    }
     // Filter the the string list by a search string
     this.filter = function(search) {
       if(search == false || search == '') {
@@ -126,11 +160,12 @@ Gallery.behaviors.l10nClient = function(context) {
     $('#l10n-client-string-select li').removeClass('active');
     $(this).addClass('active');
     var index = $('#l10n-client-string-select li').index(this);
-
-    $('#l10n-client-string-editor .source-text').text(Gallery.l10nClient.getString(index, 'source'));
-    $("#gL10nClientSaveForm input[name='l10n-message-source']").val(Gallery.l10nClient.getString(index, 'source'));
-    $('#gL10nClientSaveForm #l10n-edit-target').val(Gallery.l10nClient.getString(index, 'translation'));
-
+    var source = Gallery.l10nClient.getString(index, 'source');
+    var key = Gallery.l10nClient.getString(index, 'key');
+    var is_plural = Gallery.l10nClient.isPluralMessage(source);
+    Gallery.l10nClient.showSourceMessage(source, is_plural);
+    Gallery.l10nClient.updateTranslationForm(Gallery.l10nClient.getString(index, 'translation'), is_plural);
+    $("#gL10nClientSaveForm input[name='l10n-message-key']").val(key);
     Gallery.l10nClient.selected = index;
   });
 
@@ -165,23 +200,46 @@ Gallery.behaviors.l10nClient = function(context) {
   $('#gL10nClientSaveForm').ajaxForm({
       dataType: "json",
       success: function(data) {
-        // Store string in local js
-        Gallery.l10nClient.setString(Gallery.l10nClient.selected, $('#gL10nClientSaveForm #l10n-edit-target').val());
+              var source = Gallery.l10nClient.getString(Gallery.l10nClient.selected, 'source');
+              var is_plural = Gallery.l10nClient.isPluralMessage(source);
+              var num_plural_forms = plural_forms.length;
 
-        // Mark string as translated.
-        $('#l10n-client-string-select li').eq(Gallery.l10nClient.selected).removeClass('untranslated').removeClass('active').addClass('translated').text($('#gL10nClientSaveForm #l10n-edit-target').val());
+              // Store translation in local js
+              if (is_plural) {
+                  var translation = {};
+                  for (var i = 0; i < num_plural_forms; i++) {
+                      var form = plural_forms[i];
+                      translation[form] = $('#gL10nClientSaveForm #l10n-edit-plural-translation-' + form).attr('value');
+                  }
+              } else {
+                  translation = $('#l10n-edit-translation').attr('value');
+              }
+              Gallery.l10nClient.setString(Gallery.l10nClient.selected, translation);
 
-        // Empty input fields.
-        $('#l10n-client-string-editor .source-text').html('');
-        $('#gL10nClientSaveForm #l10n-edit-target').val('');
-        $("#gL10nClientSaveForm input[name='l10n-message-source']").val('');
-      },
-      error: function(xmlhttp) {
-        // TODO: Localize this message
-        alert('An HTTP error @status occured (or empty response).'.replace('@status', xmlhttp.status));
-      }
-  });
+              // Mark message as translated.
+              $('#l10n-client-string-select li').eq(Gallery.l10nClient.selected).removeClass('untranslated').removeClass('active').addClass('translated');
 
+              // Clear the translation form fields
+              Gallery.l10nClient.showSourceMessage('', false);
+              $('#gL10nClientSaveForm #l10n-edit-translation').val('');
+        
+              for (var i = 0; i < num_plural_forms; i++) {
+                  var form = plural_forms[i];
+                  $('#gL10nClientSaveForm #l10n-edit-plural-translation-' + form).val('');
+              }
+              $("#gL10nClientSaveForm input[name='l10n-message-key']").val('');
+          },
+              error: function(xmlhttp) {
+              // TODO: Localize this message
+              alert('An HTTP error @status occured (or empty response).'.replace('@status', xmlhttp.status));
+          }
+      });
+
+  // TODO: Add copy/clear buttons (without ajax behavior)
+  /*         <input type="submit" name="l10n-edit-copy" value="<?= t("Copy source") ?>"/>
+        <input type="submit" name="l10n-edit-clear" value="<?= t("Clear") ?>"/>
+  */
+  // TODO: Handle plurals in copy button
 
   // Copy source text to translation field on button click.
   $('#gL10nClientSaveForm #l10n-edit-copy').click(function() {

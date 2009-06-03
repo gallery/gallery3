@@ -200,4 +200,80 @@ class l10n_client_Core {
     // @todo Move messages out of outgoing into incoming, using new rev?
     // @todo show which messages have been rejected / are pending?
   }
+
+  /**
+   * Plural forms.
+   */
+  static function plural_forms($locale) {
+    $parts = explode('_', $locale);
+    $language = $parts[0];
+
+    // Data from CLDR 1.6 (http://unicode.org/cldr/data/common/supplemental/plurals.xml).
+    // Docs: http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html
+    switch ($language) {
+      case 'az':
+      case 'fa':
+      case 'hu':
+      case 'ja':
+      case 'ko':
+      case 'my':
+      case 'to':
+      case 'tr':
+      case 'vi':
+      case 'yo':
+      case 'zh':
+      case 'bo':
+      case 'dz':
+      case 'id':
+      case 'jv':
+      case 'ka':
+      case 'km':
+      case 'kn':
+      case 'ms':
+      case 'th':
+        return array('other');
+
+      case 'ar':
+        return array('zero', 'one', 'two', 'few', 'many', 'other');
+
+      case 'lv':
+        return array('zero', 'one', 'other');
+
+      case 'ga':
+      case 'se':
+      case 'sma':
+      case 'smi':
+      case 'smj':
+      case 'smn':
+      case 'sms':
+        return array('one', 'two', 'other');
+
+      case 'ro':
+      case 'mo':
+      case 'lt':
+      case 'cs':
+      case 'sk':
+      case 'pl':
+        return array('one', 'few', 'other');
+
+      case 'hr':
+      case 'ru':
+      case 'sr':
+      case 'uk':
+      case 'be':
+      case 'bs':
+      case 'sh':
+      case 'mt':
+        return array('one', 'few', 'many', 'other');
+
+      case 'sl':
+        return array('one', 'two', 'few', 'other');
+
+      case 'cy':
+        return array('one', 'two', 'many', 'other');
+
+      default: // en, de, etc.
+        return array('one', 'other');
+    }
+  }
 }

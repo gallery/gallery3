@@ -38,6 +38,10 @@ class Access_Helper_Test extends Unit_Test_Case {
         $user->delete();
       }
     } catch (Exception $e) { }
+
+    // Reset some permissions that we mangle below
+    $root = ORM::factory("item", 1);
+    access::allow(group::everybody(), "view", $root);
   }
 
   public function setup() {

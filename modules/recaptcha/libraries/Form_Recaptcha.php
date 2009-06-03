@@ -39,20 +39,9 @@ class Form_Recaptcha_Core extends Form_Input {
                           "http://recaptcha.net/api/getkey</a>");
     }
 
-    $server = "http://api.recaptcha.net";
-
-    $options[] = "callback: Recaptcha.focus_response_field";
-    $options[] = "lang: \"" . Kohana::config("locale.root_locale") . "\"";
-    $options[] = "theme: \"white\"";
-    $options = implode(", ", $options);
-
-    $html = "<div id=\"gRecaptcha\" />";
-    $html .= "<script type=\"text/javascript\" ";
-    $html .= "src=\"http://api.recaptcha.net/js/recaptcha_ajax.js\"></script>";
-    $html .= "<script type=\"text/javascript\">";
-    $html .= "Recaptcha.create(\"$public_key\", \"gRecaptcha\", {" . $options . "});";
-    $html .= "</script>";
-    return $html;
+    $view = new View("form_recaptcha.html");
+    $view->public_key = $public_key;
+    return $view;
   }
 
   /**

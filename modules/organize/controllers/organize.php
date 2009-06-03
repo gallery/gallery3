@@ -24,19 +24,22 @@ class Organize_Controller extends Controller {
   function index($item_id=1) {
     $item = ORM::factory("item", $item_id);
     $root = ($item->id == 1) ? $item : ORM::factory("item", 1);
+    access::required("view", $item);
+    access::required("edit", $item);
 
     $v = new View("organize.html");
     $v->root = $root;
     $v->item = $item;
     $v->album_tree = $this->tree($item, $root);
-
     $v->button_pane = new View("organize_button_pane.html");
-
     print $v;
   }
 
   function content($item_id) {
     $item = ORM::factory("item", $item_id);
+    access::required("view", $item);
+    access::required("edit", $item);
+
     $width = $this->input->get("width");
     $height = $this->input->get("height");
     $offset = $this->input->get("offset", 0);
@@ -55,12 +58,17 @@ class Organize_Controller extends Controller {
 
   function header($item_id) {
     $item = ORM::factory("item", $item_id);
+    access::required("view", $item);
+    access::required("edit", $item);
 
     print json_encode(array("title" => $item->title,
                             "description" => empty($item->description) ? "" : $item->description));
   }
 
   function tree($item, $parent) {
+    access::required("view", $item);
+    access::required("edit", $item);
+
     $albums = ORM::factory("item")
       ->where(array("parent_id" => $parent->id, "type" => "album"))
       ->orderby(array("title" => "ASC"))
@@ -88,6 +96,8 @@ class Organize_Controller extends Controller {
     $items = $this->input->post("item");
 
     $item = ORM::factory("item", $id);
+    access::required("view", $item);
+    access::required("edit", $item);
 
     $definition = $this->_getOperationDefinition($item, $operation);
 
@@ -101,22 +111,26 @@ class Organize_Controller extends Controller {
     // @todo If there is only one item then call task_run($task->id); Maybe even change js so
     // we can call finish as well.
     batch::start();
-    print json_encode(array("result" => "started",
-                            "runningMsg" => $definition["runningMsg"],
-                            "pauseMsg" => "<div class=\"gWarning\">{$definition['pauseMsg']}</div>",
-                            "resumeMsg" => "<div class=\"gWarning\">{$definition['resumeMsg']}</div>",
-                            "task" => array("id" => $task->id,
-                                            "percent_complete" => $task->percent_complete,
-                                            "type" => $task->get("type"),
-                                            "status" => $task->status,
-                                            "state" => $task->state,
-                                            "done" => $task->done)));
+    print json_encode(
+      array("result" => "started",
+            "runningMsg" => $definition["runningMsg"],
+            "pauseMsg" => "<div class=\"gWarning\">{$definition['pauseMsg']}</div>",
+            "resumeMsg" => "<div class=\"gWarning\">{$definition['resumeMsg']}</div>",
+            "task" => array("id" => $task->id,
+                            "percent_complete" => $task->percent_complete,
+                            "type" => $task->get("type"),
+                            "status" => $task->status,
+                            "state" => $task->state,
+                            "done" => $task->done)));
   }
 
   function runTask($task_id) {
     access::verify_csrf();
 
     $task = task::run($task_id);
+    if (!$task->loaded || $task->owner_id != user::active()->id) {
+      access::forbidden();
+    }
 
     print json_encode(array("result" => $task->done ? $task->state : "in_progress",
                             "task" => array("id" => $task->id,
@@ -132,6 +146,9 @@ class Organize_Controller extends Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
+    if (!$task->loaded || $task->owner_id != user::active()->id) {
+      access::forbidden();
+    }
 
     if ($task->done) {
       $item = ORM::factory("item", (int)$task->get("target"));
@@ -178,6 +195,9 @@ class Organize_Controller extends Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
+    if (!$task->loaded || $task->owner_id != user::active()->id) {
+      access::forbidden();
+    }
 
     if (!$task->done) {
       $task->done = 1;
@@ -210,7 +230,7 @@ class Organize_Controller extends Controller {
   function editForm() {
     $event_parms = new stdClass();
     $event_parms->panes = array();
-    $event_parms->itemids = $this->input->get("item");;
+    $event_parms->itemids = $this->input->get("item");
 
     // The following code should be done more dynamically i.e. use the event mechanism
     if (count($event_parms->itemids) == 1) {
@@ -218,8 +238,12 @@ class Organize_Controller extends Controller {
         ->in("id", $event_parms->itemids[0])
         ->find();
 
-      $event_parms->panes[] = array("label" => $item->is_album() ? t("Edit Album") : t("Edit Photo"),
-                                    "content" => organize::get_general_edit_form($item));
+      access::required("view", $item);
+      access::required("edit", $item);
+
+      $event_parms->panes[] = array(
+        "label" => $item->is_album() ? t("Edit Album") : t("Edit Photo"),
+        "content" => organize::get_general_edit_form($item));
 
       if ($item->is_album()) {
         $event_parms->panes[] = array("label" => t("Sort Order"),
@@ -243,6 +267,7 @@ class Organize_Controller extends Controller {
     $item = ORM::factory("item")
       ->in("id", $itemids[0])
       ->find();
+    access::required("view", $item);
     access::required("edit", $item);
 
     $form = organize::get_general_edit_form($item);
@@ -273,6 +298,7 @@ class Organize_Controller extends Controller {
     $item = ORM::factory("item")
       ->in("id", $itemids[0])
       ->find();
+    access::required("view", $item);
     access::required("edit", $item);
 
     print organize::get_general_edit_form($item);
@@ -285,6 +311,7 @@ class Organize_Controller extends Controller {
     $item = ORM::factory("item")
       ->in("id", $itemids[0])
       ->find();
+    access::required("view", $item);
     access::required("edit", $item);
 
     $form = organize::get_sort_edit_form($item);
@@ -309,6 +336,7 @@ class Organize_Controller extends Controller {
     $item = ORM::factory("item")
       ->in("id", $itemids[0])
       ->find();
+    access::required("view", $item);
     access::required("edit", $item);
 
     print organize::get_sort_edit_form($item);
@@ -373,6 +401,13 @@ class Organize_Controller extends Controller {
   }
 
   private function _add_tag($new_tag, $itemids) {
+    // Super lame security stopgap.  This code is going to get rewritten anyway.
+    foreach ($itemids as $item_id) {
+      $item = ORM::factory("item", $item_id);
+      access::required("view", $item);
+      access::required("edit", $item);
+    }
+
     $tag = ORM::factory("tag")
       ->where("name", $new_tag)
       ->find();
@@ -391,6 +426,13 @@ class Organize_Controller extends Controller {
   }
 
   private function _delete_tag($new_tag, $itemids) {
+    // Super lame security stopgap.  This code is going to get rewritten anyway.
+    foreach ($itemids as $item_id) {
+      $item = ORM::factory("item", $item_id);
+      access::required("view", $item);
+      access::required("edit", $item);
+    }
+
     $tag = ORM::factory("tag")
       ->where("name", $new_tag)
       ->find();
@@ -407,6 +449,13 @@ class Organize_Controller extends Controller {
   }
 
   private function _update_tag($new_tag, $itemids) {
+    // Super lame security stopgap.  This code is going to get rewritten anyway.
+    foreach ($itemids as $item_id) {
+      $item = ORM::factory("item", $item_id);
+      access::required("view", $item);
+      access::required("edit", $item);
+    }
+
     $tag = ORM::factory("tag")
       ->where("name", $new_tag)
       ->find();
@@ -441,6 +490,7 @@ class Organize_Controller extends Controller {
                    "pauseMsg" => t("The move operation was paused"),
                    "resumeMsg" => t("The move operation was resumed"));
       break;
+
     case "rearrange":
       return array("description" => t("Rearrange the order of albums and photos"),
                    "name" => t("Rearrange: %name", array("name" => $item->title)),
@@ -449,6 +499,7 @@ class Organize_Controller extends Controller {
                    "pauseMsg" => t("The rearrange operation was paused"),
                    "resumeMsg" => t("The rearrange operation was resumed"));
       break;
+
     case "rotateCcw":
       return array("description" => t("Rotate the selected photos counter clockwise"),
                    "name" => t("Rotate images in %name", array("name" => $item->title)),
@@ -457,6 +508,7 @@ class Organize_Controller extends Controller {
                    "pauseMsg" => t("The rotate operation was paused"),
                    "resumeMsg" => t("The rotate operation was resumed"));
       break;
+
     case "rotateCw":
       return array("description" => t("Rotate the selected photos clockwise"),
                    "name" => t("Rotate images in %name", array("name" => $item->title)),
@@ -465,6 +517,7 @@ class Organize_Controller extends Controller {
                    "pauseMsg" => t("The rotate operation was paused"),
                    "resumeMsg" => t("The rotate operation was resumed"));
       break;
+
     case "delete":
       return array("description" => t("Delete selected photos and albums"),
                    "name" => t("Delete images in %name", array("name" => $item->title)),
@@ -473,6 +526,7 @@ class Organize_Controller extends Controller {
                    "pauseMsg" => t("The delete operation was paused"),
                    "resumeMsg" => t("The delete operation was resumed"));
       break;
+
     case "albumCover":
       return array("description" => t("Reset Album Cover"),
                    "name" => t("Reset Album cover for %name", array("name" => $item->title)),
@@ -481,6 +535,7 @@ class Organize_Controller extends Controller {
                    "pauseMsg" => t("Reset album cover was paused"),
                    "resumeMsg" => t("Reset album cover was resumed"));
       break;
+
     default:
       throw new Exception("Operation '$operation' is not implmented");
     }

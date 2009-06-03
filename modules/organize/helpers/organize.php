@@ -66,6 +66,14 @@ class organize_Core {
     $tagPane->hidden("item")->value(implode("|", $itemids));
     $item_count = count($itemids);
     $ids = implode(", ", $itemids);
+
+    // Lame stopgap security check.  This code is going to get rewritten anyway.
+    foreach ($itemids as $id) {
+      $item = ORM::factory("item", $id);
+      access::required("view", $item);
+      access::required("edit", $item);
+    }
+
     $tags = Database::instance()->query(
       "SELECT t.name, COUNT(it.item_id) as count
          FROM {items_tags} it, {tags} t

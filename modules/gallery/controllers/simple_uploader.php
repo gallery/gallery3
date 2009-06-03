@@ -20,6 +20,7 @@
 class Simple_Uploader_Controller extends Controller {
   public function app($id) {
     $item = ORM::factory("item", $id);
+    access::required("view", $item);
     access::required("add", $item);
 
     $v = new View("simple_uploader.html");
@@ -33,13 +34,13 @@ class Simple_Uploader_Controller extends Controller {
 
   public function add_photo($id) {
     $album = ORM::factory("item", $id);
+    access::required("view", $album);
     access::required("add", $album);
     access::verify_csrf();
 
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules("Filedata", "upload::valid", "upload::type[gif,jpg,png,flv,mp4]");
     if ($file_validation->validate()) {
-
       // SimpleUploader.swf does not yet call /start directly, so simulate it here for now.
       if (!batch::in_progress()) {
         batch::start();
@@ -48,7 +49,7 @@ class Simple_Uploader_Controller extends Controller {
       $temp_filename = upload::save("Filedata");
       try {
         $name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
-        $title = $this->convert_filename_to_title($name);
+        $title = item::convert_filename_to_title($name);
         $path_info = pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
             in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
@@ -69,18 +70,11 @@ class Simple_Uploader_Controller extends Controller {
     print "File Received";
   }
 
-  /**
-   * We should move this into a helper somewhere.. but where is appropriate?
-   */
-  private function convert_filename_to_title($filename) {
-    $title = strtr($filename, "_", " ");
-    $title = preg_replace("/\..*?$/", "", $title);
-    $title = preg_replace("/ +/", " ", $title);
-    return $title;
-  }
-
   public function finish() {
+    access::verify_csrf();
+
     batch::stop();
     print json_encode(array("result" => "success"));
   }
+
 }

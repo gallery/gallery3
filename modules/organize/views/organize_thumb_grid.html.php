@@ -6,7 +6,7 @@
 <? endif ?>
 <li id="thumb_<?= $child->id ?>" class="gMicroThumbContainer" ref="<?= $child->id ?>">
   <div id="gMicroThumb-<?= $child->id ?>" class="gMicroThumb <?= $item_class ?>">
-    <?= $child->thumb_tag(array("class" => "gThumbnail"), $thumbsize, true) ?>
+    <?= $child->thumb_img(array("class" => "gThumbnail"), $thumbsize, true) ?>
   </div>
 </li>
 <? endforeach ?>

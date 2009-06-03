@@ -29,7 +29,7 @@
       <? endif ?>
    <li class="gItem <?= $item_class ?>">
       <a href="<?= url::site("items/$item->id") ?>">
-        <?= $item->thumb_tag() ?>
+        <?= $item->thumb_img() ?>
         <p>
           <?= p::clean($item->title) ?>
         </p>

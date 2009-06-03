@@ -29,7 +29,7 @@ class recaptcha_installer {
     recaptcha::check_config();
   }
 
-  static function uninstall() {
+  static function deactivate() {
     site_status::clear("recaptcha_config");
   }
 }

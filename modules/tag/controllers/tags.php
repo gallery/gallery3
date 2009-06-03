@@ -27,16 +27,16 @@ class Tags_Controller extends REST_Controller {
     $offset = ($page-1) * $page_size;
 
     // Make sure that the page references a valid offset
-    if ($page < 1 || $page > ceil($children_count / $page_size)) {
+    if ($page < 1 || ($children_count && $page > ceil($children_count / $page_size))) {
       Kohana::show_404();
     }
 
     $template = new Theme_View("page.html", "tag");
-    $template->set_global('page_size', $page_size);
-    $template->set_global('page_title', t("Browse Tag::%name", array("name" => $tag->name)));
-    $template->set_global('tag', $tag);
-    $template->set_global('children', $tag->items($page_size, $offset));
-    $template->set_global('children_count', $children_count);
+    $template->set_global("page_size", $page_size);
+    $template->set_global("page_title", t("Browse Tag::%name", array("name" => $tag->name)));
+    $template->set_global("tag", $tag);
+    $template->set_global("children", $tag->items($page_size, $offset));
+    $template->set_global("children_count", $children_count);
     $template->content = new View("dynamic.html");
 
     print $template;
@@ -48,6 +48,7 @@ class Tags_Controller extends REST_Controller {
 
   public function _create($tag) {
     $item = ORM::factory("item", $this->input->post("item_id"));
+    access::required("view", $item);
     access::required("edit", $item);
 
     $form = tag::get_add_form($item);
@@ -73,6 +74,7 @@ class Tags_Controller extends REST_Controller {
   public function _form_add($item_id) {
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
+    access::required("edit", $item);
 
     return tag::get_add_form($item);
   }

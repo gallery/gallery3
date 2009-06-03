@@ -287,6 +287,10 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function relative_path() {
+    if (!$this->loaded) {
+      return;
+    }
+
     if (!isset($this->relative_path_cache)) {
       $paths = array();
       foreach (Database::instance()
@@ -391,7 +395,7 @@ class Item_Model extends ORM_MPTT {
    * @param boolean (optional) $center_vertically Center vertically (default: false)
    * @return string
    */
-  public function thumb_tag($extra_attrs=array(), $max=null, $center_vertically=false) {
+  public function thumb_img($extra_attrs=array(), $max=null, $center_vertically=false) {
     list ($height, $width) = $this->scale_dimensions($max);
     if ($center_vertically && $max) {
       // The constant is divide by 2 to calculate the file and 10 to convert to em
@@ -444,7 +448,7 @@ class Item_Model extends ORM_MPTT {
    * @param array $extra_attrs  Extra attributes to add to the img tag
    * @return string
    */
-  public function resize_tag($extra_attrs) {
+  public function resize_img($extra_attrs) {
     $attrs = array_merge($extra_attrs,
             array("src" => $this->resize_url(),
               "alt" => $this->title,
@@ -460,7 +464,7 @@ class Item_Model extends ORM_MPTT {
    * @param array $extra_attrs
    * @return string
    */
-  public function movie_tag($extra_attrs) {
+  public function movie_img($extra_attrs) {
     $attrs = array_merge($extra_attrs,
             array("id" => "player",
               "style" => "display:block;width:400px;height:300px")

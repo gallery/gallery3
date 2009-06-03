@@ -66,6 +66,8 @@ class Movies_Controller extends Items_Controller {
    * @see REST_Controller::_update($resource)
    */
   public function _update($photo) {
+    access::verify_csrf();
+    access::required("view", $photo);
     access::required("edit", $photo);
 
     $form = photo::get_edit_form($photo);
@@ -108,6 +110,7 @@ class Movies_Controller extends Items_Controller {
    *  @see REST_Controller::_form_edit($resource)
    */
   public function _form_edit($photo) {
+    access::required("view", $photo);
     access::required("edit", $photo);
     print photo::get_edit_form($photo);
   }

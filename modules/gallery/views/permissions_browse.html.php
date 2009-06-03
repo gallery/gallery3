@@ -27,7 +27,7 @@
   <? if (!$htaccess_works): ?>
   <ul id="gMessage">
     <li class="gError">
-      <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to set <a href=\"%url\"><i>AllowOverride FileInfo Options</i></a> to fix this.", array("url" => "http://httpd.apache.org/docs/2.0/mod/gallery.html#allowoverride")) ?>
+      <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to set <a %attrs><i>AllowOverride FileInfo Options</i></a> to fix this.", array("attrs" => "href=\"http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride\" target=\"_blank\"")) ?>
     </li>
   </ul>
   <? endif ?>

@@ -38,30 +38,55 @@ class organize_task_Core {
         switch ($taskType) {
         case "move":
           $source = ORM::factory("item", $id);
+          access::required("view", $source);
+          access::required("view", $target);
+          access::required("edit", $source);
+          access::required("edit", $target);
+
           item::move($source, $target);
           break;
+
         case "rearrange":
+          $item = ORM::factory("item", $id);
+          access::required("view", $item);
+          access::required("edit", $item);
+
           Database::instance()
             ->query("Update {items} set weight = {$context["position"]} where id=$id;");
           break;
+
         case "rotateCcw":
         case "rotateCw":
           $item = ORM::factory("item", $id);
+          access::required("view", $item);
+          access::required("edit", $item);
+
           if ($item->is_photo()) {
             $context["post_process"]["reload"][] =
               self::_do_rotation($item, $taskType == "rotateCcw" ? -90 : 90);
           }
           break;
+
         case "albumCover":
-          item::make_album_cover(ORM::factory("item", $id));
+          $item = ORM::factory("item", $id);
+          access::required("view", $item);
+          access::required("view", $item->parent());
+          access::required("edit", $item->parent());
+
+          item::make_album_cover($item);
           break;
+
         case "delete":
           $item = ORM::factory("item", $id);
+          access::required("view", $item);
+          access::required("edit", $item);
+
           $item->delete();
           $context["post_process"]["remove"][] = array("id" => $id);
           break;
+
         default:
-          throw new Exception("Task '$taskType' is not implmented");
+          throw new Exception("Task '$taskType' is not implemented");
         }
       }
       $context["position"] += $stop;

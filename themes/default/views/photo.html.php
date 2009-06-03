@@ -29,7 +29,7 @@
     <? if (access::can("view_full", $item)): ?>
     <a href="#" class="gFullSizeLink" title="<?= t("View full size") ?>">
       <? endif ?>
-      <?= $item->resize_tag(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?>
+      <?= $item->resize_img(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?>
       <? if (access::can("view_full", $item)): ?>
     </a>
     <? endif ?>

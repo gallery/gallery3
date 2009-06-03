@@ -15,7 +15,7 @@
   <li id="gItemId-<?= $child->id ?>" class="gItem <?= $item_class ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
-      <?= $child->thumb_tag(array("class" => "gThumbnail")) ?>
+      <?= $child->thumb_img(array("class" => "gThumbnail")) ?>
     </a>
     <?= $theme->thumb_bottom($child) ?>
     <h2><span></span><a href="<?= $child->url() ?>"><?= p::clean($child->title) ?></a></h2>

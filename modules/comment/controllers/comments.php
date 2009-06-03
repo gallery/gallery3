@@ -134,6 +134,7 @@ class Comments_Controller extends REST_Controller {
    */
   public function _update($comment) {
     $item = ORM::factory("item", $comment->item_id);
+    access::required("view", $item);
     access::required("edit", $item);
 
     $form = comment::get_edit_form($comment);
@@ -161,6 +162,7 @@ class Comments_Controller extends REST_Controller {
    */
   public function _delete($comment) {
     $item = ORM::factory("item", $comment->item_id);
+    access::required("view", $item);
     access::required("edit", $item);
 
     $comment->delete();
@@ -183,6 +185,9 @@ class Comments_Controller extends REST_Controller {
    *  @see REST_Controller::form_edit($resource)
    */
   public function _form_edit($comment) {
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
     print comment::get_edit_form($comment);
   }
 }
