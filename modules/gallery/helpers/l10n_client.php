@@ -173,7 +173,7 @@ class l10n_client_Core {
       $request->{$key}->translations->{$row->locale} = json_encode(unserialize($row->translation));
     }
 
-    // @todo reduce memory consumpotion, e.g. free $request
+    // @todo reduce memory consumption, e.g. free $request
     $request_data = json_encode($request);
     $url = self::_server_url() . "?q=translations/submit";
     $signature = self::_sign($request_data);
