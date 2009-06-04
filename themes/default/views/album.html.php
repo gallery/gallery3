@@ -7,6 +7,7 @@
 </div>
 
 <ul id="gAlbumGrid">
+<? if (count($children)): ?>
   <? foreach ($children as $i => $child): ?>
     <? $item_class = "gPhoto"; ?>
     <? if ($child->is_album()): ?>
@@ -24,6 +25,14 @@
     </ul>
   </li>
   <? endforeach ?>
+<? else: ?>
+  <? if ($user->admin || access::can("add", $item)): ?>
+  <? $addurl = url::file("index.php/simple_uploader/app/$item->id") ?>
+  <li><?= t("There aren't any photos here yet! <a href=\"$addurl\" class=\"gDialogLink\">Add some</a>.") ?></li>
+  <? else: ?>
+  <li><?= t("There aren't any photos here yet!") ?></li>
+  <? endif; ?>
+<? endif; ?>
 </ul>
 <?= $theme->album_bottom() ?>
 
