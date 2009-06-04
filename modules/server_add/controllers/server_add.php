@@ -33,6 +33,7 @@ class Server_Add_Controller extends Controller {
 
     $tree = new View("server_add_tree.html");
     $tree->data = array();
+    $tree->checked = false;
     $tree->tree_id = "tree_$id";
     foreach (array_keys($paths) as $path) {
       $tree->data[$path] = array("path" => $path, "is_dir" => true);
@@ -49,6 +50,7 @@ class Server_Add_Controller extends Controller {
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     $path_valid = false;
     $path = $this->input->post("path");
+    $checked = $this->input->post("checked") == "true";
 
     foreach (array_keys($paths) as $valid_path) {
       if ($path_valid = strpos($path, $valid_path) === 0) {
@@ -65,6 +67,7 @@ class Server_Add_Controller extends Controller {
 
     $tree = new View("server_add_tree.html");
     $tree->data = $this->_get_children($path);
+    $tree->checked = $checked;
     $tree->tree_id = "tree_" . md5($path);
     print $tree;
   }
@@ -78,18 +81,22 @@ class Server_Add_Controller extends Controller {
     $item = ORM::factory("item", $id);
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     $input_files = $this->input->post("path");
+    $collapsed = $this->input->post("collapsed");
     $files = array();
     $total_count = 0;
     foreach (array_keys($paths) as $valid_path) {
       $path_length = strlen($valid_path);
       foreach ($input_files as $key => $path) {
-        if ($valid_path != $path && strpos($path, $valid_path) === 0) {
+        if (!empty($path) && $valid_path != $path && strpos($path, $valid_path) === 0) {
           $relative_path = substr(dirname($path), $path_length);
           $name = basename($path);
           $files[$valid_path][] = array("path" => $relative_path,
                                         "parent_id" => $id, "name" => basename($path),
                                         "type" => is_dir($path) ? "album" : "file");
           $total_count++;
+          if ($collapsed[$key] === "true") {
+            $total_count += $this->_select_children($id, $valid_path, $path, $files[$valid_path]);
+          }
           unset($input_files[$key]);
         }
       }
@@ -129,6 +136,7 @@ class Server_Add_Controller extends Controller {
     access::verify_csrf();
 
     $task = task::run($task_id);
+    // @todo the task is already run... its a little late to check the access
     if (!$task->loaded || $task->owner_id != user::active()->id) {
       access::forbidden();
     }
@@ -192,6 +200,41 @@ class Server_Add_Controller extends Controller {
     message::warning(t("Add from server was cancelled prior to completion"));
     batch::stop();
     print json_encode(array("result" => "success"));
+  }
+
+  private function _select_children($id, $valid_path, $path, &$files) {
+    $count = 0;
+    $children = new RecursiveIteratorIterator(
+      new RecursiveDirectoryIterator($path),
+      RecursiveIteratorIterator::SELF_FIRST);
+
+    $path_length = strlen($valid_path);
+    foreach($children as $name => $file){
+      if ($file->isLink()) {
+        continue;
+      }
+      $filename = $file->getFilename();
+      if ($filename[0] != ".") {
+        if ($file->isDir()) {
+          $relative_path = substr(dirname($file->getPathname()), $path_length);
+          $files[] = array("path" => $relative_path,
+                           "parent_id" => $id, "name" => $filename, "type" => "album");
+          $count++;
+        } else {
+          $extension = strtolower(substr(strrchr($filename, '.'), 1));
+          if ($file->isReadable() &&
+              in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+            $relative_path = substr(dirname($file->getPathname()), $path_length);
+            $files[] = array("path" => $relative_path,
+                             "parent_id" => $id, "name" => $filename, "type" => "file");
+            $count++;
+          }
+        }
+      }
+
+    }
+
+    return $count;
   }
 
   private function _get_children($path) {

@@ -25,32 +25,54 @@ function init_server_add_form() {
         type: "POST",
         url: get_url("server_add/pause", task.id)
       });
+    } else {
+      document.location.reload();
     }
+  });
+  set_click_events();
+}
+
+function set_click_events() {
+  $(".ui-icon").unbind("click");
+  $(":checkbox").unbind("click");
+  $(".ui-icon").click(function(event) {
+    open_close_branch(this, event);
+  });
+
+  $("input[type=checkbox]").click(function(event) {
+    checkbox_click(this);
   });
 }
 
 function open_close_branch(icon, event) {
   var parent = icon.parentNode;
-  var children = $(parent).find(".gCheckboxTree");
   var closed = $(icon).hasClass("ui-icon-plus");
+  var children = $(parent).find(".gCheckboxTree");
 
   if (closed) {
     if (children.length == 0) {
-      load_children(parent, function(data, textStatus) {
-        $(parent).append(data);
-        $(icon).addClass("ui-icon-minus");
-        $(icon).removeClass("ui-icon-plus");
-      });
+      load_children(icon);
     } else {
+        toggle_branch("open", icon);
+    }
+  } else {
+    toggle_branch("close", icon);
+  }
+}
+
+function toggle_branch(direction, icon) {
+  var parent = icon.parentNode;
+  var branch = $(parent).children(".gServerAddChildren");
+  $(branch).slideToggle("fast", function() {
+    if (direction == "open") {
       $(icon).addClass("ui-icon-minus");
       $(icon).removeClass("ui-icon-plus");
+      $(parent).removeClass("gCollapsed");
+    } else {
+      $(icon).addClass("ui-icon-plus");
+      $(icon).removeClass("ui-icon-minus");
     }
-    $(parent).children("ul").slideDown("fast");
-  } else {
-    $(icon).addClass("ui-icon-plus");
-    $(icon).removeClass("ui-icon-minus");
-    $(parent).children("ul").slideUp("fast");
-  }
+  });
 }
 
 function get_url(uri, task_id) {
@@ -60,24 +82,30 @@ function get_url(uri, task_id) {
   return url;
 }
 
-function checkbox_click(checkbox, event) {
-  var _this = this;
-  var parents = $(checkbox).parents("li");
-  var parent = parents.get(0);
-  if ($(parent).hasClass("gDirectory") &&  $(parent).find(".gCheckboxTree").length == 0) {
-      load_children(parent, function(data, textStatus) {
-        $(parent).append(data);
-      });
+function checkbox_click(checkbox) {
+  var parent = $(checkbox).parents("li").get(0);
+  var checked = $(checkbox).attr("checked");
+  if (!$(parent).hasClass("gCollapsed")) {
+    $(parent).find(".gCheckboxTree input[type=checkbox]").attr("checked", checked);
   }
-  $(parent).find(".gCheckboxTree :checkbox").click();
-  var checked = $("#gServerAdd :checkbox[checked]");
-  $("#gServerAdd form :submit").attr("disabled", checked.length == 0);
+  var checkboxes = $("#gServerAdd :checkbox[checked]");
+  $("#gServerAdd form :submit").attr("disabled", checkboxes.length == 0);
 }
 
-function load_children(parent, callback) {
-  var parms = "&path=" +  $(parent).find(":checkbox").attr("value");
-  $.ajax({async: false,
-          success: callback,
+function load_children(icon) {
+  $("#gDialog").addClass("gDialogLoadingLarge");
+  var parent = icon.parentNode;
+  var checkbox = $(parent).find("input[type=checkbox]");
+  var parms = "&path=" + $(checkbox).attr("value");
+  parms += "&checked=" + $(checkbox).is(":checked");
+  parms += "&collapsed=" + $(parent).hasClass("gCollapsed");
+
+  $.ajax({success: function(data, textStatus) {
+            $(parent).children(".gServerAddChildren").html(data);
+            set_click_events();
+            $("#gDialog").removeClass("gDialogLoadingLarge");
+            toggle_branch("open", icon);
+          },
           data: parms,
           dataType: "html",
           type: "POST",
@@ -91,16 +119,20 @@ function do_add(submit, event) {
   $("#gServerAdd #gServerAddButton").hide();
   $("#gServerAdd #gServerPauseButton").show();
 
+  var parms = "";
   if (!paused) {
     $(".gProgressBar").progressbar("value", 0);
     $(".gProgressBar").css("visibility", "visible");
     var check_list = $("#gServerAdd :checkbox[checked]");
 
-    var parms = "";
+    var paths = "";
+    var collapsed = "";
     $.each(check_list, function () {
       var parent = $(this).parents("li")[0];
-      parms += "&path[]=" + this.value;
+      paths += "&path[]=" + this.value;
+      collapsed += "&collapsed[]=" + $(parent).hasClass("gCollapsed");
     });
+    parms = paths + collapsed;
   }
   paused = false;
 

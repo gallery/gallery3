@@ -1,14 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-$("#<?= $tree_id ?>").ready(function() {
-  $("#<?= $tree_id ?> span.ui-icon").click(function(event) {
-    open_close_branch(this, event);
-  });
-
-  $("#<?= $tree_id ?> :checkbox").click(function(event) {
-    checkbox_click(this, event);
-  });
-});
 </script>
 <ul id="<?= $tree_id ?>" class="gCheckboxTree">
   <? foreach ($data as $file => $file_info): ?>
@@ -16,7 +7,8 @@ $("#<?= $tree_id ?>").ready(function() {
     <? if (!empty($file_info["is_dir"])): ?>
     <span class="ui-icon ui-icon-plus"></span>
     <? endif ?>
-    <label> <?= form::checkbox("checkbox[]", p::clean($file_info["path"])) . " " . p::clean($file) ?> </label>
+       <label> <?= form::checkbox("checkbox[]", p::clean($file_info["path"]), $checked) . " " . p::clean($file) ?> </label>
+    <div class="gServerAddChildren" style="display: none"></div>
   </li>
   <? endforeach ?>
 </ul>

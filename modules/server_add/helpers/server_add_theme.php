@@ -18,6 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class server_add_theme_Core {
+  static function head($theme) {
+    return html::script("modules/server_add/js/server_add.js") . "\n";;
+  }
+
   static function admin_head($theme) {
     $head = array();
     if (strpos(Router::$current_uri, "admin/server_add") !== false) {
@@ -30,7 +34,7 @@ class server_add_theme_Core {
       $head[] = html::script("lib/jquery.autocomplete.js");
       $head[] = html::script("modules/server_add/js/admin.js");
     }
-    
+
     return implode("\n", $head);
   }
 }
