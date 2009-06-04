@@ -497,7 +497,7 @@ form .gError,
 }
 
 #gContent #gPhoto {
-  
+
 }
 
 #gContent #gItem .gFullSizeLink img {
@@ -779,6 +779,11 @@ form .gError,
   font-size: 0;
 }
 
+.gDialogLoadingLarge {
+  background: url('../images/loading-lg.gif') no-repeat center center !important;
+  font-size: 0;
+}
+
 .gLoadingSmall {
   background: #e8e8e8 url('../images/loading-sm.gif') no-repeat center center;
   font-size: 0;
@@ -883,10 +888,6 @@ form .gError,
 }
 
 /* Server Add */
-.gCheckboxTree {
-  display: none;
-}
-
 .gCheckboxTree input {
   display: inline;
 }
