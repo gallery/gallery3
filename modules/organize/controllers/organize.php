@@ -61,8 +61,9 @@ class Organize_Controller extends Controller {
     access::required("view", $item);
     access::required("edit", $item);
 
-    print json_encode(array("title" => $item->title,
-                            "description" => empty($item->description) ? "" : $item->description));
+    print json_encode(
+      array("title" => p::clean($item->title),
+            "description" => empty($item->description) ? "" : p::clean($item->description)));
   }
 
   function tree($item, $parent) {

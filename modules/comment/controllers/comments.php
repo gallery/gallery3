@@ -37,13 +37,17 @@ class Comments_Controller extends REST_Controller {
     switch (rest::output_format()) {
     case "json":
       foreach ($comments as $comment) {
-        $data[] = $comment->as_array();
+        $data[] = array(
+          "id" => $comment->id,
+          "author_name" => p::clean($comment->author_name()),
+          "created" => $comment->created,
+          "text" => p::clean($comment->text));
       }
       print json_encode($data);
       break;
 
     case "html":
-      $view = new View("comments.html");
+      $view = new Theme_View("comments.html", "page");
       $view->comments = $comments;
       print $view;
       break;
@@ -120,7 +124,11 @@ class Comments_Controller extends REST_Controller {
     if (rest::output_format() == "json") {
       print json_encode(
         array("result" => "success",
-              "data" => $comment->as_array()));
+              "data" => array(
+                "id" => $comment->id,
+                "author_name" => p::clean($comment->author_name()),
+                "created" => $comment->created,
+                "text" => p::clean($comment->text))));
     } else {
       $view = new Theme_View("comment.html", "fragment");
       $view->comment = $comment;
