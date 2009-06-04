@@ -125,7 +125,7 @@ class Xss_Security_Test extends Unit_Test_Case {
       foreach ($entries as $entry) {
         fwrite($fd,
                sprintf("%-60s %-3s %-5s %s\n",
-                       $view, $entry[0], $entry[1] ? "CLEAN" : "DIRTY", $entry[2]));
+                       $view, $entry[0], $entry[1] ? "" : "DIRTY", $entry[2]));
       }
     }
     fclose($fd);
