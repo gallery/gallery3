@@ -30,7 +30,7 @@ class server_add_menu_Core {
     $item = $theme->item();
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
-    if (user::active()->admin && $item->is_album() && !empty($paths)) {
+    if ($item && user::active()->admin && $item->is_album() && !empty($paths)) {
       // This is a little tricky.  Normally there's an "Add Photo" menu option, but we want to
       // turn that into a dropdown if there are two different ways to add things.  Do that in a
       // portable way for now.  If we find ourselves duplicating this pattern, we should make an
