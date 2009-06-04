@@ -6,7 +6,6 @@
     init_server_add_form();
   });
 </script>
-<!-- ?= html::script("modules/server_add/js/server_add.js"); ? -->
 <div id="gServerAdd">
   <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::clean($album_title))) ?></h1>
 

@@ -19,7 +19,9 @@
  */
 class server_add_theme_Core {
   static function head($theme) {
-    return html::script("modules/server_add/js/server_add.js") . "\n";;
+    if (user::active()->admin) {
+      return html::script("modules/server_add/js/server_add.js");
+    }
   }
 
   static function admin_head($theme) {
