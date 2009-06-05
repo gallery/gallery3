@@ -80,7 +80,7 @@
       "user_agent": "<?= Input::instance()->server("HTTP_USER_AGENT") ?>",
       "csrf": "<?= $csrf ?>"
     },
-    file_size_limit : "100 MB",
+    file_size_limit : "<?= (!ini_get('upload_max_filesize')=="" ? ini_get('upload_max_filesize') : "100M") ?>",
     file_types : "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
     file_types_description : "<?= t("Photos and Movies") ?>",
     file_upload_limit : 1000,
