@@ -17,26 +17,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class akismet_menu_Core {
-  static function admin($menu, $theme) {
-    $menu->get("settings_menu")
-      ->append(Menu::factory("link")
-               ->id("akismet")
-               ->label(t("Akismet"))
-               ->url(url::site("admin/akismet")));
-
-    if (module::get_var("akismet", "api_key")) {
-      if (!$statistics_menu = $menu->get("statistics_menu")) {
-        $menu->append(Menu::factory("submenu")
-                      ->id("statistics_menu")
-                      ->label(t("Statistics")));
-      }
-
-      $menu->get("statistics_menu")
-        ->append(Menu::factory("link")
-                 ->id("akismet")
-                 ->label(t("Akismet"))
-                 ->url(url::site("admin/akismet/stats")));
+class num extends num_Core {
+  /**
+   * Convert a size value as accepted by PHP's shorthand to bytes.
+   * ref: http://us2.php.net/manual/en/function.ini-get.php
+   * ref: http://us2.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+   */
+  static function convert_to_bytes($val) {
+    $val = trim($val);
+    $last = strtolower($val[strlen($val)-1]);
+    switch($last) {
+    case 'g':
+      $val *= 1024;
+    case 'm':
+      $val *= 1024;
+    case 'k':
+      $val *= 1024;
     }
+
+    return $val;
   }
 }
