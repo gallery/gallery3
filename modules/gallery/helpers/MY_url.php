@@ -54,7 +54,7 @@ class url extends url_Core {
       }
     }
 
-    if (!empty($item)) {
+    if ($item && $item->loaded) {
       Router::$controller = "{$item->type}s";
       Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
       Router::$method = $item->id;
