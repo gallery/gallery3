@@ -150,7 +150,7 @@
     switch (error_code) {
     case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
       fp.title.html(file.name);
-      fp.set_status("error", "<strong><?= t("File is too big.") ?></strong> <?= t("A likely error source is a too low value for") ?> <br /> <em>upload_max_filesize</em> (<?= ini_get('upload_max_filesize') ?>) <?= t("in your") ?> <em>php.ini</em>.");
+      fp.set_status("error", "<?= t("<strong>File is too big.</strong> A likely error source is a too low value for <em>upload_max_filesize</em> (%upload_max_filesize) in your <em>php.ini</em>.", array("upload_max_filesize" => ini_get("upload_max_filesize"))) ?>");
       break;
     case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
       fp.title.html(file.name);
