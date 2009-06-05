@@ -18,19 +18,21 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class notification_menu_Core {
-  static function album($menu, $theme) {
+  static function site($menu, $theme) {
     if (!user::active()->guest) {
       $item = $theme->item();
-
-      if ($item) {
+      
+      if ($item && $item->is_album()) {
         $watching = notification::is_watching($item);
 
-        $menu
+        $watching ? $label = t("Remove notifications") : $label = t("Enable notifications");
+
+        $menu->get("options_menu")
           ->append(Menu::factory("link")
             ->id("watch")
-            ->label(t("Enable notifications for this album"))
-            ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token()))
-            ->css_id($watching ? "gRemoveNotifyLink" : "gAddNotifyLink"));
+            ->label($label)
+            ->css_id("gNotifyLink")
+            ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token())));
       }
     }
   }
