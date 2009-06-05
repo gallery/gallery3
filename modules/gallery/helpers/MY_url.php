@@ -38,6 +38,14 @@ class url extends url_Core {
       return;
     }
 
+    // Work around problems with the CGI sapi by enforcing our default path
+    if ($_SERVER["SCRIPT_NAME"] && "/" . Router::$current_uri == $_SERVER["SCRIPT_NAME"]) {
+      Router::$controller_path = MODPATH . "gallery/controllers/albums.php";
+      Router::$controller = "albums";
+      Router::$method = 1;
+      return;
+    }
+
     $current_uri = html_entity_decode(Router::$current_uri, ENT_QUOTES);
     $item = ORM::factory("item")->where("relative_path_cache", $current_uri)->find();
     if (!$item->loaded) {
