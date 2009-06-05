@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // See http://docs.kohanaphp.com/libraries/pagination ?>
 <ul class="gPager">
-  <? /* XXX: This message isn't easily localizable */
+  <? /* @todo This message isn't easily localizable */
      $from_to_msg = t("Photos %from_number - %to_number of %total",
                       array("from_number" => $current_first_item,
                             "to_number" => $current_last_item,
