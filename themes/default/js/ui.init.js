@@ -12,7 +12,7 @@ var shortForms = new Array(
 );
 
 $(document).ready(function() {
-  
+
   // Initialize Superfish menus
   $("ul.gMenu").addClass("sf-menu");
   $('ul.sf-menu').superfish({
@@ -64,7 +64,7 @@ $(document).ready(function() {
 
     // Collapse comments form, insert button to expand
     if ($("#gAddCommentForm").length) {
-      var showCommentForm = '<a href="#add_comment_form" class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right"><span class="ui-icon ui-icon-comment"></span>Add a comment</a>';
+      var showCommentForm = '<a href="#add_comment_form" class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right"><span class="ui-icon ui-icon-comment"></span>' + ADD_A_COMMENT + '</a>';
       $("#gAddCommentForm").hide();
       $("#gComments").prepend(showCommentForm);
       $(".showCommentForm").click(function(){
