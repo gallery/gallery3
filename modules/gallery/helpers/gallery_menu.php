@@ -30,14 +30,14 @@ class gallery_menu_Core {
 
     $can_edit = $item && access::can("edit", $item) || $is_admin;
     $can_add = $item && (access::can("add", $item) || $is_admin);
-    
+
     if ($can_add) {
       $menu->append(Menu::factory("dialog")
                     ->id("add_photos_item")
                     ->label(t("Add photos"))
                     ->url(url::site("simple_uploader/app/$item->id")));
     }
-    
+
     if ($item && $can_edit || $can_add) {
       $menu->append($options_menu = Menu::factory("submenu")
                     ->id("options_menu")
@@ -156,10 +156,6 @@ class gallery_menu_Core {
       ->append(Menu::factory("link")
                ->id("maintenance")
                ->label(t("Maintenance"))
-               ->url(url::site("admin/maintenance")))
-      ->append(Menu::factory("submenu")
-               ->id("statistics_menu")
-               ->label(t("Statistics"))
-               ->url("#"));
+               ->url(url::site("admin/maintenance")));
   }
 }

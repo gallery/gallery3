@@ -26,6 +26,12 @@ class akismet_menu_Core {
                ->url(url::site("admin/akismet")));
 
     if (module::get_var("akismet", "api_key")) {
+      if (!$statistics_menu = $menu->get("statistics_menu")) {
+        $menu->append(Menu::factory("submenu")
+                      ->id("statistics_menu")
+                      ->label(t("Statistics")));
+      }
+
       $menu->get("statistics_menu")
         ->append(Menu::factory("link")
                  ->id("akismet")
