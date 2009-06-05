@@ -492,6 +492,7 @@ themes/admin_default/views/admin.html.php                    31  DIRTY $theme->a
 themes/admin_default/views/admin.html.php                    35  DIRTY $theme->admin_page_top()
 themes/admin_default/views/admin.html.php                    41  DIRTY $theme->site_status()
 themes/admin_default/views/admin.html.php                    43  DIRTY $theme->admin_header_top()
+themes/admin_default/views/admin.html.php                    46  DIRTY $csrf
 themes/admin_default/views/admin.html.php                    50  DIRTY $theme->admin_menu()
 themes/admin_default/views/admin.html.php                    52  DIRTY $theme->admin_header_bottom()
 themes/admin_default/views/admin.html.php                    58  DIRTY $theme->messages()
