@@ -59,7 +59,7 @@ class locale_Core {
   private static function _init_language_data() {
     $l["af_ZA"] = "Afrikaans";                            // Afrikaans
     $l["ar_SA"] = "&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;"; // Arabic
-    $l["be_RU"] = "Belarusian";                           // Belarusian
+    $l["be_BY"] = "&#1041;&#1077;&#1083;&#1072;&#1088;&#1091;&#1089;&#1082;&#1110;"; // Belarusian
     $l["bg_BG"] = "&#x0411;&#x044a;&#x043b;&#x0433;&#x0430;&#x0440;&#x0441;&#x043a;&#x0438;"; // Bulgarian
     $l["ca_ES"] = "Catalan";                              // Catalan
     $l["cs_CZ"] = "&#x010c;esky";                         // Czech
