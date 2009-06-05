@@ -23,7 +23,8 @@
  * then a full URL will be used, eg: http://localhost/kohana/. If it only includes
  * the path, and a site_protocol is specified, the domain will be auto-detected.
  */
-$config["site_domain"] = dirname($_SERVER["SCRIPT_NAME"]);
+$config["site_domain"] = dirname(
+  empty($_SERVER["ORIG_SCRIPT_NAME"]) ? $_SERVER["SCRIPT_NAME"] : $_SERVER["ORIG_SCRIPT_NAME"]);
 
 /**
  * Force a default protocol to be used by the site. If no site_protocol is
