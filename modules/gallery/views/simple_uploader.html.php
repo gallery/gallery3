@@ -80,7 +80,12 @@
       "user_agent": "<?= Input::instance()->server("HTTP_USER_AGENT") ?>",
       "csrf": "<?= $csrf ?>"
     },
-    file_size_limit : "<?= (!ini_get('upload_max_filesize')=="" ? ini_get('upload_max_filesize') : "100M") ?>",
+    <?
+      $file_size_limit = ini_get('upload_max_filesize');
+      if ($file_size_limit == "") $file_size_limit = "100";
+      else $file_size_limit = substr($file_size_limit, 0, strlen($file_size_limit)-1); // strip trailing "M"
+    ?>
+    file_size_limit : "<?= $file_size_limit ?>MB",
     file_types : "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
     file_types_description : "<?= t("Photos and Movies") ?>",
     file_upload_limit : 1000,
@@ -149,16 +154,24 @@
     var fp = new File_Progress(file);
     switch (error_code) {
     case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
-      fp.set_status("error", "<?= t("File is too big.") ?>");
+      fp.title.html(file.name);
+      fp.set_status("error", "<strong><?= t("File is too big.") ?></strong>
+           <?= t("A likely error source is a too low value for
+           <em>upload_max_filesize</em> (".ini_get('upload_max_filesize').")
+           and/or <em>max_post_size</em> (".ini_get('max_post_size').")
+           in you php.ini.") ?>");
       break;
     case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
+      fp.title.html(file.name);
       fp.set_status("error", "<?= t("Cannot upload empty files.") ?>");
       break;
     case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
+      fp.title.html(file.name);
       fp.set_status("error", "<?= t("Invalid file type.") ?>");
       break;
     default:
       if (file !== null) {
+        fp.title.html(file.name);
         fp.set_status("error", "<?= t("Unknown error") ?>");
       }
       break;
