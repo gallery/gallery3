@@ -2,7 +2,7 @@
 <div id="gAdminRecaptcha">
   <h1> <?= t("ReCaptcha Challenge Filtering") ?> </h1>
   <p>
-    <?= t("Recaptcha is a free CAPTCHA service that helps to digitize books, newspapers and old time radio shows. automated spam filtering service.  In order to use it, you need to sign up for a <a href=\"%domain_url\">ReCaptcha Public/Private Key pair</a>, which is also free.  Once registered, the the challenge and response strings are evaluated at <a href=\"%recaptcha_url\">recaptcha.net</a> to determine if the form content has been entered by a bot.",
+    <?= t("Recaptcha is a free CAPTCHA service that helps to digitize books, newspapers and old time radio shows. automated spam filtering service.  In order to use it, you need to sign up for a <a href=\"%domain_url\">ReCaptcha Public/Private Key pair</a>, which is also free.  Once registered, the challenge and response strings are evaluated at <a href=\"%recaptcha_url\">recaptcha.net</a> to determine if the form content has been entered by a bot.",
           array("domain_url" => $form->get_key_url,
                 "recaptcha_url" => "http://recaptcha.net")) ?>
   </p>
