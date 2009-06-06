@@ -46,14 +46,22 @@ class gallery_task_Core {
    */
   static function rebuild_dirty_images($task) {
     $result = graphics::find_dirty_images_query();
-    $remaining = $result->count();
     $completed = $task->get("completed", 0);
+    $ignored = $task->get("ignored", array());
+    $remaining = $result->count() - count($ignored);
 
     $i = 0;
     foreach ($result as $row) {
+      if (array_key_exists($row->id, $ignored)) {
+        continue;
+      }
+
       $item = ORM::factory("item", $row->id);
       if ($item->loaded) {
-        graphics::generate($item);
+        $success = graphics::generate($item);
+        if (!$success) {
+          $ignored[$item->id] = 1;
+        }
       }
 
       $completed++;
@@ -76,6 +84,7 @@ class gallery_task_Core {
     }
 
     $task->set("completed", $completed);
+    $task->set("ignored", $ignored);
     if ($remaining == 0) {
       $task->done = true;
       $task->state = "success";

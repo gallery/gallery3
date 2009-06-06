@@ -127,7 +127,7 @@ class gallery_menu_Core {
                                         access::csrf_token())))
                ->append(Menu::factory("link")
                         ->id("advanced")
-                        ->label("Advanced")
+                        ->label(t("Advanced"))
                         ->url(url::site("admin/advanced_settings"))))
       ->append(Menu::factory("link")
                ->id("modules")

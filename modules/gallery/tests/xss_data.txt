@@ -279,7 +279,7 @@ modules/gallery/views/simple_uploader.html.php               30        $item->ti
 modules/gallery/views/simple_uploader.html.php               77  DIRTY $item->id
 modules/gallery/views/simple_uploader.html.php               81  DIRTY $csrf
 modules/image_block/views/image_block_block.html.php         3   DIRTY $item->url()
-modules/image_block/views/image_block_block.html.php         4   DIRTY $item->thumb_image(array("class" => "gThumbnail"))
+modules/image_block/views/image_block_block.html.php         4   DIRTY $item->thumb_img(array("class" => "gThumbnail"))
 modules/info/views/info_block.html.php                       6         $item->title
 modules/info/views/info_block.html.php                       11        $item->description
 modules/info/views/info_block.html.php                       17        $item->name
@@ -492,6 +492,7 @@ themes/admin_default/views/admin.html.php                    31  DIRTY $theme->a
 themes/admin_default/views/admin.html.php                    35  DIRTY $theme->admin_page_top()
 themes/admin_default/views/admin.html.php                    41  DIRTY $theme->site_status()
 themes/admin_default/views/admin.html.php                    43  DIRTY $theme->admin_header_top()
+themes/admin_default/views/admin.html.php                    46  DIRTY $csrf
 themes/admin_default/views/admin.html.php                    50  DIRTY $theme->admin_menu()
 themes/admin_default/views/admin.html.php                    52  DIRTY $theme->admin_header_bottom()
 themes/admin_default/views/admin.html.php                    58  DIRTY $theme->messages()
@@ -612,7 +613,7 @@ themes/default/views/photo.html.php                          32  DIRTY $item->re
 themes/default/views/photo.html.php                          36  DIRTY $theme->resize_bottom($item)
 themes/default/views/photo.html.php                          40        $item->title
 themes/default/views/photo.html.php                          41        $item->description
-themes/default/views/photo.html.php                          44  DIRTY $theme->photo_bottom()
+themes/default/views/photo.html.php                          47  DIRTY $theme->photo_bottom()
 themes/default/views/sidebar.html.php                        2   DIRTY $theme->sidebar_top()
 themes/default/views/sidebar.html.php                        6   DIRTY $theme->album_menu()
 themes/default/views/sidebar.html.php                        8   DIRTY $theme->photo_menu()

@@ -25,32 +25,22 @@ class Photos_Controller extends Items_Controller {
   public function _show($photo) {
     access::required("view", $photo);
 
-    // We sort by id ascending so for now, find sibling info by doing id based queries.
-    $next_item = ORM::factory("item")
-      ->viewable()
-      ->where("parent_id", $photo->parent_id)
-      ->where("id >", $photo->id)
-      ->orderby("id", "ASC")
-      ->find();
-    $previous_item = ORM::factory("item")
-      ->viewable()
-      ->where("parent_id", $photo->parent_id)
-      ->where("id <", $photo->id)
-      ->orderby("id", "DESC")
-      ->find();
-    $position = ORM::factory("item")
-      ->viewable()
-      ->where("parent_id", $photo->parent_id)
-      ->where("id <=", $photo->id)
-      ->count_all();
+    $position = $photo->parent()->get_position($photo->id);
+    if ($position > 1) {
+      list ($previous_item, $ignore, $next_item) =
+        $photo->parent()->children(3, $position - 2);
+    } else {
+      $previous_item = null;
+      list ($next_item) = $photo->parent()->children(1, $position);
+    }
 
     $template = new Theme_View("page.html", "photo");
     $template->set_global("item", $photo);
     $template->set_global("children", array());
     $template->set_global("children_count", $photo->children_count());
     $template->set_global("parents", $photo->parents());
-    $template->set_global("next_item", $next_item->loaded ? $next_item : null);
-    $template->set_global("previous_item", $previous_item->loaded ? $previous_item : null);
+    $template->set_global("next_item", $next_item);
+    $template->set_global("previous_item", $previous_item);
     $template->set_global("sibling_count", $photo->parent()->children_count());
     $template->set_global("position", $position);
 
