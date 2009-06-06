@@ -159,6 +159,8 @@ how it wants to round. */
 #l10n-client-string-editor .source .source-text {
       line-height:1.5em;
       background:#eee;
+      font-family: monospace;
+      text-align: left;
       height:16em; margin:1em; padding:1em;
       overflow:auto;
       direction: ltr;

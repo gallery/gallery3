@@ -19,9 +19,9 @@
  */
 class Password_Controller extends Controller {
   public function reset() {
-    access::verify_csrf();
-
     if (request::method() == "post") {
+      // @todo separate the post from get parts of this function
+      access::verify_csrf();
       $this->_send_reset();
     } else {
       print $this->_reset_form();

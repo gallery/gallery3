@@ -283,8 +283,11 @@ modules/image_block/views/image_block_block.html.php         4   DIRTY $item->th
 modules/info/views/info_block.html.php                       6         $item->title
 modules/info/views/info_block.html.php                       11        $item->description
 modules/info/views/info_block.html.php                       17        $item->name
-modules/info/views/info_block.html.php                       23  DIRTY $item->captured
-modules/info/views/info_block.html.php                       29        $item->owner->name
+modules/info/views/info_block.html.php                       25  DIRTY $parent->id
+modules/info/views/info_block.html.php                       25  DIRTY $item->id
+modules/info/views/info_block.html.php                       26        $parent->title
+modules/info/views/info_block.html.php                       34  DIRTY $item->captured
+modules/info/views/info_block.html.php                       40        $item->owner->name
 modules/notification/views/comment_published.html.php        4         $subject
 modules/notification/views/comment_published.html.php        7         $subject
 modules/notification/views/comment_published.html.php        11        $comment->text
@@ -339,9 +342,9 @@ modules/organize/views/organize_thumb_grid.html.php          7   DIRTY $child->i
 modules/organize/views/organize_thumb_grid.html.php          8   DIRTY $child->id
 modules/organize/views/organize_thumb_grid.html.php          8   DIRTY $item_class
 modules/organize/views/organize_thumb_grid.html.php          9   DIRTY $child->thumb_img(array("class" => "gThumbnail"), $thumbsize, true)
-modules/recaptcha/views/admin_recaptcha.html.php             5   DIRTY $form->get_key_url
-modules/recaptcha/views/admin_recaptcha.html.php             8   DIRTY $form
-modules/recaptcha/views/admin_recaptcha.html.php             21  DIRTY $public_key
+modules/recaptcha/views/admin_recaptcha.html.php             6   DIRTY $form->get_key_url
+modules/recaptcha/views/admin_recaptcha.html.php             10  DIRTY $form
+modules/recaptcha/views/admin_recaptcha.html.php             23  DIRTY $public_key
 modules/recaptcha/views/form_recaptcha.html.php              7   DIRTY $public_key
 modules/rss/views/comment.mrss.php                           9         $title
 modules/rss/views/comment.mrss.php                           10  DIRTY $link
@@ -470,11 +473,11 @@ modules/user/views/admin_users_group.html.php                22  DIRTY $user->id
 modules/user/views/admin_users_group.html.php                22  DIRTY $group->id
 modules/user/views/admin_users_group.html.php                25        $user->name
 modules/user/views/admin_users_group.html.php                25        $group->name
-modules/user/views/login.html.php                            11  DIRTY $user->id
-modules/user/views/login.html.php                            14        $user->full_name
-modules/user/views/login.html.php                            14        $user->name
-modules/user/views/login.html.php                            14        $user->full_name
-modules/user/views/login.html.php                            15  DIRTY $csrf
+modules/user/views/login.html.php                            12  DIRTY $user->id
+modules/user/views/login.html.php                            15        $user->full_name
+modules/user/views/login.html.php                            15        $user->name
+modules/user/views/login.html.php                            15        $user->full_name
+modules/user/views/login.html.php                            18  DIRTY $csrf
 modules/user/views/login_ajax.html.php                       37  DIRTY $form
 modules/user/views/reset_password.html.php                   9         $user->full_name
 modules/user/views/reset_password.html.php                   9         $user->full_name

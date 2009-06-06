@@ -649,18 +649,6 @@ form .gError,
   width: 43px !important;
 }
 
-#gViewMenu #gAlbumLink {
-  background-image: url('../images/ico-view-album.png');
-}
-
-#gViewMenu #gAddNotifyLink {
-  background-image: url('../images/ico-notify-add.png');
-}
-
-#gViewMenu #gRemoveNotifyLink {
-  background-image: url('../images/ico-notify-remove.png');
-}
-
 #gViewMenu #gHybridLink {
   background-image: url('../images/ico-view-hybrid.png');
 }

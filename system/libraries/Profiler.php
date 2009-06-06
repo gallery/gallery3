@@ -8,7 +8,7 @@
  * POST Data    - The name and values of any POST data submitted to the current page.
  * Cookie Data  - All cookies sent for the current request.
  *
- * $Id: Profiler.php 4090 2009-03-19 01:27:45Z bharat $
+ * $Id: Profiler.php 4383 2009-06-03 00:17:24Z ixmatus $
  *
  * @package    Profiler
  * @author     Kohana Team
@@ -104,7 +104,7 @@ class Profiler_Core {
 		$view = new View('kohana_profiler', $data);
 
 		// Return rendered view if $return is TRUE
-		if ($return == TRUE)
+		if ($return === TRUE)
 			return $view->render();
 
 		// Add profiler data to the output

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>G3: Admin Dashboard</title>
+    <title><?= t("Admin Dashboard") ?></title>
     <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
         media="screen,projection" />
@@ -42,8 +42,8 @@
       <div id="gHeader">
         <?= $theme->admin_header_top() ?>
         <ul id="gLoginMenu">
-          <li class="first"><?= html::anchor("albums/1", "Browse the Gallery") ?></li>
-          <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1&csrf=$csrf") ?>">Logout</a></li>
+          <li class="first"><?= html::anchor("albums/1", t("Browse the Gallery")) ?></li>
+          <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1&csrf=$csrf") ?>"><?= t("Logout") ?></a></li>
         </ul>
         <a href="<?= url::site("albums/1") ?>"><img src="<?= url::file("themes/default/images/logo.png") ?>" id="gLogo" alt="<?= t("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
         <div id="gSiteAdminMenu" style="display: none">
