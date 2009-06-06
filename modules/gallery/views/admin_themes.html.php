@@ -7,7 +7,7 @@
   }
 </script>
 
-<h1> <?= t("Theme Administration") ?> </h1>
+<h1> <?= t("Theme Choice") ?> </h1>
 <p>
   <?= t("Gallery allows you to choose a theme for browsing your Gallery, as well as a special theme for the administration interface.  Click a theme to preview and activate it.") ?>
 </p>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>G3: Admin Dashboard</title>
+    <title><?= t("Admin Dashboard") ?></title>
     <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
         media="screen,projection" />
