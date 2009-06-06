@@ -100,12 +100,6 @@ class gallery_menu_Core {
                ->url("#")
                ->css_class("gFullSizeLink"));
     }
-    $menu
-      ->append(Menu::factory("link")
-               ->id("album")
-               ->label(t("Return to album"))
-               ->url($theme->item()->parent()->url("show={$theme->item->id}"))
-               ->css_id("gAlbumLink"));
   }
 
   static function admin($menu, $theme) {

@@ -602,10 +602,6 @@ form .gError,
   width: 43px !important;
 }
 
-#gViewMenu #gAlbumLink {
-  background-image: url('../images/ico-view-album.png');
-}
-
 #gViewMenu #gHybridLink {
   background-image: url('../images/ico-view-hybrid.png');
 }
