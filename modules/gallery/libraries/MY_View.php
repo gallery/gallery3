@@ -43,4 +43,11 @@ class View extends View_Core {
       return "";
     }
   }
+
+  public function main_element_attributes() {
+    if (locale::is_rtl()) {
+      return 'class="rtl"';
+    }
+    return '';
+  }
 }

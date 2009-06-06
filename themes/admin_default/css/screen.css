@@ -36,6 +36,12 @@
   margin-right: 1em;
 }
 
+.rtl .gSelected img,
+.rtl .gAvailable .gBlock img {
+  float: right;
+  margin-left: 1em;
+}
+
 .gSelected {
   background: #e8e8e8;
 }
@@ -95,6 +101,10 @@
   margin: -22px 10px 0 0;
 }
 
+.rtl #gHeader #gLogo {
+  float: left;
+}
+
 #gHeader #gLoginMenu {
   float: none;
   margin: 0;
@@ -105,9 +115,18 @@
   text-align: right;
 }
 
+
+.rtl #gHeader #gLoginMenu {
+  text-align: left;
+}
+
 #gHeader #gSiteAdminMenu {
   float: left;
   font-size: 1.2em;
+}
+
+.rtl #gHeader #gSiteAdminMenu {
+  float: right;
 }
 
 #gHeader #gSiteAdminMenu ul {
@@ -147,6 +166,10 @@
   width: 90px;
 }
 
+.rtl #gContent #gPhotoStream .gItem {
+  float: right;
+}
+
 #gSiteStatus {
 	margin-bottom: 0;
 }
@@ -179,10 +202,21 @@
   width: 30%;
 }
 
+.rtl #gAdminGraphics .gAvailable .gBlock {
+  float: right;
+  margin-left: 1em;
+  margin-right: 0em;
+}
+
 #gSiteTheme,
 #gAdminTheme {
   float: left;
   width: 48%;
+}
+
+.rtl #gSiteTheme,
+.rtl #gAdminTheme {
+  float: right;
 }
 
 #gSiteTheme {
@@ -218,6 +252,11 @@ li.gGroup {
   padding: 0;
   margin: 0 1em 1em 0;
 }
+
+.rtl li.gGroup {
+  float: right;
+}
+
 li.gGroup h4 {
   background-color: #EEEEEE;
   border-bottom: 1px dashed #CCCCCC;
@@ -319,6 +358,9 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   float: left;
   width: 200px;
 }
+.rtl #gTagAdmin .gColumn {
+  float: right;
+}
 .gEditable {
   padding: .1em .3em .2em .3em;
 }
@@ -332,6 +374,9 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   float: left;
   margin: 0 .2em 0 0;
 }
+.rtl #gRenameTagForm input {
+  float: right;
+}
 #gRenameTagForm input[type="submit"] {
   height: 25px;
 }
@@ -340,9 +385,15 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   float: left;
   padding: .2em .2em 0 .1em;
 }
+.rtl #gRenameTagForm a, #gRenameTagForm span {
+  float: right;
+}
 #gProgress button {
   float: right;
   margin-top: 1em;
+}
+.rtl #gProgress button {
+  float: left;
 }
 
 /** *******************************************************************
@@ -351,6 +402,10 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 #gServerAddAdmin {
   margin:auto;
   text-align: left;
+}
+
+.rtl #gServerAddAdmin {
+  text-align: right;
 }
 
 #gServerAddAdmin form fieldset {

@@ -54,7 +54,7 @@
     <?= $theme->head() ?>
   </head>
 
-  <body>
+    <body <?= $theme->main_element_attributes() ?>>
     <?= $theme->page_top() ?>
     <div id="doc4" class="yui-t5 gView">
       <?= $theme->site_status() ?>

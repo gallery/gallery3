@@ -31,7 +31,7 @@
     <?= $theme->admin_head() ?>
   </head>
 
-  <body>
+  <body <?= $theme->main_element_attributes() ?>>
     <?= $theme->admin_page_top() ?>
     <? if ($sidebar): ?>
     <div id="doc3" class="yui-t5 gView">

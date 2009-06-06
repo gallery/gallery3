@@ -71,7 +71,9 @@ how it wants to round. */
 #l10n-client-string-select {
   display:none;
   float:left;
-  width:25%;}
+  width:25%;
+  direction: ltr;
+}
 
   #l10n-client .string-list {
     height:17em;
@@ -150,15 +152,17 @@ how it wants to round. */
   float:left;
   width:74%;}
 
-  #l10n-client-string-editor .source {
+#l10n-client-string-editor .source {
     overflow:hidden;
     width:50%; float:left;}
 
-    #l10n-client-string-editor .source .source-text {
+#l10n-client-string-editor .source .source-text {
       line-height:1.5em;
       background:#eee;
       height:16em; margin:1em; padding:1em;
-      overflow:auto;}
+      overflow:auto;
+      direction: ltr;
+}
 
   #l10n-client-string-editor .translation {
     overflow:hidden;
