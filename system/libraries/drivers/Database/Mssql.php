@@ -298,7 +298,7 @@ class Database_Mssql_Driver extends Database_Driver
 
 	public function field_data($table)
 	{
-		$query = $this->query('SHOW COLUMNS FROM '.$this->escape_table($table), $this->link);
+		$query = $this->query("SELECT COLUMN_NAME AS Field, DATA_TYPE as Type  FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME = '".$this->escape_table($table)."'", $this->link);
 
 		return $query->result_array(TRUE);
 	}

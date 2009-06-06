@@ -4,7 +4,7 @@
  * to be added to 'events'. Events can be run multiple times, and can also
  * process event-specific data. By default, Kohana has several system events.
  *
- * $Id: Event.php 4358 2009-05-27 17:24:25Z ixmatus $
+ * $Id: Event.php 4390 2009-06-04 03:05:36Z zombor $
  *
  * @package    Core
  * @author     Kohana Team
@@ -206,7 +206,7 @@ final class Event {
 
 			foreach ($callbacks as $callback)
 			{
-				call_user_func_array($callback, array(&$data));
+				call_user_func($callback);
 			}
 
 			// Do this to prevent data from getting 'stuck'

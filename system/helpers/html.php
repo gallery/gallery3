@@ -2,7 +2,7 @@
 /**
  * HTML helper class.
  *
- * $Id: html.php 4368 2009-05-27 21:58:51Z samsoir $
+ * $Id: html.php 4376 2009-06-01 11:40:39Z samsoir $
  *
  * @package    Core
  * @author     Kohana Team
@@ -68,15 +68,21 @@ class html_Core {
 	 * @param   string  link text
 	 * @param   array   HTML anchor attributes
 	 * @param   string  non-default protocol, eg: https
+	 * @param   boolean option to escape the title that is output
 	 * @return  string
 	 */
-	public static function anchor($uri, $title = NULL, $attributes = NULL, $protocol = NULL)
+	public static function anchor($uri, $title = NULL, $attributes = NULL, $protocol = NULL, $escape_title = FALSE)
 	{
 		if ($uri === '')
 		{
 			$site_url = url::base(FALSE);
 		}
-		elseif (strpos($uri, '://') === FALSE AND strpos($uri, '#') !== 0)
+		elseif (strpos($uri, '#') === 0)
+		{
+			// This is an id target link, not a URL
+			$site_url = $uri;
+		}
+		elseif (strpos($uri, '://') === FALSE)
 		{
 			$site_url = url::site($uri, $protocol);
 		}
@@ -96,7 +102,7 @@ class html_Core {
 		// Attributes empty? Use an empty string
 		.(is_array($attributes) ? html::attributes($attributes) : '').'>'
 		// Title empty? Use the parsed URL
-		.html::specialchars((($title === NULL) ? $site_url : $title), FALSE).'</a>';
+		.($escape_title ? html::specialchars((($title === NULL) ? $site_url : $title), FALSE) : (($title === NULL) ? $site_url : $title)).'</a>';
 	}
 
 	/**
