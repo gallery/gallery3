@@ -17,6 +17,17 @@
       <td><?= p::clean($item->name) ?></td>
     </tr>
     <? endif ?>
+    <? if ($item->id != 1): ?>
+    <? $parent = $item->parent(); ?>
+    <tr>
+      <th><?= t("Album: ") ?></th>
+      <td>
+        <a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>">
+          <?= p::clean($parent->title) ?>
+        </a>
+      </td>
+    </tr>
+    <? endif ?>
     <? if ($item->captured): ?>
     <tr>
       <th><?= t("Captured:") ?></th>

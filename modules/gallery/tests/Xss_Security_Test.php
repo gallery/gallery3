@@ -18,41 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Xss_Security_Test extends Unit_Test_Case {
-
-  static function scan_php_file($file, &$cache) {
-    $code = file_get_contents($file);
-    $raw_tokens = token_get_all($code);
-    unset($code);
-
-    $tokens = array();
-    $func_token_list = array("t" => array(), "t2" => array());
-    $token_number = 0;
-    // Filter out HTML / whitespace, and build a lookup for global function calls.
-    foreach ($raw_tokens as $token) {
-      if ((!is_array($token)) || (($token[0] != T_WHITESPACE) && ($token[0] != T_INLINE_HTML))) {
-        if (is_array($token)) {
-          if ($token[0] == T_STRING && in_array($token[1], array("t", "t2"))) {
-            $func_token_list[$token[1]][] = $token_number;
-          }
-        }
-        $tokens[] = $token;
-        $token_number++;
-      }
-    }
-    unset($raw_tokens);
-
-    if (!empty($func_token_list["t"])) {
-      l10n_scanner::_parse_t_calls($tokens, $func_token_list["t"], $cache);
-    }
-    if (!empty($func_token_list["t2"])) {
-      l10n_scanner::_parse_plural_calls($tokens, $func_token_list["t2"], $cache);
-    }
-  }
-
   public function find_unescaped_variables_in_views_test() {
     foreach (glob("*/*/views/*.php") as $view) {
       $expr = null;
-      $line = null;
       $level = 0;
       $php = 0;
       $str = null;
