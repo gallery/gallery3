@@ -16,7 +16,7 @@
        [other] - <?= $string["source"]["other"] ?>
         <? else: ?>
         <?= $string["source"] ?>
-        <? endif; ?> 
+        <? endif; ?>
       </li>
       <? endforeach; ?>
     </ul>
@@ -25,7 +25,7 @@
   </div>
   <div id="l10n-client-string-editor">
     <div class="source">
-      <pre class="source-text"></pre>
+      <p class="source-text"></p>
     </div>
     <div class="translation">
       <form method="post" action="<?= url::site("l10n_client/save") ?>" id="gL10nClientSaveForm">
