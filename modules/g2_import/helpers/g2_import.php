@@ -37,11 +37,13 @@ class g2_import_Core {
     }
 
     $embed_path = module::get_var("g2_import", "embed_path");
+    $multi_path = module::get_var("g2_import", "multi_path");
+
     if (empty($embed_path)) {
       throw new Exception("@todo G2_IMPORT_NOT_CONFIGURED");
     }
 
-    g2_import::$init = g2_import::init_embed($embed_path);
+    g2_import::$init = g2_import::init_embed($embed_path, $multi_path);
   }
 
   static function is_valid_embed_path($embed_path, $multi_path) {
@@ -52,7 +54,7 @@ class g2_import_Core {
    * Initialize the embedded Gallery2 instance.  Call this before any other Gallery2 calls.
    */
   static function init_embed($embed_path, $multi_path) {
-    if (!is_file($embed_path) || (!empty($multi_path) && !is_dir($multi_path)) {
+    if (!is_file($embed_path) || (!empty($multi_path) && !is_dir($multi_path))) {
       return false;
     }
 
@@ -73,7 +75,7 @@ class g2_import_Core {
       if (!empty($multi_path))
 	$config_dir = dirname($multi_path);
       else
-	$config_dir = $base_dir
+	$config_dir = $base_dir;
 
       file_put_contents(
         "$mod_path/embed.php",
