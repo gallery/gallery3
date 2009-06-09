@@ -46,7 +46,19 @@ class url extends url_Core {
       return;
     }
 
-    $current_uri = html_entity_decode(Router::$current_uri, ENT_QUOTES);
+    $item = self:: get_item_from_uri(Router::$current_uri);
+    if ($item && $item->loaded) {
+      Router::$controller = "{$item->type}s";
+      Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
+      Router::$method = $item->id;
+    }
+  }
+
+  /**
+   * Return the item that the uri is referencing
+   */
+  static function get_item_from_uri($uri) {
+    $current_uri = html_entity_decode($uri);
     $item = ORM::factory("item")->where("relative_path_cache", $current_uri)->find();
     if (!$item->loaded) {
       // It's possible that the relative path cache for the item we're looking for is out of date,
@@ -61,12 +73,7 @@ class url extends url_Core {
         }
       }
     }
-
-    if ($item && $item->loaded) {
-      Router::$controller = "{$item->type}s";
-      Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
-      Router::$method = $item->id;
-    }
+    return $item;
   }
 
   /**
