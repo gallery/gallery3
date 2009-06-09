@@ -53,6 +53,10 @@ class photo_Core {
       throw new Exception("@todo NAME_CANNOT_END_IN_PERIOD");
     }
 
+    if (filesize($filename) == 0) {
+      throw new Exception("@todo EMPTY_INPUT_FILE");
+    }
+
     $image_info = getimagesize($filename);
 
     // Force an extension onto the name

@@ -22,9 +22,25 @@
  * Base path of the web site. If this includes a domain, eg: localhost/kohana/
  * then a full URL will be used, eg: http://localhost/kohana/. If it only includes
  * the path, and a site_protocol is specified, the domain will be auto-detected.
+ *
+ * Here we do our best to autodetect the base path to Gallery.  If your url is something like:
+ *   http://example.com/gallery3/index.php/album73/photo5.jpg?param=value
+ *
+ * We want the site_domain to be:
+ *   /gallery3
+ *
+ * In the above example, $_SERVER["SCRIPT_NAME"] contains "/gallery3/index.php" so
+ * dirname($_SERVER["SCRIPT_NAME"]) is what we need.  Except some low end hosts (namely 1and1.com)
+ * break SCRIPT_NAME and it contains the extra path info, so in the above example it'd be:
+ *   /gallery3/index.php/album73/photo5.jpg
+ *
+ * So dirname doesn't work.  So we do a tricky workaround where we look up the SCRIPT_FILENAME (in
+ * this case it'd be "index.php" and we delete from that part onwards.  If you work at 1and1 and
+ * you're reading this, please fix this bug!
  */
-$config["site_domain"] = dirname(
-  empty($_SERVER["ORIG_SCRIPT_NAME"]) ? $_SERVER["SCRIPT_NAME"] : $_SERVER["ORIG_SCRIPT_NAME"]);
+$config["site_domain"] =
+  substr($_SERVER["SCRIPT_NAME"], 0,
+         strpos($_SERVER["SCRIPT_NAME"], basename($_SERVER["SCRIPT_FILENAME"])));
 
 /**
  * Force a default protocol to be used by the site. If no site_protocol is
