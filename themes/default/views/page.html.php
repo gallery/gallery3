@@ -52,6 +52,13 @@
     <script src="<?= $theme->url("js/jquery.localscroll.js") ?>" type="text/javascript"></script>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
+    <? if (!empty($unauthorized)): ?>
+    <script type="text/javascript">
+       $(document).ready(function() {
+         $("#gLoginLink").click();
+       });
+    </script>
+    <? endif ?>
   </head>
 
     <body <?= $theme->main_element_attributes() ?>>

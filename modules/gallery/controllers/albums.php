@@ -23,16 +23,24 @@ class Albums_Controller extends Items_Controller {
    *  @see REST_Controller::_show($resource)
    */
   public function _show($album) {
+    $page_size = module::get_var("gallery", "page_size", 9);
     if (!access::can("view", $album)) {
       if ($album->id == 1) {
-        print new Theme_View("login_page.html", "album");
+        $template = new Theme_View("page.html", "album");
+        $template->set_global("page_size", $page_size);
+        $template->set_global("item", $album);
+        $template->set_global("children", array());
+        $template->set_global("children_count", 0);
+        $template->set_global("parents", $album->parents());
+        $template->unauthorized = true;
+        $template->content = new View("album.html");
+        print $template;
         return;
       } else {
         access::forbidden();
       }
     }
 
-    $page_size = module::get_var("gallery", "page_size", 9);
     $show = $this->input->get("show");
 
     if ($show) {
