@@ -46,7 +46,7 @@ class url extends url_Core {
       return;
     }
 
-    $item = self:: get_item_from_uri(Router::$current_uri);
+    $item = self::get_item_from_uri(Router::$current_uri);
     if ($item && $item->loaded) {
       Router::$controller = "{$item->type}s";
       Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
