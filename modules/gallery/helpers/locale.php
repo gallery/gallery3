@@ -114,7 +114,9 @@ class locale_Core {
     return self::$locales["$locale"];
   }
 
-  static function is_rtl($locale) {
-    return in_array($locale, array("he_IL", "fa_IR", "ar_SA"));
+  static function is_rtl($locale=null) {
+    $locale or $locale = I18n::instance()->locale();
+    list ($language, $territory) = explode('_', $locale . "_");
+    return in_array($language, array("he", "fa", "ar"));
   }
 }
