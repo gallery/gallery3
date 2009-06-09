@@ -412,13 +412,19 @@ class g2_import_Core {
         Kohana::log("alert", "$g2_path unsupported image type; using a placeholder gif");
         $corrupt = 1;
       }
-      $item = photo::create(
-        $parent,
-        $g2_path,
-        $g2_item->getPathComponent(),
-        $g2_item->getTitle(),
-        self::extract_description($g2_item),
-        self::map($g2_item->getOwnerId()));
+      try {
+        $item = photo::create(
+          $parent,
+          $g2_path,
+          $g2_item->getPathComponent(),
+          $g2_item->getTitle(),
+          self::extract_description($g2_item),
+          self::map($g2_item->getOwnerId()));
+      } catch (Exception $e) {
+        Kohana::log("alert", "Corrupt image $g2_path\n" .
+                    $e->getMessage() . "\n" . $e->getTraceAsString());
+        $corrupt = 1;
+      }
       break;
 
     case "GalleryMovieItem":
@@ -454,12 +460,18 @@ class g2_import_Core {
       // Why oh why did I ever approve the session id placeholder idea in G2?
       $g2_item_url =
         str_replace('&amp;g2_GALLERYSID=TMP_SESSION_ID_DI_NOISSES_PMT', '', $g2_item_url);
-      $warning =
-        t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
-          "(imported as <a href=\"%g3_url\">%title</a>)",
-          array("g2_url" => $g2_item_url,
-                "g3_url" => $item->url(),
-                "title" => $g2_item->getTitle()));
+      if (!empty($item)) {
+        $warning =
+          t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
+            "(imported as <a href=\"%g3_url\">%title</a>)",
+            array("g2_url" => $g2_item_url,
+                  "g3_url" => $item->url(),
+                  "title" => $g2_item->getTitle()));
+      } else {
+        $warning =
+          t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed",
+            array("g2_url" => $g2_item_url, "title" => $g2_item->getTitle()));
+      }
       message::warning($warning);
       log::warning("g2_import", $warning);
       Kohana::log("alert", $warning);

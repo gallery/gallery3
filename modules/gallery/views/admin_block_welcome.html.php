@@ -10,7 +10,7 @@
   </li>
   <li>
     <?= t("Appearance - <a href=\"%theme_url\">choose a theme</a>, or <a href=\"%theme_details_url\">customize the way it looks</a>.",
-        array("theme_url" => url::site("admin/theme"),
+        array("theme_url" => url::site("admin/themes"),
               "theme_details_url" => url::site("admin/theme_details"))) ?>
   </li>
   <li>

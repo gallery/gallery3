@@ -166,12 +166,11 @@ class graphics_Core {
         $item->resize_dirty = 0;
       }
       $item->save();
-    } catch (Kohana_Exception $e) {
+    } catch (Exception $e) {
       // Something went wrong rebuilding the image.  Leave it dirty and move on.
       // @todo we should handle this better.
       Kohana::log("error", "Caught exception rebuilding image: {$item->title}\n" .
-                  $e->getMessage() . "\n" .
-                  $e->getTraceAsString());
+                  $e->getMessage() . "\n" . $e->getTraceAsString());
       return false;
     }
 
@@ -192,7 +191,7 @@ class graphics_Core {
     }
 
     if (filesize($input_file) == 0) {
-      throw new Exception("@todo MALFORMED_INPUT_FILE");
+      throw new Exception("@todo EMPTY_INPUT_FILE");
     }
 
     $dims = getimagesize($input_file);
