@@ -44,13 +44,20 @@ class Admin_g2_import_Controller extends Admin_Controller {
     $form = $this->_get_import_form();
     if ($form->validate()) {
       $embed_path = $form->configure_g2_import->embed_path->value;
+      $multi_path = $form->configure_g2_import->multi_path->value;
+
       if (!is_file($embed_path) && file_exists("$embed_path/embed.php")) {
         $embed_path = "$embed_path/embed.php";
       }
+      
+      if (!empty($multi_path) && !is_file($multi_path) && file_exists("$multi_path/config.php")) {
+	$multi_path = "$multi_path/embed.php";
+      }
 
-      if (g2_import::is_valid_embed_path($embed_path)) {
+      if (g2_import::is_valid_embed_path($embed_path, $multi_path)) {
         message::success("Gallery 2 path saved.");
         module::set_var("g2_import", "embed_path", $embed_path);
+        module::set_var("g2_import", "multi_path", $multi_path);
         url::redirect("admin/g2_import");
       } else {
         $form->configure_g2_import->embed_path->add_error("invalid", 1);
@@ -67,10 +74,15 @@ class Admin_g2_import_Controller extends Admin_Controller {
     $form = new Forge(
       "admin/g2_import/save", "", "post", array("id" => "gAdminConfigureG2ImportForm"));
     $group = $form->group("configure_g2_import")->label(t("Configure Gallery 2 Import"));
-    $group->input("embed_path")->label(t("Filesystem path to your Gallery 2 embed.php file"))
+    $group->input("embed_path")->label(t("Filesystem path to your Gallery 2 embed.php file (in case of multisite config, use the path to the 'master')"))
       ->value(module::get_var("g2_import", "embed_path", ""));
+
+    $group->input("multi_path")->label(t("Filesystem path to your Gallery 2 multisite instance config (leave empty if not applicable)"))
+      ->value(module::get_var("g2_import", "multi_path", ""));
+
     $group->embed_path->error_messages(
       "invalid", t("The path you entered is not a Gallery 2 installation."));
+
     $group->submit("")->value(t("Save"));
     return $form;
   }

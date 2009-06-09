@@ -44,15 +44,15 @@ class g2_import_Core {
     g2_import::$init = g2_import::init_embed($embed_path);
   }
 
-  static function is_valid_embed_path($embed_path) {
-    return file_exists($embed_path) && g2_import::init_embed($embed_path);
+  static function is_valid_embed_path($embed_path, $multi_path) {
+    return file_exists($embed_path) && (empty($multi_path) || file_exists($multi_path)) && g2_import::init_embed($embed_path, $multi_path);
   }
 
   /**
    * Initialize the embedded Gallery2 instance.  Call this before any other Gallery2 calls.
    */
-  static function init_embed($embed_path) {
-    if (!is_file($embed_path)) {
+  static function init_embed($embed_path, $multi_path) {
+    if (!is_file($embed_path) || (!empty($multi_path) && !is_dir($multi_path)) {
       return false;
     }
 
@@ -70,6 +70,11 @@ class g2_import_Core {
       mkdir($mod_path);
 
       $base_dir = dirname($embed_path);
+      if (!empty($multi_path))
+	$config_dir = dirname($multi_path);
+      else
+	$config_dir = $base_dir
+
       file_put_contents(
         "$mod_path/embed.php",
         str_replace(
@@ -103,7 +108,7 @@ class g2_import_Core {
                 "\$gallery =& new Gallery();"),
           array("require_once(dirname(__FILE__) . '/Gallery.class');",
                 "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
-                "define('GALLERY_CONFIG_DIR', '$base_dir');",
+                "define('GALLERY_CONFIG_DIR', '$config_dir');",
                 "\$gallery =& new G2_Gallery();"),
           array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
                       file("$base_dir/bootstrap.inc"))));
