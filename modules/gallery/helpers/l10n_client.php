@@ -123,7 +123,12 @@ class l10n_client_Core {
       $key = $message_data->key;
       $locale = $message_data->locale;
       $revision = $message_data->rev;
-      $translation = serialize(json_decode($message_data->translation));
+      $translation = json_decode($message_data->translation);
+      if (!is_string($translation)) {
+        // Normalize stdclass to array
+        $translation = (array) $translation;
+      }
+      $translation = serialize($translation);
 
       // @todo Should we normalize the incoming_translations table into messages(id, key, message)
       // and incoming_translations(id, translation, locale, revision)? Or just allow
