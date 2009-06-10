@@ -20,6 +20,27 @@
 class Upgrader_Controller extends Controller {
   public function index() {
     $view = new View("upgrader.html");
+    $view->available = module::available();
+    $view->done = Input::instance()->get("done");
     print $view;
+  }
+
+  public function upgrade() {
+    // Upgrade gallery and user first
+    module::install("gallery");
+    module::install("user");
+
+    // Then upgrade the rest
+    foreach (module::available() as $id => $module) {
+      if ($id == "gallery") {
+        continue;
+      }
+
+      if ($module->active && $module->code_version != $module->version) {
+        module::install($id);
+      }
+    }
+
+    url::redirect("upgrader?done=1");
   }
 }
