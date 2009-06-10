@@ -27,6 +27,7 @@ class module_Core {
   public static $active = array();
   public static $modules = array();
   public static $var_cache = null;
+  public static $available = array();
 
   /**
    * Set the version of the corresponding Module_Model
@@ -74,23 +75,27 @@ class module_Core {
    * Return the list of available modules, including uninstalled modules.
    */
   static function available() {
-    $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-    foreach (glob(MODPATH . "*/module.info") as $file) {
-      $module_name = basename(dirname($file));
-      $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-      $m =& $modules->$module_name;
-      $m->installed = self::is_installed($module_name);
-      $m->active = self::is_active($module_name);
-      $m->version = self::get_version($module_name);
-      $m->locked = false;
+    if (empty(self::$available)) {
+      $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+      foreach (glob(MODPATH . "*/module.info") as $file) {
+        $module_name = basename(dirname($file));
+        $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+        $m =& $modules->$module_name;
+        $m->installed = self::is_installed($module_name);
+        $m->active = self::is_active($module_name);
+        $m->code_version = $m->version;
+        $m->version = self::get_version($module_name);
+        $m->locked = false;
+      }
+
+      // Lock certain modules
+      $modules->gallery->locked = true;
+      $modules->user->locked = true;
+      $modules->ksort();
+      self::$available = $modules;
     }
 
-    // Lock certain modules
-    $modules->gallery->locked = true;
-    $modules->user->locked = true;
-    $modules->ksort();
-
-    return $modules;
+    return self::$available;
   }
 
   /**
