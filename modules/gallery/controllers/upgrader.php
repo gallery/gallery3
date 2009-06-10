@@ -32,7 +32,11 @@ class Upgrader_Controller extends Controller {
 
   public function upgrade() {
     // Todo: give the admin a chance to log in here
-    if (!user::active()->admin) {
+    if (php_sapi_name() == "cli") {
+      // @todo this may screw up some module installers, but we don't have a better answer at
+      // this time.
+      $_SERVER["HTTP_HOST"] = "example.com";
+    } else if (!user::active()->admin) {
       access::forbidden();
     }
 
@@ -51,6 +55,10 @@ class Upgrader_Controller extends Controller {
       }
     }
 
-    url::redirect("upgrader?done=1");
+    if (php_sapi_name() == "cli") {
+      print "Upgrade complete\n";
+    } else {
+      url::redirect("upgrader?done=1");
+    }
   }
 }
