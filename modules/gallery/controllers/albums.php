@@ -26,9 +26,7 @@ class Albums_Controller extends Items_Controller {
     $page_size = module::get_var("gallery", "page_size", 9);
     if (!access::can("view", $album)) {
       if ($album->id == 1) {
-        $template = new Theme_View("not_authorized.html", "album");
-        $template->content = new View("login_page.html");
-        print $template;
+        print new Theme_View("login_page.html");
         return;
       } else {
         access::forbidden();
