@@ -10,23 +10,23 @@
   };
 
   $(document).ready(function(){
-    $("#gAdminDashboard .gBlock *:first").addClass("gDraggable");
+    $("#gAdminDashboard .gBlock .ui-widget-header").addClass("gDraggable");
     $("#gAdminDashboard").sortable({
       connectWith: ["#gAdminDashboardSidebar"],
       containment: "document",
       cursor: "move",
-      handle: $("div:first"),
+      handle: $(".ui-widget-header"),
       opacity: 0.6,
       placeholder: "gDropTarget",
       stop: update_blocks
     });
 
-    $("#gAdminDashboardSidebar .gBlock *:first").addClass("gDraggable");
+    $("#gAdminDashboardSidebar .gBlock .ui-widget-header").addClass("gDraggable");
     $("#gAdminDashboardSidebar").sortable({
       connectWith: ["#gAdminDashboard"],
       containment: "document",
       cursor: "move",
-      handle: $("div:first"),
+      handle: $(".ui-widget-header"),
       opacity: 0.6,
       placeholder: "gDropTarget",
       stop: update_blocks

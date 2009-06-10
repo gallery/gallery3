@@ -327,8 +327,7 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   border: none;
 }
 
-.ui-draggable,
-.ui-sortable {
+.ui-draggable {
   cursor: move;
 }
 
