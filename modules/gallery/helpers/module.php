@@ -78,10 +78,11 @@ class module_Core {
     foreach (glob(MODPATH . "*/module.info") as $file) {
       $module_name = basename(dirname($file));
       $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-      $modules->$module_name->installed = self::is_installed($module_name);
-      $modules->$module_name->active = self::is_active($module_name);
-      $modules->$module_name->version = self::get_version($module_name);
-      $modules->$module_name->locked = false;
+      $m =& $modules->$module_name;
+      $m->installed = self::is_installed($module_name);
+      $m->active = self::is_active($module_name);
+      $m->version = self::get_version($module_name);
+      $m->locked = false;
     }
 
     // Lock certain modules
