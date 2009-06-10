@@ -19,6 +19,11 @@
  */
 class Upgrader_Controller extends Controller {
   public function index() {
+    // Todo: give the admin a chance to log in here
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
+
     $view = new View("upgrader.html");
     $view->available = module::available();
     $view->done = Input::instance()->get("done");
@@ -26,6 +31,11 @@ class Upgrader_Controller extends Controller {
   }
 
   public function upgrade() {
+    // Todo: give the admin a chance to log in here
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
+
     // Upgrade gallery and user first
     module::install("gallery");
     module::install("user");
