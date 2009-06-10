@@ -40,7 +40,7 @@ class module_Core {
       $module->name = $module_name;
       $module->active = $module_name == "gallery";  // only gallery is active by default
     }
-    $module->version = 1;
+    $module->version = $version;
     $module->save();
     Kohana::log("debug", "$module_name: version is now $version");
   }
