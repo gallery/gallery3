@@ -46,16 +46,12 @@ define("MODPATH", realpath("modules") . "/");
 define("THEMEPATH", realpath("themes") . "/");
 define("SYSPATH", realpath("system") . "/");
 
-// Force a test run if we"re in command line mode.
+// We only accept a few controllers on the command line
 if (PHP_SAPI == "cli") {
-  switch ($_SERVER["argv"][1]) {
+  switch ($arg_1 = $_SERVER["argv"][1]) {
   case "upgrade":
-    array_splice($_SERVER["argv"], 1, 1, "upgrader/upgrade");
-    define("TEST_MODE", 0);
-    define("VARPATH", realpath("var") . "/");
-    break;
-
   case "package":
+    $_SERVER["argv"] = array("index.php", "{$arg_1}r/$arg_1");
     define("TEST_MODE", 0);
     define("VARPATH", realpath("var") . "/");
     break;
@@ -66,6 +62,10 @@ if (PHP_SAPI == "cli") {
     @mkdir("test/var/logs", 0777, true);
     define("VARPATH", realpath("test/var") . "/");
     @copy("var/database.php", VARPATH . "database.php");
+
+  default:
+    print "Usage: php index.php { upgrade | package | test }\n";
+    exit(1);
   }
 } else {
   define("TEST_MODE", 0);
