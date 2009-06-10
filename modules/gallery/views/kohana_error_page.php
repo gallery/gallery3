@@ -59,7 +59,7 @@
   </head>
   <body>
     <? try { $user = user::active(); } catch (Exception $e) { } ?>
-    <? $admin = isset($user) && $user->admin ?>
+    <? $admin = php_sapi_name() == "cli" || isset($user) && $user->admin ?>
     <div class="big_box" id="framework_error">
       <h1>
         <?= t("Dang...  Something went wrong!") ?>
