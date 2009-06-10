@@ -6,7 +6,7 @@
   </p>
   <ul id="gMessage">
     <li class="gWarning">
-      <b><?= t("Change these values at your own risk!</b>") ?>
+      <b><?= t("Change these values at your own risk!") ?>
     </li>
   </ul>
 
@@ -25,7 +25,11 @@
         <a href="<?= url::site("admin/advanced_settings/edit/$var->module_name/" . p::clean($var->name)) ?>"
           class="gDialogLink"
           title="<?= t("Edit %var (%module_name)", array("var" => p::clean($var->name), "module_name" => $var->module_name)) ?>">
+          <? if ($var->value): ?>
           <?= p::clean($var->value) ?>
+          <? else: ?>
+          <i> <?= t("empty") ?> </i>
+          <? endif ?>
       </a>
       </td>
     </tr>

@@ -17,37 +17,40 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class View extends View_Core {
-  /**
-   * Override View_Core::__construct so that we can set the csrf value into all views.
-   *
-   * @see View_Core::__construct
-   */
-  public function __construct($name = NULL, $data = NULL, $type = NULL) {
-    parent::__construct($name, $data, $type);
-    $this->set_global("csrf", access::csrf_token());
+class Upgrader_Controller extends Controller {
+  public function index() {
+    // Todo: give the admin a chance to log in here
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
+
+    $view = new View("upgrader.html");
+    $view->available = module::available();
+    $view->done = Input::instance()->get("done");
+    print $view;
   }
 
-  /**
-   * Override View_Core::render so that we trap errors stemming from bad PHP includes and show a
-   * visible stack trace to help developers.
-   *
-   * @see View_Core::render
-   */
-  public function render($print=false, $renderer=false) {
-    try {
-      return parent::render($print, $renderer);
-    } catch (Exception $e) {
-      Kohana::Log('error', $e->getTraceAsString());
-      Kohana::Log('debug', $e->getMessage());
-      return "";
+  public function upgrade() {
+    // Todo: give the admin a chance to log in here
+    if (!user::active()->admin) {
+      access::forbidden();
     }
-  }
 
-  public function body_attributes() {
-    if (locale::is_rtl()) {
-      return 'class="rtl"';
+    // Upgrade gallery and user first
+    module::install("gallery");
+    module::install("user");
+
+    // Then upgrade the rest
+    foreach (module::available() as $id => $module) {
+      if ($id == "gallery") {
+        continue;
+      }
+
+      if ($module->active && $module->code_version != $module->version) {
+        module::install($id);
+      }
     }
-    return '';
+
+    url::redirect("upgrader?done=1");
   }
 }

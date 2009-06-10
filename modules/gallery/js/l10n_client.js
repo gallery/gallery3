@@ -35,20 +35,20 @@ jQuery.extend(Gallery, {
           if(userSelection.length > 0) {
             Gallery.l10nClient.filter(userSelection);
             Gallery.l10nClient.toggle(1);
-            $('#l10n-client #gL10nSearch').focus();      
+            $('#l10n-client #gL10nSearch').focus();
           } else {
             if($('#l10n-client').is('.hidden')) {
               Gallery.l10nClient.toggle(1);
               if(!$.browser.safari) {
                 $('#l10n-client #gL10nSearch').focus();
               }
-            } else { 
+            } else {
               Gallery.l10nClient.toggle(0);
             }
           }
         break;
         case 'clear':
-          this.filter(false);      
+          this.filter(false);
         break;
       }
     }
@@ -61,7 +61,7 @@ jQuery.extend(Gallery, {
           $('#l10n-client .labels .toggle').text('X');
         /*
          * This CSS clashes with Gallery's CSS, probably due to
-         * YUI's grid / floats. 
+         * YUI's grid / floats.
           if(!$.browser.msie) {
               $('body').css('border-bottom', '22em solid #fff');
           }
@@ -79,7 +79,7 @@ jQuery.extend(Gallery, {
           }
         */
           $.cookie('Gallery_l10n_client', '0', {expires: 7, path: '/'});
-        break;        
+        break;
       }
     }
     // Get a string from the DOM tree
@@ -124,7 +124,7 @@ jQuery.extend(Gallery, {
         $('#l10n-edit-translation').removeClass('hidden');
       }
     }
-    // Filter the the string list by a search string
+    // Filter the string list by a search string
     this.filter = function(search) {
       if(search == false || search == '') {
         $('#l10n-client #l10n-search-filter-clear').focus();
@@ -153,7 +153,7 @@ Gallery.behaviors.l10nClient = function(context) {
       Gallery.l10nClient.toggle(0);
     break;
   }
-  
+
   // If the selection changes, copy string values to the source and target fields.
   // Add class to indicate selected string in list widget.
   $('#l10n-client-string-select li').click(function() {
@@ -173,7 +173,7 @@ Gallery.behaviors.l10nClient = function(context) {
   $('#l10n-client .labels .toggle').click(function() {
     if($('#l10n-client').is('.hidden')) {
       Gallery.l10nClient.toggle(1);
-    } else { 
+    } else {
       Gallery.l10nClient.toggle(0);
     }
   });
@@ -184,7 +184,7 @@ Gallery.behaviors.l10nClient = function(context) {
     $.hotkeys.add(Gallery.l10nClient.keys['toggle'], function(){Gallery.l10nClient.key('toggle')});
     $.hotkeys.add(Gallery.l10nClient.keys['clear'], {target:'#l10n-client #gL10nSearch', type:'keyup'}, function(){Gallery.l10nClient.key('clear')});
   }
-  
+
   // Custom listener for l10n_client livesearch
   $('#l10n-client #gL10nSearch').keyup(function(key) {
     Gallery.l10nClient.filter($('#l10n-client #gL10nSearch').val());
@@ -222,7 +222,7 @@ Gallery.behaviors.l10nClient = function(context) {
               // Clear the translation form fields
               Gallery.l10nClient.showSourceMessage('', false);
               $('#gL10nClientSaveForm #l10n-edit-translation').val('');
-        
+
               for (var i = 0; i < num_plural_forms; i++) {
                   var form = plural_forms[i];
                   $('#gL10nClientSaveForm #l10n-edit-plural-translation-' + form).val('');

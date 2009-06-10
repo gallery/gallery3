@@ -87,9 +87,12 @@ class Quick_Controller extends Controller {
     access::required("view", $item->parent());
     access::required("edit", $item->parent());
 
-    item::make_album_cover($item);
+    $msg = t("Made <b>%title</b> this album's cover", array("title" => $item->title));
 
-    print json_encode(array("result" => "success"));
+    item::make_album_cover($item);
+    message::success($msg);
+
+    print json_encode(array("result" => "success", "reload" => 1));
   }
 
   public function delete($id) {

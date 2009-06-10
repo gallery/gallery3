@@ -27,6 +27,7 @@ class module_Core {
   public static $active = array();
   public static $modules = array();
   public static $var_cache = null;
+  public static $available = array();
 
   /**
    * Set the version of the corresponding Module_Model
@@ -39,7 +40,7 @@ class module_Core {
       $module->name = $module_name;
       $module->active = $module_name == "gallery";  // only gallery is active by default
     }
-    $module->version = 1;
+    $module->version = $version;
     $module->save();
     Kohana::log("debug", "$module_name: version is now $version");
   }
@@ -74,22 +75,27 @@ class module_Core {
    * Return the list of available modules, including uninstalled modules.
    */
   static function available() {
-    $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-    foreach (glob(MODPATH . "*/module.info") as $file) {
-      $module_name = basename(dirname($file));
-      $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-      $modules->$module_name->installed = self::is_installed($module_name);
-      $modules->$module_name->active = self::is_active($module_name);
-      $modules->$module_name->version = self::get_version($module_name);
-      $modules->$module_name->locked = false;
+    if (empty(self::$available)) {
+      $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+      foreach (glob(MODPATH . "*/module.info") as $file) {
+        $module_name = basename(dirname($file));
+        $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+        $m =& $modules->$module_name;
+        $m->installed = self::is_installed($module_name);
+        $m->active = self::is_active($module_name);
+        $m->code_version = $m->version;
+        $m->version = self::get_version($module_name);
+        $m->locked = false;
+      }
+
+      // Lock certain modules
+      $modules->gallery->locked = true;
+      $modules->user->locked = true;
+      $modules->ksort();
+      self::$available = $modules;
     }
 
-    // Lock certain modules
-    $modules->gallery->locked = true;
-    $modules->user->locked = true;
-    $modules->ksort();
-
-    return $modules;
+    return self::$available;
   }
 
   /**
