@@ -54,7 +54,7 @@ class g2_import_Core {
    * Initialize the embedded Gallery2 instance.  Call this before any other Gallery2 calls.
    */
   static function init_embed($embed_path, $multi_path) {
-    if (!is_file($embed_path) || (!empty($multi_path) && !is_dir($multi_path))) {
+    if (!is_file($embed_path) && (empty($multi_path) || is_dir($multi_path))) {
       return false;
     }
 
