@@ -87,17 +87,20 @@ class Server_Add_Controller extends Controller {
     foreach (array_keys($paths) as $valid_path) {
       $path_length = strlen($valid_path);
       foreach ($input_files as $key => $path) {
-        if (!empty($path) && $valid_path != $path && strpos($path, $valid_path) === 0) {
-          $relative_path = substr(dirname($path), $path_length);
-          $name = basename($path);
-          $files[$valid_path][] = array("path" => $relative_path,
-                                        "parent_id" => $id, "name" => basename($path),
+        if (!empty($path)) {
+          if ($valid_path != $path && strpos($path, $valid_path) === 0) {
+            $relative_path = substr(dirname($path), $path_length);
+            $name = basename($path);
+            $files[$valid_path][] = array("path" => $relative_path,
+                                          "parent_id" => $id, "name" => basename($path),
                                         "type" => is_dir($path) ? "album" : "file");
-          $total_count++;
+            $total_count++;
+          }
           if ($collapsed[$key] === "true") {
             $total_count += $this->_select_children($id, $valid_path, $path, $files[$valid_path]);
           }
           unset($input_files[$key]);
+          unset($collapsed[$key]);
         }
       }
     }

@@ -93,7 +93,7 @@
     button_width: "202",
     button_height: "45",
     button_placeholder_id: "gChooseFilesButtonPlaceholder",
-    button_text: '<span class="swfUploadFont">Select photos...</span>',
+    button_text: '<span class="swfUploadFont"><?= t("Select photos...") ?></span>',
     button_text_style: ".swfUploadFont { color: #2E6E9E; font-size: 16px; font-family: Lucida Grande,Lucida Sans,Arial,sans-serif; font-weight: bold; }",
     button_text_left_padding: 30,
     button_text_top_padding: 10,
