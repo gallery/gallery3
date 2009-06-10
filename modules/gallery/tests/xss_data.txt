@@ -73,7 +73,7 @@ modules/gallery/views/admin_advanced_settings.html.php       25  DIRTY $var->mod
 modules/gallery/views/admin_advanced_settings.html.php       25        $var->name
 modules/gallery/views/admin_advanced_settings.html.php       27        $var->name
 modules/gallery/views/admin_advanced_settings.html.php       27  DIRTY $var->module_name
-modules/gallery/views/admin_advanced_settings.html.php       28        $var->value
+modules/gallery/views/admin_advanced_settings.html.php       29        $var->value
 modules/gallery/views/admin_block_log_entries.html.php       4   DIRTY $entry->severity
 modules/gallery/views/admin_block_log_entries.html.php       5   DIRTY $entry->user_id
 modules/gallery/views/admin_block_log_entries.html.php       5         $entry->user->name
@@ -278,6 +278,14 @@ modules/gallery/views/simple_uploader.html.php               28        $parent->
 modules/gallery/views/simple_uploader.html.php               30        $item->title
 modules/gallery/views/simple_uploader.html.php               77  DIRTY $item->id
 modules/gallery/views/simple_uploader.html.php               81  DIRTY $csrf
+modules/gallery/views/upgrader.html.php                      94  DIRTY $done
+modules/gallery/views/upgrader.html.php                      124 DIRTY $module->version
+modules/gallery/views/upgrader.html.php                      124 DIRTY $module->code_version
+modules/gallery/views/upgrader.html.php                      125 DIRTY $id
+modules/gallery/views/upgrader.html.php                      126 DIRTY $module->name
+modules/gallery/views/upgrader.html.php                      129 DIRTY $module->version
+modules/gallery/views/upgrader.html.php                      132 DIRTY $module->code_version
+modules/gallery/views/upgrader.html.php                      155 DIRTY $module->name
 modules/image_block/views/image_block_block.html.php         3   DIRTY $item->url()
 modules/image_block/views/image_block_block.html.php         4   DIRTY $item->thumb_img(array("class" => "gThumbnail"))
 modules/info/views/info_block.html.php                       6         $item->title
@@ -492,6 +500,7 @@ themes/admin_default/views/admin.html.php                    20  DIRTY $theme->u
 themes/admin_default/views/admin.html.php                    29  DIRTY $theme->url("js/jquery.dropshadow.js")
 themes/admin_default/views/admin.html.php                    30  DIRTY $theme->url("js/ui.init.js")
 themes/admin_default/views/admin.html.php                    31  DIRTY $theme->admin_head()
+themes/admin_default/views/admin.html.php                    34  DIRTY $theme->body_attributes()
 themes/admin_default/views/admin.html.php                    35  DIRTY $theme->admin_page_top()
 themes/admin_default/views/admin.html.php                    41  DIRTY $theme->site_status()
 themes/admin_default/views/admin.html.php                    43  DIRTY $theme->admin_header_top()
@@ -563,7 +572,6 @@ themes/default/views/header.html.php                         21  DIRTY $parent->
 themes/default/views/header.html.php                         21  DIRTY $item->id
 themes/default/views/header.html.php                         22        $parent->title
 themes/default/views/header.html.php                         26        $item->title
-themes/default/views/login_page.html.php                     10  DIRTY $theme->url("css/screen.css")
 themes/default/views/movie.html.php                          4   DIRTY $theme->photo_top()
 themes/default/views/movie.html.php                          7   DIRTY $position
 themes/default/views/movie.html.php                          7   DIRTY $sibling_count
@@ -590,6 +598,7 @@ themes/default/views/page.html.php                           51  DIRTY $theme->u
 themes/default/views/page.html.php                           52  DIRTY $theme->url("js/jquery.localscroll.js")
 themes/default/views/page.html.php                           53  DIRTY $theme->url("js/ui.init.js")
 themes/default/views/page.html.php                           54  DIRTY $theme->head()
+themes/default/views/page.html.php                           57  DIRTY $theme->body_attributes()
 themes/default/views/page.html.php                           58  DIRTY $theme->page_top()
 themes/default/views/page.html.php                           60  DIRTY $theme->site_status()
 themes/default/views/page.html.php                           62  DIRTY $theme->display("header.html")
