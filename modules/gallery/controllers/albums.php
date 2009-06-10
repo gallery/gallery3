@@ -26,14 +26,8 @@ class Albums_Controller extends Items_Controller {
     $page_size = module::get_var("gallery", "page_size", 9);
     if (!access::can("view", $album)) {
       if ($album->id == 1) {
-        $template = new Theme_View("page.html", "album");
-        $template->set_global("page_size", $page_size);
-        $template->set_global("item", $album);
-        $template->set_global("children", array());
-        $template->set_global("children_count", 0);
-        $template->set_global("parents", $album->parents());
-        $template->unauthorized = true;
-        $template->content = new View("album.html");
+        $template = new Theme_View("not_authorized.html", "album");
+        $template->content = new View("login_page.html");
         print $template;
         return;
       } else {
