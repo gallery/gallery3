@@ -9,6 +9,9 @@
       font-family: Trebuchet MS;
       font-size: 1.1em;
     }
+    h1 {
+      font-size: 1.4em;
+    }
     div#outer {
       width: 650px;
       background: white;
@@ -93,11 +96,17 @@
     .gray_on_done {
       opacity: <?= $done ? "0.5" : "1" ?>;
     }
+    pre {
+      display: inline;
+      margin: 0px;
+      padding: 0px;
+    }
   </style>
   <body>
     <div id="outer">
       <img src="<?= url::file("modules/gallery/images/gallery.png") ?>" />
       <div id="inner">
+        <? if ($can_upgrade): ?>
         <? if ($done): ?>
         <div id="confirmation">
           <div>
@@ -158,6 +167,13 @@
           <? endforeach ?>
         </p>
         <? endif ?>
+        <? else: // can_upgrade ?>
+        <h1> <?= t("Who are you?") ?> </h1>
+        <p>
+          <?= t("You're not logged in as an administrator, so we have to verify you to make sure it's ok for you to do an upgrade.  To prove you can run an upgrade, create a file called %name in your <b>gallery3/var/tmp</b> directory.", array("name" => "<br/><b>$upgrade_token</b>")) ?>
+        </p>
+        <a href="<?= url::site("upgrader?") ?>"><?= t("Ok, I've done that") ?></a>
+        <? endif // can_upgrade ?>
       </div>
       <div id="footer">
         <p>
