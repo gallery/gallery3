@@ -425,13 +425,19 @@ class g2_import_Core {
     case "GalleryMovieItem":
       // @todo we should transcode other types into FLV
       if (in_array($g2_item->getMimeType(), array("video/mp4", "video/x-flv"))) {
-        $item = movie::create(
-          $parent,
-          $g2_path,
-          $g2_item->getPathComponent(),
-          $g2_item->getTitle(),
-          self::extract_description($g2_item),
-          self::map($g2_item->getOwnerId()));
+        try {
+          $item = movie::create(
+            $parent,
+            $g2_path,
+            $g2_item->getPathComponent(),
+            $g2_item->getTitle(),
+            self::extract_description($g2_item),
+            self::map($g2_item->getOwnerId()));
+        } catch (Exception $e) {
+          Kohana::log("alert", "Corrupt movie $g2_path\n" .
+                      $e->getMessage() . "\n" . $e->getTraceAsString());
+          $corrupt = 1;
+        }
       }
       break;
 
