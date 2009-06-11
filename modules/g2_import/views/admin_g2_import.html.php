@@ -52,7 +52,7 @@
     <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
         array("g2_pixels" => $g2_sizes["thumb"]["size"],
               "g3_pixels" => $thumb_size,
-              "url" => url::site("admin/theme_details"))) ?>
+              "url" => url::site("admin/theme_options"))) ?>
   </div>
   <? endif ?>
 
@@ -61,7 +61,7 @@
     <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
         array("g2_pixels" => $g2_sizes["resize"]["size"],
               "g3_pixels" => $resize_size,
-              "url" => url::site("admin/theme_details"))) ?>
+              "url" => url::site("admin/theme_options"))) ?>
   </div>
   <? endif ?>
 

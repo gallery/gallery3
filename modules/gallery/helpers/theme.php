@@ -40,7 +40,7 @@ class theme_Core {
   }
 
   static function get_edit_form_admin() {
-    $form = new Forge("admin/theme_details/save/", "", null, array("id" =>"gThemeDetailsForm"));
+    $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"gThemeOptionsForm"));
     $group = $form->group("edit_theme");
     $group->input("page_size")->label(t("Items per page"))->id("gPageSize")
       ->rules("required|valid_digit")
