@@ -61,7 +61,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
     log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
-              html::anchor(url::site("admin/maintenance"), t("maintenance")));
+              html::anchor("admin/maintenance", t("maintenance")));
     print $view;
   }
 
@@ -81,7 +81,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
     log::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
-              html::anchor(url::site("admin/maintenance"), t("maintenance")));
+              html::anchor("admin/maintenance", t("maintenance")));
     print $view;
   }
 
@@ -152,14 +152,14 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       case "success":
         log::success("tasks", t("Task %task_name completed (task id %task_id)",
                                 array("task_name" => $task->name, "task_id" => $task->id)),
-                     html::anchor(url::site("admin/maintenance"), t("maintenance")));
+                     html::anchor("admin/maintenance", t("maintenance")));
         message::success(t("Task completed successfully"));
         break;
 
       case "error":
         log::error("tasks", t("Task %task_name failed (task id %task_id)",
                               array("task_name" => $task->name, "task_id" => $task->id)),
-                   html::anchor(url::site("admin/maintenance"), t("maintenance")));
+                   html::anchor("admin/maintenance", t("maintenance")));
         message::success(t("Task failed"));
         break;
       }
