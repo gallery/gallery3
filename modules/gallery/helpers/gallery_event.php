@@ -43,4 +43,8 @@ class gallery_event_Core {
       module::clear_var("gallery", "choose_default_tookit");
     }
   }
+
+  static function request_feed_links($event_data) {
+    $event_data->feeds[t("New photos or movies")] = url::site("rss/updates");
+  }
 }
