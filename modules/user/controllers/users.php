@@ -33,12 +33,14 @@ class Users_Controller extends REST_Controller {
         $user->password = $form->edit_user->password->value;
       }
       $user->email = $form->edit_user->email->value;
+      $user->url = $form->edit_user->url->value;
       if ($form->edit_user->locale) {
         $desired_locale = $form->edit_user->locale->value;
         $user->locale = $desired_locale == "none" ? null : $desired_locale;
       }
       $user->save();
 
+      message::success(t("User information updated."));
       print json_encode(
         array("result" => "success",
               "resource" => url::site("users/{$user->id}")));
