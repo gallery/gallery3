@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Theme_Details_Controller extends Admin_Controller {
+class Admin_Theme_Options_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
-    $view->content = new View("admin_theme_details.html");
+    $view->content = new View("admin_theme_options.html");
     $view->content->form = theme::get_edit_form_admin();
     print $view;
   }
@@ -58,7 +58,7 @@ class Admin_Theme_Details_Controller extends Admin_Controller {
       module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
 
       message::success(t("Updated theme details"));
-      url::redirect("admin/theme_details");
+      url::redirect("admin/theme_options");
     } else {
       $view = new Admin_View("admin.html");
       $view->content = $form;
