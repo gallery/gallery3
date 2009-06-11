@@ -18,55 +18,64 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 // Set this to true to disable demo/debugging controllers
-define('IN_PRODUCTION', true);
+define("IN_PRODUCTION", true);
 
 // Gallery requires PHP 5.2+
-version_compare(PHP_VERSION, '5.2.3', '<') and exit('Gallery requires PHP 5.2.3 or newer.');
+version_compare(PHP_VERSION, "5.2.3", "<") and exit("Gallery requires PHP 5.2.3 or newer.");
 
 // Gallery requires short_tags to be on
-!ini_get('short_open_tag') and exit('Gallery requires short_open_tag to be on.');
+!ini_get("short_open_tag") and exit("Gallery requires short_open_tag to be on.");
 
 // Set the error reporting level.  Use E_ALL unless you have a special need.
 error_reporting(0);
 
 // Disabling display_errors will  effectively disable Kohana error display
 // and logging. You can turn off Kohana errors in application/config/config.php
-ini_set('display_errors', false);
+ini_set("display_errors", false);
 
-define('EXT', '.php');
-define('DOCROOT', strtr(getcwd() . '/', DIRECTORY_SEPARATOR, '/'));
-define('KOHANA',  'index.php');
+define("EXT", ".php");
+define("DOCROOT", getcwd() . "/");
+define("KOHANA",  "index.php");
 
 // If the front controller is a symlink, change to the real docroot
 is_link(basename(__FILE__)) and chdir(dirname(realpath(__FILE__)));
 
 // Define application and system paths
-define('APPPATH', strtr(realpath('application') . '/', DIRECTORY_SEPARATOR, '/'));
-define('MODPATH', strtr(realpath('modules') . '/', DIRECTORY_SEPARATOR, '/'));
-define('THEMEPATH', strtr(realpath('themes') . '/', DIRECTORY_SEPARATOR, '/'));
-define('SYSPATH', strtr(realpath('system') . '/', DIRECTORY_SEPARATOR, '/'));
+define("APPPATH", realpath("application") . "/");
+define("MODPATH", realpath("modules") . "/");
+define("THEMEPATH", realpath("themes") . "/");
+define("SYSPATH", realpath("system") . "/");
 
-// Force a test run if we're in command line mode.
-if (PHP_SAPI == 'cli') {
-  if ($_SERVER['argv'][1] != "package") {
-    array_splice($_SERVER['argv'], 1, 0, 'gallery_unit_test');
-    define('TEST_MODE', 1);
-    @mkdir('test/var/logs', 0777, true);
-    define('VARPATH', strtr(realpath('test/var') . '/', DIRECTORY_SEPARATOR, '/'));
+// We only accept a few controllers on the command line
+if (PHP_SAPI == "cli") {
+  switch ($arg_1 = $_SERVER["argv"][1]) {
+  case "upgrade":
+  case "package":
+    $_SERVER["argv"] = array("index.php", "{$arg_1}r/$arg_1");
+    define("TEST_MODE", 0);
+    define("VARPATH", realpath("var") . "/");
+    break;
+
+  case "test":
+    array_splice($_SERVER["argv"], 1, 1, "gallery_unit_test");
+    define("TEST_MODE", 1);
+    @mkdir("test/var/logs", 0777, true);
+    define("VARPATH", realpath("test/var") . "/");
     @copy("var/database.php", VARPATH . "database.php");
-  } else {
-    define('TEST_MODE', 0);
-    define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
+
+  default:
+    print "Usage: php index.php { upgrade | package | test }\n";
+    exit(1);
   }
 } else {
-  define('TEST_MODE', 0);
-  define('VARPATH', strtr(realpath('var') . '/', DIRECTORY_SEPARATOR, '/'));
+  define("TEST_MODE", 0);
+  define("VARPATH", realpath("var") . "/");
 }
-define('TMPPATH', VARPATH . '/tmp/');
+define("TMPPATH", VARPATH . "/tmp/");
 
 if (file_exists("local.php")) {
   include("local.php");
 }
 
 // Initialize.
-require SYSPATH . 'core/Bootstrap' . EXT;
+require SYSPATH . "core/Bootstrap" . EXT;

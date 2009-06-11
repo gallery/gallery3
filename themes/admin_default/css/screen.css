@@ -432,3 +432,7 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   cursor: pointer;
 }
 
+#gLanguageSettingsForm .checklist li {
+  width: 150px;
+  overflow: hidden;
+}

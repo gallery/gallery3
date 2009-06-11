@@ -17,11 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Package_Controller extends Controller {
-  function index() {
-    if (PHP_SAPI != 'cli') {
-      Kohana::show_404();
+class Packager_Controller extends Controller {
+  function package() {
+    if (PHP_SAPI != "cli") {
+      access::forbidden();
     }
+
+    $_SERVER["HTTP_HOST"] = "example.com";
 
     try {
       $this->_reset();                // empty and reinstall the standard modules
