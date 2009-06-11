@@ -23,6 +23,13 @@ class Gallery_Unit_Test_Controller extends Controller {
       print Kohana::show_404();
     }
 
+    // Jump through some hoops to satisfy the way that we check for the site_domain in
+    // config.php.  We structure this such that the code in config will leave us with a
+    // site_domain of "." (for historical reasons)
+    // @todo: for tests, we should force the site_domain to something like example.com
+    $_SERVER["SCRIPT_FILENAME"] = "index.php";
+    $_SERVER["SCRIPT_NAME"] = "./index.php";
+
     $original_config = DOCROOT . "var/database.php";
     $test_config = VARPATH . "database.php";
     if (!file_exists($original_config)) {
