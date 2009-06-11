@@ -62,6 +62,7 @@ if (PHP_SAPI == "cli") {
     @mkdir("test/var/logs", 0777, true);
     define("VARPATH", realpath("test/var") . "/");
     @copy("var/database.php", VARPATH . "database.php");
+    break;
 
   default:
     print "Usage: php index.php { upgrade | package | test }\n";
