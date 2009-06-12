@@ -36,18 +36,11 @@ class rss_theme_Core {
       return;
     }
 
-    $event_data = new stdClass();
-    $event_data->feeds = array();
-    $event_data->item = $theme->item();
-    module::event("request_feed_links", $event_data);
-    foreach ($event_data->feeds as $key => $feed) {
-      $event_data->feeds[$key] = url::site("rss/$feed");
-    }
     $block = new Block();
     $block->css_id = "gRss";
     $block->title = t("Available RSS Feeds");
     $block->content = new View("rss_block.html");
-    $block->content->feeds = $event_data->feeds;
+    $block->content->feeds = rss::get_feeds($theme->item());
 
     return $block;
   }
