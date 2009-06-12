@@ -24,4 +24,19 @@ class gallery_rss_Core {
                        "sidebar" => true,
                        "uri" => "updates"));
   }
+
+  static function updates($offset, $limit) {
+    $feed = new stdClass();
+    $feed->data["children"] = ORM::factory("item")
+      ->viewable()
+      ->where("type !=", "album")
+      ->orderby("created", "DESC")
+      ->find_all($limit, $offset);
+    $feed->max_pages = ceil($feed->data["children"]->count() / $limit);
+    $feed->data["title"] = t("Recent Updates");
+    $feed->data["link"] = url::abs_site("albums/1");
+    $feed->data["description"] = t("Recent Updates");
+
+    return $feed;
+  }
 }
