@@ -69,7 +69,7 @@
           <? elseif ($intent === access::ALLOW): ?>
             <td class="gAllowed">
               <? if ($item->id == 1): ?>
-                <img src="<?= url::file('themes/default/images/ico-success.png') ?>" title="allowed" alt="<?= t('allowed icon') ?>" />
+                <img src="<?= url::file('themes/default/images/ico-success.png') ?>" title="<?= t("allowed") ?>" alt="<?= t('allowed icon') ?>" />
               <? else: ?>
                 <a href="javascript:set('reset',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                   title="<?= t('allowed, click to reset') ?>">
