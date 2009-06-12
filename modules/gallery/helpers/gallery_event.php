@@ -45,6 +45,6 @@ class gallery_event_Core {
   }
 
   static function request_feed_links($event_data) {
-    $event_data->feeds[t("New photos or movies")] = url::site("rss/updates");
+    $event_data->feeds[t("New photos or movies")] = url::site("updates");
   }
 }
