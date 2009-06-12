@@ -17,31 +17,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class rss_theme_Core {
-  static function head($theme) {
-    if ($theme->item()) {
-      $url = rss::item_feed($theme->item());
-    } else if ($theme->tag()) {
-      $url = rss::tag_feed($theme->tag());
-    }
 
-    if (!empty($url)) {
-      return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
-    }
+class tag_rss_Core {
+  static function available_feeds($item) {
+    return array(array("description" => t("Tag Album feed"),
+                       "sidebar" => false,
+                       "uri" => "tags"));
   }
 
-  static function sidebar_blocks($theme) {
-    // @todo this needs to be data driven
-    if (!$theme->item()) {
-      return;
+  static function tags($offset, $limit, $id) {
+    $tag = ORM::factory("tag", $id);
+    if (!$tag->loaded) {
+      return Kohana::show_404();
     }
 
-    $block = new Block();
-    $block->css_id = "gRss";
-    $block->title = t("Available RSS Feeds");
-    $block->content = new View("rss_block.html");
-    $block->content->feeds = rss::get_feeds($theme->item());
+    $feed = new stdClass();
+    $feed->data["children"] = $tag->items($limit, $offset, "photo");
+    $feed->max_pages = ceil($tag->count / $limit);
+    $feed->data["title"] = $tag->name;
+    $feed->data["link"] = url::abs_site("tags/{$tag->id}");
+    $feed->data["description"] = t("Photos related to %tag_name", array("tag_name" => $tag->name));
 
-    return $block;
+    return $feed;
   }
 }
