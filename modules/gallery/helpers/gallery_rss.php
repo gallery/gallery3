@@ -22,7 +22,10 @@ class gallery_rss_Core {
   static function available_feeds($item) {
     return array(array("description" => t("New photos or movies"),
                        "sidebar" => true,
-                       "uri" => "updates"));
+                       "uri" => "updates"),
+                 array("description" => t("Album feed"),
+                       "sidebar" => false,
+                       "uri" => "albums"));
   }
 
   static function updates($offset, $limit) {
@@ -36,6 +39,22 @@ class gallery_rss_Core {
     $feed->data["title"] = t("Recent Updates");
     $feed->data["link"] = url::abs_site("albums/1");
     $feed->data["description"] = t("Recent Updates");
+
+    return $feed;
+  }
+
+  static function albums($offset, $limit, $id) {
+    $item = ORM::factory("item", $id);
+    access::required("view", $item);
+
+    $feed = new stdClass();
+    $feed->data["children"] = $item
+      ->viewable()
+      ->descendants($limit, $offset, "photo");
+    $feed->max_pages = ceil($item->viewable()->descendants_count("photo") / $limit);
+    $feed->data["title"] = $item->title;
+    $feed->data["link"] = url::abs_site("albums/{$item->id}");
+    $feed->data["description"] = $item->description;
 
     return $feed;
   }
