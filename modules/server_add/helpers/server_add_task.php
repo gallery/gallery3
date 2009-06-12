@@ -56,11 +56,12 @@ class server_add_task_Core {
         } else {
           $extension = strtolower(substr(strrchr($name, '.'), 1));
           $source_path = "$path{$file['path']}/$name";
+          $title = item::convert_filename_to_title($name);
           if (in_array($extension, array("flv", "mp4"))) {
-            $movie = movie::create($parent, $source_path, $name, $name,
+            $movie = movie::create($parent, $source_path, $name, $title,
                                    null, user::active()->id);
           } else {
-            $photo = photo::create($parent, $source_path, $name, $name,
+            $photo = photo::create($parent, $source_path, $name, $title,
                                    null, user::active()->id);
           }
         }
