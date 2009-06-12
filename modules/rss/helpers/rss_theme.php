@@ -36,20 +36,17 @@ class rss_theme_Core {
       return;
     }
 
+    $event_data = new stdClass();
+    $event_data->feeds = array();
+    $event_data->item = $theme->item();
+    module::event("request_feed_links", $event_data);
+    
     $block = new Block();
     $block->css_id = "gRss";
     $block->title = t("Available RSS Feeds");
     $block->content = new View("rss_block.html");
-    // @todo consider pushing the code for the feeds back to the associated modules
-    // and create an event 'generate_rss_feeds' that modules can respond to create
-    // the list of feeds.
-    $feeds = array(t("New photos or movies") => url::site("rss/updates"));
-    if (module::is_active("comment")) {
-      $feeds[t("All new comments")] = url::site("rss/comments");
-      $feeds[sprintf(t("Comments on %s"), $theme->item()->title)] =
-        url::site("rss/comments/{$theme->item()->id}");
-    }
-    $block->content->feeds = $feeds;
+    $block->content->feeds = $event_data->feeds;
+
     return $block;
   }
 }
