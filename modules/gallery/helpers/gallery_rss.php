@@ -17,8 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class comment_event_Core {
-  static function item_before_delete($item) {
-    Database::instance()->delete("comments", array("item_id" => $item->id));
+
+class gallery_rss_Core {
+  static function available_feeds($item) {
+    return array(array("description" => t("New photos or movies"),
+                       "sidebar" => true,
+                       "uri" => "updates"));
   }
 }

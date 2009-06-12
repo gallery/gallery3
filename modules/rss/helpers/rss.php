@@ -27,4 +27,25 @@ class rss_Core {
   static function tag_feed($tag) {
     return url::site("rss/tags/$tag->id}");
   }
+
+  /**
+   * Get all available rss feeds
+   */
+  static function get_feeds($item, $sidebar_only=true) {
+    $feeds = array();
+    foreach (module::active() as $module) {
+      $class_name = "{$module->name}_rss";
+      if (method_exists($class_name, "available_feeds")) {
+        foreach (call_user_func(array($class_name, "available_feeds"), $item) as $feed) {
+          if ($sidebar_only && !$feed["sidebar"]) {
+            continue;
+          }
+          $feeds[$feed["description"]] = url::site("rss/{$feed['uri']}");
+        }
+      }
+    }
+
+    return $feeds;
+  }
+
 }
