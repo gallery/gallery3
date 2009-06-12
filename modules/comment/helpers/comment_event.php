@@ -23,8 +23,8 @@ class comment_event_Core {
   }
 
   static function request_feed_links($event_data) {
-    $event_data->feeds[t("All new comments")] = url::site("rss/comments");
+    $event_data->feeds[t("All new comments")] = "comments";
     $event_data->feeds[sprintf(t("Comments on %s"), $event_data->item->title)] =
-      url::site("rss/comments/{$event_data->item->id}");
+      "comments/{$event_data->item->id}";
   }
 }
