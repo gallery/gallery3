@@ -62,47 +62,6 @@ class Rss_Controller extends Controller {
     print $view;
   }
 
-  public function updates() {
-    $page = $this->input->get("page", 1);
-    if ($page < 1) {
-      url::redirect("rss/updates");
-    }
-
-    $items = ORM::factory("item")
-      ->viewable()
-      ->where("type !=", "album")
-      ->orderby("created", "DESC")
-      ->find_all(self::$page_size, ($page - 1) * self::$page_size);
-    $max_pages = ceil($items->count() / self::$page_size);
-
-    if ($max_pages && $page > $max_pages) {
-      url::redirect("rss/updates?page=$max_pages");
-    }
-
-    $view = new View("feed.mrss");
-    $view->title = t("Recent Updates");
-    $view->link = url::abs_site("albums/1");
-    $view->description = t("Recent Updates");
-    $view->feed_link = url::abs_site("rss/updates");
-    $view->children = $items;
-
-    if ($page > 1) {
-      $previous_page = $page - 1;
-      $view->previous_page_link = url::site("rss/updates?page={$previous_page}");
-    }
-
-    if ($page < $max_pages) {
-      $next_page = $page + 1;
-      $view->next_page_link = url::site("rss/updates?page={$next_page}");
-    }
-
-    // @todo do we want to add an upload date to the items table?
-    $view->pub_date = date("D, d M Y H:i:s T");
-
-    rest::http_content_type(rest::RSS);
-    print $view;
-  }
-
   public function tags($id) {
     $tag = ORM::factory("tag", $id);
     if (!$tag->loaded) {
@@ -145,58 +104,36 @@ class Rss_Controller extends Controller {
     print $view;
   }
 
-  public function comments($id=null) {
+  public function __call($method, $arguments) {
+    $id = empty($arguments) ? null : $arguments[0];
     $page = $this->input->get("page", 1);
+    $feed_uri = "rss/$method" . (empty($id) ? "" : "/$id");
     if ($page < 1) {
-      url::redirect("rss/comments/$id");
+      url::redirect($feed_uri);
     }
 
-    $orm = ORM::factory("comment")
-      ->where("state", "published")
-      ->orderby("created", "DESC");
-    if (!empty($id)) {
-      $orm->where("item_id", $id);
+    $feed = rss::process_feed($method, ($page - 1) * self::$page_size, self::$page_size, $id);
+    if ($feed->max_pages && $page > $feed->max_pages) {
+      url::redirect("$feed_uri?page={$feed->max_pages}");
     }
 
-    $comments = $orm->find_all(self::$page_size, ($page - 1) * self::$page_size);
-    $max_pages = ceil($orm->count_last_query() / self::$page_size);
-
-    if ($max_pages && $page > $max_pages) {
-      url::redirect("rss/comments/{$item->id}?page=$max_pages");
+    $view = new View(empty($feed->view) ? "feed.mrss" : $feed->view);
+    foreach ($feed->data as $field => $value) {
+      $view->$field = $value;
     }
-
-    $view = new View("comment.mrss");
-    $view->title = htmlspecialchars(t("Recent Comments"));
-    $view->link = url::abs_site("albums/1");
-    $view->description = t("Recent Comments");
-    $view->feed_link = url::abs_site("rss/comments");
-    $view->pub_date = date("D, d M Y H:i:s T");
-
-    $view->children = array();
-    foreach ($comments as $comment) {
-      $item = $comment->item();
-      $view->children[] = array(
-        "pub_date" => date("D, d M Y H:i:s T", $comment->created),
-        "text" => htmlspecialchars($comment->text),
-        "thumb_url" => $item->thumb_url(),
-        "thumb_height" => $item->thumb_height,
-        "thumb_width" => $item->thumb_width,
-        "item_link" => htmlspecialchars(url::abs_site("{$item->type}s/$item->id")),
-        "title" =>htmlspecialchars($item->title),
-        "author" =>
-          empty($comment->guest_name) ? $comment->author()->full_name : $comment->guest_name
-      );
-    }
+    $view->feed_link = url::abs_site($feed_uri);
 
     if ($page > 1) {
       $previous_page = $page - 1;
-      $view->previous_page_link = url::site("rss/comments/{$item->id}?page={$previous_page}");
+      $view->previous_page_link = url::site("$feed_uri?page={$previous_page}");
     }
 
-    if ($page < $max_pages) {
+    if ($page < $feed->max_pages) {
       $next_page = $page + 1;
-      $view->next_page_link = url::site("rss/comments/{$item->id}?page={$next_page}");
+      $view->next_page_link = url::site("$feed_uri?page={$next_page}");
     }
+
+    $view->pub_date = date("D, d M Y H:i:s T");
 
     rest::http_content_type(rest::RSS);
     print $view;

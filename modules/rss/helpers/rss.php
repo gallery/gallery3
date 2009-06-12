@@ -48,4 +48,12 @@ class rss_Core {
     return $feeds;
   }
 
+  static function process_feed($feed, $offset, $limit, $id) {
+    foreach (module::active() as $module) {
+      $class_name = "{$module->name}_rss";
+      if (method_exists($class_name, $feed)) {
+        return call_user_func(array($class_name, $feed), $offset, $limit, $id);
+      }
+    }
+  }
 }
