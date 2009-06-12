@@ -100,11 +100,13 @@ class g2_import_Core {
           array("require_once(dirname(__FILE__) . '/modules/core/classes/Gallery.class');",
                 "require_once(dirname(__FILE__) . '/modules/core/classes/GalleryDataCache.class');",
                 "define('GALLERY_CONFIG_DIR', dirname(__FILE__));",
-                "\$gallery =& new Gallery();"),
+                "\$gallery =& new Gallery();",
+                "\$gallery = new Gallery();"),
           array("require_once(dirname(__FILE__) . '/Gallery.class');",
                 "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
                 "define('GALLERY_CONFIG_DIR', '$base_dir');",
-                "\$gallery =& new G2_Gallery();"),
+                "\$gallery =& new G2_Gallery();",
+                "\$gallery = new G2_Gallery();"),
           array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
                       file("$base_dir/bootstrap.inc"))));
 
