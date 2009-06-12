@@ -92,7 +92,7 @@ class gallery_block_Core {
     $form = new Forge("admin/dashboard/add_block", "", "post",
                       array("id" => "gAddDashboardBlockForm"));
     $group = $form->group("add_block")->label(t("Add Block"));
-    $group->dropdown("id")->label("Available Blocks")->options(block_manager::get_available());
+    $group->dropdown("id")->label(t("Available Blocks"))->options(block_manager::get_available());
     $group->submit("center")->value(t("Add to center"));
     $group->submit("sidebar")->value(t("Add to sidebar"));
     return $form;

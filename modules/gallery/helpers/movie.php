@@ -140,13 +140,11 @@ class movie_Core {
 
   static function find_ffmpeg() {
     if (!$ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) {
+      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin");
       if (function_exists("exec")) {
         $ffmpeg_path = exec("which ffmpeg");
       }
 
-      if (empty($ffmpeg) && @file_exists("/usr/local/bin/ffmpeg")) {
-        $ffmpeg_path = "/usr/local/bin/ffmpeg";
-      }
       module::set_var("gallery", "ffmpeg_path", $ffmpeg_path);
     }
     return $ffmpeg_path;
