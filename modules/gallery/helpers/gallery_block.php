@@ -56,7 +56,8 @@ class gallery_block_Core {
       $block->css_id = "gStats";
       $block->title = t("Gallery Stats");
       $block->content = new View("admin_block_stats.html");
-      $block->content->album_count = ORM::factory("item")->where("type", "album")->count_all();
+      $block->content->album_count =
+        ORM::factory("item")->where("type", "album")->where("id <>", 1)->count_all();
       $block->content->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
       break;
 
