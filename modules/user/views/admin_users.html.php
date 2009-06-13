@@ -80,7 +80,7 @@
           <?= p::clean($user->email) ?>
         </td>
         <td>
-          <?= ($user->last_login == 0) ? "" : date("j-M-y", $user->last_login) ?>
+          <?= ($user->last_login == 0) ? "" : gallery::date($user->last_login) ?>
         </td>
         <td class="gActions">
           <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"

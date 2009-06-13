@@ -8,8 +8,9 @@
            width="40"
            height="40" />
     </a>
-    <?= t("on ") . date("Y-M-d H:i:s", $comment->created) ?>
-    <a href="#"><?= p::clean($comment->author_name()) ?></a> <?= t("said") ?>
+    <?= t("on %date_time, %author_name said",
+          array("date_time" => gallery::date_time($comment->created),
+                "author_name" => p::clean($comment->author_name()))) ?>
   </p>
   <div>
     <?= p::clean($comment->text) ?>
