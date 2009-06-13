@@ -56,7 +56,7 @@ class gallery_Core {
    * @return string
    */
   static function date_time($timestamp) {
-    return date("Y-M-d H:i:s", $timestamp);
+    return date(module::get_var("gallery", "date_time_format", "Y-M-d H:i:s"), $timestamp);
   }
 
   /**
@@ -65,7 +65,7 @@ class gallery_Core {
    * @return string
    */
   static function date($timestamp) {
-    return date("Y-M-d", $timestamp);
+    return date(module::get_var("gallery", "date_format", "Y-M-d"), $timestamp);
   }
 
   /**
@@ -74,6 +74,6 @@ class gallery_Core {
    * @return string
    */
   static function time($timestamp) {
-    return date("H:i:s", $timestamp);
+    return date(module::get_var("gallery", "time_format", "H:i:s"), $timestamp);
   }
 }

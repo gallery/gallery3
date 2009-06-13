@@ -254,6 +254,12 @@ class gallery_installer {
 
       // @todo this string needs to be picked up by l10n_scanner
       module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
+    } else if ($version == 1) {
+      module::set_var("gallery", "date_format", "Y-M-d");
+      module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
+      module::set_var("gallery", "time_format", "H:i:s");
+      module::set_var("gallery", "version", "3.0 pre beta 2 (git)");
+      module::set_version("gallery", 2);
     }
   }
 
