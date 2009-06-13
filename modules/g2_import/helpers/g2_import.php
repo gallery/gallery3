@@ -69,7 +69,18 @@ class g2_import_Core {
       @dir::unlink($mod_path);
       mkdir($mod_path);
 
-      $base_dir = dirname($embed_path);
+      $config_dir = dirname($embed_path);
+      if (filesize($embed_path) > 200) {
+        // Regular install
+        $base_dir = $config_dir;
+      } else {
+        // Multisite install.  Line 2 of embed.php will be something like:
+        //   require('/usr/home/bharat/public_html/gallery2/embed.php');
+        $lines = file($embed_path);
+        preg_match("#require\('(.*)/embed.php'\);#", $lines[2], $matches);
+        $base_dir = $matches[1];
+      }
+
       file_put_contents(
         "$mod_path/embed.php",
         str_replace(
@@ -104,7 +115,7 @@ class g2_import_Core {
                 "\$gallery = new Gallery();"),
           array("require_once(dirname(__FILE__) . '/Gallery.class');",
                 "require_once('$base_dir/modules/core/classes/GalleryDataCache.class');",
-                "define('GALLERY_CONFIG_DIR', '$base_dir');",
+                "define('GALLERY_CONFIG_DIR', '$config_dir');",
                 "\$gallery =& new G2_Gallery();",
                 "\$gallery = new G2_Gallery();"),
           array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
