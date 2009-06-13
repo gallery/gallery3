@@ -6,7 +6,7 @@
   </p>
   <ul id="gMessage">
     <li class="gWarning">
-      <b><?= t("Change these values at your own risk!") ?>
+      <b><?= t("Change these values at your own risk!") ?></b>
     </li>
   </ul>
 
