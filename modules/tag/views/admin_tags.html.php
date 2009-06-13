@@ -30,7 +30,7 @@
     <tr>
       <td>
         <? foreach ($tags as $i => $tag): ?>
-          <? $current_letter = strtoupper(substr($tag->name, 0, 1)) ?>
+          <? $current_letter = strtoupper(mb_substr($tag->name, 0, 1)) ?>
 
           <? if ($i == 0): /* first letter */ ?>
             <strong><?= $current_letter ?></strong>
