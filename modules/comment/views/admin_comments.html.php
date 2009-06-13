@@ -117,7 +117,7 @@
       </td>
       <td>
         <div class="right">
-          <? $item = $comment->item(); ?>
+          <? $item = $comment->item() ?>
           <div class="gItem gPhoto">
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>
@@ -131,7 +131,7 @@
             </a>
           </div>
         </div>
-        <p><?= date("Y-M-d", $comment->created); ?></p>
+        <p><?= gallery::date($comment->created) ?></p>
         <?= p::clean($comment->text) ?>
       </td>
       <td>

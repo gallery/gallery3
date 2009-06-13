@@ -31,7 +31,7 @@
     <? if ($item->captured): ?>
     <tr>
       <th><?= t("Captured:") ?></th>
-      <td><?= date("M j, Y H:i:s", $item->captured)?></td>
+      <td><?= gallery::date_time($item->captured) ?></td>
     </tr>
     <? endif ?>
     <? if ($item->owner): ?>

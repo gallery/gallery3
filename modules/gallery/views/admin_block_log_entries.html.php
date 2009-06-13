@@ -3,7 +3,7 @@
   <? foreach ($entries as $entry): ?>
   <li class="<?= log::severity_class($entry->severity) ?>" style="direction: ltr">
     <a href="<?= url::site("user/$entry->user_id") ?>"><?= p::clean($entry->user->name) ?></a>
-    <?= date("Y-M-d H:i:s", $entry->timestamp) ?>
+    <?= gallery::date_time($entry->timestamp) ?>
     <?= $entry->message ?>
     <?= $entry->html ?>
   </li>

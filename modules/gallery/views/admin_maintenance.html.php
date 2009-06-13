@@ -69,7 +69,7 @@
       <? foreach ($running_tasks as $task): ?>
       <tr class="<?= $task->state == "stalled" ? "gWarning" : "" ?>">
         <td>
-          <?= date("M j, Y H:i:s", $task->updated) ?>
+          <?= gallery::date_time($task->updated) ?>
         </td>
         <td>
           <?= $task->name ?>
@@ -139,7 +139,7 @@
       <? foreach ($finished_tasks as $task): ?>
       <tr class="<?= $task->state == "success" ? "gSuccess" : "gError" ?>">
         <td>
-          <?= date("M j, Y H:i:s", $task->updated) ?>
+          <?= gallery::date_time($task->updated) ?>
         </td>
         <td>
           <?= $task->name ?>

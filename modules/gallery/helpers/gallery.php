@@ -49,4 +49,31 @@ class gallery_Core {
   static function shutdown() {
     module::event("gallery_shutdown");
   }
+
+  /**
+   * Return a unix timestamp in a user specified format including date and time.
+   * @param $timestamp unix timestamp
+   * @return string
+   */
+  static function date_time($timestamp) {
+    return date("Y-M-d H:i:s", $timestamp);
+  }
+
+  /**
+   * Return a unix timestamp in a user specified format that's just the date.
+   * @param $timestamp unix timestamp
+   * @return string
+   */
+  static function date($timestamp) {
+    return date("Y-M-d", $timestamp);
+  }
+
+  /**
+   * Return a unix timestamp in a user specified format that's just the time.
+   * @param $timestamp unix timestamp
+   * @return string
+   */
+  static function time($timestamp) {
+    return date("H:i:s", $timestamp);
+  }
 }
