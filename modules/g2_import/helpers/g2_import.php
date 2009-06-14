@@ -259,7 +259,14 @@ class g2_import_Core {
 
     $g2_admin_group_id =
       g2(GalleryCoreApi::getPluginParameter("module", "core", "id.adminGroup"));
-    $g2_user = g2(GalleryCoreApi::loadEntitiesById($g2_user_id));
+    try {
+      $g2_user = g2(GalleryCoreApi::loadEntitiesById($g2_user_id));
+    } catch (Exception $e) {
+      $msg = t("Failed to import Gallery 2 user with id: %id", array("id" => $g2_user_id));
+      Kohana::log("alert", $msg);
+      message::warning($msg);
+      return;
+    }
     $g2_groups = g2(GalleryCoreApi::fetchGroupsForUser($g2_user->getId()));
 
     try {
