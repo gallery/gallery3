@@ -20,10 +20,9 @@
 class Rss_Controller extends Controller {
   public static $page_size = 30;
 
-  public function __call($method, $arguments) {
-    $id = empty($arguments) ? null : $arguments[0];
+  public function feed($method, $id=null) {
     $page = $this->input->get("page", 1);
-    $feed_uri = "rss/$method" . (empty($id) ? "" : "/$id");
+    $feed_uri = "rss/feed/$method" . (empty($id) ? "" : "/$id");
     if ($page < 1) {
       url::redirect($feed_uri);
     }

@@ -21,11 +21,11 @@
 class rss_Core {
   static function item_feed($item) {
     $id = $item->is_album() ? $item->id : $item->parent_id;
-    return url::site("rss/albums/$id");
+    return url::site("rss/feed/albums/$id");
   }
 
   static function tag_feed($tag) {
-    return url::site("rss/tags/$tag->id}");
+    return url::site("rss/feed/tags/$tag->id}");
   }
 
   /**
@@ -40,7 +40,7 @@ class rss_Core {
           if ($sidebar_only && !$feed["sidebar"]) {
             continue;
           }
-          $feeds[$feed["description"]] = url::site("rss/{$feed['uri']}");
+          $feeds[$feed["description"]] = url::site("rss/feed/{$feed['uri']}");
         }
       }
     }
