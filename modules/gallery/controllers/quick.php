@@ -101,7 +101,9 @@ class Quick_Controller extends Controller {
     access::required("edit", $item);
 
     if ($item->is_album()) {
-      print t("Delete the album <b>%title</b>? All items within the album will also be deleted.", array("title" => $item->title));
+      print t(
+        "Delete the album <b>%title</b>? All photos and movies in the album will also be deleted.",
+        array("title" => $item->title));
     } else {
       print t("Are you sure you want to delete <b>%title</b>?", array("title" => $item->title));
     }
