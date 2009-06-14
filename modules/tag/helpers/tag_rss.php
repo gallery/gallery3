@@ -21,7 +21,6 @@
 class tag_rss_Core {
   static function available_feeds($item) {
     return array(array("description" => t("Tag Album feed"),
-                       "type" => "head",
                        "uri" => "tags"));
   }
 
@@ -31,11 +30,11 @@ class tag_rss_Core {
       return Kohana::show_404();
     }
 
-    $feed["children"] = $tag->items($limit, $offset, "photo");
-    $feed["max_pages"] = ceil($tag->count / $limit);
-    $feed["title"] = $tag->name;
-    $feed["link"] = url::abs_site("tags/{$tag->id}");
-    $feed["description"] = t("Photos related to %tag_name", array("tag_name" => $tag->name));
+    $feed->children = $tag->items($limit, $offset, "photo");
+    $feed->max_pages = ceil($tag->count / $limit);
+    $feed->title = $tag->name;
+    $feed->link = url::abs_site("tags/{$tag->id}");
+    $feed->description = t("Photos related to %tag_name", array("tag_name" => $tag->name));
 
     return $feed;
   }

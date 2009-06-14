@@ -33,9 +33,7 @@ class rss_Core {
       $class_name = "{$module->name}_rss";
       if (method_exists($class_name, "available_feeds")) {
         foreach (call_user_func(array($class_name, "available_feeds"), $item) as $feed) {
-          if ($feed["type"] == "block") {
-            $feeds[$feed["description"]] = url::site("rss/feed/{$feed['uri']}");
-          }
+          $feeds[$feed["description"]] = url::site("rss/feed/{$feed['uri']}");
         }
       }
     }
@@ -43,7 +41,7 @@ class rss_Core {
     return $feeds;
   }
 
-  static function feed_data($feed, $offset, $limit, $id) {
+  static function feed_data($method, $offset, $limit, $id) {
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_rss";
       if (method_exists($class_name, $feed)) {
