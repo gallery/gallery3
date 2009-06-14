@@ -17,7 +17,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
+// We know that we have either mysql or mysqli.  By default we use mysql functions, so if they're
+// not defined then do the simplest thing which will work: remap them to their mysqli
+// counterparts.
+if (!function_exists("mysql_query")) {
+  function mysql_connect($host, $user, $pass) {
+    installer::$mysqli = new mysqli($host, $user, $pass);
+    // http://php.net/manual/en/mysqli.connect.php says to use mysqli_connect_error() instead of
+    // $mysqli->connect_error because of bugs before PHP 5.2.9
+    $error = mysqli_connect_error();
+    return empty($error);
+  }
+  function mysql_query($query) {
+    return installer::$mysqli->query($query);
+  }
+  function mysql_num_rows($result) {
+    return $result->num_rows;
+  }
+  function mysql_error() {
+    return installer::$mysqli->error;
+  }
+  function mysql_select_db($db) {
+    return installer::$mysqli->select_db($db);
+  }
+}
+
 class installer {
+  static $mysqli;
+
   static function already_installed() {
     return file_exists(VARPATH . "database.php");
   }
