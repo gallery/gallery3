@@ -21,10 +21,10 @@
 class gallery_rss_Core {
   static function available_feeds($item) {
     return array(array("description" => t("New photos or movies"),
-                       "sidebar" => true,
+                       "type" => "block",
                        "uri" => "updates"),
                  array("description" => t("Album feed"),
-                       "sidebar" => false,
+                       "type" => "head",
                        "uri" => "albums"));
   }
 

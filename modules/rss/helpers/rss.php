@@ -27,16 +27,15 @@ class rss_Core {
   /**
    * Get all available rss feeds
    */
-  static function available_feeds($item, $sidebar_only=true) {
+  static function available_feeds($item) {
     $feeds = array();
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_rss";
       if (method_exists($class_name, "available_feeds")) {
         foreach (call_user_func(array($class_name, "available_feeds"), $item) as $feed) {
-          if ($sidebar_only && !$feed["sidebar"]) {
-            continue;
+          if ($feed["type"] == "block") {
+            $feeds[$feed["description"]] = url::site("rss/feed/{$feed['uri']}");
           }
-          $feeds[$feed["description"]] = url::site("rss/feed/{$feed['uri']}");
         }
       }
     }
