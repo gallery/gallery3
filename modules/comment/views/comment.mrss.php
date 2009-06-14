@@ -6,33 +6,33 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
-    <title><?= p::clean($title) ?></title>
-    <link><?= $link ?></link>
-    <description><?= p::clean($description) ?></description>
+    <title><?= p::clean($feed->title) ?></title>
+    <link><?= $feed->uri ?></link>
+    <description><?= p::clean($feed->description) ?></description>
     <language>en-us</language>
-    <atom:link rel="self" href="<?= $feed_link ?>" type="application/rss+xml" />
+    <atom:link rel="self" href="<?= $feed->uri ?>" type="application/rss+xml" />
     <fh:complete/>
-    <? if (!empty($previous_page_link)): ?>
-    <atom:link rel="previous" href="<?= $previous_page_link ?>" type="application/rss+xml" />
+    <? if (!empty($feed->previous_page_uri)): ?>
+    <atom:link rel="previous" href="<?= $feed->previous_page_uri ?>" type="application/rss+xml" />
     <? endif ?>
-    <? if (!empty($next_page_link)): ?>
-    <atom:link rel="next" href="<?= $next_page_link ?>" type="application/rss+xml" />
+    <? if (!empty($feed->next_page_uri)): ?>
+    <atom:link rel="next" href="<?= $feed->next_page_uri ?>" type="application/rss+xml" />
     <? endif ?>
     <pubDate><?= $pub_date ?></pubDate>
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
-    <? foreach ($children as $child): ?>
+    <? foreach ($feed->children as $child): ?>
     <item>
-      <title><?= p::clean($child["title"]) ?></title>
-      <link><?= p::clean($child["item_link"]) ?></link>
-      <author><?= p::clean($child["author"]) ?></author>
-      <guid isPermaLink="true"><?= $child["item_link"] ?></guid>
-      <pubDate><?= $child["pub_date"] ?></pubDate>
+      <title><?= p::clean($child->title) ?></title>
+      <link><?= p::clean($child->item_uri) ?></link>
+      <author><?= p::clean($child->author) ?></author>
+      <guid isPermaLink="true"><?= $child->item_uri ?></guid>
+      <pubDate><?= $child->pub_date ?></pubDate>
       <content:encoded>
         <![CDATA[
-          <p><?= p::clean($child["text"]) ?></p>
+          <p><?= p::clean($child->text) ?></p>
           <p>
-            <img alt="" src="<?= $child["thumb_url"] ?>"
-                 height="<?= $child["thumb_height"] ?>" width="<?= $child["thumb_width"] ?>" />
+            <img alt="" src="<?= $child->thumb_url ?>"
+                 height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" />
             <br />
           </p>
         ]]>

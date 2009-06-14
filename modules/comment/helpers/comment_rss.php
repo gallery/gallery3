@@ -21,43 +21,45 @@
 class comment_rss_Core {
   static function available_feeds($item) {
     return array(array("description" => t("All new comments"),
-                       "type" => "block",
                        "uri" => "comments"),
                  array("description" => sprintf(t("Comments on %s"), $item->title),
-                       "type" => "block",
                        "uri" => "comments/{$item->id}"));
   }
 
   static function comments($offset, $limit, $id) {
-    $orm = ORM::factory("comment")
+    $comments = ORM::factory("comment")
       ->where("state", "published")
       ->orderby("created", "DESC");
-    if (!empty($id)) {
-      $orm->where("item_id", $id);
+    if ($id) {
+      $comments->where("item_id", $id);
     }
 
-    $feed["view"] = "comment.mrss";
-    $comments = $orm->find_all($limit, $offset);
-    $feed["children"] = array();
+    $feed->view = "comment.mrss";
+    $comments = $comments->find_all($limit, $offset);
+    $feed->children = array();
     foreach ($comments as $comment) {
       $item = $comment->item();
-      $feed["children"][] = array(
-        "pub_date" => date("D, d M Y H:i:s T", $comment->created),
-        "text" => htmlspecialchars($comment->text),
-        "thumb_url" => $item->thumb_url(),
-        "thumb_height" => $item->thumb_height,
-        "thumb_width" => $item->thumb_width,
-        "item_link" => htmlspecialchars(url::abs_site("{$item->type}s/$item->id")),
-        "title" =>htmlspecialchars($item->title),
-        "author" =>
-          empty($comment->guest_name) ? $comment->author()->full_name : $comment->guest_name
-      );
+      $feed->children[] = new ArrayObject(
+        array("pub_date" => date("D, d M Y H:i:s T", $comment->created),
+              "text" => $comment->text,
+              "thumb_url" => $item->thumb_url(),
+              "thumb_height" => $item->thumb_height,
+              "thumb_width" => $item->thumb_width,
+              "item_uri" => url::abs_site("{$item->type}s/$item->id"),
+              "title" => $item->title,
+              "author" => $comment->author_name()),
+        ArrayObject::ARRAY_AS_PROPS);
     }
 
-    $feed["max_pages"] = ceil($comments->count() / $limit);
-    $feed["title"] = htmlspecialchars(t("Recent Comments"));
-    $feed["link"] = url::abs_site("albums/" . (empty($id) ? "1" : $id));
-    $feed["description"] = t("Recent Comments");
+    $all_comments = ORM::factory("comment")->where("state", "published");
+    if ($id) {
+      $all_comments->where("item_id", $id);
+    }
+
+    $feed->max_pages = ceil($all_comments->find_all()->count() / $limit);
+    $feed->title = htmlspecialchars(t("Recent Comments"));
+    $feed->uri = url::abs_site("albums/" . (empty($id) ? "1" : $id));
+    $feed->description = t("Recent Comments");
 
     return $feed;
   }

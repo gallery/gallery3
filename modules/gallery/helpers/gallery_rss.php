@@ -21,23 +21,27 @@
 class gallery_rss_Core {
   static function available_feeds($item) {
     return array(array("description" => t("New photos or movies"),
-                       "type" => "block",
                        "uri" => "updates"),
                  array("description" => t("Album feed"),
-                       "type" => "head",
                        "uri" => "albums"));
   }
 
   static function updates($offset, $limit) {
-    $feed["children"] = ORM::factory("item")
+    $feed->children = ORM::factory("item")
       ->viewable()
       ->where("type !=", "album")
       ->orderby("created", "DESC")
       ->find_all($limit, $offset);
-    $feed["max_pages"] = ceil($feed["children"]->count() / $limit);
-    $feed["title"] = t("Recent Updates");
-    $feed["link"] = url::abs_site("albums/1");
-    $feed["description"] = t("Recent Updates");
+
+    $all_children = ORM::factory("item")
+      ->viewable()
+      ->where("type !=", "album")
+      ->orderby("created", "DESC");
+
+    $feed->max_pages = ceil($all_children->find_all()->count() / $limit);
+    $feed->title = t("Recent Updates");
+    $feed->link = url::abs_site("albums/1");
+    $feed->description = t("Recent Updates");
 
     return $feed;
   }
@@ -46,13 +50,13 @@ class gallery_rss_Core {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
 
-    $feed["children"] = $item
+    $feed->children = $item
       ->viewable()
       ->descendants($limit, $offset, "photo");
-    $feed["max_pages"] = ceil($item->viewable()->descendants_count("photo") / $limit);
-    $feed["title"] = $item->title;
-    $feed["link"] = url::abs_site("albums/{$item->id}");
-    $feed["description"] = $item->description;
+    $feed->max_pages = ceil($item->viewable()->descendants_count("photo") / $limit);
+    $feed->title = $item->title;
+    $feed->link = url::abs_site("albums/{$item->id}");
+    $feed->description = $item->description;
 
     return $feed;
   }

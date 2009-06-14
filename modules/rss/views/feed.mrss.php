@@ -6,21 +6,21 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
-    <title><?= p::clean($title) ?></title>
-    <link><?= $link ?></link>
-    <description><?= p::clean($description) ?></description>
+    <title><?= p::clean($feed->title) ?></title>
+    <link><?= $feed->uri ?></link>
+    <description><?= p::clean($feed->description) ?></description>
     <language>en-us</language>
-    <atom:link rel="self" href="<?= $feed_link ?>" type="application/rss+xml" />
+    <atom:link rel="self" href="<?= $feed->uri ?>" type="application/rss+xml" />
     <fh:complete/>
-    <? if (!empty($previous_page_link)): ?>
-    <atom:link rel="previous" href="<?= $previous_page_link ?>" type="application/rss+xml" />
+    <? if (!empty($feed->previous_page_uri)): ?>
+    <atom:link rel="previous" href="<?= $feed->previous_page_uri ?>" type="application/rss+xml" />
     <? endif ?>
-    <? if (!empty($next_page_link)): ?>
-    <atom:link rel="next" href="<?= $next_page_link ?>" type="application/rss+xml" />
+    <? if (!empty($feed->next_page_uri)): ?>
+    <atom:link rel="next" href="<?= $feed->next_page_uri ?>" type="application/rss+xml" />
     <? endif ?>
     <pubDate><?= $pub_date ?></pubDate>
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
-    <? foreach ($children as $child): ?>
+    <? foreach ($feed->children as $child): ?>
     <item>
       <title><?= p::clean($child->title) ?></title>
       <link><?= url::abs_site("{$child->type}s/{$child->id}") ?></link>
