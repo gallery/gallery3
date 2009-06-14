@@ -19,28 +19,23 @@
  */
 
 class rss_Core {
-  static function item_feed($item) {
-    $id = $item->is_album() ? $item->id : $item->parent_id;
-    return url::site("rss/albums/$id");
-  }
-
-  static function tag_feed($tag) {
-    return url::site("rss/tags/$tag->id}");
+  static function feed_link($uri) {
+    $url = url::site("rss/feed/$uri");
+    return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
   }
 
   /**
    * Get all available rss feeds
    */
-  static function get_feeds($item, $sidebar_only=true) {
+  static function available_feeds($item) {
     $feeds = array();
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_rss";
       if (method_exists($class_name, "available_feeds")) {
         foreach (call_user_func(array($class_name, "available_feeds"), $item) as $feed) {
-          if ($sidebar_only && !$feed["sidebar"]) {
-            continue;
+          if ($feed["type"] == "block") {
+            $feeds[$feed["description"]] = url::site("rss/feed/{$feed['uri']}");
           }
-          $feeds[$feed["description"]] = url::site("rss/{$feed['uri']}");
         }
       }
     }
@@ -48,7 +43,7 @@ class rss_Core {
     return $feeds;
   }
 
-  static function process_feed($feed, $offset, $limit, $id) {
+  static function feed_data($feed, $offset, $limit, $id) {
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_rss";
       if (method_exists($class_name, $feed)) {

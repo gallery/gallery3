@@ -18,18 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class rss_theme_Core {
-  static function head($theme) {
-    if ($theme->item()) {
-      $url = rss::item_feed($theme->item());
-    } else if ($theme->tag()) {
-      $url = rss::tag_feed($theme->tag());
-    }
-
-    if (!empty($url)) {
-      return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
-    }
-  }
-
   static function sidebar_blocks($theme) {
     // @todo this needs to be data driven
     if (!$theme->item()) {
@@ -40,7 +28,7 @@ class rss_theme_Core {
     $block->css_id = "gRss";
     $block->title = t("Available RSS Feeds");
     $block->content = new View("rss_block.html");
-    $block->content->feeds = rss::get_feeds($theme->item());
+    $block->content->feeds = rss::available_feeds($theme->item());
 
     return $block;
   }

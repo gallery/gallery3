@@ -21,15 +21,14 @@
 class comment_rss_Core {
   static function available_feeds($item) {
     return array(array("description" => t("All new comments"),
-                       "sidebar" => true,
+                       "type" => "block",
                        "uri" => "comments"),
                  array("description" => sprintf(t("Comments on %s"), $item->title),
-                       "sidebar" => true,
+                       "type" => "block",
                        "uri" => "comments/{$item->id}"));
   }
 
   static function comments($offset, $limit, $id) {
-    $feed = new stdClass();
     $orm = ORM::factory("comment")
       ->where("state", "published")
       ->orderby("created", "DESC");
@@ -37,12 +36,12 @@ class comment_rss_Core {
       $orm->where("item_id", $id);
     }
 
-    $feed->view = "comment.mrss";
+    $feed["view"] = "comment.mrss";
     $comments = $orm->find_all($limit, $offset);
-    $feed->data["children"] = array();
+    $feed["children"] = array();
     foreach ($comments as $comment) {
       $item = $comment->item();
-      $feed->data["children"][] = array(
+      $feed["children"][] = array(
         "pub_date" => date("D, d M Y H:i:s T", $comment->created),
         "text" => htmlspecialchars($comment->text),
         "thumb_url" => $item->thumb_url(),
@@ -55,10 +54,10 @@ class comment_rss_Core {
       );
     }
 
-    $feed->max_pages = ceil($comments->count() / $limit);
-    $feed->data["title"] = htmlspecialchars(t("Recent Comments"));
-    $feed->data["link"] = url::abs_site("albums/" . (empty($id) ? "1" : $id));
-    $feed->data["description"] = t("Recent Comments");
+    $feed["max_pages"] = ceil($comments->count() / $limit);
+    $feed["title"] = htmlspecialchars(t("Recent Comments"));
+    $feed["link"] = url::abs_site("albums/" . (empty($id) ? "1" : $id));
+    $feed["description"] = t("Recent Comments");
 
     return $feed;
   }
