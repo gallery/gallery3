@@ -21,7 +21,7 @@
 class tag_rss_Core {
   static function available_feeds($item) {
     return array(array("description" => t("Tag Album feed"),
-                       "sidebar" => false,
+                       "type" => "head",
                        "uri" => "tags"));
   }
 

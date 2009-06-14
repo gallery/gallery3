@@ -21,10 +21,10 @@
 class comment_rss_Core {
   static function available_feeds($item) {
     return array(array("description" => t("All new comments"),
-                       "sidebar" => true,
+                       "type" => "block",
                        "uri" => "comments"),
                  array("description" => sprintf(t("Comments on %s"), $item->title),
-                       "sidebar" => true,
+                       "type" => "block",
                        "uri" => "comments/{$item->id}"));
   }
 
