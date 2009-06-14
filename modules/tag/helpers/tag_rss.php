@@ -31,12 +31,11 @@ class tag_rss_Core {
       return Kohana::show_404();
     }
 
-    $feed = new stdClass();
-    $feed->data["children"] = $tag->items($limit, $offset, "photo");
-    $feed->max_pages = ceil($tag->count / $limit);
-    $feed->data["title"] = $tag->name;
-    $feed->data["link"] = url::abs_site("tags/{$tag->id}");
-    $feed->data["description"] = t("Photos related to %tag_name", array("tag_name" => $tag->name));
+    $feed["children"] = $tag->items($limit, $offset, "photo");
+    $feed["max_pages"] = ceil($tag->count / $limit);
+    $feed["title"] = $tag->name;
+    $feed["link"] = url::abs_site("tags/{$tag->id}");
+    $feed["description"] = t("Photos related to %tag_name", array("tag_name" => $tag->name));
 
     return $feed;
   }
