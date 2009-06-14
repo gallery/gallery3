@@ -3,7 +3,10 @@
   <h1> <?= t("Gallery 2 Import") ?> </h1>
   <p>
     <?= t("Import your Gallery 2 users, photos, movies, comments and tags into your new Gallery 3 installation.") ?>
-    <?= t("<b>Note: The importer is a work in progress and does not currently support permissions, and movie formats other than Flash video and MP4</b>") ?>
+    <br/>
+    <?= t("<b>Note</b>: The importer is a work in progress and does not currently support permissions, and movie formats other than Flash video and MP4") ?>
+    <br/>
+    <?= t("<b>Note</b>: The importer has <i>known issues</i> with the eAccelerator PHP accelerator.  If you're using eAccelerator, please disable it.  One way to do that is to put <code>php_value eaccelerator.enable 0</code> in gallery3/.htaccess") ?>
   </p>
   <?= $form ?>
 </div>
