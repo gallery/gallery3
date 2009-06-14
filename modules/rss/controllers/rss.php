@@ -28,12 +28,16 @@ class Rss_Controller extends Controller {
     }
 
     $feed = rss::feed_data($method, ($page - 1) * self::$page_size, self::$page_size, $id);
-    if ($feed->max_pages && $page > $feed->max_pages) {
-      url::redirect("$feed_uri?page={$feed->max_pages}");
+    $max_pages = $feed["max_pages"];
+    if ($max_pages && $page > $max_pages) {
+      url::redirect("$feed_uri?page={$max_pages}");
     }
+    unset($feed["max_pages"]);
 
-    $view = new View(empty($feed->view) ? "feed.mrss" : $feed->view);
-    foreach ($feed->data as $field => $value) {
+    $view = new View(empty($feed["view"]) ? "feed.mrss" : $feed["view"]);
+    unset($feed["view"]);
+
+    foreach ($feed as $field => $value) {
       $view->$field = $value;
     }
     $view->feed_link = url::abs_site($feed_uri);
@@ -43,7 +47,7 @@ class Rss_Controller extends Controller {
       $view->previous_page_link = url::site("$feed_uri?page={$previous_page}");
     }
 
-    if ($page < $feed->max_pages) {
+    if ($page < $max_pages) {
       $next_page = $page + 1;
       $view->next_page_link = url::site("$feed_uri?page={$next_page}");
     }
