@@ -119,4 +119,22 @@ class item_Core {
     $title = preg_replace("/ +/", " ", $title);
     return $title;
   }
+
+  /**
+   * Display delete confirmation message and form
+   * @param object $item
+   * @return string form
+   */
+  static function get_delete_form($item) {
+    if (Input::instance()->get("page_type") == "album") {
+      $page_type = "album";
+    } else {
+      $page_type = "item";
+    }
+    $form = new Forge("quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
+    $form->hidden("_method")->value("put");
+    $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
+    $group->submit("")->value(t("Delete"));
+    return $form;
+  }
 }
