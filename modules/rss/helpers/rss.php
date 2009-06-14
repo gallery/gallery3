@@ -19,13 +19,9 @@
  */
 
 class rss_Core {
-  static function item_feed($item) {
-    $id = $item->is_album() ? $item->id : $item->parent_id;
-    return url::site("rss/feed/albums/$id");
-  }
-
-  static function tag_feed($tag) {
-    return url::site("rss/feed/tags/$tag->id}");
+  static function feed_link($uri) {
+    $url = url::site("rss/feed/$uri");
+    return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
   }
 
   /**
