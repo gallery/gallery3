@@ -39,10 +39,6 @@ var show_quick = function() {
       );
       $("#gQuickPane a:not(.options)").click(function(e) {
         e.preventDefault();
-        if ($(this).attr("id") == "gQuickDelete" &&
-            !confirm($(this).attr("ref"))) {
-          return;
-        }
         quick_do(cont, $(this), img);
       });
       $("#gQuickPane a.options").click(function(e) {

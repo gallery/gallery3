@@ -95,6 +95,21 @@ class Quick_Controller extends Controller {
     print json_encode(array("result" => "success", "reload" => 1));
   }
 
+  public function form_delete($id) {
+    $item = model_cache::get("item", $id);
+    access::required("view", $item);
+    access::required("edit", $item);
+
+    if ($item->is_album()) {
+      print t("Delete the album <b>%title</b>? All items within the album will also be deleted.", array("title" => $item->title));
+    } else {
+      print t("Are you sure you want to delete <b>%title</b>?", array("title" => $item->title));
+    }
+
+    $form = item::get_delete_form($item);
+    print $form;
+  }
+
   public function delete($id) {
     access::verify_csrf();
     $item = model_cache::get("item", $id);
