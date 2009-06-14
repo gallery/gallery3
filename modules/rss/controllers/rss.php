@@ -27,7 +27,7 @@ class Rss_Controller extends Controller {
       url::redirect($feed_uri);
     }
 
-    $feed = rss::process_feed($method, ($page - 1) * self::$page_size, self::$page_size, $id);
+    $feed = rss::feed_data($method, ($page - 1) * self::$page_size, self::$page_size, $id);
     if ($feed->max_pages && $page > $feed->max_pages) {
       url::redirect("$feed_uri?page={$feed->max_pages}");
     }

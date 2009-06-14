@@ -40,7 +40,7 @@ class rss_theme_Core {
     $block->css_id = "gRss";
     $block->title = t("Available RSS Feeds");
     $block->content = new View("rss_block.html");
-    $block->content->feeds = rss::get_feeds($theme->item());
+    $block->content->feeds = rss::available_feeds($theme->item());
 
     return $block;
   }

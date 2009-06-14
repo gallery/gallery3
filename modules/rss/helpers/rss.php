@@ -31,7 +31,7 @@ class rss_Core {
   /**
    * Get all available rss feeds
    */
-  static function get_feeds($item, $sidebar_only=true) {
+  static function available_feeds($item, $sidebar_only=true) {
     $feeds = array();
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_rss";
@@ -48,7 +48,7 @@ class rss_Core {
     return $feeds;
   }
 
-  static function process_feed($feed, $offset, $limit, $id) {
+  static function feed_data($feed, $offset, $limit, $id) {
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_rss";
       if (method_exists($class_name, $feed)) {
