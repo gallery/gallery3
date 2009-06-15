@@ -42,10 +42,6 @@ class gallery_theme_Core {
       $buf .= html::script("modules/gallery/js/fullsize.js");
     }
 
-    if ($theme->item()) {
-      $buf .= rss::feed_link("albums/{$theme->item()->id}");
-    }
-
     if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("modules/gallery/css/l10n_client.css") . "\" />";

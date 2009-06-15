@@ -19,34 +19,18 @@
  */
 
 class rss_Core {
-  static function feed_link($uri) {
-    $url = url::site("rss/feed/$uri");
-    return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
+  /**
+   * Convert a rss feed id into a rss feed url.
+   */
+  static function url($uri) {
+    return url::site("rss/feed/$uri");
   }
 
   /**
-   * Get all available rss feeds
+   * Return a <link> element for a given rss feed id.
    */
-  static function available_feeds($item) {
-    $feeds = array();
-    foreach (module::active() as $module) {
-      $class_name = "{$module->name}_rss";
-      if (method_exists($class_name, "available_feeds")) {
-        foreach (call_user_func(array($class_name, "available_feeds"), $item) as $feed) {
-          $feeds[$feed["description"]] = url::site("rss/feed/{$feed['uri']}");
-        }
-      }
-    }
-
-    return $feeds;
-  }
-
-  static function feed_data($method, $offset, $limit, $id) {
-    foreach (module::active() as $module) {
-      $class_name = "{$module->name}_rss";
-      if (method_exists($class_name, $feed)) {
-        return call_user_func(array($class_name, $feed), $offset, $limit, $id);
-      }
-    }
+  static function feed_link($uri) {
+    $url = url::site("rss/feed/$uri");
+    return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
   }
 }

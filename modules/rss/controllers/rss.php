@@ -20,36 +20,42 @@
 class Rss_Controller extends Controller {
   public static $page_size = 20;
 
-  public function feed($method, $id=null) {
+  public function feed($module_id, $feed_id, $id=null) {
     $page = $this->input->get("page", 1);
-    $feed_uri = "rss/feed/$method" . (empty($id) ? "" : "/$id");
     if ($page < 1) {
-      url::redirect($feed_uri);
+      url::redirect(url::merge(array("page" => 1)));
     }
 
-    $feed = rss::feed_data($method, ($page - 1) * self::$page_size, self::$page_size, $id);
-    $max_pages = $feed->max_pages;
-    if ($max_pages && $page > $max_pages) {
-      url::redirect("$feed_uri?page={$max_pages}");
+    // Run the appropriate feed callback
+    if (module::is_active($module_id)) {
+      $class_name = "{$module_id}_rss";
+      if (method_exists($class_name, "feed")) {
+        $feed = call_user_func(
+          array($class_name, "feed"), $feed_id,
+          ($page - 1) * self::$page_size, self::$page_size, $id);
+      }
+    }
+    if (empty($feed)) {
+      Kohana::show_404();
+    }
+
+    if ($feed->max_pages && $page > $feed->max_pages) {
+      url::redirect(url::merge(array("page" => $feed->max_pages)));
     }
 
     $view = new View(empty($feed->view) ? "feed.mrss" : $feed->view);
     unset($feed->view);
 
-    $feed->uri = url::abs_site($feed_uri);
     $view->feed = $feed;
-
-    if ($page > 1) {
-      $previous_page = $page - 1;
-      $feed->previous_page_uri = url::site("$feed_uri?page={$previous_page}");
-    }
-
-    if ($page < $max_pages) {
-      $next_page = $page + 1;
-      $feed->next_page_uri = url::site("$feed_uri?page={$next_page}");
-    }
-
     $view->pub_date = date("D, d M Y H:i:s T");
+
+    $feed->uri = url::abs_site(Router::$current_uri);
+    if ($page > 1) {
+      $feed->previous_page_uri = url::abs_site(url::merge(array("page" => $page - 1)));
+    }
+    if ($page < $feed->max_pages) {
+      $feed->next_page_uri = url::abs_site(url::merge(array("page" => $page + 1)));
+    }
 
     rest::http_content_type(rest::RSS);
     print $view;
