@@ -13,7 +13,6 @@
       <? else: ?>
         <?= $page_title ?>
       <? endif ?>
-      <?= $theme->page_type ?>
     </title>
     <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
@@ -48,13 +47,15 @@
     <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/gallery.form.js") ?>" type="text/javascript"></script>
     <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/jquery.scrollTo.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/jquery.localscroll.js") ?>" type="text/javascript"></script>
+    <? if ($theme->page_type == 'photo'): ?>
+    <script src="<?= url::file("lib/jquery.scrollTo.js") ?>" type="text/javascript"></script>
+    <script src="<?= url::file("lib/jquery.localscroll.js") ?>" type="text/javascript"></script>
+    <? endif ?>
     <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
   </head>
 
-    <body <?= $theme->body_attributes() ?>>
+  <body <?= $theme->body_attributes() ?>>
     <?= $theme->page_top() ?>
     <div id="doc4" class="yui-t5 gView">
       <?= $theme->site_status() ?>
