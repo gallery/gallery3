@@ -124,6 +124,23 @@ class Theme_View_Core extends View {
     print $menu;
   }
 
+  public function tag_menu() {
+    $menu = Menu::factory("root");
+    gallery_menu::tag($menu, $this);
+
+    foreach (module::active() as $module) {
+      if ($module->name == "gallery") {
+        continue;
+      }
+      $class = "{$module->name}_menu";
+      if (method_exists($class, "tag")) {
+        call_user_func_array(array($class, "tag"), array(&$menu, $this));
+      }
+    }
+
+    print $menu;
+  }
+
   public function photo_menu() {
     $menu = Menu::factory("root");
     gallery_menu::photo($menu, $this);

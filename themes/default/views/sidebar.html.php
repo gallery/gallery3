@@ -6,6 +6,8 @@
       <?= $theme->album_menu() ?>
     <? elseif ($page_type == "photo") : ?>
       <?= $theme->photo_menu() ?>
+    <? elseif ($page_type == "tag") : ?>
+      <?= $theme->tag_menu() ?>
     <? endif ?>
   </div>
 </div>
