@@ -19,17 +19,22 @@
  */
 class rss_theme_Core {
   static function sidebar_blocks($theme) {
-    // @todo this needs to be data driven
-    if (!$theme->item()) {
-      return;
-    }
-
     $block = new Block();
     $block->css_id = "gRss";
     $block->title = t("Available RSS Feeds");
     $block->content = new View("rss_block.html");
-    $block->content->feeds = rss::available_feeds($theme->item());
+    $block->content->feeds = array();
+    foreach (module::active() as $module) {
+      $class_name = "{$module->name}_rss";
+      if (method_exists($class_name, "available_feeds")) {
+        $block->content->feeds = array_merge(
+          $block->content->feeds,
+          call_user_func(array($class_name, "available_feeds"), $theme->item(), $theme->tag()));
+      }
+    }
 
-    return $block;
+    if ($block->content->feeds) {
+      return $block;
+    }
   }
 }

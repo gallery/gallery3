@@ -19,48 +19,60 @@
  */
 
 class comment_rss_Core {
-  static function available_feeds($item) {
-    return array(array("description" => t("All new comments"),
-                       "uri" => "comments"),
-                 array("description" => sprintf(t("Comments on %s"), $item->title),
-                       "uri" => "comments/{$item->id}"));
+  static function available_feeds($item, $tag) {
+    $feeds["comment/newest"] = t("All new comments");
+    if ($item) {
+      $feeds["comment/item/$item->id"] =
+        t("Comments on %title", array("title" => p::clean($item->title)));
+    }
+    return $feeds;
   }
 
-  static function comments($offset, $limit, $id) {
-    $comments = ORM::factory("comment")
-      ->where("state", "published")
-      ->orderby("created", "DESC");
-    if ($id) {
-      $comments->where("item_id", $id);
+  static function feed($feed_id, $offset, $limit, $id) {
+    switch ($feed_id) {
+    case "newest":
+      $comments = ORM::factory("comment")
+        ->where("state", "published")
+        ->orderby("created", "DESC");
+      $all_comments = ORM::factory("comment")
+        ->where("state", "published")
+        ->orderby("created", "DESC");
+      break;
+
+    case "item":
+      $comments = ORM::factory("comment")
+        ->where("state", "published")
+        ->orderby("created", "DESC")
+        ->where("item_id", $id);
+      $all_comments = ORM::factory("comment")
+        ->where("state", "published")
+        ->where("item_id", $id);
     }
 
-    $feed->view = "comment.mrss";
-    $comments = $comments->find_all($limit, $offset);
-    $feed->children = array();
-    foreach ($comments as $comment) {
-      $item = $comment->item();
-      $feed->children[] = new ArrayObject(
-        array("pub_date" => date("D, d M Y H:i:s T", $comment->created),
-              "text" => $comment->text,
-              "thumb_url" => $item->thumb_url(),
-              "thumb_height" => $item->thumb_height,
-              "thumb_width" => $item->thumb_width,
-              "item_uri" => url::abs_site("{$item->type}s/$item->id"),
-              "title" => $item->title,
-              "author" => $comment->author_name()),
-        ArrayObject::ARRAY_AS_PROPS);
+    if (!empty($comments)) {
+      $feed->view = "comment.mrss";
+      $comments = $comments->find_all($limit, $offset);
+      $feed->children = array();
+      foreach ($comments as $comment) {
+        $item = $comment->item();
+        $feed->children[] = new ArrayObject(
+          array("pub_date" => date("D, d M Y H:i:s T", $comment->created),
+                "text" => $comment->text,
+                "thumb_url" => $item->thumb_url(),
+                "thumb_height" => $item->thumb_height,
+                "thumb_width" => $item->thumb_width,
+                "item_uri" => url::abs_site("{$item->type}s/$item->id"),
+                "title" => $item->title,
+                "author" => $comment->author_name()),
+          ArrayObject::ARRAY_AS_PROPS);
+      }
+
+      $feed->max_pages = ceil($all_comments->find_all()->count() / $limit);
+      $feed->title = htmlspecialchars(t("Recent Comments"));
+      $feed->uri = url::abs_site("albums/" . (empty($id) ? "1" : $id));
+      $feed->description = t("Recent Comments");
+
+      return $feed;
     }
-
-    $all_comments = ORM::factory("comment")->where("state", "published");
-    if ($id) {
-      $all_comments->where("item_id", $id);
-    }
-
-    $feed->max_pages = ceil($all_comments->find_all()->count() / $limit);
-    $feed->title = htmlspecialchars(t("Recent Comments"));
-    $feed->uri = url::abs_site("albums/" . (empty($id) ? "1" : $id));
-    $feed->description = t("Recent Comments");
-
-    return $feed;
   }
 }

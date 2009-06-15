@@ -20,7 +20,17 @@
 class slideshow_theme_Core {
   static function head($theme) {
     $proto = (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] === "off") ? "http" : "https";
-    return "<script src=\"$proto://lite.piclens.com/current/piclens_optimized.js\"" .
+
+    if (module::is_active("rss")) {
+      if ($item = $theme->item()) {
+        $buf = rss::feed_link("gallery/album/{$item->id}");
+      } else if ($tag = $theme->tag()) {
+        $buf = rss::feed_link("tag/{$tag->id}");
+      }
+    }
+
+    $buf .= "<script src=\"$proto://lite.piclens.com/current/piclens_optimized.js\"" .
       "type=\"text/javascript\"></script>";
+    return $buf;
   }
 }

@@ -19,23 +19,28 @@
  */
 
 class tag_rss_Core {
-  static function available_feeds($item) {
-    return array(array("description" => t("Tag Album feed"),
-                       "uri" => "tags"));
+  static function available_feeds($item, $tag) {
+    if ($tag) {
+      $feeds["tag/tag/{$tag->id}"] =
+        t("Tag feed for %tag_name", array("tag_name" => p::clean($tag->name)));
+      return $feeds;
+    }
+    return array();
   }
 
-  static function tags($offset, $limit, $id) {
-    $tag = ORM::factory("tag", $id);
-    if (!$tag->loaded) {
-      return Kohana::show_404();
+  static function feed($feed_id, $offset, $limit, $id) {
+    if ($feed_id == "tag") {
+      $tag = ORM::factory("tag", $id);
+      if (!$tag->loaded) {
+        Kohana::show_404();
+      }
+      $feed->children = $tag->items($limit, $offset, "photo");
+      $feed->max_pages = ceil($tag->count / $limit);
+      $feed->title = $tag->name;
+      $feed->link = url::abs_site("tags/{$tag->id}");
+      $feed->description = t("Photos related to %tag_name", array("tag_name" => $tag->name));
+
+      return $feed;
     }
-
-    $feed->children = $tag->items($limit, $offset, "photo");
-    $feed->max_pages = ceil($tag->count / $limit);
-    $feed->title = $tag->name;
-    $feed->link = url::abs_site("tags/{$tag->id}");
-    $feed->description = t("Photos related to %tag_name", array("tag_name" => $tag->name));
-
-    return $feed;
   }
 }
