@@ -20,11 +20,7 @@
 class tag_theme_Core {
   static function head($theme) {
     $url = url::file("modules/tag/js/tag.js");
-    $head[] = "<script src=\"$url\" type=\"text/javascript\"></script>";
-    if ($theme->tag() && module::is_active("rss")) {
-       $head[] = rss::feed_link("tags/{$theme->tag()->id}");
-    }
-    return implode("\n", $head);
+    return "<script src=\"$url\" type=\"text/javascript\"></script>";
   }
 
   static function sidebar_blocks($theme) {

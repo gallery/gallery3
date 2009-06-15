@@ -91,6 +91,9 @@ class gallery_menu_Core {
   static function album($menu, $theme) {
   }
 
+  static function tag($menu, $theme) {
+  }
+
   static function photo($menu, $theme) {
     if (access::can("view_full", $theme->item())) {
       $menu

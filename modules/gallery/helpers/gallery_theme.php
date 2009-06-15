@@ -42,6 +42,14 @@ class gallery_theme_Core {
       $buf .= html::script("modules/gallery/js/fullsize.js");
     }
 
+    if (module::is_active("rss")) {
+      if ($item = $theme->item()) {
+        $buf = rss::feed_link("gallery/album/{$item->id}");
+      } else if ($tag = $theme->tag()) {
+        $buf = rss::feed_link("tag/tag/{$tag->id}");
+      }
+    }
+
     if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("modules/gallery/css/l10n_client.css") . "\" />";

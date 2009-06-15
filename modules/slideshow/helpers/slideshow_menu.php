@@ -37,4 +37,15 @@ class slideshow_menu_Core {
                      "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
                ->css_id("gSlideshowLink"));
   }
+
+  static function tag($menu, $theme) {
+    $menu
+      ->append(Menu::factory("link")
+               ->id("slideshow")
+               ->label(t("View slideshow"))
+               ->url("javascript:PicLensLite.start(" .
+                     "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
+               ->css_id("gSlideshowLink"));
+  }
+
 }
