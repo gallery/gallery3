@@ -172,8 +172,6 @@ class g2_import_Core {
    */
   static function stats() {
     global $gallery;
-    GalleryCoreApi::requireOnce("modules/comment/classes/GalleryCommentHelper.class");
-
     $root_album_id = g2(GalleryCoreApi::getDefaultAlbumId());
     $stats["users"] = g2(GalleryCoreApi::fetchUserCount());
     $stats["groups"] = g2(GalleryCoreApi::fetchGroupCount());
@@ -182,6 +180,7 @@ class g2_import_Core {
     $stats["movies"] = g2(GalleryCoreApi::fetchItemIdCount("GalleryMovieItem"));
 
     if (g2_import::g2_module_active("comment") && module::is_active("comment")) {
+      GalleryCoreApi::requireOnce("modules/comment/classes/GalleryCommentHelper.class");
       list (, $stats["comments"]) = g2(GalleryCommentHelper::fetchAllComments($root_album_id, 1));
     } else {
       $stats["comments"] = 0;
