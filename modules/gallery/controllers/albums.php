@@ -27,6 +27,7 @@ class Albums_Controller extends Items_Controller {
     if (!access::can("view", $album)) {
       if ($album->id == 1) {
         $view = new Theme_View("page.html", "page");
+        $view->page_title = t("Log in to Gallery");
         $view->content = user::get_login_form("login/auth_html");
         print $view;
         return;
