@@ -47,6 +47,7 @@ class Theme_View_Core extends View {
     $this->set_global("theme", $this);
     $this->set_global("user", user::active());
     $this->set_global("page_type", $page_type);
+    $this->set_global("page_title", null);
     if ($page_type == "album") {
       $this->set_global("thumb_proportion", $this->thumb_proportion());
     }

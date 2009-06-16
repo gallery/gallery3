@@ -5,13 +5,22 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>
-      <? if (empty($page_title)): ?>
-        <?= t("Browse Photos") ?>
-        <? if (!empty($item)): ?>
-        :: <?= p::clean($item->title) ?>
-        <? endif ?>
-      <? else: ?>
+      <? if ($page_title): ?>
         <?= $page_title ?>
+      <? else: ?>
+        <? if ($theme->item()): ?>
+          <? if ($theme->item()->is_album()): ?>
+          <?= t("Browse Album :: %album_title", array("album_title" => p::clean($theme->item()->title))) ?>
+          <? elseif ($theme->item()->is_photo()): ?>
+          <?= t("Photo :: %photo_title", array("photo_title" => p::clean($theme->item()->title))) ?>
+          <? else: ?>
+          <?= t("Movie :: %movie_title", array("movie_title" => p::clean($theme->item()->title))) ?>
+          <? endif ?>
+        <? elseif ($theme->tag()): ?>
+          <?= t("Browse Tag :: %tag_title", array("tag_title" => p::clean($theme->tag()->title))) ?>
+        <? else: /* Not an item, not a tag, no page_title specified.  Help! */ ?>
+          <?= t("Gallery") ?>
+        <? endif ?>
       <? endif ?>
     </title>
     <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
