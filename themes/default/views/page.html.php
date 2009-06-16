@@ -17,7 +17,7 @@
           <?= t("Movie :: %movie_title", array("movie_title" => p::clean($theme->item()->title))) ?>
           <? endif ?>
         <? elseif ($theme->tag()): ?>
-          <?= t("Browse Tag :: %tag_title", array("tag_title" => p::clean($theme->tag()->title))) ?>
+          <?= t("Browse Tag :: %tag_title", array("tag_title" => p::clean($theme->tag()->name))) ?>
         <? else: /* Not an item, not a tag, no page_title specified.  Help! */ ?>
           <?= t("Gallery") ?>
         <? endif ?>
