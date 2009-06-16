@@ -29,24 +29,20 @@ class comment_rss_Core {
   }
 
   static function feed($feed_id, $offset, $limit, $id) {
-    switch ($feed_id) {
-    case "newest":
-      $comments = ORM::factory("comment")
-        ->where("state", "published")
-        ->orderby("created", "DESC");
-      $all_comments = ORM::factory("comment")
-        ->where("state", "published")
-        ->orderby("created", "DESC");
-      break;
+    if ($feed_id != "newest" && $feed_id != "item") {
+      return;
+    }
 
-    case "item":
-      $comments = ORM::factory("comment")
-        ->where("state", "published")
-        ->orderby("created", "DESC")
-        ->where("item_id", $id);
-      $all_comments = ORM::factory("comment")
-        ->where("state", "published")
-        ->where("item_id", $id);
+    $comments = ORM::factory("comment")
+      ->where("state", "published")
+      ->orderby("created", "DESC");
+    $all_comments = ORM::factory("comment")
+      ->where("state", "published")
+      ->orderby("created", "DESC");
+
+    if ($feed_id == "item") {
+      $comments->where("item_id", $id);
+      $all_comments->where("item_id", $id);
     }
 
     if (!empty($comments)) {
