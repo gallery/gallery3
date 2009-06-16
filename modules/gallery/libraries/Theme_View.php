@@ -109,50 +109,27 @@ class Theme_View_Core extends View {
   }
 
   public function album_menu() {
-    $menu = Menu::factory("root");
-    gallery_menu::album($menu, $this);
-
-    foreach (module::active() as $module) {
-      if ($module->name == "gallery") {
-        continue;
-      }
-      $class = "{$module->name}_menu";
-      if (method_exists($class, "album")) {
-        call_user_func_array(array($class, "album"), array(&$menu, $this));
-      }
-    }
-
-    print $menu;
+    $this->_menu("album");
   }
 
   public function tag_menu() {
-    $menu = Menu::factory("root");
-    gallery_menu::tag($menu, $this);
-
-    foreach (module::active() as $module) {
-      if ($module->name == "gallery") {
-        continue;
-      }
-      $class = "{$module->name}_menu";
-      if (method_exists($class, "tag")) {
-        call_user_func_array(array($class, "tag"), array(&$menu, $this));
-      }
-    }
-
-    print $menu;
+    $this->_menu("tag");
   }
 
   public function photo_menu() {
-    $menu = Menu::factory("root");
-    gallery_menu::photo($menu, $this);
+    $this->_menu("photo");
+  }
 
+  private function _menu($type) {
+    $menu = Menu::factory("root");
+    call_user_func_array(array("gallery_menu", $type), array(&$menu, $this));
     foreach (module::active() as $module) {
       if ($module->name == "gallery") {
         continue;
       }
       $class = "{$module->name}_menu";
-      if (method_exists($class, "photo")) {
-        call_user_func_array(array($class, "photo"), array(&$menu, $this));
+      if (method_exists($class, $type)) {
+        call_user_func_array(array($class, $type), array(&$menu, $this));
       }
     }
 
