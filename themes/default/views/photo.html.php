@@ -1,4 +1,18 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+
+<? if (access::can("view_full", $theme->item())): ?>
+<!-- Use javascript to show the full size as an overlay on the current page -->
+<script src="<?= url::file("lib/gallery.show_full_size.js") ?>" type="text/javascript"></script>
+<script>
+  $(document).ready(function() {
+    $(".gFullSizeLink").click(function() {
+      show_full_size("<?= $theme->item()->file_url() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
+      return false;
+    });
+  });
+</script>
+<? endif ?>
+
 <div id="gItem">
   <?= $theme->photo_top() ?>
 
@@ -27,7 +41,7 @@
   <div id="gPhoto">
     <?= $theme->resize_top($item) ?>
     <? if (access::can("view_full", $item)): ?>
-    <a href="#" class="gFullSizeLink" title="<?= t("View full size") ?>">
+    <a href="<?= $item->file_url() ?>" class="gFullSizeLink" title="<?= t("View full size") ?>">
       <? endif ?>
       <?= $item->resize_img(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?>
       <? if (access::can("view_full", $item)): ?>

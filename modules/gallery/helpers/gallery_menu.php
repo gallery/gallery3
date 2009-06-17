@@ -96,12 +96,11 @@ class gallery_menu_Core {
 
   static function photo($menu, $theme) {
     if (access::can("view_full", $theme->item())) {
-      $menu
-        ->append(Menu::factory("link")
-               ->id("fullsize")
-               ->label(t("View full size"))
-               ->url("#")
-               ->css_class("gFullSizeLink"));
+      $menu->append(Menu::factory("link")
+                    ->id("fullsize")
+                    ->label(t("View full size"))
+                    ->url($theme->item()->file_url())
+                    ->css_class("gFullSizeLink"));
     }
   }
 

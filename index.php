@@ -65,7 +65,10 @@ if (PHP_SAPI == "cli") {
     break;
 
   default:
-    print "Usage: php index.php { upgrade | package | test }\n";
+    print "To upgrade:\n  php index.php upgrade\n\n\n";
+    print "Developer-only features:\n  ** CAUTION! THESE FEATURES -WILL- DAMAGE YOUR INSTALL **\n";
+    print "  php index.php package  # create new installer files\n";
+    print "  php index.php test     # run unit tests\n";
     exit(1);
   }
 } else {
