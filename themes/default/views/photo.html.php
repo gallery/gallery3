@@ -1,4 +1,17 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+
+<? if (access::can("view_full", $theme->item())): ?>
+<script type="text/javascript">
+  var fullsize_detail = {
+    close: "<?= url::file("modules/gallery/images/ico-close.png") ?>",
+    url: "<?= $theme->item()->file_url() ?>",
+    width: "<?= $theme->item()->width ?>",
+    height: "<?= $theme->item()->height ?>"
+  };
+</script>
+<script src="<?= url::file("themes/default/js/fullsize.js") ?>" type="text/javascript"></script>
+<? endif ?>
+
 <div id="gItem">
   <?= $theme->photo_top() ?>
 

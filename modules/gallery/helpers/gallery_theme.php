@@ -31,16 +31,6 @@ class gallery_theme_Core {
         url::file("modules/gallery/css/quick.css") . "\" />";
       $buf .= html::script("modules/gallery/js/quick.js");
     }
-    if ($theme->page_type == "photo" && access::can("view_full", $theme->item())) {
-      $buf .= "<script type=\"text/javascript\" >" .
-              "  var fullsize_detail = { " .
-              "    close: \"" . url::file("modules/gallery/images/ico-close.png") . "\", " .
-              "    url: \"" . $theme->item()->file_url() . "\", " .
-              "    width: " . $theme->item()->width . ", " .
-              "    height: " . $theme->item()->height . "};" .
-              "</script>";
-      $buf .= html::script("modules/gallery/js/fullsize.js");
-    }
 
     if (module::is_active("rss")) {
       if ($item = $theme->item()) {
