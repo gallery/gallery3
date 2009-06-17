@@ -2,7 +2,7 @@
 <div id="l10n-client" class="hidden">
   <div class="labels">
     <span class="toggle"><?= t("Translate Text") ?></span>
-    <div class="label strings"><h2><?= t("Page Text") ?></h2></div>
+    <div class="label strings"><h2><?= t("Page Text") ?> <a href="<?= url::site("admin/languages?show_all_l10n_messages=1") ?>"><?= t("(Show All)") ?></a></h2></div>
     <div class="label source"><h2><?= t("Source") ?></div>
     <div class="label translation"><h2><?= t("Translation to %language",
                                              array("language" => locale::display_name())) ?></h2></div>
