@@ -106,7 +106,19 @@ class L10n_Client_Controller extends Controller {
   }
 
   public static function l10n_form() {
-    $calls = I18n::instance()->call_log();
+    if (Input::instance()->get("show_all_l10n_messages")) {
+      $calls = array();
+      foreach (Database::instance()
+               ->select("key", "message")
+               ->from("incoming_translations")
+               ->where(array("locale" => 'root'))
+               ->get()
+               ->as_array() as $row) {
+        $calls[$row->key] = array(unserialize($row->message), array());
+      }
+    } else {
+      $calls = I18n::instance()->call_log();
+    }
     $locale = I18n::instance()->locale();
 
     if ($calls) {
