@@ -81,7 +81,9 @@
           </div>
         </div>
         <div id="gSidebar" class="yui-b">
+          <? if ($theme->page_type != "login"): ?>
           <?= $theme->display("sidebar.html") ?>
+          <? endif ?>
         </div>
       </div>
       <div id="gFooter">
