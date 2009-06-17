@@ -1,15 +1,15 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 
 <? if (access::can("view_full", $theme->item())): ?>
-<script type="text/javascript">
-  var fullsize_detail = {
-    close: "<?= url::file("modules/gallery/images/ico-close.png") ?>",
-    url: "<?= $theme->item()->file_url() ?>",
-    width: "<?= $theme->item()->width ?>",
-    height: "<?= $theme->item()->height ?>"
-  };
-</script>
 <script src="<?= url::file("themes/default/js/fullsize.js") ?>" type="text/javascript"></script>
+<script>
+  $(document).ready(function() {
+    $(".gFullSizeLink").click(function() {
+      show_full_size("<?= $theme->item()->file_url() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
+      return false;
+    });
+  });
+</script>
 <? endif ?>
 
 <div id="gItem">
@@ -40,7 +40,7 @@
   <div id="gPhoto">
     <?= $theme->resize_top($item) ?>
     <? if (access::can("view_full", $item)): ?>
-    <a href="#" class="gFullSizeLink" title="<?= t("View full size") ?>">
+    <a href="<?= $item->file_url() ?>" class="gFullSizeLink" title="<?= t("View full size") ?>">
       <? endif ?>
       <?= $item->resize_img(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?>
       <? if (access::can("view_full", $item)): ?>
