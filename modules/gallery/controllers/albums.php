@@ -26,7 +26,7 @@ class Albums_Controller extends Items_Controller {
     $page_size = module::get_var("gallery", "page_size", 9);
     if (!access::can("view", $album)) {
       if ($album->id == 1) {
-        $view = new Theme_View("page.html", "page");
+        $view = new Theme_View("page.html", "login");
         $view->page_title = t("Log in to Gallery");
         $view->content = user::get_login_form("login/auth_html");
         print $view;
