@@ -34,9 +34,9 @@ class gallery_theme_Core {
 
     if (module::is_active("rss")) {
       if ($item = $theme->item()) {
-        $buf = rss::feed_link("gallery/album/{$item->id}");
+        $buf .= rss::feed_link("gallery/album/{$item->id}");
       } else if ($tag = $theme->tag()) {
-        $buf = rss::feed_link("tag/tag/{$tag->id}");
+        $buf .= rss::feed_link("tag/tag/{$tag->id}");
       }
     }
 
