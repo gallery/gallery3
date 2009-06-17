@@ -53,7 +53,12 @@ class movie_Core {
       throw new Exception("@todo NAME_CANNOT_END_IN_PERIOD");
     }
 
-    $movie_info = movie::getmoviesize($filename);
+    try {
+      $movie_info = movie::getmoviesize($filename);
+    } catch (Exception $e) {
+      // Assuming this is MISSING_FFMPEG for now
+      $movie_info = getimagesize(MODPATH . "gallery/images/missing_movie.png");
+    }
 
     // Force an extension onto the name
     $pi = pathinfo($filename);

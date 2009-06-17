@@ -39,7 +39,8 @@ class Simple_Uploader_Controller extends Controller {
     access::verify_csrf();
 
     $file_validation = new Validation($_FILES);
-    $file_validation->add_rules("Filedata", "upload::valid", "upload::type[gif,jpg,png,flv,mp4]");
+    $file_validation->add_rules(
+      "Filedata", "upload::valid", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
     if ($file_validation->validate()) {
       // SimpleUploader.swf does not yet call /start directly, so simulate it here for now.
       if (!batch::in_progress()) {
