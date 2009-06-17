@@ -69,22 +69,9 @@ class Admin_View_Core extends View {
       }
     }
 
-    $this->_remove_empty_items($menu);
+    $menu->compact();
     print $menu;
   }
-
-  private function _remove_empty_items($menu) {
-    foreach ($menu->elements as $target_id => $element) {
-      if ($element->type == "submenu") {
-        if (empty($element->elements)) {
-          $menu->remove($target_id);
-        } else {
-          $this->_remove_empty_items($element);
-        }
-      }
-    }
-  }
-
 
   /**
    * Print out any site wide status information.
