@@ -93,12 +93,13 @@ jQuery.extend(Gallery, {
     // Display the source message
     this.showSourceMessage = function(source, is_plural) {
       if (is_plural) {
-        var pretty_source = '[one] - ' + source['one'] + "\n";
-        pretty_source += '[other] - ' + source['other'];
+        var pretty_source = $('#source-text-tmp-space').text('[one] - ' + source['one']).html();
+        pretty_source += '<br/>';
+        pretty_source += $('#source-text-tmp-space').text('[other] - ' + source['other']).html();
       } else {
-        var pretty_source = source;
+        var pretty_source = $('#source-text-tmp-space').text(source).html();
       }
-      $('#l10n-client-string-editor .source-text').text(pretty_source);
+      $('#l10n-client-string-editor .source-text').html(pretty_source);
     }
     this.isPluralMessage = function(message) {
       return typeof(message) == 'object';
