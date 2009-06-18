@@ -125,7 +125,7 @@ class l10n_scanner_Core {
             && is_array($first_param) && $first_param[0] == T_CONSTANT_ENCAPSED_STRING
             && is_array($second_param) && $second_param[0] == T_CONSTANT_ENCAPSED_STRING) {
           $singular = self::_escape_quoted_string($first_param[1]);
-          $plural = self::_escape_quoted_string($first_param[1]);
+          $plural = self::_escape_quoted_string($second_param[1]);
           l10n_scanner::process_message(array("one" => $singular, "other" => $plural), $cache);
         } else {
           // t2() found, but inside is something which is not a string literal.
