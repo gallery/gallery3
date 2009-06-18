@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 class g2_import_Core {
   public static $init = false;
   public static $map = array();
@@ -207,7 +208,14 @@ class g2_import_Core {
       return;
     }
 
-    $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
+    try {
+      $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
+    } catch (Exception $e) {
+      g2_import::log(
+        t("Failed to import Gallery 2 group with id: %id", array("id" => $g2_group_id)));
+      return;
+    }
+
     switch ($g2_group->getGroupType()) {
     case GROUP_NORMAL:
       try {
@@ -255,9 +263,8 @@ class g2_import_Core {
     try {
       $g2_user = g2(GalleryCoreApi::loadEntitiesById($g2_user_id));
     } catch (Exception $e) {
-      $msg = t("Failed to import Gallery 2 user with id: %id", array("id" => $g2_user_id));
-      Kohana::log("alert", $msg);
-      message::warning($msg);
+      g2_import::log(
+        t("Failed to import Gallery 2 user with id: %id", array("id" => $g2_user_id)));
       return;
     }
     $g2_groups = g2(GalleryCoreApi::fetchGroupsForUser($g2_user->getId()));
@@ -305,8 +312,15 @@ class g2_import_Core {
       return;
     }
 
-    // Load the G2 album item, and figure out its parent in G3.
-    $g2_album = g2(GalleryCoreApi::loadEntitiesById($g2_album_id));
+    try {
+      // Load the G2 album item, and figure out its parent in G3.
+      $g2_album = g2(GalleryCoreApi::loadEntitiesById($g2_album_id));
+    } catch (Exception $e) {
+      g2_import::log(
+        t("Failed to import Gallery 2 album with id: %id", array("id" => $g2_album_id)));
+      return;
+    }
+
     if ($g2_album->getParentId() == null) {
       return;
     }
@@ -392,10 +406,17 @@ class g2_import_Core {
       return;
     }
 
-    self::$current_g2_item = $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
+    try {
+      self::$current_g2_item = $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
+      $g2_path = g2($g2_item->fetchPath());
+    } catch (Exception $e) {
+      g2_import::log(
+        t("Failed to import Gallery 2 item with id: %id", array("id" => $g2_item_id)));
+      return;
+    }
+
     $parent = ORM::factory("item", self::map($g2_item->getParentId()));
 
-    $g2_path = g2($g2_item->fetchPath());
     $g2_type = $g2_item->getEntityType();
     $corrupt = 0;
     if (!file_exists($g2_path)) {
@@ -406,8 +427,8 @@ class g2_import_Core {
       //
       // Note that this will change movies to be photos, if there's a broken movie.  Hopefully
       // this case is rare enough that we don't need to take any heroic action here.
-
-      Kohana::log("alert", "$g2_path missing in import; replacing it");
+      g2_import::log(
+        t("%path missing in import; replacing it with a placeholder", array("path" => $g2_path)));
       $g2_path = MODPATH . "g2_import/data/broken-image.gif";
       $g2_type = "GalleryPhotoItem";
       $corrupt = 1;
@@ -417,7 +438,7 @@ class g2_import_Core {
     case "GalleryPhotoItem":
       if (!in_array($g2_item->getMimeType(), array("image/jpeg", "image/gif", "image/png"))) {
         $g2_path = MODPATH . "g2_import/data/broken-image.gif";
-        Kohana::log("alert", "$g2_path unsupported image type; using a placeholder gif");
+        Kohana::log("alert", "$g2_path is an unsupported image type; using a placeholder gif");
         $corrupt = 1;
       }
       try {
@@ -429,8 +450,8 @@ class g2_import_Core {
           self::extract_description($g2_item),
           self::map($g2_item->getOwnerId()));
       } catch (Exception $e) {
-        Kohana::log("alert", "Corrupt image $g2_path\n" .
-                    $e->getMessage() . "\n" . $e->getTraceAsString());
+        Kohana::log(
+          "alert", "Corrupt image $g2_path\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
         $corrupt = 1;
       }
       break;
@@ -486,9 +507,7 @@ class g2_import_Core {
           t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed",
             array("g2_url" => $g2_item_url, "title" => $g2_item->getTitle()));
       }
-      message::warning($warning);
-      log::warning("g2_import", $warning);
-      Kohana::log("alert", $warning);
+      g2_import::log($warning);
     }
 
     self::$current_g2_item = null;
@@ -499,7 +518,14 @@ class g2_import_Core {
    */
   static function import_comment(&$queue) {
     $g2_comment_id = array_shift($queue);
-    $g2_comment = g2(GalleryCoreApi::loadEntitiesById($g2_comment_id));
+
+    try {
+      $g2_comment = g2(GalleryCoreApi::loadEntitiesById($g2_comment_id));
+    } catch (Exception $e) {
+      g2_import::log("Failed to import Gallery 2 comment with id: %id",
+                     array("id" => $g2_comment_id));
+      return;
+    }
 
     $text = $g2_comment->getSubject();
     if ($text) {
@@ -528,7 +554,14 @@ class g2_import_Core {
     GalleryCoreApi::requireOnce("modules/tags/classes/TagsHelper.class");
     $g2_item_id = array_shift($queue);
     $g3_item = ORM::factory("item", self::map($g2_item_id));
-    $tag_names = array_values(g2(TagsHelper::getTagsByItemId($g2_item_id)));
+
+    try {
+      $tag_names = array_values(g2(TagsHelper::getTagsByItemId($g2_item_id)));
+    } catch (Exception $e) {
+      g2_import::log("Failed to import tags for Gallery 2 item with id: %id",
+                     array("id" => $g2_item_id));
+      return;
+    }
 
     foreach ($tag_names as $tag_name) {
       $tag = tag::add($g3_item, $tag_name);
@@ -766,6 +799,11 @@ class g2_import_Core {
     $g2_map->g2_id = $g2_id;
     $g2_map->save();
     self::$map[$g2_id] = $g3_id;
+  }
+
+  static function log($msg) {
+    message::warning($msg);
+    Kohana::log("alert", $msg);
   }
 }
 
