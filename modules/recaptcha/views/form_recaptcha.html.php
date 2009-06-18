@@ -6,7 +6,12 @@
     Recaptcha.create(
       "<?= $public_key ?>",
       "gRecaptcha",
-      { theme: "white", callback: Recaptcha.focus_response_field });
+      {
+        theme: "white",
+        custom_translations : { instructions_visual : "<?= t("Type words to check:") ?>"},
+        callback: Recaptcha.focus_response_field
+      }
+    );
   }, 0);
 </script>
 

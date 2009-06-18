@@ -23,6 +23,7 @@
     Recaptcha.create("<?= $public_key ?>", "gRecaptcha", {
       callback: Recaptcha.focus_response_field,
       lang: "en",
+      custom_translations : { instructions_visual : "<?= t("Type words to check:") ?>"},
       theme: "white"
     });
   </script>

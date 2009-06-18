@@ -60,7 +60,7 @@
         <th><?= t("Full name") ?></th>
         <th><?= t("Email") ?></th>
         <th><?= t("Last login") ?></th>
-        <th>Actions</th>
+        <th><?= t("Actions") ?></th>
       </tr>
 
       <? foreach ($users as $i => $user): ?>
