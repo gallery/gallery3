@@ -30,6 +30,7 @@
   <div id="l10n-client-string-editor">
     <div class="source">
       <p class="source-text"></p>
+      <p id="source-text-tmp-space" style="display:none"></p>
     </div>
     <div class="translation">
       <form method="post" action="<?= url::site("l10n_client/save") ?>" id="gL10nClientSaveForm">
