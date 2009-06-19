@@ -1088,15 +1088,16 @@ form .gError,
 #gAdminG2ImportDetails .gInfo {
   padding: 2px;
   border: 1px solid #999;
+  margin-bottom: 10px;
 }
 
-#gAdminG2ImportNotes p {
+#gAdminG2ImportNotes p, #gAdminG2ImportDetails .gInfo p {
   padding: 0px;
   margin: 0px;
 }
 
-#gAdminG2ImportNotes ul li {
+#gAdminG2ImportNotes ul li, #gAdminG2Import .gInfo ul li {
   padding-left: 0px;
   margin-left: 20px;
-  list-style-type: circle;
+  list-style-type: disc;
 }

@@ -83,10 +83,12 @@
       </ul>
     </div>
 
-    <a class="gDialogLink"
-       href="<?= url::site("admin/maintenance/start/g2_import_task::import?csrf=$csrf") ?>">
-      <?= t("Start importing!") ?>
-    </a>
+    <p>
+      <a class="gButtonLink gDialogLink ui-state-default ui-corner-all"
+         href="<?= url::site("admin/maintenance/start/g2_import_task::import?csrf=$csrf") ?>">
+        <?= t("Begin import!") ?>
+      </a>
+    </p>
   </div>
   <? endif ?>
 </div>
