@@ -1012,6 +1012,7 @@ form .gError,
   background-color: #cfc;
 }
 
+
 /*************** STUFF THAT NEEDS A HOME ****************/
 #gProgress h1 {
  font-size: 1.1em;
@@ -1070,4 +1071,32 @@ form .gError,
 #gAddPhotosQueue .complete {
   background-color: #cfc;
   border: 1px solid #beb;
+}
+
+#gAdminG2ImportNotes {
+  padding-bottom: 20px;
+}
+
+#gAdminG2ImportDetails {
+  padding-top: 20px;
+}
+
+#gAdminG2ImportDetails .gWarning {
+  margin-top: 4px;
+}
+
+#gAdminG2ImportDetails .gInfo {
+  padding: 2px;
+  border: 1px solid #999;
+}
+
+#gAdminG2ImportNotes p {
+  padding: 0px;
+  margin: 0px;
+}
+
+#gAdminG2ImportNotes ul li {
+  padding-left: 0px;
+  margin-left: 20px;
+  list-style-type: circle;
 }

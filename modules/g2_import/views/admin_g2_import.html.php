@@ -1,74 +1,92 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gAdminG2Config">
+<div id="gAdminG2Import">
   <h1> <?= t("Gallery 2 Import") ?> </h1>
   <p>
     <?= t("Import your Gallery 2 users, photos, movies, comments and tags into your new Gallery 3 installation.") ?>
-    <br/>
-    <?= t("<b>Note</b>: The importer is a work in progress and does not currently support permissions, and movie formats other than Flash video and MP4") ?>
-    <br/>
-    <?= t("<b>Note</b>: The importer has <i>known issues</i> with the eAccelerator PHP accelerator.  If you're using eAccelerator, please disable it.  One way to do that is to put <code>php_value eaccelerator.enable 0</code> in gallery3/.htaccess") ?>
   </p>
-  <?= $form ?>
-</div>
 
-<? if (g2_import::is_initialized()): ?>
-<div id="gAdminG2Import">
-  <h1> <?= t("Import") ?> </h1>
-  <ul id="gMessage">
-    <li class="gSuccess">
-      <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
-    </li>
-  </ul>
-
-  <div class="gInfo">
+  <div id="gAdminG2ImportNotes">
+    <h2> <?= t("Notes") ?> </h2>
     <p>
-      <?= t("Your Gallery 2 has the following importable data in it") ?>
+      <?= t("The import process is a work in progress with some known issues:") ?>
     </p>
     <ul>
       <li>
-        <?= t2("1 user", "%count users", $g2_stats["users"]) ?>
+        <?= t("Permissions are <b>not imported</b>.  You will have to set them again manually (for now).") ?>
       </li>
       <li>
-        <?= t2("1 group", "%count groups", $g2_stats["groups"]) ?>
+        <?= t("The only supported image formats are JPG, PNG and GIF.  Other formats will be skipped.") ?>
       </li>
       <li>
-        <?= t2("1 album", "%count albums", $g2_stats["albums"]) ?>
+        <?= t("The only supported movie formats are FLV and MP4.  Other formats will be skipped.") ?>
       </li>
       <li>
-        <?= t2("1 photo", "%count photos", $g2_stats["photos"]) ?>
-      </li>
-      <li>
-        <?= t2("1 movie", "%count movies", $g2_stats["movies"]) ?>
-      </li>
-      <li>
-        <?= t2("1 comment", "%count comments", $g2_stats["comments"]) ?>
-      </li>
-      <li>
-        <?= t2("1 tagged photo/movie/album",
-               "%count tagged photos/movies/albums", $g2_stats["tags"]) ?>
+        <?= t("The eAccelerator PHP performance extension is known to cause issues.  If you're using eAccelerator and having problems, please disable it while you do your import.  One way to do that is to put <code>php_value eaccelerator.enable 0</code> in gallery3/.htaccess") ?>
       </li>
     </ul>
   </div>
+  <?= $form ?>
 
-  <? if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
-  <div class="gWarning">
-    <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
-        array("g2_pixels" => $g2_sizes["thumb"]["size"],
-              "g3_pixels" => $thumb_size,
-              "url" => url::site("admin/theme_options"))) ?>
+  <? if (g2_import::is_initialized()): ?>
+  <div id="gAdminG2ImportDetails">
+    <h2> <?= t("Import") ?> </h2>
+    <ul id="gMessage">
+      <li class="gSuccess">
+        <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
+      </li>
+      <? if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
+      <li class="gWarning">
+        <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
+            array("g2_pixels" => $g2_sizes["thumb"]["size"],
+        "g3_pixels" => $thumb_size,
+        "url" => url::site("admin/theme_options"))) ?>
+      </li>
+      <? endif ?>
+
+      <? if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
+      <li class="gWarning">
+        <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
+            array("g2_pixels" => $g2_sizes["resize"]["size"],
+        "g3_pixels" => $resize_size,
+        "url" => url::site("admin/theme_options"))) ?>
+      </li>
+      <? endif ?>
+    </ul>
+
+    <div class="gInfo">
+      <p>
+        <?= t("Your Gallery 2 has the following importable data in it") ?>
+      </p>
+      <ul>
+        <li>
+          <?= t2("1 user", "%count users", $g2_stats["users"]) ?>
+        </li>
+        <li>
+          <?= t2("1 group", "%count groups", $g2_stats["groups"]) ?>
+        </li>
+        <li>
+          <?= t2("1 album", "%count albums", $g2_stats["albums"]) ?>
+        </li>
+        <li>
+          <?= t2("1 photo", "%count photos", $g2_stats["photos"]) ?>
+        </li>
+        <li>
+          <?= t2("1 movie", "%count movies", $g2_stats["movies"]) ?>
+        </li>
+        <li>
+          <?= t2("1 comment", "%count comments", $g2_stats["comments"]) ?>
+        </li>
+        <li>
+          <?= t2("1 tagged photo/movie/album",
+              "%count tagged photos/movies/albums", $g2_stats["tags"]) ?>
+        </li>
+      </ul>
+    </div>
+
+    <a class="gDialogLink"
+       href="<?= url::site("admin/maintenance/start/g2_import_task::import?csrf=$csrf") ?>">
+      <?= t("Start importing!") ?>
+    </a>
   </div>
   <? endif ?>
-
-  <? if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
-  <div class="gWarning">
-    <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
-        array("g2_pixels" => $g2_sizes["resize"]["size"],
-              "g3_pixels" => $resize_size,
-              "url" => url::site("admin/theme_options"))) ?>
-  </div>
-  <? endif ?>
-
-  <?= t("You can begin your import on the <a href=\"%url\">maintenance page</a>",
-        array("url" => url::site("admin/maintenance"))) ?>
 </div>
-<? endif ?>
