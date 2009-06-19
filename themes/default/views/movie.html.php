@@ -25,7 +25,7 @@
         },
         controls: {
           autoHide: 'always',
-          hideDelay: 2000,
+          hideDelay: 2000
         }
       }
     })
@@ -36,5 +36,8 @@
     <div><?= p::clean($item->description) ?></div>
   </div>
 
+  <script type="text/javascript">
+    var ADD_A_COMMENT = "<?= t("Add a comment") ?>";
+  </script>
   <?= $theme->photo_bottom() ?>
 </div>
