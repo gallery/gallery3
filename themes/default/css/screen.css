@@ -1000,6 +1000,10 @@ form .gError,
 
 
 /*************** STUFF THAT NEEDS A HOME ****************/
+#gProgress h1 {
+ font-size: 1.1em;
+}
+
 .gProgressBar {
   height: 1em;
   width: 100%;
