@@ -443,8 +443,8 @@ class g2_import_Core {
     switch ($g2_type) {
     case "GalleryPhotoItem":
       if (!in_array($g2_item->getMimeType(), array("image/jpeg", "image/gif", "image/png"))) {
-        $g2_path = MODPATH . "g2_import/data/broken-image.gif";
         Kohana::log("alert", "$g2_path is an unsupported image type; using a placeholder gif");
+        $g2_path = MODPATH . "g2_import/data/broken-image.gif";
         $corrupt = 1;
       }
       try {
