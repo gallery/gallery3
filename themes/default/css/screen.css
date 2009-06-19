@@ -999,6 +999,19 @@ form .gError,
 }
 
 
+/* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gPermissions .gDenied, #gPermissions .gAllowed {
+  text-align: center;
+  vertical-align: middle;
+}
+#gPermissions .gDenied {
+  background-color: #fcc;
+}
+#gPermissions .gAllowed {
+  background-color: #cfc;
+}
+
 /*************** STUFF THAT NEEDS A HOME ****************/
 #gProgress h1 {
  font-size: 1.1em;
@@ -1057,17 +1070,4 @@ form .gError,
 #gAddPhotosQueue .complete {
   background-color: #cfc;
   border: 1px solid #beb;
-}
-
-/* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gPermissions .gDenied, #gPermissions .gAllowed {
-  text-align: center;
-  vertical-align: middle;
-}
-#gPermissions .gDenied {
-  background-color: #fcc;
-}
-#gPermissions .gAllowed {
-  background-color: #cfc;
 }
