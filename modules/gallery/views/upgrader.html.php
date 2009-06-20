@@ -2,106 +2,10 @@
 <html>
   <head>
     <title><?= t("Gallery3 Upgrader") ?></title>
+    <link rel="stylesheet" type="text/css" href="<?= url::file("modules/gallery/css/upgrader.css") ?>"
+          media="screen,print,projection" />
+    <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
   </head>
-  <style>
-    body {
-      background: #eee;
-      font-family: Trebuchet MS;
-      font-size: 1.1em;
-    }
-    h1 {
-      font-size: 1.4em;
-    }
-    div#outer {
-      width: 650px;
-      background: white;
-      border: 1px solid #999;
-      margin: 0 auto;
-        padding: -10px;
-    }
-    div#inner {
-      padding: 0 1em 0 1em;
-      margin: 0px;
-    }
-    div#footer {
-      border-top: 1px solid #ccc;
-      margin: 1em;
-    }
-    td.name {
-      text-align: left;
-      padding-left: 30px;
-    }
-    td {
-      text-align: center;
-      border-bottom: 1px solid #eee;
-    }
-    tr.current td {
-      color: #999;
-      font-style: italic;
-    }
-    tr.current td.gallery {
-      color: #00d;
-    }
-    tr.upgradeable td {
-      font-weight: bold;
-    }
-    tr.upgradeable td.gallery {
-      color: #00d;
-    }
-    table {
-      width: 600px;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: .9em;
-    }
-    ul {
-      font-size: .9em;
-      list-style: none;
-    }
-    li {
-      display: inline;
-    }
-    li:before {
-      content: "\00BB \0020";
-    }
-    div.button {
-      margin: 0 auto;
-      width: 120px;
-      text-align: center;
-      border: 1px solid #999;
-      background: #eee;
-    }
-    div.button a {
-      text-decoration: none;
-    }
-    div.button:hover {
-      background: #ccc;
-    }
-    div#confirmation {
-      position: fixed;
-      top: 400px;
-      left: 325px;
-      background: blue;
-      z-index: 1000;
-      margin: 10px;
-      text-align: center;
-    }
-    div#confirmation div {
-      margin: 2px;
-      padding: 20px;
-      border: 2px solid #999;
-      background: white;
-    }
-    .gray_on_done {
-      opacity: <?= $done ? "0.5" : "1" ?>;
-    }
-    pre {
-      display: inline;
-      margin: 0px;
-      padding: 0px;
-    }
-  </style>
   <body>
     <div id="outer">
       <img src="<?= url::file("modules/gallery/images/gallery.png") ?>" />
@@ -117,6 +21,12 @@
             </p>
           </div>
         </div>
+        <script type="text/javascript">
+          $(document).ready(function() {
+            $("#confirmation").css("left", Math.round(($(window).width() - $("#confirmation").width()) / 2));
+            $("#confirmation").css("top", Math.round(($(window).height() - $("#confirmation").height()) / 2));
+          });
+        </script>
         <? endif ?>
         <p class="gray_on_done">
           <?= t("Welcome to the Gallery upgrader.  One click and you're done!") ?>
