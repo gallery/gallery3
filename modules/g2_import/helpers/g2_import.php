@@ -582,7 +582,18 @@ class g2_import_Core {
       return;
     }
 
-    foreach (preg_split("/[,;]/", $keywords) as $keyword) {
+    // Keywords in G2 are free form.  So we don't know what our user used as a separator.  Try to
+    // be smart about it.  If we see a comma or a semicolon, expect the keywords to be separated
+    // by that delimeter.  Otherwise, use space as the delimiter.
+    if (strpos($keywords, ";")) {
+      $delim = ";";
+    } else if (strpos($keywords, ",")) {
+      $delim = ",";
+    } else {
+      $delim = " ";
+    }
+
+    foreach (preg_split("/$delim/", $keywords) as $keyword) {
       $keyword = trim($keyword);
       if ($keyword) {
         tag::add($item, $keyword);
