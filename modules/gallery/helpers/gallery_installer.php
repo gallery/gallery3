@@ -50,6 +50,18 @@ class gallery_installer {
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+      $db->query("CREATE TABLE {incoming_translations} (
+                   `id` int(9) NOT NULL auto_increment,
+                   `key` char(32) NOT NULL,
+                   `locale` char(10) NOT NULL,
+                   `message` text NOT NULL,
+                   `revision` int(9) DEFAULT NULL,
+                   `translation` text,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`key`, `locale`),
+                   KEY `locale_key` (`locale`, `key`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
       $db->query("CREATE TABLE {items} (
                    `id` int(9) NOT NULL auto_increment,
                    `album_cover_item_id` int(9) default NULL,
@@ -117,34 +129,6 @@ class gallery_installer {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE {themes} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `name` varchar(64) default NULL,
-                   `version` int(9) default NULL,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`name`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
-      $db->query("CREATE TABLE {permissions} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `display_name` varchar(64) default NULL,
-                   `name` varchar(64) default NULL,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`name`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
-      $db->query("CREATE TABLE {incoming_translations} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `key` char(32) NOT NULL,
-                   `locale` char(10) NOT NULL,
-                   `message` text NOT NULL,
-                   `revision` int(9) DEFAULT NULL,
-                   `translation` text,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`key`, `locale`),
-                   KEY `locale_key` (`locale`, `key`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
       $db->query("CREATE TABLE {outgoing_translations} (
                    `id` int(9) NOT NULL auto_increment,
                    `base_revision` int(9) DEFAULT NULL,
@@ -155,6 +139,14 @@ class gallery_installer {
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`key`, `locale`),
                    KEY `locale_key` (`locale`, `key`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
+      $db->query("CREATE TABLE {permissions} (
+                   `id` int(9) NOT NULL auto_increment,
+                   `display_name` varchar(64) default NULL,
+                   `name` varchar(64) default NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE {sessions} (
@@ -177,6 +169,14 @@ class gallery_installer {
                   `updated` int(9) default NULL,
                   PRIMARY KEY (`id`),
                   KEY (`owner_id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
+      $db->query("CREATE TABLE {themes} (
+                   `id` int(9) NOT NULL auto_increment,
+                   `name` varchar(64) default NULL,
+                   `version` int(9) default NULL,
+                   PRIMARY KEY (`id`),
+                   UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
       $db->query("CREATE TABLE {vars} (
@@ -248,18 +248,20 @@ class gallery_installer {
       block_manager::add("dashboard_center", "gallery", "photo_stream");
       block_manager::add("dashboard_center", "gallery", "log_entries");
 
-      module::set_version("gallery", 1);
+      module::set_version("gallery", $version = 1);
       module::set_var("gallery", "version", "3.0 beta 1");
       module::set_var("gallery", "choose_default_tookit", 1);
 
       // @todo this string needs to be picked up by l10n_scanner
       module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    } else if ($version == 1) {
+    }
+
+    if ($version == 1) {
       module::set_var("gallery", "date_format", "Y-M-d");
       module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
       module::set_var("gallery", "time_format", "H:i:s");
       module::set_var("gallery", "version", "3.0 pre beta 2 (git)");
-      module::set_version("gallery", 2);
+      module::set_version("gallery", $version = 2);
     }
   }
 
@@ -268,16 +270,15 @@ class gallery_installer {
     $db->query("DROP TABLE IF EXISTS {access_caches}");
     $db->query("DROP TABLE IF EXISTS {access_intents}");
     $db->query("DROP TABLE IF EXISTS {graphics_rules}");
+    $db->query("DROP TABLE IF EXISTS {incoming_translations}");
     $db->query("DROP TABLE IF EXISTS {items}");
     $db->query("DROP TABLE IF EXISTS {logs}");
-    $db->query("DROP TABLE IF EXISTS {messages}");
     $db->query("DROP TABLE IF EXISTS {modules}");
-    $db->query("DROP TABLE IF EXISTS {themes}");
-    $db->query("DROP TABLE IF EXISTS {incoming_translations}");
     $db->query("DROP TABLE IF EXISTS {outgoing_translations}");
     $db->query("DROP TABLE IF EXISTS {permissions}");
     $db->query("DROP TABLE IF EXISTS {sessions}");
     $db->query("DROP TABLE IF EXISTS {tasks}");
+    $db->query("DROP TABLE IF EXISTS {themes}");
     $db->query("DROP TABLE IF EXISTS {vars}");
     foreach (array("albums", "resizes", "thumbs", "uploads",
                    "modules", "logs", "database.php") as $entry) {
