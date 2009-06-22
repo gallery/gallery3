@@ -330,7 +330,7 @@ form p.gError,
 }
 
 form .gError {
-	color: #f00;
+  color: #f00;
 }
 
 #gSiteStatus .gError,
@@ -368,7 +368,7 @@ form p.gError {
 
 form .gError,
 .gPager .gInfo {
-	background-color: #fff;
+  background-color: #fff;
 }
 
 #gAdminMaintenance .gError,
@@ -414,7 +414,7 @@ form .gError,
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
-	background-color: #e8e8e8;
+  background-color: #e8e8e8;
   border-bottom: 1px solid #fff;
   font-size: .8em;
   margin-bottom: 1em;
@@ -435,7 +435,7 @@ form .gError,
 }
 
 #gFooter {
-	background-color: #e8e8e8;
+  background-color: #e8e8e8;
   border-top: 1px solid #ccc;
   font-size: .8em;
   margin-top: 20px;
@@ -700,7 +700,7 @@ form .gError,
 }
 
 #gAddPhotos .gBreadcrumbs {
-	font-size: .9em;
+  font-size: .9em;
 }
 
 /* Tags and cloud ~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -833,14 +833,14 @@ form .gError,
 }
 
 .gDraggable {
-	cursor: move;
+  cursor: move;
 }
 
 .gDropTarget {
-	background-color: #cfdeff;
-	border: 1px dotted #999;
-	height: 100px;
-	margin: 1em 0;
+  background-color: #cfdeff;
+  border: 1px dotted #999;
+  height: 100px;
+  margin: 1em 0;
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -864,7 +864,7 @@ form .gError,
 }
 
 #gDialog li {
-	padding-left: 0;
+  padding-left: 0;
 }
 
 #gDialog form input[type="text"],
@@ -1015,7 +1015,7 @@ form .gError,
 
 /*************** STUFF THAT NEEDS A HOME ****************/
 #gProgress h1 {
- font-size: 1.1em;
+  font-size: 1.1em;
 }
 
 .gProgressBar {
