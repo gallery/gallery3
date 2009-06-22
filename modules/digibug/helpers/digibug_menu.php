@@ -1,4 +1,5 @@
-<?php defined("SYSPATH") or die("No direct script access.");/**
+<?php defined("SYSPATH") or die("No direct script access.");
+/**
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2009 Bharat Mediratta
  *
@@ -24,10 +25,10 @@ class digibug_menu {
         ->label(t("Digibug Administration"))
         ->url(url::site("admin/digibug")));
   }
-  
+
   static function photo($menu, $theme) {
   }
-  
+
   static function site($menu, $theme) {
     $item = $theme->item();
 
