@@ -414,7 +414,7 @@ form .gError,
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
-	background-color: #e8e8e8;
+  background-color: #e8e8e8;
   border-bottom: 1px solid #fff;
   font-size: .8em;
   margin-bottom: 1em;
@@ -435,7 +435,7 @@ form .gError,
 }
 
 #gFooter {
-	background-color: #e8e8e8;
+  background-color: #e8e8e8;
   border-top: 1px solid #ccc;
   font-size: .8em;
   margin-top: 20px;
