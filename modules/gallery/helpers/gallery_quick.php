@@ -50,9 +50,6 @@ class gallery_quick_Core {
       }
     }
 
-    Kohana::log("error", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    Kohana::log("error", Kohana::debug($sorted_buttons));
-    Kohana::log("error", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     return $sorted_buttons;
   }
 
