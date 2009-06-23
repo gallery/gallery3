@@ -18,35 +18,57 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Digibug_Controller extends Controller {
-  public function index() {
-    print $this->_get_form();
-  }
-
-  public function handler() {
+  public function print_photo($id) {
     access::verify_csrf();
 
-    $form = $this->_get_form();
-    if ($form->validate()) {
-      // @todo process the admin form
+    $item = ORM::factory("item", $id);
 
-      message::success(t("Digibug Processing Successfully"));
+    $proxy = ORM::factory("proxy");
+    $proxy->uuid = digibug::uuid();
+    $proxy->item_id = $item->id;
+    $proxy->save();
 
-      print json_encode(
-        array("result" => "success"));
+    $url = url::abs_site("digibug/print_proxy/{$proxy->uuid}");
+    if (module::get_var("digibug", "mode", "basic")) {
+      $company_id = module::get_var("digibug", "basic_company_id");
+      $event_id = module::get_var("digibug", "basic_event_id");
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      $company_id = module::get_var("digibug", "company_id");
+      $event_id = module::get_var("digibug", "event_id");
     }
+    $digibug_parms = array(
+      "digibug_api_version" => "100",
+      "company_id" => $company_id,
+      "event_id" => $event_id,
+      "cmd" => "adding",
+      "return_url" => url::abs_site($this->input->get("return")),
+      "num_images" => "1",
+      "image_1" => $url,
+      "thumb_1" => "$url/thumb",
+      "image_height_1" => $item->height,
+      "image_width_1" => $item->width,
+      "thumb_height_1" => $item->thumb_height,
+      "thumb_width_1" => $item->thumb_width,
+      "title" => $item->title);
+
+    Kohana::log("error", Kohana::debug($digibug_parms));
+
+    message::success(
+      t("Photo '%title' was submitted for printing.", array("title" => $item->title)));
+    print json_encode(array("result" => "success", "reload" => 1));
   }
 
-  private function _get_form() {
-    $form = new Forge("digibug/handler", "", "post",
-                      array("id" => "gDigibugForm"));
-    $group = $form->group("group")->label(t("Digibug Handler"));
-    $group->input("text")->label(t("Text"))->rules("required");
-    $group->submit("submit")->value(t("Submit"));
+  public function print_proxy($id, $thumb=null) {
 
-    return $form;
+    // We don't need to save the session for this request
+    Session::abort_save();
+
+    // Dump out the image
+    header("Content-Type: $item->mime_type");
+    Kohana::close_buffers(false);
+    $fd = fopen($file, "rb");
+    fpassthru($fd);
+    fclose($fd);
   }
+
 }

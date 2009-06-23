@@ -18,8 +18,31 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class digibug_theme_Core {
+  static function head($theme) {
+    $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
+      url::file("modules/digibug/css/digibug.css") . "\" />";
+    $head[] = html::script("modules/digibug/js/digibug.js");;
+    return implode("\n", $head);
+  }
+
   static function admin_head($theme) {
     return "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
       url::file("modules/digibug/css/digibug.css") . "\" />";
+  }
+
+  static function thumb_bottom($theme, $child) {
+    if ($theme->page_type() == "album" && $child->type == "photo") {
+      $csrf = access::csrf_token();
+      $return = "album/{$child->parent()->id}";
+      $href = url::site("digibug/print_photo/$child->id?csrf={$csrf}&return=$return");
+      $title = t("Print photo with Digibug");
+      return "<div class=\"gDigibugPrintButton\">
+                <a class=\"gButtonLink ui-corner-all ui-state-default ui-icon-left\" href=\"$href\"
+                   title=\"$title\">
+                  <span class=\"ui-icon ui-icon-print\">$title</span>
+                </a>
+             </div>";
+    }
+    return "";
   }
 }

@@ -17,18 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class digibug_quick_Core {
-  static function buttons($item, $page_type) {
-    $elements["center"] = array();
-    if (access::can("view", $item) && $item->type == "photo") {
-      $csrf = access::csrf_token();
-      $elements["center"][] = (object)array(
-        "title" => t("Print photo with Digibug"),
-        "class" => "gButtonLink",
-        "icon" => "ui-icon-print",
-        "href" => url::site("digibug/print/$item->id?csrf=$csrf"));
-    }
-
-    return $elements;
-  }
+class Proxy_Model extends ORM {
+  protected $has_one = array("item");
 }
