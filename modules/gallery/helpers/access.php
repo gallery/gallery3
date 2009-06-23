@@ -426,7 +426,7 @@ class access_Core {
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     $db->query("ALTER TABLE {{$cache_table}} ADD `$field` SMALLINT NOT NULL DEFAULT 0");
-    $db->query("ALTER TABLE {access_intents} ADD `$field` BOOLEAN DEFAULT NULL");
+    $db->query("ALTER TABLE {access_intents} ADD `$field` SMALLINT DEFAULT NULL");
     $db->update("access_intents", array($field => 0), array("item_id" => 1));
     ORM::factory("access_intent")->clear_cache();
   }
