@@ -167,7 +167,8 @@ class Albums_Controller extends Items_Controller {
     $form = album::get_edit_form($album);
     if ($valid = $form->validate()) {
       // Make sure that there's not a conflict
-      if (Database::instance()
+      if ($album->id != 1 &&
+          Database::instance()
           ->from("items")
           ->where("parent_id", $album->parent_id)
           ->where("id <>", $album->id)
@@ -188,7 +189,9 @@ class Albums_Controller extends Items_Controller {
       $album->description = $form->edit_album->description->value;
       $album->sort_column = $form->edit_album->sort_order->column->value;
       $album->sort_order = $form->edit_album->sort_order->direction->value;
-      $album->rename($form->edit_album->dirname->value);
+      if ($album->id != 1) {
+        $album->rename($form->edit_album->dirname->value);
+      }
       $album->save();
 
       module::event("item_updated", $orig, $album);

@@ -107,7 +107,7 @@ class module_Core {
 
   /**
    * Install a module.  This will call <module>_installer::install(), which is responsible for
-   * creating database tables, setting module variables and and calling module::set_version().
+   * creating database tables, setting module variables and calling module::set_version().
    * Note that after installing, the module must be activated before it is available for use.
    * @param string $module_name
    */
@@ -128,6 +128,38 @@ class module_Core {
 
     log::success(
       "module", t("Installed module %module_name", array("module_name" => $module_name)));
+  }
+
+  /**
+   * Upgrade a module.  This will call <module>_installer::upgrade(), which is responsible for
+   * modifying database tables, changing module variables and calling module::set_version().
+   * Note that after upgrading, the module must be activated before it is available for use.
+   * @param string $module_name
+   */
+  static function upgrade($module_name) {
+    $kohana_modules = Kohana::config("core.modules");
+    array_unshift($kohana_modules, MODPATH . $module_name);
+    Kohana::config_set("core.modules",  $kohana_modules);
+
+    $version_before = module::get_version($module_name);
+    $installer_class = "{$module_name}_installer";
+    if (method_exists($installer_class, "upgrade")) {
+      call_user_func_array(array($installer_class, "upgrade"), array($version_before));
+    }
+    module::load_modules();
+
+    // Now the module is upgraded but inactive, so don't leave it in the active path
+    array_shift($kohana_modules);
+    Kohana::config_set("core.modules",  $kohana_modules);
+
+    $version_after = module::get_version($module_name);
+    if ($version_before != $version_after) {
+      log::success(
+        "module", t("Upgraded module %module_name from %version_before to %version_after",
+                    array("module_name" => $module_name,
+                          "version_before" => $version_before,
+                          "version_after" => $version_after)));
+    }
   }
 
   /**

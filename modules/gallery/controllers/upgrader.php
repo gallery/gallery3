@@ -50,8 +50,8 @@ class Upgrader_Controller extends Controller {
     }
 
     // Upgrade gallery and user first
-    module::install("gallery");
-    module::install("user");
+    module::upgrade("gallery");
+    module::upgrade("user");
 
     // Then upgrade the rest
     foreach (module::available() as $id => $module) {
@@ -60,7 +60,7 @@ class Upgrader_Controller extends Controller {
       }
 
       if ($module->active && $module->code_version != $module->version) {
-        module::install($id);
+        module::upgrade($id);
       }
     }
 
