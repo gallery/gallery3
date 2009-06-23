@@ -55,7 +55,7 @@ CREATE TABLE {comments} (
   `server_remote_addr` varchar(32) default NULL,
   `server_remote_host` varchar(64) default NULL,
   `server_remote_port` varchar(16) default NULL,
-  `state` char(15) default 'unpublished',
+  `state` varchar(15) default 'unpublished',
   `text` text,
   `updated` int(9) NOT NULL,
   PRIMARY KEY  (`id`)
