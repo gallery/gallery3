@@ -51,24 +51,43 @@ class Digibug_Controller extends Controller {
       "thumb_width_1" => $item->thumb_width,
       "title" => $item->title);
 
-    Kohana::log("error", Kohana::debug($digibug_parms));
-
     message::success(
       t("Photo '%title' was submitted for printing.", array("title" => $item->title)));
     print json_encode(array("result" => "success", "reload" => 1));
   }
 
   public function print_proxy($id, $thumb=null) {
+    $proxy = ORM::factory("proxy")
+      ->where("uuid", $id)
+      ->find();
+
+    if (!$proxy->loaded) {
+      Kohana::show_404();
+    }
+
+    if (!$proxy->item->loaded) {
+      Kohana::show_404();
+    }
+
+    $file = empty($thumb) ? $proxy->item->file_path() : $proxy->item->thumb_path();
+    if (!file_exists($file)) {
+      kohana::show_404();
+    }
 
     // We don't need to save the session for this request
     Session::abort_save();
 
     // Dump out the image
-    header("Content-Type: $item->mime_type");
+    header("Content-Type: $proxy->item->mime_type");
     Kohana::close_buffers(false);
     $fd = fopen($file, "rb");
     fpassthru($fd);
     fclose($fd);
+
+    // If the request was for the image and not the thumb, then delete the proxy.
+    if (empty($thumb)) {
+      $proxy->delete();
+    }
   }
 
 }

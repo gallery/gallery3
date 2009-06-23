@@ -32,16 +32,11 @@ class digibug_theme_Core {
 
   static function thumb_bottom($theme, $child) {
     if ($theme->page_type() == "album" && $child->type == "photo") {
-      $csrf = access::csrf_token();
-      $return = "album/{$child->parent()->id}";
-      $href = url::site("digibug/print_photo/$child->id?csrf={$csrf}&return=$return");
-      $title = t("Print photo with Digibug");
-      return "<div class=\"gDigibugPrintButton\">
-                <a class=\"gButtonLink ui-corner-all ui-state-default ui-icon-left\" href=\"$href\"
-                   title=\"$title\">
-                  <span class=\"ui-icon ui-icon-print\">$title</span>
-                </a>
-             </div>";
+      $v = new View("digibug_album.html");
+      $v->id = $child->id;
+      $v->return = "album/{$child->parent()->id}";
+      $v->title = t("Print photo with Digibug");
+      return $v->render();
     }
     return "";
   }
