@@ -381,9 +381,9 @@ class Item_Model extends ORM_MPTT {
     $result = Database::instance()->query("
       SELECT COUNT(*) AS position FROM {items}
        WHERE parent_id = {$this->id}
-         AND {$this->sort_column} <= (SELECT {$this->sort_column}
+         AND `{$this->sort_column}` <= (SELECT `{$this->sort_column}`
                                         FROM {items} WHERE id = $child_id)
-       ORDER BY {$this->sort_column} {$this->sort_order}");
+       ORDER BY `{$this->sort_column}` {$this->sort_order}");
 
     return $result->current()->position;
   }
