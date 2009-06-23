@@ -49,8 +49,9 @@ class gallery_block_Core {
       $block->css_id = "gLogEntries";
       $block->title = t("Log Entries");
       $block->content = new View("admin_block_log_entries.html");
-      $block->content->entries = ORM::factory("log")->orderby("timestamp", "DESC")->find_all(5);
-        break;
+      $block->content->entries = ORM::factory("log")
+        ->orderby(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
+      break;
 
     case "stats":
       $block->css_id = "gStats";
