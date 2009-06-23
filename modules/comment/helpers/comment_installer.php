@@ -51,6 +51,14 @@ class comment_installer {
     module::set_version("comment", 1);
   }
 
+  static function upgrade($version) {
+    if ($version == 1) {
+      $db = Database::instance();
+      $db->query("ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
+      module::set_version("comment", 2);
+    }
+  }
+
   static function uninstall() {
     $db = Database::instance();
     $sql = "SELECT `item_id` FROM {comments}";
