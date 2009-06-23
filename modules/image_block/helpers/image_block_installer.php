@@ -19,8 +19,6 @@
  */
 class image_block_installer {
   static function install() {
-    if (module::get_version("image_block") == 0) {
-      module::set_version("image_block", 1);
-    }
+    module::set_version("image_block", 1);
   }
 }

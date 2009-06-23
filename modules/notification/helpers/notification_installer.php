@@ -20,27 +20,23 @@
 class notification_installer {
   static function install() {
     $db = Database::instance();
-    $version = module::get_version("notification");
+    $db->query("CREATE TABLE IF NOT EXISTS {subscriptions} (
+               `id` int(9) NOT NULL auto_increment,
+               `item_id` int(9) NOT NULL,
+               `user_id` int(9) NOT NULL,
+               PRIMARY KEY (`id`),
+               UNIQUE KEY (`item_id`, `user_id`),
+               UNIQUE KEY (`user_id`, `item_id`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    $db->query("CREATE TABLE IF NOT EXISTS {pending_notifications} (
+               `id` int(9) NOT NULL auto_increment,
+               `email` varchar(128) NOT NULL,
+               `subject` varchar(255) NOT NULL,
+               `text` text,
+               PRIMARY KEY (`id`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-    if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS {subscriptions} (
-                 `id` int(9) NOT NULL auto_increment,
-                 `item_id` int(9) NOT NULL,
-                 `user_id` int(9) NOT NULL,
-                 PRIMARY KEY (`id`),
-                 UNIQUE KEY (`item_id`, `user_id`),
-                 UNIQUE KEY (`user_id`, `item_id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-      $db->query("CREATE TABLE IF NOT EXISTS {pending_notifications} (
-                 `id` int(9) NOT NULL auto_increment,
-                 `email` varchar(128) NOT NULL,
-                 `subject` varchar(255) NOT NULL,
-                 `text` text,
-                 PRIMARY KEY (`id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
-      module::set_version("notification", 1);
-    }
+    module::set_version("notification", 1);
   }
 
   static function uninstall() {

@@ -19,9 +19,6 @@
  */
 class organize_installer {
   static function install() {
-    $version = module::get_version("organize");
-    if ($version == 0) {
-      module::set_version("organize", 1);
-    }
+    module::set_version("organize", 1);
   }
 }
