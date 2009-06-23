@@ -45,7 +45,7 @@ class search_Core {
       "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
       $access_sql .
       "ORDER BY `score` DESC " .
-      "LIMIT $offset, $limit";
+      "LIMIT $limit OFFSET $offset";
 
     return array($count, new ORM_Iterator(ORM::factory("item"), $db->query($query)));
   }
