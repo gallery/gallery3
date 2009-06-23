@@ -40,7 +40,7 @@ class comment_installer {
                  `server_remote_addr` varchar(32) default NULL,
                  `server_remote_host` varchar(64) default NULL,
                  `server_remote_port` varchar(16) default NULL,
-                 `state` char(15) default 'unpublished',
+                 `state` varchar(15) default 'unpublished',
                  `text` text,
                  `updated` int(9) NOT NULL,
                PRIMARY KEY (`id`))
@@ -48,7 +48,7 @@ class comment_installer {
 
     block_manager::add("dashboard_center", "comment", "recent_comments");
     module::set_var("comment", "spam_caught", 0);
-    module::set_version("comment", 1);
+    module::set_version("comment", 2);
   }
 
   static function upgrade($version) {
