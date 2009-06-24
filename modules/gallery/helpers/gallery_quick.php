@@ -83,19 +83,20 @@ class gallery_quick_Core {
       "class" => "gDialogLink gButtonLink",
       "icon" => "ui-icon-pencil",
       "href" => url::site("quick/form_edit/$item->id?page_type=$page_type"));
+
     if ($item->is_photo() && graphics::can("rotate")) {
       $elements["left"][] =
         (object)array(
           "title" => t("Rotate 90 degrees counter clockwise"),
           "class" => "gButtonLink",
           "icon" => "ui-icon-rotate-ccw",
-          "href" => url::site("quick/form_edit/$item->id/ccw?csrf=$csrf&page_type=$page_type"));
+          "href" => url::site("quick/rotate/$item->id/ccw?csrf=$csrf&page_type=$page_type"));
       $elements["left"][] =
         (object)array(
           "title" => t("Rotate 90 degrees clockwise"),
           "class" => "gButtonLink",
           "icon" => "ui-icon-rotate-cw",
-          "href" => url::site("quick/form_edit/$item->id/cw?csrf=$csrf&page_type=$page_type"));
+          "href" => url::site("quick/rotate/$item->id/cw?csrf=$csrf&page_type=$page_type"));
     }
 
     // Don't move photos from the photo page; we don't yet have a good way of redirecting after move
