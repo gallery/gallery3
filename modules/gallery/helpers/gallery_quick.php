@@ -118,7 +118,7 @@ class gallery_quick_Core {
 
       $elements["right"][] = (object)array(
         "title" => $delete_title,
-        "class" => "gButtonLink",
+        "class" => "gDialogLink gButtonLink",
         "icon" => "ui-icon-trash",
         "id" => "gQuickDelete",
         "href" => url::site("quick/form_delete/$item->id?csrf=$csrf&page_type=$page_type"));
