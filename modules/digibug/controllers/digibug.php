@@ -41,7 +41,7 @@ class Digibug_Controller extends Controller {
       "digibug_api_version" => "100",
       "company_id" => $company_id,
       "event_id" => $event_id,
-      "cmd" => "adding",
+      "cmd" => "addimg",
       "return_url" => url::abs_site("digibug/close_window"),
       "num_images" => "1",
       "image_1" => $url,
@@ -50,7 +50,7 @@ class Digibug_Controller extends Controller {
       "image_width_1" => $item->width,
       "thumb_height_1" => $item->thumb_height,
       "thumb_width_1" => $item->thumb_width,
-      "title" => $item->title);
+      "title_1" => $item->title);
 
     print $v;
   }
