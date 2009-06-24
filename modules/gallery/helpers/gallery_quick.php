@@ -89,7 +89,7 @@ class gallery_quick_Core {
           "title" => t("Rotate 90 degrees counter clockwise"),
           "class" => "gButtonLink",
           "icon" => "ui-icon-rotate-ccw",
-          "href" => url::site("quick/form_edit/$item->id/ccw?csrf=$csrf&?page_type=$page_type"));
+          "href" => url::site("quick/form_edit/$item->id/ccw?csrf=$csrf&page_type=$page_type"));
       $elements["left"][] =
         (object)array(
           "title" => t("Rotate 90 degrees clockwise"),
