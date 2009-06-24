@@ -19,9 +19,6 @@
  */
 class info_installer {
   static function install() {
-    $version = module::get_version("info");
-    if ($version == 0) {
-      module::set_version("info", 1);
-    }
+    module::set_version("info", 1);
   }
 }

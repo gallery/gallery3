@@ -77,14 +77,14 @@
  **********************************************************************/
 
 .gView {
-	min-width: 974px !important;
+  min-width: 974px !important;
 }
 
 #gHeader {
-	background-color: #e8e8e8;
-	border-bottom: 1px solid #ccc;
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
   margin-bottom: 20px;
-	padding: 0 20px;
+  padding: 0 20px;
 }
 
 #gContent {
@@ -171,7 +171,7 @@
 }
 
 #gSiteStatus {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 #gContent .gItem {

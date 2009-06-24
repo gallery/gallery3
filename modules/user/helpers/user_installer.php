@@ -20,70 +20,66 @@
 class user_installer {
   static function install() {
     $db = Database::instance();
-    $version = module::get_version("user");
+    $db->query("CREATE TABLE IF NOT EXISTS {users} (
+                 `id` int(9) NOT NULL auto_increment,
+                 `name` varchar(32) NOT NULL,
+                 `full_name` varchar(255) NOT NULL,
+                 `password` varchar(64) NOT NULL,
+                 `login_count` int(10) unsigned NOT NULL DEFAULT 0,
+                 `last_login` int(10) unsigned NOT NULL DEFAULT 0,
+                 `email` varchar(64) default NULL,
+                 `admin` BOOLEAN default 0,
+                 `guest` BOOLEAN default 0,
+                 `hash` char(32) default NULL,
+                 `url` varchar(255) default NULL,
+                 `locale` char(10) default NULL,
+                 PRIMARY KEY (`id`),
+                 UNIQUE KEY(`hash`),
+                 UNIQUE KEY(`name`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-    if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS {users} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `name` varchar(32) NOT NULL,
-                   `full_name` varchar(255) NOT NULL,
-                   `password` varchar(64) NOT NULL,
-                   `login_count` int(10) unsigned NOT NULL DEFAULT 0,
-                   `last_login` int(10) unsigned NOT NULL DEFAULT 0,
-                   `email` varchar(64) default NULL,
-                   `admin` BOOLEAN default 0,
-                   `guest` BOOLEAN default 0,
-                   `hash` char(32) default NULL,
-                   `url` varchar(255) default NULL,
-                   `locale` char(10) default NULL,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`hash`),
-                   UNIQUE KEY(`name`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    $db->query("CREATE TABLE IF NOT EXISTS {groups} (
+                 `id` int(9) NOT NULL auto_increment,
+                 `name` char(64) default NULL,
+                 `special` BOOLEAN default 0,
+                 PRIMARY KEY (`id`),
+                 UNIQUE KEY(`name`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE IF NOT EXISTS {groups} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `name` char(64) default NULL,
-                   `special` BOOLEAN default 0,
-                   PRIMARY KEY (`id`),
-                   UNIQUE KEY(`name`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    $db->query("CREATE TABLE IF NOT EXISTS {groups_users} (
+                 `group_id` int(9) NOT NULL,
+                 `user_id` int(9) NOT NULL,
+                 PRIMARY KEY (`group_id`, `user_id`),
+                 UNIQUE KEY(`user_id`, `group_id`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      $db->query("CREATE TABLE IF NOT EXISTS {groups_users} (
-                   `group_id` int(9) NOT NULL,
-                   `user_id` int(9) NOT NULL,
-                   PRIMARY KEY (`group_id`, `user_id`),
-                   UNIQUE KEY(`user_id`, `group_id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    $everybody = group::create("Everybody");
+    $everybody->special = true;
+    $everybody->save();
 
-      $everybody = group::create("Everybody");
-      $everybody->special = true;
-      $everybody->save();
+    $registered = group::create("Registered Users");
+    $registered->special = true;
+    $registered->save();
 
-      $registered = group::create("Registered Users");
-      $registered->special = true;
-      $registered->save();
+    $guest = user::create("guest", "Guest User", "");
+    $guest->guest = true;
+    $guest->remove($registered);
+    $guest->save();
 
-      $guest = user::create("guest", "Guest User", "");
-      $guest->guest = true;
-      $guest->remove($registered);
-      $guest->save();
+    $admin = user::create("admin", "Gallery Administrator", "admin");
+    $admin->admin = true;
+    $admin->save();
 
-      $admin = user::create("admin", "Gallery Administrator", "admin");
-      $admin->admin = true;
-      $admin->save();
+    // Let the admin own everything
+    $db->update("items", array("owner_id" => $admin->id), array("owner_id" => "IS NULL"));
+    module::set_version("user", 1);
 
-      // Let the admin own everything
-      $db->update("items", array("owner_id" => $admin->id), array("owner_id" => "IS NULL"));
-      module::set_version("user", 1);
+    $root = ORM::factory("item", 1);
+    access::allow($everybody, "view", $root);
+    access::allow($everybody, "view_full", $root);
 
-      $root = ORM::factory("item", 1);
-      access::allow($everybody, "view", $root);
-      access::allow($everybody, "view_full", $root);
-
-      access::allow($registered, "view", $root);
-      access::allow($registered, "view_full", $root);
-    }
+    access::allow($registered, "view", $root);
+    access::allow($registered, "view_full", $root);
   }
 
   static function uninstall() {

@@ -56,6 +56,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
 
       module::set_var("gallery", "header_text", $form->edit_theme->header_text->value);
       module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
+      module::set_var("gallery", "show_credits", $form->edit_theme->show_credits->value);
 
       message::success(t("Updated theme details"));
       url::redirect("admin/theme_options");

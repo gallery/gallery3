@@ -21,6 +21,9 @@ class Admin_g2_import_Controller extends Admin_Controller {
   public function index() {
     if (g2_import::is_configured()) {
       g2_import::init();
+    }
+
+    if (class_exists("GalleryCoreApi")) {
       $g2_stats = g2_import::stats();
       $g2_sizes = g2_import::common_sizes();
     }

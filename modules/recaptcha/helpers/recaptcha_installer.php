@@ -19,10 +19,7 @@
  */
 class recaptcha_installer {
   static function install() {
-    $version = module::get_version("recaptcha");
-    if ($version == 0) {
-      module::set_version("recaptcha", 1);
-    }
+    module::set_version("recaptcha", 1);
   }
 
   static function activate() {

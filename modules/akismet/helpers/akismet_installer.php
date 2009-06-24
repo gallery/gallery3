@@ -19,10 +19,7 @@
  */
 class akismet_installer {
   static function install() {
-    $version = module::get_version("akismet");
-    if ($version == 0) {
-      module::set_version("akismet", 1);
-    }
+    module::set_version("akismet", 1);
   }
 
   static function activate() {

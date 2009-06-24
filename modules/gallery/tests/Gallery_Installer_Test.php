@@ -33,7 +33,7 @@ class Gallery_Installer_Test extends Unit_Test_Case {
     $this->assert_equal("gallery", $gallery->name);
 
     // This is probably too volatile to keep for long
-    $this->assert_equal(1, $gallery->version);
+    $this->assert_equal(2, $gallery->version);
   }
 
   public function install_creates_root_item_test() {
