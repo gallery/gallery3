@@ -17,30 +17,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class exif_installer {
+class digibug_installer {
   static function install() {
-    $db = Database::instance();
-    $db->query("CREATE TABLE IF NOT EXISTS {exif_records} (
-                 `id` int(9) NOT NULL auto_increment,
-                 `item_id` INTEGER(9) NOT NULL,
-                 `key_count` INTEGER(9) default 0,
-                 `data` TEXT,
-                 `dirty` BOOLEAN default 1,
-                 PRIMARY KEY (`id`),
-                 KEY(`item_id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-    module::set_version("exif", 1);
-  }
+    $version = module::get_version("digibug");
+    if ($version == 0) {
+      Database::instance()
+        ->query("CREATE TABLE {proxies} (
+                   `id` int(9) NOT NULL AUTO_INCREMENT,
+                   `uuid` char(36) NOT NULL,
+                   `request_date` TIMESTAMP NOT NULL DEFAULT current_timestamp,
+                   `item_id` int(9) NOT NULL,
+                   PRIMARY KEY (`id`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-  static function activate() {
-    exif::check_index();
-  }
+      module::set_var("digibug", "basic_company_id", "3153");
+      module::set_var("digibug", "basic_event_id", "8491");
+      module::set_var("digibug", "mode", "basic");
 
-  static function deactivate() {
-    site_status::clear("exif_index_out_of_date");
+      module::set_version("digibug", 1);
+    }
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {exif_records};");
+    Database::instance()->query("DROP TABLE IF EXISTS {proxies}");
+    module::delete("digibug");
   }
 }

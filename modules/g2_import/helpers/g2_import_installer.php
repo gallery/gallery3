@@ -20,19 +20,16 @@
 class g2_import_installer {
   static function install() {
     $db = Database::instance();
-    $version = module::get_version("g2_import");
-    if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS {g2_maps} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `g2_id` int(9) NOT NULL,
-                   `g3_id` int(9) NOT NULL,
-                 PRIMARY KEY (`id`),
-                 KEY (`g2_id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    $db->query("CREATE TABLE IF NOT EXISTS {g2_maps} (
+                 `id` int(9) NOT NULL auto_increment,
+                 `g2_id` int(9) NOT NULL,
+                 `g3_id` int(9) NOT NULL,
+               PRIMARY KEY (`id`),
+               KEY (`g2_id`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      module::set_version("g2_import", 1);
-      mkdir(VARPATH . "modules/g2_import");
-    }
+    module::set_version("g2_import", 1);
+    mkdir(VARPATH . "modules/g2_import");
   }
 
   static function uninstall() {

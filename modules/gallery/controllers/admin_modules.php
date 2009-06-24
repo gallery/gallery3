@@ -45,7 +45,11 @@ class Admin_Modules_Controller extends Admin_Controller {
       } else if (!$info->active && $desired && !module::is_active($module_name)) {
         $changes->activate[] = $module_name;
         $activated_names[] = $info->name;
-        module::install($module_name);
+        if (module::is_installed($module_name)) {
+          module::upgrade($module_name);
+        } else {
+          module::install($module_name);
+        }
         module::activate($module_name);
       }
     }

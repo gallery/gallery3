@@ -19,10 +19,7 @@
  */
 class slideshow_installer {
   static function install() {
-    $version = module::get_version("slideshow");
-    if ($version == 0) {
-      module::set_version("slideshow", 1);
-    }
+    module::set_version("slideshow", 1);
   }
 
   static function deactivate() {

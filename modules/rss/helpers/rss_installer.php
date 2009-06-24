@@ -19,9 +19,6 @@
  */
 class rss_installer {
   static function install() {
-    $version = module::get_version("rss");
-    if ($version == 0) {
-      module::set_version("rss", 1);
-    }
+    module::set_version("rss", 1);
   }
 }

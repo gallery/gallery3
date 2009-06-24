@@ -81,7 +81,7 @@ function oops($error) {
 
 function check_environment() {
   if (!function_exists("mysql_query") && !function_exists("mysqli_set_charset")) {
-    $errors[] = "Gallery 3 requires a MySQL database, but PHP doesn't have either the the <a href=\"http://php.net/mysql\">MySQL</a> or the  <a href=\"http://php.net/mysqli\">MySQLi</a> extension.";
+    $errors[] = "Gallery 3 requires a MySQL database, but PHP doesn't have either the <a href=\"http://php.net/mysql\">MySQL</a> or the  <a href=\"http://php.net/mysqli\">MySQLi</a> extension.";
   }
 
   if (!@preg_match("/^.$/u", utf8_encode("\xF1"))) {

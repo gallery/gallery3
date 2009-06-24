@@ -19,7 +19,7 @@
       <?= $child->thumb_img(array("class" => "gThumbnail")) ?>
     </a>
     <?= $theme->thumb_bottom($child) ?>
-    <h2><a href="<?= $child->url() ?>"><?= p::clean($child->title) ?></a></h2>
+    <h2><span></span><a href="<?= $child->url() ?>"><?= p::clean($child->title) ?></a></h2>
     <ul class="gMetadata">
       <?= $theme->thumb_info($child) ?>
     </ul>

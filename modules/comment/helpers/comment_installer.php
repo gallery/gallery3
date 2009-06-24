@@ -20,38 +20,42 @@
 class comment_installer {
   static function install() {
     $db = Database::instance();
-    $version = module::get_version("comment");
+    $db->query("CREATE TABLE IF NOT EXISTS {comments} (
+                 `author_id` int(9) default NULL,
+                 `created` int(9) NOT NULL,
+                 `guest_email` varchar(128) default NULL,
+                 `guest_name` varchar(128) default NULL,
+                 `guest_url` varchar(255) default NULL,
+                 `id` int(9) NOT NULL auto_increment,
+                 `item_id` int(9) NOT NULL,
+                 `server_http_accept_charset` varchar(64) default NULL,
+                 `server_http_accept_encoding` varchar(64) default NULL,
+                 `server_http_accept_language` varchar(64) default NULL,
+                 `server_http_accept` varchar(128) default NULL,
+                 `server_http_connection` varchar(64) default NULL,
+                 `server_http_host` varchar(64) default NULL,
+                 `server_http_referer` varchar(255) default NULL,
+                 `server_http_user_agent` varchar(128) default NULL,
+                 `server_query_string` varchar(64) default NULL,
+                 `server_remote_addr` varchar(32) default NULL,
+                 `server_remote_host` varchar(64) default NULL,
+                 `server_remote_port` varchar(16) default NULL,
+                 `state` varchar(15) default 'unpublished',
+                 `text` text,
+                 `updated` int(9) NOT NULL,
+               PRIMARY KEY (`id`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-    if ($version == 0) {
-      $db->query("CREATE TABLE IF NOT EXISTS {comments} (
-                   `author_id` int(9) default NULL,
-                   `created` int(9) NOT NULL,
-                   `guest_email` varchar(128) default NULL,
-                   `guest_name` varchar(128) default NULL,
-                   `guest_url` varchar(255) default NULL,
-                   `id` int(9) NOT NULL auto_increment,
-                   `item_id` int(9) NOT NULL,
-                   `server_http_accept_charset` varchar(64) default NULL,
-                   `server_http_accept_encoding` varchar(64) default NULL,
-                   `server_http_accept_language` varchar(64) default NULL,
-                   `server_http_accept` varchar(128) default NULL,
-                   `server_http_connection` varchar(64) default NULL,
-                   `server_http_host` varchar(64) default NULL,
-                   `server_http_referer` varchar(255) default NULL,
-                   `server_http_user_agent` varchar(128) default NULL,
-                   `server_query_string` varchar(64) default NULL,
-                   `server_remote_addr` varchar(32) default NULL,
-                   `server_remote_host` varchar(64) default NULL,
-                   `server_remote_port` varchar(16) default NULL,
-                   `state` varchar(15) default 'unpublished',
-                   `text` text,
-                   `updated` int(9) NOT NULL,
-                 PRIMARY KEY (`id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    block_manager::add("dashboard_center", "comment", "recent_comments");
+    module::set_var("comment", "spam_caught", 0);
+    module::set_version("comment", 2);
+  }
 
-      block_manager::add("dashboard_center", "comment", "recent_comments");
-      module::set_var("comment", "spam_caught", 0);
-      module::set_version("comment", 1);
+  static function upgrade($version) {
+    if ($version == 1) {
+      $db = Database::instance();
+      $db->query("ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
+      module::set_version("comment", 2);
     }
   }
 

@@ -19,11 +19,7 @@
  */
 class server_add_installer {
   static function install() {
-    $db = Database::instance();
-    $version = module::get_version("server_add");
-    if ($version == 0) {
-      module::set_version("server_add", 1);
-    }
+    module::set_version("server_add", 1);
     server_add::check_config();
   }
 
