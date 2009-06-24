@@ -34,7 +34,6 @@ class digibug_theme_Core {
     if ($theme->page_type() == "album" && $child->type == "photo") {
       $v = new View("digibug_album.html");
       $v->id = $child->id;
-      $v->return = "album/{$child->parent()->id}";
       $v->title = t("Print photo with Digibug");
       return $v->render();
     }

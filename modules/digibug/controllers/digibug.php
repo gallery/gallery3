@@ -36,12 +36,13 @@ class Digibug_Controller extends Controller {
       $company_id = module::get_var("digibug", "company_id");
       $event_id = module::get_var("digibug", "event_id");
     }
-    $digibug_parms = array(
+    $v = new View("digibug_form.html");
+    $v->order_parms = array(
       "digibug_api_version" => "100",
       "company_id" => $company_id,
       "event_id" => $event_id,
       "cmd" => "adding",
-      "return_url" => url::abs_site($this->input->get("return")),
+      "return_url" => url::abs_site("digibug/close_window"),
       "num_images" => "1",
       "image_1" => $url,
       "thumb_1" => "$url/thumb",
@@ -51,9 +52,7 @@ class Digibug_Controller extends Controller {
       "thumb_width_1" => $item->thumb_width,
       "title" => $item->title);
 
-    message::success(
-      t("Photo '%title' was submitted for printing.", array("title" => $item->title)));
-    print json_encode(array("result" => "success", "reload" => 1));
+    print $v;
   }
 
   public function print_proxy($id, $thumb=null) {
@@ -90,4 +89,7 @@ class Digibug_Controller extends Controller {
     }
   }
 
+  public function close_window() {
+    print "<script type=\"text/javascript\">window.close();</script>";
+  }
 }

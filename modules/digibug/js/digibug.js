@@ -5,20 +5,42 @@ $(document).ready(function() {
   });
 });
 
+function popUp(url, options) {
+  options = $.extend({
+    /* default options */
+    width:      400,
+    height:     400,
+    target:     'dbPopWin',
+    scrollbars: 'yes',
+    resizable:  'no',
+    menuBar:    'no',
+    addressBar: 'yes'}, options);
+
+  /* center the window by default. */
+  if (!options.winY) {
+    options.winY = screen.height / 2 - options.height / 2;
+  };
+  if (!options.winX) {
+    options.winX = screen.width / 2 - options.width / 2;
+  };
+
+  open(
+    url,
+    options['target'],
+    'width= '      + options.width +
+      ',height='     + options.height +
+      ',top='        + options.winY +
+      ',left='       + options.winX +
+      ',scrollbars=' + options.scrollbars +
+      ',resizable='  + options.resizable +
+      ',menubar='    + options.menuBar +
+      ',location='   + options.addressBar
+  );
+
+  return false;
+
+}
+
 function queue_print(e) {
-  var parent = e.currentTarget.parentNode;
-  $(parent).addClass("gLoadingLarge");
-  $.ajax({
-    type: "GET",
-    url: e.currentTarget.href,
-    dataType: "json",
-    success: function(data) {
-      $(parent).removeClass("gLoadingLarge");
-      if (data.location) {
-        window.location = data.location;
-      } else if (data.reload) {
-        window.location.reload();
-      }
-    }
-  });
+  return popUp(e.currentTarget.href, { width: 800, height: 600 } );
 };

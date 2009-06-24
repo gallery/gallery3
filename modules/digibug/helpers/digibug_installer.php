@@ -24,7 +24,7 @@ class digibug_installer {
       Database::instance()
         ->query("CREATE TABLE {proxies} (
                    `id` int(9) NOT NULL auto_increment,
-                   `uuid` char(32) NOT NULL,
+                   `uuid` char(36) NOT NULL,
                    `item_id` int(9),
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
