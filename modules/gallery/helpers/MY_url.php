@@ -58,7 +58,7 @@ class url extends url_Core {
    * Return the item that the uri is referencing
    */
   static function get_item_from_uri($uri) {
-    $current_uri = html_entity_decode($uri);
+    $current_uri = html_entity_decode($uri, ENT_QUOTES);
     $item = ORM::factory("item")->where("relative_path_cache", $current_uri)->find();
     if (!$item->loaded) {
       // It's possible that the relative path cache for the item we're looking for is out of date,
