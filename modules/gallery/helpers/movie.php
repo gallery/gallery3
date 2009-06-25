@@ -145,7 +145,7 @@ class movie_Core {
 
   static function find_ffmpeg() {
     if (!$ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) {
-      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin");
+      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin");
       if (function_exists("exec")) {
         $ffmpeg_path = exec("which ffmpeg");
       }

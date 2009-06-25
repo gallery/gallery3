@@ -665,6 +665,10 @@ form .gError,
   background-image: url('../images/ico-view-comments.png');
 }
 
+#gViewMenu #gDigibugLink {
+  background-image: url('../images/ico-print.png');
+}
+
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gBreadcrumbs {
