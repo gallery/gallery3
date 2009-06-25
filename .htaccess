@@ -22,7 +22,7 @@
 # Then just use your Gallery 3 without the index.php in the url.
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /~bharat/gallery3/
+  RewriteBase /
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^(.*)$ index.php?kohana_uri=$1 [QSA,PT,L]
