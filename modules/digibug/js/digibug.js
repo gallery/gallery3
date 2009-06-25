@@ -3,6 +3,10 @@ $(document).ready(function() {
     e.preventDefault();
     queue_print(e);
   });
+  $("#gDigibugLink").click(function(e) {
+    e.preventDefault();
+    return queue_print(e);
+  });
 });
 
 function popUp(url, options) {
