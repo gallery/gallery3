@@ -28,17 +28,11 @@ p {
   margin-bottom: 1em;
 }
 
-strong {
-  font-weight: bold;
-}
-
 em {
   font-style: oblique;
 }
 
-/* Headings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-h1, h2, h3, h4, h5 {
+h1, h2, h3, h4, h5, strong, th {
   font-weight: bold;
 }
 
@@ -48,6 +42,10 @@ h1 {
 
 #gSearchResults h1 {
   margin-bottom: 1em;
+}
+
+#gProgress h1 {
+  font-size: 1.1em;
 }
 
 h2 {
@@ -68,7 +66,8 @@ a,
 .gMenu a,
 #gDialog a,
 .gButtonLink,
-.gButtonLink:hover {
+.gButtonLink:hover,
+.gButtonLink:active {
   color: #5382BF !important;
   text-decoration: none;
   -moz-outline-style: none;
@@ -91,6 +90,7 @@ a:hover,
 
 #gForgotPasswordLink {
   float: right;
+  font-size: .9em;
 }
 
 #gDialog .gCancel {
@@ -110,10 +110,6 @@ table {
 caption,
 th {
   text-align: left;
-}
-
-th {
-  font-weight: bold;
 }
 
 th,
@@ -144,7 +140,9 @@ legend {
 
 #gHeader legend,
 #gSidebar legend,
-#gContent #gSearchForm legend {
+#gContent #gSearchForm legend,
+input[type="hidden"],
+.gShortForm label {
   display: none;
 }
 
@@ -164,10 +162,6 @@ textarea {
   border-top-color: #ccc;
   border-left-color: #ccc;
   color: #333;
-}
-
-input[type="hidden"] {
-  display: none;
 }
 
 textarea {
@@ -368,10 +362,6 @@ form .gError,
   padding: .4em 0;
 }
 
-.gShortForm label {
-  display: none;
-}
-
 .gShortForm input[type="text"] {
   color: #666;
   padding: .3em .6em;
@@ -449,14 +439,6 @@ form .gError,
 
 #gSidebar .gBlockContent {
   padding-left: 1em;
-}
-
-/* Album/Photo information ~~~~~~~~~~~~~~~ */
-
-#gContent #gInfo {
-}
-
-#gContent #gInfo .gDescription {
 }
 
 /* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -805,8 +787,6 @@ form .gError,
 }
 
 #gDialog {
-  font-family: inherit;
-  font-size: inherit;
   text-align: left;
 }
 
@@ -884,6 +864,7 @@ form .gError,
 }
 
 /* Server Add */
+
 .gCheckboxTree input {
   display: inline;
 }
@@ -922,7 +903,7 @@ form .gError,
   font-size: 1em;
   padding: 0;
   margin: 0;
-  border-top-width: 0px;
+  border-top-width: 0;
 }
 
 #gServerAdd p {
@@ -933,10 +914,10 @@ form .gError,
   padding: 10px 6px 10px 16px;
 }
 
-
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gPermissions .gDenied, #gPermissions .gAllowed {
+#gPermissions .gDenied,
+#gPermissions .gAllowed {
   text-align: center;
   vertical-align: middle;
 }
@@ -947,22 +928,18 @@ form .gError,
   background-color: #cfc;
 }
 
-
 /*************** STUFF THAT NEEDS A HOME ****************/
-#gProgress h1 {
-  font-size: 1.1em;
-}
 
 .gProgressBar {
   height: 1em;
   width: 100%;
-  margin-top: 0.5em;
+  margin-top: .5em;
   display: inline-block;
 }
 
 #gAddPhotos p {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 #gAddPhotosCanvas {
@@ -1026,13 +1003,15 @@ form .gError,
   margin-bottom: 10px;
 }
 
-#gAdminG2ImportNotes p, #gAdminG2ImportDetails .gInfo p {
-  padding: 0px;
-  margin: 0px;
+#gAdminG2ImportNotes p,
+#gAdminG2ImportDetails .gInfo p {
+  padding: 0;
+  margin: 0;
 }
 
-#gAdminG2ImportNotes ul li, #gAdminG2Import .gInfo ul li {
-  padding-left: 0px;
+#gAdminG2ImportNotes ul li,
+#gAdminG2Import .gInfo ul li {
+  padding-left: 0;
   margin-left: 20px;
   list-style-type: disc;
 }
@@ -1044,7 +1023,8 @@ form .gError,
 }
 
 .rtl caption,
-.rtl th {
+.rtl th,
+.rtl #gDialog {
   text-align: right;
 }
 
@@ -1069,10 +1049,4 @@ form .gError,
 .rtl .gButtonSet li,
 .rtl .ui-icon-left .ui-icon {
   float: right;
-}
-
-.rtl #gDialog {
-  font-family: inherit;
-  font-size: inherit;
-  text-align: right;
 }
