@@ -22,7 +22,7 @@ class digibug_task_Core {
     // Delete extra exif_records
     $expired_request_count = Database::instance()->query(
       "SELECT count(*) as print_requests
-         FROM {proxies}
+         FROM {digibug_proxies}
         WHERE `request_date` <= (CURDATE() - INTERVAL 10 DAY)")->current()->print_requests;
 
     return array(Task_Definition::factory()
@@ -38,7 +38,7 @@ class digibug_task_Core {
 
   static function remove_expired($task) {
     $completed = $task->get("completed", 0);
-    $expired = ORM::factory("proxy")
+    $expired = ORM::factory("digibug_proxy")
       ->where("request_date <= (CURDATE() - INTERVAL 10 DAY)")
       ->find_all();
     $remaining = $expired->count();

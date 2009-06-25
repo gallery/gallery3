@@ -23,8 +23,8 @@ class Digibug_Controller extends Controller {
 
     $item = ORM::factory("item", $id);
 
-    $proxy = ORM::factory("proxy");
-    $proxy->uuid = digibug::uuid();
+    $proxy = ORM::factory("digibug_proxy");
+    $proxy->uuid =  md5(rand());
     $proxy->item_id = $item->id;
     $proxy->save();
 
@@ -56,7 +56,7 @@ class Digibug_Controller extends Controller {
   }
 
   public function print_proxy($id, $thumb=null) {
-    $proxy = ORM::factory("proxy")
+    $proxy = ORM::factory("digibug_proxy")
       ->where("uuid", $id)
       ->find();
 

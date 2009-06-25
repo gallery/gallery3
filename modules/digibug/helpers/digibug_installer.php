@@ -22,9 +22,9 @@ class digibug_installer {
     $version = module::get_version("digibug");
     if ($version == 0) {
       Database::instance()
-        ->query("CREATE TABLE {proxies} (
+        ->query("CREATE TABLE {digibug_proxies} (
                    `id` int(9) NOT NULL AUTO_INCREMENT,
-                   `uuid` char(36) NOT NULL,
+                   `uuid` char(32) NOT NULL,
                    `request_date` TIMESTAMP NOT NULL DEFAULT current_timestamp,
                    `item_id` int(9) NOT NULL,
                    PRIMARY KEY (`id`))
@@ -39,7 +39,7 @@ class digibug_installer {
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {proxies}");
+    Database::instance()->query("DROP TABLE IF EXISTS {digibug_proxies}");
     module::delete("digibug");
   }
 }
