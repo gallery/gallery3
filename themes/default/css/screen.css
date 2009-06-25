@@ -4,15 +4,16 @@
  * @requires YUI reset, font, grids CSS
  *
  * Sheet organization:
- * 1)  Basic HTML elements
- * 2)  Reusable classes
- * 3)  Reusable content blocks
- * 4)  Page layout containers
- * 5)  Content blocks in specific layout containers
- * 6)  Navigation and menus
- * 7)  Browser hacks
- * 8)  jQuery and jQuery UI
- * 9)  Right-to-left language styles
+ *  1)  Basic HTML elements
+ *  2)  Reusable classes
+ *  3)  Reusable content blocks
+ *  4)  Page layout containers
+ *  5)  Content blocks in specific layout containers
+ *  6)  Navigation and menus
+ *  7)  Browser hacks
+ *  8)  jQuery and jQuery UI
+ *  9)  Right-to-left language styles
+ * 10)  Digibug Print
  */
 
 /** *******************************************************************
@@ -1050,3 +1051,7 @@ form .gError,
 .rtl .ui-icon-left .ui-icon {
   float: right;
 }
+
+/** *******************************************************************
+ * 10)  Digibug Print
+ **********************************************************************/

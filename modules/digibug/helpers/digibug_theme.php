@@ -19,15 +19,7 @@
  */
 class digibug_theme_Core {
   static function head($theme) {
-    $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-      url::file("modules/digibug/css/digibug.css") . "\" />";
-    $head[] = html::script("modules/digibug/js/digibug.js");;
-    return implode("\n", $head);
-  }
-
-  static function admin_head($theme) {
-    return "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-      url::file("modules/digibug/css/digibug.css") . "\" />";
+    return html::script("modules/digibug/js/digibug.js");
   }
 
   static function thumb_bottom($theme, $child) {

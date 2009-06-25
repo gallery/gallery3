@@ -22,7 +22,7 @@ class digibug_menu {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
         ->id("digibug_menu")
-        ->label(t("Digibug Administration"))
+        ->label(t("Digibug"))
         ->url(url::site("admin/digibug")));
   }
 
