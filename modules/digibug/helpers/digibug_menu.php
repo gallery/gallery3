@@ -27,17 +27,13 @@ class digibug_menu {
   }
 
   static function photo($menu, $theme) {
-  }
-
-  static function site($menu, $theme) {
     $item = $theme->item();
-
-    if ($item && access::can("edit", $item)) {
-      $options_menu = $menu->get("options_menu")
-        ->append(Menu::factory("dialog")
-          ->id("digibug")
-          ->label(t("Peform Digibug Processing"))
-          ->url(url::site("digibug/index/$item->id")));
-    }
+    $csrf = access::csrf_token();
+    $menu
+      ->append(Menu::factory("link")
+               ->id("digibug")
+               ->label(t("Print with Digibug"))
+               ->url(url::site("digibug/print_photo/{$item->id}?csrf={$csrf}"))
+               ->css_id("gDigibugLink"));
   }
 }

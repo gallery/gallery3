@@ -12,15 +12,12 @@
  * 6)  Navigation and menus
  * 7)  Browser hacks
  * 8)  jQuery and jQuery UI
+ * 9)  Right-to-left language styles
  */
 
 /** *******************************************************************
  * 1) Basic HTML elements
  **********************************************************************/
-
-.rtl {
-  direction: rtl;
-}
 
 body, html {
   background-color: #ccc;
@@ -31,17 +28,11 @@ p {
   margin-bottom: 1em;
 }
 
-strong {
-  font-weight: bold;
-}
-
 em {
   font-style: oblique;
 }
 
-/* Headings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-h1, h2, h3, h4, h5 {
+h1, h2, h3, h4, h5, strong, th {
   font-weight: bold;
 }
 
@@ -51,6 +42,10 @@ h1 {
 
 #gSearchResults h1 {
   margin-bottom: 1em;
+}
+
+#gProgress h1 {
+  font-size: 1.1em;
 }
 
 h2 {
@@ -71,7 +66,8 @@ a,
 .gMenu a,
 #gDialog a,
 .gButtonLink,
-.gButtonLink:hover {
+.gButtonLink:hover,
+.gButtonLink:active {
   color: #5382BF !important;
   text-decoration: none;
   -moz-outline-style: none;
@@ -92,11 +88,12 @@ a:hover,
   margin: .3em 1em;
 }
 
-#gForgotPasswordLink, .rtl #gDialog .gCancel {
+#gForgotPasswordLink {
   float: right;
+  font-size: .9em;
 }
 
-#gDialog .gCancel, .rtl #gForgotPasswordLink {
+#gDialog .gCancel {
   float: left;
 }
 
@@ -113,15 +110,6 @@ table {
 caption,
 th {
   text-align: left;
-}
-
-.rtl caption,
-.rtl th {
-  text-align: right;
-}
-
-th {
-  font-weight: bold;
 }
 
 th,
@@ -152,7 +140,9 @@ legend {
 
 #gHeader legend,
 #gSidebar legend,
-#gContent #gSearchForm legend {
+#gContent #gSearchForm legend,
+input[type="hidden"],
+.gShortForm label {
   display: none;
 }
 
@@ -172,10 +162,6 @@ textarea {
   border-top-color: #ccc;
   border-left-color: #ccc;
   color: #333;
-}
-
-input[type="hidden"] {
-  display: none;
 }
 
 textarea {
@@ -205,10 +191,6 @@ form ul ul li {
   float: left;
 }
 
-.rtl form ul ul li {
-  float: right;
-}
-
 input,
 select,
 textarea {
@@ -222,11 +204,6 @@ input[type="reset"] {
   display: inline;
   clear: none;
   float: left;
-}
-
-.rtl input[type="submit"],
-.rtl input[type="reset"] {
-  float: right;
 }
 
 /* Form validation ~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -385,14 +362,6 @@ form .gError,
   padding: .4em 0;
 }
 
-.rtl .gShortForm li {
-  float: right;
-}
-
-.gShortForm label {
-  display: none;
-}
-
 .gShortForm input[type="text"] {
   color: #666;
   padding: .3em .6em;
@@ -453,19 +422,10 @@ form .gError,
   margin: -4px 10px 0 0;
 }
 
-.rtl #gHeader #gLogo {
-  float: right;
-}
-
 #gHeader #gQuickSearchForm {
   clear: right;
   float: right;
   margin: 1em 0;
-}
-
-.rtl #gHeader #gQuickSearchForm {
-  clear: left;
-  float: left;
 }
 
 #gHeader #gQuickSearchForm input[type='text'] {
@@ -479,14 +439,6 @@ form .gError,
 
 #gSidebar .gBlockContent {
   padding-left: 1em;
-}
-
-/* Album/Photo information ~~~~~~~~~~~~~~~ */
-
-#gContent #gInfo {
-}
-
-#gContent #gInfo .gDescription {
 }
 
 /* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -506,11 +458,6 @@ form .gError,
   padding: 14px 8px;
   text-align: center;
   width: 213px;
-}
-
-
-.rtl #gContent #gAlbumGrid .gItem {
-  float: right;
 }
 
 #gContent #gAlbumGrid .gItem h2 {
@@ -618,20 +565,12 @@ form .gError,
   float: right;
 }
 
-.rtl #gHeader #gLoginMenu {
-  float: left;
-}
-
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSiteMenu {
   float: left;
   margin-top: 20px;
   padding: 0 20px 0 0;
-}
-
-.rtl #gSiteMenu {
-  float: right;
 }
 
 #gSiteMenu ul {
@@ -665,6 +604,10 @@ form .gError,
   background-image: url('../images/ico-view-comments.png');
 }
 
+#gViewMenu #gDigibugLink {
+  background-image: url('../images/ico-print.png');
+}
+
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gBreadcrumbs {
@@ -679,10 +622,6 @@ form .gError,
   background: transparent url('../images/ico-separator.gif') no-repeat scroll left center;
   float: left;
   padding: 10px 6px 10px 16px !important;
-}
-
-.rtl .gBreadcrumbs li {
-  float: right;
 }
 
 .gBreadcrumbs li.root {
@@ -785,10 +724,6 @@ form .gError,
   width: 30%;
 }
 
-.rtl .gPager li {
-  float: right;
-}
-
 .gPager .gInfo {
   text-align: center;
   width: 40%;
@@ -852,15 +787,7 @@ form .gError,
 }
 
 #gDialog {
-  font-family: inherit;
-  font-size: inherit;
   text-align: left;
-}
-
-.rtl #gDialog {
-  font-family: inherit;
-  font-size: inherit;
-  text-align: right;
 }
 
 #gDialog li {
@@ -904,10 +831,6 @@ form .gError,
   float: left;
 }
 
-.rtl .gButtonSet li {
-  float: right;
-}
-
 .gButtonSet .gButtonLink {
   margin: 0;
 }
@@ -917,17 +840,9 @@ form .gError,
   margin-right: .2em;
 }
 
-.rtl .ui-icon-left .ui-icon {
-  float: right;
-}
-
 .ui-icon-right .ui-icon {
   float: right;
   margin-left: .2em;
-}
-
-.rtl .ui-icon-right .ui-icon {
-  float: left;
 }
 
 .ui-icon-rotate-ccw {
@@ -949,6 +864,7 @@ form .gError,
 }
 
 /* Server Add */
+
 .gCheckboxTree input {
   display: inline;
 }
@@ -987,7 +903,7 @@ form .gError,
   font-size: 1em;
   padding: 0;
   margin: 0;
-  border-top-width: 0px;
+  border-top-width: 0;
 }
 
 #gServerAdd p {
@@ -998,10 +914,10 @@ form .gError,
   padding: 10px 6px 10px 16px;
 }
 
-
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gPermissions .gDenied, #gPermissions .gAllowed {
+#gPermissions .gDenied,
+#gPermissions .gAllowed {
   text-align: center;
   vertical-align: middle;
 }
@@ -1012,22 +928,18 @@ form .gError,
   background-color: #cfc;
 }
 
-
 /*************** STUFF THAT NEEDS A HOME ****************/
-#gProgress h1 {
-  font-size: 1.1em;
-}
 
 .gProgressBar {
   height: 1em;
   width: 100%;
-  margin-top: 0.5em;
+  margin-top: .5em;
   display: inline-block;
 }
 
 #gAddPhotos p {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 #gAddPhotosCanvas {
@@ -1091,13 +1003,50 @@ form .gError,
   margin-bottom: 10px;
 }
 
-#gAdminG2ImportNotes p, #gAdminG2ImportDetails .gInfo p {
-  padding: 0px;
-  margin: 0px;
+#gAdminG2ImportNotes p,
+#gAdminG2ImportDetails .gInfo p {
+  padding: 0;
+  margin: 0;
 }
 
-#gAdminG2ImportNotes ul li, #gAdminG2Import .gInfo ul li {
-  padding-left: 0px;
+#gAdminG2ImportNotes ul li,
+#gAdminG2Import .gInfo ul li {
+  padding-left: 0;
   margin-left: 20px;
   list-style-type: disc;
+}
+
+/* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl {
+  direction: rtl;
+}
+
+.rtl caption,
+.rtl th,
+.rtl #gDialog {
+  text-align: right;
+}
+
+.rtl #gHeader #gQuickSearchForm,
+.rtl #gForgotPasswordLink,
+.rtl #gHeader #gLoginMenu,
+.rtl .ui-icon-right .ui-icon {
+  clear: left;
+  float: left;
+}
+
+.rtl #gDialog .gCancel,
+.rtl form ul ul li,
+.rtl input[type="submit"],
+.rtl input[type="reset"],
+.rtl .gShortForm li,
+.rtl #gHeader #gLogo,
+.rtl #gContent #gAlbumGrid .gItem,
+.rtl #gSiteMenu,
+.rtl .gBreadcrumbs li,
+.rtl .gPager li,
+.rtl .gButtonSet li,
+.rtl .ui-icon-left .ui-icon {
+  float: right;
 }

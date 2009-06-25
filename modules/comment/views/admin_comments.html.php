@@ -163,6 +163,7 @@
             </a>
           </li>
         <? endif ?>
+          <!--
           <li>
             <a href="javascript:reply(<?=$comment->id?>)"
                 class="gButtonLink ui-state-default ui-icon-left">
@@ -177,6 +178,7 @@
               <?= t("Edit") ?>
             </a>
           </li>
+          -->
           <li>
             <a href="javascript:set_state('deleted',<?=$comment->id?>)"
                 class="gButtonLink ui-state-default ui-icon-left">
