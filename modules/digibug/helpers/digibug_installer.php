@@ -30,7 +30,6 @@ class digibug_installer {
 
     module::set_var("digibug", "default_company_id", "3153");
     module::set_var("digibug", "default_event_id", "8491");
-    module::set_var("digibug", "mode", "basic");
 
     module::set_version("digibug", 1);
   }
