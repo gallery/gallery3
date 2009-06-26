@@ -28,8 +28,8 @@ class digibug_installer {
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-    module::set_var("digibug", "basic_company_id", "3153");
-    module::set_var("digibug", "basic_event_id", "8491");
+    module::set_var("digibug", "default_company_id", "3153");
+    module::set_var("digibug", "default_event_id", "8491");
     module::set_var("digibug", "mode", "basic");
 
     module::set_version("digibug", 1);

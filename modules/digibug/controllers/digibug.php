@@ -29,13 +29,11 @@ class Digibug_Controller extends Controller {
     $proxy->save();
 
     $url = url::abs_site("digibug/print_proxy/{$proxy->uuid}");
-    if (module::get_var("digibug", "mode", "basic")) {
-      $company_id = module::get_var("digibug", "basic_company_id");
-      $event_id = module::get_var("digibug", "basic_event_id");
-    } else {
-      $company_id = module::get_var("digibug", "company_id");
-      $event_id = module::get_var("digibug", "event_id");
-    }
+    $company_id = module::get_var("digibug", "company_id",
+                                  module::get_var("digibug", "default_company_id"));
+    $event_id = module::get_var("digibug", "event_id",
+                                module::get_var("digibug", "default_event_id"));
+
     $v = new View("digibug_form.html");
     $v->order_parms = array(
       "digibug_api_version" => "100",
@@ -50,7 +48,7 @@ class Digibug_Controller extends Controller {
       "image_width_1" => $item->width,
       "thumb_height_1" => $item->thumb_height,
       "thumb_width_1" => $item->thumb_width,
-      "title_1" => $item->title);
+      "title_1" => p::clean($item->title));
 
     print $v;
   }

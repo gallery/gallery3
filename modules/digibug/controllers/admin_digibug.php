@@ -22,24 +22,14 @@ class Admin_Digibug_Controller extends Admin_Controller {
     print $this->_get_view();
   }
 
-  public function basic() {
-    access::verify_csrf();
-
-    module::set_var("digibug", "mode", "basic");
-    message::success(t("Successfully set Digibug mode to basic"));
-
-    url::redirect("admin/digibug");
-  }
-
-  public function advanced() {
+  public function update() {
     access::verify_csrf();
 
     $form = $this->_get_form();
     if ($form->validate()) {
       module::set_var("digibug", "company_id", $form->group->company_id->value);
       module::set_var("digibug", "event_id", $form->group->event_id->value);
-      module::set_var("digibug", "mode", "advanced");
-      message::success(t("Successfully set Digibug mode to advanced"));
+      message::success(t("Successfully updated Digibug company and event id's"));
 
       url::redirect("admin/digibug");
     }
@@ -47,18 +37,28 @@ class Admin_Digibug_Controller extends Admin_Controller {
     print $this->_get_view($form);
   }
 
+  public function default_settings() {
+    access::verify_csrf();
+
+    module::set_var("digibug", "company_id", module::get_var("digibug", "default_company_id"));
+    module::set_var("digibug", "event_id", module::get_var("digibug", "default_event_id"));
+    message::success(t("Successfully set Digibug company and event id's to default"));
+
+    url::redirect("admin/digibug");
+  }
+
   private function _get_view($form=null) {
     $v = new Admin_View("admin.html");
     $v->content = new View("admin_digibug.html");
-    $v->content->mode = module::get_var("digibug", "mode", "basic");
     $v->content->form = empty($form) ? $this->_get_form() : $form;
     return $v;
   }
 
   private function _get_form() {
-    $form = new Forge("admin/digibug/advanced", "", "post",
-                      array("id" => "gAdminForm"));
-    $group = $form->group("group");
+    $form = new Forge("admin/digibug/update", "", "post",
+                      array("id" => "gDigibugForm"));
+    $group = $form->group("group")
+      ->label(t("Enter your account information."));
     $group->input("company_id")
       ->label(t("Company Id"))
       ->rules("required")
@@ -67,7 +67,7 @@ class Admin_Digibug_Controller extends Admin_Controller {
       ->label(t("Event Id"))
       ->rules("required")
       ->value(module::get_var("digibug", "event_id", ""));
-    $group->submit("submit")->value(t("Submit"));
+    $group->submit("")->value(t("Submit"));
 
     return $form;
   }

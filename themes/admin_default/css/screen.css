@@ -458,16 +458,9 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   text-indent: 110px;
 }
 
-.gDigibugTab {
+.gDigibugAccount {
   width: 820px;
   height: 420px;
-}
-
-.gDigibugTab .gDigibugTitle {
-  font-family: Georgia;
-  font-size: 20px;
-  font-weight: bold;
-  padding-bottom: 10px;
 }
 
 .gDigibugTab .gDigibugText {
@@ -475,40 +468,6 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   font-weight: bold;
   line-height: 17px;
   padding-bottom: 15px;
-}
-
-.gDigibugListItems ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  font-size: 12px;
-  font-weight: bold;
-  line-height: 15px;
-}
-
-.gDigibugListItems ul li{
-  padding-top: 10px;
-}
-
-.gDigibugRounded {
-  background-color:#5C9CCC;
-  color: white;
-  width: 308px;
-  height: 45px;
-  text-align: center;
-  line-height: 15px;
-  margin-top: 10px;
-  font-weight: bold;
-  font-size: 12px;
-  margin-left: 60px;
-  margin-right: -50px;
-  margin-left: 20px;
-  margin-right: 0px;
-}
-
-.gDigibugRounded a {
-  color: white !important;
-  font-weight: bold;
-  text-decoration: underline;
 }
 
 .gDigibugSignIn {
@@ -523,9 +482,14 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   text-decoration: underline;
 }
 
-.gDigibugAdvancedForm {
+#gDigibugForm {
   float: left;
   padding-left: 30px;
-  width: 180px;
+  width: 220px;
 }
 
+.gDigibugDefault {
+  clear: none;
+  float: left;
+  margin: .3em 1em;
+}
