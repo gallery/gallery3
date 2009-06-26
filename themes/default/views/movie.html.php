@@ -1,5 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<script src="<?= url::file("lib/flowplayer.js") ?>" type="text/javascript"></script>
 <div id="gItem">
   <?= $theme->photo_top() ?>
 

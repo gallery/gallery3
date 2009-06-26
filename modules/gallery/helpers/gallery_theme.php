@@ -31,6 +31,10 @@ class gallery_theme_Core {
     if ($theme->page_type == 'photo') {
       $buf .= html::script("lib/jquery.scrollTo.js");
       $buf .= html::script("lib/jquery.localscroll.js");
+      $buf .= html::script("lib/gallery.show_full_size.js");
+    }
+    if ($theme->page_type == 'movie') {
+      $buf .= html::script("lib/flowplayer.js");
     }
     $buf .= html::script($theme->url("js/ui.init.js", false, true));
     if ($session->get("debug")) {
