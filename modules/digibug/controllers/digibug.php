@@ -49,6 +49,7 @@ class Digibug_Controller extends Controller {
       "thumb_height_1" => $item->thumb_height,
       "thumb_width_1" => $item->thumb_width,
       "title_1" => p::clean($item->title));
+    Kohana::log("error", Kohana::debug($v->order_parms));
 
     print $v;
   }

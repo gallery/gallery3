@@ -40,8 +40,8 @@ class Admin_Digibug_Controller extends Admin_Controller {
   public function default_settings() {
     access::verify_csrf();
 
-    module::set_var("digibug", "company_id", module::get_var("digibug", "default_company_id"));
-    module::set_var("digibug", "event_id", module::get_var("digibug", "default_event_id"));
+    module::set_var("digibug", "company_id", null);
+    module::set_var("digibug", "event_id", null);
     message::success(t("Successfully set Digibug company and event id's to default"));
 
     url::redirect("admin/digibug");
