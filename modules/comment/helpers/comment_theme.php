@@ -19,8 +19,8 @@
  */
 class comment_theme_Core {
   static function head($theme) {
-    $url = url::file("modules/comment/js/comment.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>\n";
+    $theme->script("modules/comment/js/comment.js");
+    return "";
   }
 
   static function photo_bottom($theme) {

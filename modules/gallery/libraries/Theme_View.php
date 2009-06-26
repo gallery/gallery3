@@ -19,6 +19,7 @@
  */
 class Theme_View_Core extends View {
   private $theme_name = null;
+  private $scripts = array();
 
   /**
    * Attempts to load a view and pre-load view data.
@@ -163,6 +164,19 @@ class Theme_View_Core extends View {
     return message::get();
   }
 
+  public function script($file) {
+    $this->scripts[$file] = 1;
+  }
+
+  private function _combine_script() {
+    $links = array();
+    Kohana::log("error", Kohana::debug($this->scripts));
+    foreach (array_keys($this->scripts) as $file) {
+      $links[] = html::script($file);
+    }
+    return empty($links) ? "" : implode("\n", $links);
+  }
+
   /**
    * Handle all theme functions that insert module content.
    */
@@ -221,6 +235,11 @@ class Theme_View_Core extends View {
             array_merge(array($this), $args));
         }
       }
+
+      if ($function == "head" || $function == "admin_head") {
+        array_unshift($blocks, $this->_combine_script());
+      }
+
       if (Session::instance()->get("debug")) {
         if ($function != "head") {
           array_unshift(
