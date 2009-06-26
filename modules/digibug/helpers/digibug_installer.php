@@ -19,10 +19,8 @@
  */
 class digibug_installer {
   static function install() {
-    $version = module::get_version("digibug");
-    if ($version == 0) {
-      Database::instance()
-        ->query("CREATE TABLE {digibug_proxies} (
+    Database::instance()
+      ->query("CREATE TABLE {digibug_proxies} (
                    `id` int(9) NOT NULL AUTO_INCREMENT,
                    `uuid` char(32) NOT NULL,
                    `request_date` TIMESTAMP NOT NULL DEFAULT current_timestamp,
@@ -30,12 +28,14 @@ class digibug_installer {
                    PRIMARY KEY (`id`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      module::set_var("digibug", "basic_company_id", "3153");
-      module::set_var("digibug", "basic_event_id", "8491");
-      module::set_var("digibug", "mode", "basic");
+    module::set_var("digibug", "basic_company_id", "3153");
+    module::set_var("digibug", "basic_event_id", "8491");
+    module::set_var("digibug", "mode", "basic");
 
-      module::set_version("digibug", 1);
-    }
+    module::set_version("digibug", 1);
+  }
+
+  static function upgrade($version) {
   }
 
   static function uninstall() {
