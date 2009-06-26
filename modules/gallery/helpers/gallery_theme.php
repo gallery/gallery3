@@ -21,6 +21,18 @@ class gallery_theme_Core {
   static function head($theme) {
     $session = Session::instance();
     $buf = "";
+    $buf .= html::script("lib/jquery.js");
+    $buf .= html::script("lib/jquery.form.js");
+    $buf .= html::script("lib/jquery-ui.js");
+    $buf .= html::script("lib/gallery.common.js");
+    $buf .= html::script("lib/gallery.dialog.js");
+    $buf .= html::script("lib/gallery.form.js");
+    $buf .= html::script("lib/superfish/js/superfish.js");
+    if ($theme->page_type == 'photo') {
+      $buf .= html::script("lib/jquery.scrollTo.js");
+      $buf .= html::script("lib/jquery.localscroll.js");
+    }
+    $buf .= html::script($theme->url("js/ui.init.js", false, true));
     if ($session->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("modules/gallery/css/debug.css") . "\" />";
@@ -79,6 +91,14 @@ class gallery_theme_Core {
   static function admin_head($theme) {
     $session = Session::instance();
     $buf = "";
+    $buf .= html::script("lib/jquery.js");
+    $buf .= html::script("lib/jquery.form.js");
+    $buf .= html::script("lib/jquery-ui.js");
+    $buf .= html::script("lib/gallery.common.js");
+    $buf .= html::script("lib/gallery.dialog.js");
+    $buf .= html::script("lib/superfish/js/superfish.js");
+    $buf .= html::script($theme->url("js/jquery.dropshadow.js", false, true));
+    $buf .= html::script($theme->url("js/ui.init.js", false, true));
     if ($session->get("debug")) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("modules/gallery/css/debug.css") . "\" />";

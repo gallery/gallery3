@@ -68,9 +68,9 @@ class Theme_View_Core extends View {
     return module::get_var("gallery", "thumb_size", 200) / 200;
   }
 
-  public function url($path, $absolute_url=false) {
+  public function url($path, $absolute_url=false, $no_root=false) {
     $arg = "themes/{$this->theme_name}/$path";
-    return $absolute_url ? url::abs_file($arg) : url::file($arg);
+    return $absolute_url ? url::abs_file($arg) : $no_root ? $arg : url::file($arg);
   }
 
   public function item() {
@@ -192,7 +192,28 @@ class Theme_View_Core extends View {
     case "thumb_info":
     case "thumb_top":
       $blocks = array();
+      if (method_exists("gallery_theme", $function)) {
+        switch (count($args)) {
+        case 0:
+          $blocks[] = gallery_theme::$function($this);
+          break;
+        case 1:
+          $blocks[] = gallery_theme::$function($this, $args[0]);
+          break;
+        case 2:
+          $blocks[] = gallery_theme::$function($this, $args[0], $args[1]);
+          break;
+        default:
+          $blocks[] = call_user_func_array(
+            array("gallery_theme", $function),
+            array_merge(array($this), $args));
+        }
+
+      }
       foreach (module::active() as $module) {
+        if ($module->name == "gallery") {
+          continue;
+        }
         $helper_class = "{$module->name}_theme";
         if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(

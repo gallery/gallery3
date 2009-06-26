@@ -49,18 +49,6 @@
     </style>
       <? endif ?>
     <? endif ?>
-    <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/gallery.common.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/gallery.form.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
-    <? if ($theme->page_type == 'photo'): ?>
-    <script src="<?= url::file("lib/jquery.scrollTo.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery.localscroll.js") ?>" type="text/javascript"></script>
-    <? endif ?>
-    <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
     <?= $theme->head() ?>
   </head>
 
