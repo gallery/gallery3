@@ -4,7 +4,7 @@
   <?= html::script("lib/jquery.js") ?>
   <script type="text/javascript">
     $("body form").ready(function() {
-                                     $("body form").submit();
+      $("body form").submit();
     });
   </script>
 </head>
