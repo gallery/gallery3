@@ -44,7 +44,7 @@ class Movies_Controller extends Items_Controller {
       ->where("id <=", $photo->id)
       ->count_all();
 
-    $template = new Theme_View("page.html", "photo");
+    $template = new Theme_View("page.html", "movie");
     $template->set_global("item", $photo);
     $template->set_global("children", array());
     $template->set_global("children_count", $photo->children_count());
