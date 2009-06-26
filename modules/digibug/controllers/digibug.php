@@ -76,6 +76,8 @@ class Digibug_Controller extends Controller {
     // We don't need to save the session for this request
     Session::abort_save();
 
+    $this->_clean_expired();
+
     // Dump out the image
     header("Content-Type: $proxy->item->mime_type");
     Kohana::close_buffers(false);
@@ -91,5 +93,20 @@ class Digibug_Controller extends Controller {
 
   public function close_window() {
     print "<script type=\"text/javascript\">window.close();</script>";
+  }
+
+  private function _clean_expired() {
+    $expired = ORM::factory("digibug_proxy")
+      ->where("request_date <= (CURDATE() - INTERVAL 10 DAY)")
+      ->find_all();
+
+    // Delete as many as we can in a second, so as to not slow up the request.
+    $start = microtime(true);
+    foreach ($expired as $proxy) {
+      if (microtime(true) - $start > 1.0) {
+        break;
+      }
+      $proxy->delete();
+    }
   }
 }
