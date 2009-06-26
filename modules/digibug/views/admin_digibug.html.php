@@ -1,47 +1,21 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-  $("#gDigibugTabs").ready(function() {
-    $("#gDigibugTabs").tabs({});
+  $("#gDigibugForm").ready(function() {
+    $("#gDigibugForm input:submit").parent().append('<a href="<?= url::site("admin/digibug/default_settings?csrf=$csrf") ?>" class="gDigibugDefault"><?= t("Set Default") ?></a>');
   });
 </script>
 <div id="gAdminDigibug">
   <div class="gAdminDigibugIntro">
     <p>
-      <?= t("offers you two options for turning your photos into a wide variety of prints, gifts and games. Choose your solution and get started today!") ?>
+      <?= t("allows you to turn your photos into a wide variety of prints, gifts and games.") ?>
     </p>
   </div>
-  <div id="gDigibugTabs">
-    <ul>
-      <li><a href="#gDigibugTabBasic"><?= t("Basic") ?></a></li>
-      <li><a href="#gDigibugTabAdvanced"><?= t("Advanced") ?></a></li>
-    </ul>
-    <div id="gDigibugTabBasic" class="gDigibugTab">
-      <div class="gDigibugText">
-        <?= t("Use Digibug Basic and there's nothing else to do - no registration, no administration.") ?>
-      </div>
-      <div class="gDigibugRounded ui-corner-all">
-        <br/>
-        <? if ($mode == "basic"): ?>
-        <?= t("You are currently using Basic mode!") ?>
-        <? else: ?>
-        <a href='<?= url::site("admin/digibug/basic?csrf=$csrf") ?>'><?= t("Click Here") ?></a>
-           <?= t(" to switch back to basic") ?>
-        <? endif ?>
-      </div>
+  <div id="gDigibugAccount">
+    <div style="width: 120px;" class="gDigibugText gDigibugSignIn">
+      <?= t("Don't have an account?") ?>
+      <br/> <br/>
+      <a href="http://www.digibug.com/signup.php" style=""><?= t("Sign up") ?></a><?= t(" to get started") ?>
     </div>
-    <div id="gDigibugTabAdvanced" class="gDigibugTab">
-      <div class="gDigibugText">
-        <?= t("Digibug Advanced allows you to set your own price for photos and gifts. Simply provide your account information.") ?>
-      </div>
-      <div style="width: 120px;" class="gDigibugText gDigibugSignIn">
-        <?= t("New to Digibug Advanced?") ?>
-        <br/> <br/>
-        <a href="http://www.digibug.com/signup.php" style=""><?= t("Sign up") ?></a><?= t(" to get started") ?>
-      </div>
-      <div class="gDigibugAdvancedForm">
-        <div class="gDigibugText"><?= t("Enter your Digibug company ID and event ID") ?></div>
-        <?= $form ?>
-      </div>
-    </div>
+      <?= $form ?>
   </div>
 </div>
