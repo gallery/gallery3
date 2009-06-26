@@ -34,7 +34,7 @@
         <?= t("Digibug Advanced allows you to set your own price for photos and gifts. Simply provide your account information.") ?>
       </div>
       <div style="width: 120px;" class="gDigibugText gDigibugSignIn">
-        <?= t("New to Digibug ADVANCED?") ?>
+        <?= t("New to Digibug Advanced?") ?>
         <br/> <br/>
         <a href="http://www.digibug.com/signup.php" style=""><?= t("Sign up") ?></a><?= t(" to get started") ?>
       </div>

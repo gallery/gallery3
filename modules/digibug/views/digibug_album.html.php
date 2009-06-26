@@ -2,7 +2,7 @@
 <div class="gDigibugPrintButton">
   <a class="gButtonLink ui-corner-all ui-state-default ui-icon-left"
      href="<?= url::site("digibug/print_photo/$id?csrf={$csrf}") ?>"
-     title="<?= $title ?>">
+     title="<?= p::clean($title) ?>">
     <span class="ui-icon ui-icon-print"><?= $title ?></span>
   </a>
 </div>
