@@ -22,6 +22,7 @@ class Digibug_Controller extends Controller {
     access::verify_csrf();
 
     $item = ORM::factory("item", $id);
+    access::required("view_full", $id);
 
     $proxy = ORM::factory("digibug_proxy");
     $proxy->uuid =  md5(rand());

@@ -23,7 +23,8 @@ class digibug_theme_Core {
   }
 
   static function thumb_bottom($theme, $child) {
-    if ($theme->page_type() == "album" && $child->type == "photo") {
+    if ($theme->page_type() == "album" && $child->type == "photo" &&
+        access::can("view_full", $child)) {
       $v = new View("digibug_album.html");
       $v->id = $child->id;
       $v->title = t("Print photo with Digibug");
