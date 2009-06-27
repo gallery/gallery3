@@ -121,16 +121,20 @@ class Theme_View_Core extends View {
     $this->_menu("photo");
   }
 
-  private function _menu($type) {
+  public function thumb_menu($item) {
+    $this->_menu("thumb", $item);
+  }
+
+  private function _menu($type, $item=null) {
     $menu = Menu::factory("root");
-    call_user_func_array(array("gallery_menu", $type), array(&$menu, $this));
+    call_user_func_array(array("gallery_menu", $type), array(&$menu, $this, $item));
     foreach (module::active() as $module) {
       if ($module->name == "gallery") {
         continue;
       }
       $class = "{$module->name}_menu";
       if (method_exists($class, $type)) {
-        call_user_func_array(array($class, $type), array(&$menu, $this));
+        call_user_func_array(array($class, $type), array(&$menu, $this, $item));
       }
     }
 
