@@ -21,20 +21,28 @@ class digibug_installer {
   static function install() {
     Database::instance()
       ->query("CREATE TABLE {digibug_proxies} (
-                   `id` int(9) NOT NULL AUTO_INCREMENT,
-                   `uuid` char(32) NOT NULL,
-                   `request_date` TIMESTAMP NOT NULL DEFAULT current_timestamp,
-                   `item_id` int(9) NOT NULL,
-                   PRIMARY KEY (`id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                `id` int(9) NOT NULL AUTO_INCREMENT,
+                `uuid` char(32) NOT NULL,
+                `request_date` TIMESTAMP NOT NULL DEFAULT current_timestamp,
+                `item_id` int(9) NOT NULL,
+               PRIMARY KEY (`id`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-    module::set_var("digibug", "default_company_id", "3153");
-    module::set_var("digibug", "default_event_id", "8491");
-
-    module::set_version("digibug", 1);
+    module::set_var("digibug", "company_id", "3153");
+    module::set_var("digibug", "event_id", "8491");
+    module::set_version("digibug", 2);
   }
 
   static function upgrade($version) {
+    if ($version == 1) {
+      module::clear_var("digibug", "default_company_id");
+      module::clear_var("digibug", "default_event_id");
+      module::clear_var("digibug", "basic_default_company_id");
+      module::clear_var("digibug", "basic_event_id");
+      module::set_var("digibug", "company_id", "3153");
+      module::set_var("digibug", "event_id", "8491");
+      module::set_version("digibug", $version = 2);
+    }
   }
 
   static function uninstall() {

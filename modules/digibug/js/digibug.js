@@ -1,26 +1,16 @@
-$(document).ready(function() {
-  $(".gDigibugPrintButton a").click(function(e) {
-    e.preventDefault();
-    queue_print(e);
-  });
-  $("#gDigibugLink").click(function(e) {
-    e.preventDefault();
-    return queue_print(e);
-  });
-});
-
-function popUp(url, options) {
+function digibug_popup(url, options) {
   options = $.extend({
     /* default options */
-    width:      400,
-    height:     400,
+    width:      '800',
+    height:     '600',
     target:     'dbPopWin',
     scrollbars: 'yes',
     resizable:  'no',
     menuBar:    'no',
-    addressBar: 'yes'}, options);
+    addressBar: 'yes'
+  }, options);
 
-  /* center the window by default. */
+  // center the window by default.
   if (!options.winY) {
     options.winY = screen.height / 2 - options.height / 2;
   };
@@ -32,19 +22,15 @@ function popUp(url, options) {
     url,
     options['target'],
     'width= '      + options.width +
-      ',height='     + options.height +
-      ',top='        + options.winY +
-      ',left='       + options.winX +
-      ',scrollbars=' + options.scrollbars +
-      ',resizable='  + options.resizable +
-      ',menubar='    + options.menuBar +
-      ',location='   + options.addressBar
-  );
+    ',height='     + options.height +
+    ',top='        + options.winY +
+    ',left='       + options.winX +
+    ',scrollbars=' + options.scrollbars +
+    ',resizable='  + options.resizable +
+    ',menubar='    + options.menuBar +
+    ',location='   + options.addressBar
+    );
 
   return false;
 
 }
-
-function queue_print(e) {
-  return popUp(e.currentTarget.href, { width: 800, height: 600 } );
-};
