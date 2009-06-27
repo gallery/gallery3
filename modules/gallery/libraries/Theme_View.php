@@ -170,11 +170,34 @@ class Theme_View_Core extends View {
 
   private function _combine_script() {
     $links = array();
-    Kohana::log("error", Kohana::debug($this->scripts));
+    $key = "";
     foreach (array_keys($this->scripts) as $file) {
-      $links[] = html::script($file);
+      $path = DOCROOT . $file;
+      if (file_exists($path)) {
+        $stats = stat($path);
+        $links[] = $path;
+        // 7 == size, 9 == mtime, see http://php.net/stat
+        $key = "{$key}$file $stats[7] $stats[9],";
+      } else {
+        Kohana::log("warn", "Javascript file missing: " . $file);
+      }
     }
-    return empty($links) ? "" : implode("\n", $links);
+
+    $key = md5($key);
+    $file = "tmp/CombinedJavascript_$key";
+    if (!file_exists(VARPATH . $file)) {
+      $contents = '';
+      foreach ($links as $link) {
+        $contents .= file_get_contents($link);
+      }
+      file_put_contents(VARPATH . $file, $contents);
+      if (function_exists("gzencode")) {
+        file_put_contents(VARPATH . "{$file}_gzip", gzencode($contents, 9, FORCE_GZIP));
+      }
+    }
+
+    return "<script type=\"text/javascript\" src=\"" . url::site("javascript/combined/$key") .
+      "\"></script>";
   }
 
   /**
