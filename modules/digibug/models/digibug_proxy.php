@@ -18,5 +18,4 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Digibug_Proxy_Model extends ORM {
-  protected $has_one = array("item");
 }
