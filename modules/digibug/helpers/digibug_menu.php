@@ -33,7 +33,7 @@ class digibug_menu {
       ->append(Menu::factory("link")
                ->id("digibug")
                ->label(t("Print with Digibug"))
-               ->url(url::site("digibug/print_photo/{$item->id}?csrf={$csrf}"))
+               ->url(url::site("digibug/print_photo/$item->id?csrf=$csrf"))
                ->css_id("gDigibugLink"));
   }
 }
