@@ -185,7 +185,7 @@ class gallery_installer {
                 `id` varchar(255) NOT NULL,
                 `tags` varchar(255),
                 `expiration` int(9) NOT NULL,
-                `cache` text,
+                `cache` longblob,
                 PRIMARY KEY (`id`),
                 KEY (`tags`))
                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
@@ -258,7 +258,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 4);
+    module::set_version("gallery", 5);
   }
 
   static function upgrade($version) {
@@ -286,6 +286,11 @@ class gallery_installer {
                 KEY (`tags`))
                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("gallery", $version = 4);
+    }
+    if ($version == 4) {
+      Cache::instance()->delete_all();
+      $db->query("ALTER TABLE {caches} modify column cache LONGBLOB");
+      module::set_version("gallery", $version = 5);
     }
   }
 
