@@ -181,6 +181,15 @@ class gallery_installer {
                 UNIQUE KEY(`module_name`, `name`))
                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+    $db->query("CREATE TABLE {caches} (
+                `id` varchar(255) NOT NULL,
+                `tags` varchar(255),
+                `expiration` int(9) NOT NULL,
+                `cache` text,
+                PRIMARY KEY (`id`),
+                KEY (`tags`))
+                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
     foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {
       @mkdir(VARPATH . $dir);
     }
@@ -249,10 +258,11 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 3);
+    module::set_version("gallery", 4);
   }
 
   static function upgrade($version) {
+    $db = Database::instance();
     if ($version == 1) {
       module::set_var("gallery", "date_format", "Y-M-d");
       module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
@@ -264,6 +274,18 @@ class gallery_installer {
     if ($version == 2) {
       module::set_var("gallery", "show_credits", 1);
       module::set_version("gallery", $version = 3);
+    }
+
+    if ($version == 3) {
+      $db->query("CREATE TABLE {caches} (
+                `id` varchar(255) NOT NULL,
+                `tags` varchar(255),
+                `expiration` int(9) NOT NULL,
+                `cache` text,
+                PRIMARY KEY (`id`),
+                KEY (`tags`))
+                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+      module::set_version("gallery", $version = 4);
     }
   }
 
@@ -282,6 +304,7 @@ class gallery_installer {
     $db->query("DROP TABLE IF EXISTS {tasks}");
     $db->query("DROP TABLE IF EXISTS {themes}");
     $db->query("DROP TABLE IF EXISTS {vars}");
+    $db->query("DROP TABLE IF EXISTS {caches}");
     foreach (array("albums", "resizes", "thumbs", "uploads",
                    "modules", "logs", "database.php") as $entry) {
       system("/bin/rm -rf " . VARPATH . $entry);
