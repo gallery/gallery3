@@ -68,7 +68,6 @@ class Cache_Database_Driver implements Cache_Driver {
       $lifetime += time();
     }
 
-    $data = serialize($data);
     if ($this->exists($id)) {
       $status = $this->db->update("caches",
         array("tags" => $tags, "expiration" => $lifetime, "cache" => $data), array("id" => $id));
@@ -101,7 +100,7 @@ class Cache_Database_Driver implements Cache_Driver {
 
       foreach ($db_result as $row) {
         // Add each cache to the array
-        $result[$row->id] = unserialize($row->cache);
+        $result[$row->id] = $row->cache;
       }
 
       // Turn notices back on
@@ -133,7 +132,7 @@ class Cache_Database_Driver implements Cache_Driver {
         $ER = error_reporting(~E_NOTICE);
 
         // Return the valid cache data
-        $data = unserialize($cache->cache);
+        $data = $cache->cache;
 
         // Turn notices back on
         error_reporting($ER);
