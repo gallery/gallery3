@@ -20,30 +20,35 @@
 class Javascript_Controller extends Controller {
   public function combined($key) {
     if (preg_match('/[^0-9a-f]/', $key)) {
-      /* The key can't contain non-hex, so just terminate early */
+      // The key can't contain non-hex, so just terminate early
       Kohana::show_404();
     }
 
     // We don't need to save the session for this request
     Session::abort_save();
 
-    Kohana::log("error", Kohana::debug($_SERVER));
     // Dump out the javascript file
-    $ext = strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false ? "_gzip" : "";
-    $file = VARPATH . "tmp/CombinedJavascript_$key{$ext}";
+    $cache = Cache::instance();
 
-    if (!file_exists($file)) {
-      Kohana::show_404();
-    }
-
-    $stats = stat($file);
-    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"]) &&
-        $stats[9] <= $_SERVER["HTTP_IF_MODIFIED_SINCE"]) {
-      header("HTTP/1.0 304 Not Modified");
+    $modified = $cache->get("{$key}_modified");
+    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"]) && !empty($modified)) {
+      header('HTTP/1.0 304 Not Modified');
       return;
     }
 
-    Kohana::log("error", Kohana::debug($_SERVER));
+    $content = "";
+    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false ) {
+      $content = $cache->get("{$key}_gz");
+    }
+
+    if (empty($content)) {
+      $content = $cache->get($key);
+    }
+
+    if (empty($content)) {
+      Kohana::show_404();
+    }
+
     if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
       header("Content-Encoding: gzip");
       header("Cache-Control: private, x-gzip-ok=\"public\"");
@@ -52,13 +57,13 @@ class Javascript_Controller extends Controller {
     header("Content-Type: text/javascript; charset=UTF-8");
 
     header("Expires: " . gmdate(21474383647));
-    header("Last-Modified: " . gmdate($stats[9]));
+    header("Last-Modified: " . $modified);
 
     Kohana::close_buffers(false);
 
-    $fd = fopen($file, "rb");
-    fpassthru($fd);
-    fclose($fd);
+    $handle = fopen("php://output", "wb");
+    fwrite($handle, $content);
+    fclose($handle);
   }
 }
 

@@ -188,18 +188,21 @@ class Theme_View_Core extends View {
     }
 
     $key = md5($key);
-    $file = "tmp/CombinedJavascript_$key";
-    if (!file_exists(VARPATH . $file)) {
+    $contents = Cache::instance()->get($key);
+    if (empty($contents)) {
       $contents = '';
       foreach ($links as $link) {
         $contents .= file_get_contents($link);
       }
-      file_put_contents(VARPATH . $file, $contents);
+      Cache::instance()->set($key, $contents, array("javascript"), 84600);
       if (function_exists("gzencode")) {
-        file_put_contents(VARPATH . "{$file}_gzip", gzencode($contents, 9, FORCE_GZIP));
+        Cache::instance()->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
+                               array("javascript", "gzip"), 84600);
       }
+      Cache::instance()->set("{$key}_modified", time(), array("javascript", "modified"), 84600);
     }
 
+    // Handcraft the script link because html::script will add a .js extenstion
     return "<script type=\"text/javascript\" src=\"" . url::site("javascript/combined/$key") .
       "\"></script>";
   }
