@@ -32,9 +32,8 @@ class Cache_Database_Driver implements Cache_Driver {
     $this->db = Database::instance();
 
     if (!$this->db->table_exists("caches")) {
-      throw new Kohana_Exception("cache.driver_error", "Cache table is not defined");
+      throw new Exception("@todo Cache table is not defined");
     }
-    Kohana::log("debug", "Cache Database Driver Initialized");
   }
 
   /**
@@ -44,7 +43,7 @@ class Cache_Database_Driver implements Cache_Driver {
    * @return boolean
    */
   public function exists($id) {
-    $count = $this->db->count_records("caches", array("id" => $id, "expiration >=" => time()));
+    $count = $this->db->count_records("caches", array("key" => $id, "expiration >=" => time()));
     return $count > 0;
   }
 
@@ -70,10 +69,10 @@ class Cache_Database_Driver implements Cache_Driver {
 
     if ($this->exists($id)) {
       $status = $this->db->update("caches",
-        array("tags" => $tags, "expiration" => $lifetime, "cache" => $data), array("id" => $id));
+        array("tags" => $tags, "expiration" => $lifetime, "cache" => $data), array("key" => $id));
     } else {
       $status = $this->db->insert("caches",
-        array("id" => $id, "tags" => $tags, "expiration" => $lifetime, "cache" => $data));
+        array("key" => $id, "tags" => $tags, "expiration" => $lifetime, "cache" => $data));
     }
 
     return count($status) > 0;
@@ -119,7 +118,7 @@ class Cache_Database_Driver implements Cache_Driver {
    */
   public function get($id) {
     $data = null;
-    $result = $this->db->getwhere("caches", array("id" => $id));
+    $result = $this->db->getwhere("caches", array("key" => $id));
 
     if (count($result) > 0) {
       $cache = $result->current();
@@ -157,7 +156,7 @@ class Cache_Database_Driver implements Cache_Driver {
     } else if ($tag === true) {
       $this->db->like("tags", "<$id>");
     } else {
-      $this->db->where("id", $id);
+      $this->db->where("key", $id);
     }
 
     $status = $this->db->delete();
