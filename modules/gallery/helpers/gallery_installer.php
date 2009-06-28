@@ -32,6 +32,16 @@ class gallery_installer {
                  PRIMARY KEY (`id`))
                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+    $db->query("CREATE TABLE {caches} (
+                `id` int(9) NOT NULL auto_increment,
+                `key` varchar(255) NOT NULL,
+                `tags` varchar(255),
+                `expiration` int(9) NOT NULL,
+                `cache` longblob,
+                PRIMARY KEY (`id`),
+                KEY (`tags`))
+                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
     $db->query("CREATE TABLE {graphics_rules} (
                  `id` int(9) NOT NULL auto_increment,
                  `active` BOOLEAN default 0,
@@ -181,15 +191,6 @@ class gallery_installer {
                 UNIQUE KEY(`module_name`, `name`))
                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {caches} (
-                `id` varchar(255) NOT NULL,
-                `tags` varchar(255),
-                `expiration` int(9) NOT NULL,
-                `cache` text,
-                PRIMARY KEY (`id`),
-                KEY (`tags`))
-                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
     foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {
       @mkdir(VARPATH . $dir);
     }
@@ -258,7 +259,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 4);
+    module::set_version("gallery", 5);
   }
 
   static function upgrade($version) {
@@ -278,14 +279,28 @@ class gallery_installer {
 
     if ($version == 3) {
       $db->query("CREATE TABLE {caches} (
-                `id` varchar(255) NOT NULL,
-                `tags` varchar(255),
-                `expiration` int(9) NOT NULL,
-                `cache` text,
-                PRIMARY KEY (`id`),
-                KEY (`tags`))
-                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                 `id` varchar(255) NOT NULL,
+                 `tags` varchar(255),
+                 `expiration` int(9) NOT NULL,
+                 `cache` text,
+                 PRIMARY KEY (`id`),
+                 KEY (`tags`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("gallery", $version = 4);
+    }
+
+    if ($version == 4) {
+      Cache::instance()->delete_all();
+      $db->query("ALTER TABLE {caches} MODIFY COLUMN `cache` LONGBLOB");
+      module::set_version("gallery", $version = 5);
+    }
+
+    if ($version == 5) {
+      Cache::instance()->delete_all();
+      $db->query("ALTER TABLE {caches} DROP COLUMN `id`");
+      $db->query("ALTER TABLE {caches} ADD COLUMN `key` varchar(255) NOT NULL");
+      $db->query("ALTER TABLE {caches} ADD COLUMN `id` int(9) NOT NULL auto_increment PRIMARY KEY");
+      module::set_version("gallery", $version = 6);
     }
   }
 

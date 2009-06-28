@@ -25,11 +25,8 @@ class user_theme_Core {
   }
 
   static function admin_head($theme) {
-    $head = array();
     if (strpos(Router::$current_uri, "admin/users") !== false) {
-      $head[] = html::script("lib/gallery.panel.js");
+      $theme->script("lib/gallery.panel.js");
     }
-
-    return implode("\n", $head);
   }
 }

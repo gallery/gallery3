@@ -19,6 +19,6 @@
  */
 class digibug_theme_Core {
   static function head($theme) {
-    return html::script("modules/digibug/js/digibug.js");
+    $theme->script("modules/digibug/js/digibug.js");
   }
 }

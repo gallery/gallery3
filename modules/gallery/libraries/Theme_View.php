@@ -19,6 +19,7 @@
  */
 class Theme_View_Core extends View {
   private $theme_name = null;
+  private $scripts = array();
 
   /**
    * Attempts to load a view and pre-load view data.
@@ -68,9 +69,9 @@ class Theme_View_Core extends View {
     return module::get_var("gallery", "thumb_size", 200) / 200;
   }
 
-  public function url($path, $absolute_url=false) {
+  public function url($path, $absolute_url=false, $no_root=false) {
     $arg = "themes/{$this->theme_name}/$path";
-    return $absolute_url ? url::abs_file($arg) : url::file($arg);
+    return $absolute_url ? url::abs_file($arg) : $no_root ? $arg : url::file($arg);
   }
 
   public function item() {
@@ -167,6 +168,49 @@ class Theme_View_Core extends View {
     return message::get();
   }
 
+  public function script($file) {
+    $this->scripts[$file] = 1;
+  }
+
+  /**
+   * Combine a series of Javascript files into a single one and cache it in the database, then
+   * return a single <script> element to refer to it.
+   */
+  private function _combine_script() {
+    $links = array();
+    $key = "";
+    foreach (array_keys($this->scripts) as $file) {
+      $path = DOCROOT . $file;
+      if (file_exists($path)) {
+        $stats = stat($path);
+        $links[] = $path;
+        // 7 == size, 9 == mtime, see http://php.net/stat
+        $key = "{$key}$file $stats[7] $stats[9],";
+      } else {
+        Kohana::log("warn", "Javascript file missing: " . $file);
+      }
+    }
+
+    $key = md5($key);
+    $cache = Cache::instance();
+    $contents = $cache->get($key);
+    if (empty($contents)) {
+      $contents = "";
+      foreach ($links as $link) {
+        $contents .= file_get_contents($link);
+      }
+      $cache->set($key, $contents, array("javascript"), 30 * 84600);
+      if (function_exists("gzencode")) {
+        $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
+                    array("javascript", "gzip"), 30 * 84600);
+      }
+    }
+
+    // Handcraft the script link because html::script will add a .js extenstion
+    return "<script type=\"text/javascript\" src=\"" . url::site("javascript/combined/$key") .
+      "\"></script>";
+  }
+
   /**
    * Handle all theme functions that insert module content.
    */
@@ -196,7 +240,28 @@ class Theme_View_Core extends View {
     case "thumb_info":
     case "thumb_top":
       $blocks = array();
+      if (method_exists("gallery_theme", $function)) {
+        switch (count($args)) {
+        case 0:
+          $blocks[] = gallery_theme::$function($this);
+          break;
+        case 1:
+          $blocks[] = gallery_theme::$function($this, $args[0]);
+          break;
+        case 2:
+          $blocks[] = gallery_theme::$function($this, $args[0], $args[1]);
+          break;
+        default:
+          $blocks[] = call_user_func_array(
+            array("gallery_theme", $function),
+            array_merge(array($this), $args));
+        }
+
+      }
       foreach (module::active() as $module) {
+        if ($module->name == "gallery") {
+          continue;
+        }
         $helper_class = "{$module->name}_theme";
         if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
@@ -204,6 +269,11 @@ class Theme_View_Core extends View {
             array_merge(array($this), $args));
         }
       }
+
+      if ($function == "head" || $function == "admin_head") {
+        array_unshift($blocks, $this->_combine_script());
+      }
+
       if (Session::instance()->get("debug")) {
         if ($function != "head") {
           array_unshift(
