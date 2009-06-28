@@ -9,6 +9,12 @@
   php_value post_max_size 	  100M
 </IfModule>
 
+# Try to disable the parts of mod_security that interfere with the Flash uploader
+<IfModule mod_security.c>
+  SecFilterEngine Off
+  SecFilterScanPOST Off
+</IfModule>
+
 # You can use mod_rewrite to enable short urls in Gallery 3 (which
 # gets rid of the "index.php" from your urls).  To do this, you must
 # uncomment the block below that starts with <IfModule> and ends with
