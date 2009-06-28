@@ -27,16 +27,13 @@ class Javascript_Controller extends Controller {
     // We don't need to save the session for this request
     Session::abort_save();
 
-    // Dump out the javascript file
-    $cache = Cache::instance();
-
-    $modified = $cache->get("{$key}_modified");
-    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"]) && !empty($modified)) {
+    // Our data is immutable, so if they already have a copy then it needs no updating.
+    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
       header('HTTP/1.0 304 Not Modified');
       return;
     }
 
-    $content = "";
+    $cache = Cache::instance();
     if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false ) {
       $content = $cache->get("{$key}_gz");
     }
@@ -51,19 +48,15 @@ class Javascript_Controller extends Controller {
 
     if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
       header("Content-Encoding: gzip");
-      header("Cache-Control: private, x-gzip-ok=\"public\"");
+      header("Cache-Control: public");
     }
 
     header("Content-Type: text/javascript; charset=UTF-8");
-
-    header("Expires: " . gmdate(21474383647));
-    header("Last-Modified: " . $modified);
+    header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s T", time()));
 
     Kohana::close_buffers(false);
-
-    $handle = fopen("php://output", "wb");
-    fwrite($handle, $content);
-    fclose($handle);
+    print $content;
   }
 }
 

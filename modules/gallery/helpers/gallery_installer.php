@@ -32,6 +32,15 @@ class gallery_installer {
                  PRIMARY KEY (`id`))
                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
+    $db->query("CREATE TABLE {caches} (
+                `id` varchar(255) NOT NULL,
+                `tags` varchar(255),
+                `expiration` int(9) NOT NULL,
+                `cache` longblob,
+                PRIMARY KEY (`id`),
+                KEY (`tags`))
+                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
     $db->query("CREATE TABLE {graphics_rules} (
                  `id` int(9) NOT NULL auto_increment,
                  `active` BOOLEAN default 0,
@@ -181,15 +190,6 @@ class gallery_installer {
                 UNIQUE KEY(`module_name`, `name`))
                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {caches} (
-                `id` varchar(255) NOT NULL,
-                `tags` varchar(255),
-                `expiration` int(9) NOT NULL,
-                `cache` longblob,
-                PRIMARY KEY (`id`),
-                KEY (`tags`))
-                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
     foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {
       @mkdir(VARPATH . $dir);
     }
@@ -278,13 +278,13 @@ class gallery_installer {
 
     if ($version == 3) {
       $db->query("CREATE TABLE {caches} (
-                `id` varchar(255) NOT NULL,
-                `tags` varchar(255),
-                `expiration` int(9) NOT NULL,
-                `cache` text,
-                PRIMARY KEY (`id`),
-                KEY (`tags`))
-                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                 `id` varchar(255) NOT NULL,
+                 `tags` varchar(255),
+                 `expiration` int(9) NOT NULL,
+                 `cache` text,
+                 PRIMARY KEY (`id`),
+                 KEY (`tags`))
+                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("gallery", $version = 4);
     }
     if ($version == 4) {

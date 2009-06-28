@@ -172,6 +172,10 @@ class Theme_View_Core extends View {
     $this->scripts[$file] = 1;
   }
 
+  /**
+   * Combine a series of Javascript files into a single one and cache it in the database, then
+   * return a single <script> element to refer to it.
+   */
   private function _combine_script() {
     $links = array();
     $key = "";
@@ -188,18 +192,18 @@ class Theme_View_Core extends View {
     }
 
     $key = md5($key);
-    $contents = Cache::instance()->get($key);
+    $cache = Cache::instance();
+    $contents = $cache->get($key);
     if (empty($contents)) {
-      $contents = '';
+      $contents = "";
       foreach ($links as $link) {
         $contents .= file_get_contents($link);
       }
-      Cache::instance()->set($key, $contents, array("javascript"), 84600);
+      $cache->set($key, $contents, array("javascript"), 30 * 84600);
       if (function_exists("gzencode")) {
-        Cache::instance()->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
-                               array("javascript", "gzip"), 84600);
+        $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
+                    array("javascript", "gzip"), 30 * 84600);
       }
-      Cache::instance()->set("{$key}_modified", time(), array("javascript", "modified"), 84600);
     }
 
     // Handcraft the script link because html::script will add a .js extenstion
