@@ -33,7 +33,8 @@ class gallery_installer {
                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {caches} (
-                `id` varchar(255) NOT NULL,
+                `id` int(9) NOT NULL auto_increment,
+                `key` varchar(255) NOT NULL,
                 `tags` varchar(255),
                 `expiration` int(9) NOT NULL,
                 `cache` longblob,
@@ -287,10 +288,19 @@ class gallery_installer {
                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("gallery", $version = 4);
     }
+
     if ($version == 4) {
       Cache::instance()->delete_all();
-      $db->query("ALTER TABLE {caches} modify column cache LONGBLOB");
+      $db->query("ALTER TABLE {caches} MODIFY COLUMN `cache` LONGBLOB");
       module::set_version("gallery", $version = 5);
+    }
+
+    if ($version == 5) {
+      Cache::instance()->delete_all();
+      $db->query("ALTER TABLE {caches} DROP COLUMN `id`");
+      $db->query("ALTER TABLE {caches} ADD COLUMN `key` varchar(255) NOT NULL");
+      $db->query("ALTER TABLE {caches} ADD COLUMN `id` int(9) NOT NULL auto_increment PRIMARY KEY");
+      module::set_version("gallery", $version = 6);
     }
   }
 
