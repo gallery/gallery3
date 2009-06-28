@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2009 Bharat Mediratta
@@ -32,9 +32,9 @@ class Cache_Database_Driver implements Cache_Driver {
     $this->db = Database::instance();
 
     if (!$this->db->table_exists("caches")) {
-      throw new Kohana_Exception('cache.driver_error', "Cache table is not defined");
+      throw new Kohana_Exception("cache.driver_error", "Cache table is not defined");
     }
-    Kohana::log('debug', 'Cache Database Driver Initialized');
+    Kohana::log("debug", "Cache Database Driver Initialized");
   }
 
   /**
@@ -44,7 +44,7 @@ class Cache_Database_Driver implements Cache_Driver {
    * @return boolean
    */
   public function exists($id) {
-    $count = $this->db->count_records("caches", array('id' => $id, "expiration >=" => time()));
+    $count = $this->db->count_records("caches", array("id" => $id, "expiration >=" => time()));
     return $count > 0;
   }
 
@@ -60,7 +60,7 @@ class Cache_Database_Driver implements Cache_Driver {
   public function set($id, $data, array $tags = NULL, $lifetime) {
     if (!empty($tags)) {
       // Escape the tags, adding brackets so the tag can be explicitly matched
-      $tags = '<' . implode('>,<', $tags) . '>';
+      $tags = "<" . implode(">,<", $tags) . ">";
     }
 
     // Cache Database driver expects unix timestamp
@@ -120,7 +120,7 @@ class Cache_Database_Driver implements Cache_Driver {
    */
   public function get($id) {
     $data = null;
-    $result = $this->db->getwhere("caches", array('id' => $id));
+    $result = $this->db->getwhere("caches", array("id" => $id));
 
     if (count($result) > 0) {
       $cache = $result->current();
