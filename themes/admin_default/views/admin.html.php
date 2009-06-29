@@ -20,6 +20,16 @@
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
         media="screen,print,projection" />
    <![endif]-->
+
+   <?= $theme->script("lib/jquery.js") ?>
+   <?= $theme->script("lib/jquery.form.js") ?>
+   <?= $theme->script("lib/jquery-ui.js") ?>
+   <?= $theme->script("lib/gallery.common.js") ?>
+   <?= $theme->script("lib/gallery.dialog.js") ?>
+   <?= $theme->script("lib/superfish/js/superfish.js") ?>
+   <?= $theme->theme_script("js/jquery.dropshadow.js") ?>
+   <?= $theme->theme_script("js/ui.init.js") ?>
+
    <?= $theme->admin_head() ?>
   </head>
 

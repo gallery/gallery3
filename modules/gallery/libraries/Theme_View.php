@@ -17,10 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Theme_View_Core extends View {
-  private $theme_name = null;
-  private $scripts = array();
-
+class Theme_View_Core extends Gallery_View {
   /**
    * Attempts to load a view and pre-load view data.
    *
@@ -69,11 +66,6 @@ class Theme_View_Core extends View {
     return module::get_var("gallery", "thumb_size", 200) / 200;
   }
 
-  public function url($path, $absolute_url=false, $no_root=false) {
-    $arg = "themes/{$this->theme_name}/$path";
-    return $absolute_url ? url::abs_file($arg) : $no_root ? $arg : url::file($arg);
-  }
-
   public function item() {
     return $this->item;
   }
@@ -84,10 +76,6 @@ class Theme_View_Core extends View {
 
   public function page_type() {
     return $this->page_type;
-  }
-
-  public function display($page_name, $view_class="View") {
-    return new $view_class($page_name);
   }
 
   public function site_menu() {
@@ -168,49 +156,6 @@ class Theme_View_Core extends View {
     return message::get();
   }
 
-  public function script($file) {
-    $this->scripts[$file] = 1;
-  }
-
-  /**
-   * Combine a series of Javascript files into a single one and cache it in the database, then
-   * return a single <script> element to refer to it.
-   */
-  private function _combine_script() {
-    $links = array();
-    $key = "";
-    foreach (array_keys($this->scripts) as $file) {
-      $path = DOCROOT . $file;
-      if (file_exists($path)) {
-        $stats = stat($path);
-        $links[] = $path;
-        // 7 == size, 9 == mtime, see http://php.net/stat
-        $key = "{$key}$file $stats[7] $stats[9],";
-      } else {
-        Kohana::log("warn", "Javascript file missing: " . $file);
-      }
-    }
-
-    $key = md5($key);
-    $cache = Cache::instance();
-    $contents = $cache->get($key);
-    if (empty($contents)) {
-      $contents = "";
-      foreach ($links as $link) {
-        $contents .= file_get_contents($link);
-      }
-      $cache->set($key, $contents, array("javascript"), 30 * 84600);
-      if (function_exists("gzencode")) {
-        $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
-                    array("javascript", "gzip"), 30 * 84600);
-      }
-    }
-
-    // Handcraft the script link because html::script will add a .js extenstion
-    return "<script type=\"text/javascript\" src=\"" . url::site("combined/javascript/$key") .
-      "\"></script>";
-  }
-
   /**
    * Handle all theme functions that insert module content.
    */
@@ -270,8 +215,8 @@ class Theme_View_Core extends View {
         }
       }
 
-      if ($function == "head" || $function == "admin_head") {
-        array_unshift($blocks, $this->_combine_script());
+      if ($function == "head") {
+        array_unshift($blocks, $this->combine_script());
       }
 
       if (Session::instance()->get("debug")) {
