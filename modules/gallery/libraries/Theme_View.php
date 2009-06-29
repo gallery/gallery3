@@ -207,7 +207,7 @@ class Theme_View_Core extends View {
     }
 
     // Handcraft the script link because html::script will add a .js extenstion
-    return "<script type=\"text/javascript\" src=\"" . url::site("javascript/combined/$key") .
+    return "<script type=\"text/javascript\" src=\"" . url::site("combined/javascript/$key") .
       "\"></script>";
   }
 

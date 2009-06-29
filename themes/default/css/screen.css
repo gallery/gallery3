@@ -57,6 +57,10 @@ h2 {
   font-size: 1.2em;
 }
 
+#gSidebar .gBlock li {
+  margin-bottom: .6em;
+}
+
 h3 {
   font-size: 1.2em;
 }
