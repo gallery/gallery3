@@ -43,7 +43,7 @@ class Gallery_View_Core extends View {
    * Provide a url to a resource within the current theme.  This allows us to refer to theme
    * resources without naming the theme itself which makes themes easier to copy.
    */
-  public function url($path, $absolute_url=false) {
+  public function theme_url($path, $absolute_url=false) {
     $arg = "themes/{$this->theme_name}/$path";
     return $absolute_url ? url::abs_file($arg) : url::file($arg);
   }

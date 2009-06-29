@@ -14,10 +14,10 @@
         media="screen,projection" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("themes/default/css/screen.css") ?>"
         media="screen,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/screen.css") ?>"
         media="screen,projection" />
    <!--[if IE]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
         media="screen,print,projection" />
    <![endif]-->
 
