@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Javascript_Controller extends Controller {
-  public function combined($key) {
+class Combined_Controller extends Controller {
+  public function javascript($key) {
     if (preg_match('/[^0-9a-f]/', $key)) {
       // The key can't contain non-hex, so just terminate early
       Kohana::show_404();
