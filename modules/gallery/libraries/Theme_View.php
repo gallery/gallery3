@@ -20,6 +20,7 @@
 class Theme_View_Core extends View {
   private $theme_name = null;
   private $scripts = array();
+  private $css = array();
 
   /**
    * Attempts to load a view and pre-load view data.
@@ -172,6 +173,10 @@ class Theme_View_Core extends View {
     $this->scripts[$file] = 1;
   }
 
+  public function css($file) {
+    $this->css[$file] = 1;
+  }
+
   /**
    * Combine a series of Javascript files into a single one and cache it in the database, then
    * return a single <script> element to refer to it.
@@ -209,6 +214,21 @@ class Theme_View_Core extends View {
     // Handcraft the script link because html::script will add a .js extenstion
     return "<script type=\"text/javascript\" src=\"" . url::site("combined/javascript/$key") .
       "\"></script>";
+  }
+
+  /**
+   * Combine a series of Javascript files into a single one and cache it in the database, then
+   * return a single <script> element to refer to it.
+   */
+  private function _combine_css() {
+    $links = array();
+    $key = "";
+    foreach (array_keys($this->css) as $file) {
+      $links[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
+        url::file($file) . "\" />";
+
+    }
+    return implode("\n", $links);
   }
 
   /**
@@ -256,8 +276,14 @@ class Theme_View_Core extends View {
             array("gallery_theme", $function),
             array_merge(array($this), $args));
         }
-
       }
+
+      // Give the theme a chance to add its blocks
+      $helper_class = "{$this->theme_name}_theme";
+      $blocks[] =  call_user_func_array(
+            array($helper_class, $function),
+            array_merge(array($this), $args));
+
       foreach (module::active() as $module) {
         if ($module->name == "gallery") {
           continue;
@@ -271,6 +297,7 @@ class Theme_View_Core extends View {
       }
 
       if ($function == "head" || $function == "admin_head") {
+        array_unshift($blocks, $this->_combine_css());
         array_unshift($blocks, $this->_combine_script());
       }
 

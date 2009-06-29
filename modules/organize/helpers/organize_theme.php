@@ -22,7 +22,6 @@ class organize_theme {
     // @tdo remove the addition css and organize.js (just here to test)
     $theme->script("modules/organize/js/organize_init.js");
     $theme->script("modules/organize/js/organize.js");
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-      url::file("modules/organize/css/organize.css") . "\" />";
+    $theme->css("modules/organize/css/organize.css");
   }
 }

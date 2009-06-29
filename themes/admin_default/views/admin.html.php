@@ -6,21 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title><?= t("Admin Dashboard") ?></title>
     <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
-        media="screen,projection" />
-    <link rel="stylesheet" type="text/css" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
-        media="screen,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
-        media="screen,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("themes/default/css/screen.css") ?>"
-        media="screen,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
-        media="screen,projection" />
-   <!--[if IE]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
-        media="screen,print,projection" />
-   <![endif]-->
-   <?= $theme->admin_head() ?>
+    <?= $theme->admin_head() ?>
   </head>
 
   <body <?= $theme->body_attributes() ?>>
