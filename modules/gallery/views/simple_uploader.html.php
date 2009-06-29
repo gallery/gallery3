@@ -30,17 +30,23 @@
     <li class="active"> <?= p::clean($item->title) ?> </li>
   </ul>
 
-  <p><?= t("Upload Queue") ?></p>
+  <p>
+    <?= t("Upload Queue") ?>
+    <span id="gUploadQueueInfo"></span>
+    <a id="gUploadCancel" title="<?= t("Cancel all the pending uploads") ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
+  </p>
   <div id="gAddPhotosCanvas" style="text-align: center;">
     <div id="gAddPhotosQueue"></div>
     <div id="gEditPhotosQueue"></div>
     <span id="gChooseFilesButtonPlaceholder"></span>
   </div>
+  <!--
   <button id="gUploadCancel" class="ui-state-default ui-corner-all" type="button"
           onclick="swfu.cancelQueue();"
           disabled="disabled">
     <?= t("Cancel all") ?>
   </button>
+  -->
 
   <!-- Proxy the done request back to our form, since its been ajaxified -->
   <button class="ui-state-default ui-corner-all" onclick="$('#gAddPhotosForm').submit()">
@@ -67,25 +73,26 @@
     float: right;
   }
   #gAddPhotos #gUploadCancel {
-    float: left;
+    display: none;
+    cursor: pointer;
   }
 </style>
 
 <script type="text/javascript">
   var swfu = new SWFUpload({
-    flash_url : "<?= url::file("lib/swfupload/swfupload.swf") ?>",
+    flash_url: "<?= url::file("lib/swfupload/swfupload.swf") ?>",
     upload_url: "<?= url::site("simple_uploader/add_photo/$item->id") ?>",
     post_params: {
       "g3sid": "<?= Session::instance()->id() ?>",
       "user_agent": "<?= Input::instance()->server("HTTP_USER_AGENT") ?>",
       "csrf": "<?= $csrf ?>"
     },
-    file_size_limit : "<?= ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB" ?>",
-    file_types : "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
-    file_types_description : "<?= t("Photos and Movies") ?>",
-    file_upload_limit : 1000,
-    file_queue_limit : 0,
-    custom_settings : { },
+    file_size_limit: "<?= ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB" ?>",
+    file_types: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
+    file_types_description: "<?= t("Photos and Movies") ?>",
+    file_upload_limit: 1000,
+    file_queue_limit: 0,
+    custom_settings: { },
     debug: false,
 
     // Button settings
@@ -99,15 +106,15 @@
     button_text_top_padding: 10,
 
     // The event handler functions are defined in handlers.js
-    file_queued_handler : file_queued,
-    file_queue_error_handler : file_queue_error,
-    file_dialog_complete_handler : file_dialog_complete,
-    upload_start_handler : upload_start,
-    upload_progress_handler : upload_progress,
-    upload_error_handler : upload_error,
-    upload_success_handler : upload_success,
-    upload_complete_handler : upload_complete,
-    queue_complete_handler : queue_complete
+    file_queued_handler: file_queued,
+    file_queue_error_handler: file_queue_error,
+    file_dialog_complete_handler: file_dialog_complete,
+    upload_start_handler: upload_start,
+    upload_progress_handler: upload_progress,
+    upload_error_handler: upload_error,
+    upload_success_handler: upload_success,
+    upload_complete_handler: upload_complete,
+    queue_complete_handler: queue_complete
   });
 
   // @todo add support for cancelling individual uploads
@@ -118,7 +125,8 @@
         "<div class=\"box\" id=\"" + file.id + "\">" +
         "<div class=\"title\"></div>" +
         "<div class=\"status\"></div>" +
-        "<div class=\"progressbar\"></div></div>");
+        "<div class=\"progressbar\"></div>" +
+        "</div>");
       this.box = $("#" + file.id);
     }
     this.title = this.box.find(".title");
@@ -171,9 +179,12 @@
 
   function file_dialog_complete(num_files_selected, num_files_queued) {
     if (num_files_selected > 0) {
-      $("#gUploadCancel").enable(true);
+      $("#gUploadCancel").show();
+      var stats = this.getStats();
+      $("#gUploadQueueInfo").text("(completed " + stats.successful_uploads +
+                                  " of " + (stats.files_queued + stats.successful_uploads + stats.upload_errors + stats.upload_cancelled + stats.queue_errors) + ")");
     }
-
+    
     // Auto start the upload
     this.startUpload();
   }
@@ -226,7 +237,7 @@
     case SWFUpload.UPLOAD_ERROR.FILE_CANCELLED:
       // If there aren't any files left (they were all cancelled) disable the cancel button
       if (this.getStats().files_queued === 0) {
-        $("#gUploadCancel").enable(false);
+        $("#gUploadCancel").hide();
       }
       fp.set_status("error", "<?= t("Cancelled") ?>");
       break;
@@ -240,8 +251,11 @@
   }
 
   function upload_complete(file) {
-    if (this.getStats().files_queued === 0) {
-      $("#gUploadCancel").enable(false);
+    var stats = this.getStats();
+    $("#gUploadQueueInfo").text("(completed " + stats.successful_uploads +
+                                " of " + (stats.files_queued + stats.successful_uploads + stats.upload_errors + stats.upload_cancelled + stats.queue_errors) + ")");
+    if (stats.files_queued === 0) {
+      $("#gUploadCancel").hide();
     }
   }
 
