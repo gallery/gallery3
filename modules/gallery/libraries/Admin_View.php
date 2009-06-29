@@ -99,6 +99,7 @@ class Admin_View_Core extends Gallery_View {
       }
 
       if ($function == "admin_head") {
+        array_unshift($blocks, $this->combine_css());
         array_unshift($blocks, $this->combine_script());
       }
 

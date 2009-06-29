@@ -99,10 +99,5 @@ class Combined_Controller extends Controller {
     Kohana::close_buffers(false);
     print $content;
   }
-
-  public function __call($function, $args) {
-    array_unshift($args, $function);
-    print "<!-- " . implode("/", $args) . " -->";
-  }
 }
 

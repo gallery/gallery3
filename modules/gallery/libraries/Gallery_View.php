@@ -113,7 +113,6 @@ class Gallery_View_Core extends View {
   protected function combine_css() {
     $links = array();
     $key = "";
-    static $PATTERN = "#url\(\s*['|\"]{0,1}(.*?)['|\"]{0,1}\s*\)#";
 
     foreach (array_keys($this->css) as $file) {
       $path = DOCROOT . $file;
@@ -130,27 +129,12 @@ class Gallery_View_Core extends View {
     $key = md5($key);
     $cache = Cache::instance();
     $contents = $cache->get($key);
-    $docroot_length = strlen(DOCROOT);
 
+    $contents = "";
     if (empty($contents)) {
       $contents = "";
       foreach ($links as $link) {
-        $css = file_get_contents($link);
-        if (preg_match_all($PATTERN, $css, $matches, PREG_SET_ORDER)) {
-          $search = $replace = array();
-          foreach ($matches as $match) {
-            $relative = substr(realpath(dirname($link) . "/$match[1]"), $docroot_length);
-            if (!empty($relative)) {
-              $search[] = $match[1];
-              $replace[] = url::abs_file($relative);
-            } else {
-              Kohana::log("alert", sprintf("Missing URL reference '%s' in CSS file '%s' ",
-                                           $match[1], $link));
-            }
-          }
-          $css = str_replace($search, $replace, $css);
-        }
-        $contents .= $css;
+        $contents .= $this->process_css($link);
       }
       $cache->set($key, $contents, array("css"), 30 * 84600);
       if (function_exists("gzencode")) {
@@ -162,4 +146,38 @@ class Gallery_View_Core extends View {
       url::site("combined/css/$key") . "\" />";
   }
 
+  private function process_css($css_file) {
+    static $PATTERN = "#url\(\s*['|\"]{0,1}(.*?)['|\"]{0,1}\s*\)#";
+    $docroot_length = strlen(DOCROOT);
+
+    $css = file_get_contents($css_file);
+    if (preg_match_all($PATTERN, $css, $matches, PREG_SET_ORDER)) {
+      $search = $replace = array();
+      foreach ($matches as $match) {
+        $relative = substr(realpath(dirname($css_file) . "/$match[1]"), $docroot_length);
+        if (!empty($relative)) {
+          $search[] = $match[0];
+          $replace[] = "url('" . url::abs_file($relative) . "')";
+        } else {
+          Kohana::log("alert", sprintf("Missing URL reference '%s' in CSS file '%s' ",
+                                       $match[1], $css_file));
+        }
+      }
+      $css = str_replace($search, $replace, $css);
+    }
+    $imports = preg_match_all("#@import\s*['|\"]{0,1}(.*?)['|\"]{0,1};#",
+                              $css, $matches, PREG_SET_ORDER);
+
+    if ($imports) {
+      $search = $replace = array();
+      foreach ($matches as $match) {
+        Kohana::log("error", dirname($css_file) . "/$match[1]");
+        $search[] = $match[0];
+        $replace[] = $this->process_css(dirname($css_file) . "/$match[1]");
+      }
+      $css = str_replace($search, $replace, $css);
+    }
+
+    return $css;
+  }
 }
