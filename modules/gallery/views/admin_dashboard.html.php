@@ -13,7 +13,6 @@
     $("#gAdminDashboard .gBlock .ui-widget-header").addClass("gDraggable");
     $("#gAdminDashboard").sortable({
       connectWith: ["#gAdminDashboardSidebar"],
-      containment: "document",
       cursor: "move",
       handle: $(".ui-widget-header"),
       opacity: 0.6,
@@ -24,7 +23,6 @@
     $("#gAdminDashboardSidebar .gBlock .ui-widget-header").addClass("gDraggable");
     $("#gAdminDashboardSidebar").sortable({
       connectWith: ["#gAdminDashboard"],
-      containment: "document",
       cursor: "move",
       handle: $(".ui-widget-header"),
       opacity: 0.6,

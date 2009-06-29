@@ -26,7 +26,7 @@ class Gallery_View_Core extends View {
    * Add a script to the combined scripts list.
    * @param $file  the relative path to a script from the gallery3 directory
    */
-  public function script($file, $theme_relative=false) {
+  public function script($file) {
     $this->scripts[$file] = 1;
   }
 
