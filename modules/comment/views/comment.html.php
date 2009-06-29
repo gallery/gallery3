@@ -2,7 +2,7 @@
 <li id="gComment-<?= $comment->id; ?>">
   <p class="gAuthor">
     <a href="#">
-      <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
+      <img src="<?= $comment->author()->avatar_url(40, $theme->theme_url("images/avatar.jpg", true)) ?>"
            class="gAvatar"
            alt="<?= p::clean($comment->author_name()) ?>"
            width="40"

@@ -6,7 +6,26 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title><?= t("Admin Dashboard") ?></title>
     <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
-    <?= $theme->admin_head() ?>
+
+    <?= $theme->css("lib/yui/reset-fonts-grids.css") ?>
+    <?= $theme->css("lib/themeroller/ui.base.css") ?>
+    <?= $theme->css("lib/superfish/css/superfish.css") ?>
+    <?= $theme->css("themes/default/css/screen.css") ?>
+    <?= $theme->theme_css("css/screen.css") ?>
+   <!--[if IE]>
+    <?= $theme->theme_css("css/fix-ie.css") ?>
+   <![endif]-->
+
+   <?= $theme->script("lib/jquery.js") ?>
+   <?= $theme->script("lib/jquery.form.js") ?>
+   <?= $theme->script("lib/jquery-ui.js") ?>
+   <?= $theme->script("lib/gallery.common.js") ?>
+   <?= $theme->script("lib/gallery.dialog.js") ?>
+   <?= $theme->script("lib/superfish/js/superfish.js") ?>
+   <?= $theme->theme_script("js/jquery.dropshadow.js") ?>
+   <?= $theme->theme_script("js/ui.init.js") ?>
+
+   <?= $theme->admin_head() ?>
   </head>
 
   <body <?= $theme->body_attributes() ?>>

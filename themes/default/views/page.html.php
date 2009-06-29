@@ -23,18 +23,13 @@
         <? endif ?>
       <? endif ?>
     </title>
-    <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
-          media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
-          media="screen" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
-          media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
-          media="screen,print,projection" />
+    <link rel="shortcut icon" href="<?= $theme->theme_url("images/favicon.ico") ?>" type="image/x-icon" />
+    <?= $theme->css("lib/yui/reset-fonts-grids.css") ?>
+    <?= $theme->css("lib/themeroller/ui.base.css") ?>
+    <?= $theme->css("lib/superfish/css/superfish.css") ?>
+    <?= $theme->theme_css("css/screen.css") ?>
     <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
-          media="screen,print,projection" />
+    <?= $theme->theme_css("css/fix-ie.css") ?>
     <![endif]-->
     <? if ($theme->page_type == 'album'): ?>
       <? if ($thumb_proportion != 1): ?>
@@ -49,6 +44,24 @@
     </style>
       <? endif ?>
     <? endif ?>
+    <?= $theme->script("lib/jquery.js") ?>
+    <?= $theme->script("lib/jquery.form.js") ?>
+    <?= $theme->script("lib/jquery-ui.js") ?>
+    <?= $theme->script("lib/gallery.common.js") ?>
+    <?= $theme->script("lib/gallery.dialog.js") ?>
+    <?= $theme->script("lib/gallery.form.js") ?>
+    <?= $theme->script("lib/superfish/js/superfish.js") ?>
+    <?= $theme->script("lib/jquery.localscroll.js") ?>
+    <?= $theme->theme_script("js/ui.init.js") ?>
+
+    <? /* These are page specific, but if we put them before $theme->head() they get combined */ ?>
+    <? if ($theme->page_type == "photo"): ?>
+    <?= $theme->script("lib/jquery.scrollTo.js") ?>
+    <?= $theme->script("lib/gallery.show_full_size.js") ?>
+    <? elseif ($theme->page_type == "movie"): ?>
+    <?= $theme->script("lib/flowplayer.js") ?>
+    <? endif ?>
+
     <?= $theme->head() ?>
   </head>
 
@@ -57,7 +70,7 @@
     <div id="doc4" class="yui-t5 gView">
       <?= $theme->site_status() ?>
       <div id="gHeader">
-        <?= $theme->display("header.html") ?>
+        <?= new View("header.html") ?>
       </div>
       <div id="bd">
         <div id="yui-main">
@@ -70,12 +83,12 @@
         </div>
         <div id="gSidebar" class="yui-b">
           <? if ($theme->page_type != "login"): ?>
-          <?= $theme->display("sidebar.html") ?>
+          <?= new View("sidebar.html") ?>
           <? endif ?>
         </div>
       </div>
       <div id="gFooter">
-        <?= $theme->display("footer.html") ?>
+        <?= new View("footer.html") ?>
       </div>
     </div>
     <?= $theme->page_bottom() ?>

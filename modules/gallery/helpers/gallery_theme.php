@@ -21,30 +21,12 @@ class gallery_theme_Core {
   static function head($theme) {
     $session = Session::instance();
     $buf = "";
-    $theme->script("lib/jquery.js");
-    $theme->script("lib/jquery.form.js");
-    $theme->script("lib/jquery-ui.js");
-    $theme->script("lib/gallery.common.js");
-    $theme->script("lib/gallery.dialog.js");
-    $theme->script("lib/gallery.form.js");
-    $theme->script("lib/superfish/js/superfish.js");
-    if ($theme->page_type == 'photo') {
-      $theme->script("lib/jquery.scrollTo.js");
-      $theme->script("lib/jquery.localscroll.js");
-      $theme->script("lib/gallery.show_full_size.js");
-    }
-    if ($theme->page_type == 'movie') {
-      $theme->script("lib/flowplayer.js");
-    }
-    $theme->script($theme->url("js/ui.init.js", false, true));
     if ($session->get("debug")) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/debug.css") . "\" />";
+      $theme->css("modules/gallery/css/debug.css");
     }
     if (($theme->page_type == "album" || $theme->page_type == "photo")
         && access::can("edit", $theme->item())) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/quick.css") . "\" />";
+      $theme->css("modules/gallery/css/quick.css");
       $theme->script("modules/gallery/js/quick.js");
     }
 
@@ -57,8 +39,7 @@ class gallery_theme_Core {
     }
 
     if ($session->get("l10n_mode", false)) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/l10n_client.css") . "\" />";
+      $theme->css("modules/gallery/css/l10n_client.css");
       $theme->script("lib/jquery.cookie.js");
       $theme->script("modules/gallery/js/l10n_client.js");
     }
@@ -94,28 +75,15 @@ class gallery_theme_Core {
 
   static function admin_head($theme) {
     $session = Session::instance();
-    $buf = "";
-    $theme->script("lib/jquery.js");
-    $theme->script("lib/jquery.form.js");
-    $theme->script("lib/jquery-ui.js");
-    $theme->script("lib/gallery.common.js");
-    $theme->script("lib/gallery.dialog.js");
-    $theme->script("lib/superfish/js/superfish.js");
-    $theme->script($theme->url("js/jquery.dropshadow.js", false, true));
-    $theme->script($theme->url("js/ui.init.js", false, true));
     if ($session->get("debug")) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/debug.css") . "\" />";
+      $theme->css("modules/gallery/css/debug.css");
     }
 
     if ($session->get("l10n_mode", false)) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/l10n_client.css") . "\" />";
+      $theme->css("modules/gallery/css/l10n_client.css");
       $theme->script("lib/jquery.cookie.js");
       $theme->script("modules/gallery/js/l10n_client.js");
     }
-
-    return $buf;
   }
 
   static function page_bottom($theme) {

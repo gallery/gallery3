@@ -32,6 +32,19 @@ CREATE TABLE {access_intents} (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {access_intents} VALUES (1,1,1,1,0,0,1,1,0,0);
+DROP TABLE IF EXISTS {caches};
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE {caches} (
+  `id` int(9) NOT NULL auto_increment,
+  `key` varchar(255) NOT NULL,
+  `tags` varchar(255) default NULL,
+  `expiration` int(9) NOT NULL,
+  `cache` longblob,
+  PRIMARY KEY  (`id`),
+  KEY `tags` (`tags`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {comments};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -208,7 +221,7 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,1,'gallery',3),(2,1,'user',1),(3,1,'comment',2),(4,1,'organize',1),(5,1,'info',1),(6,1,'rss',1),(7,1,'search',1),(8,1,'slideshow',1),(9,1,'tag',1);
+INSERT INTO {modules} VALUES (1,1,'gallery',6),(2,1,'user',1),(3,1,'comment',2),(4,1,'organize',1),(5,1,'info',1),(6,1,'rss',1),(7,1,'search',1),(8,1,'slideshow',1),(9,1,'tag',1);
 DROP TABLE IF EXISTS {outgoing_translations};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
