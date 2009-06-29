@@ -25,8 +25,10 @@ class Quick_Controller extends Controller {
     }
 
     $view = new View("quick_pane.html");
+    $page_type = Input::instance()->get("page_type");
+    $view->button_list = gallery_quick::get_quick_buttons($item, $page_type);
     $view->item = $item;
-    $view->page_type = Input::instance()->get("page_type");
+    $view->page_type = $page_type;
     print $view;
   }
 

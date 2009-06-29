@@ -19,21 +19,17 @@
  */
 class exif_installer {
   static function install() {
-    $version = module::get_version("exif");
-
-    if ($version == 0) {
-      $db = Database::instance();
-      $db->query("CREATE TABLE IF NOT EXISTS {exif_records} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `item_id` INTEGER(9) NOT NULL,
-                   `key_count` INTEGER(9) default 0,
-                   `data` TEXT,
-                   `dirty` BOOLEAN default 1,
-                   PRIMARY KEY (`id`),
-                   KEY(`item_id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-      module::set_version("exif", 1);
-    }
+    $db = Database::instance();
+    $db->query("CREATE TABLE IF NOT EXISTS {exif_records} (
+                 `id` int(9) NOT NULL auto_increment,
+                 `item_id` INTEGER(9) NOT NULL,
+                 `key_count` INTEGER(9) default 0,
+                 `data` TEXT,
+                 `dirty` BOOLEAN default 1,
+                 PRIMARY KEY (`id`),
+                 KEY(`item_id`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    module::set_version("exif", 1);
   }
 
   static function activate() {

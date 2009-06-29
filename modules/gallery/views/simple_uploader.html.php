@@ -1,6 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript" src="<?= url::file("lib/swfupload/swfupload.js") ?>"></script>
 <script type="text/javascript" src="<?= url::file("lib/swfupload/swfupload.queue.js") ?>"></script>
+<script type="text/javascript" src="<?= url::file("lib/jquery.scrollTo.js") ?>"></script>
 
 <!-- hack to set the title for the dialog -->
 <form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
@@ -195,6 +196,7 @@
     var fp = new File_Progress(file);
     fp.title.html(file.name);
     fp.set_status("uploading", "<?= t("Uploading...") ?>");
+    $("#gAddPhotosCanvas").scrollTo(fp.box, 1000);
     return true;
     // @todo add cancel button to call this.cancelUpload(file.id)
   }

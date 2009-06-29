@@ -106,7 +106,7 @@
     <tr id="gComment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
       <td>
         <a href="#">
-          <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
+          <img src="<?= $comment->author()->avatar_url(40, $theme->theme_url("images/avatar.jpg", true)) ?>"
                class="gAvatar"
                alt="<?= p::clean($comment->author_name()) ?>"
                width="40"
@@ -163,6 +163,7 @@
             </a>
           </li>
         <? endif ?>
+          <!--
           <li>
             <a href="javascript:reply(<?=$comment->id?>)"
                 class="gButtonLink ui-state-default ui-icon-left">
@@ -177,6 +178,7 @@
               <?= t("Edit") ?>
             </a>
           </li>
+          -->
           <li>
             <a href="javascript:set_state('deleted',<?=$comment->id?>)"
                 class="gButtonLink ui-state-default ui-icon-left">

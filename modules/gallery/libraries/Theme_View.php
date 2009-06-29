@@ -17,9 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Theme_View_Core extends View {
-  private $theme_name = null;
-
+class Theme_View_Core extends Gallery_View {
   /**
    * Attempts to load a view and pre-load view data.
    *
@@ -68,11 +66,6 @@ class Theme_View_Core extends View {
     return module::get_var("gallery", "thumb_size", 200) / 200;
   }
 
-  public function url($path, $absolute_url=false) {
-    $arg = "themes/{$this->theme_name}/$path";
-    return $absolute_url ? url::abs_file($arg) : url::file($arg);
-  }
-
   public function item() {
     return $this->item;
   }
@@ -83,10 +76,6 @@ class Theme_View_Core extends View {
 
   public function page_type() {
     return $this->page_type;
-  }
-
-  public function display($page_name, $view_class="View") {
-    return new $view_class($page_name);
   }
 
   public function site_menu() {
@@ -105,6 +94,7 @@ class Theme_View_Core extends View {
       }
     }
 
+    $menu->compact();
     print $menu;
   }
 
@@ -120,16 +110,20 @@ class Theme_View_Core extends View {
     $this->_menu("photo");
   }
 
-  private function _menu($type) {
+  public function thumb_menu($item) {
+    $this->_menu("thumb", $item);
+  }
+
+  private function _menu($type, $item=null) {
     $menu = Menu::factory("root");
-    call_user_func_array(array("gallery_menu", $type), array(&$menu, $this));
+    call_user_func_array(array("gallery_menu", $type), array(&$menu, $this, $item));
     foreach (module::active() as $module) {
       if ($module->name == "gallery") {
         continue;
       }
       $class = "{$module->name}_menu";
       if (method_exists($class, $type)) {
-        call_user_func_array(array($class, $type), array(&$menu, $this));
+        call_user_func_array(array($class, $type), array(&$menu, $this, $item));
       }
     }
 
@@ -191,7 +185,28 @@ class Theme_View_Core extends View {
     case "thumb_info":
     case "thumb_top":
       $blocks = array();
+      if (method_exists("gallery_theme", $function)) {
+        switch (count($args)) {
+        case 0:
+          $blocks[] = gallery_theme::$function($this);
+          break;
+        case 1:
+          $blocks[] = gallery_theme::$function($this, $args[0]);
+          break;
+        case 2:
+          $blocks[] = gallery_theme::$function($this, $args[0], $args[1]);
+          break;
+        default:
+          $blocks[] = call_user_func_array(
+            array("gallery_theme", $function),
+            array_merge(array($this), $args));
+        }
+
+      }
       foreach (module::active() as $module) {
+        if ($module->name == "gallery") {
+          continue;
+        }
         $helper_class = "{$module->name}_theme";
         if (method_exists($helper_class, $function)) {
           $blocks[] = call_user_func_array(
@@ -199,6 +214,11 @@ class Theme_View_Core extends View {
             array_merge(array($this), $args));
         }
       }
+
+      if ($function == "head") {
+        array_unshift($blocks, $this->combine_script());
+      }
+
       if (Session::instance()->get("debug")) {
         if ($function != "head") {
           array_unshift(

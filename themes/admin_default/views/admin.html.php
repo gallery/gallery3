@@ -14,21 +14,23 @@
         media="screen,projection" />
     <link rel="stylesheet" type="text/css" href="<?= url::file("themes/default/css/screen.css") ?>"
         media="screen,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/screen.css") ?>"
         media="screen,projection" />
    <!--[if IE]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
         media="screen,print,projection" />
    <![endif]-->
-    <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/gallery.common.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/jquery.dropshadow.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
-    <?= $theme->admin_head() ?>
+
+   <?= $theme->script("lib/jquery.js") ?>
+   <?= $theme->script("lib/jquery.form.js") ?>
+   <?= $theme->script("lib/jquery-ui.js") ?>
+   <?= $theme->script("lib/gallery.common.js") ?>
+   <?= $theme->script("lib/gallery.dialog.js") ?>
+   <?= $theme->script("lib/superfish/js/superfish.js") ?>
+   <?= $theme->theme_script("js/jquery.dropshadow.js") ?>
+   <?= $theme->theme_script("js/ui.init.js") ?>
+
+   <?= $theme->admin_head() ?>
   </head>
 
   <body <?= $theme->body_attributes() ?>>

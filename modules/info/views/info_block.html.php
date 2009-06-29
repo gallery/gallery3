@@ -1,44 +1,35 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<table class="gMetadata">
-  <tbody>
-    <tr>
-      <th><?= t("Title:") ?></th>
-      <td><?= p::clean($item->title) ?></td>
-    </tr>
-    <? if ($item->description): ?>
-    <tr>
-      <th><?= t("Description:") ?></th>
-      <td><?= p::clean($item->description) ?></td>
-    </tr>
+<ul class="gMetadata">
+  <li>
+    <strong class="caption"><?= t("Title:") ?></strong>
+    <?= p::clean($item->title) ?>
+  </li>
+  <? if ($item->description): ?>
+  <li>
+    <strong class="caption"><?= t("Description:") ?></strong>
+    <?= p::clean($item->description) ?>
+  </li>
+  <? endif ?>
+  <? if ($item->id != 1): ?>
+  <li>
+    <strong class="caption"><?= t("Folder name:") ?></strong>
+    <?= p::clean($item->name) ?>
+  </li>
+  <? endif ?>
+  <? if ($item->captured): ?>
+  <li>
+    <strong class="caption"><?= t("Captured:") ?></strong>
+    <?= date("M j, Y H:i:s", $item->captured)?>
+  </li>
+  <? endif ?>
+  <? if ($item->owner): ?>
+  <li>
+    <strong class="caption"><?= t("Owner:") ?></strong>
+    <? if ($item->owner->url): ?>
+    <a href="<?= $item->owner->url ?>"><?= p::clean($item->owner->full_name) ?></a>
+    <? else: ?>
+    <?= p::clean($item->owner->name) ?>
     <? endif ?>
-    <? if ($item->id != 1): ?>
-    <tr>
-      <th><?= t("Name:") ?></th>
-      <td><?= p::clean($item->name) ?></td>
-    </tr>
-    <? endif ?>
-    <? if ($item->id != 1): ?>
-    <? $parent = $item->parent(); ?>
-    <tr>
-      <th><?= t("Album: ") ?></th>
-      <td>
-        <a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>">
-          <?= p::clean($parent->title) ?>
-        </a>
-      </td>
-    </tr>
-    <? endif ?>
-    <? if ($item->captured): ?>
-    <tr>
-      <th><?= t("Captured:") ?></th>
-      <td><?= gallery::date_time($item->captured) ?></td>
-    </tr>
-    <? endif ?>
-    <? if ($item->owner): ?>
-    <tr>
-      <th><?= t("Owner:") ?></th>
-      <td><a href="#"><?= p::clean($item->owner->name) ?></a></td>
-    </tr>
-    <? endif ?>
-  </tbody>
-</table>
+  </li>
+  <? endif ?>
+</ul>

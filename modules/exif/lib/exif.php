@@ -485,7 +485,7 @@ function formatData($type,$tag,$intel,$data) {
 			if ($data == 0) $data = gettext('No Flash');
 			else if ($data == 1)    $data = gettext('Flash');
 			else if ($data == 5)    $data = gettext('Flash, strobe return light not detected');
-			else if ($data == 7)    $data = gettext('Flash, strob return light detected');
+			else if ($data == 7)    $data = gettext('Flash, strobe return light detected');
 			else if ($data == 9)    $data = gettext('Compulsory Flash');
 			else if ($data == 13)   $data = gettext('Compulsory Flash, Return light not detected');
 			else if ($data == 15)   $data = gettext('Compulsory Flash, Return light detected');

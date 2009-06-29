@@ -94,6 +94,9 @@ class gallery_menu_Core {
   static function tag($menu, $theme) {
   }
 
+  static function thumb($menu, $theme, $item) {
+  }
+
   static function photo($menu, $theme) {
     if (access::can("view_full", $theme->item())) {
       $menu->append(Menu::factory("link")
@@ -149,6 +152,9 @@ class gallery_menu_Core {
                         ->id("theme_options")
                         ->label(t("Theme Options"))
                         ->url(url::site("admin/theme_options"))))
+      ->append(Menu::factory("submenu")
+               ->id("statistics_menu")
+               ->label(t("Statistics")))
       ->append(Menu::factory("link")
                ->id("maintenance")
                ->label(t("Maintenance"))

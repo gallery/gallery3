@@ -1,8 +1,40 @@
 <IfModule mod_php5.c>
-  php_value short_open_tag      1
-  php_value magic_quotes_gpc    0
-  php_value register_globals    0
-  php_value session.auto_start  0
-  php_value upload_max_filesize 20M
-  php_value post_max_size 	100M
+  php_value short_open_tag        1
+  php_value magic_quotes_gpc      0
+  php_value magic_quotes_sybase   0
+  php_value magic_quotes_runtime  0
+  php_value register_globals      0
+  php_value session.auto_start    0
+  php_value upload_max_filesize   20M
+  php_value post_max_size 	  100M
 </IfModule>
+
+# Try to disable the parts of mod_security that interfere with the Flash uploader
+<IfModule mod_security.c>
+  SecFilterEngine Off
+  SecFilterScanPOST Off
+</IfModule>
+
+# You can use mod_rewrite to enable short urls in Gallery 3 (which
+# gets rid of the "index.php" from your urls).  To do this, you must
+# uncomment the block below that starts with <IfModule> and ends with
+# </IfModule> then properly configure the RewriteBase line in the
+# block below.  You just need to change RewriteBase line to match your
+# Gallery 3 URL.  Here are some examples:
+#
+#   Gallery3 URL                        RewriteBase line
+#   =============                       ====================
+#   http://example.com/gallery3         RewriteBase /gallery3
+#   http://example.com/~bob/photos      RewriteBase /~bob/photos
+#   http://gallery3.example.com/        RewriteBase /
+#
+# Then just use your Gallery 3 without the index.php in the url.
+#
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteBase /
+#   RewriteCond %{REQUEST_FILENAME} !-f
+#   RewriteCond %{REQUEST_FILENAME} !-d
+#   RewriteRule ^(.*)$ index.php?kohana_uri=$1 [QSA,PT,L]
+#   RewriteRule ^$ index.php?kohana_uri=$1 [QSA,PT,L]
+# </IfModule>

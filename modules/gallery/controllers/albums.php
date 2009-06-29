@@ -26,7 +26,7 @@ class Albums_Controller extends Items_Controller {
     $page_size = module::get_var("gallery", "page_size", 9);
     if (!access::can("view", $album)) {
       if ($album->id == 1) {
-        $view = new Theme_View("page.html", "page");
+        $view = new Theme_View("page.html", "login");
         $view->page_title = t("Log in to Gallery");
         $view->content = user::get_login_form("login/auth_html");
         print $view;
@@ -167,7 +167,8 @@ class Albums_Controller extends Items_Controller {
     $form = album::get_edit_form($album);
     if ($valid = $form->validate()) {
       // Make sure that there's not a conflict
-      if (Database::instance()
+      if ($album->id != 1 &&
+          Database::instance()
           ->from("items")
           ->where("parent_id", $album->parent_id)
           ->where("id <>", $album->id)
@@ -188,7 +189,9 @@ class Albums_Controller extends Items_Controller {
       $album->description = $form->edit_album->description->value;
       $album->sort_column = $form->edit_album->sort_order->column->value;
       $album->sort_order = $form->edit_album->sort_order->direction->value;
-      $album->rename($form->edit_album->dirname->value);
+      if ($album->id != 1) {
+        $album->rename($form->edit_album->dirname->value);
+      }
       $album->save();
 
       module::event("item_updated", $orig, $album);

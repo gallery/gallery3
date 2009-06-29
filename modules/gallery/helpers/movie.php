@@ -53,7 +53,12 @@ class movie_Core {
       throw new Exception("@todo NAME_CANNOT_END_IN_PERIOD");
     }
 
-    $movie_info = movie::getmoviesize($filename);
+    try {
+      $movie_info = movie::getmoviesize($filename);
+    } catch (Exception $e) {
+      // Assuming this is MISSING_FFMPEG for now
+      $movie_info = getimagesize(MODPATH . "gallery/images/missing_movie.png");
+    }
 
     // Force an extension onto the name
     $pi = pathinfo($filename);
@@ -140,7 +145,7 @@ class movie_Core {
 
   static function find_ffmpeg() {
     if (!$ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) {
-      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin");
+      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin");
       if (function_exists("exec")) {
         $ffmpeg_path = exec("which ffmpeg");
       }

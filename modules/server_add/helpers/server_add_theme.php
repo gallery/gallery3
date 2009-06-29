@@ -20,7 +20,7 @@
 class server_add_theme_Core {
   static function head($theme) {
     if (user::active()->admin) {
-      return html::script("modules/server_add/js/server_add.js");
+      $theme->script("modules/server_add/js/server_add.js");
     }
   }
 
@@ -33,8 +33,8 @@ class server_add_theme_Core {
       $csrf = access::csrf_token();
       $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
-      $head[] = html::script("lib/jquery.autocomplete.js");
-      $head[] = html::script("modules/server_add/js/admin.js");
+      $theme->script("lib/jquery.autocomplete.js");
+      $theme->script("modules/server_add/js/admin.js");
     }
 
     return implode("\n", $head);

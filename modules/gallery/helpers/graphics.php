@@ -135,7 +135,12 @@ class graphics_Core {
         if ($input_item->is_movie()) {
           // Convert the movie to a JPG first
           $output_file = preg_replace("/...$/", "jpg", $output_file);
-          movie::extract_frame($input_file, $output_file);
+          try {
+            movie::extract_frame($input_file, $output_file);
+          } catch (Exception $e) {
+            // Assuming this is MISSING_FFMPEG for now
+            copy(MODPATH . "gallery/images/missing_movie.png", $output_file);
+          }
           $working_file = $output_file;
         } else {
           $working_file = $input_file;
@@ -326,7 +331,7 @@ class graphics_Core {
     if (!isset($gd["GD Version"])) {
       $gd["GD Version"] = false;
     }
-    putenv("PATH=" . getenv("PATH") . ":/usr/local/bin");
+    putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin");
     return array("gd" => $gd,
                  "imagemagick" => $exec ? dirname(exec("which convert")) : false,
                  "graphicsmagick" => $exec ? dirname(exec("which gm")) : false);

@@ -9,6 +9,8 @@
  * 4) Content blocks in specific layout containers
  * 5) Browser hacks
  * 6) jQuery and jQuery UI
+ * 7) Server Add
+ * 8) Digibug Print Administration
  */
 
 /** *******************************************************************
@@ -77,14 +79,14 @@
  **********************************************************************/
 
 .gView {
-	min-width: 974px !important;
+  min-width: 974px !important;
 }
 
 #gHeader {
-	background-color: #e8e8e8;
-	border-bottom: 1px solid #ccc;
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
   margin-bottom: 20px;
-	padding: 0 20px;
+  padding: 0 20px;
 }
 
 #gContent {
@@ -171,7 +173,7 @@
 }
 
 #gSiteStatus {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 #gContent .gItem {
@@ -436,3 +438,4 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   width: 150px;
   overflow: hidden;
 }
+

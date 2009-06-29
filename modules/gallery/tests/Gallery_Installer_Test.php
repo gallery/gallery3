@@ -31,9 +31,6 @@ class Gallery_Installer_Test extends Unit_Test_Case {
   public function install_registers_gallery_module_test() {
     $gallery = ORM::factory("module")->where("name", "gallery")->find();
     $this->assert_equal("gallery", $gallery->name);
-
-    // This is probably too volatile to keep for long
-    $this->assert_equal(1, $gallery->version);
   }
 
   public function install_creates_root_item_test() {

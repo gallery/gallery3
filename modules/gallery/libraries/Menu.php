@@ -23,6 +23,11 @@ class Menu_Element {
   public $css_id;
   public $css_class;
   public $id;
+  public $type;
+
+  public function __construct($type) {
+    $this->type = $type;
+  }
 
   /**
    * Set the id
@@ -125,26 +130,38 @@ class Menu_Core extends Menu_Element {
   public static function factory($type) {
     switch($type) {
     case "link":
-      return new Menu_Element_Link();
+      return new Menu_Element_Link($type);
 
     case "dialog":
-      return new Menu_Element_Dialog();
+      return new Menu_Element_Dialog($type);
 
     case "root":
-      $menu = new Menu();
-      $menu->is_root = true;
-      return $menu;
+      return  new Menu("root");
 
     case "submenu":
-      return new Menu();
+      return new Menu("submenu");
 
     default:
       throw Exception("@todo UNKNOWN_MENU_TYPE");
     }
   }
 
-  public function __construct() {
+  public function compact() {
+    foreach ($this->elements as $target_id => $element) {
+      if ($element->type == "submenu") {
+        if (empty($element->elements)) {
+          $this->remove($target_id);
+        } else {
+          $element->compact();
+        }
+      }
+    }
+  }
+
+  public function __construct($type) {
+    parent::__construct($type);
     $this->elements = array();
+    $this->is_root = $type == "root";
   }
 
   /**

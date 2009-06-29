@@ -29,22 +29,22 @@ class gallery_theme_Core {
         && access::can("edit", $theme->item())) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("modules/gallery/css/quick.css") . "\" />";
-      $buf .= html::script("modules/gallery/js/quick.js");
+      $theme->script("modules/gallery/js/quick.js");
     }
 
     if (module::is_active("rss")) {
       if ($item = $theme->item()) {
-        $buf = rss::feed_link("gallery/album/{$item->id}");
+        $buf .= rss::feed_link("gallery/album/{$item->id}");
       } else if ($tag = $theme->tag()) {
-        $buf = rss::feed_link("tag/tag/{$tag->id}");
+        $buf .= rss::feed_link("tag/tag/{$tag->id}");
       }
     }
 
     if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("modules/gallery/css/l10n_client.css") . "\" />";
-      $buf .= html::script("lib/jquery.cookie.js");
-      $buf .= html::script("modules/gallery/js/l10n_client.js");
+      $theme->script("lib/jquery.cookie.js");
+      $theme->script("modules/gallery/js/l10n_client.js");
     }
 
     return $buf;
@@ -87,8 +87,8 @@ class gallery_theme_Core {
     if ($session->get("l10n_mode", false)) {
       $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
         url::file("modules/gallery/css/l10n_client.css") . "\" />";
-      $buf .= html::script("lib/jquery.cookie.js");
-      $buf .= html::script("modules/gallery/js/l10n_client.js");
+      $theme->script("lib/jquery.cookie.js");
+      $theme->script("modules/gallery/js/l10n_client.js");
     }
 
     return $buf;

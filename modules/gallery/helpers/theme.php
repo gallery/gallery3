@@ -55,6 +55,8 @@ class theme_Core {
       ->value(module::get_var("gallery", "header_text"));
     $group->textarea("footer_text")->label(t("Footer text"))->id("gFooterText")
       ->value(module::get_var("gallery", "footer_text"));
+    $group->checkbox("show_credits")->label(t("Show site credits"))->id("gFooterText")
+      ->checked(module::get_var("gallery", "show_credits"));
     $group->submit("")->value(t("Save"));
     return $form;
   }

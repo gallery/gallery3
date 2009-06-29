@@ -32,6 +32,19 @@ CREATE TABLE {access_intents} (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {access_intents} VALUES (1,1,1,1,0,0,1,1,0,0);
+DROP TABLE IF EXISTS {caches};
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE {caches} (
+  `id` int(9) NOT NULL auto_increment,
+  `key` varchar(255) NOT NULL,
+  `tags` varchar(255) default NULL,
+  `expiration` int(9) NOT NULL,
+  `cache` longblob,
+  PRIMARY KEY  (`id`),
+  KEY `tags` (`tags`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {comments};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -55,7 +68,7 @@ CREATE TABLE {comments} (
   `server_remote_addr` varchar(32) default NULL,
   `server_remote_host` varchar(64) default NULL,
   `server_remote_port` varchar(16) default NULL,
-  `state` char(15) default 'unpublished',
+  `state` varchar(15) default 'unpublished',
   `text` text,
   `updated` int(9) NOT NULL,
   PRIMARY KEY  (`id`)
@@ -208,7 +221,7 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,1,'gallery',1),(2,1,'user',1),(3,1,'comment',1),(4,1,'organize',1),(5,1,'info',1),(6,1,'rss',1),(7,1,'search',1),(8,1,'slideshow',1),(9,1,'tag',1);
+INSERT INTO {modules} VALUES (1,1,'gallery',6),(2,1,'user',1),(3,1,'comment',2),(4,1,'organize',1),(5,1,'info',1),(6,1,'rss',1),(7,1,'search',1),(8,1,'slideshow',1),(9,1,'tag',1);
 DROP TABLE IF EXISTS {outgoing_translations};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -333,6 +346,6 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','default'),(2,'gallery','active_admin_theme','admin_default'),(3,'gallery','page_size','9'),(4,'gallery','thumb_size','200'),(5,'gallery','resize_size','640'),(6,'gallery','default_locale','en_US'),(7,'gallery','image_quality','75'),(9,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}'),(14,'gallery','blocks_dashboard_center','a:4:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}i:9;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(17,'gallery','version','3.0 beta 1'),(18,'gallery','choose_default_tookit','1'),(19,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>'),(21,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','default'),(2,'gallery','active_admin_theme','admin_default'),(3,'gallery','page_size','9'),(4,'gallery','thumb_size','200'),(5,'gallery','resize_size','640'),(6,'gallery','default_locale','en_US'),(7,'gallery','image_quality','75'),(9,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}'),(14,'gallery','blocks_dashboard_center','a:4:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}i:9;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(17,'gallery','version','3.0 pre beta 2 (git)'),(18,'gallery','choose_default_tookit','1'),(19,'gallery','date_format','Y-M-d'),(20,'gallery','date_time_format','Y-M-d H:i:s'),(21,'gallery','time_format','H:i:s'),(22,'gallery','show_credits','1'),(23,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>'),(25,'comment','spam_caught','0');

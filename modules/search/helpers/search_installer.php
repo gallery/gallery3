@@ -19,20 +19,17 @@
  */
 class search_installer {
   static function install() {
-    $version = module::get_version("search");
     $db = Database::instance();
-    if ($version == 0) {
-      $db->query("CREATE TABLE {search_records} (
-                   `id` int(9) NOT NULL auto_increment,
-                   `item_id` int(9),
-                   `dirty` boolean default 1,
-                   `data` LONGTEXT default NULL,
-                   PRIMARY KEY (`id`),
-                   KEY(`item_id`),
-                   FULLTEXT INDEX (`data`))
-                 ENGINE=MyISAM DEFAULT CHARSET=utf8;");
-      module::set_version("search", 1);
-    }
+    $db->query("CREATE TABLE {search_records} (
+                 `id` int(9) NOT NULL auto_increment,
+                 `item_id` int(9),
+                 `dirty` boolean default 1,
+                 `data` LONGTEXT default NULL,
+                 PRIMARY KEY (`id`),
+                 KEY(`item_id`),
+                 FULLTEXT INDEX (`data`))
+               ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+    module::set_version("search", 1);
   }
 
   static function activate() {

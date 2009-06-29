@@ -23,8 +23,11 @@
   }
 </script>
 <div id="gProgress">
+  <h1> <?= $task->name ?> </h1>
   <div class="gProgressBar"></div>
-  <div id="gStatus"></div>
+  <div id="gStatus">
+    <?= t("Starting up...") ?>
+  </div>
   <div>
     <button id="gPauseButton" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Pause") ?></button>
     <button id="gDoneButton" class="ui-state-default ui-corner-all" style="display: none" onclick="dismiss()"><?= t("Done") ?></button>

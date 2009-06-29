@@ -4,7 +4,10 @@
     <?= t("Add From Server Admininstration") ?>
   </h2>
   <div id="gAuthorizedPath">
-    <span><?= t("Authorized Paths") ?></span>
+    <h3><?= t("Authorized Paths") ?></h3>
+    <ul id="gMessage"<? if (!empty($paths)): ?> style="display: none;"<? endif ?>>
+      <li class="gInfo"><?= t("No Authorized image source paths defined yet") ?></li>
+    </ul>
     <ul id="gPathList">
       <? foreach ($paths as $id => $path): ?>
       <li class="ui-icon-left">
@@ -17,9 +20,6 @@
       </li>
       <? endforeach ?>
     </ul>
-    <div id="gNoAuthorizedPaths" <? if (!empty($paths)): ?>style="display:none"<? endif ?>>
-      <span class="gWarning"><?= t("No Authorized image source paths defined") ?></span>
-    </div>
   </div>
   <?= $form ?>
 </div>

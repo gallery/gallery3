@@ -5,8 +5,8 @@
 /* $Id: l10n_client.css,v 1.6 2008/09/09 10:48:20 goba Exp $ */
 
 /* width percentages add to 99% rather than 100% to prevent float
-overflows from occurring in an unnamed browser that can't decide
-how it wants to round. */
+   overflows from occurring in an unnamed browser that can't decide
+   how it wants to round. */
 
 /* l10n_client container */
 #l10n-client {
@@ -19,8 +19,8 @@ how it wants to round. */
   bottom:0px; left:0px;
   overflow:hidden;}
 
-  * html #l10n-client {
-    position:static;}
+* html #l10n-client {
+  position:static;}
 
 #l10n-client-string-select .string-list,
 #l10n-client-string-editor .source,
@@ -34,38 +34,38 @@ how it wants to round. */
   color:#fff;
   background:#37a;}
 
-  #l10n-client .labels .label {
-    display:none;}
+#l10n-client .labels .label {
+  display:none;}
 
-  /* Panel toggle button (span) */
-  #l10n-client .labels .toggle {
-    cursor:pointer;
-    display:block;
-    position:absolute; right:0em;
-    padding: 0em .75em; height:2em; line-height:2em;
-    text-transform:uppercase;
-    text-align:center; background:#000;}
+/* Panel toggle button (span) */
+#l10n-client .labels .toggle {
+  cursor:pointer;
+  display:block;
+  position:absolute; right:0em;
+  padding: 0em .75em; height:2em; line-height:2em;
+  text-transform:uppercase;
+  text-align:center; background:#000;}
 
-  /* Panel labels */
-  #l10n-client h2 {
-    border-left:1px solid #fff;
-    height:1em; line-height:1em;
-    padding: .5em; margin:0px;
-    font-size:1em;
-    text-transform:uppercase;}
+/* Panel labels */
+#l10n-client h2 {
+  border-left:1px solid #fff;
+  height:1em; line-height:1em;
+  padding: .5em; margin:0px;
+  font-size:1em;
+  text-transform:uppercase;}
 
-    #l10n-client .strings h2 {
-      border:0px;}
+#l10n-client .strings h2 {
+  border:0px;}
 
-  /* 25 + 37 + 37 = 99 */
-  #l10n-client .strings {
-    width:25%; float:left;}
+/* 25 + 37 + 37 = 99 */
+#l10n-client .strings {
+  width:25%; float:left;}
 
-  #l10n-client .source {
-    width:37%; float:left;}
+#l10n-client .source {
+  width:37%; float:left;}
 
-  #l10n-client .translation {
-    width:37%; float:left;}
+#l10n-client .translation {
+  width:37%; float:left;}
 
 /* Translatable string list */
 #l10n-client-string-select {
@@ -75,77 +75,77 @@ how it wants to round. */
   direction: ltr;
 }
 
-  #l10n-client .string-list {
-    height:17em;
-    overflow:auto;
-    list-style:none; list-style-image:none;
-    margin:0em; padding:0em;}
+#l10n-client .string-list {
+  height:17em;
+  overflow:auto;
+  list-style:none; list-style-image:none;
+  margin:0em; padding:0em;}
 
-  #l10n-client .string-list li {
-    font-size:.9em;
-    line-height:1.5em;
-    cursor:default;
-    background:transparent;
-    list-style:none; list-style-image:none;
-    border-bottom:1px solid #ddd;
-    padding:.25em .5em;
-    margin:0em;}
+#l10n-client .string-list li {
+  font-size:.9em;
+  line-height:1.5em;
+  cursor:default;
+  background:transparent;
+  list-style:none; list-style-image:none;
+  border-bottom:1px solid #ddd;
+  padding:.25em .5em;
+  margin:0em;}
 
-  /* Green for translated */
-  #l10n-client .string-list li.translated {
-    border-bottom-color:#9c3;
-    background:#cf6; color:#360;}
+/* Green for translated */
+#l10n-client .string-list li.translated {
+  border-bottom-color:#9c3;
+  background:#cf6; color:#360;}
 
-    #l10n-client .string-list li.translated:hover {
-      background: #df8;}
+#l10n-client .string-list li.translated:hover {
+  background: #df8;}
 
-    #l10n-client .string-list li.translated:active {
-      background: #9c3;}
+#l10n-client .string-list li.translated:active {
+  background: #9c3;}
 
-  #l10n-client .string-list li.hidden {
-    display:none;}
+#l10n-client .string-list li.hidden {
+  display:none;}
 
-  /* Gray + Blue hover for untranslated */
-  #l10n-client .string-list li.untranslated {}
+/* Gray + Blue hover for untranslated */
+#l10n-client .string-list li.untranslated {}
 
-    #l10n-client .string-list li.untranslated:hover {
-      background: #ace;}
+#l10n-client .string-list li.untranslated:hover {
+  background: #ace;}
 
-    #l10n-client .string-list li.untranslated:active {
-      background: #8ac;}
+#l10n-client .string-list li.untranslated:active {
+  background: #8ac;}
 
-  /* Selected string is indicated by bold text */
-  #l10n-client .string-list li.active {
-    font-weight:bold;}
+/* Selected string is indicated by bold text */
+#l10n-client .string-list li.active {
+  font-weight:bold;}
 
-  #l10n-client #gL10nSearchForm {
-    background:#eee;
-    text-align:center;
-    height:2em; line-height:2em;
-    margin:0em; padding:.5em .5em;
-  }
+#l10n-client #gL10nSearchForm {
+  background:#eee;
+  text-align:center;
+  height:2em; line-height:2em;
+  margin:0em; padding:.5em .5em;
+}
 
-  #l10n-client #gL10nSearchForm .form-item,
-  #l10n-client #gL10nSearchForm input.form-text,
-  #l10n-client #gL10nSearchForm #search-filter-go,
-  #l10n-client #gL10nSearchForm #search-filter-clear {
-    display:inline;
-    vertical-align:middle;
-  }
+#l10n-client #gL10nSearchForm .form-item,
+#l10n-client #gL10nSearchForm input.form-text,
+#l10n-client #gL10nSearchForm #search-filter-go,
+#l10n-client #gL10nSearchForm #search-filter-clear {
+  display:inline;
+  vertical-align:middle;
+}
 
-    #l10n-client #gL10nSearchForm .form-item {
-      margin:0em;
-      padding:0em;
-    }
+#l10n-client #gL10nSearchForm .form-item {
+  margin:0em;
+  padding:0em;
+}
 
-    #l10n-client #gL10nSearchForm input.form-text {
-      width:80%;
-    }
+#l10n-client #gL10nSearchForm input.form-text {
+  width:80%;
+}
 
-    #l10n-client #gL10nSearchForm #search-filter-clear {
-      width:10%;
-      margin:0em;
-    }
+#l10n-client #gL10nSearchForm #search-filter-clear {
+  width:10%;
+  margin:0em;
+}
 
 #l10n-client-string-editor {
   display:none;
@@ -153,22 +153,22 @@ how it wants to round. */
   width:74%;}
 
 #l10n-client-string-editor .source {
-    overflow:hidden;
-    width:50%; float:left;}
+  overflow:hidden;
+  width:50%; float:left;}
 
 #l10n-client-string-editor .source .source-text {
-      line-height:1.5em;
-      background:#eee;
-      font-family: monospace;
-      text-align: left;
-      height:16em; margin:1em; padding:1em;
-      overflow:auto;
-      direction: ltr;
+  line-height:1.5em;
+  background:#eee;
+  font-family: monospace;
+  text-align: left;
+  height:16em; margin:1em; padding:1em;
+  overflow:auto;
+  direction: ltr;
 }
 
-  #l10n-client-string-editor .translation {
-    overflow:hidden;
-    width:49%; float:right;}
+#l10n-client-string-editor .translation {
+  overflow:hidden;
+  width:49%; float:right;}
 
 #gL10nClientSaveForm {
   padding:0em;}

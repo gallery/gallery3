@@ -1,5 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<script src="<?= url::file("modules/tag/js/tag.js") ?>" type="text/javascript"></script>
 <script>
   var TAG_RENAME_URL = "<?= url::site("admin/tags/rename/__ID__") ?>";
   $("document").ready(function() {
