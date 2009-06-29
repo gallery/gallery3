@@ -113,12 +113,53 @@ class Gallery_View_Core extends View {
   protected function combine_css() {
     $links = array();
     $key = "";
-    foreach (array_keys($this->css) as $file) {
-      $links[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file($file) . "\" />";
+    static $PATTERN = "#url\(\s*['|\"]{0,1}(.*?)['|\"]{0,1}\s*\)#";
 
+    foreach (array_keys($this->css) as $file) {
+      $path = DOCROOT . $file;
+      if (file_exists($path)) {
+        $stats = stat($path);
+        $links[] = $path;
+        // 7 == size, 9 == mtime, see http://php.net/stat
+        $key = "{$key}$file $stats[7] $stats[9],";
+      } else {
+        Kohana::log("alert", "CSS file missing: " . $file);
+      }
     }
-    return implode("\n", $links);
+
+    $key = md5($key);
+    $cache = Cache::instance();
+    $contents = $cache->get($key);
+    $docroot_length = strlen(DOCROOT);
+
+    if (empty($contents)) {
+      $contents = "";
+      foreach ($links as $link) {
+        $css = file_get_contents($link);
+        if (preg_match_all($PATTERN, $css, $matches, PREG_SET_ORDER)) {
+          $search = $replace = array();
+          foreach ($matches as $match) {
+            $relative = substr(realpath(dirname($link) . "/$match[1]"), $docroot_length);
+            if (!empty($relative)) {
+              $search[] = $match[1];
+              $replace[] = url::abs_file($relative);
+            } else {
+              Kohana::log("alert", sprintf("Missing URL reference '%s' in CSS file '%s' ",
+                                           $match[1], $link));
+            }
+          }
+          $css = str_replace($search, $replace, $css);
+        }
+        $contents .= $css;
+      }
+      $cache->set($key, $contents, array("css"), 30 * 84600);
+      if (function_exists("gzencode")) {
+        $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
+                    array("css", "gzip"), 30 * 84600);
+      }
+    }
+    return "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
+      url::site("combined/css/$key") . "\" />";
   }
 
 }

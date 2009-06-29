@@ -25,8 +25,8 @@
     </title>
     <link rel="shortcut icon" href="<?= $theme->theme_url("images/favicon.ico") ?>" type="image/x-icon" />
     <?= $theme->css("lib/yui/reset-fonts-grids.css") ?>
-    <?= $theme->css("lib/themeroller/ui.base.css") ?>
     <?= $theme->css("lib/superfish/css/superfish.css") ?>
+    <?= $theme->css("lib/themeroller/ui.base.css") ?>
     <?= $theme->theme_css("css/screen.css") ?>
     <!--[if lt IE 8]>
     <?= $theme->theme_css("css/fix-ie.css") ?>

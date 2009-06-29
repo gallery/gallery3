@@ -58,5 +58,51 @@ class Combined_Controller extends Controller {
     Kohana::close_buffers(false);
     print $content;
   }
+
+  public function css($key) {
+    if (preg_match('/[^0-9a-f]/', $key)) {
+      // The key can't contain non-hex, so just terminate early
+      Kohana::show_404();
+    }
+
+    // We don't need to save the session for this request
+    Session::abort_save();
+
+    // Our data is immutable, so if they already have a copy then it needs no updating.
+    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+      header('HTTP/1.0 304 Not Modified');
+      return;
+    }
+
+    $cache = Cache::instance();
+    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false ) {
+      $content = $cache->get("{$key}_gz");
+    }
+
+    if (empty($content)) {
+      $content = $cache->get($key);
+    }
+
+    if (empty($content)) {
+      Kohana::show_404();
+    }
+
+    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
+      header("Content-Encoding: gzip");
+      header("Cache-Control: public");
+    }
+
+    header("Content-Type: text/css; charset=UTF-8");
+    header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s T", time()));
+
+    Kohana::close_buffers(false);
+    print $content;
+  }
+
+  public function __call($function, $args) {
+    array_unshift($args, $function);
+    print "<!-- " . implode("/", $args) . " -->";
+  }
 }
 
