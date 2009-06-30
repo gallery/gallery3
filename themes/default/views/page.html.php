@@ -49,6 +49,10 @@
     <?= $theme->script("lib/jquery.form.js") ?>
     <?= $theme->script("lib/jquery-ui.js") ?>
     <?= $theme->script("lib/gallery.common.js") ?>
+    <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
+    <script type="text/javascript">
+    var MSG_CANCEL = "<?= t('Cancel') ?>";
+    </script>
     <?= $theme->script("lib/gallery.dialog.js") ?>
     <?= $theme->script("lib/gallery.form.js") ?>
     <?= $theme->script("lib/superfish/js/superfish.js") ?>
