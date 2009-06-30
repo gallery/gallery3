@@ -74,7 +74,7 @@ class Gallery_View_Core extends View {
     $links = array();
     $key = array();
 
-    foreach (array_keys($this->css) as $file) {
+    foreach (array_keys($files) as $file) {
       $path = DOCROOT . $file;
       if (file_exists($path)) {
         $stats = stat($path);
@@ -95,9 +95,9 @@ class Gallery_View_Core extends View {
       $contents = "";
       foreach ($links as $link) {
         if ($type == "css") {
-          $contents .= $this->process_css($link);
+          $contents .= "/* $link */\n" . $this->process_css($link) . "\n";
         } else {
-          $contents .= file_get_contents($link);
+          $contents .= "/* $link */\n" . file_get_contents($link) . "\n";
         }
       }
 
@@ -109,10 +109,11 @@ class Gallery_View_Core extends View {
     }
 
     if ($type == "css") {
-      return html::stylesheet("combined/css/$key", "screen,print,projection", true);
+      return "<!-- LOOKING FOR YOUR CSS? It's all been combined into the link below -->\n" .
+        html::stylesheet("combined/css/$key", "screen,print,projection", true);
     } else {
-      // Handcraft the script link because html::script will add a .js extenstion
-      return html::script("combined/javascript/$key", true);
+      return "<!-- LOOKING FOR YOUR JAVASCRIPT? It's all been combined into the link below -->\n" .
+        html::script("combined/javascript/$key", true);
     }
   }
 
