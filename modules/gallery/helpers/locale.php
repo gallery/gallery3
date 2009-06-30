@@ -50,7 +50,9 @@ class locale_Core {
   static function update_installed($locales) {
     // Ensure that the default is included...
     $default = module::get_var("gallery", "default_locale");
-    $locales = array_merge($locales, array($default));
+    $locales = in_array($default, $locales)
+      ? $locales
+      : array_merge($locales, array($default));
 
     module::set_var("gallery", "installed_locales", join("|", $locales));
   }
