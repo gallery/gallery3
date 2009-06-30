@@ -40,8 +40,10 @@ class Combined_Controller extends Controller {
    * @param string   the key (typically an md5 sum)
    */
   private function _emit($type, $key) {
+    $input = Input::instance();
+
     // Our data is immutable, so if they already have a copy then it needs no updating.
-    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+    if ($input->server("HTTP_IF_MODIFIED_SINCE")) {
       header('HTTP/1.0 304 Not Modified');
       return;
     }
@@ -54,21 +56,18 @@ class Combined_Controller extends Controller {
     Session::abort_save();
 
     $cache = Cache::instance();
-    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false ) {
-      $content = $cache->get("{$key}_gz");
-    }
-
-    if (!$content) {
+    $use_gzip = function_exists("gzencode") &&
+      (strpos($input->server("HTTP_ACCEPT_ENCODING"), "gzip") !== false);
+    if ($use_gzip && $content = $cache->get("{$key}_gz")) {
+      header("Content-Encoding: gzip");
+      header("Cache-Control: public");
+    } else {
+      // Fall back to non-gzipped if we have to
       $content = $cache->get($key);
     }
 
-    if (!$content) {
+    if (empty($content)) {
       Kohana::show_404();
-    }
-
-    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
-      header("Content-Encoding: gzip");
-      header("Cache-Control: public");
     }
 
     // $type is either 'javascript' or 'css'
