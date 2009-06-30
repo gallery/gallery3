@@ -36,6 +36,9 @@ class Admin_Themes_Controller extends Admin_Controller {
 
       $file = THEMEPATH . "$theme_name/theme.info";
       $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+      $theme_info->description = t($theme_info->description);
+      $theme_info->name = t($theme_info->name);
+      
       $themes[$theme_name] = $theme_info;
     }
     return $themes;
