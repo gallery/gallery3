@@ -22,6 +22,9 @@ class Simple_Uploader_Controller extends Controller {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
     access::required("add", $item);
+    if (!$item->is_album()) {
+      $item = $item->parent();
+    }
 
     $v = new View("simple_uploader.html");
     $v->item = $item;
