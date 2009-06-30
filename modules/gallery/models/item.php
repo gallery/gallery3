@@ -492,14 +492,13 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function movie_img($extra_attrs) {
-    $attrs = array_merge($extra_attrs,
-            array("id" => "player",
-              "style" => "display:block;width:400px;height:300px")
-      );
-    return html::anchor($this->file_url(true), "", $attrs) .
-      "<script>flowplayer('player', '" .
-      url::abs_file("lib/flowplayer-3.0.5.swf") .
-      "'); </script>";
+    $v = new View("movieplayer.html");
+    $v->attrs = array_merge($extra_attrs,
+      array("style" => "display:block;width:{$this->width}px;height:{$this->height}px"));
+    if (empty($v->attrs["id"])) {
+       $v->attrs["id"] = "gMovieId-{$this->id}";
+    }
+    return $v;
   }
 
   /**

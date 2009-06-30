@@ -12,23 +12,7 @@
     <? endif ?>
   </ul>
 
-  <a id="gMovieId-<?= $item->id ?>"
-     href="<?= $item->file_url(true) ?>"
-     style="display: block; width: <?= $item->width ?>px; height: <?= $item->height ?>px">
-  </a>
-  <script>
-    flowplayer("gMovieId-<?= $item->id ?>", "<?= url::abs_file("lib/flowplayer.swf") ?>", {
-      plugins: {
-        h264streaming: {
-          url: "<?= url::abs_file("lib/flowplayer.h264streaming.swf") ?>"
-        },
-        controls: {
-          autoHide: 'always',
-          hideDelay: 2000
-        }
-      }
-    })
-  </script>
+  <?= $item->movie_img(array("class" => "gMovie", "id" => "gMovieId-{$item->id}")) ?>
 
   <div id="gInfo">
     <h1><?= p::clean($item->title) ?></h1>
