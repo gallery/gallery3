@@ -42,7 +42,7 @@
           <? if ($module->active): ?>
           <tr class="<?= $module->version == $module->code_version ? "current" : "upgradeable" ?>" >
             <td class="name <?= $id ?>">
-              <?= $module->name ?>
+              <?= t($module->name) ?>
             </td>
             <td>
               <?= $module->version ?>
@@ -71,7 +71,7 @@
           <? foreach ($available as $module): ?>
           <? if (!$module->active): ?>
           <li>
-            <?= $module->name ?>
+            <?= t($module->name) ?>
           </li>
           <? endif ?>
           <? endforeach ?>
