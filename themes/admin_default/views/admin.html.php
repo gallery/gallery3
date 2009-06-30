@@ -12,9 +12,10 @@
     <?= $theme->css("lib/superfish/css/superfish.css") ?>
     <?= $theme->css("themes/default/css/screen.css") ?>
     <?= $theme->theme_css("css/screen.css") ?>
-   <!--[if IE]>
-    <?= $theme->theme_css("css/fix-ie.css") ?>
-   <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
+          media="screen,print,projection" />
+    <![endif]-->
 
    <?= $theme->script("lib/jquery.js") ?>
    <?= $theme->script("lib/jquery.form.js") ?>
