@@ -29,7 +29,8 @@
     <?= $theme->css("lib/themeroller/ui.base.css") ?>
     <?= $theme->theme_css("css/screen.css") ?>
     <!--[if lt IE 8]>
-    <?= $theme->theme_css("css/fix-ie.css") ?>
+    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
+          media="screen,print,projection" />
     <![endif]-->
     <? if ($theme->page_type == 'album'): ?>
       <? if ($thumb_proportion != 1): ?>
