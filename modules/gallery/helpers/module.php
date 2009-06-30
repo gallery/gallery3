@@ -86,6 +86,8 @@ class module_Core {
         $m->code_version = $m->version;
         $m->version = self::get_version($module_name);
         $m->locked = false;
+        $m->name = t($m->name);
+        $m->description = t($m->description);
       }
 
       // Lock certain modules
