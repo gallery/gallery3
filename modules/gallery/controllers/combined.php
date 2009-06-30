@@ -73,7 +73,11 @@ class Combined_Controller extends Controller {
     }
 
     // $type is either 'javascript' or 'css'
-    header("Content-Type: text/$type; charset=UTF-8");
+    if ($type == "javascript") {
+      header("Content-Type: application/javascript; charset=UTF-8");
+    } else {
+      header("Content-Type: text/css; charset=UTF-8");
+    }
     header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
     header("Cache-Control: max-age=2678400");
     header('Pragma: public');
