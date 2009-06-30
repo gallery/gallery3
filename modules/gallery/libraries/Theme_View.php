@@ -216,8 +216,8 @@ class Theme_View_Core extends Gallery_View {
       }
 
       if ($function == "head") {
-        array_unshift($blocks, $this->combine_css());
-        array_unshift($blocks, $this->combine_script());
+        array_unshift($blocks, $this->combine_files($this->css, "css"));
+        array_unshift($blocks, $this->combine_files($this->css, "javascript"));
       }
 
       if (Session::instance()->get("debug")) {

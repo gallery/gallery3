@@ -22,6 +22,7 @@ class Combined_Controller extends Controller {
    * Return the combined Javascript bundle associated with the given key.
    */
   public function javascript($key) {
+    $key = substr($key, 0, strlen($key) - 3);  // strip off the trailing .js
     return $this->_emit("javascript", $key);
   }
 
@@ -29,6 +30,7 @@ class Combined_Controller extends Controller {
    * Return the combined CSS bundle associated with the given key.
    */
   public function css($key) {
+    $key = substr($key, 0, strlen($key) - 4);  // strip off the trailing .css
     return $this->_emit("css", $key);
   }
 
