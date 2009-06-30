@@ -18,31 +18,51 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Combined_Controller extends Controller {
+  /**
+   * Return the combined Javascript bundle associated with the given key.
+   */
   public function javascript($key) {
-    if (preg_match('/[^0-9a-f]/', $key)) {
-      // The key can't contain non-hex, so just terminate early
-      Kohana::show_404();
-    }
+    $key = substr($key, 0, strlen($key) - 3);  // strip off the trailing .js
+    return $this->_emit("javascript", $key);
+  }
 
-    // We don't need to save the session for this request
-    Session::abort_save();
+  /**
+   * Return the combined CSS bundle associated with the given key.
+   */
+  public function css($key) {
+    $key = substr($key, 0, strlen($key) - 4);  // strip off the trailing .css
+    return $this->_emit("css", $key);
+  }
 
+  /**
+   * Print out a cached entry.
+   * @param string   the combined entry type (either "javascript" or "css")
+   * @param string   the key (typically an md5 sum)
+   */
+  private function _emit($type, $key) {
     // Our data is immutable, so if they already have a copy then it needs no updating.
     if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
       header('HTTP/1.0 304 Not Modified');
       return;
     }
 
+    if (empty($key)) {
+      Kohana::show_404();
+    }
+
+    // We don't need to save the session for this request
+    Session::abort_save();
+
     $cache = Cache::instance();
     if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false ) {
       $content = $cache->get("{$key}_gz");
     }
 
-    if (empty($content)) {
+    if (!$content) {
       $content = $cache->get($key);
     }
 
-    if (empty($content)) {
+    if (!$content) {
       Kohana::show_404();
     }
 
@@ -51,12 +71,14 @@ class Combined_Controller extends Controller {
       header("Cache-Control: public");
     }
 
-    header("Content-Type: text/javascript; charset=UTF-8");
+    // $type is either 'javascript' or 'css'
+    header("Content-Type: text/$type; charset=UTF-8");
     header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
     header("Last-Modified: " . gmdate("D, d M Y H:i:s T", time()));
 
     Kohana::close_buffers(false);
     print $content;
   }
+
 }
 

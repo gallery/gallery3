@@ -98,8 +98,9 @@ class Admin_View_Core extends Gallery_View {
         }
       }
 
-      if ($function == "admin_head") {
-        array_unshift($blocks, $this->combine_script());
+      if ($function == "head") {
+        array_unshift($blocks, $this->combine_files($this->css, "css"));
+        array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
       }
 
       if (Session::instance()->get("debug")) {

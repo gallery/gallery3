@@ -201,8 +201,8 @@ class Theme_View_Core extends Gallery_View {
             array("gallery_theme", $function),
             array_merge(array($this), $args));
         }
-
       }
+
       foreach (module::active() as $module) {
         if ($module->name == "gallery") {
           continue;
@@ -216,7 +216,8 @@ class Theme_View_Core extends Gallery_View {
       }
 
       if ($function == "head") {
-        array_unshift($blocks, $this->combine_script());
+        array_unshift($blocks, $this->combine_files($this->css, "css"));
+        array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
       }
 
       if (Session::instance()->get("debug")) {

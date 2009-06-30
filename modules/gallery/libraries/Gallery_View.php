@@ -20,6 +20,7 @@
 class Gallery_View_Core extends View {
   protected $theme_name = null;
   protected $scripts = array();
+  protected $css = array();
 
   /**
    * Add a script to the combined scripts list.
@@ -49,41 +50,108 @@ class Gallery_View_Core extends View {
   }
 
   /**
-   * Combine a series of Javascript files into a single one and cache it in the database, then
-   * return a single <script> element to refer to it.
+   * Add a css file to the combined css list.
+   * @param $file  the relative path to a script from the gallery3 directory
    */
-  protected function combine_script() {
+  public function css($file, $theme_relative=false) {
+    $this->css[$file] = 1;
+  }
+
+  /**
+   * Add a css file to the combined css list.
+   * @param $file  the relative path to a script from the base of the active theme
+   * @param
+   */
+  public function theme_css($file) {
+    $file = "themes/{$this->theme_name}/$file";
+    $this->css[$file] = 1;
+  }
+
+  /**
+   * Combine a series of files into a single one and cache it in the database.
+   */
+  protected function combine_files($files, $type) {
     $links = array();
-    $key = "";
-    foreach (array_keys($this->scripts) as $file) {
+    $key = array();
+
+    foreach (array_keys($files) as $file) {
       $path = DOCROOT . $file;
       if (file_exists($path)) {
         $stats = stat($path);
         $links[] = $path;
         // 7 == size, 9 == mtime, see http://php.net/stat
-        $key = "{$key}$file $stats[7] $stats[9],";
+        $key[] = "$file $stats[7] $stats[9]";
       } else {
-        Kohana::log("alert", "Javascript file missing: " . $file);
+        Kohana::log("error", "missing file ($type): $file");
       }
     }
 
-    $key = md5($key);
+    $key = md5(join(" ", $key));
     $cache = Cache::instance();
     $contents = $cache->get($key);
+
+    $contents = "";
     if (empty($contents)) {
       $contents = "";
       foreach ($links as $link) {
-        $contents .= file_get_contents($link);
+        if ($type == "css") {
+          $contents .= "/* $link */\n" . $this->process_css($link) . "\n";
+        } else {
+          $contents .= "/* $link */\n" . file_get_contents($link) . "\n";
+        }
       }
-      $cache->set($key, $contents, array("javascript"), 30 * 84600);
+
+      $cache->set($key, $contents, array($type), 30 * 84600);
       if (function_exists("gzencode")) {
         $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
-                    array("javascript", "gzip"), 30 * 84600);
+                    array($type, "gzip"), 30 * 84600);
       }
     }
 
-    // Handcraft the script link because html::script will add a .js extenstion
-    return "<script type=\"text/javascript\" src=\"" . url::site("combined/javascript/$key") .
-      "\"></script>";
+    if ($type == "css") {
+      return "<!-- LOOKING FOR YOUR CSS? It's all been combined into the link below -->\n" .
+        html::stylesheet("combined/css/$key", "screen,print,projection", true);
+    } else {
+      return "<!-- LOOKING FOR YOUR JAVASCRIPT? It's all been combined into the link below -->\n" .
+        html::script("combined/javascript/$key", true);
+    }
+  }
+
+  /**
+   * Convert relative references inside a CSS file to absolute ones so that when it's served from
+   * a new location as part of a combined bundle the references are still correct.
+   * @param string  the path to the css file
+   */
+  private function process_css($css_file) {
+    static $PATTERN = "#url\(\s*['|\"]{0,1}(.*?)['|\"]{0,1}\s*\)#";
+    $docroot_length = strlen(DOCROOT);
+
+    $css = file_get_contents($css_file);
+    if (preg_match_all($PATTERN, $css, $matches, PREG_SET_ORDER)) {
+      $search = $replace = array();
+      foreach ($matches as $match) {
+        $relative = substr(realpath(dirname($css_file) . "/$match[1]"), $docroot_length);
+        if (!empty($relative)) {
+          $search[] = $match[0];
+          $replace[] = "url('" . url::abs_file($relative) . "')";
+        } else {
+          Kohana::log("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
+        }
+      }
+      $css = str_replace($search, $replace, $css);
+    }
+    $imports = preg_match_all("#@import\s*['|\"]{0,1}(.*?)['|\"]{0,1};#",
+                              $css, $matches, PREG_SET_ORDER);
+
+    if ($imports) {
+      $search = $replace = array();
+      foreach ($matches as $match) {
+        $search[] = $match[0];
+        $replace[] = $this->process_css(dirname($css_file) . "/$match[1]");
+      }
+      $css = str_replace($search, $replace, $css);
+    }
+
+    return $css;
   }
 }

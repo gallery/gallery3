@@ -24,17 +24,12 @@
       <? endif ?>
     </title>
     <link rel="shortcut icon" href="<?= $theme->theme_url("images/favicon.ico") ?>" type="image/x-icon" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
-          media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
-          media="screen" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
-          media="screen,print,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/screen.css") ?>"
-          media="screen,print,projection" />
+    <?= $theme->css("lib/yui/reset-fonts-grids.css") ?>
+    <?= $theme->css("lib/superfish/css/superfish.css") ?>
+    <?= $theme->css("lib/themeroller/ui.base.css") ?>
+    <?= $theme->theme_css("css/screen.css") ?>
     <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
-          media="screen,print,projection" />
+    <?= $theme->theme_css("css/fix-ie.css") ?>
     <![endif]-->
     <? if ($theme->page_type == 'album'): ?>
       <? if ($thumb_proportion != 1): ?>
