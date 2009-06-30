@@ -90,7 +90,6 @@ class Gallery_View_Core extends View {
     $cache = Cache::instance();
     $contents = $cache->get($key);
 
-    $contents = "";
     if (empty($contents)) {
       $contents = "";
       foreach ($links as $link) {
