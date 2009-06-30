@@ -10,10 +10,24 @@
 </IfModule>
 
 # Try to disable the parts of mod_security that interfere with the Flash uploader
+#
 <IfModule mod_security.c>
   SecFilterEngine Off
   SecFilterScanPOST Off
 </IfModule>
+
+# Improve performance by uncommenting this block.  It tells the
+# browser that your images don't change very often so it won't keep
+# asking for them.  If you get an error after uncommenting this, make
+# sure you specify "AuthConfig Indexes" in your Apache config file.
+#
+# <IfModule mod_expires.c>
+#   ExpiresActive On
+#   # Cache all files for a month after access (A).
+#   ExpiresDefault A2678400
+#   # Do not cache dynamically generated pages.
+#   ExpiresByType text/html A1
+# </IfModule>
 
 # You can use mod_rewrite to enable short urls in Gallery 3 (which
 # gets rid of the "index.php" from your urls).  To do this, you must

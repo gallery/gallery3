@@ -40,9 +40,14 @@ class Combined_Controller extends Controller {
    * @param string   the key (typically an md5 sum)
    */
   private function _emit($type, $key) {
+    $input = Input::instance();
+
     // Our data is immutable, so if they already have a copy then it needs no updating.
-    if (!empty($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+    if ($input->server("HTTP_IF_MODIFIED_SINCE")) {
       header('HTTP/1.0 304 Not Modified');
+      header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
+      header("Cache-Control: max-age=2678400");
+      header('Pragma: public');
       return;
     }
 
@@ -54,26 +59,28 @@ class Combined_Controller extends Controller {
     Session::abort_save();
 
     $cache = Cache::instance();
-    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false ) {
-      $content = $cache->get("{$key}_gz");
-    }
-
-    if (!$content) {
+    $use_gzip = function_exists("gzencode") &&
+      (strpos($input->server("HTTP_ACCEPT_ENCODING"), "gzip") !== false);
+    if ($use_gzip && $content = $cache->get("{$key}_gz")) {
+      header("Content-Encoding: gzip");
+    } else {
+      // Fall back to non-gzipped if we have to
       $content = $cache->get($key);
     }
 
-    if (!$content) {
+    if (empty($content)) {
       Kohana::show_404();
     }
 
-    if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
-      header("Content-Encoding: gzip");
-      header("Cache-Control: public");
-    }
-
     // $type is either 'javascript' or 'css'
-    header("Content-Type: text/$type; charset=UTF-8");
+    if ($type == "javascript") {
+      header("Content-Type: application/javascript; charset=UTF-8");
+    } else {
+      header("Content-Type: text/css; charset=UTF-8");
+    }
     header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
+    header("Cache-Control: max-age=2678400");
+    header('Pragma: public');
     header("Last-Modified: " . gmdate("D, d M Y H:i:s T", time()));
 
     Kohana::close_buffers(false);
