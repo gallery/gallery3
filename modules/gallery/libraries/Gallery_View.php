@@ -109,7 +109,7 @@ class Gallery_View_Core extends View {
     }
 
     if ($type == "css") {
-      return html::stylesheet("combined/css/$key", false, true);
+      return html::stylesheet("combined/css/$key", "screen,print,projection", true);
     } else {
       // Handcraft the script link because html::script will add a .js extenstion
       return html::script("combined/javascript/$key", true);
