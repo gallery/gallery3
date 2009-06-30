@@ -38,7 +38,7 @@
   display:none;}
 
 /* Panel toggle button (span) */
-#l10n-client .labels .toggle {
+#l10n-client-toggler {
   cursor:pointer;
   display:block;
   position:absolute; right:0em;

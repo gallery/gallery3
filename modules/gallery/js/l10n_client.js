@@ -58,7 +58,7 @@ jQuery.extend(Gallery, {
         case 1:
           $('#l10n-client-string-select, #l10n-client-string-editor, #l10n-client .labels .label').show();
           $('#l10n-client').height('22em').removeClass('hidden');
-          $('#l10n-client .labels .toggle').text('X');
+        $('#l10n-client-toggler').text(MSG_CLOSE_X);
         /*
          * This CSS clashes with Gallery's CSS, probably due to
          * YUI's grid / floats.
@@ -72,7 +72,7 @@ jQuery.extend(Gallery, {
           $('#l10n-client-string-select, #l10n-client-string-editor, #l10n-client .labels .label').hide();
           $('#l10n-client').height('2em').addClass('hidden');
           // TODO: Localize this message
-          $('#l10n-client .labels .toggle').text('Translate Text');
+          $('#l10n-client-toggler').text(MSG_TRANSLATE_TEXT);
         /*
           if(!$.browser.msie) {
             $('body').css('border-bottom', '0px');
@@ -171,7 +171,7 @@ Gallery.behaviors.l10nClient = function(context) {
   });
 
   // When l10n_client window is clicked, toggle based on current state.
-  $('#l10n-client .labels .toggle').click(function() {
+  $('#l10n-client-toggler').click(function() {
     if($('#l10n-client').is('.hidden')) {
       Gallery.l10nClient.toggle(1);
     } else {
