@@ -45,6 +45,9 @@ class Combined_Controller extends Controller {
     // Our data is immutable, so if they already have a copy then it needs no updating.
     if ($input->server("HTTP_IF_MODIFIED_SINCE")) {
       header('HTTP/1.0 304 Not Modified');
+      header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
+      header("Cache-Control: max-age=2678400");
+      header('Pragma: public');
       return;
     }
 
@@ -60,7 +63,6 @@ class Combined_Controller extends Controller {
       (strpos($input->server("HTTP_ACCEPT_ENCODING"), "gzip") !== false);
     if ($use_gzip && $content = $cache->get("{$key}_gz")) {
       header("Content-Encoding: gzip");
-      header("Cache-Control: public");
     } else {
       // Fall back to non-gzipped if we have to
       $content = $cache->get($key);
@@ -73,6 +75,8 @@ class Combined_Controller extends Controller {
     // $type is either 'javascript' or 'css'
     header("Content-Type: text/$type; charset=UTF-8");
     header("Expires: Tue, 19 Jan 2038 00:00:00 GMT");
+    header("Cache-Control: max-age=2678400");
+    header('Pragma: public');
     header("Last-Modified: " . gmdate("D, d M Y H:i:s T", time()));
 
     Kohana::close_buffers(false);
