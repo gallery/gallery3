@@ -88,7 +88,7 @@
       <div id="footer">
         <p>
           <i>
-            <?= t("Did something go wrong? Try the <a href=\"%faq_url\">FAQ</a> or ask in the <a href=\"%forums_url\">Gallery forums</a>.</i>",
+            <?= t("Did something go wrong? Try the <a href=\"%faq_url\">FAQ</a> or ask in the <a href=\"%forums_url\">Gallery forums</a>.",
                 array("faq_url" => "http://codex.gallery2.org/Gallery3:FAQ",
                       "forums_url" => "http://gallery.menalto.com/forum")) ?>
           </i>
