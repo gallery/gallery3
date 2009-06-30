@@ -30,7 +30,7 @@ class Cache_Test extends Unit_Test_Case {
     $this->assert_false($this->_driver->exists("test_key"), "test_key should not be defined");
 
     $id = md5(rand());
-    $db->insert("caches", array("id" => $id, "tags" => "<tag1>, <tag2>",
+    $db->insert("caches", array("key" => $id, "tags" => "<tag1>, <tag2>",
                                 "expiration" => 84600 + time(),
                                 "cache" => serialize("some test data")));
 
@@ -41,7 +41,7 @@ class Cache_Test extends Unit_Test_Case {
     $db = Database::instance();
 
     $id = md5(rand());
-    $db->insert("caches", array("id" => $id, "tags" => "<tag1>, <tag2>",
+    $db->insert("caches", array("key" => $id, "tags" => "<tag1>, <tag2>",
                                 "expiration" => 84600  + time(),
                                 "cache" => serialize("some test data")));
 
