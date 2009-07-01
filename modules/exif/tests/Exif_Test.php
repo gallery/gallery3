@@ -31,7 +31,7 @@ class Exif_Test extends Unit_Test_Case {
       array("caption" => "Color Space", "value" => "Uncalibrated"),
       array("caption" => "Exposure Value", "value" => "4294.67 EV"),
       array("caption" => "Exposure Program", "value" => "Program"),
-      array("caption" => "Exposure Time", "value" => "1/60 sec"),
+      array("caption" => "Exposure Time", "value" => "833/49979 sec"),
       array("caption" => "Flash", "value" => "No Flash"),
       array("caption" => "Focal Length", "value" => "50 mm"),
       array("caption" => "ISO", "value" => "6553700"),
