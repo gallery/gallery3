@@ -32,8 +32,7 @@ class digibug_menu {
       Menu::factory("link")
       ->id("digibug")
       ->label(t("Print with Digibug"))
-      ->url("javascript:digibug_popup('" .
-            url::site("digibug/print_photo/$item->id?csrf=$theme->csrf") . "')")
+      ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
       ->css_id("gDigibugLink"));
   }
 
@@ -43,8 +42,7 @@ class digibug_menu {
         Menu::factory("link")
         ->id("digibug")
         ->label(t("Print with Digibug"))
-        ->url("javascript:digibug_popup('" .
-              url::site("digibug/print_photo/$item->id?csrf=$theme->csrf") . "')")
+        ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
         ->css_id("gDigibugLink"));
     }
   }
