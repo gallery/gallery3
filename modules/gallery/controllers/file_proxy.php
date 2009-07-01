@@ -112,6 +112,9 @@ class File_Proxy_Controller extends Controller {
       kohana::show_404();
     }
 
+    // We don't need to save the session for this request
+    Session::abort_save();
+
     // Dump out the image
     header("Content-Type: $item->mime_type");
     Kohana::close_buffers(false);
