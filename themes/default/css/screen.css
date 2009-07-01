@@ -13,7 +13,6 @@
  *  7)  Browser hacks
  *  8)  jQuery and jQuery UI
  *  9)  Right-to-left language styles
- * 10)  Digibug Print
  */
 
 /** *******************************************************************
@@ -754,6 +753,16 @@ form .gError,
 /** *******************************************************************
  * 7) jQuery and jQuery UI
  *********************************************************************/
+
+/* Superfish menu overrides ~~~~~~~~~~~~~~ */
+
+.sf-menu li li, .sf-menu li li ul li {
+  background-color: #bdd2ff;
+}
+
+.sf-menu li:hover {
+  background-color: #dfe9ff;
+}
 
 /* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
 
