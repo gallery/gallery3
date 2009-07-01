@@ -37,7 +37,7 @@ class info_theme_Core {
     }
     if ($item->owner) {
       $results .= "<li>";
-      $results .= t("By: %owner_name", array("owner_name" => "<a href=\"#\">{$item->owner->name}</a>"));
+      $results .= t("By: %owner_name", array("owner_name" => "<a href=\"#\">{$item->owner->full_name}</a>"));
       $results .= "</li>";
     }
     return $results;
