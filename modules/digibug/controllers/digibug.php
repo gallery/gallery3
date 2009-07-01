@@ -55,7 +55,7 @@ class Digibug_Controller extends Controller {
   }
 
   public function print_proxy($type, $id) {
-    $proxy = ORM::factory("digibug_proxy", array("uuid", $id));
+    $proxy = ORM::factory("digibug_proxy", array("uuid" => $id));
     if (!$proxy->loaded || !$proxy->item->loaded) {
       Kohana::show_404();
     }

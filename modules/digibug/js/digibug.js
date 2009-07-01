@@ -1,3 +1,15 @@
+$(document).ready(function() {
+  $(".gDigibugPrintButton a").click(function(e) {
+    e.preventDefault();
+    return digibug_popup(e.currentTarget.href, { width: 800, height: 600 } );
+  });
+
+  $("#gDigibugLink").click(function(e) {
+    e.preventDefault();
+    return digibug_popup(e.currentTarget.href, { width: 800, height: 600 } );
+  });
+});
+
 function digibug_popup(url, options) {
   options = $.extend({
     /* default options */
