@@ -2,7 +2,7 @@
 /**
  * Session library.
  *
- * $Id: Session.php 4073 2009-03-13 17:53:58Z Shadowhand $
+ * $Id: Session.php 4433 2009-07-01 03:44:20Z kiall $
  *
  * @package    Core
  * @author     Kohana Team
@@ -26,6 +26,9 @@ class Session_Core {
 
 	// Input library
 	protected $input;
+
+	// Automatically save the session by default
+	public static $should_save = true;
 
 	/**
 	 * Singleton instance of Session.
@@ -453,6 +456,18 @@ class Session_Core {
 			// Unset the key
 			unset($_SESSION[$key]);
 		}
+	}
+
+	/**
+	 * Do not save this session.
+	 * This is a performance feature only, if using the native
+	 * session "driver" the save will NOT be aborted.
+	 * 
+	 * @return  void
+	 */
+	public function abort_save()
+	{
+		Session::$should_save = FALSE;
 	}
 
 } // End Session Class

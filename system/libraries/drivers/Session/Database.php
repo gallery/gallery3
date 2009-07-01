@@ -2,7 +2,7 @@
 /**
  * Session database driver.
  *
- * $Id: Database.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: Database.php 4431 2009-07-01 03:41:41Z kiall $
  *
  * @package    Core
  * @author     Kohana Team
@@ -98,6 +98,9 @@ class Session_Database_Driver implements Session_Driver {
 
 	public function write($id, $data)
 	{
+		if ( ! Session::$should_save)
+			return TRUE;
+
 		$data = array
 		(
 			'session_id' => $id,
