@@ -422,7 +422,7 @@ form .gError,
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLogo {
+#gHeader #gLogo img {
   float: left;
   margin: -4px 10px 0 0;
 }
@@ -1046,7 +1046,7 @@ form .gError,
 .rtl input[type="submit"],
 .rtl input[type="reset"],
 .rtl .gShortForm li,
-.rtl #gHeader #gLogo,
+.rtl #gHeader #gLogo img,
 .rtl #gContent #gAlbumGrid .gItem,
 .rtl #gSiteMenu,
 .rtl .gBreadcrumbs li,

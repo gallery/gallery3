@@ -3,8 +3,8 @@
 <? if ($header_text = module::get_var("gallery", "header_text")): ?>
 <?= $header_text ?>
 <? else: ?>
-<a href="<?= url::site("albums/1") ?>">
-  <img width="107" height="48" id="gLogo" alt="<?= t("Gallery: Your photos on your web site") ?>" src="<?= $theme->theme_url("images/logo.png") ?>" />
+<a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery home") ?>">
+  <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site") ?>" src="<?= $theme->theme_url("images/logo.png") ?>" />
 </a>
 <? endif ?>
 

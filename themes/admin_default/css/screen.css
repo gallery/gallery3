@@ -98,12 +98,28 @@
  * 4) Content blocks in specific layout containers
  *********************************************************************/
 
-#gHeader #gLogo {
+#gHeader #gLogo img {
   float: left;
   margin: -22px 10px 0 0;
 }
 
-.rtl #gHeader #gLogo {
+#gHeader #gLogo {
+  position: relative;
+  display: block;
+  text-decoration: none;
+}
+#gHeader #gLogo span {
+  display: none;
+  position: absolute;
+  top: -20px;
+  left: 2px;
+  color: #FF6600;
+}
+#gHeader #gLogo:hover span {
+  display: inline;
+}
+
+.rtl #gHeader #gLogo img {
   float: left;
 }
 
