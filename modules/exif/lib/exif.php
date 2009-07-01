@@ -1007,36 +1007,8 @@ if ($result['ValidJpeg'] == 1) {
 //================================================================================================
 function ConvertToFraction($v, &$n, &$d)
 {
-	$MaxTerms = 15;         // Limit to prevent infinite loop
-	$MinDivisor = 0.000001; // Limit to prevent divide by zero
-	$MaxError = 0.00000001; // How close is enough
-
-	$f = $v; // Initialize fraction being converted
-
-	$n_un = 1; // Initialize fractions with 1/0, 0/1
-	$d_un = 0;
-	$n_deux = 0;
-	$d_deux = 1;
-
-	for ($i = 0; $i<$MaxTerms; $i++)
-	{
-		$a = floor($f); // Get next term
-		$f = $f - $a; // Get new divisor
-		$n = $n_un * $a + $n_deux; // Calculate new fraction
-		$d = $d_un * $a + $d_deux;
-		$n_deux = $n_un; // Save last two fractions
-		$d_deux = $d_un;
-		$n_un = $n;
-		$d_un = $d;
-
-		if ($f < $MinDivisor) // Quit if dividing by zero
-			break;
-
-		if (abs($v - $n / $d) < $MaxError)
-			break;
-
-		$f = 1 / $f; // Take reciprocal
-	}
+        $n = 1;
+        $d = !empty($v) ? round(1.0 / $v) : 0;
 }  
 
 //================================================================================================
