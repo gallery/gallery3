@@ -46,6 +46,10 @@ class g2_import_Core {
   }
 
   static function is_valid_embed_path($embed_path) {
+    $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
+    if (file_exists($mod_path)) {
+      dir::unlink($mod_path);
+    }
     return file_exists($embed_path) && g2_import::init_embed($embed_path);
   }
 
