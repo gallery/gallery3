@@ -47,8 +47,8 @@
           <li class="first"><?= html::anchor("albums/1", "&larr; ".t("Back to the Gallery")) ?></li>
           <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1&csrf=$csrf") ?>"><?= t("Logout") ?></a></li>
         </ul>
-        <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery") ?>"><img src="<?= url::file("themes/default/images/logo.png") ?>" alt="<?= t("Gallery logo: Your Photos on Your Web Site") ?>" /><span>&larr; <?= t("back") ?></span></a>
-        <div id="gSiteAdminMenu" style="display: none">
+        <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery") ?>"><!--<img src="<?= url::file("themes/default/images/logo.png") ?>" alt="<?= t("Gallery logo: Your Photos on Your Web Site") ?>" />-->&larr; <?= t("back to the ...") ?></a>
+        <div id="gSiteAdminMenu" style="display: none;">
           <?= $theme->admin_menu() ?>
         </div>
         <?= $theme->admin_header_bottom() ?>
