@@ -13,6 +13,7 @@
         <? if ($can_upgrade): ?>
         <? if ($done): ?>
         <div id="confirmation">
+          <a onclick="$('#confirmation').slideUp(); return false;" href="#" class="close">[x]</a>
           <div>
             <h1> <?= t("That's it!") ?> </h1>
             <p>
