@@ -106,7 +106,7 @@
   width: 105px; /* 107px - padding-left */
   height: 48px;
   background-image: url('../../default/images/logo.png');
-  color: gray ! important;
+  color: #A5A5A5 ! important;
 }
 #gHeader #gLogo:hover {
   color: #FF6600 ! important;
@@ -117,9 +117,6 @@
   float: none;
   margin: 0;
   padding: 5px 0 10px 0;
-}
-
-#gHeader #gLoginMenu {
   text-align: right;
 }
 
