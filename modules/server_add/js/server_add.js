@@ -41,6 +41,14 @@ function click_node(checkbox) {
   var parent = $(checkbox).parents("li").get(0);
   var checked = $(checkbox).attr("checked");
   $(parent).find("input[type=checkbox]").attr("checked", checked);
+
+  if ($("#gServerAddTree").find("input[type=checkbox]").is(":checked")) {
+    $("#gServerAddAddButton").attr("disabled", true);
+    $("#gServerAddAddButton").removeClass("ui-state-disabled");
+  } else {
+    $("#gServerAddAddButton").attr("disabled", false);
+    $("#gServerAddAddButton").addClass("ui-state-disabled");
+  }
 }
 
 /* ================================================================================ */

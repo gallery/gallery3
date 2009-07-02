@@ -25,8 +25,10 @@
   </ul>
 
   <span>
-    <?= form::submit(array("id" => "gServerPauseButton", "name" => "add", "disabled" => true, "class" => "submit", "style" => "display:none"), t("Pause")) ?>
-    <?= form::submit(array("id" => "gServerAddButton", "name" => "add", "disabled" => true, "class" => "submit"), t("Add")) ?>
+    <input id="gServerAddPauseButton" class="submit ui-state-disabled" disabled="disabled" type="submit"
+           value="<?= t("Pause") ?>" style="display: none">
+    <input id="gServerAddAddButton" class="submit ui-state-disabled" disabled="disabled" type="submit"
+           value="<?= t("Add") ?>">
   </span>
   <?= form::close() ?>
   <div class="gProgressBar" style="visibility: hidden" ></div>
