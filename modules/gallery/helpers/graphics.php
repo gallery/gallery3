@@ -195,7 +195,7 @@ class graphics_Core {
       self::init_toolkit();
     }
 
-    if (filesize($input_file) == 0) {
+    if (@filesize($input_file) == 0) {
       throw new Exception("@todo EMPTY_INPUT_FILE");
     }
 
