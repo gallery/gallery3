@@ -402,6 +402,7 @@ class g2_import_Core {
         $g2_album = ORM::factory("item", $g3_album_id);
         $g2_album->album_cover_item_id = $item->id;
         $g2_album->thumb_dirty = 1;
+        $g2_album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
         $g2_album->save();
         graphics::generate($g2_album);
       }
@@ -498,6 +499,8 @@ class g2_import_Core {
 
     if (isset($item)) {
       self::set_map($g2_item_id, $item->id);
+      $item->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
+      $item->save();
     }
 
     if ($corrupt) {
