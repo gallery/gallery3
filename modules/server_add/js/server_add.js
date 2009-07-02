@@ -43,10 +43,10 @@ function click_node(checkbox) {
   $(parent).find("input[type=checkbox]").attr("checked", checked);
 
   if ($("#gServerAddTree").find("input[type=checkbox]").is(":checked")) {
-    $("#gServerAddAddButton").attr("disabled", true);
+    $("#gServerAddAddButton").enable(true);
     $("#gServerAddAddButton").removeClass("ui-state-disabled");
   } else {
-    $("#gServerAddAddButton").attr("disabled", false);
+    $("#gServerAddAddButton").enable(false);
     $("#gServerAddAddButton").addClass("ui-state-disabled");
   }
 }
