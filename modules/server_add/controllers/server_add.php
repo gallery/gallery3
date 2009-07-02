@@ -27,9 +27,7 @@ class Server_Add_Controller extends Controller {
 
     $item = ORM::factory("item", $id);
     $view = new View("server_add_tree_dialog.html");
-    $view->action = url::abs_site("__ARGS__/{$id}__TASK_ID__?csrf=" . access::csrf_token());
-    $view->parents = $item->parents();
-    $view->album_title = $item->title;
+    $view->item = $item;
 
     $tree = new View("server_add_tree.html");
     $tree->data = array();
