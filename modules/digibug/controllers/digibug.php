@@ -41,6 +41,7 @@ class Digibug_Controller extends Controller {
       "company_id" => module::get_var("digibug", "company_id"),
       "event_id" => module::get_var("digibug", "event_id"),
       "cmd" => "addimg",
+      "partner_code" => "69",
       "return_url" => url::abs_site("digibug/close_window"),
       "num_images" => "1",
       "image_1" => $full_url,
