@@ -23,8 +23,8 @@ class Logout_Controller extends Controller {
 
     $user = user::active();
     user::logout();
-    log::info("user", t("User %name logged out", array("name" => $user->name)),
-              html::anchor("user/$user->id", $user->name));
+    log::info("user", t("User %name logged out", array("name" => p::clean($user->name))),
+              html::anchor("user/$user->id", p::clean($user->name)));
     if ($this->input->get("continue")) {
       $item = url::get_item_from_uri($this->input->get("continue"));
       if (access::can("view", $item)) {

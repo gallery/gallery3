@@ -112,7 +112,9 @@ class l10n_client_Core {
     //    {key:<key_2>, ...}
     //   ]
     $count = count($response);
-    log::info("translations", "Installed $count new / updated translation messages");
+    log::info("translations",
+              t2("Installed 1 new / updated translation message",
+                 "Installed %count new / updated translation messages", $count));
 
     foreach ($response as $message_data) {
       // @todo Better input validation

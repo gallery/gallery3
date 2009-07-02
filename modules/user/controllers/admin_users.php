@@ -50,7 +50,7 @@ class Admin_Users_Controller extends Controller {
       }
 
       $user->save();
-      message::success(t("Created user %user_name", array("user_name" => $user->name)));
+      message::success(t("Created user %user_name", array("user_name" => p::clean($user->name))));
       print json_encode(array("result" => "success"));
     } else {
       print json_encode(array("result" => "error",
@@ -83,7 +83,7 @@ class Admin_Users_Controller extends Controller {
                               "form" => $form->__toString()));
     }
 
-    $message = t("Deleted user %user_name", array("user_name" => $name));
+    $message = t("Deleted user %user_name", array("user_name" => p::clean($name)));
     log::success("user", $message);
     message::success($message);
     print json_encode(array("result" => "success"));
@@ -139,7 +139,7 @@ class Admin_Users_Controller extends Controller {
       }
       $user->save();
 
-      message::success(t("Changed user %user_name", array("user_name" => $user->name)));
+      message::success(t("Changed user %user_name", array("user_name" => p::clean($user->name))));
       print json_encode(array("result" => "success"));
     } else {
       print json_encode(array("result" => "error",
@@ -200,7 +200,8 @@ class Admin_Users_Controller extends Controller {
     if ($valid) {
       $group = group::create($new_name);
       $group->save();
-      message::success(t("Created group %group_name", array("group_name" => $group->name)));
+      message::success(
+        t("Created group %group_name", array("group_name" => p::clean($group->name))));
       print json_encode(array("result" => "success"));
     } else {
       print json_encode(array("result" => "error",
@@ -229,7 +230,7 @@ class Admin_Users_Controller extends Controller {
                               "form" => $form->__toString()));
     }
 
-    $message = t("Deleted group %group_name", array("group_name" => $name));
+    $message = t("Deleted group %group_name", array("group_name" => p::clean($name)));
     log::success("group", $message);
     message::success($message);
     print json_encode(array("result" => "success"));
@@ -266,10 +267,12 @@ class Admin_Users_Controller extends Controller {
     if ($valid) {
       $group->name = $form->edit_group->inputs["name"]->value;
       $group->save();
-      message::success(t("Changed group %group_name", array("group_name" => $group->name)));
+      message::success(
+        t("Changed group %group_name", array("group_name" => p::clean($group->name))));
       print json_encode(array("result" => "success"));
     } else {
-      message::error(t("Failed to change group %group_name", array("group_name" => $group->name)));
+      message::error(
+        t("Failed to change group %group_name", array("group_name" => p::clean($group->name))));
       print json_encode(array("result" => "error",
                               "form" => $form->__toString()));
     }

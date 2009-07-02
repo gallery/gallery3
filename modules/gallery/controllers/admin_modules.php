@@ -56,7 +56,7 @@ class Admin_Modules_Controller extends Admin_Controller {
 
     module::event("module_change", $changes);
 
-    // @todo this type of collation is questionable from a i18n perspective
+    // @todo this type of collation is questionable from an i18n perspective
     if ($activated_names) {
       message::success(t("Activated: %names", array("names" => join(", ", $activated_names))));
     }
