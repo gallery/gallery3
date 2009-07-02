@@ -1,3 +1,44 @@
+function open_close_branch(path, id) {
+  var parent = $("#file_" + id);
+  var children = $("#tree_" + id);
+  var icon = parent.find(".ui-icon:first");
+
+  if (!children.html()) {
+    parent.addClass("gLoadingSmall");
+    $.ajax({
+      url: GET_CHILDREN_URL.replace("__PATH__", path),
+      success: function(data, textStatus) {
+        children.html(data);
+	parent.removeClass("gLoadingSmall");
+
+	// Propagate checkbox value
+	children.find("input[type=checkbox]").attr(
+          "checked", parent.find("input[type=checkbox]:first").attr("checked"));
+      },
+    });
+  }
+
+  children.slideToggle("fast", function() {
+    if (children.is(":hidden")) {
+      icon.addClass("ui-icon-plus");
+      icon.removeClass("ui-icon-minus");
+    } else {
+      icon.addClass("ui-icon-minus");
+      icon.removeClass("ui-icon-plus");
+      parent.removeClass("gCollapsed");
+    }
+  });
+}
+
+function click_node(checkbox) {
+  var parent = $(checkbox).parents("li").get(0);
+  var checked = $(checkbox).attr("checked");
+  $(parent).find("input[type=checkbox]").attr("checked", checked);
+}
+
+/* ================================================================================ */
+
+/*
 var paused = false;
 var task = null;
 
@@ -80,16 +121,6 @@ function get_url(uri, task_id) {
   url = url.replace("__ARGS__", uri);
   url = url.replace("__TASK_ID__", !task_id ? "" : "/" + task_id);
   return url;
-}
-
-function checkbox_click(checkbox) {
-  var parent = $(checkbox).parents("li").get(0);
-  var checked = $(checkbox).attr("checked");
-  if (!$(parent).hasClass("gCollapsed")) {
-    $(parent).find(".gCheckboxTree input[type=checkbox]").attr("checked", checked);
-  }
-  var checkboxes = $("#gServerAdd :checkbox[checked]");
-  $("#gServerAdd form :submit").attr("disabled", checkboxes.length == 0);
 }
 
 function load_children(icon) {
@@ -203,3 +234,4 @@ function display_upload_error(error) {
     });
 }
 
+*/

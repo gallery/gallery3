@@ -18,26 +18,38 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Server_Add_Controller extends Controller {
-  public function index($id) {
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
-
+  public function browse($id) {
     if (!user::active()->admin) {
       access::forbidden();
+    }
+
+
+    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    foreach (array_keys($paths) as $path) {
+      $files[$path] = basename($path);
     }
 
     $item = ORM::factory("item", $id);
     $view = new View("server_add_tree_dialog.html");
     $view->item = $item;
-
-    $tree = new View("server_add_tree.html");
-    $tree->data = array();
-    $tree->checked = false;
-    $tree->tree_id = "tree_$id";
-    foreach (array_keys($paths) as $path) {
-      $tree->data[$path] = array("path" => $path, "is_dir" => true);
-    }
-    $view->tree = $tree->__toString();
+    $view->tree = new View("server_add_tree.html");
+    $view->tree->files = $files;
     print $view;
+  }
+
+  private function _validate_path($path) {
+    if (!is_readable($path) || is_link($path)) {
+      throw new Exception("@todo BAD_PATH");
+    }
+
+    $authorized_paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    foreach (array_keys($authorized_paths) as $valid_path) {
+      if (strpos($path, $valid_path) === 0) {
+        return;
+      }
+    }
+
+    throw new Exception("@todo BAD_PATH");
   }
 
   public function children() {
@@ -45,30 +57,31 @@ class Server_Add_Controller extends Controller {
       access::forbidden();
     }
 
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
-    $path_valid = false;
-    $path = $this->input->post("path");
-    $checked = $this->input->post("checked") == "true";
-
-    foreach (array_keys($paths) as $valid_path) {
-      if ($path_valid = strpos($path, $valid_path) === 0) {
-        break;
-      }
-    }
-    if (empty($path_valid)) {
-      throw new Exception("@todo BAD_PATH");
-    }
-
-    if (!is_readable($path) || is_link($path)) {
-      kohana::show_404();
-    }
+    $path = $this->input->get("path");
+    $this->_validate_path($path);
 
     $tree = new View("server_add_tree.html");
-    $tree->data = $this->_get_children($path);
-    $tree->checked = $checked;
-    $tree->tree_id = "tree_" . md5($path);
+    $tree->files = array();
+    $tree->tree_id = substr(md5($path), 10);
+
+    foreach (glob("$path/*") as $file) {
+      if (!is_readable($file)) {
+        continue;
+      }
+
+      if (!is_dir($file)) {
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+          continue;
+        }
+      }
+
+      $tree->files[$file] = basename($file);
+    }
     print $tree;
   }
+
+  /* ================================================================================ */
 
   function start($id) {
     if (!user::active()->admin) {
@@ -236,37 +249,5 @@ class Server_Add_Controller extends Controller {
     }
 
     return $count;
-  }
-
-  private function _get_children($path) {
-    $directory_list = $file_list = array();
-    $files = new DirectoryIterator($path);
-    foreach ($files as $file) {
-      if ($file->isDot() || $file->isLink()) {
-        continue;
-      }
-      $filename = $file->getFilename();
-      if ($filename[0] != ".") {
-        if ($file->isDir()) {
-          $directory_list[$filename] = array("path" => $file->getPathname(), "is_dir" => true);
-        } else {
-          $extension = strtolower(substr(strrchr($filename, '.'), 1));
-          if ($file->isReadable() &&
-              in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
-            $file_list[$filename] = array("path" => $file->getPathname(), "is_dir" => false);
-          }
-        }
-      }
-    }
-
-    ksort($directory_list);
-    ksort($file_list);
-
-    // We can't use array_merge here because if a file name is numeric, it will
-    // get renumbered, so lets do it ourselves
-    foreach ($file_list as $file => $fileinfo) {
-      $directory_list[$file] = $fileinfo;
-    }
-    return $directory_list;
   }
 }
