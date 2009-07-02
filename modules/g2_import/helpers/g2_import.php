@@ -667,8 +667,6 @@ class g2_import_Core {
           }
         }
       }
-    } else {
-      // @todo Figure out away to create the thumbnail and resizes?
     }
     $item->save();
   }
