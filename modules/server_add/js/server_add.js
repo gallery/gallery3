@@ -1,3 +1,7 @@
+/**
+ * We've clicked the + icon next to a directory.  Load up children of this
+ * directory from the server and display them.
+ */
 function open_close_branch(path, id) {
   var parent = $("#file_" + id);
   var children = $("#tree_" + id);
@@ -30,6 +34,9 @@ function open_close_branch(path, id) {
   });
 }
 
+/**
+ * We've clicked a checkbox.  Propagate the value downwards as necessary.
+ */
 function click_node(checkbox) {
   var parent = $(checkbox).parents("li").get(0);
   var checked = $(checkbox).attr("checked");
