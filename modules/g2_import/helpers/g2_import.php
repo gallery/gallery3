@@ -554,6 +554,7 @@ class g2_import_Core {
     $comment->text = $text;
     $comment->state = "published";
     $comment->server_http_host = $g2_comment->getHost();
+    $comment->created = $g2_comment->getDate();
     $comment->save();
 
     self::map($g2_comment->getId(), $comment->id);
