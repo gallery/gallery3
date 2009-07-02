@@ -638,33 +638,37 @@ class g2_import_Core {
 
     $target_thumb_size = module::get_var("gallery", "thumb_size");
     $target_resize_size = module::get_var("gallery", "resize_size");
-    foreach ($derivatives[$g2_item_id] as $derivative) {
-      if ($derivative->getPostFilterOperations()) {
-        // Let's assume for now that this is a watermark operation, which we can't handle.
-        continue;
-      }
+    if (!empty($derivatives[$g2_item_id])) {
+      foreach ($derivatives[$g2_item_id] as $derivative) {
+        if ($derivative->getPostFilterOperations()) {
+          // Let's assume for now that this is a watermark operation, which we can't handle.
+          continue;
+        }
 
-      if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
-          $item->thumb_dirty &&
-          ($derivative->getWidth() == $target_thumb_size ||
-           $derivative->getHeight() == $target_thumb_size)) {
-        if (@copy(g2($derivative->fetchPath()), $item->thumb_path())) {
-          $item->thumb_height = $derivative->getHeight();
-          $item->thumb_width = $derivative->getWidth();
-          $item->thumb_dirty = false;
+        if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
+            $item->thumb_dirty &&
+            ($derivative->getWidth() == $target_thumb_size ||
+             $derivative->getHeight() == $target_thumb_size)) {
+          if (@copy(g2($derivative->fetchPath()), $item->thumb_path())) {
+            $item->thumb_height = $derivative->getHeight();
+            $item->thumb_width = $derivative->getWidth();
+            $item->thumb_dirty = false;
+          }
+        }
+
+        if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_RESIZE &&
+            $item->resize_dirty &&
+            ($derivative->getWidth() == $target_resize_size ||
+             $derivative->getHeight() == $target_resize_size)) {
+          if (@copy(g2($derivative->fetchPath()), $item->resize_path())) {
+            $item->resize_height = $derivative->getHeight();
+            $item->resize_width = $derivative->getWidth();
+            $item->resize_dirty = false;
+          }
         }
       }
-
-      if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_RESIZE &&
-          $item->resize_dirty &&
-          ($derivative->getWidth() == $target_resize_size ||
-           $derivative->getHeight() == $target_resize_size)) {
-        if (@copy(g2($derivative->fetchPath()), $item->resize_path())) {
-          $item->resize_height = $derivative->getHeight();
-          $item->resize_width = $derivative->getWidth();
-          $item->resize_dirty = false;
-        }
-      }
+    } else {
+      // @todo Figure out away to create the thumbnail and resizes?
     }
     $item->save();
   }
