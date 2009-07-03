@@ -22,14 +22,14 @@
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($feed->children as $child): ?>
     <item>
-      <title><?= p::clean($child->title) ?></title>
+      <title><?= p::purify($child->title) ?></title>
       <link><?= p::clean($child->item_uri) ?></link>
       <author><?= p::clean($child->author) ?></author>
       <guid isPermaLink="true"><?= $child->item_uri ?></guid>
       <pubDate><?= $child->pub_date ?></pubDate>
       <content:encoded>
         <![CDATA[
-          <p><?= p::clean($child->text) ?></p>
+          <p><?= nl2br(p::purify($child->text)) ?></p>
           <p>
             <img alt="" src="<?= $child->thumb_url ?>"
                  height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" />

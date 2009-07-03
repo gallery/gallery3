@@ -132,7 +132,7 @@
           </div>
         </div>
         <p><?= gallery::date($comment->created) ?></p>
-        <?= p::purify($comment->text) ?>
+           <?= nl2br(p::purify($comment->text)) ?>
       </td>
       <td>
         <ul class="gButtonSetVertical">

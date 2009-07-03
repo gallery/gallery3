@@ -21,7 +21,7 @@
       <? if ($item->description): ?>
       <tr>
         <td><?= t("Description:") ?></td>
-        <td><?= p::purify($item->description) ?></td>
+         <td><?= nl2br(p::purify($item->description)) ?></td>
       </tr>
       <? endif ?>
     </table>

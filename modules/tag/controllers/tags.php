@@ -37,6 +37,7 @@ class Tags_Controller extends REST_Controller {
     $template->set_global("children", $tag->items($page_size, $offset));
     $template->set_global("children_count", $children_count);
     $template->content = new View("dynamic.html");
+    $template->content->title = $tag->name;
 
     print $template;
   }

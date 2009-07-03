@@ -3,7 +3,7 @@
 <div id="gInfo">
   <?= $theme->album_top() ?>
   <h1><?= p::purify($item->title) ?></h1>
-  <div class="gDescription"><?= p::purify($item->description) ?></div>
+  <div class="gDescription"><?= nl2br(p::purify($item->description)) ?></div>
 </div>
 
 <ul id="gAlbumGrid">

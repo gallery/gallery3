@@ -19,7 +19,7 @@
  */
 
 $config["Cache"] = array(
-  "SerializerPath" => "var/tmp"
+  "SerializerPath" => TMPPATH
 );
 
 $config["Attr"] = array(
