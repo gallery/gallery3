@@ -21,7 +21,7 @@ class p_Core {
   private static $_purifier = null;
   static function clean($dirty_html) {
     if (empty(self::$_purifier)) {
-      require_once(dirname(__file__) . "/../libraries/HTMLPurifier/HTMLPurifier.auto.php");
+      require_once(dirname(__file__) . "/../lib/HTMLPurifier/HTMLPurifier.auto.php");
       $config = HTMLPurifier_Config::createDefault();
       foreach (Kohana::config('purifier') as $category => $key_value) {
         foreach ($key_value as $key => $value) {
