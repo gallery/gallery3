@@ -82,7 +82,7 @@ class user_Core {
     $locales = locale::installed();
     if (count($locales) > 1) {
       // Put "none" at the first position in the array
-      $locales = array_merge(array("" => t("&laquo; none &raquo;")), $locales);
+      $locales = array_merge(array("" => t("« none »")), $locales);
       $selected_locale = ($user && $user->locale) ? $user->locale : "";
       $form->dropdown("locale")
         ->label(t("Language Preference"))
