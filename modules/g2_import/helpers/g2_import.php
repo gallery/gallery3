@@ -46,6 +46,10 @@ class g2_import_Core {
   }
 
   static function is_valid_embed_path($embed_path) {
+    $mod_path = VARPATH . "modules/g2_import/" . md5($embed_path);
+    if (file_exists($mod_path)) {
+      dir::unlink($mod_path);
+    }
     return file_exists($embed_path) && g2_import::init_embed($embed_path);
   }
 
@@ -337,8 +341,8 @@ class g2_import_Core {
     $album = album::create(
       $parent_album,
       $g2_album->getPathComponent(),
-      $g2_album->getTitle(),
-      self::extract_description($g2_album),
+      self::_decode_html_special_chars($g2_album->getTitle()),
+      self::_decode_html_special_chars(self::extract_description($g2_album)),
       self::map($g2_album->getOwnerId()));
 
     $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
@@ -398,6 +402,7 @@ class g2_import_Core {
         $g2_album = ORM::factory("item", $g3_album_id);
         $g2_album->album_cover_item_id = $item->id;
         $g2_album->thumb_dirty = 1;
+        $g2_album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
         $g2_album->save();
         graphics::generate($g2_album);
       }
@@ -450,12 +455,14 @@ class g2_import_Core {
         $corrupt = 1;
       }
       try {
+        Kohana::log("error", "description: " . self::extract_description($g2_item));
+        Kohana::log("error", "title: " . $g2_item->getTitle());
         $item = photo::create(
           $parent,
           $g2_path,
           $g2_item->getPathComponent(),
-          $g2_item->getTitle(),
-          self::extract_description($g2_item),
+          self::_decode_html_special_chars($g2_item->getTitle()),
+          self::_decode_html_special_chars(self::extract_description($g2_item)),
           self::map($g2_item->getOwnerId()));
       } catch (Exception $e) {
         Kohana::log(
@@ -472,8 +479,8 @@ class g2_import_Core {
             $parent,
             $g2_path,
             $g2_item->getPathComponent(),
-            $g2_item->getTitle(),
-            self::extract_description($g2_item),
+            self::_decode_html_special_chars($g2_item->getTitle()),
+            self::_decode_html_special_chars(self::extract_description($g2_item)),
             self::map($g2_item->getOwnerId()));
         } catch (Exception $e) {
           Kohana::log("alert", "Corrupt movie $g2_path\n" .
@@ -494,6 +501,8 @@ class g2_import_Core {
 
     if (isset($item)) {
       self::set_map($g2_item_id, $item->id);
+      $item->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
+      $item->save();
     }
 
     if ($corrupt) {
@@ -522,6 +531,15 @@ class g2_import_Core {
   }
 
   /**
+   * g2 encoded'&', '"', '<' and '>' as '&amp;', '&quot;', '&lt;' and '&gt;' respectively.
+   * This function undoes that encoding.
+   */
+  private static function _decode_html_special_chars($value) {
+    return str_replace(array("&amp;", "&quot;", "&lt;", "&gt;"),
+                       array("&", "\"", "<", ">"), $value);
+  }
+
+  /**
    * Import a single comment.
    */
   static function import_comment(&$queue) {
@@ -547,9 +565,10 @@ class g2_import_Core {
     $comment->author_id = self::map($g2_comment->getCommenterId());
     $comment->guest_name = $g2_comment->getAuthor();
     $comment->item_id = self::map($g2_comment->getParentId());
-    $comment->text = $text;
+    $comment->text = self::_transform_bbcode($text);
     $comment->state = "published";
     $comment->server_http_host = $g2_comment->getHost();
+    $comment->created = $g2_comment->getDate();
     $comment->save();
 
     self::map($g2_comment->getId(), $comment->id);
@@ -633,31 +652,33 @@ class g2_import_Core {
 
     $target_thumb_size = module::get_var("gallery", "thumb_size");
     $target_resize_size = module::get_var("gallery", "resize_size");
-    foreach ($derivatives[$g2_item_id] as $derivative) {
-      if ($derivative->getPostFilterOperations()) {
-        // Let's assume for now that this is a watermark operation, which we can't handle.
-        continue;
-      }
-
-      if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
-          $item->thumb_dirty &&
-          ($derivative->getWidth() == $target_thumb_size ||
-           $derivative->getHeight() == $target_thumb_size)) {
-        if (@copy(g2($derivative->fetchPath()), $item->thumb_path())) {
-          $item->thumb_height = $derivative->getHeight();
-          $item->thumb_width = $derivative->getWidth();
-          $item->thumb_dirty = false;
+    if (!empty($derivatives[$g2_item_id])) {
+      foreach ($derivatives[$g2_item_id] as $derivative) {
+        if ($derivative->getPostFilterOperations()) {
+          // Let's assume for now that this is a watermark operation, which we can't handle.
+          continue;
         }
-      }
 
-      if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_RESIZE &&
-          $item->resize_dirty &&
-          ($derivative->getWidth() == $target_resize_size ||
-           $derivative->getHeight() == $target_resize_size)) {
-        if (@copy(g2($derivative->fetchPath()), $item->resize_path())) {
-          $item->resize_height = $derivative->getHeight();
-          $item->resize_width = $derivative->getWidth();
-          $item->resize_dirty = false;
+        if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
+            $item->thumb_dirty &&
+            ($derivative->getWidth() == $target_thumb_size ||
+             $derivative->getHeight() == $target_thumb_size)) {
+          if (@copy(g2($derivative->fetchPath()), $item->thumb_path())) {
+            $item->thumb_height = $derivative->getHeight();
+            $item->thumb_width = $derivative->getWidth();
+            $item->thumb_dirty = false;
+          }
+        }
+
+        if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_RESIZE &&
+            $item->resize_dirty &&
+            ($derivative->getWidth() == $target_resize_size ||
+             $derivative->getHeight() == $target_resize_size)) {
+          if (@copy(g2($derivative->fetchPath()), $item->resize_path())) {
+            $item->resize_height = $derivative->getHeight();
+            $item->resize_width = $derivative->getWidth();
+            $item->resize_dirty = false;
+          }
         }
       }
     }
@@ -731,7 +752,29 @@ class g2_import_Core {
     } else {
       $description = $g2_summary . " " . $g2_description;
     }
-    return $description;
+    return self::_transform_bbcode($description);
+  }
+
+  static $bbcode_mappings = array(
+    "#\\[b\\](.*?)\\[/b\\]#" => "<span style=\"font-weight: bold;\">$1</span>",
+    "#\\[i\\](.*?)\\[/i\\]#" => "<span style=\"font-style: italic;\">$1</span>",
+    "#\\[u\\](.*?)\\[/u\\]#" => "<span style=\"text-decoration: underline: bold;\">$1</span>",
+    "#\\[s\\](.*?)\\[/s\\]#" => "<span style=\"font-decoration: line-through;\">$1</span>",
+    "#\\[url\\](.*?)\[/url\\]#" => "<a href=\"$1\">$1</a>",
+    "#\\[url=(.*?)\\](.*?)\[/url\\]#" => "<a href=\"$1\">$2</a>",
+    "#\\[img\\](.*?)\\[/img\\]#" => "<img src=\"$1\"/>",
+    "#\\[quote\\](.*?)\\[/quote\\]#" => "<blockquote><p>$1</p></blockquote>",
+    "#\\[code\\](.*?)\\[/code\\]#" => "<pre>$1</pre>",
+    "#\\[color=([^\\[]*)\\]([^\\[]*)\\[/color\\]#" => "<span style=\"font-color: $1;\">$2/span>",
+    "#\\[ul\\](.*?)\\/ul\\]#" => "<ul>$1</ul>",
+    "#\\[li\\](.*?)\\[/li\\]#" => "<li>$1</li>",
+  );
+  private static function _transform_bbcode($text) {
+    if (strpos($text, "[") !== false) {
+      $text = preg_replace(array_keys(self::$bbcode_mappings), array_values(self::$bbcode_mappings),
+                           $text);
+    }
+    return $text;
   }
 
   /**

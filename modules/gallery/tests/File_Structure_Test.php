@@ -84,6 +84,7 @@ class File_Structure_Test extends Unit_Test_Case {
       $expected = array("<?php defined('SYSPATH') OR die('No direct access allowed.');\n");
     } else if (strpos($path, MODPATH . "forge") === 0 ||
                strpos($path, MODPATH . "exif/lib") === 0 ||
+               strpos($path, MODPATH . "gallery/lib/HTMLPurifier") === 0 ||
                $path == MODPATH . "user/lib/PasswordHash.php" ||
                $path == DOCROOT . "var/database.php") {
       // 3rd party module security-only preambles, similar to Gallery's
@@ -136,7 +137,7 @@ class File_Structure_Test extends Unit_Test_Case {
 
   public function code_files_start_with_preamble_test() {
     $dir = new PhpCodeFilterIterator(
-      new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
+        new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
 
     $errors = array();
     foreach ($dir as $file) {
@@ -239,6 +240,7 @@ class GalleryCodeFilterIterator extends FilterIterator {
       strpos($path_name, MODPATH . "user/lib/PasswordHash") !== false ||
       strpos($path_name, DOCROOT . "lib/swfupload") !== false ||
       strpos($path_name, SYSPATH) !== false ||
+      strpos($path_name, MODPATH . "gallery/libraries/HTMLPurifier") !== false ||
       substr($path_name, -1, 1) == "~");
   }
 }

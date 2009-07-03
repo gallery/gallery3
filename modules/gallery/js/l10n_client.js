@@ -140,6 +140,32 @@ jQuery.extend(Gallery, {
         }
       }
     }
+
+    this.copySourceText = function() {
+      var index  = Gallery.l10nClient.selected;
+      if (index >= 0) {
+        var source = Gallery.l10nClient.getString(index, 'source');
+        var is_plural = Gallery.l10nClient.isPluralMessage(source);
+        if (is_plural) {
+          if (typeof(translation) != 'object') {
+            translation = {};
+          }
+          var num_plural_forms = plural_forms.length;
+          for (var i = 0; i < num_plural_forms; i++) {
+            var form = plural_forms[i];
+            var text = source['other'];
+            if (form == 'one') {
+              text = source['one'];
+            }
+            $('#l10n-edit-plural-translation-' + form)
+                .attr('value', text);
+          }
+        } else {
+          $('#l10n-edit-translation').attr('value', source);
+        }
+
+      }
+    }
   })
 });
 

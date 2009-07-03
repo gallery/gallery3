@@ -144,7 +144,7 @@ class Server_Add_Controller extends Controller {
                               "url" => "",
                               "task" => array(
                                 "id" => -1, "done" => 1, "percent_complete" => 100,
-                                "status" => t("No Eligible files, import cancelled"))));
+                                "status" => t("No eligible files, import cancelled"))));
       return;
     }
 

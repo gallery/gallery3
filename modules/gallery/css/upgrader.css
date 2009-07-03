@@ -99,6 +99,12 @@ div#confirmation {
   text-align: center;
 }
 
+div#confirmation a.close {
+  float: right;
+  padding: 10px;
+  text-decoration: none;
+}
+
 div#confirmation div {
   margin: 2px;
   padding: 20px;

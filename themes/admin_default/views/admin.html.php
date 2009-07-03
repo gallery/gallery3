@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Tranisitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
@@ -44,11 +44,13 @@
       <div id="gHeader">
         <?= $theme->admin_header_top() ?>
         <ul id="gLoginMenu">
-          <li class="first"><?= html::anchor("albums/1", t("Browse the Gallery")) ?></li>
+          <li class="first"><?= html::anchor("albums/1", "&larr; ".t("Back to the Gallery")) ?></li>
           <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1&csrf=$csrf") ?>"><?= t("Logout") ?></a></li>
         </ul>
-        <a href="<?= url::site("albums/1") ?>"><img src="<?= url::file("themes/default/images/logo.png") ?>" id="gLogo" alt="<?= t("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
-        <div id="gSiteAdminMenu" style="display: none">
+        <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery") ?>">
+          &larr; <?= t("back to the ...") ?>
+        </a>
+        <div id="gSiteAdminMenu" style="display: none;">
           <?= $theme->admin_menu() ?>
         </div>
         <?= $theme->admin_header_bottom() ?>

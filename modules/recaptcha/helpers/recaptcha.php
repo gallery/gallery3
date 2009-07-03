@@ -21,7 +21,7 @@ class recaptcha_Core {
   static function get_configure_form() {
     $form = new Forge("admin/recaptcha", "", "post", array("id" => "gConfigureRecaptchaForm"));
     $group = $form->group("configure_recaptcha")
-      ->label(t("Configure Recaptcha"));
+      ->label(t("Configure reCAPTCHA"));
     $group->input("public_key")
       ->label(t("Public Key"))
       ->value(module::get_var("recaptcha", "public_key"));
@@ -42,7 +42,7 @@ class recaptcha_Core {
     $private_key = module::get_var("recaptcha", "private_key");
     if (empty($public_key) || empty($private_key)) {
       site_status::warning(
-        t("Recaptcha is not quite ready!  Please configure the <a href=\"%url\">Recaptcha Keys</a>",
+        t("reCAPTCHA is not quite ready!  Please configure the <a href=\"%url\">reCAPTCHA Keys</a>",
           array("url" => url::site("admin/recaptcha"))),
         "recaptcha_config");
     } else {

@@ -10,7 +10,7 @@
  * Lifetime does not need to be set as it is
  * overridden by the session expiration setting.
  *
- * $Id: Cache.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: Cache.php 4431 2009-07-01 03:41:41Z kiall $
  *
  * @package    Core
  * @author     Kohana Team
@@ -76,6 +76,9 @@ class Session_Cache_Driver implements Session_Driver {
 
 	public function write($id, $data)
 	{
+		if ( ! Session::$should_save)
+			return TRUE;
+
 		$id = 'session_'.$id;
 		$data = Kohana::config('session.encryption') ? $this->encrypt->encode($data) : $data;
 

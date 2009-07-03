@@ -72,13 +72,16 @@ class Gallery_View_Core extends View {
    */
   protected function combine_files($files, $type) {
     $links = array();
-    $key = array();
+
+    // Include the url in the cache key so that if the Gallery moves, we don't use old cached
+    // entries.
+    $key = array(url::abs_file(""));
 
     foreach (array_keys($files) as $file) {
       $path = DOCROOT . $file;
       if (file_exists($path)) {
         $stats = stat($path);
-        $links[] = $path;
+        $links[$file] = $path;
         // 7 == size, 9 == mtime, see http://php.net/stat
         $key[] = "$file $stats[7] $stats[9]";
       } else {
@@ -92,11 +95,11 @@ class Gallery_View_Core extends View {
 
     if (empty($contents)) {
       $contents = "";
-      foreach ($links as $link) {
+      foreach ($links as $file => $link) {
         if ($type == "css") {
-          $contents .= "/* $link */\n" . $this->process_css($link) . "\n";
+          $contents .= "/* $file */\n" . $this->process_css($link) . "\n";
         } else {
-          $contents .= "/* $link */\n" . file_get_contents($link) . "\n";
+          $contents .= "/* $file */\n" . file_get_contents($link) . "\n";
         }
       }
 

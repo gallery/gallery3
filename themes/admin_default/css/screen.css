@@ -101,19 +101,22 @@
 #gHeader #gLogo {
   float: left;
   margin: -22px 10px 0 0;
+  display: block;
+  padding-left: 2px;
+  width: 105px; /* 107px - padding-left */
+  height: 48px;
+  background-image: url('../../default/images/logo.png');
+  color: #A5A5A5 ! important;
 }
-
-.rtl #gHeader #gLogo {
-  float: left;
+#gHeader #gLogo:hover {
+  color: #FF6600 ! important;
+  text-decoration: none;
 }
 
 #gHeader #gLoginMenu {
   float: none;
   margin: 0;
   padding: 5px 0 10px 0;
-}
-
-#gHeader #gLoginMenu {
   text-align: right;
 }
 

@@ -32,11 +32,18 @@ class Upgrader_Controller extends Controller {
       @unlink(TMPPATH . $upgrade_token);
     }
 
+    $available_upgrades = 0;
+    foreach (module::available() as $module) {
+      if ($module->version && $module->version != $module->code_version) {
+        $available_upgrades++;
+      }
+    }
+
     $view = new View("upgrader.html");
     $view->can_upgrade = user::active()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
     $view->available = module::available();
-    $view->done = Input::instance()->get("done");
+    $view->done = ($available_upgrades == 0);
     print $view;
   }
 
@@ -67,7 +74,7 @@ class Upgrader_Controller extends Controller {
     if (php_sapi_name() == "cli") {
       print "Upgrade complete\n";
     } else {
-      url::redirect("upgrader?done=1");
+      url::redirect("upgrader");
     }
   }
 }

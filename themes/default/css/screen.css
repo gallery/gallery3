@@ -13,7 +13,6 @@
  *  7)  Browser hacks
  *  8)  jQuery and jQuery UI
  *  9)  Right-to-left language styles
- * 10)  Digibug Print
  */
 
 /** *******************************************************************
@@ -422,7 +421,7 @@ form .gError,
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLogo {
+#gHeader #gLogo img {
   float: left;
   margin: -4px 10px 0 0;
 }
@@ -755,6 +754,16 @@ form .gError,
  * 7) jQuery and jQuery UI
  *********************************************************************/
 
+/* Superfish menu overrides ~~~~~~~~~~~~~~ */
+
+.sf-menu li li, .sf-menu li li ul li {
+  background-color: #bdd2ff;
+}
+
+.sf-menu li:hover {
+  background-color: #dfe9ff;
+}
+
 /* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
 
 .gLoadingLarge {
@@ -1046,7 +1055,7 @@ form .gError,
 .rtl input[type="submit"],
 .rtl input[type="reset"],
 .rtl .gShortForm li,
-.rtl #gHeader #gLogo,
+.rtl #gHeader #gLogo img,
 .rtl #gContent #gAlbumGrid .gItem,
 .rtl #gSiteMenu,
 .rtl .gBreadcrumbs li,
