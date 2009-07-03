@@ -40,11 +40,11 @@ class Admin_Modules_Controller extends Admin_Controller {
       $desired = $this->input->post($module_name) == 1;
       if ($info->active && !$desired && module::is_active($module_name)) {
         $changes->deactivate[] = $module_name;
-        $deactivated_names[] = $info->name;
+        $deactivated_names[] = t($info->name);
         module::deactivate($module_name);
       } else if (!$info->active && $desired && !module::is_active($module_name)) {
         $changes->activate[] = $module_name;
-        $activated_names[] = $info->name;
+        $activated_names[] = t($info->name);
         if (module::is_installed($module_name)) {
           module::upgrade($module_name);
         } else {
