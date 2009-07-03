@@ -81,6 +81,29 @@ class Server_Add_Controller extends Controller {
     print $tree;
   }
 
+  public function add() {
+    if (!user::active()->admin) {
+      access::forbidden();
+    }
+    access::verify_csrf();
+
+    $authorized_paths = unserialize(module::get_var("server_add", "authorized_paths"));
+
+    // The paths we receive are full pathnames.  Convert that into a tree structure to save space
+    // in our task.
+    foreach (Input::instance()->post("path") as $path) {
+      if (is_dir($path)) {
+        $dirs[$path] = array();
+      } else if (is_file($path)) {
+        $dir = dirname($path);
+        $file = basename($path);
+        $dirs[$dir][] = $file;
+      }
+    }
+
+    Kohana::log("alert",print_r($dirs,1));
+  }
+
   /* ================================================================================ */
 
   function start($id) {
