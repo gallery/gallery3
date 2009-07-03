@@ -18,7 +18,18 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class p_Core {
+  private static $_purifier = null;
   static function clean($dirty_html) {
-    return GalleryHtmlPurifier::instance()->purify($dirty_html);
+    if (empty(self::$_purifier)) {
+      require_once(dirname(__file__) . "/../libraries/HTMLPurifier/HTMLPurifier.auto.php");
+      $config = HTMLPurifier_Config::createDefault();
+      foreach (Kohana::config('purifier') as $category => $key_value) {
+        foreach ($key_value as $key => $value) {
+          $config->set("$category.$key", $value);
+        }
+      }
+      self::$_purifier = new HTMLPurifier($config);
+    }
+    return self::$_purifier->purify($dirty_html);
   }
 }
