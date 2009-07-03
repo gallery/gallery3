@@ -341,8 +341,8 @@ class g2_import_Core {
     $album = album::create(
       $parent_album,
       $g2_album->getPathComponent(),
-      $g2_album->getTitle(),
-      self::extract_description($g2_album),
+      self::_decode_html_special_chars($g2_album->getTitle()),
+      self::_decode_html_special_chars(self::extract_description($g2_album)),
       self::map($g2_album->getOwnerId()));
 
     $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
@@ -455,12 +455,14 @@ class g2_import_Core {
         $corrupt = 1;
       }
       try {
+        Kohana::log("error", "description: " . self::extract_description($g2_item));
+        Kohana::log("error", "title: " . $g2_item->getTitle());
         $item = photo::create(
           $parent,
           $g2_path,
           $g2_item->getPathComponent(),
-          $g2_item->getTitle(),
-          self::extract_description($g2_item),
+          self::_decode_html_special_chars($g2_item->getTitle()),
+          self::_decode_html_special_chars(self::extract_description($g2_item)),
           self::map($g2_item->getOwnerId()));
       } catch (Exception $e) {
         Kohana::log(
@@ -477,8 +479,8 @@ class g2_import_Core {
             $parent,
             $g2_path,
             $g2_item->getPathComponent(),
-            $g2_item->getTitle(),
-            self::extract_description($g2_item),
+            self::_decode_html_special_chars($g2_item->getTitle()),
+            self::_decode_html_special_chars(self::extract_description($g2_item)),
             self::map($g2_item->getOwnerId()));
         } catch (Exception $e) {
           Kohana::log("alert", "Corrupt movie $g2_path\n" .
@@ -526,6 +528,15 @@ class g2_import_Core {
     }
 
     self::$current_g2_item = null;
+  }
+
+  /**
+   * g2 encoded'&', '"', '<' and '>' as '&amp;', '&quot;', '&lt;' and '&gt;' respectively.
+   * This function undoes that encoding.
+   */
+  private static function _decode_html_special_chars($value) {
+    return str_replace(array("&amp;", "&quot;", "&lt;", "&gt;"),
+                       array("&", "\"", "<", ">"), $value);
   }
 
   /**
