@@ -42,6 +42,9 @@ function click_node(checkbox) {
   var checked = $(checkbox).attr("checked");
   $(parent).find("input[type=checkbox]").attr("checked", checked);
 
+  // @todo if we uncheck all the children for a parent, we should uncheck the
+  // parent itself, otherwise in the code we'll add the entire parent since if
+  // we find an album as a leaf, we assume that it's never been expanded in the UI.
   if ($("#gServerAddTree").find("input[type=checkbox]").is(":checked")) {
     $("#gServerAddAddButton").enable(true);
     $("#gServerAddAddButton").removeClass("ui-state-disabled");
