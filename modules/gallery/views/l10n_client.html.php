@@ -63,6 +63,8 @@
           <?= form::textarea("l10n-edit-plural-translation-other", "", ' rows="2"') ?>
         </div>
         <input type="submit" name="l10n-edit-save" value="<?= t("Save translation") ?>"/>
+        <a href="javascript: Gallery.l10nClient.copySourceText()"
+           class="gButtonLink ui-state-default ui-corner-all"><?= t("Copy source text") ?></a>
       </form>
     </div>
   </div>
