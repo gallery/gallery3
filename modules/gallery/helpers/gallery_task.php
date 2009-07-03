@@ -109,7 +109,7 @@ class gallery_task_Core {
 
     case "find_files":  // 0% - 10%
       while (($dir = array_pop($dirs)) && microtime(true) - $start < 0.5) {
-        if (basename($dir) == "tests") {
+        if (in_array(basename($dir), array("tests", "lib"))) {
           continue;
         }
 
