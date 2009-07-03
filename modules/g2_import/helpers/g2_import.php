@@ -565,7 +565,7 @@ class g2_import_Core {
     $comment->author_id = self::map($g2_comment->getCommenterId());
     $comment->guest_name = $g2_comment->getAuthor();
     $comment->item_id = self::map($g2_comment->getParentId());
-    $comment->text = $text;
+    $comment->text = self::_transform_bbcode($text);
     $comment->state = "published";
     $comment->server_http_host = $g2_comment->getHost();
     $comment->created = $g2_comment->getDate();
@@ -752,7 +752,29 @@ class g2_import_Core {
     } else {
       $description = $g2_summary . " " . $g2_description;
     }
-    return $description;
+    return self::_transform_bbcode($description);
+  }
+
+  static $bbcode_mappings = array(
+    "#\\[b\\](.*?)\\[/b\\]#" => "<span style=\"font-weight: bold;\">$1</span>",
+    "#\\[i\\](.*?)\\[/i\\]#" => "<span style=\"font-style: italic;\">$1</span>",
+    "#\\[u\\](.*?)\\[/u\\]#" => "<span style=\"text-decoration: underline: bold;\">$1</span>",
+    "#\\[s\\](.*?)\\[/s\\]#" => "<span style=\"font-decoration: line-through;\">$1</span>",
+    "#\\[url\\](.*?)\[/url\\]#" => "<a href=\"$1\">$1</a>",
+    "#\\[url=(.*?)\\](.*?)\[/url\\]#" => "<a href=\"$1\">$2</a>",
+    "#\\[img\\](.*?)\\[/img\\]#" => "<img src=\"$1\"/>",
+    "#\\[quote\\](.*?)\\[/quote\\]#" => "<blockquote><p>$1</p></blockquote>",
+    "#\\[code\\](.*?)\\[/code\\]#" => "<pre>$1</pre>",
+    "#\\[color=([^\\[]*)\\]([^\\[]*)\\[/color\\]#" => "<span style=\"font-color: $1;\">$2/span>",
+    "#\\[ul\\](.*?)\\/ul\\]#" => "<ul>$1</ul>",
+    "#\\[li\\](.*?)\\[/li\\]#" => "<li>$1</li>",
+  );
+  private static function _transform_bbcode($text) {
+    if (strpos($text, "[") !== false) {
+      $text = preg_replace(array_keys(self::$bbcode_mappings), array_values(self::$bbcode_mappings),
+                           $text);
+    }
+    return $text;
   }
 
   /**
