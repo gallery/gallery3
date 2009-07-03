@@ -41,7 +41,7 @@ class Comments_Controller extends REST_Controller {
           "id" => $comment->id,
           "author_name" => p::clean($comment->author_name()),
           "created" => $comment->created,
-          "text" => p::clean($comment->text));
+          "text" => p::purify($comment->text));
       }
       print json_encode($data);
       break;
@@ -128,7 +128,7 @@ class Comments_Controller extends REST_Controller {
                 "id" => $comment->id,
                 "author_name" => p::clean($comment->author_name()),
                 "created" => $comment->created,
-                "text" => p::clean($comment->text))));
+                "text" => p::purify($comment->text))));
     } else {
       $view = new Theme_View("comment.html", "fragment");
       $view->comment = $comment;

@@ -8,7 +8,7 @@
     <table>
       <tr>
         <td><?= t("Comment:") ?></td>
-        <td><?= p::clean($comment->text) ?></td>
+        <td><?= p::purify($comment->text) ?></td>
       </tr>
       <tr>
         <td><?= t("Author Name:") ?></td>

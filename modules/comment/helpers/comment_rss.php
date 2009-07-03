@@ -23,7 +23,7 @@ class comment_rss_Core {
     $feeds["comment/newest"] = t("All new comments");
     if ($item) {
       $feeds["comment/item/$item->id"] =
-        t("Comments on %title", array("title" => p::clean($item->title)));
+        t("Comments on %title", array("title" => p::purify($item->title)));
     }
     return $feeds;
   }

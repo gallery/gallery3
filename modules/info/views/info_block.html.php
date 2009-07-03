@@ -2,12 +2,12 @@
 <ul class="gMetadata">
   <li>
     <strong class="caption"><?= t("Title:") ?></strong>
-    <?= p::clean($item->title) ?>
+    <?= p::purify($item->title) ?>
   </li>
   <? if ($item->description): ?>
   <li>
     <strong class="caption"><?= t("Description:") ?></strong>
-    <?= p::clean($item->description) ?>
+    <?= p::purify($item->description) ?>
   </li>
   <? endif ?>
   <? if ($item->id != 1): ?>

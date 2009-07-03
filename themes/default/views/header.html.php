@@ -19,10 +19,10 @@
   <? foreach ($parents as $parent): ?>
   <li>
     <a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>">
-      <?= p::clean($parent->title) ?>
+      <?= p::purify($parent->title) ?>
     </a>
   </li>
   <? endforeach ?>
-  <li class="active"><?= p::clean($item->title) ?></li>
+  <li class="active"><?= p::purify($item->title) ?></li>
 </ul>
 <? endif ?>

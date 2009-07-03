@@ -122,7 +122,7 @@
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
-                 alt="<?= p::clean($item->title) ?>"
+                 alt="<?= p::purify($item->title) ?>"
                  <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
               />
               <? else: ?>
@@ -132,7 +132,7 @@
           </div>
         </div>
         <p><?= gallery::date($comment->created) ?></p>
-        <?= p::clean($comment->text) ?>
+        <?= p::purify($comment->text) ?>
       </td>
       <td>
         <ul class="gButtonSetVertical">
