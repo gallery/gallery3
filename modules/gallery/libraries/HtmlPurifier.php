@@ -17,8 +17,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class p_Core {
-  static function clean($dirty_html) {
-    return GalleryHtmlPurifier::instance()->purify($dirty_html);
+class HtmlPurifier_Core {
+  private static $_instance;
+
+  public function __construct($name = NULL, $data = NULL, $type = NULL) {
+    parent::__construct($name, $data, $type);
+    $this->set_global("csrf", access::csrf_token());
+  }
+
+  static function instance($config=null) {
+    require_once(dirname(__file__) . "/HTMLPurifier/HTMLPurifier.auto.php");
+    if (self::$_instance == NULL) {
+      $config = isset($config) ? $config : Kohana::config('purifier');
+      $purifier_config = HTMLPurifier_Config::createDefault();
+      foreach ($config as $category => $key_value) {
+        foreach ($key_value as $key => $value) {
+          $purifier_config->set("$category.$key", $value);
+        }
+      }
+      self::$_instance = new HtmlPurifier($purifier_config);
+    }
+
+    return self::$_instance;
   }
 }

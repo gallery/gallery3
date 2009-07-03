@@ -17,8 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class p_Core {
-  static function clean($dirty_html) {
-    return GalleryHtmlPurifier::instance()->purify($dirty_html);
-  }
-}
+
+$config["Cache"] = array(
+  "SerializerPath" => "var/tmp"
+);
+
+$config["Attr"] = array(
+  "EnableID" => true
+);
