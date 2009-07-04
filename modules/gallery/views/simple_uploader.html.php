@@ -6,7 +6,7 @@
 <!-- hack to set the title for the dialog -->
 <form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
   <fieldset>
-    <legend> <?= t("Add photos to %album_title", array("album_title" => p::clean($item->title))) ?> </legend>
+    <legend> <?= t("Add photos to %album_title", array("album_title" => p::purify($item->title))) ?> </legend>
   </fieldset>
 </form>
 
@@ -28,7 +28,7 @@
     <? foreach ($item->parents() as $parent): ?>
     <li> <?= p::clean($parent->title) ?> </li>
     <? endforeach ?>
-    <li class="active"> <?= p::clean($item->title) ?> </li>
+    <li class="active"> <?= p::purify($item->title) ?> </li>
   </ul>
 
   <p>
@@ -185,7 +185,7 @@
       $("#gUploadQueueInfo").text("(completed " + stats.successful_uploads +
                                   " of " + (stats.files_queued + stats.successful_uploads + stats.upload_errors + stats.upload_cancelled + stats.queue_errors) + ")");
     }
-    
+
     // Auto start the upload
     this.startUpload();
   }

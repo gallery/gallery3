@@ -50,8 +50,8 @@
   </div>
 
   <div id="gInfo">
-    <h1><?= p::clean($item->title) ?></h1>
-    <div><?= p::clean($item->description) ?></div>
+    <h1><?= p::purify($item->title) ?></h1>
+    <div><?= p::purify($item->description) ?></div>
   </div>
 
   <script type="text/javascript">

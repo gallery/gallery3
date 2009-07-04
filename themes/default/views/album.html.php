@@ -2,8 +2,8 @@
 <? // @todo Set hover on AlbumGrid list items for guest users ?>
 <div id="gInfo">
   <?= $theme->album_top() ?>
-  <h1><?= p::clean($item->title) ?></h1>
-  <div class="gDescription"><?= p::clean($item->description) ?></div>
+  <h1><?= p::purify($item->title) ?></h1>
+  <div class="gDescription"><?= p::purify($item->description) ?></div>
 </div>
 
 <ul id="gAlbumGrid">
