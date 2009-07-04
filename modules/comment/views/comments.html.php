@@ -21,7 +21,7 @@
                   "name" => p::clean($comment->author_name()))); ?>
     </p>
     <div>
-      <?= p::purify($comment->text) ?>
+      <?= nl2br(p::purify($comment->text)) ?>
     </div>
   </li>
   <? endforeach ?>
