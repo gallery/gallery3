@@ -8,7 +8,7 @@
     <table>
       <tr>
         <td><?= t("Comment:") ?></td>
-        <td><?= p::purify($comment->text) ?></td>
+  <td><?= nl2br(p::purify($comment->text)) ?></td>
       </tr>
       <tr>
         <td><?= t("Author Name:") ?></td>

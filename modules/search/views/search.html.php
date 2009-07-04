@@ -34,7 +34,7 @@
           <?= p::purify($item->title) ?>
         </p>
         <div>
-          <?= p::purify($item->description) ?>
+    <?= nl2br(p::purify($item->description)) ?>
         </div>
       </a>
     </li>

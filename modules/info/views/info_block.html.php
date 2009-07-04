@@ -7,7 +7,7 @@
   <? if ($item->description): ?>
   <li>
     <strong class="caption"><?= t("Description:") ?></strong>
-    <?= p::purify($item->description) ?>
+     <?= nl2br(p::purify($item->description)) ?>
   </li>
   <? endif ?>
   <? if ($item->id != 1): ?>
