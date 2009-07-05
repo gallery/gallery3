@@ -13,7 +13,6 @@
  *  7)  Browser hacks
  *  8)  jQuery and jQuery UI
  *  9)  Right-to-left language styles
- * 10)  BBCode Styles
  */
 
 /** *******************************************************************
@@ -1064,22 +1063,5 @@ form .gError,
 .rtl .gButtonSet li,
 .rtl .ui-icon-left .ui-icon {
   float: right;
-}
-
-/* BBCode ~~~~~~~~~~~~~~~~~~~~ */
-.gBBCodeBold {
-  font-weight: bold;
-}
-
-.gBBCodeItalic {
-  font-style: italic;
-}
-
-.gBBCodeUnderline {
-  text-decoration: underline;
-}
-
-.gBBCodeStrike {
-  font-decoration: line-through;
 }
 
