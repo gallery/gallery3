@@ -756,17 +756,16 @@ class g2_import_Core {
   }
 
   static $bbcode_mappings = array(
-    "#\\[b\\](.*?)\\[/b\\]#" => "<b>$1</b>",
-    "#\\[i\\](.*?)\\[/i\\]#" => "<i>$1</i>",
-    "#\\[u\\](.*?)\\[/u\\]#" => "<u>$1</u>",
-    "#\\[s\\](.*?)\\[/s\\]#" => "<strike>$1</strike>",
+    "#\\[b\\](.*?)\\[/b\\]#" => "<span style=\"font-weight: bold;\">$1</span>",
+    "#\\[i\\](.*?)\\[/i\\]#" => "<span style=\"font-style: italic;\">$1</span>",
+    "#\\[u\\](.*?)\\[/u\\]#" => "<span style=\"text-decoration: underline: bold;\">$1</span>",
+    "#\\[s\\](.*?)\\[/s\\]#" => "<span style=\"font-decoration: line-through;\">$1</span>",
     "#\\[url\\](.*?)\[/url\\]#" => "<a href=\"$1\">$1</a>",
     "#\\[url=(.*?)\\](.*?)\[/url\\]#" => "<a href=\"$1\">$2</a>",
     "#\\[img\\](.*?)\\[/img\\]#" => "<img src=\"$1\"/>",
     "#\\[quote\\](.*?)\\[/quote\\]#" => "<blockquote><p>$1</p></blockquote>",
     "#\\[code\\](.*?)\\[/code\\]#" => "<pre>$1</pre>",
-    "#\\[size=([^\\[]*)\\]([^\\[]*)\\[/size\\]#" => "<font size=\"$1\">$2</font>",
-    "#\\[color=([^\\[]*)\\]([^\\[]*)\\[/color\\]#" => "<font color=\"$1\">$2</font>",
+    "#\\[color=([^\\[]*)\\]([^\\[]*)\\[/color\\]#" => "<span style=\"font-color: $1;\">$2/span>",
     "#\\[ul\\](.*?)\\/ul\\]#" => "<ul>$1</ul>",
     "#\\[li\\](.*?)\\[/li\\]#" => "<li>$1</li>",
   );
