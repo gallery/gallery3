@@ -40,7 +40,31 @@ class Task_Model extends ORM {
     return parent::save();
   }
 
+  public function delete() {
+    Cache::instance()->delete($this->_cache_key());
+    return parent::save();
+  }
+
   public function owner() {
     return user::lookup($this->owner_id);
+  }
+
+  public function log($msg) {
+    $key = $this->_cache_key();
+    $log = Cache::instance()->get($key);
+
+    // Save for 30 days.
+    $log .= !empty($log) ? "\n" : "";
+    Cache::instance()->set($key, "$log{$msg}",
+                           array("task", "log", "import"), 2592000);
+  }
+
+  public function get_task_log() {
+    $log_data = Cache::instance()->get($this->_cache_key());
+    return  $log_data !== null ? $log_data : false;
+  }
+
+  private function _cache_key() {
+    return md5("$this->id; $this->name; $this->callback");
   }
 }

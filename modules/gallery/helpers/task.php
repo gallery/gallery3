@@ -56,6 +56,8 @@ class task_Core {
     }
     $task->done = 1;
     $task->state = "cancelled";
+    $task->log(t("Task %task_name cancelled (task id %task_id)",
+                 array("task_name" => $task->name, "task_id" => $task->id)));
     $task->save();
 
     return $task;

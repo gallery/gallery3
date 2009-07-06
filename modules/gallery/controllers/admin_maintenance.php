@@ -59,6 +59,8 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view = new View("admin_maintenance_task.html");
     $view->task = $task;
 
+    $task->log(t("Task %task_name started (task id %task_id)",
+                         array("task_name" => $task->name, "task_id" => $task->id)));
     log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
@@ -79,10 +81,46 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view = new View("admin_maintenance_task.html");
     $view->task = $task;
 
+    $task->log(t("Task %task_name resumed (task id %task_id)",
+                 array("task_name" => $task->name, "task_id" => $task->id)));
     log::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
     print $view;
+  }
+
+  /**
+   * Show the task log
+   * @param string $task_id
+   */
+  public function show_log($task_id) {
+    access::verify_csrf();
+
+    $task = ORM::factory("task", $task_id);
+    if (!$task->loaded) {
+      throw new Exception("@todo MISSING_TASK");
+    }
+    $view = new View("admin_maintenance_show_log.html");
+    $view->task = $task;
+
+    print $view;
+  }
+
+  /**
+   * Save the task log
+   * @param string $task_id
+   */
+  public function save_log($task_id) {
+    access::verify_csrf();
+
+    $task = ORM::factory("task", $task_id);
+    if (!$task->loaded) {
+      throw new Exception("@todo MISSING_TASK");
+    }
+
+    header("Content-Type: application/text");
+    header("Content-Disposition: filename=g2_import.txt");
+    print $task->get_task_log();
   }
 
   /**
