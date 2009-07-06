@@ -76,9 +76,17 @@ class task_Core {
       throw new Exception("@todo MISSING_TASK");
     }
 
-    $task->state = "running";
-    call_user_func_array($task->callback, array(&$task));
-    $task->save();
+    try {
+      $task->state = "running";
+      call_user_func_array($task->callback, array(&$task));
+      $task->save();
+    } catch (Exception $e) {
+      $task->log($e->__toString());
+      $task->state = "error";
+      $task->done = true;
+      $task->status = $e->getMessage();
+      $task->save();
+    }
 
     return $task;
   }
