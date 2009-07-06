@@ -79,6 +79,9 @@ class task_Core {
     try {
       $task->state = "running";
       call_user_func_array($task->callback, array(&$task));
+      if ($task->done) {
+        $task->log($task->status);
+      }
       $task->save();
     } catch (Exception $e) {
       $task->log($e->__toString());
