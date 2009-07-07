@@ -54,14 +54,14 @@ class g2_import_Core {
   }
 
   /**
-   * Initialize the embedded Gallery2 instance.  Call this before any other Gallery2 calls.
+   * Initialize the embedded Gallery 2 instance.  Call this before any other Gallery 2 calls.
    */
   static function init_embed($embed_path) {
     if (!is_file($embed_path)) {
       return false;
     }
 
-    // Gallery2 defines a class called Gallery.  So does Gallery 3.  They don't get along.  So do
+    // Gallery 2 defines a class called Gallery.  So does Gallery 3.  They don't get along.  So do
     // a total hack here and copy over a few critical files (embed.php, main.php, bootstrap.inc
     // and Gallery.class) and munge them so that we can rename the Gallery class to be
     // G2_Gallery.   Is this retarded?  Why yes it is.
@@ -244,7 +244,7 @@ class g2_import_Core {
       break;
 
     case GROUP_SITE_ADMINS:
-      $message = t("Group 'Admin' does not exist in gallery3, skipping");
+      $message = t("Group 'Admin' does not exist in Gallery 3, skipping");
       break;  // This is not a group in G3
 
     case GROUP_EVERYBODY:
@@ -343,7 +343,7 @@ class g2_import_Core {
     }
 
     if ($g2_album->getParentId() == null) {
-      return t("Skipping Gallery2 root album");
+      return t("Skipping Gallery 2 root album");
     }
     $parent_album = ORM::factory("item", self::map($g2_album->getParentId()));
 
@@ -446,7 +446,7 @@ class g2_import_Core {
     $g2_type = $g2_item->getEntityType();
     $corrupt = 0;
     if (!file_exists($g2_path)) {
-      // If the Gallery2 source image isn't available, this operation is going to fail.  That can
+      // If the Gallery 2 source image isn't available, this operation is going to fail.  That can
       // happen in cases where there's corruption in the source Gallery 2.  In that case, fall
       // back on using a broken image.  It's important that we import *something* otherwise
       // anything that refers to this item in Gallery 2 will have a dangling pointer in Gallery 3
@@ -665,8 +665,8 @@ class g2_import_Core {
   }
 
   /**
-   * If the thumbnails and resizes created for the Gallery2 photo match the dimensions of the
-   * ones we expect to create for Gallery3, then copy the files over instead of recreating them.
+   * If the thumbnails and resizes created for the Gallery 2 photo match the dimensions of the
+   * ones we expect to create for Gallery 3, then copy the files over instead of recreating them.
    */
   static function copy_matching_thumbnails_and_resizes($item) {
     // We only operate on items that are being imported
@@ -674,7 +674,7 @@ class g2_import_Core {
       return;
     }
 
-    // Precaution: if the Gallery2 item was watermarked, or we have the Gallery3 watermark module
+    // Precaution: if the Gallery 2 item was watermarked, or we have the Gallery 3 watermark module
     // active then we'd have to do something a lot more sophisticated here.  For now, just skip
     // this step in those cases.
     // @todo we should probably use an API here, eventually.
@@ -927,7 +927,7 @@ function g2() {
   $args = func_get_arg(0);
   $ret = array_shift($args);
   if ($ret) {
-    Kohana::log("error", "Gallery2 call failed with: " . $ret->getAsText());
+    Kohana::log("error", "Gallery 2 call failed with: " . $ret->getAsText());
     throw new Exception("@todo G2_FUNCTION_FAILED");
   }
   if (count($args) == 1) {

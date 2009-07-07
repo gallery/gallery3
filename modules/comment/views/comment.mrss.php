@@ -5,7 +5,7 @@
    xmlns:content="http://purl.org/rss/1.0/modules/content/"
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
-    <generator>gallery3</generator>
+    <generator>Gallery 3</generator>
     <title><?= p::clean($feed->title) ?></title>
     <link><?= $feed->uri ?></link>
     <description><?= p::clean($feed->description) ?></description>
