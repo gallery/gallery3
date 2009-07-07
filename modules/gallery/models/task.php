@@ -42,7 +42,7 @@ class Task_Model extends ORM {
 
   public function delete() {
     Cache::instance()->delete($this->_cache_key());
-    return parent::save();
+    return parent::delete();
   }
 
   public function owner() {

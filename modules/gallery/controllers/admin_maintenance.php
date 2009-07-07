@@ -161,7 +161,14 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
   public function remove_finished_tasks() {
     access::verify_csrf();
-    Database::instance()->delete("tasks", array("done" => 1));
+
+    // Do it the long way so we can call delete and remove the cache.
+    $finished = ORM::factory("task")
+      ->where(array("done" => 1))
+      ->find_all();
+    foreach ($finished as $task) {
+      task::remove($task->id);
+    }
     message::success(t("All finished tasks removed"));
     url::redirect("admin/maintenance");
   }
