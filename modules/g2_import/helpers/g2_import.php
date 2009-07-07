@@ -622,7 +622,7 @@ class g2_import_Core {
     try {
       $tag_names = array_values(g2(TagsHelper::getTagsByItemId($g2_item_id)));
     } catch (Exception $e) {
-      return t("Failed to import tags for Gallery 2 item with id: %id\n%exception",
+      return t("Failed to import Gallery 2 tags for item with id: %id\n%exception",
                      array("id" => $g2_item_id, "exception" => $e->__toString()));
     }
 
