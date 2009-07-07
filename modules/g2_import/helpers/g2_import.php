@@ -339,7 +339,7 @@ class g2_import_Core {
       $g2_album = g2(GalleryCoreApi::loadEntitiesById($g2_album_id));
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 album with id: %id\n%exception",
-          array("id" => $g2_album_id, "exception" => $e->__toString()));
+               array("id" => $g2_album_id, "exception" => $e->__toString()));
     }
 
     if ($g2_album->getParentId() == null) {
@@ -438,7 +438,7 @@ class g2_import_Core {
       $g2_path = g2($g2_item->fetchPath());
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 item with id: %id\n%exception",
-              array("id" => $g2_item_id, "exception" => $e->__toString()));
+               array("id" => $g2_item_id, "exception" => $e->__toString()));
     }
 
     $parent = ORM::factory("item", self::map($g2_item->getParentId()));
@@ -485,8 +485,9 @@ class g2_import_Core {
       } catch (Exception $e) {
         Kohana::log(
           "alert", "Corrupt image $g2_path\n" . $e->__toString());
-        $message .= (strlen($message) ? "\n" : "") . t("Corrupt image '%path'\n$exception",
-                                       array("path" => $g2_path,"exception" => $e->__toString()));
+        $message .= (strlen($message) ? "\n" : "") .
+          t("Corrupt image '%path'\n$exception",
+            array("path" => $g2_path,"exception" => $e->__toString()));
         $corrupt = 1;
       }
       break;
@@ -502,12 +503,13 @@ class g2_import_Core {
             self::_decode_html_special_chars($g2_item->getTitle()),
             self::_decode_html_special_chars(self::extract_description($g2_item)),
             self::map($g2_item->getOwnerId()));
-        $message .= (strlen($message) ? "\n" : "") .
-          t("Imported movie: '%title'", array("title" => p::purify($item->title)));
+          $message .= (strlen($message) ? "\n" : "") .
+            t("Imported movie: '%title'", array("title" => p::purify($item->title)));
         } catch (Exception $e) {
           Kohana::log("alert", "Corrupt movie $g2_path\n" . $e->__toString());
-          $message .= (strlen($message) ? "\n" : "") . t("Corrupt movie '%path'\n$exception",
-                     array("path" => $g2_path,"exception" => $e->__toString()));
+          $message .= (strlen($message) ? "\n" : "") .
+            t("Corrupt movie '%path'\n$exception",
+              array("path" => $g2_path,"exception" => $e->__toString()));
           $corrupt = 1;
         }
       } else {
@@ -580,7 +582,7 @@ class g2_import_Core {
       $g2_comment = g2(GalleryCoreApi::loadEntitiesById($g2_comment_id));
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 comment with id: %id\%exception",
-                     array("id" => $g2_comment_id, "exception" => $e->__toString()));
+               array("id" => $g2_comment_id, "exception" => $e->__toString()));
     }
 
     $text = $g2_comment->getSubject();
@@ -623,7 +625,7 @@ class g2_import_Core {
       $tag_names = array_values(g2(TagsHelper::getTagsByItemId($g2_item_id)));
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 tags for item with id: %id\n%exception",
-                     array("id" => $g2_item_id, "exception" => $e->__toString()));
+               array("id" => $g2_item_id, "exception" => $e->__toString()));
     }
 
     $tags = "";
