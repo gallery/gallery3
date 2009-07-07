@@ -217,15 +217,14 @@ class g2_import_Core {
   static function import_group(&$queue) {
     $g2_group_id = array_shift($queue);
     if (self::map($g2_group_id)) {
-      return;
+      return t("Group with id: %id already imported, skipping", array("id" => $g2_group_id));
     }
 
     try {
       $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
     } catch (Exception $e) {
-      g2_import::log(
-        t("Failed to import Gallery 2 group with id: %id", array("id" => $g2_group_id)));
-      return;
+      return t("Failed to import Gallery 2 group with id: %id\n%exception",
+               array("id" => $g2_group_id, "exception" => $e->__toString()));
     }
 
     switch ($g2_group->getGroupType()) {
@@ -236,24 +235,29 @@ class g2_import_Core {
         // @todo For now we assume this is a "duplicate group" exception
         $group = group::lookup_by_name($g2_group->getGroupname());
       }
-
+      $message = t("Group '%name' was imported", array("name" => $g2_group->getGroupname()));
       break;
 
     case GROUP_ALL_USERS:
       $group = group::registered_users();
+      $message = t("Group 'Registered' was converted to '%name'", array("name" => $group->name));
       break;
 
     case GROUP_SITE_ADMINS:
+      $message = t("Group 'Admin'does not exist in gallery3, skipping");
       break;  // This is not a group in G3
 
     case GROUP_EVERYBODY:
       $group = group::everybody();
+      $message = t("Group 'Everybody' was converted to '%name'", array("name" => $group->name));
       break;
     }
 
     if (isset($group)) {
       self::set_map($g2_group->getId(), $group->id);
     }
+
+    return $message;
   }
 
   /**
@@ -262,12 +266,12 @@ class g2_import_Core {
   static function import_user(&$queue) {
     $g2_user_id = array_shift($queue);
     if (self::map($g2_user_id)) {
-      return;
+      return t("User with id: %id already imported, skipping", array("id" => $g2_user_id));
     }
 
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
       self::set_map($g2_user_id, user::guest()->id);
-      return;
+      return t("Skipping Anonymous User");
     }
 
     $g2_admin_group_id =
@@ -275,17 +279,18 @@ class g2_import_Core {
     try {
       $g2_user = g2(GalleryCoreApi::loadEntitiesById($g2_user_id));
     } catch (Exception $e) {
-      g2_import::log(
-        t("Failed to import Gallery 2 user with id: %id", array("id" => $g2_user_id)));
-      return;
+      return t("Failed to import Gallery 2 user with id: %id\n%exception",
+               array("id" => $g2_user_id, "exception" => $e->__toString()));
     }
     $g2_groups = g2(GalleryCoreApi::fetchGroupsForUser($g2_user->getId()));
 
     try {
       $user = user::create($g2_user->getUsername(), $g2_user->getfullname(), "");
+      $message = t("Created user: '%name'.", array("name" => $user->name));
     } catch (Exception $e) {
       // @todo For now we assume this is a "duplicate user" exception
       $user = user::lookup_by_name($g2_user->getUsername());
+      $message = t("Loaded existing user: '%name'.", array("name" => $user->name));
     }
 
     $user->hashed_password = $g2_user->getHashedPassword();
@@ -294,13 +299,18 @@ class g2_import_Core {
     foreach ($g2_groups as $g2_group_id => $g2_group_name) {
       if ($g2_group_id == $g2_admin_group_id) {
         $user->admin = true;
+        $message .= t("\n\tAdded 'admin' flag to user");
       } else {
-        $user->add(ORM::factory("group", self::map($g2_group_id)));
+        $group = ORM::factory("group", self::map($g2_group_id));
+        $user->add($group);
+        $message .= t("\n\tAdded user to group '%group'.", array("group" => $group->name));
       }
     }
     $user->save();
 
     self::set_map($g2_user->getId(), $user->id);
+
+    return $message;
   }
 
 
@@ -321,20 +331,19 @@ class g2_import_Core {
     }
 
     if (self::map($g2_album_id)) {
-      return;
+      return t("Album with id: %id already imported, skipping", array("id" => $g2_album_id));
     }
 
     try {
       // Load the G2 album item, and figure out its parent in G3.
       $g2_album = g2(GalleryCoreApi::loadEntitiesById($g2_album_id));
     } catch (Exception $e) {
-      g2_import::log(
-        t("Failed to import Gallery 2 album with id: %id", array("id" => $g2_album_id)));
-      return;
+      return t("Failed to import Gallery 2 album with id: %id\n%exception",
+          array("id" => $g2_album_id, "exception" => $e->__toString()));
     }
 
     if ($g2_album->getParentId() == null) {
-      return;
+      return t("Skipping Gallery2 root album");
     }
     $parent_album = ORM::factory("item", self::map($g2_album->getParentId()));
 
@@ -367,10 +376,12 @@ class g2_import_Core {
     }
     $album->save();
 
-    self::import_keywords_as_tags($g2_album->getKeywords(), $album);
+    $message = t("Album '%name' imported.", array("name" => $album->name));
+    $message .= self::import_keywords_as_tags($g2_album->getKeywords(), $album);
     self::set_map($g2_album_id, $album->id);
 
     // @todo import album highlights
+    return $message;
   }
 
   /**
@@ -386,10 +397,11 @@ class g2_import_Core {
 
     $g3_album_id = self::map($g2_album_id);
     if (!$g3_album_id) {
-      return;
+      return t("Album with id: %id not imported", array("id" => $g3_album_id));
     }
 
     $table = g2(GalleryCoreApi::fetchThumbnailsByItemIds(array($g2_album_id)));
+    $message = "";
     if (isset($table[$g2_album_id])) {
       // Backtrack the source id to an item
       $g2_source = $table[$g2_album_id];
@@ -405,8 +417,10 @@ class g2_import_Core {
         $g2_album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
         $g2_album->save();
         graphics::generate($g2_album);
+        $message = t("Highlight created for album '%name'", array("name" => $g2_album->name));
       }
     }
+    return $message;
   }
 
   /**
@@ -416,16 +430,15 @@ class g2_import_Core {
     $g2_item_id = array_shift($queue);
 
     if (self::map($g2_item_id)) {
-      return;
+      return t("Item with id: %id already imported, skipping", array("id" => $g2_item_id));
     }
 
     try {
       self::$current_g2_item = $g2_item = g2(GalleryCoreApi::loadEntitiesById($g2_item_id));
       $g2_path = g2($g2_item->fetchPath());
     } catch (Exception $e) {
-      g2_import::log(
-        t("Failed to import Gallery 2 item with id: %id", array("id" => $g2_item_id)));
-      return;
+      return t("Failed to import Gallery 2 item with id: %id\n%exception",
+              array("id" => $g2_item_id, "exception" => $e->__toString()));
     }
 
     $parent = ORM::factory("item", self::map($g2_item->getParentId()));
@@ -447,10 +460,13 @@ class g2_import_Core {
       $corrupt = 1;
     }
 
+    $message = "";
     switch ($g2_type) {
     case "GalleryPhotoItem":
       if (!in_array($g2_item->getMimeType(), array("image/jpeg", "image/gif", "image/png"))) {
         Kohana::log("alert", "$g2_path is an unsupported image type; using a placeholder gif");
+        $message = t("'%path' is an unsupported image type, using a placeholder",
+                     array("path" => $g2_path));
         $g2_path = MODPATH . "g2_import/data/broken-image.gif";
         $corrupt = 1;
       }
@@ -464,9 +480,13 @@ class g2_import_Core {
           self::_decode_html_special_chars($g2_item->getTitle()),
           self::_decode_html_special_chars(self::extract_description($g2_item)),
           self::map($g2_item->getOwnerId()));
+        $message .= (strlen($message) ? "\n" : "") .
+          t("Imported photo: '%title'", array("title" => p::purify($item->title)));
       } catch (Exception $e) {
         Kohana::log(
-          "alert", "Corrupt image $g2_path\n" . $e->getMessage() . "\n" . $e->getTraceAsString());
+          "alert", "Corrupt image $g2_path\n" . $e->__toString());
+        $message .= (strlen($message) ? "\n" : "") . t("Corrupt image '%path'\n$exception",
+                                       array("path" => $g2_path,"exception" => $e->__toString()));
         $corrupt = 1;
       }
       break;
@@ -482,12 +502,20 @@ class g2_import_Core {
             self::_decode_html_special_chars($g2_item->getTitle()),
             self::_decode_html_special_chars(self::extract_description($g2_item)),
             self::map($g2_item->getOwnerId()));
+        $message .= (strlen($message) ? "\n" : "") .
+          t("Imported movie: '%title'", array("title" => p::purify($item->title)));
         } catch (Exception $e) {
-          Kohana::log("alert", "Corrupt movie $g2_path\n" .
-                      $e->getMessage() . "\n" . $e->getTraceAsString());
+          Kohana::log("alert", "Corrupt movie $g2_path\n" . $e->__toString());
+          $message .= (strlen($message) ? "\n" : "") . t("Corrupt movie '%path'\n$exception",
+                     array("path" => $g2_path,"exception" => $e->__toString()));
           $corrupt = 1;
         }
+      } else {
+        Kohana::log("alert", "$g2_path is an unsupported movie type");
+        $message .= t("'%path' is an unsupported movie type", array("path" => $g2_path));
+        $corrupt = 1;
       }
+
       break;
 
     default:
@@ -496,13 +524,16 @@ class g2_import_Core {
     }
 
     if (!empty($item)) {
-      self::import_keywords_as_tags($g2_item->getKeywords(), $item);
+      $message .= (strlen($message) ? "\n" : "") .
+        self::import_keywords_as_tags($g2_item->getKeywords(), $item);
     }
 
     if (isset($item)) {
       self::set_map($g2_item_id, $item->id);
       $item->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
       $item->save();
+      $message .= (strlen($message) ? "\n" : "") .
+        t("View count updated: %count", array("count" => $item->view_count));
     }
 
     if ($corrupt) {
@@ -524,7 +555,7 @@ class g2_import_Core {
           t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed",
             array("g2_url" => $g2_item_url, "title" => $g2_item->getTitle()));
       }
-      g2_import::log($warning);
+      $message .= (strlen($message) ? "\n" : "") . $warning;
     }
 
     self::$current_g2_item = null;
@@ -548,9 +579,8 @@ class g2_import_Core {
     try {
       $g2_comment = g2(GalleryCoreApi::loadEntitiesById($g2_comment_id));
     } catch (Exception $e) {
-      g2_import::log("Failed to import Gallery 2 comment with id: %id",
-                     array("id" => $g2_comment_id));
-      return;
+      return t("Failed to import Gallery 2 comment with id: %id\%exception",
+                     array("id" => $g2_comment_id, "exception" => $e->__toString()));
     }
 
     $text = $g2_comment->getSubject();
@@ -572,12 +602,19 @@ class g2_import_Core {
     $comment->save();
 
     self::map($g2_comment->getId(), $comment->id);
+    return t("Imported comment '%comment' for item with id: %id",
+             array("id" => $comment->item_id,
+                   "comment" => text::limit_words(nl2br(p::purify($comment->text)), 50)));
   }
 
   /**
    * Import all the tags for a single item
    */
   static function import_tags_for_item(&$queue) {
+    if (!module::is_active("tag")) {
+      return t("Gallery 3 tag module is inactive, no tags will be imported");
+    }
+
     GalleryCoreApi::requireOnce("modules/tags/classes/TagsHelper.class");
     $g2_item_id = array_shift($queue);
     $g3_item = ORM::factory("item", self::map($g2_item_id));
@@ -585,22 +622,24 @@ class g2_import_Core {
     try {
       $tag_names = array_values(g2(TagsHelper::getTagsByItemId($g2_item_id)));
     } catch (Exception $e) {
-      g2_import::log("Failed to import tags for Gallery 2 item with id: %id",
-                     array("id" => $g2_item_id));
-      return;
+      return t("Failed to import tags for Gallery 2 item with id: %id\n%exception",
+                     array("id" => $g2_item_id, "exception" => $e->__toString()));
     }
 
+    $tags = "";
     foreach ($tag_names as $tag_name) {
-      $tag = tag::add($g3_item, $tag_name);
+      $tags .= (strlen($tags) ? ", " : "") . tag::add($g3_item, $tag_name);
     }
 
     // Tag operations are idempotent so we don't need to map them.  Which is good because we don't
     // have an id for each individual tag mapping anyway so it'd be hard to set up the mapping.
+    return t("Added '%tags' to '%title'", array("tags" => $tags,
+                                                "title" => p::purify($item->title)));
   }
 
   static function import_keywords_as_tags($keywords, $item) {
     if (!module::is_active("tag")) {
-      return;
+      return t("Gallery 3 tag module is inactive, no keywords will be imported");
     }
 
     // Keywords in G2 are free form.  So we don't know what our user used as a separator.  Try to
@@ -614,12 +653,15 @@ class g2_import_Core {
       $delim = " ";
     }
 
+    $tags = "";
     foreach (preg_split("/$delim/", $keywords) as $keyword) {
       $keyword = trim($keyword);
       if ($keyword) {
-        tag::add($item, $keyword);
+        $tags .= (strlen($tags) ? ", " : "") . tag::add($item, $keyword);
       }
     }
+    return strlen($tags) ? t("Added '%keywords' to '%title'",
+                             array("tags" => $tags, "title" => p::purify($item->title))) : "";
   }
 
   /**
