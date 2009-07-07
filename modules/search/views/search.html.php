@@ -7,7 +7,7 @@
     </legend>
     <ul>
       <li>
-        <label for="q"><?= t("Search the Gallery") ?></label>
+        <label for="q"><?= t("Search the gallery") ?></label>
         <input name="q" id="q" type="text" value="<?= p::clean($q) ?>"/>
       </li>
       <li>
