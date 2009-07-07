@@ -244,7 +244,7 @@ class g2_import_Core {
       break;
 
     case GROUP_SITE_ADMINS:
-      $message = t("Group 'Admin'does not exist in gallery3, skipping");
+      $message = t("Group 'Admin' does not exist in gallery3, skipping");
       break;  // This is not a group in G3
 
     case GROUP_EVERYBODY:
