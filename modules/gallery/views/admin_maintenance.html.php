@@ -164,7 +164,7 @@
           <a href="<?= url::site("admin/maintenance/remove/$task->id?csrf=$csrf") ?>">
             <?= t("remove") ?>
           </a>
-          <? if ($task->get_task_log()): ?>
+          <? if ($task->get_log()): ?>
           <a class="gDialogLink" href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>">
             <?= t("browse log") ?>
           </a>

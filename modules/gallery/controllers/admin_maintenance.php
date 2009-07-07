@@ -119,8 +119,8 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     }
 
     header("Content-Type: application/text");
-    header("Content-Disposition: filename=g2_import.txt");
-    print $task->get_task_log();
+    header("Content-Disposition: filename=gallery3_task_log.txt");
+    print $task->get_log();
   }
 
   /**
