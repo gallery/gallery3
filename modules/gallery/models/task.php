@@ -53,6 +53,10 @@ class Task_Model extends ORM {
     $key = $this->_cache_key();
     $log = Cache::instance()->get($key);
 
+    if (is_array($msg)) {
+      $msg = implode("\n", $msg);
+    }
+
     // Save for 30 days.
     $log .= !empty($log) ? "\n" : "";
     Cache::instance()->set($key, "$log{$msg}",

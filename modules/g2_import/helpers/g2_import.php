@@ -376,8 +376,8 @@ class g2_import_Core {
     }
     $album->save();
 
-    $message = t("Album '%name' imported.", array("name" => $album->name));
-    $message .= self::import_keywords_as_tags($g2_album->getKeywords(), $album);
+    $message[] = t("Album '%name' imported.", array("name" => $album->name));
+    $message[] = self::import_keywords_as_tags($g2_album->getKeywords(), $album);
     self::set_map($g2_album_id, $album->id);
 
     // @todo import album highlights
@@ -460,12 +460,12 @@ class g2_import_Core {
       $corrupt = 1;
     }
 
-    $message = "";
+    $message = array();
     switch ($g2_type) {
     case "GalleryPhotoItem":
       if (!in_array($g2_item->getMimeType(), array("image/jpeg", "image/gif", "image/png"))) {
         Kohana::log("alert", "$g2_path is an unsupported image type; using a placeholder gif");
-        $message = t("'%path' is an unsupported image type, using a placeholder",
+        $message[] = t("'%path' is an unsupported image type, using a placeholder",
                      array("path" => $g2_path));
         $g2_path = MODPATH . "g2_import/data/broken-image.gif";
         $corrupt = 1;
@@ -480,12 +480,11 @@ class g2_import_Core {
           self::_decode_html_special_chars($g2_item->getTitle()),
           self::_decode_html_special_chars(self::extract_description($g2_item)),
           self::map($g2_item->getOwnerId()));
-        $message .= (strlen($message) ? "\n" : "") .
-          t("Imported photo: '%title'", array("title" => p::purify($item->title)));
+        $message[].= t("Imported photo: '%title'", array("title" => p::purify($item->title)));
       } catch (Exception $e) {
         Kohana::log(
           "alert", "Corrupt image $g2_path\n" . $e->__toString());
-        $message .= (strlen($message) ? "\n" : "") . t("Corrupt image '%path'\n$exception",
+        $message[] = t("Corrupt image '%path'\n$exception",
                                        array("path" => $g2_path,"exception" => $e->__toString()));
         $corrupt = 1;
       }
@@ -502,17 +501,16 @@ class g2_import_Core {
             self::_decode_html_special_chars($g2_item->getTitle()),
             self::_decode_html_special_chars(self::extract_description($g2_item)),
             self::map($g2_item->getOwnerId()));
-        $message .= (strlen($message) ? "\n" : "") .
-          t("Imported movie: '%title'", array("title" => p::purify($item->title)));
+        $message[] = t("Imported movie: '%title'", array("title" => p::purify($item->title)));
         } catch (Exception $e) {
           Kohana::log("alert", "Corrupt movie $g2_path\n" . $e->__toString());
-          $message .= (strlen($message) ? "\n" : "") . t("Corrupt movie '%path'\n$exception",
-                     array("path" => $g2_path,"exception" => $e->__toString()));
+          $message[] = t("Corrupt movie '%path'\n$exception",
+                         array("path" => $g2_path,"exception" => $e->__toString()));
           $corrupt = 1;
         }
       } else {
         Kohana::log("alert", "$g2_path is an unsupported movie type");
-        $message .= t("'%path' is an unsupported movie type", array("path" => $g2_path));
+        $message[] = t("'%path' is an unsupported movie type", array("path" => $g2_path));
         $corrupt = 1;
       }
 
@@ -524,16 +522,14 @@ class g2_import_Core {
     }
 
     if (!empty($item)) {
-      $message .= (strlen($message) ? "\n" : "") .
-        self::import_keywords_as_tags($g2_item->getKeywords(), $item);
+      $message[] = self::import_keywords_as_tags($g2_item->getKeywords(), $item);
     }
 
     if (isset($item)) {
       self::set_map($g2_item_id, $item->id);
       $item->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
       $item->save();
-      $message .= (strlen($message) ? "\n" : "") .
-        t("View count updated: %count", array("count" => $item->view_count));
+      $message[] = t("View count updated: %count", array("count" => $item->view_count));
     }
 
     if ($corrupt) {
@@ -544,21 +540,21 @@ class g2_import_Core {
       $g2_item_url =
         str_replace('&amp;g2_GALLERYSID=TMP_SESSION_ID_DI_NOISSES_PMT', '', $g2_item_url);
       if (!empty($item)) {
-        $warning =
+        $message[] =
           t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
             "(imported as <a href=\"%g3_url\">%title</a>)",
             array("g2_url" => $g2_item_url,
                   "g3_url" => $item->url(),
                   "title" => $g2_item->getTitle()));
       } else {
-        $warning =
+        $message[] =
           t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed",
             array("g2_url" => $g2_item_url, "title" => $g2_item->getTitle()));
       }
-      $message .= (strlen($message) ? "\n" : "") . $warning;
     }
 
     self::$current_g2_item = null;
+    return $message;
   }
 
   /**
@@ -661,7 +657,7 @@ class g2_import_Core {
       }
     }
     return strlen($tags) ? t("Added '%keywords' to '%title'",
-                             array("tags" => $tags, "title" => p::purify($item->title))) : "";
+                             array("keywords" => $tags, "title" => p::purify($item->title))) : "";
   }
 
   /**
