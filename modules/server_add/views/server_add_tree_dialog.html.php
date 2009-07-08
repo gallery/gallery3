@@ -1,6 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   var GET_CHILDREN_URL = "<?= url::site("server_add/children?path=__PATH__") ?>";
+  var START_URL = "<?= url::site("server_add/start?item_id={$item->id}&csrf=$csrf") ?>";
 </script>
 
 <div id="gServerAdd">
@@ -18,18 +19,28 @@
     </li>
   </ul>
 
-  <?= form::open(url::abs_site("server_add/add"), array("method" => "post")) ?>
+  <?= form::open(url::abs_site("server_add/start/$item->id"), array("method" => "post")) ?>
   <?= access::csrf_form_field(); ?>
   <ul id="gServerAddTree" class="gCheckboxTree">
     <?= $tree ?>
   </ul>
 
+  <div class="gProgressBar" style="display: none"></div>
+
   <span>
-    <input id="gServerAddPauseButton" class="submit ui-state-disabled" disabled="disabled" type="submit"
-           value="<?= t("Pause") ?>" style="display: none">
-    <input id="gServerAddAddButton" class="submit ui-state-disabled" disabled="disabled" type="submit"
-           value="<?= t("Add") ?>">
+    <input id="gServerAddAddButton" class="submit ui-state-disabled" disabled="disabled"
+           type="submit" value="<?= t("Add") ?>">
   </span>
   <?= form::close() ?>
-  <div class="gProgressBar" style="visibility: hidden" ></div>
+  <script type="text/javascript">
+    $("#gServerAddAddButton").ready(function() {
+      $("#gServerAddAddButton").click(function(event) {
+         event.preventDefault();
+         $("#gServerAdd .gProgressBar").
+           progressbar().
+           progressbar("value", 0).
+           slideDown("fast", function() { start_add() });
+      });
+    });
+  </script>
 </div>

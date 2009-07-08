@@ -19,8 +19,28 @@
  */
 class server_add_installer {
   static function install() {
-    module::set_version("server_add", 1);
+    $db = Database::instance();
+    $db->query("CREATE TABLE {server_add_files} (
+                  `id` int(9) NOT NULL auto_increment,
+                  `task_id` int(9) NOT NULL,
+                  `file` varchar(255) NOT NULL,
+                  PRIMARY KEY (`id`))
+                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    module::set_version("server_add", 2);
     server_add::check_config();
+  }
+
+  static function upgrade($version) {
+    $db = Database::instance();
+    if ($version == 1) {
+      $db->query("CREATE TABLE {server_add_files} (
+                    `id` int(9) NOT NULL auto_increment,
+                    `task_id` int(9) NOT NULL,
+                    `file` varchar(255) NOT NULL,
+                    PRIMARY KEY (`id`))
+                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+      module::set_version("server_add", $version = 2);
+    }
   }
 
   static function deactivate() {
