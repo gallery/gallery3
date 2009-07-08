@@ -50,6 +50,9 @@ class search_Core {
     return array($count, new ORM_Iterator(ORM::factory("item"), $db->query($query)));
   }
 
+  /**
+   * @return string An error message suitable for inclusion in the task log
+   */
   static function check_index() {
     list ($remaining) = search::stats();
     if ($remaining) {
@@ -76,6 +79,7 @@ class search_Core {
     $record->data = join(" ", $data);
     $record->dirty = 0;
     $record->save();
+    return t("Search index updated for '%title'", array("title" => p::purify($item->title)));
   }
 
   static function stats() {
