@@ -45,50 +45,63 @@ class gallery_task_Core {
    * @param Task_Model the task
    */
   static function rebuild_dirty_images($task) {
-    $result = graphics::find_dirty_images_query();
-    $completed = $task->get("completed", 0);
-    $ignored = $task->get("ignored", array());
-    $remaining = $result->count() - count($ignored);
+    try {
+      $result = graphics::find_dirty_images_query();
+      $completed = $task->get("completed", 0);
+      $ignored = $task->get("ignored", array());
+      $remaining = $result->count() - count($ignored);
 
-    $i = 0;
-    foreach ($result as $row) {
-      if (array_key_exists($row->id, $ignored)) {
-        continue;
-      }
+      $i = 0;
+      foreach ($result as $row) {
+        if (array_key_exists($row->id, $ignored)) {
+          continue;
+        }
 
-      $item = ORM::factory("item", $row->id);
-      if ($item->loaded) {
-        $success = graphics::generate($item);
-        if (!$success) {
-          $ignored[$item->id] = 1;
+        $item = ORM::factory("item", $row->id);
+        if ($item->loaded) {
+          $success = graphics::generate($item);
+          if (!$success) {
+            $ignored[$item->id] = 1;
+            $message = t("Unable to rebuild images for '%title'",
+                         array("title" => p::purify($item->title)));
+          } else {
+            $message = t("Successfully rebuilt images for '%title'",
+                         array("title" => p::purify($item->title)));
+          }
+          $task->log($message);
+        }
+
+        $completed++;
+        $remaining--;
+
+        if (++$i == 2) {
+          break;
         }
       }
 
-      $completed++;
-      $remaining--;
+      $task->status = t2("Updated: 1 image. Total: %total_count.",
+                         "Updated: %count images. Total: %total_count.",
+                         $completed,
+                         array("total_count" => ($remaining + $completed)));
 
-      if (++$i == 2) {
-        break;
+      if ($completed + $remaining > 0) {
+        $task->percent_complete = (int)(100 * $completed / ($completed + $remaining));
+      } else {
+        $task->percent_complete = 100;
       }
-    }
 
-    $task->status = t2("Updated: 1 image. Total: %total_count.",
-                       "Updated: %count images. Total: %total_count.",
-                       $completed,
-                       array("total_count" => ($remaining + $completed)));
-
-    if ($completed + $remaining > 0) {
-      $task->percent_complete = (int)(100 * $completed / ($completed + $remaining));
-    } else {
-      $task->percent_complete = 100;
-    }
-
-    $task->set("completed", $completed);
-    $task->set("ignored", $ignored);
-    if ($remaining == 0) {
+      $task->set("completed", $completed);
+      $task->set("ignored", $ignored);
+      if ($remaining == 0) {
+        $task->done = true;
+        $task->state = "success";
+        site_status::clear("graphics_dirty");
+      }
+    } catch (Exception $e) {
       $task->done = true;
-      $task->state = "success";
-      site_status::clear("graphics_dirty");
+      $task->state = "error";
+      $task->status = $e->getMessage();
+      $task->log($e->__toString());
     }
   }
 
