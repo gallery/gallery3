@@ -94,7 +94,10 @@ class g2_import_task_Core {
         if (empty($queue)) {
           $task->set("queue", $queue = array_keys(g2(GalleryCoreApi::fetchGroupNames())));
         }
-        g2_import::import_group($queue);
+        $log_message = g2_import::import_group($queue);
+        if ($log_message) {
+          $task->log($log_message);
+        }
         $task->status = t(
           "Importing groups (%count of %total)",
           array("count" => $done["groups"] + 1, "total" => $stats["groups"]));
@@ -105,7 +108,10 @@ class g2_import_task_Core {
           $task->set(
             "queue", $queue = array_keys(g2(GalleryCoreApi::fetchUsersForGroup(GROUP_EVERYBODY))));
         }
-        g2_import::import_user($queue);
+        $log_message = g2_import::import_user($queue);
+        if ($log_message) {
+          $task->log($log_message);
+        }
         $task->status = t(
           "Importing users (%count of %total)",
           array("count" => $done["users"] + 1, "total" => $stats["users"]));
@@ -115,7 +121,10 @@ class g2_import_task_Core {
         if (empty($queue)) {
           $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
         }
-        g2_import::import_album($queue);
+        $log_message = g2_import::import_album($queue);
+        if ($log_message) {
+          $task->log($log_message);
+        }
         $task->status = t(
           "Importing albums (%count of %total)",
           array("count" => $done["albums"] + 1, "total" => $stats["albums"]));
@@ -127,7 +136,10 @@ class g2_import_task_Core {
           $task->set("last_id", end($queue));
         }
 
-        g2_import::import_item($queue);
+        $log_message = g2_import::import_item($queue);
+        if ($log_message) {
+          $task->log($log_message);
+        }
         $task->status = t(
           "Importing photos (%count of %total)",
           array("count" => $done["items"] + 1, "total" => $stats["items"]));
@@ -138,7 +150,10 @@ class g2_import_task_Core {
           $task->set("queue", $queue = g2_import::get_comment_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
         }
-        g2_import::import_comment($queue);
+        $log_message = g2_import::import_comment($queue);
+        if ($log_message) {
+          $task->log($log_message);
+        }
         $task->status = t(
           "Importing comments (%count of %total)",
           array("count" => $done["comments"] + 1, "total" => $stats["comments"]));
@@ -150,7 +165,10 @@ class g2_import_task_Core {
           $task->set("queue", $queue = g2_import::get_tag_item_ids($task->get("last_id", 0)));
           $task->set("last_id", end($queue));
         }
-        g2_import::import_tags_for_item($queue);
+        $log_message = g2_import::import_tags_for_item($queue);
+        if ($log_message) {
+          $task->log($log_message);
+        }
         $task->status = t(
           "Importing tags (%count of %total)",
           array("count" => $done["tags"] + 1, "total" => $stats["tags"]));
@@ -161,7 +179,10 @@ class g2_import_task_Core {
         if (empty($queue)) {
           $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
         }
-        g2_import::set_album_highlight($queue);
+        $log_message = g2_import::set_album_highlight($queue);
+        if ($log_message) {
+          $task->log($log_message);
+        }
         $task->status = t(
           "Album highlights (%count of %total)",
           array("count" => $done["tags"] + 1, "total" => $stats["albums"]));

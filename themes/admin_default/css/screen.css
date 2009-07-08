@@ -400,6 +400,20 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   float: left;
 }
 
+#gTaskLogDialog h1 {
+  font-size: 1.1em;
+}
+
+.gTaskLog {
+  border: 1pt solid;
+  font-size: .9em;
+  height: 400px;
+  margin: .5em 0;
+  overflow: auto;
+  padding: .5em
+}
+
+
 /** *******************************************************************
  * 7) Server Add
  *********************************************************************/

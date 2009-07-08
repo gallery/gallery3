@@ -40,7 +40,47 @@ class Task_Model extends ORM {
     return parent::save();
   }
 
+  public function delete() {
+    Cache::instance()->delete($this->_cache_key());
+    return parent::delete();
+  }
+
   public function owner() {
     return user::lookup($this->owner_id);
+  }
+
+  /**
+   * Log a message to the task log.
+   * @params $msg mixed a string or array of strings
+   */
+  public function log($msg) {
+    $key = $this->_cache_key();
+    $log = Cache::instance()->get($key);
+
+    if (is_array($msg)) {
+      $msg = implode("\n", $msg);
+    }
+
+    // Save for 30 days.
+    $log .= !empty($log) ? "\n" : "";
+    Cache::instance()->set($key, "$log{$msg}",
+                           array("task", "log", "import"), 2592000);
+  }
+
+  /**
+   * Retrieve the cached log information for this task.
+   * @returns the log data or null if there is no log data
+   */
+  public function get_log() {
+    $log_data = Cache::instance()->get($this->_cache_key());
+    return  $log_data !== null ? $log_data : false;
+  }
+
+  /**
+   * Build the task cache key
+   * @returns the key to use in access the cache
+   */
+  private function _cache_key() {
+    return md5("$this->id; $this->name; $this->callback");
   }
 }

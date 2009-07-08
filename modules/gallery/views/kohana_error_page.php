@@ -53,7 +53,6 @@
         margin: 0px;
       }
     </style>
-    <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title><?= t("Something went wrong!") ?></title>
   </head>
@@ -78,8 +77,13 @@
       <h2>
         <?= t("Hey wait, you're an admin!  We can tell you stuff.") ?>
       </h2>
-      <a id="toggle" href=""
-         onclick="javascript:$('#stuff').slideDown('slow'); $('#toggle').slideUp(); return false">
+      <script type="text/javascript">
+        var show_details = function() {
+          document.getElementById("stuff").style.display = "block";
+          document.getElementById("toggle").style.display = "none";
+        }
+      </script>
+      <a id="toggle" href="#" onclick="javascript:show_details(); return false;">
         <b><?= t("Ok.. tell me stuff!") ?></b>
       </a>
       <div id="stuff" style="display: none">
