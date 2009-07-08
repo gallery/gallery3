@@ -29,7 +29,7 @@
         </td>
         <td>
           <a href="<?= url::site("admin/maintenance/start/$task->callback?csrf=$csrf") ?>"
-            class="gDialogLink">
+            class="gDialogLink gButtonLink ui-icon-left ui-state-default ui-corner-all">
             <?= t("run") ?>
           </a>
         </td>
@@ -94,11 +94,13 @@
         </td>
         <td>
           <? if ($task->state == "stalled"): ?>
-          <a class="gDialogLink" href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
+          <a class="gDialogLink gButtonLink ui-icon-left ui-state-default ui-corner-all"
+             href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
             <?= t("resume") ?>
           </a>
           <? endif ?>
-          <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>">
+          <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>"
+             class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
             <?= t("cancel") ?>
           </a>
         </td>
