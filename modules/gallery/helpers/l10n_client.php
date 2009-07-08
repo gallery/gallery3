@@ -101,8 +101,7 @@ class l10n_client_Core {
       throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED " . $response_status);
     }
     if (empty($response_data)) {
-      log::info("translations", "Translations fetch request resulted in an empty response");
-      return;
+      return array(t("Translations fetch request resulted in an empty response"));
     }
 
     $response = json_decode($response_data);
@@ -112,9 +111,8 @@ class l10n_client_Core {
     //    {key:<key_2>, ...}
     //   ]
     $count = count($response);
-    log::info("translations",
-              t2("Installed 1 new / updated translation message",
-                 "Installed %count new / updated translation messages", $count));
+    $message[] = t2("Installed 1 new / updated translation message",
+                    "Installed %count new / updated translation messages", $count);
 
     foreach ($response as $message_data) {
       // @todo Better input validation
@@ -152,6 +150,7 @@ class l10n_client_Core {
       $entry->translation = $translation;
       $entry->save();
     }
+    return $message;
   }
 
   static function submit_translations() {
