@@ -161,22 +161,23 @@
         </td>
         <td>
           <? if ($task->done): ?>
-          <a href="<?= url::site("admin/maintenance/remove/$task->id?csrf=$csrf") ?>">
+          <a href="<?= url::site("admin/maintenance/remove/$task->id?csrf=$csrf") ?>" class="gButtonLink ui-state-default ui-corner-all">
             <?= t("remove") ?>
           </a>
           <? if ($task->get_log()): ?>
-          <a class="gDialogLink" href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>">
+          <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="gDialogLink gButtonLink ui-state-default ui-corner-all">
             <?= t("browse log") ?>
           </a>
           <? endif ?>
           <? else: ?>
-          <a class="gDialogLink" href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
+          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>" class="gDialogLink gButtonLink" ui-state-default ui-corner-all>
             <?= t("resume") ?>
           </a>
-          <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>">
+          <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>" class="gButtonLink ui-state-default ui-corner-all">
             <?= t("cancel") ?>
           </a>
           <? endif ?>
+          </ul>
         </td>
       </tr>
       <? endforeach ?>
