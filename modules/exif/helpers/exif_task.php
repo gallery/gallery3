@@ -38,37 +38,48 @@ class exif_task_Core {
   }
 
   static function update_index($task) {
-    $completed = $task->get("completed", 0);
+    try {
+      $completed = $task->get("completed", 0);
 
-    $start = microtime(true);
-    foreach (ORM::factory("item")
-             ->join("exif_records", "items.id", "exif_records.item_id", "left")
-             ->where("type", "photo")
-             ->open_paren()
-             ->where("exif_records.item_id", null)
-             ->orwhere("exif_records.dirty", 1)
-             ->close_paren()
-             ->find_all() as $item) {
-      if (microtime(true) - $start > 1.5) {
-        break;
+      $start = microtime(true);
+      $message = array();
+      foreach (ORM::factory("item")
+               ->join("exif_records", "items.id", "exif_records.item_id", "left")
+               ->where("type", "photo")
+               ->open_paren()
+               ->where("exif_records.item_id", null)
+               ->orwhere("exif_records.dirty", 1)
+               ->close_paren()
+               ->find_all() as $item) {
+        if (microtime(true) - $start > 1.5) {
+          break;
+        }
+
+        $completed++;
+        exif::extract($item);
+        $message[] = t("Updated Exif meta data for '%title'",
+                       array("title" => p::purify($item->title)));
       }
 
-      $completed++;
-      exif::extract($item);
-    }
-
-    list ($remaining, $total, $percent) = exif::stats();
-    $task->set("completed", $completed);
-    if ($remaining == 0 || !($remaining + $completed)) {
+      $task->log($message);
+      list ($remaining, $total, $percent) = exif::stats();
+      $task->set("completed", $completed);
+      if ($remaining == 0 || !($remaining + $completed)) {
+        $task->done = true;
+        $task->state = "success";
+        site_status::clear("exif_index_out_of_date");
+        $task->percent_complete = 100;
+      } else {
+        $task->percent_complete = round(100 * $completed / ($remaining + $completed));
+      }
+      $task->status = t2("one record updated, index is %percent% up-to-date",
+                         "%count records updated, index is %percent% up-to-date",
+                         $completed, array("percent" => $percent));
+    } catch (Exception $e) {
       $task->done = true;
-      $task->state = "success";
-      site_status::clear("exif_index_out_of_date");
-      $task->percent_complete = 100;
-    } else {
-      $task->percent_complete = round(100 * $completed / ($remaining + $completed));
+      $task->state = "error";
+      $task->status = $e->getMessage();
+      $task->log($e->__toString());
     }
-    $task->status = t2("one record updated, index is %percent% up-to-date",
-                       "%count records updated, index is %percent% up-to-date",
-                       $completed, array("percent" => $percent));
   }
 }
