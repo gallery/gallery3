@@ -131,14 +131,21 @@ class Server_Add_Controller extends Admin_Controller {
       $queue = $task->get("queue");
       while ($queue && microtime(true) - $start < 0.5) {
         $file = array_shift($queue);
-        $entry = ORM::factory("server_add_file");
-        $entry->task_id = $task->id;
-        $entry->file = $file;
-        $entry->save();
-
         if (is_dir($file)) {
-          $queue = array_merge(
-            $queue, empty($selections[$file]) ? glob("$file/*") : $selections[$file]);
+          $children = empty($selections[$file]) ? glob("$file/*") : $selections[$file];
+        } else {
+          $children = array($file);
+        }
+
+        foreach ($children as $child) {
+          $entry = ORM::factory("server_add_file");
+          $entry->task_id = $task->id;
+          $entry->file = $child;
+          $entry->save();
+
+          if (is_dir($child)) {
+            $queue[] = $child;
+          }
         }
       }
       // We have no idea how long this can take because we have no idea how deep the tree
@@ -218,7 +225,7 @@ class Server_Add_Controller extends Admin_Controller {
         $entry->delete();
       }
       $task->set("completed_files", $completed_files);
-      $task->status = t("Adding photos (%completed of %total)",
+      $task->status = t("Adding photos and albums (%completed of %total)",
                         array("completed" => $completed_files,
                               "total" => $total_files));
       $task->percent_complete = 10 + 100 * ($completed_files / $total_files);
