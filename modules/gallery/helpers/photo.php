@@ -81,7 +81,7 @@ class photo_Core {
     $photo->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
     // Randomize the name if there's a conflict
-    while (ORM::factory("item")
+    while (ORM::Factory("item")
            ->where("parent_id", $parent->id)
            ->where("name", $photo->name)
            ->find()->id) {
