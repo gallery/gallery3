@@ -38,7 +38,7 @@ class server_add_menu_Core {
       $server_add = Menu::factory("dialog")
         ->id("server_add")
         ->label(t("Add from server"))
-        ->url(url::site("server_add/index/$item->id"));
+        ->url(url::site("server_add/browse/$item->id"));
       $add_photos_item = $menu->get("add_photos_item");
       $add_photos_menu = $menu->get("add_photos_menu");
 
