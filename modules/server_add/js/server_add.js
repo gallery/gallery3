@@ -66,6 +66,7 @@ function start_add() {
     data: { "paths[]": paths },
     dataType: "json",
     success: function(data, textStatus) {
+      $("#gStatus").html(data.status);
       $("#gServerAdd .gProgressBar").progressbar("value", data.percent_complete);
       setTimeout(function() { run_add(data.url); }, 0);
     }
@@ -79,9 +80,10 @@ function run_add(url) {
     async: false,
     dataType: "json",
     success: function(data, textStatus) {
+      $("#gStatus").html(data.status);
       $("#gServerAdd .gProgressBar").progressbar("value", data.percent_complete);
       if (data.done) {
-	$("#gServerAdd .gProgressBar").slideUp();
+	$("#gProgress").slideUp();
       } else {
 	setTimeout(function() { run_add(url); }, 0);
       }

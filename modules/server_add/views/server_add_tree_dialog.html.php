@@ -25,7 +25,10 @@
     <?= $tree ?>
   </ul>
 
-  <div class="gProgressBar" style="display: none"></div>
+  <div id="gProgress" style="display: none">
+    <div class="gProgressBar"></div>
+    <div id="gStatus"></div>
+  </div>
 
   <span>
     <input id="gServerAddAddButton" class="submit ui-state-disabled" disabled="disabled"
@@ -38,8 +41,8 @@
          event.preventDefault();
          $("#gServerAdd .gProgressBar").
            progressbar().
-           progressbar("value", 0).
-           slideDown("fast", function() { start_add() });
+           progressbar("value", 0);
+         $("#gProgress").slideDown("fast", function() { start_add() });
       });
     });
   </script>

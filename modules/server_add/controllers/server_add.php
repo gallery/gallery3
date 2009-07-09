@@ -86,6 +86,7 @@ class Server_Add_Controller extends Admin_Controller {
 
     print json_encode(
       array("result" => "started",
+            "status" => $task->status,
             "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())));
   }
 
@@ -99,6 +100,7 @@ class Server_Add_Controller extends Admin_Controller {
 
     $task = task::run($task_id);
     print json_encode(array("done" => $task->done,
+                            "status" => $task->status,
                             "percent_complete" => $task->percent_complete));
   }
 
@@ -117,6 +119,7 @@ class Server_Add_Controller extends Admin_Controller {
     case "init":
       $task->set("mode", "build-file-list");
       $task->set("queue", array_keys($selections));
+      $task->status = t("Starting up");
       $task->percent_complete = 0;
       batch::start();
       break;
@@ -126,7 +129,6 @@ class Server_Add_Controller extends Admin_Controller {
       // Don't use an iterator here because we can't get enough control over it when we're dealing
       // with a deep hierarchy and we don't want to go over our time quota.
       $queue = $task->get("queue");
-      Kohana::log("alert",print_r($queue,1));
       while ($queue && microtime(true) - $start < 0.5) {
         $file = array_shift($queue);
         $entry = ORM::factory("server_add_file");
@@ -144,6 +146,10 @@ class Server_Add_Controller extends Admin_Controller {
       // over 10% in percent_complete.
       $task->set("queue", $queue);
       $task->percent_complete = min($task->percent_complete + 0.1, 10);
+      $task->status = t2("Found one file", "Found %count files",
+                         Database::instance()
+                         ->where("task_id", $task->id)
+                         ->count_records("server_add_files"));
 
       if (!$queue) {
         $task->set("mode", "add-files");
@@ -202,6 +208,7 @@ class Server_Add_Controller extends Admin_Controller {
           } else if (in_array($extension, array("flv", "mp4"))) {
             movie::create($parent, $entry->file, $name, $title, null, user::active()->id);
           } else {
+            $task->log("Skipping unknown file type: $relative_path");
             // Unsupported type
             // @todo: $task->log this
           }
@@ -211,8 +218,10 @@ class Server_Add_Controller extends Admin_Controller {
         $entry->delete();
       }
       $task->set("completed_files", $completed_files);
+      $task->status = t("Adding photos (%completed of %total)",
+                        array("completed" => $completed_files,
+                              "total" => $total_files));
       $task->percent_complete = 10 + 100 * ($completed_files / $total_files);
-      Kohana::log("alert",print_r($task->as_array(),1));
       break;
 
     case "done":
