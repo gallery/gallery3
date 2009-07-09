@@ -1,30 +1,46 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<script>
-  var FATAL_ERROR = "<?= t("Fatal Error") ?>";
-  var FILE_IMPORT_WARNING = "<?= t("Add from server warning") ?>";
-  $("#gServerAdd").ready(function() {
-    init_server_add_form();
-  });
+<script type="text/javascript">
+  var GET_CHILDREN_URL = "<?= url::site("server_add/children?path=__PATH__") ?>";
+  var START_URL = "<?= url::site("server_add/start?item_id={$item->id}&csrf=$csrf") ?>";
 </script>
+
 <div id="gServerAdd">
-  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::clean($album_title))) ?></h1>
+  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::clean($item->title))) ?></h1>
 
   <p id="gDescription"><?= t("Photos will be added to album:") ?></p>
   <ul class="gBreadcrumbs">
-    <? foreach ($parents as $parent): ?>
-    <li><?= p::clean($parent->title) ?></li>
+    <? foreach ($item->parents() as $parent): ?>
+    <li>
+      <?= p::clean($parent->title) ?>
+    </li>
     <? endforeach ?>
-    <li class="active"><?= p::clean($album_title) ?></li>
+    <li class="active">
+      <?= p::clean($item->title) ?>
+    </li>
   </ul>
 
-  <?= form::open($action, array("method" => "post")) ?>
-  <div id="gServerAddTree" >
+  <?= form::open(url::abs_site("server_add/start/$item->id"), array("method" => "post")) ?>
+  <?= access::csrf_form_field(); ?>
+  <ul id="gServerAddTree" class="gCheckboxTree">
     <?= $tree ?>
-  </div>
+  </ul>
+
+  <div class="gProgressBar" style="display: none"></div>
+
   <span>
-    <?= form::submit(array("id" => "gServerPauseButton", "name" => "add", "disabled" => true, "class" => "submit", "style" => "display:none"), t("Pause")) ?>
-    <?= form::submit(array("id" => "gServerAddButton", "name" => "add", "disabled" => true, "class" => "submit"), t("Add")) ?>
+    <input id="gServerAddAddButton" class="submit ui-state-disabled" disabled="disabled"
+           type="submit" value="<?= t("Add") ?>">
   </span>
   <?= form::close() ?>
-  <div class="gProgressBar" style="visibility: hidden" ></div>
+  <script type="text/javascript">
+    $("#gServerAddAddButton").ready(function() {
+      $("#gServerAddAddButton").click(function(event) {
+         event.preventDefault();
+         $("#gServerAdd .gProgressBar").
+           progressbar().
+           progressbar("value", 0).
+           slideDown("fast", function() { start_add() });
+      });
+    });
+  </script>
 </div>
