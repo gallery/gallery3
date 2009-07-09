@@ -7,17 +7,17 @@
   });
 </script>
 <div id="gServerAdd">
-  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::clean($item->title))) ?></h1>
+  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::clean($album_title))) ?></h1>
 
   <p id="gDescription"><?= t("Photos will be added to album:") ?></p>
   <ul class="gBreadcrumbs">
-    <? foreach ($item->parents() as $parent): ?>
+    <? foreach ($parents as $parent): ?>
     <li><?= p::clean($parent->title) ?></li>
     <? endforeach ?>
-    <li class="active"><?= p::clean($item->title) ?></li>
+    <li class="active"><?= p::clean($album_title) ?></li>
   </ul>
 
-  <?= form::open(url::abs_site("__ARGS__/{$id}__TASK_ID__?csrf=$csrf"), array("method" => "post")) ?>
+  <?= form::open($action, array("method" => "post")) ?>
   <div id="gServerAddTree" >
     <?= $tree ?>
   </div>
