@@ -22,6 +22,5 @@ class organize_theme {
     // @tdo remove the addition css and organize.js (just here to test)
     $theme->script("modules/organize/js/organize_init.js");
     $theme->script("modules/organize/js/organize.js");
-    $theme->css("modules/organize/css/organize.css");
   }
 }
