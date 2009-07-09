@@ -67,9 +67,6 @@ class l10n_client_Core {
     return true;
   }
 
-  /**
-   * @return an array of messages that will be written to the task log
-   */
   static function fetch_updates() {
     $request->locales = array();
     $request->messages = new stdClass();
