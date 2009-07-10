@@ -127,6 +127,7 @@ class Theme_View_Core extends Gallery_View {
       }
     }
 
+    $menu->compact();
     print $menu;
   }
 
