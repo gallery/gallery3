@@ -21,7 +21,7 @@ class Server_Add_Controller extends Admin_Controller {
   public function browse($id) {
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     foreach (array_keys($paths) as $path) {
-      $files[$path] = basename($path);
+      $files[] = $path;
     }
 
     $item = ORM::factory("item", $id);
@@ -54,7 +54,7 @@ class Server_Add_Controller extends Admin_Controller {
         }
       }
 
-      $tree->files[$file] = basename($file);
+      $tree->files[] = $file;
     }
     print $tree;
   }
@@ -119,8 +119,8 @@ class Server_Add_Controller extends Admin_Controller {
     case "init":
       $task->set("mode", "build-file-list");
       $task->set("queue", array_keys($selections));
-      $task->status = t("Starting up");
       $task->percent_complete = 0;
+      $task->status = t("Starting up");
       batch::start();
       break;
 
@@ -132,6 +132,11 @@ class Server_Add_Controller extends Admin_Controller {
       while ($queue && microtime(true) - $start < 0.5) {
         $file = array_shift($queue);
         if (is_dir($file)) {
+          $entry = ORM::factory("server_add_file");
+          $entry->task_id = $task->id;
+          $entry->file = $file;
+          $entry->save();
+
           $children = empty($selections[$file]) ? glob("$file/*") : $selections[$file];
         } else {
           $children = array($file);
@@ -187,6 +192,7 @@ class Server_Add_Controller extends Admin_Controller {
 
       $item = model_cache::get("item", $item_id);
       foreach ($entries as $entry) {
+        Kohana::log("alert",print_r($albums,1));
         if (microtime(true) - $start > 0.5) {
           break;
         }
@@ -195,19 +201,33 @@ class Server_Add_Controller extends Admin_Controller {
         $name = basename($relative_path);
         $title = item::convert_filename_to_title($name);
         if (is_dir($entry->file)) {
-          if (isset($albums[$relative_path]) && $parent_id = $albums[$relative_path]) {
+          $parent_path = dirname($relative_path);
+          Kohana::log("alert",print_r("rp: $relative_path -> $parent_path",1));
+          if (isset($albums[$parent_path]) && $parent_id = $albums[$parent_path]) {
             $parent = ORM::factory("item", $parent_id);
-          } else {
-            $album = album::create($item, $name, $title, null, user::active()->id);
-            $albums[$relative_path] = $album->id;
-            $task->set("albums", $albums);
-          }
-        } else {
-          if (strpos($relative_path, "/") !== false) {
-            $parent = ORM::factory("item", $albums[dirname($relative_path)]);
           } else {
             $parent = $item;
           }
+          $album = album::create($parent, $name, $title, null, user::active()->id);
+          $albums[$relative_path] = $album->id;
+          $task->set("albums", $albums);
+        } else {
+          // Find the nearest selected parent.  We check to see if any of the candidate parents
+          // were selected in the UI and if so, we use that.  Otherwise, we fall back to making
+          // the parent the current item.
+          $parent_path = $relative_path;
+          $parent = null;
+          do {
+            if (strpos($parent_path, "/") !== false) {
+              if (array_key_exists($parent_path, $albums)) {
+                $parent = ORM::factory("item", $albums[$parent_path]);
+              } else {
+                $parent_path = dirname($parent_path);
+              }
+            } else {
+              $parent = $item;
+            }
+          } while (!$parent);
 
           $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
           if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
