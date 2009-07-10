@@ -5,17 +5,17 @@
 </script>
 
 <div id="gServerAdd">
-  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::clean($item->title))) ?></h1>
+  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::purify($item->title))) ?></h1>
 
   <p id="gDescription"><?= t("Photos will be added to album:") ?></p>
   <ul class="gBreadcrumbs">
     <? foreach ($item->parents() as $parent): ?>
     <li>
-      <?= p::clean($parent->title) ?>
+      <?= p::purify($parent->title) ?>
     </li>
     <? endforeach ?>
     <li class="active">
-      <?= p::clean($item->title) ?>
+      <?= p::purify($item->title) ?>
     </li>
   </ul>
 
@@ -25,7 +25,10 @@
     <?= $tree ?>
   </ul>
 
-  <div class="gProgressBar" style="display: none"></div>
+  <div id="gProgress" style="display: none">
+    <div class="gProgressBar"></div>
+    <div id="gStatus"></div>
+  </div>
 
   <span>
     <input id="gServerAddAddButton" class="submit ui-state-disabled" disabled="disabled"
@@ -38,8 +41,8 @@
          event.preventDefault();
          $("#gServerAdd .gProgressBar").
            progressbar().
-           progressbar("value", 0).
-           slideDown("fast", function() { start_add() });
+           progressbar("value", 0);
+         $("#gProgress").slideDown("fast", function() { start_add() });
       });
     });
   </script>

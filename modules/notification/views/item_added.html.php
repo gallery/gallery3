@@ -8,7 +8,7 @@
     <table>
       <tr>
         <td><?= t("Title:") ?></td>
-        <td><?= p::purifys($item->title) ?></td>
+        <td><?= p::purify($item->title) ?></td>
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>

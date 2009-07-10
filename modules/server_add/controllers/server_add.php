@@ -21,7 +21,7 @@ class Server_Add_Controller extends Admin_Controller {
   public function browse($id) {
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     foreach (array_keys($paths) as $path) {
-      $files[$path] = basename($path);
+      $files[] = $path;
     }
 
     $item = ORM::factory("item", $id);
@@ -54,7 +54,7 @@ class Server_Add_Controller extends Admin_Controller {
         }
       }
 
-      $tree->files[$file] = basename($file);
+      $tree->files[] = $file;
     }
     print $tree;
   }
@@ -86,6 +86,7 @@ class Server_Add_Controller extends Admin_Controller {
 
     print json_encode(
       array("result" => "started",
+            "status" => $task->status,
             "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())));
   }
 
@@ -99,6 +100,7 @@ class Server_Add_Controller extends Admin_Controller {
 
     $task = task::run($task_id);
     print json_encode(array("done" => $task->done,
+                            "status" => $task->status,
                             "percent_complete" => $task->percent_complete));
   }
 
@@ -118,6 +120,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->set("mode", "build-file-list");
       $task->set("queue", array_keys($selections));
       $task->percent_complete = 0;
+      $task->status = t("Starting up");
       batch::start();
       break;
 
@@ -126,17 +129,28 @@ class Server_Add_Controller extends Admin_Controller {
       // Don't use an iterator here because we can't get enough control over it when we're dealing
       // with a deep hierarchy and we don't want to go over our time quota.
       $queue = $task->get("queue");
-      Kohana::log("alert",print_r($queue,1));
       while ($queue && microtime(true) - $start < 0.5) {
         $file = array_shift($queue);
-        $entry = ORM::factory("server_add_file");
-        $entry->task_id = $task->id;
-        $entry->file = $file;
-        $entry->save();
-
         if (is_dir($file)) {
-          $queue = array_merge(
-            $queue, empty($selections[$file]) ? glob("$file/*") : $selections[$file]);
+          $entry = ORM::factory("server_add_file");
+          $entry->task_id = $task->id;
+          $entry->file = $file;
+          $entry->save();
+
+          $children = empty($selections[$file]) ? glob("$file/*") : $selections[$file];
+        } else {
+          $children = array($file);
+        }
+
+        foreach ($children as $child) {
+          $entry = ORM::factory("server_add_file");
+          $entry->task_id = $task->id;
+          $entry->file = $child;
+          $entry->save();
+
+          if (is_dir($child)) {
+            $queue[] = $child;
+          }
         }
       }
       // We have no idea how long this can take because we have no idea how deep the tree
@@ -144,6 +158,10 @@ class Server_Add_Controller extends Admin_Controller {
       // over 10% in percent_complete.
       $task->set("queue", $queue);
       $task->percent_complete = min($task->percent_complete + 0.1, 10);
+      $task->status = t2("Found one file", "Found %count files",
+                         Database::instance()
+                         ->where("task_id", $task->id)
+                         ->count_records("server_add_files"));
 
       if (!$queue) {
         $task->set("mode", "add-files");
@@ -182,19 +200,32 @@ class Server_Add_Controller extends Admin_Controller {
         $name = basename($relative_path);
         $title = item::convert_filename_to_title($name);
         if (is_dir($entry->file)) {
-          if (isset($albums[$relative_path]) && $parent_id = $albums[$relative_path]) {
+          $parent_path = dirname($relative_path);
+          if (isset($albums[$parent_path]) && $parent_id = $albums[$parent_path]) {
             $parent = ORM::factory("item", $parent_id);
-          } else {
-            $album = album::create($item, $name, $title, null, user::active()->id);
-            $albums[$relative_path] = $album->id;
-            $task->set("albums", $albums);
-          }
-        } else {
-          if (strpos($relative_path, "/") !== false) {
-            $parent = ORM::factory("item", $albums[dirname($relative_path)]);
           } else {
             $parent = $item;
           }
+          $album = album::create($parent, $name, $title, null, user::active()->id);
+          $albums[$relative_path] = $album->id;
+          $task->set("albums", $albums);
+        } else {
+          // Find the nearest selected parent.  We check to see if any of the candidate parents
+          // were selected in the UI and if so, we use that.  Otherwise, we fall back to making
+          // the parent the current item.
+          $parent_path = $relative_path;
+          $parent = null;
+          do {
+            if (strpos($parent_path, "/") !== false) {
+              if (array_key_exists($parent_path, $albums)) {
+                $parent = ORM::factory("item", $albums[$parent_path]);
+              } else {
+                $parent_path = dirname($parent_path);
+              }
+            } else {
+              $parent = $item;
+            }
+          } while (!$parent);
 
           $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
           if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
@@ -202,6 +233,7 @@ class Server_Add_Controller extends Admin_Controller {
           } else if (in_array($extension, array("flv", "mp4"))) {
             movie::create($parent, $entry->file, $name, $title, null, user::active()->id);
           } else {
+            $task->log("Skipping unknown file type: $relative_path");
             // Unsupported type
             // @todo: $task->log this
           }
@@ -211,8 +243,10 @@ class Server_Add_Controller extends Admin_Controller {
         $entry->delete();
       }
       $task->set("completed_files", $completed_files);
+      $task->status = t("Adding photos and albums (%completed of %total)",
+                        array("completed" => $completed_files,
+                              "total" => $total_files));
       $task->percent_complete = 10 + 100 * ($completed_files / $total_files);
-      Kohana::log("alert",print_r($task->as_array(),1));
       break;
 
     case "done":

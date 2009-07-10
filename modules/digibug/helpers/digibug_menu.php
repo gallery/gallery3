@@ -38,12 +38,13 @@ class digibug_menu {
 
   static function thumb($menu, $theme, $item) {
     if ($item->type == "photo" && access::can("view_full", $item)) {
-      $menu->append(
-        Menu::factory("link")
-        ->id("digibug")
-        ->label(t("Print with Digibug"))
-        ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
-        ->css_id("gDigibugLink"));
+      $menu->get("options_menu")
+        ->append(
+          Menu::factory("link")
+          ->id("digibug")
+          ->label(t("Print with Digibug"))
+          ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
+          ->css_id("gDigibugLink"));
     }
   }
 }
