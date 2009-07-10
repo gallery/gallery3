@@ -79,7 +79,7 @@
           <? if ($task->state == "cancelled"): ?>
           <?= t("Cancelled") ?>
           <? endif ?>
-          <?= t("Done") ?>
+          <?= t("Close") ?>
           <? elseif ($task->state == "stalled"): ?>
           <?= t("Stalled") ?>
           <? else: ?>
