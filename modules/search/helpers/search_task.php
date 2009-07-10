@@ -69,6 +69,7 @@ class search_task_Core {
       $task->status = t2("one record updated, index is %percent% up-to-date",
                          "%count records updated, index is %percent% up-to-date",
                          $completed, array("percent" => $percent));
+      $message[] = $task->status;
     } catch (Exception $e) {
       $task->done = true;
       $task->state = "error";
