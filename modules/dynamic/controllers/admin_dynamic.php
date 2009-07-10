@@ -28,9 +28,11 @@ class Admin_Dynamic_Controller extends Admin_Controller {
     if ($form->validate()) {
       foreach (array("updates", "popular") as $album) {
         $album_defn = unserialize(module::get_var("dynamic", $album));
-        $album_defn->enabled = $form->$album->enabled->value;
-        $album_defn->description = $form->$album->description->value;
-        $album_defn->limit = $form->$album->limit->value === "" ? null : $form->$album->limit->value;
+        $group = $form->inputs[$album];
+        $album_defn->enabled = $group->inputs["{$album}_enabled"]->value;
+        $album_defn->description = $group->inputs["{$album}_description"]->value;
+        $album_defn->limit = $group->inputs["{$album}_limit"] === "" ? null :
+          $group->inputs["{$album}_limit"]->value;
         module::set_var("dynamic", $album, serialize($album_defn));
       }
 
@@ -58,15 +60,15 @@ class Admin_Dynamic_Controller extends Admin_Controller {
       $album_defn = unserialize(module::get_var("dynamic", $album));
 
       $group = $form->group($album)->label(t($album_defn->title));
-      $group->checkbox("enabled")
+      $group->checkbox("{$album}_enabled")
         ->label(t("Enable"))
         ->value(1)
         ->checked($album_defn->enabled);
-      $group->input("limit")
+      $group->input("{$album}_limit")
         ->label(t("Limit (leave empty for unlimited)"))
-        ->value(empty($updates->limit) ? "" : $updates->limit)
+        ->value(empty($album_defn->limit) ? "" : $album_defn->limit)
         ->rules("valid_numeric");
-      $group->textarea("description")
+      $group->textarea("{$album}_description")
         ->label(t("Description"))
         ->rules("length[0,2048]")
         ->value($album_defn->description);
