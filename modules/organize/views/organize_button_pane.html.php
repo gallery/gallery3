@@ -46,5 +46,5 @@
 <div id="gOrganizeEditHandleButtonsRight">
   <a id="gMicroThumbSelectAll" href="#" ref="select-all" class="gButtonLink ui-corner-all ui-state-default"><?= t("Select all") ?></a>
   <a id="gMicroThumbUnselectAll" href="#" ref="unselect-all" style="display: none" class="gButtonLink ui-corner-all ui-state-default"><?= t("Deselect all") ?></a>
-  <a id="gMicroThumbDone" href="#" ref="done" class="gButtonLink ui-corner-all ui-state-default"><?= t("Done") ?></a>
+  <a id="gMicroThumbDone" href="#" ref="done" class="gButtonLink ui-corner-all ui-state-default"><?= t("Close") ?></a>
 </div>

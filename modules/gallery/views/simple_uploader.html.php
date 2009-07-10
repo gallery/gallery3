@@ -51,7 +51,7 @@
 
   <!-- Proxy the done request back to our form, since its been ajaxified -->
   <button class="ui-state-default ui-corner-all" onclick="$('#gAddPhotosForm').submit()">
-    <?= t("Done") ?>
+    <?= t("Close") ?>
   </button>
 </div>
 
