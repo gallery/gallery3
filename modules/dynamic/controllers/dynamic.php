@@ -18,36 +18,6 @@
  */
 class Dynamic_Controller extends Controller {
   public function updates() {
-    $page_size = module::get_var("gallery", "page_size", 9);
-    $page = $this->input->get("page", "1");
-
-    $children_count = ORM::factory("item")
-      ->viewable()
-      ->where("type !=", "album")
-      ->count_all();
-    $offset = ($page-1) * $page_size;
-    print $children_count;
-
-    $max_pages = ceil($children_count / $page_size);
-    print $max_pages;
-
-    // Make sure that the page references a valid offset
-    if ($page < 1 || ($children_count && $page > ceil($children_count / $page_size))) {
-      Kohana::show_404();
-    }
-
-    $template = new Theme_View("page.html", "dynamic");
-    $template->set_global("page_size", $page_size);
-    $template->set_global("children", ORM::factory("item")
-                          ->viewable()
-                          ->where("type !=", "album")
-                          ->orderby("created", "DESC")
-                          ->find_all($page_size, $offset));
-    $template->set_global("children_count", $children_count);
-    $template->content = new View("dynamic.html");
-    $template->content->title = t("Recent Updates");
-
-    print $template;
     print $this->_show("updates");
   }
 
