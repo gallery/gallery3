@@ -95,6 +95,9 @@ class gallery_menu_Core {
   }
 
   static function thumb($menu, $theme, $item) {
+    $menu->append(Menu::factory("submenu")
+                  ->id("options_menu")
+                  ->label(t("Options")));
   }
 
   static function photo($menu, $theme) {
