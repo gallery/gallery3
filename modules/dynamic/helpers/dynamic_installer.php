@@ -31,7 +31,7 @@ class dynamic_installer {
                                               "limit" => null,
                                               "description" => "",
                                               "key_field" => "created",
-                                              "title" => t("Recent Updates"))));
+                                              "title" => t("Recent Changes"))));
       module::set_version("dynamic", 1);
     }
   }
