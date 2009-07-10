@@ -192,7 +192,6 @@ class Server_Add_Controller extends Admin_Controller {
 
       $item = model_cache::get("item", $item_id);
       foreach ($entries as $entry) {
-        Kohana::log("alert",print_r($albums,1));
         if (microtime(true) - $start > 0.5) {
           break;
         }
@@ -202,7 +201,6 @@ class Server_Add_Controller extends Admin_Controller {
         $title = item::convert_filename_to_title($name);
         if (is_dir($entry->file)) {
           $parent_path = dirname($relative_path);
-          Kohana::log("alert",print_r("rp: $relative_path -> $parent_path",1));
           if (isset($albums[$parent_path]) && $parent_id = $albums[$parent_path]) {
             $parent = ORM::factory("item", $parent_id);
           } else {
