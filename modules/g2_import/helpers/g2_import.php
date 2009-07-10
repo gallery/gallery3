@@ -623,8 +623,10 @@ class g2_import_Core {
     }
 
     $tags = "";
+    // Multiword tags have the space changed to dots.s
     foreach ($tag_names as $tag_name) {
-      $tags .= (strlen($tags) ? ", " : "") . tag::add($g3_item, $tag_name);
+      $tags .= (strlen($tags) ? ", " : "") .
+        tag::add($g3_item, preg_replace('/\s\s+/', '.', $tag_name));
     }
 
     // Tag operations are idempotent so we don't need to map them.  Which is good because we don't
