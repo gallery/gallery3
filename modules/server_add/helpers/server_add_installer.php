@@ -28,7 +28,7 @@ class server_add_installer {
                   `task_id` int(9) NOT NULL,
                   PRIMARY KEY (`id`))
                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-    module::set_version("server_add", 2);
+    module::set_version("server_add", 3);
     server_add::check_config();
   }
 
