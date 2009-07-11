@@ -207,7 +207,7 @@ class Menu_Core extends Menu_Element {
 
   public function __toString() {
     $html = $this->is_root ? "<ul class=\"gMenu\">" :
-      "<li><a href=#>$this->label</a><ul class=\"gMenu\">";
+      "<li title=\"$this->label\"><a href=#>$this->label</a><ul class=\"gMenu\">";
     $html .= implode("\n", $this->elements);
     $html .= $this->is_root ? "</ul>" : "</ul></li>";
     return $html;
