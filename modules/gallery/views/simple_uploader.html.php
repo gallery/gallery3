@@ -258,7 +258,7 @@
     var msg = "(<?= t("completed __COMPLETED__ of __TOTAL__") ?>)";
     msg = msg.replace("__COMPLETED__", stats.successful_uploads);
     msg = msg.replace("__TOTAL__", stats.files_queued + stats.successful_uploads +
-      stats.upload_errors + stats.upload_cancelled + stats.queue_errors;
+      stats.upload_errors + stats.upload_cancelled + stats.queue_errors);
     $("#gUploadQueueInfo").text(msg);
     if (stats.files_queued === 0) {
       $("#gUploadCancel").hide();
