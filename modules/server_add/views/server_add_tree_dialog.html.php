@@ -46,4 +46,8 @@
       });
     });
   </script>
+
+  <button class="ui-state-default ui-corner-all" onclick="closeDialog(); window.location.reload();">
+    <?= t("Close") ?>
+  </button>
 </div>
