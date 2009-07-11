@@ -28,12 +28,12 @@ class exif_task_Core {
     list ($remaining, $total, $percent) = exif::stats();
     return array(Task_Definition::factory()
                  ->callback("exif_task::update_index")
-                 ->name(t("Extract EXIF data"))
+                 ->name(t("Extract Exif data"))
                  ->description($remaining
                                ? t2("1 photo needs to be scanned",
                                     "%count (%percent%) of your photos need to be scanned",
                                     $remaining, array("percent" => (100 - $percent)))
-                               : t("EXIF data is up-to-date"))
+                               : t("Exif data is up-to-date"))
                  ->severity($remaining ? log::WARNING : log::SUCCESS));
   }
 
@@ -57,7 +57,7 @@ class exif_task_Core {
 
         $completed++;
         exif::extract($item);
-        $message[] = t("Updated EXIF meta data for '%title'",
+        $message[] = t("Updated Exif meta data for '%title'",
                        array("title" => p::purify($item->title)));
       }
 
