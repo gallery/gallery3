@@ -22,10 +22,10 @@ var show_quick = function() {
     function(data, textStatus) {
       $("#gQuickPane").html(data).slideDown("fast");
       $(".ui-state-default").hover(
-        function(){
+        function() {
           $(this).addClass("ui-state-hover");
         },
-        function(){
+        function() {
           $(this).removeClass("ui-state-hover");
         }
       );
