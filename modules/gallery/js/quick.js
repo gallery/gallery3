@@ -46,7 +46,7 @@ var quick_do = function(cont, pane, img) {
     return false;
   }
   if (pane.hasClass("gDialogLink")) {
-    openDialog(pane, function() { window.location.reload(); });
+    openDialog(pane);
   } else {
     img.css("opacity", "0.1");
     cont.addClass("gLoadingLarge");
