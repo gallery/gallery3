@@ -57,7 +57,7 @@ class exif_task_Core {
 
         $completed++;
         exif::extract($item);
-        $message[] = t("Updated Exif meta data for '%title'",
+        $message[] = t("Updated EXIF meta data for '%title'",
                        array("title" => p::purify($item->title)));
       }
 
