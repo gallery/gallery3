@@ -29,51 +29,58 @@ class Server_Add_Controller extends Admin_Controller {
     $view->item = $item;
     $view->tree = new View("server_add_tree.html");
     $view->tree->files = $files;
+    $view->tree->parents = array();
     print $view;
   }
 
   public function children() {
     $path = $this->input->get("path");
-    if (!server_add::is_valid_path($path)) {
-      throw new Exception("@todo BAD_PATH");
-    }
 
     $tree = new View("server_add_tree.html");
     $tree->files = array();
-    $tree->tree_id = substr(md5($path), 10);
+    $tree->parents = array();
 
-    foreach (glob("$path/*") as $file) {
-      if (!is_readable($file)) {
-        continue;
+    // Make a tree with the parents back up to the authorized path, and all the children under the
+    // current path.
+    if (server_add::is_valid_path($path)) {
+      $tree->parents[] = $path;
+      while (server_add::is_valid_path(dirname($tree->parents[0]))) {
+        array_unshift($tree->parents, dirname($tree->parents[0]));
       }
 
-      if (!is_dir($file)) {
-        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-        if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+      foreach (glob("$path/*") as $file) {
+        if (!is_readable($file)) {
           continue;
         }
-      }
+        if (!is_dir($file)) {
+          $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+          if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+            continue;
+          }
+        }
 
-      $tree->files[] = $file;
+        $tree->files[] = $file;
+      }
+    } else {
+      // Missing or invalid path; print out the list of authorized path
+      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+      foreach (array_keys($paths) as $path) {
+        $tree->files[] = $path;
+      }
     }
     print $tree;
   }
 
+  /**
+   * Begin the task of adding photos.
+   */
   public function start() {
     access::verify_csrf();
-
     $item = ORM::factory("item", Input::instance()->get("item_id"));
-    // We're an admin so this isn't necessary, but we'll eventually open this up to non-admins and
-    // this also verifies that the item was loaded properly.
-    access::required("edit", $item);
 
-    // Gather up all the paths and associate them by directory, so that we can locate any empty
-    // directories for the next round.
     foreach (Input::instance()->post("paths") as $path) {
-      if (is_dir($path)) {
-        $selections[$path] = array();
-      } else if (is_file($path)) {
-        $selections[dirname($path)][] = $path;
+      if (server_add::is_valid_path($path)) {
+        $paths[] = array($path, null);
       }
     }
 
@@ -81,8 +88,7 @@ class Server_Add_Controller extends Admin_Controller {
       ->callback("Server_Add_Controller::add")
       ->description(t("Add photos or movies from the local server"))
       ->name(t("Add from server"));
-    $task = task::create(
-      $task_def, array("item_id" => $item->id, "selections" => $selections));
+    $task = task::create($task_def, array("item_id" => $item->id, "queue" => $paths));
 
     print json_encode(
       array("result" => "started",
@@ -90,6 +96,9 @@ class Server_Add_Controller extends Admin_Controller {
             "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())));
   }
 
+  /**
+   * Run the task of adding photos
+   */
   function run($task_id) {
     access::verify_csrf();
 
@@ -110,49 +119,48 @@ class Server_Add_Controller extends Admin_Controller {
    * them one at a time.
    */
   static function add($task) {
-    $selections = $task->get("selections");
     $mode = $task->get("mode", "init");
     $start = microtime(true);
-    $item_id = $task->get("item_id");
 
     switch ($mode) {
     case "init":
       $task->set("mode", "build-file-list");
-      $task->set("queue", array_keys($selections));
       $task->percent_complete = 0;
       $task->status = t("Starting up");
       batch::start();
       break;
 
-    case "build-file-list":  /* 0% to 10% */
+    case "build-file-list":  // 0% to 10%
       // We can't fit an arbitrary number of paths in a task, so store them in a separate table.
       // Don't use an iterator here because we can't get enough control over it when we're dealing
-      // with a deep hierarchy and we don't want to go over our time quota.
+      // with a deep hierarchy and we don't want to go over our time quota.  The queue is in the
+      // form [path, parent_id] where the parent_id refers to another Server_Add_File_Model.  We
+      // have this extra level of abstraction because we don't know its Item_Model id yet.
       $queue = $task->get("queue");
       while ($queue && microtime(true) - $start < 0.5) {
-        $file = array_shift($queue);
-        if (is_dir($file)) {
-          $entry = ORM::factory("server_add_file");
-          $entry->task_id = $task->id;
-          $entry->file = $file;
-          $entry->save();
+        list($file, $parent_entry_id) = array_shift($queue);
+        $entry = ORM::factory("server_add_file");
+        $entry->task_id = $task->id;
+        $entry->file = $file;
+        $entry->parent_id = $parent_entry_id;
+        $entry->save();
 
-          $children = empty($selections[$file]) ? glob("$file/*") : $selections[$file];
-        } else {
-          $children = array($file);
-        }
-
-        foreach ($children as $child) {
-          $entry = ORM::factory("server_add_file");
-          $entry->task_id = $task->id;
-          $entry->file = $child;
-          $entry->save();
-
+        foreach (glob("$file/*") as $child) {
           if (is_dir($child)) {
-            $queue[] = $child;
+            $queue[] = array($child, $entry->id);
+          } else {
+            $ext = strtolower(pathinfo($child, PATHINFO_EXTENSION));
+            if (in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+              $child_entry = ORM::factory("server_add_file");
+              $child_entry->task_id = $task->id;
+              $child_entry->file = $child;
+              $child_entry->parent_id = $entry->id;
+              $child_entry->save();
+            }
           }
         }
       }
+
       // We have no idea how long this can take because we have no idea how deep the tree
       // hierarchy rabbit hole goes.  Leave ourselves room here for 100 iterations and don't go
       // over 10% in percent_complete.
@@ -168,79 +176,67 @@ class Server_Add_Controller extends Admin_Controller {
         $task->set(
           "total_files", database::instance()->count_records(
             "server_add_files", array("task_id" => $task->id)));
-        $task->set("albums", array());
-        $task->set("completed", 0);
         $task->percent_complete = 10;
       }
       break;
 
-    case "add-files": /* 10% to 100% */
-      $completed_files = $task->get("completed_files");
+    case "add-files": // 10% to 100%
+      $completed_files = $task->get("completed_files", 0);
       $total_files = $task->get("total_files");
-      $albums = $task->get("albums");
 
       // Ordering by id ensures that we add them in the order that we created the entries, which
-      // will create albums first.
+      // will create albums first.  Ignore entries which already have an Item_Model attached,
+      // they're done.
       $entries = ORM::factory("server_add_file")
         ->where("task_id", $task->id)
+        ->where("item_id", null)
         ->orderby("id", "ASC")
         ->limit(10)
         ->find_all();
       if ($entries->count() == 0) {
+        // Out of entries, we're done.
         $task->set("mode", "done");
       }
 
-      $item = model_cache::get("item", $item_id);
+      $owner_id = user::active()->id;
       foreach ($entries as $entry) {
         if (microtime(true) - $start > 0.5) {
           break;
         }
 
-        $relative_path = self::_relative_path($entry->file);
-        $name = basename($relative_path);
+        // Look up the parent item for this entry.  By now it should exist, but if none was
+        // specified, then this belongs as a child of the current item.
+        $parent_entry = ORM::factory("server_add_file", $entry->parent_id);
+        if (!$parent_entry->loaded) {
+          $parent = ORM::factory("item", $task->get("item_id"));
+        } else {
+          $parent = ORM::factory("item", $parent_entry->item_id);
+        }
+
+        $name = basename($entry->file);
         $title = item::convert_filename_to_title($name);
         if (is_dir($entry->file)) {
-          $parent_path = dirname($relative_path);
-          if (isset($albums[$parent_path]) && $parent_id = $albums[$parent_path]) {
-            $parent = ORM::factory("item", $parent_id);
-          } else {
-            $parent = $item;
-          }
-          $album = album::create($parent, $name, $title, null, user::active()->id);
-          $albums[$relative_path] = $album->id;
-          $task->set("albums", $albums);
+          $album = album::create($parent, $name, $title, null, $owner_id);
+          $entry->item_id = $album->id;
         } else {
-          // Find the nearest selected parent.  We check to see if any of the candidate parents
-          // were selected in the UI and if so, we use that.  Otherwise, we fall back to making
-          // the parent the current item.
-          $parent_path = $relative_path;
-          $parent = null;
-          do {
-            if (strpos($parent_path, "/") !== false) {
-              if (array_key_exists($parent_path, $albums)) {
-                $parent = ORM::factory("item", $albums[$parent_path]);
-              } else {
-                $parent_path = dirname($parent_path);
-              }
-            } else {
-              $parent = $item;
-            }
-          } while (!$parent);
-
           $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
           if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
-            photo::create($parent, $entry->file, $name, $title, null, user::active()->id);
+            $photo = photo::create($parent, $entry->file, $name, $title, null, $owner_id);
+            $entry->item_id = $photo->id;
           } else if (in_array($extension, array("flv", "mp4"))) {
-            movie::create($parent, $entry->file, $name, $title, null, user::active()->id);
+            $movie = movie::create($parent, $entry->file, $name, $title, null, $owner_id);
+            $entry->item_id = $movie->id;
           } else {
-            $task->log("Skipping unknown file type: $relative_path");
-            // Unsupported type
-            // @todo: $task->log this
+            // This should never happen, because we don't add stuff to the list that we can't
+            // process.  But just in, case.. set this to a non-null value so that we skip this
+            // entry.
+            $entry->item_id = 0;
+            $task->log("Skipping unknown file type: $entry->file");
           }
         }
 
         $completed_files++;
-        $entry->delete();
+        $entry->save();
       }
       $task->set("completed_files", $completed_files);
       $task->status = t("Adding photos and albums (%completed of %total)",
@@ -254,33 +250,10 @@ class Server_Add_Controller extends Admin_Controller {
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
+      ORM::factory("server_add_file")->where("task_id", $task->id)->delete_all();
       message::info(t2("Successfully added one photo",
-                       "Successfully added %count photos",
+                       "Successfully added %count photos and albums",
                        $task->get("completed_files")));
     }
-  }
-
-  /**
-   * Given a path that's somewhere in our authorized_paths list, return just the part that's
-   * relative to the nearest authorized path.
-   */
-  static function _relative_path($path) {
-    static $authorized_paths;
-    // @todo this doesn't deal well with overlapping authorized paths, it'll just use the first one
-    // that matches.  If we sort $authorized_paths by length in descending order, that should take
-    // care of the problem.
-    if (!$authorized_paths) {
-      $authorized_paths =
-        array_keys(unserialize(module::get_var("server_add", "authorized_paths")));
-    }
-
-    foreach ($authorized_paths as $candidate) {
-      $candidate = dirname($candidate);
-      if (strpos($path, $candidate) === 0) {
-        return substr($path, strlen($candidate) + 1);
-      }
-    }
-
-    throw new Exception("@todo BAD_PATH");
   }
 }

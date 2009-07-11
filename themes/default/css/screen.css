@@ -879,24 +879,20 @@ form .gError,
 
 /* Server Add */
 
-.gCheckboxTree input {
-  display: inline;
+#gServerAddTree {
+  cursor: pointer;
 }
 
-.gCheckboxTree li {
+#gServerAddTree li {
   padding: 0;
   float: none;
 }
 
-.gCheckboxTree .ui-icon {
-  cursor: pointer;
+#gServerAddTree span.selected {
+  background: #ddd;
 }
 
-.gFile {
-  padding-left: 2.5em;
-}
-
-#gServerAdd #gServerAddTree {
+#gServerAddTree {
   border: 1px solid #ccc;
   height: 25em;
   overflow: auto;
@@ -907,10 +903,6 @@ form .gError,
 
 #gServerAdd ul ul li {
   padding-left: 1.2em;
-}
-
-#gServerAdd ul li .gFile {
-  padding-left: 2.5em;
 }
 
 #gServerAdd .gBreadcrumbs {
