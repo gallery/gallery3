@@ -36,6 +36,14 @@ $(document).ready(function() {
     $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
 
+  // gThumbMenu
+  if ($(".gItem .gMenu").length) {
+    $(".gItem .gMenu").removeClass("sf-menu");
+    $(".gItem .gMenu span").removeClass("sf-sub-indicator");
+    $(".gItem .gMenu span").addClass("ui-icon ui-icon-triangle-1-n");
+    $(".gItem .gMenu li:first-child").addClass("ui-icon-right ui-corner-top ui-state-default");
+  }
+
   // Initialize view menu
   if ($("#gViewMenu").length) {
     $("#gViewMenu ul").removeClass("gMenu").removeClass("sf-menu");
