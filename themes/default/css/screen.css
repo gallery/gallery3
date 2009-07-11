@@ -460,6 +460,7 @@ form .gError,
   height: 240px;
   overflow: hidden;
   padding: 14px 8px;
+  position: relative;
   text-align: center;
   width: 213px;
 }
@@ -487,7 +488,7 @@ form .gError,
 }
 
 #gContent #gPhoto {
-
+  position: relative;
 }
 
 #gContent #gItem .gFullSizeLink img {
@@ -580,6 +581,21 @@ form .gError,
 #gSiteMenu ul {
   margin-bottom: 0;
 }
+
+/* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gItem .gMenu {
+  bottom: 0;
+  margin-bottom: -2px;
+  position: absolute;
+  right: 0;
+}
+
+.gItem .gMenu li {
+  font-weight: normal !important;
+}
+
+/* View Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gViewMenu {
   margin-bottom: 1em;
