@@ -98,7 +98,7 @@ class Packager_Controller extends Controller {
       print "$sql_file is not writeable";
       return;
     }
-    $command = "mysqldump --compact --add-drop-table -h{$conn['host']} " .
+    $command = "mysqldump --compact --skip-extended-insert --add-drop-table -h{$conn['host']} " .
       "-u{$conn['user']} $pass {$conn['database']} > $sql_file";
     exec($command, $output, $status);
     if ($status) {
@@ -153,7 +153,7 @@ class Packager_Controller extends Controller {
         $paths[] = "VARPATH . \"" . substr($name, strlen(VARPATH)) . "\"";
       } else {
         // @todo: serialize non-directories
-        print "Unknown file: $name";
+        print "IGNORING FILE: $name\n";
         return;
       }
     }

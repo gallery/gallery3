@@ -88,7 +88,8 @@ CREATE TABLE {graphics_rules} (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {graphics_rules} VALUES (1,1,'a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:2;}','gallery','resize',100,'thumb'),(2,1,'a:3:{s:5:\"width\";i:640;s:6:\"height\";i:480;s:6:\"master\";i:2;}','gallery','resize',100,'resize');
+INSERT INTO {graphics_rules} VALUES (1,1,'a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:2;}','gallery','resize',100,'thumb');
+INSERT INTO {graphics_rules} VALUES (2,1,'a:3:{s:5:\"width\";i:640;s:6:\"height\";i:480;s:6:\"master\";i:2;}','gallery','resize',100,'resize');
 DROP TABLE IF EXISTS {groups};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -100,7 +101,8 @@ CREATE TABLE {groups} (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {groups} VALUES (1,'Everybody',1),(2,'Registered Users',1);
+INSERT INTO {groups} VALUES (1,'Everybody',1);
+INSERT INTO {groups} VALUES (2,'Registered Users',1);
 DROP TABLE IF EXISTS {groups_users};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -111,7 +113,9 @@ CREATE TABLE {groups_users} (
   UNIQUE KEY `user_id` (`user_id`,`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {groups_users} VALUES (1,1),(1,2),(2,2);
+INSERT INTO {groups_users} VALUES (1,1);
+INSERT INTO {groups_users} VALUES (1,2);
+INSERT INTO {groups_users} VALUES (2,2);
 DROP TABLE IF EXISTS {incoming_translations};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -221,7 +225,15 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',6),(2,1,'user',1),(3,1,'comment',2),(4,1,'organize',1),(5,1,'info',1),(6,1,'rss',1),(7,1,'search',1),(8,1,'slideshow',1),(9,1,'tag',1);
+INSERT INTO {modules} VALUES (1,1,'gallery',6);
+INSERT INTO {modules} VALUES (2,1,'user',1);
+INSERT INTO {modules} VALUES (3,1,'comment',2);
+INSERT INTO {modules} VALUES (4,1,'organize',1);
+INSERT INTO {modules} VALUES (5,1,'info',1);
+INSERT INTO {modules} VALUES (6,1,'rss',1);
+INSERT INTO {modules} VALUES (7,1,'search',1);
+INSERT INTO {modules} VALUES (8,1,'slideshow',1);
+INSERT INTO {modules} VALUES (9,1,'tag',1);
 DROP TABLE IF EXISTS {outgoing_translations};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -248,7 +260,10 @@ CREATE TABLE {permissions} (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {permissions} VALUES (1,'View','view'),(2,'View Full Size','view_full'),(3,'Edit','edit'),(4,'Add','add');
+INSERT INTO {permissions} VALUES (1,'View','view');
+INSERT INTO {permissions} VALUES (2,'View Full Size','view_full');
+INSERT INTO {permissions} VALUES (3,'Edit','edit');
+INSERT INTO {permissions} VALUES (4,'Add','add');
 DROP TABLE IF EXISTS {search_records};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -313,7 +328,8 @@ CREATE TABLE {themes} (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {themes} VALUES (1,'default',1),(2,'admin_default',1);
+INSERT INTO {themes} VALUES (1,'default',1);
+INSERT INTO {themes} VALUES (2,'admin_default',1);
 DROP TABLE IF EXISTS {users};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -335,7 +351,8 @@ CREATE TABLE {users} (
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {users} VALUES (1,'guest','Guest User','',0,0,NULL,0,1,NULL,NULL,NULL),(2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
+INSERT INTO {users} VALUES (1,'guest','Guest User','',0,0,NULL,0,1,NULL,NULL,NULL);
+INSERT INTO {users} VALUES (2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
 DROP TABLE IF EXISTS {vars};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -348,4 +365,20 @@ CREATE TABLE {vars} (
   UNIQUE KEY `module_name` (`module_name`,`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','default'),(2,'gallery','active_admin_theme','admin_default'),(3,'gallery','page_size','9'),(4,'gallery','thumb_size','200'),(5,'gallery','resize_size','640'),(6,'gallery','default_locale','en_US'),(7,'gallery','image_quality','75'),(9,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}'),(14,'gallery','blocks_dashboard_center','a:4:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}i:9;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}'),(17,'gallery','version','3.0 pre beta 2 (git)'),(18,'gallery','choose_default_tookit','1'),(19,'gallery','date_format','Y-M-d'),(20,'gallery','date_time_format','Y-M-d H:i:s'),(21,'gallery','time_format','H:i:s'),(22,'gallery','show_credits','1'),(23,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>'),(25,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','default');
+INSERT INTO {vars} VALUES (2,'gallery','active_admin_theme','admin_default');
+INSERT INTO {vars} VALUES (3,'gallery','page_size','9');
+INSERT INTO {vars} VALUES (4,'gallery','thumb_size','200');
+INSERT INTO {vars} VALUES (5,'gallery','resize_size','640');
+INSERT INTO {vars} VALUES (6,'gallery','default_locale','en_US');
+INSERT INTO {vars} VALUES (7,'gallery','image_quality','75');
+INSERT INTO {vars} VALUES (9,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
+INSERT INTO {vars} VALUES (14,'gallery','blocks_dashboard_center','a:4:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}i:9;a:2:{i:0;s:7:\"comment\";i:1;s:15:\"recent_comments\";}}');
+INSERT INTO {vars} VALUES (17,'gallery','version','3.0 pre beta 2 (git)');
+INSERT INTO {vars} VALUES (18,'gallery','choose_default_tookit','1');
+INSERT INTO {vars} VALUES (19,'gallery','date_format','Y-M-d');
+INSERT INTO {vars} VALUES (20,'gallery','date_time_format','Y-M-d H:i:s');
+INSERT INTO {vars} VALUES (21,'gallery','time_format','H:i:s');
+INSERT INTO {vars} VALUES (22,'gallery','show_credits','1');
+INSERT INTO {vars} VALUES (23,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>');
+INSERT INTO {vars} VALUES (25,'comment','spam_caught','0');
