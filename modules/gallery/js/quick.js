@@ -11,6 +11,7 @@ $(document).ready(function() {
 var show_quick = function() {
   var cont = $(this);
   var quick = $(this).find(".gQuick");
+  var img = cont.find(".gThumbnail,.gResize");
   $("#gQuickPane").remove();
   cont.append("<div id=\"gQuickPane\"></div>");
   $("#gQuickPane").hide();
