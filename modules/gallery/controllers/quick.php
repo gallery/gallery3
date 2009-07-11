@@ -127,6 +127,7 @@ class Quick_Controller extends Controller {
       $msg = t("Deleted photo <b>%title</b>", array("title" => p::purify($item->title)));
     }
 
+    $parent = $item->parent();
     $item->delete();
     message::success($msg);
 
