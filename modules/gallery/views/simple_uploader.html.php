@@ -182,8 +182,9 @@
     if (num_files_selected > 0) {
       $("#gUploadCancel").show();
       var stats = this.getStats();
-      $("#gUploadQueueInfo").text("(completed " + stats.successful_uploads +
-                                  " of " + (stats.files_queued + stats.successful_uploads + stats.upload_errors + stats.upload_cancelled + stats.queue_errors) + ")");
+      $("#gUploadQueueInfo").text("(<?= t("completed") ?> " + stats.successful_uploads +
+		" <?= t("of") ?> " + (stats.files_queued + stats.successful_uploads +
+		stats.upload_errors + stats.upload_cancelled + stats.queue_errors) + ")");
     }
 
     // Auto start the upload
@@ -254,8 +255,9 @@
 
   function upload_complete(file) {
     var stats = this.getStats();
-    $("#gUploadQueueInfo").text("(completed " + stats.successful_uploads +
-                                " of " + (stats.files_queued + stats.successful_uploads + stats.upload_errors + stats.upload_cancelled + stats.queue_errors) + ")");
+    $("#gUploadQueueInfo").text("(<?= t("completed") ?> " + stats.successful_uploads +
+	  " <?= t("of") ?> " + (stats.files_queued + stats.successful_uploads +
+	  stats.upload_errors + stats.upload_cancelled + stats.queue_errors) + ")");
     if (stats.files_queued === 0) {
       $("#gUploadCancel").hide();
     }
