@@ -19,8 +19,6 @@
     </li>
   </ul>
 
-  <?= form::open(url::abs_site("server_add/start/$item->id"), array("method" => "post")) ?>
-  <?= access::csrf_form_field(); ?>
   <ul id="gServerAddTree" class="gCheckboxTree">
     <?= $tree ?>
   </ul>
@@ -31,10 +29,16 @@
   </div>
 
   <span>
-    <input id="gServerAddAddButton" class="submit ui-state-disabled" disabled="disabled"
-           type="submit" value="<?= t("Add") ?>">
+    <button id="gServerAddAddButton" class="ui-state-default ui-state-disabled ui-corner-all"
+            disabled="disabled">
+      <?= t("Add") ?>
+    </button>
+
+    <button class="ui-state-default ui-corner-all" onclick="closeDialog(); window.location.reload();">
+      <?= t("Close") ?>
+    </button>
   </span>
-  <?= form::close() ?>
+
   <script type="text/javascript">
     $("#gServerAddAddButton").ready(function() {
       $("#gServerAddAddButton").click(function(event) {
@@ -46,4 +50,5 @@
       });
     });
   </script>
+
 </div>

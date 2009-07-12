@@ -899,8 +899,14 @@ form .gError,
 
 /* Server Add */
 
+#gServerAdd button {
+  float: left;
+  margin-bottom: .5em;
+}
+
 #gServerAddTree {
   cursor: pointer;
+  padding-left: 4px;
 }
 
 #gServerAddTree li {
