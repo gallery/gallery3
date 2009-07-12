@@ -50,8 +50,23 @@ $(document).ready(function() {
         .css({
           "height":"10px",
           "margin":"0",
-          "padding":"0"
+          "padding":"0",
+          "width":"16px"
         });
+    var menuHt = $("#gContent .gThumbMenu").height();
+    var bottomPos = "-" + (menuHt - 15) + "px";
+    $("#gContent .gThumbMenu").css("bottom",bottomPos);
+    console.log("Initilizing: Placing at " + bottomPos);
+    $("#gContent .gThumbMenu li").hover(
+      function(){
+        $(this).css("bottom","0");
+        console.log("Placing at 0px");
+      },
+      function(){
+        $(this).css("bottom",bottomPos);
+        console.log("Placing at " + bottomPos);
+      }
+    );
   }
 
   // Initialize view menu

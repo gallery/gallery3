@@ -459,7 +459,7 @@ form .gError,
   font-size: .7em;
   height: 240px;
   overflow: hidden;
-  padding: 14px 8px;
+  padding: 15px 8px 30px 8px;
   position: relative;
   text-align: center;
   width: 213px;
