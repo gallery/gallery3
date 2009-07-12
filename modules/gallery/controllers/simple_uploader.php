@@ -58,13 +58,13 @@ class Simple_Uploader_Controller extends Controller {
         $path_info = @pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
             in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
-          $movie = movie::create($album, $temp_filename, $name, $title);
+          $item = movie::create($album, $temp_filename, $name, $title);
           log::success("content", t("Added a movie"),
-                       html::anchor("movies/$movie->id", t("view movie")));
+                       html::anchor("movies/$item->id", t("view movie")));
         } else {
-          $photo = photo::create($album, $temp_filename, $name, $title);
+          $item = photo::create($album, $temp_filename, $name, $title);
           log::success("content", t("Added a photo"),
-                       html::anchor("photos/$photo->id", t("view photo")));
+                       html::anchor("photos/$item->id", t("view photo")));
         }
       } catch (Exception $e) {
         Kohana::log("alert", $e->__toString());
@@ -76,7 +76,7 @@ class Simple_Uploader_Controller extends Controller {
         return;
       }
       unlink($temp_filename);
-      print "FILEID: $photo->id";
+      print "FILEID: $item->id";
     } else {
       header("HTTP/1.1 400 Bad Request");
       print "ERROR: Invalid Upload";

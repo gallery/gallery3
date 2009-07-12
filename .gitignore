@@ -1,6 +1,6 @@
-# Ignore the var subdirectory
+# We store Gallery3 data in var
 var
 
-# Ignore the index.local.php
+# local.php is a local customization point that gets loaded at the end of index.php
 local.php
 

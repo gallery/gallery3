@@ -11,6 +11,7 @@ $(document).ready(function() {
 var show_quick = function() {
   var cont = $(this);
   var quick = $(this).find(".gQuick");
+  var img = cont.find(".gThumbnail,.gResize");
   $("#gQuickPane").remove();
   cont.append("<div id=\"gQuickPane\"></div>");
   $("#gQuickPane").hide();
@@ -21,10 +22,10 @@ var show_quick = function() {
     function(data, textStatus) {
       $("#gQuickPane").html(data).slideDown("fast");
       $(".ui-state-default").hover(
-        function(){
+        function() {
           $(this).addClass("ui-state-hover");
         },
-        function(){
+        function() {
           $(this).removeClass("ui-state-hover");
         }
       );
@@ -45,7 +46,7 @@ var quick_do = function(cont, pane, img) {
     return false;
   }
   if (pane.hasClass("gDialogLink")) {
-    openDialog(pane, function() { window.location.reload(); });
+    openDialog(pane);
   } else {
     img.css("opacity", "0.1");
     cont.addClass("gLoadingLarge");
