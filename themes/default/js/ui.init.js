@@ -14,8 +14,9 @@ var shortForms = new Array(
 $(document).ready(function() {
 
   // Remove .gMenu from thumb menu's before initializing Superfish
+  // @todo gallery_menu should only apply gMenu to top-level menus, submenus should be gSubMenu-N
   $("#gContent .gItem .gMenu").removeClass("gMenu");
-  $("#gContent .gQuick + ul").addClass("gThumbMenu")
+  $("#gContent .gQuick + ul").addClass("gPhotoMenu");
 
   // Initialize Superfish menus
   $("ul.gMenu").addClass("sf-menu");
@@ -40,31 +41,24 @@ $(document).ready(function() {
     $(dialogLinks[i]).bind("click", handleDialogEvent);
   }
 
-  // gThumbMenu
-  if ($("#gContent .gThumbMenu").length) {    
-    $("#gContent .gThumbMenu li").addClass("ui-state-default");
-    // ui-icon-triangle-1-n
-    $("#gContent .gThumbMenu li a")
+  // Initialize photo menus
+  if ($("#gContent .gPhotoMenu").length) {
+    $("#gContent .gPhotoMenu li").addClass("ui-state-default");
+    $("#gContent .gPhotoMenu li a")
         .not('[class]')
         .addClass("gButtonLink ui-icon")
         .css({
           "height":"10px",
           "margin":"0",
-          "padding":"0",
-          "width":"16px"
+          "padding":"0"
         });
-    var menuHt = $("#gContent .gThumbMenu").height();
-    var bottomPos = "-" + (menuHt - 15) + "px";
-    $("#gContent .gThumbMenu").css("bottom",bottomPos);
-    console.log("Initilizing: Placing at " + bottomPos);
-    $("#gContent .gThumbMenu li").hover(
+    //$(".gPhotoMenu ul").hide();
+    $(".gPhotoMenu").hover(
       function(){
-        $(this).css("bottom","0");
-        console.log("Placing at 0px");
+        $(this + " ul").show();
       },
       function(){
-        $(this).css("bottom",bottomPos);
-        console.log("Placing at " + bottomPos);
+        $(this + " ul").hide();
       }
     );
   }
