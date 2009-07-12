@@ -13,6 +13,10 @@ var shortForms = new Array(
 
 $(document).ready(function() {
 
+  // Remove .gMenu from thumb menu's before initializing Superfish
+  $("#gContent .gItem .gMenu").removeClass("gMenu");
+  $("#gContent .gQuick + ul").addClass("gThumbMenu")
+
   // Initialize Superfish menus
   $("ul.gMenu").addClass("sf-menu");
   $('ul.sf-menu').superfish({
@@ -37,11 +41,17 @@ $(document).ready(function() {
   }
 
   // gThumbMenu
-  if ($(".gItem .gMenu").length) {
-    $(".gItem .gMenu").removeClass("sf-menu");
-    $(".gItem .gMenu span").removeClass("sf-sub-indicator");
-    $(".gItem .gMenu span").addClass("ui-icon ui-icon-triangle-1-n");
-    $(".gItem .gMenu li:first-child").addClass("ui-icon-right ui-corner-top ui-state-default");
+  if ($("#gContent .gThumbMenu").length) {    
+    $("#gContent .gThumbMenu li").addClass("ui-state-default");
+    // ui-icon-triangle-1-n
+    $("#gContent .gThumbMenu li a")
+        .not('[class]')
+        .addClass("gButtonLink ui-icon")
+        .css({
+          "height":"10px",
+          "margin":"0",
+          "padding":"0"
+        });
   }
 
   // Initialize view menu
