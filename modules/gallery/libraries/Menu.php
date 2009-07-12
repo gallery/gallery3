@@ -136,7 +136,7 @@ class Menu_Core extends Menu_Element {
       return new Menu_Element_Dialog($type);
 
     case "root":
-      return  new Menu("root");
+      return new Menu("root");
 
     case "submenu":
       return new Menu("submenu");
