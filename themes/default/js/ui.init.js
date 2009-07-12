@@ -15,8 +15,6 @@ $(document).ready(function() {
 
   // Remove .gMenu from thumb menu's before initializing Superfish
   // @todo gallery_menu should only apply gMenu to top-level menus, submenus should be gSubMenu-N
-  $("#gContent .gItem .gMenu").removeClass("gMenu");
-  $("#gContent .gQuick + ul").addClass("gPhotoMenu");
 
   // Initialize Superfish menus
   $("ul.gMenu").addClass("sf-menu");
@@ -39,28 +37,6 @@ $(document).ready(function() {
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
     $(dialogLinks[i]).bind("click", handleDialogEvent);
-  }
-
-  // Initialize photo menus
-  if ($("#gContent .gPhotoMenu").length) {
-    $("#gContent .gPhotoMenu li").addClass("ui-state-default");
-    $("#gContent .gPhotoMenu li a")
-        .not('[class]')
-        .addClass("gButtonLink ui-icon")
-        .css({
-          "height":"10px",
-          "margin":"0",
-          "padding":"0"
-        });
-    //$(".gPhotoMenu ul").hide();
-    $(".gPhotoMenu").hover(
-      function(){
-        $(this + " ul").show();
-      },
-      function(){
-        $(this + " ul").hide();
-      }
-    );
   }
 
   // Initialize view menu
@@ -117,6 +93,29 @@ $(document).ready(function() {
       $(this).removeClass("ui-state-hover");
     }
   );
+
+  // Initialize thumbnail menus
+  if ($("#gContent .gThumbMenu").length) {
+    $("#gContent .gThumbMenu li").addClass("ui-state-default");
+    $("#gContent .gThumbMenu li a")
+      .not('[class]')
+      .addClass("gButtonLink ui-icon")
+      .css({
+        height: "10px",
+        margin: "0",
+        padding: "0"
+      });
+
+    $(".gThumbMenu ul").hide();
+    $(".gThumbMenu").hover(
+      function() {
+	$(this).find("ul").slideDown("fast");
+      },
+      function() {
+	$(this).find("ul").slideUp("slow");
+      }
+    );
+  }
 
 });
 

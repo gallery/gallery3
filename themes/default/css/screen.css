@@ -582,21 +582,21 @@ form .gError,
   margin-bottom: 0;
 }
 
-/* Photo Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gContent .gPhotoMenu {
+#gContent .gThumbMenu {
   bottom: 0;
   left: 0;
   position: absolute;
   width: 100%;
 }
 
-#gContent .gPhotoMenu li {
+#gContent .gThumbMenu li {
   border-left: none;
   border-right: none;
 }
 
-#gContent .gPhotoMenu a:hover {
+#gContent .gThumbMenu a:hover {
   text-decoration: none;
 }
 
