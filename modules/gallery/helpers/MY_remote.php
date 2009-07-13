@@ -21,11 +21,11 @@ class remote extends remote_Core {
 
   static function post($url, $post_data_array, $extra_headers=array()) {
     $post_data_raw = self::_encode_post_data($post_data_array, $extra_headers);
-    
+
     /* Read the web page into a buffer */
     list ($response_status, $response_headers, $response_body) =
       self::do_request($url, 'POST', $extra_headers, $post_data_raw);
-    
+
     return array($response_body, $response_status, $response_headers);
   }
 
@@ -49,22 +49,23 @@ class remote extends remote_Core {
       }
       $post_data_raw .= urlencode($key) . '=' . urlencode($value);
     }
-    
+
     $extra_headers['Content-Type'] = 'application/x-www-form-urlencoded';
     $extra_headers['Content-Length'] = strlen($post_data_raw);
-    
+
     return $post_data_raw;
   }
 
   /**
    * A single request, without following redirects
    *
-   * @todo: Handle redirects? If so, only for GET (i.e. not for POST), and use G2's WebHelper_simple::_parseLocation logic.
+   * @todo: Handle redirects? If so, only for GET (i.e. not for POST), and use G2's
+   * WebHelper_simple::_parseLocation logic.
    */
   static function do_request($url, $method='GET', $headers=array(), $body='') {
     /* Convert illegal characters */
     $url = str_replace(' ', '%20', $url);
-    
+
     $url_components = self::_parse_url_for_fsockopen($url);
     $handle = fsockopen(
       $url_components['fsockhost'], $url_components['port'], $errno, $errstr, 5);
@@ -72,12 +73,12 @@ class remote extends remote_Core {
       // log "Error $errno: '$errstr' requesting $url";
       return array(null, null, null);
     }
-    
+
     $header_lines = array('Host: ' . $url_components['host']);
     foreach ($headers as $key => $value) {
       $header_lines[] = $key . ': ' . $value;
     }
-    
+
     $success = fwrite($handle, sprintf("%s %s HTTP/1.0\r\n%s\r\n\r\n%s",
                                        $method,
                                        $url_components['uri'],
@@ -89,7 +90,7 @@ class remote extends remote_Core {
       return array(null, null, null);
     }
     fflush($handle);
-    
+
     /*
      * Read the status line.  fgets stops after newlines.  The first line is the protocol
      * version followed by a numeric status code and its associated textual phrase.
@@ -99,7 +100,7 @@ class remote extends remote_Core {
       // 'Empty http response code, maybe timeout'
       return array(null, null, null);
     }
-    
+
     /* Read the headers */
     $response_headers = array();
     while (!feof($handle)) {
@@ -107,10 +108,10 @@ class remote extends remote_Core {
       if (empty($line)) {
         break;
       }
-      
+
       /* Normalize the line endings */
       $line = str_replace("\r", '', $line);
-      
+
       list ($key, $value) = explode(':', $line, 2);
       if (isset($response_headers[$key])) {
         if (!is_array($response_headers[$key])) {
@@ -121,7 +122,7 @@ class remote extends remote_Core {
         $response_headers[$key] = trim($value);
       }
     }
-    
+
     /* Read the body */
     $response_body = '';
     while (!feof($handle)) {
