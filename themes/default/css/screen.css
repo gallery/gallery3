@@ -594,6 +594,11 @@ form .gError,
 #gContent .gThumbMenu li {
   border-left: none;
   border-right: none;
+  border-bottom: none;
+}
+
+#gContent .gThumbMenu li li {
+  padding: .3em;
 }
 
 #gContent .gThumbMenu a:hover {
