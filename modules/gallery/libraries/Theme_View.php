@@ -99,19 +99,19 @@ class Theme_View_Core extends Gallery_View {
   }
 
   public function album_menu() {
-    $this->_menu("album");
+    print $this->_menu("album");
   }
 
   public function tag_menu() {
-    $this->_menu("tag");
+    print $this->_menu("tag");
   }
 
   public function photo_menu() {
-    $this->_menu("photo");
+    print $this->_menu("photo");
   }
 
   public function thumb_menu($item) {
-    $this->_menu("thumb", $item);
+    print $this->_menu("thumb", $item)->css_class("gThumbMenu");
   }
 
   private function _menu($type, $item=null) {
@@ -127,8 +127,7 @@ class Theme_View_Core extends Gallery_View {
       }
     }
 
-    $menu->compact();
-    print $menu;
+    return $menu->compact();
   }
 
   public function pager() {

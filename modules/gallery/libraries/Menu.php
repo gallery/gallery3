@@ -136,7 +136,9 @@ class Menu_Core extends Menu_Element {
       return new Menu_Element_Dialog($type);
 
     case "root":
-      return  new Menu("root");
+      $menu = new Menu("root");
+      $menu->css_class("gMenu");
+      return $menu;
 
     case "submenu":
       return new Menu("submenu");
@@ -156,6 +158,7 @@ class Menu_Core extends Menu_Element {
         }
       }
     }
+    return $this;
   }
 
   public function __construct($type) {
@@ -206,8 +209,8 @@ class Menu_Core extends Menu_Element {
   }
 
   public function __toString() {
-    $html = $this->is_root ? "<ul class=\"gMenu\">" :
-      "<li title=\"$this->label\"><a href=\"#\">$this->label</a><ul class=\"gMenu\">";
+    $html = $this->is_root ? "<ul class=\"$this->css_class\">" :
+      "<li title=\"$this->label\"><a href=\"#\">$this->label</a><ul>";
     $html .= implode("\n", $this->elements);
     $html .= $this->is_root ? "</ul>" : "</ul></li>";
     return $html;

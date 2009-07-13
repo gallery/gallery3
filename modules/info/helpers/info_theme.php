@@ -37,7 +37,11 @@ class info_theme_Core {
     }
     if ($item->owner) {
       $results .= "<li>";
-      $results .= t("By: %owner_name", array("owner_name" => "<a href=\"#\">{$item->owner->full_name}</a>"));
+      if ($item->owner->url) {
+        $results .= t("By: %owner_name", array("owner_name" => "<a href=\"{$item->owner->url}\">{$item->owner->full_name}</a>"));
+      } else {
+        $results .= t("By: %owner_name", array("owner_name" => "{$item->owner->full_name}"));
+      }
       $results .= "</li>";
     }
     return $results;
