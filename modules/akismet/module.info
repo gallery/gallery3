@@ -1,3 +1,3 @@
-name = Akismet
+name = "Akismet"
 description = "Filter comments through the Akismet web service to detect and eliminate spam (http://akismet.com).  You'll need a WordPress.com API key to use it."
 version = 1

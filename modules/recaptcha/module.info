@@ -1,3 +1,3 @@
-name = reCAPTCHA
+name = "reCAPTCHA"
 description = "reCAPTCHA displays a graphical verification that protects the input form from abuse from 'bots,' or automated programs usually written to generate spam (http://recaptcha.net)."
 version = 1
