@@ -471,8 +471,6 @@ class g2_import_Core {
         $corrupt = 1;
       }
       try {
-        Kohana::log("error", "description: " . self::extract_description($g2_item));
-        Kohana::log("error", "title: " . $g2_item->getTitle());
         $item = photo::create(
           $parent,
           $g2_path,
