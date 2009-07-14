@@ -20,11 +20,6 @@
 class HtmlPurifier_Core {
   private static $_instance;
 
-  public function __construct($name = NULL, $data = NULL, $type = NULL) {
-    parent::__construct($name, $data, $type);
-    $this->set_global("csrf", access::csrf_token());
-  }
-
   static function instance($config=null) {
     require_once(dirname(__file__) . "/HTMLPurifier/HTMLPurifier.auto.php");
     if (self::$_instance == NULL) {
