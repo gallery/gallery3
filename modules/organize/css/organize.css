@@ -163,7 +163,6 @@
 }
 
 #gOrganizeEditHandleLeft {
-  background-image: url(organize_edit_drawer.png);
   background-color: #FFF;
   float: left;
   height: 30px;
@@ -200,7 +199,6 @@
 
 #gOrganizeEditHandleRight {
   background-color: #FFF;
-  background-image: url(organize_edit_drawer.png);
   background-position: -15px 0;
   float: right;
   height: 30px;
