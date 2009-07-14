@@ -119,7 +119,7 @@ class Admin_Languages_Controller extends Admin_Controller {
   private function _share_translations_form() {
     $form = new Forge("admin/languages/share", "", "post", array("id" => "gShareTranslationsForm"));
     $group = $form->group("sharing")
-      ->label(t("Sharing you own translations with the Gallery community is easy. Please do!"));
+      ->label(t("Sharing your own translations with the Gallery community is easy. Please do!"));
     $api_key = l10n_client::api_key();
     $server_link = l10n_client::server_api_key_url();
     $group->input("api_key")
