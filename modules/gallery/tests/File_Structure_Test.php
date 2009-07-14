@@ -213,6 +213,43 @@ class File_Structure_Test extends Unit_Test_Case {
       }
     }
   }
+
+  public function module_info_is_well_formed_test() {
+    $info_files = array_merge(
+      glob("modules/*/module.info"),
+      glob("themes/*/module.info"));
+
+    $errors = array();
+    foreach ($info_files as $file) {
+      foreach (file($file) as $line) {
+        $parts = explode("=", $line, 2);
+        $values[trim($parts[0])] = trim($parts[1]);
+      }
+
+      $module = dirname($file);
+      // Certain keys must exist
+      foreach (array("name", "description", "version") as $key) {
+        if (!array_key_exists($key, $values)) {
+          $errors[] = "$module: missing key $key";
+        }
+      }
+
+      // Any values containing spaces must be quoted
+      foreach ($values as $key => $value) {
+        if (strpos($value, " ") !== false && !preg_match('/^".*"$/', $value)) {
+          $errors[] = "$module: value for $key must be quoted";
+        }
+      }
+
+      // The file must parse
+      if (!is_array(parse_ini_file($file))) {
+        $errors[] = "$module: info file is not parseable";
+      }
+    }
+    if ($errors) {
+      $this->assert_true(false, $errors);
+    }
+  }
 }
 
 class PhpCodeFilterIterator extends FilterIterator {
