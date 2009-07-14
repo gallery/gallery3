@@ -42,7 +42,9 @@ class server_add_installer {
                     PRIMARY KEY (`id`))
                   ENGINE=InnoDB DEFAULT CHARSET=utf8;");
       module::set_version("server_add", $version = 2);
-    } else if ($version == 2) {
+    }
+
+    if ($version == 2) {
       $db->query("ALTER TABLE {server_add_files} ADD COLUMN `item_id` int(9)");
       $db->query("ALTER TABLE {server_add_files} ADD COLUMN `parent_id` int(9)");
       module::set_version("server_add", $version = 3);
