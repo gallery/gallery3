@@ -331,7 +331,7 @@ class graphics_Core {
     if (!isset($gd["GD Version"])) {
       $gd["GD Version"] = false;
     }
-    putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin");
+    putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
     return array("gd" => $gd,
                  "imagemagick" => $exec ? dirname(exec("which convert")) : false,
                  "graphicsmagick" => $exec ? dirname(exec("which gm")) : false);
