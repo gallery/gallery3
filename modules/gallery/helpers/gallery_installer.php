@@ -251,7 +251,6 @@ class gallery_installer {
     block_manager::add("dashboard_center", "gallery", "photo_stream");
     block_manager::add("dashboard_center", "gallery", "log_entries");
 
-    module::set_var("gallery", "version", "3.0 pre beta 2 (git)");
     module::set_var("gallery", "choose_default_tookit", 1);
     module::set_var("gallery", "date_format", "Y-M-d");
     module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
@@ -259,7 +258,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 6);
+    module::set_version("gallery", 7);
   }
 
   static function upgrade($version) {
@@ -268,7 +267,6 @@ class gallery_installer {
       module::set_var("gallery", "date_format", "Y-M-d");
       module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
       module::set_var("gallery", "time_format", "H:i:s");
-      module::set_var("gallery", "version", "3.0 pre beta 2 (git)");
       module::set_version("gallery", $version = 2);
     }
 
@@ -301,6 +299,11 @@ class gallery_installer {
       $db->query("ALTER TABLE {caches} ADD COLUMN `key` varchar(255) NOT NULL");
       $db->query("ALTER TABLE {caches} ADD COLUMN `id` int(9) NOT NULL auto_increment PRIMARY KEY");
       module::set_version("gallery", $version = 6);
+    }
+
+    if ($version == 6) {
+      module::clear_var("gallery", "version");
+      module::set_version("gallery", $version = 7);
     }
   }
 

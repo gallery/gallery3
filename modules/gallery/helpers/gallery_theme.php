@@ -116,8 +116,7 @@ class gallery_theme_Core {
   static function credits() {
      return "<li class=\"first\">" .
       t(module::get_var("gallery", "credits"),
-        array("url" => "http://gallery.menalto.com",
-              "version" => module::get_var("gallery", "version"))) .
+        array("url" => "http://gallery.menalto.com", "version" => gallery::VERSION)) .
       "</li>";
   }
 
