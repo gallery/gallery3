@@ -32,8 +32,9 @@
   </ul>
 
   <p>
-    <?= t("Upload Queue") ?>
-    <span id="gUploadQueueInfo"></span>
+    <span id="gUploadQueueInfo">
+      <?= t("Upload Queue") ?>
+    </span>
     <a id="gUploadCancel" title="<?= t("Cancel all the pending uploads") ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
   </p>
   <div id="gAddPhotosCanvas" style="text-align: center;">
@@ -181,10 +182,7 @@
   function file_dialog_complete(num_files_selected, num_files_queued) {
     if (num_files_selected > 0) {
       $("#gUploadCancel").show();
-      var stats = this.getStats();
-      $("#gUploadQueueInfo").text("(<?= t("completed") ?> " + stats.successful_uploads +
-        " <?= t("of") ?> " + (stats.files_queued + stats.successful_uploads +
-        stats.upload_errors + stats.upload_cancelled + stats.queue_errors) + ")");
+      $("#gUploadQueueInfo").text(get_completed_status_msg(this.getStats()));
     }
 
     // Auto start the upload
@@ -255,14 +253,18 @@
 
   function upload_complete(file) {
     var stats = this.getStats();
-    var msg = "(<?= t("completed __COMPLETED__ of __TOTAL__") ?>)";
-    msg = msg.replace("__COMPLETED__", stats.successful_uploads);
-    msg = msg.replace("__TOTAL__", stats.files_queued + stats.successful_uploads +
-      stats.upload_errors + stats.upload_cancelled + stats.queue_errors);
-    $("#gUploadQueueInfo").text(msg);
+    $("#gUploadQueueInfo").text(get_completed_status_msg(stats));
     if (stats.files_queued === 0) {
       $("#gUploadCancel").hide();
     }
+  }
+
+  function get_completed_status_msg(stats) {
+    var msg = "<?= t("Upload Queue (completed %completed of %total)", array("completed" => "__COMPLETED__", "total" => "__TOTAL__")) ?>";
+    msg = msg.replace("__COMPLETED__", stats.successful_uploads);
+    msg = msg.replace("__TOTAL__", stats.files_queued + stats.successful_uploads +
+      stats.upload_errors + stats.upload_cancelled + stats.queue_errors);
+    return msg;
   }
 
   // This event comes from the Queue Plugin
