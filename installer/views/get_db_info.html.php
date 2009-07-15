@@ -26,6 +26,7 @@
   <?php endif ?>
 </fieldset>
 
+<?php if (installer::var_writable()): ?>
 <form method="post" action="index.php?step=save_db_info">
   <fieldset>
     <legend>Database</legend>
@@ -87,3 +88,4 @@
     </table>
   </fieldset>
 </form>
+<? endif ?>
