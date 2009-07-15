@@ -8,7 +8,8 @@
     <div id="outer">
       <img src="../modules/gallery/images/gallery.png" />
       <div id="inner">
-        <?php print $content ?>
+        <?= $content ?>
+        <?= empty($database_form) ? "" : $database_form ?>
       </div>
       <div id="footer">
         <p>
