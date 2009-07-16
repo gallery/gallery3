@@ -140,6 +140,7 @@ class Gallery_View_Core extends View {
           Kohana::log("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
         }
       }
+      $replace = str_replace(DIRECTORY_SEPARATOR, "/", $replace);
       $css = str_replace($search, $replace, $css);
     }
     $imports = preg_match_all("#@import\s*['|\"]{0,1}(.*?)['|\"]{0,1};#",
