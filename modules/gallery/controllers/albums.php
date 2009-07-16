@@ -181,10 +181,6 @@ class Albums_Controller extends Items_Controller {
       }
     }
 
-    // @todo
-    // @todo we need to make sure that filename / dirname components can't contain a /
-    // @todo
-
     if ($valid) {
       $orig = clone $album;
       $album->title = $form->edit_album->title->value;
