@@ -44,8 +44,10 @@ class User_Model extends ORM {
    * @see ORM::delete()
    */
   public function delete($id=null) {
+    $old = clone $this;
     module::event("user_before_delete", $this);
     parent::delete($id);
+    module::event("user_deleted", $old);
   }
 
   /**

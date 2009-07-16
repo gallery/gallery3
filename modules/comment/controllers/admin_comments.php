@@ -113,8 +113,8 @@ class Admin_Comments_Controller extends Admin_Controller {
     if ($comment->loaded) {
       $comment->state = $state;
       $comment->save();
-      module::event("comment_updated", $orig, $comment);
-      if ($orig->state == "published" || $comment->state == "published") {
+      module::event("comment_updated", $comment);
+      if ($comment->original("state") == "published" || $comment->state == "published") {
         module::event("item_related_update", $comment->item());
       }
     }

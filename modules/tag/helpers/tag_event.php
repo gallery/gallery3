@@ -59,7 +59,7 @@ class tag_event_Core {
     return;
   }
 
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     $db = Database::instance();
     $db->query("UPDATE {tags} SET `count` = `count` - 1 WHERE `count` > 0 " .
                "AND `id` IN (SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");

@@ -192,7 +192,7 @@ class Albums_Controller extends Items_Controller {
       }
       $album->save();
 
-      module::event("item_updated", $orig, $album);
+      module::event("item_updated", $album);
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
       message::success(

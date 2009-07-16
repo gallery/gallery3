@@ -21,7 +21,7 @@ class notification_menu_Core {
   static function site($menu, $theme) {
     if (!user::active()->guest) {
       $item = $theme->item();
-      
+
       if ($item && $item->is_album()) {
         $watching = notification::is_watching($item);
 

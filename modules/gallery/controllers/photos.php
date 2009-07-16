@@ -84,7 +84,7 @@ class Photos_Controller extends Items_Controller {
       $photo->rename($form->edit_photo->filename->value);
       $photo->save();
 
-      module::event("item_updated", $orig, $photo);
+      module::event("item_updated", $photo);
 
       log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
       message::success(

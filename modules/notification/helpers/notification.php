@@ -82,17 +82,16 @@ class notification {
     return $subscribers;
   }
 
-  static function send_item_updated($old, $new) {
+  static function send_item_updated($item) {
     $v = new View("item_updated.html");
-    $v->old = $old;
-    $v->new = $new;
-    $v->subject = $old->is_album() ?
-      t("Album %title updated", array("title" => $old->title)) :
-      ($old->is_photo() ?
-       t("Photo %title updated", array("title" => $old->title))
-       : t("Movie %title updated", array("title" => $old->title)));
+    $v->item = $item;
+    $v->subject = $item->is_album() ?
+      t("Album %title updated", array("title" => $item->original("title"))) :
+      ($item->is_photo() ?
+       t("Photo %title updated", array("title" => $item->original("title")))
+       : t("Movie %title updated", array("title" => $item->original("title"))));
 
-    self::_notify_subscribers($old, $v->render(), $v->subject);
+    self::_notify_subscribers($item, $v->render(), $v->subject);
   }
 
   static function send_item_add($item) {

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_event_Core {
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     Database::instance()->delete("comments", array("item_id" => $item->id));
   }
 }

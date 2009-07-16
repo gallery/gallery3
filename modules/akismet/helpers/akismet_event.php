@@ -40,14 +40,14 @@ class akismet_event_Core {
     $comment->save();
   }
 
-  static function comment_updated($old, $new) {
+  static function comment_updated($comment) {
     if (!module::get_var("akismet", "api_key")) {
       return;
     }
 
-    if ($old->state != "spam" && $new->state == "spam") {
+    if ($comment->original("state") != "spam" && $comment->state == "spam") {
       akismet::submit_spam($new);
-    } else if ($old->state == "spam" && $new->state != "spam") {
+    } else if ($comment->original("state") == "spam" && $comment->state != "spam") {
       akismet::submit_ham($new);
     }
   }

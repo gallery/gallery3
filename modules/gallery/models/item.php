@@ -93,6 +93,7 @@ class Item_Model extends ORM_MPTT {
   }
 
   public function delete() {
+    $old = clone $this;
     module::event("item_before_delete", $this);
 
     $parent = $this->parent();
@@ -114,6 +115,8 @@ class Item_Model extends ORM_MPTT {
       @unlink($resize_path);
       @unlink($thumb_path);
     }
+
+    module::event("item_deleted", $old);
   }
 
   /**
