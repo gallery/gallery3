@@ -38,10 +38,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
         $path = $form->add_path->path->value;
         $paths[$path] = 1;
         module::set_var("server_add", "authorized_paths", serialize($paths));
-        $form->add_path->inputs->path->value = "";
-
-        message::success(t("Added path %path", array("path" => $path)));
-
+        message::success(t("Added path %path", array("path" => p::clean($path))));
         server_add::check_config($paths);
         url::redirect("admin/server_add");
       } else {
@@ -61,11 +58,12 @@ class Admin_Server_Add_Controller extends Admin_Controller {
 
     $path = $this->input->get("path");
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
-    unset($paths[$path]);
-    message::success(t("Removed path %path", array("path" => $path)));
-    module::set_var("server_add", "authorized_paths", serialize($paths));
-    server_add::check_config($paths);
-
+    if (isset($paths[$path])) {
+      unset($paths[$path]);
+      message::success(t("Removed path %path", array("path" => p::clean($path))));
+      module::set_var("server_add", "authorized_paths", serialize($paths));
+      server_add::check_config($paths);
+    }
     url::redirect("admin/server_add");
   }
 

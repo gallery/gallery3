@@ -1,14 +1,15 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title>Gallery3 Installer</title>
+    <title>Gallery 3 Installer</title>
     <link rel="stylesheet" type="text/css" href="install.css"/>
   </head>
   <body>
     <div id="outer">
       <img src="../modules/gallery/images/gallery.png" />
       <div id="inner">
-        <?php print $content ?>
+        <?= $content ?>
+        <?= empty($database_form) ? "" : $database_form ?>
       </div>
       <div id="footer">
         <p>

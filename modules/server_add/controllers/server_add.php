@@ -17,258 +17,243 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Server_Add_Controller extends Controller {
-  public function index($id) {
+class Server_Add_Controller extends Admin_Controller {
+  public function browse($id) {
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
-
-    if (!user::active()->admin) {
-      access::forbidden();
+    foreach (array_keys($paths) as $path) {
+      $files[] = $path;
     }
 
     $item = ORM::factory("item", $id);
     $view = new View("server_add_tree_dialog.html");
-    $view->action = url::abs_site("__ARGS__/{$id}__TASK_ID__?csrf=" . access::csrf_token());
-    $view->parents = $item->parents();
-    $view->album_title = $item->title;
-
-    $tree = new View("server_add_tree.html");
-    $tree->data = array();
-    $tree->checked = false;
-    $tree->tree_id = "tree_$id";
-    foreach (array_keys($paths) as $path) {
-      $tree->data[$path] = array("path" => $path, "is_dir" => true);
-    }
-    $view->tree = $tree->__toString();
+    $view->item = $item;
+    $view->tree = new View("server_add_tree.html");
+    $view->tree->files = $files;
+    $view->tree->parents = array();
     print $view;
   }
 
   public function children() {
-    if (!user::active()->admin) {
-      access::forbidden();
-    }
-
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
-    $path_valid = false;
-    $path = $this->input->post("path");
-    $checked = $this->input->post("checked") == "true";
-
-    foreach (array_keys($paths) as $valid_path) {
-      if ($path_valid = strpos($path, $valid_path) === 0) {
-        break;
-      }
-    }
-    if (empty($path_valid)) {
-      throw new Exception("@todo BAD_PATH");
-    }
-
-    if (!is_readable($path) || is_link($path)) {
-      kohana::show_404();
-    }
+    $path = $this->input->get("path");
 
     $tree = new View("server_add_tree.html");
-    $tree->data = $this->_get_children($path);
-    $tree->checked = $checked;
-    $tree->tree_id = "tree_" . md5($path);
+    $tree->files = array();
+    $tree->parents = array();
+
+    // Make a tree with the parents back up to the authorized path, and all the children under the
+    // current path.
+    if (server_add::is_valid_path($path)) {
+      $tree->parents[] = $path;
+      while (server_add::is_valid_path(dirname($tree->parents[0]))) {
+        array_unshift($tree->parents, dirname($tree->parents[0]));
+      }
+
+      foreach (glob("$path/*") as $file) {
+        if (!is_readable($file)) {
+          continue;
+        }
+        if (!is_dir($file)) {
+          $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+          if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+            continue;
+          }
+        }
+
+        $tree->files[] = $file;
+      }
+    } else {
+      // Missing or invalid path; print out the list of authorized path
+      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+      foreach (array_keys($paths) as $path) {
+        $tree->files[] = $path;
+      }
+    }
     print $tree;
   }
 
-  function start($id) {
-    if (!user::active()->admin) {
-      access::forbidden();
-    }
+  /**
+   * Begin the task of adding photos.
+   */
+  public function start() {
     access::verify_csrf();
+    $item = ORM::factory("item", Input::instance()->get("item_id"));
 
-    $item = ORM::factory("item", $id);
-    $paths = unserialize(module::get_var("server_add", "authorized_paths"));
-    $input_files = $this->input->post("path");
-    $collapsed = $this->input->post("collapsed");
-    $files = array();
-    $total_count = 0;
-    foreach (array_keys($paths) as $valid_path) {
-      $path_length = strlen($valid_path);
-      foreach ($input_files as $key => $path) {
-        if (!empty($path)) {
-          if ($valid_path != $path && strpos($path, $valid_path) === 0) {
-            $relative_path = substr(dirname($path), $path_length);
-            $name = basename($path);
-            $files[$valid_path][] = array("path" => $relative_path,
-                                          "parent_id" => $id, "name" => basename($path),
-                                        "type" => is_dir($path) ? "album" : "file");
-            $total_count++;
-          }
-          if ($collapsed[$key] === "true") {
-            $total_count += $this->_select_children($id, $valid_path, $path, $files[$valid_path]);
-          }
-          unset($input_files[$key]);
-          unset($collapsed[$key]);
-        }
+    foreach (Input::instance()->post("paths") as $path) {
+      if (server_add::is_valid_path($path)) {
+        $paths[] = array($path, null);
       }
-    }
-
-    if ($total_count == 0) {
-      print json_encode(array("result" => "success",
-                              "url" => "",
-                              "task" => array(
-                                "id" => -1, "done" => 1, "percent_complete" => 100,
-                                "status" => t("No Eligible files, import cancelled"))));
-      return;
     }
 
     $task_def = Task_Definition::factory()
-      ->callback("server_add_task::add_from_server")
+      ->callback("Server_Add_Controller::add")
       ->description(t("Add photos or movies from the local server"))
       ->name(t("Add from server"));
-    $task = task::create($task_def, array("item_id" => $id, "next_path" => 0, "files" => $files,
-      "counter" => 0, "position" => 0, "total" => $total_count));
+    $task = task::create($task_def, array("item_id" => $item->id, "queue" => $paths));
 
-    batch::start();
-    print json_encode(array("result" => "started",
-                            "url" => url::site("server_add/add_photo/{$task->id}?csrf=" .
-                                               access::csrf_token()),
-                            "task" => array(
-                              "id" => $task->id,
-                              "percent_complete" => $task->percent_complete,
-                              "status" => $task->status,
-                              "done" => $task->done)));
+    print json_encode(
+      array("result" => "started",
+            "status" => $task->status,
+            "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())));
   }
 
-  function add_photo($task_id) {
-    if (!user::active()->admin) {
+  /**
+   * Run the task of adding photos
+   */
+  function run($task_id) {
+    access::verify_csrf();
+
+    $task = ORM::factory("task", $task_id);
+    if (!$task->loaded || $task->owner_id != user::active()->id) {
       access::forbidden();
     }
-    access::verify_csrf();
 
     $task = task::run($task_id);
-    // @todo the task is already run... its a little late to check the access
-    if (!$task->loaded || $task->owner_id != user::active()->id) {
-      access::forbidden();
-    }
-
-    if ($task->done) {
-      switch ($task->state) {
-      case "success":
-        message::success(t("Add from server completed"));
-        break;
-
-      case "error":
-        message::warning(t("Add from server completed with errors"));
-        break;
-      }
-      print json_encode(array("result" => "success",
-                              "task" => array(
-                                "id" => $task->id,
-                                "percent_complete" => $task->percent_complete,
-                                "status" => $task->status,
-                                "done" => $task->done)));
-
-    } else {
-      print json_encode(array("result" => "in_progress",
-                              "task" => array(
-                                "id" => $task->id,
-                                "percent_complete" => $task->percent_complete,
-                                "status" => $task->status,
-                                "done" => $task->done)));
-    }
+    print json_encode(array("done" => $task->done,
+                            "status" => $task->status,
+                            "percent_complete" => $task->percent_complete));
   }
 
-  public function finish($id, $task_id) {
-    if (!user::active()->admin) {
-      access::forbidden();
-    }
-    access::verify_csrf();
-    $task = ORM::factory("task", $task_id);
+  /**
+   * This is the task code that adds photos and albums.  It first examines all the target files
+   * and creates a set of Server_Add_File_Models, then runs through the list of models and adds
+   * them one at a time.
+   */
+  static function add($task) {
+    $mode = $task->get("mode", "init");
+    $start = microtime(true);
 
-    if (!$task->loaded || $task->owner_id != user::active()->id) {
-      access::forbidden();
-    }
+    switch ($mode) {
+    case "init":
+      $task->set("mode", "build-file-list");
+      $task->percent_complete = 0;
+      $task->status = t("Starting up");
+      batch::start();
+      break;
 
-    if (!$task->done) {
-      message::warning(t("Add from server was cancelled prior to completion"));
-    }
+    case "build-file-list":  // 0% to 10%
+      // We can't fit an arbitrary number of paths in a task, so store them in a separate table.
+      // Don't use an iterator here because we can't get enough control over it when we're dealing
+      // with a deep hierarchy and we don't want to go over our time quota.  The queue is in the
+      // form [path, parent_id] where the parent_id refers to another Server_Add_File_Model.  We
+      // have this extra level of abstraction because we don't know its Item_Model id yet.
+      $queue = $task->get("queue");
+      while ($queue && microtime(true) - $start < 0.5) {
+        list($file, $parent_entry_id) = array_shift($queue);
+        $entry = ORM::factory("server_add_file");
+        $entry->task_id = $task->id;
+        $entry->file = $file;
+        $entry->parent_id = $parent_entry_id;
+        $entry->save();
 
-    batch::stop();
-    print json_encode(array("result" => "success"));
-  }
-
-  public function pause($id, $task_id) {
-    if (!user::active()->admin) {
-      access::forbidden();
-    }
-    access::verify_csrf();
-    $task = ORM::factory("task", $task_id);
-    if (!$task->loaded || $task->owner_id != user::active()->id) {
-      access::forbidden();
-    }
-
-    message::warning(t("Add from server was cancelled prior to completion"));
-    batch::stop();
-    print json_encode(array("result" => "success"));
-  }
-
-  private function _select_children($id, $valid_path, $path, &$files) {
-    $count = 0;
-    $children = new RecursiveIteratorIterator(
-      new RecursiveDirectoryIterator($path),
-      RecursiveIteratorIterator::SELF_FIRST);
-
-    $path_length = strlen($valid_path);
-    foreach($children as $name => $file){
-      if ($file->isLink()) {
-        continue;
-      }
-      $filename = $file->getFilename();
-      if ($filename[0] != ".") {
-        if ($file->isDir()) {
-          $relative_path = substr(dirname($file->getPathname()), $path_length);
-          $files[] = array("path" => $relative_path,
-                           "parent_id" => $id, "name" => $filename, "type" => "album");
-          $count++;
-        } else {
-          $extension = strtolower(substr(strrchr($filename, '.'), 1));
-          if ($file->isReadable() &&
-              in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
-            $relative_path = substr(dirname($file->getPathname()), $path_length);
-            $files[] = array("path" => $relative_path,
-                             "parent_id" => $id, "name" => $filename, "type" => "file");
-            $count++;
+        foreach (glob("$file/*") as $child) {
+          if (is_dir($child)) {
+            $queue[] = array($child, $entry->id);
+          } else {
+            $ext = strtolower(pathinfo($child, PATHINFO_EXTENSION));
+            if (in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+              $child_entry = ORM::factory("server_add_file");
+              $child_entry->task_id = $task->id;
+              $child_entry->file = $child;
+              $child_entry->parent_id = $entry->id;
+              $child_entry->save();
+            }
           }
         }
       }
 
-    }
+      // We have no idea how long this can take because we have no idea how deep the tree
+      // hierarchy rabbit hole goes.  Leave ourselves room here for 100 iterations and don't go
+      // over 10% in percent_complete.
+      $task->set("queue", $queue);
+      $task->percent_complete = min($task->percent_complete + 0.1, 10);
+      $task->status = t2("Found one file", "Found %count files",
+                         Database::instance()
+                         ->where("task_id", $task->id)
+                         ->count_records("server_add_files"));
 
-    return $count;
-  }
-
-  private function _get_children($path) {
-    $directory_list = $file_list = array();
-    $files = new DirectoryIterator($path);
-    foreach ($files as $file) {
-      if ($file->isDot() || $file->isLink()) {
-        continue;
+      if (!$queue) {
+        $task->set("mode", "add-files");
+        $task->set(
+          "total_files", database::instance()->count_records(
+            "server_add_files", array("task_id" => $task->id)));
+        $task->percent_complete = 10;
       }
-      $filename = $file->getFilename();
-      if ($filename[0] != ".") {
-        if ($file->isDir()) {
-          $directory_list[$filename] = array("path" => $file->getPathname(), "is_dir" => true);
+      break;
+
+    case "add-files": // 10% to 100%
+      $completed_files = $task->get("completed_files", 0);
+      $total_files = $task->get("total_files");
+
+      // Ordering by id ensures that we add them in the order that we created the entries, which
+      // will create albums first.  Ignore entries which already have an Item_Model attached,
+      // they're done.
+      $entries = ORM::factory("server_add_file")
+        ->where("task_id", $task->id)
+        ->where("item_id", null)
+        ->orderby("id", "ASC")
+        ->limit(10)
+        ->find_all();
+      if ($entries->count() == 0) {
+        // Out of entries, we're done.
+        $task->set("mode", "done");
+      }
+
+      $owner_id = user::active()->id;
+      foreach ($entries as $entry) {
+        if (microtime(true) - $start > 0.5) {
+          break;
+        }
+
+        // Look up the parent item for this entry.  By now it should exist, but if none was
+        // specified, then this belongs as a child of the current item.
+        $parent_entry = ORM::factory("server_add_file", $entry->parent_id);
+        if (!$parent_entry->loaded) {
+          $parent = ORM::factory("item", $task->get("item_id"));
         } else {
-          $extension = strtolower(substr(strrchr($filename, '.'), 1));
-          if ($file->isReadable() &&
-              in_array($extension, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
-            $file_list[$filename] = array("path" => $file->getPathname(), "is_dir" => false);
+          $parent = ORM::factory("item", $parent_entry->item_id);
+        }
+
+        $name = basename($entry->file);
+        $title = item::convert_filename_to_title($name);
+        if (is_dir($entry->file)) {
+          $album = album::create($parent, $name, $title, null, $owner_id);
+          $entry->item_id = $album->id;
+        } else {
+          $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+          if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
+            $photo = photo::create($parent, $entry->file, $name, $title, null, $owner_id);
+            $entry->item_id = $photo->id;
+          } else if (in_array($extension, array("flv", "mp4"))) {
+            $movie = movie::create($parent, $entry->file, $name, $title, null, $owner_id);
+            $entry->item_id = $movie->id;
+          } else {
+            // This should never happen, because we don't add stuff to the list that we can't
+            // process.  But just in, case.. set this to a non-null value so that we skip this
+            // entry.
+            $entry->item_id = 0;
+            $task->log("Skipping unknown file type: $entry->file");
           }
         }
+
+        $completed_files++;
+        $entry->save();
       }
-    }
+      $task->set("completed_files", $completed_files);
+      $task->status = t("Adding photos and albums (%completed of %total)",
+                        array("completed" => $completed_files,
+                              "total" => $total_files));
+      $task->percent_complete = 10 + 100 * ($completed_files / $total_files);
+      break;
 
-    ksort($directory_list);
-    ksort($file_list);
-
-    // We can't use array_merge here because if a file name is numeric, it will
-    // get renumbered, so lets do it ourselves
-    foreach ($file_list as $file => $fileinfo) {
-      $directory_list[$file] = $fileinfo;
+    case "done":
+      batch::stop();
+      $task->done = true;
+      $task->state = "success";
+      $task->percent_complete = 100;
+      ORM::factory("server_add_file")->where("task_id", $task->id)->delete_all();
+      message::info(t2("Successfully added one photo",
+                       "Successfully added %count photos and albums",
+                       $task->get("completed_files")));
     }
-    return $directory_list;
   }
 }

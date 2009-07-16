@@ -34,10 +34,13 @@ class tag_event_Core {
         if (!empty($iptc["2#025"])) {
           foreach($iptc["2#025"] as $tag) {
             $tag = str_replace("\0",  "", $tag);
-            if (function_exists("mb_detect_encoding") && mb_detect_encoding($tag) != "UTF-8") {
-              $tag = utf8_encode($tag);
+            foreach (preg_split("/[,;]/", $tag) as $word) {
+              $word = preg_replace('/\s+/', '.', trim($word));
+              if (function_exists("mb_detect_encoding") && mb_detect_encoding($word) != "UTF-8") {
+                $word = utf8_encode($word);
+              }
+              $tags[$word] = 1;
             }
-            $tags[$tag] = 1;
           }
         }
       }

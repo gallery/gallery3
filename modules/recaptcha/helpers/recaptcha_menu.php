@@ -22,7 +22,7 @@ class recaptcha_menu_Core {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("recaptcha")
-               ->label(t("Recaptcha"))
+               ->label(t("reCAPTCHA"))
                ->url(url::site("admin/recaptcha")));
   }
 }

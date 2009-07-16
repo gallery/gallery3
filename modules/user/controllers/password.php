@@ -72,7 +72,9 @@ class Password_Controller extends Controller {
         ->message($message->render())
         ->send();
 
-      log::success("user", "Password reset email sent for user $user->name");
+      log::success(
+        "user",
+        t("Password reset email sent for user %name", array("name" => p::clean($user->name)));
     } else {
       // Don't include the username here until you're sure that it's XSS safe
       log::warning(

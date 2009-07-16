@@ -9,6 +9,8 @@
  * 4) Content blocks in specific layout containers
  * 5) Browser hacks
  * 6) jQuery and jQuery UI
+ * 7) Server Add
+ * 8) Digibug Print Administration
  */
 
 /** *******************************************************************
@@ -99,19 +101,22 @@
 #gHeader #gLogo {
   float: left;
   margin: -22px 10px 0 0;
+  display: block;
+  padding-left: 2px;
+  width: 105px; /* 107px - padding-left */
+  height: 48px;
+  background-image: url('../../default/images/logo.png');
+  color: #A5A5A5 ! important;
 }
-
-.rtl #gHeader #gLogo {
-  float: left;
+#gHeader #gLogo:hover {
+  color: #FF6600 ! important;
+  text-decoration: none;
 }
 
 #gHeader #gLoginMenu {
   float: none;
   margin: 0;
   padding: 5px 0 10px 0;
-}
-
-#gHeader #gLoginMenu {
   text-align: right;
 }
 
@@ -395,6 +400,20 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   float: left;
 }
 
+#gTaskLogDialog h1 {
+  font-size: 1.1em;
+}
+
+.gTaskLog {
+  border: 1pt solid;
+  font-size: .9em;
+  height: 400px;
+  margin: .5em 0;
+  overflow: auto;
+  padding: .5em
+}
+
+
 /** *******************************************************************
  * 7) Server Add
  *********************************************************************/
@@ -436,3 +455,4 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   width: 150px;
   overflow: hidden;
 }
+

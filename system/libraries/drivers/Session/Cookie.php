@@ -2,7 +2,7 @@
 /**
  * Session cookie driver.
  *
- * $Id: Cookie.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: Cookie.php 4431 2009-07-01 03:41:41Z kiall $
  *
  * @package    Core
  * @author     Kohana Team
@@ -48,6 +48,9 @@ class Session_Cookie_Driver implements Session_Driver {
 
 	public function write($id, $data)
 	{
+		if ( ! Session::$should_save)
+			return TRUE;
+
 		$data = empty($this->encrypt) ? base64_encode($data) : $this->encrypt->encode($data);
 
 		if (strlen($data) > 4048)

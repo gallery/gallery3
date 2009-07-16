@@ -19,27 +19,34 @@
  */
 class digibug_installer {
   static function install() {
-    $version = module::get_version("digibug");
-    if ($version == 0) {
-      Database::instance()
-        ->query("CREATE TABLE {proxies} (
-                   `id` int(9) NOT NULL AUTO_INCREMENT,
-                   `uuid` char(36) NOT NULL,
-                   `request_date` TIMESTAMP NOT NULL DEFAULT current_timestamp,
-                   `item_id` int(9) NOT NULL,
-                   PRIMARY KEY (`id`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    Database::instance()
+      ->query("CREATE TABLE {digibug_proxies} (
+                `id` int(9) NOT NULL AUTO_INCREMENT,
+                `uuid` char(32) NOT NULL,
+                `request_date` TIMESTAMP NOT NULL DEFAULT current_timestamp,
+                `item_id` int(9) NOT NULL,
+               PRIMARY KEY (`id`))
+               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-      module::set_var("digibug", "basic_company_id", "3153");
-      module::set_var("digibug", "basic_event_id", "8491");
-      module::set_var("digibug", "mode", "basic");
+    module::set_var("digibug", "company_id", "3153");
+    module::set_var("digibug", "event_id", "8491");
+    module::set_version("digibug", 2);
+  }
 
-      module::set_version("digibug", 1);
+  static function upgrade($version) {
+    if ($version == 1) {
+      module::clear_var("digibug", "default_company_id");
+      module::clear_var("digibug", "default_event_id");
+      module::clear_var("digibug", "basic_default_company_id");
+      module::clear_var("digibug", "basic_event_id");
+      module::set_var("digibug", "company_id", "3153");
+      module::set_var("digibug", "event_id", "8491");
+      module::set_version("digibug", $version = 2);
     }
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {proxies}");
+    Database::instance()->query("DROP TABLE IF EXISTS {digibug_proxies}");
     module::delete("digibug");
   }
 }

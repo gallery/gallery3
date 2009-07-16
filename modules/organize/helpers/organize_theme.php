@@ -20,11 +20,8 @@
 class organize_theme {
   static function head($theme) {
     // @tdo remove the addition css and organize.js (just here to test)
-    $script[] = html::script("modules/organize/js/organize_init.js");
-    $script[] = html::script("modules/organize/js/organize.js");
-    $script[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-      url::file("modules/organize/css/organize.css") . "\" />";
-    return implode("\n", $script);
-    //return html::script("modules/organize/js/organize_init.js");
+    $theme->script("modules/organize/js/organize_init.js");
+    $theme->script("modules/organize/js/organize.js");
+    $theme->css("modules/organize/css/organize.css");
   }
 }

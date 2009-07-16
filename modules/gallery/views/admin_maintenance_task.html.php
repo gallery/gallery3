@@ -30,6 +30,6 @@
   </div>
   <div>
     <button id="gPauseButton" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Pause") ?></button>
-    <button id="gDoneButton" class="ui-state-default ui-corner-all" style="display: none" onclick="dismiss()"><?= t("Done") ?></button>
+    <button id="gDoneButton" class="ui-state-default ui-corner-all" style="display: none" onclick="dismiss()"><?= t("Close") ?></button>
   </div>
 </div>

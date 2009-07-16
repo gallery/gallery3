@@ -1,34 +1,36 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Tranisitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title><?= t("Admin Dashboard") ?></title>
     <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/yui/reset-fonts-grids.css") ?>"
-        media="screen,projection" />
-    <link rel="stylesheet" type="text/css" type="text/css" href="<?= url::file("lib/themeroller/ui.base.css") ?>"
-        media="screen,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("lib/superfish/css/superfish.css") ?>"
-        media="screen,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= url::file("themes/default/css/screen.css") ?>"
-        media="screen,projection" />
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/screen.css") ?>"
-        media="screen,projection" />
-   <!--[if IE]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
-        media="screen,print,projection" />
-   <![endif]-->
-    <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery.form.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/jquery-ui.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/gallery.common.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/gallery.dialog.js") ?>" type="text/javascript"></script>
-    <script src="<?= url::file("lib/superfish/js/superfish.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/jquery.dropshadow.js") ?>" type="text/javascript"></script>
-    <script src="<?= $theme->url("js/ui.init.js") ?>" type="text/javascript"></script>
-    <?= $theme->admin_head() ?>
+
+    <?= $theme->css("lib/yui/reset-fonts-grids.css") ?>
+    <?= $theme->css("lib/themeroller/ui.base.css") ?>
+    <?= $theme->css("lib/superfish/css/superfish.css") ?>
+    <?= $theme->css("themes/default/css/screen.css") ?>
+    <?= $theme->theme_css("css/screen.css") ?>
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
+          media="screen,print,projection" />
+    <![endif]-->
+
+   <?= $theme->script("lib/jquery.js") ?>
+   <?= $theme->script("lib/jquery.form.js") ?>
+   <?= $theme->script("lib/jquery-ui.js") ?>
+   <?= $theme->script("lib/gallery.common.js") ?>
+   <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
+   <script type="text/javascript">
+   var MSG_CANCEL = "<?= t('Cancel') ?>";
+   </script>
+   <?= $theme->script("lib/gallery.dialog.js") ?>
+   <?= $theme->script("lib/superfish/js/superfish.js") ?>
+   <?= $theme->theme_script("js/jquery.dropshadow.js") ?>
+   <?= $theme->theme_script("js/ui.init.js") ?>
+
+   <?= $theme->admin_head() ?>
   </head>
 
   <body <?= $theme->body_attributes() ?>>
@@ -42,11 +44,13 @@
       <div id="gHeader">
         <?= $theme->admin_header_top() ?>
         <ul id="gLoginMenu">
-          <li class="first"><?= html::anchor("albums/1", t("Browse the Gallery")) ?></li>
+          <li class="first"><?= html::anchor("albums/1", "&larr; ".t("Back to the Gallery")) ?></li>
           <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1&csrf=$csrf") ?>"><?= t("Logout") ?></a></li>
         </ul>
-        <a href="<?= url::site("albums/1") ?>"><img src="<?= url::file("themes/default/images/logo.png") ?>" id="gLogo" alt="<?= t("Gallery 3: Your Photos on Your Web Site") ?>" /></a>
-        <div id="gSiteAdminMenu" style="display: none">
+        <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery") ?>">
+          &larr; <?= t("back to the ...") ?>
+        </a>
+        <div id="gSiteAdminMenu" style="display: none;">
           <?= $theme->admin_menu() ?>
         </div>
         <?= $theme->admin_header_bottom() ?>

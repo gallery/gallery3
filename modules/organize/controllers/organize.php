@@ -62,8 +62,8 @@ class Organize_Controller extends Controller {
     access::required("edit", $item);
 
     print json_encode(
-      array("title" => p::clean($item->title),
-            "description" => empty($item->description) ? "" : p::clean($item->description)));
+      array("title" => p::purify($item->title),
+            "description" => empty($item->description) ? "" : p::purify($item->description)));
   }
 
   function tree($item, $parent) {
@@ -283,10 +283,10 @@ class Organize_Controller extends Controller {
 
       if ($item->is_album()) {
         log::success("content", "Updated album", "<a href=\"albums/$item->id\">view</a>");
-        $message = t("Saved album %album_title", array("album_title" => $item->title));
+        $message = t("Saved album %album_title", array("album_title" => p::purify($item->title)));
       } else {
         log::success("content", "Updated photo", "<a href=\"photos/$item->id\">view</a>");
-        $message = t("Saved photo %photo_title", array("photo_title" => $item->title));
+        $message = t("Saved photo %photo_title", array("photo_title" => p::purify($item->title)));
       }
       print json_encode(array("form" => $form->__toString(), "message" => $message));
     } else {
@@ -325,7 +325,7 @@ class Organize_Controller extends Controller {
       module::event("item_updated", $orig, $item);
 
       log::success("content", "Updated album", "<a href=\"albums/$item->id\">view</a>");
-      $message = t("Saved album %album_title", array("album_title" => $item->title));
+      $message = t("Saved album %album_title", array("album_title" => p::purify($item->title)));
       print json_encode(array("form" => $form->__toString(), "message" => $message));
     } else {
       print json_encode(array("form" => $form->__toString()));

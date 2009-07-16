@@ -2,7 +2,6 @@
 
 <? if (access::can("view_full", $theme->item())): ?>
 <!-- Use javascript to show the full size as an overlay on the current page -->
-<script src="<?= url::file("lib/gallery.show_full_size.js") ?>" type="text/javascript"></script>
 <script>
   $(document).ready(function() {
     $(".gFullSizeLink").click(function() {
@@ -51,8 +50,8 @@
   </div>
 
   <div id="gInfo">
-    <h1><?= p::clean($item->title) ?></h1>
-    <div><?= p::clean($item->description) ?></div>
+    <h1><?= p::purify($item->title) ?></h1>
+    <div><?= nl2br(p::purify($item->description)) ?></div>
   </div>
 
   <script type="text/javascript">

@@ -20,55 +20,48 @@
 class Digibug_Controller extends Controller {
   public function print_photo($id) {
     access::verify_csrf();
-
     $item = ORM::factory("item", $id);
+    access::required("view_full", $item);
 
-    $proxy = ORM::factory("proxy");
-    $proxy->uuid = digibug::uuid();
-    $proxy->item_id = $item->id;
-    $proxy->save();
-
-    $url = url::abs_site("digibug/print_proxy/{$proxy->uuid}");
-    if (module::get_var("digibug", "mode", "basic")) {
-      $company_id = module::get_var("digibug", "basic_company_id");
-      $event_id = module::get_var("digibug", "basic_event_id");
+    if (access::group_can(group::everybody(), "view_full", $item)) {
+      $full_url = $item->file_url(true);
+      $thumb_url = $item->thumb_url(true);
     } else {
-      $company_id = module::get_var("digibug", "company_id");
-      $event_id = module::get_var("digibug", "event_id");
+      $proxy = ORM::factory("digibug_proxy");
+      $proxy->uuid =  md5(rand());
+      $proxy->item_id = $item->id;
+      $proxy->save();
+      $full_url = url::abs_site("digibug/print_proxy/full/$proxy->uuid");
+      $thumb_url = url::abs_site("digibug/print_proxy/thumb/$proxy->uuid");
     }
+
     $v = new View("digibug_form.html");
     $v->order_parms = array(
       "digibug_api_version" => "100",
-      "company_id" => $company_id,
-      "event_id" => $event_id,
+      "company_id" => module::get_var("digibug", "company_id"),
+      "event_id" => module::get_var("digibug", "event_id"),
       "cmd" => "addimg",
+      "partner_code" => "69",
       "return_url" => url::abs_site("digibug/close_window"),
       "num_images" => "1",
-      "image_1" => $url,
-      "thumb_1" => "$url/thumb",
+      "image_1" => $full_url,
+      "thumb_1" => $thumb_url,
       "image_height_1" => $item->height,
       "image_width_1" => $item->width,
       "thumb_height_1" => $item->thumb_height,
       "thumb_width_1" => $item->thumb_width,
-      "title_1" => $item->title);
+      "title_1" => p::purify($item->title));
 
     print $v;
   }
 
-  public function print_proxy($id, $thumb=null) {
-    $proxy = ORM::factory("proxy")
-      ->where("uuid", $id)
-      ->find();
-
-    if (!$proxy->loaded) {
+  public function print_proxy($type, $id) {
+    $proxy = ORM::factory("digibug_proxy", array("uuid" => $id));
+    if (!$proxy->loaded || !$proxy->item->loaded) {
       Kohana::show_404();
     }
 
-    if (!$proxy->item->loaded) {
-      Kohana::show_404();
-    }
-
-    $file = empty($thumb) ? $proxy->item->file_path() : $proxy->item->thumb_path();
+    $file = $type == "full" ? $proxy->item->file_path() : $proxy->item->thumb_path();
     if (!file_exists($file)) {
       kohana::show_404();
     }
@@ -84,12 +77,21 @@ class Digibug_Controller extends Controller {
     fclose($fd);
 
     // If the request was for the image and not the thumb, then delete the proxy.
-    if (empty($thumb)) {
+    if ($type == "full") {
       $proxy->delete();
     }
+
+    $this->_clean_expired();
   }
 
   public function close_window() {
     print "<script type=\"text/javascript\">window.close();</script>";
+  }
+
+  private function _clean_expired() {
+    Database::instance()>query(
+      "DELETE FROM {digibug_proxy} " .
+      "WHERE request_date <= (CURDATE() - INTERVAL 10 DAY) " .
+      "LIMIT 20");
   }
 }

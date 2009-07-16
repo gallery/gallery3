@@ -42,7 +42,7 @@
         <? endforeach ?>
         <li>
           <a href="javascript:show(<?= $item->id ?>)">
-            <?= p::clean($item->title) ?>
+            <?= p::purify($item->title) ?>
           </a>
           <div class="form" id="edit-<?= $item->id ?>">
             <?= $form ?>

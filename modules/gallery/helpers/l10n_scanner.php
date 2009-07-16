@@ -82,11 +82,10 @@ class l10n_scanner_Core {
   }
 
   static function scan_info_file($file, &$cache) {
-    $code = file_get_contents($file);
-    if (preg_match("#name\s*?=\s*(.*?)\ndescription\s*?=\s*(.*)\n#", $code, $matches)) {
-      unset($matches[0]);
-      foreach ($matches as $string) {
-        l10n_scanner::process_message($string, $cache);
+    $info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+    foreach (array('name', 'description') as $property) {
+      if (isset($info->$property)) {
+        l10n_scanner::process_message($info->$property, $cache);
       }
     }
   }

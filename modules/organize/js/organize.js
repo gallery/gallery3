@@ -99,7 +99,7 @@ var thumbDroppable =  {
       dataType: "json",
       success: operationCallback,
       type: "POST",
-      url: get_url("organize/startTask/rearrange", {item_id: item_id})
+      url: get_organize_url("organize/startTask/rearrange", {item_id: item_id})
     });
   }
 };
@@ -135,7 +135,7 @@ var treeDroppable =  {
       dataType: "json",
       success: operationCallback,
       type: "POST",
-      url: get_url("organize/startTask/move", {item_id: targetItemId})
+      url: get_organize_url("organize/startTask/move", {item_id: targetItemId})
     });
     return true;
   }
@@ -274,7 +274,7 @@ function drawerHandleButtonsClick(event) {
         dataType: "json",
         success: operationCallback,
         type: "POST",
-        url: get_url("organize/startTask/" + operation, {item_id: item_id})
+        url: get_organize_url("organize/startTask/" + operation, {item_id: item_id})
       });
       break;
     }
@@ -331,7 +331,7 @@ var operationCallback = function (data, textStatus) {
       },
       dataType: "json",
       type: "POST",
-      url: get_url("organize/runTask", {task_id: task.id})
+      url: get_organize_url("organize/runTask", {task_id: task.id})
     });
   }
   if (!paused) {
@@ -344,7 +344,7 @@ var operationCallback = function (data, textStatus) {
       },
       dataType: "json",
       type: "POST",
-      url: get_url("organize/finishTask", {task_id: task.id})
+      url: get_organize_url("organize/finishTask", {task_id: task.id})
     });
   }
   $(".gMicroThumbContainer").draggable("enable");
@@ -438,7 +438,7 @@ function organizeOpenFolder(event) {
   event.preventDefault();
 }
 
-function get_url(uri, parms) {
+function get_organize_url(uri, parms) {
   var url = rearrangeUrl;
   url = url.replace("__URI__", uri);
   url = url.replace("__ITEM_ID__", !parms.item_id ? "" : parms.item_id);
@@ -501,7 +501,7 @@ function setSelectedThumbs() {
 function getEditForm() {
   if ($("#gMicroThumbGrid li.ui-selected").length > 0) {
     var postData = serializeItemIds("li.ui-selected");
-    var url_data = get_url("organize/editForm", {}) + postData;
+    var url_data = get_organize_url("organize/editForm", {}) + postData;
     $.get(url_data, function(data, textStatus) {
       $("#gOrganizeEditForm").tabs("destroy");
       $("#gOrganizeEditForm").html(data);
@@ -585,7 +585,7 @@ function createProgressDialog(title) {
       },
       dataType: "json",
       type: "POST",
-      url: get_url("organize/cancelTask", {task_id: task.id})
+      url: get_organize_url("organize/cancelTask", {task_id: task.id})
     });
   });
 }

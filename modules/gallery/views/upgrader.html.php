@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title><?= t("Gallery3 Upgrader") ?></title>
+    <title><?= t("Gallery 3 Upgrader") ?></title>
     <link rel="stylesheet" type="text/css" href="<?= url::file("modules/gallery/css/upgrader.css") ?>"
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
@@ -13,6 +13,7 @@
         <? if ($can_upgrade): ?>
         <? if ($done): ?>
         <div id="confirmation">
+          <a onclick="$('#confirmation').slideUp(); return false;" href="#" class="close">[x]</a>
           <div>
             <h1> <?= t("That's it!") ?> </h1>
             <p>
@@ -42,7 +43,7 @@
           <? if ($module->active): ?>
           <tr class="<?= $module->version == $module->code_version ? "current" : "upgradeable" ?>" >
             <td class="name <?= $id ?>">
-              <?= $module->name ?>
+              <?= t($module->name) ?>
             </td>
             <td>
               <?= $module->version ?>
@@ -71,7 +72,7 @@
           <? foreach ($available as $module): ?>
           <? if (!$module->active): ?>
           <li>
-            <?= $module->name ?>
+            <?= t($module->name) ?>
           </li>
           <? endif ?>
           <? endforeach ?>
@@ -88,7 +89,7 @@
       <div id="footer">
         <p>
           <i>
-            <?= t("Did something go wrong? Try the <a href=\"%faq_url\">FAQ</a> or ask in the <a href=\"%forums_url\">Gallery forums</a>.</i>",
+            <?= t("Did something go wrong? Try the <a href=\"%faq_url\">FAQ</a> or ask in the <a href=\"%forums_url\">Gallery forums</a>.",
                 array("faq_url" => "http://codex.gallery2.org/Gallery3:FAQ",
                       "forums_url" => "http://gallery.menalto.com/forum")) ?>
           </i>

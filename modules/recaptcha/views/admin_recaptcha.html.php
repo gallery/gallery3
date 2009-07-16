@@ -1,8 +1,8 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gAdminRecaptcha">
-  <h1> <?= t("ReCaptcha Challenge Filtering") ?> </h1>
+  <h1> <?= t("reCAPTCHA Challenge Filtering") ?> </h1>
   <p>
-    <?= t("Recaptcha is a free CAPTCHA service that helps to digitize books, newspapers and old time radio shows. automated spam filtering service.  In order to use it, you need to sign up for a <a href=\"%domain_url\">ReCaptcha Public/Private Key pair</a>, which is also free.  Once registered, the challenge and response strings are evaluated at <a href=\"%recaptcha_url\">recaptcha.net</a> to determine if the form content has been entered by a bot.",
+    <?= t("reCAPTCHA is a free CAPTCHA service that helps to digitize books, newspapers and old time radio shows.  In order to use it, you need to sign up for a <a href=\"%domain_url\">reCAPTCHA Public/Private Key pair</a>, which is also free.  Once registered, the challenge and response strings are evaluated at <a href=\"%recaptcha_url\">recaptcha.net</a> to determine if the form content has been entered by a bot.",
           array("domain_url" => $form->get_key_url,
                 "recaptcha_url" => "http://recaptcha.net")) ?>
   </p>
@@ -12,9 +12,9 @@
 
 <? if ($public_key && $private_key): ?>
 <div id="gAdminRecaptchaTest" class="gBlock">
-  <h2> <?= t("Recaptcha Test") ?> </h2>
+  <h2> <?= t("reCAPTCHA Test") ?> </h2>
   <p>
-    <?= t("If you see a captcha form below, then Recaptcha is functioning properly.") ?>
+    <?= t("If you see a CAPTCHA form below, then reCAPTCHA is functioning properly.") ?>
   </p>
 
   <div id="gRecaptcha"/>

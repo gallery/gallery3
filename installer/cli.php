@@ -69,7 +69,7 @@ function oops($message) {
   print "==> " . $message;
   print "\n";
   print "For help you can try:\n";
-  print "  * The Gallery3 FAQ   - http://codex.gallery2.org/Gallery3:FAQ\n";
+  print "  * The Gallery 3 FAQ   - http://codex.gallery2.org/Gallery3:FAQ\n";
   print "  * The Gallery Forums - http://gallery.menalto.com/forum\n";
   print "\n\n** INSTALLATION FAILED **\n";
   exit(1);

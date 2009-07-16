@@ -1,11 +1,13 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // See http://docs.kohanaphp.com/libraries/pagination ?>
 <ul class="gPager">
-  <? /* XXX: This message isn't easily localizable */
-     $from_to_msg = t("Items %from_number - %to_number of %total",
-                      array("from_number" => $current_first_item,
-                            "to_number" => $current_last_item,
-                            "total" => $total_items)) ?>
+  <? /* @todo This message isn't easily localizable */
+     $from_to_msg = t2("Item %from_number of %count",
+                       "Items %from_number - %to_number of %count",
+                       $total_items,
+                       array("from_number" => $current_first_item,
+                             "to_number" => $current_last_item,
+                             "count" => $total_items)) ?>
   <li>
   <? if ($first_page): ?>
     <a href="<?= str_replace('{page}', 1, $url) ?>" class="gButtonLink ui-icon-left ui-state-default ui-corner-all">

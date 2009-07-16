@@ -33,7 +33,7 @@ class gallery_block_Core {
     switch($block_id) {
     case "welcome":
       $block->css_id = "gWelcome";
-      $block->title = t("Welcome to Gallery3");
+      $block->title = t("Welcome to Gallery 3");
       $block->content = new View("admin_block_welcome.html");
       break;
 

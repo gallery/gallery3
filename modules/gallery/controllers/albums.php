@@ -111,7 +111,8 @@ class Albums_Controller extends Items_Controller {
 
       log::success("content", "Created an album",
                html::anchor("albums/$new_album->id", "view album"));
-      message::success(t("Created album %album_title", array("album_title" => $new_album->title)));
+      message::success(
+        t("Created album %album_title", array("album_title" => p::clean($new_album->title))));
 
       print json_encode(
         array("result" => "success",
@@ -143,7 +144,8 @@ class Albums_Controller extends Items_Controller {
         user::active()->id);
 
       log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
-      message::success(t("Added photo %photo_title", array("photo_title" => $photo->title)));
+      message::success(
+        t("Added photo %photo_title", array("photo_title" => p::clean($photo->title))));
 
       print json_encode(
         array("result" => "success",
@@ -179,10 +181,6 @@ class Albums_Controller extends Items_Controller {
       }
     }
 
-    // @todo
-    // @todo we need to make sure that filename / dirname components can't contain a /
-    // @todo
-
     if ($valid) {
       $orig = clone $album;
       $album->title = $form->edit_album->title->value;
@@ -197,7 +195,8 @@ class Albums_Controller extends Items_Controller {
       module::event("item_updated", $orig, $album);
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
-      message::success(t("Saved album %album_title", array("album_title" => $album->title)));
+      message::success(
+        t("Saved album %album_title", array("album_title" => p::clean($album->title))));
 
       print json_encode(
         array("result" => "success",

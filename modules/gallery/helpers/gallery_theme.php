@@ -22,14 +22,12 @@ class gallery_theme_Core {
     $session = Session::instance();
     $buf = "";
     if ($session->get("debug")) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/debug.css") . "\" />";
+      $theme->css("modules/gallery/css/debug.css");
     }
     if (($theme->page_type == "album" || $theme->page_type == "photo")
         && access::can("edit", $theme->item())) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/quick.css") . "\" />";
-      $buf .= html::script("modules/gallery/js/quick.js");
+      $theme->css("modules/gallery/css/quick.css");
+      $theme->script("modules/gallery/js/quick.js");
     }
 
     if (module::is_active("rss")) {
@@ -41,10 +39,9 @@ class gallery_theme_Core {
     }
 
     if ($session->get("l10n_mode", false)) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/l10n_client.css") . "\" />";
-      $buf .= html::script("lib/jquery.cookie.js");
-      $buf .= html::script("modules/gallery/js/l10n_client.js");
+      $theme->css("modules/gallery/css/l10n_client.css");
+      $theme->script("lib/jquery.cookie.js");
+      $theme->script("modules/gallery/js/l10n_client.js");
     }
 
     return $buf;
@@ -78,20 +75,15 @@ class gallery_theme_Core {
 
   static function admin_head($theme) {
     $session = Session::instance();
-    $buf = "";
     if ($session->get("debug")) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/debug.css") . "\" />";
+      $theme->css("modules/gallery/css/debug.css");
     }
 
     if ($session->get("l10n_mode", false)) {
-      $buf .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("modules/gallery/css/l10n_client.css") . "\" />";
-      $buf .= html::script("lib/jquery.cookie.js");
-      $buf .= html::script("modules/gallery/js/l10n_client.js");
+      $theme->css("modules/gallery/css/l10n_client.css");
+      $theme->script("lib/jquery.cookie.js");
+      $theme->script("modules/gallery/js/l10n_client.js");
     }
-
-    return $buf;
   }
 
   static function page_bottom($theme) {
@@ -124,8 +116,7 @@ class gallery_theme_Core {
   static function credits() {
      return "<li class=\"first\">" .
       t(module::get_var("gallery", "credits"),
-        array("url" => "http://gallery.menalto.com",
-              "version" => module::get_var("gallery", "version"))) .
+        array("url" => "http://gallery.menalto.com", "version" => gallery::VERSION)) .
       "</li>";
   }
 

@@ -31,10 +31,10 @@
       <a href="<?= url::site("items/$item->id") ?>">
         <?= $item->thumb_img() ?>
         <p>
-          <?= p::clean($item->title) ?>
+          <?= p::purify($item->title) ?>
         </p>
         <div>
-          <?= p::clean($item->description) ?>
+    <?= nl2br(p::purify($item->description)) ?>
         </div>
       </a>
     </li>

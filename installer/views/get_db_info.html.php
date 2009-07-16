@@ -1,31 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<h1> Welcome! </h1>
-<p>
-  Installing Gallery is very easy.  We just need to know how to talk
-  to your MySQL database, and we need a place to store your photos on
-  your web host.
-</p>
-
-
-<fieldset>
-  <legend>Photo Storage</legend>
-  <?php if (!installer::var_writable()): ?>
-  <p class="error">
-    We're having trouble creating a place for your photos.  Can you
-    help?  Please create a directory called "var" using <code>mkdir var</code> in your
-    gallery3 directory, then run <code>chmod 777 var</code>.  That
-    should fix it.
-    <br/><br/>
-    <a href="index.php">Check again</a>
-  </p>
-  <?php else: ?>
-  <p class="success">
-    We've found a place to store your photos:
-    <code class="location"> <?= VARPATH ?> </code>
-  </p>
-  <?php endif ?>
-</fieldset>
-
 <form method="post" action="index.php?step=save_db_info">
   <fieldset>
     <legend>Database</legend>
@@ -40,7 +13,7 @@
           Database Name
         </td>
         <td>
-          <input name="dbname" value="gallery3"/>
+          <input name="dbname" value="<?= $dbname ?>"/>
         </td>
       </tr>
       <tr>
@@ -48,7 +21,7 @@
           User
         </td>
         <td>
-          <input name="dbuser" value="root"/>
+          <input name="dbuser" value="<?= $user ?>"/>
         </td>
       </tr>
       <tr>
@@ -56,7 +29,7 @@
           Password
         </td>
         <td>
-          <input name="dbpass" value=""/>
+          <input name="dbpass" value="<?= $password ?>"/>
         </td>
       </tr>
       <tr>
@@ -64,7 +37,7 @@
           Host
         </td>
         <td>
-          <input name="dbhost" value="localhost"/>
+          <input name="dbhost" value="<?= $host ?>"/>
         </td>
       </tr>
       <tr>
@@ -72,16 +45,12 @@
           Table Prefix
         </td>
         <td>
-          <input name="prefix" value=""/>
+          <input name="prefix" value="<?= $prefix ?>"/>
         </td>
       </tr>
       <tr>
         <td colspan="2">
-          <?php if (installer::var_writable()): ?>
           <input type="submit" value="Continue"/>
-          <?php else: ?>
-          <i class="error">(Please fix the photo storage problem before continuing)</i>
-          <?php endif ?>
         </td>
       </tr>
     </table>

@@ -8,7 +8,7 @@
     <table>
       <tr>
         <td><?= t("Title:") ?></td>
-        <td><?= p::clean($item->title) ?></td>
+        <td><?= p::purify($item->title) ?></td>
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>
@@ -21,7 +21,7 @@
       <? if ($item->description): ?>
       <tr>
         <td><?= t("Description:") ?></td>
-        <td><?= p::clean($item->description) ?></td>
+         <td><?= nl2br(p::purify($item->description)) ?></td>
       </tr>
       <? endif ?>
     </table>

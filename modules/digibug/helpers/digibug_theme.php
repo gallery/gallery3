@@ -19,24 +19,6 @@
  */
 class digibug_theme_Core {
   static function head($theme) {
-    $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-      url::file("modules/digibug/css/digibug.css") . "\" />";
-    $head[] = html::script("modules/digibug/js/digibug.js");;
-    return implode("\n", $head);
-  }
-
-  static function admin_head($theme) {
-    return "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-      url::file("modules/digibug/css/digibug.css") . "\" />";
-  }
-
-  static function thumb_bottom($theme, $child) {
-    if ($theme->page_type() == "album" && $child->type == "photo") {
-      $v = new View("digibug_album.html");
-      $v->id = $child->id;
-      $v->title = t("Print photo with Digibug");
-      return $v->render();
-    }
-    return "";
+    $theme->script("modules/digibug/js/digibug.js");
   }
 }

@@ -43,7 +43,7 @@ class organize_Core {
     $sortPane->hidden("item[]")->value($item->id);
     $sortPane->dropdown("column", array("id" => "gAlbumSortColumn"))
       ->label(t("Sort by"))
-      ->options(array("weight" => t("Default"),
+      ->options(array("weight" => t("Order Added"),
                       "captured" => t("Capture Date"),
                       "created" => t("Creation Date"),
                       "title" => t("Title"),

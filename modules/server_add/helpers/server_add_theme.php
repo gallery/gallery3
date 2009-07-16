@@ -20,21 +20,20 @@
 class server_add_theme_Core {
   static function head($theme) {
     if (user::active()->admin) {
-      return html::script("modules/server_add/js/server_add.js");
+      $theme->script("modules/server_add/js/server_add.js");
     }
   }
 
   static function admin_head($theme) {
     $head = array();
     if (strpos(Router::$current_uri, "admin/server_add") !== false) {
-      $head[] = "<link media=\"screen, projection\" rel=\"stylesheet\" type=\"text/css\" href=\"" .
-        url::file("lib/jquery.autocomplete.css") . "\" />";
+      $theme->css("lib/jquery.autocomplete.css");
       $base = url::site("__ARGS__");
       $csrf = access::csrf_token();
       $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
-      $head[] = html::script("lib/jquery.autocomplete.js");
-      $head[] = html::script("modules/server_add/js/admin.js");
+      $theme->script("lib/jquery.autocomplete.js");
+      $theme->script("modules/server_add/js/admin.js");
     }
 
     return implode("\n", $head);

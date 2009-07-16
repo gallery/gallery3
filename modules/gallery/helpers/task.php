@@ -56,6 +56,8 @@ class task_Core {
     }
     $task->done = 1;
     $task->state = "cancelled";
+    $task->log(t("Task %task_name cancelled (task id %task_id)",
+                 array("task_name" => $task->name, "task_id" => $task->id)));
     $task->save();
 
     return $task;
@@ -74,9 +76,20 @@ class task_Core {
       throw new Exception("@todo MISSING_TASK");
     }
 
-    $task->state = "running";
-    call_user_func_array($task->callback, array(&$task));
-    $task->save();
+    try {
+      $task->state = "running";
+      call_user_func_array($task->callback, array(&$task));
+      if ($task->done) {
+        $task->log($task->status);
+      }
+      $task->save();
+    } catch (Exception $e) {
+      $task->log($e->__toString());
+      $task->state = "error";
+      $task->done = true;
+      $task->status = $e->getMessage();
+      $task->save();
+    }
 
     return $task;
   }

@@ -106,7 +106,7 @@
     <tr id="gComment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
       <td>
         <a href="#">
-          <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
+          <img src="<?= $comment->author()->avatar_url(40, $theme->theme_url("images/avatar.jpg", true)) ?>"
                class="gAvatar"
                alt="<?= p::clean($comment->author_name()) ?>"
                width="40"
@@ -122,7 +122,7 @@
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
-                 alt="<?= p::clean($item->title) ?>"
+                 alt="<?= p::purify($item->title) ?>"
                  <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
               />
               <? else: ?>
@@ -132,7 +132,7 @@
           </div>
         </div>
         <p><?= gallery::date($comment->created) ?></p>
-        <?= p::clean($comment->text) ?>
+           <?= nl2br(p::purify($comment->text)) ?>
       </td>
       <td>
         <ul class="gButtonSetVertical">

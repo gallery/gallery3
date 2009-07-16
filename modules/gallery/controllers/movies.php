@@ -44,7 +44,7 @@ class Movies_Controller extends Items_Controller {
       ->where("id <=", $photo->id)
       ->count_all();
 
-    $template = new Theme_View("page.html", "photo");
+    $template = new Theme_View("page.html", "movie");
     $template->set_global("item", $photo);
     $template->set_global("children", array());
     $template->set_global("children_count", $photo->children_count());
@@ -94,7 +94,8 @@ class Movies_Controller extends Items_Controller {
       module::event("item_updated", $orig, $photo);
 
       log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
-      message::success(t("Saved photo %photo_title", array("photo_title" => $photo->title)));
+      message::success(
+        t("Saved photo %photo_title", array("photo_title" => p::clean($photo->title))));
 
       print json_encode(
         array("result" => "success",

@@ -1,11 +1,12 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript" src="<?= url::file("lib/swfupload/swfupload.js") ?>"></script>
 <script type="text/javascript" src="<?= url::file("lib/swfupload/swfupload.queue.js") ?>"></script>
+<script type="text/javascript" src="<?= url::file("lib/jquery.scrollTo.js") ?>"></script>
 
 <!-- hack to set the title for the dialog -->
 <form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
   <fieldset>
-    <legend> <?= t("Add photos to %album_title", array("album_title" => p::clean($item->title))) ?> </legend>
+    <legend> <?= t("Add photos to %album_title", array("album_title" => p::purify($item->title))) ?> </legend>
   </fieldset>
 </form>
 
@@ -27,24 +28,31 @@
     <? foreach ($item->parents() as $parent): ?>
     <li> <?= p::clean($parent->title) ?> </li>
     <? endforeach ?>
-    <li class="active"> <?= p::clean($item->title) ?> </li>
+    <li class="active"> <?= p::purify($item->title) ?> </li>
   </ul>
 
-  <p><?= t("Upload Queue") ?></p>
+  <p>
+    <span id="gUploadQueueInfo">
+      <?= t("Upload Queue") ?>
+    </span>
+    <a id="gUploadCancel" title="<?= t("Cancel all the pending uploads") ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
+  </p>
   <div id="gAddPhotosCanvas" style="text-align: center;">
     <div id="gAddPhotosQueue"></div>
     <div id="gEditPhotosQueue"></div>
     <span id="gChooseFilesButtonPlaceholder"></span>
   </div>
+  <!--
   <button id="gUploadCancel" class="ui-state-default ui-corner-all" type="button"
           onclick="swfu.cancelQueue();"
           disabled="disabled">
     <?= t("Cancel all") ?>
   </button>
+  -->
 
   <!-- Proxy the done request back to our form, since its been ajaxified -->
   <button class="ui-state-default ui-corner-all" onclick="$('#gAddPhotosForm').submit()">
-    <?= t("Done") ?>
+    <?= t("Close") ?>
   </button>
 </div>
 
@@ -67,25 +75,26 @@
     float: right;
   }
   #gAddPhotos #gUploadCancel {
-    float: left;
+    display: none;
+    cursor: pointer;
   }
 </style>
 
 <script type="text/javascript">
   var swfu = new SWFUpload({
-    flash_url : "<?= url::file("lib/swfupload/swfupload.swf") ?>",
+    flash_url: "<?= url::file("lib/swfupload/swfupload.swf") ?>",
     upload_url: "<?= url::site("simple_uploader/add_photo/$item->id") ?>",
     post_params: {
       "g3sid": "<?= Session::instance()->id() ?>",
       "user_agent": "<?= Input::instance()->server("HTTP_USER_AGENT") ?>",
       "csrf": "<?= $csrf ?>"
     },
-    file_size_limit : "<?= ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB" ?>",
-    file_types : "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
-    file_types_description : "<?= t("Photos and Movies") ?>",
-    file_upload_limit : 1000,
-    file_queue_limit : 0,
-    custom_settings : { },
+    file_size_limit: "<?= ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB" ?>",
+    file_types: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
+    file_types_description: "<?= t("Photos and Movies") ?>",
+    file_upload_limit: 1000,
+    file_queue_limit: 0,
+    custom_settings: { },
     debug: false,
 
     // Button settings
@@ -99,15 +108,15 @@
     button_text_top_padding: 10,
 
     // The event handler functions are defined in handlers.js
-    file_queued_handler : file_queued,
-    file_queue_error_handler : file_queue_error,
-    file_dialog_complete_handler : file_dialog_complete,
-    upload_start_handler : upload_start,
-    upload_progress_handler : upload_progress,
-    upload_error_handler : upload_error,
-    upload_success_handler : upload_success,
-    upload_complete_handler : upload_complete,
-    queue_complete_handler : queue_complete
+    file_queued_handler: file_queued,
+    file_queue_error_handler: file_queue_error,
+    file_dialog_complete_handler: file_dialog_complete,
+    upload_start_handler: upload_start,
+    upload_progress_handler: upload_progress,
+    upload_error_handler: upload_error,
+    upload_success_handler: upload_success,
+    upload_complete_handler: upload_complete,
+    queue_complete_handler: queue_complete
   });
 
   // @todo add support for cancelling individual uploads
@@ -118,7 +127,8 @@
         "<div class=\"box\" id=\"" + file.id + "\">" +
         "<div class=\"title\"></div>" +
         "<div class=\"status\"></div>" +
-        "<div class=\"progressbar\"></div></div>");
+        "<div class=\"progressbar\"></div>" +
+        "</div>");
       this.box = $("#" + file.id);
     }
     this.title = this.box.find(".title");
@@ -171,7 +181,8 @@
 
   function file_dialog_complete(num_files_selected, num_files_queued) {
     if (num_files_selected > 0) {
-      $("#gUploadCancel").enable(true);
+      $("#gUploadCancel").show();
+      $("#gUploadQueueInfo").text(get_completed_status_msg(this.getStats()));
     }
 
     // Auto start the upload
@@ -184,6 +195,7 @@
     var fp = new File_Progress(file);
     fp.title.html(file.name);
     fp.set_status("uploading", "<?= t("Uploading...") ?>");
+    $("#gAddPhotosCanvas").scrollTo(fp.box, 1000);
     return true;
     // @todo add cancel button to call this.cancelUpload(file.id)
   }
@@ -226,7 +238,7 @@
     case SWFUpload.UPLOAD_ERROR.FILE_CANCELLED:
       // If there aren't any files left (they were all cancelled) disable the cancel button
       if (this.getStats().files_queued === 0) {
-        $("#gUploadCancel").enable(false);
+        $("#gUploadCancel").hide();
       }
       fp.set_status("error", "<?= t("Cancelled") ?>");
       break;
@@ -240,9 +252,19 @@
   }
 
   function upload_complete(file) {
-    if (this.getStats().files_queued === 0) {
-      $("#gUploadCancel").enable(false);
+    var stats = this.getStats();
+    $("#gUploadQueueInfo").text(get_completed_status_msg(stats));
+    if (stats.files_queued === 0) {
+      $("#gUploadCancel").hide();
     }
+  }
+
+  function get_completed_status_msg(stats) {
+    var msg = "<?= t("Upload Queue (completed %completed of %total)", array("completed" => "__COMPLETED__", "total" => "__TOTAL__")) ?>";
+    msg = msg.replace("__COMPLETED__", stats.successful_uploads);
+    msg = msg.replace("__TOTAL__", stats.files_queued + stats.successful_uploads +
+      stats.upload_errors + stats.upload_cancelled + stats.queue_errors);
+    return msg;
   }
 
   // This event comes from the Queue Plugin

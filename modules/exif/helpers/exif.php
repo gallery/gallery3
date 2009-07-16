@@ -104,35 +104,35 @@ class exif_Core {
   private static function _keys() {
     if (!isset(self::$exif_keys)) {
       self::$exif_keys = array(
-        "Make"            => array("IFD0",   "Make",              t("Camera Maker"),     true),
-        "Model"           => array("IFD0",   "Model",             t("Camera Model"),     true),
-        "Aperture"        => array("SubIFD", "FNumber",           t("Aperture"),         true),
-        "ColorSpace"      => array("SubIFD", "ColorSpace",        t("Color Space"),      true),
-        "ExposureBias"    => array("SubIFD", "ExposureBiasValue", t("Exposure Value"),   true),
-        "ExposureProgram" => array("SubIFD", "ExposureProgram",   t("Exposure Program"), true),
-        "Flash"           => array("SubIFD", "Flash",             t("Flash"),            true),
-        "FocalLength"     => array("SubIFD", "FocalLength",       t("Focal Length"),     true),
-        "ISO"             => array("SubIFD", "ISOSpeedRatings",   t("ISO"),              true),
-        "MeteringMode"    => array("SubIFD", "MeteringMode",      t("Metering Mode"),    true),
-        "ShutterSpeed"    => array("SubIFD", "ShutterSpeedValue", t("Shutter Speed"),    true),
-        "DateTime"        => array("SubIFD", "DateTimeOriginal",  t("Date/Time"),        true),
-        "Copyright"       => array("IFD0",   "Copyright",         t("Copyright"),        false),
-        "ImageType"       => array("IFD0",   "ImageType",         t("Image Type"),       false),
-        "Orientation"     => array("IFD0",   "Orientation",       t("Orientation"),      false),
-        "ResolutionUnit"  => array("IFD0",   "ResolutionUnit",    t("Resolution Unit"),  false),
-        "xResolution"     => array("IFD0",   "xResolution",       t("X Resolution"),     false),
-        "yResolution"     => array("IFD0",   "yResolution",       t("Y Resolution"),     false),
-        "Compression"     => array("IFD1",   "Compression",       t("Compression"),      false),
-        "BrightnessValue" => array("SubIFD", "BrightnessValue",   t("Brightness Value"), false),
-        "Contrast"        => array("SubIFD", "Contrast",          t("Contrast"),         false),
-        "ExposureMode"    => array("SubIFD", "ExposureMode",      t("Exposure Mode"),    false),
-        "FlashEnergy"     => array("SubIFD", "FlashEnergy",       t("Flash Energy"),     false),
-        "Saturation"      => array("SubIFD", "Saturation",        t("Saturation"),       false),
-        "SceneType"       => array("SubIFD", "SceneType",         t("Scene Type"),       false),
-        "Sharpness"       => array("SubIFD", "Sharpness",         t("Sharpness"),        false),
-        "SubjectDistance" => array("SubIFD", "SubjectDistance",   t("Subject Distance"), false),
-        "Caption"         => array("IPTC",   "Caption",           t("Caption"),          false),
-        "Keywords"        => array("IPTC",   "Keywords",          t("Keywords"),         false)
+        "Make"            => array("IFD0",   "Make",              t("Camera Maker"),     ),
+        "Model"           => array("IFD0",   "Model",             t("Camera Model"),     ),
+        "Aperture"        => array("SubIFD", "FNumber",           t("Aperture"),         ),
+        "ColorSpace"      => array("SubIFD", "ColorSpace",        t("Color Space"),      ),
+        "ExposureBias"    => array("SubIFD", "ExposureBiasValue", t("Exposure Value"),   ),
+        "ExposureProgram" => array("SubIFD", "ExposureProgram",   t("Exposure Program"), ),
+        "ExposureTime"    => array("SubIFD", "ExposureTime",      t("Exposure Time"),    ),
+        "Flash"           => array("SubIFD", "Flash",             t("Flash"),            ),
+        "FocalLength"     => array("SubIFD", "FocalLength",       t("Focal Length"),     ),
+        "ISO"             => array("SubIFD", "ISOSpeedRatings",   t("ISO"),              ),
+        "MeteringMode"    => array("SubIFD", "MeteringMode",      t("Metering Mode"),    ),
+        "DateTime"        => array("SubIFD", "DateTimeOriginal",  t("Date/Time"),        ),
+        "Copyright"       => array("IFD0",   "Copyright",         t("Copyright"),        ),
+        "ImageType"       => array("IFD0",   "ImageType",         t("Image Type"),       ),
+        "Orientation"     => array("IFD0",   "Orientation",       t("Orientation"),      ),
+        "ResolutionUnit"  => array("IFD0",   "ResolutionUnit",    t("Resolution Unit"),  ),
+        "xResolution"     => array("IFD0",   "xResolution",       t("X Resolution"),     ),
+        "yResolution"     => array("IFD0",   "yResolution",       t("Y Resolution"),     ),
+        "Compression"     => array("IFD1",   "Compression",       t("Compression"),      ),
+        "BrightnessValue" => array("SubIFD", "BrightnessValue",   t("Brightness Value"), ),
+        "Contrast"        => array("SubIFD", "Contrast",          t("Contrast"),         ),
+        "ExposureMode"    => array("SubIFD", "ExposureMode",      t("Exposure Mode"),    ),
+        "FlashEnergy"     => array("SubIFD", "FlashEnergy",       t("Flash Energy"),     ),
+        "Saturation"      => array("SubIFD", "Saturation",        t("Saturation"),       ),
+        "SceneType"       => array("SubIFD", "SceneType",         t("Scene Type"),       ),
+        "Sharpness"       => array("SubIFD", "Sharpness",         t("Sharpness"),        ),
+        "SubjectDistance" => array("SubIFD", "SubjectDistance",   t("Subject Distance"), ),
+        "Caption"         => array("IPTC",   "Caption",           t("Caption"),          ),
+        "Keywords"        => array("IPTC",   "Keywords",          t("Keywords"),         )
       );
     }
     return self::$exif_keys;
@@ -163,7 +163,7 @@ class exif_Core {
     list ($remaining) = exif::stats();
     if ($remaining) {
       site_status::warning(
-        t('Your EXIF index needs to be updated.  <a href="%url" class="gDialogLink">Fix this now</a>',
+        t('Your Exif index needs to be updated.  <a href="%url" class="gDialogLink">Fix this now</a>',
           array("url" => url::site("admin/maintenance/start/exif_task::update_index?csrf=__CSRF__"))),
         "exif_index_out_of_date");
     }

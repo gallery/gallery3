@@ -13,6 +13,9 @@ var shortForms = new Array(
 
 $(document).ready(function() {
 
+  // Remove .gMenu from thumb menu's before initializing Superfish
+  // @todo gallery_menu should only apply gMenu to top-level menus, submenus should be gSubMenu-N
+
   // Initialize Superfish menus
   $("ul.gMenu").addClass("sf-menu");
   $('ul.sf-menu').superfish({
@@ -90,6 +93,30 @@ $(document).ready(function() {
       $(this).removeClass("ui-state-hover");
     }
   );
+
+  // Initialize thumbnail menus
+  // @todo Toggle between north and south caret's on hover
+  if ($("#gContent .gThumbMenu").length) {
+    $("#gContent .gThumbMenu li").addClass("ui-state-default");
+    $("#gContent .gThumbMenu li a")
+      .not('[class]')
+      .addClass("gButtonLink ui-icon ui-icon-caret-l-n")
+      .css({
+        height: "10px",
+        margin: "0",
+        padding: "0 0 3px 0"
+      });
+
+    $(".gThumbMenu ul").hide();
+    $(".gThumbMenu").hover(
+      function() {
+        $(this).find("ul").slideDown("fast");
+      },
+      function() {
+	      $(this).find("ul").slideUp("slow");
+      }
+    );
+  }
 
 });
 

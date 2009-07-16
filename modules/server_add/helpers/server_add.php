@@ -31,4 +31,19 @@ class server_add_Core {
       site_status::clear("server_add_configuration");
     }
   }
+
+  static function is_valid_path($path) {
+    if (!is_readable($path) || is_link($path)) {
+      return false;
+    }
+
+    $authorized_paths = unserialize(module::get_var("server_add", "authorized_paths"));
+    foreach (array_keys($authorized_paths) as $valid_path) {
+      if (strpos($path, $valid_path) === 0) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="l10n-client" class="hidden">
   <div class="labels">
-    <span class="toggle"><?= t("Translate Text") ?></span>
+    <span id="l10n-client-toggler">X</span>
     <div class="label strings"><h2><?= t("Page Text") ?>
     <? if (!Input::instance()->get('show_all_l10n_messages')): ?>
       <a style="background-color:#fff" href="<?= url::site("admin/languages?show_all_l10n_messages=1") ?>"><?= t("(Show All)") ?></a>
@@ -63,10 +63,14 @@
           <?= form::textarea("l10n-edit-plural-translation-other", "", ' rows="2"') ?>
         </div>
         <input type="submit" name="l10n-edit-save" value="<?= t("Save translation") ?>"/>
+        <a href="javascript: Gallery.l10nClient.copySourceText()"
+           class="gButtonLink ui-state-default ui-corner-all"><?= t("Copy source text") ?></a>
       </form>
     </div>
   </div>
   <script type="text/javascript">
+    var MSG_TRANSLATE_TEXT = "<?= t("Translate Text") ?>";
+    var MSG_CLOSE_X = "<?= t("X") ?>";
     var l10n_client_data = <?= json_encode($string_list) ?>;
     var plural_forms = <?= json_encode($plural_forms) ?>;
   </script>

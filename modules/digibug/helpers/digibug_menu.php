@@ -22,18 +22,29 @@ class digibug_menu {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
         ->id("digibug_menu")
-        ->label(t("Digibug Administration"))
+        ->label(t("Digibug"))
         ->url(url::site("admin/digibug")));
   }
 
   static function photo($menu, $theme) {
     $item = $theme->item();
-    $csrf = access::csrf_token();
-    $menu
-      ->append(Menu::factory("link")
-               ->id("digibug")
-               ->label(t("Print with Digibug"))
-               ->url(url::site("digibug/print_photo/{$item->id}?csrf={$csrf}"))
-               ->css_id("gDigibugLink"));
+    $menu->append(
+      Menu::factory("link")
+      ->id("digibug")
+      ->label(t("Print with Digibug"))
+      ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
+      ->css_id("gDigibugLink"));
+  }
+
+  static function thumb($menu, $theme, $item) {
+    if ($item->type == "photo" && access::can("view_full", $item)) {
+      $menu->get("options_menu")
+        ->append(
+          Menu::factory("link")
+          ->id("digibug")
+          ->label(t("Print with Digibug"))
+          ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
+          ->css_id("gDigibugLink"));
+    }
   }
 }

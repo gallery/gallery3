@@ -19,15 +19,15 @@
  */
 class tag_theme_Core {
   static function head($theme) {
-    $url = url::file("modules/tag/js/tag.js");
-    return "<script src=\"$url\" type=\"text/javascript\"></script>";
+    $theme->script("modules/tag/js/tag.js");
+  }
+
+  static function admin_head($theme) {
+    $theme->script("modules/tag/js/tag.js");
   }
 
   static function sidebar_blocks($theme) {
     // @todo this needs to be data driven
-    if (!$theme->item()) {
-      return;
-    }
 
     $block = new Block();
     $block->css_id = "gTag";
@@ -35,7 +35,7 @@ class tag_theme_Core {
     $block->content = new View("tag_block.html");
     $block->content->cloud = tag::cloud(30);
 
-    if ($theme->page_type() != "tag" && access::can("edit", $theme->item())) {
+    if ($theme->item() && $theme->page_type() != "tag" && access::can("edit", $theme->item())) {
       $controller = new Tags_Controller();
       $block->content->form = tag::get_add_form($theme->item());
     } else {

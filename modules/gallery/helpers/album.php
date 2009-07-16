@@ -111,7 +111,7 @@ class album_Core {
 
     $sort_order->dropdown("column", array("id" => "gAlbumSortColumn"))
       ->label(t("Sort by"))
-      ->options(array("weight" => t("Default"),
+      ->options(array("weight" => t("Order Added"),
                       "captured" => t("Capture Date"),
                       "created" => t("Creation Date"),
                       "title" => t("Title"),

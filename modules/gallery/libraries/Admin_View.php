@@ -17,9 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_View_Core extends View {
-  private $theme_name = null;
-
+class Admin_View_Core extends Gallery_View {
   /**
    * Attempts to load a view and pre-load view data.
    *
@@ -44,15 +42,6 @@ class Admin_View_Core extends View {
     $this->sidebar = "";
     $this->set_global("theme", $this);
     $this->set_global("user", user::active());
-  }
-
-  public function url($path, $absolute_url=false) {
-    $arg = "themes/{$this->theme_name}/$path";
-    return $absolute_url ? url::abs_file($arg) : url::file($arg);
-  }
-
-  public function display($page_name, $view_class="View") {
-    return new $view_class($page_name);
   }
 
   public function admin_menu() {
@@ -107,6 +96,11 @@ class Admin_View_Core extends View {
             array($helper_class, $function),
             array_merge(array($this), $args));
         }
+      }
+
+      if ($function == "admin_head") {
+        array_unshift($blocks, $this->combine_files($this->css, "css"));
+        array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
       }
 
       if (Session::instance()->get("debug")) {
