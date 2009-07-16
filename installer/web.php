@@ -20,12 +20,6 @@
 if (installer::already_installed()) {
   $content = render("success.html.php");
 } else {
-  $config = array("host" => empty($_POST["dbhost"]) ? "localhost" : $_POST["dbhost"],
-                  "user" => empty($_POST["dbuser"]) ? "root" : $_POST["dbuser"],
-                  "password" => empty($_POST["dbpass"]) ? "" : $_POST["dbpass"],
-                  "dbname" => empty($_POST["dbname"]) ? "gallery3" : $_POST["dbname"],
-                  "prefix" => empty($_POST["prefix"]) ? "" : $_POST["prefix"],
-                  "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
   switch (@$_GET["step"]) {
   default:
   case "welcome":
@@ -33,13 +27,18 @@ if (installer::already_installed()) {
     if ($errors) {
       $content = render("environment_errors.html.php", array("errors" => $errors));
     } else {
-      $request_db_info = $is_var_writable = installer::var_writable();
-      $content = render("var_dir_status.html.php", array("writable" => $is_var_writable));
+      $content = render("get_db_info.html.php");
     }
     break;
 
   case "save_db_info":
-    $request_db_info = true;
+    $config = array("host" => $_POST["dbhost"],
+                    "user" => $_POST["dbuser"],
+                    "password" => $_POST["dbpass"],
+                    "dbname" => $_POST["dbname"],
+                    "prefix" => $_POST["prefix"],
+                    "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
+
     if (!installer::connect($config)) {
       $content = render("invalid_db_info.html.php");
     } else if (!installer::select_db($config)) {
@@ -59,7 +58,6 @@ if (installer::already_installed()) {
         $content = render("success.html.php", array("user" => $user, "password" => $password));
 
         installer::create_private_key($config);
-        $request_db_info = false;
       } catch (Exception $e) {
         $content = oops($e->getMessage());
       }
@@ -68,9 +66,6 @@ if (installer::already_installed()) {
   }
 }
 
-if (empty($errors) && !empty($request_db_info)) {
-  $database_form = render("get_db_info.html.php", $config);
-}
 include("views/install.html.php");
 
 function render($view, $args=array()) {
