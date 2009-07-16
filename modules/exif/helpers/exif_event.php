@@ -19,7 +19,9 @@
  */
 class exif_event_Core {
   static function item_created($item) {
-    exif::extract($item);
+    if (!$item->is_album()) {
+      exif::extract($item);
+    }
   }
 
   static function item_deleted($item) {

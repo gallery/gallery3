@@ -32,4 +32,17 @@ class Group_Model extends ORM {
     parent::delete($id);
     module::event("group_deleted", $old);
   }
+
+  public function save() {
+    if (!$this->loaded) {
+        $created = 1;
+    }
+    parent::save();
+    if (isset($created)) {
+      module::event("group_created", $this);
+    } else {
+      module::event("group_updated", $this);
+    }
+    return $this;
+  }
 }

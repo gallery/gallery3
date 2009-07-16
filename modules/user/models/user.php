@@ -59,4 +59,17 @@ class User_Model extends ORM {
     return sprintf("http://www.gravatar.com/avatar/%s.jpg?s=%d&r=pg%s",
                    md5($this->email), $size, $default ? "&d=" . urlencode($default) : "");
   }
+
+  public function save() {
+    if (!$this->loaded) {
+        $created = 1;
+    }
+    parent::save();
+    if (isset($created)) {
+      module::event("user_created", $this);
+    } else {
+      module::event("user_updated", $this);
+    }
+    return $this;
+  }
 }

@@ -152,7 +152,6 @@ class Comments_Controller extends REST_Controller {
       $comment->url = $form->edit_comment->url->value;
       $comment->text = $form->edit_comment->text->value;
       $comment->save();
-      module::event("comment_updated", $comment);
 
       print json_encode(
         array("result" => "success",

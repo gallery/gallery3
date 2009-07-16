@@ -61,11 +61,6 @@ class comment_Core {
     $comment->server_remote_port = substr($input->server("REMOTE_PORT"), 0, 16);
     $comment->save();
 
-    module::event("comment_created", $comment);
-    if ($comment->state == "published") {
-      module::event("item_related_update", $comment->item());
-    }
-
     return $comment;
   }
 

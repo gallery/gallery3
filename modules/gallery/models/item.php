@@ -350,9 +350,14 @@ class Item_Model extends ORM_MPTT {
         $this->created = $this->updated;
         $r = ORM::factory("item")->select("MAX(weight) as max_weight")->find();
         $this->weight = $r->max_weight + 1;
+        $created = 1;
       }
     }
-    return parent::save();
+    parent::save();
+    if (!isset($created)) {
+      module::event("item_updated", $this);
+    }
+    return $this;
   }
 
   /**

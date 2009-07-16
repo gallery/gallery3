@@ -202,7 +202,6 @@ class user_Core {
     $user->add(group::registered_users());
 
     $user->save();
-    module::event("user_created", $user);
     return $user;
   }
 
