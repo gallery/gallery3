@@ -326,12 +326,12 @@ modules/notification/views/item_deleted.html.php             18  DIRTY $item->pa
 modules/notification/views/item_deleted.html.php             19  DIRTY $item->parent()->url(array(), true)
 modules/notification/views/item_updated.html.php             4         $subject
 modules/notification/views/item_updated.html.php             7         $subject
-modules/notification/views/item_updated.html.php             12        $new->title
-modules/notification/views/item_updated.html.php             15        $new->title
-modules/notification/views/item_updated.html.php             20  DIRTY $new->url(array(), true)
-modules/notification/views/item_updated.html.php             20  DIRTY $new->url(array(), true)
-modules/notification/views/item_updated.html.php             25        $new->description
-modules/notification/views/item_updated.html.php             30        $new->description
+modules/notification/views/item_updated.html.php             12        $item->title
+modules/notification/views/item_updated.html.php             15        $item->title
+modules/notification/views/item_updated.html.php             20  DIRTY $item->url(array(), true)
+modules/notification/views/item_updated.html.php             20  DIRTY $item->url(array(), true)
+modules/notification/views/item_updated.html.php             25        $item->description
+modules/notification/views/item_updated.html.php             30        $item->description
 modules/organize/views/organize.html.php                     10  DIRTY $item->id
 modules/organize/views/organize.html.php                     12  DIRTY $csrf
 modules/organize/views/organize.html.php                     13  DIRTY $csrf
