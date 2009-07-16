@@ -135,12 +135,12 @@ class Gallery_View_Core extends View {
         $relative = substr(realpath(dirname($css_file) . "/$match[1]"), $docroot_length);
         if (!empty($relative)) {
           $search[] = $match[0];
-          $relative = str_replace(DIRECTORY_SEPARATOR, "/", $relative);
           $replace[] = "url('" . url::abs_file($relative) . "')";
         } else {
           Kohana::log("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
         }
       }
+      $replace = str_replace(DIRECTORY_SEPARATOR, "/", $replace);
       $css = str_replace($search, $replace, $css);
     }
     $imports = preg_match_all("#@import\s*['|\"]{0,1}(.*?)['|\"]{0,1};#",
