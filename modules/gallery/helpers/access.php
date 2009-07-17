@@ -205,6 +205,7 @@ class access_Core {
     }
 
     self::_update_htaccess_files($album, $group, $perm_name, $value);
+    model_cache::clear();
   }
 
   /**
@@ -256,6 +257,7 @@ class access_Core {
         }
       }
     }
+    model_cache::clear();
   }
 
   /**
@@ -426,6 +428,7 @@ class access_Core {
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     $db->query("ALTER TABLE {{$cache_table}} DROP `$field`");
     $db->query("ALTER TABLE {access_intents} DROP `$field`");
+    model_cache::clear();
     ORM::factory("access_intent")->clear_cache();
   }
 
@@ -443,6 +446,7 @@ class access_Core {
     $db->query("ALTER TABLE {{$cache_table}} ADD `$field` SMALLINT NOT NULL DEFAULT 0");
     $db->query("ALTER TABLE {access_intents} ADD `$field` BOOLEAN DEFAULT NULL");
     $db->update("access_intents", array($field => 0), array("item_id" => 1));
+    model_cache::clear();
     ORM::factory("access_intent")->clear_cache();
   }
 

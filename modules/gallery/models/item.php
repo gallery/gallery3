@@ -140,6 +140,7 @@ class Item_Model extends ORM_MPTT {
     $original_parent = $this->parent();
 
     parent::move_to($target, true);
+    model_cache::clear();
     $this->relative_path_cache = null;
 
     rename($original_path, $this->file_path());

@@ -32,7 +32,7 @@ class ORM extends ORM_Core {
   }
 
   public function save() {
-    model_cache::clear($this->object_name, $this->{$this->primary_key}, $this->primary_key);
+    model_cache::clear();
     $result = parent::save();
     $this->original = $this->object;
     return $result;
