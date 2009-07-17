@@ -122,8 +122,8 @@ class Item_Model extends ORM_MPTT {
   /**
    * Move this item to the specified target.
    * @chainable
-   * @param   Item_Model $target  Target item (must be an album
-   * @return  ORM_MTPP
+   * @param   Item_Model $target  Target item (must be an album)
+   * @return  ORM_MPTT
    */
   function move_to($target) {
     if (!$target->is_album()) {
@@ -137,6 +137,7 @@ class Item_Model extends ORM_MPTT {
     $original_path = $this->file_path();
     $original_resize_path = $this->resize_path();
     $original_thumb_path = $this->thumb_path();
+    $original_parent = $this->parent();
 
     parent::move_to($target, true);
     $this->relative_path_cache = null;
@@ -154,6 +155,7 @@ class Item_Model extends ORM_MPTT {
       @rename($original_thumb_path, $this->thumb_path());
     }
 
+    module::event("item_moved", $this, $original_parent);
     return $this;
   }
 

@@ -244,6 +244,21 @@ class access_Core {
   }
 
   /**
+   * Recalculate the permissions for a given item and its hierarchy.  $item must be an album.
+   */
+  static function recalculate_permissions($item) {
+    foreach (self::_get_all_groups() as $group) {
+      foreach (ORM::factory("permission")->find_all() as $perm) {
+        if ($perm->name == "view") {
+          self::_update_access_view_cache($group, $item);
+        } else {
+          self::_update_access_non_view_cache($group, $perm->name, $item);
+        }
+      }
+    }
+  }
+
+  /**
    * Register a permission so that modules can use it.
    *
    * @param  string $name           The internal name for for this permission

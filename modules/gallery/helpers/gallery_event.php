@@ -35,6 +35,10 @@ class gallery_event_Core {
     access::delete_item($item);
   }
 
+  static function item_moved($item, $old_parent) {
+    access::recalculate_permissions($item->parent());
+  }
+
   static function user_login($user) {
     // If this user is an admin, check to see if there are any post-install tasks that we need
     // to run and take care of those now.
