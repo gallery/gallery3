@@ -60,14 +60,15 @@ class Combined_Controller extends Controller {
 
     $cache = Cache::instance();
     $use_gzip = function_exists("gzencode") &&
-      (strpos($input->server("HTTP_ACCEPT_ENCODING"), "gzip") !== false);
+      stripos($input->server("HTTP_ACCEPT_ENCODING"), "gzip") !== false &&
+      (int) ini_get("zlib.output_compression") === 0;
+
     if ($use_gzip && $content = $cache->get("{$key}_gz")) {
       header("Content-Encoding: gzip");
     } else {
       // Fall back to non-gzipped if we have to
       $content = $cache->get($key);
     }
-
     if (empty($content)) {
       Kohana::show_404();
     }
