@@ -45,7 +45,7 @@ class View extends View_Core {
   }
 
   public function body_attributes() {
-    if (locale::is_rtl()) {
+    if (locales::is_rtl()) {
       return 'class="rtl"';
     }
     return '';
