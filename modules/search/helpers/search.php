@@ -24,7 +24,7 @@ class search_Core {
 
     if (!user::active()->admin) {
       foreach (user::group_ids() as $id) {
-        $fields[] = "`view_$id` = " . access::ALLOW;
+        $fields[] = "`view_$id` = TRUE"; // access::ALLOW
       }
       $access_sql = "AND (" . join(" AND ", $fields) . ")";
     } else {
