@@ -73,6 +73,10 @@ class Gallery_View_Core extends View {
   protected function combine_files($files, $type) {
     $links = array();
 
+    if (empty($files)) {
+      return;
+    }
+
     // Include the url in the cache key so that if the Gallery moves, we don't use old cached
     // entries.
     $key = array(url::abs_file(""));
