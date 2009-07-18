@@ -74,7 +74,7 @@ class l10n_client_Core {
     $request->locales = array();
     $request->messages = new stdClass();
 
-    $locales = locale::installed();
+    $locales = locales::installed();
     foreach ($locales as $locale => $locale_data) {
       $request->locales[] = $locale;
     }
