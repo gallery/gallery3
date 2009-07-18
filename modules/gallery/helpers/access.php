@@ -130,7 +130,7 @@ class access_Core {
    * @param  Group_Model $group
    * @param  string      $perm_name
    * @param  Item_Model  $item
-   * @return boolean     access::ALLOW, access::DENY or access::INHERIT (null) for no intent
+   * @return boolean     access::ALLOW, ccess::DENY or access::INHERIT (null) for no intent
    */
   static function group_intent($group, $perm_name, $item) {
     $intent = model_cache::get("access_intent", $item->id, "item_id");
@@ -158,7 +158,7 @@ class access_Core {
       ->where("`right` >= $item->right")
       ->where("items.id <> $item->id")
       ->join("access_intents", "items.id", "access_intents.item_id")
-      ->where("access_intents.view_$group->id", access::DENY)
+      ->where("access_intents.view_$group->id", self::DENY)
       ->orderby("level", "DESC")
       ->limit(1)
       ->find();
@@ -242,7 +242,7 @@ class access_Core {
     if ($item->id == 1) {
       throw new Exception("@todo CANT_RESET_ROOT_PERMISSION");
     }
-    self::_set($group, $perm_name, $item, access::INHERIT);
+    self::_set($group, $perm_name, $item, self::INHERIT);
   }
 
   /**
@@ -447,7 +447,7 @@ class access_Core {
     $not_null = $cache_table == "items" ? "" : "NOT NULL";
     $db->query("ALTER TABLE {{$cache_table}} ADD `$field` BINARY $not_null DEFAULT FALSE");
     $db->query("ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
-    $db->update("access_intents", array($field => access::DENY), array("item_id" => 1));
+    $db->update("access_intents", array($field => self::DENY), array("item_id" => 1));
     model_cache::clear();
     ORM::factory("access_intent")->clear_cache();
   }
@@ -572,7 +572,7 @@ class access_Core {
       ->orderby("level", "ASC")
       ->find_all();
     foreach  ($query as $row) {
-      $value = ($row->$field === access::ALLOW) ? "TRUE" : "FALSE";
+      $value = ($row->$field === self::ALLOW) ? "TRUE" : "FALSE";
       $db->query(
         "UPDATE {access_caches} SET `$field` = $value " .
         "WHERE `item_id` IN " .
