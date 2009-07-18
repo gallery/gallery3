@@ -182,7 +182,6 @@ class Albums_Controller extends Items_Controller {
     }
 
     if ($valid) {
-      $orig = clone $album;
       $album->title = $form->edit_album->title->value;
       $album->description = $form->edit_album->description->value;
       $album->sort_column = $form->edit_album->sort_order->column->value;
@@ -191,8 +190,6 @@ class Albums_Controller extends Items_Controller {
         $album->rename($form->edit_album->dirname->value);
       }
       $album->save();
-
-      module::event("item_updated", $orig, $album);
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
       message::success(

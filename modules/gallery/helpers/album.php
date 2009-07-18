@@ -71,6 +71,8 @@ class album_Core {
     mkdir(dirname($album->thumb_path()));
     mkdir(dirname($album->resize_path()));
 
+    // @todo: publish this from inside Item_Model::save() when we refactor to the point where
+    // there's only one save() happening here.
     module::event("item_created", $album);
 
     return $album;

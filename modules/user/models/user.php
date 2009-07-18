@@ -44,8 +44,10 @@ class User_Model extends ORM {
    * @see ORM::delete()
    */
   public function delete($id=null) {
+    $old = clone $this;
     module::event("user_before_delete", $this);
     parent::delete($id);
+    module::event("user_deleted", $old);
   }
 
   /**
@@ -56,5 +58,18 @@ class User_Model extends ORM {
   public function avatar_url($size=80, $default=null) {
     return sprintf("http://www.gravatar.com/avatar/%s.jpg?s=%d&r=pg%s",
                    md5($this->email), $size, $default ? "&d=" . urlencode($default) : "");
+  }
+
+  public function save() {
+    if (!$this->loaded) {
+        $created = 1;
+    }
+    parent::save();
+    if (isset($created)) {
+      module::event("user_created", $this);
+    } else {
+      module::event("user_updated", $this);
+    }
+    return $this;
   }
 }

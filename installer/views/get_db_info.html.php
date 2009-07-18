@@ -1,4 +1,32 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<h1> Welcome! </h1>
+<p>
+  Installing Gallery is very easy.  We just need to know how to talk
+  to your MySQL database, and we need a place to store your photos on
+  your web host.
+</p>
+
+
+<fieldset>
+  <legend>Photo Storage</legend>
+  <?php if (!installer::var_writable()): ?>
+  <p class="error">
+    We're having trouble creating a place for your photos.  Can you
+    help?  Please create a directory called "var" using <code>mkdir var</code> in your
+    gallery3 directory, then run <code>chmod 777 var</code>.  That
+    should fix it.
+    <br/><br/>
+    <a href="index.php">Check again</a>
+  </p>
+  <?php else: ?>
+  <p class="success">
+    We've found a place to store your photos:
+    <code class="location"> <?= VARPATH ?> </code>
+  </p>
+  <?php endif ?>
+</fieldset>
+
+<?php if (installer::var_writable()): ?>
 <form method="post" action="index.php?step=save_db_info">
   <fieldset>
     <legend>Database</legend>
@@ -13,7 +41,7 @@
           Database Name
         </td>
         <td>
-          <input name="dbname" value="<?= $dbname ?>"/>
+          <input name="dbname" value="gallery3"/>
         </td>
       </tr>
       <tr>
@@ -21,7 +49,7 @@
           User
         </td>
         <td>
-          <input name="dbuser" value="<?= $user ?>"/>
+          <input name="dbuser" value="root"/>
         </td>
       </tr>
       <tr>
@@ -29,7 +57,7 @@
           Password
         </td>
         <td>
-          <input name="dbpass" value="<?= $password ?>"/>
+          <input name="dbpass" value=""/>
         </td>
       </tr>
       <tr>
@@ -37,7 +65,7 @@
           Host
         </td>
         <td>
-          <input name="dbhost" value="<?= $host ?>"/>
+          <input name="dbhost" value="localhost"/>
         </td>
       </tr>
       <tr>
@@ -45,7 +73,7 @@
           Table Prefix
         </td>
         <td>
-          <input name="prefix" value="<?= $prefix ?>"/>
+          <input name="prefix" value=""/>
         </td>
       </tr>
       <tr>
@@ -56,3 +84,4 @@
     </table>
   </fieldset>
 </form>
+<?php endif ?>

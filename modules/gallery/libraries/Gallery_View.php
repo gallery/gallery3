@@ -73,6 +73,10 @@ class Gallery_View_Core extends View {
   protected function combine_files($files, $type) {
     $links = array();
 
+    if (empty($files)) {
+      return;
+    }
+
     // Include the url in the cache key so that if the Gallery moves, we don't use old cached
     // entries.
     $key = array(url::abs_file(""));
@@ -104,7 +108,10 @@ class Gallery_View_Core extends View {
       }
 
       $cache->set($key, $contents, array($type), 30 * 84600);
-      if (function_exists("gzencode")) {
+
+      $use_gzip = function_exists("gzencode") &&
+        (int) ini_get("zlib.output_compression") === 0;
+      if ($use_gzip) {
         $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
                     array($type, "gzip"), 30 * 84600);
       }

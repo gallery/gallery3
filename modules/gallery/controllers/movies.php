@@ -85,13 +85,10 @@ class Movies_Controller extends Items_Controller {
     }
 
     if ($valid) {
-      $orig = clone $photo;
       $photo->title = $form->edit_photo->title->value;
       $photo->description = $form->edit_photo->description->value;
       $photo->rename($form->edit_photo->filename->value);
       $photo->save();
-
-      module::event("item_updated", $orig, $photo);
 
       log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
       message::success(

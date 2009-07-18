@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class g2_import_event_Core {
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     Database::instance()->delete("g2_maps", array("g3_id" => $item->id));
   }
 

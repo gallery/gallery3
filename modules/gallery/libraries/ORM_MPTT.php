@@ -285,6 +285,7 @@ class ORM_MPTT_Core extends ORM {
 
     // Lets reload to get the changes.
     $this->reload();
+    $target->reload();
     return $this;
   }
 

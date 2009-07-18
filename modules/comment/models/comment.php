@@ -61,8 +61,23 @@ class Comment_Model extends ORM {
       $this->updated = time();
       if (!$this->loaded && empty($this->created)) {
         $this->created = $this->updated;
+        $created = true;
       }
     }
-    return parent::save();
+    parent::save();
+
+    if (isset($created)) {
+      module::event("comment_created", $this);
+    } else {
+      module::event("comment_updated", $this);
+    }
+
+    // We only notify on the related items if we're making a visible change, which means moving in
+    // or out of a published state
+    if ($this->original("state") == "published" || $this->state == "published") {
+      module::event("item_related_update", $this->item());
+    }
+
+    return $this;
   }
 }

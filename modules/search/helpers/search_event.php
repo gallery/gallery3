@@ -22,11 +22,11 @@ class search_event_Core {
     search::update($item);
   }
 
-  static function item_updated($old_item, $new_item) {
-    search::update($new_item);
+  static function item_updated($item) {
+    search::update($item);
   }
 
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     ORM::factory("search_record")
       ->where("item_id", $item->id)
       ->delete_all();

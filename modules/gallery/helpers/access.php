@@ -205,6 +205,7 @@ class access_Core {
     }
 
     self::_update_htaccess_files($album, $group, $perm_name, $value);
+    model_cache::clear();
   }
 
   /**
@@ -241,6 +242,22 @@ class access_Core {
       throw new Exception("@todo CANT_RESET_ROOT_PERMISSION");
     }
     self::_set($group, $perm_name, $item, null);
+  }
+
+  /**
+   * Recalculate the permissions for a given item and its hierarchy.  $item must be an album.
+   */
+  static function recalculate_permissions($item) {
+    foreach (self::_get_all_groups() as $group) {
+      foreach (ORM::factory("permission")->find_all() as $perm) {
+        if ($perm->name == "view") {
+          self::_update_access_view_cache($group, $item);
+        } else {
+          self::_update_access_non_view_cache($group, $perm->name, $item);
+        }
+      }
+    }
+    model_cache::clear();
   }
 
   /**
@@ -411,6 +428,7 @@ class access_Core {
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     $db->query("ALTER TABLE {{$cache_table}} DROP `$field`");
     $db->query("ALTER TABLE {access_intents} DROP `$field`");
+    model_cache::clear();
     ORM::factory("access_intent")->clear_cache();
   }
 
@@ -428,6 +446,7 @@ class access_Core {
     $db->query("ALTER TABLE {{$cache_table}} ADD `$field` SMALLINT NOT NULL DEFAULT 0");
     $db->query("ALTER TABLE {access_intents} ADD `$field` BOOLEAN DEFAULT NULL");
     $db->update("access_intents", array($field => 0), array("item_id" => 1));
+    model_cache::clear();
     ORM::factory("access_intent")->clear_cache();
   }
 

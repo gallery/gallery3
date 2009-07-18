@@ -141,22 +141,28 @@ modules/gallery/views/admin_maintenance.html.php             75  DIRTY $task->na
 modules/gallery/views/admin_maintenance.html.php             86  DIRTY $task->percent_complete
 modules/gallery/views/admin_maintenance.html.php             90  DIRTY $task->status
 modules/gallery/views/admin_maintenance.html.php             93        $task->owner()->name
-modules/gallery/views/admin_maintenance.html.php             97  DIRTY $task->id
-modules/gallery/views/admin_maintenance.html.php             97  DIRTY $csrf
-modules/gallery/views/admin_maintenance.html.php             101 DIRTY $task->id
-modules/gallery/views/admin_maintenance.html.php             101 DIRTY $csrf
-modules/gallery/views/admin_maintenance.html.php             113 DIRTY $csrf
-modules/gallery/views/admin_maintenance.html.php             140 DIRTY $task->state
-modules/gallery/views/admin_maintenance.html.php             142 DIRTY $task->updated
-modules/gallery/views/admin_maintenance.html.php             145 DIRTY $task->name
-modules/gallery/views/admin_maintenance.html.php             157 DIRTY $task->status
-modules/gallery/views/admin_maintenance.html.php             160 DIRTY $task->owner()->name
-modules/gallery/views/admin_maintenance.html.php             164 DIRTY $task->id
-modules/gallery/views/admin_maintenance.html.php             164 DIRTY $csrf
-modules/gallery/views/admin_maintenance.html.php             168 DIRTY $task->id
-modules/gallery/views/admin_maintenance.html.php             168 DIRTY $csrf
-modules/gallery/views/admin_maintenance.html.php             171 DIRTY $task->id
-modules/gallery/views/admin_maintenance.html.php             171 DIRTY $csrf
+modules/gallery/views/admin_maintenance.html.php             98  DIRTY $task->id
+modules/gallery/views/admin_maintenance.html.php             98  DIRTY $csrf
+modules/gallery/views/admin_maintenance.html.php             102 DIRTY $task->id
+modules/gallery/views/admin_maintenance.html.php             102 DIRTY $csrf
+modules/gallery/views/admin_maintenance.html.php             115 DIRTY $csrf
+modules/gallery/views/admin_maintenance.html.php             142 DIRTY $task->state
+modules/gallery/views/admin_maintenance.html.php             144 DIRTY $task->updated
+modules/gallery/views/admin_maintenance.html.php             147 DIRTY $task->name
+modules/gallery/views/admin_maintenance.html.php             159 DIRTY $task->status
+modules/gallery/views/admin_maintenance.html.php             162 DIRTY $task->owner()->name
+modules/gallery/views/admin_maintenance.html.php             166 DIRTY $task->id
+modules/gallery/views/admin_maintenance.html.php             166 DIRTY $csrf
+modules/gallery/views/admin_maintenance.html.php             170 DIRTY $task->id
+modules/gallery/views/admin_maintenance.html.php             170 DIRTY $csrf
+modules/gallery/views/admin_maintenance.html.php             175 DIRTY $task->id
+modules/gallery/views/admin_maintenance.html.php             175 DIRTY $csrf
+modules/gallery/views/admin_maintenance.html.php             178 DIRTY $task->id
+modules/gallery/views/admin_maintenance.html.php             178 DIRTY $csrf
+modules/gallery/views/admin_maintenance_show_log.html.php    8   DIRTY $task->id
+modules/gallery/views/admin_maintenance_show_log.html.php    8   DIRTY $csrf
+modules/gallery/views/admin_maintenance_show_log.html.php    13  DIRTY $task->name
+modules/gallery/views/admin_maintenance_show_log.html.php    15        $task->get_log()
 modules/gallery/views/admin_maintenance_task.html.php        5   DIRTY $task->id
 modules/gallery/views/admin_maintenance_task.html.php        5   DIRTY $csrf
 modules/gallery/views/admin_maintenance_task.html.php        26  DIRTY $task->name
@@ -201,10 +207,10 @@ modules/gallery/views/admin_themes_preview.html.php          4   DIRTY $info->na
 modules/gallery/views/admin_themes_preview.html.php          7   DIRTY $url
 modules/gallery/views/after_install.html.php                 11        $user->name
 modules/gallery/views/after_install.html.php                 15  DIRTY $user->id
-modules/gallery/views/kohana_error_page.php                  98  DIRTY $message
-modules/gallery/views/kohana_error_page.php                  100 DIRTY $file
-modules/gallery/views/kohana_error_page.php                  100 DIRTY $line
-modules/gallery/views/kohana_error_page.php                  112 DIRTY $trace
+modules/gallery/views/kohana_error_page.php                  102 DIRTY $message
+modules/gallery/views/kohana_error_page.php                  104 DIRTY $file
+modules/gallery/views/kohana_error_page.php                  104 DIRTY $line
+modules/gallery/views/kohana_error_page.php                  116 DIRTY $trace
 modules/gallery/views/kohana_profiler.php                    32  DIRTY $profile->render()
 modules/gallery/views/kohana_profiler.php                    34  DIRTY $execution_time
 modules/gallery/views/l10n_client.html.php                   17  DIRTY $string
@@ -212,8 +218,8 @@ modules/gallery/views/l10n_client.html.php                   19  DIRTY $string
 modules/gallery/views/l10n_client.html.php                   20  DIRTY $string
 modules/gallery/views/l10n_client.html.php                   22  DIRTY $string
 modules/gallery/views/l10n_client.html.php                   28  DIRTY $l10n_search_form
-modules/gallery/views/l10n_client.html.php                   72  DIRTY $string_list
-modules/gallery/views/l10n_client.html.php                   73  DIRTY $plural_forms
+modules/gallery/views/l10n_client.html.php                   74  DIRTY $string_list
+modules/gallery/views/l10n_client.html.php                   75  DIRTY $plural_forms
 modules/gallery/views/move_browse.html.php                   4   DIRTY $source->id
 modules/gallery/views/move_browse.html.php                   39  DIRTY $tree
 modules/gallery/views/move_browse.html.php                   42  DIRTY $source->id
@@ -280,8 +286,8 @@ modules/gallery/views/simple_uploader.html.php               7   DIRTY $csrf
 modules/gallery/views/simple_uploader.html.php               9         $item->title
 modules/gallery/views/simple_uploader.html.php               29        $parent->title
 modules/gallery/views/simple_uploader.html.php               31        $item->title
-modules/gallery/views/simple_uploader.html.php               85  DIRTY $item->id
-modules/gallery/views/simple_uploader.html.php               89  DIRTY $csrf
+modules/gallery/views/simple_uploader.html.php               86  DIRTY $item->id
+modules/gallery/views/simple_uploader.html.php               90  DIRTY $csrf
 modules/gallery/views/upgrader.html.php                      44  DIRTY $module->version
 modules/gallery/views/upgrader.html.php                      44  DIRTY $module->code_version
 modules/gallery/views/upgrader.html.php                      45  DIRTY $id
@@ -320,12 +326,12 @@ modules/notification/views/item_deleted.html.php             18  DIRTY $item->pa
 modules/notification/views/item_deleted.html.php             19  DIRTY $item->parent()->url(array(), true)
 modules/notification/views/item_updated.html.php             4         $subject
 modules/notification/views/item_updated.html.php             7         $subject
-modules/notification/views/item_updated.html.php             12        $new->title
-modules/notification/views/item_updated.html.php             15        $new->title
-modules/notification/views/item_updated.html.php             20  DIRTY $new->url(array(), true)
-modules/notification/views/item_updated.html.php             20  DIRTY $new->url(array(), true)
-modules/notification/views/item_updated.html.php             25        $new->description
-modules/notification/views/item_updated.html.php             30        $new->description
+modules/notification/views/item_updated.html.php             12        $item->title
+modules/notification/views/item_updated.html.php             15        $item->title
+modules/notification/views/item_updated.html.php             20  DIRTY $item->url(array(), true)
+modules/notification/views/item_updated.html.php             20  DIRTY $item->url(array(), true)
+modules/notification/views/item_updated.html.php             25        $item->description
+modules/notification/views/item_updated.html.php             30        $item->description
 modules/organize/views/organize.html.php                     10  DIRTY $item->id
 modules/organize/views/organize.html.php                     12  DIRTY $csrf
 modules/organize/views/organize.html.php                     13  DIRTY $csrf
@@ -417,16 +423,17 @@ modules/server_add/views/admin_server_add.html.php           14  DIRTY $csrf
 modules/server_add/views/admin_server_add.html.php           15  DIRTY $id
 modules/server_add/views/admin_server_add.html.php           19  DIRTY $path
 modules/server_add/views/admin_server_add.html.php           24  DIRTY $form
-modules/server_add/views/server_add_tree.html.php            4   DIRTY $tree_id
-modules/server_add/views/server_add_tree.html.php            6   DIRTY $file_info
-modules/server_add/views/server_add_tree.html.php            10        $file_info
-modules/server_add/views/server_add_tree.html.php            10  DIRTY $checked
-modules/server_add/views/server_add_tree.html.php            10        $file
-modules/server_add/views/server_add_tree_dialog.html.php     10        $album_title
-modules/server_add/views/server_add_tree_dialog.html.php     15        $parent->title
-modules/server_add/views/server_add_tree_dialog.html.php     17        $album_title
-modules/server_add/views/server_add_tree_dialog.html.php     20  DIRTY $action
-modules/server_add/views/server_add_tree_dialog.html.php     22  DIRTY $tree
+modules/server_add/views/server_add_tree.html.php            12  DIRTY $dir
+modules/server_add/views/server_add_tree.html.php            13  DIRTY $dir
+modules/server_add/views/server_add_tree.html.php            20  DIRTY $file
+modules/server_add/views/server_add_tree.html.php            25  DIRTY $file
+modules/server_add/views/server_add_tree.html.php            27        $file
+modules/server_add/views/server_add_tree_dialog.html.php     4   DIRTY $item->id
+modules/server_add/views/server_add_tree_dialog.html.php     4   DIRTY $csrf
+modules/server_add/views/server_add_tree_dialog.html.php     8         $item->title
+modules/server_add/views/server_add_tree_dialog.html.php     14        $parent->title
+modules/server_add/views/server_add_tree_dialog.html.php     18        $item->title
+modules/server_add/views/server_add_tree_dialog.html.php     23  DIRTY $tree
 modules/tag/views/admin_tags.html.php                        13  DIRTY $csrf
 modules/tag/views/admin_tags.html.php                        27  DIRTY $tags->count()
 modules/tag/views/admin_tags.html.php                        35  DIRTY $current_letter
@@ -501,14 +508,14 @@ themes/admin_default/views/admin.html.php                    37  DIRTY $theme->a
 themes/admin_default/views/admin.html.php                    43  DIRTY $theme->site_status()
 themes/admin_default/views/admin.html.php                    45  DIRTY $theme->admin_header_top()
 themes/admin_default/views/admin.html.php                    48  DIRTY $csrf
-themes/admin_default/views/admin.html.php                    52  DIRTY $theme->admin_menu()
-themes/admin_default/views/admin.html.php                    54  DIRTY $theme->admin_header_bottom()
-themes/admin_default/views/admin.html.php                    60  DIRTY $theme->messages()
-themes/admin_default/views/admin.html.php                    61  DIRTY $content
-themes/admin_default/views/admin.html.php                    67  DIRTY $sidebar
-themes/admin_default/views/admin.html.php                    72  DIRTY $theme->admin_footer()
-themes/admin_default/views/admin.html.php                    74  DIRTY $theme->admin_credits()
-themes/admin_default/views/admin.html.php                    78  DIRTY $theme->admin_page_bottom()
+themes/admin_default/views/admin.html.php                    54  DIRTY $theme->admin_menu()
+themes/admin_default/views/admin.html.php                    56  DIRTY $theme->admin_header_bottom()
+themes/admin_default/views/admin.html.php                    62  DIRTY $theme->messages()
+themes/admin_default/views/admin.html.php                    63  DIRTY $content
+themes/admin_default/views/admin.html.php                    69  DIRTY $sidebar
+themes/admin_default/views/admin.html.php                    74  DIRTY $theme->admin_footer()
+themes/admin_default/views/admin.html.php                    76  DIRTY $theme->admin_credits()
+themes/admin_default/views/admin.html.php                    80  DIRTY $theme->admin_page_bottom()
 themes/admin_default/views/block.html.php                    2   DIRTY $id
 themes/admin_default/views/block.html.php                    2   DIRTY $css_id
 themes/admin_default/views/block.html.php                    5   DIRTY $id
@@ -544,7 +551,7 @@ themes/default/views/block.html.php                          3   DIRTY $css_id
 themes/default/views/block.html.php                          4   DIRTY $title
 themes/default/views/block.html.php                          6   DIRTY $content
 themes/default/views/dynamic.html.php                        4   DIRTY $theme->dynamic_top()
-themes/default/views/dynamic.html.php                        6         $tag->name
+themes/default/views/dynamic.html.php                        6         $title
 themes/default/views/dynamic.html.php                        11  DIRTY $child->is_album()
 themes/default/views/dynamic.html.php                        12  DIRTY $theme->thumb_top($child)
 themes/default/views/dynamic.html.php                        13  DIRTY $child->url()

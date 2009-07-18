@@ -27,7 +27,22 @@ class Group_Model extends ORM {
    * @see ORM::delete()
    */
   public function delete($id=null) {
+    $old = clone $this;
     module::event("group_before_delete", $this);
     parent::delete($id);
+    module::event("group_deleted", $old);
+  }
+
+  public function save() {
+    if (!$this->loaded) {
+        $created = 1;
+    }
+    parent::save();
+    if (isset($created)) {
+      module::event("group_created", $this);
+    } else {
+      module::event("group_updated", $this);
+    }
+    return $this;
   }
 }

@@ -23,7 +23,7 @@ class gallery_event_Core {
     access::add_group($group);
   }
 
-  static function group_before_delete($group) {
+  static function group_deleted($group) {
     access::delete_group($group);
   }
 
@@ -31,8 +31,12 @@ class gallery_event_Core {
     access::add_item($item);
   }
 
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     access::delete_item($item);
+  }
+
+  static function item_moved($item, $old_parent) {
+    access::recalculate_permissions($item->parent());
   }
 
   static function user_login($user) {

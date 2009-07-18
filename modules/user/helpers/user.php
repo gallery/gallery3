@@ -79,7 +79,7 @@ class user_Core {
   }
 
   private static function _add_locale_dropdown(&$form, $user=null) {
-    $locales = locale::installed();
+    $locales = locales::installed();
     if (count($locales) > 1) {
       // Put "none" at the first position in the array
       $locales = array_merge(array("" => t("« none »")), $locales);
@@ -202,7 +202,6 @@ class user_Core {
     $user->add(group::registered_users());
 
     $user->save();
-    module::event("user_created", $user);
     return $user;
   }
 

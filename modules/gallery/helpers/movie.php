@@ -102,6 +102,8 @@ class movie_Core {
 
     copy($filename, $movie->file_path());
 
+    // @todo: publish this from inside Item_Model::save() when we refactor to the point where
+    // there's only one save() happening here.
     module::event("item_created", $movie);
 
     // Build our thumbnail

@@ -324,4 +324,40 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
   }
+
+  public function moved_items_inherit_new_permissions_test() {
+    user::set_active(user::lookup_by_name("admin"));
+
+    $root = ORM::factory("item", 1);
+    $public_album = album::create($root, rand(), "public album");
+    $public_photo = photo::create($public_album, MODPATH . "gallery/images/gallery.png", "", "");
+    access::allow(group::everybody(), "view", $public_album);
+
+    $root->reload();  // Account for MPTT changes
+
+    $private_album = album::create($root, rand(), "private album");
+    access::deny(group::everybody(), "view", $private_album);
+    $private_photo = photo::create($private_album, MODPATH . "gallery/images/gallery.png", "", "");
+
+    // Make sure that we now have a public photo and private photo.
+    $this->assert_true(access::group_can(group::everybody(), "view", $public_photo));
+    $this->assert_false(access::group_can(group::everybody(), "view", $private_photo));
+
+    // Swap the photos
+    item::move($public_photo, $private_album);
+    $private_album->reload(); // Reload to get new MPTT pointers and cached perms.
+    $public_album->reload();
+    $private_photo->reload();
+    $public_photo->reload();
+
+    item::move($private_photo, $public_album);
+    $private_album->reload(); // Reload to get new MPTT pointers and cached perms.
+    $public_album->reload();
+    $private_photo->reload();
+    $public_photo->reload();
+
+    // Make sure that the public_photo is now private, and the private_photo is now public.
+    $this->assert_false(access::group_can(group::everybody(), "view", $public_photo));
+    $this->assert_true(access::group_can(group::everybody(), "view", $private_photo));
+  }
 }
