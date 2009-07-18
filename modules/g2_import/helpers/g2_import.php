@@ -376,12 +376,10 @@ class g2_import_Core {
     }
     $album->save();
 
-    $message[] = t("Album '%name' imported.", array("name" => $album->name));
-    $message[] = self::import_keywords_as_tags($g2_album->getKeywords(), $album);
+    self::import_keywords_as_tags($g2_album->getKeywords(), $album);
     self::set_map($g2_album_id, $album->id);
 
     // @todo import album highlights
-    return $message;
   }
 
   /**
@@ -401,7 +399,6 @@ class g2_import_Core {
     }
 
     $table = g2(GalleryCoreApi::fetchThumbnailsByItemIds(array($g2_album_id)));
-    $message = "";
     if (isset($table[$g2_album_id])) {
       // Backtrack the source id to an item
       $g2_source = $table[$g2_album_id];
@@ -417,10 +414,8 @@ class g2_import_Core {
         $g2_album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
         $g2_album->save();
         graphics::generate($g2_album);
-        $message = t("Highlight created for album '%name'", array("name" => $g2_album->name));
       }
     }
-    return $message;
   }
 
   /**
@@ -478,7 +473,6 @@ class g2_import_Core {
           self::_decode_html_special_chars($g2_item->getTitle()),
           self::_decode_html_special_chars(self::extract_description($g2_item)),
           self::map($g2_item->getOwnerId()));
-        $message[].= t("Imported photo: '%title'", array("title" => p::purify($item->title)));
       } catch (Exception $e) {
         Kohana::log(
           "alert", "Corrupt image $g2_path\n" . $e->__toString());
@@ -499,7 +493,6 @@ class g2_import_Core {
             self::_decode_html_special_chars($g2_item->getTitle()),
             self::_decode_html_special_chars(self::extract_description($g2_item)),
             self::map($g2_item->getOwnerId()));
-          $message[] = t("Imported movie: '%title'", array("title" => p::purify($item->title)));
         } catch (Exception $e) {
           Kohana::log("alert", "Corrupt movie $g2_path\n" . $e->__toString());
           $message[] = t("Corrupt movie '%path'", array("path" => $g2_path));
@@ -520,14 +513,13 @@ class g2_import_Core {
     }
 
     if (!empty($item)) {
-      $message[] = self::import_keywords_as_tags($g2_item->getKeywords(), $item);
+      self::import_keywords_as_tags($g2_item->getKeywords(), $item);
     }
 
     if (isset($item)) {
       self::set_map($g2_item_id, $item->id);
       $item->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
       $item->save();
-      $message[] = t("View count updated: %count", array("count" => $item->view_count));
     }
 
     if ($corrupt) {
@@ -629,15 +621,9 @@ class g2_import_Core {
 
     // Tag operations are idempotent so we don't need to map them.  Which is good because we don't
     // have an id for each individual tag mapping anyway so it'd be hard to set up the mapping.
-    return t("Added '%tags' to '%title'", array("tags" => $tags,
-                                                "title" => p::purify($item->title)));
   }
 
   static function import_keywords_as_tags($keywords, $item) {
-    if (!module::is_active("tag")) {
-      return t("Gallery 3 tag module is inactive, no keywords will be imported");
-    }
-
     // Keywords in G2 are free form.  So we don't know what our user used as a separator.  Try to
     // be smart about it.  If we see a comma or a semicolon, expect the keywords to be separated
     // by that delimeter.  Otherwise, use space as the delimiter.
@@ -656,8 +642,6 @@ class g2_import_Core {
         $tags .= (strlen($tags) ? ", " : "") . tag::add($item, $keyword);
       }
     }
-    return strlen($tags) ? t("Added '%keywords' to '%title'",
-                             array("keywords" => $tags, "title" => p::purify($item->title))) : "";
   }
 
   /**
