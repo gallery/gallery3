@@ -104,7 +104,10 @@ class Gallery_View_Core extends View {
       }
 
       $cache->set($key, $contents, array($type), 30 * 84600);
-      if (function_exists("gzencode")) {
+
+      $use_gzip = function_exists("gzencode") &&
+        (int) ini_get("zlib.output_compression") === 0;
+      if ($use_gzip) {
         $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
                     array($type, "gzip"), 30 * 84600);
       }
