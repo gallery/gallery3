@@ -79,6 +79,25 @@ class tag_Core {
     }
   }
 
+
+  /**
+   * Return all the tags for a given item.
+   * @return array
+   */
+  static function item_tags($item) {
+    access::required("view", $item);
+    $tags = array();
+    foreach (Database::instance()
+             ->select("name")
+             ->from("tags")
+             ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
+             ->where("items_tags.item_id", $item->id)
+             ->get() as $row) {
+      $tags[] = $row->name;
+    }
+    return $tags;
+  }
+
   static function get_add_form($item) {
     $form = new Forge("tags", "", "post", array("id" => "gAddTagForm"));
     $label = $item->is_album() ?

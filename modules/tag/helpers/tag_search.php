@@ -19,6 +19,6 @@
  */
 class tag_search_Core {
   static function item_index_data($item) {
-    return join(" ", tag::get_tags($item)); 
+    return join(" ", tag::item_tags($item));
   }
 }
