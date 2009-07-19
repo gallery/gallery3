@@ -72,4 +72,13 @@ class User_Model extends ORM {
     }
     return $this;
   }
+
+  /**
+   * Return the best version of the user's name.  Either their specified full name, or fall back
+   * to the user name.
+   * @return string
+   */
+  public function display_name() {
+    return empty($this->full_name) ? $this->name : $this->full_name;
+  }
 }
