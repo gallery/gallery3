@@ -45,7 +45,7 @@ class gallery_task_Core {
    * @param Task_Model the task
    */
   static function rebuild_dirty_images($task) {
-    $message = array();
+    $errors = array();
     try {
       $result = graphics::find_dirty_images_query();
       $completed = $task->get("completed", 0);
@@ -63,11 +63,11 @@ class gallery_task_Core {
           $success = graphics::generate($item);
           if (!$success) {
             $ignored[$item->id] = 1;
-            $message[] = t("Unable to rebuild images for '%title'",
-                         array("title" => p::purify($item->title)));
+            $errors[] = t("Unable to rebuild images for '%title'",
+                          array("title" => p::purify($item->title)));
           } else {
-            $message[] = t("Successfully rebuilt images for '%title'",
-                         array("title" => p::purify($item->title)));
+            $errors[] = t("Successfully rebuilt images for '%title'",
+                          array("title" => p::purify($item->title)));
           }
         }
 
@@ -101,13 +101,15 @@ class gallery_task_Core {
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
-      $message[] = $e->__toString();
+      $errors[] = $e->__toString();
     }
-    $task->log($message);
+    if ($errors) {
+      $task->log($errors);
+    }
   }
 
   static function update_l10n(&$task) {
-    $message = array();
+    $errors = array();
     try {
       $start = microtime(true);
       $dirs = $task->get("dirs");
@@ -139,8 +141,8 @@ class gallery_task_Core {
           }
         }
 
-        $message[] = $task->status = t2("Finding files: found 1 file",
-                                        "Finding files: found %count files", count($files));
+        $task->status = t2("Finding files: found 1 file",
+                           "Finding files: found %count files", count($files));
 
         if (!$dirs) {
           $task->set("mode", "scan_files");
@@ -165,8 +167,8 @@ class gallery_task_Core {
         }
 
         $total_files = $task->get("total_files");
-        $message[] = $task->status = t2("Scanning files: scanned 1 file",
-                              "Scanning files: scanned %count files", $total_files - count($files));
+        $task->status = t2("Scanning files: scanned 1 file",
+                           "Scanning files: scanned %count files", $total_files - count($files));
 
         $task->percent_complete = 10 + 80 * ($total_files - count($files)) / $total_files;
         if (empty($files)) {
@@ -177,7 +179,7 @@ class gallery_task_Core {
         break;
 
       case "fetch_updates":  // 90% - 100%
-        $message = array_merge($message, l10n_client::fetch_updates());
+        l10n_client::fetch_updates();
         $task->done = true;
         $task->state = "success";
         $task->status = t("Translations installed/updated");
@@ -191,8 +193,10 @@ class gallery_task_Core {
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
-      $message[] = $e->__toString();
+      $errors[] = $e->__toString();
     }
-    $task->log($message);
+    if ($errors) {
+      $task->log($errors);
+    }
   }
 }
