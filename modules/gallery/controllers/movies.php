@@ -90,6 +90,8 @@ class Movies_Controller extends Items_Controller {
       $photo->rename($form->edit_photo->filename->value);
       $photo->save();
 
+      module::event("photo_edit_form_completed", $photo, $form);
+
       log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
       message::success(
         t("Saved photo %photo_title", array("photo_title" => p::clean($photo->title))));

@@ -67,4 +67,22 @@ class tag_event_Core {
                "SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
     $db->delete("items_tags", array("item_id" => "$item->id"));
   }
+  
+  static function album_edit_form($album, $form) {
+    $tag_value = implode('; ', tag::get_tags($album));
+    $form->edit_album->input("tags")->label(t("Tags ( seperate by , or ; )"))->value($tag_value);
+  }
+  
+  static function album_edit_form_completed($album, $form) {
+    tag::update($album, $form->edit_album->tags->value);
+  }
+  
+  static function photo_edit_form($photo, $form) {
+    $tag_value = implode('; ', tag::get_tags($photo));
+    $form->edit_photo->input("tags")->label(t("Tags ( seperate by , or ; )"))->value($tag_value);
+  }
+  
+  static function photo_edit_form_completed($photo, $form) {
+    tag::update($photo, $form->edit_photo->tags->value);
+  }
 }

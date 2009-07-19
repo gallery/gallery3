@@ -191,6 +191,8 @@ class Albums_Controller extends Items_Controller {
       }
       $album->save();
 
+      module::event("album_edit_form_completed", $album, $form);
+
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
       message::success(
         t("Saved album %album_title", array("album_title" => p::clean($album->title))));

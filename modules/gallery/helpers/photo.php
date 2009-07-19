@@ -147,6 +147,8 @@ class photo_Core {
       ->callback("item::validate_no_trailing_period")
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""));
 
+    module::event("photo_edit_form", $photo, $form);
+
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;

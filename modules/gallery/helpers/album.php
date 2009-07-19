@@ -126,6 +126,9 @@ class album_Core {
       ->options(array("ASC" => t("Ascending"),
                       "DESC" => t("Descending")))
       ->selected($parent->sort_order);
+
+    module::event("album_edit_form", $parent, $form);
+
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));

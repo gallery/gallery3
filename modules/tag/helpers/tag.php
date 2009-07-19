@@ -51,6 +51,59 @@ class tag_Core {
   }
 
   /**
+   * Modify the tags associate with an item.
+   *
+   * @param Item_Model $item an item
+   * @param string     $new_tags_string a string of new tags name seperated by ;
+   * @return null
+   * @throws Exception("@todo {$tag_name} WAS_NOT_ADDED_TO {$item->id}")
+   * @throws Exception("@todo {$tag_name} WAS_NOT_DELETED_TO {$item->id}")
+   */
+  static function update($item, $new_tags_string) {
+    $old_tags = self::get_tags($item);
+
+    $new_tags = preg_split("/[,;]/", $new_tags_string);
+    foreach ($new_tags as $i => $new_tag) {
+      $new_tags[$i] = trim($new_tag);
+    }
+
+    $add_tags = array_diff($new_tags, $old_tags);
+    foreach ($add_tags as $tag_name) {
+      if (empty($tag_name)) continue;
+      $tag = ORM::factory("tag")->where("name", $tag_name)->find();
+      if (!$tag->loaded) {
+        $tag->name = $tag_name;
+        $tag->count = 0;
+        $tag->save();
+      }
+      if (!$tag->has($item)) {
+        if (!$tag->add($item, $tag)) {
+          throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
+        }
+        $tag->count++;
+        $tag->save();
+      }
+    }
+    
+    $del_tags = array_diff($old_tags, $new_tags);
+    foreach ($del_tags as $tag_name) {
+      $tag = ORM::factory("tag")->where("name", $tag_name)->find();
+      if ($tag->has($item)) {
+        if (!$tag->remove($item, $tag)) {
+          throw new Exception("@todo {$tag->name} WAS_NOT_DELETED_TO {$item->id}");
+        }
+        $tag->save();
+        $tag->count--;
+        if ($tag->count <= 0) {
+          $tag->delete();
+        } else {
+          $tag->save();
+        }
+      }
+    }
+  }
+
+  /**
    * Return the N most popular tags.
    *
    * @return ORM_Iterator of Tag_Model in descending tag count order
@@ -126,5 +179,19 @@ class tag_Core {
       ->label(t("Really delete tag %tag_name?", array("tag_name" => $tag->name)));
     $group->submit("")->value(t("Delete Tag"));
     return $form;
+  }
+  
+  static function get_tags($item) {
+    $records = ORM::factory("item")
+                    ->select("tags.name as tag_name")
+                    ->join("items_tags", "items.id", "items_tags.item_id", "left")
+                    ->join("tags", "items_tags.tag_id", "tags.id", "left")
+                    ->where("items.id", $item->id)
+                    ->find_all();
+    $tags = array(); 
+    foreach ($records as $record) {
+      $tags[] = $record->tag_name;
+    }
+    return $tags; 
   }
 }
