@@ -42,7 +42,6 @@ class exif_task_Core {
       $completed = $task->get("completed", 0);
 
       $start = microtime(true);
-      $message = array();
       foreach (ORM::factory("item")
                ->join("exif_records", "items.id", "exif_records.item_id", "left")
                ->where("type", "photo")
@@ -57,11 +56,8 @@ class exif_task_Core {
 
         $completed++;
         exif::extract($item);
-        $message[] = t("Updated Exif meta data for '%title'",
-                       array("title" => p::purify($item->title)));
       }
 
-      $task->log($message);
       list ($remaining, $total, $percent) = exif::stats();
       $task->set("completed", $completed);
       if ($remaining == 0 || !($remaining + $completed)) {

@@ -17,10 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class slideshow_theme_Core {
-  static function head($theme) {
-    $proto = (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] === "off") ? "http" : "https";
-    return "<script src=\"$proto://lite.piclens.com/current/piclens_optimized.js\" " .
-      "type=\"text/javascript\"></script>";
+class tag_search_Core {
+  static function item_index_data($item) {
+    return join(" ", tag::item_tags($item));
   }
 }

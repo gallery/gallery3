@@ -52,7 +52,7 @@ class search_task_Core {
           break;
         }
 
-        $message[] = search::update($item);
+        search::update($item);
         $completed++;
       }
 
@@ -69,13 +69,10 @@ class search_task_Core {
       $task->status = t2("one record updated, index is %percent% up-to-date",
                          "%count records updated, index is %percent% up-to-date",
                          $completed, array("percent" => $percent));
-      $message[] = $task->status;
     } catch (Exception $e) {
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
-      $message[] = $e->__toString();
     }
-    $task->log($message);
   }
 }

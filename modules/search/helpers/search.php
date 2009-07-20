@@ -79,7 +79,6 @@ class search_Core {
     $record->data = join(" ", $data);
     $record->dirty = 0;
     $record->save();
-    return t("Search index updated for '%title'", array("title" => p::purify($item->title)));
   }
 
   static function stats() {
