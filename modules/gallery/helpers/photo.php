@@ -137,7 +137,7 @@ class photo_Core {
   static function get_edit_form($photo) {
     $form = new Forge("photos/$photo->id", "", "post", array("id" => "gEditPhotoForm"));
     $form->hidden("_method")->value("put");
-    $group = $form->group("edit_photo")->label(t("Edit Photo"));
+    $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("filename")->label(t("Filename"))->value($photo->name)
@@ -147,7 +147,7 @@ class photo_Core {
       ->callback("item::validate_no_trailing_period")
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""));
 
-    module::event("photo_edit_form", $photo, $form);
+    module::event("item_edit_form", $photo, $form);
 
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
