@@ -63,25 +63,26 @@ class Photos_Controller extends Items_Controller {
 
     $form = photo::get_edit_form($photo);
     if ($valid = $form->validate()) {
-      if ($form->edit_photo->filename->value != $photo->name) {
+      if ($form->edit_item->filename->value != $photo->name) {
         // Make sure that there's not a conflict
         if (Database::instance()
             ->from("items")
             ->where("parent_id", $photo->parent_id)
             ->where("id <>", $photo->id)
-            ->where("name", $form->edit_photo->filename->value)
+            ->where("name", $form->edit_item->filename->value)
             ->count_records()) {
-          $form->edit_photo->filename->add_error("conflict", 1);
+          $form->edit_item->filename->add_error("conflict", 1);
           $valid = false;
         }
       }
     }
 
     if ($valid) {
-      $photo->title = $form->edit_photo->title->value;
-      $photo->description = $form->edit_photo->description->value;
-      $photo->rename($form->edit_photo->filename->value);
+      $photo->title = $form->edit_item->title->value;
+      $photo->description = $form->edit_item->description->value;
+      $photo->rename($form->edit_item->filename->value);
       $photo->save();
+      module::event("item_edit_form_completed", $photo, $form);
 
       log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
       message::success(

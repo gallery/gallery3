@@ -60,11 +60,23 @@ class tag_event_Core {
   }
 
   static function item_deleted($item) {
-    $db = Database::instance();
-    $db->query("UPDATE {tags} SET `count` = `count` - 1 WHERE `count` > 0 " .
-               "AND `id` IN (SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
-    $db->query("DELETE FROM {tags} WHERE `count` = 0 AND `id` IN (" .
-               "SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
-    $db->delete("items_tags", array("item_id" => "$item->id"));
+    tag::clear_all($item);
+    tag::compact();
+  }
+
+  static function item_edit_form($item, $form) {
+    $tag_value = implode("; ", tag::item_tags($item));
+    $form->edit_item->input("tags")->label(t("Tags (separate by , or ;)"))
+      ->value($tag_value);
+  }
+
+  static function item_edit_form_completed($item, $form) {
+    tag::clear_all($item);
+    foreach (preg_split("/[,;]/", $form->edit_item->tags->value) as $tag_name) {
+      if ($tag_name) {
+        tag::add($item, $tag_name);
+      }
+    }
+    tag::compact();
   }
 }
