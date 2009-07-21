@@ -66,20 +66,6 @@ class File_Proxy_Controller extends Controller {
       // We didn't turn it up.  This may mean that the path cache is out of date, so look it up
       // the hard way.
       //
-      // Find all items that match the level and name, then iterate over those to find a match.
-      // In most cases we'll get it in one.  Note that for the level calculation, we just count the
-      // size of $paths.
-      $paths = explode("/", $path);
-      $count = count($paths);
-      foreach (ORM::factory("item")
-               ->where("name", $paths[$count - 1])
-               ->where("level", $count + 1)
-               ->find_all() as $match) {
-        if ($match->relative_path() == $path) {
-          $item = $match;
-          break;
-        }
-      }
     }
 
     if (!$item->loaded) {
