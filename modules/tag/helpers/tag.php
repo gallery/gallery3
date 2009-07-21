@@ -127,4 +127,24 @@ class tag_Core {
     $group->submit("")->value(t("Delete Tag"));
     return $form;
   }
+
+  /**
+   * Delete all tags associated with an item
+   */
+  static function clear_all($item) {
+    $db = Database::instance();
+    $db->query("UPDATE {tags} SET `count` = `count` - 1 WHERE `count` > 0 " .
+               "AND `id` IN (SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
+    $db->delete("items_tags", array("item_id" => "$item->id"));
+  }
+
+  /**
+   * Get rid of any tags that have no associated items.
+   */
+  static function compact() {
+    // @todo There's a potential race condition here which we can solve by adding a lock around
+    // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
+    // extremely rare case.
+    Database::instance() ->delete("tags", array("count" => 0));
+  }
 }

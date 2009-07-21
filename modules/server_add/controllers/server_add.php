@@ -251,7 +251,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->state = "success";
       $task->percent_complete = 100;
       ORM::factory("server_add_file")->where("task_id", $task->id)->delete_all();
-      message::info(t2("Successfully added one photo",
+      message::info(t2("Successfully added one photo / album",
                        "Successfully added %count photos and albums",
                        $task->get("completed_files")));
     }

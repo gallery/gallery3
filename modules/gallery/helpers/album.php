@@ -96,7 +96,7 @@ class album_Core {
   static function get_edit_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gEditAlbumForm"));
     $form->hidden("_method")->value("put");
-    $group = $form->group("edit_album")->label(t("Edit Album"));
+    $group = $form->group("edit_item")->label(t("Edit Album"));
 
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
@@ -126,6 +126,9 @@ class album_Core {
       ->options(array("ASC" => t("Ascending"),
                       "DESC" => t("Descending")))
       ->selected($parent->sort_order);
+
+    module::event("item_edit_form", $parent, $form);
+
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
