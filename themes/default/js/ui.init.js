@@ -57,7 +57,7 @@ $(document).ready(function() {
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
     $(".gItem").vAlign();
-    $(".gItem").change(function(){
+    $(".gQuick").ajaxStop(function(){
       $(".gItem").vAlign();
     });
   }
