@@ -239,7 +239,7 @@ class Server_Add_Controller extends Admin_Controller {
         $entry->save();
       }
       $task->set("completed_files", $completed_files);
-      $task->status = t("Adding photos and albums (%completed of %total)",
+      $task->status = t("Adding photos / albums (%completed of %total)",
                         array("completed" => $completed_files,
                               "total" => $total_files));
       $task->percent_complete = 10 + 100 * ($completed_files / $total_files);
@@ -252,7 +252,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->percent_complete = 100;
       ORM::factory("server_add_file")->where("task_id", $task->id)->delete_all();
       message::info(t2("Successfully added one photo / album",
-                       "Successfully added %count photos and albums",
+                       "Successfully added %count photos / albums",
                        $task->get("completed_files")));
     }
   }

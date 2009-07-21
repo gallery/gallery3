@@ -516,7 +516,7 @@ class Organize_Controller extends Controller {
       break;
 
     case "delete":
-      return array("description" => t("Delete selected photos and albums"),
+      return array("description" => t("Delete selected photos / albums"),
                    "name" => t("Delete images in %name", array("name" => $item->title)),
                    "type" => "delete",
                    "runningMsg" => t("Delete images in progress"),
