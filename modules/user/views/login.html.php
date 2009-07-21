@@ -15,7 +15,7 @@
       p::clean($user->display_name()) . '</a>')) ?>
   </li>
   <li>
-    <a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . url::current(true)) ?>"
+    <a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(url::current(true))) ?>"
        id="gLogoutLink"><?= t("Logout") ?></a>
   </li>
   <? endif ?>
