@@ -85,7 +85,6 @@ class tag_Core {
    * @return array
    */
   static function item_tags($item) {
-    access::required("view", $item);
     $tags = array();
     foreach (Database::instance()
              ->select("name")
