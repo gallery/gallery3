@@ -63,9 +63,22 @@ class File_Proxy_Controller extends Controller {
     // We now have the relative path to the item.  Search for it in the path cache
     $item = ORM::factory("item")->where("relative_path_cache", $path)->find();
     if (!$item->loaded) {
-      // We didn't turn it up.  This may mean that the path cache is out of date, so look it up
-      // the hard way.
-      //
+      // We didn't turn it up.  It's possible that the relative_path_cache is out of date here.
+      // There was fallback code, but bharat deleted it in 8f1bca74.  If it turns out to be
+      // necessary, it's easily resurrected.
+
+      // If we're looking for a .jpg then it's it's possible that we're requesting the thumbnail
+      // for a movie.  In that case, the .flv or .mp4 file would have been converted to a .jpg.
+      // So try some alternate types:
+      if (preg_match('/.jpg$/', $path)) {
+        foreach (array("flv", "mp4") as $ext) {
+          $movie_path = preg_replace('/.jpg$/', ".$ext", $path);
+          $item = ORM::factory("item")->where("relative_path_cache", $movie_path)->find();
+          if ($item->loaded) {
+            break;
+          }
+        }
+      }
     }
 
     if (!$item->loaded) {
@@ -102,8 +115,13 @@ class File_Proxy_Controller extends Controller {
     // We don't need to save the session for this request
     Session::abort_save();
 
-    // Dump out the image
-    header("Content-Type: $item->mime_type");
+    // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
+    if (in_array($item->mime_type, array("video/x-flv", "video/mp4"))) {
+      header("Content-type: image/jpeg");
+    } else {
+      print("Content-Type: $item->mime_type");
+    }
+
     Kohana::close_buffers(false);
     $fd = fopen($file, "rb");
     fpassthru($fd);
