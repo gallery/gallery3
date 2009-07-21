@@ -12,15 +12,15 @@ var show_quick = function() {
   var cont = $(this);
   var quick = $(this).find(".gQuick");
   var img = cont.find(".gThumbnail,.gResize");
-  $("#gQuickPane").remove();
-  cont.append("<div id=\"gQuickPane\"></div>");
-  $("#gQuickPane").hide();
-  cont.hover(function() {}, hide_quick);
+  cont.find(".gQuickPane").remove();
+  cont.append("<div class=\"gQuickPane\"></div>");
+  cont.find(".gQuickPane").hide();
+  cont.hover(function() {}, function() { cont.find(".gQuickPane").remove(); });
   $.get(
     quick.attr("href"),
     {},
     function(data, textStatus) {
-      $("#gQuickPane").html(data).slideDown("fast");
+      cont.find(".gQuickPane").html(data).slideDown("fast");
       $(".ui-state-default").hover(
         function() {
           $(this).addClass("ui-state-hover");
@@ -29,13 +29,13 @@ var show_quick = function() {
           $(this).removeClass("ui-state-hover");
         }
       );
-      $("#gQuickPane a:not(.options)").click(function(e) {
+      cont.find(".gQuickPane a:not(.options)").click(function(e) {
         e.preventDefault();
         quick_do(cont, $(this), img);
       });
-      $("#gQuickPane a.options").click(function(e) {
+      cont.find(".gQuickPane a.options").click(function(e) {
         e.preventDefault();
-        $("#gQuickPaneOptions").slideToggle("fast");
+        cont.find(".gQuickPaneOptions").slideToggle("fast");
       });
     }
   );
@@ -75,8 +75,4 @@ var quick_do = function(cont, pane, img) {
     });
   }
   return false;
-};
-
-var hide_quick = function() {
-  $("#gQuickPane").remove();
 };

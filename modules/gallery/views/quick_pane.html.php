@@ -15,7 +15,7 @@
   </span>
 </a>
 
-<ul id="gQuickPaneOptions" style="display: none">
+<ul class="gQuickPaneOptions" style="display: none">
   <? foreach ($button_list->additional as $button): ?>
   <li><a class="<?= $button->class ?>" href="<?= $button->href ?>"
     title="<?= $button->title ?>">
