@@ -19,11 +19,11 @@
  */
 class tag_theme_Core {
   static function head($theme) {
-    $theme->script("modules/tag/js/tag.js");
+    $theme->script("tag.js");
   }
 
   static function admin_head($theme) {
-    $theme->script("modules/tag/js/tag.js");
+    $theme->script("tag.js");
   }
 
   static function sidebar_blocks($theme) {

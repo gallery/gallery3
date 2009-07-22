@@ -19,7 +19,7 @@
  */
 class comment_theme_Core {
   static function head($theme) {
-    $theme->script("modules/comment/js/comment.js");
+    $theme->script("comment.js");
     return "";
   }
 
