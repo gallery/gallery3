@@ -237,7 +237,7 @@ modules/gallery/views/move_tree.html.php                     15  DIRTY $child->i
 modules/gallery/views/move_tree.html.php                     15        $child->title
 modules/gallery/views/movieplayer.html.php                   2   DIRTY $item->file_url(true)
 modules/gallery/views/movieplayer.html.php                   2   DIRTY $attrs
-modules/gallery/views/movieplayer.html.php                   4   DIRTY $attrs
+modules/gallery/views/movieplayer.html.php                   5   DIRTY $attrs
 modules/gallery/views/permissions_browse.html.php            15  DIRTY $csrf
 modules/gallery/views/permissions_browse.html.php            37  DIRTY $parent->id
 modules/gallery/views/permissions_browse.html.php            38        $parent->title

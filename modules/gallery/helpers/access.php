@@ -79,11 +79,23 @@ class access_Core {
    * @return boolean
    */
   static function can($perm_name, $item) {
+    return self::user_can(user::active(), $perm_name, $item);
+  }
+
+  /**
+   * Does the user have this permission on this item?
+   *
+   * @param  User_Model $user
+   * @param  string     $perm_name
+   * @param  Item_Model $item
+   * @return boolean
+   */
+  static function user_can($user, $perm_name, $item) {
     if (!$item->loaded) {
       return false;
     }
 
-    if (user::active()->admin) {
+    if ($user->admin) {
       return true;
     }
 

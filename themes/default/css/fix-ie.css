@@ -45,6 +45,6 @@ input.submit {
   width: 60px;
 }
 
-#gQuickPane {
+.gQuickPane {
   height: 32px !important;
 }

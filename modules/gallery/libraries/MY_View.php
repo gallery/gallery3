@@ -38,8 +38,7 @@ class View extends View_Core {
     try {
       return parent::render($print, $renderer);
     } catch (Exception $e) {
-      Kohana::Log('error', $e->getTraceAsString());
-      Kohana::Log('debug', $e->getMessage());
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       return "";
     }
   }
