@@ -209,6 +209,7 @@ class access_Core {
     $access = model_cache::get("access_intent", $album->id, "item_id");
     $access->__set("{$perm_name}_{$group->id}", $value);
     $access->save();
+    $album->reload();
 
     if ($perm_name == "view") {
       self::_update_access_view_cache($group, $album);
