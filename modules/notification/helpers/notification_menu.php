@@ -22,10 +22,10 @@ class notification_menu_Core {
     if (!user::active()->guest) {
       $item = $theme->item();
 
-      if ($item && $item->is_album()) {
+      if ($item && $item->is_album() && access::can("view", $item)) {
         $watching = notification::is_watching($item);
 
-        $watching ? $label = t("Remove notifications") : $label = t("Enable notifications");
+        $label = $watching ? t("Remove notifications") : t("Enable notifications");
 
         $menu->get("options_menu")
           ->append(Menu::factory("link")
