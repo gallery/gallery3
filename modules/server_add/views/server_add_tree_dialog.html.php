@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   var GET_CHILDREN_URL = "<?= url::site("server_add/children?path=__PATH__") ?>";
-  var START_URL = "<?= url::site("server_add/start?item_id={$item->id}&csrf=$csrf") ?>";
+  var START_URL = "<?= url::site("server_add/start?item_id={$item->id}&amp;csrf=$csrf") ?>";
 </script>
 
 <div id="gServerAdd">

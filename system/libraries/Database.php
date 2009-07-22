@@ -2,7 +2,7 @@
 /**
  * Provides database access in a platform agnostic way, using simple query building blocks.
  *
- * $Id: Database.php 4342 2009-05-08 16:56:01Z jheathco $
+ * $Id: Database.php 4438 2009-07-06 04:11:16Z kiall $
  *
  * @package    Core
  * @author     Kohana Team
@@ -1144,7 +1144,12 @@ class Database_Core {
 
 		$query = $this->select('COUNT(*) AS '.$this->escape_column('records_found'))->get()->result(TRUE);
 
-		return (int) $query->current()->records_found;
+		$query = $query->current();
+		
+		if ( ! $query)
+			return 0;
+		else
+			return (int) $query->records_found;
 	}
 
 	/**

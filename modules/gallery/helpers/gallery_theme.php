@@ -32,7 +32,11 @@ class gallery_theme_Core {
 
     if (module::is_active("rss")) {
       if ($item = $theme->item()) {
-        $buf .= rss::feed_link("gallery/album/{$item->id}");
+        if ($item->is_album()) {
+          $buf .= rss::feed_link("gallery/album/{$item->id}");
+        } else {
+          $buf .= rss::feed_link("gallery/album/{$item->parent()->id}");
+        }
       } else if ($tag = $theme->tag()) {
         $buf .= rss::feed_link("tag/tag/{$tag->id}");
       }

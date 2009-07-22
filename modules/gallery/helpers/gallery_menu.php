@@ -19,8 +19,6 @@
  */
 class gallery_menu_Core {
   static function site($menu, $theme) {
-    $is_admin = user::active()->admin;
-
     $menu->append(Menu::factory("link")
                   ->id("home")
                   ->label(t("Home"))
@@ -28,8 +26,8 @@ class gallery_menu_Core {
 
     $item = $theme->item();
 
-    $can_edit = $item && access::can("edit", $item) || $is_admin;
-    $can_add = $item && (access::can("add", $item) || $is_admin);
+    $can_edit = $item && access::can("edit", $item);
+    $can_add = $item && access::can("add", $item);
 
     if ($can_add) {
       $menu->append(Menu::factory("dialog")
@@ -38,11 +36,10 @@ class gallery_menu_Core {
                     ->url(url::site("simple_uploader/app/$item->id")));
     }
 
-    if ($item && $can_edit || $can_add) {
-      $menu->append($options_menu = Menu::factory("submenu")
-                    ->id("options_menu")
-                    ->label(t("Options")));
-
+    $menu->append($options_menu = Menu::factory("submenu")
+                  ->id("options_menu")
+                  ->label(t("Options")));
+    if ($item && ($can_edit || $can_add)) {
       if ($can_edit) {
         $options_menu
           ->append(Menu::factory("dialog")
@@ -71,7 +68,7 @@ class gallery_menu_Core {
       }
     }
 
-    if ($is_admin) {
+    if (user::active()->admin) {
       $menu->append($admin_menu = Menu::factory("submenu")
                     ->id("admin_menu")
                     ->label(t("Admin")));

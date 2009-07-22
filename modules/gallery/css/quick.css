@@ -1,4 +1,4 @@
-#gQuickPane {
+.gQuickPane {
   position: absolute;
   top: 0;
   left: 0;
@@ -17,7 +17,7 @@
   padding: 0 !important;
 }
 
-#gQuickPane {
+.gQuickPane {
   background: #000;
   border-bottom: 1px solid #ccc;
   opacity: 0.9;
@@ -26,19 +26,19 @@
   left: 0;
 }
 
-#gQuickPane a {
+.gQuickPane a {
   cursor: pointer;
   float: left;
   margin: 4px;
 }
 
-#gQuickPaneOptions {
+.gQuickPaneOptions {
   background: #000;
   float: left;
   width: 100%;
 }
 
-#gQuickPaneOptions li a {
+.gQuickPaneOptions li a {
   display: block;
   float: none;
   width: auto;
@@ -47,6 +47,6 @@
   text-align: left;
 }
 
-#gQuickPaneOptions li a:hover {
+.gQuickPaneOptions li a:hover {
   background-color: #4d4d4d;
 }
