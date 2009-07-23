@@ -20,8 +20,8 @@
 class organize_theme {
   static function head($theme) {
     // @tdo remove the addition css and organize.js (just here to test)
-    $theme->script("modules/organize/js/organize_init.js");
-    $theme->script("modules/organize/js/organize.js");
-    $theme->css("modules/organize/css/organize.css");
+    $theme->script("organize_init.js");
+    $theme->script("organize.js");
+    $theme->css("organize.css");
   }
 }

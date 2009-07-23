@@ -22,12 +22,12 @@ class gallery_theme_Core {
     $session = Session::instance();
     $buf = "";
     if ($session->get("debug")) {
-      $theme->css("modules/gallery/css/debug.css");
+      $theme->css("debug.css");
     }
     if (($theme->page_type == "album" || $theme->page_type == "photo")
         && access::can("edit", $theme->item())) {
-      $theme->css("modules/gallery/css/quick.css");
-      $theme->script("modules/gallery/js/quick.js");
+      $theme->css("quick.css");
+      $theme->script("quick.js");
     }
 
     if (module::is_active("rss")) {
@@ -43,9 +43,9 @@ class gallery_theme_Core {
     }
 
     if ($session->get("l10n_mode", false)) {
-      $theme->css("modules/gallery/css/l10n_client.css");
-      $theme->script("lib/jquery.cookie.js");
-      $theme->script("modules/gallery/js/l10n_client.js");
+      $theme->css("l10n_client.css");
+      $theme->script("jquery.cookie.js");
+      $theme->script("l10n_client.js");
     }
 
     return $buf;
@@ -80,13 +80,13 @@ class gallery_theme_Core {
   static function admin_head($theme) {
     $session = Session::instance();
     if ($session->get("debug")) {
-      $theme->css("modules/gallery/css/debug.css");
+      $theme->css("debug.css");
     }
 
     if ($session->get("l10n_mode", false)) {
-      $theme->css("modules/gallery/css/l10n_client.css");
-      $theme->script("lib/jquery.cookie.js");
-      $theme->script("modules/gallery/js/l10n_client.js");
+      $theme->css("l10n_client.css");
+      $theme->script("jquery.cookie.js");
+      $theme->script("l10n_client.js");
     }
   }
 

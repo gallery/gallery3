@@ -1,313 +1,774 @@
 /**
- * Gallery 3 Default Admin Theme Screen Styles
+ * Gallery 3 Default Theme Screen Styles
  *
- * Extends themes/default/css/screen.css
+ * @requires YUI reset, font, grids CSS
  *
- * 1)  Basic HTML elements
- * 2) Reusable content blocks
- * 3) Page layout containers
- * 4) Content blocks in specific layout containers
- * 5) Browser hacks
- * 6) jQuery and jQuery UI
- * 7) Server Add
- * 8) Digibug Print Administration
+ * Sheet organization:
+ *  1)  Basic HTML elements
+ *  2)  Reusable classes
+ *  3)  Reusable content blocks
+ *  4)  Page layout containers
+ *  5)  Content blocks in specific layout containers
+ *  6)  Navigation and menus
+ *  7)  Browser hacks
+ *  8)  jQuery and jQuery UI
+ *  9)  Right-to-left language styles
  */
 
 /** *******************************************************************
  * 1) Basic HTML elements
  **********************************************************************/
 
-/** *******************************************************************
- * 2) Reusable content blocks
- **********************************************************************/
-
-.gBlock {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  margin-bottom: 1em;
-  padding: 1em;
+body, html {
+  background-color: #ccc;
+  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
-#gSidebar .gBlockContent {
-  padding: 0;
-}
-
-.gSelected img,
-.gAvailable .gBlock img {
-  float: left;
-  margin-right: 1em;
-}
-
-.rtl .gSelected img,
-.rtl .gAvailable .gBlock img {
-  float: right;
-  margin-left: 1em;
-}
-
-.gSelected {
-  background: #e8e8e8;
-}
-
-.gAvailable .gInstalledToolkit:hover {
-  cursor: pointer;
-  background: #eee;
-}
-
-.gAvailable .gButtonLink {
-  width: 96%;
-}
-
-.gSelected .gButtonLink {
-  display: none;
-}
-
-.gUnavailable {
-  border-color: #999;
-  opacity: 0.4;
-}
-
-.gOddRow {
-  background-color: #eee;
-}
-
-.gEvenRow {
-  background-color: #fff;
-}
-
-/** *******************************************************************
- * 3) Page layout containers
- **********************************************************************/
-
-.gView {
-  min-width: 974px !important;
-}
-
-#gHeader {
-  background-color: #e8e8e8;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 20px;
-  padding: 0 20px;
-}
-
-#gContent {
-  font-size: 1.1em;
-  width: 96%;
-}
-
-/** *******************************************************************
- * 4) Content blocks in specific layout containers
- *********************************************************************/
-
-#gHeader #gLogo {
-  float: left;
-  margin: -22px 10px 0 0;
-  display: block;
-  padding-left: 2px;
-  width: 105px; /* 107px - padding-left */
-  height: 48px;
-  background-image: url('../../default/images/logo.png');
-  color: #A5A5A5 ! important;
-}
-#gHeader #gLogo:hover {
-  color: #FF6600 ! important;
-  text-decoration: none;
-}
-
-#gHeader #gLoginMenu {
-  float: none;
-  margin: 0;
-  padding: 5px 0 10px 0;
-  text-align: right;
-}
-
-
-.rtl #gHeader #gLoginMenu {
-  text-align: left;
-}
-
-#gHeader #gSiteAdminMenu {
-  float: left;
-  font-size: 1.2em;
-}
-
-.rtl #gHeader #gSiteAdminMenu {
-  float: right;
-}
-
-#gHeader #gSiteAdminMenu ul {
-  margin-bottom: 0;
-}
-
-.gBlock .ui-dialog-titlebar {
-  margin: -1em -1em 0;
-}
-
-#gSidebar .gBlock h2 {
-  background: none;
-}
-
-#gPhotoStream {
-  background-color: #e8e8e8;
-}
-
-#gPhotoStream .gBlockContent ul {
-  border-right: 1px solid #e8e8e8;
-  height: 135px;
-  overflow: auto;
-  overflow: -moz-scrollbars-horizontal; /* for FF */
-  overflow-x: scroll; /* scroll horizontal */
-  overflow-y: hidden; /* Hide vertical*/
-}
-
-#gContent #gPhotoStream .gItem {
-  background-color: #fff;
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
-  float: left;
-  height: 90px;
-  overflow: hidden;
-  text-align: center;
-  width: 90px;
-}
-
-.rtl #gContent #gPhotoStream .gItem {
-  float: right;
-}
-
-#gSiteStatus {
-  margin-bottom: 0;
-}
-
-#gContent .gItem {
-  background-color: #fff;
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
-  height: 90px;
-  padding: 14px 8px;
-  text-align: center;
-  width: 90px;
-}
-
-#gAdminCommentsMenu {
-  margin: 1em 0;
-}
-
-#gAdminCommentsMenu a {
-  margin: 0;
-  padding: .2em .6em;
-}
-
-#gAdminGraphics .gAvailable .gBlock {
-  clear: none;
-  float: left;
-  height: 16em;
-  margin-right: 1em;
-  width: 30%;
-}
-
-.rtl #gAdminGraphics .gAvailable .gBlock {
-  float: right;
-  margin-left: 1em;
-  margin-right: 0em;
-}
-
-#gSiteTheme,
-#gAdminTheme {
-  float: left;
-  width: 48%;
-}
-
-.rtl #gSiteTheme,
-.rtl #gAdminTheme {
-  float: right;
-}
-
-#gSiteTheme {
-  margin-right: 1em;
-}
-
-#gUserAdminList {
+p {
   margin-bottom: 1em;
 }
-#gUserAdminList td {
-  vertical-align: bottom;
+
+em {
+  font-style: oblique;
 }
 
-#gUserAdminList .gDraggable:hover {
-  border: 1px dashed black;
-}
-
-#gUserAdminList .admin {
-  color: #55f;
+h1, h2, h3, h4, h5, strong, th {
   font-weight: bold;
 }
 
-.gActions a,
-.gActions span {
-  margin-right: 3em;
+h1 {
+  font-size: 1.7em;
 }
 
-li.gGroup {
+#gSearchResults h1 {
+  margin-bottom: 1em;
+}
+
+#gProgress h1 {
+  font-size: 1.1em;
+}
+
+h2 {
+  font-size: 1.4em;
+}
+
+#gSidebar .gBlock h2 {
+  font-size: 1.2em;
+}
+
+#gSidebar .gBlock li {
+  margin-bottom: .6em;
+}
+
+h3 {
+  font-size: 1.2em;
+}
+
+/* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+a,
+.gMenu a,
+#gDialog a,
+.gButtonLink,
+.gButtonLink:hover,
+.gButtonLink:active {
+  color: #5382BF !important;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a:hover,
+#gDialog a:hover {
+  text-decoration: underline;
+}
+
+.gMenu a:hover {
+  text-decoration: none;
+}
+
+#gDialog .gCancel {
+  clear: none;
   float: left;
-  display: block;
-  width: 200px;
-  border: 1px solid gray;
-  padding: 0;
-  margin: 0 1em 1em 0;
+  margin: .3em 1em;
 }
 
-.rtl li.gGroup {
+#gForgotPasswordLink {
   float: right;
+  font-size: .9em;
 }
 
-li.gGroup h4 {
-  background-color: #EEEEEE;
-  border-bottom: 1px dashed #CCCCCC;
-  padding: .5em 0 .5em .5em;
-}
-li.gGroup .gButtonLink {
-  padding: 0;
-}
-li.gGroup ul, li.gGroup div {
-  height: 180px;
-  margin: 1px;
-  overflow: auto;
-  padding-top: .2em;
-}
-li.gGroup div p {
-  color: gray;
-  text-align: center;
-  padding: 2em .5em 0 .5em
-}
-li.gGroup .gUser {
-  padding: .2em 0 0 .5em;
-}
-li.gGroup .gUser .gButtonLink {
-  vertical-align: middle;
+#gDialog .gCancel {
+  float: left;
 }
 
-li.gDefaultGroup h4, li.gDefaultGroup .gUser {
-  color: gray;
+/* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+table {
+  width: 100%;
 }
 
-#gAdminAdvancedSettings tr.setting:hover {
-  background: #ffc;
+#gContent table {
+  margin: 1em 0;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+th,
+td {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: .5em;
+  vertical-align: top;
+}
+
+/* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+fieldset {
+  border: 1px solid #ccc;
+  padding-bottom: .8em;
+}
+
+#gHeader fieldset,
+#gSidebar fieldset,
+.gShortForm fieldset {
+  border: none;
+}
+
+legend {
+  font-weight: bold;
+  margin-left: 1em;
+}
+
+#gHeader legend,
+#gSidebar legend,
+#gContent #gSearchForm legend,
+input[type="hidden"],
+.gShortForm label {
+  display: none;
+}
+
+label {
+  cursor: help;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 50%;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  border: 1px solid #e8e8e8;
+  border-top-color: #ccc;
+  border-left-color: #ccc;
+  color: #333;
+}
+
+textarea {
+  width: 100%;
+  height: 12em;
+}
+
+input:focus,
+textarea:focus,
+option:focus {
+  background-color: #ffc;
+  color: #000;
+}
+
+/* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+form li {
+  margin: 0 !important;
+  padding: .3em 1.5em .3em 1em;
+}
+
+form ul ul {
+  clear: both;
+}
+
+form ul ul li {
+  float: left;
+}
+
+input,
+select,
+textarea {
+  display: block;
+  clear: both;
+  padding: .2em;
+}
+
+input[type="submit"],
+input[type="reset"] {
+  display: inline;
+  clear: none;
+  float: left;
+}
+
+/* Form validation ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gValidationRule {
+  font-size: 80%;
+  margin-top: .5em;
+}
+
+form.gError input[type="text"],
+li.gError input[type="text"],
+form.gError input[type="password"],
+li.gError input[type="password"],
+form.gError input[type="checkbox"],
+li.gError input[type="checkbox"],
+form.gError input[type="radio"],
+li.gError input[type="radio"],
+form.gError textarea,
+li.gError textarea,
+form.gError select,
+li.gError select {
+  border: 2px solid red;
 }
 
 /** *******************************************************************
- * 5) Browser hacks
+ * 2) Reusable generic classes
  *********************************************************************/
 
+.inactive, .understate {
+  color: #ccc;
+  font-weight: normal;
+}
+
+.left {
+  float: left;
+  margin: 1em 1em 1em 0;
+}
+
+.right {
+  float: right;
+  margin: 1em 0 1em 1em;
+}
+
+.txtright {
+  text-align: right;
+}
+
+/** *******************************************************************
+ * 3) Reusable content blocks
+ *********************************************************************/
+
+.gBlock {
+  clear: both;
+  margin-bottom: 2.5em;
+}
+
+.gBlock h2 {
+  background-color: #e8e8e8;
+  padding: .3em .8em;
+}
+
+.gBlockContent {
+  margin-top: 1em;
+}
+
+/* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gMessage {
+  width: 99%;
+}
+
+#gAdminAkismet .gSuccess,
+#gSiteStatus li,
+#gMessage li {
+  border: 1px solid #ccc;
+  margin-bottom: .4em;
+}
+
+#gSiteStatus li {
+  margin-bottom: 0;
+  border: none;
+  border-bottom: 1px solid #ccc;
+}
+
+#gSiteStatus .gError,
+#gMessage .gError,
+form p.gError,
+#gSiteStatus .gInfo,
+#gMessage .gInfo,
+#gSiteStatus .gSuccess,
+#gMessage .gSuccess,
+#gSiteStatus .gWarning,
+#gMessage .gWarning {
+  background-position: .4em 50%;
+  background-repeat: no-repeat;
+  padding: .4em .5em .4em 30px;
+}
+
+.gError {
+  background-color: #fcc;
+}
+
+form .gError {
+  color: #f00;
+}
+
+#gSiteStatus .gError,
+#gMessage .gError,
+form p.gError {
+  background-image: url('../images/ico-error.png');
+}
+
+.gInfo {
+  background-color: #e8e8e8;
+}
+
+#gSiteStatus .gInfo,
+#gMessage .gInfo {
+  background-image: url('../images/ico-info.png');
+}
+
+.gSuccess {
+  background-color: #96EF95;
+}
+
+#gSiteStatus .gSuccess,
+#gMessage .gSuccess {
+  background-image: url('../images/ico-success.png');
+}
+
+.gWarning {
+  background-color: #ff9;
+}
+
+#gSiteStatus .gWarning,
+#gMessage .gWarning {
+  background-image: url('../images/ico-warning.png');
+}
+
+form .gError,
+.gPager .gInfo {
+  background-color: #fff;
+}
+
+#gAdminMaintenance .gError,
+#gAdminMaintenance .gInfo,
+#gAdminMaintenance .gWarning,
+#gAdminMaintenance .gSuccess {
+  background-image: none;
+}
+
+/* Inline layout (forms, lists) ~~~~~~~~~~ */
+
+.gShortForm li {
+  float: left;
+  padding: .4em 0;
+}
+
+.gShortForm input[type="text"] {
+  color: #666;
+  padding: .3em .6em;
+  width: 11em;
+}
+
+/*** ******************************************************************
+ * 4) Page layout containers
+ *********************************************************************/
+
+/* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gView {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+/* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
+
+#gHeader {
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #fff;
+  font-size: .8em;
+  margin-bottom: 1em;
+  padding: 1em 20px 0 20px;
+}
+
+#gContent {
+  font-size: 1.2em;
+  padding-left: 20px;
+  width: 696px;
+}
+
+#gSidebar {
+  background-color: #fff;
+  font-size: .9em;
+  padding: 0 20px;
+  width: 220px;
+}
+
+#gFooter {
+  background-color: #e8e8e8;
+  border-top: 1px solid #ccc;
+  font-size: .8em;
+  margin-top: 20px;
+  padding: 10px 20px;
+}
+
+/** *******************************************************************
+ * 5) Content blocks in specific layout containers
+ *********************************************************************/
+
+/* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gHeader #gLogo img {
+  float: left;
+  margin: -4px 10px 0 0;
+}
+
+#gHeader #gQuickSearchForm {
+  clear: right;
+  float: right;
+  margin: 1em 0;
+}
+
+#gHeader #gQuickSearchForm input[type='text'] {
+  width: 17em;
+}
+
+#gContent .gBlock h2 {
+  background-color: transparent;
+  padding-left: 0;
+}
+
+#gSidebar .gBlockContent {
+  padding-left: 1em;
+}
+
+/* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gContent #gAlbumGrid {
+  margin: 1em 0;
+}
+
+#gContent #gAlbumGrid .gItem {
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  float: left;
+  font-size: .7em;
+  height: 240px;
+  overflow: hidden;
+  padding: 15px 8px 30px 8px;
+  position: relative;
+  text-align: center;
+  width: 213px;
+}
+
+#gContent #gAlbumGrid .gItem h2 {
+  margin: 5px 0;
+}
+
+#gContent #gAlbumGrid .gAlbum {
+  background-color: #e8e8e8;
+}
+
+#gContent #gAlbumGrid .gAlbum h2 span {
+  background: transparent url('../images/ico-album.png') no-repeat top left !important;
+  display: inline-block;
+  height: 16px;
+  margin-right: 5px;
+  width: 16px;
+}
+
+/* Individual photo content ~~~~~~~~~~~~~~ */
+
+#gContent #gItem {
+  width: 99%;
+}
+
+#gContent #gPhoto {
+  position: relative;
+}
+
+#gContent #gItem .gFullSizeLink img {
+  display: block;
+  margin: 1em auto !important;
+}
+
+#gContent #gComments {
+  margin-top: 2em;
+}
+
+#gContent #gComments ul li {
+  margin: 1em 0;
+}
+
+#gContent #gComments .gAuthor {
+  border-bottom: 1px solid #ccc;
+  color: #999;
+  height: 32px;
+  line-height: 32px;
+}
+
+#gContent #gComments ul li div {
+  padding: 0 8px 8px 43px;
+}
+
+#gContent #gComments ul li #gRecaptcha {
+  padding: 0;
+}
+
+#gContent #gComments ul li #gRecaptcha div {
+  padding: 0;
+}
+
+#gContent #gComments .gAvatar {
+  height: 32px;
+  margin-right: .4em;
+  width: 32px;
+}
+
+#gContent #gAddCommentForm {
+  margin-top: 2em;
+}
+
+/* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gHeader #gLoginMenu li,
+#gFooter #gCredits li {
+  display: inline;
+}
+
+#gHeader #gLoginMenu li {
+  padding-left: 1.2em;
+}
+
+#gFooter #gCredits li {
+  padding-right: 1.2em;
+}
+
+#gContent #gSearchResults {
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
+/** *******************************************************************
+ * 5) Navigation and menus
+ *********************************************************************/
+
+#gSiteMenu,
+.gBreadcrumbs,
+#gTagCloud ul {
+  font-size: 1.2em;
+}
+
+/* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gHeader #gLoginMenu {
+  color: #999;
+  float: right;
+}
+
+/* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gSiteMenu {
+  float: left;
+  margin-top: 20px;
+  padding: 0 20px 0 0;
+}
+
+#gSiteMenu ul {
+  margin-bottom: 0;
+}
+
+/* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gContent .gThumbMenu {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+
+#gContent .gThumbMenu li {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+#gContent .gThumbMenu li li {
+  padding: .3em;
+}
+
+#gContent .gThumbMenu a:hover {
+  text-decoration: none;
+}
+
+/* View Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gViewMenu {
+  margin-bottom: 1em;
+}
+
+#gViewMenu a {
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 28px !important;
+  width: 43px !important;
+}
+
+#gViewMenu #gHybridLink {
+  background-image: url('../images/ico-view-hybrid.png');
+}
+
+#gViewMenu #gSlideshowLink {
+  background-image: url('../images/ico-view-slideshow.png');
+}
+
+#gViewMenu .gFullSizeLink {
+  background-image: url('../images/ico-view-fullsize.png');
+}
+
+#gViewMenu #gCommentsLink {
+  background-image: url('../images/ico-view-comments.png');
+}
+
+#gViewMenu #gDigibugLink {
+  background-image: url('../images/ico-print.png');
+}
+
+/* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gBreadcrumbs {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+  clear: both;
+  margin: 0 -20px;
+  padding-left: 20px;
+}
+
+.gBreadcrumbs li {
+  background: transparent url('../images/ico-separator.gif') no-repeat scroll left center;
+  float: left;
+  padding: 10px 6px 10px 16px !important;
+}
+
+.gBreadcrumbs li.root {
+  background: transparent;
+}
+
+.gBreadcrumbs li a,
+.gBreadcrumbs li span {
+  display: block;
+}
+
+.gBreadcrumbs li.active,
+.gBreadcrumbs li.active span {
+  font-weight: bold;
+}
+
+#gAddPhotos .gBreadcrumbs {
+  font-size: .9em;
+}
+
+/* Tags and cloud ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gTagCloud ul {
+  text-align: justify;
+}
+
+#gTagCloud ul li {
+  display: inline;
+  line-height: 1.5em;
+  text-align: justify;
+}
+
+#gTagCloud ul li a {
+  text-decoration: none;
+}
+
+#gTagCloud ul li span {
+  display: none;
+}
+
+#gTagCloud ul li.size1 a {
+  color: #9cf;
+  font-size: 80%;
+  font-weight: 100;
+}
+
+#gTagCloud ul li.size2 a {
+  color: #69f;
+  font-size: 90%;
+  font-weight: 300;
+}
+
+#gTagCloud ul li.size3 a {
+  color: #69c;
+  font-size: 100%;
+  font-weight: 500;
+}
+
+#gTagCloud ul li.size4 a {
+  color: #369;
+  font-size: 110%;
+  font-weight: 700;
+}
+
+#gTagCloud ul li.size5 a {
+  color: #0e2b52;
+  font-size: 120%;
+  font-weight: 900;
+}
+
+#gTagCloud ul li.size6 a {
+  color: #0e2b52;
+  font-size: 130%;
+  font-weight: 900;
+}
+
+#gTagCloud ul li.size7 a {
+  color: #0e2b52;
+  font-size: 140%;
+  font-weight: 900;
+}
+
+#gTagCloud ul li a:hover {
+  color: #f30;
+  text-decoration: underline;
+}
+
+/* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gPager {
+  clear: both;
+  margin: 0;
+  padding: 5px 0 !important;
+  width: 100%;
+}
+
+.gPager li {
+  float: left;
+  margin: 0;
+  width: 30%;
+}
+
+.gPager .gInfo {
+  text-align: center;
+  width: 40%;
+}
+
+/** *******************************************************************
+ * 6) Browser hacks
+ *********************************************************************/
+
+#gSiteMenu:after,
 #gHeader:after,
-#gAdminCommentsMenu:after,
-#gGroupAdmin:after,
-.gSelected:after,
-.gAvailable .gBlock:after,
-#gModuleCreateForm ul li ul:after,
-#gDeveloperTools:after,
-#gPhotoStream:after {
+.gBreadcrumbs:after,
+#gAlbumGrid:after,
+.gPager:after,
+#gViewMenu:after {
   clear: both;
   content: ".";
   display: block;
@@ -316,143 +777,315 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 }
 
 /** *******************************************************************
- * 6) jQuery and jQuery UI
+ * 7) jQuery and jQuery UI
  *********************************************************************/
 
-#gPanel {
-  display: none;
-  padding: 1em;
+/* Superfish menu overrides ~~~~~~~~~~~~~~ */
+
+.sf-menu li li, .sf-menu li li ul li {
+  background-color: #bdd2ff;
 }
 
-#gPanel legend {
-  display: none;
+.sf-menu li:hover {
+  background-color: #dfe9ff;
 }
 
-#gPanel fieldset {
-  border: none;
+/* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
+
+.gLoadingLarge {
+  background: #e8e8e8 url('../images/loading-lg.gif') no-repeat center center;
+  font-size: 0;
 }
 
-.ui-draggable {
+.gDialogLoadingLarge {
+  background: url('../images/loading-lg.gif') no-repeat center center !important;
+  font-size: 0;
+}
+
+.gLoadingSmall {
+  background: #e8e8e8 url('../images/loading-sm.gif') no-repeat center center;
+  font-size: 0;
+}
+
+.gDraggable {
   cursor: move;
 }
 
-.gButtonSetVertical a {
-  width: 8em !important;
+.gDropTarget {
+  background-color: #cfdeff;
+  border: 1px dotted #999;
+  height: 100px;
+  margin: 1em 0;
 }
 
-#gAdminDashboard .ui-dialog-titlebar,
-#gAdminDashboardSidebar .ui-dialog-titlebar {
-  padding: .2em .4em;
+/* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
+
+.ui-widget-overlay {
+  background: #000;
+  opacity: .7;
+  filter: Alpha(Opacity=70);
 }
 
-/**** Stuff that needs a home! ****/
-#gTagAdmin {
-  table-layout: fixed;
-}
-#gTagAdmin td {
-  border: 0;
-}
-#gTagAdmin ul {
-  padding-bottom: .3em;
-}
-#gTagAdmin li {
-  padding: .1em 0 .2em .3em;
-}
-#gTagAdmin .gColumn {
-  float: left;
-  width: 200px;
-}
-.rtl #gTagAdmin .gColumn {
-  float: right;
-}
-.gEditable {
-  padding: .1em .3em .2em .3em;
-}
-.gEditable:hover {
-  background-color: #ffc;
-  cursor: text;
-}
-#gRenameTagForm input {
-  padding: 0 .2em 0 .2em;
-  clear: none;
-  float: left;
-  margin: 0 .2em 0 0;
-}
-.rtl #gRenameTagForm input {
-  float: right;
-}
-#gRenameTagForm input[type="submit"] {
-  height: 25px;
-}
-#gRenameTagForm a, #gRenameTagForm span {
-  display: block;
-  float: left;
-  padding: .2em .2em 0 .1em;
-}
-.rtl #gRenameTagForm a, #gRenameTagForm span {
-  float: right;
-}
-#gProgress button {
-  float: right;
-  margin-top: 1em;
-}
-.rtl #gProgress button {
-  float: left;
-}
-
-#gTaskLogDialog h1 {
-  font-size: 1.1em;
-}
-
-.gTaskLog {
-  border: 1pt solid;
-  font-size: .9em;
-  height: 400px;
-  margin: .5em 0;
-  overflow: auto;
-  padding: .5em
-}
-
-
-/** *******************************************************************
- * 7) Server Add
- *********************************************************************/
-#gServerAddAdmin {
-  margin:auto;
+#gDialog {
   text-align: left;
 }
 
-.rtl #gServerAddAdmin {
-  text-align: right;
+#gDialog li {
+  padding-left: 0;
 }
 
-#gServerAddAdmin form fieldset {
-  border: medium none;
+#gDialog form input[type="text"],
+#gDialog form input[type="password"] {
+  width: 100%;
 }
 
-#gServerAddAdmin legend {
+#gDialog #gLoginForm,
+#gDialog #gAddUserForm,
+#gDialog #gAddGroupForm {
+  margin: 0 auto;
+  width: 270px;
+}
+
+#gDialog fieldset {
+  border: none;
+}
+
+#gDialog legend {
   display: none;
 }
 
-#gServerAddAdmin .gWarning {
-  background-color: #FFFF99;
+/* jQuery UI ThemeRoller buttons */
+
+.gButtonLink {
+  display: inline-block;
+  margin: 0 4px 0 0;
+  padding: .2em .4em;
+  outline: 0;
 }
 
-#gAuthorizedPath {
-  margin: 0 !important;
-  padding: 0.3em 1.5em 0.3em 1em;
+.gButtonSet {
+  padding-left: 1px;
 }
 
-#gServerAdd Admin #path {
-  width: 80%;
+.gButtonSet li {
+  float: left;
 }
 
-.gRemoveDir:hover {
+.gButtonSet .gButtonLink {
+  margin: 0;
+}
+
+.ui-icon-left .ui-icon {
+  float: left;
+  margin-right: .2em;
+}
+
+.ui-icon-right .ui-icon {
+  float: right;
+  margin-left: .2em;
+}
+
+.ui-icon-rotate-ccw {
+  background-position: -192px -64px;
+}
+
+.ui-icon-rotate-cw {
+  background-position: -208px -64px;
+}
+
+/* STUFF THAT NEEDS A HOME */
+
+#gMove ul {
+  padding-left: 1em;
+}
+
+#gMove .selected {
+  background: #999;
+}
+
+/* Server Add */
+
+#gServerAdd button {
+  float: left;
+  margin-bottom: .5em;
+}
+
+#gServerAddTree {
   cursor: pointer;
+  padding-left: 4px;
 }
 
-#gLanguageSettingsForm .checklist li {
-  width: 150px;
-  overflow: hidden;
+#gServerAddTree li {
+  padding: 0;
+  float: none;
+}
+
+#gServerAddTree span.selected {
+  background: #ddd;
+}
+
+#gServerAddTree {
+  border: 1px solid #ccc;
+  height: 25em;
+  overflow: auto;
+  margin-bottom: .5em;
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+
+#gServerAdd ul ul li {
+  padding-left: 1.2em;
+}
+
+#gServerAdd .gBreadcrumbs {
+  font-size: 1em;
+  padding: 0;
+  margin: 0;
+  border-top-width: 0;
+}
+
+#gServerAdd p {
+  margin: 0;
+}
+
+#gServerAdd .gBreadcrumbs li {
+  padding: 10px 6px 10px 16px;
+}
+
+/* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gPermissions .gDenied,
+#gPermissions .gAllowed {
+  text-align: center;
+  vertical-align: middle;
+}
+#gPermissions .gDenied {
+  background-color: #fcc;
+}
+#gPermissions .gAllowed {
+  background-color: #cfc;
+}
+
+/*************** STUFF THAT NEEDS A HOME ****************/
+
+.gProgressBar {
+  height: 1em;
+  width: 100%;
+  margin-top: .5em;
+  display: inline-block;
+}
+
+#gAddPhotos p {
+  margin: 0;
+  padding: 0;
+}
+
+#gAddPhotosCanvas {
+  height: 325px;
+  width: 450px;
+  overflow: auto;
+}
+
+#gAddPhotosQueue .progressbar {
+  height: 4px;
+}
+
+#gAddPhotosQueue .title {
+  font-size: 1.25em;
+}
+
+#gAddPhotosQueue .status {
+  font-size: .75em;
+}
+
+#gAddPhotosQueue .box {
+  margin-bottom: 8px;
+  padding: 4px;
+}
+
+#gAddPhotosQueue .pending {
+  background-color: #e8e8e8;
+  border: 1px solid #d7d7d7;
+}
+
+#gAddPhotosQueue .error {
+  background-color: #fcc;
+  border: 1px solid #ebb;
+}
+
+#gAddPhotosQueue .uploading {
+  background-color: #ff9;
+  border: 1px solid #ee8;
+}
+
+#gAddPhotosQueue .complete {
+  background-color: #cfc;
+  border: 1px solid #beb;
+}
+
+#gAdminG2ImportNotes {
+  padding-bottom: 20px;
+}
+
+#gAdminG2ImportDetails {
+  padding-top: 20px;
+}
+
+#gAdminG2ImportDetails .gWarning {
+  margin-top: 4px;
+}
+
+#gAdminG2ImportDetails .gInfo {
+  padding: 2px;
+  border: 1px solid #999;
+  margin-bottom: 10px;
+}
+
+#gAdminG2ImportNotes p,
+#gAdminG2ImportDetails .gInfo p {
+  padding: 0;
+  margin: 0;
+}
+
+#gAdminG2ImportNotes ul li,
+#gAdminG2Import .gInfo ul li {
+  padding-left: 0;
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+/* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl {
+  direction: rtl;
+}
+
+.rtl caption,
+.rtl th,
+.rtl #gDialog {
+  text-align: right;
+}
+
+.rtl #gHeader #gQuickSearchForm,
+.rtl #gForgotPasswordLink,
+.rtl #gHeader #gLoginMenu,
+.rtl .ui-icon-right .ui-icon {
+  clear: left;
+  float: left;
+}
+
+.rtl #gDialog .gCancel,
+.rtl form ul ul li,
+.rtl input[type="submit"],
+.rtl input[type="reset"],
+.rtl .gShortForm li,
+.rtl #gHeader #gLogo img,
+.rtl #gContent #gAlbumGrid .gItem,
+.rtl #gSiteMenu,
+.rtl .gBreadcrumbs li,
+.rtl .gPager li,
+.rtl .gButtonSet li,
+.rtl .ui-icon-left .ui-icon {
+  float: right;
 }
 

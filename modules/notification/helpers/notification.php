@@ -67,6 +67,8 @@ class notification {
   }
 
   static function get_subscribers($item) {
+    // @todo don't access the user table directly
+    // @todo only return distinct email addresses
     $users = ORM::factory("user")
       ->join("subscriptions", "users.id", "subscriptions.user_id")
       ->join("items", "subscriptions.item_id", "items.id")
@@ -77,9 +79,11 @@ class notification {
 
     $subscribers = array();
     foreach ($users as $user) {
-      $subscribers[] = $user->email;
+      if (access::user_can($user, "view", $item)) {
+        $subscribers[$user->email] = 1;
+      }
     }
-    return $subscribers;
+    return array_keys($subscribers);
   }
 
   static function send_item_updated($item) {
@@ -103,8 +107,8 @@ class notification {
         array("title" => $item->title, "parent_title" => $parent->title)) :
       ($item->is_photo() ?
        t("Photo %title added to %parent_title",
-         array("title" => $item->title, "parent_title" => $parent->title))
-       : t("Movie %title added to %parent_title",
+         array("title" => $item->title, "parent_title" => $parent->title)) :
+       t("Movie %title added to %parent_title",
            array("title" => $item->title, "parent_title" => $parent->title)));
 
     self::_notify_subscribers($item, $v->render(), $v->subject);

@@ -7,28 +7,28 @@
     <title><?= t("Admin Dashboard") ?></title>
     <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
 
-    <?= $theme->css("lib/yui/reset-fonts-grids.css") ?>
-    <?= $theme->css("lib/themeroller/ui.base.css") ?>
-    <?= $theme->css("lib/superfish/css/superfish.css") ?>
-    <?= $theme->css("themes/default/css/screen.css") ?>
-    <?= $theme->theme_css("css/screen.css") ?>
+    <?= $theme->css("yui/reset-fonts-grids.css") ?>
+    <?= $theme->css("themeroller/ui.base.css") ?>
+    <?= $theme->css("superfish/css/superfish.css") ?>
+    <?= $theme->css("screen.css") ?>
+    <?= $theme->css("admin_screen.css") ?>
     <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
 
-   <?= $theme->script("lib/jquery.js") ?>
-   <?= $theme->script("lib/jquery.form.js") ?>
-   <?= $theme->script("lib/jquery-ui.js") ?>
-   <?= $theme->script("lib/gallery.common.js") ?>
+   <?= $theme->script("jquery.js") ?>
+   <?= $theme->script("jquery.form.js") ?>
+   <?= $theme->script("jquery-ui.js") ?>
+   <?= $theme->script("gallery.common.js") ?>
    <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
    <script type="text/javascript">
    var MSG_CANCEL = "<?= t('Cancel') ?>";
    </script>
-   <?= $theme->script("lib/gallery.dialog.js") ?>
-   <?= $theme->script("lib/superfish/js/superfish.js") ?>
-   <?= $theme->theme_script("js/jquery.dropshadow.js") ?>
-   <?= $theme->theme_script("js/ui.init.js") ?>
+   <?= $theme->script("gallery.dialog.js") ?>
+   <?= $theme->script("superfish/js/superfish.js") ?>
+   <?= $theme->script("jquery.dropshadow.js") ?>
+   <?= $theme->script("ui.init.js") ?>
 
    <?= $theme->admin_head() ?>
   </head>
