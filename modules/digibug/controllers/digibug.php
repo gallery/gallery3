@@ -21,7 +21,7 @@ class Digibug_Controller extends Controller {
   public function print_photo($id) {
     access::verify_csrf();
     $item = ORM::factory("item", $id);
-    access::required("view_full", $item);
+    access::required("view", $item);
 
     if (access::group_can(group::everybody(), "view_full", $item)) {
       $full_url = $item->file_url(true);
@@ -56,6 +56,30 @@ class Digibug_Controller extends Controller {
   }
 
   public function print_proxy($type, $id) {
+    // If its a request for the full size then make sure we are coming from an
+    // authorized address
+    if ($type == "full") {
+      $remote_addr = ip2long($this->input->server("REMOTE_ADDR"));
+      if ($remote_addr === false) {
+        Kohana::show_404();
+      }
+      $config = Kohana::config("digibug");
+
+      $authorized = false;
+      foreach ($config["ranges"] as $ip_range) {
+        $low = ip2long($ip_range["low"]);
+        $high = ip2long($ip_range["high"]);
+        $authorized = $low !== false && $high !== false &&
+          $low <= $remote_addr && $remote_addr <= $high;
+        if ($authorized) {
+          break;
+        }
+      }
+      if (!$authorized) {
+        Kohana::show_404();
+      }
+    }
+
     $proxy = ORM::factory("digibug_proxy", array("uuid" => $id));
     if (!$proxy->loaded || !$proxy->item->loaded) {
       Kohana::show_404();
@@ -69,16 +93,18 @@ class Digibug_Controller extends Controller {
     // We don't need to save the session for this request
     Session::abort_save();
 
-    // Dump out the image
-    header("Content-Type: $proxy->item->mime_type");
-    Kohana::close_buffers(false);
-    $fd = fopen($file, "rb");
-    fpassthru($fd);
-    fclose($fd);
+    if (!TEST_MODE) {
+      // Dump out the image
+      header("Content-Type: $proxy->item->mime_type");
+      Kohana::close_buffers(false);
+      $fd = fopen($file, "rb");
+      fpassthru($fd);
+      fclose($fd);
 
-    // If the request was for the image and not the thumb, then delete the proxy.
-    if ($type == "full") {
-      $proxy->delete();
+      // If the request was for the image and not the thumb, then delete the proxy.
+      if ($type == "full") {
+        $proxy->delete();
+      }
     }
 
     $this->_clean_expired();
@@ -89,8 +115,8 @@ class Digibug_Controller extends Controller {
   }
 
   private function _clean_expired() {
-    Database::instance()>query(
-      "DELETE FROM {digibug_proxy} " .
+    Database::instance()->query(
+      "DELETE FROM {digibug_proxies} " .
       "WHERE request_date <= (CURDATE() - INTERVAL 10 DAY) " .
       "LIMIT 20");
   }
