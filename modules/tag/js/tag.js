@@ -7,7 +7,7 @@ function ajaxify_tag_form() {
     dataType: "json",
     success: function(data) {
       if (data.result == "success") {
-        $.get($("#gTagCloud").attr("src"), function(data, textStatus) {
+        $.get($("#gTagCloud").attr("title"), function(data, textStatus) {
 	      $("#gTagCloud").html(data);
 	    });
       }
