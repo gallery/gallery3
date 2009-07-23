@@ -53,10 +53,10 @@ class Tags_Controller extends REST_Controller {
 
     $form = tag::get_add_form($item);
     if ($form->validate()) {
-      foreach (split("[\,\ \;]", $form->add_tag->inputs["name"]->value) as $tag_name) {
+      foreach (split("[\,\;]", $form->add_tag->inputs["name"]->value) as $tag_name) {
         $tag_name = trim($tag_name);
         if ($tag_name) {
-          $tag = tag::add($item, $tag_name);
+          $tag = tag::add($item, str_replace(" ", ".", $tag_name));
         }
       }
 

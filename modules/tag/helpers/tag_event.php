@@ -74,7 +74,7 @@ class tag_event_Core {
     tag::clear_all($item);
     foreach (preg_split("/[,;]/", $form->edit_item->tags->value) as $tag_name) {
       if ($tag_name) {
-        tag::add($item, $tag_name);
+        tag::add($item, str_replace(" ", ".", $tag_name));
       }
     }
     tag::compact();

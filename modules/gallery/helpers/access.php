@@ -142,7 +142,7 @@ class access_Core {
    * @param  Group_Model $group
    * @param  string      $perm_name
    * @param  Item_Model  $item
-   * @return boolean     access::ALLOW, ccess::DENY or access::INHERIT (null) for no intent
+   * @return boolean     access::ALLOW, access::DENY or access::INHERIT (null) for no intent
    */
   static function group_intent($group, $perm_name, $item) {
     $intent = model_cache::get("access_intent", $item->id, "item_id");
