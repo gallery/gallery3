@@ -26,7 +26,7 @@
             </a>
           </td>
         <? else: ?>
-          <? if ($intent === null): ?>
+          <? if ($intent === access::INHERIT): ?>
             <? if ($allowed): ?>
               <td class="gAllowed">
                 <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"

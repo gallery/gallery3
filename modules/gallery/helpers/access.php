@@ -66,9 +66,10 @@
  *   the Access_Intent_Model
  */
 class access_Core {
-  const DENY      = 0;
-  const ALLOW     = 1;
-  const UNKNOWN   = 2;
+  const DENY      = false;
+  const ALLOW     = true;
+  const INHERIT   = null; // access_intent
+  const UNKNOWN   = null; // cache (access_cache, items)
 
   /**
    * Does the active user have this permission on this item?
@@ -141,7 +142,7 @@ class access_Core {
    * @param  Group_Model $group
    * @param  string      $perm_name
    * @param  Item_Model  $item
-   * @return integer     access::ALLOW, access::DENY or null for no intent
+   * @return boolean     access::ALLOW, access::DENY or access::INHERIT (null) for no intent
    */
   static function group_intent($group, $perm_name, $item) {
     $intent = model_cache::get("access_intent", $item->id, "item_id");
@@ -169,7 +170,7 @@ class access_Core {
       ->where("`right` >= $item->right")
       ->where("items.id <> $item->id")
       ->join("access_intents", "items.id", "access_intents.item_id")
-      ->where("access_intents.view_$group->id", 0)
+      ->where("access_intents.view_$group->id", self::DENY)
       ->orderby("level", "DESC")
       ->limit(1)
       ->find();
@@ -253,7 +254,7 @@ class access_Core {
     if ($item->id == 1) {
       throw new Exception("@todo CANT_RESET_ROOT_PERMISSION");
     }
-    self::_set($group, $perm_name, $item, null);
+    self::_set($group, $perm_name, $item, self::INHERIT);
   }
 
   /**
@@ -455,9 +456,10 @@ class access_Core {
     $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
-    $db->query("ALTER TABLE {{$cache_table}} ADD `$field` SMALLINT NOT NULL DEFAULT 0");
-    $db->query("ALTER TABLE {access_intents} ADD `$field` BOOLEAN DEFAULT NULL");
-    $db->update("access_intents", array($field => 0), array("item_id" => 1));
+    $not_null = $cache_table == "items" ? "" : "NOT NULL";
+    $db->query("ALTER TABLE {{$cache_table}} ADD `$field` BINARY $not_null DEFAULT FALSE");
+    $db->query("ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
+    $db->update("access_intents", array($field => self::DENY), array("item_id" => 1));
     model_cache::clear();
     ORM::factory("access_intent")->clear_cache();
   }
@@ -513,7 +515,7 @@ class access_Core {
       ->where("left >=", $item->left)
       ->where("right <=", $item->right)
       ->where("type", "album")
-      ->where("access_intents.$field IS NOT", null)
+      ->where("access_intents.$field IS NOT", self::INHERIT)
       ->orderby("level", "DESC")
       ->find_all();
     foreach ($query as $row) {
@@ -557,12 +559,12 @@ class access_Core {
     //
     // @todo To optimize this, we wouldn't need to propagate from the parent, we could just
     //       propagate from here with the parent's intent.
-    if ($access->$field === null) {
+    if ($access->$field === self::INHERIT) {
       $tmp_item = ORM::factory("item")
         ->join("access_intents", "items.id", "access_intents.item_id")
         ->where("left <", $item->left)
         ->where("right >", $item->right)
-        ->where("$field IS NOT", null)
+        ->where("$field IS NOT", self::UNKNOWN)
         ->orderby("left", "DESC")
         ->limit(1)
         ->find();
@@ -578,12 +580,13 @@ class access_Core {
       ->join("items", "items.id", "access_intents.item_id")
       ->where("left >=", $item->left)
       ->where("right <=", $item->right)
-      ->where("$field IS NOT", null)
+      ->where("$field IS NOT", self::INHERIT)
       ->orderby("level", "ASC")
       ->find_all();
     foreach  ($query as $row) {
+      $value = ($row->$field === self::ALLOW) ? "TRUE" : "FALSE";
       $db->query(
-        "UPDATE {access_caches} SET `$field` = {$row->$field} " .
+        "UPDATE {access_caches} SET `$field` = $value " .
         "WHERE `item_id` IN " .
         "  (SELECT `id` FROM {items} " .
         "  WHERE `left` >= $row->left " .

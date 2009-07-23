@@ -4,12 +4,12 @@ DROP TABLE IF EXISTS {access_caches};
 CREATE TABLE {access_caches} (
   `id` int(9) NOT NULL auto_increment,
   `item_id` int(9) default NULL,
-  `view_full_1` smallint(6) NOT NULL default '0',
-  `edit_1` smallint(6) NOT NULL default '0',
-  `add_1` smallint(6) NOT NULL default '0',
-  `view_full_2` smallint(6) NOT NULL default '0',
-  `edit_2` smallint(6) NOT NULL default '0',
-  `add_2` smallint(6) NOT NULL default '0',
+  `view_full_1` binary(1) NOT NULL default false,
+  `edit_1` binary(1) NOT NULL default false,
+  `add_1` binary(1) NOT NULL default false,
+  `view_full_2` binary(1) NOT NULL default false,
+  `edit_2` binary(1) NOT NULL default false,
+  `add_2` binary(1) NOT NULL default false,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -20,14 +20,14 @@ DROP TABLE IF EXISTS {access_intents};
 CREATE TABLE {access_intents} (
   `id` int(9) NOT NULL auto_increment,
   `item_id` int(9) default NULL,
-  `view_1` tinyint(1) default NULL,
-  `view_full_1` tinyint(1) default NULL,
-  `edit_1` tinyint(1) default NULL,
-  `add_1` tinyint(1) default NULL,
-  `view_2` tinyint(1) default NULL,
-  `view_full_2` tinyint(1) default NULL,
-  `edit_2` tinyint(1) default NULL,
-  `add_2` tinyint(1) default NULL,
+  `view_1` binary(1) default NULL,
+  `view_full_1` binary(1) default NULL,
+  `edit_1` binary(1) default NULL,
+  `add_1` binary(1) default NULL,
+  `view_2` binary(1) default NULL,
+  `view_full_2` binary(1) default NULL,
+  `edit_2` binary(1) default NULL,
+  `add_2` binary(1) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -164,8 +164,8 @@ CREATE TABLE {items} (
   `view_count` int(9) default '0',
   `weight` int(9) NOT NULL default '0',
   `width` int(9) default NULL,
-  `view_1` smallint(6) NOT NULL default '0',
-  `view_2` smallint(6) NOT NULL default '0',
+  `view_1` binary(1) default false,
+  `view_2` binary(1) default false,
   PRIMARY KEY  (`id`),
   KEY `parent_id` (`parent_id`),
   KEY `type` (`type`),
