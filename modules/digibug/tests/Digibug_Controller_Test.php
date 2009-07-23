@@ -42,50 +42,37 @@ class Digibug_Controller_Test extends Unit_Test_Case {
     $this->_item = photo::create($this->_album, MODPATH . "gallery/tests/test.jpg", "$rand.jpg",
                                  $rand, $rand);
     $this->_proxy = ORM::factory("digibug_proxy");
-    $this->_proxy->uuid =  md5(rand());
+    $this->_proxy->uuid = md5(rand());
     $this->_proxy->item_id = $this->_item->id;
     $this->_proxy->save();
   }
 
   public function digibug_request_thumb_test() {
-    try {
-      $controller = new Digibug_Controller();
-      $controller->print_proxy("thumb", $this->_proxy->uuid);
-    } catch (Exception $e) {
-      $this->assert_true(false, "Exception Occurred\n" . $e->__toString());
-    }
+    $controller = new Digibug_Controller();
+    $controller->print_proxy("thumb", $this->_proxy->uuid);
   }
 
   public function digibug_request_full_malicious_ip_test() {
-    $_SERVER["REMOTE_ADDR"] = "123.456.789.012";
+    $_SERVER["REMOTE_ADDR"] = "123.123.123.123";
     try {
       $controller = new Digibug_Controller();
       $controller->print_proxy("full", $this->_proxy->uuid);
       $this->assert_true(false, "Should have failed with an 404 exception");
-    } catch (Exception $e) {
-      if (get_class($e) !== "Kohana_404_Exception") {
-        $this->assert_true(false, "Exception Occurred\n" . $e->__toString());
-      }
+    } catch (Kohana_404_Exception $e) {
+      // expected behavior
     }
   }
 
   public function digibug_request_full_authorized_ip_test() {
     $config = Kohana::config("digibug");
-    if (empty($config)) {
-      $this->assert_true(false, "The Digibug config is empty");
-    }
+    $this->assert_true(!empty($config), "The Digibug config is empty");
+
     $ranges = array_values($config["ranges"]);
     $low = ip2long($ranges[0]["low"]);
     $high = ip2long($ranges[0]["high"]);
 
     $_SERVER["REMOTE_ADDR"] = long2ip(rand($low, $high));
-    try {
-      $controller = new Digibug_Controller();
-      $controller->print_proxy("full", $this->_proxy->uuid);
-      $results = ob_get_contents();
-    } catch (Exception $e) {
-      $this->assert_true(false, "Exception Occurred\n" . $e->__toString());
-    }
+    $controller = new Digibug_Controller();
+    $controller->print_proxy("full", $this->_proxy->uuid);
   }
-
 }
