@@ -39,6 +39,7 @@ class Users_Controller extends REST_Controller {
         $user->locale = $desired_locale == "none" ? null : $desired_locale;
       }
       $user->save();
+      module::event("user_edit_form_completed", $user, $form);
 
       message::success(t("User information updated."));
       print json_encode(

@@ -36,6 +36,8 @@ class user_Core {
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
     $group->submit("")->value(t("Save"));
     $form->add_rules_from($user);
+
+    module::event("user_edit_form", $user);
     return $form;
   }
 
@@ -56,6 +58,8 @@ class user_Core {
     $group->submit("")->value(t("Modify User"));
     $form->add_rules_from($user);
     $form->edit_user->password->rules("-required");
+
+    module::event("user_edit_form_admin", $user);
     return $form;
   }
 
@@ -75,6 +79,8 @@ class user_Core {
     $group->submit("")->value(t("Add User"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
+
+    module::event("user_add_form_admin", $user);
     return $form;
   }
 
