@@ -79,8 +79,6 @@ class notification {
 
     $subscribers = array();
     foreach ($users as $user) {
-      Kohana::log("error", "user: $user->name");
-
       if (access::user_can($user, "view", $item)) {
         $subscribers[$user->email] = 1;
       }
