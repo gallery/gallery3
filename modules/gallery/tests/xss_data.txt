@@ -207,6 +207,8 @@ modules/gallery/views/admin_themes_preview.html.php          4   DIRTY $info->na
 modules/gallery/views/admin_themes_preview.html.php          7   DIRTY $url
 modules/gallery/views/after_install.html.php                 11        $user->name
 modules/gallery/views/after_install.html.php                 15  DIRTY $user->id
+modules/gallery/views/item_edit.html.php                     4   DIRTY $script
+modules/gallery/views/item_edit.html.php                     8   DIRTY $form
 modules/gallery/views/kohana_error_page.php                  102 DIRTY $message
 modules/gallery/views/kohana_error_page.php                  104 DIRTY $file
 modules/gallery/views/kohana_error_page.php                  104 DIRTY $line
@@ -442,8 +444,8 @@ modules/tag/views/admin_tags.html.php                        50  DIRTY $tag->id
 modules/tag/views/admin_tags.html.php                        50        $tag->name
 modules/tag/views/admin_tags.html.php                        51  DIRTY $tag->count
 modules/tag/views/admin_tags.html.php                        52  DIRTY $tag->id
-modules/tag/views/tag_block.html.php                         3   DIRTY $cloud
-modules/tag/views/tag_block.html.php                         5   DIRTY $form
+modules/tag/views/tag_block.html.php                         13  DIRTY $cloud
+modules/tag/views/tag_block.html.php                         15  DIRTY $form
 modules/tag/views/tag_cloud.html.php                         4   DIRTY $tag->count
 modules/tag/views/tag_cloud.html.php                         4   DIRTY $max_count
 modules/tag/views/tag_cloud.html.php                         5   DIRTY $tag->count

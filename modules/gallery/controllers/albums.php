@@ -166,7 +166,8 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("edit", $album);
 
-    $form = album::get_edit_form($album);
+    $view = album::get_edit_form($album);
+    $form = $view->form;
     if ($valid = $form->validate()) {
       // Make sure that there's not a conflict
       if ($album->id != 1 &&
@@ -202,7 +203,7 @@ class Albums_Controller extends Items_Controller {
     } else {
       print json_encode(
         array("result" => "error",
-              "form" => $form->__toString()));
+              "form" => $view->__toString()));
     }
   }
 
