@@ -68,7 +68,7 @@ function editInPlace(element) {
 }
 
 function formatTagAutoCompleteResult(row) {
-  var text = $("#gAddTagForm input:text").val();
+  var text = $(".ac_loading").val();
   if (/[\s,;]/.test(text)) {
     for (var i= text.length - 1; i >= 0; i--) {
       var chr = text.charAt(i);
