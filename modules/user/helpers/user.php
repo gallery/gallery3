@@ -37,7 +37,7 @@ class user_Core {
     $group->submit("")->value(t("Save"));
     $form->add_rules_from($user);
 
-    module::event("user_edit_form", $user);
+    module::event("user_edit_form", $user, $form);
     return $form;
   }
 
@@ -59,7 +59,7 @@ class user_Core {
     $form->add_rules_from($user);
     $form->edit_user->password->rules("-required");
 
-    module::event("user_edit_form_admin", $user);
+    module::event("user_edit_form_admin", $user, $form);
     return $form;
   }
 
