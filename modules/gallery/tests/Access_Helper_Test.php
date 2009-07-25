@@ -64,6 +64,43 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_false(array_key_exists("access_test_{$group->id}", $fields));
   }
 
+  public function user_can_access_test() {
+    $access_test = group::create("access_test");
+
+    $root = ORM::factory("item", 1);
+    access::allow($access_test, "view", $root);
+
+    $item = album::create($root,  rand(), "test album");
+
+    access::deny(group::everybody(), "view", $item);
+    access::deny(group::registered_users(), "view", $item);
+
+    $user = user::create("access_test", "Access Test", "");
+    foreach ($user->groups as $group) {
+      $user->remove($group);
+    }
+    $user->add($access_test);
+    $user->save();
+
+    $this->assert_true(access::user_can($user, "view", $item), "Should be able to view");
+  }
+
+  public function user_can_no_access_test() {
+    $root = ORM::factory("item", 1);
+    $item = album::create($root,  rand(), "test album");
+
+    access::deny(group::everybody(), "view", $item);
+    access::deny(group::registered_users(), "view", $item);
+
+    $user = user::create("access_test", "Access Test", "");
+    foreach ($user->groups as $group) {
+      $user->remove($group);
+    }
+    $user->save();
+
+    $this->assert_false(access::user_can($user, "view", $item), "Should be unable to view");
+  }
+
   public function adding_and_removing_items_adds_ands_removes_rows_test() {
     $root = ORM::factory("item", 1);
     $item = album::create($root,  rand(), "test album");

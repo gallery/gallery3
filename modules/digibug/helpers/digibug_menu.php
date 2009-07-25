@@ -37,7 +37,7 @@ class digibug_menu {
   }
 
   static function thumb($menu, $theme, $item) {
-    if ($item->type == "photo" && access::can("view_full", $item)) {
+    if ($item->type == "photo") {
       $menu->get("options_menu")
         ->append(
           Menu::factory("link")

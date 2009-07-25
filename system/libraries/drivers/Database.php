@@ -120,7 +120,7 @@ abstract class Database_Driver {
 					$key .= ' =';
 				}
 
-				$value = ($value == TRUE) ? ' 1' : ' 0';
+				$value = ($value == TRUE) ? ' TRUE' : ' FALSE';
 			}
 			else
 			{
@@ -310,7 +310,7 @@ abstract class Database_Driver {
 				$value = '\''.$this->escape_str($value).'\'';
 			break;
 			case 'boolean':
-				$value = (int) $value;
+				$value = ($value == TRUE) ? 'TRUE' : 'FALSE';
 			break;
 			case 'double':
 				// Convert to non-locale aware float to prevent possible commas

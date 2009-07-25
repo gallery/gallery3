@@ -7,7 +7,7 @@ function ajaxify_tag_form() {
     dataType: "json",
     success: function(data) {
       if (data.result == "success") {
-        $.get($("#gTagCloud").attr("src"), function(data, textStatus) {
+        $.get($("#gTagCloud").attr("title"), function(data, textStatus) {
 	      $("#gTagCloud").html(data);
 	    });
       }
@@ -65,4 +65,19 @@ function editInPlace(element) {
     });
   };
   ajaxify_editInPlaceForm();
+}
+
+function formatTagAutoCompleteResult(row) {
+  var text = $(".ac_loading").val();
+  if (/[\s,;]/.test(text)) {
+    for (var i= text.length - 1; i >= 0; i--) {
+      var chr = text.charAt(i);
+      if (chr == " " || chr == "," || chr == ";") {
+        break;
+      }
+    }
+    return text.substr(0, i + 1) + row[0];
+  } else {
+    return row[0];
+  }
 }

@@ -66,7 +66,7 @@
       <? foreach ($users as $i => $user): ?>
       <tr id="gUser-<?= $user->id ?>" class="<?= text::alternate("gOddRow", "gEvenRow") ?> user <?= $user->admin ? "admin" : "" ?>">
         <td id="user-<?= $user->id ?>" class="core-info gDraggable">
-          <img src="<?= $user->avatar_url(20, $theme->theme_url("images/avatar.jpg", true)) ?>"
+          <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                title="<?= t("Drag user onto group below to add as a new member") ?>"
                alt="<?= p::clean($user->name) ?>"
                width="20"

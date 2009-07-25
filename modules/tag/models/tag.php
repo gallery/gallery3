@@ -44,10 +44,14 @@ class Tag_Model extends ORM {
    * @return integer
    */
   public function items_count($type=null) {
-    return ORM::factory("item")
+    $model = ORM::factory("item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
-      ->where("items_tags.tag_id", $this->id)
-      ->count_all();
+      ->where("items_tags.tag_id", $this->id);
+
+    if ($type) {
+      $model->where("items.type", $type);
+    }
+    return $model->count_all();
   }
 }

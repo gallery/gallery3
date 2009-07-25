@@ -305,6 +305,24 @@ class gallery_installer {
       module::clear_var("gallery", "version");
       module::set_version("gallery", $version = 7);
     }
+
+    if ($version == 7) {
+      $groups = ORM::factory("group")->find_all();
+      $permissions = ORM::factory("permission")->find_all();
+      foreach($groups as $group) {
+        foreach($permissions as $permission) {
+          // Update access intents
+          $db->query("ALTER TABLE {access_intents} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT NULL");
+          // Update access cache
+          if ($permission->name === "view") {
+            $db->query("ALTER TABLE {items} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) DEFAULT FALSE");
+          } else {
+            $db->query("ALTER TABLE {access_caches} MODIFY COLUMN {$permission->name}_{$group->id} BINARY(1) NOT NULL DEFAULT FALSE");
+          }
+        }
+      }
+      module::set_version("gallery", $version = 8);
+    }
   }
 
   static function uninstall() {
