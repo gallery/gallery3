@@ -150,7 +150,7 @@ class Item_Model extends ORM_MPTT {
       Database::instance()
         ->update("items",
                  array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     } else {
       @rename($original_resize_path, $this->resize_path());
       @rename($original_thumb_path, $this->thumb_path());
@@ -186,7 +186,7 @@ class Item_Model extends ORM_MPTT {
       Database::instance()
         ->update("items",
                  array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     }
 
     return $this;
@@ -302,10 +302,10 @@ class Item_Model extends ORM_MPTT {
       foreach (Database::instance()
                ->select("name")
                ->from("items")
-               ->where("left <=", $this->left)
-               ->where("right >=", $this->right)
+               ->where("left_ptr <=", $this->left_ptr)
+               ->where("right_ptr >=", $this->right_ptr)
                ->where("id <>", 1)
-               ->orderby("left", "ASC")
+               ->orderby("left_ptr", "ASC")
                ->get() as $row) {
         $paths[] = $row->name;
       }

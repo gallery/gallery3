@@ -103,15 +103,15 @@ class Database_Test extends Unit_Test_Case {
     $sql = "UPDATE {test_tables} SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
         "  (SELECT `id` FROM {items} " .
-        "  WHERE `left` >= 1 " .
-        "  AND `right` <= 6)";
+        "  WHERE `left_ptr` >= 1 " .
+        "  AND `right_ptr` <= 6)";
     $sql = $db->add_table_prefixes($sql);
 
     $expected = "UPDATE g3test_test_tables SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
         "  (SELECT `id` FROM g3test_items " .
-        "  WHERE `left` >= 1 " .
-        "  AND `right` <= 6)";
+        "  WHERE `left_ptr` >= 1 " .
+        "  AND `right_ptr` <= 6)";
 
     $this->assert_same($expected, $sql);
   }
