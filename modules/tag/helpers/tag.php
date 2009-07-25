@@ -104,7 +104,7 @@ class tag_Core {
       ($item->is_photo() ? t("Add tag to photo") : t("Add tag to movie"));
 
     $group = $form->group("add_tag")->label("Add Tag");
-    $group->input("name")->label($label)->rules("required|length[1,64]");
+    $group->input("name")->label($label)->rules("required");
     $group->hidden("item_id")->value($item->id);
     $group->submit("")->value(t("Add Tag"));
     return $form;

@@ -64,9 +64,15 @@ class tag_event_Core {
     tag::compact();
   }
 
-  static function item_edit_form($item, $form) {
+  static function item_edit_form($item, $view) {
+    $url = url::site("tags/autocomplete");
+    $view->script[] = "$('#gEditFormContainer form').ready(function() {
+                         $('#gEditFormContainer form input[id=tags]').autocomplete(
+                           '$url', {max: 30, formatResult: formatTagAutoCompleteResult}
+                         );
+                      });";
     $tag_value = implode("; ", tag::item_tags($item));
-    $form->edit_item->input("tags")->label(t("Tags (separate by , or ;)"))
+    $view->form->edit_item->input("tags")->label(t("Tags (separate by , or ;)"))
       ->value($tag_value);
   }
 

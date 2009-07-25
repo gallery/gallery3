@@ -2,7 +2,7 @@
 <ul>
   <? foreach ($comments as $i => $comment): ?>
   <li class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
-    <img src="<?= $comment->author()->avatar_url(32, $theme->theme_url("images/avatar.jpg", true)) ?>"
+    <img src="<?= $comment->author()->avatar_url(32, $theme->url("images/avatar.jpg", true)) ?>"
          class="gAvatar"
          alt="<?= p::clean($comment->author_name()) ?>"
          width="32"

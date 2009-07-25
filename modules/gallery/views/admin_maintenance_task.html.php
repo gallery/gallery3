@@ -1,11 +1,32 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
+  var target_value;
+  var animation = null;
+  var delta = 1;
+  animate_progress_bar = function() {
+    var current_value = Number($(".gProgressBar div").css("width").replace("%", ""));
+    if (current_value != target_value) {
+      var new_value = Math.min(current_value + delta, target_value);
+      if (target_value - current_value > delta) {
+        delta += .075;
+      }
+      $(".gProgressBar").progressbar("value", new_value);
+      animation = setTimeout(function() { animate_progress_bar(target_value); }, 100);
+    } else {
+      animation = null;
+      delta = 1;
+    }
+  }
+
   update = function() {
     $.ajax({
       url: "<?= url::site("admin/maintenance/run/$task->id?csrf=$csrf") ?>",
       dataType: "json",
       success: function(data) {
-        $(".gProgressBar").progressbar("value", data.task.percent_complete);
+        target_value = data.task.percent_complete;
+        if (!animation) {
+          animate_progress_bar();
+        }
         $("#gStatus").html("" + data.task.status);
         if (data.task.done) {
           $("#gPauseButton").hide();

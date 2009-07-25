@@ -108,12 +108,20 @@ class gallery_quick_Core {
         "href" => url::site("move/browse/$item->id"));
     }
 
-    if (access::can("edit", $item->parent())) {
-      $disabledState =
-        $item->type == "album" && empty($item->album_cover_item_id) ? " ui-state-disabled" : "";
+    $parent = $item->parent();
+    if (access::can("edit", $parent)) {
+      // We can't make this item the highlight if it's an album with no album cover, or if it's
+      // already the album cover.
+      if (($item->type == "album" && empty($item->album_cover_item_id)) ||
+          ($item->type == "album" && $parent->album_cover_item_id == $item->album_cover_item_id) ||
+          $parent->album_cover_item_id == $item->id) {
+        $disabledState = " ui-state-disabled";
+      } else {
+        $disabledState = " ";
+      }
       $elements["right"][] = (object)array(
         "title" => $cover_title,
-        "class" => "gButtonLink{$disabledState}",
+        "class" => "gButtonLink$disabledState",
         "icon" => "ui-icon-star",
         "href" => url::site("quick/make_album_cover/$item->id?csrf=$csrf&page_type=$page_type"));
 
