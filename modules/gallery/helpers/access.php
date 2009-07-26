@@ -99,7 +99,6 @@ class access_Core {
       return true;
     }
 
-    print "Before owner id check\n";
     if ($item->owner_id == $user->id  &&
         in_array($perm_name, array("view_full", "edit", "add"))) {
       return true;
@@ -110,9 +109,7 @@ class access_Core {
     } else {
       $resource = model_cache::get("access_cache", $item->id, "item_id");
     }
-    print Kohana::debug($resource->as_array()) . "\n";
     foreach ($user->groups as $group) {
-      print "$group->name\n";
       if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
       }
