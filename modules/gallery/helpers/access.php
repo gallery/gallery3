@@ -95,12 +95,20 @@ class access_Core {
       return false;
     }
 
-    if ($user->admin && $item->owner_id == $user->id) {
+    if ($user->admin) {
       return true;
     }
 
-    $resource = $perm_name == "view" ?
-      $item : model_cache::get("access_cache", $item->id, "item_id");
+    if ($item->owner_id == $user->id  &&
+        in_array($perm_name, array("view_full", "edit", "add"))) {
+      return true;
+    }
+
+    if ($perm_name == "view") {
+      $resource = $item->owner_id == $user->id ? $item->parent() : $item;
+    } else {
+      $resource = model_cache::get("access_cache", $item->id, "item_id");
+    }
     foreach ($user->groups as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
