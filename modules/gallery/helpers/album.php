@@ -104,6 +104,7 @@ class album_Core {
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
       $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
+        ->rules("required")
         ->callback("item::validate_no_slashes")
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->callback("item::validate_no_trailing_period")

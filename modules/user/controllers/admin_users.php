@@ -130,6 +130,7 @@ class Admin_Users_Controller extends Controller {
         $user->password = $form->edit_user->password->value;
       }
       $user->email = $form->edit_user->email->value;
+      $user->url = $form->edit_user->url->value;
       if ($form->edit_user->locale) {
         $desired_locale = $form->edit_user->locale->value;
         $user->locale = $desired_locale == "none" ? null : $desired_locale;
