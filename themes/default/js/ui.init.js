@@ -57,9 +57,6 @@ $(document).ready(function() {
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
     $(".gItem").vAlign();
-    $(".gQuick").ajaxStop(function(){
-      $(".gItem").vAlign();
-    });
   }
 
   // Photo/Item item view only
