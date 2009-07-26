@@ -1,26 +1,17 @@
 /**
  * Fix display in IE 6, 7
  */
-#gHeader,
-#gSiteMenu,
+
+#gBanner,
 .gBreadcrumbs,
 #gAlbumGrid,
 #gPager,
-#gViewMenu {
+#gViewMenu  {
   zoom: 1;
 }
 
-#gHeader #gLogo img {
-  margin-top: 5px;
-  margin-bottom: 0;
-}
-
-#gHeader #gSiteMenu {
-  margin-top: 28px;
-}
-
-#gHeader #gQuickSearchForm {
-  margin-bottom: 0;
+#gBanner {
+  z-index: 2;
 }
 
 input.submit {

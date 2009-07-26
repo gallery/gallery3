@@ -131,7 +131,7 @@ fieldset {
   padding-bottom: .8em;
 }
 
-#gHeader fieldset,
+#gBanner fieldset,
 #gSidebar fieldset,
 .gShortForm fieldset {
   border: none;
@@ -142,7 +142,7 @@ legend {
   margin-left: 1em;
 }
 
-#gHeader legend,
+#gBanner legend,
 #gSidebar legend,
 #gContent #gSearchForm legend,
 input[type="hidden"],
@@ -387,16 +387,21 @@ form .gError,
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
-  background-color: #e8e8e8;
-  border-bottom: 1px solid #fff;
-  font-size: .8em;
   margin-bottom: 1em;
-  padding: 1em 20px 0 20px;
+}
+
+#gBanner {
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  font-size: .8em;
+  padding: 1em 20px;
+  position: relative;
 }
 
 #gContent {
   font-size: 1.2em;
   padding-left: 20px;
+  position: relative;
   width: 696px;
 }
 
@@ -421,18 +426,17 @@ form .gError,
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLogo img {
-  float: left;
-  margin: -4px 10px 0 0;
+#gBanner #gLogo img {
+  margin: 0;
 }
 
-#gHeader #gQuickSearchForm {
+#gBanner #gQuickSearchForm {
   clear: right;
   float: right;
-  margin: 1em 0;
+  margin-top: 1em;
 }
 
-#gHeader #gQuickSearchForm input[type='text'] {
+#gBanner #gQuickSearchForm input[type='text'] {
   width: 17em;
 }
 
@@ -535,12 +539,12 @@ form .gError,
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLoginMenu li,
+#gBanner #gLoginMenu li,
 #gFooter #gCredits li {
   display: inline;
 }
 
-#gHeader #gLoginMenu li {
+#gBanner #gLoginMenu li {
   padding-left: 1.2em;
 }
 
@@ -558,14 +562,13 @@ form .gError,
  *********************************************************************/
 
 #gSiteMenu,
-.gBreadcrumbs,
 #gTagCloud ul {
   font-size: 1.2em;
 }
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLoginMenu {
+#gBanner #gLoginMenu {
   color: #999;
   float: right;
 }
@@ -573,13 +576,14 @@ form .gError,
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSiteMenu {
-  float: left;
-  margin-top: 20px;
-  padding: 0 20px 0 0;
+  bottom: 0;
+	display: none;
+  left: 140px;
+  position: absolute;
 }
 
 #gSiteMenu ul {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 
 /* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -641,11 +645,7 @@ form .gError,
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gBreadcrumbs {
-  background-color: #fff;
-  border-top: 1px solid #ccc;
-  clear: both;
-  margin: 0 -20px;
-  padding-left: 20px;
+  padding: 0 20px;
 }
 
 .gBreadcrumbs li {
@@ -763,9 +763,7 @@ form .gError,
  * 6) Browser hacks
  *********************************************************************/
 
-#gSiteMenu:after,
 #gHeader:after,
-.gBreadcrumbs:after,
 #gAlbumGrid:after,
 .gPager:after,
 #gViewMenu:after {
@@ -823,7 +821,6 @@ form .gError,
 .ui-widget-overlay {
   background: #000;
   opacity: .7;
-  filter: Alpha(Opacity=70);
 }
 
 #gDialog {
