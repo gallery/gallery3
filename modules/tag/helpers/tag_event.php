@@ -72,7 +72,7 @@ class tag_event_Core {
                          );
                       });";
     $tag_value = implode("; ", tag::item_tags($item));
-    $view->form->edit_item->input("tags")->label(t("Tags (separate by , or ;)"))
+    $view->form->edit_item->input("tags")->label(t("Tags (comma or semicolon separated)"))
       ->value($tag_value);
   }
 
