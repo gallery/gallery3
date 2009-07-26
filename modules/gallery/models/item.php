@@ -38,31 +38,17 @@ class Item_Model extends ORM_MPTT {
       if (user::active()->admin) {
         $this->view_restrictions = array();
       } else {
+        $this->view_restrictions["owner_id"] = user::active()->id;
         foreach (user::group_ids() as $id) {
-          // Separate the first restriction from the rest to make it easier for us to formulate
-          // our where clause below
-          if (empty($this->view_restrictions)) {
-            $this->view_restrictions[0] = "view_$id";
-          } else {
-            $this->view_restrictions[1]["view_$id"] = access::ALLOW;
-          }
+          $this->view_restrictions["view_$id"] = access::ALLOW;
         }
       }
     }
-    switch (count($this->view_restrictions)) {
-    case 0:
-      break;
 
-    case 1:
-      $this->where($this->view_restrictions[0], access::ALLOW);
-      break;
-
-    default:
+    if (!empty($this->view_restrictions)) {
       $this->open_paren();
-      $this->where($this->view_restrictions[0], access::ALLOW);
-      $this->orwhere($this->view_restrictions[1]);
+      $this->orwhere($this->view_restrictions);
       $this->close_paren();
-      break;
     }
 
     return $this;

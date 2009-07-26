@@ -95,7 +95,7 @@ class access_Core {
       return false;
     }
 
-    if ($user->admin) {
+    if ($user->admin && $item->owner_id == $user->id) {
       return true;
     }
 
