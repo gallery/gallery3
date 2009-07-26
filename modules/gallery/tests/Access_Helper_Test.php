@@ -101,6 +101,48 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_false(access::user_can($user, "view", $item), "Should be unable to view");
   }
 
+  public function owner_can_view_album_test() {
+    $user = user::create("access_test", "Access Test", "");
+    foreach ($user->groups as $group) {
+      $user->remove($group);
+    }
+    $user->save();
+
+    $root = ORM::factory("item", 1);
+    $item = album::create($root,  rand(), "test album", $user->id);
+
+    $this->assert_true(access::user_can($user, "view", $item), "Should be able to view");
+  }
+
+  public function owner_can_view_photo_test() {
+    $user = user::create("access_test", "Access Test", "");
+    foreach ($user->groups as $group) {
+      $user->remove($group);
+    }
+    $user->save();
+
+    $root = ORM::factory("item", 1);
+    $album = album::create($root,  rand(), "test album", $user->id);
+    $item = photo::create($album, MODPATH . "gallery/images/gallery.png", "", "", null, $user->id);
+
+    $this->assert_true(access::user_can($user, "view", $item), "Should be able to view");
+  }
+
+  public function owner_cant_view_photo_test() {
+    $user = user::create("access_test", "Access Test", "");
+    foreach ($user->groups as $group) {
+      $user->remove($group);
+    }
+    $user->save();
+
+    $root = ORM::factory("item", 1);
+    $album = album::create($root,  rand(), "test album");
+    access::deny(group::everybody(), "view", $album);
+    $item = photo::create($album, MODPATH . "gallery/images/gallery.png", "", "", null, $user->id);
+
+    $this->assert_false(access::user_can($user, "view", $item), "Should not be able to view");
+  }
+
   public function adding_and_removing_items_adds_ands_removes_rows_test() {
     $root = ORM::factory("item", 1);
     $item = album::create($root,  rand(), "test album");
