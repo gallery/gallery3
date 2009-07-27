@@ -72,7 +72,7 @@ class gallery_installer {
                  `created` int(9) default NULL,
                  `description` varchar(2048) default NULL,
                  `height` int(9) default NULL,
-                 `left` int(9) NOT NULL,
+                 `left_ptr` int(9) NOT NULL,
                  `level` int(9) NOT NULL,
                  `mime_type` varchar(64) default NULL,
                  `name` varchar(255) default NULL,
@@ -83,7 +83,7 @@ class gallery_installer {
                  `resize_dirty` boolean default 1,
                  `resize_height` int(9) default NULL,
                  `resize_width` int(9) default NULL,
-                 `right` int(9) NOT NULL,
+                 `right_ptr` int(9) NOT NULL,
                  `sort_column` varchar(64) default NULL,
                  `sort_order` char(4) default 'ASC',
                  `thumb_dirty` boolean default 1,
@@ -204,8 +204,8 @@ class gallery_installer {
     $root->type = "album";
     $root->title = "Gallery";
     $root->description = "";
-    $root->left = 1;
-    $root->right = 2;
+    $root->left_ptr = 1;
+    $root->right_ptr = 2;
     $root->parent_id = 0;
     $root->level = 1;
     $root->thumb_dirty = 1;
@@ -258,7 +258,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 7);
+    module::set_version("gallery", 9);
   }
 
   static function upgrade($version) {
@@ -322,6 +322,12 @@ class gallery_installer {
         }
       }
       module::set_version("gallery", $version = 8);
+    }
+
+    if ($version == 8) {
+      $db->query("ALTER TABLE {items} CHANGE COLUMN `left`  `left_ptr`  INT(9) NOT NULL;");
+      $db->query("ALTER TABLE {items} CHANGE COLUMN `right` `right_ptr` INT(9) NOT NULL;");
+      module::set_version("gallery", $version = 9);
     }
   }
 

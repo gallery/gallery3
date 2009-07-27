@@ -73,8 +73,8 @@ class notification {
       ->join("subscriptions", "users.id", "subscriptions.user_id")
       ->join("items", "subscriptions.item_id", "items.id")
       ->where("email IS NOT", null)
-      ->where("items.left <=", $item->left)
-      ->where("items.right >", $item->right)
+      ->where("items.left_ptr <=", $item->left_ptr)
+      ->where("items.right_ptr >", $item->right_ptr)
       ->find_all();
 
     $subscribers = array();

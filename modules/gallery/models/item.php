@@ -136,7 +136,7 @@ class Item_Model extends ORM_MPTT {
       Database::instance()
         ->update("items",
                  array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     } else {
       @rename($original_resize_path, $this->resize_path());
       @rename($original_thumb_path, $this->thumb_path());
@@ -172,7 +172,7 @@ class Item_Model extends ORM_MPTT {
       Database::instance()
         ->update("items",
                  array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     }
 
     return $this;
@@ -288,10 +288,10 @@ class Item_Model extends ORM_MPTT {
       foreach (Database::instance()
                ->select("name")
                ->from("items")
-               ->where("left <=", $this->left)
-               ->where("right >=", $this->right)
+               ->where("left_ptr <=", $this->left_ptr)
+               ->where("right_ptr >=", $this->right_ptr)
                ->where("id <>", 1)
-               ->orderby("left", "ASC")
+               ->orderby("left_ptr", "ASC")
                ->get() as $row) {
         $paths[] = $row->name;
       }
@@ -387,8 +387,7 @@ class Item_Model extends ORM_MPTT {
       SELECT COUNT(*) AS position FROM {items}
       WHERE parent_id = {$this->id}
         AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
-                                          FROM {items} WHERE id = $child_id)
-      ORDER BY `{$this->sort_column}` {$this->sort_order}")->current()->position;
+                                          FROM {items} WHERE id = $child_id)")->current()->position;
 
     // We stopped short of our target value in the sort (notice that we're using a < comparator
     // above) because it's possible that we have duplicate values in the sort column.  An
