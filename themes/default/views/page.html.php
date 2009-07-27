@@ -49,6 +49,8 @@
     <?= $theme->script("jquery.form.js") ?>
     <?= $theme->script("jquery-ui.js") ?>
     <?= $theme->script("gallery.common.js") ?>
+    <? /* Themes can override this to provide custom refresh handling */ ?>
+    <?= $theme->script("gallery.reload.js") ?>
     <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
     <script type="text/javascript">
     var MSG_CANCEL = "<?= t('Cancel') ?>";

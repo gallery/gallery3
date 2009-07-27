@@ -40,7 +40,7 @@
   $(".gProgressBar").progressbar({value: 0});
   update();
   dismiss = function() {
-    window.location.reload();
+    $.gallery_reload();
   }
 </script>
 <div id="gProgress">
