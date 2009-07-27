@@ -399,10 +399,10 @@ class Item_Model extends ORM_MPTT {
     $db = Database::instance();
     $position = $db->query("
       SELECT COUNT(*) AS position FROM {items}
-      WHERE parent_id = {$this->id}
+      WHERE `parent_id` = {$this->id}
         AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
-                                          FROM {items} WHERE id = $child_id)
-      ORDER BY `{$this->sort_column}` {$this->sort_order}")->current()->position;
+                                          FROM {items} WHERE `id` = $child_id)")
+      ->current()->position;
 
     // We stopped short of our target value in the sort (notice that we're using a < comparator
     // above) because it's possible that we have duplicate values in the sort column.  An
@@ -414,9 +414,10 @@ class Item_Model extends ORM_MPTT {
     // our base value.
     $result = $db->query("
       SELECT id FROM {items}
-      WHERE parent_id = {$this->id}
+      WHERE `parent_id` = {$this->id}
         AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
-                                      FROM {items} WHERE id = $child_id)");
+                                      FROM {items} WHERE `id` = $child_id)
+      ORDER BY `id` ASC");
     foreach ($result as $row) {
       $position++;
       if ($row->id == $child_id) {
