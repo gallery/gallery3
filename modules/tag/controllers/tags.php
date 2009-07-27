@@ -53,10 +53,10 @@ class Tags_Controller extends REST_Controller {
 
     $form = tag::get_add_form($item);
     if ($form->validate()) {
-      foreach (split("[\,\;]", $form->add_tag->inputs["name"]->value) as $tag_name) {
+      foreach (split(",", $form->add_tag->inputs["name"]->value) as $tag_name) {
         $tag_name = trim($tag_name);
         if ($tag_name) {
-          $tag = tag::add($item, str_replace(" ", ".", $tag_name));
+          $tag = tag::add($item, $tag_name);
         }
       }
 
@@ -81,7 +81,7 @@ class Tags_Controller extends REST_Controller {
 
   public function autocomplete() {
     $tags = array();
-    $tag_parts = preg_split("#[,\s;]+# ", $this->input->get("q"));
+    $tag_parts = preg_split("#[,\s]+# ", $this->input->get("q"));
     $limit = $this->input->get("limit");
     $tag_part = end($tag_parts);
     $tag_list = ORM::factory("tag")
