@@ -34,8 +34,8 @@ class tag_event_Core {
         if (!empty($iptc["2#025"])) {
           foreach($iptc["2#025"] as $tag) {
             $tag = str_replace("\0",  "", $tag);
-            foreach (preg_split("/[,;]/", $tag) as $word) {
-              $word = preg_replace('/\s+/', '.', trim($word));
+            foreach (preg_split("/,/", $tag) as $word) {
+              $word = trim($word);
               if (function_exists("mb_detect_encoding") && mb_detect_encoding($word) != "UTF-8") {
                 $word = utf8_encode($word);
               }
@@ -71,16 +71,16 @@ class tag_event_Core {
                            '$url', {max: 30, formatResult: formatTagAutoCompleteResult}
                          );
                       });";
-    $tag_value = implode("; ", tag::item_tags($item));
-    $view->form->edit_item->input("tags")->label(t("Tags (comma or semicolon separated)"))
+    $tag_value = implode(", ", tag::item_tags($item));
+    $view->form->edit_item->input("tags")->label(t("Tags (comma separated)"))
       ->value($tag_value);
   }
 
   static function item_edit_form_completed($item, $form) {
     tag::clear_all($item);
-    foreach (preg_split("/[,;]/", $form->edit_item->tags->value) as $tag_name) {
+    foreach (preg_split("/,/", $form->edit_item->tags->value) as $tag_name) {
       if ($tag_name) {
-        tag::add($item, str_replace(" ", ".", $tag_name));
+        tag::add($item, trim($tag_name));
       }
     }
     tag::compact();
