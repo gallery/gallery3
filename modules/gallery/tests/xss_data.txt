@@ -163,9 +163,9 @@ modules/gallery/views/admin_maintenance_show_log.html.php    8   DIRTY $task->id
 modules/gallery/views/admin_maintenance_show_log.html.php    8   DIRTY $csrf
 modules/gallery/views/admin_maintenance_show_log.html.php    13  DIRTY $task->name
 modules/gallery/views/admin_maintenance_show_log.html.php    15        $task->get_log()
-modules/gallery/views/admin_maintenance_task.html.php        5   DIRTY $task->id
-modules/gallery/views/admin_maintenance_task.html.php        5   DIRTY $csrf
-modules/gallery/views/admin_maintenance_task.html.php        26  DIRTY $task->name
+modules/gallery/views/admin_maintenance_task.html.php        23  DIRTY $task->id
+modules/gallery/views/admin_maintenance_task.html.php        23  DIRTY $csrf
+modules/gallery/views/admin_maintenance_task.html.php        47  DIRTY $task->name
 modules/gallery/views/admin_modules.html.php                 19  DIRTY $i
 modules/gallery/views/admin_modules.html.php                 22  DIRTY $data
 modules/gallery/views/admin_modules.html.php                 22  DIRTY $module_name
@@ -567,11 +567,11 @@ themes/default/views/dynamic.html.php                        29  DIRTY $theme->p
 themes/default/views/footer.html.php                         2   DIRTY $theme->footer()
 themes/default/views/footer.html.php                         4   DIRTY $footer_text
 themes/default/views/footer.html.php                         9   DIRTY $theme->credits()
-themes/default/views/header.html.php                         2   DIRTY $theme->header_top()
-themes/default/views/header.html.php                         4   DIRTY $header_text
-themes/default/views/header.html.php                         7   DIRTY $theme->url("images/logo.png")
+themes/default/views/header.html.php                         3   DIRTY $theme->header_top()
+themes/default/views/header.html.php                         5   DIRTY $header_text
+themes/default/views/header.html.php                         8   DIRTY $theme->url("images/logo.png")
 themes/default/views/header.html.php                         12  DIRTY $theme->site_menu()
-themes/default/views/header.html.php                         15  DIRTY $theme->header_bottom()
+themes/default/views/header.html.php                         14  DIRTY $theme->header_bottom()
 themes/default/views/header.html.php                         21  DIRTY $parent->id
 themes/default/views/header.html.php                         21  DIRTY $item->id
 themes/default/views/header.html.php                         22        $parent->title
