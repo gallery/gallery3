@@ -61,8 +61,7 @@ class Photos_Controller extends Items_Controller {
     access::required("view", $photo);
     access::required("edit", $photo);
 
-    $view = photo::get_edit_form($photo);
-    $form = $view->form;
+    $form = photo::get_edit_form($photo);
     if ($valid = $form->validate()) {
       if ($form->edit_item->filename->value != $photo->name) {
         // Make sure that there's not a conflict
@@ -95,7 +94,7 @@ class Photos_Controller extends Items_Controller {
     } else {
       print json_encode(
         array("result" => "error",
-              "form" => $view->__toString()));
+              "form" => $form->__toString()));
     }
   }
 

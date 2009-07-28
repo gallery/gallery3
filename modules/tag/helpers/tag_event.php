@@ -64,19 +64,15 @@ class tag_event_Core {
     tag::compact();
   }
 
-  static function item_edit_form($item, $view) {
+  static function item_edit_form($item, $form) {
     $url = url::site("tags/autocomplete");
-    $view->script[] = "$('#gEditFormContainer form').ready(function() {
-                         $('#gEditFormContainer form input[id=tags]').autocomplete(
-                           '$url',
-                           {max: 30,
-                            multiple: true,
-                            multipleSeparator: ',',
-                            cacheLength: 1}
-                         );
-                      });";
+    $form->script("")
+      ->text("$('form input[id=tags]').ready(function() {
+                $('form input[id=tags]').autocomplete(
+                  '$url', {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1});
+              });");
     $tag_value = implode(", ", tag::item_tags($item));
-    $view->form->edit_item->input("tags")->label(t("Tags (comma separated)"))
+    $form->edit_item->input("tags")->label(t("Tags (comma separated)"))
       ->value($tag_value);
   }
 
