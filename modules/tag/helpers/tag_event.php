@@ -68,7 +68,11 @@ class tag_event_Core {
     $url = url::site("tags/autocomplete");
     $view->script[] = "$('#gEditFormContainer form').ready(function() {
                          $('#gEditFormContainer form input[id=tags]').autocomplete(
-                           '$url', {max: 30, formatResult: formatTagAutoCompleteResult}
+                           '$url',
+                           {max: 30,
+                            multiple: true,
+                            multipleSeparator: ',',
+                            cacheLength: 1}
                          );
                       });";
     $tag_value = implode(", ", tag::item_tags($item));
