@@ -90,6 +90,8 @@ class album_Core {
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Create"));
     $form->add_rules_from(ORM::factory("item"));
+    $form->script("")
+      ->url(url::abs_file("modules/gallery/js/albums_form_add.js"));
     return $form;
   }
 
