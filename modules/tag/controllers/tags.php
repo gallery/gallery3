@@ -81,7 +81,7 @@ class Tags_Controller extends REST_Controller {
 
   public function autocomplete() {
     $tags = array();
-    $tag_parts = preg_split("#[,\s]+# ", $this->input->get("q"));
+    $tag_parts = preg_split("#,#", $this->input->get("q"));
     $limit = $this->input->get("limit");
     $tag_part = end($tag_parts);
     $tag_list = ORM::factory("tag")
