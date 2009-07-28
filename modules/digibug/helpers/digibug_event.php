@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class digibug_menu {
-  static function admin($menu, $theme) {
+class digibug_event_Core {
+  static function admin_menu($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
         ->id("digibug_menu")
@@ -26,7 +26,7 @@ class digibug_menu {
         ->url(url::site("admin/digibug")));
   }
 
-  static function photo($menu, $theme) {
+  static function photo_menu($menu, $theme) {
     $item = $theme->item();
     $menu->append(
       Menu::factory("link")
@@ -36,7 +36,7 @@ class digibug_menu {
       ->css_id("gDigibugLink"));
   }
 
-  static function thumb($menu, $theme, $item) {
+  static function thumb_menu($menu, $theme, $item) {
     if ($item->type == "photo") {
       $menu->get("options_menu")
         ->append(

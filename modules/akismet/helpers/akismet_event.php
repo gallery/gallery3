@@ -51,4 +51,20 @@ class akismet_event_Core {
       akismet::submit_ham($new);
     }
   }
+
+  static function admin_menu($menu, $theme) {
+    $menu->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("akismet")
+               ->label(t("Akismet"))
+               ->url(url::site("admin/akismet")));
+
+    if (module::get_var("akismet", "api_key")) {
+      $menu->get("statistics_menu")
+        ->append(Menu::factory("link")
+                 ->id("akismet")
+                 ->label(t("Akismet"))
+                 ->url(url::site("admin/akismet/stats")));
+    }
+  }
 }

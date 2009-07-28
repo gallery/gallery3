@@ -81,52 +81,103 @@ class Theme_View_Core extends Gallery_View {
   public function site_menu() {
     $menu = Menu::factory("root");
     if ($this->page_type != "login") {
-      gallery_menu::site($menu, $this);
+      $menu->append(Menu::factory("link")
+                    ->id("home")
+                    ->label(t("Home"))
+                    ->url(url::site("albums/1")));
 
-      foreach (module::active() as $module) {
-        if ($module->name == "gallery") {
-          continue;
+      $item = $this->item();
+
+      $can_edit = $item && access::can("edit", $item);
+      $can_add = $item && access::can("add", $item);
+
+      if ($can_add) {
+        $menu->append(Menu::factory("dialog")
+                      ->id("add_photos_item")
+                      ->label(t("Add photos"))
+                      ->url(url::site("simple_uploader/app/$item->id")));
+      }
+
+      $menu->append($options_menu = Menu::factory("submenu")
+                    ->id("options_menu")
+                    ->label(t("Options")));
+      if ($item && ($can_edit || $can_add)) {
+        if ($can_edit) {
+          $options_menu
+            ->append(Menu::factory("dialog")
+                     ->id("edit_item")
+                     ->label($item->is_album() ? t("Edit album") : t("Edit photo"))
+                     ->url(url::site("form/edit/{$item->type}s/$item->id")));
         }
-        $class = "{$module->name}_menu";
-        if (method_exists($class, "site")) {
-          call_user_func_array(array($class, "site"), array(&$menu, $this));
+
+        // @todo Move album options menu to the album quick edit pane
+        if ($item->is_album()) {
+          if ($can_add) {
+            $options_menu
+              ->append(Menu::factory("dialog")
+                       ->id("add_album")
+                       ->label(t("Add an album"))
+                       ->url(url::site("form/add/albums/$item->id?type=album")));
+          }
+
+          if ($can_edit) {
+            $options_menu
+              ->append(Menu::factory("dialog")
+                       ->id("edit_permissions")
+                       ->label(t("Edit permissions"))
+                       ->url(url::site("permissions/browse/$item->id")));
+          }
         }
       }
+
+      if (user::active()->admin) {
+        $menu->append($admin_menu = Menu::factory("submenu")
+                      ->id("admin_menu")
+                      ->label(t("Admin")));
+        Admin_View::admin_menu($admin_menu, $this);
+        module::event("admin_menu", $admin_menu, $this);
+      }
+
+      module::event("site_menu", $menu, $this);
     }
 
-    $menu->compact();
-    print $menu;
+    return $menu->compact();
   }
 
   public function album_menu() {
-    print $this->_menu("album");
+    $menu = Menu::factory("root");
+    module::event("album_menu", $menu, $this);
+    return $menu->compact();
   }
 
   public function tag_menu() {
-    print $this->_menu("tag");
+    $menu = Menu::factory("root");
+    module::event("tag_menu", $menu, $this);
+    return $menu->compact();
   }
 
   public function photo_menu() {
-    print $this->_menu("photo");
+    $menu = Menu::factory("root");
+    if (access::can("view_full", $this->item())) {
+      $menu->append(Menu::factory("link")
+                    ->id("fullsize")
+                    ->label(t("View full size"))
+                    ->url($this->item()->file_url())
+                    ->css_class("gFullSizeLink"));
+    }
+
+    module::event("photo_menu", $menu, $this);
+    return $menu->compact();
   }
 
   public function thumb_menu($item) {
-    print $this->_menu("thumb", $item)->css_class("gThumbMenu");
-  }
+    $menu = Menu::factory("root")
+      ->append(Menu::factory("submenu")
+               ->id("options_menu")
+               ->label(t("Options"))
+               ->css_class("gThumbMenu"));
 
-  private function _menu($type, $item=null) {
-    $menu = Menu::factory("root");
-    call_user_func_array(array("gallery_menu", $type), array(&$menu, $this, $item));
-    foreach (module::active() as $module) {
-      if ($module->name == "gallery") {
-        continue;
-      }
-      $class = "{$module->name}_menu";
-      if (method_exists($class, $type)) {
-        call_user_func_array(array($class, $type), array(&$menu, $this, $item));
-      }
-    }
-
+    module::event("thumb_menu", $menu, $this, $item);
     return $menu->compact();
   }
 

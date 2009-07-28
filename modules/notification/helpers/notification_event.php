@@ -55,4 +55,23 @@ class notification_event_Core {
   static function batch_complete() {
     notification::send_pending_notifications();
   }
+
+  static function site_menu($menu, $theme) {
+    if (!user::active()->guest) {
+      $item = $theme->item();
+
+      if ($item && $item->is_album() && access::can("view", $item)) {
+        $watching = notification::is_watching($item);
+
+        $label = $watching ? t("Remove notifications") : t("Enable notifications");
+
+        $menu->get("options_menu")
+          ->append(Menu::factory("link")
+            ->id("watch")
+            ->label($label)
+            ->css_id("gNotifyLink")
+            ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token())));
+      }
+    }
+  }
 }

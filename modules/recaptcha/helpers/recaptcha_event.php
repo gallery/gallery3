@@ -23,4 +23,12 @@ class recaptcha_event_Core {
       $form->add_comment->recaptcha("recaptcha")->label("")->id("gRecaptcha");
     }
   }
+
+  static function admin_menu($menu, $theme) {
+    $menu->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("recaptcha")
+               ->label(t("reCAPTCHA"))
+               ->url(url::site("admin/recaptcha")));
+  }
 }
