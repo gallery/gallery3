@@ -444,8 +444,8 @@ modules/tag/views/admin_tags.html.php                        50  DIRTY $tag->id
 modules/tag/views/admin_tags.html.php                        50        $tag->name
 modules/tag/views/admin_tags.html.php                        51  DIRTY $tag->count
 modules/tag/views/admin_tags.html.php                        52  DIRTY $tag->id
-modules/tag/views/tag_block.html.php                         13  DIRTY $cloud
-modules/tag/views/tag_block.html.php                         15  DIRTY $form
+modules/tag/views/tag_block.html.php                         15  DIRTY $cloud
+modules/tag/views/tag_block.html.php                         17  DIRTY $form
 modules/tag/views/tag_cloud.html.php                         4   DIRTY $tag->count
 modules/tag/views/tag_cloud.html.php                         4   DIRTY $max_count
 modules/tag/views/tag_cloud.html.php                         5   DIRTY $tag->count

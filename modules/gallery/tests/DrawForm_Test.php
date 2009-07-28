@@ -80,5 +80,44 @@ class DrawForm_Test extends Unit_Test_Case {
     $this->assert_same($expected, $rendered);
   }
 
+  function form_script_test() {
+    $form = new Forge("test/controller", "", "post", array("id" => "gTestGroupForm"));
+    $group = $form->group("test_group")->label(t("Test Group"));
+    $group->input("title")->label(t("Title"));
+    $group->textarea("description")->label(t("Text Area"));
+    $form->script("")
+      ->url(url::file("test.js"))
+      ->text("alert('Test Javascript');");
+    $group->submit("")->value(t("Submit"));
+    $rendered = $form->__toString();
+
+    $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
+                      "id=\"gTestGroupForm\">\n" .
+                "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"  />\n" .
+                "  <fieldset>\n" .
+                "    <legend>Test Group</legend>\n" .
+                "    <ul>\n" .
+                "      <li>\n" .
+                "        <label for=\"title\" >Title</label>\n" .
+                "        <input type=\"text\" id=\"title\" name=\"title\" value=\"\" " .
+                            "class=\"textbox\"  />\n" .
+                "      </li>\n" .
+                "      <li>\n" .
+                "        <label for=\"description\" >Text Area</label>\n" .
+                "        <textarea id=\"description\" name=\"description\" " .
+                              "class=\"textarea\" ></textarea>\n" .
+                "      </li>\n" .
+                "      <li>\n" .
+                "        <input type=\"submit\" value=\"Submit\" class=\"submit\"  />\n" .
+                "      </li>\n" .
+                "    </ul>\n" .
+                "  </fieldset>\n" .
+                "<script type=\"text/javascript\" src=\"http://./test.js\"></script>\n\n" .
+                "<script type=\"text/javascript\">\n" .
+                "alert('Test Javascript');\n" .
+                "</script>\n" .
+                "</form>\n";
+    $this->assert_same($expected, $rendered);
+  }
 }
 
