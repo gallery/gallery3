@@ -66,3 +66,4 @@ function editInPlace(element) {
   };
   ajaxify_editInPlaceForm();
 }
+

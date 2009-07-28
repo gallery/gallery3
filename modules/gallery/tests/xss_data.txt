@@ -207,8 +207,6 @@ modules/gallery/views/admin_themes_preview.html.php          4   DIRTY $info->na
 modules/gallery/views/admin_themes_preview.html.php          7   DIRTY $url
 modules/gallery/views/after_install.html.php                 11        $user->name
 modules/gallery/views/after_install.html.php                 15  DIRTY $user->id
-modules/gallery/views/item_edit.html.php                     4   DIRTY $script
-modules/gallery/views/item_edit.html.php                     8   DIRTY $form
 modules/gallery/views/kohana_error_page.php                  102 DIRTY $message
 modules/gallery/views/kohana_error_page.php                  104 DIRTY $file
 modules/gallery/views/kohana_error_page.php                  104 DIRTY $line
