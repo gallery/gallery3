@@ -115,8 +115,8 @@ class Theme_View_Core extends Gallery_View {
     $menu = Menu::factory("root")
       ->append(Menu::factory("submenu")
                ->id("options_menu")
-               ->label(t("Options"))
-               ->css_class("gThumbMenu"));
+               ->label(t("Options")))
+      ->css_class("gThumbMenu");
 
     module::event("thumb_menu", $menu, $this, $item);
     return $menu->compact();
