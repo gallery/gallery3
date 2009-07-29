@@ -93,4 +93,8 @@ class tag_event_Core {
                ->label(t("Tags"))
                ->url(url::site("admin/tags")));
   }
+
+  static function item_index_data($item, $data) {
+    $data[] = join(" ", tag::item_tags($item));
+  }
 }

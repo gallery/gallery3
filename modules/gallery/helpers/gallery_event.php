@@ -47,4 +47,10 @@ class gallery_event_Core {
       module::clear_var("gallery", "choose_default_tookit");
     }
   }
+
+  static function item_index_data($item, $data) {
+    $data[] = $item->description;
+    $data[] = $item->name;
+    $data[] = $item->title;
+  }
 }

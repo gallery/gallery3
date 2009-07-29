@@ -38,4 +38,15 @@ class comment_event_Core {
                ->url("#comments")
                ->css_id("gCommentsLink"));
   }
+
+  static function item_index_data($item, $data) {
+    foreach (Database::instance()
+             ->select("text")
+             ->from("comments")
+             ->where("item_id", $item->id)
+             ->get()
+             ->as_array() as $row) {
+      $data[] = $row->text;
+    }
+  }
 }
