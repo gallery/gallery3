@@ -71,7 +71,6 @@ class search_Core {
     }
 
     module::event("item_index_data", $record->item(), $data);
-    Kohana::log("alert",print_r($data,1));
     $record->data = join(" ", (array)$data);
     $record->dirty = 0;
     $record->save();
