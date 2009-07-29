@@ -10,6 +10,9 @@
       if (target_value - current_value > delta) {
         delta += .075;
       }
+      if (target_value == 100) {
+        new_value = 100;
+      }
       $(".gProgressBar").progressbar("value", new_value);
       animation = setTimeout(function() { animate_progress_bar(target_value); }, 100);
     } else {
