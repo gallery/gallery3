@@ -98,8 +98,19 @@ class gallery_installer {
                  PRIMARY KEY (`id`),
                  KEY `parent_id` (`parent_id`),
                  KEY `type` (`type`),
-                 KEY `random` (`rand_key`))
+                 KEY `random` (`rand_key`),
+                 KEY `weight` (`weight` DESC))
                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
+    $db->query("DELIMITER |
+               CREATE TRIGGER setweight BEFORE INSERT ON {items}
+                 FOR EACH ROW BEGIN
+                   DECLARE new_weight int(9);
+                   SELECT weight+1 FROM {items}
+                    ORDER BY weight LIMIT 1 INTO new_weight;
+                   SET NEW.weight = new_weight;
+                 END;|
+               DELIMITER ;");
 
     $db->query("CREATE TABLE {logs} (
                  `id` int(9) NOT NULL auto_increment,
@@ -329,7 +340,13 @@ class gallery_installer {
       $db->query("ALTER TABLE {items} CHANGE COLUMN `right` `right_ptr` INT(9) NOT NULL;");
       module::set_version("gallery", $version = 9);
     }
-  }
+
+    if ($version == 9) {
+      $db->query("ALTER TABLE {items} ADD KEY `weight` (`weight` DESC);");
+
+      module::set_version("gallery", $version = 10);
+    }
+}
 
   static function uninstall() {
     $db = Database::instance();
