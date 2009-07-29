@@ -44,63 +44,9 @@ class Admin_View_Core extends Gallery_View {
     $this->set_global("user", user::active());
   }
 
-  public function admin_menu($menu=null) {
-    if (!$menu) {
-      $menu = Menu::factory("root");
-    }
-
-    $menu
-      ->append(Menu::factory("link")
-               ->id("dashboard")
-               ->label(t("Dashboard"))
-               ->url(url::site("admin")))
-      ->append(Menu::factory("submenu")
-               ->id("settings_menu")
-               ->label(t("Settings"))
-               ->append(Menu::factory("link")
-                        ->id("graphics_toolkits")
-                        ->label(t("Graphics"))
-                        ->url(url::site("admin/graphics")))
-               ->append(Menu::factory("link")
-                        ->id("languages")
-                        ->label(t("Languages"))
-                        ->url(url::site("admin/languages")))
-               ->append(Menu::factory("link")
-                        ->id("l10n_mode")
-                        ->label(Session::instance()->get("l10n_mode", false)
-                                ? t("Stop translating") : t("Start translating"))
-                        ->url(url::site("l10n_client/toggle_l10n_mode?csrf=" .
-                                        access::csrf_token())))
-               ->append(Menu::factory("link")
-                        ->id("advanced")
-                        ->label(t("Advanced"))
-                        ->url(url::site("admin/advanced_settings"))))
-      ->append(Menu::factory("link")
-               ->id("modules")
-               ->label(t("Modules"))
-               ->url(url::site("admin/modules")))
-      ->append(Menu::factory("submenu")
-               ->id("content_menu")
-               ->label(t("Content")))
-      ->append(Menu::factory("submenu")
-               ->id("appearance_menu")
-               ->label(t("Appearance"))
-               ->append(Menu::factory("link")
-                        ->id("themes")
-                        ->label(t("Theme Choice"))
-                        ->url(url::site("admin/themes")))
-               ->append(Menu::factory("link")
-                        ->id("theme_options")
-                        ->label(t("Theme Options"))
-                        ->url(url::site("admin/theme_options"))))
-      ->append(Menu::factory("submenu")
-               ->id("statistics_menu")
-               ->label(t("Statistics")))
-      ->append(Menu::factory("link")
-               ->id("maintenance")
-               ->label(t("Maintenance"))
-               ->url(url::site("admin/maintenance")));
-
+  public function admin_menu() {
+    $menu = Menu::factory("root");
+    gallery::admin_menu($menu, $this);
     module::event("admin_menu", $menu, $this);
     $menu->compact();
     return $menu;
