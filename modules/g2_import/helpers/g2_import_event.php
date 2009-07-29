@@ -25,4 +25,13 @@ class g2_import_event_Core {
   static function item_created($item) {
     g2_import::copy_matching_thumbnails_and_resizes($item);
   }
+
+  static function admin_menu($menu, $theme) {
+    $menu
+      ->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("g2_import")
+               ->label(t("Gallery 2 Import"))
+               ->url(url::site("admin/g2_import")));
+  }
 }

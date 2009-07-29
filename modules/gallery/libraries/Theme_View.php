@@ -80,53 +80,45 @@ class Theme_View_Core extends Gallery_View {
 
   public function site_menu() {
     $menu = Menu::factory("root");
-    if ($this->page_type != "login") {
-      gallery_menu::site($menu, $this);
-
-      foreach (module::active() as $module) {
-        if ($module->name == "gallery") {
-          continue;
-        }
-        $class = "{$module->name}_menu";
-        if (method_exists($class, "site")) {
-          call_user_func_array(array($class, "site"), array(&$menu, $this));
-        }
-      }
-    }
-
-    $menu->compact();
-    print $menu;
+    gallery::site_menu($menu, $this);
+    module::event("site_menu", $menu, $this);
+    return $menu->compact();
   }
 
   public function album_menu() {
-    print $this->_menu("album");
+    $menu = Menu::factory("root");
+    module::event("album_menu", $menu, $this);
+    return $menu->compact();
   }
 
   public function tag_menu() {
-    print $this->_menu("tag");
+    $menu = Menu::factory("root");
+    module::event("tag_menu", $menu, $this);
+    return $menu->compact();
   }
 
   public function photo_menu() {
-    print $this->_menu("photo");
+    $menu = Menu::factory("root");
+    if (access::can("view_full", $this->item())) {
+      $menu->append(Menu::factory("link")
+                    ->id("fullsize")
+                    ->label(t("View full size"))
+                    ->url($this->item()->file_url())
+                    ->css_class("gFullSizeLink"));
+    }
+
+    module::event("photo_menu", $menu, $this);
+    return $menu->compact();
   }
 
   public function thumb_menu($item) {
-    print $this->_menu("thumb", $item)->css_class("gThumbMenu");
-  }
+    $menu = Menu::factory("root")
+      ->append(Menu::factory("submenu")
+               ->id("options_menu")
+               ->label(t("Options")))
+      ->css_class("gThumbMenu");
 
-  private function _menu($type, $item=null) {
-    $menu = Menu::factory("root");
-    call_user_func_array(array("gallery_menu", $type), array(&$menu, $this, $item));
-    foreach (module::active() as $module) {
-      if ($module->name == "gallery") {
-        continue;
-      }
-      $class = "{$module->name}_menu";
-      if (method_exists($class, $type)) {
-        call_user_func_array(array($class, $type), array(&$menu, $this, $item));
-      }
-    }
-
+    module::event("thumb_menu", $menu, $this, $item);
     return $menu->compact();
   }
 

@@ -64,19 +64,15 @@ class search_Core {
   }
 
   static function update($item) {
-    $data = array();
+    $data = new ArrayObject();
     $record = ORM::factory("search_record")->where("item_id", $item->id)->find();
     if (!$record->loaded) {
       $record->item_id = $item->id;
     }
 
-    foreach (module::active() as $module) {
-      $class_name = "{$module->name}_search";
-      if (method_exists($class_name, "item_index_data")) {
-        $data[] = call_user_func(array($class_name, "item_index_data"), $record->item());
-      }
-    }
-    $record->data = join(" ", $data);
+    module::event("item_index_data", $record->item(), $data);
+    Kohana::log("alert",print_r($data,1));
+    $record->data = join(" ", (array)$data);
     $record->dirty = 0;
     $record->save();
   }
