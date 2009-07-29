@@ -350,9 +350,21 @@ class Item_Model extends ORM_MPTT {
     if (!empty($this->changed) && $this->changed != array("view_count" => "view_count")) {
       $this->updated = time();
       if (!$this->loaded) {
+        try {
         $this->created = $this->updated;
-        $r = ORM::factory("item")->select("MAX(weight) as max_weight")->find();
-        $this->weight = $r->max_weight + 1;
+        Kohana::log("error", "get Weight");
+        $weight = ORM::factory("item")
+          ->select("weight")
+          ->orderby("weight", "DESC")
+          ->limit(1)
+          ->find_all()
+          ->current()->weight;
+          Kohana::log("error", "Weight: $weight");
+        $this->weight = $weight + 1;
+        } catch (Exception $e) {
+          Kohana::log("error", $e->__toString());
+          throw $e;
+        }
       } else {
         $send_event = 1;
       }
