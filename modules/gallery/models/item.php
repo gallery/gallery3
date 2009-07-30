@@ -350,7 +350,6 @@ class Item_Model extends ORM_MPTT {
     if (!empty($this->changed) && $this->changed != array("view_count" => "view_count")) {
       $this->updated = time();
       if (!$this->loaded) {
-        try {
         $this->created = $this->updated;
         $weight = Database::instance()
           ->select("weight")->from("items")
