@@ -31,7 +31,7 @@ class Comment_Model extends ORM {
     if ($author->guest) {
       return $this->guest_name;
     } else {
-      return $author->full_name;
+      return $author->display_name();
     }
   }
 
