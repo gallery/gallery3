@@ -351,11 +351,14 @@ class Item_Model extends ORM_MPTT {
       $this->updated = time();
       if (!$this->loaded) {
         $this->created = $this->updated;
-        $weight = Database::instance()
+        // Guard against an empty result when we create the first item.  It's unfortunate that we
+        // have to check this every time.
+        // @todo: figure out a better way to bootstrap the weight.
+        $result = Database::instance()
           ->select("weight")->from("items")
           ->orderby("weight", "desc")->limit(1)
-          ->get()->current()->weight;
-        $this->weight = $weight + 1;
+          ->get()->current();
+        $this->weight = ($result ? $result->weight : 0) + 1;
       } else {
         $send_event = 1;
       }
