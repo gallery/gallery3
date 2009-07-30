@@ -352,19 +352,11 @@ class Item_Model extends ORM_MPTT {
       if (!$this->loaded) {
         try {
         $this->created = $this->updated;
-        Kohana::log("error", "get Weight");
-        $weight = ORM::factory("item")
-          ->select("weight")
-          ->orderby("weight", "DESC")
-          ->limit(1)
-          ->find_all()
-          ->current()->weight;
-          Kohana::log("error", "Weight: $weight");
+        $weight = Database::instance()
+          ->select("weight")->from("items")
+          ->orderby("weight", "desc")->limit(1)
+          ->get()->current()->weight;
         $this->weight = $weight + 1;
-        } catch (Exception $e) {
-          Kohana::log("error", $e->__toString());
-          throw $e;
-        }
       } else {
         $send_event = 1;
       }

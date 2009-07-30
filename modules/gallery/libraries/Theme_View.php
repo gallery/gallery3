@@ -156,6 +156,7 @@ class Theme_View_Core extends Gallery_View {
     case "album_blocks":
     case "album_bottom":
     case "album_top":
+    case "body_attributes":
     case "credits";
     case "dynamic_bottom":
     case "dynamic_top":
