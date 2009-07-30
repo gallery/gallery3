@@ -46,20 +46,10 @@ class Admin_View_Core extends Gallery_View {
 
   public function admin_menu() {
     $menu = Menu::factory("root");
-    gallery_menu::admin($menu, $this);
-
-    foreach (module::active() as $module) {
-      if ($module->name == "gallery") {
-        continue;
-      }
-      $class = "{$module->name}_menu";
-      if (method_exists($class, "admin")) {
-        call_user_func_array(array($class, "admin"), array(&$menu, $this));
-      }
-    }
-
+    gallery::admin_menu($menu, $this);
+    module::event("admin_menu", $menu, $this);
     $menu->compact();
-    print $menu;
+    return $menu;
   }
 
   /**
@@ -88,6 +78,7 @@ class Admin_View_Core extends Gallery_View {
     case "admin_page_bottom":
     case "admin_page_top":
     case "admin_head":
+    case "body_attributes":
       $blocks = array();
       foreach (module::active() as $module) {
         $helper_class = "{$module->name}_theme";

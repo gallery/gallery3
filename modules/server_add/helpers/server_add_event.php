@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class server_add_menu_Core {
-  static function admin($menu, $theme) {
+class server_add_event_Core {
+  static function admin_menu($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("server_add")
@@ -26,7 +26,7 @@ class server_add_menu_Core {
                ->url(url::site("admin/server_add")));
   }
 
-  static function site($menu, $theme) {
+  static function site_menu($menu, $theme) {
     $item = $theme->item();
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 

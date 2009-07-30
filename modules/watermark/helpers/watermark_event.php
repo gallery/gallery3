@@ -17,21 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class comment_menu_Core {
-  static function admin($menu, $theme) {
+class watermark_event_Core {
+  static function admin_menu($menu, $theme) {
     $menu->get("content_menu")
-      ->append(Menu::factory("link")
-               ->id("comments")
-               ->label(t("Comments"))
-               ->url(url::site("admin/comments")));
-  }
-
-  static function photo($menu, $theme) {
-    $menu
-      ->append(Menu::factory("link")
-               ->id("comments")
-               ->label(t("View comments on this item"))
-               ->url("#comments")
-               ->css_id("gCommentsLink"));
+      ->append(
+        Menu::factory("link")
+        ->id("watermarks")
+        ->label(t("Watermarks"))
+        ->url(url::site("admin/watermarks")));
   }
 }

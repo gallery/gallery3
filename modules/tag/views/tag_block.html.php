@@ -5,7 +5,9 @@
     $("#gAddTagForm input:text").autocomplete(
       url, {
         max: 30,
-        formatResult: formatTagAutoCompleteResult}
+        multiple: true,
+          multipleSeparator: ',',
+          cacheLength: 1}
     );
   });
 </script>

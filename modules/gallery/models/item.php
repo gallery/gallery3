@@ -38,17 +38,31 @@ class Item_Model extends ORM_MPTT {
       if (user::active()->admin) {
         $this->view_restrictions = array();
       } else {
-        $this->view_restrictions["owner_id"] = user::active()->id;
         foreach (user::group_ids() as $id) {
-          $this->view_restrictions["view_$id"] = access::ALLOW;
+          // Separate the first restriction from the rest to make it easier for us to formulate
+          // our where clause below
+          if (empty($this->view_restrictions)) {
+            $this->view_restrictions[0] = "view_$id";
+          } else {
+            $this->view_restrictions[1]["view_$id"] = access::ALLOW;
+          }
         }
       }
     }
+    switch (count($this->view_restrictions)) {
+    case 0:
+      break;
 
-    if (!empty($this->view_restrictions)) {
+    case 1:
+      $this->where($this->view_restrictions[0], access::ALLOW);
+      break;
+
+    default:
       $this->open_paren();
-      $this->orwhere($this->view_restrictions);
+      $this->where($this->view_restrictions[0], access::ALLOW);
+      $this->orwhere($this->view_restrictions[1]);
       $this->close_paren();
+      break;
     }
 
     return $this;
@@ -136,7 +150,7 @@ class Item_Model extends ORM_MPTT {
       Database::instance()
         ->update("items",
                  array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     } else {
       @rename($original_resize_path, $this->resize_path());
       @rename($original_thumb_path, $this->thumb_path());
@@ -172,7 +186,7 @@ class Item_Model extends ORM_MPTT {
       Database::instance()
         ->update("items",
                  array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     }
 
     return $this;
@@ -288,10 +302,10 @@ class Item_Model extends ORM_MPTT {
       foreach (Database::instance()
                ->select("name")
                ->from("items")
-               ->where("left <=", $this->left)
-               ->where("right >=", $this->right)
+               ->where("left_ptr <=", $this->left_ptr)
+               ->where("right_ptr >=", $this->right_ptr)
                ->where("id <>", 1)
-               ->orderby("left", "ASC")
+               ->orderby("left_ptr", "ASC")
                ->get() as $row) {
         $paths[] = $row->name;
       }
@@ -337,8 +351,14 @@ class Item_Model extends ORM_MPTT {
       $this->updated = time();
       if (!$this->loaded) {
         $this->created = $this->updated;
-        $r = ORM::factory("item")->select("MAX(weight) as max_weight")->find();
-        $this->weight = $r->max_weight + 1;
+        // Guard against an empty result when we create the first item.  It's unfortunate that we
+        // have to check this every time.
+        // @todo: figure out a better way to bootstrap the weight.
+        $result = Database::instance()
+          ->select("weight")->from("items")
+          ->orderby("weight", "desc")->limit(1)
+          ->get()->current();
+        $this->weight = ($result ? $result->weight : 0) + 1;
       } else {
         $send_event = 1;
       }
@@ -385,10 +405,10 @@ class Item_Model extends ORM_MPTT {
     $db = Database::instance();
     $position = $db->query("
       SELECT COUNT(*) AS position FROM {items}
-      WHERE parent_id = {$this->id}
+      WHERE `parent_id` = {$this->id}
         AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
-                                          FROM {items} WHERE id = $child_id)
-      ORDER BY `{$this->sort_column}` {$this->sort_order}")->current()->position;
+                                          FROM {items} WHERE `id` = $child_id)")
+      ->current()->position;
 
     // We stopped short of our target value in the sort (notice that we're using a < comparator
     // above) because it's possible that we have duplicate values in the sort column.  An
@@ -400,9 +420,10 @@ class Item_Model extends ORM_MPTT {
     // our base value.
     $result = $db->query("
       SELECT id FROM {items}
-      WHERE parent_id = {$this->id}
+      WHERE `parent_id` = {$this->id}
         AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
-                                      FROM {items} WHERE id = $child_id)");
+                                      FROM {items} WHERE `id` = $child_id)
+      ORDER BY `id` ASC");
     foreach ($result as $row) {
       $position++;
       if ($row->id == $child_id) {

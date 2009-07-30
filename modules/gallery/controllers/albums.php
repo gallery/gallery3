@@ -122,7 +122,7 @@ class Albums_Controller extends Items_Controller {
       print json_encode(
         array(
           "result" => "error",
-          "form" => $form->__toString() . html::script("modules/gallery/js/albums_form_add.js")));
+          "form" => $form->__toString()));
     }
   }
 
@@ -166,8 +166,7 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("edit", $album);
 
-    $view = album::get_edit_form($album);
-    $form = $view->form;
+    $form = album::get_edit_form($album);
     if ($valid = $form->validate()) {
       // Make sure that there's not a conflict
       if ($album->id != 1 &&
@@ -203,7 +202,7 @@ class Albums_Controller extends Items_Controller {
     } else {
       print json_encode(
         array("result" => "error",
-              "form" => $view->__toString()));
+              "form" => $form->__toString()));
     }
   }
 
@@ -217,8 +216,7 @@ class Albums_Controller extends Items_Controller {
 
     switch ($this->input->get("type")) {
     case "album":
-      print album::get_add_form($album) .
-        html::script("modules/gallery/js/albums_form_add.js");
+      print album::get_add_form($album);
       break;
 
     case "photo":

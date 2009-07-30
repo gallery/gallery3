@@ -5,11 +5,18 @@
   var delta = 1;
   animate_progress_bar = function() {
     var current_value = Number($(".gProgressBar div").css("width").replace("%", ""));
-    if (current_value != target_value) {
+    if (target_value > current_value) {
+      // speed up
+      delta = Math.min(delta + 0.04, 3);
+    } else {
+      // slow down
+      delta = Math.max(delta - 0.05, 1);
+    }
+
+    if (target_value == 100) {
+      $(".gProgressBar").progressbar("value", 100);
+    } else if (current_value != target_value || delta != 1) {
       var new_value = Math.min(current_value + delta, target_value);
-      if (target_value - current_value > delta) {
-        delta += .075;
-      }
       $(".gProgressBar").progressbar("value", new_value);
       animation = setTimeout(function() { animate_progress_bar(target_value); }, 100);
     } else {

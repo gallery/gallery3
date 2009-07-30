@@ -17,12 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class recaptcha_menu_Core {
-  static function admin($menu, $theme) {
+class digibug_event_Core {
+  static function admin_menu($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
-               ->id("recaptcha")
-               ->label(t("reCAPTCHA"))
-               ->url(url::site("admin/recaptcha")));
+        ->id("digibug_menu")
+        ->label(t("Digibug"))
+        ->url(url::site("admin/digibug")));
+  }
+
+  static function photo_menu($menu, $theme) {
+    $item = $theme->item();
+    $menu->append(
+      Menu::factory("link")
+      ->id("digibug")
+      ->label(t("Print with Digibug"))
+      ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
+      ->css_id("gDigibugLink"));
+  }
+
+  static function thumb_menu($menu, $theme, $item) {
+    if ($item->type == "photo") {
+      $menu->get("options_menu")
+        ->append(
+          Menu::factory("link")
+          ->id("digibug")
+          ->label(t("Print with Digibug"))
+          ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
+          ->css_id("gDigibugLink"));
+    }
   }
 }

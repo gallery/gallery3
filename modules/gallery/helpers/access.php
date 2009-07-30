@@ -99,16 +99,8 @@ class access_Core {
       return true;
     }
 
-    if ($item->owner_id == $user->id  &&
-        in_array($perm_name, array("view_full", "edit", "add"))) {
-      return true;
-    }
-
-    if ($perm_name == "view") {
-      $resource = $item->owner_id == $user->id ? $item->parent() : $item;
-    } else {
-      $resource = model_cache::get("access_cache", $item->id, "item_id");
-    }
+    $resource = $perm_name == "view" ?
+      $item : model_cache::get("access_cache", $item->id, "item_id");
     foreach ($user->groups as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
@@ -174,8 +166,8 @@ class access_Core {
     // For view permissions, if any parent is self::DENY, then those parents lock this one.
     // Return
     $lock = ORM::factory("item")
-      ->where("`left` <= $item->left")
-      ->where("`right` >= $item->right")
+      ->where("`left_ptr` <= $item->left_ptr")
+      ->where("`right_ptr` >= $item->right_ptr")
       ->where("items.id <> $item->id")
       ->join("access_intents", "items.id", "access_intents.item_id")
       ->where("access_intents.view_$group->id", self::DENY)
@@ -498,11 +490,11 @@ class access_Core {
     // item, then its safe to propagate from here.
     if ($access->$field !== self::DENY) {
       $tmp_item = ORM::factory("item")
-        ->where("left <", $item->left)
-        ->where("right >", $item->right)
+        ->where("left_ptr <", $item->left_ptr)
+        ->where("right_ptr >", $item->right_ptr)
         ->join("access_intents", "access_intents.item_id", "items.id")
         ->where("access_intents.$field", self::DENY)
-        ->orderby("left", "DESC")
+        ->orderby("left_ptr", "DESC")
         ->limit(1)
         ->find();
       if ($tmp_item->loaded) {
@@ -515,13 +507,13 @@ class access_Core {
     // them according the rule above.  So mark every permission below this level as UNKNOWN so
     // that we can tell which permissions have been changed, and which ones need to be updated.
     $db->update("items", array($field => self::UNKNOWN),
-                array("left >=" => $item->left, "right <=" => $item->right));
+                array("left_ptr >=" => $item->left_ptr, "right_ptr <=" => $item->right_ptr));
 
     $query = ORM::factory("access_intent")
-      ->select(array("access_intents.$field", "items.left", "items.right", "items.id"))
+      ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr", "items.id"))
       ->join("items", "items.id", "access_intents.item_id")
-      ->where("left >=", $item->left)
-      ->where("right <=", $item->right)
+      ->where("left_ptr >=", $item->left_ptr)
+      ->where("right_ptr <=", $item->right_ptr)
       ->where("type", "album")
       ->where("access_intents.$field IS NOT", self::INHERIT)
       ->orderby("level", "DESC")
@@ -530,11 +522,11 @@ class access_Core {
       if ($row->$field == self::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
         $db->update("items", array($field => $row->$field),
-          array($field => self::UNKNOWN, "left >=" => $row->left, "right <=" => $row->right));
+          array($field => self::UNKNOWN, "left_ptr >=" => $row->left_ptr, "right_ptr <=" => $row->right_ptr));
       } else if ($row->$field == self::DENY) {
         // DENY overwrites everything below it
         $db->update("items", array($field => $row->$field),
-                    array("left >=" => $row->left, "right <=" => $row->right));
+                    array("left_ptr >=" => $row->left_ptr, "right_ptr <=" => $row->right_ptr));
       }
     }
 
@@ -542,7 +534,7 @@ class access_Core {
     // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
     // the hierarchy, and all of those are safe to change to ALLOW.
     $db->update("items", array($field => self::ALLOW),
-                array($field => self::UNKNOWN, "left >=" => $item->left, "right <=" => $item->right));
+                array($field => self::UNKNOWN, "left_ptr >=" => $item->left_ptr, "right_ptr <=" => $item->right_ptr));
   }
 
   /**
@@ -570,10 +562,10 @@ class access_Core {
     if ($access->$field === self::INHERIT) {
       $tmp_item = ORM::factory("item")
         ->join("access_intents", "items.id", "access_intents.item_id")
-        ->where("left <", $item->left)
-        ->where("right >", $item->right)
+        ->where("left_ptr <", $item->left_ptr)
+        ->where("right_ptr >", $item->right_ptr)
         ->where("$field IS NOT", self::UNKNOWN)
-        ->orderby("left", "DESC")
+        ->orderby("left_ptr", "DESC")
         ->limit(1)
         ->find();
       if ($tmp_item->loaded) {
@@ -584,10 +576,10 @@ class access_Core {
     // With non-view permissions, each level can override any permissions that came above it
     // so start at the top and work downwards, overlaying permissions as we go.
     $query = ORM::factory("access_intent")
-      ->select(array("access_intents.$field", "items.left", "items.right"))
+      ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr"))
       ->join("items", "items.id", "access_intents.item_id")
-      ->where("left >=", $item->left)
-      ->where("right <=", $item->right)
+      ->where("left_ptr >=", $item->left_ptr)
+      ->where("right_ptr <=", $item->right_ptr)
       ->where("$field IS NOT", self::INHERIT)
       ->orderby("level", "ASC")
       ->find_all();
@@ -597,8 +589,8 @@ class access_Core {
         "UPDATE {access_caches} SET `$field` = $value " .
         "WHERE `item_id` IN " .
         "  (SELECT `id` FROM {items} " .
-        "  WHERE `left` >= $row->left " .
-        "  AND `right` <= $row->right)");
+        "  WHERE `left_ptr` >= $row->left_ptr " .
+        "  AND `right_ptr` <= $row->right_ptr)");
     }
   }
 

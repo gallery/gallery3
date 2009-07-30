@@ -43,8 +43,8 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($image_info[0], $photo->width);
     $this->assert_equal($image_info[1], $photo->height);
 
-    $this->assert_equal($photo->parent()->right - 2, $photo->left);
-    $this->assert_equal($photo->parent()->right - 1, $photo->right);
+    $this->assert_equal($photo->parent()->right_ptr - 2, $photo->left_ptr);
+    $this->assert_equal($photo->parent()->right_ptr - 1, $photo->right_ptr);
   }
 
   public function create_conflicting_photo_test() {

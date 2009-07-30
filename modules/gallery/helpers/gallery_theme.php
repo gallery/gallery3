@@ -127,4 +127,10 @@ class gallery_theme_Core {
   static function admin_credits() {
     return gallery_theme::credits();
   }
+
+  static function body_attributes() {
+    if (locales::is_rtl()) {
+      return 'class="rtl"';
+    }
+  }
 }
