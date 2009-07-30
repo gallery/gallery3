@@ -128,7 +128,7 @@ class gallery_theme_Core {
     return gallery_theme::credits();
   }
 
-  public function body_attributes() {
+  static function body_attributes() {
     if (locales::is_rtl()) {
       return 'class="rtl"';
     }
