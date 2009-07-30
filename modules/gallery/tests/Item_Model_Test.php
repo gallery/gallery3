@@ -142,17 +142,11 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function save_original_values_test() {
-    print "START\n";
     $item = $this->create_random_item();
     $item->title = "ORIGINAL_VALUE";
     $item->save();
-
-    print "CHANGE\n";
     $item->title = "NEW_VALUE";
 
-    //printf("<pre>%s</pre>",print_r($item,1));flush();
-
-    print "COMPARE\n";
     $this->assert_same("ORIGINAL_VALUE", $item->original("title"));
     $this->assert_same("NEW_VALUE", $item->title);
   }
