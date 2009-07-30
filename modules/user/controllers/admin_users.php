@@ -49,7 +49,6 @@ class Admin_Users_Controller extends Controller {
         $user->locale = $desired_locale == "none" ? null : $desired_locale;
       }
       $user->save();
-
       module::event("user_add_form_admin_completed", $user, $form);
 
       message::success(t("Created user %user_name", array("user_name" => p::clean($user->name))));
@@ -141,6 +140,7 @@ class Admin_Users_Controller extends Controller {
         $user->admin = $form->edit_user->admin->checked;
       }
       $user->save();
+      module::event("user_edit_form_admin_completed", $user, $form);
 
       message::success(t("Changed user %user_name", array("user_name" => p::clean($user->name))));
       print json_encode(array("result" => "success"));
