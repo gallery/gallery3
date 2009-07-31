@@ -163,9 +163,9 @@ modules/gallery/views/admin_maintenance_show_log.html.php    8   DIRTY $task->id
 modules/gallery/views/admin_maintenance_show_log.html.php    8   DIRTY $csrf
 modules/gallery/views/admin_maintenance_show_log.html.php    13  DIRTY $task->name
 modules/gallery/views/admin_maintenance_show_log.html.php    15        $task->get_log()
-modules/gallery/views/admin_maintenance_task.html.php        23  DIRTY $task->id
-modules/gallery/views/admin_maintenance_task.html.php        23  DIRTY $csrf
-modules/gallery/views/admin_maintenance_task.html.php        47  DIRTY $task->name
+modules/gallery/views/admin_maintenance_task.html.php        30  DIRTY $task->id
+modules/gallery/views/admin_maintenance_task.html.php        30  DIRTY $csrf
+modules/gallery/views/admin_maintenance_task.html.php        54  DIRTY $task->name
 modules/gallery/views/admin_modules.html.php                 19  DIRTY $i
 modules/gallery/views/admin_modules.html.php                 22  DIRTY $data
 modules/gallery/views/admin_modules.html.php                 22  DIRTY $module_name
