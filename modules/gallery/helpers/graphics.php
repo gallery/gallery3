@@ -195,6 +195,8 @@ class graphics_Core {
       self::init_toolkit();
     }
 
+    module::event("graphics_resize", $input_file, $output_file, $options);
+
     if (@filesize($input_file) == 0) {
       throw new Exception("@todo EMPTY_INPUT_FILE");
     }
@@ -209,6 +211,8 @@ class graphics_Core {
         ->quality(module::get_var("gallery", "image_quality"))
         ->save($output_file);
     }
+
+    module::event("graphics_resize_completed", $input_file, $output_file, $options);
   }
 
   /**
@@ -223,10 +227,14 @@ class graphics_Core {
       self::init_toolkit();
     }
 
+    module::event("graphics_rotate", $input_file, $output_file, $options);
+
     Image::factory($input_file)
       ->quality(module::get_var("gallery", "image_quality"))
       ->rotate($options["degrees"])
       ->save($output_file);
+
+    module::event("graphics_rotate_completed", $input_file, $output_file, $options);
   }
 
   /**
@@ -248,6 +256,8 @@ class graphics_Core {
     if (!self::$init) {
       self::init_toolkit();
     }
+
+    module::event("graphics_composite", $input_file, $output_file, $options);
 
     list ($width, $height) = getimagesize($input_file);
     list ($w_width, $w_height) = getimagesize($options["file"]);
@@ -276,6 +286,9 @@ class graphics_Core {
       ->composite($options["file"], $x, $y, $options["transparency"])
       ->quality(module::get_var("gallery", "image_quality"))
       ->save($output_file);
+
+
+    module::event("graphics_composite_completed", $input_file, $output_file, $options);
   }
 
   /**
