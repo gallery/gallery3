@@ -41,7 +41,7 @@ class Group_Model extends ORM {
     if (isset($created)) {
       module::event("group_created", $this);
     } else {
-      module::event("group_updated", $this);
+      module::event("group_updated", $this->original(), $this);
     }
     return $this;
   }

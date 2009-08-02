@@ -22,8 +22,8 @@ class search_event_Core {
     search::update($item);
   }
 
-  static function item_updated($item) {
-    search::update($item);
+  static function item_updated($original, $new) {
+    search::update($new);
   }
 
   static function item_deleted($item) {

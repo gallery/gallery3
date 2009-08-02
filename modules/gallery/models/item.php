@@ -365,7 +365,7 @@ class Item_Model extends ORM_MPTT {
     }
     parent::save();
     if (isset($send_event)) {
-      module::event("item_updated", $this);
+      module::event("item_updated", $this->original(), $this);
     }
     return $this;
   }

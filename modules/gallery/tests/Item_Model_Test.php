@@ -147,7 +147,7 @@ class Item_Model_Test extends Unit_Test_Case {
     $item->save();
     $item->title = "NEW_VALUE";
 
-    $this->assert_same("ORIGINAL_VALUE", $item->original("title"));
+    $this->assert_same("ORIGINAL_VALUE", $item->original()->title);
     $this->assert_same("NEW_VALUE", $item->title);
   }
 }
