@@ -64,17 +64,17 @@ class Comment_Model extends ORM {
         $created = true;
       }
     }
+    $visible_change = $this->original()->state == "published" || $this->state == "published";
     parent::save();
 
     if (isset($created)) {
       module::event("comment_created", $this);
     } else {
-      module::event("comment_updated", $this);
+      module::event("comment_updated", $this->original(), $this);
     }
 
-    // We only notify on the related items if we're making a visible change, which means moving in
-    // or out of a published state
-    if ($this->original("state") == "published" || $this->state == "published") {
+    // We only notify on the related items if we're making a visible change.
+    if ($visible_change) {
       module::event("item_related_update", $this->item());
     }
 

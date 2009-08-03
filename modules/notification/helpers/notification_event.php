@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class notification_event_Core {
-  static function item_updated($item) {
-    notification::send_item_updated($item);
+  static function item_updated($original, $new) {
+    notification::send_item_updated($new);
   }
 
   static function item_created($item) {
@@ -40,8 +40,8 @@ class notification_event_Core {
     }
   }
 
-  static function comment_updated($item) {
-    if ($item->state == "published" && $item->original("state") != "published") {
+  static function comment_updated($original, $new) {
+    if ($new->state == "published" && $original->state != "published") {
       notification::send_comment_published($new);
     }
   }
