@@ -1,41 +1,44 @@
-/* @todo move to theme css */
 /*******************************************************************
  * Dialog wide stylings
  */
-#gMessage {
-  margin-bottom: .4em;
-}
-
-#gMessage .gInfo {
-  background-color: transparent;
-  background-image: none;
-  padding-left: .4em;
-}
-
-#gOrganizeProgressDialog {
+#gOrganizeDialog {
   text-align: left;
 }
 
-#gDialog .yui-gf div.first {
-  width: 20%;
+#gOrganize {
+  overflow: hidden;
 }
 
-#gDialog .yui-gf .yui-u {
-  width: 80%;
+#gOrganize .yui-u {
+  width: 75%;
 }
+
+#gOrganize .yui-gf .first {
+  width: 25%;
+}
+
+#gOrganize .yui-gf #gMessage {
+  margin-bottom: .4em;
+  width: 75%;
+}
+
+#gMessage .gInfo {
+  font-weight: bold;
+  padding-left: 2em;
+}
+
 
 /*******************************************************************
  * Album Tree styling
  */
 #gOrganizeTreeContainer {
-  overflow-y: auto;
+  overflow: auto;
   margin: 0 !important;
   padding: 0 !important;
 }
 
-#gOrganizeAlbumDescription {
-  height: 2em;
-  overflow-y: auto;
+#gOrganizeTreeContainer ul ul li {
+  padding-left: 1.2em;
 }
 
 .gBranchSelected {
@@ -45,37 +48,21 @@
   padding: .3em 0;
 }
 
-.gBranchDroppable {
-  border: 1px dotted;
+.gBranchCollapsed {
+  display: none;
+}
+
+.gOrganizeBranch span {
+  cursor: pointer;
 }
 
 .gBranchText {
   cursor: pointer;
   width: auto;
 }
-
-.gBranchCollapsed {
-  display: none;
-}
-
-.gBranchEmpty {
-  visibility: hidden;
-}
-
-#gOrganizeTreeContainer ul ul li {
-  padding-left: 1.2em;
-}
-
 /*******************************************************************
  * Album Panel Styles
  */
-
-#gMicroThumbUnselectAll,
-#gMicroThumbSelectAll {
-  font-size: 1em;
-  font-weight: bold;
-}
-
 #gMicroThumbPanel {
   margin: 0 !important;
   padding: 0 !important;
@@ -83,33 +70,27 @@
   border: 1px solid #999 !important;
   border-top: none !important;
   border-left: none !important;
-  margin-left: -1em !important;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 #gMicroThumbGrid {
-  padding: .5em;
 }
 
 .gMicroThumbContainer {
-  display: block;
-  float: left;
-  font-size: .7em;
-  height: 9em;
-  margin-bottom: 1em;
-  margin-left: 1em;
-  opacity: .4;
-  padding: 0 .5em;
+//  padding: 0 .5em;
+//  opacity: .4;
 }
 
 .gMicroThumb {
-  height: 9em;
-  width: 9em;
-  background-color: #fff;
   display: block;
   float: left;
+//  font-size: .7em;
+  height: 9em;
+  margin-bottom: 1em;
+  margin-left: 1em;
   text-align: center;
+  width: 9em;
 }
 
 #gMicroThumbPanel #gMicroThumbGrid .gAlbum {
@@ -120,35 +101,12 @@
   opacity: 1;
 }
 
-.gMicroThumbContainer.ui-selected {
-  opacity: 1;
-}
-
-#gDragHelper .gMicroThumbGrid {
-  background-color: transparent;
-  padding: 0;
-  overflow: visible;
-}
-
-#gDragHelper .gMicroThumbContainer {
-  display: block;
-  margin: 0;
-  padding: 0;
-}
-
-#gDragHelper .gMicroThumb {
-  background-color: transparent;
-  height: auto;
-  width: auto;
-}
-
-
 /****************************************************************
  * Organize Edit Drawer styling
  */
 #gOrganizeEditDrawer {
   background-color: #13A;
-  width: 90%;
+  width: 100% !important;
 }
 
 #gOrganizeEditDrawerPanel {
@@ -203,80 +161,4 @@
   float: right;
   height: 30px;
   width: 15px;
-}
-
-#gOrganizeFormButtons {
-  bottom: 0.5em;
-}
-
-#gOrganizeFormButtons .submit {
-  display: inline;
-  float: none;
-  left: 0.5em;
-  position: relative;
-}
-
-/* yui-u gives 80% width, but then we wrap so do it ourselves */
-#gOrganizeEditForm {
-  float: right;
-  width: 79%;
-  //  height: 100px;
-}
-
-#gOrganizeFormThumbs {
-  overflow: hidden;
-}
-
-#gOrganizeFormThumbs div {
-  margin: 0;
-  text-align: center;
-  background: transparent none repeat scroll 0 0;
-}
-
-#gOrganizeFormThumbs .gMicroThumbContainer {
-  display: block;
-  float: left;
-  opacity: 1;
-  position: absolute;
-}
-
-/****************************************************************
- * Organize Edit From tabs styling
- */
-#gOrganizeEditForm.ui-tabs .ui-tabs-hide {
-  display: block !important;
-  left: -10000px;
-  position: absolute;
-}
-
-#gOrganizeEditForm.ui-widget {
-  font-size: .75em;
-}
-
-.gOrganizeEditPane {
-  height: 135px;
-  overflow-y: auto;
-}
-
-.textbox,
-.textarea {
-  border: 1px solid #e8e8e8;
-  border-top-color: #ccc;
-  border-left-color: #ccc;
-  color: #333;
-  width: 100%;
-}
-
-.textarea {
-  height: 6em;
-}
-
-.textbox  {
-  height: 1.3em;
-  width: 50%
-}
-
-.gTagGroup {
-  float:left;
-  margin: .5em;
 }
