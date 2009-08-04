@@ -588,24 +588,25 @@ form .gError,
 
 /* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gContent .gThumbMenu {
+#gContent .gContextMenu {
   bottom: 0;
   left: 0;
   position: absolute;
   width: 100%;
+  display: none;
 }
 
-#gContent .gThumbMenu li {
+#gContent .gContextMenu li {
   border-left: none;
   border-right: none;
   border-bottom: none;
 }
 
-#gContent .gThumbMenu li li {
+#gContent .gContextMenu li li {
   padding: .3em;
 }
 
-#gContent .gThumbMenu a:hover {
+#gContent .gContextMenu a:hover {
   text-decoration: none;
 }
 

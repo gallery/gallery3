@@ -23,4 +23,5 @@
     var ADD_A_COMMENT = "<?= t("Add a comment") ?>";
   </script>
   <?= $theme->photo_bottom() ?>
+  <?= $theme->context_menu($item) ?>
 </div>
