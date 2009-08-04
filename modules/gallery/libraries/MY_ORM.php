@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class ORM extends ORM_Core {
-  // Track the original value of this ORM instance so that we can look it up in ORM::original()
+  // Track the original value of this ORM so that we can look it up in ORM::original()
   protected $original = null;
 
   public function open_paren() {
@@ -34,13 +34,13 @@ class ORM extends ORM_Core {
   public function save() {
     model_cache::clear();
     $result = parent::save();
-    $this->original = $this->object;
+    $this->original = clone $this;
     return $result;
   }
 
   public function __set($column, $value) {
     if (!isset($this->original)) {
-      $this->original = $this->object;
+      $this->original = clone $this;
     }
 
     return parent::__set($column, $value);
@@ -48,14 +48,14 @@ class ORM extends ORM_Core {
 
   public function __unset($column) {
     if (!isset($this->original)) {
-      $this->original = $this->object;
+      $this->original = clone $this;
     }
 
     return parent::__unset($column);
   }
 
-  public function original($column) {
-    return $this->original[$column];
+  public function original() {
+    return $this->original;
   }
 }
 

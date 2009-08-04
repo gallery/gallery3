@@ -68,7 +68,7 @@ class User_Model extends ORM {
     if (isset($created)) {
       module::event("user_created", $this);
     } else {
-      module::event("user_updated", $this);
+      module::event("user_updated", $this->original(), $this);
     }
     return $this;
   }
