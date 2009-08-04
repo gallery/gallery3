@@ -47,6 +47,7 @@
     </a>
     <? endif ?>
     <?= $theme->resize_bottom($item) ?>
+    <?= $theme->context_menu($item) ?>
   </div>
 
   <div id="gInfo">
