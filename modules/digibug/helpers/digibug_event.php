@@ -36,9 +36,9 @@ class digibug_event_Core {
       ->css_id("gDigibugLink"));
   }
 
-  static function thumb_menu($menu, $theme, $item) {
+  static function context_menu($menu, $theme, $item) {
     if ($item->type == "photo") {
-      $menu->get("options_menu")
+      $menu
         ->append(
           Menu::factory("link")
           ->id("digibug")

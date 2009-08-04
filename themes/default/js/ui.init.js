@@ -32,7 +32,6 @@ $(document).ready(function() {
   $("#gMessage li").showMessage();
 
   // Initialize dialogs
-  $(".gMenuLink").addClass("gDialogLink");
   $("#gLoginLink").addClass("gDialogLink");
   var dialogLinks = $(".gDialogLink");
   for (var i=0; i < dialogLinks.length; i++) {
@@ -57,9 +56,6 @@ $(document).ready(function() {
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
     $(".gItem").vAlign();
-    $(".gQuick").ajaxStop(function(){
-      $(".gItem").vAlign();
-    });
   }
 
   // Photo/Item item view only
@@ -97,26 +93,19 @@ $(document).ready(function() {
     }
   );
 
-  // Initialize thumbnail menus
-  // @todo Toggle between north and south caret's on hover
-  if ($("#gContent .gThumbMenu").length) {
-    $("#gContent .gThumbMenu li").addClass("ui-state-default");
-    $("#gContent .gThumbMenu li a")
-      .not('[class]')
-      .addClass("gButtonLink ui-icon ui-icon-caret-l-n")
-      .css({
-        height: "10px",
-        margin: "0",
-        padding: "0 0 3px 0"
-      });
-
-    $(".gThumbMenu ul").hide();
-    $(".gThumbMenu").hover(
+  // Initialize context menus
+  if ($("#gContent .gContextMenu").length) {
+    $("#gContent .gContextMenu li").addClass("ui-state-default");
+    $(".gContextMenu").parent().hover(
       function() {
-        $(this).find("ul").slideDown("fast");
+        $(this).find(".gContextMenu").slideDown("fast");
+	var dialogLinks = $(this).find(".gDialogLink");
+	for (var i = 0; i < dialogLinks.length; i++) {
+	  $(dialogLinks[i]).bind("click", handleDialogEvent);
+	}
       },
       function() {
-	      $(this).find("ul").slideUp("slow");
+	$(this).find(".gContextMenu").slideUp("slow");
       }
     );
   }

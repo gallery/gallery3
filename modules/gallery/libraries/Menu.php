@@ -91,7 +91,7 @@ class Menu_Element_Link extends Menu_Element {
     } else {
       $css_class = "";
     }
-    return "<li><a$css_id class=\"gMenuElement$css_class\" href=\"$this->url\" " .
+    return "<li><a$css_id class=\"gMenuLink $css_class\" href=\"$this->url\" " .
       "title=\"$this->label\">$this->label</a></li>";
   }
 }
@@ -111,7 +111,7 @@ class Menu_Element_Dialog extends Menu_Element {
     } else {
       $css_class = "";
     }
-    return "<li><a$css_id class=\"gMenuLink$css_class\" href=\"$this->url\" " .
+    return "<li><a$css_id class=\"gDialogLink $css_class\" href=\"$this->url\" " .
            "title=\"$this->label\">$this->label</a></li>";
   }
 }
