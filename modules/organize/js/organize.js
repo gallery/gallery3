@@ -64,12 +64,10 @@
     });
 
     $(".gBranchText span").click(_collapse_or_expanded_tree);
+    $(".gBranchText").click(_setContents);
 
     //$(".gOrganizeBranch .ui-icon").click(organizeToggleChildren);
     //$(".gBranchText").droppable(treeDroppable);
-    //$(".gBranchText").click(organizeOpenFolder);
-    //retrieveMicroThumbs(item_id);
-    //showLoading("#gOrganizeDialog");
 
     //$("#gMicroThumbPanel").droppable(thumbDroppable);
     //$("#gMicroThumbPanel").selectable(selectable);
@@ -114,6 +112,7 @@
    * Open or close a branch. If the children is a div placeholder, replace with <ul>
    */
   function _collapse_or_expanded_tree(event) {
+    event.stopPropagation();
     var id = $(event.currentTarget).attr("ref");
     if ($(event.currentTarget).hasClass("ui-icon-minus")) {
       $(event.currentTarget).removeClass("ui-icon-minus");
@@ -127,12 +126,31 @@
         $.get(url, function(data) {
           $("#gOrganizeChildren-" + id).html(data);
           $(".gBranchText span").click(_collapse_or_expanded_tree);
-        });;
+          $(".gBranchText").click(_setContents);
+        });
       }
       $("#gOrganizeChildren-" + id).show();
       $(event.currentTarget).removeClass("ui-icon-plus");
       $(event.currentTarget).addClass("ui-icon-minus");
     }
+  }
+
+  /**
+   * When the text of a selection is clicked, then show that albums contents
+   */
+  function _setContents(event) {
+    event.preventDefault();
+    if ($(event.currentTarget).hasClass("gBranchSelected")) {
+      return;
+    }
+    var id = $(event.currentTarget).attr("ref");
+    $(".gBranchSelected").removeClass("gBranchSelected");
+    $(event.currentTarget).addClass("gBranchSelected");
+    var url = $("#gMicroThumbPanel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
+    $.get(url, function(data) {
+      $("#gMicroThumbGrid").html(data);
+    });
+
   }
 
 })(jQuery);
