@@ -83,6 +83,7 @@
 }
 
 #gMicroThumbGrid {
+  padding: .5em;
 }
 
 .gMicroThumbContainer {
@@ -93,12 +94,16 @@
 .gMicroThumb {
   display: block;
   float: left;
-//  font-size: .7em;
+  font-size: .8em;
   height: 9em;
   margin-bottom: 1em;
   margin-left: 1em;
   text-align: center;
   width: 9em;
+}
+
+.gThumbnail {
+  padding: .5em;
 }
 
 #gMicroThumbPanel #gMicroThumbGrid .gAlbum {
