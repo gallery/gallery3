@@ -66,7 +66,9 @@ $(document).ready(function() {
 
     // Collapse comments form, insert button to expand
     if ($("#gAddCommentForm").length) {
-      var showCommentForm = '<a href="#add_comment_form" class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right"><span class="ui-icon ui-icon-comment"></span>' + ADD_A_COMMENT + '</a>';
+      var showCommentForm = '<a href="#add_comment_form"'
+        + ' class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right">'
+        + '<span class="ui-icon ui-icon-comment"></span>' + ADD_A_COMMENT + '</a>';
       $("#gAddCommentForm").hide();
       $("#gComments").prepend(showCommentForm);
       $(".showCommentForm").click(function(){
@@ -99,13 +101,13 @@ $(document).ready(function() {
     $(".gContextMenu").parent().hover(
       function() {
         $(this).find(".gContextMenu").slideDown("fast");
-	var dialogLinks = $(this).find(".gDialogLink");
-	for (var i = 0; i < dialogLinks.length; i++) {
-	  $(dialogLinks[i]).bind("click", handleDialogEvent);
-	}
+        var dialogLinks = $(this).find(".gDialogLink");
+        for (var i = 0; i < dialogLinks.length; i++) {
+          $(dialogLinks[i]).bind("click", handleDialogEvent);
+        }
       },
       function() {
-	$(this).find(".gContextMenu").slideUp("slow");
+        $(this).find(".gContextMenu").slideUp("slow");
       }
     );
   }
