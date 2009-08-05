@@ -55,7 +55,7 @@ class Organize_Controller extends Controller {
     access::required("view", $item);
     access::required("edit", $item);
 
-    $albums = $item->children(null, 0, "album", array("title" => "ASC"));
+    $albums = $item->children(null, 0, array("type" => "album"), array("title" => "ASC"));
 
     $children = "";
     foreach ($albums as $album) {
@@ -63,7 +63,8 @@ class Organize_Controller extends Controller {
       $v->album = $album;
       $v->selected = false;
       $v->children = array();
-      $v->album_icon = $album->children_count("album") ? "ui-icon-plus" : "gBranchEmpty";
+      $v->album_icon =
+        $album->children_count(array("type" => "album")) ? "ui-icon-plus" : "gBranchEmpty";
 
       $children .= $v->__toString();
     }
@@ -82,7 +83,7 @@ class Organize_Controller extends Controller {
   }
 
   private function _tree($item, $parent, $depth=0) {
-    $albums = $parent->children(null, 0, "album", array("title" => "ASC"));
+    $albums = $parent->children(null, 0, array("type" => "album"), array("title" => "ASC"));
 
     $v = new View("organize_tree.html");
     $v->album = $parent;
