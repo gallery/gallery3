@@ -50,27 +50,6 @@ class Organize_Controller extends Controller {
     print $v->__toString();
   }
 
-  function children($item_id) {
-    $item = ORM::factory("item", $item_id);
-    access::required("view", $item);
-    access::required("edit", $item);
-
-    $albums = $item->children(null, 0, "album", array("title" => "ASC"));
-
-    $children = "";
-    foreach ($albums as $album) {
-      $v = new View("organize_tree.html");
-      $v->album = $album;
-      $v->selected = false;
-      $v->children = array();
-      $v->album_icon = $album->children_count("album") ? "ui-icon-plus" : "gBranchEmpty";
-
-      $children .= $v->__toString();
-    }
-
-    print $children;
-  }
-
   private function _get_micro_thumb_grid($item, $offset=0) {
     $v = new View("organize_thumb_grid.html");
     $v->item_id = $item->id;
@@ -81,30 +60,34 @@ class Organize_Controller extends Controller {
     return $v;
   }
 
-  private function _tree($item, $parent, $depth=0) {
-    $albums = $parent->children(null, 0, "album", array("title" => "ASC"));
+  private function _tree($item, $parent, $selected=false) {
+    access::required("view", $item);
+    access::required("edit", $item);
+
+    $albums = ORM::factory("item")
+      ->where(array("parent_id" => $parent->id, "type" => "album"))
+      ->orderby(array("title" => "ASC"))
+      ->find_all();
 
     $v = new View("organize_tree.html");
     $v->album = $parent;
 
-    if ($parent->id == $item->id) {
-      $v->selected = true;
-      $depth = 1;
-    } else {
-      $v->selected = false;
-    }
-    $v->children = array();
-    $v->album_icon = "gBranchEmpty";
-    if ($albums->count()) {
-      $v->album_icon = "ui-icon-plus";
+    $v->selected = false;
+    $v->children = "";
+    $v->album_icon = "ui-icon-plus";
+    if (!$selected) {
+      $v->selected = $parent->id == $item->id;
 
-      if ($depth <= 1) {
+      if ($albums->count() && ($parent->id == 1 || $v->selected) ) {
         $v->album_icon = "ui-icon-minus";
-        foreach ($albums as $album) {
-          $v->children[] = $this->_tree($item, $album, ++$depth);
-        }
+      }
+
+      foreach ($albums as $album) {
+        $v->children .= $this->_tree($item, $album, $v->selected);
       }
     }
-    return $v;
+    return $v->__toString();
   }
+
+
 }
