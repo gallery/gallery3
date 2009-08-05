@@ -34,7 +34,7 @@
       <?= t("Add") ?>
     </button>
 
-    <button class="ui-state-default ui-corner-all" onclick="closeDialog(); window.location.reload();">
+    <button class="ui-state-default ui-corner-all" onclick="closeDialog(); $.gallery_reload();">
       <?= t("Close") ?>
     </button>
   </span>
