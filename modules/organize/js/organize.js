@@ -374,7 +374,7 @@ function organize_dialog_init() {
   }
 
   $("#gDialog").bind("organize_close", function(target) {
-    $.gallery_reload();
+    document.location.reload();
   });
 
   heightMicroThumbPanel -= 2 * parseFloat($("#gDialog").css("padding-top"));

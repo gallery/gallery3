@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   dismiss = function() {
-    $.gallery_reload();
+    window.location.reload();
   }
   download = function(){
     // send request
