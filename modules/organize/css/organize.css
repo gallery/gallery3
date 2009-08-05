@@ -41,6 +41,14 @@
   padding-left: 1.2em;
 }
 
+.gBranchText:hover {
+  border: 1px dashed #999;
+}
+
+.gBranchEmpty {
+  visibility: hidden;
+}
+
 .gBranchSelected {
   background-color: #cfdeff !important;
   border-bottom: 1px solid #999 !important;

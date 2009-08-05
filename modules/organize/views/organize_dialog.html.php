@@ -12,7 +12,7 @@
     </div>
     <div class="yui-gf">
       <div id="gOrganizeTreeContainer" class="yui-u first">
-        <ul id="gOrganizeAlbumTree">
+        <ul id="gOrganizeAlbumTree" ref="<?= url::site("organize/children/__ITEM_ID__") ?>">
           <?= $album_tree ?>
         </ul>
       </div>
