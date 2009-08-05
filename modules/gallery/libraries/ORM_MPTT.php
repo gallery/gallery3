@@ -146,11 +146,15 @@ class ORM_MPTT_Core extends ORM {
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
+   * @param   string   type to return
    * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $orderby=null) {
+  function children($limit=null, $offset=0, $type=null, $orderby=null) {
     $this->where("parent_id", $this->id);
+    if ($type) {
+      $this->where("type", $type);
+    }
     if (empty($orderby)) {
       $this->orderby("id", "ASC");
     } else {
@@ -163,16 +167,18 @@ class ORM_MPTT_Core extends ORM {
    * Return all of the children of this node, ordered by id.
    *
    * @chainable
-   * @param   integer  SQL limit
-   * @param   integer  SQL offset
+   * @param   string  type to return
    * @return array ORM
    */
-  function children_count() {
+  function children_count($type=null) {
+    if ($type) {
+      $this->where("type", $type);
+    }
     return $this->where("parent_id", $this->id)->count_all();
   }
 
   /**
-   * Return all of the children of the specified type, ordered by id.
+   * Return all of the decendents of the specified type, ordered by id.
    *
    * @param   integer  SQL limit
    * @param   integer  SQL offset

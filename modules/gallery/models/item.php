@@ -526,10 +526,15 @@ class Item_Model extends ORM_MPTT {
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
+   * @param   string   type to return
+   * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0) {
-    return parent::children($limit, $offset, array($this->sort_column => $this->sort_order));
+  function children($limit=null, $offset=0, $type=null,  $orderby=null) {
+    if (empty($orderby)) {
+      $orderby = array($this->sort_column => $this->sort_order);
+    }
+    return parent::children($limit, $offset, $type, $orderby);
   }
 
   /**
