@@ -521,31 +521,38 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Return all of the children of this node, ordered by the defined sort order.
+   * Return all of the children of this album.  Unless you specify a specific sort order, the
+   * results will be ordered by this album's sort order.
    *
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
-   * @param   string   type to return
+   * @param   array    additional where clauses
    * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $type=null,  $orderby=null) {
+  function children($limit=null, $offset=0, $where=array(), $orderby=null) {
     if (empty($orderby)) {
       $orderby = array($this->sort_column => $this->sort_order);
     }
-    return parent::children($limit, $offset, $type, $orderby);
+    return parent::children($limit, $offset, $where, $orderby);
   }
 
   /**
-   * Return all of the children of the specified type, ordered by the defined sort order.
+   * Return the children of this album, and all of it's sub-albums.  Unless you specify a specific
+   * sort order, the results will be ordered by this album's sort order.  Note that this
+   * album's sort order is imposed on all sub-albums, regardless of their sort order.
+   *
+   * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
-   * @param   string   type to return
+   * @param   array    additional where clauses
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $type=null) {
-    return parent::descendants($limit, $offset, $type,
-                               array($this->sort_column => $this->sort_order));
+  function descendants($limit=null, $offset=0, $where=array(), $orderby=null) {
+    if (empty($orderby)) {
+      $orderby = array($this->sort_column => $this->sort_order);
+    }
+    return parent::descendants($limit, $offset, $where, $orderby);
   }
 }
