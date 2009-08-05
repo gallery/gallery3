@@ -37,7 +37,6 @@
    * Dynamically initialize the organize dialog when it is displayed
    */
   function _init(data) {
-
     // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475
     $(".sf-menu li.sfHover ul").css("z-index", 70);
 
@@ -63,6 +62,8 @@
     $("#gOrganizeDialog").bind("organize_close", function(target) {
       $.gallery_reload();
     });
+
+    $(".gBranchText span").click(_collapse_or_expanded_tree);
 
     //$(".gOrganizeBranch .ui-icon").click(organizeToggleChildren);
     //$(".gBranchText").droppable(treeDroppable);
@@ -108,6 +109,31 @@
     event.preventDefault();
     $("#gOrganizeDialog").dialog("close");
   };
+
+  /**
+   * Open or close a branch. If the children is a div placeholder, replace with <ul>
+   */
+  function _collapse_or_expanded_tree(event) {
+    var id = $(event.currentTarget).attr("ref");
+    if ($(event.currentTarget).hasClass("ui-icon-minus")) {
+      $(event.currentTarget).removeClass("ui-icon-minus");
+      $(event.currentTarget).addClass("ui-icon-plus");
+      $("#gOrganizeChildren-" + id).hide();
+    } else {
+      if ($("#gOrganizeChildren-" + id).is("div")) {
+        $("#gOrganizeChildren-" + id).remove();
+        $("#gOrganizeBranch-" + id).after("<ul id=\"gOrganizeChildren-" + id + "></ul>");
+        var url = $("#gOrganizeAlbumTree").attr("ref").replace("__ITEM_ID__", id);
+        $.get(url, function(data) {
+          $("#gOrganizeChildren-" + id).html(data);
+          $(".gBranchText span").click(_collapse_or_expanded_tree);
+        });;
+      }
+      $("#gOrganizeChildren-" + id).show();
+      $(event.currentTarget).removeClass("ui-icon-plus");
+      $(event.currentTarget).addClass("ui-icon-minus");
+    }
+  }
 
 })(jQuery);
 
