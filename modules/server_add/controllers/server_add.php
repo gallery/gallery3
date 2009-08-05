@@ -150,7 +150,8 @@ class Server_Add_Controller extends Admin_Controller {
             $queue[] = array($child, $entry->id);
           } else {
             $ext = strtolower(pathinfo($child, PATHINFO_EXTENSION));
-            if (in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+            if (in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4")) &&
+                filesize($child) > 0) {
               $child_entry = ORM::factory("server_add_file");
               $child_entry->task_id = $task->id;
               $child_entry->file = $child;

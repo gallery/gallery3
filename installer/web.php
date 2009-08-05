@@ -104,6 +104,10 @@ function check_environment() {
     $errors[] = "PHP is missing the <a href=\"http://php.net/iconv\">iconv extension</a>";
   }
 
+  if (!(extension_loaded("simplexml"))) {
+    $errors[] = "PHP is missing the <a href=\"http://php.net/simplexml\">SimpleXML extension</a>";
+  }
+
   if (extension_loaded("mbstring") && (ini_get("mbstring.func_overload") & MB_OVERLOAD_STRING)) {
     $errors[] = "The <a href=\"http://php.net/mbstring\">mbstring extension</a> is overloading PHP's native string functions.  Please disable it.";
   }

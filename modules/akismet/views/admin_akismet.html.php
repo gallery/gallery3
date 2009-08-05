@@ -2,7 +2,9 @@
 <div id="gAdminAkismet">
   <h1> <?= t("Akismet Spam Filtering") ?> </h1>
   <p>
-    <?= t("Akismet is a free, automated spam filtering service.  In order to use it, you need to sign up for a <a href=\"http://wordpress.com/api-keys\">Wordpress.com API Key</a>, which is also free.  Your comments will be automatically relayed to <a href=\"http://akismet.com\">Akismet.com</a> where they'll be scanned for spam.  Spam messages will be flagged accordingly and hidden from your vistors until you approve or delete them.") ?>
+  <?= t("Akismet is a free, automated spam filtering service.  In order to use it, you need to sign up for a <a href=\"%api_key_url\">Wordpress.com API Key</a>, which is also free.  Your comments will be automatically relayed to <a href=\"%akismet_url\">Akismet.com</a> where they'll be scanned for spam.  Spam messages will be flagged accordingly and hidden from your vistors until you approve or delete them.",
+	array("api_key_url" => "http://wordpress.com/api-keys",
+	      "akismet_url" => "http://akismet.com")) ?>
   </p>
 
   <? if ($valid_key): ?>
