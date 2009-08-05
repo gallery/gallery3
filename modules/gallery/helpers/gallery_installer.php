@@ -102,16 +102,6 @@ class gallery_installer {
                  KEY `weight` (`weight` DESC))
                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-    $db->query("DELIMITER |
-               CREATE TRIGGER setweight BEFORE INSERT ON {items}
-                 FOR EACH ROW BEGIN
-                   DECLARE new_weight int(9);
-                   SELECT weight+1 FROM {items}
-                    ORDER BY weight LIMIT 1 INTO new_weight;
-                   SET NEW.weight = new_weight;
-                 END;|
-               DELIMITER ;");
-
     $db->query("CREATE TABLE {logs} (
                  `id` int(9) NOT NULL auto_increment,
                  `category` varchar(64) default NULL,
