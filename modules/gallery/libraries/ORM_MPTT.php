@@ -150,7 +150,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $where=array(), $orderby=array("id", "ASC")) {
+  function children($limit=null, $offset=0, $where=array(), $orderby=array("id" => "ASC")) {
     return $this
       ->where("parent_id", $this->id)
       ->where($where)
@@ -181,7 +181,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   array    orderby
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $where=array(), $orderby=array("id", "ASC")) {
+  function descendants($limit=null, $offset=0, $where=array(), $orderby=array("id" => "ASC")) {
     return $this
       ->where("left_ptr >", $this->left_ptr)
       ->where("right_ptr <=", $this->right_ptr)
