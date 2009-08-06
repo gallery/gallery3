@@ -65,6 +65,7 @@
 
     $(".gBranchText span").click(_collapse_or_expanded_tree);
     $(".gBranchText").click(_setContents);
+    $(".gAlbum img.gThumbnail").live("dblclick", _openAlbum);
 
     //$(".gOrganizeBranch .ui-icon").click(organizeToggleChildren);
     //$(".gBranchText").droppable(treeDroppable);
@@ -73,34 +74,6 @@
     //$("#gMicroThumbPanel").selectable(selectable);
     //$("#gOrganizeEditDrawerHandle a").click(drawerHandleButtonsClick);
 
-    $(window).bind("resize", _size_dialog);
-  };
-
-  /**
-   * Dynamically initialize the organize dialog when it is displayed
-   */
-  function _size_dialog(event) {
-    var size = $.getViewportSize();
-    var h = $("#gOrganizeDialog").dialog("option", "minHeight");
-    var sh = size.height() - 100;
-    var height  = Math.max(sh, h);
-    var w = $("#gOrganizeDialog").dialog("option", "minWidth");
-    var sw = size.width() - 100;
-    var width = Math.max(w, sw);
-
-    $("#gOrganizeDialog").parent().css("height", height);
-    $("#gOrganizeDialog").parent().css("width", width);
-    $("#gOrganizeDialog").parent().css("left", "50px");
-    $("#gOrganizeDialog").parent().css("top", "50px");
-
-    var heightMicroThumbPanel = height - 50;
-    heightMicroThumbPanel -= 2 * parseFloat($("#gOrganizeDialog").css("padding-bottom"));
-    heightMicroThumbPanel -= $("#gMessage").outerHeight();
-    heightMicroThumbPanel = Math.floor(heightMicroThumbPanel);
-    $("#gOrganizeTreeContainer").height(heightMicroThumbPanel);
-
-    heightMicroThumbPanel -= $("#gOrganizeEditDrawerHandle").outerHeight();
-    $("#gMicroThumbPanel").height(heightMicroThumbPanel);
   };
 
   function _dialog_close(event) {
@@ -150,7 +123,19 @@
     $.get(url, function(data) {
       $("#gMicroThumbGrid").html(data);
     });
+  }
 
+  function _openAlbum(event) {
+    event.preventDefault();
+    var id = $(event.target).parent().attr("ref");
+    $(".gBranchSelected").removeClass("gBranchSelected");
+    $("#gOrganizeBranch-" + id).addClass("gBranchSelected");
+    var url = $("#gMicroThumbPanel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
+    // @todo load the branch elements if required.
+    $.get(url, function(data) {
+      $("#gMicroThumbGrid").html(data);
+    //  $(".gAlbum img.gThumbnail").dblclick(_openAlbum);
+    });
   }
 
 })(jQuery);
