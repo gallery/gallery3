@@ -18,20 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Quick_Controller extends Controller {
-  public function pane($id) {
-    $item = model_cache::get("item", $id);
-    if (!access::can("view", $item) || !access::can("edit", $item)) {
-      return "";
-    }
-
-    $view = new View("quick_pane.html");
-    $page_type = Input::instance()->get("page_type");
-    $view->button_list = gallery_quick::get_quick_buttons($item, $page_type);
-    $view->item = $item;
-    $view->page_type = $page_type;
-    print $view;
-  }
-
   public function rotate($id, $dir) {
     access::verify_csrf();
     $item = model_cache::get("item", $id);

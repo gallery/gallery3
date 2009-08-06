@@ -196,4 +196,106 @@ class gallery_Core {
                ->url(url::site("admin/maintenance")));
     return $menu;
   }
+
+  static function context_menu($menu, $theme, $item, $page_type) {
+    switch ($item->type) {
+    case "movie":
+      $edit_title = t("Edit this movie");
+      $move_title = t("Move this movie to another album");
+      $cover_title = t("Choose this movie as the album cover");
+      $delete_title = t("Delete this movie");
+      break;
+
+    case "album":
+      $edit_title = t("Edit this album");
+      $move_title = t("Move this album to another album");
+      $cover_title = t("Choose this album as the album cover");
+      $delete_title = t("Delete this album");
+      break;
+
+    default:
+      $edit_title = t("Edit this photo");
+      $move_title = t("Move this photo to another album");
+      $cover_title = t("Choose this photo as the album cover");
+      $delete_title = t("Delete this photo");
+      break;
+    }
+
+    $csrf = access::csrf_token();
+    $menu->append(Menu::factory("dialog")
+                  ->id("edit")
+                  ->label($edit_title)
+                  ->css_clasS("ui-icon-pencil")
+                  ->url(url::site("quick/form_edit/$item->id?page_type=$page_type")));
+
+
+    if ($item->is_photo() && graphics::can("rotate")) {
+      $menu
+        ->append(Menu::factory("link")
+                  ->id("rotate_ccw")
+                 ->label(t("Rotate 90 degrees counter clockwise"))
+                 ->css_class("ui-icon-rotate-ccw")
+                 ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&page_type=$page_type")))
+        ->append(Menu::factory("link")
+                  ->id("rotate_cw")
+                 ->label(t("Rotate 90 degrees clockwise"))
+                 ->css_class("ui-icon-rotate-cw")
+                 ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&page_type=$page_type")));
+    }
+
+    // Don't move photos from the photo page; we don't yet have a good way of redirecting after move
+    if ($page_type == "album") {
+      $menu
+        ->append(Menu::factory("dialog")
+                 ->id("move")
+                 ->label($move_title)
+                 ->css_class("ui-icon-folder-open")
+                 ->url(url::site("move/browse/$item->id")));
+    }
+
+    $parent = $item->parent();
+    if (access::can("edit", $parent)) {
+      // We can't make this item the highlight if it's an album with no album cover, or if it's
+      // already the album cover.
+      if (($item->type == "album" && empty($item->album_cover_item_id)) ||
+          ($item->type == "album" && $parent->album_cover_item_id == $item->album_cover_item_id) ||
+          $parent->album_cover_item_id == $item->id) {
+        $disabledState = " ui-state-disabled";
+      } else {
+        $disabledState = " ";
+      }
+      $menu
+        ->append(Menu::factory("link")
+                 ->id("make_album_cover")
+                 ->label($cover_title)
+                 ->css_class($disabledState)
+                 ->url(
+                   url::site("quick/make_album_cover/$item->id?csrf=$csrf&page_type=$page_type")))
+        ->append(Menu::factory("dialog")
+                 ->id("delete")
+                 ->label($delete_title)
+                 ->css_class("ui-icon-trash")
+                 ->css_id("gQuickDelete")
+                 ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&page_type=$page_type")));
+    }
+
+    if ($item->is_album()) {
+      $menu
+        ->append(Menu::factory("dialog")
+                 ->id("add_item")
+                 ->label(t("Add a photo"))
+                 ->css_class("add_item")
+                 ->url(url::site("simple_uploader/app/$item->id")))
+        ->append(Menu::factory("dialog")
+                 ->id("add_album")
+                 ->label(t("Add an album"))
+                 ->css_class("add_album")
+                 ->url(url::site("form/add/albums/$item->id?type=album")))
+        ->append(Menu::factory("dialog")
+                 ->id("edit_permissions")
+                 ->label(t("Edit permissions"))
+                 ->css_class("permissions")
+                 ->url(url::site("permissions/browse/$item->id")));
+    }
+  }
 }
