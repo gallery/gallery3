@@ -12,7 +12,6 @@
         $("body").append('<div id="gOrganizeDialog"></div>');
 
         $("#gOrganizeDialog").dialog(opts);
-        // Pass the approx height and width of the thumb grid to optimize thumb retrieval
         $.get(href, _init);
         return false;
       });
@@ -45,8 +44,7 @@
 
     var heightMicroThumbPanel = $("#gOrganizeDialog").innerHeight();
     heightMicroThumbPanel -= 2 * parseFloat($("#gOrganizeDialog").css("padding-bottom"));
-    heightMicroThumbPanel -= $("#gMessage").outerHeight();
-    heightMicroThumbPanel = Math.floor(heightMicroThumbPanel);
+    heightMicroThumbPanel = Math.floor(heightMicroThumbPanel - 10 - $("#gMessage").outerHeight());
     $("#gOrganizeTreeContainer").height(heightMicroThumbPanel);
 
     heightMicroThumbPanel -= $("#gOrganizeEditDrawerHandle").outerHeight();
@@ -65,15 +63,6 @@
 
     $(".gBranchText span").click(_collapse_or_expanded_tree);
     $(".gBranchText").click(_setContents);
-    $(".gAlbum img.gThumbnail").live("dblclick", _openAlbum);
-
-    //$(".gOrganizeBranch .ui-icon").click(organizeToggleChildren);
-    //$(".gBranchText").droppable(treeDroppable);
-
-    //$("#gMicroThumbPanel").droppable(thumbDroppable);
-    //$("#gMicroThumbPanel").selectable(selectable);
-    //$("#gOrganizeEditDrawerHandle a").click(drawerHandleButtonsClick);
-
   };
 
   function _dialog_close(event) {
@@ -86,26 +75,12 @@
    */
   function _collapse_or_expanded_tree(event) {
     event.stopPropagation();
-    var id = $(event.currentTarget).attr("ref");
     if ($(event.currentTarget).hasClass("ui-icon-minus")) {
-      $(event.currentTarget).removeClass("ui-icon-minus");
-      $(event.currentTarget).addClass("ui-icon-plus");
-      $("#gOrganizeChildren-" + id).hide();
+      $(event.currentTarget).removeClass("ui-icon-minus").addClass("ui-icon-plus");
     } else {
-      if ($("#gOrganizeChildren-" + id).is("div")) {
-        $("#gOrganizeChildren-" + id).remove();
-        $("#gOrganizeBranch-" + id).after("<ul id=\"gOrganizeChildren-" + id + "></ul>");
-        var url = $("#gOrganizeAlbumTree").attr("ref").replace("__ITEM_ID__", id);
-        $.get(url, function(data) {
-          $("#gOrganizeChildren-" + id).html(data);
-          $(".gBranchText span").click(_collapse_or_expanded_tree);
-          $(".gBranchText").click(_setContents);
-        });
-      }
-      $("#gOrganizeChildren-" + id).show();
-      $(event.currentTarget).removeClass("ui-icon-plus");
-      $(event.currentTarget).addClass("ui-icon-minus");
+      $(event.currentTarget).removeClass("ui-icon-plus").addClass("ui-icon-minus");
     }
+    $("#gOrganizeChildren-" + $(event.currentTarget).attr("ref")).toggle();
   }
 
   /**
@@ -118,26 +93,12 @@
     }
     var id = $(event.currentTarget).attr("ref");
     $(".gBranchSelected").removeClass("gBranchSelected");
-    $(event.currentTarget).addClass("gBranchSelected");
-    var url = $("#gMicroThumbPanel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
-    $.get(url, function(data) {
-      $("#gMicroThumbGrid").html(data);
-    });
-  }
-
-  function _openAlbum(event) {
-    event.preventDefault();
-    var id = $(event.target).parent().attr("ref");
-    $(".gBranchSelected").removeClass("gBranchSelected");
     $("#gOrganizeBranch-" + id).addClass("gBranchSelected");
     var url = $("#gMicroThumbPanel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
-    // @todo load the branch elements if required.
     $.get(url, function(data) {
       $("#gMicroThumbGrid").html(data);
-    //  $(".gAlbum img.gThumbnail").dblclick(_openAlbum);
     });
   }
-
 })(jQuery);
 
 $("document").ready(function() {

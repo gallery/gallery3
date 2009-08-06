@@ -8,15 +8,12 @@
     </span>
     <?= p::clean($album->title) ?>
   </div>
-  <? if (empty($children)): ?>
-    <div id="gOrganizeChildren-<?= $album->id ?>"></div>
-  <? else: ?>
-    <ul id="gOrganizeChildren-<?= $album->id ?>"
-       class="<?= $album_icon == "ui-icon-plus" ? "gBranchCollapsed" : "" ?>">
-      <? foreach ($children as $child): ?>
-        <?= $child ?>
-      <? endforeach ?>
-    </ul>
-  <? endif ?>
+  <ul id="gOrganizeChildren-<?= $album->id ?>"
+      class="<?= $album_icon == "ui-icon-plus" ? "gBranchCollapsed" : "" ?>">
+    <li style="display:none">&nbsp;</li>
+    <? foreach ($children as $child): ?>
+      <?= $child ?>
+    <? endforeach ?>
+  </ul>
 </li>
 

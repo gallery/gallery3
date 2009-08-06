@@ -23,21 +23,20 @@ class Organize_Controller extends Controller {
 
   function index($item_id) {
     $item = ORM::factory("item", $item_id);
-    $root = ($item->id == 1) ? $item : ORM::factory("item", 1);
+    $root = $item->id == 1 ? $item : ORM::factory("item", 1);
     access::required("view", $item);
     access::required("edit", $item);
 
     $v = new View("organize_dialog.html");
-    $v->root = $root;
-    $v->item = $item;
-    $v->album_tree = $this->_tree($item, $root);
-    $v->micro_thumb_grid = $this->_get_micro_thumb_grid($item);
-    $v->button_pane = new View("organize_button_pane.html");
-    $buttons = (object)array("left" => array(), "middle" =>array(), "right" => array(),
-                             "item" => $item);
-    module::event("organize_format_button_pane", $buttons);
+    $v->title = $item->title;
+    $parents = array();
+    foreach ($item->parents() as $parent) {
+      $parents[$parent->id] = 1;
+    }
+    $parents[$item->id] = 1;
 
-    $v->button_pane->buttons = $buttons;
+    $v->album_tree = $this->_tree($root, $parents);
+    $v->micro_thumb_grid = $this->_get_micro_thumb_grid($item);
     print $v;
   }
 
@@ -50,28 +49,6 @@ class Organize_Controller extends Controller {
     print $v->__toString();
   }
 
-  function children($item_id) {
-    $item = ORM::factory("item", $item_id);
-    access::required("view", $item);
-    access::required("edit", $item);
-
-    $albums = $item->children(null, 0, array("type" => "album"), array("title" => "ASC"));
-
-    $children = "";
-    foreach ($albums as $album) {
-      $v = new View("organize_tree.html");
-      $v->album = $album;
-      $v->selected = false;
-      $v->children = array();
-      $v->album_icon =
-        $album->children_count(array("type" => "album")) ? "ui-icon-plus" : "gBranchEmpty";
-
-      $children .= $v->__toString();
-    }
-
-    print $children;
-  }
-
   private function _get_micro_thumb_grid($item, $offset=0) {
     $v = new View("organize_thumb_grid.html");
     $v->item_id = $item->id;
@@ -82,28 +59,20 @@ class Organize_Controller extends Controller {
     return $v;
   }
 
-  private function _tree($item, $parent, $depth=0) {
-    $albums = $parent->children(null, 0, array("type" => "album"), array("title" => "ASC"));
-
+  private function _tree($item, $parents) {
     $v = new View("organize_tree.html");
-    $v->album = $parent;
-
-    if ($parent->id == $item->id) {
-      $v->selected = true;
-      $depth = 1;
-    } else {
-      $v->selected = false;
-    }
+    $v->album = $item;
+    $keys = array_keys($parents);
+    $v->selected = end($keys) == $item->id;
     $v->children = array();
     $v->album_icon = "gBranchEmpty";
-    if ($albums->count()) {
-      $v->album_icon = "ui-icon-plus";
 
-      if ($depth <= 1) {
-        $v->album_icon = "ui-icon-minus";
-        foreach ($albums as $album) {
-          $v->children[] = $this->_tree($item, $album, ++$depth);
-        }
+    $albums = $item->children(null, 0, array("type" => "album"), array("title" => "ASC"));
+    if ($albums->count()) {
+      $v->album_icon = empty($parents[$item->id]) ? "ui-icon-plus" : "ui-icon-minus";
+
+      foreach ($albums as $album) {
+        $v->children[] = $this->_tree($album, $parents);
       }
     }
     return $v;
