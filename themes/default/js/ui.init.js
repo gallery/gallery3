@@ -34,10 +34,7 @@ $(document).ready(function() {
   // Initialize dialogs
   $(".gMenuLink").addClass("gDialogLink");
   $("#gLoginLink").addClass("gDialogLink");
-  var dialogLinks = $(".gDialogLink");
-  for (var i=0; i < dialogLinks.length; i++) {
-    $(dialogLinks[i]).bind("click", handleDialogEvent);
-  }
+  $(".gDialogLink").bind("click", handleDialogEvent);
 
   // Initialize view menu
   if ($("#gViewMenu").length) {

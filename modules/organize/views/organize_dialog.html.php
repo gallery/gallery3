@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="gOrganize">
-  <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($item->title))) ?></h1>
+  <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($title))) ?></h1>
   <div id="bd">
     <div class="yui-gf">
       <div class="yui-u first">
@@ -12,7 +12,7 @@
     </div>
     <div class="yui-gf">
       <div id="gOrganizeTreeContainer" class="yui-u first">
-        <ul id="gOrganizeAlbumTree" ref="<?= url::site("organize/children/__ITEM_ID__") ?>">
+        <ul id="gOrganizeAlbumTree">
           <?= $album_tree ?>
         </ul>
       </div>
@@ -27,7 +27,10 @@
           <div id="gOrganizeEditDrawerPanel" class="yui-gf">
           </div>
           <div id="gOrganizeEditDrawerHandle">
-            <?= $button_pane ?>
+            <div id="gOrganizeEditHandleButtonsRight">
+              <a id="gMicroThumbDone" href="#" ref="done"
+                 class="gButtonLink ui-corner-all ui-state-default"><?= t("Close") ?></a>
+            </div>
           </div>
         </div>
       </div>
