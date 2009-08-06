@@ -17,9 +17,9 @@
           height: height,
           position: "center",
           close: function () {
-            $("#gOrganizeDialog").trigger("organize_close");
             $("#gOrganizeDialog").dialog("destroy").remove();
-          },
+            document.location.reload();
+         },
           zIndex: 75
         });
         $.get(href, _init);
@@ -47,18 +47,12 @@
       $("#gOrganizeDialog").dialog('option', 'title', $("#gOrganizeDialog fieldset legend:eq(0)").html());
     }
 
-    $("#gOrganizeDialog #gMicroThumbDone").click(_dialog_close);
-    $("#gOrganizeDialog").bind("organize_close", function(target) {
-      document.location.reload();
+    $("#gOrganizeDialog #gMicroThumbDone").click(function(event) {
+      $("#gOrganizeDialog").dialog("close");
     });
 
     $(".gBranchText span").click(_collapse_or_expanded_tree);
     $(".gBranchText").click(_setContents);
-  };
-
-  function _dialog_close(event) {
-    event.preventDefault();
-    $("#gOrganizeDialog").dialog("close");
   };
 
   /**
