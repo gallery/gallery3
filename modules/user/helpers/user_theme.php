@@ -19,9 +19,11 @@
  */
 class user_theme_Core {
   static function header_top($theme) {
-    $view = new View("login.html");
-    $view->user = user::active();
-    return $view->render();
+    if ($theme->page_type != "login") {
+      $view = new View("login.html");
+      $view->user = user::active();
+      return $view->render();
+    }
   }
 
   static function admin_head($theme) {
