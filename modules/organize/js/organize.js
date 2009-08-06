@@ -1,54 +1,45 @@
 (function($) {
-  $.fn.organize = function(options) {
+  $.fn.organize = function() {
     var size = $.getViewportSize();
     var height = size.height() - 100;     // Leave 50 pixels on the top and bottom of the dialog
     var width = size.width() - 100;       // Leave 50 pixels on the left and right of the dialog
-    var opts = $.extend({}, $.fn.organize.defaults, {width: width, height: height}, options);
     return this.each(function() {
       $(this).click(function(event) {
         var href = event.target.href;
-        var size = $.getViewportSize();
 
         $("body").append('<div id="gOrganizeDialog"></div>');
 
-        $("#gOrganizeDialog").dialog(opts);
+        $("#gOrganizeDialog").dialog({
+          autoOpen: false,
+          modal: true,
+          resizable: false,
+          width: width,
+          height: height,
+          position: "center",
+          close: function () {
+            $("#gOrganizeDialog").trigger("organize_close");
+            $("#gOrganizeDialog").dialog("destroy").remove();
+          },
+          zIndex: 75
+        });
         $.get(href, _init);
         return false;
       });
     });
   };
 
-  $.fn.organize.defaults = {
-    autoOpen: false,
-    modal: true,
-    resizable: false,
-    minWidth: 600,
-    minHeight: 500,
-    position: "center",
-    close: function () {
-      $("#gOrganizeDialog").trigger("organize_close");
-      $("#gOrganizeDialog").dialog("destroy").remove();
-    },
-    zIndex: 75
-  };
-
   /**
    * Dynamically initialize the organize dialog when it is displayed
    */
   function _init(data) {
-    // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475
+    // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475 (target 1.8?)
     $(".sf-menu li.sfHover ul").css("z-index", 70);
 
     $("#gOrganizeDialog").html(data);
     $("#gOrganizeDialog").dialog("open");
 
-    var heightMicroThumbPanel = $("#gOrganizeDialog").innerHeight();
-    heightMicroThumbPanel -= 2 * parseFloat($("#gOrganizeDialog").css("padding-bottom"));
-    heightMicroThumbPanel = Math.floor(heightMicroThumbPanel - 10 - $("#gMessage").outerHeight());
-    $("#gOrganizeTreeContainer").height(heightMicroThumbPanel);
-
-    heightMicroThumbPanel -= $("#gOrganizeEditDrawerHandle").outerHeight();
-    $("#gMicroThumbPanel").height(heightMicroThumbPanel);
+    var height = $("#gOrganizeDetail").innerHeight();
+    $("#gMicroThumbPanel").height(height - $("#gOrganizeEditDrawerHandle").outerHeight());
 
     if ($("#gOrganizeDialog h1").length) {
       $("#gOrganizeDialog").dialog('option', 'title', $("#gOrganizeDialog h1:eq(0)").html());

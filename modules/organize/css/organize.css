@@ -7,6 +7,11 @@
 
 #gOrganize {
   overflow: hidden;
+  height: 100%;
+}
+
+#gOrganize #bd {
+  height: 100%;
 }
 
 #gOrganize .yui-u {
@@ -22,16 +27,20 @@
   width: 75%;
 }
 
+#gOrganizeDetail {
+  height: 100%;
+}
+
 #gMessage .gInfo {
   font-weight: bold;
   padding-left: 2em;
 }
 
-
 /*******************************************************************
  * Album Tree styling
  */
 #gOrganizeTreeContainer {
+  height: 100%;
   overflow: auto;
   margin: 0 !important;
   padding: 0 !important;
