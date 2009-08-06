@@ -12,7 +12,7 @@
 
       $("#gDialog #gMicroThumbDone").click(function(event) {
         $("#gDialog").dialog("close");
-                                             window.location.reload();
+        window.location.reload();
       });
 
       $(".gBranchText span").click($.organize.collapse_or_expand_tree);
