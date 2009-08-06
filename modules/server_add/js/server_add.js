@@ -4,11 +4,9 @@
 function select_file(li) {
   $(li).toggleClass("selected");
   if ($("#gServerAdd span.selected").length) {
-    $("#gServerAddAddButton").enable(true);
-    $("#gServerAddAddButton").removeClass("ui-state-disabled");
+    $("#gServerAddAddButton").enable(true).removeClass("ui-state-disabled");
   } else {
-    $("#gServerAddAddButton").enable(false);
-    $("#gServerAddAddButton").addClass("ui-state-disabled");
+    $("#gServerAddAddButton").enable(false).addClass("ui-state-disabled");
   }
 }
 
