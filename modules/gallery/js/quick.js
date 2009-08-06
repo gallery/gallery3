@@ -67,9 +67,9 @@ var quick_do = function(cont, pane, img) {
             img.css("margin-top", 0);
           }
         } else if (data.location) {
-          $.gallery_location(data.location);
+          window.location = data.location;
         } else if (data.reload) {
-          $.gallery_reload();
+          window.location.reload();
         }
       }
     });

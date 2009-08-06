@@ -58,7 +58,7 @@
 
     $("#gOrganizeDialog #gMicroThumbDone").click(_dialog_close);
     $("#gOrganizeDialog").bind("organize_close", function(target) {
-      $.gallery_reload();
+      document.location.reload();
     });
 
     $(".gBranchText span").click(_collapse_or_expanded_tree);

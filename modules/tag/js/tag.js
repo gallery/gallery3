@@ -59,7 +59,7 @@ function editInPlace(element) {
           closeEditInPlaceForms(); // close form
           $("#gTag-" + data.tag_id).text(data.new_tagname); // update tagname
           console.log(data);
-          $.gallery_reload();
+          window.location.reload();
         }
       }
     });
