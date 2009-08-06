@@ -23,10 +23,4 @@ class user_theme_Core {
     $view->user = user::active();
     return $view->render();
   }
-
-  static function admin_head($theme) {
-    if (strpos(Router::$current_uri, "admin/users") !== false) {
-      $theme->script("gallery.panel.js");
-    }
-  }
 }
