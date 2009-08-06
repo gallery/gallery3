@@ -19,8 +19,9 @@
  */
 class organize_theme {
   static function head($theme) {
-    //$theme->script("organize_init.js");
-    $theme->script("organize.js");
-    $theme->css("organize.css");
+    if (access::can("view", $theme->item()) && access::can("edit", $theme->item())) {
+      $theme->script("organize.js");
+      $theme->css("organize.css");
+    }
   }
 }
