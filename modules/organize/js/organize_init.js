@@ -17,7 +17,7 @@ $("document").ready(function() {
       zIndex: 75
     });
 
-    //showLoading("#gDialog");
+    //$.gallery_show_loading("#gDialog");
 
     $.get(href, function(data) {
       $("#gDialog").html(data);

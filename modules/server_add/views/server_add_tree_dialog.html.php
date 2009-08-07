@@ -34,7 +34,7 @@
       <?= t("Add") ?>
     </button>
 
-    <button class="ui-state-default ui-corner-all" onclick="closeDialog(); window.location.reload();">
+    <button id="gServerCloseButton" class="ui-state-default ui-corner-all">
       <?= t("Close") ?>
     </button>
   </span>
@@ -47,6 +47,9 @@
            progressbar().
            progressbar("value", 0);
          $("#gProgress").slideDown("fast", function() { start_add() });
+      });
+      $("#gServerCloseButton").click(function(event) {
+        $("#gDialog").dialog("close");
       });
     });
   </script>

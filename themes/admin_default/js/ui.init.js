@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
   // Initialize Superfish menus
   $("#gSiteAdminMenu ul.gMenu").addClass("sf-menu");
   $("ul.gMenu").addClass("sf-menu");
@@ -15,17 +14,17 @@ $(document).ready(function(){
   $("#gSiteAdminMenu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").showMessage();
+  $("#gMessage li").gallery_show_message();
 
   // Initialize modal dialogs
-  $(".gDialogLink").bind("click", handleDialogEvent);
+  $(".gDialogLink").gallery_dialog();
 
   // Initialize panels
-  $(".gPanelLink").bind("click", handlePanelEvent);
+  $(".gPanelLink").gallery_panel();
 
   if ($("#gPhotoStream").length) {
     // Vertically align thumbs in photostream
-    $(".gItem").vAlign();
+    $(".gItem").gallery_valign();
   }
 
   // Apply jQuery UI button css to submit inputs

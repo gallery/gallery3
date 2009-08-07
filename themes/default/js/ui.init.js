@@ -1,3 +1,4 @@
+#
 /**
  * Initialize jQuery UI and Plugin elements
  *
@@ -29,11 +30,11 @@ $(document).ready(function() {
   $("#gSiteMenu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").showMessage();
+  $("#gMessage li").gallery_show_message();
 
   // Initialize dialogs
   $("#gLoginLink").addClass("gDialogLink");
-  $(".gDialogLink").bind("click", handleDialogEvent);
+  $(".gDialogLink").gallery_dialog();
 
   // Initialize view menu
   if ($("#gViewMenu").length) {
@@ -52,7 +53,10 @@ $(document).ready(function() {
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
-    $(".gItem").vAlign();
+    $(".gItem").gallery_valign();
+    $(".gQuick").ajaxStop(function(){
+      $(".gItem").gallery_valign();
+    });
   }
 
   // Photo/Item item view only
