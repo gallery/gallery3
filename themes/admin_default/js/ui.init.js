@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
   // Initialize Superfish menus
   $("#gSiteAdminMenu ul.gMenu").addClass("sf-menu");
   $("ul.gMenu").addClass("sf-menu");
@@ -21,7 +20,7 @@ $(document).ready(function(){
   $(".gDialogLink").bind("click", handleDialogEvent);
 
   // Initialize panels
-  $(".gPanelLink").bind("click", handlePanelEvent);
+  $(".gPanelLink").galleryPanel();
 
   if ($("#gPhotoStream").length) {
     // Vertically align thumbs in photostream
