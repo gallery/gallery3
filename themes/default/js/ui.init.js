@@ -34,7 +34,7 @@ $(document).ready(function() {
   // Initialize dialogs
   $(".gMenuLink").addClass("gDialogLink");
   $("#gLoginLink").addClass("gDialogLink");
-  $(".gDialogLink").galleryDialog();
+  $(".gDialogLink").gallery_dialog();
 
   // Initialize view menu
   if ($("#gViewMenu").length) {

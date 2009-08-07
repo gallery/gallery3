@@ -17,10 +17,10 @@ $(document).ready(function(){
   $("#gMessage li").showMessage();
 
   // Initialize modal dialogs
-  $(".gDialogLink").galleryDialog();
+  $(".gDialogLink").gallery_dialog();
 
   // Initialize panels
-  $(".gPanelLink").galleryPanel();
+  $(".gPanelLink").gallery_panel();
 
   if ($("#gPhotoStream").length) {
     // Vertically align thumbs in photostream
