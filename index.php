@@ -21,7 +21,8 @@
 define("IN_PRODUCTION", true);
 
 // Gallery requires PHP 5.2+
-version_compare(PHP_VERSION, "5.2.3", "<") and exit("Gallery requires PHP 5.2.3 or newer.");
+version_compare(PHP_VERSION, "5.2.3", "<") and
+  exit("Gallery requires PHP 5.2.3 or newer (you're using " . PHP_VERSION  . ")");
 
 // Gallery requires short_tags to be on
 !ini_get("short_open_tag") and exit("Gallery requires short_open_tag to be on.");
