@@ -1,6 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <li class="gOrganizeBranch ui-icon-left" ref="<?= $album->id ?>">
-
   <div id="gOrganizeBranch-<?= $album->id ?>" ref="<?= $album->id ?>"
        class="<?= $selected ? "gBranchSelected" : "" ?> gBranchText">
     <span id="gOrganizeIcon-<?= $album->id ?>" ref="<?= $album->id ?>"
@@ -16,4 +15,3 @@
     <? endforeach ?>
   </ul>
 </li>
-

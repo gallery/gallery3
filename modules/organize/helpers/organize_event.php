@@ -27,7 +27,7 @@ class organize_event_Core {
         ->id("organize")
         ->label(t("Organize Album"))
         ->css_id("gOrganizeLink")
-        ->url(url::site("organize/index/{$item->id}")));
+        ->url(url::site("organize/dialog/{$item->id}")));
     }
   }
 }
