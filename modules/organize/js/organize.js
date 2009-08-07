@@ -16,26 +16,22 @@
       });
 
       $(".gBranchText span").click($.organize.collapse_or_expand_tree);
-      $(".gBranchText").click($.organize.setContents);
+      $(".gBranchText").click($.organize.show_album);
     },
 
     /**
-     * Open or close a branch. If the children is a div placeholder, replace with <ul>
+     * Open or close a branch.
      */
-    collapse_or_expand_tree: function (event) {
+    collapse_or_expand_tree: function(event) {
       event.stopPropagation();
-      if ($(event.currentTarget).hasClass("ui-icon-minus")) {
-        $(event.currentTarget).removeClass("ui-icon-minus").addClass("ui-icon-plus");
-      } else {
-        $(event.currentTarget).removeClass("ui-icon-plus").addClass("ui-icon-minus");
-      }
+      $(event.currentTarget).toggleClass("ui-icon-minus").toggleClass("ui-icon-plus");
       $("#gOrganizeChildren-" + $(event.currentTarget).attr("ref")).toggle();
     },
 
     /**
      * When the text of a selection is clicked, then show that albums contents
      */
-    setContents: function(event) {
+    show_album: function(event) {
       event.preventDefault();
       if ($(event.currentTarget).hasClass("gBranchSelected")) {
         return;
