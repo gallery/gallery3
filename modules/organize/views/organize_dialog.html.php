@@ -38,3 +38,13 @@
   </div>
 </div>
 
+<script type="text/javascript">
+  setTimeout(function() {
+    // Resize with 50 pixels padding all around
+    var size = $.getViewportSize();
+    $("#gDialog").dialog("option", "height", size.height() - 100)
+                 .dialog("option", "width", size.width() - 100)
+                 .dialog("option", "position", "center");
+    $.organize.init();
+  }, 0);
+</script>
