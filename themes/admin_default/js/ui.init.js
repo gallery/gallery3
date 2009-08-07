@@ -17,7 +17,7 @@ $(document).ready(function(){
   $("#gMessage li").showMessage();
 
   // Initialize modal dialogs
-  $(".gDialogLink").bind("click", handleDialogEvent);
+  $(".gDialogLink").galleryDialog();
 
   // Initialize panels
   $(".gPanelLink").galleryPanel();

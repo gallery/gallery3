@@ -28,7 +28,7 @@
           {},
           function(data) {
             $("#group-" + group_id).html(data);
-            $("#group-" + group_id + " .gDialogLink").bind("click", handleDialogEvent);
+            $("#group-" + group_id + " .gDialogLink").galleryDialog());
           });
   }
 
