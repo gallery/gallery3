@@ -4,6 +4,12 @@
      * Dynamically initialize the organize dialog when it is displayed
      */
     init: function(data) {
+      // Resize with 50 pixels padding all around
+      var size = $.getViewportSize();
+      $("#gDialog").dialog("option", "height", size.height() - 100)
+	.dialog("option", "width", size.width() - 100)
+	.dialog("option", "position", "center");
+
       // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475 (target 1.8?)
       $(".sf-menu li.sfHover ul").css("z-index", 70);
 

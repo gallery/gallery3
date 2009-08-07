@@ -18,10 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Organize_Controller extends Controller {
-  private static $_MICRO_THUMB_SIZE = 90;
-  private static $_MICRO_THUMB_PADDING = 10;
-
-  function index($item_id) {
+  function dialog($item_id) {
     $item = ORM::factory("item", $item_id);
     $root = $item->id == 1 ? $item : ORM::factory("item", 1);
     access::required("view", $item);
@@ -36,26 +33,21 @@ class Organize_Controller extends Controller {
     $parents[$item->id] = 1;
 
     $v->album_tree = $this->_tree($root, $parents);
-    $v->micro_thumb_grid = $this->_get_micro_thumb_grid($item);
+    $v->micro_thumb_grid = $this->_get_micro_thumb_grid($item, 0);
     print $v;
   }
 
-  function content($item_id, $offset=0) {
+  function content($item_id, $offset) {
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
     access::required("edit", $item);
-
-    $v = $this->_get_micro_thumb_grid($item, $offset);
-    print $v->__toString();
+    print $this->_get_micro_thumb_grid($item, $offset);
   }
 
-  private function _get_micro_thumb_grid($item, $offset=0) {
+  private function _get_micro_thumb_grid($item, $offset) {
     $v = new View("organize_thumb_grid.html");
-    $v->item_id = $item->id;
-    $v->children = $item->children(25, $offset);
-    $v->thumbsize = self::$_MICRO_THUMB_SIZE;
-    $v->offset = $offset + 25;
-
+    $v->item = $item;
+    $v->offset = $offset;
     return $v;
   }
 

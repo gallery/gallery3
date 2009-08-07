@@ -1,4 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/css/organize.css") ?>" />
 <div id="gOrganize">
   <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($title))) ?></h1>
   <div id="bd">
@@ -38,13 +39,9 @@
   </div>
 </div>
 
+<script type="text/javascript" src="<?= url::file("modules/organize/js/organize.js") ?>"></script>
 <script type="text/javascript">
   setTimeout(function() {
-    // Resize with 50 pixels padding all around
-    var size = $.getViewportSize();
-    $("#gDialog").dialog("option", "height", size.height() - 100)
-                 .dialog("option", "width", size.width() - 100)
-                 .dialog("option", "position", "center");
     $.organize.init();
   }, 0);
 </script>
