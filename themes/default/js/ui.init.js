@@ -1,4 +1,3 @@
-#
 /**
  * Initialize jQuery UI and Plugin elements
  *
