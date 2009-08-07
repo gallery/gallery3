@@ -29,7 +29,7 @@ $(document).ready(function() {
   $("#gSiteMenu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").showMessage();
+  $("#gMessage li").gallery_show_message();
 
   // Initialize dialogs
   $(".gMenuLink").addClass("gDialogLink");
@@ -53,9 +53,9 @@ $(document).ready(function() {
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
-    $(".gItem").vAlign();
+    $(".gItem").gallery_valign();
     $(".gQuick").ajaxStop(function(){
-      $(".gItem").vAlign();
+      $(".gItem").gallery_valign();
     });
   }
 

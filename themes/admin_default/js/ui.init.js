@@ -14,7 +14,7 @@ $(document).ready(function(){
   $("#gSiteAdminMenu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").showMessage();
+  $("#gMessage li").gallery_show_message();
 
   // Initialize modal dialogs
   $(".gDialogLink").gallery_dialog();
@@ -24,7 +24,7 @@ $(document).ready(function(){
 
   if ($("#gPhotoStream").length) {
     // Vertically align thumbs in photostream
-    $(".gItem").vAlign();
+    $(".gItem").gallery_valign();
   }
 
   // Apply jQuery UI button css to submit inputs
