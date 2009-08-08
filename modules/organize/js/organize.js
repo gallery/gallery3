@@ -4,21 +4,19 @@
      * Dynamically initialize the organize dialog when it is displayed
      */
     init: function(data) {
-      // Resize with 50 pixels padding all around
-      var size = $.getViewportSize();
-      $("#gDialog").dialog("option", "height", size.height() - 100)
-	.dialog("option", "width", size.width() - 100)
-	.dialog("option", "position", "center");
-
       // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475 (target 1.8?)
       $(".sf-menu li.sfHover ul").css("z-index", 70);
 
-      var height = $("#gOrganizeDetail").innerHeight();
-      $("#gMicroThumbPanel").height(height - $("#gOrganizeEditDrawerHandle").outerHeight());
+      $("#gDialog").bind("dialogopen", function(event, ui) {
+        $("#gMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
+      });
+
+      $("#gDialog").bind("dialogclose", function(event, ui) {
+        window.location.reload();
+      });
 
       $("#gDialog #gMicroThumbDone").click(function(event) {
         $("#gDialog").dialog("close");
-        window.location.reload();
       });
 
       $(".gBranchText span").click($.organize.collapse_or_expand_tree);

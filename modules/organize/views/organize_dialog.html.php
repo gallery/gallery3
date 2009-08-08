@@ -41,7 +41,5 @@
 
 <script type="text/javascript" src="<?= url::file("modules/organize/js/organize.js") ?>"></script>
 <script type="text/javascript">
-  setTimeout(function() {
-    $.organize.init();
-  }, 0);
+  $("#gOrganize").ready($.organize.init);
 </script>
