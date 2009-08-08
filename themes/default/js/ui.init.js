@@ -29,14 +29,11 @@ $(document).ready(function() {
   $("#gSiteMenu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").showMessage();
+  $("#gMessage li").gallery_show_message();
 
   // Initialize dialogs
   $("#gLoginLink").addClass("gDialogLink");
-  var dialogLinks = $(".gDialogLink");
-  for (var i=0; i < dialogLinks.length; i++) {
-    $(dialogLinks[i]).bind("click", handleDialogEvent);
-  }
+  $(".gDialogLink").gallery_dialog();
 
   // Initialize view menu
   if ($("#gViewMenu").length) {
@@ -55,7 +52,10 @@ $(document).ready(function() {
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
-    $(".gItem").vAlign();
+    $(".gItem").gallery_valign();
+    $(".gQuick").ajaxStop(function(){
+      $(".gItem").gallery_valign();
+    });
   }
 
   // Photo/Item item view only

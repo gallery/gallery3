@@ -50,8 +50,9 @@ class gallery_rss_Core {
 
       $feed->children = $item
         ->viewable()
-        ->descendants($limit, $offset, "photo");
-      $feed->max_pages = ceil($item->viewable()->descendants_count("photo") / $limit);
+        ->descendants($limit, $offset, array("type" => "photo"));
+      $feed->max_pages = ceil(
+        $item->viewable()->descendants_count(array("type" => "photo")) / $limit);
       $feed->title = p::purify($item->title);
       $feed->link = url::abs_site("albums/{$item->id}");
       $feed->description = nl2br(p::purify($item->description));

@@ -146,69 +146,62 @@ class ORM_MPTT_Core extends ORM {
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
+   * @param   array    additional where clauses
    * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $orderby=null) {
-    $this->where("parent_id", $this->id);
-    if (empty($orderby)) {
-      $this->orderby("id", "ASC");
-    } else {
-      $this->orderby($orderby);
-    }
-    return $this->find_all($limit, $offset);
+  function children($limit=null, $offset=0, $where=array(), $orderby=array("id" => "ASC")) {
+    return $this
+      ->where("parent_id", $this->id)
+      ->where($where)
+      ->orderby($orderby)
+      ->find_all($limit, $offset);
   }
 
   /**
    * Return all of the children of this node, ordered by id.
    *
    * @chainable
-   * @param   integer  SQL limit
-   * @param   integer  SQL offset
+   * @param   array    additional where clauses
    * @return array ORM
    */
-  function children_count() {
-    return $this->where("parent_id", $this->id)->count_all();
+  function children_count($where=array()) {
+    return $this
+      ->where($where)
+      ->where("parent_id", $this->id)
+      ->count_all();
   }
 
   /**
-   * Return all of the children of the specified type, ordered by id.
+   * Return all of the decendents of the specified type, ordered by id.
    *
    * @param   integer  SQL limit
    * @param   integer  SQL offset
-   * @param   string   type to return
+   * @param   array    additional where clauses
    * @param   array    orderby
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $type=null, $orderby=null) {
-    $this->where("left_ptr >", $this->left_ptr)
-      ->where("right_ptr <=", $this->right_ptr);
-    if ($type) {
-      $this->where("type", $type);
-    }
-
-    if (empty($orderby)) {
-      $this->orderby("id", "ASC");
-    } else {
-      $this->orderby($orderby);
-    }
-
-    return $this->find_all($limit, $offset);
+  function descendants($limit=null, $offset=0, $where=array(), $orderby=array("id" => "ASC")) {
+    return $this
+      ->where("left_ptr >", $this->left_ptr)
+      ->where("right_ptr <=", $this->right_ptr)
+      ->where($where)
+      ->orderby($orderby)
+      ->find_all($limit, $offset);
   }
 
   /**
    * Return the count of all the children of the specified type.
    *
-   * @param   string   type to count
+   * @param    array    additional where clauses
    * @return   integer  child count
    */
-  function descendants_count($type=null) {
-    $this->where("left_ptr >", $this->left_ptr)
-      ->where("right_ptr <=", $this->right_ptr);
-    if ($type) {
-      $this->where("type", $type);
-    }
-    return $this->count_all();
+  function descendants_count($where=array()) {
+    return $this
+      ->where("left_ptr >", $this->left_ptr)
+      ->where("right_ptr <=", $this->right_ptr)
+      ->where($where)
+      ->count_all();
   }
 
   /**

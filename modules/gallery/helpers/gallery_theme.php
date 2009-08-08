@@ -47,6 +47,7 @@ class gallery_theme_Core {
   }
 
   static function admin_head($theme) {
+    $theme->script("gallery.panel.js");
     $session = Session::instance();
     if ($session->get("debug")) {
       $theme->css("debug.css");
