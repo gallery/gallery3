@@ -8,6 +8,7 @@
       $(".sf-menu li.sfHover ul").css("z-index", 70);
 
       $("#gDialog").bind("dialogopen", function(event, ui) {
+        $("#gOrganize").height($("#gDialog").innerHeight() - 20);
         $("#gMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
       });
 
