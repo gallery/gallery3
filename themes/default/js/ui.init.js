@@ -53,8 +53,13 @@ $(document).ready(function() {
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
     $(".gItem").gallery_valign();
-    $(".gQuick").ajaxStop(function(){
-      $(".gItem").gallery_valign();
+    // Apply styles to gContextMenu
+    $(".gContextMenu li").addClass("ui-state-default");
+    $(".gContextMenu a").addClass("gButtonLink ui-icon-left");
+    $(".gContextMenu a").prepend("<span class=\"ui-icon\"></span>");
+    $(".gContextMenu a span").each(function() {
+      var iconClass = $(this).parent().attr("class").match(/ui-icon-.[^\s]*/).toString();
+      $(this).addClass(iconClass);
     });
   }
 
@@ -96,7 +101,6 @@ $(document).ready(function() {
   );
 
   // Initialize context menus
-  // @todo Switch Options icon to carat-1-s when menu's open
   // @todo apply hover affect to links
   $(".gItem").hover(
     function(){
@@ -104,9 +108,6 @@ $(document).ready(function() {
       var itemClasses = $(this).attr("class");
       var bgColor = $(this).css("background-color");
       var cont = $(this).parent();
-      var iconSpan = "<span class=\"ui-icon ui-icon-carat-1-n\"></span>";
-      $("#gHoverItem .ui-icon-carat-1-n").html(iconSpan + $("#gHoverItem .ui-icon-carat-1-n").html());
-
       $("#gHoverItem").remove();
       cont.append("<div id=\"gHoverItem\"><div class=\"" + itemClasses + "\">" 
           + $(this).html() + "</div></div>");
@@ -117,21 +118,12 @@ $(document).ready(function() {
       $("#gHoverItem").hover(
         function(){
           // Initialize context menus
-          $("#gContent .gContextMenu li").addClass("ui-state-default");
           $(".gContextMenu ul").hide();
           $(".gContextMenu").hover(
             function() {
               $(this).find("ul").slideDown("fast");
-              var optLinks = $(this).find("a");
-              for (var i = 0; i < optLinks.length; i++) {
-                var iconClass = $(optLinks[i]).attr("class").match(/ui-icon-.[^\s]*/);
-                iconSpan = "<span class=\"ui-icon " + iconClass + "\"></span>";
-                $(optLinks[i]).html(iconSpan + $(optLinks[i]).html());
-                if ($(optLinks[i]).hasClass("gDialogLink")) {
-                  $(optLinks[i]).bind("click", handleDialogEvent);
-                }
-              }
-              $("#gContent .gContextMenu li a").addClass("gButtonLink ui-icon-left");
+              var dialogLinks = $(this).find(".gDialogLink");
+              $(dialgoLinks).gallery_dialog();
             },
             function() {
               $(this).find("ul").slideUp("slow");
