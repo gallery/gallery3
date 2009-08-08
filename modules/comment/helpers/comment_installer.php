@@ -52,8 +52,8 @@ class comment_installer {
   }
 
   static function upgrade($version) {
+    $db = Database::instance();
     if ($version == 1) {
-      $db = Database::instance();
       $db->query("ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
       module::set_version("comment", 2);
     }
@@ -61,9 +61,16 @@ class comment_installer {
 
   static function uninstall() {
     $db = Database::instance();
-    $sql = "SELECT `item_id` FROM {comments}";
-    module::event("item_related_update_batch", $sql);
 
+    // Notify listeners that we're deleting some data.  This is probably going to be very
+    // inefficient for large uninstalls, and we could make it better by doing things like passing
+    // a SQL fragment through so that the listeners could use subselects.  But by using a single,
+    // simple event API we lighten the load on module developers.
+    foreach (ORM::factory("item")
+             ->join("comments", "items.id", "comments.item_id")
+             ->find_all() as $item) {
+      module::event("item_related_update", $item);
+    }
     $db->query("DROP TABLE IF EXISTS {comments};");
   }
 }
