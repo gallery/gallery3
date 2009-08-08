@@ -453,24 +453,30 @@ form .gError,
 
 #gContent #gAlbumGrid {
   margin: 1em 0;
+  position: relative;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem {
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
+  background-color: #fff;
+  border: 1px solid #fff;
   float: left;
   font-size: .7em;
-  height: 240px;
+  height: 220px;
   overflow: hidden;
-  padding: 15px 8px 30px 8px;
+  padding: .6em 8px;
   position: relative;
   text-align: center;
   width: 213px;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem h2 {
   margin: 5px 0;
+}
+
+.gPhoto h2, .gItem .gMetadata {
+  display: none;
 }
 
 #gContent #gAlbumGrid .gAlbum {
@@ -483,6 +489,35 @@ form .gError,
   height: 16px;
   margin-right: 5px;
   width: 16px;
+}
+
+#gContent #gAlbumGrid #gHoverItem {
+  background-color: #fff;
+  border: 1px solid #000;
+  display: none;
+  height: auto;
+  margin-top: -1em;
+  margin-left: -.4em;
+  padding: 0;
+  position: absolute;
+  width: auto;
+  z-index: 100;
+}
+
+#gContent #gAlbumGrid #gHoverItem .gItem {
+  float: none;
+  height: 210px;
+  margin: 0;
+  padding: 0 1em 3em;
+}
+
+#gContent #gAlbumGrid #gHoverItem .gItem div {
+  margin-top: 1em !important;
+}
+
+#gHoverItem .gItem h2,
+#gHoverItem .gItem .gMetadata {
+  display: block;
 }
 
 /* Individual photo content ~~~~~~~~~~~~~~ */
@@ -588,25 +623,34 @@ form .gError,
 
 /* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gContent .gContextMenu {
+.gContextMenu {
   bottom: 0;
+  display: none;
   left: 0;
   position: absolute;
   width: 100%;
-  display: none;
 }
 
-#gContent .gContextMenu li {
+.gContextMenu li {
   border-left: none;
   border-right: none;
   border-bottom: none;
 }
 
-#gContent .gContextMenu li li {
+.gContextMenu li li {
   padding: .3em;
 }
 
-#gContent .gContextMenu a:hover {
+
+#gHoverItem .gContextMenu {
+  display: block;
+}
+
+#gHoverItem .gContextMenu li {
+  text-align: left;
+}
+
+#gHoverItem .gContextMenu a:hover {
   text-decoration: none;
 }
 

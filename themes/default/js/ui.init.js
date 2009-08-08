@@ -96,21 +96,56 @@ $(document).ready(function() {
   );
 
   // Initialize context menus
-  if ($("#gContent .gContextMenu").length) {
-    $("#gContent .gContextMenu li").addClass("ui-state-default");
-    $(".gContextMenu").parent().hover(
-      function() {
-        $(this).find(".gContextMenu").slideDown("fast");
-        var dialogLinks = $(this).find(".gDialogLink");
-        for (var i = 0; i < dialogLinks.length; i++) {
-          $(dialogLinks[i]).bind("click", handleDialogEvent);
+  // @todo Switch Options icon to carat-1-s when menu's open
+  // @todo apply hover affect to links
+  $(".gItem").hover(
+    function(){
+      var pos = $(this).position();
+      var itemClasses = $(this).attr("class");
+      var bgColor = $(this).css("background-color");
+      var cont = $(this).parent();
+      var iconSpan = "<span class=\"ui-icon ui-icon-carat-1-n\"></span>";
+      $("#gHoverItem .ui-icon-carat-1-n").html(iconSpan + $("#gHoverItem .ui-icon-carat-1-n").html());
+
+      $("#gHoverItem").remove();
+      cont.append("<div id=\"gHoverItem\"><div class=\"" + itemClasses + "\">" 
+          + $(this).html() + "</div></div>");
+      $("#gHoverItem").css("top", pos.top);
+      $("#gHoverItem").css("left", pos.left);
+      $("#gHoverItem").css("background-color", bgColor);
+      $("#gHoverItem").fadeIn("fast");
+      $("#gHoverItem").hover(
+        function(){
+          // Initialize context menus
+          $("#gContent .gContextMenu li").addClass("ui-state-default");
+          $(".gContextMenu ul").hide();
+          $(".gContextMenu").hover(
+            function() {
+              $(this).find("ul").slideDown("fast");
+              var optLinks = $(this).find("a");
+              for (var i = 0; i < optLinks.length; i++) {
+                var iconClass = $(optLinks[i]).attr("class").match(/ui-icon-.[^\s]*/);
+                iconSpan = "<span class=\"ui-icon " + iconClass + "\"></span>";
+                $(optLinks[i]).html(iconSpan + $(optLinks[i]).html());
+                if ($(optLinks[i]).hasClass("gDialogLink")) {
+                  $(optLinks[i]).bind("click", handleDialogEvent);
+                }
+              }
+              $("#gContent .gContextMenu li a").addClass("gButtonLink ui-icon-left");
+            },
+            function() {
+              $(this).find("ul").slideUp("slow");
+            }
+          );
+        },
+        function() {
+          $(this).hide();
         }
-      },
-      function() {
-        $(this).find(".gContextMenu").slideUp("slow");
-      }
-    );
-  }
+      );
+    },
+    function(){
+    }
+  );
 
 });
 

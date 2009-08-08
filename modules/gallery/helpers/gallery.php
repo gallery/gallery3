@@ -201,28 +201,30 @@ class gallery_Core {
     switch ($item->type) {
     case "movie":
       $edit_title = t("Edit this movie");
-      $move_title = t("Move this movie to another album");
-      $cover_title = t("Choose this movie as the album cover");
       $delete_title = t("Delete this movie");
       break;
 
     case "album":
       $edit_title = t("Edit this album");
-      $move_title = t("Move this album to another album");
-      $cover_title = t("Choose this album as the album cover");
       $delete_title = t("Delete this album");
       break;
 
     default:
       $edit_title = t("Edit this photo");
-      $move_title = t("Move this photo to another album");
-      $cover_title = t("Choose this photo as the album cover");
       $delete_title = t("Delete this photo");
       break;
     }
+    $cover_title = t("Choose as the album cover");
+    $move_title = t("Move to another album");
 
     $csrf = access::csrf_token();
-    $menu->append(Menu::factory("dialog")
+    
+    $menu->append($options_menu = Menu::factory("submenu")
+                  ->id("options")
+                  ->label(t("Options"))
+                  ->css_class("ui-icon-carat-1-n"));
+
+    $options_menu->append(Menu::factory("dialog")
                   ->id("edit")
                   ->label($edit_title)
                   ->css_clasS("ui-icon-pencil")
@@ -230,22 +232,22 @@ class gallery_Core {
 
 
     if ($item->is_photo() && graphics::can("rotate")) {
-      $menu
+      $options_menu
         ->append(Menu::factory("link")
                   ->id("rotate_ccw")
-                 ->label(t("Rotate 90 degrees counter clockwise"))
+                 ->label(t("Rotate 90&deg; counter clockwise"))
                  ->css_class("ui-icon-rotate-ccw")
                  ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&page_type=$page_type")))
         ->append(Menu::factory("link")
                   ->id("rotate_cw")
-                 ->label(t("Rotate 90 degrees clockwise"))
+                 ->label(t("Rotate 90&deg; clockwise"))
                  ->css_class("ui-icon-rotate-cw")
                  ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&page_type=$page_type")));
     }
 
     // Don't move photos from the photo page; we don't yet have a good way of redirecting after move
     if ($page_type == "album") {
-      $menu
+      $options_menu
         ->append(Menu::factory("dialog")
                  ->id("move")
                  ->label($move_title)
@@ -264,11 +266,11 @@ class gallery_Core {
       } else {
         $disabledState = " ";
       }
-      $menu
+      $options_menu
         ->append(Menu::factory("link")
                  ->id("make_album_cover")
                  ->label($cover_title)
-                 ->css_class($disabledState)
+                 ->css_class("ui-icon-star")
                  ->url(
                    url::site("quick/make_album_cover/$item->id?csrf=$csrf&page_type=$page_type")))
         ->append(Menu::factory("dialog")
@@ -280,7 +282,7 @@ class gallery_Core {
     }
 
     if ($item->is_album()) {
-      $menu
+      $options_menu
         ->append(Menu::factory("dialog")
                  ->id("add_item")
                  ->label(t("Add a photo"))

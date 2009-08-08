@@ -28,19 +28,19 @@ class digibug_event_Core {
 
   static function photo_menu($menu, $theme) {
     $item = $theme->item();
-    $menu->append(
-      Menu::factory("link")
-      ->id("digibug")
-      ->label(t("Print with Digibug"))
-      ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
-      ->css_id("gDigibugLink"));
+    $menu->get("options_menu")
+      ->append(Menu::factory("link")
+        ->id("digibug")
+        ->label(t("Print with Digibug"))
+        ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
+        ->css_id("gDigibugLink"));
   }
 
   static function context_menu($menu, $theme, $item) {
+    $item = $theme->item();
     if ($item->type == "photo") {
-      $menu
-        ->append(
-          Menu::factory("link")
+      $menu->get("options_menu")
+        ->append(Menu::factory("link")
           ->id("digibug")
           ->label(t("Print with Digibug"))
           ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
