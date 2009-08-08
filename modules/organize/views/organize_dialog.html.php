@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/css/organize.css") ?>" />
-<div id="gOrganize">
+<div id="gOrganize" class="gDialogPanel">
   <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($title))) ?></h1>
   <div id="bd">
     <div class="yui-gf">
