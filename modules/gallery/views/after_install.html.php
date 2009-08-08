@@ -16,7 +16,7 @@
     title="<?= t("Edit Your Profile") ?>"
     id="gAfterInstallChangePasswordLink" class="gButtonLink ui-state-default ui-corners-all"><?= t("Change Password Now") ?></a>
   <script>
-    $("#gAfterInstallChangePasswordLink").gallery_dialog();
+    $("#gAfterInstallChangePasswordLink").gallery_dialog({immediate: 1});
   </script>
 </p>
 

@@ -46,7 +46,7 @@ var quick_do = function(cont, pane, img) {
     return false;
   }
   if (pane.hasClass("gDialogLink")) {
-    openDialog(pane);
+    $(pane).gallery_dialog({immediate: 1});
   } else {
     img.css("opacity", "0.1");
     cont.addClass("gLoadingLarge");
