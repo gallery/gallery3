@@ -339,15 +339,90 @@ class graphics_Core {
    * GraphicsMagick we return the path to the directory containing the appropriate binaries.
    */
   static function detect_toolkits() {
+    $toolkits = new stdClass();
+
+    // GD is special, it doesn't use exec()
     $gd = function_exists("gd_info") ? gd_info() : array();
-    $exec = function_exists("exec");
+    $toolkits->gd->name = "GD";
     if (!isset($gd["GD Version"])) {
-      $gd["GD Version"] = false;
+      $toolkits->gd->installed = false;
+      $toolkits->gd->error = t("GD is not installed");
+    } else {
+      $toolkits->gd->installed = true;
+      $toolkits->gd->version = $gd["GD Version"];
+      $toolkits->gd->rotate = function_exists("imagerotate");
+      $toolkits->gd->binary = "";
+      $toolkits->gd->dir = "";
+
+      if (!$toolkits->gd->rotate) {
+        $toolkits->gd->error =
+          t("You have GD version %version, but it lacks image rotation.",
+            array("version" => $gd["GD Version"]));
+      }
     }
-    putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
-    return array("gd" => $gd,
-                 "imagemagick" => $exec ? dirname(exec("which convert")) : false,
-                 "graphicsmagick" => $exec ? dirname(exec("which gm")) : false);
+
+    if (!function_exists("exec")) {
+      $toolkits->imagemagick->installed = false;
+      $toolkits->imagemagick->error = t("ImageMagick requires the <b>exec</b> function");
+
+      $toolkits->graphicsmagick->installed = false;
+      $toolkits->graphicsmagick->error = t("GraphicsMagick requires the <b>exec</b> function");
+    } else {
+      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
+
+      // @todo: consider refactoring the two segments below into a loop since they are so
+      // similar.
+
+      // ImageMagick
+      $path = exec("which convert");
+      $toolkits->imagemagick->name = "ImageMagick";
+      if ($path) {
+        if (@is_file($path)) {
+          preg_match('/Version: \S+ (\S+)/', `convert -v`, $matches);
+          $version = $matches[1];
+
+          $toolkits->imagemagick->installed = true;
+          $toolkits->imagemagick->version = $version;
+          $toolkits->imagemagick->binary = $path;
+          $toolkits->imagemagick->dir = dirname($path);
+          $toolkits->imagemagick->rotate = true;
+        } else {
+          $toolkits->imagemagick->installed = false;
+          $toolkits->imagemagick->error =
+            t("ImageMagick is installed, but PHP's open_basedir restriction " .
+              "prevents Gallery from using it.");
+        }
+      } else {
+        $toolkits->imagemagick->installed = false;
+        $toolkits->imagemagick->error = t("We could not locate ImageMagick on your system.");
+      }
+
+      // GraphicsMagick
+      $path = exec("which gm");
+      $toolkits->graphicsmagick->name = "GraphicsMagick";
+      if ($path) {
+        if (@is_file($path)) {
+          preg_match('/\S+ (\S+)/', `gm version`, $matches);
+          $version = $matches[1];
+
+          $toolkits->graphicsmagick->installed = true;
+          $toolkits->graphicsmagick->version = $version;
+          $toolkits->graphicsmagick->binary = $path;
+          $toolkits->graphicsmagick->dir = dirname($path);
+          $toolkits->graphicsmagick->rotate = true;
+        } else {
+          $toolkits->graphicsmagick->installed = false;
+          $toolkits->graphicsmagick->error =
+            t("GraphicsMagick is installed, but PHP's open_basedir restriction " .
+              "prevents Gallery from using it.");
+        }
+      } else {
+        $toolkits->graphicsmagick->installed = false;
+        $toolkits->graphicsmagick->error = t("We could not locate GraphicsMagick on your system.");
+      }
+    }
+
+    return $toolkits;
   }
 
   /**
@@ -357,12 +432,13 @@ class graphics_Core {
     // Detect a graphics toolkit
     $toolkits = graphics::detect_toolkits();
     foreach (array("imagemagick", "graphicsmagick", "gd") as $tk) {
-      if ($toolkits[$tk]) {
+      if ($toolkits->$tk->installed) {
         module::set_var("gallery", "graphics_toolkit", $tk);
-        module::set_var("gallery", "graphics_toolkit_path", $tk == "gd" ? "" : $toolkits[$tk]);
+        module::set_var("gallery", "graphics_toolkit_path", $toolkits->$tk->dir);
         break;
       }
     }
+
     if (!module::get_var("gallery", "graphics_toolkit")) {
       site_status::warning(
         t("Graphics toolkit missing!  Please <a href=\"%url\">choose a toolkit</a>",
