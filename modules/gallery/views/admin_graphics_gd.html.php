@@ -1,23 +1,26 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gd" class="gBlock<?= $is_active ? " gSelected" : "" ?><?= $tk->gd["GD Version"] ? " gInstalledToolkit" : " gUnavailable" ?>">
+<div id="gd" class="gBlock<?= $is_active ? " gSelected" : "" ?><?= $tk->installed ? " gInstalledToolkit" : " gUnavailable" ?>">
   <img class="logo" width="170" height="110" src="<?= url::file("modules/gallery/images/gd.png"); ?>" alt="<? t("Visit the GD lib project site") ?>" />
   <h3> <?= t("GD") ?> </h3>
   <p>
     <?= t("The GD graphics library is an extension to PHP commonly installed most webservers.  Please refer to the <a href=\"%url\">GD website</a> for more information.",
         array("url" => "http://www.boutell.com/gd")) ?>
   </p>
-  <? if ($tk->gd["GD Version"] && function_exists('imagerotate')): ?>
+  <? if ($tk->installed && $tk->rotate): ?>
   <p class="gSuccess">
-    <?= t("You have GD version %version.", array("version" => $tk->gd["GD Version"])) ?>
+    <?= t("You have GD version %version.", array("version" => $tk->version)) ?>
   </p>
   <p>
     <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
   </p>
-  <? elseif ($tk->gd["GD Version"]): ?>
+  <? elseif ($tk->installed): ?>
+
+  <? if ($tk->error): ?>
   <p class="gWarning">
-    <?= t("You have GD version %version, but it lacks image rotation.",
-        array("version" => $tk->gd["GD Version"])) ?>
+    <?= $tk->error ?>
   </p>
+  <? endif ?>
+
   <p>
     <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
   </p>
