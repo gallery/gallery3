@@ -227,7 +227,7 @@ class gallery_Core {
     $options_menu->append(Menu::factory("dialog")
                   ->id("edit")
                   ->label($edit_title)
-                  ->css_clasS("ui-icon-pencil")
+                  ->css_class("ui-icon-pencil")
                   ->url(url::site("quick/form_edit/$item->id?page_type=$page_type")));
 
 
