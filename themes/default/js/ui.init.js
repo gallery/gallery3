@@ -58,16 +58,15 @@ $(document).ready(function() {
     $(".gContextMenu a").addClass("gButtonLink ui-icon-left");
     $(".gContextMenu a").prepend("<span class=\"ui-icon\"></span>");
     $(".gContextMenu a span").each(function() {
-      var iconClass = $(this).parent().attr("class").match(/ui-icon-.[^\s]*/).toString();
+      var iconClass = $(this).parent().attr("class").match(/ui-icon-.[^\s]+/).toString();
       $(this).addClass(iconClass);
     });
   }
 
-  // Photo/Item item view only
+  // Photo/Item item view
   if ($("#gItem").length) {
-    // Ensure that sized image versions
-    // fit inside their container
-    sizedImage();
+    // Ensure the resized image fits within its container
+    $("#gItem").gallery_fit_image();
 
     // Collapse comments form, insert button to expand
     if ($("#gAddCommentForm").length) {
@@ -140,18 +139,3 @@ $(document).ready(function() {
   );
 
 });
-
-/**
- * Reduce width of sized photo if it's wider than its parent container
- */
-function sizedImage() {
-  var containerWidth = $("#gItem").width();
-  var oPhoto = $("#gItem img").filter(function() {
-    return this.id.match(/gPhotoId-/);
-  });
-  if (containerWidth < oPhoto.width()) {
-    var proportion = containerWidth / oPhoto.width();
-    oPhoto.width(containerWidth);
-    oPhoto.height(proportion * oPhoto.height());
-  }
-}
