@@ -32,17 +32,19 @@ class digibug_event_Core {
                   ->id("digibug")
                   ->label(t("Print with Digibug"))
                   ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
-                  ->css_id("gDigibugLink"));
+                  ->css_id("gDigibugLink")
+                    ->css_class("ui-icon-print"));
   }
 
-  static function context_menu($menu, $theme, $item) {
+  static function context_menu($menu, $theme) {
     $item = $theme->item();
     if ($item->type == "photo") {
       $menu->append(Menu::factory("link")
                     ->id("digibug")
                     ->label(t("Print with Digibug"))
                     ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
-                    ->css_id("gDigibugLink"));
+                    ->css_id("gDigibugLink")
+                    ->css_class("ui-icon-print"));
     }
   }
 }
