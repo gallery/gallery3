@@ -95,11 +95,6 @@
   padding: .5em;
 }
 
-.gMicroThumbContainer {
-//  padding: 0 .5em;
-//  opacity: .4;
-}
-
 .gMicroThumb {
   display: block;
   float: left;
@@ -107,9 +102,15 @@
   height: 9em;
   margin-bottom: 1em;
   margin-left: 1em;
+  opacity: .5;
   text-align: center;
   width: 9em;
 }
+
+.gMicroThumb.ui-selected {
+  opacity: 1;
+}
+
 
 .gThumbnail {
   padding: .5em;

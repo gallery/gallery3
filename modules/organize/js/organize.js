@@ -5,8 +5,8 @@
      */
     init: function(data) {
       // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475 (target 1.8?)
-      $(".sf-menu li.sfHover ul").css("z-index", 70);
-
+      $(".sf-menu li.sfHover ul").css("z-index", 68);
+      $("#gDialog").dialog("option", "zIndex", 70);
       $("#gDialog").bind("dialogopen", function(event, ui) {
         $("#gOrganize").height($("#gDialog").innerHeight() - 20);
         $("#gMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
@@ -22,6 +22,8 @@
 
       $(".gBranchText span").click($.organize.collapse_or_expand_tree);
       $(".gBranchText").click($.organize.show_album);
+
+      $("#gMicroThumbGrid").selectable({filter: ".gMicroThumb"});
     },
 
     /**
