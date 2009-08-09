@@ -123,7 +123,7 @@ $(document).ready(function() {
             function() {
               $(this).find("ul").slideDown("fast");
               var dialogLinks = $(this).find(".gDialogLink");
-              $(dialgoLinks).gallery_dialog();
+              $(dialogLinks).gallery_dialog();
             },
             function() {
               $(this).find("ul").slideUp("slow");
