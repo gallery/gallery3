@@ -86,7 +86,6 @@ $(document).ready(function() {
       duration: 1000,
       hash: true
     });
-
   }
 
   // Add hover state for buttons
@@ -103,16 +102,30 @@ $(document).ready(function() {
   // @todo apply hover affect to links
   $(".gItem").hover(
     function(){
-      var pos = $(this).position();
-      var itemClasses = $(this).attr("class");
-      var bgColor = $(this).css("background-color");
-      var cont = $(this).parent();
+      var position = $(this).position();
+      var item_classes = $(this).attr("class");
+      var bg_color = $(this).css("background-color");
+      var container = $(this).parent();
       $("#gHoverItem").remove();
-      cont.append("<div id=\"gHoverItem\"><div class=\"" + itemClasses + "\">" 
+      container.append("<div id=\"gHoverItem\"><div class=\"" + item_classes + "\">"
           + $(this).html() + "</div></div>");
-      $("#gHoverItem").css("top", pos.top);
-      $("#gHoverItem").css("left", pos.left);
-      $("#gHoverItem").css("background-color", bgColor);
+      $("#gHoverItem").css("top", position.top);
+      $("#gHoverItem").css("left", position.left);
+      $("#gHoverItem").css("background-color", bg_color);
+
+      var v_align = $(this).find(".gValign");
+      var title = $(this).find("h2");
+      var meta = $(this).find(".gMetadata");
+      var context = $(this).find(".gContextMenu");
+      var context_label = $(this).find(".gContextMenu li:first");
+      $("#gHoverItem .gItem").height(
+          $(v_align).gallery_height()
+          + $(title).gallery_height()
+          + $(meta).gallery_height()
+          + parseInt($(context).css("margin-top").replace("px",""))
+          + $(context_label).gallery_height()
+        );
+      
       $("#gHoverItem").fadeIn("fast");
       $("#gHoverItem").hover(
         function(){
@@ -137,5 +150,12 @@ $(document).ready(function() {
     function(){
     }
   );
+
+  $.fn.gallery_height = function() {
+    var ht = $(this).height();
+    var mt = $(this).css("margin-top").replace("px","");
+    var mb = $(this).css("margin-bottom").replace("px","");
+    return ht + parseInt(mt) + parseInt(mb);
+  };
 
 });

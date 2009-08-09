@@ -475,7 +475,8 @@ form .gError,
   margin: 5px 0;
 }
 
-.gPhoto h2, .gItem .gMetadata {
+#gContent .gPhoto h2,
+#gContent .gItem .gMetadata {
   display: none;
 }
 
@@ -484,7 +485,7 @@ form .gError,
 }
 
 #gContent #gAlbumGrid .gAlbum h2 span {
-  background: transparent url('../images/ico-album.png') no-repeat top left !important;
+  background: transparent url('../images/ico-album.png') no-repeat top left;
   display: inline-block;
   height: 16px;
   margin-right: 5px;
@@ -496,8 +497,6 @@ form .gError,
   border: 1px solid #000;
   display: none;
   height: auto;
-  margin-top: -1em;
-  margin-left: -.4em;
   padding: 0;
   position: absolute;
   width: auto;
@@ -505,18 +504,11 @@ form .gError,
 }
 
 #gContent #gAlbumGrid #gHoverItem .gItem {
-  float: none;
-  height: 210px;
-  margin: 0;
-  padding: 0 1em 3em;
+  border: none;
 }
 
-#gContent #gAlbumGrid #gHoverItem .gItem div {
-  margin-top: 1em !important;
-}
-
-#gHoverItem .gItem h2,
-#gHoverItem .gItem .gMetadata {
+#gContent #gHoverItem .gItem h2,
+#gContent #gHoverItem .gItem .gMetadata {
   display: block;
 }
 
@@ -627,6 +619,7 @@ form .gError,
   bottom: 0;
   display: none;
   left: 0;
+  margin-top: 2em;
   position: absolute;
   width: 100%;
 }
