@@ -25,6 +25,7 @@ class User_Model extends ORM {
     "full_name" => "length[0,255]",
     "email" => "valid_email|length[1,255]",
     "password" => "length[1,40]",
+    "url" => "valid_url",
     "locale" => "length[2,10]");
 
   public function __set($column, $value) {
