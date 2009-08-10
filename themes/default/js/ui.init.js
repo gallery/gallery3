@@ -49,11 +49,8 @@ $(document).ready(function() {
   // Apply jQuery UI button css to submit inputs
   $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
 
-  // Album view only
-  if ($("#gAlbumGrid").length) {
-    // Vertical align thumbnails/metadata in album grid
-    $(".gItem").gallery_valign();
-    // Apply styles to gContextMenu
+  // Apply styles and icon classes to gContextMenu
+  if ($(".gContextMenu").length) {
     $(".gContextMenu li").addClass("ui-state-default");
     $(".gContextMenu a").addClass("gButtonLink ui-icon-left");
     $(".gContextMenu a").prepend("<span class=\"ui-icon\"></span>");
@@ -63,10 +60,83 @@ $(document).ready(function() {
     });
   }
 
+  // Album view only
+  if ($("#gAlbumGrid").length) {
+    // Vertical align thumbnails/metadata in album grid
+    $(".gItem").gallery_valign();
+
+    // Initialize context menus
+    $(".gItem").hover(
+      function(){
+        var position = $(this).position();
+        var item_classes = $(this).attr("class");
+        var bg_color = $(this).css("background-color");
+        var container = $(this).parent();
+        $("#gHoverItem").remove();
+        container.append("<div id=\"gHoverItem\"><div class=\"" + item_classes + "\">"
+            + $(this).html() + "</div></div>");
+        $("#gHoverItem").css("top", position.top);
+        $("#gHoverItem").css("left", position.left);
+        $("#gHoverItem").css("background-color", bg_color);
+        $.fn.gallery_hover_init();
+        var v_align = $(this).find(".gValign");
+        var title = $(this).find("h2");
+        var meta = $(this).find(".gMetadata");
+        var context = $(this).find(".gContextMenu");
+        var context_label = $(this).find(".gContextMenu li:first");
+        $("#gHoverItem .gItem").height(
+            $(v_align).gallery_height()
+            + $(title).gallery_height()
+            + $(meta).gallery_height()
+            + parseInt($(context).css("margin-top").replace("px",""))
+            + $(context_label).gallery_height()
+          );
+
+        $("#gHoverItem").fadeIn("fast");
+        $("#gHoverItem").hover(
+          function(){
+            // Initialize context menus
+            $(".gContextMenu ul").hide();
+            $(".gContextMenu").hover(
+              function() {
+                $(this).find("ul").slideDown("fast");
+                var dialogLinks = $(this).find(".gDialogLink");
+                $(dialogLinks).gallery_dialog();
+              },
+              function() {
+                $(this).find("ul").slideUp("slow");
+              }
+            );
+          },
+          function() {
+            $(this).hide();
+          }
+        );
+      }
+    );
+  }
+
   // Photo/Item item view
   if ($("#gItem").length) {
     // Ensure the resized image fits within its container
-    $("#gItem").gallery_fit_image();
+    $("#gItem").gallery_fit_photo();
+
+    // Initialize context menus
+    var resize = $("#gItem").gallery_get_photo();
+    $(resize).hover(
+      function(){
+        $(".gContextMenu").hover(
+          function() {
+            $(this).find("ul").slideDown("fast");
+            var dialogLinks = $(this).find(".gDialogLink");
+            $(dialogLinks).gallery_dialog();
+          },
+          function() {
+            $(this).find("ul").slideUp("slow");
+          }
+        );
+      }
+    );
 
     // Collapse comments form, insert button to expand
     if ($("#gAddCommentForm").length) {
@@ -88,74 +158,7 @@ $(document).ready(function() {
     });
   }
 
-  // Add hover state for buttons
-  $(".ui-state-default").hover(
-    function(){
-      $(this).addClass("ui-state-hover");
-    },
-    function(){
-      $(this).removeClass("ui-state-hover");
-    }
-  );
-
-  // Initialize context menus
-  // @todo apply hover affect to links
-  $(".gItem").hover(
-    function(){
-      var position = $(this).position();
-      var item_classes = $(this).attr("class");
-      var bg_color = $(this).css("background-color");
-      var container = $(this).parent();
-      $("#gHoverItem").remove();
-      container.append("<div id=\"gHoverItem\"><div class=\"" + item_classes + "\">"
-          + $(this).html() + "</div></div>");
-      $("#gHoverItem").css("top", position.top);
-      $("#gHoverItem").css("left", position.left);
-      $("#gHoverItem").css("background-color", bg_color);
-
-      var v_align = $(this).find(".gValign");
-      var title = $(this).find("h2");
-      var meta = $(this).find(".gMetadata");
-      var context = $(this).find(".gContextMenu");
-      var context_label = $(this).find(".gContextMenu li:first");
-      $("#gHoverItem .gItem").height(
-          $(v_align).gallery_height()
-          + $(title).gallery_height()
-          + $(meta).gallery_height()
-          + parseInt($(context).css("margin-top").replace("px",""))
-          + $(context_label).gallery_height()
-        );
-      
-      $("#gHoverItem").fadeIn("fast");
-      $("#gHoverItem").hover(
-        function(){
-          // Initialize context menus
-          $(".gContextMenu ul").hide();
-          $(".gContextMenu").hover(
-            function() {
-              $(this).find("ul").slideDown("fast");
-              var dialogLinks = $(this).find(".gDialogLink");
-              $(dialogLinks).gallery_dialog();
-            },
-            function() {
-              $(this).find("ul").slideUp("slow");
-            }
-          );
-        },
-        function() {
-          $(this).hide();
-        }
-      );
-    },
-    function(){
-    }
-  );
-
-  $.fn.gallery_height = function() {
-    var ht = $(this).height();
-    var mt = $(this).css("margin-top").replace("px","");
-    var mb = $(this).css("margin-bottom").replace("px","");
-    return ht + parseInt(mt) + parseInt(mb);
-  };
+  // Initialize button hover effect
+  $.fn.gallery_hover_init();
 
 });
