@@ -515,6 +515,7 @@ form .gError,
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
 #gContent #gItem {
+  position: relative;
   width: 99%;
 }
 
@@ -616,12 +617,23 @@ form .gError,
 /* Context Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gContextMenu {
-  bottom: 0;
-  display: none;
-  left: 0;
-  margin-top: 2em;
   position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.gItem .gContextMenu {
+  display: none;
+  margin-top: 2em;
   width: 100%;
+}
+
+#gItem .gContextMenu {
+  font-size: .7em;
+}
+
+#gItem .gContextMenu ul {
+  display: none;
 }
 
 .gContextMenu li {
