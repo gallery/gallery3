@@ -226,21 +226,21 @@ class gallery_Core {
                   ->css_class("ui-icon-carat-1-n"));
 
     $options_menu->append(Menu::factory("dialog")
-                  ->id("edit")
-                  ->label($edit_title)
-                  ->css_class("ui-icon-pencil")
-                  ->url(url::site("quick/form_edit/$item->id?page_type=$page_type")));
+                          ->id("edit")
+                          ->label($edit_title)
+                          ->css_class("ui-icon-pencil")
+                          ->url(url::site("quick/form_edit/$item->id?page_type=$page_type")));
 
 
     if ($item->is_photo() && graphics::can("rotate")) {
       $options_menu
         ->append(Menu::factory("link")
-                  ->id("rotate_ccw")
+                 ->id("rotate_ccw")
                  ->label(t("Rotate 90&deg; counter clockwise"))
                  ->css_class("ui-icon-rotate-ccw")
                  ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&page_type=$page_type")))
         ->append(Menu::factory("link")
-                  ->id("rotate_cw")
+                 ->id("rotate_cw")
                  ->label(t("Rotate 90&deg; clockwise"))
                  ->css_class("ui-icon-rotate-cw")
                  ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&page_type=$page_type")));
