@@ -118,9 +118,8 @@ class Theme_View_Core extends Gallery_View {
                ->label(t("Options")))
       ->css_class("gContextMenu");
 
-    $page_type = Input::instance()->get("page_type");
-    gallery::context_menu($menu, $this, $item, $page_type);
-    module::event("context_menu", $menu, $this, $item, $page_type);
+    gallery::context_menu($menu, $this, $item);
+    module::event("context_menu", $menu, $this, $item);
     return $menu->compact();
   }
 

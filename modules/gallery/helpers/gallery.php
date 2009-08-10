@@ -197,7 +197,8 @@ class gallery_Core {
     return $menu;
   }
 
-  static function context_menu($menu, $theme, $item, $page_type) {
+  static function context_menu($menu, $theme, $item) {
+    $page_type = $theme->page_type();
     switch ($item->type) {
     case "movie":
       $edit_title = t("Edit this movie");
@@ -218,9 +219,9 @@ class gallery_Core {
     $move_title = t("Move to another album");
 
     $csrf = access::csrf_token();
-    
+
     $menu->append($options_menu = Menu::factory("submenu")
-                  ->id("options")
+                  ->id("options_menu")
                   ->label(t("Options"))
                   ->css_class("ui-icon-carat-1-n"));
 
