@@ -34,7 +34,6 @@ $(document).ready(function() {
   // Initialize dialogs
   $("#gLoginLink").addClass("gDialogLink");
   $(".gDialogLink").gallery_dialog();
-  $(".gAjaxLink").gallery_ajax();
 
   // Initialize view menu
   if ($("#gViewMenu").length) {
@@ -96,18 +95,7 @@ $(document).ready(function() {
         $("#gHoverItem").fadeIn("fast");
         $("#gHoverItem").hover(
           function(){
-            // Initialize context menus
-            $(".gContextMenu ul").hide();
-            $(".gContextMenu").hover(
-              function() {
-                $(this).find("ul").slideDown("fast");
-		$(this).find(".gDialogLink").gallery_dialog();
-		$(this).find(".gAjaxLink").gallery_ajax();
-              },
-              function() {
-                $(this).find("ul").slideUp("slow");
-              }
-            );
+            $(this).gallery_context_menu();
           },
           function() {
             $(this).hide();
@@ -124,20 +112,9 @@ $(document).ready(function() {
 
     // Initialize context menus
     var resize = $("#gItem").gallery_get_photo();
-    $(resize).hover(
-      function(){
-        $(".gContextMenu").hover(
-          function() {
-            $(this).find("ul").slideDown("fast");
-            $(this).find(".gDialogLink").gallery_dialog();
-            $(this).find(".gAjaxLink").gallery_ajax();
-          },
-          function() {
-            $(this).find("ul").slideUp("slow");
-          }
-        );
-      }
-    );
+    $(resize).hover(function(){
+      $(this).gallery_context_menu();
+    });
 
     // Collapse comments form, insert button to expand
     if ($("#gAddCommentForm").length) {
