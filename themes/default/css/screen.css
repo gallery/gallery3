@@ -643,6 +643,7 @@ form .gError,
 }
 
 .gContextMenu li a {
+  display: block;
   line-height: 1.6em;
 }
 
