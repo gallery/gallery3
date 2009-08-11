@@ -25,6 +25,7 @@
    <script type="text/javascript">
    var MSG_CANCEL = "<?= t('Cancel') ?>";
    </script>
+   <?= $theme->script("gallery.ajax.js") ?>
    <?= $theme->script("gallery.dialog.js") ?>
    <?= $theme->script("superfish/js/superfish.js") ?>
    <?= $theme->script("jquery.dropshadow.js") ?>
