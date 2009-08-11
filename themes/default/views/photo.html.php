@@ -47,7 +47,7 @@
     </a>
     <? endif ?>
     <?= $theme->resize_bottom($item) ?>
-    <?= $theme->context_menu($item) ?>
+    <?= $theme->context_menu($item, "#gPhotoId-{$item->id}") ?>
   </div>
 
   <div id="gInfo">

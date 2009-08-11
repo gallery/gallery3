@@ -111,15 +111,15 @@ class Theme_View_Core extends Gallery_View {
     return $menu->compact();
   }
 
-  public function context_menu($item) {
+  public function context_menu($item, $thumbnail_css_selector) {
     $menu = Menu::factory("root")
       ->append(Menu::factory("submenu")
                ->id("context_menu")
                ->label(t("Options")))
       ->css_class("gContextMenu");
 
-    gallery::context_menu($menu, $this, $item);
-    module::event("context_menu", $menu, $this, $item);
+    gallery::context_menu($menu, $this, $item, $thumbnail_css_selector);
+    module::event("context_menu", $menu, $this, $item, $thumbnail_css_selector);
     return $menu->compact();
   }
 

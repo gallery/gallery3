@@ -34,6 +34,7 @@ $(document).ready(function() {
   // Initialize dialogs
   $("#gLoginLink").addClass("gDialogLink");
   $(".gDialogLink").gallery_dialog();
+  $(".gAjaxLink").gallery_ajax();
 
   // Initialize view menu
   if ($("#gViewMenu").length) {
@@ -100,8 +101,8 @@ $(document).ready(function() {
             $(".gContextMenu").hover(
               function() {
                 $(this).find("ul").slideDown("fast");
-                var dialogLinks = $(this).find(".gDialogLink");
-                $(dialogLinks).gallery_dialog();
+		$(this).find(".gDialogLink").gallery_dialog();
+		$(this).find(".gAjaxLink").gallery_ajax();
               },
               function() {
                 $(this).find("ul").slideUp("slow");
@@ -128,8 +129,8 @@ $(document).ready(function() {
         $(".gContextMenu").hover(
           function() {
             $(this).find("ul").slideDown("fast");
-            var dialogLinks = $(this).find(".gDialogLink");
-            $(dialogLinks).gallery_dialog();
+            $(this).find(".gDialogLink").gallery_dialog();
+            $(this).find(".gAjaxLink").gallery_ajax();
           },
           function() {
             $(this).find("ul").slideUp("slow");
