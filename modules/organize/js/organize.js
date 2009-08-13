@@ -3,7 +3,7 @@
     micro_thumb_draggable: {
       distance: 10,
       cursorAt: { left: -10, top: -10},
-      appendTo: "#gOrganizeContentPane",
+      //appendTo: "#gOrganizeContentPane",
       helper: function(event, ui) {
         var selected = $("li.ui-state-selected img"),
             set = $('<div class="temp"></div>').css({zIndex: 2000, width: 80, height: Math.ceil(selected.length / 5) * 16 }),
@@ -28,21 +28,19 @@
         return set;
       },
       start: function(event, ui) {
-        $("#gMicroThumbPanel").prepend("<div id=\"gPlaceHolder\"></div>");
-
         $("#gMicroThumbPanel li.ui-state-selected").hide();
       },
       drag: function(event, ui) {
-        var container = $("#gMicroThumbPanel").get(0);
-        var scrollTop = container.scrollTop;
-        var height = $(container).height();
-        if (event.pageY > height + scrollTop) {
-          container.scrollTop += height;
-        } else if (event.pageY < scrollTop) {
-          container.scrollTop -= height;
+        var top = $("#gMicroThumbPanel").offset().top;
+        var height = $("#gMicroThumbPanel").height();
+        if (ui.offset.top > height + top - 20) {
+          $("#gMicroThumbPanel").get(0).scrollTop += 100;
+        } else if (ui.offset.top < top + 20) {
+          $("#gMicroThumbPanel").get(0).scrollTop = Math.max(0, $("#gMicroThumbPanel").get(0).scrollTop - 100);
         }
       },
       stop: function(event, ui) {
+        // @todo delete this method when drop is implemented
         $("li.ui-state-selected").show();
       }
     },
@@ -63,6 +61,7 @@
         //   tree: null | new tree,
         //   content: new thumbgrid
         // }
+        // do forget to reset all the stuff in init when updating the content
       }
     },
 
@@ -92,7 +91,7 @@
       $(".gBranchText").click($.organize.show_album);
 
       $("#gMicroThumbPanel").selectable({filter: "li"});
-      $("#gMicroThumbPanel img").draggable($.organize.micro_thumb_draggable);
+      $("#gMicroThumbPanel li").draggable($.organize.micro_thumb_draggable);
       $(".gOrganizeBranch").droppable($.organize.droppable);
       $("#gMicroThumbPanel").droppable($.organize.droppable);
     },
