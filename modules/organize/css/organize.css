@@ -1,3 +1,4 @@
+
 /*******************************************************************
  * Dialog wide stylings
  */
@@ -92,7 +93,7 @@
 }
 
 #gMicroThumbGrid {
-  padding: .5em;
+  padding: 1em;
 }
 
 .gMicroThumb {
@@ -107,10 +108,14 @@
   width: 9em;
 }
 
-.gMicroThumb.ui-selected {
+.gMicroThumb.ui-state-selected {
   opacity: 1;
 }
 
+.ui-selectable-lasso {
+  z-index: 2000 !important;
+  border: 1px dashed #13A;
+}
 
 .gThumbnail {
   padding: .5em;

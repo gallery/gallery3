@@ -3,7 +3,7 @@
 <li id="gMicroThumb_<?= $child->id ?>"
     class="gMicroThumb <?= $child->is_album() ? "gAlbum" : "gPhoto" ?>"
     ref="<?= $child->id ?>">
-  <?= $child->thumb_img(array("class" => "gThumbnail"), 90, true) ?>
+  <?= $child->thumb_img(array("class" => "gThumbnail", "ref" => $child->id), 90, true) ?>
 </li>
 <? endforeach ?>
 

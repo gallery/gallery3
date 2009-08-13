@@ -60,12 +60,13 @@ class Organize_Controller extends Controller {
     $v->album_icon = "gBranchEmpty";
 
     $albums = $item->children(null, 0, array("type" => "album"), array("title" => "ASC"));
-    if ($albums->count()) {
-      $v->album_icon = empty($parents[$item->id]) ? "ui-icon-plus" : "ui-icon-minus";
-
-      foreach ($albums as $album) {
+    foreach ($albums as $album) {
+      if (access::can("view", $album)) {
         $v->children[] = $this->_tree($album, $parents);
       }
+    }
+    if (count($v->children)) {
+      $v->album_icon = empty($parents[$item->id]) ? "ui-icon-plus" : "ui-icon-minus";
     }
     return $v;
   }
