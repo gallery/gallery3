@@ -46,23 +46,68 @@
       }
     },
 
-    droppable: {
+    content_droppable: {
       accept: "*",
       tolerance: "pointer",
       greedy: true,
       drop: function(event, ui) {
-        // @todo do a ajax call to send the rearrange request to the server
-        // organize/move/target_id/
-        // post parameters
-        //  before=id|after=id
-        //  source=[id1, id2, ...]
-        //  before or after not supplied then append to end
-        // return: json {
-        //   result: success | msg,
-        //   tree: null | new tree,
-        //   content: new thumbgrid
-        // }
-        // do forget to reset all the stuff in init when updating the content
+        $.organize.do_drop({
+          parent_id: $(".gBranchSelected").attr("ref"),
+          target_id: $(".currentDropTarget").attr("ref"),
+          position: $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after",
+          source: $(ui.helper).children("img")
+        });
+      }
+    },
+
+    branch_droppable: {
+      accept: "*",
+      tolerance: "pointer",
+      greedy: true,
+      drop: function(event, ui) {
+        $.organize.do_drop({
+          parent_id: $(event.target).attr("ref"),
+          target_id: -1,
+          position: "after",
+          source: $(ui.helper).children("img")
+        });
+      }
+    },
+
+    do_drop:function(drop_parms) {
+      var source_ids = "";
+      $(drop_parms.source).each(function(i) {
+        source_ids += (source_ids.length ? "&" : "") + "source_id[" + i + "]=" + $(this).attr("ref");
+      });
+      var url = drop_url.replace("__PARENT_ID__", drop_parms.parent_id)
+        .replace("__POSITION__", drop_parms.position)
+        .replace("__TARGET_ID__", drop_parms.target_id);
+
+      console.group("do_drop");
+      console.log("Generated url: " + url);
+      console.log("Post data(ids to move): " + source_ids);
+      console.groupEnd();
+      // @todo do a ajax call to send the rearrange request to the server
+      // organize/move/parent_id/before|after/-1|target_id
+      // post parameters
+      //  source=[id1, id2, ...]
+      //  before or after not supplied then append to end
+      // return: json {
+      //   result: success | msg,
+      //   tree: null | new tree,
+      //   content: new thumbgrid
+      // }
+      // do forget to reset all the stuff in init when updating the content
+    },
+
+    mouse_move_handler: function(event) {
+      if ($(".gDragHelper").length) {
+        $(".gMicroThumbGridCell").css("borderStyle", "hidden");
+        $(".currentDropTarget").removeClass("currentDropTarget");
+        var borderStyle = event.pageX < $(this).offset().left + $(this).width() / 2 ?
+          "borderLeftStyle" : "borderRightStyle";
+        $(this).css(borderStyle, "solid");
+        $(this).addClass("currentDropTarget");
       }
     },
 
@@ -88,27 +133,18 @@
         $("#gDialog").dialog("close");
       });
 
-      $(".gBranchText span").click($.organize.collapse_or_expand_tree);
-      $(".gBranchText").click($.organize.show_album);
-
       $("#gMicroThumbPanel").selectable({filter: ".gMicroThumbGridCell"});
-      $(".gOrganizeBranch").droppable($.organize.droppable);
-      $("#gMicroThumbPanel").droppable($.organize.droppable);
+      $("#gMicroThumbPanel").droppable($.organize.content_droppable);
 
       $.organize.set_handlers();
     },
 
     set_handlers: function() {
       $(".gMicroThumbGridCell").draggable($.organize.micro_thumb_draggable);
-      $(".gMicroThumbGridCell").mousemove(function(event) {
-        if ($(".gDragHelper").length) {
-          $(".gMicroThumbGridCell").css("borderStyle", "none");
-          console.log("pageX:" + event.pageX + ", offset.left:" + $(this).offset().left + ", width:" + $(this).width());
-          var side = event.pageX < $(this).offset().left + $(this).width() / 2 ?
-            "hidden hidden hidden solid" : "hidden solid hidden hidden";
-          $(this).css("borderStyle", side);
-        }
-      });
+      $(".gMicroThumbGridCell").mousemove($.organize.mouse_move_handler);
+      $(".gOrganizeBranch").droppable($.organize.branch_droppable);
+      $(".gBranchText span").click($.organize.collapse_or_expand_tree);
+      $(".gBranchText").click($.organize.show_album);
     },
 
     /**

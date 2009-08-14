@@ -1,4 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<script type="text/javascript">
+  var drop_url = "<?= url::site("organize/drop/__PARENT_ID__/__POSITION__/__TARGET_ID__?csrf=$csrf") ?>";
+</script>
 <div id="gOrganize" class="gDialogPanel">
   <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($title))) ?></h1>
   <div id="bd">
