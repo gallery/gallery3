@@ -1,9 +1,11 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? foreach ($item->children(25, $offset) as $child): ?>
-<li id="gMicroThumb_<?= $child->id ?>"
+<li class="gMicroThumbGridCell">
+<div id="gMicroThumb_<?= $child->id ?>"
     class="gMicroThumb <?= $child->is_album() ? "gAlbum" : "gPhoto" ?>"
     ref="<?= $child->id ?>">
   <?= $child->thumb_img(array("class" => "gThumbnail", "ref" => $child->id), 90, true) ?>
+</div>
 </li>
 <? endforeach ?>
 
@@ -13,6 +15,7 @@
     $.get("<?= url::site("organize/content/$item->id/" . ($offset + 25)) ?>",
       function(data) {
         $("#gMicroThumbGrid").append(data);
+        $.organize.set_handlers();
       }
     );
   }, 50);

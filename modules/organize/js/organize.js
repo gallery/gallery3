@@ -3,10 +3,10 @@
     micro_thumb_draggable: {
       distance: 10,
       cursorAt: { left: -10, top: -10},
-      //appendTo: "#gOrganizeContentPane",
+      appendTo: "#gMicroThumbPanel",
       helper: function(event, ui) {
-        var selected = $("li.ui-state-selected img"),
-            set = $('<div class="temp"></div>').css({zIndex: 2000, width: 80, height: Math.ceil(selected.length / 5) * 16 }),
+        var selected = $(".ui-draggable.ui-state-selected img"),
+            set = $('<div class="gDragHelper"></div>').css({zIndex: 2000, width: 80, height: Math.ceil(selected.length / 5) * 16 }),
             offset = $(this).offset(),
             click = { left: event.pageX - offset.left, top: event.pageY - offset.top };
 
@@ -28,7 +28,7 @@
         return set;
       },
       start: function(event, ui) {
-        $("#gMicroThumbPanel li.ui-state-selected").hide();
+        $("#gMicroThumbPanel .ui-state-selected").hide();
       },
       drag: function(event, ui) {
         var top = $("#gMicroThumbPanel").offset().top;
@@ -39,9 +39,10 @@
           $("#gMicroThumbPanel").get(0).scrollTop = Math.max(0, $("#gMicroThumbPanel").get(0).scrollTop - 100);
         }
       },
+      // @todo delete this method when drop is implemented
       stop: function(event, ui) {
-        // @todo delete this method when drop is implemented
-        $("li.ui-state-selected").show();
+        $(".ui-state-selected").show();
+        $(".gMicroThumbGridCell").css("borderStyle", "none");
       }
     },
 
@@ -50,7 +51,7 @@
       tolerance: "pointer",
       greedy: true,
       drop: function(event, ui) {
-        // @todo do a ajax call to send the rearrange request to the zerver
+        // @todo do a ajax call to send the rearrange request to the server
         // organize/move/target_id/
         // post parameters
         //  before=id|after=id
@@ -90,10 +91,24 @@
       $(".gBranchText span").click($.organize.collapse_or_expand_tree);
       $(".gBranchText").click($.organize.show_album);
 
-      $("#gMicroThumbPanel").selectable({filter: "li"});
-      $("#gMicroThumbPanel li").draggable($.organize.micro_thumb_draggable);
+      $("#gMicroThumbPanel").selectable({filter: ".gMicroThumbGridCell"});
       $(".gOrganizeBranch").droppable($.organize.droppable);
       $("#gMicroThumbPanel").droppable($.organize.droppable);
+
+      $.organize.set_handlers();
+    },
+
+    set_handlers: function() {
+      $(".gMicroThumbGridCell").draggable($.organize.micro_thumb_draggable);
+      $(".gMicroThumbGridCell").mousemove(function(event) {
+        if ($(".gDragHelper").length) {
+          $(".gMicroThumbGridCell").css("borderStyle", "none");
+          console.log("pageX:" + event.pageX + ", offset.left:" + $(this).offset().left + ", width:" + $(this).width());
+          var side = event.pageX < $(this).offset().left + $(this).width() / 2 ?
+            "hidden hidden hidden solid" : "hidden solid hidden hidden";
+          $(this).css("borderStyle", side);
+        }
+      });
     },
 
     /**
@@ -119,6 +134,7 @@
       var url = $("#gMicroThumbPanel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
       $.get(url, function(data) {
         $("#gMicroThumbGrid").html(data);
+        $.organize.set_handlers();
       });
     }
   };

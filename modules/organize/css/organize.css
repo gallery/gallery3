@@ -96,19 +96,23 @@
   padding: 1em;
 }
 
+.gMicroThumbGridCell {
+  float: left;
+  font-size: 0.8em;
+  padding: .5em !important;
+  opacity: .5;
+  border-left: 1px hidden #13A;
+  border-right: 1px hidden #13A;
+}
+
 .gMicroThumb {
   display: block;
-  float: left;
-  font-size: .8em;
   height: 9em;
-  margin-bottom: 1em;
-  margin-left: 1em;
-  opacity: .5;
   text-align: center;
   width: 9em;
 }
 
-.gMicroThumb.ui-state-selected {
+.gMicroThumbGridCell.ui-state-selected {
   opacity: 1;
 }
 
