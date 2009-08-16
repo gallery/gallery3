@@ -37,12 +37,12 @@
             </div>
           </div>
         </div>
+        <div id="gOrganizeProgress" style="display: none">
+          <div class="gProgressBar"></div>
+          <div id="gStatus"></div>
+        </div>
       </div>
     </div>
-  </div>
-  <div id="gOrganizeProgress" style="display: none">
-    <div class="gProgressBar"></div>
-    <div id="gStatus"></div>
   </div>
 </div>
 
