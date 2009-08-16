@@ -1,6 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-  var drop_url = "<?= url::site("organize/drop/__PARENT_ID__/__POSITION__/__TARGET_ID__?csrf=$csrf") ?>";
+  var move_url = "<?= url::site("organize/move/__TARGET_ID__?csrf=$csrf") ?>";
+  var rearrange_url = "<?= url::site("organize/rearrange/__TARGET_ID__/__BEFORE__?csrf=$csrf") ?>";
 </script>
 <div id="gOrganize" class="gDialogPanel">
   <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($title))) ?></h1>
@@ -38,6 +39,10 @@
         </div>
       </div>
     </div>
+  </div>
+  <div id="gOrganizeProgress" style="display: none">
+    <div class="gProgressBar"></div>
+    <div id="gStatus"></div>
   </div>
 </div>
 
