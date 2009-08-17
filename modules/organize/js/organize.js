@@ -58,7 +58,7 @@
       drop: function(event, ui) {
         $.organize.do_drop({
           url: rearrange_url.replace("__TARGET_ID__", $(".currentDropTarget").attr("ref"))
-                            .replace("__BEFORE__", $(".currentDropTarget").css("borderLeftStyle") == "solid"),
+                            .replace("__BEFORE__", $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after"),
           source: $(ui.helper).children("img")
         });
       }

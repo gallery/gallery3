@@ -72,7 +72,9 @@ class Organize_Controller extends Controller {
       ->description(t("Rearrange Image"))
       ->name(t("Rearrange Images"));
     $task = task::create($task_def, array("target_id" => $target_id, "before" => $before,
-                                          "current" => 0,
+                                          "parent_id" => $parent->id,
+                                          "weight" => item::get_max_weight(),
+                                          "total" => $parent->children_count(),
                                           "source_ids" => $this->input->post("source_ids")));
 
     print json_encode(
@@ -146,7 +148,7 @@ class Organize_Controller extends Controller {
       $count++;
     }
     $task->set("current", $idx);
-    $task->percent_complete = ceil($idx / count($source_ids) * 100);
+    $task->percent_complete = (int)($idx / count($source_ids) * 100);
     $task->status = t2("Moved one file", "Moved %count files", $count);
     if ($task->percent_complete == 100) {
       batch::stop();
@@ -165,18 +167,74 @@ class Organize_Controller extends Controller {
   }
 
   static function rearrange_task_handler($task) {
-    // @todo need to
-    // 1) reset the weights based on the current sort order
-    // 2) when they are all copied, change the sort order of the parent to "weight"
-    $task->percent_complete = 100;
-    //$start = microtime(true);
-    //$mode = $task->get("mode", "init");
-    //$start = microtime(true);
-    //    if (microtime(true) - $start > 0.5) {
-    //      break;
-    $task->done = true;
-    $task->state = "success";
-    $target = ORM::factory("item", $task->get("target_id"));
-    $task->set("content", self::_get_micro_thumb_grid($target, 0)->__toString());
+    $phase = $task->get("phase", "before_drop");
+    $source_ids = $task->get("source_ids");
+    $parent = ORM::factory("item", $task->get("parent_id"));
+    $weight = $task->get("weight");
+    $target_id = $task->get("target_id");
+    $is_before = $task->get("before") == "before";
+    // @todo at some point if we allow drag from album tree this needs to be changed
+    Kohana::log("error", "starting task processing: " . ($is_before ? "true" : "false"));
+    Kohana::log("error", Kohana::debug($task->as_array()));
+    if ($phase == "dropping") {
+      Kohana::log("error", "currently dropping");
+      $children = ORM::factory("item")
+        ->where("parent_id", $parent->id)
+        ->where("weight < ", $weight)
+        ->in("id", $source_ids)
+        ->orderby(array($parent->sort_column => $parent->sort_order))
+        ->find_all();
+      Kohana::log("error", Database::instance()->last_query());
+      if ($children->count() == 0) {
+        $phase = "after_drop";
+        $task->set("phase", $phase);
+      }
+    }
+    if ($phase != "dropping") {
+      Kohana::log("error", "not dropping");
+      $dropping = false;
+      $children = ORM::factory("item")
+        ->where("parent_id", $parent->id)
+        ->where("weight < ", $weight)
+        ->in("id", $source_ids, true)
+        ->orderby(array($parent->sort_column => $parent->sort_order))
+        ->find_all();
+      Kohana::log("error", Database::instance()->last_query());
+    }
+    $completed = $task->get("completed", 0);
+
+    $start = microtime(true);
+    foreach ($children as $child) {
+      if (microtime(true) - $start > 0.5) {
+        Kohana::log("error", "time expired... exiting");
+        break;
+      }
+      if ($phase == "before_drop" && $child->id == $target_id && $is_before) {
+        $task->set("dropping", true);
+        Kohana::log("error", "found the target and insert before... exiting");
+        $task->set("phase", "dropping");
+        break;
+      }
+      $child->weight = item::get_max_weight();
+      $child->save();
+      $completed++;
+      if ($phase == "before_drop" && $child->id == $task->get("target_id")) {
+        $task->set("dropping", true);
+        Kohana::log("error", "found the target and insert after... exiting");
+        $task->set("phase", "dropping");
+        break;
+      }
+    }
+    if ($completed == $task->get("total")) {
+      $parent->sort_column = "weight";
+      $parent->save();
+      $task->done = true;
+      $task->state = "success";
+      $task->set("content", self::_get_micro_thumb_grid($parent, 0)->__toString());
+      $task->percent_complete = 100;
+    } else {
+      $task->percent_complete = (int)(100 * $completed / $task->get("total"));
+    }
+    $task->set("completed", $completed);
   }
 }
