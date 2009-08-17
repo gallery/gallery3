@@ -52,7 +52,7 @@ function run_add(url) {
       $("#gStatus").html(data.status);
       $("#gServerAdd .gProgressBar").progressbar("value", data.percent_complete);
       if (data.done) {
-	$("#gProgress").slideUp();
+	$("#gServerAddProgress").slideUp();
       } else {
 	setTimeout(function() { run_add(url); }, 0);
       }
