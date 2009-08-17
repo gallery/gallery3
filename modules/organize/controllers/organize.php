@@ -174,24 +174,19 @@ class Organize_Controller extends Controller {
     $target_id = $task->get("target_id");
     $is_before = $task->get("before") == "before";
     // @todo at some point if we allow drag from album tree this needs to be changed
-    Kohana::log("error", "starting task processing: " . ($is_before ? "true" : "false"));
-    Kohana::log("error", Kohana::debug($task->as_array()));
     if ($phase == "dropping") {
-      Kohana::log("error", "currently dropping");
       $children = ORM::factory("item")
         ->where("parent_id", $parent->id)
         ->where("weight < ", $weight)
         ->in("id", $source_ids)
         ->orderby(array($parent->sort_column => $parent->sort_order))
         ->find_all();
-      Kohana::log("error", Database::instance()->last_query());
       if ($children->count() == 0) {
         $phase = "after_drop";
         $task->set("phase", $phase);
       }
     }
     if ($phase != "dropping") {
-      Kohana::log("error", "not dropping");
       $dropping = false;
       $children = ORM::factory("item")
         ->where("parent_id", $parent->id)
@@ -199,28 +194,27 @@ class Organize_Controller extends Controller {
         ->in("id", $source_ids, true)
         ->orderby(array($parent->sort_column => $parent->sort_order))
         ->find_all();
-      Kohana::log("error", Database::instance()->last_query());
     }
     $completed = $task->get("completed", 0);
 
     $start = microtime(true);
     foreach ($children as $child) {
+      $step = microtime(true);
       if (microtime(true) - $start > 0.5) {
-        Kohana::log("error", "time expired... exiting");
         break;
       }
       if ($phase == "before_drop" && $child->id == $target_id && $is_before) {
         $task->set("dropping", true);
-        Kohana::log("error", "found the target and insert before... exiting");
         $task->set("phase", "dropping");
         break;
       }
-      $child->weight = item::get_max_weight();
-      $child->save();
+      Database::instance()->query(
+        "UPDATE {items} SET `weight` =  " . item::get_max_weight() .
+        " WHERE `id` = " . $child->id);
+
       $completed++;
       if ($phase == "before_drop" && $child->id == $task->get("target_id")) {
         $task->set("dropping", true);
-        Kohana::log("error", "found the target and insert after... exiting");
         $task->set("phase", "dropping");
         break;
       }
