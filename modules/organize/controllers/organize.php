@@ -173,9 +173,7 @@ class Organize_Controller extends Controller {
     $weight = $task->get("weight");
     $target_id = $task->get("target_id");
     $is_before = $task->get("before") == "before";
-    if ($task->percent_complete == 0) {
-      batch::start();
-    }
+
     // @todo at some point if we allow drag from album tree this needs to be changed
     if ($phase == "dropping") {
       $children = ORM::factory("item")
@@ -211,8 +209,9 @@ class Organize_Controller extends Controller {
         $task->set("phase", "dropping");
         break;
       }
-      $child->weight = item::get_max_weight();
-      $child->save();
+      Database::instance()->query(
+        "UPDATE {items} SET `weight` =  " . item::get_max_weight() .
+        " WHERE `id` = " . $child->id);
 
       $completed++;
       if ($phase == "before_drop" && $child->id == $task->get("target_id")) {
@@ -222,9 +221,10 @@ class Organize_Controller extends Controller {
       }
     }
     if ($completed == $task->get("total")) {
-      $parent->sort_column = "weight";
-      $parent->save();
-      batch::stop();
+      Database::instance()->query(
+        "UPDATE {items} SET `sort_column` =  \"weight\"" .
+        " WHERE `id` = " . $parent->id);
+      module::event("album_rearrange", $parent);
       $task->done = true;
       $task->state = "success";
       $task->set("content", self::_get_micro_thumb_grid($parent, 0)->__toString());
