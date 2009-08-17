@@ -137,4 +137,18 @@ class item_Core {
     $group->submit("")->value(t("Delete"));
     return $form;
   }
+
+  /**
+   * Get the next weight value
+   */
+  static function get_max_weight() {
+    // Guard against an empty result when we create the first item.  It's unfortunate that we
+    // have to check this every time.
+    // @todo: figure out a better way to bootstrap the weight.
+    $result = Database::instance()
+      ->select("weight")->from("items")
+      ->orderby("weight", "desc")->limit(1)
+      ->get()->current();
+    return ($result ? $result->weight : 0) + 1;
+  }
 }
