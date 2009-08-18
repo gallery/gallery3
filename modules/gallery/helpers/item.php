@@ -129,7 +129,7 @@ class item_Core {
     if (Input::instance()->get("page_type") == "album") {
       $page_type = "album";
     } else {
-      $page_type = "item";
+      $page_type = "photo";
     }
     $form = new Forge("quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
     $form->hidden("_method")->value("put");
