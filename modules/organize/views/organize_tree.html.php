@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<li class="gOrganizeBranch ui-icon-left" ref="<?= $album->id ?>">
+<li class="gOrganizeBranch ui-icon-left <?= $can_edit ? "" : "gViewOnly" ?>" ref="<?= $album->id ?>">
   <div id="gOrganizeBranch-<?= $album->id ?>" ref="<?= $album->id ?>"
        class="<?= $selected ? "gBranchSelected" : "" ?>">
     <span id="gOrganizeIcon-<?= $album->id ?>" ref="<?= $album->id ?>"

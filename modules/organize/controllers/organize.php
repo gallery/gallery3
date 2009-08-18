@@ -118,6 +118,7 @@ class Organize_Controller extends Controller {
     $v->album = $item;
     $keys = array_keys($parents);
     $v->selected = end($keys) == $item->id;
+    $v->can_edit= access::can("edit", $item);
     $v->children = array();
     $v->album_icon = "gBranchEmpty";
 

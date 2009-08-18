@@ -43,11 +43,6 @@
         } else if (ui.offset.top < top + 20) {
           $("#gMicroThumbPanel").get(0).scrollTop = Math.max(0, $("#gMicroThumbPanel").get(0).scrollTop - 100);
         }
-      },
-      // @todo delete this method when drop is implemented
-      stop: function(event, ui) {
-        $(".ui-state-selected").show();
-        $(".gMicroThumbGridCell").css("borderStyle", "none");
       }
     },
 
@@ -69,10 +64,15 @@
       tolerance: "pointer",
       greedy: true,
       drop: function(event, ui) {
-        $.organize.do_drop({
-          url: move_url.replace("__TARGET_ID__", $(event.target).attr("ref")),
-          source: $(ui.helper).children("img")
-        });
+        if ($(event.target).hasClass("gViewOnly")) {
+          $(".ui-state-selected").show();
+          $(".gMicroThumbGridCell").css("borderStyle", "none");
+        } else {
+          $.organize.do_drop({
+            url: move_url.replace("__TARGET_ID__", $(event.target).attr("ref")),
+            source: $(ui.helper).children("img")
+          });
+        }
       }
     },
 
@@ -198,6 +198,10 @@
     show_album: function(event) {
       event.preventDefault();
       if ($(event.currentTarget).hasClass("gBranchSelected")) {
+        return;
+      }
+      var parent = $(event.currentTarget).parents(".gOrganizeBranch");
+      if ($(parent).hasClass("gViewOnly")) {
         return;
       }
       $("#gMicroThumbPanel").selectable("destroy");
