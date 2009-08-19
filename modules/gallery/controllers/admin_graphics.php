@@ -32,7 +32,7 @@ class Admin_Graphics_Controller extends Admin_Controller {
     if ($toolkit_id != module::get_var("gallery", "graphics_toolkit")) {
       $tk = graphics::detect_toolkits();
       module::set_var("gallery", "graphics_toolkit", $toolkit_id);
-      module::set_var("gallery", "graphics_toolkit_path", dirname($tk->$toolkit_id->dir));
+      module::set_var("gallery", "graphics_toolkit_path", $tk->$toolkit_id->dir);
 
       site_status::clear("missing_graphics_toolkit");
 
