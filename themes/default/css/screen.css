@@ -453,24 +453,31 @@ form .gError,
 
 #gContent #gAlbumGrid {
   margin: 1em 0;
+  position: relative;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem {
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
+  background-color: #fff;
+  border: 1px solid #fff;
   float: left;
   font-size: .7em;
-  height: 240px;
+  height: 220px;
   overflow: hidden;
-  padding: 15px 8px 30px 8px;
+  padding: .6em 8px;
   position: relative;
   text-align: center;
   width: 213px;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem h2 {
   margin: 5px 0;
+}
+
+#gContent .gPhoto h2,
+#gContent .gItem .gMetadata {
+  display: none;
 }
 
 #gContent #gAlbumGrid .gAlbum {
@@ -478,16 +485,37 @@ form .gError,
 }
 
 #gContent #gAlbumGrid .gAlbum h2 span {
-  background: transparent url('../images/ico-album.png') no-repeat top left !important;
+  background: transparent url('../images/ico-album.png') no-repeat top left;
   display: inline-block;
   height: 16px;
   margin-right: 5px;
   width: 16px;
 }
 
+#gContent #gAlbumGrid #gHoverItem {
+  background-color: #fff;
+  border: 1px solid #000;
+  display: none;
+  height: auto;
+  padding: 0;
+  position: absolute;
+  width: auto;
+  z-index: 100;
+}
+
+#gContent #gAlbumGrid #gHoverItem .gItem {
+  border: none;
+}
+
+#gContent #gHoverItem .gItem h2,
+#gContent #gHoverItem .gItem .gMetadata {
+  display: block;
+}
+
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
 #gContent #gItem {
+  position: relative;
   width: 99%;
 }
 
@@ -586,26 +614,48 @@ form .gError,
   margin-bottom: 0 !important;
 }
 
-/* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Context Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gContent .gThumbMenu {
+.gContextMenu {
+  position: absolute;
   bottom: 0;
   left: 0;
-  position: absolute;
+}
+
+.gItem .gContextMenu {
+  display: none;
+  margin-top: 2em;
   width: 100%;
 }
 
-#gContent .gThumbMenu li {
+#gItem .gContextMenu {
+  font-size: .7em;
+}
+
+#gItem .gContextMenu ul {
+  display: none;
+}
+
+.gContextMenu li {
   border-left: none;
   border-right: none;
   border-bottom: none;
 }
 
-#gContent .gThumbMenu li li {
-  padding: .3em;
+.gContextMenu li a {
+  display: block;
+  line-height: 1.6em;
 }
 
-#gContent .gThumbMenu a:hover {
+#gHoverItem .gContextMenu {
+  display: block;
+}
+
+#gHoverItem .gContextMenu li {
+  text-align: left;
+}
+
+#gHoverItem .gContextMenu a:hover {
   text-decoration: none;
 }
 

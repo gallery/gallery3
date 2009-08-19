@@ -19,6 +19,9 @@ $(document).ready(function(){
   // Initialize modal dialogs
   $(".gDialogLink").gallery_dialog();
 
+  // Initialize ajax links
+  $(".gDialogLink").gallery_ajax();
+
   // Initialize panels
   $(".gPanelLink").gallery_panel();
 

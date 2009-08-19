@@ -32,7 +32,6 @@ $(document).ready(function() {
   $("#gMessage li").gallery_show_message();
 
   // Initialize dialogs
-  $(".gMenuLink").addClass("gDialogLink");
   $("#gLoginLink").addClass("gDialogLink");
   $(".gDialogLink").gallery_dialog();
 
@@ -50,24 +49,78 @@ $(document).ready(function() {
   // Apply jQuery UI button css to submit inputs
   $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
 
+  // Apply styles and icon classes to gContextMenu
+  if ($(".gContextMenu").length) {
+    $(".gContextMenu li").addClass("ui-state-default");
+    $(".gContextMenu a").addClass("gButtonLink ui-icon-left");
+    $(".gContextMenu a").prepend("<span class=\"ui-icon\"></span>");
+    $(".gContextMenu a span").each(function() {
+      var iconClass = $(this).parent().attr("class").match(/ui-icon-.[^\s]+/).toString();
+      $(this).addClass(iconClass);
+    });
+  }
+
   // Album view only
   if ($("#gAlbumGrid").length) {
     // Vertical align thumbnails/metadata in album grid
     $(".gItem").gallery_valign();
-    $(".gQuick").ajaxStop(function(){
-      $(".gItem").gallery_valign();
-    });
+
+    // Initialize context menus
+    $(".gItem").hover(
+      function(){
+        var position = $(this).position();
+        var item_classes = $(this).attr("class");
+        var bg_color = $(this).css("background-color");
+        var container = $(this).parent();
+        $("#gHoverItem").remove();
+        container.append("<div id=\"gHoverItem\"><div class=\"" + item_classes + "\">"
+            + $(this).html() + "</div></div>");
+        $("#gHoverItem").css("top", position.top);
+        $("#gHoverItem").css("left", position.left);
+        $("#gHoverItem").css("background-color", bg_color);
+        $.fn.gallery_hover_init();
+        var v_align = $(this).find(".gValign");
+        var title = $(this).find("h2");
+        var meta = $(this).find(".gMetadata");
+        var context = $(this).find(".gContextMenu");
+        var context_label = $(this).find(".gContextMenu li:first");
+        $("#gHoverItem .gItem").height(
+            $(v_align).gallery_height()
+            + $(title).gallery_height()
+            + $(meta).gallery_height()
+            + parseInt($(context).css("margin-top").replace("px",""))
+            + $(context_label).gallery_height()
+          );
+
+        $("#gHoverItem").fadeIn("fast");
+        $("#gHoverItem").hover(
+          function(){
+            $(this).gallery_context_menu();
+          },
+          function() {
+            $(this).hide();
+          }
+        );
+      }
+    );
   }
 
-  // Photo/Item item view only
+  // Photo/Item item view
   if ($("#gItem").length) {
-    // Ensure that sized image versions
-    // fit inside their container
-    sizedImage();
+    // Ensure the resized image fits within its container
+    $("#gItem").gallery_fit_photo();
+
+    // Initialize context menus
+    var resize = $("#gItem").gallery_get_photo();
+    $(resize).hover(function(){
+      $(this).gallery_context_menu();
+    });
 
     // Collapse comments form, insert button to expand
     if ($("#gAddCommentForm").length) {
-      var showCommentForm = '<a href="#add_comment_form" class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right"><span class="ui-icon ui-icon-comment"></span>' + ADD_A_COMMENT + '</a>';
+      var showCommentForm = '<a href="#add_comment_form"'
+        + ' class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right">'
+        + '<span class="ui-icon ui-icon-comment"></span>' + ADD_A_COMMENT + '</a>';
       $("#gAddCommentForm").hide();
       $("#gComments").prepend(showCommentForm);
       $(".showCommentForm").click(function(){
@@ -81,56 +134,9 @@ $(document).ready(function() {
       duration: 1000,
       hash: true
     });
-
   }
 
-  // Add hover state for buttons
-  $(".ui-state-default").hover(
-    function(){
-      $(this).addClass("ui-state-hover");
-    },
-    function(){
-      $(this).removeClass("ui-state-hover");
-    }
-  );
-
-  // Initialize thumbnail menus
-  // @todo Toggle between north and south caret's on hover
-  if ($("#gContent .gThumbMenu").length) {
-    $("#gContent .gThumbMenu li").addClass("ui-state-default");
-    $("#gContent .gThumbMenu li a")
-      .not('[class]')
-      .addClass("gButtonLink ui-icon ui-icon-caret-l-n")
-      .css({
-        height: "10px",
-        margin: "0",
-        padding: "0 0 3px 0"
-      });
-
-    $(".gThumbMenu ul").hide();
-    $(".gThumbMenu").hover(
-      function() {
-        $(this).find("ul").slideDown("fast");
-      },
-      function() {
-	      $(this).find("ul").slideUp("slow");
-      }
-    );
-  }
+  // Initialize button hover effect
+  $.fn.gallery_hover_init();
 
 });
-
-/**
- * Reduce width of sized photo if it's wider than its parent container
- */
-function sizedImage() {
-  var containerWidth = $("#gItem").width();
-  var oPhoto = $("#gItem img").filter(function() {
-    return this.id.match(/gPhotoId-/);
-  });
-  if (containerWidth < oPhoto.width()) {
-    var proportion = containerWidth / oPhoto.width();
-    oPhoto.width(containerWidth);
-    oPhoto.height(proportion * oPhoto.height());
-  }
-}
