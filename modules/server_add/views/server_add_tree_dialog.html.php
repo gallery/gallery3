@@ -23,7 +23,7 @@
     <?= $tree ?>
   </ul>
 
-  <div id="gProgress" style="display: none">
+  <div id="gServerAddProgress" style="display: none">
     <div class="gProgressBar"></div>
     <div id="gStatus"></div>
   </div>
@@ -46,7 +46,7 @@
          $("#gServerAdd .gProgressBar").
            progressbar().
            progressbar("value", 0);
-         $("#gProgress").slideDown("fast", function() { start_add() });
+         $("#gServerAddProgress").slideDown("fast", function() { start_add() });
       });
       $("#gServerCloseButton").click(function(event) {
         $("#gDialog").dialog("close");
