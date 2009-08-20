@@ -19,10 +19,12 @@
  */
 class slideshow_installer {
   static function install() {
-    module::set_version("slideshow", 1);
+    module::set_version("slideshow", 2);
   }
 
-  static function deactivate() {
-    site_status::clear("slideshow_needs_rss");
+  static function upgrade($version) {
+    if ($version == 1) {
+      module::set_version("slideshow", 2);
+    }
   }
 }
