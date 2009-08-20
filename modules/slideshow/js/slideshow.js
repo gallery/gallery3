@@ -2,11 +2,14 @@
   $.gallery_slideshow = {
     interval: 4000,
     timer: null,
+    images: [],
+    current: -1,
     init: function(data) {
       var self = this;
       var size = $.gallery_get_viewport_size();
       $("body").append(
         '<div id="gSlideshowOverlay" class="ui-dialog-overlay"></div>' +
+        '<div class="gLoadingLarge" style="z-index; 2005; width:100%; height:100%">&nbsp</div>' +
         '<div id="gSlideshowButtonPanel"><div class="ui-corner-all">' +
         '<a id="gSlideshowPrevious" href="javascript: $.gallery_slideshow.previous()" />' +
         '<a id="gSlideshowPause" href="javascript: $.gallery_slideshow.pause()" />' +
@@ -19,24 +22,34 @@
 
       // array of {url: xxx, width: nnn, height: nnn}
       for (var i=0; i < data.length; i++) {
-        var position = $.gallery_slideshow._autofit_image(data[i].width, data[i].height);
         $("#gSlideShowImages").append(
-            '<img id="img_' + i + '" src="' + data[i].url + '" width="' + position.width + 'px" ' +
-            'height="' + position.height + 'px" style="position: absolute; top: ' + position.top +
-            'px; left: ' + position.left + 'px;" />');
-        if (i == 0) {
-          $("#gSlideShowImages #img_0").load(function() {
+            '<img id="img_' + i + '" src="' + data[i].url + '" width="' + data[i].width + 'px" ' +
+            'height="' + data[i].height + 'px"  />');
+        $("#gSlideShowImages #img_" + i).load(function() {
+          $.gallery_slideshow.images.push("#" +$(this).attr("id"));
+          if ($.gallery_slideshow.images.length == 1) {
             $.gallery_slideshow._show_image(null);
             setTimeout(function() {$("#gSlideshowButtonPanel").hide();},
                        $.gallery_slideshow.interval);
+          }
+        });
+      };
+      $(window).resize(function() {
+        var size = $.gallery_get_viewport_size();
+        $("#gSlideshowOverlay").width(size.width()).height(size.height());
+        var current = $(".gSlideCurrent");
+        var position = $.gallery_auto_fit_window(current.width(), current.height());
+        $($.gallery_slideshow.images[$.gallery_slideshow.current].replace("img", "clone"))
+          .height(position.height).width(position.width).css({
+            top: position.top,
+            left: position.left
           });
-        }
-      }
-    },
+        });
+      },
 
     close: function(event) {
-      $("#gSlideShowImages img.gSlideShowing").toggle();
       $.gallery_slideshow.pause();
+      $($.gallery_slideshow.images[$.gallery_slideshow.current].replace("img", "clone")).remove();
       $("#gSlideshowOverlay").remove();
       $("#gSlideShowImages").remove();
       $("#gSlideshowButtonPanel").remove();
@@ -45,19 +58,18 @@
 
     previous: function() {
       $.gallery_slideshow.pause();
-      var next_image = $("#gSlideShowImages img.gSlideShowing").prev();
-      if (next_image.length == 0) {
-        next_image = $("#gSlideShowImages img:last");
-      }
+      $.gallery_slideshow.current--;
+
+      $.gallery_slideshow.current = --$.gallery_slideshow.current < 0 ?
+        $.gallery_slideshow.images.length - 1 : $.gallery_slideshow.current;
+      var next_image = $($.gallery_slideshow.images[$.gallery_slideshow.current]);
       $.gallery_slideshow._show_image(next_image);
     },
 
     next: function() {
       $.gallery_slideshow.pause();
-      var next_image = $("#gSlideShowImages img.gSlideShowing").next();
-      if (next_image.length == 0) {
-        next_image = $("#gSlideShowImages img:first");
-      }
+      $.gallery_slideshow.current = ++$.gallery_slideshow.current % $.gallery_slideshow.images.length;
+      var next_image = $($.gallery_slideshow.images[$.gallery_slideshow.current]);
       $.gallery_slideshow._show_image(next_image);
     },
 
@@ -85,51 +97,35 @@
       }
     },
 
-    _autofit_image: function(imageWidth, imageHeight) {
-      var size = $.gallery_get_viewport_size();
-
-      var ratio = size.width() / imageWidth;
-      imageWidth *= ratio;
-      imageHeight *= ratio;
-
-      /* after scaling the width, check that the height fits */
-      if (imageHeight > size.height()) {
-	ratio = size.height() / imageHeight;
-	imageWidth *= ratio;
-	imageHeight *= ratio;
-      }
-
-      // handle the case where the calculation is almost zero (2.14e-14)
-      return {
-	top: Number((size.height() - imageHeight) / 2),
-	left: Number((size.width() - imageWidth) / 2),
-	width: Number(imageWidth),
-	height: Number(imageHeight)
-      };
-    },
-
     // If next_image is not null, then this a call from prev or next
     _show_image: function(next_image) {
       var reset_timer = false;
+      var previous = $.gallery_slideshow.current;
       if (next_image == null) {
-        next_image = $("#gSlideShowImages img.gSlideShowing").next();
-        if (next_image.length == 0) {
-          next_image = $("#gSlideShowImages img:first");
-        }
+        $.gallery_slideshow.current = ++$.gallery_slideshow.current % $.gallery_slideshow.images.length;
+        next_image = $($.gallery_slideshow.images[$.gallery_slideshow.current]);
         reset_timer = true;
       }
-      next_image.addClass("gSlideShowNextImage");
-
       var zIndex = parseInt(next_image.css("zIndex"));
-      next_image.css("zIndex", zIndex + 1);
-      next_image.fadeIn("slow", function() {
-        var current = $("#gSlideShowImages img.gSlideShowing");
-        if (current.length) {
-          current.hide();
-          current.removeClass("gSlideShowing");
+      var position = $.gallery_auto_fit_window(next_image.width(), next_image.height());
+      var clone = next_image.clone();
+
+      clone.attr("id", next_image.attr("id").replace("img", "clone"));
+      clone.height(position.height).width(position.width).css({
+        marginTop: 0, marginLeft: 0, marginBottom: 0, marginRight: 0,
+        display: "none",
+        position: "absolute",
+        zIndex: zIndex + 1,
+        top: position.top + "px",
+        left: position.left + "px"
+      });
+
+      $("body").append(clone);
+      clone.fadeIn("slow", function() {
+        if (previous >= 0) {
+          $($.gallery_slideshow.images[previous].replace("img", "clone")).remove();
         }
-        $(".gSlideShowNextImage").addClass("gSlideShowing").removeClass("gSlideShowNextImage")
-          .css("zIndex", zIndex);
+        clone.css("zIndex", zIndex);
         if (reset_timer) {
           $.gallery_slideshow.timer =
             setTimeout(function() {$.gallery_slideshow._show_image(null);},
