@@ -22,32 +22,23 @@ class Slideshow_Controller extends Controller {
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
 
-    print $this->_build_image_list($item->children());
+    print json_encode(array_values($this->_build_image_list($item->children())));
   }
 
   function photo($item_id) {
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
 
-    print $this->_build_image_list($item->parent()->children());
+    $images = $this->_build_image_list($item->parent()->children());
+    $this_photo = array_search($item_id, array_keys($images));
+    $images = array_merge(array_slice($images, $this_photo), array_slice($images, 0, $this_photo));
+
+    print json_encode($images);
   }
 
-  function tag($item_id) {
-    $item = ORM::factory("item", $item_id);
-    $root = $item->id == 1 ? $item : ORM::factory("item", 1);
-    access::required("view", $item);
-
-    $v = new View("organize_dialog.html");
-    $v->title = $item->title;
-    $parents = array();
-    foreach ($item->parents() as $parent) {
-      $parents[$parent->id] = 1;
-    }
-    $parents[$item->id] = 1;
-
-    $v->album_tree = self::_tree($root, $parents);
-    $v->micro_thumb_grid = self::_get_micro_thumb_grid($item, 0);
-    print $v;
+  function tag($tag_id) {
+    $tag = ORM::factory("tag", $tag_id);
+    print json_encode(array_values($this->_build_image_list($tag->items())));
   }
 
   private function _build_image_list($children) {
@@ -57,17 +48,17 @@ class Slideshow_Controller extends Controller {
       case "album":
         if (!empty($child->album_cover_item_id)) {
           $cover = ORM::factory("item", $child->album_cover_item_id);
-          $resizes[] = array("url" => $cover->resize_url(), "width" => $cover->resize_width,
-                             "height" => $cover->resize_height);
+          $resizes[$child->id] = array("url" => $cover->resize_url(),
+            "width" => $cover->resize_width, "height" => $cover->resize_height);
         }
         break;
       case "photo":
-        $resizes[] = array("url" => $child->resize_url(), "width" => $child->resize_width,
-                           "height" => $child->resize_height);
+        $resizes[$child->id] = array("url" => $child->resize_url(),
+          "width" => $child->resize_width, "height" => $child->resize_height);
         break;
       }
     }
 
-    return json_encode($resizes);
+    return $resizes;
   }
 }

@@ -28,7 +28,7 @@ class slideshow_event_Core {
   }
 
   static function photo_menu($menu, $theme) {
-    $item = $theme->item()->parent();
+    $item = $theme->item();
     $menu->append(Menu::factory("link")
                   ->id("slideshow")
                   ->label(t("View slideshow"))
