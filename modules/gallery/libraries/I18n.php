@@ -77,7 +77,12 @@ class I18n_Core {
       // TODO: See G2 for better fallack code.
       $locale_prefs = array($locale);
       $locale_prefs[] = 'en_US';
-      setlocale(LC_ALL, $locale_prefs);
+      $new_locale = setlocale(LC_ALL, $locale_prefs);
+      if (is_string($new_locale) && strpos($new_locale, 'tr') === 0) {
+	// Make PHP 5 work with Turkish (the localization results are mixed though).
+	// Hack for http://bugs.php.net/18556
+	setlocale(LC_CTYPE, 'C');
+      }
     }
     return $this->_config['default_locale'];
   }

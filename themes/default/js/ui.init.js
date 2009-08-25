@@ -1,8 +1,5 @@
 /**
- * Initialize jQuery UI and Plugin elements
- *
- * @todo Standardize how elements requiring listeners are handled
- *        http://docs.jquery.com/Events/live
+ * Initialize jQuery UI and Gallery Plugin elements
  */
 
 var shortForms = new Array(
@@ -12,9 +9,6 @@ var shortForms = new Array(
 );
 
 $(document).ready(function() {
-
-  // Remove .gMenu from thumb menu's before initializing Superfish
-  // @todo gallery_menu should only apply gMenu to top-level menus, submenus should be gSubMenu-N
 
   // Initialize Superfish menus
   $("ul.gMenu").addClass("sf-menu");
