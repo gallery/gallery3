@@ -11,7 +11,7 @@ CREATE TABLE {access_caches} (
   `edit_2` binary(1) NOT NULL default '0',
   `add_2` binary(1) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {access_caches} VALUES (1,1,'1','0','0','1','0','0');
 DROP TABLE IF EXISTS {access_intents};
@@ -29,7 +29,7 @@ CREATE TABLE {access_intents} (
   `edit_2` binary(1) default NULL,
   `add_2` binary(1) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {access_intents} VALUES (1,1,'1','1','0','0','1','1','0','0');
 DROP TABLE IF EXISTS {caches};
@@ -43,7 +43,7 @@ CREATE TABLE {caches} (
   `cache` longblob,
   PRIMARY KEY  (`id`),
   KEY `tags` (`tags`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {comments};
 SET @saved_cs_client     = @@character_set_client;
@@ -72,7 +72,7 @@ CREATE TABLE {comments} (
   `text` text,
   `updated` int(9) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {graphics_rules};
 SET @saved_cs_client     = @@character_set_client;
@@ -86,7 +86,7 @@ CREATE TABLE {graphics_rules} (
   `priority` int(9) NOT NULL,
   `target` varchar(32) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {graphics_rules} VALUES (1,1,'a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:2;}','gallery','resize',100,'thumb');
 INSERT INTO {graphics_rules} VALUES (2,1,'a:3:{s:5:\"width\";i:640;s:6:\"height\";i:480;s:6:\"master\";i:2;}','gallery','resize',100,'resize');
@@ -99,7 +99,7 @@ CREATE TABLE {groups} (
   `special` tinyint(1) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {groups} VALUES (1,'Everybody',1);
 INSERT INTO {groups} VALUES (2,'Registered Users',1);
@@ -111,7 +111,7 @@ CREATE TABLE {groups_users} (
   `user_id` int(9) NOT NULL,
   PRIMARY KEY  (`group_id`,`user_id`),
   UNIQUE KEY `user_id` (`user_id`,`group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {groups_users} VALUES (1,1);
 INSERT INTO {groups_users} VALUES (1,2);
@@ -129,7 +129,7 @@ CREATE TABLE {incoming_translations} (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `key` (`key`,`locale`),
   KEY `locale_key` (`locale`,`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {items};
 SET @saved_cs_client     = @@character_set_client;
@@ -171,7 +171,7 @@ CREATE TABLE {items} (
   KEY `type` (`type`),
   KEY `random` (`rand_key`),
   KEY `weight` (`weight`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,NULL,0,NULL,'',1,NULL,NULL,2,'weight','ASC',1,NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
 DROP TABLE IF EXISTS {items_tags};
@@ -184,7 +184,7 @@ CREATE TABLE {items_tags} (
   PRIMARY KEY  (`id`),
   KEY `tag_id` (`tag_id`,`id`),
   KEY `item_id` (`item_id`,`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {logs};
 SET @saved_cs_client     = @@character_set_client;
@@ -200,7 +200,7 @@ CREATE TABLE {logs} (
   `url` varchar(255) default NULL,
   `user_id` int(9) default '0',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {messages};
 SET @saved_cs_client     = @@character_set_client;
@@ -212,7 +212,7 @@ CREATE TABLE {messages} (
   `value` varchar(255) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {modules};
 SET @saved_cs_client     = @@character_set_client;
@@ -224,7 +224,7 @@ CREATE TABLE {modules} (
   `version` int(9) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {modules} VALUES (1,1,'gallery',10);
 INSERT INTO {modules} VALUES (2,1,'user',1);
@@ -248,7 +248,7 @@ CREATE TABLE {outgoing_translations} (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `key` (`key`,`locale`),
   KEY `locale_key` (`locale`,`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {permissions};
 SET @saved_cs_client     = @@character_set_client;
@@ -259,7 +259,7 @@ CREATE TABLE {permissions} (
   `name` varchar(64) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {permissions} VALUES (1,'View','view');
 INSERT INTO {permissions} VALUES (2,'View Full Size','view_full');
@@ -276,7 +276,7 @@ CREATE TABLE {search_records} (
   PRIMARY KEY  (`id`),
   KEY `item_id` (`item_id`),
   FULLTEXT KEY `data` (`data`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {search_records} VALUES (1,1,0,'  Gallery');
 DROP TABLE IF EXISTS {sessions};
@@ -287,7 +287,7 @@ CREATE TABLE {sessions} (
   `data` text NOT NULL,
   `last_activity` int(10) unsigned NOT NULL,
   PRIMARY KEY  (`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {tags};
 SET @saved_cs_client     = @@character_set_client;
@@ -298,7 +298,7 @@ CREATE TABLE {tags} (
   `count` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {tasks};
 SET @saved_cs_client     = @@character_set_client;
@@ -316,7 +316,7 @@ CREATE TABLE {tasks} (
   `updated` int(9) default NULL,
   PRIMARY KEY  (`id`),
   KEY `owner_id` (`owner_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {themes};
 SET @saved_cs_client     = @@character_set_client;
@@ -327,7 +327,7 @@ CREATE TABLE {themes} (
   `version` int(9) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {themes} VALUES (1,'default',1);
 INSERT INTO {themes} VALUES (2,'admin_default',1);
@@ -350,7 +350,7 @@ CREATE TABLE {users} (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {users} VALUES (1,'guest','Guest User','',0,0,NULL,0,1,NULL,NULL,NULL);
 INSERT INTO {users} VALUES (2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
@@ -364,7 +364,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','default');
 INSERT INTO {vars} VALUES (2,'gallery','active_admin_theme','admin_default');

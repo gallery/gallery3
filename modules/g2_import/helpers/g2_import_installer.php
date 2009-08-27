@@ -26,7 +26,7 @@ class g2_import_installer {
                  `g3_id` int(9) NOT NULL,
                PRIMARY KEY (`id`),
                KEY (`g2_id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     module::set_version("g2_import", 1);
     mkdir(VARPATH . "modules/g2_import");

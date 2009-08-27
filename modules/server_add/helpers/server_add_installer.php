@@ -27,7 +27,7 @@ class server_add_installer {
                   `parent_id` int(9),
                   `task_id` int(9) NOT NULL,
                   PRIMARY KEY (`id`))
-                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                DEFAULT CHARSET=utf8;");
     module::set_version("server_add", 3);
     server_add::check_config();
   }
@@ -40,7 +40,7 @@ class server_add_installer {
                     `task_id` int(9) NOT NULL,
                     `file` varchar(255) NOT NULL,
                     PRIMARY KEY (`id`))
-                  ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                  DEFAULT CHARSET=utf8;");
       module::set_version("server_add", $version = 2);
     }
 
