@@ -79,9 +79,9 @@ class I18n_Core {
       $locale_prefs[] = 'en_US';
       $new_locale = setlocale(LC_ALL, $locale_prefs);
       if (is_string($new_locale) && strpos($new_locale, 'tr') === 0) {
-	// Make PHP 5 work with Turkish (the localization results are mixed though).
-	// Hack for http://bugs.php.net/18556
-	setlocale(LC_CTYPE, 'C');
+        // Make PHP 5 work with Turkish (the localization results are mixed though).
+        // Hack for http://bugs.php.net/18556
+        setlocale(LC_CTYPE, 'C');
       }
     }
     return $this->_config['default_locale'];
@@ -183,7 +183,7 @@ class I18n_Core {
   static function is_plural_message($message) {
     return is_array($message);
   }
-  
+
   private function interpolate($locale, $string, $values) {
     // TODO: Handle locale specific number formatting.
 
