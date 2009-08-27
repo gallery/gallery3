@@ -29,4 +29,38 @@ class slideshow_event_Core {
       site_status::clear("slideshow_needs_rss");
     }
   }
+
+  static function album_menu($menu, $theme) {
+    $descendants_count = ORM::factory("item", $theme->item->id)
+      ->descendants_count(array("type" => "photo"));
+    if ($descendants_count > 1) {
+      $menu
+        ->append(Menu::factory("link")
+                 ->id("slideshow")
+                 ->label(t("View slideshow"))
+                 ->url("javascript:PicLensLite.start(" .
+                       "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
+                 ->css_id("gSlideshowLink"));
+    }
+  }
+
+  static function photo_menu($menu, $theme) {
+    $menu
+      ->append(Menu::factory("link")
+               ->id("slideshow")
+               ->label(t("View slideshow"))
+               ->url("javascript:PicLensLite.start(" .
+                     "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
+               ->css_id("gSlideshowLink"));
+  }
+
+  static function tag_menu($menu, $theme) {
+    $menu
+      ->append(Menu::factory("link")
+               ->id("slideshow")
+               ->label(t("View slideshow"))
+               ->url("javascript:PicLensLite.start(" .
+                     "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
+               ->css_id("gSlideshowLink"));
+  }
 }
