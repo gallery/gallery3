@@ -20,7 +20,7 @@
 class slideshow_theme_Core {
   static function head($theme) {
     $proto = (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] === "off") ? "http" : "https";
-    return "<script src=\"$proto://lite.piclens.com/current/piclens_optimized.js\"" .
+    return "<script src=\"$proto://lite.piclens.com/current/piclens_optimized.js\" " .
       "type=\"text/javascript\"></script>";
   }
 }

@@ -23,13 +23,13 @@
         <? endif ?>
       <? endif ?>
     </title>
-    <link rel="shortcut icon" href="<?= $theme->theme_url("images/favicon.ico") ?>" type="image/x-icon" />
-    <?= $theme->css("lib/yui/reset-fonts-grids.css") ?>
-    <?= $theme->css("lib/superfish/css/superfish.css") ?>
-    <?= $theme->css("lib/themeroller/ui.base.css") ?>
-    <?= $theme->theme_css("css/screen.css") ?>
+    <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
+    <?= $theme->css("yui/reset-fonts-grids.css") ?>
+    <?= $theme->css("superfish/css/superfish.css") ?>
+    <?= $theme->css("themeroller/ui.base.css") ?>
+    <?= $theme->css("screen.css") ?>
     <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
     <? if ($theme->page_type == 'album'): ?>
@@ -45,26 +45,27 @@
     </style>
       <? endif ?>
     <? endif ?>
-    <?= $theme->script("lib/jquery.js") ?>
-    <?= $theme->script("lib/jquery.form.js") ?>
-    <?= $theme->script("lib/jquery-ui.js") ?>
-    <?= $theme->script("lib/gallery.common.js") ?>
+    <?= $theme->script("jquery.js") ?>
+    <?= $theme->script("jquery.form.js") ?>
+    <?= $theme->script("jquery-ui.js") ?>
+    <?= $theme->script("gallery.common.js") ?>
     <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
     <script type="text/javascript">
     var MSG_CANCEL = "<?= t('Cancel') ?>";
     </script>
-    <?= $theme->script("lib/gallery.dialog.js") ?>
-    <?= $theme->script("lib/gallery.form.js") ?>
-    <?= $theme->script("lib/superfish/js/superfish.js") ?>
-    <?= $theme->script("lib/jquery.localscroll.js") ?>
-    <?= $theme->theme_script("js/ui.init.js") ?>
+    <?= $theme->script("gallery.ajax.js") ?>
+    <?= $theme->script("gallery.dialog.js") ?>
+    <?= $theme->script("gallery.form.js") ?>
+    <?= $theme->script("superfish/js/superfish.js") ?>
+    <?= $theme->script("jquery.localscroll.js") ?>
+    <?= $theme->script("ui.init.js") ?>
 
     <? /* These are page specific, but if we put them before $theme->head() they get combined */ ?>
     <? if ($theme->page_type == "photo"): ?>
-    <?= $theme->script("lib/jquery.scrollTo.js") ?>
-    <?= $theme->script("lib/gallery.show_full_size.js") ?>
+    <?= $theme->script("jquery.scrollTo.js") ?>
+    <?= $theme->script("gallery.show_full_size.js") ?>
     <? elseif ($theme->page_type == "movie"): ?>
-    <?= $theme->script("lib/flowplayer.js") ?>
+    <?= $theme->script("flowplayer.js") ?>
     <? endif ?>
 
     <?= $theme->head() ?>

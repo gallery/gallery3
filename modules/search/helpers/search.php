@@ -24,7 +24,7 @@ class search_Core {
 
     if (!user::active()->admin) {
       foreach (user::group_ids() as $id) {
-        $fields[] = "`view_$id` = " . access::ALLOW;
+        $fields[] = "`view_$id` = TRUE"; // access::ALLOW
       }
       $access_sql = "AND (" . join(" AND ", $fields) . ")";
     } else {
@@ -50,6 +50,9 @@ class search_Core {
     return array($count, new ORM_Iterator(ORM::factory("item"), $db->query($query)));
   }
 
+  /**
+   * @return string An error message suitable for inclusion in the task log
+   */
   static function check_index() {
     list ($remaining) = search::stats();
     if ($remaining) {
@@ -61,19 +64,14 @@ class search_Core {
   }
 
   static function update($item) {
-    $data = array();
+    $data = new ArrayObject();
     $record = ORM::factory("search_record")->where("item_id", $item->id)->find();
     if (!$record->loaded) {
       $record->item_id = $item->id;
     }
 
-    foreach (module::active() as $module) {
-      $class_name = "{$module->name}_search";
-      if (method_exists($class_name, "item_index_data")) {
-        $data[] = call_user_func(array($class_name, "item_index_data"), $record->item());
-      }
-    }
-    $record->data = join(" ", $data);
+    module::event("item_index_data", $record->item(), $data);
+    $record->data = join(" ", (array)$data);
     $record->dirty = 0;
     $record->save();
   }

@@ -1,14 +1,41 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<script type="text/javascript">
-</script>
-<ul id="<?= $tree_id ?>" class="gCheckboxTree">
-  <? foreach ($data as $file => $file_info): ?>
-  <li class="<?= empty($file_info["is_dir"]) ? "gFile" : "gDirectory gCollapsed ui-icon-left" ?>">
-    <? if (!empty($file_info["is_dir"])): ?>
-    <span class="ui-icon ui-icon-plus"></span>
-    <? endif ?>
-       <label> <?= form::checkbox("checkbox[]", p::clean($file_info["path"]), $checked) . " " . p::clean($file) ?> </label>
-    <div class="gServerAddChildren" style="display: none"></div>
-  </li>
-  <? endforeach ?>
-</ul>
+<li class="ui-icon-left">
+  <span class="ui-icon ui-icon-folder-open"></span>
+  <span ondblclick="open_dir('')">
+    <?= t("All") ?>
+  </span>
+  <ul>
+
+    <? foreach ($parents as $dir): ?>
+    <li class="ui-icon-left">
+      <span class="ui-icon ui-icon-folder-open"></span>
+      <span ondblclick="open_dir('<?= $dir ?>')">
+        <?= basename($dir) ?>
+      </span>
+      <ul>
+        <? endforeach ?>
+
+        <? foreach ($files as $file): ?>
+        <li class="ui-icon-left">
+          <span class="ui-icon <?= is_dir($file) ? "ui-icon-folder-collapsed" : "ui-icon-document" ?>"></span>
+          <span onclick="select_file(this)"
+                <? if (is_dir($file)): ?>
+                ondblclick="open_dir($(this).attr('file'))"
+                <? endif ?>
+                file="<?= $file ?>"
+                >
+            <?= p::clean(basename($file)) ?>
+          </span>
+        </li>
+        <? endforeach ?>
+        <? if (!$files): ?>
+        <li> <i> <?= t("empty") ?> </i> </li>
+        <? endif ?>
+
+        <? foreach ($parents as $dir): ?>
+      </ul>
+    </li>
+    <? endforeach ?>
+
+  </ul>
+</li>

@@ -279,8 +279,6 @@ class Organize_Controller extends Controller {
       $item->rename($form->dirname->value);
       $item->save();
 
-      module::event("item_updated", $orig, $item);
-
       if ($item->is_album()) {
         log::success("content", "Updated album", "<a href=\"albums/$item->id\">view</a>");
         $message = t("Saved album %album_title", array("album_title" => p::purify($item->title)));
@@ -321,8 +319,6 @@ class Organize_Controller extends Controller {
       $item->sort_column = $form->column->value;
       $item->sort_order = $form->direction->value;
       $item->save();
-
-      module::event("item_updated", $orig, $item);
 
       log::success("content", "Updated album", "<a href=\"albums/$item->id\">view</a>");
       $message = t("Saved album %album_title", array("album_title" => p::purify($item->title)));
@@ -520,7 +516,7 @@ class Organize_Controller extends Controller {
       break;
 
     case "delete":
-      return array("description" => t("Delete selected photos and albums"),
+      return array("description" => t("Delete selected photos / albums"),
                    "name" => t("Delete images in %name", array("name" => $item->title)),
                    "type" => "delete",
                    "runningMsg" => t("Delete images in progress"),

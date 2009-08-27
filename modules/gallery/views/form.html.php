@@ -40,6 +40,8 @@ if (!function_exists("DrawForm")) {
           print "$prefix  {$hidden->render()}\n";
         }
         print "$prefix</fieldset>\n";
+      } else if ($input->type == 'script') {
+        print $input->render();
       } else {
         if ($input->error_messages()) {
           print "$prefix<li class=\"gError\">\n";

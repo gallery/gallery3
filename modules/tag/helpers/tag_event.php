@@ -34,10 +34,13 @@ class tag_event_Core {
         if (!empty($iptc["2#025"])) {
           foreach($iptc["2#025"] as $tag) {
             $tag = str_replace("\0",  "", $tag);
-            if (function_exists("mb_detect_encoding") && mb_detect_encoding($tag) != "UTF-8") {
-              $tag = utf8_encode($tag);
+            foreach (preg_split("/,/", $tag) as $word) {
+              $word = trim($word);
+              if (function_exists("mb_detect_encoding") && mb_detect_encoding($word) != "UTF-8") {
+                $word = utf8_encode($word);
+              }
+              $tags[$word] = 1;
             }
-            $tags[$tag] = 1;
           }
         }
       }
@@ -56,12 +59,42 @@ class tag_event_Core {
     return;
   }
 
-  static function item_before_delete($item) {
-    $db = Database::instance();
-    $db->query("UPDATE {tags} SET `count` = `count` - 1 WHERE `count` > 0 " .
-               "AND `id` IN (SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
-    $db->query("DELETE FROM {tags} WHERE `count` = 0 AND `id` IN (" .
-               "SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
-    $db->delete("items_tags", array("item_id" => "$item->id"));
+  static function item_deleted($item) {
+    tag::clear_all($item);
+    tag::compact();
+  }
+
+  static function item_edit_form($item, $form) {
+    $url = url::site("tags/autocomplete");
+    $form->script("")
+      ->text("$('form input[id=tags]').ready(function() {
+                $('form input[id=tags]').autocomplete(
+                  '$url', {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1});
+              });");
+    $tag_value = implode(", ", tag::item_tags($item));
+    $form->edit_item->input("tags")->label(t("Tags (comma separated)"))
+      ->value($tag_value);
+  }
+
+  static function item_edit_form_completed($item, $form) {
+    tag::clear_all($item);
+    foreach (preg_split("/,/", $form->edit_item->tags->value) as $tag_name) {
+      if ($tag_name) {
+        tag::add($item, trim($tag_name));
+      }
+    }
+    tag::compact();
+  }
+
+  static function admin_menu($menu, $theme) {
+    $menu->get("content_menu")
+      ->append(Menu::factory("link")
+               ->id("tags")
+               ->label(t("Tags"))
+               ->url(url::site("admin/tags")));
+  }
+
+  static function item_index_data($item, $data) {
+    $data[] = join(" ", tag::item_tags($item));
   }
 }

@@ -1,0 +1,458 @@
+/**
+ * Gallery 3 Default Admin Theme Screen Styles
+ *
+ * Extends themes/default/css/screen.css
+ *
+ * 1)  Basic HTML elements
+ * 2) Reusable content blocks
+ * 3) Page layout containers
+ * 4) Content blocks in specific layout containers
+ * 5) Browser hacks
+ * 6) jQuery and jQuery UI
+ * 7) Server Add
+ * 8) Digibug Print Administration
+ */
+
+/** *******************************************************************
+ * 1) Basic HTML elements
+ **********************************************************************/
+
+/** *******************************************************************
+ * 2) Reusable content blocks
+ **********************************************************************/
+
+.gBlock {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-bottom: 1em;
+  padding: 1em;
+}
+
+#gSidebar .gBlockContent {
+  padding: 0;
+}
+
+.gSelected img,
+.gAvailable .gBlock img {
+  float: left;
+  margin-right: 1em;
+}
+
+.rtl .gSelected img,
+.rtl .gAvailable .gBlock img {
+  float: right;
+  margin-left: 1em;
+}
+
+.gSelected {
+  background: #e8e8e8;
+}
+
+.gAvailable .gInstalledToolkit:hover {
+  cursor: pointer;
+  background: #eee;
+}
+
+.gAvailable .gButtonLink {
+  width: 96%;
+}
+
+.gSelected .gButtonLink {
+  display: none;
+}
+
+.gUnavailable {
+  border-color: #999;
+  opacity: 0.4;
+}
+
+.gOddRow {
+  background-color: #eee;
+}
+
+.gEvenRow {
+  background-color: #fff;
+}
+
+/** *******************************************************************
+ * 3) Page layout containers
+ **********************************************************************/
+
+.gView {
+  min-width: 974px !important;
+}
+
+#gHeader {
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+#gContent {
+  font-size: 1.1em;
+  width: 96%;
+}
+
+/** *******************************************************************
+ * 4) Content blocks in specific layout containers
+ *********************************************************************/
+
+#gHeader #gLogo {
+  float: left;
+  margin: -22px 10px 0 0;
+  display: block;
+  padding-left: 2px;
+  width: 105px; /* 107px - padding-left */
+  height: 48px;
+  background-image: url('../../default/images/logo.png');
+  color: #A5A5A5 ! important;
+}
+#gHeader #gLogo:hover {
+  color: #FF6600 ! important;
+  text-decoration: none;
+}
+
+#gHeader #gLoginMenu {
+  float: none;
+  margin: 0;
+  padding: 5px 0 10px 0;
+  text-align: right;
+}
+
+
+.rtl #gHeader #gLoginMenu {
+  text-align: left;
+}
+
+#gHeader #gSiteAdminMenu {
+  float: left;
+  font-size: 1.2em;
+}
+
+.rtl #gHeader #gSiteAdminMenu {
+  float: right;
+}
+
+#gHeader #gSiteAdminMenu ul {
+  margin-bottom: 0;
+}
+
+.gBlock .ui-dialog-titlebar {
+  margin: -1em -1em 0;
+}
+
+#gSidebar .gBlock h2 {
+  background: none;
+}
+
+#gPhotoStream {
+  background-color: #e8e8e8;
+}
+
+#gPhotoStream .gBlockContent ul {
+  border-right: 1px solid #e8e8e8;
+  height: 135px;
+  overflow: auto;
+  overflow: -moz-scrollbars-horizontal; /* for FF */
+  overflow-x: scroll; /* scroll horizontal */
+  overflow-y: hidden; /* Hide vertical*/
+}
+
+#gContent #gPhotoStream .gItem {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  float: left;
+  height: 90px;
+  overflow: hidden;
+  text-align: center;
+  width: 90px;
+}
+
+.rtl #gContent #gPhotoStream .gItem {
+  float: right;
+}
+
+#gSiteStatus {
+  margin-bottom: 0;
+}
+
+#gContent .gItem {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  height: 90px;
+  padding: 14px 8px;
+  text-align: center;
+  width: 90px;
+}
+
+#gAdminCommentsMenu {
+  margin: 1em 0;
+}
+
+#gAdminCommentsMenu a {
+  margin: 0;
+  padding: .2em .6em;
+}
+
+#gAdminGraphics .gAvailable .gBlock {
+  clear: none;
+  float: left;
+  height: 16em;
+  margin-right: 1em;
+  width: 30%;
+}
+
+.rtl #gAdminGraphics .gAvailable .gBlock {
+  float: right;
+  margin-left: 1em;
+  margin-right: 0em;
+}
+
+#gSiteTheme,
+#gAdminTheme {
+  float: left;
+  width: 48%;
+}
+
+.rtl #gSiteTheme,
+.rtl #gAdminTheme {
+  float: right;
+}
+
+#gSiteTheme {
+  margin-right: 1em;
+}
+
+#gUserAdminList {
+  margin-bottom: 1em;
+}
+#gUserAdminList td {
+  vertical-align: bottom;
+}
+
+#gUserAdminList .gDraggable:hover {
+  border: 1px dashed black;
+}
+
+#gUserAdminList .admin {
+  color: #55f;
+  font-weight: bold;
+}
+
+.gActions a,
+.gActions span {
+  margin-right: 3em;
+}
+
+li.gGroup {
+  float: left;
+  display: block;
+  width: 200px;
+  border: 1px solid gray;
+  padding: 0;
+  margin: 0 1em 1em 0;
+}
+
+.rtl li.gGroup {
+  float: right;
+}
+
+li.gGroup h4 {
+  background-color: #EEEEEE;
+  border-bottom: 1px dashed #CCCCCC;
+  padding: .5em 0 .5em .5em;
+}
+li.gGroup .gButtonLink {
+  padding: 0;
+}
+li.gGroup ul, li.gGroup div {
+  height: 180px;
+  margin: 1px;
+  overflow: auto;
+  padding-top: .2em;
+}
+li.gGroup div p {
+  color: gray;
+  text-align: center;
+  padding: 2em .5em 0 .5em
+}
+li.gGroup .gUser {
+  padding: .2em 0 0 .5em;
+}
+li.gGroup .gUser .gButtonLink {
+  vertical-align: middle;
+}
+
+li.gDefaultGroup h4, li.gDefaultGroup .gUser {
+  color: gray;
+}
+
+#gAdminAdvancedSettings tr.setting:hover {
+  background: #ffc;
+}
+
+/** *******************************************************************
+ * 5) Browser hacks
+ *********************************************************************/
+
+#gHeader:after,
+#gAdminCommentsMenu:after,
+#gGroupAdmin:after,
+.gSelected:after,
+.gAvailable .gBlock:after,
+#gModuleCreateForm ul li ul:after,
+#gDeveloperTools:after,
+#gPhotoStream:after {
+  clear: both;
+  content: ".";
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+/** *******************************************************************
+ * 6) jQuery and jQuery UI
+ *********************************************************************/
+
+#gPanel {
+  display: none;
+  padding: 1em;
+}
+
+#gPanel legend {
+  display: none;
+}
+
+#gPanel fieldset {
+  border: none;
+}
+
+.ui-draggable {
+  cursor: move;
+}
+
+.gButtonSetVertical a {
+  width: 8em !important;
+}
+
+#gAdminDashboard .ui-dialog-titlebar,
+#gAdminDashboardSidebar .ui-dialog-titlebar {
+  padding: .2em .4em;
+}
+
+/**** Stuff that needs a home! ****/
+#gTagAdmin {
+  table-layout: fixed;
+}
+#gTagAdmin td {
+  border: 0;
+}
+#gTagAdmin ul {
+  padding-bottom: .3em;
+}
+#gTagAdmin li {
+  padding: .1em 0 .2em .3em;
+}
+#gTagAdmin .gColumn {
+  float: left;
+  width: 200px;
+}
+.rtl #gTagAdmin .gColumn {
+  float: right;
+}
+.gEditable {
+  padding: .1em .3em .2em .3em;
+}
+.gEditable:hover {
+  background-color: #ffc;
+  cursor: text;
+}
+#gRenameTagForm input {
+  padding: 0 .2em 0 .2em;
+  clear: none;
+  float: left;
+  margin: 0 .2em 0 0;
+}
+.rtl #gRenameTagForm input {
+  float: right;
+}
+#gRenameTagForm input[type="submit"] {
+  height: 25px;
+}
+#gRenameTagForm a, #gRenameTagForm span {
+  display: block;
+  float: left;
+  padding: .2em .2em 0 .1em;
+}
+.rtl #gRenameTagForm a, #gRenameTagForm span {
+  float: right;
+}
+#gProgress button {
+  float: right;
+  margin-top: 1em;
+}
+.rtl #gProgress button {
+  float: left;
+}
+
+#gTaskLogDialog h1 {
+  font-size: 1.1em;
+}
+
+.gTaskLog {
+  border: 1pt solid;
+  font-size: .9em;
+  height: 400px;
+  margin: .5em 0;
+  overflow: auto;
+  padding: .5em
+}
+
+
+/** *******************************************************************
+ * 7) Server Add
+ *********************************************************************/
+#gServerAddAdmin {
+  margin:auto;
+  text-align: left;
+}
+
+.rtl #gServerAddAdmin {
+  text-align: right;
+}
+
+#gServerAddAdmin form fieldset {
+  border: medium none;
+}
+
+#gServerAddAdmin legend {
+  display: none;
+}
+
+#gServerAddAdmin .gWarning {
+  background-color: #FFFF99;
+}
+
+#gAuthorizedPath {
+  margin: 0 !important;
+  padding: 0.3em 1.5em 0.3em 1em;
+}
+
+#gServerAdd Admin #path {
+  width: 80%;
+}
+
+.gRemoveDir:hover {
+  cursor: pointer;
+}
+
+#gLanguageSettingsForm .checklist li {
+  width: 150px;
+  overflow: hidden;
+}
+

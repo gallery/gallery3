@@ -17,18 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+class organize_event_Core {
+  static function site_menu($menu, $theme) {
+    $item = $theme->item();
 
-class Comment_Search_Core {
-  static function item_index_data($item) {
-    $data = array();
-    foreach (Database::instance()
-             ->select("text")
-             ->from("comments")
-             ->where("item_id", $item->id)
-             ->get()
-             ->as_array() as $row) {
-      $data[] = $row->text;
+    if ($item && access::can("edit", $item) && $item->is_album()) {
+      $menu->get("options_menu")
+        ->append(Menu::factory("link")
+        ->id("organize")
+        ->label(t("Organize Album"))
+        ->css_id("gOrganizeLink")
+        ->url(url::site("organize/index/{$item->id}")));
     }
-    return join(" ", $data);
   }
 }

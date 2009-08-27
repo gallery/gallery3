@@ -39,7 +39,6 @@ class group_Core {
     $group->name = $name;
     $group->save();
 
-    module::event("group_created", $group);
     return $group;
   }
 

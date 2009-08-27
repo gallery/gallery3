@@ -21,7 +21,7 @@
 /**
  * This is the API for handling locales.
  */
-class locale_Core {
+class locales_Core {
   private static $locales;
 
   /**

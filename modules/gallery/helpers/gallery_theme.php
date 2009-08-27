@@ -22,67 +22,41 @@ class gallery_theme_Core {
     $session = Session::instance();
     $buf = "";
     if ($session->get("debug")) {
-      $theme->css("modules/gallery/css/debug.css");
-    }
-    if (($theme->page_type == "album" || $theme->page_type == "photo")
-        && access::can("edit", $theme->item())) {
-      $theme->css("modules/gallery/css/quick.css");
-      $theme->script("modules/gallery/js/quick.js");
+      $theme->css("debug.css");
     }
 
     if (module::is_active("rss")) {
       if ($item = $theme->item()) {
-        $buf .= rss::feed_link("gallery/album/{$item->id}");
+        if ($item->is_album()) {
+          $buf .= rss::feed_link("gallery/album/{$item->id}");
+        } else {
+          $buf .= rss::feed_link("gallery/album/{$item->parent()->id}");
+        }
       } else if ($tag = $theme->tag()) {
         $buf .= rss::feed_link("tag/tag/{$tag->id}");
       }
     }
 
     if ($session->get("l10n_mode", false)) {
-      $theme->css("modules/gallery/css/l10n_client.css");
-      $theme->script("lib/jquery.cookie.js");
-      $theme->script("modules/gallery/js/l10n_client.js");
+      $theme->css("l10n_client.css");
+      $theme->script("jquery.cookie.js");
+      $theme->script("l10n_client.js");
     }
 
     return $buf;
   }
 
-  static function resize_top($theme, $item) {
-    if (access::can("edit", $item)) {
-      $edit_link = url::site("quick/pane/$item->id?page_type=photo");
-      return "<div class=\"gQuick\" href=\"$edit_link\">";
-    }
-  }
-
-  static function resize_bottom($theme, $item) {
-    if (access::can("edit", $item)) {
-      return "</div>";
-    }
-  }
-
-  static function thumb_top($theme, $child) {
-    if (access::can("edit", $child)) {
-      $edit_link = url::site("quick/pane/$child->id?page_type=album");
-      return "<div class=\"gQuick\" href=\"$edit_link\">";
-    }
-  }
-
-  static function thumb_bottom($theme, $child) {
-    if (access::can("edit", $child)) {
-      return "</div>";
-    }
-  }
-
   static function admin_head($theme) {
+    $theme->script("gallery.panel.js");
     $session = Session::instance();
     if ($session->get("debug")) {
-      $theme->css("modules/gallery/css/debug.css");
+      $theme->css("debug.css");
     }
 
     if ($session->get("l10n_mode", false)) {
-      $theme->css("modules/gallery/css/l10n_client.css");
-      $theme->script("lib/jquery.cookie.js");
-      $theme->script("modules/gallery/js/l10n_client.js");
+      $theme->css("l10n_client.css");
+      $theme->script("jquery.cookie.js");
+      $theme->script("l10n_client.js");
     }
   }
 
@@ -116,12 +90,17 @@ class gallery_theme_Core {
   static function credits() {
      return "<li class=\"first\">" .
       t(module::get_var("gallery", "credits"),
-        array("url" => "http://gallery.menalto.com",
-              "version" => module::get_var("gallery", "version"))) .
+        array("url" => "http://gallery.menalto.com", "version" => gallery::VERSION)) .
       "</li>";
   }
 
   static function admin_credits() {
     return gallery_theme::credits();
+  }
+
+  static function body_attributes() {
+    if (locales::is_rtl()) {
+      return 'class="rtl"';
+    }
   }
 }

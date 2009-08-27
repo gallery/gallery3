@@ -1,205 +1,62 @@
-var paused = false;
-var task = null;
-
-$("#gServerAdd").ready(function() {
-  init_server_add_form();
-});
-
-function init_server_add_form() {
-  $("#gServerAdd #gServerAddButton").click(function(event) {
-    do_add(this, event);
-  });
-  $("#gServerAdd #gServerPauseButton").click(function(event) {
-    event.preventDefault();
-    paused = true;
-  });
-  $(".gProgressBar").progressbar();
-  $("#gServerAddTree ul").css("display", "block");
-  $("#gServerAdd form").bind("form_closing", function(target) {
-    if (task != null && !task.done) {
-      $.ajax({async: false,
-        success: function(data, textStatus) {
-          document.location.reload();
-        },
-        dataType: "json",
-        type: "POST",
-        url: get_url("server_add/pause", task.id)
-      });
-    } else {
-      document.location.reload();
-    }
-  });
-  set_click_events();
-}
-
-function set_click_events() {
-  $(".ui-icon").unbind("click");
-  $(":checkbox").unbind("click");
-  $(".ui-icon").click(function(event) {
-    open_close_branch(this, event);
-  });
-
-  $("input[type=checkbox]").click(function(event) {
-    checkbox_click(this);
-  });
-}
-
-function open_close_branch(icon, event) {
-  var parent = icon.parentNode;
-  var closed = $(icon).hasClass("ui-icon-plus");
-  var children = $(parent).find(".gCheckboxTree");
-
-  if (closed) {
-    if (children.length == 0) {
-      load_children(icon);
-    } else {
-        toggle_branch("open", icon);
-    }
+/**
+ * Manage file selection state.
+ */
+function select_file(li) {
+  $(li).toggleClass("selected");
+  if ($("#gServerAdd span.selected").length) {
+    $("#gServerAddAddButton").enable(true).removeClass("ui-state-disabled");
   } else {
-    toggle_branch("close", icon);
+    $("#gServerAddAddButton").enable(false).addClass("ui-state-disabled");
   }
 }
 
-function toggle_branch(direction, icon) {
-  var parent = icon.parentNode;
-  var branch = $(parent).children(".gServerAddChildren");
-  $(branch).slideToggle("fast", function() {
-    if (direction == "open") {
-      $(icon).addClass("ui-icon-minus");
-      $(icon).removeClass("ui-icon-plus");
-      $(parent).removeClass("gCollapsed");
-    } else {
-      $(icon).addClass("ui-icon-plus");
-      $(icon).removeClass("ui-icon-minus");
+/**
+ * Load a new directory
+ */
+function open_dir(path) {
+  $.ajax({
+    url: GET_CHILDREN_URL.replace("__PATH__", path),
+    success: function(data, textStatus) {
+      $("#gServerAddTree").html(data);
     }
   });
 }
 
-function get_url(uri, task_id) {
-  var url = $("#gServerAdd form").attr("action");
-  url = url.replace("__ARGS__", uri);
-  url = url.replace("__TASK_ID__", !task_id ? "" : "/" + task_id);
-  return url;
-}
-
-function checkbox_click(checkbox) {
-  var parent = $(checkbox).parents("li").get(0);
-  var checked = $(checkbox).attr("checked");
-  if (!$(parent).hasClass("gCollapsed")) {
-    $(parent).find(".gCheckboxTree input[type=checkbox]").attr("checked", checked);
-  }
-  var checkboxes = $("#gServerAdd :checkbox[checked]");
-  $("#gServerAdd form :submit").attr("disabled", checkboxes.length == 0);
-}
-
-function load_children(icon) {
-  $("#gDialog").addClass("gDialogLoadingLarge");
-  var parent = icon.parentNode;
-  var checkbox = $(parent).find("input[type=checkbox]");
-  var parms = "&path=" + $(checkbox).attr("value");
-  parms += "&checked=" + $(checkbox).is(":checked");
-  parms += "&collapsed=" + $(parent).hasClass("gCollapsed");
-
-  $.ajax({success: function(data, textStatus) {
-            $(parent).children(".gServerAddChildren").html(data);
-            set_click_events();
-            $("#gDialog").removeClass("gDialogLoadingLarge");
-            toggle_branch("open", icon);
-          },
-          data: parms,
-          dataType: "html",
-          type: "POST",
-          url: get_url("server_add/children")
+function start_add() {
+  var paths = [];
+  $.each($("#gServerAdd span.selected"), function () {
+    paths.push($(this).attr("file"));
   });
-}
 
-function do_add(submit, event) {
-  event.preventDefault();
-
-  $("#gServerAdd #gServerAddButton").hide();
-  $("#gServerAdd #gServerPauseButton").show();
-
-  var parms = "";
-  if (!paused) {
-    $(".gProgressBar").progressbar("value", 0);
-    $(".gProgressBar").css("visibility", "visible");
-    var check_list = $("#gServerAdd :checkbox[checked]");
-
-    var paths = "";
-    var collapsed = "";
-    $.each(check_list, function () {
-      var parent = $(this).parents("li")[0];
-      paths += "&path[]=" + this.value;
-      collapsed += "&collapsed[]=" + $(parent).hasClass("gCollapsed");
-    });
-    parms = paths + collapsed;
-  }
-  paused = false;
-
-  $.ajax({async: false,
-    data: parms,
+  $.ajax({
+    url: START_URL,
+    type: "POST",
+    async: false,
+    data: { "paths[]": paths },
     dataType: "json",
     success: function(data, textStatus) {
-      var done = data.task.done;
-      if (done) {
-        task = null;
-        $("body").append("<div id='gNoFilesDialog'>" + data.task.status + "</div>");
-
-        $("#gNoFilesDialog").dialog({modal: true,
-                                    autoOpen: true,
-                                    title: FILE_IMPORT_WARNING});
-        $(".gProgressBar").css("visibility", "hidden");
-        $("#gServerAdd #gServerAddButton").show();
-        $("#gServerAdd #gServerPauseButton").hide();
-        return;
-      }
-      task = data.task;
-      var url = data.url;
-      while (!done && !paused) {
-        $.ajax({async: false,
-          success: function(data, textStatus) {
-            $(".gProgressBar").progressbar("value", data.task.percent_complete);
-            done = data.task.done;
-          },
-          error: function(XMLHttpRequest, textStatus, errorThrown) {
-            paused = true;
-            display_upload_error(XMLHttpRequest.responseText);
-          },
-          dataType: "json",
-          type: "POST",
-          url: url
-        });
-      }
-      if (!paused) {
-        $.ajax({async: false,
-          success: function(data, textStatus) {
-            document.location.reload();
-          },
-          dataType: "json",
-          type: "POST",
-          url: get_url("server_add/finish", task.id)
-        });
-      } else {
-        $("#gServerAdd #gServerAddButton").show();
-        $("#gServerAdd #gServerPauseButton").hide();
-      }
-    },
-    type: "POST",
-    url: get_url("server_add/start")
+      $("#gStatus").html(data.status);
+      $("#gServerAdd .gProgressBar").progressbar("value", data.percent_complete);
+      setTimeout(function() { run_add(data.url); }, 0);
+    }
   });
-
   return false;
 }
 
-function display_upload_error(error) {
-  $("body").append("<div id=\"gServerAddError\" title=\"" + FATAL_ERROR + "\">" + error + "</div>");
-  $("#gServerAddError").dialog({
-      autoOpen: true,
-      autoResize: false,
-      modal: true,
-      resizable: true,
-      width: 610,
-      height: $("#gDialog").height()
-    });
+function run_add(url) {
+  $.ajax({
+    url: url,
+    async: false,
+    dataType: "json",
+    success: function(data, textStatus) {
+      $("#gStatus").html(data.status);
+      $("#gServerAdd .gProgressBar").progressbar("value", data.percent_complete);
+      if (data.done) {
+	$("#gServerAddProgress").slideUp();
+      } else {
+	setTimeout(function() { run_add(url); }, 0);
+      }
+    }
+  });
 }
 

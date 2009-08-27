@@ -48,8 +48,9 @@ class Admin_Users_Controller extends Controller {
         $desired_locale = $form->add_user->locale->value;
         $user->locale = $desired_locale == "none" ? null : $desired_locale;
       }
-
       $user->save();
+      module::event("user_add_form_admin_completed", $user, $form);
+
       message::success(t("Created user %user_name", array("user_name" => p::clean($user->name))));
       print json_encode(array("result" => "success"));
     } else {
@@ -128,6 +129,7 @@ class Admin_Users_Controller extends Controller {
         $user->password = $form->edit_user->password->value;
       }
       $user->email = $form->edit_user->email->value;
+      $user->url = $form->edit_user->url->value;
       if ($form->edit_user->locale) {
         $desired_locale = $form->edit_user->locale->value;
         $user->locale = $desired_locale == "none" ? null : $desired_locale;
@@ -138,6 +140,7 @@ class Admin_Users_Controller extends Controller {
         $user->admin = $form->edit_user->admin->checked;
       }
       $user->save();
+      module::event("user_edit_form_admin_completed", $user, $form);
 
       message::success(t("Changed user %user_name", array("user_name" => p::clean($user->name))));
       print json_encode(array("result" => "success"));

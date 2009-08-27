@@ -31,7 +31,7 @@ class Comment_Model extends ORM {
     if ($author->guest) {
       return $this->guest_name;
     } else {
-      return $author->full_name;
+      return $author->display_name();
     }
   }
 
@@ -61,8 +61,23 @@ class Comment_Model extends ORM {
       $this->updated = time();
       if (!$this->loaded && empty($this->created)) {
         $this->created = $this->updated;
+        $created = true;
       }
     }
-    return parent::save();
+    $visible_change = $this->original()->state == "published" || $this->state == "published";
+    parent::save();
+
+    if (isset($created)) {
+      module::event("comment_created", $this);
+    } else {
+      module::event("comment_updated", $this->original(), $this);
+    }
+
+    // We only notify on the related items if we're making a visible change.
+    if ($visible_change) {
+      module::event("item_related_update", $this->item());
+    }
+
+    return $this;
   }
 }

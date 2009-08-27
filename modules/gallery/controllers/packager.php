@@ -98,7 +98,7 @@ class Packager_Controller extends Controller {
       print "$sql_file is not writeable";
       return;
     }
-    $command = "mysqldump --compact --add-drop-table -h{$conn['host']} " .
+    $command = "mysqldump --compact --skip-extended-insert --add-drop-table -h{$conn['host']} " .
       "-u{$conn['user']} $pass {$conn['database']} > $sql_file";
     exec($command, $output, $status);
     if ($status) {
@@ -123,6 +123,10 @@ class Packager_Controller extends Controller {
       // Normalize dates
       $line = preg_replace("/,$root_created_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
       $line = preg_replace("/,$root_updated_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
+
+      // Remove ENGINE= specifications
+      $line = preg_replace("/ENGINE=\S+ /", "", $line);
+
       $buf .= $line;
     }
     $fd = fopen($sql_file, "wb");
@@ -153,7 +157,7 @@ class Packager_Controller extends Controller {
         $paths[] = "VARPATH . \"" . substr($name, strlen(VARPATH)) . "\"";
       } else {
         // @todo: serialize non-directories
-        print "Unknown file: $name";
+        print "IGNORING FILE: $name\n";
         return;
       }
     }

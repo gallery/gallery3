@@ -19,14 +19,10 @@
  */
 class user_theme_Core {
   static function header_top($theme) {
-    $view = new View("login.html");
-    $view->user = user::active();
-    return $view->render();
-  }
-
-  static function admin_head($theme) {
-    if (strpos(Router::$current_uri, "admin/users") !== false) {
-      $theme->script("lib/gallery.panel.js");
+    if ($theme->page_type != "login") {
+      $view = new View("login.html");
+      $view->user = user::active();
+      return $view->render();
     }
   }
 }

@@ -12,7 +12,7 @@
   <? endif ?>
   <? if ($item->id != 1): ?>
   <li>
-    <strong class="caption"><?= t("Folder name:") ?></strong>
+    <strong class="caption"><?= $theme->page_type == 'album' ?  t("Folder name:"): t("File name:"); ?></strong>
     <?= p::clean($item->name) ?>
   </li>
   <? endif ?>
@@ -26,9 +26,9 @@
   <li>
     <strong class="caption"><?= t("Owner:") ?></strong>
     <? if ($item->owner->url): ?>
-    <a href="<?= $item->owner->url ?>"><?= p::clean($item->owner->full_name) ?></a>
+    <a href="<?= $item->owner->url ?>"><?= p::clean($item->owner->display_name()) ?></a>
     <? else: ?>
-    <?= p::clean($item->owner->name) ?>
+    <?= p::clean($item->owner->display_name()) ?>
     <? endif ?>
   </li>
   <? endif ?>

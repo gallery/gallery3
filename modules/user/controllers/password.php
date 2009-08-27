@@ -29,8 +29,6 @@ class Password_Controller extends Controller {
   }
 
   public function do_reset() {
-    access::verify_csrf();
-
     if (request::method() == "post") {
       $this->_change_password();
     } else {
@@ -74,7 +72,7 @@ class Password_Controller extends Controller {
 
       log::success(
         "user",
-        t("Password reset email sent for user %name", array("name" => p::clean($user->name)));
+        t("Password reset email sent for user %name", array("name" => p::clean($user->name))));
     } else {
       // Don't include the username here until you're sure that it's XSS safe
       log::warning(

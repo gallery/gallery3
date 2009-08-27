@@ -5,7 +5,7 @@
 <script>
   $(document).ready(function() {
     $(".gFullSizeLink").click(function() {
-      show_full_size("<?= $theme->item()->file_url() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
+      $.gallery_show_full_size("<?= $theme->item()->file_url() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
       return false;
     });
   });
@@ -47,6 +47,7 @@
     </a>
     <? endif ?>
     <?= $theme->resize_bottom($item) ?>
+    <?= $theme->context_menu($item, "#gPhotoId-{$item->id}") ?>
   </div>
 
   <div id="gInfo">

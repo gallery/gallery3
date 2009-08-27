@@ -122,7 +122,7 @@ class Albums_Controller extends Items_Controller {
       print json_encode(
         array(
           "result" => "error",
-          "form" => $form->__toString() . html::script("modules/gallery/js/albums_form_add.js")));
+          "form" => $form->__toString()));
     }
   }
 
@@ -174,29 +174,23 @@ class Albums_Controller extends Items_Controller {
           ->from("items")
           ->where("parent_id", $album->parent_id)
           ->where("id <>", $album->id)
-          ->where("name", $form->edit_album->dirname->value)
+          ->where("name", $form->edit_item->dirname->value)
           ->count_records()) {
-        $form->edit_album->dirname->add_error("conflict", 1);
+        $form->edit_item->dirname->add_error("conflict", 1);
         $valid = false;
       }
     }
 
-    // @todo
-    // @todo we need to make sure that filename / dirname components can't contain a /
-    // @todo
-
     if ($valid) {
-      $orig = clone $album;
-      $album->title = $form->edit_album->title->value;
-      $album->description = $form->edit_album->description->value;
-      $album->sort_column = $form->edit_album->sort_order->column->value;
-      $album->sort_order = $form->edit_album->sort_order->direction->value;
+      $album->title = $form->edit_item->title->value;
+      $album->description = $form->edit_item->description->value;
+      $album->sort_column = $form->edit_item->sort_order->column->value;
+      $album->sort_order = $form->edit_item->sort_order->direction->value;
       if ($album->id != 1) {
-        $album->rename($form->edit_album->dirname->value);
+        $album->rename($form->edit_item->dirname->value);
       }
       $album->save();
-
-      module::event("item_updated", $orig, $album);
+      module::event("item_edit_form_completed", $album, $form);
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
       message::success(
@@ -222,8 +216,7 @@ class Albums_Controller extends Items_Controller {
 
     switch ($this->input->get("type")) {
     case "album":
-      print album::get_add_form($album) .
-        html::script("modules/gallery/js/albums_form_add.js");
+      print album::get_add_form($album);
       break;
 
     case "photo":

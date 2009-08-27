@@ -36,7 +36,7 @@ class Xss_Security_Test extends Unit_Test_Case {
 
         // If we find a "(" after a "p::clean" then start counting levels of parens and assume
         // that we're inside a p::clean() call until we find the matching close paren.
-        if ($token[0] == "(" && $str == "p::clean") {
+        if ($token[0] == "(" && ($str == "p::clean" || $str == "p::purify")) {
           $in_p_clean = 1;
         } else if ($token[0] == "(" && $in_p_clean) {
           $in_p_clean++;

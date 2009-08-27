@@ -7,27 +7,27 @@
     <h2> <?= p::clean($subject) ?> </h2>
     <table>
       <tr>
-        <? if ($old->title != $new->title): ?>
+        <? if ($item->original("title") != $item->title): ?>
         <td><?= t("New Title:") ?></td>
-        <td><?= p::clean($new->title) ?></td>
+        <td><?= p::clean($item->title) ?></td>
         <? else: ?>
         <td><?= t("Title:") ?></td>
-        <td><?= p::clean($new->title) ?></td>
+        <td><?= p::clean($item->title) ?></td>
         <? endif ?>
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>
-        <td><a href="<?= $new->url(array(), true) ?>"><?= $new->url(array(), true) ?></a></td>
+        <td><a href="<?= $item->url(array(), true) ?>"><?= $item->url(array(), true) ?></a></td>
       </tr>
-      <? if ($old->description != $new->description): ?>
+      <? if ($item->original("description") != $item->description): ?>
       <tr>
         <td><?= t("New Description:") ?></td>
-        <td><?= p::clean($new->description) ?></td>
+        <td><?= p::clean($item->description) ?></td>
       </tr>
-      <? elseif (!empty($new->description)): ?>
+      <? elseif (!empty($item->description)): ?>
       <tr>
         <td><?= t("Description:") ?></td>
-        <td><?= p::clean($new->description) ?></td>
+        <td><?= p::clean($item->description) ?></td>
       </tr>
       <? endif ?>
     </table>

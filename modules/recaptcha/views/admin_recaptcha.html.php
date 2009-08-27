@@ -14,7 +14,7 @@
 <div id="gAdminRecaptchaTest" class="gBlock">
   <h2> <?= t("reCAPTCHA Test") ?> </h2>
   <p>
-    <?= t("If you see a captcha form below, then reCAPTCHA is functioning properly.") ?>
+    <?= t("If you see a CAPTCHA form below, then reCAPTCHA is functioning properly.") ?>
   </p>
 
   <div id="gRecaptcha"/>

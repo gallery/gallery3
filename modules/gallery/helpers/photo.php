@@ -81,7 +81,7 @@ class photo_Core {
     $photo->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
     // Randomize the name if there's a conflict
-    while (ORM::Factory("item")
+    while (ORM::factory("item")
            ->where("parent_id", $parent->id)
            ->where("name", $photo->name)
            ->find()->id) {
@@ -105,6 +105,8 @@ class photo_Core {
 
     copy($filename, $photo->file_path());
 
+    // @todo: publish this from inside Item_Model::save() when we refactor to the point where
+    // there's only one save() happening here.
     module::event("item_created", $photo);
 
     // Build our thumbnail/resizes
@@ -135,7 +137,7 @@ class photo_Core {
   static function get_edit_form($photo) {
     $form = new Forge("photos/$photo->id", "", "post", array("id" => "gEditPhotoForm"));
     $form->hidden("_method")->value("put");
-    $group = $form->group("edit_photo")->label(t("Edit Photo"));
+    $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("filename")->label(t("Filename"))->value($photo->name)
@@ -144,6 +146,8 @@ class photo_Core {
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
       ->callback("item::validate_no_trailing_period")
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""));
+
+    module::event("item_edit_form", $photo, $form);
 
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));

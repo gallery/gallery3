@@ -7,7 +7,7 @@ function ajaxify_tag_form() {
     dataType: "json",
     success: function(data) {
       if (data.result == "success") {
-        $.get($("#gTagCloud").attr("src"), function(data, textStatus) {
+        $.get($("#gTagCloud").attr("title"), function(data, textStatus) {
 	      $("#gTagCloud").html(data);
 	    });
       }
@@ -23,7 +23,7 @@ function closeEditInPlaceForms() {
     $("#gRenameTagForm").parent().html($("#gRenameTagForm").parent().data("revert"));
     li.height("");
     $(".gEditable", li).bind("click", editInPlace);
-    $(".gDialogLink", li).bind("click", handleDialogEvent);
+    $(".gDialogLink", li).gallery_dialog();
   }
 }
 
@@ -66,3 +66,4 @@ function editInPlace(element) {
   };
   ajaxify_editInPlaceForm();
 }
+

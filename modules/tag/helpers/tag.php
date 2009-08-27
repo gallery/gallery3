@@ -79,6 +79,24 @@ class tag_Core {
     }
   }
 
+
+  /**
+   * Return all the tags for a given item.
+   * @return array
+   */
+  static function item_tags($item) {
+    $tags = array();
+    foreach (Database::instance()
+             ->select("name")
+             ->from("tags")
+             ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
+             ->where("items_tags.item_id", $item->id)
+             ->get() as $row) {
+      $tags[] = $row->name;
+    }
+    return $tags;
+  }
+
   static function get_add_form($item) {
     $form = new Forge("tags", "", "post", array("id" => "gAddTagForm"));
     $label = $item->is_album() ?
@@ -86,7 +104,7 @@ class tag_Core {
       ($item->is_photo() ? t("Add tag to photo") : t("Add tag to movie"));
 
     $group = $form->group("add_tag")->label("Add Tag");
-    $group->input("name")->label($label)->rules("required|length[1,64]");
+    $group->input("name")->label($label)->rules("required");
     $group->hidden("item_id")->value($item->id);
     $group->submit("")->value(t("Add Tag"));
     return $form;
@@ -107,5 +125,25 @@ class tag_Core {
       ->label(t("Really delete tag %tag_name?", array("tag_name" => $tag->name)));
     $group->submit("")->value(t("Delete Tag"));
     return $form;
+  }
+
+  /**
+   * Delete all tags associated with an item
+   */
+  static function clear_all($item) {
+    $db = Database::instance();
+    $db->query("UPDATE {tags} SET `count` = `count` - 1 WHERE `count` > 0 " .
+               "AND `id` IN (SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
+    $db->delete("items_tags", array("item_id" => "$item->id"));
+  }
+
+  /**
+   * Get rid of any tags that have no associated items.
+   */
+  static function compact() {
+    // @todo There's a potential race condition here which we can solve by adding a lock around
+    // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
+    // extremely rare case.
+    Database::instance() ->delete("tags", array("count" => 0));
   }
 }

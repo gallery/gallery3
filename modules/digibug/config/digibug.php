@@ -17,12 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class recaptcha_menu_Core {
-  static function admin($menu, $theme) {
-    $menu->get("settings_menu")
-      ->append(Menu::factory("link")
-               ->id("recaptcha")
-               ->label(t("reCAPTCHA"))
-               ->url(url::site("admin/recaptcha")));
-  }
-}
+/**
+ * PHP Mail Configuration parameters
+ * from        => email address that appears as the from address
+ * line-length => word wrap length (PHP documentations suggest no larger tha 70 characters
+ * reply-to    => what goes into the reply to header
+ */
+$config["ranges"] = array(
+  "Digibug1" => array("low" => "65.249.152.0", "high" => "65.249.159.255"),
+  "Digibug2" => array("low" => "208.122.55.0", "high" => "208.122.55.255")
+);

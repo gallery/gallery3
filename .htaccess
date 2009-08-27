@@ -44,6 +44,11 @@
 #
 # Then just use your Gallery 3 without the index.php in the url.
 #
+# NOTE: future upgrades of Gallery 3 will overwrite this file!  If you
+# want these changes to be persistent, you should talk to your system
+# administrator about putting this block into your Apache config
+# files.
+#
 # <IfModule mod_rewrite.c>
 #   RewriteEngine On
 #   RewriteBase /

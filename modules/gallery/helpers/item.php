@@ -53,7 +53,7 @@ class item_Core {
     access::required("view", $parent);
     access::required("edit", $parent);
 
-    model_cache::clear("item", $parent->album_cover_item_id);
+    model_cache::clear();
     $parent->album_cover_item_id = $item->is_album() ? $item->album_cover_item_id : $item->id;
     $parent->thumb_dirty = 1;
     $parent->save();
@@ -69,7 +69,7 @@ class item_Core {
     access::required("edit", $album);
     @unlink($album->thumb_path());
 
-    model_cache::clear("item", $album->album_cover_item_id)  ;
+    model_cache::clear();
     $album->album_cover_item_id = null;
     $album->thumb_width = 0;
     $album->thumb_height = 0;
@@ -129,12 +129,26 @@ class item_Core {
     if (Input::instance()->get("page_type") == "album") {
       $page_type = "album";
     } else {
-      $page_type = "item";
+      $page_type = "photo";
     }
     $form = new Forge("quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
     $form->hidden("_method")->value("put");
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     return $form;
+  }
+
+  /**
+   * Get the next weight value
+   */
+  static function get_max_weight() {
+    // Guard against an empty result when we create the first item.  It's unfortunate that we
+    // have to check this every time.
+    // @todo: figure out a better way to bootstrap the weight.
+    $result = Database::instance()
+      ->select("weight")->from("items")
+      ->orderby("weight", "desc")->limit(1)
+      ->get()->current();
+    return ($result ? $result->weight : 0) + 1;
   }
 }

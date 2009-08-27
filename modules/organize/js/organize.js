@@ -391,7 +391,7 @@ function organize_dialog_init() {
   $(".gBranchText").droppable(treeDroppable);
   $(".gBranchText").click(organizeOpenFolder);
   retrieveMicroThumbs(item_id);
-  //showLoading("#gDialog");
+  //$.gallery_show_loading("#gDialog");
 
   $("#gMicroThumbPanel").droppable(thumbDroppable);
   $("#gMicroThumbPanel").selectable(selectable);

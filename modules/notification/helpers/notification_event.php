@@ -18,15 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class notification_event_Core {
-  static function item_updated($old, $new) {
-    notification::send_item_updated($old, $new);
+  static function item_updated($original, $new) {
+    notification::send_item_updated($new);
   }
 
   static function item_created($item) {
     notification::send_item_add($item);
   }
 
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     notification::send_item_deleted($item);
 
     if (notification::is_watching($item)) {
@@ -40,8 +40,8 @@ class notification_event_Core {
     }
   }
 
-  static function comment_updated($old, $new) {
-    if ($new->state == "published" && $old->state != "published") {
+  static function comment_updated($original, $new) {
+    if ($new->state == "published" && $original->state != "published") {
       notification::send_comment_published($new);
     }
   }
@@ -54,5 +54,24 @@ class notification_event_Core {
 
   static function batch_complete() {
     notification::send_pending_notifications();
+  }
+
+  static function site_menu($menu, $theme) {
+    if (!user::active()->guest) {
+      $item = $theme->item();
+
+      if ($item && $item->is_album() && access::can("view", $item)) {
+        $watching = notification::is_watching($item);
+
+        $label = $watching ? t("Remove notifications") : t("Enable notifications");
+
+        $menu->get("options_menu")
+          ->append(Menu::factory("link")
+            ->id("watch")
+            ->label($label)
+            ->css_id("gNotifyLink")
+            ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token())));
+      }
+    }
   }
 }

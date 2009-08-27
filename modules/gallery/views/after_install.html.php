@@ -16,12 +16,12 @@
     title="<?= t("Edit Your Profile") ?>"
     id="gAfterInstallChangePasswordLink" class="gButtonLink ui-state-default ui-corners-all"><?= t("Change Password Now") ?></a>
   <script>
-    $("#gAfterInstallChangePasswordLink").bind("click", handleDialogEvent);
+    $("#gAfterInstallChangePasswordLink").gallery_dialog();
   </script>
 </p>
 
 <p>
-  <?= t("Want to learn more? The <a href=\"%url\">Gallery website</a> has news and information about Gallery Project and community.", array("url" => "http://gallery.menalto.com")) ?>
+  <?= t("Want to learn more? The <a href=\"%url\">Gallery website</a> has news and information about the Gallery project and community.", array("url" => "http://gallery.menalto.com")) ?>
 </p>
 
 <p>

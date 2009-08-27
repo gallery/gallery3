@@ -93,6 +93,7 @@ class Item_Model extends ORM_MPTT {
   }
 
   public function delete() {
+    $old = clone $this;
     module::event("item_before_delete", $this);
 
     $parent = $this->parent();
@@ -114,13 +115,15 @@ class Item_Model extends ORM_MPTT {
       @unlink($resize_path);
       @unlink($thumb_path);
     }
+
+    module::event("item_deleted", $old);
   }
 
   /**
    * Move this item to the specified target.
    * @chainable
-   * @param   Item_Model $target  Target item (must be an album
-   * @return  ORM_MTPP
+   * @param   Item_Model $target  Target item (must be an album)
+   * @return  ORM_MPTT
    */
   function move_to($target) {
     if (!$target->is_album()) {
@@ -134,8 +137,10 @@ class Item_Model extends ORM_MPTT {
     $original_path = $this->file_path();
     $original_resize_path = $this->resize_path();
     $original_thumb_path = $this->thumb_path();
+    $original_parent = $this->parent();
 
     parent::move_to($target, true);
+    model_cache::clear();
     $this->relative_path_cache = null;
 
     rename($original_path, $this->file_path());
@@ -145,12 +150,13 @@ class Item_Model extends ORM_MPTT {
       Database::instance()
         ->update("items",
                  array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     } else {
       @rename($original_resize_path, $this->resize_path());
       @rename($original_thumb_path, $this->thumb_path());
     }
 
+    module::event("item_moved", $this, $original_parent);
     return $this;
   }
 
@@ -180,7 +186,7 @@ class Item_Model extends ORM_MPTT {
       Database::instance()
         ->update("items",
                  array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     }
 
     return $this;
@@ -296,10 +302,10 @@ class Item_Model extends ORM_MPTT {
       foreach (Database::instance()
                ->select("name")
                ->from("items")
-               ->where("left <=", $this->left)
-               ->where("right >=", $this->right)
+               ->where("left_ptr <=", $this->left_ptr)
+               ->where("right_ptr >=", $this->right_ptr)
                ->where("id <>", 1)
-               ->orderby("left", "ASC")
+               ->orderby("left_ptr", "ASC")
                ->get() as $row) {
         $paths[] = $row->name;
       }
@@ -345,11 +351,16 @@ class Item_Model extends ORM_MPTT {
       $this->updated = time();
       if (!$this->loaded) {
         $this->created = $this->updated;
-        $r = ORM::factory("item")->select("MAX(weight) as max_weight")->find();
-        $this->weight = $r->max_weight + 1;
+        $this->weight = item::get_max_weight();
+      } else {
+        $send_event = 1;
       }
     }
-    return parent::save();
+    parent::save();
+    if (isset($send_event)) {
+      module::event("item_updated", $this->original(), $this);
+    }
+    return $this;
   }
 
   /**
@@ -387,10 +398,10 @@ class Item_Model extends ORM_MPTT {
     $db = Database::instance();
     $position = $db->query("
       SELECT COUNT(*) AS position FROM {items}
-      WHERE parent_id = {$this->id}
+      WHERE `parent_id` = {$this->id}
         AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
-                                          FROM {items} WHERE id = $child_id)
-      ORDER BY `{$this->sort_column}` {$this->sort_order}")->current()->position;
+                                          FROM {items} WHERE `id` = $child_id)")
+      ->current()->position;
 
     // We stopped short of our target value in the sort (notice that we're using a < comparator
     // above) because it's possible that we have duplicate values in the sort column.  An
@@ -402,9 +413,10 @@ class Item_Model extends ORM_MPTT {
     // our base value.
     $result = $db->query("
       SELECT id FROM {items}
-      WHERE parent_id = {$this->id}
+      WHERE `parent_id` = {$this->id}
         AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
-                                      FROM {items} WHERE id = $child_id)");
+                                      FROM {items} WHERE `id` = $child_id)
+      ORDER BY `id` ASC");
     foreach ($result as $row) {
       $position++;
       if ($row->id == $child_id) {
@@ -502,26 +514,38 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Return all of the children of this node, ordered by the defined sort order.
+   * Return all of the children of this album.  Unless you specify a specific sort order, the
+   * results will be ordered by this album's sort order.
    *
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
+   * @param   array    additional where clauses
+   * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0) {
-    return parent::children($limit, $offset, array($this->sort_column => $this->sort_order));
+  function children($limit=null, $offset=0, $where=array(), $orderby=null) {
+    if (empty($orderby)) {
+      $orderby = array($this->sort_column => $this->sort_order);
+    }
+    return parent::children($limit, $offset, $where, $orderby);
   }
 
   /**
-   * Return all of the children of the specified type, ordered by the defined sort order.
+   * Return the children of this album, and all of it's sub-albums.  Unless you specify a specific
+   * sort order, the results will be ordered by this album's sort order.  Note that this
+   * album's sort order is imposed on all sub-albums, regardless of their sort order.
+   *
+   * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
-   * @param   string   type to return
+   * @param   array    additional where clauses
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $type=null) {
-    return parent::descendants($limit, $offset, $type,
-                               array($this->sort_column => $this->sort_order));
+  function descendants($limit=null, $offset=0, $where=array(), $orderby=null) {
+    if (empty($orderby)) {
+      $orderby = array($this->sort_column => $this->sort_order);
+    }
+    return parent::descendants($limit, $offset, $where, $orderby);
   }
 }

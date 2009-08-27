@@ -38,16 +38,8 @@ class View extends View_Core {
     try {
       return parent::render($print, $renderer);
     } catch (Exception $e) {
-      Kohana::Log('error', $e->getTraceAsString());
-      Kohana::Log('debug', $e->getMessage());
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       return "";
     }
-  }
-
-  public function body_attributes() {
-    if (locale::is_rtl()) {
-      return 'class="rtl"';
-    }
-    return '';
   }
 }

@@ -22,11 +22,11 @@ class search_event_Core {
     search::update($item);
   }
 
-  static function item_updated($old_item, $new_item) {
-    search::update($new_item);
+  static function item_updated($original, $new) {
+    search::update($new);
   }
 
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     ORM::factory("search_record")
       ->where("item_id", $item->id)
       ->delete_all();
@@ -34,10 +34,5 @@ class search_event_Core {
 
   static function item_related_update($item) {
     search::update($item);
-  }
-
-  static function item_related_update_batch($sql) {
-    $db = Database::instance();
-    $db->query("UPDATE {search_records} SET `dirty` = 1 WHERE item_id IN ($sql)");
   }
 }

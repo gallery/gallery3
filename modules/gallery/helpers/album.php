@@ -71,6 +71,8 @@ class album_Core {
     mkdir(dirname($album->thumb_path()));
     mkdir(dirname($album->resize_path()));
 
+    // @todo: publish this from inside Item_Model::save() when we refactor to the point where
+    // there's only one save() happening here.
     module::event("item_created", $album);
 
     return $album;
@@ -88,18 +90,21 @@ class album_Core {
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Create"));
     $form->add_rules_from(ORM::factory("item"));
+    $form->script("")
+      ->url(url::abs_file("modules/gallery/js/albums_form_add.js"));
     return $form;
   }
 
   static function get_edit_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gEditAlbumForm"));
     $form->hidden("_method")->value("put");
-    $group = $form->group("edit_album")->label(t("Edit Album"));
+    $group = $form->group("edit_item")->label(t("Edit Album"));
 
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
       $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
+        ->rules("required")
         ->callback("item::validate_no_slashes")
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->callback("item::validate_no_trailing_period")
@@ -111,7 +116,7 @@ class album_Core {
 
     $sort_order->dropdown("column", array("id" => "gAlbumSortColumn"))
       ->label(t("Sort by"))
-      ->options(array("weight" => t("Default"),
+      ->options(array("weight" => t("Order Added"),
                       "captured" => t("Capture Date"),
                       "created" => t("Creation Date"),
                       "title" => t("Title"),
@@ -124,6 +129,9 @@ class album_Core {
       ->options(array("ASC" => t("Ascending"),
                       "DESC" => t("Descending")))
       ->selected($parent->sort_order);
+
+    module::event("item_edit_form", $parent, $form);
+
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));

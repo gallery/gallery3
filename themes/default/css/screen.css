@@ -131,7 +131,7 @@ fieldset {
   padding-bottom: .8em;
 }
 
-#gHeader fieldset,
+#gBanner fieldset,
 #gSidebar fieldset,
 .gShortForm fieldset {
   border: none;
@@ -142,7 +142,7 @@ legend {
   margin-left: 1em;
 }
 
-#gHeader legend,
+#gBanner legend,
 #gSidebar legend,
 #gContent #gSearchForm legend,
 input[type="hidden"],
@@ -387,16 +387,21 @@ form .gError,
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
-  background-color: #e8e8e8;
-  border-bottom: 1px solid #fff;
-  font-size: .8em;
   margin-bottom: 1em;
-  padding: 1em 20px 0 20px;
+}
+
+#gBanner {
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  font-size: .8em;
+  padding: 1em 20px;
+  position: relative;
 }
 
 #gContent {
   font-size: 1.2em;
   padding-left: 20px;
+  position: relative;
   width: 696px;
 }
 
@@ -421,18 +426,17 @@ form .gError,
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLogo img {
-  float: left;
-  margin: -4px 10px 0 0;
+#gBanner #gLogo img {
+  margin: 0;
 }
 
-#gHeader #gQuickSearchForm {
+#gBanner #gQuickSearchForm {
   clear: right;
   float: right;
-  margin: 1em 0;
+  margin-top: 1em;
 }
 
-#gHeader #gQuickSearchForm input[type='text'] {
+#gBanner #gQuickSearchForm input[type='text'] {
   width: 17em;
 }
 
@@ -449,23 +453,31 @@ form .gError,
 
 #gContent #gAlbumGrid {
   margin: 1em 0;
+  position: relative;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem {
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
+  background-color: #fff;
+  border: 1px solid #fff;
   float: left;
   font-size: .7em;
-  height: 240px;
+  height: 220px;
   overflow: hidden;
-  padding: 14px 8px;
+  padding: .6em 8px;
+  position: relative;
   text-align: center;
   width: 213px;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem h2 {
   margin: 5px 0;
+}
+
+#gContent .gPhoto h2,
+#gContent .gItem .gMetadata {
+  display: none;
 }
 
 #gContent #gAlbumGrid .gAlbum {
@@ -473,21 +485,42 @@ form .gError,
 }
 
 #gContent #gAlbumGrid .gAlbum h2 span {
-  background: transparent url('../images/ico-album.png') no-repeat top left !important;
+  background: transparent url('../images/ico-album.png') no-repeat top left;
   display: inline-block;
   height: 16px;
   margin-right: 5px;
   width: 16px;
 }
 
+#gContent #gAlbumGrid #gHoverItem {
+  background-color: #fff;
+  border: 1px solid #000;
+  display: none;
+  height: auto;
+  padding: 0;
+  position: absolute;
+  width: auto;
+  z-index: 100;
+}
+
+#gContent #gAlbumGrid #gHoverItem .gItem {
+  border: none;
+}
+
+#gContent #gHoverItem .gItem h2,
+#gContent #gHoverItem .gItem .gMetadata {
+  display: block;
+}
+
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
 #gContent #gItem {
+  position: relative;
   width: 99%;
 }
 
 #gContent #gPhoto {
-
+  position: relative;
 }
 
 #gContent #gItem .gFullSizeLink img {
@@ -534,12 +567,12 @@ form .gError,
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLoginMenu li,
+#gBanner #gLoginMenu li,
 #gFooter #gCredits li {
   display: inline;
 }
 
-#gHeader #gLoginMenu li {
+#gBanner #gLoginMenu li {
   padding-left: 1.2em;
 }
 
@@ -557,14 +590,13 @@ form .gError,
  *********************************************************************/
 
 #gSiteMenu,
-.gBreadcrumbs,
 #gTagCloud ul {
   font-size: 1.2em;
 }
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLoginMenu {
+#gBanner #gLoginMenu {
   color: #999;
   float: right;
 }
@@ -572,14 +604,62 @@ form .gError,
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSiteMenu {
-  float: left;
-  margin-top: 20px;
-  padding: 0 20px 0 0;
+  bottom: 0;
+	display: none;
+  left: 140px;
+  position: absolute;
 }
 
 #gSiteMenu ul {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
+
+/* Context Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gContextMenu {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.gItem .gContextMenu {
+  display: none;
+  margin-top: 2em;
+  width: 100%;
+}
+
+#gItem .gContextMenu {
+  font-size: .7em;
+}
+
+#gItem .gContextMenu ul {
+  display: none;
+}
+
+.gContextMenu li {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+.gContextMenu li a {
+  display: block;
+  line-height: 1.6em;
+}
+
+#gHoverItem .gContextMenu {
+  display: block;
+}
+
+#gHoverItem .gContextMenu li {
+  text-align: left;
+}
+
+#gHoverItem .gContextMenu a:hover {
+  text-decoration: none;
+}
+
+/* View Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gViewMenu {
   margin-bottom: 1em;
@@ -615,11 +695,7 @@ form .gError,
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gBreadcrumbs {
-  background-color: #fff;
-  border-top: 1px solid #ccc;
-  clear: both;
-  margin: 0 -20px;
-  padding-left: 20px;
+  padding: 0 20px;
 }
 
 .gBreadcrumbs li {
@@ -737,9 +813,7 @@ form .gError,
  * 6) Browser hacks
  *********************************************************************/
 
-#gSiteMenu:after,
 #gHeader:after,
-.gBreadcrumbs:after,
 #gAlbumGrid:after,
 .gPager:after,
 #gViewMenu:after {
@@ -797,7 +871,6 @@ form .gError,
 .ui-widget-overlay {
   background: #000;
   opacity: .7;
-  filter: Alpha(Opacity=70);
 }
 
 #gDialog {
@@ -879,24 +952,26 @@ form .gError,
 
 /* Server Add */
 
-.gCheckboxTree input {
-  display: inline;
+#gServerAdd button {
+  float: left;
+  margin-bottom: .5em;
 }
 
-.gCheckboxTree li {
+#gServerAddTree {
+  cursor: pointer;
+  padding-left: 4px;
+}
+
+#gServerAddTree li {
   padding: 0;
   float: none;
 }
 
-.gCheckboxTree .ui-icon {
-  cursor: pointer;
+#gServerAddTree span.selected {
+  background: #ddd;
 }
 
-.gFile {
-  padding-left: 2.5em;
-}
-
-#gServerAdd #gServerAddTree {
+#gServerAddTree {
   border: 1px solid #ccc;
   height: 25em;
   overflow: auto;
@@ -907,10 +982,6 @@ form .gError,
 
 #gServerAdd ul ul li {
   padding-left: 1.2em;
-}
-
-#gServerAdd ul li .gFile {
-  padding-left: 2.5em;
 }
 
 #gServerAdd .gBreadcrumbs {

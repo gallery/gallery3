@@ -67,32 +67,35 @@ class notification {
   }
 
   static function get_subscribers($item) {
+    // @todo don't access the user table directly
+    // @todo only return distinct email addresses
     $users = ORM::factory("user")
       ->join("subscriptions", "users.id", "subscriptions.user_id")
       ->join("items", "subscriptions.item_id", "items.id")
       ->where("email IS NOT", null)
-      ->where("items.left <=", $item->left)
-      ->where("items.right >", $item->right)
+      ->where("items.left_ptr <=", $item->left_ptr)
+      ->where("items.right_ptr >", $item->right_ptr)
       ->find_all();
 
     $subscribers = array();
     foreach ($users as $user) {
-      $subscribers[] = $user->email;
+      if (access::user_can($user, "view", $item)) {
+        $subscribers[$user->email] = 1;
+      }
     }
-    return $subscribers;
+    return array_keys($subscribers);
   }
 
-  static function send_item_updated($old, $new) {
+  static function send_item_updated($item) {
     $v = new View("item_updated.html");
-    $v->old = $old;
-    $v->new = $new;
-    $v->subject = $old->is_album() ?
-      t("Album %title updated", array("title" => $old->title)) :
-      ($old->is_photo() ?
-       t("Photo %title updated", array("title" => $old->title))
-       : t("Movie %title updated", array("title" => $old->title)));
+    $v->item = $item;
+    $v->subject = $item->is_album() ?
+      t("Album %title updated", array("title" => $item->original("title"))) :
+      ($item->is_photo() ?
+       t("Photo %title updated", array("title" => $item->original("title")))
+       : t("Movie %title updated", array("title" => $item->original("title"))));
 
-    self::_notify_subscribers($old, $v->render(), $v->subject);
+    self::_notify_subscribers($item, $v->render(), $v->subject);
   }
 
   static function send_item_add($item) {
@@ -104,8 +107,8 @@ class notification {
         array("title" => $item->title, "parent_title" => $parent->title)) :
       ($item->is_photo() ?
        t("Photo %title added to %parent_title",
-         array("title" => $item->title, "parent_title" => $parent->title))
-       : t("Movie %title added to %parent_title",
+         array("title" => $item->title, "parent_title" => $parent->title)) :
+       t("Movie %title added to %parent_title",
            array("title" => $item->title, "parent_title" => $parent->title)));
 
     self::_notify_subscribers($item, $v->render(), $v->subject);

@@ -1,6 +1,6 @@
-name = Gallery Default
-description = A crisp Site Administration theme with soft colors and drop down menus.
+name = "Gallery Default"
+description = "A crisp Site Administration theme with soft colors and drop down menus."
 version = 1
-author = Gallery Team
+author = "Gallery Team"
 admin = 1
 site = 0

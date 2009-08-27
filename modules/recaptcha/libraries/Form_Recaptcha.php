@@ -28,7 +28,7 @@ class Form_Recaptcha_Core extends Form_Input {
   public function __construct($name) {
     parent::__construct($name);
     $this->error_messages("incorrect-captcha-sol",
-                          t("The values supplied to recaptcha are incorrect."));
+                          t("The values supplied to reCAPTCHA are incorrect."));
     $this->error_messages("invalid-site-private-key", t("The site private key is incorrect."));
   }
 

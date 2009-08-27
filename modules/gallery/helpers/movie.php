@@ -82,7 +82,7 @@ class movie_Core {
     $movie->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
     // Randomize the name if there's a conflict
-    while (ORM::Factory("item")
+    while (ORM::factory("item")
            ->where("parent_id", $parent->id)
            ->where("name", $movie->name)
            ->find()->id) {
@@ -102,6 +102,8 @@ class movie_Core {
 
     copy($filename, $movie->file_path());
 
+    // @todo: publish this from inside Item_Model::save() when we refactor to the point where
+    // there's only one save() happening here.
     module::event("item_created", $movie);
 
     // Build our thumbnail
@@ -145,7 +147,7 @@ class movie_Core {
 
   static function find_ffmpeg() {
     if (!$ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) {
-      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin");
+      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
       if (function_exists("exec")) {
         $ffmpeg_path = exec("which ffmpeg");
       }

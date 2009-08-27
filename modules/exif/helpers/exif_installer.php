@@ -28,7 +28,7 @@ class exif_installer {
                  `dirty` BOOLEAN default 1,
                  PRIMARY KEY (`id`),
                  KEY(`item_id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
     module::set_version("exif", 1);
   }
 

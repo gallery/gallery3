@@ -33,7 +33,7 @@ var CONFIRM_DELETE = "<?= t("Do you really want to delete the selected albums an
         <?= $album_tree ?>
       </div>
       <div id="gMicroThumbPanel" class="yui-u"
-           ref="<?= url::site("organize/content/__ITEM_ID__?width=__WIDTH__&height=__HEIGHT__&offset=__OFFSET__") ?>">
+           ref="<?= url::site("organize/content/__ITEM_ID__?width=__WIDTH__&amp;height=__HEIGHT__&amp;offset=__OFFSET__") ?>">
         <ul id="gMicroThumbGrid"></ul>
       </div>
       <div id="gOrganizeEditDrawer" class="yui-u">

@@ -36,7 +36,7 @@ class Admin_Languages_Controller extends Admin_Controller {
     $form = $this->_languages_form();
     if ($form->validate()) {
       module::set_var("gallery", "default_locale", $form->choose_language->locale->value);
-      locale::update_installed($form->choose_language->installed_locales->value);
+      locales::update_installed($form->choose_language->installed_locales->value);
       message::success(t("Settings saved"));
     }
     url::redirect("admin/languages");
@@ -89,8 +89,8 @@ class Admin_Languages_Controller extends Admin_Controller {
   }
 
   private function _languages_form() {
-    $all_locales = locale::available();
-    $installed_locales = locale::installed();
+    $all_locales = locales::available();
+    $installed_locales = locales::installed();
     $form = new Forge("admin/languages/save", "", "post", array("id" => "gLanguageSettingsForm"));
     $group = $form->group("choose_language")
       ->label(t("Language settings"));
@@ -119,7 +119,7 @@ class Admin_Languages_Controller extends Admin_Controller {
   private function _share_translations_form() {
     $form = new Forge("admin/languages/share", "", "post", array("id" => "gShareTranslationsForm"));
     $group = $form->group("sharing")
-      ->label(t("Sharing you own translations with the Gallery community is easy. Please do!"));
+      ->label(t("Sharing your own translations with the Gallery community is easy. Please do!"));
     $api_key = l10n_client::api_key();
     $server_link = l10n_client::server_api_key_url();
     $group->input("api_key")

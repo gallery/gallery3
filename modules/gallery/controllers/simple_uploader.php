@@ -43,7 +43,7 @@ class Simple_Uploader_Controller extends Controller {
 
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules(
-      "Filedata", "upload::valid", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
+      "Filedata", "upload::valid",  "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
     if ($file_validation->validate()) {
       // SimpleUploader.swf does not yet call /start directly, so simulate it here for now.
       if (!batch::in_progress()) {
@@ -54,24 +54,32 @@ class Simple_Uploader_Controller extends Controller {
       try {
         $name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
         $title = item::convert_filename_to_title($name);
-        $path_info = pathinfo($temp_filename);
+        $path_info = @pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
             in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
-          $movie = movie::create($album, $temp_filename, $name, $title);
+          $item = movie::create($album, $temp_filename, $name, $title);
           log::success("content", t("Added a movie"),
-                       html::anchor("movies/$movie->id", t("view movie")));
+                       html::anchor("movies/$item->id", t("view movie")));
         } else {
-          $photo = photo::create($album, $temp_filename, $name, $title);
+          $item = photo::create($album, $temp_filename, $name, $title);
           log::success("content", t("Added a photo"),
-                       html::anchor("photos/$photo->id", t("view photo")));
+                       html::anchor("photos/$item->id", t("view photo")));
         }
       } catch (Exception $e) {
-        unlink($temp_filename);
-        throw $e;
+        Kohana::log("alert", $e->__toString());
+        if (file_exists($temp_filename)) {
+          unlink($temp_filename);
+        }
+        header("HTTP/1.1 500 Internal Server Error");
+        print "ERROR:" . $e->getMessage();
+        return;
       }
       unlink($temp_filename);
+      print "FILEID: $item->id";
+    } else {
+      header("HTTP/1.1 400 Bad Request");
+      print "ERROR: Invalid Upload";
     }
-    print "File Received";
   }
 
   public function finish() {

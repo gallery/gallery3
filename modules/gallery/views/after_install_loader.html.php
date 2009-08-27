@@ -3,5 +3,5 @@
       title="<?= t("Welcome to Gallery 3") ?>"
       href="<?= url::site("after_install") ?>"/>
 <script type="text/javascript">
-  $(document).ready(function(){openDialog($("#gAfterInstall"));});
+  $(document).ready(function(){$("#gAfterInstall").gallery_dialog({immediate: true});});
 </script>
