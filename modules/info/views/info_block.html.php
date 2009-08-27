@@ -12,7 +12,7 @@
   <? endif ?>
   <? if ($item->id != 1): ?>
   <li>
-    <strong class="caption"><?= t("Folder name:") ?></strong>
+    <strong class="caption"><?= $theme->page_type == 'album' ?  t("Folder name:"): t("File name:"); ?></strong>
     <?= p::clean($item->name) ?>
   </li>
   <? endif ?>
