@@ -30,7 +30,7 @@ class watermark_installer {
                  `mime_type` varchar(64) default NULL,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`name`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     @mkdir(VARPATH . "modules/watermark");
     module::set_version("watermark", 1);

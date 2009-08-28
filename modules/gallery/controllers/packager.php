@@ -123,6 +123,10 @@ class Packager_Controller extends Controller {
       // Normalize dates
       $line = preg_replace("/,$root_created_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
       $line = preg_replace("/,$root_updated_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
+
+      // Remove ENGINE= specifications
+      $line = preg_replace("/ENGINE=\S+ /", "", $line);
+
       $buf .= $line;
     }
     $fd = fopen($sql_file, "wb");

@@ -10,9 +10,9 @@
      <?= nl2br(p::purify($item->description)) ?>
   </li>
   <? endif ?>
-  <? if ($item->id != 1): ?>
+  <? if (!$item->is_album()): ?>
   <li>
-    <strong class="caption"><?= t("Folder name:") ?></strong>
+    <strong class="caption"><?= t("File name:") ?></strong>
     <?= p::clean($item->name) ?>
   </li>
   <? endif ?>

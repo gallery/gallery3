@@ -24,13 +24,13 @@ class gallery_installer {
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
                  PRIMARY KEY (`id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {access_intents} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
                  PRIMARY KEY (`id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {caches} (
                 `id` int(9) NOT NULL auto_increment,
@@ -40,7 +40,7 @@ class gallery_installer {
                 `cache` longblob,
                 PRIMARY KEY (`id`),
                 KEY (`tags`))
-                ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {graphics_rules} (
                  `id` int(9) NOT NULL auto_increment,
@@ -51,7 +51,7 @@ class gallery_installer {
                  `priority` int(9) NOT NULL,
                  `target`  varchar(32) NOT NULL,
                  PRIMARY KEY (`id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {incoming_translations} (
                  `id` int(9) NOT NULL auto_increment,
@@ -63,7 +63,7 @@ class gallery_installer {
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`key`, `locale`),
                  KEY `locale_key` (`locale`, `key`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {items} (
                  `id` int(9) NOT NULL auto_increment,
@@ -100,7 +100,7 @@ class gallery_installer {
                  KEY `type` (`type`),
                  KEY `random` (`rand_key`),
                  KEY `weight` (`weight` DESC))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {logs} (
                  `id` int(9) NOT NULL auto_increment,
@@ -113,7 +113,7 @@ class gallery_installer {
                  `url` varchar(255) default NULL,
                  `user_id` int(9) default 0,
                  PRIMARY KEY (`id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {messages} (
                  `id` int(9) NOT NULL auto_increment,
@@ -122,7 +122,7 @@ class gallery_installer {
                  `value` varchar(255) default NULL,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`key`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {modules} (
                  `id` int(9) NOT NULL auto_increment,
@@ -131,7 +131,7 @@ class gallery_installer {
                  `version` int(9) default NULL,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`name`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {outgoing_translations} (
                  `id` int(9) NOT NULL auto_increment,
@@ -143,7 +143,7 @@ class gallery_installer {
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`key`, `locale`),
                  KEY `locale_key` (`locale`, `key`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {permissions} (
                  `id` int(9) NOT NULL auto_increment,
@@ -151,14 +151,14 @@ class gallery_installer {
                  `name` varchar(64) default NULL,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`name`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {sessions} (
                 `session_id` varchar(127) NOT NULL,
                 `data` text NOT NULL,
                 `last_activity` int(10) UNSIGNED NOT NULL,
                 PRIMARY KEY (`session_id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {tasks} (
                 `id` int(9) NOT NULL auto_increment,
@@ -173,7 +173,7 @@ class gallery_installer {
                 `updated` int(9) default NULL,
                 PRIMARY KEY (`id`),
                 KEY (`owner_id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {themes} (
                  `id` int(9) NOT NULL auto_increment,
@@ -181,7 +181,7 @@ class gallery_installer {
                  `version` int(9) default NULL,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`name`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {vars} (
                 `id` int(9) NOT NULL auto_increment,
@@ -190,7 +190,7 @@ class gallery_installer {
                 `value` text,
                 PRIMARY KEY (`id`),
                 UNIQUE KEY(`module_name`, `name`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {
       @mkdir(VARPATH . $dir);
@@ -284,7 +284,7 @@ class gallery_installer {
                  `cache` text,
                  PRIMARY KEY (`id`),
                  KEY (`tags`))
-                 ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+                 DEFAULT CHARSET=utf8;");
       module::set_version("gallery", $version = 4);
     }
 
