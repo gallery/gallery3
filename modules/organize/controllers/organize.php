@@ -168,15 +168,20 @@ class Organize_Controller extends Controller {
   }
 
   static function rearrange_task_handler($task) {
-    $phase = $task->get("phase", "before_drop");
+    $mode = $task->get("mode", "before_drop");
     $source_ids = $task->get("source_ids");
     $parent = ORM::factory("item", $task->get("parent_id"));
     $weight = $task->get("weight");
     $target_id = $task->get("target_id");
     $is_before = $task->get("before") == "before";
 
+    // 1. Find the insertion point, which is the weight of the target_id item
+    // 2. Set the weight of the source_ids items to be
+
+    // Find the weight of the target insertion point
+
     // @todo at some point if we allow drag from album tree this needs to be changed
-    if ($phase == "dropping") {
+    if ($mode == "dropping") {
       $children = ORM::factory("item")
         ->where("parent_id", $parent->id)
         ->where("weight < ", $weight)
@@ -184,11 +189,12 @@ class Organize_Controller extends Controller {
         ->orderby(array($parent->sort_column => $parent->sort_order))
         ->find_all();
       if ($children->count() == 0) {
-        $phase = "after_drop";
-        $task->set("phase", $phase);
+        $mode = "after_drop";
+        $task->set("mode", $mode);
       }
     }
-    if ($phase != "dropping") {
+
+    if ($mode != "dropping") {
       $dropping = false;
       $children = ORM::factory("item")
         ->where("parent_id", $parent->id)
@@ -205,9 +211,9 @@ class Organize_Controller extends Controller {
       if (microtime(true) - $start > 0.5) {
         break;
       }
-      if ($phase == "before_drop" && $child->id == $target_id && $is_before) {
+      if ($mode == "before_drop" && $child->id == $target_id && $is_before) {
         $task->set("dropping", true);
-        $task->set("phase", "dropping");
+        $task->set("mode", "dropping");
         break;
       }
       Database::instance()->query(
@@ -215,9 +221,9 @@ class Organize_Controller extends Controller {
         " WHERE `id` = " . $child->id);
 
       $completed++;
-      if ($phase == "before_drop" && $child->id == $task->get("target_id")) {
+      if ($mode == "before_drop" && $child->id == $task->get("target_id")) {
         $task->set("dropping", true);
-        $task->set("phase", "dropping");
+        $task->set("mode", "dropping");
         break;
       }
     }
