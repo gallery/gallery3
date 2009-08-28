@@ -14,7 +14,7 @@
         <div class="gInfo"><?= t("Select one or more items to edit; drag and drop items to re-order or move between albums") ?></div>
       </div>
     </div>
-    <div id= "gOrganizeContentPane" class="yui-gf">
+    <div id="gOrganizeContentPane" class="yui-gf">
       <div id="gOrganizeTreeContainer" class="yui-u first">
         <ul id="gOrganizeAlbumTree">
           <?= $album_tree ?>
