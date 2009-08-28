@@ -60,7 +60,7 @@ class Organize_Controller extends Controller {
             "url" => url::site("organize/run/$task->id?csrf=" . access::csrf_token())));
   }
 
-  function rearrange($target_id, $before) {
+  function rearrange($target_id, $before_or_after) {
     access::verify_csrf();
     $target = ORM::factory("item", $target_id);
     $parent = $target->parent();
@@ -71,11 +71,12 @@ class Organize_Controller extends Controller {
       ->callback("Organize_Controller::rearrange_task_handler")
       ->description(t("Rearrange Image"))
       ->name(t("Rearrange Images"));
-    $task = task::create($task_def, array("target_id" => $target_id, "before" => $before,
-                                          "parent_id" => $parent->id,
-                                          "weight" => item::get_max_weight(),
-                                          "total" => $parent->children_count(),
-                                          "source_ids" => $this->input->post("source_ids")));
+    $task = task::create(
+      $task_def,
+      array("target_id" => $target_id,
+            "before_or_after" => $before_or_after,
+            "parent_id" => $parent->id,
+            "source_ids" => $this->input->post("source_ids")));
 
     print json_encode(
       array("result" => "started",
@@ -168,71 +169,84 @@ class Organize_Controller extends Controller {
   }
 
   static function rearrange_task_handler($task) {
-    $phase = $task->get("phase", "before_drop");
-    $source_ids = $task->get("source_ids");
-    $parent = ORM::factory("item", $task->get("parent_id"));
-    $weight = $task->get("weight");
-    $target_id = $task->get("target_id");
-    $is_before = $task->get("before") == "before";
-
-    // @todo at some point if we allow drag from album tree this needs to be changed
-    if ($phase == "dropping") {
-      $children = ORM::factory("item")
-        ->where("parent_id", $parent->id)
-        ->where("weight < ", $weight)
-        ->in("id", $source_ids)
-        ->orderby(array($parent->sort_column => $parent->sort_order))
-        ->find_all();
-      if ($children->count() == 0) {
-        $phase = "after_drop";
-        $task->set("phase", $phase);
-      }
-    }
-    if ($phase != "dropping") {
-      $dropping = false;
-      $children = ORM::factory("item")
-        ->where("parent_id", $parent->id)
-        ->where("weight < ", $weight)
-        ->in("id", $source_ids, true)
-        ->orderby(array($parent->sort_column => $parent->sort_order))
-        ->find_all();
-    }
-    $completed = $task->get("completed", 0);
-
     $start = microtime(true);
-    foreach ($children as $child) {
-      $step = microtime(true);
-      if (microtime(true) - $start > 0.5) {
-        break;
-      }
-      if ($phase == "before_drop" && $child->id == $target_id && $is_before) {
-        $task->set("dropping", true);
-        $task->set("phase", "dropping");
-        break;
-      }
-      Database::instance()->query(
-        "UPDATE {items} SET `weight` =  " . item::get_max_weight() .
-        " WHERE `id` = " . $child->id);
+    $mode = $task->get("mode", "init");
 
-      $completed++;
-      if ($phase == "before_drop" && $child->id == $task->get("target_id")) {
-        $task->set("dropping", true);
-        $task->set("phase", "dropping");
+    if ($task->percent_complete == 0) {
+      batch::start();
+    }
+    while (microtime(true) - $start < 1.5) {
+      switch ($mode) {
+      case "init":
+        $album = ORM::factory("item", $task->get("parent_id"));
+        if ($album->sort_column != "weight") {
+          $mode = "convert-to-weight-order";
+        } else {
+          $mode = "find-insertion-point";
+        }
+        break;
+
+      case "convert-to-weight-order":
+        $i = 0;
+        $album = ORM::factory("item", $task->get("parent_id"));
+        foreach ($album->children() as $child) {
+          // Do this directly in the database to avoid sending notifications
+          Database::Instance()->update("items", array("weight" => ++$i), array("id" => $child->id));
+        }
+        $album->sort_column = "weight";
+        $album->sort_order = "ASC";
+        $album->save();
+        $mode = "find-insertion-point";
+        $task->percent_complete = 25;
+        break;
+
+      case "find-insertion-point":
+        $target = ORM::factory("item", $task->get("target_id"));
+        $target_weight = $target->weight;
+
+        if ($task->get("before_or_after") == "after") {
+          $target_weight++;
+        }
+        $task->set("target_weight", $target_weight);
+        $task->percent_complete = 40;
+        $mode = "make-a-hole";
+        break;
+
+      case "make-a-hole":
+        $target_weight = $task->get("target_weight");
+        $source_ids = $task->get("source_ids");
+        $count = count($source_ids);
+        $parent_id = $task->get("parent_id");
+        Database::Instance()->query(
+          "UPDATE {items} " .
+          "SET `weight` = `weight` + $count " .
+          "WHERE `weight` >= $target_weight AND `parent_id` = {$parent_id}");
+
+        $mode = "insert-source-items";
+        $task->percent_complete = 80;
+        break;
+
+      case "insert-source-items":
+        $target_weight = $task->get("target_weight");
+        foreach ($source_ids as $source_id) {
+          Database::Instance()->update(
+            "items", array("weight" => $target_weight++), array("id" => $source_id));
+        }
+        $mode = "done";
+        break;
+
+      case "done":
+        $album = ORM::factory("item", $task->get("parent_id"));
+        module::event("album_rearrange", $album);
+        batch::stop();
+        $task->done = true;
+        $task->state = "success";
+        $task->percent_complete = 100;
+        $task->set("content", self::_get_micro_thumb_grid($album, 0)->__toString());
         break;
       }
     }
-    if ($completed == $task->get("total")) {
-      Database::instance()->query(
-        "UPDATE {items} SET `sort_column` =  \"weight\"" .
-        " WHERE `id` = " . $parent->id);
-      module::event("album_rearrange", $parent);
-      $task->done = true;
-      $task->state = "success";
-      $task->set("content", self::_get_micro_thumb_grid($parent, 0)->__toString());
-      $task->percent_complete = 100;
-    } else {
-      $task->percent_complete = (int)(100 * $completed / $task->get("total"));
-    }
-    $task->set("completed", $completed);
+
+    $task->set("mode", $mode);
   }
 }

@@ -8,16 +8,19 @@
       helper: function(event, ui) {
         var selected = $(".ui-draggable.ui-state-selected img");
         if (selected.length) {
-          var set = $('<div class="gDragHelper"></div>').css({zIndex: 2000, width: 80, height: Math.ceil(selected.length / 5) * 16 }),
-              offset = $(this).offset(),
-              click = { left: event.pageX - offset.left, top: event.pageY - offset.top };
+          var set = $('<div class="gDragHelper"></div>')
+		      .css({
+			zIndex: 2000,
+			width: 80,
+			height: Math.ceil(selected.length / 5) * 16
+		      });
+          var offset = $(this).offset();
+          var click = {left: event.pageX - offset.left, top: event.pageY - offset.top};
 
           selected.each(function(i) {
             var row = parseInt(i / 5);
             var j = i - (row * 5);
-
             var o = $(this).offset();
-
             var copy = $(this).clone()
               .css({
                 width: $(this).width(), height: $(this).height(), display: "block",
@@ -25,7 +28,7 @@
                 left: o.left - event.pageX, top: o.top - event.pageY
               })
               .appendTo(set)
-              .animate({width: 10, height: 10, outlineWidth: 1, margin: 1, left: (20 * j), top: (row * 20)}, 500);
+              .animate({ width: 10, height: 10, outlineWidth: 1, margin: 1, left: (20 * j), top: (row * 20) }, 500);
           });
           return set;
         }
@@ -35,6 +38,7 @@
       start: function(event, ui) {
         $("#gMicroThumbPanel .ui-state-selected").hide();
       },
+
       drag: function(event, ui) {
         var top = $("#gMicroThumbPanel").offset().top;
         var height = $("#gMicroThumbPanel").height();
@@ -52,8 +56,9 @@
       greedy: true,
       drop: function(event, ui) {
         $.organize.do_drop({
-          url: rearrange_url.replace("__TARGET_ID__", $(".currentDropTarget").attr("ref"))
-                            .replace("__BEFORE__", $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after"),
+          url: rearrange_url
+	    .replace("__TARGET_ID__", $(".currentDropTarget").attr("ref"))
+            .replace("__BEFORE__", $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after"),
           source: $(ui.helper).children("img")
         });
       }
@@ -86,8 +91,9 @@
       if (source_ids.length) {
         $("#gOrganize .gProgressBar").progressbar().progressbar("value", 0);
         $("#gOrganizeProgress").animate(
-          {height: "toggle", display: "toggle"},
-          {duration: "fast",
+          { height: "toggle", display: "toggle" },
+          {
+	   duration: "fast",
            step: function() {
            },
            complete: function() {

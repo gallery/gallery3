@@ -11,10 +11,10 @@
         <h3><?= t("Albums") ?></h3>
       </div>
       <div id="gMessage" class="yui-u">
-        <div class="gInfo"><?= t("Select one or more items to edit; drag and drop items to re-order or move between albums") ?></div>
+        <div class="gInfo"><?= t("Drag and drop photos to re-order or move between albums") ?></div>
       </div>
     </div>
-    <div id= "gOrganizeContentPane" class="yui-gf">
+    <div id="gOrganizeContentPane" class="yui-gf">
       <div id="gOrganizeTreeContainer" class="yui-u first">
         <ul id="gOrganizeAlbumTree">
           <?= $album_tree ?>
@@ -22,7 +22,7 @@
       </div>
       <div id="gOrganizeDetail" class="yui-u">
         <div id="gMicroThumbPanel"
-           ref="<?= url::site("organize/content/__ITEM_ID__/__OFFSET__") ?>">
+             ref="<?= url::site("organize/content/__ITEM_ID__/__OFFSET__") ?>">
           <ul id="gMicroThumbGrid">
             <?= $micro_thumb_grid ?>
           </ul>
