@@ -718,7 +718,7 @@ form .gError,
   font-weight: bold;
 }
 
-#gAddPhotos .gBreadcrumbs {
+#gDialog .gBreadcrumbs li {
   font-size: .9em;
 }
 
@@ -901,6 +901,10 @@ form .gError,
   display: none;
 }
 
+#gDialog p {
+	margin: 0;
+}
+
 /* jQuery UI ThemeRoller buttons */
 
 .gButtonLink {
@@ -1001,6 +1005,14 @@ form .gError,
 
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+#gEditPermissionForm {
+	clear: both;
+}
+#gEditPermissionForm fieldset {
+	border: 1px solid #cccccc;
+	padding: 0;
+}
+
 #gPermissions .gDenied,
 #gPermissions .gAllowed {
   text-align: center;
@@ -1020,11 +1032,6 @@ form .gError,
   width: 100%;
   margin-top: .5em;
   display: inline-block;
-}
-
-#gAddPhotos p {
-  margin: 0;
-  padding: 0;
 }
 
 #gAddPhotosCanvas {
