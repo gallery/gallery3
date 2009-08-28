@@ -104,6 +104,13 @@ class installer {
       mysql_select_db($config["dbname"]);
   }
 
+  static function verify_version($config) {
+    $result = mysql_query("SHOW VARIABLES WHERE variable_name = \"version\"");
+    $row = mysql_fetch_object($result);
+    $version = substr($row->Value, 0, strpos($row->Value, "-"));
+    return version_compare($version, "5.0.0", ">=");
+  }
+
   static function db_empty($config) {
     $query = "SHOW TABLES IN {$config['dbname']} LIKE '{$config['prefix']}items'";
     return mysql_num_rows(mysql_query($query)) == 0;
