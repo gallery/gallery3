@@ -220,19 +220,25 @@ class Server_Add_Controller extends Admin_Controller {
           $album = album::create($parent, $name, $title, null, $owner_id);
           $entry->item_id = $album->id;
         } else {
-          $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-          if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
-            $photo = photo::create($parent, $entry->file, $name, $title, null, $owner_id);
-            $entry->item_id = $photo->id;
-          } else if (in_array($extension, array("flv", "mp4"))) {
-            $movie = movie::create($parent, $entry->file, $name, $title, null, $owner_id);
-            $entry->item_id = $movie->id;
-          } else {
-            // This should never happen, because we don't add stuff to the list that we can't
-            // process.  But just in, case.. set this to a non-null value so that we skip this
-            // entry.
+          try {
+            $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
+              $photo = photo::create($parent, $entry->file, $name, $title, null, $owner_id);
+              $entry->item_id = $photo->id;
+            } else if (in_array($extension, array("flv", "mp4"))) {
+              $movie = movie::create($parent, $entry->file, $name, $title, null, $owner_id);
+              $entry->item_id = $movie->id;
+            } else {
+              // This should never happen, because we don't add stuff to the list that we can't
+              // process.  But just in, case.. set this to a non-null value so that we skip this
+              // entry.
+              $entry->item_id = 0;
+              $task->log("Skipping unknown file type: $entry->file");
+            }
+          } catch (Exception $e) {
+            // This can happen if a photo file is invalid, like a BMP masquerading as a .jpg
             $entry->item_id = 0;
-            $task->log("Skipping unknown file type: $entry->file");
+            $task->log("Skipping invalid file: $entry->file");
           }
         }
 
