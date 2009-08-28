@@ -530,6 +530,7 @@ form .gError,
 
 #gContent #gComments {
   margin-top: 2em;
+  position: relative;
 }
 
 #gContent #gComments ul li {
@@ -559,6 +560,12 @@ form .gError,
   height: 32px;
   margin-right: .4em;
   width: 32px;
+}
+
+#gAddCommentButton {
+  position: absolute;
+  right: 0;
+  top: 2px;
 }
 
 #gContent #gAddCommentForm {
