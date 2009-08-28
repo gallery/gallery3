@@ -191,7 +191,7 @@ class Organize_Controller extends Controller {
         $album = ORM::factory("item", $task->get("parent_id"));
         foreach ($album->children() as $child) {
           // Do this directly in the database to avoid sending notifications
-          Database::Instance()->update("items", array("weight" => $i++), array("id" => $child->id));
+          Database::Instance()->update("items", array("weight" => ++$i), array("id" => $child->id));
         }
         $album->sort_column = "weight";
         $album->sort_order = "ASC";
@@ -220,7 +220,8 @@ class Organize_Controller extends Controller {
         Database::Instance()->query(
           "UPDATE {items} " .
           "SET `weight` = `weight` + $count " .
-          "WHERE `weight` > $target_weight AND `parent_id` = {$parent_id}");
+          "WHERE `weight` >= $target_weight AND `parent_id` = {$parent_id}");
+
         $mode = "insert-source-items";
         $task->percent_complete = 80;
         break;
