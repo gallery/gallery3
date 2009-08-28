@@ -451,8 +451,20 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   cursor: pointer;
 }
 
-#gLanguageSettingsForm .checklist li {
-  width: 150px;
-  overflow: hidden;
+#gLanguagesForm table {
+	width: 400px;
+	float: left;
+	margin: 0 3em 1em 0;
 }
+#gLanguagesForm .installed {
+  background-color: #EEEEEE;
+}
+#gLanguagesForm .default {
+	background-color: #C5DBEC;
+	font-weight: bold;
+}
+#gLanguagesForm input, #gShareTranslationsForm, #gLanguages h2 {
+	clear: both;
+}
+
 
