@@ -86,8 +86,6 @@ class Sendmail_Core {
     $headers = implode($this->header_separator, $headers);
     $message = wordwrap($this->message, $this->line_length, "\n");
     if (!$this->mail($to, $this->subject, $message, $headers)) {
-      Kohana::log("error", wordwrap("Sending mail failed:\nTo: $to\n $this->subject\n" .
-                                    "Headers: $headers\n $this->message"));
       throw new Exception("@todo SEND_MAIL_FAILED");
     }
     return $this;

@@ -24,13 +24,17 @@ class notification_event_Core {
   static function item_updated($original, $new) {
     try {
       notification::send_item_updated($new);
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+      Kohana::log("error", "@todo notification_event::item_updated() failed");
+    }
   }
 
   static function item_created($item) {
     try {
       notification::send_item_add($item);
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+      Kohana::log("error", "@todo notification_event::item_created() failed");
+    }
   }
 
   static function item_deleted($item) {
@@ -40,7 +44,9 @@ class notification_event_Core {
       if (notification::is_watching($item)) {
         notification::remove_watch($item);
       }
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+      Kohana::log("error", "@todo notification_event::item_deleted() failed");
+    }
   }
 
   static function comment_created($comment) {
@@ -48,7 +54,9 @@ class notification_event_Core {
       if ($comment->state == "published") {
         notification::send_comment_published($comment);
       }
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+      Kohana::log("error", "@todo notification_event::comment_created() failed");
+    }
   }
 
   static function comment_updated($original, $new) {
@@ -56,7 +64,9 @@ class notification_event_Core {
       if ($new->state == "published" && $original->state != "published") {
         notification::send_comment_published($new);
       }
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+      Kohana::log("error", "@todo notification_event::comment_updated() failed");
+    }
   }
 
   static function user_before_delete($user) {
@@ -64,33 +74,35 @@ class notification_event_Core {
       ORM::factory("subscription")
         ->where("user_id", $user->id)
         ->delete_all();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+      Kohana::log("error", "@todo notification_event::user_before_delete() failed");
+    }
   }
 
   static function batch_complete() {
     try {
       notification::send_pending_notifications();
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+      Kohana::log("error", "@todo notification_event::batch_complete() failed");
+    }
   }
 
   static function site_menu($menu, $theme) {
-    try {
-      if (!user::active()->guest) {
-        $item = $theme->item();
+    if (!user::active()->guest) {
+      $item = $theme->item();
 
-        if ($item && $item->is_album() && access::can("view", $item)) {
-          $watching = notification::is_watching($item);
+      if ($item && $item->is_album() && access::can("view", $item)) {
+        $watching = notification::is_watching($item);
 
-          $label = $watching ? t("Remove notifications") : t("Enable notifications");
+        $label = $watching ? t("Remove notifications") : t("Enable notifications");
 
-          $menu->get("options_menu")
-            ->append(Menu::factory("link")
-                     ->id("watch")
-                     ->label($label)
-                     ->css_id("gNotifyLink")
-                     ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token())));
-        }
+        $menu->get("options_menu")
+          ->append(Menu::factory("link")
+                   ->id("watch")
+                   ->label($label)
+                   ->css_id("gNotifyLink")
+                   ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token())));
       }
-    } catch (Exception $e) {}
+    }
   }
 }
