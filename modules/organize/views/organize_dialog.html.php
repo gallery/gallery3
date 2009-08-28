@@ -11,7 +11,7 @@
         <h3><?= t("Albums") ?></h3>
       </div>
       <div id="gMessage" class="yui-u">
-        <div class="gInfo"><?= t("Select one or more items to edit; drag and drop items to re-order or move between albums") ?></div>
+        <div class="gInfo"><?= t("Drag and drop photos to re-order or move between albums") ?></div>
       </div>
     </div>
     <div id="gOrganizeContentPane" class="yui-gf">
