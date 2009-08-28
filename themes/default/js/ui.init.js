@@ -112,18 +112,6 @@ $(document).ready(function() {
       $(this).gallery_context_menu();
     });
 
-    // Collapse comments form, insert button to expand
-    if ($("#gAddCommentForm").length) {
-      var showCommentForm = '<a href="#add_comment_form"'
-        + ' class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right">'
-        + '<span class="ui-icon ui-icon-comment"></span>' + ADD_A_COMMENT + '</a>';
-      $("#gAddCommentForm").hide();
-      $("#gComments").prepend(showCommentForm);
-      $(".showCommentForm").click(function(){
-        $("#gAddCommentForm").show(1000);
-      });
-    }
-
     // Add scroll effect for links to named anchors
     $.localScroll({
       queue: true,
