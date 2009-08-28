@@ -22,7 +22,7 @@
       </div>
       <div id="gOrganizeDetail" class="yui-u">
         <div id="gMicroThumbPanel"
-           ref="<?= url::site("organize/content/__ITEM_ID__/__OFFSET__") ?>">
+             ref="<?= url::site("organize/content/__ITEM_ID__/__OFFSET__") ?>">
           <ul id="gMicroThumbGrid">
             <?= $micro_thumb_grid ?>
           </ul>
