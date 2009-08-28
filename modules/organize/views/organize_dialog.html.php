@@ -2,9 +2,10 @@
 <script type="text/javascript">
   var move_url = "<?= url::site("organize/move/__TARGET_ID__?csrf=$csrf") ?>";
   var rearrange_url = "<?= url::site("organize/rearrange/__TARGET_ID__/__BEFORE__?csrf=$csrf") ?>";
+  var sort_order_url = "<?= url::site("organize/resort/$album->id/__COL__/__DIR__?csrf=$csrf") ?>";
 </script>
 <div id="gOrganize" class="gDialogPanel">
-  <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($title))) ?></h1>
+  <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($album->title))) ?></h1>
   <div id="bd">
     <div class="yui-gf">
       <div class="yui-u first">
@@ -27,15 +28,14 @@
             <?= $micro_thumb_grid ?>
           </ul>
         </div>
-        <div id="gOrganizeEditDrawer" class="yui-u">
-          <div id="gOrganizeEditDrawerPanel" class="yui-gf">
-          </div>
-          <div id="gOrganizeEditDrawerHandle">
-            <div id="gOrganizeEditHandleButtonsRight">
-              <a id="gMicroThumbDone" href="#" ref="done"
-                 class="gButtonLink ui-corner-all ui-state-default"><?= t("Close") ?></a>
-            </div>
-          </div>
+        <div id="gOrganizeControls">
+          <a id="gOrganizeClose" href="#" ref="done"
+             class="gButtonLink ui-corner-all ui-state-default"><?= t("Close") ?></a>
+          <form>
+            <?= t("Sort order") ?>
+            <?= form::dropdown(array("id" => "gOrganizeSortColumn"), album::get_sort_order_options(), $album->sort_column) ?>
+            <?= form::dropdown(array("id" => "gOrganizeSortDir"), array("ASC" => "Ascending", "DESC" => "Descending"), $album->sort_order) ?>
+          </form>
         </div>
         <div id="gOrganizeProgress" style="display: none">
           <div class="gProgressBar"></div>

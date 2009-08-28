@@ -25,7 +25,7 @@ class Organize_Controller extends Controller {
     access::required("edit", $item);
 
     $v = new View("organize_dialog.html");
-    $v->title = $item->title;
+    $v->album = $item;
     $parents = array();
     foreach ($item->parents() as $parent) {
       $parents[$parent->id] = 1;
@@ -82,6 +82,25 @@ class Organize_Controller extends Controller {
       array("result" => "started",
             "status" => $task->status,
             "url" => url::site("organize/run/$task->id?csrf=" . access::csrf_token())));
+  }
+
+  function resort($target_id, $col, $dir) {
+    access::verify_csrf();
+
+    $album = ORM::factory("item", $target_id);
+    access::required("view", $album);
+    access::required("edit", $album);
+
+    $options = album::get_sort_order_options();
+    if (!isset($options[$col])) {
+      return;
+    }
+
+    $album->sort_column = $col;
+    $album->sort_order = $dir;
+    $album->save();
+
+    print self::_get_micro_thumb_grid($album, 0);
   }
 
   private static function _get_micro_thumb_grid($item, $offset) {

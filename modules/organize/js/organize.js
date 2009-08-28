@@ -125,9 +125,8 @@
           $("#gOrganize .gProgressBar").progressbar("value", data.percent_complete);
           if (data.done) {
             var height = $("#gOrganizeProgress").height();
-            $("#gOrganizeProgress").toggle();
+            $("#gOrganizeProgress").slideUp();
             $("#gMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
-            //$("#gMicroThumbPanel").height($("#gMicroThumbPanel").height() + height);
             if (data.tree) {
               $("#gOrganizeAlbumTree").html(data.tree);
             }
@@ -171,8 +170,12 @@
         window.location.reload();
       });
 
-      $("#gDialog #gMicroThumbDone").click(function(event) {
+      $("#gDialog #gOrganizeClose").click(function(event) {
         $("#gDialog").dialog("close");
+      });
+
+      $("#gOrganizeSortColumn,#gOrganizeSortDir").change(function(event) {
+	$.organize.resort($("#gOrganizeSortColumn").attr("value"), $("#gOrganizeSortDir").attr("value"));
       });
 
       $.organize.set_handlers();
@@ -218,6 +221,19 @@
       $.get(url, function(data) {
         $("#gMicroThumbGrid").html(data);
         $.organize.set_handlers();
+      });
+    },
+
+    /**
+     * Change the sort order.
+     */
+    resort: function(column, dir) {
+      var url = sort_order_url
+        .replace("__COL__", column)
+        .replace("__DIR__", dir);
+      $.get(url, function(data) {
+	$("#gMicroThumbGrid").html(data);
+	$.organize.set_handlers();
       });
     }
   };
