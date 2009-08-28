@@ -36,7 +36,7 @@ class user_installer {
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`hash`),
                  UNIQUE KEY(`name`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE IF NOT EXISTS {groups} (
                  `id` int(9) NOT NULL auto_increment,
@@ -44,14 +44,14 @@ class user_installer {
                  `special` BOOLEAN default 0,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`name`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE IF NOT EXISTS {groups_users} (
                  `group_id` int(9) NOT NULL,
                  `user_id` int(9) NOT NULL,
                  PRIMARY KEY (`group_id`, `user_id`),
                  UNIQUE KEY(`user_id`, `group_id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $everybody = group::create("Everybody");
     $everybody->special = true;
