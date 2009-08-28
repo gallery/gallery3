@@ -5,8 +5,9 @@
     $.ajax({
       url: form_url.replace("__ITEM__", id),
       success: function(data) {
-        $("div.form").slideUp();
-        $("div#edit-" + id).html(data).slideDown();
+		    $("#gEditPermissionForm").html(data);
+		    $(".active").removeClass("active");
+		    $("#item-" + id).addClass("active");
       }
     });
   }
@@ -18,7 +19,7 @@
       url: action_url.replace("__CMD__", cmd).replace("__GROUP__", group_id).
            replace("__PERM__", perm_id).replace("__ITEM__", item_id),
       success: function(data) {
-        $("div#edit-" + item_id).load(form_url.replace("__ITEM__", item_id));
+        $("#gEditPermissionForm").load(form_url.replace("__ITEM__", item_id));
       }
     });
   }
@@ -31,26 +32,25 @@
     </li>
   </ul>
   <? endif ?>
-  <ul>
+  
+  <p>Edit permissions for album:</p>
+  
+  <ul class="gBreadcrumbs">
     <? foreach ($parents as $parent): ?>
-    <li>
+    <li id="item-<?= $parent->id ?>">
       <a href="javascript:show(<?= $parent->id ?>)">
-        <?= p::clean($parent->title) ?>
+        <?= p::purify($parent->title) ?>
       </a>
-      <div class="form" id="edit-<?= $parent->id ?>"></div>
-      <ul>
-        <? endforeach ?>
-        <li>
-          <a href="javascript:show(<?= $item->id ?>)">
-            <?= p::purify($item->title) ?>
-          </a>
-          <div class="form" id="edit-<?= $item->id ?>">
-            <?= $form ?>
-          </div>
-        </li>
-        <? foreach ($parents as $parent): ?>
-      </ul>
     </li>
+    <? endforeach ?>
+    <li class="active" id="item-<?= $item->id ?>">
+      <a href="javascript:show(<?= $item->id ?>)">
+    	<?= p::purify($item->title) ?></li>
+	  </a>
+	</li>
   </ul>
-  <? endforeach ?>
+  
+  <div id="gEditPermissionForm">
+    <?= $form ?>
+  </div>
 </div>
