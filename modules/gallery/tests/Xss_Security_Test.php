@@ -126,7 +126,23 @@ class Xss_Security_Test extends Unit_Test_Case {
 	      $token_number++;
 	      $token = $tokens[$token_number];
 	    }
-	  }
+	  } else if ($token[1] == "url") {
+	    // url methods return a SafeString
+	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+		in_array($tokens[$token_number + 2][1],
+			 array("site", "current", "base", "file", "abs_site", "abs_current",
+			       "abs_file", "merge")) &&
+		self::_token_matches("(", $tokens, $token_number + 3)) {
+	      $frame->is_safestring(true);
+
+	      $method = $tokens[$token_number + 2][1];
+	      $frame->expr_append("::$method(");
+
+	      $token_number += 3;
+	      $token = $tokens[$token_number];
+	    }
+	  } 
 	} else if ($frame && $token[0] == T_OBJECT_OPERATOR) {
 	  $frame->expr_append($token[1]);
 
@@ -155,8 +171,9 @@ class Xss_Security_Test extends Unit_Test_Case {
       }
     }
 
-    // Generate the report.
     /*
+     * Generate the report
+     *
      * States for uses of < ? = X ? >:
      * JS_XSS:
      *   In <script> block
@@ -166,7 +183,7 @@ class Xss_Security_Test extends Unit_Test_Case {
      *     X can be anything without a call to ->for_html() or ->purified_html()
      * CLEAN:
      *   Outside <script> block:
-     *     X = t() or t2()
+     *     X = is SafeString (t(), t2(), url::site())
      *     X = * and for_html() or purified_html() is called
      *   Inside <script> block:
      *     X = * with ->for_js() or json_encode(...)
@@ -192,7 +209,6 @@ class Xss_Security_Test extends Unit_Test_Case {
       }
     }
     fclose($fd);
-    exit;
 
     // Compare with the expected report from our golden file.
     $canonical = MODPATH . "gallery/tests/xss_data.txt";

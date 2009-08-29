@@ -30,7 +30,8 @@ class url extends url_Core {
     if ($parts[0] == "albums" || $parts[0] == "photos") {
       $uri = model_cache::get("item", $parts[1])->relative_path();
     }
-    return parent::site($uri . $query, $protocol);
+    $url = parent::site($uri . $query, $protocol);
+    return SafeString::of($url)->mark_html_safe();
   }
 
   static function parse_url() {
@@ -99,4 +100,25 @@ class url extends url_Core {
   static function abs_current($qs=false) {
     return self::abs_site(url::current($qs));
   }
+
+  public static function base($index=false, $protocol=false) {
+    $url = parent::base($index, $protocol);
+    return SafeString::of($url)->mark_html_safe();
+  }
+
+  public static function current($qs=false) {
+    $url = parent::current($qs);
+    return SafeString::of($url)->mark_html_safe();
+  }
+
+  public static function file($file, $index=false) {
+    $url = parent::file($file, $index);
+    return SafeString::of($url)->mark_html_safe();
+  }
+
+  public static function merge(array $arguments) {
+    $url = parent::merge($arguments);
+    return SafeString::of($url)->mark_html_safe();
+  }
+
 }
