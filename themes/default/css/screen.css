@@ -308,7 +308,7 @@ li.gError select {
 
 .gError {
   background-color: #f6cbca;
-  color: #fc0;
+  color: #f00;
   background-image: url('../images/ico-error.png');
 }
 
