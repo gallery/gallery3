@@ -463,8 +463,18 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 	background-color: #C5DBEC;
 	font-weight: bold;
 }
-#gLanguagesForm input, #gShareTranslationsForm, #gLanguages h2 {
+#gLanguagesForm input {
 	clear: both;
 }
 
+#gTranslations {
+	padding: 2em 0 0 0;
+	clear: both;
+}
+#gTranslations .gButtonLink {
+	padding: .5em;
+}
 
+.gDocLink {
+  float: right;
+}
