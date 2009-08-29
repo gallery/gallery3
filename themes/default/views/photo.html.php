@@ -5,7 +5,7 @@
 <script>
   $(document).ready(function() {
     $(".gFullSizeLink").click(function() {
-      show_full_size("<?= $theme->item()->file_url() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
+      show_full_size("<?= $theme->item()->file_url()->for_js() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
       return false;
     });
   });
@@ -55,7 +55,7 @@
   </div>
 
   <script type="text/javascript">
-    var ADD_A_COMMENT = "<?= t("Add a comment") ?>";
+    var ADD_A_COMMENT = "<?= t("Add a comment")->for_js() ?>";
   </script>
   <?= $theme->photo_bottom() ?>
 </div>

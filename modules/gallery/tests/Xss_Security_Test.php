@@ -178,10 +178,10 @@ class Xss_Security_Test extends Unit_Test_Case {
      * Generate the report
      *
      * States for uses of < ? = X ? >:
-     * JS_XSS:
+     * DIRTY_JS:
      *   In <script> block
      *     X can be anything without calling ->for_js()
-     * UNKNOWN:
+     * DIRTY:
      *   Outside <script> block:
      *     X can be anything without a call to ->for_html() or ->purified_html()
      * CLEAN:
@@ -196,9 +196,9 @@ class Xss_Security_Test extends Unit_Test_Case {
     ksort($found);
     foreach ($found as $view => $frames) {
       foreach ($frames as $frame) {
-	$state = "UNKNOWN";
+	$state = "DIRTY";
 	if ($frame->in_script_block()) {
-	  $state = "JS_XSS";
+	  $state = "DIRTY_JS";
 	  if ($frame->for_js_called() || $frame->json_encode_called()) {
 	    $state = "CLEAN";
 	  }
@@ -207,6 +207,13 @@ class Xss_Security_Test extends Unit_Test_Case {
 	    $state = "CLEAN";
 	  }
 	}
+
+	if ("CLEAN" == $state) {
+	  // Don't print CLEAN instances - No need to update the golden
+	  // file when adding / moving clean instances.
+	  continue;
+	}
+
 	fprintf($fd, "%-60s %-3s %-8s %s\n",
 		$view, $frame->line(), $state, $frame->expr());
       }

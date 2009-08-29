@@ -20,7 +20,7 @@
   </div>
 
   <script type="text/javascript">
-    var ADD_A_COMMENT = "<?= t("Add a comment") ?>";
+    var ADD_A_COMMENT = "<?= t("Add a comment")->for_js() ?>";
   </script>
   <?= $theme->photo_bottom() ?>
 </div>

@@ -51,7 +51,7 @@
     <?= $theme->script("gallery.common.js") ?>
     <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
     <script type="text/javascript">
-    var MSG_CANCEL = "<?= t('Cancel') ?>";
+    var MSG_CANCEL = "<?= t('Cancel')->for_js() ?>";
     </script>
     <?= $theme->script("gallery.dialog.js") ?>
     <?= $theme->script("gallery.form.js") ?>

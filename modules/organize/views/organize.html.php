@@ -1,16 +1,16 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <!-- ?= html::script("modules/organize/js/organize.js") ? -->
 <script>
-  var FATAL_ERROR = "<?= t("Fatal Error") ?>";
-  var PAUSE_BUTTON = "<?= t("Pause") ?>";
-  var RESUME_BUTTON = "<?= t("Resume") ?>";
-  var CANCEL_BUTTON = "<?= t("Cancel") ?>";
-  var INVALID_DROP_TARGET = "<div class=\"gError\"><?= t("Drop cancelled as it would result in a recursive move") ?></div>";
-var CONFIRM_DELETE = "<?= t("Do you really want to delete the selected albums and/or photos") ?>"
+  var FATAL_ERROR = "<?= t("Fatal Error")->for_js() ?>";
+  var PAUSE_BUTTON = "<?= t("Pause")->for_js() ?>";
+  var RESUME_BUTTON = "<?= t("Resume"->for_js()) ?>";
+  var CANCEL_BUTTON = "<?= t("Cancel")->for_js() ?>";
+  var INVALID_DROP_TARGET = "<div class=\"gError\"><?= t("Drop cancelled as it would result in a recursive move")->for_js() ?></div>";
+var CONFIRM_DELETE = "<?= t("Do you really want to delete the selected albums and/or photos")->for_js() ?>"
   var item_id = <?= $item->id ?>;
 
-  var csrf = "<?= $csrf ?>";
-  var rearrangeUrl = "<?= url::site("__URI__/__ITEM_ID____TASK_ID__?csrf=$csrf") ?>";
+  var csrf = <?= json_encode($csrf) ?>;
+  var rearrangeUrl = "<?= url::site("__URI__/__ITEM_ID____TASK_ID__?csrf=$csrf")->for_js() ?>";
   $("#doc3").ready(function() {
     organize_dialog_init();
   });
