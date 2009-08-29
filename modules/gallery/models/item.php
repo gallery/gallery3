@@ -19,7 +19,6 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-  private $view_restrictions = null;
   protected $sorting = array();
 
   var $rules = array(
@@ -34,38 +33,7 @@ class Item_Model extends ORM_MPTT {
    * @chainable
    */
   public function viewable() {
-    if (is_null($this->view_restrictions)) {
-      if (user::active()->admin) {
-        $this->view_restrictions = array();
-      } else {
-        foreach (user::group_ids() as $id) {
-          // Separate the first restriction from the rest to make it easier for us to formulate
-          // our where clause below
-          if (empty($this->view_restrictions)) {
-            $this->view_restrictions[0] = "view_$id";
-          } else {
-            $this->view_restrictions[1]["view_$id"] = access::ALLOW;
-          }
-        }
-      }
-    }
-    switch (count($this->view_restrictions)) {
-    case 0:
-      break;
-
-    case 1:
-      $this->where($this->view_restrictions[0], access::ALLOW);
-      break;
-
-    default:
-      $this->open_paren();
-      $this->where($this->view_restrictions[0], access::ALLOW);
-      $this->orwhere($this->view_restrictions[1]);
-      $this->close_paren();
-      break;
-    }
-
-    return $this;
+    return item::viewable($this);
   }
 
   /**

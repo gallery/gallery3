@@ -151,4 +151,41 @@ class item_Core {
       ->get()->current();
     return ($result ? $result->weight : 0) + 1;
   }
+
+  /**
+   * Add a set of restrictions to any following queries to restrict access only to items
+   * viewable by the active user.
+   * @chainable
+   */
+  static function viewable($model) {
+    $view_restrictions = array();
+    if (!user::active()->admin) {
+      foreach (user::group_ids() as $id) {
+        // Separate the first restriction from the rest to make it easier for us to formulate
+        // our where clause below
+        if (empty($view_restrictions)) {
+          $view_restrictions[0] = "items.view_$id";
+        } else {
+          $view_restrictions[1]["items.view_$id"] = access::ALLOW;
+        }
+      }
+    }
+    switch (count($view_restrictions)) {
+    case 0:
+      break;
+
+    case 1:
+      $model->where($view_restrictions[0], access::ALLOW);
+      break;
+
+    default:
+      $model->open_paren();
+      $model->where($view_restrictions[0], access::ALLOW);
+      $model->orwhere($view_restrictions[1]);
+      $model->close_paren();
+      break;
+    }
+
+    return $model;
+  }
 }

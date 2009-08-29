@@ -159,7 +159,12 @@ class user_Core {
    */
   static function active() {
     // @todo (maybe) cache this object so we're not always doing session lookups.
-    $user = Session::instance()->get("user", self::guest());
+    $user = Session::instance()->get("user", null);
+    if (!isset($user)) {
+      // Don't do this as a fallback in the Session::get() call because it can trigger unnecessary
+      // work.
+      $user = user::guest();
+    }
     return $user;
   }
 
