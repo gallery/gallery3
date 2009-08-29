@@ -21,7 +21,10 @@ class Admin_Languages_Controller extends Admin_Controller {
   public function index($share_translations_form=null) {
     $v = new Admin_View("admin.html");
     $v->content = new View("admin_languages.html");
-    $v->content->settings_form = $this->_languages_form();
+		$v->content->available_locales = locales::available();
+    $v->content->installed_locales = locales::installed();
+    $v->content->default_locale = module::get_var("gallery", "default_locale");
+		
     if (empty($share_translations_form)) {
       $share_translations_form = $this->_share_translations_form();
     }
@@ -32,14 +35,21 @@ class Admin_Languages_Controller extends Admin_Controller {
 
   public function save() {
     access::verify_csrf();
-
-    $form = $this->_languages_form();
-    if ($form->validate()) {
-      module::set_var("gallery", "default_locale", $form->choose_language->locale->value);
-      locales::update_installed($form->choose_language->installed_locales->value);
-      message::success(t("Settings saved"));
-    }
-    url::redirect("admin/languages");
+		
+		locales::update_installed($this->input->post("installed_locales"));
+		
+		$installed_locales = array_keys(locales::installed());
+    $new_default_locale = $this->input->post("default_locale");
+		if (!in_array($new_default_locale, $installed_locales)) {
+			if (!empty($installed_locales)) {
+				$new_default_locale = $installed_locales[0];
+			} else {
+				$new_default_locale = "en_US";
+			}
+		}
+		module::set_var("gallery", "default_locale", $new_default_locale);
+		
+		print json_encode(array("result" => "success"));
   }
 
   public function share() {
@@ -86,30 +96,6 @@ class Admin_Languages_Controller extends Admin_Controller {
       // Show the page with form errors
       $this->index($form);
     }
-  }
-
-  private function _languages_form() {
-    $all_locales = locales::available();
-    $installed_locales = locales::installed();
-    $form = new Forge("admin/languages/save", "", "post", array("id" => "gLanguageSettingsForm"));
-    $group = $form->group("choose_language")
-      ->label(t("Language settings"));
-    $group->dropdown("locale")
-      ->options($installed_locales)
-      ->selected(module::get_var("gallery", "default_locale"))
-      ->label(t("Default language"))
-      ->rules('required');
-
-    $installation_options = array();
-    foreach ($all_locales as $code => $display_name) {
-      $installation_options[$code] = array($display_name, isset($installed_locales->$code));
-    }
-    $group->checklist("installed_locales")
-      ->label(t("Installed Languages"))
-      ->options($installation_options)
-      ->rules("required");
-    $group->submit("save")->value(t("Save settings"));
-    return $form;
   }
 
   private function _outgoing_translations_count() {

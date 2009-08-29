@@ -5,7 +5,7 @@
 <script>
   $(document).ready(function() {
     $(".gFullSizeLink").click(function() {
-      show_full_size("<?= $theme->item()->file_url()->for_js() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
+      $.gallery_show_full_size("<?= $theme->item()->file_url()->for_js() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
       return false;
     });
   });
@@ -47,6 +47,7 @@
     </a>
     <? endif ?>
     <?= $theme->resize_bottom($item) ?>
+    <?= $theme->context_menu($item, "#gPhotoId-{$item->id}") ?>
   </div>
 
   <div id="gInfo">
@@ -54,8 +55,5 @@
     <div><?= nl2br(SafeString::purify($item->description)) ?></div>
   </div>
 
-  <script type="text/javascript">
-    var ADD_A_COMMENT = "<?= t("Add a comment")->for_js() ?>";
-  </script>
   <?= $theme->photo_bottom() ?>
 </div>

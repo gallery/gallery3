@@ -1,8 +1,5 @@
 /**
- * Initialize jQuery UI and Plugin elements
- *
- * @todo Standardize how elements requiring listeners are handled
- *        http://docs.jquery.com/Events/live
+ * Initialize jQuery UI and Gallery Plugin elements
  */
 
 var shortForms = new Array(
@@ -12,9 +9,6 @@ var shortForms = new Array(
 );
 
 $(document).ready(function() {
-
-  // Remove .gMenu from thumb menu's before initializing Superfish
-  // @todo gallery_menu should only apply gMenu to top-level menus, submenus should be gSubMenu-N
 
   // Initialize Superfish menus
   $("ul.gMenu").addClass("sf-menu");
@@ -29,15 +23,11 @@ $(document).ready(function() {
   $("#gSiteMenu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").showMessage();
+  $("#gMessage li").gallery_show_message();
 
   // Initialize dialogs
-  $(".gMenuLink").addClass("gDialogLink");
   $("#gLoginLink").addClass("gDialogLink");
-  var dialogLinks = $(".gDialogLink");
-  for (var i=0; i < dialogLinks.length; i++) {
-    $(dialogLinks[i]).bind("click", handleDialogEvent);
-  }
+  $(".gDialogLink").gallery_dialog();
 
   // Initialize view menu
   if ($("#gViewMenu").length) {
@@ -53,30 +43,74 @@ $(document).ready(function() {
   // Apply jQuery UI button css to submit inputs
   $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
 
-  // Album view only
-  if ($("#gAlbumGrid").length) {
-    // Vertical align thumbnails/metadata in album grid
-    $(".gItem").vAlign();
-    $(".gQuick").ajaxStop(function(){
-      $(".gItem").vAlign();
+  // Apply styles and icon classes to gContextMenu
+  if ($(".gContextMenu").length) {
+    $(".gContextMenu li").addClass("ui-state-default");
+    $(".gContextMenu a").addClass("gButtonLink ui-icon-left");
+    $(".gContextMenu a").prepend("<span class=\"ui-icon\"></span>");
+    $(".gContextMenu a span").each(function() {
+      var iconClass = $(this).parent().attr("class").match(/ui-icon-.[^\s]+/).toString();
+      $(this).addClass(iconClass);
     });
   }
 
-  // Photo/Item item view only
-  if ($("#gItem").length) {
-    // Ensure that sized image versions
-    // fit inside their container
-    sizedImage();
+  // Album view only
+  if ($("#gAlbumGrid").length) {
+    // Vertical align thumbnails/metadata in album grid
+    $(".gItem").gallery_valign();
 
-    // Collapse comments form, insert button to expand
-    if ($("#gAddCommentForm").length) {
-      var showCommentForm = '<a href="#add_comment_form" class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right"><span class="ui-icon ui-icon-comment"></span>' + ADD_A_COMMENT + '</a>';
-      $("#gAddCommentForm").hide();
-      $("#gComments").prepend(showCommentForm);
-      $(".showCommentForm").click(function(){
-        $("#gAddCommentForm").show(1000);
-      });
-    }
+    // Initialize context menus
+    $(".gItem").hover(
+      function(){
+        // Insert invisible placeholder to hold the item's position in the grid
+        var placeHolder = $(this).clone();
+        $(placeHolder).attr("id", "gPlaceHolder");
+        $(placeHolder).css("visibility", "hidden");
+        $(this).after($(placeHolder));
+        // Style and position the item
+        $(this).addClass("gHoverItem");
+        var position = $(this).position();
+        $(this).css("position", "absolute");
+        $(this).css("top", position.top);
+        $(this).css("left", position.left);
+        $(this).css("z-index", "1000");
+        // Initialize the contextual menu
+        $(this).gallery_context_menu();
+        // Set height based on height of descendents
+        var title = $(this).find("h2");
+        var meta = $(this).find(".gMetadata");
+        var context_label = $(this).find(".gContextMenu li:first");
+        var item_ht = $(this).height();
+        var title_ht = $(title).gallery_height();
+        var meta_ht = $(meta).gallery_height();
+        var context_label_ht = $(context_label).gallery_height();
+        $(this).height(item_ht + title_ht + meta_ht + context_label_ht);
+      },
+      function() {
+        // Reset item height, position, and z-index
+        var sib_height = $(this).next().height();
+        $(this).css("height", sib_height);
+        $(this).css("position", "relative");
+        $(this).css("top", null);
+        $(this).css("left", null);
+        $(this).css("z-index", null);
+        // Remove the placeholder and hover class from the item
+        $("#gPlaceHolder").remove();
+        $(this).removeClass("gHoverItem");
+      }
+    );
+  }
+
+  // Photo/Item item view
+  if ($("#gItem").length) {
+    // Ensure the resized image fits within its container
+    $("#gItem").gallery_fit_photo();
+
+    // Initialize context menus
+    var resize = $("#gItem").gallery_get_photo();
+    $(resize).hover(function(){
+      $(this).gallery_context_menu();
+    });
 
     // Add scroll effect for links to named anchors
     $.localScroll({
@@ -84,56 +118,9 @@ $(document).ready(function() {
       duration: 1000,
       hash: true
     });
-
   }
 
-  // Add hover state for buttons
-  $(".ui-state-default").hover(
-    function(){
-      $(this).addClass("ui-state-hover");
-    },
-    function(){
-      $(this).removeClass("ui-state-hover");
-    }
-  );
-
-  // Initialize thumbnail menus
-  // @todo Toggle between north and south caret's on hover
-  if ($("#gContent .gThumbMenu").length) {
-    $("#gContent .gThumbMenu li").addClass("ui-state-default");
-    $("#gContent .gThumbMenu li a")
-      .not('[class]')
-      .addClass("gButtonLink ui-icon ui-icon-caret-l-n")
-      .css({
-        height: "10px",
-        margin: "0",
-        padding: "0 0 3px 0"
-      });
-
-    $(".gThumbMenu ul").hide();
-    $(".gThumbMenu").hover(
-      function() {
-        $(this).find("ul").slideDown("fast");
-      },
-      function() {
-	      $(this).find("ul").slideUp("slow");
-      }
-    );
-  }
+  // Initialize button hover effect
+  $.fn.gallery_hover_init();
 
 });
-
-/**
- * Reduce width of sized photo if it's wider than its parent container
- */
-function sizedImage() {
-  var containerWidth = $("#gItem").width();
-  var oPhoto = $("#gItem img").filter(function() {
-    return this.id.match(/gPhotoId-/);
-  });
-  if (containerWidth < oPhoto.width()) {
-    var proportion = containerWidth / oPhoto.width();
-    oPhoto.width(containerWidth);
-    oPhoto.height(proportion * oPhoto.height());
-  }
-}

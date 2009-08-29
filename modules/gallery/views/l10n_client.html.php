@@ -1,7 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="l10n-client" class="hidden">
   <div class="labels">
-    <span id="l10n-client-toggler">X</span>
+    <span id="l10n-client-toggler">
+    	<a id="gMinimizeL10n">_</a>
+			<a id="gCloseL10n" href="<?= url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token()) ?>">X</a>
+	  </span>
     <div class="label strings"><h2><?= t("Page Text") ?>
     <? if (!Input::instance()->get('show_all_l10n_messages')): ?>
       <a style="background-color:#fff" href="<?= url::site("admin/languages?show_all_l10n_messages=1") ?>"><?= t("(Show All)") ?></a>

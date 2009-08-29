@@ -109,8 +109,12 @@ class photo_Core {
     // there's only one save() happening here.
     module::event("item_created", $photo);
 
-    // Build our thumbnail/resizes
-    graphics::generate($photo);
+    // Build our thumbnail/resizes.  If we fail to build thumbnail/resize we assume that the image
+    // is bad in some way and discard it.
+    if (!graphics::generate($photo)) {
+      $photo->delete();
+      throw new Exception("@todo BAD_IMAGE_FILE");
+    }
 
     // If the parent has no cover item, make this it.
     if (access::can("edit", $parent) && $parent->album_cover_item_id == null)  {

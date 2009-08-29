@@ -129,12 +129,63 @@ class item_Core {
     if (Input::instance()->get("page_type") == "album") {
       $page_type = "album";
     } else {
-      $page_type = "item";
+      $page_type = "photo";
     }
     $form = new Forge("quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
     $form->hidden("_method")->value("put");
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     return $form;
+  }
+
+  /**
+   * Get the next weight value
+   */
+  static function get_max_weight() {
+    // Guard against an empty result when we create the first item.  It's unfortunate that we
+    // have to check this every time.
+    // @todo: figure out a better way to bootstrap the weight.
+    $result = Database::instance()
+      ->select("weight")->from("items")
+      ->orderby("weight", "desc")->limit(1)
+      ->get()->current();
+    return ($result ? $result->weight : 0) + 1;
+  }
+
+  /**
+   * Add a set of restrictions to any following queries to restrict access only to items
+   * viewable by the active user.
+   * @chainable
+   */
+  static function viewable($model) {
+    $view_restrictions = array();
+    if (!user::active()->admin) {
+      foreach (user::group_ids() as $id) {
+        // Separate the first restriction from the rest to make it easier for us to formulate
+        // our where clause below
+        if (empty($view_restrictions)) {
+          $view_restrictions[0] = "items.view_$id";
+        } else {
+          $view_restrictions[1]["items.view_$id"] = access::ALLOW;
+        }
+      }
+    }
+    switch (count($view_restrictions)) {
+    case 0:
+      break;
+
+    case 1:
+      $model->where($view_restrictions[0], access::ALLOW);
+      break;
+
+    default:
+      $model->open_paren();
+      $model->where($view_restrictions[0], access::ALLOW);
+      $model->orwhere($view_restrictions[1]);
+      $model->close_paren();
+      break;
+    }
+
+    return $model;
   }
 }

@@ -54,4 +54,52 @@ class Tag_Model extends ORM {
     }
     return $model->count_all();
   }
+
+  /**
+   * Overload ORM::save() to trigger an item_related_update event for all items that are related
+   * to this tag.  Since items can be added or removed as part of the save, we need to trigger an
+   * event for the union of all related items before and after the save.
+   */
+  public function save() {
+    $db = Database::instance();
+    $related_item_ids = array();
+    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+      $related_item_ids[$row->item_id] = 1;
+    }
+
+    $result = parent::save();
+
+    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+      $related_item_ids[$row->item_id] = 1;
+    }
+
+    if ($related_item_ids) {
+      foreach (ORM::factory("item")->in("id", array_keys($related_item_ids))->find_all() as $item) {
+        module::event("item_related_update", $item);
+      }
+    }
+
+    return $result;
+  }
+
+  /**
+   * Overload ORM::delete() to trigger an item_related_update event for all items that are
+   * related to this tag.
+   */
+  public function delete() {
+    $related_item_ids = array();
+    $db = Database::Instance();
+    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+      $related_item_ids[$row->item_id] = 1;
+    }
+
+    $result = parent::delete();
+
+    if ($related_item_ids) {
+      foreach (ORM::factory("item")->in("id", array_keys($related_item_ids))->find_all() as $item) {
+        module::event("item_related_update", $item);
+      }
+    }
+    return $result;
+  }
 }

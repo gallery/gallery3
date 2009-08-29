@@ -29,8 +29,6 @@ class Password_Controller extends Controller {
   }
 
   public function do_reset() {
-    access::verify_csrf();
-
     if (request::method() == "post") {
       $this->_change_password();
     } else {

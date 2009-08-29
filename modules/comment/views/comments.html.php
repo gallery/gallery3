@@ -1,11 +1,17 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+  <a href="<?= url::site("form/add/comments/{$item->id})") ?>" id="gAddCommentButton"
+   class="gButtonLink ui-corner-all ui-icon-left ui-state-default right">
+  <span class="ui-icon ui-icon-comment"></span>
+  <?= t("Add a comment") ?>
+</a>
+<div id="gCommentDetail">
 <? if (!$comments->count()): ?>
 <p id="gNoCommentsYet">
   <?= t("No comments yet. Be the first to <a %attrs>comment</a>!",
       array("attrs" => "href=\"#add_comment_form\" class=\"showCommentForm\"")) ?>
 </p>
 <? endif ?>
-<ul id="gComments">
+<ul>
   <? foreach ($comments as $comment): ?>
   <li id="gComment-<?= $comment->id ?>">
     <p class="gAuthor">
@@ -26,4 +32,4 @@
   </li>
   <? endforeach ?>
 </ul>
-<a name="add_comment_form"></a>
+</div>

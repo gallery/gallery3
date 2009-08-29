@@ -80,4 +80,14 @@ class Comment_Model extends ORM {
 
     return $this;
   }
+
+  /**
+   * Add a set of restrictions to any following queries to restrict access only to items
+   * viewable by the active user.
+   * @chainable
+   */
+  public function viewable() {
+    $this->join("items", "items.id", "comments.item_id");
+    return item::viewable($this);
+  }
 }

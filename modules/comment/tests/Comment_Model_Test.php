@@ -17,25 +17,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class comment_theme_Core {
-  static function head($theme) {
-    $theme->script("comment.js");
-    return "";
-  }
+class Comment_Model_Test extends Unit_Test_Case {
 
-  static function photo_bottom($theme) {
-    $block = new Block;
-    $block->css_id = "gComments";
-    $block->title = t("Comments");
+  public function cant_view_comments_for_unviewable_items_test() {
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, rand(), rand(), rand());
+    $comment = comment::create($album, user::guest(), "text", "name", "email", "url");
+    user::set_active(user::guest());
 
-    $view = new View("comments.html");
-    $view->comments = ORM::factory("comment")
-      ->where("item_id", $theme->item()->id)
-      ->where("state", "published")
-      ->orderby("created", "ASC")
-      ->find_all();
+    // We can see the comment when permissions are granted on the album
+    access::allow(group::everybody(), "view", $album);
+    $this->assert_equal(
+      1,
+      ORM::factory("comment")->viewable()->where("comments.id", $comment->id)->count_all());
 
-    $block->content = $view;
-    return $block;
+    // We can't see the comment when permissions are denied on the album
+    access::deny(group::everybody(), "view", $album);
+    $this->assert_equal(
+      0,
+      ORM::factory("comment")->viewable()->where("comments.id", $comment->id)->count_all());
   }
 }

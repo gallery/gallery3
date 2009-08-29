@@ -274,11 +274,9 @@ class module_Core {
     array_shift($args);
     $function = str_replace(".", "_", $name);
 
-    foreach (self::$modules as $module) {
-      if (!$module->active) {
-        continue;
-      }
-
+    // @todo: consider calling gallery_event first, since for things menus we need it to do some
+    // setup
+    foreach (self::$active as $module) {
       $class = "{$module->name}_event";
       if (method_exists($class, $function)) {
         call_user_func_array(array($class, $function), $args);

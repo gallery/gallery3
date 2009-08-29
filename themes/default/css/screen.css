@@ -276,12 +276,12 @@ li.gError select {
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gMessage {
-  width: 99%;
+  width: 100%;
 }
 
-#gAdminAkismet .gSuccess,
 #gSiteStatus li,
-#gMessage li {
+#gMessage li,
+.gModuleStatus {
   border: 1px solid #ccc;
   margin-bottom: .4em;
 }
@@ -292,71 +292,49 @@ li.gError select {
   border-bottom: 1px solid #ccc;
 }
 
-#gSiteStatus .gError,
-#gMessage .gError,
-form p.gError,
-#gSiteStatus .gInfo,
-#gMessage .gInfo,
-#gSiteStatus .gSuccess,
-#gMessage .gSuccess,
-#gSiteStatus .gWarning,
-#gMessage .gWarning {
+.gModuleStatus {
+  clear: both;
+  margin-bottom: 1em;
+}
+
+.gError,
+.gInfo,
+.gSuccess,
+.gWarning {
   background-position: .4em 50%;
   background-repeat: no-repeat;
   padding: .4em .5em .4em 30px;
 }
 
 .gError {
-  background-color: #fcc;
-}
-
-form .gError {
-  color: #f00;
-}
-
-#gSiteStatus .gError,
-#gMessage .gError,
-form p.gError {
+  background-color: #f6cbca;
+  color: #fc0;
   background-image: url('../images/ico-error.png');
 }
 
 .gInfo {
   background-color: #e8e8e8;
-}
-
-#gSiteStatus .gInfo,
-#gMessage .gInfo {
   background-image: url('../images/ico-info.png');
 }
 
 .gSuccess {
-  background-color: #96EF95;
-}
-
-#gSiteStatus .gSuccess,
-#gMessage .gSuccess {
+  background-color: #d9efc2;
   background-image: url('../images/ico-success.png');
 }
 
 .gWarning {
-  background-color: #ff9;
-}
-
-#gSiteStatus .gWarning,
-#gMessage .gWarning {
+  background-color: #fcf9ce;
   background-image: url('../images/ico-warning.png');
 }
 
 form .gError,
 .gPager .gInfo {
-  background-color: #fff;
+  background-color: #fff !important;
 }
 
-#gAdminMaintenance .gError,
-#gAdminMaintenance .gInfo,
-#gAdminMaintenance .gWarning,
-#gAdminMaintenance .gSuccess {
-  background-image: none;
+.gPager .gInfo {
+  background-image: none !important;
+  padding: 0 !important;
 }
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
@@ -406,7 +384,6 @@ form .gError,
 }
 
 #gSidebar {
-  background-color: #fff;
   font-size: .9em;
   padding: 0 20px;
   width: 220px;
@@ -453,24 +430,31 @@ form .gError,
 
 #gContent #gAlbumGrid {
   margin: 1em 0;
+  position: relative;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem {
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
+  background-color: #fff;
+  border: 1px solid #fff;
   float: left;
   font-size: .7em;
-  height: 240px;
+  height: 220px;
   overflow: hidden;
-  padding: 15px 8px 30px 8px;
+  padding: .6em 8px;
   position: relative;
   text-align: center;
   width: 213px;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem h2 {
   margin: 5px 0;
+}
+
+#gContent .gPhoto h2,
+#gContent .gItem .gMetadata {
+  display: none;
 }
 
 #gContent #gAlbumGrid .gAlbum {
@@ -478,16 +462,27 @@ form .gError,
 }
 
 #gContent #gAlbumGrid .gAlbum h2 span {
-  background: transparent url('../images/ico-album.png') no-repeat top left !important;
+  background: transparent url('../images/ico-album.png') no-repeat top left;
   display: inline-block;
   height: 16px;
   margin-right: 5px;
   width: 16px;
 }
 
+#gContent #gAlbumGrid .gHoverItem {
+  background-color: #fff;
+  border: 1px solid #000;
+}
+
+#gContent .gHoverItem h2,
+#gContent .gHoverItem .gMetadata {
+  display: block;
+}
+
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
 #gContent #gItem {
+  position: relative;
   width: 99%;
 }
 
@@ -502,6 +497,7 @@ form .gError,
 
 #gContent #gComments {
   margin-top: 2em;
+  position: relative;
 }
 
 #gContent #gComments ul li {
@@ -531,6 +527,12 @@ form .gError,
   height: 32px;
   margin-right: .4em;
   width: 32px;
+}
+
+#gAddCommentButton {
+  position: absolute;
+  right: 0;
+  top: 2px;
 }
 
 #gContent #gAddCommentForm {
@@ -586,26 +588,48 @@ form .gError,
   margin-bottom: 0 !important;
 }
 
-/* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Context Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gContent .gThumbMenu {
+.gContextMenu {
+  position: absolute;
   bottom: 0;
   left: 0;
-  position: absolute;
+}
+
+.gItem .gContextMenu {
+  display: none;
+  margin-top: 2em;
   width: 100%;
 }
 
-#gContent .gThumbMenu li {
+#gItem .gContextMenu {
+  font-size: .7em;
+}
+
+#gItem .gContextMenu ul {
+  display: none;
+}
+
+.gContextMenu li {
   border-left: none;
   border-right: none;
   border-bottom: none;
 }
 
-#gContent .gThumbMenu li li {
-  padding: .3em;
+.gContextMenu li a {
+  display: block;
+  line-height: 1.6em;
 }
 
-#gContent .gThumbMenu a:hover {
+.gHoverItem .gContextMenu {
+  display: block;
+}
+
+.gHoverItem .gContextMenu li {
+  text-align: left;
+}
+
+.gHoverItem .gContextMenu a:hover {
   text-decoration: none;
 }
 
@@ -668,7 +692,7 @@ form .gError,
   font-weight: bold;
 }
 
-#gAddPhotos .gBreadcrumbs {
+#gDialog .gBreadcrumbs li {
   font-size: .9em;
 }
 
@@ -851,6 +875,10 @@ form .gError,
   display: none;
 }
 
+#gDialog p {
+	margin: 0;
+}
+
 /* jQuery UI ThemeRoller buttons */
 
 .gButtonLink {
@@ -951,6 +979,14 @@ form .gError,
 
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+#gEditPermissionForm {
+	clear: both;
+}
+#gEditPermissionForm fieldset {
+	border: 1px solid #cccccc;
+	padding: 0;
+}
+
 #gPermissions .gDenied,
 #gPermissions .gAllowed {
   text-align: center;
@@ -970,11 +1006,6 @@ form .gError,
   width: 100%;
   margin-top: .5em;
   display: inline-block;
-}
-
-#gAddPhotos p {
-  margin: 0;
-  padding: 0;
 }
 
 #gAddPhotosCanvas {

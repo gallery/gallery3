@@ -35,13 +35,12 @@
 .gSelected img,
 .gAvailable .gBlock img {
   float: left;
-  margin-right: 1em;
+  margin: 0 1em 1em 0;
 }
 
 .rtl .gSelected img,
 .rtl .gAvailable .gBlock img {
   float: right;
-  margin-left: 1em;
 }
 
 .gSelected {
@@ -202,7 +201,7 @@
 #gAdminGraphics .gAvailable .gBlock {
   clear: none;
   float: left;
-  height: 16em;
+  height: 17em;
   margin-right: 1em;
   width: 30%;
 }
@@ -263,8 +262,8 @@ li.gGroup {
 }
 
 li.gGroup h4 {
-  background-color: #EEEEEE;
-  border-bottom: 1px dashed #CCCCCC;
+  background-color: #eee;
+  border-bottom: 1px dashed ccc;
   padding: .5em 0 .5em .5em;
 }
 li.gGroup .gButtonLink {
@@ -451,8 +450,30 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   cursor: pointer;
 }
 
-#gLanguageSettingsForm .checklist li {
-  width: 150px;
-  overflow: hidden;
+#gLanguagesForm table {
+	width: 400px;
+	float: left;
+	margin: 0 3em 1em 0;
+}
+#gLanguagesForm .installed {
+  background-color: #EEEEEE;
+}
+#gLanguagesForm .default {
+	background-color: #C5DBEC;
+	font-weight: bold;
+}
+#gLanguagesForm input {
+	clear: both;
 }
 
+#gTranslations {
+	padding: 2em 0 0 0;
+	clear: both;
+}
+#gTranslations .gButtonLink {
+	padding: .5em;
+}
+
+.gDocLink {
+  float: right;
+}

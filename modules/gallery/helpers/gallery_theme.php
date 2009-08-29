@@ -24,11 +24,6 @@ class gallery_theme_Core {
     if ($session->get("debug")) {
       $theme->css("debug.css");
     }
-    if (($theme->page_type == "album" || $theme->page_type == "photo")
-        && access::can("edit", $theme->item())) {
-      $theme->css("quick.css");
-      $theme->script("quick.js");
-    }
 
     if (module::is_active("rss")) {
       if ($item = $theme->item()) {
@@ -51,33 +46,8 @@ class gallery_theme_Core {
     return $buf;
   }
 
-  static function resize_top($theme, $item) {
-    if (access::can("edit", $item)) {
-      $edit_link = url::site("quick/pane/$item->id?page_type=photo");
-      return "<div class=\"gQuick\" href=\"$edit_link\">";
-    }
-  }
-
-  static function resize_bottom($theme, $item) {
-    if (access::can("edit", $item)) {
-      return "</div>";
-    }
-  }
-
-  static function thumb_top($theme, $child) {
-    if (access::can("edit", $child)) {
-      $edit_link = url::site("quick/pane/$child->id?page_type=album");
-      return "<div class=\"gQuick\" href=\"$edit_link\">";
-    }
-  }
-
-  static function thumb_bottom($theme, $child) {
-    if (access::can("edit", $child)) {
-      return "</div>";
-    }
-  }
-
   static function admin_head($theme) {
+    $theme->script("gallery.panel.js");
     $session = Session::instance();
     if ($session->get("debug")) {
       $theme->css("debug.css");

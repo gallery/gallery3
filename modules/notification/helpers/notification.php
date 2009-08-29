@@ -153,7 +153,7 @@ class notification {
         ->where("email", $email)
         ->find_all();
       if ($result->count() == 1) {
-        $pending = $result->get();
+        $pending = $result->current();
         Sendmail::factory()
           ->to($email)
           ->subject($pending->subject)

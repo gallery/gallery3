@@ -9,8 +9,8 @@
     };
     $("#gAdminGraphics div.gAvailable .gBlock").click(select_toolkit);
   });
-
 </script>
+
 <div id="gAdminGraphics">
   <h1> <?= t("Graphics Settings") ?> </h1>
   <p>
@@ -18,11 +18,19 @@
   </p>
 
   <h2> <?= t("Active Toolkit") ?> </h2>
-  <?= $active ?>
+  <? if ($active == "none"): ?>
+  <?= new View("admin_graphics_none.html") ?>
+  <? else: ?>
+  <?= new View("admin_graphics_$active.html", array("tk" => $tk->$active, "is_active" => true)) ?>
+  <? endif ?>
 
   <div class="gAvailable">
     <h2> <?= t("Available Toolkits") ?> </h2>
-    <?= $available ?>
+    <? foreach (array_keys((array)$tk) as $id): ?>
+    <? if ($id != $active): ?>
+    <?= new View("admin_graphics_$id.html", array("tk" => $tk->$id, "is_active" => false)) ?>
+    <? endif ?>
+    <? endforeach ?>
   </div>
 </div>
 

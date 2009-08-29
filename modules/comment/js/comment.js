@@ -1,5 +1,13 @@
 $("document").ready(function() {
-  ajaxify_comment_form();
+  $("#gAddCommentButton").click(function(event) {
+    event.preventDefault();
+    $.get($(this).attr("href"),
+          {},
+          function(data) {
+            $("#gCommentDetail").append(data);
+            ajaxify_comment_form();
+          });
+    });
 });
 
 function ajaxify_comment_form() {

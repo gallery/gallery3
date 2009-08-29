@@ -53,6 +53,7 @@
     <script type="text/javascript">
     var MSG_CANCEL = "<?= t('Cancel')->for_js() ?>";
     </script>
+    <?= $theme->script("gallery.ajax.js") ?>
     <?= $theme->script("gallery.dialog.js") ?>
     <?= $theme->script("gallery.form.js") ?>
     <?= $theme->script("superfish/js/superfish.js") ?>

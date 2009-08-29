@@ -26,7 +26,7 @@ class digibug_installer {
                 `request_date` TIMESTAMP NOT NULL DEFAULT current_timestamp,
                 `item_id` int(9) NOT NULL,
                PRIMARY KEY (`id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     module::set_var("digibug", "company_id", "3153");
     module::set_var("digibug", "event_id", "8491");

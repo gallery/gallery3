@@ -108,7 +108,7 @@ table {
 }
 
 #gContent table {
-  margin: 1em 0;
+  margin: 1em 0 3em 0;
 }
 
 caption,
@@ -122,6 +122,10 @@ td {
   border-bottom: 1px solid #ccc;
   padding: .5em;
   vertical-align: top;
+}
+
+#gAdminMaintenance td {
+  vertical-align: middle;
 }
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -276,12 +280,12 @@ li.gError select {
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gMessage {
-  width: 99%;
+  width: 100%;
 }
 
-#gAdminAkismet .gSuccess,
 #gSiteStatus li,
-#gMessage li {
+#gMessage li,
+.gModuleStatus {
   border: 1px solid #ccc;
   margin-bottom: .4em;
 }
@@ -292,71 +296,62 @@ li.gError select {
   border-bottom: 1px solid #ccc;
 }
 
-#gSiteStatus .gError,
-#gMessage .gError,
-form p.gError,
-#gSiteStatus .gInfo,
-#gMessage .gInfo,
-#gSiteStatus .gSuccess,
-#gMessage .gSuccess,
-#gSiteStatus .gWarning,
-#gMessage .gWarning {
+.gModuleStatus {
+  clear: both;
+  margin-bottom: 1em;
+}
+
+.gError,
+.gInfo,
+.gSuccess,
+.gWarning {
   background-position: .4em 50%;
   background-repeat: no-repeat;
   padding: .4em .5em .4em 30px;
 }
 
 .gError {
-  background-color: #fcc;
-}
-
-form .gError {
-  color: #f00;
-}
-
-#gSiteStatus .gError,
-#gMessage .gError,
-form p.gError {
+  background-color: #f6cbca;
+  color: red;
   background-image: url('../images/ico-error.png');
 }
 
 .gInfo {
   background-color: #e8e8e8;
-}
-
-#gSiteStatus .gInfo,
-#gMessage .gInfo {
   background-image: url('../images/ico-info.png');
 }
 
 .gSuccess {
-  background-color: #96EF95;
-}
-
-#gSiteStatus .gSuccess,
-#gMessage .gSuccess {
+  background-color: #d9efc2;
   background-image: url('../images/ico-success.png');
 }
 
 .gWarning {
-  background-color: #ff9;
-}
-
-#gSiteStatus .gWarning,
-#gMessage .gWarning {
+  background-color: #fcf9ce;
   background-image: url('../images/ico-warning.png');
 }
 
-form .gError,
-.gPager .gInfo {
-  background-color: #fff;
+table .gError {
+  background-color: #f6cbca !important;
 }
 
-#gAdminMaintenance .gError,
-#gAdminMaintenance .gInfo,
-#gAdminMaintenance .gWarning,
-#gAdminMaintenance .gSuccess {
-  background-image: none;
+table .gWarning {
+  background-color: #fcf9ce !important;
+}
+
+.gPager .gInfo,
+form .gError,
+table .gInfo,
+table .gSuccess {
+  background-color: transparent !important;
+}
+
+.gPager .gInfo,
+table .gError,
+table .gInfo,
+table .gSuccess,
+table .gWarning {
+  background-image: none !important;
 }
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
@@ -823,7 +818,6 @@ form .gError,
 .ui-widget-overlay {
   background: #000;
   opacity: .7;
-  filter: Alpha(Opacity=70);
 }
 
 #gDialog {

@@ -217,7 +217,7 @@
     var fp = new File_Progress(file);
     switch (error_code) {
     case SWFUpload.UPLOAD_ERROR.HTTP_ERROR:
-      fp.set_status("error", "<?= t("Upload error: ")->for_js() ?>" + message);
+      fp.set_status("error", "<?= t("Upload error: bad image file")->for_js() ?>");
       break;
     case SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED:
       fp.set_status("error", "<?= t("Upload failed")->for_js() ?>");

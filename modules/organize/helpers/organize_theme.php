@@ -19,9 +19,14 @@
  */
 class organize_theme {
   static function head($theme) {
-    // @tdo remove the addition css and organize.js (just here to test)
-    $theme->script("organize_init.js");
-    $theme->script("organize.js");
-    $theme->css("organize.css");
+    $item = $theme->item();
+    if ($item && access::can("edit", $item) && $item->is_album()) {
+      // @todo: Defer loading js/css until we're loading the organize dialog as <script> and
+      // <link> elements so that we're not forcing them to be downloaded on every page view (which
+      // is expensive in terms of browser latency).  When we do that, we'll have to figure out an
+      // approach that lets us continue to use the Kohana cascading filesystem.
+      $theme->script("organize.js");
+      $theme->css("organize.css");
+    }
   }
 }

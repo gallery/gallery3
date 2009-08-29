@@ -19,7 +19,6 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-  private $view_restrictions = null;
   protected $sorting = array();
 
   var $rules = array(
@@ -34,38 +33,7 @@ class Item_Model extends ORM_MPTT {
    * @chainable
    */
   public function viewable() {
-    if (is_null($this->view_restrictions)) {
-      if (user::active()->admin) {
-        $this->view_restrictions = array();
-      } else {
-        foreach (user::group_ids() as $id) {
-          // Separate the first restriction from the rest to make it easier for us to formulate
-          // our where clause below
-          if (empty($this->view_restrictions)) {
-            $this->view_restrictions[0] = "view_$id";
-          } else {
-            $this->view_restrictions[1]["view_$id"] = access::ALLOW;
-          }
-        }
-      }
-    }
-    switch (count($this->view_restrictions)) {
-    case 0:
-      break;
-
-    case 1:
-      $this->where($this->view_restrictions[0], access::ALLOW);
-      break;
-
-    default:
-      $this->open_paren();
-      $this->where($this->view_restrictions[0], access::ALLOW);
-      $this->orwhere($this->view_restrictions[1]);
-      $this->close_paren();
-      break;
-    }
-
-    return $this;
+    return item::viewable($this);
   }
 
   /**
@@ -351,14 +319,7 @@ class Item_Model extends ORM_MPTT {
       $this->updated = time();
       if (!$this->loaded) {
         $this->created = $this->updated;
-        // Guard against an empty result when we create the first item.  It's unfortunate that we
-        // have to check this every time.
-        // @todo: figure out a better way to bootstrap the weight.
-        $result = Database::instance()
-          ->select("weight")->from("items")
-          ->orderby("weight", "desc")->limit(1)
-          ->get()->current();
-        $this->weight = ($result ? $result->weight : 0) + 1;
+        $this->weight = item::get_max_weight();
       } else {
         $send_event = 1;
       }
@@ -521,26 +482,38 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Return all of the children of this node, ordered by the defined sort order.
+   * Return all of the children of this album.  Unless you specify a specific sort order, the
+   * results will be ordered by this album's sort order.
    *
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
+   * @param   array    additional where clauses
+   * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0) {
-    return parent::children($limit, $offset, array($this->sort_column => $this->sort_order));
+  function children($limit=null, $offset=0, $where=array(), $orderby=null) {
+    if (empty($orderby)) {
+      $orderby = array($this->sort_column => $this->sort_order);
+    }
+    return parent::children($limit, $offset, $where, $orderby);
   }
 
   /**
-   * Return all of the children of the specified type, ordered by the defined sort order.
+   * Return the children of this album, and all of it's sub-albums.  Unless you specify a specific
+   * sort order, the results will be ordered by this album's sort order.  Note that this
+   * album's sort order is imposed on all sub-albums, regardless of their sort order.
+   *
+   * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
-   * @param   string   type to return
+   * @param   array    additional where clauses
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $type=null) {
-    return parent::descendants($limit, $offset, $type,
-                               array($this->sort_column => $this->sort_order));
+  function descendants($limit=null, $offset=0, $where=array(), $orderby=null) {
+    if (empty($orderby)) {
+      $orderby = array($this->sort_column => $this->sort_order);
+    }
+    return parent::descendants($limit, $offset, $where, $orderby);
   }
 }

@@ -119,7 +119,7 @@ class File_Proxy_Controller extends Controller {
     if (in_array($item->mime_type, array("video/x-flv", "video/mp4"))) {
       header("Content-type: image/jpeg");
     } else {
-      print("Content-Type: $item->mime_type");
+      header("Content-Type: $item->mime_type");
     }
 
     Kohana::close_buffers(false);

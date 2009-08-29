@@ -84,6 +84,7 @@ class task_Core {
       }
       $task->save();
     } catch (Exception $e) {
+      Kohana::log("error", $e->__toString());
       $task->log($e->__toString());
       $task->state = "error";
       $task->done = true;
