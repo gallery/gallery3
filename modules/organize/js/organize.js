@@ -159,8 +159,34 @@
       $(".gMicroThumbGridCell").mousemove($.organize.mouse_move_handler);
       $(".gOrganizeAlbum").droppable($.organize.branch_droppable);
       $(".gAlbumText").click($.organize.show_album);
+      $("#gOrganizeAlbumTree .ui-icon-plus,#gOrganizeAlbumTree .ui-icon-minus").click($.organize.toggle_branch);
     },
 
+    toggle_branch: function(event) {
+      event.preventDefault();
+      var target = $(event.currentTarget);
+      var branch = $(target).parent();
+      var id = $(event.currentTarget).parent().attr("ref");
+
+      if ($(target).hasClass("ui-icon-plus")) {
+	// Expanding
+	if (!branch.find("ul").length) {
+	  $.get(tree_url.replace("__ALBUM_ID__", id), { },
+	    function(data) {
+	      branch.replaceWith(data);
+	      $.organize.set_handlers();
+	    }
+	  );
+	} else {
+	  branch.find("ul:eq(0)").slideDown();
+	}
+      } else {
+	// Contracting
+	branch.find("ul:eq(0)").slideUp();
+      }
+      $(target).toggleClass("ui-icon-plus");
+      $(target).toggleClass("ui-icon-minus");
+    },
 
     /**
      * When the text of a selection is clicked, then show that albums contents

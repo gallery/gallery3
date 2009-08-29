@@ -3,6 +3,7 @@
   var move_url = "<?= url::site("organize/move_to/__ALBUM_ID__?csrf=$csrf") ?>";
   var rearrange_url = "<?= url::site("organize/rearrange/__TARGET_ID__/__BEFORE__?csrf=$csrf") ?>";
   var sort_order_url = "<?= url::site("organize/sort_order/__ALBUM_ID__/__COL__/__DIR__?csrf=$csrf") ?>";
+  var tree_url = "<?= url::site("organize/tree/__ALBUM_ID__") ?>";
 </script>
 <div id="gOrganize" class="gDialogPanel">
   <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($album->title))) ?></h1>

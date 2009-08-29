@@ -25,7 +25,7 @@ class Organize_Controller extends Controller {
 
     $v = new View("organize_dialog.html");
     $v->album = $album;
-    $v->album_tree = self::_tree($album);
+    $v->album_tree = self::_tree(ORM::factory("item", 1));
     $v->micro_thumb_grid = self::_get_micro_thumb_grid($album, 0);
     print $v;
   }
@@ -50,7 +50,7 @@ class Organize_Controller extends Controller {
     }
 
     print json_encode(
-      array("tree" => self::_tree($album)->__toString(),
+      array("tree" => self::_tree(ORM::factory("item", 1))->__toString(),
             "grid" => self::_get_micro_thumb_grid($album, 0)->__toString()));
   }
 
@@ -132,17 +132,15 @@ class Organize_Controller extends Controller {
     return $v;
   }
 
+  public function tree($album_id) {
+    $album = ORM::factory("item", $album_id);
+    access::required("view", $album);
+    print self::_tree($album);
+  }
+
   private static function _tree($album) {
     $v = new View("organize_tree.html");
-    $v->parents = $album->parents();
     $v->album = $album;
-
-    if ($album->id == 1) {
-      $v->peers = array($album);
-    } else {
-      $v->peers = $album->parent()->children(null, 0, array("type" => "album"));
-    }
-
     return $v;
   }
 }
