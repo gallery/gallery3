@@ -24,6 +24,7 @@
 class SafeString_Core {
   private $_raw_string;
   protected $_is_safe_html = false;
+  protected $_is_purified_html = false;
 
   private static $_purifier = null;
 
@@ -44,11 +45,25 @@ class SafeString_Core {
   }
 
   /**
-   * Marks this string as safe to be used in HTML without any escaping.
+   * Factory method returning a new SafeString instance after HTML purifying
+   * the given string.
    */
-  function mark_html_safe() {
-    $this->_is_safe_html = true;
-    return $this;
+  static function purify($string) {
+    if ($string instanceof SafeString) {
+      $string = $string->unescaped();
+    }
+    $safe_string = self::of_safe_html(self::_purify_for_html($string));
+    $safe_string->_is_purified_html = true;
+    return $safe_string;
+  }
+
+  /**
+   * Factory method returning a new SafeString instance which won't HTML escape.
+   */
+  static function of_safe_html($string) {
+    $safe_string = new SafeString($string);
+    $safe_string->_is_safe_html = true;
+    return $safe_string;
   }
 
   /**
@@ -117,10 +132,10 @@ class SafeString_Core {
    * @return the string escaped for use in HTML.
    */
   function purified_html() {
-    if ($this->_is_safe_html) {
+    if ($this->_is_purified_html) {
       return $this;
     } else {
-      return SafeString::of(self::_purify_for_html($this->_raw_string), true);
+      return self::purify($this);
     }
   }
 

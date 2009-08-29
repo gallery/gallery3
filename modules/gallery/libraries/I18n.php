@@ -116,7 +116,7 @@ class I18n_Core {
 
     $entry = $this->interpolate($locale, $entry, $values);
 
-    return SafeString::of($entry)->mark_html_safe();
+    return SafeString::of_safe_html($entry);
   }
 
   private function lookup($locale, $message) {

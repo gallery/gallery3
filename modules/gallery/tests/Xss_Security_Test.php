@@ -110,10 +110,13 @@ class Xss_Security_Test extends Unit_Test_Case {
 	  } else if ($token[1] == "SafeString") {
 	    // Looking for SafeString::of(...
 	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-		self::_token_matches(array(T_STRING, "of"), $tokens, $token_number + 2)	&&
+		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+		in_array($tokens[$token_number + 2][1], array("of", "of_safe_html", "purify")) &&
 		self::_token_matches("(", $tokens, $token_number + 3)) {
 	      $frame->is_safestring(true);
-	      $frame->expr_append("::of(");
+
+	      $method = $tokens[$token_number + 2][1];
+	      $frame->expr_append("::$method(");
 
 	      $token_number += 3;
 	      $token = $tokens[$token_number];
