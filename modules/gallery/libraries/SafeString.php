@@ -32,6 +32,7 @@ class SafeString_Core {
   function __construct($string) {
     if ($string instanceof SafeString) {
       $this->_is_safe_html = $string->_is_safe_html;
+      $this->_is_purified_html = $string->_is_purified_html;
       $string = $string->unescaped();
     }
     $this->_raw_string = (string) $string;
