@@ -51,30 +51,23 @@
   padding-left: 1.2em;
 }
 
-.gBranchText:hover {
+.gAlbumText:hover {
   border: 1px dashed #999;
+  padding: 1px;
 }
 
-.gBranchEmpty {
-  visibility: hidden;
-}
-
-.gBranchSelected {
+#gOrganizeAlbumTree .selected {
   background-color: #cfdeff !important;
   border-bottom: 1px solid #999 !important;
   display: block;
   padding: .3em 0;
 }
 
-.gBranchCollapsed {
-  display: none;
-}
-
-.gOrganizeBranch span {
+.gOrganizeAlbum span {
   cursor: pointer;
 }
 
-.gBranchText {
+.gAlbumText {
   cursor: pointer;
   width: auto;
 }
