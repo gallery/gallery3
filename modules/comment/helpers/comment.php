@@ -35,7 +35,7 @@ class comment_Core {
    * @return Comment_Model
    */
   static function create($item, $author, $text, $guest_name=null,
-                         $guest_email=ull, $guest_url=null) {
+                         $guest_email=null, $guest_url=null) {
     $comment = ORM::factory("comment");
     $comment->author_id = $author->id;
     $comment->guest_email = $guest_email;
