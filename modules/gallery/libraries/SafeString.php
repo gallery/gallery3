@@ -90,6 +90,25 @@ class SafeString_Core {
   }
 
   /**
+   * Safe for use in HTML element attributes.
+   *
+   * Assumes that the HTML element attribute is already
+   * delimited by single or double quotes
+   *
+   * Example:<pre>
+   *     <a title="<?= $php_var->for_html_attr() ?>">;
+   *   </script>
+   * </pre>
+   * @return the string escaped for use in HTML attributes.
+   */
+  function for_html_attr() {
+    $string = (string) $this->for_html();
+    return strtr($string,
+		 array("'"=>"&#039;",
+		       '"'=>'&quot;'));
+  }
+
+  /**
    * Safe for use HTML (purified HTML)
    *
    * Example:<pre>

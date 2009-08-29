@@ -18,13 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class SafeString_Test extends Unit_Test_Case {
-  public function p_clean_returns_safestring_instance_test() {
-    $safe_string = p::clean("hello <p>world</p>");
-    $this->assert_true($safe_string instanceof SafeString);
-    $this->assert_equal("hello <p>world</p>",
-			$safe_string->unescaped());
-  }
-
   public function toString_escapes_for_html_test() {
     $safe_string = new SafeString("hello <p>world</p>");
     $this->assert_equal("hello &lt;p&gt;world&lt;/p&gt;",
@@ -59,6 +52,20 @@ class SafeString_Test extends Unit_Test_Case {
     $js_string = $safe_string->for_js();
     $this->assert_equal('\\"<em>Foo<\\/em>\\\'s bar\\"',
 			$js_string);
+  }
+
+  public function for_html_attr_test() {
+    $safe_string = new SafeString('"<em>Foo</em>\'s bar"');
+    $attr_string = $safe_string->for_html_attr();
+    $this->assert_equal('&quot;&lt;em&gt;Foo&lt;/em&gt;&#039;s bar&quot;',
+			$attr_string);
+  }
+
+  public function for_html_attr_with_safe_html_test() {
+    $safe_string = SafeString::of('"<em>Foo</em>\'s bar"')->mark_html_safe();
+    $attr_string = $safe_string->for_html_attr();
+    $this->assert_equal('&quot;<em>Foo</em>&#039;s bar&quot;',
+			$attr_string);
   }
 
   public function string_safestring_equality_test() {
