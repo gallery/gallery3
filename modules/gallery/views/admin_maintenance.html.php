@@ -164,7 +164,7 @@
           <?= $task->status ?>
         </td>
         <td>
-          <?= $task->owner()->name ?>
+          <?= SafeString::of($task->owner()->name) ?>
         </td>
         <td>
           <? if ($task->done): ?>
