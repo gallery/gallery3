@@ -56,11 +56,12 @@
       tolerance: "pointer",
       greedy: true,
       drop: function(event, ui) {
+	var before_or_after = $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after";
         $.organize.do_drop({
           url: rearrange_url
 	    .replace("__TARGET_ID__", $(".currentDropTarget").attr("ref"))
 	    .replace("__ALBUM_ID__", $(".currentDropTarget").attr("ref"))
-            .replace("__BEFORE__", $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after"),
+	    .replace("__BEFORE__", before_or_after),
           source: $(ui.helper).children("img")
         });
       }
@@ -91,56 +92,23 @@
       });
 
       if (source_ids.length) {
-        $("#gOrganize .gProgressBar").progressbar().progressbar("value", 0);
-        $("#gOrganizeProgress").animate(
-          { height: "toggle", display: "toggle" },
-          {
-	   duration: "fast",
-           step: function() {
-           },
-           complete: function() {
-             $("#gMicroThumbPanel").height($("#gMicroThumbPanel").height() - $(this).height());
-             $.ajax({
-               url: options.url,
-               type: "POST",
-               async: false,
-               data: { "source_ids[]": source_ids },
-               dataType: "json",
-               success: function(data, textStatus) {
-                 $("#gOrganize .gProgressBar").progressbar("value", data.percent_complete);
-                 setTimeout(function() { $.organize._run_task(data.url); }, 0);
-               }
-             });
-           }
-        });
+	$.post(options.url,
+	       { "source_ids[]": source_ids },
+	       function(data) { $.organize._refresh(data); },
+	      "json");
       }
     },
 
-    _run_task: function(url) {
-      $.ajax({
-        url: url,
-        async: false,
-        dataType: "json",
-        success: function(data, textStatus) {
-          $("#gOrganize .gProgressBar").progressbar("value", data.percent_complete);
-          if (data.done) {
-            var height = $("#gOrganizeProgress").height();
-            $("#gOrganizeProgress").slideUp();
-            $("#gMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
-            if (data.tree) {
-              $("#gOrganizeAlbumTree").html(data.tree);
-            }
-            if (data.grid) {
-              $("#gMicroThumbGrid").html(data.grid);
-              $("#gOrganizeSortColumn").attr("value", data.sort_column);
-              $("#gOrganizeSortOrder").attr("value", data.sort_order);
-            }
-            $.organize.set_handlers();
-          } else {
-	    setTimeout(function() {  $.organize._run_task(url); }, 0);
-          }
-        }
-      });
+    _refresh: function(data) {
+      if (data.tree) {
+        $("#gOrganizeAlbumTree").html(data.tree);
+      }
+      if (data.grid) {
+        $("#gMicroThumbGrid").html(data.grid);
+        $("#gOrganizeSortColumn").attr("value", data.sort_column);
+        $("#gOrganizeSortOrder").attr("value", data.sort_order);
+      }
+      $.organize.set_handlers();
     },
 
     mouse_move_handler: function(event) {
@@ -211,13 +179,13 @@
       $("#gOrganizeAlbumTree .selected").removeClass("selected");
       $(".gAlbumText[ref=" + id + "]").addClass("selected");
       var url = $("#gMicroThumbPanel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
-      $.get(url, function(data) {
+      $.get(url, {},
+	    function(data) {
 	      $("#gMicroThumbGrid").html(data.grid);
 	      $("#gOrganizeSortColumn").attr("value", data.sort_column);
               $("#gOrganizeSortOrder").attr("value", data.sort_order);
               $.organize.set_handlers();
 	    },
-	    function() { },
 	    "json");
     },
 
@@ -229,13 +197,13 @@
         .replace("__ALBUM_ID__", $("#gOrganizeAlbumTree .selected").attr("ref"))
         .replace("__COL__", column)
         .replace("__DIR__", dir);
-      $.get(url, function(data) {
+      $.get(url, {},
+	    function(data) {
 	      $("#gMicroThumbGrid").html(data.grid);
               $("#gOrganizeSortColumn").attr("value", data.sort_column);
               $("#gOrganizeSortOrder").attr("value", data.sort_order);
 	      $.organize.set_handlers();
 	    },
-	    function() { },
 	    "json");
     }
   };

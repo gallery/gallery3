@@ -37,9 +37,6 @@
             <?= form::dropdown(array("id" => "gOrganizeSortOrder"), array("ASC" => "Ascending", "DESC" => "Descending"), $album->sort_order) ?>
           </form>
         </div>
-        <div id="gOrganizeProgress" style="display: none">
-          <div class="gProgressBar"></div>
-        </div>
       </div>
     </div>
   </div>
