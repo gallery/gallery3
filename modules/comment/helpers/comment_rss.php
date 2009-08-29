@@ -33,16 +33,16 @@ class comment_rss_Core {
       return;
     }
 
-    $comment_model = ORM::factory("comment")
+    $comments = ORM::factory("comment")
       ->viewable()
       ->where("state", "published")
       ->orderby("created", "DESC");
 
     if ($feed_id == "item") {
-      $comment_model->where("item_id", $id);
+      $comments->where("item_id", $id);
     }
 
-    $comments = $comment_model->find_all($limit, $offset);
+    $comments = $comments->find_all($limit, $offset);
     $feed->view = "comment.mrss";
     $feed->children = array();
     foreach ($comments as $comment) {
@@ -59,7 +59,7 @@ class comment_rss_Core {
         ArrayObject::ARRAY_AS_PROPS);
     }
 
-    $feed->max_pages = ceil($comment_model->count_all() / $limit);
+    $feed->max_pages = ceil($comments->count_all() / $limit);
     $feed->title = htmlspecialchars(t("Recent Comments"));
     $feed->uri = url::abs_site("albums/" . (empty($id) ? "1" : $id));
     $feed->description = t("Recent Comments");
