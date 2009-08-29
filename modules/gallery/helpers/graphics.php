@@ -206,10 +206,15 @@ class graphics_Core {
       // Image would get upscaled; do nothing
       copy($input_file, $output_file);
     } else {
+      try {
       Image::factory($input_file)
         ->resize($options["width"], $options["height"], $options["master"])
         ->quality(module::get_var("gallery", "image_quality"))
+        ->sharpen(module::get_var("gallery", "image_sharpen"))
         ->save($output_file);
+      } catch (Exception $e) {
+        Kohana::log("error", $e->getMessage());
+      }
     }
 
     module::event("graphics_resize_completed", $input_file, $output_file, $options);

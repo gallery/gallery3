@@ -10,8 +10,7 @@
   <ul class="ui-icon-plus">
     <? endforeach ?>
 
-    <? if ($parent->id == $album->parent_id): ?>
-    <? foreach ($parent->children(null, 0, array("type" => "album")) as $peer): ?>
+    <? foreach ($peers as $peer): ?>
     <li class="gOrganizeAlbum ui-icon-left <?= access::can("edit", $peer) ? "" : "gViewOnly" ?>"
         ref="<?= $peer->id ?>">
       <span class="ui-icon <?= $peer->id == $album->id ? "ui-icon-minus" : "ui-icon-plus" ?>">
@@ -36,10 +35,8 @@
         <? endforeach ?>
       </ul>
       <? endif ?>
-
     </li>
     <? endforeach ?>
-    <? endif ?>
 
     <? foreach ($parents as $parent): ?>
   </ul>
