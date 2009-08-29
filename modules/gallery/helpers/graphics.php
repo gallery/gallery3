@@ -442,7 +442,7 @@ class graphics_Core {
     if (!module::get_var("gallery", "graphics_toolkit")) {
       site_status::warning(
         t("Graphics toolkit missing!  Please <a href=\"%url\">choose a toolkit</a>",
-          array("url" => url::site("admin/graphics"))),
+          array("url" => SafeString::of_safe_html(url::site("admin/graphics")))),
         "missing_graphics_toolkit");
     }
   }

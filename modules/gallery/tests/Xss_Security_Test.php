@@ -130,14 +130,14 @@ class Xss_Security_Test extends Unit_Test_Case {
 	      $token = $tokens[$token_number];
 	    }
 	  } else if ($token[1] == "url") {
-	    // url methods return a SafeString
+	    // url methods return safe HTML
 	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
 		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
 		in_array($tokens[$token_number + 2][1],
 			 array("site", "current", "base", "file", "abs_site", "abs_current",
 			       "abs_file", "merge")) &&
 		self::_token_matches("(", $tokens, $token_number + 3)) {
-	      $frame->is_safestring(true);
+	      $frame->is_safe_html(true);
 
 	      $method = $tokens[$token_number + 2][1];
 	      $frame->expr_append("::$method(");
@@ -203,7 +203,8 @@ class Xss_Security_Test extends Unit_Test_Case {
 	    $state = "CLEAN";
 	  }
 	} else {
-	  if ($frame->is_safestring() || $frame->purified_html_called() || $frame->for_html_called()) {
+	  if ($frame->is_safe_html() || $frame->is_safestring() ||
+              $frame->purified_html_called() || $frame->for_html_called()) {
 	    $state = "CLEAN";
 	  }
 	}
@@ -259,6 +260,7 @@ class Xss_Security_Test_Frame {
   private $_for_html_called = false;
   private $_purified_html_called = false;
   private $_json_encode_called = false;
+  private $_is_safe_html = false;
   private $_line;
 
   function __construct($line_number, $in_script_block) {
@@ -286,6 +288,13 @@ class Xss_Security_Test_Frame {
       $this->_is_safestring = (bool) $new_val;
     }
     return $this->_is_safestring;
+  }
+
+  function is_safe_html($new_val=NULL) {
+    if ($new_val !== NULL) {
+      $this->_is_safe_html = (bool) $new_val;
+    }
+    return $this->_is_safe_html;
   }
 
   function json_encode_called($new_val=NULL) {
