@@ -7,26 +7,24 @@
         array("url" => "http://www.boutell.com/gd")) ?>
   </p>
   <? if ($tk->installed && $tk->rotate): ?>
-  <p class="gSuccess">
+  <div class="gModuleStatus gInfo">
     <?= t("You have GD version %version.", array("version" => $tk->version)) ?>
-  </p>
+  </div>
   <p>
     <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
   </p>
   <? elseif ($tk->installed): ?>
-
   <? if ($tk->error): ?>
-  <p class="gWarning">
+  <p class="gModuleStatus gWarning">
     <?= $tk->error ?>
   </p>
   <? endif ?>
-
   <p>
     <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
   </p>
   <? else: ?>
-  <p class="gInfo">
+  <div class="gModuleStatus gInfo">
     <?= t("You do not have GD installed.") ?>
-  </p>
+  </div>
   <? endif ?>
 </div>

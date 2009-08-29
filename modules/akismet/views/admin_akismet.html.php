@@ -8,7 +8,7 @@
   </p>
 
   <? if ($valid_key): ?>
-  <div class="gSuccess">
+  <div class="gModuleStatus gSuccess">
     <?= t("Your API Key is valid.  Your comments will be filtered!") ?>
   </div>
   <? endif ?>

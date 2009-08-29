@@ -7,7 +7,7 @@
 
   <div id="gAvailableTasks">
     <h2> <?= t("Available Tasks") ?> </h2>
-    <table>
+    <table class="gMessages">
       <tr>
         <th>
           <?= t("Name") ?>
@@ -19,8 +19,9 @@
           <?= t("Action") ?>
         </th>
       </tr>
+      <? $i = 0; ?>
       <? foreach ($task_definitions as $task): ?>
-      <tr class="<?= log::severity_class($task->severity) ?>">
+      <tr class="<?= log::severity_class($task->severity) ?> <?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
         <td>
           <?= $task->name ?>
         </td>
@@ -34,17 +35,18 @@
           </a>
         </td>
       </tr>
+      <? $i++ ?>
       <? endforeach ?>
     </table>
   </div>
 
   <? if ($running_tasks->count()): ?>
   <div id="gRunningTasks">
-    <h2> <?= t("Running Tasks") ?> </h2>
     <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
        class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
       <?= t("cancel all") ?></a>
 
+    <h2> <?= t("Running Tasks") ?> </h2>
     <table>
       <tr>
         <th>
@@ -66,8 +68,9 @@
           <?= t("Action") ?>
         </th>
       </tr>
+      <? $i = 0; ?>
       <? foreach ($running_tasks as $task): ?>
-      <tr class="<?= $task->state == "stalled" ? "gWarning" : "" ?>">
+      <tr class="<?= $task->state == "stalled" ? "gWarning" : "" ?> <?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
         <td>
           <?= gallery::date_time($task->updated) ?>
         </td>
@@ -105,6 +108,7 @@
           </a>
         </td>
       </tr>
+      <? $i++ ?>
       <? endforeach ?>
     </table>
   </div>
@@ -138,8 +142,9 @@
           <?= t("Action") ?>
         </th>
       </tr>
+      <? $i = 0; ?>
       <? foreach ($finished_tasks as $task): ?>
-      <tr class="<?= $task->state == "success" ? "gSuccess" : "gError" ?>">
+      <tr class="<?= $task->state == "success" ? "gSuccess" : "gError" ?> <?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
         <td>
           <?= gallery::date_time($task->updated) ?>
         </td>
@@ -183,6 +188,7 @@
         </td>
       </tr>
       <? endforeach ?>
+      <? $i++ ?>
     </table>
   </div>
   <? endif ?>
