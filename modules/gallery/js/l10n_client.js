@@ -205,6 +205,19 @@ Gallery.behaviors.l10nClient = function(context) {
       Gallery.l10nClient.toggle(0);
     }
   });
+	
+	// Close the l10n client using an AJAX call and refreshing the page
+  $('#gCloseL10n').click(function(event) {
+		$.ajax({
+      type: "GET",
+      url: toggle_l10n_mode_url,
+      data: "csrf=" + csrf,
+      success: function() {
+        window.location.reload(true);
+      }
+    });
+		event.preventDefault();
+  });
 
   // Register keybindings using jQuery hotkeys
   // TODO: Either remove hotkeys code or add query.hotkeys.js.
