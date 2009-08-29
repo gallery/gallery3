@@ -84,6 +84,12 @@ class I18n_Core {
 
   /**
    * Translates a localizable message.
+   *
+   * Security:
+   * The returned string is safe for use in HTML (it contains a safe subset of HTML and
+   * interpolation parameters are converted to HTML entities).
+   * For use in JavaScript, please call ->for_js() on it.
+   *
    * @param $message String|array The message to be translated. E.g. "Hello world"
    *                 or array("one" => "One album", "other" => "%count albums")
    * @param $options array (optional) Options array for key value pairs which are used
@@ -110,7 +116,7 @@ class I18n_Core {
 
     $entry = $this->interpolate($locale, $entry, $values);
 
-    return $entry;
+    return SafeString::of($entry)->mark_html_safe();
   }
 
   private function lookup($locale, $message) {
@@ -179,17 +185,19 @@ class I18n_Core {
     return is_array($message);
   }
   
-  private function interpolate($locale, $string, $values) {
+  private function interpolate($locale, $string, $key_values) {
     // TODO: Handle locale specific number formatting.
 
     // Replace x_y before replacing x.
-    krsort($values, SORT_STRING);
+    krsort($key_values, SORT_STRING);
 
     $keys = array();
-    foreach (array_keys($values) as $key) {
+    $values = array();
+    foreach ($key_values as $key => $value) {
       $keys[] = "%$key";
+      $values[] = new SafeString($value);
     }
-    return str_replace($keys, array_values($values), $string);
+    return str_replace($keys, $values, $string);
   }
 
   private function pluralize($locale, $entry, $count) {
