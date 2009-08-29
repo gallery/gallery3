@@ -41,6 +41,8 @@ if (installer::already_installed()) {
 
     if (!installer::connect($config)) {
       $content = render("invalid_db_info.html.php");
+    } else if (!installer::verify_version($config)) {
+      $content = render("invalid_db_version.html.php");
     } else if (!installer::select_db($config)) {
       $content = render("missing_db.html.php");
     } else if (!installer::db_empty($config)) {

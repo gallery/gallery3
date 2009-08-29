@@ -276,7 +276,7 @@ li.gError select {
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gMessage {
-  width: 99%;
+  width: 100%;
 }
 
 #gAdminAkismet .gSuccess,
@@ -406,7 +406,6 @@ form .gError,
 }
 
 #gSidebar {
-  background-color: #fff;
   font-size: .9em;
   padding: 0 20px;
   width: 220px;
@@ -492,23 +491,13 @@ form .gError,
   width: 16px;
 }
 
-#gContent #gAlbumGrid #gHoverItem {
+#gContent #gAlbumGrid .gHoverItem {
   background-color: #fff;
   border: 1px solid #000;
-  display: none;
-  height: auto;
-  padding: 0;
-  position: absolute;
-  width: auto;
-  z-index: 100;
 }
 
-#gContent #gAlbumGrid #gHoverItem .gItem {
-  border: none;
-}
-
-#gContent #gHoverItem .gItem h2,
-#gContent #gHoverItem .gItem .gMetadata {
+#gContent .gHoverItem h2,
+#gContent .gHoverItem .gMetadata {
   display: block;
 }
 
@@ -530,6 +519,7 @@ form .gError,
 
 #gContent #gComments {
   margin-top: 2em;
+  position: relative;
 }
 
 #gContent #gComments ul li {
@@ -559,6 +549,12 @@ form .gError,
   height: 32px;
   margin-right: .4em;
   width: 32px;
+}
+
+#gAddCommentButton {
+  position: absolute;
+  right: 0;
+  top: 2px;
 }
 
 #gContent #gAddCommentForm {
@@ -647,15 +643,15 @@ form .gError,
   line-height: 1.6em;
 }
 
-#gHoverItem .gContextMenu {
+.gHoverItem .gContextMenu {
   display: block;
 }
 
-#gHoverItem .gContextMenu li {
+.gHoverItem .gContextMenu li {
   text-align: left;
 }
 
-#gHoverItem .gContextMenu a:hover {
+.gHoverItem .gContextMenu a:hover {
   text-decoration: none;
 }
 

@@ -276,7 +276,7 @@ li.gError select {
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gMessage {
-  width: 99%;
+  width: 100%;
 }
 
 #gAdminAkismet .gSuccess,

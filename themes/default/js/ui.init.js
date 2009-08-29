@@ -62,39 +62,41 @@ $(document).ready(function() {
     // Initialize context menus
     $(".gItem").hover(
       function(){
+        // Insert invisible placeholder to hold the item's position in the grid
+        var placeHolder = $(this).clone();
+        $(placeHolder).attr("id", "gPlaceHolder");
+        $(placeHolder).css("visibility", "hidden");
+        $(this).after($(placeHolder));
+        // Style and position the item
+        $(this).addClass("gHoverItem");
         var position = $(this).position();
-        var item_classes = $(this).attr("class");
-        var bg_color = $(this).css("background-color");
-        var container = $(this).parent();
-        $("#gHoverItem").remove();
-        container.append("<div id=\"gHoverItem\"><div class=\"" + item_classes + "\">"
-            + $(this).html() + "</div></div>");
-        $("#gHoverItem").css("top", position.top);
-        $("#gHoverItem").css("left", position.left);
-        $("#gHoverItem").css("background-color", bg_color);
-        $.fn.gallery_hover_init();
-        var v_align = $(this).find(".gValign");
+        $(this).css("position", "absolute");
+        $(this).css("top", position.top);
+        $(this).css("left", position.left);
+        $(this).css("z-index", "1000");
+        // Initialize the contextual menu
+        $(this).gallery_context_menu();
+        // Set height based on height of descendents
         var title = $(this).find("h2");
         var meta = $(this).find(".gMetadata");
-        var context = $(this).find(".gContextMenu");
         var context_label = $(this).find(".gContextMenu li:first");
-        $("#gHoverItem .gItem").height(
-            $(v_align).gallery_height()
-            + $(title).gallery_height()
-            + $(meta).gallery_height()
-            + parseInt($(context).css("margin-top").replace("px",""))
-            + $(context_label).gallery_height()
-          );
-
-        $("#gHoverItem").fadeIn("fast");
-        $("#gHoverItem").hover(
-          function(){
-            $(this).gallery_context_menu();
-          },
-          function() {
-            $(this).hide();
-          }
-        );
+        var item_ht = $(this).height();
+        var title_ht = $(title).gallery_height();
+        var meta_ht = $(meta).gallery_height();
+        var context_label_ht = $(context_label).gallery_height();
+        $(this).height(item_ht + title_ht + meta_ht + context_label_ht);
+      },
+      function() {
+        // Reset item height, position, and z-index
+        var sib_height = $(this).next().height();
+        $(this).css("height", sib_height);
+        $(this).css("position", "relative");
+        $(this).css("top", null);
+        $(this).css("left", null);
+        $(this).css("z-index", null);
+        // Remove the placeholder and hover class from the item
+        $("#gPlaceHolder").remove();
+        $(this).removeClass("gHoverItem");
       }
     );
   }
@@ -109,18 +111,6 @@ $(document).ready(function() {
     $(resize).hover(function(){
       $(this).gallery_context_menu();
     });
-
-    // Collapse comments form, insert button to expand
-    if ($("#gAddCommentForm").length) {
-      var showCommentForm = '<a href="#add_comment_form"'
-        + ' class="showCommentForm gButtonLink ui-corner-all ui-icon-left ui-state-default right">'
-        + '<span class="ui-icon ui-icon-comment"></span>' + ADD_A_COMMENT + '</a>';
-      $("#gAddCommentForm").hide();
-      $("#gComments").prepend(showCommentForm);
-      $(".showCommentForm").click(function(){
-        $("#gAddCommentForm").show(1000);
-      });
-    }
 
     // Add scroll effect for links to named anchors
     $.localScroll({
