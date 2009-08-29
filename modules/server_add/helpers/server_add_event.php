@@ -31,15 +31,11 @@ class server_add_event_Core {
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
     if ($item && user::active()->admin && $item->is_album() && !empty($paths)) {
-      // This is a little tricky.  Normally there's an "Add Photo" menu option, but we want to
-      // turn that into a dropdown if there are two different ways to add things.  Do that in a
-      // portable way for now.  If we find ourselves duplicating this pattern, we should make an
-      // API method for this.
-			$add_menu = $menu->get("add_menu");
-      $add_menu->append(Menu::factory("dialog")
-                  ->id("server_add")
-                  ->label(t("Server add"))
-                  ->url(url::site("server_add/browse/$item->id")));
+      $menu->get("add_menu")
+        ->append(Menu::factory("dialog")
+                 ->id("server_add")
+                 ->label(t("Server add"))
+                 ->url(url::site("server_add/browse/$item->id")));
     }
   }
 }
