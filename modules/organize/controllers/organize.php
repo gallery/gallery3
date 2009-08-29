@@ -136,6 +136,13 @@ class Organize_Controller extends Controller {
     $v = new View("organize_tree.html");
     $v->parents = $album->parents();
     $v->album = $album;
+
+    if ($album->id == 1) {
+      $v->peers = array($album);
+    } else {
+      $v->peers = $album->parent()->children(null, 0, array("type" => "album"));
+    }
+
     return $v;
   }
 }
