@@ -82,9 +82,9 @@ class gallery_Core {
   static function site_menu($menu, $theme) {
     if ($theme->page_type != "login") {
       $menu->append(Menu::factory("link")
-                    ->id("home")
-                    ->label(t("Home"))
-                    ->url(url::site("albums/1")));
+              ->id("home")
+              ->label(t("Home"))
+              ->url(url::site("albums/1")));
 
       $item = $theme->item();
 
@@ -92,48 +92,47 @@ class gallery_Core {
       $can_add = $item && access::can("add", $item);
 
       if ($can_add) {
-        $menu->append(Menu::factory("dialog")
-                      ->id("add_photos_item")
-                      ->label(t("Add photos"))
-                      ->url(url::site("simple_uploader/app/$item->id")));
+      	$menu->append($add_menu = Menu::factory("submenu")
+                    ->id("add_menu")
+                    ->label(t("Add")));
+        $add_menu->append(Menu::factory("dialog")
+                    ->id("add_photos_item")
+                    ->label(t("Add photos"))
+                    ->url(url::site("simple_uploader/app/$item->id")));
+        if ($item->is_album()) {
+        	$add_menu->append(Menu::factory("dialog")
+                      ->id("add_album_item")
+                      ->label(t("Add an album"))
+                      ->url(url::site("form/add/albums/$item->id?type=album")));
+				}
       }
 
       $menu->append($options_menu = Menu::factory("submenu")
-                    ->id("options_menu")
-                    ->label(t("Options")));
+              ->id("options_menu")
+              ->label(t("Photo options")));
       if ($item && ($can_edit || $can_add)) {
         if ($can_edit) {
-          $options_menu
-            ->append(Menu::factory("dialog")
-                     ->id("edit_item")
-                     ->label($item->is_album() ? t("Edit album") : t("Edit photo"))
-                     ->url(url::site("form/edit/{$item->type}s/$item->id")));
+          $options_menu->append(Menu::factory("dialog")
+                          ->id("edit_item")
+                          ->label($item->is_album() ? t("Edit album") : t("Edit photo"))
+                          ->url(url::site("form/edit/{$item->type}s/$item->id")));
         }
 
-        // @todo Move album options menu to the album quick edit pane
         if ($item->is_album()) {
-          if ($can_add) {
-            $options_menu
-              ->append(Menu::factory("dialog")
-                       ->id("add_album")
-                       ->label(t("Add an album"))
-                       ->url(url::site("form/add/albums/$item->id?type=album")));
-          }
-
+          $options_menu->label(t("Album options"));
           if ($can_edit) {
-            $options_menu
-              ->append(Menu::factory("dialog")
-                       ->id("edit_permissions")
-                       ->label(t("Edit permissions"))
-                       ->url(url::site("permissions/browse/$item->id")));
+            $options_menu->append(Menu::factory("dialog")
+                            ->id("edit_permissions")
+                            ->label(t("Edit permissions"))
+                            ->url(url::site("permissions/browse/$item->id")));
           }
         }
       }
 
       if (user::active()->admin) {
         $menu->append($admin_menu = Menu::factory("submenu")
-                      ->id("admin_menu")
-                      ->label(t("Admin")));
+                ->id("admin_menu")
+                ->label(t("Admin")));
         gallery::admin_menu($admin_menu, $theme);
         module::event("admin_menu", $admin_menu, $theme);
       }
@@ -159,12 +158,6 @@ class gallery_Core {
                         ->id("languages")
                         ->label(t("Languages"))
                         ->url(url::site("admin/languages")))
-               ->append(Menu::factory("link")
-                        ->id("l10n_mode")
-                        ->label(Session::instance()->get("l10n_mode", false)
-                                ? t("Stop translating") : t("Start translating"))
-                        ->url(url::site("l10n_client/toggle_l10n_mode?csrf=" .
-                                        access::csrf_token())))
                ->append(Menu::factory("link")
                         ->id("advanced")
                         ->label(t("Advanced"))

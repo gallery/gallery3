@@ -42,9 +42,17 @@
   cursor:pointer;
   display:block;
   position:absolute; right:0em;
-  padding: 0em .75em; height:2em; line-height:2em;
+  height:2em; line-height:2em;
   text-transform:uppercase;
-  text-align:center; background:#000;}
+  text-align:center; background:#000;
+}
+#l10n-client-toggler a {
+	font-size: 1em;
+	padding: .5em;
+}
+#l10n-client-toggler #gMinimizeL10n {
+  border-right: 1px solid #ffffff;
+}
 
 /* Panel labels */
 #l10n-client h2 {
