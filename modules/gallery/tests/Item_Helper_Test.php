@@ -18,65 +18,30 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Item_Helper_Test extends Unit_Test_Case {
-  private $_group;
-  private $_album;
-  private $_item;
-  //private $_user;
 
-  public function teardown() {
-    try {
-      $this->_group->delete();
-    } catch (Exception $e) { }
-
-    try {
-      $this->_album->delete();
-    } catch (Exception $e) { }
-
-    //try {
-    //  $this->_user->delete();
-    //} catch (Exception $e) { }
-  }
-
-  public function setup() {
-  }
-
-  public function viewable_item_test() {
-    $this->_group = group::create("access_test");
+  public function viewable_test() {
     $root = ORM::factory("item", 1);
-    $this->_album = album::create($root, rand(), "visible_test");
-    $this->_user = user::create("visible_test", "Visible Test", "");
-    $this->_user->add($this->_group);
-    $this->_item = self::_create_random_item($this->_album);
-    comment::create($this->_item, $this->_user, "This is a comment");
-    access::deny(group::everybody(), "view", $this->_album);
-    $active = user::active();
+    $album = album::create($root, rand(), rand(), rand());
+    $item = self::_create_random_item($album);
+    user::set_active(user::guest());
 
-    $items = ORM::factory("item")
-      ->where("id", $this->_album->id)
-      ->find_all();
-    print Database::instance()->last_query() . "\n";
-    $items = ORM::factory("item")
-      ->where("id", $this->_album->id)
-      ->viewable()
-      ->find_all();
-    print Database::instance()->last_query() . "\n";
+    // We can see the item when permissions are granted
+    access::allow(group::everybody(), "view", $album);
+    $this->assert_equal(
+      1,
+      ORM::factory("item")->viewable()->where("id", $item->id)->count_all());
+
+    // We can't see the item when permissions are denied
+    access::deny(group::everybody(), "view", $album);
+    $this->assert_equal(
+      0,
+      ORM::factory("item")->viewable()->where("id", $item->id)->count_all());
   }
 
-
-  //public function viewable_one_restrictions_test() {
-  //  $item = self::create_random_item();
-  //  $this->assert_true(!empty($item->created));
-  //  $this->assert_true(!empty($item->updated));
-  //}
-  //public function viewable_multiple_restrictions_test() {
-  //  $item = self::create_random_item();
-  //  $this->assert_true(!empty($item->created));
-  //  $this->assert_true(!empty($item->updated));
-  //}
 
   private static function _create_random_item($album) {
+    // Set all required fields (values are irrelevant)
     $item = ORM::factory("item");
-    /* Set all required fields (values are irrelevant) */
     $item->name = rand();
     $item->type = "photo";
     return $item->add_to_parent($album);
