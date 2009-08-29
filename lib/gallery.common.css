@@ -1,0 +1,111 @@
+/* ####### states, interactions, positioning ########### */
+
+/* states */
+
+.g-active,   .g-enabled,  .g-available,   .g-editable,              .g-selected,   .g-highlight {
+  font-weight: bold;
+}
+.g-inactive, .g-disabled, .g-unavailable, .g-uneditable, .g-locked, .g-unselected, .g-understate {
+  color: #ccc;
+  font-weight: normal;
+}
+
+.g-error, .g-denied {
+	
+}
+.g-success, .g-allowed {
+	
+}
+.g-info {
+	
+}
+.g-warning {
+	
+}
+
+.g-open {
+	
+}
+.g-closed {
+	
+}
+
+.g-installed {
+	
+}
+.g-default {
+	
+}
+
+/* interactions */
+
+.g-draggable, .ui-draggable {
+	cursor: move;
+}
+.g-target {
+	
+}
+
+
+
+/* positioning */
+
+.g-right {
+	float: right;
+}
+.g-left {
+	float: left;
+}
+
+/* order */
+
+.g-first {
+	
+}
+.g-last {
+	
+}
+.g-even-row {
+  
+}
+.g-odd-row {
+	
+}
+
+/* text */
+
+.g-txt-small {
+	font-size: .8em;
+}
+.g-txt-big {
+	font-size: 1.2em;
+}
+.g-txt-right {
+	text-align: right;
+}
+
+/* ####### reusable containers/widgets ########### */
+
+.g-dialog {
+	
+}
+
+.g-button { /* a link styled like a button */
+	
+}
+
+.g-progressbar {
+	
+}
+
+.g-block {
+	
+}
+
+.g-message-box {
+	
+}
+
+.g-list-horizontal {
+	
+}
