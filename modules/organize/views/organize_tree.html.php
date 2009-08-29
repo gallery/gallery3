@@ -5,7 +5,7 @@
   <span class="ui-icon ui-icon-minus">
   </span>
   <span class="gAlbumText" ref="<?= $parent->id ?>">
-    <?= p::clean($parent->title) ?>
+    <?= SafeString::of($parent->title) ?>
   </span>
   <ul class="ui-icon-plus">
     <? endforeach ?>
@@ -17,7 +17,7 @@
       </span>
       <span class="gAlbumText <?= $peer->id == $album->id ? "selected" : "" ?>"
             ref="<?= $peer->id ?>">
-        <?= p::clean($peer->title) ?>
+        <?= SafeString::of($peer->title) ?>
       </span>
 
       <? if ($peer->id == $album->id): ?>
@@ -29,7 +29,7 @@
           </span>
           <span class="gAlbumText"
                 ref="<?= $child->id ?>">
-            <?= p::clean($child->title) ?>
+            <?= SafeString::of($child->title) ?>
           </span>
         </li>
         <? endforeach ?>
