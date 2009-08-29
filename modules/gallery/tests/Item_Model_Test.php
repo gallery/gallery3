@@ -19,12 +19,12 @@
  */
 class Item_Model_Test extends Unit_Test_Case {
   public function saving_sets_created_and_updated_dates_test() {
-    $item = self::create_random_item();
+    $item = self::_create_random_item();
     $this->assert_true(!empty($item->created));
     $this->assert_true(!empty($item->updated));
   }
 
-  private function create_random_item() {
+  private static function _create_random_item() {
     $item = ORM::factory("item");
     /* Set all required fields (values are irrelevant) */
     $item->name = rand();
@@ -33,7 +33,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function updating_doesnt_change_created_date_test() {
-    $item = self::create_random_item();
+    $item = self::_create_random_item();
 
     // Force the creation date to something well known
     $db = Database::instance();
@@ -47,7 +47,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function updating_view_count_only_doesnt_change_updated_date_test() {
-    $item = self::create_random_item();
+    $item = self::_create_random_item();
     $item->reload();
     $this->assert_same(0, $item->view_count);
 
@@ -64,7 +64,7 @@ class Item_Model_Test extends Unit_Test_Case {
 
   public function move_photo_test() {
     // Create a test photo
-    $item = self::create_random_item();
+    $item = self::_create_random_item();
 
     file_put_contents($item->thumb_path(), "thumb");
     file_put_contents($item->resize_path(), "resize");
@@ -128,7 +128,7 @@ class Item_Model_Test extends Unit_Test_Case {
 
   public function item_rename_wont_accept_slash_test() {
     // Create a test photo
-    $item = self::create_random_item();
+    $item = self::_create_random_item();
 
     $new_name = rand() . "/";
 
@@ -142,7 +142,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function save_original_values_test() {
-    $item = $this->create_random_item();
+    $item = self::_create_random_item();
     $item->title = "ORIGINAL_VALUE";
     $item->save();
     $item->title = "NEW_VALUE";

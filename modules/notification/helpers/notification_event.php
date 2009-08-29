@@ -26,6 +26,7 @@ class notification_event_Core {
       notification::send_item_updated($new);
     } catch (Exception $e) {
       Kohana::log("error", "@todo notification_event::item_updated() failed");
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -34,6 +35,7 @@ class notification_event_Core {
       notification::send_item_add($item);
     } catch (Exception $e) {
       Kohana::log("error", "@todo notification_event::item_created() failed");
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -46,6 +48,7 @@ class notification_event_Core {
       }
     } catch (Exception $e) {
       Kohana::log("error", "@todo notification_event::item_deleted() failed");
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -56,6 +59,7 @@ class notification_event_Core {
       }
     } catch (Exception $e) {
       Kohana::log("error", "@todo notification_event::comment_created() failed");
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -66,6 +70,7 @@ class notification_event_Core {
       }
     } catch (Exception $e) {
       Kohana::log("error", "@todo notification_event::comment_updated() failed");
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -76,6 +81,7 @@ class notification_event_Core {
         ->delete_all();
     } catch (Exception $e) {
       Kohana::log("error", "@todo notification_event::user_before_delete() failed");
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -84,6 +90,7 @@ class notification_event_Core {
       notification::send_pending_notifications();
     } catch (Exception $e) {
       Kohana::log("error", "@todo notification_event::batch_complete() failed");
+      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 

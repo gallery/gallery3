@@ -116,13 +116,7 @@ class album_Core {
 
     $sort_order->dropdown("column", array("id" => "gAlbumSortColumn"))
       ->label(t("Sort by"))
-      ->options(array("weight" => t("Manual"),
-                      "captured" => t("Date captured"),
-                      "created" => t("Date uploaded"),
-                      "title" => t("Title"),
-                      "updated" => t("Date modified"),
-                      "view_count" => t("Number of views"),
-                      "rand_key" => t("Random")))
+      ->options(album::get_sort_order_options())
       ->selected($parent->sort_column);
     $sort_order->dropdown("direction", array("id" => "gAlbumSortDirection"))
       ->label(t("Order"))
@@ -136,5 +130,18 @@ class album_Core {
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
+  }
+
+  /**
+   * Return a structured set of all the possible sort orders.
+   */
+  static function get_sort_order_options() {
+    return array("weight" => t("Manual"),
+                 "captured" => t("Date captured"),
+                 "created" => t("Date uploaded"),
+                 "title" => t("Title"),
+                 "updated" => t("Date modified"),
+                 "view_count" => t("Number of views"),
+                 "rand_key" => t("Random"));
   }
 }
