@@ -2,8 +2,8 @@
 <? // @todo Set hover on AlbumGrid list items for guest users ?>
 <div id="gInfo">
   <?= $theme->album_top() ?>
-  <h1><?= p::purify($item->title) ?></h1>
-  <div class="gDescription"><?= nl2br(p::purify($item->description)) ?></div>
+  <h1><?= SafeString::of($item->title)->purified_html() ?></h1>
+  <div class="gDescription"><?= nl2br(SafeString::of($item->description)->purified_html()) ?></div>
 </div>
 
 <ul id="gAlbumGrid">
@@ -20,7 +20,7 @@
     </a>
     <?= $theme->thumb_bottom($child) ?>
     <?= $theme->thumb_menu($child) ?>
-    <h2><span></span><a href="<?= $child->url() ?>"><?= p::clean($child->title) ?></a></h2>
+    <h2><span></span><a href="<?= $child->url() ?>"><?= SafeString::of($child->title) ?></a></h2>
     <ul class="gMetadata">
       <?= $theme->thumb_info($child) ?>
     </ul>
