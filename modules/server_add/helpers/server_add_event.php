@@ -35,30 +35,11 @@ class server_add_event_Core {
       // turn that into a dropdown if there are two different ways to add things.  Do that in a
       // portable way for now.  If we find ourselves duplicating this pattern, we should make an
       // API method for this.
-      $server_add = Menu::factory("dialog")
-        ->id("server_add")
-        ->label(t("Add from server"))
-        ->url(url::site("server_add/browse/$item->id"));
-      $add_photos_item = $menu->get("add_photos_item");
-      $add_photos_menu = $menu->get("add_photos_menu");
-
-      if ($add_photos_item && !$add_photos_menu) {
-        // Assuming that $add_menu is unset, create add_menu and add our item
-        $menu->add_after(
-          "add_photos_item",
-          Menu::factory("submenu")
-          ->id("add_photos_menu")
-          ->label($add_photos_item->label)
-          ->append(Menu::factory("dialog")
-                   ->id("add_photos_submenu_item")
-                   ->label(t("Simple Uploader"))
-                   ->url($add_photos_item->url))
-          ->append($server_add));
-        $menu->remove("add_photos_item");
-      } else if ($add_photos_menu) {
-        // Append to the existing sub-menu
-        $add_photos_menu->append($server_add);
-      }
+			$add_menu = $menu->get("add_menu");
+      $add_menu->append(Menu::factory("dialog")
+                  ->id("server_add")
+                  ->label(t("Server add"))
+                  ->url(url::site("server_add/browse/$item->id")));
     }
   }
 }
