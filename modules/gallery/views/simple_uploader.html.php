@@ -6,7 +6,7 @@
 <!-- hack to set the title for the dialog -->
 <form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
   <fieldset>
-    <legend> <?= t("Add photos to %album_title", array("album_title" => p::purify($item->title))) ?> </legend>
+    <legend> <?= t("Add photos to %album_title", array("album_title" => SafeString::purify($item->title))) ?> </legend>
   </fieldset>
 </form>
 
@@ -26,9 +26,9 @@
   </p>
   <ul class="gBreadcrumbs">
     <? foreach ($item->parents() as $parent): ?>
-    <li> <?= p::clean($parent->title) ?> </li>
+    <li> <?= SafeString::of($parent->title) ?> </li>
     <? endforeach ?>
-    <li class="active"> <?= p::purify($item->title) ?> </li>
+    <li class="active"> <?= SafeString::purify($item->title) ?> </li>
   </ul>
 
   <p>

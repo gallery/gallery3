@@ -24,7 +24,7 @@
                 <? endif ?>
                 file="<?= $file ?>"
                 >
-            <?= p::clean(basename($file)) ?>
+            <?= SafeString::of(basename($file)) ?>
           </span>
         </li>
         <? endforeach ?>

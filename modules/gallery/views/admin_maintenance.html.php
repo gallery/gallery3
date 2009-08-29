@@ -90,7 +90,7 @@
           <?= $task->status ?>
         </td>
         <td>
-          <?= p::clean($task->owner()->name) ?>
+          <?= SafeString::of($task->owner()->name) ?>
         </td>
         <td>
           <? if ($task->state == "stalled"): ?>

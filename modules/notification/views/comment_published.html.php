@@ -1,26 +1,26 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title><?= p::clean($subject) ?> </title>
+    <title><?= SafeString::of($subject) ?> </title>
   </head>
   <body>
-    <h2><?= p::clean($subject) ?></h2>
+    <h2><?= SafeString::of($subject) ?></h2>
     <table>
       <tr>
         <td><?= t("Comment:") ?></td>
-  <td><?= nl2br(p::purify($comment->text)) ?></td>
+  <td><?= nl2br(SafeString::purify($comment->text)) ?></td>
       </tr>
       <tr>
         <td><?= t("Author Name:") ?></td>
-        <td><?= p::clean($comment->author_name()) ?></td>
+        <td><?= SafeString::of($comment->author_name()) ?></td>
       </tr>
       <tr>
         <td><?= t("Author Email:") ?></td>
-        <td><?= p::clean($comment->author_email()) ?></td>
+        <td><?= SafeString::of($comment->author_email()) ?></td>
       </tr>
       <tr>
         <td><?= t("Author URL:") ?></td>
-        <td><?= p::clean($comment->author_url()) ?></td>
+        <td><?= SafeString::of($comment->author_url()) ?></td>
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>

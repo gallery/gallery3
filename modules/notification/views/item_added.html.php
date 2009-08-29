@@ -1,14 +1,14 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title><?= p::clean($subject) ?> </title>
+    <title><?= SafeString::of($subject) ?> </title>
   </head>
   <body>
-    <h2><?= p::clean($subject) ?></h2>
+    <h2><?= SafeString::of($subject) ?></h2>
     <table>
       <tr>
         <td><?= t("Title:") ?></td>
-        <td><?= p::purify($item->title) ?></td>
+        <td><?= SafeString::purify($item->title) ?></td>
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>
@@ -21,7 +21,7 @@
       <? if ($item->description): ?>
       <tr>
         <td><?= t("Description:") ?></td>
-         <td><?= nl2br(p::purify($item->description)) ?></td>
+         <td><?= nl2br(SafeString::purify($item->description)) ?></td>
       </tr>
       <? endif ?>
     </table>

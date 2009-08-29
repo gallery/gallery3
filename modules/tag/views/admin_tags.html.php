@@ -47,7 +47,7 @@
           <? endif ?>
 
           <li>
-            <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= p::clean($tag->name) ?></span>
+            <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= SafeString::of($tag->name) ?></span>
             <span class="understate">(<?= $tag->count ?>)</span>
             <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
                class="gDialogLink delete-link gButtonLink">

@@ -7,7 +7,7 @@
 
     <div id="gOrganizeBranch-<?= $album->id ?>" ref="<?= $album->id ?>"
           class="<?= $selected ? "gBranchSelected" : "" ?> gBranchText">
-      <?= p::clean($album->title) ?>
+      <?= SafeString::of($album->title) ?>
     </div>
     <div id="gOrganizeChildren-<?= $album->id ?>"
           class="<?= $album_icon == "ui-icon-plus" ? "gBranchCollapsed" : "" ?>">

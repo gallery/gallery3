@@ -35,14 +35,14 @@
     <? foreach ($parents as $parent): ?>
     <li>
       <a href="javascript:show(<?= $parent->id ?>)">
-        <?= p::clean($parent->title) ?>
+        <?= SafeString::of($parent->title) ?>
       </a>
       <div class="form" id="edit-<?= $parent->id ?>"></div>
       <ul>
         <? endforeach ?>
         <li>
           <a href="javascript:show(<?= $item->id ?>)">
-            <?= p::purify($item->title) ?>
+            <?= SafeString::purify($item->title) ?>
           </a>
           <div class="form" id="edit-<?= $item->id ?>">
             <?= $form ?>

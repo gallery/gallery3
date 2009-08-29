@@ -2,18 +2,18 @@
 <ul class="gMetadata">
   <li>
     <strong class="caption"><?= t("Title:") ?></strong>
-    <?= p::purify($item->title) ?>
+    <?= SafeString::purify($item->title) ?>
   </li>
   <? if ($item->description): ?>
   <li>
     <strong class="caption"><?= t("Description:") ?></strong>
-     <?= nl2br(p::purify($item->description)) ?>
+     <?= nl2br(SafeString::purify($item->description)) ?>
   </li>
   <? endif ?>
   <? if ($item->id != 1): ?>
   <li>
     <strong class="caption"><?= t("Folder name:") ?></strong>
-    <?= p::clean($item->name) ?>
+    <?= SafeString::of($item->name) ?>
   </li>
   <? endif ?>
   <? if ($item->captured): ?>
@@ -26,9 +26,9 @@
   <li>
     <strong class="caption"><?= t("Owner:") ?></strong>
     <? if ($item->owner->url): ?>
-    <a href="<?= $item->owner->url ?>"><?= p::clean($item->owner->display_name()) ?></a>
+    <a href="<?= $item->owner->url ?>"><?= SafeString::of($item->owner->display_name()) ?></a>
     <? else: ?>
-    <?= p::clean($item->owner->display_name()) ?>
+    <?= SafeString::of($item->owner->display_name()) ?>
     <? endif ?>
   </li>
   <? endif ?>

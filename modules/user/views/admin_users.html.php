@@ -68,16 +68,16 @@
         <td id="user-<?= $user->id ?>" class="core-info gDraggable">
           <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                title="<?= t("Drag user onto group below to add as a new member") ?>"
-               alt="<?= p::clean($user->name) ?>"
+               alt="<?= SafeString::of($user->name) ?>"
                width="20"
                height="20" />
-          <?= p::clean($user->name) ?>
+          <?= SafeString::of($user->name) ?>
         </td>
         <td>
-          <?= p::clean($user->full_name) ?>
+          <?= SafeString::of($user->full_name) ?>
         </td>
         <td>
-          <?= p::clean($user->email) ?>
+          <?= SafeString::of($user->email) ?>
         </td>
         <td>
           <?= ($user->last_login == 0) ? "" : gallery::date($user->last_login) ?>

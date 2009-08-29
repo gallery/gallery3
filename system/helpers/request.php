@@ -30,7 +30,7 @@ class request_Core {
 			// Set referrer
 			$ref = $_SERVER['HTTP_REFERER'];
 
-			if (strpos($ref, url::base(FALSE)) === 0)
+			if (strpos($ref, (string) url::base(FALSE)) === 0)
 			{
 				// Remove the base URL from the referrer
 				$ref = substr($ref, strlen(url::base(FALSE)));
