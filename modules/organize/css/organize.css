@@ -18,7 +18,7 @@
   width: 25%;
 }
 
-#gOrganize .yui-gf #gMessage {
+#gMessage {
   margin-bottom: .4em;
   width: 75%;
   white-space: nowrap;
@@ -114,11 +114,11 @@
   padding: .5em;
 }
 
-#gOrganizeMicroThumbPanel #gOrganizeMicroThumbGrid .gAlbum {
+#gOrganizeMicroThumbGrid .gAlbum {
   background-color: #e8e8e8;
 }
 
-#gOrganizeMicroThumbPanel #gOrganizeMicroThumbGrid :hover {
+#gOrganizeMicroThumbGrid :hover {
   opacity: 1;
 }
 
