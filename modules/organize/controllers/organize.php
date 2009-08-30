@@ -136,7 +136,7 @@ class Organize_Controller extends Controller {
     $album = ORM::factory("item", $album_id);
     access::required("view", $album);
 
-    print self::_expanded_tree($album, $album);
+    print self::_expanded_tree($album);
   }
 
   /**
@@ -144,7 +144,7 @@ class Organize_Controller extends Controller {
    * include albums along the descendant hierarchy that includes the selected album, and the
    * immediate child albums.
    */
-  private static function _expanded_tree($root, $selected_album) {
+  private static function _expanded_tree($root, $selected_album=null) {
     $v = new View("organize_tree.html");
     $v->album = $root;
     $v->selected = $selected_album;

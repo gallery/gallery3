@@ -4,14 +4,14 @@
   <span class="ui-icon ui-icon-minus">
   </span>
   <span class="gAlbumText
-               <?= $album->id == $selected->id ? "selected" : "" ?>
+               <?= $selected && $album->id == $selected->id ? "selected" : "" ?>
                "
         ref="<?= $album->id ?>">
     <?= p::clean($album->title) ?>
   </span>
   <ul>
     <? foreach ($album->children(null, 0, array("type" => "album")) as $child): ?>
-    <? if ($child->is_descendant($selected)): ?>
+    <? if ($selected && $child->is_descendant($selected)): ?>
     <?= View::factory("organize_tree.html", array("selected" => $selected, "album" => $child)); ?>
     <? else: ?>
     <li class="gOrganizeAlbum ui-icon-left <?= access::can("edit", $child) ? "" : "gViewOnly" ?>"
