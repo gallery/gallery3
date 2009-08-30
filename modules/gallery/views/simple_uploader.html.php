@@ -88,7 +88,7 @@
       "g3sid" => Session::instance()->id(),
       "user_agent" => Input::instance()->server("HTTP_USER_AGENT"),
       "csrf" => $csrf)) ?>,
-    file_size_limit: "<?= html::clean_js(ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB")) ?>",
+    file_size_limit: "<?= html::clean_js(ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB") ?>",
     file_types: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
     file_types_description: "<?= t("Photos and Movies")->for_js() ?>",
     file_upload_limit: 1000,
