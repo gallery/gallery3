@@ -47,7 +47,7 @@
   padding-left: 1.2em;
 }
 
-.gAlbumText:hover {
+.gOrganizeAlbumText:hover {
   border: 1px dashed #999;
   padding: 1px;
 }
@@ -63,7 +63,7 @@
   cursor: pointer;
 }
 
-.gAlbumText {
+.gOrganizeAlbumText {
   cursor: pointer;
   width: auto;
 }

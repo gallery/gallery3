@@ -3,7 +3,7 @@
     ref="<?= $album->id ?>">
   <span class="ui-icon ui-icon-minus">
   </span>
-  <span class="gAlbumText
+  <span class="gOrganizeAlbumText
                <?= $selected && $album->id == $selected->id ? "selected" : "" ?>
                "
         ref="<?= $album->id ?>">
@@ -18,7 +18,7 @@
         ref="<?= $child->id ?>">
       <span class="ui-icon ui-icon-plus">
       </span>
-      <span class="gAlbumText" ref="<?= $child->id ?>">
+      <span class="gOrganizeAlbumText" ref="<?= $child->id ?>">
         <?= p::clean($child->title) ?>
       </span>
     </li>
