@@ -1,6 +1,6 @@
 
 /*******************************************************************
- * Dialog wide stylings
+ * Dialog wide styles
  */
 #gOrganize {
   overflow: hidden;
@@ -34,7 +34,7 @@
 }
 
 /*******************************************************************
- * Album Tree styling
+ * Album Tree styles
  */
 #gOrganizeTreeContainer {
   height: 100%;
@@ -69,7 +69,7 @@
 }
 
 /*******************************************************************
- * Album Panel Styles
+ * Album panel styles
  */
 #gOrganizeMicroThumbPanel {
   margin: 0 !important;
@@ -128,7 +128,7 @@
 }
 
 /****************************************************************
- * Organize Controls styling
+ * Controls styles
  */
 #gOrganizeControls {
   padding-left: 8px;
