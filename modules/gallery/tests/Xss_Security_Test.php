@@ -96,6 +96,43 @@ class Xss_Security_Test extends Unit_Test_Case {
 	  $frame = null;
         } else if ($frame && $token[0] == T_VARIABLE) {
 	  $frame->expr_append($token[1]);
+          if ($token[1] == '$theme') {
+	    if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
+		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+		in_array($tokens[$token_number + 2][1],
+			 array("thumb_proportion", "site_menu", "album_menu", "tag_menu", "photo_menu",
+                               "context_menu", "pager", "site_status", "messages", "album_blocks",
+                               "album_bottom", "album_top", "body_attributes", "credits",
+                               "dynamic_bottom", "dynamic_top", "footer", "head", "header_bottom",
+                               "header_top", "page_bottom", "page_top", "photo_blocks", "photo_bottom",
+                               "photo_top", "resize_bottom", "resize_top", "sidebar_blocks", "sidebar_bottom",
+                               "sidebar_top", "thumb_bottom", "thumb_info", "thumb_top")) &&
+		self::_token_matches("(", $tokens, $token_number + 3)) {
+
+	      $method = $tokens[$token_number + 2][1];
+	      $frame->expr_append("->$method(");
+
+	      $token_number += 3;
+	      $token = $tokens[$token_number];
+
+              $frame->is_safe_html(true);
+	    } else if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
+		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+		in_array($tokens[$token_number + 2][1],
+			 array("css", "script", "url")) &&
+		self::_token_matches("(", $tokens, $token_number + 3) &&
+                // Only allow constant strings here
+                self::_token_matches(array(T_CONSTANT_ENCAPSED_STRING), $tokens, $token_number + 4)) {
+
+	      $method = $tokens[$token_number + 2][1];
+	      $frame->expr_append("->$method(");
+
+	      $token_number += 4;
+	      $token = $tokens[$token_number];
+
+              $frame->is_safe_html(true);
+	    }
+          }
 	} else if ($frame && $token[0] == T_STRING) {
 	  $frame->expr_append($token[1]);
 	  // t() and t2() are special in that they're guaranteed to return a SafeString().
