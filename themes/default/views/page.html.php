@@ -12,7 +12,7 @@
           <? if ($theme->item()->is_album()): ?>
           <?= t("Browse Album :: %album_title", array("album_title" => $theme->item()->title)) ?>
           <? elseif ($theme->item()->is_photo()): ?>
-	  <?= t("Photo :: %photo_title", array("photo_title" => $theme->item()->title)) ?>
+          <?= t("Photo :: %photo_title", array("photo_title" => $theme->item()->title)) ?>
           <? else: ?>
           <?= t("Movie :: %movie_title", array("movie_title" => $theme->item()->title)) ?>
           <? endif ?>
@@ -51,7 +51,7 @@
     <?= $theme->script("gallery.common.js") ?>
     <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
     <script type="text/javascript">
-    var MSG_CANCEL = "<?= t('Cancel')->for_js() ?>";
+    var MSG_CANCEL = <?= t('Cancel')->for_js() ?>;
     </script>
     <?= $theme->script("gallery.ajax.js") ?>
     <?= $theme->script("gallery.dialog.js") ?>

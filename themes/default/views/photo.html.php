@@ -5,7 +5,7 @@
 <script>
   $(document).ready(function() {
     $(".gFullSizeLink").click(function() {
-      $.gallery_show_full_size("<?= html::clean_js($theme->item()->file_url()) ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
+      $.gallery_show_full_size(<?= html::js_string($theme->item()->file_url()) ?>, "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
       return false;
     });
   });
