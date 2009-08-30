@@ -44,8 +44,8 @@
 }
 
 #gOrganizeAlbumTree .selected {
-  background-color: #cfdeff !important;
-  border-bottom: 1px solid #999 !important;
+  background-color: #cfdeff;
+  border-bottom: 1px solid #999;
   margin-right: 0px;
 }
 
@@ -75,7 +75,7 @@
   margin: 0 !important;
   padding: 0 !important;
   background-color: #cfdeff;
-  border: 1px solid #999 !important;
+  border: 1px solid #999;
   border-top: none !important;
   border-left: none !important;
   overflow-x: hidden;
