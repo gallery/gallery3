@@ -212,8 +212,7 @@ class ORM_MPTT_Core extends ORM {
    * @return  ORM_MTPP
    */
   function move_to($target) {
-    if ($this->left_ptr <= $target->left_ptr &&
-        $this->right_ptr >= $target->right_ptr) {
+    if ($this->is_descendant($target)) {
       throw new Exception("@todo INVALID_TARGET can't move item inside itself");
     }
 
