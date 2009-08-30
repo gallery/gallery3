@@ -101,7 +101,7 @@ class Xss_Security_Test extends Unit_Test_Case {
 	  // t() and t2() are special in that they're guaranteed to return a SafeString().
 	  if (in_array($token[1], array("t", "t2"))) {
 	    if (self::_token_matches("(", $tokens, $token_number + 1)) {
-	      $frame->is_safestring(true);
+	      $frame->is_safe_html(true);
 	      $frame->expr_append("(");
 
 	      $token_number++;
@@ -111,9 +111,11 @@ class Xss_Security_Test extends Unit_Test_Case {
 	    // Looking for SafeString::of(...
 	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
 		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-		in_array($tokens[$token_number + 2][1], array("of", "of_safe_html", "purify")) &&
+		in_array($tokens[$token_number + 2][1], array("of", "purify")) &&
 		self::_token_matches("(", $tokens, $token_number + 3)) {
-	      $frame->is_safestring(true);
+              // Not checking for of_safe_html(). We want such calls to be marked dirty (thus reviewed).
+
+	      $frame->is_safe_html(true);
 
 	      $method = $tokens[$token_number + 2][1];
 	      $frame->expr_append("::$method(");
@@ -123,7 +125,7 @@ class Xss_Security_Test extends Unit_Test_Case {
 	    }
 	  } else if ($token[1] == "json_encode") {
 	    if (self::_token_matches("(", $tokens, $token_number + 1)) {
-	      $frame->json_encode_called(true);
+	      $frame->is_safe_js(true);
 	      $frame->expr_append("(");
 
 	      $token_number++;
@@ -145,15 +147,34 @@ class Xss_Security_Test extends Unit_Test_Case {
 	      $token_number += 3;
 	      $token = $tokens[$token_number];
 	    }
+	  } else if ($token[1] == "html") {
+	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+		in_array($tokens[$token_number + 2][1],
+			 array("clean", "purify", "escape_for_js", "clean_attribute_test")) &&
+		self::_token_matches("(", $tokens, $token_number + 3)) {
+              // Not checking for mark_safe(). We want such calls to be marked dirty (thus reviewed).
+
+	      $method = $tokens[$token_number + 2][1];
+	      $frame->expr_append("::$method(");
+
+	      $token_number += 3;
+	      $token = $tokens[$token_number];
+
+              if ("escape_for_js" == $method) {
+                $frame->is_safe_js(true);
+              } else {
+                $frame->is_safe_html(true);
+              }
+	    }
 	  } 
 	} else if ($frame && $token[0] == T_OBJECT_OPERATOR) {
 	  $frame->expr_append($token[1]);
 
 	  if (self::_token_matches(array(T_STRING), $tokens, $token_number + 1) &&
 	      in_array($tokens[$token_number + 1][1],
-		       array("for_js", "for_html", "purified_html")) &&
+		       array("for_js", "for_html", "purified_html", "for_html_attr")) &&
 	      self::_token_matches("(", $tokens, $token_number + 2)) {
-
 	    $method = $tokens[$token_number + 1][1];
 	    $frame->expr_append("$method(");
 
@@ -161,11 +182,9 @@ class Xss_Security_Test extends Unit_Test_Case {
 	    $token = $tokens[$token_number];
 
 	    if ("for_js" == $method) {
-	      $frame->for_js_called(true);
-	    } else if ("for_html" == $method) {
-	      $frame->for_html_called(true);
-	    } else if ("purified_html" == $method) {
-	      $frame->purified_html_called(true);
+	      $frame->is_safe_js(true);
+	    } else {
+	      $frame->is_safe_html(true);
 	    }
 	  }
         } else if ($frame) {
@@ -199,12 +218,11 @@ class Xss_Security_Test extends Unit_Test_Case {
 	$state = "DIRTY";
 	if ($frame->in_script_block()) {
 	  $state = "DIRTY_JS";
-	  if ($frame->for_js_called() || $frame->json_encode_called()) {
+	  if ($frame->is_safe_js()) {
 	    $state = "CLEAN";
 	  }
 	} else {
-	  if ($frame->is_safe_html() || $frame->is_safestring() ||
-              $frame->purified_html_called() || $frame->for_html_called()) {
+	  if ($frame->is_safe_html()) {
 	    $state = "CLEAN";
 	  }
 	}
@@ -255,12 +273,8 @@ class Xss_Security_Test extends Unit_Test_Case {
 class Xss_Security_Test_Frame {
   private $_expr = "";
   private $_in_script_block = false;
-  private $_is_safestring = false;
-  private $_for_js_called = false;
-  private $_for_html_called = false;
-  private $_purified_html_called = false;
-  private $_json_encode_called = false;
   private $_is_safe_html = false;
+  private $_is_safe_js = false;
   private $_line;
 
   function __construct($line_number, $in_script_block) {
@@ -283,13 +297,6 @@ class Xss_Security_Test_Frame {
     return $this->_in_script_block;
   }
 
-  function is_safestring($new_val=NULL) {
-    if ($new_val !== NULL) {
-      $this->_is_safestring = (bool) $new_val;
-    }
-    return $this->_is_safestring;
-  }
-
   function is_safe_html($new_val=NULL) {
     if ($new_val !== NULL) {
       $this->_is_safe_html = (bool) $new_val;
@@ -297,32 +304,11 @@ class Xss_Security_Test_Frame {
     return $this->_is_safe_html;
   }
 
-  function json_encode_called($new_val=NULL) {
+  function is_safe_js($new_val=NULL) {
     if ($new_val !== NULL) {
-      $this->_json_encode_called = (bool) $new_val;
+      $this->_is_safe_js = (bool) $new_val;
     }
-    return $this->_json_encode_called;
-  }
-
-  function for_js_called($new_val=NULL) {
-    if ($new_val !== NULL) {
-      $this->_for_js_called = (bool) $new_val;
-    }
-    return $this->_for_js_called;
-  }
-
-  function for_html_called($new_val=NULL) {
-    if ($new_val !== NULL) {
-      $this->_for_html_called = (bool) $new_val;
-    }
-    return $this->_for_html_called;
-  }
-
-  function purified_html_called($new_val=NULL) {
-    if ($new_val !== NULL) {
-      $this->_purified_html_called = (bool) $new_val;
-    }
-    return $this->_purified_html_called;
+    return $this->_is_safe_js;
   }
 
   function line() {
