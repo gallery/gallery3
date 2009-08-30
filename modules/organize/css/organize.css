@@ -43,20 +43,14 @@
   padding: 0 !important;
 }
 
-#gOrganizeTreeContainer ul ul li {
-  padding-left: 1.2em;
-}
-
-.gOrganizeAlbumText:hover {
-  border: 1px dashed #999;
-  padding: 1px;
-}
-
 #gOrganizeAlbumTree .selected {
   background-color: #cfdeff !important;
   border-bottom: 1px solid #999 !important;
-  display: block;
-  padding: .3em 0;
+  margin-right: 0px;
+}
+
+#gOrganizeAlbumTree ul li {
+  padding-left: 1.2em;
 }
 
 .gOrganizeAlbum span {
@@ -66,7 +60,15 @@
 .gOrganizeAlbumText {
   cursor: pointer;
   width: auto;
+  margin: 2px 0px 1px 2px;
+  display: block;
+  padding: 0;
 }
+
+.gOrganizeAlbumText:hover {
+  background: #eee;
+}
+
 /*******************************************************************
  * Album Panel Styles
  */
