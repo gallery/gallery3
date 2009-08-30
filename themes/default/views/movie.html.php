@@ -28,8 +28,8 @@
   <?= $item->movie_img(array("class" => "gMovie", "id" => "gMovieId-{$item->id}")) ?>
 
   <div id="gInfo">
-    <h1><?= SafeString::purify($item->title) ?></h1>
-       <div><?= nl2br(SafeString::purify($item->description)) ?></div>
+    <h1><?= html::purify($item->title) ?></h1>
+       <div><?= nl2br(html::purify($item->description)) ?></div>
   </div>
 
   <?= $theme->photo_bottom() ?>

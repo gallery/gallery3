@@ -16,7 +16,7 @@
            class="gRemoveDir ui-icon ui-icon-trash">
           X
         </a>
-        <?= SafeString::of($path) ?>
+        <?= html::clean($path) ?>
       </li>
       <? endforeach ?>
     </ul>

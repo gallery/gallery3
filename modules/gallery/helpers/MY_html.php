@@ -65,11 +65,11 @@ class html extends html_Core {
    *
    * Example:<pre>
    *   <script type="text/javascript>"
-   *     var some_js_var = "<?= html::escape_for_js($php_var) ?>";
+   *     var some_js_var = "<?= html::clean_js($php_var) ?>";
    *   </script>
    * </pre>
    */
-  static function escape_for_js($string) {
+  static function clean_js($string) {
     return SafeString::of($string)->for_js();
   }
 

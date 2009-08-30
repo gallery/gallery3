@@ -6,7 +6,7 @@
 <!-- hack to set the title for the dialog -->
 <form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
   <fieldset>
-    <legend> <?= t("Add photos to %album_title", array("album_title" => SafeString::purify($item->title))) ?> </legend>
+    <legend> <?= t("Add photos to %album_title", array("album_title" => html::purify($item->title))) ?> </legend>
   </fieldset>
 </form>
 
@@ -26,9 +26,9 @@
   </p>
   <ul class="gBreadcrumbs">
     <? foreach ($item->parents() as $parent): ?>
-    <li> <?= SafeString::of($parent->title) ?> </li>
+    <li> <?= html::clean($parent->title) ?> </li>
     <? endforeach ?>
-    <li class="active"> <?= SafeString::purify($item->title) ?> </li>
+    <li class="active"> <?= html::purify($item->title) ?> </li>
   </ul>
 
   <p>
@@ -82,13 +82,13 @@
 
 <script type="text/javascript">
   var swfu = new SWFUpload({
-    flash_url: "<?= url::file("lib/swfupload/swfupload.swf")->for_js() ?>",
-    upload_url: "<?= url::site("simple_uploader/add_photo/$item->id")->for_js() ?>",
+    flash_url: "<?= html::escape_for_js(url::file("lib/swfupload/swfupload.swf")) ?>",
+    upload_url: "<?= html::escape_for_js(url::site("simple_uploader/add_photo/$item->id")) ?>",
     post_params: <?= json_encode(array(
       "g3sid" => Session::instance()->id(),
       "user_agent" => Input::instance()->server("HTTP_USER_AGENT"),
       "csrf" => $csrf)) ?>,
-    file_size_limit: "<?= SafeString::of(ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB")->for_js() ?>",
+    file_size_limit: "<?= html::escape_for_js(ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB")) ?>",
     file_types: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
     file_types_description: "<?= t("Photos and Movies")->for_js() ?>",
     file_upload_limit: 1000,
@@ -97,7 +97,7 @@
     debug: false,
 
     // Button settings
-    button_image_url: "<?= url::file("themes/default/images/select-photos-backg.png")->for_js() ?>",
+    button_image_url: "<?= html::escape_for_js(url::file("themes/default/images/select-photos-backg.png")) ?>",
     button_width: "202",
     button_height: "45",
     button_placeholder_id: "gChooseFilesButtonPlaceholder",

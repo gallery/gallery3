@@ -39,13 +39,13 @@
     <? foreach ($parents as $parent): ?>
     <li id="item-<?= $parent->id ?>">
       <a href="javascript:show(<?= $parent->id ?>)">
-        <?= SafeString::purify($parent->title) ?>
+        <?= html::purify($parent->title) ?>
       </a>
     </li>
     <? endforeach ?>
     <li class="active" id="item-<?= $item->id ?>">
       <a href="javascript:show(<?= $item->id ?>)">
-    	<?= SafeString::purify($item->title) ?>
+    	<?= html::purify($item->title) ?>
       </a>
     </li>
   </ul>

@@ -10,7 +10,7 @@
     <li class="ui-icon-left">
       <span class="ui-icon ui-icon-folder-open"></span>
       <span ondblclick="open_dir('<?= $dir ?>')">
-        <?= SafeString::of(basename($dir)) ?>
+        <?= html::clean(basename($dir)) ?>
       </span>
       <ul>
         <? endforeach ?>
@@ -24,7 +24,7 @@
                 <? endif ?>
                 file="<?= strtr($file, array('"' => '\\"')) ?>"
                 >
-            <?= SafeString::of(basename($file)) ?>
+            <?= html::clean(basename($file)) ?>
           </span>
         </li>
         <? endforeach ?>

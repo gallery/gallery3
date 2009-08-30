@@ -40,8 +40,8 @@ class Html_Helper_Test extends Unit_Test_Case {
 			$safe_string_2);
   }
 
-  public function escape_for_js_test() {
-    $string = html::escape_for_js("hello's <p  >world</p>");
+  public function clean_js_test() {
+    $string = html::clean_js("hello's <p  >world</p>");
     $this->assert_equal("hello\\'s <p  >world<\\/p>",
 			$string);
   }

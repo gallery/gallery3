@@ -5,7 +5,7 @@
   var sort_order_url = "<?= url::site("organize/sort_order/__ALBUM_ID__/__COL__/__DIR__?csrf=$csrf") ?>";
 </script>
 <div id="gOrganize" class="gDialogPanel">
-  <h1 style="display:none"><?= t("Organize %name", array("name" => SafeString::purify($album->title))) ?></h1>
+  <h1 style="display:none"><?= t("Organize %name", array("name" => html::purify($album->title))) ?></h1>
   <div id="bd">
     <div class="yui-gf">
       <div class="yui-u first">

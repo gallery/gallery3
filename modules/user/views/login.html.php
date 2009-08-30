@@ -12,7 +12,7 @@
       '<a href="' . url::site("form/edit/users/{$user->id}") .
       '" title="' . t("Edit Your Profile")->for_html_attr() .
       '" id="gUserProfileLink" class="gDialogLink">' .
-      SafeString::of($user->display_name()) . '</a>'))) ?>
+      html::clean($user->display_name()) . '</a>'))) ?>
   </li>
   <li>
     <a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(url::current(true))) ?>"

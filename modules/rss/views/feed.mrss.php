@@ -6,9 +6,9 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>gallery3</generator>
-    <title><?= SafeString::of($feed->title) ?></title>
+    <title><?= html::clean($feed->title) ?></title>
     <link><?= $feed->uri ?></link>
-    <description><?= SafeString::of($feed->description) ?></description>
+    <description><?= html::clean($feed->description) ?></description>
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed->uri ?>" type="application/rss+xml" />
     <fh:complete/>
@@ -22,25 +22,25 @@
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($feed->children as $child): ?>
     <item>
-      <title><?= SafeString::of($child->title) ?></title>
+      <title><?= html::clean($child->title) ?></title>
       <link><?= url::abs_site("{$child->type}s/{$child->id}") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("{$child->type}s/{$child->id}") ?></guid>
       <pubDate><?= date("D, d M Y H:i:s T", $child->created); ?></pubDate>
       <content:encoded>
         <![CDATA[
-          <span><?= SafeString::of($child->description) ?></span>
+          <span><?= html::clean($child->description) ?></span>
           <p>
           <? if ($child->type == "photo" || $child->type == "album"): ?>
             <img alt="" src="<?= $child->resize_url(true) ?>"
-                 title="<?= SafeString::of($child->title) ?>"
+                 title="<?= html::clean($child->title) ?>"
                  height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
           <? else: ?>
             <a href="<?= url::abs_site("{$child->type}s/{$child->id}") ?>">
             <img alt="" src="<?= $child->thumb_url(true) ?>"
-                 title="<?= SafeString::of($child->title) ?>"
+                 title="<?= html::clean($child->title) ?>"
                  height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" /></a><br />
           <? endif ?>
-            <?= SafeString::of($child->description) ?>
+            <?= html::clean($child->description) ?>
           </p>
         ]]>
       </content:encoded>

@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <h4>
-  <?= SafeString::of($group->name) ?>
+  <?= html::clean($group->name) ?>
   <? if (!$group->special): ?>
   <a href="<?= url::site("admin/users/delete_group_form/$group->id") ?>"
     title="<?= t("Delete the %name group", array("name" => $group->name)) ?>"
@@ -17,7 +17,7 @@
 <ul>
   <? foreach ($group->users as $i => $user): ?>
   <li class="gUser">
-    <?= SafeString::of($user->name) ?>
+    <?= html::clean($user->name) ?>
     <? if (!$group->special): ?>
     <a href="javascript:remove_user(<?= $user->id ?>, <?= $group->id ?>)"
        class="gButtonLink ui-state-default ui-corner-all ui-icon-left"

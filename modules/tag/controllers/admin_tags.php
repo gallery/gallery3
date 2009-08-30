@@ -106,7 +106,7 @@ class Admin_Tags_Controller extends Admin_Controller {
         array("result" => "success",
               "location" => url::site("admin/tags"),
               "tag_id" => $tag->id,
-              "new_tagname" => SafeString::of($tag->name)));
+              "new_tagname" => html::clean($tag->name)));
     } else {
       print json_encode(
         array("result" => "error",
