@@ -40,7 +40,7 @@
   </form>
 	
 	<script type="text/javascript">
-    var old_default_locale = "<?= html::escape_for_js($default_locale) ?>";
+    var old_default_locale = "<?= html::clean_js($default_locale) ?>";
     
     $("input[name='installed_locales[]']").change(function (event) {
       if (this.checked) {
@@ -57,7 +57,7 @@
       dataType: "json",
       success: function(data) {
         if (data.result == "success") {
-          el = $('<a href="<?= html::escape_for_js(url::site("admin/maintenance/start/gallery_task::update_l10n?csrf=$csrf")) ?>"></a>'); // this is a little hack to trigger the update_l10n task in a dialog
+          el = $('<a href="<?= html::clean_js(url::site("admin/maintenance/start/gallery_task::update_l10n?csrf=$csrf")) ?>"></a>'); // this is a little hack to trigger the update_l10n task in a dialog
           el.gallery_dialog();
           el.trigger('click');
         }
