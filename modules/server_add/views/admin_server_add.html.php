@@ -11,12 +11,12 @@
     <ul id="gPathList">
       <? foreach ($paths as $id => $path): ?>
       <li class="ui-icon-left">
-        <a href="<?= url::site("admin/server_add/remove_path?path=$path&amp;csrf=$csrf") ?>"
+        <a href="<?= url::site("admin/server_add/remove_path?path=" . urlencode($path) . "&amp;csrf=$csrf") ?>"
            id="icon_<?= $id?>"
            class="gRemoveDir ui-icon ui-icon-trash">
           X
         </a>
-        <?= $path ?>
+        <?= html::clean($path) ?>
       </li>
       <? endforeach ?>
     </ul>

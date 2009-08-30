@@ -3,7 +3,7 @@
   <div id="gAlbumHeaderButtons">
     <?= $theme->dynamic_top() ?>
   </div>
-  <h1><?= p::clean($title) ?></h1>
+  <h1><?= html::clean($title) ?></h1>
 </div>
 
 <ul id="gAlbumGrid">
@@ -16,7 +16,7 @@
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />
     </a>
-    <h2><?= p::purify($child->title) ?></h2>
+    <h2><?= html::purify($child->title) ?></h2>
     <?= $theme->thumb_bottom($child) ?>
     <ul class="gMetadata">
       <?= $theme->thumb_info($child) ?>

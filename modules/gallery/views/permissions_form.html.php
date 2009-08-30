@@ -6,7 +6,7 @@
     <tr>
       <th> </th>
       <? foreach ($groups as $group): ?>
-      <th> <?= p::clean($group->name) ?> </th>
+      <th> <?= html::clean($group->name) ?> </th>
       <? endforeach ?>
     </tr>
 

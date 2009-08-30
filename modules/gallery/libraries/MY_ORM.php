@@ -43,6 +43,10 @@ class ORM extends ORM_Core {
       $this->original = clone $this;
     }
 
+    if ($value instanceof SafeString) {
+      $value = $value->unescaped();
+    }
+
     return parent::__set($column, $value);
   }
 

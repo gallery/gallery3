@@ -1,9 +1,9 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <h4>
-  <?= p::clean($group->name) ?>
+  <?= html::clean($group->name) ?>
   <? if (!$group->special): ?>
   <a href="<?= url::site("admin/users/delete_group_form/$group->id") ?>"
-    title="<?= t("Delete the %name group", array("name" => p::clean($group->name))) ?>"
+    title="<?= t("Delete the %name group", array("name" => $group->name)) ?>"
     class="gDialogLink gButtonLink ui-state-default ui-corner-all">
     <span class="ui-icon ui-icon-trash"><?= t("delete") ?></span></a>
   <? else: ?>
@@ -17,12 +17,12 @@
 <ul>
   <? foreach ($group->users as $i => $user): ?>
   <li class="gUser">
-    <?= p::clean($user->name) ?>
+    <?= html::clean($user->name) ?>
     <? if (!$group->special): ?>
     <a href="javascript:remove_user(<?= $user->id ?>, <?= $group->id ?>)"
        class="gButtonLink ui-state-default ui-corner-all ui-icon-left"
        title="<?= t("Remove %user from %group group",
-              array("user" => p::clean($user->name), "group" => p::clean($group->name))) ?>">
+              array("user" => $user->name, "group" => $group->name)) ?>">
       <span class="ui-icon ui-icon-closethick"><?= t("remove") ?></span>
     </a>
     <? endif ?>

@@ -16,7 +16,7 @@
     <p>
       <?= t("You don't need an account with Digibug, but if you <a href=\"%signup_url\">register with Digibug</a> and enter your Digibug id in the <a href=\"%advanced_settings_url\">Advanced Settings</a> page you can make money off of your photos!",
           array("signup_url" => "http://www.digibug.com/signup.php",
-      "advanced_settings_url" => url::site("admin/advanced_settings"))) ?>
+                "advanced_settings_url" => html::mark_safe(url::site("admin/advanced_settings")))) ?>
     </p>
   </div>
 </div>

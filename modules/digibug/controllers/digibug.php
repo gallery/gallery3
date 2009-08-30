@@ -50,7 +50,7 @@ class Digibug_Controller extends Controller {
       "image_width_1" => $item->width,
       "thumb_height_1" => $item->thumb_height,
       "thumb_width_1" => $item->thumb_width,
-      "title_1" => p::purify($item->title));
+      "title_1" => html::purify($item->title));
 
     print $v;
   }

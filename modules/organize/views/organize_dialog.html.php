@@ -6,7 +6,7 @@
   var tree_url = "<?= url::site("organize/tree/__ALBUM_ID__") ?>";
 </script>
 <div id="gOrganize" class="gDialogPanel">
-  <h1 style="display:none"><?= t("Organize %name", array("name" => p::purify($album->title))) ?></h1>
+  <h1 style="display:none"><?= t("Organize %name", array("name" => html::purify($album->title))) ?></h1>
   <div id="bd">
     <div class="yui-gf">
       <div class="yui-u first">

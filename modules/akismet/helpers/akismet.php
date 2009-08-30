@@ -94,7 +94,7 @@ class akismet_Core {
     if (empty($api_key)) {
       site_status::warning(
         t("Akismet is not quite ready!  Please provide an <a href=\"%url\">API Key</a>",
-          array("url" => url::site("admin/akismet"))),
+          array("url" => html::mark_safe(url::site("admin/akismet")))),
         "akismet_config");
     } else {
       site_status::clear("akismet_config");

@@ -3,7 +3,7 @@
   <? foreach ($tags as $tag): ?>
   <li class="size<?=(int)(($tag->count / $max_count) * 7) ?>">
     <span><?= $tag->count ?> photos are tagged with </span>
-    <a href="<?= url::site("tags/$tag->id") ?>"><?= p::clean($tag->name) ?></a>
+    <a href="<?= url::site("tags/$tag->id") ?>"><?= html::clean($tag->name) ?></a>
   </li>
   <? endforeach ?>
 </ul>

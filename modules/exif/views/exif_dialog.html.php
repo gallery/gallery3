@@ -14,14 +14,14 @@
          <?= $details[$i]["caption"] ?>
          </td>
          <td class="gOdd">
-         <?= p::clean($details[$i]["value"]) ?>
+         <?= html::clean($details[$i]["value"]) ?>
          </td>
          <? if (!empty($details[++$i])): ?>
            <td class="gEven">
            <?= $details[$i]["caption"] ?>
            </td>
            <td class="gOdd">
-           <?= p::clean($details[$i]["value"]) ?>
+           <?= html::clean($details[$i]["value"]) ?>
            </td>
          <? else: ?>
            <td class="gEven"></td><td class="gOdd"></td>

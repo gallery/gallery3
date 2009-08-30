@@ -5,9 +5,9 @@
     $.ajax({
       url: form_url.replace("__ITEM__", id),
       success: function(data) {
-		    $("#gEditPermissionForm").html(data);
-		    $(".active").removeClass("active");
-		    $("#item-" + id).addClass("active");
+          $("#gEditPermissionForm").html(data);
+          $(".active").removeClass("active");
+          $("#item-" + id).addClass("active");
       }
     });
   }
@@ -28,28 +28,29 @@
   <? if (!$htaccess_works): ?>
   <ul id="gMessage">
     <li class="gError">
-      <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.", array("mod_rewrite_attrs" => "href=\"http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html\" target=\"_blank\"", "apache_attrs" => "href=\"http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride\" target=\"_blank\"")) ?>
+      <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.",
+            array("mod_rewrite_attrs" => html::mark_safe("href=\"http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html\" target=\"_blank\"", "apache_attrs" => "href=\"http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride\" target=\"_blank\""))) ?>
     </li>
   </ul>
   <? endif ?>
-  
-  <p>Edit permissions for album:</p>
-  
+
+  <p><?= t("Edit permissions for album:") ?></p>
+
   <ul class="gBreadcrumbs">
     <? foreach ($parents as $parent): ?>
     <li id="item-<?= $parent->id ?>">
       <a href="javascript:show(<?= $parent->id ?>)">
-        <?= p::purify($parent->title) ?>
+        <?= html::purify($parent->title) ?>
       </a>
     </li>
     <? endforeach ?>
     <li class="active" id="item-<?= $item->id ?>">
       <a href="javascript:show(<?= $item->id ?>)">
-    	<?= p::purify($item->title) ?></li>
-	  </a>
-	</li>
+        <?= html::purify($item->title) ?>
+      </a>
+    </li>
   </ul>
-  
+
   <div id="gEditPermissionForm">
     <?= $form ?>
   </div>

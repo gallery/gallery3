@@ -12,7 +12,7 @@ appendTo('body').submit().remove();
 <div id="gTaskLogDialog">
   <h1> <?= $task->name ?> </h1>
   <div class="gTaskLog">
-    <pre><?= p::purify($task->get_log()) ?></pre>
+    <pre><?= html::purify($task->get_log()) ?></pre>
   </div>
   <button id="gCloseButton" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Close") ?></button>
   <button id="gSaveButton" class="ui-state-default ui-corner-all" onclick="download()"><?= t("Save") ?></button>

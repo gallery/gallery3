@@ -177,10 +177,20 @@ class File_Structure_Test extends Unit_Test_Case {
       new GalleryCodeFilterIterator(
         new RecursiveIteratorIterator(
           new RecursiveDirectoryIterator(DOCROOT))));
+    $errors = array();
     foreach ($dir as $file) {
-      $this->assert_false(
-        preg_match('/\t/', file_get_contents($file)),
-        "{$file->getPathname()} has tabs in it");
+      $file_as_string = file_get_contents($file);
+      if (preg_match('/\t/', $file_as_string)) {
+        foreach (split("\n", $file_as_string) as $l => $line) {
+          if (preg_match('/\t/', $line)) {
+            $errors[] = "$file:$l has tab(s) ($line)";
+          }
+        }
+      }
+      $file_as_string = null;
+    }
+    if ($errors) {
+      $this->assert_false(true, "tab(s) found:\n" . join("\n", $errors));
     }
   }
 

@@ -1,26 +1,26 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title><?= p::clean($subject) ?> </title>
+    <title><?= html::clean($subject) ?> </title>
   </head>
   <body>
-    <h2><?= p::clean($subject) ?></h2>
+    <h2><?= html::clean($subject) ?></h2>
     <table>
       <tr>
         <td><?= t("Comment:") ?></td>
-  <td><?= nl2br(p::purify($comment->text)) ?></td>
+  <td><?= nl2br(html::purify($comment->text)) ?></td>
       </tr>
       <tr>
         <td><?= t("Author Name:") ?></td>
-        <td><?= p::clean($comment->author_name()) ?></td>
+        <td><?= html::clean($comment->author_name()) ?></td>
       </tr>
       <tr>
         <td><?= t("Author Email:") ?></td>
-        <td><?= p::clean($comment->author_email()) ?></td>
+        <td><?= html::clean($comment->author_email()) ?></td>
       </tr>
       <tr>
         <td><?= t("Author URL:") ?></td>
-        <td><?= p::clean($comment->author_url()) ?></td>
+        <td><?= html::clean($comment->author_url()) ?></td>
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>
