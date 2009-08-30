@@ -46,7 +46,10 @@ class Organize_Controller extends Controller {
 
     $album = ORM::factory("item", $album_id);
     foreach ($this->input->post("source_ids") as $source_id) {
-      item::move(ORM::factory("item", $source_id), $album);
+      $source = ORM::factory("item", $source_id);
+      if (!$album->is_descendant($source)) {
+        item::move($source, $album);
+      }
     }
 
     print json_encode(
