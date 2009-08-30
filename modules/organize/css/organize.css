@@ -2,10 +2,6 @@
 /*******************************************************************
  * Dialog wide stylings
  */
-#gOrganizeDialog {
-  text-align: left;
-}
-
 #gOrganize {
   overflow: hidden;
 }
