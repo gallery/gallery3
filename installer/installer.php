@@ -104,11 +104,15 @@ class installer {
       mysql_select_db($config["dbname"]);
   }
 
-  static function verify_version($config) {
+  static function verify_mysql_version($config) {
+    return version_compare(installer::mysql_version($config), "5.0.0", ">=");
+  }
+
+  static function mysql_version($config) {
     $result = mysql_query("SHOW VARIABLES WHERE variable_name = \"version\"");
     $row = mysql_fetch_object($result);
     $version = substr($row->Value, 0, strpos($row->Value, "-"));
-    return version_compare($version, "5.0.0", ">=");
+    return $version;
   }
 
   static function db_empty($config) {
