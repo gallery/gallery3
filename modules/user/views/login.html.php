@@ -8,7 +8,7 @@
   </li>
   <? else: ?>
   <li class="first">
-    <?= t('Logged in as %name', array('name' => SafeString::of_safe_html(
+    <?= t('Logged in as %name', array('name' => html::mark_safe(
       '<a href="' . url::site("form/edit/users/{$user->id}") .
       '" title="' . t("Edit Your Profile")->for_html_attr() .
       '" id="gUserProfileLink" class="gDialogLink">' .
