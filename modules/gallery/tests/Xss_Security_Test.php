@@ -188,7 +188,7 @@ class Xss_Security_Test extends Unit_Test_Case {
 	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
 		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
 		in_array($tokens[$token_number + 2][1],
-			 array("clean", "purify", "clean_js", "clean_attribute")) &&
+			 array("clean", "purify", "js_string", "clean_attribute")) &&
 		self::_token_matches("(", $tokens, $token_number + 3)) {
               // Not checking for mark_safe(). We want such calls to be marked dirty (thus reviewed).
 
@@ -198,7 +198,7 @@ class Xss_Security_Test extends Unit_Test_Case {
 	      $token_number += 3;
 	      $token = $tokens[$token_number];
 
-              if ("clean_js" == $method) {
+              if ("js_string" == $method) {
                 $frame->is_safe_js(true);
               } else {
                 $frame->is_safe_html(true);

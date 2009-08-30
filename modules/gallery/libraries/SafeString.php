@@ -92,17 +92,17 @@ class SafeString_Core {
   }
 
   /**
-   * Safe for use in JavaScript.
+   * Safe for use as JavaScript string.
    *
    * Example:<pre>
    *   <script type="text/javascript>"
-   *     var some_js_var = "<?= $php_var->for_js() ?>";
+   *     var some_js_var = <?= $php_var->for_js() ?>;
    *   </script>
    * </pre>
    * @return the string escaped for use in JavaScript.
    */
   function for_js() {
-    return self::_escape_for_js($this->_raw_string);
+    return json_encode((string) $this->_raw_string);
   }
 
   /**
@@ -150,14 +150,6 @@ class SafeString_Core {
   // Escapes special HTML chars ("<", ">", "&", etc.) to HTML entities.
   private static function _escape_for_html($dirty_html) {
     return html::specialchars($dirty_html);
-  }
-
-  // Escapes special chars (quotes, backslash, etc.) with a backslash sequence.
-  private static function _escape_for_js($string) {
-    // From Smarty plugins/modifier.escape.php
-    // Might want to be stricter here.
-    return strtr($string,
-		 array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));
   }
 
   // Purifies the string, removing any potentially malicious or unsafe HTML / JavaScript.

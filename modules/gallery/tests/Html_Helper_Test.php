@@ -40,9 +40,9 @@ class Html_Helper_Test extends Unit_Test_Case {
 			$safe_string_2);
   }
 
-  public function clean_js_test() {
-    $string = html::clean_js("hello's <p  >world</p>");
-    $this->assert_equal("hello\\'s <p  >world<\\/p>",
+  public function js_string_test() {
+    $string = html::js_string("hello's <p  >world</p>");
+    $this->assert_equal('"hello\'s <p  >world<\\/p>"',
 			$string);
   }
 

@@ -49,7 +49,7 @@ class SafeString_Test extends Unit_Test_Case {
   public function for_js_test() {
     $safe_string = new SafeString('"<em>Foo</em>\'s bar"');
     $js_string = $safe_string->for_js();
-    $this->assert_equal('\\"<em>Foo<\\/em>\\\'s bar\\"',
+    $this->assert_equal('"\\"<em>Foo<\\/em>\'s bar\\""',
 			$js_string);
   }
 
@@ -96,21 +96,21 @@ class SafeString_Test extends Unit_Test_Case {
 
   public function of_fluid_api_test() {
     $escaped_string = SafeString::of("Foo's bar")->for_js();
-    $this->assert_equal("Foo\\'s bar", $escaped_string);
+    $this->assert_equal('"Foo\'s bar"', $escaped_string);
   }
 
   public function safestring_of_safestring_preserves_safe_status_test() {
     $safe_string = SafeString::of_safe_html("hello's <p>world</p>");
     $safe_string_2 = new SafeString($safe_string);
     $this->assert_equal("hello's <p>world</p>", $safe_string_2);
-    $this->assert_equal("hello\\'s <p>world<\\/p>", $safe_string_2->for_js());
+    $this->assert_equal('"hello\'s <p>world<\\/p>"', $safe_string_2->for_js());
   }
 
   public function safestring_of_safestring_preserves_html_safe_status_test() {
     $safe_string = SafeString::of_safe_html("hello's <p>world</p>");
     $safe_string_2 = new SafeString($safe_string);
     $this->assert_equal("hello's <p>world</p>", $safe_string_2);
-    $this->assert_equal("hello\\'s <p>world<\\/p>", $safe_string_2->for_js());
+    $this->assert_equal('"hello\'s <p>world<\\/p>"', $safe_string_2->for_js());
   }
 
   public function safestring_of_safestring_safe_status_override_test() {
