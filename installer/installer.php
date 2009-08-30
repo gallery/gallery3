@@ -110,9 +110,7 @@ class installer {
 
   static function mysql_version($config) {
     $result = mysql_query("SHOW VARIABLES WHERE variable_name = \"version\"");
-    $row = mysql_fetch_object($result);
-    $version = substr($row->Value, 0, strpos($row->Value, "-"));
-    return $version;
+    return $row->Value;
   }
 
   static function db_empty($config) {
