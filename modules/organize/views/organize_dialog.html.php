@@ -23,9 +23,9 @@
         </ul>
       </div>
       <div id="gOrganizeDetail" class="yui-u">
-        <div id="gMicroThumbPanel"
+        <div id="gOrganizeMicroThumbPanel"
              ref="<?= url::site("organize/album/__ITEM_ID__/__OFFSET__") ?>">
-          <ul id="gMicroThumbGrid">
+          <ul id="gOrganizeMicroThumbGrid">
             <?= $micro_thumb_grid ?>
           </ul>
         </div>

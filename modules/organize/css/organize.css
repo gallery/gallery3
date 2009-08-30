@@ -70,7 +70,7 @@
 /*******************************************************************
  * Album Panel Styles
  */
-#gMicroThumbPanel {
+#gOrganizeMicroThumbPanel {
   margin: 0 !important;
   padding: 0 !important;
   background-color: #cfdeff;
@@ -81,11 +81,11 @@
   overflow-y: auto;
 }
 
-#gMicroThumbGrid {
+#gOrganizeMicroThumbGrid {
   padding: 1em;
 }
 
-.gMicroThumbGridCell {
+.gOrganizeMicroThumbGridCell {
   float: left;
   font-size: 0.8em;
   padding: .5em !important;
@@ -94,14 +94,14 @@
   border-right: 1px hidden #13A;
 }
 
-.gMicroThumb {
+.gOrganizeMicroThumb {
   display: block;
   height: 9em;
   text-align: center;
   width: 9em;
 }
 
-.gMicroThumbGridCell.ui-state-selected {
+.gOrganizeMicroThumbGridCell.ui-state-selected {
   opacity: 1;
 }
 
@@ -114,11 +114,11 @@
   padding: .5em;
 }
 
-#gMicroThumbPanel #gMicroThumbGrid .gAlbum {
+#gOrganizeMicroThumbPanel #gOrganizeMicroThumbGrid .gAlbum {
   background-color: #e8e8e8;
 }
 
-#gMicroThumbPanel #gMicroThumbGrid :hover {
+#gOrganizeMicroThumbPanel #gOrganizeMicroThumbGrid :hover {
   opacity: 1;
 }
 
