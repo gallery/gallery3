@@ -312,7 +312,6 @@ li.gError select {
 
 .gError {
   background-color: #f6cbca;
-  color: red;
   background-image: url('../images/ico-error.png');
 }
 
@@ -346,11 +345,7 @@ table .gSuccess {
   background-color: transparent !important;
 }
 
-.gPager .gInfo,
-table .gError,
-table .gInfo,
-table .gSuccess,
-table .gWarning {
+.gPager .gInfo {
   background-image: none !important;
 }
 
