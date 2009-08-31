@@ -10,7 +10,7 @@
     <li class="ui-icon-left">
       <span class="ui-icon ui-icon-folder-open"></span>
       <span ondblclick="open_dir('<?= $dir ?>')">
-        <?= basename($dir) ?>
+        <?= html::clean(basename($dir)) ?>
       </span>
       <ul>
         <? endforeach ?>
@@ -22,9 +22,9 @@
                 <? if (is_dir($file)): ?>
                 ondblclick="open_dir($(this).attr('file'))"
                 <? endif ?>
-                file="<?= $file ?>"
+                file="<?= strtr($file, array('"' => '\\"')) ?>"
                 >
-            <?= p::clean(basename($file)) ?>
+            <?= html::clean(basename($file)) ?>
           </span>
         </li>
         <? endforeach ?>

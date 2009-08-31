@@ -32,7 +32,7 @@
           <? $current_letter = strtoupper(mb_substr($tag->name, 0, 1)) ?>
 
           <? if ($i == 0): /* first letter */ ?>
-            <strong><?= $current_letter ?></strong>
+            <strong><?= html::clean($current_letter) ?></strong>
             <ul>
           <? elseif ($last_letter != $current_letter): /* new letter */ ?>
             <? if ($column_tag_count > $tags_per_column): /* new column */ ?>
@@ -42,12 +42,12 @@
             <? endif ?>
 
             </ul>
-            <strong><?= $current_letter ?></strong>
+            <strong><?= html::clean($current_letter) ?></strong>
             <ul>
           <? endif ?>
 
           <li>
-            <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= p::clean($tag->name) ?></span>
+            <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= html::clean($tag->name) ?></span>
             <span class="understate">(<?= $tag->count ?>)</span>
             <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
                class="gDialogLink delete-link gButtonLink">

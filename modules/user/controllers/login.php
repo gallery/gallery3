@@ -63,7 +63,7 @@ class Login_Controller extends Controller {
         log::warning(
           "user",
           t("Failed login for %name",
-            array("name" => p::clean($form->login->inputs["name"]->value))));
+            array("name" => $form->login->inputs["name"]->value)));
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $valid = false;
       }
@@ -71,7 +71,7 @@ class Login_Controller extends Controller {
 
     if ($valid) {
       user::login($user);
-      log::info("user", t("User %name logged in", array("name" => p::clean($user->name))));
+      log::info("user", t("User %name logged in", array("name" => $user->name)));
     }
 
     // Either way, regenerate the session id to avoid session trapping

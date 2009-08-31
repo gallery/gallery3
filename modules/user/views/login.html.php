@@ -8,11 +8,11 @@
   </li>
   <? else: ?>
   <li class="first">
-    <?= t('Logged in as %name', array('name' =>
-    '<a href="' . url::site("form/edit/users/{$user->id}") .
-      '" title="' . t("Edit Your Profile") .
+    <?= t('Logged in as %name', array('name' => html::mark_safe(
+      '<a href="' . url::site("form/edit/users/{$user->id}") .
+      '" title="' . t("Edit Your Profile")->for_html_attr() .
       '" id="gUserProfileLink" class="gDialogLink">' .
-      p::clean($user->display_name()) . '</a>')) ?>
+      html::clean($user->display_name()) . '</a>'))) ?>
   </li>
   <li>
     <a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(url::current(true))) ?>"

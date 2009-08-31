@@ -1,6 +1,6 @@
 
 /*******************************************************************
- * Dialog wide stylings
+ * Dialog wide styles
  */
 #gOrganize {
   overflow: hidden;
@@ -18,7 +18,7 @@
   width: 25%;
 }
 
-#gOrganize .yui-gf #gMessage {
+#gMessage {
   margin-bottom: .4em;
   width: 75%;
   white-space: nowrap;
@@ -34,7 +34,7 @@
 }
 
 /*******************************************************************
- * Album Tree styling
+ * Album Tree styles
  */
 #gOrganizeTreeContainer {
   height: 100%;
@@ -43,20 +43,14 @@
   padding: 0 !important;
 }
 
-#gOrganizeTreeContainer ul ul li {
-  padding-left: 1.2em;
-}
-
-.gOrganizeAlbumText:hover {
-  border: 1px dashed #999;
-  padding: 1px;
-}
-
 #gOrganizeAlbumTree .selected {
-  background-color: #cfdeff !important;
-  border-bottom: 1px solid #999 !important;
-  display: block;
-  padding: .3em 0;
+  background-color: #cfdeff;
+  border-bottom: 1px solid #999;
+  margin-right: 0px;
+}
+
+#gOrganizeAlbumTree ul li {
+  padding-left: 1.2em;
 }
 
 .gOrganizeAlbum span {
@@ -66,15 +60,22 @@
 .gOrganizeAlbumText {
   cursor: pointer;
   width: auto;
+  margin: 2px 0px 1px 2px;
+  display: block;
 }
+
+.gOrganizeAlbumText:hover {
+  background: #eee;
+}
+
 /*******************************************************************
- * Album Panel Styles
+ * Album panel styles
  */
 #gOrganizeMicroThumbPanel {
   margin: 0 !important;
   padding: 0 !important;
   background-color: #cfdeff;
-  border: 1px solid #999 !important;
+  border: 1px solid #999;
   border-top: none !important;
   border-left: none !important;
   overflow-x: hidden;
@@ -89,9 +90,9 @@
   float: left;
   font-size: 0.8em;
   padding: .5em !important;
-  opacity: .5;
   border-left: 1px hidden #13A;
   border-right: 1px hidden #13A;
+  margin: 4px;
 }
 
 .gOrganizeMicroThumb {
@@ -102,28 +103,32 @@
 }
 
 .gOrganizeMicroThumbGridCell.ui-state-selected {
-  opacity: 1;
+  margin: 2px;
+  border: 2px solid #13A;
 }
 
 .ui-selectable-lasso {
   z-index: 2000 !important;
-  border: 1px dashed #13A;
+  border: 1px dashed #00F;
+  opacity: 0.25;
+  background: #13A;
 }
 
 .gThumbnail {
   padding: .5em;
 }
 
-#gOrganizeMicroThumbPanel #gOrganizeMicroThumbGrid .gAlbum {
+#gOrganizeMicroThumbGrid .gAlbum {
   background-color: #e8e8e8;
 }
 
-#gOrganizeMicroThumbPanel #gOrganizeMicroThumbGrid :hover {
-  opacity: 1;
+.gOrganizeMicroThumbGridCell:hover {
+  margin: 2px;
+  border: 2px solid #13A;
 }
 
 /****************************************************************
- * Organize Controls styling
+ * Controls styles
  */
 #gOrganizeControls {
   padding-left: 8px;

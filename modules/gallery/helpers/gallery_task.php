@@ -64,10 +64,10 @@ class gallery_task_Core {
           if (!$success) {
             $ignored[$item->id] = 1;
             $errors[] = t("Unable to rebuild images for '%title'",
-                          array("title" => p::purify($item->title)));
+                          array("title" => html::purify($item->title)));
           } else {
             $errors[] = t("Successfully rebuilt images for '%title'",
-                          array("title" => p::purify($item->title)));
+                          array("title" => html::purify($item->title)));
           }
         }
 

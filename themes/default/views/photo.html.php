@@ -5,7 +5,7 @@
 <script>
   $(document).ready(function() {
     $(".gFullSizeLink").click(function() {
-      $.gallery_show_full_size("<?= $theme->item()->file_url() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
+      $.gallery_show_full_size(<?= html::js_string($theme->item()->file_url()) ?>, "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
       return false;
     });
   });
@@ -51,8 +51,8 @@
   </div>
 
   <div id="gInfo">
-    <h1><?= p::purify($item->title) ?></h1>
-    <div><?= nl2br(p::purify($item->description)) ?></div>
+    <h1><?= html::purify($item->title) ?></h1>
+    <div><?= nl2br(html::purify($item->description)) ?></div>
   </div>
 
   <?= $theme->photo_bottom() ?>

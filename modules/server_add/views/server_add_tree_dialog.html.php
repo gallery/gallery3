@@ -5,17 +5,17 @@
 </script>
 
 <div id="gServerAdd">
-  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => p::purify($item->title))) ?></h1>
+  <h1 style="display: none;"><?= t("Add Photos to '%title'", array("title" => html::purify($item->title))) ?></h1>
 
   <p id="gDescription"><?= t("Photos will be added to album:") ?></p>
   <ul class="gBreadcrumbs">
     <? foreach ($item->parents() as $parent): ?>
     <li>
-      <?= p::purify($parent->title) ?>
+      <?= html::purify($parent->title) ?>
     </li>
     <? endforeach ?>
     <li class="active">
-      <?= p::purify($item->title) ?>
+      <?= html::purify($item->title) ?>
     </li>
   </ul>
 

@@ -93,7 +93,7 @@
           <?= $task->status ?>
         </td>
         <td>
-          <?= p::clean($task->owner()->name) ?>
+          <?= html::clean($task->owner()->name) ?>
         </td>
         <td>
           <? if ($task->state == "stalled"): ?>
@@ -164,7 +164,7 @@
           <?= $task->status ?>
         </td>
         <td>
-          <?= $task->owner()->name ?>
+          <?= html::clean($task->owner()->name) ?>
         </td>
         <td>
           <? if ($task->done): ?>

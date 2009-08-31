@@ -6,7 +6,7 @@
 <!-- hack to set the title for the dialog -->
 <form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
   <fieldset>
-    <legend> <?= t("Add photos to %album_title", array("album_title" => p::purify($item->title))) ?> </legend>
+    <legend> <?= t("Add photos to %album_title", array("album_title" => html::purify($item->title))) ?> </legend>
   </fieldset>
 </form>
 
@@ -26,9 +26,9 @@
   </p>
   <ul class="gBreadcrumbs">
     <? foreach ($item->parents() as $parent): ?>
-    <li> <?= p::clean($parent->title) ?> </li>
+    <li> <?= html::clean($parent->title) ?> </li>
     <? endforeach ?>
-    <li class="active"> <?= p::purify($item->title) ?> </li>
+    <li class="active"> <?= html::purify($item->title) ?> </li>
   </ul>
 
   <p>
@@ -82,27 +82,26 @@
 
 <script type="text/javascript">
   var swfu = new SWFUpload({
-    flash_url: "<?= url::file("lib/swfupload/swfupload.swf") ?>",
-    upload_url: "<?= url::site("simple_uploader/add_photo/$item->id") ?>",
-    post_params: {
-      "g3sid": "<?= Session::instance()->id() ?>",
-      "user_agent": "<?= Input::instance()->server("HTTP_USER_AGENT") ?>",
-      "csrf": "<?= $csrf ?>"
-    },
-    file_size_limit: "<?= ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB" ?>",
+    flash_url: <?= html::js_string(url::file("lib/swfupload/swfupload.swf")) ?>,
+    upload_url: <?= html::js_string(url::site("simple_uploader/add_photo/$item->id")) ?>,
+    post_params: <?= json_encode(array(
+      "g3sid" => Session::instance()->id(),
+      "user_agent" => Input::instance()->server("HTTP_USER_AGENT"),
+      "csrf" => $csrf)) ?>,
+    file_size_limit: <?= html::js_string(ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB") ?>,
     file_types: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
-    file_types_description: "<?= t("Photos and Movies") ?>",
+    file_types_description: <?= t("Photos and Movies")->for_js() ?>,
     file_upload_limit: 1000,
     file_queue_limit: 0,
     custom_settings: { },
     debug: false,
 
     // Button settings
-    button_image_url: "<?= url::file("themes/default/images/select-photos-backg.png") ?>",
+    button_image_url: <?= html::js_string(url::file("themes/default/images/select-photos-backg.png")) ?>,
     button_width: "202",
     button_height: "45",
     button_placeholder_id: "gChooseFilesButtonPlaceholder",
-    button_text: '<span class="swfUploadFont"><?= t("Select photos...") ?></span>',
+    button_text: <?= json_encode('<span class="swfUploadFont">' . t("Select photos...") . '</span>') ?>,
     button_text_style: ".swfUploadFont { color: #2E6E9E; font-size: 16px; font-family: Lucida Grande,Lucida Sans,Arial,sans-serif; font-weight: bold; }",
     button_text_left_padding: 30,
     button_text_top_padding: 10,
@@ -146,13 +145,13 @@
   function file_queued(file) {
     var fp = new File_Progress(file);
     fp.title.html(file.name);
-    fp.set_status("pending", "<?= t("Pending...") ?>");
+    fp.set_status("pending", <?= t("Pending...")->for_js() ?>);
     // @todo add cancel button to call this.cancelUpload(file.id)
   }
 
   function file_queue_error(file, error_code, message) {
     if (error_code === SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED) {
-      alert("<?= t("You have attempted to queue too many files.") ?>");
+      alert(<?= t("You have attempted to queue too many files.")->for_js() ?>);
       return;
     }
 
@@ -160,20 +159,20 @@
     switch (error_code) {
     case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
       fp.title.html(file.name);
-      fp.set_status("error", "<?= t("<strong>File is too big.</strong> A likely error source is a too low value for <em>upload_max_filesize</em> (%upload_max_filesize) in your <em>php.ini</em>.", array("upload_max_filesize" => ini_get("upload_max_filesize"))) ?>");
+      fp.set_status("error", <?= t("<strong>File is too big.</strong> A likely error source is a too low value for <em>upload_max_filesize</em> (%upload_max_filesize) in your <em>php.ini</em>.", array("upload_max_filesize" => ini_get("upload_max_filesize")))->for_js() ?>);
       break;
     case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
       fp.title.html(file.name);
-      fp.set_status("error", "<?= t("Cannot upload empty files.") ?>");
+      fp.set_status("error", <?= t("Cannot upload empty files.")->for_js() ?>);
       break;
     case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
       fp.title.html(file.name);
-      fp.set_status("error", "<?= t("Invalid file type.") ?>");
+      fp.set_status("error", <?= t("Invalid file type.")->for_js() ?>);
       break;
     default:
       if (file !== null) {
         fp.title.html(file.name);
-        fp.set_status("error", "<?= t("Unknown error") ?>");
+        fp.set_status("error", <?= t("Unknown error")->for_js() ?>);
       }
       break;
     }
@@ -194,7 +193,7 @@
     // no uploadProgress events are called (limitation in the Linux Flash VM).
     var fp = new File_Progress(file);
     fp.title.html(file.name);
-    fp.set_status("uploading", "<?= t("Uploading...") ?>");
+    fp.set_status("uploading", <?= t("Uploading...")->for_js() ?>);
     $("#gAddPhotosCanvas").scrollTo(fp.box, 1000);
     return true;
     // @todo add cancel button to call this.cancelUpload(file.id)
@@ -203,7 +202,7 @@
   function upload_progress(file, bytes_loaded, bytes_total) {
     var percent = Math.ceil((bytes_loaded / bytes_total) * 100);
     var fp = new File_Progress(file);
-    fp.set_status("uploading", "<?= t("Uploading...") ?>");
+    fp.set_status("uploading", <?= t("Uploading...")->for_js() ?>);
     fp.progress_bar.css("visibility", "visible");
     fp.progress_bar.progressbar("value", percent);
   }
@@ -211,42 +210,42 @@
   function upload_success(file, serverData) {
     var fp = new File_Progress(file);
     fp.progress_bar.progressbar("value", 100);
-    fp.set_status("complete", "<?= t("Complete.") ?>");
+    fp.set_status("complete", <?= t("Complete.")->for_js() ?>);
   }
 
   function upload_error(file, error_code, message) {
     var fp = new File_Progress(file);
     switch (error_code) {
     case SWFUpload.UPLOAD_ERROR.HTTP_ERROR:
-      fp.set_status("error", "<?= t("Upload error: bad image file") ?>");
+      fp.set_status("error", <?= t("Upload error: bad image file")->for_js() ?>);
       break;
     case SWFUpload.UPLOAD_ERROR.UPLOAD_FAILED:
-      fp.set_status("error", "<?= t("Upload failed") ?>");
+      fp.set_status("error", <?= t("Upload failed")->for_js() ?>);
       break;
     case SWFUpload.UPLOAD_ERROR.IO_ERROR:
-      fp.set_status("error", "<?= t("Server error") ?>");
+      fp.set_status("error", <?= t("Server error")->for_js() ?>);
       break;
     case SWFUpload.UPLOAD_ERROR.SECURITY_ERROR:
-      fp.set_status("error", "<?= t("Security error") ?>");
+      fp.set_status("error", <?= t("Security error")->for_js() ?>);
       break;
     case SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED:
-      fp.set_status("error", "<?= t("Upload limit exceeded") ?>");
+      fp.set_status("error", <?= t("Upload limit exceeded")->for_js() ?>);
       break;
     case SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED:
-      fp.set_status("error", "<?= t("Failed validation.  File skipped") ?>");
+      fp.set_status("error", <?= t("Failed validation.  File skipped")->for_js() ?>);
       break;
     case SWFUpload.UPLOAD_ERROR.FILE_CANCELLED:
       // If there aren't any files left (they were all cancelled) disable the cancel button
       if (this.getStats().files_queued === 0) {
         $("#gUploadCancel").hide();
       }
-      fp.set_status("error", "<?= t("Cancelled") ?>");
+      fp.set_status("error", <?= t("Cancelled")->for_js() ?>);
       break;
     case SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED:
-      fp.set_status("error", "<?= t("Stopped") ?>");
+      fp.set_status("error", <?= t("Stopped")->for_js() ?>);
       break;
     default:
-      fp.set_status("error", "<?= t("Unknown error: ") ?>" + error_code);
+      fp.set_status("error", <?= t("Unknown error: ")->for_js() ?> + error_code);
       break;
     }
   }
@@ -260,7 +259,7 @@
   }
 
   function get_completed_status_msg(stats) {
-    var msg = "<?= t("Upload Queue (completed %completed of %total)", array("completed" => "__COMPLETED__", "total" => "__TOTAL__")) ?>";
+    var msg = <?= t("Upload Queue (completed %completed of %total)", array("completed" => "__COMPLETED__", "total" => "__TOTAL__"))->for_js() ?>;
     msg = msg.replace("__COMPLETED__", stats.successful_uploads);
     msg = msg.replace("__TOTAL__", stats.files_queued + stats.successful_uploads +
       stats.upload_errors + stats.upload_cancelled + stats.queue_errors);
@@ -269,7 +268,7 @@
 
   // This event comes from the Queue Plugin
   function queue_complete(num_files_uploaded) {
-    var status_msg = "<?= t("Uploaded: __COUNT__") ?>";
+    var status_msg = <?= t("Uploaded: __COUNT__")->for_js() ?>;
     $("#gUploadStatus").html(status_msg.replace("__COUNT__", num_files_uploaded));
   }
 </script>

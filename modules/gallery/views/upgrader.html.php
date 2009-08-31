@@ -18,7 +18,7 @@
             <h1> <?= t("That's it!") ?> </h1>
             <p>
               <?= t("Your <a href=\"%url\">Gallery</a> is up to date.",
-                    array("url" => url::site("albums/1"))) ?>
+                    array("url" => html::mark_safe(url::site("albums/1")))) ?>
             </p>
           </div>
         </div>

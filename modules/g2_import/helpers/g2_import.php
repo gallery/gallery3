@@ -590,7 +590,7 @@ class g2_import_Core {
     self::map($g2_comment->getId(), $comment->id);
     return t("Imported comment '%comment' for item with id: %id",
              array("id" => $comment->item_id,
-                   "comment" => text::limit_words(nl2br(p::purify($comment->text)), 50)));
+                   "comment" => text::limit_words(nl2br(html::purify($comment->text)), 50)));
   }
 
   /**

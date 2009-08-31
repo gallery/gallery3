@@ -8,10 +8,10 @@
     <ul>
       <li>
         <label for="q"><?= t("Search the gallery") ?></label>
-        <input name="q" id="q" type="text" value="<?= p::clean($q) ?>"/>
+        <input name="q" id="q" type="text" value="<?= html::clean_attribute($q) ?>"/>
       </li>
       <li>
-        <input type="submit" value="<?= t("Search") ?>" />
+        <input type="submit" value="<?= t("Search")->for_html_attr() ?>" />
       </li>
     </ul>
   </fieldset>
@@ -31,10 +31,10 @@
       <a href="<?= url::site("items/$item->id") ?>">
         <?= $item->thumb_img() ?>
         <p>
-          <?= p::purify($item->title) ?>
+    <?= html::purify($item->title) ?>
         </p>
         <div>
-    <?= nl2br(p::purify($item->description)) ?>
+    <?= nl2br(html::purify($item->description)) ?>
         </div>
       </a>
     </li>
@@ -44,7 +44,7 @@
 
   <? else: ?>
   <p>
-    <?= t("No results found for <b>%term</b>", array("term" => p::clean($q))) ?>
+    <?= t("No results found for <b>%term</b>", array("term" => $q)) ?>
   </p>
 
   <? endif; ?>

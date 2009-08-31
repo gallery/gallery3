@@ -8,7 +8,7 @@
 </p>
 
 <p>
-  <?= t("You're logged in to the <b>%user_name</b> account.  The very first thing you should do is to change your password to something that you'll remember.", array("user_name" => p::clean($user->name))) ?>
+  <?= t("You're logged in to the <b>%user_name</b> account.  The very first thing you should do is to change your password to something that you'll remember.", array("user_name" => $user->name)) ?>
 </p>
 
 <p>

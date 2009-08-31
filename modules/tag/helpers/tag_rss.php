@@ -22,7 +22,7 @@ class tag_rss_Core {
   static function available_feeds($item, $tag) {
     if ($tag) {
       $feeds["tag/tag/{$tag->id}"] =
-        t("Tag feed for %tag_name", array("tag_name" => p::clean($tag->name)));
+        t("Tag feed for %tag_name", array("tag_name" => $tag->name));
       return $feeds;
     }
     return array();

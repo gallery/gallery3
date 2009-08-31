@@ -23,7 +23,7 @@ class comment_rss_Core {
     $feeds["comment/newest"] = t("All new comments");
     if ($item) {
       $feeds["comment/item/$item->id"] =
-        t("Comments on %title", array("title" => p::purify($item->title)));
+        t("Comments on %title", array("title" => html::purify($item->title)));
     }
     return $feeds;
   }
@@ -49,13 +49,13 @@ class comment_rss_Core {
       $item = $comment->item();
       $feed->children[] = new ArrayObject(
         array("pub_date" => date("D, d M Y H:i:s T", $comment->created),
-              "text" => nl2br(p::purify($comment->text)),
+              "text" => nl2br(html::purify($comment->text)),
               "thumb_url" => $item->thumb_url(),
               "thumb_height" => $item->thumb_height,
               "thumb_width" => $item->thumb_width,
               "item_uri" => url::abs_site("{$item->type}s/$item->id"),
-              "title" => p::purify($item->title),
-              "author" => p::clean($comment->author_name())),
+              "title" => html::purify($item->title),
+              "author" => html::clean($comment->author_name())),
         ArrayObject::ARRAY_AS_PROPS);
     }
 

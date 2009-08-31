@@ -5,7 +5,7 @@
     <span class="ui-icon-left">
     <a href="<?= rss::url($url) ?>">
       <span class="ui-icon ui-icon-signal-diag"></span>
-      <?= $title ?>
+      <?= html::purify($title) ?>
     </a>
     </span>
   </li>
