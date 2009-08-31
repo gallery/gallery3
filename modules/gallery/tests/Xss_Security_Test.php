@@ -195,7 +195,7 @@ class Xss_Security_Test extends Unit_Test_Case {
                 in_array($tokens[$token_number + 2][1],
                          array("clean", "purify", "js_string", "clean_attribute")) &&
                 self::_token_matches("(", $tokens, $token_number + 3)) {
-              // Not checking for mark_safe(). We want such calls to be marked dirty (thus reviewed).
+              // Not checking for mark_clean(). We want such calls to be marked dirty (thus reviewed).
 
               $method = $tokens[$token_number + 2][1];
               $frame->expr_append("::$method(");

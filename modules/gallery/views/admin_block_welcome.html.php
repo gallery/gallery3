@@ -5,16 +5,16 @@
 <ul>
   <li>
     <?= t("General Settings - choose your <a href=\"%graphics_url\">graphics</a> and <a href=\"%language_url\">language</a> settings.",
-          array("graphics_url" => html::mark_safe(url::site("admin/graphics")),
-                "language_url" => html::mark_safe(url::site("admin/languages")))) ?>
+          array("graphics_url" => html::mark_clean(url::site("admin/graphics")),
+                "language_url" => html::mark_clean(url::site("admin/languages")))) ?>
   </li>
   <li>
     <?= t("Appearance - <a href=\"%theme_url\">choose a theme</a>, or <a href=\"%theme_options_url\">customize the way it looks</a>.",
-          array("theme_url" => html::mark_safe(url::site("admin/themes")),
-                "theme_options_url" => html::mark_safe(url::site("admin/theme_options")))) ?>
+          array("theme_url" => html::mark_clean(url::site("admin/themes")),
+                "theme_options_url" => html::mark_clean(url::site("admin/theme_options")))) ?>
   </li>
   <li>
     <?= t("Customize - <a href=\"%modules_url\">install modules</a> to add cool features!",
-          array("modules_url" => html::mark_safe(url::site("admin/modules")))) ?>
+          array("modules_url" => html::mark_clean(url::site("admin/modules")))) ?>
   </li>
 </ul>

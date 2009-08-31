@@ -10,7 +10,7 @@
     </p>
     <p>
   <?= t("We received a request to reset your password for <a href=\"%site_url\">%site_url</a>.  If you made this request, you can confirm it by <a href=\"%confirm_url\">clicking this link</a>.  If you didn't request this password reset, it's ok to ignore this mail.",
-        array("site_url" => html::mark_safe(url::base(false, "http")),
+        array("site_url" => html::mark_clean(url::base(false, "http")),
               "confirm_url" => $confirm_url)) ?>
     </p>
   </body>

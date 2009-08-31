@@ -43,7 +43,7 @@ class recaptcha_Core {
     if (empty($public_key) || empty($private_key)) {
       site_status::warning(
         t("reCAPTCHA is not quite ready!  Please configure the <a href=\"%url\">reCAPTCHA Keys</a>",
-          array("url" => html::mark_safe(url::site("admin/recaptcha")))),
+          array("url" => html::mark_clean(url::site("admin/recaptcha")))),
         "recaptcha_config");
     } else {
       site_status::clear("recaptcha_config");

@@ -51,12 +51,12 @@ class html extends html_Core {
    *
    * Example:<pre>
    *   // Parameters to t() are automatically escaped by default.
-   *   // If the parameter is marked as safe, it won't get escaped.
+   *   // If the parameter is marked as clean, it won't get escaped.
    *   t('Go <a href="%url">there</a>',
-   *     array("url" => html::mark_safe(url::current())))
+   *     array("url" => html::mark_clean(url::current())))
    * </pre>
    */
-  static function mark_safe($html) {
+  static function mark_clean($html) {
     return SafeString::of_safe_html($html);
   }
 

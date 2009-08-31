@@ -29,7 +29,7 @@
   <ul id="gMessage">
     <li class="gError">
       <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.",
-            array("mod_rewrite_attrs" => html::mark_safe("href=\"http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html\" target=\"_blank\"", "apache_attrs" => "href=\"http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride\" target=\"_blank\""))) ?>
+            array("mod_rewrite_attrs" => html::mark_clean("href=\"http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html\" target=\"_blank\"", "apache_attrs" => "href=\"http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride\" target=\"_blank\""))) ?>
     </li>
   </ul>
   <? endif ?>

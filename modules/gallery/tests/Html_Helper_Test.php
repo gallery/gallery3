@@ -32,8 +32,8 @@ class Html_Helper_Test extends Unit_Test_Case {
     $this->assert_true($safe_string instanceof SafeString);
   }
 
-  public function mark_safe_test() {
-    $safe_string = html::mark_safe("hello <p  >world</p>");
+  public function mark_clean_test() {
+    $safe_string = html::mark_clean("hello <p  >world</p>");
     $this->assert_true($safe_string instanceof SafeString);
     $safe_string_2 = html::clean($safe_string);
     $this->assert_equal("hello <p  >world</p>",
