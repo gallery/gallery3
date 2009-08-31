@@ -95,12 +95,12 @@
         <ul class="gBreadcrumbs">
           <? foreach ($parents as $parent): ?>
           <li>
-            <a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>">
+            <a href="<?= url::site("albums/{$parent->id}?show=$theme->item()->id") ?>">
               <?= html::purify($parent->title) ?>
             </a>
           </li>
           <? endforeach ?>
-          <li class="active"><?= html::purify($item->title) ?></li>
+          <li class="active"><?= html::purify($theme->item()->title) ?></li>
         </ul>
         <? endif ?>
       </div>
