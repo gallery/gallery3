@@ -47,9 +47,6 @@ $(document).ready(function(){
   $(".gAvailable .gBlock").addClass("ui-corner-all");
   $(".gUnavailable").addClass("ui-corner-all");
 
-  // Add drop shadows
-  $(".gSelected").dropShadow();
-
   // Add hover state for buttons
   $(".ui-state-default").hover(
     function() {
