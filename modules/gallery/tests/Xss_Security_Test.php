@@ -32,6 +32,7 @@ class Xss_Security_Test extends Unit_Test_Case {
       $frame  = null;
       $script_block = 0;
       $in_script_block = false;
+      $inline_html = "";
 
       for ($token_number = 0; $token_number < count($tokens); $token_number++) {
         $token = $tokens[$token_number];
@@ -81,6 +82,8 @@ class Xss_Security_Test extends Unit_Test_Case {
           }
         }
 
+        $href_attribute_start = preg_match('{href\s*=\s*[\'"]?\s*$}i', str_replace("\n", "", $inline_html));
+
         // Look and report each instance of < ? = ... ? >
         if (!is_array($token)) {
           // A single char token, e.g: ; ( )
@@ -89,7 +92,8 @@ class Xss_Security_Test extends Unit_Test_Case {
           }
         } else if ($token[0] == T_OPEN_TAG_WITH_ECHO) {
           // No need for a stack here - assume < ? = cannot be nested.
-          $frame = self::_create_frame($token, $in_script_block);
+          $frame = self::_create_frame($token, $in_script_block, $href_attribute_start);
+          $href_attribute_start = false;
         } else if ($frame && $token[0] == T_CLOSE_TAG) {
           // Store the < ? = ... ? > block that just ended here.
           $found[$view][] = $frame;
@@ -177,6 +181,7 @@ class Xss_Security_Test extends Unit_Test_Case {
                                "abs_file", "merge")) &&
                 self::_token_matches("(", $tokens, $token_number + 3)) {
               $frame->is_safe_html(true);
+              $frame->is_safe_href_attr(true);
 
               $method = $tokens[$token_number + 2][1];
               $frame->expr_append("::$method(");
@@ -237,6 +242,8 @@ class Xss_Security_Test extends Unit_Test_Case {
      * DIRTY_JS:
      *   In <script> block
      *     X can be anything without calling ->for_js()
+     *   At the start of a href= attribute
+     *     X = anything but a url method
      * DIRTY:
      *   Outside <script> block:
      *     X can be anything without a call to ->for_html() or ->purified_html()
@@ -246,6 +253,8 @@ class Xss_Security_Test extends Unit_Test_Case {
      *     X = * and for_html() or purified_html() is called
      *   Inside <script> block:
      *     X = * with ->for_js() or json_encode(...)
+     *   Start of href attribute:
+     *     X = url method
      */
     $new = TMPPATH . "xss_data.txt";
     $fd = fopen($new, "wb");
@@ -253,9 +262,16 @@ class Xss_Security_Test extends Unit_Test_Case {
     foreach ($found as $view => $frames) {
       foreach ($frames as $frame) {
         $state = "DIRTY";
-        if ($frame->in_script_block()) {
+        if ($frame->in_script_block() && $frame->in_href_attribute()) {
+          $state = "ILLEGAL";
+        } else if ($frame->in_script_block()) {
           $state = "DIRTY_JS";
           if ($frame->is_safe_js()) {
+            $state = "CLEAN";
+          }
+        } else if ($frame->in_href_attribute()) {
+          $state = "DIRTY_JS";
+          if ($frame->is_safe_href_attr()) {
             $state = "CLEAN";
           }
         } else {
@@ -283,8 +299,8 @@ class Xss_Security_Test extends Unit_Test_Case {
                         $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 
-  private static function _create_frame($token, $in_script_block) {
-    return new Xss_Security_Test_Frame($token[2], $in_script_block);
+  private static function _create_frame($token, $in_script_block, $href_attribute_start) {
+    return new Xss_Security_Test_Frame($token[2], $in_script_block, $href_attribute_start);
   }
 
   private static function _token_matches($expected_token, &$tokens, $token_number) {
@@ -312,11 +328,14 @@ class Xss_Security_Test_Frame {
   private $_in_script_block = false;
   private $_is_safe_html = false;
   private $_is_safe_js = false;
+  private $_in_href_attribute = false;
+  private $_is_safe_href_attr = false;
   private $_line;
 
-  function __construct($line_number, $in_script_block) {
+  function __construct($line_number, $in_script_block, $href_attribute_start) {
     $this->_line = $line_number;
-    $this->in_script_block($in_script_block);
+    $this->_in_script_block = $in_script_block;
+    $this->_in_href_attribute = $href_attribute_start;
   }
 
   function expr() {
@@ -327,11 +346,12 @@ class Xss_Security_Test_Frame {
     return $this->_expr .= $append_value;
   }
 
-  function in_script_block($new_val=NULL) {
-    if ($new_val !== NULL) {
-      $this->_in_script_block = (bool) $new_val;
-    }
+  function in_script_block() {
     return $this->_in_script_block;
+  }
+
+  function in_href_attribute() {
+    return $this->_in_href_attribute;
   }
 
   function is_safe_html($new_val=NULL) {
@@ -339,6 +359,13 @@ class Xss_Security_Test_Frame {
       $this->_is_safe_html = (bool) $new_val;
     }
     return $this->_is_safe_html;
+  }
+
+  function is_safe_href_attr($new_val=NULL) {
+    if ($new_val !== NULL) {
+      $this->_is_safe_href_attr  = (bool) $new_val;
+    }
+    return $this->_is_safe_href_attr;
   }
 
   function is_safe_js($new_val=NULL) {
