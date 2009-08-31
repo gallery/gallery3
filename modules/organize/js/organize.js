@@ -94,7 +94,9 @@
       if (source_ids.length) {
 	$.post(options.url,
 	       { "source_ids[]": source_ids },
-	       function(data) { $.organize._refresh(data); },
+	       function(data) {
+		 $.organize._refresh(data);
+	       },
 	      "json");
       }
     },
@@ -152,11 +154,12 @@
     },
 
     set_handlers: function() {
-      $("#gOrganizeMicroThumbPanel").selectable({filter: ".gOrganizeMicroThumbGridCell"});
-      $("#gOrganizeMicroThumbPanel").droppable($.organize.content_droppable);
-
-      $(".gOrganizeMicroThumbGridCell").draggable($.organize.micro_thumb_draggable);
-      $(".gOrganizeMicroThumbGridCell").mousemove($.organize.mouse_move_handler);
+      $("#gOrganizeMicroThumbPanel")
+	.selectable({filter: ".gOrganizeMicroThumbGridCell"})
+	.droppable($.organize.content_droppable);
+      $(".gOrganizeMicroThumbGridCell")
+	.draggable($.organize.micro_thumb_draggable)
+	.mousemove($.organize.mouse_move_handler);
       $(".gOrganizeAlbum").droppable($.organize.branch_droppable);
       $(".gOrganizeAlbumText").click($.organize.show_album);
       $("#gOrganizeAlbumTree .ui-icon-plus,#gOrganizeAlbumTree .ui-icon-minus").click($.organize.toggle_branch);

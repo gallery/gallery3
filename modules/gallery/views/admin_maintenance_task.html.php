@@ -23,6 +23,7 @@
       animation = null;
       delta = 1;
     }
+    $.fn.gallery_hover_init();
   }
 
   update = function() {
