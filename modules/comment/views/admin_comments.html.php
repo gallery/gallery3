@@ -108,12 +108,12 @@
         <a href="#">
           <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
                class="gAvatar"
-               alt="<?= html::clean($comment->author_name()) ?>"
+               alt="<?= html::clean_attribute($comment->author_name()) ?>"
                width="40"
                height="40" />
         </a>
-        <p><a href="mailto:<?= html::clean($comment->author_email()) ?>"
-              title="<?= html::clean($comment->author_email()) ?>"> <?= html::clean($comment->author_name()) ?> </a></p>
+        <p><a href="mailto:<?= html::clean_attribute($comment->author_email()) ?>"
+              title="<?= html::clean_attribute($comment->author_email()) ?>"> <?= html::clean($comment->author_name()) ?> </a></p>
       </td>
       <td>
         <div class="right">
