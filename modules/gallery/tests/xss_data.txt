@@ -61,12 +61,12 @@ modules/gallery/views/admin_graphics_imagemagick.html.php    2   DIRTY    $is_ac
 modules/gallery/views/admin_graphics_imagemagick.html.php    2   DIRTY    $tk->installed?"  gInstalledToolkit":" gUnavailable"
 modules/gallery/views/admin_graphics_imagemagick.html.php    18  DIRTY    $tk->error
 modules/gallery/views/admin_languages.html.php               9   DIRTY    access::csrf_form_field()
-modules/gallery/views/admin_languages.html.php               28  DIRTY    (isset($installed_locales[$code]))?"installed":""
-modules/gallery/views/admin_languages.html.php               28  DIRTY    ($default_locale==$code)?" default":""
-modules/gallery/views/admin_languages.html.php               29  DIRTY    form::checkbox("installed_locales[]",$code,isset($installed_locales[$code]))
-modules/gallery/views/admin_languages.html.php               30  DIRTY    $display_name
-modules/gallery/views/admin_languages.html.php               32  DIRTY    form::radio("default_locale",$code,($default_locale==$code),((isset($installed_locales[$code]))?'':'disabled="disabled"'))
-modules/gallery/views/admin_languages.html.php               104 DIRTY    $share_translations_form
+modules/gallery/views/admin_languages.html.php               27  DIRTY    (isset($installed_locales[$code]))?"installed":""
+modules/gallery/views/admin_languages.html.php               27  DIRTY    ($default_locale==$code)?" default":""
+modules/gallery/views/admin_languages.html.php               28  DIRTY    form::checkbox("installed_locales[]",$code,isset($installed_locales[$code]))
+modules/gallery/views/admin_languages.html.php               29  DIRTY    $display_name
+modules/gallery/views/admin_languages.html.php               31  DIRTY    form::radio("default_locale",$code,($default_locale==$code),((isset($installed_locales[$code]))?'':'disabled="disabled"'))
+modules/gallery/views/admin_languages.html.php               102 DIRTY    $share_translations_form
 modules/gallery/views/admin_maintenance.html.php             24  DIRTY    log::severity_class($task->severity)
 modules/gallery/views/admin_maintenance.html.php             24  DIRTY    ($i%2==0)?"gOddRow":"gEvenRow"
 modules/gallery/views/admin_maintenance.html.php             26  DIRTY    $task->name
@@ -105,20 +105,20 @@ modules/gallery/views/admin_themes_preview.html.php          7   DIRTY    $url
 modules/gallery/views/kohana_error_page.php                  102 DIRTY    $message
 modules/gallery/views/kohana_error_page.php                  116 DIRTY    $trace
 modules/gallery/views/kohana_profiler.php                    32  DIRTY    $profile->render();
-modules/gallery/views/l10n_client.html.php                   20  DIRTY    $string["translation"]===""?"untranslated":"translated"
-modules/gallery/views/l10n_client.html.php                   22  DIRTY    $string["source"]["one"]
-modules/gallery/views/l10n_client.html.php                   23  DIRTY    $string["source"]["other"]
-modules/gallery/views/l10n_client.html.php                   25  DIRTY    $string["source"]
-modules/gallery/views/l10n_client.html.php                   31  DIRTY    $l10n_search_form
-modules/gallery/views/l10n_client.html.php                   40  DIRTY    access::csrf_form_field()
-modules/gallery/views/l10n_client.html.php                   41  DIRTY    form::hidden("l10n-message-key")
-modules/gallery/views/l10n_client.html.php                   42  DIRTY    form::textarea("l10n-edit-translation","",' rows="5" class="translationField"')
-modules/gallery/views/l10n_client.html.php                   45  DIRTY    form::textarea("l10n-edit-plural-translation-zero","",' rows="2"')
-modules/gallery/views/l10n_client.html.php                   49  DIRTY    form::textarea("l10n-edit-plural-translation-one","",' rows="2"')
-modules/gallery/views/l10n_client.html.php                   53  DIRTY    form::textarea("l10n-edit-plural-translation-two","",' rows="2"')
-modules/gallery/views/l10n_client.html.php                   57  DIRTY    form::textarea("l10n-edit-plural-translation-few","",' rows="2"')
-modules/gallery/views/l10n_client.html.php                   61  DIRTY    form::textarea("l10n-edit-plural-translation-many","",' rows="2"')
-modules/gallery/views/l10n_client.html.php                   66  DIRTY    form::textarea("l10n-edit-plural-translation-other","",' rows="2"')
+modules/gallery/views/l10n_client.html.php                   21  DIRTY    $string["translation"]===""?"untranslated":"translated"
+modules/gallery/views/l10n_client.html.php                   23  DIRTY    $string["source"]["one"]
+modules/gallery/views/l10n_client.html.php                   24  DIRTY    $string["source"]["other"]
+modules/gallery/views/l10n_client.html.php                   26  DIRTY    $string["source"]
+modules/gallery/views/l10n_client.html.php                   32  DIRTY    $l10n_search_form
+modules/gallery/views/l10n_client.html.php                   41  DIRTY    access::csrf_form_field()
+modules/gallery/views/l10n_client.html.php                   42  DIRTY    form::hidden("l10n-message-key")
+modules/gallery/views/l10n_client.html.php                   43  DIRTY    form::textarea("l10n-edit-translation","",' rows="5" class="translationField"')
+modules/gallery/views/l10n_client.html.php                   46  DIRTY    form::textarea("l10n-edit-plural-translation-zero","",' rows="2"')
+modules/gallery/views/l10n_client.html.php                   50  DIRTY    form::textarea("l10n-edit-plural-translation-one","",' rows="2"')
+modules/gallery/views/l10n_client.html.php                   54  DIRTY    form::textarea("l10n-edit-plural-translation-two","",' rows="2"')
+modules/gallery/views/l10n_client.html.php                   58  DIRTY    form::textarea("l10n-edit-plural-translation-few","",' rows="2"')
+modules/gallery/views/l10n_client.html.php                   62  DIRTY    form::textarea("l10n-edit-plural-translation-many","",' rows="2"')
+modules/gallery/views/l10n_client.html.php                   67  DIRTY    form::textarea("l10n-edit-plural-translation-other","",' rows="2"')
 modules/gallery/views/maintenance.html.php                   46  DIRTY    user::get_login_form("login/auth_html")
 modules/gallery/views/move_browse.html.php                   39  DIRTY    $tree
 modules/gallery/views/move_browse.html.php                   43  DIRTY    access::csrf_form_field()
@@ -132,11 +132,11 @@ modules/gallery/views/move_tree.html.php                     13  DIRTY    $child
 modules/gallery/views/move_tree.html.php                     15  DIRTY    $child->id
 modules/gallery/views/movieplayer.html.php                   2   DIRTY    html::anchor($item->file_url(true),"",$attrs)
 modules/gallery/views/movieplayer.html.php                   5   DIRTY    $attrs["id"]
-modules/gallery/views/permissions_browse.html.php            40  DIRTY    $parent->id
 modules/gallery/views/permissions_browse.html.php            41  DIRTY    $parent->id
-modules/gallery/views/permissions_browse.html.php            46  DIRTY    $item->id
+modules/gallery/views/permissions_browse.html.php            42  DIRTY    $parent->id
 modules/gallery/views/permissions_browse.html.php            47  DIRTY    $item->id
-modules/gallery/views/permissions_browse.html.php            54  DIRTY    $form
+modules/gallery/views/permissions_browse.html.php            48  DIRTY    $item->id
+modules/gallery/views/permissions_browse.html.php            55  DIRTY    $form
 modules/gallery/views/permissions_form.html.php              24  DIRTY    $lock->id
 modules/gallery/views/permissions_form.html.php              32  DIRTY    $group->id
 modules/gallery/views/permissions_form.html.php              32  DIRTY    $permission->id
@@ -178,25 +178,22 @@ modules/notification/views/item_deleted.html.php             18  DIRTY    $item-
 modules/notification/views/item_deleted.html.php             19  DIRTY    $item->parent()->url(array(),true)
 modules/notification/views/item_updated.html.php             20  DIRTY    $item->url(array(),true)
 modules/notification/views/item_updated.html.php             20  DIRTY    $item->url(array(),true)
-modules/organize/views/organize_dialog.html.php              21  DIRTY    $album_tree
-modules/organize/views/organize_dialog.html.php              28  DIRTY    $micro_thumb_grid
-modules/organize/views/organize_dialog.html.php              36  DIRTY    form::dropdown(array("id"=>"gOrganizeSortColumn"),album::get_sort_order_options(),$album->sort_column)
-modules/organize/views/organize_dialog.html.php              37  DIRTY    form::dropdown(array("id"=>"gOrganizeSortOrder"),array("ASC"=>"Ascending","DESC"=>"Descending"),$album->sort_order)
+modules/organize/views/organize_dialog.html.php              22  DIRTY    $album_tree
+modules/organize/views/organize_dialog.html.php              29  DIRTY    $micro_thumb_grid
+modules/organize/views/organize_dialog.html.php              37  DIRTY    form::dropdown(array("id"=>"gOrganizeSortColumn"),album::get_sort_order_options(),$album->sort_column)
+modules/organize/views/organize_dialog.html.php              38  DIRTY    form::dropdown(array("id"=>"gOrganizeSortOrder"),array("ASC"=>"Ascending","DESC"=>"Descending"),$album->sort_order)
 modules/organize/views/organize_thumb_grid.html.php          3   DIRTY    $child->id
 modules/organize/views/organize_thumb_grid.html.php          4   DIRTY    $child->id
 modules/organize/views/organize_thumb_grid.html.php          5   DIRTY    $child->is_album()?"gAlbum":"gPhoto"
 modules/organize/views/organize_thumb_grid.html.php          6   DIRTY    $child->thumb_img(array("class"=>"gThumbnail","ref"=>$child->id),90,true)
-modules/organize/views/organize_tree.html.php                3   DIRTY    access::can("edit",$parent)?"":"gViewOnly"
-modules/organize/views/organize_tree.html.php                4   DIRTY    $parent->id
-modules/organize/views/organize_tree.html.php                7   DIRTY    $parent->id
-modules/organize/views/organize_tree.html.php                14  DIRTY    access::can("edit",$peer)?"":"gViewOnly"
-modules/organize/views/organize_tree.html.php                15  DIRTY    $peer->id
-modules/organize/views/organize_tree.html.php                16  DIRTY    $peer->id==$album->id?"ui-icon-minus":"ui-icon-plus"
-modules/organize/views/organize_tree.html.php                18  DIRTY    $peer->id==$album->id?"selected":""
-modules/organize/views/organize_tree.html.php                19  DIRTY    $peer->id
-modules/organize/views/organize_tree.html.php                26  DIRTY    access::can("edit",$child)?"":"gViewOnly"
-modules/organize/views/organize_tree.html.php                27  DIRTY    $child->id
-modules/organize/views/organize_tree.html.php                31  DIRTY    $child->id
+modules/organize/views/organize_tree.html.php                2   DIRTY    access::can("edit",$album)?"":"gViewOnly"
+modules/organize/views/organize_tree.html.php                3   DIRTY    $album->id
+modules/organize/views/organize_tree.html.php                7   DIRTY    $selected&&$album->id==$selected->id?"selected":""
+modules/organize/views/organize_tree.html.php                9   DIRTY    $album->id
+modules/organize/views/organize_tree.html.php                15  DIRTY    View::factory("organize_tree.html",array("selected"=>$selected,"album"=>$child));
+modules/organize/views/organize_tree.html.php                17  DIRTY    access::can("edit",$child)?"":"gViewOnly"
+modules/organize/views/organize_tree.html.php                18  DIRTY    $child->id
+modules/organize/views/organize_tree.html.php                21  DIRTY    $child->id
 modules/recaptcha/views/admin_recaptcha.html.php             10  DIRTY    $form
 modules/recaptcha/views/admin_recaptcha.html.php             23  DIRTY    $public_key
 modules/recaptcha/views/form_recaptcha.html.php              7   DIRTY    $public_key
