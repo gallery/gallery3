@@ -76,7 +76,33 @@
     <div id="doc4" class="yui-t5 gView">
       <?= $theme->site_status() ?>
       <div id="gHeader">
-        <?= new View("header.html") ?>
+        <div id="gBanner">
+          <?= $theme->header_top() ?>
+          <? if ($header_text = module::get_var("gallery", "header_text")): ?>
+          <?= $header_text ?>
+          <? else: ?>
+          <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery home") ?>">
+            <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site") ?>" src="<?= $theme->url("images/logo.png") ?>" />
+          </a>
+          <? endif ?>
+          <div id="gSiteMenu">
+          <?= $theme->site_menu() ?>
+          </div>
+          <?= $theme->header_bottom() ?>
+        </div>
+
+        <? if (!empty($parents)): ?>
+        <ul class="gBreadcrumbs">
+          <? foreach ($parents as $parent): ?>
+          <li>
+            <a href="<?= url::site("albums/{$parent->id}?show=$item->id") ?>">
+              <?= html::purify($parent->title) ?>
+            </a>
+          </li>
+          <? endforeach ?>
+          <li class="active"><?= html::purify($item->title) ?></li>
+        </ul>
+        <? endif ?>
       </div>
       <div id="bd">
         <div id="yui-main">
@@ -94,7 +120,16 @@
         </div>
       </div>
       <div id="gFooter">
-        <?= new View("footer.html") ?>
+        <?= $theme->footer() ?>
+        <? if ($footer_text = module::get_var("gallery", "footer_text")): ?>
+        <?= $footer_text ?>
+        <? endif ?>
+
+        <? if (module::get_var("gallery", "show_credits")): ?>
+        <ul id="gCredits">
+          <?= $theme->credits() ?>
+        </ul>
+        <? endif ?>
       </div>
     </div>
     <?= $theme->page_bottom() ?>
