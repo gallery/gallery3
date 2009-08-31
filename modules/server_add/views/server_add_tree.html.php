@@ -9,7 +9,7 @@
     <? foreach ($parents as $dir): ?>
     <li class="ui-icon-left">
       <span class="ui-icon ui-icon-folder-open"></span>
-      <span ondblclick="open_dir(<?= html::js_string($dir) ?>)">
+      <span ondblclick='open_dir(<?= html::js_string($dir) ?>)'>
         <?= html::clean(basename($dir)) ?>
       </span>
       <ul>
