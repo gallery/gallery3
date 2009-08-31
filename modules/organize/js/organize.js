@@ -4,7 +4,7 @@
       handle: ".ui-state-selected",
       distance: 10,
       cursorAt: { left: -10, top: -10},
-      appendTo: "#gMicroThumbPanel",
+      appendTo: "#gOrganizeMicroThumbPanel",
       helper: function(event, ui) {
         var selected = $(".ui-draggable.ui-state-selected img");
         if (selected.length) {
@@ -37,16 +37,16 @@
       },
 
       start: function(event, ui) {
-        $("#gMicroThumbPanel .ui-state-selected").hide();
+        $("#gOrganizeMicroThumbPanel .ui-state-selected").hide();
       },
 
       drag: function(event, ui) {
-        var top = $("#gMicroThumbPanel").offset().top;
-        var height = $("#gMicroThumbPanel").height();
+        var top = $("#gOrganizeMicroThumbPanel").offset().top;
+        var height = $("#gOrganizeMicroThumbPanel").height();
         if (ui.offset.top > height + top - 20) {
-          $("#gMicroThumbPanel").get(0).scrollTop += 100;
+          $("#gOrganizeMicroThumbPanel").get(0).scrollTop += 100;
         } else if (ui.offset.top < top + 20) {
-          $("#gMicroThumbPanel").get(0).scrollTop = Math.max(0, $("#gMicroThumbPanel").get(0).scrollTop - 100);
+          $("#gOrganizeMicroThumbPanel").get(0).scrollTop = Math.max(0, $("#gOrganizeMicroThumbPanel").get(0).scrollTop - 100);
         }
       }
     },
@@ -74,7 +74,7 @@
       drop: function(event, ui) {
         if ($(event.target).hasClass("gViewOnly")) {
           $(".ui-state-selected").show();
-          $(".gMicroThumbGridCell").css("borderStyle", "none");
+          $(".gOrganizeMicroThumbGridCell").css("borderStyle", "none");
         } else {
           $.organize.do_drop({
             url: move_url.replace("__ALBUM_ID__", $(event.target).attr("ref")),
@@ -85,7 +85,7 @@
     },
 
     do_drop: function(options) {
-      $("#gMicroThumbPanel").selectable("destroy");
+      $("#gOrganizeMicroThumbPanel").selectable("destroy");
       var source_ids = [];
       $(options.source).each(function(i) {
         source_ids.push($(this).attr("ref"));
@@ -104,7 +104,7 @@
         $("#gOrganizeAlbumTree").html(data.tree);
       }
       if (data.grid) {
-        $("#gMicroThumbGrid").html(data.grid);
+        $("#gOrganizeMicroThumbGrid").html(data.grid);
         $("#gOrganizeSortColumn").attr("value", data.sort_column);
         $("#gOrganizeSortOrder").attr("value", data.sort_order);
       }
@@ -113,7 +113,7 @@
 
     mouse_move_handler: function(event) {
       if ($(".gDragHelper").length) {
-        $(".gMicroThumbGridCell").css("borderStyle", "hidden");
+        $(".gOrganizeMicroThumbGridCell").css("borderStyle", "hidden");
         $(".currentDropTarget").removeClass("currentDropTarget");
         var borderStyle = event.pageX < $(this).offset().left + $(this).width() / 2 ?
           "borderLeftStyle" : "borderRightStyle";
@@ -132,7 +132,7 @@
       $("#gDialog").dialog("option", "zIndex", 70);
       $("#gDialog").bind("dialogopen", function(event, ui) {
         $("#gOrganize").height($("#gDialog").innerHeight() - 20);
-        $("#gMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
+        $("#gOrganizeMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
         $("#gOrganizeAlbumTree").height($("#gDialog").innerHeight() - 59);
       });
 
@@ -152,15 +152,41 @@
     },
 
     set_handlers: function() {
-      $("#gMicroThumbPanel").selectable({filter: ".gMicroThumbGridCell"});
-      $("#gMicroThumbPanel").droppable($.organize.content_droppable);
+      $("#gOrganizeMicroThumbPanel").selectable({filter: ".gOrganizeMicroThumbGridCell"});
+      $("#gOrganizeMicroThumbPanel").droppable($.organize.content_droppable);
 
-      $(".gMicroThumbGridCell").draggable($.organize.micro_thumb_draggable);
-      $(".gMicroThumbGridCell").mousemove($.organize.mouse_move_handler);
+      $(".gOrganizeMicroThumbGridCell").draggable($.organize.micro_thumb_draggable);
+      $(".gOrganizeMicroThumbGridCell").mousemove($.organize.mouse_move_handler);
       $(".gOrganizeAlbum").droppable($.organize.branch_droppable);
-      $(".gAlbumText").click($.organize.show_album);
+      $(".gOrganizeAlbumText").click($.organize.show_album);
+      $("#gOrganizeAlbumTree .ui-icon-plus,#gOrganizeAlbumTree .ui-icon-minus").click($.organize.toggle_branch);
     },
 
+    toggle_branch: function(event) {
+      event.preventDefault();
+      var target = $(event.currentTarget);
+      var branch = $(target).parent();
+      var id = $(event.currentTarget).parent().attr("ref");
+
+      if ($(target).hasClass("ui-icon-plus")) {
+	// Expanding
+	if (!branch.find("ul").length) {
+	  $.get(tree_url.replace("__ALBUM_ID__", id), { },
+	    function(data) {
+	      branch.replaceWith(data);
+	      $.organize.set_handlers();
+	    }
+	  );
+	} else {
+	  branch.find("ul:eq(0)").slideDown();
+	}
+      } else {
+	// Contracting
+	branch.find("ul:eq(0)").slideUp();
+      }
+      $(target).toggleClass("ui-icon-plus");
+      $(target).toggleClass("ui-icon-minus");
+    },
 
     /**
      * When the text of a selection is clicked, then show that albums contents
@@ -174,14 +200,14 @@
       if ($(parent).hasClass("gViewOnly")) {
         return;
       }
-      $("#gMicroThumbPanel").selectable("destroy");
+      $("#gOrganizeMicroThumbPanel").selectable("destroy");
       var id = $(event.currentTarget).attr("ref");
       $("#gOrganizeAlbumTree .selected").removeClass("selected");
-      $(".gAlbumText[ref=" + id + "]").addClass("selected");
-      var url = $("#gMicroThumbPanel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
+      $(".gOrganizeAlbumText[ref=" + id + "]").addClass("selected");
+      var url = $("#gOrganizeMicroThumbPanel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
       $.get(url, {},
 	    function(data) {
-	      $("#gMicroThumbGrid").html(data.grid);
+	      $("#gOrganizeMicroThumbGrid").html(data.grid);
 	      $("#gOrganizeSortColumn").attr("value", data.sort_column);
               $("#gOrganizeSortOrder").attr("value", data.sort_order);
               $.organize.set_handlers();
@@ -199,7 +225,7 @@
         .replace("__DIR__", dir);
       $.get(url, {},
 	    function(data) {
-	      $("#gMicroThumbGrid").html(data.grid);
+	      $("#gOrganizeMicroThumbGrid").html(data.grid);
               $("#gOrganizeSortColumn").attr("value", data.sort_column);
               $("#gOrganizeSortOrder").attr("value", data.sort_order);
 	      $.organize.set_handlers();

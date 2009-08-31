@@ -3,6 +3,7 @@
   var move_url = "<?= url::site("organize/move_to/__ALBUM_ID__?csrf=$csrf") ?>";
   var rearrange_url = "<?= url::site("organize/rearrange/__TARGET_ID__/__BEFORE__?csrf=$csrf") ?>";
   var sort_order_url = "<?= url::site("organize/sort_order/__ALBUM_ID__/__COL__/__DIR__?csrf=$csrf") ?>";
+  var tree_url = "<?= url::site("organize/tree/__ALBUM_ID__") ?>";
 </script>
 <div id="gOrganize" class="gDialogPanel">
   <h1 style="display:none"><?= t("Organize %name", array("name" => html::purify($album->title))) ?></h1>
@@ -22,9 +23,9 @@
         </ul>
       </div>
       <div id="gOrganizeDetail" class="yui-u">
-        <div id="gMicroThumbPanel"
+        <div id="gOrganizeMicroThumbPanel"
              ref="<?= url::site("organize/album/__ITEM_ID__/__OFFSET__") ?>">
-          <ul id="gMicroThumbGrid">
+          <ul id="gOrganizeMicroThumbGrid">
             <?= $micro_thumb_grid ?>
           </ul>
         </div>

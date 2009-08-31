@@ -1,44 +1,29 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<? foreach ($parents as $parent): ?>
-<li class="gOrganizeAlbum ui-icon-left <?= access::can("edit", $parent) ? "" : "gViewOnly" ?>"
-    ref="<?= $parent->id ?>">
+<li class="gOrganizeAlbum ui-icon-left <?= access::can("edit", $album) ? "" : "gViewOnly" ?>"
+    ref="<?= $album->id ?>">
   <span class="ui-icon ui-icon-minus">
   </span>
-  <span class="gAlbumText" ref="<?= $parent->id ?>">
-    <?= html::clean($parent->title) ?>
+  <span class="gOrganizeAlbumText
+               <?= $selected && $album->id == $selected->id ? "selected" : "" ?>
+               "
+        ref="<?= $album->id ?>">
+    <?= html::clean($album->title) ?>
   </span>
-  <ul class="ui-icon-plus">
-    <? endforeach ?>
-
-    <? foreach ($peers as $peer): ?>
-    <li class="gOrganizeAlbum ui-icon-left <?= access::can("edit", $peer) ? "" : "gViewOnly" ?>"
-        ref="<?= $peer->id ?>">
-      <span class="ui-icon <?= $peer->id == $album->id ? "ui-icon-minus" : "ui-icon-plus" ?>">
+  <ul>
+    <? foreach ($album->children(null, 0, array("type" => "album")) as $child): ?>
+    <? if ($selected && $child->is_descendant($selected)): ?>
+    <?= View::factory("organize_tree.html", array("selected" => $selected, "album" => $child)); ?>
+    <? else: ?>
+    <li class="gOrganizeAlbum ui-icon-left <?= access::can("edit", $child) ? "" : "gViewOnly" ?>"
+        ref="<?= $child->id ?>">
+      <span class="ui-icon ui-icon-plus">
       </span>
-      <span class="gAlbumText <?= $peer->id == $album->id ? "selected" : "" ?>"
-            ref="<?= $peer->id ?>">
-        <?= html::clean($peer->title) ?>
+      <span class="gOrganizeAlbumText" ref="<?= $child->id ?>">
+        <?= html::clean($child->title) ?>
       </span>
-
-      <? if ($peer->id == $album->id): ?>
-      <ul class="ui-icon-plus">
-        <? foreach ($album->children(null, 0, array("type" => "album")) as $child): ?>
-        <li class="gOrganizeAlbum ui-icon-left <?= access::can("edit", $child) ? "" : "gViewOnly" ?>"
-            ref="<?= $child->id ?>">
-          <span class="ui-icon ui-icon-plus">
-          </span>
-          <span class="gAlbumText"
-                ref="<?= $child->id ?>">
-            <?= html::clean($child->title) ?>
-          </span>
-        </li>
-        <? endforeach ?>
-      </ul>
-      <? endif ?>
     </li>
+    <? endif ?>
     <? endforeach ?>
-
-    <? foreach ($parents as $parent): ?>
   </ul>
 </li>
-<? endforeach ?>
+

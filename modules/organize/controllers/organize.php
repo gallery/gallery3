@@ -25,7 +25,7 @@ class Organize_Controller extends Controller {
 
     $v = new View("organize_dialog.html");
     $v->album = $album;
-    $v->album_tree = self::_tree($album);
+    $v->album_tree = self::_expanded_tree(ORM::factory("item", 1), $album);
     $v->micro_thumb_grid = self::_get_micro_thumb_grid($album, 0);
     print $v;
   }
@@ -46,11 +46,14 @@ class Organize_Controller extends Controller {
 
     $album = ORM::factory("item", $album_id);
     foreach ($this->input->post("source_ids") as $source_id) {
-      item::move(ORM::factory("item", $source_id), $album);
+      $source = ORM::factory("item", $source_id);
+      if (!$album->is_descendant($source)) {
+        item::move($source, $album);
+      }
     }
 
     print json_encode(
-      array("tree" => self::_tree($album)->__toString(),
+      array("tree" => self::_expanded_tree(ORM::factory("item", 1), $album)->__toString(),
             "grid" => self::_get_micro_thumb_grid($album, 0)->__toString()));
   }
 
@@ -132,17 +135,22 @@ class Organize_Controller extends Controller {
     return $v;
   }
 
-  private static function _tree($album) {
+  public function tree($album_id) {
+    $album = ORM::factory("item", $album_id);
+    access::required("view", $album);
+
+    print self::_expanded_tree($album);
+  }
+
+  /**
+   * Create an HTML representation of the tree from the root down to the selected album.  We only
+   * include albums along the descendant hierarchy that includes the selected album, and the
+   * immediate child albums.
+   */
+  private static function _expanded_tree($root, $selected_album=null) {
     $v = new View("organize_tree.html");
-    $v->parents = $album->parents();
-    $v->album = $album;
-
-    if ($album->id == 1) {
-      $v->peers = array($album);
-    } else {
-      $v->peers = $album->parent()->children(null, 0, array("type" => "album"));
-    }
-
+    $v->album = $root;
+    $v->selected = $selected_album;
     return $v;
   }
 }

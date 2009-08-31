@@ -223,6 +223,7 @@ class gallery_installer {
     module::set_var("gallery", "resize_size", 640);
     module::set_var("gallery", "default_locale", "en_US");
     module::set_var("gallery", "image_quality", 75);
+    module::set_var("gallery", "image_sharpen", 15);
 
     // Add rules for generating our thumbnails and resizes
     graphics::add_rule(
@@ -259,7 +260,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 10);
+    module::set_version("gallery", 11);
   }
 
   static function upgrade($version) {
@@ -335,6 +336,12 @@ class gallery_installer {
       $db->query("ALTER TABLE {items} ADD KEY `weight` (`weight` DESC);");
 
       module::set_version("gallery", $version = 10);
+    }
+
+    if ($version == 10) {
+      module::set_var("gallery", "image_sharpen", 15);
+
+      module::set_version("gallery", $version = 11);
     }
 }
 

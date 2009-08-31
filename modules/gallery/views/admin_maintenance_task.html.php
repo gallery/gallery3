@@ -4,7 +4,7 @@
   var animation = null;
   var delta = 1;
   animate_progress_bar = function() {
-    var current_value = Number($(".gProgressBar div").css("width").replace("%", ""));
+    var current_value = parseInt($(".gProgressBar div").css("width").replace("%", ""));
     if (target_value > current_value) {
       // speed up
       delta = Math.min(delta + 0.04, 3);

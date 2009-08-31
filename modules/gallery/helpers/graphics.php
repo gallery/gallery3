@@ -209,6 +209,7 @@ class graphics_Core {
       Image::factory($input_file)
         ->resize($options["width"], $options["height"], $options["master"])
         ->quality(module::get_var("gallery", "image_quality"))
+        ->sharpen(module::get_var("gallery", "image_sharpen"))
         ->save($output_file);
     }
 

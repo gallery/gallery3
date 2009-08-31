@@ -48,12 +48,18 @@ class search_task_Core {
                ->where("search_records.item_id", null)
                ->orwhere("search_records.dirty", 1)
                ->find_all() as $item) {
-        if (microtime(true) - $start > 1.5) {
-          break;
+        // The query above can take a long time, so start the timer after its done
+        // to give ourselves a little time to actually process rows.
+        if (!isset($start)) {
+          $start = microtime(true);
         }
 
         search::update($item);
         $completed++;
+
+        if (microtime(true) - $start > 1.5) {
+          break;
+        }
       }
 
       list ($remaining, $total, $percent) = search::stats();
