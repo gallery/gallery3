@@ -26,10 +26,10 @@ class Notification_Controller extends Controller {
 
     if (notification::is_watching($item)) {
       notification::remove_watch($item);
-      message::success(sprintf(t("You are no longer watching %s"), $item->title));
+      message::success(sprintf(t("You are no longer watching %s"), html::purify($item->title)));
     } else {
       notification::add_watch($item);
-      message::success(sprintf(t("You are now watching %s"), $item->title));
+      message::success(sprintf(t("You are now watching %s"), html::purify($item->title)));
     }
     url::redirect($item->url(array(), true));
   }

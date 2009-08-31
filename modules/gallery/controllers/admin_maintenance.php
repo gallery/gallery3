@@ -34,7 +34,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
                       "%count tasks are stalled",
                       $stalled_count),
                    t('<a href="%url">view</a>',
-                     array("url" => url::site("admin/maintenance"))));
+                     array("url" => html::mark_clean(url::site("admin/maintenance")))));
     }
 
     $view = new Admin_View("admin.html");

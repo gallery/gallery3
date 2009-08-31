@@ -23,7 +23,7 @@ class slideshow_event_Core {
       site_status::warning(
         t("The Slideshow module requires the RSS module.  " .
           "<a href=\"%url\">Activate the RSS module now</a>",
-          array("url" => url::site("admin/modules"))),
+          array("url" => html::mark_clean(url::site("admin/modules")))),
         "slideshow_needs_rss");
     } else {
       site_status::clear("slideshow_needs_rss");

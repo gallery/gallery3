@@ -86,7 +86,8 @@ class Photos_Controller extends Items_Controller {
 
       log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
       message::success(
-        t("Saved photo %photo_title", array("photo_title" => $photo->title)));
+                       t("Saved photo %photo_title",
+                         array("photo_title" => html::purify($photo->title))));
 
       print json_encode(
         array("result" => "success",

@@ -326,9 +326,9 @@ class graphics_Core {
           t2("One of your photos is out of date. <a %attrs>Click here to fix it</a>",
              "%count of your photos are out of date. <a %attrs>Click here to fix them</a>",
              $count,
-             array("attrs" => sprintf(
+             array("attrs" => html::mark_clean(sprintf(
                'href="%s" class="gDialogLink"',
-               url::site("admin/maintenance/start/gallery_task::rebuild_dirty_images?csrf=__CSRF__")))),
+               url::site("admin/maintenance/start/gallery_task::rebuild_dirty_images?csrf=__CSRF__"))))),
           "graphics_dirty");
     }
   }
