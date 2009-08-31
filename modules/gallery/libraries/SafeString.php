@@ -120,8 +120,8 @@ class SafeString_Core {
   function for_html_attr() {
     $string = (string) $this->for_html();
     return strtr($string,
-		 array("'"=>"&#039;",
-		       '"'=>'&quot;'));
+                 array("'"=>"&#039;",
+                       '"'=>'&quot;'));
   }
 
   /**

@@ -24,9 +24,9 @@ class Xss_Security_Test extends Unit_Test_Case {
       // List of all tokens without whitespace, simplifying parsing.
       $tokens = array();
       foreach (token_get_all(file_get_contents($view)) as $token) {
-	if (!is_array($token) || ($token[0] != T_WHITESPACE)) {
-	  $tokens[] = $token;
-	}
+        if (!is_array($token) || ($token[0] != T_WHITESPACE)) {
+          $tokens[] = $token;
+        }
       }
 
       $frame  = null;
@@ -34,199 +34,199 @@ class Xss_Security_Test extends Unit_Test_Case {
       $in_script_block = false;
 
       for ($token_number = 0; $token_number < count($tokens); $token_number++) {
-	$token = $tokens[$token_number];
+        $token = $tokens[$token_number];
 
-	// Are we in a <script> ... </script> block?
-	if (is_array($token) && $token[0] == T_INLINE_HTML) {
-	  $inline_html = $token[1];
-	  // T_INLINE_HTML blocks can be split. Need to handle the case
-	  // where one token has "<scr" and the next has "ipt"
-	  while (self::_token_matches(array(T_INLINE_HTML), $tokens, $token_number + 1)) {
-	    $token_number++;
-	    $token = $tokens[$token_number];
-	    $inline_html .= $token[1];
-	  }
+        // Are we in a <script> ... </script> block?
+        if (is_array($token) && $token[0] == T_INLINE_HTML) {
+          $inline_html = $token[1];
+          // T_INLINE_HTML blocks can be split. Need to handle the case
+          // where one token has "<scr" and the next has "ipt"
+          while (self::_token_matches(array(T_INLINE_HTML), $tokens, $token_number + 1)) {
+            $token_number++;
+            $token = $tokens[$token_number];
+            $inline_html .= $token[1];
+          }
 
-	  if ($frame) {
-	    $frame->expr_append($inline_html);
-	  }
+          if ($frame) {
+            $frame->expr_append($inline_html);
+          }
 
-	  // Note: This approach won't catch <script src="..."> blocks if the src
-	  // URL is generated via < ? = url::site() ? > or some other PHP.
-	  // Assume that all such script blocks with a src URL have an
-	  // empty element body.
-	  // But we'll catch closing tags for such blocks, so don't keep track
-	  // of opening / closing tag count since it would be meaningless.
+          // Note: This approach won't catch <script src="..."> blocks if the src
+          // URL is generated via < ? = url::site() ? > or some other PHP.
+          // Assume that all such script blocks with a src URL have an
+          // empty element body.
+          // But we'll catch closing tags for such blocks, so don't keep track
+          // of opening / closing tag count since it would be meaningless.
 
-	  // Handle multiple start / end blocks on the same line?
-	  $opening_script_pos = $closing_script_pos = 0;
-	  if (preg_match_all('{</script>}i', $inline_html, $matches, PREG_OFFSET_CAPTURE)) {
-	    $last_match = array_pop($matches[0]);
-	    if (is_array($last_match)) {
-	      $closing_script_pos = $last_match[1];
-	    } else {
-	      $closing_script_pos = $last_match;
-	    }
-	  }
-	  if (preg_match('{<script\b[^>]*>}i', $inline_html, $matches, PREG_OFFSET_CAPTURE)) {
-	    $last_match = array_pop($matches[0]);
-	    if (is_array($last_match)) {
-	      $opening_script_pos = $last_match[1];
-	    } else {
-	      $opening_script_pos = $last_match;
-	    }
-	  }
-	  if ($opening_script_pos != $closing_script_pos) {
-	    $in_script_block = $opening_script_pos > $closing_script_pos;
-	  }
-	}
+          // Handle multiple start / end blocks on the same line?
+          $opening_script_pos = $closing_script_pos = 0;
+          if (preg_match_all('{</script>}i', $inline_html, $matches, PREG_OFFSET_CAPTURE)) {
+            $last_match = array_pop($matches[0]);
+            if (is_array($last_match)) {
+              $closing_script_pos = $last_match[1];
+            } else {
+              $closing_script_pos = $last_match;
+            }
+          }
+          if (preg_match('{<script\b[^>]*>}i', $inline_html, $matches, PREG_OFFSET_CAPTURE)) {
+            $last_match = array_pop($matches[0]);
+            if (is_array($last_match)) {
+              $opening_script_pos = $last_match[1];
+            } else {
+              $opening_script_pos = $last_match;
+            }
+          }
+          if ($opening_script_pos != $closing_script_pos) {
+            $in_script_block = $opening_script_pos > $closing_script_pos;
+          }
+        }
 
-	// Look and report each instance of < ? = ... ? >
-	if (!is_array($token)) {
-	  // A single char token, e.g: ; ( )
-	  if ($frame) {
-	    $frame->expr_append($token);
-	  }
-	} else if ($token[0] == T_OPEN_TAG_WITH_ECHO) {
-	  // No need for a stack here - assume < ? = cannot be nested.
-	  $frame = self::_create_frame($token, $in_script_block);
+        // Look and report each instance of < ? = ... ? >
+        if (!is_array($token)) {
+          // A single char token, e.g: ; ( )
+          if ($frame) {
+            $frame->expr_append($token);
+          }
+        } else if ($token[0] == T_OPEN_TAG_WITH_ECHO) {
+          // No need for a stack here - assume < ? = cannot be nested.
+          $frame = self::_create_frame($token, $in_script_block);
         } else if ($frame && $token[0] == T_CLOSE_TAG) {
-	  // Store the < ? = ... ? > block that just ended here.
-	  $found[$view][] = $frame;
-	  $frame = null;
+          // Store the < ? = ... ? > block that just ended here.
+          $found[$view][] = $frame;
+          $frame = null;
         } else if ($frame && $token[0] == T_VARIABLE) {
-	  $frame->expr_append($token[1]);
+          $frame->expr_append($token[1]);
           if ($token[1] == '$theme') {
-	    if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
-		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-		in_array($tokens[$token_number + 2][1],
-			 array("thumb_proportion", "site_menu", "album_menu", "tag_menu", "photo_menu",
+            if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
+                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+                in_array($tokens[$token_number + 2][1],
+                         array("thumb_proportion", "site_menu", "album_menu", "tag_menu", "photo_menu",
                                "context_menu", "pager", "site_status", "messages", "album_blocks",
                                "album_bottom", "album_top", "body_attributes", "credits",
                                "dynamic_bottom", "dynamic_top", "footer", "head", "header_bottom",
                                "header_top", "page_bottom", "page_top", "photo_blocks", "photo_bottom",
                                "photo_top", "resize_bottom", "resize_top", "sidebar_blocks", "sidebar_bottom",
                                "sidebar_top", "thumb_bottom", "thumb_info", "thumb_top")) &&
-		self::_token_matches("(", $tokens, $token_number + 3)) {
+                self::_token_matches("(", $tokens, $token_number + 3)) {
 
-	      $method = $tokens[$token_number + 2][1];
-	      $frame->expr_append("->$method(");
+              $method = $tokens[$token_number + 2][1];
+              $frame->expr_append("->$method(");
 
-	      $token_number += 3;
-	      $token = $tokens[$token_number];
-
-              $frame->is_safe_html(true);
-	    } else if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
-		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-		in_array($tokens[$token_number + 2][1],
-			 array("css", "script", "url")) &&
-		self::_token_matches("(", $tokens, $token_number + 3) &&
-                // Only allow constant strings here
-                self::_token_matches(array(T_CONSTANT_ENCAPSED_STRING), $tokens, $token_number + 4)) {
-
-	      $method = $tokens[$token_number + 2][1];
-	      $frame->expr_append("->$method(");
-
-	      $token_number += 4;
-	      $token = $tokens[$token_number];
+              $token_number += 3;
+              $token = $tokens[$token_number];
 
               $frame->is_safe_html(true);
-	    }
+            } else if (self::_token_matches(array(T_OBJECT_OPERATOR, "->"), $tokens, $token_number + 1) &&
+                       self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+                       in_array($tokens[$token_number + 2][1],
+                                array("css", "script", "url")) &&
+                       self::_token_matches("(", $tokens, $token_number + 3) &&
+                       // Only allow constant strings here
+                       self::_token_matches(array(T_CONSTANT_ENCAPSED_STRING), $tokens, $token_number + 4)) {
+
+              $method = $tokens[$token_number + 2][1];
+              $frame->expr_append("->$method(");
+
+              $token_number += 4;
+              $token = $tokens[$token_number];
+
+              $frame->is_safe_html(true);
+            }
           }
-	} else if ($frame && $token[0] == T_STRING) {
-	  $frame->expr_append($token[1]);
-	  // t() and t2() are special in that they're guaranteed to return a SafeString().
-	  if (in_array($token[1], array("t", "t2"))) {
-	    if (self::_token_matches("(", $tokens, $token_number + 1)) {
-	      $frame->is_safe_html(true);
-	      $frame->expr_append("(");
+        } else if ($frame && $token[0] == T_STRING) {
+          $frame->expr_append($token[1]);
+          // t() and t2() are special in that they're guaranteed to return a SafeString().
+          if (in_array($token[1], array("t", "t2"))) {
+            if (self::_token_matches("(", $tokens, $token_number + 1)) {
+              $frame->is_safe_html(true);
+              $frame->expr_append("(");
 
-	      $token_number++;
-	      $token = $tokens[$token_number];
-	    }
-	  } else if ($token[1] == "SafeString") {
-	    // Looking for SafeString::of(...
-	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-		in_array($tokens[$token_number + 2][1], array("of", "purify")) &&
-		self::_token_matches("(", $tokens, $token_number + 3)) {
+              $token_number++;
+              $token = $tokens[$token_number];
+            }
+          } else if ($token[1] == "SafeString") {
+            // Looking for SafeString::of(...
+            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+                in_array($tokens[$token_number + 2][1], array("of", "purify")) &&
+                self::_token_matches("(", $tokens, $token_number + 3)) {
               // Not checking for of_safe_html(). We want such calls to be marked dirty (thus reviewed).
 
-	      $frame->is_safe_html(true);
+              $frame->is_safe_html(true);
 
-	      $method = $tokens[$token_number + 2][1];
-	      $frame->expr_append("::$method(");
+              $method = $tokens[$token_number + 2][1];
+              $frame->expr_append("::$method(");
 
-	      $token_number += 3;
-	      $token = $tokens[$token_number];
-	    }
-	  } else if ($token[1] == "json_encode") {
-	    if (self::_token_matches("(", $tokens, $token_number + 1)) {
-	      $frame->is_safe_js(true);
-	      $frame->expr_append("(");
+              $token_number += 3;
+              $token = $tokens[$token_number];
+            }
+          } else if ($token[1] == "json_encode") {
+            if (self::_token_matches("(", $tokens, $token_number + 1)) {
+              $frame->is_safe_js(true);
+              $frame->expr_append("(");
 
-	      $token_number++;
-	      $token = $tokens[$token_number];
-	    }
-	  } else if ($token[1] == "url") {
-	    // url methods return safe HTML
-	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-		in_array($tokens[$token_number + 2][1],
-			 array("site", "current", "base", "file", "abs_site", "abs_current",
-			       "abs_file", "merge")) &&
-		self::_token_matches("(", $tokens, $token_number + 3)) {
-	      $frame->is_safe_html(true);
+              $token_number++;
+              $token = $tokens[$token_number];
+            }
+          } else if ($token[1] == "url") {
+            // url methods return safe HTML
+            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+                in_array($tokens[$token_number + 2][1],
+                         array("site", "current", "base", "file", "abs_site", "abs_current",
+                               "abs_file", "merge")) &&
+                self::_token_matches("(", $tokens, $token_number + 3)) {
+              $frame->is_safe_html(true);
 
-	      $method = $tokens[$token_number + 2][1];
-	      $frame->expr_append("::$method(");
+              $method = $tokens[$token_number + 2][1];
+              $frame->expr_append("::$method(");
 
-	      $token_number += 3;
-	      $token = $tokens[$token_number];
-	    }
-	  } else if ($token[1] == "html") {
-	    if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
-		self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-		in_array($tokens[$token_number + 2][1],
-			 array("clean", "purify", "js_string", "clean_attribute")) &&
-		self::_token_matches("(", $tokens, $token_number + 3)) {
+              $token_number += 3;
+              $token = $tokens[$token_number];
+            }
+          } else if ($token[1] == "html") {
+            if (self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
+                self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
+                in_array($tokens[$token_number + 2][1],
+                         array("clean", "purify", "js_string", "clean_attribute")) &&
+                self::_token_matches("(", $tokens, $token_number + 3)) {
               // Not checking for mark_safe(). We want such calls to be marked dirty (thus reviewed).
 
-	      $method = $tokens[$token_number + 2][1];
-	      $frame->expr_append("::$method(");
+              $method = $tokens[$token_number + 2][1];
+              $frame->expr_append("::$method(");
 
-	      $token_number += 3;
-	      $token = $tokens[$token_number];
+              $token_number += 3;
+              $token = $tokens[$token_number];
 
               if ("js_string" == $method) {
                 $frame->is_safe_js(true);
               } else {
                 $frame->is_safe_html(true);
               }
-	    }
-	  } 
-	} else if ($frame && $token[0] == T_OBJECT_OPERATOR) {
-	  $frame->expr_append($token[1]);
+            }
+          } 
+        } else if ($frame && $token[0] == T_OBJECT_OPERATOR) {
+          $frame->expr_append($token[1]);
 
-	  if (self::_token_matches(array(T_STRING), $tokens, $token_number + 1) &&
-	      in_array($tokens[$token_number + 1][1],
-		       array("for_js", "for_html", "purified_html", "for_html_attr")) &&
-	      self::_token_matches("(", $tokens, $token_number + 2)) {
-	    $method = $tokens[$token_number + 1][1];
-	    $frame->expr_append("$method(");
+          if (self::_token_matches(array(T_STRING), $tokens, $token_number + 1) &&
+              in_array($tokens[$token_number + 1][1],
+                       array("for_js", "for_html", "purified_html", "for_html_attr")) &&
+              self::_token_matches("(", $tokens, $token_number + 2)) {
+            $method = $tokens[$token_number + 1][1];
+            $frame->expr_append("$method(");
 
-	    $token_number += 2;
-	    $token = $tokens[$token_number];
+            $token_number += 2;
+            $token = $tokens[$token_number];
 
-	    if ("for_js" == $method) {
-	      $frame->is_safe_js(true);
-	    } else {
-	      $frame->is_safe_html(true);
-	    }
-	  }
+            if ("for_js" == $method) {
+              $frame->is_safe_js(true);
+            } else {
+              $frame->is_safe_html(true);
+            }
+          }
         } else if ($frame) {
-	  $frame->expr_append($token[1]);
-	}
+          $frame->expr_append($token[1]);
+        }
       }
     }
 
@@ -252,26 +252,26 @@ class Xss_Security_Test extends Unit_Test_Case {
     ksort($found);
     foreach ($found as $view => $frames) {
       foreach ($frames as $frame) {
-	$state = "DIRTY";
-	if ($frame->in_script_block()) {
-	  $state = "DIRTY_JS";
-	  if ($frame->is_safe_js()) {
-	    $state = "CLEAN";
-	  }
-	} else {
-	  if ($frame->is_safe_html()) {
-	    $state = "CLEAN";
-	  }
-	}
+        $state = "DIRTY";
+        if ($frame->in_script_block()) {
+          $state = "DIRTY_JS";
+          if ($frame->is_safe_js()) {
+            $state = "CLEAN";
+          }
+        } else {
+          if ($frame->is_safe_html()) {
+            $state = "CLEAN";
+          }
+        }
 
-	if ("CLEAN" == $state) {
-	  // Don't print CLEAN instances - No need to update the golden
-	  // file when adding / moving clean instances.
-	  continue;
-	}
+        if ("CLEAN" == $state) {
+          // Don't print CLEAN instances - No need to update the golden
+          // file when adding / moving clean instances.
+          continue;
+        }
 
-	fprintf($fd, "%-60s %-3s %-8s %s\n",
-		$view, $frame->line(), $state, $frame->expr());
+        fprintf($fd, "%-60s %-3s %-8s %s\n",
+                $view, $frame->line(), $state, $frame->expr());
       }
     }
     fclose($fd);
@@ -280,7 +280,7 @@ class Xss_Security_Test extends Unit_Test_Case {
     $canonical = MODPATH . "gallery/tests/xss_data.txt";
     exec("diff $canonical $new", $output, $return_value);
     $this->assert_false(
-      $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
+                        $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 
   private static function _create_frame($token, $in_script_block) {
@@ -296,9 +296,9 @@ class Xss_Security_Test extends Unit_Test_Case {
 
     if (is_array($expected_token)) {
       for ($i = 0; $i < count($expected_token); $i++) {
-	if ($expected_token[$i] != $token[$i]) {
-	  return false;
-	}
+        if ($expected_token[$i] != $token[$i]) {
+          return false;
+        }
       }
       return true;
     } else {

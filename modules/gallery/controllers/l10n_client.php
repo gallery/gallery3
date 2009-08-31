@@ -90,13 +90,13 @@ class L10n_Client_Controller extends Controller {
     }
 
     $session = Session::instance();
-		$l10n_mode = $session->get("l10n_mode", false);
+                $l10n_mode = $session->get("l10n_mode", false);
     $session->set("l10n_mode", !$l10n_mode);
 
     $redirect_url = "admin/languages";
-		if (!$l10n_mode) {
-			$redirect_url .= "#l10n-client";
-		}
+                if (!$l10n_mode) {
+                        $redirect_url .= "#l10n-client";
+                }
  
     url::redirect($redirect_url);
   }

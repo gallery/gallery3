@@ -92,7 +92,7 @@ class gallery_Core {
       $can_add = $item && access::can("add", $item);
 
       if ($can_add) {
-      	$menu->append($add_menu = Menu::factory("submenu")
+              $menu->append($add_menu = Menu::factory("submenu")
                     ->id("add_menu")
                     ->label(t("Add")));
         $add_menu->append(Menu::factory("dialog")
@@ -100,11 +100,11 @@ class gallery_Core {
                     ->label(t("Add photos"))
                     ->url(url::site("simple_uploader/app/$item->id")));
         if ($item->is_album()) {
-        	$add_menu->append(Menu::factory("dialog")
+                $add_menu->append(Menu::factory("dialog")
                       ->id("add_album_item")
                       ->label(t("Add an album"))
                       ->url(url::site("form/add/albums/$item->id?type=album")));
-				}
+                                }
       }
 
       $menu->append($options_menu = Menu::factory("submenu")

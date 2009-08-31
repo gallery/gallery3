@@ -21,19 +21,19 @@ class SafeString_Test extends Unit_Test_Case {
   public function toString_escapes_for_html_test() {
     $safe_string = new SafeString("hello <p>world</p>");
     $this->assert_equal("hello &lt;p&gt;world&lt;/p&gt;",
-			$safe_string);
+                        $safe_string);
   }
 
   public function toString_for_safe_string_test() {
     $safe_string = SafeString::of_safe_html("hello <p>world</p>");
     $this->assert_equal("hello <p>world</p>",
-			$safe_string);
+                        $safe_string);
   }
 
   public function for_html_test() {
     $safe_string = new SafeString("hello <p>world</p>");
     $this->assert_equal("hello &lt;p&gt;world&lt;/p&gt;",
-			$safe_string->for_html());
+                        $safe_string->for_html());
   }
 
   public function safestring_of_safestring_test() {
@@ -50,27 +50,27 @@ class SafeString_Test extends Unit_Test_Case {
     $safe_string = new SafeString('"<em>Foo</em>\'s bar"');
     $js_string = $safe_string->for_js();
     $this->assert_equal('"\\"<em>Foo<\\/em>\'s bar\\""',
-			$js_string);
+                        $js_string);
   }
 
   public function for_html_attr_test() {
     $safe_string = new SafeString('"<em>Foo</em>\'s bar"');
     $attr_string = $safe_string->for_html_attr();
     $this->assert_equal('&quot;&lt;em&gt;Foo&lt;/em&gt;&#039;s bar&quot;',
-			$attr_string);
+                        $attr_string);
   }
 
   public function for_html_attr_with_safe_html_test() {
     $safe_string = SafeString::of_safe_html('"<em>Foo</em>\'s bar"');
     $attr_string = $safe_string->for_html_attr();
     $this->assert_equal('&quot;<em>Foo</em>&#039;s bar&quot;',
-			$attr_string);
+                        $attr_string);
   }
 
   public function string_safestring_equality_test() {
     $safe_string = new SafeString("hello <p>world</p>");
     $this->assert_equal("hello <p>world</p>",
-			$safe_string->unescaped());
+                        $safe_string->unescaped());
     $escaped_string = "hello &lt;p&gt;world&lt;/p&gt;";
     $this->assert_equal($escaped_string, $safe_string);
 

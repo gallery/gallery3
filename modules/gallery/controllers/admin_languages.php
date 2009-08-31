@@ -21,10 +21,10 @@ class Admin_Languages_Controller extends Admin_Controller {
   public function index($share_translations_form=null) {
     $v = new Admin_View("admin.html");
     $v->content = new View("admin_languages.html");
-		$v->content->available_locales = locales::available();
+                $v->content->available_locales = locales::available();
     $v->content->installed_locales = locales::installed();
     $v->content->default_locale = module::get_var("gallery", "default_locale");
-		
+                
     if (empty($share_translations_form)) {
       $share_translations_form = $this->_share_translations_form();
     }
@@ -35,21 +35,21 @@ class Admin_Languages_Controller extends Admin_Controller {
 
   public function save() {
     access::verify_csrf();
-		
-		locales::update_installed($this->input->post("installed_locales"));
-		
-		$installed_locales = array_keys(locales::installed());
+                
+                locales::update_installed($this->input->post("installed_locales"));
+                
+                $installed_locales = array_keys(locales::installed());
     $new_default_locale = $this->input->post("default_locale");
-		if (!in_array($new_default_locale, $installed_locales)) {
-			if (!empty($installed_locales)) {
-				$new_default_locale = $installed_locales[0];
-			} else {
-				$new_default_locale = "en_US";
-			}
-		}
-		module::set_var("gallery", "default_locale", $new_default_locale);
-		
-		print json_encode(array("result" => "success"));
+                if (!in_array($new_default_locale, $installed_locales)) {
+                        if (!empty($installed_locales)) {
+                                $new_default_locale = $installed_locales[0];
+                        } else {
+                                $new_default_locale = "en_US";
+                        }
+                }
+                module::set_var("gallery", "default_locale", $new_default_locale);
+                
+                print json_encode(array("result" => "success"));
   }
 
   public function share() {

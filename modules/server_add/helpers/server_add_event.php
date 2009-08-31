@@ -35,7 +35,7 @@ class server_add_event_Core {
       // turn that into a dropdown if there are two different ways to add things.  Do that in a
       // portable way for now.  If we find ourselves duplicating this pattern, we should make an
       // API method for this.
-			$add_menu = $menu->get("add_menu");
+                        $add_menu = $menu->get("add_menu");
       $add_menu->append(Menu::factory("dialog")
                   ->id("server_add")
                   ->label(t("Server add"))
