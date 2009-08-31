@@ -95,7 +95,7 @@
         <ul class="gBreadcrumbs">
           <? foreach ($parents as $parent): ?>
           <li>
-            <a href="<?= url::site("albums/{$parent->id}?show=$theme->item()->id") ?>">
+            <a href="<?= url::site("albums/{$parent->id}?show={$theme->item()->id}") ?>">
               <?= html::purify($parent->title) ?>
             </a>
           </li>
