@@ -197,8 +197,7 @@
                          array("album_title" => html::purify($album->title))));
 
       print json_encode(
-        array("result" => "success",
-              "location" => url::site("albums/$album->id")));
+        array("result" => "success"));
     } else {
       print json_encode(
         array("result" => "error",

@@ -92,7 +92,7 @@ class installer {
       }
     }
 
-    return mysql_connect($config["host"], $config["user"], $config["password"]);
+    return @mysql_connect($config["host"], $config["user"], $config["password"]);
   }
 
   static function select_db($config) {
