@@ -40,7 +40,7 @@
   <div id="gPhoto">
     <?= $theme->resize_top($item) ?>
     <? if (access::can("view_full", $item)): ?>
-    <a href="<?= $item->file_url() ?>" class="gFullSizeLink" title="<?= t("View full size") ?>">
+    <a href="<?= $item->file_url() ?>" class="gFullSizeLink" title="<?= t("View full size")->for_html_attr() ?>">
       <? endif ?>
       <?= $item->resize_img(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?>
       <? if (access::can("view_full", $item)): ?>

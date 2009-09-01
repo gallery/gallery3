@@ -122,7 +122,7 @@
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
-                 alt="<?= html::purify($item->title) ?>"
+                 alt="<?= html::purify($item->title)->for_html_attr() ?>"
                  <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
               />
               <? else: ?>

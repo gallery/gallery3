@@ -27,6 +27,6 @@
       <? $i++ ?>
       <? endforeach ?>
     </table>
-    <input type="submit" value="<?= t("Update") ?>"/>
+    <input type="submit" value="<?= t("Update")->for_html_attr() ?>"/>
   </form>
 </div>

@@ -6,7 +6,7 @@
       <input type="text" name="q" id="gSearch"/>
     </li>
     <li>
-      <input type="submit" value="<?= t("Go") ?>" />
+      <input type="submit" value="<?= t("Go")->for_html_attr() ?>" />
     </li>
   </ul>
 </form>
