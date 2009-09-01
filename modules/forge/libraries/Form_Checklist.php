@@ -67,7 +67,7 @@ class Form_Checklist_Core extends Form_Input {
 			$data['value']   = $val;
 			$data['checked'] = $checked;
 
-			$checklist .= '<li><label>'.form::checkbox($data).' '.$title.'</label></li>'.$nl;
+			$checklist .= '<li><label>'.form::checkbox($data).' '.html::purify($title).'</label></li>'.$nl;
 		}
 		$checklist .= '</ul>';
 
