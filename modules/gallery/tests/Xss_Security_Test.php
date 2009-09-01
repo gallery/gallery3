@@ -34,7 +34,9 @@ class Xss_Security_Test extends Unit_Test_Case {
       $in_script_block = false;
       $inline_html = "";
       $in_attribute_js_context = false;
+      $in_attribute = false;
       $href_attribute_start = false;
+      $preceded_by_quote = false;
 
       for ($token_number = 0; $token_number < count($tokens); $token_number++) {
         $token = $tokens[$token_number];
@@ -86,21 +88,31 @@ class Xss_Security_Test extends Unit_Test_Case {
           }
         }
 
-        $href_attribute_start = preg_match('{\bhref\s*=\s*[\'"]?\s*$}i', $inline_html);
+        $preceded_by_quote = preg_match('{[\'"]\s*$}i', $inline_html);
 
         $pos = false;
-        if ($in_attribute_js_context && ($pos = strpos($inline_html, $delimiter)) !== false) {
+        if (($in_attribute || $in_attribute_js_context) &&
+            ($pos = strpos($inline_html, $delimiter)) !== false) {
           $in_attribute_js_context = false;
+          $in_attribute = false;
+          $href_attribute_start = false;
         }
-        if (!$in_attribute_js_context) {
+        if (!$in_attribute_js_context || !$in_attribute) {
           $pos = ($pos === false) ? 0 : $pos;
           if (preg_match('{\bhref\s*=\s*(")javascript:[^"]*$}i', $inline_html, $matches, 0, $pos) ||
               preg_match("{\bhref\s*=\s*(')javascript:[^']*$}i", $inline_html, $matches, 0, $pos) ||
               preg_match("{\bon[a-z]+\s*=\s*(')[^']*$}i", $inline_html, $matches, 0, $pos) ||
               preg_match('{\bon[a-z]+\s*=\s*(")[^"]*$}i', $inline_html, $matches, 0, $pos)) {
             $in_attribute_js_context = true;
+            $in_attribute = true;
             $delimiter = $matches[1];
             $inline_html = "";
+          } else if (preg_match('{\b([a-z]+)\s*=\s*(")([^"]*)$}i', $inline_html, $matches, 0, $pos) ||
+                     preg_match("{\b([a-z]+)\s*=\s*(')([^']*)$}i", $inline_html, $matches, 0, $pos)) {
+            $in_attribute = true;
+            $delimiter = $matches[2];
+            $inline_html = "";
+            $href_attribute_start = strtolower($matches[1]) == "href" && empty($matches[3]);
           }
         }
 
@@ -113,7 +125,8 @@ class Xss_Security_Test extends Unit_Test_Case {
         } else if ($token[0] == T_OPEN_TAG_WITH_ECHO) {
           // No need for a stack here - assume < ? = cannot be nested.
           $frame = self::_create_frame($token, $in_script_block,
-                                       $href_attribute_start, $in_attribute_js_context);
+                                       $href_attribute_start, $in_attribute_js_context,
+                                       $in_attribute, $preceded_by_quote);
           $href_attribute_start = false;
         } else if ($frame && $token[0] == T_CLOSE_TAG) {
           // Store the < ? = ... ? > block that just ended here.
@@ -203,6 +216,7 @@ class Xss_Security_Test extends Unit_Test_Case {
                 self::_token_matches("(", $tokens, $token_number + 3)) {
               $frame->is_safe_html(true);
               $frame->is_safe_href_attr(true);
+              $frame->is_safe_attr(true);
 
               $method = $tokens[$token_number + 2][1];
               $frame->expr_append("::$method(");
@@ -229,6 +243,9 @@ class Xss_Security_Test extends Unit_Test_Case {
               } else {
                 $frame->is_safe_html(true);
               }
+              if ("clean_attribute" == $method) {
+                $frame->is_safe_attr(true);
+              }
             }
           } 
         } else if ($frame && $token[0] == T_OBJECT_OPERATOR) {
@@ -248,6 +265,9 @@ class Xss_Security_Test extends Unit_Test_Case {
               $frame->is_safe_js(true);
             } else {
               $frame->is_safe_html(true);
+            }
+            if ("for_html_attr" == $method) {
+              $frame->is_safe_attr(true);
             }
           }
         } else if ($frame) {
@@ -290,7 +310,7 @@ class Xss_Security_Test extends Unit_Test_Case {
           $state = "ILLEGAL";
         } else if ($frame->in_script_block()) {
           $state = "DIRTY_JS";
-          if ($frame->is_safe_js()) {
+          if ($frame->is_safe_js() && !$frame->preceded_by_quote()) {
             $state = "CLEAN";
           }
         } else if ($frame->in_attribute_js_context()) {
@@ -299,6 +319,11 @@ class Xss_Security_Test extends Unit_Test_Case {
         } else if ($frame->in_href_attribute()) {
           $state = "DIRTY_JS";
           if ($frame->is_safe_href_attr()) {
+            $state = "CLEAN";
+          }
+        } else if ($frame->in_attribute()) {
+          $state = "DIRTY_ATTR";
+          if ($frame->is_safe_attr()) {
             $state = "CLEAN";
           }
         } else {
@@ -327,9 +352,11 @@ class Xss_Security_Test extends Unit_Test_Case {
   }
 
   private static function _create_frame($token, $in_script_block,
-                                        $href_attribute_start, $in_attribute_js_context) {
+                                        $href_attribute_start, $in_attribute_js_context,
+                                        $in_attribute, $preceded_by_quote) {
     return new Xss_Security_Test_Frame($token[2], $in_script_block,
-                                       $href_attribute_start, $in_attribute_js_context);
+                                       $href_attribute_start, $in_attribute_js_context,
+                                       $in_attribute, $preceded_by_quote);
   }
 
   private static function _token_matches($expected_token, &$tokens, $token_number) {
@@ -360,14 +387,20 @@ class Xss_Security_Test_Frame {
   private $_in_href_attribute = false;
   private $_is_safe_href_attr = false;
   private $_in_attribute_js_context = false;
+  private $_in_attribute = false;
+  private $_preceded_by_quote = false;
+  private $_is_safe_attr = false;
   private $_line;
 
   function __construct($line_number, $in_script_block,
-                       $href_attribute_start, $in_attribute_js_context) {
+                       $href_attribute_start, $in_attribute_js_context,
+                       $in_attribute, $preceded_by_quote) {
     $this->_line = $line_number;
     $this->_in_script_block = $in_script_block;
     $this->_in_href_attribute = $href_attribute_start;
     $this->_in_attribute_js_context = $in_attribute_js_context;
+    $this->_in_attribute = $in_attribute;
+    $this->_preceded_by_quote = $preceded_by_quote;
   }
 
   function expr() {
@@ -384,6 +417,10 @@ class Xss_Security_Test_Frame {
 
   function in_href_attribute() {
     return $this->_in_href_attribute;
+  }
+
+  function in_attribute() {
+    return $this->_in_attribute;
   }
 
   function in_attribute_js_context() {
@@ -404,11 +441,22 @@ class Xss_Security_Test_Frame {
     return $this->_is_safe_href_attr;
   }
 
+  function is_safe_attr($new_val=NULL) {
+    if ($new_val !== NULL) {
+      $this->_is_safe_attr  = (bool) $new_val;
+    }
+    return $this->_is_safe_attr;
+  }
+
   function is_safe_js($new_val=NULL) {
     if ($new_val !== NULL) {
       $this->_is_safe_js = (bool) $new_val;
     }
     return $this->_is_safe_js;
+  }
+
+  function preceded_by_quote() {
+    return $this->_preceded_by_quote;
   }
 
   function line() {

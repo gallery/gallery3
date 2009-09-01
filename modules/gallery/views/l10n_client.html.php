@@ -66,7 +66,7 @@
           (<a href="http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html"><?= t("learn more about plural forms") ?></a>)
           <?= form::textarea("l10n-edit-plural-translation-other", "", ' rows="2"') ?>
         </div>
-        <input type="submit" name="l10n-edit-save" value="<?= t("Save translation") ?>"/>
+        <input type="submit" name="l10n-edit-save" value="<?= t("Save translation")->for_html_attr() ?>"/>
         <a href="javascript: Gallery.l10nClient.copySourceText()"
            class="gButtonLink ui-state-default ui-corner-all"><?= t("Copy source text") ?></a>
       </form>

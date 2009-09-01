@@ -4,7 +4,7 @@
     <a href="#">
       <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
            class="gAvatar"
-           alt="<?= html::clean($comment->author_name()) ?>"
+           alt="<?= html::clean_attribute($comment->author_name()) ?>"
            width="40"
            height="40" />
     </a>

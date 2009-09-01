@@ -7,7 +7,7 @@
 
   <? if (empty($name)): ?>
   <a href="<?= url::site("admin/watermarks/form_add") ?>"
-     title="<?= t("Upload a watermark") ?>"
+     title="<?= t("Upload a watermark")->for_html_attr() ?>"
      class="gDialogLink gButtonLink ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-document-b"></span><?= t("Upload a watermark") ?></a>
   <? else: ?>
   <h2> <?= t("Active Watermark") ?> </h2>
@@ -26,10 +26,10 @@
     </div>
     <div class="controls">
       <a href="<?= url::site("admin/watermarks/form_edit") ?>"
-         title="<?= t("Edit Watermark") ?>"
+         title="<?= t("Edit Watermark")->for_html_attr() ?>"
          class="gDialogLink gButtonLink ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-pencil"></span><?= t("edit") ?></a>
       <a href="<?= url::site("admin/watermarks/form_delete") ?>"
-         title="<?= t("Delete Watermark") ?>"
+         title="<?= t("Delete Watermark")->for_html_attr() ?>"
          class="gDialogLink gButtonLink ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
     </div>
   </div>

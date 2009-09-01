@@ -96,8 +96,7 @@ class Movies_Controller extends Items_Controller {
         t("Saved photo %photo_title", array("photo_title" => $photo->title)));
 
       print json_encode(
-        array("result" => "success",
-              "location" => url::site("photos/$photo->id")));
+        array("result" => "success"));
     } else {
       print json_encode(
         array("result" => "error",

@@ -3,7 +3,7 @@
   <? if ($user->guest): ?>
   <li class="first">
     <a href="<?= url::site("login/ajax") ?>"
-       title="<?= t("Login to Gallery") ?>"
+       title="<?= t("Login to Gallery")->for_html_attr() ?>"
        id="gLoginLink"><?= t("Login") ?></a>
   </li>
   <? else: ?>

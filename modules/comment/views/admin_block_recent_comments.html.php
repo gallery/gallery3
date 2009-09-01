@@ -4,7 +4,7 @@
   <li class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
     <img src="<?= $comment->author()->avatar_url(32, $theme->url("images/avatar.jpg", true)) ?>"
          class="gAvatar"
-         alt="<?= html::clean($comment->author_name()) ?>"
+         alt="<?= html::clean_attribute($comment->author_name()) ?>"
          width="32"
          height="32" />
     <?= gallery::date_time($comment->created) ?>

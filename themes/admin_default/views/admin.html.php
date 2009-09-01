@@ -48,7 +48,7 @@
           <li class="first"><?= html::anchor("albums/1", "&larr; ".t("Back to the Gallery")) ?></li>
           <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1&amp;csrf=$csrf") ?>"><?= t("Logout") ?></a></li>
         </ul>
-        <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery") ?>">
+        <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
           &larr; <?= t("back to the ...") ?>
         </a>
         <div id="gSiteAdminMenu" style="display: none;">

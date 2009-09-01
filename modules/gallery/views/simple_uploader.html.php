@@ -35,7 +35,7 @@
     <span id="gUploadQueueInfo">
       <?= t("Upload Queue") ?>
     </span>
-    <a id="gUploadCancel" title="<?= t("Cancel all the pending uploads") ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
+    <a id="gUploadCancel" title="<?= t("Cancel all the pending uploads")->for_html_attr() ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
   </p>
   <div id="gAddPhotosCanvas" style="text-align: center;">
     <div id="gAddPhotosQueue"></div>

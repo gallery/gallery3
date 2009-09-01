@@ -42,6 +42,6 @@
   <form method="post" action="<?= url::site("move/save/$source->id") ?>">
     <?= access::csrf_form_field() ?>
     <input type="hidden" name="target_id" value="" />
-    <input type="submit" id="gMoveButton" value="<?= t("Move") ?>" disabled="disabled"/>
+    <input type="submit" id="gMoveButton" value="<?= t("Move")->for_html_attr() ?>" disabled="disabled"/>
   </form>
 </div>
