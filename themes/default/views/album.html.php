@@ -30,7 +30,7 @@
   <? if ($user->admin || access::can("add", $item)): ?>
   <? $addurl = url::file("index.php/simple_uploader/app/$item->id") ?>
   <li><?= t("There aren't any photos here yet! <a %attrs>Add some</a>.",
-            array("attrs" => "href=\"$addurl\" class=\"gDialogLink\"")) ?></li>
+            array("attrs" => html::mark_clean("href=\"$addurl\" class=\"gDialogLink\""))) ?></li>
   <? else: ?>
   <li><?= t("There aren't any photos here yet!") ?></li>
   <? endif; ?>
