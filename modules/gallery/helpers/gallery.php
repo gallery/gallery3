@@ -268,13 +268,16 @@ class gallery_Core {
         } else {
           $disabledState = " ";
         }
+        if ($item->is_photo()) {
+          $options_menu
+            ->append(Menu::factory("ajax_link")
+                     ->id("make_album_cover")
+                     ->label($cover_title)
+                     ->css_class("ui-icon-star")
+                     ->ajax_handler("function(data) { window.location.reload() }")
+                     ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")));
+        }
         $options_menu
-          ->append(Menu::factory("ajax_link")
-                   ->id("make_album_cover")
-                   ->label($cover_title)
-                   ->css_class("ui-icon-star")
-                   ->ajax_handler("function(data) { window.location.reload() }")
-                   ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")))
           ->append(Menu::factory("dialog")
                    ->id("delete")
                    ->label($delete_title)
