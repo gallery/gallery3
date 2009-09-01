@@ -1,9 +1,9 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script>
-  var TAG_RENAME_URL = "<?= url::site("admin/tags/rename/__ID__") ?>";
+  var TAG_RENAME_URL = <?= html::js_string(url::site("admin/tags/rename/__ID__")) ?>;
   $("document").ready(function() {
     // using JS for adding link titles to avoid running t() for each tag
-    $("#gTagAdmin .tag-name").attr("title", "<?= t("Click to edit this tag") ?>");
+    $("#gTagAdmin .tag-name").attr("title", <?= t("Click to edit this tag")->for_js() ?>);
     $("#gTagAdmin .delete-link").attr("title", $(".delete-link:first span").html());
 
     // In-place editing for tag admin
@@ -11,8 +11,8 @@
   });
   // make some values available within tag.js
   var csrf_token = "<?= $csrf ?>";
-  var save_i18n = '<?= t("save") ?>';
-  var cancel_i18n = '<?= t("cancel") ?>';
+  var save_i18n = <?= html::js_string(t("save")->for_html_attr()) ?>;
+  var cancel_i18n = <?= html::js_string(t("cancel")->for_html_attr()) ?>;
 </script>
 <div class="gBlock">
   <h2>

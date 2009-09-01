@@ -27,18 +27,24 @@ function closeEditInPlaceForms() {
   }
 }
 
+function str_replace(search_term, replacement, string) {
+  var temp = string.split(search_term);
+  return temp.join(replacement);
+}
+
 function editInPlace(element) {
   closeEditInPlaceForms();
 
   // create edit form
   var tag_id = $(this).attr('id').substr(5);
-  var tag_name = $(this).text();
+  var tag_name = $(this).html();
   var tag_width = $(this).width();
   $(this).parent().data("revert", $(this).parent().html());
   var form = '<form id="gRenameTagForm" method="post" class="ui-helper-clearfix" ';
   form += 'action="' + TAG_RENAME_URL.replace('__ID__', tag_id) + '">';
   form += '<input name="csrf" type="hidden" value="' + csrf_token + '" />';
-  form += '<input id="name" name="name" type="text" class="textbox" value="' + tag_name + '" />';
+  form += '<input id="name" name="name" type="text" class="textbox" value="' +
+          str_replace('"', "&quot;", tag_name) + '" />';
   form += '<input type="submit" class="submit ui-state-default ui-corner-all" value="' + save_i18n + '" i/>';
   form += '<a href="#">' + cancel_i18n + '</a>';
   form += '</form>';
