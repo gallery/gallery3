@@ -21,6 +21,7 @@ class Xss_Security_Test extends Unit_Test_Case {
   public function find_unescaped_variables_in_views_test() {
     $found = array();
     foreach (glob("*/*/views/*.php") as $view) {
+      if ($view != "modules/tag/views/admin_tags.html.php") continue;
       // List of all tokens without whitespace, simplifying parsing.
       $tokens = array();
       foreach (token_get_all(file_get_contents($view)) as $token) {
@@ -66,7 +67,7 @@ class Xss_Security_Test extends Unit_Test_Case {
           // of opening / closing tag count since it would be meaningless.
 
           // Handle multiple start / end blocks on the same line?
-          $opening_script_pos = $closing_script_pos = 0;
+          $opening_script_pos = $closing_script_pos = -1;
           if (preg_match_all('{</script>}i', $inline_html, $matches, PREG_OFFSET_CAPTURE)) {
             $last_match = array_pop($matches[0]);
             if (is_array($last_match)) {
@@ -75,7 +76,7 @@ class Xss_Security_Test extends Unit_Test_Case {
               $closing_script_pos = $last_match;
             }
           }
-          if (preg_match('{<script\b[^>]*>}i', $inline_html, $matches, PREG_OFFSET_CAPTURE)) {
+          if (preg_match_all('{<script\b[^>]*>}i', $inline_html, $matches, PREG_OFFSET_CAPTURE)) {
             $last_match = array_pop($matches[0]);
             if (is_array($last_match)) {
               $opening_script_pos = $last_match[1];
