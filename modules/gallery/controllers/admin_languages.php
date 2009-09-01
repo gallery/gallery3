@@ -61,7 +61,7 @@ class Admin_Languages_Controller extends Admin_Controller {
       return $this->index($form);
     }
 
-    if ($form->sharing->share) {
+    if ($this->input->post("share")) {
       l10n_client::submit_translations();
       message::success(t("Translations submitted"));
     } else {
