@@ -391,13 +391,6 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 .rtl #gRenameTagForm a, #gRenameTagForm span {
   float: right;
 }
-#gProgress button {
-  float: right;
-  margin-top: 1em;
-}
-.rtl #gProgress button {
-  float: left;
-}
 
 #gTaskLogDialog h1 {
   font-size: 1.1em;

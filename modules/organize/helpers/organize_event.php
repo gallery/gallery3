@@ -24,10 +24,10 @@ class organize_event_Core {
     if ($item && $item->is_album() && access::can("edit", $item)) {
       $menu->get("options_menu")
         ->append(Menu::factory("dialog")
-        ->id("organize")
-        ->label(t("Organize Album"))
-        ->css_id("gOrganizeLink")
-        ->url(url::site("organize/dialog/{$item->id}")));
+                 ->id("organize")
+                 ->label(t("Organize Album"))
+                 ->css_id("gOrganizeLink")
+                 ->url(url::site("organize/dialog/{$item->id}")));
     }
   }
 
@@ -38,6 +38,7 @@ class organize_event_Core {
                  ->id("organize")
                  ->label(t("Organize album"))
                  ->css_id("gOrganizeLink")
+                 ->css_class("ui-icon-folder-open")
                  ->url(url::site("organize/dialog/{$item->id}")));
     }
   }

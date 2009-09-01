@@ -71,8 +71,12 @@ a,
 #gDialog a,
 .gButtonLink,
 .gButtonLink:hover,
-.gButtonLink:active {
-  color: #5382BF !important;
+.gButtonLink:active,
+a.ui-state-hover,
+input.ui-state-hover,
+button.ui-state-hover {
+  color: #5382bf !important;
+  cursor: pointer !important;
   text-decoration: none;
   -moz-outline-style: none;
 }
@@ -371,6 +375,7 @@ form .gError,
   background-color: #e8e8e8;
   border-bottom: 1px solid #ccc;
   font-size: .8em;
+  min-height: 5em;
   padding: 1em 20px;
   position: relative;
 }

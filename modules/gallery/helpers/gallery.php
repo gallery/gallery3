@@ -268,13 +268,16 @@ class gallery_Core {
         } else {
           $disabledState = " ";
         }
+        if ($item->is_photo()) {
+          $options_menu
+            ->append(Menu::factory("ajax_link")
+                     ->id("make_album_cover")
+                     ->label($cover_title)
+                     ->css_class("ui-icon-star")
+                     ->ajax_handler("function(data) { window.location.reload() }")
+                     ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")));
+        }
         $options_menu
-          ->append(Menu::factory("ajax_link")
-                   ->id("make_album_cover")
-                   ->label($cover_title)
-                   ->css_class("ui-icon-star")
-                   ->ajax_handler("function(data) { window.location.reload() }")
-                   ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")))
           ->append(Menu::factory("dialog")
                    ->id("delete")
                    ->label($delete_title)
@@ -288,17 +291,17 @@ class gallery_Core {
           ->append(Menu::factory("dialog")
                    ->id("add_item")
                    ->label(t("Add a photo"))
-                   ->css_class("add_item")
+                   ->css_class("ui-icon-plus")
                    ->url(url::site("simple_uploader/app/$item->id")))
           ->append(Menu::factory("dialog")
                    ->id("add_album")
                    ->label(t("Add an album"))
-                   ->css_class("add_album")
+                   ->css_class("ui-icon-note")
                    ->url(url::site("form/add/albums/$item->id?type=album")))
           ->append(Menu::factory("dialog")
                    ->id("edit_permissions")
                    ->label(t("Edit permissions"))
-                   ->css_class("permissions")
+                   ->css_class("ui-icon-key")
                    ->url(url::site("permissions/browse/$item->id")));
       }
     }

@@ -71,7 +71,10 @@ a,
 #gDialog a,
 .gButtonLink,
 .gButtonLink:hover,
-.gButtonLink:active {
+.gButtonLink:active,
+a.ui-state-hover,
+input.ui-state-hover,
+button.ui-state-hover {
   color: #5382BF !important;
   text-decoration: none;
   -moz-outline-style: none;
@@ -1053,6 +1056,10 @@ table .gSuccess {
 .rtl th,
 .rtl #gDialog {
   text-align: right;
+}
+
+.rtl .txtright {
+  text-align: left;
 }
 
 .rtl #gHeader #gQuickSearchForm,
