@@ -35,6 +35,7 @@ class Xss_Security_Test extends Unit_Test_Case {
       $inline_html = "";
       $in_attribute_js_context = false;
       $href_attribute_start = false;
+      $preceded_by_quote = false;
 
       for ($token_number = 0; $token_number < count($tokens); $token_number++) {
         $token = $tokens[$token_number];
@@ -88,6 +89,8 @@ class Xss_Security_Test extends Unit_Test_Case {
 
         $href_attribute_start = preg_match('{\bhref\s*=\s*[\'"]?\s*$}i', $inline_html);
 
+        $preceded_by_quote = preg_match('{[\'"]\s*$}i', $inline_html);
+
         $pos = false;
         if ($in_attribute_js_context && ($pos = strpos($inline_html, $delimiter)) !== false) {
           $in_attribute_js_context = false;
@@ -113,7 +116,8 @@ class Xss_Security_Test extends Unit_Test_Case {
         } else if ($token[0] == T_OPEN_TAG_WITH_ECHO) {
           // No need for a stack here - assume < ? = cannot be nested.
           $frame = self::_create_frame($token, $in_script_block,
-                                       $href_attribute_start, $in_attribute_js_context);
+                                       $href_attribute_start, $in_attribute_js_context,
+                                       $preceded_by_quote);
           $href_attribute_start = false;
         } else if ($frame && $token[0] == T_CLOSE_TAG) {
           // Store the < ? = ... ? > block that just ended here.
@@ -290,7 +294,7 @@ class Xss_Security_Test extends Unit_Test_Case {
           $state = "ILLEGAL";
         } else if ($frame->in_script_block()) {
           $state = "DIRTY_JS";
-          if ($frame->is_safe_js()) {
+          if ($frame->is_safe_js() && !$frame->preceded_by_quote()) {
             $state = "CLEAN";
           }
         } else if ($frame->in_attribute_js_context()) {
@@ -327,9 +331,11 @@ class Xss_Security_Test extends Unit_Test_Case {
   }
 
   private static function _create_frame($token, $in_script_block,
-                                        $href_attribute_start, $in_attribute_js_context) {
+                                        $href_attribute_start, $in_attribute_js_context,
+                                        $preceded_by_quote) {
     return new Xss_Security_Test_Frame($token[2], $in_script_block,
-                                       $href_attribute_start, $in_attribute_js_context);
+                                       $href_attribute_start, $in_attribute_js_context,
+                                       $preceded_by_quote);
   }
 
   private static function _token_matches($expected_token, &$tokens, $token_number) {
@@ -360,14 +366,17 @@ class Xss_Security_Test_Frame {
   private $_in_href_attribute = false;
   private $_is_safe_href_attr = false;
   private $_in_attribute_js_context = false;
+  private $_preceded_by_quote;
   private $_line;
 
   function __construct($line_number, $in_script_block,
-                       $href_attribute_start, $in_attribute_js_context) {
+                       $href_attribute_start, $in_attribute_js_context,
+                       $preceded_by_quote) {
     $this->_line = $line_number;
     $this->_in_script_block = $in_script_block;
     $this->_in_href_attribute = $href_attribute_start;
     $this->_in_attribute_js_context = $in_attribute_js_context;
+    $this->_preceded_by_quote = $preceded_by_quote;
   }
 
   function expr() {
@@ -409,6 +418,10 @@ class Xss_Security_Test_Frame {
       $this->_is_safe_js = (bool) $new_val;
     }
     return $this->_is_safe_js;
+  }
+
+  function preceded_by_quote() {
+    return $this->_preceded_by_quote;
   }
 
   function line() {
