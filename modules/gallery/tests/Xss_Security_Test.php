@@ -21,7 +21,6 @@ class Xss_Security_Test extends Unit_Test_Case {
   public function find_unescaped_variables_in_views_test() {
     $found = array();
     foreach (glob("*/*/views/*.php") as $view) {
-      if ($view != "modules/tag/views/admin_tags.html.php") continue;
       // List of all tokens without whitespace, simplifying parsing.
       $tokens = array();
       foreach (token_get_all(file_get_contents($view)) as $token) {
