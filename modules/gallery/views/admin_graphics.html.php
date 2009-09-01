@@ -3,7 +3,7 @@
   $(document).ready(function() {
     select_toolkit = function(el) {
       if (!$(this).hasClass("gUnavailable")) {
-        window.location = '<?= url::site("admin/graphics/choose/__TK__?csrf=$csrf") ?>'
+        window.location = <?= html::js_string(url::site("admin/graphics/choose/__TK__?csrf=$csrf")) ?>
           .replace("__TK__", $(this).attr("id"));
       }
     };

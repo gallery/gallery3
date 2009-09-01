@@ -28,7 +28,7 @@
 
   update = function() {
     $.ajax({
-      url: "<?= url::site("admin/maintenance/run/$task->id?csrf=$csrf") ?>",
+      url: <?= html::js_string(url::site("admin/maintenance/run/$task->id?csrf=$csrf")) ?>,
       dataType: "json",
       success: function(data) {
         target_value = data.task.percent_complete;

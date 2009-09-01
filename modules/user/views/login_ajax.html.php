@@ -6,7 +6,7 @@
         url: "<?= url::site("password/reset") ?>",
         success: function(data) {
           $("div#gLoginView").html(data);
-          $("#ui-dialog-title-gDialog").text("<?= t("Reset Password") ?>");
+          $("#ui-dialog-title-gDialog").html(<?= t("Reset Password")->for_js() ?>);
           ajaxify_login_reset_form();
         }
       });
