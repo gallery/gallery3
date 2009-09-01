@@ -74,7 +74,6 @@
   </div>
   <script type="text/javascript">
     var MSG_TRANSLATE_TEXT = <?= t("Translate Text")->for_js() ?>;
-    var MSG_CLOSE_X = <?= t("X")->for_js() ?>;
     var l10n_client_data = <?= json_encode($string_list) ?>;
     var plural_forms = <?= json_encode($plural_forms) ?>;
     var toggle_l10n_mode_url = <?= html::js_string(url::site("l10n_client/toggle_l10n_mode")) ?>;
