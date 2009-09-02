@@ -111,9 +111,11 @@ class photo_Core {
 
     // Build our thumbnail/resizes.  If we fail to build thumbnail/resize we assume that the image
     // is bad in some way and discard it.
-    if (!graphics::generate($photo)) {
+    try {
+      graphics::generate($photo);
+    } catch (Exception $e) {
       $photo->delete();
-      throw new Exception("@todo BAD_IMAGE_FILE");
+      throw $e;
     }
 
     // If the parent has no cover item, make this it.

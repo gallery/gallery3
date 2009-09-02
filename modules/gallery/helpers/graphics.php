@@ -102,12 +102,12 @@ class graphics_Core {
   /**
    * Rebuild the thumb and resize for the given item.
    * @param Item_Model $item
-   * @return true on successful generation
    */
   static function generate($item) {
     if ($item->is_album()) {
       if (!$cover = $item->album_cover()) {
-        return false;
+        // This album has no cover; there's nothing to generate.
+        return;
       }
       $input_file = $cover->file_path();
       $input_item = $cover;
@@ -127,7 +127,7 @@ class graphics_Core {
       $item->thumb_dirty = 0;
       $item->resize_dirty = 0;
       $item->save();
-      return true;
+      return;
     }
 
     try {
@@ -176,10 +176,8 @@ class graphics_Core {
       // @todo we should handle this better.
       Kohana::log("error", "Caught exception rebuilding image: {$item->title}\n" .
                   $e->getMessage() . "\n" . $e->getTraceAsString());
-      return false;
+      throw $e;
     }
-
-    return true;
   }
 
   /**
