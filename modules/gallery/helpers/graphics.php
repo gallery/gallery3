@@ -206,11 +206,13 @@ class graphics_Core {
       // Image would get upscaled; do nothing
       copy($input_file, $output_file);
     } else {
-      Image::factory($input_file)
+      $image = Image::factory($input_file)
         ->resize($options["width"], $options["height"], $options["master"])
-        ->quality(module::get_var("gallery", "image_quality"))
-        ->sharpen(module::get_var("gallery", "image_sharpen"))
-        ->save($output_file);
+        ->quality(module::get_var("gallery", "image_quality"));
+      if (graphics::can("sharpen")) {
+        $image->sharpen(module::get_var("gallery", "image_sharpen"));
+      }
+      $image->save($output_file);
     }
 
     module::event("graphics_resize_completed", $input_file, $output_file, $options);
@@ -352,12 +354,21 @@ class graphics_Core {
       $toolkits->gd->installed = true;
       $toolkits->gd->version = $gd["GD Version"];
       $toolkits->gd->rotate = function_exists("imagerotate");
+      $toolkits->gd->sharpen = function_exists("imageconvolution");
       $toolkits->gd->binary = "";
       $toolkits->gd->dir = "";
 
-      if (!$toolkits->gd->rotate) {
+      if (!$toolkits->gd->rotate && !$toolkits->gd->sharpen) {
+        $toolkits->gd->error =
+          t("You have GD version %version, but it lacks image rotation and sharpening.",
+            array("version" => $gd["GD Version"]));
+      } else if (!$toolkits->gd->rotate) {
         $toolkits->gd->error =
           t("You have GD version %version, but it lacks image rotation.",
+            array("version" => $gd["GD Version"]));
+      } else if (!$toolkits->gd->sharpen) {
+        $toolkits->gd->error =
+          t("You have GD version %version, but it lacks image sharpening.",
             array("version" => $gd["GD Version"]));
       }
     }
@@ -387,6 +398,7 @@ class graphics_Core {
           $toolkits->imagemagick->binary = $path;
           $toolkits->imagemagick->dir = dirname($path);
           $toolkits->imagemagick->rotate = true;
+          $toolkits->imagemagick->sharpen = true;
         } else {
           $toolkits->imagemagick->installed = false;
           $toolkits->imagemagick->error =
@@ -411,6 +423,7 @@ class graphics_Core {
           $toolkits->graphicsmagick->binary = $path;
           $toolkits->graphicsmagick->dir = dirname($path);
           $toolkits->graphicsmagick->rotate = true;
+          $toolkits->graphicsmagick->sharpen = true;
         } else {
           $toolkits->graphicsmagick->installed = false;
           $toolkits->graphicsmagick->error =
@@ -475,14 +488,18 @@ class graphics_Core {
 
   /**
    * Verify that a specific graphics function is available with the active toolkit.
-   * @param  string  $func (eg rotate, resize)
+   * @param  string  $func (eg rotate, sharpen)
    * @return boolean
    */
   static function can($func) {
-    if (module::get_var("gallery", "graphics_toolkit") == "gd" &&
-        $func == "rotate" &&
-        !function_exists("imagerotate")) {
-      return false;
+    if (module::get_var("gallery", "graphics_toolkit") == "gd") {
+      switch ($func) {
+      case "rotate":
+        return function_exists("imagerotate");
+
+      case "sharpen":
+        return function_exists("imageconvolution");
+      }
     }
 
     return true;
