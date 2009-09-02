@@ -268,7 +268,7 @@ class gallery_Core {
         } else {
           $disabledState = " ";
         }
-        if ($item->is_photo()) {
+        if ($item->parent()->id != 1) {
           $options_menu
             ->append(Menu::factory("ajax_link")
                      ->id("make_album_cover")
