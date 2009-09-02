@@ -127,7 +127,8 @@ class installer {
       $salt .= chr($char);
     }
     $password = substr(md5(time() * rand()), 0, 6);
-    $hashed_password = $salt . md5($salt . $password);
+    // Escape backslash in preparation for our UPDATE statement.
+    $hashed_password = str_replace("\\", "\\\\", $salt . md5($salt . $password));
     $sql = self::prepend_prefix($config["prefix"],
        "UPDATE {users} SET `password` = '$hashed_password' WHERE `id` = 2");
     if (mysql_query($sql)) {
