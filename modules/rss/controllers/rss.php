@@ -26,13 +26,16 @@ class Rss_Controller extends Controller {
       url::redirect(url::merge(array("page" => 1)));
     }
 
+    // Configurable page size between 1 and 100, default 20
+    $page_size = max(1, min(100, $this->input->get("page_size", self::$page_size)));
+
     // Run the appropriate feed callback
     if (module::is_active($module_id)) {
       $class_name = "{$module_id}_rss";
       if (method_exists($class_name, "feed")) {
         $feed = call_user_func(
           array($class_name, "feed"), $feed_id,
-          ($page - 1) * self::$page_size, self::$page_size, $id);
+          ($page - 1) * $page_size, $page_size, $id);
       }
     }
     if (empty($feed)) {

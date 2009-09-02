@@ -42,10 +42,9 @@ class comment_rss_Core {
       $comments->where("item_id", $id);
     }
 
-    $comments = $comments->find_all($limit, $offset);
     $feed->view = "comment.mrss";
     $feed->children = array();
-    foreach ($comments as $comment) {
+    foreach ($comments->find_all($limit, $offset) as $comment) {
       $item = $comment->item();
       $feed->children[] = new ArrayObject(
         array("pub_date" => date("D, d M Y H:i:s T", $comment->created),

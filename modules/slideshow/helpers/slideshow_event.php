@@ -31,36 +31,44 @@ class slideshow_event_Core {
   }
 
   static function album_menu($menu, $theme) {
-    $descendants_count = ORM::factory("item", $theme->item->id)
+    $descendants_count = ORM::factory("item", $theme->item()->id)
       ->descendants_count(array("type" => "photo"));
     if ($descendants_count > 1) {
-      $menu
-        ->append(Menu::factory("link")
-                 ->id("slideshow")
-                 ->label(t("View slideshow"))
-                 ->url("javascript:PicLensLite.start(" .
-                       "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
-                 ->css_id("gSlideshowLink"));
+      $menu->append(Menu::factory("link")
+                    ->id("slideshow")
+                    ->label(t("View slideshow"))
+                    ->url("javascript:PicLensLite.start(" .
+                          "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
+                    ->css_id("gSlideshowLink"));
     }
   }
 
   static function photo_menu($menu, $theme) {
-    $menu
-      ->append(Menu::factory("link")
-               ->id("slideshow")
-               ->label(t("View slideshow"))
-               ->url("javascript:PicLensLite.start(" .
-                     "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
-               ->css_id("gSlideshowLink"));
+    $menu->append(Menu::factory("link")
+                  ->id("slideshow")
+                  ->label(t("View slideshow"))
+                  ->url("javascript:PicLensLite.start(" .
+                        "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
+                  ->css_id("gSlideshowLink"));
   }
 
   static function tag_menu($menu, $theme) {
-    $menu
-      ->append(Menu::factory("link")
-               ->id("slideshow")
-               ->label(t("View slideshow"))
-               ->url("javascript:PicLensLite.start(" .
-                     "{maxScale:0,feedUrl:PicLensLite.indexFeeds()[0].url})")
-               ->css_id("gSlideshowLink"));
+    $menu->append(Menu::factory("link")
+                  ->id("slideshow")
+                  ->label(t("View slideshow"))
+                  ->url("javascript:PicLensLite.start(" .
+                        "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
+                  ->css_id("gSlideshowLink"));
+  }
+
+  private static function _feed_url($theme) {
+    if ($item = $theme->item()) {
+      if (!$item->is_album()) {
+        $item = $item->parent();
+      }
+      return rss::url("gallery/album/{$item->id}?page_size=100");
+    } else {
+      return rss::url("tag/tag/{$theme->tag()->id}?page_size=100");
+    }
   }
 }
