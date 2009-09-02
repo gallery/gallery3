@@ -188,9 +188,8 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
    */
   public function file_url($full_uri=false) {
-    return $full_uri ?
-      url::abs_file("var/albums/" . $this->relative_path()) :
-      url::file("var/albums/" . $this->relative_path());
+    $relative_path = "var/albums/" . $this->relative_path();
+    return $full_uri ? url::abs_file($relative_path) : url::file($relative_path);
   }
 
   /**
@@ -222,9 +221,8 @@ class Item_Model extends ORM_MPTT {
    */
   public function thumb_url($full_uri=false) {
     $cache_buster = "?m=" . $this->updated;
-    $base = ($full_uri ?
-             url::abs_file("var/thumbs/" . $this->relative_path()) :
-             url::file("var/thumbs/" . $this->relative_path()));
+    $relative_path = "var/thumbs/" . $this->relative_path();
+    $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
     if ($this->is_photo()) {
       return $base . $cache_buster;
     } else if ($this->is_album()) {
@@ -250,9 +248,8 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
   public function resize_url($full_uri=false) {
-    return ($full_uri ?
-            url::abs_file("var/resizes/" . $this->relative_path()) :
-            url::file("var/resizes/" . $this->relative_path())) .
+    $relative_path = "var/resizes/" . $this->relative_path();
+    return ($full_uri ? url::abs_file($relative_path) : url::file($relative_path)) .
       ($this->is_album() ? "/.album.jpg" : "");
   }
 
