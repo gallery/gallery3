@@ -5,13 +5,12 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title><?= t("Admin Dashboard") ?></title>
-    <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
+    <link rel="shortcut icon" href="<?= url::file("lib/images/favicon.ico") ?>" type="image/x-icon" />
 
     <?= $theme->css("yui/reset-fonts-grids.css") ?>
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("superfish/css/superfish.css") ?>
     <?= $theme->css("screen.css") ?>
-    <?= $theme->css("admin_screen.css") ?>
     <!--[if lt IE 8]>
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("fix-ie.css") ?>"
           media="screen,print,projection" />
@@ -28,7 +27,6 @@
    <?= $theme->script("gallery.ajax.js") ?>
    <?= $theme->script("gallery.dialog.js") ?>
    <?= $theme->script("superfish/js/superfish.js") ?>
-   <?= $theme->script("jquery.dropshadow.js") ?>
    <?= $theme->script("ui.init.js") ?>
 
    <?= $theme->admin_head() ?>

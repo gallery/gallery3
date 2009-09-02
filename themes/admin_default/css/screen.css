@@ -267,8 +267,15 @@ li.gError select {
  *********************************************************************/
 
 .gBlock {
+  background-color: #fff;
+  border: 1px solid #ccc;
   clear: both;
   margin-bottom: 2.5em;
+  padding: 1em;
+}
+
+#gSidebar .gBlockContent {
+  padding: 0;
 }
 
 .gBlock h2 {
@@ -278,6 +285,47 @@ li.gError select {
 
 .gBlockContent {
   margin-top: 1em;
+}
+
+.gSelected img,
+.gAvailable .gBlock img {
+  float: left;
+  margin: 0 1em 1em 0;
+}
+
+.rtl .gSelected img,
+.rtl .gAvailable .gBlock img {
+  float: right;
+}
+
+.gSelected {
+  background: #e8e8e8;
+}
+
+.gAvailable .gInstalledToolkit:hover {
+  cursor: pointer;
+  background: #eee;
+}
+
+.gAvailable .gButtonLink {
+  width: 96%;
+}
+
+.gSelected .gButtonLink {
+  display: none;
+}
+
+.gUnavailable {
+  border-color: #999;
+  opacity: 0.4;
+}
+
+.gOddRow {
+  background-color: #eee;
+}
+
+.gEvenRow {
+  background-color: #fff;
 }
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -375,22 +423,24 @@ table .gSuccess {
   background-color: #fff;
   border: 1px solid #ccc;
   border-bottom: none;
+  min-width: 974px !important;
 }
 
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
   background-color: #e8e8e8;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #ccc;
   font-size: .8em;
-  margin-bottom: 1em;
-  padding: 1em 20px 0 20px;
+  margin-bottom: 20px;
+  padding: 0 20px;
+  position: relative;
 }
 
 #gContent {
-  font-size: 1.2em;
+  font-size: 1.1em;
   padding-left: 20px;
-  width: 696px;
+  width: 96%;
 }
 
 #gSidebar {
@@ -414,9 +464,18 @@ table .gSuccess {
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLogo img {
-  float: left;
-  margin: -4px 10px 0 0;
+#gHeader #gLogo {
+  background: transparent url('../../../lib/images/logo.png') no-repeat 0 .5em;
+  color: #A5A5A5 !important;
+  display: block;
+  height: 55px;
+  padding-top: 5px;
+  width: 105px;
+}
+
+#gHeader #gLogo:hover {
+  color: #f60 !important;
+  text-decoration: none;
 }
 
 #gHeader #gQuickSearchForm {
@@ -436,94 +495,6 @@ table .gSuccess {
 
 #gSidebar .gBlockContent {
   padding-left: 1em;
-}
-
-/* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gContent #gAlbumGrid {
-  margin: 1em 0;
-}
-
-#gContent #gAlbumGrid .gItem {
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
-  float: left;
-  font-size: .7em;
-  height: 240px;
-  overflow: hidden;
-  padding: 15px 8px 30px 8px;
-  position: relative;
-  text-align: center;
-  width: 213px;
-}
-
-#gContent #gAlbumGrid .gItem h2 {
-  margin: 5px 0;
-}
-
-#gContent #gAlbumGrid .gAlbum {
-  background-color: #e8e8e8;
-}
-
-#gContent #gAlbumGrid .gAlbum h2 span {
-  background: transparent url('../images/ico-album.png') no-repeat top left !important;
-  display: inline-block;
-  height: 16px;
-  margin-right: 5px;
-  width: 16px;
-}
-
-/* Individual photo content ~~~~~~~~~~~~~~ */
-
-#gContent #gItem {
-  width: 99%;
-}
-
-#gContent #gPhoto {
-  position: relative;
-}
-
-#gContent #gItem .gFullSizeLink img {
-  display: block;
-  margin: 1em auto !important;
-}
-
-#gContent #gComments {
-  margin-top: 2em;
-}
-
-#gContent #gComments ul li {
-  margin: 1em 0;
-}
-
-#gContent #gComments .gAuthor {
-  border-bottom: 1px solid #ccc;
-  color: #999;
-  height: 32px;
-  line-height: 32px;
-}
-
-#gContent #gComments ul li div {
-  padding: 0 8px 8px 43px;
-}
-
-#gContent #gComments ul li #gRecaptcha {
-  padding: 0;
-}
-
-#gContent #gComments ul li #gRecaptcha div {
-  padding: 0;
-}
-
-#gContent #gComments .gAvatar {
-  height: 32px;
-  margin-right: .4em;
-  width: 32px;
-}
-
-#gContent #gAddCommentForm {
-  margin-top: 2em;
 }
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -546,12 +517,169 @@ table .gSuccess {
   padding-top: 1em;
 }
 
+.gBlock .ui-dialog-titlebar {
+  margin: -1em -1em 0;
+}
+
+#gSidebar .gBlock h2 {
+  background: none;
+}
+
+#gPhotoStream {
+  background-color: #e8e8e8;
+}
+
+#gPhotoStream .gBlockContent ul {
+  border-right: 1px solid #e8e8e8;
+  height: 135px;
+  overflow: auto;
+  overflow: -moz-scrollbars-horizontal; /* for FF */
+  overflow-x: scroll; /* scroll horizontal */
+  overflow-y: hidden; /* Hide vertical*/
+}
+
+#gContent #gPhotoStream .gItem {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  float: left;
+  height: 90px;
+  overflow: hidden;
+  text-align: center;
+  width: 90px;
+}
+
+.rtl #gContent #gPhotoStream .gItem {
+  float: right;
+}
+
+#gSiteStatus {
+  margin-bottom: 0;
+}
+
+#gContent .gItem {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  height: 90px;
+  padding: 14px 8px;
+  text-align: center;
+  width: 90px;
+}
+
+#gAdminCommentsMenu {
+  margin: 1em 0;
+}
+
+#gAdminCommentsMenu a {
+  margin: 0;
+  padding: .2em .6em;
+}
+
+#gAdminGraphics .gAvailable .gBlock {
+  clear: none;
+  float: left;
+  height: 17em;
+  margin-right: 1em;
+  width: 30%;
+}
+
+.rtl #gAdminGraphics .gAvailable .gBlock {
+  float: right;
+  margin-left: 1em;
+  margin-right: 0em;
+}
+
+#gSiteTheme,
+#gAdminTheme {
+  float: left;
+  width: 48%;
+}
+
+.rtl #gSiteTheme,
+.rtl #gAdminTheme {
+  float: right;
+}
+
+#gSiteTheme {
+  margin-right: 1em;
+}
+
+#gUserAdminList {
+  margin-bottom: 1em;
+}
+#gUserAdminList td {
+  vertical-align: bottom;
+}
+
+#gUserAdminList .gDraggable:hover {
+  border: 1px dashed black;
+}
+
+#gUserAdminList .admin {
+  color: #55f;
+  font-weight: bold;
+}
+
+.gActions a,
+.gActions span {
+  margin-right: 3em;
+}
+
+li.gGroup {
+  float: left;
+  display: block;
+  width: 200px;
+  border: 1px solid gray;
+  padding: 0;
+  margin: 0 1em 1em 0;
+}
+
+.rtl li.gGroup {
+  float: right;
+}
+
+li.gGroup h4 {
+  background-color: #eee;
+  border-bottom: 1px dashed ccc;
+  padding: .5em 0 .5em .5em;
+}
+li.gGroup .gButtonLink {
+  padding: 0;
+}
+li.gGroup ul, li.gGroup div {
+  height: 180px;
+  margin: 1px;
+  overflow: auto;
+  padding-top: .2em;
+}
+li.gGroup div p {
+  color: gray;
+  text-align: center;
+  padding: 2em .5em 0 .5em
+}
+li.gGroup .gUser {
+  padding: .2em 0 0 .5em;
+}
+li.gGroup .gUser .gButtonLink {
+  vertical-align: middle;
+}
+
+li.gDefaultGroup h4, li.gDefaultGroup .gUser {
+  color: gray;
+}
+
+#gAdminAdvancedSettings tr.setting:hover {
+  background: #ffc;
+}
+
 /** *******************************************************************
  * 5) Navigation and menus
  *********************************************************************/
 
-#gSiteMenu,
-.gBreadcrumbs,
+#gSiteAdminMenu,
 #gTagCloud ul {
   font-size: 1.2em;
 }
@@ -561,175 +689,26 @@ table .gSuccess {
 #gHeader #gLoginMenu {
   color: #999;
   float: right;
+  margin: 0;
+  padding: 5px 0;
+}
+
+.rtl #gHeader #gLoginMenu {
+  text-align: left;
 }
 
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gSiteMenu {
-  float: left;
-  margin-top: 20px;
-  padding: 0 20px 0 0;
-}
-
-#gSiteMenu ul {
-  margin-bottom: 0;
-}
-
-/* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gContent .gThumbMenu {
+#gSiteAdminMenu {
   bottom: 0;
-  left: 0;
+	display: none;
+  font-size: 1.2em;
+  left: 140px;
   position: absolute;
-  width: 100%;
 }
 
-#gContent .gThumbMenu li {
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
-}
-
-#gContent .gThumbMenu li li {
-  padding: .3em;
-}
-
-#gContent .gThumbMenu a:hover {
-  text-decoration: none;
-}
-
-/* View Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gViewMenu {
-  margin-bottom: 1em;
-}
-
-#gViewMenu a {
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  height: 28px !important;
-  width: 43px !important;
-}
-
-#gViewMenu #gHybridLink {
-  background-image: url('../images/ico-view-hybrid.png');
-}
-
-#gViewMenu #gSlideshowLink {
-  background-image: url('../images/ico-view-slideshow.png');
-}
-
-#gViewMenu .gFullSizeLink {
-  background-image: url('../images/ico-view-fullsize.png');
-}
-
-#gViewMenu #gCommentsLink {
-  background-image: url('../images/ico-view-comments.png');
-}
-
-#gViewMenu #gDigibugLink {
-  background-image: url('../images/ico-print.png');
-}
-
-/* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-.gBreadcrumbs {
-  background-color: #fff;
-  border-top: 1px solid #ccc;
-  clear: both;
-  margin: 0 -20px;
-  padding-left: 20px;
-}
-
-.gBreadcrumbs li {
-  background: transparent url('../images/ico-separator.gif') no-repeat scroll left center;
-  float: left;
-  padding: 10px 6px 10px 16px !important;
-}
-
-.gBreadcrumbs li.root {
-  background: transparent;
-}
-
-.gBreadcrumbs li a,
-.gBreadcrumbs li span {
-  display: block;
-}
-
-.gBreadcrumbs li.active,
-.gBreadcrumbs li.active span {
-  font-weight: bold;
-}
-
-#gAddPhotos .gBreadcrumbs {
-  font-size: .9em;
-}
-
-/* Tags and cloud ~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gTagCloud ul {
-  text-align: justify;
-}
-
-#gTagCloud ul li {
-  display: inline;
-  line-height: 1.5em;
-  text-align: justify;
-}
-
-#gTagCloud ul li a {
-  text-decoration: none;
-}
-
-#gTagCloud ul li span {
-  display: none;
-}
-
-#gTagCloud ul li.size1 a {
-  color: #9cf;
-  font-size: 80%;
-  font-weight: 100;
-}
-
-#gTagCloud ul li.size2 a {
-  color: #69f;
-  font-size: 90%;
-  font-weight: 300;
-}
-
-#gTagCloud ul li.size3 a {
-  color: #69c;
-  font-size: 100%;
-  font-weight: 500;
-}
-
-#gTagCloud ul li.size4 a {
-  color: #369;
-  font-size: 110%;
-  font-weight: 700;
-}
-
-#gTagCloud ul li.size5 a {
-  color: #0e2b52;
-  font-size: 120%;
-  font-weight: 900;
-}
-
-#gTagCloud ul li.size6 a {
-  color: #0e2b52;
-  font-size: 130%;
-  font-weight: 900;
-}
-
-#gTagCloud ul li.size7 a {
-  color: #0e2b52;
-  font-size: 140%;
-  font-weight: 900;
-}
-
-#gTagCloud ul li a:hover {
-  color: #f30;
-  text-decoration: underline;
+#gSiteAdminMenu ul {
+  margin-bottom: 0;
 }
 
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -756,11 +735,15 @@ table .gSuccess {
  * 6) Browser hacks
  *********************************************************************/
 
-#gSiteMenu:after,
+#gSiteAdminMenu:after,
 #gHeader:after,
-.gBreadcrumbs:after,
-#gAlbumGrid:after,
-.gPager:after,
+#gAdminCommentsMenu:after,
+#gGroupAdmin:after,
+.gSelected:after,
+.gAvailable .gBlock:after,
+#gModuleCreateForm ul li ul:after,
+#gDeveloperTools:after,
+#gPhotoStream:after,
 #gViewMenu:after {
   clear: both;
   content: ".";
@@ -812,6 +795,32 @@ table .gSuccess {
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gPanel {
+  display: none;
+  padding: 1em;
+}
+
+#gPanel legend {
+  display: none;
+}
+
+#gPanel fieldset {
+  border: none;
+}
+
+.ui-draggable {
+  cursor: move;
+}
+
+.gButtonSetVertical a {
+  width: 8em !important;
+}
+
+#gAdminDashboard .ui-dialog-titlebar,
+#gAdminDashboardSidebar .ui-dialog-titlebar {
+  padding: .2em .4em;
+}
 
 .ui-widget-overlay {
   background: #000;
@@ -885,7 +894,7 @@ table .gSuccess {
   background-position: -208px -64px;
 }
 
-/* STUFF THAT NEEDS A HOME */
+/*************** STUFF THAT NEEDS A HOME ****************/
 
 #gMove ul {
   padding-left: 1em;
@@ -894,71 +903,6 @@ table .gSuccess {
 #gMove .selected {
   background: #999;
 }
-
-/* Server Add */
-
-#gServerAdd button {
-  float: left;
-  margin-bottom: .5em;
-}
-
-#gServerAddTree {
-  cursor: pointer;
-  padding-left: 4px;
-}
-
-#gServerAddTree li {
-  padding: 0;
-  float: none;
-}
-
-#gServerAddTree span.selected {
-  background: #ddd;
-}
-
-#gServerAddTree {
-  border: 1px solid #ccc;
-  height: 25em;
-  overflow: auto;
-  margin-bottom: .5em;
-  padding-top: .5em;
-  padding-bottom: .5em;
-}
-
-#gServerAdd ul ul li {
-  padding-left: 1.2em;
-}
-
-#gServerAdd .gBreadcrumbs {
-  font-size: 1em;
-  padding: 0;
-  margin: 0;
-  border-top-width: 0;
-}
-
-#gServerAdd p {
-  margin: 0;
-}
-
-#gServerAdd .gBreadcrumbs li {
-  padding: 10px 6px 10px 16px;
-}
-
-/* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#gPermissions .gDenied,
-#gPermissions .gAllowed {
-  text-align: center;
-  vertical-align: middle;
-}
-#gPermissions .gDenied {
-  background-color: #fcc;
-}
-#gPermissions .gAllowed {
-  background-color: #cfc;
-}
-
-/*************** STUFF THAT NEEDS A HOME ****************/
 
 .gProgressBar {
   height: 1em;
@@ -1046,6 +990,144 @@ table .gSuccess {
   list-style-type: disc;
 }
 
+#gTagAdmin {
+  table-layout: fixed;
+}
+
+#gTagAdmin td {
+  border: 0;
+}
+
+#gTagAdmin ul {
+  padding-bottom: .3em;
+}
+
+#gTagAdmin li {
+  padding: .1em 0 .2em .3em;
+}
+
+#gTagAdmin .gColumn {
+  float: left;
+  width: 200px;
+}
+
+.rtl #gTagAdmin .gColumn {
+  float: right;
+}
+
+.gEditable {
+  padding: .1em .3em .2em .3em;
+}
+
+.gEditable:hover {
+  background-color: #ffc;
+  cursor: text;
+}
+
+#gRenameTagForm input {
+  padding: 0 .2em 0 .2em;
+  clear: none;
+  float: left;
+  margin: 0 .2em 0 0;
+}
+
+.rtl #gRenameTagForm input {
+  float: right;
+}
+
+#gRenameTagForm input[type="submit"] {
+  height: 25px;
+}
+
+#gRenameTagForm a, #gRenameTagForm span {
+  display: block;
+  float: left;
+  padding: .2em .2em 0 .1em;
+}
+
+.rtl #gRenameTagForm a, #gRenameTagForm span {
+  float: right;
+}
+
+#gTaskLogDialog h1 {
+  font-size: 1.1em;
+}
+
+.gTaskLog {
+  border: 1pt solid;
+  font-size: .9em;
+  height: 400px;
+  margin: .5em 0;
+  overflow: auto;
+  padding: .5em
+}
+
+#gServerAddAdmin {
+  margin:auto;
+  text-align: left;
+}
+
+.rtl #gServerAddAdmin {
+  text-align: right;
+}
+
+#gServerAddAdmin form fieldset {
+  border: medium none;
+}
+
+#gServerAddAdmin legend {
+  display: none;
+}
+
+#gServerAddAdmin .gWarning {
+  background-color: #FFFF99;
+}
+
+#gAuthorizedPath {
+  margin: 0 !important;
+  padding: 0.3em 1.5em 0.3em 1em;
+}
+
+#gServerAdd Admin #path {
+  width: 80%;
+}
+
+.gRemoveDir:hover {
+  cursor: pointer;
+}
+
+#gLanguagesForm table {
+	width: 400px;
+	float: left;
+	margin: 0 3em 1em 0;
+}
+
+#gLanguagesForm .installed {
+  background-color: #EEEEEE;
+}
+
+#gLanguagesForm .default {
+	background-color: #C5DBEC;
+	font-weight: bold;
+}
+
+#gLanguagesForm input {
+	clear: both;
+}
+
+#gTranslations {
+	padding: 2em 0 0 0;
+	clear: both;
+}
+
+#gTranslations .gButtonLink {
+	padding: .5em;
+}
+
+.gDocLink {
+  float: right;
+}
+
 /* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
 
 .rtl {
@@ -1075,13 +1157,10 @@ table .gSuccess {
 .rtl input[type="submit"],
 .rtl input[type="reset"],
 .rtl .gShortForm li,
-.rtl #gHeader #gLogo img,
 .rtl #gContent #gAlbumGrid .gItem,
-.rtl #gSiteMenu,
-.rtl .gBreadcrumbs li,
+.rtl #gSiteAdminMenu,
 .rtl .gPager li,
 .rtl .gButtonSet li,
 .rtl .ui-icon-left .ui-icon {
   float: right;
 }
-

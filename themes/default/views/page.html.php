@@ -23,7 +23,7 @@
         <? endif ?>
       <? endif ?>
     </title>
-    <link rel="shortcut icon" href="<?= $theme->url("images/favicon.ico") ?>" type="image/x-icon" />
+    <link rel="shortcut icon" href="<?= url::file("lib/images/favicon.ico") ?>" type="image/x-icon" />
     <?= $theme->css("yui/reset-fonts-grids.css") ?>
     <?= $theme->css("superfish/css/superfish.css") ?>
     <?= $theme->css("themeroller/ui.base.css") ?>
@@ -82,7 +82,7 @@
           <?= $header_text ?>
           <? else: ?>
           <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
-            <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site")->for_html_attr() ?>" src="<?= $theme->url("images/logo.png") ?>" />
+            <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site")->for_html_attr() ?>" src="<?= url::file("lib/images/logo.png") ?>" />
           </a>
           <? endif ?>
           <div id="gSiteMenu">

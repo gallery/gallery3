@@ -1,9 +1,8 @@
 /**
- * Fix display in IE
+ * Fix display in IE 6 and 7
  */
 
 #gHeader,
-#gAdminMenu,
 #gGroupAdmin,
 #gDeveloperTools,
 .gAvailable .gBlock {
