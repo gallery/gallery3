@@ -83,7 +83,7 @@ class SafeString_Core {
    * Safe for use in HTML.
    *
    * Example:<pre>
-   *   <div><?= $php_var ?> 
+   *   <div><?= $php_var ?>
    * </pre>
    * @return the string escaped for use in HTML.
    */
@@ -128,7 +128,7 @@ class SafeString_Core {
    * Safe for use HTML (purified HTML)
    *
    * Example:<pre>
-   *   <div><?= $php_var->purified_html() ?> 
+   *   <div><?= $php_var->purified_html() ?>
    * </pre>
    * @return the string escaped for use in HTML.
    */
@@ -154,16 +154,22 @@ class SafeString_Core {
 
   // Purifies the string, removing any potentially malicious or unsafe HTML / JavaScript.
   private static function _purify_for_html($dirty_html) {
-    if (empty(self::$_purifier)) {
-      require_once(dirname(__file__) . "/../lib/HTMLPurifier/HTMLPurifier.auto.php");
-      $config = HTMLPurifier_Config::createDefault();
-      foreach (Kohana::config('purifier') as $category => $key_value) {
-        foreach ($key_value as $key => $value) {
-          $config->set("$category.$key", $value);
+    if (module::is_active("htmlpurifier")) {
+      if (empty(self::$_purifier)) {
+        require_once(MODPATH . "htmlpurifier/lib/HTMLPurifier/HTMLPurifier.auto.php");
+        $config = HTMLPurifier_Config::createDefault();
+        foreach (Kohana::config('purifier') as $category => $key_value) {
+          foreach ($key_value as $key => $value) {
+            $config->set("$category.$key", $value);
+          }
         }
+        self::$_purifier = new HTMLPurifier($config);
       }
-      self::$_purifier = new HTMLPurifier($config);
+      Kohana::log("error", "Purify: " . $dirty_html);
+      return self::$_purifier->purify($dirty_html);
+    } else {
+      Kohana::log("error", "revert to clean: " . $dirty_html);
+      return self::_escape_for_html($dirty_html);
     }
-    return self::$_purifier->purify($dirty_html);
   }
 }
