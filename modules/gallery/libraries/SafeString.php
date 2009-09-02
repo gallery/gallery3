@@ -165,10 +165,8 @@ class SafeString_Core {
         }
         self::$_purifier = new HTMLPurifier($config);
       }
-      Kohana::log("error", "Purify: " . $dirty_html);
       return self::$_purifier->purify($dirty_html);
     } else {
-      Kohana::log("error", "revert to clean: " . $dirty_html);
       return self::_escape_for_html($dirty_html);
     }
   }
