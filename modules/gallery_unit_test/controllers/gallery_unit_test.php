@@ -122,6 +122,9 @@ class Gallery_Unit_Test_Controller extends Controller {
         module::activate($module_name);
       }
 
+      // Trigger late-binding install actions (defined in gallery_event::user_login)
+      graphics::choose_default_toolkit();
+
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
       print new Unit_Test($modules, $filter);
     } catch (Exception $e) {
