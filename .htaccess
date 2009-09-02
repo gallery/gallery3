@@ -29,13 +29,12 @@
 #   ExpiresByType text/html A1
 # </IfModule>
 
-# You can use mod_rewrite to enable short urls in Gallery 3 (which
-# gets rid of the "index.php" from your urls).  To do this, you must
-# uncomment the block below that starts with <IfModule> and ends with
-# </IfModule> then properly configure the RewriteBase line in the
-# block below.  You just need to change RewriteBase line to match your
-# Gallery 3 URL.  Here are some examples:
+# You can use the mod_rewrite Apache module to get rid of the
+# "index.php" from your Gallery 3 urls.  Uncomment the block below
+# inside the <IfModule> ... </IfModule> lines and then edit the
+# RewriteBase line to match your Gallery 3 URL.
 #
+# Here are some RewriteBase values:
 #   Gallery 3 URL                       RewriteBase line
 #   =============                       ====================
 #   http://example.com/gallery3         RewriteBase /gallery3
@@ -45,9 +44,8 @@
 # Then just use your Gallery 3 without the index.php in the url.
 #
 # NOTE: future upgrades of Gallery 3 will overwrite this file!  If you
-# want these changes to be persistent, you should talk to your system
-# administrator about putting this block into your Apache config
-# files.
+# want these changes to be persistent, talk to your system admin about
+# putting this block into your Apache config files.
 #
 # <IfModule mod_rewrite.c>
 #   RewriteEngine On

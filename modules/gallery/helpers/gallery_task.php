@@ -60,14 +60,15 @@ class gallery_task_Core {
 
         $item = ORM::factory("item", $row->id);
         if ($item->loaded) {
-          $success = graphics::generate($item);
-          if (!$success) {
+          try {
+            graphics::generate($item);
             $ignored[$item->id] = 1;
-            $errors[] = t("Unable to rebuild images for '%title'",
-                          array("title" => html::purify($item->title)));
-          } else {
             $errors[] = t("Successfully rebuilt images for '%title'",
                           array("title" => html::purify($item->title)));
+          } catch (Exception $e) {
+            $errors[] = t("Unable to rebuild images for '%title'",
+                          array("title" => html::purify($item->title)));
+            $errors[] = $e->__toString();
           }
         }
 
