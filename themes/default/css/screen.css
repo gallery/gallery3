@@ -819,17 +819,17 @@ form .gError,
 /* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
 
 .gLoadingLarge {
-  background: #e8e8e8 url('../images/loading-lg.gif') no-repeat center center;
+  background: #e8e8e8 url('../../../lib/images/loading-large.gif') no-repeat center center;
   font-size: 0;
 }
 
 .gDialogLoadingLarge {
-  background: url('../images/loading-lg.gif') no-repeat center center !important;
+  background: url('../../../lib/images/loading-large.gif') no-repeat center center !important;
   font-size: 0;
 }
 
 .gLoadingSmall {
-  background: #e8e8e8 url('../images/loading-sm.gif') no-repeat center center;
+  background: #e8e8e8 url('../../../lib/images/loading-small.gif') no-repeat center center;
   font-size: 0;
 }
 
