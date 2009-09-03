@@ -7,7 +7,7 @@
 
   <div id="gAvailableTasks">
     <h2> <?= t("Available Tasks") ?> </h2>
-    <table class="gMessages">
+    <table>
       <tr>
         <th>
           <?= t("Name") ?>
@@ -21,7 +21,7 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($task_definitions as $task): ?>
-      <tr class="<?= log::severity_class($task->severity) ?> <?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= log::severity_class($task->severity) ?>">
         <td class="<?= log::severity_class($task->severity) ?>">
           <?= $task->name ?>
         </td>
@@ -69,7 +69,7 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($running_tasks as $task): ?>
-      <tr class="<?= $task->state == "stalled" ? "gWarning" : "" ?> <?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= $task->state == "stalled" ? "gWarning" : "" ?>">
         <td class="<?= $task->state == "stalled" ? "gWarning" : "" ?>">
           <?= gallery::date_time($task->updated) ?>
         </td>
@@ -142,7 +142,7 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($finished_tasks as $task): ?>
-      <tr class="<?= $task->state == "success" ? "gSuccess" : "gError" ?> <?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= $task->state == "success" ? "gSuccess" : "gError" ?>">
         <td class="<?= $task->state == "success" ? "gSuccess" : "gError" ?>">
           <?= gallery::date_time($task->updated) ?>
         </td>
