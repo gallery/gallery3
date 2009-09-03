@@ -91,7 +91,9 @@ class SafeString_Test extends Unit_Test_Case {
 
   public function purify_test() {
     $safe_string = SafeString::purify("hello <p  >world</p>");
-    $this->assert_equal("hello <p>world</p>", $safe_string);
+    $expected =
+      module::is_active("htmlpurifier") ? "hello <p>world</p>" : "hello &lt;p  &gt;world&lt;/p&gt;";
+    $this->assert_equal($expected, $safe_string->unescaped());
   }
 
   public function of_fluid_api_test() {
