@@ -36,7 +36,7 @@
 }
 
 .ac_loading {
-	background: white url('indicator.gif') right center no-repeat;
+	background: white url('../themes/default/images/loading-sm.gif') right center no-repeat;
 }
 
 .ac_odd {
