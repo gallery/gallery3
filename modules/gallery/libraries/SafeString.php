@@ -51,7 +51,11 @@ class SafeString_Core {
    */
   static function purify($string) {
     if ($string instanceof SafeString) {
-      $string = $string->unescaped();
+      if ($string->_is_purified_html) {
+        return $string;
+      } else {
+        $string = $string->unescaped();
+      }
     }
     $safe_string = self::of_safe_html(self::_purify_for_html($string));
     $safe_string->_is_purified_html = true;
