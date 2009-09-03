@@ -26,8 +26,6 @@ class SafeString_Core {
   protected $_is_safe_html = false;
   protected $_is_purified_html = false;
 
-  private static $_purifier = null;
-
   /** Constructor */
   function __construct($string) {
     if ($string instanceof SafeString) {
@@ -151,29 +149,19 @@ class SafeString_Core {
     return $this->_raw_string;
   }
 
-  // Escapes special HTML chars ("<", ">", "&", etc.) to HTML entities.
+  /**
+   * Escape special HTML chars ("<", ">", "&", etc.) to HTML entities.
+   */
   private static function _escape_for_html($dirty_html) {
     return html::specialchars($dirty_html);
   }
 
-  // Purifies the string, removing any potentially malicious or unsafe HTML / JavaScript.
+  /**
+   * Purify the string, removing any potentially malicious or unsafe HTML / JavaScript.
+   */
   private static function _purify_for_html($dirty_html) {
-    if (null === self::$_purifier) {
-      if (module::is_active("htmlpurifier")) {
-        require_once(MODPATH . "htmlpurifier/lib/HTMLPurifier/HTMLPurifier.auto.php");
-        $config = HTMLPurifier_Config::createDefault();
-        foreach (Kohana::config('purifier') as $category => $key_value) {
-          foreach ($key_value as $key => $value) {
-            $config->set("$category.$key", $value);
-          }
-        }
-        self::$_purifier = new HTMLPurifier($config);
-      } else {
-        self::$_purifier = false;
-      }
-    }
-    if (self::$_purifier) {
-      return self::$_purifier->purify($dirty_html);
+    if (method_exists("purifier", "purify")) {
+      return purifier::purify($dirty_html);
     } else {
       return self::_escape_for_html($dirty_html);
     }
