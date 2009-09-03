@@ -356,48 +356,47 @@ li.gError select {
 .gInfo,
 .gSuccess,
 .gWarning {
-  background-position: .4em 50%;
-  background-repeat: no-repeat;
   padding: .4em .5em .4em 30px;
 }
 
-.gError {
-  background-color: #f6cbca;
-  background-image: url('../images/ico-error.png');
+.gError, tr.gError td.gError {
+  background: #f6cbca url('../images/ico-error.png') no-repeat .4em 50%;
 }
 
 .gInfo {
-  background-color: #e8e8e8;
-  background-image: url('../images/ico-info.png');
+  background: #e8e8e8 url('../images/ico-info.png') no-repeat .4em 50%;
 }
 
 .gSuccess {
-  background-color: #d9efc2;
-  background-image: url('../images/ico-success.png');
+  background: #d9efc2  url('../images/ico-success.png') no-repeat .4em 50%;
 }
 
-.gWarning {
-  background-color: #fcf9ce;
-  background-image: url('../images/ico-warning.png');
-}
-
-table .gError {
-  background-color: #f6cbca !important;
-}
-
-table .gWarning {
-  background-color: #fcf9ce !important;
+.gWarning, tr.gWarning td.gWarning {
+  background: #fcf9ce url('../images/ico-warning.png') no-repeat .4em 50%;
 }
 
 .gPager .gInfo,
-form .gError,
-table .gInfo,
-table .gSuccess {
-  background-color: transparent !important;
+tr.gError,
+tr.gInfo,
+tr.gSuccess,
+tr.gWarning {
+  background: none;
 }
 
-.gPager .gInfo {
-  background-image: none !important;
+.gInfo td.gInfo {
+  background-color: transparent;
+}
+
+.gSuccess td.gSuccess {
+  background-color: transparent;
+}
+
+.gError td {
+  background-color: #f6cbca;
+}
+
+.gWarning td {
+  background-color: #fcf9ce;
 }
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
@@ -643,7 +642,7 @@ li.gGroup {
 
 li.gGroup h4 {
   background-color: #eee;
-  border-bottom: 1px dashed ccc;
+  border-bottom: 1px dashed #ccc;
   padding: .5em 0 .5em .5em;
 }
 li.gGroup .gButtonLink {
