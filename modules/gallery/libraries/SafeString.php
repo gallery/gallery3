@@ -158,8 +158,8 @@ class SafeString_Core {
 
   // Purifies the string, removing any potentially malicious or unsafe HTML / JavaScript.
   private static function _purify_for_html($dirty_html) {
-    if (module::is_active("htmlpurifier")) {
-      if (empty(self::$_purifier)) {
+    if (null === self::$_purifier) {
+      if (module::is_active("htmlpurifier")) {
         require_once(MODPATH . "htmlpurifier/lib/HTMLPurifier/HTMLPurifier.auto.php");
         $config = HTMLPurifier_Config::createDefault();
         foreach (Kohana::config('purifier') as $category => $key_value) {
@@ -168,7 +168,11 @@ class SafeString_Core {
           }
         }
         self::$_purifier = new HTMLPurifier($config);
+      } else {
+        self::$_purifier = false;
       }
+    }
+    if (self::$_purifier) {
       return self::$_purifier->purify($dirty_html);
     } else {
       return self::_escape_for_html($dirty_html);
