@@ -36,7 +36,12 @@ class Users_Controller extends REST_Controller {
       $user->url = $form->edit_user->url->value;
       if ($form->edit_user->locale) {
         $desired_locale = $form->edit_user->locale->value;
-        $user->locale = $desired_locale == "none" ? null : $desired_locale;
+        $new_locale = $desired_locale == "none" ? null : $desired_locale;
+        if ($new_locale != $user->locale) {
+          // Delete the session based locale preference
+          setcookie("g_locale", "", time() - 24 * 3600, "/");
+        }
+        $user->locale = $new_locale;
       }
       $user->save();
       module::event("user_edit_form_completed", $user, $form);
