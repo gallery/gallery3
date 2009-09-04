@@ -277,6 +277,7 @@ modules/user/views/admin_users_group.html.php                22  DIRTY_JS $user-
 modules/user/views/admin_users_group.html.php                22  DIRTY_JS $group->id
 modules/user/views/login_ajax.html.php                       6   DIRTY_JS url::site("password/reset")
 modules/user/views/login_ajax.html.php                       37  DIRTY    $form
+modules/user/views/user_languages_block.html.php             2   DIRTY    form::dropdown("gSelectSessionLocale",$installed_locales,$selected)
 modules/watermark/views/admin_watermarks.html.php            19  DIRTY_ATTR $width
 modules/watermark/views/admin_watermarks.html.php            19  DIRTY_ATTR $height
 modules/watermark/views/admin_watermarks.html.php            19  DIRTY_ATTR $url
