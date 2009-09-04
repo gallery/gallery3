@@ -23,6 +23,7 @@
  */
 class locales_Core {
   private static $locales;
+  private static $language_subtag_to_locale;
 
   /**
    * Return the list of available locales.
@@ -105,6 +106,16 @@ class locales_Core {
     $l["zh_TW"] = "&#32321;&#39636;&#20013;&#25991;";     // Chinese (TW)
     asort($l, SORT_LOCALE_STRING);
     self::$locales = $l;
+
+    // Language subtag to (default) locale mapping
+    foreach ($l as $locale => $name) {
+      list ($language) = explode("_", $locale . "_");
+      // The first one mentioned is the default
+      if (!isset($d[$language])) {
+        $d[$language] = $locale;
+      }
+    }
+    self::$language_subtag_to_locale = $d;
   }
 
   static function display_name($locale=null) {
@@ -120,5 +131,79 @@ class locales_Core {
     $locale or $locale = I18n::instance()->locale();
     list ($language, $territory) = explode('_', $locale . "_");
     return in_array($language, array("he", "fa", "ar"));
+  }
+
+  /**
+   * Returns the best match comparing the HTTP accept-language header
+   * with the installed locales.
+   */
+  static function locale_from_http_request() {
+    $http_accept_language = Input::instance()->server("HTTP_ACCEPT_LANGUAGE");
+    if ($http_accept_language) {
+      // Parse the HTTP header and build a preference list
+      // Example value: "de,en-us;q=0.7,en-uk,fr-fr;q=0.2"
+      $locale_preferences = array();
+      foreach (explode(",", $http_accept_language) as $code) {
+        list ($requested_locale, $qvalue) = explode(";", $code . ";");
+        $requested_locale = trim($requested_locale);
+        $qvalue = trim($qvalue);
+        if (preg_match("/^([a-z]{2,3})(?:[_-]([a-zA-Z]{2}))?/", $requested_locale, $matches)) {
+          $requested_locale = strtolower($matches[1]);
+          if (!empty($matches[2])) {
+            $requested_locale .= "_" . strtoupper($matches[2]);
+          }
+          $requested_locale = trim(str_replace("-", "_", $requested_locale));
+          if (!strlen($qvalue)) {
+            // If not specified, default to 1.
+            $qvalue = 1;
+          } else {
+            // qvalue is expected to be something like "q=0.7"
+            list ($ignored, $qvalue) = explode("=", $qvalue . "==");
+            $qvalue = floatval($qvalue);
+          }
+          $locale_preferences[] = array($requested_locale, $qvalue);
+        }
+      }
+
+      // Compare and score requested locales with installed ones
+      $matched_locales = array();
+      foreach ($locale_preferences as $requested_value) {
+        $scored_locale_match = self::_locale_match_score($requested_value);
+        if ($scored_locale_match) {
+          $scored_locales[] = $scored_locale_match;
+        }
+      }
+
+      usort($matched_locales, array("locales", "_compare_locale_by_qvalue"));
+
+      $best_match = array_shift($scored_locales);
+      if ($best_match) {
+        return $best_match[0];
+      }
+    }
+
+    return null;
+  }
+
+  static function _compare_locale_by_qvalue($a, $b) {
+    $a = $a[1];
+    $b = $b[1];
+    if ($a == $b) {
+      return 0;
+    }
+    return $a < $b ? 1 : -1;
+  }
+
+  private static function _locale_match_score($requested_locale_and_qvalue) {
+    list ($requested_locale, $qvalue) = $requested_locale_and_qvalue;
+    $installed = self::installed();
+    if (isset($installed[$requested_locale])) {
+      return $requested_locale_and_qvalue;
+    }
+    list ($language) = explode("_", $requested_locale . "_");
+    if (isset(self::$language_subtag_to_locale[$language])) {
+      return array(self::$language_subtag_to_locale[$language], $qvalue * 0.66);
+    }
+    return null;
   }
 }

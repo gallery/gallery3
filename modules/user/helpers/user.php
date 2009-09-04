@@ -87,6 +87,9 @@ class user_Core {
 
   private static function _add_locale_dropdown(&$form, $user=null) {
     $locales = locales::installed();
+    foreach ($locales as $locale => $display_name) {
+      $locales[$locale] = SafeString::of_safe_html($display_name);
+    }
     if (count($locales) > 1) {
       // Put "none" at the first position in the array
       $locales = array_merge(array("" => t("« none »")), $locales);
@@ -335,5 +338,20 @@ class user_Core {
       $salt = substr($salt, 0, 4);
     }
     return $salt . md5($salt . $password);
+  }
+
+  static function cookie_locale() {
+    $cookie_data = Input::instance()->cookie("g_locale");
+    $locale = null;
+    if ($cookie_data) {
+      if (preg_match("/^([a-z]{2,3}(?:_[A-Z]{2})?)$/", trim($cookie_data), $matches)) {
+        $requested_locale = $matches[1];
+        $installed_locales = locales::installed();
+        if (isset($installed_locales[$requested_locale])) {
+          $locale = $requested_locale;
+        }
+      }
+    }
+    return $locale;
   }
 }
