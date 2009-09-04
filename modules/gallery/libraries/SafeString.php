@@ -24,13 +24,11 @@
 class SafeString_Core {
   private $_raw_string;
   protected $_is_safe_html = false;
-  protected $_is_purified_html = false;
 
   /** Constructor */
   function __construct($string) {
     if ($string instanceof SafeString) {
       $this->_is_safe_html = $string->_is_safe_html;
-      $this->_is_purified_html = $string->_is_purified_html;
       $string = $string->unescaped();
     }
     $this->_raw_string = (string) $string;
@@ -49,14 +47,13 @@ class SafeString_Core {
    */
   static function purify($string) {
     if ($string instanceof SafeString) {
-      if ($string->_is_purified_html) {
+      if ($string->_is_safe_html) {
         return $string;
       } else {
         $string = $string->unescaped();
       }
     }
     $safe_string = self::of_safe_html(self::_purify_for_html($string));
-    $safe_string->_is_purified_html = true;
     return $safe_string;
   }
 
@@ -135,11 +132,7 @@ class SafeString_Core {
    * @return the string escaped for use in HTML.
    */
   function purified_html() {
-    if ($this->_is_purified_html) {
-      return $this;
-    } else {
-      return self::purify($this);
-    }
+    return self::purify($this);
   }
 
   /**

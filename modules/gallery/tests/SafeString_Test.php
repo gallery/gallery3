@@ -106,6 +106,12 @@ class SafeString_Test extends Unit_Test_Case {
     $this->assert_equal($expected, $safe_string_2);
   }
 
+  public function purify_safe_html_test() {
+    $safe_string = SafeString::of_safe_html("hello <p  >world</p>");
+    $actual = SafeString::purify($safe_string);
+    $this->assert_equal("hello <p  >world</p>", $actual);
+  }
+
   public function of_fluid_api_test() {
     $escaped_string = SafeString::of("Foo's bar")->for_js();
     $this->assert_equal('"Foo\'s bar"', $escaped_string);
