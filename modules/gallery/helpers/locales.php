@@ -136,6 +136,7 @@ class locales_Core {
   /**
    * Returns the best match comparing the HTTP accept-language header
    * with the installed locales.
+   * @todo replace this with request::accepts_language() when we upgrade to Kohana 2.4
    */
   static function locale_from_http_request() {
     $http_accept_language = Input::instance()->server("HTTP_ACCEPT_LANGUAGE");
