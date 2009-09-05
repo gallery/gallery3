@@ -42,9 +42,10 @@ class user_theme_Core {
     if (count($locales) > 1) {
       $block = new Block();
       $block->css_id = "gUserLanguageBlock";
-      $block->title = t("Select Language Preference");
+      $block->title = t("Language Preference");
       $block->content = new View("user_languages_block.html");
-      $block->content->installed_locales = array_merge(array("" => t("« none »")), $locales);
+      $block->content->installed_locales =
+        array_merge(array("" => t("&laquo; none &raquo;")), $locales);
       $block->content->selected = (string) user::cookie_locale();
       return $block;
     }
