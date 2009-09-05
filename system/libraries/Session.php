@@ -2,7 +2,7 @@
 /**
  * Session library.
  *
- * $Id: Session.php 4433 2009-07-01 03:44:20Z kiall $
+ * $Id: Session.php 4493 2009-07-27 20:05:41Z ixmatus $
  *
  * @package    Core
  * @author     Kohana Team
@@ -43,11 +43,16 @@ class Session_Core {
 
 		return Session::$instance;
 	}
+	
+	/**
+	 * Be sure to block the use of __clone.
+	 */
+	private function __clone(){}
 
 	/**
 	 * On first session instance creation, sets up the driver and creates session.
 	 */
-	public function __construct()
+	protected function __construct()
 	{
 		$this->input = Input::instance();
 
