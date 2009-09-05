@@ -11,12 +11,13 @@
 <? if ($album->children_count() > $offset): ?>
 <script>
   setTimeout(function() {
-    $.get("<?= url::site("organize/content/$album->id/" . ($offset + 25)) ?>",
-      function(data) {
-        $("#gOrganizeMicroThumbGrid").append(data);
-        $.organize.set_handlers();
-      }
-    );
+    $.get("<?= url::site("organize/album/$album->id/" . ($offset + 25)) ?>",
+          {},
+          function(data) {
+            $("#gOrganizeMicroThumbGrid").append(data.grid);
+            $.organize.set_handlers();
+          },
+          "json");
   }, 50);
 </script>
 <? endif ?>
