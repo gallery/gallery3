@@ -768,7 +768,7 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 /* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
 
 .gLoadingLarge {
-  background: #e8e8e8 url('../../../lib/images/loading-arge.gif') no-repeat center center;
+  background: #e8e8e8 url('../../../lib/images/loading-large.gif') no-repeat center center;
   font-size: 0;
 }
 
