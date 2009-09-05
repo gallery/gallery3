@@ -119,6 +119,8 @@ class module_Core {
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
+    } else {
+      module::set_version($module_name, 1);
     }
     module::load_modules();
 
@@ -145,6 +147,13 @@ class module_Core {
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "upgrade")) {
       call_user_func_array(array($installer_class, "upgrade"), array($version_before));
+    } else {
+      $available = module::available();
+      if (isset($available->$module_name->code_version)) {
+        module::set_version($module_name, $available->$module_name->code_version);
+      } else {
+        throw new Exception("@todo UNKNOWN_MODULE");
+      }
     }
     module::load_modules();
 

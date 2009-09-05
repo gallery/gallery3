@@ -18,10 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class recaptcha_installer {
-  static function install() {
-    module::set_version("recaptcha", 1);
-  }
-
   static function activate() {
     recaptcha::check_config();
   }
