@@ -40,9 +40,13 @@
   <ul class="gBreadcrumbs">
     <? foreach ($parents as $parent): ?>
     <li id="item-<?= $parent->id ?>">
+      <? if (access::can("edit", $parent)): ?>
       <a href="javascript:show(<?= $parent->id ?>)">
         <?= html::purify($parent->title) ?>
       </a>
+      <? else: ?>
+      <?= html::purify($parent->title) ?>
+      <? endif ?>
     </li>
     <? endforeach ?>
     <li class="active" id="item-<?= $item->id ?>">
