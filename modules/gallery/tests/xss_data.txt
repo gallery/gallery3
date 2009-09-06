@@ -200,7 +200,7 @@ modules/organize/views/organize_thumb_grid.html.php          3   DIRTY_ATTR $chi
 modules/organize/views/organize_thumb_grid.html.php          4   DIRTY_ATTR $child->id
 modules/organize/views/organize_thumb_grid.html.php          5   DIRTY_ATTR $child->is_album()?"gAlbum":"gPhoto"
 modules/organize/views/organize_thumb_grid.html.php          6   DIRTY    $child->thumb_img(array("class"=>"gThumbnail","ref"=>$child->id),90,true)
-modules/organize/views/organize_thumb_grid.html.php          14  DIRTY_JS url::site("organize/content/$album->id/".($offset+25))
+modules/organize/views/organize_thumb_grid.html.php          14  DIRTY_JS url::site("organize/album/$album->id/".($offset+25))
 modules/organize/views/organize_tree.html.php                2   DIRTY_ATTR access::can("edit",$album)?"":"gViewOnly"
 modules/organize/views/organize_tree.html.php                3   DIRTY_ATTR $album->id
 modules/organize/views/organize_tree.html.php                6   DIRTY_ATTR $selected&&$album->id==$selected->id?"selected":""
