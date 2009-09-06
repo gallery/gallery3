@@ -45,7 +45,7 @@ class user_theme_Core {
       $block->title = t("Language Preference");
       $block->content = new View("user_languages_block.html");
       $block->content->installed_locales =
-        array_merge(array("" => t("&laquo; none &raquo;")), $locales);
+        array_merge(array("" => t("« none »")), $locales);
       $block->content->selected = (string) user::cookie_locale();
       return $block;
     }
