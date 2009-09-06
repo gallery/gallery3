@@ -24,9 +24,11 @@ function open_dir(path) {
 
 function start_add() {
   var paths = [];
-  $.each($("#gServerAdd span.selected"), function () {
-    paths.push($(this).attr("file"));
-  });
+  $.each($("#gServerAdd span.selected"),
+	 function () {
+	   paths.push($(this).attr("file"));
+	 }
+  );
 
   $.ajax({
     url: START_URL,
