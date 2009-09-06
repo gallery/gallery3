@@ -56,6 +56,9 @@ class locales_Core {
       : array_merge($locales, array($default));
 
     module::set_var("gallery", "installed_locales", join("|", $locales));
+
+    // Clear the cache
+    self::$locales = null;
   }
 
   // @todo Might want to add a localizable language name as well.
@@ -167,7 +170,7 @@ class locales_Core {
       }
 
       // Compare and score requested locales with installed ones
-      $matched_locales = array();
+      $scored_locales = array();
       foreach ($locale_preferences as $requested_value) {
         $scored_locale_match = self::_locale_match_score($requested_value);
         if ($scored_locale_match) {
@@ -175,7 +178,7 @@ class locales_Core {
         }
       }
 
-      usort($matched_locales, array("locales", "_compare_locale_by_qvalue"));
+      usort($scored_locales, array("locales", "_compare_locale_by_qvalue"));
 
       $best_match = array_shift($scored_locales);
       if ($best_match) {
@@ -202,7 +205,8 @@ class locales_Core {
       return $requested_locale_and_qvalue;
     }
     list ($language) = explode("_", $requested_locale . "_");
-    if (isset(self::$language_subtag_to_locale[$language])) {
+    if (isset(self::$language_subtag_to_locale[$language]) &&
+        isset($installed[self::$language_subtag_to_locale[$language]])) {
       return array(self::$language_subtag_to_locale[$language], $qvalue * 0.66);
     }
     return null;
