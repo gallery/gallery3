@@ -80,10 +80,12 @@ class gallery_installer {
                  `parent_id` int(9) NOT NULL,
                  `rand_key` float default NULL,
                  `relative_path_cache` varchar(255) default NULL,
+                 `relative_url_cache` varchar(255) default NULL,
                  `resize_dirty` boolean default 1,
                  `resize_height` int(9) default NULL,
                  `resize_width` int(9) default NULL,
                  `right_ptr` int(9) NOT NULL,
+                 `slug` varchar(255) default NULL,
                  `sort_column` varchar(64) default NULL,
                  `sort_order` char(4) default 'ASC',
                  `thumb_dirty` boolean default 1,
@@ -260,7 +262,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 11);
+    module::set_version("gallery", 12);
   }
 
   static function upgrade($version) {
@@ -343,7 +345,18 @@ class gallery_installer {
 
       module::set_version("gallery", $version = 11);
     }
-}
+
+    if ($version == 11) {
+      $db->query("ALTER TABLE {items} ADD COLUMN `relative_url_cache` varchar(255) DEFAULT NULL");
+      $db->query("ALTER TABLE {items} ADD COLUMN `slug` varchar(255) DEFAULT NULL");
+
+      // This is imperfect since some of the slugs may contain invalid characters, but it'll do
+      // for now because we don't want a lengthy operation here.
+      $db->query("UPDATE {items} SET `slug` = `name`");
+      $db->query("UPDATE {items} SET `relative_url_cache` = `relative_path_cache`");
+      module::set_version("gallery", $version = 12);
+    }
+  }
 
   static function uninstall() {
     $db = Database::instance();

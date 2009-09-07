@@ -117,7 +117,8 @@ class Item_Model extends ORM_MPTT {
       @rename(dirname($original_thumb_path), dirname($this->thumb_path()));
       Database::instance()
         ->update("items",
-                 array("relative_path_cache" => null),
+                 array("relative_path_cache" => null,
+                       "relative_url_cache" => null),
                  array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     } else {
       @rename($original_resize_path, $this->resize_path());
@@ -153,7 +154,8 @@ class Item_Model extends ORM_MPTT {
     if ($this->is_album()) {
       Database::instance()
         ->update("items",
-                 array("relative_path_cache" => null),
+                 array("relative_path_cache" => null,
+                       "relative_url_cache" => null),
                  array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     }
 
@@ -188,8 +190,8 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
    */
   public function file_url($full_uri=false) {
-    $relative_path = "var/albums/" . $this->relative_path();
-    return $full_uri ? url::abs_file($relative_path) : url::file($relative_path);
+    $relative_url = "var/albums/" . $this->relative_url();
+    return $full_uri ? url::abs_file($relative_url) : url::file($relative_url);
   }
 
   /**
@@ -221,8 +223,8 @@ class Item_Model extends ORM_MPTT {
    */
   public function thumb_url($full_uri=false) {
     $cache_buster = "?m=" . $this->updated;
-    $relative_path = "var/thumbs/" . $this->relative_path();
-    $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
+    $relative_url = "var/thumbs/" . $this->relative_url();
+    $base = ($full_uri ? url::abs_file($relative_url) : url::file($relative_url));
     if ($this->is_photo()) {
       return $base . $cache_buster;
     } else if ($this->is_album()) {
@@ -248,9 +250,31 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
   public function resize_url($full_uri=false) {
-    $relative_path = "var/resizes/" . $this->relative_path();
-    return ($full_uri ? url::abs_file($relative_path) : url::file($relative_path)) .
+    $relative_url = "var/resizes/" . $this->relative_url();
+    return ($full_uri ? url::abs_file($relative_url) : url::file($relative_url)) .
       ($this->is_album() ? "/.album.jpg" : "");
+  }
+
+  /**
+   * Rebuild the relative_path_cache and relative_url_cache.
+   */
+  private function _build_relative_caches() {
+    $names = array();
+    $slugs = array();
+    foreach (Database::instance()
+             ->select(array("name", "slug"))
+             ->from("items")
+             ->where("left_ptr <=", $this->left_ptr)
+             ->where("right_ptr >=", $this->right_ptr)
+             ->where("id <>", 1)
+             ->orderby("left_ptr", "ASC")
+             ->get() as $row) {
+      $names[] = $row->name;
+      $slugs[] = $row->slug;
+    }
+    $this->relative_path_cache = implode($names, "/");
+    $this->relative_url_cache = implode($slugs, "/");
+    $this->save();
   }
 
   /**
@@ -263,21 +287,24 @@ class Item_Model extends ORM_MPTT {
     }
 
     if (!isset($this->relative_path_cache)) {
-      $paths = array();
-      foreach (Database::instance()
-               ->select("name")
-               ->from("items")
-               ->where("left_ptr <=", $this->left_ptr)
-               ->where("right_ptr >=", $this->right_ptr)
-               ->where("id <>", 1)
-               ->orderby("left_ptr", "ASC")
-               ->get() as $row) {
-        $paths[] = $row->name;
-      }
-      $this->relative_path_cache = implode($paths, "/");
-      $this->save();
+      $this->_build_relative_caches();
     }
     return $this->relative_path_cache;
+  }
+
+  /**
+   * Return the relative url to this item's file.
+   * @return string
+   */
+  public function relative_url() {
+    if (!$this->loaded) {
+      return;
+    }
+
+    if (!isset($this->relative_url_cache)) {
+      $this->_build_relative_caches();
+    }
+    return $this->relative_url_cache;
   }
 
   /**
@@ -302,7 +329,8 @@ class Item_Model extends ORM_MPTT {
    */
   public function __set($column, $value) {
     if ($column == "name") {
-      // Clear the relative path as it is no longer valid.
+      // Clear the relative path as it is no longer valid.  The relative url cache does not need
+      // to be flushed because it's not tightly bound to the actual name of the file.
       $this->relative_path_cache = null;
     }
     parent::__set($column, $value);

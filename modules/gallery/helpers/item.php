@@ -121,6 +121,14 @@ class item_Core {
   }
 
   /**
+   * Convert a filename into something we can use as a url component.
+   * @param string $filename
+   */
+  static function convert_filename_to_slug($filename) {
+    return preg_replace("/[^A-Za-z0-9-_]+/", "-", pathinfo($filename, PATHINFO_FILENAME));
+  }
+
+  /**
    * Display delete confirmation message and form
    * @param object $item
    * @return string form

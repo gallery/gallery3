@@ -31,10 +31,11 @@ class photo_Core {
    * @param string  $name the filename to use for this photo in the album
    * @param integer $title the title of the new photo
    * @param string  $description (optional) the longer description of this photo
+   * @param string  $slug (optional) the url component for this photo
    * @return Item_Model
    */
   static function create($parent, $filename, $name, $title,
-                         $description=null, $owner_id=null) {
+                         $description=null, $owner_id=null, $slug=null) {
     if (!$parent->loaded || !$parent->is_album()) {
       throw new Exception("@todo INVALID_PARENT");
     }
@@ -66,6 +67,10 @@ class photo_Core {
       $name .= "." . $pi["extension"];
     }
 
+    if (empty($slug)) {
+      $slug = item::convert_filename_to_slug($name);
+    }
+
     $photo = ORM::factory("item");
     $photo->type = "photo";
     $photo->title = $title;
@@ -78,15 +83,21 @@ class photo_Core {
     $photo->thumb_dirty = 1;
     $photo->resize_dirty = 1;
     $photo->sort_column = "weight";
+    $photo->slug = $slug;
     $photo->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
-    // Randomize the name if there's a conflict
+    // Randomize the name or slug if there's a conflict
+    // @todo Improve this.  Random numbers are not user friendly
     while (ORM::factory("item")
            ->where("parent_id", $parent->id)
+           ->open_paren()
            ->where("name", $photo->name)
+           ->orwhere("slug", $photo->slug)
+           ->close_paren()
            ->find()->id) {
-      // @todo Improve this.  Random numbers are not user friendly
-      $photo->name = rand() . "." . $pi["extension"];
+      $rand = rand();
+      $photo->name = "{$name}.$rand.{$pi['extension']}";
+      $photo->slug = "{$slug}-$rand";
     }
 
     // This saves the photo

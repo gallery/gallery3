@@ -30,9 +30,10 @@ class album_Core {
    * @param string  $name the name of this new album (it will become the directory name on disk)
    * @param integer $title the title of the new album
    * @param string  $description (optional) the longer description of this album
+   * @param string  $slug (optional) the url component for this photo
    * @return Item_Model
    */
-  static function create($parent, $name, $title, $description=null, $owner_id=null) {
+  static function create($parent, $name, $title, $description=null, $owner_id=null, $slug=null) {
     if (!$parent->loaded || !$parent->is_album()) {
       throw new Exception("@todo INVALID_PARENT");
     }
@@ -47,6 +48,10 @@ class album_Core {
       throw new Exception("@todo NAME_CANNOT_END_IN_PERIOD");
     }
 
+    if (empty($slug)) {
+      $slug = item::convert_filename_to_slug($name);
+    }
+
     $album = ORM::factory("item");
     $album->type = "album";
     $album->title = $title;
@@ -55,15 +60,23 @@ class album_Core {
     $album->owner_id = $owner_id;
     $album->thumb_dirty = 1;
     $album->resize_dirty = 1;
+    $album->slug = $slug;
     $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
     $album->sort_column = "created";
     $album->sort_order = "ASC";
 
+    // Randomize the name or slug if there's a conflict
+    // @todo Improve this.  Random numbers are not user friendly
     while (ORM::factory("item")
            ->where("parent_id", $parent->id)
+           ->open_paren()
            ->where("name", $album->name)
+           ->orwhere("slug", $album->slug)
+           ->close_paren()
            ->find()->id) {
-      $album->name = "{$name}-" . rand();
+      $rand = rand();
+      $album->name = "{$name}-$rand";
+      $album->slug = "{$slug}-$rand";
     }
 
     $album = $album->add_to_parent($parent);
