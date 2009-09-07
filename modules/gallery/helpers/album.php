@@ -100,6 +100,7 @@ class album_Core {
     $group->input("name")->label(t("Directory Name"))
       ->callback("item::validate_no_slashes")
       ->error_messages("no_slashes", t("The directory name can't contain the \"/\" character"));
+    $group->input("slug")->label(t("Internet Address"));
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Create"));
     $form->add_rules_from(ORM::factory("item"));
@@ -122,6 +123,7 @@ class album_Core {
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->callback("item::validate_no_trailing_period")
         ->error_messages("no_trailing_period", t("The directory name can't end in \".\""));
+      $group->input("slug")->label(t("Internet Address"))->value($parent->slug);
     }
 
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))

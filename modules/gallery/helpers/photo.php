@@ -140,10 +140,11 @@ class photo_Core {
   static function get_add_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddPhotoForm"));
     $group = $form->group("add_photo")->label(
-      t("Add Photo to %album_title", array("album_title" =>$parent->title)));
+      t("Add Photo to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
     $group->input("name")->label(t("Filename"));
+    $group->input("slug")->label(t("Internet Address"))->value($photo->slug);
     $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif,flv,mp4]");
     $group->hidden("type")->value("photo");
     $group->submit("")->value(t("Upload"));
@@ -163,6 +164,7 @@ class photo_Core {
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
       ->callback("item::validate_no_trailing_period")
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""));
+    $group->input("slug")->label(t("Internet Address"))->value($photo->slug);
 
     module::event("item_edit_form", $photo, $form);
 
