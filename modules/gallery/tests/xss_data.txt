@@ -143,10 +143,10 @@ modules/gallery/views/movieplayer.html.php                   13  DIRTY_JS url::a
 modules/gallery/views/permissions_browse.html.php            3   DIRTY_JS url::site("permissions/form/__ITEM__")
 modules/gallery/views/permissions_browse.html.php            16  DIRTY_JS url::site("permissions/change/__CMD__/__GROUP__/__PERM__/__ITEM__?csrf=$csrf")
 modules/gallery/views/permissions_browse.html.php            42  DIRTY_ATTR $parent->id
-modules/gallery/views/permissions_browse.html.php            43  DIRTY_JS $parent->id
-modules/gallery/views/permissions_browse.html.php            48  DIRTY_ATTR $item->id
-modules/gallery/views/permissions_browse.html.php            49  DIRTY_JS $item->id
-modules/gallery/views/permissions_browse.html.php            56  DIRTY    $form
+modules/gallery/views/permissions_browse.html.php            44  DIRTY_JS $parent->id
+modules/gallery/views/permissions_browse.html.php            52  DIRTY_ATTR $item->id
+modules/gallery/views/permissions_browse.html.php            53  DIRTY_JS $item->id
+modules/gallery/views/permissions_browse.html.php            60  DIRTY    $form
 modules/gallery/views/permissions_form.html.php              24  DIRTY_JS $lock->id
 modules/gallery/views/permissions_form.html.php              32  DIRTY_JS $group->id
 modules/gallery/views/permissions_form.html.php              32  DIRTY_JS $permission->id
