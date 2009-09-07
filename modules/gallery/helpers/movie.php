@@ -141,7 +141,7 @@ class movie_Core {
 
     $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
       " -an -ss 00:00:03 -an -r 1 -vframes 1" .
-      " -y -f mjpeg " . escapeshellarg($output_file);
+      " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
     exec($cmd);
   }
 
