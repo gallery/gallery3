@@ -168,15 +168,27 @@ class Albums_Controller extends Items_Controller {
 
     $form = album::get_edit_form($album);
     if ($valid = $form->validate()) {
-      // Make sure that there's not a conflict
       if ($album->id != 1 &&
-          Database::instance()
+          $form->edit_item->dirname->value != $album->name ||
+          $form->edit_item->slug->value != $album->slug) {
+        // Make sure that there's not a conflict
+        $row = Database::instance()
+          ->select(array("name", "slug"))
           ->from("items")
           ->where("parent_id", $album->parent_id)
           ->where("id <>", $album->id)
+          ->open_paren()
           ->where("name", $form->edit_item->dirname->value)
-          ->count_records()) {
-        $form->edit_item->dirname->add_error("conflict", 1);
+          ->orwhere("slug", $form->edit_item->slug->value)
+          ->close_paren()
+          ->get()
+          ->current();
+        if ($row->name == $form->edit_item->dirname->value) {
+          $form->edit_item->dirname->add_error("name_conflict", 1);
+        }
+        if ($row->slug == $form->edit_item->slug->value) {
+          $form->edit_item->slug->add_error("slug_conflict", 1);
+        }
         $valid = false;
       }
     }

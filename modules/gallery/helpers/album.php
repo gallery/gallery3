@@ -97,10 +97,14 @@ class album_Core {
       ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
-    $group->input("name")->label(t("Directory Name"))
+    $group->input("name")->label(t("Directory name"))
       ->callback("item::validate_no_slashes")
       ->error_messages("no_slashes", t("The directory name can't contain the \"/\" character"));
-    $group->input("slug")->label(t("Internet Address"));
+    $group->input("slug")->label(t("Internet Address"))
+      ->callback("item::validate_url_safe")
+      ->error_messages(
+        "not_url_safe",
+        t("The internet address should contain only letters, numbers, hyphens and underscores"));
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Create"));
     $form->add_rules_from(ORM::factory("item"));
@@ -119,11 +123,18 @@ class album_Core {
     if ($parent->id != 1) {
       $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
         ->rules("required")
+        ->error_messages("name_conflict", t("There is already a photo or album with this name"))
         ->callback("item::validate_no_slashes")
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->callback("item::validate_no_trailing_period")
         ->error_messages("no_trailing_period", t("The directory name can't end in \".\""));
-      $group->input("slug")->label(t("Internet Address"))->value($parent->slug);
+      $group->input("slug")->label(t("Internet Address"))->value($parent->slug)
+        ->error_messages(
+          "slug_conflict", t("There is already a photo or album with this internet address"))
+        ->callback("item::validate_url_safe")
+        ->error_messages(
+          "not_url_safe",
+          t("The internet address should contain only letters, numbers, hyphens and underscores"));
     }
 
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
