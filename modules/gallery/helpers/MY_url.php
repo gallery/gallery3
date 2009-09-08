@@ -26,9 +26,11 @@ class url extends url_Core {
       $query = "";
     }
 
-    $parts = explode("/", $uri, 3);
     // @todo if we're only doing this for Item_Model, why not just put this
-    // all into Item_Model::url()?  It'd make url::site() faster.
+    // all into Item_Model::url()?  It'd make url::site() faster.  Downside is that
+    // anywhere we refer to an item by id, eg url::site("albums/123") would have
+    // to load the item and do $item->url();
+    $parts = explode("/", $uri, 3);
     if ($parts[0] == "albums" || $parts[0] == "photos" || $parts[0] == "movies") {
       $uri = model_cache::get("item", $parts[1])->relative_url();
     }
