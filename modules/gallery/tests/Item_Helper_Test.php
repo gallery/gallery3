@@ -38,6 +38,16 @@ class Item_Helper_Test extends Unit_Test_Case {
       ORM::factory("item")->viewable()->where("id", $item->id)->count_all());
   }
 
+  public function validate_url_safe_test() {
+    $input = new MockInput();
+    $input->value = "Ab_cd-ef-d9";
+    item::validate_url_safe($input);
+    $this->assert_true(!isset($input->not_url_safe));
+
+    $input->value = "ab&cd";
+    item::validate_url_safe($input);
+    $this->assert_equal(1, $input->not_url_safe);
+  }
 
   private static function _create_random_item($album) {
     // Set all required fields (values are irrelevant)
@@ -45,5 +55,11 @@ class Item_Helper_Test extends Unit_Test_Case {
     $item->name = rand();
     $item->type = "photo";
     return $item->add_to_parent($album);
+  }
+}
+
+class MockInput {
+  function add_error($error, $value) {
+    $this->$error = $value;
   }
 }
