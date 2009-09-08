@@ -94,25 +94,6 @@ class item_Core {
     if (preg_match("/[^A-Za-z0-9-_]/", $input->value)) {
       $input->add_error("not_url_safe", 1);
     }
-    Kohana::log("alert",print_r($input,1));
-  }
-
-  static function validate_no_name_conflict($input) {
-    $itemid = Input::instance()->post("item");
-    if (is_array($itemid)) {
-      $itemid = $itemid[0];
-    }
-    $item = ORM::factory("item")
-      ->in("id", $itemid)
-      ->find();
-    if (Database::instance()
-        ->from("items")
-        ->where("parent_id", $item->parent_id)
-        ->where("id <>", $item->id)
-        ->where("name", $input->value)
-        ->count_records()) {
-      $input->add_error("conflict", 1);
-    }
   }
 
   /**
