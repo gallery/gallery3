@@ -190,7 +190,7 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
    */
   public function file_url($full_uri=false) {
-    $relative_url = "var/albums/" . $this->relative_url();
+    $relative_url = "var/albums/" . $this->relative_path();
     return $full_uri ? url::abs_file($relative_url) : url::file($relative_url);
   }
 
@@ -223,8 +223,8 @@ class Item_Model extends ORM_MPTT {
    */
   public function thumb_url($full_uri=false) {
     $cache_buster = "?m=" . $this->updated;
-    $relative_url = "var/thumbs/" . $this->relative_url();
-    $base = ($full_uri ? url::abs_file($relative_url) : url::file($relative_url));
+    $relative_path = "var/thumbs/" . $this->relative_path();
+    $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
     if ($this->is_photo()) {
       return $base . $cache_buster;
     } else if ($this->is_album()) {
@@ -250,8 +250,8 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
   public function resize_url($full_uri=false) {
-    $relative_url = "var/resizes/" . $this->relative_url();
-    return ($full_uri ? url::abs_file($relative_url) : url::file($relative_url)) .
+    $relative_path = "var/resizes/" . $this->relative_path();
+    return ($full_uri ? url::abs_file($relative_path) : url::file($relative_path)) .
       ($this->is_album() ? "/.album.jpg" : "");
   }
 
@@ -329,9 +329,11 @@ class Item_Model extends ORM_MPTT {
    */
   public function __set($column, $value) {
     if ($column == "name") {
-      // Clear the relative path as it is no longer valid.  The relative url cache does not need
-      // to be flushed because it's not tightly bound to the actual name of the file.
+      // Clear the relative path as it is no longer valid.
       $this->relative_path_cache = null;
+    } else if ($column == "slug") {
+      // Clear the relative url as it is no longer valid.
+      $this->relative_url_cache = null;
     }
     parent::__set($column, $value);
   }
