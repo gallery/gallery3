@@ -329,11 +329,18 @@ class Item_Model extends ORM_MPTT {
    */
   public function __set($column, $value) {
     if ($column == "name") {
-      // Clear the relative path as it is no longer valid.
       $this->relative_path_cache = null;
     } else if ($column == "slug") {
-      // Clear the relative url as it is no longer valid.
-      $this->relative_url_cache = null;
+      if ($this->slug != $value) {
+        // Clear the relative url cache for this item and all children
+        $this->relative_url_cache = null;
+        if ($this->is_album()) {
+          Database::instance()
+            ->update("items",
+                     array("relative_url_cache" => null),
+                     array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
+        }
+      }
     }
     parent::__set($column, $value);
   }

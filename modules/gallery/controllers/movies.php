@@ -75,30 +75,32 @@ class Movies_Controller extends Items_Controller {
       if ($form->edit_item->filename->value != $photo->name ||
           $form->edit_item->slug->value != $photo->slug) {
         // Make sure that there's not a name or slug conflict
-        $row = Database::instance()
-          ->select(array("name", "slug"))
-          ->from("items")
-          ->where("parent_id", $photo->parent_id)
-          ->where("id <>", $photo->id)
-          ->open_paren()
-          ->where("name", $form->edit_item->filename->value)
-          ->orwhere("slug", $form->edit_item->slug->value)
-          ->close_paren()
-          ->get()
-          ->current();
-        if ($row->name == $form->edit_item->filename->value) {
-          $form->edit_item->filename->add_error("name_conflict", 1);
+        if ($row = Database::instance()
+            ->select(array("name", "slug"))
+            ->from("items")
+            ->where("parent_id", $photo->parent_id)
+            ->where("id <>", $photo->id)
+            ->open_paren()
+            ->where("name", $form->edit_item->filename->value)
+            ->orwhere("slug", $form->edit_item->slug->value)
+            ->close_paren()
+            ->get()
+            ->current()) {
+          if ($row->name == $form->edit_item->filename->value) {
+            $form->edit_item->filename->add_error("name_conflict", 1);
+          }
+          if ($row->slug == $form->edit_item->slug->value) {
+            $form->edit_item->slug->add_error("slug_conflict", 1);
+          }
+          $valid = false;
         }
-        if ($row->slug == $form->edit_item->slug->value) {
-          $form->edit_item->slug->add_error("slug_conflict", 1);
-        }
-        $valid = false;
       }
     }
 
     if ($valid) {
       $photo->title = $form->edit_item->title->value;
       $photo->description = $form->edit_item->description->value;
+      $photo->slug = $form->edit_item->slug->value;
       $photo->rename($form->edit_item->filename->value);
       $photo->save();
       module::event("item_edit_form_completed", $photo, $form);

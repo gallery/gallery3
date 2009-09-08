@@ -172,24 +172,25 @@ class Albums_Controller extends Items_Controller {
           $form->edit_item->dirname->value != $album->name ||
           $form->edit_item->slug->value != $album->slug) {
         // Make sure that there's not a conflict
-        $row = Database::instance()
-          ->select(array("name", "slug"))
-          ->from("items")
-          ->where("parent_id", $album->parent_id)
-          ->where("id <>", $album->id)
-          ->open_paren()
-          ->where("name", $form->edit_item->dirname->value)
-          ->orwhere("slug", $form->edit_item->slug->value)
-          ->close_paren()
-          ->get()
-          ->current();
-        if ($row->name == $form->edit_item->dirname->value) {
-          $form->edit_item->dirname->add_error("name_conflict", 1);
+        if ($row = Database::instance()
+            ->select(array("name", "slug"))
+            ->from("items")
+            ->where("parent_id", $album->parent_id)
+            ->where("id <>", $album->id)
+            ->open_paren()
+            ->where("name", $form->edit_item->dirname->value)
+            ->orwhere("slug", $form->edit_item->slug->value)
+            ->close_paren()
+            ->get()
+            ->current()) {
+          if ($row->name == $form->edit_item->dirname->value) {
+            $form->edit_item->dirname->add_error("name_conflict", 1);
+          }
+          if ($row->slug == $form->edit_item->slug->value) {
+            $form->edit_item->slug->add_error("slug_conflict", 1);
+          }
+          $valid = false;
         }
-        if ($row->slug == $form->edit_item->slug->value) {
-          $form->edit_item->slug->add_error("slug_conflict", 1);
-        }
-        $valid = false;
       }
     }
 
@@ -201,6 +202,7 @@ class Albums_Controller extends Items_Controller {
       if ($album->id != 1) {
         $album->rename($form->edit_item->dirname->value);
       }
+      $album->slug = $form->edit_item->slug->value;
       $album->save();
       module::event("item_edit_form_completed", $album, $form);
 
