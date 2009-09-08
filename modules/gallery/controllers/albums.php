@@ -42,9 +42,9 @@ class Albums_Controller extends Items_Controller {
       $index = $album->get_position($show);
       $page = ceil($index / $page_size);
       if ($page == 1) {
-        url::redirect("albums/$album->id");
+        url::redirect($album->url());
       } else {
-        url::redirect("albums/$album->id?page=$page");
+        url::redirect($album->url("page=$page"));
       }
     }
 
@@ -55,9 +55,9 @@ class Albums_Controller extends Items_Controller {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      url::redirect("albums/$album->id");
+      url::redirect($album->url());
     } else if ($page > $max_pages) {
-      url::redirect("albums/$album->id?page=$max_pages");
+      url::redirect($album->url("page=$max_pages"));
     }
 
     $template = new Theme_View("page.html", "album");
@@ -116,8 +116,8 @@ class Albums_Controller extends Items_Controller {
 
       print json_encode(
         array("result" => "success",
-              "location" => url::site("albums/$new_album->id"),
-              "resource" => url::site("albums/$new_album->id")));
+              "location" => $new_album->url(),
+              "resource" => $new_album->url()));
     } else {
       print json_encode(
         array(
@@ -149,8 +149,8 @@ class Albums_Controller extends Items_Controller {
 
       print json_encode(
         array("result" => "success",
-              "resource" => url::site("photos/$photo->id"),
-              "location" => url::site("photos/$photo->id")));
+              "resource" => $photo->url(),
+              "location" => $photo->url()));
     } else {
       print json_encode(
         array("result" => "error",

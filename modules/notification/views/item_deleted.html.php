@@ -15,8 +15,8 @@
       <tr>
         <td><?= t("Url:") ?></td>
         <td>
-          <a href="<?= $item->parent()->url(array(), true) ?>">
-            <?= $item->parent()->url(array(), true) ?>
+          <a href="<?= $item->parent()->abs_url() ?>">
+            <?= $item->parent()->abs_url() ?>
           </a>
         </td>
       </tr>

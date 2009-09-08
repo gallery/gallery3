@@ -97,7 +97,7 @@ class Photos_Controller extends Items_Controller {
       $photo->save();
       module::event("item_edit_form_completed", $photo, $form);
 
-      log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
+      log::success("content", "Updated photo", "<a href=\"{$photo->url()}\">view</a>");
       message::success(
                        t("Saved photo %photo_title",
                          array("photo_title" => html::purify($photo->title))));

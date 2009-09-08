@@ -184,4 +184,12 @@ class item_Core {
 
     return $model;
   }
+
+  /**
+   * Return the root Item_Model
+   * @return Item_Model
+   */
+  static function root() {
+    return model_cache::get("item", 1);
+  }
 }

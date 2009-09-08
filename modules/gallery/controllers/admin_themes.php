@@ -38,7 +38,7 @@ class Admin_Themes_Controller extends Admin_Controller {
       $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
       $theme_info->description = t($theme_info->description);
       $theme_info->name = t($theme_info->name);
-      
+
       $themes[$theme_name] = $theme_info;
     }
     return $themes;
@@ -54,7 +54,7 @@ class Admin_Themes_Controller extends Admin_Controller {
     if ($type == "admin") {
       $view->url = url::site("admin?theme=$theme_name");
     } else {
-      $view->url = url::site("albums/1?theme=$theme_name");
+      $view->url = item::root()->url("theme=$theme_name");
     }
     print $view;
   }

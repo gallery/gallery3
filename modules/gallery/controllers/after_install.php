@@ -20,7 +20,7 @@
 class After_Install_Controller extends Controller {
   public function index() {
     if (!user::active()->admin) {
-      url::redirect("albums/1");
+      url::redirect(item::root()->url());
     }
 
     $v = new View("after_install.html");

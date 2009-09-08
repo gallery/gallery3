@@ -168,9 +168,24 @@ class Item_Model extends ORM_MPTT {
    *
    * @param string $query the query string (eg "show=3")
    */
-  public function url($query=array(), $full_uri=false) {
-    $url = ($full_uri ? url::abs_site("{$this->type}s/$this->id")
-            : url::site("{$this->type}s/$this->id"));
+  public function url($query=null) {
+    $relative_url = $this->relative_url();
+    $url = url::site($relative_url);
+    if ($query) {
+      $url .= "?$query";
+    }
+    return $url;
+  }
+
+  /**
+   * album: url::abs_site("albums/2")
+   * photo: url::abs_site("photos/3")
+   *
+   * @param string $query the query string (eg "show=3")
+   */
+  public function abs_url($query=null) {
+    $relative_url = $this->relative_url();
+    $url = url::abs_site($relative_url);
     if ($query) {
       $url .= "?$query";
     }

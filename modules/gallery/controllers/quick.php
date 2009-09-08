@@ -121,7 +121,7 @@ class Quick_Controller extends Controller {
       print json_encode(array("result" => "success", "reload" => 1));
     } else {
       print json_encode(array("result" => "success",
-                              "location" => url::site("albums/$parent->id")));
+                              "location" => $parent->url()));
     }
   }
 

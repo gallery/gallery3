@@ -18,25 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class url extends url_Core {
-  static function site($uri, $protocol=false) {
-    if (($pos = strpos($uri, "?")) !== false) {
-      list ($uri, $query) = explode("?", $uri, 2);
-      $query = "?$query";
-    } else {
-      $query = "";
-    }
-
-    // @todo if we're only doing this for Item_Model, why not just put this
-    // all into Item_Model::url()?  It'd make url::site() faster.  Downside is that
-    // anywhere we refer to an item by id, eg url::site("albums/123") would have
-    // to load the item and do $item->url();
-    $parts = explode("/", $uri, 3);
-    if ($parts[0] == "albums" || $parts[0] == "photos" || $parts[0] == "movies") {
-      $uri = model_cache::get("item", $parts[1])->relative_url();
-    }
-    return parent::site($uri . $query, $protocol);
-  }
-
   static function parse_url() {
     if (Router::$controller) {
       return;

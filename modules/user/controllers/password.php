@@ -130,7 +130,7 @@ class Password_Controller extends Controller {
       $user->hash = null;
       $user->save();
       message::success(t("Password reset successfully"));
-      url::redirect("albums/1");
+      url::redirect(item::root()->url());
     } else {
       print $view;
     }

@@ -28,7 +28,7 @@
         <? $item_class = "gAlbum"; ?>
       <? endif ?>
    <li class="gItem <?= $item_class ?>">
-      <a href="<?= url::site("items/$item->id") ?>">
+      <a href="<?= $item->url() ?>">
         <?= $item->thumb_img() ?>
         <p>
     <?= html::purify($item->title) ?>

@@ -81,7 +81,7 @@
           <? if ($header_text = module::get_var("gallery", "header_text")): ?>
           <?= $header_text ?>
           <? else: ?>
-          <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
+          <a id="gLogo" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
             <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site")->for_html_attr() ?>" src="<?= url::file("lib/images/logo.png") ?>" />
           </a>
           <? endif ?>
@@ -95,7 +95,7 @@
         <ul class="gBreadcrumbs">
           <? foreach ($parents as $parent): ?>
           <li>
-            <a href="<?= url::site("albums/{$parent->id}?show={$theme->item()->id}") ?>">
+            <a href="<?= $parent->url("show={$theme->item()->id}") ?>">
               <?= html::purify($parent->title) ?>
             </a>
           </li>
