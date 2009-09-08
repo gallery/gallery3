@@ -349,7 +349,12 @@ class Item_Model extends ORM_MPTT {
    * @see ORM::save()
    */
   public function save() {
-    if (!empty($this->changed) && $this->changed != array("view_count" => "view_count")) {
+    $significant_changes = $this->changed;
+    unset($significant_changes["view_count"]);
+    unset($significant_changes["relative_url_cache"]);
+    unset($significant_changes["relative_path_cache"]);
+
+    if (!empty($this->changed) && $significant_changes) {
       $this->updated = time();
       if (!$this->loaded) {
         $this->created = $this->updated;
