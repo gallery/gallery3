@@ -149,10 +149,12 @@ CREATE TABLE {items} (
   `parent_id` int(9) NOT NULL,
   `rand_key` float default NULL,
   `relative_path_cache` varchar(255) default NULL,
+  `relative_url_cache` varchar(255) default NULL,
   `resize_dirty` tinyint(1) default '1',
   `resize_height` int(9) default NULL,
   `resize_width` int(9) default NULL,
   `right_ptr` int(9) NOT NULL,
+  `slug` varchar(255) default NULL,
   `sort_column` varchar(64) default NULL,
   `sort_order` char(4) default 'ASC',
   `thumb_dirty` tinyint(1) default '1',
@@ -173,7 +175,7 @@ CREATE TABLE {items} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,NULL,0,NULL,'',1,NULL,NULL,2,'weight','ASC',1,NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
+INSERT INTO {items} VALUES (1,NULL,NULL,UNIX_TIMESTAMP(),'',NULL,1,1,NULL,NULL,NULL,0,NULL,'','',1,NULL,NULL,2,NULL,'weight','ASC',1,NULL,NULL,'Gallery','album',UNIX_TIMESTAMP(),0,1,NULL,'1','1');
 DROP TABLE IF EXISTS {items_tags};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -226,7 +228,7 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,1,'gallery',11);
+INSERT INTO {modules} VALUES (1,1,'gallery',12);
 INSERT INTO {modules} VALUES (2,1,'user',1);
 INSERT INTO {modules} VALUES (3,1,'comment',2);
 INSERT INTO {modules} VALUES (4,1,'organize',1);
