@@ -27,7 +27,9 @@ class url extends url_Core {
     }
 
     $parts = explode("/", $uri, 3);
-    if ($parts[0] == "albums" || $parts[0] == "photos") {
+    // @todo if we're only doing this for Item_Model, why not just put this
+    // all into Item_Model::url()?  It'd make url::site() faster.
+    if ($parts[0] == "albums" || $parts[0] == "photos" || $parts[0] == "movies") {
       $uri = model_cache::get("item", $parts[1])->relative_url();
     }
     return parent::site($uri . $query, $protocol);
