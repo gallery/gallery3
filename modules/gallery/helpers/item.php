@@ -129,7 +129,8 @@ class item_Core {
     } else {
       $page_type = "photo";
     }
-    $form = new Forge("quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
+    $form = new Forge(
+      "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
     $form->hidden("_method")->value("put");
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
