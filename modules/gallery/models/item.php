@@ -163,14 +163,14 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * album: url::site("albums/2")
-   * photo: url::site("photos/3")
+   * Return the server-relative url to this item, eg:
+   *   /gallery3/index.php/BobsWedding?page=2
+   *   /gallery3/index.php/BobsWedding/Eating-Cake.jpg
    *
    * @param string $query the query string (eg "show=3")
    */
   public function url($query=null) {
-    $relative_url = $this->relative_url();
-    $url = url::site($relative_url);
+    $url = url::site($this->relative_url());
     if ($query) {
       $url .= "?$query";
     }
@@ -178,14 +178,14 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * album: url::abs_site("albums/2")
-   * photo: url::abs_site("photos/3")
+   * Return the full url to this item, eg:
+   *   http://example.com/gallery3/index.php/BobsWedding?page=2
+   *   http://example.com/gallery3/index.php/BobsWedding/Eating-Cake.jpg
    *
    * @param string $query the query string (eg "show=3")
    */
   public function abs_url($query=null) {
-    $relative_url = $this->relative_url();
-    $url = url::abs_site($relative_url);
+    $url = url::abs_site($this->relative_url());
     if ($query) {
       $url .= "?$query";
     }

@@ -44,7 +44,7 @@
         <?= $theme->admin_header_top() ?>
         <ul id="gLoginMenu">
           <li class="first"><?= html::anchor(item::root()->url(), "&larr; ".t("Back to the Gallery")) ?></li>
-          <li id="gLogoutLink"><a href="<?= url::site("logout?continue=items/1&amp;csrf=$csrf") ?>"><?= t("Logout") ?></a></li>
+          <li id="gLogoutLink"><a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(item::root()->url())) ?>"><?= t("Logout") ?></a></li>
         </ul>
         <a id="gLogo" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
           &larr; <?= t("back to the ...") ?>
