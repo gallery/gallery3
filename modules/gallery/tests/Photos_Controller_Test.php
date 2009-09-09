@@ -41,6 +41,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
+    $_POST["slug"] = "new-slug";
     $_POST["csrf"] = access::csrf_token();
     access::allow(group::everybody(), "edit", $root);
 
@@ -49,9 +50,8 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $results = ob_get_contents();
     ob_end_clean();
 
-    $this->assert_equal(
-      json_encode(array("result" => "success")),
-      $results);
+    $this->assert_equal(json_encode(array("result" => "success")), $results);
+    $this->assert_equal("new-slug", $this->_photo->slug);
     $this->assert_equal("new title", $this->_photo->title);
     $this->assert_equal("new description", $this->_photo->description);
 
