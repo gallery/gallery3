@@ -353,7 +353,9 @@ class gallery_installer {
       // This is imperfect since some of the slugs may contain invalid characters, but it'll do
       // for now because we don't want a lengthy operation here.
       $db->query("UPDATE {items} SET `slug` = `name`");
-      $db->query("UPDATE {items} SET `relative_url_cache` = `relative_path_cache`");
+
+      // Flush all path caches becuase we're going to start urlencoding them.
+      $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
       module::set_version("gallery", $version = 12);
     }
   }
