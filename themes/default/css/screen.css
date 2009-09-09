@@ -105,6 +105,12 @@ a:hover,
   float: left;
 }
 
+#gDialog #gMessage li {
+  width: 400px;
+  white-space: normal;
+  padding-left: 32px;
+}
+
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 table {
