@@ -115,9 +115,7 @@ class item_Core {
   static function convert_filename_to_slug($filename) {
     $result = pathinfo($filename, PATHINFO_FILENAME);
     $result = preg_replace("/[^A-Za-z0-9-_]+/", "-", $result);
-    $result = preg_replace("/^-+/", "", $result);
-    $result = preg_replace("/-+$/", "", $result);
-    return $result;
+    return trim($result, "-");
   }
 
   /**
