@@ -49,6 +49,11 @@ class Item_Helper_Test extends Unit_Test_Case {
     $this->assert_equal(1, $input->not_url_safe);
   }
 
+  public function convert_filename_to_slug_test() {
+    $this->assert_equal("foo", item::convert_filename_to_slug("{[foo]}"));
+    $this->assert_equal("foo-bar", item::convert_filename_to_slug("{[foo!@#!$@#^$@($!(@bar]}"));
+  }
+
   private static function _create_random_item($album) {
     // Set all required fields (values are irrelevant)
     $item = ORM::factory("item");
