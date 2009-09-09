@@ -107,7 +107,8 @@ class Albums_Controller extends Items_Controller {
         $this->input->post("name"),
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
-        user::active()->id);
+        user::active()->id,
+        $this->input->post("slug"));
 
       log::success("content", "Created an album",
                    html::anchor("albums/$new_album->id", "view album"));
