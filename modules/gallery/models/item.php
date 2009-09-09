@@ -144,7 +144,7 @@ class Item_Model extends ORM_MPTT {
       throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
     }
 
-    $old_relative_path = $this->relative_path();
+    $old_relative_path = urldecode($this->relative_path());
     $new_relative_path = dirname($old_relative_path) . "/" . $new_name;
     @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$new_relative_path");
     @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$new_relative_path");
@@ -197,7 +197,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/album2/photo.jpg
    */
   public function file_path() {
-    return VARPATH . "albums/" . $this->relative_path();
+    return VARPATH . "albums/" . urldecode($this->relative_path());
   }
 
   /**
@@ -205,8 +205,8 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
    */
   public function file_url($full_uri=false) {
-    $relative_url = "var/albums/" . $this->relative_path();
-    return $full_uri ? url::abs_file($relative_url) : url::file($relative_url);
+    $relative_path = "var/albums/" . $this->relative_path();
+    return $full_uri ? url::abs_file($relative_path) : url::file($relative_path);
   }
 
   /**
@@ -214,7 +214,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/photo.thumb.jpg
    */
   public function thumb_path() {
-    $base = VARPATH . "thumbs/" . $this->relative_path();
+    $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
     if ($this->is_photo()) {
       return $base;
     } else if ($this->is_album()) {
@@ -256,7 +256,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/photo.resize.jpg
    */
   public function resize_path() {
-    return VARPATH . "resizes/" . $this->relative_path() .
+    return VARPATH . "resizes/" . urldecode($this->relative_path()) .
       ($this->is_album() ? "/.album.jpg" : "");
   }
 
@@ -284,8 +284,8 @@ class Item_Model extends ORM_MPTT {
              ->where("id <>", 1)
              ->orderby("left_ptr", "ASC")
              ->get() as $row) {
-      $names[] = $row->name;
-      $slugs[] = $row->slug;
+      $names[] = urlencode($row->name);
+      $slugs[] = urlencode($row->slug);
     }
     $this->relative_path_cache = implode($names, "/");
     $this->relative_url_cache = implode($slugs, "/");
@@ -293,7 +293,9 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Return the relative path to this item's file.
+   * Return the relative path to this item's file.  Note that the components of the path are
+   * urlencoded so if you want to use this as a filesystem path, you need to call urldecode
+   * on it.
    * @return string
    */
   public function relative_path() {
