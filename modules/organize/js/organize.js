@@ -56,11 +56,18 @@
       tolerance: "pointer",
       greedy: true,
       drop: function(event, ui) {
-	var before_or_after = $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after";
+        var before_or_after = null;
+        var target_id = null;
+        if ($(".currentDropTarget").length) {
+          before_or_after = $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after";
+          target_id = $(".currentDropTarget").attr("ref");
+        } else {
+          before_or_after = "after";
+          target_id = $("#gOrganizeMicroThumbGrid li:last").attr("ref");
+        }
         $.organize.do_drop({
           url: rearrange_url
-	    .replace("__TARGET_ID__", $(".currentDropTarget").attr("ref"))
-	    .replace("__ALBUM_ID__", $(".currentDropTarget").attr("ref"))
+	    .replace("__TARGET_ID__", target_id)
 	    .replace("__BEFORE__", before_or_after),
           source: $(ui.helper).children("img")
         });
@@ -119,8 +126,8 @@
         $(".currentDropTarget").removeClass("currentDropTarget");
         var borderStyle = event.pageX < $(this).offset().left + $(this).width() / 2 ?
           "borderLeftStyle" : "borderRightStyle";
-        $(this).css(borderStyle, "solid");
-        $(this).addClass("currentDropTarget");
+        $(this).addClass("currentDropTarget")
+          .css(borderStyle, "solid");
       }
     },
 
@@ -159,6 +166,7 @@
 	.droppable($.organize.content_droppable);
       $(".gOrganizeMicroThumbGridCell")
 	.draggable($.organize.micro_thumb_draggable)
+        .mouseleave($.organize.mouse_leave_handler)
 	.mousemove($.organize.mouse_move_handler);
       $(".gOrganizeAlbum").droppable($.organize.branch_droppable);
       $(".gOrganizeAlbumText").click($.organize.show_album);
