@@ -9,7 +9,7 @@
   </span>
   <ul>
     <? foreach ($album->children(null, 0, array("type" => "album")) as $child): ?>
-    <? if ($selected && $child->is_descendant($selected)): ?>
+    <? if ($selected && $child->contains($selected)): ?>
     <?= View::factory("organize_tree.html", array("selected" => $selected, "album" => $child)); ?>
     <? else: ?>
     <li class="gOrganizeAlbum ui-icon-left <?= access::can("edit", $child) ? "" : "gViewOnly" ?>"

@@ -110,7 +110,7 @@ class ORM_MPTT_Core extends ORM {
    * @param ORM $target
    * @return boolean
    */
-  function is_descendant($target) {
+  function contains($target) {
     return ($this->left_ptr <= $target->left_ptr && $this->right_ptr >= $target->right_ptr);
   }
 
@@ -212,7 +212,7 @@ class ORM_MPTT_Core extends ORM {
    * @return  ORM_MTPP
    */
   function move_to($target) {
-    if ($this->is_descendant($target)) {
+    if ($this->contains($target)) {
       throw new Exception("@todo INVALID_TARGET can't move item inside itself");
     }
 
