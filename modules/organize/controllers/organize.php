@@ -47,7 +47,7 @@ class Organize_Controller extends Controller {
     $target_album = ORM::factory("item", $target_album_id);
     foreach ($this->input->post("source_ids") as $source_id) {
       $source = ORM::factory("item", $source_id);
-      if (!$source->is_descendant($target_album_)) {
+      if (!$source->contains($target_album)) {
         item::move($source, $target_album);
       }
     }

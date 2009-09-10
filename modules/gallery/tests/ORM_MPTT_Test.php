@@ -97,6 +97,19 @@ class ORM_MPTT_Test extends Unit_Test_Case {
       $album1_2->children()->select_list());
   }
 
+  public function cant_move_parent_into_own_subtree_test() {
+    $album1 = album::create(item::root(), "move_to_test", "move_to_test");
+    $album2 = album::create($album1, "move_to_test", "move_to_test");
+    $album3 = album::create($album2, "move_to_test", "move_to_test");
+
+    try {
+      $album1->move_to($album3);
+      $self->assert_true(false, "We should be unable to move an item inside its own hierarchy");
+    } catch (Exception $e) {
+      // pass
+    }
+  }
+
   public function parent_test() {
     $root = ORM::factory("item", 1);
     $album = self::create_item_and_add_to_parent($root);
