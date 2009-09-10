@@ -41,14 +41,14 @@ class Organize_Controller extends Controller {
             "sort_order" => $album->sort_order));
   }
 
-  function move_to($album_id) {
+  function move_to($target_album_id) {
     access::verify_csrf();
 
-    $album = ORM::factory("item", $album_id);
+    $target_album = ORM::factory("item", $target_album_id);
     foreach ($this->input->post("source_ids") as $source_id) {
       $source = ORM::factory("item", $source_id);
-      if (!$source->is_descendant($album)) {
-        item::move($source, $album);
+      if (!$source->is_descendant($target_album_)) {
+        item::move($source, $target_album);
       }
     }
 
