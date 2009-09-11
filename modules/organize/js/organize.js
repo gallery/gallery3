@@ -122,12 +122,12 @@
 
     mouse_move_handler: function(event) {
       if ($(".gDragHelper").length) {
-        $(".gOrganizeMicroThumbGridCell").css("borderStyle", "hidden");
+        $(".gOrganizeMicroThumbGridCell").css({borderStyle: "hidden", margin: "4px"});
         $(".currentDropTarget").removeClass("currentDropTarget");
         var borderStyle = event.pageX < $(this).offset().left + $(this).width() / 2 ?
-          "borderLeftStyle" : "borderRightStyle";
+          {borderLeftStyle: "solid", marginLeft: "2px"} : {borderRightStyle: "solid", marginRight: "2px"};
         $(this).addClass("currentDropTarget")
-          .css(borderStyle, "solid");
+          .css(borderStyle);
       }
     },
 
