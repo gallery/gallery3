@@ -178,6 +178,7 @@ class photo_Core {
 
     module::event("item_edit_form", $photo, $form);
 
+    $group = $form->group("buttons")->label("");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;

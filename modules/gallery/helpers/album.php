@@ -152,6 +152,7 @@ class album_Core {
 
     module::event("item_edit_form", $parent, $form);
 
+    $group = $form->group("buttons")->label("");
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
