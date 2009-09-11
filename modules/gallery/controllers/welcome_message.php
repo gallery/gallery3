@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class After_Install_Controller extends Controller {
+class Welcome_Message_Controller extends Controller {
   public function index() {
     if (!user::active()->admin) {
       url::redirect(item::root()->url());
     }
 
-    $v = new View("after_install.html");
+    $v = new View("welcome_message.html");
     $v->user = user::active();
     print $v;
   }

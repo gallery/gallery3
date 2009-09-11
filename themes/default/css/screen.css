@@ -773,6 +773,10 @@ form .gError,
   text-decoration: underline;
 }
 
+#gWelcomeMessage p {
+  padding-bottom: 1em;
+}
+
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gPager {

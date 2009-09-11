@@ -72,7 +72,7 @@ class gallery_theme_Core {
 
     if ($session->get("after_install")) {
       $session->delete("after_install");
-      return new View("after_install_loader.html");
+      return new View("welcome_message_loader.html");
     }
   }
 
