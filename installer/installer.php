@@ -60,7 +60,7 @@ class installer {
     $prefix = $config["prefix"];
     $buf = null;
     foreach (file(DOCROOT . "installer/install.sql") as $line) {
-      $buf .= $line;
+      $buf .= trim($line);
       if (preg_match("/;$/", $buf)) {
         if (!mysql_query(self::prepend_prefix($prefix, $buf))) {
           return false;
