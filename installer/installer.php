@@ -47,6 +47,11 @@ class installer {
   }
 
   static function unpack_var() {
+    if (!file_exists(VARPATH)) {
+      mkdir(VARPATH);
+      chmod(VARPATH, 0777);
+    }
+
     include(DOCROOT . "installer/init_var.php");
     return true;
   }

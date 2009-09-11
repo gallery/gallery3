@@ -70,9 +70,9 @@ class gallery_theme_Core {
       return L10n_Client_Controller::l10n_form();
     }
 
-    if ($session->get("after_install")) {
+    if (true || $session->get("after_install")) {
       $session->delete("after_install");
-      return new View("after_install_loader.html");
+      return new View("welcome_message_loader.html");
     }
   }
 
