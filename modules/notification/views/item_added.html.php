@@ -13,8 +13,8 @@
       <tr>
         <td><?= t("Url:") ?></td>
         <td>
-          <a href="<?= $item->url(array(), true) ?>">
-            <?= $item->url(array(), true) ?>
+          <a href="<?= $item->abs_url() ?>">
+            <?= $item->abs_url() ?>
           </a>
         </td>
       </tr>

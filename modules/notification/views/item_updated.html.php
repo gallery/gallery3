@@ -17,7 +17,7 @@
       </tr>
       <tr>
         <td><?= t("Url:") ?></td>
-        <td><a href="<?= $item->url(array(), true) ?>"><?= $item->url(array(), true) ?></a></td>
+        <td><a href="<?= $item->abs_url() ?>"><?= $item->abs_url() ?></a></td>
       </tr>
       <? if ($item->original("description") != $item->description): ?>
       <tr>
