@@ -1022,6 +1022,11 @@ form .gError,
   display: inline-block;
 }
 
+#gAddPhotos span {
+  clear: both;
+  display: block;
+}
+
 #gAddPhotosCanvas {
   height: 325px;
   width: 450px;
