@@ -702,6 +702,12 @@ form .gError,
   font-weight: bold;
 }
 
+#gDialog ul.gBreadcrumbs {
+  clear: both;
+  margin-left: 0;
+  padding-left: 0;
+}
+
 #gDialog .gBreadcrumbs li {
   font-size: .9em;
 }
