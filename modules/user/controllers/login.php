@@ -48,7 +48,7 @@ class Login_Controller extends Controller {
 
     list ($valid, $form) = $this->_auth("login/auth_html");
     if ($valid) {
-      url::redirect(item::root()->url());
+      url::redirect(item::root()->abs_url());
     } else {
       print $form;
     }

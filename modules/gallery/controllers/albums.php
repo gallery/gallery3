@@ -42,9 +42,9 @@ class Albums_Controller extends Items_Controller {
       $index = $album->get_position($show);
       $page = ceil($index / $page_size);
       if ($page == 1) {
-        url::redirect($album->url());
+        url::redirect($album->abs_url());
       } else {
-        url::redirect($album->url("page=$page"));
+        url::redirect($album->abs_url("page=$page"));
       }
     }
 
@@ -55,9 +55,9 @@ class Albums_Controller extends Items_Controller {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      url::redirect($album->url());
+      url::redirect($album->abs_url());
     } else if ($page > $max_pages) {
-      url::redirect($album->url("page=$max_pages"));
+      url::redirect($album->abs_url("page=$max_pages"));
     }
 
     $template = new Theme_View("page.html", "album");

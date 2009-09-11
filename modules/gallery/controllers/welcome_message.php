@@ -20,7 +20,7 @@
 class Welcome_Message_Controller extends Controller {
   public function index() {
     if (!user::active()->admin) {
-      url::redirect(item::root()->url());
+      url::redirect(item::root()->abs_url());
     }
 
     $v = new View("welcome_message.html");

@@ -31,7 +31,7 @@ class Logout_Controller extends Controller {
         // Don't use url::redirect() because it'll call url::site() and munge the continue url.
         header("Location: $continue_url");
       } else {
-        url::redirect(item::root()->url());
+        url::redirect(item::root()->abs_url());
       }
     }
   }
