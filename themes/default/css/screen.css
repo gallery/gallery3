@@ -945,13 +945,13 @@ form .gError,
 /* Server Add */
 
 #gServerAdd button {
-  float: left;
   margin-bottom: .5em;
 }
 
 #gServerAddTree {
   cursor: pointer;
   padding-left: 4px;
+  width: 95%;
 }
 
 #gServerAddTree li {
@@ -965,30 +965,14 @@ form .gError,
 
 #gServerAddTree {
   border: 1px solid #ccc;
-  height: 25em;
+  height: 20em;
   overflow: auto;
   margin-bottom: .5em;
-  padding-top: .5em;
-  padding-bottom: .5em;
+  padding: .5em;
 }
 
 #gServerAdd ul ul li {
   padding-left: 1.2em;
-}
-
-#gServerAdd .gBreadcrumbs {
-  font-size: 1em;
-  padding: 0;
-  margin: 0;
-  border-top-width: 0;
-}
-
-#gServerAdd p {
-  margin: 0;
-}
-
-#gServerAdd .gBreadcrumbs li {
-  padding: 10px 6px 10px 16px;
 }
 
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
