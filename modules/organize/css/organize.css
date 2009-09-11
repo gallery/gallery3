@@ -102,9 +102,15 @@
   width: 9em;
 }
 
-.gOrganizeMicroThumbGridCell.ui-state-selected {
-  margin: 2px;
-  border: 2px solid #13A;
+.gOrganizeMicroThumbGridCell.ui-selected {
+  margin: 2px !important;
+  border: 2px solid #13A !important;
+}
+
+.gOrganizeMicroThumbGridCell.ui-state-focus,
+.gOrganizeMicroThumbGridCell.ui-state-active {
+  background: none;
+  border: 0px;
 }
 
 .ui-selectable-lasso {
