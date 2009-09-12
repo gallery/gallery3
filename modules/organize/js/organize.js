@@ -1,12 +1,12 @@
 (function($) {
   $.organize = {
     micro_thumb_draggable: {
-      handle: ".ui-state-selected",
+      handle: ".ui-selected",
       distance: 10,
       cursorAt: { left: -10, top: -10},
       appendTo: "#gOrganizeMicroThumbPanel",
       helper: function(event, ui) {
-        var selected = $(".ui-draggable.ui-state-selected img");
+        var selected = $(".ui-draggable.ui-selected img");
         if (selected.length) {
           var set = $('<div class="gDragHelper"></div>')
 		      .css({
@@ -37,7 +37,7 @@
       },
 
       start: function(event, ui) {
-        $("#gOrganizeMicroThumbPanel .ui-state-selected").hide();
+        $("#gOrganizeMicroThumbPanel .ui-selected").hide();
       },
 
       drag: function(event, ui) {
@@ -80,7 +80,7 @@
       greedy: true,
       drop: function(event, ui) {
         if ($(event.target).hasClass("gViewOnly")) {
-          $(".ui-state-selected").show();
+          $(".ui-selected").show();
           $(".gOrganizeMicroThumbGridCell").css("borderStyle", "none");
         } else {
           $.organize.do_drop({
