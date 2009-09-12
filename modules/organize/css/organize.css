@@ -102,12 +102,13 @@
   width: 9em;
 }
 
-.gOrganizeMicroThumbGridCell.ui-state-selected {
+.gOrganizeMicroThumbGridCell.ui-selecting,
+.gOrganizeMicroThumbGridCell.ui-selected {
   margin: 2px;
   border: 2px solid #13A;
 }
 
-.ui-selectable-lasso {
+.ui-selectable-helper {
   z-index: 2000 !important;
   border: 1px dashed #00F;
   opacity: 0.25;
