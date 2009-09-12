@@ -42,7 +42,7 @@ class info_theme_Core {
                       array("owner_name" => $item->owner->display_name(),
                             "owner_url" => $item->owner->url));
       } else {
-        $results .= t("By: %owner_name", array("owner_name" => "{$item->owner->full_name}"));
+        $results .= t("By: %owner_name", array("owner_name" => $item->owner->display_name()));
       }
       $results .= "</li>";
     }
