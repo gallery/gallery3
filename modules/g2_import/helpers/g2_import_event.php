@@ -18,11 +18,20 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class g2_import_event_Core {
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     Database::instance()->delete("g2_maps", array("g3_id" => $item->id));
   }
 
   static function item_created($item) {
     g2_import::copy_matching_thumbnails_and_resizes($item);
+  }
+
+  static function admin_menu($menu, $theme) {
+    $menu
+      ->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("g2_import")
+               ->label(t("Gallery 2 Import"))
+               ->url(url::site("admin/g2_import")));
   }
 }

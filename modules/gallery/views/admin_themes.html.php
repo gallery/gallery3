@@ -16,7 +16,7 @@
   <h2> <?= t("Gallery theme") ?> </h2>
   <div class="gBlock gSelected">
     <img src="<?= url::file("themes/{$site}/thumbnail.png") ?>"
-         alt="<?= $themes[$site]->name ?>" />
+         alt="<?= html::clean_attribute($themes[$site]->name) ?>" />
     <h3> <?= $themes[$site]->name ?> </h3>
     <p>
       <?= $themes[$site]->description ?>
@@ -30,9 +30,9 @@
     <? if (!$info->site) continue ?>
     <? if ($id == $site) continue ?>
     <div class="gBlock">
-      <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="gDialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name)) ?>">
+      <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="gDialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
         <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
-             alt="<?= $info->name ?>" />
+             alt="<?= html::clean_attribute($info->name) ?>" />
         <h3> <?= $info->name ?> </h3>
         <p>
           <?= $info->description ?>
@@ -54,7 +54,7 @@
   <h2> <?= t("Admin theme") ?> </h2>
   <div class="gBlock gSelected">
     <img src="<?= url::file("themes/{$admin}/thumbnail.png") ?>"
-         alt="<?= $themes[$admin]->name ?>" />
+         alt="<?= html::clean_attribute($themes[$admin]->name) ?>" />
     <h3> <?= $themes[$admin]->name ?> </h3>
     <p>
       <?= $themes[$admin]->description ?>
@@ -68,9 +68,9 @@
     <? if (!$info->admin) continue ?>
     <? if ($id == $admin) continue ?>
     <div class="gBlock">
-      <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="gDialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name)) ?>">
+      <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="gDialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
         <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
-             alt="<?= $info->name ?>" />
+             alt="<?= html::clean_attribute($info->name) ?>" />
         <h3> <?= $info->name ?> </h3>
         <p>
           <?= $info->description ?>

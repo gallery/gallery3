@@ -21,41 +21,24 @@ class Admin_Graphics_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_graphics.html");
-    $view->content->available = "";
-
-    $tk = new ArrayObject(graphics::detect_toolkits(), ArrayObject::ARRAY_AS_PROPS);
-    $active = module::get_var("gallery", "graphics_toolkit", "none");
-    foreach (array("gd", "imagemagick", "graphicsmagick", "none") as $id) {
-      if ($id == $active) {
-        $view->content->active = new View("admin_graphics_$id.html");
-        $view->content->active->tk = $tk;
-        $view->content->active->is_active = true;
-      } else if ($id != "none") {
-        $v = new View("admin_graphics_$id.html");
-        $v->tk = $tk;
-        $v->is_active = false;
-        $view->content->available .= $v;
-      }
-    }
-
+    $view->content->tk = graphics::detect_toolkits();
+    $view->content->active = module::get_var("gallery", "graphics_toolkit", "none");
     print $view;
   }
 
-  public function choose($toolkit) {
+  public function choose($toolkit_id) {
     access::verify_csrf();
 
-    if ($toolkit != module::get_var("gallery", "graphics_toolkit")) {
-      module::set_var("gallery", "graphics_toolkit", $toolkit);
-
-      $toolkit_info = graphics::detect_toolkits();
-      if ($toolkit == "graphicsmagick" || $toolkit == "imagemagick") {
-        module::set_var("gallery", "graphics_toolkit_path", $toolkit_info[$toolkit]);
-      }
+    if ($toolkit_id != module::get_var("gallery", "graphics_toolkit")) {
+      $tk = graphics::detect_toolkits();
+      module::set_var("gallery", "graphics_toolkit", $toolkit_id);
+      module::set_var("gallery", "graphics_toolkit_path", $tk->$toolkit_id->dir);
 
       site_status::clear("missing_graphics_toolkit");
-      message::success(t("Updated Graphics Toolkit"));
-      log::success("graphics", t("Changed graphics toolkit to: %toolkit",
-                                 array("toolkit" => $toolkit)));
+
+      $msg = t("Changed graphics toolkit to: %toolkit", array("toolkit" => $tk->$toolkit_id->name));
+      message::success($msg);
+      log::success("graphics", $msg);
     }
 
     url::redirect("admin/graphics");

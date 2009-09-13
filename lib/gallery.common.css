@@ -1,0 +1,161 @@
+/**
+ * Gallery 3 commonly reused screen styles
+ *
+ * Sheet organization:
+ *  1)  Text
+ *  2)  States and interactions
+ *  3)  Positioning and order
+ *  4)  Reusable containers/widgets
+ */
+
+/** *******************************************************************
+ * 1) Text
+ **********************************************************************/
+
+
+.g-txt-small {
+	font-size: .8em;
+}
+
+.g-txt-big {
+	font-size: 1.2em;
+}
+
+.g-txt-right {
+	text-align: right;
+}
+
+/** *******************************************************************
+ * 2) States and interactions
+ **********************************************************************/
+
+.g-active,
+.g-enabled,
+.g-available,
+.g-editable,
+.g-selected,
+.g-highlight {
+  font-weight: bold;
+}
+
+.g-inactive,
+.g-disabled,
+.g-unavailable,
+.g-uneditable,
+.g-locked,
+.g-unselected,
+.g-understate {
+  color: #ccc;
+  font-weight: normal;
+}
+
+.g-error,
+.g-info,
+.g-success,
+.g-warning {
+  background-position: .4em 50%;
+  background-repeat: no-repeat;
+  padding: .4em .5em .4em 30px;
+}
+
+.g-error,
+.g-denied {
+  background-color: #f6cbca;
+  color: #f00;
+  background-image: url('lib/images/ico-error.png');
+}
+
+.g-info {
+  background-color: #e8e8e8;
+  background-image: url('lib/images/ico-info.png');
+}
+
+.g-success,
+.g-allowed {
+  background-color: #d9efc2;
+  background-image: url('lib/images/ico-success.png');
+}
+
+.g-warning {
+  background-color: #fcf9ce;
+  background-image: url('lib/images/ico-warning.png');
+}
+
+form .g-error {
+  background-color: #fff;
+}
+
+.g-open {
+}
+
+.g-closed {
+}
+
+.g-installed {
+}
+
+.g-default {
+}
+
+.g-draggable,
+.ui-draggable {
+	cursor: move;
+}
+
+.g-target {
+}
+
+/** *******************************************************************
+ * 3) Positioning and order
+ **********************************************************************/
+
+.g-right {
+	float: right;
+}
+
+.g-left {
+	float: left;
+}
+
+.g-first {
+}
+
+.g-last {
+}
+
+.g-even-row {
+}
+
+.g-odd-row {
+}
+
+/** *******************************************************************
+ * 4) Reusable containers/widgets
+ **********************************************************************/
+
+.g-dialog {
+}
+
+.g-button {
+}
+
+.g-progressbar {
+}
+
+.g-block {
+}
+
+.g-message-box {
+  width: 100%;
+}
+
+.g-message {
+  border: 1px solid #ccc;
+  margin-bottom: .4em;
+}
+
+.g-pager {
+}
+
+.g-list-horizontal {
+}

@@ -19,9 +19,10 @@
           <?= t("Action") ?>
         </th>
       </tr>
+      <? $i = 0; ?>
       <? foreach ($task_definitions as $task): ?>
-      <tr class="<?= log::severity_class($task->severity) ?>">
-        <td>
+      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= log::severity_class($task->severity) ?>">
+        <td class="<?= log::severity_class($task->severity) ?>">
           <?= $task->name ?>
         </td>
         <td>
@@ -34,6 +35,7 @@
           </a>
         </td>
       </tr>
+      <? $i++ ?>
       <? endforeach ?>
     </table>
   </div>
@@ -41,10 +43,6 @@
   <? if ($running_tasks->count()): ?>
   <div id="gRunningTasks">
     <h2> <?= t("Running Tasks") ?> </h2>
-    <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
-       class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
-      <?= t("cancel all") ?></a>
-
     <table>
       <tr>
         <th>
@@ -64,11 +62,15 @@
         </th>
         <th>
           <?= t("Action") ?>
+          <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
+             class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
+            <?= t("cancel all") ?></a>
         </th>
       </tr>
+      <? $i = 0; ?>
       <? foreach ($running_tasks as $task): ?>
-      <tr class="<?= $task->state == "stalled" ? "gWarning" : "" ?>">
-        <td>
+      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= $task->state == "stalled" ? "gWarning" : "" ?>">
+        <td class="<?= $task->state == "stalled" ? "gWarning" : "" ?>">
           <?= gallery::date_time($task->updated) ?>
         </td>
         <td>
@@ -90,7 +92,7 @@
           <?= $task->status ?>
         </td>
         <td>
-          <?= p::clean($task->owner()->name) ?>
+          <?= html::clean($task->owner()->name) ?>
         </td>
         <td>
           <? if ($task->state == "stalled"): ?>
@@ -105,6 +107,7 @@
           </a>
         </td>
       </tr>
+      <? $i++ ?>
       <? endforeach ?>
     </table>
   </div>
@@ -112,10 +115,6 @@
 
   <? if ($finished_tasks->count()): ?>
   <div id="gFinishedTasks">
-    <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"
-         class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
-       <span class="ui-icon ui-icon-trash"></span><?= t("remove all finished") ?></a>
-
     <h2> <?= t("Finished Tasks") ?> </h2>
     <table>
       <tr>
@@ -136,11 +135,15 @@
         </th>
         <th>
           <?= t("Action") ?>
+          <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"
+               class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
+             <span class="ui-icon ui-icon-trash"></span><?= t("remove all finished") ?></a>
         </th>
       </tr>
+      <? $i = 0; ?>
       <? foreach ($finished_tasks as $task): ?>
-      <tr class="<?= $task->state == "success" ? "gSuccess" : "gError" ?>">
-        <td>
+      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= $task->state == "success" ? "gSuccess" : "gError" ?>">
+        <td class="<?= $task->state == "success" ? "gSuccess" : "gError" ?>">
           <?= gallery::date_time($task->updated) ?>
         </td>
         <td>
@@ -159,7 +162,7 @@
           <?= $task->status ?>
         </td>
         <td>
-          <?= $task->owner()->name ?>
+          <?= html::clean($task->owner()->name) ?>
         </td>
         <td>
           <? if ($task->done): ?>
@@ -183,6 +186,7 @@
         </td>
       </tr>
       <? endforeach ?>
+      <? $i++ ?>
     </table>
   </div>
   <? endif ?>

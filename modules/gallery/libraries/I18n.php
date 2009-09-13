@@ -77,13 +77,24 @@ class I18n_Core {
       // TODO: See G2 for better fallack code.
       $locale_prefs = array($locale);
       $locale_prefs[] = 'en_US';
-      setlocale(LC_ALL, $locale_prefs);
+      $new_locale = setlocale(LC_ALL, $locale_prefs);
+      if (is_string($new_locale) && strpos($new_locale, 'tr') === 0) {
+        // Make PHP 5 work with Turkish (the localization results are mixed though).
+        // Hack for http://bugs.php.net/18556
+        setlocale(LC_CTYPE, 'C');
+      }
     }
     return $this->_config['default_locale'];
   }
 
   /**
    * Translates a localizable message.
+   *
+   * Security:
+   * The returned string is safe for use in HTML (it contains a safe subset of HTML and
+   * interpolation parameters are converted to HTML entities).
+   * For use in JavaScript, please call ->for_js() on it.
+   *
    * @param $message String|array The message to be translated. E.g. "Hello world"
    *                 or array("one" => "One album", "other" => "%count albums")
    * @param $options array (optional) Options array for key value pairs which are used
@@ -110,7 +121,7 @@ class I18n_Core {
 
     $entry = $this->interpolate($locale, $entry, $values);
 
-    return $entry;
+    return SafeString::of_safe_html($entry);
   }
 
   private function lookup($locale, $message) {
@@ -178,18 +189,20 @@ class I18n_Core {
   static function is_plural_message($message) {
     return is_array($message);
   }
-  
-  private function interpolate($locale, $string, $values) {
+
+  private function interpolate($locale, $string, $key_values) {
     // TODO: Handle locale specific number formatting.
 
     // Replace x_y before replacing x.
-    krsort($values, SORT_STRING);
+    krsort($key_values, SORT_STRING);
 
     $keys = array();
-    foreach (array_keys($values) as $key) {
+    $values = array();
+    foreach ($key_values as $key => $value) {
       $keys[] = "%$key";
+      $values[] = new SafeString($value);
     }
-    return str_replace($keys, array_values($values), $string);
+    return str_replace($keys, $values, $string);
   }
 
   private function pluralize($locale, $entry, $count) {

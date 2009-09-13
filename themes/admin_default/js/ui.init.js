@@ -1,5 +1,4 @@
 $(document).ready(function(){
-  
   // Initialize Superfish menus
   $("#gSiteAdminMenu ul.gMenu").addClass("sf-menu");
   $("ul.gMenu").addClass("sf-menu");
@@ -15,23 +14,20 @@ $(document).ready(function(){
   $("#gSiteAdminMenu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").showMessage();
+  $("#gMessage li").gallery_show_message();
 
   // Initialize modal dialogs
-  var dialogLinks = $(".gDialogLink");
-  for (var i=0; i < dialogLinks.length; i++) {
-    $(dialogLinks[i]).bind("click", handleDialogEvent);
-  }
+  $(".gDialogLink").gallery_dialog();
+
+  // Initialize ajax links
+  $(".gDialogLink").gallery_ajax();
 
   // Initialize panels
-  var panelLinks = $(".gPanelLink");
-  for (i=0; i<panelLinks.length; i++) {
-    $(panelLinks[i]).bind("click", handlePanelEvent);
-  }
+  $(".gPanelLink").gallery_panel();
 
   if ($("#gPhotoStream").length) {
     // Vertically align thumbs in photostream
-    $(".gItem").vAlign();
+    $(".gItem").gallery_valign();
   }
 
   // Apply jQuery UI button css to submit inputs
@@ -50,9 +46,6 @@ $(document).ready(function(){
   $(".gSelected").addClass("ui-corner-all");
   $(".gAvailable .gBlock").addClass("ui-corner-all");
   $(".gUnavailable").addClass("ui-corner-all");
-
-  // Add drop shadows
-  $(".gSelected").dropShadow();
 
   // Add hover state for buttons
   $(".ui-state-default").hover(

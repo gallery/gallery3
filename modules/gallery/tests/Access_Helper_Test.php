@@ -64,6 +64,43 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_false(array_key_exists("access_test_{$group->id}", $fields));
   }
 
+  public function user_can_access_test() {
+    $access_test = group::create("access_test");
+
+    $root = ORM::factory("item", 1);
+    access::allow($access_test, "view", $root);
+
+    $item = album::create($root,  rand(), "test album");
+
+    access::deny(group::everybody(), "view", $item);
+    access::deny(group::registered_users(), "view", $item);
+
+    $user = user::create("access_test", "Access Test", "");
+    foreach ($user->groups as $group) {
+      $user->remove($group);
+    }
+    $user->add($access_test);
+    $user->save();
+
+    $this->assert_true(access::user_can($user, "view", $item), "Should be able to view");
+  }
+
+  public function user_can_no_access_test() {
+    $root = ORM::factory("item", 1);
+    $item = album::create($root,  rand(), "test album");
+
+    access::deny(group::everybody(), "view", $item);
+    access::deny(group::registered_users(), "view", $item);
+
+    $user = user::create("access_test", "Access Test", "");
+    foreach ($user->groups as $group) {
+      $user->remove($group);
+    }
+    $user->save();
+
+    $this->assert_false(access::user_can($user, "view", $item), "Should be unable to view");
+  }
+
   public function adding_and_removing_items_adds_ands_removes_rows_test() {
     $root = ORM::factory("item", 1);
     $item = album::create($root,  rand(), "test album");
@@ -323,5 +360,41 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
+  }
+
+  public function moved_items_inherit_new_permissions_test() {
+    user::set_active(user::lookup_by_name("admin"));
+
+    $root = ORM::factory("item", 1);
+    $public_album = album::create($root, rand(), "public album");
+    $public_photo = photo::create($public_album, MODPATH . "gallery/images/gallery.png", "", "");
+    access::allow(group::everybody(), "view", $public_album);
+
+    $root->reload();  // Account for MPTT changes
+
+    $private_album = album::create($root, rand(), "private album");
+    access::deny(group::everybody(), "view", $private_album);
+    $private_photo = photo::create($private_album, MODPATH . "gallery/images/gallery.png", "", "");
+
+    // Make sure that we now have a public photo and private photo.
+    $this->assert_true(access::group_can(group::everybody(), "view", $public_photo));
+    $this->assert_false(access::group_can(group::everybody(), "view", $private_photo));
+
+    // Swap the photos
+    item::move($public_photo, $private_album);
+    $private_album->reload(); // Reload to get new MPTT pointers and cached perms.
+    $public_album->reload();
+    $private_photo->reload();
+    $public_photo->reload();
+
+    item::move($private_photo, $public_album);
+    $private_album->reload(); // Reload to get new MPTT pointers and cached perms.
+    $public_album->reload();
+    $private_photo->reload();
+    $public_photo->reload();
+
+    // Make sure that the public_photo is now private, and the private_photo is now public.
+    $this->assert_false(access::group_can(group::everybody(), "view", $public_photo));
+    $this->assert_true(access::group_can(group::everybody(), "view", $private_photo));
   }
 }

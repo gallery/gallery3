@@ -9,8 +9,8 @@
     <? foreach ($parents as $dir): ?>
     <li class="ui-icon-left">
       <span class="ui-icon ui-icon-folder-open"></span>
-      <span ondblclick="open_dir('<?= $dir ?>')">
-        <?= basename($dir) ?>
+      <span ondblclick='open_dir(<?= html::js_string($dir) ?>)'>
+        <?= html::clean(basename($dir)) ?>
       </span>
       <ul>
         <? endforeach ?>
@@ -22,9 +22,9 @@
                 <? if (is_dir($file)): ?>
                 ondblclick="open_dir($(this).attr('file'))"
                 <? endif ?>
-                file="<?= $file ?>"
+                file="<?= html::clean_attribute($file) ?>"
                 >
-            <?= p::clean(basename($file)) ?>
+            <?= html::clean(basename($file)) ?>
           </span>
         </li>
         <? endforeach ?>

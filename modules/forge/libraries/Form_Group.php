@@ -57,7 +57,7 @@ class Form_Group_Core extends Forge {
 		{
 			if ($label = $this->data['label'])
 			{
-				return $this->data['label'];
+				return html::purify($this->data['label']);
 			}
 		}
 		else

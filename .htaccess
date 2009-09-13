@@ -1,12 +1,13 @@
 <IfModule mod_php5.c>
-  php_value short_open_tag        1
-  php_value magic_quotes_gpc      0
-  php_value magic_quotes_sybase   0
-  php_value magic_quotes_runtime  0
-  php_value register_globals      0
-  php_value session.auto_start    0
-  php_value upload_max_filesize   20M
-  php_value post_max_size 	  100M
+  php_flag short_open_tag            On
+  php_flag magic_quotes_gpc          Off
+  php_flag magic_quotes_sybase       Off
+  php_flag magic_quotes_runtime      Off
+  php_flag register_globals          Off
+  php_flag session.auto_start        Off
+  php_flag suhosin.session.encrypt   Off
+  php_value upload_max_filesize      20M
+  php_value post_max_size 	     100M
 </IfModule>
 
 # Try to disable the parts of mod_security that interfere with the Flash uploader
@@ -29,13 +30,12 @@
 #   ExpiresByType text/html A1
 # </IfModule>
 
-# You can use mod_rewrite to enable short urls in Gallery 3 (which
-# gets rid of the "index.php" from your urls).  To do this, you must
-# uncomment the block below that starts with <IfModule> and ends with
-# </IfModule> then properly configure the RewriteBase line in the
-# block below.  You just need to change RewriteBase line to match your
-# Gallery 3 URL.  Here are some examples:
+# You can use the mod_rewrite Apache module to get rid of the
+# "index.php" from your Gallery 3 urls.  Uncomment the block below
+# inside the <IfModule> ... </IfModule> lines and then edit the
+# RewriteBase line to match your Gallery 3 URL.
 #
+# Here are some RewriteBase values:
 #   Gallery 3 URL                       RewriteBase line
 #   =============                       ====================
 #   http://example.com/gallery3         RewriteBase /gallery3
@@ -43,6 +43,10 @@
 #   http://gallery3.example.com/        RewriteBase /
 #
 # Then just use your Gallery 3 without the index.php in the url.
+#
+# NOTE: future upgrades of Gallery 3 will overwrite this file!  If you
+# want these changes to be persistent, talk to your system admin about
+# putting this block into your Apache config files.
 #
 # <IfModule mod_rewrite.c>
 #   RewriteEngine On

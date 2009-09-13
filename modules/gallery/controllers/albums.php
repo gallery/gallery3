@@ -40,11 +40,13 @@ class Albums_Controller extends Items_Controller {
 
     if ($show) {
       $index = $album->get_position($show);
-      $page = ceil($index / $page_size);
-      if ($page == 1) {
-        url::redirect("albums/$album->id");
-      } else {
-        url::redirect("albums/$album->id?page=$page");
+      if ($index) {
+        $page = ceil($index / $page_size);
+        if ($page == 1) {
+          url::redirect($album->abs_url());
+        } else {
+          url::redirect($album->abs_url("page=$page"));
+        }
       }
     }
 
@@ -55,9 +57,9 @@ class Albums_Controller extends Items_Controller {
 
     // Make sure that the page references a valid offset
     if ($page < 1) {
-      url::redirect("albums/$album->id");
+      url::redirect($album->abs_url());
     } else if ($page > $max_pages) {
-      url::redirect("albums/$album->id?page=$max_pages");
+      url::redirect($album->abs_url("page=$max_pages"));
     }
 
     $template = new Theme_View("page.html", "album");
@@ -107,22 +109,23 @@ class Albums_Controller extends Items_Controller {
         $this->input->post("name"),
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
-        user::active()->id);
+        user::active()->id,
+        $this->input->post("slug"));
 
       log::success("content", "Created an album",
-               html::anchor("albums/$new_album->id", "view album"));
-      message::success(
-        t("Created album %album_title", array("album_title" => p::clean($new_album->title))));
+                   html::anchor("albums/$new_album->id", "view album"));
+      message::success(t("Created album %album_title",
+                         array("album_title" => html::purify($new_album->title))));
 
       print json_encode(
         array("result" => "success",
-              "location" => url::site("albums/$new_album->id"),
-              "resource" => url::site("albums/$new_album->id")));
+              "location" => $new_album->url(),
+              "resource" => $new_album->url()));
     } else {
       print json_encode(
         array(
           "result" => "error",
-          "form" => $form->__toString() . html::script("modules/gallery/js/albums_form_add.js")));
+          "form" => $form->__toString()));
     }
   }
 
@@ -144,13 +147,13 @@ class Albums_Controller extends Items_Controller {
         user::active()->id);
 
       log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
-      message::success(
-        t("Added photo %photo_title", array("photo_title" => p::clean($photo->title))));
+      message::success(t("Added photo %photo_title",
+                         array("photo_title" => html::purify($photo->title))));
 
       print json_encode(
         array("result" => "success",
-              "resource" => url::site("photos/$photo->id"),
-              "location" => url::site("photos/$photo->id")));
+              "resource" => $photo->url(),
+              "location" => $photo->url()));
     } else {
       print json_encode(
         array("result" => "error",
@@ -168,43 +171,50 @@ class Albums_Controller extends Items_Controller {
 
     $form = album::get_edit_form($album);
     if ($valid = $form->validate()) {
-      // Make sure that there's not a conflict
       if ($album->id != 1 &&
-          Database::instance()
-          ->from("items")
-          ->where("parent_id", $album->parent_id)
-          ->where("id <>", $album->id)
-          ->where("name", $form->edit_album->dirname->value)
-          ->count_records()) {
-        $form->edit_album->dirname->add_error("conflict", 1);
-        $valid = false;
+          $form->edit_item->dirname->value != $album->name ||
+          $form->edit_item->slug->value != $album->slug) {
+        // Make sure that there's not a conflict
+        if ($row = Database::instance()
+            ->select(array("name", "slug"))
+            ->from("items")
+            ->where("parent_id", $album->parent_id)
+            ->where("id <>", $album->id)
+            ->open_paren()
+            ->where("name", $form->edit_item->dirname->value)
+            ->orwhere("slug", $form->edit_item->slug->value)
+            ->close_paren()
+            ->get()
+            ->current()) {
+          if ($row->name == $form->edit_item->dirname->value) {
+            $form->edit_item->dirname->add_error("name_conflict", 1);
+          }
+          if ($row->slug == $form->edit_item->slug->value) {
+            $form->edit_item->slug->add_error("slug_conflict", 1);
+          }
+          $valid = false;
+        }
       }
     }
 
-    // @todo
-    // @todo we need to make sure that filename / dirname components can't contain a /
-    // @todo
-
     if ($valid) {
-      $orig = clone $album;
-      $album->title = $form->edit_album->title->value;
-      $album->description = $form->edit_album->description->value;
-      $album->sort_column = $form->edit_album->sort_order->column->value;
-      $album->sort_order = $form->edit_album->sort_order->direction->value;
+      $album->title = $form->edit_item->title->value;
+      $album->description = $form->edit_item->description->value;
+      $album->sort_column = $form->edit_item->sort_order->column->value;
+      $album->sort_order = $form->edit_item->sort_order->direction->value;
       if ($album->id != 1) {
-        $album->rename($form->edit_album->dirname->value);
+        $album->rename($form->edit_item->dirname->value);
       }
+      $album->slug = $form->edit_item->slug->value;
       $album->save();
-
-      module::event("item_updated", $orig, $album);
+      module::event("item_edit_form_completed", $album, $form);
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
-      message::success(
-        t("Saved album %album_title", array("album_title" => p::clean($album->title))));
+      message::success(t("Saved album %album_title",
+                         array("album_title" => html::purify($album->title))));
 
       print json_encode(
-        array("result" => "success",
-              "location" => url::site("albums/$album->id")));
+        array("result" => "success"));
     } else {
       print json_encode(
         array("result" => "error",
@@ -222,8 +232,7 @@ class Albums_Controller extends Items_Controller {
 
     switch ($this->input->get("type")) {
     case "album":
-      print album::get_add_form($album) .
-        html::script("modules/gallery/js/albums_form_add.js");
+      print album::get_add_form($album);
       break;
 
     case "photo":

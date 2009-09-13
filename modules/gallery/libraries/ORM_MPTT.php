@@ -52,14 +52,14 @@ class ORM_MPTT_Core extends ORM {
     try {
       // Make a hole in the parent for this new item
       $this->db->query(
-        "UPDATE {{$this->table_name}} SET `left` = `left` + 2 WHERE `left` >= {$parent->right}");
+        "UPDATE {{$this->table_name}} SET `left_ptr` = `left_ptr` + 2 WHERE `left_ptr` >= {$parent->right_ptr}");
       $this->db->query(
-        "UPDATE {{$this->table_name}} SET `right` = `right` + 2 WHERE `right` >= {$parent->right}");
-      $parent->right += 2;
+        "UPDATE {{$this->table_name}} SET `right_ptr` = `right_ptr` + 2 WHERE `right_ptr` >= {$parent->right_ptr}");
+      $parent->right_ptr += 2;
 
       // Insert this item into the hole
-      $this->left = $parent->right - 2;
-      $this->right = $parent->right - 1;
+      $this->left_ptr = $parent->right_ptr - 2;
+      $this->right_ptr = $parent->right_ptr - 1;
       $this->parent_id = $parent->id;
       $this->level = $parent->level + 1;
       $this->save();
@@ -81,7 +81,7 @@ class ORM_MPTT_Core extends ORM {
     if ($children) {
       foreach ($this->children() as $item) {
         // Deleting children affects the MPTT tree, so we have to reload each child before we
-        // delete it so that we have current left/right pointers.  This is inefficient.
+        // delete it so that we have current left_ptr/right_ptr pointers.  This is inefficient.
         // @todo load each child once, not twice.
         $item->reload()->delete();
       }
@@ -93,9 +93,9 @@ class ORM_MPTT_Core extends ORM {
     $this->lock();
     try {
       $this->db->query(
-        "UPDATE {{$this->table_name}} SET `left` = `left` - 2 WHERE `left` > {$this->right}");
+        "UPDATE {{$this->table_name}} SET `left_ptr` = `left_ptr` - 2 WHERE `left_ptr` > {$this->right_ptr}");
       $this->db->query(
-        "UPDATE {{$this->table_name}} SET `right` = `right` - 2 WHERE `right` > {$this->right}");
+        "UPDATE {{$this->table_name}} SET `right_ptr` = `right_ptr` - 2 WHERE `right_ptr` > {$this->right_ptr}");
     } catch (Exception $e) {
       $this->unlock();
       throw $e;
@@ -110,8 +110,8 @@ class ORM_MPTT_Core extends ORM {
    * @param ORM $target
    * @return boolean
    */
-  function is_descendant($target) {
-    return ($this->left <= $target->left && $this->right >= $target->right);
+  function contains($target) {
+    return ($this->left_ptr <= $target->left_ptr && $this->right_ptr >= $target->right_ptr);
   }
 
   /**
@@ -133,10 +133,10 @@ class ORM_MPTT_Core extends ORM {
    */
   function parents() {
     return $this
-      ->where("`left` <= {$this->left}")
-      ->where("`right` >= {$this->right}")
+      ->where("`left_ptr` <= {$this->left_ptr}")
+      ->where("`right_ptr` >= {$this->right_ptr}")
       ->where("id <> {$this->id}")
-      ->orderby("left", "ASC")
+      ->orderby("left_ptr", "ASC")
       ->find_all();
   }
 
@@ -146,69 +146,62 @@ class ORM_MPTT_Core extends ORM {
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
+   * @param   array    additional where clauses
    * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $orderby=null) {
-    $this->where("parent_id", $this->id);
-    if (empty($orderby)) {
-      $this->orderby("id", "ASC");
-    } else {
-      $this->orderby($orderby);
-    }
-    return $this->find_all($limit, $offset);
+  function children($limit=null, $offset=0, $where=array(), $orderby=array("id" => "ASC")) {
+    return $this
+      ->where("parent_id", $this->id)
+      ->where($where)
+      ->orderby($orderby)
+      ->find_all($limit, $offset);
   }
 
   /**
    * Return all of the children of this node, ordered by id.
    *
    * @chainable
-   * @param   integer  SQL limit
-   * @param   integer  SQL offset
+   * @param   array    additional where clauses
    * @return array ORM
    */
-  function children_count() {
-    return $this->where("parent_id", $this->id)->count_all();
+  function children_count($where=array()) {
+    return $this
+      ->where($where)
+      ->where("parent_id", $this->id)
+      ->count_all();
   }
 
   /**
-   * Return all of the children of the specified type, ordered by id.
+   * Return all of the decendents of the specified type, ordered by id.
    *
    * @param   integer  SQL limit
    * @param   integer  SQL offset
-   * @param   string   type to return
+   * @param   array    additional where clauses
    * @param   array    orderby
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $type=null, $orderby=null) {
-    $this->where("left >", $this->left)
-      ->where("right <=", $this->right);
-    if ($type) {
-      $this->where("type", $type);
-    }
-
-    if (empty($orderby)) {
-      $this->orderby("id", "ASC");
-    } else {
-      $this->orderby($orderby);
-    }
-
-    return $this->find_all($limit, $offset);
+  function descendants($limit=null, $offset=0, $where=array(), $orderby=array("id" => "ASC")) {
+    return $this
+      ->where("left_ptr >", $this->left_ptr)
+      ->where("right_ptr <=", $this->right_ptr)
+      ->where($where)
+      ->orderby($orderby)
+      ->find_all($limit, $offset);
   }
 
   /**
    * Return the count of all the children of the specified type.
    *
-   * @param   string   type to count
+   * @param    array    additional where clauses
    * @return   integer  child count
    */
-  function descendants_count($type=null) {
-    $this->where("left >", $this->left)
-      ->where("right <=", $this->right);
-    if ($type) {
-      $this->where("type", $type);
-    }
-    return $this->count_all();
+  function descendants_count($where=array()) {
+    return $this
+      ->where("left_ptr >", $this->left_ptr)
+      ->where("right_ptr <=", $this->right_ptr)
+      ->where($where)
+      ->count_all();
   }
 
   /**
@@ -219,16 +212,15 @@ class ORM_MPTT_Core extends ORM {
    * @return  ORM_MTPP
    */
   function move_to($target) {
-    if ($this->left <= $target->left &&
-        $this->right >= $target->right) {
+    if ($this->contains($target)) {
       throw new Exception("@todo INVALID_TARGET can't move item inside itself");
     }
 
-    $number_to_move = (int)(($this->right - $this->left) / 2 + 1);
+    $number_to_move = (int)(($this->right_ptr - $this->left_ptr) / 2 + 1);
     $size_of_hole = $number_to_move * 2;
-    $original_left = $this->left;
-    $original_right = $this->right;
-    $target_right = $target->right;
+    $original_left_ptr = $this->left_ptr;
+    $original_right_ptr = $this->right_ptr;
+    $target_right_ptr = $target->right_ptr;
     $level_delta = ($target->level + 1) - $this->level;
 
     $this->lock();
@@ -237,45 +229,45 @@ class ORM_MPTT_Core extends ORM {
         // Update the levels for the to-be-moved items
         $this->db->query(
           "UPDATE {{$this->table_name}} SET `level` = `level` + $level_delta" .
-          " WHERE `left` >= $original_left AND `right` <= $original_right");
+          " WHERE `left_ptr` >= $original_left_ptr AND `right_ptr` <= $original_right_ptr");
       }
 
       // Make a hole in the target for the move
       $target->db->query(
-        "UPDATE {{$this->table_name}} SET `left` = `left` + $size_of_hole" .
-        " WHERE `left` >= $target_right");
+        "UPDATE {{$this->table_name}} SET `left_ptr` = `left_ptr` + $size_of_hole" .
+        " WHERE `left_ptr` >= $target_right_ptr");
       $target->db->query(
-        "UPDATE {{$this->table_name}} SET `right` = `right` + $size_of_hole" .
-        " WHERE `right` >= $target_right");
+        "UPDATE {{$this->table_name}} SET `right_ptr` = `right_ptr` + $size_of_hole" .
+        " WHERE `right_ptr` >= $target_right_ptr");
 
       // Change the parent.
       $this->db->query(
         "UPDATE {{$this->table_name}} SET `parent_id` = {$target->id}" .
         " WHERE `id` = {$this->id}");
 
-      // If the source is to the right of the target then we just adjusted its left and right above.
-      $left = $original_left;
-      $right = $original_right;
-      if ($original_left > $target_right) {
-        $left += $size_of_hole;
-        $right += $size_of_hole;
+      // If the source is to the right of the target then we just adjusted its left_ptr and right_ptr above.
+      $left_ptr = $original_left_ptr;
+      $right_ptr = $original_right_ptr;
+      if ($original_left_ptr > $target_right_ptr) {
+        $left_ptr += $size_of_hole;
+        $right_ptr += $size_of_hole;
       }
 
-      $new_offset = $target->right - $left;
+      $new_offset = $target->right_ptr - $left_ptr;
       $this->db->query(
         "UPDATE {{$this->table_name}}" .
-        "   SET `left` = `left` + $new_offset," .
-        "       `right` = `right` + $new_offset" .
-      " WHERE `left` >= $left" .
-        "   AND `right` <= $right");
+        "   SET `left_ptr` = `left_ptr` + $new_offset," .
+        "       `right_ptr` = `right_ptr` + $new_offset" .
+      " WHERE `left_ptr` >= $left_ptr" .
+        "   AND `right_ptr` <= $right_ptr");
 
       // Close the hole in the source's parent after the move
       $this->db->query(
-        "UPDATE {{$this->table_name}} SET `left` = `left` - $size_of_hole" .
-        " WHERE `left` > $right");
+        "UPDATE {{$this->table_name}} SET `left_ptr` = `left_ptr` - $size_of_hole" .
+        " WHERE `left_ptr` > $right_ptr");
       $this->db->query(
-        "UPDATE {{$this->table_name}} SET `right` = `right` - $size_of_hole" .
-        " WHERE `right` > $right");
+        "UPDATE {{$this->table_name}} SET `right_ptr` = `right_ptr` - $size_of_hole" .
+        " WHERE `right_ptr` > $right_ptr");
     } catch (Exception $e) {
       $this->unlock();
       throw $e;
@@ -285,6 +277,7 @@ class ORM_MPTT_Core extends ORM {
 
     // Lets reload to get the changes.
     $this->reload();
+    $target->reload();
     return $this;
   }
 

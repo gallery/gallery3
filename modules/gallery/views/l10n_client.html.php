@@ -1,7 +1,11 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="l10n-client" class="hidden">
   <div class="labels">
-    <span id="l10n-client-toggler">X</span>
+    <span id="l10n-client-toggler">
+      <a id="gMinimizeL10n">_</a>
+      <a id="gCloseL10n" title="<?= t("Stop the translation mode")->for_html_attr() ?>"
+         href="<?= html::clean_attribute(url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token())) ?>">X</a>
+    </span>
     <div class="label strings"><h2><?= t("Page Text") ?>
     <? if (!Input::instance()->get('show_all_l10n_messages')): ?>
       <a style="background-color:#fff" href="<?= url::site("admin/languages?show_all_l10n_messages=1") ?>"><?= t("(Show All)") ?></a>
@@ -9,7 +13,7 @@
     </h2></div>
     <div class="label source"><h2><?= t("Source") ?></div>
     <div class="label translation"><h2><?= t("Translation to %language",
-                                             array("language" => locale::display_name())) ?></h2></div>
+                                             array("language" => locales::display_name())) ?></h2></div>
   </div>
   <div id="l10n-client-string-select">
     <ul class="string-list">
@@ -62,16 +66,17 @@
           (<a href="http://www.unicode.org/cldr/data/charts/supplemental/language_plural_rules.html"><?= t("learn more about plural forms") ?></a>)
           <?= form::textarea("l10n-edit-plural-translation-other", "", ' rows="2"') ?>
         </div>
-        <input type="submit" name="l10n-edit-save" value="<?= t("Save translation") ?>"/>
+        <input type="submit" name="l10n-edit-save" value="<?= t("Save translation")->for_html_attr() ?>"/>
         <a href="javascript: Gallery.l10nClient.copySourceText()"
            class="gButtonLink ui-state-default ui-corner-all"><?= t("Copy source text") ?></a>
       </form>
     </div>
   </div>
   <script type="text/javascript">
-    var MSG_TRANSLATE_TEXT = "<?= t("Translate Text") ?>";
-    var MSG_CLOSE_X = "<?= t("X") ?>";
+    var MSG_TRANSLATE_TEXT = <?= t("Translate Text")->for_js() ?>;
     var l10n_client_data = <?= json_encode($string_list) ?>;
     var plural_forms = <?= json_encode($plural_forms) ?>;
+    var toggle_l10n_mode_url = <?= html::js_string(url::site("l10n_client/toggle_l10n_mode")) ?>;
+    var csrf = <?= html::js_string(access::csrf_token()) ?>;
   </script>
 </div>

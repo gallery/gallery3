@@ -62,37 +62,48 @@ class Photos_Controller extends Items_Controller {
     access::required("edit", $photo);
 
     $form = photo::get_edit_form($photo);
+    $valid = $form->validate();
     if ($valid = $form->validate()) {
-      if ($form->edit_photo->filename->value != $photo->name) {
-        // Make sure that there's not a conflict
-        if (Database::instance()
+      if ($form->edit_item->filename->value != $photo->name ||
+          $form->edit_item->slug->value != $photo->slug) {
+        // Make sure that there's not a name or slug conflict
+        if ($row = Database::instance()
+            ->select(array("name", "slug"))
             ->from("items")
             ->where("parent_id", $photo->parent_id)
             ->where("id <>", $photo->id)
-            ->where("name", $form->edit_photo->filename->value)
-            ->count_records()) {
-          $form->edit_photo->filename->add_error("conflict", 1);
+            ->open_paren()
+            ->where("name", $form->edit_item->filename->value)
+            ->orwhere("slug", $form->edit_item->slug->value)
+            ->close_paren()
+            ->get()
+            ->current()) {
+          if ($row->name == $form->edit_item->filename->value) {
+            $form->edit_item->filename->add_error("name_conflict", 1);
+          }
+          if ($row->slug == $form->edit_item->slug->value) {
+            $form->edit_item->slug->add_error("slug_conflict", 1);
+          }
           $valid = false;
         }
       }
     }
 
     if ($valid) {
-      $orig = clone $photo;
-      $photo->title = $form->edit_photo->title->value;
-      $photo->description = $form->edit_photo->description->value;
-      $photo->rename($form->edit_photo->filename->value);
+      $photo->title = $form->edit_item->title->value;
+      $photo->description = $form->edit_item->description->value;
+      $photo->slug = $form->edit_item->slug->value;
+      $photo->rename($form->edit_item->filename->value);
       $photo->save();
+      module::event("item_edit_form_completed", $photo, $form);
 
-      module::event("item_updated", $orig, $photo);
-
-      log::success("content", "Updated photo", "<a href=\"photos/$photo->id\">view</a>");
+      log::success("content", "Updated photo", "<a href=\"{$photo->url()}\">view</a>");
       message::success(
-        t("Saved photo %photo_title", array("photo_title" => p::clean($photo->title))));
+                       t("Saved photo %photo_title",
+                         array("photo_title" => html::purify($photo->title))));
 
       print json_encode(
-        array("result" => "success",
-              "location" => url::site("photos/$photo->id")));
+        array("result" => "success"));
     } else {
       print json_encode(
         array("result" => "error",

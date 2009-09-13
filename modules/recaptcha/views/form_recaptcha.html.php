@@ -8,7 +8,7 @@
       "gRecaptcha",
       {
         theme: "white",
-        custom_translations : { instructions_visual : "<?= t("Type words to check:") ?>"},
+        custom_translations : { instructions_visual : <?= t("Type words to check:")->for_js() ?>},
         callback: Recaptcha.focus_response_field
       }
     );

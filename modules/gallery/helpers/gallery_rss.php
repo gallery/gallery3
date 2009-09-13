@@ -40,7 +40,6 @@ class gallery_rss_Core {
 
       $feed->max_pages = ceil($all_children->find_all()->count() / $limit);
       $feed->title = t("Recent Updates");
-      $feed->link = url::abs_site("albums/1");
       $feed->description = t("Recent Updates");
       return $feed;
 
@@ -50,11 +49,11 @@ class gallery_rss_Core {
 
       $feed->children = $item
         ->viewable()
-        ->descendants($limit, $offset, "photo");
-      $feed->max_pages = ceil($item->viewable()->descendants_count("photo") / $limit);
-      $feed->title = p::purify($item->title);
-      $feed->link = url::abs_site("albums/{$item->id}");
-      $feed->description = nl2br(p::purify($item->description));
+        ->descendants($limit, $offset, array("type" => "photo"));
+      $feed->max_pages = ceil(
+        $item->viewable()->descendants_count(array("type" => "photo")) / $limit);
+      $feed->title = html::purify($item->title);
+      $feed->description = nl2br(html::purify($item->description));
 
       return $feed;
     }

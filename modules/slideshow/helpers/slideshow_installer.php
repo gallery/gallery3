@@ -18,10 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class slideshow_installer {
-  static function install() {
-    module::set_version("slideshow", 1);
-  }
-
   static function deactivate() {
     site_status::clear("slideshow_needs_rss");
   }

@@ -33,8 +33,8 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $album->sort_order = "ASC";
     $album->add_to_parent($root);
 
-    $this->assert_equal($album->parent()->right - 2, $album->left);
-    $this->assert_equal($album->parent()->right - 1, $album->right);
+    $this->assert_equal($album->parent()->right_ptr - 2, $album->left_ptr);
+    $this->assert_equal($album->parent()->right_ptr - 1, $album->right_ptr);
     $this->assert_equal($album->parent()->level + 1, $album->level);
     $this->assert_equal($album->parent()->id, $album->parent_id);
   }
@@ -48,10 +48,10 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $album1_1_2 = self::create_item_and_add_to_parent($album1_1);
 
     $album1->reload();
-    $this->assert_equal(9, $album1->right - $album1->left);
+    $this->assert_equal(9, $album1->right_ptr - $album1->left_ptr);
 
     $album1_1->reload();
-    $this->assert_equal(5, $album1_1->right - $album1_1->left);
+    $this->assert_equal(5, $album1_1->right_ptr - $album1_1->left_ptr);
   }
 
   public function delete_hierarchy_test() {
@@ -66,7 +66,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $album1->reload();
 
     // Now album1 contains only album1_2
-    $this->assert_equal(3, $album1->right - $album1->left);
+    $this->assert_equal(3, $album1->right_ptr - $album1->left_ptr);
   }
 
   public function move_to_test() {
@@ -85,8 +85,8 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $album1_1->reload();
     $album1_2->reload();
 
-    $this->assert_equal(3, $album1_1->right - $album1_1->left);
-    $this->assert_equal(3, $album1_2->right - $album1_2->left);
+    $this->assert_equal(3, $album1_1->right_ptr - $album1_1->left_ptr);
+    $this->assert_equal(3, $album1_2->right_ptr - $album1_2->left_ptr);
 
     $this->assert_equal(
       array($album1_1_2->id => "move_to_test_1_1_2"),
@@ -95,6 +95,19 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $this->assert_equal(
       array($album1_1_1->id => "move_to_test_1_1_1"),
       $album1_2->children()->select_list());
+  }
+
+  public function cant_move_parent_into_own_subtree_test() {
+    $album1 = album::create(item::root(), "move_to_test", "move_to_test");
+    $album2 = album::create($album1, "move_to_test", "move_to_test");
+    $album3 = album::create($album2, "move_to_test", "move_to_test");
+
+    try {
+      $album1->move_to($album3);
+      $self->assert_true(false, "We should be unable to move an item inside its own hierarchy");
+    } catch (Exception $e) {
+      // pass
+    }
   }
 
   public function parent_test() {
@@ -177,8 +190,8 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $parent->reload();
 
     $this->assert_equal(3, $parent->descendants()->count());
-    $this->assert_equal(2, $parent->descendants(null, 0, "photo")->count());
-    $this->assert_equal(1, $parent->descendants(null, 0, "album")->count());
+    $this->assert_equal(2, $parent->descendants(null, 0, array("type" => "photo"))->count());
+    $this->assert_equal(1, $parent->descendants(null, 0, array("type" => "album"))->count());
   }
 
   public function descendant_limit_test() {
@@ -215,7 +228,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $parent->reload();
 
     $this->assert_equal(3, $parent->descendants_count());
-    $this->assert_equal(2, $parent->descendants_count("photo"));
-    $this->assert_equal(1, $parent->descendants_count("album"));
+    $this->assert_equal(2, $parent->descendants_count(array("type" => "photo")));
+    $this->assert_equal(1, $parent->descendants_count(array("type" => "album")));
   }
 }

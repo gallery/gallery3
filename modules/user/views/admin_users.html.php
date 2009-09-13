@@ -28,7 +28,7 @@
           {},
           function(data) {
             $("#group-" + group_id).html(data);
-            $("#group-" + group_id + " .gDialogLink").bind("click", handleDialogEvent);
+            $("#group-" + group_id + " .gDialogLink").gallery_dialog();
           });
   }
 
@@ -44,7 +44,7 @@
 <div class="gBlock">
   <a href="<?= url::site("admin/users/add_user_form") ?>"
       class="gDialogLink gButtonLink right ui-icon-left ui-state-default ui-corner-all"
-      title="<?= t("Create a new user") ?>">
+      title="<?= t("Create a new user")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new user") ?>
   </a>
@@ -66,18 +66,18 @@
       <? foreach ($users as $i => $user): ?>
       <tr id="gUser-<?= $user->id ?>" class="<?= text::alternate("gOddRow", "gEvenRow") ?> user <?= $user->admin ? "admin" : "" ?>">
         <td id="user-<?= $user->id ?>" class="core-info gDraggable">
-          <img src="<?= $user->avatar_url(20, $theme->theme_url("images/avatar.jpg", true)) ?>"
-               title="<?= t("Drag user onto group below to add as a new member") ?>"
-               alt="<?= p::clean($user->name) ?>"
+          <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
+               title="<?= t("Drag user onto group below to add as a new member")->for_html_attr() ?>"
+               alt="<?= html::clean_attribute($user->name) ?>"
                width="20"
                height="20" />
-          <?= p::clean($user->name) ?>
+          <?= html::clean($user->name) ?>
         </td>
         <td>
-          <?= p::clean($user->full_name) ?>
+          <?= html::clean($user->full_name) ?>
         </td>
         <td>
-          <?= p::clean($user->email) ?>
+          <?= html::clean($user->email) ?>
         </td>
         <td>
           <?= ($user->last_login == 0) ? "" : gallery::date($user->last_login) ?>
@@ -92,7 +92,7 @@
               class="gDialogLink gButtonLink ui-state-default ui-corner-all ui-icon-left">
             <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
           <? else: ?>
-          <span title="<?= t("This user cannot be deleted") ?>"
+          <span title="<?= t("This user cannot be deleted")->for_html_attr() ?>"
               class="gButtonLink ui-state-disabled ui-corner-all ui-icon-left">
             <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></span>
           <? endif ?>
@@ -106,7 +106,7 @@
 <div id="gGroupAdmin" class="gBlock">
   <a href="<?= url::site("admin/users/add_group_form") ?>"
       class="gDialogLink gButtonLink right ui-icon-left ui-state-default ui-corner-all"
-      title="<?= t("Create a new group") ?>">
+      title="<?= t("Create a new group")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new group") ?>
   </a>

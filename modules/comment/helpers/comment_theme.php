@@ -19,14 +19,13 @@
  */
 class comment_theme_Core {
   static function head($theme) {
-    $theme->script("modules/comment/js/comment.js");
+    $theme->script("comment.js");
     return "";
   }
 
   static function photo_bottom($theme) {
     $block = new Block;
     $block->css_id = "gComments";
-    $block->anchor = t("comments");
     $block->title = t("Comments");
 
     $view = new View("comments.html");
@@ -37,7 +36,6 @@ class comment_theme_Core {
       ->find_all();
 
     $block->content = $view;
-    $block->content .= comment::get_add_form($theme->item())->render("form.html");
     return $block;
   }
 }

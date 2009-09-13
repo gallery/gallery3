@@ -43,8 +43,8 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $this->assert_equal($image_info[0], $photo->width);
     $this->assert_equal($image_info[1], $photo->height);
 
-    $this->assert_equal($photo->parent()->right - 2, $photo->left);
-    $this->assert_equal($photo->parent()->right - 1, $photo->right);
+    $this->assert_equal($photo->parent()->right_ptr - 2, $photo->left_ptr);
+    $this->assert_equal($photo->parent()->right_ptr - 1, $photo->right_ptr);
   }
 
   public function create_conflicting_photo_test() {
@@ -79,6 +79,16 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $photo = photo::create($album, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
 
     $this->assert_equal("http://./var/resizes/{$rand}/{$rand}.jpg", $photo->resize_url());
+  }
+
+  public function create_photo_creates_reasonable_slug_test() {
+    $rand = rand();
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, $rand, $rand, $rand);
+    $photo = photo::create(
+      $album, MODPATH . "gallery/tests/test.jpg", "This (is) my file%name.jpg", $rand, $rand);
+
+    $this->assert_equal("This-is-my-file-name", $photo->slug);
   }
 
   public function create_photo_shouldnt_allow_names_with_slash_test() {

@@ -18,7 +18,35 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_event_Core {
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     Database::instance()->delete("comments", array("item_id" => $item->id));
+  }
+
+  static function admin_menu($menu, $theme) {
+    $menu->get("content_menu")
+      ->append(Menu::factory("link")
+               ->id("comments")
+               ->label(t("Comments"))
+               ->url(url::site("admin/comments")));
+  }
+
+  static function photo_menu($menu, $theme) {
+    $menu
+      ->append(Menu::factory("link")
+               ->id("comments")
+               ->label(t("View comments on this item"))
+               ->url("#comments")
+               ->css_id("gCommentsLink"));
+  }
+
+  static function item_index_data($item, $data) {
+    foreach (Database::instance()
+             ->select("text")
+             ->from("comments")
+             ->where("item_id", $item->id)
+             ->get()
+             ->as_array() as $row) {
+      $data[] = $row->text;
+    }
   }
 }

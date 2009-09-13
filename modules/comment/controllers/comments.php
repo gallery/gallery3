@@ -39,9 +39,9 @@ class Comments_Controller extends REST_Controller {
       foreach ($comments as $comment) {
         $data[] = array(
           "id" => $comment->id,
-          "author_name" => p::clean($comment->author_name()),
+          "author_name" => html::clean($comment->author_name()),
           "created" => $comment->created,
-          "text" => nl2br(p::purify($comment->text)));
+          "text" => nl2br(html::purify($comment->text)));
       }
       print json_encode($data);
       break;
@@ -126,9 +126,9 @@ class Comments_Controller extends REST_Controller {
         array("result" => "success",
               "data" => array(
                 "id" => $comment->id,
-                "author_name" => p::clean($comment->author_name()),
+                "author_name" => html::clean($comment->author_name()),
                 "created" => $comment->created,
-                "text" => nl2br(p::purify($comment->text)))));
+                "text" => nl2br(html::purify($comment->text)))));
     } else {
       $view = new Theme_View("comment.html", "fragment");
       $view->comment = $comment;
@@ -152,7 +152,6 @@ class Comments_Controller extends REST_Controller {
       $comment->url = $form->edit_comment->url->value;
       $comment->text = $form->edit_comment->text->value;
       $comment->save();
-      module::event("comment_updated", $comment);
 
       print json_encode(
         array("result" => "success",

@@ -48,12 +48,18 @@ class search_task_Core {
                ->where("search_records.item_id", null)
                ->orwhere("search_records.dirty", 1)
                ->find_all() as $item) {
+        // The query above can take a long time, so start the timer after its done
+        // to give ourselves a little time to actually process rows.
+        if (!isset($start)) {
+          $start = microtime(true);
+        }
+
+        search::update($item);
+        $completed++;
+
         if (microtime(true) - $start > 1.5) {
           break;
         }
-
-        $message[] = search::update($item);
-        $completed++;
       }
 
       list ($remaining, $total, $percent) = search::stats();
@@ -69,13 +75,10 @@ class search_task_Core {
       $task->status = t2("one record updated, index is %percent% up-to-date",
                          "%count records updated, index is %percent% up-to-date",
                          $completed, array("percent" => $percent));
-      $message[] = $task->status;
     } catch (Exception $e) {
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
-      $message[] = $e->__toString();
     }
-    $task->log($message);
   }
 }

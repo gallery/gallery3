@@ -18,21 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class url extends url_Core {
-  static function site($uri, $protocol=false) {
-    if (($pos = strpos($uri, "?")) !== false) {
-      list ($uri, $query) = explode("?", $uri, 2);
-      $query = "?$query";
-    } else {
-      $query = "";
-    }
-
-    $parts = explode("/", $uri, 3);
-    if ($parts[0] == "albums" || $parts[0] == "photos") {
-      $uri = model_cache::get("item", $parts[1])->relative_path();
-    }
-    return parent::site($uri . $query, $protocol);
-  }
-
   static function parse_url() {
     if (Router::$controller) {
       return;
@@ -55,20 +40,24 @@ class url extends url_Core {
   }
 
   /**
-   * Return the item that the uri is referencing
+   * Locate an item using the URI.  We assume that the uri is in the form /a/b/c where each
+   * component matches up with an item slug.
+   * @param string $uri the uri fragment
+   * @return Item_Model
    */
   static function get_item_from_uri($uri) {
     $current_uri = html_entity_decode($uri, ENT_QUOTES);
-    $item = ORM::factory("item")->where("relative_path_cache", $current_uri)->find();
+    // In most cases, we'll have an exact match in the relative_url_cache item field.
+    // but failing that, walk down the tree until we find it.  The fallback code will fix caches
+    // as it goes, so it'll never be run frequently.
+    $item = ORM::factory("item")->where("relative_url_cache", $current_uri)->find();
     if (!$item->loaded) {
-      // It's possible that the relative path cache for the item we're looking for is out of date,
-      // so find it the hard way.
       $count = count(Router::$segments);
       foreach (ORM::factory("item")
-               ->where("name", html_entity_decode(Router::$segments[$count - 1], ENT_QUOTES))
+               ->where("slug", html_entity_decode(Router::$segments[$count - 1], ENT_QUOTES))
                ->where("level", $count + 1)
                ->find_all() as $match) {
-        if ($match->relative_path() == $current_uri) {
+        if ($match->relative_url() == $current_uri) {
           $item = $match;
         }
       }

@@ -26,7 +26,7 @@ class tag_installer {
                  `count` int(10) unsigned NOT NULL DEFAULT 0,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`name`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE IF NOT EXISTS {items_tags} (
                  `id` int(9) NOT NULL auto_increment,
@@ -35,7 +35,7 @@ class tag_installer {
                  PRIMARY KEY (`id`),
                  KEY(`tag_id`, `id`),
                  KEY(`item_id`, `id`))
-               ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+               DEFAULT CHARSET=utf8;");
     module::set_version("tag", 1);
   }
 

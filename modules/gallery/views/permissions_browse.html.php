@@ -5,8 +5,9 @@
     $.ajax({
       url: form_url.replace("__ITEM__", id),
       success: function(data) {
-        $("div.form").slideUp();
-        $("div#edit-" + id).html(data).slideDown();
+          $("#gEditPermissionForm").html(data);
+          $(".active").removeClass("active");
+          $("#item-" + id).addClass("active");
       }
     });
   }
@@ -18,7 +19,7 @@
       url: action_url.replace("__CMD__", cmd).replace("__GROUP__", group_id).
            replace("__PERM__", perm_id).replace("__ITEM__", item_id),
       success: function(data) {
-        $("div#edit-" + item_id).load(form_url.replace("__ITEM__", item_id));
+        $("#gEditPermissionForm").load(form_url.replace("__ITEM__", item_id));
       }
     });
   }
@@ -27,30 +28,35 @@
   <? if (!$htaccess_works): ?>
   <ul id="gMessage">
     <li class="gError">
-      <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.", array("mod_rewrite_attrs" => "href=\"http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html\" target=\"_blank\"", "apache_attrs" => "href=\"http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride\" target=\"_blank\"")) ?>
+      <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.",
+            array("mod_rewrite_attrs" => html::mark_clean('href="http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html" target="_blank"'),
+                  "apache_attrs" => html::mark_clean('href="http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride" target="_blank"'))) ?>
     </li>
   </ul>
   <? endif ?>
-  <ul>
+
+  <p><?= t("Edit permissions for album:") ?></p>
+
+  <ul class="gBreadcrumbs">
     <? foreach ($parents as $parent): ?>
-    <li>
+    <li id="item-<?= $parent->id ?>">
+      <? if (access::can("edit", $parent)): ?>
       <a href="javascript:show(<?= $parent->id ?>)">
-        <?= p::clean($parent->title) ?>
+        <?= html::purify($parent->title) ?>
       </a>
-      <div class="form" id="edit-<?= $parent->id ?>"></div>
-      <ul>
-        <? endforeach ?>
-        <li>
-          <a href="javascript:show(<?= $item->id ?>)">
-            <?= p::purify($item->title) ?>
-          </a>
-          <div class="form" id="edit-<?= $item->id ?>">
-            <?= $form ?>
-          </div>
-        </li>
-        <? foreach ($parents as $parent): ?>
-      </ul>
+      <? else: ?>
+      <?= html::purify($parent->title) ?>
+      <? endif ?>
+    </li>
+    <? endforeach ?>
+    <li class="active" id="item-<?= $item->id ?>">
+      <a href="javascript:show(<?= $item->id ?>)">
+        <?= html::purify($item->title) ?>
+      </a>
     </li>
   </ul>
-  <? endforeach ?>
+
+  <div id="gEditPermissionForm">
+    <?= $form ?>
+  </div>
 </div>

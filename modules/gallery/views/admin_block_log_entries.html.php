@@ -2,7 +2,7 @@
 <ul>
   <? foreach ($entries as $entry): ?>
   <li class="<?= log::severity_class($entry->severity) ?>" style="direction: ltr">
-    <a href="<?= url::site("user/$entry->user_id") ?>"><?= p::clean($entry->user->name) ?></a>
+    <a href="<?= url::site("user/$entry->user_id") ?>"><?= html::clean($entry->user->name) ?></a>
     <?= gallery::date_time($entry->timestamp) ?>
     <?= $entry->message ?>
     <?= $entry->html ?>

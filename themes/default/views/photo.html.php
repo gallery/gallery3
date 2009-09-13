@@ -5,7 +5,7 @@
 <script>
   $(document).ready(function() {
     $(".gFullSizeLink").click(function() {
-      show_full_size("<?= $theme->item()->file_url() ?>", "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
+      $.gallery_show_full_size(<?= html::js_string($theme->item()->file_url()) ?>, "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
       return false;
     });
   });
@@ -40,22 +40,20 @@
   <div id="gPhoto">
     <?= $theme->resize_top($item) ?>
     <? if (access::can("view_full", $item)): ?>
-    <a href="<?= $item->file_url() ?>" class="gFullSizeLink" title="<?= t("View full size") ?>">
+    <a href="<?= $item->file_url() ?>" class="gFullSizeLink" title="<?= t("View full size")->for_html_attr() ?>">
       <? endif ?>
       <?= $item->resize_img(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?>
       <? if (access::can("view_full", $item)): ?>
     </a>
     <? endif ?>
     <?= $theme->resize_bottom($item) ?>
+    <?= $theme->context_menu($item, "#gPhotoId-{$item->id}") ?>
   </div>
 
   <div id="gInfo">
-    <h1><?= p::purify($item->title) ?></h1>
-    <div><?= nl2br(p::purify($item->description)) ?></div>
+    <h1><?= html::purify($item->title) ?></h1>
+    <div><?= nl2br(html::purify($item->description)) ?></div>
   </div>
 
-  <script type="text/javascript">
-    var ADD_A_COMMENT = "<?= t("Add a comment") ?>";
-  </script>
   <?= $theme->photo_bottom() ?>
 </div>

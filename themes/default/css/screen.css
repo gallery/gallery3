@@ -71,8 +71,12 @@ a,
 #gDialog a,
 .gButtonLink,
 .gButtonLink:hover,
-.gButtonLink:active {
-  color: #5382BF !important;
+.gButtonLink:active,
+a.ui-state-hover,
+input.ui-state-hover,
+button.ui-state-hover {
+  color: #5382bf !important;
+  cursor: pointer !important;
   text-decoration: none;
   -moz-outline-style: none;
 }
@@ -99,6 +103,12 @@ a:hover,
 
 #gDialog .gCancel {
   float: left;
+}
+
+#gDialog #gMessage li {
+  width: 400px;
+  white-space: normal;
+  padding-left: 32px;
 }
 
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -131,7 +141,7 @@ fieldset {
   padding-bottom: .8em;
 }
 
-#gHeader fieldset,
+#gBanner fieldset,
 #gSidebar fieldset,
 .gShortForm fieldset {
   border: none;
@@ -142,7 +152,7 @@ legend {
   margin-left: 1em;
 }
 
-#gHeader legend,
+#gBanner legend,
 #gSidebar legend,
 #gContent #gSearchForm legend,
 input[type="hidden"],
@@ -276,12 +286,12 @@ li.gError select {
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gMessage {
-  width: 99%;
+  width: 100%;
 }
 
-#gAdminAkismet .gSuccess,
 #gSiteStatus li,
-#gMessage li {
+#gMessage li,
+.gModuleStatus {
   border: 1px solid #ccc;
   margin-bottom: .4em;
 }
@@ -292,71 +302,48 @@ li.gError select {
   border-bottom: 1px solid #ccc;
 }
 
-#gSiteStatus .gError,
-#gMessage .gError,
-form p.gError,
-#gSiteStatus .gInfo,
-#gMessage .gInfo,
-#gSiteStatus .gSuccess,
-#gMessage .gSuccess,
-#gSiteStatus .gWarning,
-#gMessage .gWarning {
+.gModuleStatus {
+  clear: both;
+  margin-bottom: 1em;
+}
+
+.gError,
+.gInfo,
+.gSuccess,
+.gWarning {
   background-position: .4em 50%;
   background-repeat: no-repeat;
   padding: .4em .5em .4em 30px;
 }
 
 .gError {
-  background-color: #fcc;
-}
-
-form .gError {
-  color: #f00;
-}
-
-#gSiteStatus .gError,
-#gMessage .gError,
-form p.gError {
+  background-color: #f6cbca;
   background-image: url('../images/ico-error.png');
 }
 
 .gInfo {
   background-color: #e8e8e8;
-}
-
-#gSiteStatus .gInfo,
-#gMessage .gInfo {
   background-image: url('../images/ico-info.png');
 }
 
 .gSuccess {
-  background-color: #96EF95;
-}
-
-#gSiteStatus .gSuccess,
-#gMessage .gSuccess {
+  background-color: #d9efc2;
   background-image: url('../images/ico-success.png');
 }
 
 .gWarning {
-  background-color: #ff9;
-}
-
-#gSiteStatus .gWarning,
-#gMessage .gWarning {
+  background-color: #fcf9ce;
   background-image: url('../images/ico-warning.png');
 }
 
 form .gError,
 .gPager .gInfo {
-  background-color: #fff;
+  background-color: #fff !important;
 }
 
-#gAdminMaintenance .gError,
-#gAdminMaintenance .gInfo,
-#gAdminMaintenance .gWarning,
-#gAdminMaintenance .gSuccess {
-  background-image: none;
+.gPager .gInfo {
+  background-image: none !important;
+  padding: 0 !important;
 }
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
@@ -387,21 +374,26 @@ form .gError,
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
-  background-color: #e8e8e8;
-  border-bottom: 1px solid #fff;
-  font-size: .8em;
   margin-bottom: 1em;
-  padding: 1em 20px 0 20px;
+}
+
+#gBanner {
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  font-size: .8em;
+  min-height: 5em;
+  padding: 1em 20px;
+  position: relative;
 }
 
 #gContent {
   font-size: 1.2em;
   padding-left: 20px;
+  position: relative;
   width: 696px;
 }
 
 #gSidebar {
-  background-color: #fff;
   font-size: .9em;
   padding: 0 20px;
   width: 220px;
@@ -421,18 +413,17 @@ form .gError,
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLogo img {
-  float: left;
-  margin: -4px 10px 0 0;
+#gBanner #gLogo img {
+  margin: 0;
 }
 
-#gHeader #gQuickSearchForm {
+#gBanner #gQuickSearchForm {
   clear: right;
   float: right;
-  margin: 1em 0;
+  margin-top: 1em;
 }
 
-#gHeader #gQuickSearchForm input[type='text'] {
+#gBanner #gQuickSearchForm input[type='text'] {
   width: 17em;
 }
 
@@ -449,24 +440,31 @@ form .gError,
 
 #gContent #gAlbumGrid {
   margin: 1em 0;
+  position: relative;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem {
-  border: 1px solid #e8e8e8;
-  border-right-color: #ccc;
-  border-bottom-color: #ccc;
+  background-color: #fff;
+  border: 1px solid #fff;
   float: left;
   font-size: .7em;
-  height: 240px;
+  height: 220px;
   overflow: hidden;
-  padding: 15px 8px 30px 8px;
+  padding: .6em 8px;
   position: relative;
   text-align: center;
   width: 213px;
+  z-index: 1;
 }
 
 #gContent #gAlbumGrid .gItem h2 {
   margin: 5px 0;
+}
+
+#gContent .gPhoto h2,
+#gContent .gItem .gMetadata {
+  display: none;
 }
 
 #gContent #gAlbumGrid .gAlbum {
@@ -474,16 +472,27 @@ form .gError,
 }
 
 #gContent #gAlbumGrid .gAlbum h2 span {
-  background: transparent url('../images/ico-album.png') no-repeat top left !important;
+  background: transparent url('../images/ico-album.png') no-repeat top left;
   display: inline-block;
   height: 16px;
   margin-right: 5px;
   width: 16px;
 }
 
+#gContent #gAlbumGrid .gHoverItem {
+  background-color: #fff;
+  border: 1px solid #000;
+}
+
+#gContent .gHoverItem h2,
+#gContent .gHoverItem .gMetadata {
+  display: block;
+}
+
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
 #gContent #gItem {
+  position: relative;
   width: 99%;
 }
 
@@ -498,6 +507,7 @@ form .gError,
 
 #gContent #gComments {
   margin-top: 2em;
+  position: relative;
 }
 
 #gContent #gComments ul li {
@@ -529,18 +539,24 @@ form .gError,
   width: 32px;
 }
 
+#gAddCommentButton {
+  position: absolute;
+  right: 0;
+  top: 2px;
+}
+
 #gContent #gAddCommentForm {
   margin-top: 2em;
 }
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLoginMenu li,
+#gBanner #gLoginMenu li,
 #gFooter #gCredits li {
   display: inline;
 }
 
-#gHeader #gLoginMenu li {
+#gBanner #gLoginMenu li {
   padding-left: 1.2em;
 }
 
@@ -558,14 +574,13 @@ form .gError,
  *********************************************************************/
 
 #gSiteMenu,
-.gBreadcrumbs,
 #gTagCloud ul {
   font-size: 1.2em;
 }
 
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gHeader #gLoginMenu {
+#gBanner #gLoginMenu {
   color: #999;
   float: right;
 }
@@ -573,35 +588,58 @@ form .gError,
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gSiteMenu {
-  float: left;
-  margin-top: 20px;
-  padding: 0 20px 0 0;
+  bottom: 0;
+	display: none;
+  left: 140px;
+  position: absolute;
 }
 
 #gSiteMenu ul {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 
-/* Thumb Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Context Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gContent .gThumbMenu {
+.gContextMenu {
+  position: absolute;
   bottom: 0;
   left: 0;
-  position: absolute;
+}
+
+.gItem .gContextMenu {
+  display: none;
+  margin-top: 2em;
   width: 100%;
 }
 
-#gContent .gThumbMenu li {
+#gItem .gContextMenu {
+  font-size: .7em;
+}
+
+#gItem .gContextMenu ul {
+  display: none;
+}
+
+.gContextMenu li {
   border-left: none;
   border-right: none;
   border-bottom: none;
 }
 
-#gContent .gThumbMenu li li {
-  padding: .3em;
+.gContextMenu li a {
+  display: block;
+  line-height: 1.6em;
 }
 
-#gContent .gThumbMenu a:hover {
+.gHoverItem .gContextMenu {
+  display: block;
+}
+
+.gHoverItem .gContextMenu li {
+  text-align: left;
+}
+
+.gHoverItem .gContextMenu a:hover {
   text-decoration: none;
 }
 
@@ -641,11 +679,7 @@ form .gError,
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gBreadcrumbs {
-  background-color: #fff;
-  border-top: 1px solid #ccc;
-  clear: both;
-  margin: 0 -20px;
-  padding-left: 20px;
+  padding: 0 20px;
 }
 
 .gBreadcrumbs li {
@@ -668,7 +702,13 @@ form .gError,
   font-weight: bold;
 }
 
-#gAddPhotos .gBreadcrumbs {
+#gDialog ul.gBreadcrumbs {
+  clear: both;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+#gDialog .gBreadcrumbs li {
   font-size: .9em;
 }
 
@@ -739,6 +779,10 @@ form .gError,
   text-decoration: underline;
 }
 
+#gWelcomeMessage p {
+  padding-bottom: 1em;
+}
+
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gPager {
@@ -763,9 +807,7 @@ form .gError,
  * 6) Browser hacks
  *********************************************************************/
 
-#gSiteMenu:after,
 #gHeader:after,
-.gBreadcrumbs:after,
 #gAlbumGrid:after,
 .gPager:after,
 #gViewMenu:after {
@@ -793,17 +835,17 @@ form .gError,
 /* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
 
 .gLoadingLarge {
-  background: #e8e8e8 url('../images/loading-lg.gif') no-repeat center center;
+  background: #e8e8e8 url('../../../lib/images/loading-large.gif') no-repeat center center;
   font-size: 0;
 }
 
 .gDialogLoadingLarge {
-  background: url('../images/loading-lg.gif') no-repeat center center !important;
+  background: url('../../../lib/images/loading-large.gif') no-repeat center center !important;
   font-size: 0;
 }
 
 .gLoadingSmall {
-  background: #e8e8e8 url('../images/loading-sm.gif') no-repeat center center;
+  background: #e8e8e8 url('../../../lib/images/loading-small.gif') no-repeat center center;
   font-size: 0;
 }
 
@@ -823,7 +865,6 @@ form .gError,
 .ui-widget-overlay {
   background: #000;
   opacity: .7;
-  filter: Alpha(Opacity=70);
 }
 
 #gDialog {
@@ -852,6 +893,10 @@ form .gError,
 
 #gDialog legend {
   display: none;
+}
+
+#gDialog p {
+	margin: 0;
 }
 
 /* jQuery UI ThemeRoller buttons */
@@ -906,13 +951,13 @@ form .gError,
 /* Server Add */
 
 #gServerAdd button {
-  float: left;
   margin-bottom: .5em;
 }
 
 #gServerAddTree {
   cursor: pointer;
   padding-left: 4px;
+  width: 95%;
 }
 
 #gServerAddTree li {
@@ -926,33 +971,25 @@ form .gError,
 
 #gServerAddTree {
   border: 1px solid #ccc;
-  height: 25em;
+  height: 20em;
   overflow: auto;
   margin-bottom: .5em;
-  padding-top: .5em;
-  padding-bottom: .5em;
+  padding: .5em;
 }
 
 #gServerAdd ul ul li {
   padding-left: 1.2em;
 }
 
-#gServerAdd .gBreadcrumbs {
-  font-size: 1em;
-  padding: 0;
-  margin: 0;
-  border-top-width: 0;
-}
-
-#gServerAdd p {
-  margin: 0;
-}
-
-#gServerAdd .gBreadcrumbs li {
-  padding: 10px 6px 10px 16px;
-}
-
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gEditPermissionForm {
+	clear: both;
+}
+#gEditPermissionForm fieldset {
+	border: 1px solid #cccccc;
+	padding: 0;
+}
 
 #gPermissions .gDenied,
 #gPermissions .gAllowed {
@@ -975,9 +1012,9 @@ form .gError,
   display: inline-block;
 }
 
-#gAddPhotos p {
-  margin: 0;
-  padding: 0;
+#gAddPhotos span {
+  clear: both;
+  display: block;
 }
 
 #gAddPhotosCanvas {

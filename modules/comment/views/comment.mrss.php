@@ -6,9 +6,9 @@
    xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <generator>Gallery 3</generator>
-    <title><?= p::clean($feed->title) ?></title>
+    <title><?= html::clean($feed->title) ?></title>
     <link><?= $feed->uri ?></link>
-    <description><?= p::clean($feed->description) ?></description>
+    <description><?= html::clean($feed->description) ?></description>
     <language>en-us</language>
     <atom:link rel="self" href="<?= $feed->uri ?>" type="application/rss+xml" />
     <fh:complete/>
@@ -22,14 +22,14 @@
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
     <? foreach ($feed->children as $child): ?>
     <item>
-      <title><?= p::purify($child->title) ?></title>
-      <link><?= p::clean($child->item_uri) ?></link>
-      <author><?= p::clean($child->author) ?></author>
+      <title><?= html::purify($child->title) ?></title>
+      <link><?= html::clean($child->item_uri) ?></link>
+      <author><?= html::clean($child->author) ?></author>
       <guid isPermaLink="true"><?= $child->item_uri ?></guid>
       <pubDate><?= $child->pub_date ?></pubDate>
       <content:encoded>
         <![CDATA[
-          <p><?= nl2br(p::purify($child->text)) ?></p>
+          <p><?= nl2br(html::purify($child->text)) ?></p>
           <p>
             <img alt="" src="<?= $child->thumb_url ?>"
                  height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" />

@@ -1,4 +1,3 @@
-
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
@@ -72,7 +71,7 @@ class Simple_Uploader_Controller extends Controller {
           unlink($temp_filename);
         }
         header("HTTP/1.1 500 Internal Server Error");
-        print "ERROR:" . $e->getMessage();
+        print "ERROR: " . $e->getMessage();
         return;
       }
       unlink($temp_filename);

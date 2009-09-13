@@ -4,11 +4,9 @@
 function select_file(li) {
   $(li).toggleClass("selected");
   if ($("#gServerAdd span.selected").length) {
-    $("#gServerAddAddButton").enable(true);
-    $("#gServerAddAddButton").removeClass("ui-state-disabled");
+    $("#gServerAddAddButton").enable(true).removeClass("ui-state-disabled");
   } else {
-    $("#gServerAddAddButton").enable(false);
-    $("#gServerAddAddButton").addClass("ui-state-disabled");
+    $("#gServerAddAddButton").enable(false).addClass("ui-state-disabled");
   }
 }
 
@@ -26,9 +24,11 @@ function open_dir(path) {
 
 function start_add() {
   var paths = [];
-  $.each($("#gServerAdd span.selected"), function () {
-    paths.push($(this).attr("file"));
-  });
+  $.each($("#gServerAdd span.selected"),
+	 function () {
+	   paths.push($(this).attr("file"));
+	 }
+  );
 
   $.ajax({
     url: START_URL,
@@ -54,7 +54,7 @@ function run_add(url) {
       $("#gStatus").html(data.status);
       $("#gServerAdd .gProgressBar").progressbar("value", data.percent_complete);
       if (data.done) {
-	$("#gProgress").slideUp();
+	$("#gServerAddProgress").slideUp();
       } else {
 	setTimeout(function() { run_add(url); }, 0);
       }

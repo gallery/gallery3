@@ -67,35 +67,48 @@ class notification {
   }
 
   static function get_subscribers($item) {
+    // @todo don't access the user table directly
+    // @todo only return distinct email addresses
     $users = ORM::factory("user")
       ->join("subscriptions", "users.id", "subscriptions.user_id")
       ->join("items", "subscriptions.item_id", "items.id")
       ->where("email IS NOT", null)
-      ->where("items.left <=", $item->left)
-      ->where("items.right >", $item->right)
+      ->where("items.left_ptr <=", $item->left_ptr)
+      ->where("items.right_ptr >", $item->right_ptr)
       ->find_all();
 
     $subscribers = array();
     foreach ($users as $user) {
-      $subscribers[] = $user->email;
+      if (access::user_can($user, "view", $item)) {
+        $subscribers[$user->email] = 1;
+      }
     }
-    return $subscribers;
+    return array_keys($subscribers);
   }
 
-  static function send_item_updated($old, $new) {
-    $v = new View("item_updated.html");
-    $v->old = $old;
-    $v->new = $new;
-    $v->subject = $old->is_album() ?
-      t("Album %title updated", array("title" => $old->title)) :
-      ($old->is_photo() ?
-       t("Photo %title updated", array("title" => $old->title))
-       : t("Movie %title updated", array("title" => $old->title)));
+  static function send_item_updated($item) {
+    $subscribers = self::get_subscribers($item);
+    if (!$subscribers) {
+      return;
+    }
 
-    self::_notify_subscribers($old, $v->render(), $v->subject);
+    $v = new View("item_updated.html");
+    $v->item = $item;
+    $v->subject = $item->is_album() ?
+      t("Album %title updated", array("title" => $item->original("title"))) :
+      ($item->is_photo() ?
+       t("Photo %title updated", array("title" => $item->original("title")))
+       : t("Movie %title updated", array("title" => $item->original("title"))));
+
+    self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
 
   static function send_item_add($item) {
+    $subscribers = self::get_subscribers($item);
+    if (!$subscribers) {
+      return;
+    }
+
     $parent = $item->parent();
     $v = new View("item_added.html");
     $v->item = $item;
@@ -104,14 +117,19 @@ class notification {
         array("title" => $item->title, "parent_title" => $parent->title)) :
       ($item->is_photo() ?
        t("Photo %title added to %parent_title",
-         array("title" => $item->title, "parent_title" => $parent->title))
-       : t("Movie %title added to %parent_title",
+         array("title" => $item->title, "parent_title" => $parent->title)) :
+       t("Movie %title added to %parent_title",
            array("title" => $item->title, "parent_title" => $parent->title)));
 
-    self::_notify_subscribers($item, $v->render(), $v->subject);
+    self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
 
   static function send_item_deleted($item) {
+    $subscribers = self::get_subscribers($item);
+    if (!$subscribers) {
+      return;
+    }
+
     $parent = $item->parent();
     $v = new View("item_deleted.html");
     $v->item = $item;
@@ -124,11 +142,16 @@ class notification {
        : t("Movie %title removed from %parent_title",
            array("title" => $item->title, "parent_title" => $parent->title)));
 
-    self::_notify_subscribers($item, $v->render(), $v->subject);
+    self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
 
   static function send_comment_published($comment) {
     $item = $comment->item();
+    $subscribers = self::get_subscribers($item);
+    if (!$subscribers) {
+      return;
+    }
+
     $v = new View("comment_published.html");
     $v->comment = $comment;
     $v->subject = $item->is_album() ?
@@ -137,7 +160,7 @@ class notification {
        t("A new comment was published for photo %title", array("title" => $item->title))
        : t("A new comment was published for movie %title", array("title" => $item->title)));
 
-    self::_notify_subscribers($item, $v->render(), $v->subject);
+    self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
 
   static function send_pending_notifications() {
@@ -150,7 +173,7 @@ class notification {
         ->where("email", $email)
         ->find_all();
       if ($result->count() == 1) {
-        $pending = $result->get();
+        $pending = $result->current();
         Sendmail::factory()
           ->to($email)
           ->subject($pending->subject)
@@ -176,23 +199,22 @@ class notification {
     }
   }
 
-  private static function _notify_subscribers($item, $text, $subject) {
-    $users = self::get_subscribers($item);
-    if (!empty($users)) {
+  private static function _notify($subscribers, $item, $text, $subject) {
+    if (!empty($subscribers)) {
       if (!batch::in_progress()) {
         Sendmail::factory()
-          ->to($users)
+          ->to($subscribers)
           ->subject($subject)
           ->header("Mime-Version", "1.0")
           ->header("Content-type", "text/html; charset=utf-8")
           ->message($text)
           ->send();
       } else {
-        foreach ($users as $user) {
+        foreach ($subscribers as $subscriber) {
           $pending = ORM::factory("pending_notification");
           $pending->subject = $subject;
           $pending->text = $text;
-          $pending->email = $user;
+          $pending->email = $subscriber;
           $pending->save();
         }
       }

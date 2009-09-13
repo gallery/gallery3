@@ -40,15 +40,31 @@ class akismet_event_Core {
     $comment->save();
   }
 
-  static function comment_updated($old, $new) {
+  static function comment_updated($original, $new) {
     if (!module::get_var("akismet", "api_key")) {
       return;
     }
 
-    if ($old->state != "spam" && $new->state == "spam") {
+    if ($original->state != "spam" && $new->state == "spam") {
       akismet::submit_spam($new);
-    } else if ($old->state == "spam" && $new->state != "spam") {
+    } else if ($original->state == "spam" && $new->state != "spam") {
       akismet::submit_ham($new);
+    }
+  }
+
+  static function admin_menu($menu, $theme) {
+    $menu->get("settings_menu")
+      ->append(Menu::factory("link")
+               ->id("akismet")
+               ->label(t("Akismet"))
+               ->url(url::site("admin/akismet")));
+
+    if (module::get_var("akismet", "api_key")) {
+      $menu->get("statistics_menu")
+        ->append(Menu::factory("link")
+                 ->id("akismet")
+                 ->label(t("Akismet"))
+                 ->url(url::site("admin/akismet/stats")));
     }
   }
 }

@@ -26,6 +26,7 @@
   <?php endif ?>
 </fieldset>
 
+<?php if (installer::var_writable()): ?>
 <form method="post" action="index.php?step=save_db_info">
   <fieldset>
     <legend>Database</legend>
@@ -77,13 +78,10 @@
       </tr>
       <tr>
         <td colspan="2">
-          <?php if (installer::var_writable()): ?>
           <input type="submit" value="Continue"/>
-          <?php else: ?>
-          <i class="error">(Please fix the photo storage problem before continuing)</i>
-          <?php endif ?>
         </td>
       </tr>
     </table>
   </fieldset>
 </form>
+<?php endif ?>

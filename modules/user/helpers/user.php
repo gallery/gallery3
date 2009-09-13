@@ -34,13 +34,16 @@ class user_Core {
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    $group->submit("")->value(t("Save"));
     $form->add_rules_from($user);
+
+    module::event("user_edit_form", $user, $form);
+    $group->submit("")->value(t("Save"));
     return $form;
   }
 
   static function get_edit_form_admin($user) {
-    $form = new Forge("admin/users/edit_user/$user->id", "", "post", array("id" => "gEditUserForm"));
+    $form = new Forge(
+      "admin/users/edit_user/$user->id", "", "post", array("id" => "gEditUserForm"));
     $group = $form->group("edit_user")->label(t("Edit User"));
     $group->input("name")->label(t("Username"))->id("gUsername")->value($user->name);
     $group->inputs["name"]->error_messages(
@@ -53,9 +56,11 @@ class user_Core {
     $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
     $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
     $group->checkbox("admin")->label(t("Admin"))->id("gAdmin")->checked($user->admin);
-    $group->submit("")->value(t("Modify User"));
     $form->add_rules_from($user);
     $form->edit_user->password->rules("-required");
+
+    module::event("user_edit_form_admin", $user, $form);
+    $group->submit("")->value(t("Modify User"));
     return $form;
   }
 
@@ -72,14 +77,19 @@ class user_Core {
     $group->input("url")->label(t("URL"))->id("gUrl");
     self::_add_locale_dropdown($group);
     $group->checkbox("admin")->label(t("Admin"))->id("gAdmin");
-    $group->submit("")->value(t("Add User"));
     $user = ORM::factory("user");
     $form->add_rules_from($user);
+
+    module::event("user_add_form_admin", $user, $form);
+    $group->submit("")->value(t("Add User"));
     return $form;
   }
 
   private static function _add_locale_dropdown(&$form, $user=null) {
-    $locales = locale::installed();
+    $locales = locales::installed();
+    foreach ($locales as $locale => $display_name) {
+      $locales[$locale] = SafeString::of_safe_html($display_name);
+    }
     if (count($locales) > 1) {
       // Put "none" at the first position in the array
       $locales = array_merge(array("" => t("« none »")), $locales);
@@ -152,7 +162,12 @@ class user_Core {
    */
   static function active() {
     // @todo (maybe) cache this object so we're not always doing session lookups.
-    $user = Session::instance()->get("user", self::guest());
+    $user = Session::instance()->get("user", null);
+    if (!isset($user)) {
+      // Don't do this as a fallback in the Session::get() call because it can trigger unnecessary
+      // work.
+      $user = user::guest();
+    }
     return $user;
   }
 
@@ -202,7 +217,6 @@ class user_Core {
     $user->add(group::registered_users());
 
     $user->save();
-    module::event("user_created", $user);
     return $user;
   }
 
@@ -324,5 +338,20 @@ class user_Core {
       $salt = substr($salt, 0, 4);
     }
     return $salt . md5($salt . $password);
+  }
+
+  static function cookie_locale() {
+    $cookie_data = Input::instance()->cookie("g_locale");
+    $locale = null;
+    if ($cookie_data) {
+      if (preg_match("/^([a-z]{2,3}(?:_[A-Z]{2})?)$/", trim($cookie_data), $matches)) {
+        $requested_locale = $matches[1];
+        $installed_locales = locales::installed();
+        if (isset($installed_locales[$requested_locale])) {
+          $locale = $requested_locale;
+        }
+      }
+    }
+    return $locale;
   }
 }

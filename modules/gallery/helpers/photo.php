@@ -31,10 +31,11 @@ class photo_Core {
    * @param string  $name the filename to use for this photo in the album
    * @param integer $title the title of the new photo
    * @param string  $description (optional) the longer description of this photo
+   * @param string  $slug (optional) the url component for this photo
    * @return Item_Model
    */
   static function create($parent, $filename, $name, $title,
-                         $description=null, $owner_id=null) {
+                         $description=null, $owner_id=null, $slug=null) {
     if (!$parent->loaded || !$parent->is_album()) {
       throw new Exception("@todo INVALID_PARENT");
     }
@@ -66,6 +67,10 @@ class photo_Core {
       $name .= "." . $pi["extension"];
     }
 
+    if (empty($slug)) {
+      $slug = item::convert_filename_to_slug($name);
+    }
+
     $photo = ORM::factory("item");
     $photo->type = "photo";
     $photo->title = $title;
@@ -78,15 +83,21 @@ class photo_Core {
     $photo->thumb_dirty = 1;
     $photo->resize_dirty = 1;
     $photo->sort_column = "weight";
+    $photo->slug = $slug;
     $photo->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
-    // Randomize the name if there's a conflict
+    // Randomize the name or slug if there's a conflict
+    // @todo Improve this.  Random numbers are not user friendly
     while (ORM::factory("item")
            ->where("parent_id", $parent->id)
+           ->open_paren()
            ->where("name", $photo->name)
+           ->orwhere("slug", $photo->slug)
+           ->close_paren()
            ->find()->id) {
-      // @todo Improve this.  Random numbers are not user friendly
-      $photo->name = rand() . "." . $pi["extension"];
+      $rand = rand();
+      $photo->name = "{$name}.$rand.{$pi['extension']}";
+      $photo->slug = "{$slug}-$rand";
     }
 
     // This saves the photo
@@ -105,10 +116,18 @@ class photo_Core {
 
     copy($filename, $photo->file_path());
 
+    // @todo: publish this from inside Item_Model::save() when we refactor to the point where
+    // there's only one save() happening here.
     module::event("item_created", $photo);
 
-    // Build our thumbnail/resizes
-    graphics::generate($photo);
+    // Build our thumbnail/resizes.  If we fail to build thumbnail/resize we assume that the image
+    // is bad in some way and discard it.
+    try {
+      graphics::generate($photo);
+    } catch (Exception $e) {
+      $photo->delete();
+      throw $e;
+    }
 
     // If the parent has no cover item, make this it.
     if (access::can("edit", $parent) && $parent->album_cover_item_id == null)  {
@@ -121,10 +140,15 @@ class photo_Core {
   static function get_add_form($parent) {
     $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddPhotoForm"));
     $group = $form->group("add_photo")->label(
-      t("Add Photo to %album_title", array("album_title" =>$parent->title)));
+      t("Add Photo to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
     $group->input("name")->label(t("Filename"));
+    $group->input("slug")->label(t("Internet Address"))->value($photo->slug)
+      ->callback("item::validate_url_safe")
+      ->error_messages(
+        "not_url_safe",
+        t("The internet address should contain only letters, numbers, hyphens and underscores"));
     $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif,flv,mp4]");
     $group->hidden("type")->value("photo");
     $group->submit("")->value(t("Upload"));
@@ -135,16 +159,26 @@ class photo_Core {
   static function get_edit_form($photo) {
     $form = new Forge("photos/$photo->id", "", "post", array("id" => "gEditPhotoForm"));
     $form->hidden("_method")->value("put");
-    $group = $form->group("edit_photo")->label(t("Edit Photo"));
+    $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("filename")->label(t("Filename"))->value($photo->name)
-      ->error_messages("conflict", t("There is already a file with this name"))
+      ->error_messages("name_conflict", t("There is already a photo or album with this name"))
       ->callback("item::validate_no_slashes")
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
       ->callback("item::validate_no_trailing_period")
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""));
+    $group->input("slug")->label(t("Internet Address"))->value($photo->slug)
+      ->callback("item::validate_url_safe")
+      ->error_messages(
+        "slug_conflict", t("There is already a photo or album with this internet address"))
+      ->error_messages(
+        "not_url_safe",
+        t("The internet address should contain only letters, numbers, hyphens and underscores"));
 
+    module::event("item_edit_form", $photo, $form);
+
+    $group = $form->group("buttons")->label("");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;

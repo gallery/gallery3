@@ -22,7 +22,7 @@ class Movie_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     try {
-      $movie = movie::create($root, MODPATH . "gallery/tests/test.jpg", "$rand/.jpg", $rand, $rand);
+      $movie = movie::create($root, MODPATH . "gallery/tests/test.flv", "$rand/.flv", $rand, $rand);
     } catch (Exception $e) {
       // pass
       return;
@@ -35,12 +35,22 @@ class Movie_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     try {
-      $movie = movie::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg.", $rand, $rand);
+      $movie = movie::create($root, MODPATH . "gallery/tests/test.flv", "$rand.flv.", $rand, $rand);
     } catch (Exception $e) {
       $this->assert_equal("@todo NAME_CANNOT_END_IN_PERIOD", $e->getMessage());
       return;
     }
 
     $this->assert_true(false, "Shouldn't create a movie with trailing . in the name");
+  }
+
+  public function create_movie_creates_reasonable_slug_test() {
+    $rand = rand();
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, $rand, $rand, $rand);
+    $movie = movie::create(
+      $album, MODPATH . "gallery/tests/test.flv", "This (is) my file%name.flv", $rand, $rand);
+
+    $this->assert_equal("This-is-my-file-name", $movie->slug);
   }
 }

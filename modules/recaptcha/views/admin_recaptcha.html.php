@@ -4,7 +4,7 @@
   <p>
     <?= t("reCAPTCHA is a free CAPTCHA service that helps to digitize books, newspapers and old time radio shows.  In order to use it, you need to sign up for a <a href=\"%domain_url\">reCAPTCHA Public/Private Key pair</a>, which is also free.  Once registered, the challenge and response strings are evaluated at <a href=\"%recaptcha_url\">recaptcha.net</a> to determine if the form content has been entered by a bot.",
           array("domain_url" => $form->get_key_url,
-                "recaptcha_url" => "http://recaptcha.net")) ?>
+                "recaptcha_url" => html::mark_clean("http://recaptcha.net"))) ?>
   </p>
 
      <?= $form ?>
@@ -23,7 +23,7 @@
     Recaptcha.create("<?= $public_key ?>", "gRecaptcha", {
       callback: Recaptcha.focus_response_field,
       lang: "en",
-      custom_translations : { instructions_visual : "<?= t("Type words to check:") ?>"},
+      custom_translations : { instructions_visual : <?= t("Type words to check:")->for_js() ?>},
       theme: "white"
     });
   </script>

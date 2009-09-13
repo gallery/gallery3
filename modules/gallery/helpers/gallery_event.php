@@ -23,7 +23,7 @@ class gallery_event_Core {
     access::add_group($group);
   }
 
-  static function group_before_delete($group) {
+  static function group_deleted($group) {
     access::delete_group($group);
   }
 
@@ -31,8 +31,12 @@ class gallery_event_Core {
     access::add_item($item);
   }
 
-  static function item_before_delete($item) {
+  static function item_deleted($item) {
     access::delete_item($item);
+  }
+
+  static function item_moved($item, $old_parent) {
+    access::recalculate_permissions($item->parent());
   }
 
   static function user_login($user) {
@@ -42,5 +46,11 @@ class gallery_event_Core {
       graphics::choose_default_toolkit();
       module::clear_var("gallery", "choose_default_tookit");
     }
+  }
+
+  static function item_index_data($item, $data) {
+    $data[] = $item->description;
+    $data[] = $item->name;
+    $data[] = $item->title;
   }
 }

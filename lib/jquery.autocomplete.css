@@ -3,8 +3,8 @@
 	border: 1px solid black;
 	background-color: white;
 	overflow: hidden;
-	text-align: left;
 	z-index: 99999;
+	text-align: left;
 }
 
 .ac_results ul {
@@ -36,7 +36,7 @@
 }
 
 .ac_loading {
-	background: white url('indicator.gif') right center no-repeat;
+	background: white url('images/loading-small.gif') right center no-repeat;
 }
 
 .ac_odd {

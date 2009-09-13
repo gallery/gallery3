@@ -2,8 +2,8 @@
 <? // @todo Set hover on AlbumGrid list items for guest users ?>
 <div id="gInfo">
   <?= $theme->album_top() ?>
-  <h1><?= p::purify($item->title) ?></h1>
-  <div class="gDescription"><?= nl2br(p::purify($item->description)) ?></div>
+  <h1><?= html::purify($item->title) ?></h1>
+  <div class="gDescription"><?= nl2br(html::purify($item->description)) ?></div>
 </div>
 
 <ul id="gAlbumGrid">
@@ -19,8 +19,8 @@
       <?= $child->thumb_img(array("class" => "gThumbnail")) ?>
     </a>
     <?= $theme->thumb_bottom($child) ?>
-    <?= $theme->thumb_menu($child) ?>
-    <h2><span></span><a href="<?= $child->url() ?>"><?= p::clean($child->title) ?></a></h2>
+    <?= $theme->context_menu($child, "#gItemId-{$child->id} .gThumbnail") ?>
+    <h2><span></span><a href="<?= $child->url() ?>"><?= html::purify($child->title) ?></a></h2>
     <ul class="gMetadata">
       <?= $theme->thumb_info($child) ?>
     </ul>
@@ -30,7 +30,7 @@
   <? if ($user->admin || access::can("add", $item)): ?>
   <? $addurl = url::file("index.php/simple_uploader/app/$item->id") ?>
   <li><?= t("There aren't any photos here yet! <a %attrs>Add some</a>.",
-            array("attrs" => "href=\"$addurl\" class=\"gDialogLink\"")) ?></li>
+            array("attrs" => html::mark_clean("href=\"$addurl\" class=\"gDialogLink\""))) ?></li>
   <? else: ?>
   <li><?= t("There aren't any photos here yet!") ?></li>
   <? endif; ?>

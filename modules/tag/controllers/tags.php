@@ -53,7 +53,7 @@ class Tags_Controller extends REST_Controller {
 
     $form = tag::get_add_form($item);
     if ($form->validate()) {
-      foreach (split("[\,\ \;]", $form->add_tag->inputs["name"]->value) as $tag_name) {
+      foreach (split(",", $form->add_tag->inputs["name"]->value) as $tag_name) {
         $tag_name = trim($tag_name);
         if ($tag_name) {
           $tag = tag::add($item, $tag_name);
@@ -77,5 +77,22 @@ class Tags_Controller extends REST_Controller {
     access::required("edit", $item);
 
     return tag::get_add_form($item);
+  }
+
+  public function autocomplete() {
+    $tags = array();
+    $tag_parts = preg_split("#,#", $this->input->get("q"));
+    $limit = $this->input->get("limit");
+    $tag_part = end($tag_parts);
+    $tag_list = ORM::factory("tag")
+      ->like("name", "{$tag_part}%", false)
+      ->orderby("name", "ASC")
+      ->limit($limit)
+      ->find_all();
+    foreach ($tag_list as $tag) {
+      $tags[] = $tag->name;
+    }
+
+    print implode("\n", $tags);
   }
 }

@@ -16,7 +16,7 @@
       </tr>
       <? $i = 0 ?>
       <? foreach ($available as $module_name => $module_info):  ?>
-      <tr class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
         <? $data = array("name" => $module_name); ?>
         <? if ($module_info->locked) $data["disabled"] = 1; ?>
         <td> <?= form::checkbox($data, '1', module::is_active($module_name)) ?> </td>
@@ -27,6 +27,6 @@
       <? $i++ ?>
       <? endforeach ?>
     </table>
-    <input type="submit" value="<?= t("Update") ?>"/>
+    <input type="submit" value="<?= t("Update")->for_html_attr() ?>"/>
   </form>
 </div>

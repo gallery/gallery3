@@ -24,7 +24,7 @@ class search_Core {
 
     if (!user::active()->admin) {
       foreach (user::group_ids() as $id) {
-        $fields[] = "`view_$id` = " . access::ALLOW;
+        $fields[] = "`view_$id` = TRUE"; // access::ALLOW
       }
       $access_sql = "AND (" . join(" AND ", $fields) . ")";
     } else {
@@ -58,28 +58,22 @@ class search_Core {
     if ($remaining) {
       site_status::warning(
         t('Your search index needs to be updated.  <a href="%url" class="gDialogLink">Fix this now</a>',
-          array("url" => url::site("admin/maintenance/start/search_task::update_index?csrf=__CSRF__"))),
+          array("url" => html::mark_clean(url::site("admin/maintenance/start/search_task::update_index?csrf=__CSRF__")))),
         "search_index_out_of_date");
     }
   }
 
   static function update($item) {
-    $data = array();
+    $data = new ArrayObject();
     $record = ORM::factory("search_record")->where("item_id", $item->id)->find();
     if (!$record->loaded) {
       $record->item_id = $item->id;
     }
 
-    foreach (module::active() as $module) {
-      $class_name = "{$module->name}_search";
-      if (method_exists($class_name, "item_index_data")) {
-        $data[] = call_user_func(array($class_name, "item_index_data"), $record->item());
-      }
-    }
-    $record->data = join(" ", $data);
+    module::event("item_index_data", $record->item(), $data);
+    $record->data = join(" ", (array)$data);
     $record->dirty = 0;
     $record->save();
-    return t("Search index updated for '%title'", array("title" => p::purify($item->title)));
   }
 
   static function stats() {

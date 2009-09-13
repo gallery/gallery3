@@ -53,8 +53,8 @@ class Admin_Tags_Controller extends Admin_Controller {
       $name = $tag->name;
       Database::instance()->delete("items_tags", array("tag_id" => "$tag->id"));
       $tag->delete();
-      message::success(t("Deleted tag %tag_name", array("tag_name" => p::clean($name))));
-      log::success("tags", t("Deleted tag %tag_name", array("tag_name" => p::clean($name))));
+      message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
+      log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
 
       print json_encode(
         array("result" => "success",
@@ -98,7 +98,7 @@ class Admin_Tags_Controller extends Admin_Controller {
       $tag->save();
 
       $message = t("Renamed tag %old_name to %new_name",
-                   array("old_name" => p::clean($old_name), "new_name" => p::clean($tag->name)));
+                   array("old_name" => $old_name, "new_name" => $tag->name));
       message::success($message);
       log::success("tags", $message);
 
@@ -106,7 +106,7 @@ class Admin_Tags_Controller extends Admin_Controller {
         array("result" => "success",
               "location" => url::site("admin/tags"),
               "tag_id" => $tag->id,
-              "new_tagname" => p::clean($tag->name)));
+              "new_tagname" => html::clean($tag->name)));
     } else {
       print json_encode(
         array("result" => "error",

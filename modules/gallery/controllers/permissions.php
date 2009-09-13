@@ -71,6 +71,13 @@ class Permissions_Controller extends Controller {
         access::reset($group, $perm->name, $item);
         break;
       }
+
+      // If the active user just took away their own edit permissions, give it back.
+      if ($perm->name == "edit") {
+        if (!access::user_can(user::active(), "edit", $item)) {
+          access::allow($group, $perm->name, $item);
+        }
+      }
     }
   }
 

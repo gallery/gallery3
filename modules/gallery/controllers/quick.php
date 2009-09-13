@@ -18,20 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Quick_Controller extends Controller {
-  public function pane($id) {
-    $item = model_cache::get("item", $id);
-    if (!access::can("view", $item) || !access::can("edit", $item)) {
-      return "";
-    }
-
-    $view = new View("quick_pane.html");
-    $page_type = Input::instance()->get("page_type");
-    $view->button_list = gallery_quick::get_quick_buttons($item, $page_type);
-    $view->item = $item;
-    $view->page_type = $page_type;
-    print $view;
-  }
-
   public function rotate($id, $dir) {
     access::verify_csrf();
     $item = model_cache::get("item", $id);
@@ -89,7 +75,7 @@ class Quick_Controller extends Controller {
     access::required("view", $item->parent());
     access::required("edit", $item->parent());
 
-    $msg = t("Made <b>%title</b> this album's cover", array("title" => p::purify($item->title)));
+    $msg = t("Made <b>%title</b> this album's cover", array("title" => html::purify($item->title)));
 
     item::make_album_cover($item);
     message::success($msg);
@@ -105,10 +91,10 @@ class Quick_Controller extends Controller {
     if ($item->is_album()) {
       print t(
         "Delete the album <b>%title</b>? All photos and movies in the album will also be deleted.",
-        array("title" => p::purify($item->title)));
+        array("title" => html::purify($item->title)));
     } else {
       print t("Are you sure you want to delete <b>%title</b>?",
-              array("title" => p::purify($item->title)));
+              array("title" => html::purify($item->title)));
     }
 
     $form = item::get_delete_form($item);
@@ -122,9 +108,9 @@ class Quick_Controller extends Controller {
     access::required("edit", $item);
 
     if ($item->is_album()) {
-      $msg = t("Deleted album <b>%title</b>", array("title" => p::purify($item->title)));
+      $msg = t("Deleted album <b>%title</b>", array("title" => html::purify($item->title)));
     } else {
-      $msg = t("Deleted photo <b>%title</b>", array("title" => p::purify($item->title)));
+      $msg = t("Deleted photo <b>%title</b>", array("title" => html::purify($item->title)));
     }
 
     $parent = $item->parent();
@@ -135,7 +121,7 @@ class Quick_Controller extends Controller {
       print json_encode(array("result" => "success", "reload" => 1));
     } else {
       print json_encode(array("result" => "success",
-                              "location" => url::site("albums/$parent->id")));
+                              "location" => $parent->url()));
     }
   }
 

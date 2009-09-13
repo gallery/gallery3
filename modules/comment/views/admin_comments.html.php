@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   var set_state_url =
-    "<?= url::site("admin/comments/set_state/__ID__/__STATE__?csrf=$csrf") ?>";
+    <?= html::js_string(url::site("admin/comments/set_state/__ID__/__STATE__?csrf=$csrf")) ?>;
   function set_state(state, id) {
     $.get(set_state_url.replace("__STATE__", state).replace("__ID__", id),
           {},
@@ -12,7 +12,7 @@
   }
 
   var delete_url =
-    "<?= url::site("admin/comments/delete/__ID__?csrf=$csrf") ?>";
+    <?= html::js_string(url::site("admin/comments/delete/__ID__?csrf=$csrf")) ?>;
 
   function del(id) {
     $.get(delete_url.replace("__ID__", id),
@@ -24,7 +24,7 @@
   }
 
   function update_menu() {
-    $.get("<?= url::site("admin/comments/menu_labels") ?>", {},
+    $.get(<?= html::js_string(url::site("admin/comments/menu_labels")) ?>, {},
           function(data) {
             for (var i = 0; i < data.length; i++) {
               $("#gAdminCommentsMenu li:eq(" + i + ") a").html(data[i]);
@@ -103,17 +103,17 @@
       </th>
     </tr>
     <? foreach ($comments as $i => $comment): ?>
-    <tr id="gComment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
+    <tr id="gComment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
       <td>
         <a href="#">
-          <img src="<?= $comment->author()->avatar_url(40, $theme->theme_url("images/avatar.jpg", true)) ?>"
+          <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
                class="gAvatar"
-               alt="<?= p::clean($comment->author_name()) ?>"
+               alt="<?= html::clean_attribute($comment->author_name()) ?>"
                width="40"
                height="40" />
         </a>
-        <p><a href="mailto:<?= p::clean($comment->author_email()) ?>"
-              title="<?= p::clean($comment->author_email()) ?>"> <?= p::clean($comment->author_name()) ?> </a></p>
+        <p><a href="mailto:<?= html::clean_attribute($comment->author_email()) ?>"
+              title="<?= html::clean_attribute($comment->author_email()) ?>"> <?= html::clean($comment->author_name()) ?> </a></p>
       </td>
       <td>
         <div class="right">
@@ -122,7 +122,7 @@
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
-                 alt="<?= p::purify($item->title) ?>"
+                 alt="<?= html::purify($item->title)->for_html_attr() ?>"
                  <?= photo::img_dimensions($item->thumb_width, $item->thumb_height, 75) ?>
               />
               <? else: ?>
@@ -132,7 +132,7 @@
           </div>
         </div>
         <p><?= gallery::date($comment->created) ?></p>
-           <?= nl2br(p::purify($comment->text)) ?>
+           <?= nl2br(html::purify($comment->text)) ?>
       </td>
       <td>
         <ul class="gButtonSetVertical">

@@ -91,8 +91,39 @@ class Menu_Element_Link extends Menu_Element {
     } else {
       $css_class = "";
     }
-    return "<li><a$css_id class=\"gMenuElement$css_class\" href=\"$this->url\" " .
+    return "<li><a$css_id class=\"gMenuLink $css_class\" href=\"$this->url\" " .
       "title=\"$this->label\">$this->label</a></li>";
+  }
+}
+
+/**
+ * Menu element that provides an AJAX link.
+ */
+class Menu_Element_Ajax_Link extends Menu_Element {
+  public $ajax_handler;
+
+  /**
+   * Set the AJAX handler
+   * @chainable
+   */
+  public function ajax_handler($ajax_handler) {
+    $this->ajax_handler = $ajax_handler;
+    return $this;
+  }
+
+  public function __toString() {
+    if (isset($this->css_id) && !empty($this->css_id)) {
+      $css_id = " id=\"$this->css_id\"";
+    } else {
+      $css_id = "";
+    }
+    if (isset($this->css_class) && !empty($this->css_class)) {
+      $css_class = " $this->css_class";
+    } else {
+      $css_class = "";
+    }
+    return "<li><a$css_id class=\"gAjaxLink $css_class\" href=\"$this->url\" " .
+      "title=\"$this->label\" ajax_handler=\"$this->ajax_handler\">$this->label</a></li>";
   }
 }
 
@@ -111,7 +142,7 @@ class Menu_Element_Dialog extends Menu_Element {
     } else {
       $css_class = "";
     }
-    return "<li><a$css_id class=\"gMenuLink$css_class\" href=\"$this->url\" " .
+    return "<li><a$css_id class=\"gDialogLink $css_class\" href=\"$this->url\" " .
            "title=\"$this->label\">$this->label</a></li>";
   }
 }
@@ -131,6 +162,9 @@ class Menu_Core extends Menu_Element {
     switch($type) {
     case "link":
       return new Menu_Element_Link($type);
+
+    case "ajax_link":
+      return new Menu_Element_Ajax_Link($type);
 
     case "dialog":
       return new Menu_Element_Dialog($type);

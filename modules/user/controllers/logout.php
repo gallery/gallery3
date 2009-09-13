@@ -19,18 +19,19 @@
  */
 class Logout_Controller extends Controller {
   public function index() {
-    access::verify_csrf();
+    //access::verify_csrf();
 
     $user = user::active();
     user::logout();
-    log::info("user", t("User %name logged out", array("name" => p::clean($user->name))),
-              html::anchor("user/$user->id", p::clean($user->name)));
-    if ($this->input->get("continue")) {
-      $item = url::get_item_from_uri($this->input->get("continue"));
+    log::info("user", t("User %name logged out", array("name" => $user->name)),
+              html::anchor("user/$user->id", html::clean($user->name)));
+    if ($continue_url = $this->input->get("continue")) {
+      $item = url::get_item_from_uri($continue_url);
       if (access::can("view", $item)) {
-        url::redirect($this->input->get("continue"));
+        // Don't use url::redirect() because it'll call url::site() and munge the continue url.
+        header("Location: $continue_url");
       } else {
-        url::redirect("");
+        url::redirect(item::root()->abs_url());
       }
     }
   }

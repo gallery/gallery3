@@ -22,7 +22,7 @@ class tag_rss_Core {
   static function available_feeds($item, $tag) {
     if ($tag) {
       $feeds["tag/tag/{$tag->id}"] =
-        t("Tag feed for %tag_name", array("tag_name" => p::clean($tag->name)));
+        t("Tag feed for %tag_name", array("tag_name" => $tag->name));
       return $feeds;
     }
     return array();
@@ -37,7 +37,6 @@ class tag_rss_Core {
       $feed->children = $tag->items($limit, $offset, "photo");
       $feed->max_pages = ceil($tag->count / $limit);
       $feed->title = $tag->name;
-      $feed->link = url::abs_site("tags/{$tag->id}");
       $feed->description = t("Photos related to %tag_name", array("tag_name" => $tag->name));
 
       return $feed;

@@ -102,12 +102,12 @@ class graphics_Core {
   /**
    * Rebuild the thumb and resize for the given item.
    * @param Item_Model $item
-   * @return true on successful generation
    */
   static function generate($item) {
     if ($item->is_album()) {
       if (!$cover = $item->album_cover()) {
-        return false;
+        // This album has no cover; there's nothing to generate.
+        return;
       }
       $input_file = $cover->file_path();
       $input_item = $cover;
@@ -127,7 +127,7 @@ class graphics_Core {
       $item->thumb_dirty = 0;
       $item->resize_dirty = 0;
       $item->save();
-      return true;
+      return;
     }
 
     try {
@@ -176,10 +176,8 @@ class graphics_Core {
       // @todo we should handle this better.
       Kohana::log("error", "Caught exception rebuilding image: {$item->title}\n" .
                   $e->getMessage() . "\n" . $e->getTraceAsString());
-      return false;
+      throw $e;
     }
-
-    return true;
   }
 
   /**
@@ -195,6 +193,8 @@ class graphics_Core {
       self::init_toolkit();
     }
 
+    module::event("graphics_resize", $input_file, $output_file, $options);
+
     if (@filesize($input_file) == 0) {
       throw new Exception("@todo EMPTY_INPUT_FILE");
     }
@@ -204,11 +204,16 @@ class graphics_Core {
       // Image would get upscaled; do nothing
       copy($input_file, $output_file);
     } else {
-      Image::factory($input_file)
+      $image = Image::factory($input_file)
         ->resize($options["width"], $options["height"], $options["master"])
-        ->quality(module::get_var("gallery", "image_quality"))
-        ->save($output_file);
+        ->quality(module::get_var("gallery", "image_quality"));
+      if (graphics::can("sharpen")) {
+        $image->sharpen(module::get_var("gallery", "image_sharpen"));
+      }
+      $image->save($output_file);
     }
+
+    module::event("graphics_resize_completed", $input_file, $output_file, $options);
   }
 
   /**
@@ -223,10 +228,14 @@ class graphics_Core {
       self::init_toolkit();
     }
 
+    module::event("graphics_rotate", $input_file, $output_file, $options);
+
     Image::factory($input_file)
       ->quality(module::get_var("gallery", "image_quality"))
       ->rotate($options["degrees"])
       ->save($output_file);
+
+    module::event("graphics_rotate_completed", $input_file, $output_file, $options);
   }
 
   /**
@@ -248,6 +257,8 @@ class graphics_Core {
     if (!self::$init) {
       self::init_toolkit();
     }
+
+    module::event("graphics_composite", $input_file, $output_file, $options);
 
     list ($width, $height) = getimagesize($input_file);
     list ($w_width, $w_height) = getimagesize($options["file"]);
@@ -276,6 +287,9 @@ class graphics_Core {
       ->composite($options["file"], $x, $y, $options["transparency"])
       ->quality(module::get_var("gallery", "image_quality"))
       ->save($output_file);
+
+
+    module::event("graphics_composite_completed", $input_file, $output_file, $options);
   }
 
   /**
@@ -312,9 +326,9 @@ class graphics_Core {
           t2("One of your photos is out of date. <a %attrs>Click here to fix it</a>",
              "%count of your photos are out of date. <a %attrs>Click here to fix them</a>",
              $count,
-             array("attrs" => sprintf(
+             array("attrs" => html::mark_clean(sprintf(
                'href="%s" class="gDialogLink"',
-               url::site("admin/maintenance/start/gallery_task::rebuild_dirty_images?csrf=__CSRF__")))),
+               url::site("admin/maintenance/start/gallery_task::rebuild_dirty_images?csrf=__CSRF__"))))),
           "graphics_dirty");
     }
   }
@@ -326,15 +340,101 @@ class graphics_Core {
    * GraphicsMagick we return the path to the directory containing the appropriate binaries.
    */
   static function detect_toolkits() {
+    $toolkits = new stdClass();
+
+    // GD is special, it doesn't use exec()
     $gd = function_exists("gd_info") ? gd_info() : array();
-    $exec = function_exists("exec");
+    $toolkits->gd->name = "GD";
     if (!isset($gd["GD Version"])) {
-      $gd["GD Version"] = false;
+      $toolkits->gd->installed = false;
+      $toolkits->gd->error = t("GD is not installed");
+    } else {
+      $toolkits->gd->installed = true;
+      $toolkits->gd->version = $gd["GD Version"];
+      $toolkits->gd->rotate = function_exists("imagerotate");
+      $toolkits->gd->sharpen = function_exists("imageconvolution");
+      $toolkits->gd->binary = "";
+      $toolkits->gd->dir = "";
+
+      if (!$toolkits->gd->rotate && !$toolkits->gd->sharpen) {
+        $toolkits->gd->error =
+          t("You have GD version %version, but it lacks image rotation and sharpening.",
+            array("version" => $gd["GD Version"]));
+      } else if (!$toolkits->gd->rotate) {
+        $toolkits->gd->error =
+          t("You have GD version %version, but it lacks image rotation.",
+            array("version" => $gd["GD Version"]));
+      } else if (!$toolkits->gd->sharpen) {
+        $toolkits->gd->error =
+          t("You have GD version %version, but it lacks image sharpening.",
+            array("version" => $gd["GD Version"]));
+      }
     }
-    putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
-    return array("gd" => $gd,
-                 "imagemagick" => $exec ? dirname(exec("which convert")) : false,
-                 "graphicsmagick" => $exec ? dirname(exec("which gm")) : false);
+
+    if (!function_exists("exec")) {
+      $toolkits->imagemagick->installed = false;
+      $toolkits->imagemagick->error = t("ImageMagick requires the <b>exec</b> function");
+
+      $toolkits->graphicsmagick->installed = false;
+      $toolkits->graphicsmagick->error = t("GraphicsMagick requires the <b>exec</b> function");
+    } else {
+      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
+
+      // @todo: consider refactoring the two segments below into a loop since they are so
+      // similar.
+
+      // ImageMagick
+      $path = exec("which convert");
+      $toolkits->imagemagick->name = "ImageMagick";
+      if ($path) {
+        if (@is_file($path)) {
+          preg_match('/Version: \S+ (\S+)/', `convert -v`, $matches);
+          $version = $matches[1];
+
+          $toolkits->imagemagick->installed = true;
+          $toolkits->imagemagick->version = $version;
+          $toolkits->imagemagick->binary = $path;
+          $toolkits->imagemagick->dir = dirname($path);
+          $toolkits->imagemagick->rotate = true;
+          $toolkits->imagemagick->sharpen = true;
+        } else {
+          $toolkits->imagemagick->installed = false;
+          $toolkits->imagemagick->error =
+            t("ImageMagick is installed, but PHP's open_basedir restriction " .
+              "prevents Gallery from using it.");
+        }
+      } else {
+        $toolkits->imagemagick->installed = false;
+        $toolkits->imagemagick->error = t("We could not locate ImageMagick on your system.");
+      }
+
+      // GraphicsMagick
+      $path = exec("which gm");
+      $toolkits->graphicsmagick->name = "GraphicsMagick";
+      if ($path) {
+        if (@is_file($path)) {
+          preg_match('/\S+ (\S+)/', `gm version`, $matches);
+          $version = $matches[1];
+
+          $toolkits->graphicsmagick->installed = true;
+          $toolkits->graphicsmagick->version = $version;
+          $toolkits->graphicsmagick->binary = $path;
+          $toolkits->graphicsmagick->dir = dirname($path);
+          $toolkits->graphicsmagick->rotate = true;
+          $toolkits->graphicsmagick->sharpen = true;
+        } else {
+          $toolkits->graphicsmagick->installed = false;
+          $toolkits->graphicsmagick->error =
+            t("GraphicsMagick is installed, but PHP's open_basedir restriction " .
+              "prevents Gallery from using it.");
+        }
+      } else {
+        $toolkits->graphicsmagick->installed = false;
+        $toolkits->graphicsmagick->error = t("We could not locate GraphicsMagick on your system.");
+      }
+    }
+
+    return $toolkits;
   }
 
   /**
@@ -344,16 +444,17 @@ class graphics_Core {
     // Detect a graphics toolkit
     $toolkits = graphics::detect_toolkits();
     foreach (array("imagemagick", "graphicsmagick", "gd") as $tk) {
-      if ($toolkits[$tk]) {
+      if ($toolkits->$tk->installed) {
         module::set_var("gallery", "graphics_toolkit", $tk);
-        module::set_var("gallery", "graphics_toolkit_path", $tk == "gd" ? "" : $toolkits[$tk]);
+        module::set_var("gallery", "graphics_toolkit_path", $toolkits->$tk->dir);
         break;
       }
     }
+
     if (!module::get_var("gallery", "graphics_toolkit")) {
       site_status::warning(
         t("Graphics toolkit missing!  Please <a href=\"%url\">choose a toolkit</a>",
-          array("url" => url::site("admin/graphics"))),
+          array("url" => html::mark_clean(url::site("admin/graphics")))),
         "missing_graphics_toolkit");
     }
   }
@@ -385,14 +486,18 @@ class graphics_Core {
 
   /**
    * Verify that a specific graphics function is available with the active toolkit.
-   * @param  string  $func (eg rotate, resize)
+   * @param  string  $func (eg rotate, sharpen)
    * @return boolean
    */
   static function can($func) {
-    if (module::get_var("gallery", "graphics_toolkit") == "gd" &&
-        $func == "rotate" &&
-        !function_exists("imagerotate")) {
-      return false;
+    if (module::get_var("gallery", "graphics_toolkit") == "gd") {
+      switch ($func) {
+      case "rotate":
+        return function_exists("imagerotate");
+
+      case "sharpen":
+        return function_exists("imageconvolution");
+      }
     }
 
     return true;

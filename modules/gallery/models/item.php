@@ -19,7 +19,6 @@
  */
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
-  private $view_restrictions = null;
   protected $sorting = array();
 
   var $rules = array(
@@ -34,38 +33,7 @@ class Item_Model extends ORM_MPTT {
    * @chainable
    */
   public function viewable() {
-    if (is_null($this->view_restrictions)) {
-      if (user::active()->admin) {
-        $this->view_restrictions = array();
-      } else {
-        foreach (user::group_ids() as $id) {
-          // Separate the first restriction from the rest to make it easier for us to formulate
-          // our where clause below
-          if (empty($this->view_restrictions)) {
-            $this->view_restrictions[0] = "view_$id";
-          } else {
-            $this->view_restrictions[1]["view_$id"] = access::ALLOW;
-          }
-        }
-      }
-    }
-    switch (count($this->view_restrictions)) {
-    case 0:
-      break;
-
-    case 1:
-      $this->where($this->view_restrictions[0], access::ALLOW);
-      break;
-
-    default:
-      $this->open_paren();
-      $this->where($this->view_restrictions[0], access::ALLOW);
-      $this->orwhere($this->view_restrictions[1]);
-      $this->close_paren();
-      break;
-    }
-
-    return $this;
+    return item::viewable($this);
   }
 
   /**
@@ -93,6 +61,7 @@ class Item_Model extends ORM_MPTT {
   }
 
   public function delete() {
+    $old = clone $this;
     module::event("item_before_delete", $this);
 
     $parent = $this->parent();
@@ -114,13 +83,15 @@ class Item_Model extends ORM_MPTT {
       @unlink($resize_path);
       @unlink($thumb_path);
     }
+
+    module::event("item_deleted", $old);
   }
 
   /**
    * Move this item to the specified target.
    * @chainable
-   * @param   Item_Model $target  Target item (must be an album
-   * @return  ORM_MTPP
+   * @param   Item_Model $target  Target item (must be an album)
+   * @return  ORM_MPTT
    */
   function move_to($target) {
     if (!$target->is_album()) {
@@ -134,8 +105,10 @@ class Item_Model extends ORM_MPTT {
     $original_path = $this->file_path();
     $original_resize_path = $this->resize_path();
     $original_thumb_path = $this->thumb_path();
+    $original_parent = $this->parent();
 
     parent::move_to($target, true);
+    model_cache::clear();
     $this->relative_path_cache = null;
 
     rename($original_path, $this->file_path());
@@ -144,13 +117,15 @@ class Item_Model extends ORM_MPTT {
       @rename(dirname($original_thumb_path), dirname($this->thumb_path()));
       Database::instance()
         ->update("items",
-                 array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("relative_path_cache" => null,
+                       "relative_url_cache" => null),
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     } else {
       @rename($original_resize_path, $this->resize_path());
       @rename($original_thumb_path, $this->thumb_path());
     }
 
+    module::event("item_moved", $this, $original_parent);
     return $this;
   }
 
@@ -169,7 +144,7 @@ class Item_Model extends ORM_MPTT {
       throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
     }
 
-    $old_relative_path = $this->relative_path();
+    $old_relative_path = urldecode($this->relative_path());
     $new_relative_path = dirname($old_relative_path) . "/" . $new_name;
     @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$new_relative_path");
     @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$new_relative_path");
@@ -179,22 +154,38 @@ class Item_Model extends ORM_MPTT {
     if ($this->is_album()) {
       Database::instance()
         ->update("items",
-                 array("relative_path_cache" => null),
-                 array("left >" => $this->left, "right <" => $this->right));
+                 array("relative_path_cache" => null,
+                       "relative_url_cache" => null),
+                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
     }
 
     return $this;
   }
 
   /**
-   * album: url::site("albums/2")
-   * photo: url::site("photos/3")
+   * Return the server-relative url to this item, eg:
+   *   /gallery3/index.php/BobsWedding?page=2
+   *   /gallery3/index.php/BobsWedding/Eating-Cake.jpg
    *
    * @param string $query the query string (eg "show=3")
    */
-  public function url($query=array(), $full_uri=false) {
-    $url = ($full_uri ? url::abs_site("{$this->type}s/$this->id")
-            : url::site("{$this->type}s/$this->id"));
+  public function url($query=null) {
+    $url = url::site($this->relative_url());
+    if ($query) {
+      $url .= "?$query";
+    }
+    return $url;
+  }
+
+  /**
+   * Return the full url to this item, eg:
+   *   http://example.com/gallery3/index.php/BobsWedding?page=2
+   *   http://example.com/gallery3/index.php/BobsWedding/Eating-Cake.jpg
+   *
+   * @param string $query the query string (eg "show=3")
+   */
+  public function abs_url($query=null) {
+    $url = url::abs_site($this->relative_url());
     if ($query) {
       $url .= "?$query";
     }
@@ -206,7 +197,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/album2/photo.jpg
    */
   public function file_path() {
-    return VARPATH . "albums/" . $this->relative_path();
+    return VARPATH . "albums/" . urldecode($this->relative_path());
   }
 
   /**
@@ -214,9 +205,8 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.jpg
    */
   public function file_url($full_uri=false) {
-    return $full_uri ?
-      url::abs_file("var/albums/" . $this->relative_path()) :
-      url::file("var/albums/" . $this->relative_path());
+    $relative_path = "var/albums/" . $this->relative_path();
+    return $full_uri ? url::abs_file($relative_path) : url::file($relative_path);
   }
 
   /**
@@ -224,7 +214,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/photo.thumb.jpg
    */
   public function thumb_path() {
-    $base = VARPATH . "thumbs/" . $this->relative_path();
+    $base = VARPATH . "thumbs/" . urldecode($this->relative_path());
     if ($this->is_photo()) {
       return $base;
     } else if ($this->is_album()) {
@@ -248,9 +238,8 @@ class Item_Model extends ORM_MPTT {
    */
   public function thumb_url($full_uri=false) {
     $cache_buster = "?m=" . $this->updated;
-    $base = ($full_uri ?
-             url::abs_file("var/thumbs/" . $this->relative_path()) :
-             url::file("var/thumbs/" . $this->relative_path()));
+    $relative_path = "var/thumbs/" . $this->relative_path();
+    $base = ($full_uri ? url::abs_file($relative_path) : url::file($relative_path));
     if ($this->is_photo()) {
       return $base . $cache_buster;
     } else if ($this->is_album()) {
@@ -267,7 +256,7 @@ class Item_Model extends ORM_MPTT {
    * photo: /var/albums/album1/photo.resize.jpg
    */
   public function resize_path() {
-    return VARPATH . "resizes/" . $this->relative_path() .
+    return VARPATH . "resizes/" . urldecode($this->relative_path()) .
       ($this->is_album() ? "/.album.jpg" : "");
   }
 
@@ -276,14 +265,37 @@ class Item_Model extends ORM_MPTT {
    * photo: http://example.com/gallery3/var/albums/album1/photo.resize.jpg
    */
   public function resize_url($full_uri=false) {
-    return ($full_uri ?
-            url::abs_file("var/resizes/" . $this->relative_path()) :
-            url::file("var/resizes/" . $this->relative_path())) .
+    $relative_path = "var/resizes/" . $this->relative_path();
+    return ($full_uri ? url::abs_file($relative_path) : url::file($relative_path)) .
       ($this->is_album() ? "/.album.jpg" : "");
   }
 
   /**
-   * Return the relative path to this item's file.
+   * Rebuild the relative_path_cache and relative_url_cache.
+   */
+  private function _build_relative_caches() {
+    $names = array();
+    $slugs = array();
+    foreach (Database::instance()
+             ->select(array("name", "slug"))
+             ->from("items")
+             ->where("left_ptr <=", $this->left_ptr)
+             ->where("right_ptr >=", $this->right_ptr)
+             ->where("id <>", 1)
+             ->orderby("left_ptr", "ASC")
+             ->get() as $row) {
+      $names[] = rawurlencode($row->name);
+      $slugs[] = rawurlencode($row->slug);
+    }
+    $this->relative_path_cache = implode($names, "/");
+    $this->relative_url_cache = implode($slugs, "/");
+    $this->save();
+  }
+
+  /**
+   * Return the relative path to this item's file.  Note that the components of the path are
+   * urlencoded so if you want to use this as a filesystem path, you need to call urldecode
+   * on it.
    * @return string
    */
   public function relative_path() {
@@ -292,21 +304,24 @@ class Item_Model extends ORM_MPTT {
     }
 
     if (!isset($this->relative_path_cache)) {
-      $paths = array();
-      foreach (Database::instance()
-               ->select("name")
-               ->from("items")
-               ->where("left <=", $this->left)
-               ->where("right >=", $this->right)
-               ->where("id <>", 1)
-               ->orderby("left", "ASC")
-               ->get() as $row) {
-        $paths[] = $row->name;
-      }
-      $this->relative_path_cache = implode($paths, "/");
-      $this->save();
+      $this->_build_relative_caches();
     }
     return $this->relative_path_cache;
+  }
+
+  /**
+   * Return the relative url to this item's file.
+   * @return string
+   */
+  public function relative_url() {
+    if (!$this->loaded) {
+      return;
+    }
+
+    if (!isset($this->relative_url_cache)) {
+      $this->_build_relative_caches();
+    }
+    return $this->relative_url_cache;
   }
 
   /**
@@ -331,8 +346,18 @@ class Item_Model extends ORM_MPTT {
    */
   public function __set($column, $value) {
     if ($column == "name") {
-      // Clear the relative path as it is no longer valid.
       $this->relative_path_cache = null;
+    } else if ($column == "slug") {
+      if ($this->slug != $value) {
+        // Clear the relative url cache for this item and all children
+        $this->relative_url_cache = null;
+        if ($this->is_album()) {
+          Database::instance()
+            ->update("items",
+                     array("relative_url_cache" => null),
+                     array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
+        }
+      }
     }
     parent::__set($column, $value);
   }
@@ -341,15 +366,25 @@ class Item_Model extends ORM_MPTT {
    * @see ORM::save()
    */
   public function save() {
-    if (!empty($this->changed) && $this->changed != array("view_count" => "view_count")) {
+    $significant_changes = $this->changed;
+    unset($significant_changes["view_count"]);
+    unset($significant_changes["relative_url_cache"]);
+    unset($significant_changes["relative_path_cache"]);
+
+    if (!empty($this->changed) && $significant_changes) {
       $this->updated = time();
       if (!$this->loaded) {
         $this->created = $this->updated;
-        $r = ORM::factory("item")->select("MAX(weight) as max_weight")->find();
-        $this->weight = $r->max_weight + 1;
+        $this->weight = item::get_max_weight();
+      } else {
+        $send_event = 1;
       }
     }
-    return parent::save();
+    parent::save();
+    if (isset($send_event)) {
+      module::event("item_updated", $this->original(), $this);
+    }
+    return $this;
   }
 
   /**
@@ -387,10 +422,10 @@ class Item_Model extends ORM_MPTT {
     $db = Database::instance();
     $position = $db->query("
       SELECT COUNT(*) AS position FROM {items}
-      WHERE parent_id = {$this->id}
+      WHERE `parent_id` = {$this->id}
         AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
-                                          FROM {items} WHERE id = $child_id)
-      ORDER BY `{$this->sort_column}` {$this->sort_order}")->current()->position;
+                                          FROM {items} WHERE `id` = $child_id)")
+      ->current()->position;
 
     // We stopped short of our target value in the sort (notice that we're using a < comparator
     // above) because it's possible that we have duplicate values in the sort column.  An
@@ -402,9 +437,10 @@ class Item_Model extends ORM_MPTT {
     // our base value.
     $result = $db->query("
       SELECT id FROM {items}
-      WHERE parent_id = {$this->id}
+      WHERE `parent_id` = {$this->id}
         AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
-                                      FROM {items} WHERE id = $child_id)");
+                                      FROM {items} WHERE `id` = $child_id)
+      ORDER BY `id` ASC");
     foreach ($result as $row) {
       $position++;
       if ($row->id == $child_id) {
@@ -502,26 +538,38 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Return all of the children of this node, ordered by the defined sort order.
+   * Return all of the children of this album.  Unless you specify a specific sort order, the
+   * results will be ordered by this album's sort order.
    *
    * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
+   * @param   array    additional where clauses
+   * @param   array    orderby
    * @return array ORM
    */
-  function children($limit=null, $offset=0) {
-    return parent::children($limit, $offset, array($this->sort_column => $this->sort_order));
+  function children($limit=null, $offset=0, $where=array(), $orderby=null) {
+    if (empty($orderby)) {
+      $orderby = array($this->sort_column => $this->sort_order);
+    }
+    return parent::children($limit, $offset, $where, $orderby);
   }
 
   /**
-   * Return all of the children of the specified type, ordered by the defined sort order.
+   * Return the children of this album, and all of it's sub-albums.  Unless you specify a specific
+   * sort order, the results will be ordered by this album's sort order.  Note that this
+   * album's sort order is imposed on all sub-albums, regardless of their sort order.
+   *
+   * @chainable
    * @param   integer  SQL limit
    * @param   integer  SQL offset
-   * @param   string   type to return
+   * @param   array    additional where clauses
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $type=null) {
-    return parent::descendants($limit, $offset, $type,
-                               array($this->sort_column => $this->sort_order));
+  function descendants($limit=null, $offset=0, $where=array(), $orderby=null) {
+    if (empty($orderby)) {
+      $orderby = array($this->sort_column => $this->sort_order);
+    }
+    return parent::descendants($limit, $offset, $where, $orderby);
   }
 }

@@ -2,7 +2,7 @@
 /**
  * URL helper class.
  *
- * $Id: url.php 4029 2009-03-03 12:39:32Z Shadowhand $
+ * $Id: url.php 4479 2009-07-23 04:51:22Z ixmatus $
  *
  * @package    Core
  * @author     Kohana Team
@@ -15,11 +15,14 @@ class url_Core {
 	 * Fetches the current URI.
 	 *
 	 * @param   boolean  include the query string
+	 * @param   boolean  include the suffix  
 	 * @return  string
 	 */
-	public static function current($qs = FALSE)
+	public static function current($qs = FALSE, $suffix = FALSE)
 	{
-		return ($qs === TRUE) ? Router::$complete_uri : Router::$current_uri;
+		$uri = ($qs === TRUE) ? Router::$complete_uri : Router::$current_uri;
+
+		return ($suffix === TRUE) ? $uri.Kohana::config('core.url_suffix') : $uri;
 	}
 
 	/**

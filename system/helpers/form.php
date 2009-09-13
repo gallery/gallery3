@@ -283,15 +283,21 @@ class form_Core {
 					// Inner key should always be a string
 					$inner_key = (string) $inner_key;
 
-					$sel = in_array($inner_key, $selected) ? ' selected="selected"' : '';
-					$input .= '<option value="'.$inner_key.'"'.$sel.'>'.$inner_val.'</option>'."\n";
+                                        $attr = array('value' => $inner_key);
+                                        if (in_array($inner_key, $selected)) {
+                                          $attr['selected'] = 'selected';
+                                        }
+					$input .= '<option '.html::attributes($attr).'>'.html::purify($inner_val).'</option>'."\n";
 				}
 				$input .= '</optgroup>'."\n";
 			}
 			else
 			{
-				$sel = in_array($key, $selected) ? ' selected="selected"' : '';
-				$input .= '<option value="'.$key.'"'.$sel.'>'.$val.'</option>'."\n";
+					$attr = array('value' => $key);
+					if (in_array($key, $selected)) {
+						$attr['selected'] = 'selected';
+					}
+					$input .= '<option '.html::attributes($attr).'>'.html::purify($val).'</option>'."\n";
 			}
 		}
 		$input .= '</select>';
@@ -410,8 +416,9 @@ class form_Core {
 		{
 			$value = arr::remove('value', $data);
 		}
+                // $value must be ::purify
 
-		return '<button'.form::attributes($data, 'button').' '.$extra.'>'.$value.'</button>';
+		return '<button'.form::attributes($data, 'button').' '.$extra.'>'.html::purify($value).'</button>';
 	}
 
 	/**
@@ -455,7 +462,7 @@ class form_Core {
 			$text = ucwords(inflector::humanize($data['for']));
 		}
 
-		return '<label'.form::attributes($data).' '.$extra.'>'.$text.'</label>';
+		return '<label'.form::attributes($data).' '.$extra.'>'.html::purify($text).'</label>';
 	}
 
 	/**

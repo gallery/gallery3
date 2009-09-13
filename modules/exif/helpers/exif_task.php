@@ -42,7 +42,6 @@ class exif_task_Core {
       $completed = $task->get("completed", 0);
 
       $start = microtime(true);
-      $message = array();
       foreach (ORM::factory("item")
                ->join("exif_records", "items.id", "exif_records.item_id", "left")
                ->where("type", "photo")
@@ -51,17 +50,20 @@ class exif_task_Core {
                ->orwhere("exif_records.dirty", 1)
                ->close_paren()
                ->find_all() as $item) {
+        // The query above can take a long time, so start the timer after its done
+        // to give ourselves a little time to actually process rows.
+        if (!isset($start)) {
+          $start = microtime(true);
+        }
+
+        exif::extract($item);
+        $completed++;
+
         if (microtime(true) - $start > 1.5) {
           break;
         }
-
-        $completed++;
-        exif::extract($item);
-        $message[] = t("Updated Exif meta data for '%title'",
-                       array("title" => p::purify($item->title)));
       }
 
-      $task->log($message);
       list ($remaining, $total, $percent) = exif::stats();
       $task->set("completed", $completed);
       if ($remaining == 0 || !($remaining + $completed)) {

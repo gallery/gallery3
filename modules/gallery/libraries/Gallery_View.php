@@ -27,24 +27,20 @@ class Gallery_View_Core extends View {
    * @param $file  the relative path to a script from the gallery3 directory
    */
   public function script($file) {
-    $this->scripts[$file] = 1;
-  }
-
-  /**
-   * Add a script to the combined scripts list.
-   * @param $file  the relative path to a script from the base of the active theme
-   * @param
-   */
-  public function theme_script($file) {
-    $file = "themes/{$this->theme_name}/$file";
-    $this->scripts[$file] = 1;
+    $base_file = str_replace(".js", "", $file);
+    if (($path = Kohana::find_file("js", $base_file, false, "js")) ||
+        file_exists($path = DOCROOT . "lib/$file")) {
+      $this->scripts[$path] = 1;
+    } else {
+      Kohana::log("error", "Can't find script file: $file");
+    }
   }
 
   /**
    * Provide a url to a resource within the current theme.  This allows us to refer to theme
    * resources without naming the theme itself which makes themes easier to copy.
    */
-  public function theme_url($path, $absolute_url=false) {
+  public function url($path, $absolute_url=false) {
     $arg = "themes/{$this->theme_name}/$path";
     return $absolute_url ? url::abs_file($arg) : url::file($arg);
   }
@@ -53,40 +49,34 @@ class Gallery_View_Core extends View {
    * Add a css file to the combined css list.
    * @param $file  the relative path to a script from the gallery3 directory
    */
-  public function css($file, $theme_relative=false) {
-    $this->css[$file] = 1;
-  }
-
-  /**
-   * Add a css file to the combined css list.
-   * @param $file  the relative path to a script from the base of the active theme
-   * @param
-   */
-  public function theme_css($file) {
-    $file = "themes/{$this->theme_name}/$file";
-    $this->css[$file] = 1;
+  public function css($file) {
+    $base_file = str_replace(".css", "", $file);
+    if (($path = Kohana::find_file("css", $base_file, false, "css")) ||
+        file_exists($path = DOCROOT . "lib/$file")) {
+      $this->css[$path] = 1;
+    } else {
+      Kohana::log("error", "Can't find css file: $file");
+    }
   }
 
   /**
    * Combine a series of files into a single one and cache it in the database.
    */
-  protected function combine_files($files, $type) {
+  protected function combine_files($paths, $type) {
     $links = array();
+
+    if (empty($paths)) {
+      return;
+    }
 
     // Include the url in the cache key so that if the Gallery moves, we don't use old cached
     // entries.
     $key = array(url::abs_file(""));
 
-    foreach (array_keys($files) as $file) {
-      $path = DOCROOT . $file;
-      if (file_exists($path)) {
-        $stats = stat($path);
-        $links[$file] = $path;
-        // 7 == size, 9 == mtime, see http://php.net/stat
-        $key[] = "$file $stats[7] $stats[9]";
-      } else {
-        Kohana::log("error", "missing file ($type): $file");
-      }
+    foreach (array_keys($paths) as $path) {
+      $stats = stat($path);
+      // 7 == size, 9 == mtime, see http://php.net/stat
+      $key[] = "$path $stats[7] $stats[9]";
     }
 
     $key = md5(join(" ", $key));
@@ -95,16 +85,21 @@ class Gallery_View_Core extends View {
 
     if (empty($contents)) {
       $contents = "";
-      foreach ($links as $file => $link) {
+      $docroot_len = strlen(DOCROOT);
+      foreach (array_keys($paths) as $path) {
+        $relative = substr($path, $docroot_len);
         if ($type == "css") {
-          $contents .= "/* $file */\n" . $this->process_css($link) . "\n";
+          $contents .= "/* $relative */\n" . $this->process_css($path) . "\n";
         } else {
-          $contents .= "/* $file */\n" . file_get_contents($link) . "\n";
+          $contents .= "/* $relative */\n" . file_get_contents($path) . "\n";
         }
       }
 
       $cache->set($key, $contents, array($type), 30 * 84600);
-      if (function_exists("gzencode")) {
+
+      $use_gzip = function_exists("gzencode") &&
+        (int) ini_get("zlib.output_compression") === 0;
+      if ($use_gzip) {
         $cache->set("{$key}_gz", gzencode($contents, 9, FORCE_GZIP),
                     array($type, "gzip"), 30 * 84600);
       }

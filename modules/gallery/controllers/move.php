@@ -43,7 +43,7 @@ class Move_Controller extends Controller {
 
     print json_encode(
       array("result" => "success",
-            "location" => url::site("albums/{$target->id}")));
+            "location" => $target->url()));
   }
 
   public function show_sub_tree($source_id, $target_id) {

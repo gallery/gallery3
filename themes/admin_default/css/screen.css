@@ -1,30 +1,276 @@
 /**
- * Gallery 3 Default Admin Theme Screen Styles
+ * Gallery 3 Default Theme Screen Styles
  *
- * Extends themes/default/css/screen.css
+ * @requires YUI reset, font, grids CSS
  *
- * 1)  Basic HTML elements
- * 2) Reusable content blocks
- * 3) Page layout containers
- * 4) Content blocks in specific layout containers
- * 5) Browser hacks
- * 6) jQuery and jQuery UI
- * 7) Server Add
- * 8) Digibug Print Administration
+ * Sheet organization:
+ *  1)  Basic HTML elements
+ *  2)  Reusable classes
+ *  3)  Reusable content blocks
+ *  4)  Page layout containers
+ *  5)  Content blocks in specific layout containers
+ *  6)  Navigation and menus
+ *  7)  Browser hacks
+ *  8)  jQuery and jQuery UI
+ *  9)  Right-to-left language styles
  */
 
 /** *******************************************************************
  * 1) Basic HTML elements
  **********************************************************************/
 
+body, html {
+  background-color: #ccc;
+  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+em {
+  font-style: oblique;
+}
+
+h1, h2, h3, h4, h5, strong, th {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 1.7em;
+}
+
+#gSearchResults h1 {
+  margin-bottom: 1em;
+}
+
+#gProgress h1 {
+  font-size: 1.1em;
+}
+
+h2 {
+  font-size: 1.4em;
+}
+
+#gSidebar .gBlock h2 {
+  font-size: 1.2em;
+}
+
+#gSidebar .gBlock li {
+  margin-bottom: .6em;
+}
+
+h3 {
+  font-size: 1.2em;
+}
+
+/* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+a,
+.gMenu a,
+#gDialog a,
+.gButtonLink,
+.gButtonLink:hover,
+.gButtonLink:active,
+a.ui-state-hover,
+input.ui-state-hover,
+button.ui-state-hover {
+  color: #5382BF !important;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a:hover,
+#gDialog a:hover {
+  text-decoration: underline;
+}
+
+.gMenu a:hover {
+  text-decoration: none;
+}
+
+#gDialog .gCancel {
+  clear: none;
+  float: left;
+  margin: .3em 1em;
+}
+
+#gForgotPasswordLink {
+  float: right;
+  font-size: .9em;
+}
+
+#gDialog .gCancel {
+  float: left;
+}
+
+/* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+table {
+  width: 100%;
+}
+
+#gContent table {
+  margin: 1em 0 3em 0;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+th,
+td {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: .5em;
+  vertical-align: top;
+}
+
+#gAdminMaintenance td {
+  vertical-align: middle;
+}
+
+/* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+fieldset {
+  border: 1px solid #ccc;
+  padding-bottom: .8em;
+}
+
+#gHeader fieldset,
+#gSidebar fieldset,
+.gShortForm fieldset {
+  border: none;
+}
+
+legend {
+  font-weight: bold;
+  margin-left: 1em;
+}
+
+#gHeader legend,
+#gSidebar legend,
+#gContent #gSearchForm legend,
+input[type="hidden"],
+.gShortForm label {
+  display: none;
+}
+
+label {
+  cursor: help;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 50%;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  border: 1px solid #e8e8e8;
+  border-top-color: #ccc;
+  border-left-color: #ccc;
+  color: #333;
+}
+
+textarea {
+  width: 100%;
+  height: 12em;
+}
+
+input:focus,
+textarea:focus,
+option:focus {
+  background-color: #ffc;
+  color: #000;
+}
+
+/* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+form li {
+  margin: 0 !important;
+  padding: .3em 1.5em .3em 1em;
+}
+
+form ul ul {
+  clear: both;
+}
+
+form ul ul li {
+  float: left;
+}
+
+input,
+select,
+textarea {
+  display: block;
+  clear: both;
+  padding: .2em;
+}
+
+input[type="submit"],
+input[type="reset"] {
+  display: inline;
+  clear: none;
+  float: left;
+}
+
+/* Form validation ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gValidationRule {
+  font-size: 80%;
+  margin-top: .5em;
+}
+
+form.gError input[type="text"],
+li.gError input[type="text"],
+form.gError input[type="password"],
+li.gError input[type="password"],
+form.gError input[type="checkbox"],
+li.gError input[type="checkbox"],
+form.gError input[type="radio"],
+li.gError input[type="radio"],
+form.gError textarea,
+li.gError textarea,
+form.gError select,
+li.gError select {
+  border: 2px solid red;
+}
+
 /** *******************************************************************
- * 2) Reusable content blocks
- **********************************************************************/
+ * 2) Reusable generic classes
+ *********************************************************************/
+
+.inactive, .understate {
+  color: #ccc;
+  font-weight: normal;
+}
+
+.left {
+  float: left;
+  margin: 1em 1em 1em 0;
+}
+
+.right {
+  float: right;
+  margin: 1em 0 1em 1em;
+}
+
+.txtright {
+  text-align: right;
+}
+
+/** *******************************************************************
+ * 3) Reusable content blocks
+ *********************************************************************/
 
 .gBlock {
   background-color: #fff;
   border: 1px solid #ccc;
-  margin-bottom: 1em;
+  clear: both;
+  margin-bottom: 2.5em;
   padding: 1em;
 }
 
@@ -32,16 +278,24 @@
   padding: 0;
 }
 
+.gBlock h2 {
+  background-color: #e8e8e8;
+  padding: .3em .8em;
+}
+
+.gBlockContent {
+  margin-top: 1em;
+}
+
 .gSelected img,
 .gAvailable .gBlock img {
   float: left;
-  margin-right: 1em;
+  margin: 0 1em 1em 0;
 }
 
 .rtl .gSelected img,
 .rtl .gAvailable .gBlock img {
   float: right;
-  margin-left: 1em;
 }
 
 .gSelected {
@@ -74,68 +328,192 @@
   background-color: #fff;
 }
 
-/** *******************************************************************
- * 3) Page layout containers
- **********************************************************************/
+/* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gMessage {
+  width: 100%;
+}
+
+#gSiteStatus li,
+#gMessage li,
+.gModuleStatus {
+  border: 1px solid #ccc;
+  margin-bottom: .4em;
+}
+
+#gSiteStatus li {
+  margin-bottom: 0;
+  border: none;
+  border-bottom: 1px solid #ccc;
+}
+
+.gModuleStatus {
+  clear: both;
+  margin-bottom: 1em;
+}
+
+.gError,
+.gInfo,
+.gSuccess,
+.gWarning {
+  padding: .4em .5em .4em 30px;
+}
+
+.gError, tr.gError td.gError {
+  background: #f6cbca url('../images/ico-error.png') no-repeat .4em 50%;
+}
+
+.gInfo {
+  background: #e8e8e8 url('../images/ico-info.png') no-repeat .4em 50%;
+}
+
+.gSuccess {
+  background: #d9efc2  url('../images/ico-success.png') no-repeat .4em 50%;
+}
+
+.gWarning, tr.gWarning td.gWarning {
+  background: #fcf9ce url('../images/ico-warning.png') no-repeat .4em 50%;
+}
+
+.gPager .gInfo,
+tr.gError,
+tr.gInfo,
+tr.gSuccess,
+tr.gWarning {
+  background: none;
+}
+
+.gInfo td.gInfo {
+  background-color: transparent;
+}
+
+.gSuccess td.gSuccess {
+  background-color: transparent;
+}
+
+.gError td {
+  background-color: #f6cbca;
+}
+
+.gWarning td {
+  background-color: #fcf9ce;
+}
+
+/* Inline layout (forms, lists) ~~~~~~~~~~ */
+
+.gShortForm li {
+  float: left;
+  padding: .4em 0;
+}
+
+.gShortForm input[type="text"] {
+  color: #666;
+  padding: .3em .6em;
+  width: 11em;
+}
+
+/*** ******************************************************************
+ * 4) Page layout containers
+ *********************************************************************/
+
+/* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .gView {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom: none;
   min-width: 974px !important;
 }
+
+/* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
 
 #gHeader {
   background-color: #e8e8e8;
   border-bottom: 1px solid #ccc;
+  font-size: .8em;
   margin-bottom: 20px;
   padding: 0 20px;
+  position: relative;
 }
 
 #gContent {
   font-size: 1.1em;
+  padding-left: 20px;
   width: 96%;
 }
 
+#gSidebar {
+  background-color: #fff;
+  font-size: .9em;
+  padding: 0 20px;
+  width: 220px;
+}
+
+#gFooter {
+  background-color: #e8e8e8;
+  border-top: 1px solid #ccc;
+  font-size: .8em;
+  margin-top: 20px;
+  padding: 10px 20px;
+}
+
 /** *******************************************************************
- * 4) Content blocks in specific layout containers
+ * 5) Content blocks in specific layout containers
  *********************************************************************/
 
+/* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
 #gHeader #gLogo {
-  float: left;
-  margin: -22px 10px 0 0;
+  background: transparent url('../../../lib/images/logo.png') no-repeat 0 .5em;
+  color: #A5A5A5 !important;
   display: block;
-  padding-left: 2px;
-  width: 105px; /* 107px - padding-left */
-  height: 48px;
-  background-image: url('../../default/images/logo.png');
-  color: #A5A5A5 ! important;
+  height: 55px;
+  padding-top: 5px;
+  width: 105px;
 }
+
 #gHeader #gLogo:hover {
-  color: #FF6600 ! important;
+  color: #f60 !important;
   text-decoration: none;
 }
 
-#gHeader #gLoginMenu {
-  float: none;
-  margin: 0;
-  padding: 5px 0 10px 0;
-  text-align: right;
-}
-
-
-.rtl #gHeader #gLoginMenu {
-  text-align: left;
-}
-
-#gHeader #gSiteAdminMenu {
-  float: left;
-  font-size: 1.2em;
-}
-
-.rtl #gHeader #gSiteAdminMenu {
+#gHeader #gQuickSearchForm {
+  clear: right;
   float: right;
+  margin: 1em 0;
 }
 
-#gHeader #gSiteAdminMenu ul {
-  margin-bottom: 0;
+#gHeader #gQuickSearchForm input[type='text'] {
+  width: 17em;
+}
+
+#gContent .gBlock h2 {
+  background-color: transparent;
+  padding-left: 0;
+}
+
+#gSidebar .gBlockContent {
+  padding-left: 1em;
+}
+
+/* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gHeader #gLoginMenu li,
+#gFooter #gCredits li {
+  display: inline;
+}
+
+#gHeader #gLoginMenu li {
+  padding-left: 1.2em;
+}
+
+#gFooter #gCredits li {
+  padding-right: 1.2em;
+}
+
+#gContent #gSearchResults {
+  margin-top: 1em;
+  padding-top: 1em;
 }
 
 .gBlock .ui-dialog-titlebar {
@@ -202,7 +580,7 @@
 #gAdminGraphics .gAvailable .gBlock {
   clear: none;
   float: left;
-  height: 16em;
+  height: 17em;
   margin-right: 1em;
   width: 30%;
 }
@@ -263,8 +641,8 @@ li.gGroup {
 }
 
 li.gGroup h4 {
-  background-color: #EEEEEE;
-  border-bottom: 1px dashed #CCCCCC;
+  background-color: #eee;
+  border-bottom: 1px dashed #ccc;
   padding: .5em 0 .5em .5em;
 }
 li.gGroup .gButtonLink {
@@ -297,9 +675,66 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 }
 
 /** *******************************************************************
- * 5) Browser hacks
+ * 5) Navigation and menus
  *********************************************************************/
 
+#gSiteAdminMenu,
+#gTagCloud ul {
+  font-size: 1.2em;
+}
+
+/* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gHeader #gLoginMenu {
+  color: #999;
+  float: right;
+  margin: 0;
+  padding: 5px 0;
+}
+
+.rtl #gHeader #gLoginMenu {
+  text-align: left;
+}
+
+/* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#gSiteAdminMenu {
+  bottom: 0;
+	display: none;
+  font-size: 1.2em;
+  left: 140px;
+  position: absolute;
+}
+
+#gSiteAdminMenu ul {
+  margin-bottom: 0;
+}
+
+/* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.gPager {
+  clear: both;
+  margin: 0;
+  padding: 5px 0 !important;
+  width: 100%;
+}
+
+.gPager li {
+  float: left;
+  margin: 0;
+  width: 30%;
+}
+
+.gPager .gInfo {
+  text-align: center;
+  width: 40%;
+}
+
+/** *******************************************************************
+ * 6) Browser hacks
+ *********************************************************************/
+
+#gSiteAdminMenu:after,
 #gHeader:after,
 #gAdminCommentsMenu:after,
 #gGroupAdmin:after,
@@ -307,7 +742,8 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 .gAvailable .gBlock:after,
 #gModuleCreateForm ul li ul:after,
 #gDeveloperTools:after,
-#gPhotoStream:after {
+#gPhotoStream:after,
+#gViewMenu:after {
   clear: both;
   content: ".";
   display: block;
@@ -316,8 +752,48 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 }
 
 /** *******************************************************************
- * 6) jQuery and jQuery UI
+ * 7) jQuery and jQuery UI
  *********************************************************************/
+
+/* Superfish menu overrides ~~~~~~~~~~~~~~ */
+
+.sf-menu li li, .sf-menu li li ul li {
+  background-color: #bdd2ff;
+}
+
+.sf-menu li:hover {
+  background-color: #dfe9ff;
+}
+
+/* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
+
+.gLoadingLarge {
+  background: #e8e8e8 url('../../../lib/images/loading-large.gif') no-repeat center center;
+  font-size: 0;
+}
+
+.gDialogLoadingLarge {
+  background: url('../../../lib/images/loading-large.gif') no-repeat center center !important;
+  font-size: 0;
+}
+
+.gLoadingSmall {
+  background: #e8e8e8 url('../../../lib/images/loading-small.gif') no-repeat center center;
+  font-size: 0;
+}
+
+.gDraggable {
+  cursor: move;
+}
+
+.gDropTarget {
+  background-color: #cfdeff;
+  border: 1px dotted #999;
+  height: 100px;
+  margin: 1em 0;
+}
+
+/* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gPanel {
   display: none;
@@ -345,59 +821,231 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   padding: .2em .4em;
 }
 
-/**** Stuff that needs a home! ****/
+.ui-widget-overlay {
+  background: #000;
+  opacity: .7;
+}
+
+#gDialog {
+  text-align: left;
+}
+
+#gDialog li {
+  padding-left: 0;
+}
+
+#gDialog form input[type="text"],
+#gDialog form input[type="password"] {
+  width: 100%;
+}
+
+#gDialog #gLoginForm,
+#gDialog #gAddUserForm,
+#gDialog #gAddGroupForm {
+  margin: 0 auto;
+  width: 270px;
+}
+
+#gDialog fieldset {
+  border: none;
+}
+
+#gDialog legend {
+  display: none;
+}
+
+/* jQuery UI ThemeRoller buttons */
+
+.gButtonLink {
+  display: inline-block;
+  margin: 0 4px 0 0;
+  padding: .2em .4em;
+  outline: 0;
+}
+
+.gButtonSet {
+  padding-left: 1px;
+}
+
+.gButtonSet li {
+  float: left;
+}
+
+.gButtonSet .gButtonLink {
+  margin: 0;
+}
+
+.ui-icon-left .ui-icon {
+  float: left;
+  margin-right: .2em;
+}
+
+.ui-icon-right .ui-icon {
+  float: right;
+  margin-left: .2em;
+}
+
+.ui-icon-rotate-ccw {
+  background-position: -192px -64px;
+}
+
+.ui-icon-rotate-cw {
+  background-position: -208px -64px;
+}
+
+/*************** STUFF THAT NEEDS A HOME ****************/
+
+#gMove ul {
+  padding-left: 1em;
+}
+
+#gMove .selected {
+  background: #999;
+}
+
+.gProgressBar {
+  height: 1em;
+  width: 100%;
+  margin-top: .5em;
+  display: inline-block;
+}
+
+#gAddPhotos p {
+  margin: 0;
+  padding: 0;
+}
+
+#gAddPhotosCanvas {
+  height: 325px;
+  width: 450px;
+  overflow: auto;
+}
+
+#gAddPhotosQueue .progressbar {
+  height: 4px;
+}
+
+#gAddPhotosQueue .title {
+  font-size: 1.25em;
+}
+
+#gAddPhotosQueue .status {
+  font-size: .75em;
+}
+
+#gAddPhotosQueue .box {
+  margin-bottom: 8px;
+  padding: 4px;
+}
+
+#gAddPhotosQueue .pending {
+  background-color: #e8e8e8;
+  border: 1px solid #d7d7d7;
+}
+
+#gAddPhotosQueue .error {
+  background-color: #fcc;
+  border: 1px solid #ebb;
+}
+
+#gAddPhotosQueue .uploading {
+  background-color: #ff9;
+  border: 1px solid #ee8;
+}
+
+#gAddPhotosQueue .complete {
+  background-color: #cfc;
+  border: 1px solid #beb;
+}
+
+#gAdminG2ImportNotes {
+  padding-bottom: 20px;
+}
+
+#gAdminG2ImportDetails {
+  padding-top: 20px;
+}
+
+#gAdminG2ImportDetails .gWarning {
+  margin-top: 4px;
+}
+
+#gAdminG2ImportDetails .gInfo {
+  padding: 2px;
+  border: 1px solid #999;
+  margin-bottom: 10px;
+}
+
+#gAdminG2ImportNotes p,
+#gAdminG2ImportDetails .gInfo p {
+  padding: 0;
+  margin: 0;
+}
+
+#gAdminG2ImportNotes ul li,
+#gAdminG2Import .gInfo ul li {
+  padding-left: 0;
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
 #gTagAdmin {
   table-layout: fixed;
 }
+
 #gTagAdmin td {
   border: 0;
 }
+
 #gTagAdmin ul {
   padding-bottom: .3em;
 }
+
 #gTagAdmin li {
   padding: .1em 0 .2em .3em;
 }
+
 #gTagAdmin .gColumn {
   float: left;
   width: 200px;
 }
+
 .rtl #gTagAdmin .gColumn {
   float: right;
 }
+
 .gEditable {
   padding: .1em .3em .2em .3em;
 }
+
 .gEditable:hover {
   background-color: #ffc;
   cursor: text;
 }
+
 #gRenameTagForm input {
   padding: 0 .2em 0 .2em;
   clear: none;
   float: left;
   margin: 0 .2em 0 0;
 }
+
 .rtl #gRenameTagForm input {
   float: right;
 }
+
 #gRenameTagForm input[type="submit"] {
   height: 25px;
 }
+
 #gRenameTagForm a, #gRenameTagForm span {
   display: block;
   float: left;
   padding: .2em .2em 0 .1em;
 }
+
 .rtl #gRenameTagForm a, #gRenameTagForm span {
   float: right;
-}
-#gProgress button {
-  float: right;
-  margin-top: 1em;
-}
-.rtl #gProgress button {
-  float: left;
 }
 
 #gTaskLogDialog h1 {
@@ -413,10 +1061,6 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   padding: .5em
 }
 
-
-/** *******************************************************************
- * 7) Server Add
- *********************************************************************/
 #gServerAddAdmin {
   margin:auto;
   text-align: left;
@@ -451,8 +1095,71 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   cursor: pointer;
 }
 
-#gLanguageSettingsForm .checklist li {
-  width: 150px;
-  overflow: hidden;
+#gLanguagesForm table {
+	width: 400px;
+	float: left;
+	margin: 0 3em 1em 0;
 }
 
+#gLanguagesForm .installed {
+  background-color: #EEEEEE;
+}
+
+#gLanguagesForm .default {
+	background-color: #C5DBEC;
+	font-weight: bold;
+}
+
+#gLanguagesForm input {
+	clear: both;
+}
+
+#gTranslations {
+	padding: 2em 0 0 0;
+	clear: both;
+}
+
+#gTranslations .gButtonLink {
+	padding: .5em;
+}
+
+.gDocLink {
+  float: right;
+}
+
+/* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl {
+  direction: rtl;
+}
+
+.rtl caption,
+.rtl th,
+.rtl #gDialog {
+  text-align: right;
+}
+
+.rtl .txtright {
+  text-align: left;
+}
+
+.rtl #gHeader #gQuickSearchForm,
+.rtl #gForgotPasswordLink,
+.rtl #gHeader #gLoginMenu,
+.rtl .ui-icon-right .ui-icon {
+  clear: left;
+  float: left;
+}
+
+.rtl #gDialog .gCancel,
+.rtl form ul ul li,
+.rtl input[type="submit"],
+.rtl input[type="reset"],
+.rtl .gShortForm li,
+.rtl #gContent #gAlbumGrid .gItem,
+.rtl #gSiteAdminMenu,
+.rtl .gPager li,
+.rtl .gButtonSet li,
+.rtl .ui-icon-left .ui-icon {
+  float: right;
+}

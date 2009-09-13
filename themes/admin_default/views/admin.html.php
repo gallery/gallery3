@@ -5,30 +5,29 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title><?= t("Admin Dashboard") ?></title>
-    <link rel="shortcut icon" href="<?= url::file("themes/default/images/favicon.ico") ?>" type="image/x-icon" />
+    <link rel="shortcut icon" href="<?= url::file("lib/images/favicon.ico") ?>" type="image/x-icon" />
 
-    <?= $theme->css("lib/yui/reset-fonts-grids.css") ?>
-    <?= $theme->css("lib/themeroller/ui.base.css") ?>
-    <?= $theme->css("lib/superfish/css/superfish.css") ?>
-    <?= $theme->css("themes/default/css/screen.css") ?>
-    <?= $theme->theme_css("css/screen.css") ?>
+    <?= $theme->css("yui/reset-fonts-grids.css") ?>
+    <?= $theme->css("themeroller/ui.base.css") ?>
+    <?= $theme->css("superfish/css/superfish.css") ?>
+    <?= $theme->css("screen.css") ?>
     <!--[if lt IE 8]>
-    <link rel="stylesheet" type="text/css" href="<?= $theme->theme_url("css/fix-ie.css") ?>"
+    <link rel="stylesheet" type="text/css" href="<?= $theme->url("fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
 
-   <?= $theme->script("lib/jquery.js") ?>
-   <?= $theme->script("lib/jquery.form.js") ?>
-   <?= $theme->script("lib/jquery-ui.js") ?>
-   <?= $theme->script("lib/gallery.common.js") ?>
+   <?= $theme->script("jquery.js") ?>
+   <?= $theme->script("jquery.form.js") ?>
+   <?= $theme->script("jquery-ui.js") ?>
+   <?= $theme->script("gallery.common.js") ?>
    <? /* MSG_CANCEL is required by gallery.dialog.js */ ?>
    <script type="text/javascript">
-   var MSG_CANCEL = "<?= t('Cancel') ?>";
+   var MSG_CANCEL = <?= t('Cancel')->for_js() ?>;
    </script>
-   <?= $theme->script("lib/gallery.dialog.js") ?>
-   <?= $theme->script("lib/superfish/js/superfish.js") ?>
-   <?= $theme->theme_script("js/jquery.dropshadow.js") ?>
-   <?= $theme->theme_script("js/ui.init.js") ?>
+   <?= $theme->script("gallery.ajax.js") ?>
+   <?= $theme->script("gallery.dialog.js") ?>
+   <?= $theme->script("superfish/js/superfish.js") ?>
+   <?= $theme->script("ui.init.js") ?>
 
    <?= $theme->admin_head() ?>
   </head>
@@ -44,10 +43,10 @@
       <div id="gHeader">
         <?= $theme->admin_header_top() ?>
         <ul id="gLoginMenu">
-          <li class="first"><?= html::anchor("albums/1", "&larr; ".t("Back to the Gallery")) ?></li>
-          <li id="gLogoutLink"><a href="<?= url::site("logout?continue=albums/1&csrf=$csrf") ?>"><?= t("Logout") ?></a></li>
+          <li class="first"><?= html::anchor(item::root()->url(), "&larr; ".t("Back to the Gallery")) ?></li>
+          <li id="gLogoutLink"><a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(item::root()->url())) ?>"><?= t("Logout") ?></a></li>
         </ul>
-        <a id="gLogo" href="<?= url::site("albums/1") ?>" title="<?= t("go back to the Gallery") ?>">
+        <a id="gLogo" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
           &larr; <?= t("back to the ...") ?>
         </a>
         <div id="gSiteAdminMenu" style="display: none;">

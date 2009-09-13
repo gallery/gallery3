@@ -47,6 +47,11 @@ class installer {
   }
 
   static function unpack_var() {
+    if (!file_exists(VARPATH)) {
+      mkdir(VARPATH);
+      chmod(VARPATH, 0777);
+    }
+
     include(DOCROOT . "installer/init_var.php");
     return true;
   }
@@ -55,7 +60,7 @@ class installer {
     $prefix = $config["prefix"];
     $buf = null;
     foreach (file(DOCROOT . "installer/install.sql") as $line) {
-      $buf .= $line;
+      $buf .= trim($line);
       if (preg_match("/;$/", $buf)) {
         if (!mysql_query(self::prepend_prefix($prefix, $buf))) {
           return false;
@@ -92,7 +97,7 @@ class installer {
       }
     }
 
-    return mysql_connect($config["host"], $config["user"], $config["password"]);
+    return @mysql_connect($config["host"], $config["user"], $config["password"]);
   }
 
   static function select_db($config) {
@@ -102,6 +107,16 @@ class installer {
 
     return mysql_query("CREATE DATABASE {$config['dbname']}") &&
       mysql_select_db($config["dbname"]);
+  }
+
+  static function verify_mysql_version($config) {
+    return version_compare(installer::mysql_version($config), "5.0.0", ">=");
+  }
+
+  static function mysql_version($config) {
+    $result = mysql_query("SHOW VARIABLES WHERE variable_name = \"version\"");
+    $row = mysql_fetch_object($result);
+    return $row->Value;
   }
 
   static function db_empty($config) {
@@ -117,7 +132,8 @@ class installer {
       $salt .= chr($char);
     }
     $password = substr(md5(time() * rand()), 0, 6);
-    $hashed_password = $salt . md5($salt . $password);
+    // Escape backslash in preparation for our UPDATE statement.
+    $hashed_password = str_replace("\\", "\\\\", $salt . md5($salt . $password));
     $sql = self::prepend_prefix($config["prefix"],
        "UPDATE {users} SET `password` = '$hashed_password' WHERE `id` = 2");
     if (mysql_query($sql)) {

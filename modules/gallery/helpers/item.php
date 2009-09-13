@@ -53,7 +53,7 @@ class item_Core {
     access::required("view", $parent);
     access::required("edit", $parent);
 
-    model_cache::clear("item", $parent->album_cover_item_id);
+    model_cache::clear();
     $parent->album_cover_item_id = $item->is_album() ? $item->album_cover_item_id : $item->id;
     $parent->thumb_dirty = 1;
     $parent->save();
@@ -69,7 +69,7 @@ class item_Core {
     access::required("edit", $album);
     @unlink($album->thumb_path());
 
-    model_cache::clear("item", $album->album_cover_item_id)  ;
+    model_cache::clear();
     $album->album_cover_item_id = null;
     $album->thumb_width = 0;
     $album->thumb_height = 0;
@@ -90,21 +90,9 @@ class item_Core {
     }
   }
 
-  static function validate_no_name_conflict($input) {
-    $itemid = Input::instance()->post("item");
-    if (is_array($itemid)) {
-      $itemid = $itemid[0];
-    }
-    $item = ORM::factory("item")
-      ->in("id", $itemid)
-      ->find();
-    if (Database::instance()
-        ->from("items")
-        ->where("parent_id", $item->parent_id)
-        ->where("id <>", $item->id)
-        ->where("name", $input->value)
-        ->count_records()) {
-      $input->add_error("conflict", 1);
+  static function validate_url_safe($input) {
+    if (preg_match("/[^A-Za-z0-9-_]/", $input->value)) {
+      $input->add_error("not_url_safe", 1);
     }
   }
 
@@ -121,6 +109,16 @@ class item_Core {
   }
 
   /**
+   * Convert a filename into something we can use as a url component.
+   * @param string $filename
+   */
+  static function convert_filename_to_slug($filename) {
+    $result = pathinfo($filename, PATHINFO_FILENAME);
+    $result = preg_replace("/[^A-Za-z0-9-_]+/", "-", $result);
+    return trim($result, "-");
+  }
+
+  /**
    * Display delete confirmation message and form
    * @param object $item
    * @return string form
@@ -129,12 +127,72 @@ class item_Core {
     if (Input::instance()->get("page_type") == "album") {
       $page_type = "album";
     } else {
-      $page_type = "item";
+      $page_type = "photo";
     }
-    $form = new Forge("quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
+    $form = new Forge(
+      "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
     $form->hidden("_method")->value("put");
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     return $form;
+  }
+
+  /**
+   * Get the next weight value
+   */
+  static function get_max_weight() {
+    // Guard against an empty result when we create the first item.  It's unfortunate that we
+    // have to check this every time.
+    // @todo: figure out a better way to bootstrap the weight.
+    $result = Database::instance()
+      ->select("weight")->from("items")
+      ->orderby("weight", "desc")->limit(1)
+      ->get()->current();
+    return ($result ? $result->weight : 0) + 1;
+  }
+
+  /**
+   * Add a set of restrictions to any following queries to restrict access only to items
+   * viewable by the active user.
+   * @chainable
+   */
+  static function viewable($model) {
+    $view_restrictions = array();
+    if (!user::active()->admin) {
+      foreach (user::group_ids() as $id) {
+        // Separate the first restriction from the rest to make it easier for us to formulate
+        // our where clause below
+        if (empty($view_restrictions)) {
+          $view_restrictions[0] = "items.view_$id";
+        } else {
+          $view_restrictions[1]["items.view_$id"] = access::ALLOW;
+        }
+      }
+    }
+    switch (count($view_restrictions)) {
+    case 0:
+      break;
+
+    case 1:
+      $model->where($view_restrictions[0], access::ALLOW);
+      break;
+
+    default:
+      $model->open_paren();
+      $model->where($view_restrictions[0], access::ALLOW);
+      $model->orwhere($view_restrictions[1]);
+      $model->close_paren();
+      break;
+    }
+
+    return $model;
+  }
+
+  /**
+   * Return the root Item_Model
+   * @return Item_Model
+   */
+  static function root() {
+    return model_cache::get("item", 1);
   }
 }

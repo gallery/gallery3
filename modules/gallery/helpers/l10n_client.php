@@ -74,7 +74,7 @@ class l10n_client_Core {
     $request->locales = array();
     $request->messages = new stdClass();
 
-    $locales = locale::installed();
+    $locales = locales::installed();
     foreach ($locales as $locale => $locale_data) {
       $request->locales[] = $locale;
     }
@@ -113,10 +113,6 @@ class l10n_client_Core {
     //   [{key:<key_1>, translation: <JSON encoded translation>, rev:<rev>, locale:<locale>},
     //    {key:<key_2>, ...}
     //   ]
-    $count = count($response);
-    $message[] = t2("Installed 1 new / updated translation message",
-                    "Installed %count new / updated translation messages", $count);
-
     foreach ($response as $message_data) {
       // @todo Better input validation
       if (empty($message_data->key) || empty($message_data->translation) ||
@@ -153,7 +149,6 @@ class l10n_client_Core {
       $entry->translation = $translation;
       $entry->save();
     }
-    return $message;
   }
 
   static function submit_translations() {

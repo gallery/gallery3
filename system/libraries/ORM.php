@@ -1295,7 +1295,9 @@ class ORM_Core {
 				$value = (float) $value;
 			break;
 			case 'boolean':
-				$value = (bool) $value;
+				if ($value === "t")      $value = true;  // For PgSQL
+				else if ($value === "f") $value = false; // For PgSQL
+				else                     $value = (bool) $value;
 			break;
 			case 'string':
 				$value = (string) $value;

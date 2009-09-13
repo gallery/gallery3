@@ -23,10 +23,30 @@ class user_event_Core {
    */
   static function gallery_ready() {
     user::load_user();
+    self::set_request_locale();
+  }
 
-    $locale = user::active()->locale;
-    if (!empty($locale)) {
-      // TODO(andy_st): Check session data as well.
+  static function admin_menu($menu, $theme) {
+    $menu->add_after("appearance_menu",
+                     Menu::factory("link")
+                     ->id("users_groups")
+                     ->label(t("Users/Groups"))
+                     ->url(url::site("admin/users")));
+  }
+
+  static function set_request_locale() {
+    // 1. Check the session specific preference (cookie)
+    $locale = user::cookie_locale();
+    // 2. Check the user's preference
+    if (!$locale) {
+      $locale = user::active()->locale;
+    }
+    // 3. Check the browser's / OS' preference
+    if (!$locale) {
+      $locale = locales::locale_from_http_request();
+    }
+    // If we have any preference, override the site's default locale
+    if ($locale) {
       I18n::instance()->locale($locale);
     }
   }
