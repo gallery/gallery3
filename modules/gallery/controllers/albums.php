@@ -40,11 +40,13 @@ class Albums_Controller extends Items_Controller {
 
     if ($show) {
       $index = $album->get_position($show);
-      $page = ceil($index / $page_size);
-      if ($page == 1) {
-        url::redirect($album->abs_url());
-      } else {
-        url::redirect($album->abs_url("page=$page"));
+      if ($index) {
+        $page = ceil($index / $page_size);
+        if ($page == 1) {
+          url::redirect($album->abs_url());
+        } else {
+          url::redirect($album->abs_url("page=$page"));
+        }
       }
     }
 
