@@ -7,10 +7,10 @@ interface.
 
 
 SECURITY (& INTENDED AUDIENCE):
-This is the first beta release of Gallery 3.0 and while it's not a
-finished product, it's heading into the home stretch.  You can install
-it on public websites, but remember that until the final release is
-out, we make no guarantees that it won't do bad things.
+This is the third and final beta release of Gallery 3.0 and while it's
+not a finished product, it's heading into the home stretch.  You can
+install it on public websites, but remember that until the final
+release is out, we make no guarantees that it won't do bad things.
 
 Note:
  - We've contracted a professional security audit, received their results
@@ -22,8 +22,7 @@ Note:
  - Most of the key features are in, but some of them (notably the "add from
    server" and "organize album" features) are probably going to be completely
    rewritten.
- - Starting with beta 1 we're going to offer an upgrade path so you won't
-   have to reinstall and start all over (yay!)
+ - You can upgrade from beta 1, but not from alpha releases.
 
 The intended audience of this release is folks who are willing to live
 a little bit on the edge. We'll do our best to take care of your data
