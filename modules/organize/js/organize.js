@@ -142,7 +142,7 @@
       $("#gDialog").bind("dialogopen", function(event, ui) {
         $("#gOrganize").height($("#gDialog").innerHeight() - 20);
         $("#gOrganizeMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
-        $("#gOrganizeAlbumTree").height($("#gDialog").innerHeight() - 59);
+        $("#gOrganizeTreeContainer").height($("#gDialog").innerHeight() - 59);
       });
 
       $("#gDialog").bind("dialogclose", function(event, ui) {
