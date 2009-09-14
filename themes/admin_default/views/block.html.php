@@ -1,4 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<? if ($anchor): ?>
+<a name="<?= $anchor ?>"></a>
+<? endif ?>
 <div block_id="<?= $id ?>" id="<?= $css_id ?>" class="gBlock ui-widget">
   <div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-icon-right">
     <? if ($css_id != "gBlockAdder"): ?>
