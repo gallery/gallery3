@@ -165,50 +165,58 @@ class locales_Core {
             list ($ignored, $qvalue) = explode("=", $qvalue . "==");
             $qvalue = floatval($qvalue);
           }
-          $locale_preferences[] = array($requested_locale, $qvalue);
+          // Group by language to boost inexact same-language matches
+          list ($language) = explode("_", $requested_locale . "_");
+          if (!isset($locale_preferences[$language])) {
+            $locale_preferences[$language] = array();
+          }
+          $locale_preferences[$language][$requested_locale] = $qvalue;
         }
       }
 
       // Compare and score requested locales with installed ones
       $scored_locales = array();
-      foreach ($locale_preferences as $requested_value) {
-        $scored_locale_match = self::_locale_match_score($requested_value);
-        if ($scored_locale_match) {
-          $scored_locales[] = $scored_locale_match;
+      foreach ($locale_preferences as $language => $requested_locales) {
+        // Inexact match adjustment (same language, different region)
+        $fallback_adjustment_factor = 0.95;
+        if (count($requested_locales) > 1) {
+          // Sort by qvalue, descending
+          $qvalues = array_values($requested_locales);
+          rsort($qvalues);
+          // Ensure inexact match scores worse than 2nd preference in same language.
+          $fallback_adjustment_factor *= $qvalues[1];
+        }
+        foreach ($requested_locales as $requested_locale => $qvalue) {
+          list ($matched_locale, $match_score) =
+              self::_locale_match_score($requested_locale, $qvalue, $fallback_adjustment_factor);
+          if ($matched_locale &&
+              (!isset($scored_locales[$matched_locale]) ||
+               $match_score > $scored_locales[$matched_locale])) {
+            $scored_locales[$matched_locale] = $match_score;
+          }
         }
       }
 
-      usort($scored_locales, array("locales", "_compare_locale_by_qvalue"));
+      arsort($scored_locales);
 
-      $best_match = array_shift($scored_locales);
-      if ($best_match) {
-        return $best_match[0];
-      }
+      list ($locale) = each($scored_locales);
+      return $locale;
     }
 
     return null;
   }
 
-  static function _compare_locale_by_qvalue($a, $b) {
-    $a = $a[1];
-    $b = $b[1];
-    if ($a == $b) {
-      return 0;
-    }
-    return $a < $b ? 1 : -1;
-  }
-
-  private static function _locale_match_score($requested_locale_and_qvalue) {
-    list ($requested_locale, $qvalue) = $requested_locale_and_qvalue;
+  private static function _locale_match_score($requested_locale, $qvalue, $adjustment_factor) {
     $installed = self::installed();
     if (isset($installed[$requested_locale])) {
-      return $requested_locale_and_qvalue;
+      return array($requested_locale, $qvalue);
     }
     list ($language) = explode("_", $requested_locale . "_");
     if (isset(self::$language_subtag_to_locale[$language]) &&
         isset($installed[self::$language_subtag_to_locale[$language]])) {
-      return array(self::$language_subtag_to_locale[$language], $qvalue * 0.66);
+      $score = $adjustment_factor * $qvalue;
+      return array(self::$language_subtag_to_locale[$language], $score);
     }
-    return null;
+    return array(null, 0);
   }
 }
