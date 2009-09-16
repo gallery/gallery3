@@ -44,7 +44,8 @@ class Tags_Controller extends REST_Controller {
 
   public function _index() {
     // Far from perfection, but at least require view permission for the root album
-    access::required("view", 1);
+    $album = ORM::factory("item", 1);
+    access::required("view", $album);
     print tag::cloud(30);
   }
 

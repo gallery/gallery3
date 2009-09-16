@@ -45,9 +45,13 @@ class Organize_Controller extends Controller {
     access::verify_csrf();
 
     $target_album = ORM::factory("item", $target_album_id);
+    access::required("view", $target_album);
+    access::required("add", $target_album);
+
     foreach ($this->input->post("source_ids") as $source_id) {
       $source = ORM::factory("item", $source_id);
       if (!$source->contains($target_album)) {
+        access::required("edit", $source);
         item::move($source, $target_album);
       }
     }
