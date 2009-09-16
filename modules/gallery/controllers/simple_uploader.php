@@ -32,6 +32,7 @@ class Simple_Uploader_Controller extends Controller {
   }
 
   public function start() {
+    access::verify_csrf();
     batch::start();
   }
 

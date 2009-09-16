@@ -21,6 +21,10 @@ class Controller_Auth_Test extends Unit_Test_Case {
   public function find_missing_auth_test() {
     $found = array();
     foreach (glob("*/*/controllers/*.php") as $controller) {
+      if (strpos($controller, "modules/unit_test/") !== false) {
+        continue;
+      }
+
       // List of all tokens without whitespace, simplifying parsing.
       $tokens = array();
       foreach (token_get_all(file_get_contents($controller)) as $token) {
@@ -150,12 +154,12 @@ class Controller_Auth_Test extends Unit_Test_Case {
           continue;
         }
 
-        fprintf($fd, "%-60s %-20s %-21s\n",
+        fprintf($fd, "%-60s %-20s %s\n",
                 $controller, $function->name, implode("|", $flags));
       }
 
       if (strpos(basename($controller), "admin_") === 0 && !$is_admin_controller) {
-        fprintf($fd, "%-60s %-20s %-21s\n",
+        fprintf($fd, "%-60s %-20s %s\n",
                 $controller, basename($controller), "NO_ADMIN_CONTROLLER");
       }
     }

@@ -43,6 +43,8 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _index() {
+    // Far from perfection, but at least require view permission for the root album
+    access::required("view", 1);
     print tag::cloud(30);
   }
 

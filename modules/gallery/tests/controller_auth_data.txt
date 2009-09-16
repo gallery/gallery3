@@ -1,0 +1,17 @@
+modules/comment/controllers/admin_comments.php               queue                DIRTY_CSRF
+modules/digibug/controllers/digibug.php                      close_window         DIRTY_AUTH
+modules/gallery/controllers/combined.php                     javascript           DIRTY_AUTH
+modules/gallery/controllers/combined.php                     css                  DIRTY_AUTH
+modules/gallery/controllers/maintenance.php                  index                DIRTY_AUTH
+modules/gallery/controllers/rest.php                         form_add             DIRTY_AUTH
+modules/gallery/controllers/rest.php                         _index               DIRTY_AUTH
+modules/gallery/controllers/rest.php                         _create              DIRTY_AUTH
+modules/gallery/controllers/rest.php                         _show                DIRTY_AUTH
+modules/gallery/controllers/rest.php                         _update              DIRTY_AUTH
+modules/gallery/controllers/rest.php                         _delete              DIRTY_AUTH
+modules/gallery/controllers/rest.php                         _form_add            DIRTY_AUTH
+modules/gallery/controllers/rest.php                         _form_edit           DIRTY_AUTH
+modules/gallery/controllers/simple_uploader.php              start                DIRTY_AUTH
+modules/gallery/controllers/simple_uploader.php              finish               DIRTY_AUTH
+modules/user/controllers/login.php                           ajax                 DIRTY_AUTH
+modules/user/controllers/login.php                           html                 DIRTY_AUTH
