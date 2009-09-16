@@ -19,6 +19,7 @@ function ajaxify_tag_form() {
 function closeEditInPlaceForms() {
   // closes currently open inplace edit forms
   if ($("#gRenameTagForm").length) {
+    $("#gEditErrorMessage").remove();
     var li = $("#gRenameTagForm").parent();
     $("#gRenameTagForm").parent().html($("#gRenameTagForm").parent().data("revert"));
     li.height("");
@@ -66,6 +67,11 @@ function editInPlace(element) {
           $("#gTag-" + data.tag_id).text(data.new_tagname); // update tagname
           console.log(data);
           window.location.reload();
+        } else if (data.result == "error") {
+          $("#gRenameTagForm #name")
+            .css("border", "2px solid red")
+            .focus();
+          $("#gTagAdmin").before("<p id=\"gEditErrorMessage\" class=\"gError\">" + data.message + "</p>");
         }
       }
     });
