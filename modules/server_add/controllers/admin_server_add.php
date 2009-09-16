@@ -87,7 +87,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $add_path = $form->group("add_path");
     $add_path->input("path")->label(t("Path"))->rules("required")
       ->error_messages("not_readable", t("This directory is not readable by the webserver"))
-      ->error_messages("is_symlink", t("Path can not be symbolic link"));
+      ->error_messages("is_symlink", t("Symbolic links are not allowed"));
     $add_path->submit("add")->value(t("Add Path"));
 
     return $form;
