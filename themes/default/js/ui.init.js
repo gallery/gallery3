@@ -2,7 +2,7 @@
  * Initialize jQuery UI and Gallery Plugin elements
  */
 
-var shortForms = new Array(
+var short_forms = new Array(
   "#gQuickSearchForm",
   "#gAddTagForm",
   "#gSearchForm"
@@ -36,7 +36,10 @@ $(document).ready(function() {
   }
 
   // Initialize short forms
-  handleShortFormEvent(shortForms);
+  for (var i in short_forms) {
+    short_form_init(short_forms[i]);
+    $(short_forms[i]).addClass("gShortForm");
+  }
   $(".gShortForm input[type=text]").addClass("ui-corner-left");
   $(".gShortForm input[type=submit]").addClass("ui-state-default ui-corner-right");
 

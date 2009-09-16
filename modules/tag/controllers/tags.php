@@ -22,7 +22,7 @@ class Tags_Controller extends REST_Controller {
 
   public function _show($tag) {
     $page_size = module::get_var("gallery", "page_size", 9);
-    $page = $this->input->get("page", "1");
+    $page = (int) $this->input->get("page", "1");
     $children_count = $tag->items_count();
     $offset = ($page-1) * $page_size;
 
@@ -43,6 +43,9 @@ class Tags_Controller extends REST_Controller {
   }
 
   public function _index() {
+    // Far from perfection, but at least require view permission for the root album
+    $album = ORM::factory("item", 1);
+    access::required("view", $album);
     print tag::cloud(30);
   }
 
