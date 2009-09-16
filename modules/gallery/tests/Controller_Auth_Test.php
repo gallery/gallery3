@@ -25,7 +25,9 @@ class Controller_Auth_Test extends Unit_Test_Case {
 
   public function find_missing_auth_test() {
     $found = array();
-    foreach (glob("*/*/controllers/*.php") as $controller) {
+    $controllers = glob("*/*/controllers/*.php");
+    $feeds = glob("*/*/helpers/*_rss.php");
+    foreach (array_merge($controllers, $feeds) as $controller) {
       if (preg_match("{modules/(gallery_)?unit_test/}", $controller)) {
         continue;
       }
@@ -92,7 +94,9 @@ class Controller_Auth_Test extends Unit_Test_Case {
               }
             } while ($token_number < count($tokens));
 
-            if (!$is_static &&
+            $is_rss_feed = $name == "feed" && strpos(basename($controller), "_rss.php");
+
+            if ((!$is_static || $is_rss_feed) &&
                 (!$is_private ||
                  ($is_rest_controller && in_array($name, self::$rest_methods)))) {
               $function = self::_function($name, $line, $is_admin_controller);
