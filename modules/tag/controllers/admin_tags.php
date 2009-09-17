@@ -89,7 +89,7 @@ class Admin_Tags_Controller extends Admin_Controller {
       $new_name = $this->input->post("name");
       $new_tag = ORM::factory("tag")->where("name", $new_name)->find();
       if ($new_tag->loaded) {
-        $error_msg = t("There is already a tag with that name")->__toString();
+        $error_msg = (string)t("There is already a tag with that name");
         $valid = false;
       }
     } else {
