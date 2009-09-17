@@ -39,7 +39,7 @@ function start_add() {
     success: function(data, textStatus) {
       $("#gStatus").html(data.status);
       $("#gServerAdd .gProgressBar").progressbar("value", data.percent_complete);
-      setTimeout(function() { run_add(data.url); }, 0);
+      setTimeout(function() { run_add(data.url); }, 25);
     }
   });
   return false;
@@ -56,7 +56,7 @@ function run_add(url) {
       if (data.done) {
 	$("#gServerAddProgress").slideUp();
       } else {
-	setTimeout(function() { run_add(url); }, 0);
+	setTimeout(function() { run_add(url); }, 25);
       }
     }
   });
