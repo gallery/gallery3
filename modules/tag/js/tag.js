@@ -69,7 +69,7 @@ function editInPlace(element) {
           window.location.reload();
         } else if (data.result == "error") {
           $("#gRenameTagForm #name")
-            .css("border", "2px solid red")
+            .addClass("gError")
             .focus();
           $("#gTagAdmin").before("<p id=\"gEditErrorMessage\" class=\"gError\">" + data.message + "</p>");
         }

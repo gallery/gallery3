@@ -144,7 +144,8 @@ class Xss_Security_Test extends Unit_Test_Case {
                                "dynamic_bottom", "dynamic_top", "footer", "head", "header_bottom",
                                "header_top", "page_bottom", "page_top", "photo_blocks", "photo_bottom",
                                "photo_top", "resize_bottom", "resize_top", "sidebar_blocks", "sidebar_bottom",
-                               "sidebar_top", "thumb_bottom", "thumb_info", "thumb_top")) &&
+                               "sidebar_top", "thumb_bottom", "thumb_info", "thumb_top",
+                               "movie_menu")) &&
                 self::_token_matches("(", $tokens, $token_number + 3)) {
 
               $method = $tokens[$token_number + 2][1];
