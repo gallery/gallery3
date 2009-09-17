@@ -81,15 +81,20 @@ class Admin_Tags_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    $form = tag::get_rename_form($tag);
-    $valid = $form->validate();
+    //Don't use a form as the form is dynamically created in the js
+    $post = new Validation($_POST);
+    $post->add_rules("name", "required", "length[1,64]");
+    $valid = $post->validate();
     if ($valid) {
-      $new_name = $form->rename_tag->inputs["name"]->value;
+      $new_name = $this->input->post("name");
       $new_tag = ORM::factory("tag")->where("name", $new_name)->find();
       if ($new_tag->loaded) {
-        $form->rename_tag->inputs["name"]->add_error("in_use", 1);
+        $error_msg = "There is already a tag with that name";
         $valid = false;
       }
+    } else {
+      $error_msg = $post->errors();
+      $error_msg = $error_msg[0];
     }
 
     if ($valid) {
@@ -110,7 +115,7 @@ class Admin_Tags_Controller extends Admin_Controller {
     } else {
       print json_encode(
         array("result" => "error",
-              "form" => $form->__toString()));
+              "message" => $error_msg));
     }
   }
 }
