@@ -30,6 +30,11 @@ if (installer::already_installed()) {
   return;
 }
 
+$errors = installer::check_environment();
+if ($errors) {
+  oops(implode("errors", "\n"));
+}
+
 $config = parse_cli_params();
 if (!installer::connect($config)) {
   oops("Unable to connect to the database.\n" . mysql_error() . "\n");
