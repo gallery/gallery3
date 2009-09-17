@@ -81,7 +81,7 @@ class Admin_Tags_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    //Don't use a form as the form is dynamically created in the js
+    // Don't use a form as the form is dynamically created in the js
     $post = new Validation($_POST);
     $post->add_rules("name", "required", "length[1,64]");
     $valid = $post->validate();
@@ -89,7 +89,7 @@ class Admin_Tags_Controller extends Admin_Controller {
       $new_name = $this->input->post("name");
       $new_tag = ORM::factory("tag")->where("name", $new_name)->find();
       if ($new_tag->loaded) {
-        $error_msg = "There is already a tag with that name";
+        $error_msg = t("There is already a tag with that name")->__toString();
         $valid = false;
       }
     } else {

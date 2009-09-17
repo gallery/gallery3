@@ -1034,6 +1034,11 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   float: right;
 }
 
+#gRenameTagForm input[type="text"].gError {
+  border: 2px solid red;
+  background: none;
+}
+
 #gRenameTagForm input[type="submit"] {
   height: 25px;
 }
