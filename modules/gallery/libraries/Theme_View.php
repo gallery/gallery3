@@ -111,6 +111,12 @@ class Theme_View_Core extends Gallery_View {
     return $menu->compact();
   }
 
+  public function movie_menu() {
+    $menu = Menu::factory("root");
+    module::event("movie_menu", $menu, $this);
+    return $menu->compact();
+  }
+
   public function context_menu($item, $thumbnail_css_selector) {
     $menu = Menu::factory("root")
       ->append(Menu::factory("submenu")
