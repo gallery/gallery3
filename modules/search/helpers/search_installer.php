@@ -28,7 +28,7 @@ class search_installer {
                  PRIMARY KEY (`id`),
                  KEY(`item_id`),
                  FULLTEXT INDEX (`data`))
-               ENGINE=MYISAM
+               ENGINE=MyISAM
                DEFAULT CHARSET=utf8;");
     module::set_version("search", 1);
   }
@@ -48,13 +48,4 @@ class search_installer {
   static function uninstall() {
     Database::instance()->query("DROP TABLE {search_records}");
   }
-
-  static function upgrade($version) {
-    $db = Database::instance();
-    if ($version == 1) {
-      $db->query("ALTER TABLE {search_records} ENGINE=MYISAM");
-      module::set_version("search", 2);
-    }
-  }
-
 }
