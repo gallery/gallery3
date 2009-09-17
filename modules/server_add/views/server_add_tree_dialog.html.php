@@ -50,6 +50,7 @@
       });
       $("#gServerCloseButton").click(function(event) {
         $("#gDialog").dialog("close");
+        window.location.reload();
       });
     });
   </script>

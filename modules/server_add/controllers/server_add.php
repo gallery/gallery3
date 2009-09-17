@@ -137,17 +137,25 @@ class Server_Add_Controller extends Admin_Controller {
       // form [path, parent_id] where the parent_id refers to another Server_Add_File_Model.  We
       // have this extra level of abstraction because we don't know its Item_Model id yet.
       $queue = $task->get("queue");
+      $paths = unserialize(module::get_var("server_add", "authorized_paths"));
+
       while ($queue && microtime(true) - $start < 0.5) {
         list($file, $parent_entry_id) = array_shift($queue);
-        $entry = ORM::factory("server_add_file");
-        $entry->task_id = $task->id;
-        $entry->file = $file;
-        $entry->parent_id = $parent_entry_id;
-        $entry->save();
+        // Ignore the staging directories as directories to be imported.
+        if (empty($paths[$file])) {
+          $entry = ORM::factory("server_add_file");
+          $entry->task_id = $task->id;
+          $entry->file = $file;
+          $entry->parent_id = $parent_entry_id;
+          $entry->save();
+          $entry_id = $entry->id;
+        } else {
+          $entry_id = null;
+        }
 
         foreach (glob("$file/*") as $child) {
           if (is_dir($child)) {
-            $queue[] = array($child, $entry->id);
+            $queue[] = array($child, $entry_id);
           } else {
             $ext = strtolower(pathinfo($child, PATHINFO_EXTENSION));
             if (in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4")) &&
@@ -155,7 +163,7 @@ class Server_Add_Controller extends Admin_Controller {
               $child_entry = ORM::factory("server_add_file");
               $child_entry->task_id = $task->id;
               $child_entry->file = $child;
-              $child_entry->parent_id = $entry->id;
+              $child_entry->parent_id = $entry_id;
               $child_entry->save();
             }
           }
