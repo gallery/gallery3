@@ -36,7 +36,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     if ($form->validate()) {
       if (is_link($form->add_path->path->value)) {
         $form->add_path->path->add_error("is_symlink", 1);
-      } else if (! is_readable($form->add_path->path->value)) {
+      } else if (!is_readable($form->add_path->path->value)) {
         $form->add_path->path->add_error("not_readable", 1);
       } else {
         $path = $form->add_path->path->value;
@@ -73,7 +73,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $directories = array();
     $path_prefix = $this->input->get("q");
     foreach (glob("{$path_prefix}*") as $file) {
-      if (is_dir($file)) {
+      if (is_dir($file) && !is_link($file)) {
         $directories[] = $file;
       }
     }
