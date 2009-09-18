@@ -9,7 +9,18 @@
            progressbar("value", 0);
          $("#gServerAddProgress", this.element).slideDown("fast", function() { self.start_add(); });
        });
-       $("#gServerCloseButton", this.element).click(function(event) {
+       $("#gServerAddPauseButton", this.element).click(function(event) {
+         self.pause = true;
+         $("#gServerAddPauseButton", this.element).hide();
+         $("#gServerAddContinueButton", this.element).show();
+       });
+       $("#gServerAddContinueButton", this.element).click(function(event) {
+         self.pause = false;
+         $("#gServerAddPauseButton", this.element).show();
+         $("#gServerAddContinueButton", this.element).hide();
+         self.run_add();
+       });
+       $("#gServerAddCloseButton", this.element).click(function(event) {
          $("#gDialog").dialog("close");
          window.location.reload();
        });
@@ -19,7 +30,16 @@
        $("#gServerAddTree span.gFile, #gServerAddTree span.gDirectory", this.element).click(function(event) {
          self.select_file(event);
        });
+       $("#gServerAddTree span.gDirectory", this.element).dblclick(function(event) {
+         self.open_dir(event);
+       });
+       $("#gDialog").bind("dialogclose", function(event, ui) {
+         window.location.reload();
+       });
      },
+
+     taskURL: null,
+     pause: false,
 
      start_add: function() {
        var self = this;
@@ -27,6 +47,9 @@
        $.each($("span.selected", self.element), function () {
 	 paths.push($(this).attr("ref"));
        });
+
+       $("#gServerAddAddButton", this.element).hide();
+       $("#gServerAddPauseButton", this.element).show();
 
        $.ajax({
          url: START_URL,
@@ -37,16 +60,17 @@
          success: function(data, textStatus) {
            $("#gStatus").html(data.status);
            $(".gProgressBar", self.element).progressbar("value", data.percent_complete);
-           setTimeout(function() { self.run_add(data.url); }, 25);
+           self.taskURL = data.url;
+           setTimeout(function() { self.run_add(); }, 25);
          }
        });
        return false;
      },
 
-     run_add: function (url) {
+     run_add: function () {
        var self = this;
        $.ajax({
-         url: url,
+         url: self.taskURL,
          async: false,
          dataType: "json",
          success: function(data, textStatus) {
@@ -54,10 +78,14 @@
            $(".gProgressBar", self.element).progressbar("value", data.percent_complete);
            if (data.done) {
 	     $("#gServerAddProgress", this.element).slideUp();
+             $("#gServerAddAddButton", this.element).show();
+             $("#gServerAddPauseButton", this.element).hide();
+             $("#gServerAddContinueButton", this.element).hide();
            } else {
-	     setTimeout(function() { self.run_add(url); }, 25);
+             if (!self.pause) {
+               setTimeout(function() { self.run_add(); }, 25);
+             }
            }
-
          }
        });
      },
