@@ -40,18 +40,8 @@
   </span>
 
   <script type="text/javascript">
-    $("#gServerAddAddButton").ready(function() {
-      $("#gServerAddAddButton").click(function(event) {
-         event.preventDefault();
-         $("#gServerAdd .gProgressBar").
-           progressbar().
-           progressbar("value", 0);
-         $("#gServerAddProgress").slideDown("fast", function() { start_add() });
-      });
-      $("#gServerCloseButton").click(function(event) {
-        $("#gDialog").dialog("close");
-        window.location.reload();
-      });
+    $("#gServerAdd").ready(function() {
+      $("#gServerAdd").gallery_server_add();
     });
   </script>
 

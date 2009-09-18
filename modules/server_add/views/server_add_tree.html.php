@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <li class="ui-icon-left">
   <span class="ui-icon ui-icon-folder-open"></span>
-  <span ondblclick="open_dir('')">
+  <span class="gDirectory" ref="">
     <?= t("All") ?>
   </span>
   <ul>
@@ -9,7 +9,7 @@
     <? foreach ($parents as $dir): ?>
     <li class="ui-icon-left">
       <span class="ui-icon ui-icon-folder-open"></span>
-      <span ondblclick='open_dir(<?= html::js_string($dir) ?>)'>
+      <span class="gDirectory" ref="<?= html::clean_attribute($dir) ?>">
         <?= html::clean(basename($dir)) ?>
       </span>
       <ul>
@@ -18,12 +18,8 @@
         <? foreach ($files as $file): ?>
         <li class="ui-icon-left">
           <span class="ui-icon <?= is_dir($file) ? "ui-icon-folder-collapsed" : "ui-icon-document" ?>"></span>
-          <span onclick="select_file(this)"
-                <? if (is_dir($file)): ?>
-                ondblclick="open_dir($(this).attr('file'))"
-                <? endif ?>
-                file="<?= html::clean_attribute($file) ?>"
-                >
+          <span class="<?= is_dir($file) ? "gDirectory" : "gFile" ?>"
+                ref="<?= html::clean_attribute($file) ?>" >
             <?= html::clean(basename($file)) ?>
           </span>
         </li>
