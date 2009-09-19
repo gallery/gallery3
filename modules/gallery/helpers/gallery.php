@@ -89,27 +89,29 @@ class gallery_Core {
       $item = $theme->item();
 
       $can_edit = $item && access::can("edit", $item);
-      $is_album_writable =
-        is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path());
       $can_add = $item && access::can("add", $item);
 
-      if ($can_add && $is_album_writable) {
+      if ($can_add) {
         $menu->append($add_menu = Menu::factory("submenu")
                       ->id("add_menu")
                       ->label(t("Add")));
-        $add_menu->append(Menu::factory("dialog")
-                          ->id("add_photos_item")
-                          ->label(t("Add photos"))
-                          ->url(url::site("simple_uploader/app/$item->id")));
-        if ($item->is_album()) {
+        $is_album_writable =
+          is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path());
+        if ($is_album_writable) {
           $add_menu->append(Menu::factory("dialog")
-                            ->id("add_album_item")
-                            ->label(t("Add an album"))
-                            ->url(url::site("form/add/albums/$item->id?type=album")));
+                            ->id("add_photos_item")
+                            ->label(t("Add photos"))
+                            ->url(url::site("simple_uploader/app/$item->id")));
+          if ($item->is_album()) {
+            $add_menu->append(Menu::factory("dialog")
+                              ->id("add_album_item")
+                              ->label(t("Add an album"))
+                              ->url(url::site("form/add/albums/$item->id?type=album")));
+          }
+        } else {
+          message::warning(t("The album '%album_name' is not writable.",
+                             array("album_name" => $item->title)));
         }
-      } else if (!$is_album_writable) {
-        message::warning(t("The album '%album_name' is not writable.",
-                           array("album_name" => $item->title)));
       }
 
       $menu->append($options_menu = Menu::factory("submenu")
