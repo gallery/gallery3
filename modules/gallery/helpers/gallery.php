@@ -89,9 +89,11 @@ class gallery_Core {
       $item = $theme->item();
 
       $can_edit = $item && access::can("edit", $item);
+      $is_album_writable =
+        is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path());
       $can_add = $item && access::can("add", $item);
 
-      if ($can_add) {
+      if ($can_add && $is_album_writable) {
         $menu->append($add_menu = Menu::factory("submenu")
                       ->id("add_menu")
                       ->label(t("Add")));
@@ -105,6 +107,9 @@ class gallery_Core {
                             ->label(t("Add an album"))
                             ->url(url::site("form/add/albums/$item->id?type=album")));
         }
+      } else if (!$is_album_writable) {
+        message::warning(t("The album '%album_name' is not writable.",
+                           array("album_name" => $item->title)));
       }
 
       $menu->append($options_menu = Menu::factory("submenu")
