@@ -135,6 +135,9 @@ class album_Core {
         ->error_messages(
           "not_url_safe",
           t("The internet address should contain only letters, numbers, hyphens and underscores"));
+    } else {
+      $group->hidden("dirname")->value($parent->name);
+      $group->hidden("slug")->value($parent->slug);
     }
 
     $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
