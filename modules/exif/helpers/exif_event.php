@@ -27,8 +27,4 @@ class exif_event_Core {
   static function item_deleted($item) {
     Database::instance()->delete("exif_records", array("item_id" => $item->id));
   }
-
-  static function get_sort_fields($sort_order) {
-    $sort_order->fields["captured"] = t("Date captured");
-  }
 }

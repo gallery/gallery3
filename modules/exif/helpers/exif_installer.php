@@ -29,12 +29,6 @@ class exif_installer {
                  PRIMARY KEY (`id`),
                  KEY(`item_id`))
                DEFAULT CHARSET=utf8;");
-
-
-    $item_fields = $db->list_fields("items");
-    if (empty($item_fields["captured"])) {
-      $db->query("ALTER TABLE {items} ADD COLUMN `captured` int(9) default NULL");
-    }
     module::set_version("exif", 1);
   }
 
@@ -47,8 +41,6 @@ class exif_installer {
   }
 
   static function uninstall() {
-    $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {exif_records};");
-    $db->query("ALTER TABLE {items} DROP COLUMN `captured`");
+    Database::instance()->query("DROP TABLE IF EXISTS {exif_records};");
   }
 }

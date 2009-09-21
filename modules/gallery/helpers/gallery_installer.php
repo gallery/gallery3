@@ -68,6 +68,7 @@ class gallery_installer {
     $db->query("CREATE TABLE {items} (
                  `id` int(9) NOT NULL auto_increment,
                  `album_cover_item_id` int(9) default NULL,
+                 `captured` int(9) default NULL,
                  `created` int(9) default NULL,
                  `description` varchar(2048) default NULL,
                  `height` int(9) default NULL,
@@ -267,7 +268,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 13);
+    module::set_version("gallery", 12);
   }
 
   static function upgrade($version) {
@@ -362,20 +363,6 @@ class gallery_installer {
       // Flush all path caches becuase we're going to start urlencoding them.
       $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
       module::set_version("gallery", $version = 12);
-    }
-
-    if ($version == 12) {
-      // remove the capture field if exif is not installed and it has no data
-      if (!module::is_active("exif")) {
-        $total_records = $db->query("SELECT COUNT(id) as total_records FROM {items}")
-          ->current()->total_records;
-        $count_null = $db->query("SELECT COUNT(id) as count_null FROM {items} where `captured`is NULL")
-          ->current()->count_null;
-        if ($total_records == $count_null) {
-          $db->query("ALTER TABLE {items} DROP COLUMN `captured`");
-        }
-      }
-      module::set_version("gallery", $version = 13);
     }
   }
 
