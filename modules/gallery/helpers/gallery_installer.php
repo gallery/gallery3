@@ -367,8 +367,6 @@ class gallery_installer {
     if ($version == 12) {
       // remove the capture field if exif is not installed and it has no data
       if (!module::is_active("exif")) {
-        $db->query("update g3_items set sort_order = 'weight'
-                     where type = 'album' and sort_order = 'captured';");
         $total_records = $db->query("SELECT COUNT(id) as total_records FROM {items}")
           ->current()->total_records;
         $count_null = $db->query("SELECT COUNT(id) as count_null FROM {items} where `captured`is NULL")
