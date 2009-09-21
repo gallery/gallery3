@@ -412,38 +412,51 @@ class Item_Model extends ORM_MPTT {
    * Find the position of the given child id in this album.  The resulting value is 1-indexed, so
    * the first child in the album is at position 1.
    */
-  public function get_position($child_id) {
+  public function get_position($child) {
     if ($this->sort_order == "DESC") {
       $comp = ">";
     } else {
       $comp = "<";
     }
-
     $db = Database::instance();
-    $position = $db->query("
-      SELECT COUNT(*) AS position FROM {items}
-      WHERE `parent_id` = {$this->id}
-        AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
-                                          FROM {items} WHERE `id` = $child_id)")
-      ->current()->position;
 
-    // We stopped short of our target value in the sort (notice that we're using a < comparator
-    // above) because it's possible that we have duplicate values in the sort column.  An
-    // equality check would just arbitrarily pick one of those multiple possible equivalent
-    // columns, which would mean that if you choose a sort order that has duplicates, it'd pick
-    // any one of them as the child's "position".
-    //
-    // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
-    // our base value.
-    $result = $db->query("
-      SELECT id FROM {items}
-      WHERE `parent_id` = {$this->id}
-        AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
-                                      FROM {items} WHERE `id` = $child_id)
-      ORDER BY `id` ASC");
+    // We can't use isset() in this comparison because ORM::__get() confuses it.
+    if ($child->{$this->sort_column} !== null) {
+      $position = $db->query("
+        SELECT COUNT(*) AS position FROM {items}
+        WHERE `parent_id` = {$this->id}
+          AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
+                                            FROM {items} WHERE `id` = $child->id)")
+        ->current()->position;
+
+      // We stopped short of our target value in the sort (notice that we're using a < comparator
+      // above) because it's possible that we have duplicate values in the sort column.  An
+      // equality check would just arbitrarily pick one of those multiple possible equivalent
+      // columns, which would mean that if you choose a sort order that has duplicates, it'd pick
+      // any one of them as the child's "position".
+      //
+      // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
+      // our base value.
+      $result = $db->query("
+        SELECT id FROM {items}
+        WHERE `parent_id` = {$this->id}
+          AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
+                                        FROM {items} WHERE `id` = $child->id)
+        ORDER BY `id` ASC");
+    } else {
+      // If the sort value is null, then we can't take the approach of doing a comparison to get
+      // most of the way there.  We have to iterate the entire data set.
+      $position = 0;
+      $result = $db->query("
+        SELECT id FROM {items}
+        WHERE `parent_id` = {$this->id}
+          AND `{$this->sort_column}` IS NULL
+        ORDER BY `id` ASC");
+    }
+
     foreach ($result as $row) {
       $position++;
-      if ($row->id == $child_id) {
+      if ($row->id == $child->id) {
         break;
       }
     }
