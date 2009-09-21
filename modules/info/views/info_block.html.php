@@ -16,7 +16,7 @@
     <?= html::clean($item->name) ?>
   </li>
   <? endif ?>
-  <? if ($item->captured): ?>
+  <? if (module::is_active("exif") && $item->captured): ?>
   <li>
     <strong class="caption"><?= t("Captured:") ?></strong>
     <?= date("M j, Y H:i:s", $item->captured)?>

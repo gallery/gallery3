@@ -53,4 +53,14 @@ class gallery_event_Core {
     $data[] = $item->name;
     $data[] = $item->title;
   }
+
+  static function get_sort_fields($sort_order) {
+    $sort_order->fields = array_merge($sort_order->fields,
+                                      array("weight" => t("Manual"),
+                                            "created" => t("Date uploaded"),
+                                            "title" => t("Title"),
+                                            "updated" => t("Date modified"),
+                                            "view_count" => t("Number of views"),
+                                            "rand_key" => t("Random")));
+  }
 }

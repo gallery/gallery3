@@ -166,12 +166,10 @@ class album_Core {
    * Return a structured set of all the possible sort orders.
    */
   static function get_sort_order_options() {
-    return array("weight" => t("Manual"),
-                 "captured" => t("Date captured"),
-                 "created" => t("Date uploaded"),
-                 "title" => t("Title"),
-                 "updated" => t("Date modified"),
-                 "view_count" => t("Number of views"),
-                 "rand_key" => t("Random"));
+    $sort_order = (object)array("fields" => array());
+    module::event("get_sort_fields", $sort_order);
+    asort($sort_order->fields);
+
+    return $sort_order->fields;
   }
 }

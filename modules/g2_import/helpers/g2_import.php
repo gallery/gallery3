@@ -23,6 +23,7 @@ class g2_import_Core {
   public static $map = array();
 
   private static $current_g2_item = null;
+  private static $order_map = false;
 
   static function is_configured() {
     return module::get_var("g2_import", "embed_path");
@@ -313,7 +314,6 @@ class g2_import_Core {
     return $message;
   }
 
-
   /**
    * Import a single album.
    */
@@ -357,16 +357,26 @@ class g2_import_Core {
     $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
     $album->created = $g2_album->getCreationTimestamp();
 
-    $order_map = array(
-      "originationTimestamp" => "captured",
-      "creationTimestamp" => "created",
-      "description" => "description",
-      "modificationTimestamp" => "updated",
-      "orderWeight" => "weight",
-      "pathComponent" => "name",
-      "summary" => "description",
-      "title" => "title",
-      "viewCount" => "view_count");
+    if (self::$order_map === false) {
+      self::$order_map = array(
+        "originationTimestamp" => "captured",
+        "creationTimestamp" => "created",
+        "description" => "description",
+        "modificationTimestamp" => "updated",
+        "orderWeight" => "weight",
+        "pathComponent" => "name",
+        "summary" => "description",
+        "title" => "title",
+        "viewCount" => "view_count");
+     $sort_order = (object)array("fields" => array());
+     module::event("get_sort_fields", $sort_order);
+     foreach (self::$order_map as $g2_sort_key => $g3_sort_key) {
+       if (empty($sort_order->fields[$g3_sort_key])) {
+         unset(self::$order_map[$g2_sort_key]);
+       }
+     }
+    }
+
     $direction_map = array(
       ORDER_ASCENDING => "asc",
       ORDER_DESCENDING => "desc");
