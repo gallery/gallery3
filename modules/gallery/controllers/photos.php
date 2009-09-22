@@ -31,7 +31,7 @@ class Photos_Controller extends Items_Controller {
         $photo->parent()->children(3, $position - 2);
     } else {
       $previous_item = null;
-      list ($next_item) = $photo->parent()->children(1, $position);
+      list ($next_item) = $photo->parent()->viewable()->children(1, $position);
     }
 
     $template = new Theme_View("page.html", "photo");
@@ -41,7 +41,7 @@ class Photos_Controller extends Items_Controller {
     $template->set_global("parents", $photo->parents());
     $template->set_global("next_item", $next_item);
     $template->set_global("previous_item", $previous_item);
-    $template->set_global("sibling_count", $photo->parent()->children_count());
+    $template->set_global("sibling_count", $photo->parent()->viewable()->children_count());
     $template->set_global("position", $position);
 
     $template->content = new View("photo.html");
