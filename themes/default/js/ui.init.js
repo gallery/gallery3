@@ -62,9 +62,9 @@ $(document).ready(function() {
     // Vertical align thumbnails/metadata in album grid
     $(".gItem").gallery_valign();
 
-    // Initialize context menus
+    // Initialize thumbnail hover effect
     $(".gItem").hover(
-      function(){
+      function() {
         // Insert invisible placeholder to hold the item's position in the grid
         var placeHolder = $(this).clone();
         $(placeHolder).attr("id", "gPlaceHolder");
@@ -82,12 +82,17 @@ $(document).ready(function() {
         // Set height based on height of descendents
         var title = $(this).find("h2");
         var meta = $(this).find(".gMetadata");
-        var context_label = $(this).find(".gContextMenu li:first");
         var item_ht = $(this).height();
         var title_ht = $(title).gallery_height();
         var meta_ht = $(meta).gallery_height();
-        var context_label_ht = $(context_label).gallery_height();
-        $(this).height(item_ht + title_ht + meta_ht + context_label_ht);
+        var ht = item_ht + title_ht + meta_ht;
+        var context_label = $(this).find(".gContextMenu li:first");
+        var css_id = $(this).attr("id");
+        if ($("#" + css_id + " .gContextMenu li").length) {
+          var context_label_ht = $(context_label).gallery_height();
+          ht = ht + context_label_ht;
+        }
+        $(this).height(ht);
       },
       function() {
         // Reset item height, position, and z-index
@@ -101,8 +106,8 @@ $(document).ready(function() {
         }
         $(this).css("height", sib_height);
         $(this).css("position", "relative");
-        $(this).css("top", null);
-        $(this).css("left", null);
+        $(this).css("top", 0);
+        $(this).css("left", 0);
         $(this).css("z-index", 1);
         // Remove the placeholder and hover class from the item
         $("#gPlaceHolder").remove();
