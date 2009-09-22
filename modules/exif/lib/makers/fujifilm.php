@@ -84,89 +84,89 @@ function formatFujifilmData($type,$tag,$intel,$data) {
 		$data=hexdec($data);
 		
 		if($tag=="1001") { //Sharpness
-			if($data == 1) $data = gettext("Soft");
-			else if($data == 2) $data = gettext("Soft");
-			else if($data == 3) $data = gettext("Normal");
-			else if($data == 4) $data = gettext("Hard");
-			else if($data == 5) $data = gettext("Hard");
-			else $data = gettext("Unknown").": ".$data;
+			if($data == 1) $data = (string) t("Soft");
+			else if($data == 2) $data = (string) t("Soft");
+			else if($data == 3) $data = (string) t("Normal");
+			else if($data == 4) $data = (string) t("Hard");
+			else if($data == 5) $data = (string) t("Hard");
+			else $data = (string) t("Unknown").": ".$data;
 		}
 		if($tag=="1002") { //WhiteBalance
-			if($data == 0) $data = gettext("Auto");
-			else if($data == 256) $data = gettext("Daylight");
-			else if($data == 512) $data = gettext("Cloudy");
-			else if($data == 768) $data = gettext("DaylightColor-fluorescence");
-			else if($data == 769) $data = gettext("DaywhiteColor-fluorescence");
-			else if($data == 770) $data = gettext("White-fluorescence");
-			else if($data == 1024) $data = gettext("Incandescence");
-			else if($data == 3840) $data = gettext("Custom");
-			else $data = gettext("Unknown").": ".$data;
+			if($data == 0) $data = (string) t("Auto");
+			else if($data == 256) $data = (string) t("Daylight");
+			else if($data == 512) $data = (string) t("Cloudy");
+			else if($data == 768) $data = (string) t("DaylightColor-fluorescence");
+			else if($data == 769) $data = (string) t("DaywhiteColor-fluorescence");
+			else if($data == 770) $data = (string) t("White-fluorescence");
+			else if($data == 1024) $data = (string) t("Incandescence");
+			else if($data == 3840) $data = (string) t("Custom");
+			else $data = (string) t("Unknown").": ".$data;
 		}
 		if($tag=="1003") { //Color
-			if($data == 0) $data = gettext("Chroma Saturation Normal(STD)");
-			else if($data == 256) $data = gettext("Chroma Saturation High");
-			else if($data == 512) $data = gettext("Chroma Saturation Low(ORG)");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Chroma Saturation Normal(STD)");
+			else if($data == 256) $data = (string) t("Chroma Saturation High");
+			else if($data == 512) $data = (string) t("Chroma Saturation Low(ORG)");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1004") { //Tone
-			if($data == 0) $data = gettext("Contrast Normal(STD)");
-			else if($data == 256) $data = gettext("Contrast High(HARD)");
-			else if($data == 512) $data = gettext("Contrast Low(ORG)");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Contrast Normal(STD)");
+			else if($data == 256) $data = (string) t("Contrast High(HARD)");
+			else if($data == 512) $data = (string) t("Contrast Low(ORG)");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1010") { //FlashMode
-			if($data == 0) $data = gettext("Auto");
-			else if($data == 1) $data = gettext("On");
-			else if($data == 2) $data = gettext("Off");
-			else if($data == 3) $data = gettext("Red-Eye Reduction");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Auto");
+			else if($data == 1) $data = (string) t("On");
+			else if($data == 2) $data = (string) t("Off");
+			else if($data == 3) $data = (string) t("Red-Eye Reduction");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1020") { //Macro
-			if($data == 0) $data = gettext("Off");
-			else if($data == 1) $data = gettext("On");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Off");
+			else if($data == 1) $data = (string) t("On");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1021") { //FocusMode
-			if($data == 0) $data = gettext("Auto");
-			else if($data == 1) $data = gettext("Manual");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Auto");
+			else if($data == 1) $data = (string) t("Manual");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1030") { //SlowSync
-			if($data == 0) $data = gettext("Off");
-			else if($data == 1) $data = gettext("On");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Off");
+			else if($data == 1) $data = (string) t("On");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1031") { //PictureMode
-			if($data == 0) $data = gettext("Auto");
-			else if($data == 1) $data = gettext("Portrait");
-			else if($data == 2) $data = gettext("Landscape");
-			else if($data == 4) $data = gettext("Sports");
-			else if($data == 5) $data = gettext("Night");
-			else if($data == 6) $data = gettext("Program AE");
-			else if($data == 256) $data = gettext("Aperture Priority AE");
-			else if($data == 512) $data = gettext("Shutter Priority");
-			else if($data == 768) $data = gettext("Manual Exposure");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Auto");
+			else if($data == 1) $data = (string) t("Portrait");
+			else if($data == 2) $data = (string) t("Landscape");
+			else if($data == 4) $data = (string) t("Sports");
+			else if($data == 5) $data = (string) t("Night");
+			else if($data == 6) $data = (string) t("Program AE");
+			else if($data == 256) $data = (string) t("Aperture Priority AE");
+			else if($data == 512) $data = (string) t("Shutter Priority");
+			else if($data == 768) $data = (string) t("Manual Exposure");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1100") { //ContinuousTakingBracket
-			if($data == 0) $data = gettext("Off");
-			else if($data == 1) $data = gettext("On");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Off");
+			else if($data == 1) $data = (string) t("On");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1300") { //BlurWarning
-			if($data == 0) $data = gettext("No Warning");
-			else if($data == 1) $data = gettext("Warning");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("No Warning");
+			else if($data == 1) $data = (string) t("Warning");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1301") { //FocusWarning
-			if($data == 0) $data = gettext("Auto Focus Good");
-			else if($data == 1) $data = gettext("Out of Focus");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("Auto Focus Good");
+			else if($data == 1) $data = (string) t("Out of Focus");
+			else $data = (string) t("Unknown: ").$data;
 		}
 		if($tag=="1302") { //AEWarning
-			if($data == 0) $data = gettext("AE Good");
-			else if($data == 1) $data = gettext("Over Exposure");
-			else $data = gettext("Unknown: ").$data;
+			if($data == 0) $data = (string) t("AE Good");
+			else if($data == 1) $data = (string) t("Over Exposure");
+			else $data = (string) t("Unknown: ").$data;
 		}
 	} else if($type=="UNDEFINED") {
 		
