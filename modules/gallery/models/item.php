@@ -420,8 +420,15 @@ class Item_Model extends ORM_MPTT {
     }
     $db = Database::instance();
 
-    // We can't use isset() in this comparison because ORM::__get() confuses it.
-    if ($child->{$this->sort_column} !== null) {
+    // If the comparison column has NULLs in it, we can't use comparators on it and will have to
+    // deal with it the hard way.
+    $count = $db->from("items")
+      ->where("parent_id", $this->id)
+      ->where($this->sort_column, NULL)
+      ->count_records();
+
+    if (empty($count)) {
+      // There are no NULLs in the sort column, so we can just use it directly.
       $position = $db->query("
         SELECT COUNT(*) AS position FROM {items}
         WHERE `parent_id` = {$this->id}
@@ -443,21 +450,36 @@ class Item_Model extends ORM_MPTT {
           AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
                                         FROM {items} WHERE `id` = $child->id)
         ORDER BY `id` ASC");
+      foreach ($result as $row) {
+        $position++;
+        if ($row->id == $child->id) {
+          break;
+        }
+      }
     } else {
-      // If the sort value is null, then we can't take the approach of doing a comparison to get
-      // most of the way there.  We have to iterate the entire data set.
-      $position = 0;
-      $result = $db->query("
-        SELECT id FROM {items}
-        WHERE `parent_id` = {$this->id}
-          AND `{$this->sort_column}` IS NULL
-        ORDER BY `id` ASC");
-    }
+      // There are NULLs in the sort column, so we can't use MySQL comparators.  Fall back to
+      // iterating over every child row to get to the current one.  This can be wildly inefficient
+      // for really large albums, but it should be a rare case that the user is sorting an album
+      // with null values in the sort column.
+      //
+      // Reproduce the children() functionality here using Database directly to avoid loading the
+      // whole ORM for each row.
+      $orderby = array($this->sort_column => $this->sort_order);
+      // Use id as a tie breaker
+      if ($this->sort_column != "id") {
+        $orderby["id"] = "ASC";
+      }
 
-    foreach ($result as $row) {
-      $position++;
-      if ($row->id == $child->id) {
-        break;
+      $position = 0;
+      foreach ($db->select("id")
+               ->from("items")
+               ->where("parent_id", $this->id)
+               ->orderby($orderby)
+               ->get() as $row) {
+        $position++;
+        if ($row->id == $child->id) {
+          break;
+        }
       }
     }
 
@@ -564,6 +586,10 @@ class Item_Model extends ORM_MPTT {
   function children($limit=null, $offset=0, $where=array(), $orderby=null) {
     if (empty($orderby)) {
       $orderby = array($this->sort_column => $this->sort_order);
+      // Use id as a tie breaker
+      if ($this->sort_column != "id") {
+        $orderby["id"] = "ASC";
+      }
     }
     return parent::children($limit, $offset, $where, $orderby);
   }
@@ -582,6 +608,10 @@ class Item_Model extends ORM_MPTT {
   function descendants($limit=null, $offset=0, $where=array(), $orderby=null) {
     if (empty($orderby)) {
       $orderby = array($this->sort_column => $this->sort_order);
+      // Use id as a tie breaker
+      if ($this->sort_column != "id") {
+        $orderby["id"] = "ASC";
+      }
     }
     return parent::descendants($limit, $offset, $where, $orderby);
   }
