@@ -91,12 +91,19 @@ $(document).ready(function() {
       },
       function() {
         // Reset item height, position, and z-index
-        var sib_height = $(this).next().height();
+        if ($(this).next().height()) {
+          var sib_height = $(this).next().height();
+        } else {
+          var sib_height = $(this).prev().height();
+        }
+        if ($.browser.msie && $.browser.version >= 8) {
+          sib_height = sib_height + 1;
+        }
         $(this).css("height", sib_height);
         $(this).css("position", "relative");
         $(this).css("top", null);
         $(this).css("left", null);
-        $(this).css("z-index", null);
+        $(this).css("z-index", 1);
         // Remove the placeholder and hover class from the item
         $("#gPlaceHolder").remove();
         $(this).removeClass("gHoverItem");
