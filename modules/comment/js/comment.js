@@ -10,6 +10,18 @@ $("document").ready(function() {
 	    });
     }
   });
+  $("#gNoComments").click(function(event) {
+    event.preventDefault();
+    if (!$("#gAddCommentForm").length) {
+      $.get($(this).attr("href"),
+	    {},
+	    function(data) {
+	      $("#gCommentDetail").append(data);
+	      ajaxify_comment_form();
+	    });
+      $("#gNoCommentsYet").remove();
+    }
+  });
 });
 
 function ajaxify_comment_form() {

@@ -8,7 +8,7 @@
 <? if (!$comments->count()): ?>
 <p id="gNoCommentsYet">
   <?= t("No comments yet. Be the first to <a %attrs>comment</a>!",
-        array("attrs" => html::mark_clean("href=\"#add_comment_form\" class=\"showCommentForm\""))) ?>
+        array("attrs" => html::mark_clean("id= \"gNoComments\" href=\"" . url::site("form/add/comments/{$item->id}") . "\" class=\"showCommentForm\""))) ?>
 </p>
 <? endif ?>
 <ul>
