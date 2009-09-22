@@ -98,6 +98,6 @@
    </a>
 </div>
 
-<h3>Sharing your translations</h3>
+<h3><?= t("Sharing your translations") ?></h3>
   <?= $share_translations_form ?>
 </div>

@@ -28,6 +28,7 @@ class search_installer {
                  PRIMARY KEY (`id`),
                  KEY(`item_id`),
                  FULLTEXT INDEX (`data`))
+               ENGINE=MyISAM
                DEFAULT CHARSET=utf8;");
     module::set_version("search", 1);
   }

@@ -150,4 +150,14 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_same("ORIGINAL_VALUE", $item->original()->title);
     $this->assert_same("NEW_VALUE", $item->title);
   }
+
+  public function urls_are_rawurlencoded_test() {
+    $item = self::_create_random_item();
+    $item->slug = "foo bar";
+    $item->name = "foo bar.jpg";
+    $item->save();
+
+    $this->assert_equal("foo%20bar", $item->relative_url());
+    $this->assert_equal("foo%20bar.jpg", $item->relative_path());
+  }
 }

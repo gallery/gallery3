@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_Core {
-  const VERSION = "3.0 git (pre-beta3)";
+  const VERSION = "3.0 git (pre-RC1)";
 
   /**
    * If Gallery is in maintenance mode, then force all non-admins to get routed to a "This site is
@@ -95,15 +95,22 @@ class gallery_Core {
         $menu->append($add_menu = Menu::factory("submenu")
                       ->id("add_menu")
                       ->label(t("Add")));
-        $add_menu->append(Menu::factory("dialog")
-                          ->id("add_photos_item")
-                          ->label(t("Add photos"))
-                          ->url(url::site("simple_uploader/app/$item->id")));
-        if ($item->is_album()) {
+        $is_album_writable =
+          is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path());
+        if ($is_album_writable) {
           $add_menu->append(Menu::factory("dialog")
-                            ->id("add_album_item")
-                            ->label(t("Add an album"))
-                            ->url(url::site("form/add/albums/$item->id?type=album")));
+                            ->id("add_photos_item")
+                            ->label(t("Add photos"))
+                            ->url(url::site("simple_uploader/app/$item->id")));
+          if ($item->is_album()) {
+            $add_menu->append(Menu::factory("dialog")
+                              ->id("add_album_item")
+                              ->label(t("Add an album"))
+                              ->url(url::site("form/add/albums/$item->id?type=album")));
+          }
+        } else {
+          message::warning(t("The album '%album_name' is not writable.",
+                             array("album_name" => $item->title)));
         }
       }
 

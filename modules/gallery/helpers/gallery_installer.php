@@ -203,6 +203,12 @@ class gallery_installer {
     access::register_permission("edit", "Edit");
     access::register_permission("add", "Add");
 
+    // Mark for translation (must be the same strings as used above)
+    t("View Full Size");
+    t("View");
+    t("Edit");
+    t("Add");
+
     $root = ORM::factory("item");
     $root->type = "album";
     $root->title = "Gallery";

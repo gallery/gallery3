@@ -278,7 +278,7 @@ CREATE TABLE {search_records} (
   PRIMARY KEY  (`id`),
   KEY `item_id` (`item_id`),
   FULLTEXT KEY `data` (`data`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {search_records} VALUES (1,1,0,'  Gallery');
 DROP TABLE IF EXISTS {sessions};

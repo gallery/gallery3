@@ -95,7 +95,12 @@
         <ul class="gBreadcrumbs">
           <? foreach ($parents as $parent): ?>
           <li>
-            <a href="<?= $parent->url("show={$theme->item()->id}") ?>">
+            <!-- Adding ?show=<id> causes Gallery3 to display the page
+                 containing that photo.  For now, we just do it for
+                 the immediate parent so that when you go back up a
+                 level you're on the right page. -->
+            <a href="<?= $parent->url($parent == $theme->item()->parent() ?
+                     "show={$theme->item()->id}" : null) ?>">
               <?= html::purify($parent->title) ?>
             </a>
           </li>

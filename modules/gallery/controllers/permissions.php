@@ -81,7 +81,7 @@ class Permissions_Controller extends Controller {
     }
   }
 
-  function _get_form($item) {
+  private function _get_form($item) {
     $view = new View("permissions_form.html");
     $view->item = $item;
     $view->groups = ORM::factory("group")->find_all();

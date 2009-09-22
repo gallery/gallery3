@@ -33,24 +33,21 @@
             disabled="disabled">
       <?= t("Add") ?>
     </button>
+    <button id="gServerAddPauseButton" class="ui-state-default ui-corner-all" style="display:none">
+      <?= t("Pause") ?>
+    </button>
+    <button id="gServerAddContinueButton" class="ui-state-default ui-corner-all" style="display:none">
+      <?= t("Continue") ?>
+    </button>
 
-    <button id="gServerCloseButton" class="ui-state-default ui-corner-all">
+    <button id="gServerAddCloseButton" class="ui-state-default ui-corner-all">
       <?= t("Close") ?>
     </button>
   </span>
 
   <script type="text/javascript">
-    $("#gServerAddAddButton").ready(function() {
-      $("#gServerAddAddButton").click(function(event) {
-         event.preventDefault();
-         $("#gServerAdd .gProgressBar").
-           progressbar().
-           progressbar("value", 0);
-         $("#gServerAddProgress").slideDown("fast", function() { start_add() });
-      });
-      $("#gServerCloseButton").click(function(event) {
-        $("#gDialog").dialog("close");
-      });
+    $("#gServerAdd").ready(function() {
+      $("#gServerAdd").gallery_server_add();
     });
   </script>
 

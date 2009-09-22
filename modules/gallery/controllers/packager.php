@@ -114,18 +114,24 @@ class Packager_Controller extends Controller {
     $root = ORM::factory("item", 1);
     $root_created_timestamp = $root->created;
     $root_updated_timestamp = $root->updated;
+    $table_name = "";
     foreach (file($sql_file) as $line) {
       // Prefix tables
       $line = preg_replace(
         "/(CREATE TABLE|IF EXISTS|INSERT INTO) `{$dbconfig['table_prefix']}(\w+)`/", "\\1 {\\2}",
         $line);
 
+      if (preg_match("/CREATE TABLE {(\w+)}/", $line, $matches)) {
+        $table_name = $matches[1];
+      }
       // Normalize dates
       $line = preg_replace("/,$root_created_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
       $line = preg_replace("/,$root_updated_timestamp,/", ",UNIX_TIMESTAMP(),", $line);
 
-      // Remove ENGINE= specifications
-      $line = preg_replace("/ENGINE=\S+ /", "", $line);
+      // Remove ENGINE= specifications execpt for search records, it always needs to be MyISAM
+      if ($table_name != "search_records") {
+        $line = preg_replace("/ENGINE=\S+ /", "", $line);
+      }
 
       $buf .= $line;
     }

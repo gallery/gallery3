@@ -34,15 +34,17 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $form = $this->_get_admin_form();
     $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));
     if ($form->validate()) {
-      if (is_readable($form->add_path->path->value)) {
+      if (is_link($form->add_path->path->value)) {
+        $form->add_path->path->add_error("is_symlink", 1);
+      } else if (!is_readable($form->add_path->path->value)) {
+        $form->add_path->path->add_error("not_readable", 1);
+      } else {
         $path = $form->add_path->path->value;
         $paths[$path] = 1;
         module::set_var("server_add", "authorized_paths", serialize($paths));
         message::success(t("Added path %path", array("path" => $path)));
         server_add::check_config($paths);
         url::redirect("admin/server_add");
-      } else {
-        $form->add_path->path->add_error("not_readable", 1);
       }
     }
 
@@ -71,7 +73,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
     $directories = array();
     $path_prefix = $this->input->get("q");
     foreach (glob("{$path_prefix}*") as $file) {
-      if (is_dir($file)) {
+      if (is_dir($file) && !is_link($file)) {
         $directories[] = $file;
       }
     }
@@ -84,7 +86,8 @@ class Admin_Server_Add_Controller extends Admin_Controller {
                       array("id" => "gServerAddAdminForm"));
     $add_path = $form->group("add_path");
     $add_path->input("path")->label(t("Path"))->rules("required")
-      ->error_messages("not_readable", t("This directory is not readable by the webserver"));
+      ->error_messages("not_readable", t("This directory is not readable by the webserver"))
+      ->error_messages("is_symlink", t("Symbolic links are not allowed"));
     $add_path->submit("add")->value(t("Add Path"));
 
     return $form;
