@@ -17,14 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class exif_event_Core {
-  static function item_created($item) {
-    if (!$item->is_album()) {
-      exif::extract($item);
+class gallery_error_Core {
+  function error_handler($severity, $message, $filename, $lineno) {
+    if (error_reporting() == 0) {
+      return;
     }
-  }
 
-  static function item_deleted($item) {
-    Database::instance()->delete("exif_records", array("item_id" => $item->id));
+    if (error_reporting() & $severity) {
+      $e = new ErrorException($message, 0, $severity, $filename, $lineno);
+      log::error("error", $e->getMessage());
+      Kohana::log("error", $e->__toString());
+    }
   }
 }
