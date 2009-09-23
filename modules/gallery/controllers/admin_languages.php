@@ -89,7 +89,7 @@ class Admin_Languages_Controller extends Admin_Controller {
         } else if (!$old_key && $new_key) {
           message::success(t("Your API key has been saved."));
         } else if ($old_key && $new_key && $old_key == $new_key) {
-          message::info(t("Your API key was not changed as it was identical to the current key."));
+          message::info(t("Your API key was not changed."));
         }
 
         log::success(t("gallery"), t("l10n_client API key changed."));
