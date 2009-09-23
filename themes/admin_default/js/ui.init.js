@@ -20,7 +20,7 @@ $(document).ready(function(){
   $(".gDialogLink").gallery_dialog();
 
   // Initialize ajax links
-  $(".gDialogLink").gallery_ajax();
+  $(".gAjaxLink").gallery_ajax();
 
   // Initialize panels
   $(".gPanelLink").gallery_panel();
