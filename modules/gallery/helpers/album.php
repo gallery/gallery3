@@ -124,7 +124,7 @@ class album_Core {
       $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
         ->rules("required")
         ->error_messages(
-          "name_conflict", t("There is already amovie, photo or album with this name"))
+          "name_conflict", t("There is already a movie, photo or album with this name"))
         ->callback("item::validate_no_slashes")
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->callback("item::validate_no_trailing_period")
