@@ -12,17 +12,16 @@
  * 1) Text
  **********************************************************************/
 
-
 .g-txt-small {
-	font-size: .8em;
+  font-size: .8em;
 }
 
 .g-txt-big {
-	font-size: 1.2em;
+  font-size: 1.2em;
 }
 
 .g-txt-right {
-	text-align: right;
+  text-align: right;
 }
 
 /** *******************************************************************
@@ -99,7 +98,7 @@ form .g-error {
 
 .g-draggable,
 .ui-draggable {
-	cursor: move;
+  cursor: move;
 }
 
 .g-target {
@@ -110,11 +109,11 @@ form .g-error {
  **********************************************************************/
 
 .g-right {
-	float: right;
+  float: right;
 }
 
 .g-left {
-	float: left;
+  float: left;
 }
 
 .g-first {
