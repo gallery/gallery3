@@ -2,8 +2,8 @@
 <script type="text/javascript">
   dismiss = function() {
     window.location.reload();
-  }
-  download = function(){
+  };
+  download = function() {
     // send request
     $('<form action="<?= url::site("admin/maintenance/save_log/$task->id?csrf=$csrf") ?>" method="post"></form>').
 appendTo('body').submit().remove();
