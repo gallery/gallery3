@@ -364,6 +364,17 @@ class gallery_installer {
       $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
       module::set_version("gallery", $version = 12);
     }
+
+    if ($version == 12) {
+      if (module::get_var("gallery", "active_site_theme") == "default") {
+        module::set_var("gallery", "active_site_theme", "wind");
+      }
+      if (module::get_var("gallery", "active_admin_theme") == "admin_default") {
+        module::set_var("gallery", "active_admin_theme", "admin_wind");
+      }
+      module::set_version("gallery", $version = 13);
+    }
+
   }
 
   static function uninstall() {
