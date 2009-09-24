@@ -224,8 +224,8 @@ class gallery_installer {
     $root->save();
     access::add_item($root);
 
-    module::set_var("gallery", "active_site_theme", "default");
-    module::set_var("gallery", "active_admin_theme", "admin_default");
+    module::set_var("gallery", "active_site_theme", "wind");
+    module::set_var("gallery", "active_admin_theme", "admin_wind");
     module::set_var("gallery", "page_size", 9);
     module::set_var("gallery", "thumb_size", 200);
     module::set_var("gallery", "resize_size", 640);
