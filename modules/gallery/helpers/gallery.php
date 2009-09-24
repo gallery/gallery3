@@ -79,6 +79,20 @@ class gallery_Core {
     return date(module::get_var("gallery", "time_format", "H:i:s"), $timestamp);
   }
 
+  /**
+   * Provide a wrapper function for Kohana::find_file, that first strips the extension and
+   * then calls the Kohana::find_file supply that extension
+   * @param   string   directory to search in
+   * @param   string   filename to look for (without extension)
+   * @param   boolean  file required
+   * @return  the file relative to the DOCROOT
+   */
+  static function find_file($directory, $file, $required=false) {
+    $file_name = substr($file, 0, -strlen($ext = strrchr($file, '.')));
+    $file_name = Kohana::find_file($directory, $file_name, $required, substr($ext, 1));
+    return substr($file_name, strlen(DOCROOT));
+  }
+
   static function site_menu($menu, $theme) {
     if ($theme->page_type != "login") {
       $menu->append(Menu::factory("link")
