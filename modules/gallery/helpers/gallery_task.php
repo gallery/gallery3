@@ -48,9 +48,13 @@ class gallery_task_Core {
     $errors = array();
     try {
       $result = graphics::find_dirty_images_query();
+      $total_count = $task->get("total_count", -1);
+      if ($total_count < 0) {
+        $total_count = $result->count();
+        $task->set("total_count", $total_count);
+      }
       $completed = $task->get("completed", 0);
       $ignored = $task->get("ignored", array());
-      $remaining = $result->count() - count($ignored);
 
       $i = 0;
       foreach ($result as $row) {
@@ -62,18 +66,17 @@ class gallery_task_Core {
         if ($item->loaded) {
           try {
             graphics::generate($item);
-            $ignored[$item->id] = 1;
+            $completed++;
+
             $errors[] = t("Successfully rebuilt images for '%title'",
                           array("title" => html::purify($item->title)));
           } catch (Exception $e) {
             $errors[] = t("Unable to rebuild images for '%title'",
                           array("title" => html::purify($item->title)));
             $errors[] = $e->__toString();
+            $ignored[$item->id] = 1;
           }
         }
-
-        $completed++;
-        $remaining--;
 
         if (++$i == 2) {
           break;
@@ -83,17 +86,17 @@ class gallery_task_Core {
       $task->status = t2("Updated: 1 image. Total: %total_count.",
                          "Updated: %count images. Total: %total_count.",
                          $completed,
-                         array("total_count" => ($remaining + $completed)));
+                         array("total_count" => $total_count));
 
-      if ($completed + $remaining > 0) {
-        $task->percent_complete = (int)(100 * $completed / ($completed + $remaining));
+      if ($completed < $total_count) {
+        $task->percent_complete = (int)(100 * ($completed + count($ignored)) / $total_count);
       } else {
         $task->percent_complete = 100;
       }
 
       $task->set("completed", $completed);
       $task->set("ignored", $ignored);
-      if ($remaining == 0) {
+      if ($task->percent_complete == 100) {
         $task->done = true;
         $task->state = "success";
         site_status::clear("graphics_dirty");
