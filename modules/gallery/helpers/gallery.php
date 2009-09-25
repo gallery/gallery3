@@ -79,6 +79,20 @@ class gallery_Core {
     return date(module::get_var("gallery", "time_format", "H:i:s"), $timestamp);
   }
 
+  /**
+   * Provide a wrapper function for Kohana::find_file, that first strips the extension and
+   * then calls the Kohana::find_file supply that extension
+   * @param   string   directory to search in
+   * @param   string   filename to look for (without extension)
+   * @param   boolean  file required
+   * @return  the file relative to the DOCROOT
+   */
+  static function find_file($directory, $file, $required=false) {
+    $file_name = substr($file, 0, -strlen($ext = strrchr($file, '.')));
+    $file_name = Kohana::find_file($directory, $file_name, $required, substr($ext, 1));
+    return substr($file_name, strlen(DOCROOT));
+  }
+
   static function site_menu($menu, $theme) {
     if ($theme->page_type != "login") {
       $menu->append(Menu::factory("link")
@@ -114,19 +128,32 @@ class gallery_Core {
         }
       }
 
+      switch ($item->type) {
+      case "album":
+        $option_text = t("Album options");
+        $edit_text = t("Edit album");
+        break;
+      case "movie":
+        $option_text = t("Movie options");
+        $edit_text = t("Edit movie");
+        break;
+      default:
+        $option_text = t("Photo options");
+        $edit_text = t("Edit photo");
+      }
+
       $menu->append($options_menu = Menu::factory("submenu")
                     ->id("options_menu")
-                    ->label(t("Photo options")));
+                    ->label($option_text));
       if ($item && ($can_edit || $can_add)) {
         if ($can_edit) {
           $options_menu->append(Menu::factory("dialog")
                                 ->id("edit_item")
-                                ->label($item->is_album() ? t("Edit album") : t("Edit photo"))
+                                ->label($edit_text)
                                 ->url(url::site("form/edit/{$item->type}s/$item->id")));
         }
 
         if ($item->is_album()) {
-          $options_menu->label(t("Album options"));
           if ($can_edit) {
             $options_menu->append(Menu::factory("dialog")
                                   ->id("edit_permissions")
