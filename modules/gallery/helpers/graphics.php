@@ -152,7 +152,7 @@ class graphics_Core {
                  ->orderby("priority", "asc")
                  ->find_all() as $rule) {
           $args = array($working_file, $output_file, unserialize($rule->args));
-          call_user_func_array(array("graphics", $rule->operation), $args);
+          call_user_func_array(array("{$rule->module_name}_graphics", $rule->operation), $args);
           $working_file = $output_file;
         }
       }
@@ -181,42 +181,6 @@ class graphics_Core {
   }
 
   /**
-   * Resize an image.  Valid options are width, height and master.  Master is one of the Image
-   * master dimension constants.
-   *
-   * @param string     $input_file
-   * @param string     $output_file
-   * @param array      $options
-   */
-  static function resize($input_file, $output_file, $options) {
-    if (!self::$init) {
-      self::init_toolkit();
-    }
-
-    module::event("graphics_resize", $input_file, $output_file, $options);
-
-    if (@filesize($input_file) == 0) {
-      throw new Exception("@todo EMPTY_INPUT_FILE");
-    }
-
-    $dims = getimagesize($input_file);
-    if (max($dims[0], $dims[1]) < min($options["width"], $options["height"])) {
-      // Image would get upscaled; do nothing
-      copy($input_file, $output_file);
-    } else {
-      $image = Image::factory($input_file)
-        ->resize($options["width"], $options["height"], $options["master"])
-        ->quality(module::get_var("gallery", "image_quality"));
-      if (graphics::can("sharpen")) {
-        $image->sharpen(module::get_var("gallery", "image_sharpen"));
-      }
-      $image->save($output_file);
-    }
-
-    module::event("graphics_resize_completed", $input_file, $output_file, $options);
-  }
-
-  /**
    * Rotate an image.  Valid options are degrees
    *
    * @param string     $input_file
@@ -236,60 +200,6 @@ class graphics_Core {
       ->save($output_file);
 
     module::event("graphics_rotate_completed", $input_file, $output_file, $options);
-  }
-
-  /**
-   * Overlay an image on top of the input file.
-   *
-   * Valid options are: file, mime_type, position, transparency_percent, padding
-   *
-   * Valid positions: northwest, north, northeast,
-   *                  west, center, east,
-   *                  southwest, south, southeast
-   *
-   * padding is in pixels
-   *
-   * @param string     $input_file
-   * @param string     $output_file
-   * @param array      $options
-   */
-  static function composite($input_file, $output_file, $options) {
-    if (!self::$init) {
-      self::init_toolkit();
-    }
-
-    module::event("graphics_composite", $input_file, $output_file, $options);
-
-    list ($width, $height) = getimagesize($input_file);
-    list ($w_width, $w_height) = getimagesize($options["file"]);
-
-    $pad = isset($options["padding"]) ? $options["padding"] : 10;
-    $top = $pad;
-    $left = $pad;
-    $y_center = max($height / 2 - $w_height / 2, $pad);
-    $x_center = max($width / 2 - $w_width / 2, $pad);
-    $bottom = max($height - $w_height - $pad, $pad);
-    $right = max($width - $w_width - $pad, $pad);
-
-    switch ($options["position"]) {
-    case "northwest": $x = $left;     $y = $top;       break;
-    case "north":     $x = $x_center; $y = $top;       break;
-    case "northeast": $x = $right;    $y = $top;       break;
-    case "west":      $x = $left;     $y = $y_center;  break;
-    case "center":    $x = $x_center; $y = $y_center;  break;
-    case "east":      $x = $right;    $y = $y_center;  break;
-    case "southwest": $x = $left;     $y = $bottom;    break;
-    case "south":     $x = $x_center; $y = $bottom;    break;
-    case "southeast": $x = $right;    $y = $bottom;    break;
-    }
-
-    Image::factory($input_file)
-      ->composite($options["file"], $x, $y, $options["transparency"])
-      ->quality(module::get_var("gallery", "image_quality"))
-      ->save($output_file);
-
-
-    module::event("graphics_composite_completed", $input_file, $output_file, $options);
   }
 
   /**
@@ -463,6 +373,9 @@ class graphics_Core {
    * Choose which driver the Kohana Image library uses.
    */
   static function init_toolkit() {
+    if (self::$init) {
+      return;
+    }
     switch(module::get_var("gallery", "graphics_toolkit")) {
     case "gd":
       Kohana::config_set("image.driver", "GD");

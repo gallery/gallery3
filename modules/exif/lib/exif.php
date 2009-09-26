@@ -158,10 +158,15 @@ function intel2Moto($intel) {
 		return $cache[$intel];
 	}
 
-	$len  = strlen($intel);
 	$cache[$intel] = '';
-	for($i = 0; $i <= $len; $i += 2) {
-		$cache[$intel] .= substr($intel, $len-$i, 2);
+	$len  = strlen($intel);
+	if ($len > 1000) {
+		debugLogBacktrace('intel2Moto called with unreasonable data string: length='.$len);	
+		trigger_error(sprintf((string) t('intel2Moto called with unreasonable data string: length=%s. See debug log for details. (Setting DEBUG_EXIF to true might help locate problem images.)'),$len));
+	} else {
+		for($i = 0; $i <= $len; $i += 2) {		
+			$cache[$intel] .= substr($intel, $len-$i, 2);
+		}
 	}
 	return $cache[$intel];
 }
@@ -1057,6 +1062,12 @@ function get35mmEquivFocalLength(&$result) {
 		return $equivfl;
 	}
 	return null;
+}
+
+if (!function_exists('debugLogBacktrace')) {
+	// define this function for stand-alone uses if exifier
+	function debugLogBacktrace($msg) {
+	}
 }
 
 ?>

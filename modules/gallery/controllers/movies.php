@@ -60,7 +60,7 @@ class Movies_Controller extends Items_Controller {
     access::required("view", $movie);
     access::required("edit", $movie);
 
-    $form = photo::get_edit_form($movie);
+    $form = movie::get_edit_form($movie);
     if ($valid = $form->validate()) {
       if ($form->edit_item->filename->value != $movie->name ||
           $form->edit_item->slug->value != $movie->slug) {
@@ -114,6 +114,6 @@ class Movies_Controller extends Items_Controller {
   public function _form_edit($movie) {
     access::required("view", $movie);
     access::required("edit", $movie);
-    print photo::get_edit_form($movie);
+    print movie::get_edit_form($movie);
   }
 }

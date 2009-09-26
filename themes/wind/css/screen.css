@@ -285,7 +285,7 @@ li.gError select {
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#gMessage {
+#gContent #gMessage {
   width: 100%;
 }
 

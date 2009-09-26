@@ -123,14 +123,15 @@ class album_Core {
     if ($parent->id != 1) {
       $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
         ->rules("required")
-        ->error_messages("name_conflict", t("There is already a photo or album with this name"))
+        ->error_messages(
+          "name_conflict", t("There is already a movie, photo or album with this name"))
         ->callback("item::validate_no_slashes")
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->callback("item::validate_no_trailing_period")
         ->error_messages("no_trailing_period", t("The directory name can't end in \".\""));
       $group->input("slug")->label(t("Internet Address"))->value($parent->slug)
         ->error_messages(
-          "slug_conflict", t("There is already a photo or album with this internet address"))
+          "slug_conflict", t("There is already a movie, photo or album with this internet address"))
         ->callback("item::validate_url_safe")
         ->error_messages(
           "not_url_safe",

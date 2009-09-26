@@ -224,8 +224,8 @@ class gallery_installer {
     $root->save();
     access::add_item($root);
 
-    module::set_var("gallery", "active_site_theme", "default");
-    module::set_var("gallery", "active_admin_theme", "admin_default");
+    module::set_var("gallery", "active_site_theme", "wind");
+    module::set_var("gallery", "active_admin_theme", "admin_wind");
     module::set_var("gallery", "page_size", 9);
     module::set_var("gallery", "thumb_size", 200);
     module::set_var("gallery", "resize_size", 640);
@@ -268,7 +268,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 12);
+    module::set_version("gallery", 13);
   }
 
   static function upgrade($version) {
@@ -364,6 +364,17 @@ class gallery_installer {
       $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
       module::set_version("gallery", $version = 12);
     }
+
+    if ($version == 12) {
+      if (module::get_var("gallery", "active_site_theme") == "default") {
+        module::set_var("gallery", "active_site_theme", "wind");
+      }
+      if (module::get_var("gallery", "active_admin_theme") == "admin_default") {
+        module::set_var("gallery", "active_admin_theme", "admin_wind");
+      }
+      module::set_version("gallery", $version = 13);
+    }
+
   }
 
   static function uninstall() {

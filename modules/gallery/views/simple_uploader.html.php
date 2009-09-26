@@ -99,7 +99,7 @@
     debug: false,
 
     // Button settings
-    button_image_url: <?= html::js_string(url::file("themes/default/images/select-photos-backg.png")) ?>,
+      button_image_url: <?= html::js_string(url::file(gallery::find_file("images", "select-photos-backg.png"))) ?>,
     button_width: "202",
     button_height: "45",
     button_placeholder_id: "gChooseFilesButtonPlaceholder",

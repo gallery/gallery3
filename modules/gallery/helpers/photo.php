@@ -163,7 +163,8 @@ class photo_Core {
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("filename")->label(t("Filename"))->value($photo->name)
-      ->error_messages("name_conflict", t("There is already a photo or album with this name"))
+      ->error_messages(
+        "name_conflict", t("There is already a movie, photo or album with this name"))
       ->callback("item::validate_no_slashes")
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
       ->callback("item::validate_no_trailing_period")
@@ -171,7 +172,7 @@ class photo_Core {
     $group->input("slug")->label(t("Internet Address"))->value($photo->slug)
       ->callback("item::validate_url_safe")
       ->error_messages(
-        "slug_conflict", t("There is already a photo or album with this internet address"))
+        "slug_conflict", t("There is already a movie, photo or album with this internet address"))
       ->error_messages(
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"));

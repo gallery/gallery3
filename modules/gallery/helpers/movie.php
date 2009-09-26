@@ -128,6 +128,36 @@ class movie_Core {
     return $movie;
   }
 
+  static function get_edit_form($movie) {
+    $form = new Forge("movies/$movie->id", "", "post", array("id" => "gEditMovieForm"));
+    $form->hidden("_method")->value("put");
+    $group = $form->group("edit_item")->label(t("Edit Movie"));
+    $group->input("title")->label(t("Title"))->value($movie->title);
+    $group->textarea("description")->label(t("Description"))->value($movie->description);
+    $group->input("filename")->label(t("Filename"))->value($movie->name)
+      ->error_messages(
+        "name_conflict", t("There is already a movie, photo or album with this name"))
+      ->callback("item::validate_no_slashes")
+      ->error_messages("no_slashes", t("The movie name can't contain a \"/\""))
+      ->callback("item::validate_no_trailing_period")
+      ->error_messages("no_trailing_period", t("The movie name can't end in \".\""));
+    $group->input("slug")->label(t("Internet Address"))->value($movie->slug)
+      ->callback("item::validate_url_safe")
+      ->error_messages(
+        "slug_conflict", t("There is already a movie, photo or album with this internet address"))
+      ->error_messages(
+        "not_url_safe",
+        t("The internet address should contain only letters, numbers, hyphens and underscores"));
+
+    module::event("item_edit_form", $movie, $form);
+
+    $group = $form->group("buttons")->label("");
+    $group->submit("")->value(t("Modify"));
+    $form->add_rules_from(ORM::factory("item"));
+    return $form;
+  }
+
+
   static function getmoviesize($filename) {
     $ffmpeg = self::find_ffmpeg();
     if (empty($ffmpeg)) {
