@@ -1021,15 +1021,37 @@ form .gError,
   display: inline-block;
 }
 
-#gAddPhotos span {
+#gAddPhotos #SWFUpload_0 {
+  position: relative;
+  top: -200px;
+  left: 134px;
+}
+#gAddPhotos .gBreadcrumbs {
+  border: 0;
+  margin: 0;
+  padding-left:10px;
+}
+#gAddPhotosCanvas {
+  border: 1px solid  #CCCCCC;
+  margin: .5em 0 .5em 0;
+  width: 469px;
+	height: 325px;
+  overflow: auto;
+}
+#gAddPhotos button {
+  margin-bottom: .5em;
+  float: right;
+}
+#g-uploadqueue-infobar {
   clear: both;
-  display: block;
+}
+#g-uploadqueue-infobar #g-cancelupload {
+  display: none;
+  cursor: pointer;
 }
 
 #gAddPhotosCanvas {
-  height: 325px;
-  width: 450px;
-  overflow: auto;
+
 }
 
 #gAddPhotosQueue .progressbar {
