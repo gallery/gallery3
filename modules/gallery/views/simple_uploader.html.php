@@ -31,56 +31,22 @@
     <li class="active"> <?= html::purify($item->title) ?> </li>
   </ul>
 
-  <p>
-    <span id="gUploadQueueInfo">
-      <?= t("Upload Queue") ?>
-    </span>
-    <a id="gUploadCancel" title="<?= t("Cancel all the pending uploads")->for_html_attr() ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
-  </p>
+  <div id="g-uploadqueue-infobar">
+  	<?= t("Upload Queue") ?>
+    <span id="g-uploadstatus"></span>
+    <a id="g-cancelupload" title="<?= t("Cancel all the pending uploads")->for_html_attr() ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
+  </div>
   <div id="gAddPhotosCanvas" style="text-align: center;">
     <div id="gAddPhotosQueue"></div>
     <div id="gEditPhotosQueue"></div>
   </div>
 	<span id="gChooseFilesButtonPlaceholder"></span>
-  <!--
-  <button id="gUploadCancel" class="ui-state-default ui-corner-all" type="button"
-          onclick="swfu.cancelQueue();"
-          disabled="disabled">
-    <?= t("Cancel all") ?>
-  </button>
-  -->
 
   <!-- Proxy the done request back to our form, since its been ajaxified -->
   <button class="ui-state-default ui-corner-all" onclick="$('#gAddPhotosForm').submit()">
     <?= t("Done") ?>
   </button>
 </div>
-
-<style>
-  #SWFUpload_0 {
-    position: relative;
-		top: -200px;
-		left: 134px;
-  }
-  #gAddPhotos .gBreadcrumbs {
-    border: 0;
-    margin: 0;
-    padding-left:10px;
-  }
-  #gAddPhotosCanvas {
-    border: 1px solid  #CCCCCC;
-    margin: .5em 0 .5em 0;
-    width: 469px;
-  }
-  #gAddPhotos button {
-    margin-bottom: .5em;
-    float: right;
-  }
-  #gAddPhotos #gUploadCancel {
-    display: none;
-    cursor: pointer;
-  }
-</style>
 
 <script type="text/javascript">
   var swfu = new SWFUpload({
@@ -99,13 +65,14 @@
     debug: false,
 
     // Button settings
-      button_image_url: <?= html::js_string(url::file(gallery::find_file("images", "select-photos-backg.png"))) ?>,
+    button_image_url: <?= html::js_string(url::file(gallery::find_file("images", "select-photos-backg.png"))) ?>,
     button_width: "202",
     button_height: "45",
     button_placeholder_id: "gChooseFilesButtonPlaceholder",
     button_text: <?= json_encode('<span class="swfUploadFont">' . t("Select photos...") . '</span>') ?>,
     button_text_style: ".swfUploadFont { color: #2E6E9E; font-size: 16px; font-family: Lucida Grande,Lucida Sans,Arial,sans-serif; font-weight: bold; }",
     button_text_left_padding: 30,
+		button_text_right_padding: 30,
     button_text_top_padding: 10,
 
     // The event handler functions are defined in handlers.js
@@ -182,8 +149,8 @@
 
   function file_dialog_complete(num_files_selected, num_files_queued) {
     if (num_files_selected > 0) {
-      $("#gUploadCancel").show();
-      $("#gUploadQueueInfo").text(get_completed_status_msg(this.getStats()));
+      $("#g-cancelupload").show();
+      $("#g-uploadstatus").text(get_completed_status_msg(this.getStats()));
     }
 
     // Auto start the upload
@@ -200,6 +167,7 @@
 		
 		// move file select button
 		$("#SWFUpload_0").css({'left': '0', 'top': '0'});
+		swfu.setButtonText(<?= json_encode('<span class="swfUploadFont">' . t("Select more photos...") . '</span>') ?>);
 		
     return true;
     // @todo add cancel button to call this.cancelUpload(file.id)
@@ -243,7 +211,7 @@
     case SWFUpload.UPLOAD_ERROR.FILE_CANCELLED:
       // If there aren't any files left (they were all cancelled) disable the cancel button
       if (this.getStats().files_queued === 0) {
-        $("#gUploadCancel").hide();
+        $("#g-cancelupload").hide();
       }
       fp.set_status("error", <?= t("Cancelled")->for_js() ?>);
       break;
@@ -258,14 +226,14 @@
 
   function upload_complete(file) {
     var stats = this.getStats();
-    $("#gUploadQueueInfo").text(get_completed_status_msg(stats));
+    $("#g-uploadstatus").text(get_completed_status_msg(stats));
     if (stats.files_queued === 0) {
-      $("#gUploadCancel").hide();
+      $("#g-cancelupload").hide();
     }
   }
 
   function get_completed_status_msg(stats) {
-    var msg = <?= t("Upload Queue (completed %completed of %total)", array("completed" => "__COMPLETED__", "total" => "__TOTAL__"))->for_js() ?>;
+    var msg = <?= t("(completed %completed of %total)", array("completed" => "__COMPLETED__", "total" => "__TOTAL__"))->for_js() ?>;
     msg = msg.replace("__COMPLETED__", stats.successful_uploads);
     msg = msg.replace("__TOTAL__", stats.files_queued + stats.successful_uploads +
       stats.upload_errors + stats.upload_cancelled + stats.queue_errors);
