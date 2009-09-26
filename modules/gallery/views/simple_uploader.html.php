@@ -40,8 +40,8 @@
   <div id="gAddPhotosCanvas" style="text-align: center;">
     <div id="gAddPhotosQueue"></div>
     <div id="gEditPhotosQueue"></div>
-    <span id="gChooseFilesButtonPlaceholder"></span>
   </div>
+	<span id="gChooseFilesButtonPlaceholder"></span>
   <!--
   <button id="gUploadCancel" class="ui-state-default ui-corner-all" type="button"
           onclick="swfu.cancelQueue();"
@@ -52,13 +52,15 @@
 
   <!-- Proxy the done request back to our form, since its been ajaxified -->
   <button class="ui-state-default ui-corner-all" onclick="$('#gAddPhotosForm').submit()">
-    <?= t("Close") ?>
+    <?= t("Done") ?>
   </button>
 </div>
 
 <style>
   #SWFUpload_0 {
-    margin-top: 100px;
+    position: relative;
+		top: -200px;
+		left: 134px;
   }
   #gAddPhotos .gBreadcrumbs {
     border: 0;
@@ -195,6 +197,10 @@
     fp.title.html(file.name);
     fp.set_status("uploading", <?= t("Uploading...")->for_js() ?>);
     $("#gAddPhotosCanvas").scrollTo(fp.box, 1000);
+		
+		// move file select button
+		$("#SWFUpload_0").css({'left': '0', 'top': '0'});
+		
     return true;
     // @todo add cancel button to call this.cancelUpload(file.id)
   }
