@@ -32,7 +32,7 @@
   </ul>
 
   <div id="g-uploadqueue-infobar">
-  	<?= t("Upload Queue") ?>
+    <?= t("Upload Queue") ?>
     <span id="g-uploadstatus"></span>
     <a id="g-cancelupload" title="<?= t("Cancel all the pending uploads")->for_html_attr() ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
   </div>
@@ -40,7 +40,7 @@
     <div id="gAddPhotosQueue"></div>
     <div id="gEditPhotosQueue"></div>
   </div>
-	<span id="gChooseFilesButtonPlaceholder"></span>
+  <span id="gChooseFilesButtonPlaceholder"></span>
 
   <!-- Proxy the done request back to our form, since its been ajaxified -->
   <button class="ui-state-default ui-corner-all" onclick="$('#gAddPhotosForm').submit()">
@@ -72,7 +72,7 @@
     button_text: <?= json_encode('<span class="swfUploadFont">' . t("Select photos...") . '</span>') ?>,
     button_text_style: ".swfUploadFont { color: #2E6E9E; font-size: 16px; font-family: Lucida Grande,Lucida Sans,Arial,sans-serif; font-weight: bold; }",
     button_text_left_padding: 30,
-		button_text_right_padding: 30,
+    button_text_right_padding: 30,
     button_text_top_padding: 10,
 
     // The event handler functions are defined in handlers.js
@@ -164,11 +164,11 @@
     fp.title.html(file.name);
     fp.set_status("uploading", <?= t("Uploading...")->for_js() ?>);
     $("#gAddPhotosCanvas").scrollTo(fp.box, 1000);
-		
-		// move file select button
-		$("#SWFUpload_0").css({'left': '0', 'top': '0'});
-		swfu.setButtonText(<?= json_encode('<span class="swfUploadFont">' . t("Select more photos...") . '</span>') ?>);
-		
+
+    // move file select button
+    $("#SWFUpload_0").css({'left': '0', 'top': '0'});
+    swfu.setButtonText(<?= json_encode('<span class="swfUploadFont">' . t("Select more photos...") . '</span>') ?>);
+
     return true;
     // @todo add cancel button to call this.cancelUpload(file.id)
   }
