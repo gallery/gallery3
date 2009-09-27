@@ -74,13 +74,14 @@ $(document).ready(function() {
         $(this).addClass("gHoverItem");
         // Initialize the contextual menu
         $(this).gallery_context_menu();
+        // Set the hover item's height
         $(this).height("auto");
         var context_menu = $(this).find(".gContextMenu");
         var adj_height = $(this).height() + context_menu.height(); 
         $(this).height(adj_height); 
       },
       function() {
-        // Reset item height, position, and z-index
+        // Reset item height and position
         if ($(this).next().height()) {
           var sib_height = $(this).next().height();
         } else {
@@ -89,7 +90,6 @@ $(document).ready(function() {
         if ($.browser.msie && $.browser.version >= 8) {
           sib_height = sib_height + 1;
         }
-        $(this).toggleClass("gHoverItem");
         $(this).css("height", sib_height);
         $(this).css("position", "relative");
         $(this).css("top", 0).css("left", 0);
