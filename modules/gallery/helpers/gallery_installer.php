@@ -235,11 +235,11 @@ class gallery_installer {
 
     // Add rules for generating our thumbnails and resizes
     graphics::add_rule(
-      "gallery", "thumb", "resize",
+      "gallery", "thumb", "gallery_graphics::resize",
       array("width" => 200, "height" => 200, "master" => Image::AUTO),
       100);
     graphics::add_rule(
-      "gallery", "resize", "resize",
+      "gallery", "resize", "gallery_graphics::resize",
       array("width" => 640, "height" => 480, "master" => Image::AUTO),
       100);
 
@@ -268,7 +268,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 13);
+    module::set_version("gallery", 14);
   }
 
   static function upgrade($version) {
@@ -373,6 +373,21 @@ class gallery_installer {
         module::set_var("gallery", "active_admin_theme", "admin_wind");
       }
       module::set_version("gallery", $version = 13);
+    }
+
+    if ($version == 13) {
+      // Add rules for generating our thumbnails and resizes
+      graphics::remove_rule("gallery", "thumb", "gallery_graphics::resize");
+      graphics::remove_rule("gallery", "resize", "gallery_graphics::resize");
+      graphics::add_rule(
+        "gallery", "thumb", "gallery_graphics::resize",
+        array("width" => 200, "height" => 200, "master" => Image::AUTO),
+        100);
+      graphics::add_rule(
+        "gallery", "resize", "gallery_graphics::resize",
+        array("width" => 640, "height" => 480, "master" => Image::AUTO),
+        100);
+      module::set_version("gallery", $version = 14);
     }
 
   }

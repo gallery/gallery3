@@ -138,7 +138,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     if ($name = module::get_var("watermark", "name")) {
       foreach (array("thumb", "resize") as $target) {
         graphics::add_rule(
-          "watermark", $target, "composite",
+          "watermark", $target, "gallery_graphics::composite",
           array("file" => VARPATH . "modules/watermark/$name",
                 "width" => module::get_var("watermark", "width"),
                 "height" => module::get_var("watermark", "height"),
