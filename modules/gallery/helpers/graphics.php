@@ -19,6 +19,7 @@
  */
 class graphics_Core {
   private static $init;
+  private static $_rules_cache = array();
 
   /**
    * Add a new graphics rule.
@@ -26,7 +27,7 @@ class graphics_Core {
    * Rules are applied to targets (thumbnails and resizes) in priority order.  Rules are functions
    * in the graphics class.  So for example, the following rule:
    *
-   *   graphics::add_rule("gallery", "thumb", "resize",
+   *   graphics::add_rule("gallery", "thumb", "gallery_graphics::resize",
    *                       array("width" => 200, "height" => 200, "master" => Image::AUTO), 100);
    *
    * Specifies that "gallery" is adding a rule to resize thumbnails down to a max of 200px on
@@ -35,7 +36,7 @@ class graphics_Core {
    *
    * @param string  $module_name the module that added the rule
    * @param string  $target      the target for this operation ("thumb" or "resize")
-   * @param string  $operation   the name of the operation
+   * @param string  $operation   the name of the operation (<defining class>::method)
    * @param array   $args        arguments to the operation
    * @param integer $priority    the priority for this rule (lower priorities are run first)
    */
@@ -56,7 +57,7 @@ class graphics_Core {
    * Remove any matching graphics rules
    * @param string  $module_name the module that added the rule
    * @param string  $target      the target for this operation ("thumb" or "resize")
-   * @param string  $operation   the name of the operation
+   * @param string  $operation   the name of the operation(<defining class>::method)
    */
   static function remove_rule($module_name, $target, $operation) {
     ORM::factory("graphics_rule")
@@ -146,13 +147,9 @@ class graphics_Core {
           $working_file = $input_file;
         }
 
-        foreach (ORM::factory("graphics_rule")
-                 ->where("target", $target)
-                 ->where("active", true)
-                 ->orderby("priority", "asc")
-                 ->find_all() as $rule) {
+        foreach (self::_get_rules($target) as $rule) {
           $args = array($working_file, $output_file, unserialize($rule->args));
-          call_user_func_array(array("{$rule->module_name}_graphics", $rule->operation), $args);
+          call_user_func_array($rule->operation, $args);
           $working_file = $output_file;
         }
       }
@@ -178,6 +175,21 @@ class graphics_Core {
                   $e->getMessage() . "\n" . $e->getTraceAsString());
       throw $e;
     }
+  }
+
+  private static function _get_rules($target) {
+    if (empty(self::$_rules_cache[$target])) {
+      $rules = array();
+      foreach (ORM::factory("graphics_rule")
+               ->where("target", $target)
+               ->where("active", true)
+               ->orderby("priority", "asc")
+               ->find_all() as $rule) {
+        $rules[] = (object)$rule->as_array();
+      }
+      self::$_rules_cache[$target] = $rules;
+    }
+    return self::$_rules_cache[$target];
   }
 
   /**

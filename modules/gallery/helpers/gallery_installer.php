@@ -235,16 +235,16 @@ class gallery_installer {
 
     // Add rules for generating our thumbnails and resizes
     graphics::add_rule(
-      "gallery", "thumb", "resize",
+      "gallery", "thumb", "gallery_graphics::resize",
       array("width" => 200, "height" => 200, "master" => Image::AUTO),
       100);
     graphics::add_rule(
-      "gallery", "resize", "resize",
+      "gallery", "resize", "gallery_graphics::resize",
       array("width" => 640, "height" => 480, "master" => Image::AUTO),
       100);
 
     // Instantiate default themes (site and admin)
-    foreach (array("default", "admin_default") as $theme_name) {
+    foreach (array("wind", "admin_wind") as $theme_name) {
       $theme_info = new ArrayObject(parse_ini_file(THEMEPATH . $theme_name . "/theme.info"),
                                     ArrayObject::ARRAY_AS_PROPS);
       $theme = ORM::factory("theme");
@@ -268,7 +268,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 13);
+    module::set_version("gallery", 14);
   }
 
   static function upgrade($version) {
@@ -373,6 +373,13 @@ class gallery_installer {
         module::set_var("gallery", "active_admin_theme", "admin_wind");
       }
       module::set_version("gallery", $version = 13);
+    }
+
+    if ($version == 13) {
+      // Add rules for generating our thumbnails and resizes
+      Database::instance()->query("update g3_graphics_rules g
+                                   set operation=concat(\"gallery_graphics::\", g.operation);");
+      module::set_version("gallery", $version = 14);
     }
 
   }
