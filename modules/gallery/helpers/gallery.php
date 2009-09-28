@@ -83,14 +83,21 @@ class gallery_Core {
    * Provide a wrapper function for Kohana::find_file, that first strips the extension and
    * then calls the Kohana::find_file supply that extension
    * @param   string   directory to search in
-   * @param   string   filename to look for (without extension)
-   * @param   boolean  file required
-   * @return  the file relative to the DOCROOT
+   * @param   string   filename to look for
+   * @param   boolean  file required (optional: default false)
+   * @param   boolean  make the file name relative (optiona: default false)
+   * @return  array    if the type is config, i18n or l10n
+   * @return  string   if the file is found (relative to the DOCROOT)
+   * @return  FALSE    if the file is not found
    */
   static function find_file($directory, $file, $required=false) {
     $file_name = substr($file, 0, -strlen($ext = strrchr($file, '.')));
     $file_name = Kohana::find_file($directory, $file_name, $required, substr($ext, 1));
-    return substr($file_name, strlen(DOCROOT));
+    if (!$file_name && file_exists(DOCROOT . "lib/$file")) {
+      return "lib/$file";
+    }
+
+    return is_string($file_name) ? substr($file_name, strlen(DOCROOT)) : $file_name;
   }
 
   static function site_menu($menu, $theme) {
