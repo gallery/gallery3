@@ -377,8 +377,8 @@ class gallery_installer {
 
     if ($version == 13) {
       // Add rules for generating our thumbnails and resizes
-      Database::instance()->query("update g3_graphics_rules g
-                                   set operation=concat(\"gallery_graphics::\", g.operation);");
+      Database::instance()->query(
+        "UPDATE {graphics_rules} SET `operation` = CONCAT('gallery_graphics::', `operation`);");
       module::set_version("gallery", $version = 14);
     }
 
