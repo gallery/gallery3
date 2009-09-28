@@ -399,6 +399,11 @@ tr.gWarning {
   background-color: #fcf9ce;
 }
 
+#gLogEntries .gInfo,
+#gLogEntries .gSuccess {
+  background-color: #fff;
+}
+
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
 
 .gShortForm li {
