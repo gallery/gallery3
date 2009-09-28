@@ -48,11 +48,13 @@ class gallery_task_Core {
     $errors = array();
     try {
       $result = graphics::find_dirty_images_query();
-      $total_count = $task->get("total_count", -1);
-      if ($total_count < 0) {
-        $total_count = $result->count();
+      $total_count = $task->get("total_count", $result->count());
+      $mode = $task->get("mode", "init");
+      if ($mode == "init") {
         $task->set("total_count", $total_count);
+        $task->get("mode", "process");
       }
+
       $completed = $task->get("completed", 0);
       $ignored = $task->get("ignored", array());
 
