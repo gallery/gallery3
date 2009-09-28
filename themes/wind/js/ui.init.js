@@ -59,8 +59,8 @@ $(document).ready(function() {
 
   // Album view only
   if ($("#gAlbumGrid").length) {
-    // Vertical align thumbnails/metadata in album grid
-    $(".gItem").gallery_valign();
+    // Set equal height for album items and vertically align thumbnails/metadata
+    $('.gItem').equal_heights().gallery_valign();
 
     // Initialize thumbnail hover effect
     $(".gItem").hover(
