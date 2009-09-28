@@ -228,7 +228,7 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,1,'gallery',13);
+INSERT INTO {modules} VALUES (1,1,'gallery',14);
 INSERT INTO {modules} VALUES (2,1,'user',1);
 INSERT INTO {modules} VALUES (3,1,'comment',2);
 INSERT INTO {modules} VALUES (4,1,'organize',1);

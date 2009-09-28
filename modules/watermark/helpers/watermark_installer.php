@@ -33,31 +33,11 @@ class watermark_installer {
                DEFAULT CHARSET=utf8;");
 
     @mkdir(VARPATH . "modules/watermark");
-    module::set_version("watermark", 2);
+    module::set_version("watermark", 1);
   }
 
   static function uninstall() {
     Database::instance()->query("DROP TABLE {watermarks}");
     dir::unlink(VARPATH . "modules/watermark");
-  }
-
-  static function upgrade($version) {
-    $db = Database::instance();
-    if ($version == 1) {
-      graphics::remove_rules("watermark");
-      if ($name = module::get_var("watermark", "name")) {
-        foreach (array("thumb", "resize") as $target) {
-          graphics::add_rule(
-            "watermark", $target, "gallery_graphics::composite",
-            array("file" => VARPATH . "modules/watermark/$name",
-                  "width" => module::get_var("watermark", "width"),
-                  "height" => module::get_var("watermark", "height"),
-                  "position" => module::get_var("watermark", "position"),
-                  "transparency" => 101 - module::get_var("watermark", "transparency")),
-            1000);
-        }
-      }
-      module::set_version("watermark", $version = 2);
-    }
   }
 }

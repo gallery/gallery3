@@ -377,16 +377,8 @@ class gallery_installer {
 
     if ($version == 13) {
       // Add rules for generating our thumbnails and resizes
-      graphics::remove_rule("gallery", "thumb", "gallery_graphics::resize");
-      graphics::remove_rule("gallery", "resize", "gallery_graphics::resize");
-      graphics::add_rule(
-        "gallery", "thumb", "gallery_graphics::resize",
-        array("width" => 200, "height" => 200, "master" => Image::AUTO),
-        100);
-      graphics::add_rule(
-        "gallery", "resize", "gallery_graphics::resize",
-        array("width" => 640, "height" => 480, "master" => Image::AUTO),
-        100);
+      Database::instance()->query("update g3_graphics_rules g
+                                   set operation=concat(\"gallery_graphics::\", g.operation);");
       module::set_version("gallery", $version = 14);
     }
 
