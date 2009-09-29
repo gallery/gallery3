@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_block_Core {
-  static function get_list() {
+  static function get_admin_list() {
     return array(
       "welcome" => t("Welcome to Gallery 3!"),
       "photo_stream" => t("Photo Stream"),
@@ -94,7 +94,8 @@ class gallery_block_Core {
     $form = new Forge("admin/dashboard/add_block", "", "post",
                       array("id" => "gAddDashboardBlockForm"));
     $group = $form->group("add_block")->label(t("Add Block"));
-    $group->dropdown("id")->label(t("Available Blocks"))->options(block_manager::get_available());
+    $group->dropdown("id")->label(t("Available Blocks"))
+      ->options(block_manager::get_available_admin_blocks());
     $group->submit("center")->value(t("Add to center"));
     $group->submit("sidebar")->value(t("Add to sidebar"));
     return $form;

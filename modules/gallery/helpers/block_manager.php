@@ -38,13 +38,21 @@ class block_manager_Core {
     self::set_active($location, $blocks);
   }
 
-  static function get_available() {
+  static function get_available_admin_blocks() {
+    return self::_get_blocks("get_admin_list");
+  }
+
+  static function get_available_site_blocks() {
+    return self::_get_blocks("get_site_list");
+  }
+
+  private static function _get_blocks($function) {
     $blocks = array();
 
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_block";
-      if (method_exists($class_name, "get_list")) {
-        foreach (call_user_func(array($class_name, "get_list")) as $id => $title) {
+      if (method_exists($class_name, $function)) {
+        foreach (call_user_func(array($class_name, $function)) as $id => $title) {
           $blocks["{$module->name}:$id"] = $title;
         }
       }
