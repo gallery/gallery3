@@ -24,9 +24,9 @@ class Gallery_View_Core extends View {
 
   /**
    * Add a script to the combined scripts list.
-   * @param $file  the file name or path of the script to include. if a path is specified then
-   *               the location needs to be DOCROOT/lib. Just specifying a file name will result
-   *               in searching the hierarchical file system.
+   * @param $file  the file name or path of the script to include. If a path is specified then
+   *               it needs to be relative to DOCROOT. Just specifying a file name will result
+   *               in searching Kohana's cascading file system.
    */
   public function script($file) {
     if (($path = gallery::find_file("js", $file, false))) {
@@ -47,9 +47,9 @@ class Gallery_View_Core extends View {
 
   /**
    * Add a css file to the combined css list.
-   * @param $file  the file name or path of a css file to include. if a path is specified then
-   *               the location needs to be DOCROOT/lib. Just specifying a file name will result
-   *               in searching the hierarchical file system.
+   * @param $file  the file name or path of the script to include. If a path is specified then
+   *               it needs to be relative to DOCROOT. Just specifying a file name will result
+   *               in searching Kohana's cascading file system.
    */
   public function css($file) {
     if (($path = gallery::find_file("css", $file, false))) {
