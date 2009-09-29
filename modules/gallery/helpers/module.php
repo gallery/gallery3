@@ -283,9 +283,28 @@ class module_Core {
     array_shift($args);
     $function = str_replace(".", "_", $name);
 
+    if (method_exists("gallery_event", $function)) {
+      switch (count($args)) {
+      case 0:
+        gallery_event::$function();
+        break;
+      case 1:
+        gallery_event::$function($args[0]);
+        break;
+      case 2:
+        gallery_event::$function($args[0], $args[1]);
+        break;
+      default:
+        call_user_func_array(array("gallery_event", $function), $args);
+      }
+    }
+
     // @todo: consider calling gallery_event first, since for things menus we need it to do some
     // setup
     foreach (self::$active as $module) {
+      if ($module->name == "gallery") {
+        continue;
+      }
       $class = "{$module->name}_event";
       if (method_exists($class, $function)) {
         call_user_func_array(array($class, $function), $args);

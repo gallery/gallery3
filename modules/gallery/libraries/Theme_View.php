@@ -80,7 +80,6 @@ class Theme_View_Core extends Gallery_View {
 
   public function site_menu() {
     $menu = Menu::factory("root");
-    gallery::site_menu($menu, $this);
     module::event("site_menu", $menu, $this);
     return $menu->compact();
   }
@@ -124,7 +123,6 @@ class Theme_View_Core extends Gallery_View {
                ->label(t("Options")))
       ->css_class("gContextMenu");
 
-    gallery::context_menu($menu, $this, $item, $thumbnail_css_selector);
     module::event("context_menu", $menu, $this, $item, $thumbnail_css_selector);
     return $menu->compact();
   }
