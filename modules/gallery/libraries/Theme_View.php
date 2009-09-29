@@ -157,7 +157,7 @@ class Theme_View_Core extends Gallery_View {
    * Print out the sidebar.
    */
   public function sidebar_blocks() {
-    return block_manager::get_html("site.sidebar");
+    return block_manager::get_html("site.sidebar", $this);
   }
 
   /**
@@ -183,7 +183,6 @@ class Theme_View_Core extends Gallery_View {
     case "photo_top":
     case "resize_bottom":
     case "resize_top":
-    case "sidebar_blocks":
     case "sidebar_bottom":
     case "sidebar_top":
     case "thumb_bottom":

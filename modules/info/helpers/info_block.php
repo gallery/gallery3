@@ -17,47 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class image_block_block_Core {
+class info_block_Core {
   static function get_site_list() {
-    return array("random_image" => t("Random Image"));
+    return array("metadata" => t("Metadata"));
   }
 
   static function get($block_id, $theme) {
     $block = new Block();
     switch ($block_id) {
-    case "random_image":
-      $block = new Block();
-      $block->css_id = "gImageBlock";
-      $block->title = t("Random Image");
-      $block->content = new View("image_block_block.html");
-
-      $random = ((float)mt_rand()) / (float)mt_getrandmax();
-
-      $items = ORM::factory("item")
-        ->viewable()
-        ->where("type !=", "album")
-        ->where("rand_key < ", $random)
-        ->orderby(array("rand_key" => "DESC"))
-        ->find_all(1);
-
-      if ($items->count() == 0) {
-        // Try once more.  If this fails, just ditch the block altogether
-        $items = ORM::factory("item")
-          ->viewable()
-          ->where("type !=", "album")
-          ->where("rand_key >= ", $random)
-          ->orderby(array("rand_key" => "DESC"))
-          ->find_all(1);
-      }
-
-      if ($items->count() > 0) {
-        $block->content->item = $items->current();
-      } else {
-        $block = "";
+    case "metadata":
+      if ($theme->item()) {
+        $block = new Block();
+        $block->css_id = "gMetadata";
+        $block->title = $theme->item()->is_album() ? t("Album Info") : t("Photo Info");
+        $block->content = new View("info_block.html");
       }
       break;
     }
-
     return $block;
   }
 }

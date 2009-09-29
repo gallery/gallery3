@@ -60,12 +60,12 @@ class block_manager_Core {
     return $blocks;
   }
 
-  static function get_html($location) {
+  static function get_html($location, $theme) {
     $active = self::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
       if (method_exists("$desc[0]_block", "get")) {
-        $block = call_user_func(array("$desc[0]_block", "get"), $desc[1]);
+        $block = call_user_func(array("$desc[0]_block", "get"), $desc[1], $theme);
         $block->id = $id;
         $result .= $block;
       }
