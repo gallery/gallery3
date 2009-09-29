@@ -24,9 +24,7 @@ class gallery_error_Core {
     }
 
     if (error_reporting() & $severity) {
-      $e = new ErrorException($message, 0, $severity, $filename, $lineno);
-      log::error("error", $e->getMessage());
-      Kohana::log("error", $e->__toString());
+      throw new ErrorException($message, 0, $severity, $filename, $lineno);
     }
   }
 }
