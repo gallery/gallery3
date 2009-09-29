@@ -301,7 +301,6 @@ class module_Core {
         gallery_event::$function($args[0], $args[1], $args[2], $args[3]);
         break;
       default:
-        Kohana::log("error", "Number of arguments: " . count($args));
         call_user_func_array(array("gallery_event", $function), $args);
       }
     }
