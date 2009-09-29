@@ -154,6 +154,13 @@ class Theme_View_Core extends Gallery_View {
   }
 
   /**
+   * Print out the sidebar.
+   */
+  public function sidebar_blocks() {
+    return block_manager::get_html("site.sidebar");
+  }
+
+  /**
    * Handle all theme functions that insert module content.
    */
   public function __call($function, $args) {

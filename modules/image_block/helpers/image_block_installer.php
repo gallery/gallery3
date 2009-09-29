@@ -17,34 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class image_block_theme_Core {
-  static function sidebar_blocks($theme) {
-    $block = new Block();
-    $block->css_id = "gImageBlock";
-    $block->title = t("Random Image");
-    $block->content = new View("image_block_block.html");
+class image_block_installer {
+  static function install() {
+    block_manager::add("site.sidebar", "image_block", "random_image");
+    module::set_version("image_block", 2);
+  }
 
-    $random = ((float)mt_rand()) / (float)mt_getrandmax();
-
-    $items = ORM::factory("item")
-      ->viewable()
-      ->where("type !=", "album")
-      ->where("rand_key < ", $random)
-      ->orderby(array("rand_key" => "DESC"))
-      ->find_all(1);
-
-    if ($items->count() == 0) {
-      // Try once more.  If this fails, just ditch the block altogether
-      $items = ORM::factory("item")
-        ->viewable()
-        ->where("type !=", "album")
-        ->where("rand_key >= ", $random)
-        ->orderby(array("rand_key" => "DESC"))
-        ->find_all(1);
+  static function upgrade($version) {
+    if ($version == 1) {
+      block_manager::add("site.sidebar", "image_block", "random_image");
+      module::set_version("image_block", 2);
     }
-
-    $block->content->item = $items->current();
-
-    return $items->count() == 0 ? "" : $block;
   }
 }
