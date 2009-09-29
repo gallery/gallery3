@@ -294,13 +294,18 @@ class module_Core {
       case 2:
         gallery_event::$function($args[0], $args[1]);
         break;
+      case 3:
+        gallery_event::$function($args[0], $args[1], $args[2]);
+        break;
+      case 4:      // Context menu events have 4 arguments so lets optimize them
+        gallery_event::$function($args[0], $args[1], $args[2], $args[3]);
+        break;
       default:
+        Kohana::log("error", "Number of arguments: " . count($args));
         call_user_func_array(array("gallery_event", $function), $args);
       }
     }
 
-    // @todo: consider calling gallery_event first, since for things menus we need it to do some
-    // setup
     foreach (self::$active as $module) {
       if ($module->name == "gallery") {
         continue;
