@@ -108,12 +108,14 @@ form .g-error {
  * 3) Positioning and order
  **********************************************************************/
 
-.g-right {
-  float: right;
-}
-
 .g-left {
   float: left;
+  margin: 1em 1em 1em 0;
+}
+
+.g-right {
+  float: right;
+  margin: 1em 0 1em 1em;
 }
 
 .g-first {
@@ -136,6 +138,18 @@ form .g-error {
 }
 
 .g-button {
+  display: inline-block;
+  margin: 0 4px 0 0;
+  padding: .2em .4em;
+}
+
+.g-button,
+.g-button:hover,
+.g-button:active {
+  cursor: pointer !important;
+  outline: 0;
+  text-decoration: none;
+  -moz-outline-style: none;
 }
 
 .g-progressbar {

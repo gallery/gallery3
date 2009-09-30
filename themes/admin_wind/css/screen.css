@@ -5,7 +5,6 @@
  *
  * Sheet organization:
  *  1)  Basic HTML elements
- *  2)  Reusable classes
  *  3)  Reusable content blocks
  *  4)  Page layout containers
  *  5)  Content blocks in specific layout containers
@@ -69,9 +68,9 @@ h3 {
 a,
 .gMenu a,
 #gDialog a,
-.gButtonLink,
-.gButtonLink:hover,
-.gButtonLink:active,
+.g-button,
+.g-button:hover,
+.g-button:active,
 a.ui-state-hover,
 input.ui-state-hover,
 button.ui-state-hover {
@@ -240,29 +239,6 @@ li.gError select {
 }
 
 /** *******************************************************************
- * 2) Reusable generic classes
- *********************************************************************/
-
-.inactive, .understate {
-  color: #ccc;
-  font-weight: normal;
-}
-
-.left {
-  float: left;
-  margin: 1em 1em 1em 0;
-}
-
-.right {
-  float: right;
-  margin: 1em 0 1em 1em;
-}
-
-.txtright {
-  text-align: right;
-}
-
-/** *******************************************************************
  * 3) Reusable content blocks
  *********************************************************************/
 
@@ -307,11 +283,11 @@ li.gError select {
   background: #eee;
 }
 
-.gAvailable .gButtonLink {
+.gAvailable .g-button {
   width: 96%;
 }
 
-.gSelected .gButtonLink {
+.gSelected .g-button {
   display: none;
 }
 
@@ -399,7 +375,9 @@ tr.gWarning {
   background-color: #fcf9ce;
 }
 
+.gModuleStatus.gInfo,
 #gLogEntries .gInfo,
+.gModuleStatus.gSuccess,
 #gLogEntries .gSuccess {
   background-color: #fff;
 }
@@ -585,7 +563,6 @@ tr.gWarning {
 #gAdminGraphics .gAvailable .gBlock {
   clear: none;
   float: left;
-  height: 17em;
   margin-right: 1em;
   width: 30%;
 }
@@ -650,7 +627,7 @@ li.gGroup h4 {
   border-bottom: 1px dashed #ccc;
   padding: .5em 0 .5em .5em;
 }
-li.gGroup .gButtonLink {
+li.gGroup .g-button {
   padding: 0;
 }
 li.gGroup ul, li.gGroup div {
@@ -667,7 +644,7 @@ li.gGroup div p {
 li.gGroup .gUser {
   padding: .2em 0 0 .5em;
 }
-li.gGroup .gUser .gButtonLink {
+li.gGroup .gUser .g-button {
   vertical-align: middle;
 }
 
@@ -861,13 +838,6 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 
 /* jQuery UI ThemeRoller buttons */
 
-.gButtonLink {
-  display: inline-block;
-  margin: 0 4px 0 0;
-  padding: .2em .4em;
-  outline: 0;
-}
-
 .gButtonSet {
   padding-left: 1px;
 }
@@ -876,7 +846,7 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   float: left;
 }
 
-.gButtonSet .gButtonLink {
+.gButtonSet .g-button {
   margin: 0;
 }
 
@@ -1129,7 +1099,7 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 	clear: both;
 }
 
-#gTranslations .gButtonLink {
+#gTranslations .g-button {
 	padding: .5em;
 }
 

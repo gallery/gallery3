@@ -10,34 +10,34 @@
                              "count" => $total_items)) ?>
   <li>
   <? if ($first_page): ?>
-    <a href="<?= str_replace('{page}', 1, $url) ?>" class="gButtonLink ui-icon-left ui-state-default ui-corner-all">
+    <a href="<?= str_replace('{page}', 1, $url) ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-first"></span><?= t("first") ?></a>
   <? else: ?>
-    <a class="gButtonLink ui-icon-left ui-state-disabled ui-corner-all">
+    <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
       <span class="ui-icon ui-icon-seek-first"></span><?= t("first") ?></a>
   <? endif ?>
   <? if ($previous_page): ?>
-    <a href="<?= str_replace('{page}', $previous_page, $url) ?>" class="gButtonLink ui-icon-left ui-state-default ui-corner-all">
+    <a href="<?= str_replace('{page}', $previous_page, $url) ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-prev"></span><?= t("previous") ?></a>
   <? else: ?>
-    <a class="gButtonLink ui-icon-left ui-state-disabled ui-corner-all">
+    <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
       <span class="ui-icon ui-icon-seek-prev"></span><?= t("previous") ?></a>
   <? endif ?>
   </li>
   <li class="gInfo"><?= $from_to_msg ?></li>
-  <li class="txtright">
+  <li class="g-txt-right">
   <? if ($next_page): ?>
-    <a href="<?= str_replace('{page}', $next_page, $url) ?>" class="gButtonLink ui-icon-right ui-state-default ui-corner-all">
+    <a href="<?= str_replace('{page}', $next_page, $url) ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-next"></span><?= t("next") ?></a>
   <? else: ?>
-    <a class="gButtonLink ui-state-disabled ui-icon-right ui-corner-all">
+    <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
       <span class="ui-icon ui-icon-seek-next"></span><?= t("next") ?></a>
   <? endif ?>
   <? if ($last_page): ?>
-    <a href="<?= str_replace('{page}', $last_page, $url) ?>" class="gButtonLink ui-icon-right ui-state-default ui-corner-all">
+    <a href="<?= str_replace('{page}', $last_page, $url) ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-end"></span><?= t("last") ?></a>
   <? else: ?>
-    <a class="gButtonLink ui-state-disabled ui-icon-right ui-corner-all">
+    <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
       <span class="ui-icon ui-icon-seek-end"></span><?= t("last") ?></a>
   <? endif ?>
   </li>

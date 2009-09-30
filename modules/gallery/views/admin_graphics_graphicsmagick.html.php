@@ -11,7 +11,7 @@
     <?= t("GraphicsMagick version %version is available in %dir", array("version" => $tk->version, "dir" => $tk->dir)) ?>
   </div>
   <p>
-    <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate Graphics Magic") ?></a>
+    <a class="g-button ui-state-default ui-corner-all"><?= t("Activate Graphics Magic") ?></a>
   </p>
   <? else: ?>
   <div class="gModuleStatus gWarning">

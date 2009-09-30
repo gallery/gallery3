@@ -116,7 +116,7 @@
               title="<?= html::clean_attribute($comment->author_email()) ?>"> <?= html::clean($comment->author_name()) ?> </a></p>
       </td>
       <td>
-        <div class="right">
+        <div class="g-right">
           <? $item = $comment->item() ?>
           <div class="gItem gPhoto">
             <a href="<?= $item->url() ?>">
@@ -139,7 +139,7 @@
         <? if ($comment->state != "unpublished"): ?>
           <li>
             <a href="javascript:set_state('unpublished',<?=$comment->id?>)"
-                class="gButtonLink ui-state-default ui-icon-left">
+                class="g-button ui-state-default ui-icon-left">
               <span class="ui-icon ui-icon-check"></span>
               <?= t("Unapprove") ?>
             </a>
@@ -148,7 +148,7 @@
         <? if ($comment->state != "published"): ?>
           <li>
             <a href="javascript:set_state('published',<?=$comment->id?>)"
-                class="gButtonLink ui-state-default ui-icon-left">
+                class="g-button ui-state-default ui-icon-left">
               <span class="ui-icon ui-icon-check"></span>
               <?= t("Approve") ?>
             </a>
@@ -157,7 +157,7 @@
         <? if ($comment->state != "spam"): ?>
           <li>
             <a href="javascript:set_state('spam',<?=$comment->id?>)"
-                class="gButtonLink ui-state-default ui-icon-left">
+                class="g-button ui-state-default ui-icon-left">
               <span class="ui-icon ui-icon-cancel"></span>
               <?= t("Spam") ?>
             </a>
@@ -166,14 +166,14 @@
           <!--
           <li>
             <a href="javascript:reply(<?=$comment->id?>)"
-                class="gButtonLink ui-state-default ui-icon-left">
+                class="g-button ui-state-default ui-icon-left">
               <span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>
               <?= t("Reply") ?>
             </a>
           </li>
           <li>
             <a href="javascript:Edit(<?=$comment->id?>)"
-                class="gButtonLink ui-state-default ui-icon-left">
+                class="g-button ui-state-default ui-icon-left">
               <span class="ui-icon ui-icon-pencil"></span>
               <?= t("Edit") ?>
             </a>
@@ -181,7 +181,7 @@
           -->
           <li>
             <a href="javascript:set_state('deleted',<?=$comment->id?>)"
-                class="gButtonLink ui-state-default ui-icon-left">
+                class="g-button ui-state-default ui-icon-left">
               <span class="ui-icon ui-icon-trash"></span>
               <?= t("Delete") ?>
             </a>

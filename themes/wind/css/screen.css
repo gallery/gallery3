@@ -5,7 +5,6 @@
  *
  * Sheet organization:
  *  1)  Basic HTML elements
- *  2)  Reusable classes
  *  3)  Reusable content blocks
  *  4)  Page layout containers
  *  5)  Content blocks in specific layout containers
@@ -69,9 +68,9 @@ h3 {
 a,
 .gMenu a,
 #gDialog a,
-.gButtonLink,
-.gButtonLink:hover,
-.gButtonLink:active,
+.g-button,
+.g-button:hover,
+.g-button:active,
 a.ui-state-hover,
 input.ui-state-hover,
 button.ui-state-hover {
@@ -240,29 +239,6 @@ li.gError textarea,
 form.gError select,
 li.gError select {
   border: 2px solid red;
-}
-
-/** *******************************************************************
- * 2) Reusable generic classes
- *********************************************************************/
-
-.inactive, .understate {
-  color: #ccc;
-  font-weight: normal;
-}
-
-.left {
-  float: left;
-  margin: 1em 1em 1em 0;
-}
-
-.right {
-  float: right;
-  margin: 1em 0 1em 1em;
-}
-
-.txtright {
-  text-align: right;
 }
 
 /** *******************************************************************
@@ -908,13 +884,6 @@ form .gError,
 
 /* jQuery UI ThemeRoller buttons */
 
-.gButtonLink {
-  display: inline-block;
-  margin: 0 4px 0 0;
-  padding: .2em .4em;
-  outline: 0;
-}
-
 .gButtonSet {
   padding-left: 1px;
 }
@@ -923,7 +892,7 @@ form .gError,
   float: left;
 }
 
-.gButtonSet .gButtonLink {
+.gButtonSet .g-button {
   margin: 0;
 }
 

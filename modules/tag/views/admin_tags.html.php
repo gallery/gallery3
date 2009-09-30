@@ -23,7 +23,7 @@
   <? $column_tag_count = 0 ?>
 
   <table id="gTagAdmin" class="gBlockContent">
-    <caption class="understate">
+    <caption class="g-understate">
       <?= t2("There is one tag", "There are %count tags", $tags->count()) ?>
     </caption>
     <tr>
@@ -48,9 +48,9 @@
 
           <li>
             <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= html::clean($tag->name) ?></span>
-            <span class="understate">(<?= $tag->count ?>)</span>
+            <span class="g-understate">(<?= $tag->count ?>)</span>
             <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
-               class="gDialogLink delete-link gButtonLink">
+               class="gDialogLink delete-link g-button">
                 <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
           </li>
 

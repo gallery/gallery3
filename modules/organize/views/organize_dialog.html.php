@@ -31,7 +31,7 @@
         </div>
         <div id="gOrganizeControls">
           <a id="gOrganizeClose" href="#" ref="done"
-             class="gButtonLink ui-corner-all ui-state-default"><?= t("Close") ?></a>
+             class="g-button ui-corner-all ui-state-default"><?= t("Close") ?></a>
           <form>
             <?= t("Sort order") ?>
             <?= form::dropdown(array("id" => "gOrganizeSortColumn"), album::get_sort_order_options(), $album->sort_column) ?>
