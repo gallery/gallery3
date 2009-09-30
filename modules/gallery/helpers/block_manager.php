@@ -60,7 +60,7 @@ class block_manager_Core {
     return $blocks;
   }
 
-  static function get_html($location, $theme) {
+  static function get_html($location, $theme=null) {
     $active = self::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
