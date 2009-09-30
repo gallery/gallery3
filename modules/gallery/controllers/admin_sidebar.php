@@ -21,8 +21,47 @@ class Admin_Sidebar_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_sidebar.html");
+    $view->content->csrf = access::csrf_token();
+    $view->content->available = new View("admin_sidebar_blocks.html");
+    $view->content->active = new View("admin_sidebar_blocks.html");
+    list($view->content->available->blocks, $view->content->active->blocks) = $this->_get_blocks();
     print $view;
   }
 
+  public function update() {
+    access::verify_csrf();
+
+    $available_blocks = block_manager::get_available_site_blocks();
+
+    $active_blocks = array();
+    foreach ($this->input->get("block", array()) as $block_id) {
+      $active_blocks[] = explode(":", (string) $block_id);
+    }
+    block_manager::set_active("site.sidebar", $active_blocks);
+
+    $result = array("result" => "success");
+    list($available, $active) = $this->_get_blocks();
+    $v = new View("admin_sidebar_blocks.html");
+    $v->blocks = $available;
+    $result["available"] = $v->render();
+    $v = new View("admin_sidebar_blocks.html");
+    $v->blocks = $active;
+    $result["active"] = $v->render();
+
+    print json_encode($result);
+  }
+
+  private function _get_blocks() {
+    $active_blocks = array();
+    $available_blocks = block_manager::get_available_site_blocks();
+    foreach (block_manager::get_active("site.sidebar") as $block) {
+      $id = "{$block[0]}:{$block[1]}";
+      if (!empty($available_blocks[$id])) {
+        $active_blocks[$id] = $available_blocks[$id];
+        unset($available_blocks[$id]);
+      }
+    }
+    return array($available_blocks, $active_blocks);
+  }
 }
 

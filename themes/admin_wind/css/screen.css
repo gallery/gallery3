@@ -656,6 +656,34 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   background: #ffc;
 }
 
+/* admin/sidebar  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.gAdminBlocksList {
+  float: left;
+  height: 300px;
+  margin-left: 20px;
+  width: 30%;
+}
+
+.gAdminBlocksList div:last-child {
+  border: .1em solid;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.gAdminBlocksList ul {
+  margin: .1em .1em;
+  padding: .1em;
+}
+
+.gAdminBlocksList ul li {
+  background-color: #e8e8e8;
+  font-size: 1em;
+  font-weight: bold;
+  margin: .5em;
+  padding: .3em .8em;
+}
+
+
 /** *******************************************************************
  * 5) Navigation and menus
  *********************************************************************/
