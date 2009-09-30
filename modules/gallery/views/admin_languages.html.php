@@ -88,7 +88,7 @@
     <p><?= t("<strong>Step 3:</strong> Start the translation mode and the translation interface will appear at the bottom of each Gallery page.") ?></p>
 
     <a href="<?= url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token()) ?>"
-       class="gButtonLink ui-state-default ui-corner-all ui-icon-left">
+       class="g-button ui-state-default ui-corner-all ui-icon-left">
       <span class="ui-icon ui-icon-power"></span>
       <? if (Session::instance()->get("l10n_mode", false)): ?>
       <?= t("Stop translation mode") ?>

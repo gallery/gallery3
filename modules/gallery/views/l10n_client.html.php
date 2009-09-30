@@ -68,7 +68,7 @@
         </div>
         <input type="submit" name="l10n-edit-save" value="<?= t("Save translation")->for_html_attr() ?>"/>
         <a href="javascript: Gallery.l10nClient.copySourceText()"
-           class="gButtonLink ui-state-default ui-corner-all"><?= t("Copy source text") ?></a>
+           class="g-button ui-state-default ui-corner-all"><?= t("Copy source text") ?></a>
       </form>
     </div>
   </div>

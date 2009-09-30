@@ -68,9 +68,9 @@ h3 {
 a,
 .gMenu a,
 #gDialog a,
-.gButtonLink,
-.gButtonLink:hover,
-.gButtonLink:active,
+.g-button,
+.g-button:hover,
+.g-button:active,
 a.ui-state-hover,
 input.ui-state-hover,
 button.ui-state-hover {
@@ -884,13 +884,6 @@ form .gError,
 
 /* jQuery UI ThemeRoller buttons */
 
-.gButtonLink {
-  display: inline-block;
-  margin: 0 4px 0 0;
-  padding: .2em .4em;
-  outline: 0;
-}
-
 .gButtonSet {
   padding-left: 1px;
 }
@@ -899,7 +892,7 @@ form .gError,
   float: left;
 }
 
-.gButtonSet .gButtonLink {
+.gButtonSet .g-button {
   margin: 0;
 }
 

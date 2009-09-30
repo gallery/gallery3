@@ -18,7 +18,7 @@
     <a href="<?= url::site("form/edit/users/{$user->id}") ?>"
       title="<?= t("Edit Your Profile")->for_html_attr() ?>"
       id="gAfterInstallChangePasswordLink"
-      class="gButtonLink ui-state-default ui-corners-all">
+      class="g-button ui-state-default ui-corners-all">
       <?= t("Change Password Now") ?>
     </a>
     <script>

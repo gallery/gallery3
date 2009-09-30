@@ -68,9 +68,9 @@ h3 {
 a,
 .gMenu a,
 #gDialog a,
-.gButtonLink,
-.gButtonLink:hover,
-.gButtonLink:active,
+.g-button,
+.g-button:hover,
+.g-button:active,
 a.ui-state-hover,
 input.ui-state-hover,
 button.ui-state-hover {
@@ -283,11 +283,11 @@ li.gError select {
   background: #eee;
 }
 
-.gAvailable .gButtonLink {
+.gAvailable .g-button {
   width: 96%;
 }
 
-.gSelected .gButtonLink {
+.gSelected .g-button {
   display: none;
 }
 
@@ -627,7 +627,7 @@ li.gGroup h4 {
   border-bottom: 1px dashed #ccc;
   padding: .5em 0 .5em .5em;
 }
-li.gGroup .gButtonLink {
+li.gGroup .g-button {
   padding: 0;
 }
 li.gGroup ul, li.gGroup div {
@@ -644,7 +644,7 @@ li.gGroup div p {
 li.gGroup .gUser {
   padding: .2em 0 0 .5em;
 }
-li.gGroup .gUser .gButtonLink {
+li.gGroup .gUser .g-button {
   vertical-align: middle;
 }
 
@@ -838,13 +838,6 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 
 /* jQuery UI ThemeRoller buttons */
 
-.gButtonLink {
-  display: inline-block;
-  margin: 0 4px 0 0;
-  padding: .2em .4em;
-  outline: 0;
-}
-
 .gButtonSet {
   padding-left: 1px;
 }
@@ -853,7 +846,7 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
   float: left;
 }
 
-.gButtonSet .gButtonLink {
+.gButtonSet .g-button {
   margin: 0;
 }
 
@@ -1106,7 +1099,7 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 	clear: both;
 }
 
-#gTranslations .gButtonLink {
+#gTranslations .g-button {
 	padding: .5em;
 }
 

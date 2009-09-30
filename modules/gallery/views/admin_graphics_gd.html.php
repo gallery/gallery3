@@ -11,7 +11,7 @@
     <?= t("You have GD version %version.", array("version" => $tk->version)) ?>
   </div>
   <p>
-    <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
+    <a class="g-button ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
   </p>
   <? elseif ($tk->installed): ?>
   <? if ($tk->error): ?>
@@ -20,7 +20,7 @@
   </p>
   <? endif ?>
   <p>
-    <a class="gButtonLink ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
+    <a class="g-button ui-state-default ui-corner-all"><?= t("Activate GD") ?></a>
   </p>
   <? else: ?>
   <div class="gModuleStatus gInfo">

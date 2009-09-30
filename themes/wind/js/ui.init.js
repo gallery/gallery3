@@ -49,7 +49,7 @@ $(document).ready(function() {
   // Apply styles and icon classes to gContextMenu
   if ($(".gContextMenu").length) {
     $(".gContextMenu li").addClass("ui-state-default");
-    $(".gContextMenu a").addClass("gButtonLink ui-icon-left");
+    $(".gContextMenu a").addClass("g-button ui-icon-left");
     $(".gContextMenu a").prepend("<span class=\"ui-icon\"></span>");
     $(".gContextMenu a span").each(function() {
       var iconClass = $(this).parent().attr("class").match(/ui-icon-.[^\s]+/).toString();

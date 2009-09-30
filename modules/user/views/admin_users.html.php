@@ -43,7 +43,7 @@
 </script>
 <div class="gBlock">
   <a href="<?= url::site("admin/users/add_user_form") ?>"
-      class="gDialogLink gButtonLink g-right ui-icon-left ui-state-default ui-corner-all"
+      class="gDialogLink g-button g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new user")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new user") ?>
@@ -85,15 +85,15 @@
         <td class="gActions">
           <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"
               open_text="<?= t("close") ?>"
-              class="gPanelLink gButtonLink ui-state-default ui-corner-all ui-icon-left">
+              class="gPanelLink g-button ui-state-default ui-corner-all ui-icon-left">
             <span class="ui-icon ui-icon-pencil"></span><span class="gButtonText"><?= t("edit") ?></span></a>
           <? if (user::active()->id != $user->id && !$user->guest): ?>
           <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
-              class="gDialogLink gButtonLink ui-state-default ui-corner-all ui-icon-left">
+              class="gDialogLink g-button ui-state-default ui-corner-all ui-icon-left">
             <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
           <? else: ?>
           <span title="<?= t("This user cannot be deleted")->for_html_attr() ?>"
-              class="gButtonLink ui-state-disabled ui-corner-all ui-icon-left">
+              class="g-button ui-state-disabled ui-corner-all ui-icon-left">
             <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></span>
           <? endif ?>
         </td>
@@ -105,7 +105,7 @@
 
 <div id="gGroupAdmin" class="gBlock">
   <a href="<?= url::site("admin/users/add_group_form") ?>"
-      class="gDialogLink gButtonLink right ui-icon-left ui-state-default ui-corner-all"
+      class="gDialogLink g-button right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new group")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new group") ?>
