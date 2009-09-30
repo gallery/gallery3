@@ -63,7 +63,7 @@
         <th>
           <?= t("Action") ?>
           <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
-             class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
+             class="gButtonLink g-right ui-icon-left ui-state-default ui-corner-all">
             <?= t("cancel all") ?></a>
         </th>
       </tr>
@@ -102,7 +102,7 @@
           </a>
           <? endif ?>
           <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>"
-             class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
+             class="gButtonLink g-right ui-icon-left ui-state-default ui-corner-all">
             <?= t("cancel") ?>
           </a>
         </td>
@@ -136,7 +136,7 @@
         <th>
           <?= t("Action") ?>
           <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"
-               class="gButtonLink ui-icon-left ui-state-default ui-corner-all right">
+               class="gButtonLink g-right ui-icon-left ui-state-default ui-corner-all">
              <span class="ui-icon ui-icon-trash"></span><?= t("remove all finished") ?></a>
         </th>
       </tr>

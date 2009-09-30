@@ -108,12 +108,14 @@ form .g-error {
  * 3) Positioning and order
  **********************************************************************/
 
-.g-right {
-  float: right;
-}
-
 .g-left {
   float: left;
+  margin: 1em 1em 1em 0;
+}
+
+.g-right {
+  float: right;
+  margin: 1em 0 1em 1em;
 }
 
 .g-first {

@@ -5,7 +5,6 @@
  *
  * Sheet organization:
  *  1)  Basic HTML elements
- *  2)  Reusable classes
  *  3)  Reusable content blocks
  *  4)  Page layout containers
  *  5)  Content blocks in specific layout containers
@@ -240,29 +239,6 @@ li.gError textarea,
 form.gError select,
 li.gError select {
   border: 2px solid red;
-}
-
-/** *******************************************************************
- * 2) Reusable generic classes
- *********************************************************************/
-
-.inactive, .understate {
-  color: #ccc;
-  font-weight: normal;
-}
-
-.left {
-  float: left;
-  margin: 1em 1em 1em 0;
-}
-
-.right {
-  float: right;
-  margin: 1em 0 1em 1em;
-}
-
-.txtright {
-  text-align: right;
 }
 
 /** *******************************************************************

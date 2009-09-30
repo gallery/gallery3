@@ -25,7 +25,7 @@
   <? endif ?>
   </li>
   <li class="gInfo"><?= $from_to_msg ?></li>
-  <li class="txtright">
+  <li class="g-txt-right">
   <? if ($next_page): ?>
     <a href="<?= str_replace('{page}', $next_page, $url) ?>" class="gButtonLink ui-icon-right ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-next"></span><?= t("next") ?></a>

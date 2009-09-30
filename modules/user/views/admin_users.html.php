@@ -43,7 +43,7 @@
 </script>
 <div class="gBlock">
   <a href="<?= url::site("admin/users/add_user_form") ?>"
-      class="gDialogLink gButtonLink right ui-icon-left ui-state-default ui-corner-all"
+      class="gDialogLink gButtonLink g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new user")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new user") ?>

@@ -116,7 +116,7 @@
               title="<?= html::clean_attribute($comment->author_email()) ?>"> <?= html::clean($comment->author_name()) ?> </a></p>
       </td>
       <td>
-        <div class="right">
+        <div class="g-right">
           <? $item = $comment->item() ?>
           <div class="gItem gPhoto">
             <a href="<?= $item->url() ?>">
