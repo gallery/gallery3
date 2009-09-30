@@ -61,10 +61,10 @@
           <?= t("Owner") ?>
         </th>
         <th>
-          <?= t("Action") ?>
           <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
              class="gButtonLink g-right ui-icon-left ui-state-default ui-corner-all">
             <?= t("cancel all") ?></a>
+          <?= t("Action") ?>
         </th>
       </tr>
       <? $i = 0; ?>
@@ -95,16 +95,16 @@
           <?= html::clean($task->owner()->name) ?>
         </td>
         <td>
+          <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>"
+             class="gButtonLink g-right ui-icon-left ui-state-default ui-corner-all">
+            <?= t("cancel") ?>
+          </a>
           <? if ($task->state == "stalled"): ?>
           <a class="gDialogLink gButtonLink ui-icon-left ui-state-default ui-corner-all"
              href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
             <?= t("resume") ?>
           </a>
           <? endif ?>
-          <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>"
-             class="gButtonLink g-right ui-icon-left ui-state-default ui-corner-all">
-            <?= t("cancel") ?>
-          </a>
         </td>
       </tr>
       <? $i++ ?>
@@ -134,10 +134,10 @@
           <?= t("Owner") ?>
         </th>
         <th>
-          <?= t("Action") ?>
           <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"
                class="gButtonLink g-right ui-icon-left ui-state-default ui-corner-all">
              <span class="ui-icon ui-icon-trash"></span><?= t("remove all finished") ?></a>
+          <?= t("Action") ?>
         </th>
       </tr>
       <? $i = 0; ?>
