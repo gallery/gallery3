@@ -1,6 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   $(document).ready(function() {
+    $(".gAvailable .gBlock").equal_heights();
     select_toolkit = function(el) {
       if (!$(this).hasClass("gUnavailable")) {
         window.location = <?= html::js_string(url::site("admin/graphics/choose/__TK__?csrf=$csrf")) ?>

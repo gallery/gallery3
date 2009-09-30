@@ -587,7 +587,6 @@ tr.gWarning {
 #gAdminGraphics .gAvailable .gBlock {
   clear: none;
   float: left;
-  height: 17em;
   margin-right: 1em;
   width: 30%;
 }
