@@ -17,18 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tag_theme_Core {
-  static function head($theme) {
-    $theme->css("jquery.autocomplete.css");
-    $theme->script("jquery.autocomplete.js");
-    $theme->script("tag.js");
+class Admin_Sidebar_Controller extends Admin_Controller {
+  public function index() {
+    $view = new Admin_View("admin.html");
+    $view->content = new View("admin_sidebar.html");
+    print $view;
   }
 
-  static function admin_head($theme) {
-    $theme->script("tag.js");
-  }
-
-  static function sort_by_name($tag1, $tag2) {
-    return strcasecmp($tag1->name, $tag2->name);
-  }
 }
+

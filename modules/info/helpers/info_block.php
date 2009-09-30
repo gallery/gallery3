@@ -17,24 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class rss_theme_Core {
-  static function sidebar_blocks($theme) {
-    $block = new Block();
-    $block->css_id = "gRss";
-    $block->title = t("Available RSS Feeds");
-    $block->content = new View("rss_block.html");
-    $block->content->feeds = array();
-    foreach (module::active() as $module) {
-      $class_name = "{$module->name}_rss";
-      if (method_exists($class_name, "available_feeds")) {
-        $block->content->feeds = array_merge(
-          $block->content->feeds,
-          call_user_func(array($class_name, "available_feeds"), $theme->item(), $theme->tag()));
-      }
-    }
+class info_block_Core {
+  static function get_site_list() {
+    return array("metadata" => t("Metadata"));
+  }
 
-    if ($block->content->feeds) {
-      return $block;
+  static function get($block_id, $theme) {
+    $block = "";
+    switch ($block_id) {
+    case "metadata":
+      if ($theme->item()) {
+        $block = new Block();
+        $block->css_id = "gMetadata";
+        $block->title = $theme->item()->is_album() ? t("Album Info") : t("Photo Info");
+        $block->content = new View("info_block.html");
+      }
+      break;
     }
+    return $block;
   }
 }

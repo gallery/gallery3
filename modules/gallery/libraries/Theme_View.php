@@ -154,6 +154,17 @@ class Theme_View_Core extends Gallery_View {
   }
 
   /**
+   * Print out the sidebar.
+   */
+  public function sidebar_blocks() {
+    $sidebar = block_manager::get_html("site.sidebar", $this);
+    if (empty($sidebar) && user::active()->admin) {
+      $sidebar = new View("no_sidebar.html");
+    }
+    return $sidebar;
+  }
+
+  /**
    * Handle all theme functions that insert module content.
    */
   public function __call($function, $args) {
@@ -176,7 +187,6 @@ class Theme_View_Core extends Gallery_View {
     case "photo_top":
     case "resize_bottom":
     case "resize_top":
-    case "sidebar_blocks":
     case "sidebar_bottom":
     case "sidebar_top":
     case "thumb_bottom":

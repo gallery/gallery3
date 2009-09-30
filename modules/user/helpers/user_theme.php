@@ -33,21 +33,4 @@ class user_theme_Core {
       return $view->render();
     }
   }
-
-  static function sidebar_blocks($theme) {
-    $locales = locales::installed();
-    foreach ($locales as $locale => $display_name) {
-      $locales[$locale] = SafeString::of_safe_html($display_name);
-    }
-    if (count($locales) > 1) {
-      $block = new Block();
-      $block->css_id = "gUserLanguageBlock";
-      $block->title = t("Language Preference");
-      $block->content = new View("user_languages_block.html");
-      $block->content->installed_locales =
-        array_merge(array("" => t("« none »")), $locales);
-      $block->content->selected = (string) user::cookie_locale();
-      return $block;
-    }
-  }
 }

@@ -38,13 +38,21 @@ class block_manager_Core {
     self::set_active($location, $blocks);
   }
 
-  static function get_available() {
+  static function get_available_admin_blocks() {
+    return self::_get_blocks("get_admin_list");
+  }
+
+  static function get_available_site_blocks() {
+    return self::_get_blocks("get_site_list");
+  }
+
+  private static function _get_blocks($function) {
     $blocks = array();
 
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_block";
-      if (method_exists($class_name, "get_list")) {
-        foreach (call_user_func(array($class_name, "get_list")) as $id => $title) {
+      if (method_exists($class_name, $function)) {
+        foreach (call_user_func(array($class_name, $function)) as $id => $title) {
           $blocks["{$module->name}:$id"] = $title;
         }
       }
@@ -52,14 +60,16 @@ class block_manager_Core {
     return $blocks;
   }
 
-  static function get_html($location) {
+  static function get_html($location, $theme) {
     $active = self::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
       if (method_exists("$desc[0]_block", "get")) {
-        $block = call_user_func(array("$desc[0]_block", "get"), $desc[1]);
-        $block->id = $id;
-        $result .= $block;
+        $block = call_user_func(array("$desc[0]_block", "get"), $desc[1], $theme);
+        if (!empty($block)) {
+          $block->id = $id;
+          $result .= $block;
+        }
       }
     }
     return $result;

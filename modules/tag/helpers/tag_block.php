@@ -17,18 +17,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tag_theme_Core {
-  static function head($theme) {
-    $theme->css("jquery.autocomplete.css");
-    $theme->script("jquery.autocomplete.js");
-    $theme->script("tag.js");
+class tag_block_Core {
+  static function get_site_list() {
+    return array("tag" => t("Popular Tags"));
   }
 
-  static function admin_head($theme) {
-    $theme->script("tag.js");
-  }
+  static function get($block_id, $theme) {
+    $block = "";
+    switch ($block_id) {
+    case "tag":
+      $block = new Block();
+      $block->css_id = "gTag";
+      $block->title = t("Popular Tags");
+      $block->content = new View("tag_block.html");
+      $block->content->cloud = tag::cloud(30);
 
-  static function sort_by_name($tag1, $tag2) {
-    return strcasecmp($tag1->name, $tag2->name);
+      if ($theme->item() && $theme->page_type() != "tag" && access::can("edit", $theme->item())) {
+        $controller = new Tags_Controller();
+        $block->content->form = tag::get_add_form($theme->item());
+      } else {
+        $block->content->form = "";
+      }
+      break;
+    }
+    return $block;
   }
 }

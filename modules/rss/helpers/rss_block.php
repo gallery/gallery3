@@ -17,34 +17,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class image_block_theme_Core {
-  static function sidebar_blocks($theme) {
-    $block = new Block();
-    $block->css_id = "gImageBlock";
-    $block->title = t("Random Image");
-    $block->content = new View("image_block_block.html");
+class rss_block_Core {
+  static function get_site_list() {
+    return array("rss_feeds" => t("Available RSS Feeds"));
+  }
 
-    $random = ((float)mt_rand()) / (float)mt_getrandmax();
-
-    $items = ORM::factory("item")
-      ->viewable()
-      ->where("type !=", "album")
-      ->where("rand_key < ", $random)
-      ->orderby(array("rand_key" => "DESC"))
-      ->find_all(1);
-
-    if ($items->count() == 0) {
-      // Try once more.  If this fails, just ditch the block altogether
-      $items = ORM::factory("item")
-        ->viewable()
-        ->where("type !=", "album")
-        ->where("rand_key >= ", $random)
-        ->orderby(array("rand_key" => "DESC"))
-        ->find_all(1);
+  static function get($block_id, $theme) {
+    $block = "";
+    switch ($block_id) {
+    case "rss_feeds":
+      $feeds = array();
+      foreach (module::active() as $module) {
+        $class_name = "{$module->name}_rss";
+        if (method_exists($class_name, "available_feeds")) {
+          $feeds = array_merge($feeds,
+            call_user_func(array($class_name, "available_feeds"), $theme->item(), $theme->tag()));
+        }
+      }
+      if (!empty($feeds)) {
+        $block = new Block();
+        $block->css_id = "gRss";
+        $block->title = t("Available RSS Feeds");
+        $block->content = new View("rss_block.html");
+        $block->content->feeds = $feeds;
+      }
+      break;
     }
 
-    $block->content->item = $items->current();
-
-    return $items->count() == 0 ? "" : $block;
+    return $block;
   }
 }

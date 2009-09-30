@@ -17,18 +17,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tag_theme_Core {
-  static function head($theme) {
-    $theme->css("jquery.autocomplete.css");
-    $theme->script("jquery.autocomplete.js");
-    $theme->script("tag.js");
+class user_block_Core {
+  static function get_site_list() {
+    return array("language" => t("Language Preference"));
   }
 
-  static function admin_head($theme) {
-    $theme->script("tag.js");
-  }
-
-  static function sort_by_name($tag1, $tag2) {
-    return strcasecmp($tag1->name, $tag2->name);
+  static function get($block_id, $theme) {
+    $block = "";
+    switch ($block_id) {
+    case "language":
+      $locales = locales::installed();
+      foreach ($locales as $locale => $display_name) {
+        $locales[$locale] = SafeString::of_safe_html($display_name);
+      }
+      if (count($locales) > 1) {
+        $block = new Block();
+        $block->css_id = "gUserLanguageBlock";
+        $block->title = t("Language Preference");
+        $block->content = new View("user_languages_block.html");
+        $block->content->installed_locales =
+          array_merge(array("" => t("« none »")), $locales);
+        $block->content->selected = (string) user::cookie_locale();
+      }
+      break;
+    }
+    return $block;
   }
 }
