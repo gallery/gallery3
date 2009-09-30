@@ -399,7 +399,9 @@ tr.gWarning {
   background-color: #fcf9ce;
 }
 
+.gModuleStatus.gInfo,
 #gLogEntries .gInfo,
+.gModuleStatus.gSuccess,
 #gLogEntries .gSuccess {
   background-color: #fff;
 }
