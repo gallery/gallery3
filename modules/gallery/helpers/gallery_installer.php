@@ -268,7 +268,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 14);
+    module::set_version("gallery", 15);
   }
 
   static function upgrade($version) {
@@ -382,6 +382,17 @@ class gallery_installer {
       module::set_version("gallery", $version = 14);
     }
 
+    if ($version == 14) {
+      $sidebar_blocks = block_manager::get_active("site.sidebar");
+      if (empty($sidebar_blocks)) {
+        $available_blocks = block_manager::get_available_site_blocks();
+        foreach  (array_key(block_manager::get_available_site_blocks()) as $id) {
+          $sidebar_blocks[] = explode(":", $id);
+        }
+        block_manager::set_active("site.sidebar", $sidebar_blocks);
+      }
+      module::set_version("gallery", $version = 15);
+    }
   }
 
   static function uninstall() {
