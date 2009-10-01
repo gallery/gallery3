@@ -7,6 +7,8 @@
         success: function(data) {
           $("div#gLoginView").html(data);
           $("#ui-dialog-title-gDialog").html(<?= t("Reset Password")->for_js() ?>);
+          $(".submit").addClass("g-button ui-state-default ui-corner-all");
+          $(".submit").gallery_hover_init();
           ajaxify_login_reset_form();
         }
       });
