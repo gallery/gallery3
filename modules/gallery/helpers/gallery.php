@@ -96,7 +96,18 @@ class gallery_Core {
       return "lib/$file";
     }
 
-    return is_string($file_name) ? substr($file_name, strlen(DOCROOT)) : $file_name;
+    if (is_string($file_name)) {
+      // make relative to DOCROOT
+      $parts = explode("/", $file_name);
+      foreach ($parts as $idx => $part) {
+        if (in_array($part, array("application", "modules", "themes", "lib"))) {
+          break;
+        }
+        unset($parts[$idx]);
+      }
+      $file_name = implode("/", $parts);
+    }
+    return $file_name;
   }
 
 }

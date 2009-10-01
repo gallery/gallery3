@@ -85,13 +85,11 @@ class Gallery_View_Core extends View {
 
     if (empty($contents)) {
       $contents = "";
-      $docroot_len = strlen(DOCROOT);
       foreach (array_keys($paths) as $path) {
-        $relative = substr($path, $docroot_len);
         if ($type == "css") {
-          $contents .= "/* $relative */\n" . $this->process_css($path) . "\n";
+          $contents .= "/* $path */\n" . $this->process_css($path) . "\n";
         } else {
-          $contents .= "/* $relative */\n" . file_get_contents($path) . "\n";
+          $contents .= "/* $path */\n" . file_get_contents($path) . "\n";
         }
       }
 
