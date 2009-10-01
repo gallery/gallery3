@@ -5,7 +5,7 @@
   var sort_order_url = "<?= url::site("organize/sort_order/__ALBUM_ID__/__COL__/__DIR__?csrf=$csrf") ?>";
   var tree_url = "<?= url::site("organize/tree/__ALBUM_ID__") ?>";
 </script>
-<div id="gOrganize" class="gDialogPanel">
+<div id="gOrganize" class="g-dialogPanel">
   <h1 style="display:none"><?= t("Organize %name", array("name" => html::purify($album->title))) ?></h1>
   <div id="bd">
     <div class="yui-gf">

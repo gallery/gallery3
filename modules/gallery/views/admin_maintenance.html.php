@@ -30,7 +30,7 @@
         </td>
         <td>
           <a href="<?= url::site("admin/maintenance/start/$task->callback?csrf=$csrf") ?>"
-            class="gDialogLink g-button ui-icon-left ui-state-default ui-corner-all">
+            class="g-dialogLink g-button ui-icon-left ui-state-default ui-corner-all">
             <?= t("run") ?>
           </a>
         </td>
@@ -100,7 +100,7 @@
             <?= t("cancel") ?>
           </a>
           <? if ($task->state == "stalled"): ?>
-          <a class="gDialogLink g-button ui-icon-left ui-state-default ui-corner-all"
+          <a class="g-dialogLink g-button ui-icon-left ui-state-default ui-corner-all"
              href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
             <?= t("resume") ?>
           </a>
@@ -170,12 +170,12 @@
             <?= t("remove") ?>
           </a>
           <? if ($task->get_log()): ?>
-          <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="gDialogLink g-button ui-state-default ui-corner-all">
+          <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="g-dialogLink g-button ui-state-default ui-corner-all">
             <?= t("browse log") ?>
           </a>
           <? endif ?>
           <? else: ?>
-          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>" class="gDialogLink g-button" ui-state-default ui-corner-all>
+          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>" class="g-dialogLink g-button" ui-state-default ui-corner-all>
             <?= t("resume") ?>
           </a>
           <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>" class="g-button ui-state-default ui-corner-all">

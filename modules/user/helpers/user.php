@@ -26,6 +26,7 @@
 class user_Core {
   static function get_edit_form($user) {
     $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gEditUserForm"));
+    $form->set_attr("class", "g-narrow");
     $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
     $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
@@ -66,6 +67,7 @@ class user_Core {
 
   static function get_add_form_admin() {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "gAddUserForm"));
+    $form->set_attr('class', "g-narrow");
     $group = $form->group("add_user")->label(t("Add User"));
     $group->input("name")->label(t("Username"))->id("gUsername")
       ->error_messages("in_use", t("There is already a user with that username"));
@@ -112,6 +114,7 @@ class user_Core {
 
   static function get_login_form($url) {
     $form = new Forge($url, "", "post", array("id" => "gLoginForm"));
+    $form->set_attr('class', "g-narrow");
     $group = $form->group("login")->label(t("Login"));
     $group->input("name")->label(t("Username"))->id("gUsername")->class(null);
     $group->password("password")->label(t("Password"))->id("gPassword")->class(null);

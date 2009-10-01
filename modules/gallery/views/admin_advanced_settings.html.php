@@ -23,7 +23,7 @@
       <td> <?= html::clean($var->name) ?> </td>
       <td>
         <a href="<?= url::site("admin/advanced_settings/edit/$var->module_name/" . html::clean($var->name)) ?>"
-          class="gDialogLink"
+          class="g-dialogLink"
           title="<?= t("Edit %var (%module_name)", array("var" => $var->name, "module_name" => $var->module_name))->for_html_attr() ?>">
           <? if ($var->value): ?>
           <?= html::clean($var->value) ?>

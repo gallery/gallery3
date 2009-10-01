@@ -1,12 +1,12 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-  $("#gLoginForm").ready(function() {
-    $("#gForgotPasswordLink").click(function() {
+  $("#g-login-form").ready(function() {
+    $("#g-password-reset").click(function() {
       $.ajax({
         url: "<?= url::site("password/reset") ?>",
         success: function(data) {
-          $("div#gLoginView").html(data);
-          $("#ui-dialog-title-gDialog").html(<?= t("Reset Password")->for_js() ?>);
+          $("#g-login").html(data);
+          $("#ui-dialog-title-g-dialog").html(<?= t("Reset Password")->for_js() ?>);
           $(".submit").addClass("g-button ui-state-default ui-corner-all");
           $(".submit").gallery_hover_init();
           ajaxify_login_reset_form();
@@ -16,30 +16,28 @@
   });
 
   function ajaxify_login_reset_form() {
-    $("#gLoginView form").ajaxForm({
+    $("#g-login form").ajaxForm({
       dataType: "json",
       success: function(data) {
         if (data.form) {
-          $("#gLoginView form").replaceWith(data.form);
+          $("#g-login form").replaceWith(data.form);
           ajaxify_login_reset_form();
         }
         if (data.result == "success") {
-          $("#gDialog").dialog("close");
+          $("#g-dialog").dialog("close");
           window.location.reload();
         }
       }
     });
   };
 </script>
-<div id="gLoginView">
+<div id="g-login">
   <ul>
-    <li>
-      <div id="gLoginViewForm">
-        <?= $form ?>
-      </div>
+    <li id="g-login-form">
+      <?= $form ?>
     </li>
     <li>
-      <a href="#" id="gForgotPasswordLink"><?= t("Forgot Your Password?") ?></a>
+      <a href="#" id="g-password-reset" class="g-right g-txt-small"><?= t("Forgot Your Password?") ?></a>
     </li>
   </ul>
 </div>

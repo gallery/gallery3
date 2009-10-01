@@ -4,11 +4,11 @@
   <? if (!$group->special): ?>
   <a href="<?= url::site("admin/users/delete_group_form/$group->id") ?>"
     title="<?= t("Delete the %name group", array("name" => $group->name))->for_html_attr() ?>"
-    class="gDialogLink g-button ui-state-default ui-corner-all">
+    class="g-dialogLink g-button ui-state-default ui-corner-all">
     <span class="ui-icon ui-icon-trash"><?= t("delete") ?></span></a>
   <? else: ?>
   <a title="<?= t("This default group cannot be deleted")->for_html_attr() ?>"
-     class="gDialogLink g-button ui-state-disabled ui-corner-all ui-icon-left">
+     class="g-dialogLink g-button ui-state-disabled ui-corner-all ui-icon-left">
     <span class="ui-icon ui-icon-trash"><?= t("delete") ?></span></a>
   <? endif ?>
 </h4>

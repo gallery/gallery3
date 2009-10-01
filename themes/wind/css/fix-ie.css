@@ -23,7 +23,7 @@ input.submit {
   width: 110px;
 }
 
-#gDialog a.gCancel {
+#g-dialog a.g-cancel {
   display: inline-block !important;
   float: none !important;
 }

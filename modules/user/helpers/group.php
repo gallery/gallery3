@@ -86,6 +86,7 @@ class group_Core {
 
   static function get_add_form_admin() {
     $form = new Forge("admin/users/add_group", "", "post", array("id" => "gAddGroupForm"));
+    $form->set_attr('class', "g-narrow");
     $form_group = $form->group("add_group")->label(t("Add Group"));
     $form_group->input("name")->label(t("Name"))->id("gName");
     $form_group->inputs["name"]->error_messages(

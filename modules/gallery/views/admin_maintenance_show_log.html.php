@@ -9,7 +9,7 @@
 appendTo('body').submit().remove();
   };
 </script>
-<div id="gTaskLogDialog">
+<div id="gTaskLog-dialog">
   <h1> <?= $task->name ?> </h1>
   <div class="gTaskLog">
     <pre><?= html::purify($task->get_log()) ?></pre>

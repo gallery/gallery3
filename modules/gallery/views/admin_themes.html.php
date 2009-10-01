@@ -30,7 +30,7 @@
     <? if (!$info->site) continue ?>
     <? if ($id == $site) continue ?>
     <div class="gBlock">
-      <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="gDialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
+      <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="g-dialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
         <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
              alt="<?= html::clean_attribute($info->name) ?>" />
         <h3> <?= $info->name ?> </h3>
@@ -68,7 +68,7 @@
     <? if (!$info->admin) continue ?>
     <? if ($id == $admin) continue ?>
     <div class="gBlock">
-      <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="gDialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
+      <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="g-dialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
         <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
              alt="<?= html::clean_attribute($info->name) ?>" />
         <h3> <?= $info->name ?> </h3>

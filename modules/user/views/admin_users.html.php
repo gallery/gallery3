@@ -28,7 +28,7 @@
           {},
           function(data) {
             $("#group-" + group_id).html(data);
-            $("#group-" + group_id + " .gDialogLink").gallery_dialog();
+            $("#group-" + group_id + " .g-dialogLink").gallery_dialog();
           });
   }
 
@@ -43,7 +43,7 @@
 </script>
 <div class="gBlock">
   <a href="<?= url::site("admin/users/add_user_form") ?>"
-      class="gDialogLink g-button g-right ui-icon-left ui-state-default ui-corner-all"
+      class="g-dialogLink g-button g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new user")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new user") ?>
@@ -89,7 +89,7 @@
             <span class="ui-icon ui-icon-pencil"></span><span class="gButtonText"><?= t("edit") ?></span></a>
           <? if (user::active()->id != $user->id && !$user->guest): ?>
           <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
-              class="gDialogLink g-button ui-state-default ui-corner-all ui-icon-left">
+              class="g-dialogLink g-button ui-state-default ui-corner-all ui-icon-left">
             <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
           <? else: ?>
           <span title="<?= t("This user cannot be deleted")->for_html_attr() ?>"
@@ -105,7 +105,7 @@
 
 <div id="gGroupAdmin" class="gBlock">
   <a href="<?= url::site("admin/users/add_group_form") ?>"
-      class="gDialogLink g-button g-right ui-icon-left ui-state-default ui-corner-all"
+      class="g-dialogLink g-button g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new group")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new group") ?>

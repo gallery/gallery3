@@ -17,7 +17,7 @@ $(document).ready(function(){
   $("#gMessage li").gallery_show_message();
 
   // Initialize modal dialogs
-  $(".gDialogLink").gallery_dialog();
+  $(".g-dialogLink").gallery_dialog();
 
   // Initialize ajax links
   $(".gAjaxLink").gallery_ajax();

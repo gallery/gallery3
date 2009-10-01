@@ -26,8 +26,8 @@ $(document).ready(function() {
   $("#gMessage li").gallery_show_message();
 
   // Initialize dialogs
-  $("#gLoginLink").addClass("gDialogLink");
-  $(".gDialogLink").gallery_dialog();
+  $("#gLoginLink").addClass("g-dialogLink");
+  $(".g-dialogLink").gallery_dialog();
 
   // Initialize view menu
   if ($("#gViewMenu").length) {

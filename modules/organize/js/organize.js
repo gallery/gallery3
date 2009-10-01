@@ -138,19 +138,19 @@
       var self = this;
       // Deal with ui.jquery bug: http://dev.jqueryui.com/ticket/4475 (target 1.8?)
       $(".sf-menu li.sfHover ul").css("z-index", 68);
-      $("#gDialog").dialog("option", "zIndex", 70);
-      $("#gDialog").bind("dialogopen", function(event, ui) {
-        $("#gOrganize").height($("#gDialog").innerHeight() - 20);
-        $("#gOrganizeMicroThumbPanel").height($("#gDialog").innerHeight() - 90);
-        $("#gOrganizeTreeContainer").height($("#gDialog").innerHeight() - 59);
+      $("#g-dialog").dialog("option", "zIndex", 70);
+      $("#g-dialog").bind("dialogopen", function(event, ui) {
+        $("#gOrganize").height($("#g-dialog").innerHeight() - 20);
+        $("#gOrganizeMicroThumbPanel").height($("#g-dialog").innerHeight() - 90);
+        $("#gOrganizeTreeContainer").height($("#g-dialog").innerHeight() - 59);
       });
 
-      $("#gDialog").bind("dialogclose", function(event, ui) {
+      $("#g-dialog").bind("dialogclose", function(event, ui) {
         window.location.reload();
       });
 
-      $("#gDialog #gOrganizeClose").click(function(event) {
-        $("#gDialog").dialog("close");
+      $("#g-dialog #gOrganizeClose").click(function(event) {
+        $("#g-dialog").dialog("close");
       });
 
       $("#gOrganizeSortColumn,#gOrganizeSortOrder").change(function(event) {

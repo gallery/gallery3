@@ -67,7 +67,7 @@ h3 {
 
 a,
 .gMenu a,
-#gDialog a,
+#g-dialog a,
 .g-button,
 .g-button:hover,
 .g-button:active,
@@ -81,7 +81,7 @@ button.ui-state-hover {
 }
 
 a:hover,
-#gDialog a:hover {
+#g-dialog a:hover {
   text-decoration: underline;
 }
 
@@ -89,22 +89,7 @@ a:hover,
   text-decoration: none;
 }
 
-#gDialog .gCancel {
-  clear: none;
-  float: left;
-  margin: .3em 1em;
-}
-
-#gForgotPasswordLink {
-  float: right;
-  font-size: .9em;
-}
-
-#gDialog .gCancel {
-  float: left;
-}
-
-#gDialog #gMessage li {
+#g-dialog #gMessage li {
   width: 400px;
   white-space: normal;
   padding-left: 32px;
@@ -685,13 +670,13 @@ form .gError,
   font-weight: bold;
 }
 
-#gDialog ul.gBreadcrumbs {
+#g-dialog ul.gBreadcrumbs {
   clear: both;
   margin-left: 0;
   padding-left: 0;
 }
 
-#gDialog .gBreadcrumbs li {
+#g-dialog .gBreadcrumbs li {
   font-size: .9em;
 }
 
@@ -822,7 +807,7 @@ form .gError,
   font-size: 0;
 }
 
-.gDialogLoadingLarge {
+.g-dialogLoadingLarge {
   background: url('../../../lib/images/loading-large.gif') no-repeat center center !important;
   font-size: 0;
 }
@@ -848,38 +833,6 @@ form .gError,
 .ui-widget-overlay {
   background: #000;
   opacity: .7;
-}
-
-#gDialog {
-  text-align: left;
-}
-
-#gDialog li {
-  padding-left: 0;
-}
-
-#gDialog form input[type="text"],
-#gDialog form input[type="password"] {
-  width: 100%;
-}
-
-#gDialog #gLoginForm,
-#gDialog #gAddUserForm,
-#gDialog #gAddGroupForm {
-  margin: 0 auto;
-  width: 270px;
-}
-
-#gDialog fieldset {
-  border: none;
-}
-
-#gDialog legend {
-  display: none;
-}
-
-#gDialog p {
-	margin: 0;
 }
 
 /* jQuery UI ThemeRoller buttons */
@@ -1097,7 +1050,7 @@ form .gError,
 
 .rtl caption,
 .rtl th,
-.rtl #gDialog {
+.rtl #g-dialog {
   text-align: right;
 }
 
@@ -1109,7 +1062,7 @@ form .gError,
   float: left;
 }
 
-.rtl #gDialog .gCancel,
+.rtl #g-dialog .g-cancel,
 .rtl form ul ul li,
 .rtl input[type="submit"],
 .rtl input[type="reset"],

@@ -50,7 +50,7 @@
             <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= html::clean($tag->name) ?></span>
             <span class="g-understate">(<?= $tag->count ?>)</span>
             <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
-               class="gDialogLink delete-link g-button">
+               class="g-dialogLink delete-link g-button">
                 <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
           </li>
 

@@ -84,7 +84,7 @@
     </div>
 
     <p>
-      <a class="g-button gDialogLink ui-state-default ui-corner-all"
+      <a class="g-button g-dialogLink ui-state-default ui-corner-all"
          href="<?= url::site("admin/maintenance/start/g2_import_task::import?csrf=$csrf") ?>">
         <?= t("Begin import!") ?>
       </a>

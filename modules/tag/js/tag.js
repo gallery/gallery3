@@ -24,7 +24,7 @@ function closeEditInPlaceForms() {
     $("#gRenameTagForm").parent().html($("#gRenameTagForm").parent().data("revert"));
     li.height("");
     $(".gEditable", li).bind("click", editInPlace);
-    $(".gDialogLink", li).gallery_dialog();
+    $(".g-dialogLink", li).gallery_dialog();
   }
 }
 

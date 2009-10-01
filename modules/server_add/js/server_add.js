@@ -21,7 +21,7 @@
          self.run_add();
        });
        $("#gServerAddCloseButton", this.element).click(function(event) {
-         $("#gDialog").dialog("close");
+         $("#g-dialog").dialog("close");
          window.location.reload();
        });
        $("#gServerAddTree span.gDirectory", this.element).dblclick(function(event) {
@@ -33,7 +33,7 @@
        $("#gServerAddTree span.gDirectory", this.element).dblclick(function(event) {
          self.open_dir(event);
        });
-       $("#gDialog").bind("dialogclose", function(event, ui) {
+       $("#g-dialog").bind("dialogclose", function(event, ui) {
          window.location.reload();
        });
      },

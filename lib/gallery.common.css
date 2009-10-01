@@ -3,9 +3,10 @@
  *
  * Sheet organization:
  *  1)  Text
- *  2)  States and interactions
- *  3)  Positioning and order
- *  4)  Reusable containers/widgets
+ *  2)  Dimension and scale
+ *  3)  States and interactions
+ *  4)  Positioning and order
+ *  5)  Containers/widgets
  */
 
 /** *******************************************************************
@@ -24,8 +25,16 @@
   text-align: right;
 }
 
+
 /** *******************************************************************
- * 2) States and interactions
+ * 2) Dimension and scale
+ **********************************************************************/
+
+.g-narrow {
+}
+
+/** *******************************************************************
+ * 3) States and interactions
  **********************************************************************/
 
 .g-active,
@@ -105,7 +114,7 @@ form .g-error {
 }
 
 /** *******************************************************************
- * 3) Positioning and order
+ * 4) Positioning and order
  **********************************************************************/
 
 .g-left {
@@ -131,10 +140,43 @@ form .g-error {
 }
 
 /** *******************************************************************
- * 4) Reusable containers/widgets
+ * 5) Containers/widgets
  **********************************************************************/
 
-.g-dialog {
+#g-dialog {
+  text-align: left;
+}
+
+#g-dialog .g-narrow {
+  margin: 0 auto;
+  width: 270px;
+}
+
+#g-dialog fieldset {
+  border: none;
+}
+
+#g-dialog legend {
+  display: none;
+}
+
+#g-dialog form input[type="text"],
+#g-dialog form input[type="password"] {
+  width: 100%;
+}
+
+#g-dialog p {
+	margin: 0;
+}
+
+#g-dialog li {
+  padding-left: 0;
+}
+
+#g-dialog .g-cancel {
+  clear: none;
+  float: left;
+  margin: .3em 1em;
 }
 
 .g-button {
