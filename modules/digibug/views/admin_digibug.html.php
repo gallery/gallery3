@@ -7,8 +7,8 @@
       <?= t("Turn your photos into a wide variety of prints, gifts and games!") ?>
     </p>
 
-    <ul id="gMessage">
-      <li class="gSuccess">
+    <ul>
+      <li class="gModuleStatus gSuccess">
         <?= t("You're ready to print photos!") ?>
       </li>
     </ul>
