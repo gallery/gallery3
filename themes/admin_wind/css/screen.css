@@ -336,19 +336,19 @@ li.gError select {
 }
 
 .gError, tr.gError td.gError {
-  background: #f6cbca url('../images/ico-error.png') no-repeat .4em 50%;
+  background: #f6cbca url('../../../lib/images/ico-error.png') no-repeat .4em 50%;
 }
 
 .gInfo {
-  background: #e8e8e8 url('../images/ico-info.png') no-repeat .4em 50%;
+  background: #e8e8e8 url('../../../lib/images/ico-info.png') no-repeat .4em 50%;
 }
 
 .gSuccess {
-  background: #d9efc2  url('../images/ico-success.png') no-repeat .4em 50%;
+  background: #d9efc2  url('../../../lib/images/ico-success.png') no-repeat .4em 50%;
 }
 
 .gWarning, tr.gWarning td.gWarning {
-  background: #fcf9ce url('../images/ico-warning.png') no-repeat .4em 50%;
+  background: #fcf9ce url('../../../lib/images/ico-warning.png') no-repeat .4em 50%;
 }
 
 .gPager .gInfo,

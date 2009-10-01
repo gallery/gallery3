@@ -294,22 +294,22 @@ li.gError select {
 
 .gError {
   background-color: #f6cbca;
-  background-image: url('../images/ico-error.png');
+  background-image: url('../../../lib/images/ico-error.png');
 }
 
 .gInfo {
   background-color: #e8e8e8;
-  background-image: url('../images/ico-info.png');
+  background-image: url('../../../lib/images/ico-info.png');
 }
 
 .gSuccess {
   background-color: #d9efc2;
-  background-image: url('../images/ico-success.png');
+  background-image: url('../../../lib/images/ico-success.png');
 }
 
 .gWarning {
   background-color: #fcf9ce;
-  background-image: url('../images/ico-warning.png');
+  background-image: url('../../../lib/images/ico-warning.png');
 }
 
 form .gError,
