@@ -32,10 +32,33 @@ class block_manager_Core {
     self::set_active($location, $blocks);
   }
 
+  static function activate_sidebar_blocks($module_name) {
+    $block_class = "{$module_name}_block";
+    if (method_exists($block_class, "get_site_list")) {
+      $blocks = call_user_func(array($block_class, "get_site_list"));
+      Kohana::log("error", Kohana::debug($blocks));
+      foreach  (array_keys($blocks) as $id) {
+        list ($unused, $block_id) = explode(":", $id);
+        self::add("site.sidebar", $module_name, $block_id);
+      }
+    }
+  }
+
   static function remove($location, $block_id) {
     $blocks = self::get_active($location);
     unset($blocks[$block_id]);
     self::set_active($location, $blocks);
+  }
+
+  static function deactivate_sidebar_blocks($module_name) {
+    $block_class = "{$module_name}_block";
+    if (method_exists($block_class, "get_site_list")) {
+      $blocks = call_user_func(array($block_class, "get_site_list"));
+      foreach  (array_keys($blocks) as $id) {
+        list ($unused, $block_id) = explode(":", $id);
+        self::remove("site.sidebar", $module_name, $block_id);
+      }
+    }
   }
 
   static function get_available_admin_blocks() {

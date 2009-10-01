@@ -386,7 +386,7 @@ class gallery_installer {
       $sidebar_blocks = block_manager::get_active("site.sidebar");
       if (empty($sidebar_blocks)) {
         $available_blocks = block_manager::get_available_site_blocks();
-        foreach  (array_key(block_manager::get_available_site_blocks()) as $id) {
+        foreach  (array_keys(block_manager::get_available_site_blocks()) as $id) {
           $sidebar_blocks[] = explode(":", $id);
         }
         block_manager::set_active("site.sidebar", $sidebar_blocks);
