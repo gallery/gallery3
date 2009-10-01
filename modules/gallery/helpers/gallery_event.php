@@ -61,65 +61,68 @@ class gallery_event_Core {
                     ->label(t("Home"))
                     ->url(item::root()->url()));
 
+
       $item = $theme->item();
 
-      $can_edit = $item && access::can("edit", $item);
-      $can_add = $item && access::can("add", $item);
+      if (!empty($item)) {
+        $can_edit = $item && access::can("edit", $item);
+        $can_add = $item && access::can("add", $item);
 
-      if ($can_add) {
-        $menu->append($add_menu = Menu::factory("submenu")
-                      ->id("add_menu")
-                      ->label(t("Add")));
-        $is_album_writable =
-          is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path());
-        if ($is_album_writable) {
-          $add_menu->append(Menu::factory("dialog")
-                            ->id("add_photos_item")
-                            ->label(t("Add photos"))
-                            ->url(url::site("simple_uploader/app/$item->id")));
-          if ($item->is_album()) {
+        if ($can_add) {
+          $menu->append($add_menu = Menu::factory("submenu")
+                        ->id("add_menu")
+                        ->label(t("Add")));
+          $is_album_writable =
+            is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path());
+          if ($is_album_writable) {
             $add_menu->append(Menu::factory("dialog")
-                              ->id("add_album_item")
-                              ->label(t("Add an album"))
-                              ->url(url::site("form/add/albums/$item->id?type=album")));
+                              ->id("add_photos_item")
+                              ->label(t("Add photos"))
+                              ->url(url::site("simple_uploader/app/$item->id")));
+            if ($item->is_album()) {
+              $add_menu->append(Menu::factory("dialog")
+                                ->id("add_album_item")
+                                ->label(t("Add an album"))
+                                ->url(url::site("form/add/albums/$item->id?type=album")));
+            }
+          } else {
+            message::warning(t("The album '%album_name' is not writable.",
+                               array("album_name" => $item->title)));
           }
-        } else {
-          message::warning(t("The album '%album_name' is not writable.",
-                             array("album_name" => $item->title)));
-        }
-      }
-
-      switch ($item->type) {
-      case "album":
-        $option_text = t("Album options");
-        $edit_text = t("Edit album");
-        break;
-      case "movie":
-        $option_text = t("Movie options");
-        $edit_text = t("Edit movie");
-        break;
-      default:
-        $option_text = t("Photo options");
-        $edit_text = t("Edit photo");
-      }
-
-      $menu->append($options_menu = Menu::factory("submenu")
-                    ->id("options_menu")
-                    ->label($option_text));
-      if ($item && ($can_edit || $can_add)) {
-        if ($can_edit) {
-          $options_menu->append(Menu::factory("dialog")
-                                ->id("edit_item")
-                                ->label($edit_text)
-                                ->url(url::site("form/edit/{$item->type}s/$item->id")));
         }
 
-        if ($item->is_album()) {
+        switch ($item->type) {
+        case "album":
+          $option_text = t("Album options");
+          $edit_text = t("Edit album");
+          break;
+        case "movie":
+          $option_text = t("Movie options");
+          $edit_text = t("Edit movie");
+          break;
+        default:
+          $option_text = t("Photo options");
+          $edit_text = t("Edit photo");
+        }
+
+        $menu->append($options_menu = Menu::factory("submenu")
+                      ->id("options_menu")
+                      ->label($option_text));
+        if ($item && ($can_edit || $can_add)) {
           if ($can_edit) {
             $options_menu->append(Menu::factory("dialog")
-                                  ->id("edit_permissions")
-                                  ->label(t("Edit permissions"))
-                                  ->url(url::site("permissions/browse/$item->id")));
+                                  ->id("edit_item")
+                                  ->label($edit_text)
+                                  ->url(url::site("form/edit/{$item->type}s/$item->id")));
+          }
+
+          if ($item->is_album()) {
+            if ($can_edit) {
+              $options_menu->append(Menu::factory("dialog")
+                                    ->id("edit_permissions")
+                                    ->label(t("Edit permissions"))
+                                    ->url(url::site("permissions/browse/$item->id")));
+            }
           }
         }
       }
