@@ -105,7 +105,7 @@
 
 <div id="gGroupAdmin" class="gBlock">
   <a href="<?= url::site("admin/users/add_group_form") ?>"
-      class="gDialogLink g-button right ui-icon-left ui-state-default ui-corner-all"
+      class="gDialogLink g-button g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new group")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new group") ?>
