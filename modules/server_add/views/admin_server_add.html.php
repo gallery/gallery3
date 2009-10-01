@@ -5,8 +5,8 @@
   </h2>
   <div id="gAuthorizedPath">
     <h3><?= t("Authorized Paths") ?></h3>
-    <ul id="gMessage"<? if (!empty($paths)): ?> style="display: none;"<? endif ?>>
-      <li class="gInfo"><?= t("No Authorized image source paths defined yet") ?></li>
+    <ul<? if (!empty($paths)): ?> style="display: none;"<? endif ?>>
+      <li class="gModuleStatus gInfo"><?= t("No Authorized image source paths defined yet") ?></li>
     </ul>
     <ul id="gPathList">
       <? foreach ($paths as $id => $path): ?>
