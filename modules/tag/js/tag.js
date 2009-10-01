@@ -8,8 +8,8 @@ function ajaxify_tag_form() {
     success: function(data) {
       if (data.result == "success") {
         $.get($("#gTagCloud").attr("title"), function(data, textStatus) {
-	      $("#gTagCloud").html(data);
-	    });
+	  $("#gTagCloud").html(data);
+	});
       }
       $("#gTag form").resetForm();
     }
