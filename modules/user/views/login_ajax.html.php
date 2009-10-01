@@ -25,7 +25,6 @@
           $("#gDialog").dialog("close");
           window.location.reload();
         }
-
       }
     });
   };
