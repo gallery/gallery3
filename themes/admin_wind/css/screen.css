@@ -656,6 +656,7 @@ li.gDefaultGroup h4, li.gDefaultGroup .gUser {
 }
 
 .gAdminBlocksList ul {
+  height: 98%;
   margin: .1em .1em;
   padding: .1em;
 }
