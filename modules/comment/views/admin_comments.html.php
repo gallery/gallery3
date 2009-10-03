@@ -103,7 +103,7 @@
       </th>
     </tr>
     <? foreach ($comments as $i => $comment): ?>
-    <tr id="gComment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
+    <tr id="gComment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?>">
       <td>
         <a href="#">
           <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"

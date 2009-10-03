@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul>
   <? foreach ($comments as $i => $comment): ?>
-  <li class="<?= ($i % 2 == 0) ? "gEvenRow" : "gOddRow" ?>">
+  <li class="<?= ($i % 2 == 0) ? "g-even-row" : "g-odd-row" ?>">
     <img src="<?= $comment->author()->avatar_url(32, $theme->url("images/avatar.jpg", true)) ?>"
          class="gAvatar"
          alt="<?= html::clean_attribute($comment->author_name()) ?>"

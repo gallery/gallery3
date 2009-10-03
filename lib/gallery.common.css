@@ -134,9 +134,11 @@ form .g-error {
 }
 
 .g-even-row {
+  background-color: #fff;
 }
 
 .g-odd-row {
+  background-color: #eee;
 }
 
 /** *******************************************************************

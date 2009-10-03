@@ -16,7 +16,7 @@
       </tr>
       <? $i = 0 ?>
       <? foreach ($available as $module_name => $module_info):  ?>
-      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?>">
         <? $data = array("name" => $module_name); ?>
         <? if ($module_info->locked) $data["disabled"] = 1; ?>
         <td> <?= form::checkbox($data, '1', module::is_active($module_name)) ?> </td>

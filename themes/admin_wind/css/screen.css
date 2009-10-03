@@ -281,14 +281,6 @@ li.gError select {
   opacity: 0.4;
 }
 
-.gOddRow {
-  background-color: #eee;
-}
-
-.gEvenRow {
-  background-color: #fff;
-}
-
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #gMessage {

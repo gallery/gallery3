@@ -21,7 +21,7 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($task_definitions as $task): ?>
-      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= log::severity_class($task->severity) ?>">
+      <tr class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?> <?= log::severity_class($task->severity) ?>">
         <td class="<?= log::severity_class($task->severity) ?>">
           <?= $task->name ?>
         </td>
@@ -69,7 +69,7 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($running_tasks as $task): ?>
-      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= $task->state == "stalled" ? "gWarning" : "" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?> <?= $task->state == "stalled" ? "gWarning" : "" ?>">
         <td class="<?= $task->state == "stalled" ? "gWarning" : "" ?>">
           <?= gallery::date_time($task->updated) ?>
         </td>
@@ -142,7 +142,7 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($finished_tasks as $task): ?>
-      <tr class="<?= ($i % 2 == 0) ? "gOddRow" : "gEvenRow" ?> <?= $task->state == "success" ? "gSuccess" : "gError" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?> <?= $task->state == "success" ? "gSuccess" : "gError" ?>">
         <td class="<?= $task->state == "success" ? "gSuccess" : "gError" ?>">
           <?= gallery::date_time($task->updated) ?>
         </td>
