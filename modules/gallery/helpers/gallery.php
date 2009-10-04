@@ -110,4 +110,17 @@ class gallery_Core {
     return $file_name;
   }
 
+  /**
+   * Return a full path to the theme or module file.  It checks the APPPATH/(themes|modules) first
+   * then the THEMEPATH | MODPATH
+   * @param $file the file or directory
+   * @param $type ("module" | "theme" optional: defaults to "module")
+   * @return string
+   */
+  static function plugin_path($file, $type="module") {
+    if (!file_exists($ofile = APPPATH . "{$type}s/$file")) {
+      $ofile = $type == "module" ? MODPATH . $file : THEMEPATH . $file;
+    }
+    return $ofile;
+  }
 }

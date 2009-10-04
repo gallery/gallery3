@@ -29,17 +29,20 @@ class Admin_Themes_Controller extends Admin_Controller {
 
   private function _get_themes() {
     $themes = array();
-    foreach (scandir(THEMEPATH) as $theme_name) {
-      if ($theme_name[0] == ".") {
-        continue;
+    foreach (array(APPPATH . "themes/", THEMEPATH) as $themepath) {
+      foreach (scandir($themepath) as $theme_name) {
+        if ($theme_name[0] == ".") {
+          continue;
+        }
+        $file = $themepath . "$theme_name/theme.info";
+        if (file_exists($file)) {
+          $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+          $theme_info->description = t($theme_info->description);
+          $theme_info->name = t($theme_info->name);
+
+          $themes[$theme_name] = $theme_info;
+        }
       }
-
-      $file = THEMEPATH . "$theme_name/theme.info";
-      $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-      $theme_info->description = t($theme_info->description);
-      $theme_info->name = t($theme_info->name);
-
-      $themes[$theme_name] = $theme_info;
     }
     return $themes;
   }
@@ -47,8 +50,8 @@ class Admin_Themes_Controller extends Admin_Controller {
   public function preview($type, $theme_name) {
     $view = new View("admin_themes_preview.html");
     $theme_name = preg_replace("/[^\w]/", "", $theme_name);
-    $view->info = new ArrayObject(
-      parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
+    $view->info = new ArrayObject(parse_ini_file(
+      gallery::plugin_path("$theme_name/theme.info", "theme")), ArrayObject::ARRAY_AS_PROPS);
     $view->theme_name = $theme_name;
     $view->type = $type;
     if ($type == "admin") {
@@ -63,8 +66,8 @@ class Admin_Themes_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $theme_name = preg_replace("/[^\w]/", "", $theme_name);
-    $info = new ArrayObject(
-      parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
+    $info = new ArrayObject(parse_ini_file(
+      gallery::plugin_path("$theme_name/theme.info", "theme")), ArrayObject::ARRAY_AS_PROPS);
 
     if ($type == "admin" && $info->admin) {
       module::set_var("gallery", "active_admin_theme", $theme_name);
