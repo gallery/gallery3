@@ -30,8 +30,11 @@ class theme_Core {
    */
   static function load_themes() {
     $modules = Kohana::config("core.modules");
-    array_unshift($modules, gallery::plugin_path(module::get_var("gallery",
-      (Router::$controller == "admin") ? "active_admin_theme" : "active_site_theme"), "theme"));
+    if (Router::$controller == "admin") {
+      array_unshift($modules, THEMEPATH . module::get_var("gallery", "active_admin_theme"));
+    } else {
+      array_unshift($modules, THEMEPATH . module::get_var("gallery", "active_site_theme"));
+    }
 
     Kohana::config_set("core.modules", $modules);
   }

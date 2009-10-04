@@ -245,8 +245,8 @@ class gallery_installer {
 
     // Instantiate default themes (site and admin)
     foreach (array("wind", "admin_wind") as $theme_name) {
-      $file = gallery::plugin_path("$theme_name/theme.info", "theme");
-      $theme_info = new ArrayObject(parse_ini_file($file, ArrayObject::ARRAY_AS_PROPS);
+      $theme_info = new ArrayObject(parse_ini_file(THEMEPATH . $theme_name . "/theme.info"),
+                                    ArrayObject::ARRAY_AS_PROPS);
       $theme = ORM::factory("theme");
       $theme->name = $theme_name;
       $theme->version = $theme_info->version;

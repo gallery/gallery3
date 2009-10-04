@@ -77,23 +77,15 @@ class module_Core {
   static function available() {
     if (empty(self::$available)) {
       $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
-      foreach (array(APPPATH . "modules/", MODPATH) as $modpath) {
-        foreach (scandir($modpath) as $module_name) {
-          if ($module_name[0] == ".") {
-            continue;
-          }
-          $file = "{$modpath}$module_name/module.info";
-          if (file_exists($file)) {
-            $modules->$module_name =
-              new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-            $m =& $modules->$module_name;
-            $m->installed = self::is_installed($module_name);
-            $m->active = self::is_active($module_name);
-            $m->code_version = $m->version;
-            $m->version = self::get_version($module_name);
-            $m->locked = false;
-          }
-        }
+      foreach (glob(MODPATH . "*/module.info") as $file) {
+        $module_name = basename(dirname($file));
+        $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+        $m =& $modules->$module_name;
+        $m->installed = self::is_installed($module_name);
+        $m->active = self::is_active($module_name);
+        $m->code_version = $m->version;
+        $m->version = self::get_version($module_name);
+        $m->locked = false;
       }
 
       // Lock certain modules
@@ -121,7 +113,7 @@ class module_Core {
    */
   static function install($module_name) {
     $kohana_modules = Kohana::config("core.modules");
-    array_unshift($kohana_modules, gallery::plugin_path($module_name));
+    array_unshift($kohana_modules, MODPATH . $module_name);
     Kohana::config_set("core.modules",  $kohana_modules);
 
     $installer_class = "{$module_name}_installer";
@@ -148,7 +140,7 @@ class module_Core {
    */
   static function upgrade($module_name) {
     $kohana_modules = Kohana::config("core.modules");
-    array_unshift($kohana_modules, gallery::plugin_path($module_name));
+    array_unshift($kohana_modules, MODPATH . $module_name);
     Kohana::config_set("core.modules",  $kohana_modules);
 
     $version_before = module::get_version($module_name);
@@ -187,7 +179,7 @@ class module_Core {
    */
   static function activate($module_name) {
     $kohana_modules = Kohana::config("core.modules");
-    array_unshift($kohana_modules, gallery::plugin_path($module_name));
+    array_unshift($kohana_modules, MODPATH . $module_name);
     Kohana::config_set("core.modules",  $kohana_modules);
 
     $installer_class = "{$module_name}_installer";
@@ -279,7 +271,7 @@ class module_Core {
         $gallery = $module;
       } else {
         self::$active[] = $module;
-        $kohana_modules[] = gallery::plugin_path($module->name);
+        $kohana_modules[] = MODPATH . $module->name;
       }
     }
     self::$active[] = $gallery;  // put gallery last in the module list to match core.modules
