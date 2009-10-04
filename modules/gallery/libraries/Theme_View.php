@@ -103,7 +103,7 @@ class Theme_View_Core extends Gallery_View {
                     ->id("fullsize")
                     ->label(t("View full size"))
                     ->url($this->item()->file_url())
-                    ->css_class("gFullSizeLink"));
+                    ->css_class("g-fullsize-link"));
     }
 
     module::event("photo_menu", $menu, $this);
@@ -121,7 +121,7 @@ class Theme_View_Core extends Gallery_View {
       ->append(Menu::factory("submenu")
                ->id("context_menu")
                ->label(t("Options")))
-      ->css_class("gContextMenu");
+      ->css_class("g-context-menu");
 
     module::event("context_menu", $menu, $this, $item, $thumbnail_css_selector);
     return $menu->compact();
@@ -231,7 +231,7 @@ class Theme_View_Core extends Gallery_View {
       if (Session::instance()->get("debug")) {
         if ($function != "head") {
           array_unshift(
-            $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function gClearFix\">" .
+            $blocks, "<div class=\"g-annotated-theme-block g-annotated-theme-block_$function g-clear-fix\">" .
             "<div class=\"title\">$function</div>");
           $blocks[] = "</div>";
         }

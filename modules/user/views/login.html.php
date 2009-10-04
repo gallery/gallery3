@@ -1,22 +1,22 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<ul id="gLoginMenu">
+<ul id="g-login-menu">
   <? if ($user->guest): ?>
   <li class="first">
     <a href="<?= url::site("login/ajax") ?>"
        title="<?= t("Login to Gallery")->for_html_attr() ?>"
-       id="gLoginLink"><?= t("Login") ?></a>
+       id="g-login-link"><?= t("Login") ?></a>
   </li>
   <? else: ?>
   <li class="first">
     <?= t('Logged in as %name', array('name' => html::mark_clean(
       '<a href="' . url::site("form/edit/users/{$user->id}") .
       '" title="' . t("Edit Your Profile")->for_html_attr() .
-      '" id="gUserProfileLink" class="g-dialogLink">' .
+      '" id="g-user-profile-link" class="g-dialog-link">' .
       html::clean($user->display_name()) . '</a>'))) ?>
   </li>
   <li>
     <a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(url::current(true))) ?>"
-       id="gLogoutLink"><?= t("Logout") ?></a>
+       id="g-logoutLink"><?= t("Logout") ?></a>
   </li>
   <? endif ?>
 </ul>

@@ -3,14 +3,14 @@
  var load_tree = function(target_id, locked) {
    var load_url = "<?= url::site("move/show_sub_tree/{$source->id}/__TARGETID__") ?>";
    var node = $("#node_" + target_id);
-   $("#gMove .node a").removeClass("selected");
+   $("#g-move .node a").removeClass("selected");
    node.find("a:first").addClass("selected");
    if (locked) {
-     $("#gMoveButton").attr("disabled", "disabled");
-     $("#gMove form input[name=target_id]").attr("value", "");
+     $("#g-move-button").attr("disabled", "disabled");
+     $("#g-move form input[name=target_id]").attr("value", "");
    } else {
-     $("#gMoveButton").removeAttr("disabled");
-     $("#gMove form input[name=target_id]").attr("value", target_id);
+     $("#g-move-button").removeAttr("disabled");
+     $("#g-move form input[name=target_id]").attr("value", target_id);
    }
    var sub_tree = $("#tree_" + target_id);
    if (sub_tree.length) {
@@ -33,7 +33,7 @@
   <? t("Move this album to a new album") ?>
   <? endif ?>
 </h1>
-<div id="gMove">
+<div id="g-move">
   <ul id="tree_0">
     <li id="node_1" class="node">
       <?= $tree ?>
@@ -42,6 +42,6 @@
   <form method="post" action="<?= url::site("move/save/$source->id") ?>">
     <?= access::csrf_form_field() ?>
     <input type="hidden" name="target_id" value="" />
-    <input type="submit" id="gMoveButton" value="<?= t("Move")->for_html_attr() ?>" disabled="disabled"/>
+    <input type="submit" id="g-move-button" value="<?= t("Move")->for_html_attr() ?>" disabled="disabled"/>
   </form>
 </div>

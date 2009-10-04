@@ -44,7 +44,7 @@ if (!function_exists("DrawForm")) {
         print $input->render();
       } else {
         if ($input->error_messages()) {
-          print "$prefix<li class=\"gError\">\n";
+          print "$prefix<li class=\"g-error\">\n";
         } else {
           print "$prefix<li>\n";
         }
@@ -58,7 +58,7 @@ if (!function_exists("DrawForm")) {
         }
         if ($input->error_messages()) {
           foreach ($input->error_messages() as $error_message) {
-            print "$prefix  <p class=\"gError\">\n";
+            print "$prefix  <p class=\"g-error\">\n";
             print "$prefix    $error_message\n";
             print "$prefix  </p>\n";
           }

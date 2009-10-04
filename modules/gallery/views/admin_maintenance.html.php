@@ -1,11 +1,11 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gAdminMaintenance">
+<div id="g-admin-maintenance">
   <h1> <?= t("Maintenance Tasks") ?> </h1>
   <p>
     <?= t("Occasionally your Gallery will require some maintenance.  Here are some tasks you can use to keep it running smoothly.") ?>
   </p>
 
-  <div id="gAvailableTasks">
+  <div id="g-available-tasks">
     <h2> <?= t("Available Tasks") ?> </h2>
     <table>
       <tr>
@@ -21,7 +21,7 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($task_definitions as $task): ?>
-      <tr class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?> <?= log::severity_class($task->severity) ?>">
+      <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?> <?= log::severity_class($task->severity) ?>">
         <td class="<?= log::severity_class($task->severity) ?>">
           <?= $task->name ?>
         </td>
@@ -30,7 +30,7 @@
         </td>
         <td>
           <a href="<?= url::site("admin/maintenance/start/$task->callback?csrf=$csrf") ?>"
-            class="g-dialogLink g-button ui-icon-left ui-state-default ui-corner-all">
+            class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all">
             <?= t("run") ?>
           </a>
         </td>
@@ -41,7 +41,7 @@
   </div>
 
   <? if ($running_tasks->count()): ?>
-  <div id="gRunningTasks">
+  <div id="g-running-tasks">
     <h2> <?= t("Running Tasks") ?> </h2>
     <table>
       <tr>
@@ -69,8 +69,8 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($running_tasks as $task): ?>
-      <tr class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?> <?= $task->state == "stalled" ? "gWarning" : "" ?>">
-        <td class="<?= $task->state == "stalled" ? "gWarning" : "" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?> <?= $task->state == "stalled" ? "g-warning" : "" ?>">
+        <td class="<?= $task->state == "stalled" ? "g-warning" : "" ?>">
           <?= gallery::date_time($task->updated) ?>
         </td>
         <td>
@@ -100,7 +100,7 @@
             <?= t("cancel") ?>
           </a>
           <? if ($task->state == "stalled"): ?>
-          <a class="g-dialogLink g-button ui-icon-left ui-state-default ui-corner-all"
+          <a class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"
              href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>">
             <?= t("resume") ?>
           </a>
@@ -114,7 +114,7 @@
   <? endif ?>
 
   <? if ($finished_tasks->count()): ?>
-  <div id="gFinishedTasks">
+  <div id="g-finished-tasks">
     <h2> <?= t("Finished Tasks") ?> </h2>
     <table>
       <tr>
@@ -142,8 +142,8 @@
       </tr>
       <? $i = 0; ?>
       <? foreach ($finished_tasks as $task): ?>
-      <tr class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?> <?= $task->state == "success" ? "gSuccess" : "gError" ?>">
-        <td class="<?= $task->state == "success" ? "gSuccess" : "gError" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?> <?= $task->state == "success" ? "g-success" : "g-error" ?>">
+        <td class="<?= $task->state == "success" ? "g-success" : "g-error" ?>">
           <?= gallery::date_time($task->updated) ?>
         </td>
         <td>
@@ -170,12 +170,12 @@
             <?= t("remove") ?>
           </a>
           <? if ($task->get_log()): ?>
-          <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="g-dialogLink g-button ui-state-default ui-corner-all">
+          <a href="<?= url::site("admin/maintenance/show_log/$task->id?csrf=$csrf") ?>" class="g-dialog-link g-button ui-state-default ui-corner-all">
             <?= t("browse log") ?>
           </a>
           <? endif ?>
           <? else: ?>
-          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>" class="g-dialogLink g-button" ui-state-default ui-corner-all>
+          <a href="<?= url::site("admin/maintenance/resume/$task->id?csrf=$csrf") ?>" class="g-dialog-link g-button" ui-state-default ui-corner-all>
             <?= t("resume") ?>
           </a>
           <a href="<?= url::site("admin/maintenance/cancel/$task->id?csrf=$csrf") ?>" class="g-button ui-state-default ui-corner-all">

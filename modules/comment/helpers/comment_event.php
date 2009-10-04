@@ -36,7 +36,7 @@ class comment_event_Core {
                ->id("comments")
                ->label(t("View comments on this item"))
                ->url("#comments")
-               ->css_id("gCommentsLink"));
+               ->css_id("g-comments-link"));
   }
 
   static function item_index_data($item, $data) {

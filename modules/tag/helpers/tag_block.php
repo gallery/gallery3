@@ -27,7 +27,7 @@ class tag_block_Core {
     switch ($block_id) {
     case "tag":
       $block = new Block();
-      $block->css_id = "gTag";
+      $block->css_id = "g-tag";
       $block->title = t("Popular Tags");
       $block->content = new View("tag_block.html");
       $block->content->cloud = tag::cloud(30);

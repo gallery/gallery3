@@ -102,9 +102,9 @@ class L10n_Client_Controller extends Controller {
   }
 
   private static function _l10n_client_search_form() {
-    $form = new Forge("l10n_client/search", "", "post", array("id" => "gL10nSearchForm"));
+    $form = new Forge("l10n_client/search", "", "post", array("id" => "g-l10n-search-form"));
     $group = $form->group("l10n_search");
-    $group->input("l10n-search")->id("gL10nSearch");
+    $group->input("l10n-search")->id("g-l10n-search");
     $group->submit("l10n-search-filter-clear")->value(t("X"));
 
     return $form;

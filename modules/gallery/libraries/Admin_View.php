@@ -96,7 +96,7 @@ class Admin_View_Core extends Gallery_View {
       if (Session::instance()->get("debug")) {
         if ($function != "admin_head") {
           array_unshift(
-            $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function\">" .
+            $blocks, "<div class=\"g-annotated-theme-block g-annotated-theme-block_$function\">" .
             "<div class=\"title\">$function</div>");
           $blocks[] = "</div>";
         }

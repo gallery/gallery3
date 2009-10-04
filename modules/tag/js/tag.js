@@ -3,28 +3,28 @@ $("document").ready(function() {
 });
 
 function ajaxify_tag_form() {
-  $("#gTag form").ajaxForm({
+  $("#g-tag form").ajaxForm({
     dataType: "json",
     success: function(data) {
       if (data.result == "success") {
-        $.get($("#gTagCloud").attr("title"), function(data, textStatus) {
-	  $("#gTagCloud").html(data);
+        $.get($("#g-tag-cloud").attr("title"), function(data, textStatus) {
+	  $("#g-tag-cloud").html(data);
 	});
       }
-      $("#gTag form").resetForm();
+      $("#g-tag form").resetForm();
     }
   });
 }
 
 function closeEditInPlaceForms() {
   // closes currently open inplace edit forms
-  if ($("#gRenameTagForm").length) {
-    $("#gEditErrorMessage").remove();
-    var li = $("#gRenameTagForm").parent();
-    $("#gRenameTagForm").parent().html($("#gRenameTagForm").parent().data("revert"));
+  if ($("#g-rename-tag-form").length) {
+    $("#g-edit-error-message").remove();
+    var li = $("#g-rename-tag-form").parent();
+    $("#g-rename-tag-form").parent().html($("#g-rename-tag-form").parent().data("revert"));
     li.height("");
-    $(".gEditable", li).bind("click", editInPlace);
-    $(".g-dialogLink", li).gallery_dialog();
+    $(".g-editable", li).bind("click", editInPlace);
+    $(".g-dialog-link", li).gallery_dialog();
   }
 }
 
@@ -41,7 +41,7 @@ function editInPlace(element) {
   var tag_name = $(this).html();
   var tag_width = $(this).width();
   $(this).parent().data("revert", $(this).parent().html());
-  var form = '<form id="gRenameTagForm" method="post" class="ui-helper-clearfix" ';
+  var form = '<form id="g-rename-tag-form" method="post" class="ui-helper-clearfix" ';
   form += 'action="' + TAG_RENAME_URL.replace('__ID__', tag_id) + '">';
   form += '<input name="csrf" type="hidden" value="' + csrf_token + '" />';
   form += '<input id="name" name="name" type="text" class="textbox" value="' +
@@ -52,26 +52,26 @@ function editInPlace(element) {
 
   // add edit form
   $(this).parent().html(form);
-  $("#gRenameTagForm #name")
+  $("#g-rename-tag-form #name")
     .width(tag_width+30)
     .focus();
-  //$("#gRenameTagForm").parent().height( $("#gRenameTagForm").height() );
-  $("#gRenameTagForm a").bind("click", closeEditInPlaceForms);
+  //$("#g-rename-tag-form").parent().height( $("#g-rename-tag-form").height() );
+  $("#g-rename-tag-form a").bind("click", closeEditInPlaceForms);
 
   ajaxify_editInPlaceForm = function() {
-    $("#gRenameTagForm").ajaxForm({
+    $("#g-rename-tag-form").ajaxForm({
       dataType: "json",
       success: function(data) {
         if (data.result == "success") {
           closeEditInPlaceForms(); // close form
-          $("#gTag-" + data.tag_id).text(data.new_tagname); // update tagname
+          $("#g-tag-" + data.tag_id).text(data.new_tagname); // update tagname
           console.log(data);
           window.location.reload();
         } else if (data.result == "error") {
-          $("#gRenameTagForm #name")
-            .addClass("gError")
+          $("#g-rename-tag-form #name")
+            .addClass("g-error")
             .focus();
-          $("#gTagAdmin").before("<p id=\"gEditErrorMessage\" class=\"gError\">" + data.message + "</p>");
+          $("#g-tag-admin").before("<p id=\"g-edit-error-message\" class=\"g-error\">" + data.message + "</p>");
         }
       }
     });

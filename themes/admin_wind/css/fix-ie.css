@@ -2,17 +2,17 @@
  * Fix display in IE 6 and 7
  */
 
-#gHeader,
-#gGroupAdmin,
-#gDeveloperTools,
-.gAvailable .gBlock {
+#g-header,
+#g-group-admin,
+#g-developer-tools,
+.g-available .g-block {
   zoom: 1;
 }
 
-.gUnavailable {
+.g-unavailable {
   filter: alpha(opacity=40);
 }
 
-.gUnavailable:hover {
+.g-unavailable:hover {
   filter: alpha(opacity=100);
 }

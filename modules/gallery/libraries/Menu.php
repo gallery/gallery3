@@ -91,7 +91,7 @@ class Menu_Element_Link extends Menu_Element {
     } else {
       $css_class = "";
     }
-    return "<li><a$css_id class=\"gMenuLink $css_class\" href=\"$this->url\" " .
+    return "<li><a$css_id class=\"g-menu-link $css_class\" href=\"$this->url\" " .
       "title=\"$this->label\">$this->label</a></li>";
   }
 }
@@ -122,7 +122,7 @@ class Menu_Element_Ajax_Link extends Menu_Element {
     } else {
       $css_class = "";
     }
-    return "<li><a$css_id class=\"gAjaxLink $css_class\" href=\"$this->url\" " .
+    return "<li><a$css_id class=\"g-ajax-link $css_class\" href=\"$this->url\" " .
       "title=\"$this->label\" ajax_handler=\"$this->ajax_handler\">$this->label</a></li>";
   }
 }
@@ -142,7 +142,7 @@ class Menu_Element_Dialog extends Menu_Element {
     } else {
       $css_class = "";
     }
-    return "<li><a$css_id class=\"g-dialogLink $css_class\" href=\"$this->url\" " .
+    return "<li><a$css_id class=\"g-dialog-link $css_class\" href=\"$this->url\" " .
            "title=\"$this->label\">$this->label</a></li>";
   }
 }
@@ -171,7 +171,7 @@ class Menu_Core extends Menu_Element {
 
     case "root":
       $menu = new Menu("root");
-      $menu->css_class("gMenu");
+      $menu->css_class("g-menu");
       return $menu;
 
     case "submenu":

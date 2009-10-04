@@ -2,12 +2,12 @@
 <script type="text/javascript">
   var add_user_to_group_url = "<?= url::site("admin/users/add_user_to_group/__USERID__/__GROUPID__?csrf=$csrf") ?>";
   $(document).ready(function(){
-    $("#gUserAdminList .core-info").draggable({
+    $("#g-user-admin-list .core-info").draggable({
       helper: "clone"
     });
-    $("#gGroupAdmin .gGroup").droppable({
+    $("#g-group-admin .g-group").droppable({
       accept: ".core-info",
-      hoverClass: "gSelected",
+      hoverClass: "g-selected",
       drop: function(ev, ui) {
         var user_id = $(ui.draggable).attr("id").replace("user-", "");
         var group_id = $(this).attr("id").replace("group-", "");
@@ -28,7 +28,7 @@
           {},
           function(data) {
             $("#group-" + group_id).html(data);
-            $("#group-" + group_id + " .g-dialogLink").gallery_dialog();
+            $("#group-" + group_id + " .g-dialog-link").gallery_dialog();
           });
   }
 
@@ -41,9 +41,9 @@
           });
   }
 </script>
-<div class="gBlock">
+<div class="g-block">
   <a href="<?= url::site("admin/users/add_user_form") ?>"
-      class="g-dialogLink g-button g-right ui-icon-left ui-state-default ui-corner-all"
+      class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new user")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new user") ?>
@@ -53,8 +53,8 @@
     <?= t("User Admin") ?>
   </h2>
 
-  <div class="gBlockContent">
-    <table id="gUserAdminList">
+  <div class="g-block-content">
+    <table id="g-user-admin-list">
       <tr>
         <th><?= t("Username") ?></th>
         <th><?= t("Full name") ?></th>
@@ -64,8 +64,8 @@
       </tr>
 
       <? foreach ($users as $i => $user): ?>
-      <tr id="gUser-<?= $user->id ?>" class="<?= text::alternate("g-odd-row", "g-even-row") ?> user <?= $user->admin ? "admin" : "" ?>">
-        <td id="user-<?= $user->id ?>" class="core-info gDraggable">
+      <tr id="g-user-<?= $user->id ?>" class="<?= text::alternate("g-odd", "g-even") ?> user <?= $user->admin ? "admin" : "" ?>">
+        <td id="user-<?= $user->id ?>" class="core-info g-draggable">
           <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                title="<?= t("Drag user onto group below to add as a new member")->for_html_attr() ?>"
                alt="<?= html::clean_attribute($user->name) ?>"
@@ -82,14 +82,14 @@
         <td>
           <?= ($user->last_login == 0) ? "" : gallery::date($user->last_login) ?>
         </td>
-        <td class="gActions">
+        <td class="g-actions">
           <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"
               open_text="<?= t("close") ?>"
-              class="gPanelLink g-button ui-state-default ui-corner-all ui-icon-left">
-            <span class="ui-icon ui-icon-pencil"></span><span class="gButtonText"><?= t("edit") ?></span></a>
+              class="g-panel-link g-button ui-state-default ui-corner-all ui-icon-left">
+            <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text"><?= t("edit") ?></span></a>
           <? if (user::active()->id != $user->id && !$user->guest): ?>
           <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
-              class="g-dialogLink g-button ui-state-default ui-corner-all ui-icon-left">
+              class="g-dialog-link g-button ui-state-default ui-corner-all ui-icon-left">
             <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
           <? else: ?>
           <span title="<?= t("This user cannot be deleted")->for_html_attr() ?>"
@@ -103,9 +103,9 @@
   </div>
 </div>
 
-<div id="gGroupAdmin" class="gBlock">
+<div id="g-group-admin" class="g-block">
   <a href="<?= url::site("admin/users/add_group_form") ?>"
-      class="g-dialogLink g-button g-right ui-icon-left ui-state-default ui-corner-all"
+      class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new group")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new group") ?>
@@ -115,10 +115,10 @@
     <?= t("Group Admin") ?>
   </h2>
 
-  <div class="gBlockContent">
+  <div class="g-block-content">
     <ul>
       <? foreach ($groups as $i => $group): ?>
-      <li id="group-<?= $group->id ?>" class="gGroup <?= ($group->special ? "gDefaultGroup" : "") ?>" />
+      <li id="group-<?= $group->id ?>" class="g-group <?= ($group->special ? "g-default-group" : "") ?>" />
         <? $v = new View("admin_users_group.html"); $v->group = $group; ?>
         <?= $v ?>
       </li>

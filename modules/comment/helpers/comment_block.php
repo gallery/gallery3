@@ -26,7 +26,7 @@ class comment_block_Core {
     $block = new Block();
     switch ($block_id) {
     case "recent_comments":
-      $block->css_id = "gRecentComments";
+      $block->css_id = "g-recent-comments";
       $block->title = t("Recent Comments");
       $block->content = new View("admin_block_recent_comments.html");
       $block->content->comments =

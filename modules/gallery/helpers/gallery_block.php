@@ -32,13 +32,13 @@ class gallery_block_Core {
     $block = new Block();
     switch($block_id) {
     case "welcome":
-      $block->css_id = "gWelcome";
+      $block->css_id = "g-welcome";
       $block->title = t("Welcome to Gallery 3");
       $block->content = new View("admin_block_welcome.html");
       break;
 
     case "photo_stream":
-      $block->css_id = "gPhotoStream";
+      $block->css_id = "g-photo-stream";
       $block->title = t("Photo Stream");
       $block->content = new View("admin_block_photo_stream.html");
       $block->content->photos =
@@ -46,7 +46,7 @@ class gallery_block_Core {
       break;
 
     case "log_entries":
-      $block->css_id = "gLogEntries";
+      $block->css_id = "g-log-entries";
       $block->title = t("Log Entries");
       $block->content = new View("admin_block_log_entries.html");
       $block->content->entries = ORM::factory("log")
@@ -54,7 +54,7 @@ class gallery_block_Core {
       break;
 
     case "stats":
-      $block->css_id = "gStats";
+      $block->css_id = "g-stats";
       $block->title = t("Gallery Stats");
       $block->content = new View("admin_block_stats.html");
       $block->content->album_count =
@@ -63,7 +63,7 @@ class gallery_block_Core {
       break;
 
     case "platform_info":
-      $block->css_id = "gPlatform";
+      $block->css_id = "g-platform";
       $block->title = t("Platform Information");
       $block->content = new View("admin_block_platform.html");
       if (is_readable("/proc/loadavg")) {
@@ -75,14 +75,14 @@ class gallery_block_Core {
       break;
 
     case "project_news":
-      $block->css_id = "gProjectNews";
+      $block->css_id = "g-project-news";
       $block->title = t("Gallery Project News");
       $block->content = new View("admin_block_news.html");
       $block->content->feed = feed::parse("http://gallery.menalto.com/node/feed", 3);
       break;
 
     case "block_adder":
-      $block->css_id = "gBlockAdder";
+      $block->css_id = "g-block-adder";
       $block->title = t("Dashboard Content");
       $block->content = self::get_add_block_form();
     }
@@ -92,7 +92,7 @@ class gallery_block_Core {
 
   static function get_add_block_form() {
     $form = new Forge("admin/dashboard/add_block", "", "post",
-                      array("id" => "gAddDashboardBlockForm"));
+                      array("id" => "g-add-dashboard-block-form"));
     $group = $form->group("add_block")->label(t("Add Block"));
     $group->dropdown("id")->label(t("Available Blocks"))
       ->options(block_manager::get_available_admin_blocks());

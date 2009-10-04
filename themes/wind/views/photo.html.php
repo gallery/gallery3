@@ -4,7 +4,7 @@
 <!-- Use javascript to show the full size as an overlay on the current page -->
 <script>
   $(document).ready(function() {
-    $(".gFullSizeLink").click(function() {
+    $(".g-fullsize-link").click(function() {
       $.gallery_show_full_size(<?= html::js_string($theme->item()->file_url()) ?>, "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");
       return false;
     });
@@ -12,10 +12,10 @@
 </script>
 <? endif ?>
 
-<div id="gItem">
+<div id="g-item">
   <?= $theme->photo_top() ?>
 
-  <ul class="gPager">
+  <ul class="g-pager">
     <li>
       <? if ($previous_item): ?>
       <a href="<?= $previous_item->url() ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
@@ -25,7 +25,7 @@
       <span class="ui-icon ui-icon-triangle-1-w"></span><?= t("previous") ?></a>
       <? endif; ?>
     </li>
-    <li class="gInfo"><?= t("%position of %total", array("position" => $position, "total" => $sibling_count)) ?></li>
+    <li class="g-info"><?= t("%position of %total", array("position" => $position, "total" => $sibling_count)) ?></li>
     <li class="g-txt-right">
       <? if ($next_item): ?>
       <a href="<?= $next_item->url() ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
@@ -37,20 +37,20 @@
     </li>
   </ul>
 
-  <div id="gPhoto">
+  <div id="g-photo">
     <?= $theme->resize_top($item) ?>
     <? if (access::can("view_full", $item)): ?>
-    <a href="<?= $item->file_url() ?>" class="gFullSizeLink" title="<?= t("View full size")->for_html_attr() ?>">
+    <a href="<?= $item->file_url() ?>" class="g-fullsize-link" title="<?= t("View full size")->for_html_attr() ?>">
       <? endif ?>
-      <?= $item->resize_img(array("id" => "gPhotoId-{$item->id}", "class" => "gResize")) ?>
+      <?= $item->resize_img(array("id" => "g-photoId-{$item->id}", "class" => "g-resize")) ?>
       <? if (access::can("view_full", $item)): ?>
     </a>
     <? endif ?>
     <?= $theme->resize_bottom($item) ?>
-    <?= $theme->context_menu($item, "#gPhotoId-{$item->id}") ?>
+    <?= $theme->context_menu($item, "#g-photoId-{$item->id}") ?>
   </div>
 
-  <div id="gInfo">
+  <div id="g-info">
     <h1><?= html::purify($item->title) ?></h1>
     <div><?= nl2br(html::purify($item->description)) ?></div>
   </div>

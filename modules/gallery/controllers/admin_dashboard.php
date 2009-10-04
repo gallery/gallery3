@@ -22,7 +22,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_dashboard.html");
     $view->content->blocks = block_manager::get_html("dashboard_center");
-    $view->sidebar = "<div id=\"gAdminDashboardSidebar\">" .
+    $view->sidebar = "<div id=\"g-admin-dashboard-sidebar\">" .
       block_manager::get_html("dashboard_sidebar") .
       "</div>";
     print $view;

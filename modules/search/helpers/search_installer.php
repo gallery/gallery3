@@ -24,7 +24,7 @@ class search_installer {
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
                  `dirty` boolean default 1,
-                 `data` LONGTEXT default NULL,
+                 `data` LONg-text default NULL,
                  PRIMARY KEY (`id`),
                  KEY(`item_id`),
                  FULLTEXT INDEX (`data`))

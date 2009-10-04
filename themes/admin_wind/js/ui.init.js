@@ -1,7 +1,7 @@
 $(document).ready(function(){
   // Initialize Superfish menus
-  $("#gSiteAdminMenu ul.gMenu").addClass("sf-menu");
-  $("ul.gMenu").addClass("sf-menu");
+  $("#g-site-admin-menu ul.g-menu").addClass("sf-menu");
+  $("ul.g-menu").addClass("sf-menu");
   $("ul.sf-menu").superfish({
     delay: 500,
     animation: {
@@ -11,41 +11,41 @@ $(document).ready(function(){
     pathClass: "current",
     speed: "fast"
   });
-  $("#gSiteAdminMenu").css("display", "block");
+  $("#g-site-admin-menu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").gallery_show_message();
+  $("#g-action-status li").gallery_show_message();
 
   // Initialize modal dialogs
-  $(".g-dialogLink").gallery_dialog();
+  $(".g-dialog-link").gallery_dialog();
 
   // Initialize ajax links
-  $(".gAjaxLink").gallery_ajax();
+  $(".g-ajax-link").gallery_ajax();
 
   // Initialize panels
-  $(".gPanelLink").gallery_panel();
+  $(".g-panel-link").gallery_panel();
 
-  if ($("#gPhotoStream").length) {
+  if ($("#g-photo-stream").length) {
     // Vertically align thumbs in photostream
-    $(".gItem").gallery_valign();
+    $(".g-item").gallery_valign();
   }
 
   // Apply jQuery UI button css to submit inputs
-  $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
+  $("input[type=submit]:not(.g-short-form input)").addClass("ui-state-default ui-corner-all");
 
   // Round view menu buttons
-  if ($("#gAdminCommentsMenu").length) {
-    $("#gAdminCommentsMenu ul").removeClass("gMenu").removeClass("sf-menu");
-    $("#gAdminCommentsMenu").addClass("gButtonSet");
-    $("#gAdminCommentsMenu a").addClass("g-button ui-state-default");
-    $("#gAdminCommentsMenu ul li:first a").addClass("ui-corner-left");
-    $("#gAdminCommentsMenu ul li:last a").addClass("ui-corner-right");
+  if ($("#g-admin-comments-menu").length) {
+    $("#g-admin-comments-menu ul").removeClass("g-menu").removeClass("sf-menu");
+    $("#g-admin-comments-menu").addClass("g-buttonset");
+    $("#g-admin-comments-menu a").addClass("g-button ui-state-default");
+    $("#g-admin-comments-menu ul li:first a").addClass("ui-corner-left");
+    $("#g-admin-comments-menu ul li:last a").addClass("ui-corner-right");
   }
 
   // Round corners
-  $(".gSelected").addClass("ui-corner-all");
-  $(".gAvailable .gBlock").addClass("ui-corner-all");
-  $(".gUnavailable").addClass("ui-corner-all");
+  $(".g-selected").addClass("ui-corner-all");
+  $(".g-available .g-block").addClass("ui-corner-all");
+  $(".g-unavailable").addClass("ui-corner-all");
 
   // Add hover state for buttons
   $(".ui-state-default").hover(

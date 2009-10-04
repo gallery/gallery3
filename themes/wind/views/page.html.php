@@ -38,7 +38,7 @@
         <? $new_width = $thumb_proportion * 213 ?>
         <? $new_height = $thumb_proportion * 240 ?>
     <style type="text/css">
-    #gContent #gAlbumGrid .gItem {
+    #g-content #g-album-grid .g-item {
       width: <?= $new_width ?>px;
       height: <?= $new_height ?>px;
       /* <?= $thumb_proportion ?> */
@@ -74,26 +74,26 @@
 
   <body <?= $theme->body_attributes() ?>>
     <?= $theme->page_top() ?>
-    <div id="doc4" class="yui-t5 gView">
+    <div id="doc4" class="yui-t5 g-view">
       <?= $theme->site_status() ?>
-      <div id="gHeader">
-        <div id="gBanner">
+      <div id="g-header">
+        <div id="g-banner">
           <?= $theme->header_top() ?>
           <? if ($header_text = module::get_var("gallery", "header_text")): ?>
           <?= $header_text ?>
           <? else: ?>
-          <a id="gLogo" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
+          <a id="g-logo" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
             <img width="107" height="48" alt="<?= t("Gallery logo: Your photos on your web site")->for_html_attr() ?>" src="<?= url::file("lib/images/logo.png") ?>" />
           </a>
           <? endif ?>
-          <div id="gSiteMenu">
+          <div id="g-site-menu">
           <?= $theme->site_menu() ?>
           </div>
           <?= $theme->header_bottom() ?>
         </div>
 
         <? if (!empty($parents)): ?>
-        <ul class="gBreadcrumbs">
+        <ul class="g-breadcrumbs">
           <? foreach ($parents as $parent): ?>
           <li>
             <!-- Adding ?show=<id> causes Gallery3 to display the page
@@ -113,26 +113,26 @@
       <div id="bd">
         <div id="yui-main">
           <div class="yui-b">
-            <div id="gContent" class="yui-g">
+            <div id="g-content" class="yui-g">
               <?= $theme->messages() ?>
               <?= $content ?>
             </div>
           </div>
         </div>
-        <div id="gSidebar" class="yui-b">
+        <div id="g-sidebar" class="yui-b">
           <? if ($theme->page_type != "login"): ?>
           <?= new View("sidebar.html") ?>
           <? endif ?>
         </div>
       </div>
-      <div id="gFooter">
+      <div id="g-footer">
         <?= $theme->footer() ?>
         <? if ($footer_text = module::get_var("gallery", "footer_text")): ?>
         <?= $footer_text ?>
         <? endif ?>
 
         <? if (module::get_var("gallery", "show_credits")): ?>
-        <ul id="gCredits">
+        <ul id="g-credits">
           <?= $theme->credits() ?>
         </ul>
         <? endif ?>

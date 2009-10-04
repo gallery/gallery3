@@ -85,9 +85,9 @@ class Password_Controller extends Controller {
   }
 
   private function _reset_form() {
-    $form = new Forge(url::current(true), "", "post", array("id" => "gResetForm"));
+    $form = new Forge(url::current(true), "", "post", array("id" => "g-reset-form"));
     $group = $form->group("reset")->label(t("Reset Password"));
-    $group->input("name")->label(t("Username"))->id("gName")->class(null)->rules("required");
+    $group->input("name")->label(t("Username"))->id("g-name")->class(null)->rules("required");
     $group->inputs["name"]->error_messages("no_email", t("No email, unable to reset password"));
     $group->submit("")->value(t("Reset"));
 
@@ -97,15 +97,15 @@ class Password_Controller extends Controller {
   private function _new_password_form($hash=null) {
     $template = new Theme_View("page.html", "reset");
 
-    $form = new Forge("password/do_reset", "", "post", array("id" => "gChangePasswordForm"));
+    $form = new Forge("password/do_reset", "", "post", array("id" => "g-change-password-form"));
     $group = $form->group("reset")->label(t("Change Password"));
     $hidden = $group->hidden("hash");
     if (!empty($hash)) {
       $hidden->value($hash);
     }
-    $group->password("password")->label(t("Password"))->id("gPassword")
+    $group->password("password")->label(t("Password"))->id("g-password")
       ->rules("required|length[1,40]");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
       ->matches($group->password);
     $group->inputs["password2"]->error_messages(
       "mistyped", t("The password and the confirm password must match"));

@@ -19,7 +19,7 @@
         <? $lock = access::locked_by($group, $permission->name, $item) ?>
 
         <? if ($lock): ?>
-          <td class="gDenied">
+          <td class="g-denied">
             <img src="<?= url::file(gallery::find_file("images", "ico-denied.png")) ?>"
                  title="<?= t('denied and locked through parent album')->for_html_attr() ?>"
                  alt="<?= t('denied icon')->for_html_attr() ?>" />
@@ -30,7 +30,7 @@
         <? else: ?>
           <? if ($intent === access::INHERIT): ?>
             <? if ($allowed): ?>
-              <td class="gAllowed">
+              <td class="g-allowed">
                 <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" title="<?= t('allowed through parent album, click to allow explicitly')->for_html_attr() ?>">
                   <img src="<?= url::file(gallery::find_file("images", "ico-success-pale.png")) ?>" alt="<?= t('passive allowed icon')->for_html_attr() ?>" />
                 </a>
@@ -40,7 +40,7 @@
                 </a>
               </td>
             <? else: ?>
-              <td class="gDenied">
+              <td class="g-denied">
                 <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                   title="<?= t('click to allow')->for_html_attr() ?>">
                   <img src="<?= url::file(gallery::find_file("images", "ico-success-gray.png")) ?>" alt="<?= t('inactive allowed icon')->for_html_attr() ?>" />
@@ -53,7 +53,7 @@
             <? endif ?>
 
           <? elseif ($intent === access::DENY): ?>
-            <td class="gDenied">
+            <td class="g-denied">
               <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                 title="<?= t('click to allow')->for_html_attr() ?>">
                 <img src="<?= url::file(gallery::find_file("images", "ico-success-gray.png")) ?>" alt="<?= t('inactive allowed icon')->for_html_attr() ?>" />
@@ -68,7 +68,7 @@
               <? endif ?>
             </td>
           <? elseif ($intent === access::ALLOW): ?>
-            <td class="gAllowed">
+            <td class="g-allowed">
               <? if ($item->id == 1): ?>
                 <img src="<?= url::file(gallery::find_file("images", "ico-success.png")) ?>" title="<?= t("allowed")->for_html_attr() ?>" alt="<?= t('allowed icon')->for_html_attr() ?>" />
               <? else: ?>

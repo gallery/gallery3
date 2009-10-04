@@ -1,6 +1,8 @@
-// TODO(andy_st): Add original copyright notice from Drupal l10_client.
-// TODO(andy_st): Add G3 copyright notice.
-// TODO(andy_st): clean up formatting to match our other CSS files.
+/**
+ * TODO(andy_st): Add original copyright notice from Drupal l10_client.
+ * TODO(andy_st): Add G3 copyright notice.
+ * TODO(andy_st): clean up formatting to match our other CSS files.
+ */
 
 /* $Id: l10n_client.css,v 1.6 2008/09/09 10:48:20 goba Exp $ */
 
@@ -50,7 +52,7 @@
 	font-size: 1em;
 	padding: .5em;
 }
-#l10n-client-toggler #gMinimizeL10n {
+#l10n-client-toggler #g-minimize-l10n {
   border-right: 1px solid #ffffff;
 }
 
@@ -126,31 +128,31 @@
 #l10n-client .string-list li.active {
   font-weight:bold;}
 
-#l10n-client #gL10nSearchForm {
+#l10n-client #g-l10n-search-form {
   background:#eee;
   text-align:center;
   height:2em; line-height:2em;
   margin:0em; padding:.5em .5em;
 }
 
-#l10n-client #gL10nSearchForm .form-item,
-#l10n-client #gL10nSearchForm input.form-text,
-#l10n-client #gL10nSearchForm #search-filter-go,
-#l10n-client #gL10nSearchForm #search-filter-clear {
+#l10n-client #g-l10n-search-form .form-item,
+#l10n-client #g-l10n-search-form input.form-text,
+#l10n-client #g-l10n-search-form #search-filter-go,
+#l10n-client #g-l10n-search-form #search-filter-clear {
   display:inline;
   vertical-align:middle;
 }
 
-#l10n-client #gL10nSearchForm .form-item {
+#l10n-client #g-l10n-search-form .form-item {
   margin:0em;
   padding:0em;
 }
 
-#l10n-client #gL10nSearchForm input.form-text {
+#l10n-client #g-l10n-search-form input.form-text {
   width:80%;
 }
 
-#l10n-client #gL10nSearchForm #search-filter-clear {
+#l10n-client #g-l10n-search-form #search-filter-clear {
   width:10%;
   margin:0em;
 }
@@ -178,7 +180,7 @@
   overflow:hidden;
   width:49%; float:right;}
 
-#gL10nClientSaveForm {
+#g-l10n-client-save-form {
   padding:0em;}
 
 #l10n-client form ul,

@@ -6,7 +6,7 @@
     $.get(set_state_url.replace("__STATE__", state).replace("__ID__", id),
           {},
           function() {
-            $("#gComment-" + id).slideUp();
+            $("#g-comment-" + id).slideUp();
             update_menu();
           });
   }
@@ -18,7 +18,7 @@
     $.get(delete_url.replace("__ID__", id),
           {},
           function() {
-            $("#gComment-" + id).slideUp();
+            $("#g-comment-" + id).slideUp();
             update_menu();
           });
   }
@@ -27,18 +27,18 @@
     $.get(<?= html::js_string(url::site("admin/comments/menu_labels")) ?>, {},
           function(data) {
             for (var i = 0; i < data.length; i++) {
-              $("#gAdminCommentsMenu li:eq(" + i + ") a").html(data[i]);
+              $("#g-admin-comments-menu li:eq(" + i + ") a").html(data[i]);
             }
           },
           "json");
   }
 </script>
 
-<div id="gAdminComments">
+<div id="g-admin-comments">
   <h1> <?= t("Manage Comments") ?> </h1>
 
   <!-- @todo: Highlight active menu option -->
-  <div id="gAdminCommentsMenu">
+  <div id="g-admin-comments-menu">
     <?= $menu ?>
   </div>
 
@@ -90,7 +90,7 @@
   </div>
   <? endif ?>
 
-  <table id="gAdminCommentsList">
+  <table id="g-admin-commentsList">
     <tr>
       <th>
         <?= t("Author") ?>
@@ -103,11 +103,11 @@
       </th>
     </tr>
     <? foreach ($comments as $i => $comment): ?>
-    <tr id="gComment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?>">
+    <tr id="g-comment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?>">
       <td>
         <a href="#">
           <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
-               class="gAvatar"
+               class="g-avatar"
                alt="<?= html::clean_attribute($comment->author_name()) ?>"
                width="40"
                height="40" />
@@ -118,7 +118,7 @@
       <td>
         <div class="g-right">
           <? $item = $comment->item() ?>
-          <div class="gItem gPhoto">
+          <div class="g-item g-photo">
             <a href="<?= $item->url() ?>">
               <? if ($item->has_thumb()): ?>
               <img src="<?= $item->thumb_url() ?>"
@@ -135,7 +135,7 @@
            <?= nl2br(html::purify($comment->text)) ?>
       </td>
       <td>
-        <ul class="gButtonSetVertical">
+        <ul class="g-buttonset-vertical">
         <? if ($comment->state != "unpublished"): ?>
           <li>
             <a href="javascript:set_state('unpublished',<?=$comment->id?>)"

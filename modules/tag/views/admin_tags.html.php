@@ -3,18 +3,18 @@
   var TAG_RENAME_URL = <?= html::js_string(url::site("admin/tags/rename/__ID__")) ?>;
   $("document").ready(function() {
     // using JS for adding link titles to avoid running t() for each tag
-    $("#gTagAdmin .tag-name").attr("title", <?= t("Click to edit this tag")->for_js() ?>);
-    $("#gTagAdmin .delete-link").attr("title", $(".delete-link:first span").html());
+    $("#g-tag-admin .tag-name").attr("title", <?= t("Click to edit this tag")->for_js() ?>);
+    $("#g-tag-admin .delete-link").attr("title", $(".delete-link:first span").html());
 
     // In-place editing for tag admin
-    $(".gEditable").bind("click", editInPlace);
+    $(".g-editable").bind("click", editInPlace);
   });
   // make some values available within tag.js
   var csrf_token = "<?= $csrf ?>";
   var save_i18n = <?= html::js_string(t("save")->for_html_attr()) ?>;
   var cancel_i18n = <?= html::js_string(t("cancel")->for_html_attr()) ?>;
 </script>
-<div class="gBlock">
+<div class="g-block">
   <h2>
     <?= t("Tag Admin") ?>
   </h2>
@@ -22,7 +22,7 @@
   <? $tags_per_column = $tags->count()/5 ?>
   <? $column_tag_count = 0 ?>
 
-  <table id="gTagAdmin" class="gBlockContent">
+  <table id="g-tag-admin" class="g-block-content">
     <caption class="g-understate">
       <?= t2("There is one tag", "There are %count tags", $tags->count()) ?>
     </caption>
@@ -47,10 +47,10 @@
           <? endif ?>
 
           <li>
-            <span id="gTag-<?= $tag->id ?>" class="gEditable tag-name"><?= html::clean($tag->name) ?></span>
+            <span id="g-tag-<?= $tag->id ?>" class="g-editable tag-name"><?= html::clean($tag->name) ?></span>
             <span class="g-understate">(<?= $tag->count ?>)</span>
             <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
-               class="g-dialogLink delete-link g-button">
+               class="g-dialog-link delete-link g-button">
                 <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
           </li>
 

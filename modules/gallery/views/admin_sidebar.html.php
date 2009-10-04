@@ -1,20 +1,20 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   $(function() {
-    $(".gAdminBlocksList ul").sortable({
-      connectWith: ".sortableBlocks",
+    $(".g-admin-blocks-list ul").sortable({
+      connectWith: ".g-sortable-blocks",
       opacity: .7,
       placeholder: "ui-state-highlight",
       update: function(event,ui) {
-        if ($(this).attr("id") == "gActiveBlocks") {
+        if ($(this).attr("id") == "g-active-blocks") {
           var active_blocks = "";
-          $("ul#gActiveBlocks li").each(function(i) {
+          $("ul#g-active-blocks li").each(function(i) {
             active_blocks += "&block["+i+"]="+$(this).attr("ref");
           });
-          $.getJSON($("#gSiteBlocks").attr("ref").replace("__ACTIVE__", active_blocks), function(data) {
+          $.getJSON($("#g-site-blocks").attr("ref").replace("__ACTIVE__", active_blocks), function(data) {
             if (data.result == "success") {
-              $("ul#gAvailableBlocks").html(data.available);
-              $("ul#gActiveBlocks").html(data.active);
+              $("ul#g-available-blocks").html(data.available);
+              $("ul#g-active-blocks").html(data.active);
             }
           });
         }
@@ -26,19 +26,19 @@
 <p>
   <?= t("Select and drag blocks from the available column to the active column to add to the sidebar; remove by dragging the other way.") ?>
 </p>
-    <div id="gSiteBlocks" ref="<?= url::site("admin/sidebar/update?csrf={$csrf}__ACTIVE__") ?>">
-  <div class="gAdminBlocksList">
+    <div id="g-site-blocks" ref="<?= url::site("admin/sidebar/update?csrf={$csrf}__ACTIVE__") ?>">
+  <div class="g-admin-blocks-list">
     <div><h3><?= t("Available Blocks") ?></h3></div>
     <div>
-      <ul id="gAvailableBlocks" class="sortableBlocks">
+      <ul id="g-available-blocks" class="g-sortable-blocks">
       <?= $available ?>
       </ul>
     </div>
   </div>
-  <div class="gAdminBlocksList">
+  <div class="g-admin-blocks-list">
     <div><h3><?= t("Active Blocks") ?></h3></div>
     <div>
-      <ul id="gActiveBlocks" class="sortableBlocks">
+      <ul id="g-active-blocks" class="g-sortable-blocks">
       <?= $active ?>
       </ul>
     </div>

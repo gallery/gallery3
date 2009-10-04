@@ -98,7 +98,7 @@ class tag_Core {
   }
 
   static function get_add_form($item) {
-    $form = new Forge("tags", "", "post", array("id" => "gAddTagForm"));
+    $form = new Forge("tags", "", "post", array("id" => "g-add-tag-form"));
     $label = $item->is_album() ?
       t("Add tag to album") :
       ($item->is_photo() ? t("Add tag to photo") : t("Add tag to movie"));
@@ -111,7 +111,7 @@ class tag_Core {
   }
 
   static function get_rename_form($tag) {
-    $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "gRenameTagForm"));
+    $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "g-rename-tag-form"));
     $group = $form->group("rename_tag")->label(t("Rename Tag"));
     $group->input("name")->label(t("Tag name"))->value($tag->name)->rules("required|length[1,64]");
     $group->inputs["name"]->error_messages("in_use", t("There is already a tag with that name"));
@@ -120,7 +120,7 @@ class tag_Core {
   }
 
   static function get_delete_form($tag) {
-    $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "gDeleteTagForm"));
+    $form = new Forge("admin/tags/delete/$tag->id", "", "post", array("id" => "g-delete-tag-form"));
     $group = $form->group("delete_tag")
       ->label(t("Really delete tag %tag_name?", array("tag_name" => $tag->name)));
     $group->submit("")->value(t("Delete Tag"));

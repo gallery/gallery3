@@ -12,9 +12,9 @@
   <?= t("Gallery allows you to choose a theme for browsing your Gallery, as well as a special theme for the administration interface.  Click a theme to preview and activate it.") ?>
 </p>
 
-<div id="gSiteTheme">
+<div id="g-site-theme">
   <h2> <?= t("Gallery theme") ?> </h2>
-  <div class="gBlock gSelected">
+  <div class="g-block g-selected">
     <img src="<?= url::file("themes/{$site}/thumbnail.png") ?>"
          alt="<?= html::clean_attribute($themes[$site]->name) ?>" />
     <h3> <?= $themes[$site]->name ?> </h3>
@@ -24,13 +24,13 @@
   </div>
 
   <h2> <?= t("Available Gallery themes") ?> </h2>
-  <div class="gAvailable">
+  <div class="g-available">
     <? $count = 0 ?>
     <? foreach ($themes as $id => $info): ?>
     <? if (!$info->site) continue ?>
     <? if ($id == $site) continue ?>
-    <div class="gBlock">
-      <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="g-dialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
+    <div class="g-block">
+      <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
         <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
              alt="<?= html::clean_attribute($info->name) ?>" />
         <h3> <?= $info->name ?> </h3>
@@ -50,9 +50,9 @@
   </div>
 </div>
 
-<div id="gAdminTheme">
+<div id="g-admin-theme">
   <h2> <?= t("Admin theme") ?> </h2>
-  <div class="gBlock gSelected">
+  <div class="g-block g-selected">
     <img src="<?= url::file("themes/{$admin}/thumbnail.png") ?>"
          alt="<?= html::clean_attribute($themes[$admin]->name) ?>" />
     <h3> <?= $themes[$admin]->name ?> </h3>
@@ -62,13 +62,13 @@
   </div>
 
   <h2> <?= t("Available admin themes") ?> </h2>
-  <div class="gAvailable">
+  <div class="g-available">
     <? $count = 0 ?>
     <? foreach ($themes as $id => $info): ?>
     <? if (!$info->admin) continue ?>
     <? if ($id == $admin) continue ?>
-    <div class="gBlock">
-      <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="g-dialogLink" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
+    <div class="g-block">
+      <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
         <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
              alt="<?= html::clean_attribute($info->name) ?>" />
         <h3> <?= $info->name ?> </h3>

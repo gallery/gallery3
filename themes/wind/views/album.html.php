@@ -1,27 +1,27 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // @todo Set hover on AlbumGrid list items for guest users ?>
-<div id="gInfo">
+<div id="g-info">
   <?= $theme->album_top() ?>
   <h1><?= html::purify($item->title) ?></h1>
-  <div class="gDescription"><?= nl2br(html::purify($item->description)) ?></div>
+  <div class="g-description"><?= nl2br(html::purify($item->description)) ?></div>
 </div>
 
-<ul id="gAlbumGrid">
+<ul id="g-album-grid">
 <? if (count($children)): ?>
   <? foreach ($children as $i => $child): ?>
-    <? $item_class = "gPhoto"; ?>
+    <? $item_class = "g-photo"; ?>
     <? if ($child->is_album()): ?>
-      <? $item_class = "gAlbum"; ?>
+      <? $item_class = "g-album"; ?>
     <? endif ?>
-  <li id="gItemId-<?= $child->id ?>" class="gItem <?= $item_class ?>">
+  <li id="g-itemId-<?= $child->id ?>" class="g-item <?= $item_class ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
-      <?= $child->thumb_img(array("class" => "gThumbnail")) ?>
+      <?= $child->thumb_img(array("class" => "g-thumbnail")) ?>
     </a>
     <?= $theme->thumb_bottom($child) ?>
-    <?= $theme->context_menu($child, "#gItemId-{$child->id} .gThumbnail") ?>
+    <?= $theme->context_menu($child, "#g-itemId-{$child->id} .g-thumbnail") ?>
     <h2><span></span><a href="<?= $child->url() ?>"><?= html::purify($child->title) ?></a></h2>
-    <ul class="gMetadata">
+    <ul class="g-metadata">
       <?= $theme->thumb_info($child) ?>
     </ul>
   </li>
@@ -30,7 +30,7 @@
   <? if ($user->admin || access::can("add", $item)): ?>
   <? $addurl = url::file("index.php/simple_uploader/app/$item->id") ?>
   <li><?= t("There aren't any photos here yet! <a %attrs>Add some</a>.",
-            array("attrs" => html::mark_clean("href=\"$addurl\" class=\"g-dialogLink\""))) ?></li>
+            array("attrs" => html::mark_clean("href=\"$addurl\" class=\"g-dialog-link\""))) ?></li>
   <? else: ?>
   <li><?= t("There aren't any photos here yet!") ?></li>
   <? endif; ?>

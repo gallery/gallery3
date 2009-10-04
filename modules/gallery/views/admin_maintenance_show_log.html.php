@@ -9,11 +9,11 @@
 appendTo('body').submit().remove();
   };
 </script>
-<div id="gTaskLog-dialog">
+<div id="g-task-log-dialog">
   <h1> <?= $task->name ?> </h1>
-  <div class="gTaskLog">
+  <div class="g-task-log">
     <pre><?= html::purify($task->get_log()) ?></pre>
   </div>
-  <button id="gCloseButton" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Close") ?></button>
-  <button id="gSaveButton" class="ui-state-default ui-corner-all" onclick="download()"><?= t("Save") ?></button>
+  <button id="g-close" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Close") ?></button>
+  <button id="g-save" class="ui-state-default ui-corner-all" onclick="download()"><?= t("Save") ?></button>
 </div>

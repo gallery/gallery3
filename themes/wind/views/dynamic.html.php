@@ -1,24 +1,24 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gAlbumHeader">
-  <div id="gAlbumHeaderButtons">
+<div id="g-albumHeader">
+  <div id="g-albumHeaderButtons">
     <?= $theme->dynamic_top() ?>
   </div>
   <h1><?= html::clean($title) ?></h1>
 </div>
 
-<ul id="gAlbumGrid">
+<ul id="g-album-grid">
   <? foreach ($children as $i => $child): ?>
-  <li class="gItem <?= $child->is_album() ? "gAlbum" : "" ?>">
+  <li class="g-item <?= $child->is_album() ? "g-album" : "" ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
-      <img id="gPhotoId-<?= $child->id ?>" class="gThumbnail"
+      <img id="g-photoId-<?= $child->id ?>" class="g-thumbnail"
            alt="photo" src="<?= $child->thumb_url() ?>"
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />
     </a>
     <h2><?= html::purify($child->title) ?></h2>
     <?= $theme->thumb_bottom($child) ?>
-    <ul class="gMetadata">
+    <ul class="g-metadata">
       <?= $theme->thumb_info($child) ?>
     </ul>
   </li>

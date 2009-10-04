@@ -5,7 +5,7 @@
     $.ajax({
       url: form_url.replace("__ITEM__", id),
       success: function(data) {
-          $("#gEditPermissionForm").html(data);
+          $("#g-edit-permissions-form").html(data);
           $(".active").removeClass("active");
           $("#item-" + id).addClass("active");
       }
@@ -19,15 +19,15 @@
       url: action_url.replace("__CMD__", cmd).replace("__GROUP__", group_id).
            replace("__PERM__", perm_id).replace("__ITEM__", item_id),
       success: function(data) {
-        $("#gEditPermissionForm").load(form_url.replace("__ITEM__", item_id));
+        $("#g-edit-permissions-form").load(form_url.replace("__ITEM__", item_id));
       }
     });
   }
 </script>
-<div id="gPermissions">
+<div id="g-permissions">
   <? if (!$htaccess_works): ?>
-  <ul id="gMessage">
-    <li class="gError">
+  <ul id="g-action-status">
+    <li class="g-error">
       <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.",
             array("mod_rewrite_attrs" => html::mark_clean('href="http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html" target="_blank"'),
                   "apache_attrs" => html::mark_clean('href="http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride" target="_blank"'))) ?>
@@ -37,7 +37,7 @@
 
   <p><?= t("Edit permissions for album:") ?></p>
 
-  <ul class="gBreadcrumbs">
+  <ul class="g-breadcrumbs">
     <? foreach ($parents as $parent): ?>
     <li id="item-<?= $parent->id ?>">
       <? if (access::can("edit", $parent)): ?>
@@ -56,7 +56,7 @@
     </li>
   </ul>
 
-  <div id="gEditPermissionForm">
+  <div id="g-edit-permissions-form">
     <?= $form ?>
   </div>
 </div>

@@ -2,16 +2,10 @@
  * Initialize jQuery UI and Gallery Plugin elements
  */
 
-var short_forms = new Array(
-  "#gQuickSearchForm",
-  "#gAddTagForm",
-  "#gSearchForm"
-);
-
 $(document).ready(function() {
 
   // Initialize Superfish menus
-  $("ul.gMenu").addClass("sf-menu");
+  $("ul.g-menu").addClass("sf-menu");
   $('ul.sf-menu').superfish({
     delay: 500,
     animation: {
@@ -20,63 +14,69 @@ $(document).ready(function() {
     },
     speed: 'fast'
   });
-  $("#gSiteMenu").css("display", "block");
+  $("#g-site-menu").css("display", "block");
 
   // Initialize status message effects
-  $("#gMessage li").gallery_show_message();
+  $("#g-action-status li").gallery_show_message();
 
   // Initialize dialogs
-  $("#gLoginLink").addClass("g-dialogLink");
-  $(".g-dialogLink").gallery_dialog();
+  $("#g-login-link").addClass("g-dialog-link");
+  $(".g-dialog-link").gallery_dialog();
 
   // Initialize view menu
-  if ($("#gViewMenu").length) {
-    $("#gViewMenu ul").removeClass("gMenu").removeClass("sf-menu");
-    $("#gViewMenu a").addClass("ui-icon");
+  if ($("#g-view-menu").length) {
+    $("#g-view-menu ul").removeClass("g-menu").removeClass("sf-menu");
+    $("#g-view-menu a").addClass("ui-icon");
   }
 
   // Initialize short forms
+  var short_forms = new Array(
+    "#g-quick-search-form",
+    "#g-add-tag-form",
+    "#g-search-form"
+  );
+
   for (var i in short_forms) {
     short_form_init(short_forms[i]);
-    $(short_forms[i]).addClass("gShortForm");
+    $(short_forms[i]).addClass("g-short-form");
   }
-  $(".gShortForm input[type=text]").addClass("ui-corner-left");
-  $(".gShortForm input[type=submit]").addClass("ui-state-default ui-corner-right");
+  $(".g-short-form input[type=text]").addClass("ui-corner-left");
+  $(".g-short-form input[type=submit]").addClass("ui-state-default ui-corner-right");
 
   // Apply jQuery UI button css to submit inputs
-  $("input[type=submit]:not(.gShortForm input)").addClass("ui-state-default ui-corner-all");
+  $("input[type=submit]:not(.g-short-form input)").addClass("ui-state-default ui-corner-all");
 
-  // Apply styles and icon classes to gContextMenu
-  if ($(".gContextMenu").length) {
-    $(".gContextMenu li").addClass("ui-state-default");
-    $(".gContextMenu a").addClass("g-button ui-icon-left");
-    $(".gContextMenu a").prepend("<span class=\"ui-icon\"></span>");
-    $(".gContextMenu a span").each(function() {
+  // Apply styles and icon classes to g-context-menu
+  if ($(".g-context-menu").length) {
+    $(".g-context-menu li").addClass("ui-state-default");
+    $(".g-context-menu a").addClass("g-button ui-icon-left");
+    $(".g-context-menu a").prepend("<span class=\"ui-icon\"></span>");
+    $(".g-context-menu a span").each(function() {
       var iconClass = $(this).parent().attr("class").match(/ui-icon-.[^\s]+/).toString();
       $(this).addClass(iconClass);
     });
   }
 
   // Album view only
-  if ($("#gAlbumGrid").length) {
+  if ($("#g-album-grid").length) {
     // Set equal height for album items and vertically align thumbnails/metadata
-    $('.gItem').equal_heights().gallery_valign();
+    $('.g-item').equal_heights().gallery_valign();
 
     // Initialize thumbnail hover effect
-    $(".gItem").hover(
+    $(".g-item").hover(
       function() {
         // Insert a placeholder to hold the item's position in the grid
-        var placeHolder = $(this).clone().attr("id", "gPlaceHolder");
+        var placeHolder = $(this).clone().attr("id", "g-place-holder");
         $(this).after($(placeHolder));
         // Style and position the hover item
         var position = $(this).position();
         $(this).css("top", position.top).css("left", position.left);
-        $(this).addClass("gHoverItem");
+        $(this).addClass("g-hover-item");
         // Initialize the contextual menu
         $(this).gallery_context_menu();
         // Set the hover item's height
         $(this).height("auto");
-        var context_menu = $(this).find(".gContextMenu");
+        var context_menu = $(this).find(".g-context-menu");
         var adj_height = $(this).height() + context_menu.height(); 
         $(this).height(adj_height); 
       },
@@ -94,19 +94,19 @@ $(document).ready(function() {
         $(this).css("position", "relative");
         $(this).css("top", 0).css("left", 0);
         // Remove the placeholder and hover class from the item
-        $(this).removeClass("gHoverItem");
-        $("#gPlaceHolder").remove();
+        $(this).removeClass("g-hover-item");
+        $("#g-place-holder").remove();
       }
     );
   }
 
   // Photo/Item item view
-  if ($("#gItem").length) {
+  if ($("#g-item").length) {
     // Ensure the resized image fits within its container
-    $("#gItem").gallery_fit_photo();
+    $("#g-item").gallery_fit_photo();
 
     // Initialize context menus
-    var resize = $("#gItem").gallery_get_photo();
+    var resize = $("#g-item").gallery_get_photo();
     $(resize).hover(function(){
       $(this).gallery_context_menu();
     });

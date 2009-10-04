@@ -3,34 +3,34 @@
   update_blocks = function() {
     $.get(<?= html::js_string(url::site("admin/dashboard/reorder")) ?>,
           {"csrf": "<?= $csrf ?>",
-           "dashboard_center[]": $("#gAdminDashboard").sortable(
+           "dashboard_center[]": $("#g-admin-dashboard").sortable(
              "toArray", {attribute: "block_id"}),
-           "dashboard_sidebar[]": $("#gAdminDashboardSidebar").sortable(
+           "dashboard_sidebar[]": $("#g-admin-dashboard-sidebar").sortable(
              "toArray", {attribute: "block_id"})});
   };
 
   $(document).ready(function(){
-    $("#gAdminDashboard .gBlock .ui-widget-header").addClass("gDraggable");
-    $("#gAdminDashboard").sortable({
-      connectWith: ["#gAdminDashboardSidebar"],
+    $("#g-admin-dashboard .g-block .ui-widget-header").addClass("g-draggable");
+    $("#g-admin-dashboard").sortable({
+      connectWith: ["#g-admin-dashboard-sidebar"],
       cursor: "move",
       handle: $(".ui-widget-header"),
       opacity: 0.6,
-      placeholder: "gDropTarget",
+      placeholder: "g-drop-target",
       stop: update_blocks
     });
 
-    $("#gAdminDashboardSidebar .gBlock .ui-widget-header").addClass("gDraggable");
-    $("#gAdminDashboardSidebar").sortable({
-      connectWith: ["#gAdminDashboard"],
+    $("#g-admin-dashboard-sidebar .g-block .ui-widget-header").addClass("g-draggable");
+    $("#g-admin-dashboard-sidebar").sortable({
+      connectWith: ["#g-admin-dashboard"],
       cursor: "move",
       handle: $(".ui-widget-header"),
       opacity: 0.6,
-      placeholder: "gDropTarget",
+      placeholder: "g-drop-target",
       stop: update_blocks
     });
   });
 </script>
-<div id="gAdminDashboard">
+<div id="g-admin-dashboard">
   <?= $blocks ?>
 </div>

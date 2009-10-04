@@ -133,11 +133,11 @@ form .g-error {
 .g-last {
 }
 
-.g-even-row {
+.g-even {
   background-color: #fff;
 }
 
-.g-odd-row {
+.g-odd {
   background-color: #eee;
 }
 
@@ -211,7 +211,60 @@ form .g-error {
   margin-bottom: .4em;
 }
 
+/* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-breadcrumbs {
+  padding: 0 20px;
+}
+
+.g-breadcrumbs li {
+  background: transparent url('images/ico-separator.gif') no-repeat scroll left center;
+  float: left;
+  padding: 10px 6px 10px 16px !important;
+}
+
+.g-breadcrumbs li.root {
+  background: transparent;
+}
+
+.g-breadcrumbs li a,
+.g-breadcrumbs li span {
+  display: block;
+}
+
+.g-breadcrumbs li.active,
+.g-breadcrumbs li.active span {
+  font-weight: bold;
+}
+
+#g-dialog ul.g-breadcrumbs {
+  clear: both;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+#g-dialog .g-breadcrumbs li {
+  font-size: .9em;
+}
+
+/* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
 .g-pager {
+  clear: both;
+  margin: 0;
+  padding: 5px 0 !important;
+  width: 100%;
+}
+
+.g-pager li {
+  float: left;
+  margin: 0;
+  width: 30%;
+}
+
+.g-pager .g-info {
+  text-align: center;
+  width: 40%;
 }
 
 .g-list-horizontal {

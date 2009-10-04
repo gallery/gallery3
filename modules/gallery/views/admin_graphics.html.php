@@ -1,18 +1,18 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   $(document).ready(function() {
-    $(".gAvailable .gBlock").equal_heights();
+    $(".g-available .g-block").equal_heights();
     select_toolkit = function(el) {
-      if (!$(this).hasClass("gUnavailable")) {
+      if (!$(this).hasClass("g-unavailable")) {
         window.location = <?= html::js_string(url::site("admin/graphics/choose/__TK__?csrf=$csrf")) ?>
           .replace("__TK__", $(this).attr("id"));
       }
     };
-    $("#gAdminGraphics div.gAvailable .gBlock").click(select_toolkit);
+    $("#g-admin-graphics div.g-available .g-block").click(select_toolkit);
   });
 </script>
 
-<div id="gAdminGraphics">
+<div id="g-admin-graphics">
   <h1> <?= t("Graphics Settings") ?> </h1>
   <p>
     <?= t("Gallery needs a graphics toolkit in order to manipulate your photos.  Please choose one from the list below.") ?>
@@ -25,7 +25,7 @@
   <?= new View("admin_graphics_$active.html", array("tk" => $tk->$active, "is_active" => true)) ?>
   <? endif ?>
 
-  <div class="gAvailable">
+  <div class="g-available">
     <h2> <?= t("Available Toolkits") ?> </h2>
     <? foreach (array_keys((array)$tk) as $id): ?>
     <? if ($id != $active): ?>

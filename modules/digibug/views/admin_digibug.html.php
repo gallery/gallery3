@@ -1,14 +1,14 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gAdminDigibug">
-  <div class="gAdminDigibugIntro">
-    <img id="DigibugLogo" src="<?= url::file("modules/digibug/images/digibug_logo.png") ?>">
+<div id="g-admin-digibug">
+  <div class="g-admin-digibug-intro">
+    <img id="Digibug-logo" src="<?= url::file("modules/digibug/images/digibug_logo.png") ?>">
     <h2> <?= t("Digibug Photo Printing") ?> </h2>
     <p>
       <?= t("Turn your photos into a wide variety of prints, gifts and games!") ?>
     </p>
 
     <ul>
-      <li class="gModuleStatus gSuccess">
+      <li class="g-module-status g-success">
         <?= t("You're ready to print photos!") ?>
       </li>
     </ul>

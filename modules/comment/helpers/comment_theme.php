@@ -25,7 +25,7 @@ class comment_theme_Core {
 
   static function photo_bottom($theme) {
     $block = new Block;
-    $block->css_id = "gComments";
+    $block->css_id = "g-comments";
     $block->title = t("Comments");
     $block->anchor = "comments";
 

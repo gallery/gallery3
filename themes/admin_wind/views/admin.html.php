@@ -36,21 +36,21 @@
   <body <?= $theme->body_attributes() ?>>
     <?= $theme->admin_page_top() ?>
     <? if ($sidebar): ?>
-    <div id="doc3" class="yui-t5 gView">
+    <div id="doc3" class="yui-t5 g-view">
     <? else: ?>
-    <div id="doc3" class="yui-t7 gView">
+    <div id="doc3" class="yui-t7 g-view">
     <? endif; ?>
       <?= $theme->site_status() ?>
-      <div id="gHeader">
+      <div id="g-header">
         <?= $theme->admin_header_top() ?>
-        <ul id="gLoginMenu">
+        <ul id="g-login-menu">
           <li class="first"><?= html::anchor(item::root()->abs_url(), "&larr; ".t("Back to the Gallery")) ?></li>
-          <li id="gLogoutLink"><a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(item::root()->url())) ?>"><?= t("Logout") ?></a></li>
+          <li id="g-logoutLink"><a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(item::root()->url())) ?>"><?= t("Logout") ?></a></li>
         </ul>
-        <a id="gLogo" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
+        <a id="g-logo" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
           &larr; <?= t("back to the ...") ?>
         </a>
-        <div id="gSiteAdminMenu" style="display: none;">
+        <div id="g-site-admin-menu" style="display: none;">
           <?= $theme->admin_menu() ?>
         </div>
         <?= $theme->admin_header_bottom() ?>
@@ -58,19 +58,19 @@
       <div id="bd">
         <div id="yui-main">
           <div class="yui-b">
-            <div id="gContent" class="yui-g">
+            <div id="g-content" class="yui-g">
               <?= $theme->messages() ?>
               <?= $content ?>
             </div>
           </div>
         </div>
         <? if ($sidebar): ?>
-        <div id="gSidebar" class="yui-b">
+        <div id="g-sidebar" class="yui-b">
           <?= $sidebar ?>
         </div>
         <? endif ?>
       </div>
-      <div id="gFooter">
+      <div id="g-footer">
         <?= $theme->admin_footer() ?>
         <div>
           <?= $theme->admin_credits() ?>

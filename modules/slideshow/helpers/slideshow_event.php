@@ -39,7 +39,7 @@ class slideshow_event_Core {
                     ->label(t("View slideshow"))
                     ->url("javascript:PicLensLite.start(" .
                           "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
-                    ->css_id("gSlideshowLink"));
+                    ->css_id("g-slideshow-link"));
     }
   }
 
@@ -49,7 +49,7 @@ class slideshow_event_Core {
                   ->label(t("View slideshow"))
                   ->url("javascript:PicLensLite.start(" .
                         "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
-                  ->css_id("gSlideshowLink"));
+                  ->css_id("g-slideshow-link"));
   }
 
   static function tag_menu($menu, $theme) {
@@ -58,7 +58,7 @@ class slideshow_event_Core {
                   ->label(t("View slideshow"))
                   ->url("javascript:PicLensLite.start(" .
                         "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
-                  ->css_id("gSlideshowLink"));
+                  ->css_id("g-slideshow-link"));
   }
 
   private static function _feed_url($theme) {

@@ -35,12 +35,12 @@ jQuery.extend(Gallery, {
           if(userSelection.length > 0) {
             Gallery.l10nClient.filter(userSelection);
             Gallery.l10nClient.toggle(1);
-            $('#l10n-client #gL10nSearch').focus();
+            $('#l10n-client #g-l10n-search').focus();
           } else {
             if($('#l10n-client').is('.hidden')) {
               Gallery.l10nClient.toggle(1);
               if(!$.browser.safari) {
-                $('#l10n-client #gL10nSearch').focus();
+                $('#l10n-client #g-l10n-search').focus();
               }
             } else {
               Gallery.l10nClient.toggle(0);
@@ -59,7 +59,7 @@ jQuery.extend(Gallery, {
           $('#l10n-client-string-select, #l10n-client-string-editor, #l10n-client .labels .label').show();
           $('#l10n-client').height('22em').removeClass('hidden');
 					//$('#l10n-client').slideUp();
-					$('#gMinimizeL10n').text("_");
+					$('#g-minimize-l10n').text("_");
         /*
          * This CSS clashes with Gallery's CSS, probably due to
          * YUI's grid / floats.
@@ -73,7 +73,7 @@ jQuery.extend(Gallery, {
           $('#l10n-client-string-select, #l10n-client-string-editor, #l10n-client .labels .label').hide();
           $('#l10n-client').height('2em').addClass('hidden');
           // TODO: Localize this message
-					$('#gMinimizeL10n').text(MSG_TRANSLATE_TEXT);
+					$('#g-minimize-l10n').text(MSG_TRANSLATE_TEXT);
         /*
           if(!$.browser.msie) {
             $('body').css('border-bottom', '0px');
@@ -131,13 +131,13 @@ jQuery.extend(Gallery, {
       if(search == false || search == '') {
         $('#l10n-client #l10n-search-filter-clear').focus();
         $('#l10n-client-string-select li').show();
-        $('#l10n-client #gL10nSearch').val('');
-        $('#l10n-client #gL10nSearch').focus();
+        $('#l10n-client #g-l10n-search').val('');
+        $('#l10n-client #g-l10n-search').focus();
       } else {
         if(search.length > 0) {
           $('#l10n-client-string-select li').hide();
           $('#l10n-client-string-select li:contains('+search+')').show();
-          $('#l10n-client #gL10nSearch').val(search);
+          $('#l10n-client #g-l10n-search').val(search);
         }
       }
     }
@@ -193,12 +193,12 @@ Gallery.behaviors.l10nClient = function(context) {
     var is_plural = Gallery.l10nClient.isPluralMessage(source);
     Gallery.l10nClient.showSourceMessage(source, is_plural);
     Gallery.l10nClient.updateTranslationForm(Gallery.l10nClient.getString(index, 'translation'), is_plural);
-    $("#gL10nClientSaveForm input[name='l10n-message-key']").val(key);
+    $("#g-l10n-client-save-form input[name='l10n-message-key']").val(key);
     Gallery.l10nClient.selected = index;
   });
 
   // When l10n_client window is clicked, toggle based on current state.
-  $('#gMinimizeL10n').click(function() {
+  $('#g-minimize-l10n').click(function() {
     if($('#l10n-client').is('.hidden')) {
       Gallery.l10nClient.toggle(1);
     } else {
@@ -207,7 +207,7 @@ Gallery.behaviors.l10nClient = function(context) {
   });
 	
 	// Close the l10n client using an AJAX call and refreshing the page
-  $('#gCloseL10n').click(function(event) {
+  $('#g-close-l10n').click(function(event) {
 		$.ajax({
       type: "GET",
       url: toggle_l10n_mode_url,
@@ -223,12 +223,12 @@ Gallery.behaviors.l10nClient = function(context) {
   // TODO: Either remove hotkeys code or add query.hotkeys.js.
   if($.hotkeys) {
     $.hotkeys.add(Gallery.l10nClient.keys['toggle'], function(){Gallery.l10nClient.key('toggle')});
-    $.hotkeys.add(Gallery.l10nClient.keys['clear'], {target:'#l10n-client #gL10nSearch', type:'keyup'}, function(){Gallery.l10nClient.key('clear')});
+    $.hotkeys.add(Gallery.l10nClient.keys['clear'], {target:'#l10n-client #g-l10n-search', type:'keyup'}, function(){Gallery.l10nClient.key('clear')});
   }
 
   // Custom listener for l10n_client livesearch
-  $('#l10n-client #gL10nSearch').keyup(function(key) {
-    Gallery.l10nClient.filter($('#l10n-client #gL10nSearch').val());
+  $('#l10n-client #g-l10n-search').keyup(function(key) {
+    Gallery.l10nClient.filter($('#l10n-client #g-l10n-search').val());
   });
 
   // Clear search
@@ -238,7 +238,7 @@ Gallery.behaviors.l10nClient = function(context) {
   });
 
   // Send AJAX POST data on form submit.
-  $('#gL10nClientSaveForm').ajaxForm({
+  $('#g-l10n-client-save-form').ajaxForm({
       dataType: "json",
       success: function(data) {
               var source = Gallery.l10nClient.getString(Gallery.l10nClient.selected, 'source');
@@ -250,7 +250,7 @@ Gallery.behaviors.l10nClient = function(context) {
                   var translation = {};
                   for (var i = 0; i < num_plural_forms; i++) {
                       var form = plural_forms[i];
-                      translation[form] = $('#gL10nClientSaveForm #l10n-edit-plural-translation-' + form).attr('value');
+                      translation[form] = $('#g-l10n-client-save-form #l10n-edit-plural-translation-' + form).attr('value');
                   }
               } else {
                   translation = $('#l10n-edit-translation').attr('value');
@@ -262,13 +262,13 @@ Gallery.behaviors.l10nClient = function(context) {
 
               // Clear the translation form fields
               Gallery.l10nClient.showSourceMessage('', false);
-              $('#gL10nClientSaveForm #l10n-edit-translation').val('');
+              $('#g-l10n-client-save-form #l10n-edit-translation').val('');
 
               for (var i = 0; i < num_plural_forms; i++) {
                   var form = plural_forms[i];
-                  $('#gL10nClientSaveForm #l10n-edit-plural-translation-' + form).val('');
+                  $('#g-l10n-client-save-form #l10n-edit-plural-translation-' + form).val('');
               }
-              $("#gL10nClientSaveForm input[name='l10n-message-key']").val('');
+              $("#g-l10n-client-save-form input[name='l10n-message-key']").val('');
           },
               error: function(xmlhttp) {
               // TODO: Localize this message
@@ -283,12 +283,12 @@ Gallery.behaviors.l10nClient = function(context) {
   // TODO: Handle plurals in copy button
 
   // Copy source text to translation field on button click.
-  $('#gL10nClientSaveForm #l10n-edit-copy').click(function() {
-    $('#gL10nClientSaveForm #l10n-edit-target').val($('#l10n-client-string-editor .source-text').text());
+  $('#g-l10n-client-save-form #l10n-edit-copy').click(function() {
+    $('#g-l10n-client-save-form #l10n-edit-target').val($('#l10n-client-string-editor .source-text').text());
   });
 
   // Clear translation field on button click.
-  $('#gL10nClientSaveForm #l10n-edit-clear').click(function() {
-    $('#gL10nClientSaveForm #l10n-edit-target').val('');
+  $('#g-l10n-client-save-form #l10n-edit-clear').click(function() {
+    $('#g-l10n-client-save-form #l10n-edit-target').val('');
   });
 };

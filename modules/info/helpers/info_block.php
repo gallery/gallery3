@@ -28,7 +28,7 @@ class info_block_Core {
     case "metadata":
       if ($theme->item()) {
         $block = new Block();
-        $block->css_id = "gMetadata";
+        $block->css_id = "g-metadata";
         $block->title = $theme->item()->is_album() ? t("Album Info") : t("Photo Info");
         $block->content = new View("info_block.html");
       }

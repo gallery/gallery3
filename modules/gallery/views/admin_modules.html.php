@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gModules">
+<div id="g-modules">
   <h1> <?= t("Gallery Modules") ?> </h1>
   <p>
     <?= t("Power up your Gallery by adding more modules! Each module provides new cool features.") ?>
@@ -16,7 +16,7 @@
       </tr>
       <? $i = 0 ?>
       <? foreach ($available as $module_name => $module_info):  ?>
-      <tr class="<?= ($i % 2 == 0) ? "g-odd-row" : "g-even-row" ?>">
+      <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?>">
         <? $data = array("name" => $module_name); ?>
         <? if ($module_info->locked) $data["disabled"] = 1; ?>
         <td> <?= form::checkbox($data, '1', module::is_active($module_name)) ?> </td>

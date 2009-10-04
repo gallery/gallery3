@@ -25,16 +25,16 @@
  */
 class user_Core {
   static function get_edit_form($user) {
-    $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gEditUserForm"));
+    $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "g-edit-user-form"));
     $form->set_attr("class", "g-narrow");
     $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
-    $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
+    $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
       ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
-    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
+    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
+    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
     $form->add_rules_from($user);
 
     module::event("user_edit_form", $user, $form);
@@ -44,19 +44,19 @@ class user_Core {
 
   static function get_edit_form_admin($user) {
     $form = new Forge(
-      "admin/users/edit_user/$user->id", "", "post", array("id" => "gEditUserForm"));
+      "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit User"));
-    $group->input("name")->label(t("Username"))->id("gUsername")->value($user->name);
+    $group->input("name")->label(t("Username"))->id("g-username")->value($user->name);
     $group->inputs["name"]->error_messages(
       "in_use", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
+    $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
       ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
-    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    $group->checkbox("admin")->label(t("Admin"))->id("gAdmin")->checked($user->admin);
+    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
+    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
+    $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
     $form->add_rules_from($user);
     $form->edit_user->password->rules("-required");
 
@@ -66,19 +66,19 @@ class user_Core {
   }
 
   static function get_add_form_admin() {
-    $form = new Forge("admin/users/add_user", "", "post", array("id" => "gAddUserForm"));
+    $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
     $form->set_attr('class', "g-narrow");
     $group = $form->group("add_user")->label(t("Add User"));
-    $group->input("name")->label(t("Username"))->id("gUsername")
+    $group->input("name")->label(t("Username"))->id("g-username")
       ->error_messages("in_use", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full Name"))->id("gFullName");
-    $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+    $group->input("full_name")->label(t("Full Name"))->id("g-fullname");
+    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
       ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("gEmail");
-    $group->input("url")->label(t("URL"))->id("gUrl");
+    $group->input("email")->label(t("Email"))->id("g-email");
+    $group->input("url")->label(t("URL"))->id("g-url");
     self::_add_locale_dropdown($group);
-    $group->checkbox("admin")->label(t("Admin"))->id("gAdmin");
+    $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
     $user = ORM::factory("user");
     $form->add_rules_from($user);
 
@@ -105,7 +105,7 @@ class user_Core {
 
   static function get_delete_form_admin($user) {
     $form = new Forge("admin/users/delete_user/$user->id", "", "post",
-                      array("id" => "gDeleteUserForm"));
+                      array("id" => "g-delete-user-form"));
     $group = $form->group("delete_user")->label(
       t("Are you sure you want to delete user %name?", array("name" => $user->name)));
     $group->submit("")->value(t("Delete user %name", array("name" => $user->name)));
@@ -113,11 +113,11 @@ class user_Core {
   }
 
   static function get_login_form($url) {
-    $form = new Forge($url, "", "post", array("id" => "gLoginForm"));
+    $form = new Forge($url, "", "post", array("id" => "g-login-form"));
     $form->set_attr('class', "g-narrow");
     $group = $form->group("login")->label(t("Login"));
-    $group->input("name")->label(t("Username"))->id("gUsername")->class(null);
-    $group->password("password")->label(t("Password"))->id("gPassword")->class(null);
+    $group->input("name")->label(t("Username"))->id("g-username")->class(null);
+    $group->password("password")->label(t("Password"))->id("g-password")->class(null);
     $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
     $group->submit("")->value(t("Login"));
     return $form;

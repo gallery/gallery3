@@ -249,7 +249,7 @@ class graphics_Core {
              "%count of your photos are out of date. <a %attrs>Click here to fix them</a>",
              $count,
              array("attrs" => html::mark_clean(sprintf(
-               'href="%s" class="g-dialogLink"',
+               'href="%s" class="g-dialog-link"',
                url::site("admin/maintenance/start/gallery_task::rebuild_dirty_images?csrf=__CSRF__"))))),
           "graphics_dirty");
     }

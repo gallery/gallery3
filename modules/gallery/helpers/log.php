@@ -93,16 +93,16 @@ class log_Core {
   static function severity_class($severity) {
     switch($severity) {
     case self::SUCCESS:
-      return "gSuccess";
+      return "g-success";
 
     case self::INFO:
-      return "gInfo";
+      return "g-info";
 
     case self::WARNING:
-      return "gWarning";
+      return "g-warning";
 
     case self::ERROR:
-      return "gError";
+      return "g-error";
     }
   }
 }

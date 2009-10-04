@@ -57,7 +57,7 @@ class search_Core {
     list ($remaining) = search::stats();
     if ($remaining) {
       site_status::warning(
-        t('Your search index needs to be updated.  <a href="%url" class="g-dialogLink">Fix this now</a>',
+        t('Your search index needs to be updated.  <a href="%url" class="g-dialog-link">Fix this now</a>',
           array("url" => html::mark_clean(url::site("admin/maintenance/start/search_task::update_index?csrf=__CSRF__")))),
         "search_index_out_of_date");
     }

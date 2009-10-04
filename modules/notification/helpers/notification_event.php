@@ -107,7 +107,7 @@ class notification_event_Core {
           ->append(Menu::factory("link")
                    ->id("watch")
                    ->label($label)
-                   ->css_id("gNotifyLink")
+                   ->css_id("g-notify-link")
                    ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token())));
       }
     }

@@ -27,7 +27,7 @@ class image_block_block_Core {
     switch ($block_id) {
     case "random_image":
       $block = new Block();
-      $block->css_id = "gImageBlock";
+      $block->css_id = "g-image-block";
       $block->title = t("Random Image");
       $block->content = new View("image_block_block.html");
 

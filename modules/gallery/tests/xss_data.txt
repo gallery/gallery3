@@ -1,12 +1,12 @@
 modules/akismet/views/admin_akismet.html.php                 16  DIRTY    $form
 modules/akismet/views/admin_akismet_stats.html.php           9   DIRTY_ATTR $api_key
 modules/akismet/views/admin_akismet_stats.html.php           9   DIRTY_ATTR urlencode($blog_url)
-modules/comment/views/admin_block_recent_comments.html.php   4   DIRTY_ATTR ($i%2==0)?"g-even-row":"g-odd-row"
+modules/comment/views/admin_block_recent_comments.html.php   4   DIRTY_ATTR ($i%2==0)?"g-even":"g-odd"
 modules/comment/views/admin_block_recent_comments.html.php   5   DIRTY_ATTR $comment->author()->avatar_url(32,$theme->url(,true))
 modules/comment/views/admin_block_recent_comments.html.php   10  DIRTY    gallery::date_time($comment->created)
 modules/comment/views/admin_comments.html.php                42  DIRTY    $menu
 modules/comment/views/admin_comments.html.php                106 DIRTY_ATTR $comment->id
-modules/comment/views/admin_comments.html.php                106 DIRTY_ATTR ($i%2==0)?"g-odd-row":"g-even-row"
+modules/comment/views/admin_comments.html.php                106 DIRTY_ATTR ($i%2==0)?"g-odd":"g-even"
 modules/comment/views/admin_comments.html.php                109 DIRTY_ATTR $comment->author()->avatar_url(40,$theme->url(,true))
 modules/comment/views/admin_comments.html.php                122 DIRTY_JS $item->url()
 modules/comment/views/admin_comments.html.php                124 DIRTY_ATTR $item->thumb_url()
@@ -56,14 +56,14 @@ modules/gallery/views/admin_dashboard.html.php               35  DIRTY    $block
 modules/gallery/views/admin_graphics.html.php                22  DIRTY    newView("admin_graphics_none.html")
 modules/gallery/views/admin_graphics.html.php                24  DIRTY    newView("admin_graphics_$active.html",array("tk"=>$tk->$active,"is_active"=>true))
 modules/gallery/views/admin_graphics.html.php                31  DIRTY    newView("admin_graphics_$id.html",array("tk"=>$tk->$id,"is_active"=>false))
-modules/gallery/views/admin_graphics_gd.html.php             2   DIRTY_ATTR $is_active?" gSelected":""
-modules/gallery/views/admin_graphics_gd.html.php             2   DIRTY_ATTR $tk->installed?" gInstalledToolkit":" gUnavailable"
+modules/gallery/views/admin_graphics_gd.html.php             2   DIRTY_ATTR $is_active?" g-selected":""
+modules/gallery/views/admin_graphics_gd.html.php             2   DIRTY_ATTR $tk->installed?" g-installed-toolkit":" g-unavailable"
 modules/gallery/views/admin_graphics_gd.html.php             19  DIRTY    $tk->error
-modules/gallery/views/admin_graphics_graphicsmagick.html.php 2   DIRTY_ATTR $is_active?" gSelected":""
-modules/gallery/views/admin_graphics_graphicsmagick.html.php 2   DIRTY_ATTR $tk->installed?"  gInstalledToolkit":" gUnavailable"
+modules/gallery/views/admin_graphics_graphicsmagick.html.php 2   DIRTY_ATTR $is_active?" g-selected":""
+modules/gallery/views/admin_graphics_graphicsmagick.html.php 2   DIRTY_ATTR $tk->installed?"  g-installed-toolkit":" g-unavailable"
 modules/gallery/views/admin_graphics_graphicsmagick.html.php 18  DIRTY    $tk->error
-modules/gallery/views/admin_graphics_imagemagick.html.php    2   DIRTY_ATTR $is_active?" gSelected":""
-modules/gallery/views/admin_graphics_imagemagick.html.php    2   DIRTY_ATTR $tk->installed?"  gInstalledToolkit":" gUnavailable"
+modules/gallery/views/admin_graphics_imagemagick.html.php    2   DIRTY_ATTR $is_active?" g-selected":""
+modules/gallery/views/admin_graphics_imagemagick.html.php    2   DIRTY_ATTR $tk->installed?"  g-installed-toolkit":" g-unavailable"
 modules/gallery/views/admin_graphics_imagemagick.html.php    18  DIRTY    $tk->error
 modules/gallery/views/admin_languages.html.php               9   DIRTY    access::csrf_form_field()
 modules/gallery/views/admin_languages.html.php               27  DIRTY_ATTR (isset($installed_locales[$code]))?"installed":""
@@ -72,20 +72,20 @@ modules/gallery/views/admin_languages.html.php               28  DIRTY    form::
 modules/gallery/views/admin_languages.html.php               29  DIRTY    $display_name
 modules/gallery/views/admin_languages.html.php               31  DIRTY    form::radio("default_locale",$code,($default_locale==$code),((isset($installed_locales[$code]))?'':'disabled="disabled"'))
 modules/gallery/views/admin_languages.html.php               102 DIRTY    $share_translations_form
-modules/gallery/views/admin_maintenance.html.php             24  DIRTY_ATTR ($i%2==0)?"g-odd-row":"g-even-row"
+modules/gallery/views/admin_maintenance.html.php             24  DIRTY_ATTR ($i%2==0)?"g-odd":"g-even"
 modules/gallery/views/admin_maintenance.html.php             24  DIRTY_ATTR log::severity_class($task->severity)
 modules/gallery/views/admin_maintenance.html.php             25  DIRTY_ATTR log::severity_class($task->severity)
 modules/gallery/views/admin_maintenance.html.php             26  DIRTY    $task->name
 modules/gallery/views/admin_maintenance.html.php             29  DIRTY    $task->description
-modules/gallery/views/admin_maintenance.html.php             72  DIRTY_ATTR ($i%2==0)?"g-odd-row":"g-even-row"
-modules/gallery/views/admin_maintenance.html.php             72  DIRTY_ATTR $task->state=="stalled"?"gWarning":""
-modules/gallery/views/admin_maintenance.html.php             73  DIRTY_ATTR $task->state=="stalled"?"gWarning":""
+modules/gallery/views/admin_maintenance.html.php             72  DIRTY_ATTR ($i%2==0)?"g-odd":"g-even"
+modules/gallery/views/admin_maintenance.html.php             72  DIRTY_ATTR $task->state=="stalled"?"g-warning":""
+modules/gallery/views/admin_maintenance.html.php             73  DIRTY_ATTR $task->state=="stalled"?"g-warning":""
 modules/gallery/views/admin_maintenance.html.php             74  DIRTY    gallery::date_time($task->updated)
 modules/gallery/views/admin_maintenance.html.php             77  DIRTY    $task->name
 modules/gallery/views/admin_maintenance.html.php             92  DIRTY    $task->status
-modules/gallery/views/admin_maintenance.html.php             145 DIRTY_ATTR ($i%2==0)?"g-odd-row":"g-even-row"
-modules/gallery/views/admin_maintenance.html.php             145 DIRTY_ATTR $task->state=="success"?"gSuccess":"gError"
-modules/gallery/views/admin_maintenance.html.php             146 DIRTY_ATTR $task->state=="success"?"gSuccess":"gError"
+modules/gallery/views/admin_maintenance.html.php             145 DIRTY_ATTR ($i%2==0)?"g-odd":"g-even"
+modules/gallery/views/admin_maintenance.html.php             145 DIRTY_ATTR $task->state=="success"?"g-success":"g-error"
+modules/gallery/views/admin_maintenance.html.php             146 DIRTY_ATTR $task->state=="success"?"g-success":"g-error"
 modules/gallery/views/admin_maintenance.html.php             147 DIRTY    gallery::date_time($task->updated)
 modules/gallery/views/admin_maintenance.html.php             150 DIRTY    $task->name
 modules/gallery/views/admin_maintenance.html.php             162 DIRTY    $task->status
@@ -93,7 +93,7 @@ modules/gallery/views/admin_maintenance_show_log.html.php    8   DIRTY_JS url::s
 modules/gallery/views/admin_maintenance_show_log.html.php    13  DIRTY    $task->name
 modules/gallery/views/admin_maintenance_task.html.php        55  DIRTY    $task->name
 modules/gallery/views/admin_modules.html.php                 9   DIRTY    access::csrf_form_field()
-modules/gallery/views/admin_modules.html.php                 19  DIRTY_ATTR ($i%2==0)?"g-odd-row":"g-even-row"
+modules/gallery/views/admin_modules.html.php                 19  DIRTY_ATTR ($i%2==0)?"g-odd":"g-even"
 modules/gallery/views/admin_modules.html.php                 22  DIRTY    form::checkbox($data,'1',module::is_active($module_name))
 modules/gallery/views/admin_modules.html.php                 24  DIRTY    $module_info->version
 modules/gallery/views/admin_theme_options.html.php           5   DIRTY    $form
@@ -178,7 +178,7 @@ modules/gallery/views/upgrader.html.php                      45  DIRTY_ATTR $id
 modules/gallery/views/upgrader.html.php                      49  DIRTY    $module->version
 modules/gallery/views/upgrader.html.php                      52  DIRTY    $module->code_version
 modules/image_block/views/image_block_block.html.php         3   DIRTY_JS $item->url()
-modules/image_block/views/image_block_block.html.php         4   DIRTY    $item->thumb_img(array("class"=>"gThumbnail"))
+modules/image_block/views/image_block_block.html.php         4   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
 modules/info/views/info_block.html.php                       22  DIRTY    date("M j, Y H:i:s",$item->captured)
 modules/info/views/info_block.html.php                       29  DIRTY_JS $item->owner->url
 modules/notification/views/comment_published.html.php        28  DIRTY_JS $comment->item()->abs_url()
@@ -195,19 +195,19 @@ modules/organize/views/organize_dialog.html.php              5   DIRTY_JS url::s
 modules/organize/views/organize_dialog.html.php              6   DIRTY_JS url::site("organize/tree/__ALBUM_ID__")
 modules/organize/views/organize_dialog.html.php              22  DIRTY    $album_tree
 modules/organize/views/organize_dialog.html.php              29  DIRTY    $micro_thumb_grid
-modules/organize/views/organize_dialog.html.php              37  DIRTY    form::dropdown(array("id"=>"gOrganizeSortColumn"),album::get_sort_order_options(),$album->sort_column)
-modules/organize/views/organize_dialog.html.php              38  DIRTY    form::dropdown(array("id"=>"gOrganizeSortOrder"),array("ASC"=>"Ascending","DESC"=>"Descending"),$album->sort_order)
+modules/organize/views/organize_dialog.html.php              37  DIRTY    form::dropdown(array("id"=>"g-organize-sort-column"),album::get_sort_order_options(),$album->sort_column)
+modules/organize/views/organize_dialog.html.php              38  DIRTY    form::dropdown(array("id"=>"g-organize-sort-order"),array("ASC"=>"Ascending","DESC"=>"Descending"),$album->sort_order)
 modules/organize/views/organize_thumb_grid.html.php          3   DIRTY_ATTR $child->id
 modules/organize/views/organize_thumb_grid.html.php          4   DIRTY_ATTR $child->id
-modules/organize/views/organize_thumb_grid.html.php          5   DIRTY_ATTR $child->is_album()?"gAlbum":"gPhoto"
-modules/organize/views/organize_thumb_grid.html.php          6   DIRTY    $child->thumb_img(array("class"=>"gThumbnail","ref"=>$child->id),90,true)
+modules/organize/views/organize_thumb_grid.html.php          5   DIRTY_ATTR $child->is_album()?"g-album":"g-photo"
+modules/organize/views/organize_thumb_grid.html.php          6   DIRTY    $child->thumb_img(array("class"=>"g-thumbnail","ref"=>$child->id),90,true)
 modules/organize/views/organize_thumb_grid.html.php          14  DIRTY_JS url::site("organize/album/$album->id/".($offset+25))
-modules/organize/views/organize_tree.html.php                2   DIRTY_ATTR access::can("edit",$album)?"":"gViewOnly"
+modules/organize/views/organize_tree.html.php                2   DIRTY_ATTR access::can("edit",$album)?"":"g-view-only"
 modules/organize/views/organize_tree.html.php                3   DIRTY_ATTR $album->id
 modules/organize/views/organize_tree.html.php                6   DIRTY_ATTR $selected&&$album->id==$selected->id?"selected":""
 modules/organize/views/organize_tree.html.php                7   DIRTY_ATTR $album->id
 modules/organize/views/organize_tree.html.php                13  DIRTY    View::factory("organize_tree.html",array("selected"=>$selected,"album"=>$child));
-modules/organize/views/organize_tree.html.php                15  DIRTY_ATTR access::can("edit",$child)?"":"gViewOnly"
+modules/organize/views/organize_tree.html.php                15  DIRTY_ATTR access::can("edit",$child)?"":"g-view-only"
 modules/organize/views/organize_tree.html.php                16  DIRTY_ATTR $child->id
 modules/organize/views/organize_tree.html.php                19  DIRTY_ATTR $child->id
 modules/recaptcha/views/admin_recaptcha.html.php             10  DIRTY    $form
@@ -252,7 +252,7 @@ modules/search/views/search.html.php                         32  DIRTY    $item-
 modules/server_add/views/admin_server_add.html.php           15  DIRTY_ATTR $id
 modules/server_add/views/admin_server_add.html.php           24  DIRTY    $form
 modules/server_add/views/server_add_tree.html.php            20  DIRTY_ATTR is_dir($file)?"ui-icon-folder-collapsed":"ui-icon-document"
-modules/server_add/views/server_add_tree.html.php            21  DIRTY_ATTR is_dir($file)?"gDirectory":"gFile"
+modules/server_add/views/server_add_tree.html.php            21  DIRTY_ATTR is_dir($file)?"g-directory":"g-file"
 modules/server_add/views/server_add_tree_dialog.html.php     3   DIRTY_JS url::site("server_add/children?path=__PATH__")
 modules/server_add/views/server_add_tree_dialog.html.php     4   DIRTY_JS url::site("server_add/start?item_id={$item->id}&csrf=$csrf")
 modules/server_add/views/server_add_tree_dialog.html.php     23  DIRTY    $tree
@@ -267,19 +267,19 @@ modules/user/views/admin_users.html.php                      3   DIRTY_JS url::s
 modules/user/views/admin_users.html.php                      26  DIRTY_JS url::site("admin/users/group/__GROUPID__")
 modules/user/views/admin_users.html.php                      36  DIRTY_JS url::site("admin/users/remove_user_from_group/__USERID__/__GROUPID__?csrf=$csrf")
 modules/user/views/admin_users.html.php                      67  DIRTY_ATTR $user->id
-modules/user/views/admin_users.html.php                      67  DIRTY_ATTR text::alternate("g-odd-row","g-even-row")
+modules/user/views/admin_users.html.php                      67  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/user/views/admin_users.html.php                      67  DIRTY_ATTR $user->admin?"admin":""
 modules/user/views/admin_users.html.php                      68  DIRTY_ATTR $user->id
 modules/user/views/admin_users.html.php                      69  DIRTY_ATTR $user->avatar_url(20,$theme->url(,true))
 modules/user/views/admin_users.html.php                      83  DIRTY    ($user->last_login==0)?"":gallery::date($user->last_login)
 modules/user/views/admin_users.html.php                      121 DIRTY_ATTR $group->id
-modules/user/views/admin_users.html.php                      121 DIRTY_ATTR ($group->special?"gDefaultGroup":"")
+modules/user/views/admin_users.html.php                      121 DIRTY_ATTR ($group->special?"g-default-group":"")
 modules/user/views/admin_users.html.php                      123 DIRTY    $v
 modules/user/views/admin_users_group.html.php                22  DIRTY_JS $user->id
 modules/user/views/admin_users_group.html.php                22  DIRTY_JS $group->id
 modules/user/views/login_ajax.html.php                       6   DIRTY_JS url::site("password/reset")
 modules/user/views/login_ajax.html.php                       37  DIRTY    $form
-modules/user/views/user_languages_block.html.php             2   DIRTY    form::dropdown("gSelectSessionLocale",$installed_locales,$selected)
+modules/user/views/user_languages_block.html.php             2   DIRTY    form::dropdown("g-select-session-locale",$installed_locales,$selected)
 modules/watermark/views/admin_watermarks.html.php            19  DIRTY_ATTR $width
 modules/watermark/views/admin_watermarks.html.php            19  DIRTY_ATTR $height
 modules/watermark/views/admin_watermarks.html.php            19  DIRTY_ATTR $url
@@ -308,13 +308,13 @@ themes/admin_wind/views/pager.html.php                       37  DIRTY_JS str_re
 themes/wind/views/album.html.php                             16  DIRTY_ATTR $child->id
 themes/wind/views/album.html.php                             16  DIRTY_ATTR $item_class
 themes/wind/views/album.html.php                             18  DIRTY_JS $child->url()
-themes/wind/views/album.html.php                             19  DIRTY    $child->thumb_img(array("class"=>"gThumbnail"))
+themes/wind/views/album.html.php                             19  DIRTY    $child->thumb_img(array("class"=>"g-thumbnail"))
 themes/wind/views/album.html.php                             23  DIRTY_JS $child->url()
 themes/wind/views/block.html.php                             3   DIRTY_ATTR $anchor
 themes/wind/views/block.html.php                             5   DIRTY_ATTR $css_id
 themes/wind/views/block.html.php                             6   DIRTY    $title
 themes/wind/views/block.html.php                             8   DIRTY    $content
-themes/wind/views/dynamic.html.php                           11  DIRTY_ATTR $child->is_album()?"gAlbum":""
+themes/wind/views/dynamic.html.php                           11  DIRTY_ATTR $child->is_album()?"g-album":""
 themes/wind/views/dynamic.html.php                           13  DIRTY_JS $child->url()
 themes/wind/views/dynamic.html.php                           14  DIRTY_ATTR $child->id
 themes/wind/views/dynamic.html.php                           15  DIRTY_ATTR $child->thumb_url()
@@ -322,7 +322,7 @@ themes/wind/views/dynamic.html.php                           16  DIRTY_ATTR $chi
 themes/wind/views/dynamic.html.php                           17  DIRTY_ATTR $child->thumb_height
 themes/wind/views/movie.html.php                             8   DIRTY_JS $previous_item->url()
 themes/wind/views/movie.html.php                             18  DIRTY_JS $next_item->url()
-themes/wind/views/movie.html.php                             28  DIRTY    $item->movie_img(array("class"=>"gMovie","id"=>"gMovieId-{$item->id}"))
+themes/wind/views/movie.html.php                             28  DIRTY    $item->movie_img(array("class"=>"g-movie","id"=>"g-movie-id-{$item->id}"))
 themes/wind/views/page.html.php                              9   DIRTY    $page_title
 themes/wind/views/page.html.php                              32  DIRTY_JS $theme->url()
 themes/wind/views/page.html.php                              41  DIRTY    $new_width
@@ -344,4 +344,4 @@ themes/wind/views/photo.html.php                             8   DIRTY_JS $theme
 themes/wind/views/photo.html.php                             21  DIRTY_JS $previous_item->url()
 themes/wind/views/photo.html.php                             31  DIRTY_JS $next_item->url()
 themes/wind/views/photo.html.php                             43  DIRTY_JS $item->file_url()
-themes/wind/views/photo.html.php                             45  DIRTY    $item->resize_img(array("id"=>"gPhotoId-{$item->id}","class"=>"gResize"))
+themes/wind/views/photo.html.php                             45  DIRTY    $item->resize_img(array("id"=>"g-photoId-{$item->id}","class"=>"g-resize"))

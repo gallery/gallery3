@@ -36,7 +36,7 @@ class rss_block_Core {
       }
       if (!empty($feeds)) {
         $block = new Block();
-        $block->css_id = "gRss";
+        $block->css_id = "g-rss";
         $block->title = t("Available RSS Feeds");
         $block->content = new View("rss_block.html");
         $block->content->feeds = $feeds;

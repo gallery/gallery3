@@ -23,7 +23,7 @@ class watermark_Core {
       $range[$i] = "$i%";
     }
 
-    $form = new Forge("admin/watermarks/add", "", "post", array("id" => "gAddWatermarkForm"));
+    $form = new Forge("admin/watermarks/add", "", "post", array("id" => "g-add-watermark-form"));
     $group = $form->group("add_watermark")->label(t("Upload Watermark"));
     $group->upload("file")->label(t("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required");
     $group->dropdown("position")->label(t("Watermark Position"))
@@ -41,7 +41,7 @@ class watermark_Core {
       $range[$i] = "$i%";
     }
 
-    $form = new Forge("admin/watermarks/edit", "", "post", array("id" => "gEditWatermarkForm"));
+    $form = new Forge("admin/watermarks/edit", "", "post", array("id" => "g-edit-watermark-form"));
     $group = $form->group("edit_watermark")->label(t("Edit Watermark"));
     $group->dropdown("position")->label(t("Watermark Position"))
       ->options(self::positions())
@@ -54,7 +54,7 @@ class watermark_Core {
   }
 
   static function get_delete_form() {
-    $form = new Forge("admin/watermarks/delete", "", "post", array("id" => "gDeleteWatermarkForm"));
+    $form = new Forge("admin/watermarks/delete", "", "post", array("id" => "g-delete-watermark-form"));
     $group = $form->group("delete_watermark")->label(t("Really delete Watermark?"));
     $group->submit("")->value(t("Delete"));
     return $form;

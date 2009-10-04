@@ -4,16 +4,16 @@
 <script type="text/javascript" src="<?= url::file("lib/jquery.scrollTo.js") ?>"></script>
 
 <!-- hack to set the title for the dialog -->
-<form id="gAddPhotosForm" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
+<form id="g-add-photos-form" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
   <fieldset>
     <legend> <?= t("Add photos to %album_title", array("album_title" => html::purify($item->title))) ?> </legend>
   </fieldset>
 </form>
 
-<div id="gAddPhotos">
+<div id="g-add-photos">
   <? if (ini_get("suhosin.session.encrypt")): ?>
-  <ul id="gMessage">
-    <li class="gError">
+  <ul id="g-action-status">
+    <li class="g-error">
       <?= t("Error: your server is configured to use the <a href=\"%encrypt_url\"><code>suhosin.session.encrypt</code></a> setting from <a href=\"%suhosin_url\">Suhosin</a>.  You must disable this setting to upload photos.",
           array("encrypt_url" => "http://www.hardened-php.net/suhosin/configuration.html#suhosin.session.encrypt",
       "suhosin_url" => "http://www.hardened-php.net/suhosin/")) ?>
@@ -24,7 +24,7 @@
   <p>
     <?= t("Photos will be uploaded to album: ") ?>
   </p>
-  <ul class="gBreadcrumbs">
+  <ul class="g-breadcrumbs">
     <? foreach ($item->parents() as $parent): ?>
     <li> <?= html::clean($parent->title) ?> </li>
     <? endforeach ?>
@@ -36,14 +36,14 @@
     <span id="g-uploadstatus"></span>
     <a id="g-cancelupload" title="<?= t("Cancel all the pending uploads")->for_html_attr() ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
   </div>
-  <div id="gAddPhotosCanvas" style="text-align: center;">
-    <div id="gAddPhotosQueue"></div>
-    <div id="gEditPhotosQueue"></div>
+  <div id="g-add-photos-canvas" style="text-align: center;">
+    <div id="g-add-photos-queue"></div>
+    <div id="g-edit-photos-queue"></div>
   </div>
-  <span id="gChooseFilesButtonPlaceholder"></span>
+  <span id="g-choose-files-placeholder"></span>
 
   <!-- Proxy the done request back to our form, since its been ajaxified -->
-  <button class="ui-state-default ui-corner-all" onclick="$('#gAddPhotosForm').submit()">
+  <button class="ui-state-default ui-corner-all" onclick="$('#g-add-photos-form').submit()">
     <?= t("Done") ?>
   </button>
 </div>
@@ -68,7 +68,7 @@
     button_image_url: <?= html::js_string(url::file(gallery::find_file("images", "select-photos-backg.png"))) ?>,
     button_width: "202",
     button_height: "45",
-    button_placeholder_id: "gChooseFilesButtonPlaceholder",
+    button_placeholder_id: "g-choose-files-placeholder",
     button_text: <?= json_encode('<span class="swfUploadFont">' . t("Select photos...") . '</span>') ?>,
     button_text_style: ".swfUploadFont { color: #2E6E9E; font-size: 16px; font-family: Lucida Grande,Lucida Sans,Arial,sans-serif; font-weight: bold; }",
     button_text_left_padding: 30,
@@ -91,7 +91,7 @@
   function File_Progress(file) {
     this.box = $("#" + file.id);
     if (!this.box.length) {
-      $("#gAddPhotosQueue").append(
+      $("#g-add-photos-queue").append(
         "<div class=\"box\" id=\"" + file.id + "\">" +
         "<div class=\"title\"></div>" +
         "<div class=\"status\"></div>" +
@@ -163,7 +163,7 @@
     var fp = new File_Progress(file);
     fp.title.html(file.name);
     fp.set_status("uploading", <?= t("Uploading...")->for_js() ?>);
-    $("#gAddPhotosCanvas").scrollTo(fp.box, 1000);
+    $("#g-add-photos-canvas").scrollTo(fp.box, 1000);
 
     // move file select button
     $("#SWFUpload_0").css({'left': '0', 'top': '0'});
@@ -243,6 +243,6 @@
   // This event comes from the Queue Plugin
   function queue_complete(num_files_uploaded) {
     var status_msg = <?= t("Uploaded: __COUNT__")->for_js() ?>;
-    $("#gUploadStatus").html(status_msg.replace("__COUNT__", num_files_uploaded));
+    $("#g-upload-status").html(status_msg.replace("__COUNT__", num_files_uploaded));
   }
 </script>

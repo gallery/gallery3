@@ -2,9 +2,9 @@
 <? if ($anchor): ?>
 <a name="<?= $anchor ?>"></a>
 <? endif ?>
-<div id="<?= $css_id ?>" class="gBlock">
+<div id="<?= $css_id ?>" class="g-block">
   <h2><?= $title ?></h2>
-  <div class="gBlockContent">
+  <div class="g-block-content">
     <?= $content ?>
   </div>
 </div>

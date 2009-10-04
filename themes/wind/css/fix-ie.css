@@ -2,15 +2,15 @@
  * Fix display in IE 6, 7
  */
 
-#gBanner,
-.gBreadcrumbs,
-#gAlbumGrid,
-#gPager,
-#gViewMenu  {
+#g-banner,
+.g-breadcrumbs,
+#g-album-grid,
+#g-pager,
+#g-view-menu  {
   zoom: 1;
 }
 
-#gBanner {
+#g-banner {
   z-index: 2;
 }
 
@@ -19,7 +19,7 @@ input.submit {
   display: inline !important;
 }
 
-#gAddTagForm input.textbox {
+#g-add-tag-form input.textbox {
   width: 110px;
 }
 
@@ -28,10 +28,10 @@ input.submit {
   float: none !important;
 }
 
-.gPager .g-txt-right {
+.g-pager .g-txt-right {
   width: 29%;
 }
 
-.gPager .ui-icon-right {
+.g-pager .ui-icon-right {
   width: 60px;
 }

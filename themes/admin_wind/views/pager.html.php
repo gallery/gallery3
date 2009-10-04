@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // See http://docs.kohanaphp.com/libraries/pagination ?>
-<ul class="gPager">
+<ul class="g-pager">
   <? /* @todo This message isn't easily localizable */
      $from_to_msg = t2("Item %from_number of %count",
                        "Items %from_number - %to_number of %count",
@@ -24,7 +24,7 @@
       <span class="ui-icon ui-icon-seek-prev"></span><?= t("previous") ?></a>
   <? endif ?>
   </li>
-  <li class="gInfo"><?= $from_to_msg ?></li>
+  <li class="g-info"><?= $from_to_msg ?></li>
   <li class="g-txt-right">
   <? if ($next_page): ?>
     <a href="<?= str_replace('{page}', $next_page, $url) ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">

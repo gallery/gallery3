@@ -2,33 +2,33 @@
 /*******************************************************************
  * Dialog wide styles
  */
-#gOrganize {
+#g-organize {
   overflow: hidden;
 }
 
-#gOrganize #bd {
+#g-organize #bd {
   height: 100%;
 }
 
-#gOrganize .yui-u {
+#g-organize .yui-u {
   width: 75%;
 }
 
-#gOrganize .yui-gf .first {
+#g-organize .yui-gf .first {
   width: 25%;
 }
 
-#gMessage {
+#g-action-status {
   margin-bottom: .4em;
   width: 75%;
   white-space: nowrap;
 }
 
-#gOrganizeDetail {
+#g-organizeDetail {
   height: 100%;
 }
 
-#gMessage .gInfo {
+#g-action-status .g-info {
   font-weight: bold;
   padding-left: 2em;
 }
@@ -36,42 +36,42 @@
 /*******************************************************************
  * Album Tree styles
  */
-#gOrganizeTreeContainer {
+#g-organizeTreeContainer {
   height: 100%;
   overflow: auto;
   margin: 0 !important;
   padding: 0 !important;
 }
 
-#gOrganizeAlbumTree .selected {
+#g-organize-albumTree .selected {
   background-color: #cfdeff;
   border-bottom: 1px solid #999;
   margin-right: 0px;
 }
 
-#gOrganizeAlbumTree ul li {
+#g-organize-albumTree ul li {
   padding-left: 1.2em;
 }
 
-.gOrganizeAlbum span {
+.g-organize-album span {
   cursor: pointer;
 }
 
-.gOrganizeAlbumText {
+.g-organize-album-text {
   cursor: pointer;
   width: auto;
   margin: 2px 0px 1px 2px;
   display: block;
 }
 
-.gOrganizeAlbumText:hover {
+.g-organize-album-text:hover {
   background: #eee;
 }
 
 /*******************************************************************
  * Album panel styles
  */
-#gOrganizeMicroThumbPanel {
+#g-organize-microthumb-panel {
   margin: 0 !important;
   padding: 0 !important;
   background-color: #cfdeff;
@@ -82,11 +82,11 @@
   overflow-y: auto;
 }
 
-#gOrganizeMicroThumbGrid {
+#g-organize-microthumb-grid {
   padding: 1em;
 }
 
-.gOrganizeMicroThumbGridCell {
+.g-organize-microthumb-grid-cell {
   float: left;
   font-size: 0.8em;
   padding: .5em !important;
@@ -95,15 +95,15 @@
   margin: 4px;
 }
 
-.gOrganizeMicroThumb {
+.g-organize-microthumb {
   display: block;
   height: 9em;
   text-align: center;
   width: 9em;
 }
 
-.gOrganizeMicroThumbGridCell.ui-selecting,
-.gOrganizeMicroThumbGridCell.ui-selected {
+.g-organize-microthumb-grid-cell.ui-selecting,
+.g-organize-microthumb-grid-cell.ui-selected {
   margin: 2px;
   border: 2px solid #13A;
 }
@@ -115,15 +115,15 @@
   background: #13A;
 }
 
-.gThumbnail {
+.g-thumbnail {
   padding: .5em;
 }
 
-#gOrganizeMicroThumbGrid .gAlbum {
+#g-organize-microthumb-grid .g-album {
   background-color: #e8e8e8;
 }
 
-.gOrganizeMicroThumbGridCell:hover {
+.g-organize-microthumb-grid-cell:hover {
   margin: 2px;
   border: 2px solid #13A;
 }
@@ -131,18 +131,18 @@
 /****************************************************************
  * Controls styles
  */
-#gOrganizeControls {
+#g-organizeControls {
   padding-left: 8px;
   background-color: #13A;
   color: #ccc;
   width: 100% !important;
 }
 
-#gOrganizeControls select {
+#g-organizeControls select {
   display: inline;
 }
 
-#gOrganizeClose {
+#g-organizeClose {
   float: right;
   margin-right: 12px;
 }

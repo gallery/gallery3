@@ -1,11 +1,11 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gLanguages">
+<div id="g-languages">
   <h1> <?= t("Languages") ?> </h1>
   <p>
     <?= t("Install new languages, update installed ones and set the default language for your Gallery.") ?>
   </p>
 
-  <form id="gLanguagesForm" method="post" action="<?= url::site("admin/languages/save") ?>">
+  <form id="g-languages-form" method="post" action="<?= url::site("admin/languages/save") ?>">
     <?= access::csrf_form_field() ?>
     <table>
       <tr>
@@ -52,7 +52,7 @@
       }
     });
     
-    $("#gLanguagesForm").ajaxForm({
+    $("g-languages-form").ajaxForm({
       dataType: "json",
       success: function(data) {
         if (data.result == "success") {
@@ -65,7 +65,7 @@
   </script>
 </div>
 
-<div id="gTranslations">
+<div id="g-translations">
   <h1> <?= t("Translations") ?> </h1>
   <p>
     <?= t("Create your own translations and share them with the rest of the Gallery community.") ?>
@@ -73,9 +73,9 @@
 
   <h3><?= t("Translating Gallery") ?></h3>
 
-  <div class="gBlock">
+  <div class="g-block">
     <a href="http://codex.gallery2.org/Gallery3:Localization" target="_blank"
-       class="gDocLink ui-state-default ui-corner-all ui-icon ui-icon-help"
+       class="g-doc-link ui-state-default ui-corner-all ui-icon ui-icon-help"
        title="<?= t("Localization documentation")->for_html_attr() ?>">
       <?= t("Localization documentation") ?>
     </a>

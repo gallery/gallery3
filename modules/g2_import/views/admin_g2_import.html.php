@@ -1,11 +1,11 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gAdminG2Import">
+<div id="g-admin-g2-import">
   <h1> <?= t("Gallery 2 Import") ?> </h1>
   <p>
     <?= t("Import your Gallery 2 users, photos, movies, comments and tags into your new Gallery 3 installation.") ?>
   </p>
 
-  <div id="gAdminG2ImportNotes">
+  <div id="g-admin-g2-import-notes">
     <h2> <?= t("Notes") ?> </h2>
     <p>
       <?= t("The import process is a work in progress with some known issues:") ?>
@@ -28,14 +28,14 @@
   <?= $form ?>
 
   <? if (g2_import::is_initialized()): ?>
-  <div id="gAdminG2ImportDetails">
+  <div id="g-admin-g2-import-details">
     <h2> <?= t("Import") ?> </h2>
-    <ul id="gMessage">
-      <li class="gSuccess">
+    <ul id="g-action-status">
+      <li class="g-success">
         <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
       </li>
       <? if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
-      <li class="gWarning">
+      <li class="g-warning">
         <?= t("Your most common thumbnail size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
               array("g2_pixels" => $g2_sizes["thumb"]["size"],
                     "g3_pixels" => $thumb_size,
@@ -44,7 +44,7 @@
       <? endif ?>
 
       <? if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
-      <li class="gWarning">
+      <li class="g-warning">
         <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
             array("g2_pixels" => $g2_sizes["resize"]["size"],
                   "g3_pixels" => $resize_size,
@@ -53,7 +53,7 @@
       <? endif ?>
     </ul>
 
-    <div class="gInfo">
+    <div class="g-info">
       <p>
         <?= t("Your Gallery 2 has the following importable data in it") ?>
       </p>
@@ -84,7 +84,7 @@
     </div>
 
     <p>
-      <a class="g-button g-dialogLink ui-state-default ui-corner-all"
+      <a class="g-button g-dialog-link ui-state-default ui-corner-all"
          href="<?= url::site("admin/maintenance/start/g2_import_task::import?csrf=$csrf") ?>">
         <?= t("Begin import!") ?>
       </a>

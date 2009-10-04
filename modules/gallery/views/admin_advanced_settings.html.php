@@ -1,11 +1,11 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gAdminAdvancedSettings">
+<div id="g-admin-advanced-settings">
   <h1> <?= t("Advanced Settings") ?> </h1>
   <p>
     <?= t("Here are internal Gallery configuration settings.  Most of these settings are accessible elsewhere in the administrative console.") ?>
   </p>
-  <ul id="gMessage">
-    <li class="gWarning">
+  <ul id="g-action-status">
+    <li class="g-warning">
       <b><?= t("Change these values at your own risk!") ?></b>
     </li>
   </ul>
@@ -23,7 +23,7 @@
       <td> <?= html::clean($var->name) ?> </td>
       <td>
         <a href="<?= url::site("admin/advanced_settings/edit/$var->module_name/" . html::clean($var->name)) ?>"
-          class="g-dialogLink"
+          class="g-dialog-link"
           title="<?= t("Edit %var (%module_name)", array("var" => $var->name, "module_name" => $var->module_name))->for_html_attr() ?>">
           <? if ($var->value): ?>
           <?= html::clean($var->value) ?>

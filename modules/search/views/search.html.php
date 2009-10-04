@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // @todo Set hover on AlbumGrid list items ?>
-<form action="<?= url::site("/search") ?>" id="gSearchForm">
+<form action="<?= url::site("/search") ?>" id="g-search-form">
   <fieldset>
     <legend>
       <?= t("Search") ?>
@@ -17,17 +17,17 @@
   </fieldset>
 </form>
 
-<div id="gSearchResults">
+<div id="g-search-results">
   <h1><?= t("Search Results") ?></h1>
 
   <? if (count($items)): ?>
-  <ul id="gAlbumGrid">
+  <ul id="g-album-grid">
     <? foreach ($items as $item): ?>
-      <? $item_class = "gPhoto"; ?>
+      <? $item_class = "g-photo"; ?>
       <? if ($item->is_album()): ?>
-        <? $item_class = "gAlbum"; ?>
+        <? $item_class = "g-album"; ?>
       <? endif ?>
-   <li class="gItem <?= $item_class ?>">
+   <li class="g-item <?= $item_class ?>">
       <a href="<?= $item->url() ?>">
         <?= $item->thumb_img() ?>
         <p>
