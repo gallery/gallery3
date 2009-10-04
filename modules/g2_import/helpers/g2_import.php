@@ -201,7 +201,7 @@ class g2_import_Core {
 
     if (g2_import::g2_module_active("tags") && module::is_active("tag")) {
       $result =
-        g2($gallery->search("SELECT COUNT(DISTINCT([Tag-itemMap::itemId])) FROM [Tag-itemMap]"))
+        g2($gallery->search("SELECT COUNT(DISTINCT([TagItemMap::itemId])) FROM [TagItemMap]"))
         ->nextResult();
       $stats["tags"] = $result[0];
     } else {
@@ -853,8 +853,8 @@ class g2_import_Core {
 
     $ids = array();
     $results = g2($gallery->search(
-      "SELECT DISTINCT([Tag-itemMap::itemId]) FROM [Tag-itemMap] " .
-      "WHERE [Tag-itemMap::itemId] > ?",
+      "SELECT DISTINCT([TagItemMap::itemId]) FROM [TagItemMap] " .
+      "WHERE [TagItemMap::itemId] > ?",
       array($min_id),
       array("limit" => array("count" => 100))));
     while ($result = $results->nextResult()) {
