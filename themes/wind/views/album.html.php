@@ -13,13 +13,13 @@
     <? if ($child->is_album()): ?>
       <? $item_class = "g-album"; ?>
     <? endif ?>
-  <li id="g-itemId-<?= $child->id ?>" class="g-item <?= $item_class ?>">
+  <li id="g-item-id-<?= $child->id ?>" class="g-item <?= $item_class ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
       <?= $child->thumb_img(array("class" => "g-thumbnail")) ?>
     </a>
     <?= $theme->thumb_bottom($child) ?>
-    <?= $theme->context_menu($child, "#g-itemId-{$child->id} .g-thumbnail") ?>
+    <?= $theme->context_menu($child, "#g-item-id-{$child->id} .g-thumbnail") ?>
     <h2><span></span><a href="<?= $child->url() ?>"><?= html::purify($child->title) ?></a></h2>
     <ul class="g-metadata">
       <?= $theme->thumb_info($child) ?>

@@ -40,7 +40,7 @@
       <?= t("Continue") ?>
     </button>
 
-    <button id="g-server-addCloseButton" class="ui-state-default ui-corner-all">
+    <button id="g-server-add-close-button" class="ui-state-default ui-corner-all">
       <?= t("Close") ?>
     </button>
   </span>

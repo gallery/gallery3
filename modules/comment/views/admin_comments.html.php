@@ -90,7 +90,7 @@
   </div>
   <? endif ?>
 
-  <table id="g-admin-commentsList">
+  <table id="g-admin-comments-list">
     <tr>
       <th>
         <?= t("Author") ?>
@@ -192,7 +192,7 @@
     <? endforeach ?>
   </table>
 
-  <div class="pager">
+  <div class="g-pager">
     <?= $pager ?>
   </div>
 </div>

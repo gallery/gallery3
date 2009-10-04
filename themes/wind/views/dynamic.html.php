@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="g-albumHeader">
-  <div id="g-albumHeaderButtons">
+<div id="g-album-header">
+  <div id="g-album-header-buttons">
     <?= $theme->dynamic_top() ?>
   </div>
   <h1><?= html::clean($title) ?></h1>
@@ -11,7 +11,7 @@
   <li class="g-item <?= $child->is_album() ? "g-album" : "" ?>">
     <?= $theme->thumb_top($child) ?>
     <a href="<?= $child->url() ?>">
-      <img id="g-photoId-<?= $child->id ?>" class="g-thumbnail"
+      <img id="g-photo-id-<?= $child->id ?>" class="g-thumbnail"
            alt="photo" src="<?= $child->thumb_url() ?>"
            width="<?= $child->thumb_width ?>"
            height="<?= $child->thumb_height ?>" />

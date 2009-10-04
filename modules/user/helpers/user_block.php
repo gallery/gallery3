@@ -32,7 +32,7 @@ class user_block_Core {
       }
       if (count($locales) > 1) {
         $block = new Block();
-        $block->css_id = "g-userLanguageBlock";
+        $block->css_id = "g-user-language-block";
         $block->title = t("Language Preference");
         $block->content = new View("user_languages_block.html");
         $block->content->installed_locales =

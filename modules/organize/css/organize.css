@@ -24,7 +24,7 @@
   white-space: nowrap;
 }
 
-#g-organizeDetail {
+#g-organize-detail {
   height: 100%;
 }
 
@@ -36,20 +36,20 @@
 /*******************************************************************
  * Album Tree styles
  */
-#g-organizeTreeContainer {
+#g-organize-tree-container {
   height: 100%;
   overflow: auto;
   margin: 0 !important;
   padding: 0 !important;
 }
 
-#g-organize-albumTree .selected {
+#g-organize-album-tree .selected {
   background-color: #cfdeff;
   border-bottom: 1px solid #999;
   margin-right: 0px;
 }
 
-#g-organize-albumTree ul li {
+#g-organize-album-tree ul li {
   padding-left: 1.2em;
 }
 
@@ -131,18 +131,18 @@
 /****************************************************************
  * Controls styles
  */
-#g-organizeControls {
+#g-organize-controls {
   padding-left: 8px;
   background-color: #13A;
   color: #ccc;
   width: 100% !important;
 }
 
-#g-organizeControls select {
+#g-organize-controls select {
   display: inline;
 }
 
-#g-organizeClose {
+#g-organize-close {
   float: right;
   margin-right: 12px;
 }

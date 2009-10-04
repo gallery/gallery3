@@ -20,7 +20,7 @@
          $("#g-server-add-continue-button", this.element).hide();
          self.run_add();
        });
-       $("#g-server-addCloseButton", this.element).click(function(event) {
+       $("#g-server-add-close-button", this.element).click(function(event) {
          $("#g-dialog").dialog("close");
          window.location.reload();
        });

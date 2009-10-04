@@ -83,7 +83,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
 
   private function _get_admin_form() {
     $form = new Forge("admin/server_add/add_path", "", "post",
-                      array("id" => "g-server-add-adminForm"));
+                      array("id" => "g-server-add-admin-form"));
     $add_path = $form->group("add_path");
     $add_path->input("path")->label(t("Path"))->rules("required")
       ->error_messages("not_readable", t("This directory is not readable by the webserver"))

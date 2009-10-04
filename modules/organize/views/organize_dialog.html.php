@@ -16,21 +16,21 @@
         <div class="g-info"><?= t("Drag and drop photos to re-order or move between albums") ?></div>
       </div>
     </div>
-    <div id="g-organizeContentPane" class="yui-gf">
-      <div id="g-organizeTreeContainer" class="yui-u first">
-        <ul id="g-organize-albumTree">
+    <div id="g-organize-content-pane" class="yui-gf">
+      <div id="g-organize-tree-container" class="yui-u first">
+        <ul id="g-organize-album-tree">
           <?= $album_tree ?>
         </ul>
       </div>
-      <div id="g-organizeDetail" class="yui-u">
+      <div id="g-organize-detail" class="yui-u">
         <div id="g-organize-microthumb-panel"
              ref="<?= url::site("organize/album/__ITEM_ID__/__OFFSET__") ?>">
           <ul id="g-organize-microthumb-grid">
             <?= $micro_thumb_grid ?>
           </ul>
         </div>
-        <div id="g-organizeControls">
-          <a id="g-organizeClose" href="#" ref="done"
+        <div id="g-organize-controls">
+          <a id="g-organize-close" href="#" ref="done"
              class="g-button ui-corner-all ui-state-default"><?= t("Close") ?></a>
           <form>
             <?= t("Sort order") ?>

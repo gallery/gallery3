@@ -344,4 +344,4 @@ themes/wind/views/photo.html.php                             8   DIRTY_JS $theme
 themes/wind/views/photo.html.php                             21  DIRTY_JS $previous_item->url()
 themes/wind/views/photo.html.php                             31  DIRTY_JS $next_item->url()
 themes/wind/views/photo.html.php                             43  DIRTY_JS $item->file_url()
-themes/wind/views/photo.html.php                             45  DIRTY    $item->resize_img(array("id"=>"g-photoId-{$item->id}","class"=>"g-resize"))
+themes/wind/views/photo.html.php                             45  DIRTY    $item->resize_img(array("id"=>"g-photo-id-{$item->id}","class"=>"g-resize"))

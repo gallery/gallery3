@@ -110,7 +110,7 @@
 
     _refresh: function(data) {
       if (data.tree) {
-        $("#g-organize-albumTree").html(data.tree);
+        $("#g-organize-album-tree").html(data.tree);
       }
       if (data.grid) {
         $("#g-organize-microthumb-grid").html(data.grid);
@@ -142,14 +142,14 @@
       $("#g-dialog").bind("dialogopen", function(event, ui) {
         $("#g-organize").height($("#g-dialog").innerHeight() - 20);
         $("#g-organize-microthumb-panel").height($("#g-dialog").innerHeight() - 90);
-        $("#g-organizeTreeContainer").height($("#g-dialog").innerHeight() - 59);
+        $("#g-organize-tree-container").height($("#g-dialog").innerHeight() - 59);
       });
 
       $("#g-dialog").bind("dialogclose", function(event, ui) {
         window.location.reload();
       });
 
-      $("#g-dialog #g-organizeClose").click(function(event) {
+      $("#g-dialog #g-organize-close").click(function(event) {
         $("#g-dialog").dialog("close");
       });
 
@@ -170,7 +170,7 @@
 	.mousemove($.organize.mouse_move_handler);
       $(".g-organize-album").droppable($.organize.branch_droppable);
       $(".g-organize-album-text").click($.organize.show_album);
-      $("#g-organize-albumTree .ui-icon-plus,#g-organize-albumTree .ui-icon-minus").click($.organize.toggle_branch);
+      $("#g-organize-album-tree .ui-icon-plus,#g-organize-album-tree .ui-icon-minus").click($.organize.toggle_branch);
     },
 
     toggle_branch: function(event) {
@@ -207,13 +207,13 @@
       if ($(event.currentTarget).hasClass("selected")) {
         return;
       }
-      var parent = $(event.currentTarget).parents(".g-organizeBranch");
+      var parent = $(event.currentTarget).parents(".g-organize-branch");
       if ($(parent).hasClass("g-view-only")) {
         return;
       }
       $("#g-organize-microthumb-panel").selectable("destroy");
       var id = $(event.currentTarget).attr("ref");
-      $("#g-organize-albumTree .selected").removeClass("selected");
+      $("#g-organize-album-tree .selected").removeClass("selected");
       $(".g-organize-album-text[ref=" + id + "]").addClass("selected");
       var url = $("#g-organize-microthumb-panel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
       $.get(url, {},
@@ -231,7 +231,7 @@
      */
     resort: function(column, dir) {
       var url = sort_order_url
-        .replace("__ALBUM_ID__", $("#g-organize-albumTree .selected").attr("ref"))
+        .replace("__ALBUM_ID__", $("#g-organize-album-tree .selected").attr("ref"))
         .replace("__COL__", column)
         .replace("__DIR__", dir);
       $.get(url, {},

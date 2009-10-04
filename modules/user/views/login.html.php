@@ -16,7 +16,7 @@
   </li>
   <li>
     <a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(url::current(true))) ?>"
-       id="g-logoutLink"><?= t("Logout") ?></a>
+       id="g-logout-link"><?= t("Logout") ?></a>
   </li>
   <? endif ?>
 </ul>
