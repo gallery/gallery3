@@ -304,27 +304,62 @@ class user_Core {
    * @return User_Model  the user object, or null if the id was invalid.
    */
   static function lookup($id) {
-    $user = model_cache::get("user", $id);
-    if ($user->loaded) {
-      return $user;
-    }
-    return null;
+    return self::_lookup_user_by_field("id", $id);
   }
 
   /**
    * Look up a user by name.
-   * @param integer      $id the user name
+   * @param integer      $name the user name
    * @return User_Model  the user object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    $user = model_cache::get("user", $name, "name");
-    if ($user->loaded) {
-      return $user;
+    return self::_lookup_user_by_field("name", $name);
+  }
+
+  /**
+   * Look up a user by hash.
+   * @param integer      $hash the user hash value
+   * @return User_Model  the user object, or null if the name was invalid.
+   */
+  static function lookup_by_hash($hash) {
+    return self::_lookup_user_by_field("hash", $hash);
+  }
+
+  /**
+   * List the users
+   * @param mixed      filters (@see Database.php
+   * @return array     the user list.
+   */
+  static function get_user_list($filter=array()) {
+    $user = ORM::factory("user");
+
+    foreach($filter as $method => $args) {
+      $user->$method($args);
+    }
+    return $user->find_all();
+  }
+
+  /**
+   * Look up a user by field value.
+   * @param string      search field
+   * @param string      search value
+   * @return User_Core  the user object, or null if the name was invalid.
+   */
+ private static function _lookup_user_by_field($field_name, $value) {
+    try {
+      $user = model_cache::get("user", $value, $field_name);
+      if ($user->loaded) {
+        return $user;
+      }
+    } catch (Exception $e) {
+      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
+       throw $e;
+      }
     }
     return null;
   }
 
-  /**
+ /**
    * Create a hashed password using md5 plus salt.
    * @param string $password plaintext password
    * @param string $salt (optional) salt or hash containing salt (randomly generated if omitted)

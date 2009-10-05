@@ -32,10 +32,8 @@ class Password_Controller extends Controller {
     if (request::method() == "post") {
       $this->_change_password();
     } else {
-      $user = ORM::factory("user")
-        ->where("hash", Input::instance()->get("key"))
-        ->find();
-      if ($user->loaded) {
+      $user = user::lookup_by_hash(Input::instance()->get("key"));
+      if (!empty($user)) {
         print $this->_new_password_form($user->hash);
       } else {
         throw new Exception("@todo FORBIDDEN", 503);
@@ -48,7 +46,7 @@ class Password_Controller extends Controller {
 
     $valid = $form->validate();
     if ($valid) {
-      $user = ORM::factory("user")->where("name", $form->reset->inputs["name"]->value)->find();
+      $user = user::lockup_by_name($form->reset->inputs["name"]->value);
       if (!$user->loaded || empty($user->email)) {
         $form->reset->inputs["name"]->add_error("no_email", 1);
         $valid = false;
@@ -118,11 +116,8 @@ class Password_Controller extends Controller {
   private function _change_password() {
     $view = $this->_new_password_form();
     if ($view->content->validate()) {
-      $user = ORM::factory("user")
-        ->where("hash", $view->content->reset->hash->value)
-        ->find();
-
-      if (!$user->loaded) {
+      $user = user::lookup_by_hash(Input::instance()->get("key"));
+      if (empty($user)) {
         throw new Exception("@todo FORBIDDEN", 503);
       }
 

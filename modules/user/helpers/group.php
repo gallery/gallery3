@@ -73,6 +73,20 @@ class group_Core {
     return null;
   }
 
+  /**
+   * List the users
+   * @param mixed      filters (@see Database.php
+   * @return array     the group list.
+   */
+  static function get_group_list($filter=array()) {
+    $group = ORM::factory("group");
+
+    foreach($filter as $method => $args) {
+      $group->$method($args);
+    }
+    return $group->find_all();
+  }
+
   static function get_edit_form_admin($group) {
     $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "g-edit-group-form"));
     $form_group = $form->group("edit_group")->label(t("Edit Group"));
