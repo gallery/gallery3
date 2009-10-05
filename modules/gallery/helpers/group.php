@@ -24,55 +24,6 @@
  * Note: by design, this class does not do any permission checking.
  */
 class group_Core {
-  /**
-   * Create a new group.
-   *
-   * @param string  $name
-   * @return Group_Model
-   */
-  static function create($name) {
-    $group = ORM::factory("group")->where("name", $name)->find();
-    if ($group->loaded) {
-      throw new Exception("@todo GROUP_ALREADY_EXISTS $name");
-    }
-
-    $group->name = $name;
-    $group->save();
-
-    return $group;
-  }
-
-  /**
-   * The group of all possible visitors.  This includes the guest user.
-   *
-   * @return Group_Model
-   */
-  static function everybody() {
-    return model_cache::get("group", 1);
-  }
-
-  /**
-   * The group of all logged-in visitors.  This does not include guest users.
-   *
-   * @return Group_Model
-   */
-  static function registered_users() {
-    return model_cache::get("group", 2);
-  }
-
-  /**
-   * Look up a group by name.
-   * @param integer      $id the group name
-   * @return Group_Model  the group object, or null if the name was invalid.
-   */
-  static function lookup_by_name($name) {
-    $group = model_cache::get("group", $name, "name");
-    if ($group->loaded) {
-      return $group;
-    }
-    return null;
-  }
-
   static function get_edit_form_admin($group) {
     $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "g-edit-group-form"));
     $form_group = $form->group("edit_group")->label(t("Edit Group"));
@@ -104,5 +55,60 @@ class group_Core {
       t("Are you sure you want to delete group %group_name?", array("group_name" => $group->name)));
     $form_group->submit("")->value(t("Delete"));
     return $form;
+  }
+
+  /**
+   * Create a new group.
+   *
+   * @param string  $name
+   * @return Group_Core
+   */
+  static function create($name) {
+    return Identity::instance()->create_group($name);
+  }
+
+  /**
+   * The group of all possible visitors.  This includes the guest user.
+   *
+   * @return Group_Core
+   */
+  static function everybody() {
+    return Identity::instance()->everybody();
+  }
+
+  /**
+   * The group of all logged-in visitors.  This does not include guest users.
+   *
+   * @return Group_Core
+   */
+  static function registered_users() {
+    return Identity::instance()->everybody();
+  }
+
+  /**
+   * Look up a group by id.
+   * @param integer      $id the user id
+   * @return Group_Model  the group object, or null if the id was invalid.
+   */
+  static function lookup($id) {
+    return Identity::instance()->lookup_group($id);
+  }
+
+  /**
+   * Look up a group by name.
+   * @param integer      $id the group name
+   * @return Group_Core  the group object, or null if the name was invalid.
+   */
+  static function lookup_by_name($name) {
+    return Identity::instance()->lookup_group_by_name($name);
+  }
+
+  /**
+   * List the groups
+   * @param mixed      options to apply to the selection of the user
+   * @return array     the group list.
+   */
+  static function groups($filter=array()) {
+    return Identity::instance()->list_groups($filter);
   }
 }
