@@ -21,8 +21,8 @@ class Admin_Users_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_users.html");
-    $view->content->users = ORM::factory("user")->orderby("name")->find_all();
-    $view->content->groups = ORM::factory("group")->orderby("name")->find_all();
+    $view->content->users = user::users(array("orderby" => array("name")));
+    $view->content->groups = group::groups(array("orderby" => array("name")));
     print $view;
   }
 
@@ -32,8 +32,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = user::get_add_form_admin();
     $valid = $form->validate();
     $name = $form->add_user->inputs["name"]->value;
-    $user = ORM::factory("user")->where("name", $name)->find();
-    if ($user->loaded) {
+    if ($user = user::lookup_by_name($name)) {
       $form->add_user->inputs["name"]->add_error("in_use", 1);
       $valid = false;
     }
@@ -70,8 +69,8 @@ class Admin_Users_Controller extends Admin_Controller {
       access::forbidden();
     }
 
-    $user = ORM::factory("user", $id);
-    if (!$user->loaded) {
+    $user = user::lookup($id);
+    if (empty($user)) {
       kohana::show_404();
     }
 
@@ -91,8 +90,8 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function delete_user_form($id) {
-    $user = ORM::factory("user", $id);
-    if (!$user->loaded) {
+    $user = user::lookup($id);
+    if (empty($user)) {
       kohana::show_404();
     }
     print user::get_delete_form_admin($user);
@@ -101,8 +100,8 @@ class Admin_Users_Controller extends Admin_Controller {
   public function edit_user($id) {
     access::verify_csrf();
 
-    $user = ORM::factory("user", $id);
-    if (!$user->loaded) {
+    $user = user::lookup($id);
+    if (empty($user)) {
       kohana::show_404();
     }
 
@@ -110,12 +109,9 @@ class Admin_Users_Controller extends Admin_Controller {
     $valid = $form->validate();
     if ($valid) {
       $new_name = $form->edit_user->inputs["name"]->value;
+      $temp_user = user::lookup_by_name($new_name);
       if ($new_name != $user->name &&
-          ORM::factory("user")
-          ->where("name", $new_name)
-          ->where("id !=", $user->id)
-          ->find()
-          ->loaded) {
+          ($temp_user && $temp_user->id != $user->id)) {
         $form->edit_user->inputs["name"]->add_error("in_use", 1);
         $valid = false;
       } else {
@@ -151,8 +147,8 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function edit_user_form($id) {
-    $user = ORM::factory("user", $id);
-    if (!$user->loaded) {
+    $user = user::lookup($id);
+    if (empty($user)) {
       kohana::show_404();
     }
 
@@ -166,23 +162,23 @@ class Admin_Users_Controller extends Admin_Controller {
 
   public function add_user_to_group($user_id, $group_id) {
     access::verify_csrf();
-    $group = ORM::factory("group", $group_id);
-    $user = ORM::factory("user", $user_id);
+    $group = group::lookup($group_id);
+    $user = user::lookup($user_id);
     $group->add($user);
     $group->save();
   }
 
   public function remove_user_from_group($user_id, $group_id) {
     access::verify_csrf();
-    $group = ORM::factory("group", $group_id);
-    $user = ORM::factory("user", $user_id);
+    $group = group::lookup($group_id);
+    $user = user::lookup($user_id);
     $group->remove($user);
     $group->save();
   }
 
   public function group($group_id) {
     $view = new View("admin_users_group.html");
-    $view->group = ORM::factory("group", $group_id);
+    $view->group = group::lookup($group_id);
     print $view;
   }
 
@@ -193,8 +189,8 @@ class Admin_Users_Controller extends Admin_Controller {
     $valid = $form->validate();
     if ($valid) {
       $new_name = $form->add_group->inputs["name"]->value;
-      $group = ORM::factory("group")->where("name", $new_name)->find();
-      if ($group->loaded) {
+      $group = group::lookup_by_name($new_name);
+      if (!empty($group)) {
         $form->add_group->inputs["name"]->add_error("in_use", 1);
         $valid = false;
       }
@@ -219,8 +215,8 @@ class Admin_Users_Controller extends Admin_Controller {
   public function delete_group($id) {
     access::verify_csrf();
 
-    $group = ORM::factory("group", $id);
-    if (!$group->loaded) {
+    $group = group::lookup($id);
+    if (empty($group)) {
       kohana::show_404();
     }
 
@@ -240,19 +236,20 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function delete_group_form($id) {
-    $group = ORM::factory("group", $id);
-    if (!$group->loaded) {
+    $group = group::lookup($id);
+    if (empty($group)) {
       kohana::show_404();
     }
+
     print group::get_delete_form_admin($group);
   }
 
   public function edit_group($id) {
     access::verify_csrf();
 
-    $group = ORM::factory("group", $id);
-    if (!$group->loaded) {
-      kohana::show_404();
+    $group = group::lookup($id);
+    if (empty($group)) {
+       kohana::show_404();
     }
 
     $form = group::get_edit_form_admin($group);
@@ -260,7 +257,7 @@ class Admin_Users_Controller extends Admin_Controller {
 
     if ($valid) {
       $new_name = $form->edit_group->inputs["name"]->value;
-      $group = ORM::factory("group")->where("name", $new_name)->find();
+      $group = group::lookup_by_name($name);
       if ($group->loaded) {
         $form->edit_group->inputs["name"]->add_error("in_use", 1);
         $valid = false;
@@ -282,8 +279,8 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function edit_group_form($id) {
-    $group = ORM::factory("group", $id);
-    if (!$group->loaded) {
+    $group = group::lookup($id);
+    if (empty($group)) {
       kohana::show_404();
     }
 

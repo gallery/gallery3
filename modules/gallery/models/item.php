@@ -332,7 +332,7 @@ class Item_Model extends ORM_MPTT {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
       try {
-        return model_cache::get("user", $this->owner_id);
+        return user::lookup($this->owner_id);
       } catch (Exception $e) {
         return null;
       }
