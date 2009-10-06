@@ -193,28 +193,6 @@ class graphics_Core {
   }
 
   /**
-   * Rotate an image.  Valid options are degrees
-   *
-   * @param string     $input_file
-   * @param string     $output_file
-   * @param array      $options
-   */
-  static function rotate($input_file, $output_file, $options) {
-    if (!self::$init) {
-      self::init_toolkit();
-    }
-
-    module::event("graphics_rotate", $input_file, $output_file, $options);
-
-    Image::factory($input_file)
-      ->quality(module::get_var("gallery", "image_quality"))
-      ->rotate($options["degrees"])
-      ->save($output_file);
-
-    module::event("graphics_rotate_completed", $input_file, $output_file, $options);
-  }
-
-  /**
    * Return a query result that locates all items with dirty images.
    * @return Database_Result Query result
    */

@@ -36,7 +36,8 @@ class Quick_Controller extends Controller {
     }
 
     if ($degrees) {
-      graphics::rotate($item->file_path(), $item->file_path(), array("degrees" => $degrees));
+      gallery_graphics::rotate($item->file_path(), $item->file_path(),
+                               array("degrees" => $degrees));
 
       list($item->width, $item->height) = getimagesize($item->file_path());
       $item->resize_dirty= 1;

@@ -19,6 +19,26 @@
  */
 class gallery_graphics_Core {
   /**
+   * Rotate an image.  Valid options are degrees
+   *
+   * @param string     $input_file
+   * @param string     $output_file
+   * @param array      $options
+   */
+  static function rotate($input_file, $output_file, $options) {
+    graphics::init_toolkit();
+
+    module::event("graphics_rotate", $input_file, $output_file, $options);
+
+    Image::factory($input_file)
+      ->quality(module::get_var("gallery", "image_quality"))
+      ->rotate($options["degrees"])
+      ->save($output_file);
+
+    module::event("graphics_rotate_completed", $input_file, $output_file, $options);
+  }
+
+  /**
    * Resize an image.  Valid options are width, height and master.  Master is one of the Image
    * master dimension constants.
    *
