@@ -21,8 +21,8 @@ class Admin_Users_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_users.html");
-    $view->content->users = user::users(array("orderby" => array("name")));
-    $view->content->groups = group::groups(array("orderby" => array("name")));
+    $view->content->users = user::users(array("orderby" => array("name" => "ASC")));
+    $view->content->groups = group::groups(array("orderby" => array("name" => "ASC")));
     print $view;
   }
 

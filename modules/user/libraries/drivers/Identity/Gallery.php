@@ -211,7 +211,12 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return array     the group list.
    */
   public function list_users($filter=array()) {
-    return ORM::factory("user")->orderby("name")->find_all();
+    $user = ORM::factory("user");
+    foreach($filter as $method => $args) {
+      $user->$method($args);
+    }
+
+    return $user->find_all();
   }
 
 
@@ -221,7 +226,12 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return array     the group list.
    */
   public function list_groups($filter=array()) {
-    return ORM::factory("group")->orderby("name")->find_all();
+    $user = ORM::factory("group");
+    foreach($filter as $method => $args) {
+      $user->$method($args);
+    }
+
+    return $user->find_all();
   }
 
   /**

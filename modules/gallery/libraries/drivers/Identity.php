@@ -106,6 +106,7 @@ interface Identity_Driver {
   /**
    * List the users
    * @param mixed      options to apply to the selection of the user
+   *                   @todo Do a longer write up on format of filters (@see Database.php)
    * @return array     the group list.
    */
   public function list_users($filter=array());
@@ -113,6 +114,7 @@ interface Identity_Driver {
   /**
    * List the groups
    * @param mixed      options to apply to the selection of the user
+   *                   @todo Do a longer write up on format of filters (@see Database.php)
    * @return array     the group list.
    */
   public function list_groups($filter=array());
