@@ -211,12 +211,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return array     the group list.
    */
   public function list_users($filter=array()) {
-    $user = ORM::factory("user");
-    foreach($filter as $method => $args) {
-      $user->$method($args);
-    }
-
-    return $user->find_all();
+    return $this->_do_search("user", $filter);
   }
 
 
@@ -226,12 +221,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return array     the group list.
    */
   public function list_groups($filter=array()) {
-    $user = ORM::factory("group");
-    foreach($filter as $method => $args) {
-      $user->$method($args);
-    }
-
-    return $user->find_all();
+    return $this->_do_search("group", $filter);
   }
 
   /**
@@ -243,4 +233,26 @@ class Identity_Gallery_Driver implements Identity_Driver {
   public function get_edit_rules($object_type) {
     return (object)ORM::factory($object_type)->rules;
   }
+
+  /**
+   * Build the query based on the supplied filters for the specified model.
+   * @param  string   $object_type to return rules for ("user"|"group")
+   * @param  mixed    $filters options to apply to the selection.
+   */
+  private function _do_search($object_type, $filter) {
+    $object = ORM::factory($object_type);
+
+    foreach ($filter as $method => $args) {
+      switch ($method) {
+      case "in":
+        $object->in($args[0], $args[1]);
+        break;
+      default:
+        $object->$method($args);
+      }
+    }
+
+    return $object->find_all();
+  }
+
 } // End Identity Gallery Driver
