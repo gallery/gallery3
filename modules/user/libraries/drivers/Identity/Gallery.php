@@ -29,7 +29,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return User_Model
    */
   public function guest() {
-    return model_cache::get("user", 1);
+    return new Gallery_User(model_cache::get("user", 1));
   }
 
   /**
@@ -51,11 +51,11 @@ class Identity_Gallery_Driver implements Identity_Driver {
     $user->password = $password;
 
     // Required groups
-    $user->add(group::everybody());
-    $user->add(group::registered_users());
+    $user->add($this->everybody()->uncloaked());
+    $user->add($this->registered_users()->uncloaked());
 
     $user->save();
-    return $user;
+    return new Gallery_User($user);
   }
 
   /**
@@ -112,7 +112,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
   public function lookup_user($id) {
     $user = model_cache::get("user", $id);
     if ($user->loaded) {
-      return $user;
+      return new Gallery_User($user);
     }
     return null;
   }
@@ -127,7 +127,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
     try {
       $user = model_cache::get("user", $value, $field_name);
       if ($user->loaded) {
-        return $user;
+        return new Gallery_User($user);
       }
     } catch (Exception $e) {
       if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
@@ -152,7 +152,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
     $group->name = $name;
     $group->save();
 
-    return $group;
+    return new Gallery_Group($group);
   }
 
   /**
@@ -161,7 +161,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return Group_Model
    */
   public function everybody() {
-    return model_cache::get("group", 1);
+    return new Gallery_Group(model_cache::get("group", 1));
   }
 
   /**
@@ -170,7 +170,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return Group_Model
    */
   public function registered_users() {
-    return model_cache::get("group", 2);
+    return new Gallery_Group(model_cache::get("group", 2));
   }
 
   /**
@@ -181,7 +181,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
   public function lookup_group($id) {
     $group = model_cache::get("group", $id);
     if ($group->loaded) {
-      return $group;
+      return new Gallery_Group($group);
     }
     return null;
   }
@@ -195,7 +195,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
     try {
       $group = model_cache::get("group", $name, "name");
       if ($group->loaded) {
-        return $group;
+        return new Gallery_Group($group);
       }
     } catch (Exception $e) {
       if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
@@ -211,7 +211,12 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return array     the group list.
    */
   public function list_users($filter=array()) {
-    return $this->_do_search("user", $filter);
+    $results = $this->_do_search("user", $filter);
+    $users = array();
+    foreach ($results->as_array() as $user) {
+      $users[] = new Gallery_User($user);
+    }
+    return $users;
   }
 
 
@@ -221,7 +226,12 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @return array     the group list.
    */
   public function list_groups($filter=array()) {
-    return $this->_do_search("group", $filter);
+    $results = $this->_do_search("group", $filter);
+    $groups = array();
+    foreach ($results->as_array() as $group) {
+      $groups[] = new Gallery_Group($group);
+    }
+    return $groups;
   }
 
   /**
@@ -256,3 +266,52 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
 } // End Identity Gallery Driver
+
+/**
+ * User Data wrapper
+ */
+class Gallery_User extends User_Definition {
+  /*
+   *  Not for general user, allows the back-end to easily create the interface object
+   */
+  function __construct($user) {
+    $this->user = $user;
+  }
+
+  public function save() {
+    $this->user->save();
+  }
+
+  public function delete() {
+    $this->user->delete();
+  }
+
+}
+
+/**
+ * Group Data wrapper
+ */
+class Gallery_Group extends Group_Definition {
+  /*
+   *  Not for general user, allows the back-end to easily create the interface object
+   */
+  function __construct($group) {
+    $this->group = $group;
+  }
+
+  public function save() {
+    $this->group->save();
+  }
+
+  public function delete() {
+    $this->group->delete();
+  }
+
+  public function add($user) {
+    $this->group->add($user->uncloaked());
+  }
+
+  public function remove($user) {
+    $this->group->remove($user->uncloaked());
+  }
+}

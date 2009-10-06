@@ -126,4 +126,177 @@ interface Identity_Driver {
    * @return stdClass containing the rules
    */
   public function get_edit_rules($object_type);
-} // End User Driver
+} // End Identity Driver Definition
+
+/**
+ * User Data wrapper
+ */
+abstract class User_Definition {
+  protected $user;
+  public function __get($column) {
+    switch ($column) {
+    case "id":
+    case "name":
+    case "full_name":
+    case "password":
+    case "login_count":
+    case "last_login":
+    case "email":
+    case "admin":
+    case "guest":
+    case "hash":
+    case "url":
+    case "locale":
+      return $this->user->$column;
+    case "hashed_password":
+      throw new Exception("@todo WRITE ONLY FIELD: $column");
+      break;
+    default:
+      throw new Exception("@todo UNSUPPORTED FIELD: $column");
+      break;
+    }
+  }
+
+  public function __set($column, $value) {
+    switch ($column) {
+    case "id":
+      throw new Exception("@todo READ ONLY FIELD: $column");
+      break;
+    case "name":
+    case "full_name":
+    case "hashed_password":
+    case "password":
+    case "login_count":
+    case "last_login":
+    case "email":
+    case "admin":
+    case "guest":
+    case "hash":
+    case "url":
+    case "locale":
+      return $this->user->$column;
+    default:
+      throw new Exception("@todo UNSUPPORTED FIELD: $column");
+      break;
+    }
+  }
+
+  public function __isset($column) {
+    return isset($this->user->$column);
+  }
+
+  public function __unset($column) {
+    switch ($column) {
+    case "id":
+      throw new Exception("@todo READ ONLY FIELD: $column");
+      break;
+    case "name":
+    case "full_name":
+    case "password":
+    case "login_count":
+    case "last_login":
+    case "email":
+    case "admin":
+    case "guest":
+    case "hash":
+    case "url":
+    case "locale":
+      unset($this->user->$column);
+      break;
+    case "hashed_password":
+      throw new Exception("@todo WRITE ONLY FIELD: $column");
+    default:
+      throw new Exception("@todo UNSUPPORTED FIELD: $column");
+      break;
+    }
+  }
+
+  /**
+   * Return a url to the user's avatar image.
+   * @param integer $size the target size of the image (default 80px)
+   * @return string a url
+   */
+  public function avatar_url($size=80, $default=null) {
+    return sprintf("http://www.gravatar.com/avatar/%s.jpg?s=%d&r=pg%s",
+                   md5($this->user->email), $size, $default ? "&d=" . urlencode($default) : "");
+  }
+
+  /**
+   * Return the best version of the user's name.  Either their specified full name, or fall back
+   * to the user name.
+   * @return string
+   */
+  public function display_name() {
+    return empty($this->user->full_name) ? $this->user->name : $this->user->full_name;
+  }
+
+  public function uncloaked() {
+    return $this->user;
+  }
+
+  abstract public function save();
+  abstract public function delete();
+}
+
+/**
+ * Group Data wrapper
+ */
+abstract class Group_Definition {
+  protected $group;
+
+  public function __get($column) {
+    switch ($column) {
+    case "id":
+    case "name":
+    case "special":
+    case "users":
+      return $this->group->$column;
+    default:
+      throw new Exception("@todo UNSUPPORTED FIELD: $column");
+      break;
+    }
+  }
+
+  public function __set($column, $value) {
+    switch ($column) {
+    case "id":
+    case "users":
+      throw new Exception("@todo READ ONLY FIELD: $column");
+      break;
+    case "name":
+    case "special":
+      $this->group->$column = $value;
+    default:
+      throw new Exception("@todo UNSUPPORTED FIELD: $column");
+      break;
+    }
+  }
+
+  public function __isset($column) {
+    return isset($this->group->$column);
+  }
+
+  public function __unset($column) {
+    switch ($column) {
+    case "id":
+    case "users":
+      throw new Exception("@todo READ ONLY FIELD: $column");
+      break;
+    case "name":
+    case "special":
+      unset($this->group->$column);
+    default:
+      throw new Exception("@todo UNSUPPORTED FIELD: $column");
+      break;
+    }
+  }
+
+  public function uncloaked() {
+    return $this->group;
+  }
+
+  abstract public function save();
+  abstract public function delete();
+  abstract public function add($user);
+  abstract public function remove($user);
+}
