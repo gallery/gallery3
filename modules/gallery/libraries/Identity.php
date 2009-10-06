@@ -56,39 +56,39 @@ class Identity_Core {
       $name = $config;
 
       // Test the config group name
-      if (($config = Kohana::config('identity.'.$config)) === NULL) {
+      if (($config = Kohana::config("identity.".$config)) === NULL) {
         throw new Exception("@todo NO USER LIBRARY CONFIGURATION FOR: $name");
       }
 
       if (is_array($config)) {
         // Append the default configuration options
-        $config += Kohana::config('identity.default');
+        $config += Kohana::config("identity.default");
       } else {
         // Load the default group
-        $config = Kohana::config('identity.default');
+        $config = Kohana::config("identity.default");
       }
 
       // Cache the config in the object
       $this->config = $config;
 
       // Set driver name
-      $driver = 'Identity_'.ucfirst($this->config['driver']).'_Driver';
+      $driver = "Identity_".ucfirst($this->config["driver"])."_Driver";
 
       // Load the driver
       if ( ! Kohana::auto_load($driver)) {
-        throw new Kohana_Exception('core.driver_not_found', $this->config['driver'],
+        throw new Kohana_Exception("core.driver_not_found", $this->config["driver"],
                                    get_class($this));
       }
 
       // Initialize the driver
-      $this->driver = new $driver($this->config['params']);
+      $this->driver = new $driver($this->config["params"]);
 
       // Validate the driver
       if ( !($this->driver instanceof Identity_Driver))
-        throw new Kohana_Exception('core.driver_implements', $this->config['driver'],
-                                   get_class($this), 'Identity_Driver');
+        throw new Kohana_Exception("core.driver_implements", $this->config["driver"],
+                                   get_class($this), "Identity_Driver");
 
-      Kohana::log('debug', 'Identity Library initialized');
+      Kohana::log("debug", "Identity Library initialized");
     }
   }
 
