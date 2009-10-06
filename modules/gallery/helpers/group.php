@@ -31,7 +31,7 @@ class group_Core {
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
     $form_group->submit("")->value(t("Save"));
-    $form->add_rules_from($group);
+    $form->add_rules_from(self::get_edit_rules());
     return $form;
   }
 
@@ -44,7 +44,7 @@ class group_Core {
       "in_use", t("There is already a group with that name"));
     $form_group->submit("")->value(t("Add Group"));
     $group = ORM::factory("group");
-    $form->add_rules_from($group);
+    $form->add_rules_from(self::get_edit_rules());
     return $form;
   }
 
@@ -110,5 +110,14 @@ class group_Core {
    */
   static function groups($filter=array()) {
     return Identity::instance()->list_groups($filter);
+  }
+
+  /**
+   * Return the edit rules associated with an group.
+   *
+   * @return stdClass containing the rules
+   */
+  static function get_edit_rules() {
+    return Identity::instance()->get_edit_rules("group");
   }
 }

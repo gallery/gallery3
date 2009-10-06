@@ -35,7 +35,7 @@ class user_Core {
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
-    $form->add_rules_from($user);
+    $form->add_rules_from(self::get_edit_rules());
 
     module::event("user_edit_form", $user, $form);
     $group->submit("")->value(t("Save"));
@@ -57,8 +57,7 @@ class user_Core {
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
-    $form->add_rules_from($user);
-    $form->edit_user->password->rules("-required");
+    $form->add_rules_from(self::get_edit_rules());
 
     module::event("user_edit_form_admin", $user, $form);
     $group->submit("")->value(t("Modify User"));
@@ -79,8 +78,7 @@ class user_Core {
     $group->input("url")->label(t("URL"))->id("g-url");
     self::_add_locale_dropdown($group);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
-    $user = ORM::factory("user");
-    $form->add_rules_from($user);
+    $form->add_rules_from(self::get_edit_rules());
 
     module::event("user_add_form_admin", $user, $form);
     $group->submit("")->value(t("Add User"));
@@ -310,5 +308,14 @@ class user_Core {
    */
   static function users($filter=array()) {
     return Identity::instance()->list_users($filter);
+  }
+
+  /**
+   * Return the edit rules associated with an user.
+   *
+   * @return stdClass containing the rules
+   */
+  static function get_edit_rules() {
+    return Identity::instance()->get_edit_rules("user");
   }
 }

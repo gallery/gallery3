@@ -116,4 +116,12 @@ interface Identity_Driver {
    * @return array     the group list.
    */
   public function list_groups($filter=array());
+
+  /**
+   * Return the edit rules associated with an group.
+   *
+   * @param  string   $object_type to return rules for ("user"|"group")
+   * @return stdClass containing the rules
+   */
+  public function get_edit_rules($object_type);
 } // End User Driver

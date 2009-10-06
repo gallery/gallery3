@@ -223,4 +223,14 @@ class Identity_Gallery_Driver implements Identity_Driver {
   public function list_groups($filter=array()) {
     return ORM::factory("group")->orderby("name")->find_all();
   }
+
+  /**
+   * Return the edit rules associated with an group.
+   *
+   * @param  string   $object_type to return rules for ("user"|"group")
+   * @return stdClass containing the rules
+   */
+  public function get_edit_rules($object_type) {
+    return (object)ORM::factory($object_type)->rules;
+  }
 } // End Identity Gallery Driver

@@ -217,4 +217,14 @@ class Identity_Core {
   public function list_groups($filter=array()) {
     return $this->driver->list_groups($filter);
   }
+
+  /**
+   * Return the edit rules associated with an group.
+   *
+   * @param  string   $object_type to return rules for ("user"|"group")
+   * @return stdClass containing the rules
+   */
+  public function get_edit_rules($object_type) {
+    return $this->driver->get_edit_rules($object_type);
+  }
 } // End Identity
