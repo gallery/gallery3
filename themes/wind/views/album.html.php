@@ -6,7 +6,7 @@
   <div class="g-description"><?= nl2br(html::purify($item->description)) ?></div>
 </div>
 
-<ul id="g-album-grid">
+<ul id="g-album-grid" class="g-clearfix">
 <? if (count($children)): ?>
   <? foreach ($children as $i => $child): ?>
     <? $item_class = "g-photo"; ?>

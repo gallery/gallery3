@@ -321,20 +321,9 @@ form .g-error {
  *********************************************************************/
 
 .g-clearfix,
-#g-header:after,
-#g-album-grid:after,
-.g-pager:after,
-#g-view-menu:after,
 #g-site-admin-menu:after,
-#g-header:after,
-#g-admin-comments-menu:after,
-#g-group-admin:after,
-.g-selected:after,
-.g-available .g-block:after,
 #g-module-create-form ul li ul:after,
-#g-developer-tools:after,
-#g-photo-stream:after,
-#g-view-menu:after {
+#g-developer-tools:after {
   clear: both;
   content: ".";
   display: block;

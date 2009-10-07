@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <?= $theme->sidebar_top() ?>
 <div class="g-toolbar">
-  <div id="g-view-menu" class="g-buttonset">
+  <div id="g-view-menu" class="g-buttonset g-clearfix">
     <? if ($page_type == "album"):?>
       <?= $theme->album_menu() ?>
     <? elseif ($page_type == "photo") : ?>
