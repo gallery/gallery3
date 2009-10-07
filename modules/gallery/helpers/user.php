@@ -174,10 +174,13 @@ class user_Core {
     return $locale;
   }
 
-    /**
-   * Make sure that we have a session and group_ids cached in the session.
+  /**
+   * Make sure that we have a session and group_ids cached in the session.  This is one
+   * of the first calls to reference the user so call the Identity::instance to load the
+   * driver classes.
    */
   static function load_user() {
+    Identity::instance();
     $session = Session::instance();
     if (!($user = $session->get("user"))) {
       $session->set("user", $user = self::guest());

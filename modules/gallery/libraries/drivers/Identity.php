@@ -147,6 +147,7 @@ abstract class User_Definition {
     case "hash":
     case "url":
     case "locale":
+    case "groups":
       return $this->user->$column;
     case "hashed_password":
       throw new Exception("@todo WRITE ONLY FIELD: $column");
@@ -160,6 +161,7 @@ abstract class User_Definition {
   public function __set($column, $value) {
     switch ($column) {
     case "id":
+    case "groups":
       throw new Exception("@todo READ ONLY FIELD: $column");
       break;
     case "name":
@@ -188,6 +190,7 @@ abstract class User_Definition {
   public function __unset($column) {
     switch ($column) {
     case "id":
+    case "groups":
       throw new Exception("@todo READ ONLY FIELD: $column");
       break;
     case "name":
