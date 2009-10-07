@@ -5,13 +5,13 @@
  *
  * Sheet organization:
  *  1)  Basic HTML elements
- *  3)  Reusable content blocks
- *  4)  Page layout containers
- *  5)  Content blocks in specific layout containers
- *  6)  Navigation and menus
- *  7)  Browser hacks
- *  8)  jQuery and jQuery UI
- *  9)  Right-to-left language styles
+ *  2)  Reusable content blocks
+ *  3)  Page layout containers
+ *  4)  Content blocks in specific layout containers
+ *  5)  Navigation and menus
+ *  6)  Browser hacks
+ *  7)  jQuery and jQuery UI
+ *  8)  Right-to-left language styles
  */
 
 /** *******************************************************************
@@ -222,13 +222,8 @@ li.g-error select {
 }
 
 /** *******************************************************************
- * 3) Reusable content blocks
+ * 2) Reusable content blocks
  *********************************************************************/
-
-.g-block {
-  clear: both;
-  margin-bottom: 2.5em;
-}
 
 .g-block h2 {
   background-color: #e8e8e8;
@@ -240,57 +235,6 @@ li.g-error select {
 }
 
 /* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#g-content #g-action-status {
-  width: 100%;
-}
-
-#g-site-status li,
-#g-action-status li,
-.g-module-status {
-  border: 1px solid #ccc;
-  margin-bottom: .4em;
-}
-
-#g-site-status li {
-  margin-bottom: 0;
-  border: none;
-  border-bottom: 1px solid #ccc;
-}
-
-.g-module-status {
-  clear: both;
-  margin-bottom: 1em;
-}
-
-.g-error,
-.g-info,
-.g-success,
-.g-warning {
-  background-position: .4em 50%;
-  background-repeat: no-repeat;
-  padding: .4em .5em .4em 30px;
-}
-
-.g-error {
-  background-color: #f6cbca;
-  background-image: url('../../../lib/images/ico-error.png');
-}
-
-.g-info {
-  background-color: #e8e8e8;
-  background-image: url('../../../lib/images/ico-info.png');
-}
-
-.g-success {
-  background-color: #d9efc2;
-  background-image: url('../../../lib/images/ico-success.png');
-}
-
-.g-warning {
-  background-color: #fcf9ce;
-  background-image: url('../../../lib/images/ico-warning.png');
-}
 
 form .g-error,
 .g-pager .g-info {
@@ -316,7 +260,7 @@ form .g-error,
 }
 
 /*** ******************************************************************
- * 4) Page layout containers
+ * 3) Page layout containers
  *********************************************************************/
 
 /* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -364,7 +308,7 @@ form .g-error,
 }
 
 /** *******************************************************************
- * 5) Content blocks in specific layout containers
+ * 4) Content blocks in specific layout containers
  *********************************************************************/
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -455,7 +399,7 @@ form .g-error,
 
 #g-content #g-item {
   position: relative;
-  width: 99%;
+  width: 100%;
 }
 
 #g-content #g-photo {
@@ -707,22 +651,7 @@ form .g-error,
 }
 
 /** *******************************************************************
- * 6) Browser hacks
- *********************************************************************/
-
-#g-header:after,
-#g-album-grid:after,
-.g-pager:after,
-#g-view-menu:after {
-  clear: both;
-  content: ".";
-  display: block;
-  height: 0;
-  visibility: hidden;
-}
-
-/** *******************************************************************
- * 7) jQuery and jQuery UI
+ * 6) jQuery and jQuery UI
  *********************************************************************/
 
 /* Superfish menu overrides ~~~~~~~~~~~~~~ */
@@ -733,34 +662,6 @@ form .g-error,
 
 .sf-menu li:hover {
   background-color: #dfe9ff;
-}
-
-/* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
-
-.g-loading-large {
-  background: #e8e8e8 url('../../../lib/images/loading-large.gif') no-repeat center center;
-  font-size: 0;
-}
-
-.g-dialog-loading-large {
-  background: url('../../../lib/images/loading-large.gif') no-repeat center center !important;
-  font-size: 0;
-}
-
-.g-loading-small {
-  background: #e8e8e8 url('../../../lib/images/loading-small.gif') no-repeat center center;
-  font-size: 0;
-}
-
-.g-draggable {
-  cursor: move;
-}
-
-.g-drop-target {
-  background-color: #cfdeff;
-  border: 1px dotted #999;
-  height: 100px;
-  margin: 1em 0;
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -875,13 +776,6 @@ form .g-error,
 }
 
 /*************** STUFF THAT NEEDS A HOME ****************/
-
-.g-progress-bar {
-  height: 1em;
-  width: 100%;
-  margin-top: .5em;
-  display: inline-block;
-}
 
 #g-add-photos #SWFUpload_0 {
   position: relative;

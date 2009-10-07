@@ -30,7 +30,7 @@
   <? if (g2_import::is_initialized()): ?>
   <div id="g-admin-g2-import-details">
     <h2> <?= t("Import") ?> </h2>
-    <ul id="g-action-status">
+    <ul id="g-action-status" class="g-message-block">
       <li class="g-success">
         <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
       </li>

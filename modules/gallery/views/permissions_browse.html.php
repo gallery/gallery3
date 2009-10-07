@@ -26,7 +26,7 @@
 </script>
 <div id="g-permissions">
   <? if (!$htaccess_works): ?>
-  <ul id="g-action-status">
+  <ul id="g-action-status" class="g-message-block">
     <li class="g-error">
       <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.",
             array("mod_rewrite_attrs" => html::mark_clean('href="http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html" target="_blank"'),

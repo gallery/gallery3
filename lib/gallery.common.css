@@ -7,6 +7,7 @@
  *  3)  States and interactions
  *  4)  Positioning and order
  *  5)  Containers/widgets
+ *  6)  Browser hacks
  */
 
 /** *******************************************************************
@@ -61,32 +62,28 @@
 .g-info,
 .g-success,
 .g-warning {
-  background-position: .4em 50%;
-  background-repeat: no-repeat;
   padding: .4em .5em .4em 30px;
 }
 
-.g-error,
-.g-denied {
-  background-color: #f6cbca;
+.g-error, 
+.g-denied,
+tr.g-error td.g-error {
+  background: #f6cbca url('images/ico-error.png') no-repeat .4em 50%;
   color: #f00;
-  background-image: url('images/ico-error.png');
 }
 
 .g-info {
-  background-color: #e8e8e8;
-  background-image: url('images/ico-info.png');
+  background: #e8e8e8 url('images/ico-info.png') no-repeat .4em 50%;
 }
 
 .g-success,
 .g-allowed {
-  background-color: #d9efc2;
-  background-image: url('images/ico-success.png');
+  background: #d9efc2  url('images/ico-success.png') no-repeat .4em 50%;
 }
 
-.g-warning {
-  background-color: #fcf9ce;
-  background-image: url('images/ico-warning.png');
+.g-warning, 
+tr.g-warning td.g-warning {
+  background: #fcf9ce url('images/ico-warning.png') no-repeat .4em 50%;
 }
 
 form .g-error {
@@ -110,7 +107,29 @@ form .g-error {
   cursor: move;
 }
 
-.g-target {
+.g-draggable:hover {
+  border: 1px dashed #000;
+}
+
+.ui-sortable .g-target,
+.ui-state-highlight {
+  background-color: #fcf9ce;
+  border: 2px dotted #999;
+  height: 2em;
+  margin: 1em 0;
+}
+
+/* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
+
+.g-loading-large,
+.g-dialog-loading-large {
+  background: #e8e8e8 url('images/loading-large.gif') no-repeat center center;
+  font-size: 0;
+}
+
+.g-loading-small {
+  background: #e8e8e8 url('images/loading-small.gif') no-repeat center center;
+  font-size: 0;
 }
 
 /** *******************************************************************
@@ -145,41 +164,17 @@ form .g-error {
  * 5) Containers/widgets
  **********************************************************************/
 
-#g-dialog {
-  text-align: left;
+/* Generic block container ~~~~~~~~~~~~~~~ */
+
+.g-block {
+  clear: both;
+  margin-bottom: 2.5em;
 }
 
-#g-dialog .g-narrow {
-  margin: 0 auto;
-  width: 270px;
+.g-block-content {
 }
 
-#g-dialog fieldset {
-  border: none;
-}
-
-#g-dialog legend {
-  display: none;
-}
-
-#g-dialog form input[type="text"],
-#g-dialog form input[type="password"] {
-  width: 100%;
-}
-
-#g-dialog p {
-	margin: 0;
-}
-
-#g-dialog li {
-  padding-left: 0;
-}
-
-#g-dialog .g-cancel {
-  clear: none;
-  float: left;
-  margin: .3em 1em;
-}
+/* Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .g-button {
   display: inline-block;
@@ -196,22 +191,30 @@ form .g-error {
   -moz-outline-style: none;
 }
 
-.g-progressbar {
-}
-
-.g-block {
-}
-
-.g-block-content {
-}
-
-.g-message-box {
+.g-progress-bar {
+  height: 1em;
   width: 100%;
+  margin-top: .5em;
+  display: inline-block;
 }
 
-.g-message {
+/* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-message-block {
   border: 1px solid #ccc;
-  margin-bottom: .4em;
+}
+
+#g-action-status {
+  width: 100% !important;
+}
+
+#g-site-status li {
+  border-bottom: 1px solid #ccc;
+}
+
+.g-module-status {
+  clear: both;
+  margin-bottom: 1em;
 }
 
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -271,4 +274,70 @@ form .g-error {
 }
 
 .g-list-horizontal {
+}
+
+/* Dialogs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-dialog {
+  text-align: left;
+}
+
+#g-dialog .g-narrow {
+  margin: 0 auto;
+  width: 270px;
+}
+
+#g-dialog fieldset {
+  border: none;
+}
+
+#g-dialog legend {
+  display: none;
+}
+
+#g-dialog form input[type="text"],
+#g-dialog form input[type="password"] {
+  width: 100%;
+}
+
+#g-dialog p {
+	margin: 0;
+}
+
+#g-dialog li {
+  padding-left: 0;
+}
+
+#g-dialog .g-cancel {
+  clear: none;
+  float: left;
+  margin: .3em 1em;
+}
+
+/** *******************************************************************
+ * 6) Browser hacks
+ *    @todo Insert .g-clearfix in context of specific selectors 
+ *          listed then delete them
+ *********************************************************************/
+
+.g-clearfix,
+#g-header:after,
+#g-album-grid:after,
+.g-pager:after,
+#g-view-menu:after,
+#g-site-admin-menu:after,
+#g-header:after,
+#g-admin-comments-menu:after,
+#g-group-admin:after,
+.g-selected:after,
+.g-available .g-block:after,
+#g-module-create-form ul li ul:after,
+#g-developer-tools:after,
+#g-photo-stream:after,
+#g-view-menu:after {
+  clear: both;
+  content: ".";
+  display: block;
+  height: 0;
+  visibility: hidden;
 }

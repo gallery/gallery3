@@ -12,7 +12,7 @@
 
 <div id="g-add-photos">
   <? if (ini_get("suhosin.session.encrypt")): ?>
-  <ul id="g-action-status">
+  <ul id="g-action-status" class="g-message-block">
     <li class="g-error">
       <?= t("Error: your server is configured to use the <a href=\"%encrypt_url\"><code>suhosin.session.encrypt</code></a> setting from <a href=\"%suhosin_url\">Suhosin</a>.  You must disable this setting to upload photos.",
           array("encrypt_url" => "http://www.hardened-php.net/suhosin/configuration.html#suhosin.session.encrypt",

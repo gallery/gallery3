@@ -4,7 +4,7 @@
   <p>
     <?= t("Here are internal Gallery configuration settings.  Most of these settings are accessible elsewhere in the administrative console.") ?>
   </p>
-  <ul id="g-action-status">
+  <ul id="g-action-status" class="g-message-block">
     <li class="g-warning">
       <b><?= t("Change these values at your own risk!") ?></b>
     </li>
