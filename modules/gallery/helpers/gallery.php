@@ -92,8 +92,12 @@ class gallery_Core {
   static function find_file($directory, $file, $required=false) {
     $file_name = substr($file, 0, -strlen($ext = strrchr($file, '.')));
     $file_name = Kohana::find_file($directory, $file_name, $required, substr($ext, 1));
-    if (!$file_name && file_exists(DOCROOT . "lib/$file")) {
-      return "lib/$file";
+    if (!$file_name) {
+      if (file_exists(DOCROOT . "lib/$directory/$file")) {
+        return "lib/$directory/$file";
+      } else if (file_exists(DOCROOT . "lib/$file")) {
+        return "lib/$file";
+      }
     }
 
     if (is_string($file_name)) {
