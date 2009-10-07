@@ -92,9 +92,16 @@ class gallery_Core {
   static function find_file($directory, $file, $required=false) {
     $file_name = substr($file, 0, -strlen($ext = strrchr($file, '.')));
     $file_name = Kohana::find_file($directory, $file_name, $required, substr($ext, 1));
-    if (!$file_name && file_exists(DOCROOT . "lib/$file")) {
-      return "lib/$file";
+    if (!$file_name) {
+      if (file_exists(DOCROOT . "lib/$directory/$file")) {
+        Kohana::log("alert",print_r(print_r(array($directory, $file),1) . " ==> lib/$directory/$file",1));
+        return "lib/$directory/$file";
+      } else if (file_exists(DOCROOT . "lib/$file")) {
+        Kohana::log("alert",print_r(print_r(array($directory, $file),1) . " ==> lib/$file",1));
+        return "lib/$file";
+      }
     }
+    Kohana::log("alert",print_r(print_r(array($directory, $file),1) . " ==> $file_name",1));
 
     if (is_string($file_name)) {
       // make relative to DOCROOT
