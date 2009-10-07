@@ -19,6 +19,14 @@
  */
 
 class gallery_event_Core {
+  /**
+   * Initialization.
+   */
+  static function gallery_ready() {
+    user::load_user();
+    locales::set_request_locale();
+  }
+
   static function group_created($group) {
     access::add_group($group);
   }
@@ -179,6 +187,10 @@ class gallery_event_Core {
                         ->id("sidebar")
                         ->label(t("Manage Sidebar"))
                         ->url(url::site("admin/sidebar"))))
+      ->append(Menu::factory("link")
+               ->id("users_groups")
+               ->label(t("Users/Groups"))
+               ->url(url::site("admin/users")))
       ->append(Menu::factory("submenu")
                ->id("statistics_menu")
                ->label(t("Statistics")))

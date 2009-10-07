@@ -37,6 +37,11 @@ class gallery_theme_Core {
       }
     }
 
+    if (count(locales::installed())) {
+      // Needed by the languages block
+      $theme->script("jquery.cookie.js");
+    }
+
     if ($session->get("l10n_mode", false)) {
       $theme->css("l10n_client.css");
       $theme->script("jquery.cookie.js");
@@ -44,6 +49,14 @@ class gallery_theme_Core {
     }
 
     return $buf;
+  }
+
+  static function header_top($theme) {
+    if ($theme->page_type != "login") {
+      $view = new View("login.html");
+      $view->user = user::active();
+      return $view->render();
+    }
   }
 
   static function admin_head($theme) {
