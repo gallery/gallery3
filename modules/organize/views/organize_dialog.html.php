@@ -12,7 +12,7 @@
       <div class="yui-u first">
         <h3><?= t("Albums") ?></h3>
       </div>
-      <div id="g-action-status" class="yui-u">
+      <div id="g-action-status" class="g-message-block yui-u">
         <div class="g-info"><?= t("Drag and drop photos to re-order or move between albums") ?></div>
       </div>
     </div>

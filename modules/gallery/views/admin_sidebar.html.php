@@ -4,7 +4,7 @@
     $(".g-admin-blocks-list ul").sortable({
       connectWith: ".g-sortable-blocks",
       opacity: .7,
-      placeholder: "ui-state-highlight",
+      placeholder: "g-target",
       update: function(event,ui) {
         if ($(this).attr("id") == "g-active-blocks") {
           var active_blocks = "";
@@ -18,7 +18,7 @@
             }
           });
         }
-      },
+      }
     }).disableSelection();
   });
 </script>

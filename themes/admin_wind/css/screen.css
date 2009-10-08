@@ -5,13 +5,12 @@
  *
  * Sheet organization:
  *  1)  Basic HTML elements
- *  3)  Reusable content blocks
- *  4)  Page layout containers
- *  5)  Content blocks in specific layout containers
- *  6)  Navigation and menus
- *  7)  Browser hacks
- *  8)  jQuery and jQuery UI
- *  9)  Right-to-left language styles
+ *  2)  Reusable content blocks
+ *  3)  Page layout containers
+ *  4)  Content blocks in specific layout containers
+ *  5)  Navigation and menus
+ *  6)  jQuery and jQuery UI
+ *  7)  Right-to-left language styles
  */
 
 /** *******************************************************************
@@ -219,19 +218,13 @@ li.g-error select {
 }
 
 /** *******************************************************************
- * 3) Reusable content blocks
+ * 2) Reusable content blocks
  *********************************************************************/
 
 .g-block {
   background-color: #fff;
   border: 1px solid #ccc;
-  clear: both;
-  margin-bottom: 2.5em;
   padding: 1em;
-}
-
-#g-sidebar .g-block-content {
-  padding: 0;
 }
 
 .g-block h2 {
@@ -241,6 +234,10 @@ li.g-error select {
 
 .g-block-content {
   margin-top: 1em;
+}
+
+#g-sidebar .g-block-content {
+  padding: 0;
 }
 
 .g-selected img,
@@ -274,53 +271,6 @@ li.g-error select {
 .g-unavailable {
   border-color: #999;
   opacity: 0.4;
-}
-
-/* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#g-action-status {
-  width: 100%;
-}
-
-#g-site-status li,
-#g-action-status li,
-.g-module-status {
-  border: 1px solid #ccc;
-  margin-bottom: .4em;
-}
-
-#g-site-status li {
-  margin-bottom: 0;
-  border: none;
-  border-bottom: 1px solid #ccc;
-}
-
-.g-module-status {
-  clear: both;
-  margin-bottom: 1em;
-}
-
-.g-error,
-.g-info,
-.g-success,
-.g-warning {
-  padding: .4em .5em .4em 30px;
-}
-
-.g-error, tr.g-error td.g-error {
-  background: #f6cbca url('../../../lib/images/ico-error.png') no-repeat .4em 50%;
-}
-
-.g-info {
-  background: #e8e8e8 url('../../../lib/images/ico-info.png') no-repeat .4em 50%;
-}
-
-.g-success {
-  background: #d9efc2  url('../../../lib/images/ico-success.png') no-repeat .4em 50%;
-}
-
-.g-warning, tr.g-warning td.g-warning {
-  background: #fcf9ce url('../../../lib/images/ico-warning.png') no-repeat .4em 50%;
 }
 
 .g-pager .g-info,
@@ -368,7 +318,7 @@ tr.g-warning {
 }
 
 /*** ******************************************************************
- * 4) Page layout containers
+ * 3) Page layout containers
  *********************************************************************/
 
 /* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -413,7 +363,7 @@ tr.g-warning {
 }
 
 /** *******************************************************************
- * 5) Content blocks in specific layout containers
+ * 4) Content blocks in specific layout containers
  *********************************************************************/
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -563,12 +513,9 @@ tr.g-warning {
 #g-user-admin-list {
   margin-bottom: 1em;
 }
+
 #g-user-admin-list td {
   vertical-align: bottom;
-}
-
-#g-user-admin-list .g-draggable:hover {
-  border: 1px dashed black;
 }
 
 #g-user-admin-list .admin {
@@ -694,28 +641,7 @@ li.g-default-group h4, li.g-default-group .g-user {
 }
 
 /** *******************************************************************
- * 6) Browser hacks
- *********************************************************************/
-
-#g-site-admin-menu:after,
-#g-header:after,
-#g-admin-comments-menu:after,
-#g-group-admin:after,
-.g-selected:after,
-.g-available .g-block:after,
-#g-module-create-form ul li ul:after,
-#g-developer-tools:after,
-#g-photo-stream:after,
-#g-view-menu:after {
-  clear: both;
-  content: ".";
-  display: block;
-  height: 0;
-  visibility: hidden;
-}
-
-/** *******************************************************************
- * 7) jQuery and jQuery UI
+ * 6) jQuery and jQuery UI
  *********************************************************************/
 
 /* Superfish menu overrides ~~~~~~~~~~~~~~ */
@@ -726,30 +652,6 @@ li.g-default-group h4, li.g-default-group .g-user {
 
 .sf-menu li:hover {
   background-color: #dfe9ff;
-}
-
-/* Ajax loading indicator ~~~~~~~~~~~~~~~~ */
-
-.g-loading-large,
-.g-dialog-loading-large {
-  background: url('../../../lib/images/loading-large.gif') no-repeat center center !important;
-  font-size: 0;
-}
-
-.g-loading-small {
-  background: #e8e8e8 url('../../../lib/images/loading-small.gif') no-repeat center center;
-  font-size: 0;
-}
-
-.g-draggable {
-  cursor: move;
-}
-
-.g-drop-target {
-  background-color: #cfdeff;
-  border: 1px dotted #999;
-  height: 100px;
-  margin: 1em 0;
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -769,6 +671,12 @@ li.g-default-group h4, li.g-default-group .g-user {
 
 .ui-draggable {
   cursor: move;
+}
+
+#g-admin-dashboard .ui-state-highlight,
+#g-sidebar .ui-state-highlight {
+  height: 2em;
+  margin-bottom: 1em;
 }
 
 .g-buttonset-vertical a {

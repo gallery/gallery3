@@ -16,7 +16,7 @@
       cursor: "move",
       handle: $(".ui-widget-header"),
       opacity: 0.6,
-      placeholder: "g-drop-target",
+      placeholder: "g-target",
       stop: update_blocks
     });
 
@@ -26,7 +26,7 @@
       cursor: "move",
       handle: $(".ui-widget-header"),
       opacity: 0.6,
-      placeholder: "g-drop-target",
+      placeholder: "g-target",
       stop: update_blocks
     });
   });

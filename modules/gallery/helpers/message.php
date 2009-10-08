@@ -81,7 +81,7 @@ class message_Core {
       $buf[] = "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
     }
     if ($buf) {
-      return "<ul id=\"g-action-status\">" . implode("", $buf) . "</ul>";
+      return "<ul id=\"g-action-status\" class=\"g-message-block\">" . implode("", $buf) . "</ul>";
     }
   }
 

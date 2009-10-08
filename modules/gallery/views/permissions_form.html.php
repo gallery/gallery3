@@ -32,22 +32,22 @@
             <? if ($allowed): ?>
               <td class="g-allowed">
                 <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)" title="<?= t('allowed through parent album, click to allow explicitly')->for_html_attr() ?>">
-                  <img src="<?= url::file(gallery::find_file("images", "ico-success-pale.png")) ?>" alt="<?= t('passive allowed icon')->for_html_attr() ?>" />
+                  <img src="<?= url::file(gallery::find_file("images", "ico-success-passive.png")) ?>" alt="<?= t('passive allowed icon')->for_html_attr() ?>" />
                 </a>
                 <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                   title="<?= t('click to deny')->for_html_attr() ?>">
-                  <img src="<?= url::file(gallery::find_file("images", "ico-denied-gray.png")) ?>" alt="<?= t('inactive denied icon')->for_html_attr() ?>" />
+                  <img src="<?= url::file(gallery::find_file("images", "ico-denied-inactive.png")) ?>" alt="<?= t('inactive denied icon')->for_html_attr() ?>" />
                 </a>
               </td>
             <? else: ?>
               <td class="g-denied">
                 <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                   title="<?= t('click to allow')->for_html_attr() ?>">
-                  <img src="<?= url::file(gallery::find_file("images", "ico-success-gray.png")) ?>" alt="<?= t('inactive allowed icon')->for_html_attr() ?>" />
+                  <img src="<?= url::file(gallery::find_file("images", "ico-success-inactive.png")) ?>" alt="<?= t('inactive allowed icon')->for_html_attr() ?>" />
                 </a>
                 <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                   title="<?= t('denied through parent album, click to deny explicitly')->for_html_attr() ?>">
-                  <img src="<?= url::file(gallery::find_file("images", "ico-denied-pale.png")) ?>" alt="<?= t('passive denied icon')->for_html_attr() ?>" />
+                  <img src="<?= url::file(gallery::find_file("images", "ico-denied-passive.png")) ?>" alt="<?= t('passive denied icon')->for_html_attr() ?>" />
                 </a>
               </td>
             <? endif ?>
@@ -56,7 +56,7 @@
             <td class="g-denied">
               <a href="javascript:set('allow',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                 title="<?= t('click to allow')->for_html_attr() ?>">
-                <img src="<?= url::file(gallery::find_file("images", "ico-success-gray.png")) ?>" alt="<?= t('inactive allowed icon')->for_html_attr() ?>" />
+                <img src="<?= url::file(gallery::find_file("images", "ico-success-inactive.png")) ?>" alt="<?= t('inactive allowed icon')->for_html_attr() ?>" />
               </a>
               <? if ($item->id == 1): ?>
                 <img src="<?= url::file(gallery::find_file("images", "ico-denied.png")) ?>" alt="<?= t('denied icon')->for_html_attr() ?>" title="<?= t('denied')->for_html_attr() ?>"/>
@@ -79,7 +79,7 @@
               <? endif ?>
               <a href="javascript:set('deny',<?= $group->id ?>,<?= $permission->id ?>,<?= $item->id ?>)"
                 title="<?= t('click to deny')->for_html_attr() ?>">
-                <img src="<?= url::file(gallery::find_file("images", "ico-denied-gray.png")) ?>" alt="<?= t('inactive denied icon')->for_html_attr() ?>" />
+                <img src="<?= url::file(gallery::find_file("images", "ico-denied-inactive.png")) ?>" alt="<?= t('inactive denied icon')->for_html_attr() ?>" />
               </a>
             </td>
           <? endif ?>
