@@ -890,14 +890,15 @@ form .g-error,
   text-align: right;
 }
 
+.rtl .g-right,
 .rtl #g-header #g-quick-search-form,
-.rtl #g-reset-password,
 .rtl #g-header #g-login-menu,
 .rtl .ui-icon-right .ui-icon {
   clear: left;
   float: left;
 }
 
+.rtl .g-left,
 .rtl #g-dialog .g-cancel,
 .rtl form ul ul li,
 .rtl input[type="submit"],
@@ -912,4 +913,3 @@ form .g-error,
 .rtl .ui-icon-left .ui-icon {
   float: right;
 }
-
