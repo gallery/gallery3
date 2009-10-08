@@ -93,6 +93,17 @@ class Identity_Core {
   }
 
   /**
+   * Determine if a feature is supported by the driver.
+   *
+   * @param  string  $feature the name of the feature to check
+   * @return boolean true if supported
+   */
+  public function is_writable() {
+    return !empty($this->config["allow_updates"]);
+  }
+
+
+  /**
    * Return the guest user.
    *
    * @todo consider caching

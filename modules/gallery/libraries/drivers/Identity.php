@@ -176,7 +176,6 @@ abstract class User_Definition {
     case "hash":
     case "url":
     case "locale":
-      Kohana::log("error", "__set($column, $value)");
       $this->user->$column = $value;
       break;
     default:

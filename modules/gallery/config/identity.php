@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 /*
- * @package  User
+ * @package  Identity
  *
  * User settings, defined as arrays, or "groups". If no group name is
  * used when loading the cache library, the group named "default" will be used.
@@ -32,5 +32,6 @@
  */
 $config["default"] = array (
   "driver"   => "gallery",
+  "allow_updates" => false,
   "params"   => array(),
 );

@@ -2,7 +2,7 @@
 <script type="text/javascript">
   var add_user_to_group_url = "<?= url::site("admin/users/add_user_to_group/__USERID__/__GROUPID__?csrf=$csrf") ?>";
   $(document).ready(function(){
-    $("#g-user-admin-list .core-info").draggable({
+    $("#g-user-admin-list .g-draggable").draggable({
       helper: "clone"
     });
     $("#g-group-admin .g-group").droppable({
@@ -20,6 +20,7 @@
     });
     $("#group-1").droppable("destroy");
     $("#group-2").droppable("destroy");
+    $(".g-group-disable").droppable("destroy");
   });
 
   var reload_group = function(group_id) {
@@ -42,12 +43,14 @@
   }
 </script>
 <div class="g-block">
+  <? if (!empty($writable)): ?>
   <a href="<?= url::site("admin/users/add_user_form") ?>"
       class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new user")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new user") ?>
   </a>
+  <? endif ?>
 
   <h2>
     <?= t("User Admin") ?>
@@ -65,7 +68,7 @@
 
       <? foreach ($users as $i => $user): ?>
       <tr id="g-user-<?= $user->id ?>" class="<?= text::alternate("g-odd", "g-even") ?> user <?= $user->admin ? "admin" : "" ?>">
-        <td id="user-<?= $user->id ?>" class="core-info g-draggable">
+        <td id="user-<?= $user->id ?>" class="core-info <?= !empty($writable) ? "g-draggable" : "" ?> ">
           <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                title="<?= t("Drag user onto group below to add as a new member")->for_html_attr() ?>"
                alt="<?= html::clean_attribute($user->name) ?>"
@@ -86,15 +89,19 @@
           <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"
               open_text="<?= t("close") ?>"
               class="g-panel-link g-button ui-state-default ui-corner-all ui-icon-left">
-            <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text"><?= t("edit") ?></span></a>
-          <? if (user::active()->id != $user->id && !$user->guest): ?>
-          <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
-              class="g-dialog-link g-button ui-state-default ui-corner-all ui-icon-left">
-            <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
-          <? else: ?>
-          <span title="<?= t("This user cannot be deleted")->for_html_attr() ?>"
-              class="g-button ui-state-disabled ui-corner-all ui-icon-left">
-            <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></span>
+            <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text">
+              <?= (!empty($writable)) ? t("edit") : t("display") ?>
+            </span></a>
+          <? if (!empty($writable)): ?>
+            <? if (user::active()->id != $user->id && !$user->guest): ?>
+            <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
+                class="g-dialog-link g-button ui-state-default ui-corner-all ui-icon-left">
+              <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
+            <? else: ?>
+            <span title="<?= t("This user cannot be deleted")->for_html_attr() ?>"
+                class="g-button ui-state-disabled ui-corner-all ui-icon-left">
+              <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></span>
+            <? endif ?>
           <? endif ?>
         </td>
       </tr>
@@ -104,12 +111,14 @@
 </div>
 
 <div id="g-group-admin" class="g-block g-clearfix">
+  <? if (!empty($writable)): ?>
   <a href="<?= url::site("admin/users/add_group_form") ?>"
       class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
       title="<?= t("Create a new group")->for_html_attr() ?>">
     <span class="ui-icon ui-icon-circle-plus"></span>
     <?= t("Add a new group") ?>
   </a>
+  <? endif ?>
 
   <h2>
     <?= t("Group Admin") ?>
@@ -118,8 +127,9 @@
   <div class="g-block-content">
     <ul>
       <? foreach ($groups as $i => $group): ?>
-      <li id="group-<?= $group->id ?>" class="g-group <?= ($group->special ? "g-default-group" : "") ?>" />
-        <? $v = new View("admin_users_group.html"); $v->group = $group; ?>
+      <? $class = !empty($writable) ? "" : "g-group-disable" ?>
+      <li id="group-<?= $group->id ?>" class="g-group <?= $class ?> <?= ($group->special ? "g-default-group" : "") ?>" />
+        <? $v = new View("admin_users_group.html"); $v->group = $group; $v->writable = !empty($writable) ?>
         <?= $v ?>
       </li>
       <? endforeach ?>

@@ -25,24 +25,34 @@
  */
 class user_Core {
   static function get_edit_form($user) {
+    $writable = self::is_writable();
     $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $form->set_attr("class", "g-narrow");
     $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
     $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("g-password");
-    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
-      ->matches($group->password);
+    if ($writable) {
+      $group->password("password")->label(t("Password"))->id("g-password");
+      $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
+        ->matches($group->password);
+    }
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
     $form->add_rules_from(self::get_edit_rules());
 
     module::event("user_edit_form", $user, $form);
     $group->submit("")->value(t("Save"));
+
+    if (!$writable) {
+      foreach ($group->inputs as $input) {
+        $input->disabled("disabled");
+      }
+    }
     return $form;
   }
 
   static function get_edit_form_admin($user) {
+    $writable = self::is_writable();
     $form = new Forge(
       "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit User"));
@@ -51,9 +61,11 @@ class user_Core {
       "in_use", t("There is already a user with that username"));
     $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("g-password");
-    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
-      ->matches($group->password);
+    if ($writable) {
+      $group->password("password")->label(t("Password"))->id("g-password");
+      $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
+        ->matches($group->password);
+    }
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
@@ -61,6 +73,11 @@ class user_Core {
 
     module::event("user_edit_form_admin", $user, $form);
     $group->submit("")->value(t("Modify User"));
+    if (!$writable) {
+      foreach ($group->inputs as $input) {
+        $input->disabled("disabled");
+      }
+    }
     return $form;
   }
 
@@ -232,6 +249,16 @@ class user_Core {
       }
       module::event("user_logout", $user);
     }
+  }
+
+  /**
+   * Determine if a feature is supported by the driver.
+   *
+   * @param  string  $feature the name of the feature to check
+   * @return boolean true if supported
+   */
+  static function is_writable() {
+    return Identity::instance()->is_writable();
   }
 
   /**

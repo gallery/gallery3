@@ -567,7 +567,8 @@ li.g-group .g-user .g-button {
   vertical-align: middle;
 }
 
-li.g-default-group h4, li.g-default-group .g-user {
+li.g-default-group h4, li.g-default-group .g-user,
+li.g-group-disable h4, li.g-group-disable .g-user {
   color: gray;
 }
 
