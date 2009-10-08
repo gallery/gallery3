@@ -1,0 +1,33 @@
+/**
+ * Fix display in IE 6, 7
+ */
+
+.g-clearfix {
+  zoom: 1;
+}
+
+#g-banner {
+  z-index: 2;
+}
+
+input.submit {
+  clear: none !important;
+  display: inline !important;
+}
+
+#g-add-tag-form input.textbox {
+  width: 110px;
+}
+
+#g-dialog a.g-cancel {
+  display: inline-block !important;
+  float: none !important;
+}
+
+.g-pager .g-txt-right {
+  width: 29%;
+}
+
+.g-pager .ui-icon-right {
+  width: 60px;
+}
