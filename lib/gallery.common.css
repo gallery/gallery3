@@ -137,11 +137,13 @@ form .g-error {
  **********************************************************************/
 
 .g-left {
+  clear: none;
   float: left;
   margin: 1em 1em 1em 0;
 }
 
 .g-right {
+  clear: none;
   float: right;
   margin: 1em 0 1em 1em;
 }
@@ -256,19 +258,18 @@ form .g-error {
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .g-pager {
-  clear: both;
-  margin: 0;
-  padding: 5px 0 !important;
+  padding: 5px 0;
   width: 100%;
 }
 
 .g-pager li {
   float: left;
-  margin: 0;
   width: 30%;
 }
 
 .g-pager .g-info {
+  background: none;
+  padding: .2em 0;
   text-align: center;
   width: 40%;
 }
@@ -309,9 +310,7 @@ form .g-error {
 }
 
 #g-dialog .g-cancel {
-  clear: none;
-  float: left;
-  margin: .3em 1em;
+  margin: .4em 1em;
 }
 
 /** *******************************************************************

@@ -19,7 +19,7 @@
  **********************************************************************/
 
 body, html {
-  background-color: #ccc;
+  background-color: #333;
   font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
@@ -74,7 +74,7 @@ a,
 a.ui-state-hover,
 input.ui-state-hover,
 button.ui-state-hover {
-  color: #5382bf !important;
+  color: #fff !important;
   cursor: pointer !important;
   text-decoration: none;
   -moz-outline-style: none;
@@ -226,12 +226,24 @@ li.g-error select {
  *********************************************************************/
 
 .g-block h2 {
-  background-color: #e8e8e8;
+  background-color: #333;
   padding: .3em .8em;
 }
 
 .g-block-content {
   margin-top: 1em;
+}
+
+/* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+form .g-error,
+.g-pager .g-info {
+  background-color: #000 !important;
+}
+
+.g-pager .g-info {
+  background-image: none !important;
+  padding: 0 !important;
 }
 
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
@@ -254,9 +266,10 @@ li.g-error select {
 /* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .g-view {
-  background-color: #fff;
-  border: 1px solid #ccc;
+  background-color: #000;
+  border: 1px solid #333;
   border-bottom: none;
+  color: #fff;
 }
 
 /* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
@@ -266,8 +279,8 @@ li.g-error select {
 }
 
 #g-banner {
-  background-color: #e8e8e8;
-  border-bottom: 1px solid #ccc;
+  background-color: #000;
+  border-bottom: 1px solid #333;
   font-size: .8em;
   min-height: 5em;
   padding: 1em 20px;
@@ -288,8 +301,8 @@ li.g-error select {
 }
 
 #g-footer {
-  background-color: #e8e8e8;
-  border-top: 1px solid #ccc;
+  background-color: #000;
+  border-top: 1px solid #333;
   font-size: .8em;
   margin-top: 20px;
   padding: 10px 20px;
@@ -333,8 +346,7 @@ li.g-error select {
 }
 
 #g-content #g-album-grid .g-item {
-  background-color: #fff;
-  border: 1px solid #fff;
+  background-color: #000;
   float: left;
   font-size: .7em;
   padding: .6em 8px;
@@ -396,7 +408,7 @@ li.g-error select {
 
 #g-content #g-item .g-fullsize-link img {
   display: block;
-  margin: 1em auto;
+  margin: 1em auto !important;
 }
 
 #g-content #g-comments {
@@ -644,12 +656,29 @@ li.g-error select {
 
 /* Superfish menu overrides ~~~~~~~~~~~~~~ */
 
+.sf-menu a {
+  border-left: 1px solid #CCC;
+  border-top: 1px solid #CCC;
+}
+
+.sf-menu li {
+  color: #fff;
+  background-color: #333;
+}
+
 .sf-menu li li, .sf-menu li li ul li {
-  background-color: #bdd2ff;
+  color: #fff;
+  background-color: #333;
 }
 
 .sf-menu li:hover {
-  background-color: #dfe9ff;
+  color: #fff;
+  background-color: #777;
+}
+
+.sf-menu li:hover, .sf-menu li.sfHover,
+.sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active {
+	background:		#777;
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -887,6 +916,7 @@ li.g-error select {
 }
 
 .rtl .g-left,
+.rtl #g-dialog .g-cancel,
 .rtl form ul ul li,
 .rtl input[type="submit"],
 .rtl input[type="reset"],

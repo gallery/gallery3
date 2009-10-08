@@ -163,6 +163,7 @@ class photo_Core {
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("filename")->label(t("Filename"))->value($photo->name)
+      ->rules("required")
       ->error_messages(
         "name_conflict", t("There is already a movie, photo or album with this name"))
       ->callback("item::validate_no_slashes")

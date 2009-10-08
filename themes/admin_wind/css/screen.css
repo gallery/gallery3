@@ -268,7 +268,6 @@ li.g-error select {
   opacity: 0.4;
 }
 
-.g-pager .g-info,
 tr.g-error,
 tr.g-info,
 tr.g-success,
@@ -952,7 +951,6 @@ g-languages-form input {
 }
 
 .rtl .g-left,
-.rtl #g-dialog .g-cancel,
 .rtl form ul ul li,
 .rtl input[type="submit"],
 .rtl input[type="reset"],

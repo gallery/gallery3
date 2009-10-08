@@ -31,21 +31,16 @@ class search_Core {
       $access_sql = "";
     }
 
-    // Count the total number of rows.  We can't do this with our regular query because of the
-    // limit statement.  It's possible that if we get rid of the limit (but keep the offset) on
-    // the 2nd query and combine the two, it might be faster than making 2 separate queries.
-    $count_query = "SELECT COUNT(*) AS c " .
-      "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
-      "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
-      $access_sql;
-    $count = $db->query($count_query)->current()->c;
-
-    $query = "SELECT {items}.*, MATCH({search_records}.`data`) AGAINST ('$q') AS `score` " .
+    $query =
+      "SELECT SQL_CALC_FOUND_ROWS {items}.*, " .
+      "  MATCH({search_records}.`data`) AGAINST ('$q') AS `score` " .
       "FROM {items} JOIN {search_records} ON ({items}.`id` = {search_records}.`item_id`) " .
       "WHERE MATCH({search_records}.`data`) AGAINST ('$q' IN BOOLEAN MODE) " .
       $access_sql .
       "ORDER BY `score` DESC " .
       "LIMIT $limit OFFSET $offset";
+    $data = $db->query($query);
+    $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
 
     return array($count, new ORM_Iterator(ORM::factory("item"), $db->query($query)));
   }
