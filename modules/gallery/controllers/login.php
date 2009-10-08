@@ -21,6 +21,7 @@ class Login_Controller extends Controller {
 
   public function ajax() {
     $view = new View("login_ajax.html");
+    $view->writable = user::is_writable();
     $view->form = user::get_login_form("login/auth_ajax");
     print $view;
   }

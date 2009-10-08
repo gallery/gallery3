@@ -29,6 +29,7 @@ class Albums_Controller extends Items_Controller {
         $view = new Theme_View("page.html", "login");
         $view->page_title = t("Log in to Gallery");
         $view->content = new View("login_ajax.html");
+        $view->content->writable = user::is_writable();
         $view->content->form = user::get_login_form("login/auth_html");
         print $view;
         return;
