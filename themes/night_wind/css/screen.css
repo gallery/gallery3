@@ -19,7 +19,7 @@
  **********************************************************************/
 
 body, html {
-  background-color: #ccc;
+  background-color: #333;
   font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
@@ -267,7 +267,7 @@ form .g-error,
 
 .g-view {
   background-color: #000;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-bottom: none;
   color: #fff;
 }
