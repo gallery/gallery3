@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Users_Controller extends REST_Controller {
-  protected $resource_type = "user";
+class Users_Controller extends Controller {
+  public function update($id) {
+    $user = user::lookup($id);
 
-  public function _update($user) {
     if ($user->guest || $user->id != user::active()->id) {
       access::forbidden();
     }
@@ -57,7 +57,8 @@ class Users_Controller extends REST_Controller {
     }
   }
 
-  public function _form_edit($user) {
+  public function form_edit($id) {
+    $user = user::lookup($id);
     if ($user->guest || $user->id != user::active()->id) {
       access::forbidden();
     }

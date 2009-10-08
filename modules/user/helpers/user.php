@@ -25,7 +25,7 @@
  */
 class user_Core {
   static function get_edit_form($user) {
-    $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "g-edit-user-form"));
+    $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $form->set_attr("class", "g-narrow");
     $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
     $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
