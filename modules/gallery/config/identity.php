@@ -32,6 +32,6 @@
  */
 $config["default"] = array (
   "driver"   => "gallery",
-  "allow_updates" => true,
+  "allow_updates" => false,
   "params"   => array(),
 );

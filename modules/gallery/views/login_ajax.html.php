@@ -36,8 +36,10 @@
     <li id="g-login-form">
       <?= $form ?>
     </li>
+    <? if (!empty($writable)): ?>
     <li>
       <a href="#" id="g-password-reset" class="g-right g-txt-small"><?= t("Forgot Your Password?") ?></a>
     </li>
+    <? endif ?>
   </ul>
 </div>
