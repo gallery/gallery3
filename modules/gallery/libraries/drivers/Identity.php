@@ -176,7 +176,9 @@ abstract class User_Definition {
     case "hash":
     case "url":
     case "locale":
-      return $this->user->$column;
+      Kohana::log("error", "__set($column, $value)");
+      $this->user->$column = $value;
+      break;
     default:
       throw new Exception("@todo UNSUPPORTED FIELD: $column");
       break;
