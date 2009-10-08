@@ -320,7 +320,7 @@ form .g-error {
  *          listed then delete them
  *********************************************************************/
 
-.g-clearfix,
+.g-clearfix:after,
 #g-site-admin-menu:after,
 #g-module-create-form ul li ul:after,
 #g-developer-tools:after {
