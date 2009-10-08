@@ -246,11 +246,6 @@ li.g-error select {
   margin: 0 1em 1em 0;
 }
 
-.rtl .g-selected img,
-.rtl .g-available .g-block img {
-  float: right;
-}
-
 .g-selected {
   background: #e8e8e8;
 }
@@ -454,10 +449,6 @@ tr.g-warning {
   width: 90px;
 }
 
-.rtl #g-content #g-photo-stream .g-item {
-  float: right;
-}
-
 #g-site-status {
   margin-bottom: 0;
 }
@@ -489,21 +480,10 @@ tr.g-warning {
   width: 30%;
 }
 
-.rtl #g-admin-graphics .g-available .g-block {
-  float: right;
-  margin-left: 1em;
-  margin-right: 0em;
-}
-
 #g-site-theme,
 #g-admin-theme {
   float: left;
   width: 48%;
-}
-
-.rtl #g-site-theme,
-.rtl #g-admin-theme {
-  float: right;
 }
 
 #g-site-theme {
@@ -535,10 +515,6 @@ li.g-group {
   border: 1px solid gray;
   padding: 0;
   margin: 0 1em 1em 0;
-}
-
-.rtl li.g-group {
-  float: right;
 }
 
 li.g-group h4 {
@@ -604,7 +580,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   padding: .3em .8em;
 }
 
-
 /** *******************************************************************
  * 5) Navigation and menus
  *********************************************************************/
@@ -621,10 +596,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   float: right;
   margin: 0;
   padding: 5px 0;
-}
-
-.rtl #g-header #g-login-menu {
-  text-align: left;
 }
 
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -843,10 +814,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   width: 200px;
 }
 
-.rtl #g-tag-admin .g-column {
-  float: right;
-}
-
 .g-editable {
   padding: .1em .3em .2em .3em;
 }
@@ -861,10 +828,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   clear: none;
   float: left;
   margin: 0 .2em 0 0;
-}
-
-.rtl #g-rename-tag-form input {
-  float: right;
 }
 
 #g-rename-tag-form input[type="text"].g-error {
@@ -882,7 +845,7 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   padding: .2em .2em 0 .1em;
 }
 
-.rtl #g-rename-tag-form a, #g-rename-tag-form span {
+#g-rename-tag-form span {
   float: right;
 }
 
@@ -902,10 +865,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
 #g-server-add-admin {
   margin:auto;
   text-align: left;
-}
-
-.rtl #g-server-add-admin {
-  text-align: right;
 }
 
 #g-server-add-admin form fieldset {
@@ -965,7 +924,9 @@ g-languages-form input {
   float: right;
 }
 
-/* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
+/** *******************************************************************
+ * 7) Right to left styles
+ *********************************************************************/
 
 .rtl {
   direction: rtl;
@@ -977,18 +938,20 @@ g-languages-form input {
   text-align: right;
 }
 
-.rtl .txtright {
+.rtl #g-header #g-login-menu,
+.rtl .g-txt-right {
   text-align: left;
 }
 
+.rtl .g-right,
 .rtl #g-header #g-quick-search-form,
-.rtl #g-reset-password,
 .rtl #g-header #g-login-menu,
 .rtl .ui-icon-right .ui-icon {
   clear: left;
   float: left;
 }
 
+.rtl .g-left,
 .rtl #g-dialog .g-cancel,
 .rtl form ul ul li,
 .rtl input[type="submit"],
@@ -998,6 +961,23 @@ g-languages-form input {
 .rtl #g-site-admin-menu,
 .rtl .g-pager li,
 .rtl .g-buttonset li,
+.rtl .ui-icon-left .ui-icon,
+.rtl #g-site-theme,
+.rtl #g-admin-theme,
+.rtl .g-selected img,
+.rtl .g-available .g-block img,
+.rtl #g-content #g-photo-stream .g-item,
+.rtl li.g-group,
+.rtl #g-tag-admin .g-column,
+.rtl #g-rename-tag-form input,
+.rtl #g-rename-tag-form a,
+.rtl #g-server-add-admin,
 .rtl .ui-icon-left .ui-icon {
   float: right;
+}
+
+.rtl #g-admin-graphics .g-available .g-block {
+  float: right;
+  margin-left: 1em;
+  margin-right: 0em;
 }

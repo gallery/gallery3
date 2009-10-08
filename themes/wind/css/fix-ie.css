@@ -2,11 +2,7 @@
  * Fix display in IE 6, 7
  */
 
-#g-banner,
-.g-breadcrumbs,
-#g-album-grid,
-#g-pager,
-#g-view-menu  {
+.g-clearfix {
   zoom: 1;
 }
 

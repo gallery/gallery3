@@ -2,10 +2,9 @@
  * Fix display in IE 6 and 7
  */
 
-#g-header,
+.g-clearfix,
 #g-group-admin,
-#g-developer-tools,
-.g-available .g-block {
+#g-developer-tools {
   zoom: 1;
 }
 
