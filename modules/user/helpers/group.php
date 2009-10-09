@@ -82,7 +82,13 @@ class group_Core {
     $group = ORM::factory("group");
 
     foreach($filter as $method => $args) {
-      $group->$method($args);
+      switch ($method) {
+      case "in":
+        $group->in($args[0], $args[1]);
+        break;
+      default:
+        $group->$method($args);
+      }
     }
     return $group->find_all();
   }

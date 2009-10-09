@@ -334,7 +334,13 @@ class user_Core {
     $user = ORM::factory("user");
 
     foreach($filter as $method => $args) {
-      $user->$method($args);
+      switch ($method) {
+      case "in":
+        $user->in($args[0], $args[1]);
+        break;
+      default:
+        $user->$method($args);
+      }
     }
     return $user->find_all();
   }

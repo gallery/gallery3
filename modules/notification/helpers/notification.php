@@ -67,15 +67,20 @@ class notification {
   }
 
   static function get_subscribers($item) {
-    // @todo don't access the user table directly
     // @todo only return distinct email addresses
-    $users = ORM::factory("user")
-      ->join("subscriptions", "users.id", "subscriptions.user_id")
-      ->join("items", "subscriptions.item_id", "items.id")
-      ->where("email IS NOT", null)
-      ->where("items.left_ptr <=", $item->left_ptr)
-      ->where("items.right_ptr >", $item->right_ptr)
-      ->find_all();
+    $subscriber_ids = array();
+    foreach (ORM::factory("subscription")
+             ->select("user_id")
+             ->join("items", "subscriptions.item_id", "items.id")
+             ->where("items.left_ptr <=", $item->left_ptr)
+             ->where("items.right_ptr >", $item->right_ptr)
+             ->find_all()
+             ->as_array() as $subscriber) {
+      $subscriber_ids[] = $subscriber->user_id;
+    }
+
+    $users = user::get_user_list(array("in" => array("id", $subscriber_ids),
+                                       "where" => array("email IS NOT" => null)));
 
     $subscribers = array();
     foreach ($users as $user) {
