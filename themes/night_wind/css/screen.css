@@ -234,18 +234,6 @@ li.g-error select {
   margin-top: 1em;
 }
 
-/* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
-
-form .g-error,
-.g-pager .g-info {
-  background-color: #000 !important;
-}
-
-.g-pager .g-info {
-  background-image: none !important;
-  padding: 0 !important;
-}
-
 /* Inline layout (forms, lists) ~~~~~~~~~~ */
 
 .g-short-form li {
@@ -408,7 +396,7 @@ form .g-error,
 
 #g-content #g-item .g-fullsize-link img {
   display: block;
-  margin: 1em auto !important;
+  margin: 1em auto;
 }
 
 #g-content #g-comments {
@@ -916,7 +904,6 @@ form .g-error,
 }
 
 .rtl .g-left,
-.rtl #g-dialog .g-cancel,
 .rtl form ul ul li,
 .rtl input[type="submit"],
 .rtl input[type="reset"],
