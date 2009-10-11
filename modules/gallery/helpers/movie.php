@@ -135,6 +135,7 @@ class movie_Core {
     $group->input("title")->label(t("Title"))->value($movie->title);
     $group->textarea("description")->label(t("Description"))->value($movie->description);
     $group->input("filename")->label(t("Filename"))->value($movie->name)
+      ->rules("required")
       ->error_messages(
         "name_conflict", t("There is already a movie, photo or album with this name"))
       ->callback("item::validate_no_slashes")
