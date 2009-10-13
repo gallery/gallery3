@@ -364,23 +364,4 @@ class user_Core {
     }
     return null;
   }
-
- /**
-   * Create a hashed password using md5 plus salt.
-   * @param string $password plaintext password
-   * @param string $salt (optional) salt or hash containing salt (randomly generated if omitted)
-   * @return string hashed password
-   */
-  private static function _md5Salt($password, $salt="") {
-    if (empty($salt)) {
-      for ($i = 0; $i < 4; $i++) {
-        $char = mt_rand(48, 109);
-        $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
-        $salt .= chr($char);
-      }
-    } else {
-      $salt = substr($salt, 0, 4);
-    }
-    return $salt . md5($salt . $password);
-  }
 }
