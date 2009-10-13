@@ -103,7 +103,7 @@ class gallery_block_Core {
         $block->content = new View("user_languages_block.html");
         $block->content->installed_locales =
           array_merge(array("" => t("« none »")), $locales);
-        $block->content->selected = (string) user::cookie_locale();
+        $block->content->selected = (string) locales::cookie_locale();
       } else {
         $block = "";
       }
