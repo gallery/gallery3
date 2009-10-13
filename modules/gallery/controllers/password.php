@@ -32,7 +32,7 @@ class Password_Controller extends Controller {
     if (request::method() == "post") {
       $this->_change_password();
     } else {
-      $user = user::lookyp_by_hash(Input::instance()->get("key"));
+      $user = user::lookup_by_hash(Input::instance()->get("key"));
       if (!empty($user)) {
         print $this->_new_password_form($user->hash);
       } else {
@@ -116,7 +116,7 @@ class Password_Controller extends Controller {
   private function _change_password() {
     $view = $this->_new_password_form();
     if ($view->content->validate()) {
-      $user = user::lookyp_by_hash(Input::instance()->get("key"));
+      $user = user::lookup_by_hash(Input::instance()->get("key"));
       if (empty($user)) {
         throw new Exception("@todo FORBIDDEN", 503);
       }

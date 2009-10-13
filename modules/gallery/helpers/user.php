@@ -310,17 +310,18 @@ class user_Core {
    * @return User_Model  the user object, or null if the id was invalid.
    */
   static function lookup($id) {
-    return Identity::instance()->lookup_user($id);
+    return Identity::instance()->lookup_user_by_field("id", $id);
   }
 
   /**
    * Look up a user by name.
-   * @param integer      $id the user name
+   * @param integer      $name the user name
    * @return User_Model  the user object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
     return Identity::instance()->lookup_user_by_field("name", $name);
   }
+
 
   /**
    * Look up a user by hash.
@@ -336,8 +337,8 @@ class user_Core {
    * @param mixed      options to apply to the selection of the user(optional)
    * @return array     the group list.
    */
-  static function users($filter=array()) {
-    return Identity::instance()->list_users($filter);
+  static function get_user_list($filter=array()) {
+    return Identity::instance()->get_user_list($filter);
   }
 
   /**

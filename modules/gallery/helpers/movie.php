@@ -141,7 +141,8 @@ class movie_Core {
       ->callback("item::validate_no_slashes")
       ->error_messages("no_slashes", t("The movie name can't contain a \"/\""))
       ->callback("item::validate_no_trailing_period")
-      ->error_messages("no_trailing_period", t("The movie name can't end in \".\""));
+      ->error_messages("no_trailing_period", t("The movie name can't end in \".\""))
+      ->error_messages("illegal_extension", t("You cannot change the filename extension"));
     $group->input("slug")->label(t("Internet Address"))->value($movie->slug)
       ->callback("item::validate_url_safe")
       ->error_messages(

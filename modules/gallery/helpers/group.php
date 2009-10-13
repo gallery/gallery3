@@ -91,7 +91,7 @@ class group_Core {
    * @return Group_Model  the group object, or null if the id was invalid.
    */
   static function lookup($id) {
-    return Identity::instance()->lookup_group($id);
+    return Identity::instance()->lookup_group_by_field("id", $id);
   }
 
   /**
@@ -100,16 +100,16 @@ class group_Core {
    * @return Group_Core  the group object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    return Identity::instance()->lookup_group_by_name($name);
+    return Identity::instance()->lookup_group_by_field("name", $name);
   }
 
   /**
    * List the groups
-   * @param mixed      options to apply to the selection of the user
+   * @param mixed      options to apply to the selection of the user (@see Database.php)
    * @return array     the group list.
    */
-  static function groups($filter=array()) {
-    return Identity::instance()->list_groups($filter);
+  static function get_group_list($filter=array()) {
+    return Identity::instance()->get_group_list($filter);
   }
 
   /**

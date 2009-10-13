@@ -52,15 +52,9 @@ interface Identity_Driver {
    * @return string hashed password
    */
   public function hash_password($password);
-  /**
-   * Look up a user by id.
-   * @param integer      $id the user id
-   * @return User_Core  the user object, or null if the id was invalid.
-   */
-  public function lookup_user($id);
 
   /**
-   * Look up a user by name.
+   * Look up a user by by search the specified field.
    * @param string      search field
    * @param string      search value
    * @return User_Core  the user object, or null if the name was invalid.
@@ -90,34 +84,20 @@ interface Identity_Driver {
   public function registered_users();
 
   /**
-   * Look up a group by id.
-   * @param integer      $id the user id
-   * @return Group_Model  the group object, or null if the id was invalid.
-   */
-  public function lookup_group($id);
-
-  /**
-   * Look up a group by name.
-   * @param integer      $id the group name
-   * @return Group_Model  the group object, or null if the name was invalid.
-   */
-  public function lookup_group_by_name($name);
-
-  /**
    * List the users
    * @param mixed      options to apply to the selection of the user
    *                   @todo Do a longer write up on format of filters (@see Database.php)
    * @return array     the group list.
    */
-  public function list_users($filter=array());
+  public function get_user_list($filter=array());
 
   /**
    * List the groups
-   * @param mixed      options to apply to the selection of the user
+   * @param mixed      options to apply to the selection of the group
    *                   @todo Do a longer write up on format of filters (@see Database.php)
    * @return array     the group list.
    */
-  public function list_groups($filter=array());
+  public function get_group_list($filter=array());
 
   /**
    * Return the edit rules associated with an group.

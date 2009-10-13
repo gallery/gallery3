@@ -79,8 +79,8 @@ class notification {
       $subscriber_ids[] = $subscriber->user_id;
     }
 
-    $users = user::users(array("in" => array("id", $subscriber_ids),
-                               "where" => array("email IS NOT" => null)));
+    $users = user::get_user_list(array("in" => array("id", $subscriber_ids),
+                                       "where" => array("email IS NOT" => null)));
 
     $subscribers = array();
     foreach ($users as $user) {

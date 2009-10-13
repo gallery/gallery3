@@ -105,19 +105,6 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * Look up a user by id.
-   * @param integer      $id the user id
-   * @return User_Model  the user object, or null if the id was invalid.
-   */
-  public function lookup_user($id) {
-    $user = model_cache::get("user", $id);
-    if ($user->loaded) {
-      return new Gallery_User($user);
-    }
-    return null;
-  }
-
-  /**
    * Look up a user by field value.
    * @param string      search field
    * @param string      search value
@@ -174,27 +161,15 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * Look up a user by id.
-   * @param integer      $id the user id
-   * @return User_Model  the user object, or null if the id was invalid.
+   * Look up a group by field value.
+   * @param string      search field
+   * @param string      search value
+   * @return Group_Core  the group object, or null if the name was invalid.
    */
-  public function lookup_group($id) {
-    $group = model_cache::get("group", $id);
-    if ($group->loaded) {
-      return new Gallery_Group($group);
-    }
-    return null;
-  }
-
-  /**
-   * Look up a group by name.
-   * @param integer      $id the group name
-   * @return Group_Model  the group object, or null if the name was invalid.
-   */
-  public function lookup_group_by_name($name) {
+  public function lookup_user_by_field($field_name, $value) {
     try {
-      $group = model_cache::get("group", $name, "name");
-      if ($group->loaded) {
+      $user = model_cache::get("group", $value, $field_name);
+      if ($user->loaded) {
         return new Gallery_Group($group);
       }
     } catch (Exception $e) {
@@ -205,12 +180,13 @@ class Identity_Gallery_Driver implements Identity_Driver {
     return null;
   }
 
+
   /**
    * List the users
    * @param mixed      options to apply to the selection of the user
    * @return array     the group list.
    */
-  public function list_users($filter=array()) {
+  public function get_user_list($filter=array()) {
     $results = $this->_do_search("user", $filter);
     $users = array();
     foreach ($results->as_array() as $user) {
@@ -222,10 +198,10 @@ class Identity_Gallery_Driver implements Identity_Driver {
 
   /**
    * List the groups
-   * @param mixed      options to apply to the selection of the user
+   * @param mixed      options to apply to the selection of the group
    * @return array     the group list.
    */
-  public function list_groups($filter=array()) {
+  public function get_group_list($filter=array()) {
     $results = $this->_do_search("group", $filter);
     $groups = array();
     foreach ($results->as_array() as $group) {

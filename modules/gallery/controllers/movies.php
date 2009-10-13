@@ -61,7 +61,18 @@ class Movies_Controller extends Items_Controller {
     access::required("edit", $movie);
 
     $form = movie::get_edit_form($movie);
-    if ($valid = $form->validate()) {
+    $valid = $form->validate();
+
+    if ($valid) {
+      $new_ext = pathinfo($form->edit_item->filename->value, PATHINFO_EXTENSION);
+      $old_ext = pathinfo($photo->name, PATHINFO_EXTENSION);
+      if (strcasecmp($new_ext, $old_ext)) {
+        $form->edit_item->filename->add_error("illegal_extension", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
       if ($form->edit_item->filename->value != $movie->name ||
           $form->edit_item->slug->value != $movie->slug) {
         // Make sure that there's not a name or slug conflict

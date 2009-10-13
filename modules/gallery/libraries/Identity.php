@@ -147,15 +147,6 @@ class Identity_Core {
   }
 
   /**
-   * Look up a user by id.
-   * @param integer      $id the user id
-   * @return Identity_Model  the user object, or null if the id was invalid.
-   */
-  public function lookup_user($id) {
-    return $this->driver->lookup_user($id);
-  }
-
-  /**
    * Look up a user by field value.
    * @param string      search field
    * @param string      search value
@@ -194,21 +185,12 @@ class Identity_Core {
   }
 
   /**
-   * Look up a group by id.
-   * @param integer      $id the user id
-   * @return Group_Model  the group object, or null if the id was invalid.
-   */
-  public function lookup_group($id) {
-    return $this->driver->lookup_group($id);
-  }
-
-  /**
    * Look up a group by name.
    * @param integer      $id the group name
    * @return Group_Model  the group object, or null if the name was invalid.
    */
-  public function lookup_group_by_name($name) {
-    return $this->driver->lookup_group_by_name($name);
+  public function lookup_group_by_field($field_name, $value) {
+    return $this->driver->lookup_group_by_field($field_name, $value);
   }
 
   /**
@@ -216,8 +198,8 @@ class Identity_Core {
    * @param mixed      options to apply to the selection of the user
    * @return array     the group list.
    */
-  public function list_users($filter=array()) {
-    return $this->driver->list_users($filter);
+  public function get_user_list($filter=array()) {
+    return $this->driver->get_user_list($filter);
   }
 
   /**
@@ -225,8 +207,8 @@ class Identity_Core {
    * @param mixed      options to apply to the selection of the user
    * @return array     the group list.
    */
-  public function list_groups($filter=array()) {
-    return $this->driver->list_groups($filter);
+  public function get_group_list($filter=array()) {
+    return $this->driver->get_group_list($filter);
   }
 
   /**

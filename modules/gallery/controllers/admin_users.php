@@ -22,8 +22,8 @@ class Admin_Users_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_users.html");
     $view->content->writable = user::is_writable();
-    $view->content->users = user::users(array("orderby" => array("name" => "ASC")));
-    $view->content->groups = group::groups(array("orderby" => array("name" => "ASC")));
+    $view->content->users = user::get_user_list(array("orderby" => array("name" => "ASC")));
+    $view->content->groups = group::get_group_list(array("orderby" => array("name" => "ASC")));
     print $view;
   }
 

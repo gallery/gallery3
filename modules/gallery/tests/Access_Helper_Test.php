@@ -33,7 +33,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     } catch (Exception $e) { }
 
     try {
-      $user = ORM::factory("user")->where("name", "access_test")->find();
+      $user = user::lookup_by_name("access_test");
       if ($user->loaded) {
         $user->delete();
       }
@@ -307,7 +307,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     $group->save();
     access::allow($group, "edit", $root);
 
-    $user = ORM::factory("user", $user->id);  // reload() does not flush related columns
+    $user = user::lookup($user->id);  // reload() does not flush related columns
     user::set_active($user);
 
     // And verify that the user can edit.
