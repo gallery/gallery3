@@ -166,7 +166,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @param string      search value
    * @return Group_Core  the group object, or null if the name was invalid.
    */
-  public function lookup_user_by_field($field_name, $value) {
+  public function lookup_group_by_field($field_name, $value) {
     try {
       $user = model_cache::get("group", $value, $field_name);
       if ($user->loaded) {
