@@ -219,4 +219,36 @@ class locales_Core {
     }
     return array(null, 0);
   }
+
+  static function set_request_locale() {
+    // 1. Check the session specific preference (cookie)
+    $locale = self::cookie_locale();
+    // 2. Check the user's preference
+    if (!$locale) {
+      $locale = user::active()->locale;
+    }
+    // 3. Check the browser's / OS' preference
+    if (!$locale) {
+      $locale = locales::locale_from_http_request();
+    }
+    // If we have any preference, override the site's default locale
+    if ($locale) {
+      I18n::instance()->locale($locale);
+    }
+  }
+
+  static function cookie_locale() {
+    $cookie_data = Input::instance()->cookie("g_locale");
+    $locale = null;
+    if ($cookie_data) {
+      if (preg_match("/^([a-z]{2,3}(?:_[A-Z]{2})?)$/", trim($cookie_data), $matches)) {
+        $requested_locale = $matches[1];
+        $installed_locales = locales::installed();
+        if (isset($installed_locales[$requested_locale])) {
+          $locale = $requested_locale;
+        }
+      }
+    }
+    return $locale;
+  }
 }

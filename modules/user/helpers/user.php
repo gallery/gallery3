@@ -383,19 +383,4 @@ class user_Core {
     }
     return $salt . md5($salt . $password);
   }
-
-  static function cookie_locale() {
-    $cookie_data = Input::instance()->cookie("g_locale");
-    $locale = null;
-    if ($cookie_data) {
-      if (preg_match("/^([a-z]{2,3}(?:_[A-Z]{2})?)$/", trim($cookie_data), $matches)) {
-        $requested_locale = $matches[1];
-        $installed_locales = locales::installed();
-        if (isset($installed_locales[$requested_locale])) {
-          $locale = $requested_locale;
-        }
-      }
-    }
-    return $locale;
-  }
 }

@@ -19,6 +19,14 @@
  */
 
 class gallery_event_Core {
+  /**
+   * Initialization.
+   */
+  static function gallery_ready() {
+    user::load_user();
+    locales::set_request_locale();
+  }
+
   static function group_created($group) {
     access::add_group($group);
   }

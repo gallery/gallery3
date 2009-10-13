@@ -28,6 +28,10 @@ class gallery_block_Core {
       "project_news" => t("Gallery Project News"));
   }
 
+  static function get_site_list() {
+    return array("language" => t("Language Preference"));
+  }
+
   static function get($block_id) {
     $block = new Block();
     switch($block_id) {
@@ -85,8 +89,25 @@ class gallery_block_Core {
       $block->css_id = "g-block-adder";
       $block->title = t("Dashboard Content");
       $block->content = self::get_add_block_form();
-    }
 
+    case "language":
+      $locales = locales::installed();
+      foreach ($locales as $locale => $display_name) {
+        $locales[$locale] = SafeString::of_safe_html($display_name);
+      }
+      if (count($locales) > 1) {
+        $block = new Block();
+        $block->css_id = "g-user-language-block";
+        $block->title = t("Language Preference");
+        $block->content = new View("user_languages_block.html");
+        $block->content->installed_locales =
+          array_merge(array("" => t("« none »")), $locales);
+        $block->content->selected = (string) locales::cookie_locale();
+      } else {
+        $block = "";
+      }
+      break;
+    }
     return $block;
   }
 
