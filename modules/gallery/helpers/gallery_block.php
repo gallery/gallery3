@@ -89,6 +89,7 @@ class gallery_block_Core {
       $block->css_id = "g-block-adder";
       $block->title = t("Dashboard Content");
       $block->content = self::get_add_block_form();
+      break;
 
     case "language":
       $locales = locales::installed();
