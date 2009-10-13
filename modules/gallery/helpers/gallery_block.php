@@ -93,10 +93,10 @@ class gallery_block_Core {
 
     case "language":
       $locales = locales::installed();
-      foreach ($locales as $locale => $display_name) {
-        $locales[$locale] = SafeString::of_safe_html($display_name);
-      }
-      if (count($locales) > 1) {
+      if (count($locales)) {
+        foreach ($locales as $locale => $display_name) {
+          $locales[$locale] = SafeString::of_safe_html($display_name);
+        }
         $block = new Block();
         $block->css_id = "g-user-language-block";
         $block->title = t("Language Preference");
