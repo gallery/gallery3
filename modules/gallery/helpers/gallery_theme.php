@@ -55,7 +55,6 @@ class gallery_theme_Core {
     if ($theme->page_type != "login") {
       $view = new View("login.html");
       $view->user = user::active();
-      $view->writable = user::is_writable();
       return $view->render();
     }
   }

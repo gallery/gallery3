@@ -109,7 +109,6 @@ class gallery_block_Core {
       }
       break;
     }
-
     return $block;
   }
 
