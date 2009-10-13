@@ -175,22 +175,6 @@ class user_Core {
     return Session::instance()->get("group_ids", array(1));
   }
 
-
-  static function cookie_locale() {
-    $cookie_data = Input::instance()->cookie("g_locale");
-    $locale = null;
-    if ($cookie_data) {
-      if (preg_match("/^([a-z]{2,3}(?:_[A-Z]{2})?)$/", trim($cookie_data), $matches)) {
-        $requested_locale = $matches[1];
-        $installed_locales = locales::installed();
-        if (isset($installed_locales[$requested_locale])) {
-          $locale = $requested_locale;
-        }
-      }
-    }
-    return $locale;
-  }
-
   /**
    * Make sure that we have a session and group_ids cached in the session.  This is one
    * of the first calls to reference the user so call the Identity::instance to load the
