@@ -236,10 +236,7 @@ class user_Core {
   }
 
   /**
-   * Determine if a feature is supported by the driver.
-   *
-   * @param  string  $feature the name of the feature to check
-   * @return boolean true if supported
+   * @see Identity_Core::is_writable.
    */
   static function is_writable() {
     return Identity::instance()->is_writable();
@@ -248,7 +245,7 @@ class user_Core {
   /**
    * @see Identity_Driver::guest.
    */
-static function guest() {
+  static function guest() {
     return Identity::instance()->guest();
   }
 
