@@ -21,9 +21,7 @@ interface Identity_Driver {
   /**
    * Return the guest user.
    *
-   * @todo consider caching
-   *
-   * @return User_Model
+   * @return User_Definition the user object
    */
   public function guest();
 
@@ -33,14 +31,14 @@ interface Identity_Driver {
    * @param string  $name
    * @param string  $full_name
    * @param string  $password
-   * @return User_Core
+   * @return User_Definition the user object
    */
   public function create_user($name, $full_name, $password);
 
   /**
    * Is the password provided correct?
    *
-   * @param user User Model
+   * @param user User_Definition the user object
    * @param string $password a plaintext password
    * @return boolean true if the password is correct
    */
@@ -57,7 +55,7 @@ interface Identity_Driver {
    * Look up a user by by search the specified field.
    * @param string      search field
    * @param string      search value
-   * @return User_Core  the user object, or null if the name was invalid.
+   * @return User_Definition the user object, or null if the name was invalid.
    */
   public function lookup_user_by_field($field, $value);
 
@@ -65,28 +63,33 @@ interface Identity_Driver {
    * Create a new group.
    *
    * @param string  $name
-   * @return Group_Model
+   * @return Group_Definition the group object
    */
   public function create_group($name);
 
   /**
    * The group of all possible visitors.  This includes the guest user.
    *
-   * @return Group_Model
+   * @return Group_Definition the group object
    */
   public function everybody();
 
   /**
    * The group of all logged-in visitors.  This does not include guest users.
    *
-   * @return Group_Model
+   * @return Group_Definition the group object
    */
   public function registered_users();
 
   /**
    * List the users
    * @param mixed      options to apply to the selection of the user
-   *                   @todo Do a longer write up on format of filters (@see Database.php)
+   *                   currently supported:
+   *                     "orderby" => array(<field name>, "ASC|DESC")
+   *                     "in" => array(<field name>, array(values, ...))
+   *                     "where" => array(<field name>, value)
+   *                        <field name> follows Kohana syntax where it could contain the first
+   *                                     half of a logical expression (i.e. "field IS NOT")
    * @return array     the group list.
    */
   public function get_user_list($filter=array());
@@ -94,7 +97,12 @@ interface Identity_Driver {
   /**
    * List the groups
    * @param mixed      options to apply to the selection of the group
-   *                   @todo Do a longer write up on format of filters (@see Database.php)
+   *                   currently supported:
+   *                     "orderby" => array(<field name>, "ASC|DESC")
+   *                     "in" => array(<field name>, array(values, ...))
+   *                     "where" => array(<field name>, value)
+   *                        <field name> follows Kohana syntax where it could contain the first
+   *                                     half of a logical expression (i.e. "field IS NOT")
    * @return array     the group list.
    */
   public function get_group_list($filter=array());
@@ -128,10 +136,8 @@ abstract class User_Definition {
     case "url":
     case "locale":
     case "groups":
-      return $this->user->$column;
     case "hashed_password":
-      throw new Exception("@todo WRITE ONLY FIELD: $column");
-      break;
+      return $this->user->$column;
     default:
       throw new Exception("@todo UNSUPPORTED FIELD: $column");
       break;
@@ -185,10 +191,9 @@ abstract class User_Definition {
     case "hash":
     case "url":
     case "locale":
+    case "hashed_password":
       unset($this->user->$column);
       break;
-    case "hashed_password":
-      throw new Exception("@todo WRITE ONLY FIELD: $column");
     default:
       throw new Exception("@todo UNSUPPORTED FIELD: $column");
       break;
@@ -214,7 +219,12 @@ abstract class User_Definition {
     return empty($this->user->full_name) ? $this->user->name : $this->user->full_name;
   }
 
-  public function uncloaked() {
+  /**
+   * Return the internal user object without the wrapper.
+   * This method is used by implementing classes to access the internal user object.
+   * Consider it pseudo private and only declared public as PHP as not internal or friend modifier
+   */
+  public function _uncloaked() {
     return $this->user;
   }
 
@@ -275,7 +285,12 @@ abstract class Group_Definition {
     }
   }
 
-  public function uncloaked() {
+  /**
+   * Return the internal group object without the wrapper.
+   * This method is used by implementing classes to access the internal group object.
+   * Consider it pseudo private and only declared public as PHP as not internal or friend modifier
+   */
+  public function _uncloaked() {
     return $this->group;
   }
 

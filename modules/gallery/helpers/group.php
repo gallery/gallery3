@@ -58,28 +58,21 @@ class group_Core {
   }
 
   /**
-   * Create a new group.
-   *
-   * @param string  $name
-   * @return Group_Core
+   * @see Identity_Driver::create.
    */
   static function create($name) {
     return Identity::instance()->create_group($name);
   }
 
   /**
-   * The group of all possible visitors.  This includes the guest user.
-   *
-   * @return Group_Core
+   * @see Identity_Driver::everbody.
    */
   static function everybody() {
     return Identity::instance()->everybody();
   }
 
   /**
-   * The group of all logged-in visitors.  This does not include guest users.
-   *
-   * @return Group_Core
+   * @see Identity_Driver::registered_users.
    */
   static function registered_users() {
     return Identity::instance()->everybody();
@@ -88,7 +81,7 @@ class group_Core {
   /**
    * Look up a group by id.
    * @param integer      $id the user id
-   * @return Group_Model  the group object, or null if the id was invalid.
+   * @return Group_Definition  the group object, or null if the id was invalid.
    */
   static function lookup($id) {
     return Identity::instance()->lookup_group_by_field("id", $id);
@@ -97,25 +90,21 @@ class group_Core {
   /**
    * Look up a group by name.
    * @param integer      $id the group name
-   * @return Group_Core  the group object, or null if the name was invalid.
+   * @return Group_Definition  the group object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
     return Identity::instance()->lookup_group_by_field("name", $name);
   }
 
   /**
-   * List the groups
-   * @param mixed      options to apply to the selection of the user (@see Database.php)
-   * @return array     the group list.
+   * @see Identity_Driver::get_group_list.
    */
   static function get_group_list($filter=array()) {
     return Identity::instance()->get_group_list($filter);
   }
 
   /**
-   * Return the edit rules associated with an group.
-   *
-   * @return stdClass containing the rules
+   * @see Identity_Driver::get_edit_rules.
    */
   static function get_edit_rules() {
     return Identity::instance()->get_edit_rules("group");

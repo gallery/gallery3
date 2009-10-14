@@ -22,23 +22,14 @@
  */
 class Identity_Gallery_Driver implements Identity_Driver {
   /**
-   * Return the guest user.
-   *
-   * @todo consider caching
-   *
-   * @return User_Model
+   * @see Identity_Driver::guest.
    */
   public function guest() {
     return new Gallery_User(model_cache::get("user", 1));
   }
 
   /**
-   * Create a new user.
-   *
-   * @param string  $name
-   * @param string  $full_name
-   * @param string  $password
-   * @return User_Model
+   * @see Identity_Driver::create_user.
    */
   public function create_user($name, $full_name, $password) {
     $user = ORM::factory("user")->where("name", $name)->find();
@@ -51,19 +42,15 @@ class Identity_Gallery_Driver implements Identity_Driver {
     $user->password = $password;
 
     // Required groups
-    $user->add($this->everybody()->uncloaked());
-    $user->add($this->registered_users()->uncloaked());
+    $user->add($this->everybody()->_uncloaked());
+    $user->add($this->registered_users()->_uncloaked());
 
     $user->save();
     return new Gallery_User($user);
   }
 
   /**
-   * Is the password provided correct?
-   *
-   * @param user User Model
-   * @param string $password a plaintext password
-   * @return boolean true if the password is correct
+   * @see Identity_Driver::is_correct_password.
    */
   public function is_correct_password($user, $password) {
     $valid = $user->password;
@@ -94,9 +81,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * Create the hashed passwords.
-   * @param string $password a plaintext password
-   * @return string hashed password
+   * @see Identity_Driver::hash_password.
    */
   public function hash_password($password) {
     require_once(MODPATH . "user/lib/PasswordHash.php");
@@ -105,10 +90,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * Look up a user by field value.
-   * @param string      search field
-   * @param string      search value
-   * @return User_Core  the user object, or null if the name was invalid.
+   * @see Identity_Driver::lookup_user_by_field.
    */
   public function lookup_user_by_field($field_name, $value) {
     try {
@@ -125,10 +107,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * Create a new group.
-   *
-   * @param string  $name
-   * @return Group_Model
+   * @see Identity_Driver::create_group.
    */
   public function create_group($name) {
     $group = ORM::factory("group")->where("name", $name)->find();
@@ -143,33 +122,26 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * The group of all possible visitors.  This includes the guest user.
-   *
-   * @return Group_Model
+   * @see Identity_Driver::everybody.
    */
   public function everybody() {
     return new Gallery_Group(model_cache::get("group", 1));
   }
 
   /**
-   * The group of all logged-in visitors.  This does not include guest users.
-   *
-   * @return Group_Model
+   * @see Identity_Driver::registered_users.
    */
   public function registered_users() {
     return new Gallery_Group(model_cache::get("group", 2));
   }
 
   /**
-   * Look up a group by field value.
-   * @param string      search field
-   * @param string      search value
-   * @return Group_Core  the group object, or null if the name was invalid.
+   * @see Identity_Driver::lookup_group_by_field.
    */
   public function lookup_group_by_field($field_name, $value) {
     try {
-      $user = model_cache::get("group", $value, $field_name);
-      if ($user->loaded) {
+      $group = model_cache::get("group", $value, $field_name);
+      if ($group->loaded) {
         return new Gallery_Group($group);
       }
     } catch (Exception $e) {
@@ -180,11 +152,8 @@ class Identity_Gallery_Driver implements Identity_Driver {
     return null;
   }
 
-
   /**
-   * List the users
-   * @param mixed      options to apply to the selection of the user
-   * @return array     the group list.
+   * @see Identity_Driver::get_user_list.
    */
   public function get_user_list($filter=array()) {
     $results = $this->_do_search("user", $filter);
@@ -195,11 +164,8 @@ class Identity_Gallery_Driver implements Identity_Driver {
     return $users;
   }
 
-
   /**
-   * List the groups
-   * @param mixed      options to apply to the selection of the group
-   * @return array     the group list.
+   * @see Identity_Driver::get_group_list.
    */
   public function get_group_list($filter=array()) {
     $results = $this->_do_search("group", $filter);
@@ -211,10 +177,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * Return the edit rules associated with an group.
-   *
-   * @param  string   $object_type to return rules for ("user"|"group")
-   * @return stdClass containing the rules
+   * @see Identity_Driver::get_edit_rules.
    */
   public function get_edit_rules($object_type) {
     return (object)ORM::factory($object_type)->rules;
@@ -284,10 +247,10 @@ class Gallery_Group extends Group_Definition {
   }
 
   public function add($user) {
-    $this->group->add($user->uncloaked());
+    $this->group->add($user->_uncloaked());
   }
 
   public function remove($user) {
-    $this->group->remove($user->uncloaked());
+    $this->group->remove($user->_uncloaked());
   }
 }

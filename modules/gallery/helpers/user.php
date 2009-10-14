@@ -246,43 +246,28 @@ class user_Core {
   }
 
   /**
-   * Return the guest user.
-   *
-   * @todo consider caching
-   *
-   * @return User_Model
+   * @see Identity_Driver::guest.
    */
-  static function guest() {
+static function guest() {
     return Identity::instance()->guest();
   }
 
   /**
-   * Create a new user.
-   *
-   * @param string  $name
-   * @param string  $full_name
-   * @param string  $password
-   * @return User_Model
+   * @see Identity_Driver::create_user.
    */
   static function create($name, $full_name, $password) {
     return Identity::instance()->create_user($name, $full_name, $password);
   }
 
   /**
-   * Is the password provided correct?
-   *
-   * @param user User Model
-   * @param string $password a plaintext password
-   * @return boolean true if the password is correct
+   * @see Identity_Driver::is_correct_password.
    */
   static function is_correct_password($user, $password) {
     return Identity::instance()->is_correct_password($user, $password);
   }
 
   /**
-   * Create the hashed passwords.
-   * @param string $password a plaintext password
-   * @return string hashed password
+   * @see Identity_Driver::hash_password.
    */
   static function hash_password($password) {
     return Identity::instance()->hash_password($password);
@@ -291,7 +276,7 @@ class user_Core {
   /**
    * Look up a user by id.
    * @param integer      $id the user id
-   * @return User_Model  the user object, or null if the id was invalid.
+   * @return User_Definition  the user object, or null if the id was invalid.
    */
   static function lookup($id) {
     return Identity::instance()->lookup_user_by_field("id", $id);
@@ -300,35 +285,30 @@ class user_Core {
   /**
    * Look up a user by name.
    * @param integer      $name the user name
-   * @return User_Model  the user object, or null if the name was invalid.
+   * @return User_Definition  the user object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
     return Identity::instance()->lookup_user_by_field("name", $name);
   }
 
-
   /**
    * Look up a user by hash.
    * @param string       $name the user name
-   * @return User_Model  the user object, or null if the name was invalid.
+   * @return User_Definition  the user object, or null if the name was invalid.
    */
   static function lookup_by_hash($hash) {
     return Identity::instance()->lookup_user_by_field("hash", $hash);
   }
 
   /**
-   * List the users
-   * @param mixed      options to apply to the selection of the user(optional)
-   * @return array     the group list.
+   * @see Identity_Driver::get_user_list.
    */
   static function get_user_list($filter=array()) {
     return Identity::instance()->get_user_list($filter);
   }
 
   /**
-   * Return the edit rules associated with an user.
-   *
-   * @return stdClass containing the rules
+   * @see Identity_Driver::get_edit_rules.
    */
   static function get_edit_rules() {
     return Identity::instance()->get_edit_rules("user");

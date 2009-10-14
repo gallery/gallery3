@@ -22,7 +22,7 @@
  * Provides a driver-based interface for managing users and groups.
  */
 class Identity_Core {
-  protected static $instances = array();
+  protected static $instances;
 
   // Configuration
   protected $config;
@@ -32,17 +32,18 @@ class Identity_Core {
 
   /**
    * Returns a singleton instance of Identity.
+   * There can only be one Identity driver configured at a given point
    *
    * @param   string  configuration
    * @return  Identity_Core
    */
   static function & instance($config="default") {
-   if (!isset(Identity::$instances[$config])) {
+   if (!isset(Identity::$instances)) {
       // Create a new instance
-      Identity::$instances[$config] = new Identity($config);
+      Identity::$instances = new Identity($config);
     }
 
-    return Identity::$instances[$config];
+    return Identity::$instances;
   }
 
   /**
@@ -93,10 +94,9 @@ class Identity_Core {
   }
 
   /**
-   * Determine if a feature is supported by the driver.
+   * Determine if if the current driver supports updates.
    *
-   * @param  string  $feature the name of the feature to check
-   * @return boolean true if supported
+   * @return boolean true if the driver supports updates; false if read only
    */
   public function is_writable() {
     return !empty($this->config["allow_updates"]);
@@ -104,118 +104,84 @@ class Identity_Core {
 
 
   /**
-   * Return the guest user.
-   *
-   * @todo consider caching
-   *
-   * @return Identity_Model
+   * @see Identity_Driver::guest.
    */
   public function guest() {
     return $this->driver->guest();
   }
 
   /**
-   * Create a new user.
-   *
-   * @param string  $name
-   * @param string  $full_name
-   * @param string  $password
-   * @return Identity_Model
+   * @see Identity_Driver::create_user.
    */
   public function create_user($name, $full_name, $password) {
     return $this->driver->create_user($name, $full_name, $password);
   }
 
   /**
-   * Is the password provided correct?
-   *
-   * @param user Identity Model
-   * @param string $password a plaintext password
-   * @return boolean true if the password is correct
+   * @see Identity_Driver::is_correct_password.
    */
   public function is_correct_password($user, $password) {
     return $this->driver->is_correct_password($user, $password);
   }
 
   /**
-   * Create the hashed passwords.
-   * @param string $password a plaintext password
-   * @return string hashed password
+   * @see Identity_Driver::hash_password.
    */
   public function hash_password($password) {
     return $this->driver->hash_password($password);
   }
 
   /**
-   * Look up a user by field value.
-   * @param string      search field
-   * @param string      search value
-   * @return Identity_Model  the user object, or null if the name was invalid.
+   * @see Identity_Driver::lookup_user_by_field.
    */
   public function lookup_user_by_field($field_name, $value) {
     return $this->driver->lookup_user_by_field($field_name, $value);
   }
 
   /**
-   * Create a new group.
-   *
-   * @param string  $name
-   * @return Group_Model
+   * @see Identity_Driver::create_group.
    */
   public function create_group($name) {
     return $this->driver->create_group($name);
   }
 
   /**
-   * The group of all possible visitors.  This includes the guest user.
-   *
-   * @return Group_Model
+   * @see Identity_Driver::everybody.
    */
   public function everybody() {
     return $this->driver->everybody();
   }
 
   /**
-   * The group of all logged-in visitors.  This does not include guest users.
-   *
-   * @return Group_Model
+   * @see Identity_Driver::registered_users.
    */
   public function registered_users() {
     return $this->driver->everybody();
   }
 
   /**
-   * Look up a group by name.
-   * @param integer      $id the group name
-   * @return Group_Model  the group object, or null if the name was invalid.
+   * @see Identity_Driver::lookup_group_by_field.
    */
   public function lookup_group_by_field($field_name, $value) {
     return $this->driver->lookup_group_by_field($field_name, $value);
   }
 
   /**
-   * List the users
-   * @param mixed      options to apply to the selection of the user
-   * @return array     the group list.
+   * @see Identity_Driver::get_user_list.
    */
   public function get_user_list($filter=array()) {
     return $this->driver->get_user_list($filter);
   }
 
   /**
-   * List the groups
-   * @param mixed      options to apply to the selection of the user
-   * @return array     the group list.
+   * @see Identity_Driver::get_group_list.
    */
   public function get_group_list($filter=array()) {
     return $this->driver->get_group_list($filter);
   }
 
   /**
-   * Return the edit rules associated with an group.
-   *
-   * @param  string   $object_type to return rules for ("user"|"group")
-   * @return stdClass containing the rules
+   * @see Identity_Driver::get_edit_rules.
    */
   public function get_edit_rules($object_type) {
     return $this->driver->get_edit_rules($object_type);
