@@ -335,6 +335,7 @@ li.g-error select {
 
 #g-content #g-album-grid .g-item {
   background-color: #000;
+  border: 1px solid #000;
   float: left;
   font-size: .7em;
   padding: .6em 8px;
