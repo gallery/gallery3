@@ -61,14 +61,39 @@ class group_Core {
   }
 
   /**
+   * Look up a user by id.
+   * @param integer      $id the user id
+   * @return User_Model  the user object, or null if the id was invalid.
+   */
+  static function lookup($id) {
+    return self::_lookup_group_by_field("id", $id);
+  }
+
+  /**
    * Look up a group by name.
    * @param integer      $id the group name
    * @return Group_Model  the group object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    $group = model_cache::get("group", $name, "name");
-    if ($group->loaded) {
-      return $group;
+    return self::_lookup_group_by_field("name", $name);
+  }
+
+  /**
+   * Look up a user by field value.
+   * @param string      search field
+   * @param string      search value
+   * @return Group_Model  the user object, or null if the name was invalid.
+   */
+  private static function _lookup_group_by_field($field_name, $value) {
+    try {
+      $user = model_cache::get("group", $value, $field_name);
+      if ($user->loaded) {
+        return $user;
+      }
+    } catch (Exception $e) {
+      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
+       throw $e;
+      }
     }
     return null;
   }

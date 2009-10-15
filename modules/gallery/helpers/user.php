@@ -351,7 +351,7 @@ class user_Core {
    * @param string      search value
    * @return User_Core  the user object, or null if the name was invalid.
    */
- private static function _lookup_user_by_field($field_name, $value) {
+  private static function _lookup_user_by_field($field_name, $value) {
     try {
       $user = model_cache::get("user", $value, $field_name);
       if ($user->loaded) {
