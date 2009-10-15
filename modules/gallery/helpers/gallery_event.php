@@ -23,6 +23,10 @@ class gallery_event_Core {
    * Initialization.
    */
   static function gallery_ready() {
+    // Call Identity::instance() now to force the load of the user interface classes.
+    // user::load_user will attempt to load the active user from the session and needs
+    // the user definition class, which can't be reached by Kohana's heiracrchical lookup.
+    Identity::instance();
     user::load_user();
     locales::set_request_locale();
   }

@@ -78,7 +78,6 @@ class user_Core {
    * driver classes.
    */
   static function load_user() {
-    Identity::instance();
     $session = Session::instance();
     if (!($user = $session->get("user"))) {
       $session->set("user", $user = self::guest());

@@ -77,7 +77,7 @@ class Users_Controller extends Controller {
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
-    $form->add_rules_from($user);
+    $form->add_rules_from(user::get_edit_rules());
 
     module::event("user_edit_form", $user, $form);
     $group->submit("")->value(t("Save"));

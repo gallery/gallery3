@@ -8,11 +8,15 @@
   </li>
   <? else: ?>
   <li class="first">
+    <? if (user::is_writable()): ?>
     <?= t('Logged in as %name', array('name' => html::mark_clean(
       '<a href="' . url::site("form/edit/users/{$user->id}") .
-      '" title="' . ($writable ? t("Edit Your Profile")->for_html_attr() : t("Display Your Profile")->for_html_attr()) .
+      '" title="' . t("Edit Your Profile")->for_html_attr() .
       '" id="g-user-profile-link" class="g-dialog-link">' .
       html::clean($user->display_name()) . '</a>'))) ?>
+    <? else: ?>
+    <?= t('Logged in as %name', array('name' => html::clean($user->display_name()))) ?>
+    <? endif ?>
   </li>
   <li>
     <a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(url::current(true))) ?>"

@@ -102,7 +102,6 @@ class Identity_Core {
     return !empty($this->config["allow_updates"]);
   }
 
-
   /**
    * @see Identity_Driver::guest.
    */
