@@ -26,7 +26,7 @@ class Log_Model extends ORM {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
       try {
-        return user::lookup($this->user_id);
+        return Identity::lookup_user($this->user_id);
       } catch (Exception $e) {
         return null;
       }

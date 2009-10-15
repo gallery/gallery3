@@ -21,7 +21,7 @@ class Login_Controller extends Controller {
 
   public function ajax() {
     $view = new View("login_ajax.html");
-    $view->form = user::get_login_form("login/auth_ajax");
+    $view->form = Identity::get_login_form("login/auth_ajax");
     print $view;
   }
 
@@ -40,7 +40,7 @@ class Login_Controller extends Controller {
   }
 
   public function html() {
-    print user::get_login_form("login/auth_html");
+    print Identity::get_login_form("login/auth_html");
   }
 
   public function auth_html() {
@@ -54,11 +54,11 @@ class Login_Controller extends Controller {
     }
   }
   private function _auth($url) {
-    $form = user::get_login_form($url);
+    $form = Identity::get_login_form($url);
     $valid = $form->validate();
     if ($valid) {
-      $user = user::lookup_by_name($form->login->inputs["name"]->value);
-      if (empty($user) || !user::is_correct_password($user, $form->login->password->value)) {
+      $user = Identity::lookup_user_by_name($form->login->inputs["name"]->value);
+      if (empty($user) || !Identity::is_correct_password($user, $form->login->password->value)) {
         log::warning(
           "user",
           t("Failed login for %name",
@@ -69,7 +69,7 @@ class Login_Controller extends Controller {
     }
 
     if ($valid) {
-      user::login($user);
+      Identity::login($user);
       log::info("user", t("User %name logged in", array("name" => $user->name)));
     }
 

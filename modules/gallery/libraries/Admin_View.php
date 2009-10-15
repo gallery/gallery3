@@ -36,12 +36,12 @@ class Admin_View_Core extends Gallery_View {
     parent::__construct($name);
 
     $this->theme_name = module::get_var("gallery", "active_admin_theme");
-    if (user::active()->admin) {
+    if (Identity::active()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
     $this->sidebar = "";
     $this->set_global("theme", $this);
-    $this->set_global("user", user::active());
+    $this->set_global("user", Identity::active());
   }
 
   public function admin_menu() {

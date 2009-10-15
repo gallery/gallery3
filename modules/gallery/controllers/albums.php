@@ -29,7 +29,7 @@ class Albums_Controller extends Items_Controller {
         $view = new Theme_View("page.html", "login");
         $view->page_title = t("Log in to Gallery");
         $view->content = new View("login_ajax.html");
-        $view->content->form = user::get_login_form("login/auth_html");
+        $view->content->form = Identity::get_login_form("login/auth_html");
         print $view;
         return;
       } else {
@@ -111,7 +111,7 @@ class Albums_Controller extends Items_Controller {
         $this->input->post("name"),
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
-        user::active()->id,
+        Identity::active()->id,
         $this->input->post("slug"));
 
       log::success("content", "Created an album",
@@ -146,7 +146,7 @@ class Albums_Controller extends Items_Controller {
         $_FILES["file"]["name"],
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
-        user::active()->id);
+        Identity::active()->id);
 
       log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
       message::success(t("Added photo %photo_title",

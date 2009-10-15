@@ -21,8 +21,8 @@ class Logout_Controller extends Controller {
   public function index() {
     //access::verify_csrf();
 
-    $user = user::active();
-    user::logout();
+    $user = Identity::active();
+    Identity::logout();
     log::info("user", t("User %name logged out", array("name" => $user->name)),
               html::anchor("user/$user->id", html::clean($user->name)));
     if ($continue_url = $this->input->get("continue")) {

@@ -19,7 +19,7 @@
  */
 class server_add_theme_Core {
   static function head($theme) {
-    if (user::active()->admin) {
+    if (Identity::active()->admin) {
       $theme->script("server_add.js");
     }
   }

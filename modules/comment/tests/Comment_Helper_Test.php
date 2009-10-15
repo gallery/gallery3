@@ -48,7 +48,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     $comment = comment::create(
-      $root, user::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
+      $root, Identity::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
 
     $this->assert_equal("name_$rand", $comment->author_name());
     $this->assert_equal("email_$rand", $comment->author_email());
@@ -77,7 +77,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
   public function create_comment_for_user_test() {
     $rand = rand();
     $root = ORM::factory("item", 1);
-    $admin = user::lookup(2);
+    $admin = Identity::lookup_user(2);
     $comment = comment::create(
       $root, $admin, "text_$rand", "name_$rand", "email_$rand", "url_$rand");
 

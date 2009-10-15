@@ -22,7 +22,7 @@
  * Provides a driver-based interface for managing users and groups.
  */
 class Identity_Core {
-  protected static $instances;
+  protected static $instance;
 
   // Configuration
   protected $config;
@@ -38,12 +38,12 @@ class Identity_Core {
    * @return  Identity_Core
    */
   static function & instance($config="default") {
-   if (!isset(Identity::$instances)) {
+   if (!isset(Identity::$instance)) {
       // Create a new instance
-      Identity::$instances = new Identity($config);
+      Identity::$instance = new Identity($config);
     }
 
-    return Identity::$instances;
+    return Identity::$instance;
   }
 
   /**
@@ -85,9 +85,10 @@ class Identity_Core {
       $this->driver = new $driver($this->config["params"]);
 
       // Validate the driver
-      if ( !($this->driver instanceof Identity_Driver))
+      if ( !($this->driver instanceof Identity_Driver)) {
         throw new Kohana_Exception("core.driver_implements", $this->config["driver"],
                                    get_class($this), "Identity_Driver");
+      }
 
       Kohana::log("debug", "Identity Library initialized");
     }
@@ -98,91 +99,220 @@ class Identity_Core {
    *
    * @return boolean true if the driver supports updates; false if read only
    */
-  public function is_writable() {
-    return !empty($this->config["allow_updates"]);
+  static function is_writable() {
+    return !empty(self::instance()->config["allow_updates"]);
   }
 
   /**
    * @see Identity_Driver::guest.
    */
-  public function guest() {
-    return $this->driver->guest();
+  static function guest() {
+    return self::instance()->driver->guest();
   }
 
   /**
    * @see Identity_Driver::create_user.
    */
-  public function create_user($name, $full_name, $password) {
-    return $this->driver->create_user($name, $full_name, $password);
+  static function create_user($name, $full_name, $password) {
+    return self::instance()->driver->create_user($name, $full_name, $password);
   }
 
   /**
    * @see Identity_Driver::is_correct_password.
    */
-  public function is_correct_password($user, $password) {
-    return $this->driver->is_correct_password($user, $password);
+  static function is_correct_password($user, $password) {
+    return self::instance()->driver->is_correct_password($user, $password);
   }
 
   /**
    * @see Identity_Driver::hash_password.
    */
-  public function hash_password($password) {
-    return $this->driver->hash_password($password);
+  static function hash_password($password) {
+    return self::instance()->driver->hash_password($password);
   }
 
   /**
-   * @see Identity_Driver::lookup_user_by_field.
+   * Look up a user by id.
+   * @param integer      $id the user id
+   * @return User_Definition  the user object, or null if the id was invalid.
    */
-  public function lookup_user_by_field($field_name, $value) {
-    return $this->driver->lookup_user_by_field($field_name, $value);
+  static function lookup_user($id) {
+    return self::instance()->driver->lookup_user_by_field("id", $id);
+  }
+
+  /**
+   * Look up a user by name.
+   * @param integer      $name the user name
+   * @return User_Definition  the user object, or null if the name was invalid.
+   */
+  static function lookup_user_by_name($name) {
+    return self::instance()->driver->lookup_user_by_field("name", $name);
+  }
+
+  /**
+   * Look up a user by hash.
+   * @param string       $name the user name
+   * @return User_Definition  the user object, or null if the name was invalid.
+   */
+  static function lookup_user_by_hash($hash) {
+    return self::instance()->driver->lookup_user_by_field("hash", $hash);
   }
 
   /**
    * @see Identity_Driver::create_group.
    */
-  public function create_group($name) {
-    return $this->driver->create_group($name);
+  static function create_group($name) {
+    return self::instance()->driver->create_group($name);
   }
 
   /**
    * @see Identity_Driver::everybody.
    */
-  public function everybody() {
-    return $this->driver->everybody();
+  static function everybody() {
+    return self::instance()->driver->everybody();
   }
 
   /**
    * @see Identity_Driver::registered_users.
    */
-  public function registered_users() {
-    return $this->driver->everybody();
+  static function registered_users() {
+    return self::instance()->driver->everybody();
   }
 
   /**
-   * @see Identity_Driver::lookup_group_by_field.
+   * Look up a group by name.
+   * @param integer      $id the group name
+   * @return Group_Definition  the group object, or null if the name was invalid.
    */
-  public function lookup_group_by_field($field_name, $value) {
-    return $this->driver->lookup_group_by_field($field_name, $value);
+  static function lookup_group_by_name($name) {
+    return self::instance()->driver->lookup_group_by_field("name", $name);
   }
 
   /**
    * @see Identity_Driver::get_user_list.
    */
-  public function get_user_list($filter=array()) {
-    return $this->driver->get_user_list($filter);
+  static function get_user_list($filter=array()) {
+    return self::instance()->driver->get_user_list($filter);
   }
 
   /**
    * @see Identity_Driver::get_group_list.
    */
-  public function get_group_list($filter=array()) {
-    return $this->driver->get_group_list($filter);
+  static function get_group_list($filter=array()) {
+    return self::instance()->driver->get_group_list($filter);
   }
 
   /**
    * @see Identity_Driver::get_edit_rules.
    */
-  public function get_edit_rules($object_type) {
-    return $this->driver->get_edit_rules($object_type);
+  static function get_edit_rules($object_type) {
+    return self::instance()->driver->get_edit_rules($object_type);
+  }
+
+  static function get_login_form($url) {
+    $form = new Forge($url, "", "post", array("id" => "g-login-form"));
+    $form->set_attr('class', "g-narrow");
+    $group = $form->group("login")->label(t("Login"));
+    $group->input("name")->label(t("Username"))->id("g-username")->class(null);
+    $group->password("password")->label(t("Password"))->id("g-password")->class(null);
+    $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
+    $group->submit("")->value(t("Login"));
+    return $form;
+  }
+
+  /**
+   * Return the active user.  If there's no active user, return the guest user.
+   *
+   * @return User_Model
+   */
+  static function active() {
+    // @todo (maybe) cache this object so we're not always doing session lookups.
+    $user = Session::instance()->get("user", null);
+    if (!isset($user)) {
+      // Don't do this as a fallback in the Session::get() call because it can trigger unnecessary
+      // work.
+      $user = self::guest();
+    }
+    return $user;
+  }
+
+  /**
+   * Change the active user.
+   *
+   * @return User_Model
+   */
+  static function set_active($user) {
+    $session = Session::instance();
+    $session->set("user", $user);
+    $session->delete("group_ids");
+    self::load_user();
+  }
+
+  /**
+   * Return the array of group ids this user belongs to
+   *
+   * @return array
+   */
+  static function group_ids_for_active_user() {
+    return Session::instance()->get("group_ids", array(1));
+  }
+
+  /**
+   * Make sure that we have a session and group_ids cached in the session.  This is one
+   * of the first calls to reference the user so call the Identity::instance to load the
+   * driver classes.
+   */
+  static function load_user() {
+    $session = Session::instance();
+    if (!($user = $session->get("user"))) {
+      $session->set("user", $user = self::guest());
+    }
+
+    // The installer cannot set a user into the session, so it just sets an id which we should
+    // upconvert into a user.
+    // @todo set the user name into the session instead of 2 and then use it to get the user object
+    if ($user === 2) {
+      $user = self::lookup_user_by_name("admin");
+      self::login($user);
+      $session->set("user", $user);
+    }
+
+    if (!$session->get("group_ids")) {
+      $ids = array();
+      foreach ($user->groups as $group) {
+        $ids[] = $group->id;
+      }
+      $session->set("group_ids", $ids);
+    }
+  }
+
+  /**
+   * Log in as a given user.
+   * @param object $user the user object.
+   */
+  static function login($user) {
+    // @todo make this an interface call
+    $user->login_count += 1;
+    $user->last_login = time();
+    $user->save();
+
+    self::set_active($user);
+    module::event("user_login", $user);
+  }
+
+  /**
+   * Log out the active user and destroy the session.
+   * @param object $user the user object.
+   */
+  static function logout() {
+    $user = self::active();
+    if (!$user->guest) {
+      try {
+        Session::instance()->destroy();
+      } catch (Exception $e) {
+        Kohana::log("error", $e);
+      }
+      module::event("user_logout", $user);
+    }
   }
 } // End Identity

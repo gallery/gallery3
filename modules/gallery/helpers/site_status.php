@@ -95,7 +95,7 @@ class site_status_Core {
    * @return html text
    */
   static function get() {
-    if (!user::active()->admin) {
+    if (!Identity::active()->admin) {
       return;
     }
     $buf = array();

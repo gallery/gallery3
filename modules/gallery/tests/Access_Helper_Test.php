@@ -33,7 +33,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     } catch (Exception $e) { }
 
     try {
-      $user = user::lookup_by_name("access_test");
+      $user = Identity::lookup_user_by_name("access_test");
       if ($user->loaded) {
         $user->delete();
       }
@@ -41,16 +41,16 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     // Reset some permissions that we mangle below
     $root = ORM::factory("item", 1);
-    access::allow(group::everybody(), "view", $root);
+    access::allow(Identity::everybody(), "view", $root);
   }
 
   public function setup() {
-    user::set_active(user::guest());
+    Identity::set_active(Identity::guest());
   }
 
   public function groups_and_permissions_are_bound_to_columns_test() {
     access::register_permission("access_test", "Access Test");
-    $group = group::create("access_test");
+    $group = Identity::create_group("access_test");
 
     // We have a new column for this perm / group combo
     $fields = Database::instance()->list_fields("access_caches");
@@ -65,17 +65,17 @@ class Access_Helper_Test extends Unit_Test_Case {
   }
 
   public function user_can_access_test() {
-    $access_test = group::create("access_test");
+    $access_test = Identity::create_group("access_test");
 
     $root = ORM::factory("item", 1);
     access::allow($access_test, "view", $root);
 
     $item = album::create($root,  rand(), "test album");
 
-    access::deny(group::everybody(), "view", $item);
-    access::deny(group::registered_users(), "view", $item);
+    access::deny(Identity::everybody(), "view", $item);
+    access::deny(Identity::registered_users(), "view", $item);
 
-    $user = user::create("access_test", "Access Test", "");
+    $user = Identity::create_user("access_test", "Access Test", "");
     foreach ($user->groups as $group) {
       $user->remove($group);
     }
@@ -89,10 +89,10 @@ class Access_Helper_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $item = album::create($root,  rand(), "test album");
 
-    access::deny(group::everybody(), "view", $item);
-    access::deny(group::registered_users(), "view", $item);
+    access::deny(Identity::everybody(), "view", $item);
+    access::deny(Identity::registered_users(), "view", $item);
 
-    $user = user::create("access_test", "Access Test", "");
+    $user = Identity::create_user("access_test", "Access Test", "");
     foreach ($user->groups as $group) {
       $user->remove($group);
     }
@@ -121,14 +121,14 @@ class Access_Helper_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
 
     $album = album::create($root, rand(), "test album");
-    access::allow(group::everybody(), "view", $album);
+    access::allow(Identity::everybody(), "view", $album);
 
     $photo = ORM::factory("item");
     $photo->type = "photo";
     $photo->add_to_parent($album);
     access::add_item($photo);
 
-    $this->assert_true($photo->__get("view_" . group::everybody()->id));
+    $this->assert_true($photo->__get("view_" . Identity::everybody()->id));
   }
 
   public function can_allow_deny_and_reset_intent_test() {
@@ -137,23 +137,23 @@ class Access_Helper_Test extends Unit_Test_Case {
     $intent = ORM::factory("access_intent")->where("item_id", $album)->find();
 
     // Allow
-    access::allow(group::everybody(), "view", $album);
+    access::allow(Identity::everybody(), "view", $album);
     $this->assert_same(access::ALLOW, $intent->reload()->view_1);
 
     // Deny
-    access::deny(group::everybody(), "view", $album);
+    access::deny(Identity::everybody(), "view", $album);
     $this->assert_same(
       access::DENY,
       ORM::factory("access_intent")->where("item_id", $album)->find()->view_1);
 
     // Allow again.  If the initial value was allow, then the first Allow clause above may not
     // have actually changed any values.
-    access::allow(group::everybody(), "view", $album);
+    access::allow(Identity::everybody(), "view", $album);
     $this->assert_same(
       access::ALLOW,
       ORM::factory("access_intent")->where("item_id", $album)->find()->view_1);
 
-    access::reset(group::everybody(), "view", $album);
+    access::reset(Identity::everybody(), "view", $album);
     $this->assert_same(
       null,
       ORM::factory("access_intent")->where("item_id", $album)->find()->view_1);
@@ -161,7 +161,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function cant_reset_root_item_test() {
     try {
-      access::reset(group::everybody(), "view", ORM::factory("item", 1));
+      access::reset(Identity::everybody(), "view", ORM::factory("item", 1));
     } catch (Exception $e) {
       return;
     }
@@ -170,17 +170,17 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function can_view_item_test() {
     $root = ORM::factory("item", 1);
-    access::allow(group::everybody(), "view", $root);
-    $this->assert_true(access::group_can(group::everybody(), "view", $root));
+    access::allow(Identity::everybody(), "view", $root);
+    $this->assert_true(access::group_can(Identity::everybody(), "view", $root));
   }
 
   public function can_always_fails_on_unloaded_items_test() {
     $root = ORM::factory("item", 1);
-    access::allow(group::everybody(), "view", $root);
-    $this->assert_true(access::group_can(group::everybody(), "view", $root));
+    access::allow(Identity::everybody(), "view", $root);
+    $this->assert_true(access::group_can(Identity::everybody(), "view", $root));
 
     $bogus = ORM::factory("item", -1);
-    $this->assert_false(access::group_can(group::everybody(), "view", $bogus));
+    $this->assert_false(access::group_can(Identity::everybody(), "view", $bogus));
   }
 
   public function cant_view_child_of_hidden_parent_test() {
@@ -188,21 +188,21 @@ class Access_Helper_Test extends Unit_Test_Case {
     $album = album::create($root, rand(), "test album");
 
     $root->reload();
-    access::deny(group::everybody(), "view", $root);
-    access::reset(group::everybody(), "view", $album);
+    access::deny(Identity::everybody(), "view", $root);
+    access::reset(Identity::everybody(), "view", $album);
 
     $album->reload();
-    $this->assert_false(access::group_can(group::everybody(), "view", $album));
+    $this->assert_false(access::group_can(Identity::everybody(), "view", $album));
   }
 
   public function view_permissions_propagate_down_test() {
     $root = ORM::factory("item", 1);
     $album = album::create($root, rand(), "test album");
 
-    access::allow(group::everybody(), "view", $root);
-    access::reset(group::everybody(), "view", $album);
+    access::allow(Identity::everybody(), "view", $root);
+    access::reset(Identity::everybody(), "view", $album);
     $album->reload();
-    $this->assert_true(access::group_can(group::everybody(), "view", $album));
+    $this->assert_true(access::group_can(Identity::everybody(), "view", $album));
   }
 
   public function can_toggle_view_permissions_propagate_down_test() {
@@ -217,18 +217,18 @@ class Access_Helper_Test extends Unit_Test_Case {
     $album3->reload();
     $album4->reload();
 
-    access::allow(group::everybody(), "view", $root);
-    access::deny(group::everybody(), "view", $album1);
-    access::reset(group::everybody(), "view", $album2);
-    access::reset(group::everybody(), "view", $album3);
-    access::reset(group::everybody(), "view", $album4);
+    access::allow(Identity::everybody(), "view", $root);
+    access::deny(Identity::everybody(), "view", $album1);
+    access::reset(Identity::everybody(), "view", $album2);
+    access::reset(Identity::everybody(), "view", $album3);
+    access::reset(Identity::everybody(), "view", $album4);
 
     $album4->reload();
-    $this->assert_false(access::group_can(group::everybody(), "view", $album4));
+    $this->assert_false(access::group_can(Identity::everybody(), "view", $album4));
 
-    access::allow(group::everybody(), "view", $album1);
+    access::allow(Identity::everybody(), "view", $album1);
     $album4->reload();
-    $this->assert_true(access::group_can(group::everybody(), "view", $album4));
+    $this->assert_true(access::group_can(Identity::everybody(), "view", $album4));
   }
 
   public function revoked_view_permissions_cant_be_allowed_lower_down_test() {
@@ -237,29 +237,29 @@ class Access_Helper_Test extends Unit_Test_Case {
     $album2 = album::create($album1, rand(), "test album");
 
     $root->reload();
-    access::deny(group::everybody(), "view", $root);
-    access::allow(group::everybody(), "view", $album2);
+    access::deny(Identity::everybody(), "view", $root);
+    access::allow(Identity::everybody(), "view", $album2);
 
     $album1->reload();
-    $this->assert_false(access::group_can(group::everybody(), "view", $album1));
+    $this->assert_false(access::group_can(Identity::everybody(), "view", $album1));
 
     $album2->reload();
-    $this->assert_false(access::group_can(group::everybody(), "view", $album2));
+    $this->assert_false(access::group_can(Identity::everybody(), "view", $album2));
   }
 
   public function can_edit_item_test() {
     $root = ORM::factory("item", 1);
-    access::allow(group::everybody(), "edit", $root);
-    $this->assert_true(access::group_can(group::everybody(), "edit", $root));
+    access::allow(Identity::everybody(), "edit", $root);
+    $this->assert_true(access::group_can(Identity::everybody(), "edit", $root));
   }
 
   public function non_view_permissions_propagate_down_test() {
     $root = ORM::factory("item", 1);
     $album = album::create($root, rand(), "test album");
 
-    access::allow(group::everybody(), "edit", $root);
-    access::reset(group::everybody(), "edit", $album);
-    $this->assert_true(access::group_can(group::everybody(), "edit", $album));
+    access::allow(Identity::everybody(), "edit", $root);
+    access::reset(Identity::everybody(), "edit", $album);
+    $this->assert_true(access::group_can(Identity::everybody(), "edit", $album));
   }
 
   public function non_view_permissions_can_be_revoked_lower_down_test() {
@@ -279,36 +279,36 @@ class Access_Helper_Test extends Unit_Test_Case {
     $outer->reload();
     $inner->reload();
 
-    access::allow(group::everybody(), "edit", $root);
-    access::deny(group::everybody(), "edit", $outer);
-    access::allow(group::everybody(), "edit", $inner);
+    access::allow(Identity::everybody(), "edit", $root);
+    access::deny(Identity::everybody(), "edit", $outer);
+    access::allow(Identity::everybody(), "edit", $inner);
 
     // Outer album is not editable, inner one is.
-    $this->assert_false(access::group_can(group::everybody(), "edit", $outer_photo));
-    $this->assert_true(access::group_can(group::everybody(), "edit", $inner_photo));
+    $this->assert_false(access::group_can(Identity::everybody(), "edit", $outer_photo));
+    $this->assert_true(access::group_can(Identity::everybody(), "edit", $inner_photo));
   }
 
   public function i_can_edit_test() {
     // Create a new user that belongs to no groups
-    $user = user::create("access_test", "Access Test", "");
+    $user = Identity::create_user("access_test", "Access Test", "");
     foreach ($user->groups as $group) {
       $user->remove($group);
     }
     $user->save();
-    user::set_active($user);
+    Identity::set_active($user);
 
     // This user can't edit anything
     $root = ORM::factory("item", 1);
     $this->assert_false(access::can("edit", $root));
 
     // Now add them to a group that has edit permission
-    $group = group::create("access_test");
+    $group = Identity::create_group("access_test");
     $group->add($user);
     $group->save();
     access::allow($group, "edit", $root);
 
-    $user = user::lookup($user->id);  // reload() does not flush related columns
-    user::set_active($user);
+    $user = Identity::lookup_user($user->id);  // reload() does not flush related columns
+    Identity::set_active($user);
 
     // And verify that the user can edit.
     $this->assert_true(access::can("edit", $root));
@@ -320,16 +320,16 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
 
-    access::deny(group::everybody(), "view", $album);
+    access::deny(Identity::everybody(), "view", $album);
     $this->assert_true(file_exists($album->file_path() . "/.htaccess"));
 
-    access::allow(group::everybody(), "view", $album);
+    access::allow(Identity::everybody(), "view", $album);
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
 
-    access::deny(group::everybody(), "view", $album);
+    access::deny(Identity::everybody(), "view", $album);
     $this->assert_true(file_exists($album->file_path() . "/.htaccess"));
 
-    access::reset(group::everybody(), "view", $album);
+    access::reset(Identity::everybody(), "view", $album);
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
   }
 
@@ -341,44 +341,44 @@ class Access_Helper_Test extends Unit_Test_Case {
     $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
 
-    access::deny(group::everybody(), "view_full", $album);
+    access::deny(Identity::everybody(), "view_full", $album);
     $this->assert_true(file_exists($album->file_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
 
-    access::allow(group::everybody(), "view_full", $album);
+    access::allow(Identity::everybody(), "view_full", $album);
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
 
-    access::deny(group::everybody(), "view_full", $album);
+    access::deny(Identity::everybody(), "view_full", $album);
     $this->assert_true(file_exists($album->file_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
 
-    access::reset(group::everybody(), "view_full", $album);
+    access::reset(Identity::everybody(), "view_full", $album);
     $this->assert_false(file_exists($album->file_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->resize_path() . "/.htaccess"));
     $this->assert_false(file_exists($album->thumb_path() . "/.htaccess"));
   }
 
   public function moved_items_inherit_new_permissions_test() {
-    user::set_active(user::lookup_by_name("admin"));
+    Identity::set_active(Identity::lookup_user_by_name("admin"));
 
     $root = ORM::factory("item", 1);
     $public_album = album::create($root, rand(), "public album");
     $public_photo = photo::create($public_album, MODPATH . "gallery/images/gallery.png", "", "");
-    access::allow(group::everybody(), "view", $public_album);
+    access::allow(Identity::everybody(), "view", $public_album);
 
     $root->reload();  // Account for MPTT changes
 
     $private_album = album::create($root, rand(), "private album");
-    access::deny(group::everybody(), "view", $private_album);
+    access::deny(Identity::everybody(), "view", $private_album);
     $private_photo = photo::create($private_album, MODPATH . "gallery/images/gallery.png", "", "");
 
     // Make sure that we now have a public photo and private photo.
-    $this->assert_true(access::group_can(group::everybody(), "view", $public_photo));
-    $this->assert_false(access::group_can(group::everybody(), "view", $private_photo));
+    $this->assert_true(access::group_can(Identity::everybody(), "view", $public_photo));
+    $this->assert_false(access::group_can(Identity::everybody(), "view", $private_photo));
 
     // Swap the photos
     item::move($public_photo, $private_album);
@@ -394,7 +394,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     $public_photo->reload();
 
     // Make sure that the public_photo is now private, and the private_photo is now public.
-    $this->assert_false(access::group_can(group::everybody(), "view", $public_photo));
-    $this->assert_true(access::group_can(group::everybody(), "view", $private_photo));
+    $this->assert_false(access::group_can(Identity::everybody(), "view", $public_photo));
+    $this->assert_true(access::group_can(Identity::everybody(), "view", $private_photo));
   }
 }

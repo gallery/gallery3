@@ -37,13 +37,13 @@ class Theme_View_Core extends Gallery_View {
     parent::__construct($name);
 
     $this->theme_name = module::get_var("gallery", "active_site_theme");
-    if (user::active()->admin) {
+    if (Identity::active()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
     $this->item = null;
     $this->tag = null;
     $this->set_global("theme", $this);
-    $this->set_global("user", user::active());
+    $this->set_global("user", Identity::active());
     $this->set_global("page_type", $page_type);
     $this->set_global("page_title", null);
     if ($page_type == "album") {
@@ -158,7 +158,7 @@ class Theme_View_Core extends Gallery_View {
    */
   public function sidebar_blocks() {
     $sidebar = block_manager::get_html("site.sidebar", $this);
-    if (empty($sidebar) && user::active()->admin) {
+    if (empty($sidebar) && Identity::active()->admin) {
       $sidebar = new View("no_sidebar.html");
     }
     return $sidebar;

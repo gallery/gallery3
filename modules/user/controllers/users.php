@@ -21,7 +21,7 @@ class Users_Controller extends Controller {
   public function update($id) {
     $user = user::lookup($id);
 
-    if ($user->guest || $user->id != user::active()->id) {
+    if ($user->guest || $user->id != Identity::active()->id) {
       access::forbidden();
     }
 
@@ -59,7 +59,7 @@ class Users_Controller extends Controller {
 
   public function form_edit($id) {
     $user = user::lookup($id);
-    if ($user->guest || $user->id != user::active()->id) {
+    if ($user->guest || $user->id != Identity::active()->id) {
       access::forbidden();
     }
 

@@ -44,7 +44,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $_POST["direction"] = "ASC";
     $_POST["csrf"] = access::csrf_token();
     $_POST["_method"] = "put";
-    access::allow(group::everybody(), "edit", $root);
+    access::allow(Identity::everybody(), "edit", $root);
 
     ob_start();
     $controller->_update($this->_album);
@@ -68,7 +68,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
-    access::allow(group::everybody(), "edit", $root);
+    access::allow(Identity::everybody(), "edit", $root);
 
     try {
       $controller->_update($this->_album);

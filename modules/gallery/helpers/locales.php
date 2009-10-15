@@ -141,7 +141,7 @@ class locales_Core {
     $locale = self::cookie_locale();
     // 2. Check the user's preference
     if (!$locale) {
-      $locale = user::active()->locale;
+      $locale = Identity::active()->locale;
     }
     // 3. Check the browser's / OS' preference
     if (!$locale) {

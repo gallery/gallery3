@@ -20,7 +20,7 @@
 class notification {
   static function get_subscription($item_id, $user=null) {
     if (empty($user)) {
-      $user = user::active();
+      $user = Identity::active();
     }
 
     return ORM::factory("subscription")
@@ -31,7 +31,7 @@ class notification {
 
   static function is_watching($item, $user=null) {
     if (empty($user)) {
-      $user = user::active();
+      $user = Identity::active();
     }
 
     return ORM::factory("subscription")
@@ -44,7 +44,7 @@ class notification {
   static function add_watch($item, $user=null) {
     if ($item->is_album()) {
       if (empty($user)) {
-        $user = user::active();
+        $user = Identity::active();
       }
       $subscription = ORM::factory("subscription");
       $subscription->item_id = $item->id;
@@ -56,7 +56,7 @@ class notification {
   static function remove_watch($item, $user=null) {
     if ($item->is_album()) {
       if (empty($user)) {
-        $user = user::active();
+        $user = Identity::active();
       }
 
       $subscription = ORM::factory("subscription")
@@ -79,7 +79,7 @@ class notification {
       $subscriber_ids[] = $subscriber->user_id;
     }
 
-    $users = user::get_user_list(array("in" => array("id", $subscriber_ids),
+    $users = Identity::get_user_list(array("in" => array("id", $subscriber_ids),
                                        "where" => array("email IS NOT" => null)));
 
     $subscribers = array();

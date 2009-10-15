@@ -65,7 +65,7 @@ class Admin_Users_Controller extends Admin_Controller {
   public function delete_user($id) {
     access::verify_csrf();
 
-    if ($id == user::active()->id || $id == user::guest()->id) {
+    if ($id == Identity::active()->id || $id == user::guest()->id) {
       access::forbidden();
     }
 
@@ -132,7 +132,7 @@ class Admin_Users_Controller extends Admin_Controller {
       }
 
       // An admin can change the admin status for any user but themselves
-      if ($user->id != user::active()->id) {
+      if ($user->id != Identity::active()->id) {
         $user->admin = $form->edit_user->admin->checked;
       }
       $user->save();
@@ -154,7 +154,7 @@ class Admin_Users_Controller extends Admin_Controller {
 
     $form = $this->_get_user_edit_form_admin($user);
     // Don't allow the user to control their own admin bit, else you can lock yourself out
-    if ($user->id == user::active()->id) {
+    if ($user->id == Identity::active()->id) {
       $form->edit_user->admin->disabled(1);
     }
     print $form;
