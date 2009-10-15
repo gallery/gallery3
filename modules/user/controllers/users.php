@@ -25,7 +25,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    $form = user::get_edit_form($user);
+    $form = $this->_get_edit_form($user);
     $valid = $form->validate();
     if ($valid) {
       $user->full_name = $form->edit_user->full_name->value;
@@ -63,6 +63,41 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    print user::get_edit_form($user);
+    print $this->_get_edit_form($user);
+  }
+
+  private function _get_edit_form($user) {
+    $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
+    $form->set_attr("class", "g-narrow");
+    $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
+    $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
+    self::_add_locale_dropdown($group, $user);
+    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
+      ->matches($group->password);
+    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
+    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
+    $form->add_rules_from($user);
+
+    module::event("user_edit_form", $user, $form);
+    $group->submit("")->value(t("Save"));
+    return $form;
+  }
+
+  /** @todo combine with Admin_Users_Controller::_add_locale_dropdown */
+  private function _add_locale_dropdown(&$form, $user=null) {
+    $locales = locales::installed();
+    foreach ($locales as $locale => $display_name) {
+      $locales[$locale] = SafeString::of_safe_html($display_name);
+    }
+    if (count($locales) > 1) {
+      // Put "none" at the first position in the array
+      $locales = array_merge(array("" => t("« none »")), $locales);
+      $selected_locale = ($user && $user->locale) ? $user->locale : "";
+      $form->dropdown("locale")
+        ->label(t("Language Preference"))
+        ->options($locales)
+        ->selected($selected_locale);
+    }
   }
 }

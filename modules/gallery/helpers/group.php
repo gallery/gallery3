@@ -117,37 +117,4 @@ class group_Core {
     }
     return $group->find_all();
   }
-
-  static function get_edit_form_admin($group) {
-    $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "g-edit-group-form"));
-    $form_group = $form->group("edit_group")->label(t("Edit Group"));
-    $form_group->input("name")->label(t("Name"))->id("g-name")->value($group->name);
-    $form_group->inputs["name"]->error_messages(
-      "in_use", t("There is already a group with that name"));
-    $form_group->submit("")->value(t("Save"));
-    $form->add_rules_from($group);
-    return $form;
-  }
-
-  static function get_add_form_admin() {
-    $form = new Forge("admin/users/add_group", "", "post", array("id" => "g-add-group-form"));
-    $form->set_attr('class', "g-narrow");
-    $form_group = $form->group("add_group")->label(t("Add Group"));
-    $form_group->input("name")->label(t("Name"))->id("g-name");
-    $form_group->inputs["name"]->error_messages(
-      "in_use", t("There is already a group with that name"));
-    $form_group->submit("")->value(t("Add Group"));
-    $group = ORM::factory("group");
-    $form->add_rules_from($group);
-    return $form;
-  }
-
-  static function get_delete_form_admin($group) {
-    $form = new Forge("admin/users/delete_group/$group->id", "", "post",
-                      array("id" => "g-delete-group-form"));
-    $form_group = $form->group("delete_group")->label(
-      t("Are you sure you want to delete group %group_name?", array("group_name" => $group->name)));
-    $form_group->submit("")->value(t("Delete"));
-    return $form;
-  }
 }

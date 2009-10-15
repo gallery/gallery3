@@ -29,7 +29,7 @@ class Admin_Users_Controller extends Admin_Controller {
   public function add_user() {
     access::verify_csrf();
 
-    $form = user::get_add_form_admin();
+    $form = $this->_get_user_add_form_admin();
     $valid = $form->validate();
     $name = $form->add_user->inputs["name"]->value;
     if ($user = user::lookup_by_name($name)) {
@@ -59,7 +59,7 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function add_user_form() {
-    print user::get_add_form_admin();
+    print $this->_get_user_add_form_admin();
   }
 
   public function delete_user($id) {
@@ -74,7 +74,7 @@ class Admin_Users_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    $form = user::get_delete_form_admin($user);
+    $form = $this->_get_user_delete_form_admin($user);
     if($form->validate()) {
       $name = $user->name;
       $user->delete();
@@ -94,7 +94,7 @@ class Admin_Users_Controller extends Admin_Controller {
     if (empty($user)) {
       kohana::show_404();
     }
-    print user::get_delete_form_admin($user);
+    print $this->_get_user_delete_form_admin($user);
   }
 
   public function edit_user($id) {
@@ -105,7 +105,7 @@ class Admin_Users_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    $form = user::get_edit_form_admin($user);
+    $form = $this->_get_user_edit_form_admin($user);
     $valid = $form->validate();
     if ($valid) {
       $new_name = $form->edit_user->inputs["name"]->value;
@@ -152,7 +152,7 @@ class Admin_Users_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    $form = user::get_edit_form_admin($user);
+    $form = $this->_get_user_edit_form_admin($user);
     // Don't allow the user to control their own admin bit, else you can lock yourself out
     if ($user->id == user::active()->id) {
       $form->edit_user->admin->disabled(1);
@@ -185,7 +185,7 @@ class Admin_Users_Controller extends Admin_Controller {
   public function add_group() {
     access::verify_csrf();
 
-    $form = group::get_add_form_admin();
+    $form = $this->_get_group_add_form_admin();
     $valid = $form->validate();
     if ($valid) {
       $new_name = $form->add_group->inputs["name"]->value;
@@ -209,7 +209,7 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function add_group_form() {
-    print group::get_add_form_admin();
+    print $this->_get_group_add_form_admin();
   }
 
   public function delete_group($id) {
@@ -220,7 +220,7 @@ class Admin_Users_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    $form = group::get_delete_form_admin($group);
+    $form = $this->_get_group_delete_form_admin($group);
     if ($form->validate()) {
       $name = $group->name;
       $group->delete();
@@ -241,7 +241,7 @@ class Admin_Users_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    print group::get_delete_form_admin($group);
+    print $this->_get_group_delete_form_admin($group);
   }
 
   public function edit_group($id) {
@@ -252,7 +252,7 @@ class Admin_Users_Controller extends Admin_Controller {
        kohana::show_404();
     }
 
-    $form = group::get_edit_form_admin($group);
+    $form = $this->_get_group_edit_form_admin($group);
     $valid = $form->validate();
 
     if ($valid) {
@@ -284,7 +284,111 @@ class Admin_Users_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    print group::get_edit_form_admin($group);
+    print $this->_get_group_edit_form_admin($group);
   }
 
+  /* User Form Definitions */
+  static function _get_user_edit_form_admin($user) {
+    $form = new Forge(
+      "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
+    $group = $form->group("edit_user")->label(t("Edit User"));
+    $group->input("name")->label(t("Username"))->id("g-username")->value($user->name);
+    $group->inputs["name"]->error_messages(
+      "in_use", t("There is already a user with that username"));
+    $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
+    self::_add_locale_dropdown($group, $user);
+    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
+      ->matches($group->password);
+    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
+    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
+    $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
+    $form->add_rules_from($user);
+    $form->edit_user->password->rules("-required");
+
+    module::event("user_edit_form_admin", $user, $form);
+    $group->submit("")->value(t("Modify User"));
+    return $form;
+  }
+
+  static function _get_user_add_form_admin() {
+    $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
+    $form->set_attr('class', "g-narrow");
+    $group = $form->group("add_user")->label(t("Add User"));
+    $group->input("name")->label(t("Username"))->id("g-username")
+      ->error_messages("in_use", t("There is already a user with that username"));
+    $group->input("full_name")->label(t("Full Name"))->id("g-fullname");
+    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
+      ->matches($group->password);
+    $group->input("email")->label(t("Email"))->id("g-email");
+    $group->input("url")->label(t("URL"))->id("g-url");
+    self::_add_locale_dropdown($group);
+    $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
+    $user = ORM::factory("user");
+    $form->add_rules_from($user);
+
+    module::event("user_add_form_admin", $user, $form);
+    $group->submit("")->value(t("Add User"));
+    return $form;
+  }
+
+  private function _add_locale_dropdown(&$form, $user=null) {
+    $locales = locales::installed();
+    foreach ($locales as $locale => $display_name) {
+      $locales[$locale] = SafeString::of_safe_html($display_name);
+    }
+    if (count($locales) > 1) {
+      // Put "none" at the first position in the array
+      $locales = array_merge(array("" => t("« none »")), $locales);
+      $selected_locale = ($user && $user->locale) ? $user->locale : "";
+      $form->dropdown("locale")
+        ->label(t("Language Preference"))
+        ->options($locales)
+        ->selected($selected_locale);
+    }
+  }
+
+  private function _get_user_delete_form_admin($user) {
+    $form = new Forge("admin/users/delete_user/$user->id", "", "post",
+                      array("id" => "g-delete-user-form"));
+    $group = $form->group("delete_user")->label(
+      t("Are you sure you want to delete user %name?", array("name" => $user->name)));
+    $group->submit("")->value(t("Delete user %name", array("name" => $user->name)));
+    return $form;
+  }
+
+  /* Group Form Definitions */
+  private function _get_group_edit_form_admin($group) {
+    $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "g-edit-group-form"));
+    $form_group = $form->group("edit_group")->label(t("Edit Group"));
+    $form_group->input("name")->label(t("Name"))->id("g-name")->value($group->name);
+    $form_group->inputs["name"]->error_messages(
+      "in_use", t("There is already a group with that name"));
+    $form_group->submit("")->value(t("Save"));
+    $form->add_rules_from($group);
+    return $form;
+  }
+
+  private function _get_group_add_form_admin() {
+    $form = new Forge("admin/users/add_group", "", "post", array("id" => "g-add-group-form"));
+    $form->set_attr('class', "g-narrow");
+    $form_group = $form->group("add_group")->label(t("Add Group"));
+    $form_group->input("name")->label(t("Name"))->id("g-name");
+    $form_group->inputs["name"]->error_messages(
+      "in_use", t("There is already a group with that name"));
+    $form_group->submit("")->value(t("Add Group"));
+    $group = ORM::factory("group");
+    $form->add_rules_from($group);
+    return $form;
+  }
+
+  private function _get_group_delete_form_admin($group) {
+    $form = new Forge("admin/users/delete_group/$group->id", "", "post",
+                      array("id" => "g-delete-group-form"));
+    $form_group = $form->group("delete_group")->label(
+      t("Are you sure you want to delete group %group_name?", array("group_name" => $group->name)));
+    $form_group->submit("")->value(t("Delete"));
+    return $form;
+  }
 }
