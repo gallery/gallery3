@@ -310,4 +310,18 @@ class user_Core {
   static function get_edit_rules() {
     return Identity::instance()->get_edit_rules("user");
   }
+
+  private static function _lookup_user_by_field($field_name, $value) {
+    try {
+      $user = model_cache::get("user", $value, $field_name);
+      if ($user->loaded) {
+        return $user;
+      }
+    } catch (Exception $e) {
+      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
+       throw $e;
+      }
+    }
+    return null;
+  }
 }
