@@ -25,28 +25,14 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @see Identity_Driver::guest.
    */
   public function guest() {
-    return new Gallery_User(model_cache::get("user", 1));
+    return new Gallery_User(user::guest());
   }
 
   /**
    * @see Identity_Driver::create_user.
    */
   public function create_user($name, $full_name, $password) {
-    $user = ORM::factory("user")->where("name", $name)->find();
-    if ($user->loaded) {
-      throw new Exception("@todo USER_ALREADY_EXISTS $name");
-    }
-
-    $user->name = $name;
-    $user->full_name = $full_name;
-    $user->password = $password;
-
-    // Required groups
-    $user->add($this->everybody()->_uncloaked());
-    $user->add($this->registered_users()->_uncloaked());
-
-    $user->save();
-    return new Gallery_User($user);
+    return new Gallery_User(user::create($name, $full_name, $password));
   }
 
   /**
@@ -84,126 +70,58 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @see Identity_Driver::hash_password.
    */
   public function hash_password($password) {
-    require_once(MODPATH . "user/lib/PasswordHash.php");
-    $hashGenerator = new PasswordHash(10, true);
-    return $hashGenerator->HashPassword($password);
+    return user::hash_password($password);
   }
 
   /**
    * @see Identity_Driver::lookup_user_by_field.
    */
   public function lookup_user_by_field($field_name, $value) {
-    try {
-      $user = model_cache::get("user", $value, $field_name);
-      if ($user->loaded) {
-        return new Gallery_User($user);
-      }
-    } catch (Exception $e) {
-      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
-       throw $e;
-      }
-    }
-    return null;
+    return new Gallery_User(user::lookup_by_field($field_name, $value));
   }
 
   /**
    * @see Identity_Driver::create_group.
    */
   public function create_group($name) {
-    $group = ORM::factory("group")->where("name", $name)->find();
-    if ($group->loaded) {
-      throw new Exception("@todo GROUP_ALREADY_EXISTS $name");
-    }
-
-    $group->name = $name;
-    $group->save();
-
-    return new Gallery_Group($group);
+    return new Gallery_Group(group::create($name));
   }
 
   /**
    * @see Identity_Driver::everybody.
    */
   public function everybody() {
-    return new Gallery_Group(model_cache::get("group", 1));
+    return new Gallery_Group(group::everybody());
   }
 
   /**
    * @see Identity_Driver::registered_users.
    */
   public function registered_users() {
-    return new Gallery_Group(model_cache::get("group", 2));
+    return new Gallery_Group(group::registered_users());
   }
 
   /**
    * @see Identity_Driver::lookup_group_by_field.
    */
   public function lookup_group_by_field($field_name, $value) {
-    try {
-      $group = model_cache::get("group", $value, $field_name);
-      if ($group->loaded) {
-        return new Gallery_Group($group);
-      }
-    } catch (Exception $e) {
-      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
-       throw $e;
-      }
-    }
-    return null;
+    return new Gallery_Group(group::lookup_by_field($field_name, $value));
   }
 
   /**
    * @see Identity_Driver::get_user_list.
    */
-  public function get_user_list($filter=array()) {
-    $results = $this->_do_search("user", $filter);
+  public function get_user_list($ids) {
+    $results = ORM::factory("user")
+      ->in("id", ids)
+      ->find_all()
+      ->as_array();;
     $users = array();
-    foreach ($results->as_array() as $user) {
+    foreach ($results as $user) {
       $users[] = new Gallery_User($user);
     }
     return $users;
   }
-
-  /**
-   * @see Identity_Driver::get_group_list.
-   */
-  public function get_group_list($filter=array()) {
-    $results = $this->_do_search("group", $filter);
-    $groups = array();
-    foreach ($results->as_array() as $group) {
-      $groups[] = new Gallery_Group($group);
-    }
-    return $groups;
-  }
-
-  /**
-   * @see Identity_Driver::get_edit_rules.
-   */
-  public function get_edit_rules($object_type) {
-    return (object)ORM::factory($object_type)->rules;
-  }
-
-  /**
-   * Build the query based on the supplied filters for the specified model.
-   * @param  string   $object_type to return rules for ("user"|"group")
-   * @param  mixed    $filters options to apply to the selection.
-   */
-  private function _do_search($object_type, $filter) {
-    $object = ORM::factory($object_type);
-
-    foreach ($filter as $method => $args) {
-      switch ($method) {
-      case "in":
-        $object->in($args[0], $args[1]);
-        break;
-      default:
-        $object->$method($args);
-      }
-    }
-
-    return $object->find_all();
-  }
-
 } // End Identity Gallery Driver
 
 /**
@@ -215,6 +133,20 @@ class Gallery_User extends User_Definition {
    */
   function __construct($user) {
     $this->user = $user;
+  }
+
+  /**
+   * @see User_Definition::avatar_url
+   */
+  public function avatar_url($size=80, $default=null) {
+    return $this->user->avatar_url($size, $default);
+  }
+
+  /**
+   * @see User_Definition::display_name
+   */
+  public function display_name() {
+    return $this->user->display_name();
   }
 
   public function save() {

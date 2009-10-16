@@ -51,6 +51,16 @@ class User_Model extends ORM {
     module::event("user_deleted", $old);
   }
 
+  /**
+   * Return a url to the user's avatar image.
+   * @param integer $size the target size of the image (default 80px)
+   * @return string a url
+   */
+  public function avatar_url($size=80, $default=null) {
+    return sprintf("http://www.gravatar.com/avatar/%s.jpg?s=%d&r=pg%s",
+                   md5($this->email), $size, $default ? "&d=" . urlencode($default) : "");
+  }
+
   public function save() {
     if (!$this->loaded) {
         $created = 1;
@@ -62,5 +72,14 @@ class User_Model extends ORM {
       module::event("user_updated", $this->original(), $this);
     }
     return $this;
+  }
+
+  /**
+   * Return the best version of the user's name.  Either their specified full name, or fall back
+   * to the user name.
+   * @return string
+   */
+  public function display_name() {
+    return empty($this->full_name) ? $this->name : $this->full_name;
   }
 }

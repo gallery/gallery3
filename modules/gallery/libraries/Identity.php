@@ -191,22 +191,8 @@ class Identity_Core {
   /**
    * @see Identity_Driver::get_user_list.
    */
-  static function get_user_list($filter=array()) {
-    return self::instance()->driver->get_user_list($filter);
-  }
-
-  /**
-   * @see Identity_Driver::get_group_list.
-   */
-  static function get_group_list($filter=array()) {
-    return self::instance()->driver->get_group_list($filter);
-  }
-
-  /**
-   * @see Identity_Driver::get_edit_rules.
-   */
-  static function get_edit_rules($object_type) {
-    return self::instance()->driver->get_edit_rules($object_type);
+  static function get_user_list($ids) {
+    return self::instance()->driver->get_user_list($ids);
   }
 
   static function get_login_form($url) {

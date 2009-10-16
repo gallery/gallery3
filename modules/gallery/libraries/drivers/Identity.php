@@ -83,37 +83,11 @@ interface Identity_Driver {
 
   /**
    * List the users
-   * @param mixed      options to apply to the selection of the user
-   *                   currently supported:
-   *                     "orderby" => array(<field name>, "ASC|DESC")
-   *                     "in" => array(<field name>, array(values, ...))
-   *                     "where" => array(<field name>, value)
-   *                        <field name> follows Kohana syntax where it could contain the first
-   *                                     half of a logical expression (i.e. "field IS NOT")
-   * @return array     the group list.
+   * @param array      array of ids to return the user objects for
+   * @return array     the user list.
    */
-  public function get_user_list($filter=array());
+  public function get_user_list($ids);
 
-  /**
-   * List the groups
-   * @param mixed      options to apply to the selection of the group
-   *                   currently supported:
-   *                     "orderby" => array(<field name>, "ASC|DESC")
-   *                     "in" => array(<field name>, array(values, ...))
-   *                     "where" => array(<field name>, value)
-   *                        <field name> follows Kohana syntax where it could contain the first
-   *                                     half of a logical expression (i.e. "field IS NOT")
-   * @return array     the group list.
-   */
-  public function get_group_list($filter=array());
-
-  /**
-   * Return the edit rules associated with an group.
-   *
-   * @param  string   $object_type to return rules for ("user"|"group")
-   * @return stdClass containing the rules
-   */
-  public function get_edit_rules($object_type);
 } // End Identity Driver Definition
 
 /**
@@ -205,19 +179,14 @@ abstract class User_Definition {
    * @param integer $size the target size of the image (default 80px)
    * @return string a url
    */
-  public function avatar_url($size=80, $default=null) {
-    return sprintf("http://www.gravatar.com/avatar/%s.jpg?s=%d&r=pg%s",
-                   md5($this->user->email), $size, $default ? "&d=" . urlencode($default) : "");
-  }
+  abstract public function avatar_url($size=80, $default=null);
 
   /**
    * Return the best version of the user's name.  Either their specified full name, or fall back
    * to the user name.
    * @return string
    */
-  public function display_name() {
-    return empty($this->user->full_name) ? $this->user->name : $this->user->full_name;
-  }
+  abstract public function display_name();
 
   /**
    * Return the internal user object without the wrapper.

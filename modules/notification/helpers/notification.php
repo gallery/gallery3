@@ -67,8 +67,7 @@ class notification {
   }
 
   static function get_subscribers($item) {
-    // @todo only return distinct email addresses
-    $subscriber_ids = array();
+   $subscriber_ids = array();
     foreach (ORM::factory("subscription")
              ->select("user_id")
              ->join("items", "subscriptions.item_id", "items.id")
@@ -79,12 +78,11 @@ class notification {
       $subscriber_ids[] = $subscriber->user_id;
     }
 
-    $users = Identity::get_user_list(array("in" => array("id", $subscriber_ids),
-                                       "where" => array("email IS NOT" => null)));
+    $users = Identity::get_user_list($subscriber_ids);
 
     $subscribers = array();
     foreach ($users as $user) {
-      if (access::user_can($user, "view", $item)) {
+      if (access::user_can($user, "view", $item) && !empty($user->email)) {
         $subscribers[$user->email] = 1;
       }
     }

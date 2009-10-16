@@ -76,7 +76,7 @@ class photo_Core {
     $photo->title = $title;
     $photo->description = $description;
     $photo->name = $name;
-    $photo->owner_id = $owner_id ? $owner_id : Identity::active();
+    $photo->owner_id = $owner_id ? $owner_id : Identity::active()->id;
     $photo->width = $image_info[0];
     $photo->height = $image_info[1];
     $photo->mime_type = empty($image_info['mime']) ? "application/unknown" : $image_info['mime'];

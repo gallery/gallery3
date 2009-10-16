@@ -21,8 +21,12 @@ class Admin_Users_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_users.html");
-    $view->content->users = user::get_user_list(array("orderby" => array("name" => "ASC")));
-    $view->content->groups = group::get_group_list(array("orderby" => array("name" => "ASC")));
+    $view->content->users = ORM::factory("user")
+      ->orderby("name", "ASC")
+      ->find_all();
+    $view->content->groups = ORM::factory("group")
+      ->orderby("name", "ASC")
+      ->find_all();
     print $view;
   }
 
@@ -303,7 +307,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
-    $form->add_rules_from(user::get_edit_rules());
+    $form->add_rules_from($user);
     $form->edit_user->password->rules("-required");
 
     module::event("user_edit_form_admin", $user, $form);
@@ -325,8 +329,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $group->input("url")->label(t("URL"))->id("g-url");
     self::_add_locale_dropdown($group);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
-    $user = ORM::factory("user");
-    $form->add_rules_from(user::get_edit_rules());
+    $form->add_rules_from(ORM::factory("user"));
 
     module::event("user_add_form_admin", $user, $form);
     $group->submit("")->value(t("Add User"));
@@ -366,7 +369,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
     $form_group->submit("")->value(t("Save"));
-    $form->add_rules_from(group::get_edit_rules());
+    $form->add_rules_from($group);
     return $form;
   }
 
@@ -378,8 +381,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
     $form_group->submit("")->value(t("Add Group"));
-    $group = ORM::factory("group");
-    $form->add_rules_from(group::get_edit_rules());
+    $form->add_rules_from(ORM::factory("group"));
     return $form;
   }
 

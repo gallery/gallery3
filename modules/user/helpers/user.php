@@ -28,28 +28,37 @@ class user_Core {
    * @see Identity_Driver::guest.
    */
   static function guest() {
-    return Identity::guest();
+    return model_cache::get("user", 1);
   }
 
   /**
    * @see Identity_Driver::create_user.
    */
   static function create($name, $full_name, $password) {
-    return Identity::create_user($name, $full_name, $password);
-  }
+    $user = ORM::factory("user")->where("name", $name)->find();
+    if ($user->loaded) {
+      throw new Exception("@todo USER_ALREADY_EXISTS $name");
+    }
 
-  /**
-   * @see Identity_Driver::is_correct_password.
-   */
-  static function is_correct_password($user, $password) {
-    return Identity::is_correct_password($user, $password);
+    $user->name = $name;
+    $user->full_name = $full_name;
+    $user->password = $password;
+
+    // Required groups
+    $user->add(group::everybody());
+    $user->add(group::registered_users());
+
+    $user->save();
+    return $user;
   }
 
   /**
    * @see Identity_Driver::hash_password.
    */
   static function hash_password($password) {
-    return Identity::hash_password($password);
+    require_once(MODPATH . "user/lib/PasswordHash.php");
+    $hashGenerator = new PasswordHash(10, true);
+    return $hashGenerator->HashPassword($password);
   }
 
   /**
@@ -58,7 +67,7 @@ class user_Core {
    * @return User_Definition  the user object, or null if the id was invalid.
    */
   static function lookup($id) {
-    return self::_lookup_user_by_field("id", $id);
+    return self::lookup_by_field("id", $id);
   }
 
   /**
@@ -67,33 +76,10 @@ class user_Core {
    * @return User_Definition  the user object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    return self::_lookup_user_by_field("name", $name);
+    return self::lookup_by_field("name", $name);
   }
 
-  /**
-   * Look up a user by hash.
-   * @param string       $name the user name
-   * @return User_Definition  the user object, or null if the name was invalid.
-   */
-  static function lookup_by_hash($hash) {
-    return self::_lookup_user_by_field("hash", $hash);
-  }
-
-  /**
-   * @see Identity_Driver::get_user_list.
-   */
-  static function get_user_list($filter=array()) {
-    return Identity::get_user_list($filter);
-  }
-
-  /**
-   * @see Identity_Driver::get_edit_rules.
-   */
-  static function get_edit_rules() {
-    return Identity::get_edit_rules("user");
-  }
-
-  private static function _lookup_user_by_field($field_name, $value) {
+  static function lookup_by_field($field_name, $value) {
     try {
       $user = model_cache::get("user", $value, $field_name);
       if ($user->loaded) {

@@ -28,7 +28,14 @@ class group_Core {
    * @see Identity_Driver::create.
    */
   static function create($name) {
-    return Identity::instance()->create_group($name);
+    $group = ORM::factory("group")->where("name", $name)->find();
+    if ($group->loaded) {
+      throw new Exception("@todo GROUP_ALREADY_EXISTS $name");
+    }
+
+    $group->name = $name;
+    $group->save();
+    return $group;
   }
 
   /**
@@ -51,7 +58,7 @@ class group_Core {
    * @return Group_Definition  the group object, or null if the id was invalid.
    */
   static function lookup($id) {
-    return Identity::instance()->lookup_group_by_field("id", $id);
+    return self::lookup_by_field("id", $id);
   }
 
   /**
@@ -60,20 +67,23 @@ class group_Core {
    * @return Group_Definition  the group object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    return Identity::instance()->lookup_group_by_field("name", $name);
+    return self::lookup_by_field("name", $name);
   }
 
   /**
    * @see Identity_Driver::get_group_list.
    */
-  static function get_group_list($filter=array()) {
-    return Identity::instance()->get_group_list($filter);
-  }
-
-  /**
-   * @see Identity_Driver::get_edit_rules.
-   */
-  static function get_edit_rules() {
-    return Identity::instance()->get_edit_rules("group");
+  static function lookup_by_field($field_name, $value) {
+    try {
+      $user = model_cache::get("group", $value, $field_name);
+      if ($user->loaded) {
+        return $user;
+      }
+    } catch (Exception $e) {
+      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
+       throw $e;
+      }
+    }
+    return null;
   }
 }
