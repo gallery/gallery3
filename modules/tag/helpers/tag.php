@@ -98,7 +98,7 @@ class tag_Core {
   }
 
   static function get_add_form($item) {
-    $form = new Forge("tags", "", "post", array("id" => "g-add-tag-form"));
+    $form = new Forge("tags", "", "post", array("id" => "g-add-tag-form", "class" => "g-short-form"));
     $label = $item->is_album() ?
       t("Add tag to album") :
       ($item->is_photo() ? t("Add tag to photo") : t("Add tag to movie"));
