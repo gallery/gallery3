@@ -891,22 +891,22 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   cursor: pointer;
 }
 
-g-languages-form table {
+#g-languages-form table {
 	width: 400px;
 	float: left;
 	margin: 0 3em 1em 0;
 }
 
-g-languages-form .installed {
+#g-languages-form .installed {
   background-color: #EEEEEE;
 }
 
-g-languages-form .default {
+#g-languages-form .default {
 	background-color: #C5DBEC;
 	font-weight: bold;
 }
 
-g-languages-form input {
+#g-languages-form input {
 	clear: both;
 }
 
