@@ -27,7 +27,7 @@ class gallery_Core {
   static function maintenance_mode() {
     $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
 
-    if (Router::$controller != "login" && !empty($maintenance_mode) && !Identity::active()->admin) {
+    if (Router::$controller != "login" && !empty($maintenance_mode) && !Session::active_user()->admin) {
       Router::$controller = "maintenance";
       Router::$controller_path = MODPATH . "gallery/controllers/maintenance.php";
       Router::$method = "index";

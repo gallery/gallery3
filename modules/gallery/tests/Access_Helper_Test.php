@@ -45,7 +45,7 @@ class Access_Helper_Test extends Unit_Test_Case {
   }
 
   public function setup() {
-    Identity::set_active(Identity::guest());
+    Session::set_active_user(Identity::guest());
   }
 
   public function groups_and_permissions_are_bound_to_columns_test() {
@@ -295,7 +295,7 @@ class Access_Helper_Test extends Unit_Test_Case {
       $user->remove($group);
     }
     $user->save();
-    Identity::set_active($user);
+    Session::set_active_user($user);
 
     // This user can't edit anything
     $root = ORM::factory("item", 1);
@@ -308,7 +308,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     access::allow($group, "edit", $root);
 
     $user = Identity::lookup_user($user->id);  // reload() does not flush related columns
-    Identity::set_active($user);
+    Session::set_active_user($user);
 
     // And verify that the user can edit.
     $this->assert_true(access::can("edit", $root));
@@ -363,7 +363,7 @@ class Access_Helper_Test extends Unit_Test_Case {
   }
 
   public function moved_items_inherit_new_permissions_test() {
-    Identity::set_active(Identity::lookup_user_by_name("admin"));
+    Session::set_active_user(Identity::lookup_user_by_name("admin"));
 
     $root = ORM::factory("item", 1);
     $public_album = album::create($root, rand(), "public album");

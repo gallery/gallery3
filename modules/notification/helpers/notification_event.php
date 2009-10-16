@@ -95,7 +95,7 @@ class notification_event_Core {
   }
 
   static function site_menu($menu, $theme) {
-    if (!Identity::active()->guest) {
+    if (!Session::active_user()->guest) {
       $item = $theme->item();
 
       if ($item && $item->is_album() && access::can("view", $item)) {

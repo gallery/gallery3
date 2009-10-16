@@ -22,8 +22,8 @@ class search_Core {
     $db = Database::instance();
     $q = $db->escape_str($q);
 
-    if (!Identity::active()->admin) {
-      foreach (Identity::group_ids_for_active_user() as $id) {
+    if (!Session::active_user()->admin) {
+      foreach (Session::group_ids_for_active_user() as $id) {
         $fields[] = "`view_$id` = TRUE"; // access::ALLOW
       }
       $access_sql = "AND (" . join(" AND ", $fields) . ")";

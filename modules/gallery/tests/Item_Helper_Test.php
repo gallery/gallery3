@@ -23,7 +23,7 @@ class Item_Helper_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $album = album::create($root, rand(), rand(), rand());
     $item = self::_create_random_item($album);
-    Identity::set_active(Identity::guest());
+    Session::set_active_user(Identity::guest());
 
     // We can see the item when permissions are granted
     access::allow(Identity::everybody(), "view", $album);

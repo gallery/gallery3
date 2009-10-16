@@ -21,7 +21,7 @@ class Login_Controller extends Controller {
 
   public function ajax() {
     $view = new View("login_ajax.html");
-    $view->form = Identity::get_login_form("login/auth_ajax");
+    $view->form = login::get_login_form("login/auth_ajax");
     print $view;
   }
 
@@ -40,7 +40,7 @@ class Login_Controller extends Controller {
   }
 
   public function html() {
-    print Identity::get_login_form("login/auth_html");
+    print login::get_login_form("login/auth_html");
   }
 
   public function auth_html() {
@@ -54,7 +54,7 @@ class Login_Controller extends Controller {
     }
   }
   private function _auth($url) {
-    $form = Identity::get_login_form($url);
+    $form = login::get_login_form($url);
     $valid = $form->validate();
     if ($valid) {
       $user = Identity::lookup_user_by_name($form->login->inputs["name"]->value);
@@ -69,7 +69,12 @@ class Login_Controller extends Controller {
     }
 
     if ($valid) {
-      Identity::login($user);
+      if (Identity::is_writable()) {
+        $user->login_count += 1;
+        $user->last_login = time();
+        $user->save();
+      }
+      Session::set_active_user($user);
       log::info("user", t("User %name logged in", array("name" => $user->name)));
     }
 

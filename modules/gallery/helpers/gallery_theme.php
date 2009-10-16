@@ -54,7 +54,7 @@ class gallery_theme_Core {
   static function header_top($theme) {
     if ($theme->page_type != "login") {
       $view = new View("login.html");
-      $view->user = Identity::active();
+      $view->user = Session::active_user();
       return $view->render();
     }
   }

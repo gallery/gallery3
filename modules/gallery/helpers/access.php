@@ -79,7 +79,7 @@ class access_Core {
    * @return boolean
    */
   static function can($perm_name, $item) {
-    return self::user_can(Identity::active(), $perm_name, $item);
+    return self::user_can(Session::active_user(), $perm_name, $item);
   }
 
   /**

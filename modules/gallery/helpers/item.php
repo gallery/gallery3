@@ -158,8 +158,8 @@ class item_Core {
    */
   static function viewable($model) {
     $view_restrictions = array();
-    if (!Identity::active()->admin) {
-      foreach (Identity::group_ids_for_active_user() as $id) {
+    if (!Session::active_user()->admin) {
+      foreach (Session::group_ids_for_active_user() as $id) {
         // Separate the first restriction from the rest to make it easier for us to formulate
         // our where clause below
         if (empty($view_restrictions)) {

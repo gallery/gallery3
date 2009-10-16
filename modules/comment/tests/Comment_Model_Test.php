@@ -23,7 +23,7 @@ class Comment_Model_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $album = album::create($root, rand(), rand(), rand());
     $comment = comment::create($album, Identity::guest(), "text", "name", "email", "url");
-    Identity::set_active(Identity::guest());
+    Session::set_active_user(Identity::guest());
 
     // We can see the comment when permissions are granted on the album
     access::allow(Identity::everybody(), "view", $album);

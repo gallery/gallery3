@@ -19,12 +19,12 @@
  */
 class Welcome_Message_Controller extends Controller {
   public function index() {
-    if (!Identity::active()->admin) {
+    if (!Session::active_user()->admin) {
       url::redirect(item::root()->abs_url());
     }
 
     $v = new View("welcome_message.html");
-    $v->user = Identity::active();
+    $v->user = Session::active_user();
     print $v;
   }
 }

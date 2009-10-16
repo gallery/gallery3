@@ -17,27 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Logout_Controller extends Controller {
-  public function index() {
-    $user = Session::active_user();
-    if (!$user->guest) {
-      try {
-        Session::instance()->destroy();
-      } catch (Exception $e) {
-        Kohana::log("error", $e);
-      }
-      module::event("user_logout", $user);
-    }
-    log::info("user", t("User %name logged out", array("name" => $user->name)),
-              html::anchor("user/$user->id", html::clean($user->name)));
-    if ($continue_url = $this->input->get("continue")) {
-      $item = url::get_item_from_uri($continue_url);
-      if (access::can("view", $item)) {
-        // Don't use url::redirect() because it'll call url::site() and munge the continue url.
-        header("Location: $continue_url");
-      } else {
-        url::redirect(item::root()->abs_url());
-      }
-    }
+class login_Core {
+  static function get_login_form($url) {
+    $form = new Forge($url, "", "post", array("id" => "g-login-form"));
+    $form->set_attr('class', "g-narrow");
+    $group = $form->group("login")->label(t("Login"));
+    $group->input("name")->label(t("Username"))->id("g-username")->class(null);
+    $group->password("password")->label(t("Password"))->id("g-password")->class(null);
+    $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
+    $group->submit("")->value(t("Login"));
+    return $form;
   }
 }
