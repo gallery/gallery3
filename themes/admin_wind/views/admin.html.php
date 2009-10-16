@@ -50,7 +50,7 @@
         <a id="g-logo" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
           &larr; <?= t("back to the ...") ?>
         </a>
-        <div id="g-site-admin-menu" style="display: none;">
+        <div id="g-site-admin-menu" class="g-clearfix">
           <?= $theme->admin_menu() ?>
         </div>
         <?= $theme->admin_header_bottom() ?>

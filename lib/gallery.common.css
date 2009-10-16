@@ -315,14 +315,9 @@ form .g-error {
 
 /** *******************************************************************
  * 6) Browser hacks
- *    @todo Insert .g-clearfix in context of specific selectors 
- *          listed then delete them
  *********************************************************************/
 
-.g-clearfix:after,
-#g-site-admin-menu:after,
-#g-module-create-form ul li ul:after,
-#g-developer-tools:after {
+.g-clearfix:after {
   clear: both;
   content: ".";
   display: block;
