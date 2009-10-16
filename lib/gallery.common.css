@@ -62,7 +62,15 @@
 .g-info,
 .g-success,
 .g-warning {
-  padding: .4em .5em .4em 30px;
+  padding-left: 30px;
+}
+
+form li.g-error,
+form li.g-info,
+form li.g-success,
+form li.g-warning {
+  background-image: none;
+  padding: .3em .8em .3em 1em;
 }
 
 .g-error, 
@@ -212,6 +220,7 @@ form .g-error {
 
 #g-site-status li {
   border-bottom: 1px solid #ccc;
+  padding: .3em .3em .3em 30px;
 }
 
 .g-module-status {
@@ -290,6 +299,8 @@ form .g-error {
 
 #g-dialog fieldset {
   border: none;
+  padding: 0 !important;
+  width: 99%;
 }
 
 #g-dialog legend {

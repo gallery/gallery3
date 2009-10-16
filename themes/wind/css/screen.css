@@ -122,7 +122,7 @@ td {
 
 fieldset {
   border: 1px solid #ccc;
-  padding-bottom: .8em;
+  padding: .8em 1em !important;
 }
 
 #g-banner fieldset,
@@ -133,7 +133,7 @@ fieldset {
 
 legend {
   font-weight: bold;
-  margin-left: 1em;
+  margin-left: .8em;
 }
 
 #g-banner legend,
@@ -178,7 +178,7 @@ option:focus {
 
 form li {
   margin: 0 !important;
-  padding: .3em 1.5em .3em 1em;
+  padding: .3em 0;
 }
 
 form ul ul {
