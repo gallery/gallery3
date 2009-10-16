@@ -23,28 +23,14 @@ $(document).ready(function() {
   $("#g-login-link").addClass("g-dialog-link");
   $(".g-dialog-link").gallery_dialog();
 
-  // Initialize view menu
+  // Apply jQuery UI button css to submit inputs
+  $(".g-short-form input[type=text]").addClass("ui-corner-left");
+  $(".g-short-form input[type=submit]").addClass("ui-state-default ui-corner-right");
+  $("input[type=submit]:not(.g-short-form input)").addClass("ui-state-default ui-corner-all");
   if ($("#g-view-menu").length) {
     $("#g-view-menu ul").removeClass("g-menu").removeClass("sf-menu");
     $("#g-view-menu a").addClass("ui-icon");
   }
-
-  // Initialize short forms
-  var short_forms = new Array(
-    "#g-quick-search-form",
-    "#g-add-tag-form",
-    "#g-search-form"
-  );
-
-  for (var i in short_forms) {
-    short_form_init(short_forms[i]);
-    $(short_forms[i]).addClass("g-short-form");
-  }
-  $(".g-short-form input[type=text]").addClass("ui-corner-left");
-  $(".g-short-form input[type=submit]").addClass("ui-state-default ui-corner-right");
-
-  // Apply jQuery UI button css to submit inputs
-  $("input[type=submit]:not(.g-short-form input)").addClass("ui-state-default ui-corner-all");
 
   // Apply styles and icon classes to g-context-menu
   if ($(".g-context-menu").length) {
