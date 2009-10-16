@@ -1,20 +1,20 @@
 /**
- * Initialize jQuery UI and Gallery Plugin elements
+ * Initialize jQuery UI and Gallery Plugins
  */
 
 $(document).ready(function() {
 
-  // Initialize Superfish menus
-  $("ul.g-menu").addClass("sf-menu");
-  $('ul.sf-menu').superfish({
+  // Initialize Superfish menus (hidden, then shown to address IE issue)
+  $("#g-site-menu .g-menu").hide().addClass("sf-menu");
+  $("#g-site-menu .g-menu").superfish({
     delay: 500,
     animation: {
       opacity:'show',
       height:'show'
     },
+    pathClass: "g-selected",
     speed: 'fast'
-  });
-  $("#g-site-menu").css("display", "block");
+  }).show();
 
   // Initialize status message effects
   $("#g-action-status li").gallery_show_message();
@@ -23,7 +23,7 @@ $(document).ready(function() {
   $("#g-login-link").addClass("g-dialog-link");
   $(".g-dialog-link").gallery_dialog();
 
-  // Apply jQuery UI button css to submit inputs
+  // Apply jQuery UI icon, hover, and rounded corner styles
   $(".g-short-form input[type=text]").addClass("ui-corner-left");
   $(".g-short-form input[type=submit]").addClass("ui-state-default ui-corner-right");
   $("input[type=submit]:not(.g-short-form input)").addClass("ui-state-default ui-corner-all");
@@ -32,7 +32,7 @@ $(document).ready(function() {
     $("#g-view-menu a").addClass("ui-icon");
   }
 
-  // Apply styles and icon classes to g-context-menu
+  // Apply jQuery UI icon and hover styles to context menus
   if ($(".g-context-menu").length) {
     $(".g-context-menu li").addClass("ui-state-default");
     $(".g-context-menu a").addClass("g-button ui-icon-left");

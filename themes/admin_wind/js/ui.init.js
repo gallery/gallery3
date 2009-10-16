@@ -1,17 +1,20 @@
+/**
+ * Initialize jQuery UI and Gallery Plugins
+ */
+
 $(document).ready(function(){
+  
   // Initialize Superfish menus
-  $("#g-site-admin-menu ul.g-menu").addClass("sf-menu");
-  $("ul.g-menu").addClass("sf-menu");
-  $("ul.sf-menu").superfish({
+  $("#g-site-admin-menu .g-menu").hide().addClass("sf-menu");
+  $("#g-site-admin-menu .g-menu").superfish({
     delay: 500,
     animation: {
       opacity: "show",
       height: "show"
     },
-    pathClass: "current",
+    pathClass: "g-selected",
     speed: "fast"
-  });
-  $("#g-site-admin-menu").css("display", "block");
+  }).show();
 
   // Initialize status message effects
   $("#g-action-status li").gallery_show_message();
@@ -35,7 +38,7 @@ $(document).ready(function(){
 
   // Round view menu buttons
   if ($("#g-admin-comments-menu").length) {
-    $("#g-admin-comments-menu ul").removeClass("g-menu").removeClass("sf-menu");
+    $("#g-admin-comments-menu ul").removeClass("g-menu");
     $("#g-admin-comments-menu").addClass("g-buttonset");
     $("#g-admin-comments-menu a").addClass("g-button ui-state-default");
     $("#g-admin-comments-menu ul li:first a").addClass("ui-corner-left");
