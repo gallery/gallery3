@@ -4,7 +4,7 @@
   <li class="first">
     <a href="<?= url::site("login/ajax") ?>"
        title="<?= t("Login to Gallery")->for_html_attr() ?>"
-       id="g-login-link"><?= t("Login") ?></a>
+       id="g-login-link" class="g-dialog-link"><?= t("Login") ?></a>
   </li>
   <? else: ?>
   <li class="first">

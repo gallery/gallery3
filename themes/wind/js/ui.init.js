@@ -20,7 +20,6 @@ $(document).ready(function() {
   $("#g-action-status li").gallery_show_message();
 
   // Initialize dialogs
-  $("#g-login-link").addClass("g-dialog-link");
   $(".g-dialog-link").gallery_dialog();
 
   // Apply jQuery UI icon, hover, and rounded corner styles
