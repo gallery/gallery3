@@ -7,7 +7,6 @@
  *  3)  States and interactions
  *  4)  Positioning and order
  *  5)  Containers/widgets
- *  6)  Browser hacks
  */
 
 /** *******************************************************************
@@ -324,16 +323,4 @@ form .g-error {
 
 #g-dialog .g-cancel {
   margin: .4em 1em;
-}
-
-/** *******************************************************************
- * 6) Browser hacks
- *********************************************************************/
-
-.g-clearfix:after {
-  clear: both;
-  content: ".";
-  display: block;
-  height: 0;
-  visibility: hidden;
 }

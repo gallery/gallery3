@@ -38,7 +38,7 @@
   <h1> <?= t("Manage Comments") ?> </h1>
 
   <!-- @todo: Highlight active menu option -->
-  <div id="g-admin-comments-menu" class="g-clearfix">
+  <div id="g-admin-comments-menu" class="ui-helper-clearfix">
     <?= $menu ?>
   </div>
 

@@ -14,7 +14,7 @@
 
 <div id="g-site-theme">
   <h2> <?= t("Gallery theme") ?> </h2>
-  <div class="g-block g-selected g-clearfix">
+  <div class="g-block g-selected ui-helper-clearfix">
     <img src="<?= url::file("themes/{$site}/thumbnail.png") ?>"
          alt="<?= html::clean_attribute($themes[$site]->name) ?>" />
     <h3> <?= $themes[$site]->name ?> </h3>
@@ -29,7 +29,7 @@
     <? foreach ($themes as $id => $info): ?>
     <? if (!$info->site) continue ?>
     <? if ($id == $site) continue ?>
-    <div class="g-block g-clearfix">
+    <div class="g-block ui-helper-clearfix">
       <a href="<?= url::site("admin/themes/preview/site/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
         <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
              alt="<?= html::clean_attribute($info->name) ?>" />
@@ -52,7 +52,7 @@
 
 <div id="g-admin-theme">
   <h2> <?= t("Admin theme") ?> </h2>
-  <div class="g-block g-selected g-clearfix">
+  <div class="g-block g-selected ui-helper-clearfix">
     <img src="<?= url::file("themes/{$admin}/thumbnail.png") ?>"
          alt="<?= html::clean_attribute($themes[$admin]->name) ?>" />
     <h3> <?= $themes[$admin]->name ?> </h3>
@@ -67,7 +67,7 @@
     <? foreach ($themes as $id => $info): ?>
     <? if (!$info->admin) continue ?>
     <? if ($id == $admin) continue ?>
-    <div class="g-block g-clearfix">
+    <div class="g-block ui-helper-clearfix">
       <a href="<?= url::site("admin/themes/preview/admin/$id") ?>" class="g-dialog-link" title="<?= t("Theme Preview: %theme_name", array("theme_name" => $info->name))->for_html_attr() ?>">
         <img src="<?= url::file("themes/{$id}/thumbnail.png") ?>"
              alt="<?= html::clean_attribute($info->name) ?>" />

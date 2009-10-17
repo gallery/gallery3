@@ -2,7 +2,7 @@
  * Fix display in IE 6, 7
  */
 
-.g-clearfix {
+.ui-helper-clearfix {
   zoom: 1;
 }
 

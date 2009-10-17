@@ -15,7 +15,7 @@
 <div id="g-item">
   <?= $theme->photo_top() ?>
 
-  <ul class="g-pager g-clearfix">
+  <ul class="g-pager ui-helper-clearfix">
     <li>
       <? if ($previous_item): ?>
       <a href="<?= $previous_item->url() ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
