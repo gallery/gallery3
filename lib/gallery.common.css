@@ -283,7 +283,9 @@ form .g-error {
   width: 40%;
 }
 
-.g-list-horizontal {
+.g-inline * {
+  float: left;
+  margin-right: .4em;
 }
 
 /* Dialogs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

@@ -21,6 +21,7 @@ class tag_theme_Core {
   static function head($theme) {
     $theme->css("jquery.autocomplete.css");
     $theme->script("jquery.autocomplete.js");
+    $theme->css("tag.css");
     $theme->script("tag.js");
   }
 
