@@ -90,7 +90,8 @@ class module_Core {
 
       // Lock certain modules
       $modules->gallery->locked = true;
-      $modules->user->locked = true;
+      $identity_module = self::get_var("gallery", "identity_provider", "user");
+      $modules->$identity_module->locked = true;
       $modules->ksort();
       self::$available = $modules;
     }

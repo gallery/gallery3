@@ -26,12 +26,12 @@
  * Each group can be used independently, and multiple groups can be used at once.
  *
  * Group Options:
- *  driver   - User backend driver. Gallery comes with Gallery user driver.
- *
- *  params   - Driver parameters, specific to each driver.
+ *  driver        - User backend driver. Gallery comes with Gallery user driver.
+ *  allow_updates - Flag to indicate that the back end allows updates.
+ *  params        - Driver parameters, specific to each driver.
  */
-$config["default"] = array (
-  "driver"   => "gallery",
+$config["user"] = array (
+  "driver"        => "gallery",
   "allow_updates" => true,
-  "params"   => array(),
+  "params"        => array(),
 );
