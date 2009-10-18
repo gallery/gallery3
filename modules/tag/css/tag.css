@@ -1,4 +1,4 @@
-/* Tag cloud ~~~~~~~~~~~~~~ */
+/* Tag cloud ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-tag-cloud ul {
   font-size: 1.2em;
@@ -66,7 +66,13 @@
   text-decoration: underline;
 }
 
-/* Tag admin ~~~~~~~~~~~~~~ */
+/* Add tag form ~~~~~~~~~~~~~~~~~~~~ */
+
+#g-sidebar .g-short-form .textbox {
+  width: 11em;
+}
+
+/* Tag admin ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-tag-admin {
   table-layout: fixed;

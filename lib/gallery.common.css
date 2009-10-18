@@ -361,6 +361,11 @@ form .g-error {
   padding: .2em .8em;
 }
 
+#g-sidebar .g-short-form li {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 /* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
 
 .rtl .g-short-form li {
