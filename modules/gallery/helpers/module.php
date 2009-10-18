@@ -50,8 +50,20 @@ class module_Core {
    * @param string $module_name
    */
   static function get($module_name) {
-    // @todo can't easily use model_cache here because it throw an exception on missing models.
-    return ORM::factory("module", array("name" => $module_name));
+    if (empty(self::$modules[$module_name])) {
+      return ORM::factory("module", array("name" => $module_name));
+    }
+    return self::$modules[$module_name];
+  }
+
+  /**
+   * Get the information about a module
+   * @returns ArrayObject containing the module information from the module.info file or false if
+   *                      not found
+   */
+  static function info($module_name) {
+    $module_list = self::available();
+    return isset($module_list->$module_name) ? $module_list->$module_name : false;
   }
 
   /**
@@ -79,7 +91,8 @@ class module_Core {
       $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
       foreach (glob(MODPATH . "*/module.info") as $file) {
         $module_name = basename(dirname($file));
-        $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+        $modules->$module_name =
+          new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
         $m =& $modules->$module_name;
         $m->installed = self::is_installed($module_name);
         $m->active = self::is_active($module_name);
