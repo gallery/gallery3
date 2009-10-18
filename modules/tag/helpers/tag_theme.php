@@ -26,6 +26,7 @@ class tag_theme_Core {
   }
 
   static function admin_head($theme) {
+    $theme->css("tag.css");
     $theme->script("tag.js");
   }
 
