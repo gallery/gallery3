@@ -56,7 +56,6 @@
     </script>
     <?= $theme->script("gallery.ajax.js") ?>
     <?= $theme->script("gallery.dialog.js") ?>
-    <?= $theme->script("gallery.form.js") ?>
     <?= $theme->script("superfish/js/superfish.js") ?>
     <?= $theme->script("jquery.localscroll.js") ?>
     <?= $theme->script("ui.init.js") ?>

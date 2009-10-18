@@ -14,51 +14,50 @@
   var save_i18n = <?= html::js_string(t("save")->for_html_attr()) ?>;
   var cancel_i18n = <?= html::js_string(t("cancel")->for_html_attr()) ?>;
 </script>
-<div class="g-block">
-  <h2>
-    <?= t("Tag Admin") ?>
-  </h2>
 
-  <? $tags_per_column = $tags->count()/5 ?>
-  <? $column_tag_count = 0 ?>
+<h2>
+  <?= t("Tag Admin") ?>
+</h2>
 
-  <table id="g-tag-admin" class="g-block-content">
-    <caption class="g-understate">
-      <?= t2("There is one tag", "There are %count tags", $tags->count()) ?>
-    </caption>
-    <tr>
-      <td>
-        <? foreach ($tags as $i => $tag): ?>
-          <? $current_letter = strtoupper(mb_substr($tag->name, 0, 1)) ?>
+<? $tags_per_column = $tags->count()/5 ?>
+<? $column_tag_count = 0 ?>
 
-          <? if ($i == 0): /* first letter */ ?>
-            <strong><?= html::clean($current_letter) ?></strong>
-            <ul>
-          <? elseif ($last_letter != $current_letter): /* new letter */ ?>
-            <? if ($column_tag_count > $tags_per_column): /* new column */ ?>
-               </td>
-              <td>
-              <? $column_tag_count = 0 ?>
-            <? endif ?>
+<table id="g-tag-admin">
+  <caption class="g-understate">
+    <?= t2("There is one tag", "There are %count tags", $tags->count()) ?>
+  </caption>
+  <tr>
+    <td>
+      <? foreach ($tags as $i => $tag): ?>
+        <? $current_letter = strtoupper(mb_substr($tag->name, 0, 1)) ?>
 
-            </ul>
-            <strong><?= html::clean($current_letter) ?></strong>
-            <ul>
+        <? if ($i == 0): /* first letter */ ?>
+          <strong><?= html::clean($current_letter) ?></strong>
+          <ul>
+        <? elseif ($last_letter != $current_letter): /* new letter */ ?>
+          <? if ($column_tag_count > $tags_per_column): /* new column */ ?>
+             </td>
+            <td>
+            <? $column_tag_count = 0 ?>
           <? endif ?>
 
-          <li>
-            <span id="g-tag-<?= $tag->id ?>" class="g-editable g-tag-name"><?= html::clean($tag->name) ?></span>
-            <span class="g-understate">(<?= $tag->count ?>)</span>
-            <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
-               class="g-dialog-link g-delete-link g-button">
-                <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
-          </li>
+          </ul>
+          <strong><?= html::clean($current_letter) ?></strong>
+          <ul>
+        <? endif ?>
 
-          <? $column_tag_count++ ?>
-          <? $last_letter = $current_letter ?>
-        <? endforeach /* $tags */ ?>
-        </ul>
-      </td>
-    </tr>
-  </table>
-</div>
+        <li>
+          <span id="g-tag-<?= $tag->id ?>" class="g-editable g-tag-name"><?= html::clean($tag->name) ?></span>
+          <span class="g-understate">(<?= $tag->count ?>)</span>
+          <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
+             class="g-dialog-link g-delete-link g-button">
+              <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
+        </li>
+
+        <? $column_tag_count++ ?>
+        <? $last_letter = $current_letter ?>
+      <? endforeach /* $tags */ ?>
+      </ul>
+    </td>
+  </tr>
+</table>

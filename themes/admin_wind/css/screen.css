@@ -122,8 +122,7 @@ fieldset {
 }
 
 #g-header fieldset,
-#g-sidebar fieldset,
-.g-short-form fieldset {
+#g-sidebar fieldset {
   border: none;
 }
 
@@ -135,8 +134,7 @@ legend {
 #g-header legend,
 #g-sidebar legend,
 #g-content #g-search-form legend,
-input[type="hidden"],
-.g-short-form label {
+input[type="hidden"] {
   display: none;
 }
 
@@ -296,19 +294,6 @@ tr.g-warning {
 .g-module-status.g-success,
 #g-log-entries .g-success {
   background-color: #fff;
-}
-
-/* Inline layout (forms, lists) ~~~~~~~~~~ */
-
-.g-short-form li {
-  float: left;
-  padding: .4em 0;
-}
-
-.g-short-form input[type="text"] {
-  color: #666;
-  padding: .3em .6em;
-  width: 11em;
 }
 
 /*** ******************************************************************
@@ -811,36 +796,6 @@ li.g-default-group h4, li.g-default-group .g-user {
   padding: .5em
 }
 
-#g-server-add-admin {
-  margin:auto;
-  text-align: left;
-}
-
-#g-server-add-admin form fieldset {
-  border: medium none;
-}
-
-#g-server-add-admin legend {
-  display: none;
-}
-
-#g-server-add-admin .g-warning {
-  background-color: #FFFF99;
-}
-
-#g-authorized-path {
-  margin: 0 !important;
-  padding: 0.3em 1.5em 0.3em 1em;
-}
-
-#g-server-add-admin #path {
-  width: 80%;
-}
-
-.g-remove-dir:hover {
-  cursor: pointer;
-}
-
 #g-languages-form table {
 	width: 400px;
 	float: left;
@@ -904,7 +859,6 @@ li.g-default-group h4, li.g-default-group .g-user {
 .rtl form ul ul li,
 .rtl input[type="submit"],
 .rtl input[type="reset"],
-.rtl .g-short-form li,
 .rtl #g-content #g-album-grid .g-item,
 .rtl #g-site-admin-menu,
 .rtl .g-pager li,
