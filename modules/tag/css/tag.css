@@ -1,0 +1,114 @@
+#g-tag-cloud ul {
+  font-size: 1.2em;
+  text-align: justify;
+}
+
+#g-tag-cloud ul li {
+  display: inline;
+  line-height: 1.5em;
+  text-align: justify;
+}
+
+#g-tag-cloud ul li a {
+  text-decoration: none;
+}
+
+#g-tag-cloud ul li span {
+  display: none;
+}
+
+#g-tag-cloud ul li.size1 a {
+  color: #9cf;
+  font-size: 80%;
+  font-weight: 100;
+}
+
+#g-tag-cloud ul li.size2 a {
+  color: #69f;
+  font-size: 90%;
+  font-weight: 300;
+}
+
+#g-tag-cloud ul li.size3 a {
+  color: #69c;
+  font-size: 100%;
+  font-weight: 500;
+}
+
+#g-tag-cloud ul li.size4 a {
+  color: #369;
+  font-size: 110%;
+  font-weight: 700;
+}
+
+#g-tag-cloud ul li.size5 a {
+  color: #0e2b52;
+  font-size: 120%;
+  font-weight: 900;
+}
+
+#g-tag-cloud ul li.size6 a {
+  color: #0e2b52;
+  font-size: 130%;
+  font-weight: 900;
+}
+
+#g-tag-cloud ul li.size7 a {
+  color: #0e2b52;
+  font-size: 140%;
+  font-weight: 900;
+}
+
+#g-tag-cloud ul li a:hover {
+  color: #f30;
+  text-decoration: underline;
+}
+
+/* Tag admin ~~~~~~~~~~~~~~ */
+
+#g-tag-admin {
+  table-layout: fixed;
+}
+
+#g-tag-admin td {
+  border: 0;
+}
+
+#g-tag-admin ul {
+  padding-bottom: .3em;
+}
+
+#g-tag-admin li {
+  padding: .1em 0 .2em .3em;
+}
+
+#g-tag-admin .g-column {
+  float: left;
+  width: 200px;
+}
+
+#g-edit-tag-form input {
+  padding: 0 .2em 0 .2em;
+  clear: none;
+  float: left;
+  margin: 0 .2em 0 0;
+}
+
+#g-edit-tag-form input[type="text"].g-error {
+  border: 2px solid red;
+  background: none;
+}
+
+#g-edit-tag-form input[type="submit"] {
+  height: 25px;
+}
+
+#g-edit-tag-form a, #g-edit-tag-form span {
+  display: block;
+  float: left;
+  padding: .2em .2em 0 .1em;
+}
+
+#g-edit-tag-form span {
+  float: right;
+}

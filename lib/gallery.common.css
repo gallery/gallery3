@@ -7,7 +7,6 @@
  *  3)  States and interactions
  *  4)  Positioning and order
  *  5)  Containers/widgets
- *  6)  Browser hacks
  */
 
 /** *******************************************************************
@@ -73,7 +72,7 @@ form li.g-warning {
   padding: .3em .8em .3em 1em;
 }
 
-.g-error, 
+.g-error,
 .g-denied,
 tr.g-error td.g-error {
   background: #f6cbca url('images/ico-error.png') no-repeat .4em 50%;
@@ -89,7 +88,7 @@ tr.g-error td.g-error {
   background: #d9efc2  url('images/ico-success.png') no-repeat .4em 50%;
 }
 
-.g-warning, 
+.g-warning,
 tr.g-warning td.g-warning {
   background: #fcf9ce url('images/ico-warning.png') no-repeat .4em 50%;
 }
@@ -283,7 +282,9 @@ form .g-error {
   width: 40%;
 }
 
-.g-list-horizontal {
+.g-inline * {
+  float: left;
+  margin-right: .4em;
 }
 
 /* Dialogs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -322,16 +323,4 @@ form .g-error {
 
 #g-dialog .g-cancel {
   margin: .4em 1em;
-}
-
-/** *******************************************************************
- * 6) Browser hacks
- *********************************************************************/
-
-.g-clearfix:after {
-  clear: both;
-  content: ".";
-  display: block;
-  height: 0;
-  visibility: hidden;
 }

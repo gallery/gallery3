@@ -2,12 +2,6 @@
  * Fix display in IE 6 and 7
  */
 
-.g-clearfix,
-#g-group-admin,
-#g-developer-tools {
-  zoom: 1;
-}
-
 .g-unavailable {
   filter: alpha(opacity=40);
 }

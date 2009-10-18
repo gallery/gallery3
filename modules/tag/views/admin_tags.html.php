@@ -3,8 +3,8 @@
   var TAG_RENAME_URL = <?= html::js_string(url::site("admin/tags/rename/__ID__")) ?>;
   $("document").ready(function() {
     // using JS for adding link titles to avoid running t() for each tag
-    $("#g-tag-admin .tag-name").attr("title", <?= t("Click to edit this tag")->for_js() ?>);
-    $("#g-tag-admin .delete-link").attr("title", $(".delete-link:first span").html());
+    $("#g-tag-admin .g-tag-name").attr("title", <?= t("Click to edit this tag")->for_js() ?>);
+    $("#g-tag-admin .g-delete-link").attr("title", $(".g-delete-link:first span").html());
 
     // In-place editing for tag admin
     $(".g-editable").bind("click", editInPlace);
@@ -47,10 +47,10 @@
           <? endif ?>
 
           <li>
-            <span id="g-tag-<?= $tag->id ?>" class="g-editable tag-name"><?= html::clean($tag->name) ?></span>
+            <span id="g-tag-<?= $tag->id ?>" class="g-editable g-tag-name"><?= html::clean($tag->name) ?></span>
             <span class="g-understate">(<?= $tag->count ?>)</span>
             <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
-               class="g-dialog-link delete-link g-button">
+               class="g-dialog-link g-delete-link g-button">
                 <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
           </li>
 

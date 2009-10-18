@@ -2,10 +2,6 @@
  * Fix display in IE 6, 7
  */
 
-.g-clearfix {
-  zoom: 1;
-}
-
 #g-banner {
   z-index: 2;
 }

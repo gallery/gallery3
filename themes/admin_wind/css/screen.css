@@ -583,8 +583,7 @@ li.g-group-disable h4, li.g-group-disable .g-user {
  * 5) Navigation and menus
  *********************************************************************/
 
-#g-site-admin-menu,
-#g-tag-cloud ul {
+#g-site-admin-menu {
   font-size: 1.2em;
 }
 
@@ -791,27 +790,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   list-style-type: disc;
 }
 
-#g-tag-admin {
-  table-layout: fixed;
-}
-
-#g-tag-admin td {
-  border: 0;
-}
-
-#g-tag-admin ul {
-  padding-bottom: .3em;
-}
-
-#g-tag-admin li {
-  padding: .1em 0 .2em .3em;
-}
-
-#g-tag-admin .g-column {
-  float: left;
-  width: 200px;
-}
-
 .g-editable {
   padding: .1em .3em .2em .3em;
 }
@@ -819,32 +797,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
 .g-editable:hover {
   background-color: #ffc;
   cursor: text;
-}
-
-#g-rename-tag-form input {
-  padding: 0 .2em 0 .2em;
-  clear: none;
-  float: left;
-  margin: 0 .2em 0 0;
-}
-
-#g-rename-tag-form input[type="text"].g-error {
-  border: 2px solid red;
-  background: none;
-}
-
-#g-rename-tag-form input[type="submit"] {
-  height: 25px;
-}
-
-#g-rename-tag-form a, #g-rename-tag-form span {
-  display: block;
-  float: left;
-  padding: .2em .2em 0 .1em;
-}
-
-#g-rename-tag-form span {
-  float: right;
 }
 
 #g-task-log-dialog h1 {
@@ -965,9 +917,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
 .rtl .g-available .g-block img,
 .rtl #g-content #g-photo-stream .g-item,
 .rtl li.g-group,
-.rtl #g-tag-admin .g-column,
-.rtl #g-rename-tag-form input,
-.rtl #g-rename-tag-form a,
 .rtl #g-server-add-admin,
 .rtl .ui-icon-left .ui-icon {
   float: right;
