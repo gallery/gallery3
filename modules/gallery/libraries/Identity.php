@@ -24,6 +24,8 @@
 class Identity_Core {
   protected static $instance;
 
+  protected static $active;
+
   // Configuration
   protected $config;
 
@@ -78,6 +80,26 @@ class Identity_Core {
     }
 
     Kohana::log("debug", "Identity Library initialized");
+  }
+
+  /**
+   * Return a list of installed and activated Identity Drivers.
+   *
+   * @return boolean true if the driver supports updates; false if read only
+   */
+  static function active() {
+    if (empty(self::$active)) {
+      $drivers = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+      foreach (module::active() as $module) {
+        $module_name = $module->name;
+        if (file_exists(MODPATH . "{$module->name}/config/identity.php") &&
+            ($info = module::info($module_name))) {
+          $drivers->$module_name = $info->description;
+        }
+      }
+      self::$active = $drivers;
+    }
+    return self::$active;
   }
 
   /**
