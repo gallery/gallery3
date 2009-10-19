@@ -133,37 +133,17 @@ class Identity_Core {
   }
 
   /**
-   * @see Identity_Driver::hash_password.
-   */
-  static function hash_password($password) {
-    return self::instance()->driver->hash_password($password);
-  }
-
-  /**
-   * Look up a user by id.
-   * @param integer      $id the user id
-   * @return User_Definition  the user object, or null if the id was invalid.
+   * @see Identity_Driver::lookup_user.
    */
   static function lookup_user($id) {
-    return self::instance()->driver->lookup_user_by_field("id", $id);
+    return self::instance()->driver->lookup_user($id);
   }
 
   /**
-   * Look up a user by name.
-   * @param integer      $name the user name
-   * @return User_Definition  the user object, or null if the name was invalid.
+   * @see Identity_Driver::lookup_user_by_name.
    */
   static function lookup_user_by_name($name) {
-    return self::instance()->driver->lookup_user_by_field("name", $name);
-  }
-
-  /**
-   * Look up a user by hash.
-   * @param string       $name the user name
-   * @return User_Definition  the user object, or null if the name was invalid.
-   */
-  static function lookup_user_by_hash($hash) {
-    return self::instance()->driver->lookup_user_by_field("hash", $hash);
+    return self::instance()->driver->lookup_user_by_name($name);
   }
 
   /**
@@ -188,12 +168,10 @@ class Identity_Core {
   }
 
   /**
-   * Look up a group by name.
-   * @param integer      $id the group name
-   * @return Group_Definition  the group object, or null if the name was invalid.
+   * @see Identity_Driver::lookup_group_by_name.
    */
   static function lookup_group_by_name($name) {
-    return self::instance()->driver->lookup_group_by_field("name", $name);
+    return self::instance()->driver->lookup_group_by_name($name);
   }
 
   /**

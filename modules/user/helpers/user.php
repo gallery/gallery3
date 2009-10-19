@@ -25,14 +25,21 @@
  */
 class user_Core {
   /**
-   * @see Identity_Driver::guest.
+   * Return the guest user.
+   *
+   * @return User_Model the user object
    */
   static function guest() {
     return model_cache::get("user", 1);
   }
 
   /**
-   * @see Identity_Driver::create_user.
+   * Create a new user.
+   *
+   * @param string  $name
+   * @param string  $full_name
+   * @param string  $password
+   * @return User_Definition the user object
    */
   static function create($name, $full_name, $password) {
     $user = ORM::factory("user")->where("name", $name)->find();
@@ -53,7 +60,9 @@ class user_Core {
   }
 
   /**
-   * @see Identity_Driver::hash_password.
+   * Hash the password to the internal value
+   * @param string   $password the user password
+   * @param string   The hashed equivalent
    */
   static function hash_password($password) {
     require_once(MODPATH . "user/lib/PasswordHash.php");

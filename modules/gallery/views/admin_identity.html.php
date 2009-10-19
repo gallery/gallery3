@@ -15,11 +15,11 @@
           height:165,
           modal: true,
           overlay: {
-	    backgroundColor: '#000',
-	    opacity: 0.5
+            backgroundColor: '#000',
+            opacity: 0.5
           },
           buttons: {
-	    "Continue": function() {
+            "Continue": function() {
               $("##g-dialog form").submit();
             },
             Cancel: function() {

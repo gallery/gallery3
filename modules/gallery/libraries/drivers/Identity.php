@@ -45,19 +45,18 @@ interface Identity_Driver {
   public function is_correct_password($user, $password);
 
   /**
-   * Create the hashed passwords.
-   * @param string $password a plaintext password
-   * @return string hashed password
-   */
-  public function hash_password($password);
-
-  /**
-   * Look up a user by by search the specified field.
-   * @param string      search field
-   * @param string      search value
+   * Look up a user by id.
+   * @param integer     id
    * @return User_Definition the user object, or null if the name was invalid.
    */
-  public function lookup_user_by_field($field, $value);
+  public function lookup_user($id);
+
+  /**
+   * Look up a user by name.
+   * @param string      name
+  * @return User_Definition the user object, or null if the name was invalid.
+   */
+  public function lookup_user_by_name($name);
 
   /**
    * Create a new group.
@@ -90,181 +89,6 @@ interface Identity_Driver {
 
 } // End Identity Driver Definition
 
-/**
- * User Data wrapper
- */
-abstract class User_Definition {
-  protected $user;
-  public function __get($column) {
-    switch ($column) {
-    case "id":
-    case "name":
-    case "full_name":
-    case "password":
-    case "login_count":
-    case "last_login":
-    case "email":
-    case "admin":
-    case "guest":
-    case "hash":
-    case "url":
-    case "locale":
-    case "groups":
-    case "hashed_password":
-      return $this->user->$column;
-    default:
-      throw new Exception("@todo UNSUPPORTED FIELD: $column");
-      break;
-    }
-  }
+interface Group_Definition {}
 
-  public function __set($column, $value) {
-    switch ($column) {
-    case "id":
-    case "groups":
-      throw new Exception("@todo READ ONLY FIELD: $column");
-      break;
-    case "name":
-    case "full_name":
-    case "hashed_password":
-    case "password":
-    case "login_count":
-    case "last_login":
-    case "email":
-    case "admin":
-    case "guest":
-    case "hash":
-    case "url":
-    case "locale":
-      $this->user->$column = $value;
-      break;
-    default:
-      throw new Exception("@todo UNSUPPORTED FIELD: $column");
-      break;
-    }
-  }
-
-  public function __isset($column) {
-    return isset($this->user->$column);
-  }
-
-  public function __unset($column) {
-    switch ($column) {
-    case "id":
-    case "groups":
-      throw new Exception("@todo READ ONLY FIELD: $column");
-      break;
-    case "name":
-    case "full_name":
-    case "password":
-    case "login_count":
-    case "last_login":
-    case "email":
-    case "admin":
-    case "guest":
-    case "hash":
-    case "url":
-    case "locale":
-    case "hashed_password":
-      unset($this->user->$column);
-      break;
-    default:
-      throw new Exception("@todo UNSUPPORTED FIELD: $column");
-      break;
-    }
-  }
-
-  /**
-   * Return a url to the user's avatar image.
-   * @param integer $size the target size of the image (default 80px)
-   * @return string a url
-   */
-  abstract public function avatar_url($size=80, $default=null);
-
-  /**
-   * Return the best version of the user's name.  Either their specified full name, or fall back
-   * to the user name.
-   * @return string
-   */
-  abstract public function display_name();
-
-  /**
-   * Return the internal user object without the wrapper.
-   * This method is used by implementing classes to access the internal user object.
-   * Consider it pseudo private and only declared public as PHP as not internal or friend modifier
-   */
-  public function _uncloaked() {
-    return $this->user;
-  }
-
-  abstract public function save();
-  abstract public function delete();
-}
-
-/**
- * Group Data wrapper
- */
-abstract class Group_Definition {
-  protected $group;
-
-  public function __get($column) {
-    switch ($column) {
-    case "id":
-    case "name":
-    case "special":
-    case "users":
-      return $this->group->$column;
-    default:
-      throw new Exception("@todo UNSUPPORTED FIELD: $column");
-      break;
-    }
-  }
-
-  public function __set($column, $value) {
-    switch ($column) {
-    case "id":
-    case "users":
-      throw new Exception("@todo READ ONLY FIELD: $column");
-      break;
-    case "name":
-    case "special":
-      $this->group->$column = $value;
-    default:
-      throw new Exception("@todo UNSUPPORTED FIELD: $column");
-      break;
-    }
-  }
-
-  public function __isset($column) {
-    return isset($this->group->$column);
-  }
-
-  public function __unset($column) {
-    switch ($column) {
-    case "id":
-    case "users":
-      throw new Exception("@todo READ ONLY FIELD: $column");
-      break;
-    case "name":
-    case "special":
-      unset($this->group->$column);
-    default:
-      throw new Exception("@todo UNSUPPORTED FIELD: $column");
-      break;
-    }
-  }
-
-  /**
-   * Return the internal group object without the wrapper.
-   * This method is used by implementing classes to access the internal group object.
-   * Consider it pseudo private and only declared public as PHP as not internal or friend modifier
-   */
-  public function _uncloaked() {
-    return $this->group;
-  }
-
-  abstract public function save();
-  abstract public function delete();
-  abstract public function add($user);
-  abstract public function remove($user);
-}
+interface User_Definition {}

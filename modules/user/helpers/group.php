@@ -42,14 +42,14 @@ class group_Core {
    * @see Identity_Driver::everbody.
    */
   static function everybody() {
-    return Identity::instance()->everybody();
+    return model_cache::get("group", 1);
   }
 
   /**
    * @see Identity_Driver::registered_users.
    */
   static function registered_users() {
-    return Identity::instance()->everybody();
+    return model_cache::get("group", 2);
   }
 
   /**

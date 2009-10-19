@@ -43,6 +43,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $_POST["column"] = "weight";
     $_POST["direction"] = "ASC";
     $_POST["csrf"] = access::csrf_token();
+    $_POST["slug"] = "new_name";
     $_POST["_method"] = "put";
     access::allow(Identity::everybody(), "edit", $root);
 

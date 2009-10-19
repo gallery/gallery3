@@ -25,14 +25,14 @@ class Identity_Gallery_Driver implements Identity_Driver {
    * @see Identity_Driver::guest.
    */
   public function guest() {
-    return new Gallery_User(user::guest());
+    return user::guest();
   }
 
   /**
    * @see Identity_Driver::create_user.
    */
   public function create_user($name, $full_name, $password) {
-    return new Gallery_User(user::create($name, $full_name, $password));
+    return user::create($name, $full_name, $password);
   }
 
   /**
@@ -67,122 +67,55 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * @see Identity_Driver::hash_password.
+   * @see Identity_Driver::lookup_user.
    */
-  public function hash_password($password) {
-    return user::hash_password($password);
+  public function lookup_user($id) {
+    return user::lookup_by_field("id", $id);
   }
 
   /**
-   * @see Identity_Driver::lookup_user_by_field.
+   * @see Identity_Driver::lookup_user_by_name.
    */
-  public function lookup_user_by_field($field_name, $value) {
-    return new Gallery_User(user::lookup_by_field($field_name, $value));
+  public function lookup_user_by_name($name) {
+    return user::lookup_by_field("name", $name);
   }
 
   /**
    * @see Identity_Driver::create_group.
    */
   public function create_group($name) {
-    return new Gallery_Group(group::create($name));
+    return group::create($name);
   }
 
   /**
    * @see Identity_Driver::everybody.
    */
   public function everybody() {
-    return new Gallery_Group(group::everybody());
+    return group::everybody();
   }
 
   /**
    * @see Identity_Driver::registered_users.
    */
   public function registered_users() {
-    return new Gallery_Group(group::registered_users());
+    return group::registered_users();
   }
 
   /**
-   * @see Identity_Driver::lookup_group_by_field.
+   * @see Identity_Driver::lookup_group_by_name.
    */
-  public function lookup_group_by_field($field_name, $value) {
-    return new Gallery_Group(group::lookup_by_field($field_name, $value));
+  static function lookup_group_by_name($name) {
+    return group::lookup_by_field("name", $name);
   }
 
   /**
    * @see Identity_Driver::get_user_list.
    */
   public function get_user_list($ids) {
-    $results = ORM::factory("user")
+    return ORM::factory("user")
       ->in("id", ids)
       ->find_all()
-      ->as_array();;
-    $users = array();
-    foreach ($results as $user) {
-      $users[] = new Gallery_User($user);
-    }
-    return $users;
+      ->as_array();
   }
 } // End Identity Gallery Driver
 
-/**
- * User Data wrapper
- */
-class Gallery_User extends User_Definition {
-  /*
-   *  Not for general user, allows the back-end to easily create the interface object
-   */
-  function __construct($user) {
-    $this->user = $user;
-  }
-
-  /**
-   * @see User_Definition::avatar_url
-   */
-  public function avatar_url($size=80, $default=null) {
-    return $this->user->avatar_url($size, $default);
-  }
-
-  /**
-   * @see User_Definition::display_name
-   */
-  public function display_name() {
-    return $this->user->display_name();
-  }
-
-  public function save() {
-    $this->user->save();
-  }
-
-  public function delete() {
-    $this->user->delete();
-  }
-
-}
-
-/**
- * Group Data wrapper
- */
-class Gallery_Group extends Group_Definition {
-  /*
-   *  Not for general user, allows the back-end to easily create the interface object
-   */
-  function __construct($group) {
-    $this->group = $group;
-  }
-
-  public function save() {
-    $this->group->save();
-  }
-
-  public function delete() {
-    $this->group->delete();
-  }
-
-  public function add($user) {
-    $this->group->add($user->_uncloaked());
-  }
-
-  public function remove($user) {
-    $this->group->remove($user->_uncloaked());
-  }
-}

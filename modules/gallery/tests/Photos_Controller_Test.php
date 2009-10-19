@@ -31,7 +31,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $photo = photo::create(
       $root, MODPATH . "gallery/tests/test.jpg", "test.jpeg",
-      "test", "test", Session::active_user(), "slug");
+      "test", "test", Session::active_user()->id, "slug");
     $orig_name = $photo->name;
 
     $_POST["filename"] = "test.jpeg";
