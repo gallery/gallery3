@@ -79,7 +79,6 @@ class tag_Core {
     }
   }
 
-
   /**
    * Return all the tags for a given item.
    * @return array
@@ -111,7 +110,7 @@ class tag_Core {
   }
 
   static function get_rename_form($tag) {
-    $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "g-edit-tag-form", "class" => "g-short-form"));
+    $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "g-rename-tag-form", "class" => "g-short-form"));
     $group = $form->group("rename_tag")->label(t("Rename Tag"));
     $group->input("name")->label(t("Tag name"))->value($tag->name)->rules("required|length[1,64]");
     $group->inputs["name"]->error_messages("in_use", t("There is already a tag with that name"));

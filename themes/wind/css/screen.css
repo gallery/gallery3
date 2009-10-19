@@ -120,14 +120,18 @@ td {
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+#g-sidebar form {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 fieldset {
   border: 1px solid #ccc;
   padding: .8em 1em !important;
 }
 
 #g-banner fieldset,
-#g-sidebar fieldset,
-.g-short-form fieldset {
+#g-sidebar fieldset {
   border: none;
 }
 
@@ -139,8 +143,7 @@ legend {
 #g-banner legend,
 #g-sidebar legend,
 #g-content #g-search-form legend,
-input[type="hidden"],
-.g-short-form label {
+input[type="hidden"] {
   display: none;
 }
 
@@ -232,19 +235,6 @@ li.g-error select {
 
 .g-block-content {
   margin-top: 1em;
-}
-
-/* Inline layout (forms, lists) ~~~~~~~~~~ */
-
-.g-short-form li {
-  float: left;
-  padding: .4em 0;
-}
-
-.g-short-form input[type="text"] {
-  color: #666;
-  padding: .3em .6em;
-  width: 11em;
 }
 
 /*** ******************************************************************
@@ -821,7 +811,6 @@ li.g-error select {
 .rtl form ul ul li,
 .rtl input[type="submit"],
 .rtl input[type="reset"],
-.rtl .g-short-form li,
 .rtl #g-header #g-logo img,
 .rtl #g-content #g-album-grid .g-item,
 .rtl #g-site-menu,

@@ -31,6 +31,11 @@
  **********************************************************************/
 
 .g-narrow {
+  width: 25%;
+}
+
+.g-wide {
+  width: 100%;
 }
 
 /** *******************************************************************
@@ -104,9 +109,12 @@ form .g-error {
 }
 
 .g-installed {
+  background-color: #eeeeee;
 }
 
 .g-default {
+	background-color: #c5dbec;
+	font-weight: bold;
 }
 
 .g-draggable,
@@ -214,7 +222,13 @@ form .g-error {
 }
 
 #g-action-status {
+  margin-bottom: 1em;
   width: 100% !important;
+}
+
+#g-action-status li {
+  padding-top: .4em;
+  padding-bottom: .3em;
 }
 
 #g-site-status li {
@@ -323,4 +337,42 @@ form .g-error {
 
 #g-dialog .g-cancel {
   margin: .4em 1em;
+}
+
+/* Inline layout (forms, lists) ~~~~~~~~~~ */
+
+.g-short-form label {
+  display: none;
+}
+
+.g-short-form fieldset {
+  border: none;
+  padding: 0 !important;
+}
+
+.g-short-form li {
+  float: left;
+  padding: .4em 0;
+}
+
+.g-short-form input[type="text"] {
+  color: #666;
+  padding: .3em .6em;
+  width: auto;
+}
+
+.g-short-form .g-cancel {
+  display: block;
+  padding: .2em .8em;
+}
+
+#g-sidebar .g-short-form li {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl .g-short-form li {
+  float: right;
 }

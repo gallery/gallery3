@@ -6,7 +6,7 @@
   <h1><?= html::clean($title) ?></h1>
 </div>
 
-<ul id="g-album-grid">
+<ul id="g-album-grid" class="ui-helper-clearfix">
   <? foreach ($children as $i => $child): ?>
   <li class="g-item <?= $child->is_album() ? "g-album" : "" ?>">
     <?= $theme->thumb_top($child) ?>

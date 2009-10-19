@@ -22,9 +22,10 @@ $(document).ready(function() {
   // Initialize dialogs
   $(".g-dialog-link").gallery_dialog();
 
+  // Initialize short forms
+  $(".g-short-form").gallery_short_form();
+
   // Apply jQuery UI icon, hover, and rounded corner styles
-  $(".g-short-form input[type=text]").addClass("ui-corner-left");
-  $(".g-short-form input[type=submit]").addClass("ui-state-default ui-corner-right");
   $("input[type=submit]:not(.g-short-form input)").addClass("ui-state-default ui-corner-all");
   if ($("#g-view-menu").length) {
     $("#g-view-menu ul").removeClass("g-menu").removeClass("sf-menu");

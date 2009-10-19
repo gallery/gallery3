@@ -6,8 +6,9 @@
       url, {
         max: 30,
         multiple: true,
-          multipleSeparator: ',',
-          cacheLength: 1}
+        multipleSeparator: ',',
+        cacheLength: 1
+      }
     );
   });
 </script>

@@ -1,3 +1,5 @@
+/* Tag cloud ~~~~~~~~~~~~~~~~~~~~~~~ */
+
 #g-tag-cloud ul {
   font-size: 1.2em;
   text-align: justify;
@@ -64,7 +66,13 @@
   text-decoration: underline;
 }
 
-/* Tag admin ~~~~~~~~~~~~~~ */
+/* Add tag form ~~~~~~~~~~~~~~~~~~~~ */
+
+#g-sidebar .g-short-form .textbox {
+  width: 11em;
+}
+
+/* Tag admin ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-tag-admin {
   table-layout: fixed;
@@ -75,40 +83,18 @@
 }
 
 #g-tag-admin ul {
-  padding-bottom: .3em;
+  margin-bottom: 2em;
 }
 
 #g-tag-admin li {
-  padding: .1em 0 .2em .3em;
+  padding: .1em 0 .2em 0;
 }
 
-#g-tag-admin .g-column {
-  float: left;
-  width: 200px;
+#g-rename-tag-form ul {
+  margin-bottom: 0;
 }
 
-#g-edit-tag-form input {
-  padding: 0 .2em 0 .2em;
-  clear: none;
-  float: left;
-  margin: 0 .2em 0 0;
-}
-
-#g-edit-tag-form input[type="text"].g-error {
+#g-rename-tag-form input[type="text"].g-error {
   border: 2px solid red;
   background: none;
-}
-
-#g-edit-tag-form input[type="submit"] {
-  height: 25px;
-}
-
-#g-edit-tag-form a, #g-edit-tag-form span {
-  display: block;
-  float: left;
-  padding: .2em .2em 0 .1em;
-}
-
-#g-edit-tag-form span {
-  float: right;
 }

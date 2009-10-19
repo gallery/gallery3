@@ -107,11 +107,11 @@ td {
   border: none;
   border-bottom: 1px solid #ccc;
   padding: .5em;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
-#g-admin-maintenance td {
-  vertical-align: middle;
+th {
+  white-space: nowrap;
 }
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -122,8 +122,7 @@ fieldset {
 }
 
 #g-header fieldset,
-#g-sidebar fieldset,
-.g-short-form fieldset {
+#g-sidebar fieldset {
   border: none;
 }
 
@@ -135,8 +134,7 @@ legend {
 #g-header legend,
 #g-sidebar legend,
 #g-content #g-search-form legend,
-input[type="hidden"],
-.g-short-form label {
+input[type="hidden"] {
   display: none;
 }
 
@@ -296,19 +294,6 @@ tr.g-warning {
 .g-module-status.g-success,
 #g-log-entries .g-success {
   background-color: #fff;
-}
-
-/* Inline layout (forms, lists) ~~~~~~~~~~ */
-
-.g-short-form li {
-  float: left;
-  padding: .4em 0;
-}
-
-.g-short-form input[type="text"] {
-  color: #666;
-  padding: .3em .6em;
-  width: 11em;
 }
 
 /*** ******************************************************************
@@ -489,14 +474,6 @@ tr.g-warning {
   margin-right: 1em;
 }
 
-#g-user-admin-list {
-  margin-bottom: 1em;
-}
-
-#g-user-admin-list td {
-  vertical-align: bottom;
-}
-
 #g-user-admin-list .admin {
   color: #55f;
   font-weight: bold;
@@ -547,36 +524,18 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   color: gray;
 }
 
-#g-admin-advanced-settings tr.setting:hover {
-  background: #ffc;
-}
+/* Block admin  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-/* admin/sidebar  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
-.g-admin-blocks-list {
-  float: left;
-  height: 300px;
-  margin-left: 20px;
+#g-admin-blocks .g-block {
+  clear: none;
   width: 30%;
 }
 
-.g-admin-blocks-list div:last-child {
-  border: .1em solid;
-  height: 100%;
-  overflow-y: auto;
-}
-
-.g-admin-blocks-list ul {
-  height: 98%;
-  margin: .1em .1em;
-  padding: .1em;
-}
-
-.g-admin-blocks-list ul li {
-  background-color: #e8e8e8;
-  font-size: 1em;
-  font-weight: bold;
-  margin: .5em;
-  padding: .3em .8em;
+#g-admin-blocks .g-block .g-draggable {
+  background: #e7e7e7;
+  /*border: 1px solid #fff;*/
+  margin-bottom: 1em;
+  padding: .4em .8em;
 }
 
 /** *******************************************************************
@@ -812,49 +771,9 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   padding: .5em
 }
 
-#g-server-add-admin {
-  margin:auto;
-  text-align: left;
-}
-
-#g-server-add-admin form fieldset {
-  border: medium none;
-}
-
-#g-server-add-admin legend {
-  display: none;
-}
-
-#g-server-add-admin .g-warning {
-  background-color: #FFFF99;
-}
-
-#g-authorized-path {
-  margin: 0 !important;
-  padding: 0.3em 1.5em 0.3em 1em;
-}
-
-#g-server-add-admin #path {
-  width: 80%;
-}
-
-.g-remove-dir:hover {
-  cursor: pointer;
-}
-
 #g-languages-form table {
-	width: 400px;
-	float: left;
+	width: 40%;
 	margin: 0 3em 1em 0;
-}
-
-#g-languages-form .installed {
-  background-color: #EEEEEE;
-}
-
-#g-languages-form .default {
-	background-color: #C5DBEC;
-	font-weight: bold;
 }
 
 #g-languages-form input {
@@ -868,10 +787,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
 
 #g-translations .g-button {
 	padding: .5em;
-}
-
-.g-doc-link {
-  float: right;
 }
 
 /** *******************************************************************
@@ -905,7 +820,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
 .rtl form ul ul li,
 .rtl input[type="submit"],
 .rtl input[type="reset"],
-.rtl .g-short-form li,
 .rtl #g-content #g-album-grid .g-item,
 .rtl #g-site-admin-menu,
 .rtl .g-pager li,

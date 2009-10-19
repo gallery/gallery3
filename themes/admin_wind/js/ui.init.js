@@ -1,5 +1,6 @@
 /**
  * Initialize jQuery UI and Gallery Plugins
+ * @todo Move ui-corner-all assignments to theme admin views
  */
 
 $(document).ready(function(){
@@ -21,6 +22,9 @@ $(document).ready(function(){
 
   // Initialize modal dialogs
   $(".g-dialog-link").gallery_dialog();
+
+  // Initialize short forms
+  $(".g-short-form").gallery_short_form();
 
   // Initialize ajax links
   $(".g-ajax-link").gallery_ajax();
@@ -50,13 +54,7 @@ $(document).ready(function(){
   $(".g-available .g-block").addClass("ui-corner-all");
   $(".g-unavailable").addClass("ui-corner-all");
 
-  // Add hover state for buttons
-  $(".ui-state-default").hover(
-    function() {
-      $(this).addClass("ui-state-hover");
-    },
-    function() {
-      $(this).removeClass("ui-state-hover");
-    }
-  );
+  // Initialize button hover effect
+  $.fn.gallery_hover_init();
+
 });

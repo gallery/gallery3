@@ -12,26 +12,28 @@
   });
 </script>
 
-<div id="g-admin-graphics">
+<div id="g-admin-graphics" class="g-block ui-helper-clearfix">
   <h1> <?= t("Graphics Settings") ?> </h1>
   <p>
     <?= t("Gallery needs a graphics toolkit in order to manipulate your photos.  Please choose one from the list below.") ?>
   </p>
 
-  <h2> <?= t("Active Toolkit") ?> </h2>
-  <? if ($active == "none"): ?>
-  <?= new View("admin_graphics_none.html") ?>
-  <? else: ?>
-  <?= new View("admin_graphics_$active.html", array("tk" => $tk->$active, "is_active" => true)) ?>
-  <? endif ?>
-
-  <div class="g-available">
-    <h2> <?= t("Available Toolkits") ?> </h2>
-    <? foreach (array_keys((array)$tk) as $id): ?>
-    <? if ($id != $active): ?>
-    <?= new View("admin_graphics_$id.html", array("tk" => $tk->$id, "is_active" => false)) ?>
+  <div class="g-block-content">
+    <h2> <?= t("Active Toolkit") ?> </h2>
+    <? if ($active == "none"): ?>
+    <?= new View("admin_graphics_none.html") ?>
+    <? else: ?>
+    <?= new View("admin_graphics_$active.html", array("tk" => $tk->$active, "is_active" => true)) ?>
     <? endif ?>
-    <? endforeach ?>
+
+    <div class="g-available">
+      <h2> <?= t("Available Toolkits") ?> </h2>
+      <? foreach (array_keys((array)$tk) as $id): ?>
+      <? if ($id != $active): ?>
+      <?= new View("admin_graphics_$id.html", array("tk" => $tk->$id, "is_active" => false)) ?>
+      <? endif ?>
+      <? endforeach ?>
+    </div>
   </div>
 </div>
 
