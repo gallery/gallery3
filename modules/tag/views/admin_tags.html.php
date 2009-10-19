@@ -20,7 +20,7 @@
 
 <div class="g-block">
   <h1> <?= t("Tag Admin") ?> </h1>
-  
+
   <div class="g-block-content">
     <table id="g-tag-admin">
       <caption class="g-understate">
@@ -44,8 +44,6 @@
               <strong><?= html::clean($current_letter) ?></strong>
               <ul>
             <? endif ?>
-
-<<<<<<< HEAD
                 <li>
                   <span class="g-editable g-tag-name" rel="<?= $tag->id ?>"><?= html::clean($tag->name) ?></span>
                   <span class="g-understate">(<?= $tag->count ?>)</span>
@@ -53,7 +51,6 @@
                       class="g-dialog-link g-delete-link g-button">
                     <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
                 </li>
-=======
             </ul>
             <strong><?= html::clean($current_letter) ?></strong>
             <ul>
@@ -66,8 +63,6 @@
                class="g-dialog-link g-delete-link g-button">
                 <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
           </li>
->>>>>>> b976f9b3665771444c30e914fe21cbce5848bd21
-
             <? $column_tag_count++ ?>
             <? $last_letter = $current_letter ?>
           <? endforeach /* $tags */ ?>
