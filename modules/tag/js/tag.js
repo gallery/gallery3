@@ -37,7 +37,7 @@ function editInPlace(element) {
   closeEditInPlaceForms();
 
   // create edit form
-  var tag_id = $(this).attr('id').substr(5);
+  var tag_id = $(this).attr('rel');
   var tag_name = $(this).html();
   var tag_width = $(this).width();
   $(this).parent().data("revert", $(this).parent().html());
@@ -67,7 +67,7 @@ function editInPlace(element) {
     console.log("success");
         if (data.result == "success") {
           closeEditInPlaceForms(); // close form
-          $("#g-tag-" + data.tag_id).text(data.new_tagname); // update tagname
+          $(".g-tag[rel=" + data.tag_id + "]").text(data.new_tagname); // update tagname
           window.location.reload();
         } else if (data.result == "error") {
     console.log("error");

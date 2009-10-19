@@ -31,9 +31,11 @@
  **********************************************************************/
 
 .g-narrow {
+  width: 25%;
 }
 
 .g-wide {
+  width: 100%;
 }
 
 /** *******************************************************************
@@ -107,9 +109,12 @@ form .g-error {
 }
 
 .g-installed {
+  background-color: #eeeeee;
 }
 
 .g-default {
+	background-color: #c5dbec;
+	font-weight: bold;
 }
 
 .g-draggable,

@@ -107,11 +107,11 @@ td {
   border: none;
   border-bottom: 1px solid #ccc;
   padding: .5em;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
-#g-admin-maintenance td {
-  vertical-align: middle;
+th {
+  white-space: nowrap;
 }
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -474,14 +474,6 @@ tr.g-warning {
   margin-right: 1em;
 }
 
-#g-user-admin-list {
-  margin-bottom: 1em;
-}
-
-#g-user-admin-list td {
-  vertical-align: bottom;
-}
-
 #g-user-admin-list .admin {
   color: #55f;
   font-weight: bold;
@@ -531,36 +523,19 @@ li.g-default-group h4, li.g-default-group .g-user {
   color: gray;
 }
 
-#g-admin-advanced-settings tr.setting:hover {
-  background: #ffc;
+/* Block admin  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-admin-blocks .g-block {
+  margin-right: 2em;
+  height: 200px;
+  width: 30% !important;
 }
 
-/* admin/sidebar  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
-.g-admin-blocks-list {
-  float: left;
-  height: 300px;
-  margin-left: 20px;
-  width: 30%;
-}
-
-.g-admin-blocks-list div:last-child {
-  border: .1em solid;
-  height: 100%;
-  overflow-y: auto;
-}
-
-.g-admin-blocks-list ul {
-  height: 98%;
-  margin: .1em .1em;
-  padding: .1em;
-}
-
-.g-admin-blocks-list ul li {
-  background-color: #e8e8e8;
-  font-size: 1em;
-  font-weight: bold;
-  margin: .5em;
-  padding: .3em .8em;
+#g-admin-blocks .g-block li {
+  background: #e7e7e7;
+  /*border: 1px solid #fff;*/
+  margin-bottom: 1em;
+  padding: .4em .8em;
 }
 
 /** *******************************************************************
@@ -797,18 +772,8 @@ li.g-default-group h4, li.g-default-group .g-user {
 }
 
 #g-languages-form table {
-	width: 400px;
-	float: left;
+	width: 40%;
 	margin: 0 3em 1em 0;
-}
-
-#g-languages-form .installed {
-  background-color: #EEEEEE;
-}
-
-#g-languages-form .default {
-	background-color: #C5DBEC;
-	font-weight: bold;
 }
 
 #g-languages-form input {
@@ -822,10 +787,6 @@ li.g-default-group h4, li.g-default-group .g-user {
 
 #g-translations .g-button {
 	padding: .5em;
-}
-
-.g-doc-link {
-  float: right;
 }
 
 /** *******************************************************************
