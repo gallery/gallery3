@@ -526,12 +526,11 @@ li.g-default-group h4, li.g-default-group .g-user {
 /* Block admin  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-admin-blocks .g-block {
-  margin-right: 2em;
-  height: 200px;
-  width: 30% !important;
+  clear: none;
+  width: 30%;
 }
 
-#g-admin-blocks .g-block li {
+#g-admin-blocks .g-block .g-draggable {
   background: #e7e7e7;
   /*border: 1px solid #fff;*/
   margin-bottom: 1em;

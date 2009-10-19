@@ -1,5 +1,9 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
+  $(document).ready(function(){
+    $(".g-blocks-list").equal_heights();
+  });
+
   $(function() {
     $(".g-blocks-list ul").sortable({
       connectWith: ".g-sortable-blocks",
