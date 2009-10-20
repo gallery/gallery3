@@ -22,6 +22,20 @@
  */
 class Identity_Gallery_Driver implements Identity_Driver {
   /**
+   * @see Identity_Driver::activate.
+   */
+  public function activate() {
+    user::activate();
+  }
+
+  /**
+   * @see Identity_Driver::deactivate.
+   */
+  public function deactivate() {
+    user::deactivate();
+  }
+
+  /**
    * @see Identity_Driver::guest.
    */
   public function guest() {

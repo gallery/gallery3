@@ -39,13 +39,24 @@ class Identity_Core {
    * @param   string  configuration
    * @return  Identity_Core
    */
-  static function & instance($config="default") {
-   if (!isset(Identity::$instance)) {
+  static function & instance() {
+   if (!isset(self::$instance)) {
       // Create a new instance
-      Identity::$instance = new Identity($config);
+      self::$instance = new Identity();
     }
 
-    return Identity::$instance;
+    return self::$instance;
+  }
+
+  /**
+   * Returns a singleton instance of Identity.
+   * There can only be one Identity driver configured at a given point
+   *
+   * @param   string  configuration
+   * @return  Identity_Core
+   */
+  static function reset() {
+    self::$instance = new Identity();
   }
 
   /**
@@ -83,11 +94,11 @@ class Identity_Core {
   }
 
   /**
-   * Return a list of installed and activated Identity Drivers.
+   * Return a list of installed Identity Drivers.
    *
    * @return boolean true if the driver supports updates; false if read only
    */
-  static function active() {
+  static function providers() {
     if (empty(self::$active)) {
       $drivers = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
       foreach (module::active() as $module) {
@@ -100,6 +111,20 @@ class Identity_Core {
       self::$active = $drivers;
     }
     return self::$active;
+  }
+
+  /**
+   * @see Identity_Driver::activate.
+   */
+  static function activate() {
+    self::instance()->driver->activate();
+  }
+
+  /**
+   * @see Identity_Driver::deactivate.
+   */
+  static function deactivate() {
+    self::instance()->driver->deactivate();
   }
 
   /**

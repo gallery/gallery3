@@ -191,7 +191,7 @@ class gallery_event_Core {
                         ->id("sidebar")
                         ->label(t("Manage Sidebar"))
                         ->url(url::site("admin/sidebar"))));
-    if (count(Identity::active()) > 1) {
+    if (count(Identity::providers()) > 1) {
       $menu
         ->append(Menu::factory("submenu")
                  ->id("identity_menu")

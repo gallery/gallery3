@@ -21,7 +21,7 @@ class Admin_Identity_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_identity.html");
-    $view->content->available = Identity::active();
+    $view->content->available = Identity::providers();
     $view->content->active = module::get_var("gallery", "identity_provider", "user");
     print $view;
   }
@@ -39,18 +39,36 @@ class Admin_Identity_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $active_provider = module::get_var("gallery", "identity_provider", "user");
-    $providers = Identity::active();
+    $providers = Identity::providers();
 
     $new_provider = $this->input->post("provider");
 
     if ($new_provider != $active_provider) {
-      module::event("identity_change", $new_provider);
+
+      module::event("pre_identity_change", $active_provider, $new_provider);
+
+      Identity::deactivate();
+
+      // Switch authentication
+      module::set_var("gallery", "identity_provider", $new_provider);
+      Identity::reset();
+
+      Identity::activate();
 
       // @todo this type of collation is questionable from an i18n perspective
       message::success(t("Changed to %description",
                          array("description" => $providers->$new_provider)));
+
+      try {
+        Session::instance()->destroy();
+      } catch (Exception $e) {
+        // We don't care if there was a problem destroying the session.
+      }
+      url::redirect(item::root()->abs_url());
     }
 
+    message::info(t("The selected provider \"%description\" is already active.",
+                    array("description" => $providers->$new_provider)));
     url::redirect("admin/identity");
   }
 }
