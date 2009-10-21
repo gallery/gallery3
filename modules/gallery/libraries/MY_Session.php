@@ -23,26 +23,35 @@ class Session extends Session_Core {
    * Make sure that we have a session and group_ids cached in the session.
    */
   static function load_user() {
-    $session = Session::instance();
-    if (!($user = $session->get("user"))) {
-      $session->set("user", $user = Identity::guest());
-    }
-
-    // The installer cannot set a user into the session, so it just sets an id which we should
-    // upconvert into a user.
-    // @todo set the user name into the session instead of 2 and then use it to get the user object
-    if ($user === 2) {
-      $user = Instance::lookup_user_by_name("admin");
-      self::set_active_user($user);
-      $session->set("user", $user);
-    }
-
-    if (!$session->get("group_ids")) {
-      $ids = array();
-      foreach ($user->groups as $group) {
-        $ids[] = $group->id;
+    try {
+      $session = Session::instance();
+      if (!($user = $session->get("user"))) {
+        $session->set("user", $user = Identity::guest());
       }
-      $session->set("group_ids", $ids);
+
+      // The installer cannot set a user into the session, so it just sets an id which we should
+      // upconvert into a user.
+      // @todo set the user name into the session instead of 2 and then use it to get the user object
+      if ($user === 2) {
+        $user = Instance::lookup_user_by_name("admin");
+        self::set_active_user($user);
+        $session->set("user", $user);
+      }
+
+      if (!$session->get("group_ids")) {
+        $ids = array();
+        foreach ($user->groups as $group) {
+          $ids[] = $group->id;
+        }
+        $session->set("group_ids", $ids);
+      }
+    } catch (Exception $e) {
+      try {
+        Session::instance()->destroy();
+      } catch (Exception $e) {
+        // We don't care if there was a problem destroying the session.
+      }
+      url::redirect(item::root()->abs_url());
     }
   }
 
