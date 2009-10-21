@@ -31,19 +31,15 @@
  * 2) Forms
  **********************************************************************/
 
-#g-sidebar form {
-  padding-left: 0;
-  padding-right: 0;
-}
-
 fieldset {
   border: 1px solid #ccc;
-  padding: .8em 1em !important;
+  padding: .8em 1em;
 }
 
 #g-banner fieldset,
 #g-sidebar fieldset {
   border: none;
+  padding: 0;
 }
 
 legend {
@@ -58,9 +54,15 @@ input[type="hidden"] {
   display: none;
 }
 
+input.textbox,
 input[type="text"],
 input[type="password"] {
   width: 50%;
+}
+
+textarea {
+  width: 100%;
+  height: 12em;
 }
 
 input[type="text"],
@@ -70,11 +72,6 @@ textarea {
   border-top-color: #ccc;
   border-left-color: #ccc;
   color: #333;
-}
-
-textarea {
-  width: 100%;
-  height: 12em;
 }
 
 input:focus,
@@ -89,7 +86,7 @@ option:focus {
 /* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 form li {
-  margin: 0 !important;
+  margin: 0;
   padding: .3em 0;
 }
 
@@ -129,6 +126,7 @@ input[type="reset"] {
 
 .g-short-form li {
   float: left;
+  margin: 0 !important;
   padding: .4em 0;
 }
 
@@ -217,7 +215,8 @@ form.g-error textarea,
 li.g-error textarea,
 form.g-error select,
 li.g-error select {
-  border: 2px solid red;
+  border: 2px solid #f00;
+  margin-bottom: .2em;
 }
 
 .g-error, 
@@ -358,7 +357,11 @@ form .g-error {
   display: inline-block;
 }
 
-/* Status messages ~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Status and validation messages ~~~~ */
+
+.g-message {
+  font-size: .8em;
+}
 
 .g-message-block {
   border: 1px solid #ccc;
@@ -448,14 +451,12 @@ div#g-action-status {
 }
 
 #g-dialog .g-narrow {
-  margin: 0 auto;
-  width: 270px;
+  width: 280px;
 }
 
-#g-dialog fieldset {
+#g-dialog form fieldset {
   border: none;
-  padding: 0 !important;
-  width: 99%;
+  padding: 0;
 }
 
 #g-dialog legend {
