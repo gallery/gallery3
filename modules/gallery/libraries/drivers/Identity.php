@@ -97,6 +97,11 @@ interface Identity_Driver {
    */
   public function get_user_list($ids);
 
+  /**
+   * List the groups defined in the Identity Provider
+   */
+  static function groups();
+
 } // End Identity Driver Definition
 
 interface Group_Definition {}

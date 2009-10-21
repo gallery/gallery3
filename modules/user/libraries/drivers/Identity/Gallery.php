@@ -131,5 +131,13 @@ class Identity_Gallery_Driver implements Identity_Driver {
       ->find_all()
       ->as_array();
   }
+
+  /**
+   * @see Identity_Driver::groups.
+   */
+  static function groups() {
+    return ORM::factory("group")->find_all();
+  }
+
 } // End Identity Gallery Driver
 

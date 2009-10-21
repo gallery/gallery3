@@ -419,10 +419,11 @@ class access_Core {
    * @return ORM_Iterator
    */
   private static function _get_all_groups() {
-    // When we build the gallery package, it's possible that the user module is not installed yet.
+    // When we build the gallery package, it's possible that there is no identity provider installed yet.
     // This is ok at packaging time, so work around it.
-    if (module::is_active("user")) {
-      return ORM::factory("group")->find_all();
+    $config = module::get_var("gallery", "identity_provider");
+    if (!empty($config)) {
+      return Identity::groups();
     } else {
       return array();
     }

@@ -65,11 +65,11 @@ class Identity_Core {
    * @return  void
    */
   public function __construct() {
-    $name = $config = module::get_var("gallery", "identity_provider", "user");
+    $config = module::get_var("gallery", "identity_provider", "user");
 
     // Test the config group name
     if (($this->config = Kohana::config("identity.".$config)) === NULL) {
-      throw new Exception("@todo NO USER LIBRARY CONFIGURATION FOR: $name");
+      throw new Exception("@todo NO USER LIBRARY CONFIGURATION FOR: $config");
     }
 
     // Set driver name
@@ -204,5 +204,12 @@ class Identity_Core {
    */
   static function get_user_list($ids) {
     return self::instance()->driver->get_user_list($ids);
+  }
+
+  /**
+   * @see Identity_Driver::groups.
+   */
+  static function groups() {
+    return self::instance()->driver->groups();
   }
 } // End Identity
