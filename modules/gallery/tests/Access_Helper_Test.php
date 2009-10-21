@@ -22,8 +22,8 @@ class Access_Helper_Test extends Unit_Test_Case {
 
   public function teardown() {
     try {
-      $group = ORM::factory("group")->where("name", "access_test")->find();
-      if ($group->loaded) {
+      $group = Identity::lookup_group_by_name("access_test");
+      if (!empty($group)) {
         $group->delete();
       }
     } catch (Exception $e) { }
@@ -34,7 +34,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     try {
       $user = Identity::lookup_user_by_name("access_test");
-      if ($user->loaded) {
+      if (!empty($user)) {
         $user->delete();
       }
     } catch (Exception $e) { }
@@ -123,10 +123,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     $album = album::create($root, rand(), "test album");
     access::allow(Identity::everybody(), "view", $album);
 
-    $photo = ORM::factory("item");
-    $photo->type = "photo";
-    $photo->add_to_parent($album);
-    access::add_item($photo);
+    $photo = photo::create($album, MODPATH . "gallery/images/gallery.png", "", "");
 
     $this->assert_true($photo->__get("view_" . Identity::everybody()->id));
   }
