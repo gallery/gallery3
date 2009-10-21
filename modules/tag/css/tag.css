@@ -80,6 +80,7 @@
 
 #g-tag-admin td {
   border: 0;
+  vertical-align: top;
 }
 
 #g-tag-admin ul {

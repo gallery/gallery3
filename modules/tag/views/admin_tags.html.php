@@ -23,7 +23,7 @@
 
   <div class="g-block-content">
     <table id="g-tag-admin">
-      <caption class="g-understate">
+      <caption>
         <?= t2("There is one tag", "There are %count tags", $tags->count()) ?>
       </caption>
       <tr>
