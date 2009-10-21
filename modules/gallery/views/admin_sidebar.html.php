@@ -21,6 +21,10 @@
             if (data.result == "success") {
               $("ul#g-available-blocks").html(data.available);
               $("ul#g-active-blocks").html(data.active);
+              var message = "Updated blocks";
+              $("#g-action-status").remove();
+              $("#g-block-admin").before("<ul id=\"g-action-status\" class=\"g-message-block\"><li class=\"g-success\">" + message + "</li></ul>");
+              $("#g-action-status").fadeTo(1000,1).fadeTo(2000,0);
             }
           });
         }
@@ -29,7 +33,7 @@
   });
 </script>
 
-<div class="g-block ui-helper-clearfix">
+<div id="g-block-admin" class="g-block ui-helper-clearfix">
   <h1> <?= t("Manage Sidebar") ?> </h1>
   <p>
     <?= t("Select and drag blocks from the available column to the active column to add to the sidebar; remove by dragging the other way.") ?>
