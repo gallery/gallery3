@@ -424,16 +424,27 @@ li.g-default-group h4, li.g-default-group .g-user {
 
 /* Block admin  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#g-admin-blocks .g-block {
-  clear: none;
+.g-admin-blocks-list {
+  float: left;
+  margin: 0 2em 2em 0;
   width: 30%;
 }
 
-#g-admin-blocks .g-block .g-draggable {
-  background: #e7e7e7;
-  /*border: 1px solid #fff;*/
-  margin-bottom: 1em;
-  padding: .4em .8em;
+.g-admin-blocks-list div:last-child {
+  border: .1em solid;
+  height: 100%;
+}
+
+.g-admin-blocks-list ul {
+  height: 98%;
+  margin: .1em .1em;
+  padding: .1em;
+}
+
+.g-admin-blocks-list ul li.g-draggable {
+  background-color: #e8e8e8;
+  margin: .5em;
+  padding: .3em .8em;
 }
 
 /** *******************************************************************
