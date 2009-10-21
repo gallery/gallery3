@@ -44,6 +44,7 @@
               <strong><?= html::clean($current_letter) ?></strong>
               <ul>
             <? endif ?>
+
                 <li>
                   <span class="g-editable g-tag-name" rel="<?= $tag->id ?>"><?= html::clean($tag->name) ?></span>
                   <span class="g-understate">(<?= $tag->count ?>)</span>
@@ -51,18 +52,7 @@
                       class="g-dialog-link g-delete-link g-button">
                     <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
                 </li>
-            </ul>
-            <strong><?= html::clean($current_letter) ?></strong>
-            <ul>
-          <? endif ?>
 
-          <li>
-            <span class="g-editable g-tag-name" rel="<?= $tag->id ?>"><?= html::clean($tag->name) ?></span>
-            <span class="g-understate">(<?= $tag->count ?>)</span>
-            <a href="<?= url::site("admin/tags/form_delete/$tag->id") ?>"
-               class="g-dialog-link g-delete-link g-button">
-                <span class="ui-icon ui-icon-trash"><?= t("Delete this tag") ?></span></a>
-          </li>
             <? $column_tag_count++ ?>
             <? $last_letter = $current_letter ?>
           <? endforeach /* $tags */ ?>
