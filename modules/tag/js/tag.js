@@ -64,13 +64,11 @@ function editInPlace(element) {
     $("#g-rename-tag-form").ajaxForm({
       dataType: "json",
       success: function(data) {
-    console.log("success");
         if (data.result == "success") {
           closeEditInPlaceForms(); // close form
           $(".g-tag[rel=" + data.tag_id + "]").text(data.new_tagname); // update tagname
           window.location.reload();
         } else if (data.result == "error") {
-    console.log("error");
           $("#g-rename-tag-form #name")
             .addClass("g-error")
             .focus();
