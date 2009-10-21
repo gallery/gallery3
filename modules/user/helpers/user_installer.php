@@ -20,6 +20,7 @@
 class user_installer {
   static function install() {
     user::activate();
+    module::set_var("gallery", "identity_provider", "user");
     module::set_version("user", 1);
   }
 
