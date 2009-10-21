@@ -80,7 +80,7 @@ class user_Core {
     $admin->save();
 
     // Let the admin own everything
-    $db->update("items", array("owner_id" => $admin->id), array("owner_id" => "IS NULL"));
+    $db->query("update {items} set owner_id = {$admin->id}");
 
     $root = ORM::factory("item", 1);
     access::allow($everybody, "view", $root);
