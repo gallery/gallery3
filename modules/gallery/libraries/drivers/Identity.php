@@ -102,12 +102,19 @@ interface Identity_Driver {
    * @param integer     id
    * @return Group_Definition the user object, or null if the name was invalid.
    */
-  static function lookup_group($id);
+  public function lookup_group($id);
+
+  /**
+   * Look up the group by name.
+   * @param string     $name the name of the group to locate
+   * @return Group_Definition
+   */
+  public function lookup_group_by_name($name);
 
   /**
    * List the groups defined in the Identity Provider
    */
-  static function groups();
+  public function groups();
 
 } // End Identity Driver Definition
 

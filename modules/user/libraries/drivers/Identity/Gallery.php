@@ -118,8 +118,15 @@ class Identity_Gallery_Driver implements Identity_Driver {
   /**
    * @see Identity_Driver::lookup_group.
    */
-  static function lookup_group($id) {
+  public function lookup_group($id) {
     return group::lookup_by_field("id", $id);
+  }
+
+  /**
+   * @see Identity_Driver::lookup_group_by_name.
+   */
+  public function lookup_group_by_name($name) {
+    return group::lookup_by_field("name", $name);
   }
 
   /**
@@ -127,7 +134,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
    */
   public function get_user_list($ids) {
     return ORM::factory("user")
-      ->in("id", ids)
+      ->in("id", $ids)
       ->find_all()
       ->as_array();
   }
@@ -135,7 +142,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
   /**
    * @see Identity_Driver::groups.
    */
-  static function groups() {
+  public function groups() {
     return ORM::factory("group")->find_all();
   }
 
