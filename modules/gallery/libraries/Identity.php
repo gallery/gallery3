@@ -200,13 +200,6 @@ class Identity_Core {
   }
 
   /**
-   * @see Identity_Driver::lookup_group_by_name.
-   */
-  static function lookup_group_by_name($name) {
-    return self::instance()->driver->lookup_group_by_name($name);
-  }
-
-  /**
    * @see Identity_Driver::get_user_list.
    */
   static function get_user_list($ids) {
