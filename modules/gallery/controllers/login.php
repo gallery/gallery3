@@ -53,6 +53,7 @@ class Login_Controller extends Controller {
       print $form;
     }
   }
+
   private function _auth($url) {
     $form = login::get_login_form($url);
     $valid = $form->validate();
