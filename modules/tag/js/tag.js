@@ -19,7 +19,7 @@ function ajaxify_tag_form() {
 function closeEditInPlaceForms() {
   // closes currently open inplace edit forms
   if ($("#g-rename-tag-form").length) {
-    $("#g-edit-error-message").remove();
+    $("#g-action-status").remove();
     var li = $("#g-rename-tag-form").parent();
     $("#g-rename-tag-form").parent().html($("#g-rename-tag-form").parent().data("revert"));
     li.height("");
@@ -74,7 +74,7 @@ function editInPlace(element) {
           $("#g-rename-tag-form #name")
             .addClass("g-error")
             .focus();
-          $("#g-tag-admin").before("<p id=\"g-edit-error-message\" class=\"g-error\">" + data.message + "</p>");
+          $("#g-tag-admin").before("<p id=\"g-action-status\" class=\"g-message-block g-error\">" + data.message + "</p>");
         }
       }
     });

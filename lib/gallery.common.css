@@ -219,14 +219,16 @@ form .g-error {
 
 .g-message-block {
   border: 1px solid #ccc;
+  width: 100%;
 }
 
 #g-action-status {
   margin-bottom: 1em;
-  width: 100% !important;
 }
 
-#g-action-status li {
+#g-action-status li,
+p#g-action-status,
+div#g-action-status {
   padding-top: .4em;
   padding-bottom: .3em;
 }
@@ -355,10 +357,16 @@ form .g-error {
   padding: .4em 0;
 }
 
-.g-short-form input[type="text"] {
+.g-short-form .textbox {
   color: #666;
   padding: .3em .6em;
   width: auto;
+}
+
+.g-short-form .textbox.g-error {
+  border: 1px solid #f00;
+  color: #f00;
+  padding-left: 24px;
 }
 
 .g-short-form .g-cancel {

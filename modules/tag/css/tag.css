@@ -93,8 +93,3 @@
 #g-rename-tag-form ul {
   margin-bottom: 0;
 }
-
-#g-rename-tag-form input[type="text"].g-error {
-  border: 2px solid red;
-  background: none;
-}
