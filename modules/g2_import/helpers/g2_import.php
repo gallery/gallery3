@@ -301,7 +301,7 @@ class g2_import_Core {
         $user->admin = true;
         $message .= t("\n\tAdded 'admin' flag to user");
       } else {
-        $group = ORM::factory("group", self::map($g2_group_id));
+        $group = Identity::lookup_group(self::map($g2_group_id));
         $user->add($group);
         $message .= t("\n\tAdded user to group '%group'.", array("group" => $group->name));
       }

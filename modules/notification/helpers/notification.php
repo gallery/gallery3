@@ -78,6 +78,9 @@ class notification {
       $subscriber_ids[] = $subscriber->user_id;
     }
 
+    if (empty($subscriber_ids)) {
+      return array();
+    }
     $users = Identity::get_user_list($subscriber_ids);
 
     $subscribers = array();

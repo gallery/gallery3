@@ -317,7 +317,7 @@ class gallery_installer {
     }
 
     if ($version == 7) {
-      $groups = ORM::factory("group")->find_all();
+      $groups = Identity::groups();
       $permissions = ORM::factory("permission")->find_all();
       foreach($groups as $group) {
         foreach($permissions as $permission) {
