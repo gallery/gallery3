@@ -26,7 +26,7 @@
 class photo_Core {
   /**
    * Create a new photo.
-   * @param integer $parent_id id of parent album
+   * @param integer $parent parent album
    * @param string  $filename path to the photo file on disk
    * @param string  $name the filename to use for this photo in the album
    * @param integer $title the title of the new photo
