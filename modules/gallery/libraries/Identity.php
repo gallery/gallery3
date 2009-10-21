@@ -193,6 +193,13 @@ class Identity_Core {
   }
 
   /**
+   * @see Identity_Driver::lookup_group.
+   */
+  static function lookup_group($id) {
+    return self::instance()->driver->lookup_group($id);
+  }
+
+  /**
    * @see Identity_Driver::lookup_group_by_name.
    */
   static function lookup_group_by_name($name) {

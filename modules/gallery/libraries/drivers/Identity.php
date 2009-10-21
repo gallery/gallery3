@@ -98,6 +98,13 @@ interface Identity_Driver {
   public function get_user_list($ids);
 
   /**
+   * Look up a group by id.
+   * @param integer     id
+   * @return Group_Definition the user object, or null if the name was invalid.
+   */
+  static function lookup_group($id);
+
+  /**
    * List the groups defined in the Identity Provider
    */
   static function groups();

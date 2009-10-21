@@ -116,10 +116,10 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * @see Identity_Driver::lookup_group_by_name.
+   * @see Identity_Driver::lookup_group.
    */
-  static function lookup_group_by_name($name) {
-    return group::lookup_by_field("name", $name);
+  static function lookup_group($id) {
+    return group::lookup_by_field("id", $id);
   }
 
   /**
