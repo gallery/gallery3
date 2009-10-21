@@ -118,112 +118,6 @@ td {
   vertical-align: top;
 }
 
-/* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#g-sidebar form {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-fieldset {
-  border: 1px solid #ccc;
-  padding: .8em 1em !important;
-}
-
-#g-banner fieldset,
-#g-sidebar fieldset {
-  border: none;
-}
-
-legend {
-  font-weight: bold;
-  margin-left: .8em;
-}
-
-#g-banner legend,
-#g-sidebar legend,
-#g-content #g-search-form legend,
-input[type="hidden"] {
-  display: none;
-}
-
-label {
-  cursor: help;
-}
-
-input[type="text"],
-input[type="password"] {
-  width: 50%;
-}
-
-input[type="text"],
-input[type="password"],
-textarea {
-  border: 1px solid #e8e8e8;
-  border-top-color: #ccc;
-  border-left-color: #ccc;
-  color: #333;
-}
-
-textarea {
-  width: 100%;
-  height: 12em;
-}
-
-input:focus,
-textarea:focus,
-option:focus {
-  background-color: #ffc;
-  color: #000;
-}
-
-/* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-form li {
-  margin: 0 !important;
-  padding: .3em 0;
-}
-
-form ul ul {
-  clear: both;
-}
-
-form ul ul li {
-  float: left;
-}
-
-input,
-select,
-textarea {
-  display: block;
-  clear: both;
-  padding: .2em;
-}
-
-input[type="submit"],
-input[type="reset"] {
-  display: inline;
-  clear: none;
-  float: left;
-}
-
-/* Form validation ~~~~~~~~~~~~~~~~~~~~~~~ */
-
-form.g-error input[type="text"],
-li.g-error input[type="text"],
-form.g-error input[type="password"],
-li.g-error input[type="password"],
-form.g-error input[type="checkbox"],
-li.g-error input[type="checkbox"],
-form.g-error input[type="radio"],
-li.g-error input[type="radio"],
-form.g-error textarea,
-li.g-error textarea,
-form.g-error select,
-li.g-error select {
-  border: 2px solid red;
-}
-
 /** *******************************************************************
  * 2) Reusable content blocks
  *********************************************************************/
@@ -697,7 +591,7 @@ li.g-error select {
   padding-left:10px;
 }
 #g-add-photos-canvas {
-  border: 1px solid  #CCCCCC;
+  border: 1px solid  #ccc;
   margin: .5em 0 .5em 0;
   width: 469px;
 	height: 325px;

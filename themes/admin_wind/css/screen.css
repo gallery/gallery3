@@ -114,107 +114,6 @@ th {
   white-space: nowrap;
 }
 
-/* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-fieldset {
-  border: 1px solid #ccc;
-  padding-bottom: .8em;
-}
-
-#g-header fieldset,
-#g-sidebar fieldset {
-  border: none;
-}
-
-legend {
-  font-weight: bold;
-  margin-left: 1em;
-}
-
-#g-header legend,
-#g-sidebar legend,
-#g-content #g-search-form legend,
-input[type="hidden"] {
-  display: none;
-}
-
-label {
-  cursor: help;
-}
-
-input[type="text"],
-input[type="password"] {
-  width: 50%;
-}
-
-input[type="text"],
-input[type="password"],
-textarea {
-  border: 1px solid #e8e8e8;
-  border-top-color: #ccc;
-  border-left-color: #ccc;
-  color: #333;
-}
-
-textarea {
-  width: 100%;
-  height: 12em;
-}
-
-input:focus,
-textarea:focus,
-option:focus {
-  background-color: #ffc;
-  color: #000;
-}
-
-/* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-form li {
-  margin: 0 !important;
-  padding: .3em 1.5em .3em 1em;
-}
-
-form ul ul {
-  clear: both;
-}
-
-form ul ul li {
-  float: left;
-}
-
-input,
-select,
-textarea {
-  display: block;
-  clear: both;
-  padding: .2em;
-}
-
-input[type="submit"],
-input[type="reset"] {
-  display: inline;
-  clear: none;
-  float: left;
-}
-
-/* Form validation ~~~~~~~~~~~~~~~~~~~~~~~ */
-
-form.g-error input[type="text"],
-li.g-error input[type="text"],
-form.g-error input[type="password"],
-li.g-error input[type="password"],
-form.g-error input[type="checkbox"],
-li.g-error input[type="checkbox"],
-form.g-error input[type="radio"],
-li.g-error input[type="radio"],
-form.g-error textarea,
-li.g-error textarea,
-form.g-error select,
-li.g-error select {
-  border: 2px solid red;
-}
-
 /** *******************************************************************
  * 2) Reusable content blocks
  *********************************************************************/
@@ -526,16 +425,27 @@ li.g-group-disable h4, li.g-group-disable .g-user {
 
 /* Block admin  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#g-admin-blocks .g-block {
-  clear: none;
+.g-admin-blocks-list {
+  float: left;
+  margin: 0 2em 2em 0;
   width: 30%;
 }
 
-#g-admin-blocks .g-block .g-draggable {
-  background: #e7e7e7;
-  /*border: 1px solid #fff;*/
-  margin-bottom: 1em;
-  padding: .4em .8em;
+.g-admin-blocks-list div:last-child {
+  border: .1em solid;
+  height: 100%;
+}
+
+.g-admin-blocks-list ul {
+  height: 98%;
+  margin: .1em .1em;
+  padding: .1em;
+}
+
+.g-admin-blocks-list ul li.g-draggable {
+  background-color: #e8e8e8;
+  margin: .5em;
+  padding: .3em .8em;
 }
 
 /** *******************************************************************
@@ -668,54 +578,6 @@ li.g-group-disable h4, li.g-group-disable .g-user {
   width: 100%;
   margin-top: .5em;
   display: inline-block;
-}
-
-#g-add-photos p {
-  margin: 0;
-  padding: 0;
-}
-
-#g-add-photos-canvas {
-  height: 325px;
-  width: 450px;
-  overflow: auto;
-}
-
-#g-add-photos-queue .progressbar {
-  height: 4px;
-}
-
-#g-add-photos-queue .title {
-  font-size: 1.25em;
-}
-
-#g-add-photos-queue .status {
-  font-size: .75em;
-}
-
-#g-add-photos-queue .box {
-  margin-bottom: 8px;
-  padding: 4px;
-}
-
-#g-add-photos-queue .pending {
-  background-color: #e8e8e8;
-  border: 1px solid #d7d7d7;
-}
-
-#g-add-photos-queue .error {
-  background-color: #fcc;
-  border: 1px solid #ebb;
-}
-
-#g-add-photos-queue .uploading {
-  background-color: #ff9;
-  border: 1px solid #ee8;
-}
-
-#g-add-photos-queue .complete {
-  background-color: #cfc;
-  border: 1px solid #beb;
 }
 
 #g-admin-g2-import-notes {
