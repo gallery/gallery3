@@ -21,7 +21,7 @@
             if (data.result == "success") {
               $("ul#g-available-blocks").html(data.available);
               $("ul#g-active-blocks").html(data.active);
-              var message = "Updated blocks";
+              var message = <?= t("Updated blocks")->for_js() ?>;
               $("#g-action-status").remove();
               $("#g-block-admin").before("<ul id=\"g-action-status\" class=\"g-message-block\"><li class=\"g-success\">" + message + "</li></ul>");
               $("#g-action-status").fadeTo(1000,1).fadeTo(2000,0);
