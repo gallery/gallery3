@@ -27,7 +27,7 @@ class user_Core {
   /**
    * Initialize the provider so it is ready to use
    */
-  public function activate() {
+  static function activate() {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {users} (
                  `id` int(9) NOT NULL auto_increment,
@@ -93,7 +93,7 @@ class user_Core {
   /**
    * Cleanup up this provider so it is unavailable for use and won't conflict with the current driver
    */
-  public function deactivate() {
+  static function deactivate() {
     // Delete all users and groups so that we give other modules an opportunity to clean up
     foreach (ORM::factory("user")->find_all() as $user) {
       $user->delete();
