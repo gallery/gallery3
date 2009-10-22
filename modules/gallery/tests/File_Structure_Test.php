@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-require_once(dirname(__FILE__) . "/Gallery_Filters.php");
+require_once(MODPATH . "gallery/tests/Gallery_Filters.php");
 
 class File_Structure_Test extends Unit_Test_Case {
   public function no_trailing_closing_php_tag_test() {
