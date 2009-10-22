@@ -113,7 +113,8 @@ class Photos_Controller extends Items_Controller {
                          array("photo_title" => html::purify($photo->title))));
 
       print json_encode(
-        array("result" => "success"));
+        array("result" => "success",
+              "location" => $photo->url()));
     } else {
       print json_encode(
         array("result" => "error",
