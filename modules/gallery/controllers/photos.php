@@ -100,6 +100,8 @@ class Photos_Controller extends Items_Controller {
     }
 
     if ($valid) {
+      $watching_album = $photo->url() != ($location = parse_url(request::referrer(), PHP_URL_PATH));
+
       $photo->title = $form->edit_item->title->value;
       $photo->description = $form->edit_item->description->value;
       $photo->slug = $form->edit_item->slug->value;
@@ -114,7 +116,7 @@ class Photos_Controller extends Items_Controller {
 
       print json_encode(
         array("result" => "success",
-              "location" => $photo->url()));
+              "location" => $watching_album ? $location : $photo->url()));
     } else {
       print json_encode(
         array("result" => "error",

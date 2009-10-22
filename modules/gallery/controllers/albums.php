@@ -200,6 +200,8 @@ class Albums_Controller extends Items_Controller {
     }
 
     if ($valid) {
+      $watching_album = $album->url() != ($location = parse_url(request::referrer(), PHP_URL_PATH));
+
       $album->title = $form->edit_item->title->value;
       $album->description = $form->edit_item->description->value;
       $album->sort_column = $form->edit_item->sort_order->column->value;
@@ -217,7 +219,7 @@ class Albums_Controller extends Items_Controller {
 
       print json_encode(
         array("result" => "success",
-              "location" => $album->url()));
+              "location" => $watching_album ? $location : $album->url()));
     } else {
       print json_encode(
         array("result" => "error",
