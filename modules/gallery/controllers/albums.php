@@ -216,7 +216,8 @@ class Albums_Controller extends Items_Controller {
                          array("album_title" => html::purify($album->title))));
 
       print json_encode(
-        array("result" => "success"));
+        array("result" => "success",
+              "location" => $album->url()));
     } else {
       print json_encode(
         array("result" => "error",
