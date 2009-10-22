@@ -40,7 +40,7 @@ class Upgrader_Controller extends Controller {
     }
 
     $view = new View("upgrader.html");
-    $view->can_upgrade = Session::active_user()->admin || $session->get("can_upgrade");
+    $view->can_upgrade = identity::active_user()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
     $view->available = module::available();
     $view->done = ($available_upgrades == 0);
@@ -52,7 +52,7 @@ class Upgrader_Controller extends Controller {
       // @todo this may screw up some module installers, but we don't have a better answer at
       // this time.
       $_SERVER["HTTP_HOST"] = "example.com";
-    } else if (!Session::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
+    } else if (!identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
       access::forbidden();
     }
 

@@ -91,7 +91,7 @@
                   open_text="<?= t("close") ?>"
                   class="g-panel-link g-button ui-state-default ui-corner-all ui-icon-left">
                 <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text"><?= t("edit") ?></span></a>
-              <? if (Session::active_user()->id != $user->id && !$user->guest): ?>
+              <? if (identity::active_user()->id != $user->id && !$user->guest): ?>
               <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
                   class="g-dialog-link g-button ui-state-default ui-corner-all ui-icon-left">
                 <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>

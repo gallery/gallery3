@@ -25,7 +25,10 @@
  */
 class group_Core {
   /**
-   * @see Identity_Driver::create.
+   * Create a new group.
+   *
+   * @param string  $name
+   * @return Group_Definition the group object
    */
   static function create($name) {
     $group = ORM::factory("group")->where("name", $name)->find();
@@ -39,14 +42,18 @@ class group_Core {
   }
 
   /**
-   * @see Identity_Driver::everbody.
+   * The group of all possible visitors.  This includes the guest user.
+   *
+   * @return Group_Definition the group object
    */
   static function everybody() {
     return model_cache::get("group", 1);
   }
 
   /**
-   * @see Identity_Driver::registered_users.
+   * The group of all logged-in visitors.  This does not include guest users.
+   *
+   * @return Group_Definition the group object
    */
   static function registered_users() {
     return model_cache::get("group", 2);
@@ -71,7 +78,10 @@ class group_Core {
   }
 
   /**
-   * @see Identity_Driver::get_group_list.
+   * Search the groups by the field and value.
+   * @param string      $field_name column to look up the user by
+   * @param string      $value value to match
+   * @return Group_Definition  the group object, or null if the name was invalid.
    */
   static function lookup_by_field($field_name, $value) {
     try {

@@ -58,8 +58,8 @@ class Login_Controller extends Controller {
     $form = login::get_login_form($url);
     $valid = $form->validate();
     if ($valid) {
-      $user = Identity::lookup_user_by_name($form->login->inputs["name"]->value);
-      if (empty($user) || !Identity::is_correct_password($user, $form->login->password->value)) {
+      $user = identity::lookup_user_by_name($form->login->inputs["name"]->value);
+      if (empty($user) || !identity::is_correct_password($user, $form->login->password->value)) {
         log::warning(
           "user",
           t("Failed login for %name",
@@ -70,12 +70,12 @@ class Login_Controller extends Controller {
     }
 
     if ($valid) {
-      if (Identity::is_writable()) {
+      if (identity::is_writable()) {
         $user->login_count += 1;
         $user->last_login = time();
         $user->save();
       }
-      Session::set_active_user($user);
+      identity::set_active_user($user);
       log::info("user", t("User %name logged in", array("name" => $user->name)));
     }
 

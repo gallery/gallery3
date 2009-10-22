@@ -31,7 +31,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $photo = photo::create(
       $root, MODPATH . "gallery/tests/test.jpg", "test.jpeg",
-      "test", "test", Session::active_user()->id, "slug");
+      "test", "test", identity::active_user()->id, "slug");
     $orig_name = $photo->name;
 
     $_POST["filename"] = "test.jpeg";
@@ -40,7 +40,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $_POST["description"] = "new description";
     $_POST["slug"] = "new-slug";
     $_POST["csrf"] = access::csrf_token();
-    access::allow(Identity::everybody(), "edit", $root);
+    access::allow(identity::everybody(), "edit", $root);
 
     ob_start();
     $controller->_update($photo);
@@ -64,7 +64,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
-    access::allow(Identity::everybody(), "edit", $root);
+    access::allow(identity::everybody(), "edit", $root);
 
     try {
       $controller->_update($photo);

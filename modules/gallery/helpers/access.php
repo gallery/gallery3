@@ -79,7 +79,7 @@ class access_Core {
    * @return boolean
    */
   static function can($perm_name, $item) {
-    return self::user_can(Session::active_user(), $perm_name, $item);
+    return self::user_can(identity::active_user(), $perm_name, $item);
   }
 
   /**
@@ -423,7 +423,7 @@ class access_Core {
     // This is ok at packaging time, so work around it.
     $config = module::get_var("gallery", "identity_provider");
     if (!empty($config)) {
-      return Identity::groups();
+      return identity::groups();
     } else {
       return array();
     }

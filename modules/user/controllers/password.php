@@ -46,7 +46,7 @@ class Password_Controller extends Controller {
 
     $valid = $form->validate();
     if ($valid) {
-      $user = Identity::lookup_user_by_name($form->reset->inputs["name"]->value);
+      $user = identity::lookup_user_by_name($form->reset->inputs["name"]->value);
       if (!$user->loaded || empty($user->email)) {
         $form->reset->inputs["name"]->add_error("no_email", 1);
         $valid = false;

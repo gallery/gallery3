@@ -21,7 +21,7 @@ class Admin_Identity_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_identity.html");
-    $view->content->available = Identity::providers();
+    $view->content->available = identity::providers();
     $view->content->active = module::get_var("gallery", "identity_provider", "user");
     print $view;
   }
@@ -39,7 +39,7 @@ class Admin_Identity_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $active_provider = module::get_var("gallery", "identity_provider", "user");
-    $providers = Identity::providers();
+    $providers = identity::providers();
 
     $new_provider = $this->input->post("provider");
 
@@ -47,13 +47,13 @@ class Admin_Identity_Controller extends Admin_Controller {
 
       module::event("pre_identity_change", $active_provider, $new_provider);
 
-      Identity::deactivate();
+      identity::deactivate();
 
       // Switch authentication
       module::set_var("gallery", "identity_provider", $new_provider);
-      Identity::reset();
+      identity::reset();
 
-      Identity::activate();
+      identity::activate();
 
       // @todo this type of collation is questionable from an i18n perspective
       message::success(t("Changed to %description",

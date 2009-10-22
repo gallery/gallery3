@@ -46,7 +46,7 @@ class Task_Model extends ORM {
   }
 
   public function owner() {
-    return Identity::lookup_user($this->owner_id);
+    return identity::lookup_user($this->owner_id);
   }
 
   /**

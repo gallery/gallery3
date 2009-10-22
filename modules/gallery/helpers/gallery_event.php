@@ -23,11 +23,7 @@ class gallery_event_Core {
    * Initialization.
    */
   static function gallery_ready() {
-    // Call Identity::instance() now to force the load of the user interface classes.
-    // Session::load_user will attempt to load the active user from the session and needs
-    // the user definition class, which can't be reached by Kohana's heiracrchical lookup.
-    Identity::instance();
-    Session::load_user();
+    identity::load_user();
     locales::set_request_locale();
   }
 
@@ -139,7 +135,7 @@ class gallery_event_Core {
         }
       }
 
-      if (Session::active_user()->admin) {
+      if (identity::active_user()->admin) {
         $menu->append($admin_menu = Menu::factory("submenu")
                 ->id("admin_menu")
                 ->label(t("Admin")));
@@ -191,7 +187,7 @@ class gallery_event_Core {
                         ->id("sidebar")
                         ->label(t("Manage Sidebar"))
                         ->url(url::site("admin/sidebar"))));
-    if (count(Identity::providers()) > 1) {
+    if (count(identity::providers()) > 1) {
       $menu
         ->append(Menu::factory("submenu")
                  ->id("identity_menu")

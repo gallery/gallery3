@@ -20,37 +20,37 @@
 /*
  * Based on the Cache_Sqlite_Driver developed by the Kohana Team
  */
-class Identity_Gallery_Driver implements Identity_Driver {
+class Identity_Gallery_Driver implements IdentityProvider_Driver {
   /**
-   * @see Identity_Driver::activate.
+   * @see IdentityProvider_Driver::activate.
    */
   public function activate() {
     user::activate();
   }
 
   /**
-   * @see Identity_Driver::deactivate.
+   * @see IdentityProvider_Driver::deactivate.
    */
   public function deactivate() {
     user::deactivate();
   }
 
   /**
-   * @see Identity_Driver::guest.
+   * @see IdentityProvider_Driver::guest.
    */
   public function guest() {
     return user::guest();
   }
 
   /**
-   * @see Identity_Driver::create_user.
+   * @see IdentityProvider_Driver::create_user.
    */
   public function create_user($name, $full_name, $password) {
     return user::create($name, $full_name, $password);
   }
 
   /**
-   * @see Identity_Driver::is_correct_password.
+   * @see IdentityProvider_Driver::is_correct_password.
    */
   public function is_correct_password($user, $password) {
     $valid = $user->password;
@@ -81,56 +81,56 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * @see Identity_Driver::lookup_user.
+   * @see IdentityProvider_Driver::lookup_user.
    */
   public function lookup_user($id) {
     return user::lookup_by_field("id", $id);
   }
 
   /**
-   * @see Identity_Driver::lookup_user_by_name.
+   * @see IdentityProvider_Driver::lookup_user_by_name.
    */
   public function lookup_user_by_name($name) {
     return user::lookup_by_field("name", $name);
   }
 
   /**
-   * @see Identity_Driver::create_group.
+   * @see IdentityProvider_Driver::create_group.
    */
   public function create_group($name) {
     return group::create($name);
   }
 
   /**
-   * @see Identity_Driver::everybody.
+   * @see IdentityProvider_Driver::everybody.
    */
   public function everybody() {
     return group::everybody();
   }
 
   /**
-   * @see Identity_Driver::registered_users.
+   * @see IdentityProvider_Driver::registered_users.
    */
   public function registered_users() {
     return group::registered_users();
   }
 
   /**
-   * @see Identity_Driver::lookup_group.
+   * @see IdentityProvider_Driver::lookup_group.
    */
   public function lookup_group($id) {
     return group::lookup_by_field("id", $id);
   }
 
   /**
-   * @see Identity_Driver::lookup_group_by_name.
+   * @see IdentityProvider_Driver::lookup_group_by_name.
    */
   public function lookup_group_by_name($name) {
     return group::lookup_by_field("name", $name);
   }
 
   /**
-   * @see Identity_Driver::get_user_list.
+   * @see IdentityProvider_Driver::get_user_list.
    */
   public function get_user_list($ids) {
     return ORM::factory("user")
@@ -140,7 +140,7 @@ class Identity_Gallery_Driver implements Identity_Driver {
   }
 
   /**
-   * @see Identity_Driver::groups.
+   * @see IdentityProvider_Driver::groups.
    */
   public function groups() {
     return ORM::factory("group")->find_all();

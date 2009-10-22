@@ -36,7 +36,7 @@
     <li id="g-login-form">
       <?= $form ?>
     </li>
-    <? if (Identity::is_writable()): ?>
+    <? if (identity::is_writable()): ?>
     <li>
       <a href="#" id="g-password-reset" class="g-right g-txt-small"><?= t("Forgot Your Password?") ?></a>
     </li>

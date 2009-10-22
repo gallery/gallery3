@@ -230,16 +230,16 @@ class g2_import_Core {
     switch ($g2_group->getGroupType()) {
     case GROUP_NORMAL:
       try {
-        $group = Identity::create_group($g2_group->getGroupName());
+        $group = identity::create_group($g2_group->getGroupName());
       } catch (Exception $e) {
         // @todo For now we assume this is a "duplicate group" exception
-        $group = Identity::lookup_user_by_name($g2_group->getGroupname());
+        $group = identity::lookup_user_by_name($g2_group->getGroupname());
       }
       $message = t("Group '%name' was imported", array("name" => $g2_group->getGroupname()));
       break;
 
     case GROUP_ALL_USERS:
-      $group = Identity::registered_users();
+      $group = identity::registered_users();
       $message = t("Group 'Registered' was converted to '%name'", array("name" => $group->name));
       break;
 
@@ -248,7 +248,7 @@ class g2_import_Core {
       break;  // This is not a group in G3
 
     case GROUP_EVERYBODY:
-      $group = Identity::everybody();
+      $group = identity::everybody();
       $message = t("Group 'Everybody' was converted to '%name'", array("name" => $group->name));
       break;
     }
@@ -270,7 +270,7 @@ class g2_import_Core {
     }
 
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
-      self::set_map($g2_user_id, Identity::guest()->id);
+      self::set_map($g2_user_id, identity::guest()->id);
       return t("Skipping Anonymous User");
     }
 
@@ -285,11 +285,11 @@ class g2_import_Core {
     $g2_groups = g2(GalleryCoreApi::fetchGroupsForUser($g2_user->getId()));
 
     try {
-      $user = Identity::create_user($g2_user->getUsername(), $g2_user->getfullname(), "");
+      $user = identity::create_user($g2_user->getUsername(), $g2_user->getfullname(), "");
       $message = t("Created user: '%name'.", array("name" => $user->name));
     } catch (Exception $e) {
       // @todo For now we assume this is a "duplicate user" exception
-      $user = Identity::lookup_user_by_name($g2_user->getUsername());
+      $user = identity::lookup_user_by_name($g2_user->getUsername());
       $message = t("Loaded existing user: '%name'.", array("name" => $user->name));
     }
 
@@ -301,7 +301,7 @@ class g2_import_Core {
         $user->admin = true;
         $message .= t("\n\tAdded 'admin' flag to user");
       } else {
-        $group = Identity::lookup_group(self::map($g2_group_id));
+        $group = identity::lookup_group(self::map($g2_group_id));
         $user->add($group);
         $message .= t("\n\tAdded user to group '%group'.", array("group" => $group->name));
       }

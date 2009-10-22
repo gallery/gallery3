@@ -19,7 +19,7 @@
  */
 class Logout_Controller extends Controller {
   public function index() {
-    $user = Session::active_user();
+    $user = identity::active_user();
     if (!$user->guest) {
       try {
         Session::instance()->destroy();

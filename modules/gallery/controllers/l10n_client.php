@@ -20,7 +20,7 @@
 class L10n_Client_Controller extends Controller {
   public function save() {
     access::verify_csrf();
-    if (!Session::active_user()->admin) {
+    if (!identity::active_user()->admin) {
       access::forbidden();
     }
 
@@ -85,7 +85,7 @@ class L10n_Client_Controller extends Controller {
 
   public function toggle_l10n_mode() {
     access::verify_csrf();
-    if (!Session::active_user()->admin) {
+    if (!identity::active_user()->admin) {
       access::forbidden();
     }
 

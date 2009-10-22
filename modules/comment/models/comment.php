@@ -23,7 +23,7 @@ class Comment_Model extends ORM {
   }
 
   function author() {
-    return Identity::lookup_user($this->author_id);
+    return identity::lookup_user($this->author_id);
   }
 
   function author_name() {
