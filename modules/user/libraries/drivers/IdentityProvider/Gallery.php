@@ -70,14 +70,14 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::lookup_user.
    */
   public function lookup_user($id) {
-    return user::lookup_by_field("id", $id);
+    return user::lookup($id);
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_user_by_name.
    */
   public function lookup_user_by_name($name) {
-    return user::lookup_by_field("name", $name);
+    return user::lookup_by_name($name);
   }
 
   /**
@@ -105,14 +105,14 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::lookup_group.
    */
   public function lookup_group($id) {
-    return group::lookup_by_field("id", $id);
+    return group::lookup($id);
   }
 
   /**
    * @see IdentityProvider_Driver::lookup_group_by_name.
    */
   public function lookup_group_by_name($name) {
-    return group::lookup_by_field("name", $name);
+    return group::lookup_by_name($name);
   }
 
   /**

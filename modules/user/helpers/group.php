@@ -65,7 +65,7 @@ class group_Core {
    * @return Group_Definition  the group object, or null if the id was invalid.
    */
   static function lookup($id) {
-    return self::lookup_by_field("id", $id);
+    return self::_lookup_by_field("id", $id);
   }
 
   /**
@@ -74,7 +74,7 @@ class group_Core {
    * @return Group_Definition  the group object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    return self::lookup_by_field("name", $name);
+    return self::_lookup_by_field("name", $name);
   }
 
   /**
@@ -83,7 +83,7 @@ class group_Core {
    * @param string      $value value to match
    * @return Group_Definition  the group object, or null if the name was invalid.
    */
-  static function lookup_by_field($field_name, $value) {
+  private function _lookup_by_field($field_name, $value) {
     try {
       $user = model_cache::get("group", $value, $field_name);
       if ($user->loaded) {
