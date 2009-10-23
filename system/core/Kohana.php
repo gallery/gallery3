@@ -95,15 +95,15 @@ final class Kohana {
 		{
 			// Are we using encryption for caches?
 			self::$internal_cache_encrypt	= self::config('core.internal_cache_encrypt');
-			
+
 			if(self::$internal_cache_encrypt===TRUE)
 			{
 				self::$internal_cache_key = self::config('core.internal_cache_key');
-				
+
 				// Be sure the key is of acceptable length for the mcrypt algorithm used
 				self::$internal_cache_key = substr(self::$internal_cache_key, 0, 24);
 			}
-			
+
 			// Set the directory to be used for the internal cache
 			if ( ! self::$internal_cache_path = self::config('core.internal_cache_path'))
 			{
@@ -325,6 +325,14 @@ final class Kohana {
 
 			// Add SYSPATH as the last path
 			self::$include_paths[] = SYSPATH;
+
+                        // @todo Create a ticket on Kohana and a match in vendor
+                        self::$internal_cache['find_file_paths'] = array();
+		        if ( ! isset(self::$write_cache['find_file_paths']))
+		        {
+			        // Write cache at shutdown
+			        self::$write_cache['find_file_paths'] = TRUE;
+		        }
 		}
 
 		return self::$include_paths;
@@ -602,14 +610,14 @@ final class Kohana {
 					if(self::$internal_cache_encrypt===TRUE)
 					{
 						$data		= file_get_contents($path);
-						
+
 						$iv_size	= mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
 						$iv			= mcrypt_create_iv($iv_size, MCRYPT_RAND);
-						
+
 						$decrypted_text	= mcrypt_decrypt(MCRYPT_RIJNDAEL_256, self::$internal_cache_key, $data, MCRYPT_MODE_ECB, $iv);
-						
+
 						$cache	= unserialize($decrypted_text);
-						
+
 						// If the key changed, delete the cache file
 						if(!$cache)
 							unlink($path);
@@ -663,10 +671,10 @@ final class Kohana {
 				// Encrypt and write data to cache file
 				$iv_size	= mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
 				$iv			= mcrypt_create_iv($iv_size, MCRYPT_RAND);
-				
+
 				// Serialize and encrypt!
 				$encrypted_text	= mcrypt_encrypt(MCRYPT_RIJNDAEL_256, self::$internal_cache_key, serialize($data), MCRYPT_MODE_ECB, $iv);
-				
+
 				return (bool) file_put_contents($path, $encrypted_text);
 			}
 			else
@@ -691,9 +699,9 @@ final class Kohana {
 			// Run the send_headers event
 			Event::run('system.send_headers');
 		}
-		
+
 		self::$output	= $output;
-		
+
 		// Set and return the final output
 		return self::$output;
 	}
@@ -857,14 +865,14 @@ final class Kohana {
 		{
 			// PHP errors have 5 args, always
 			$PHP_ERROR = (func_num_args() === 5);
-	
+
 			// Test to see if errors should be displayed
 			if ($PHP_ERROR AND (error_reporting() & $exception) === 0)
 				return;
-	
+
 			// This is useful for hooks to determine if a page has an error
 			self::$has_error = TRUE;
-	
+
 			// Error handling will use exactly 5 args, every time
 			if ($PHP_ERROR)
 			{
@@ -881,11 +889,11 @@ final class Kohana {
 				$line     = $exception->getLine();
 				$template = ($exception instanceof Kohana_Exception) ? $exception->getTemplate() : 'kohana_error_page';
 			}
-	
+
 			if (is_numeric($code))
 			{
 				$codes = self::lang('errors');
-	
+
 				if ( ! empty($codes[$code]))
 				{
 					list($level, $error, $description) = $codes[$code];
@@ -904,22 +912,22 @@ final class Kohana {
 				$error = $code;
 				$description = '';
 			}
-	
+
 			// Remove the DOCROOT from the path, as a security precaution
 			$file = str_replace('\\', '/', realpath($file));
 			$file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
-	
+
 			if ($level <= self::$configuration['core']['log_threshold'])
 			{
 				// Log the error
 				self::log('error', self::lang('core.uncaught_exception', $type, $message, $file, $line));
 			}
-	
+
 			if ($PHP_ERROR)
 			{
 				$description = self::lang('errors.'.E_RECOVERABLE_ERROR);
 				$description = is_array($description) ? $description[2] : '';
-	
+
 				if ( ! headers_sent())
 				{
 					// Send the 500 header
@@ -934,13 +942,13 @@ final class Kohana {
 					$exception->sendHeaders();
 				}
 			}
-	
+
 			// Close all output buffers except for Kohana
 			while (ob_get_level() > self::$buffer_level)
 			{
 				ob_end_clean();
 			}
-	
+
 			// Test if display_errors is on
 			if (self::$configuration['core']['display_errors'] === TRUE)
 			{
@@ -948,11 +956,11 @@ final class Kohana {
 				{
 					// Remove the first entry of debug_backtrace(), it is the exception_handler call
 					$trace = $PHP_ERROR ? array_slice(debug_backtrace(), 1) : $exception->getTrace();
-	
+
 					// Beautify backtrace
 					$trace = self::backtrace($trace);
 				}
-	
+
 				// Load the error
 				require self::find_file('views', empty($template) ? 'kohana_error_page' : $template);
 			}
@@ -961,17 +969,17 @@ final class Kohana {
 				// Get the i18n messages
 				$error   = self::lang('core.generic_error');
 				$message = self::lang('core.errors_disabled', url::site(), url::site(Router::$current_uri));
-	
+
 				// Load the errors_disabled view
 				require self::find_file('views', 'kohana_error_disabled');
 			}
-	
+
 			if ( ! Event::has_run('system.shutdown'))
 			{
 				// Run the shutdown even to ensure a clean exit
 				Event::run('system.shutdown');
 			}
-	
+
 			// Turn off error reporting
 			error_reporting(0);
 			exit;
