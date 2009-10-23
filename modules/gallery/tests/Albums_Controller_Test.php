@@ -43,6 +43,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $_POST["column"] = "weight";
     $_POST["direction"] = "ASC";
     $_POST["csrf"] = access::csrf_token();
+    $_POST["slug"] = "new-name";
     $_POST["_method"] = "put";
     access::allow(group::everybody(), "edit", $root);
 
@@ -52,7 +53,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     ob_end_clean();
 
     $this->assert_equal(
-      json_encode(array("result" => "success")),
+      json_encode(array("result" => "success", "location" => "")),
       $results);
     $this->assert_equal("new title", $this->_album->title);
     $this->assert_equal("new description", $this->_album->description);
