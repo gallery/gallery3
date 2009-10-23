@@ -31,9 +31,13 @@
  * 2) Forms
  **********************************************************************/
 
+form {
+  margin: 0;
+}
+
 fieldset {
   border: 1px solid #ccc;
-  padding: .8em 1em;
+  padding: .4em 1em .8em 1em;
 }
 
 #g-banner fieldset,
@@ -44,7 +48,7 @@ fieldset {
 
 legend {
   font-weight: bold;
-  margin-left: .8em;
+  margin: 0 0 .4em .8em;
 }
 
 #g-banner legend,
@@ -54,24 +58,20 @@ input[type="hidden"] {
   display: none;
 }
 
-input.textbox,
-input[type="text"],
-input[type="password"] {
-  width: 50%;
-}
-
 textarea {
-  width: 100%;
   height: 12em;
 }
 
+input.textbox,
 input[type="text"],
 input[type="password"],
 textarea {
   border: 1px solid #e8e8e8;
   border-top-color: #ccc;
   border-left-color: #ccc;
+  clear: both;
   color: #333;
+  width: 50%;
 }
 
 input:focus,
@@ -111,6 +111,20 @@ input[type="reset"] {
   display: inline;
   clear: none;
   float: left;
+}
+
+/* Forms in dialogs ~~~~~~~~~~~~~~~~~~ */
+
+#g-dialog form fieldset {
+  border: none;
+  padding: 0;
+}
+
+#g-dialog input.textbox,
+#g-dialog input[type=text],
+#g-dialog input[type=password],
+#g-dialog textarea {
+  width: 97%;
 }
 
 /* Short forms ~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -162,6 +176,11 @@ input[type="reset"] {
 
 .g-wide {
   width: 100%;
+}
+
+form.g-narrow {
+  padding: 0;
+  width: 270px;
 }
 
 /** *******************************************************************
@@ -450,30 +469,8 @@ div#g-action-status {
   text-align: left;
 }
 
-#g-dialog .g-narrow {
-  width: 280px;
-}
-
-#g-dialog form fieldset {
-  border: none;
-  padding: 0;
-}
-
 #g-dialog legend {
   display: none;
-}
-
-#g-dialog form input[type="text"],
-#g-dialog form input[type="password"] {
-  width: 100%;
-}
-
-#g-dialog p {
-	margin: 0;
-}
-
-#g-dialog li {
-  padding-left: 0;
 }
 
 #g-dialog .g-cancel {
