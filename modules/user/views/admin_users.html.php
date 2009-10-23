@@ -2,7 +2,7 @@
 <script type="text/javascript">
   var add_user_to_group_url = "<?= url::site("admin/users/add_user_to_group/__USERID__/__GROUPID__?csrf=$csrf") ?>";
   $(document).ready(function(){
-    $("#g-user-admin-list .g-draggable").draggable({
+    $("#g-user-admin-list .core-info").draggable({
       helper: "clone"
     });
     $("#g-group-admin .g-group").droppable({
@@ -20,7 +20,6 @@
     });
     $("#group-1").droppable("destroy");
     $("#group-2").droppable("destroy");
-    $(".g-group-disable").droppable("destroy");
   });
 
   var reload_group = function(group_id) {
