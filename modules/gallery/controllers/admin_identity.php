@@ -50,12 +50,6 @@ class Admin_Identity_Controller extends Admin_Controller {
       module::deactivate($active_provider);
       module::uninstall($active_provider);
 
-      try {
-        Session::instance()->destroy();
-      } catch (Exception $e) {
-        // We don't care if there was a problem destroying the session.
-      }
-
       // Switch authentication
       identity::reset();
       module::set_var("gallery", "identity_provider", $new_provider);
@@ -67,6 +61,11 @@ class Admin_Identity_Controller extends Admin_Controller {
       message::success(t("Changed to %description",
                          array("description" => $providers->$new_provider)));
 
+      try {
+        Session::instance()->destroy();
+      } catch (Exception $e) {
+        // We don't care if there was a problem destroying the session.
+      }
       url::redirect(item::root()->abs_url());
     }
 
