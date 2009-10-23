@@ -325,6 +325,14 @@ final class Kohana {
 
 			// Add SYSPATH as the last path
 			self::$include_paths[] = SYSPATH;
+
+                        // Local fix for Kohana Ticket:2276 
+                        self::$internal_cache['find_file_paths'] = array();
+		        if ( ! isset(self::$write_cache['find_file_paths']))
+		        {
+			        // Write cache at shutdown
+			        self::$write_cache['find_file_paths'] = TRUE;
+		        }
 		}
 
 		return self::$include_paths;
