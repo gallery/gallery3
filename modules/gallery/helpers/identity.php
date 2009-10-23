@@ -40,6 +40,16 @@ class identity_Core {
   }
 
   /**
+   * Frees the current instance of the identity provider so the next call to instance will reload
+   *
+   * @param   string  configuration
+   * @return  Identity_Core
+   */
+  static function reset() {
+    IdentityProvider::reset();
+  }
+
+  /**
    * Make sure that we have a session and group_ids cached in the session.
    */
   static function load_user() {
@@ -71,12 +81,12 @@ class identity_Core {
         $session->set("group_ids", $ids);
       }
       //} catch (Exception $e) {
-      //try {
-      //Session::instance()->destroy();
-      //} catch (Exception $e) {
+      //  try {
+      //   Session::instance()->destroy();
+        //  } catch (Exception $e) {
         // We don't care if there was a problem destroying the session.
-      //}
-      //url::redirect(item::root()->abs_url());
+      // }
+      // url::redirect(item::root()->abs_url());
       //}
   }
 
@@ -123,20 +133,6 @@ class identity_Core {
    */
   static function is_writable() {
     return IdentityProvider::instance()->is_writable();
-  }
-
-  /**
-   * @see IdentityProvider_Driver::activate.
-   */
-  static function activate() {
-    IdentityProvider::instance()->activate();
-  }
-
-  /**
-   * @see IdentityProvider_Driver::deactivate.
-   */
-  static function deactivate() {
-    IdentityProvider::instance()->deactivate();
   }
 
   /**

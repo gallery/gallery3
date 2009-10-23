@@ -19,16 +19,6 @@
  */
 interface IdentityProvider_Driver {
   /**
-   * Initialize the provider so it is ready to use
-   */
-  public function activate();
-
-  /**
-   * Cleanup up this provider so it is unavailable for use and won't conflict with the current driver
-   */
-  public function deactivate();
-
-  /**
    * Return the guest user.
    *
    * @return User_Definition the user object

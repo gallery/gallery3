@@ -130,6 +130,8 @@ class module_Core {
     array_unshift($kohana_modules, MODPATH . $module_name);
     Kohana::config_set("core.modules",  $kohana_modules);
 
+    // Rebuild the include path so the module installer can benefit from auto loading
+    Kohana::include_paths(true);
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
@@ -154,7 +156,7 @@ class module_Core {
    */
   static function upgrade($module_name) {
     $kohana_modules = Kohana::config("core.modules");
-    array_unshift($kohana_modules, MODPATH . $module_name);
+    $kohana_modules = array_unshift($kohana_modules, MODPATH . $module_name);
     Kohana::config_set("core.modules",  $kohana_modules);
 
     $version_before = module::get_version($module_name);

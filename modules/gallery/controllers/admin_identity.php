@@ -47,23 +47,26 @@ class Admin_Identity_Controller extends Admin_Controller {
 
       module::event("pre_identity_change", $active_provider, $new_provider);
 
-      identity::deactivate();
-
-      // Switch authentication
-      module::set_var("gallery", "identity_provider", $new_provider);
-      identity::reset();
-
-      identity::activate();
-
-      // @todo this type of collation is questionable from an i18n perspective
-      message::success(t("Changed to %description",
-                         array("description" => $providers->$new_provider)));
+      module::deactivate($active_provider);
+      module::uninstall($active_provider);
 
       try {
         Session::instance()->destroy();
       } catch (Exception $e) {
         // We don't care if there was a problem destroying the session.
       }
+
+      // Switch authentication
+      identity::reset();
+      module::set_var("gallery", "identity_provider", $new_provider);
+
+      module::install($new_provider);
+      module::activate($new_provider);
+
+      // @todo this type of collation is questionable from an i18n perspective
+      message::success(t("Changed to %description",
+                         array("description" => $providers->$new_provider)));
+
       url::redirect(item::root()->abs_url());
     }
 

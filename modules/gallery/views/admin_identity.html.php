@@ -10,7 +10,7 @@
         $("#g-dialog").html(data);
         $("#g-dialog").dialog({
           bgiframe: true,
-          title: "<?= t("Confirm Change Identity Provider") ?>",
+          title: <?= t("Confirm identity provider change")->for_js() ?>,
           resizable: false,
           height:165,
           modal: true,
@@ -34,7 +34,7 @@
 
 </script>
 <div id="g-modules">
-  <h1> <?= t("Gallery Identity Management") ?> </h1>
+  <h1> <?= t("Manage Identity Providers") ?> </h1>
   <p>
     <?= t("Choose a different user/group management provider.") ?>
   </p>

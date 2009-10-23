@@ -38,7 +38,7 @@ class IdentityProvider_Core {
    * @return  Identity_Core
    */
   static function & instance() {
-   if (!isset(self::$instance)) {
+   if (empty(self::$instance)) {
       // Create a new instance
       self::$instance = new IdentityProvider();
     }
@@ -47,14 +47,14 @@ class IdentityProvider_Core {
   }
 
   /**
-   * Returns a singleton instance of Identity.
-   * There can only be one Identity driver configured at a given point
+   * Frees the current instance of the identity provider so the next call to instance will reload
    *
    * @param   string  configuration
    * @return  Identity_Core
    */
   static function reset() {
-    self::$instance = new IdentityProvider();
+    self::$instance = null;
+    Kohana::config_clear("identity");
   }
 
   /**
@@ -66,12 +66,12 @@ class IdentityProvider_Core {
     $config = module::get_var("gallery", "identity_provider", "user");
 
     // Test the config group name
-    if (($this->config = Kohana::config("identity.".$config)) === NULL) {
+    if (($this->config = Kohana::config("identity." . $config)) === NULL) {
       throw new Exception("@todo NO USER LIBRARY CONFIGURATION FOR: $config");
     }
 
     // Set driver name
-    $driver = "IdentityProvider_".ucfirst($this->config["driver"])."_Driver";
+    $driver = "IdentityProvider_" . ucfirst($this->config["driver"])  ."_Driver";
 
     // Load the driver
     if ( ! Kohana::auto_load($driver)) {
@@ -98,20 +98,6 @@ class IdentityProvider_Core {
    */
   public function is_writable() {
     return !empty($this->config["allow_updates"]);
-  }
-
-  /**
-   * @see IdentityProvider_Driver::activate.
-   */
-  public function activate() {
-    $this->driver->activate();
-  }
-
-  /**
-   * @see IdentityProvider_Driver::deactivate.
-   */
-  public function deactivate() {
-    $this->driver->deactivate();
   }
 
   /**

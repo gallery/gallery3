@@ -20,21 +20,7 @@
 /*
  * Based on the Cache_Sqlite_Driver developed by the Kohana Team
  */
-class Identity_Gallery_Driver implements IdentityProvider_Driver {
-  /**
-   * @see IdentityProvider_Driver::activate.
-   */
-  public function activate() {
-    user::activate();
-  }
-
-  /**
-   * @see IdentityProvider_Driver::deactivate.
-   */
-  public function deactivate() {
-    user::deactivate();
-  }
-
+class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
   /**
    * @see IdentityProvider_Driver::guest.
    */
