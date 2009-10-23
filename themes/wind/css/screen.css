@@ -12,6 +12,8 @@
  *  6)  Browser hacks
  *  7)  jQuery and jQuery UI
  *  8)  Right-to-left language styles
+ *
+ *  @todo Move #g-admin-g2-import stuff to g2import module
  */
 
 /** *******************************************************************
@@ -329,15 +331,6 @@ td {
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#g-banner #g-login-menu li,
-#g-footer #g-credits li {
-  display: inline;
-}
-
-#g-banner #g-login-menu li {
-  padding-left: 1.2em;
-}
-
 #g-footer #g-credits li {
   padding-right: 1.2em;
 }
@@ -360,6 +353,10 @@ td {
 #g-banner #g-login-menu {
   color: #999;
   float: right;
+}
+
+#g-banner #g-login-menu li {
+  padding-left: 1.2em;
 }
 
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

@@ -124,14 +124,14 @@
           <? endif ?>
         </div>
       </div>
-      <div id="g-footer">
+      <div id="g-footer" class="ui-helper-clearfix">
         <?= $theme->footer() ?>
         <? if ($footer_text = module::get_var("gallery", "footer_text")): ?>
         <?= $footer_text ?>
         <? endif ?>
 
         <? if (module::get_var("gallery", "show_credits")): ?>
-        <ul id="g-credits">
+        <ul id="g-credits" class="g-inline">
           <?= $theme->credits() ?>
         </ul>
         <? endif ?>

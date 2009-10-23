@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<ul id="g-login-menu">
+<ul id="g-login-menu" class="g-inline">
   <? if ($user->guest): ?>
   <li class="first">
     <a href="<?= url::site("login/ajax") ?>"

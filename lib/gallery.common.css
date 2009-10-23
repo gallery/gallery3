@@ -482,7 +482,7 @@ div#g-action-status {
 
 /* Inline layout  ~~~~~~~~~~ */
 
-.g-inline * {
+.g-inline li {
   float: left;
   margin-right: .4em;
 }
