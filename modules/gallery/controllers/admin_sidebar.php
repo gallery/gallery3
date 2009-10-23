@@ -47,7 +47,8 @@ class Admin_Sidebar_Controller extends Admin_Controller {
     $v = new View("admin_sidebar_blocks.html");
     $v->blocks = $active;
     $result["active"] = $v->render();
-
+    $message = t("Updated sidebar blocks");
+    $result["message"] = (string) $message;
     print json_encode($result);
   }
 

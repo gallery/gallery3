@@ -72,7 +72,10 @@ function editInPlace(element) {
           $("#g-rename-tag-form #name")
             .addClass("g-error")
             .focus();
-          $("#g-tag-admin").before("<p id=\"g-action-status\" class=\"g-message-block g-error\">" + data.message + "</p>");
+          var message = "<ul id=\"g-action-status\" class=\"g-message-block\">";
+          message += "<li class=\"g-error\">" + data.message + "</li>";
+          message += "</ul>";
+          $("#g-tag-admin").before(message);
         }
       }
     });
