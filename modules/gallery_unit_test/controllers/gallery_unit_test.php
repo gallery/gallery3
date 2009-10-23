@@ -96,6 +96,8 @@ class Gallery_Unit_Test_Controller extends Controller {
       @system("rm -rf test/var");
       @mkdir('test/var/logs', 0777, true);
 
+      $active_modules = module::$active;
+
       // Reset our caches
       module::$modules = array();
       module::$active = array();
@@ -113,13 +115,12 @@ class Gallery_Unit_Test_Controller extends Controller {
       module::install("user");
       module::activate("user");
       $modules = array();
-      foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
-        $module_name = basename(dirname(dirname($file)));
-        if (in_array($module_name, array("gallery", "user"))) {
+      foreach ($active_modules as $module) {
+        if (in_array($module->name, array("gallery", "user"))) {
           continue;
         }
-        module::install($module_name);
-        module::activate($module_name);
+        module::install($module->name);
+        module::activate($module->name);
       }
 
       // Trigger late-binding install actions (defined in gallery_event::user_login)
