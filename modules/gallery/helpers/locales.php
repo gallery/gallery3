@@ -136,23 +136,6 @@ class locales_Core {
     return in_array($language, array("he", "fa", "ar"));
   }
 
-  static function set_request_locale() {
-    // 1. Check the session specific preference (cookie)
-    $locale = self::cookie_locale();
-    // 2. Check the user's preference
-    if (!$locale) {
-      $locale = identity::active_user()->locale;
-    }
-    // 3. Check the browser's / OS' preference
-    if (!$locale) {
-      $locale = self::locale_from_http_request();
-    }
-    // If we have any preference, override the site's default locale
-    if ($locale) {
-      I18n::instance()->locale($locale);
-    }
-  }
-
   /**
    * Returns the best match comparing the HTTP accept-language header
    * with the installed locales.
@@ -235,6 +218,23 @@ class locales_Core {
       return array(self::$language_subtag_to_locale[$language], $score);
     }
     return array(null, 0);
+  }
+
+  static function set_request_locale() {
+    // 1. Check the session specific preference (cookie)
+    $locale = self::cookie_locale();
+    // 2. Check the user's preference
+    if (!$locale) {
+      $locale = identity::active_user()->locale;
+    }
+    // 3. Check the browser's / OS' preference
+    if (!$locale) {
+      $locale = self::locale_from_http_request();
+    }
+    // If we have any preference, override the site's default locale
+    if ($locale) {
+      I18n::instance()->locale($locale);
+    }
   }
 
   static function cookie_locale() {

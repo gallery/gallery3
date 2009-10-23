@@ -20,19 +20,17 @@
 
 class user_event_Core {
   static function admin_menu($menu, $theme) {
-    $config = module::get_var("gallery", "identity_provider", "user");
-    if ($config == "user") {
-      $user_group_menu = Menu::factory("link")
-        ->id("users_groups")
-        ->label(t("Users/Groups"))
-        ->url(url::site("admin/users"));
-      $identity_menu = $menu->get("identity_menu");
-      if (empty($identity_menu)) {
-        $menu->add_after("appearance_menu", $user_group_menu);
-      }else {
-        $identity_menu->append($user_group_menu);
-      }
+    $user_group_menu = Menu::factory("link")
+      ->id("users_groups")
+      ->label(t("Users/Groups"))
+      ->url(url::site("admin/users"));
+    $identity_menu = $menu->get("identity_menu");
+    if (empty($identity_menu)) {
+      $menu->add_after("appearance_menu", $user_group_menu);
+    }else {
+      $identity_menu->append($user_group_menu);
     }
+
     return $menu;
   }
 }
