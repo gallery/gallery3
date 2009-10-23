@@ -253,7 +253,7 @@ class module_Core {
       call_user_func(array($installer_class, "uninstall"));
     }
 
-    graphics::remove_rule($module_name);
+    graphics::remove_rules($module_name);
     $module = self::get($module_name);
     if ($module->loaded) {
       $module->delete();
