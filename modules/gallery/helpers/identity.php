@@ -53,7 +53,7 @@ class identity_Core {
    * Make sure that we have a session and group_ids cached in the session.
    */
   static function load_user() {
-    //try {
+    try {
       // Call IdentityProvider::instance() now to force the load of the user interface classes.
       // We are about to load the active user from the session and which needs the user definition
       // class, which can't be reached by Kohana's heiracrchical lookup.
@@ -80,14 +80,16 @@ class identity_Core {
         }
         $session->set("group_ids", $ids);
       }
-      //} catch (Exception $e) {
-      //  try {
-      //   Session::instance()->destroy();
-        //  } catch (Exception $e) {
+    } catch (Exception $e) {
+      // Log it, so we at least have so notification that we swallowed the exception.
+      Kohana::log("error", "Load_user Exception: " . $e->__toString());
+      try {
+        Session::instance()->destroy();
+      } catch (Exception $e) {
         // We don't care if there was a problem destroying the session.
-      // }
-      // url::redirect(item::root()->abs_url());
-      //}
+      }
+      url::redirect(item::root()->abs_url());
+    }
   }
 
   /**
