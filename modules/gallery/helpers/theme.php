@@ -28,14 +28,13 @@ class theme_Core {
    * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
    * active for any given request.
    */
-  static function load_themes() {
+  static function load_themes($path) {
     $modules = Kohana::config("core.modules");
-    if (Router::$controller == "admin") {
+    if (strpos($path, "/admin") === 0) {
       array_unshift($modules, THEMEPATH . module::get_var("gallery", "active_admin_theme"));
     } else {
       array_unshift($modules, THEMEPATH . module::get_var("gallery", "active_site_theme"));
     }
-
     Kohana::config_set("core.modules", $modules);
   }
 
