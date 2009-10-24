@@ -233,6 +233,10 @@ form li.g-warning {
   padding: .3em .8em .3em 1em;
 }
 
+.g-short-form li.g-error {
+  padding: .3em 0 .3em 0;
+}
+
 form.g-error input[type="text"],
 li.g-error input[type="text"],
 form.g-error input[type="password"],
