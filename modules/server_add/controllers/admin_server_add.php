@@ -83,9 +83,9 @@ class Admin_Server_Add_Controller extends Admin_Controller {
 
   private function _get_admin_form() {
     $form = new Forge("admin/server_add/add_path", "", "post",
-                      array("id" => "g-server-add-admin-form", "class" => "g-short-form g-wide"));
+                      array("id" => "g-server-add-admin-form", "class" => "g-short-form"));
     $add_path = $form->group("add_path");
-    $add_path->input("path")->label(t("Path"))->rules("required")
+    $add_path->input("path")->label(t("Path"))->rules("required")->id("g-path")
       ->error_messages("not_readable", t("This directory is not readable by the webserver"))
       ->error_messages("is_symlink", t("Symbolic links are not allowed"));
     $add_path->submit("add")->value(t("Add Path"));

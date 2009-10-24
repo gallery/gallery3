@@ -714,39 +714,6 @@ li.g-error select {
   background: #999;
 }
 
-/* Server Add */
-
-#g-server-add button {
-  margin-bottom: .5em;
-}
-
-#g-server-add-tree {
-  cursor: pointer;
-  padding-left: 4px;
-  width: 95%;
-}
-
-#g-server-add-tree li {
-  padding: 0;
-  float: none;
-}
-
-#g-server-add-tree span.selected {
-  background: #ddd;
-}
-
-#g-server-add-tree {
-  border: 1px solid #ccc;
-  height: 20em;
-  overflow: auto;
-  margin-bottom: .5em;
-  padding: .5em;
-}
-
-#g-server-add ul ul li {
-  padding-left: 1.2em;
-}
-
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-edit-permissions-form {
