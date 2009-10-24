@@ -24,17 +24,6 @@
  * Note: by design, this class does not do any permission checking.
  */
 class user_Core {
-  static function get_login_form($url) {
-    $form = new Forge($url, "", "post", array("id" => "g-login-form"));
-    $form->set_attr('class', "g-one-quarter");
-    $group = $form->group("login")->label(t("Login"));
-    $group->input("name")->label(t("Username"))->id("g-username")->class(null);
-    $group->password("password")->label(t("Password"))->id("g-password")->class(null);
-    $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
-    $group->submit("")->value(t("Login"));
-    return $form;
-  }
-
   /**
    * Make sure that we have a session and group_ids cached in the session.
    */

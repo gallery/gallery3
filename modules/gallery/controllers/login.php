@@ -21,7 +21,7 @@ class Login_Controller extends Controller {
 
   public function ajax() {
     $view = new View("login_ajax.html");
-    $view->form = login::get_login_form("login/auth_ajax");
+    $view->form = login::get_form("login/auth_ajax");
     print $view;
   }
 
@@ -40,7 +40,7 @@ class Login_Controller extends Controller {
   }
 
   public function html() {
-    print login::get_login_form("login/auth_html");
+    print login::get_form("login/auth_html");
   }
 
   public function auth_html() {
@@ -55,7 +55,7 @@ class Login_Controller extends Controller {
   }
 
   private function _auth($url) {
-    $form = login::get_login_form($url);
+    $form = login::get_form($url);
     $valid = $form->validate();
     if ($valid) {
       $user = identity::lookup_user_by_name($form->login->inputs["name"]->value);

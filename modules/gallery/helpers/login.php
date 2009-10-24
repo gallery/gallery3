@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class login_Core {
-  static function get_login_form($url) {
+  static function get_form($url) {
     $form = new Forge($url, "", "post", array("id" => "g-login-form"));
     $form->set_attr('class', "g-narrow");
     $group = $form->group("login")->label(t("Login"));

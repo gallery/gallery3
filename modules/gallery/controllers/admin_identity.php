@@ -45,7 +45,7 @@ class Admin_Identity_Controller extends Admin_Controller {
 
     if ($new_provider != $active_provider) {
 
-      module::event("pre_identity_change", $active_provider, $new_provider);
+      module::event("identity_before_change", $active_provider, $new_provider);
 
       module::deactivate($active_provider);
       module::uninstall($active_provider);
@@ -57,7 +57,6 @@ class Admin_Identity_Controller extends Admin_Controller {
       module::install($new_provider);
       module::activate($new_provider);
 
-      // @todo this type of collation is questionable from an i18n perspective
       message::success(t("Changed to %description",
                          array("description" => $providers->$new_provider)));
 
