@@ -26,6 +26,7 @@
       <link><?= url::abs_site("{$child->type}s/{$child->id}") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("{$child->type}s/{$child->id}") ?></guid>
       <pubDate><?= date("D, d M Y H:i:s T", $child->created); ?></pubDate>
+      <description><?= html::purify($child->description) ?></description>
       <content:encoded>
         <![CDATA[
           <span><?= html::purify($child->description) ?></span>
@@ -45,7 +46,6 @@
         ]]>
       </content:encoded>
       <media:thumbnail url="<?= $child->thumb_url(true) ?>"
-                       fileSize="<?= @filesize($child->thumb_path()) ?>"
                        height="<?= $child->thumb_height ?>"
                        width="<?= $child->thumb_width ?>"
                        />
