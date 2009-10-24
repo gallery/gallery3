@@ -37,7 +37,7 @@ class IdentityProvider_Core {
    * @param   string  configuration
    * @return  Identity_Core
    */
-  static function & instance() {
+  static function &instance() {
    if (empty(self::$instance)) {
       // Create a new instance
       self::$instance = new IdentityProvider();
@@ -67,7 +67,7 @@ class IdentityProvider_Core {
 
     // Test the config group name
     if (($this->config = Kohana::config("identity." . $config)) === NULL) {
-      throw new Exception("@todo NO USER LIBRARY CONFIGURATION FOR: $config");
+      throw new Exception("@todo NO_USER_LIBRARY_CONFIGURATION_FOR: $config");
     }
 
     // Set driver name
