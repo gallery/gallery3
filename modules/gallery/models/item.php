@@ -99,6 +99,10 @@ class Item_Model extends ORM_MPTT {
       throw new Exception("@todo INVALID_MOVE_TYPE $target->type");
     }
 
+    if (file_exists($target_file = "{$target->file_path()}/$this->name")) {
+      throw new Exception("@todo INVALID_MOVE_TARGET_EXISTS: $target_file");
+    }
+
     if ($this->id == 1) {
       throw new Exception("@todo INVALID_SOURCE root album");
     }
@@ -147,6 +151,10 @@ class Item_Model extends ORM_MPTT {
 
     $old_relative_path = urldecode($this->relative_path());
     $new_relative_path = dirname($old_relative_path) . "/" . $new_name;
+    if (file_exists(VARPATH . "albums/$new_relative_path")) {
+      throw new Exception("@todo INVALID_RENAME_FILE_EXISTS: $new_relative_path");
+    }
+
     @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$new_relative_path");
     @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$new_relative_path");
     @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$new_relative_path");

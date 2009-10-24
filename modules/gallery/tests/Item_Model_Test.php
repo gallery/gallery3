@@ -24,12 +24,11 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_true(!empty($item->updated));
   }
 
-  private static function _create_random_item() {
-    $item = ORM::factory("item");
-    /* Set all required fields (values are irrelevant) */
-    $item->name = rand();
-    $item->type = "photo";
-    return $item->add_to_parent(ORM::factory("item", 1));
+  private static function _create_random_item($root=null, $rand=null) {
+    $root = $root ? $root : ORM::factory("item", 1);
+    $rand = $rand ? $rand : rand();
+    $item = photo::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
+    return $item;
   }
 
   public function updating_doesnt_change_created_date_test() {
@@ -62,7 +61,7 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_true(empty($item->updated));
   }
 
-  public function move_photo_test() {
+  public function rename_photo_test() {
     // Create a test photo
     $item = self::_create_random_item();
 
@@ -86,14 +85,11 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_equal("file", file_get_contents($item->file_path()));
   }
 
-  public function move_album_test() {
+  public function rename_album_test() {
     // Create an album with a photo in it
     $root = ORM::factory("item", 1);
     $album = album::create($root, rand(), rand(), rand());
-    $photo = ORM::factory("item");
-    $photo->name = rand();
-    $photo->type = "photo";
-    $photo->add_to_parent($album);
+    $photo = self::_create_random_item($album);
 
     file_put_contents($photo->thumb_path(), "thumb");
     file_put_contents($photo->resize_path(), "resize");
@@ -141,6 +137,24 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_false(true, "Item_Model::rename should not accept / characters");
   }
 
+  public function item_rename_fails_with_existing_name_test() {
+    // Create a test photo
+    $item = self::_create_random_item();
+    $item2 = self::_create_random_item();
+
+    $new_name = $item2->name;
+
+    try {
+      $item->rename($new_name)->save();
+    } catch (Exception $e) {
+      // pass
+      $this->assert_true(strpos($e->getMessage(), "INVALID_RENAME_FILE_EXISTS") !== false,
+                         "incorrect exception.");
+      return;
+    }
+    $this->assert_false(true, "Item_Model::rename should fail.");
+  }
+
   public function save_original_values_test() {
     $item = self::_create_random_item();
     $item->title = "ORIGINAL_VALUE";
@@ -159,5 +173,102 @@ class Item_Model_Test extends Unit_Test_Case {
 
     $this->assert_equal("foo%20bar", $item->relative_url());
     $this->assert_equal("foo%20bar.jpg", $item->relative_path());
+  }
+
+  public function move_album_test() {
+    // Create an album with a photo in it
+    $root = ORM::factory("item", 1);
+    $album2 = album::create($root, rand(), rand(), rand());
+    $album = album::create($album2, rand(), rand(), rand());
+    $photo = self::_create_random_item($album);
+
+    file_put_contents($photo->thumb_path(), "thumb");
+    file_put_contents($photo->resize_path(), "resize");
+    file_put_contents($photo->file_path(), "file");
+
+    // Now move the album
+    $album->move_to($root);
+    $photo->reload();
+
+    // Expected:
+    // * the album dirs are all moved
+    // * the photo's paths are all inside the albums paths
+    // * the photo files are all still intact and accessible
+
+    $this->assert_same(0, strpos($photo->file_path(), $album->file_path()));
+    $this->assert_same(0, strpos($photo->thumb_path(), dirname($album->thumb_path())));
+    $this->assert_same(0, strpos($photo->resize_path(), dirname($album->resize_path())));
+
+    $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
+    $this->assert_equal("resize", file_get_contents($photo->resize_path()));
+    $this->assert_equal("file", file_get_contents($photo->file_path()));
+  }
+
+  public function move_photo_test() {
+    // Create an album with a photo in it
+    $root = ORM::factory("item", 1);
+    $album2 = album::create($root, rand(), rand(), rand());
+    $album = album::create($album2, rand(), rand(), rand());
+    $photo = self::_create_random_item($album);
+
+    file_put_contents($photo->thumb_path(), "thumb");
+    file_put_contents($photo->resize_path(), "resize");
+    file_put_contents($photo->file_path(), "file");
+
+    // Now move the album
+    $photo->move_to($album2);
+    $photo->reload();
+
+    // Expected:
+    // * the album dirs are all moved
+    // * the photo's paths are all inside the albums paths
+    // * the photo files are all still intact and accessible
+
+    $this->assert_same(0, strpos($photo->file_path(), $album->file_path()));
+    $this->assert_same(0, strpos($photo->thumb_path(), dirname($album->thumb_path())));
+    $this->assert_same(0, strpos($photo->resize_path(), dirname($album->resize_path())));
+
+    $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
+    $this->assert_equal("resize", file_get_contents($photo->resize_path()));
+    $this->assert_equal("file", file_get_contents($photo->file_path()));
+  }
+  public function move_album_fails_invalid_target_test() {
+    // Create an album with a photo in it
+    $root = ORM::factory("item", 1);
+    $name = rand();
+    $album = album::create($root, $name, $name, $name);
+    $source = album::create($album, $name, $name, $name);
+
+    try {
+      $source->move_to($root);
+    } catch (Exception $e) {
+      // pass
+      $this->assert_true(strpos($e->getMessage(), "INVALID_MOVE_TARGET_EXISTS") !== false,
+                         "incorrect exception.");
+      return;
+    }
+
+    $this->assert_false(true, "Item_Model::rename should not accept / characters");
+  }
+
+  public function move_photo_fails_invalid_target_test() {
+    // Create an album with a photo in it
+    $root = ORM::factory("item", 1);
+    $photo_name = rand();
+    $photo1 = self::_create_random_item($root, $photo_name);
+    $name = rand();
+    $album = album::create($root, $name, $name, $name);
+    $photo2 = self::_create_random_item($album, $photo_name);
+
+    try {
+      $photo2->move_to($root);
+    } catch (Exception $e) {
+      // pass
+      $this->assert_true(strpos($e->getMessage(), "INVALID_MOVE_TARGET_EXISTS") !== false,
+                         "incorrect exception.");
+      return;
+    }
+
+    $this->assert_false(true, "Item_Model::rename should not accept / characters");
   }
 }
