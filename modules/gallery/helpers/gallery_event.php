@@ -23,7 +23,7 @@ class gallery_event_Core {
    * Initialization.
    */
   static function gallery_ready() {
-    theme::load_themes(Input::instance()->server("PATH_INFO"));
+    theme::load_themes();
     identity::load_user();
     locales::set_request_locale();
   }
