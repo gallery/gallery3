@@ -46,22 +46,22 @@ interface IdentityProvider_Driver {
 
   /**
    * Look up a user by id.
-   * @param integer     id
+   * @param integer $id
    * @return User_Definition the user object, or null if the name was invalid.
    */
   public function lookup_user($id);
 
   /**
    * Look up a user by name.
-   * @param string      name
-  * @return User_Definition the user object, or null if the name was invalid.
+   * @param string $name
+   * @return User_Definition the user object, or null if the name was invalid.
    */
   public function lookup_user_by_name($name);
 
   /**
    * Create a new group.
    *
-   * @param string  $name
+   * @param string $name
    * @return Group_Definition the group object
    */
   public function create_group($name);
@@ -82,21 +82,21 @@ interface IdentityProvider_Driver {
 
   /**
    * List the users
-   * @param array      array of ids to return the user objects for
-   * @return array     the user list.
+   * @param array $ids array of ids to return the user objects for
+   * @return array the user list.
    */
   public function get_user_list($ids);
 
   /**
    * Look up a group by id.
-   * @param integer     id
+   * @param integer $id id
    * @return Group_Definition the user object, or null if the name was invalid.
    */
   public function lookup_group($id);
 
   /**
    * Look up the group by name.
-   * @param string     $name the name of the group to locate
+   * @param string $name the name of the group to locate
    * @return Group_Definition
    */
   public function lookup_group_by_name($name);
