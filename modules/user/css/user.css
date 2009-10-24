@@ -1,0 +1,7 @@
+#g-login-form,
+#g-add-user-form
+#g-edit-user-form,
+#g-delete-user-form,
+#g-user-admin {
+  width: 270px;
+}

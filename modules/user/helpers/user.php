@@ -26,7 +26,7 @@
 class user_Core {
   static function get_login_form($url) {
     $form = new Forge($url, "", "post", array("id" => "g-login-form"));
-    $form->set_attr('class', "g-narrow");
+    $form->set_attr('class', "g-one-quarter");
     $group = $form->group("login")->label(t("Login"));
     $group->input("name")->label(t("Username"))->id("g-username")->class(null);
     $group->password("password")->label(t("Password"))->id("g-password")->class(null);

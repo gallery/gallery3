@@ -313,7 +313,6 @@ class Admin_Users_Controller extends Admin_Controller {
 
   static function _get_user_add_form_admin() {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
-    $form->set_attr('class', "g-narrow");
     $group = $form->group("add_user")->label(t("Add User"));
     $group->input("name")->label(t("Username"))->id("g-username")
       ->error_messages("in_use", t("There is already a user with that username"));
@@ -372,7 +371,7 @@ class Admin_Users_Controller extends Admin_Controller {
 
   private function _get_group_add_form_admin() {
     $form = new Forge("admin/users/add_group", "", "post", array("id" => "g-add-group-form"));
-    $form->set_attr('class', "g-narrow");
+    $form->set_attr('class', "g-one-quarter");
     $form_group = $form->group("add_group")->label(t("Add Group"));
     $form_group->input("name")->label(t("Name"))->id("g-name");
     $form_group->inputs["name"]->error_messages(

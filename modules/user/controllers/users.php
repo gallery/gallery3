@@ -68,7 +68,6 @@ class Users_Controller extends Controller {
 
   private function _get_edit_form($user) {
     $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
-    $form->set_attr("class", "g-narrow");
     $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
     $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
