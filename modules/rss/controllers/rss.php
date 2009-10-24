@@ -52,12 +52,14 @@ class Rss_Controller extends Controller {
     $view->feed = $feed;
     $view->pub_date = date("D, d M Y H:i:s T");
 
-    $feed->uri = url::abs_site(Router::$current_uri);
+    $feed->uri = url::abs_site(str_replace("&", "&amp;", url::merge($_GET)));
     if ($page > 1) {
-      $feed->previous_page_uri = url::abs_site(url::merge(array("page" => $page - 1)));
+      $feed->previous_page_uri =
+        url::abs_site(str_replace("&", "&amp;", url::merge(array("page" => $page - 1))));
     }
     if ($page < $feed->max_pages) {
-      $feed->next_page_uri = url::abs_site(url::merge(array("page" => $page + 1)));
+      $feed->next_page_uri =
+        url::abs_site(str_replace("&", "&amp;", url::merge(array("page" => $page + 1))));
     }
 
     rest::http_content_type(rest::RSS);
