@@ -3,6 +3,6 @@
  *
  */
 $("document").ready(function() {
-  $("#g-server-add-admin input:text").autocomplete(
+  $("#g-path").autocomplete(
     base_url.replace("__ARGS__", "admin/server_add/autocomplete"), {max: 256});
 });

@@ -1,0 +1,56 @@
+#g-login-form,
+#g-add-user-form
+#g-edit-user-form,
+#g-delete-user-form,
+#g-user-admin {
+  width: 270px;
+}
+
+#g-user-admin-list .admin {
+  color: #55f;
+  font-weight: bold;
+}
+
+li.g-group {
+  float: left;
+  display: block;
+  width: 200px;
+  border: 1px solid gray;
+  padding: 0;
+  margin: 0 1em 1em 0;
+}
+
+li.g-group h4 {
+  background-color: #eee;
+  border-bottom: 1px dashed #ccc;
+  padding: .5em 0 .5em .5em;
+}
+
+li.g-group .g-button {
+  padding: 0;
+}
+
+li.g-group ul, li.g-group div {
+  height: 180px;
+  margin: 1px;
+  overflow: auto;
+  padding-top: .2em;
+}
+
+li.g-group div p {
+  color: gray;
+  text-align: center;
+  padding: 2em .5em 0 .5em
+}
+
+li.g-group .g-user {
+  padding: .2em 0 0 .5em;
+}
+
+li.g-group .g-user .g-button {
+  vertical-align: middle;
+}
+
+li.g-default-group h4, li.g-default-group .g-user {
+  color: gray;
+}

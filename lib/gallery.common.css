@@ -170,17 +170,28 @@ input[type="reset"] {
  * 3) Dimension and scale
  **********************************************************************/
 
-.g-narrow {
+.g-one-quarter {
   width: 25%;
 }
 
-.g-wide {
-  width: 100%;
+.g-one-third {
+  width: 33%;
 }
 
-form.g-narrow {
-  padding: 0;
-  width: 270px;
+.g-one-half {
+  width: 50%;
+}
+
+.g-two-thirds {
+  width: 66%;
+}
+
+.g-three-quarters {
+  width: 75%;
+}
+
+.g-whole {
+  width: 100%;
 }
 
 /** *******************************************************************
@@ -220,6 +231,10 @@ form li.g-success,
 form li.g-warning {
   background-image: none;
   padding: .3em .8em .3em 1em;
+}
+
+.g-short-form li.g-error {
+  padding: .3em 0 .3em 0;
 }
 
 form.g-error input[type="text"],
