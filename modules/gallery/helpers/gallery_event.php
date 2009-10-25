@@ -24,7 +24,7 @@ class gallery_event_Core {
    */
   static function gallery_ready() {
     theme::load_themes();
-    identity::load_user();
+    user::load_user();
     locales::set_request_locale();
   }
 
