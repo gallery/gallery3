@@ -21,6 +21,7 @@ class gallery_theme_Core {
   static function head($theme) {
     $session = Session::instance();
     $buf = "";
+    $theme->css("gallery.css");
     if ($session->get("debug")) {
       $theme->css("debug.css");
     }
