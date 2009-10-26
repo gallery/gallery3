@@ -217,6 +217,15 @@ input[type="reset"] {
   font-weight: normal;
 }
 
+.g-editable {
+  padding: .2em .3em;
+}
+
+.g-editable:hover {
+  background-color: #ffc;
+  cursor: text;
+}
+
 .g-error,
 .g-info,
 .g-success,
