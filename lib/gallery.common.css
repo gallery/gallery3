@@ -201,7 +201,6 @@ input[type="reset"] {
 .g-active,
 .g-enabled,
 .g-available,
-.g-editable,
 .g-selected,
 .g-highlight {
   font-weight: bold;
