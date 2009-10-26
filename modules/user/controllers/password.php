@@ -116,7 +116,7 @@ class Password_Controller extends Controller {
   private function _change_password() {
     $view = $this->_new_password_form();
     if ($view->content->validate()) {
-      $user = user::lookup_by_hash(Input::instance()->get("key"));
+      $user = user::lookup_by_hash(Input::instance()->post("hash"));
       if (empty($user)) {
         throw new Exception("@todo FORBIDDEN", 503);
       }
