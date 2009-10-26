@@ -52,7 +52,8 @@ class gallery_task_Core {
       $mode = $task->get("mode", "init");
       if ($mode == "init") {
         $task->set("total_count", $total_count);
-        $task->get("mode", "process");
+        $task->set("mode", "process");
+        batch::start();
       }
 
       $completed = $task->get("completed", 0);
@@ -101,6 +102,7 @@ class gallery_task_Core {
       if ($task->percent_complete == 100) {
         $task->done = true;
         $task->state = "success";
+        batch::stop();
         site_status::clear("graphics_dirty");
       }
     } catch (Exception $e) {
