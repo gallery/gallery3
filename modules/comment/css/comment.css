@@ -33,3 +33,13 @@
   right: 0;
   top: 2px;
 }
+
+#g-admin-comments-menu {
+  margin: 1em 0;
+}
+
+#g-admin-comments-menu a {
+  margin: 0;
+  padding: .2em .6em;
+}
+
