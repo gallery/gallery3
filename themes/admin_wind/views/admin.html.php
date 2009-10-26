@@ -43,7 +43,7 @@
       <?= $theme->site_status() ?>
       <div id="g-header">
         <?= $theme->admin_header_top() ?>
-        <ul id="g-login-menu">
+        <ul id="g-login-menu" class="g-inline">
           <li class="first"><?= html::anchor(item::root()->abs_url(), "&larr; ".t("Back to the Gallery")) ?></li>
           <li id="g-logout-link"><a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(item::root()->url())) ?>"><?= t("Logout") ?></a></li>
         </ul>
@@ -70,7 +70,7 @@
         </div>
         <? endif ?>
       </div>
-      <div id="g-footer">
+      <div id="g-footer" class="g-inline ui-helper-clearfix">
         <?= $theme->admin_footer() ?>
         <div>
           <?= $theme->admin_credits() ?>
