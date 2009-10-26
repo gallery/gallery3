@@ -273,8 +273,13 @@ tr.g-error td.g-error {
 }
 
 .g-success,
-.g-allowed {
+.g-allowed,
+tr.g-success td.g-success {
   background: #d9efc2  url('images/ico-success.png') no-repeat .4em 50%;
+}
+
+tr.g-success td.g-success {
+  background-color: transparent;
 }
 
 .g-warning,
