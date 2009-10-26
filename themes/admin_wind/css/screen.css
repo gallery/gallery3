@@ -439,7 +439,8 @@ tr.g-warning {
 
 /* Superfish menu overrides ~~~~~~~~~~~~~~ */
 
-.sf-menu li li, .sf-menu li li ul li {
+.sf-menu li li,
+.sf-menu li li ul li {
   background-color: #bdd2ff;
 }
 
@@ -460,10 +461,6 @@ tr.g-warning {
 
 #g-panel fieldset {
   border: none;
-}
-
-.ui-draggable {
-  cursor: move;
 }
 
 #g-admin-dashboard .ui-state-highlight,
