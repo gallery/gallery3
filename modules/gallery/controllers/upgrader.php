@@ -56,9 +56,13 @@ class Upgrader_Controller extends Controller {
       access::forbidden();
     }
 
-    // Upgrade gallery and user first
-    module::upgrade("gallery");
-    module::upgrade("user");
+    $available = module::available();
+    // Upgrade gallery first
+    $gallery = $available["gallery"];
+    if ($gallery->code_version != $gallery->version) {
+      module::upgrade("gallery");
+      module::activate("gallery");
+    }
 
     // Then upgrade the rest
     foreach (module::available() as $id => $module) {
