@@ -25,7 +25,7 @@ class organize_event_Core {
       $menu->get("options_menu")
         ->append(Menu::factory("dialog")
                  ->id("organize")
-                 ->label(t("Organize Album"))
+                 ->label(t("Organize album"))
                  ->css_id("g-organize-link")
                  ->url(url::site("organize/dialog/{$item->id}")));
     }
