@@ -11,6 +11,8 @@
  *  5)  Navigation and menus
  *  6)  jQuery and jQuery UI
  *  7)  Right-to-left language styles
+ *
+ * @todo Consider moving g-panel to gallery.common
  */
 
 /** *******************************************************************
@@ -472,14 +474,6 @@ th {
 .ui-icon-right .ui-icon {
   float: right;
   margin-left: .2em;
-}
-
-.ui-icon-rotate-ccw {
-  background-position: -192px -64px;
-}
-
-.ui-icon-rotate-cw {
-  background-position: -208px -64px;
 }
 
 /*************** STUFF THAT NEEDS A HOME ****************/

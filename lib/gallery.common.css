@@ -400,6 +400,18 @@ ul.sf-menu li li li.sfHover ul {
 	left: 12em;
 }
 
+/* jQuery UI ThemeRoller buttons */
+
+/* Rotate icon, themerollower only provides one of these */
+
+.ui-icon-rotate-ccw {
+  background-position: -192px -64px;
+}
+
+.ui-icon-rotate-cw {
+  background-position: -208px -64px;
+}
+
 /* Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .g-button {
