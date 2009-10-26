@@ -21,7 +21,7 @@
   <h1><?= t("Search Results") ?></h1>
 
   <? if (count($items)): ?>
-  <ul id="g-album-grid">
+  <ul id="g-album-grid" class="ui-helper-clearfix">
     <? foreach ($items as $item): ?>
       <? $item_class = "g-photo"; ?>
       <? if ($item->is_album()): ?>

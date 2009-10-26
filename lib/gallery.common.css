@@ -55,7 +55,6 @@ legend {
 
 #g-banner legend,
 #g-sidebar legend,
-#g-content #g-search-form legend,
 input[type="hidden"] {
   display: none;
 }
@@ -132,6 +131,7 @@ input[type="reset"] {
 
 /* Short forms ~~~~~~~~~~~~~~~~~~~~~~~ */
 
+.g-short-form legend,
 .g-short-form label {
   display: none;
 }
@@ -151,6 +151,7 @@ input[type="reset"] {
 .g-short-form input[type=text] {
   color: #666;
   padding: .3em .6em;
+  width: 100%;
 }
 
 .g-short-form .textbox.g-error {
