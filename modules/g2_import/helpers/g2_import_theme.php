@@ -17,30 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class organize_event_Core {
-  static function site_menu($menu, $theme) {
-    $item = $theme->item();
-
-    if ($item && $item->is_album() && access::can("edit", $item)) {
-      $menu->get("options_menu")
-        ->append(Menu::factory("dialog")
-                 ->id("organize")
-                 ->label(t("Organize album"))
-                 ->css_id("g-organize-link")
-                 ->url(url::site("organize/dialog/{$item->id}")));
-    }
+class g2_import_theme_Core {
+  static function head($theme) {
+    $theme->css("g2_import.css");
   }
 
-  static function context_menu($menu, $theme, $item) {
-    if ($item->is_album() && access::can("edit", $item)) {
-      $menu->get("options_menu")
-        ->append(Menu::factory("dialog")
-                 ->id("organize")
-                 ->label(t("Organize album"))
-                 ->css_id("g-organize-link")
-                 ->css_class("ui-icon-folder-open")
-                 ->url(url::site("organize/dialog/{$item->id}")));
-    }
+  static function admin_head($theme) {
+    $theme->css("g2_import.css");
   }
-
 }

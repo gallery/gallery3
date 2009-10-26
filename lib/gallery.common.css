@@ -9,6 +9,8 @@
  *  4)  States and interactions
  *  5)  Positioning and order
  *  6)  Containers/widgets
+ *
+ *  @todo Remove extra white space at the top of the add comment form, above the first field
  */
 
 /** *******************************************************************
@@ -53,13 +55,8 @@ legend {
 
 #g-banner legend,
 #g-sidebar legend,
-#g-content #g-search-form legend,
 input[type="hidden"] {
   display: none;
-}
-
-textarea {
-  height: 12em;
 }
 
 input.textbox,
@@ -72,6 +69,11 @@ textarea {
   clear: both;
   color: #333;
   width: 50%;
+}
+
+textarea {
+  height: 12em;
+  width: 97%;
 }
 
 input:focus,
@@ -129,6 +131,7 @@ input[type="reset"] {
 
 /* Short forms ~~~~~~~~~~~~~~~~~~~~~~~ */
 
+.g-short-form legend,
 .g-short-form label {
   display: none;
 }
@@ -148,6 +151,7 @@ input[type="reset"] {
 .g-short-form input[type=text] {
   color: #666;
   padding: .3em .6em;
+  width: 100%;
 }
 
 .g-short-form .textbox.g-error {
@@ -201,7 +205,6 @@ input[type="reset"] {
 .g-active,
 .g-enabled,
 .g-available,
-.g-editable,
 .g-selected,
 .g-highlight {
   font-weight: bold;
@@ -212,10 +215,19 @@ input[type="reset"] {
 .g-unavailable,
 .g-uneditable,
 .g-locked,
-.g-unselected,
+.g-deselected,
 .g-understate {
   color: #ccc;
   font-weight: normal;
+}
+
+.g-editable {
+  padding: .2em .3em;
+}
+
+.g-editable:hover {
+  background-color: #ffc;
+  cursor: text;
 }
 
 .g-error,
@@ -265,8 +277,13 @@ tr.g-error td.g-error {
 }
 
 .g-success,
-.g-allowed {
+.g-allowed,
+tr.g-success td.g-success {
   background: #d9efc2  url('images/ico-success.png') no-repeat .4em 50%;
+}
+
+tr.g-success td.g-success {
+  background-color: transparent;
 }
 
 .g-warning,
@@ -365,6 +382,34 @@ form .g-error {
 }
 
 .g-block-content {
+}
+
+/* Superfish menu overrides ~~~~~~~~~~~~~~ */
+
+.sf-menu ul {
+	width: 12em;
+}
+
+ul.sf-menu li li:hover ul,
+ul.sf-menu li li.sfHover ul {
+	left:	12em;
+}
+
+ul.sf-menu li li li:hover ul,
+ul.sf-menu li li li.sfHover ul {
+	left: 12em;
+}
+
+/* jQuery UI ThemeRoller buttons */
+
+/* Rotate icon, themerollower only provides one of these */
+
+.ui-icon-rotate-ccw {
+  background-position: -192px -64px;
+}
+
+.ui-icon-rotate-cw {
+  background-position: -208px -64px;
 }
 
 /* Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

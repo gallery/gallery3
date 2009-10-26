@@ -11,6 +11,8 @@
  *  5)  Navigation and menus
  *  6)  jQuery and jQuery UI
  *  7)  Right-to-left language styles
+ *
+ * @todo Consider moving g-panel to gallery.common
  */
 
 /** *******************************************************************
@@ -165,27 +167,24 @@ th {
   opacity: 0.4;
 }
 
-tr.g-error,
-tr.g-info,
-tr.g-success,
-tr.g-warning {
-  background: none;
+.g-info td {
+  background-color: transparent;
+  background-image: none;
 }
 
-.g-info td.g-info {
+.g-success td {
   background-color: transparent;
-}
-
-.g-success td.g-success {
-  background-color: transparent;
+  background-image: none;
 }
 
 .g-error td {
   background-color: #f6cbca;
+  background-image: none;
 }
 
 .g-warning td {
   background-color: #fcf9ce;
+  background-image: none;
 }
 
 .g-module-status.g-info,
@@ -281,19 +280,6 @@ tr.g-warning {
 
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#g-header #g-login-menu li,
-#g-footer #g-credits li {
-  display: inline;
-}
-
-#g-header #g-login-menu li {
-  padding-left: 1.2em;
-}
-
-#g-footer #g-credits li {
-  padding-right: 1.2em;
-}
-
 #g-content #g-search-results {
   margin-top: 1em;
   padding-top: 1em;
@@ -332,10 +318,6 @@ tr.g-warning {
   width: 90px;
 }
 
-#g-site-status {
-  margin-bottom: 0;
-}
-
 #g-content .g-item {
   background-color: #fff;
   border: 1px solid #e8e8e8;
@@ -345,15 +327,6 @@ tr.g-warning {
   padding: 14px 8px;
   text-align: center;
   width: 90px;
-}
-
-#g-admin-comments-menu {
-  margin: 1em 0;
-}
-
-#g-admin-comments-menu a {
-  margin: 0;
-  padding: .2em .6em;
 }
 
 #g-admin-graphics .g-available .g-block {
@@ -407,10 +380,6 @@ tr.g-warning {
  * 5) Navigation and menus
  *********************************************************************/
 
-#g-site-admin-menu {
-  font-size: 1.2em;
-}
-
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-header #g-login-menu {
@@ -439,7 +408,8 @@ tr.g-warning {
 
 /* Superfish menu overrides ~~~~~~~~~~~~~~ */
 
-.sf-menu li li, .sf-menu li li ul li {
+.sf-menu li li,
+.sf-menu li li ul li {
   background-color: #bdd2ff;
 }
 
@@ -460,10 +430,6 @@ tr.g-warning {
 
 #g-panel fieldset {
   border: none;
-}
-
-.ui-draggable {
-  cursor: move;
 }
 
 #g-admin-dashboard .ui-state-highlight,
@@ -510,69 +476,13 @@ tr.g-warning {
   margin-left: .2em;
 }
 
-.ui-icon-rotate-ccw {
-  background-position: -192px -64px;
-}
-
-.ui-icon-rotate-cw {
-  background-position: -208px -64px;
-}
-
 /*************** STUFF THAT NEEDS A HOME ****************/
-
-#g-move ul {
-  padding-left: 1em;
-}
-
-#g-move .selected {
-  background: #999;
-}
 
 .g-progress-bar {
   height: 1em;
   width: 100%;
   margin-top: .5em;
   display: inline-block;
-}
-
-#g-admin-g2-import-notes {
-  padding-bottom: 20px;
-}
-
-#g-admin-g2-import-details {
-  padding-top: 20px;
-}
-
-#g-admin-g2-import-details .g-warning {
-  margin-top: 4px;
-}
-
-#g-admin-g2-import-details .g-info {
-  padding: 2px;
-  border: 1px solid #999;
-  margin-bottom: 10px;
-}
-
-#g-admin-g2-import-notes p,
-#g-admin-g2-import-details .g-info p {
-  padding: 0;
-  margin: 0;
-}
-
-#g-admin-g2-import-notes ul li,
-#g-admin-g2-import .g-info ul li {
-  padding-left: 0;
-  margin-left: 20px;
-  list-style-type: disc;
-}
-
-.g-editable {
-  padding: .1em .3em .2em .3em;
-}
-
-.g-editable:hover {
-  background-color: #ffc;
-  cursor: text;
 }
 
 #g-task-log-dialog h1 {

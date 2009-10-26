@@ -1,0 +1,30 @@
+#g-admin-g2-import-notes {
+  padding-bottom: 20px;
+}
+
+#g-admin-g2-import-details {
+  padding-top: 20px;
+}
+
+#g-admin-g2-import-details .g-warning {
+  margin-top: 4px;
+}
+
+#g-admin-g2-import-details .g-info {
+  padding: 2px;
+  border: 1px solid #999;
+  margin-bottom: 10px;
+}
+
+#g-admin-g2-import-notes p,
+#g-admin-g2-import-details .g-info p {
+  padding: 0;
+  margin: 0;
+}
+
+#g-admin-g2-import-notes ul li,
+#g-admin-g2-import .g-info ul li {
+  padding-left: 0;
+  margin-left: 20px;
+  list-style-type: disc;
+}

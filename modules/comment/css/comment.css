@@ -1,0 +1,45 @@
+#g-content #g-comment-form {
+  margin-top: 2em;
+}
+
+#g-content #g-comments {
+  margin-top: 2em;
+  position: relative;
+}
+
+#g-content #g-comments ul li {
+  margin: 1em 0;
+}
+
+#g-content #g-comments .g-author {
+  border-bottom: 1px solid #ccc;
+  color: #999;
+  height: 32px;
+  line-height: 32px;
+}
+
+#g-content #g-comments ul li div {
+  padding: 0 8px 8px 43px;
+}
+
+#g-content #g-comments .g-avatar {
+  height: 32px;
+  margin-right: .4em;
+  width: 32px;
+}
+
+#g-admin-comment-button {
+  position: absolute;
+  right: 0;
+  top: 2px;
+}
+
+#g-admin-comments-menu {
+  margin: 1em 0;
+}
+
+#g-admin-comments-menu a {
+  margin: 0;
+  padding: .2em .6em;
+}
+
