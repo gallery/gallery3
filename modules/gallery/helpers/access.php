@@ -421,8 +421,7 @@ class access_Core {
   private static function _get_all_groups() {
     // When we build the gallery package, it's possible that there is no identity provider installed yet.
     // This is ok at packaging time, so work around it.
-    $config = module::get_var("gallery", "identity_provider");
-    if (!empty($config)) {
+   if (module::is_active(module::get_var("gallery", "identity_provider", "user"))) {
       return identity::groups();
     } else {
       return array();

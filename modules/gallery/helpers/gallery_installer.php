@@ -253,6 +253,8 @@ class gallery_installer {
       $theme->save();
     }
 
+    module::set_var("gallery", "identity_provider", "user");
+
     block_manager::add("dashboard_sidebar", "gallery", "block_adder");
     block_manager::add("dashboard_sidebar", "gallery", "stats");
     block_manager::add("dashboard_sidebar", "gallery", "platform_info");
@@ -268,7 +270,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 15);
+    module::set_version("gallery", 16);
   }
 
   static function upgrade($version) {
@@ -392,6 +394,11 @@ class gallery_installer {
         block_manager::set_active("site.sidebar", $sidebar_blocks);
       }
       module::set_version("gallery", $version = 15);
+    }
+
+    if ($version == 15) {
+      module::set_var("gallery", "identity_provider", "user");
+      module::set_version("gallery", $version = 16);
     }
   }
 

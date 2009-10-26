@@ -79,7 +79,7 @@ class user_installer {
 
     access::allow($registered, "view", $root);
     access::allow($registered, "view_full", $root);
-    module::set_var("gallery", "identity_provider", "user");
+
     module::set_version("user", 1);
   }
 
