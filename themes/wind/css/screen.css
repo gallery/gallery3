@@ -12,8 +12,6 @@
  *  6)  jQuery and jQuery UI
  *  7)  Right-to-left language styles
  *
- *  @todo Move #g-comments to comment module, recapthca to recaptcha?
- *  @todo Make #g-welcome-message p unecessary
  *  @todo Review g-buttonset and it's usage
  */
 
@@ -286,50 +284,6 @@ td {
   margin: 1em auto;
 }
 
-#g-content #g-comments {
-  margin-top: 2em;
-  position: relative;
-}
-
-#g-content #g-comments ul li {
-  margin: 1em 0;
-}
-
-#g-content #g-comments .g-author {
-  border-bottom: 1px solid #ccc;
-  color: #999;
-  height: 32px;
-  line-height: 32px;
-}
-
-#g-content #g-comments ul li div {
-  padding: 0 8px 8px 43px;
-}
-
-#g-content #g-comments ul li #g-recaptcha {
-  padding: 0;
-}
-
-#g-content #g-comments ul li #g-recaptcha div {
-  padding: 0;
-}
-
-#g-content #g-comments .g-avatar {
-  height: 32px;
-  margin-right: .4em;
-  width: 32px;
-}
-
-#g-admin-comment-button {
-  position: absolute;
-  right: 0;
-  top: 2px;
-}
-
-#g-content #g-comment-form {
-  margin-top: 2em;
-}
-
 /* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-footer #g-credits li {
@@ -445,10 +399,6 @@ td {
 
 #g-view-menu #g-print-digibug-link {
   background-image: url('../images/ico-print.png');
-}
-
-#g-welcome-message p {
-  padding-bottom: 1em;
 }
 
 /** *******************************************************************
