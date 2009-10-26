@@ -211,7 +211,7 @@ input[type="reset"] {
 .g-unavailable,
 .g-uneditable,
 .g-locked,
-.g-unselected,
+.g-deselected,
 .g-understate {
   color: #ccc;
   font-weight: normal;
