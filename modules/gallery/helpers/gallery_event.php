@@ -258,7 +258,7 @@ class gallery_event_Core {
             ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&page_type=$page_type")));
       }
 
-      // Don't move photos from the photo page; we don't yet have a good way of redirecting after
+      // @todo Don't move photos from the photo page; we don't yet have a good way of redirecting after
       // move
       if ($page_type == "album") {
         $options_menu
