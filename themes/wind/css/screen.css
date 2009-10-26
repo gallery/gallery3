@@ -457,7 +457,22 @@ td {
 
 /* Superfish menu overrides ~~~~~~~~~~~~~~ */
 
-.sf-menu li li, .sf-menu li li ul li {
+.sf-menu ul {
+	width: 12em;
+}
+
+ul.sf-menu li li:hover ul,
+ul.sf-menu li li.sfHover ul {
+	left:	12em;
+}
+
+ul.sf-menu li li li:hover ul,
+ul.sf-menu li li li.sfHover ul {
+	left: 12em;
+}
+
+.sf-menu li li,
+.sf-menu li li ul li {
   background-color: #bdd2ff;
 }
 
