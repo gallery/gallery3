@@ -19,7 +19,13 @@
  */
 class comment_theme_Core {
   static function head($theme) {
+    $theme->css("comment.css");
     $theme->script("comment.js");
+    return "";
+  }
+
+  static function admin_head($theme) {
+    $theme->css("comment.css");
     return "";
   }
 

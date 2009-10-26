@@ -73,7 +73,7 @@ class comment_Core {
     $group->textarea("text")->label(t("Comment"))         ->id("g-text");
     $group->hidden("item_id")->value($item->id);
     module::event("comment_add_form", $form);
-    $group->submit("")->value(t("Add"));
+    $group->submit("")->value(t("Add"))->class("ui-state-default ui-corner-all");
 
     $active = user::active();
     if (!$active->guest) {
