@@ -13,6 +13,7 @@
  *  7)  Right-to-left language styles
  *
  * @todo Consider moving g-panel to gallery.common
+ * @todo Review g-actions along with g-buttonset-vertical
  */
 
 /** *******************************************************************
@@ -40,11 +41,7 @@ h1 {
   font-size: 1.7em;
 }
 
-#g-search-results h1 {
-  margin-bottom: 1em;
-}
-
-#g-progress h1 {
+#g-dialog h1 {
   font-size: 1.1em;
 }
 
@@ -259,16 +256,6 @@ th {
   text-decoration: none;
 }
 
-#g-header #g-quick-search-form {
-  clear: right;
-  float: right;
-  margin: 1em 0;
-}
-
-#g-header #g-quick-search-form input[type='text'] {
-  width: 17em;
-}
-
 #g-content .g-block h2 {
   background-color: transparent;
   padding-left: 0;
@@ -278,13 +265,6 @@ th {
   padding-left: 1em;
 }
 
-/* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#g-content #g-search-results {
-  margin-top: 1em;
-  padding-top: 1em;
-}
-
 .g-block .ui-dialog-titlebar {
   margin: -1em -1em 0;
 }
@@ -292,6 +272,8 @@ th {
 #g-sidebar .g-block h2 {
   background: none;
 }
+
+/* Photo stream ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-photo-stream {
   background-color: #e8e8e8;
@@ -329,12 +311,16 @@ th {
   width: 90px;
 }
 
+/* Graphics settings ~~~~~~~~~~~~~~~~~~~~~ */
+
 #g-admin-graphics .g-available .g-block {
   clear: none;
   float: left;
   margin-right: 1em;
   width: 30%;
 }
+
+/* Appearance settings ~~~~~~~~~~~~~~~~~~~ */
 
 #g-site-theme,
 #g-admin-theme {
@@ -379,15 +365,6 @@ th {
 /** *******************************************************************
  * 5) Navigation and menus
  *********************************************************************/
-
-/* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-#g-header #g-login-menu {
-  color: #999;
-  float: right;
-  margin: 0;
-  padding: 5px 0;
-}
 
 /* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -447,40 +424,7 @@ th {
   padding: .2em .4em;
 }
 
-.ui-widget-overlay {
-  background: #000;
-  opacity: .7;
-}
-
-/* jQuery UI ThemeRoller buttons */
-
-.g-buttonset {
-  padding-left: 1px;
-}
-
-.g-buttonset li {
-  float: left;
-}
-
-.g-buttonset .g-button {
-  margin: 0;
-}
-
-.ui-icon-left .ui-icon {
-  float: left;
-  margin-right: .2em;
-}
-
-.ui-icon-right .ui-icon {
-  float: right;
-  margin-left: .2em;
-}
-
 /*************** STUFF THAT NEEDS A HOME ****************/
-
-#g-task-log-dialog h1 {
-  font-size: 1.1em;
-}
 
 .g-task-log {
   border: 1pt solid;

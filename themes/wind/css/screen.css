@@ -40,7 +40,7 @@ h1 {
   font-size: 1.7em;
 }
 
-#g-progress h1 {
+#g-dialog h1 {
   font-size: 1.1em;
 }
 
@@ -410,37 +410,6 @@ td {
 
 .sf-menu li:hover {
   background-color: #dfe9ff;
-}
-
-/* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
-
-.ui-widget-overlay {
-  background: #000;
-  opacity: .7;
-}
-
-/* jQuery UI ThemeRoller buttons */
-
-.g-buttonset {
-  padding-left: 1px;
-}
-
-.g-buttonset li {
-  float: left;
-}
-
-.g-buttonset .g-button {
-  margin: 0;
-}
-
-.ui-icon-left .ui-icon {
-  float: left;
-  margin-right: .2em;
-}
-
-.ui-icon-right .ui-icon {
-  float: right;
-  margin-left: .2em;
 }
 
 /** *******************************************************************
