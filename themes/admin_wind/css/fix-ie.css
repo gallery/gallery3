@@ -9,3 +9,10 @@
 .g-unavailable:hover {
   filter: alpha(opacity=100);
 }
+
+tr.g-error td,
+tr.g-info td,
+tr.g-success td,
+tr.g-warning td {
+  background: none !important;
+} 
