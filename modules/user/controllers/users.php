@@ -84,7 +84,6 @@ class Users_Controller extends Controller {
     $form->edit_user->password
       ->rules($minimum_length ? "length[$minimum_length, 40]" : "length[40]");
 
-
     module::event("user_edit_form", $user, $form);
     $group->submit("")->value(t("Save"));
     return $form;
