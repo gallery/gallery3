@@ -308,7 +308,6 @@ class Admin_Users_Controller extends Admin_Controller {
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
     $form->add_rules_from($user);
-    $form->edit_user->password->rules("-required");
 
     module::event("user_edit_form_admin", $user, $form);
     $group->submit("")->value(t("Modify User"));
@@ -329,6 +328,10 @@ class Admin_Users_Controller extends Admin_Controller {
     self::_add_locale_dropdown($group);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
     $form->add_rules_from(ORM::factory("user"));
+
+    $minimum_length = module::get_var("user", "mininum_password_length", 5);
+    $form->edit_user->password
+      ->rules($minimum_length ? "length[$minimum_length, 40]" : "length[40]");
 
     module::event("user_add_form_admin", $user, $form);
     $group->submit("")->value(t("Add User"));

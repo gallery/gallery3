@@ -80,7 +80,17 @@ class user_installer {
     access::allow($registered, "view", $root);
     access::allow($registered, "view_full", $root);
 
-    module::set_version("user", 1);
+    module::set_var("user", "mininum_password_length", 5);
+
+    module::set_version("user", 2);
+  }
+
+  static function upgrade($version) {
+    if ($version == 1) {
+      module::set_var("user", "mininum_password_length", 5);
+
+      module::set_version("user", $version = 2);
+    }
   }
 
   static function uninstall() {
