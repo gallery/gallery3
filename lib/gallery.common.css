@@ -400,16 +400,11 @@ ul.sf-menu li li li.sfHover ul {
 	left: 12em;
 }
 
-/* jQuery UI ThemeRoller buttons */
+/* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
 
-/* Rotate icon, themerollower only provides one of these */
-
-.ui-icon-rotate-ccw {
-  background-position: -192px -64px;
-}
-
-.ui-icon-rotate-cw {
-  background-position: -208px -64px;
+.ui-widget-overlay {
+  background: #000;
+  opacity: .7;
 }
 
 /* Buttons ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -427,6 +422,40 @@ ul.sf-menu li li li.sfHover ul {
   outline: 0;
   text-decoration: none;
   -moz-outline-style: none;
+}
+
+/* jQuery UI ThemeRoller buttons ~~~~~~~~~ */
+
+.g-buttonset {
+  padding-left: 1px;
+}
+
+.g-buttonset li {
+  float: left;
+}
+
+.g-buttonset .g-button {
+  margin: 0;
+}
+
+.ui-icon-left .ui-icon {
+  float: left;
+  margin-right: .2em;
+}
+
+.ui-icon-right .ui-icon {
+  float: right;
+  margin-left: .2em;
+}
+
+/* Rotate icon, ThemeRoller only provides one of these */
+
+.ui-icon-rotate-ccw {
+  background-position: -192px -64px;
+}
+
+.ui-icon-rotate-cw {
+  background-position: -208px -64px;
 }
 
 .g-progress-bar {
@@ -541,11 +570,24 @@ div#g-action-status {
 
 .g-inline li {
   float: left;
-  margin-right: .4em;
+  margin-left: 1em;
+}
+
+.g-inline li.g-first {
+  margin-left: 0;
 }
 
 /* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
 
 .rtl .g-short-form li {
   float: right;
+}
+
+.rtl .g-inline li {
+  float: right;
+  margin-right: 1em;
+}
+
+.rtl .g-inline li.g-first {
+  margin-right: 0;
 }
