@@ -478,13 +478,6 @@ th {
 
 /*************** STUFF THAT NEEDS A HOME ****************/
 
-.g-progress-bar {
-  height: 1em;
-  width: 100%;
-  margin-top: .5em;
-  display: inline-block;
-}
-
 #g-task-log-dialog h1 {
   font-size: 1.1em;
 }
