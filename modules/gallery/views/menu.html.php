@@ -2,7 +2,7 @@
 <? if ($menu->is_root): ?>
 
 <ul class="<?= $menu->css_class ?>">
-  <? foreach ($this->elements as $element): ?>
+  <? foreach ($menu->elements as $element): ?>
   <?= $element->render() ?>
   <? endforeach ?>
 </ul>
@@ -14,7 +14,7 @@
     <?= $menu->label->for_html() ?>
   </a>
   <ul>
-    <? foreach ($this->elements as $element): ?>
+    <? foreach ($menu->elements as $element): ?>
     <?= $element->render() ?>
     <? endforeach ?>
   </ul>
