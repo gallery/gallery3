@@ -9,7 +9,7 @@
   <h1 style="display:none"><?= t("Organize %name", array("name" => html::purify($album->title))) ?></h1>
   <div id="bd">
     <div class="yui-gf">
-      <div class="yui-u first">
+      <div class="yui-u g-first">
         <h3><?= t("Albums") ?></h3>
       </div>
       <div id="g-action-status" class="g-message-block yui-u">

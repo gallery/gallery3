@@ -1,13 +1,13 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <ul id="g-login-menu" class="g-inline">
   <? if ($user->guest): ?>
-  <li class="first">
+  <li class="g-first">
     <a href="<?= url::site("login/ajax") ?>"
        title="<?= t("Login to Gallery")->for_html_attr() ?>"
        id="g-login-link" class="g-dialog-link"><?= t("Login") ?></a>
   </li>
   <? else: ?>
-  <li class="first">
+  <li class="g-first">
     <? if (identity::is_writable()): ?>
     <?= t('Logged in as %name', array('name' => html::mark_clean(
       '<a href="' . url::site("form/edit/users/{$user->id}") .
