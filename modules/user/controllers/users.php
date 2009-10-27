@@ -63,7 +63,9 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    print $this->_get_edit_form($user);
+    $v = new View("user_form.html");
+    $v->form = $this->_get_edit_form($user);
+    print $v;
   }
 
   private function _get_edit_form($user) {

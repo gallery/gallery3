@@ -63,7 +63,9 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function add_user_form() {
-    print $this->_get_user_add_form_admin();
+    $v = new View("user_form.html");
+    $v->form = $this->_get_user_add_form_admin();
+    print $v;
   }
 
   public function delete_user($id) {
@@ -156,12 +158,13 @@ class Admin_Users_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    $form = $this->_get_user_edit_form_admin($user);
+    $v = new View("user_form.html");
+    $v->form = $this->_get_user_edit_form_admin($user);
     // Don't allow the user to control their own admin bit, else you can lock yourself out
     if ($user->id == identity::active_user()->id) {
-      $form->edit_user->admin->disabled(1);
+      $v->form->edit_user->admin->disabled(1);
     }
-    print $form;
+    print $v;
   }
 
   public function add_user_to_group($user_id, $group_id) {
@@ -330,7 +333,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $form->add_rules_from(ORM::factory("user"));
 
     $minimum_length = module::get_var("user", "mininum_password_length", 5);
-    $form->edit_user->password
+    $form->add_user->password
       ->rules($minimum_length ? "length[$minimum_length, 40]" : "length[40]");
 
     module::event("user_add_form_admin", $user, $form);

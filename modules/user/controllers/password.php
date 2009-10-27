@@ -32,7 +32,7 @@ class Password_Controller extends Controller {
     if (request::method() == "post") {
       $this->_change_password();
     } else {
-      $user = user::lookup_user_by_field("hash", Input::instance()->get("key"));
+      $user = user::lookup_by_hash(Input::instance()->get("key"));
       if (!empty($user)) {
         print $this->_new_password_form($user->hash);
       } else {
@@ -46,7 +46,7 @@ class Password_Controller extends Controller {
 
     $valid = $form->validate();
     if ($valid) {
-      $user = identity::lookup_user_by_name($form->reset->inputs["name"]->value);
+      $user = user::lookup_by_name($form->reset->inputs["name"]->value);
       if (!$user->loaded || empty($user->email)) {
         $form->reset->inputs["name"]->add_error("no_email", 1);
         $valid = false;
@@ -110,19 +110,20 @@ class Password_Controller extends Controller {
       "mistyped", t("The password and the confirm password must match"));
     $group->submit("")->value(t("Update"));
 
-    $template->content = $form;
+    $template->content = new View("user_form.html");
+    $template->content->form = $form;
     return $template;
   }
 
   private function _change_password() {
     $view = $this->_new_password_form();
-    if ($view->content->validate()) {
+    if ($view->content->form->validate()) {
       $user = user::lookup_by_hash(Input::instance()->post("hash"));
       if (empty($user)) {
         throw new Exception("@todo FORBIDDEN", 503);
       }
 
-      $user->password = $view->content->reset->password->value;
+      $user->password = $view->content->form->reset->password->value;
       $user->hash = null;
       $user->save();
       message::success(t("Password reset successfully"));

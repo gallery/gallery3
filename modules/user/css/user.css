@@ -54,3 +54,39 @@ li.g-group .g-user .g-button {
 li.g-default-group h4, li.g-default-group .g-user {
   color: gray;
 }
+
+.g-password-strength0 {
+  background: url(progressImg1.png) no-repeat 0 0;
+  width: 138px;
+  height: 7px;
+}
+.g-password-strength10 {
+  background-position:0 -7px;
+}
+.g-password-strength20 {
+  background-position:0 -14px;
+}
+.g-password-strength30 {
+  background-position:0 -21px;
+}
+.g-password-strength40 {
+  background-position:0 -28px;
+}
+.g-password-strength50 {
+  background-position:0 -35px;
+}
+.g-password-strength60 {
+  background-position:0 -42px;
+}
+.g-password-strength70 {
+  background-position:0 -49px;
+}
+.g-password-strength80 {
+  background-position:0 -56px;
+}
+.g-password-strength90 {
+  background-position:0 -63px;
+}
+.g-password-strength100 {
+  background-position:0 -70px;
+}
