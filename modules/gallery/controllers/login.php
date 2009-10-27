@@ -77,6 +77,7 @@ class Login_Controller extends Controller {
       }
       identity::set_active_user($user);
       log::info("user", t("User %name logged in", array("name" => $user->name)));
+      module::event("user_login", $user);
     }
 
     // Either way, regenerate the session id to avoid session trapping

@@ -25,57 +25,6 @@
  */
 class user_Core {
   /**
-   * Make sure that we have a session and group_ids cached in the session.
-   */
-  static function load_user() {
-    $session = Session::instance();
-    if (!($user = $session->get("user"))) {
-      $session->set("user", $user = user::guest());
-    }
-
-    // The installer cannot set a user into the session, so it just sets an id which we should
-    // upconvert into a user.
-    if ($user === 2) {
-      $user = model_cache::get("user", 2);
-      user::login($user);
-      $session->set("user", $user);
-    }
-
-    if (!$session->get("group_ids")) {
-      $ids = array();
-      foreach ($user->groups as $group) {
-        $ids[] = $group->id;
-      }
-      $session->set("group_ids", $ids);
-    }
-  }
-
-  /**
-   * Return the array of group ids this user belongs to
-   *
-   * @return array
-   */
-  static function group_ids() {
-    return Session::instance()->get("group_ids", array(1));
-  }
-
-  /**
-   * Return the active user.  If there's no active user, return the guest user.
-   *
-   * @return User_Model
-   */
-  static function active() {
-    // @todo (maybe) cache this object so we're not always doing session lookups.
-    $user = Session::instance()->get("user", null);
-    if (!isset($user)) {
-      // Don't do this as a fallback in the Session::get() call because it can trigger unnecessary
-      // work.
-      $user = user::guest();
-    }
-    return $user;
-  }
-
-  /**
    * Return the guest user.
    *
    * @todo consider caching
@@ -84,18 +33,6 @@ class user_Core {
    */
   static function guest() {
     return model_cache::get("user", 1);
-  }
-
-  /**
-   * Change the active user.
-   *
-   * @return User_Model
-   */
-  static function set_active($user) {
-    $session = Session::instance();
-    $session->set("user", $user);
-    $session->delete("group_ids");
-    self::load_user();
   }
 
   /**
@@ -168,35 +105,6 @@ class user_Core {
     require_once(MODPATH . "user/lib/PasswordHash.php");
     $hashGenerator = new PasswordHash(10, true);
     return $hashGenerator->HashPassword($password);
-  }
-
-  /**
-   * Log in as a given user.
-   * @param object $user the user object.
-   */
-  static function login($user) {
-    $user->login_count += 1;
-    $user->last_login = time();
-    $user->save();
-
-    user::set_active($user);
-    module::event("user_login", $user);
-  }
-
-  /**
-   * Log out the active user and destroy the session.
-   * @param object $user the user object.
-   */
-  static function logout() {
-    $user = user::active();
-    if (!$user->guest) {
-      try {
-        Session::instance()->destroy();
-      } catch (Exception $e) {
-        Kohana::log("error", $e);
-      }
-      module::event("user_logout", $user);
-    }
   }
 
   /**
