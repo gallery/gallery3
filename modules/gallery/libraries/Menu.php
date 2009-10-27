@@ -155,19 +155,6 @@ class Menu_Core extends Menu_Element {
     }
   }
 
-  public function compact() {
-    foreach ($this->elements as $target_id => $element) {
-      if ($element->type == "submenu") {
-        if (empty($element->elements)) {
-          $this->remove($target_id);
-        } else {
-          $element->compact();
-        }
-      }
-    }
-    return $this;
-  }
-
   public function __construct($type) {
     parent::__construct($type);
     $this->elements = array();

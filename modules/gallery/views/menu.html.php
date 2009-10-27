@@ -1,4 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<? if ($menu->elements): // Don't show the menu if it has no choices ?>
 <? if ($menu->is_root): ?>
 
 <ul class="<?= $menu->css_class ?>">
@@ -20,4 +21,5 @@
   </ul>
 </li>
 
+<? endif ?>
 <? endif ?>

@@ -81,19 +81,19 @@ class Theme_View_Core extends Gallery_View {
   public function site_menu() {
     $menu = Menu::factory("root");
     module::event("site_menu", $menu, $this);
-    return $menu->compact()->render();
+    return $menu->render();
   }
 
   public function album_menu() {
     $menu = Menu::factory("root");
     module::event("album_menu", $menu, $this);
-    return $menu->compact()->render();
+    return $menu->render();
   }
 
   public function tag_menu() {
     $menu = Menu::factory("root");
     module::event("tag_menu", $menu, $this);
-    return $menu->compact()->render();
+    return $menu->render();
   }
 
   public function photo_menu() {
@@ -107,13 +107,13 @@ class Theme_View_Core extends Gallery_View {
     }
 
     module::event("photo_menu", $menu, $this);
-    return $menu->compact()->render();
+    return $menu->render();
   }
 
   public function movie_menu() {
     $menu = Menu::factory("root");
     module::event("movie_menu", $menu, $this);
-    return $menu->compact()->render();
+    return $menu->render();
   }
 
   public function context_menu($item, $thumbnail_css_selector) {
@@ -124,7 +124,7 @@ class Theme_View_Core extends Gallery_View {
       ->css_class("g-context-menu");
 
     module::event("context_menu", $menu, $this, $item, $thumbnail_css_selector);
-    return $menu->compact()->render();
+    return $menu->render();
   }
 
   public function pager() {

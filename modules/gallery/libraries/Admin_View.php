@@ -47,7 +47,7 @@ class Admin_View_Core extends Gallery_View {
   public function admin_menu() {
     $menu = Menu::factory("root");
     module::event("admin_menu", $menu, $this);
-    return $menu->compact()->render();
+    return $menu->render();
   }
 
   /**
