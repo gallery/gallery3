@@ -106,16 +106,17 @@ class Gallery_Unit_Test_Controller extends Controller {
 
       module::install("user");
       module::activate("user");
-      $modules = $paths =array();
-      foreach ($active_modules as $module) {
-        if (file_exists($path =  MODPATH . "{$module->name}/tests")) {
-          $paths[] = $path;
-        }
-        if (in_array($module->name, array("gallery", "user"))) {
+      $modules = $paths = array();
+      foreach (module::available() as $module_name => $unused) {
+        if (in_array($module_name, array("gallery", "user"))) {
+          $paths[] = MODPATH . "{$module_name}/tests";
           continue;
         }
-        module::install($module->name);
-        module::activate($module->name);
+        if (file_exists($path = MODPATH . "{$module_name}/tests")) {
+          $paths[] = $path;
+          module::install($module_name);
+          module::activate($module_name);
+        }
       }
 
       Kohana::config_set('unit_test.paths', $paths);
