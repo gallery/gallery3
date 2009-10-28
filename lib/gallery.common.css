@@ -558,8 +558,8 @@ div#g-action-status {
 
 .g-inline li {
   float: left;
-  margin-left: 1.6em;
-  padding-left: 0;
+  margin-left: 1.8em;
+  padding-left: 0 !important;
 }
 
 .g-inline li.g-first {
