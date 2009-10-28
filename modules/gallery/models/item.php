@@ -293,7 +293,8 @@ class Item_Model extends ORM_MPTT {
              ->where("id <>", 1)
              ->orderby("left_ptr", "ASC")
              ->get() as $row) {
-      $names[] = rawurlencode($row->name);
+      // Don't encode the names segment
+      $names[] = $row->name;
       $slugs[] = rawurlencode($row->slug);
     }
     $this->relative_path_cache = implode($names, "/");
