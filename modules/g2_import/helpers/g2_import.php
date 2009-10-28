@@ -271,7 +271,7 @@ class g2_import_Core {
 
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
       self::set_map($g2_user_id, identity::guest()->id);
-      return t("Skipping Anonymous User");
+      return t("Skipping anonymous user");
     }
 
     $g2_admin_group_id =

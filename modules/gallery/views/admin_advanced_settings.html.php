@@ -1,10 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="g-admin-advanced-settings" class="g-block">
-  <h1> <?= t("Advanced Settings") ?> </h1>
+  <h1> <?= t("Advanced settings") ?> </h1>
   <p>
     <?= t("Here are internal Gallery configuration settings.  Most of these settings are accessible elsewhere in the administrative console.") ?>
   </p>
-  
+
   <ul id="g-action-status" class="g-message-block">
     <li class="g-warning"><?= t("Change these values at your own risk!") ?></li>
   </ul>

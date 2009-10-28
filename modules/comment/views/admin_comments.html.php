@@ -35,7 +35,7 @@
 </script>
 
 <div id="g-admin-comments" class="g-block">
-  <h1> <?= t("Manage Comments") ?> </h1>
+  <h1> <?= t("Manage comments") ?> </h1>
 
   <div class="g-block-content">
     <!-- @todo: Highlight active menu option -->
@@ -46,13 +46,13 @@
     <!-- @todo: Remove after setting active option? -->
     <h2>
       <? if ($state == "published"): ?>
-      <?= t("Approved Comments") ?>
+      <?= t("Approved comments") ?>
       <? elseif ($state == "unpublished"): ?>
-      <?= t("Comments Awaiting Moderation") ?>
+      <?= t("Comments awaiting moderation") ?>
       <? elseif ($state == "spam"): ?>
-      <?= t("Spam Comments") ?>
+      <?= t("Spam comments") ?>
       <? elseif ($state == "deleted"): ?>
-      <?= t("Recently Deleted Comments") ?>
+      <?= t("Recently deleted comments") ?>
       <? endif ?>
     </h2>
 
@@ -196,6 +196,6 @@
     <div class="g-pager">
       <?= $pager ?>
     </div>
-    
+
   </div>
 </div>

@@ -1,12 +1,12 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div class="g-block">
-  <h1> <?= t("Add From Server Admininstration") ?> </h1>
+  <h1> <?= t("Add from server admininstration") ?> </h1>
   <div class="g-block-content">
     <?= $form ?>
-    <h2><?= t("Authorized Paths") ?></h2>
+    <h2><?= t("Authorized paths") ?></h2>
     <ul id="g-server-add-paths">
       <? if (empty($paths)): ?>
-      <li class="g-module-status g-info"><?= t("No Authorized image source paths defined yet") ?></li>
+      <li class="g-module-status g-info"><?= t("No authorized image source paths defined yet") ?></li>
       <? endif ?>
       <? foreach ($paths as $id => $path): ?>
       <li>

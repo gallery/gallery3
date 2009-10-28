@@ -4,7 +4,7 @@
   .g-odd { background: #bdd2ff; }
   .g-even { background: #dfeffc; }
 </style>
-<h1 style="display: none;"><?= t("Photo Detail") ?></h1>
+<h1 style="display: none;"><?= t("Photo detail") ?></h1>
 <div id="g-exif-data">
   <table class="g-metadata" >
     <tbody>

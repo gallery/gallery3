@@ -199,12 +199,12 @@ class gallery_installer {
     }
 
     access::register_permission("view", "View");
-    access::register_permission("view_full", "View Full Size");
+    access::register_permission("view_full", "View full size");
     access::register_permission("edit", "Edit");
     access::register_permission("add", "Add");
 
     // Mark for translation (must be the same strings as used above)
-    t("View Full Size");
+    t("View full size");
     t("View");
     t("Edit");
     t("Add");

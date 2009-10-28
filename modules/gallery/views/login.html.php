@@ -11,7 +11,7 @@
     <? if (identity::is_writable()): ?>
     <?= t('Logged in as %name', array('name' => html::mark_clean(
       '<a href="' . url::site("form/edit/users/{$user->id}") .
-      '" title="' . t("Edit Your Profile")->for_html_attr() .
+      '" title="' . t("Edit your profile")->for_html_attr() .
       '" id="g-user-profile-link" class="g-dialog-link">' .
       html::clean($user->display_name()) . '</a>'))) ?>
     <? else: ?>

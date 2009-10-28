@@ -19,7 +19,7 @@
  */
 class rss_block_Core {
   static function get_site_list() {
-    return array("rss_feeds" => t("Available RSS Feeds"));
+    return array("rss_feeds" => t("Available RSS feeds"));
   }
 
   static function get($block_id, $theme) {
@@ -37,7 +37,7 @@ class rss_block_Core {
       if (!empty($feeds)) {
         $block = new Block();
         $block->css_id = "g-rss";
-        $block->title = t("Available RSS Feeds");
+        $block->title = t("Available RSS feeds");
         $block->content = new View("rss_block.html");
         $block->content->feeds = $feeds;
       }

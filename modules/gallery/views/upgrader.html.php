@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title><?= t("Gallery 3 Upgrader") ?></title>
+    <title><?= t("Gallery 3 upgrader") ?></title>
     <link rel="stylesheet" type="text/css" href="<?= url::file("modules/gallery/css/upgrader.css") ?>"
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>

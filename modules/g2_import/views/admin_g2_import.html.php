@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="g-admin-g2-import" class="g-block">
-  <h1> <?= t("Gallery 2 Import") ?> </h1>
+  <h1> <?= t("Gallery 2 import") ?> </h1>
   <p>
     <?= t("Import your Gallery 2 users, photos, movies, comments and tags into your new Gallery 3 installation.") ?>
   </p>

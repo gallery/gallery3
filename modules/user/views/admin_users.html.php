@@ -43,7 +43,7 @@
 </script>
 
 <div class="g-block">
-  <h1> <?= t("Users and Groups") ?> </h1>
+  <h1> <?= t("Users and groups") ?> </h1>
 
   <div class="g-block-content">
     <div class="g-block">
@@ -54,7 +54,7 @@
         <?= t("Add a new user") ?>
       </a>
 
-      <h2> <?= t("User Admin") ?> </h2>
+      <h2> <?= t("User admin") ?> </h2>
 
       <div class="g-block-content">
         <table id="g-user-admin-list">
@@ -87,17 +87,17 @@
             </td>
             <td class="g-actions">
               <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"
-                  open_text="<?= t("close") ?>"
+                  open_text="<?= t("Close") ?>"
                   class="g-panel-link g-button ui-state-default ui-corner-all ui-icon-left">
-                <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text"><?= t("edit") ?></span></a>
+                <span class="ui-icon ui-icon-pencil"></span><span class="g-button-text"><?= t("Edit") ?></span></a>
               <? if (identity::active_user()->id != $user->id && !$user->guest): ?>
               <a href="<?= url::site("admin/users/delete_user_form/$user->id") ?>"
                   class="g-dialog-link g-button ui-state-default ui-corner-all ui-icon-left">
-                <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
+                <span class="ui-icon ui-icon-trash"></span><?= t("Delete") ?></a>
               <? else: ?>
               <span title="<?= t("This user cannot be deleted")->for_html_attr() ?>"
                   class="g-button ui-state-disabled ui-corner-all ui-icon-left">
-                <span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></span>
+                <span class="ui-icon ui-icon-trash"></span><?= t("Delete") ?></span>
               <? endif ?>
             </td>
           </tr>
@@ -115,7 +115,7 @@
       </a>
 
       <h2>
-        <?= t("Group Admin") ?>
+        <?= t("Group admin") ?>
       </h2>
 
       <div class="g-block-content">

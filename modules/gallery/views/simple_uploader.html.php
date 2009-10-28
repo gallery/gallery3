@@ -34,7 +34,7 @@
   </ul>
 
   <div id="g-uploadqueue-infobar">
-    <?= t("Upload Queue") ?>
+    <?= t("Upload queue") ?>
     <span id="g-uploadstatus"></span>
     <a id="g-cancelupload" title="<?= t("Cancel all the pending uploads")->for_html_attr() ?>" onclick="swfu.cancelQueue();"><?= t("cancel") ?></a>
   </div>
@@ -60,7 +60,7 @@
       "csrf" => $csrf)) ?>,
     file_size_limit: <?= html::js_string(ini_get("upload_max_filesize") ? num::convert_to_bytes(ini_get("upload_max_filesize"))."B" : "100MB") ?>,
     file_types: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
-    file_types_description: <?= t("Photos and Movies")->for_js() ?>,
+    file_types_description: <?= t("Photos and movies")->for_js() ?>,
     file_upload_limit: 1000,
     file_queue_limit: 0,
     custom_settings: { },

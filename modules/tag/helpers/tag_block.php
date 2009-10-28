@@ -19,7 +19,7 @@
  */
 class tag_block_Core {
   static function get_site_list() {
-    return array("tag" => t("Popular Tags"));
+    return array("tag" => t("Popular tags"));
   }
 
   static function get($block_id, $theme) {
@@ -28,7 +28,7 @@ class tag_block_Core {
     case "tag":
       $block = new Block();
       $block->css_id = "g-tag";
-      $block->title = t("Popular Tags");
+      $block->title = t("Popular tags");
       $block->content = new View("tag_block.html");
       $block->content->cloud = tag::cloud(30);
 

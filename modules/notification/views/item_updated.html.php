@@ -8,7 +8,7 @@
     <table>
       <tr>
         <? if ($item->original("title") != $item->title): ?>
-        <td><?= t("New Title:") ?></td>
+        <td><?= t("New title:") ?></td>
         <td><?= html::clean($item->title) ?></td>
         <? else: ?>
         <td><?= t("Title:") ?></td>
@@ -21,7 +21,7 @@
       </tr>
       <? if ($item->original("description") != $item->description): ?>
       <tr>
-        <td><?= t("New Description:") ?></td>
+        <td><?= t("New description:") ?></td>
         <td><?= html::clean($item->description) ?></td>
       </tr>
       <? elseif (!empty($item->description)): ?>

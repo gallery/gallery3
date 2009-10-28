@@ -11,7 +11,7 @@
        title="<?= t("Upload a watermark")->for_html_attr() ?>"
        class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-document-b"></span><?= t("Upload a watermark") ?></a>
     <? else: ?>
-    <h2> <?= t("Active Watermark") ?> </h2>
+    <h2> <?= t("Active watermark") ?> </h2>
     <p>
       <?= t("Note that changing this watermark will require you to rebuild all of your thumbnails and resized images.") ?>
     </p>
@@ -27,10 +27,10 @@
       </div>
       <div class="controls">
         <a href="<?= url::site("admin/watermarks/form_edit") ?>"
-           title="<?= t("Edit Watermark")->for_html_attr() ?>"
+           title="<?= t("Edit watermark")->for_html_attr() ?>"
            class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-pencil"></span><?= t("edit") ?></a>
         <a href="<?= url::site("admin/watermarks/form_delete") ?>"
-           title="<?= t("Delete Watermark")->for_html_attr() ?>"
+           title="<?= t("Delete watermark")->for_html_attr() ?>"
            class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all"><span class="ui-icon ui-icon-trash"></span><?= t("delete") ?></a>
       </div>
     </div>

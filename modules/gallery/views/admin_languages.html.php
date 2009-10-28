@@ -26,7 +26,7 @@
 </script>
 
 <div class="g-block">
-  <h1> <?= t("Languages and Translation") ?> </h1>
+  <h1> <?= t("Languages and translation") ?> </h1>
 
   <div class="g-block-content">
 
@@ -107,6 +107,6 @@
         <?= $share_translations_form ?>
       </div>
     </div>
-    
+
   </div>
 </div>

@@ -35,7 +35,7 @@ class server_add_event_Core {
       $menu->get("add_menu")
         ->append(Menu::factory("dialog")
                  ->id("server_add")
-                 ->label(t("Server add"))
+                 ->label(t("Server Add"))
                  ->url(url::site("server_add/browse/$item->id")));
     }
   }

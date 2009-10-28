@@ -21,15 +21,15 @@ class gallery_block_Core {
   static function get_admin_list() {
     return array(
       "welcome" => t("Welcome to Gallery 3!"),
-      "photo_stream" => t("Photo Stream"),
-      "log_entries" => t("Log Entries"),
-      "stats" => t("Gallery Stats"),
-      "platform_info" => t("Platform Information"),
-      "project_news" => t("Gallery Project News"));
+      "photo_stream" => t("Photo stream"),
+      "log_entries" => t("Log entries"),
+      "stats" => t("Gallery stats"),
+      "platform_info" => t("Platform information"),
+      "project_news" => t("Gallery project news"));
   }
 
   static function get_site_list() {
-    return array("language" => t("Language Preference"));
+    return array("language" => t("Language preference"));
   }
 
   static function get($block_id) {
@@ -43,7 +43,7 @@ class gallery_block_Core {
 
     case "photo_stream":
       $block->css_id = "g-photo-stream";
-      $block->title = t("Photo Stream");
+      $block->title = t("Photo stream");
       $block->content = new View("admin_block_photo_stream.html");
       $block->content->photos =
         ORM::factory("item")->where("type", "photo")->orderby("created", "DESC")->find_all(10);
@@ -51,7 +51,7 @@ class gallery_block_Core {
 
     case "log_entries":
       $block->css_id = "g-log-entries";
-      $block->title = t("Log Entries");
+      $block->title = t("Log entries");
       $block->content = new View("admin_block_log_entries.html");
       $block->content->entries = ORM::factory("log")
         ->orderby(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
@@ -59,7 +59,7 @@ class gallery_block_Core {
 
     case "stats":
       $block->css_id = "g-stats";
-      $block->title = t("Gallery Stats");
+      $block->title = t("Gallery stats");
       $block->content = new View("admin_block_stats.html");
       $block->content->album_count =
         ORM::factory("item")->where("type", "album")->where("id <>", 1)->count_all();
@@ -68,7 +68,7 @@ class gallery_block_Core {
 
     case "platform_info":
       $block->css_id = "g-platform";
-      $block->title = t("Platform Information");
+      $block->title = t("Platform information");
       $block->content = new View("admin_block_platform.html");
       if (is_readable("/proc/loadavg")) {
         $block->content->load_average =
@@ -80,14 +80,14 @@ class gallery_block_Core {
 
     case "project_news":
       $block->css_id = "g-project-news";
-      $block->title = t("Gallery Project News");
+      $block->title = t("Gallery project news");
       $block->content = new View("admin_block_news.html");
       $block->content->feed = feed::parse("http://gallery.menalto.com/node/feed", 3);
       break;
 
     case "block_adder":
       $block->css_id = "g-block-adder";
-      $block->title = t("Dashboard Content");
+      $block->title = t("Dashboard content");
       $block->content = self::get_add_block_form();
       break;
 
@@ -99,7 +99,7 @@ class gallery_block_Core {
         }
         $block = new Block();
         $block->css_id = "g-user-language-block";
-        $block->title = t("Language Preference");
+        $block->title = t("Language preference");
         $block->content = new View("user_languages_block.html");
         $block->content->installed_locales =
           array_merge(array("" => t("« none »")), $locales);

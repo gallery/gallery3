@@ -34,7 +34,7 @@
 
 </script>
 <div id="g-modules">
-  <h1> <?= t("Manage Identity Providers") ?> </h1>
+  <h1> <?= t("Manage identity providers") ?> </h1>
   <p>
     <?= t("Choose a different user/group management provider.") ?>
   </p>

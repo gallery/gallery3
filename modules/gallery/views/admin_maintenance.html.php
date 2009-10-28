@@ -1,13 +1,13 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div id="g-admin-maintenance" class="g-block">
-  <h1> <?= t("Maintenance Tasks") ?> </h1>
+  <h1> <?= t("Maintenance tasks") ?> </h1>
   <p>
     <?= t("Occasionally your Gallery will require some maintenance.  Here are some tasks you can use to keep it running smoothly.") ?>
   </p>
 
   <div class="g-block-content">
     <div id="g-available-tasks">
-      <h2> <?= t("Available Tasks") ?> </h2>
+      <h2> <?= t("Available tasks") ?> </h2>
       <table>
         <tr>
           <th>
@@ -43,11 +43,11 @@
 
     <? if ($running_tasks->count()): ?>
     <div id="g-running-tasks">
-      <h2> <?= t("Running Tasks") ?> </h2>
+      <h2> <?= t("Running tasks") ?> </h2>
       <table>
         <tr>
           <th>
-            <?= t("Last Updated") ?>
+            <?= t("Last updated") ?>
           </th>
           <th>
             <?= t("Name") ?>
@@ -116,11 +116,11 @@
 
     <? if ($finished_tasks->count()): ?>
     <div id="g-finished-tasks">
-      <h2> <?= t("Finished Tasks") ?> </h2>
+      <h2> <?= t("Finished tasks") ?> </h2>
       <table>
         <tr>
           <th>
-            <?= t("Last Updated") ?>
+            <?= t("Last updated") ?>
           </th>
           <th>
             <?= t("Name") ?>

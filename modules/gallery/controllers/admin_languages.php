@@ -115,7 +115,7 @@ class Admin_Languages_Controller extends Admin_Controller {
               ? t("This is a unique key that will allow you to send translations to the remote
                   server. To get your API key go to %server-link.",
                   array("server-link" => html::mark_clean(html::anchor($server_link))))
-              : t("API Key"))
+              : t("API key"))
       ->value($api_key)
       ->error_messages("invalid", t("The API key you provided is invalid."));
     $group->submit("save")->value(t("Save settings"));

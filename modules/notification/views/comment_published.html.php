@@ -11,11 +11,11 @@
   <td><?= nl2br(html::purify($comment->text)) ?></td>
       </tr>
       <tr>
-        <td><?= t("Author Name:") ?></td>
+        <td><?= t("Author name:") ?></td>
         <td><?= html::clean($comment->author_name()) ?></td>
       </tr>
       <tr>
-        <td><?= t("Author Email:") ?></td>
+        <td><?= t("Author email:") ?></td>
         <td><?= html::clean($comment->author_email()) ?></td>
       </tr>
       <tr>

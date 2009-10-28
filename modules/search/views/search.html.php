@@ -18,7 +18,7 @@
 </form>
 
 <div id="g-search-results">
-  <h1><?= t("Search Results") ?></h1>
+  <h1><?= t("Search results") ?></h1>
 
   <? if (count($items)): ?>
   <ul id="g-album-grid" class="ui-helper-clearfix">

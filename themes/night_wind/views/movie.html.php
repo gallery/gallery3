@@ -6,20 +6,20 @@
     <li>
       <? if ($previous_item): ?>
       <a href="<?= $previous_item->url() ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
-      <span class="ui-icon ui-icon-triangle-1-w"></span><?= t("previous") ?></a>
+      <span class="ui-icon ui-icon-triangle-1-w"></span><?= t("Previous") ?></a>
       <? else: ?>
       <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
-      <span class="ui-icon ui-icon-triangle-1-w"></span><?= t("previous") ?></a>
+      <span class="ui-icon ui-icon-triangle-1-w"></span><?= t("Previous") ?></a>
       <? endif; ?>
     </li>
     <li class="g-info"><?= t("%position of %total", array("position" => $position, "total" => $sibling_count)) ?></li>
     <li class="g-txt-right">
       <? if ($next_item): ?>
       <a href="<?= $next_item->url() ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
-      <span class="ui-icon ui-icon-triangle-1-e"></span><?= t("next") ?></a>
+      <span class="ui-icon ui-icon-triangle-1-e"></span><?= t("Next") ?></a>
       <? else: ?>
       <a class="g-button ui-icon-right ui-state-disabled ui-corner-all">
-      <span class="ui-icon ui-icon-triangle-1-e"></span><?= t("next") ?></a>
+      <span class="ui-icon ui-icon-triangle-1-e"></span><?= t("Next") ?></a>
       <? endif ?>
     </li>
   </ul>

@@ -36,7 +36,7 @@
 </script>
 
 <div id="g-block-admin" class="g-block ui-helper-clearfix">
-  <h1> <?= t("Manage Sidebar") ?> </h1>
+  <h1> <?= t("Manage sidebar") ?> </h1>
   <p>
     <?= t("Select and drag blocks from the available column to the active column to add to the sidebar; remove by dragging the other way.") ?>
   </p>
@@ -44,7 +44,7 @@
   <div class="g-block-content">
     <div id="g-site-blocks" ref="<?= url::site("admin/sidebar/update?csrf={$csrf}__ACTIVE__") ?>">
       <div class="g-admin-blocks-list">
-        <div><h3><?= t("Available Blocks") ?></h3></div>
+        <div><h3><?= t("Available blocks") ?></h3></div>
         <div>
           <ul id="g-available-blocks" class="g-sortable-blocks">
           <?= $available ?>
@@ -52,7 +52,7 @@
         </div>
       </div>
       <div class="g-admin-blocks-list">
-        <div><h3><?= t("Active Blocks") ?></h3></div>
+        <div><h3><?= t("Active blocks") ?></h3></div>
         <div>
           <ul id="g-active-blocks" class="g-sortable-blocks">
           <?= $active ?>

@@ -8,7 +8,7 @@
 </script>
 
 <div class="g-block ui-helper-clearfix">
-  <h1> <?= t("Theme Choice") ?> </h1>
+  <h1> <?= t("Theme choice") ?> </h1>
   <p>
     <?= t("Gallery allows you to choose a theme for browsing your Gallery, as well as a special theme for the administration interface.  Click a theme to preview and activate it.") ?>
   </p>
@@ -89,6 +89,6 @@
         <? endif ?>
       </div>
     </div>
-    
+
   </div>
 </div>

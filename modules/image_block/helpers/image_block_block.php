@@ -19,7 +19,7 @@
  */
 class image_block_block_Core {
   static function get_site_list() {
-    return array("random_image" => t("Random Image"));
+    return array("random_image" => t("Random image"));
   }
 
   static function get($block_id, $theme) {
@@ -28,7 +28,7 @@ class image_block_block_Core {
     case "random_image":
       $block = new Block();
       $block->css_id = "g-image-block";
-      $block->title = t("Random Image");
+      $block->title = t("Random image");
       $block->content = new View("image_block_block.html");
 
       $random = ((float)mt_rand()) / (float)mt_getrandmax();
