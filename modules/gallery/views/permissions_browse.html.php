@@ -6,8 +6,8 @@
       url: form_url.replace("__ITEM__", id),
       success: function(data) {
           $("#g-edit-permissions-form").html(data);
-          $(".active").removeClass("active");
-          $("#item-" + id).addClass("active");
+          $(".g-active").removeClass("g-active");
+          $("#item-" + id).addClass("g-active");
       }
     });
   }
@@ -38,18 +38,18 @@
   <p><?= t("Edit permissions for album:") ?></p>
 
   <ul class="g-breadcrumbs">
+    <? $i = 0 ?>
     <? foreach ($parents as $parent): ?>
-    <li id="item-<?= $parent->id ?>">
+    <li id="item-<?= $parent->id ?>"<? if ($i == 0) print " class=\"g-first\"" ?>>
       <? if (access::can("edit", $parent)): ?>
-      <a href="javascript:show(<?= $parent->id ?>)">
-        <?= html::purify($parent->title) ?>
-      </a>
+      <a href="javascript:show(<?= $parent->id ?>)"> <?= html::purify($parent->title) ?> </a>
       <? else: ?>
       <?= html::purify($parent->title) ?>
       <? endif ?>
     </li>
+    <? $i++ ?>
     <? endforeach ?>
-    <li class="active" id="item-<?= $item->id ?>">
+    <li class="g-active" id="item-<?= $item->id ?>">
       <a href="javascript:show(<?= $item->id ?>)">
         <?= html::purify($item->title) ?>
       </a>

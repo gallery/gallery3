@@ -25,10 +25,12 @@
     <?= t("Photos will be uploaded to album: ") ?>
   </p>
   <ul class="g-breadcrumbs">
+    <? $i = 0 ?>
     <? foreach ($item->parents() as $parent): ?>
-    <li> <?= html::clean($parent->title) ?> </li>
+    <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::clean($parent->title) ?> </li>
+    <? $i++ ?>
     <? endforeach ?>
-    <li class="active"> <?= html::purify($item->title) ?> </li>
+    <li class="g-active"> <?= html::purify($item->title) ?> </li>
   </ul>
 
   <div id="g-uploadqueue-infobar">

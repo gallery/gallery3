@@ -93,8 +93,9 @@
 
         <? if (!empty($parents)): ?>
         <ul class="g-breadcrumbs">
+          <? $i = 0 ?>
           <? foreach ($parents as $parent): ?>
-          <li>
+          <li<? if ($i == 0) print " class=\"g-first\"" ?>>
             <!-- Adding ?show=<id> causes Gallery3 to display the page
                  containing that photo.  For now, we just do it for
                  the immediate parent so that when you go back up a
@@ -104,8 +105,9 @@
               <?= html::purify($parent->title) ?>
             </a>
           </li>
+          <? $i++ ?>
           <? endforeach ?>
-          <li class="active"><?= html::purify($theme->item()->title) ?></li>
+          <li class="g-active"><?= html::purify($theme->item()->title) ?></li>
         </ul>
         <? endif ?>
       </div>

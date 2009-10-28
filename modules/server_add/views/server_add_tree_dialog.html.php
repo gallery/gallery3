@@ -9,14 +9,12 @@
 
   <p id="g-description"><?= t("Photos will be added to album:") ?></p>
   <ul class="g-breadcrumbs">
+    <? $i = 0 ?>
     <? foreach ($item->parents() as $parent): ?>
-    <li>
-      <?= html::purify($parent->title) ?>
-    </li>
+    <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::purify($parent->title) ?> </li>
+    <? $i++ ?>
     <? endforeach ?>
-    <li class="active">
-      <?= html::purify($item->title) ?>
-    </li>
+    <li class="g-active"> <?= html::purify($item->title) ?> </li>
   </ul>
 
   <ul id="g-server-add-tree" class="g-checkbox-tree">
