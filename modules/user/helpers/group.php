@@ -83,7 +83,7 @@ class group_Core {
    * @param string      $value value to match
    * @return Group_Definition  the group object, or null if the name was invalid.
    */
-  private function _lookup_by_field($field_name, $value) {
+  private static function _lookup_by_field($field_name, $value) {
     try {
       $user = model_cache::get("group", $value, $field_name);
       if ($user->loaded) {
