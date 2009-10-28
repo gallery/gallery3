@@ -347,13 +347,11 @@ form .g-error {
 .g-left {
   clear: none;
   float: left;
-  margin: 1em 1em 1em 0;
 }
 
 .g-right {
   clear: none;
   float: right;
-  margin: 1em 0 1em 1em;
 }
 
 .g-first {
@@ -566,14 +564,45 @@ div#g-action-status {
   margin-left: 0;
 }
 
-/* Right to left styles ~~~~~~~~~~~~~~~~~~~~ */
+/** *******************************************************************
+ * 7) Right to left styles
+ **********************************************************************/
 
-.rtl .g-short-form li {
+.rtl {
+  direction: rtl;
+}
+
+.rtl caption,
+.rtl th,
+.rtl #g-dialog,
+.g-message {
+  text-align: right;
+}
+
+.rtl .g-txt-right {
+  text-align: left;
+}
+
+.rtl .g-left,
+.rtl .g-inline li,
+.rtl form ul ul li,
+.rtl input[type="submit"],
+.rtl input[type="reset"],
+.rtl #g-content #g-album-grid .g-item,
+.rtl .sf-menu li,
+.rtl .g-breadcrumbs li,
+.rtl .g-pager li,
+.rtl .g-buttonset li,
+.rtl .ui-icon-left .ui-icon {
   float: right;
 }
 
+.rtl .g-right,
+.rtl .ui-icon-right .ui-icon {
+  float: left;
+}
+
 .rtl .g-inline li {
-  float: right;
   margin-right: 1em;
 }
 

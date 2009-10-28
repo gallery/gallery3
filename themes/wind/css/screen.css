@@ -195,10 +195,6 @@ td {
 
 /* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#g-banner #g-logo img {
-  margin: 0;
-}
-
 #g-banner #g-quick-search-form {
   clear: right;
   float: right;
@@ -311,7 +307,6 @@ td {
 
 #g-banner #g-login-menu {
   color: #999;
-  float: right;
 }
 
 #g-banner #g-login-menu li {
@@ -417,37 +412,10 @@ td {
 }
 
 /** *******************************************************************
- * 6) Right to left styles
+ * 7) Right to left styles
  *********************************************************************/
 
-.rtl {
-  direction: rtl;
-}
-
-.rtl caption,
-.rtl th,
-.rtl #g-dialog {
-  text-align: right;
-}
-
-.rtl .g-right,
-.rtl #g-header #g-quick-search-form,
-.rtl #g-header #g-login-menu,
-.rtl .ui-icon-right .ui-icon {
-  clear: left;
-  float: left;
-}
-
-.rtl .g-left,
-.rtl form ul ul li,
-.rtl input[type="submit"],
-.rtl input[type="reset"],
-.rtl #g-header #g-logo img,
-.rtl #g-content #g-album-grid .g-item,
-.rtl #g-site-menu,
-.rtl .g-breadcrumbs li,
-.rtl .g-pager li,
-.rtl .g-buttonset li,
-.rtl .ui-icon-left .ui-icon {
-  float: right;
+.rtl #g-site-menu {
+  left: auto;
+  right: 150px;
 }
