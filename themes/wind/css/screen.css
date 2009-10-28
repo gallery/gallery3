@@ -4,7 +4,7 @@
  * @requires YUI reset, font, grids CSS
  *
  * Sheet organization:
- *  1)  Basic HTML elements
+ *  1)  Font sizes, base HTML elements
  *  2)  Reusable content blocks
  *  3)  Page layout containers
  *  4)  Content blocks in specific layout containers
@@ -16,7 +16,7 @@
  */
 
 /** *******************************************************************
- * 1) Basic HTML elements
+ * 1) Font sizes, base HTML elements
  **********************************************************************/
 
 body, html {
@@ -56,8 +56,24 @@ h2 {
   margin-bottom: .6em;
 }
 
+#g-content,
+#g-site-menu,
 h3 {
   font-size: 1.2em;
+}
+
+#g-sidebar,
+.g-breadcrumbs {
+  font-size: .9em;
+}
+
+#g-banner,
+#g-footer {
+  font-size: .8em;
+}
+
+#g-content #g-album-grid .g-item {
+  font-size: .7em;
 }
 
 /* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -149,21 +165,18 @@ td {
 #g-banner {
   background-color: #e8e8e8;
   border-bottom: 1px solid #ccc;
-  font-size: .8em;
   min-height: 5em;
   padding: 1em 20px;
   position: relative;
 }
 
 #g-content {
-  font-size: 1.2em;
   padding-left: 20px;
   position: relative;
   width: 696px;
 }
 
 #g-sidebar {
-  font-size: .9em;
   padding: 0 20px;
   width: 220px;
 }
@@ -171,7 +184,6 @@ td {
 #g-footer {
   background-color: #e8e8e8;
   border-top: 1px solid #ccc;
-  font-size: .8em;
   margin-top: 20px;
   padding: 10px 20px;
 }
@@ -217,7 +229,6 @@ td {
   background-color: #fff;
   border: 1px solid #fff;
   float: left;
-  font-size: .7em;
   padding: .6em 8px;
   position: relative;
   text-align: center;
@@ -295,10 +306,6 @@ td {
  * 5) Navigation and menus
  *********************************************************************/
 
-#g-site-menu {
-  font-size: 1.2em;
-}
-
 /* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-banner #g-login-menu {
@@ -335,10 +342,6 @@ td {
   display: none;
   margin-top: 2em;
   width: 100%;
-}
-
-#g-item .g-context-menu {
-  font-size: .7em;
 }
 
 #g-item .g-context-menu ul {
