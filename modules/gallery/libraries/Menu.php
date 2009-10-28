@@ -43,6 +43,11 @@ class Menu_Element {
    * @chainable
    */
   public function label($label) {
+    // Guard against developers who forget to internationalize label strings
+    if (!($label instanceof SafeString)) {
+      $label = new SafeString($label);
+    }
+
     $this->label = $label;
     return $this;
   }
