@@ -32,10 +32,6 @@ class File_Proxy_Controller extends Controller {
     $request_uri = $this->input->server("REQUEST_URI");
     $request_uri = preg_replace("/\?.*/", "", $request_uri);
 
-    // Unescape %7E (~), %20 ( ) and %27 (')
-    // @todo: figure out why we have to do this and unescape everything appropriate
-    $request_uri = str_replace(array("%7E", "%20", "%27"), array("~", " ", "'"), $request_uri);
-
     // var_uri: http://example.com/gallery3/var/
     $var_uri = url::file("var/");
 
