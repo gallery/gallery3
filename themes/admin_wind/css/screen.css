@@ -246,7 +246,7 @@ th {
   background: transparent url('../../../lib/images/logo.png') no-repeat 0 .5em;
   color: #A5A5A5 !important;
   display: block;
-  height: 55px;
+  height: 65px;
   padding-top: 5px;
   width: 105px;
 }
@@ -457,46 +457,19 @@ th {
  * 7) Right to left styles
  *********************************************************************/
 
-.rtl {
-  direction: rtl;
+.rtl #g-admin-menu {
+  left: auto;
+  right: 150px;
 }
 
-.rtl caption,
-.rtl th,
-.rtl #g-dialog {
-  text-align: right;
-}
-
-.rtl #g-header #g-login-menu,
-.rtl .g-txt-right {
-  text-align: left;
-}
-
-.rtl .g-right,
-.rtl #g-header #g-quick-search-form,
-.rtl #g-header #g-login-menu,
-.rtl .ui-icon-right .ui-icon {
-  clear: left;
-  float: left;
-}
-
-.rtl .g-left,
-.rtl form ul ul li,
-.rtl input[type="submit"],
-.rtl input[type="reset"],
 .rtl #g-content #g-album-grid .g-item,
-.rtl #g-site-admin-menu,
-.rtl .g-pager li,
-.rtl .g-buttonset li,
-.rtl .ui-icon-left .ui-icon,
 .rtl #g-site-theme,
 .rtl #g-admin-theme,
 .rtl .g-selected img,
 .rtl .g-available .g-block img,
 .rtl #g-content #g-photo-stream .g-item,
 .rtl li.g-group,
-.rtl #g-server-add-admin,
-.rtl .ui-icon-left .ui-icon {
+.rtl #g-server-add-admin {
   float: right;
 }
 
