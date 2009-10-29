@@ -17,7 +17,7 @@
       </div>
     </div>
     <div id="g-organize-content-pane" class="yui-gf">
-      <div id="g-organize-tree-container" class="yui-u first">
+      <div id="g-organize-tree-container" class="yui-u g-first">
         <ul id="g-organize-album-tree">
           <?= $album_tree ?>
         </ul>
