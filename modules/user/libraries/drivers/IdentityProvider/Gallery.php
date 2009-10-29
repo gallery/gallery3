@@ -29,6 +29,13 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
   }
 
   /**
+   * @see IdentityProvider_Driver::guest.
+   */
+  public function admin_user() {
+    return self::lookup_user(2);
+  }
+
+  /**
    * @see IdentityProvider_Driver::create_user.
    */
   public function create_user($name, $full_name, $password) {

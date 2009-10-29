@@ -26,6 +26,13 @@ interface IdentityProvider_Driver {
   public function guest();
 
   /**
+   * Return the admins user.
+   *
+   * @return User_Definition the user object
+   */
+  public function admin_user();
+
+  /**
    * Create a new user.
    *
    * @param string  $name

@@ -108,6 +108,13 @@ class IdentityProvider_Core {
   }
 
   /**
+   * @see IdentityProvider_Driver::admin_user.
+   */
+  public function admin_user() {
+    return $this->driver->admin_user();
+  }
+
+  /**
    * @see IdentityProvider_Driver::create_user.
    */
   public function create_user($name, $full_name, $password) {

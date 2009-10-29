@@ -145,6 +145,13 @@ class identity_Core {
   }
 
   /**
+   * @see IdentityProvider_Driver::admin_user.
+   */
+  static function admin_user() {
+    return IdentityProvider::instance()->admin_user();
+  }
+
+  /**
    * @see IdentityProvider_Driver::create_user.
    */
   static function create_user($name, $full_name, $password) {
