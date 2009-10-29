@@ -3,6 +3,7 @@
  * Dialog wide styles
  */
 #g-organize {
+  height: 100%;
   overflow: hidden;
 }
 
@@ -10,15 +11,16 @@
   height: 100%;
 }
 
-#g-organize .yui-u {
-  width: 75%;
+#g-organize #g-organize-detail {
+  width: auto;
 }
 
-#g-organize .yui-gf .g-first {
+#g-organize #g-organize-tree-container {
+  height: 100%;
   width: 25%;
 }
 
-#g-action-status {
+#g-organize #g-action-status {
   margin-bottom: .4em;
   width: 75%;
   white-space: nowrap;
@@ -26,11 +28,6 @@
 
 #g-organize-detail {
   height: 100%;
-}
-
-#g-action-status .g-info {
-  font-weight: bold;
-  padding-left: 2em;
 }
 
 /*******************************************************************
@@ -43,10 +40,10 @@
   padding: 0 !important;
 }
 
-#g-organize-album-tree .selected {
+#g-organize-album-tree .g-selected {
   background-color: #cfdeff;
   border-bottom: 1px solid #999;
-  margin-right: 0px;
+  margin-right: 0;
 }
 
 #g-organize-album-tree ul li {
@@ -87,8 +84,7 @@
 }
 
 .g-organize-microthumb-grid-cell {
-  float: left;
-  font-size: 0.8em;
+  font-size: .8em;
   padding: .5em !important;
   border-left: 1px hidden #13A;
   border-right: 1px hidden #13A;
@@ -143,6 +139,5 @@
 }
 
 #g-organize-close {
-  float: right;
   margin-right: 12px;
 }

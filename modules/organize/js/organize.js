@@ -204,7 +204,7 @@
      */
     show_album: function(event) {
       event.preventDefault();
-      if ($(event.currentTarget).hasClass("selected")) {
+      if ($(event.currentTarget).hasClass("g-selected")) {
         return;
       }
       var parent = $(event.currentTarget).parents(".g-organize-branch");
@@ -213,8 +213,8 @@
       }
       $("#g-organize-microthumb-panel").selectable("destroy");
       var id = $(event.currentTarget).attr("ref");
-      $("#g-organize-album-tree .selected").removeClass("selected");
-      $(".g-organize-album-text[ref=" + id + "]").addClass("selected");
+      $("#g-organize-album-tree .g-selected").removeClass("g-selected");
+      $(".g-organize-album-text[ref=" + id + "]").addClass("g-selected");
       var url = $("#g-organize-microthumb-panel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
       $.get(url, {},
 	    function(data) {
@@ -231,7 +231,7 @@
      */
     resort: function(column, dir) {
       var url = sort_order_url
-        .replace("__ALBUM_ID__", $("#g-organize-album-tree .selected").attr("ref"))
+        .replace("__ALBUM_ID__", $("#g-organize-album-tree .g-selected").attr("ref"))
         .replace("__COL__", column)
         .replace("__DIR__", dir);
       $.get(url, {},
