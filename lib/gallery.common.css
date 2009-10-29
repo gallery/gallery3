@@ -467,6 +467,7 @@ ul.sf-menu li li li.sfHover ul {
 
 .g-message-block {
   border: 1px solid #ccc;
+  padding: 0 !important;
   width: 100%;
 }
 
