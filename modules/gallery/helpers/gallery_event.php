@@ -187,19 +187,14 @@ class gallery_event_Core {
                ->append(Menu::factory("link")
                         ->id("sidebar")
                         ->label(t("Manage Sidebar"))
-                        ->url(url::site("admin/sidebar"))));
-    if (count(identity::providers()) > 1) {
-      $menu
-        ->append(Menu::factory("submenu")
-                 ->id("identity_menu")
-                 ->label(t("Identity Management"))
-                 ->append(Menu::factory("link")
-                          ->id("identity_drivers")
-                          ->label(t("Identity Drivers"))
-                          ->url(url::site("admin/identity"))));
-    }
-
-    $menu
+                        ->url(url::site("admin/sidebar"))))
+      ->append(Menu::factory("submenu")
+               ->id("identity_menu")
+               ->label(t("Identity Management"))
+               ->append(Menu::factory("link")
+                        ->id("identity_drivers")
+                        ->label(t("Identity Drivers"))
+                        ->url(url::site("admin/identity"))))
       ->append(Menu::factory("submenu")
                ->id("statistics_menu")
                ->label(t("Statistics")))
