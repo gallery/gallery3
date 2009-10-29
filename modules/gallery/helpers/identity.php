@@ -197,7 +197,7 @@ class identity_Core {
    * @see IdentityProvider_Driver::registered_users.
    */
   static function registered_users() {
-    return IdentityProvider::instance()->everybody();
+    return IdentityProvider::instance()->registered_users();
   }
 
   /**

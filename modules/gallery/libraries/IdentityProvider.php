@@ -160,7 +160,7 @@ class IdentityProvider_Core {
    * @see IdentityProvider_Driver::registered_users.
    */
   public function registered_users() {
-    return $this->driver->everybody();
+    return $this->driver->registered_users();
   }
 
   /**
