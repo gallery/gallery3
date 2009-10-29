@@ -9,7 +9,7 @@
 <? endforeach ?>
 
 <? if ($album->children_count() > $offset): ?>
-<script>
+<script type="text/javascript">
   setTimeout(function() {
     $.get("<?= url::site("organize/album/$album->id/" . ($offset + 25)) ?>",
           {},
