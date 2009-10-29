@@ -20,7 +20,7 @@
 class recaptcha_event_Core {
   static function recaptcha_add($form) {
     if (module::get_var("recaptcha", "public_key")) {
-      $form->add_comment->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+      $form->recaptcha("recaptcha")->label("")->id("g-recaptcha");
     }
   }
 
