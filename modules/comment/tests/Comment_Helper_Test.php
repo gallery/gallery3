@@ -77,7 +77,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
   public function create_comment_for_user_test() {
     $rand = rand();
     $root = ORM::factory("item", 1);
-    $admin = identity::lookup_user(2);
+    $admin = identity::admin_user();
     $comment = comment::create(
       $root, $admin, "text_$rand", "name_$rand", "email_$rand", "url_$rand");
 

@@ -68,7 +68,7 @@ class identity_Core {
       // upconvert into a user.
       // @todo set the user name into the session instead of 2 and then use it to get the user object
       if ($user === 2) {
-        $user = IdentityProvider::instance()->lookup_user_by_name("admin");
+        $user = IdentityProvider::instance()->admin_user();
         self::set_active_user($user);
         $session->set("user", $user);
       }
