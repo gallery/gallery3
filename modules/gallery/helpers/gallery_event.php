@@ -28,6 +28,13 @@ class gallery_event_Core {
     locales::set_request_locale();
   }
 
+  static function user_deleted($user) {
+    $admin = identity::admin_user();
+    $db = Database::instance();
+    $db->query("UPDATE {tasks} SET owner_id = {$admin->id} where owner_id = {$user->id}");
+    $db->query("UPDATE {items} SET owner_id = {$admin->id} where owner_id = {$user->id}");
+  }
+
   static function group_created($group) {
     access::add_group($group);
   }
