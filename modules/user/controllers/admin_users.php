@@ -36,7 +36,9 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = $this->_get_user_add_form_admin();
     $valid = $form->validate();
     $name = $form->add_user->inputs["name"]->value;
-    if ($user = user::lookup_by_name($name)) {
+    $user_exists_data = (object)array("name" => $name);
+    module::event("check_username_exists", $user_exists_data);
+    if ($user_exists_data->exists) {
       $form->add_user->inputs["name"]->add_error("in_use", 1);
       $valid = false;
     }
