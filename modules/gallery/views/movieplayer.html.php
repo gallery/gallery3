@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <?= html::anchor($item->file_url(true), "", $attrs) ?>
-<script>
+<script type="text/javascript">
   flowplayer(
     "<?= $attrs["id"] ?>",
     {

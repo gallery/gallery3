@@ -21,7 +21,7 @@
       class="g-button ui-state-default ui-corners-all">
       <?= t("Change password now") ?>
     </a>
-    <script>
+    <script type="text/javascript">
       $("#g-after-install-change-password-link").gallery_dialog();
     </script>
   </p>

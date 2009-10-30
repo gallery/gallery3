@@ -2,7 +2,7 @@
 
 <? if (access::can("view_full", $theme->item())): ?>
 <!-- Use javascript to show the full size as an overlay on the current page -->
-<script>
+<script type="text/javascript">
   $(document).ready(function() {
     $(".g-fullsize-link").click(function() {
       $.gallery_show_full_size(<?= html::js_string($theme->item()->file_url()) ?>, "<?= $theme->item()->width ?>", "<?= $theme->item()->height ?>");

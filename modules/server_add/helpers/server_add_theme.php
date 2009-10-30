@@ -32,7 +32,7 @@ class server_add_theme_Core {
       $theme->css("jquery.autocomplete.css");
       $base = url::site("__ARGS__");
       $csrf = access::csrf_token();
-      $head[] = "<script> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
+      $head[] = "<script type=\"text/javascript\"> var base_url = \"$base\"; var csrf = \"$csrf\";</script>";
 
       $theme->script("jquery.autocomplete.js");
       $theme->script("admin.js");
