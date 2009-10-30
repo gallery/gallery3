@@ -139,5 +139,23 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
     return ORM::factory("group")->find_all();
   }
 
+  /**
+   * @see IdentityProvider_Driver::add_user_to_group.
+   */
+  static function add_user_to_group($user, $group_id) {
+    $group = self::lookup_group($group_id);
+
+    $group->add($user);
+    $group->save();
+  }
+
+  /**
+   * @see IdentityProvider_Driver::remove_user_to_group.
+   */
+  static function remove_user_from_group($user, $group_id) {
+    $group = self::lookup_group_by_name($group_id);
+    $group->remove($user);
+    $group->save();
+  }
 } // End Identity Gallery Driver
 

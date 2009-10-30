@@ -227,4 +227,18 @@ class identity_Core {
   static function groups() {
     return IdentityProvider::instance()->groups();
   }
+
+  /**
+   * @see IdentityProvider_Driver::add_user_to_group.
+   */
+  static function add_user_to_group($user, $group_id) {
+    return IdentityProvider::instance()->add_user_to_group($user, $group_id);
+  }
+
+  /**
+   * @see IdentityProvider_Driver::remove_user_to_group.
+   */
+  static function remove_user_from_group($user, $group_id) {
+    return IdentityProvider::instance()->remove_user_from_group($user, $group_id);
+  }
 }

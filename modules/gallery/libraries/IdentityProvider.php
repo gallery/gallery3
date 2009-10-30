@@ -190,4 +190,18 @@ class IdentityProvider_Core {
   public function groups() {
     return $this->driver->groups();
   }
+
+  /**
+   * @see IdentityProvider_Driver::add_user_to_group.
+   */
+  public function add_user_to_group($user, $group_id) {
+    return $this->driver->add_user_to_group($user, $group_id);
+  }
+
+  /**
+   * @see IdentityProvider_Driver::remove_user_to_group.
+   */
+  public function remove_user_from_group($user, $group_id) {
+    return $this->driver->remove_user_from_group($user, $group_id);
+  }
 } // End Identity
