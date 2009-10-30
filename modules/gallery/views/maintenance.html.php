@@ -43,7 +43,7 @@
     <p>
       <?= t("This site is currently only accessible by site administrators.") ?>
     </p>
-    <?= login::get_form("login/auth_html") ?>
+    <?= auth::get_login_form("login/auth_html") ?>
   </body>
 </html>
 
