@@ -52,6 +52,10 @@ class notification_event_Core {
     }
   }
 
+  static function user_deleted($user) {
+    Database::instance()->query("DELETE FROM {subscriptions} where user_id = {$user->id}");
+  }
+
   static function comment_created($comment) {
     try {
       if ($comment->state == "published") {

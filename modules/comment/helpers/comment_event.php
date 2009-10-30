@@ -22,6 +22,17 @@ class comment_event_Core {
     Database::instance()->delete("comments", array("item_id" => $item->id));
   }
 
+  static function user_deleted($user) {
+    $guest = identity::guest();
+    Database::instance()
+      ->query("UPDATE {comments}
+                  SET author_id = {$guest->id},
+                      guest_email = '{$user->email}',
+                      guest_name = '{$user->name}',
+                      guest_url = '{$user->url}'
+                WHERE author_id = {$user->id}");
+  }
+
   static function admin_menu($menu, $theme) {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
