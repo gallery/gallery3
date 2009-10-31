@@ -70,8 +70,18 @@ class user_installer {
     $admin->admin = true;
     $admin->save();
 
-    // Let the admin own everything
-    $db->query("update {items} set owner_id = {$admin->id}");
+    $current_provider = module::get_var("gallery", "identity_provider");
+    if (empty($current_provider)) {
+      // If there is no provider defined then we are doing an initial install
+      // so we need to set the provider and make the administrator own everything
+      // If the installer is called and there is an identity provider, then we
+      // are switching identity providers and and the event handlers will do the
+      // right things
+      module::set_var("gallery", "identity_provider", "user");
+
+      // Let the admin own everything
+      $db->query("update {items} set owner_id = {$admin->id}");
+    }
 
     $root = ORM::factory("item", 1);
     access::allow($everybody, "view", $root);
