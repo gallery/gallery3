@@ -40,15 +40,11 @@ class Admin_Identity_Controller extends Admin_Controller {
 
     $active_provider = module::get_var("gallery", "identity_provider", "user");
     $providers = identity::providers();
-
     $new_provider = $this->input->post("provider");
 
     if ($new_provider != $active_provider) {
 
-      module::event("identity_before_change", $active_provider, $new_provider);
-
       module::deactivate($active_provider);
-      module::uninstall($active_provider);
 
       // Switch authentication
       identity::reset();
@@ -56,6 +52,10 @@ class Admin_Identity_Controller extends Admin_Controller {
 
       module::install($new_provider);
       module::activate($new_provider);
+
+      module::event("identity_provider_changed", $active_provider, $new_provider);
+
+      module::uninstall($active_provider);
 
       message::success(t("Changed to %description",
                          array("description" => $providers->$new_provider)));
