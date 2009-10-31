@@ -27,9 +27,4 @@ class user_event_Core {
 
     return $menu;
   }
-
-  static function check_username_exists($data) {
-    $user = user::lookup_by_name($data->name);
-    $data->exists |= $user ? true : false;
-  }
 }
