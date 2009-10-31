@@ -35,6 +35,13 @@ class gallery_event_Core {
     $db->query("UPDATE {items} SET owner_id = {$admin->id} where owner_id = {$user->id}");
   }
 
+  static function identity_provider_changed($old_provider, $new_provider) {
+    $admin = identity::admin_user();
+    $db = Database::instance();
+    $db->query("UPDATE {tasks} SET owner_id = {$admin->id}");
+    $db->query("UPDATE {items} SET owner_id = {$admin->id}");
+  }
+
   static function group_created($group) {
     access::add_group($group);
   }

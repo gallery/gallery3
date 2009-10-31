@@ -56,6 +56,10 @@ class notification_event_Core {
     Database::instance()->query("DELETE FROM {subscriptions} where user_id = {$user->id}");
   }
 
+  static function identity_provider_changed($old_provider, $new_provider) {
+    Database::instance()->query("DELETE FROM {subscriptions}");
+  }
+
   static function comment_created($comment) {
     try {
       if ($comment->state == "published") {
