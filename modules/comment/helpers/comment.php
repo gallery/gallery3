@@ -72,7 +72,7 @@ class comment_Core {
     $group->input("url")    ->label(t("Website (hidden)"))->id("g-url");
     $group->textarea("text")->label(t("Comment"))         ->id("g-text");
     $group->hidden("item_id")->value($item->id);
-    module::event("recaptcha_add", $group);
+    module::event("comment_add_form", $form);
     $group->submit("")->value(t("Add"))->class("ui-state-default ui-corner-all");
 
     $active = identity::active_user();
