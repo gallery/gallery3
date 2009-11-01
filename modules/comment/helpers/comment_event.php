@@ -24,23 +24,24 @@ class comment_event_Core {
 
   static function user_deleted($user) {
     $guest = identity::guest();
-    Database::instance()
-      ->query("UPDATE {comments}
-                  SET author_id = {$guest->id},
-                      guest_email = NULL,
-                      guest_name = 'guest',
-                      guest_url = NULL
-                WHERE author_id = {$user->id}");
+    Database::instance()->from("comments")
+      ->set(array("author_id" => $guest->id,
+                  "guest_email" => null,
+                  "guest_name" => "guest",
+                  "guest_url" => null))
+      ->where(array("author_id" => $user->id))
+      ->update();
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
     $guest = identity::guest();
-    Database::instance()
-      ->query("UPDATE {comments}
-                  SET author_id = {$guest->id},
-                      guest_email = NULL,
-                      guest_name = 'guest',
-                      guest_url = null");
+    Database::instance()->from("comments")
+      ->set(array("author_id" => $guest->id,
+                  "guest_email" => null,
+                  "guest_name" => "guest",
+                  "guest_url" => null))
+      ->where("1 = 1")
+      ->update();
   }
 
   static function admin_menu($menu, $theme) {
