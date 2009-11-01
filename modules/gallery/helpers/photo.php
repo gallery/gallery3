@@ -179,7 +179,9 @@ class photo_Core {
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"));
 
-    module::event("item_edit_form", $photo, $form);
+    $extend_form = (object)array("data" => $photo, "form" => $form, "id" => "g-edit-photo-form",
+                                 "append_to" => $group);
+    module::event("extend_form", $extend_form);
 
     $group = $form->group("buttons")->label("");
     $group->submit("")->value(t("Modify"));
