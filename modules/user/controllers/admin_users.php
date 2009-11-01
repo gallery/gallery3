@@ -36,9 +36,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = $this->_get_user_add_form_admin();
     $valid = $form->validate();
     $name = $form->add_user->inputs["name"]->value;
-    $user_exists_data = (object)array("name" => $name);
-    module::event("check_username_exists", $user_exists_data);
-    if ($user_exists_data->exists) {
+    if ($user = user::lookup_by_name($name)) {
       $form->add_user->inputs["name"]->add_error("in_use", 1);
       $valid = false;
     }
@@ -300,14 +298,14 @@ class Admin_Users_Controller extends Admin_Controller {
   static function _get_user_edit_form_admin($user) {
     $form = new Forge(
       "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
-    $group = $form->group("edit_user")->label(t("Edit User"));
+    $group = $form->group("edit_user")->label(t("Edit user"));
     $group->input("name")->label(t("Username"))->id("g-username")->value($user->name);
     $group->inputs["name"]->error_messages(
       "in_use", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
+    $group->input("full_name")->label(t("Full name"))->id("g-fullname")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
     $group->password("password")->label(t("Password"))->id("g-password");
-    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
+    $group->password("password2")->label(t("Confirm password"))->id("g-password2")
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
@@ -324,12 +322,12 @@ class Admin_Users_Controller extends Admin_Controller {
 
   static function _get_user_add_form_admin() {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
-    $group = $form->group("add_user")->label(t("Add User"));
+    $group = $form->group("add_user")->label(t("Add user"));
     $group->input("name")->label(t("Username"))->id("g-username")
       ->error_messages("in_use", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full Name"))->id("g-fullname");
+    $group->input("full_name")->label(t("Full name"))->id("g-fullname");
     $group->password("password")->label(t("Password"))->id("g-password");
-    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
+    $group->password("password2")->label(t("Confirm password"))->id("g-password2")
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("g-email");
     $group->input("url")->label(t("URL"))->id("g-url");
@@ -374,7 +372,7 @@ class Admin_Users_Controller extends Admin_Controller {
   /* Group Form Definitions */
   private function _get_group_edit_form_admin($group) {
     $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "g-edit-group-form"));
-    $form_group = $form->group("edit_group")->label(t("Edit Group"));
+    $form_group = $form->group("edit_group")->label(t("Edit group"));
     $form_group->input("name")->label(t("Name"))->id("g-name")->value($group->name);
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
@@ -386,11 +384,11 @@ class Admin_Users_Controller extends Admin_Controller {
   private function _get_group_add_form_admin() {
     $form = new Forge("admin/users/add_group", "", "post", array("id" => "g-add-group-form"));
     $form->set_attr('class', "g-one-quarter");
-    $form_group = $form->group("add_group")->label(t("Add Group"));
+    $form_group = $form->group("add_group")->label(t("Add group"));
     $form_group->input("name")->label(t("Name"))->id("g-name");
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
-    $form_group->submit("")->value(t("Add Group"));
+    $form_group->submit("")->value(t("Add group"));
     $form->add_rules_from(ORM::factory("group"));
     return $form;
   }

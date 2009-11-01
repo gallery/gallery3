@@ -12,7 +12,7 @@
           bgiframe: true,
           title: <?= t("Confirm identity provider change")->for_js() ?>,
           resizable: false,
-          height:165,
+          height:180,
           modal: true,
           overlay: {
             backgroundColor: '#000',
@@ -20,10 +20,10 @@
           },
           buttons: {
             "Continue": function() {
-              $("##g-dialog form").submit();
+              $("#g-dialog form").submit();
             },
             Cancel: function() {
-              $(this).dialog('close');
+              $(this).dialog('destroy').remove();
             }
           }
         });

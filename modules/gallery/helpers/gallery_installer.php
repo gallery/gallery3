@@ -253,8 +253,6 @@ class gallery_installer {
       $theme->save();
     }
 
-    module::set_var("gallery", "identity_provider", "user");
-
     block_manager::add("dashboard_sidebar", "gallery", "block_adder");
     block_manager::add("dashboard_sidebar", "gallery", "stats");
     block_manager::add("dashboard_sidebar", "gallery", "platform_info");

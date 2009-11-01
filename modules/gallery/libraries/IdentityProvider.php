@@ -62,8 +62,10 @@ class IdentityProvider_Core {
    *
    * @return  void
    */
-  public function __construct() {
-    $config = module::get_var("gallery", "identity_provider", "user");
+  public function __construct($config=null) {
+    if (empty($config)) {
+      $config = module::get_var("gallery", "identity_provider", "user");
+    }
 
     // Test the config group name
     if (($this->config = Kohana::config("identity." . $config)) === NULL) {

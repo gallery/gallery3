@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class login_Core {
-  static function get_form($url) {
+class auth_Core {
+  static function get_login_form($url) {
     $form = new Forge($url, "", "post", array("id" => "g-login-form"));
     $form->set_attr('class', "g-narrow");
     $group = $form->group("login")->label(t("Login"));
@@ -27,5 +27,30 @@ class login_Core {
     $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
     $group->submit("")->value(t("Login"));
     return $form;
+  }
+
+  static function login($user) {
+    if (identity::is_writable()) {
+      $user->login_count += 1;
+      $user->last_login = time();
+      $user->save();
+    }
+    identity::set_active_user($user);
+    log::info("user", t("User %name logged in", array("name" => $user->name)));
+    module::event("user_login", $user);
+  }
+
+  static function logout() {
+    $user = identity::active_user();
+    if (!$user->guest) {
+      try {
+        Session::instance()->destroy();
+      } catch (Exception $e) {
+        Kohana::log("error", $e);
+      }
+      module::event("user_logout", $user);
+    }
+    log::info("user", t("User %name logged out", array("name" => $user->name)),
+              html::anchor("user/$user->id", html::clean($user->name)));
   }
 }

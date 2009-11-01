@@ -190,7 +190,10 @@ class movie_Core {
 
   static function find_ffmpeg() {
     if (!$ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) {
-      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
+      $graphics_path = module::get_var("gallery", "graphics_toolkit_path", null);
+
+      putenv("PATH=" . getenv("PATH") . (empty($graphics_path) ? "" : ":$graphics_path") .
+             ":/usr/local/bin:/opt/local/bin:/opt/bin");
       if (function_exists("exec")) {
         $ffmpeg_path = exec("which ffmpeg");
       }

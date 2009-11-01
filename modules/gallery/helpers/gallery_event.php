@@ -28,6 +28,20 @@ class gallery_event_Core {
     locales::set_request_locale();
   }
 
+  static function user_deleted($user) {
+    $admin = identity::admin_user();
+    $db = Database::instance();
+    $db->query("UPDATE {tasks} SET owner_id = {$admin->id} where owner_id = {$user->id}");
+    $db->query("UPDATE {items} SET owner_id = {$admin->id} where owner_id = {$user->id}");
+  }
+
+  static function identity_provider_changed($old_provider, $new_provider) {
+    $admin = identity::admin_user();
+    $db = Database::instance();
+    $db->query("UPDATE {tasks} SET owner_id = {$admin->id}");
+    $db->query("UPDATE {items} SET owner_id = {$admin->id}");
+  }
+
   static function group_created($group) {
     access::add_group($group);
   }
@@ -165,7 +179,11 @@ class gallery_event_Core {
                ->append(Menu::factory("link")
                         ->id("advanced")
                         ->label(t("Advanced"))
-                        ->url(url::site("admin/advanced_settings"))))
+                        ->url(url::site("admin/advanced_settings")))
+               ->append(Menu::factory("link")
+                        ->id("identity_drivers")
+                        ->label(t("Identity drivers"))
+                        ->url(url::site("admin/identity"))))
       ->append(Menu::factory("link")
                ->id("modules")
                ->label(t("Modules"))
@@ -188,13 +206,6 @@ class gallery_event_Core {
                         ->id("sidebar")
                         ->label(t("Manage sidebar"))
                         ->url(url::site("admin/sidebar"))))
-      ->append(Menu::factory("submenu")
-               ->id("identity_menu")
-               ->label(t("Identity management"))
-               ->append(Menu::factory("link")
-                        ->id("identity_drivers")
-                        ->label(t("Identity drivers"))
-                        ->url(url::site("admin/identity"))))
       ->append(Menu::factory("submenu")
                ->id("statistics_menu")
                ->label(t("Statistics")))

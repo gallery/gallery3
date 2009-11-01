@@ -22,6 +22,27 @@ class comment_event_Core {
     Database::instance()->delete("comments", array("item_id" => $item->id));
   }
 
+  static function user_deleted($user) {
+    $guest = identity::guest();
+    Database::instance()
+      ->query("UPDATE {comments}
+                  SET author_id = {$guest->id},
+                      guest_email = NULL,
+                      guest_name = 'guest',
+                      guest_url = NULL
+                WHERE author_id = {$user->id}");
+  }
+
+  static function identity_provider_changed($old_provider, $new_provider) {
+    $guest = identity::guest();
+    Database::instance()
+      ->query("UPDATE {comments}
+                  SET author_id = {$guest->id},
+                      guest_email = NULL,
+                      guest_name = 'guest',
+                      guest_url = null");
+  }
+
   static function admin_menu($menu, $theme) {
     $menu->get("content_menu")
       ->append(Menu::factory("link")

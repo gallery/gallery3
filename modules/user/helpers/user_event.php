@@ -20,17 +20,11 @@
 
 class user_event_Core {
   static function admin_menu($menu, $theme) {
-    $menu->get("identity_menu")
-      ->append(Menu::factory("link")
-      ->id("users_groups")
-      ->label(t("Users/Groups"))
-      ->url(url::site("admin/users")));
+    $menu->add_after("appearance_menu", Menu::factory("link")
+                     ->id("users_groups")
+                     ->label(t("Users/Groups"))
+                     ->url(url::site("admin/users")));
 
     return $menu;
-  }
-
-  static function check_username_exists($data) {
-    $user = user::lookup_by_name($data->name);
-    $data->exists |= $user ? true : false;
   }
 }

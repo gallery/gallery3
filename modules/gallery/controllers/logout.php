@@ -19,17 +19,7 @@
  */
 class Logout_Controller extends Controller {
   public function index() {
-    $user = identity::active_user();
-    if (!$user->guest) {
-      try {
-        Session::instance()->destroy();
-      } catch (Exception $e) {
-        Kohana::log("error", $e);
-      }
-      module::event("user_logout", $user);
-    }
-    log::info("user", t("User %name logged out", array("name" => $user->name)),
-              html::anchor("user/$user->id", html::clean($user->name)));
+    auth::logout();
     if ($continue_url = $this->input->get("continue")) {
       $item = url::get_item_from_uri($continue_url);
       if (access::can("view", $item)) {

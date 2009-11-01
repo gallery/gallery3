@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class recaptcha_event_Core {
-  static function recaptcha_add($form) {
+  static function comment_add_form($form) {
     if (module::get_var("recaptcha", "public_key")) {
-      $form->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+      $form->add_comment->recaptcha("recaptcha")->label("")->id("g-recaptcha");
     }
   }
 
