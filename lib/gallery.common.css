@@ -85,6 +85,11 @@ option:focus {
   color: #000;
 }
 
+input.checkbox {
+  float: left;
+  margin-right: .4em;
+}
+
 /* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 form li {
@@ -608,7 +613,8 @@ div#g-action-status {
 .rtl .g-breadcrumbs li,
 .rtl .g-pager li,
 .rtl .g-buttonset li,
-.rtl .ui-icon-left .ui-icon {
+.rtl .ui-icon-left .ui-icon,
+.rtl input.checkbox {
   float: right;
 }
 
@@ -640,4 +646,8 @@ div#g-action-status {
 
 .rtl .g-pager .g-txt-right {
   margin-left: 0;
+}
+
+.rtl input.checkbox {
+  margin-right: .4em;
 }
