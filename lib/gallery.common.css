@@ -502,7 +502,7 @@ div#g-action-status {
 .g-breadcrumbs li {
   background: transparent url('images/ico-separator.gif') no-repeat scroll left center;
   float: left;
-  padding: 1em .6em 1em 1.4em;
+  padding: 1em 8px 1em 18px;
 }
 
 .g-breadcrumbs .g-first {
@@ -623,6 +623,11 @@ div#g-action-status {
 
 .rtl .g-inline li.g-first {
   margin-right: 0;
+}
+
+.rtl .g-breadcrumbs li {
+  background-position: right center;
+  padding: 1em 18px 1em 8px;
 }
 
 .rtl .g-breadcrumbs .g-first {
