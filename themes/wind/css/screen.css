@@ -307,6 +307,7 @@ td {
 
 #g-banner #g-login-menu {
   color: #999;
+  float: right;
 }
 
 #g-banner #g-login-menu li {
@@ -414,6 +415,18 @@ td {
 /** *******************************************************************
  * 7) Right to left styles
  *********************************************************************/
+
+.rtl #g-header #g-login-menu,
+.rtl #g-header #g-quick-search-form {
+  clear: left;
+  float: left;
+}
+
+.rtl #g-header #g-login-menu li {
+  margin-left: 0;
+  padding-left: 0;
+  padding-right: 1.2em;
+}
 
 .rtl #g-site-menu {
   left: auto;
