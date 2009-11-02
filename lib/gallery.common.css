@@ -9,7 +9,9 @@
  *  4)  States and interactions
  *  5)  Positioning and order
  *  6)  Containers/widgets
+ *  7)  Right to left language styles
  *
+ *  @todo Update .g-message-block, don't force it to 100%, bad things happen is themes when you do.
  *  @todo Remove extra white space at the top of the add comment form, above the first field
  */
 
@@ -83,6 +85,11 @@ textarea:focus,
 option:focus {
   background-color: #ffc;
   color: #000;
+}
+
+input.checkbox {
+  float: left;
+  margin-right: .4em;
 }
 
 /* Form layout ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -502,7 +509,7 @@ div#g-action-status {
 .g-breadcrumbs li {
   background: transparent url('images/ico-separator.gif') no-repeat scroll left center;
   float: left;
-  padding: 1em .6em 1em 1.4em;
+  padding: 1em 8px 1em 18px;
 }
 
 .g-breadcrumbs .g-first {
@@ -523,7 +530,7 @@ div#g-action-status {
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .g-pager {
-  padding: 5px 0;
+  padding: .2em 0;
   width: 100%;
 }
 
@@ -566,22 +573,36 @@ div#g-action-status {
 }
 
 /** *******************************************************************
- * 7) Right to left styles
+ * 7) Right to left language styles
  **********************************************************************/
 
 .rtl {
   direction: rtl;
 }
 
+.rtl #g-header,
+.rtl #g-content,
+.rtl #g-sidebar,
+.rtl #g-footer,
 .rtl caption,
 .rtl th,
 .rtl #g-dialog,
-.g-message {
+.rtl .g-context-menu li a,
+.rtl .g-message-box li,
+.rtl #g-site-status li {
   text-align: right;
 }
 
 .rtl .g-txt-right {
   text-align: left;
+}
+
+.rtl .g-error,
+.rtl .g-info,
+.rtl .g-success,
+.rtl .g-warning {
+  background-position: center right;
+  padding-right: 30px !important;
 }
 
 .rtl .g-left,
@@ -594,7 +615,8 @@ div#g-action-status {
 .rtl .g-breadcrumbs li,
 .rtl .g-pager li,
 .rtl .g-buttonset li,
-.rtl .ui-icon-left .ui-icon {
+.rtl .ui-icon-left .ui-icon,
+.rtl input.checkbox {
   float: right;
 }
 
@@ -609,4 +631,25 @@ div#g-action-status {
 
 .rtl .g-inline li.g-first {
   margin-right: 0;
+}
+
+.rtl .g-breadcrumbs li {
+  background-position: right center;
+  padding: 1em 18px 1em 8px;
+}
+
+.rtl .g-breadcrumbs .g-first {
+  padding-right: 0;
+}
+
+.rtl .g-pager .g-info {
+  width: 35%;
+}
+
+.rtl .g-pager .g-txt-right {
+  margin-left: 0;
+}
+
+.rtl input.checkbox {
+  margin-right: .4em;
 }
