@@ -8,7 +8,7 @@
                        array("from_number" => $current_first_item,
                              "to_number" => $current_last_item,
                              "count" => $total_items)) ?>
-  <li>
+  <li class="g-first">
   <? if ($first_page): ?>
     <a href="<?= str_replace('{page}', 1, $url) ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-first"></span><?= t("First") ?></a>

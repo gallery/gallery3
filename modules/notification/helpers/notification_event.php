@@ -53,11 +53,14 @@ class notification_event_Core {
   }
 
   static function user_deleted($user) {
-    Database::instance()->query("DELETE FROM {subscriptions} where user_id = {$user->id}");
+    ORM::factory("subscriptions")
+      ->where(array("user_id", $user->id))
+      ->delete_all();
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
-    Database::instance()->query("DELETE FROM {subscriptions}");
+    ORM::factory("subscriptions")
+      ->delete_all();
   }
 
   static function comment_created($comment) {

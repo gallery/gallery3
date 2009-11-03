@@ -1031,8 +1031,12 @@ class Database_Core {
 
 			$table = $this->from[0];
 		}
+		else
+		{
+			$table = $this->config['table_prefix'].$table;
+		}
 
-		$sql = $this->driver->merge($this->config['table_prefix'].$table, array_keys($this->set), array_values($this->set));
+		$sql = $this->driver->merge($table, array_keys($this->set), array_values($this->set));
 
 		$this->reset_write();
 		return $this->query($sql);
@@ -1068,8 +1072,12 @@ class Database_Core {
 
 			$table = $this->from[0];
 		}
+		else
+		{
+			$table = $this->config['table_prefix'].$table;
+		}
 
-		$sql = $this->driver->update($this->config['table_prefix'].$table, $this->set, $this->where);
+		$sql = $this->driver->update($table, $this->set, $this->where);
 
 		$this->reset_write();
 		return $this->query($sql);

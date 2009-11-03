@@ -1,5 +1,5 @@
 /**
- * Gallery 3 Default Theme Screen Styles
+ * Gallery 3 Wind Theme Screen Styles
  *
  * @requires YUI reset, font, grids CSS
  *
@@ -307,6 +307,7 @@ td {
 
 #g-banner #g-login-menu {
   color: #999;
+  float: right;
 }
 
 #g-banner #g-login-menu li {
@@ -412,8 +413,20 @@ td {
 }
 
 /** *******************************************************************
- * 7) Right to left styles
+ * 7) Right to left language styles
  *********************************************************************/
+
+.rtl #g-header #g-login-menu,
+.rtl #g-header #g-quick-search-form {
+  clear: left;
+  float: left;
+}
+
+.rtl #g-header #g-login-menu li {
+  margin-left: 0;
+  padding-left: 0;
+  padding-right: 1.2em;
+}
 
 .rtl #g-site-menu {
   left: auto;

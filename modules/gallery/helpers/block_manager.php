@@ -36,7 +36,6 @@ class block_manager_Core {
     $block_class = "{$module_name}_block";
     if (method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
-      Kohana::log("error", Kohana::debug($blocks));
       foreach  (array_keys($blocks) as $block_id) {
         self::add("site.sidebar", $module_name, $block_id);
       }

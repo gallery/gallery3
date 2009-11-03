@@ -31,15 +31,35 @@ class gallery_event_Core {
   static function user_deleted($user) {
     $admin = identity::admin_user();
     $db = Database::instance();
-    $db->query("UPDATE {tasks} SET owner_id = {$admin->id} where owner_id = {$user->id}");
-    $db->query("UPDATE {items} SET owner_id = {$admin->id} where owner_id = {$user->id}");
+    $db->from("tasks")
+      ->set(array("owner_id" => $admin->id))
+      ->where(array("owner_id" => $user->id))
+      ->update();
+    $db->from("items")
+      ->set(array("owner_id" => $admin->id))
+      ->where(array("owner_id" => $user->id))
+      ->update();
+    $db->from("logs")
+      ->set(array("user_id" => $admin->id))
+      ->where(array("user_id" => $user->id))
+      ->update();
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
     $admin = identity::admin_user();
     $db = Database::instance();
-    $db->query("UPDATE {tasks} SET owner_id = {$admin->id}");
-    $db->query("UPDATE {items} SET owner_id = {$admin->id}");
+    $db->from("tasks")
+      ->set(array("owner_id" => $admin->id))
+      ->where("1 = 1")
+      ->update();
+    $db->from("items")
+      ->set(array("owner_id" => $admin->id))
+      ->where("1 = 1")
+      ->update();
+    $db->from("logs")
+      ->set(array("user_id" => $admin->id))
+      ->where("1 = 1")
+      ->update();
   }
 
   static function group_created($group) {

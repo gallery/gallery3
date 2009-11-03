@@ -1,5 +1,5 @@
 /**
- * Gallery 3 Default Theme Screen Styles
+ * Gallery 3 Admin Wind Theme Screen Styles
  *
  * @requires YUI reset, font, grids CSS
  *
@@ -195,6 +195,12 @@ th {
  * 3) Page layout containers
  *********************************************************************/
 
+/* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-header #g-login-menu {
+  margin-top: 1em;
+}
+
 /* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .g-view {
@@ -217,7 +223,7 @@ th {
 
 #g-content {
   font-size: 1.1em;
-  padding-left: 20px;
+  padding: 0 2em;
   width: 96%;
 }
 
@@ -457,11 +463,6 @@ th {
  * 7) Right to left styles
  *********************************************************************/
 
-.rtl #g-admin-menu {
-  left: auto;
-  right: 150px;
-}
-
 .rtl #g-content #g-album-grid .g-item,
 .rtl #g-site-theme,
 .rtl #g-admin-theme,
@@ -477,4 +478,15 @@ th {
   float: right;
   margin-left: 1em;
   margin-right: 0em;
+}
+
+.rtl #g-site-admin-menu {
+  left: auto;
+  right: 150px;
+}
+
+.rtl #g-header #g-login-menu li {
+  margin-left: 0;
+  padding-left: 0;
+  padding-right: 1.2em;
 }
