@@ -30,13 +30,16 @@ class theme_Core {
    */
   static function load_themes() {
     $path = Input::instance()->server("PATH_INFO");
+    $input = Input::instance();
     if (empty($path)) {
-      $path = "/" . Input::instance()->get("kohana_uri");
+      $path = "/" . $input->get("kohana_uri");
     }
 
-    $theme_name = module::get_var(
-      "gallery",
-      !strncmp($path, "/admin", 6) ? "active_admin_theme" : "active_site_theme");
+    if (!(identity::active_user()->admin && $theme_name = $input->get("theme"))) {
+      $theme_name = module::get_var(
+        "gallery",
+        !strncmp($path, "/admin", 6) ? "active_admin_theme" : "active_site_theme");
+    }
     $modules = Kohana::config("core.modules");
     array_unshift($modules, THEMEPATH . $theme_name);
     Kohana::config_set("core.modules", $modules);
