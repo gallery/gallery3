@@ -450,13 +450,17 @@ th {
 	clear: both;
 }
 
-#g-translations {
-	padding: 2em 0 0 0;
-	clear: both;
+#g-translations ol {
+	margin: 0 0 1em 2em;
+}
+#g-translations ol li {
+  list-style-type: decimal;
+	line-height: 150%;
 }
 
 #g-translations .g-button {
 	padding: .5em;
+	margin-bottom: 1em;
 }
 
 /** *******************************************************************
