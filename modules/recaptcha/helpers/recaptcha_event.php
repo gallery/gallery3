@@ -24,6 +24,12 @@ class recaptcha_event_Core {
     }
   }
 
+  static function register_add_form($form) {
+    if (module::get_var("recaptcha", "public_key")) {
+      $form->register_user->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+    }
+  }
+
   static function admin_menu($menu, $theme) {
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
