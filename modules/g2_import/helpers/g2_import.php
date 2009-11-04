@@ -217,7 +217,7 @@ class g2_import_Core {
   static function import_group(&$queue) {
     $g2_group_id = array_shift($queue);
     if (self::map($g2_group_id)) {
-      return t("Group with id: %id already imported, skipping", array("id" => $g2_group_id));
+      return;
     }
 
     try {
@@ -330,7 +330,7 @@ class g2_import_Core {
     }
 
     if (self::map($g2_album_id)) {
-      return t("Album with id: %id already imported, skipping", array("id" => $g2_album_id));
+      return;
     }
 
     try {
@@ -424,7 +424,7 @@ class g2_import_Core {
     $g2_item_id = array_shift($queue);
 
     if (self::map($g2_item_id)) {
-      return t("Item with id: %id already imported, skipping", array("id" => $g2_item_id));
+      return;
     }
 
     try {

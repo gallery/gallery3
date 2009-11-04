@@ -23,8 +23,8 @@ class gallery_event_Core {
    * Initialization.
    */
   static function gallery_ready() {
-    theme::load_themes();
     identity::load_user();
+    theme::load_themes();
     locales::set_request_locale();
   }
 

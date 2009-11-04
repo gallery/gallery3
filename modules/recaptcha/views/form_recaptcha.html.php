@@ -12,6 +12,6 @@
         callback: Recaptcha.focus_response_field
       }
     );
-  }, 0);
+  }, 500);
 </script>
 

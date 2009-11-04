@@ -57,7 +57,7 @@
                 <th> <?= t("Default language") ?> </th>
               </tr>
             <? endif ?>
-            <tr class="<?= (isset($installed_locales[$code])) ? "g-installed" : "" ?><?= ($default_locale == $code) ? " g-default" : "" ?>">
+            <tr class="<?= (isset($installed_locales[$code])) ? "g-available" : "" ?><?= ($default_locale == $code) ? " g-selected" : "" ?>">
               <td> <?= form::checkbox("installed_locales[]", $code, isset($installed_locales[$code])) ?> </td>
               <td> <?= $display_name ?> </td>
               <td>
@@ -89,12 +89,12 @@
 
         <p><?= t("Follow these steps to begin translating Gallery.") ?></p>
 
-        <ul>
+        <ol>
           <li><?= t("Make sure the target language is installed and up to date (check above).") ?></li>
           <li><?= t("Make sure you have selected the right target language (currently %default_locale).",
                array("default_locale" => locales::display_name())) ?></li>
           <li><?= t("Start the translation mode and the translation interface will appear at the bottom of each Gallery page.") ?></li>
-        </ul>
+        </ol>
         <a href="<?= url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token()) ?>"
            class="g-button ui-state-default ui-corner-all ui-icon-left">
           <span class="ui-icon ui-icon-power"></span>
