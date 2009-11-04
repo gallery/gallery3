@@ -422,7 +422,7 @@ class Item_Model extends ORM_MPTT {
    * Find the position of the given child id in this album.  The resulting value is 1-indexed, so
    * the first child in the album is at position 1.
    */
-  public function get_position($child) {
+  public function get_position($child, $where=array()) {
     if ($this->sort_order == "DESC") {
       $comp = ">";
     } else {
@@ -435,18 +435,20 @@ class Item_Model extends ORM_MPTT {
     $count = $db->from("items")
       ->where("parent_id", $this->id)
       ->where($this->sort_column, NULL)
+      ->where($where)
       ->count_records();
 
     if (empty($count)) {
       // There are no NULLs in the sort column, so we can just use it directly.
-      $position = $db->query("
-        SELECT COUNT(*) AS position FROM {items}
-        WHERE `parent_id` = {$this->id}
-          AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
-                                            FROM {items} WHERE `id` = $child->id)")
-        ->current()->position;
+      $sort_column = $this->sort_column;
 
-      // We stopped short of our target value in the sort (notice that we're using a < comparator
+      $position = $db->from("items")
+        ->where("parent_id", $this->id)
+        ->where("$sort_column < ", $child->$sort_column)
+        ->where($where)
+        ->count_records();
+
+     // We stopped short of our target value in the sort (notice that we're using a < comparator
       // above) because it's possible that we have duplicate values in the sort column.  An
       // equality check would just arbitrarily pick one of those multiple possible equivalent
       // columns, which would mean that if you choose a sort order that has duplicates, it'd pick
@@ -454,13 +456,12 @@ class Item_Model extends ORM_MPTT {
       //
       // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
       // our base value.
-      $result = $db->query("
-        SELECT id FROM {items}
-        WHERE `parent_id` = {$this->id}
-          AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
-                                        FROM {items} WHERE `id` = $child->id)
-        ORDER BY `id` ASC");
-      foreach ($result as $row) {
+      foreach ($db->from("items")
+               ->where("parent_id", $this->id)
+               ->where($sort_column, $child->$sort_column)
+               ->where($where)
+               ->orderby(array("id" => "ASC"))
+               ->get() as $row) {
         $position++;
         if ($row->id == $child->id) {
           break;
@@ -484,6 +485,7 @@ class Item_Model extends ORM_MPTT {
       foreach ($db->select("id")
                ->from("items")
                ->where("parent_id", $this->id)
+               ->where($where)
                ->orderby($orderby)
                ->get() as $row) {
         $position++;

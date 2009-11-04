@@ -25,13 +25,14 @@ class Movies_Controller extends Items_Controller {
   public function _show($movie) {
     access::required("view", $movie);
 
-    $position = $movie->parent()->get_position($movie);
+    $where = array("type != " => "album");
+    $position = $movie->parent()->get_position($movie, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) =
-        $movie->parent()->children(3, $position - 2);
+        $movie->parent()->children(3, $position - 2, $where);
     } else {
       $previous_item = null;
-      list ($next_item) = $movie->parent()->viewable()->children(1, $position);
+      list ($next_item) = $movie->parent()->viewable()->children(1, $position, $where);
     }
 
     $template = new Theme_View("page.html", "movie");
@@ -41,7 +42,7 @@ class Movies_Controller extends Items_Controller {
     $template->set_global("parents", $movie->parents());
     $template->set_global("next_item", $next_item);
     $template->set_global("previous_item", $previous_item);
-    $template->set_global("sibling_count", $movie->parent()->viewable()->children_count());
+    $template->set_global("sibling_count", $movie->parent()->viewable()->children_count($where));
     $template->set_global("position", $position);
 
     $template->content = new View("movie.html");
