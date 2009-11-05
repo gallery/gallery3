@@ -69,7 +69,9 @@ class Admin_Tags_Controller extends Admin_Controller {
   public function form_rename($id) {
     $tag = ORM::factory("tag", $id);
     if ($tag->loaded) {
-      print tag::get_rename_form($tag);
+      print InPlaceEdit::factory($tag->name)
+        ->add_action("admin/tags/rename/$id")
+        ->render();
     }
   }
 
@@ -81,25 +83,15 @@ class Admin_Tags_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    // Don't use a form as the form is dynamically created in the js
-    $post = new Validation($_POST);
-    $post->add_rules("name", "required", "length[1,64]");
-    $valid = $post->validate();
-    if ($valid) {
-      $new_name = $this->input->post("name");
-      $new_tag = ORM::factory("tag")->where("name", $new_name)->find();
-      if ($new_tag->loaded) {
-        $error_msg = t("There is already a tag with that name");
-        $valid = false;
-      }
-    } else {
-      $error_msg = $post->errors();
-      $error_msg = $error_msg[0];
-    }
+    $inplaceedit = InPlaceEdit::factory($tag->name)
+      ->add_action("admin/tags/rename/$tag->id")
+      ->add_rules(array("required", "length[1,64]"))
+      ->add_messages(array("in_use" => t("There is already a tag with that name")))
+      ->add_callback(array($this, "check_for_duplicate"));
 
-    if ($valid) {
+    if ($inplaceedit->validate()) {
       $old_name = $tag->name;
-      $tag->name = $new_name;
+      $tag->name = $inplaceedit->value();
       $tag->save();
 
       $message = t("Renamed tag %old_name to %new_name",
@@ -107,16 +99,18 @@ class Admin_Tags_Controller extends Admin_Controller {
       message::success($message);
       log::success("tags", $message);
 
-      print json_encode(
-        array("result" => "success",
-              "location" => url::site("admin/tags"),
-              "tag_id" => $tag->id,
-              "new_tagname" => html::clean($tag->name)));
+      print json_encode(array("result" => "success"));
     } else {
-      print json_encode(
-        array("result" => "error",
-              "message" => (string) $error_msg));
+      print json_encode(array("result" => "error", "form" => $inplaceedit->render()));
     }
   }
+
+  public function check_for_duplicate(Validation $post_data, $field) {
+    $tag_exists = ORM::factory("tag")->where("name", $post_data[$field])->count_all();
+    if ($tag_exists) {
+      $post_data->add_error($field, "in_use");
+    }
+  }
+
 }
 

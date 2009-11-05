@@ -1,18 +1,15 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
-  var TAG_RENAME_URL = <?= html::js_string(url::site("admin/tags/rename/__ID__")) ?>;
   $("document").ready(function() {
     // using JS for adding link titles to avoid running t() for each tag
     $("#g-tag-admin .g-tag-name").attr("title", <?= t("Click to edit this tag")->for_js() ?>);
     $("#g-tag-admin .g-delete-link").attr("title", $(".g-delete-link:first span").html());
 
     // In-place editing for tag admin
-    $(".g-editable").bind("click", editInPlace);
+    $(".g-editable").gallery_in_place_edit({
+      form_url: <?= html::js_string(url::site("admin/tags/form_rename/__ID__")) ?>
+    });
   });
-  // make some values available within tag.js
-  var csrf_token = "<?= $csrf ?>";
-  var save_i18n = <?= html::js_string(t("save")->for_html_attr()) ?>;
-  var cancel_i18n = <?= html::js_string(t("cancel")->for_html_attr()) ?>;
 </script>
 
 <? $tags_per_column = $tags->count()/5 ?>

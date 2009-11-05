@@ -73,10 +73,14 @@ class tag_Core {
     if ($tags) {
       $cloud = new View("tag_cloud.html");
       $cloud->max_count = $tags[0]->count;
-      usort($tags, array("tag_theme", "sort_by_name"));
+      usort($tags, array("tag", "sort_by_name"));
       $cloud->tags = $tags;
       return $cloud;
     }
+  }
+
+  static function sort_by_name($tag1, $tag2) {
+    return strcasecmp($tag1->name, $tag2->name);
   }
 
   /**
@@ -106,15 +110,6 @@ class tag_Core {
     $group->input("name")->label($label)->rules("required");
     $group->hidden("item_id")->value($item->id);
     $group->submit("")->value(t("Add Tag"));
-    return $form;
-  }
-
-  static function get_rename_form($tag) {
-    $form = new Forge("admin/tags/rename/$tag->id", "", "post", array("id" => "g-rename-tag-form", "class" => "g-short-form"));
-    $group = $form->group("rename_tag")->label(t("Rename Tag"));
-    $group->input("name")->label(t("Tag name"))->value($tag->name)->rules("required|length[1,64]");
-    $group->inputs["name"]->error_messages("in_use", t("There is already a tag with that name"));
-    $group->submit("")->value(t("Save"));
     return $form;
   }
 
