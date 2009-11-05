@@ -74,7 +74,6 @@ class InPlaceEdit_Core {
     $v->action = url::site($this->action);
     $v->form = $this->form;
     $v->errors = $this->errors;
-    Kohana::log("alert", Kohana::debug($this->errors));
     foreach ($v->errors as $key => $error) {
       if (!empty($error)) {
         $v->errors[$key] = $this->messages[$error];
