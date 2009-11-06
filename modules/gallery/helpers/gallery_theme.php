@@ -52,14 +52,6 @@ class gallery_theme_Core {
     return $buf;
   }
 
-  static function header_top($theme) {
-    if ($theme->page_type != "login") {
-      $view = new View("login.html");
-      $view->user = identity::active_user();
-      return $view->render();
-    }
-  }
-
   static function admin_head($theme) {
     $theme->css("gallery.css");
     $theme->script("gallery.panel.js");

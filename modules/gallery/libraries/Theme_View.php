@@ -78,6 +78,14 @@ class Theme_View_Core extends Gallery_View {
     return $this->page_type;
   }
 
+  public function user_menu() {
+    $menu = Menu::factory("root")
+      ->css_id("g-login-menu")
+      ->css_class("g-inline ui-helper-clear-fix");
+    module::event("user_menu", $menu, $this);
+    return $menu->render();
+  }
+
   public function site_menu() {
     $menu = Menu::factory("root");
     module::event("site_menu", $menu, $this);
