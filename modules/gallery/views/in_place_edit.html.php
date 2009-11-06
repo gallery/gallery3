@@ -1,12 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<style>
-  #g-inplace-edit-form ul {
-    margin: 0;
-  }
-  #g-inplace-edit-message {
-background-color: #FFF;
-  }
-</style>
 <?= form::open($action, array("method" => "post", "id" => "g-inplace-edit-form", "class" => "g-short-form"), $hidden) ?>
   <ul>
     <li <? if (!empty($errors["input"])): ?> class="g-error"<? endif ?>>

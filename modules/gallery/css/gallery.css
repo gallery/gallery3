@@ -116,3 +116,7 @@
   background-color: #cfc;
   border: 1px solid #beb;
 }
+
+#g-inplace-edit-form ul {
+  margin: 0;
+}
