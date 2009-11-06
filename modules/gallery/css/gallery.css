@@ -1,8 +1,3 @@
-/**
- *  @todo Make #g-welcome-message p unecessary
- *  @todo Review permissions dialog, find home
- */
-
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-edit-permissions-form {
@@ -15,7 +10,6 @@
 
 #g-edit-permissions-form fieldset {
 	border: 1px solid #ccc;
-	padding: 0;
 }
 
 #g-permissions .g-denied,
@@ -42,50 +36,44 @@
   background: #999;
 }
 
+/* In-place edit ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-inplace-edit-form ul {
+  margin: 0;
+}
+
 /* Simple uploader ~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-add-photos #SWFUpload_0 {
+  left: 134px;
   position: relative;
   top: -200px;
-  left: 134px;
-}
-
-#g-add-photos .g-breadcrumbs {
-  border: 0;
-  margin: 0;
-  padding-left:10px;
 }
 
 #g-add-photos-canvas {
   border: 1px solid  #ccc;
-  margin: .5em 0 .5em 0;
-  width: 469px;
 	height: 325px;
+  margin: .5em 0;
   overflow: auto;
+  width: 469px;
 }
 
 #g-add-photos button {
-  margin-bottom: .5em;
   float: right;
+  margin-bottom: .5em;
 }
+
 #g-uploadqueue-infobar {
   clear: both;
 }
 
 #g-uploadqueue-infobar #g-cancelupload {
-  display: none;
   cursor: pointer;
-}
-
-#g-add-photos-canvas {
+  display: none;
 }
 
 #g-add-photos-queue .progressbar {
   height: 4px;
-}
-
-#g-add-photos-queue .title {
-  font-size: 1.25em;
 }
 
 #g-add-photos-queue .status {
@@ -93,8 +81,7 @@
 }
 
 #g-add-photos-queue .box {
-  margin-bottom: 8px;
-  padding: 4px;
+  padding: .2em;
 }
 
 #g-add-photos-queue .pending {

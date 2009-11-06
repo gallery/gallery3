@@ -21,16 +21,12 @@ class tag_theme_Core {
   static function head($theme) {
     $theme->css("jquery.autocomplete.css");
     $theme->script("jquery.autocomplete.js");
-    $theme->css("tag.css");
     $theme->script("tag.js");
+    $theme->css("tag.css");
   }
 
   static function admin_head($theme) {
     $theme->css("tag.css");
-    $theme->script("tag.js");
-  }
-
-  static function sort_by_name($tag1, $tag2) {
-    return strcasecmp($tag1->name, $tag2->name);
+    $theme->script("gallery.in_place_edit.js");
   }
 }
