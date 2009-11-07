@@ -86,6 +86,12 @@ a:hover,
   text-decoration: none;
 }
 
+/* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-dialog form {
+  width: 270px;
+}
+
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 table {
@@ -433,39 +439,6 @@ th {
 #g-admin-dashboard .ui-dialog-titlebar,
 #g-admin-dashboard-sidebar .ui-dialog-titlebar {
   padding: .2em .4em;
-}
-
-/*************** STUFF THAT NEEDS A HOME ****************/
-
-.g-task-log {
-  border: 1pt solid;
-  font-size: .9em;
-  height: 400px;
-  margin: .5em 0;
-  overflow: auto;
-  padding: .5em
-}
-
-#g-languages-form table {
-	width: 40%;
-	margin: 0 3em 1em 0;
-}
-
-#g-languages-form input {
-	clear: both;
-}
-
-#g-translations ol {
-	margin: 0 0 1em 2em;
-}
-#g-translations ol li {
-  list-style-type: decimal;
-	line-height: 150%;
-}
-
-#g-translations .g-button {
-	padding: .5em;
-	margin-bottom: 1em;
 }
 
 /** *******************************************************************

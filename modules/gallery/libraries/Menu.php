@@ -79,6 +79,15 @@ class Menu_Element {
     return $this;
   }
 
+  /**
+   * Specifiy a view for this menu item
+   * @chainable
+   */
+  public function view($view) {
+    $this->view = $view;
+    return $this;
+  }
+
 }
 
 /**
@@ -86,7 +95,7 @@ class Menu_Element {
  */
 class Menu_Element_Link extends Menu_Element {
   public function render() {
-    $view = new View("menu_link.html");
+    $view = new View(isset($this->view) ? $this->view : "menu_link.html");
     $view->menu = $this;
     return $view;
   }
@@ -108,7 +117,7 @@ class Menu_Element_Ajax_Link extends Menu_Element {
   }
 
   public function render() {
-    $view = new View("menu_ajax_link.html");
+    $view = new View(isset($this->view) ? $this->view : "menu_ajax_link.html");
     $view->menu = $this;
     return $view;
   }
@@ -119,7 +128,7 @@ class Menu_Element_Ajax_Link extends Menu_Element {
  */
 class Menu_Element_Dialog extends Menu_Element {
   public function render() {
-    $view = new View("menu_dialog.html");
+    $view = new View(isset($this->view) ? $this->view : "menu_dialog.html");
     $view->menu = $this;
     return $view;
   }
@@ -208,7 +217,7 @@ class Menu_Core extends Menu_Element {
   }
 
   public function render() {
-    $view = new View("menu.html");
+    $view = new View(isset($this->view) ? $this->view : "menu.html");
     $view->menu = $this;
     return $view;
   }

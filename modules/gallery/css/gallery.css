@@ -1,3 +1,15 @@
+/**
+ * Gallery 3 core module styles
+ *
+ * Sheet organization:
+ *  1)  End-user
+ *  2)  Admin
+ */
+
+/** *******************************************************************
+ * 1) End-user
+ **********************************************************************/
+
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-edit-permissions-form {
@@ -102,4 +114,38 @@
 #g-add-photos-queue .complete {
   background-color: #cfc;
   border: 1px solid #beb;
+}
+
+/** *******************************************************************
+ * 2) Admin
+ **********************************************************************/
+
+.g-task-log {
+  border: 1px solid #000;
+  height: 400px;
+  margin: .6em 0;
+  overflow: auto;
+  padding: .4em
+}
+
+#g-languages-form table {
+	width: 40%;
+	margin: 0 3em 1em 0;
+}
+
+#g-languages-form input {
+	clear: both;
+}
+
+#g-translations ol {
+	margin: 0 0 1em 2em;
+}
+#g-translations ol li {
+  list-style-type: decimal;
+	line-height: 150%;
+}
+
+#g-translations .g-button {
+	padding: .5em;
+	margin-bottom: 1em;
 }

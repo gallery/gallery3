@@ -97,6 +97,34 @@ class gallery_event_Core {
     $data[] = $item->title;
   }
 
+  static function user_menu($menu, $theme) {
+    if ($theme->page_type != "login") {
+      Kohana::log("alert", "in gallery::user_menu");
+      $user = identity::active_user();
+      if ($user->guest) {
+        $menu->append(Menu::factory("dialog")
+                      ->id("user_menu_login")
+                      ->css_id("g-login-link")
+                      ->url(url::site("login/ajax"))
+                      ->label(t("Login")));
+      } else {
+        $csrf = access::csrf_token();
+        $menu->append(Menu::factory("dialog")
+                      ->id("user_menu_edit_profile")
+                      ->css_id("g-user-profile-link")
+                      ->view("login_current_user.html")
+                      ->url(url::site("form/edit/users/{$user->id}"))
+                      ->label($user->display_name()));
+        $menu->append(Menu::factory("link")
+                    ->id("user_menu_logout")
+                    ->css_id("g-logout-link")
+                    ->url(url::site("logout?csrf=$csrf&amp;continue=" .
+                                    urlencode(url::current(true))))
+                    ->label(t("Logout")));
+      }
+    }
+  }
+
   static function site_menu($menu, $theme) {
     if ($theme->page_type != "login") {
       $menu->append(Menu::factory("link")
