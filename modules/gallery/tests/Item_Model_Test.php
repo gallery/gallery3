@@ -232,6 +232,7 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_equal("resize", file_get_contents($photo->resize_path()));
     $this->assert_equal("file", file_get_contents($photo->file_path()));
   }
+
   public function move_album_fails_invalid_target_test() {
     // Create an album with a photo in it
     $root = ORM::factory("item", 1);
