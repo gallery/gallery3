@@ -444,11 +444,11 @@ class Item_Model extends ORM_MPTT {
 
       $position = $db->from("items")
         ->where("parent_id", $this->id)
-        ->where("$sort_column < ", $child->$sort_column)
+        ->where("$sort_column $comp ", $child->$sort_column)
         ->where($where)
         ->count_records();
 
-     // We stopped short of our target value in the sort (notice that we're using a < comparator
+      // We stopped short of our target value in the sort (notice that we're using a < comparator
       // above) because it's possible that we have duplicate values in the sort column.  An
       // equality check would just arbitrarily pick one of those multiple possible equivalent
       // columns, which would mean that if you choose a sort order that has duplicates, it'd pick
