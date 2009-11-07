@@ -87,7 +87,10 @@ option:focus {
   color: #000;
 }
 
-input.checkbox {
+input.checkbox,
+input[type=checkbox],
+input.radio,
+input[type=radio] {
   float: left;
   margin-right: .4em;
 }
