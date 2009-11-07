@@ -107,7 +107,7 @@ table {
 }
 
 #g-content table {
-  margin: 1em 0 3em 0;
+  margin: .6em 0 2em 0;
 }
 
 caption,
@@ -131,7 +131,8 @@ th {
  * 2) Reusable content blocks
  *********************************************************************/
 
-.g-block {
+.g-block,
+#g-content #g-admin-dashboard .g-block {
   background-color: #fff;
   border: 1px solid #ccc;
   padding: 1em;
