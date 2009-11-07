@@ -88,8 +88,16 @@ a:hover,
 
 /* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+fieldset {
+  margin-bottom: 1em;
+}
+
 #g-dialog form {
   width: 270px;
+}
+
+#g-dialog fieldset {
+  margin-bottom: 0;
 }
 
 /* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
