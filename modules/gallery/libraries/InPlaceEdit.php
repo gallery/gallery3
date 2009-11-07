@@ -35,22 +35,22 @@ class InPlaceEdit_Core {
     return $instance;
   }
 
-  public function add_action($action) {
+  public function action($action) {
     $this->action = $action;
     return $this;
   }
 
-  public function add_rules($rules) {
+  public function rules($rules) {
     $this->rules += $rules;
     return $this;
   }
 
-  public function add_messages($messages) {
+  public function messages($messages) {
     $this->messages += $messages;
     return $this;
   }
 
-  public function add_callback($callback) {
+  public function callback($callback) {
     $this->callback = $callback;
     return $this;
   }
