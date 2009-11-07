@@ -146,6 +146,11 @@ th {
   margin-top: 1em;
 }
 
+#g-content .g-block {
+  border: none;
+  padding: 0;
+}
+
 #g-sidebar .g-block-content {
   padding: 0;
 }
