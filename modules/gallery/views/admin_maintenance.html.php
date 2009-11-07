@@ -116,6 +116,9 @@
 
     <? if ($finished_tasks->count()): ?>
     <div id="g-finished-tasks">
+      <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"
+           class="g-button g-right ui-icon-left ui-state-default ui-corner-all">
+         <span class="ui-icon ui-icon-trash"></span><?= t("remove all finished") ?></a>
       <h2> <?= t("Finished tasks") ?> </h2>
       <table>
         <tr>
@@ -135,9 +138,6 @@
             <?= t("Owner") ?>
           </th>
           <th>
-            <a href="<?= url::site("admin/maintenance/remove_finished_tasks?csrf=$csrf") ?>"
-                 class="g-button g-right ui-icon-left ui-state-default ui-corner-all">
-               <span class="ui-icon ui-icon-trash"></span><?= t("remove all finished") ?></a>
             <?= t("Action") ?>
           </th>
         </tr>
