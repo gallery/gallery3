@@ -70,7 +70,7 @@ class Admin_Tags_Controller extends Admin_Controller {
     $tag = ORM::factory("tag", $id);
     if ($tag->loaded) {
       print InPlaceEdit::factory($tag->name)
-        ->add_action("admin/tags/rename/$id")
+        ->action("admin/tags/rename/$id")
         ->render();
     }
   }
@@ -83,15 +83,15 @@ class Admin_Tags_Controller extends Admin_Controller {
       kohana::show_404();
     }
 
-    $inplaceedit = InPlaceEdit::factory($tag->name)
-      ->add_action("admin/tags/rename/$tag->id")
-      ->add_rules(array("required", "length[1,64]"))
-      ->add_messages(array("in_use" => t("There is already a tag with that name")))
-      ->add_callback(array($this, "check_for_duplicate"));
+    $in_place_edit = InPlaceEdit::factory($tag->name)
+      ->action("admin/tags/rename/$tag->id")
+      ->rules(array("required", "length[1,64]"))
+      ->messages(array("in_use" => t("There is already a tag with that name")))
+      ->callback(array($this, "check_for_duplicate"));
 
-    if ($inplaceedit->validate()) {
+    if ($in_place_edit->validate()) {
       $old_name = $tag->name;
-      $tag->name = $inplaceedit->value();
+      $tag->name = $in_place_edit->value();
       $tag->save();
 
       $message = t("Renamed tag %old_name to %new_name",
@@ -101,7 +101,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
       print json_encode(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error", "form" => $inplaceedit->render()));
+      print json_encode(array("result" => "error", "form" => $in_place_edit->render()));
     }
   }
 
