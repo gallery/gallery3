@@ -66,7 +66,7 @@ class Movies_Controller extends Items_Controller {
 
     if ($valid) {
       $new_ext = pathinfo($form->edit_item->filename->value, PATHINFO_EXTENSION);
-      $old_ext = pathinfo($photo->name, PATHINFO_EXTENSION);
+      $old_ext = pathinfo($movie->name, PATHINFO_EXTENSION);
       if (strcasecmp($new_ext, $old_ext)) {
         $form->edit_item->filename->add_error("illegal_extension", 1);
         $valid = false;
