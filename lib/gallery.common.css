@@ -19,15 +19,15 @@
  * 1) Text
  **********************************************************************/
 
-.g-txt-small {
+.g-text-small {
   font-size: .8em;
 }
 
-.g-txt-big {
+.g-text-big {
   font-size: 1.2em;
 }
 
-.g-txt-right {
+.g-text-right {
   text-align: right;
 }
 
@@ -596,7 +596,7 @@ div#g-action-status {
   text-align: right;
 }
 
-.rtl .g-txt-right {
+.rtl .g-text-right {
   text-align: left;
 }
 
@@ -649,7 +649,7 @@ div#g-action-status {
   width: 35%;
 }
 
-.rtl .g-pager .g-txt-right {
+.rtl .g-pager .g-text-right {
   margin-left: 0;
 }
 

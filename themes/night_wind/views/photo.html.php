@@ -26,7 +26,7 @@
       <? endif; ?>
     </li>
     <li class="g-info"><?= t("%position of %total", array("position" => $position, "total" => $sibling_count)) ?></li>
-    <li class="g-txt-right">
+    <li class="g-text-right">
       <? if ($next_item): ?>
       <a href="<?= $next_item->url() ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-triangle-1-e"></span><?= t("next") ?></a>
