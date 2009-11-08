@@ -99,7 +99,6 @@ class gallery_event_Core {
 
   static function user_menu($menu, $theme) {
     if ($theme->page_type != "login") {
-      Kohana::log("alert", "in gallery::user_menu");
       $user = identity::active_user();
       if ($user->guest) {
         $menu->append(Menu::factory("dialog")
