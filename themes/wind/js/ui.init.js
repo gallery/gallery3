@@ -87,12 +87,12 @@ $(document).ready(function() {
   }
 
   // Photo/Item item view
-  if ($("#g-item").length) {
+  if ($("#g-photo").length) {
     // Ensure the resized image fits within its container
-    $("#g-item").gallery_fit_photo();
+    $("#g-photo").gallery_fit_photo();
 
     // Initialize context menus
-    var resize = $("#g-item").gallery_get_photo();
+    var resize = $("#g-photo").gallery_get_photo();
     $(resize).hover(function(){
       $(this).gallery_context_menu();
     });
