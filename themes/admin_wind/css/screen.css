@@ -12,7 +12,6 @@
  *  6)  jQuery and jQuery UI
  *  7)  Right-to-left language styles
  *
- * @todo Consider moving g-panel to gallery.common
  * @todo Review g-actions along with g-buttonset-vertical
  */
 
@@ -427,19 +426,6 @@ th {
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
-
-#g-panel {
-  display: none;
-  padding: 1em;
-}
-
-#g-panel legend {
-  display: none;
-}
-
-#g-panel fieldset {
-  border: none;
-}
 
 #g-admin-dashboard .ui-state-highlight,
 #g-sidebar .ui-state-highlight {
