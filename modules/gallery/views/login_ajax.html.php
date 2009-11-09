@@ -38,7 +38,7 @@
     </li>
     <? if (identity::is_writable()): ?>
     <li>
-      <a href="#" id="g-password-reset" class="g-right g-txt-small"><?= t("Forgot your password?") ?></a>
+      <a href="#" id="g-password-reset" class="g-right g-text-small"><?= t("Forgot your password?") ?></a>
     </li>
     <? endif ?>
   </ul>

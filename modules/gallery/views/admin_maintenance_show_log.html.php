@@ -11,7 +11,7 @@ appendTo('body').submit().remove();
 </script>
 <div id="g-task-log-dialog">
   <h1> <?= $task->name ?> </h1>
-  <div class="g-task-log g-txt-small">
+  <div class="g-task-log g-text-small">
     <pre><?= html::purify($task->get_log()) ?></pre>
   </div>
   <button id="g-close" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Close") ?></button>

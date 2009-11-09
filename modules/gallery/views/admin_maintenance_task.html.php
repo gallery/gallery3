@@ -57,7 +57,7 @@
   <div id="g-status">
     <?= t("Starting up...") ?>
   </div>
-  <div class="g-txt-right">
+  <div class="g-text-right">
     <button id="g-pause-button" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Pause") ?></button>
     <button id="g-done-button" class="ui-state-default ui-corner-all" style="display: none" onclick="dismiss()"><?= t("Close") ?></button>
   </div>

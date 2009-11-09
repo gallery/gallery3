@@ -12,8 +12,7 @@
  *  6)  jQuery and jQuery UI
  *  7)  Right-to-left language styles
  *
- * @todo Consider moving g-panel to gallery.common
- * @todo Review g-actions along with g-buttonset-vertical
+ * @todo Review g-buttonset-vertical
  */
 
 /** *******************************************************************
@@ -92,6 +91,10 @@ fieldset {
   margin-bottom: 1em;
 }
 
+#g-content form ul li {
+  padding: .4em 0;
+}
+
 #g-dialog form {
   width: 270px;
 }
@@ -124,6 +127,7 @@ td {
 }
 
 th {
+  vertical-align: bottom;
   white-space: nowrap;
 }
 
@@ -154,6 +158,12 @@ th {
 
 #g-sidebar .g-block-content {
   padding: 0;
+}
+
+#g-content .g-selected,
+#g-content .g-available .g-block {
+  border: 1px solid #ccc;
+  padding: .8em;
 }
 
 .g-selected img,
@@ -358,11 +368,6 @@ th {
   margin-right: 1em;
 }
 
-.g-actions a,
-.g-actions span {
-  margin-right: 3em;
-}
-
 /* Block admin  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .g-admin-blocks-list {
@@ -426,19 +431,6 @@ th {
 }
 
 /* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
-
-#g-panel {
-  display: none;
-  padding: 1em;
-}
-
-#g-panel legend {
-  display: none;
-}
-
-#g-panel fieldset {
-  border: none;
-}
 
 #g-admin-dashboard .ui-state-highlight,
 #g-sidebar .ui-state-highlight {

@@ -12,22 +12,21 @@
  *  7)  Right to left language styles
  *
  *  @todo Update .g-message-block, don't force it to 100%, bad things happen is themes when you do.
- *  @todo Remove extra white space at the top of the add comment form, above the first field
  */
 
 /** *******************************************************************
  * 1) Text
  **********************************************************************/
 
-.g-txt-small {
+.g-text-small {
   font-size: .8em;
 }
 
-.g-txt-big {
+.g-text-big {
   font-size: 1.2em;
 }
 
-.g-txt-right {
+.g-text-right {
   text-align: right;
 }
 
@@ -41,7 +40,7 @@ form {
 
 fieldset {
   border: 1px solid #ccc;
-  padding: .4em 1em .8em 1em;
+  padding: 0 1em .8em 1em;
 }
 
 #g-banner fieldset,
@@ -52,7 +51,8 @@ fieldset {
 
 legend {
   font-weight: bold;
-  margin: 0 0 .4em .8em;
+  margin: 0;
+  padding: 0 .2em;
 }
 
 #g-banner legend,
@@ -99,7 +99,11 @@ input[type=radio] {
 
 form li {
   margin: 0;
-  padding: .3em 0;
+  padding: 0 0 .2em 0;
+}
+
+form ul {
+  margin-top: 0;
 }
 
 form ul ul {
@@ -125,11 +129,20 @@ input[type="reset"] {
   float: left;
 }
 
-/* Forms in dialogs ~~~~~~~~~~~~~~~~~~ */
+/* Forms in dialogs and panels ~~~~~~~~~ */
 
-#g-dialog form fieldset {
+#g-dialog ul li {
+  padding-bottom: .8em;
+}
+
+#g-dialog fieldset,
+#g-panel fieldset {
   border: none;
   padding: 0;
+}
+
+#g-panel legend {
+  display: none;
 }
 
 #g-dialog input.textbox,
@@ -549,7 +562,7 @@ div#g-action-status {
   width: 40%;
 }
 
-/* Dialogs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Dialogs and panels ~~~~~~~~~~~~~~~~~~ */
 
 #g-dialog {
   text-align: left;
@@ -561,6 +574,11 @@ div#g-action-status {
 
 #g-dialog .g-cancel {
   margin: .4em 1em;
+}
+
+#g-panel {
+  display: none;
+  padding: 1em;
 }
 
 /* Inline layout  ~~~~~~~~~~ */
@@ -596,7 +614,7 @@ div#g-action-status {
   text-align: right;
 }
 
-.rtl .g-txt-right {
+.rtl .g-text-right {
   text-align: left;
 }
 
@@ -649,7 +667,7 @@ div#g-action-status {
   width: 35%;
 }
 
-.rtl .g-pager .g-txt-right {
+.rtl .g-pager .g-text-right {
   margin-left: 0;
 }
 
