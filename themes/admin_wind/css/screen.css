@@ -156,6 +156,12 @@ th {
   padding: 0;
 }
 
+#g-content .g-selected,
+#g-content .g-available .g-block {
+  border: 1px solid #ccc;
+  padding: .8em;
+}
+
 .g-selected img,
 .g-available .g-block img {
   float: left;
