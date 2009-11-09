@@ -64,20 +64,16 @@ class tag_event_Core {
     tag::compact();
   }
 
-  static function extend_form($event_data) {
-    if (in_array($event_data->id,
-                 array("g-edit-album-form", "g-edit-movie-form", "g-edit-photo-form"))) {
-      $url = url::site("tags/autocomplete");
-      $event_data->form->script("")
-        ->text("$('form input[id=tags]').ready(function() {
+  static function item_edit_form($item, $form) {
+    $url = url::site("tags/autocomplete");
+    $form->script("")
+      ->text("$('form input[id=tags]').ready(function() {
                 $('form input[id=tags]').autocomplete(
                   '$url', {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1});
               });");
-      $tag_value = implode(", ", tag::item_tags($event_data->data));
-      $input = empty($event_data->append_to) ? $event_data->form : $event_data->append_to;
-      $input->input("tags")->label(t("Tags (comma separated)"))
-        ->value($tag_value);
-    }
+    $tag_value = implode(", ", tag::item_tags($item));
+    $form->edit_item->input("tags")->label(t("Tags (comma separated)"))
+      ->value($tag_value);
   }
 
   static function item_edit_form_completed($item, $form) {

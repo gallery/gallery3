@@ -154,9 +154,7 @@ class album_Core {
                       "DESC" => t("Descending")))
       ->selected($parent->sort_order);
 
-    $extend_form = (object)array("data" => $parent, "form" => $form, "id" => "g-edit-album-form",
-                                 "append_to" => $group);
-    module::event("extend_form", $extend_form);
+    module::event("item_edit_form", $parent, $form);
 
     $group = $form->group("buttons")->label("");
     $group->hidden("type")->value("album");

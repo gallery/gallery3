@@ -151,15 +151,14 @@ class movie_Core {
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"));
 
-    $extend_form = (object)array("data" => $parent, "form" => $form, "id" => "g-edit-movie-form",
-                                 "append_to" => $group);
-    module::event("extend_form", $extend_form);
+    module::event("item_edit_form", $movie, $form);
 
     $group = $form->group("buttons")->label("");
     $group->submit("")->value(t("Modify"));
     $form->add_rules_from(ORM::factory("item"));
     return $form;
   }
+
 
   static function getmoviesize($filename) {
     $ffmpeg = self::find_ffmpeg();

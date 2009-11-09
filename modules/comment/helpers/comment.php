@@ -72,11 +72,7 @@ class comment_Core {
     $group->input("url")    ->label(t("Website (hidden)"))->id("g-url");
     $group->textarea("text")->label(t("Comment"))         ->id("g-text");
     $group->hidden("item_id")->value($item->id);
-
-    $extend_form = (object)array("data" => $item, "form" => $form, "id" => "g-comment-form",
-                                 "append_to" => $group);
-    module::event("extend_form", $extend_form);
-
+    module::event("comment_add_form", $form);
     $group->submit("")->value(t("Add"))->class("ui-state-default ui-corner-all");
 
     $active = identity::active_user();

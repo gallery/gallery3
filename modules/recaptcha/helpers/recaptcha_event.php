@@ -18,13 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class recaptcha_event_Core {
-  static function extend_form($event_data) {
-    // @todo put into an admin interface
-    $config = Kohana::config("recaptcha");
-    if (module::get_var("recaptcha", "public_key") &&
-        in_array($event_data->id, $config["recaptcha"])) {
-      $input = empty($event_data->append_to) ? $event_data->form : $event_data->append_to;
-      $input->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+  static function comment_add_form($form) {
+    if (module::get_var("recaptcha", "public_key")) {
+      $form->add_comment->recaptcha("recaptcha")->label("")->id("g-recaptcha");
     }
   }
 
