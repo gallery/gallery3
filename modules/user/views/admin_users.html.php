@@ -85,7 +85,7 @@
             <td>
               <?= ($user->last_login == 0) ? "" : gallery::date($user->last_login) ?>
             </td>
-            <td class="g-actions">
+            <td>
               <a href="<?= url::site("admin/users/edit_user_form/$user->id") ?>"
                   open_text="<?= t("Close") ?>"
                   class="g-panel-link g-button ui-state-default ui-corner-all ui-icon-left">

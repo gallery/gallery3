@@ -12,7 +12,7 @@
  *  6)  jQuery and jQuery UI
  *  7)  Right-to-left language styles
  *
- * @todo Review g-actions along with g-buttonset-vertical
+ * @todo Review g-buttonset-vertical
  */
 
 /** *******************************************************************
@@ -356,11 +356,6 @@ th {
 
 #g-site-theme {
   margin-right: 1em;
-}
-
-.g-actions a,
-.g-actions span {
-  margin-right: 3em;
 }
 
 /* Block admin  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
