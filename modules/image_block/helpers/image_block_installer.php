@@ -19,13 +19,11 @@
  */
 class image_block_installer {
   static function install() {
-    block_manager::add("site.sidebar", "image_block", "random_image");
     module::set_version("image_block", 2);
   }
 
   static function upgrade($version) {
     if ($version == 1) {
-      block_manager::add("site.sidebar", "image_block", "random_image");
       module::set_version("image_block", 2);
     }
   }
