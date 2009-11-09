@@ -73,6 +73,7 @@
 #g-add-photos button {
   float: right;
   margin-bottom: .5em;
+  margin-left: .5em;
 }
 
 #g-uploadqueue-infobar {
@@ -116,6 +117,14 @@
   border: 1px solid #beb;
 }
 
+#g-add-photos p {
+  margin: 0
+}
+
+#g-add-photos .g-breadcrumbs li {
+  padding-top: .5em;
+}
+
 /** *******************************************************************
  * 2) Admin
  **********************************************************************/
@@ -129,23 +138,23 @@
 }
 
 #g-languages-form table {
-	width: 40%;
-	margin: 0 3em 1em 0;
+  width: 40%;
+  margin: 0 3em 1em 0;
 }
 
 #g-languages-form input {
-	clear: both;
+  clear: both;
 }
 
 #g-translations ol {
-	margin: 0 0 1em 2em;
+  margin: 0 0 1em 2em;
 }
 #g-translations ol li {
   list-style-type: decimal;
-	line-height: 150%;
+  line-height: 150%;
 }
 
 #g-translations .g-button {
-	padding: .5em;
-	margin-bottom: 1em;
+  padding: .5em;
+  margin-bottom: 1em;
 }

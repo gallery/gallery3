@@ -49,6 +49,7 @@ class gallery_theme_Core {
       $theme->script("l10n_client.js");
     }
 
+    $theme->css("uploadify/uploadify.css");
     return $buf;
   }
 
