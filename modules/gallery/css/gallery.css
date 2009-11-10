@@ -56,15 +56,17 @@
 
 /* Simple uploader ~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#g-add-photos #SWFUpload_0 {
-  left: 134px;
-  position: relative;
-  top: -200px;
-}
-
 #g-add-photos-canvas {
   border: 1px solid  #ccc;
-	height: 325px;
+  height: 200px;
+  margin: .5em 0;
+  overflow: auto;
+  width: 469px;
+}
+
+#g-add-photos-status {
+  border: 1px solid  #ccc;
+  height: 125px;
   margin: .5em 0;
   overflow: auto;
   width: 469px;
@@ -76,45 +78,14 @@
   margin-left: .5em;
 }
 
-#g-uploadqueue-infobar {
-  clear: both;
-}
-
-#g-uploadqueue-infobar #g-cancelupload {
-  cursor: pointer;
-  display: none;
-}
-
-#g-add-photos-queue .progressbar {
-  height: 4px;
-}
-
-#g-add-photos-queue .status {
-  font-size: .75em;
-}
-
-#g-add-photos-queue .box {
-  padding: .2em;
-}
-
-#g-add-photos-queue .pending {
-  background-color: #e8e8e8;
-  border: 1px solid #d7d7d7;
+#g-add-photos-status td {
+  text-align: left;
+  padding-left: 2em;
 }
 
 #g-add-photos-queue .error {
   background-color: #fcc;
   border: 1px solid #ebb;
-}
-
-#g-add-photos-queue .uploading {
-  background-color: #ff9;
-  border: 1px solid #ee8;
-}
-
-#g-add-photos-queue .complete {
-  background-color: #cfc;
-  border: 1px solid #beb;
 }
 
 #g-add-photos p {
