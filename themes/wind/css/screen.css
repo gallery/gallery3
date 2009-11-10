@@ -11,8 +11,6 @@
  *  5)  Navigation and menus
  *  6)  jQuery and jQuery UI
  *  7)  Right-to-left language styles
- *
- *  @todo Review g-buttonset and it's usage here and admin_wind
  */
 
 /** *******************************************************************
@@ -73,7 +71,9 @@ h3 {
   font-size: .8em;
 }
 
-#g-content #g-album-grid .g-item {
+#g-album-grid .g-item,
+#g-item #g-photo,
+#g-item #g-movie {
   font-size: .7em;
 }
 
@@ -284,11 +284,7 @@ td {
 
 #g-item #g-photo,
 #g-item #g-movie {
-  padding: 1em 0;
-}
-
-#g-item #g-photo,
-#g-item #g-movie {
+  padding: 2.2em 0;
   position: relative;
 }
 
