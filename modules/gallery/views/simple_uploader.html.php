@@ -30,10 +30,42 @@
         return true;
       },
       onComplete: function(event, queueID, fileObj, response, data) {
-        $("#g-add-photos-status tbody").append(
-          "<tr class=\"g-success\"><td>" + fileObj.name + "</td><td>" +
-          Math.ceil(fileObj.size / 1000) + " KB" + "</td><td>" + Math.floor(data.speed) + " KB/s </td></tr>");
+        // @todo handle a response of "Error: xxxx" as an error
+        var re = /^error: (.*)$/i;
+        var msg = re.exec(response);
+        if (msg) {
+          $("#g-add-photos-status ul").append(
+            "<li class=\"g-error\">" + fileObj.name + " - " + msg[1] + "</li>");
+        } else {
+          $("#g-add-photos-status ul").append(
+            "<li class=\"g-success\">" + fileObj.name + "</li>");
+        }
         return true;
+      },
+
+      onError: function(event, queueID, fileObj, errorObj) {
+        var msg = " - ";
+        if (errorObj.type == "HTTP") {
+          if (errorObj.info == "500") {
+            msg += "Error occurred processing the file";
+            // Server error - check server logs
+          } else if (errorObj.info == "404") {
+            msg += "The upload script was not found.";
+            // Server script not found
+          } else {
+            // Server Error: status: errorObj.info
+            msg += "Error occurred communication with the server, status: " + errorObj.info;
+          }
+        } else if (errorObj.type == "File Size") {
+          var sizelimit = $("#g-uploadify").uploadifySettings(sizeLimit);
+          msg += fileObj.name+' '+errorObj.type+' Limit: '+Math.round(d.sizeLimit/1024)+'KB';
+        } else {
+          msg += "Error occurred communication with the server, error " + errorObj.type + ": " + errorObj.info;
+        }
+        $("#g-add-photos-status ul").append(
+          "<li class=\"g-error\">" + fileObj.name + msg + "</li>");
+        $("#g-uploadify" + queueID).remove();
+        //return false;
       },
       onSelect: function(event) {
         if ($("#g-upload-cancel-all").hasClass("ui-state-disabled")) {
@@ -79,10 +111,8 @@
       <div id="g-uploadify"></div>
     </div>
     <div id="g-add-photos-status" style="text-align: center;">
-      <table>
-         <tbody>
-         </tbody>
-      </table>
+      <ul>
+      </ul>
     </div>
 
     <!-- Proxy the done request back to our form, since its been ajaxified -->

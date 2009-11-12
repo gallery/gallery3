@@ -79,7 +79,7 @@ class Simple_Uploader_Controller extends Controller {
       print "FILEID: $item->id";
     } else {
       header("HTTP/1.1 400 Bad Request");
-      print "ERROR: Invalid Upload";
+      print "ERROR: " . t("Invalid Upload");
     }
   }
 

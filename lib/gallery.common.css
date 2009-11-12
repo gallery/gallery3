@@ -593,6 +593,52 @@ div#g-action-status {
   margin-left: 0;
 }
 
+/* Simple uploader ~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-add-photos-canvas {
+  border: 1px solid  #ccc;
+  height: 200px;
+  margin: .5em 0;
+  overflow: auto;
+  width: 469px;
+}
+
+#g-add-photos-status {
+  border: 1px solid  #ccc;
+  height: 125px;
+  margin: .5em 0;
+  overflow: auto;
+  width: 469px;
+}
+
+#g-add-photos button {
+  float: right;
+  margin-bottom: .5em;
+  margin-left: .5em;
+}
+
+#g-add-photos-status li {
+  text-align: left;
+  padding-left: 2em;
+}
+
+#g-add-photos-status li.g-success {
+  background: #d9efc2  url('images/ico-success.png') no-repeat .4em 50%;
+}
+
+#g-add-photos-status li.g-error {
+  background: #f6cbca url('images/ico-error.png') no-repeat .4em 50%;
+/*  color: #f00;*/
+}
+
+#g-add-photos p {
+  margin: 0
+}
+
+#g-add-photos .g-breadcrumbs li {
+  padding-top: .5em;
+}
+
 /** *******************************************************************
  * 7) Right to left language styles
  **********************************************************************/
