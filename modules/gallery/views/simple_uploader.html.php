@@ -115,7 +115,7 @@
     </div>
 
     <div id="g-add-photos-canvas" style="text-align: center;">
-      <a id="g-add-photos-button" class="ui-corner-all" href="#"><?= t("Select Photos...") ?></a>
+      <a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select Photos...") ?></a>
 
        <div id="g-uploadify"></div>
 
