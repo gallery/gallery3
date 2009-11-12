@@ -33,7 +33,7 @@ $config['default'] = array(
     'user'     => '<?php print $user ?>',
     'pass'     => '<?php print str_replace("'", "\\'", $password) ?>',
     'host'     => '<?php print $host ?>',
-    'port'     => false,
+    'port'     => <?php if (!empty($port)): ?>'<?php print $port ?>' <?php else: ?>false<?php endif ?>,
     'socket'   => false,
     'database' => '<?php print $dbname ?>'
   ),

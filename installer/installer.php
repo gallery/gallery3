@@ -77,7 +77,8 @@ class installer {
     // counterparts.
     if (!function_exists("mysql_query")) {
       function mysql_connect($host, $user, $pass) {
-        installer::$mysqli = new mysqli($host, $user, $pass);
+        list ($host, $port) = explode(":", $host);
+        installer::$mysqli = new mysqli($host, $user, $pass, $port);
         // http://php.net/manual/en/mysqli.connect.php says to use mysqli_connect_error() instead of
         // $mysqli->connect_error because of bugs before PHP 5.2.9
         $error = mysqli_connect_error();
@@ -97,7 +98,8 @@ class installer {
       }
     }
 
-    return @mysql_connect($config["host"], $config["user"], $config["password"]);
+    $host = empty($config["port"]) ? $config['host'] : "{$config['host']}:{$config['port']}";
+    return @mysql_connect($host, $config["user"], $config["password"]);
   }
 
   static function select_db($config) {
