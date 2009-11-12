@@ -13,8 +13,10 @@
       fileExt: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
       fileDesc: <?= t("Photos and movies")->for_js() ?>,
       cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
-      buttonText: <?= t("Select Files")->for_js() ?>,
+      buttonText: <?= t("Select Photos ...")->for_js() ?>,
       simUploadLimit: 10,
+      wmode: "transparent",
+      hideButton: true,
       auto: true,
       multi: true,
       onAllComplete: function(filesUploaded, errors, allbytesLoaded, speed) {
@@ -38,7 +40,7 @@
             "<li class=\"g-error\">" + fileObj.name + " - " + msg[1] + "</li>");
         } else {
           $("#g-add-photos-status ul").append(
-            "<li class=\"g-success\">" + fileObj.name + "</li>");
+            "<li class=\"g-success\">" + fileObj.name + " - <?= t("Completed") ?></li>");
         }
         return true;
       },
@@ -76,6 +78,11 @@
         return true;
       }
     });
+
+    // @todo figure out how to actually get the offset or why it comes back 0 0
+    var offset = $("#g-add-photos-button").offset();
+    $("#g-uploadifyUploader").css({top: "97px", position: "absolute", left: "198px"});
+    $("#g-add-photos-button").height("40px").width("120px");
   });
 </script>
 
@@ -108,7 +115,11 @@
     </div>
 
     <div id="g-add-photos-canvas" style="text-align: center;">
-      <div id="g-uploadify"></div>
+      <a id="g-add-photos-button" class="ui-corner-all" href="#"><?= t("Select Photos...") ?></a>
+
+       <div id="g-uploadify"></div>
+
+
     </div>
     <div id="g-add-photos-status" style="text-align: center;">
       <ul>
