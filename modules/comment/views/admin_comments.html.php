@@ -40,7 +40,7 @@
   <div class="g-block-content">
     <!-- @todo: Highlight active menu option -->
     <div id="g-admin-comments-menu" class="ui-helper-clearfix">
-      <?= $menu ?>
+      <?= $menu->render() ?>
     </div>
 
     <!-- @todo: Remove after setting active option? -->
