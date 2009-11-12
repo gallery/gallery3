@@ -35,7 +35,7 @@ class Admin_Sidebar_Controller extends Admin_Controller {
 
     $active_blocks = array();
     foreach ($this->input->get("block", array()) as $block_id) {
-      $active_blocks[] = explode(":", (string) $block_id);
+      $active_blocks[md5($block_id)] = explode(":", (string) $block_id);
     }
     block_manager::set_active("site.sidebar", $active_blocks);
 

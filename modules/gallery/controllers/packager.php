@@ -62,6 +62,7 @@ class Packager_Controller extends Controller {
     srand(0);
 
     gallery_installer::install(true);
+
     module::load_modules();
 
     foreach (array("user", "comment", "organize", "info", "rss",
@@ -72,21 +73,10 @@ class Packager_Controller extends Controller {
   }
 
   private function _dump_database() {
-    // We now have a clean install with just the packages that we want.  Make sure that the
-    // database is clean too.
-    $i = 1;
-    foreach (array("blocks_dashboard_sidebar", "blocks_dashboard_center") as $key) {
-      $blocks = array();
-      foreach (unserialize(module::get_var("gallery", $key)) as $rnd => $value) {
-        $blocks[++$i] = $value;
-      }
-      module::set_var("gallery", $key, serialize($blocks));
-    }
-
     $db = Database::instance();
     $db->query("TRUNCATE {sessions}");
     $db->query("TRUNCATE {logs}");
-    $db->query("DELETE FROM {vars} WHERE `module_name` = 'core' AND `name` = '_cache'");
+    $db->query("DELETE FROM {vars} WHERE `module_name` = 'gallery' AND `name` = '_cache'");
     $db->update("users", array("password" => ""), array("id" => 1));
     $db->update("users", array("password" => ""), array("id" => 2));
 
