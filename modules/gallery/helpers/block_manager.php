@@ -28,11 +28,12 @@ class block_manager_Core {
 
   static function add($location, $module_name, $block_id) {
     $blocks = self::get_active($location);
-    $blocks[rand()] = array($module_name, $block_id);
+    $blocks[md5("$module_name:$block_id")] = array($module_name, $block_id);
+
     self::set_active($location, $blocks);
   }
 
-  static function activate_sidebar_blocks($module_name) {
+  static function activate_blocks($module_name) {
     $block_class = "{$module_name}_block";
     if (method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
@@ -48,12 +49,21 @@ class block_manager_Core {
     self::set_active($location, $blocks);
   }
 
-  static function deactivate_sidebar_blocks($module_name) {
+  static function deactivate_blocks($module_name) {
     $block_class = "{$module_name}_block";
     if (method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach  (array_keys($blocks) as $block_id) {
-        self::remove("site.sidebar", $module_name, $block_id);
+        self::remove("site.sidebar", md5("$module_name:$block_id"));
+      }
+    }
+
+    if (method_exists($block_class, "get_admin_list")) {
+      $blocks = call_user_func(array($block_class, "get_admin_list"));
+      foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
+        foreach  (array_keys($blocks) as $block_id) {
+          self::remove($location, md5("$module_name:$block_id"));
+        }
       }
     }
   }

@@ -211,7 +211,7 @@ class module_Core {
 
     graphics::activate_rules($module_name);
 
-    block_manager::activate_sidebar_blocks($module_name);
+    block_manager::activate_blocks($module_name);
 
     log::success(
       "module", t("Activated module %module_name", array("module_name" => $module_name)));
@@ -238,7 +238,7 @@ class module_Core {
 
     graphics::deactivate_rules($module_name);
 
-    block_manager::deactivate_sidebar_blocks($module_name);
+    block_manager::deactivate_blocks($module_name);
 
     log::success(
       "module", t("Deactivated module %module_name", array("module_name" => $module_name)));

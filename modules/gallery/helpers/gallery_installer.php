@@ -268,7 +268,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 16);
+    module::set_version("gallery", 17);
   }
 
   static function upgrade($version) {
@@ -397,6 +397,18 @@ class gallery_installer {
     if ($version == 15) {
       module::set_var("gallery", "identity_provider", "user");
       module::set_version("gallery", $version = 16);
+    }
+
+    if ($version == 16) {
+      foreach (array("dashboard_sidebar", "dashboard_center", "site.sidebar") as $location) {
+        $blocks = block_manager::get_active($location);
+        $new_blocks = array();
+        foreach ($blocks as $block) {
+          $new_blocks[md5("{$block[0]}:{$block[1]}")] = $block;
+        }
+        block_manager::set_active($location, $new_blocks);
+      }
+      module::set_version("gallery", $version = 17);
     }
   }
 
