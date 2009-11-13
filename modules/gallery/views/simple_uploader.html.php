@@ -15,8 +15,8 @@
       cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
       buttonText: <?= t("Select Photos ...")->for_js() ?>,
       simUploadLimit: 10,
-      wmode: "transparent",
-      hideButton: true,
+      //wmode: "transparent",
+      hideButton: false, /* should be true */
       auto: true,
       multi: true,
       onAllComplete: function(filesUploaded, errors, allbytesLoaded, speed) {
@@ -81,8 +81,8 @@
 
     // @todo figure out how to actually get the offset or why it comes back 0 0
     var offset = $("#g-add-photos-button").offset();
-    $("#g-uploadifyUploader").css({top: "97px", position: "absolute", left: "198px"});
-    $("#g-add-photos-button").height("40px").width("120px");
+    //$("#g-uploadifyUploader").css({top: "97px", position: "absolute", left: "198px"});
+    //$("#g-add-photos-button").height("40px").width("120px");
   });
 </script>
 
@@ -115,11 +115,8 @@
     </div>
 
     <div id="g-add-photos-canvas" style="text-align: center;">
-      <a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select Photos...") ?></a>
-
-       <div id="g-uploadify"></div>
-
-
+      <!-- a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select Photos...") ?></a -->
+      <span id="g-uploadify"></span>
     </div>
     <div id="g-add-photos-status" style="text-align: center;">
       <ul>
