@@ -165,7 +165,7 @@ class Theme_View_Core extends Gallery_View {
    * Print out the sidebar.
    */
   public function sidebar_blocks() {
-    $sidebar = block_manager::get_html("site.sidebar", $this);
+    $sidebar = block_manager::get_html("site_sidebar", $this);
     if (empty($sidebar) && identity::active_user()->admin) {
       $sidebar = new View("no_sidebar.html");
     }

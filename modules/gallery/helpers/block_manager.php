@@ -38,7 +38,7 @@ class block_manager_Core {
     if (method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach  (array_keys($blocks) as $block_id) {
-        self::add("site.sidebar", $module_name, $block_id);
+        self::add("site_sidebar", $module_name, $block_id);
       }
     }
   }
@@ -64,7 +64,7 @@ class block_manager_Core {
     if (method_exists($block_class, "get_site_list")) {
       $blocks = call_user_func(array($block_class, "get_site_list"));
       foreach  (array_keys($blocks) as $block_id) {
-        self::remove_blocks_for_module("site.sidebar", $module_name);
+        self::remove_blocks_for_module("site_sidebar", $module_name);
       }
     }
 

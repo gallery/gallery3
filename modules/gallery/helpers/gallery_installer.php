@@ -268,7 +268,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 18);
+    module::set_version("gallery", 19);
   }
 
   static function upgrade($version) {
@@ -383,13 +383,13 @@ class gallery_installer {
     }
 
     if ($version == 14) {
-      $sidebar_blocks = block_manager::get_active("site.sidebar");
+      $sidebar_blocks = block_manager::get_active("site_sidebar");
       if (empty($sidebar_blocks)) {
         $available_blocks = block_manager::get_available_site_blocks();
         foreach  (array_keys(block_manager::get_available_site_blocks()) as $id) {
           $sidebar_blocks[] = explode(":", $id);
         }
-        block_manager::set_active("site.sidebar", $sidebar_blocks);
+        block_manager::set_active("site_sidebar", $sidebar_blocks);
       }
       module::set_version("gallery", $version = 15);
     }
@@ -400,20 +400,18 @@ class gallery_installer {
     }
 
     if ($version == 16) {
-      foreach (array("dashboard_sidebar", "dashboard_center", "site.sidebar") as $location) {
-        $blocks = block_manager::get_active($location);
-        $new_blocks = array();
-        foreach ($blocks as $block) {
-          $new_blocks[md5("{$block[0]}:{$block[1]}")] = $block;
-        }
-        block_manager::set_active($location, $new_blocks);
+      $blocks = block_manager::get_active($location);
+      $new_blocks = array();
+      foreach ($blocks as $block) {
+        $new_blocks[md5("{$block[0]}:{$block[1]}")] = $block;
       }
+      block_manager::set_active($location, $new_blocks);
       module::set_version("gallery", $version = 17);
     }
 
     if ($version == 17) {
       // Once published we can't go back so reset the keys to a random to allow duplicates
-      foreach (array("dashboard_sidebar", "dashboard_center", "site.sidebar") as $location) {
+      foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
         $blocks = block_manager::get_active($location);
         $new_blocks = array();
         foreach ($blocks as $block) {
@@ -422,6 +420,16 @@ class gallery_installer {
         block_manager::set_active($location, $new_blocks);
       }
       module::set_version("gallery", $version = 18);
+    }
+
+    if ($version == 18) {
+      // Once published we can't go back so reset the keys to a random to allow duplicates
+      foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
+        $blocks = block_manager::get_active("site.sidebar");
+        block_manager::set_active("site_sidebar", $blocks);
+        module::clear_var("gallery", "blocks_site.sidebar");
+      }
+      module::set_version("gallery", $version = 19);
     }
   }
 

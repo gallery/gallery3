@@ -37,7 +37,7 @@ class Admin_Sidebar_Controller extends Admin_Controller {
     foreach ($this->input->get("block", array()) as $block_id) {
       $active_blocks[md5($block_id)] = explode(":", (string) $block_id);
     }
-    block_manager::set_active("site.sidebar", $active_blocks);
+    block_manager::set_active("site_sidebar", $active_blocks);
 
     $result = array("result" => "success");
     list($available, $active) = $this->_get_blocks();
@@ -55,7 +55,7 @@ class Admin_Sidebar_Controller extends Admin_Controller {
   private function _get_blocks() {
     $active_blocks = array();
     $available_blocks = block_manager::get_available_site_blocks();
-    foreach (block_manager::get_active("site.sidebar") as $block) {
+    foreach (block_manager::get_active("site_sidebar") as $block) {
       $id = "{$block[0]}:{$block[1]}";
       if (!empty($available_blocks[$id])) {
         $active_blocks[$id] = $available_blocks[$id];

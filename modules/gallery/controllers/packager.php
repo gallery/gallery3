@@ -76,7 +76,7 @@ class Packager_Controller extends Controller {
     // We now have a clean install with just the packages that we want.  Make sure that the
     // database is clean too.
     $i = 1;
-    foreach (array("dashboard_sidebar", "dashboard_center", "site.sidebar") as $key) {
+    foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $key) {
       $blocks = array();
       foreach (unserialize(module::get_var("gallery", "blocks_{$key}")) as $rnd => $value) {
         $blocks[++$i] = $value;
