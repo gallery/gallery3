@@ -228,7 +228,7 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,1,'gallery',17);
+INSERT INTO {modules} VALUES (1,1,'gallery',18);
 INSERT INTO {modules} VALUES (2,1,'user',2);
 INSERT INTO {modules} VALUES (3,1,'comment',2);
 INSERT INTO {modules} VALUES (4,1,'organize',1);
@@ -366,7 +366,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (2,'gallery','active_admin_theme','admin_wind');
@@ -376,15 +376,15 @@ INSERT INTO {vars} VALUES (5,'gallery','resize_size','640');
 INSERT INTO {vars} VALUES (6,'gallery','default_locale','en_US');
 INSERT INTO {vars} VALUES (7,'gallery','image_quality','75');
 INSERT INTO {vars} VALUES (8,'gallery','image_sharpen','15');
-INSERT INTO {vars} VALUES (10,'gallery','blocks_dashboard_sidebar','a:4:{s:32:\"ea6daed3baa18234bb574af71ab42250\";a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}s:32:\"f566a858e4b0238c0429d7b03b9f136f\";a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}s:32:\"4a3e6ed692f52ff14fbc0bfb94a1a130\";a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}s:32:\"53c72b14ba93d7f23d0efb72cc4d7cd1\";a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
+INSERT INTO {vars} VALUES (21,'gallery','time_format','H:i:s');
 INSERT INTO {vars} VALUES (22,'gallery','show_credits','1');
 INSERT INTO {vars} VALUES (23,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>');
+INSERT INTO {vars} VALUES (10,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
 INSERT INTO {vars} VALUES (20,'gallery','date_time_format','Y-M-d H:i:s');
-INSERT INTO {vars} VALUES (21,'gallery','time_format','H:i:s');
-INSERT INTO {vars} VALUES (15,'gallery','blocks_dashboard_center','a:3:{s:32:\"0fb54e06307c0ec68ff9494082191235\";a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}s:32:\"f76ac022796947436740be2144b6d776\";a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}s:32:\"42a3ca45d2397f2d3e59dacae4caf3e0\";a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}}');
-INSERT INTO {vars} VALUES (18,'gallery','choose_default_tookit','1');
 INSERT INTO {vars} VALUES (19,'gallery','date_format','Y-M-d');
+INSERT INTO {vars} VALUES (15,'gallery','blocks_dashboard_center','a:3:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}}');
+INSERT INTO {vars} VALUES (18,'gallery','choose_default_tookit','1');
 INSERT INTO {vars} VALUES (26,'user','mininum_password_length','5');
 INSERT INTO {vars} VALUES (27,'comment','spam_caught','0');
 INSERT INTO {vars} VALUES (25,'gallery','identity_provider','user');
-INSERT INTO {vars} VALUES (29,'gallery','blocks_site.sidebar','a:3:{s:32:\"6e901fd82a43b0e07ebbd7123b5ee349\";a:2:{i:0;s:4:\"info\";i:1;s:8:\"metadata\";}s:32:\"c07f62cf746316b111a61681fe49ad39\";a:2:{i:0;s:3:\"rss\";i:1;s:9:\"rss_feeds\";}s:32:\"2eef3fd349091e4e1cee9e27072bff39\";a:2:{i:0;s:3:\"tag\";i:1;s:3:\"tag\";}}');
+INSERT INTO {vars} VALUES (29,'gallery','blocks_site.sidebar','a:3:{i:9;a:2:{i:0;s:4:\"info\";i:1;s:8:\"metadata\";}i:10;a:2:{i:0;s:3:\"rss\";i:1;s:9:\"rss_feeds\";}i:11;a:2:{i:0;s:3:\"tag\";i:1;s:3:\"tag\";}}');
