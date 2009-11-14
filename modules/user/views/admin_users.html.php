@@ -9,7 +9,7 @@
       accept: ".g-core-info",
       hoverClass: "g-selected",
       drop: function(ev, ui) {
-        var user_id = $(ui.draggable).attr("id").replace("user-", "");
+        var user_id = $(ui.draggable).attr("id").replace("g-user-", "");
         var group_id = $(this).attr("id").replace("g-group-", "");
         $.get(add_user_to_group_url.replace("__USERID__", user_id).replace("__GROUPID__", group_id),
               {},
@@ -67,8 +67,8 @@
           </tr>
 
           <? foreach ($users as $i => $user): ?>
-          <tr id="g-user-<?= $user->id ?>" class="<?= text::alternate("g-odd", "g-even") ?> user <?= $user->admin ? "admin" : "" ?>">
-            <td id="user-<?= $user->id ?>" class="g-core-info g-draggable">
+          <tr id="g-user-<?= $user->id ?>" class="<?= text::alternate("g-odd", "g-even") ?> g-user <?= $user->admin ? "g-admin" : "" ?>">
+            <td id="g-user-<?= $user->id ?>" class="g-core-info g-draggable">
               <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                    title="<?= t("Drag user onto group below to add as a new member")->for_html_attr() ?>"
                    alt="<?= html::clean_attribute($user->name) ?>"
