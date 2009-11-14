@@ -2,15 +2,15 @@
 <script type="text/javascript">
   var add_user_to_group_url = "<?= url::site("admin/users/add_user_to_group/__USERID__/__GROUPID__?csrf=$csrf") ?>";
   $(document).ready(function(){
-    $("#g-user-admin-list .core-info").draggable({
+    $("#g-user-admin-list .g-core-info").draggable({
       helper: "clone"
     });
     $("#g-group-admin .g-group").droppable({
-      accept: ".core-info",
+      accept: ".g-core-info",
       hoverClass: "g-selected",
       drop: function(ev, ui) {
         var user_id = $(ui.draggable).attr("id").replace("user-", "");
-        var group_id = $(this).attr("id").replace("group-", "");
+        var group_id = $(this).attr("id").replace("g-group-", "");
         $.get(add_user_to_group_url.replace("__USERID__", user_id).replace("__GROUPID__", group_id),
               {},
               function() {
@@ -18,8 +18,8 @@
               });
       }
     });
-    $("#group-1").droppable("destroy");
-    $("#group-2").droppable("destroy");
+    $("#g-group-1").droppable("destroy");
+    $("#g-group-2").droppable("destroy");
   });
 
   var reload_group = function(group_id) {
@@ -27,8 +27,8 @@
     $.get(reload_group_url.replace("__GROUPID__", group_id),
           {},
           function(data) {
-            $("#group-" + group_id).html(data);
-            $("#group-" + group_id + " .g-dialog-link").gallery_dialog();
+            $("#g-group-" + group_id).html(data);
+            $("#g-group-" + group_id + " .g-dialog-link").gallery_dialog();
           });
   }
 
@@ -68,7 +68,7 @@
 
           <? foreach ($users as $i => $user): ?>
           <tr id="g-user-<?= $user->id ?>" class="<?= text::alternate("g-odd", "g-even") ?> user <?= $user->admin ? "admin" : "" ?>">
-            <td id="user-<?= $user->id ?>" class="core-info g-draggable">
+            <td id="user-<?= $user->id ?>" class="g-core-info g-draggable">
               <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
                    title="<?= t("Drag user onto group below to add as a new member")->for_html_attr() ?>"
                    alt="<?= html::clean_attribute($user->name) ?>"
@@ -121,7 +121,7 @@
       <div class="g-block-content">
         <ul>
           <? foreach ($groups as $i => $group): ?>
-          <li id="group-<?= $group->id ?>" class="g-group <?= ($group->special ? "g-default-group" : "") ?>" />
+          <li id="g-group-<?= $group->id ?>" class="g-group g-left <?= ($group->special ? "g-default-group" : "") ?>" />
             <? $v = new View("admin_users_group.html"); $v->group = $group; ?>
             <?= $v ?>
           </li>
@@ -129,5 +129,5 @@
         </ul>
       </div>
     </div>
-    </div>
+  </div>
 </div>

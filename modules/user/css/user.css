@@ -13,10 +13,10 @@
 
 li.g-group {
   display: block;
-  width: 100%;
   border: 1px solid gray;
-  padding: 0;
   margin: 0 1em 1em 0;
+  padding: 0;
+  width: 200px;
 }
 
 li.g-group h4 {
@@ -52,6 +52,10 @@ li.g-group .g-user .g-button {
 
 li.g-default-group h4, li.g-default-group .g-user {
   color: gray;
+}
+
+.g-group.ui-droppable {
+  padding: 0 !important;
 }
 
 .g-password-strength0 {
