@@ -12,12 +12,11 @@
 }
 
 li.g-group {
-  float: left;
   display: block;
-  width: 200px;
   border: 1px solid gray;
-  padding: 0;
   margin: 0 1em 1em 0;
+  padding: 0;
+  width: 200px;
 }
 
 li.g-group h4 {
@@ -55,8 +54,12 @@ li.g-default-group h4, li.g-default-group .g-user {
   color: gray;
 }
 
+.g-group.ui-droppable {
+  padding: 0 !important;
+}
+
 .g-password-strength0 {
-  background: url(progressImg1.png) no-repeat 0 0;
+  background: url(../images/progressImg1.png) no-repeat 0 0;
   width: 138px;
   height: 7px;
 }
