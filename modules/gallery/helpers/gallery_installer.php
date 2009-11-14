@@ -399,18 +399,21 @@ class gallery_installer {
       module::set_version("gallery", $version = 16);
     }
 
+    // Convert block keys to an md5 hash of the module and block name
     if ($version == 16) {
-      $blocks = block_manager::get_active($location);
-      $new_blocks = array();
-      foreach ($blocks as $block) {
-        $new_blocks[md5("{$block[0]}:{$block[1]}")] = $block;
+      foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
+        $blocks = block_manager::get_active($location);
+        $new_blocks = array();
+        foreach ($blocks as $block) {
+          $new_blocks[md5("{$block[0]}:{$block[1]}")] = $block;
+        }
+        block_manager::set_active($location, $new_blocks);
       }
-      block_manager::set_active($location, $new_blocks);
       module::set_version("gallery", $version = 17);
     }
 
+    // We didn't like md5 hashes so convert block keys back to random keys to allow duplicates.
     if ($version == 17) {
-      // Once published we can't go back so reset the keys to a random to allow duplicates
       foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
         $blocks = block_manager::get_active($location);
         $new_blocks = array();
@@ -422,13 +425,11 @@ class gallery_installer {
       module::set_version("gallery", $version = 18);
     }
 
+    // Rename blocks_site.sidebar to blocks_site_sidebar
     if ($version == 18) {
-      // Once published we can't go back so reset the keys to a random to allow duplicates
-      foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
-        $blocks = block_manager::get_active("site.sidebar");
-        block_manager::set_active("site_sidebar", $blocks);
-        module::clear_var("gallery", "blocks_site.sidebar");
-      }
+      $blocks = block_manager::get_active("site.sidebar");
+      block_manager::set_active("site_sidebar", $blocks);
+      module::clear_var("gallery", "blocks_site.sidebar");
       module::set_version("gallery", $version = 19);
     }
   }
