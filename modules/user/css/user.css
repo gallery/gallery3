@@ -12,9 +12,8 @@
 }
 
 li.g-group {
-  float: left;
   display: block;
-  width: 200px;
+  width: 100%;
   border: 1px solid gray;
   padding: 0;
   margin: 0 1em 1em 0;
@@ -56,7 +55,7 @@ li.g-default-group h4, li.g-default-group .g-user {
 }
 
 .g-password-strength0 {
-  background: url(progressImg1.png) no-repeat 0 0;
+  background: url(../images/progressImg1.png) no-repeat 0 0;
   width: 138px;
   height: 7px;
 }
