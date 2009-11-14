@@ -1,44 +1,82 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<? // See http://docs.kohanaphp.com/libraries/pagination ?>
+<?
+// This is a generic paginator for album, photo and movie pages.  Depending on the page type,
+// there are different sets of variables available.  With this data, you can make a paginator
+// that lets you say "You're viewing photo 5 of 35", or "You're viewing photos 10 - 18 of 37"
+// for album views.
+//
+// Available variables for all page types:
+//   $page_type               - "album", "movie" or "photo"
+//   $previous_page_url       - the url to the previous page, if there is one
+//   $next_page_url           - the url to the next page, if there is one
+//   $total                   - the total number of photos in this album
+//
+// Available for the "album" page type:
+//   $page                    - what page number we're on
+//   $max_pages               - the maximum page number
+//   $page_size               - the page size
+//   $first_page_url          - the url to the first page, or null if we're on the first page
+//   $last_page_url           - the url to the last page, or null if we're on the last page
+//   $first_visible_position  - the position number of the first visible photo on this page
+//   $last_visible_position   - the position number of the last visible photo on this page
+//
+// Available for "photo" and "movie" page types:
+//   $position                - the position number of this photo
+?>
+
 <ul class="g-pager ui-helper-clearfix">
-  <? /* @todo This message isn't easily localizable */
-     $from_to_msg = t2("Photo %from_number of %count",
-                       "Photos %from_number - %to_number of %count",
-                       $total_items,
-                       array("from_number" => $current_first_item,
-                             "to_number" => $current_last_item,
-                             "count" => $total_items)) ?>
   <li class="g-first">
-  <? if ($first_page): ?>
-    <a href="<?= str_replace('{page}', 1, $url) ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
-      <span class="ui-icon ui-icon-seek-first"></span><?= t("First") ?></a>
-  <? else: ?>
-    <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
-      <span class="ui-icon ui-icon-seek-first"></span><?= t("First") ?></a>
+  <? if ($page_type == "album"): ?>
+    <? if (isset($first_page_url)): ?>
+      <a href="<?= $first_page_url ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
+        <span class="ui-icon ui-icon-seek-first"></span><?= t("First") ?></a>
+    <? else: ?>
+      <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
+        <span class="ui-icon ui-icon-seek-first"></span><?= t("First") ?></a>
+    <? endif ?>
   <? endif ?>
-  <? if ($previous_page): ?>
-    <a href="<?= str_replace('{page}', $previous_page, $url) ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
+
+  <? if (isset($previous_page_url)): ?>
+    <a href="<?= $previous_page_url ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-prev"></span><?= t("Previous") ?></a>
   <? else: ?>
     <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
       <span class="ui-icon ui-icon-seek-prev"></span><?= t("Previous") ?></a>
   <? endif ?>
   </li>
-  <li class="g-info"><?= $from_to_msg ?></li>
+
+  <li class="g-info">
+    <? if ($page_type == "album"): ?>
+      <?= /* @todo This message isn't easily localizable */
+          /* @todo does this really need to be a t2?  why not just skip the msg when there's 1 photo? */
+          t2("Photo %from_number of %count",
+             "Photos %from_number - %to_number of %count",
+             $total,
+             array("from_number" => $first_visible_position,
+                   "to_number" => $last_visible_position,
+                   "count" => $total)) ?>
+    <? else: ?>
+      <?= t("%position of %total", array("position" => $position, "total" => $total)) ?>
+    <? endif ?>
+  </li>
+
   <li class="g-text-right">
-  <? if ($next_page): ?>
-    <a href="<?= str_replace('{page}', $next_page, $url) ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
+  <? if (isset($next_page_url)): ?>
+    <a href="<?= $next_page_url ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
       <span class="ui-icon ui-icon-seek-next"></span><?= t("Next") ?></a>
   <? else: ?>
     <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
       <span class="ui-icon ui-icon-seek-next"></span><?= t("Next") ?></a>
   <? endif ?>
-  <? if ($last_page): ?>
-    <a href="<?= str_replace('{page}', $last_page, $url) ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
-      <span class="ui-icon ui-icon-seek-end"></span><?= t("Last") ?></a>
-  <? else: ?>
-    <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
-      <span class="ui-icon ui-icon-seek-end"></span><?= t("Last") ?></a>
+
+  <? if ($page_type == "album"): ?>
+    <? if (isset($last_page_url)): ?>
+      <a href="<?= $last_page_url ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
+        <span class="ui-icon ui-icon-seek-end"></span><?= t("Last") ?></a>
+    <? else: ?>
+      <a class="g-button ui-state-disabled ui-icon-right ui-corner-all">
+        <span class="ui-icon ui-icon-seek-end"></span><?= t("Last") ?></a>
+    <? endif ?>
   <? endif ?>
   </li>
 </ul>

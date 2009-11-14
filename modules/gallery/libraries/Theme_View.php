@@ -135,16 +135,48 @@ class Theme_View_Core extends Gallery_View {
     return $menu->render();
   }
 
+  /**
+   * Set up the data and render a pager.
+   *
+   * See themes/wind/views/pager.html for documentation on the variables generated here.
+   */
   public function pager() {
-    if ($this->children_count) {
-      $this->pagination = new Pagination();
-      $this->pagination->initialize(
-        array("query_string" => "page",
-              "total_items" => $this->children_count,
-              "items_per_page" => $this->page_size,
-              "style" => "classic"));
-      return $this->pagination->render();
+    $v = new View("pager.html");
+    $v->page_type = $this->page_type;
+    $v->first_page_url = null;
+    $v->previous_page_url = null;
+    $v->next_page_url = null;
+    $v->last_page_url = null;
+
+    if ($this->page_type == "album") {
+      $v->page = $this->page;
+      $v->max_pages = $this->max_pages;
+      $v->total = $this->children_count;
+      if ($this->page != 1) {
+        $v->first_page_url = $this->item->url();
+        $v->previous_page_url = $this->item->url("page=" . ($this->page - 1));
+      }
+
+      if ($this->page != $this->max_pages) {
+        $v->next_page_url = $this->item->url("page=" . ($this->page + 1));
+        $v->last_page_url = $this->item->url("page={$this->max_pages}");
+      }
+
+      $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
+      $v->last_visible_position = $this->page * $this->page_size;
+    } else {
+      $v->position = $this->position;
+      $v->total = $this->sibling_count;
+      if ($v->previous_page = $this->previous_item) {
+        $v->previous_page_url = $this->previous_item->url();
+      }
+
+      if ($v->next_page = $this->next_item) {
+        $v->next_page_url = $this->next_item->url();
+      }
     }
+
+    return $v;
   }
 
   /**

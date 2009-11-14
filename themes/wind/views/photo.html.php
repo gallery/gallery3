@@ -15,27 +15,7 @@
 <div id="g-item">
   <?= $theme->photo_top() ?>
 
-  <ul class="g-pager ui-helper-clearfix">
-    <li class="g-first">
-      <? if ($previous_item): ?>
-      <a href="<?= $previous_item->url() ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
-      <span class="ui-icon ui-icon-triangle-1-w"></span><?= t("previous") ?></a>
-      <? else: ?>
-      <a class="g-button ui-icon-left ui-state-disabled ui-corner-all">
-      <span class="ui-icon ui-icon-triangle-1-w"></span><?= t("previous") ?></a>
-      <? endif; ?>
-    </li>
-    <li class="g-info"><?= t("%position of %total", array("position" => $position, "total" => $sibling_count)) ?></li>
-    <li class="g-text-right">
-      <? if ($next_item): ?>
-      <a href="<?= $next_item->url() ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
-      <span class="ui-icon ui-icon-triangle-1-e"></span><?= t("next") ?></a>
-      <? else: ?>
-      <a class="g-button ui-icon-right ui-state-disabled ui-corner-all">
-      <span class="ui-icon ui-icon-triangle-1-e"></span><?= t("next") ?></a>
-      <? endif ?>
-    </li>
-  </ul>
+  <?= $theme->pager() ?>
 
   <div id="g-photo">
     <?= $theme->resize_top($item) ?>
