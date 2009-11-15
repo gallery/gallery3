@@ -102,4 +102,18 @@ class Tag_Model extends ORM {
     }
     return $result;
   }
+
+  /**
+   * Return the server-relative url to this item, eg:
+   *   /gallery3/index.php/tags/35
+   *
+   * @param string $query the query string (eg "page=3")
+   */
+  public function url($query=null) {
+    $url = url::site("tags/$this->id");
+    if ($query) {
+      $url .= "?$query";
+    }
+    return $url;
+  }
 }

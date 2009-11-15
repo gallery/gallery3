@@ -25,13 +25,18 @@ class Tags_Controller extends REST_Controller {
     $page = (int) $this->input->get("page", "1");
     $children_count = $tag->items_count();
     $offset = ($page-1) * $page_size;
+    $max_pages = max(ceil($children_count / $page_size), 1);
 
     // Make sure that the page references a valid offset
-    if ($page < 1 || ($children_count && $page > ceil($children_count / $page_size))) {
-      Kohana::show_404();
+    if ($page < 1) {
+      url::redirect($album->abs_url());
+    } else if ($page > $max_pages) {
+      url::redirect($album->abs_url("page=$max_pages"));
     }
 
     $template = new Theme_View("page.html", "tag");
+    $template->set_global("page", $page);
+    $template->set_global("max_pages", $max_pages);
     $template->set_global("page_size", $page_size);
     $template->set_global("tag", $tag);
     $template->set_global("children", $tag->items($page_size, $offset));
