@@ -148,20 +148,19 @@ class Theme_View_Core extends Gallery_View {
     $v->next_page_url = null;
     $v->last_page_url = null;
 
-    if ($this->page_type == "album" || $this->page_type = "tag") {
+    if ($this->page_type == "album" || $this->page_type == "tag") {
       $v->page = $this->page;
       $v->max_pages = $this->max_pages;
       $v->total = $this->children_count;
 
-      $model = $this->page_type == "album" ? $this->item : $this->tag;
       if ($this->page != 1) {
-        $v->first_page_url = $model->url();
-        $v->previous_page_url = $model->url("page=" . ($this->page - 1));
+        $v->first_page_url = url::merge(array("page" => 1));
+        $v->first_page_url = url::merge(array("page" => $this->page - 1));
       }
 
       if ($this->page != $this->max_pages) {
-        $v->next_page_url = $model->url("page=" . ($this->page + 1));
-        $v->last_page_url = $model->url("page={$this->max_pages}");
+        $v->next_page_url = url::merge(array("page" => $this->page + 1));
+        $v->last_page_url = url::merge(array("page" => $this->max_pages));
       }
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
