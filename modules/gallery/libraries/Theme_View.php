@@ -140,26 +140,28 @@ class Theme_View_Core extends Gallery_View {
    *
    * See themes/wind/views/pager.html for documentation on the variables generated here.
    */
-  public function pager() {
-    $v = new View("pager.html");
+  public function paginator() {
+    $v = new View("paginator.html");
     $v->page_type = $this->page_type;
     $v->first_page_url = null;
     $v->previous_page_url = null;
     $v->next_page_url = null;
     $v->last_page_url = null;
 
-    if ($this->page_type == "album") {
+    if ($this->page_type == "album" || $this->page_type = "tag") {
       $v->page = $this->page;
       $v->max_pages = $this->max_pages;
       $v->total = $this->children_count;
+
+      $model = $this->page_type == "album" ? $this->item : $this->tag;
       if ($this->page != 1) {
-        $v->first_page_url = $this->item->url();
-        $v->previous_page_url = $this->item->url("page=" . ($this->page - 1));
+        $v->first_page_url = $model->url();
+        $v->previous_page_url = $model->url("page=" . ($this->page - 1));
       }
 
       if ($this->page != $this->max_pages) {
-        $v->next_page_url = $this->item->url("page=" . ($this->page + 1));
-        $v->last_page_url = $this->item->url("page={$this->max_pages}");
+        $v->next_page_url = $model->url("page=" . ($this->page + 1));
+        $v->last_page_url = $model->url("page={$this->max_pages}");
       }
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;

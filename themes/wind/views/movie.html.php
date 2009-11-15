@@ -2,7 +2,7 @@
 <div id="g-item">
   <?= $theme->photo_top() ?>
 
-  <?= $theme->pager() ?>
+  <?= $theme->paginator() ?>
 
   <div id="g-movie" class="ui-helper-clearfix">
     <?= $item->movie_img(array("class" => "g-movie", "id" => "g-movie-id-{$item->id}")) ?>

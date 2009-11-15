@@ -26,4 +26,4 @@
 </ul>
 <?= $theme->dynamic_bottom() ?>
 
-<?= $theme->pager() ?>
+<?= $theme->paginator() ?>

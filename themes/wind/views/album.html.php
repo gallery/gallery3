@@ -38,4 +38,4 @@
 </ul>
 <?= $theme->album_bottom() ?>
 
-<?= $theme->pager() ?>
+<?= $theme->paginator() ?>

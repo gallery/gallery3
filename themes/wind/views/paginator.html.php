@@ -6,12 +6,12 @@
 // for album views.
 //
 // Available variables for all page types:
-//   $page_type               - "album", "movie" or "photo"
+//   $page_type               - "album", "movie", "photo" or "tag"
 //   $previous_page_url       - the url to the previous page, if there is one
 //   $next_page_url           - the url to the next page, if there is one
 //   $total                   - the total number of photos in this album
 //
-// Available for the "album" page type:
+// Available for the "album" and "tag" page types:
 //   $page                    - what page number we're on
 //   $max_pages               - the maximum page number
 //   $page_size               - the page size
@@ -22,11 +22,12 @@
 //
 // Available for "photo" and "movie" page types:
 //   $position                - the position number of this photo
+//
 ?>
 
 <ul class="g-pager ui-helper-clearfix">
   <li class="g-first">
-  <? if ($page_type == "album"): ?>
+  <? if ($page_type == "album" || $page_type == "tag"): ?>
     <? if (isset($first_page_url)): ?>
       <a href="<?= $first_page_url ?>" class="g-button ui-icon-left ui-state-default ui-corner-all">
         <span class="ui-icon ui-icon-seek-first"></span><?= t("First") ?></a>
@@ -46,17 +47,20 @@
   </li>
 
   <li class="g-info">
-    <? if ($page_type == "album"): ?>
-      <?= /* @todo This message isn't easily localizable */
-          /* @todo does this really need to be a t2?  why not just skip the msg when there's 1 photo? */
-          t2("Photo %from_number of %count",
-             "Photos %from_number - %to_number of %count",
-             $total,
-             array("from_number" => $first_visible_position,
-                   "to_number" => $last_visible_position,
-                   "count" => $total)) ?>
+    <? if ($total): ?>
+      <? if ($page_type == "album" || $page_type == "tag"): ?>
+        <?= /* @todo This message isn't easily localizable */
+            t2("Photo %from_number of %count",
+               "Photos %from_number - %to_number of %count",
+               $total,
+               array("from_number" => $first_visible_position,
+                     "to_number" => $last_visible_position,
+                     "count" => $total)) ?>
+      <? else: ?>
+        <?= t("%position of %total", array("position" => $position, "total" => $total)) ?>
+      <? endif ?>
     <? else: ?>
-      <?= t("%position of %total", array("position" => $position, "total" => $total)) ?>
+      <?= t("No photos") ?>
     <? endif ?>
   </li>
 
@@ -69,7 +73,7 @@
       <span class="ui-icon ui-icon-seek-next"></span><?= t("Next") ?></a>
   <? endif ?>
 
-  <? if ($page_type == "album"): ?>
+  <? if ($page_type == "album" || $page_type == "tag"): ?>
     <? if (isset($last_page_url)): ?>
       <a href="<?= $last_page_url ?>" class="g-button ui-icon-right ui-state-default ui-corner-all">
         <span class="ui-icon ui-icon-seek-end"></span><?= t("Last") ?></a>

@@ -40,7 +40,7 @@
     </li>
     <? endforeach ?>
   </ul>
-  <?= $theme->pager() ?>
+  <?= $theme->paginator() ?>
 
   <? else: ?>
   <p>

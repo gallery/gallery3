@@ -15,7 +15,7 @@
 <div id="g-item">
   <?= $theme->photo_top() ?>
 
-  <?= $theme->pager() ?>
+  <?= $theme->paginator() ?>
 
   <div id="g-photo">
     <?= $theme->resize_top($item) ?>
