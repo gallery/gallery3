@@ -30,7 +30,12 @@ class Search_Controller extends Controller {
     }
 
     list ($count, $result) = search::search($q, $page_size, $offset);
+
+    $max_pages = max(ceil($count / $page_size), 1);
+
     $template = new Theme_View("page.html", "search");
+    $template->set_global("page", $page);
+    $template->set_global("max_pages", $max_pages);
     $template->set_global("page_size", $page_size);
     $template->set_global("children_count", $count);
 
