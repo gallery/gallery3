@@ -11,11 +11,10 @@
 /* User/group admin ~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-user-admin {
-  
+  width: auto;
 }
 
 #g-group-admin {
-  
 }
 
 #g-user-admin-list .g-admin {
@@ -25,7 +24,7 @@
 
 .g-group {
   display: block;
-  border: 1px solid gray;
+  border: 1px solid #999;
   margin: 0 1em 1em 0;
   padding: 0;
   width: 200px;
@@ -41,18 +40,17 @@
   padding: 0;
 }
 
-.g-group ul,
+.g-group .g-member-list,
 .g-group div {
   height: 180px;
   margin: 1px;
   overflow: auto;
-  padding-top: .2em;
 }
 
-.g-group div p {
-  color: gray;
+.g-group p {
+  margin-top: 1em;
+  padding: .5em;
   text-align: center;
-  padding: 2em .5em 0 .5em
 }
 
 .g-group .g-user {
@@ -65,7 +63,7 @@
 
 .g-default-group h4,
 .g-default-group .g-user {
-  color: gray;
+  color: #999;
 }
 
 .g-group.ui-droppable {

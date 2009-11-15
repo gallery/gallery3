@@ -46,7 +46,8 @@
   <h1> <?= t("Users and groups") ?> </h1>
 
   <div class="g-block-content">
-    <div class="g-block">
+
+    <div id="g-user-admin" class="g-block">
       <a href="<?= url::site("admin/users/add_user_form") ?>"
           class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
           title="<?= t("Create a new user")->for_html_attr() ?>">
@@ -54,7 +55,7 @@
         <?= t("Add a new user") ?>
       </a>
 
-      <h2> <?= t("User admin") ?> </h2>
+      <h2> <?= t("Users") ?> </h2>
 
       <div class="g-block-content">
         <table id="g-user-admin-list">
@@ -70,7 +71,7 @@
           <tr id="g-user-<?= $user->id ?>" class="<?= text::alternate("g-odd", "g-even") ?> g-user <?= $user->admin ? "g-admin" : "" ?>">
             <td id="g-user-<?= $user->id ?>" class="g-core-info g-draggable">
               <img src="<?= $user->avatar_url(20, $theme->url("images/avatar.jpg", true)) ?>"
-                   title="<?= t("Drag user onto group below to add as a new member")->for_html_attr() ?>"
+                   title="<?= t("Drag user onto a group to add as a new member")->for_html_attr() ?>"
                    alt="<?= html::clean_attribute($user->name) ?>"
                    width="20"
                    height="20" />
@@ -106,7 +107,7 @@
       </div>
     </div>
 
-    <div id="g-group-admin" class="g-block ui-helper-clearfix">
+    <div id="g-group-admin" class="g-block g-right ui-helper-clearfix">
       <a href="<?= url::site("admin/users/add_group_form") ?>"
           class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
           title="<?= t("Create a new group")->for_html_attr() ?>">
@@ -114,9 +115,7 @@
         <?= t("Add a new group") ?>
       </a>
 
-      <h2>
-        <?= t("Group admin") ?>
-      </h2>
+      <h2> <?= t("Groups") ?> </h2>
 
       <div class="g-block-content">
         <ul>
@@ -129,5 +128,6 @@
         </ul>
       </div>
     </div>
+
   </div>
 </div>
