@@ -154,13 +154,13 @@ class Theme_View_Core extends Gallery_View {
       $v->total = $this->children_count;
 
       if ($this->page != 1) {
-        $v->first_page_url = url::merge(array("page" => 1));
-        $v->first_page_url = url::merge(array("page" => $this->page - 1));
+        $v->first_page_url = url::site(url::merge(array("page" => 1)));
+        $v->previous_page_url = url::site(url::merge(array("page" => $this->page - 1)));
       }
 
       if ($this->page != $this->max_pages) {
-        $v->next_page_url = url::merge(array("page" => $this->page + 1));
-        $v->last_page_url = url::merge(array("page" => $this->max_pages));
+        $v->next_page_url = url::site(url::merge(array("page" => $this->page + 1)));
+        $v->last_page_url = url::site(url::merge(array("page" => $this->max_pages)));
       }
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
@@ -168,11 +168,11 @@ class Theme_View_Core extends Gallery_View {
     } else {
       $v->position = $this->position;
       $v->total = $this->sibling_count;
-      if ($v->previous_page = $this->previous_item) {
+      if ($this->previous_item) {
         $v->previous_page_url = $this->previous_item->url();
       }
 
-      if ($v->next_page = $this->next_item) {
+      if ($this->next_item) {
         $v->next_page_url = $this->next_item->url();
       }
     }
