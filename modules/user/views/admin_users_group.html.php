@@ -4,17 +4,17 @@
   <? if (!$group->special): ?>
   <a href="<?= url::site("admin/users/delete_group_form/$group->id") ?>"
     title="<?= t("Delete the %name group", array("name" => $group->name))->for_html_attr() ?>"
-    class="g-dialog-link g-button g-right ui-state-default ui-corner-all">
+    class="g-dialog-link g-button g-right">
     <span class="ui-icon ui-icon-trash"><?= t("Delete") ?></span></a>
   <? else: ?>
   <a title="<?= t("This default group cannot be deleted")->for_html_attr() ?>"
-     class="g-dialog-link g-button g-right ui-state-disabled ui-corner-all ui-icon-left">
+     class="g-button g-right ui-state-disabled ui-icon-left">
     <span class="ui-icon ui-icon-trash"><?= t("Delete") ?></span></a>
   <? endif ?>
 </h4>
 
 <? if ($group->users->count() > 0): ?>
-<ul>
+<ul class="g-member-list">
   <? foreach ($group->users as $i => $user): ?>
   <li class="g-user">
     <?= html::clean($user->name) ?>
@@ -31,8 +31,8 @@
 </ul>
 <? else: ?>
 <div>
-  <p>
-    <?= t("Drag &amp; drop users from the \"User admin\" above into this group box to add group members.") ?>
+  <p class="ui-state-disabled">
+    <?= t("Drag &amp; drop users from the \"Users\" list onto this group to add group members.") ?>
   </p>
 </div>
 <? endif ?>
