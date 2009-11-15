@@ -148,7 +148,7 @@ class Theme_View_Core extends Gallery_View {
     $v->next_page_url = null;
     $v->last_page_url = null;
 
-    if ($this->page_type == "album" || $this->page_type = "tag") {
+    if ($this->page_type == "album" || $this->page_type == "tag") {
       $v->page = $this->page;
       $v->max_pages = $this->max_pages;
       $v->total = $this->children_count;
