@@ -25,10 +25,15 @@ class Controller_Auth_Test extends Unit_Test_Case {
 
   public function find_missing_auth_test() {
     $found = array();
-    $controllers = glob("*/*/controllers/*.php");
-    $feeds = glob("*/*/helpers/*_rss.php");
+    $controllers = explode("\n", `git ls-files '*/*/controllers/*.php'`);
+    $feeds = explode("\n", `git ls-files '*/*/helpers/*_rss.php'`);
     foreach (array_merge($controllers, $feeds) as $controller) {
       if (preg_match("{modules/(gallery_)?unit_test/}", $controller)) {
+        continue;
+      }
+
+      if (!$controller) {
+        // The last entry in each list from git ls-files appears to be an empty line
         continue;
       }
 
@@ -118,7 +123,7 @@ class Controller_Auth_Test extends Unit_Test_Case {
               if ($token[1] == "access" &&
                   self::_token_matches(array(T_DOUBLE_COLON, "::"), $tokens, $token_number + 1) &&
                   self::_token_matches(array(T_STRING), $tokens, $token_number + 2) &&
-                  in_array($tokens[$token_number + 2][1], array("forbidden", "required")) && 
+                  in_array($tokens[$token_number + 2][1], array("forbidden", "required")) &&
                   self::_token_matches("(", $tokens, $token_number + 3)) {
                 $token_number += 3;
                 $function->checks_authorization(true);
@@ -149,7 +154,7 @@ class Controller_Auth_Test extends Unit_Test_Case {
             }
           }
         }
-      } 
+      }
     }
 
     // Generate the report
