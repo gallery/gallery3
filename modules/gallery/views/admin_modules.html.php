@@ -15,9 +15,8 @@
           <th> <?= t("Version") ?> </th>
           <th> <?= t("Description") ?> </th>
         </tr>
-        <? $i = 0 ?>
         <? foreach ($available as $module_name => $module_info):  ?>
-        <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?>">
+        <tr class="<?= text::alternate("g-odd", "g-even") ?>">
           <? $data = array("name" => $module_name); ?>
           <? if ($module_info->locked) $data["disabled"] = 1; ?>
           <td> <?= form::checkbox($data, '1', module::is_active($module_name)) ?> </td>
@@ -25,7 +24,6 @@
           <td> <?= $module_info->version ?> </td>
           <td> <?= t($module_info->description) ?> </td>
         </tr>
-        <? $i++ ?>
         <? endforeach ?>
       </table>
       <input type="submit" value="<?= t("Update")->for_html_attr() ?>" />

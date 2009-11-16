@@ -103,8 +103,8 @@
           <?= t("Actions") ?>
         </th>
       </tr>
-      <? foreach ($comments as $i => $comment): ?>
-      <tr id="g-comment-<?= $comment->id ?>" class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?>">
+      <? foreach ($comments as $comment): ?>
+      <tr id="g-comment-<?= $comment->id ?>" class="<?= text::alternate("g-odd", "g-even") ?>">
         <td>
           <a href="#">
             <img src="<?= $comment->author()->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
