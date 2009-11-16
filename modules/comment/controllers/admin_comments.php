@@ -33,10 +33,10 @@ class Admin_Comments_Controller extends Admin_Controller {
 
   public function menu_labels() {
     $menu = $this->_menu($this->_counts());
-    print json_encode(array($menu->get("unpublished")->label->for_js(),
-                            $menu->get("published")->label->for_js(),
-                            $menu->get("spam")->label->for_js(),
-                            $menu->get("deleted")->label->for_js()));
+    print json_encode(array((string) $menu->get("unpublished")->label,
+                            (string) $menu->get("published")->label,
+                            (string) $menu->get("spam")->label,
+                            (string) $menu->get("deleted")->label));
   }
 
   public function queue($state) {
