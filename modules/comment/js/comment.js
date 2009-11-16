@@ -32,7 +32,7 @@ function ajaxify_comment_form() {
         $("#g-comments form").replaceWith(data.form);
         ajaxify_comment_form();
       }
-      if (data.result == "success") {
+      if (data.result == "success" && data.resource) {
         $.get(data.resource, function(data, textStatus) {
           $("#g-comments .g-block-content ul:first").append("<li>"+data+"</li>");
           $("#g-comments .g-block-content ul:first li:last").effect("highlight", {color: "#cfc"}, 8000);
