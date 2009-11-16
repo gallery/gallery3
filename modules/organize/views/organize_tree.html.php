@@ -14,8 +14,7 @@
     <? else: ?>
     <li class="g-organize-album ui-icon-left <?= access::can("edit", $child) ? "" : "g-view-only" ?>"
         ref="<?= $child->id ?>">
-      <span class="ui-icon ui-icon-plus">
-      </span>
+      <span class="ui-icon ui-icon-plus"></span>
       <span class="g-organize-album-text" ref="<?= $child->id ?>">
         <?= html::clean($child->title) ?>
       </span>

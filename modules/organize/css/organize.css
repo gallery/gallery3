@@ -1,53 +1,42 @@
-
 /*******************************************************************
  * Dialog wide styles
  */
+
 #g-organize {
-  height: 100%;
-  overflow: hidden;
+  height: auto;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative;
+  width: 100%;
 }
 
-#g-organize #bd {
-  height: 100%;
-}
-
-#g-organize #g-organize-detail {
-  width: auto;
-}
-
-#g-organize #g-organize-tree-container {
-  height: 100%;
-  width: 25%;
-}
-
-#g-organize #g-action-status {
-  margin-bottom: .4em;
-  width: 75%;
-  white-space: nowrap;
-}
-
-#g-organize-detail {
-  height: 100%;
+#g-organize-content-pane {
+  height: auto;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative;
+  width: 100%;
 }
 
 /*******************************************************************
  * Album Tree styles
  */
-#g-organize-tree-container {
+
+#g-organize #g-organize-tree-container {
   height: 100%;
   overflow: auto;
-  margin: 0 !important;
-  padding: 0 !important;
+  margin: 0;
+  padding: 0;
+  width: 19%;
 }
 
 #g-organize-album-tree .g-selected {
-  background-color: #cfdeff;
+  background-color: #eee;
   border-bottom: 1px solid #999;
-  margin-right: 0;
 }
 
 #g-organize-album-tree ul li {
-  padding-left: 1.2em;
+  padding: 0 0 .2em 1.2em;
 }
 
 .g-organize-album span {
@@ -56,9 +45,9 @@
 
 .g-organize-album-text {
   cursor: pointer;
-  width: auto;
-  margin: 2px 0px 1px 2px;
   display: block;
+  margin: 2px 0px 1px 2px;
+  width: auto;
 }
 
 .g-organize-album-text:hover {
@@ -68,70 +57,90 @@
 /*******************************************************************
  * Album panel styles
  */
-#g-organize-microthumb-panel {
+
+#g-organize #g-organize-detail {
+  height: 100%;
   margin: 0 !important;
+  overflow: hidden;
   padding: 0 !important;
-  background-color: #cfdeff;
+  width: 80%;
+}
+
+#g-organize #g-organize-detail .g-message-block {
+  margin: 0;
+  padding-left: 30px !important;
+}
+
+#g-organize-microthumb-panel {
+  background-color: #eee;
   border: 1px solid #999;
-  border-top: none !important;
-  border-left: none !important;
-  overflow-x: hidden;
-  overflow-y: auto;
+  height: 100%;
+  margin: 0 !important;
+  position: relative;
+  padding: 0 !important;
+  width: 100%;
 }
 
 #g-organize-microthumb-grid {
-  padding: 1em;
+  height: 100%;
+  overflow: auto;
+  padding: .4em !important;
+  position: relative;
 }
 
 .g-organize-microthumb-grid-cell {
-  font-size: .8em;
-  padding: .5em !important;
-  border-left: 1px hidden #13A;
-  border-right: 1px hidden #13A;
-  margin: 4px;
+  margin: 6px;
+  padding: 0 !important;
+  position: relative;
 }
 
 .g-organize-microthumb {
+  background-color: #fff;
+  border: 1px solid #ccc;
   display: block;
-  height: 9em;
+  height: 100px;
+  margin: 0;
+  padding: .4em 0;
+  position: relative;
   text-align: center;
-  width: 9em;
+  width: 110px;
 }
 
 .g-organize-microthumb-grid-cell.ui-selecting,
 .g-organize-microthumb-grid-cell.ui-selected {
-  margin: 2px;
   border: 2px solid #13A;
+  margin: 4px;
 }
 
 .ui-selectable-helper {
-  z-index: 2000 !important;
+  background: #13A;
   border: 1px dashed #00F;
   opacity: 0.25;
-  background: #13A;
+  z-index: 2000 !important;
 }
 
-.g-thumbnail {
-  padding: .5em;
-}
-
-#g-organize-microthumb-grid .g-album {
-  background-color: #e8e8e8;
+.g-organize-microthumb .ui-icon {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  z-index: 4000;
 }
 
 .g-organize-microthumb-grid-cell:hover {
-  margin: 2px;
   border: 2px solid #13A;
+  margin: 4px;
 }
 
 /****************************************************************
  * Controls styles
  */
+
 #g-organize-controls {
-  padding-left: 8px;
-  background-color: #13A;
-  color: #ccc;
-  width: 100% !important;
+  background-color: #666;
+  color: #eee;
+  margin: 0 !important;
+  padding: .2em .4em;
+  width: 100%;
 }
 
 #g-organize-controls select {
