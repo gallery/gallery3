@@ -250,7 +250,7 @@ td {
   background-color: #e8e8e8;
 }
 
-#g-content #g-album-grid .g-album h2 span {
+#g-content #g-album-grid .g-album h2 span.g-album {
   background: transparent url('../images/ico-album.png') no-repeat top left;
   display: inline-block;
   height: 16px;

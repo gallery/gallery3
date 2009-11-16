@@ -20,7 +20,8 @@
     </a>
     <?= $theme->thumb_bottom($child) ?>
     <?= $theme->context_menu($child, "#g-item-id-{$child->id} .g-thumbnail") ?>
-    <h2><span></span><a href="<?= $child->url() ?>"><?= html::purify($child->title) ?></a></h2>
+    <h2><span class="<?= $item_class ?>"></span>
+      <a href="<?= $child->url() ?>"><?= html::purify($child->title) ?></a></h2>
     <ul class="g-metadata">
       <?= $theme->thumb_info($child) ?>
     </ul>
