@@ -120,15 +120,16 @@ class gallery_task_Core {
     $errors = array();
     try {
       $start = microtime(true);
-      $dirs = $task->get("dirs");
-      $files = $task->get("files");
-      $cache = $task->get("cache", array());
+      $data = Cache::instance()->get("update_l10n_cache:{$task->id}");
+      if ($data) {
+        list($dirs, $files, $cache) = unserialize($data);
+      }
       $i = 0;
 
       switch ($task->get("mode", "init")) {
       case "init":  // 0%
         $dirs = array("gallery", "modules", "themes", "installer");
-        $files = array();
+        $files = $cache = array();
         $task->set("mode", "find_files");
         $task->status = t("Finding files");
         break;
@@ -194,9 +195,12 @@ class gallery_task_Core {
         $task->percent_complete = 100;
       }
 
-      $task->set("files", $files);
-      $task->set("dirs", $dirs);
-      $task->set("cache", $cache);
+      if ($task->percent_complete < 100) {
+        Cache::instance()->set("update_l10n_cache:{$task->id}",
+                               serialize(array($dirs, $files, $cache)));
+      } else {
+        Cache::instance()->delete("update_l10n_cache:{$task->id}");
+      }
     } catch (Exception $e) {
       $task->done = true;
       $task->state = "error";
