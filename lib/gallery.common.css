@@ -265,7 +265,7 @@ form li.g-info,
 form li.g-success,
 form li.g-warning {
   background-image: none;
-  padding: .3em .8em .3em 1em;
+  padding: .3em .8em .3em 0;
 }
 
 .g-short-form li.g-error {
@@ -489,8 +489,7 @@ ul.sf-menu li li li.sfHover ul {
 
 .g-message-block {
   border: 1px solid #ccc;
-  padding: 0 !important;
-  width: 100%;
+  padding: 0;
 }
 
 #g-action-status {
@@ -500,8 +499,7 @@ ul.sf-menu li li li.sfHover ul {
 #g-action-status li,
 p#g-action-status,
 div#g-action-status {
-  padding-top: .4em;
-  padding-bottom: .3em;
+  padding: .3em .3em .3em 30px;
 }
 
 #g-site-status li {

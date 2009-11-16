@@ -68,7 +68,12 @@
 
 #g-organize #g-organize-detail .g-message-block {
   margin: 0;
-  padding-left: 30px !important;
+}
+
+#g-organize #g-organize-detail .g-message-block li {
+  padding-bottom: .2em;
+  padding-top: .2em;
+  width: inherit;
 }
 
 #g-organize-microthumb-panel {

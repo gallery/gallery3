@@ -17,9 +17,9 @@
     <div id="g-organize-detail" class="g-left ui-helper-clearfix">
       <div id="g-organize-microthumb-panel"
            ref="<?= url::site("organize/album/__ITEM_ID__/__OFFSET__") ?>">
-        <div id="g-action-status" class="g-message-block g-info">
-          <?= t("Drag and drop photos to re-order or move between albums") ?>
-        </div>
+        <ul id="g-action-status" class="g-message-block">
+          <li class="g-info"><?= t("Drag and drop photos to re-order or move between albums") ?></li>
+        </ul>
         <ul id="g-organize-microthumb-grid">
           <?= $micro_thumb_grid ?>
         </ul>
