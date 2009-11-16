@@ -37,7 +37,7 @@ td {
 }
 
 tr.current td {
-  color: #999;
+  opacity: 0.5;
   font-style: italic;
 }
 
@@ -87,7 +87,7 @@ div.button a {
   text-decoration: none;
 }
 
-div.button:hover {
+div.button-active:hover {
   background: #ccc;
 }
 

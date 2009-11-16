@@ -58,11 +58,17 @@
           <? endforeach ?>
         </table>
 
-        <div class="button">
+        <? if ($done): ?>
+        <div class="button muted">
+          <?= t("Upgrade all") ?>
+        </div>
+        <? else: ?>
+        <div class="button button-active">
           <a href="<?= url::site("upgrader/upgrade") ?>">
             <?= t("Upgrade all") ?>
           </a>
         </div>
+        <? endif ?>
 
         <? if (@$inactive): ?>
         <p class="<?= $done ? "muted" : "" ?>">
