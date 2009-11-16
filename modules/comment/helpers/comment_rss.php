@@ -61,7 +61,7 @@ class comment_rss_Core {
     $feed->max_pages = ceil($comments->count_all() / $limit);
     $feed->title = htmlspecialchars(t("Recent Comments"));
     $feed->uri = url::abs_site("albums/" . (empty($id) ? "1" : $id));
-    $feed->description = t("Recent Comments");
+    $feed->description = t("Recent comments");
 
     return $feed;
   }

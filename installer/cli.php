@@ -95,7 +95,7 @@ function parse_cli_params() {
       $config["dbname"] = $argv[++$i];
       break;
     case "-h":
-      $config["host"] = $argv[++$i];
+      list ($config["host"], $config["port"]) = explode(":", $argv[++$i]);
       break;
     case "-u":
       $config["user"] = $argv[++$i];

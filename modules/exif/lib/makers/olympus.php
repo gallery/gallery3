@@ -80,12 +80,12 @@ function formatOlympusData($type,$tag,$intel,$data) {
 			if($data == 1) $data = "SQ";
 			else if($data == 2) $data = "HQ";
 			else if($data == 3) $data = "SHQ";
-			else $data = gettext("Unknown").": ".$data;
+			else $data = (string) t("Unknown").": ".$data;
 		}
 		if($tag=="0202") { //Macro
 			if($data == 0) $data = "Normal";
 			else if($data == 1) $data = "Macro";
-			else $data = gettext("Unknown").": ".$data;
+			else $data = (string) t("Unknown").": ".$data;
 		}
 	} else if($type=="UNDEFINED") {
 		

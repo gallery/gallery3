@@ -26,11 +26,12 @@
       <link><?= url::abs_site("{$child->type}s/{$child->id}") ?></link>
       <guid isPermaLink="true"><?= url::abs_site("{$child->type}s/{$child->id}") ?></guid>
       <pubDate><?= date("D, d M Y H:i:s T", $child->created); ?></pubDate>
+      <description><?= html::purify($child->description) ?></description>
       <content:encoded>
         <![CDATA[
           <span><?= html::purify($child->description) ?></span>
           <p>
-          <? if ($child->type == "photo" || $child->type == "album"): ?>
+          <? if ($child->type == "photo"): ?>
             <img alt="" src="<?= $child->resize_url(true) ?>"
                  title="<?= html::purify($child->title)->for_html_attr() ?>"
                  height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
@@ -45,12 +46,11 @@
         ]]>
       </content:encoded>
       <media:thumbnail url="<?= $child->thumb_url(true) ?>"
-                       fileSize="<?= @filesize($child->thumb_path()) ?>"
                        height="<?= $child->thumb_height ?>"
                        width="<?= $child->thumb_width ?>"
                        />
       <media:group>
-        <? if ($child->type == "photo" || $child->type == "album"): ?>
+        <? if ($child->type == "photo"): ?>
           <media:content url="<?= $child->resize_url(true) ?>"
                          fileSize="<?= @filesize($child->resize_path()) ?>"
                          type="<?= $child->mime_type ?>"

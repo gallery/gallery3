@@ -79,151 +79,151 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 			if ($result['Bytes'] != strlen($data) / 2) return $result; //Bad chunk
 			$result['Macro']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//1
 			switch($result['Macro']) {
-				case 1: $result['Macro'] = gettext("Macro"); break;
-				case 2: $result['Macro'] = gettext("Normal"); break;
-				default: $result['Macro'] = gettext("Unknown");
+				case 1: $result['Macro'] = (string) t("Macro"); break;
+				case 2: $result['Macro'] = (string) t("Normal"); break;
+				default: $result['Macro'] = (string) t("Unknown");
 			}
 			$result['SelfTimer']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//2
 			switch($result['SelfTimer']) {
-				case 0: $result['SelfTimer'] = gettext("Off"); break;
-				default: $result['SelfTimer'] .= gettext("/10s");
+				case 0: $result['SelfTimer'] = (string) t("Off"); break;
+				default: $result['SelfTimer'] .= (string) t("/10s");
 			}
 			$result['Quality']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//3
 			switch($result['Quality']) {
-				case 2: $result['Quality'] = gettext("Normal"); break;
-				case 3: $result['Quality'] = gettext("Fine"); break;
-				case 5: $result['Quality'] = gettext("Superfine"); break;
-				default: $result['Quality'] = gettext("Unknown");
+				case 2: $result['Quality'] = (string) t("Normal"); break;
+				case 3: $result['Quality'] = (string) t("Fine"); break;
+				case 5: $result['Quality'] = (string) t("Superfine"); break;
+				default: $result['Quality'] = (string) t("Unknown");
 			}
 			$result['Flash']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//4
 			switch($result['Flash']) {
-				case 0: $result['Flash'] = gettext("Off"); break;
-				case 1: $result['Flash'] = gettext("Auto"); break;
-				case 2: $result['Flash'] = gettext("On"); break;
-				case 3: $result['Flash'] = gettext("Red Eye Reduction"); break;
-				case 4: $result['Flash'] = gettext("Slow Synchro"); break;
-				case 5: $result['Flash'] = gettext("Auto + Red Eye Reduction"); break;
-				case 6: $result['Flash'] = gettext("On + Red Eye Reduction"); break;
-				case 16: $result['Flash'] = gettext("External Flash"); break;
-				default: $result['Flash'] = gettext("Unknown");
+				case 0: $result['Flash'] = (string) t("Off"); break;
+				case 1: $result['Flash'] = (string) t("Auto"); break;
+				case 2: $result['Flash'] = (string) t("On"); break;
+				case 3: $result['Flash'] = (string) t("Red Eye Reduction"); break;
+				case 4: $result['Flash'] = (string) t("Slow Synchro"); break;
+				case 5: $result['Flash'] = (string) t("Auto + Red Eye Reduction"); break;
+				case 6: $result['Flash'] = (string) t("On + Red Eye Reduction"); break;
+				case 16: $result['Flash'] = (string) t("External Flash"); break;
+				default: $result['Flash'] = (string) t("Unknown");
 			}
 			$result['DriveMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//5
 			switch($result['DriveMode']) {
-				case 0: $result['DriveMode'] = gettext("Single/Timer"); break;
-				case 1: $result['DriveMode'] = gettext("Continuous"); break;
-				default: $result['DriveMode'] = gettext("Unknown");
+				case 0: $result['DriveMode'] = (string) t("Single/Timer"); break;
+				case 1: $result['DriveMode'] = (string) t("Continuous"); break;
+				default: $result['DriveMode'] = (string) t("Unknown");
 			}
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//6
 			$result['FocusMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//7
 			switch($result['FocusMode']) {
-				case 0: $result['FocusMode'] = gettext("One-Shot"); break;
-				case 1: $result['FocusMode'] = gettext("AI Servo"); break;
-				case 2: $result['FocusMode'] = gettext("AI Focus"); break;
-				case 3: $result['FocusMode'] = gettext("Manual Focus"); break;
-				case 4: $result['FocusMode'] = gettext("Single"); break;
-				case 5: $result['FocusMode'] = gettext("Continuous"); break;
-				case 6: $result['FocusMode'] = gettext("Manual Focus"); break;
-				default: $result['FocusMode'] = gettext("Unknown");
+				case 0: $result['FocusMode'] = (string) t("One-Shot"); break;
+				case 1: $result['FocusMode'] = (string) t("AI Servo"); break;
+				case 2: $result['FocusMode'] = (string) t("AI Focus"); break;
+				case 3: $result['FocusMode'] = (string) t("Manual Focus"); break;
+				case 4: $result['FocusMode'] = (string) t("Single"); break;
+				case 5: $result['FocusMode'] = (string) t("Continuous"); break;
+				case 6: $result['FocusMode'] = (string) t("Manual Focus"); break;
+				default: $result['FocusMode'] = (string) t("Unknown");
 			}
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//8
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//9
 			$result['ImageSize']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//10
 			switch($result['ImageSize']) {
-				case 0: $result['ImageSize'] = gettext("Large"); break;
-				case 1: $result['ImageSize'] = gettext("Medium"); break;
-				case 2: $result['ImageSize'] = gettext("Small"); break;
-				default: $result['ImageSize'] = gettext("Unknown");
+				case 0: $result['ImageSize'] = (string) t("Large"); break;
+				case 1: $result['ImageSize'] = (string) t("Medium"); break;
+				case 2: $result['ImageSize'] = (string) t("Small"); break;
+				default: $result['ImageSize'] = (string) t("Unknown");
 			}
 			$result['EasyShooting']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//11
 			switch($result['EasyShooting']) {
-				case 0: $result['EasyShooting'] = gettext("Full Auto"); break;
-				case 1: $result['EasyShooting'] = gettext("Manual"); break;
-				case 2: $result['EasyShooting'] = gettext("Landscape"); break;
-				case 3: $result['EasyShooting'] = gettext("Fast Shutter"); break;
-				case 4: $result['EasyShooting'] = gettext("Slow Shutter"); break;
-				case 5: $result['EasyShooting'] = gettext("Night"); break;
-				case 6: $result['EasyShooting'] = gettext("Black & White"); break;
-				case 7: $result['EasyShooting'] = gettext("Sepia"); break;
-				case 8: $result['EasyShooting'] = gettext("Portrait"); break;
-				case 9: $result['EasyShooting'] = gettext("Sport"); break;
-				case 10: $result['EasyShooting'] = gettext("Macro/Close-Up"); break;
-				case 11: $result['EasyShooting'] = gettext("Pan Focus"); break;
-				default: $result['EasyShooting'] = gettext("Unknown");
+				case 0: $result['EasyShooting'] = (string) t("Full Auto"); break;
+				case 1: $result['EasyShooting'] = (string) t("Manual"); break;
+				case 2: $result['EasyShooting'] = (string) t("Landscape"); break;
+				case 3: $result['EasyShooting'] = (string) t("Fast Shutter"); break;
+				case 4: $result['EasyShooting'] = (string) t("Slow Shutter"); break;
+				case 5: $result['EasyShooting'] = (string) t("Night"); break;
+				case 6: $result['EasyShooting'] = (string) t("Black & White"); break;
+				case 7: $result['EasyShooting'] = (string) t("Sepia"); break;
+				case 8: $result['EasyShooting'] = (string) t("Portrait"); break;
+				case 9: $result['EasyShooting'] = (string) t("Sport"); break;
+				case 10: $result['EasyShooting'] = (string) t("Macro/Close-Up"); break;
+				case 11: $result['EasyShooting'] = (string) t("Pan Focus"); break;
+				default: $result['EasyShooting'] = (string) t("Unknown");
 			}
 			$result['DigitalZoom']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//12
 			switch($result['DigitalZoom']) {
 				case 0:
-				case 65535: $result['DigitalZoom'] = gettext("None"); break;
-				case 1: $result['DigitalZoom'] = gettext("2x"); break;
-				case 2: $result['DigitalZoom'] = gettext("4x"); break;
-				default: $result['DigitalZoom'] = gettext("Unknown");
+				case 65535: $result['DigitalZoom'] = (string) t("None"); break;
+				case 1: $result['DigitalZoom'] = (string) t("2x"); break;
+				case 2: $result['DigitalZoom'] = (string) t("4x"); break;
+				default: $result['DigitalZoom'] = (string) t("Unknown");
 			}
 			$result['Contrast']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//13
 			switch($result['Contrast']) {
-				case 0: $result['Contrast'] = gettext("Normal"); break;
-				case 1: $result['Contrast'] = gettext("High"); break;
-				case 65535: $result['Contrast'] = gettext("Low"); break;
-				default: $result['Contrast'] = gettext("Unknown");
+				case 0: $result['Contrast'] = (string) t("Normal"); break;
+				case 1: $result['Contrast'] = (string) t("High"); break;
+				case 65535: $result['Contrast'] = (string) t("Low"); break;
+				default: $result['Contrast'] = (string) t("Unknown");
 			}
 			$result['Saturation']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//14
 			switch($result['Saturation']) {
-				case 0: $result['Saturation'] = gettext("Normal"); break;
-				case 1: $result['Saturation'] = gettext("High"); break;
-				case 65535: $result['Saturation'] = gettext("Low"); break;
-				default: $result['Saturation'] = gettext("Unknown");
+				case 0: $result['Saturation'] = (string) t("Normal"); break;
+				case 1: $result['Saturation'] = (string) t("High"); break;
+				case 65535: $result['Saturation'] = (string) t("Low"); break;
+				default: $result['Saturation'] = (string) t("Unknown");
 			}
 			$result['Sharpness']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//15
 			switch($result['Sharpness']) {
-				case 0: $result['Sharpness'] = gettext("Normal"); break;
-				case 1: $result['Sharpness'] = gettext("High"); break;
-				case 65535: $result['Sharpness'] = gettext("Low"); break;
-				default: $result['Sharpness'] = gettext("Unknown");
+				case 0: $result['Sharpness'] = (string) t("Normal"); break;
+				case 1: $result['Sharpness'] = (string) t("High"); break;
+				case 65535: $result['Sharpness'] = (string) t("Low"); break;
+				default: $result['Sharpness'] = (string) t("Unknown");
 			}
 			$result['ISO']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//16
 			switch($result['ISO']) {
 				case 32767:
 				case 0: $result['ISO'] = isset($exif['SubIFD']['ISOSpeedRatings'])
 					? $exif['SubIFD']['ISOSpeedRatings'] : 'Unknown'; break;
-				case 15: $result['ISO'] = gettext("Auto"); break;
-				case 16: $result['ISO'] = gettext("50"); break;
-				case 17: $result['ISO'] = gettext("100"); break;
-				case 18: $result['ISO'] = gettext("200"); break;
-				case 19: $result['ISO'] = gettext("400"); break;
-				default: $result['ISO'] = gettext("Unknown");
+				case 15: $result['ISO'] = (string) t("Auto"); break;
+				case 16: $result['ISO'] = (string) t("50"); break;
+				case 17: $result['ISO'] = (string) t("100"); break;
+				case 18: $result['ISO'] = (string) t("200"); break;
+				case 19: $result['ISO'] = (string) t("400"); break;
+				default: $result['ISO'] = (string) t("Unknown");
 			}
 			$result['MeteringMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//17
 			switch($result['MeteringMode']) {
-				case 3: $result['MeteringMode'] = gettext("Evaluative"); break;
-				case 4: $result['MeteringMode'] = gettext("Partial"); break;
-				case 5: $result['MeteringMode'] = gettext("Center-weighted"); break;
-				default: $result['MeteringMode'] = gettext("Unknown");
+				case 3: $result['MeteringMode'] = (string) t("Evaluative"); break;
+				case 4: $result['MeteringMode'] = (string) t("Partial"); break;
+				case 5: $result['MeteringMode'] = (string) t("Center-weighted"); break;
+				default: $result['MeteringMode'] = (string) t("Unknown");
 			}
 			$result['FocusType']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//18
 			switch($result['FocusType']) {
-				case 0: $result['FocusType'] = gettext("Manual"); break;
-				case 1: $result['FocusType'] = gettext("Auto"); break;
-				case 3: $result['FocusType'] = gettext("Close-up (Macro)"); break;
-				case 8: $result['FocusType'] = gettext("Locked (Pan Mode)"); break;
-				default: $result['FocusType'] = gettext("Unknown");
+				case 0: $result['FocusType'] = (string) t("Manual"); break;
+				case 1: $result['FocusType'] = (string) t("Auto"); break;
+				case 3: $result['FocusType'] = (string) t("Close-up (Macro)"); break;
+				case 8: $result['FocusType'] = (string) t("Locked (Pan Mode)"); break;
+				default: $result['FocusType'] = (string) t("Unknown");
 			}
 			$result['AFPointSelected']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//19
 			switch($result['AFPointSelected']) {
-				case 12288: $result['AFPointSelected'] = gettext("Manual Focus"); break;
-				case 12289: $result['AFPointSelected'] = gettext("Auto Selected"); break;
-				case 12290: $result['AFPointSelected'] = gettext("Right"); break;
-				case 12291: $result['AFPointSelected'] = gettext("Center"); break;
-				case 12292: $result['AFPointSelected'] = gettext("Left"); break;
-				default: $result['AFPointSelected'] = gettext("Unknown");
+				case 12288: $result['AFPointSelected'] = (string) t("Manual Focus"); break;
+				case 12289: $result['AFPointSelected'] = (string) t("Auto Selected"); break;
+				case 12290: $result['AFPointSelected'] = (string) t("Right"); break;
+				case 12291: $result['AFPointSelected'] = (string) t("Center"); break;
+				case 12292: $result['AFPointSelected'] = (string) t("Left"); break;
+				default: $result['AFPointSelected'] = (string) t("Unknown");
 			}
 			$result['ExposureMode']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//20
 			switch($result['ExposureMode']) {
-				case 0: $result['ExposureMode'] = gettext("EasyShoot"); break;
-				case 1: $result['ExposureMode'] = gettext("Program"); break;
-				case 2: $result['ExposureMode'] = gettext("Tv"); break;
-				case 3: $result['ExposureMode'] = gettext("Av"); break;
-				case 4: $result['ExposureMode'] = gettext("Manual"); break;
-				case 5: $result['ExposureMode'] = gettext("Auto-DEP"); break;
-				default: $result['ExposureMode'] = gettext("Unknown");
+				case 0: $result['ExposureMode'] = (string) t("EasyShoot"); break;
+				case 1: $result['ExposureMode'] = (string) t("Program"); break;
+				case 2: $result['ExposureMode'] = (string) t("Tv"); break;
+				case 3: $result['ExposureMode'] = (string) t("Av"); break;
+				case 4: $result['ExposureMode'] = (string) t("Manual"); break;
+				case 5: $result['ExposureMode'] = (string) t("Auto-DEP"); break;
+				default: $result['ExposureMode'] = (string) t("Unknown");
 			}
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//21
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//22
@@ -237,26 +237,26 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//27
 			$result['FlashActivity']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//28
 			switch($result['FlashActivity']) {
-				case 0: $result['FlashActivity'] = gettext("Flash Did Not Fire"); break;
-				case 1: $result['FlashActivity'] = gettext("Flash Fired"); break;
-				default: $result['FlashActivity'] = gettext("Unknown");
+				case 0: $result['FlashActivity'] = (string) t("Flash Did Not Fire"); break;
+				case 1: $result['FlashActivity'] = (string) t("Flash Fired"); break;
+				default: $result['FlashActivity'] = (string) t("Unknown");
 			}
 			$result['FlashDetails']=str_pad(base_convert(intel2Moto(substr($data,$place,4)), 16, 2), 16, "0", STR_PAD_LEFT);$place+=4;//29
 				$flashDetails = array();
-				if (substr($result['FlashDetails'], 1, 1) == 1) { $flashDetails[] = gettext('External E-TTL'); }
-				if (substr($result['FlashDetails'], 2, 1) == 1) { $flashDetails[] = gettext('Internal Flash'); }
-				if (substr($result['FlashDetails'], 4, 1) == 1) { $flashDetails[] = gettext('FP sync used'); }
-				if (substr($result['FlashDetails'], 8, 1) == 1) { $flashDetails[] = gettext('2nd(rear)-curtain sync used'); }
-				if (substr($result['FlashDetails'], 12, 1) == 1) { $flashDetails[] = gettext('1st curtain sync'); }
+				if (substr($result['FlashDetails'], 1, 1) == 1) { $flashDetails[] = (string) t('External E-TTL'); }
+				if (substr($result['FlashDetails'], 2, 1) == 1) { $flashDetails[] = (string) t('Internal Flash'); }
+				if (substr($result['FlashDetails'], 4, 1) == 1) { $flashDetails[] = (string) t('FP sync used'); }
+				if (substr($result['FlashDetails'], 8, 1) == 1) { $flashDetails[] = (string) t('2nd(rear)-curtain sync used'); }
+				if (substr($result['FlashDetails'], 12, 1) == 1) { $flashDetails[] = (string) t('1st curtain sync'); }
 				$result['FlashDetails']=implode(",", $flashDetails);
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//30
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//31
 			$anotherFocusMode=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//32
 			if(strpos(strtoupper($exif['IFD0']['Model']), "G1") !== false) {
 				switch($anotherFocusMode) {
-					case 0: $result['FocusMode'] = gettext("Single"); break;
-					case 1: $result['FocusMode'] = gettext("Continuous"); break;
-					default: $result['FocusMode'] = gettext("Unknown");
+					case 0: $result['FocusMode'] = (string) t("Single"); break;
+					case 1: $result['FocusMode'] = (string) t("Continuous"); break;
+					default: $result['FocusMode'] = (string) t("Unknown");
 				}
 			}
 			
@@ -271,14 +271,14 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//6
 			$result['WhiteBalance']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//7
 			switch($result['WhiteBalance']) {
-				case 0: $result['WhiteBalance'] = gettext("Auto"); break;
-				case 1: $result['WhiteBalance'] = gettext("Sunny"); break;
-				case 2: $result['WhiteBalance'] = gettext("Cloudy"); break;
-				case 3: $result['WhiteBalance'] = gettext("Tungsten"); break;
-				case 4: $result['WhiteBalance'] = gettext("Fluorescent"); break;
-				case 5: $result['WhiteBalance'] = gettext("Flash"); break;
-				case 6: $result['WhiteBalance'] = gettext("Custom"); break;
-				default: $result['WhiteBalance'] = gettext("Unknown");
+				case 0: $result['WhiteBalance'] = (string) t("Auto"); break;
+				case 1: $result['WhiteBalance'] = (string) t("Sunny"); break;
+				case 2: $result['WhiteBalance'] = (string) t("Cloudy"); break;
+				case 3: $result['WhiteBalance'] = (string) t("Tungsten"); break;
+				case 4: $result['WhiteBalance'] = (string) t("Fluorescent"); break;
+				case 5: $result['WhiteBalance'] = (string) t("Flash"); break;
+				case 6: $result['WhiteBalance'] = (string) t("Custom"); break;
+				default: $result['WhiteBalance'] = (string) t("Unknown");
 			}
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//8
 			$result['SequenceNumber']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//9
@@ -288,13 +288,13 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//13
 			$result['AFPointUsed']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//14
 				$afPointUsed = array();
-				if ($result['AFPointUsed'] & 0x0001) $afPointUsed[] = gettext("Right"); //bit 0
-				if ($result['AFPointUsed'] & 0x0002) $afPointUsed[] = gettext("Center"); //bit 1
-				if ($result['AFPointUsed'] & 0x0004) $afPointUsed[] = gettext("Left"); //bit 2
-				if ($result['AFPointUsed'] & 0x0800) $afPointUsed[] = gettext("12"); //bit 12
-				if ($result['AFPointUsed'] & 0x1000) $afPointUsed[] = gettext("13"); //bit 13
-				if ($result['AFPointUsed'] & 0x2000) $afPointUsed[] = gettext("14"); //bit 14
-				if ($result['AFPointUsed'] & 0x4000) $afPointUsed[] = gettext("15"); //bit 15
+				if ($result['AFPointUsed'] & 0x0001) $afPointUsed[] = (string) t("Right"); //bit 0
+				if ($result['AFPointUsed'] & 0x0002) $afPointUsed[] = (string) t("Center"); //bit 1
+				if ($result['AFPointUsed'] & 0x0004) $afPointUsed[] = (string) t("Left"); //bit 2
+				if ($result['AFPointUsed'] & 0x0800) $afPointUsed[] = (string) t("12"); //bit 12
+				if ($result['AFPointUsed'] & 0x1000) $afPointUsed[] = (string) t("13"); //bit 13
+				if ($result['AFPointUsed'] & 0x2000) $afPointUsed[] = (string) t("14"); //bit 14
+				if ($result['AFPointUsed'] & 0x4000) $afPointUsed[] = (string) t("15"); //bit 15
 				$result['AFPointUsed'] = implode(",", $afPointUsed);
 			$result['FlashBias']=intel2Moto(substr($data,$place,4));$place+=4;//15
 			switch($result['FlashBias']) {
@@ -315,7 +315,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 				case '0030': $result['FlashBias'] = "1.5 EV"; break;
 				case '0034': $result['FlashBias'] = "1.67 EV"; break;
 				case '0040': $result['FlashBias'] = "2 EV"; break;
-				default: $result['FlashBias'] = gettext("Unknown");
+				default: $result['FlashBias'] = (string) t("Unknown");
 			}
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//16
 			$result['Unknown']=hexdec(intel2Moto(substr($data,$place,4)));$place+=4;//17

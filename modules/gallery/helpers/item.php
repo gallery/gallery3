@@ -130,7 +130,7 @@ class item_Core {
       $page_type = "photo";
     }
     $form = new Forge(
-      "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "gConfirmDelete"));
+      "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "g-confirm-delete"));
     $form->hidden("_method")->value("put");
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
@@ -158,8 +158,8 @@ class item_Core {
    */
   static function viewable($model) {
     $view_restrictions = array();
-    if (!user::active()->admin) {
-      foreach (user::group_ids() as $id) {
+    if (!identity::active_user()->admin) {
+      foreach (identity::group_ids_for_active_user() as $id) {
         // Separate the first restriction from the rest to make it easier for us to formulate
         // our where clause below
         if (empty($view_restrictions)) {

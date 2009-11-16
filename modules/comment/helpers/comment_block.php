@@ -18,16 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class comment_block_Core {
-  static function get_list() {
-    return array("recent_comments" => t("Recent Comments"));
+  static function get_admin_list() {
+    return array("recent_comments" => t("Recent comments"));
   }
 
   static function get($block_id) {
     $block = new Block();
     switch ($block_id) {
     case "recent_comments":
-      $block->css_id = "gRecentComments";
-      $block->title = t("Recent Comments");
+      $block->css_id = "g-recent-comments";
+      $block->title = t("Recent comments");
       $block->content = new View("admin_block_recent_comments.html");
       $block->content->comments =
         ORM::factory("comment")->orderby("created", "DESC")->limit(5)->find_all();

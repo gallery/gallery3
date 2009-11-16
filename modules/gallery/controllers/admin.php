@@ -21,7 +21,7 @@ class Admin_Controller extends Controller {
   private $theme;
 
   public function __construct($theme=null) {
-    if (!(user::active()->admin)) {
+    if (!(identity::active_user()->admin)) {
       access::forbidden();
     }
 

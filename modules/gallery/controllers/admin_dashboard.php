@@ -22,7 +22,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_dashboard.html");
     $view->content->blocks = block_manager::get_html("dashboard_center");
-    $view->sidebar = "<div id=\"gAdminDashboardSidebar\">" .
+    $view->sidebar = "<div id=\"g-admin-dashboard-sidebar\">" .
       block_manager::get_html("dashboard_sidebar") .
       "</div>";
     print $view;
@@ -34,7 +34,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     $form = gallery_block::get_add_block_form();
     if ($form->validate()) {
       list ($module_name, $id) = explode(":", $form->add_block->id->value);
-      $available = block_manager::get_available();
+      $available = block_manager::get_available_admin_blocks();
 
       if ($form->add_block->center->value) {
         block_manager::add("dashboard_center", $module_name, $id);
@@ -66,7 +66,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
     }
 
     if (!empty($deleted)) {
-      $available = block_manager::get_available();
+      $available = block_manager::get_available_admin_blocks();
       $title = $available[join(":", $deleted)];
       message::success(t("Removed <b>%title</b> block", array("title" => $title)));
     }

@@ -9,6 +9,11 @@ modules/gallery/controllers/albums.php                       _form_add          
 modules/gallery/controllers/combined.php                     javascript           DIRTY_AUTH
 modules/gallery/controllers/combined.php                     css                  DIRTY_AUTH
 modules/gallery/controllers/file_proxy.php                   __call               DIRTY_CSRF|DIRTY_AUTH
+modules/gallery/controllers/login.php                        ajax                 DIRTY_AUTH
+modules/gallery/controllers/login.php                        auth_ajax            DIRTY_AUTH
+modules/gallery/controllers/login.php                        html                 DIRTY_AUTH
+modules/gallery/controllers/login.php                        auth_html            DIRTY_AUTH
+modules/gallery/controllers/logout.php                       index                DIRTY_CSRF|DIRTY_AUTH
 modules/gallery/controllers/maintenance.php                  index                DIRTY_AUTH
 modules/gallery/controllers/rest.php                         __construct          DIRTY_AUTH
 modules/gallery/controllers/rest.php                         __call               DIRTY_AUTH
@@ -31,10 +36,5 @@ modules/server_add/controllers/admin_server_add.php          autocomplete       
 modules/server_add/controllers/server_add.php                children             DIRTY_CSRF
 modules/tag/controllers/admin_tags.php                       index                DIRTY_CSRF
 modules/tag/controllers/tags.php                             _show                DIRTY_CSRF|DIRTY_AUTH
-modules/user/controllers/login.php                           ajax                 DIRTY_AUTH
-modules/user/controllers/login.php                           auth_ajax            DIRTY_AUTH
-modules/user/controllers/login.php                           html                 DIRTY_AUTH
-modules/user/controllers/login.php                           auth_html            DIRTY_AUTH
-modules/user/controllers/logout.php                          index                DIRTY_CSRF|DIRTY_AUTH
 modules/user/controllers/password.php                        reset                DIRTY_AUTH
 modules/user/controllers/password.php                        do_reset             DIRTY_CSRF|DIRTY_AUTH

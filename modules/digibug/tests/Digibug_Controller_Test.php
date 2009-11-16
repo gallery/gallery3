@@ -35,8 +35,8 @@ class Digibug_Controller_Test extends Unit_Test_Case {
 
     $root = ORM::factory("item", 1);
     $this->_album = album::create($root,  rand(), "test album");
-    access::deny(group::everybody(), "view_full", $this->_album);
-    access::deny(group::registered_users(), "view_full", $this->_album);
+    access::deny(identity::everybody(), "view_full", $this->_album);
+    access::deny(identity::registered_users(), "view_full", $this->_album);
 
     $rand = rand();
     $this->_item = photo::create($this->_album, MODPATH . "gallery/tests/test.jpg", "$rand.jpg",

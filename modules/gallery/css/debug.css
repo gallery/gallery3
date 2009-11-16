@@ -1,4 +1,4 @@
-.gAnnotatedThemeBlock {
+.g-annotated-theme-block {
   border: 1px solid #C00;
   clear: both;
   margin: 1em;
@@ -6,15 +6,15 @@
   position: relative;
 }
 
-.gAnnotatedThemeBlock_album_top {
+.g-annotated-theme-block_album_top {
   float: right;
 }
 
-.gAnnotatedThemeBlock_header_bottom {
+.g-annotated-theme-block_header_bottom {
   float: right;
 }
 
-.gAnnotatedThemeBlock div.title {
+.g-annotated-theme-block div.title {
   background: #C00;
   border: 1px solid black;
   color: white;

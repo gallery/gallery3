@@ -19,13 +19,19 @@
  */
 class comment_theme_Core {
   static function head($theme) {
+    $theme->css("comment.css");
     $theme->script("comment.js");
+    return "";
+  }
+
+  static function admin_head($theme) {
+    $theme->css("comment.css");
     return "";
   }
 
   static function photo_bottom($theme) {
     $block = new Block;
-    $block->css_id = "gComments";
+    $block->css_id = "g-comments";
     $block->title = t("Comments");
     $block->anchor = "comments";
 

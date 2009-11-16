@@ -77,14 +77,6 @@ class Gallery_Unit_Test_Controller extends Controller {
     }
 
     try {
-      // Find all tests, excluding sample tests that come with the unit_test module.
-      foreach (glob(MODPATH . "*/tests") as $path) {
-        if ($path != MODPATH . "unit_test/tests") {
-          $paths[] = $path;
-        }
-      }
-      Kohana::config_set('unit_test.paths', $paths);
-
       // Clean out the database
       if ($tables = $db->list_tables()) {
         foreach ($db->list_tables() as $table) {
@@ -96,6 +88,8 @@ class Gallery_Unit_Test_Controller extends Controller {
       @system("rm -rf test/var");
       @mkdir('test/var/logs', 0777, true);
 
+      $active_modules = module::$active;
+
       // Reset our caches
       module::$modules = array();
       module::$active = array();
@@ -105,22 +99,27 @@ class Gallery_Unit_Test_Controller extends Controller {
       // Rest the cascading class path
       Kohana::config_set("core", Kohana::config_load("core"));
 
-      // Install all modules
+      // Install the active modules
       // Force gallery and user to be installed first to resolve dependencies.
       gallery_installer::install(true);
       module::load_modules();
 
       module::install("user");
       module::activate("user");
-      $modules = array();
-      foreach (glob(MODPATH . "*/helpers/*_installer.php") as $file) {
-        $module_name = basename(dirname(dirname($file)));
+      $modules = $paths = array();
+      foreach (module::available() as $module_name => $unused) {
         if (in_array($module_name, array("gallery", "user"))) {
+          $paths[] = MODPATH . "{$module_name}/tests";
           continue;
         }
-        module::install($module_name);
-        module::activate($module_name);
+        if (file_exists($path = MODPATH . "{$module_name}/tests")) {
+          $paths[] = $path;
+          module::install($module_name);
+          module::activate($module_name);
+        }
       }
+
+      Kohana::config_set('unit_test.paths', $paths);
 
       // Trigger late-binding install actions (defined in gallery_event::user_login)
       graphics::choose_default_toolkit();

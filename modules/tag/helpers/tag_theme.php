@@ -21,33 +21,11 @@ class tag_theme_Core {
   static function head($theme) {
     $theme->css("jquery.autocomplete.css");
     $theme->script("jquery.autocomplete.js");
-    $theme->script("tag.js");
+    $theme->css("tag.css");
   }
 
   static function admin_head($theme) {
-    $theme->script("tag.js");
-  }
-
-  static function sidebar_blocks($theme) {
-    // @todo this needs to be data driven
-
-    $block = new Block();
-    $block->css_id = "gTag";
-    $block->title = t("Popular Tags");
-    $block->content = new View("tag_block.html");
-    $block->content->cloud = tag::cloud(30);
-
-    if ($theme->item() && $theme->page_type() != "tag" && access::can("edit", $theme->item())) {
-      $controller = new Tags_Controller();
-      $block->content->form = tag::get_add_form($theme->item());
-    } else {
-      $block->content->form = "";
-    }
-
-    return $block;
-  }
-
-  static function sort_by_name($tag1, $tag2) {
-    return strcasecmp($tag1->name, $tag2->name);
+    $theme->css("tag.css");
+    $theme->script("gallery.in_place_edit.js");
   }
 }

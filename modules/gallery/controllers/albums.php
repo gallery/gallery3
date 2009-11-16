@@ -28,7 +28,8 @@ class Albums_Controller extends Items_Controller {
       if ($album->id == 1) {
         $view = new Theme_View("page.html", "login");
         $view->page_title = t("Log in to Gallery");
-        $view->content = user::get_login_form("login/auth_html");
+        $view->content = new View("login_ajax.html");
+        $view->content->form = auth::get_login_form("login/auth_html");
         print $view;
         return;
       } else {
@@ -39,7 +40,8 @@ class Albums_Controller extends Items_Controller {
     $show = $this->input->get("show");
 
     if ($show) {
-      $index = $album->get_position($show);
+      $child = ORM::factory("item", $show);
+      $index = $album->get_position($child);
       if ($index) {
         $page = ceil($index / $page_size);
         if ($page == 1) {
@@ -63,6 +65,8 @@ class Albums_Controller extends Items_Controller {
     }
 
     $template = new Theme_View("page.html", "album");
+    $template->set_global("page", $page);
+    $template->set_global("max_pages", $max_pages);
     $template->set_global("page_size", $page_size);
     $template->set_global("item", $album);
     $template->set_global("children", $album->viewable()->children($page_size, $offset));
@@ -109,7 +113,7 @@ class Albums_Controller extends Items_Controller {
         $this->input->post("name"),
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
-        user::active()->id,
+        identity::active_user()->id,
         $this->input->post("slug"));
 
       log::success("content", "Created an album",
@@ -144,7 +148,7 @@ class Albums_Controller extends Items_Controller {
         $_FILES["file"]["name"],
         $this->input->post("title", $this->input->post("name")),
         $this->input->post("description"),
-        user::active()->id);
+        identity::active_user()->id);
 
       log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
       message::success(t("Added photo %photo_title",
@@ -198,6 +202,8 @@ class Albums_Controller extends Items_Controller {
     }
 
     if ($valid) {
+      $watching_album = $album->url() != ($location = parse_url(request::referrer(), PHP_URL_PATH));
+
       $album->title = $form->edit_item->title->value;
       $album->description = $form->edit_item->description->value;
       $album->sort_column = $form->edit_item->sort_order->column->value;
@@ -214,7 +220,8 @@ class Albums_Controller extends Items_Controller {
                          array("album_title" => html::purify($album->title))));
 
       print json_encode(
-        array("result" => "success"));
+        array("result" => "success",
+              "location" => $watching_album ? $location : $album->url()));
     } else {
       print json_encode(
         array("result" => "error",

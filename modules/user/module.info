@@ -1,3 +1,6 @@
 name = "Users and Groups"
-description = "Provides user and group management"
-version = 1
+description = "Gallery 3 user and group management"
+version = 2
+
+; Don't show this module on the module administration screen
+no_module_admin = 1

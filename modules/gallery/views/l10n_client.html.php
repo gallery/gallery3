@@ -2,13 +2,13 @@
 <div id="l10n-client" class="hidden">
   <div class="labels">
     <span id="l10n-client-toggler">
-      <a id="gMinimizeL10n">_</a>
-      <a id="gCloseL10n" title="<?= t("Stop the translation mode")->for_html_attr() ?>"
+      <a id="g-minimize-l10n">_</a>
+      <a id="g-close-l10n" title="<?= t("Stop the translation mode")->for_html_attr() ?>"
          href="<?= html::clean_attribute(url::site("l10n_client/toggle_l10n_mode?csrf=".access::csrf_token())) ?>">X</a>
     </span>
-    <div class="label strings"><h2><?= t("Page Text") ?>
+    <div class="label strings"><h2><?= t("Page text") ?>
     <? if (!Input::instance()->get('show_all_l10n_messages')): ?>
-      <a style="background-color:#fff" href="<?= url::site("admin/languages?show_all_l10n_messages=1") ?>"><?= t("(Show All)") ?></a>
+      <a style="background-color:#fff" href="<?= url::site("admin/languages?show_all_l10n_messages=1") ?>"><?= t("(Show all)") ?></a>
     <? endif; ?>
     </h2></div>
     <div class="label source"><h2><?= t("Source") ?></div>
@@ -37,7 +37,7 @@
       <p id="source-text-tmp-space" style="display:none"></p>
     </div>
     <div class="translation">
-      <form method="post" action="<?= url::site("l10n_client/save") ?>" id="gL10nClientSaveForm">
+      <form method="post" action="<?= url::site("l10n_client/save") ?>" id="g-l10n-client-save-form">
         <?= access::csrf_form_field() ?>
         <?= form::hidden("l10n-message-key") ?>
         <?= form::textarea("l10n-edit-translation", "", ' rows="5" class="translationField"') ?>
@@ -68,12 +68,12 @@
         </div>
         <input type="submit" name="l10n-edit-save" value="<?= t("Save translation")->for_html_attr() ?>"/>
         <a href="javascript: Gallery.l10nClient.copySourceText()"
-           class="gButtonLink ui-state-default ui-corner-all"><?= t("Copy source text") ?></a>
+           class="g-button ui-state-default ui-corner-all"><?= t("Copy source text") ?></a>
       </form>
     </div>
   </div>
   <script type="text/javascript">
-    var MSG_TRANSLATE_TEXT = <?= t("Translate Text")->for_js() ?>;
+    var MSG_TRANSLATE_TEXT = <?= t("Translate text")->for_js() ?>;
     var l10n_client_data = <?= json_encode($string_list) ?>;
     var plural_forms = <?= json_encode($plural_forms) ?>;
     var toggle_l10n_mode_url = <?= html::js_string(url::site("l10n_client/toggle_l10n_mode")) ?>;

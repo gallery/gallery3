@@ -27,29 +27,27 @@ class Admin_View_Core extends Gallery_View {
    * @return  void
    */
   public function __construct($name) {
-    $theme_name = module::get_var("gallery", "active_site_theme");
-    if (!file_exists("themes/$theme_name")) {
-      module::set_var("gallery", "active_site_theme", "admin_default");
+    $theme_name = module::get_var("gallery", "active_admin_theme");
+    if (!file_exists(THEMEPATH . $theme_name)) {
+      module::set_var("gallery", "active_admin_theme", "admin_wind");
       theme::load_themes();
       Kohana::log("error", "Unable to locate theme '$theme_name', switching to default theme.");
     }
     parent::__construct($name);
 
     $this->theme_name = module::get_var("gallery", "active_admin_theme");
-    if (user::active()->admin) {
+    if (identity::active_user()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
     $this->sidebar = "";
     $this->set_global("theme", $this);
-    $this->set_global("user", user::active());
+    $this->set_global("user", identity::active_user());
   }
 
   public function admin_menu() {
     $menu = Menu::factory("root");
-    gallery::admin_menu($menu, $this);
     module::event("admin_menu", $menu, $this);
-    $menu->compact();
-    return $menu;
+    return $menu->render();
   }
 
   /**
@@ -97,7 +95,7 @@ class Admin_View_Core extends Gallery_View {
       if (Session::instance()->get("debug")) {
         if ($function != "admin_head") {
           array_unshift(
-            $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function\">" .
+            $blocks, "<div class=\"g-annotated-theme-block g-annotated-theme-block_$function\">" .
             "<div class=\"title\">$function</div>");
           $blocks[] = "</div>";
         }

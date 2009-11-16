@@ -95,7 +95,7 @@ class site_status_Core {
    * @return html text
    */
   static function get() {
-    if (!user::active()->admin) {
+    if (!identity::active_user()->admin) {
       return;
     }
     $buf = array();
@@ -105,7 +105,7 @@ class site_status_Core {
     }
 
     if ($buf) {
-      return "<ul id=\"gSiteStatus\">" . implode("", $buf) . "</ul>";
+      return "<ul id=\"g-site-status\">" . implode("", $buf) . "</ul>";
     }
   }
 
@@ -117,16 +117,16 @@ class site_status_Core {
   static function severity_class($severity) {
     switch($severity) {
     case self::SUCCESS:
-      return "gSuccess";
+      return "g-success";
 
     case self::INFO:
-      return "gInfo";
+      return "g-info";
 
     case self::WARNING:
-      return "gWarning";
+      return "g-warning";
 
     case self::ERROR:
-      return "gError";
+      return "g-error";
     }
   }
 }

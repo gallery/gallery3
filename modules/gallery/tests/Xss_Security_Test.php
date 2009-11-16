@@ -248,7 +248,7 @@ class Xss_Security_Test extends Unit_Test_Case {
                 $frame->is_safe_attr(true);
               }
             }
-          } 
+          }
         } else if ($frame && $token[0] == T_OBJECT_OPERATOR) {
           $frame->expr_append($token[1]);
 
@@ -349,7 +349,7 @@ class Xss_Security_Test extends Unit_Test_Case {
     $canonical = MODPATH . "gallery/tests/xss_data.txt";
     exec("diff $canonical $new", $output, $return_value);
     $this->assert_false(
-                        $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
+      $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );
   }
 
   private static function _create_frame($token, $in_script_block,

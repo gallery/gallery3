@@ -23,16 +23,16 @@ class Item_Helper_Test extends Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $album = album::create($root, rand(), rand(), rand());
     $item = self::_create_random_item($album);
-    user::set_active(user::guest());
+    identity::set_active_user(identity::guest());
 
     // We can see the item when permissions are granted
-    access::allow(group::everybody(), "view", $album);
+    access::allow(identity::everybody(), "view", $album);
     $this->assert_equal(
       1,
       ORM::factory("item")->viewable()->where("id", $item->id)->count_all());
 
     // We can't see the item when permissions are denied
-    access::deny(group::everybody(), "view", $album);
+    access::deny(identity::everybody(), "view", $album);
     $this->assert_equal(
       0,
       ORM::factory("item")->viewable()->where("id", $item->id)->count_all());

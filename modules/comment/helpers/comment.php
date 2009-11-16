@@ -65,17 +65,17 @@ class comment_Core {
   }
 
   static function get_add_form($item) {
-    $form = new Forge("comments", "", "post", array("id" => "gAddCommentForm"));
+    $form = new Forge("comments", "", "post", array("id" => "g-comment-form"));
     $group = $form->group("add_comment")->label(t("Add comment"));
-    $group->input("name")   ->label(t("Name"))            ->id("gAuthor");
-    $group->input("email")  ->label(t("Email (hidden)"))  ->id("gEmail");
-    $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl");
-    $group->textarea("text")->label(t("Comment"))         ->id("gText");
+    $group->input("name")   ->label(t("Name"))            ->id("g-author");
+    $group->input("email")  ->label(t("Email (hidden)"))  ->id("g-email");
+    $group->input("url")    ->label(t("Website (hidden)"))->id("g-url");
+    $group->textarea("text")->label(t("Comment"))         ->id("g-text");
     $group->hidden("item_id")->value($item->id);
     module::event("comment_add_form", $form);
-    $group->submit("")->value(t("Add"));
+    $group->submit("")->value(t("Add"))->class("ui-state-default ui-corner-all");
 
-    $active = user::active();
+    $active = identity::active_user();
     if (!$active->guest) {
       $group->inputs["name"]->value($active->full_name)->disabled("disabled");
       $group->email->value($active->email)->disabled("disabled");
@@ -90,12 +90,12 @@ class comment_Core {
 
   static function get_edit_form($comment) {
     $form = new Forge("comments/{$comment->id}?_method=put", "", "post",
-                      array("id" => "gEditCommentForm"));
+                      array("id" => "g-edit-comment-form"));
     $group = $form->group("edit_comment")->label(t("Edit comment"));
-    $group->input("name")   ->label(t("Author"))          ->id("gAuthor");
-    $group->input("email")  ->label(t("Email (hidden)"))  ->id("gEmail");
-    $group->input("url")    ->label(t("Website (hidden)"))->id("gUrl");
-    $group->textarea("text")->label(t("Comment"))         ->id("gText");
+    $group->input("name")   ->label(t("Author"))          ->id("g-author");
+    $group->input("email")  ->label(t("Email (hidden)"))  ->id("g-email");
+    $group->input("url")    ->label(t("Website (hidden)"))->id("g-url");
+    $group->textarea("text")->label(t("Comment"))         ->id("g-text");
     $group->submit("")->value(t("Edit"));
 
     $group->text = $comment->text;

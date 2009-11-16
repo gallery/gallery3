@@ -52,6 +52,17 @@ class notification_event_Core {
     }
   }
 
+  static function user_deleted($user) {
+    ORM::factory("subscriptions")
+      ->where(array("user_id", $user->id))
+      ->delete_all();
+  }
+
+  static function identity_provider_changed($old_provider, $new_provider) {
+    ORM::factory("subscriptions")
+      ->delete_all();
+  }
+
   static function comment_created($comment) {
     try {
       if ($comment->state == "published") {
@@ -95,7 +106,7 @@ class notification_event_Core {
   }
 
   static function site_menu($menu, $theme) {
-    if (!user::active()->guest) {
+    if (!identity::active_user()->guest) {
       $item = $theme->item();
 
       if ($item && $item->is_album() && access::can("view", $item)) {
@@ -107,7 +118,7 @@ class notification_event_Core {
           ->append(Menu::factory("link")
                    ->id("watch")
                    ->label($label)
-                   ->css_id("gNotifyLink")
+                   ->css_id("g-notify-link")
                    ->url(url::site("notification/watch/$item->id?csrf=" . access::csrf_token())));
       }
     }

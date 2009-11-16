@@ -1,10 +1,5 @@
 $(document).ready(function() {
-  $(".gDigibugPrintButton a").click(function(e) {
-    e.preventDefault();
-    return digibug_popup(e.currentTarget.href, { width: 800, height: 600 } );
-  });
-
-  $("#gDigibugLink").click(function(e) {
+  $(".g-print-digibug-link").click(function(e) {
     e.preventDefault();
     return digibug_popup(e.currentTarget.href, { width: 800, height: 600 } );
   });

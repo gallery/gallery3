@@ -57,7 +57,7 @@
     <title><?= t("Something went wrong!") ?></title>
   </head>
   <body>
-    <? try { $user = user::active(); } catch (Exception $e) { } ?>
+    <? try { $user = identity::active_user(); } catch (Exception $e) { } ?>
     <? $admin = php_sapi_name() == "cli" || isset($user) && $user->admin ?>
     <div class="big_box" id="framework_error">
       <h1>
@@ -117,6 +117,11 @@
           <? endif ?>
         </div>
       </div>
+      <? else: ?>
+      <? $trace = $PHP_ERROR ? array_slice(debug_backtrace(), 1) : $exception->getTraceAsString(); ?>
+      <? if (!empty($trace)): ?>
+      <? Kohana::Log("error", print_r($trace, 1)); ?>
+      <? endif ?>
       <? endif ?>
   </body>
 </html>

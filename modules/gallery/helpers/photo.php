@@ -26,7 +26,7 @@
 class photo_Core {
   /**
    * Create a new photo.
-   * @param integer $parent_id id of parent album
+   * @param integer $parent parent album
    * @param string  $filename path to the photo file on disk
    * @param string  $name the filename to use for this photo in the album
    * @param integer $title the title of the new photo
@@ -76,7 +76,7 @@ class photo_Core {
     $photo->title = $title;
     $photo->description = $description;
     $photo->name = $name;
-    $photo->owner_id = $owner_id ? $owner_id : user::active();
+    $photo->owner_id = $owner_id ? $owner_id : identity::active_user()->id;
     $photo->width = $image_info[0];
     $photo->height = $image_info[1];
     $photo->mime_type = empty($image_info['mime']) ? "application/unknown" : $image_info['mime'];
@@ -138,7 +138,7 @@ class photo_Core {
   }
 
   static function get_add_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddPhotoForm"));
+    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "g-add-photo-form"));
     $group = $form->group("add_photo")->label(
       t("Add Photo to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"));
@@ -157,21 +157,24 @@ class photo_Core {
   }
 
   static function get_edit_form($photo) {
-    $form = new Forge("photos/$photo->id", "", "post", array("id" => "gEditPhotoForm"));
+    $form = new Forge("photos/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("filename")->label(t("Filename"))->value($photo->name)
-      ->error_messages("name_conflict", t("There is already a photo or album with this name"))
+      ->rules("required")
+      ->error_messages(
+        "name_conflict", t("There is already a movie, photo or album with this name"))
       ->callback("item::validate_no_slashes")
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
       ->callback("item::validate_no_trailing_period")
-      ->error_messages("no_trailing_period", t("The photo name can't end in \".\""));
+      ->error_messages("no_trailing_period", t("The photo name can't end in \".\""))
+      ->error_messages("illegal_extension", t("You cannot change the filename extension"));
     $group->input("slug")->label(t("Internet Address"))->value($photo->slug)
       ->callback("item::validate_url_safe")
       ->error_messages(
-        "slug_conflict", t("There is already a photo or album with this internet address"))
+        "slug_conflict", t("There is already a movie, photo or album with this internet address"))
       ->error_messages(
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"));

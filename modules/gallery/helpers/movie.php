@@ -77,7 +77,7 @@ class movie_Core {
     $movie->title = $title;
     $movie->description = $description;
     $movie->name = $name;
-    $movie->owner_id = $owner_id ? $owner_id : user::active();
+    $movie->owner_id = $owner_id ? $owner_id : identity::active_user()->id;
     $movie->width = $movie_info[0];
     $movie->height = $movie_info[1];
     $movie->mime_type = strtolower($pi["extension"]) == "mp4" ? "video/mp4" : "video/x-flv";
@@ -128,6 +128,38 @@ class movie_Core {
     return $movie;
   }
 
+  static function get_edit_form($movie) {
+    $form = new Forge("movies/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
+    $form->hidden("_method")->value("put");
+    $group = $form->group("edit_item")->label(t("Edit Movie"));
+    $group->input("title")->label(t("Title"))->value($movie->title);
+    $group->textarea("description")->label(t("Description"))->value($movie->description);
+    $group->input("filename")->label(t("Filename"))->value($movie->name)
+      ->rules("required")
+      ->error_messages(
+        "name_conflict", t("There is already a movie, photo or album with this name"))
+      ->callback("item::validate_no_slashes")
+      ->error_messages("no_slashes", t("The movie name can't contain a \"/\""))
+      ->callback("item::validate_no_trailing_period")
+      ->error_messages("no_trailing_period", t("The movie name can't end in \".\""))
+      ->error_messages("illegal_extension", t("You cannot change the filename extension"));
+    $group->input("slug")->label(t("Internet Address"))->value($movie->slug)
+      ->callback("item::validate_url_safe")
+      ->error_messages(
+        "slug_conflict", t("There is already a movie, photo or album with this internet address"))
+      ->error_messages(
+        "not_url_safe",
+        t("The internet address should contain only letters, numbers, hyphens and underscores"));
+
+    module::event("item_edit_form", $movie, $form);
+
+    $group = $form->group("buttons")->label("");
+    $group->submit("")->value(t("Modify"));
+    $form->add_rules_from(ORM::factory("item"));
+    return $form;
+  }
+
+
   static function getmoviesize($filename) {
     $ffmpeg = self::find_ffmpeg();
     if (empty($ffmpeg)) {
@@ -158,7 +190,10 @@ class movie_Core {
 
   static function find_ffmpeg() {
     if (!$ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) {
-      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
+      $graphics_path = module::get_var("gallery", "graphics_toolkit_path", null);
+
+      putenv("PATH=" . getenv("PATH") . (empty($graphics_path) ? "" : ":$graphics_path") .
+             ":/usr/local/bin:/opt/local/bin:/opt/bin");
       if (function_exists("exec")) {
         $ffmpeg_path = exec("which ffmpeg");
       }

@@ -42,7 +42,7 @@ class task_Core {
     $task->percent_complete = 0;
     $task->status = "";
     $task->state = "started";
-    $task->owner_id = user::active()->id;
+    $task->owner_id = identity::active_user()->id;
     $task->context = serialize($context);
     $task->save();
 

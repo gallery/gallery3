@@ -24,7 +24,8 @@ class Item_Model extends ORM_MPTT {
   var $rules = array(
     "name" => "required|length[0,255]",
     "title" => "required|length[0,255]",
-    "description" => "length[0,65535]"
+    "description" => "length[0,65535]",
+    "slug" => "required|length[0,255]"
   );
 
   /**
@@ -98,6 +99,10 @@ class Item_Model extends ORM_MPTT {
       throw new Exception("@todo INVALID_MOVE_TYPE $target->type");
     }
 
+    if (file_exists($target_file = "{$target->file_path()}/$this->name")) {
+      throw new Exception("@todo INVALID_MOVE_TARGET_EXISTS: $target_file");
+    }
+
     if ($this->id == 1) {
       throw new Exception("@todo INVALID_SOURCE root album");
     }
@@ -146,6 +151,10 @@ class Item_Model extends ORM_MPTT {
 
     $old_relative_path = urldecode($this->relative_path());
     $new_relative_path = dirname($old_relative_path) . "/" . $new_name;
+    if (file_exists(VARPATH . "albums/$new_relative_path")) {
+      throw new Exception("@todo INVALID_RENAME_FILE_EXISTS: $new_relative_path");
+    }
+
     @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$new_relative_path");
     @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$new_relative_path");
     @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$new_relative_path");
@@ -284,6 +293,7 @@ class Item_Model extends ORM_MPTT {
              ->where("id <>", 1)
              ->orderby("left_ptr", "ASC")
              ->get() as $row) {
+      // Don't encode the names segment
       $names[] = rawurlencode($row->name);
       $slugs[] = rawurlencode($row->slug);
     }
@@ -332,7 +342,7 @@ class Item_Model extends ORM_MPTT {
       // This relationship depends on an outside module, which may not be present so handle
       // failures gracefully.
       try {
-        return model_cache::get("user", $this->owner_id);
+        return identity::lookup_user($this->owner_id);
       } catch (Exception $e) {
         return null;
       }
@@ -412,39 +422,76 @@ class Item_Model extends ORM_MPTT {
    * Find the position of the given child id in this album.  The resulting value is 1-indexed, so
    * the first child in the album is at position 1.
    */
-  public function get_position($child_id) {
+  public function get_position($child, $where=array()) {
     if ($this->sort_order == "DESC") {
       $comp = ">";
     } else {
       $comp = "<";
     }
-
     $db = Database::instance();
-    $position = $db->query("
-      SELECT COUNT(*) AS position FROM {items}
-      WHERE `parent_id` = {$this->id}
-        AND `{$this->sort_column}` $comp (SELECT `{$this->sort_column}`
-                                          FROM {items} WHERE `id` = $child_id)")
-      ->current()->position;
 
-    // We stopped short of our target value in the sort (notice that we're using a < comparator
-    // above) because it's possible that we have duplicate values in the sort column.  An
-    // equality check would just arbitrarily pick one of those multiple possible equivalent
-    // columns, which would mean that if you choose a sort order that has duplicates, it'd pick
-    // any one of them as the child's "position".
-    //
-    // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
-    // our base value.
-    $result = $db->query("
-      SELECT id FROM {items}
-      WHERE `parent_id` = {$this->id}
-        AND `{$this->sort_column}` = (SELECT `{$this->sort_column}`
-                                      FROM {items} WHERE `id` = $child_id)
-      ORDER BY `id` ASC");
-    foreach ($result as $row) {
-      $position++;
-      if ($row->id == $child_id) {
-        break;
+    // If the comparison column has NULLs in it, we can't use comparators on it and will have to
+    // deal with it the hard way.
+    $count = $db->from("items")
+      ->where("parent_id", $this->id)
+      ->where($this->sort_column, NULL)
+      ->where($where)
+      ->count_records();
+
+    if (empty($count)) {
+      // There are no NULLs in the sort column, so we can just use it directly.
+      $sort_column = $this->sort_column;
+
+      $position = $db->from("items")
+        ->where("parent_id", $this->id)
+        ->where("$sort_column $comp ", $child->$sort_column)
+        ->where($where)
+        ->count_records();
+
+      // We stopped short of our target value in the sort (notice that we're using a < comparator
+      // above) because it's possible that we have duplicate values in the sort column.  An
+      // equality check would just arbitrarily pick one of those multiple possible equivalent
+      // columns, which would mean that if you choose a sort order that has duplicates, it'd pick
+      // any one of them as the child's "position".
+      //
+      // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
+      // our base value.
+      foreach ($db->from("items")
+               ->where("parent_id", $this->id)
+               ->where($sort_column, $child->$sort_column)
+               ->where($where)
+               ->orderby(array("id" => "ASC"))
+               ->get() as $row) {
+        $position++;
+        if ($row->id == $child->id) {
+          break;
+        }
+      }
+    } else {
+      // There are NULLs in the sort column, so we can't use MySQL comparators.  Fall back to
+      // iterating over every child row to get to the current one.  This can be wildly inefficient
+      // for really large albums, but it should be a rare case that the user is sorting an album
+      // with null values in the sort column.
+      //
+      // Reproduce the children() functionality here using Database directly to avoid loading the
+      // whole ORM for each row.
+      $orderby = array($this->sort_column => $this->sort_order);
+      // Use id as a tie breaker
+      if ($this->sort_column != "id") {
+        $orderby["id"] = "ASC";
+      }
+
+      $position = 0;
+      foreach ($db->select("id")
+               ->from("items")
+               ->where("parent_id", $this->id)
+               ->where($where)
+               ->orderby($orderby)
+               ->get() as $row) {
+        $position++;
+        if ($row->id == $child->id) {
+          break;
+        }
       }
     }
 
@@ -532,7 +579,7 @@ class Item_Model extends ORM_MPTT {
     $v->attrs = array_merge($extra_attrs,
       array("style" => "display:block;width:{$this->width}px;height:{$this->height}px"));
     if (empty($v->attrs["id"])) {
-       $v->attrs["id"] = "gMovieId-{$this->id}";
+       $v->attrs["id"] = "g-movie-id-{$this->id}";
     }
     return $v;
   }
@@ -551,6 +598,10 @@ class Item_Model extends ORM_MPTT {
   function children($limit=null, $offset=0, $where=array(), $orderby=null) {
     if (empty($orderby)) {
       $orderby = array($this->sort_column => $this->sort_order);
+      // Use id as a tie breaker
+      if ($this->sort_column != "id") {
+        $orderby["id"] = "ASC";
+      }
     }
     return parent::children($limit, $offset, $where, $orderby);
   }
@@ -569,6 +620,10 @@ class Item_Model extends ORM_MPTT {
   function descendants($limit=null, $offset=0, $where=array(), $orderby=null) {
     if (empty($orderby)) {
       $orderby = array($this->sort_column => $this->sort_order);
+      // Use id as a tie breaker
+      if ($this->sort_column != "id") {
+        $orderby["id"] = "ASC";
+      }
     }
     return parent::descendants($limit, $offset, $where, $orderby);
   }

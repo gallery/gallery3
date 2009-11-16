@@ -68,7 +68,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
 
   private function _get_import_form() {
     $form = new Forge(
-      "admin/g2_import/save", "", "post", array("id" => "gAdminConfigureG2ImportForm"));
+      "admin/g2_import/save", "", "post", array("id" => "g-admin-configure-g2-import-form"));
     $group = $form->group("configure_g2_import")->label(t("Configure Gallery 2 Import"));
     $group->input("embed_path")->label(t("Filesystem path to your Gallery 2 embed.php file"))
       ->value(module::get_var("g2_import", "embed_path", ""));

@@ -1,6 +1,6 @@
 body {
   background: #eee;
-  font-family: Trebuchet MS;
+  font-family: 'Trebuchet MS';
   font-size: 1.1em;
 }
 
@@ -37,7 +37,7 @@ td {
 }
 
 tr.current td {
-  color: #999;
+  opacity: 0.5;
   font-style: italic;
 }
 
@@ -87,11 +87,13 @@ div.button a {
   text-decoration: none;
 }
 
-div.button:hover {
+div.button-active:hover {
   background: #ccc;
 }
 
-div#confirmation {
+div#dialog {
+  width: 340px;
+  height: 200px;
   position: absolute;
   background: blue;
   z-index: 1000;
@@ -99,21 +101,23 @@ div#confirmation {
   text-align: center;
 }
 
-div#confirmation a.close {
+div#dialog a.close {
   float: right;
   padding: 10px;
   text-decoration: none;
 }
 
-div#confirmation div {
+div#dialog div {
+  width: 292px;
+  height: 152px;
   margin: 2px;
   padding: 20px;
   border: 2px solid #999;
   background: #eee;
 }
 
-.gray_on_done {
-  opacity: <?= $done ? "0.5" : "1" ?>;
+.muted {
+  opacity: 0.5;
 }
 
 pre {

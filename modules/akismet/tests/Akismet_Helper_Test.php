@@ -26,7 +26,7 @@ class Akismet_Helper_Test extends Unit_Test_Case {
 
     $root = ORM::factory("item", 1);
     $this->_comment = comment::create(
-      $root, user::guest(), "This is a comment",
+      $root, identity::guest(), "This is a comment",
       "John Doe", "john@gallery2.org", "http://gallery2.org");
     foreach ($this->_comment->list_fields("comments") as $name => $field) {
       if (strpos($name, "server_") === 0) {

@@ -50,6 +50,9 @@ define("SYSPATH", realpath("system") . "/");
 // We only accept a few controllers on the command line
 if (PHP_SAPI == "cli") {
   switch ($arg_1 = $_SERVER["argv"][1]) {
+  case "install":
+    include("installer/index.php");
+    exit(0);
   case "upgrade":
   case "package":
     $_SERVER["argv"] = array("index.php", "{$arg_1}r/$arg_1");
@@ -66,6 +69,7 @@ if (PHP_SAPI == "cli") {
     break;
 
   default:
+    print "To install:\n  php index.php install -d database -h host -u user -p password -x table_prefix \n\n\n";
     print "To upgrade:\n  php index.php upgrade\n\n\n";
     print "Developer-only features:\n  ** CAUTION! THESE FEATURES -WILL- DAMAGE YOUR INSTALL **\n";
     print "  php index.php package  # create new installer files\n";

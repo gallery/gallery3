@@ -24,6 +24,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
   public function setup() {
     $this->_ip_address = Input::instance()->ip_address;
     $this->_user_agent = Kohana::$user_agent;
+    $this->_save = $_SERVER;
 
     $_SERVER["HTTP_ACCEPT"] = "HTTP_ACCEPT";
     $_SERVER["HTTP_ACCEPT_CHARSET"] = "HTTP_ACCEPT_CHARSET";
@@ -42,13 +43,14 @@ class Comment_Helper_Test extends Unit_Test_Case {
   public function teardown() {
     Input::instance()->ip_address = $this->_ip_address;
     Kohana::$user_agent = $this->_user_agent;
+    $_SERVER = $this->_save;
   }
 
   public function create_comment_for_guest_test() {
     $rand = rand();
     $root = ORM::factory("item", 1);
     $comment = comment::create(
-      $root, user::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
+      $root, identity::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
 
     $this->assert_equal("name_$rand", $comment->author_name());
     $this->assert_equal("email_$rand", $comment->author_email());
@@ -77,7 +79,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
   public function create_comment_for_user_test() {
     $rand = rand();
     $root = ORM::factory("item", 1);
-    $admin = user::lookup(2);
+    $admin = identity::admin_user();
     $comment = comment::create(
       $root, $admin, "text_$rand", "name_$rand", "email_$rand", "url_$rand");
 

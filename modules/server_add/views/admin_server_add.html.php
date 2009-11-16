@@ -1,25 +1,21 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gServerAddAdmin">
-  <h2>
-    <?= t("Add From Server Admininstration") ?>
-  </h2>
-  <div id="gAuthorizedPath">
-    <h3><?= t("Authorized Paths") ?></h3>
-    <ul id="gMessage"<? if (!empty($paths)): ?> style="display: none;"<? endif ?>>
-      <li class="gInfo"><?= t("No Authorized image source paths defined yet") ?></li>
-    </ul>
-    <ul id="gPathList">
+<div class="g-block">
+  <h1> <?= t("Add from server admininstration") ?> </h1>
+  <div class="g-block-content">
+    <?= $form ?>
+    <h2><?= t("Authorized paths") ?></h2>
+    <ul id="g-server-add-paths">
+      <? if (empty($paths)): ?>
+      <li class="g-module-status g-info"><?= t("No authorized image source paths defined yet") ?></li>
+      <? endif ?>
       <? foreach ($paths as $id => $path): ?>
-      <li class="ui-icon-left">
-        <a href="<?= url::site("admin/server_add/remove_path?path=" . urlencode($path) . "&amp;csrf=$csrf") ?>"
-           id="icon_<?= $id?>"
-           class="gRemoveDir ui-icon ui-icon-trash">
-          X
-        </a>
+      <li>
         <?= html::clean($path) ?>
+        <a href="<?= url::site("admin/server_add/remove_path?path=" . urlencode($path) . "&amp;csrf=$csrf") ?>"
+           id="icon_<?= $id ?>"
+           class="g-remove-dir g-button"><span class="ui-icon ui-icon-trash"><?= t("delete") ?></span></a>
       </li>
       <? endforeach ?>
     </ul>
   </div>
-  <?= $form ?>
 </div>

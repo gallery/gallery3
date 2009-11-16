@@ -29,33 +29,39 @@ class theme_Core {
    * active for any given request.
    */
   static function load_themes() {
-    $modules = Kohana::config("core.modules");
-    if (Router::$controller == "admin") {
-      array_unshift($modules, THEMEPATH . module::get_var("gallery", "active_admin_theme"));
-    } else {
-      array_unshift($modules, THEMEPATH . module::get_var("gallery", "active_site_theme"));
+    $path = Input::instance()->server("PATH_INFO");
+    $input = Input::instance();
+    if (empty($path)) {
+      $path = "/" . $input->get("kohana_uri");
     }
 
+    if (!(identity::active_user()->admin && $theme_name = $input->get("theme"))) {
+      $theme_name = module::get_var(
+        "gallery",
+        !strncmp($path, "/admin", 6) ? "active_admin_theme" : "active_site_theme");
+    }
+    $modules = Kohana::config("core.modules");
+    array_unshift($modules, THEMEPATH . $theme_name);
     Kohana::config_set("core.modules", $modules);
   }
 
   static function get_edit_form_admin() {
-    $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"gThemeOptionsForm"));
+    $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"g-theme-options-form"));
     $group = $form->group("edit_theme");
-    $group->input("page_size")->label(t("Items per page"))->id("gPageSize")
+    $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
       ->value(module::get_var("gallery", "page_size"));
-    $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("gThumbSize")
+    $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("g-thumb-size")
       ->rules("required|valid_digit")
       ->value(module::get_var("gallery", "thumb_size"));
-    $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("gResizeSize")
+    $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("g-resize-size")
       ->rules("required|valid_digit")
       ->value(module::get_var("gallery", "resize_size"));
-    $group->textarea("header_text")->label(t("Header text"))->id("gHeaderText")
+    $group->textarea("header_text")->label(t("Header text"))->id("g-header-text")
       ->value(module::get_var("gallery", "header_text"));
-    $group->textarea("footer_text")->label(t("Footer text"))->id("gFooterText")
+    $group->textarea("footer_text")->label(t("Footer text"))->id("g-footer-text")
       ->value(module::get_var("gallery", "footer_text"));
-    $group->checkbox("show_credits")->label(t("Show site credits"))->id("gFooterText")
+    $group->checkbox("show_credits")->label(t("Show site credits"))->id("g-footer-text")
       ->checked(module::get_var("gallery", "show_credits"));
     $group->submit("")->value(t("Save"));
     return $form;

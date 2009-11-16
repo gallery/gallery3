@@ -1,0 +1,18 @@
+/**
+ * Fix display in IE 6 and 7
+ */
+
+.g-unavailable {
+  filter: alpha(opacity=40);
+}
+
+.g-unavailable:hover {
+  filter: alpha(opacity=100);
+}
+
+tr.g-error td,
+tr.g-info td,
+tr.g-success td,
+tr.g-warning td {
+  background: none !important;
+} 

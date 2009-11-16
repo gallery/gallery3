@@ -37,9 +37,9 @@ class slideshow_event_Core {
       $menu->append(Menu::factory("link")
                     ->id("slideshow")
                     ->label(t("View slideshow"))
-                    ->url("javascript:PicLensLite.start(" .
-                          "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
-                    ->css_id("gSlideshowLink"));
+                    ->url("javascript:cooliris.embed.show(" .
+                          "{maxScale:0,feed:'" . self::_feed_url($theme) . "'})")
+                    ->css_id("g-slideshow-link"));
     }
   }
 
@@ -47,18 +47,18 @@ class slideshow_event_Core {
     $menu->append(Menu::factory("link")
                   ->id("slideshow")
                   ->label(t("View slideshow"))
-                  ->url("javascript:PicLensLite.start(" .
-                        "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
-                  ->css_id("gSlideshowLink"));
+                  ->url("javascript:cooliris.embed.show(" .
+                        "{maxScale:0,feed:'" . self::_feed_url($theme) . "'})")
+                  ->css_id("g-slideshow-link"));
   }
 
   static function tag_menu($menu, $theme) {
     $menu->append(Menu::factory("link")
                   ->id("slideshow")
                   ->label(t("View slideshow"))
-                  ->url("javascript:PicLensLite.start(" .
-                        "{maxScale:0,feedUrl:'" . self::_feed_url($theme) . "'})")
-                  ->css_id("gSlideshowLink"));
+                  ->url("javascript:cooliris.embed.show(" .
+                        "{maxScale:0,feed:'" . self::_feed_url($theme) . "'})")
+                  ->css_id("g-slideshow-link"));
   }
 
   private static function _feed_url($theme) {
@@ -66,9 +66,9 @@ class slideshow_event_Core {
       if (!$item->is_album()) {
         $item = $item->parent();
       }
-      return rss::url("gallery/album/{$item->id}?page_size=100");
+      return rss::url("gallery/album/{$item->id}?page_size=20");
     } else {
-      return rss::url("tag/tag/{$theme->tag()->id}?page_size=100");
+      return rss::url("tag/tag/{$theme->tag()->id}?page_size=20");
     }
   }
 }

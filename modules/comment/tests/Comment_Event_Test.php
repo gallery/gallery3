@@ -22,7 +22,7 @@ class Comment_Event_Test extends Unit_Test_Case {
     $rand = rand();
     $album = album::create(ORM::factory("item", 1), "test_$rand", "test_$rand");
     $comment = comment::create(
-      $album, user::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
+      $album, identity::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
 
     $album->delete();
 

@@ -19,7 +19,7 @@
  */
 class recaptcha_Core {
   static function get_configure_form() {
-    $form = new Forge("admin/recaptcha", "", "post", array("id" => "gConfigureRecaptchaForm"));
+    $form = new Forge("admin/recaptcha", "", "post", array("id" => "g-configure-recaptcha-form"));
     $group = $form->group("configure_recaptcha")
       ->label(t("Configure reCAPTCHA"));
     $group->input("public_key")

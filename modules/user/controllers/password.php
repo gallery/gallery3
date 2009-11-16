@@ -32,10 +32,8 @@ class Password_Controller extends Controller {
     if (request::method() == "post") {
       $this->_change_password();
     } else {
-      $user = ORM::factory("user")
-        ->where("hash", Input::instance()->get("key"))
-        ->find();
-      if ($user->loaded) {
+      $user = user::lookup_by_hash(Input::instance()->get("key"));
+      if (!empty($user)) {
         print $this->_new_password_form($user->hash);
       } else {
         throw new Exception("@todo FORBIDDEN", 503);
@@ -48,7 +46,7 @@ class Password_Controller extends Controller {
 
     $valid = $form->validate();
     if ($valid) {
-      $user = ORM::factory("user")->where("name", $form->reset->inputs["name"]->value)->find();
+      $user = user::lookup_by_name($form->reset->inputs["name"]->value);
       if (!$user->loaded || empty($user->email)) {
         $form->reset->inputs["name"]->add_error("no_email", 1);
         $valid = false;
@@ -85,9 +83,9 @@ class Password_Controller extends Controller {
   }
 
   private function _reset_form() {
-    $form = new Forge(url::current(true), "", "post", array("id" => "gResetForm"));
+    $form = new Forge(url::current(true), "", "post", array("id" => "g-reset-form"));
     $group = $form->group("reset")->label(t("Reset Password"));
-    $group->input("name")->label(t("Username"))->id("gName")->class(null)->rules("required");
+    $group->input("name")->label(t("Username"))->id("g-name")->class(null)->rules("required");
     $group->inputs["name"]->error_messages("no_email", t("No email, unable to reset password"));
     $group->submit("")->value(t("Reset"));
 
@@ -97,36 +95,35 @@ class Password_Controller extends Controller {
   private function _new_password_form($hash=null) {
     $template = new Theme_View("page.html", "reset");
 
-    $form = new Forge("password/do_reset", "", "post", array("id" => "gChangePasswordForm"));
+    $form = new Forge("password/do_reset", "", "post", array("id" => "g-change-password-form"));
     $group = $form->group("reset")->label(t("Change Password"));
     $hidden = $group->hidden("hash");
     if (!empty($hash)) {
       $hidden->value($hash);
     }
-    $group->password("password")->label(t("Password"))->id("gPassword")
-      ->rules("required|length[1,40]");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
+    $minimum_length = module::get_var("user", "mininum_password_length", 5);
+    $input_password = $group->password("password")->label(t("Password"))->id("g-password")
+      ->rules($minimum_length ? "required|length[$minimum_length, 40]" : "length[40]");
+    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
       ->matches($group->password);
     $group->inputs["password2"]->error_messages(
       "mistyped", t("The password and the confirm password must match"));
     $group->submit("")->value(t("Update"));
 
-    $template->content = $form;
+    $template->content = new View("user_form.html");
+    $template->content->form = $form;
     return $template;
   }
 
   private function _change_password() {
     $view = $this->_new_password_form();
-    if ($view->content->validate()) {
-      $user = ORM::factory("user")
-        ->where("hash", $view->content->reset->hash->value)
-        ->find();
-
-      if (!$user->loaded) {
+    if ($view->content->form->validate()) {
+      $user = user::lookup_by_hash(Input::instance()->post("hash"));
+      if (empty($user)) {
         throw new Exception("@todo FORBIDDEN", 503);
       }
 
-      $user->password = $view->content->reset->password->value;
+      $user->password = $view->content->form->reset->password->value;
       $user->hash = null;
       $user->save();
       message::success(t("Password reset successfully"));

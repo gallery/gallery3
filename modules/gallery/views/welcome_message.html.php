@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<div id="gWelcomeMessage">
+<div id="g-welcome-message">
   <h1 style="display: none">
     <?= t("Welcome to Gallery 3!") ?>
   </h1>
@@ -16,13 +16,13 @@
 
   <p>
     <a href="<?= url::site("form/edit/users/{$user->id}") ?>"
-      title="<?= t("Edit Your Profile")->for_html_attr() ?>"
-      id="gAfterInstallChangePasswordLink"
-      class="gButtonLink ui-state-default ui-corners-all">
-      <?= t("Change Password Now") ?>
+      title="<?= t("Edit your profile")->for_html_attr() ?>"
+      id="g-after-install-change-password-link"
+      class="g-button ui-state-default ui-corners-all">
+      <?= t("Change password now") ?>
     </a>
-    <script>
-      $("#gAfterInstallChangePasswordLink").gallery_dialog();
+    <script type="text/javascript">
+      $("#g-after-install-change-password-link").gallery_dialog();
     </script>
   </p>
 

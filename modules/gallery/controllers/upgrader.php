@@ -40,10 +40,10 @@ class Upgrader_Controller extends Controller {
     }
 
     $view = new View("upgrader.html");
-    $view->can_upgrade = user::active()->admin || $session->get("can_upgrade");
+    $view->can_upgrade = identity::active_user()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
     $view->available = module::available();
-    $view->done = ($available_upgrades == 0);
+    $view->done = $available_upgrades == 0;
     print $view;
   }
 
@@ -52,13 +52,17 @@ class Upgrader_Controller extends Controller {
       // @todo this may screw up some module installers, but we don't have a better answer at
       // this time.
       $_SERVER["HTTP_HOST"] = "example.com";
-    } else if (!user::active()->admin && !Session::instance()->get("can_upgrade", false)) {
+    } else if (!identity::active_user()->admin && !Session::instance()->get("can_upgrade", false)) {
       access::forbidden();
     }
 
-    // Upgrade gallery and user first
-    module::upgrade("gallery");
-    module::upgrade("user");
+    $available = module::available();
+    // Upgrade gallery first
+    $gallery = $available["gallery"];
+    if ($gallery->code_version != $gallery->version) {
+      module::upgrade("gallery");
+      module::activate("gallery");
+    }
 
     // Then upgrade the rest
     foreach (module::available() as $id => $module) {

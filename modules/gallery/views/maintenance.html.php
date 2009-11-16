@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>
-      <?= t("Gallery - Maintenance Mode") ?>
+      <?= t("Gallery - maintenance mode") ?>
     </title>
     <style>
       body {
@@ -38,12 +38,12 @@
   </head>
   <body>
     <h1>
-      <?= t("Gallery - Maintenance Mode") ?>
+      <?= t("Gallery - maintenance mode") ?>
     </h1>
     <p>
       <?= t("This site is currently only accessible by site administrators.") ?>
     </p>
-    <?= user::get_login_form("login/auth_html") ?>
+    <?= auth::get_login_form("login/auth_html") ?>
   </body>
 </html>
 

@@ -27,10 +27,12 @@ if (!file_exists(VARPATH . "database.php")) {
 Event::add("system.ready", array("I18n", "instance"));
 Event::add("system.ready", array("module", "load_modules"));
 Event::add("system.ready", array("gallery", "ready"));
-Event::add("system.post_routing", array("theme", "load_themes"));
 Event::add("system.post_routing", array("url", "parse_url"));
 Event::add("system.post_routing", array("gallery", "maintenance_mode"));
 Event::add("system.shutdown", array("gallery", "shutdown"));
+
+// @todo once we convert to Kohana 2.4 this doesn't have to be here
+set_error_handler(array("gallery_error", "error_handler"));
 
 // Override the cookie if we have a session id in the URL.
 // @todo This should probably be an event callback

@@ -20,7 +20,7 @@
 class notification {
   static function get_subscription($item_id, $user=null) {
     if (empty($user)) {
-      $user = user::active();
+      $user = identity::active_user();
     }
 
     return ORM::factory("subscription")
@@ -31,7 +31,7 @@ class notification {
 
   static function is_watching($item, $user=null) {
     if (empty($user)) {
-      $user = user::active();
+      $user = identity::active_user();
     }
 
     return ORM::factory("subscription")
@@ -44,7 +44,7 @@ class notification {
   static function add_watch($item, $user=null) {
     if ($item->is_album()) {
       if (empty($user)) {
-        $user = user::active();
+        $user = identity::active_user();
       }
       $subscription = ORM::factory("subscription");
       $subscription->item_id = $item->id;
@@ -56,7 +56,7 @@ class notification {
   static function remove_watch($item, $user=null) {
     if ($item->is_album()) {
       if (empty($user)) {
-        $user = user::active();
+        $user = identity::active_user();
       }
 
       $subscription = ORM::factory("subscription")
@@ -67,19 +67,25 @@ class notification {
   }
 
   static function get_subscribers($item) {
-    // @todo don't access the user table directly
-    // @todo only return distinct email addresses
-    $users = ORM::factory("user")
-      ->join("subscriptions", "users.id", "subscriptions.user_id")
-      ->join("items", "subscriptions.item_id", "items.id")
-      ->where("email IS NOT", null)
-      ->where("items.left_ptr <=", $item->left_ptr)
-      ->where("items.right_ptr >", $item->right_ptr)
-      ->find_all();
+   $subscriber_ids = array();
+    foreach (ORM::factory("subscription")
+             ->select("user_id")
+             ->join("items", "subscriptions.item_id", "items.id")
+             ->where("items.left_ptr <=", $item->left_ptr)
+             ->where("items.right_ptr >", $item->right_ptr)
+             ->find_all()
+             ->as_array() as $subscriber) {
+      $subscriber_ids[] = $subscriber->user_id;
+    }
+
+    if (empty($subscriber_ids)) {
+      return array();
+    }
+    $users = identity::get_user_list($subscriber_ids);
 
     $subscribers = array();
     foreach ($users as $user) {
-      if (access::user_can($user, "view", $item)) {
+      if (access::user_can($user, "view", $item) && !empty($user->email)) {
         $subscribers[$user->email] = 1;
       }
     }

@@ -1,22 +1,22 @@
-$("#gAddAlbumForm input[name=title]").change(
+$("#g-add-album-form input[name=title]").change(
   function() {
-    $("#gAddAlbumForm input[name=name]").attr(
-      "value", $("#gAddAlbumForm input[name=title]").attr("value")
+    $("#g-add-album-form input[name=name]").attr(
+      "value", $("#g-add-album-form input[name=title]").attr("value")
         .replace(/[\s\/]+/g, "-").replace(/\.+$/, ""));
-    $("#gAddAlbumForm input[name=slug]").attr(
-      "value", $("#gAddAlbumForm input[name=title]").attr("value")
+    $("#g-add-album-form input[name=slug]").attr(
+      "value", $("#g-add-album-form input[name=title]").attr("value")
         .replace(/[^A-Za-z0-9-_]+/g, "-")
 	.replace(/^-+/, "")
 	.replace(/-+$/, ""));
   });
-$("#gAddAlbumForm input[name=title]").keyup(
+$("#g-add-album-form input[name=title]").keyup(
   function() {
-    $("#gAddAlbumForm input[name=name]").attr(
-      "value", $("#gAddAlbumForm input[name=title]").attr("value")
+    $("#g-add-album-form input[name=name]").attr(
+      "value", $("#g-add-album-form input[name=title]").attr("value")
         .replace(/[\s\/]+/g, "-")
 	.replace(/\.+$/, ""));
-    $("#gAddAlbumForm input[name=slug]").attr(
-      "value", $("#gAddAlbumForm input[name=title]").attr("value")
+    $("#g-add-album-form input[name=slug]").attr(
+      "value", $("#g-add-album-form input[name=title]").attr("value")
         .replace(/[^A-Za-z0-9-_]+/g, "-")
 	.replace(/^-+/, "")
 	.replace(/-+$/, ""));

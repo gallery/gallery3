@@ -1,0 +1,119 @@
+/* User- and group-related form width ~~~~ */
+
+#g-login-form,
+#g-add-user-form
+#g-edit-user-form,
+#g-delete-user-form,
+#g-user-admin {
+  width: 270px;
+}
+
+/* User/group admin ~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-user-admin {
+  width: auto;
+}
+
+#g-group-admin {
+}
+
+#g-user-admin-list .g-admin {
+  color: #55f;
+  font-weight: bold;
+}
+
+.g-group {
+  display: block;
+  border: 1px solid #999;
+  margin: 0 1em 1em 0;
+  padding: 0;
+  width: 200px;
+}
+
+.g-group h4 {
+  background-color: #eee;
+  border-bottom: 1px dashed #ccc;
+  padding: .5em 0 .5em .5em;
+}
+
+.g-group .g-button {
+  padding: 0;
+}
+
+.g-group .g-member-list,
+.g-group div {
+  height: 180px;
+  margin: 1px;
+  overflow: auto;
+}
+
+.g-group p {
+  margin-top: 1em;
+  padding: .5em;
+  text-align: center;
+}
+
+.g-group .g-user {
+  padding: .2em 0 0 .5em;
+}
+
+.g-group .g-user .g-button {
+  vertical-align: middle;
+}
+
+.g-default-group h4,
+.g-default-group .g-user {
+  color: #999;
+}
+
+.g-group.ui-droppable {
+  padding: 0 !important;
+}
+
+/* Password strength meter ~~~~~~~~~~~~~~~ */
+
+.g-password-strength0 {
+  background: url(../images/progressImg1.png) no-repeat 0 0;
+  width: 138px;
+  height: 7px;
+}
+
+.g-password-strength10 {
+  background-position:0 -7px;
+}
+
+.g-password-strength20 {
+  background-position:0 -14px;
+}
+
+.g-password-strength30 {
+  background-position:0 -21px;
+}
+
+.g-password-strength40 {
+  background-position:0 -28px;
+}
+
+.g-password-strength50 {
+  background-position:0 -35px;
+}
+
+.g-password-strength60 {
+  background-position:0 -42px;
+}
+
+.g-password-strength70 {
+  background-position:0 -49px;
+}
+
+.g-password-strength80 {
+  background-position:0 -56px;
+}
+
+.g-password-strength90 {
+  background-position:0 -63px;
+}
+
+.g-password-strength100 {
+  background-position:0 -70px;
+}

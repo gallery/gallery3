@@ -19,14 +19,14 @@
  */
 class DrawForm_Test extends Unit_Test_Case {
   function no_group_test() {
-    $form = new Forge("test/controller", "", "post", array("id" => "gTestGroupForm"));
+    $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
     $form->input("title")->label(t("Title"));
     $form->textarea("description")->label(t("Text Area"));
     $form->submit("")->value(t("Submit"));
     $rendered = $form->__toString();
 
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
-                      "id=\"gTestGroupForm\">\n" .
+                      "id=\"g-test-group-form\">\n" .
                 "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"  />\n" .
                 "  <ul>\n" .
                 "  <li>\n" .
@@ -48,7 +48,7 @@ class DrawForm_Test extends Unit_Test_Case {
   }
 
   function group_test() {
-    $form = new Forge("test/controller", "", "post", array("id" => "gTestGroupForm"));
+    $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
     $group = $form->group("test_group")->label(t("Test Group"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Text Area"));
@@ -56,7 +56,7 @@ class DrawForm_Test extends Unit_Test_Case {
     $rendered = $form->__toString();
 
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
-                      "id=\"gTestGroupForm\">\n" .
+                      "id=\"g-test-group-form\">\n" .
                 "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"  />\n" .
                 "  <fieldset>\n" .
                 "    <legend>Test Group</legend>\n" .
@@ -81,7 +81,7 @@ class DrawForm_Test extends Unit_Test_Case {
   }
 
   function form_script_test() {
-    $form = new Forge("test/controller", "", "post", array("id" => "gTestGroupForm"));
+    $form = new Forge("test/controller", "", "post", array("id" => "g-test-group-form"));
     $group = $form->group("test_group")->label(t("Test Group"));
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Text Area"));
@@ -92,7 +92,7 @@ class DrawForm_Test extends Unit_Test_Case {
     $rendered = $form->__toString();
 
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
-                      "id=\"gTestGroupForm\">\n" .
+                      "id=\"g-test-group-form\">\n" .
                 "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"  />\n" .
                 "  <fieldset>\n" .
                 "    <legend>Test Group</legend>\n" .

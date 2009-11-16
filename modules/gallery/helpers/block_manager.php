@@ -29,7 +29,18 @@ class block_manager_Core {
   static function add($location, $module_name, $block_id) {
     $blocks = self::get_active($location);
     $blocks[rand()] = array($module_name, $block_id);
+
     self::set_active($location, $blocks);
+  }
+
+  static function activate_blocks($module_name) {
+    $block_class = "{$module_name}_block";
+    if (method_exists($block_class, "get_site_list")) {
+      $blocks = call_user_func(array($block_class, "get_site_list"));
+      foreach  (array_keys($blocks) as $block_id) {
+        self::add("site_sidebar", $module_name, $block_id);
+      }
+    }
   }
 
   static function remove($location, $block_id) {
@@ -38,13 +49,48 @@ class block_manager_Core {
     self::set_active($location, $blocks);
   }
 
-  static function get_available() {
+  static function remove_blocks_for_module($location, $module_name) {
+    $blocks = self::get_active($location);
+    foreach ($blocks as $key => $block) {
+      if ($block[0] == $module_name) {
+        unset($blocks[$key]);
+      }
+    }
+    self::set_active($location, $blocks);
+  }
+
+  static function deactivate_blocks($module_name) {
+    $block_class = "{$module_name}_block";
+    if (method_exists($block_class, "get_site_list")) {
+      $blocks = call_user_func(array($block_class, "get_site_list"));
+      foreach  (array_keys($blocks) as $block_id) {
+        self::remove_blocks_for_module("site_sidebar", $module_name);
+      }
+    }
+
+    if (method_exists($block_class, "get_admin_list")) {
+      $blocks = call_user_func(array($block_class, "get_admin_list"));
+      foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
+        self::remove_blocks_for_module($location, $module_name);
+      }
+    }
+  }
+
+  static function get_available_admin_blocks() {
+    return self::_get_blocks("get_admin_list");
+  }
+
+  static function get_available_site_blocks() {
+    return self::_get_blocks("get_site_list");
+  }
+
+  private static function _get_blocks($function) {
     $blocks = array();
 
     foreach (module::active() as $module) {
       $class_name = "{$module->name}_block";
-      if (method_exists($class_name, "get_list")) {
-        foreach (call_user_func(array($class_name, "get_list")) as $id => $title) {
+      if (method_exists($class_name, $function)) {
+        foreach (call_user_func(array($class_name, $function)) as $id => $title) {
           $blocks["{$module->name}:$id"] = $title;
         }
       }
@@ -52,14 +98,16 @@ class block_manager_Core {
     return $blocks;
   }
 
-  static function get_html($location) {
+  static function get_html($location, $theme=null) {
     $active = self::get_active($location);
     $result = "";
     foreach ($active as $id => $desc) {
       if (method_exists("$desc[0]_block", "get")) {
-        $block = call_user_func(array("$desc[0]_block", "get"), $desc[1]);
-        $block->id = $id;
-        $result .= $block;
+        $block = call_user_func(array("$desc[0]_block", "get"), $desc[1], $theme);
+        if (!empty($block)) {
+          $block->id = $id;
+          $result .= $block;
+        }
       }
     }
     return $result;

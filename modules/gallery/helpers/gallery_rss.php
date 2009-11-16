@@ -39,8 +39,8 @@ class gallery_rss_Core {
         ->orderby("created", "DESC");
 
       $feed->max_pages = ceil($all_children->find_all()->count() / $limit);
-      $feed->title = t("Recent Updates");
-      $feed->description = t("Recent Updates");
+      $feed->title = t("Recent updates");
+      $feed->description = t("Recent updates");
       return $feed;
 
     case "album":

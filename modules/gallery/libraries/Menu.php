@@ -43,6 +43,11 @@ class Menu_Element {
    * @chainable
    */
   public function label($label) {
+    // Guard against developers who forget to internationalize label strings
+    if (!($label instanceof SafeString)) {
+      $label = new SafeString($label);
+    }
+
     $this->label = $label;
     return $this;
   }
@@ -74,25 +79,25 @@ class Menu_Element {
     return $this;
   }
 
+  /**
+   * Specifiy a view for this menu item
+   * @chainable
+   */
+  public function view($view) {
+    $this->view = $view;
+    return $this;
+  }
+
 }
 
 /**
  * Menu element that provides a link to a new page.
  */
 class Menu_Element_Link extends Menu_Element {
-  public function __toString() {
-    if (isset($this->css_id) && !empty($this->css_id)) {
-      $css_id = " id=\"$this->css_id\"";
-    } else {
-      $css_id = "";
-    }
-    if (isset($this->css_class) && !empty($this->css_class)) {
-      $css_class = " $this->css_class";
-    } else {
-      $css_class = "";
-    }
-    return "<li><a$css_id class=\"gMenuLink $css_class\" href=\"$this->url\" " .
-      "title=\"$this->label\">$this->label</a></li>";
+  public function render() {
+    $view = new View(isset($this->view) ? $this->view : "menu_link.html");
+    $view->menu = $this;
+    return $view;
   }
 }
 
@@ -111,19 +116,10 @@ class Menu_Element_Ajax_Link extends Menu_Element {
     return $this;
   }
 
-  public function __toString() {
-    if (isset($this->css_id) && !empty($this->css_id)) {
-      $css_id = " id=\"$this->css_id\"";
-    } else {
-      $css_id = "";
-    }
-    if (isset($this->css_class) && !empty($this->css_class)) {
-      $css_class = " $this->css_class";
-    } else {
-      $css_class = "";
-    }
-    return "<li><a$css_id class=\"gAjaxLink $css_class\" href=\"$this->url\" " .
-      "title=\"$this->label\" ajax_handler=\"$this->ajax_handler\">$this->label</a></li>";
+  public function render() {
+    $view = new View(isset($this->view) ? $this->view : "menu_ajax_link.html");
+    $view->menu = $this;
+    return $view;
   }
 }
 
@@ -131,19 +127,10 @@ class Menu_Element_Ajax_Link extends Menu_Element {
  * Menu element that provides a pop-up dialog
  */
 class Menu_Element_Dialog extends Menu_Element {
-  public function __toString() {
-    if (isset($this->css_id) && !empty($this->css_id)) {
-      $css_id = " id=\"$this->css_id\"";
-    } else {
-      $css_id = "";
-    }
-    if (isset($this->css_class) && !empty($this->css_class)) {
-      $css_class = " $this->css_class";
-    } else {
-      $css_class = "";
-    }
-    return "<li><a$css_id class=\"gDialogLink $css_class\" href=\"$this->url\" " .
-           "title=\"$this->label\">$this->label</a></li>";
+  public function render() {
+    $view = new View(isset($this->view) ? $this->view : "menu_dialog.html");
+    $view->menu = $this;
+    return $view;
   }
 }
 
@@ -171,7 +158,7 @@ class Menu_Core extends Menu_Element {
 
     case "root":
       $menu = new Menu("root");
-      $menu->css_class("gMenu");
+      $menu->css_class("g-menu");
       return $menu;
 
     case "submenu":
@@ -180,19 +167,6 @@ class Menu_Core extends Menu_Element {
     default:
       throw Exception("@todo UNKNOWN_MENU_TYPE");
     }
-  }
-
-  public function compact() {
-    foreach ($this->elements as $target_id => $element) {
-      if ($element->type == "submenu") {
-        if (empty($element->elements)) {
-          $this->remove($target_id);
-        } else {
-          $element->compact();
-        }
-      }
-    }
-    return $this;
   }
 
   public function __construct($type) {
@@ -242,11 +216,9 @@ class Menu_Core extends Menu_Element {
     return null;
   }
 
-  public function __toString() {
-    $html = $this->is_root ? "<ul class=\"$this->css_class\">" :
-      "<li title=\"$this->label\"><a href=\"#\">$this->label</a><ul>";
-    $html .= implode("\n", $this->elements);
-    $html .= $this->is_root ? "</ul>" : "</ul></li>";
-    return $html;
+  public function render() {
+    $view = new View(isset($this->view) ? $this->view : "menu.html");
+    $view->menu = $this;
+    return $view;
   }
 }

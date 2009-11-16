@@ -22,6 +22,28 @@ class comment_event_Core {
     Database::instance()->delete("comments", array("item_id" => $item->id));
   }
 
+  static function user_deleted($user) {
+    $guest = identity::guest();
+    Database::instance()->from("comments")
+      ->set(array("author_id" => $guest->id,
+                  "guest_email" => null,
+                  "guest_name" => "guest",
+                  "guest_url" => null))
+      ->where(array("author_id" => $user->id))
+      ->update();
+  }
+
+  static function identity_provider_changed($old_provider, $new_provider) {
+    $guest = identity::guest();
+    Database::instance()->from("comments")
+      ->set(array("author_id" => $guest->id,
+                  "guest_email" => null,
+                  "guest_name" => "guest",
+                  "guest_url" => null))
+      ->where("1 = 1")
+      ->update();
+  }
+
   static function admin_menu($menu, $theme) {
     $menu->get("content_menu")
       ->append(Menu::factory("link")
@@ -36,7 +58,7 @@ class comment_event_Core {
                ->id("comments")
                ->label(t("View comments on this item"))
                ->url("#comments")
-               ->css_id("gCommentsLink"));
+               ->css_id("g-comments-link"));
   }
 
   static function item_index_data($item, $data) {

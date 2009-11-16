@@ -1,5 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<ul class="gMetadata">
+<ul class="g-metadata">
   <li>
     <strong class="caption"><?= t("Title:") ?></strong>
     <?= html::purify($item->title) ?>

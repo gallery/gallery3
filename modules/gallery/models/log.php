@@ -18,5 +18,21 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Log_Model extends ORM {
-  protected $has_one = array("user");
+  /**
+   * @see ORM::__get()
+   */
+  public function __get($column) {
+    if ($column == "user") {
+      // This relationship depends on an outside module, which may not be present so handle
+      // failures gracefully.
+      try {
+        return identity::lookup_user($this->user_id);
+      } catch (Exception $e) {
+        Kohana::log("alert", "Unable to load user with id $this->user_id");
+        return null;
+      }
+    } else {
+      return parent::__get($column);
+    }
+  }
 }

@@ -23,7 +23,7 @@ class Digibug_Controller extends Controller {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
 
-    if (access::group_can(group::everybody(), "view_full", $item)) {
+    if (access::group_can(identity::everybody(), "view_full", $item)) {
       $full_url = $item->file_url(true);
       $thumb_url = $item->thumb_url(true);
     } else {

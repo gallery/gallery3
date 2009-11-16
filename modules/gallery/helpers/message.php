@@ -81,7 +81,7 @@ class message_Core {
       $buf[] = "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
     }
     if ($buf) {
-      return "<ul id=\"gMessage\">" . implode("", $buf) . "</ul>";
+      return "<ul id=\"g-action-status\" class=\"g-message-block\">" . implode("", $buf) . "</ul>";
     }
   }
 
@@ -93,16 +93,16 @@ class message_Core {
   static function severity_class($severity) {
     switch($severity) {
     case self::SUCCESS:
-      return "gSuccess";
+      return "g-success";
 
     case self::INFO:
-      return "gInfo";
+      return "g-info";
 
     case self::WARNING:
-      return "gWarning";
+      return "g-warning";
 
     case self::ERROR:
-      return "gError";
+      return "g-error";
     }
   }
 }

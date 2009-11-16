@@ -24,12 +24,12 @@ class Gallery_View_Core extends View {
 
   /**
    * Add a script to the combined scripts list.
-   * @param $file  the relative path to a script from the gallery3 directory
+   * @param $file  the file name or path of the script to include. If a path is specified then
+   *               it needs to be relative to DOCROOT. Just specifying a file name will result
+   *               in searching Kohana's cascading file system.
    */
   public function script($file) {
-    $base_file = str_replace(".js", "", $file);
-    if (($path = Kohana::find_file("js", $base_file, false, "js")) ||
-        file_exists($path = DOCROOT . "lib/$file")) {
+    if (($path = gallery::find_file("js", $file, false))) {
       $this->scripts[$path] = 1;
     } else {
       Kohana::log("error", "Can't find script file: $file");
@@ -47,12 +47,12 @@ class Gallery_View_Core extends View {
 
   /**
    * Add a css file to the combined css list.
-   * @param $file  the relative path to a script from the gallery3 directory
+   * @param $file  the file name or path of the script to include. If a path is specified then
+   *               it needs to be relative to DOCROOT. Just specifying a file name will result
+   *               in searching Kohana's cascading file system.
    */
   public function css($file) {
-    $base_file = str_replace(".css", "", $file);
-    if (($path = Kohana::find_file("css", $base_file, false, "css")) ||
-        file_exists($path = DOCROOT . "lib/$file")) {
+    if (($path = gallery::find_file("css", $file, false))) {
       $this->css[$path] = 1;
     } else {
       Kohana::log("error", "Can't find css file: $file");
@@ -85,13 +85,11 @@ class Gallery_View_Core extends View {
 
     if (empty($contents)) {
       $contents = "";
-      $docroot_len = strlen(DOCROOT);
       foreach (array_keys($paths) as $path) {
-        $relative = substr($path, $docroot_len);
         if ($type == "css") {
-          $contents .= "/* $relative */\n" . $this->process_css($path) . "\n";
+          $contents .= "/* $path */\n" . $this->process_css($path) . "\n";
         } else {
-          $contents .= "/* $relative */\n" . file_get_contents($path) . "\n";
+          $contents .= "/* $path */\n" . file_get_contents($path) . "\n";
         }
       }
 

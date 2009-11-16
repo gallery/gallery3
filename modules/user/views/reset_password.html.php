@@ -1,10 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <html>
   <head>
-    <title><?= t("Password Reset Request") ?> </title>
+    <title><?= t("Password reset request") ?> </title>
   </head>
   <body>
-    <h2><?= t("Password Reset Request") ?> </h2>
+    <h2><?= t("Password reset request") ?> </h2>
     <p>
       <?= t("Hello, %name,", array("name" => $user->full_name ? $user->full_name : $user->name)) ?>
     </p>

@@ -29,21 +29,21 @@ class Theme_View_Core extends Gallery_View {
    */
   public function __construct($name, $page_type) {
     $theme_name = module::get_var("gallery", "active_site_theme");
-    if (!file_exists("themes/$theme_name")) {
-      module::set_var("gallery", "active_site_theme", "default");
+    if (!file_exists(THEMEPATH . $theme_name)) {
+      module::set_var("gallery", "active_site_theme", "wind");
       theme::load_themes();
       Kohana::log("error", "Unable to locate theme '$theme_name', switching to default theme.");
     }
     parent::__construct($name);
 
     $this->theme_name = module::get_var("gallery", "active_site_theme");
-    if (user::active()->admin) {
+    if (identity::active_user()->admin) {
       $this->theme_name = Input::instance()->get("theme", $this->theme_name);
     }
     $this->item = null;
     $this->tag = null;
     $this->set_global("theme", $this);
-    $this->set_global("user", user::active());
+    $this->set_global("user", identity::active_user());
     $this->set_global("page_type", $page_type);
     $this->set_global("page_title", null);
     if ($page_type == "album") {
@@ -78,23 +78,30 @@ class Theme_View_Core extends Gallery_View {
     return $this->page_type;
   }
 
+  public function user_menu() {
+    $menu = Menu::factory("root")
+      ->css_id("g-login-menu")
+      ->css_class("g-inline ui-helper-clear-fix");
+    module::event("user_menu", $menu, $this);
+    return $menu->render();
+  }
+
   public function site_menu() {
     $menu = Menu::factory("root");
-    gallery::site_menu($menu, $this);
     module::event("site_menu", $menu, $this);
-    return $menu->compact();
+    return $menu->render();
   }
 
   public function album_menu() {
     $menu = Menu::factory("root");
     module::event("album_menu", $menu, $this);
-    return $menu->compact();
+    return $menu->render();
   }
 
   public function tag_menu() {
     $menu = Menu::factory("root");
     module::event("tag_menu", $menu, $this);
-    return $menu->compact();
+    return $menu->render();
   }
 
   public function photo_menu() {
@@ -104,17 +111,17 @@ class Theme_View_Core extends Gallery_View {
                     ->id("fullsize")
                     ->label(t("View full size"))
                     ->url($this->item()->file_url())
-                    ->css_class("gFullSizeLink"));
+                    ->css_class("g-fullsize-link"));
     }
 
     module::event("photo_menu", $menu, $this);
-    return $menu->compact();
+    return $menu->render();
   }
 
   public function movie_menu() {
     $menu = Menu::factory("root");
     module::event("movie_menu", $menu, $this);
-    return $menu->compact();
+    return $menu->render();
   }
 
   public function context_menu($item, $thumbnail_css_selector) {
@@ -122,23 +129,55 @@ class Theme_View_Core extends Gallery_View {
       ->append(Menu::factory("submenu")
                ->id("context_menu")
                ->label(t("Options")))
-      ->css_class("gContextMenu");
+      ->css_class("g-context-menu");
 
-    gallery::context_menu($menu, $this, $item, $thumbnail_css_selector);
     module::event("context_menu", $menu, $this, $item, $thumbnail_css_selector);
-    return $menu->compact();
+    return $menu->render();
   }
 
-  public function pager() {
-    if ($this->children_count) {
-      $this->pagination = new Pagination();
-      $this->pagination->initialize(
-        array("query_string" => "page",
-              "total_items" => $this->children_count,
-              "items_per_page" => $this->page_size,
-              "style" => "classic"));
-      return $this->pagination->render();
+  /**
+   * Set up the data and render a pager.
+   *
+   * See themes/wind/views/pager.html for documentation on the variables generated here.
+   */
+  public function paginator() {
+    $v = new View("paginator.html");
+    $v->page_type = $this->page_type;
+    $v->first_page_url = null;
+    $v->previous_page_url = null;
+    $v->next_page_url = null;
+    $v->last_page_url = null;
+
+    if ($this->page_type == "album" || $this->page_type == "tag") {
+      $v->page = $this->page;
+      $v->max_pages = $this->max_pages;
+      $v->total = $this->children_count;
+
+      if ($this->page != 1) {
+        $v->first_page_url = url::site(url::merge(array("page" => 1)));
+        $v->previous_page_url = url::site(url::merge(array("page" => $this->page - 1)));
+      }
+
+      if ($this->page != $this->max_pages) {
+        $v->next_page_url = url::site(url::merge(array("page" => $this->page + 1)));
+        $v->last_page_url = url::site(url::merge(array("page" => $this->max_pages)));
+      }
+
+      $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
+      $v->last_visible_position = $this->page * $this->page_size;
+    } else {
+      $v->position = $this->position;
+      $v->total = $this->sibling_count;
+      if ($this->previous_item) {
+        $v->previous_page_url = $this->previous_item->url();
+      }
+
+      if ($this->next_item) {
+        $v->next_page_url = $this->next_item->url();
+      }
     }
+
+    return $v;
   }
 
   /**
@@ -153,6 +192,17 @@ class Theme_View_Core extends Gallery_View {
    */
   public function messages() {
     return message::get();
+  }
+
+  /**
+   * Print out the sidebar.
+   */
+  public function sidebar_blocks() {
+    $sidebar = block_manager::get_html("site_sidebar", $this);
+    if (empty($sidebar) && identity::active_user()->admin) {
+      $sidebar = new View("no_sidebar.html");
+    }
+    return $sidebar;
   }
 
   /**
@@ -178,7 +228,6 @@ class Theme_View_Core extends Gallery_View {
     case "photo_top":
     case "resize_bottom":
     case "resize_top":
-    case "sidebar_blocks":
     case "sidebar_bottom":
     case "sidebar_top":
     case "thumb_bottom":
@@ -223,7 +272,7 @@ class Theme_View_Core extends Gallery_View {
       if (Session::instance()->get("debug")) {
         if ($function != "head") {
           array_unshift(
-            $blocks, "<div class=\"gAnnotatedThemeBlock gAnnotatedThemeBlock_$function gClearFix\">" .
+            $blocks, "<div class=\"g-annotated-theme-block g-annotated-theme-block_$function g-clear-fix\">" .
             "<div class=\"title\">$function</div>");
           $blocks[] = "</div>";
         }

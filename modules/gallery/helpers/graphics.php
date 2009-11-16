@@ -19,6 +19,7 @@
  */
 class graphics_Core {
   private static $init;
+  private static $_rules_cache = array();
 
   /**
    * Add a new graphics rule.
@@ -26,7 +27,7 @@ class graphics_Core {
    * Rules are applied to targets (thumbnails and resizes) in priority order.  Rules are functions
    * in the graphics class.  So for example, the following rule:
    *
-   *   graphics::add_rule("gallery", "thumb", "resize",
+   *   graphics::add_rule("gallery", "thumb", "gallery_graphics::resize",
    *                       array("width" => 200, "height" => 200, "master" => Image::AUTO), 100);
    *
    * Specifies that "gallery" is adding a rule to resize thumbnails down to a max of 200px on
@@ -35,7 +36,7 @@ class graphics_Core {
    *
    * @param string  $module_name the module that added the rule
    * @param string  $target      the target for this operation ("thumb" or "resize")
-   * @param string  $operation   the name of the operation
+   * @param string  $operation   the name of the operation (<defining class>::method)
    * @param array   $args        arguments to the operation
    * @param integer $priority    the priority for this rule (lower priorities are run first)
    */
@@ -56,7 +57,7 @@ class graphics_Core {
    * Remove any matching graphics rules
    * @param string  $module_name the module that added the rule
    * @param string  $target      the target for this operation ("thumb" or "resize")
-   * @param string  $operation   the name of the operation
+   * @param string  $operation   the name of the operation(<defining class>::method)
    */
   static function remove_rule($module_name, $target, $operation) {
     ORM::factory("graphics_rule")
@@ -146,13 +147,9 @@ class graphics_Core {
           $working_file = $input_file;
         }
 
-        foreach (ORM::factory("graphics_rule")
-                 ->where("target", $target)
-                 ->where("active", true)
-                 ->orderby("priority", "asc")
-                 ->find_all() as $rule) {
+        foreach (self::_get_rules($target) as $rule) {
           $args = array($working_file, $output_file, unserialize($rule->args));
-          call_user_func_array(array("graphics", $rule->operation), $args);
+          call_user_func_array($rule->operation, $args);
           $working_file = $output_file;
         }
       }
@@ -180,116 +177,19 @@ class graphics_Core {
     }
   }
 
-  /**
-   * Resize an image.  Valid options are width, height and master.  Master is one of the Image
-   * master dimension constants.
-   *
-   * @param string     $input_file
-   * @param string     $output_file
-   * @param array      $options
-   */
-  static function resize($input_file, $output_file, $options) {
-    if (!self::$init) {
-      self::init_toolkit();
-    }
-
-    module::event("graphics_resize", $input_file, $output_file, $options);
-
-    if (@filesize($input_file) == 0) {
-      throw new Exception("@todo EMPTY_INPUT_FILE");
-    }
-
-    $dims = getimagesize($input_file);
-    if (max($dims[0], $dims[1]) < min($options["width"], $options["height"])) {
-      // Image would get upscaled; do nothing
-      copy($input_file, $output_file);
-    } else {
-      $image = Image::factory($input_file)
-        ->resize($options["width"], $options["height"], $options["master"])
-        ->quality(module::get_var("gallery", "image_quality"));
-      if (graphics::can("sharpen")) {
-        $image->sharpen(module::get_var("gallery", "image_sharpen"));
+  private static function _get_rules($target) {
+    if (empty(self::$_rules_cache[$target])) {
+      $rules = array();
+      foreach (ORM::factory("graphics_rule")
+               ->where("target", $target)
+               ->where("active", true)
+               ->orderby("priority", "asc")
+               ->find_all() as $rule) {
+        $rules[] = (object)$rule->as_array();
       }
-      $image->save($output_file);
+      self::$_rules_cache[$target] = $rules;
     }
-
-    module::event("graphics_resize_completed", $input_file, $output_file, $options);
-  }
-
-  /**
-   * Rotate an image.  Valid options are degrees
-   *
-   * @param string     $input_file
-   * @param string     $output_file
-   * @param array      $options
-   */
-  static function rotate($input_file, $output_file, $options) {
-    if (!self::$init) {
-      self::init_toolkit();
-    }
-
-    module::event("graphics_rotate", $input_file, $output_file, $options);
-
-    Image::factory($input_file)
-      ->quality(module::get_var("gallery", "image_quality"))
-      ->rotate($options["degrees"])
-      ->save($output_file);
-
-    module::event("graphics_rotate_completed", $input_file, $output_file, $options);
-  }
-
-  /**
-   * Overlay an image on top of the input file.
-   *
-   * Valid options are: file, mime_type, position, transparency_percent, padding
-   *
-   * Valid positions: northwest, north, northeast,
-   *                  west, center, east,
-   *                  southwest, south, southeast
-   *
-   * padding is in pixels
-   *
-   * @param string     $input_file
-   * @param string     $output_file
-   * @param array      $options
-   */
-  static function composite($input_file, $output_file, $options) {
-    if (!self::$init) {
-      self::init_toolkit();
-    }
-
-    module::event("graphics_composite", $input_file, $output_file, $options);
-
-    list ($width, $height) = getimagesize($input_file);
-    list ($w_width, $w_height) = getimagesize($options["file"]);
-
-    $pad = isset($options["padding"]) ? $options["padding"] : 10;
-    $top = $pad;
-    $left = $pad;
-    $y_center = max($height / 2 - $w_height / 2, $pad);
-    $x_center = max($width / 2 - $w_width / 2, $pad);
-    $bottom = max($height - $w_height - $pad, $pad);
-    $right = max($width - $w_width - $pad, $pad);
-
-    switch ($options["position"]) {
-    case "northwest": $x = $left;     $y = $top;       break;
-    case "north":     $x = $x_center; $y = $top;       break;
-    case "northeast": $x = $right;    $y = $top;       break;
-    case "west":      $x = $left;     $y = $y_center;  break;
-    case "center":    $x = $x_center; $y = $y_center;  break;
-    case "east":      $x = $right;    $y = $y_center;  break;
-    case "southwest": $x = $left;     $y = $bottom;    break;
-    case "south":     $x = $x_center; $y = $bottom;    break;
-    case "southeast": $x = $right;    $y = $bottom;    break;
-    }
-
-    Image::factory($input_file)
-      ->composite($options["file"], $x, $y, $options["transparency"])
-      ->quality(module::get_var("gallery", "image_quality"))
-      ->save($output_file);
-
-
-    module::event("graphics_composite_completed", $input_file, $output_file, $options);
+    return self::$_rules_cache[$target];
   }
 
   /**
@@ -327,7 +227,7 @@ class graphics_Core {
              "%count of your photos are out of date. <a %attrs>Click here to fix them</a>",
              $count,
              array("attrs" => html::mark_clean(sprintf(
-               'href="%s" class="gDialogLink"',
+               'href="%s" class="g-dialog-link"',
                url::site("admin/maintenance/start/gallery_task::rebuild_dirty_images?csrf=__CSRF__"))))),
           "graphics_dirty");
     }
@@ -378,7 +278,10 @@ class graphics_Core {
       $toolkits->graphicsmagick->installed = false;
       $toolkits->graphicsmagick->error = t("GraphicsMagick requires the <b>exec</b> function");
     } else {
-      putenv("PATH=" . getenv("PATH") . ":/usr/local/bin:/opt/local/bin:/opt/bin");
+      $graphics_path = module::get_var("gallery", "graphics_toolkit_path", null);
+
+      putenv("PATH=" . getenv("PATH") . (empty($graphics_path) ? "" : ":$graphics_path") .
+             ":/usr/local/bin:/opt/local/bin:/opt/bin");
 
       // @todo: consider refactoring the two segments below into a loop since they are so
       // similar.
@@ -463,6 +366,9 @@ class graphics_Core {
    * Choose which driver the Kohana Image library uses.
    */
   static function init_toolkit() {
+    if (self::$init) {
+      return;
+    }
     switch(module::get_var("gallery", "graphics_toolkit")) {
     case "gd":
       Kohana::config_set("image.driver", "GD");

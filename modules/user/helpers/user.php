@@ -24,153 +24,6 @@
  * Note: by design, this class does not do any permission checking.
  */
 class user_Core {
-  static function get_edit_form($user) {
-    $form = new Forge("users/$user->id?_method=put", "", "post", array("id" => "gEditUserForm"));
-    $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
-    $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
-    self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
-      ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
-    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    $form->add_rules_from($user);
-
-    module::event("user_edit_form", $user, $form);
-    $group->submit("")->value(t("Save"));
-    return $form;
-  }
-
-  static function get_edit_form_admin($user) {
-    $form = new Forge(
-      "admin/users/edit_user/$user->id", "", "post", array("id" => "gEditUserForm"));
-    $group = $form->group("edit_user")->label(t("Edit User"));
-    $group->input("name")->label(t("Username"))->id("gUsername")->value($user->name);
-    $group->inputs["name"]->error_messages(
-      "in_use", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full Name"))->id("gFullName")->value($user->full_name);
-    self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
-      ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("gEmail")->value($user->email);
-    $group->input("url")->label(t("URL"))->id("gUrl")->value($user->url);
-    $group->checkbox("admin")->label(t("Admin"))->id("gAdmin")->checked($user->admin);
-    $form->add_rules_from($user);
-    $form->edit_user->password->rules("-required");
-
-    module::event("user_edit_form_admin", $user, $form);
-    $group->submit("")->value(t("Modify User"));
-    return $form;
-  }
-
-  static function get_add_form_admin() {
-    $form = new Forge("admin/users/add_user", "", "post", array("id" => "gAddUserForm"));
-    $group = $form->group("add_user")->label(t("Add User"));
-    $group->input("name")->label(t("Username"))->id("gUsername")
-      ->error_messages("in_use", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full Name"))->id("gFullName");
-    $group->password("password")->label(t("Password"))->id("gPassword");
-    $group->password("password2")->label(t("Confirm Password"))->id("gPassword2")
-      ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("gEmail");
-    $group->input("url")->label(t("URL"))->id("gUrl");
-    self::_add_locale_dropdown($group);
-    $group->checkbox("admin")->label(t("Admin"))->id("gAdmin");
-    $user = ORM::factory("user");
-    $form->add_rules_from($user);
-
-    module::event("user_add_form_admin", $user, $form);
-    $group->submit("")->value(t("Add User"));
-    return $form;
-  }
-
-  private static function _add_locale_dropdown(&$form, $user=null) {
-    $locales = locales::installed();
-    foreach ($locales as $locale => $display_name) {
-      $locales[$locale] = SafeString::of_safe_html($display_name);
-    }
-    if (count($locales) > 1) {
-      // Put "none" at the first position in the array
-      $locales = array_merge(array("" => t("« none »")), $locales);
-      $selected_locale = ($user && $user->locale) ? $user->locale : "";
-      $form->dropdown("locale")
-        ->label(t("Language Preference"))
-        ->options($locales)
-        ->selected($selected_locale);
-    }
-  }
-
-  static function get_delete_form_admin($user) {
-    $form = new Forge("admin/users/delete_user/$user->id", "", "post",
-                      array("id" => "gDeleteUserForm"));
-    $group = $form->group("delete_user")->label(
-      t("Are you sure you want to delete user %name?", array("name" => $user->name)));
-    $group->submit("")->value(t("Delete user %name", array("name" => $user->name)));
-    return $form;
-  }
-
-  static function get_login_form($url) {
-    $form = new Forge($url, "", "post", array("id" => "gLoginForm"));
-    $group = $form->group("login")->label(t("Login"));
-    $group->input("name")->label(t("Username"))->id("gUsername")->class(null);
-    $group->password("password")->label(t("Password"))->id("gPassword")->class(null);
-    $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
-    $group->submit("")->value(t("Login"));
-    return $form;
-  }
-
-  /**
-   * Make sure that we have a session and group_ids cached in the session.
-   */
-  static function load_user() {
-    $session = Session::instance();
-    if (!($user = $session->get("user"))) {
-      $session->set("user", $user = user::guest());
-    }
-
-    // The installer cannot set a user into the session, so it just sets an id which we should
-    // upconvert into a user.
-    if ($user === 2) {
-      $user = model_cache::get("user", 2);
-      user::login($user);
-      $session->set("user", $user);
-    }
-
-    if (!$session->get("group_ids")) {
-      $ids = array();
-      foreach ($user->groups as $group) {
-        $ids[] = $group->id;
-      }
-      $session->set("group_ids", $ids);
-    }
-  }
-
-  /**
-   * Return the array of group ids this user belongs to
-   *
-   * @return array
-   */
-  static function group_ids() {
-    return Session::instance()->get("group_ids", array(1));
-  }
-
-  /**
-   * Return the active user.  If there's no active user, return the guest user.
-   *
-   * @return User_Model
-   */
-  static function active() {
-    // @todo (maybe) cache this object so we're not always doing session lookups.
-    $user = Session::instance()->get("user", null);
-    if (!isset($user)) {
-      // Don't do this as a fallback in the Session::get() call because it can trigger unnecessary
-      // work.
-      $user = user::guest();
-    }
-    return $user;
-  }
-
   /**
    * Return the guest user.
    *
@@ -180,18 +33,6 @@ class user_Core {
    */
   static function guest() {
     return model_cache::get("user", 1);
-  }
-
-  /**
-   * Change the active user.
-   *
-   * @return User_Model
-   */
-  static function set_active($user) {
-    $session = Session::instance();
-    $session->set("user", $user);
-    $session->delete("group_ids");
-    self::load_user();
   }
 
   /**
@@ -267,91 +108,69 @@ class user_Core {
   }
 
   /**
-   * Log in as a given user.
-   * @param object $user the user object.
-   */
-  static function login($user) {
-    $user->login_count += 1;
-    $user->last_login = time();
-    $user->save();
-
-    user::set_active($user);
-    module::event("user_login", $user);
-  }
-
-  /**
-   * Log out the active user and destroy the session.
-   * @param object $user the user object.
-   */
-  static function logout() {
-    $user = user::active();
-    if (!$user->guest) {
-      try {
-        Session::instance()->destroy();
-      } catch (Exception $e) {
-        Kohana::log("error", $e);
-      }
-      module::event("user_logout", $user);
-    }
-  }
-
-  /**
    * Look up a user by id.
    * @param integer      $id the user id
    * @return User_Model  the user object, or null if the id was invalid.
    */
   static function lookup($id) {
-    $user = model_cache::get("user", $id);
-    if ($user->loaded) {
-      return $user;
-    }
-    return null;
+    return self::_lookup_user_by_field("id", $id);
   }
 
   /**
    * Look up a user by name.
-   * @param integer      $id the user name
+   * @param integer      $name the user name
    * @return User_Model  the user object, or null if the name was invalid.
    */
   static function lookup_by_name($name) {
-    $user = model_cache::get("user", $name, "name");
-    if ($user->loaded) {
-      return $user;
-    }
-    return null;
+    return self::_lookup_user_by_field("name", $name);
   }
 
   /**
-   * Create a hashed password using md5 plus salt.
-   * @param string $password plaintext password
-   * @param string $salt (optional) salt or hash containing salt (randomly generated if omitted)
-   * @return string hashed password
+   * Look up a user by hash.
+   * @param integer      $hash the user hash value
+   * @return User_Model  the user object, or null if the name was invalid.
    */
-  private static function _md5Salt($password, $salt="") {
-    if (empty($salt)) {
-      for ($i = 0; $i < 4; $i++) {
-        $char = mt_rand(48, 109);
-        $char += ($char > 90) ? 13 : ($char > 57) ? 7 : 0;
-        $salt .= chr($char);
-      }
-    } else {
-      $salt = substr($salt, 0, 4);
-    }
-    return $salt . md5($salt . $password);
+  static function lookup_by_hash($hash) {
+    return self::_lookup_user_by_field("hash", $hash);
   }
 
-  static function cookie_locale() {
-    $cookie_data = Input::instance()->cookie("g_locale");
-    $locale = null;
-    if ($cookie_data) {
-      if (preg_match("/^([a-z]{2,3}(?:_[A-Z]{2})?)$/", trim($cookie_data), $matches)) {
-        $requested_locale = $matches[1];
-        $installed_locales = locales::installed();
-        if (isset($installed_locales[$requested_locale])) {
-          $locale = $requested_locale;
-        }
+  /**
+   * List the users
+   * @param mixed      filters (@see Database.php
+   * @return array     the user list.
+   */
+  static function get_user_list($filter=array()) {
+    $user = ORM::factory("user");
+
+    foreach($filter as $method => $args) {
+      switch ($method) {
+      case "in":
+        $user->in($args[0], $args[1]);
+        break;
+      default:
+        $user->$method($args);
       }
     }
-    return $locale;
+    return $user->find_all();
+  }
+
+  /**
+   * Look up a user by field value.
+   * @param string      search field
+   * @param string      search value
+   * @return User_Core  the user object, or null if the name was invalid.
+   */
+  private static function _lookup_user_by_field($field_name, $value) {
+    try {
+      $user = model_cache::get("user", $value, $field_name);
+      if ($user->loaded) {
+        return $user;
+      }
+    } catch (Exception $e) {
+      if (strpos($e->getMessage(), "MISSING_MODEL") === false) {
+       throw $e;
+      }
+    }
+    return null;
   }
 }

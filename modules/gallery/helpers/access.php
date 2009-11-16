@@ -79,7 +79,7 @@ class access_Core {
    * @return boolean
    */
   static function can($perm_name, $item) {
-    return self::user_can(user::active(), $perm_name, $item);
+    return self::user_can(identity::active_user(), $perm_name, $item);
   }
 
   /**
@@ -197,8 +197,8 @@ class access_Core {
    * @param  Item_Model  $item
    * @param  boolean     $value
    */
-  private static function _set(Group_Model $group, $perm_name, $album, $value) {
-    if (get_class($group) != "Group_Model") {
+  private static function _set(Group_Definition $group, $perm_name, $album, $value) {
+    if (!($group instanceof Group_Definition)) {
       throw new Exception("@todo PERMISSIONS_ONLY_WORK_ON_GROUPS");
     }
     if (!$album->loaded) {
@@ -419,10 +419,10 @@ class access_Core {
    * @return ORM_Iterator
    */
   private static function _get_all_groups() {
-    // When we build the gallery package, it's possible that the user module is not installed yet.
+    // When we build the gallery package, it's possible that there is no identity provider installed yet.
     // This is ok at packaging time, so work around it.
-    if (module::is_active("user")) {
-      return ORM::factory("group")->find_all();
+   if (module::is_active(module::get_var("gallery", "identity_provider", "user"))) {
+      return identity::groups();
     } else {
       return array();
     }

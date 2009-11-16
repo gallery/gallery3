@@ -18,14 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class exif_event_Core {
-  static function gallery_ready() {
-    if (!function_exists("gettext")) {
-      function gettext($message) {
-        return (string) t($message);
-      }
-    }
-  }
-
   static function item_created($item) {
     if (!$item->is_album()) {
       exif::extract($item);

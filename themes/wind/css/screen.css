@@ -1,0 +1,445 @@
+/**
+ * Gallery 3 Wind Theme Screen Styles
+ *
+ * @requires YUI reset, font, grids CSS
+ *
+ * Sheet organization:
+ *  1)  Font sizes, base HTML elements
+ *  2)  Reusable content blocks
+ *  3)  Page layout containers
+ *  4)  Content blocks in specific layout containers
+ *  5)  Navigation and menus
+ *  6)  jQuery and jQuery UI
+ *  7)  Right-to-left language styles
+ */
+
+/** *******************************************************************
+ * 1) Font sizes, base HTML elements
+ **********************************************************************/
+
+body, html {
+  background-color: #ccc;
+  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+em {
+  font-style: oblique;
+}
+
+h1, h2, h3, h4, h5, strong, th {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 1.7em;
+}
+
+#g-dialog h1 {
+  font-size: 1.1em;
+}
+
+h2 {
+  font-size: 1.4em;
+}
+
+#g-sidebar .g-block h2 {
+  font-size: 1.2em;
+}
+
+#g-sidebar .g-block li {
+  margin-bottom: .6em;
+}
+
+#g-content,
+#g-site-menu,
+h3 {
+  font-size: 1.2em;
+}
+
+#g-sidebar,
+.g-breadcrumbs {
+  font-size: .9em;
+}
+
+#g-banner,
+#g-footer,
+.g-message {
+  font-size: .8em;
+}
+
+#g-album-grid .g-item,
+#g-item #g-photo,
+#g-item #g-movie {
+  font-size: .7em;
+}
+
+/* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+a,
+.g-menu a,
+#g-dialog a,
+.g-button,
+.g-button:hover,
+.g-button:active,
+a.ui-state-hover,
+input.ui-state-hover,
+button.ui-state-hover {
+  color: #5382bf !important;
+  cursor: pointer !important;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a:hover,
+#g-dialog a:hover {
+  text-decoration: underline;
+}
+
+.g-menu a:hover {
+  text-decoration: none;
+}
+
+#g-dialog #g-action-status li {
+  width: 400px;
+  white-space: normal;
+  padding-left: 32px;
+}
+
+/* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+table {
+  width: 100%;
+}
+
+#g-content table {
+  margin: 1em 0;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+th,
+td {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: .5em;
+}
+
+td {
+  vertical-align: top;
+}
+
+/** *******************************************************************
+ * 2) Reusable content blocks
+ *********************************************************************/
+
+.g-block h2 {
+  background-color: #e8e8e8;
+  padding: .3em .8em;
+}
+
+.g-block-content {
+  margin-top: 1em;
+}
+
+/*** ******************************************************************
+ * 3) Page layout containers
+ *********************************************************************/
+
+/* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-view {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+/* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-header {
+  margin-bottom: 1em;
+}
+
+#g-banner {
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  min-height: 5em;
+  padding: 1em 20px;
+  position: relative;
+}
+
+#g-content {
+  padding-left: 20px;
+  position: relative;
+  width: 696px;
+}
+
+#g-sidebar {
+  padding: 0 20px;
+  width: 220px;
+}
+
+#g-footer {
+  background-color: #e8e8e8;
+  border-top: 1px solid #ccc;
+  margin-top: 20px;
+  padding: 10px 20px;
+}
+
+/** *******************************************************************
+ * 4) Content blocks in specific layout containers
+ *********************************************************************/
+
+/* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-banner #g-quick-search-form {
+  clear: right;
+  float: right;
+  margin-top: 1em;
+}
+
+#g-banner #g-quick-search-form input[type='text'] {
+  width: 17em;
+}
+
+#g-content .g-block h2 {
+  background-color: transparent;
+  padding-left: 0;
+}
+
+#g-sidebar .g-block-content {
+  padding-left: 1em;
+}
+
+/* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-content #g-album-grid {
+  margin: 1em 0;
+  position: relative;
+  z-index: 1;
+}
+
+#g-content #g-album-grid .g-item {
+  background-color: #fff;
+  border: 1px solid #fff;
+  float: left;
+  padding: .6em 8px;
+  position: relative;
+  text-align: center;
+  width: 213px;
+  z-index: 1;
+}
+
+#g-content #g-album-grid .g-item h2 {
+  margin: 5px 0;
+}
+
+#g-content .g-photo h2,
+#g-content .g-item .g-metadata {
+  display: none;
+  margin-bottom: .6em;
+}
+
+#g-content #g-album-grid .g-album {
+  background-color: #e8e8e8;
+}
+
+#g-content #g-album-grid .g-album h2 span {
+  background: transparent url('../images/ico-album.png') no-repeat top left;
+  display: inline-block;
+  height: 16px;
+  margin-right: 5px;
+  width: 16px;
+}
+
+#g-content #g-album-grid .g-hover-item {
+  border: 1px solid #000;
+  position: absolute !important;
+  z-index: 1000 !important;
+}
+
+#g-content .g-hover-item h2,
+#g-content .g-hover-item .g-metadata {
+  display: block;
+}
+
+#g-content #g-album-grid #g-place-holder {
+  position: relative;
+  visibility: hidden;
+  z-index: 1;
+}
+
+/* Individual photo content ~~~~~~~~~~~~~~ */
+
+#g-item {
+  position: relative;
+  width: 100%;
+}
+
+#g-item #g-photo,
+#g-item #g-movie {
+  padding: 2.2em 0;
+  position: relative;
+}
+
+#g-item img.g-resize,
+#g-item a.g-movie object {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Footer content ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-footer #g-credits li {
+  padding-right: 1.2em;
+}
+
+#g-content #g-search-results {
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
+/* In-line editing  ~~~~~~~~~~~~~~~~~~~~~~ */
+#g-in-place-edit-message {
+  background-color: #FFF;
+}
+
+/** *******************************************************************
+ * 5) Navigation and menus
+ *********************************************************************/
+
+/* Login menu ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-banner #g-login-menu {
+  color: #999;
+  float: right;
+}
+
+#g-banner #g-login-menu li {
+  padding-left: 1.2em;
+}
+
+/* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-site-menu {
+  bottom: 0;
+  left: 140px;
+  position: absolute;
+}
+
+#g-site-menu ul {
+  margin-bottom: 0 !important;
+}
+
+/* Context Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-context-menu {
+  background-color: #fff;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+}
+
+.g-item .g-context-menu {
+  display: none;
+  margin-top: 2em;
+  width: 100%;
+}
+
+#g-item .g-context-menu ul {
+  display: none;
+}
+
+.g-context-menu li {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+.g-context-menu li a {
+  display: block;
+  line-height: 1.6em;
+}
+
+.g-hover-item .g-context-menu {
+  display: block;
+}
+
+.g-hover-item .g-context-menu li {
+  text-align: left;
+}
+
+.g-hover-item .g-context-menu a:hover {
+  text-decoration: none;
+}
+
+/* View Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-view-menu {
+  margin-bottom: 1em;
+}
+
+#g-view-menu a {
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 28px !important;
+  width: 43px !important;
+}
+
+#g-view-menu #g-slideshow-link {
+  background-image: url('../images/ico-view-slideshow.png');
+}
+
+#g-view-menu .g-fullsize-link {
+  background-image: url('../images/ico-view-fullsize.png');
+}
+
+#g-view-menu #g-comments-link {
+  background-image: url('../images/ico-view-comments.png');
+}
+
+#g-view-menu #g-print-digibug-link {
+  background-image: url('../images/ico-print.png');
+}
+
+/** *******************************************************************
+ * 6) jQuery and jQuery UI
+ *********************************************************************/
+
+/* Superfish menu overrides ~~~~~~~~~~~~~~ */
+
+.sf-menu li li,
+.sf-menu li li ul li {
+  background-color: #bdd2ff;
+}
+
+.sf-menu li:hover {
+  background-color: #dfe9ff;
+}
+
+/** *******************************************************************
+ * 7) Right to left language styles
+ *********************************************************************/
+
+.rtl #g-header #g-login-menu,
+.rtl #g-header #g-quick-search-form {
+  clear: left;
+  float: left;
+}
+
+.rtl #g-header #g-login-menu li {
+  margin-left: 0;
+  padding-left: 0;
+  padding-right: 1.2em;
+}
+
+.rtl #g-site-menu {
+  left: auto;
+  right: 150px;
+}

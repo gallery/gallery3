@@ -199,12 +199,12 @@ class gallery_installer {
     }
 
     access::register_permission("view", "View");
-    access::register_permission("view_full", "View Full Size");
+    access::register_permission("view_full", "View full size");
     access::register_permission("edit", "Edit");
     access::register_permission("add", "Add");
 
     // Mark for translation (must be the same strings as used above)
-    t("View Full Size");
+    t("View full size");
     t("View");
     t("Edit");
     t("Add");
@@ -224,8 +224,8 @@ class gallery_installer {
     $root->save();
     access::add_item($root);
 
-    module::set_var("gallery", "active_site_theme", "default");
-    module::set_var("gallery", "active_admin_theme", "admin_default");
+    module::set_var("gallery", "active_site_theme", "wind");
+    module::set_var("gallery", "active_admin_theme", "admin_wind");
     module::set_var("gallery", "page_size", 9);
     module::set_var("gallery", "thumb_size", 200);
     module::set_var("gallery", "resize_size", 640);
@@ -235,16 +235,16 @@ class gallery_installer {
 
     // Add rules for generating our thumbnails and resizes
     graphics::add_rule(
-      "gallery", "thumb", "resize",
+      "gallery", "thumb", "gallery_graphics::resize",
       array("width" => 200, "height" => 200, "master" => Image::AUTO),
       100);
     graphics::add_rule(
-      "gallery", "resize", "resize",
+      "gallery", "resize", "gallery_graphics::resize",
       array("width" => 640, "height" => 480, "master" => Image::AUTO),
       100);
 
     // Instantiate default themes (site and admin)
-    foreach (array("default", "admin_default") as $theme_name) {
+    foreach (array("wind", "admin_wind") as $theme_name) {
       $theme_info = new ArrayObject(parse_ini_file(THEMEPATH . $theme_name . "/theme.info"),
                                     ArrayObject::ARRAY_AS_PROPS);
       $theme = ORM::factory("theme");
@@ -268,7 +268,7 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 12);
+    module::set_version("gallery", 19);
   }
 
   static function upgrade($version) {
@@ -317,7 +317,7 @@ class gallery_installer {
     }
 
     if ($version == 7) {
-      $groups = ORM::factory("group")->find_all();
+      $groups = identity::groups();
       $permissions = ORM::factory("permission")->find_all();
       foreach($groups as $group) {
         foreach($permissions as $permission) {
@@ -363,6 +363,74 @@ class gallery_installer {
       // Flush all path caches becuase we're going to start urlencoding them.
       $db->query("UPDATE {items} SET `relative_url_cache` = NULL, `relative_path_cache` = NULL");
       module::set_version("gallery", $version = 12);
+    }
+
+    if ($version == 12) {
+      if (module::get_var("gallery", "active_site_theme") == "default") {
+        module::set_var("gallery", "active_site_theme", "wind");
+      }
+      if (module::get_var("gallery", "active_admin_theme") == "admin_default") {
+        module::set_var("gallery", "active_admin_theme", "admin_wind");
+      }
+      module::set_version("gallery", $version = 13);
+    }
+
+    if ($version == 13) {
+      // Add rules for generating our thumbnails and resizes
+      Database::instance()->query(
+        "UPDATE {graphics_rules} SET `operation` = CONCAT('gallery_graphics::', `operation`);");
+      module::set_version("gallery", $version = 14);
+    }
+
+    if ($version == 14) {
+      $sidebar_blocks = block_manager::get_active("site_sidebar");
+      if (empty($sidebar_blocks)) {
+        $available_blocks = block_manager::get_available_site_blocks();
+        foreach  (array_keys(block_manager::get_available_site_blocks()) as $id) {
+          $sidebar_blocks[] = explode(":", $id);
+        }
+        block_manager::set_active("site_sidebar", $sidebar_blocks);
+      }
+      module::set_version("gallery", $version = 15);
+    }
+
+    if ($version == 15) {
+      module::set_var("gallery", "identity_provider", "user");
+      module::set_version("gallery", $version = 16);
+    }
+
+    // Convert block keys to an md5 hash of the module and block name
+    if ($version == 16) {
+      foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
+        $blocks = block_manager::get_active($location);
+        $new_blocks = array();
+        foreach ($blocks as $block) {
+          $new_blocks[md5("{$block[0]}:{$block[1]}")] = $block;
+        }
+        block_manager::set_active($location, $new_blocks);
+      }
+      module::set_version("gallery", $version = 17);
+    }
+
+    // We didn't like md5 hashes so convert block keys back to random keys to allow duplicates.
+    if ($version == 17) {
+      foreach (array("dashboard_sidebar", "dashboard_center", "site_sidebar") as $location) {
+        $blocks = block_manager::get_active($location);
+        $new_blocks = array();
+        foreach ($blocks as $block) {
+          $new_blocks[rand()] = $block;
+        }
+        block_manager::set_active($location, $new_blocks);
+      }
+      module::set_version("gallery", $version = 18);
+    }
+
+    // Rename blocks_site.sidebar to blocks_site_sidebar
+    if ($version == 18) {
+      $blocks = block_manager::get_active("site.sidebar");
+      block_manager::set_active("site_sidebar", $blocks);
+      module::clear_var("gallery", "blocks_site.sidebar");
+      module::set_version("gallery", $version = 19);
     }
   }
 

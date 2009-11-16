@@ -38,6 +38,7 @@ if (installer::already_installed()) {
                     "dbname" => $_POST["dbname"],
                     "prefix" => $_POST["prefix"],
                     "type" => function_exists("mysqli_set_charset") ? "mysqli" : "mysql");
+    list ($config["host"], $config["port"]) = explode(":", $config["host"]);
 
     if (!installer::connect($config)) {
       $content = render("invalid_db_info.html.php");

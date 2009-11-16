@@ -22,42 +22,33 @@ class Movies_Controller extends Items_Controller {
   /**
    *  @see REST_Controller::_show($resource)
    */
-  public function _show($photo) {
-    access::required("view", $photo);
+  public function _show($movie) {
+    access::required("view", $movie);
 
-    // We sort by id ascending so for now, find sibling info by doing id based queries.
-    $next_item = ORM::factory("item")
-      ->viewable()
-      ->where("parent_id", $photo->parent_id)
-      ->where("id >", $photo->id)
-      ->orderby("id", "ASC")
-      ->find();
-    $previous_item = ORM::factory("item")
-      ->viewable()
-      ->where("parent_id", $photo->parent_id)
-      ->where("id <", $photo->id)
-      ->orderby("id", "DESC")
-      ->find();
-    $position = ORM::factory("item")
-      ->viewable()
-      ->where("parent_id", $photo->parent_id)
-      ->where("id <=", $photo->id)
-      ->count_all();
+    $where = array("type != " => "album");
+    $position = $movie->parent()->get_position($movie, $where);
+    if ($position > 1) {
+      list ($previous_item, $ignore, $next_item) =
+        $movie->parent()->children(3, $position - 2, $where);
+    } else {
+      $previous_item = null;
+      list ($next_item) = $movie->parent()->viewable()->children(1, $position, $where);
+    }
 
     $template = new Theme_View("page.html", "movie");
-    $template->set_global("item", $photo);
+    $template->set_global("item", $movie);
     $template->set_global("children", array());
-    $template->set_global("children_count", $photo->children_count());
-    $template->set_global("parents", $photo->parents());
-    $template->set_global("next_item", $next_item->loaded ? $next_item : null);
-    $template->set_global("previous_item", $previous_item->loaded ? $previous_item : null);
-    $template->set_global("sibling_count", $photo->parent()->children_count());
+    $template->set_global("children_count", 0);
+    $template->set_global("parents", $movie->parents());
+    $template->set_global("next_item", $next_item);
+    $template->set_global("previous_item", $previous_item);
+    $template->set_global("sibling_count", $movie->parent()->viewable()->children_count($where));
     $template->set_global("position", $position);
 
     $template->content = new View("movie.html");
 
-    $photo->view_count++;
-    $photo->save();
+    $movie->view_count++;
+    $movie->save();
 
     print $template;
   }
@@ -65,21 +56,32 @@ class Movies_Controller extends Items_Controller {
   /**
    * @see REST_Controller::_update($resource)
    */
-  public function _update($photo) {
+  public function _update($movie) {
     access::verify_csrf();
-    access::required("view", $photo);
-    access::required("edit", $photo);
+    access::required("view", $movie);
+    access::required("edit", $movie);
 
-    $form = photo::get_edit_form($photo);
-    if ($valid = $form->validate()) {
-      if ($form->edit_item->filename->value != $photo->name ||
-          $form->edit_item->slug->value != $photo->slug) {
+    $form = movie::get_edit_form($movie);
+    $valid = $form->validate();
+
+    if ($valid) {
+      $new_ext = pathinfo($form->edit_item->filename->value, PATHINFO_EXTENSION);
+      $old_ext = pathinfo($movie->name, PATHINFO_EXTENSION);
+      if (strcasecmp($new_ext, $old_ext)) {
+        $form->edit_item->filename->add_error("illegal_extension", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
+      if ($form->edit_item->filename->value != $movie->name ||
+          $form->edit_item->slug->value != $movie->slug) {
         // Make sure that there's not a name or slug conflict
         if ($row = Database::instance()
             ->select(array("name", "slug"))
             ->from("items")
-            ->where("parent_id", $photo->parent_id)
-            ->where("id <>", $photo->id)
+            ->where("parent_id", $movie->parent_id)
+            ->where("id <>", $movie->id)
             ->open_paren()
             ->where("name", $form->edit_item->filename->value)
             ->orwhere("slug", $form->edit_item->slug->value)
@@ -98,16 +100,16 @@ class Movies_Controller extends Items_Controller {
     }
 
     if ($valid) {
-      $photo->title = $form->edit_item->title->value;
-      $photo->description = $form->edit_item->description->value;
-      $photo->slug = $form->edit_item->slug->value;
-      $photo->rename($form->edit_item->filename->value);
-      $photo->save();
-      module::event("item_edit_form_completed", $photo, $form);
+      $movie->title = $form->edit_item->title->value;
+      $movie->description = $form->edit_item->description->value;
+      $movie->slug = $form->edit_item->slug->value;
+      $movie->rename($form->edit_item->filename->value);
+      $movie->save();
+      module::event("item_edit_form_completed", $movie, $form);
 
-      log::success("content", "Updated movie", "<a href=\"{$photo->url()}\">view</a>");
+      log::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");
       message::success(
-        t("Saved movie %movie_title", array("movie_title" => $photo->title)));
+        t("Saved movie %movie_title", array("movie_title" => $movie->title)));
 
       print json_encode(
         array("result" => "success"));
@@ -121,9 +123,9 @@ class Movies_Controller extends Items_Controller {
   /**
    *  @see REST_Controller::_form_edit($resource)
    */
-  public function _form_edit($photo) {
-    access::required("view", $photo);
-    access::required("edit", $photo);
-    print photo::get_edit_form($photo);
+  public function _form_edit($movie) {
+    access::required("view", $movie);
+    access::required("edit", $movie);
+    print movie::get_edit_form($movie);
   }
 }

@@ -2,38 +2,38 @@
    $.widget("ui.gallery_server_add",  {
      _init: function() {
        var self = this;
-       $("#gServerAddAddButton", this.element).click(function(event) {
+       $("#g-server-add-add-button", this.element).click(function(event) {
          event.preventDefault();
-         $(".gProgressBar", this.element).
+         $(".g-progress-bar", this.element).
            progressbar().
            progressbar("value", 0);
-         $("#gServerAddProgress", this.element).slideDown("fast", function() { self.start_add(); });
+         $("#g-server-add-progress", this.element).slideDown("fast", function() { self.start_add(); });
        });
-       $("#gServerAddPauseButton", this.element).click(function(event) {
+       $("#g-server-add-pause-button", this.element).click(function(event) {
          self.pause = true;
-         $("#gServerAddPauseButton", this.element).hide();
-         $("#gServerAddContinueButton", this.element).show();
+         $("#g-server-add-pause-button", this.element).hide();
+         $("#g-server-add-continue-button", this.element).show();
        });
-       $("#gServerAddContinueButton", this.element).click(function(event) {
+       $("#g-server-add-continue-button", this.element).click(function(event) {
          self.pause = false;
-         $("#gServerAddPauseButton", this.element).show();
-         $("#gServerAddContinueButton", this.element).hide();
+         $("#g-server-add-pause-button", this.element).show();
+         $("#g-server-add-continue-button", this.element).hide();
          self.run_add();
        });
-       $("#gServerAddCloseButton", this.element).click(function(event) {
-         $("#gDialog").dialog("close");
+       $("#g-server-add-close-button", this.element).click(function(event) {
+         $("#g-dialog").dialog("close");
          window.location.reload();
        });
-       $("#gServerAddTree span.gDirectory", this.element).dblclick(function(event) {
+       $("#g-server-add-tree span.g-directory", this.element).dblclick(function(event) {
          self.open_dir(event);
        });
-       $("#gServerAddTree span.gFile, #gServerAddTree span.gDirectory", this.element).click(function(event) {
+       $("#g-server-add-tree span.g-file, #g-server-add-tree span.g-directory", this.element).click(function(event) {
          self.select_file(event);
        });
-       $("#gServerAddTree span.gDirectory", this.element).dblclick(function(event) {
+       $("#g-server-add-tree span.g-directory", this.element).dblclick(function(event) {
          self.open_dir(event);
        });
-       $("#gDialog").bind("dialogclose", function(event, ui) {
+       $("#g-dialog").bind("dialogclose", function(event, ui) {
          window.location.reload();
        });
      },
@@ -48,8 +48,8 @@
 	 paths.push($(this).attr("ref"));
        });
 
-       $("#gServerAddAddButton", this.element).hide();
-       $("#gServerAddPauseButton", this.element).show();
+       $("#g-server-add-add-button", this.element).hide();
+       $("#g-server-add-pause-button", this.element).show();
 
        $.ajax({
          url: START_URL,
@@ -58,8 +58,8 @@
          data: { "paths[]": paths },
          dataType: "json",
          success: function(data, textStatus) {
-           $("#gStatus").html(data.status);
-           $(".gProgressBar", self.element).progressbar("value", data.percent_complete);
+           $("#g-status").html(data.status);
+           $(".g-progress-bar", self.element).progressbar("value", data.percent_complete);
            self.taskURL = data.url;
            setTimeout(function() { self.run_add(); }, 25);
          }
@@ -74,13 +74,13 @@
          async: false,
          dataType: "json",
          success: function(data, textStatus) {
-           $("#gStatus").html(data.status);
-           $(".gProgressBar", self.element).progressbar("value", data.percent_complete);
+           $("#g-status").html(data.status);
+           $(".g-progress-bar", self.element).progressbar("value", data.percent_complete);
            if (data.done) {
-	     $("#gServerAddProgress", this.element).slideUp();
-             $("#gServerAddAddButton", this.element).show();
-             $("#gServerAddPauseButton", this.element).hide();
-             $("#gServerAddContinueButton", this.element).hide();
+	     $("#g-server-add-progress", this.element).slideUp();
+             $("#g-server-add-add-button", this.element).show();
+             $("#g-server-add-pause-button", this.element).hide();
+             $("#g-server-add-continue-button", this.element).hide();
            } else {
              if (!self.pause) {
                setTimeout(function() { self.run_add(); }, 25);
@@ -99,11 +99,11 @@
        $.ajax({
          url: GET_CHILDREN_URL.replace("__PATH__", path),
          success: function(data, textStatus) {
-           $("#gServerAddTree", self.element).html(data);
-           $("#gServerAddTree span.gDirectory", self.element).dblclick(function(event) {
+           $("#g-server-add-tree", self.element).html(data);
+           $("#g-server-add-tree span.g-directory", self.element).dblclick(function(event) {
              self.open_dir(event);
            });
-           $("#gServerAddTree span.gFile, #gServerAddTree span.gDirectory", this.element).click(function(event) {
+           $("#g-server-add-tree span.g-file, #g-server-add-tree span.g-directory", this.element).click(function(event) {
              self.select_file(event);
            });
          }
@@ -115,10 +115,10 @@
       */
      select_file:  function (event) {
        $(event.target).toggleClass("selected");
-       if ($("#gServerAdd span.selected").length) {
-         $("#gServerAddAddButton").enable(true).removeClass("ui-state-disabled");
+       if ($("#g-server-add span.selected").length) {
+         $("#g-server-add-add-button").enable(true).removeClass("ui-state-disabled");
        } else {
-         $("#gServerAddAddButton").enable(false).addClass("ui-state-disabled");
+         $("#g-server-add-add-button").enable(false).addClass("ui-state-disabled");
        }
      }
   });

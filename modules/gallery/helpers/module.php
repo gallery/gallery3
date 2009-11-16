@@ -50,8 +50,20 @@ class module_Core {
    * @param string $module_name
    */
   static function get($module_name) {
-    // @todo can't easily use model_cache here because it throw an exception on missing models.
-    return ORM::factory("module", array("name" => $module_name));
+    if (empty(self::$modules[$module_name])) {
+      return ORM::factory("module", array("name" => $module_name));
+    }
+    return self::$modules[$module_name];
+  }
+
+  /**
+   * Get the information about a module
+   * @returns ArrayObject containing the module information from the module.info file or false if
+   *                      not found
+   */
+  static function info($module_name) {
+    $module_list = self::available();
+    return isset($module_list->$module_name) ? $module_list->$module_name : false;
   }
 
   /**
@@ -79,18 +91,20 @@ class module_Core {
       $modules = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
       foreach (glob(MODPATH . "*/module.info") as $file) {
         $module_name = basename(dirname($file));
-        $modules->$module_name = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+        $modules->$module_name =
+          new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
         $m =& $modules->$module_name;
         $m->installed = self::is_installed($module_name);
         $m->active = self::is_active($module_name);
         $m->code_version = $m->version;
         $m->version = self::get_version($module_name);
-        $m->locked = false;
+        $m->locked = !empty($m->no_module_admin);
       }
 
       // Lock certain modules
       $modules->gallery->locked = true;
-      $modules->user->locked = true;
+      $identity_module = self::get_var("gallery", "identity_provider", "user");
+      $modules->$identity_module->locked = true;
       $modules->ksort();
       self::$available = $modules;
     }
@@ -116,6 +130,8 @@ class module_Core {
     array_unshift($kohana_modules, MODPATH . $module_name);
     Kohana::config_set("core.modules",  $kohana_modules);
 
+    // Rebuild the include path so the module installer can benefit from auto loading
+    Kohana::include_paths(true);
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
@@ -139,10 +155,6 @@ class module_Core {
    * @param string $module_name
    */
   static function upgrade($module_name) {
-    $kohana_modules = Kohana::config("core.modules");
-    array_unshift($kohana_modules, MODPATH . $module_name);
-    Kohana::config_set("core.modules",  $kohana_modules);
-
     $version_before = module::get_version($module_name);
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "upgrade")) {
@@ -155,11 +167,14 @@ class module_Core {
         throw new Exception("@todo UNKNOWN_MODULE");
       }
     }
-    module::load_modules();
 
-    // Now the module is upgraded but inactive, so don't leave it in the active path
-    array_shift($kohana_modules);
-    Kohana::config_set("core.modules",  $kohana_modules);
+    // Now the module is upgraded so deactivate it, but we can'it deactivae gallery or the
+    // current identity provider.
+    $identity_provider = module::get_var("gallery", "identity_provider", "user");
+    if (!in_array($module_name, array("gallery", $identity_provider)) ) {
+      self::deactivate($module_name);
+    }
+    module::load_modules();
 
     $version_after = module::get_version($module_name);
     if ($version_before != $version_after) {
@@ -195,6 +210,9 @@ class module_Core {
     module::load_modules();
 
     graphics::activate_rules($module_name);
+
+    block_manager::activate_blocks($module_name);
+
     log::success(
       "module", t("Activated module %module_name", array("module_name" => $module_name)));
   }
@@ -219,6 +237,9 @@ class module_Core {
     module::load_modules();
 
     graphics::deactivate_rules($module_name);
+
+    block_manager::deactivate_blocks($module_name);
+
     log::success(
       "module", t("Deactivated module %module_name", array("module_name" => $module_name)));
   }
@@ -234,7 +255,7 @@ class module_Core {
       call_user_func(array($installer_class, "uninstall"));
     }
 
-    graphics::remove_rule($module_name);
+    graphics::remove_rules($module_name);
     $module = self::get($module_name);
     if ($module->loaded) {
       $module->delete();
@@ -283,9 +304,32 @@ class module_Core {
     array_shift($args);
     $function = str_replace(".", "_", $name);
 
-    // @todo: consider calling gallery_event first, since for things menus we need it to do some
-    // setup
+    if (method_exists("gallery_event", $function)) {
+      switch (count($args)) {
+      case 0:
+        gallery_event::$function();
+        break;
+      case 1:
+        gallery_event::$function($args[0]);
+        break;
+      case 2:
+        gallery_event::$function($args[0], $args[1]);
+        break;
+      case 3:
+        gallery_event::$function($args[0], $args[1], $args[2]);
+        break;
+      case 4:      // Context menu events have 4 arguments so lets optimize them
+        gallery_event::$function($args[0], $args[1], $args[2], $args[3]);
+        break;
+      default:
+        call_user_func_array(array("gallery_event", $function), $args);
+      }
+    }
+
     foreach (self::$active as $module) {
+      if ($module->name == "gallery") {
+        continue;
+      }
       $class = "{$module->name}_event";
       if (method_exists($class, $function)) {
         call_user_func_array(array($class, $function), $args);

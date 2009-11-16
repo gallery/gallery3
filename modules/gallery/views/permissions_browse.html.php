@@ -5,9 +5,9 @@
     $.ajax({
       url: form_url.replace("__ITEM__", id),
       success: function(data) {
-          $("#gEditPermissionForm").html(data);
-          $(".active").removeClass("active");
-          $("#item-" + id).addClass("active");
+          $("#g-edit-permissions-form").html(data);
+          $(".g-active").removeClass("g-active");
+          $("#item-" + id).addClass("g-active");
       }
     });
   }
@@ -19,15 +19,15 @@
       url: action_url.replace("__CMD__", cmd).replace("__GROUP__", group_id).
            replace("__PERM__", perm_id).replace("__ITEM__", item_id),
       success: function(data) {
-        $("#gEditPermissionForm").load(form_url.replace("__ITEM__", item_id));
+        $("#g-edit-permissions-form").load(form_url.replace("__ITEM__", item_id));
       }
     });
   }
 </script>
-<div id="gPermissions">
+<div id="g-permissions">
   <? if (!$htaccess_works): ?>
-  <ul id="gMessage">
-    <li class="gError">
+  <ul id="g-action-status" class="g-message-block">
+    <li class="g-error">
       <?= t("Oh no!  Your server needs a configuration change in order for you to hide photos!  Ask your server administrator to enable <a %mod_rewrite_attrs>mod_rewrite</a> and set <a %apache_attrs><i>AllowOverride FileInfo Options</i></a> to fix this.",
             array("mod_rewrite_attrs" => html::mark_clean('href="http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html" target="_blank"'),
                   "apache_attrs" => html::mark_clean('href="http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride" target="_blank"'))) ?>
@@ -37,26 +37,26 @@
 
   <p><?= t("Edit permissions for album:") ?></p>
 
-  <ul class="gBreadcrumbs">
+  <ul class="g-breadcrumbs">
+    <? $i = 0 ?>
     <? foreach ($parents as $parent): ?>
-    <li id="item-<?= $parent->id ?>">
+    <li id="item-<?= $parent->id ?>"<? if ($i == 0) print " class=\"g-first\"" ?>>
       <? if (access::can("edit", $parent)): ?>
-      <a href="javascript:show(<?= $parent->id ?>)">
-        <?= html::purify($parent->title) ?>
-      </a>
+      <a href="javascript:show(<?= $parent->id ?>)"> <?= html::purify($parent->title) ?> </a>
       <? else: ?>
       <?= html::purify($parent->title) ?>
       <? endif ?>
     </li>
+    <? $i++ ?>
     <? endforeach ?>
-    <li class="active" id="item-<?= $item->id ?>">
+    <li class="g-active" id="item-<?= $item->id ?>">
       <a href="javascript:show(<?= $item->id ?>)">
         <?= html::purify($item->title) ?>
       </a>
     </li>
   </ul>
 
-  <div id="gEditPermissionForm">
+  <div id="g-edit-permissions-form">
     <?= $form ?>
   </div>
 </div>

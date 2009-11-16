@@ -80,7 +80,7 @@ class log_Core {
     $log->url = substr(url::abs_current(true), 0, 255);
     $log->referer = request::referrer(null);
     $log->timestamp = time();
-    $log->user_id = user::active()->id;
+    $log->user_id = identity::active_user()->id;
     $log->save();
   }
 
@@ -93,16 +93,16 @@ class log_Core {
   static function severity_class($severity) {
     switch($severity) {
     case self::SUCCESS:
-      return "gSuccess";
+      return "g-success";
 
     case self::INFO:
-      return "gInfo";
+      return "g-info";
 
     case self::WARNING:
-      return "gWarning";
+      return "g-warning";
 
     case self::ERROR:
-      return "gError";
+      return "g-error";
     }
   }
 }

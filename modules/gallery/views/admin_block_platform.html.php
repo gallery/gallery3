@@ -4,7 +4,7 @@
     <?= t("Host name: %host_name", array("host_name" => php_uname("n"))) ?>
   </li>
   <li>
-    <?= t("Operating System: %os %version", array("os" => php_uname("s"), "version" => php_uname("r"))) ?>
+    <?= t("Operating system: %os %version", array("os" => php_uname("s"), "version" => php_uname("r"))) ?>
   </li>
   <li>
     <?= t("Apache: %apache_version", array("apache_version" => function_exists("apache_get_version") ? apache_get_version() : t("Unknown"))) ?>

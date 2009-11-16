@@ -25,23 +25,24 @@ class Photos_Controller extends Items_Controller {
   public function _show($photo) {
     access::required("view", $photo);
 
-    $position = $photo->parent()->get_position($photo->id);
+    $where = array("type != " => "album");
+    $position = $photo->parent()->get_position($photo, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) =
-        $photo->parent()->children(3, $position - 2);
+        $photo->parent()->children(3, $position - 2, $where);
     } else {
       $previous_item = null;
-      list ($next_item) = $photo->parent()->children(1, $position);
+      list ($next_item) = $photo->parent()->viewable()->children(1, $position, $where);
     }
 
     $template = new Theme_View("page.html", "photo");
     $template->set_global("item", $photo);
     $template->set_global("children", array());
-    $template->set_global("children_count", $photo->children_count());
+    $template->set_global("children_count", 0);
     $template->set_global("parents", $photo->parents());
     $template->set_global("next_item", $next_item);
     $template->set_global("previous_item", $previous_item);
-    $template->set_global("sibling_count", $photo->parent()->children_count());
+    $template->set_global("sibling_count", $photo->parent()->viewable()->children_count($where));
     $template->set_global("position", $position);
 
     $template->content = new View("photo.html");
@@ -63,7 +64,17 @@ class Photos_Controller extends Items_Controller {
 
     $form = photo::get_edit_form($photo);
     $valid = $form->validate();
-    if ($valid = $form->validate()) {
+
+    if ($valid) {
+      $new_ext = pathinfo($form->edit_item->filename->value, PATHINFO_EXTENSION);
+      $old_ext = pathinfo($photo->name, PATHINFO_EXTENSION);
+      if (strcasecmp($new_ext, $old_ext)) {
+        $form->edit_item->filename->add_error("illegal_extension", 1);
+        $valid = false;
+      }
+    }
+
+    if ($valid) {
       if ($form->edit_item->filename->value != $photo->name ||
           $form->edit_item->slug->value != $photo->slug) {
         // Make sure that there's not a name or slug conflict
@@ -90,6 +101,8 @@ class Photos_Controller extends Items_Controller {
     }
 
     if ($valid) {
+      $watching_album = $photo->url() != ($location = parse_url(request::referrer(), PHP_URL_PATH));
+
       $photo->title = $form->edit_item->title->value;
       $photo->description = $form->edit_item->description->value;
       $photo->slug = $form->edit_item->slug->value;
@@ -103,7 +116,8 @@ class Photos_Controller extends Items_Controller {
                          array("photo_title" => html::purify($photo->title))));
 
       print json_encode(
-        array("result" => "success"));
+        array("result" => "success",
+              "location" => $watching_album ? $location : $photo->url()));
     } else {
       print json_encode(
         array("result" => "error",

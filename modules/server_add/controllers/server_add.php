@@ -103,7 +103,7 @@ class Server_Add_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded || $task->owner_id != user::active()->id) {
+    if (!$task->loaded || $task->owner_id != identity::active_user()->id) {
       access::forbidden();
     }
 
@@ -207,7 +207,7 @@ class Server_Add_Controller extends Admin_Controller {
         $task->set("mode", "done");
       }
 
-      $owner_id = user::active()->id;
+      $owner_id = identity::active_user()->id;
       foreach ($entries as $entry) {
         if (microtime(true) - $start > 0.5) {
           break;

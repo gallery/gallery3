@@ -99,7 +99,7 @@ class Database_Test extends Unit_Test_Case {
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8";
     $this->assert_same($expected, $converted);
-   
+
     $sql = "UPDATE {test_tables} SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
         "  (SELECT `id` FROM {items} " .
@@ -116,12 +116,16 @@ class Database_Test extends Unit_Test_Case {
     $this->assert_same($expected, $sql);
   }
 
-  public function setup() {
-  }
+  function prefix_no_replacement_test() {
+    $update = Database_For_Test::instance()->from("test_tables")
+      ->where("1 = 1")
+      ->set(array("name" => "Test Name"))
+      ->update();
 
-  public function teardown() {
-  }
+    $expected = "UPDATE `g3test_test_tables` SET `name` = 'Test Name' WHERE 1 = 1";
 
+    $this->assert_same($expected, $update);
+  }
 }
 
 class Database_For_Test extends Database {
@@ -130,5 +134,13 @@ class Database_For_Test extends Database {
     $db->_table_names["{items}"] = "g3test_items";
     $db->config["table_prefix"] = "g3test_";
     return $db;
+  }
+
+  public function query($sql = '') {
+    if (!empty($sql)) {
+      print " query($sql)\n";
+      $sql = $this->add_table_prefixes($sql);
+    }
+    return $sql;
   }
 }

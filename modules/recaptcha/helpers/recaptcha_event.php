@@ -20,7 +20,13 @@
 class recaptcha_event_Core {
   static function comment_add_form($form) {
     if (module::get_var("recaptcha", "public_key")) {
-      $form->add_comment->recaptcha("recaptcha")->label("")->id("gRecaptcha");
+      $form->add_comment->recaptcha("recaptcha")->label("")->id("g-recaptcha");
+    }
+  }
+
+  static function register_add_form($form) {
+    if (module::get_var("recaptcha", "public_key")) {
+      $form->register_user->recaptcha("recaptcha")->label("")->id("g-recaptcha");
     }
   }
 

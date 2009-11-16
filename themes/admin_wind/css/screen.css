@@ -1,0 +1,480 @@
+/**
+ * Gallery 3 Admin Wind Theme Screen Styles
+ *
+ * @requires YUI reset, font, grids CSS
+ *
+ * Sheet organization:
+ *  1)  Basic HTML elements
+ *  2)  Reusable content blocks
+ *  3)  Page layout containers
+ *  4)  Content blocks in specific layout containers
+ *  5)  Navigation and menus
+ *  6)  jQuery and jQuery UI
+ *  7)  Right-to-left language styles
+ *
+ * @todo Review g-buttonset-vertical
+ */
+
+/** *******************************************************************
+ * 1) Basic HTML elements
+ **********************************************************************/
+
+body, html {
+  background-color: #ccc;
+  font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+em {
+  font-style: oblique;
+}
+
+h1, h2, h3, h4, h5, strong, th {
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 1.7em;
+}
+
+#g-dialog h1 {
+  font-size: 1.1em;
+}
+
+h2 {
+  font-size: 1.4em;
+}
+
+#g-sidebar .g-block h2 {
+  font-size: 1.2em;
+}
+
+#g-sidebar .g-block li {
+  margin-bottom: .6em;
+}
+
+h3 {
+  font-size: 1.2em;
+}
+
+/* Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+a,
+.g-menu a,
+#g-dialog a,
+.g-button,
+.g-button:hover,
+.g-button:active,
+a.ui-state-hover,
+input.ui-state-hover,
+button.ui-state-hover {
+  color: #5382BF !important;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a:hover,
+#g-dialog a:hover {
+  text-decoration: underline;
+}
+
+.g-menu a:hover {
+  text-decoration: none;
+}
+
+/* Forms ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+fieldset {
+  margin-bottom: 1em;
+}
+
+#g-content form ul li {
+  padding: .4em 0;
+}
+
+#g-dialog form {
+  width: 270px;
+}
+
+#g-dialog fieldset {
+  margin-bottom: 0;
+}
+
+/* Tables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+table {
+  width: 100%;
+}
+
+#g-content table {
+  margin: .6em 0 2em 0;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+th,
+td {
+  border: none;
+  border-bottom: 1px solid #ccc;
+  padding: .5em;
+  vertical-align: middle;
+}
+
+th {
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+/** *******************************************************************
+ * 2) Reusable content blocks
+ *********************************************************************/
+
+.g-block,
+#g-content #g-admin-dashboard .g-block {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 1em;
+}
+
+.g-block h2 {
+  background-color: #e8e8e8;
+  padding: .3em .8em;
+}
+
+.g-block-content {
+  margin-top: 1em;
+}
+
+#g-content .g-block {
+  border: none;
+  padding: 0;
+}
+
+#g-sidebar .g-block-content {
+  padding: 0;
+}
+
+#g-content .g-selected,
+#g-content .g-available .g-block {
+  border: 1px solid #ccc;
+  padding: .8em;
+}
+
+.g-selected img,
+.g-available .g-block img {
+  float: left;
+  margin: 0 1em 1em 0;
+}
+
+.g-selected {
+  background: #e8e8e8;
+}
+
+.g-available .g-installed-toolkit:hover {
+  cursor: pointer;
+  background: #eee;
+}
+
+.g-available .g-button {
+  width: 96%;
+}
+
+.g-selected .g-button {
+  display: none;
+}
+
+.g-unavailable {
+  border-color: #999;
+  opacity: 0.4;
+}
+
+.g-info td {
+  background-color: transparent;
+  background-image: none;
+}
+
+.g-success td {
+  background-color: transparent;
+  background-image: none;
+}
+
+.g-error td {
+  background-color: #f6cbca;
+  background-image: none;
+}
+
+.g-warning td {
+  background-color: #fcf9ce;
+  background-image: none;
+}
+
+.g-module-status.g-info,
+#g-log-entries .g-info,
+.g-module-status.g-success,
+#g-log-entries .g-success {
+  background-color: #fff;
+}
+
+/*** ******************************************************************
+ * 3) Page layout containers
+ *********************************************************************/
+
+/* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-header #g-login-menu {
+  margin-top: 1em;
+}
+
+/* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-view {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  min-width: 974px !important;
+}
+
+/* Layout containers ~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-header {
+  background-color: #e8e8e8;
+  border-bottom: 1px solid #ccc;
+  font-size: .8em;
+  margin-bottom: 20px;
+  padding: 0 20px;
+  position: relative;
+}
+
+#g-content {
+  font-size: 1.1em;
+  padding: 0 2em;
+  width: 96%;
+}
+
+#g-sidebar {
+  background-color: #fff;
+  font-size: .9em;
+  padding: 0 20px;
+  width: 220px;
+}
+
+#g-footer {
+  background-color: #e8e8e8;
+  border-top: 1px solid #ccc;
+  font-size: .8em;
+  margin-top: 20px;
+  padding: 10px 20px;
+}
+
+/** *******************************************************************
+ * 4) Content blocks in specific layout containers
+ *********************************************************************/
+
+/* Header  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-header #g-logo {
+  background: transparent url('../../../lib/images/logo.png') no-repeat 0 .5em;
+  color: #A5A5A5 !important;
+  display: block;
+  height: 65px;
+  padding-top: 5px;
+  width: 105px;
+}
+
+#g-header #g-logo:hover {
+  color: #f60 !important;
+  text-decoration: none;
+}
+
+#g-content .g-block h2 {
+  background-color: transparent;
+  padding-left: 0;
+}
+
+#g-sidebar .g-block-content {
+  padding-left: 1em;
+}
+
+.g-block .ui-dialog-titlebar {
+  margin: -1em -1em 0;
+}
+
+#g-sidebar .g-block h2 {
+  background: none;
+}
+
+/* Photo stream ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-photo-stream {
+  background-color: #e8e8e8;
+}
+
+#g-photo-stream .g-block-content ul {
+  border-right: 1px solid #e8e8e8;
+  height: 135px;
+  overflow: auto;
+  overflow: -moz-scrollbars-horizontal; /* for FF */
+  overflow-x: scroll; /* scroll horizontal */
+  overflow-y: hidden; /* Hide vertical*/
+}
+
+#g-content #g-photo-stream .g-item {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  float: left;
+  height: 90px;
+  overflow: hidden;
+  text-align: center;
+  width: 90px;
+}
+
+#g-content .g-item {
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-right-color: #ccc;
+  border-bottom-color: #ccc;
+  height: 90px;
+  padding: 14px 8px;
+  text-align: center;
+  width: 90px;
+}
+
+/* Graphics settings ~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-admin-graphics .g-available .g-block {
+  clear: none;
+  float: left;
+  margin-right: 1em;
+  width: 30%;
+}
+
+/* Appearance settings ~~~~~~~~~~~~~~~~~~~ */
+
+#g-site-theme,
+#g-admin-theme {
+  float: left;
+  width: 48%;
+}
+
+#g-site-theme {
+  margin-right: 1em;
+}
+
+/* Block admin  ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.g-admin-blocks-list {
+  float: left;
+  margin: 0 2em 2em 0;
+  width: 30%;
+}
+
+.g-admin-blocks-list div:last-child {
+  border: .1em solid;
+  height: 100%;
+}
+
+.g-admin-blocks-list ul {
+  height: 98%;
+  margin: .1em .1em;
+  padding: .1em;
+}
+
+.g-admin-blocks-list ul li.g-draggable {
+  background-color: #e8e8e8;
+  margin: .5em;
+  padding: .3em .8em;
+}
+
+/* In-line editing  ~~~~~~~~~~~~~~~~~~~~~~ */
+#g-in-place-edit-message {
+  background-color: #FFF;
+}
+
+/** *******************************************************************
+ * 5) Navigation and menus
+ *********************************************************************/
+
+/* Site Menu  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-site-admin-menu {
+  bottom: 0;
+  font-size: 1.2em;
+  left: 140px;
+  position: absolute;
+}
+
+#g-site-admin-menu ul {
+  margin-bottom: 0;
+}
+
+/** *******************************************************************
+ * 6) jQuery and jQuery UI
+ *********************************************************************/
+
+/* Superfish menu overrides ~~~~~~~~~~~~~~ */
+
+.sf-menu li li,
+.sf-menu li li ul li {
+  background-color: #bdd2ff;
+}
+
+.sf-menu li:hover {
+  background-color: #dfe9ff;
+}
+
+/* jQuery UI Dialog ~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-admin-dashboard .ui-state-highlight,
+#g-sidebar .ui-state-highlight {
+  height: 2em;
+  margin-bottom: 1em;
+}
+
+.g-buttonset-vertical a {
+  width: 8em !important;
+}
+
+#g-admin-dashboard .ui-dialog-titlebar,
+#g-admin-dashboard-sidebar .ui-dialog-titlebar {
+  padding: .2em .4em;
+}
+
+/** *******************************************************************
+ * 7) Right to left styles
+ *********************************************************************/
+
+.rtl #g-content #g-album-grid .g-item,
+.rtl #g-site-theme,
+.rtl #g-admin-theme,
+.rtl .g-selected img,
+.rtl .g-available .g-block img,
+.rtl #g-content #g-photo-stream .g-item,
+.rtl li.g-group,
+.rtl #g-server-add-admin {
+  float: right;
+}
+
+.rtl #g-admin-graphics .g-available .g-block {
+  float: right;
+  margin-left: 1em;
+  margin-right: 0em;
+}
+
+.rtl #g-site-admin-menu {
+  left: auto;
+  right: 150px;
+}
+
+.rtl #g-header #g-login-menu li {
+  margin-left: 0;
+  padding-left: 0;
+  padding-right: 1.2em;
+}

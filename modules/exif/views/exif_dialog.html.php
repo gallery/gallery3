@@ -1,30 +1,30 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<style>
-  #gExifData {font-size: .85em;}
-  .gOdd {background: #BDD2FF;}
-  .gEven {background: #DFEFFC;}
+<style type="text/css">
+  #g-exif-data { font-size: .85em; }
+  .g-odd { background: #bdd2ff; }
+  .g-even { background: #dfeffc; }
 </style>
-<h1 style="display: none;"><?= t("Photo Detail") ?></h1>
-<div id="gExifData">
-  <table class="gMetadata" >
+<h1 style="display: none;"><?= t("Photo detail") ?></h1>
+<div id="g-exif-data">
+  <table class="g-metadata" >
     <tbody>
       <? for ($i = 0; $i < count($details); $i++): ?>
       <tr>
-         <td class="gEven">
+         <td class="g-even">
          <?= $details[$i]["caption"] ?>
          </td>
-         <td class="gOdd">
+         <td class="g-odd">
          <?= html::clean($details[$i]["value"]) ?>
          </td>
          <? if (!empty($details[++$i])): ?>
-           <td class="gEven">
+           <td class="g-even">
            <?= $details[$i]["caption"] ?>
            </td>
-           <td class="gOdd">
+           <td class="g-odd">
            <?= html::clean($details[$i]["value"]) ?>
            </td>
          <? else: ?>
-           <td class="gEven"></td><td class="gOdd"></td>
+           <td class="g-even"></td><td class="g-odd"></td>
          <? endif ?>
        </tr>
        <? endfor ?>

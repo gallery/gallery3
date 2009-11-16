@@ -30,12 +30,12 @@ class server_add_event_Core {
     $item = $theme->item();
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
 
-    if ($item && user::active()->admin && $item->is_album() && !empty($paths) &&
+    if ($item && identity::active_user()->admin && $item->is_album() && !empty($paths) &&
         is_writable($item->is_album() ? $item->file_path() : $item->parent()->file_path())) {
       $menu->get("add_menu")
         ->append(Menu::factory("dialog")
                  ->id("server_add")
-                 ->label(t("Server add"))
+                 ->label(t("Server Add"))
                  ->url(url::site("server_add/browse/$item->id")));
     }
   }

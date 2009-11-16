@@ -70,9 +70,18 @@ class user_installer {
     $admin->admin = true;
     $admin->save();
 
-    // Let the admin own everything
-    $db->update("items", array("owner_id" => $admin->id), array("owner_id" => "IS NULL"));
-    module::set_version("user", 1);
+    $current_provider = module::get_var("gallery", "identity_provider");
+    if (empty($current_provider)) {
+      // If there is no provider defined then we are doing an initial install
+      // so we need to set the provider and make the administrator own everything
+      // If the installer is called and there is an identity provider, then we
+      // are switching identity providers and and the event handlers will do the
+      // right things
+      module::set_var("gallery", "identity_provider", "user");
+
+      // Let the admin own everything
+      $db->query("update {items} set owner_id = {$admin->id}");
+    }
 
     $root = ORM::factory("item", 1);
     access::allow($everybody, "view", $root);
@@ -80,6 +89,18 @@ class user_installer {
 
     access::allow($registered, "view", $root);
     access::allow($registered, "view_full", $root);
+
+    module::set_var("user", "mininum_password_length", 5);
+
+    module::set_version("user", 2);
+  }
+
+  static function upgrade($version) {
+    if ($version == 1) {
+      module::set_var("user", "mininum_password_length", 5);
+
+      module::set_version("user", $version = 2);
+    }
   }
 
   static function uninstall() {
@@ -92,11 +113,6 @@ class user_installer {
       $group->delete();
     }
 
-    try {
-      Session::instance()->destroy();
-    } catch (Exception $e) {
-      // We don't care if there was a problem destroying the session.
-    }
     $db = Database::instance();
     $db->query("DROP TABLE IF EXISTS {users};");
     $db->query("DROP TABLE IF EXISTS {groups};");

@@ -17,11 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class User_Model extends ORM {
+class User_Model extends ORM implements User_Definition {
   protected $has_and_belongs_to_many = array("groups");
 
   var $rules = array(
-    "name" => "length[1,32]",
+    "name" => "required|length[1,32]",
     "full_name" => "length[0,255]",
     "email" => "valid_email|length[1,255]",
     "password" => "length[1,40]",

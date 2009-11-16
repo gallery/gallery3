@@ -92,7 +92,7 @@ class album_Core {
   }
 
   static function get_add_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gAddAlbumForm"));
+    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "g-add-album-form"));
     $group = $form->group("add_album")
       ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"));
@@ -114,7 +114,7 @@ class album_Core {
   }
 
   static function get_edit_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "gEditAlbumForm"));
+    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "g-edit-album-form"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_item")->label(t("Edit Album"));
 
@@ -123,14 +123,15 @@ class album_Core {
     if ($parent->id != 1) {
       $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
         ->rules("required")
-        ->error_messages("name_conflict", t("There is already a photo or album with this name"))
+        ->error_messages(
+          "name_conflict", t("There is already a movie, photo or album with this name"))
         ->callback("item::validate_no_slashes")
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->callback("item::validate_no_trailing_period")
         ->error_messages("no_trailing_period", t("The directory name can't end in \".\""));
       $group->input("slug")->label(t("Internet Address"))->value($parent->slug)
         ->error_messages(
-          "slug_conflict", t("There is already a photo or album with this internet address"))
+          "slug_conflict", t("There is already a movie, photo or album with this internet address"))
         ->callback("item::validate_url_safe")
         ->error_messages(
           "not_url_safe",
@@ -140,14 +141,14 @@ class album_Core {
       $group->hidden("slug")->value($parent->slug);
     }
 
-    $sort_order = $group->group("sort_order", array("id" => "gAlbumSortOrder"))
+    $sort_order = $group->group("sort_order", array("id" => "g-album-sort-order"))
       ->label(t("Sort Order"));
 
-    $sort_order->dropdown("column", array("id" => "gAlbumSortColumn"))
+    $sort_order->dropdown("column", array("id" => "g-album-sort-column"))
       ->label(t("Sort by"))
       ->options(album::get_sort_order_options())
       ->selected($parent->sort_column);
-    $sort_order->dropdown("direction", array("id" => "gAlbumSortDirection"))
+    $sort_order->dropdown("direction", array("id" => "g-album-sort-direction"))
       ->label(t("Order"))
       ->options(array("ASC" => t("Ascending"),
                       "DESC" => t("Descending")))

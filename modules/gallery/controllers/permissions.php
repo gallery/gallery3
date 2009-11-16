@@ -51,13 +51,13 @@ class Permissions_Controller extends Controller {
   function change($command, $group_id, $perm_id, $item_id) {
     access::verify_csrf();
 
-    $group = ORM::factory("group", $group_id);
+    $group = identity::lookup_group($group_id);
     $perm = ORM::factory("permission", $perm_id);
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
     access::required("edit", $item);
 
-    if ($group->loaded && $perm->loaded && $item->loaded) {
+    if (!empty($group) && $perm->loaded && $item->loaded) {
       switch($command) {
       case "allow":
         access::allow($group, $perm->name, $item);
@@ -74,7 +74,7 @@ class Permissions_Controller extends Controller {
 
       // If the active user just took away their own edit permissions, give it back.
       if ($perm->name == "edit") {
-        if (!access::user_can(user::active(), "edit", $item)) {
+        if (!access::user_can(identity::active_user(), "edit", $item)) {
           access::allow($group, $perm->name, $item);
         }
       }
@@ -84,7 +84,7 @@ class Permissions_Controller extends Controller {
   private function _get_form($item) {
     $view = new View("permissions_form.html");
     $view->item = $item;
-    $view->groups = ORM::factory("group")->find_all();
+    $view->groups = identity::groups();
     $view->permissions = ORM::factory("permission")->find_all();
     return $view;
   }

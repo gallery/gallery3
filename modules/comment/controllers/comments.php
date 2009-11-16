@@ -65,7 +65,7 @@ class Comments_Controller extends REST_Controller {
     $form = comment::get_add_form($item);
     $valid = $form->validate();
     if ($valid) {
-      if (user::active()->guest && !$form->add_comment->inputs["name"]->value) {
+      if (identity::active_user()->guest && !$form->add_comment->inputs["name"]->value) {
         $form->add_comment->inputs["name"]->add_error("missing", 1);
         $valid = false;
       }
@@ -78,13 +78,13 @@ class Comments_Controller extends REST_Controller {
 
     if ($valid) {
       $comment = comment::create(
-        $item, user::active(),
+        $item, identity::active_user(),
         $form->add_comment->text->value,
         $form->add_comment->inputs["name"]->value,
         $form->add_comment->email->value,
         $form->add_comment->url->value);
 
-      $active = user::active();
+      $active = identity::active_user();
       if ($active->guest) {
         $form->add_comment->inputs["name"]->value("");
         $form->add_comment->email->value("");
@@ -192,7 +192,7 @@ class Comments_Controller extends REST_Controller {
    *  @see REST_Controller::form_edit($resource)
    */
   public function _form_edit($comment) {
-    if (!user::active()->admin) {
+    if (!identity::active_user()->admin) {
       access::forbidden();
     }
     print comment::get_edit_form($comment);

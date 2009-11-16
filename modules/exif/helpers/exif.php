@@ -163,7 +163,7 @@ class exif_Core {
     list ($remaining) = exif::stats();
     if ($remaining) {
       site_status::warning(
-        t('Your Exif index needs to be updated.  <a href="%url" class="gDialogLink">Fix this now</a>',
+        t('Your Exif index needs to be updated.  <a href="%url" class="g-dialog-link">Fix this now</a>',
           array("url" => html::mark_clean(url::site("admin/maintenance/start/exif_task::update_index?csrf=__CSRF__")))),
         "exif_index_out_of_date");
     }
