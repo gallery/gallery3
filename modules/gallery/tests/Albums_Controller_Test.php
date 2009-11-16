@@ -19,13 +19,13 @@
  */
 class Albums_Controller_Test extends Unit_Test_Case {
   public function setup() {
-    $this->_post = $_POST;
-    $this->_album = null;
+    $this->_save = array($_POST, $_SERVER);
+    $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
   }
 
   public function teardown() {
-    $_POST = $this->_post;
-    if ($this->_album) {
+    list($_POST, $_SERVER) = $this->_save;
+    if (isset($this->_album)) {
       $this->_album->delete();
     }
   }
@@ -53,7 +53,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     ob_end_clean();
 
     $this->assert_equal(
-      json_encode(array("result" => "success", "location" => "")),
+      json_encode(array("result" => "success", "location" => "HTTP_REFERER")),
       $results);
     $this->assert_equal("new title", $this->_album->title);
     $this->assert_equal("new description", $this->_album->description);

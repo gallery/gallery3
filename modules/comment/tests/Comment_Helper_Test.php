@@ -24,6 +24,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
   public function setup() {
     $this->_ip_address = Input::instance()->ip_address;
     $this->_user_agent = Kohana::$user_agent;
+    $this->_save = $_SERVER;
 
     $_SERVER["HTTP_ACCEPT"] = "HTTP_ACCEPT";
     $_SERVER["HTTP_ACCEPT_CHARSET"] = "HTTP_ACCEPT_CHARSET";
@@ -42,6 +43,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
   public function teardown() {
     Input::instance()->ip_address = $this->_ip_address;
     Kohana::$user_agent = $this->_user_agent;
+    $_SERVER = $this->_save;
   }
 
   public function create_comment_for_guest_test() {
