@@ -29,11 +29,11 @@
           });
         </script>
         <? endif ?>
-        <p class="gray_on_done">
+        <p class="<?= $done ? "muted" : "" ?>">
           <?= t("Welcome to the Gallery upgrader.  One click and you're done!") ?>
         </p>
         <table>
-          <tr class="gray_on_done">
+          <tr class="<?= $done ? "muted" : "" ?>">
             <th> <?= t("Module name") ?> </th>
             <th> <?= t("Installed version") ?> </th>
             <th> <?= t("Available version") ?> </th>
@@ -58,17 +58,17 @@
           <? endforeach ?>
         </table>
 
-        <div class="button gray_on_done">
+        <div class="button">
           <a href="<?= url::site("upgrader/upgrade") ?>">
             <?= t("Upgrade all") ?>
           </a>
         </div>
 
         <? if (@$inactive): ?>
-        <p class="gray_on_done">
+        <p class="<?= $done ? "muted" : "" ?>">
           <?= t("The following modules are inactive and don't require an upgrade.") ?>
         </p>
-        <ul class="gray_on_done">
+        <ul class="<?= $done ? "muted" : "" ?>">
           <? foreach ($available as $module): ?>
           <? if (!$module->active): ?>
           <li>
