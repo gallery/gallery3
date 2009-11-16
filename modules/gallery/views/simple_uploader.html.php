@@ -1,4 +1,17 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<style>
+#g-uploadifyUploader {
+  left: -50px;
+  position: relative;
+  z-index: 100;
+}
+#g-add-photos-button {
+  left: 55px;
+  position: relative;
+  top: -15px;
+  z-index: -1;
+}
+</style>
 <script type="text/javascript" src="<?= url::file("lib/swfobject.js") ?>"></script>
 <script type="text/javascript" src="<?= url::file("lib/uploadify/jquery.uploadify.min.js") ?>"></script>
 <script type="text/javascript">
@@ -15,8 +28,8 @@
       cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
       buttonText: <?= t("Select Photos ...")->for_js() ?>,
       simUploadLimit: 10,
-      //wmode: "transparent",
-      hideButton: false, /* should be true */
+      wmode: "transparent",
+      hideButton: true, /* should be true */
       auto: true,
       multi: true,
       onAllComplete: function(filesUploaded, errors, allbytesLoaded, speed) {
@@ -78,11 +91,6 @@
         return true;
       }
     });
-
-    // @todo figure out how to actually get the offset or why it comes back 0 0
-    var offset = $("#g-add-photos-button").offset();
-    //$("#g-uploadifyUploader").css({top: "97px", position: "absolute", left: "198px"});
-    //$("#g-add-photos-button").height("40px").width("120px");
   });
 </script>
 
@@ -115,7 +123,7 @@
     </div>
 
     <div id="g-add-photos-canvas" style="text-align: center;">
-      <!-- a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select Photos...") ?></a -->
+      <a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select Photos...") ?></a>
       <span id="g-uploadify"></span>
     </div>
     <div id="g-add-photos-status" style="text-align: center;">

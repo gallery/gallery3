@@ -60,6 +60,8 @@ class Cache_Database_Driver implements Cache_Driver {
     if (!empty($tags)) {
       // Escape the tags, adding brackets so the tag can be explicitly matched
       $tags = "<" . implode(">,<", $tags) . ">";
+    } else {
+      $tags = null;
     }
 
     // Cache Database driver expects unix timestamp
