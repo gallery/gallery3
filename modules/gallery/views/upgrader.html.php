@@ -11,14 +11,22 @@
       <img src="<?= url::file("modules/gallery/images/gallery.png") ?>" />
       <div id="inner">
         <? if ($can_upgrade): ?>
-        <? if ($done): ?>
-        <div id="dialog">
-          <a onclick="$('#dialog').fadeOut(); return false;" href="#" class="close">[x]</a>
-          <div>
+        <div id="dialog" style="visibility: hidden">
+          <a id="dialog_close_link" style="display: none" onclick="$('#dialog').fadeOut(); return false;" href="#" class="close">[x]</a>
+          <div id="busy" style="display: none">
+            <h1>
+              <img width="16" height="16" src="<?= url::file("lib/images/loading-small.gif") ?>"/>
+              <?= t("Upgrade in progress!") ?>
+            </h1>
+            <p>
+              <?= t("Please don't refresh or leave the page.") ?>
+            </p>
+          </div>
+          <div id="done" style="display: none">
             <h1> <?= t("That's it!") ?> </h1>
             <p>
               <?= t("Your <a href=\"%url\">Gallery</a> is up to date.",
-                    array("url" => html::mark_clean(item::root()->url()))) ?>
+                  array("url" => html::mark_clean(item::root()->url()))) ?>
             </p>
           </div>
         </div>
@@ -26,9 +34,26 @@
           $(document).ready(function() {
             $("#dialog").css("left", Math.round(($(window).width() - $("#dialog").width()) / 2));
             $("#dialog").css("top", Math.round(($(window).height() - $("#dialog").height()) / 2));
+            $("#upgrade_link").click(function(event) { show_busy() });
+
+            <? if ($done): ?>
+            show_done();
+            <? endif ?>
           });
+
+          var show_busy = function() {
+            $("#dialog").css("visibility", "visible");
+            $("#busy").show();
+            $("#upgrade_link").parent().removeClass("button-active");
+            $("#upgrade_link").replaceWith($("#upgrade_link").html())
+          }
+
+          var show_done = function() {
+            $("#dialog").css("visibility", "visible");
+            $("#done").show();
+            $("#dialog_close_link").show();
+          }
         </script>
-        <? endif ?>
         <p class="<?= $done ? "muted" : "" ?>">
           <?= t("Welcome to the Gallery upgrader.  One click and you're done!") ?>
         </p>
@@ -64,7 +89,7 @@
         </div>
         <? else: ?>
         <div class="button button-active">
-          <a href="<?= url::site("upgrader/upgrade") ?>">
+          <a id="upgrade_link" href="<?= url::site("upgrader/upgrade") ?>">
             <?= t("Upgrade all") ?>
           </a>
         </div>

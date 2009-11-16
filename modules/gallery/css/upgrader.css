@@ -92,6 +92,8 @@ div.button-active:hover {
 }
 
 div#dialog {
+  width: 340px;
+  height: 200px;
   position: absolute;
   background: blue;
   z-index: 1000;
@@ -106,6 +108,8 @@ div#dialog a.close {
 }
 
 div#dialog div {
+  width: 292px;
+  height: 152px;
   margin: 2px;
   padding: 20px;
   border: 2px solid #999;
