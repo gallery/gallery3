@@ -122,7 +122,7 @@
 
     mouse_move_handler: function(event) {
       if ($(".g-drag-helper").length) {
-        $(".g-organize-microthumb-grid-cell").css({borderStyle: "hidden", margin: "4px"});
+        $(".g-organize-microthumb-grid-cell").css({borderStyle: "hidden", margin: "6px"});
         $(".currentDropTarget").removeClass("currentDropTarget");
         var borderStyle = event.pageX < $(this).offset().left + $(this).width() / 2 ?
           {borderLeftStyle: "solid", marginLeft: "2px"} : {borderRightStyle: "solid", marginRight: "2px"};
@@ -141,8 +141,8 @@
       $("#g-dialog").dialog("option", "zIndex", 70);
       $("#g-dialog").bind("dialogopen", function(event, ui) {
         $("#g-organize").height($("#g-dialog").innerHeight() - 20);
-        $("#g-organize-microthumb-panel").height($("#g-dialog").innerHeight() - 90);
-        $("#g-organize-tree-container").height($("#g-dialog").innerHeight() - 59);
+        $("#g-organize-microthumb-grid").height($("#g-dialog").innerHeight() - 91);
+        $("#g-organize-tree-container").height($("#g-dialog").innerHeight() - 60);
       });
 
       $("#g-dialog").bind("dialogclose", function(event, ui) {
