@@ -91,7 +91,7 @@ div.button-active:hover {
   background: #ccc;
 }
 
-div#confirmation {
+div#dialog {
   position: absolute;
   background: blue;
   z-index: 1000;
@@ -99,13 +99,13 @@ div#confirmation {
   text-align: center;
 }
 
-div#confirmation a.close {
+div#dialog a.close {
   float: right;
   padding: 10px;
   text-decoration: none;
 }
 
-div#confirmation div {
+div#dialog div {
   margin: 2px;
   padding: 20px;
   border: 2px solid #999;

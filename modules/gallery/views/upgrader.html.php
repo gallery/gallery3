@@ -12,8 +12,8 @@
       <div id="inner">
         <? if ($can_upgrade): ?>
         <? if ($done): ?>
-        <div id="confirmation">
-          <a onclick="$('#confirmation').fadeOut(); return false;" href="#" class="close">[x]</a>
+        <div id="dialog">
+          <a onclick="$('#dialog').fadeOut(); return false;" href="#" class="close">[x]</a>
           <div>
             <h1> <?= t("That's it!") ?> </h1>
             <p>
@@ -24,8 +24,8 @@
         </div>
         <script type="text/javascript">
           $(document).ready(function() {
-            $("#confirmation").css("left", Math.round(($(window).width() - $("#confirmation").width()) / 2));
-            $("#confirmation").css("top", Math.round(($(window).height() - $("#confirmation").height()) / 2));
+            $("#dialog").css("left", Math.round(($(window).width() - $("#dialog").width()) / 2));
+            $("#dialog").css("top", Math.round(($(window).height() - $("#dialog").height()) / 2));
           });
         </script>
         <? endif ?>
