@@ -46,14 +46,12 @@
         <th> <?= t("Active") ?> </th>
         <th> <?= t("Description") ?> </th>
       </tr>
-      <? $i = 0 ?>
       <? foreach ($available as $module_name => $description):  ?>
-      <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?>">
+      <tr class="<?= text::alternate("g-odd", "g-even") ?>">
         <? $data = array("name" => "provider"); ?>
         <td> <?= form::radio($data, $module_name, $module_name == $active) ?> </td>
         <td> <?= t($description) ?> </td>
       </tr>
-      <? $i++ ?>
       <? endforeach ?>
     </table>
     <input type="submit" value="<?= t("Change")->for_html_attr() ?>" />

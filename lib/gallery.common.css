@@ -333,8 +333,7 @@ form .g-error {
 	font-weight: bold;
 }
 
-.g-draggable,
-.ui-draggable {
+.g-draggable {
   cursor: move;
 }
 

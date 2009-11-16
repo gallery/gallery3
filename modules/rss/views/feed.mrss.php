@@ -31,7 +31,7 @@
         <![CDATA[
           <span><?= html::purify($child->description) ?></span>
           <p>
-          <? if ($child->type == "photo" || $child->type == "album"): ?>
+          <? if ($child->type == "photo"): ?>
             <img alt="" src="<?= $child->resize_url(true) ?>"
                  title="<?= html::purify($child->title)->for_html_attr() ?>"
                  height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
@@ -50,7 +50,7 @@
                        width="<?= $child->thumb_width ?>"
                        />
       <media:group>
-        <? if ($child->type == "photo" || $child->type == "album"): ?>
+        <? if ($child->type == "photo"): ?>
           <media:content url="<?= $child->resize_url(true) ?>"
                          fileSize="<?= @filesize($child->resize_path()) ?>"
                          type="<?= $child->mime_type ?>"

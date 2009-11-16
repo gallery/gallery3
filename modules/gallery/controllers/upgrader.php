@@ -43,7 +43,7 @@ class Upgrader_Controller extends Controller {
     $view->can_upgrade = identity::active_user()->admin || $session->get("can_upgrade");
     $view->upgrade_token = $upgrade_token;
     $view->available = module::available();
-    $view->done = ($available_upgrades == 0);
+    $view->done = $available_upgrades == 0;
     print $view;
   }
 

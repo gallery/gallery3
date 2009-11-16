@@ -20,9 +20,8 @@
             <?= t("Action") ?>
           </th>
         </tr>
-        <? $i = 0; ?>
         <? foreach ($task_definitions as $task): ?>
-        <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?> <?= log::severity_class($task->severity) ?>">
+        <tr class="<?= text::alternate("g-odd", "g-even") ?> <?= log::severity_class($task->severity) ?>">
           <td class="<?= log::severity_class($task->severity) ?>">
             <?= $task->name ?>
           </td>
@@ -36,7 +35,6 @@
             </a>
           </td>
         </tr>
-        <? $i++ ?>
         <? endforeach ?>
       </table>
     </div>
@@ -68,9 +66,8 @@
             <?= t("Action") ?>
           </th>
         </tr>
-        <? $i = 0; ?>
         <? foreach ($running_tasks as $task): ?>
-        <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?> <?= $task->state == "stalled" ? "g-warning" : "" ?>">
+        <tr class="<?= text::alternate("g-odd", "g-even") ?> <?= $task->state == "stalled" ? "g-warning" : "" ?>">
           <td class="<?= $task->state == "stalled" ? "g-warning" : "" ?>">
             <?= gallery::date_time($task->updated) ?>
           </td>
@@ -108,7 +105,6 @@
             <? endif ?>
           </td>
         </tr>
-        <? $i++ ?>
         <? endforeach ?>
       </table>
     </div>
@@ -141,9 +137,8 @@
             <?= t("Action") ?>
           </th>
         </tr>
-        <? $i = 0; ?>
         <? foreach ($finished_tasks as $task): ?>
-        <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?> <?= $task->state == "success" ? "g-success" : "g-error" ?>">
+        <tr class="<?= text::alternate("g-odd", "g-even") ?> <?= $task->state == "success" ? "g-success" : "g-error" ?>">
           <td class="<?= $task->state == "success" ? "g-success" : "g-error" ?>">
             <?= gallery::date_time($task->updated) ?>
           </td>
@@ -187,7 +182,6 @@
           </td>
         </tr>
         <? endforeach ?>
-        <? $i++ ?>
       </table>
     </div>
     <? endif ?>

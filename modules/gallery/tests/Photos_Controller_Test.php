@@ -19,11 +19,12 @@
  */
 class Photos_Controller_Test extends Unit_Test_Case {
   public function setup() {
-    $this->_post = $_POST;
+    $this->_save = array($_POST, $_SERVER);
+    $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
   }
 
   public function teardown() {
-    $_POST = $this->_post;
+    list($_POST, $_SERVER) = $this->_save;
   }
 
   public function change_photo_test() {
@@ -47,7 +48,8 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $results = ob_get_contents();
     ob_end_clean();
 
-    $this->assert_equal(json_encode(array("result" => "success", "location" => "")), $results);
+    $this->assert_equal(
+      json_encode(array("result" => "success", "location" => "HTTP_REFERER")), $results);
     $this->assert_equal("new-slug", $photo->slug);
     $this->assert_equal("new title", $photo->title);
     $this->assert_equal("new description", $photo->description);

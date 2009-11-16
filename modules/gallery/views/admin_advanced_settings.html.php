@@ -16,10 +16,9 @@
         <th> <?= t("Name") ?> </th>
         <th> <?= t("Value") ?></th>
       </tr>
-      <? $i = 0; ?>
       <? foreach ($vars as $var): ?>
       <? if ($var->module_name == "gallery" && $var->name == "_cache") continue ?>
-      <tr class="<?= ($i % 2 == 0) ? "g-odd" : "g-even" ?>">
+      <tr class="<?= text::alternate("g-odd", "g-even") ?>">
         <td> <?= $var->module_name ?> </td>
         <td> <?= html::clean($var->name) ?> </td>
         <td>
@@ -34,7 +33,6 @@
         </a>
         </td>
       </tr>
-      <? $i++ ?>
       <? endforeach ?>
     </table>
   </div>
