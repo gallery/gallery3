@@ -38,7 +38,8 @@ class theme_Core {
     if (!(identity::active_user()->admin && $theme_name = $input->get("theme"))) {
       $theme_name = module::get_var(
         "gallery",
-        !strncmp($path, "/admin", 6) ? "active_admin_theme" : "active_site_theme");
+        $path == "/admin" || !strncmp($path, "/admin/", 7) ?
+          "active_admin_theme" : "active_site_theme");
     }
     $modules = Kohana::config("core.modules");
     array_unshift($modules, THEMEPATH . $theme_name);
