@@ -23,11 +23,12 @@ class Theme_View_Core extends Gallery_View {
    *
    * @throws  Kohana_Exception  if the requested view cannot be found
    * @param   string  $name view name
-   * @param   string  $page_type page type: album, photo, tags, etc
+   * @param   string  $page_type page type: collection, item, or other
+   * @param   string  $page_subtype page sub type: album, photo, tags, etc
    * @param   string  $theme_name view name
    * @return  void
    */
-  public function __construct($name, $page_type) {
+  public function __construct($name, $page_type, $page_subtype) {
     $theme_name = module::get_var("gallery", "active_site_theme");
     if (!file_exists(THEMEPATH . $theme_name)) {
       module::set_var("gallery", "active_site_theme", "wind");
@@ -45,8 +46,9 @@ class Theme_View_Core extends Gallery_View {
     $this->set_global("theme", $this);
     $this->set_global("user", identity::active_user());
     $this->set_global("page_type", $page_type);
+    $this->set_global("page_subtype", $page_subtype);
     $this->set_global("page_title", null);
-    if ($page_type == "album") {
+    if ($page_type == "collection") {
       $this->set_global("thumb_proportion", $this->thumb_proportion());
     }
 
@@ -76,6 +78,10 @@ class Theme_View_Core extends Gallery_View {
 
   public function page_type() {
     return $this->page_type;
+  }
+
+  public function page_subtype() {
+    return $this->page_subtype;
   }
 
   public function user_menu() {
@@ -143,12 +149,13 @@ class Theme_View_Core extends Gallery_View {
   public function paginator() {
     $v = new View("paginator.html");
     $v->page_type = $this->page_type;
+    $v->page_subtype = $this->page_subtype;
     $v->first_page_url = null;
     $v->previous_page_url = null;
     $v->next_page_url = null;
     $v->last_page_url = null;
 
-    if ($this->page_type == "album" || $this->page_type == "tag") {
+    if ($this->page_type == "collection") {
       $v->page = $this->page;
       $v->max_pages = $this->max_pages;
       $v->total = $this->children_count;

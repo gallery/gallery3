@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
-    <? if ($theme->page_type == 'album'): ?>
+    <? if ($theme->page_type == "collection"): ?>
       <? if ($thumb_proportion != 1): ?>
         <? $new_width = $thumb_proportion * 213 ?>
         <? $new_height = $thumb_proportion * 240 ?>
@@ -61,10 +61,10 @@
     <?= $theme->script("ui.init.js") ?>
 
     <? /* These are page specific, but if we put them before $theme->head() they get combined */ ?>
-    <? if ($theme->page_type == "photo"): ?>
+    <? if ($theme->page_subtype == "photo"): ?>
     <?= $theme->script("jquery.scrollTo.js") ?>
     <?= $theme->script("gallery.show_full_size.js") ?>
-    <? elseif ($theme->page_type == "movie"): ?>
+    <? elseif ($theme->page_subtype == "movie"): ?>
     <?= $theme->script("flowplayer.js") ?>
     <? endif ?>
 
@@ -122,7 +122,7 @@
           </div>
         </div>
         <div id="g-sidebar" class="yui-b">
-          <? if ($theme->page_type != "login"): ?>
+          <? if ($theme->page_subtype != "login"): ?>
           <?= new View("sidebar.html") ?>
           <? endif ?>
         </div>

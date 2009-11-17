@@ -124,11 +124,7 @@ class item_Core {
    * @return string form
    */
   static function get_delete_form($item) {
-    if (Input::instance()->get("page_type") == "album") {
-      $page_type = "album";
-    } else {
-      $page_type = "photo";
-    }
+    $page_type = Input::instance()->get("page_type");
     $form = new Forge(
       "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "g-confirm-delete"));
     $form->hidden("_method")->value("put");

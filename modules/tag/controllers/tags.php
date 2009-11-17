@@ -34,7 +34,7 @@ class Tags_Controller extends REST_Controller {
       url::redirect($album->abs_url("page=$max_pages"));
     }
 
-    $template = new Theme_View("page.html", "tag");
+    $template = new Theme_View("page.html", "collection", "tag");
     $template->set_global("page", $page);
     $template->set_global("max_pages", $max_pages);
     $template->set_global("page_size", $page_size);

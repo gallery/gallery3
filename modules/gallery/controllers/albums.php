@@ -26,7 +26,7 @@ class Albums_Controller extends Items_Controller {
     $page_size = module::get_var("gallery", "page_size", 9);
     if (!access::can("view", $album)) {
       if ($album->id == 1) {
-        $view = new Theme_View("page.html", "login");
+        $view = new Theme_View("page.html", "other", "login");
         $view->page_title = t("Log in to Gallery");
         $view->content = new View("login_ajax.html");
         $view->content->form = auth::get_login_form("login/auth_html");
@@ -64,7 +64,7 @@ class Albums_Controller extends Items_Controller {
       url::redirect($album->abs_url("page=$max_pages"));
     }
 
-    $template = new Theme_View("page.html", "album");
+    $template = new Theme_View("page.html", "collection", "album");
     $template->set_global("page", $page);
     $template->set_global("max_pages", $max_pages);
     $template->set_global("page_size", $page_size);

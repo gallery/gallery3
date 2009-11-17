@@ -33,7 +33,7 @@ class Search_Controller extends Controller {
 
     $max_pages = max(ceil($count / $page_size), 1);
 
-    $template = new Theme_View("page.html", "search");
+    $template = new Theme_View("page.html", "other", "search");
     $template->set_global("page", $page);
     $template->set_global("max_pages", $max_pages);
     $template->set_global("page_size", $page_size);

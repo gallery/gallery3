@@ -35,7 +35,7 @@ class Photos_Controller extends Items_Controller {
       list ($next_item) = $photo->parent()->viewable()->children(1, $position, $where);
     }
 
-    $template = new Theme_View("page.html", "photo");
+    $template = new Theme_View("page.html", "item", "photo");
     $template->set_global("item", $photo);
     $template->set_global("children", array());
     $template->set_global("children_count", 0);

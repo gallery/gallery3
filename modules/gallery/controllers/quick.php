@@ -55,7 +55,7 @@ class Quick_Controller extends Controller {
       }
     }
 
-    if (Input::instance()->get("page_type") == "album") {
+    if (Input::instance()->get("page_type") == "collection") {
       print json_encode(
         array("src" => $item->thumb_url() . "?rnd=" . rand(),
               "width" => $item->thumb_width,
@@ -118,7 +118,7 @@ class Quick_Controller extends Controller {
     $item->delete();
     message::success($msg);
 
-    if (Input::instance()->get("page_type") == "album") {
+    if (Input::instance()->get("page_type") == "collection") {
       print json_encode(array("result" => "success", "reload" => 1));
     } else {
       print json_encode(array("result" => "success",

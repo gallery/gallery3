@@ -35,7 +35,7 @@ class Movies_Controller extends Items_Controller {
       list ($next_item) = $movie->parent()->viewable()->children(1, $position, $where);
     }
 
-    $template = new Theme_View("page.html", "movie");
+    $template = new Theme_View("page.html", "item", "movie");
     $template->set_global("item", $movie);
     $template->set_global("children", array());
     $template->set_global("children_count", 0);

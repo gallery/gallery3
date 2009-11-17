@@ -47,7 +47,7 @@ class Comments_Controller extends REST_Controller {
       break;
 
     case "html":
-      $view = new Theme_View("comments.html", "page");
+      $view = new Theme_View("comments.html", "other", "comment");
       $view->comments = $comments;
       print $view;
       break;
@@ -130,7 +130,7 @@ class Comments_Controller extends REST_Controller {
                 "created" => $comment->created,
                 "text" => nl2br(html::purify($comment->text)))));
     } else {
-      $view = new Theme_View("comment.html", "fragment");
+      $view = new Theme_View("comment.html", "other", "comment-fragment");
       $view->comment = $comment;
       print $view;
     }

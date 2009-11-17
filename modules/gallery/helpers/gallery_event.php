@@ -98,7 +98,7 @@ class gallery_event_Core {
   }
 
   static function user_menu($menu, $theme) {
-    if ($theme->page_type != "login") {
+    if ($theme->page_subtype != "login") {
       $user = identity::active_user();
       if ($user->guest) {
         $menu->append(Menu::factory("dialog")
@@ -125,7 +125,7 @@ class gallery_event_Core {
   }
 
   static function site_menu($menu, $theme) {
-    if ($theme->page_type != "login") {
+    if ($theme->page_subtype != "login") {
       $menu->append(Menu::factory("link")
                     ->id("home")
                     ->label(t("Home"))
@@ -271,6 +271,7 @@ class gallery_event_Core {
 
     if (access::can("edit", $item)) {
       $page_type = $theme->page_type();
+      $page_subtype = $theme->page_subtype();
       switch ($item->type) {
       case "movie":
         $edit_title = t("Edit this movie");
@@ -298,7 +299,6 @@ class gallery_event_Core {
                             ->css_class("ui-icon-pencil")
                             ->url(url::site("quick/form_edit/$item->id?page_type=$page_type")));
 
-
       if ($item->is_photo() && graphics::can("rotate")) {
         $options_menu
           ->append(
@@ -319,9 +319,9 @@ class gallery_event_Core {
             ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&page_type=$page_type")));
       }
 
-      // @todo Don't move photos from the photo page; we don't yet have a good way of redirecting after
-      // move
-      if ($page_type == "album") {
+      // @todo Don't move photos from the photo page; we don't yet have a good way of redirecting
+      // after move
+      if ($page_subtype == "album") {
         $options_menu
           ->append(Menu::factory("dialog")
                    ->id("move")
