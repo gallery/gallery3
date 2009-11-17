@@ -724,3 +724,15 @@ div#g-action-status {
 .rtl input.checkbox {
   margin-right: .4em;
 }
+
+/* Superfish RTL ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl .sf-menu a.sf-with-ul {
+	padding-left: 2.25em;
+	padding-right: 1em;
+}
+
+.rtl .sf-sub-indicator {
+	left: .75em !important;
+  right: auto;
+}
