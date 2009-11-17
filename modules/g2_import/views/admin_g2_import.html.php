@@ -54,7 +54,7 @@
         <? endif ?>
       </ul>
 
-      <div class="g-info">
+      <div class="g-message-block g-info">
         <p>
           <?= t("Your Gallery 2 has the following importable data in it") ?>
         </p>

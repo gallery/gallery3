@@ -185,7 +185,7 @@ input[type="reset"] {
 
 .g-short-form .g-cancel {
   display: block;
-  padding: .2em .8em;
+  margin: .3em .8em;
 }
 
 #g-sidebar .g-short-form li {
@@ -677,6 +677,7 @@ div#g-action-status {
 
 .rtl .g-left,
 .rtl .g-inline li,
+.rtl .g-short-form li,
 .rtl form ul ul li,
 .rtl input[type="submit"],
 .rtl input[type="reset"],
@@ -722,4 +723,16 @@ div#g-action-status {
 
 .rtl input.checkbox {
   margin-right: .4em;
+}
+
+/* Superfish RTL ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl .sf-menu a.sf-with-ul {
+	padding-left: 2.25em;
+	padding-right: 1em;
+}
+
+.rtl .sf-sub-indicator {
+	left: .75em !important;
+  right: auto;
 }
