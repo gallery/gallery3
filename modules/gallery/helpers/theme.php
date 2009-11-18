@@ -57,4 +57,33 @@ class theme_Core {
 
     return $theme_info;
   }
+
+  /**
+   * Get a variable from the active theme
+   * @param string $name
+   * @param string $default_value
+   * @return the value
+   */
+  static function get_var($name, $default_value=null) {
+    return module::get_var(self::$site, $name, $default_value);
+  }
+
+  /**
+   * Store a variable for active theme
+   * @param string $module_name
+   * @param string $name
+   * @param string $value
+   */
+  static function set_var($name, $value) {
+    module::set_var(self::$site, $name, $value);
+  }
+
+ /**
+   * Remove a variable for this module.
+   * @param string $module_name
+   * @param string $name
+   */
+  static function clear_var($name) {
+    module::clear_var(self::$site, $name);
+  }
 }

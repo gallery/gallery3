@@ -24,50 +24,50 @@ class wind {
     $group = $form->group("edit_theme");
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
-      ->value(module::get_var("gallery", "page_size"));
+      ->value(module::get_var("wind", "page_size"));
     $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("g-thumb-size")
       ->rules("required|valid_digit")
-      ->value(module::get_var("gallery", "thumb_size"));
+      ->value(module::get_var("wind", "thumb_size"));
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("g-resize-size")
       ->rules("required|valid_digit")
-      ->value(module::get_var("gallery", "resize_size"));
+      ->value(module::get_var("wind", "resize_size"));
     $group->textarea("header_text")->label(t("Header text"))->id("g-header-text")
-      ->value(module::get_var("gallery", "header_text"));
+      ->value(module::get_var("wind", "header_text"));
     $group->textarea("footer_text")->label(t("Footer text"))->id("g-footer-text")
-      ->value(module::get_var("gallery", "footer_text"));
+      ->value(module::get_var("wind", "footer_text"));
     $group->checkbox("show_credits")->label(t("Show site credits"))->id("g-footer-text")
-      ->checked(module::get_var("gallery", "show_credits"));
+      ->checked(module::get_var("wind", "show_credits"));
     $group->submit("")->value(t("Save"));
     return $form;
   }
 
   static function update_options($form) {
-    module::set_var("gallery", "page_size", $form->edit_theme->page_size->value);
+    module::set_var("wind", "page_size", $form->edit_theme->page_size->value);
 
     $thumb_size = $form->edit_theme->thumb_size->value;
     $thumb_dirty = false;
-    if (module::get_var("gallery", "thumb_size") != $thumb_size) {
+    if (module::get_var("wind", "thumb_size") != $thumb_size) {
       graphics::remove_rule("gallery", "thumb", "gallery_graphics::resize");
       graphics::add_rule(
         "gallery", "thumb", "gallery_graphics::resize",
         array("width" => $thumb_size, "height" => $thumb_size, "master" => Image::AUTO),
         100);
-      module::set_var("gallery", "thumb_size", $thumb_size);
+      module::set_var("wind", "thumb_size", $thumb_size);
     }
 
     $resize_size = $form->edit_theme->resize_size->value;
     $resize_dirty = false;
-    if (module::get_var("gallery", "resize_size") != $resize_size) {
+    if (module::get_var("wind", "resize_size") != $resize_size) {
       graphics::remove_rule("gallery", "resize", "gallery_graphics::resize");
       graphics::add_rule(
         "gallery", "resize", "gallery_graphics::resize",
         array("width" => $resize_size, "height" => $resize_size, "master" => Image::AUTO),
         100);
-      module::set_var("gallery", "resize_size", $resize_size);
+      module::set_var("wind", "resize_size", $resize_size);
     }
 
-    module::set_var("gallery", "header_text", $form->edit_theme->header_text->value);
-    module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
-    module::set_var("gallery", "show_credits", $form->edit_theme->show_credits->value);
+    module::set_var("wind", "header_text", $form->edit_theme->header_text->value);
+    module::set_var("wind", "footer_text", $form->edit_theme->footer_text->value);
+    module::set_var("wind", "show_credits", $form->edit_theme->show_credits->value);
   }
 }

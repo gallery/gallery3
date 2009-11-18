@@ -77,7 +77,7 @@
       <?= $theme->site_status() ?>
       <div id="g-header" class="ui-helper-clearfix">
         <div id="g-banner">
-          <? if ($header_text = module::get_var("gallery", "header_text")): ?>
+          <? if ($header_text = theme::get_var("header_text")): ?>
           <?= $header_text ?>
           <? else: ?>
           <a id="g-logo" class="g-left" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery home")->for_html_attr() ?>">
@@ -129,11 +129,11 @@
       </div>
       <div id="g-footer" class="ui-helper-clearfix">
         <?= $theme->footer() ?>
-        <? if ($footer_text = module::get_var("gallery", "footer_text")): ?>
+        <? if ($footer_text = theme::get_var("footer_text")): ?>
         <?= $footer_text ?>
         <? endif ?>
 
-        <? if (module::get_var("gallery", "show_credits")): ?>
+        <? if (theme::get_var("show_credits")): ?>
         <ul id="g-credits" class="g-inline">
           <?= $theme->credits() ?>
         </ul>
