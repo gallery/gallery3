@@ -302,8 +302,20 @@ class Xss_Security_Test extends Unit_Test_Case {
      */
     $new = TMPPATH . "xss_data.txt";
     $fd = fopen($new, "wb");
+    $canonical = TMPPATH . "xss_data_golden.txt";
+    $fd_canonical = fopen($canonical, "wb");
+    $current_type = $current_plugin = "";
     ksort($found);
     foreach ($found as $view => $frames) {
+      list ($type, $plugin) = explode("/", $view);
+      if ($type != $current_type || $plugin != $current_plugin) {
+        $golden_file = ($type == "modules" ? MODPATH : THEMEPATH) . "{$plugin}/tests/xss_data.txt";
+        if (file_exists($golden_file)) {
+          fwrite($fd_canonical, file_get_contents($golden_file));
+        }
+        $current_type = $type;
+        $current_plugin = $plugin;
+      }
       foreach ($frames as $frame) {
         $state = "DIRTY";
         if ($frame->in_script_block() && $frame->in_href_attribute()) {
@@ -344,9 +356,9 @@ class Xss_Security_Test extends Unit_Test_Case {
       }
     }
     fclose($fd);
+    fclose($fd_canonical);
 
     // Compare with the expected report from our golden file.
-    $canonical = MODPATH . "gallery/tests/xss_data.txt";
     exec("diff $canonical $new", $output, $return_value);
     $this->assert_false(
       $return_value, "XSS golden file mismatch.  Output:\n" . implode("\n", $output) );

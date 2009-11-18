@@ -1,0 +1,2 @@
+modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
+modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]

@@ -1,0 +1,2 @@
+modules/image_block/views/image_block_block.html.php         3   DIRTY_JS $item->url()
+modules/image_block/views/image_block_block.html.php         4   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))

@@ -1,0 +1,3 @@
+modules/recaptcha/views/admin_recaptcha.html.php             11  DIRTY    $form
+modules/recaptcha/views/admin_recaptcha.html.php             23  DIRTY_JS $public_key
+modules/recaptcha/views/form_recaptcha.html.php              7   DIRTY_JS $public_key
