@@ -708,11 +708,12 @@ div#g-action-status {
 }
 
 .rtl .g-breadcrumbs li {
-  background-position: right center;
+  background: transparent url('images/ico-separator-rtl.gif') no-repeat scroll right center;
   padding: 1em 18px 1em 8px;
 }
 
 .rtl .g-breadcrumbs .g-first {
+  background: none;
   padding-right: 0;
 }
 
