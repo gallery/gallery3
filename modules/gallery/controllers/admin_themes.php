@@ -34,22 +34,15 @@ class Admin_Themes_Controller extends Admin_Controller {
         continue;
       }
 
-      $file = THEMEPATH . "$theme_name/theme.info";
-      $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
-      $theme_info->description = t($theme_info->description);
-      $theme_info->name = t($theme_info->name);
-
-      $themes[$theme_name] = $theme_info;
+      $themes[$theme_name] = theme::get_info($theme_name);
     }
     return $themes;
   }
 
   public function preview($type, $theme_name) {
     $view = new View("admin_themes_preview.html");
-    $theme_name = preg_replace("/[^\w]/", "", $theme_name);
-    $view->info = new ArrayObject(
-      parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
-    $view->theme_name = $theme_name;
+    $view->info = theme::get_info($theme_name);
+    $view->theme_name = t($theme_name);
     $view->type = $type;
     if ($type == "admin") {
       $view->url = url::site("admin?theme=$theme_name");
@@ -62,18 +55,16 @@ class Admin_Themes_Controller extends Admin_Controller {
   public function choose($type, $theme_name) {
     access::verify_csrf();
 
-    $theme_name = preg_replace("/[^\w]/", "", $theme_name);
-    $info = new ArrayObject(
-      parse_ini_file(THEMEPATH . "$theme_name/theme.info"), ArrayObject::ARRAY_AS_PROPS);
+    $info = theme::get_info($theme_name);
 
     if ($type == "admin" && $info->admin) {
       module::set_var("gallery", "active_admin_theme", $theme_name);
       message::success(t("Successfully changed your admin theme to <b>%theme_name</b>",
-                         array("theme_name" => t($info->name))));
+                         array("theme_name" => $info->name)));
     } else if ($type == "site" && $info->site) {
       module::set_var("gallery", "active_site_theme", $theme_name);
       message::success(t("Successfully changed your Gallery theme to <b>%theme_name</b>",
-                         array("theme_name" => t($info->name))));
+                         array("theme_name" => $info->name)));
     }
 
     url::redirect("admin/themes");

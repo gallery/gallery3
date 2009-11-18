@@ -29,8 +29,8 @@ class theme_Core {
    * active for any given request.
    */
   static function load_themes() {
-    $path = Input::instance()->server("PATH_INFO");
     $input = Input::instance();
+    $path = $input->server("PATH_INFO");
     if (empty($path)) {
       $path = "/" . $input->get("kohana_uri");
     }
@@ -66,6 +66,16 @@ class theme_Core {
       ->checked(module::get_var("gallery", "show_credits"));
     $group->submit("")->value(t("Save"));
     return $form;
+  }
+
+  static function get_info($theme_name) {
+    $theme_name = preg_replace("/[^\w]/", "", $theme_name);
+    $file = THEMEPATH . "$theme_name/theme.info";
+    $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
+    $theme_info->description = t($theme_info->description);
+    $theme_info->name = t($theme_info->name);
+
+    return $theme_info;
   }
 }
 
