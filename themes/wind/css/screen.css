@@ -443,3 +443,7 @@ td {
   left: auto;
   right: 150px;
 }
+
+.rtl #g-view-menu #g-slideshow-link {
+  background-image: url('../images/ico-view-slideshow-rtl.png');
+}

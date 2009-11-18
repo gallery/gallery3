@@ -43,16 +43,16 @@
 
   <div class="g-block-content">
     <div id="g-site-blocks" ref="<?= url::site("admin/sidebar/update?csrf={$csrf}__ACTIVE__") ?>">
-      <div class="g-admin-blocks-list">
-        <div><h3><?= t("Available blocks") ?></h3></div>
+      <div class="g-admin-blocks-list g-left">
+        <h3><?= t("Available blocks") ?></h3>
         <div>
           <ul id="g-available-blocks" class="g-sortable-blocks">
           <?= $available ?>
           </ul>
         </div>
       </div>
-      <div class="g-admin-blocks-list">
-        <div><h3><?= t("Active blocks") ?></h3></div>
+      <div class="g-admin-blocks-list g-left">
+        <h3><?= t("Active blocks") ?></h3>
         <div>
           <ul id="g-active-blocks" class="g-sortable-blocks">
           <?= $active ?>
