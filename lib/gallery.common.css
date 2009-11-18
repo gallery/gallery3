@@ -735,4 +735,53 @@ div#g-action-status {
 .rtl .sf-sub-indicator {
 	left: .75em !important;
   right: auto;
+	background: url('superfish/images/arrows-ffffff-rtl.png') no-repeat -10px -100px; /* 8-bit indexed alpha png. IE6 gets solid image only */
+}
+.rtl a > .sf-sub-indicator {  /* give all except IE6 the correct values */
+	top:			.8em;
+	background-position: -10px -100px; /* use translucent arrow for modern browsers*/
+}
+/* apply hovers to modern browsers */
+.rtl a:focus > .sf-sub-indicator,
+.rtl a:hover > .sf-sub-indicator,
+.rtl a:active > .sf-sub-indicator,
+.rtl li:hover > a > .sf-sub-indicator,
+.rtl li.sfHover > a > .sf-sub-indicator {
+	background-position: 0 -100px; /* arrow hovers for modern browsers*/
+}
+
+/* point right for anchors in subs */
+.rtl .sf-menu ul .sf-sub-indicator { background-position:  0 0; }
+.rtl .sf-menu ul a > .sf-sub-indicator { background-position:  -10px 0; }
+/* apply hovers to modern browsers */
+.rtl .sf-menu ul a:focus > .sf-sub-indicator,
+.rtl .sf-menu ul a:hover > .sf-sub-indicator,
+.rtl .sf-menu ul a:active > .sf-sub-indicator,
+.rtl .sf-menu ul li:hover > a > .sf-sub-indicator,
+.rtl .sf-menu ul li.sfHover > a > .sf-sub-indicator {
+	background-position: 0 0; /* arrow hovers for modern browsers*/
+}
+
+.rtl .sf-menu li:hover ul,
+.rtl .sf-menu li.sfHover ul {
+	right: 0;
+}
+
+.rtl ul.sf-menu li li:hover ul,
+.rtl ul.sf-menu li li.sfHover ul {
+	right:	12em; /* match ul width */
+}
+.rtl ul.sf-menu li li li:hover ul,
+.rtl ul.sf-menu li li li.sfHover ul {
+	right:	12em; /* match ul width */
+}
+
+/*** shadows for all but IE6 ***/
+.rtl .sf-shadow ul {
+	background:	url('superfish/images/shadow.png') no-repeat bottom left;
+	padding: 0 0 9px 8px;
+	-moz-border-radius-bottomright: 17px;
+	-moz-border-radius-topleft: 17px;
+	-webkit-border-top-left-radius: 17px;
+	-webkit-border-bottom-right-radius: 17px;
 }
