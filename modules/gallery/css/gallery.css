@@ -4,6 +4,7 @@
  * Sheet organization:
  *  1)  End-user
  *  2)  Admin
+ *  3)  Right to left language styles
  */
 
 /** *******************************************************************
@@ -86,4 +87,13 @@
 #g-translations .g-button {
   padding: .5em;
   margin-bottom: 1em;
+}
+
+/** *******************************************************************
+ * 3) Right to left language styles
+ **********************************************************************/
+
+.rtl #g-block-admin .g-left {
+  margin-left: 1em;
+  margin-right: 0;
 }

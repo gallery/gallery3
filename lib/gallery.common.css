@@ -677,17 +677,20 @@ div#g-action-status {
 
 .rtl .g-left,
 .rtl .g-inline li,
-.rtl .g-short-form li,
-.rtl form ul ul li,
-.rtl input[type="submit"],
-.rtl input[type="reset"],
 .rtl #g-content #g-album-grid .g-item,
 .rtl .sf-menu li,
 .rtl .g-breadcrumbs li,
 .rtl .g-pager li,
 .rtl .g-buttonset li,
 .rtl .ui-icon-left .ui-icon,
-.rtl input.checkbox {
+.rtl .g-short-form li,
+.rtl form ul ul li,
+.rtl input[type="submit"],
+.rtl input[type="reset"],
+.rtl input.checkbox,
+.rtl input[type=checkbox],
+.rtl input.radio,
+.rtl input[type=radio] {
   float: right;
 }
 
