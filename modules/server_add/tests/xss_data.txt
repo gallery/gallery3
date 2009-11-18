@@ -1,7 +1,0 @@
-modules/server_add/views/admin_server_add.html.php           5   DIRTY    $form
-modules/server_add/views/admin_server_add.html.php           15  DIRTY_ATTR $id
-modules/server_add/views/server_add_tree.html.php            20  DIRTY_ATTR is_dir($file)?"ui-icon-folder-collapsed":"ui-icon-document"
-modules/server_add/views/server_add_tree.html.php            21  DIRTY_ATTR is_dir($file)?"g-directory":"g-file"
-modules/server_add/views/server_add_tree_dialog.html.php     3   DIRTY_JS url::site("server_add/children?path=__PATH__")
-modules/server_add/views/server_add_tree_dialog.html.php     4   DIRTY_JS url::site("server_add/start?item_id={$item->id}&csrf=$csrf")
-modules/server_add/views/server_add_tree_dialog.html.php     21  DIRTY    $tree

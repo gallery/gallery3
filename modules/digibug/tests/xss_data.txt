@@ -1,3 +1,0 @@
-modules/digibug/views/digibug_form.html.php                  4   DIRTY    form::open("http://www.digibug.com/dapi/order.php")
-modules/digibug/views/digibug_form.html.php                  5   DIRTY    form::hidden($order_parms)
-modules/digibug/views/digibug_form.html.php                  6   DIRTY    form::close()

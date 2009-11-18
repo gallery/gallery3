@@ -1,2 +1,0 @@
-modules/info/views/info_block.html.php                       22  DIRTY    date("M j, Y H:i:s",$item->captured)
-modules/info/views/info_block.html.php                       29  DIRTY_JS $item->owner->url

@@ -1,4 +1,0 @@
-modules/search/views/search.html.php                         30  DIRTY_ATTR $item_class
-modules/search/views/search.html.php                         31  DIRTY_JS $item->url()
-modules/search/views/search.html.php                         32  DIRTY    $item->thumb_img()
-modules/search/views/search.html.php                         43  DIRTY    $theme->paginator()

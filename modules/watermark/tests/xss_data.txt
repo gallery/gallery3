@@ -1,3 +1,0 @@
-modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $width
-modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $height
-modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $url
