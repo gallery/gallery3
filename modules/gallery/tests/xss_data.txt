@@ -119,7 +119,7 @@ modules/gallery/views/admin_themes.html.php                  76  DIRTY    $info-
 modules/gallery/views/admin_themes.html.php                  78  DIRTY    $info->description
 modules/gallery/views/admin_themes_preview.html.php          7   DIRTY_ATTR $url
 modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"),$hidden)
-modules/gallery/views/in_place_edit.html.php                 5   DIRTY    form::input("input",$form["input"]," class='textbox'")
+modules/gallery/views/in_place_edit.html.php                 5   DIRTY    form::input("input",$form["input"]," class=\"textbox\"")
 modules/gallery/views/in_place_edit.html.php                 12  DIRTY    form::close()
 modules/gallery/views/in_place_edit.html.php                 14  DIRTY    $errors["input"]
 modules/gallery/views/kohana_error_page.php                  102 DIRTY    $message
@@ -203,10 +203,10 @@ modules/gallery/views/permissions_form.html.php              75  DIRTY_JS $item-
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $group->id
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $permission->id
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $item->id
-modules/gallery/views/simple_uploader.html.php               7   DIRTY_JS url::file("lib/uploadify/uploadify.swf")
-modules/gallery/views/simple_uploader.html.php               8   DIRTY_JS url::site("simple_uploader/add_photo/{$item->id}")
-modules/gallery/views/simple_uploader.html.php               15  DIRTY_JS url::file("lib/uploadify/cancel.png")
-modules/gallery/views/simple_uploader.html.php               43  DIRTY_JS t("Completed")
+modules/gallery/views/simple_uploader.html.php               20  DIRTY_JS url::file("lib/uploadify/uploadify.swf")
+modules/gallery/views/simple_uploader.html.php               21  DIRTY_JS url::site("simple_uploader/add_photo/{$item->id}")
+modules/gallery/views/simple_uploader.html.php               28  DIRTY_JS url::file("lib/uploadify/cancel.png")
+modules/gallery/views/simple_uploader.html.php               56  DIRTY_JS t("Completed")
 modules/gallery/views/upgrader.html.php                      57  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      61  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      69  DIRTY_ATTR $module->version==$module->code_version?"current":"upgradeable"
@@ -232,15 +232,16 @@ modules/organize/views/organize_dialog.html.php              3   DIRTY_JS url::s
 modules/organize/views/organize_dialog.html.php              4   DIRTY_JS url::site("organize/rearrange/__TARGET_ID__/__BEFORE__?csrf=$csrf")
 modules/organize/views/organize_dialog.html.php              5   DIRTY_JS url::site("organize/sort_order/__ALBUM_ID__/__COL__/__DIR__?csrf=$csrf")
 modules/organize/views/organize_dialog.html.php              6   DIRTY_JS url::site("organize/tree/__ALBUM_ID__")
-modules/organize/views/organize_dialog.html.php              20  DIRTY    $album_tree
-modules/organize/views/organize_dialog.html.php              27  DIRTY    $micro_thumb_grid
-modules/organize/views/organize_dialog.html.php              35  DIRTY    form::dropdown(array("id"=>"g-organize-sort-column"),album::get_sort_order_options(),$album->sort_column)
-modules/organize/views/organize_dialog.html.php              36  DIRTY    form::dropdown(array("id"=>"g-organize-sort-order"),array("ASC"=>"Ascending","DESC"=>"Descending"),$album->sort_order)
+modules/organize/views/organize_dialog.html.php              14  DIRTY    $album_tree
+modules/organize/views/organize_dialog.html.php              24  DIRTY    $micro_thumb_grid
+modules/organize/views/organize_dialog.html.php              32  DIRTY    form::dropdown(array("id"=>"g-organize-sort-column"),album::get_sort_order_options(),$album->sort_column)
+modules/organize/views/organize_dialog.html.php              33  DIRTY    form::dropdown(array("id"=>"g-organize-sort-order"),array("ASC"=>"Ascending","DESC"=>"Descending"),$album->sort_order)
 modules/organize/views/organize_thumb_grid.html.php          3   DIRTY_ATTR $child->id
 modules/organize/views/organize_thumb_grid.html.php          4   DIRTY_ATTR $child->id
 modules/organize/views/organize_thumb_grid.html.php          5   DIRTY_ATTR $child->is_album()?"g-album":"g-photo"
 modules/organize/views/organize_thumb_grid.html.php          6   DIRTY    $child->thumb_img(array("class"=>"g-thumbnail","ref"=>$child->id),90,true)
-modules/organize/views/organize_thumb_grid.html.php          14  DIRTY_JS url::site("organize/album/$album->id/".($offset+25))
+modules/organize/views/organize_thumb_grid.html.php          7   DIRTY    $child->is_album()?" class=\"ui-icon ui-icon-note\"":""
+modules/organize/views/organize_thumb_grid.html.php          15  DIRTY_JS url::site("organize/album/$album->id/".($offset+25))
 modules/organize/views/organize_tree.html.php                2   DIRTY_ATTR access::can("edit",$album)?"":"g-view-only"
 modules/organize/views/organize_tree.html.php                3   DIRTY_ATTR $album->id
 modules/organize/views/organize_tree.html.php                6   DIRTY_ATTR $selected&&$album->id==$selected->id?"selected":""
@@ -248,7 +249,7 @@ modules/organize/views/organize_tree.html.php                7   DIRTY_ATTR $alb
 modules/organize/views/organize_tree.html.php                13  DIRTY    View::factory("organize_tree.html",array("selected"=>$selected,"album"=>$child));
 modules/organize/views/organize_tree.html.php                15  DIRTY_ATTR access::can("edit",$child)?"":"g-view-only"
 modules/organize/views/organize_tree.html.php                16  DIRTY_ATTR $child->id
-modules/organize/views/organize_tree.html.php                19  DIRTY_ATTR $child->id
+modules/organize/views/organize_tree.html.php                18  DIRTY_ATTR $child->id
 modules/recaptcha/views/admin_recaptcha.html.php             11  DIRTY    $form
 modules/recaptcha/views/admin_recaptcha.html.php             23  DIRTY_JS $public_key
 modules/recaptcha/views/form_recaptcha.html.php              7   DIRTY_JS $public_key
@@ -346,8 +347,9 @@ themes/wind/views/album.html.php                             16  DIRTY_ATTR $chi
 themes/wind/views/album.html.php                             16  DIRTY_ATTR $item_class
 themes/wind/views/album.html.php                             18  DIRTY_JS $child->url()
 themes/wind/views/album.html.php                             19  DIRTY    $child->thumb_img(array("class"=>"g-thumbnail"))
-themes/wind/views/album.html.php                             23  DIRTY_JS $child->url()
-themes/wind/views/album.html.php                             41  DIRTY    $theme->paginator()
+themes/wind/views/album.html.php                             23  DIRTY_ATTR $item_class
+themes/wind/views/album.html.php                             24  DIRTY_JS $child->url()
+themes/wind/views/album.html.php                             42  DIRTY    $theme->paginator()
 themes/wind/views/block.html.php                             3   DIRTY_ATTR $anchor
 themes/wind/views/block.html.php                             5   DIRTY_ATTR $css_id
 themes/wind/views/block.html.php                             6   DIRTY    $title
@@ -373,10 +375,10 @@ themes/wind/views/page.html.php                              104 DIRTY_JS $paren
 themes/wind/views/page.html.php                              120 DIRTY    $content
 themes/wind/views/page.html.php                              126 DIRTY    newView("sidebar.html")
 themes/wind/views/page.html.php                              133 DIRTY    $footer_text
-themes/wind/views/paginator.html.php                         32  DIRTY_JS $first_page_url
-themes/wind/views/paginator.html.php                         41  DIRTY_JS $previous_page_url
-themes/wind/views/paginator.html.php                         69  DIRTY_JS $next_page_url
-themes/wind/views/paginator.html.php                         78  DIRTY_JS $last_page_url
+themes/wind/views/paginator.html.php                         33  DIRTY_JS $first_page_url
+themes/wind/views/paginator.html.php                         42  DIRTY_JS $previous_page_url
+themes/wind/views/paginator.html.php                         70  DIRTY_JS $next_page_url
+themes/wind/views/paginator.html.php                         79  DIRTY_JS $last_page_url
 themes/wind/views/photo.html.php                             8   DIRTY_JS $theme->item()->width
 themes/wind/views/photo.html.php                             8   DIRTY_JS $theme->item()->height
 themes/wind/views/photo.html.php                             18  DIRTY    $theme->paginator()

@@ -171,7 +171,7 @@ class Theme_View_Core extends Gallery_View {
       }
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
-      $v->last_visible_position = $this->page * $this->page_size;
+      $v->last_visible_position = min($this->page * $this->page_size, $v->total);
     } else {
       $v->position = $this->position;
       $v->total = $this->sibling_count;
