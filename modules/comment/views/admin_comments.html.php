@@ -193,7 +193,7 @@
       <? endforeach ?>
     </table>
 
-    <div class="g-pager">
+    <div class="g-paginator">
       <?= $pager ?>
     </div>
 

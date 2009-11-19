@@ -26,7 +26,7 @@
 //
 ?>
 
-<ul class="g-pager ui-helper-clearfix">
+<ul class="g-paginator ui-helper-clearfix">
   <li class="g-first">
   <? if ($page_type == "collection"): ?>
     <? if (isset($first_page_url)): ?>
