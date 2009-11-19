@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? // See http://docs.kohanaphp.com/libraries/pagination ?>
-<ul class="g-pager">
+<ul class="g-paginator">
   <? /* @todo This message isn't easily localizable */
      $from_to_msg = t2("Item %from_number of %count",
                        "Items %from_number - %to_number of %count",

@@ -542,17 +542,17 @@ div#g-action-status {
 
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-.g-pager {
+.g-paginator {
   padding: .2em 0;
   width: 100%;
 }
 
-.g-pager li {
+.g-paginator li {
   float: left;
   width: 30%;
 }
 
-.g-pager .g-info {
+.g-paginator .g-info {
   background: none;
   padding: .2em 0;
   text-align: center;
@@ -680,7 +680,7 @@ div#g-action-status {
 .rtl #g-content #g-album-grid .g-item,
 .rtl .sf-menu li,
 .rtl .g-breadcrumbs li,
-.rtl .g-pager li,
+.rtl .g-paginator li,
 .rtl .g-buttonset li,
 .rtl .ui-icon-left .ui-icon,
 .rtl .g-short-form li,
@@ -717,11 +717,11 @@ div#g-action-status {
   padding-right: 0;
 }
 
-.rtl .g-pager .g-info {
+.rtl .g-paginator .g-info {
   width: 35%;
 }
 
-.rtl .g-pager .g-text-right {
+.rtl .g-paginator .g-text-right {
   margin-left: 0;
 }
 
