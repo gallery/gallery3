@@ -228,7 +228,7 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,1,'gallery',20);
+INSERT INTO {modules} VALUES (1,1,'gallery',19);
 INSERT INTO {modules} VALUES (2,1,'user',2);
 INSERT INTO {modules} VALUES (3,1,'comment',2);
 INSERT INTO {modules} VALUES (4,1,'organize',1);
@@ -370,14 +370,14 @@ CREATE TABLE {vars} (
 SET character_set_client = @saved_cs_client;
 INSERT INTO {vars} VALUES (1,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (2,'gallery','active_admin_theme','admin_wind');
-INSERT INTO {vars} VALUES (3,'wind','page_size','9');
-INSERT INTO {vars} VALUES (4,'wind','thumb_size','200');
-INSERT INTO {vars} VALUES (5,'wind','resize_size','640');
+INSERT INTO {vars} VALUES (3,'gallery','page_size','9');
+INSERT INTO {vars} VALUES (4,'gallery','thumb_size','200');
+INSERT INTO {vars} VALUES (5,'gallery','resize_size','640');
 INSERT INTO {vars} VALUES (6,'gallery','default_locale','en_US');
 INSERT INTO {vars} VALUES (7,'gallery','image_quality','75');
 INSERT INTO {vars} VALUES (8,'gallery','image_sharpen','15');
 INSERT INTO {vars} VALUES (21,'gallery','time_format','H:i:s');
-INSERT INTO {vars} VALUES (22,'wind','show_credits','1');
+INSERT INTO {vars} VALUES (22,'gallery','show_credits','1');
 INSERT INTO {vars} VALUES (23,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>');
 INSERT INTO {vars} VALUES (10,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
 INSERT INTO {vars} VALUES (20,'gallery','date_time_format','Y-M-d H:i:s');

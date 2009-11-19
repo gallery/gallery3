@@ -65,7 +65,7 @@ class Theme_View_Core extends Gallery_View {
   public function thumb_proportion() {
     // @TODO change the 200 to a theme supplied value when and if we come up with an
     // API to allow the theme to set defaults.
-    return theme::get_var("thumb_size", 200) / 200;
+    return module::get_var("gallery", "thumb_size", 200) / 200;
   }
 
   public function item() {

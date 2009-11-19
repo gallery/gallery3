@@ -21,41 +21,48 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_theme_options.html");
-
-    $theme_name = theme::$site;
-    $info = theme::get_info($theme_name);
-
-    // Don't use the Kohana cascading file system because we don't want to mess up the admin theme
-    $theme_helper = THEMEPATH . "$theme_name/helpers/{$theme_name}.php";
-    @require_once($theme_helper);
-    $view->content->form =
-      call_user_func("{$theme_name}::get_admin_form", "admin/theme_options/save/");
-
-    $view->content->title = t("%name options", array("name" => $info->name));
-
+    $view->content->form = theme::get_edit_form_admin();
     print $view;
   }
 
   public function save() {
     access::verify_csrf();
 
-    // Don't use the Kohana cascading file system because we don't want to mess up the admin theme
-    $theme_name = theme::$site;
-    $theme_helper = THEMEPATH . "$theme_name/helpers/{$theme_name}.php";
-    @require_once($theme_helper);
-
-    $info = theme::get_info($theme_name);
-
-    $form = call_user_func("{$theme_name}::get_admin_form", "admin/theme_options/save/");
+    $form = theme::get_edit_form_admin();
     if ($form->validate()) {
-      call_user_func("{$theme_name}::update_options", $form);
+      module::set_var("gallery", "page_size", $form->edit_theme->page_size->value);
 
-      message::success(t("Updated %name options", array("name" => $info->name)));
+      $thumb_size = $form->edit_theme->thumb_size->value;
+      $thumb_dirty = false;
+      if (module::get_var("gallery", "thumb_size") != $thumb_size) {
+        graphics::remove_rule("gallery", "thumb", "gallery_graphics::resize");
+        graphics::add_rule(
+          "gallery", "thumb", "gallery_graphics::resize",
+          array("width" => $thumb_size, "height" => $thumb_size, "master" => Image::AUTO),
+          100);
+        module::set_var("gallery", "thumb_size", $thumb_size);
+      }
+
+      $resize_size = $form->edit_theme->resize_size->value;
+      $resize_dirty = false;
+      if (module::get_var("gallery", "resize_size") != $resize_size) {
+        graphics::remove_rule("gallery", "resize", "gallery_graphics::resize");
+        graphics::add_rule(
+          "gallery", "resize", "gallery_graphics::resize",
+          array("width" => $resize_size, "height" => $resize_size, "master" => Image::AUTO),
+          100);
+        module::set_var("gallery", "resize_size", $resize_size);
+      }
+
+      module::set_var("gallery", "header_text", $form->edit_theme->header_text->value);
+      module::set_var("gallery", "footer_text", $form->edit_theme->footer_text->value);
+      module::set_var("gallery", "show_credits", $form->edit_theme->show_credits->value);
+
+      message::success(t("Updated theme details"));
       url::redirect("admin/theme_options");
     } else {
       $view = new Admin_View("admin.html");
       $view->content = $form;
-      $view->content->title = t("%name options", array("name" => $info->name));
       print $view;
     }
   }
