@@ -675,6 +675,13 @@ div#g-action-status {
   padding-right: 30px !important;
 }
 
+.rtl form li.g-error,
+.rtl form li.g-info,
+.rtl form li.g-success,
+.rtl form li.g-warning {
+  padding-right: 0 !important;
+}
+
 .rtl .g-left,
 .rtl .g-inline li,
 .rtl #g-content #g-album-grid .g-item,
@@ -717,19 +724,11 @@ div#g-action-status {
   padding-right: 0;
 }
 
-.rtl .g-paginator .g-info {
-  width: 35%;
-}
-
-.rtl .g-paginator .g-text-right {
-  margin-left: 0;
-}
-
 .rtl input.checkbox {
   margin-right: .4em;
 }
 
-/* Superfish RTL ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* RTL Superfish ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .rtl .sf-menu a.sf-with-ul {
 	padding-left: 2.25em;
@@ -791,6 +790,14 @@ div#g-action-status {
 }
 
 /* RTL paginator ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl .g-paginator .g-info {
+  width: 35%;
+}
+
+.rtl .g-paginator .g-text-right {
+  margin-left: 0;
+}
 
 .rtl .g-paginator .ui-icon-seek-end {
   background-position: -80px -160px;
