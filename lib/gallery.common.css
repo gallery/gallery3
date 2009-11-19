@@ -789,3 +789,21 @@ div#g-action-status {
 	-webkit-border-top-left-radius: 17px;
 	-webkit-border-bottom-right-radius: 17px;
 }
+
+/* RTL paginator ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl .g-paginator .ui-icon-seek-end {
+  background-position: -80px -160px;
+}
+
+.rtl .g-paginator .ui-icon-seek-next {
+  background-position: -48px -160px;
+}
+
+.rtl .g-paginator .ui-icon-seek-prev {
+  background-position: -32px -160px;
+}
+
+.rtl .g-paginator .ui-icon-seek-first {
+  background-position: -64px -160px;
+}
