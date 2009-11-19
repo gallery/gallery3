@@ -35,8 +35,8 @@ class Admin_g2_import_Controller extends Admin_Controller {
     if (g2_import::is_initialized()) {
       $view->content->g2_stats = $g2_stats;
       $view->content->g2_sizes = $g2_sizes;
-      $view->content->thumb_size = theme::get_var("thumb_size", 200);
-      $view->content->resize_size = theme::get_var("resize_size", 640);
+      $view->content->thumb_size = theme::get_var("thumb_size");
+      $view->content->resize_size = theme::get_var("resize_size");
     }
     print $view;
   }
