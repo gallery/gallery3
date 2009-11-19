@@ -19,7 +19,7 @@
  */
 class Search_Controller extends Controller {
   public function index() {
-    $page_size = module::get_var("gallery", "page_size", 9);
+    $page_size = theme::get_var("page_size", 9);
     $q = $this->input->get("q");
     $page = $this->input->get("page", 1);
     $offset = ($page - 1) * $page_size;

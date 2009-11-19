@@ -226,9 +226,9 @@ class gallery_installer {
 
     module::set_var("gallery", "active_site_theme", "wind");
     module::set_var("gallery", "active_admin_theme", "admin_wind");
-    module::set_var("gallery", "page_size", 9);
-    module::set_var("gallery", "thumb_size", 200);
-    module::set_var("gallery", "resize_size", 640);
+    module::set_var("wind", "page_size", 9);
+    module::set_var("wind", "thumb_size", 200);
+    module::set_var("wind", "resize_size", 640);
     module::set_var("gallery", "default_locale", "en_US");
     module::set_var("gallery", "image_quality", 75);
     module::set_var("gallery", "image_sharpen", 15);
@@ -265,10 +265,10 @@ class gallery_installer {
     module::set_var("gallery", "date_format", "Y-M-d");
     module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
     module::set_var("gallery", "time_format", "H:i:s");
-    module::set_var("gallery", "show_credits", 1);
+    module::set_var("wind", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 19);
+    module::set_version("gallery", 20);
   }
 
   static function upgrade($version) {
@@ -431,6 +431,17 @@ class gallery_installer {
       block_manager::set_active("site_sidebar", $blocks);
       module::clear_var("gallery", "blocks_site.sidebar");
       module::set_version("gallery", $version = 19);
+    }
+
+    // Move the theme related variables into the current theme
+    if ($version == 19) {
+      foreach (array("page_size", "thumb_size", "resize_size", "header_text",
+                     "footer_text", "show_credits") as $var) {
+        $value = module::get_var("gallery", $var);
+        theme::set_var($var, $value);
+        module::clear_var("gallery", $var);
+      }
+      module::set_version("gallery", $version = 20);
     }
   }
 
