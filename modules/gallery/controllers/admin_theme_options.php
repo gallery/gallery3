@@ -28,8 +28,8 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
     // Don't use the Kohana cascading file system because we don't want to mess up the admin theme
     $theme_helper = THEMEPATH . "$theme_name/helpers/{$theme_name}.php";
     @require_once($theme_helper);
-    $view->content->form = call_user_func_array(array(theme::$site, "get_admin_form"),
-                                                array("admin/theme_options/save/"));
+    $view->content->form =
+      call_user_func("{$theme_name}::get_admin_form", "admin/theme_options/save/");
 
     $view->content->title = t("%name options", array("name" => $info->name));
 
@@ -46,12 +46,9 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
 
     $info = theme::get_info($theme_name);
 
-    $form = call_user_func_array(array(theme::$site, "get_admin_form"),
-                                 array("admin/theme_options/save/"));
+    $form = call_user_func("{$theme_name}::get_admin_form", "admin/theme_options/save/");
     if ($form->validate()) {
-
-      $view->content->form = call_user_func_array(array(theme::$site, "update_options"),
-                                                  array($form));
+      call_user_func("{$theme_name}::update_options", $form);
 
       message::success(t("Updated %name options", array("name" => $info->name)));
       url::redirect("admin/theme_options");
