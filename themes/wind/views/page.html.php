@@ -108,7 +108,7 @@
           </li>
           <? $i++ ?>
           <? endforeach ?>
-          <li class="g-active"><?= html::purify($theme->item()->title) ?></li>
+          <li class="g-active<? if ($i == 0) print " g-first" ?>"><?= html::purify($theme->item()->title) ?></li>
         </ul>
         <? endif ?>
       </div>

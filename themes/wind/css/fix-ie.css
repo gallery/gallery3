@@ -20,10 +20,10 @@ input.submit {
   float: none !important;
 }
 
-.g-pager .g-text-right {
+.g-paginator .g-text-right {
   width: 29%;
 }
 
-.g-pager .ui-icon-right {
+.g-paginator .ui-icon-right {
   width: 60px;
 }

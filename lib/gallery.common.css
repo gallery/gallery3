@@ -542,17 +542,17 @@ div#g-action-status {
 
 /* Pagination ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-.g-pager {
+.g-paginator {
   padding: .2em 0;
   width: 100%;
 }
 
-.g-pager li {
+.g-paginator li {
   float: left;
   width: 30%;
 }
 
-.g-pager .g-info {
+.g-paginator .g-info {
   background: none;
   padding: .2em 0;
   text-align: center;
@@ -675,12 +675,19 @@ div#g-action-status {
   padding-right: 30px !important;
 }
 
+.rtl form li.g-error,
+.rtl form li.g-info,
+.rtl form li.g-success,
+.rtl form li.g-warning {
+  padding-right: 0 !important;
+}
+
 .rtl .g-left,
 .rtl .g-inline li,
 .rtl #g-content #g-album-grid .g-item,
 .rtl .sf-menu li,
 .rtl .g-breadcrumbs li,
-.rtl .g-pager li,
+.rtl .g-paginator li,
 .rtl .g-buttonset li,
 .rtl .ui-icon-left .ui-icon,
 .rtl .g-short-form li,
@@ -717,19 +724,11 @@ div#g-action-status {
   padding-right: 0;
 }
 
-.rtl .g-pager .g-info {
-  width: 35%;
-}
-
-.rtl .g-pager .g-text-right {
-  margin-left: 0;
-}
-
 .rtl input.checkbox {
   margin-right: .4em;
 }
 
-/* Superfish RTL ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* RTL Superfish ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .rtl .sf-menu a.sf-with-ul {
 	padding-left: 2.25em;
@@ -788,4 +787,30 @@ div#g-action-status {
 	-moz-border-radius-topleft: 17px;
 	-webkit-border-top-left-radius: 17px;
 	-webkit-border-bottom-right-radius: 17px;
+}
+
+/* RTL paginator ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl .g-paginator .g-info {
+  width: 35%;
+}
+
+.rtl .g-paginator .g-text-right {
+  margin-left: 0;
+}
+
+.rtl .g-paginator .ui-icon-seek-end {
+  background-position: -80px -160px;
+}
+
+.rtl .g-paginator .ui-icon-seek-next {
+  background-position: -48px -160px;
+}
+
+.rtl .g-paginator .ui-icon-seek-prev {
+  background-position: -32px -160px;
+}
+
+.rtl .g-paginator .ui-icon-seek-first {
+  background-position: -64px -160px;
 }
