@@ -24,9 +24,6 @@
  * Note: by design, this class does not do any permission checking.
  */
 class theme_Core {
-  public static $site;
-  public static $admin;
-
   /**
    * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
    * active for any given request.
@@ -38,14 +35,37 @@ class theme_Core {
       $path = "/" . $input->get("kohana_uri");
     }
 
-    self::$site = module::get_var("gallery", "active_site_theme");
-    self::$admin = module::get_var("gallery", "active_admin_theme");
     if (!(identity::active_user()->admin && $theme_name = $input->get("theme"))) {
-      $theme_name = $path == "/admin" || !strncmp($path, "/admin/", 7) ? self::$admin : self::$site;
+      $theme_name = module::get_var(
+        "gallery",
+        $path == "/admin" || !strncmp($path, "/admin/", 7) ?
+          "active_admin_theme" : "active_site_theme");
     }
     $modules = Kohana::config("core.modules");
     array_unshift($modules, THEMEPATH . $theme_name);
     Kohana::config_set("core.modules", $modules);
+  }
+
+  static function get_edit_form_admin() {
+    $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"g-theme-options-form"));
+    $group = $form->group("edit_theme");
+    $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
+      ->rules("required|valid_digit")
+      ->value(module::get_var("gallery", "page_size"));
+    $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("g-thumb-size")
+      ->rules("required|valid_digit")
+      ->value(module::get_var("gallery", "thumb_size"));
+    $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("g-resize-size")
+      ->rules("required|valid_digit")
+      ->value(module::get_var("gallery", "resize_size"));
+    $group->textarea("header_text")->label(t("Header text"))->id("g-header-text")
+      ->value(module::get_var("gallery", "header_text"));
+    $group->textarea("footer_text")->label(t("Footer text"))->id("g-footer-text")
+      ->value(module::get_var("gallery", "footer_text"));
+    $group->checkbox("show_credits")->label(t("Show site credits"))->id("g-footer-text")
+      ->checked(module::get_var("gallery", "show_credits"));
+    $group->submit("")->value(t("Save"));
+    return $form;
   }
 
   static function get_info($theme_name) {
@@ -57,33 +77,5 @@ class theme_Core {
 
     return $theme_info;
   }
-
-  /**
-   * Get a variable from the active theme
-   * @param string $name
-   * @param string $default_value
-   * @return the value
-   */
-  static function get_var($name, $default_value=null) {
-    return module::get_var(self::$site, $name, $default_value);
-  }
-
-  /**
-   * Store a variable for active theme
-   * @param string $module_name
-   * @param string $name
-   * @param string $value
-   */
-  static function set_var($name, $value) {
-    module::set_var(self::$site, $name, $value);
-  }
-
- /**
-   * Remove a variable for this module.
-   * @param string $module_name
-   * @param string $name
-   */
-  static function clear_var($name) {
-    module::clear_var(self::$site, $name);
-  }
 }
+

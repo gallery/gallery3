@@ -245,7 +245,11 @@ class gallery_event_Core {
                         ->id("themes")
                         ->label(t("Theme choice"))
                         ->url(url::site("admin/themes")))
-              ->append(Menu::factory("link")
+               ->append(Menu::factory("link")
+                        ->id("theme_options")
+                        ->label(t("Theme options"))
+                        ->url(url::site("admin/theme_options")))
+               ->append(Menu::factory("link")
                         ->id("sidebar")
                         ->label(t("Manage sidebar"))
                         ->url(url::site("admin/sidebar"))))
@@ -256,21 +260,6 @@ class gallery_event_Core {
                ->id("maintenance")
                ->label(t("Maintenance"))
                ->url(url::site("admin/maintenance")));
-
-    $theme_name = theme::$site;
-    $theme_helper = THEMEPATH . "$theme_name/helpers/{$theme_name}.php";
-    if (file_exists($theme_helper)) {
-      require_once($theme_helper);
-
-      if (method_exists($theme_name, "get_admin_form")) {
-        $info = theme::get_info($theme_name);
-        $menu->get("appearance_menu")
-          ->add_after("themes", Menu::factory("link")
-                      ->id("theme_options")
-                      ->label(t("%name options", array("name" => $info->name)))
-                      ->url(url::site("admin/theme_options")));
-      }
-    }
     return $menu;
   }
 
