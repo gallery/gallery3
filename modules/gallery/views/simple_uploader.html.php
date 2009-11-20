@@ -106,8 +106,9 @@
 
 <form id="g-add-photos-form" action="<?= url::site("simple_uploader/finish?csrf=$csrf") ?>">
   <fieldset>
-    <legend> <?= t("Add photos to %album_title", array("album_title" => html::purify($item->title))) ?> </legend>
-
+    <legend>
+      <?= t("Add photos to %album_title", array("album_title" => html::purify($item->title))) ?>
+    </legend>
   </fieldset>
   <div id="g-add-photos">
     <? if (ini_get("suhosin.session.encrypt")): ?>
@@ -121,15 +122,15 @@
     <? endif ?>
 
     <div>
-    <p>
-      <?= t("Photos will be uploaded to album: ") ?>
-    </p>
-    <ul class="g-breadcrumbs">
-      <? foreach ($item->parents() as $i => $parent): ?>
-      <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::clean($parent->title) ?> </li>
-      <? endforeach ?>
-      <li class="g-active"> <?= html::purify($item->title) ?> </li>
-    </ul>
+      <p>
+        <?= t("Photos will be uploaded to album: ") ?>
+      </p>
+      <ul class="g-breadcrumbs">
+        <? foreach ($item->parents() as $i => $parent): ?>
+        <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::clean($parent->title) ?> </li>
+        <? endforeach ?>
+        <li class="g-active"> <?= html::purify($item->title) ?> </li>
+      </ul>
     </div>
 
     <div id="g-add-photos-canvas" style="text-align: center;">
