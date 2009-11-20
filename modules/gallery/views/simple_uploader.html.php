@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <style>
-#g-uploadifyUploader {
+#g-add-photos-canvas object {
   left: -50px;
   position: relative;
   z-index: 100;
