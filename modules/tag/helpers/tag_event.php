@@ -97,4 +97,14 @@ class tag_event_Core {
   static function item_index_data($item, $data) {
     $data[] = join(" ", tag::item_tags($item));
   }
+
+  static function add_tags_to_item($item, $tags) {
+    foreach (split(",", $tags) as $tag_name) {
+      $tag_name = trim($tag_name);
+      if ($tag_name) {
+        $tag = tag::add($item, $tag_name);
+      }
+    }
+  }
+
 }

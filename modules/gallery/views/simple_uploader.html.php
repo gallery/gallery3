@@ -21,6 +21,7 @@
       script: "<?= url::site("simple_uploader/add_photo/{$item->id}") ?>",
       scriptData: <?= json_encode(array(
         "g3sid" => Session::instance()->id(),
+        "tags" => "",
         "user_agent" => Input::instance()->server("HTTP_USER_AGENT"),
         "csrf" => $csrf)) ?>,
       fileExt: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
@@ -45,7 +46,6 @@
         return true;
       },
       onComplete: function(event, queueID, fileObj, response, data) {
-        // @todo handle a response of "Error: xxxx" as an error
         var re = /^error: (.*)$/i;
         var msg = re.exec(response);
         if (msg) {
@@ -57,7 +57,6 @@
         }
         return true;
       },
-
       onError: function(event, queueID, fileObj, errorObj) {
         var msg = " - ";
         if (errorObj.type == "HTTP") {
@@ -91,6 +90,15 @@
         return true;
       }
     });
+  <? if (module::active("tag")): ?>
+    $('#g-add-photos-tags').autocomplete(
+      '<?= url::site("tags/autocomplete") ?>',
+      {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1}
+    );
+    $('#g-add-photos-tags').blur(function (event) {
+      $("#g-uploadify").uploadifySettings("scriptData", {"tags": $(this).val()});
+    });
+  <? endif ?>
   });
 </script>
 
@@ -121,6 +129,13 @@
       <li class="g-active"> <?= html::purify($item->title) ?> </li>
     </ul>
     </div>
+
+    <? if (module::active("tag")): ?>
+    <div style="clear: both;">
+      <label for="g-add-photos-tags"><?= t("Add tags to all uploaded files") ?></label>
+      <input type="text" id="g-add-photos-tags" name="tags" value="" />
+    </div>
+    <? endif ?>
 
     <div id="g-add-photos-canvas" style="text-align: center;">
       <a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select Photos...") ?></a>
