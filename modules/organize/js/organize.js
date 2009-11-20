@@ -166,7 +166,7 @@
         .selectable({
           filter: ".g-organize-microthumb-grid-cell",
           selected: function(event, ui) {
-            ui.selected.children(".g-organize-microthumb").addClass("ui-state-highlight");
+            $(ui.selected).children(".g-organize-microthumb").addClass("ui-state-highlight");
           },
           unselected: function(event, ui) {
             $(ui.unselected).children(".g-organize-microthumb").removeClass("ui-state-highlight");
