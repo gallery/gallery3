@@ -66,6 +66,11 @@ class Simple_Uploader_Controller extends Controller {
           log::success("content", t("Added a photo"),
                        html::anchor("photos/$item->id", t("view photo")));
         }
+
+        $tags = $this->input->post("tags");
+        if (!(empty($tags))) {
+          module::event("add_tags_to_item", $item, $tags);
+        }
       } catch (Exception $e) {
         Kohana::log("alert", $e->__toString());
         if (file_exists($temp_filename)) {
