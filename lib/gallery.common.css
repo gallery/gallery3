@@ -730,6 +730,11 @@ div#g-action-status {
 
 /* RTL Superfish ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
+.rtl .sf-menu a {
+  border-left: none;
+	border-right:1px solid #fff;
+}
+
 .rtl .sf-menu a.sf-with-ul {
 	padding-left: 2.25em;
 	padding-right: 1em;
