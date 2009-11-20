@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <style>
-#g-uploadifyUploader {
+#g-add-photos-canvas object {
   left: -50px;
   position: relative;
   z-index: 100;
@@ -61,20 +61,22 @@
         var msg = " - ";
         if (errorObj.type == "HTTP") {
           if (errorObj.info == "500") {
-            msg += "Error occurred processing the file";
+            msg += <?= t("Unable to process this file")->for_js() ?>;
             // Server error - check server logs
           } else if (errorObj.info == "404") {
-            msg += "The upload script was not found.";
+            msg += <?= t("The upload script was not found.")->for_js() ?>;
             // Server script not found
           } else {
             // Server Error: status: errorObj.info
-            msg += "Error occurred communication with the server, status: " + errorObj.info;
+            msg += (<?= t("Server error: __INFO__")->for_js() ?>.replace("__INFO__", errorObj.info));
           }
         } else if (errorObj.type == "File Size") {
           var sizelimit = $("#g-uploadify").uploadifySettings(sizeLimit);
           msg += fileObj.name+' '+errorObj.type+' Limit: '+Math.round(d.sizeLimit/1024)+'KB';
         } else {
-          msg += "Error occurred communication with the server, error " + errorObj.type + ": " + errorObj.info;
+          msg += (<?= t("Server error: __INFO__ (__TYPE__)")->for_js() ?>
+            .replace("__INFO__", errorObj.info)
+            .replace("__TYPE__", errorObj.type));
         }
         $("#g-add-photos-status ul").append(
           "<li class=\"g-error\">" + fileObj.name + msg + "</li>");
@@ -130,13 +132,6 @@
     </ul>
     </div>
 
-    <? if (module::active("tag")): ?>
-    <div style="clear: both;">
-      <label for="g-add-photos-tags"><?= t("Add tags to all uploaded files") ?></label>
-      <input type="text" id="g-add-photos-tags" name="tags" value="" />
-    </div>
-    <? endif ?>
-
     <div id="g-add-photos-canvas" style="text-align: center;">
       <a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select Photos...") ?></a>
       <span id="g-uploadify"></span>
@@ -145,6 +140,13 @@
       <ul>
       </ul>
     </div>
+
+    <? if (module::active("tag")): ?>
+    <div style="clear: both;">
+      <label for="g-add-photos-tags"><?= t("Add tags to all uploaded files") ?></label>
+      <input type="text" id="g-add-photos-tags" name="tags" value="" />
+    </div>
+    <? endif ?>
 
     <!-- Proxy the done request back to our form, since its been ajaxified -->
     <button id="g-upload-done" class="ui-state-default ui-corner-all" onclick="$('#g-add-photos-form').submit();return false;">
