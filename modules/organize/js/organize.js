@@ -166,12 +166,10 @@
         .selectable({
           filter: ".g-organize-microthumb-grid-cell",
           selected: function(event, ui) {
-            ui.selected.children(".g-organize-microthumb")
-              .removeClass("ui-state-active").addClass("ui-state-focus");
+            ui.selected.children(".g-organize-microthumb").addClass("ui-state-highlight");
           },
           unselected: function(event, ui) {
-            $(ui.unselected).children(".g-organize-microthumb")
-              .addClass("ui-state-active").removeClass("ui-state-focus");
+            $(ui.unselected).children(".g-organize-microthumb").removeClass("ui-state-highlight");
           }
         })
         .droppable($.organize.content_droppable);
