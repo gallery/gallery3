@@ -30,9 +30,8 @@
   width: 19%;
 }
 
-#g-organize-album-tree .g-selected {
-  background-color: #eee;
-  border-bottom: 1px solid #999;
+#g-organize-album-tree {
+  overflow: auto;
 }
 
 #g-organize-album-tree ul li {
@@ -48,10 +47,6 @@
   display: block;
   margin: 2px 0px 1px 2px;
   width: auto;
-}
-
-.g-organize-album-text:hover {
-  background: #eee;
 }
 
 /*******************************************************************
@@ -77,8 +72,6 @@
 }
 
 #g-organize-microthumb-panel {
-  background-color: #eee;
-  border: 1px solid #999;
   height: 100%;
   margin: 0 !important;
   position: relative;
@@ -100,8 +93,6 @@
 }
 
 .g-organize-microthumb {
-  background-color: #fff;
-  border: 1px solid #ccc;
   display: block;
   height: 100px;
   margin: 0;
@@ -111,16 +102,7 @@
   width: 110px;
 }
 
-.g-organize-microthumb-grid-cell.ui-selecting,
-.g-organize-microthumb-grid-cell.ui-selected {
-  border: 2px solid #13A;
-  margin: 4px;
-}
-
 .ui-selectable-helper {
-  background: #13A;
-  border: 1px dashed #00F;
-  opacity: 0.25;
   z-index: 2000 !important;
 }
 
@@ -131,21 +113,13 @@
   z-index: 4000;
 }
 
-.g-organize-microthumb-grid-cell:hover {
-  border: 2px solid #13A;
-  margin: 4px;
-}
-
 /****************************************************************
  * Controls styles
  */
 
 #g-organize-controls {
-  background-color: #666;
-  color: #eee;
   margin: 0 !important;
   padding: .2em .4em;
-  width: 100%;
 }
 
 #g-organize-controls select {

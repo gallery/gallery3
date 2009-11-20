@@ -15,16 +15,16 @@
       </ul>
     </div>
     <div id="g-organize-detail" class="g-left ui-helper-clearfix">
-      <div id="g-organize-microthumb-panel"
+      <div id="g-organize-microthumb-panel" class="ui-widget"
            ref="<?= url::site("organize/album/__ITEM_ID__/__OFFSET__") ?>">
         <ul id="g-action-status" class="g-message-block">
           <li class="g-info"><?= t("Drag and drop photos to re-order or move between albums") ?></li>
         </ul>
-        <ul id="g-organize-microthumb-grid">
+        <ul id="g-organize-microthumb-grid" class="ui-widget-content">
           <?= $micro_thumb_grid ?>
         </ul>
       </div>
-      <div id="g-organize-controls">
+      <div id="g-organize-controls" class="ui-widget-header">
         <a id="g-organize-close" href="#" ref="done"
            class="g-button g-right ui-corner-all ui-state-default"><?= t("Close") ?></a>
         <form>

@@ -163,7 +163,17 @@
 
     set_handlers: function() {
       $("#g-organize-microthumb-panel")
-        .selectable({filter: ".g-organize-microthumb-grid-cell"})
+        .selectable({
+          filter: ".g-organize-microthumb-grid-cell",
+          selected: function(event, ui) {
+            ui.selected.children(".g-organize-microthumb")
+              .removeClass("ui-state-active").addClass("ui-state-focus");
+          },
+          unselected: function(event, ui) {
+            $(ui.unselected).children(".g-organize-microthumb")
+              .addClass("ui-state-active").removeClass("ui-state-focus");
+          }
+        })
         .droppable($.organize.content_droppable);
       $(".g-organize-microthumb-grid-cell")
         .draggable($.organize.micro_thumb_draggable)
@@ -203,7 +213,7 @@
      */
     show_album: function(event) {
       event.preventDefault();
-      if ($(event.currentTarget).hasClass("g-selected")) {
+      if ($(event.currentTarget).hasClass("ui-state-focus")) {
         return;
       }
       var parent = $(event.currentTarget).parents(".g-organize-branch");
@@ -212,8 +222,8 @@
       }
       $("#g-organize-microthumb-panel").selectable("destroy");
       var id = $(event.currentTarget).attr("ref");
-      $("#g-organize-album-tree .g-selected").removeClass("g-selected");
-      $(".g-organize-album-text[ref=" + id + "]").addClass("g-selected");
+      $(".g-organize-album-text.ui-state-focus").removeClass("ui-state-focus");
+      $(".g-organize-album-text[ref=" + id + "]").addClass("ui-state-focus");
       var url = $("#g-organize-microthumb-panel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
       $.get(url, {},
         function(data) {
@@ -230,7 +240,7 @@
      */
     resort: function(column, dir) {
       var url = sort_order_url
-        .replace("__ALBUM_ID__", $("#g-organize-album-tree .g-selected").attr("ref"))
+        .replace("__ALBUM_ID__", $("#g-organize-album-tree .ui-state-focus").attr("ref"))
         .replace("__COL__", column)
         .replace("__DIR__", dir);
       $.get(url, {},

@@ -3,7 +3,7 @@
     ref="<?= $album->id ?>">
   <span class="ui-icon ui-icon-minus">
   </span>
-  <span class="g-organize-album-text <?= $selected && $album->id == $selected->id ? "selected" : "" ?>"
+  <span class="g-organize-album-text <?= $selected && $album->id == $selected->id ? "ui-state-focus" : "" ?>"
         ref="<?= $album->id ?>">
     <?= html::clean($album->title) ?>
   </span>
