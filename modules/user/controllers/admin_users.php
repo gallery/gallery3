@@ -340,7 +340,7 @@ class Admin_Users_Controller extends Admin_Controller {
       ->rules($minimum_length ? "required|length[$minimum_length, 40]" : "length[40]");
 
     module::event("user_add_form_admin", $user, $form);
-    $group->submit("")->value(t("Add User"));
+    $group->submit("")->value(t("Add user"));
     return $form;
   }
 
