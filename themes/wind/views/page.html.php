@@ -88,7 +88,7 @@
           <?= $theme->header_top() ?>
 
           <!-- hide the menu and make it visible after the page has loaded, to minimize menu flicker -->
-          <div id="g-site-menu" style="visibility: visible">
+          <div id="g-site-menu" style="visibility: hidden">
           <?= $theme->site_menu() ?>
           </div>
           <script> $(document).ready(function() { $("#g-site-menu").css("visibility", "visible"); }) </script>
