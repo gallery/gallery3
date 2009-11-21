@@ -125,7 +125,7 @@ class Gallery_View_Core extends View {
     if (preg_match_all($PATTERN, $css, $matches, PREG_SET_ORDER)) {
       $search = $replace = array();
       foreach ($matches as $match) {
-        $relative = substr(realpath(dirname($css_file) . "/$match[1]"), $docroot_length);
+        $relative = dirname($css_file) . "/$match[1]";
         if (!empty($relative)) {
           $search[] = $match[0];
           $replace[] = "url('" . url::abs_file($relative) . "')";
