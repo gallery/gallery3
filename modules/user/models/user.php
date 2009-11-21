@@ -23,7 +23,7 @@ class User_Model extends ORM implements User_Definition {
   var $rules = array(
     "name" => "required|length[1,32]",
     "full_name" => "length[0,255]",
-    "email" => "valid_email|length[1,255]",
+    "email" => "required|valid_email|length[1,255]",
     "password" => "length[1,40]",
     "url" => "valid_url",
     "locale" => "length[2,10]");
