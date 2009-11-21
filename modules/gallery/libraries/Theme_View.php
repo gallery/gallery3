@@ -172,7 +172,7 @@ class Theme_View_Core extends Gallery_View {
 
       $v->first_visible_position = ($this->page - 1) * $this->page_size + 1;
       $v->last_visible_position = min($this->page * $this->page_size, $v->total);
-    } else {
+    } else if ($this->page_type == "item") {
       $v->position = $this->position;
       $v->total = $this->sibling_count;
       if ($this->previous_item) {
