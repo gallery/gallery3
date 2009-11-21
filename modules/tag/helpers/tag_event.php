@@ -98,13 +98,31 @@ class tag_event_Core {
     $data[] = join(" ", tag::item_tags($item));
   }
 
-  static function add_tags_to_item($item, $tags) {
-    foreach (split(",", $tags) as $tag_name) {
+  static function add_photos_form($album, $form) {
+    $group = $form->add_photos;
+    $group->input("tags")
+      ->label(t("Add tags to all uploaded files"))
+      ->value("");
+    $group->uploadify->script_data("tags", "");
+
+    $autocomplete_url = url::site("tags/autocomplete");
+    $group->script("")
+      ->text("$('input[name=tags]')
+                .autocomplete(
+                  '$autocomplete_url',
+                  {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1}
+                )
+                .change(function (event) {
+                  $('#g-uploadify').uploadifySettings('scriptData', {'tags': $(this).val()});
+                });");
+  }
+
+  static function add_photos_form_completed($album, $form) {
+    foreach (split(",", $form->add_photos->tags->value) as $tag_name) {
       $tag_name = trim($tag_name);
       if ($tag_name) {
-        $tag = tag::add($item, $tag_name);
+        $tag = tag::add($album, $tag_name);
       }
     }
   }
-
 }

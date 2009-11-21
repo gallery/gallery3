@@ -26,9 +26,7 @@ class Simple_Uploader_Controller extends Controller {
       $item = $item->parent();
     }
 
-    $v = new View("simple_uploader.html");
-    $v->item = $item;
-    print $v;
+    print self::get_add_form($item);
   }
 
   public function start() {
@@ -67,9 +65,11 @@ class Simple_Uploader_Controller extends Controller {
                        html::anchor("photos/$item->id", t("view photo")));
         }
 
-        $tags = $this->input->post("tags");
-        if (!(empty($tags))) {
-          module::event("add_tags_to_item", $item, $tags);
+        // We currently have no way of showing errors if validation fails, so only call our event
+        // handlers if validation passes.
+        $form = self::get_add_form($album);
+        if ($form->validate()) {
+          module::event("add_photos_form_completed", $item, $form);
         }
       } catch (Exception $e) {
         Kohana::log("alert", $e->__toString());
@@ -95,4 +95,17 @@ class Simple_Uploader_Controller extends Controller {
     print json_encode(array("result" => "success"));
   }
 
+  public function get_add_form($album)  {
+    $form = new Forge("simple_uploader/finish", "", "post", array("id" => "g-add-photos-form"));
+    $group = $form->group("add_photos")
+      ->label(t("Add photos to %album_title", array("album_title" => html::purify($album->title))));
+    $group->uploadify("uploadify")->album($album);
+
+    $group = $form->group("actions");
+    $group->uploadify_buttons("");
+
+    module::event("add_photos_form", $album, $form);
+
+    return $form;
+  }
 }
