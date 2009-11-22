@@ -30,11 +30,13 @@ class Admin_Themes_Controller extends Admin_Controller {
   private function _get_themes() {
     $themes = array();
     foreach (scandir(THEMEPATH) as $theme_name) {
-      if ($theme_name[0] == ".") {
-        continue;
-      }
+      if (file_exists(THEMEPATH . "$theme_name/theme.info")) {
+        if ($theme_name[0] == ".") {
+          continue;
+        }
 
-      $themes[$theme_name] = theme::get_info($theme_name);
+        $themes[$theme_name] = theme::get_info($theme_name);
+      }
     }
     return $themes;
   }

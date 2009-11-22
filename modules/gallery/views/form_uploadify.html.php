@@ -23,7 +23,7 @@
       fileExt: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
       fileDesc: <?= t("Photos and movies")->for_js() ?>,
       cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
-      buttonText: <?= t("Select Photos ...")->for_js() ?>,
+      buttonText: <?= t("Select photos...")->for_js() ?>,
       simUploadLimit: 10,
       wmode: "transparent",
       hideButton: true, /* should be true */
@@ -114,7 +114,7 @@
 </div>
 
 <div id="g-add-photos-canvas" style="text-align: center;">
-  <a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select Photos...") ?></a>
+  <a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select photos...") ?></a>
   <span id="g-uploadify"></span>
 </div>
 <div id="g-add-photos-status" style="text-align: center;">

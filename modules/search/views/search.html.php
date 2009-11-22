@@ -23,18 +23,15 @@
   <? if (count($items)): ?>
   <ul id="g-album-grid" class="ui-helper-clearfix">
     <? foreach ($items as $item): ?>
-      <? $item_class = "g-photo"; ?>
-      <? if ($item->is_album()): ?>
-        <? $item_class = "g-album"; ?>
-      <? endif ?>
-   <li class="g-item <?= $item_class ?>">
+    <? $item_class = $item->is_album() ? "g-album" : "g-photo" ?>
+    <li class="g-item <?= $item_class ?>">
       <a href="<?= $item->url() ?>">
         <?= $item->thumb_img() ?>
         <p>
-    <?= html::purify($item->title) ?>
-        </p>
-        <div>
-    <?= nl2br(html::purify($item->description)) ?>
+          <?= html::purify(text::limit_chars($item->title, 32, "…")) ?>
+         </p>
+         <div>
+          <?= nl2br(html::purify(text::limit_chars($item->description, 64, "…"))) ?>
         </div>
       </a>
     </li>
