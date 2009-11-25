@@ -61,7 +61,7 @@ class Digibug_Controller extends Controller {
     if ($type == "full") {
       $remote_addr = ip2long($this->input->server("REMOTE_ADDR"));
       if ($remote_addr === false) {
-        Kohana::show_404();
+        throw new Kohana_404_Exception();
       }
       $config = Kohana::config("digibug");
 
@@ -76,13 +76,13 @@ class Digibug_Controller extends Controller {
         }
       }
       if (!$authorized) {
-        Kohana::show_404();
+        throw new Kohana_404_Exception();
       }
     }
 
     $proxy = ORM::factory("digibug_proxy", array("uuid" => $id));
     if (!$proxy->loaded() || !$proxy->item->loaded()) {
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $file = $type == "full" ? $proxy->item->file_path() : $proxy->item->thumb_path();

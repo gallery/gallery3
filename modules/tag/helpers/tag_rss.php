@@ -32,7 +32,7 @@ class tag_rss_Core {
     if ($feed_id == "tag") {
       $tag = ORM::factory("tag", $id);
       if (!$tag->loaded()) {
-        Kohana::show_404();
+        throw new Kohana_404_Exception();
       }
       $feed->children = $tag->items($limit, $offset, "photo");
       $feed->max_pages = ceil($tag->count / $limit);

@@ -39,7 +39,7 @@ class Rss_Controller extends Controller {
       }
     }
     if (empty($feed)) {
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     if ($feed->max_pages && $page > $feed->max_pages) {

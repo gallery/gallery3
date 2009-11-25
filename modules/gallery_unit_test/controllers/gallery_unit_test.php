@@ -20,7 +20,7 @@
 class Gallery_Unit_Test_Controller extends Controller {
   function Index() {
     if (!TEST_MODE) {
-      print Kohana::show_404();
+      print throw new Kohana_404_Exception();
     }
 
     // Jump through some hoops to satisfy the way that we check for the site_domain in

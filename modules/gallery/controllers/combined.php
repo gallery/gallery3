@@ -56,7 +56,7 @@ class Combined_Controller extends Controller {
     }
 
     if (empty($key)) {
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $cache = Cache::instance();
@@ -71,7 +71,7 @@ class Combined_Controller extends Controller {
       $content = $cache->get($key);
     }
     if (empty($content)) {
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // $type is either 'javascript' or 'css'
