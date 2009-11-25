@@ -64,11 +64,14 @@ class Cache_Database_Driver extends Cache_Driver {
         $status = db::build()->update(
           "caches",
           array("tags" => $tags, "expiration" => $lifetime, "cache" => serialize($data)),
-          array("key", "=", $id));
+          array("key", "=", $id))
+          ->execute();
       } else {
         $status = db::build()->insert(
           "caches",
-          array("key" => $id, "tags" => $tags, "expiration" => $lifetime, "cache" => serialize($data)));
+          array("key" => $id, "tags" => $tags,
+                "expiration" => $lifetime, "cache" => serialize($data)))
+          ->execute();
       }
     }
 
@@ -185,6 +188,6 @@ class Cache_Database_Driver extends Cache_Driver {
    * Empty the cache
    */
   public function delete_all() {
-    db::build()->query("TRUNCATE {caches}");
+    db::build()->query("TRUNCATE {caches}")->execute();
   }
 }
