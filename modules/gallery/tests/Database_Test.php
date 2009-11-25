@@ -138,7 +138,6 @@ class Database_For_Test extends Database {
 
   public function query($sql = '') {
     if (!empty($sql)) {
-      print " query($sql)\n";
       $sql = $this->add_table_prefixes($sql);
     }
     return $sql;
