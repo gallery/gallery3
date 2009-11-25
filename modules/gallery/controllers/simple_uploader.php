@@ -26,7 +26,7 @@ class Simple_Uploader_Controller extends Controller {
       $item = $item->parent();
     }
 
-    print self::get_add_form($item);
+    print $this->_get_add_form($item);
   }
 
   public function start() {
@@ -67,7 +67,7 @@ class Simple_Uploader_Controller extends Controller {
 
         // We currently have no way of showing errors if validation fails, so only call our event
         // handlers if validation passes.
-        $form = self::get_add_form($album);
+        $form = $this->_get_add_form($album);
         if ($form->validate()) {
           module::event("add_photos_form_completed", $item, $form);
         }
@@ -95,7 +95,7 @@ class Simple_Uploader_Controller extends Controller {
     print json_encode(array("result" => "success"));
   }
 
-  public function get_add_form($album)  {
+  private function _get_add_form($album)  {
     $form = new Forge("simple_uploader/finish", "", "post", array("id" => "g-add-photos-form"));
     $group = $form->group("add_photos")
       ->label(t("Add photos to %album_title", array("album_title" => html::purify($album->title))));
