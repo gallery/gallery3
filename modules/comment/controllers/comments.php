@@ -17,49 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Comments_Controller extends REST_Controller {
-  protected $resource_type = "comment";
-
-  /**
-   * Display comments based on criteria.
-   *  @see REST_Controller::_index()
-   */
-  public function _index() {
-    $item = ORM::factory("item", $this->input->get('item_id'));
-    access::required("view", $item);
-
-    $comments = ORM::factory("comment")
-      ->where("item_id", $item->id)
-      ->where("state", "published")
-      ->orderby("created", "DESC")
-      ->find_all();
-
-    switch (rest::output_format()) {
-    case "json":
-      foreach ($comments as $comment) {
-        $data[] = array(
-          "id" => $comment->id,
-          "author_name" => html::clean($comment->author_name()),
-          "created" => $comment->created,
-          "text" => nl2br(html::purify($comment->text)));
-      }
-      print json_encode($data);
-      break;
-
-    case "html":
-      $view = new Theme_View("comments.html", "other", "comment");
-      $view->comments = $comments;
-      print $view;
-      break;
-    }
-  }
-
+class Comments_Controller extends Controller {
   /**
    * Add a new comment to the collection.
-   * @see REST_Controller::_create($resource)
    */
-  public function _create($comment) {
-    $item = ORM::factory("item", $this->input->post("item_id"));
+  public function create($id) {
+    $item = ORM::factory("item", $id);
     access::required("view", $item);
 
     $form = comment::get_add_form($item);
@@ -96,105 +59,27 @@ class Comments_Controller extends REST_Controller {
       }
 
       $form->add_comment->text->value("");
-      print json_encode(
-        array("result" => "success",
-              "resource" => ($comment->state == "published"
-                             ? url::site("comments/{$comment->id}")
-                             : null),
-              "form" => $form->__toString()));
-    } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
-    }
-  }
-
-  /**
-   * Display an existing comment.
-   *  @todo Set proper Content-Type in a central place (REST_Controller::dispatch?).
-   *  @see REST_Controller::_show($resource)
-   */
-  public function _show($comment) {
-    $item = ORM::factory("item", $comment->item_id);
-    access::required("view", $item);
-    if ($comment->state != "published") {
-      return;
-    }
-
-    if (rest::output_format() == "json") {
-      print json_encode(
-        array("result" => "success",
-              "data" => array(
-                "id" => $comment->id,
-                "author_name" => html::clean($comment->author_name()),
-                "created" => $comment->created,
-                "text" => nl2br(html::purify($comment->text)))));
-    } else {
       $view = new Theme_View("comment.html", "other", "comment-fragment");
       $view->comment = $comment;
-      print $view;
-    }
-  }
-
-  /**
-   * Change an existing comment.
-   *  @see REST_Controller::_update($resource)
-   */
-  public function _update($comment) {
-    $item = ORM::factory("item", $comment->item_id);
-    access::required("view", $item);
-    access::required("edit", $item);
-
-    $form = comment::get_edit_form($comment);
-    if ($form->validate()) {
-      $comment->guest_name = $form->edit_comment->inputs["name"]->value;
-      $comment->guest_email = $form->edit_comment->email->value;
-      $comment->url = $form->edit_comment->url->value;
-      $comment->text = $form->edit_comment->text->value;
-      $comment->save();
 
       print json_encode(
         array("result" => "success",
-              "resource" => url::site("comments/{$comment->id}")));
+              "view" => $view->__toString(),
+              "form" => $form->__toString()));
     } else {
       print json_encode(
         array("result" => "error",
-              "html" => $form->__toString()));
+              "form" => $form->__toString()));
     }
-  }
-
-  /**
-   * Delete existing comment.
-   *  @see REST_Controller::_delete($resource)
-   */
-  public function _delete($comment) {
-    $item = ORM::factory("item", $comment->item_id);
-    access::required("view", $item);
-    access::required("edit", $item);
-
-    $comment->delete();
-    print json_encode(array("result" => "success"));
   }
 
   /**
    * Present a form for adding a new comment to this item or editing an existing comment.
-   *  @see REST_Controller::form_add($resource)
    */
-  public function _form_add($item_id) {
+  public function form_add($item_id) {
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
 
     print comment::get_add_form($item);
-  }
-
-  /**
-   * Present a form for editing an existing comment.
-   *  @see REST_Controller::form_edit($resource)
-   */
-  public function _form_edit($comment) {
-    if (!identity::active_user()->admin) {
-      access::forbidden();
-    }
-    print comment::get_edit_form($comment);
   }
 }

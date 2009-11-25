@@ -8,9 +8,9 @@
            width="40"
            height="40" />
     </a>
-    <?= t("on %date_time, %author_name said",
+    <?= t("on %date_time,  <a href=\"#\">%name</a> said",
           array("date_time" => gallery::date_time($comment->created),
-                "author_name" => html::clean($comment->author_name()))) ?>
+                "name" => html::clean($comment->author_name()))) ?>
   </p>
   <div>
   <?= nl2br(html::purify($comment->text)) ?>

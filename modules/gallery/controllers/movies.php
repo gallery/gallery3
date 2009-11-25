@@ -18,10 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Movies_Controller extends Items_Controller {
-
-  /**
-   *  @see REST_Controller::_show($resource)
-   */
   public function _show($movie) {
     access::required("view", $movie);
 
@@ -53,11 +49,9 @@ class Movies_Controller extends Items_Controller {
     print $template;
   }
 
-  /**
-   * @see REST_Controller::_update($resource)
-   */
-  public function _update($movie) {
+  public function update($movie_id) {
     access::verify_csrf();
+    $movie = ORM::factory("item", $movie_id);
     access::required("view", $movie);
     access::required("edit", $movie);
 
@@ -120,10 +114,8 @@ class Movies_Controller extends Items_Controller {
     }
   }
 
-  /**
-   *  @see REST_Controller::_form_edit($resource)
-   */
-  public function _form_edit($movie) {
+  public function form_edit($movie_id) {
+    $movie = ORM::factory("item", $movie_id);
     access::required("view", $movie);
     access::required("edit", $movie);
     print movie::get_edit_form($movie);

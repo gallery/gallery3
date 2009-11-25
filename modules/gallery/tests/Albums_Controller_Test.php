@@ -48,7 +48,8 @@ class Albums_Controller_Test extends Unit_Test_Case {
     access::allow(identity::everybody(), "edit", $root);
 
     ob_start();
-    $controller->_update($this->_album);
+    $controller->update($this->_album->id);
+    $this->_album->reload();
     $results = ob_get_contents();
     ob_end_clean();
 
