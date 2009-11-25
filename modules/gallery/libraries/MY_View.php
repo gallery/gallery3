@@ -25,21 +25,6 @@ class View extends View_Core {
    */
   public function set_global($key, $value) {
     View::$global_data[$key] = $value;
-    $this->$key = $value;
-  }
-
-  public function __isset($key) {
-    if (array_key_exists($key, View::$global_data)) {
-      return true;
-    }
-    return parent::__isset($key);
-  }
-
-  public function &__get($key) {
-    if (array_key_exists($key, View::$global_data)) {
-      return View::$global_data[$key];
-    }
-    return parent::__get($key);
   }
 
   /**
@@ -58,9 +43,10 @@ class View extends View_Core {
    *
    * @see View_Core::render
    */
-  public function render($print=false, $renderer=false) {
+  public function render($print=false, $renderer=false, $modifier=false) {
     try {
-      return parent::render($print, $renderer);
+      $this->kohana_local_data = array_merge(View::$global_data, $this->kohana_local_data);
+      return parent::render($print, $renderer, $modifier);
     } catch (Exception $e) {
       Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       return "";
