@@ -18,10 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Photos_Controller extends Items_Controller {
-
-  /**
-   *  @see REST_Controller::_show($resource)
-   */
   public function _show($photo) {
     access::required("view", $photo);
 
@@ -53,12 +49,9 @@ class Photos_Controller extends Items_Controller {
     print $template;
   }
 
-
-  /**
-   * @see REST_Controller::_update($resource)
-   */
-  public function _update($photo) {
+  public function update($photo_id) {
     access::verify_csrf();
+    $photo = ORM::factory("item", $photo_id);
     access::required("view", $photo);
     access::required("edit", $photo);
 
@@ -125,10 +118,8 @@ class Photos_Controller extends Items_Controller {
     }
   }
 
-  /**
-   *  @see REST_Controller::_form_edit($resource)
-   */
-  public function _form_edit($photo) {
+  public function form_edit($photo_id) {
+    $photo = ORM::factory("item", $photo_id);
     access::required("view", $photo);
     access::required("edit", $photo);
 

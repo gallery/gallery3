@@ -157,7 +157,7 @@ class photo_Core {
   }
 
   static function get_edit_form($photo) {
-    $form = new Forge("photos/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
+    $form = new Forge("photos/update/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title);

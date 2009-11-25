@@ -92,7 +92,7 @@ class album_Core {
   }
 
   static function get_add_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "g-add-album-form"));
+    $form = new Forge("albums/create/{$parent->id}", "", "post", array("id" => "g-add-album-form"));
     $group = $form->group("add_album")
       ->label(t("Add an album to %album_title", array("album_title" => $parent->title)));
     $group->input("title")->label(t("Title"));
@@ -114,7 +114,7 @@ class album_Core {
   }
 
   static function get_edit_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "g-edit-album-form"));
+    $form = new Forge("albums/update/{$parent->id}", "", "post", array("id" => "g-edit-album-form"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_item")->label(t("Edit Album"));
 

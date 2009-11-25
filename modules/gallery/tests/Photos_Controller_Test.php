@@ -44,7 +44,8 @@ class Photos_Controller_Test extends Unit_Test_Case {
     access::allow(identity::everybody(), "edit", $root);
 
     ob_start();
-    $controller->_update($photo);
+    $controller->update($photo->id);
+    $photo->reload();
     $results = ob_get_contents();
     ob_end_clean();
 
