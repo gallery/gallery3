@@ -13,17 +13,6 @@ modules/gallery/controllers/login.php                        html               
 modules/gallery/controllers/login.php                        auth_html            DIRTY_AUTH
 modules/gallery/controllers/logout.php                       index                DIRTY_CSRF|DIRTY_AUTH
 modules/gallery/controllers/maintenance.php                  index                DIRTY_AUTH
-modules/gallery/controllers/rest.php                         __construct          DIRTY_AUTH
-modules/gallery/controllers/rest.php                         __call               DIRTY_AUTH
-modules/gallery/controllers/rest.php                         form_edit            DIRTY_AUTH
-modules/gallery/controllers/rest.php                         form_add             DIRTY_AUTH
-modules/gallery/controllers/rest.php                         _index               DIRTY_AUTH
-modules/gallery/controllers/rest.php                         _create              DIRTY_AUTH
-modules/gallery/controllers/rest.php                         _show                DIRTY_AUTH
-modules/gallery/controllers/rest.php                         _update              DIRTY_AUTH
-modules/gallery/controllers/rest.php                         _delete              DIRTY_AUTH
-modules/gallery/controllers/rest.php                         _form_add            DIRTY_AUTH
-modules/gallery/controllers/rest.php                         _form_edit           DIRTY_AUTH
 modules/gallery/controllers/simple_uploader.php              start                DIRTY_AUTH
 modules/gallery/controllers/simple_uploader.php              finish               DIRTY_AUTH
 modules/gallery/controllers/upgrader.php                     index                DIRTY_AUTH
