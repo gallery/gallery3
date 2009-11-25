@@ -65,7 +65,7 @@ class comment_Core {
   }
 
   static function get_add_form($item) {
-    $form = new Forge("comments", "", "post", array("id" => "g-comment-form"));
+    $form = new Forge("comments/create/{$item->id}", "", "post", array("id" => "g-comment-form"));
     $group = $form->group("add_comment")->label(t("Add comment"));
     $group->input("name")   ->label(t("Name"))            ->id("g-author");
     $group->input("email")  ->label(t("Email (hidden)"))  ->id("g-email");
@@ -85,30 +85,6 @@ class comment_Core {
     }
     $group->text->error_messages("missing", t("You must provide a comment"));
 
-    return $form;
-  }
-
-  static function get_edit_form($comment) {
-    $form = new Forge("comments/{$comment->id}?_method=put", "", "post",
-                      array("id" => "g-edit-comment-form"));
-    $group = $form->group("edit_comment")->label(t("Edit comment"));
-    $group->input("name")   ->label(t("Author"))          ->id("g-author");
-    $group->input("email")  ->label(t("Email (hidden)"))  ->id("g-email");
-    $group->input("url")    ->label(t("Website (hidden)"))->id("g-url");
-    $group->textarea("text")->label(t("Comment"))         ->id("g-text");
-    $group->submit("")->value(t("Edit"));
-
-    $group->text = $comment->text;
-    $author = $comment->author();
-    if ($author->guest) {
-      $group->inputs["name"]->value = $comment->guest_name;
-      $group->email = $comment->guest_email;
-      $group->url = $comment->guest_url;
-    } else {
-      $group->inputs["name"]->value($author->full_name)->disabled("disabled");
-      $group->email->value($author->email)->disabled("disabled");
-      $group->url->value($author->url)->disabled("disabled");
-    }
     return $form;
   }
 }
