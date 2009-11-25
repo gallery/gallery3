@@ -87,4 +87,4 @@ if (file_exists("local.php")) {
 }
 
 // Initialize.
-require SYSPATH . "core/Bootstrap" . EXT;
+require APPPATH . "Bootstrap" . EXT;
