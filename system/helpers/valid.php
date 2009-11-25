@@ -2,12 +2,12 @@
 /**
  * Validation helper class.
  *
- * $Id: valid.php 4367 2009-05-27 21:23:57Z samsoir $
+ * $Id: valid.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class valid_Core {
 
@@ -161,13 +161,13 @@ class valid_Core {
 		for ($i = $length - 1; $i >= 0; $i -= 2)
 		{
 			// Add up every 2nd digit, starting from the right
-			$checksum += $number[$i];
+			$checksum += substr($number, $i, 1);
 		}
 
 		for ($i = $length - 2; $i >= 0; $i -= 2)
 		{
 			// Add up every 2nd digit doubled, starting from the right
-			$double = $number[$i] * 2;
+			$double = substr($number, $i, 1) * 2;
 
 			// Subtract 9 from the double where value is greater than 10
 			$checksum += ($double >= 10) ? $double - 9 : $double;
@@ -199,7 +199,7 @@ class valid_Core {
 
 	/**
 	 * Tests if a string is a valid date string.
-	 * 
+	 *
 	 * @param   string   date to check
 	 * @return  boolean
 	 */
@@ -269,7 +269,7 @@ class valid_Core {
 	 *
 	 * @see Uses locale conversion to allow decimal point to be locale specific.
 	 * @see http://www.php.net/manual/en/function.localeconv.php
-	 * 
+	 *
 	 * @param   string   input string
 	 * @return  boolean
 	 */
@@ -281,21 +281,35 @@ class valid_Core {
 	}
 
 	/**
-	 * Checks whether a string is a valid text. Letters, numbers, whitespace,
-	 * dashes, periods, and underscores are allowed.
+	 * Tests if an integer is within a range.
 	 *
-	 * @param   string   text to check
+	 * @param   integer  number to check
+	 * @param   array    valid range of input
 	 * @return  boolean
 	 */
-	public static function standard_text($str)
+	public static function range($number, array $range)
 	{
-		// pL matches letters
-		// pN matches numbers
-		// pZ matches whitespace
-		// pPc matches underscores
-		// pPd matches dashes
-		// pPo matches normal puncuation
-		return (bool) preg_match('/^[\pL\pN\pZ\p{Pc}\p{Pd}\p{Po}]++$/uD', (string) $str);
+		// Invalid by default
+		$status = FALSE;
+
+		if (is_int($number) OR ctype_digit($number))
+		{
+			if (count($range) > 1)
+			{
+				if ($number >= $range[0] AND $number <= $range[1])
+				{
+					// Number is within the required range
+					$status = TRUE;
+				}
+			}
+			elseif ($number >= $range[0])
+			{
+				// Number is greater than the minimum
+				$status = TRUE;
+			}
+		}
+
+		return $status;
 	}
 
 	/**
@@ -333,6 +347,20 @@ class valid_Core {
 		}
 
 		return (bool) preg_match($pattern, (string) $str);
+	}
+
+	/**
+	 * Checks if a string is a proper hexadecimal HTML color value. The validation
+	 * is quite flexible as it does not require an initial "#" and also allows for
+	 * the short notation using only three instead of six hexadecimal characters.
+	 * You may want to normalize these values with format::color().
+	 *
+	 * @param   string   input string
+	 * @return  boolean
+	 */
+	public static function color($str)
+	{
+		return (bool) preg_match('/^#?+[0-9a-f]{3}(?:[0-9a-f]{3})?$/iD', $str);
 	}
 
 } // End valid

@@ -4,8 +4,8 @@
  *
  * @package    Image
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Image_GraphicsMagick_Driver extends Image_Driver {
 
@@ -31,7 +31,7 @@ class Image_GraphicsMagick_Driver extends Image_Driver {
 		{
 			// Attempt to locate GM by using "which" (only works for *nix!)
 			if ( ! is_file($path = exec('which gm')))
-				throw new Kohana_Exception('image.graphicsmagick.not_found');
+				throw new Kohana_Exception('The GraphicsMagick directory specified does not contain a required program.');
 
 			$config['directory'] = dirname($path);
 		}
@@ -41,7 +41,7 @@ class Image_GraphicsMagick_Driver extends Image_Driver {
 
 		// Check to make sure the provided path is correct
 		if ( ! is_file(realpath($config['directory']).'/gm'.$this->ext))
-			throw new Kohana_Exception('image.graphicsmagick.not_found', 'gm'.$this->ext);
+			throw new Kohana_Exception('The GraphicsMagick directory specified does not contain a required program, :gm:.', array(':gm:' => 'gm'.$this->ext));
 
 
 		// Set the installation directory
@@ -52,8 +52,12 @@ class Image_GraphicsMagick_Driver extends Image_Driver {
 	 * Creates a temporary image and executes the given actions. By creating a
 	 * temporary copy of the image before manipulating it, this process is atomic.
 	 */
-	public function process($image, $actions, $dir, $file, $render = FALSE)
+	public function process($image, $actions, $dir, $file, $render = FALSE, $background = NULL)
 	{
+		// Need to implement $background support
+		if ($background !== NULL)
+			throw new Kohana_Exception('The GraphicsMagick driver does not support setting a background color');
+
 		// We only need the filename
 		$image = $image['file'];
 

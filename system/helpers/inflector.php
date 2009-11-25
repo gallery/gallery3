@@ -2,12 +2,12 @@
 /**
  * Inflector helper class.
  *
- * $Id: inflector.php 4072 2009-03-13 17:20:38Z jheathco $
+ * $Id: inflector.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class inflector_Core {
 
@@ -45,7 +45,27 @@ class inflector_Core {
 	 * @param   integer  number of things
 	 * @return  string
 	 */
-	public static function singular($str, $count = NULL)
+	public static function singular($str, $count = NULL) {
+		$parts = explode('_', $str);
+
+		$last = inflector::_singular(array_pop($parts), $count);
+
+		$pre = implode('_', $parts);
+		if (strlen($pre))
+			$pre .= '_';
+
+		return $pre.$last;
+	}
+
+
+	/**
+	 * Makes a plural word singular.
+	 *
+	 * @param   string   word to singularize
+	 * @param   integer  number of things
+	 * @return  string
+	 */
+	public static function _singular($str, $count = NULL)
 	{
 		// Remove garbage
 		$str = strtolower(trim($str));
@@ -104,6 +124,29 @@ class inflector_Core {
 	 */
 	public static function plural($str, $count = NULL)
 	{
+		if ( ! $str)
+			return $str;
+
+		$parts = explode('_', $str);
+
+		$last = inflector::_plural(array_pop($parts), $count);
+
+		$pre = implode('_', $parts);
+		if (strlen($pre))
+			$pre .= '_';
+
+		return $pre.$last;
+	}
+
+
+	/**
+	 * Makes a singular word plural.
+	 *
+	 * @param   string  word to pluralize
+	 * @return  string
+	 */
+	public static function _plural($str, $count = NULL)
+	{
 		// Remove garbage
 		$str = strtolower(trim($str));
 
@@ -155,6 +198,24 @@ class inflector_Core {
 	}
 
 	/**
+	 * Makes a word possessive.
+	 *
+	 * @param   string  word to to make possessive
+	 * @return  string
+	 */
+	public static function possessive($string)
+	{
+		$length = strlen($string);
+
+		if (substr($string, $length - 1, $length) == 's')
+		{
+			return $string.'\'';
+		}
+
+		return $string.'\'s';
+	}
+
+	/**
 	 * Makes a phrase camel case.
 	 *
 	 * @param   string  phrase to camelize
@@ -176,7 +237,7 @@ class inflector_Core {
 	 */
 	public static function underscore($str)
 	{
-		return preg_replace('/\s+/', '_', trim($str));
+		return trim(preg_replace('/[\s_]+/', '_', $str), '_');
 	}
 
 	/**
@@ -187,7 +248,7 @@ class inflector_Core {
 	 */
 	public static function humanize($str)
 	{
-		return preg_replace('/[_-]+/', ' ', trim($str));
+		return trim(preg_replace('/[_-\s]+/', ' ', $str));
 	}
 
 } // End inflector

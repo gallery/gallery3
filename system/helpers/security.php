@@ -2,12 +2,12 @@
 /**
  * Security helper class.
  *
- * $Id: security.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: security.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class security_Core {
 
@@ -15,11 +15,12 @@ class security_Core {
 	 * Sanitize a string with the xss_clean method.
 	 *
 	 * @param   string  string to sanitize
+	 * @param   string  xss_clean method to use ('htmlpurifier' or defaults to built-in method)
 	 * @return  string
 	 */
-	public static function xss_clean($str)
+	public static function xss_clean($str, $tool = NULL)
 	{
-		return Input::instance()->xss_clean($str);
+		return Input::instance()->xss_clean($str, $tool);
 	}
 
 	/**

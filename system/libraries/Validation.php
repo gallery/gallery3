@@ -2,12 +2,12 @@
 /**
  * Validation library.
  *
- * $Id: Validation.php 4120 2009-03-25 19:22:31Z jheathco $
+ * $Id: Validation.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Validation
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Validation_Core extends ArrayObject {
 
@@ -247,7 +247,7 @@ class Validation_Core extends ArrayObject {
 				$name = $callback;
 			}
 
-			throw new Kohana_Exception('validation.not_callable', $name);
+			throw new Kohana_Exception('Callback %name% used for Validation is not callable', array('%name%' => $name));
 		}
 
 		return $callback;
@@ -349,8 +349,23 @@ class Validation_Core extends ArrayObject {
 			// Arguments for rule
 			$args = NULL;
 
+			// False rule
+			$false_rule = FALSE;
+
+			$rule_tmp = trim(is_string($rule) ? $rule : $rule[1]);
+
+			// Should the rule return false?
+			if ($rule_tmp !== ($rule_name = ltrim($rule_tmp, '! ')))
+			{
+				$false_rule = TRUE;
+			}
+
 			if (is_string($rule))
 			{
+				// Use the updated rule name
+				$rule = $rule_name;
+
+				// Have arguments?
 				if (preg_match('/^([^\[]++)\[(.+)\]$/', $rule, $matches))
 				{
 					// Split the rule into the function and args
@@ -360,6 +375,10 @@ class Validation_Core extends ArrayObject {
 					// Replace escaped comma with comma
 					$args = str_replace('\,', ',', $args);
 				}
+			}
+			else
+			{
+				$rule[1] = $rule_name;
 			}
 
 			if ($rule === 'is_array')
@@ -372,7 +391,7 @@ class Validation_Core extends ArrayObject {
 			$rule = $this->callback($rule);
 
 			// Add the rule, with args, to the field
-			$this->rules[$field][] = array($rule, $args);
+			$this->rules[$field][] = array($rule, $args, $false_rule);
 		}
 
 		return $this;
@@ -429,36 +448,7 @@ class Validation_Core extends ArrayObject {
 			$object = $this;
 		}
 
-		// Get all field names
-		$fields = $this->field_names();
-
-		// Copy the array from the object, to optimize multiple sets
-		$array = $this->getArrayCopy();
-
-		foreach ($fields as $field)
-		{
-			if ($field === '*')
-			{
-				// Ignore wildcard
-				continue;
-			}
-
-			if ( ! isset($array[$field]))
-			{
-				if (isset($this->array_fields[$field]))
-				{
-					// This field must be an array
-					$array[$field] = array();
-				}
-				else
-				{
-					$array[$field] = NULL;
-				}
-			}
-		}
-
-		// Swap the array back into the object
-		$this->exchangeArray($array);
+		$array = $this->safe_array();
 
 		// Get all defined field names
 		$fields = array_keys($array);
@@ -471,12 +461,12 @@ class Validation_Core extends ArrayObject {
 				{
 					foreach ($fields as $f)
 					{
-						$this[$f] = is_array($this[$f]) ? array_map($callback, $this[$f]) : call_user_func($callback, $this[$f]);
+						$array[$f] = is_array($array[$f]) ? array_map($callback, $array[$f]) : call_user_func($callback, $array[$f]);
 					}
 				}
 				else
 				{
-					$this[$field] = is_array($this[$field]) ? array_map($callback, $this[$field]) : call_user_func($callback, $this[$field]);
+					$array[$field] = is_array($array[$field]) ? array_map($callback, $array[$field]) : call_user_func($callback, $array[$field]);
 				}
 			}
 		}
@@ -488,8 +478,8 @@ class Validation_Core extends ArrayObject {
 		{
 			foreach ($callbacks as $callback)
 			{
-				// Separate the callback and arguments
-				list ($callback, $args) = $callback;
+				// Separate the callback, arguments and is false bool
+				list ($callback, $args, $is_false) = $callback;
 
 				// Function or method name of the rule
 				$rule = is_array($callback) ? $callback[1] : $callback;
@@ -508,31 +498,20 @@ class Validation_Core extends ArrayObject {
 							continue;
 						}
 
-						if (empty($this[$f]) AND ! in_array($rule, $this->empty_rules))
+						if (empty($array[$f]) AND ! in_array($rule, $this->empty_rules))
 						{
 							// This rule does not need to be processed on empty fields
 							continue;
 						}
 
-						if ($args === NULL)
-						{
-							if ( ! call_user_func($callback, $this[$f]))
-							{
-								$this->errors[$f] = $rule;
+						$result = ($args === NULL) ? call_user_func($callback, $array[$f]) : call_user_func($callback, $array[$f], $args);
 
-								// Stop validating this field when an error is found
-								continue;
-							}
-						}
-						else
+						if (($result == $is_false))
 						{
-							if ( ! call_user_func($callback, $this[$f], $args))
-							{
-								$this->errors[$f] = $rule;
+							$this->add_error($f, $rule, $args);
 
-								// Stop validating this field when an error is found
-								continue;
-							}
+							// Stop validating this field when an error is found
+							continue;
 						}
 					}
 				}
@@ -544,31 +523,21 @@ class Validation_Core extends ArrayObject {
 						break;
 					}
 
-					if ( ! in_array($rule, $this->empty_rules) AND ! $this->required($this[$field]))
+					if ( ! in_array($rule, $this->empty_rules) AND ! $this->required($array[$field]))
 					{
 						// This rule does not need to be processed on empty fields
 						continue;
 					}
 
-					if ($args === NULL)
-					{
-						if ( ! call_user_func($callback, $this[$field]))
-						{
-							$this->errors[$field] = $rule;
+					// Results of our test
+					$result = ($args === NULL) ? call_user_func($callback, $array[$field]) : call_user_func($callback, $array[$field], $args);
 
-							// Stop validating this field when an error is found
-							break;
-						}
-					}
-					else
+					if (($result == $is_false))
 					{
-						if ( ! call_user_func($callback, $this[$field], $args))
-						{
-							$this->errors[$field] = $rule;
+						$this->add_error($field, $rule, $args);
 
-							// Stop validating this field when an error is found
-							break;
-						}
+						// Stop validating this field when an error is found
+						break;
 					}
 				}
 			}
@@ -616,15 +585,18 @@ class Validation_Core extends ArrayObject {
 				{
 					foreach ($fields as $f)
 					{
-						$this[$f] = is_array($this[$f]) ? array_map($callback, $this[$f]) : call_user_func($callback, $this[$f]);
+						$array[$f] = is_array($array[$f]) ? array_map($callback, $array[$f]) : call_user_func($callback, $array[$f]);
 					}
 				}
 				else
 				{
-					$this[$field] = is_array($this[$field]) ? array_map($callback, $this[$field]) : call_user_func($callback, $this[$field]);
+					$array[$field] = is_array($array[$field]) ? array_map($callback, $array[$field]) : call_user_func($callback, $array[$field]);
 				}
 			}
 		}
+
+		// Swap the array back into the object
+		$this->exchangeArray($array);
 
 		// Return TRUE if there are no errors
 		return $this->errors === array();
@@ -636,11 +608,12 @@ class Validation_Core extends ArrayObject {
 	 * @chainable
 	 * @param   string  input name
 	 * @param   string  unique error name
+	 * @param   string  arguments to pass to lang file
 	 * @return  object
 	 */
-	public function add_error($field, $name)
+	public function add_error($field, $name, $args = NULL)
 	{
-		$this->errors[$field] = $name;
+		$this->errors[$field] = array($name, $args);
 
 		return $this;
 	}
@@ -688,14 +661,19 @@ class Validation_Core extends ArrayObject {
 	/**
 	 * Return the errors array.
 	 *
-	 * @param   boolean  load errors from a lang file
+	 * @param   boolean  load errors from a message file
 	 * @return  array
 	 */
 	public function errors($file = NULL)
 	{
 		if ($file === NULL)
 		{
-			return $this->errors;
+			$errors = array();
+			foreach($this->errors as $field => $error)
+			{
+				$errors[$field] = $error[0];
+			}
+			return $errors;
 		}
 		else
 		{
@@ -704,12 +682,12 @@ class Validation_Core extends ArrayObject {
 			foreach ($this->errors as $input => $error)
 			{
 				// Key for this input error
-				$key = "$file.$input.$error";
+				$key = "$file.$input.$error[0]";
 
-				if (($errors[$input] = Kohana::lang($key)) === $key)
+				if (($errors[$input] = Kohana::message('validation/'.$key, $error[1])) === $key)
 				{
 					// Get the default error message
-					$errors[$input] = Kohana::lang("$file.$input.default");
+					$errors[$input] = Kohana::message("$file.$input.default");
 				}
 			}
 
@@ -772,7 +750,7 @@ class Validation_Core extends ArrayObject {
 		if ( ! is_string($str))
 			return FALSE;
 
-		$size = utf8::strlen($str);
+		$size = mb_strlen($str);
 		$status = FALSE;
 
 		if (count($length) > 1)

@@ -2,12 +2,12 @@
 /**
  * Text helper class.
  *
- * $Id: text.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: text.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class text_Core {
 
@@ -52,7 +52,7 @@ class text_Core {
 
 		$limit = (int) $limit;
 
-		if (trim($str) === '' OR utf8::strlen($str) <= $limit)
+		if (trim($str) === '' OR mb_strlen($str) <= $limit)
 			return $str;
 
 		if ($limit <= 0)
@@ -60,7 +60,7 @@ class text_Core {
 
 		if ($preserve_words == FALSE)
 		{
-			return rtrim(utf8::substr($str, 0, $limit)).$end_char;
+			return rtrim(mb_substr($str, 0, $limit)).$end_char;
 		}
 
 		preg_match('/^.{'.($limit - 1).'}\S*/us', $str, $matches);
@@ -128,7 +128,7 @@ class text_Core {
 			break;
 			default:
 				$pool = (string) $type;
-				$utf8 = ! utf8::is_ascii($pool);
+				$utf8 = ! text::is_ascii($pool);
 			break;
 		}
 
@@ -183,7 +183,7 @@ class text_Core {
 	 * @param   boolean  replace words across word boundries (space, period, etc)
 	 * @return  string
 	 */
-	public static function censor($str, $badwords, $replacement = '#', $replace_partial_words = FALSE)
+	public static function censor($str, $badwords, $replacement = '#', $replace_partial_words = TRUE)
 	{
 		foreach ((array) $badwords as $key => $badword)
 		{
@@ -192,7 +192,7 @@ class text_Core {
 
 		$regex = '('.implode('|', $badwords).')';
 
-		if ($replace_partial_words == TRUE)
+		if ($replace_partial_words === FALSE)
 		{
 			// Just using \b isn't sufficient when we need to replace a badword that already contains word boundaries itself
 			$regex = '(?<=\b|\s|^)'.$regex.'(?=\b|\s|$)';
@@ -200,10 +200,10 @@ class text_Core {
 
 		$regex = '!'.$regex.'!ui';
 
-		if (utf8::strlen($replacement) == 1)
+		if (mb_strlen($replacement) == 1)
 		{
 			$regex .= 'e';
-			return preg_replace($regex, 'str_repeat($replacement, utf8::strlen(\'$1\'))', $str);
+			return preg_replace($regex, 'str_repeat($replacement, mb_strlen(\'$1\'))', $str);
 		}
 
 		return preg_replace($regex, $replacement, $str);
@@ -235,15 +235,59 @@ class text_Core {
 	}
 
 	/**
-	 * Converts text email addresses and anchors into links.
+	 * An alternative to the php levenshtein() function that work out the
+	 * distance between 2 words using the Damerau–Levenshtein algorithm.
+	 * Credit: http://forums.devnetwork.net/viewtopic.php?f=50&t=89094
 	 *
-	 * @param   string   text to auto link
-	 * @return  string
+	 * @see http://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance
+	 * @param     string    first word
+	 * @param     string    second word
+	 * @return    int       distance between words
 	 */
-	public static function auto_link($text)
+	public static function distance($string1, $string2)
 	{
-		// Auto link emails first to prevent problems with "www.domain.com@example.com"
-		return text::auto_link_urls(text::auto_link_emails($text));
+		$string1_length = strlen($string1);
+		$string2_length = strlen($string2);
+
+		// Here we start building the table of values
+		$matrix = array();
+
+		// String1 length + 1 = rows.
+		for ($i = 0; $i <= $string1_length; ++$i)
+		{
+			$matrix[$i][0] = $i;
+		}
+
+		// String2 length + 1 columns.
+		for ($j = 0; $j <= $string2_length; ++$j)
+		{
+			$matrix[0][$j] = $j;
+		}
+
+		for ($i = 1; $i <= $string1_length; ++$i)
+		{
+			for ($j = 1; $j <= $string2_length; ++$j)
+			{
+				$cost = substr($string1, $i - 1, 1) == substr($string2, $j - 1, 1) ? 0 : 1;
+
+				$matrix[$i][$j] = min(
+					$matrix[$i - 1][$j] + 1,		// deletion
+					$matrix[$i][$j - 1] + 1,		// insertion
+					$matrix[$i - 1][$j - 1] + $cost	// substitution
+				);
+
+				if ($i > 1 && $j > 1 &&	(substr($string1, $i - 1, 1) == substr($string2, $j - 2, 1))
+					&& (substr($string1, $i - 2, 1) == substr($string2, $j - 1, 1)))
+				{
+					$matrix[$i][$j] = min(
+						$matrix[$i][$j],
+						$matrix[$i - 2][$j - 2] + $cost	// transposition
+					);
+				}
+			}
+		}
+
+		return $matrix[$string1_length][$string2_length];
 	}
 
 	/**
@@ -304,9 +348,10 @@ class text_Core {
 	 * Automatically applies <p> and <br /> markup to text. Basically nl2br() on steroids.
 	 *
 	 * @param   string   subject
+	 * @param   boolean  convert single linebreaks to <br />
 	 * @return  string
 	 */
-	public static function auto_p($str)
+	public static function auto_p($str, $br = TRUE)
 	{
 		// Trim whitespace
 		if (($str = trim($str)) === '')
@@ -343,7 +388,10 @@ class text_Core {
 		}
 
 		// Convert single linebreaks to <br />
-		$str = preg_replace('~(?<!\n)\n(?!\n)~', "<br />\n", $str);
+		if ($br === TRUE)
+		{
+			$str = preg_replace('~(?<!\n)\n(?!\n)~', "<br />\n", $str);
+		}
 
 		return $str;
 	}
@@ -368,13 +416,13 @@ class text_Core {
 		// IEC prefixes (binary)
 		if ($si == FALSE OR strpos($force_unit, 'i') !== FALSE)
 		{
-			$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB');
+			$units = array(__('B'), __('KiB'), __('MiB'), __('GiB'), __('TiB'), __('PiB'));
 			$mod   = 1024;
 		}
 		// SI prefixes (decimal)
 		else
 		{
-			$units = array('B', 'kB', 'MB', 'GB', 'TB', 'PB');
+			$units = array(__('B'), __('kB'), __('MB'), __('GB'), __('TB'), __('PB'));
 			$mod   = 1000;
 		}
 
@@ -402,6 +450,136 @@ class text_Core {
 		if ($space !== FALSE)
 		{
 			$str = substr($str, 0, $space).'&nbsp;'.substr($str, $space + 1);
+		}
+
+		return $str;
+	}
+
+	/**
+	 * Tests whether a string contains only 7bit ASCII bytes. This is used to
+	 * determine when to use native functions or UTF-8 functions.
+	 *
+	 * @see http://sourceforge.net/projects/phputf8/
+	 * @copyright  (c) 2007-2009 Kohana Team
+	 * @copyright  (c) 2005 Harry Fuecks
+	 * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
+	 *
+	 * @param   string  string to check
+	 * @return  bool
+	 */
+	public static function is_ascii($str)
+	{
+		return is_string($str) AND ! preg_match('/[^\x00-\x7F]/S', $str);
+	}
+
+	/**
+	 * Strips out device control codes in the ASCII range.
+	 *
+	 * @see http://sourceforge.net/projects/phputf8/
+	 * @copyright  (c) 2007-2009 Kohana Team
+	 * @copyright  (c) 2005 Harry Fuecks
+	 * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
+	 *
+	 * @param   string  string to clean
+	 * @return  string
+	 */
+	public static function strip_ascii_ctrl($str)
+	{
+		return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S', '', $str);
+	}
+
+	/**
+	 * Strips out all non-7bit ASCII bytes.
+	 *
+	 * @see http://sourceforge.net/projects/phputf8/
+	 * @copyright  (c) 2007-2009 Kohana Team
+	 * @copyright  (c) 2005 Harry Fuecks
+	 * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
+	 *
+	 * @param   string  string to clean
+	 * @return  string
+	 */
+	public static function strip_non_ascii($str)
+	{
+		return preg_replace('/[^\x00-\x7F]+/S', '', $str);
+	}
+
+	/**
+	 * Replaces special/accented UTF-8 characters by ASCII-7 'equivalents'.
+	 *
+	 * @author  Andreas Gohr <andi@splitbrain.org>
+	 * @see http://sourceforge.net/projects/phputf8/
+	 * @copyright  (c) 2007-2009 Kohana Team
+	 * @copyright  (c) 2005 Harry Fuecks
+	 * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
+	 *
+	 * @param   string   string to transliterate
+	 * @param   integer  -1 lowercase only, +1 uppercase only, 0 both cases
+	 * @return  string
+	 */
+	public static function transliterate_to_ascii($str, $case = 0)
+	{
+		static $UTF8_LOWER_ACCENTS = NULL;
+		static $UTF8_UPPER_ACCENTS = NULL;
+
+		if ($case <= 0)
+		{
+			if ($UTF8_LOWER_ACCENTS === NULL)
+			{
+				$UTF8_LOWER_ACCENTS = array(
+					'à' => 'a',  'ô' => 'o',  'ď' => 'd',  'ḟ' => 'f',  'ë' => 'e',  'š' => 's',  'ơ' => 'o',
+					'ß' => 'ss', 'ă' => 'a',  'ř' => 'r',  'ț' => 't',  'ň' => 'n',  'ā' => 'a',  'ķ' => 'k',
+					'ŝ' => 's',  'ỳ' => 'y',  'ņ' => 'n',  'ĺ' => 'l',  'ħ' => 'h',  'ṗ' => 'p',  'ó' => 'o',
+					'ú' => 'u',  'ě' => 'e',  'é' => 'e',  'ç' => 'c',  'ẁ' => 'w',  'ċ' => 'c',  'õ' => 'o',
+					'ṡ' => 's',  'ø' => 'o',  'ģ' => 'g',  'ŧ' => 't',  'ș' => 's',  'ė' => 'e',  'ĉ' => 'c',
+					'ś' => 's',  'î' => 'i',  'ű' => 'u',  'ć' => 'c',  'ę' => 'e',  'ŵ' => 'w',  'ṫ' => 't',
+					'ū' => 'u',  'č' => 'c',  'ö' => 'o',  'è' => 'e',  'ŷ' => 'y',  'ą' => 'a',  'ł' => 'l',
+					'ų' => 'u',  'ů' => 'u',  'ş' => 's',  'ğ' => 'g',  'ļ' => 'l',  'ƒ' => 'f',  'ž' => 'z',
+					'ẃ' => 'w',  'ḃ' => 'b',  'å' => 'a',  'ì' => 'i',  'ï' => 'i',  'ḋ' => 'd',  'ť' => 't',
+					'ŗ' => 'r',  'ä' => 'a',  'í' => 'i',  'ŕ' => 'r',  'ê' => 'e',  'ü' => 'u',  'ò' => 'o',
+					'ē' => 'e',  'ñ' => 'n',  'ń' => 'n',  'ĥ' => 'h',  'ĝ' => 'g',  'đ' => 'd',  'ĵ' => 'j',
+					'ÿ' => 'y',  'ũ' => 'u',  'ŭ' => 'u',  'ư' => 'u',  'ţ' => 't',  'ý' => 'y',  'ő' => 'o',
+					'â' => 'a',  'ľ' => 'l',  'ẅ' => 'w',  'ż' => 'z',  'ī' => 'i',  'ã' => 'a',  'ġ' => 'g',
+					'ṁ' => 'm',  'ō' => 'o',  'ĩ' => 'i',  'ù' => 'u',  'į' => 'i',  'ź' => 'z',  'á' => 'a',
+					'û' => 'u',  'þ' => 'th', 'ð' => 'dh', 'æ' => 'ae', 'µ' => 'u',  'ĕ' => 'e',  'ı' => 'i',
+				);
+			}
+
+			$str = str_replace(
+				array_keys($UTF8_LOWER_ACCENTS),
+				array_values($UTF8_LOWER_ACCENTS),
+				$str
+			);
+		}
+
+		if ($case >= 0)
+		{
+			if ($UTF8_UPPER_ACCENTS === NULL)
+			{
+				$UTF8_UPPER_ACCENTS = array(
+					'À' => 'A',  'Ô' => 'O',  'Ď' => 'D',  'Ḟ' => 'F',  'Ë' => 'E',  'Š' => 'S',  'Ơ' => 'O',
+					'Ă' => 'A',  'Ř' => 'R',  'Ț' => 'T',  'Ň' => 'N',  'Ā' => 'A',  'Ķ' => 'K',  'Ĕ' => 'E',
+					'Ŝ' => 'S',  'Ỳ' => 'Y',  'Ņ' => 'N',  'Ĺ' => 'L',  'Ħ' => 'H',  'Ṗ' => 'P',  'Ó' => 'O',
+					'Ú' => 'U',  'Ě' => 'E',  'É' => 'E',  'Ç' => 'C',  'Ẁ' => 'W',  'Ċ' => 'C',  'Õ' => 'O',
+					'Ṡ' => 'S',  'Ø' => 'O',  'Ģ' => 'G',  'Ŧ' => 'T',  'Ș' => 'S',  'Ė' => 'E',  'Ĉ' => 'C',
+					'Ś' => 'S',  'Î' => 'I',  'Ű' => 'U',  'Ć' => 'C',  'Ę' => 'E',  'Ŵ' => 'W',  'Ṫ' => 'T',
+					'Ū' => 'U',  'Č' => 'C',  'Ö' => 'O',  'È' => 'E',  'Ŷ' => 'Y',  'Ą' => 'A',  'Ł' => 'L',
+					'Ų' => 'U',  'Ů' => 'U',  'Ş' => 'S',  'Ğ' => 'G',  'Ļ' => 'L',  'Ƒ' => 'F',  'Ž' => 'Z',
+					'Ẃ' => 'W',  'Ḃ' => 'B',  'Å' => 'A',  'Ì' => 'I',  'Ï' => 'I',  'Ḋ' => 'D',  'Ť' => 'T',
+					'Ŗ' => 'R',  'Ä' => 'A',  'Í' => 'I',  'Ŕ' => 'R',  'Ê' => 'E',  'Ü' => 'U',  'Ò' => 'O',
+					'Ē' => 'E',  'Ñ' => 'N',  'Ń' => 'N',  'Ĥ' => 'H',  'Ĝ' => 'G',  'Đ' => 'D',  'Ĵ' => 'J',
+					'Ÿ' => 'Y',  'Ũ' => 'U',  'Ŭ' => 'U',  'Ư' => 'U',  'Ţ' => 'T',  'Ý' => 'Y',  'Ő' => 'O',
+					'Â' => 'A',  'Ľ' => 'L',  'Ẅ' => 'W',  'Ż' => 'Z',  'Ī' => 'I',  'Ã' => 'A',  'Ġ' => 'G',
+					'Ṁ' => 'M',  'Ō' => 'O',  'Ĩ' => 'I',  'Ù' => 'U',  'Į' => 'I',  'Ź' => 'Z',  'Á' => 'A',
+					'Û' => 'U',  'Þ' => 'Th', 'Ð' => 'Dh', 'Æ' => 'Ae', 'İ' => 'I',
+				);
+			}
+
+			$str = str_replace(
+				array_keys($UTF8_UPPER_ACCENTS),
+				array_values($UTF8_UPPER_ACCENTS),
+				$str
+			);
 		}
 
 		return $str;

@@ -25,7 +25,6 @@ $config['validate'] = array('user_agent');
 /**
  * Enable or disable session encryption.
  * Note: this has no effect on the native session driver.
- * Note: the cookie driver always encrypts session data. Set to TRUE for stronger encryption.
  */
 $config['encryption'] = FALSE;
 
@@ -38,8 +37,10 @@ $config['expiration'] = 7200;
 /**
  * Number of page loads before the session id is regenerated.
  * A value of 0 will disable automatic session id regeneration.
+ * NOTE: Enabling automatic session regeneration can cause a race condition see the
+ * docs for details: http://docs.kohanaphp.com/libraries/session#regenerate
  */
-$config['regenerate'] = 3;
+$config['regenerate'] = 0;
 
 /**
  * Percentage probability that the gc (garbage collection) routine is started.

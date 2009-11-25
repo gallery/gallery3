@@ -1,40 +1,42 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
- * Cache driver interface.
+ * Cache driver abstract class.
  *
- * $Id: Cache.php 4046 2009-03-05 19:23:29Z Shadowhand $
+ * $Id$
  *
  * @package    Cache
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
-interface Cache_Driver {
+abstract class Cache_Driver {
+	/**
+	 * Set cache items  
+	 */
+	abstract public function set($items, $tags = NULL, $lifetime = NULL);
 
 	/**
-	 * Set a cache item.
+	 * Get a cache items by key 
 	 */
-	public function set($id, $data, array $tags = NULL, $lifetime);
+	abstract public function get($keys, $single = FALSE);
 
 	/**
-	 * Find all of the cache ids for a given tag.
+	 * Get cache items by tag 
 	 */
-	public function find($tag);
+	abstract public function get_tag($tags);
 
 	/**
-	 * Get a cache item.
-	 * Return NULL if the cache item is not found.
+	 * Delete cache item by key 
 	 */
-	public function get($id);
+	abstract public function delete($keys);
 
 	/**
-	 * Delete cache items by id or tag.
+	 * Delete cache items by tag 
 	 */
-	public function delete($id, $tag = FALSE);
+	abstract public function delete_tag($tags);
 
 	/**
-	 * Deletes all expired cache items.
+	 * Empty the cache
 	 */
-	public function delete_expired();
-
+	abstract public function delete_all();
 } // End Cache Driver

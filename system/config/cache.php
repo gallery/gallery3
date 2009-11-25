@@ -19,14 +19,10 @@
  *             thirty minutes. Specific lifetime can also be set when creating a new cache.
  *             Setting this to 0 will never automatically delete caches.
  *
- *  requests - Average number of cache requests that will processed before all expired
- *             caches are deleted. This is commonly referred to as "garbage collection".
- *             Setting this to 0 or a negative number will disable automatic garbage collection.
  */
 $config['default'] = array
 (
 	'driver'   => 'file',
-	'params'   => APPPATH.'cache',
+	'params'   => array('directory' => APPPATH.'cache', 'gc_probability' => 1000),
 	'lifetime' => 1800,
-	'requests' => 1000
 );

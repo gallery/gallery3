@@ -2,12 +2,12 @@
 /**
  * Router
  *
- * $Id: Router.php 4391 2009-06-04 03:10:12Z zombor $
+ * $Id: Router.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Router_Core {
 
@@ -38,7 +38,7 @@ class Router_Core {
 		if ( ! empty($_SERVER['QUERY_STRING']))
 		{
 			// Set the query string to the current query string
-			Router::$query_string = '?'.trim($_SERVER['QUERY_STRING'], '&/');
+			Router::$query_string = '?'.trim(urldecode($_SERVER['QUERY_STRING']), '&/');
 		}
 
 		if (Router::$routes === NULL)
@@ -53,8 +53,8 @@ class Router_Core {
 		if (Router::$current_uri === '')
 		{
 			// Make sure the default route is set
-			if ( ! isset(Router::$routes['_default']))
-				throw new Kohana_Exception('core.no_default_route');
+			if (empty(Router::$routes['_default']))
+				throw new Kohana_Exception('Please set a default route in config/routes.php.');
 
 			// Use the default route when no segments exist
 			Router::$current_uri = Router::$routes['_default'];
@@ -63,32 +63,34 @@ class Router_Core {
 			$default_route = TRUE;
 		}
 
-		// Make sure the URL is not tainted with HTML characters
-		Router::$current_uri = html::specialchars(Router::$current_uri, FALSE);
-
 		// Remove all dot-paths from the URI, they are not valid
 		Router::$current_uri = preg_replace('#\.[\s./]*/#', '', Router::$current_uri);
 
-		// At this point segments, rsegments, and current URI are all the same
-		Router::$segments = Router::$rsegments = Router::$current_uri = trim(Router::$current_uri, '/');
+		// At this point routed URI and current URI are the same
+		Router::$routed_uri = Router::$current_uri = trim(Router::$current_uri, '/');
 
-		// Set the complete URI
-		Router::$complete_uri = Router::$current_uri.Router::$query_string;
-
-		// Explode the segments by slashes
-		Router::$segments = ($default_route === TRUE OR Router::$segments === '') ? array() : explode('/', Router::$segments);
-
-		if ($default_route === FALSE AND count(Router::$routes) > 1)
+		if ($default_route === TRUE)
 		{
-			// Custom routing
-			Router::$rsegments = Router::routed_uri(Router::$current_uri);
+			Router::$complete_uri = Router::$query_string;
+			Router::$current_uri = '';
+			Router::$segments = array();
+		}
+		else
+		{
+			Router::$complete_uri = Router::$current_uri.Router::$query_string;
+
+			// Explode the segments by slashes
+			Router::$segments = explode('/', Router::$current_uri);
+
+			if (count(Router::$routes) > 1)
+			{
+				// Custom routing
+				Router::$routed_uri = Router::routed_uri(Router::$current_uri);
+			}
 		}
 
-		// The routed URI is now complete
-		Router::$routed_uri = Router::$rsegments;
-
-		// Routed segments will never be empty
-		Router::$rsegments = explode('/', Router::$rsegments);
+		// Explode the routed segments by slashes
+		Router::$rsegments = explode('/', Router::$routed_uri);
 
 		// Prepare to find the controller
 		$controller_path = '';
@@ -187,7 +189,7 @@ class Router_Core {
 					parse_str($query, $_GET);
 
 					// Convert $_GET to UTF-8
-					$_GET = utf8::clean($_GET);
+					$_GET = Input::clean($_GET);
 				}
 			}
 		}
@@ -202,28 +204,37 @@ class Router_Core {
 			// Remove the URI from $_SERVER['QUERY_STRING']
 			$_SERVER['QUERY_STRING'] = preg_replace('~\bkohana_uri\b[^&]*+&?~', '', $_SERVER['QUERY_STRING']);
 		}
-		elseif (isset($_SERVER['PATH_INFO']) AND $_SERVER['PATH_INFO'])
+		else
 		{
-			Router::$current_uri = $_SERVER['PATH_INFO'];
+			if (isset($_SERVER['PATH_INFO']) AND $_SERVER['PATH_INFO'])
+			{
+				Router::$current_uri = $_SERVER['PATH_INFO'];
+			}
+			elseif (isset($_SERVER['ORIG_PATH_INFO']) AND $_SERVER['ORIG_PATH_INFO'])
+			{
+				Router::$current_uri = $_SERVER['ORIG_PATH_INFO'];
+			}
+			elseif (isset($_SERVER['PHP_SELF']) AND $_SERVER['PHP_SELF'])
+			{
+				// PATH_INFO is empty during requests to the front controller
+				Router::$current_uri = $_SERVER['PHP_SELF'];
+			}
+
+			if (isset($_SERVER['SCRIPT_NAME']) AND $_SERVER['SCRIPT_NAME'])
+			{
+				// Clean up PATH_INFO fallbacks
+				// PATH_INFO may be formatted for ISAPI instead of CGI on IIS
+				if (strncmp(Router::$current_uri, $_SERVER['SCRIPT_NAME'], strlen($_SERVER['SCRIPT_NAME'])) === 0)
+				{
+					// Remove the front controller from the current uri
+					Router::$current_uri = (string) substr(Router::$current_uri, strlen($_SERVER['SCRIPT_NAME']));
+				}
+			}
 		}
-		elseif (isset($_SERVER['ORIG_PATH_INFO']) AND $_SERVER['ORIG_PATH_INFO'])
-		{
-			Router::$current_uri = $_SERVER['ORIG_PATH_INFO'];
-		}
-		elseif (isset($_SERVER['PHP_SELF']) AND $_SERVER['PHP_SELF'])
-		{
-			Router::$current_uri = $_SERVER['PHP_SELF'];
-		}
-		
-		if (($strpos_fc = strpos(Router::$current_uri, KOHANA)) !== FALSE)
-		{
-			// Remove the front controller from the current uri
-			Router::$current_uri = (string) substr(Router::$current_uri, $strpos_fc + strlen(KOHANA));
-		}
-		
+
 		// Remove slashes from the start and end of the URI
 		Router::$current_uri = trim(Router::$current_uri, '/');
-		
+
 		if (Router::$current_uri !== '')
 		{
 			if ($suffix = Kohana::config('core.url_suffix') AND strpos(Router::$current_uri, $suffix) !== FALSE)

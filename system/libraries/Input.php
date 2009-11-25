@@ -2,12 +2,12 @@
 /**
  * Input library.
  *
- * $Id: Input.php 4346 2009-05-11 17:08:15Z zombor $
+ * $Id: Input.php 4680 2009-11-10 01:57:00Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Input_Core {
 
@@ -48,6 +48,18 @@ class Input_Core {
 	 */
 	public function __construct()
 	{
+		// Convert all global variables to Kohana charset
+		$_GET    = Input::clean($_GET);
+		$_POST   = Input::clean($_POST);
+		$_COOKIE = Input::clean($_COOKIE);
+		$_SERVER = Input::clean($_SERVER);
+
+		if (PHP_SAPI == 'cli')
+		{
+			// Convert command line arguments
+			$_SERVER['argv'] = Input::clean($_SERVER['argv']);
+		}
+
 		// Use XSS clean?
 		$this->use_xss_clean = (bool) Kohana::config('core.global_xss_filtering');
 
@@ -56,15 +68,15 @@ class Input_Core {
 			// magic_quotes_runtime is enabled
 			if (get_magic_quotes_runtime())
 			{
-				set_magic_quotes_runtime(0);
-				Kohana::log('debug', 'Disable magic_quotes_runtime! It is evil and deprecated: http://php.net/magic_quotes');
+				@set_magic_quotes_runtime(0);
+				Kohana_Log::add('debug', 'Disable magic_quotes_runtime! It is evil and deprecated: http://php.net/magic_quotes');
 			}
 
 			// magic_quotes_gpc is enabled
 			if (get_magic_quotes_gpc())
 			{
 				$this->magic_quotes_gpc = TRUE;
-				Kohana::log('debug', 'Disable magic_quotes_gpc! It is evil and deprecated: http://php.net/magic_quotes');
+				Kohana_Log::add('debug', 'Disable magic_quotes_gpc! It is evil and deprecated: http://php.net/magic_quotes');
 			}
 
 			// register_globals is enabled
@@ -93,7 +105,7 @@ class Input_Core {
 				}
 
 				// Warn the developer about register globals
-				Kohana::log('debug', 'Disable register_globals! It is evil and deprecated: http://php.net/register_globals');
+				Kohana_Log::add('debug', 'Disable register_globals! It is evil and deprecated: http://php.net/register_globals');
 			}
 
 			if (is_array($_GET))
@@ -142,7 +154,7 @@ class Input_Core {
 			// Create a singleton
 			Input::$instance = $this;
 
-			Kohana::log('debug', 'Global GET, POST and COOKIE data sanitized');
+			Kohana_Log::add('debug', 'Global GET, POST and COOKIE data sanitized');
 		}
 	}
 
@@ -173,7 +185,8 @@ class Input_Core {
 	}
 
 	/**
-	 * Fetch an item from the $_COOKIE array.
+	 * Fetch an item from the cookie::get() ($_COOKIE won't work with signed
+	 * cookies.)
 	 *
 	 * @param   string   key to find
 	 * @param   mixed    default value
@@ -182,7 +195,7 @@ class Input_Core {
 	 */
 	public function cookie($key = array(), $default = NULL, $xss_clean = FALSE)
 	{
-		return $this->search_array($_COOKIE, $key, $default, $xss_clean);
+		return $this->search_array(cookie::get(), $key, $default, $xss_clean);
 	}
 
 	/**
@@ -300,92 +313,122 @@ class Input_Core {
 
 		if ($tool === TRUE)
 		{
-			// NOTE: This is necessary because switch is NOT type-sensative!
+			$tool = 'default';
+		}
+		elseif ( ! method_exists($this, 'xss_filter_'.$tool))
+		{
+			Kohana_Log::add('error', 'Unable to use Input::xss_filter_'.$tool.'(), no such method exists');
 			$tool = 'default';
 		}
 
-		switch ($tool)
+		$method = 'xss_filter_'.$tool;
+
+		return $this->$method($data);
+	}
+
+	/**
+	 * Default built-in cross site scripting filter.
+	 *
+	 * @param   string  data to clean
+	 * @return  string
+	 */
+	protected function xss_filter_default($data)
+	{
+		// http://svn.bitflux.ch/repos/public/popoon/trunk/classes/externalinput.php
+		// +----------------------------------------------------------------------+
+		// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
+		// +----------------------------------------------------------------------+
+		// | Licensed under the Apache License, Version 2.0 (the "License");      |
+		// | you may not use this file except in compliance with the License.     |
+		// | You may obtain a copy of the License at                              |
+		// | http://www.apache.org/licenses/LICENSE-2.0                           |
+		// | Unless required by applicable law or agreed to in writing, software  |
+		// | distributed under the License is distributed on an "AS IS" BASIS,    |
+		// | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or      |
+		// | implied. See the License for the specific language governing         |
+		// | permissions and limitations under the License.                       |
+		// +----------------------------------------------------------------------+
+		// | Author: Christian Stocker <chregu@bitflux.ch>                        |
+		// +----------------------------------------------------------------------+
+		//
+		// Kohana Modifications:
+		// * Changed double quotes to single quotes, changed indenting and spacing
+		// * Removed magic_quotes stuff
+		// * Increased regex readability:
+		//   * Used delimeters that aren't found in the pattern
+		//   * Removed all unneeded escapes
+		//   * Deleted U modifiers and swapped greediness where needed
+		// * Increased regex speed:
+		//   * Made capturing parentheses non-capturing where possible
+		//   * Removed parentheses where possible
+		//   * Split up alternation alternatives
+		//   * Made some quantifiers possessive
+
+		// Fix &entity\n;
+		$data = str_replace(array('&amp;','&lt;','&gt;'), array('&amp;amp;','&amp;lt;','&amp;gt;'), $data);
+		$data = preg_replace('/(&#*\w+)[\x00-\x20]+;/u', '$1;', $data);
+		$data = preg_replace('/(&#x*[0-9A-F]+);*/iu', '$1;', $data);
+		$data = html_entity_decode($data, ENT_COMPAT, 'UTF-8');
+
+		// Remove any attribute starting with "on" or xmlns
+		$data = preg_replace('#(<[^>]+?[\x00-\x20"\'])(?:on|xmlns)[^>]*+>#iu', '$1>', $data);
+
+		// Remove javascript: and vbscript: protocols
+		$data = preg_replace('#([a-z]*)[\x00-\x20]*=[\x00-\x20]*([`\'"]*)[\x00-\x20]*j[\x00-\x20]*a[\x00-\x20]*v[\x00-\x20]*a[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iu', '$1=$2nojavascript...', $data);
+		$data = preg_replace('#([a-z]*)[\x00-\x20]*=([\'"]*)[\x00-\x20]*v[\x00-\x20]*b[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iu', '$1=$2novbscript...', $data);
+		$data = preg_replace('#([a-z]*)[\x00-\x20]*=([\'"]*)[\x00-\x20]*-moz-binding[\x00-\x20]*:#u', '$1=$2nomozbinding...', $data);
+
+		// Only works in IE: <span style="width: expression(alert('Ping!'));"></span>
+		$data = preg_replace('#(<[^>]+?)style[\x00-\x20]*=[\x00-\x20]*[`\'"]*.*?expression[\x00-\x20]*\([^>]*+>#i', '$1>', $data);
+		$data = preg_replace('#(<[^>]+?)style[\x00-\x20]*=[\x00-\x20]*[`\'"]*.*?behaviour[\x00-\x20]*\([^>]*+>#i', '$1>', $data);
+		$data = preg_replace('#(<[^>]+?)style[\x00-\x20]*=[\x00-\x20]*[`\'"]*.*?s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:*[^>]*+>#iu', '$1>', $data);
+
+		// Remove namespaced elements (we do not need them)
+		$data = preg_replace('#</*\w+:\w[^>]*+>#i', '', $data);
+
+		do
 		{
-			case 'htmlpurifier':
-				/**
-				 * @todo License should go here, http://htmlpurifier.org/
-				 */
-				if ( ! class_exists('HTMLPurifier_Config', FALSE))
-				{
-					// Load HTMLPurifier
-					require Kohana::find_file('vendor', 'htmlpurifier/HTMLPurifier.auto', TRUE);
-					require 'HTMLPurifier.func.php';
-				}
-
-				// Set configuration
-				$config = HTMLPurifier_Config::createDefault();
-				$config->set('HTML', 'TidyLevel', 'none'); // Only XSS cleaning now
-
-				// Run HTMLPurifier
-				$data = HTMLPurifier($data, $config);
-			break;
-			default:
-				// http://svn.bitflux.ch/repos/public/popoon/trunk/classes/externalinput.php
-				// +----------------------------------------------------------------------+
-				// | Copyright (c) 2001-2006 Bitflux GmbH                                 |
-				// +----------------------------------------------------------------------+
-				// | Licensed under the Apache License, Version 2.0 (the "License");      |
-				// | you may not use this file except in compliance with the License.     |
-				// | You may obtain a copy of the License at                              |
-				// | http://www.apache.org/licenses/LICENSE-2.0                           |
-				// | Unless required by applicable law or agreed to in writing, software  |
-				// | distributed under the License is distributed on an "AS IS" BASIS,    |
-				// | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or      |
-				// | implied. See the License for the specific language governing         |
-				// | permissions and limitations under the License.                       |
-				// +----------------------------------------------------------------------+
-				// | Author: Christian Stocker <chregu@bitflux.ch>                        |
-				// +----------------------------------------------------------------------+
-				//
-				// Kohana Modifications:
-				// * Changed double quotes to single quotes, changed indenting and spacing
-				// * Removed magic_quotes stuff
-				// * Increased regex readability:
-				//   * Used delimeters that aren't found in the pattern
-				//   * Removed all unneeded escapes
-				//   * Deleted U modifiers and swapped greediness where needed
-				// * Increased regex speed:
-				//   * Made capturing parentheses non-capturing where possible
-				//   * Removed parentheses where possible
-				//   * Split up alternation alternatives
-				//   * Made some quantifiers possessive
-
-				// Fix &entity\n;
-				$data = str_replace(array('&amp;','&lt;','&gt;'), array('&amp;amp;','&amp;lt;','&amp;gt;'), $data);
-				$data = preg_replace('/(&#*\w+)[\x00-\x20]+;/u', '$1;', $data);
-				$data = preg_replace('/(&#x*[0-9A-F]+);*/iu', '$1;', $data);
-				$data = html_entity_decode($data, ENT_COMPAT, 'UTF-8');
-
-				// Remove any attribute starting with "on" or xmlns
-				$data = preg_replace('#(<[^>]+?[\x00-\x20"\'])(?:on|xmlns)[^>]*+>#iu', '$1>', $data);
-
-				// Remove javascript: and vbscript: protocols
-				$data = preg_replace('#([a-z]*)[\x00-\x20]*=[\x00-\x20]*([`\'"]*)[\x00-\x20]*j[\x00-\x20]*a[\x00-\x20]*v[\x00-\x20]*a[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iu', '$1=$2nojavascript...', $data);
-				$data = preg_replace('#([a-z]*)[\x00-\x20]*=([\'"]*)[\x00-\x20]*v[\x00-\x20]*b[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iu', '$1=$2novbscript...', $data);
-				$data = preg_replace('#([a-z]*)[\x00-\x20]*=([\'"]*)[\x00-\x20]*-moz-binding[\x00-\x20]*:#u', '$1=$2nomozbinding...', $data);
-
-				// Only works in IE: <span style="width: expression(alert('Ping!'));"></span>
-				$data = preg_replace('#(<[^>]+?)style[\x00-\x20]*=[\x00-\x20]*[`\'"]*.*?expression[\x00-\x20]*\([^>]*+>#i', '$1>', $data);
-				$data = preg_replace('#(<[^>]+?)style[\x00-\x20]*=[\x00-\x20]*[`\'"]*.*?behaviour[\x00-\x20]*\([^>]*+>#i', '$1>', $data);
-				$data = preg_replace('#(<[^>]+?)style[\x00-\x20]*=[\x00-\x20]*[`\'"]*.*?s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:*[^>]*+>#iu', '$1>', $data);
-
-				// Remove namespaced elements (we do not need them)
-				$data = preg_replace('#</*\w+:\w[^>]*+>#i', '', $data);
-
-				do
-				{
-					// Remove really unwanted tags
-					$old_data = $data;
-					$data = preg_replace('#</*(?:applet|b(?:ase|gsound|link)|embed|frame(?:set)?|i(?:frame|layer)|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|title|xml)[^>]*+>#i', '', $data);
-				}
-				while ($old_data !== $data);
-			break;
+			// Remove really unwanted tags
+			$old_data = $data;
+			$data = preg_replace('#</*(?:applet|b(?:ase|gsound|link)|embed|frame(?:set)?|i(?:frame|layer)|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|title|xml)[^>]*+>#i', '', $data);
 		}
+		while ($old_data !== $data);
+
+		return $data;
+	}
+
+	/**
+	 * HTMLPurifier cross site scripting filter. This version assumes the
+	 * existence of the "Standalone Distribution" htmlpurifier library, and is set to not tidy
+	 * input.
+	 *
+	 * @param   string  data to clean
+	 * @return  string
+	 */
+	protected function xss_filter_htmlpurifier($data)
+	{
+		/**
+		 * @todo License should go here, http://htmlpurifier.org/
+		 */
+		if ( ! class_exists('HTMLPurifier_Config', FALSE))
+		{
+			// Load HTMLPurifier
+			require Kohana::find_file('vendor', 'htmlpurifier/HTMLPurifier.standalone', TRUE);
+		}
+
+		// Set configuration
+		$config = HTMLPurifier_Config::createDefault();
+		$config->set('HTML.TidyLevel', 'none'); // Only XSS cleaning now
+
+		$cache = Kohana::config('html_purifier.cache');
+
+		if ($cache AND is_string($cache))
+		{
+			$config->set('Cache.SerializerPath', $cache);
+		}
+
+		// Run HTMLPurifier
+		$data = HTMLPurifier::instance($config)->purify($data);
 
 		return $data;
 	}
@@ -399,9 +442,7 @@ class Input_Core {
 	 */
 	public function clean_input_keys($str)
 	{
-		$chars = PCRE_UNICODE_PROPERTIES ? '\pL' : 'a-zA-Z';
-
-		if ( ! preg_match('#^['.$chars.'0-9:_.-]++$#uD', $str))
+		if ( ! preg_match('#^[\pL0-9:_.-]++$#uD', $str))
 		{
 			exit('Disallowed key characters in global data.');
 		}
@@ -444,6 +485,45 @@ class Input_Core {
 		{
 			// Standardize newlines
 			$str = str_replace(array("\r\n", "\r"), "\n", $str);
+		}
+
+		return $str;
+	}
+
+	/**
+	 * Recursively cleans arrays, objects, and strings. Removes ASCII control
+	 * codes and converts to UTF-8 while silently discarding incompatible
+	 * UTF-8 characters.
+	 *
+	 * @param   string  string to clean
+	 * @return  string
+	 */
+	public static function clean($str)
+	{
+		if (is_array($str) OR is_object($str))
+		{
+			foreach ($str as $key => $val)
+			{
+				// Recursion!
+				$str[Input::clean($key)] = Input::clean($val);
+			}
+		}
+		elseif (is_string($str) AND $str !== '')
+		{
+			// Remove control characters
+			$str = text::strip_ascii_ctrl($str);
+
+			if ( ! text::is_ascii($str))
+			{
+				// Disable notices
+				$ER = error_reporting(~E_NOTICE);
+
+				// iconv is expensive, so it is only used when needed
+				$str = iconv(Kohana::CHARSET, Kohana::CHARSET.'//IGNORE', $str);
+
+				// Turn notices back on
+				error_reporting($ER);
+			}
 		}
 
 		return $str;

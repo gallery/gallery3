@@ -2,190 +2,128 @@
 /**
  * Memcache-based Cache driver.
  *
- * $Id: Memcache.php 4102 2009-03-19 12:55:54Z Shadowhand $
+ * $Id$
  *
  * @package    Cache
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
-class Cache_Memcache_Driver implements Cache_Driver {
-
-	const TAGS_KEY = 'memcache_tags_array';
-
-	// Cache backend object and flags
+class Cache_Memcache_Driver extends Cache_Driver {
+	protected $config;
 	protected $backend;
 	protected $flags;
 
-	// Tags array
-	protected static $tags;
-
-	// Have the tags been changed?
-	protected static $tags_changed = FALSE;
-
-	public function __construct()
+	public function __construct($config)
 	{
 		if ( ! extension_loaded('memcache'))
-			throw new Kohana_Exception('cache.extension_not_loaded', 'memcache');
+			throw new Kohana_Exception('The memcache PHP extension must be loaded to use this driver.');
 
+		ini_set('memcache.allow_failover', (isset($config['allow_failover']) AND $config['allow_failover']) ? TRUE : FALSE);
+
+		$this->config = $config;
 		$this->backend = new Memcache;
-		$this->flags = Kohana::config('cache_memcache.compression') ? MEMCACHE_COMPRESSED : FALSE;
 
-		$servers = Kohana::config('cache_memcache.servers');
+		$this->flags = (isset($config['compression']) AND $config['compression']) ? MEMCACHE_COMPRESSED : FALSE;
 
-		foreach ($servers as $server)
+		foreach ($config['servers'] as $server)
 		{
 			// Make sure all required keys are set
-			$server += array('host' => '127.0.0.1', 'port' => 11211, 'persistent' => FALSE);
+			$server += array('host' => '127.0.0.1',
+			                 'port' => 11211,
+			                 'persistent' => FALSE,
+			                 'weight' => 1,
+			                 'timeout' => 1,
+			                 'retry_interval' => 15
+			);
 
 			// Add the server to the pool
-			$this->backend->addServer($server['host'], $server['port'], (bool) $server['persistent'])
-				or Kohana::log('error', 'Cache: Connection failed: '.$server['host']);
-		}
-
-		// Load tags
-		self::$tags = $this->backend->get(self::TAGS_KEY);
-
-		if ( ! is_array(self::$tags))
-		{
-			// Create a new tags array
-			self::$tags = array();
-
-			// Tags have been created
-			self::$tags_changed = TRUE;
+			$this->backend->addServer($server['host'], $server['port'], (bool) $server['persistent'], (int) $server['weight'], (int) $server['timeout'], (int) $server['retry_interval'], TRUE, array($this,'_memcache_failure_callback'));
 		}
 	}
 
-	public function __destruct()
+	public function _memcache_failure_callback($host, $port)
 	{
-		if (self::$tags_changed === TRUE)
-		{
-			// Save the tags
-			$this->backend->set(self::TAGS_KEY, self::$tags, $this->flags, 0);
-
-			// Tags are now unchanged
-			self::$tags_changed = FALSE;
-		}
+		$this->backend->setServerParams($host, $port, 1, -1, FALSE);
+		Kohana_Log::add('error', __('Cache: Memcache server down: :host:::port:',array(':host:' => $host,':port:' => $port)));
 	}
 
-	public function find($tag)
+	public function set($items, $tags = NULL, $lifetime = NULL)
 	{
-		if (isset(self::$tags[$tag]) AND $results = $this->backend->get(self::$tags[$tag]))
-		{
-				// Return all the found caches
-				return $results;
-		}
-		else
-		{
-			// No matching tags
-			return array();
-		}
-	}
-
-	public function get($id)
-	{
-		return (($return = $this->backend->get($id)) === FALSE) ? NULL : $return;
-	}
-
-	public function set($id, $data, array $tags = NULL, $lifetime)
-	{
-		if ( ! empty($tags))
-		{
-			// Tags will be changed
-			self::$tags_changed = TRUE;
-
-			foreach ($tags as $tag)
-			{
-				// Add the id to each tag
-				self::$tags[$tag][$id] = $id;
-			}
-		}
-
 		if ($lifetime !== 0)
 		{
 			// Memcache driver expects unix timestamp
 			$lifetime += time();
 		}
 
-		// Set a new value
-		return $this->backend->set($id, $data, $this->flags, $lifetime);
-	}
+		if ($tags !== NULL)
+			throw new Cache_Exception('Memcache driver does not support tags');
 
-	public function delete($id, $tag = FALSE)
-	{
-		// Tags will be changed
-		self::$tags_changed = TRUE;
-
-		if ($id === TRUE)
+		foreach ($items as $key => $value)
 		{
-			if ($status = $this->backend->flush())
+			if (is_resource($value))
+				throw new Cache_Exception('Caching of resources is impossible, because resources cannot be serialised.');
+
+			if ( ! $this->backend->set($key, $value, $this->flags, $lifetime))
 			{
-				// Remove all tags, all items have been deleted
-				self::$tags = array();
-
-				// We must sleep after flushing, or overwriting will not work!
-				// @see http://php.net/manual/en/function.memcache-flush.php#81420
-				sleep(1);
-			}
-
-			return $status;
-		}
-		elseif ($tag === TRUE)
-		{
-			if (isset(self::$tags[$id]))
-			{
-				foreach (self::$tags[$id] as $_id)
-				{
-					// Delete each id in the tag
-					$this->backend->delete($_id);
-				}
-
-				// Delete the tag
-				unset(self::$tags[$id]);
-			}
-
-			return TRUE;
-		}
-		else
-		{
-			foreach (self::$tags as $tag => $_ids)
-			{
-				if (isset(self::$tags[$tag][$id]))
-				{
-					// Remove the id from the tags
-					unset(self::$tags[$tag][$id]);
-				}
-			}
-
-			return $this->backend->delete($id);
-		}
-	}
-
-	public function delete_expired()
-	{
-		// Tags will be changed
-		self::$tags_changed = TRUE;
-
-		foreach (self::$tags as $tag => $_ids)
-		{
-			foreach ($_ids as $id)
-			{
-				if ( ! $this->backend->get($id))
-				{
-					// This id has disappeared, delete it from the tags
-					unset(self::$tags[$tag][$id]);
-				}
-			}
-
-			if (empty(self::$tags[$tag]))
-			{
-				// The tag no longer has any valid ids
-				unset(self::$tags[$tag]);
+				return FALSE;
 			}
 		}
 
-		// Memcache handles garbage collection internally
 		return TRUE;
 	}
 
+	public function get($keys, $single = FALSE)
+	{
+		$items = $this->backend->get($keys);
+
+		if ($single)
+		{
+			return ($items === FALSE OR count($items) > 0) ? current($items) : NULL;
+		}
+		else
+		{
+			return ($items === FALSE) ? array() : $items;
+		}
+	}
+
+	/**
+	 * Get cache items by tag
+	 */
+	public function get_tag($tags)
+	{
+		throw new Cache_Exception('Memcache driver does not support tags');
+	}
+
+	/**
+	 * Delete cache item by key
+	 */
+	public function delete($keys)
+	{
+		foreach ($keys as $key)
+		{
+			if ( ! $this->backend->delete($key))
+			{
+				return FALSE;
+			}
+		}
+
+		return TRUE;
+	}
+
+	/**
+	 * Delete cache items by tag
+	 */
+	public function delete_tag($tags)
+	{
+		throw new Cache_Exception('Memcache driver does not support tags');
+	}
+
+	/**
+	 * Empty the cache
+	 */
+	public function delete_all()
+	{
+		return $this->backend->flush();
+	}
 } // End Cache Memcache Driver

@@ -3,12 +3,12 @@
  * Kohana Controller class. The controller class must be extended to work
  * properly, so this class is defined as abstract.
  *
- * $Id: Controller.php 4365 2009-05-27 21:09:27Z samsoir $
+ * $Id: Controller.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 abstract class Controller_Core {
 
@@ -46,41 +46,6 @@ abstract class Controller_Core {
 	{
 		// Default to showing a 404 page
 		Event::run('system.404');
-	}
-
-	/**
-	 * Includes a View within the controller scope.
-	 *
-	 * @param   string  view filename
-	 * @param   array   array of view variables
-	 * @return  string
-	 */
-	public function _kohana_load_view($kohana_view_filename, $kohana_input_data)
-	{
-		if ($kohana_view_filename == '')
-			return;
-
-		// Buffering on
-		ob_start();
-
-		// Import the view variables to local namespace
-		extract($kohana_input_data, EXTR_SKIP);
-
-		// Views are straight HTML pages with embedded PHP, so importing them
-		// this way insures that $this can be accessed as if the user was in
-		// the controller, which gives the easiest access to libraries in views
-		try
-		{
-			include $kohana_view_filename;
-		}
-		catch (Exception $e)
-		{
-			ob_end_clean();
-			throw $e;
-		}
-
-		// Fetch the output and close the buffer
-		return ob_get_clean();
 	}
 
 } // End Controller Class

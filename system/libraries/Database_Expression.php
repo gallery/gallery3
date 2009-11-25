@@ -1,13 +1,13 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Database expression class to allow for explicit joins and where expressions.
- *
- * $Id: Database_Expression.php 4037 2009-03-04 23:35:53Z jheathco $
- *
- * @package    Core
+ * Database expression.
+ * 
+ * $Id: Database_Expression.php 4679 2009-11-10 01:45:52Z isaiah $
+ * 
+ * @package    Kohana
  * @author     Kohana Team
- * @copyright  (c) 2007-2009 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2008-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Database_Expression_Core {
 
@@ -20,7 +20,6 @@ class Database_Expression_Core {
 
 	public function __toString()
 	{
-		return (string) $this->expression;
+		return $this->expression;
 	}
-
-} // End Database Expr Class
+}

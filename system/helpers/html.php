@@ -2,12 +2,12 @@
 /**
  * HTML helper class.
  *
- * $Id: html.php 4376 2009-06-01 11:40:39Z samsoir $
+ * $Id: html.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class html_Core {
 
@@ -21,46 +21,12 @@ class html_Core {
 	 * @param   boolean  encode existing entities
 	 * @return  string
 	 */
-	public static function specialchars($str, $double_encode = TRUE)
+	public static function chars($str, $double_encode = TRUE)
 	{
-		// Force the string to be a string
-		$str = (string) $str;
-
-		// Do encode existing HTML entities (default)
-		if ($double_encode === TRUE)
-		{
-			$str = htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
-		}
-		else
-		{
-			// Do not encode existing HTML entities
-			// From PHP 5.2.3 this functionality is built-in, otherwise use a regex
-			if (version_compare(PHP_VERSION, '5.2.3', '>='))
-			{
-				$str = htmlspecialchars($str, ENT_QUOTES, 'UTF-8', FALSE);
-			}
-			else
-			{
-				$str = preg_replace('/&(?!(?:#\d++|[a-z]++);)/ui', '&amp;', $str);
-				$str = str_replace(array('<', '>', '\'', '"'), array('&lt;', '&gt;', '&#39;', '&quot;'), $str);
-			}
-		}
-
-		return $str;
+		// Return HTML entities using the Kohana charset
+		return htmlspecialchars($str, ENT_QUOTES, Kohana::CHARSET, $double_encode);
 	}
 
-	/**
-	 * Perform a html::specialchars() with additional URL specific encoding.
-	 *  
-	 * @param   string   string to convert
-	 * @param   boolean  encode existing entities
-	 * @return  string
-	 */
-	public static function specialurlencode($str, $double_encode = TRUE)
-	{
-		return str_replace(' ', '%20', html::specialchars($str, $double_encode));
-	}
-	
 	/**
 	 * Create HTML link anchors.
 	 *
@@ -98,11 +64,11 @@ class html_Core {
 
 		return
 		// Parsed URL
-		'<a href="'.html::specialurlencode($site_url, FALSE).'"'
+		'<a href="'.htmlspecialchars($site_url, ENT_QUOTES, Kohana::CHARSET, FALSE).'"'
 		// Attributes empty? Use an empty string
 		.(is_array($attributes) ? html::attributes($attributes) : '').'>'
 		// Title empty? Use the parsed URL
-		.($escape_title ? html::specialchars((($title === NULL) ? $site_url : $title), FALSE) : (($title === NULL) ? $site_url : $title)).'</a>';
+		.($escape_title ? htmlspecialchars((($title === NULL) ? $site_url : $title), ENT_QUOTES, Kohana::CHARSET, FALSE) : (($title === NULL) ? $site_url : $title)).'</a>';
 	}
 
 	/**
@@ -118,42 +84,11 @@ class html_Core {
 	{
 		return
 		// Base URL + URI = full URL
-		'<a href="'.html::specialurlencode(url::base(FALSE, $protocol).$file, FALSE).'"'
+		'<a href="'.htmlspecialchars(url::base(FALSE, $protocol).$file, ENT_QUOTES, Kohana::CHARSET, FALSE).'"'
 		// Attributes empty? Use an empty string
 		.(is_array($attributes) ? html::attributes($attributes) : '').'>'
 		// Title empty? Use the filename part of the URI
 		.(($title === NULL) ? end(explode('/', $file)) : $title) .'</a>';
-	}
-
-	/**
-	 * Similar to anchor, but with the protocol parameter first.
-	 *
-	 * @param   string  link protocol
-	 * @param   string  URI or URL to link to
-	 * @param   string  link text
-	 * @param   array   HTML anchor attributes
-	 * @return  string
-	 */
-	public static function panchor($protocol, $uri, $title = NULL, $attributes = FALSE)
-	{
-		return html::anchor($uri, $title, $attributes, $protocol);
-	}
-
-	/**
-	 * Create an array of anchors from an array of link/title pairs.
-	 *
-	 * @param   array  link/title pairs
-	 * @return  array
-	 */
-	public static function anchor_array(array $array)
-	{
-		$anchors = array();
-		foreach ($array as $link => $title)
-		{
-			// Create list of anchors
-			$anchors[] = html::anchor($link, $title);
-		}
-		return $anchors;
 	}
 
 	/**
@@ -286,7 +221,7 @@ class html_Core {
 	 */
 	public static function stylesheet($style, $media = FALSE, $index = FALSE)
 	{
-		return html::link($style, 'stylesheet', 'text/css', '.css', $media, $index);
+		return html::link($style, 'stylesheet', 'text/css', $media, $index);
 	}
 
 	/**
@@ -295,12 +230,11 @@ class html_Core {
 	 * @param   string|array  filename
 	 * @param   string|array  relationship
 	 * @param   string|array  mimetype
-	 * @param   string        specifies suffix of the file
 	 * @param   string|array  specifies on what device the document will be displayed
 	 * @param   boolean       include the index_page in the link
 	 * @return  string
 	 */
-	public static function link($href, $rel, $type, $suffix = FALSE, $media = FALSE, $index = FALSE)
+	public static function link($href, $rel, $type, $media = FALSE, $index = FALSE)
 	{
 		$compiled = '';
 
@@ -312,7 +246,7 @@ class html_Core {
 				$_type  = is_array($type) ? array_shift($type) : $type;
 				$_media = is_array($media) ? array_shift($media) : $media;
 
-				$compiled .= html::link($_href, $_rel, $_type, $suffix, $_media, $index);
+				$compiled .= html::link($_href, $_rel, $_type, $_media, $index);
 			}
 		}
 		else
@@ -321,14 +255,6 @@ class html_Core {
 			{
 				// Make the URL absolute
 				$href = url::base($index).$href;
-			}
-
-			$length = strlen($suffix);
-
-			if ( $length > 0 AND substr_compare($href, $suffix, -$length, $length, FALSE) !== 0)
-			{
-				// Add the defined suffix
-				$href .= $suffix;
 			}
 
 			$attr = array
@@ -374,12 +300,6 @@ class html_Core {
 			{
 				// Add the suffix only when it's not already present
 				$script = url::base((bool) $index).$script;
-			}
-
-			if (substr_compare($script, '.js', -3, 3, FALSE) !== 0)
-			{
-				// Add the javascript suffix
-				$script .= '.js';
 			}
 
 			$compiled = '<script type="text/javascript" src="'.$script.'"></script>';
@@ -437,7 +357,7 @@ class html_Core {
 		$compiled = '';
 		foreach ($attrs as $key => $val)
 		{
-			$compiled .= ' '.$key.'="'.html::specialchars($val).'"';
+			$compiled .= ' '.$key.'="'.htmlspecialchars($val, ENT_QUOTES, Kohana::CHARSET).'"';
 		}
 
 		return $compiled;

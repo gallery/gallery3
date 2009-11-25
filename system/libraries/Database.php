@@ -1,267 +1,281 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Provides database access in a platform agnostic way, using simple query building blocks.
- *
- * $Id: Database.php 4438 2009-07-06 04:11:16Z kiall $
- *
- * @package    Core
+ * Database wrapper.
+ * 
+ * $Id: Database.php 4679 2009-11-10 01:45:52Z isaiah $
+ * 
+ * @package    Kohana
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2008-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
-class Database_Core {
+abstract class Database_Core {
 
-	// Database instances
-	public static $instances = array();
+	const SELECT =  1;
+	const INSERT =  2;
+	const UPDATE =  3;
+	const DELETE =  4;
 
-	// Global benchmark
+	protected static $instances = array();
+
+	// Global benchmarks
 	public static $benchmarks = array();
 
-	// Configuration
-	protected $config = array
-	(
-		'benchmark'     => TRUE,
-		'persistent'    => FALSE,
-		'connection'    => '',
-		'character_set' => 'utf8',
-		'table_prefix'  => '',
-		'object'        => TRUE,
-		'cache'         => FALSE,
-		'escape'        => TRUE,
-	);
+	// Last execute query
+	protected $last_query;
 
-	// Database driver object
-	protected $driver;
-	protected $link;
+	// Configuration array
+	protected $config;
 
-	// Un-compiled parts of the SQL query
-	protected $select     = array();
-	protected $set        = array();
-	protected $from       = array();
-	protected $join       = array();
-	protected $where      = array();
-	protected $orderby    = array();
-	protected $order      = array();
-	protected $groupby    = array();
-	protected $having     = array();
-	protected $distinct   = FALSE;
-	protected $limit      = FALSE;
-	protected $offset     = FALSE;
-	protected $last_query = '';
+	// Required configuration keys
+	protected $config_required = array();
 
-	// Stack of queries for push/pop
-	protected $query_history = array();
+	// Raw server connection
+	protected $connection;
+
+	// Cache (Cache object for cross-request, array for per-request)
+	protected $cache;
+
+	// Quote character to use for identifiers (tables/columns/aliases)
+	protected $quote = '"';
 
 	/**
 	 * Returns a singleton instance of Database.
 	 *
-	 * @param   mixed   configuration array or DSN
+	 * @param   string  Database name
 	 * @return  Database_Core
 	 */
-	public static function & instance($name = 'default', $config = NULL)
+	public static function instance($name = 'default')
 	{
 		if ( ! isset(Database::$instances[$name]))
 		{
-			// Create a new instance
-			Database::$instances[$name] = new Database($config === NULL ? $name : $config);
+			// Load the configuration for this database group
+			$config = Kohana::config('database.'.$name);
+
+			if (is_string($config['connection']))
+			{
+				// Parse the DSN into connection array
+				$config['connection'] = Database::parse_dsn($config['connection']);
+			}
+
+			// Set the driver class name
+			$driver = 'Database_'.ucfirst($config['connection']['type']);
+
+			// Create the database connection instance
+			Database::$instances[$name] = new $driver($config);
 		}
 
 		return Database::$instances[$name];
 	}
 
 	/**
-	 * Returns the name of a given database instance.
+	 * Constructs a new Database object
 	 *
-	 * @param   Database  instance of Database
-	 * @return  string
+	 * @param   array  Database config array
+	 * @return  Database_Core
 	 */
-	public static function instance_name(Database $db)
+	protected function __construct(array $config)
 	{
-		return array_search($db, Database::$instances, TRUE);
+		// Store the config locally
+		$this->config = $config;
+
+		if ($this->config['cache'] !== FALSE)
+		{
+			if (is_string($this->config['cache']))
+			{
+				// Use Cache library
+				$this->cache = new Cache($this->config['cache']);
+			}
+			elseif ($this->config['cache'] === TRUE)
+			{
+				// Use array
+				$this->cache = array();
+			}
+		}
+	}
+
+	public function __destruct()
+	{
+		$this->disconnect();
 	}
 
 	/**
-	 * Sets up the database configuration, loads the Database_Driver.
+	 * Connects to the database
 	 *
-	 * @throws  Kohana_Database_Exception
+	 * @return void
 	 */
-	public function __construct($config = array())
+	abstract public function connect();
+
+	/**
+	 * Disconnects from the database
+	 *
+	 * @return void
+	 */
+	abstract public function disconnect();
+
+	/**
+	 * Sets the character set
+	 *
+	 * @return void
+	 */
+	abstract public function set_charset($charset);
+
+	/**
+	 * Executes the query
+	 *
+	 * @param  string  SQL
+	 * @return Database_Result
+	 */
+	abstract public function query_execute($sql);
+
+	/**
+	 * Escapes the given value
+	 *
+	 * @param  mixed  Value
+	 * @return mixed  Escaped value
+	 */
+	abstract public function escape($value);
+
+	/**
+	 * List constraints for the given table
+	 *
+	 * @param  string  Table name
+	 * @return array
+	 */
+	abstract public function list_constraints($table);
+
+	/**
+	 * List fields for the given table
+	 *
+	 * @param  string  Table name
+	 * @return array
+	 */
+	abstract public function list_fields($table);
+
+	/**
+	 * List tables for the given connection (checks for prefix)
+	 *
+	 * @return array
+	 */
+	abstract public function list_tables();
+
+	/**
+	 * Converts the given DSN string to an array of database connection components
+	 *
+	 * @param  string  DSN string
+	 * @return array
+	 */
+	public static function parse_dsn($dsn)
 	{
-		if (empty($config))
+		$db = array
+		(
+			'type'     => FALSE,
+			'user'     => FALSE,
+			'pass'     => FALSE,
+			'host'     => FALSE,
+			'port'     => FALSE,
+			'socket'   => FALSE,
+			'database' => FALSE
+		);
+
+		// Get the protocol and arguments
+		list ($db['type'], $connection) = explode('://', $dsn, 2);
+
+		if ($connection[0] === '/')
 		{
-			// Load the default group
-			$config = Kohana::config('database.default');
+			// Strip leading slash
+			$db['database'] = substr($connection, 1);
 		}
-		elseif (is_array($config) AND count($config) > 0)
+		else
 		{
-			if ( ! array_key_exists('connection', $config))
+			$connection = parse_url('http://'.$connection);
+
+			if (isset($connection['user']))
 			{
-				$config = array('connection' => $config);
+				$db['user'] = $connection['user'];
 			}
-		}
-		elseif (is_string($config))
-		{
-			// The config is a DSN string
-			if (strpos($config, '://') !== FALSE)
+
+			if (isset($connection['pass']))
 			{
-				$config = array('connection' => $config);
+				$db['pass'] = $connection['pass'];
 			}
-			// The config is a group name
-			else
-			{
-				$name = $config;
 
-				// Test the config group name
-				if (($config = Kohana::config('database.'.$config)) === NULL)
-					throw new Kohana_Database_Exception('database.undefined_group', $name);
+			if (isset($connection['port']))
+			{
+				$db['port'] = $connection['port'];
 			}
-		}
 
-		// Merge the default config with the passed config
-		$this->config = array_merge($this->config, $config);
-
-		if (is_string($this->config['connection']))
-		{
-			// Make sure the connection is valid
-			if (strpos($this->config['connection'], '://') === FALSE)
-				throw new Kohana_Database_Exception('database.invalid_dsn', $this->config['connection']);
-
-			// Parse the DSN, creating an array to hold the connection parameters
-			$db = array
-			(
-				'type'     => FALSE,
-				'user'     => FALSE,
-				'pass'     => FALSE,
-				'host'     => FALSE,
-				'port'     => FALSE,
-				'socket'   => FALSE,
-				'database' => FALSE
-			);
-
-			// Get the protocol and arguments
-			list ($db['type'], $connection) = explode('://', $this->config['connection'], 2);
-
-			if (strpos($connection, '@') !== FALSE)
+			if (isset($connection['host']))
 			{
-				// Get the username and password
-				list ($db['pass'], $connection) = explode('@', $connection, 2);
-				// Check if a password is supplied
-				$logindata = explode(':', $db['pass'], 2);
-				$db['pass'] = (count($logindata) > 1) ? $logindata[1] : '';
-				$db['user'] = $logindata[0];
-
-				// Prepare for finding the database
-				$connection = explode('/', $connection);
-
-				// Find the database name
-				$db['database'] = array_pop($connection);
-
-				// Reset connection string
-				$connection = implode('/', $connection);
-
-				// Find the socket
-				if (preg_match('/^unix\([^)]++\)/', $connection))
+				if ($connection['host'] === 'unix(')
 				{
-					// This one is a little hairy: we explode based on the end of
-					// the socket, removing the 'unix(' from the connection string
-					list ($db['socket'], $connection) = explode(')', substr($connection, 5), 2);
-				}
-				elseif (strpos($connection, ':') !== FALSE)
-				{
-					// Fetch the host and port name
-					list ($db['host'], $db['port']) = explode(':', $connection, 2);
+					list($db['socket'], $connection['path']) = explode(')', $connection['path'], 2);
 				}
 				else
 				{
-					$db['host'] = $connection;
+					$db['host'] = $connection['host'];
 				}
 			}
-			else
+
+			if (isset($connection['path']) AND $connection['path'])
 			{
-				// File connection
-				$connection = explode('/', $connection);
-
-				// Find database file name
-				$db['database'] = array_pop($connection);
-
-				// Find database directory name
-				$db['socket'] = implode('/', $connection).'/';
+				// Strip leading slash
+				$db['database'] = substr($connection['path'], 1);
 			}
-
-			// Reset the connection array to the database config
-			$this->config['connection'] = $db;
 		}
-		// Set driver name
-		$driver = 'Database_'.ucfirst($this->config['connection']['type']).'_Driver';
 
-		// Load the driver
-		if ( ! Kohana::auto_load($driver))
-			throw new Kohana_Database_Exception('core.driver_not_found', $this->config['connection']['type'], get_class($this));
-
-		// Initialize the driver
-		$this->driver = new $driver($this->config);
-
-		// Validate the driver
-		if ( ! ($this->driver instanceof Database_Driver))
-			throw new Kohana_Database_Exception('core.driver_implements', $this->config['connection']['type'], get_class($this), 'Database_Driver');
-
-		Kohana::log('debug', 'Database Library initialized');
+		return $db;
 	}
 
 	/**
-	 * Simple connect method to get the database queries up and running.
+	 * Returns the last executed query for this database
 	 *
-	 * @return  void
+	 * @return string
 	 */
-	public function connect()
+	public function last_query()
 	{
-		// A link can be a resource or an object
-		if ( ! is_resource($this->link) AND ! is_object($this->link))
-		{
-			$this->link = $this->driver->connect();
-			if ( ! is_resource($this->link) AND ! is_object($this->link))
-				throw new Kohana_Database_Exception('database.connection', $this->driver->show_error());
-
-			// Clear password after successful connect
-			$this->config['connection']['pass'] = NULL;
-		}
+		return $this->last_query;
 	}
 
 	/**
-	 * Runs a query into the driver and returns the result.
+	 * Executes the given query, returning the cached version if enabled
 	 *
-	 * @param   string  SQL query to execute
-	 * @return  Database_Result
+	 * @param  string  SQL query
+	 * @return Database_Result
 	 */
-	public function query($sql = '')
+	public function query($sql)
 	{
-		if ($sql == '') return FALSE;
-
-		// No link? Connect!
-		$this->link or $this->connect();
-
 		// Start the benchmark
 		$start = microtime(TRUE);
 
-		if (func_num_args() > 1) //if we have more than one argument ($sql)
+		if (is_array($this->cache))
 		{
-			$argv = func_get_args();
-			$binds = (is_array(next($argv))) ? current($argv) : array_slice($argv, 1);
-		}
+			$hash = $this->query_hash($sql);
 
-		// Compile binds if needed
-		if (isset($binds))
+			if (isset($this->cache[$hash]))
+			{
+				// Use cached result
+				$result = $this->cache[$hash];
+
+				// It's from cache
+				$sql .= ' [CACHE]';
+			}
+			else
+			{
+				// No cache, execute query and store in cache
+				$result = $this->cache[$hash] = $this->query_execute($sql);
+			}
+		}
+		else
 		{
-			$sql = $this->compile_binds($sql, $binds);
+			// Execute the query, cache is off
+			$result = $this->query_execute($sql);
 		}
-
-		// Fetch the result
-		$result = $this->driver->query($this->last_query = $sql);
 
 		// Stop the benchmark
 		$stop = microtime(TRUE);
 
-		if ($this->config['benchmark'] == TRUE)
+		if ($this->config['benchmark'] === TRUE)
 		{
 			// Benchmark the query
 			Database::$benchmarks[] = array('query' => $sql, 'time' => $stop - $start, 'rows' => count($result));
@@ -271,1187 +285,358 @@ class Database_Core {
 	}
 
 	/**
-	 * Selects the column names for a database query.
+	 * Performs the query on the cache (and caches it if it's not found)
 	 *
-	 * @param   string  string or array of column names to select
-	 * @return  Database_Core  This Database object.
+	 * @param   string  query
+	 * @param   int     time-to-live (NULL for Cache default)
+	 * @return  Database_Cache_Result
 	 */
-	public function select($sql = '*')
+	public function query_cache($sql, $ttl)
 	{
-		if (func_num_args() > 1)
+		if ( ! $this->cache instanceof Cache)
 		{
-			$sql = func_get_args();
+			throw new Database_Exception('Database :name has not been configured to use the Cache library.');
 		}
-		elseif (is_string($sql))
+
+		// Start the benchmark
+		$start = microtime(TRUE);
+
+		$hash = $this->query_hash($sql);
+
+		if (($data = $this->cache->get($hash)) !== NULL)
 		{
-			$sql = explode(',', $sql);
+			// Found in cache, create result
+			$result = new Database_Cache_Result($data, $sql, $this->config['object']);
+
+			// It's from the cache
+			$sql .= ' [CACHE]';
 		}
 		else
 		{
-			$sql = (array) $sql;
+			// Run the query and return the full array of rows
+			$data = $this->query_execute($sql)->as_array(TRUE);
+
+			// Set the Cache
+			$this->cache->set($hash, $data, NULL, $ttl);
+
+			// Create result
+			$result = new Database_Cache_Result($data, $sql, $this->config['object']);
 		}
 
-		foreach ($sql as $val)
+		// Stop the benchmark
+		$stop = microtime(TRUE);
+
+		if ($this->config['benchmark'] === TRUE)
 		{
-			if (($val = trim($val)) === '') continue;
-
-			if (strpos($val, '(') === FALSE AND $val !== '*')
-			{
-				if (preg_match('/^DISTINCT\s++(.+)$/i', $val, $matches))
-				{
-					// Only prepend with table prefix if table name is specified
-					$val = (strpos($matches[1], '.') !== FALSE) ? $this->config['table_prefix'].$matches[1] : $matches[1];
-
-					$this->distinct = TRUE;
-				}
-				else
-				{
-					$val = (strpos($val, '.') !== FALSE) ? $this->config['table_prefix'].$val : $val;
-				}
-
-				$val = $this->driver->escape_column($val);
-			}
-
-			$this->select[] = $val;
+			// Benchmark the query
+			Database::$benchmarks[] = array('query' => $sql, 'time' => $stop - $start, 'rows' => count($result));
 		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the from table(s) for a database query.
-	 *
-	 * @param   string  string or array of tables to select
-	 * @return  Database_Core  This Database object.
-	 */
-	public function from($sql)
-	{
-		if (func_num_args() > 1)
-		{
-			$sql = func_get_args();
-		}
-		elseif (is_string($sql))
-		{
-			$sql = explode(',', $sql);
-		}
-		else
-		{
-			$sql = array($sql);
-		}
-
-		foreach ($sql as $val)
-		{
-			if (is_string($val))
-			{
-				if (($val = trim($val)) === '') continue;
-
-				// TODO: Temporary solution, this should be moved to database driver (AS is checked for twice)
-				if (stripos($val, ' AS ') !== FALSE)
-				{
-					$val = str_ireplace(' AS ', ' AS ', $val);
-
-					list($table, $alias) = explode(' AS ', $val);
-
-					// Attach prefix to both sides of the AS
-					$val = $this->config['table_prefix'].$table.' AS '.$this->config['table_prefix'].$alias;
-				}
-				else
-				{
-					$val = $this->config['table_prefix'].$val;
-				}
-			}
-
-			$this->from[] = $val;
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Generates the JOIN portion of the query.
-	 *
-	 * @param   string        table name
-	 * @param   string|array  where key or array of key => value pairs
-	 * @param   string        where value
-	 * @param   string        type of join
-	 * @return  Database_Core        This Database object.
-	 */
-	public function join($table, $key, $value = NULL, $type = '')
-	{
-		$join = array();
-
-		if ( ! empty($type))
-		{
-			$type = strtoupper(trim($type));
-
-			if ( ! in_array($type, array('LEFT', 'RIGHT', 'OUTER', 'INNER', 'LEFT OUTER', 'RIGHT OUTER'), TRUE))
-			{
-				$type = '';
-			}
-			else
-			{
-				$type .= ' ';
-			}
-		}
-
-		$cond = array();
-		$keys  = is_array($key) ? $key : array($key => $value);
-		foreach ($keys as $key => $value)
-		{
-			$key    = (strpos($key, '.') !== FALSE) ? $this->config['table_prefix'].$key : $key;
-
-			if (is_string($value))
-			{
-				// Only escape if it's a string
-				$value = $this->driver->escape_column($this->config['table_prefix'].$value);
-			}
-
-			$cond[] = $this->driver->where($key, $value, 'AND ', count($cond), FALSE);
-		}
-
-		if ( ! is_array($this->join))
-		{
-			$this->join = array();
-		}
-
-		if ( ! is_array($table))
-		{
-			$table = array($table);
-		}
-
-		foreach ($table as $t)
-		{
-			if (is_string($t))
-			{
-				// TODO: Temporary solution, this should be moved to database driver (AS is checked for twice)
-				if (stripos($t, ' AS ') !== FALSE)
-				{
-					$t = str_ireplace(' AS ', ' AS ', $t);
-
-					list($table, $alias) = explode(' AS ', $t);
-
-					// Attach prefix to both sides of the AS
-					$t = $this->config['table_prefix'].$table.' AS '.$this->config['table_prefix'].$alias;
-				}
-				else
-				{
-					$t = $this->config['table_prefix'].$t;
-				}
-			}
-
-			$join['tables'][] = $this->driver->escape_column($t);
-		}
-
-		$join['conditions'] = '('.trim(implode(' ', $cond)).')';
-		$join['type'] = $type;
-
-		$this->join[] = $join;
-
-		return $this;
-	}
-
-
-	/**
-	 * Selects the where(s) for a database query.
-	 *
-	 * @param   string|array  key name or array of key => value pairs
-	 * @param   string        value to match with key
-	 * @param   boolean       disable quoting of WHERE clause
-	 * @return  Database_Core        This Database object.
-	 */
-	public function where($key, $value = NULL, $quote = TRUE)
-	{
-		$quote = (func_num_args() < 2 AND ! is_array($key)) ? -1 : $quote;
-		if (is_object($key))
-		{
-			$keys = array((string) $key => '');
-		}
-		elseif ( ! is_array($key))
-		{
-			$keys = array($key => $value);
-		}
-		else
-		{
-			$keys = $key;
-		}
-
-		foreach ($keys as $key => $value)
-		{
-			$key           = (strpos($key, '.') !== FALSE) ? $this->config['table_prefix'].$key : $key;
-			$this->where[] = $this->driver->where($key, $value, 'AND ', count($this->where), $quote);
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the or where(s) for a database query.
-	 *
-	 * @param   string|array  key name or array of key => value pairs
-	 * @param   string        value to match with key
-	 * @param   boolean       disable quoting of WHERE clause
-	 * @return  Database_Core        This Database object.
-	 */
-	public function orwhere($key, $value = NULL, $quote = TRUE)
-	{
-		$quote = (func_num_args() < 2 AND ! is_array($key)) ? -1 : $quote;
-		if (is_object($key))
-		{
-			$keys = array((string) $key => '');
-		}
-		elseif ( ! is_array($key))
-		{
-			$keys = array($key => $value);
-		}
-		else
-		{
-			$keys = $key;
-		}
-
-		foreach ($keys as $key => $value)
-		{
-			$key           = (strpos($key, '.') !== FALSE) ? $this->config['table_prefix'].$key : $key;
-			$this->where[] = $this->driver->where($key, $value, 'OR ', count($this->where), $quote);
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the like(s) for a database query.
-	 *
-	 * @param   string|array  field name or array of field => match pairs
-	 * @param   string        like value to match with field
-	 * @param   boolean       automatically add starting and ending wildcards
-	 * @return  Database_Core        This Database object.
-	 */
-	public function like($field, $match = '', $auto = TRUE)
-	{
-		$fields = is_array($field) ? $field : array($field => $match);
-
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->like($field, $match, $auto, 'AND ', count($this->where));
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the or like(s) for a database query.
-	 *
-	 * @param   string|array  field name or array of field => match pairs
-	 * @param   string        like value to match with field
-	 * @param   boolean       automatically add starting and ending wildcards
-	 * @return  Database_Core        This Database object.
-	 */
-	public function orlike($field, $match = '', $auto = TRUE)
-	{
-		$fields = is_array($field) ? $field : array($field => $match);
-
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->like($field, $match, $auto, 'OR ', count($this->where));
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the not like(s) for a database query.
-	 *
-	 * @param   string|array  field name or array of field => match pairs
-	 * @param   string        like value to match with field
-	 * @param   boolean       automatically add starting and ending wildcards
-	 * @return  Database_Core        This Database object.
-	 */
-	public function notlike($field, $match = '', $auto = TRUE)
-	{
-		$fields = is_array($field) ? $field : array($field => $match);
-
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->notlike($field, $match, $auto, 'AND ', count($this->where));
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the or not like(s) for a database query.
-	 *
-	 * @param   string|array  field name or array of field => match pairs
-	 * @param   string        like value to match with field
-	 * @return  Database_Core        This Database object.
-	 */
-	public function ornotlike($field, $match = '', $auto = TRUE)
-	{
-		$fields = is_array($field) ? $field : array($field => $match);
-
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->notlike($field, $match, $auto, 'OR ', count($this->where));
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the like(s) for a database query.
-	 *
-	 * @param   string|array  field name or array of field => match pairs
-	 * @param   string        like value to match with field
-	 * @return  Database_Core        This Database object.
-	 */
-	public function regex($field, $match = '')
-	{
-		$fields = is_array($field) ? $field : array($field => $match);
-
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->regex($field, $match, 'AND ', count($this->where));
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the or like(s) for a database query.
-	 *
-	 * @param   string|array  field name or array of field => match pairs
-	 * @param   string        like value to match with field
-	 * @return  Database_Core        This Database object.
-	 */
-	public function orregex($field, $match = '')
-	{
-		$fields = is_array($field) ? $field : array($field => $match);
-
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->regex($field, $match, 'OR ', count($this->where));
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the not regex(s) for a database query.
-	 *
-	 * @param   string|array  field name or array of field => match pairs
-	 * @param   string        regex value to match with field
-	 * @return  Database_Core        This Database object.
-	 */
-	public function notregex($field, $match = '')
-	{
-		$fields = is_array($field) ? $field : array($field => $match);
-
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->notregex($field, $match, 'AND ', count($this->where));
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the or not regex(s) for a database query.
-	 *
-	 * @param   string|array  field name or array of field => match pairs
-	 * @param   string        regex value to match with field
-	 * @return  Database_Core        This Database object.
-	 */
-	public function ornotregex($field, $match = '')
-	{
-		$fields = is_array($field) ? $field : array($field => $match);
-
-		foreach ($fields as $field => $match)
-		{
-			$field         = (strpos($field, '.') !== FALSE) ? $this->config['table_prefix'].$field : $field;
-			$this->where[] = $this->driver->notregex($field, $match, 'OR ', count($this->where));
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Chooses the column to group by in a select query.
-	 *
-	 * @param   string  column name to group by
-	 * @return  Database_Core  This Database object.
-	 */
-	public function groupby($by)
-	{
-		if ( ! is_array($by))
-		{
-			$by = explode(',', (string) $by);
-		}
-
-		foreach ($by as $val)
-		{
-			$val = trim($val);
-
-			if ($val != '')
-			{
-				// Add the table prefix if we are using table.column names
-				if(strpos($val, '.'))
-				{
-					$val = $this->config['table_prefix'].$val;
-				}
-
-				$this->groupby[] = $this->driver->escape_column($val);
-			}
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the having(s) for a database query.
-	 *
-	 * @param   string|array  key name or array of key => value pairs
-	 * @param   string        value to match with key
-	 * @param   boolean       disable quoting of WHERE clause
-	 * @return  Database_Core        This Database object.
-	 */
-	public function having($key, $value = '', $quote = TRUE)
-	{
-		$this->having[] = $this->driver->where($key, $value, 'AND', count($this->having), TRUE);
-		return $this;
-	}
-
-	/**
-	 * Selects the or having(s) for a database query.
-	 *
-	 * @param   string|array  key name or array of key => value pairs
-	 * @param   string        value to match with key
-	 * @param   boolean       disable quoting of WHERE clause
-	 * @return  Database_Core        This Database object.
-	 */
-	public function orhaving($key, $value = '', $quote = TRUE)
-	{
-		$this->having[] = $this->driver->where($key, $value, 'OR', count($this->having), TRUE);
-		return $this;
-	}
-
-	/**
-	 * Chooses which column(s) to order the select query by.
-	 *
-	 * @param   string|array  column(s) to order on, can be an array, single column, or comma seperated list of columns
-	 * @param   string        direction of the order
-	 * @return  Database_Core        This Database object.
-	 */
-	public function orderby($orderby, $direction = NULL)
-	{
-		if ( ! is_array($orderby))
-		{
-			$orderby = array($orderby => $direction);
-		}
-
-		foreach ($orderby as $column => $direction)
-		{
-			$direction = strtoupper(trim($direction));
-
-			// Add a direction if the provided one isn't valid
-			if ( ! in_array($direction, array('ASC', 'DESC', 'RAND()', 'RANDOM()', 'NULL')))
-			{
-				$direction = 'ASC';
-			}
-
-			// Add the table prefix if a table.column was passed
-			if (strpos($column, '.'))
-			{
-				$column = $this->config['table_prefix'].$column;
-			}
-
-			$this->orderby[] = $this->driver->escape_column($column).' '.$direction;
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Selects the limit section of a query.
-	 *
-	 * @param   integer  number of rows to limit result to
-	 * @param   integer  offset in result to start returning rows from
-	 * @return  Database_Core   This Database object.
-	 */
-	public function limit($limit, $offset = NULL)
-	{
-		$this->limit  = (int) $limit;
-
-		if ($offset !== NULL OR ! is_int($this->offset))
-		{
-			$this->offset($offset);
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Sets the offset portion of a query.
-	 *
-	 * @param   integer  offset value
-	 * @return  Database_Core   This Database object.
-	 */
-	public function offset($value)
-	{
-		$this->offset = (int) $value;
-
-		return $this;
-	}
-
-	/**
-	 * Allows key/value pairs to be set for inserting or updating.
-	 *
-	 * @param   string|array  key name or array of key => value pairs
-	 * @param   string        value to match with key
-	 * @return  Database_Core        This Database object.
-	 */
-	public function set($key, $value = '')
-	{
-		if ( ! is_array($key))
-		{
-			$key = array($key => $value);
-		}
-
-		foreach ($key as $k => $v)
-		{
-			// Add a table prefix if the column includes the table.
-			if (strpos($k, '.'))
-				$k = $this->config['table_prefix'].$k;
-
-			$this->set[$k] = $this->driver->escape($v);
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Compiles the select statement based on the other functions called and runs the query.
-	 *
-	 * @param   string  table name
-	 * @param   string  limit clause
-	 * @param   string  offset clause
-	 * @return  Database_Result
-	 */
-	public function get($table = '', $limit = NULL, $offset = NULL)
-	{
-		if ($table != '')
-		{
-			$this->from($table);
-		}
-
-		if ( ! is_null($limit))
-		{
-			$this->limit($limit, $offset);
-		}
-
-		$sql = $this->driver->compile_select(get_object_vars($this));
-
-		$this->reset_select();
-
-		$result = $this->query($sql);
-
-		$this->last_query = $sql;
 
 		return $result;
 	}
 
 	/**
-	 * Compiles the select statement based on the other functions called and runs the query.
+	 * Generates a hash for the given query
 	 *
-	 * @param   string  table name
-	 * @param   array   where clause
-	 * @param   string  limit clause
-	 * @param   string  offset clause
-	 * @return  Database_Core  This Database object.
-	 */
-	public function getwhere($table = '', $where = NULL, $limit = NULL, $offset = NULL)
-	{
-		if ($table != '')
-		{
-			$this->from($table);
-		}
-
-		if ( ! is_null($where))
-		{
-			$this->where($where);
-		}
-
-		if ( ! is_null($limit))
-		{
-			$this->limit($limit, $offset);
-		}
-
-		$sql = $this->driver->compile_select(get_object_vars($this));
-
-		$this->reset_select();
-
-		$result = $this->query($sql);
-
-		return $result;
-	}
-
-	/**
-	 * Compiles the select statement based on the other functions called and returns the query string.
-	 *
-	 * @param   string  table name
-	 * @param   string  limit clause
-	 * @param   string  offset clause
-	 * @return  string  sql string
-	 */
-	public function compile($table = '', $limit = NULL, $offset = NULL)
-	{
-		if ($table != '')
-		{
-			$this->from($table);
-		}
-
-		if ( ! is_null($limit))
-		{
-			$this->limit($limit, $offset);
-		}
-
-		$sql = $this->driver->compile_select(get_object_vars($this));
-
-		$this->reset_select();
-
-		return $sql;
-	}
-
-	/**
-	 * Compiles an insert string and runs the query.
-	 *
-	 * @param   string  table name
-	 * @param   array   array of key/value pairs to insert
-	 * @return  Database_Result  Query result
-	 */
-	public function insert($table = '', $set = NULL)
-	{
-		if ( ! is_null($set))
-		{
-			$this->set($set);
-		}
-
-		if ($this->set == NULL)
-			throw new Kohana_Database_Exception('database.must_use_set');
-
-		if ($table == '')
-		{
-			if ( ! isset($this->from[0]))
-				throw new Kohana_Database_Exception('database.must_use_table');
-
-			$table = $this->from[0];
-		}
-
-		// If caching is enabled, clear the cache before inserting
-		($this->config['cache'] === TRUE) and $this->clear_cache();
-
-		$sql = $this->driver->insert($this->config['table_prefix'].$table, array_keys($this->set), array_values($this->set));
-
-		$this->reset_write();
-
-		return $this->query($sql);
-	}
-
-	/**
-	 * Adds an "IN" condition to the where clause
-	 *
-	 * @param   string  Name of the column being examined
-	 * @param   mixed   An array or string to match against
-	 * @param   bool    Generate a NOT IN clause instead
-	 * @return  Database_Core  This Database object.
-	 */
-	public function in($field, $values, $not = FALSE)
-	{
-		if (is_array($values))
-		{
-			$escaped_values = array();
-			foreach ($values as $v)
-			{
-				if (is_numeric($v))
-				{
-					$escaped_values[] = $v;
-				}
-				else
-				{
-					$escaped_values[] = "'".$this->driver->escape_str($v)."'";
-				}
-			}
-			$values = implode(",", $escaped_values);
-		}
-
-		$where = $this->driver->escape_column(((strpos($field,'.') !== FALSE) ? $this->config['table_prefix'] : ''). $field).' '.($not === TRUE ? 'NOT ' : '').'IN ('.$values.')';
-		$this->where[] = $this->driver->where($where, '', 'AND ', count($this->where), -1);
-
-		return $this;
-	}
-
-	/**
-	 * Adds a "NOT IN" condition to the where clause
-	 *
-	 * @param   string  Name of the column being examined
-	 * @param   mixed   An array or string to match against
-	 * @return  Database_Core  This Database object.
-	 */
-	public function notin($field, $values)
-	{
-		return $this->in($field, $values, TRUE);
-	}
-
-	/**
-	 * Compiles a merge string and runs the query.
-	 *
-	 * @param   string  table name
-	 * @param   array   array of key/value pairs to merge
-	 * @return  Database_Result  Query result
-	 */
-	public function merge($table = '', $set = NULL)
-	{
-		if ( ! is_null($set))
-		{
-			$this->set($set);
-		}
-
-		if ($this->set == NULL)
-			throw new Kohana_Database_Exception('database.must_use_set');
-
-		if ($table == '')
-		{
-			if ( ! isset($this->from[0]))
-				throw new Kohana_Database_Exception('database.must_use_table');
-
-			$table = $this->from[0];
-		}
-		else
-		{
-			$table = $this->config['table_prefix'].$table;
-		}
-
-		$sql = $this->driver->merge($table, array_keys($this->set), array_values($this->set));
-
-		$this->reset_write();
-		return $this->query($sql);
-	}
-
-	/**
-	 * Compiles an update string and runs the query.
-	 *
-	 * @param   string  table name
-	 * @param   array   associative array of update values
-	 * @param   array   where clause
-	 * @return  Database_Result  Query result
-	 */
-	public function update($table = '', $set = NULL, $where = NULL)
-	{
-		if ( is_array($set))
-		{
-			$this->set($set);
-		}
-
-		if ( ! is_null($where))
-		{
-			$this->where($where);
-		}
-
-		if ($this->set == FALSE)
-			throw new Kohana_Database_Exception('database.must_use_set');
-
-		if ($table == '')
-		{
-			if ( ! isset($this->from[0]))
-				throw new Kohana_Database_Exception('database.must_use_table');
-
-			$table = $this->from[0];
-		}
-		else
-		{
-			$table = $this->config['table_prefix'].$table;
-		}
-
-		$sql = $this->driver->update($table, $this->set, $this->where);
-
-		$this->reset_write();
-		return $this->query($sql);
-	}
-
-	/**
-	 * Compiles a delete string and runs the query.
-	 *
-	 * @param   string  table name
-	 * @param   array   where clause
-	 * @return  Database_Result  Query result
-	 */
-	public function delete($table = '', $where = NULL)
-	{
-		if ($table == '')
-		{
-			if ( ! isset($this->from[0]))
-				throw new Kohana_Database_Exception('database.must_use_table');
-
-			$table = $this->from[0];
-		}
-		else
-		{
-			$table = $this->config['table_prefix'].$table;
-		}
-
-		if (! is_null($where))
-		{
-			$this->where($where);
-		}
-
-		if (count($this->where) < 1)
-			throw new Kohana_Database_Exception('database.must_use_where');
-
-		$sql = $this->driver->delete($table, $this->where);
-
-		$this->reset_write();
-		return $this->query($sql);
-	}
-
-	/**
-	 * Returns the last query run.
-	 *
-	 * @return  string SQL
-	 */
-	public function last_query()
-	{
-	   return $this->last_query;
-	}
-
-	/**
-	 * Count query records.
-	 *
-	 * @param   string   table name
-	 * @param   array    where clause
-	 * @return  integer
-	 */
-	public function count_records($table = FALSE, $where = NULL)
-	{
-		if (count($this->from) < 1)
-		{
-			if ($table == FALSE)
-				throw new Kohana_Database_Exception('database.must_use_table');
-
-			$this->from($table);
-		}
-
-		if ($where !== NULL)
-		{
-			$this->where($where);
-		}
-
-		$query = $this->select('COUNT(*) AS '.$this->escape_column('records_found'))->get()->result(TRUE);
-
-		$query = $query->current();
-		
-		if ( ! $query)
-			return 0;
-		else
-			return (int) $query->records_found;
-	}
-
-	/**
-	 * Resets all private select variables.
-	 *
-	 * @return  void
-	 */
-	protected function reset_select()
-	{
-		$this->select   = array();
-		$this->from     = array();
-		$this->join     = array();
-		$this->where    = array();
-		$this->orderby  = array();
-		$this->groupby  = array();
-		$this->having   = array();
-		$this->distinct = FALSE;
-		$this->limit    = FALSE;
-		$this->offset   = FALSE;
-	}
-
-	/**
-	 * Resets all private insert and update variables.
-	 *
-	 * @return  void
-	 */
-	protected function reset_write()
-	{
-		$this->set   = array();
-		$this->from  = array();
-		$this->where = array();
-	}
-
-	/**
-	 * Lists all the tables in the current database.
-	 *
-	 * @return  array
-	 */
-	public function list_tables()
-	{
-		$this->link or $this->connect();
-
-		return $this->driver->list_tables();
-	}
-
-	/**
-	 * See if a table exists in the database.
-	 *
-	 * @param   string   table name
-	 * @param   boolean  True to attach table prefix
-	 * @return  boolean
-	 */
-	public function table_exists($table_name, $prefix = TRUE)
-	{
-		if ($prefix)
-			return in_array($this->config['table_prefix'].$table_name, $this->list_tables());
-		else
-			return in_array($table_name, $this->list_tables());
-	}
-
-	/**
-	 * Combine a SQL statement with the bind values. Used for safe queries.
-	 *
-	 * @param   string  query to bind to the values
-	 * @param   array   array of values to bind to the query
+	 * @param   string  SQL query string
 	 * @return  string
 	 */
-	public function compile_binds($sql, $binds)
+	protected function query_hash($sql)
 	{
-		foreach ((array) $binds as $val)
-		{
-			// If the SQL contains no more bind marks ("?"), we're done.
-			if (($next_bind_pos = strpos($sql, '?')) === FALSE)
-				break;
-
-			// Properly escape the bind value.
-			$val = $this->driver->escape($val);
-
-			// Temporarily replace possible bind marks ("?"), in the bind value itself, with a placeholder.
-			$val = str_replace('?', '{%B%}', $val);
-
-			// Replace the first bind mark ("?") with its corresponding value.
-			$sql = substr($sql, 0, $next_bind_pos).$val.substr($sql, $next_bind_pos + 1);
-		}
-
-		// Restore placeholders.
-		return str_replace('{%B%}', '?', $sql);
+		return sha1(str_replace("\n", ' ', trim($sql)));
 	}
 
 	/**
-	 * Get the field data for a database table, along with the field's attributes.
+	 * Clears the internal query cache.
 	 *
-	 * @param   string  table name
-	 * @return  array
-	 */
-	public function field_data($table = '')
-	{
-		$this->link or $this->connect();
-
-		return $this->driver->field_data($this->config['table_prefix'].$table);
-	}
-
-	/**
-	 * Get the field data for a database table, along with the field's attributes.
-	 *
-	 * @param   string  table name
-	 * @return  array
-	 */
-	public function list_fields($table = '')
-	{
-		$this->link or $this->connect();
-
-		return $this->driver->list_fields($this->config['table_prefix'].$table);
-	}
-
-	/**
-	 * Escapes a value for a query.
-	 *
-	 * @param   mixed   value to escape
-	 * @return  string
-	 */
-	public function escape($value)
-	{
-		return $this->driver->escape($value);
-	}
-
-	/**
-	 * Escapes a string for a query.
-	 *
-	 * @param   string  string to escape
-	 * @return  string
-	 */
-	public function escape_str($str)
-	{
-		return $this->driver->escape_str($str);
-	}
-
-	/**
-	 * Escapes a table name for a query.
-	 *
-	 * @param   string  string to escape
-	 * @return  string
-	 */
-	public function escape_table($table)
-	{
-		return $this->driver->escape_table($table);
-	}
-
-	/**
-	 * Escapes a column name for a query.
-	 *
-	 * @param   string  string to escape
-	 * @return  string
-	 */
-	public function escape_column($table)
-	{
-		return $this->driver->escape_column($table);
-	}
-
-	/**
-	 * Returns table prefix of current configuration.
-	 *
-	 * @return  string
-	 */
-	public function table_prefix()
-	{
-		return $this->config['table_prefix'];
-	}
-
-	/**
-	 * Clears the query cache.
-	 *
-	 * @param   string|TRUE  clear cache by SQL statement or TRUE for last query
-	 * @return  Database_Core       This Database object.
+	 * @param   mixed  clear cache by SQL statement, NULL for all, or TRUE for last query
+	 * @return  Database
 	 */
 	public function clear_cache($sql = NULL)
 	{
-		if ($sql === TRUE)
+		if ($this->cache instanceof Cache)
 		{
-			$this->driver->clear_cache($this->last_query);
+			// Using cross-request Cache library
+			if ($sql === TRUE)
+			{
+				$this->cache->delete($this->query_hash($this->last_query));
+			}
+			elseif (is_string($sql))
+			{
+				$this->cache->delete($this->query_hash($sql));
+			}
+			else
+			{
+				$this->cache->delete_all();
+			}
 		}
-		elseif (is_string($sql))
+		elseif (is_array($this->cache))
 		{
-			$this->driver->clear_cache($sql);
+			// Using per-request memory cache
+			if ($sql === TRUE)
+			{
+				unset($this->cache[$this->query_hash($this->last_query)]);
+			}
+			elseif (is_string($sql))
+			{
+				unset($this->cache[$this->query_hash($sql)]);
+			}
+			else
+			{
+				$this->cache = array();
+			}
+		}
+	}
+
+	/**
+	 * Quotes the given value
+	 *
+	 * @param   mixed  value
+	 * @return  mixed
+	 */
+	public function quote($value)
+	{
+		if ( ! $this->config['escape'])
+			return $value;
+
+		if ($value === NULL)
+		{
+			return 'NULL';
+		}
+		elseif ($value === TRUE)
+		{
+			return 'TRUE';
+		}
+		elseif ($value === FALSE)
+		{
+			return 'FALSE';
+		}
+		elseif (is_int($value))
+		{
+			return (int) $value;
+		}
+		elseif ($value instanceof Database_Expression)
+		{
+			return (string) $value;
+		}
+
+		return '\''.$this->escape($value).'\'';
+	}
+
+	/**
+	 * Quotes a table, adding the table prefix
+	 * Reserved characters not allowed in table names for the builder are [ .*] (space, dot, asterisk)
+	 *
+	 * @param   string|array    table name or array - 'users u' or array('u' => 'users') both valid
+	 * @param   string          table alias
+	 * @return  string
+	 */
+	public function quote_table($table, $alias = NULL)
+	{
+		if (is_array($table))
+		{
+			// Using array('u' => 'user')
+			list($alias, $table) = each($table);
+		}
+		elseif (strpos(' ', $table) !== FALSE)
+		{
+			// Using format 'user u'
+			list($table, $alias) = explode(' ', $table);
+		}
+
+		if ($table instanceof Database_Expression)
+		{
+			if ($alias)
+			{
+				if ($this->config['escape'])
+				{
+					$alias = $this->quote.$alias.$this->quote;
+				}
+
+				return $table.' AS '.$alias;
+			}
+
+			return (string) $table;
+		}
+
+		if ($this->config['table_prefix'])
+		{
+			$table = $this->config['table_prefix'].$table;
+		}
+
+		if ($alias)
+		{
+			if ($this->config['escape'])
+			{
+				$table = $this->quote.$table.$this->quote;
+				$alias = $this->quote.$alias.$this->quote;
+			}
+
+			return $table.' AS '.$alias;
+		}
+
+		if ($this->config['escape'])
+		{
+			$table = $this->quote.$table.$this->quote;
+		}
+
+		return $table;
+	}
+
+	/**
+	 * Quotes column or table.column, adding the table prefix if necessary
+	 * Reserved characters not allowed in table names for the builder are [ .*] (space, dot, asterisk)
+	 * Complex column names must have table/columns in double quotes, e.g. array('mycount' => 'COUNT("users.id")')
+	 *
+	 * @param   string|array    column name or array('u' => 'COUNT("*")')
+	 * @param   string          column alias
+	 * @return  string
+	 */
+	public function quote_column($column, $alias = NULL)
+	{
+		if ($column === '*')
+			return $column;
+
+		if (is_array($column))
+		{
+			list($alias, $column) = each($column);
+		}
+
+		if ($column instanceof Database_Expression)
+		{
+			if ($alias)
+			{
+				if ($this->config['escape'])
+				{
+					$alias = $this->quote.$alias.$this->quote;
+				}
+
+				return $column.' AS '.$alias;
+			}
+
+			return (string) $column;
+		}
+
+		if ($this->config['table_prefix'] AND strpos($column, '.') !== FALSE)
+		{
+			if (strpos($column, '"') !== FALSE)
+			{
+				// Find "table.column" and replace them with "[prefix]table.column"
+				$column = preg_replace('/"([^.]++)\.([^"]++)"/', '"'.$this->config['table_prefix'].'$1.$2"', $column);
+			}
+			else
+			{
+				// Attach table prefix if table.column format
+				$column = $this->config['table_prefix'].$column;
+			}
+		}
+
+		if ($this->config['escape'])
+		{
+			if (strpos($column, '"') === FALSE)
+			{
+				// Quote the column
+				$column = $this->quote.$column.$this->quote;
+			}
+			elseif ($this->quote !== '"')
+			{
+				// Replace double quotes
+				$column = str_replace('"', $this->quote, $column);
+			}
+
+			// Replace . with "."
+			$column = str_replace('.', $this->quote.'.'.$this->quote, $column);
+
+			// Unescape any asterisks
+			$column = str_replace($this->quote.'*'.$this->quote, '*', $column);
+
+			if ($alias)
+			{
+				// Quote the alias
+				return $column.' AS '.$this->quote.$alias.$this->quote;
+			}
+
+			return $column;
+		}
+
+		// Strip double quotes
+		$column = str_replace('"', '', $column);
+
+		if ($alias)
+			return $column.' AS '.$alias;
+
+		return $column;
+	}
+
+	/**
+	 * Get the table prefix
+	 *
+	 * @param  string  Optional new table prefix to set
+	 * @return string
+	 */
+	public function table_prefix($new_prefix = NULL)
+	{
+		$prefix = $this->config['table_prefix'];
+
+		if ($new_prefix !== NULL)
+		{
+			// Set a new prefix
+			$this->config['table_prefix'] = $new_prefix;
+		}
+
+		return $prefix;
+	}
+
+	/**
+	 * Fetches SQL type information about a field, in a generic format.
+	 *
+	 * @param   string  field datatype
+	 * @return  array
+	 */
+	protected function sql_type($str)
+	{
+		static $sql_types;
+
+		if ($sql_types === NULL)
+		{
+			// Load SQL data types
+			$sql_types = Kohana::config('sql_types');
+		}
+
+		$str = trim($str);
+
+		if (($open = strpos($str, '(')) !== FALSE)
+		{
+			// Closing bracket
+			$close = strpos($str, ')', $open);
+
+			// Length without brackets
+			$length = substr($str, $open + 1, $close - 1 - $open);
+
+			// Type without the length
+			$type = substr($str, 0, $open).substr($str, $close + 1);
 		}
 		else
 		{
-			$this->driver->clear_cache();
+			// No length
+			$type = $str;
 		}
 
-		return $this;
-	}
+		if (empty($sql_types[$type]))
+			throw new Database_Exception('Undefined field type :type', array(':type' => $str));
 
-	/**
-	 * Pushes existing query space onto the query stack.  Use push
-	 * and pop to prevent queries from clashing before they are
-	 * executed
-	 *
-	 * @return Database_Core This Databaes object
-	 */
-	public function push()
-	{
-		array_push($this->query_history, array(
-			$this->select,
-			$this->from,
-			$this->join,
-			$this->where,
-			$this->orderby,
-			$this->order,
-			$this->groupby,
-			$this->having,
-			$this->distinct,
-			$this->limit,
-			$this->offset
-		));
+		// Fetch the field definition
+		$field = $sql_types[$type];
 
-		$this->reset_select();
+		$field['sql_type'] = $type;
 
-		return $this;
-	}
-
-	/**
-	 * Pops from query stack into the current query space.
-	 *
-	 * @return Database_Core This Databaes object
-	 */
-	public function pop()
-	{
-		if (count($this->query_history) == 0)
+		if (isset($length))
 		{
-			// No history
-			return $this;
+			// Add the length to the field info
+			$field['length'] = $length;
 		}
 
-		list(
-			$this->select,
-			$this->from,
-			$this->join,
-			$this->where,
-			$this->orderby,
-			$this->order,
-			$this->groupby,
-			$this->having,
-			$this->distinct,
-			$this->limit,
-			$this->offset
-		) = array_pop($this->query_history);
-
-		return $this;
+		return $field;
 	}
 
-	/**
-	 * Count the number of records in the last query, without LIMIT or OFFSET applied.
-	 *
-	 * @return  integer
-	 */
-	public function count_last_query()
-	{
-		if ($sql = $this->last_query())
-		{
-			if (stripos($sql, 'LIMIT') !== FALSE)
-			{
-				// Remove LIMIT from the SQL
-				$sql = preg_replace('/\sLIMIT\s+[^a-z]+/i', ' ', $sql);
-			}
-
-			if (stripos($sql, 'OFFSET') !== FALSE)
-			{
-				// Remove OFFSET from the SQL
-				$sql = preg_replace('/\sOFFSET\s+\d+/i', '', $sql);
-			}
-
-			// Get the total rows from the last query executed
-			$result = $this->query
-			(
-				'SELECT COUNT(*) AS '.$this->escape_column('total_rows').' '.
-				'FROM ('.trim($sql).') AS '.$this->escape_table('counted_results')
-			);
-
-			// Return the total number of rows from the query
-			return (int) $result->current()->total_rows;
-		}
-
-		return FALSE;
-	}
-
-} // End Database Class
-
-
-/**
- * Sets the code for a Database exception.
- */
-class Kohana_Database_Exception extends Kohana_Exception {
-
-	protected $code = E_DATABASE_ERROR;
-
-} // End Kohana Database Exception
+} // End Database

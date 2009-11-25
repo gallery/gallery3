@@ -25,7 +25,7 @@
  */
 $config['default'] = array
 (
-	'benchmark'     => TRUE,
+	'benchmark'     => FALSE,
 	'persistent'    => FALSE,
 	'connection'    => array
 	(

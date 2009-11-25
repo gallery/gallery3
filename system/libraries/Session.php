@@ -2,12 +2,12 @@
 /**
  * Session library.
  *
- * $Id: Session.php 4493 2009-07-27 20:05:41Z ixmatus $
+ * $Id: Session.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Session_Core {
 
@@ -32,18 +32,24 @@ class Session_Core {
 
 	/**
 	 * Singleton instance of Session.
+	 *
+	 * @param string Force a specific session_id
 	 */
-	public static function instance()
+	public static function instance($session_id = NULL)
 	{
 		if (Session::$instance == NULL)
 		{
 			// Create a new instance
-			new Session;
+			new Session($session_id);
+		}
+		elseif( ! is_null($session_id) AND $session_id != session_id() )
+		{
+			throw new Kohana_Exception('A session (SID: :session:) is already open, cannot open the specified session (SID: :new_session:).', array(':session:' => session_id(), ':new_session:' => $session_id));
 		}
 
 		return Session::$instance;
 	}
-	
+
 	/**
 	 * Be sure to block the use of __clone.
 	 */
@@ -51,8 +57,10 @@ class Session_Core {
 
 	/**
 	 * On first session instance creation, sets up the driver and creates session.
+	 *
+	 * @param string Force a specific session_id
 	 */
-	protected function __construct()
+	protected function __construct($session_id = NULL)
 	{
 		$this->input = Input::instance();
 
@@ -71,7 +79,7 @@ class Session_Core {
 			ini_set('session.gc_maxlifetime', (Session::$config['expiration'] == 0) ? 86400 : Session::$config['expiration']);
 
 			// Create a new session
-			$this->create();
+			$this->create(NULL, $session_id);
 
 			if (Session::$config['regenerate'] > 0 AND ($_SESSION['total_hits'] % Session::$config['regenerate']) === 0)
 			{
@@ -84,18 +92,15 @@ class Session_Core {
 				cookie::set(Session::$config['name'], $_SESSION['session_id'], Session::$config['expiration']);
 			}
 
-			// Close the session just before sending the headers, so that
+			// Close the session on system shutdown (run before sending the headers), so that
 			// the session cookie(s) can be written.
-			Event::add('system.send_headers', array($this, 'write_close'));
-
-			// Make sure that sessions are closed before exiting
-			register_shutdown_function(array($this, 'write_close'));
+			Event::add('system.shutdown', array($this, 'write_close'));
 
 			// Singleton instance
 			Session::$instance = $this;
 		}
 
-		Kohana::log('debug', 'Session Library initialized');
+		Kohana_Log::add('debug', 'Session Library initialized');
 	}
 
 	/**
@@ -112,9 +117,10 @@ class Session_Core {
 	 * Create a new session.
 	 *
 	 * @param   array  variables to set after creation
+	 * @param   string Force a specific session_id
 	 * @return  void
 	 */
-	public function create($vars = NULL)
+	public function create($vars = NULL, $session_id = NULL)
 	{
 		// Destroy any current sessions
 		$this->destroy();
@@ -126,14 +132,16 @@ class Session_Core {
 
 			// Load the driver
 			if ( ! Kohana::auto_load($driver))
-				throw new Kohana_Exception('core.driver_not_found', Session::$config['driver'], get_class($this));
+				throw new Kohana_Exception('The :driver: driver for the :library: library could not be found',
+										   array(':driver:' => Session::$config['driver'], ':library:' => get_class($this)));
 
 			// Initialize the driver
 			Session::$driver = new $driver();
 
 			// Validate the driver
 			if ( ! (Session::$driver instanceof Session_Driver))
-				throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], get_class($this), 'Session_Driver');
+				throw new Kohana_Exception('The :driver: driver for the :library: library must implement the :interface: interface',
+										   array(':driver:' => Session::$config['driver'], ':library:' => get_class($this), ':interface:' => 'Session_Driver'));
 
 			// Register non-native driver as the session handler
 			session_set_save_handler
@@ -149,7 +157,7 @@ class Session_Core {
 
 		// Validate the session name
 		if ( ! preg_match('~^(?=.*[a-z])[a-z0-9_]++$~iD', Session::$config['name']))
-			throw new Kohana_Exception('session.invalid_session_name', Session::$config['name']);
+			throw new Kohana_Exception('The session_name, :session:, is invalid. It must contain only alphanumeric characters and underscores. Also at least one letter must be present.', array(':session:' => Session::$config['name']));
 
 		// Name the session, this will also be the name of the cookie
 		session_name(Session::$config['name']);
@@ -164,6 +172,20 @@ class Session_Core {
 			Kohana::config('cookie.httponly')
 		);
 
+		$cookie = cookie::get(Session::$config['name']);
+		
+		if ($session_id === NULL)
+		{
+			// Reopen session from signed cookie value.
+			$session_id = $cookie;
+		}
+
+		// Reopen an existing session if supplied
+		if ( ! is_null($session_id))
+		{
+			session_id($session_id);
+		}
+
 		// Start the session!
 		session_start();
 
@@ -176,7 +198,7 @@ class Session_Core {
 			$_SESSION['total_hits'] = 0;
 			$_SESSION['_kf_flash_'] = array();
 
-			$_SESSION['user_agent'] = Kohana::$user_agent;
+			$_SESSION['user_agent'] = request::user_agent();
 			$_SESSION['ip_address'] = $this->input->ip_address();
 		}
 
@@ -196,7 +218,7 @@ class Session_Core {
 				{
 					// Check user agent for consistency
 					case 'user_agent':
-						if ($_SESSION[$valid] !== Kohana::$user_agent)
+						if ($_SESSION[$valid] !== request::user_agent())
 							return $this->create();
 					break;
 
@@ -253,7 +275,7 @@ class Session_Core {
 		if (isset($_COOKIE[$name]))
 		{
 			// Change the cookie value to match the new session id to prevent "lag"
-			$_COOKIE[$name] = $_SESSION['session_id'];
+			cookie::set($name, $_SESSION['session_id']);
 		}
 	}
 
@@ -467,7 +489,7 @@ class Session_Core {
 	 * Do not save this session.
 	 * This is a performance feature only, if using the native
 	 * session "driver" the save will NOT be aborted.
-	 * 
+	 *
 	 * @return  void
 	 */
 	public function abort_save()

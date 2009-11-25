@@ -4,12 +4,12 @@
  * using the MCrypt extension.
  * @see http://php.net/mcrypt
  *
- * $Id: Encrypt.php 4072 2009-03-13 17:20:38Z jheathco $
+ * $Id: Encrypt.php 4683 2009-11-14 17:10:53Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Encrypt_Core {
 
@@ -44,7 +44,7 @@ class Encrypt_Core {
 	public function __construct($config = FALSE)
 	{
 		if ( ! defined('MCRYPT_ENCRYPT'))
-			throw new Kohana_Exception('encrypt.requires_mcrypt');
+			throw new Kohana_Exception('To use the Encrypt library, mcrypt must be enabled in your PHP installation');
 
 		if (is_string($config))
 		{
@@ -52,7 +52,7 @@ class Encrypt_Core {
 
 			// Test the config group name
 			if (($config = Kohana::config('encryption.'.$config)) === NULL)
-				throw new Kohana_Exception('encrypt.undefined_group', $name);
+				throw new Kohana_Exception('The :name: group is not defined in your configuration.', array(':name:' => $name));
 		}
 
 		if (is_array($config))
@@ -67,7 +67,7 @@ class Encrypt_Core {
 		}
 
 		if (empty($config['key']))
-			throw new Kohana_Exception('encrypt.no_encryption_key');
+			throw new Kohana_Exception('To use the Encrypt library, you must set an encryption key in your config file');
 
 		// Find the max length of the key, based on cipher and mode
 		$size = mcrypt_get_key_size($config['cipher'], $config['mode']);
@@ -84,7 +84,7 @@ class Encrypt_Core {
 		// Cache the config in the object
 		$this->config = $config;
 
-		Kohana::log('debug', 'Encrypt Library initialized');
+		Kohana_Log::add('debug', 'Encrypt Library initialized');
 	}
 
 	/**
@@ -144,15 +144,27 @@ class Encrypt_Core {
 	 * Decrypts an encoded string back to its original value.
 	 *
 	 * @param   string  encoded string to be decrypted
-	 * @return  string  decrypted data
+	 * @return  string  decrypted data or FALSE if decryption fails
 	 */
 	public function decode($data)
 	{
 		// Convert the data back to binary
-		$data = base64_decode($data);
+		$data = base64_decode($data, TRUE);
+
+		if ( ! $data)
+		{
+			// Invalid base64 data
+			return FALSE;
+		}
 
 		// Extract the initialization vector from the data
 		$iv = substr($data, 0, $this->config['iv_size']);
+
+		if ($this->config['iv_size'] !== strlen($iv))
+		{
+			// The iv is not the correct size
+			return FALSE;
+		}
 
 		// Remove the iv from the data
 		$data = substr($data, $this->config['iv_size']);

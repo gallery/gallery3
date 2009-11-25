@@ -2,54 +2,49 @@
 /**
  * Controls headers that effect client caching of pages
  *
- * $Id: expires.php 4272 2009-04-25 21:47:26Z zombor $
+ * $Id: expires.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class expires_Core {
 
 	/**
-	 * Sets the amount of time before a page expires
+	 * Sets the amount of time before content expires
 	 *
-	 * @param  integer Seconds before the page expires 
-	 * @return boolean
+	 * @param   integer Seconds before the content expires
+	 * @return  integer Timestamp when the content expires
 	 */
 	public static function set($seconds = 60)
 	{
-		if (expires::check_headers())
-		{
-			$now = $expires = time();
+		$now = time();
+		$expires = $now + $seconds;
 
-			// Set the expiration timestamp
-			$expires += $seconds;
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $now));
 
-			// Send headers
-			header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $now));
-			header('Expires: '.gmdate('D, d M Y H:i:s T', $expires));
-			header('Cache-Control: max-age='.$seconds);
+		// HTTP 1.0
+		header('Expires: '.gmdate('D, d M Y H:i:s T', $expires));
 
-			return $expires;
-		}
+		// HTTP 1.1
+		header('Cache-Control: max-age='.$seconds);
 
-		return FALSE;
+		return $expires;
 	}
 
 	/**
-	 * Checks to see if a page should be updated or send Not Modified status
+	 * Parses the If-Modified-Since header
 	 *
-	 * @param   integer  Seconds added to the modified time received to calculate what should be sent
-	 * @return  bool     FALSE when the request needs to be updated
+	 * @return  integer|boolean Timestamp or FALSE when header is lacking or malformed
 	 */
-	public static function check($seconds = 60)
+	public static function get()
 	{
-		if ( ! empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) AND expires::check_headers())
+		if ( ! empty($_SERVER['HTTP_IF_MODIFIED_SINCE']))
 		{
+			// Some versions of IE6 append "; length=####"
 			if (($strpos = strpos($_SERVER['HTTP_IF_MODIFIED_SINCE'], ';')) !== FALSE)
 			{
-				// IE6 and perhaps other IE versions send length too, compensate here
 				$mod_time = substr($_SERVER['HTTP_IF_MODIFIED_SINCE'], 0, $strpos);
 			}
 			else
@@ -57,55 +52,69 @@ class expires_Core {
 				$mod_time = $_SERVER['HTTP_IF_MODIFIED_SINCE'];
 			}
 
-			$mod_time = strtotime($mod_time);
-			$mod_time_diff = $mod_time + $seconds - time();
-
-			if ($mod_time_diff > 0)
-			{
-				// Re-send headers
-				header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $mod_time));
-				header('Expires: '.gmdate('D, d M Y H:i:s T', time() + $mod_time_diff));
-				header('Cache-Control: max-age='.$mod_time_diff);
-				header('Status: 304 Not Modified', TRUE, 304);
-
-				// Prevent any output
-				Event::add('system.display', array('expires', 'prevent_output'));
-
-				// Exit to prevent other output
-				exit;
-			}
+			return strtotime($mod_time);
 		}
 
 		return FALSE;
 	}
 
 	/**
-	 * Check headers already created to not step on download or Img_lib's feet
+	 * Checks to see if content should be updated otherwise sends Not Modified status
+	 * and exits.
 	 *
-	 * @return boolean
+	 * @uses    exit()
+	 * @uses    expires::get()
+	 *
+	 * @param   integer         Maximum age of the content in seconds
+	 * @return  integer|boolean Timestamp of the If-Modified-Since header or FALSE when header is lacking or malformed
 	 */
-	public static function check_headers()
+	public static function check($seconds = 60)
 	{
-		foreach (headers_list() as $header)
+		if ($last_modified = expires::get())
 		{
-			if ((session_cache_limiter() == '' AND stripos($header, 'Last-Modified:') === 0)
-			    OR stripos($header, 'Expires:') === 0)
+			$expires = $last_modified + $seconds;
+			$max_age = $expires - time();
+
+			if ($max_age > 0)
 			{
-				return FALSE;
+				// Content has not expired
+				header($_SERVER['SERVER_PROTOCOL'].' 304 Not Modified');
+				header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $last_modified));
+
+				// HTTP 1.0
+				header('Expires: '.gmdate('D, d M Y H:i:s T', $expires));
+
+				// HTTP 1.1
+				header('Cache-Control: max-age='.$max_age);
+
+				// Clear any output
+				Event::add('system.display', create_function('', 'Kohana::$output = "";'));
+
+				exit;
 			}
 		}
 
-		return TRUE;
+		return $last_modified;
 	}
 
 	/**
-	 * Prevent any output from being displayed. Executed during system.display.
+	 * Check if expiration headers are already set
 	 *
-	 * @return  void
+	 * @return boolean
 	 */
-	public static function prevent_output()
+	public static function headers_set()
 	{
-		Kohana::$output = '';
+		foreach (headers_list() as $header)
+		{
+			if (strncasecmp($header, 'Expires:', 8) === 0
+				OR strncasecmp($header, 'Cache-Control:', 14) === 0
+				OR strncasecmp($header, 'Last-Modified:', 14) === 0)
+			{
+				return TRUE;
+			}
+		}
+
+		return FALSE;
 	}
 
 } // End expires

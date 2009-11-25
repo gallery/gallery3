@@ -2,12 +2,12 @@
 /**
  * URL helper class.
  *
- * $Id: url.php 4479 2009-07-23 04:51:22Z ixmatus $
+ * $Id: url.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class url_Core {
 
@@ -15,7 +15,7 @@ class url_Core {
 	 * Fetches the current URI.
 	 *
 	 * @param   boolean  include the query string
-	 * @param   boolean  include the suffix  
+	 * @param   boolean  include the suffix
 	 * @return  string
 	 */
 	public static function current($qs = FALSE, $suffix = FALSE)
@@ -167,7 +167,7 @@ class url_Core {
 		$separator = ($separator === '-') ? '-' : '_';
 
 		// Replace accented characters by their unaccented equivalents
-		$title = utf8::transliterate_to_ascii($title);
+		$title = text::transliterate_to_ascii($title);
 
 		// Remove all characters that are not the separator, a-z, 0-9, or whitespace
 		$title = preg_replace('/[^'.$separator.'a-z0-9\s]+/', '', strtolower($title));

@@ -26,7 +26,13 @@ $config['expire'] = 0;
 $config['secure'] = FALSE;
 
 /**
- * Enable this option to disable the cookie from being accessed when using a
- * secure protocol. This option is only available in PHP 5.2 and above.
+ * Enable this option to make the cookie accessible only through the
+ * HTTP protocol (e.g. no javascript access). This is not supported by all browsers.
  */
 $config['httponly'] = FALSE;
+
+/**
+ * Cookie salt for signed cookies.
+ * Make sure you change this to a unique value.
+ */
+$config['salt'] = 'K0hAN4 15 Th3 B357';

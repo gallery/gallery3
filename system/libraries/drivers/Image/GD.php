@@ -2,12 +2,12 @@
 /**
  * GD Image Driver.
  *
- * $Id: GD.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: GD.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Image
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Image_GD_Driver extends Image_Driver {
 
@@ -20,17 +20,17 @@ class Image_GD_Driver extends Image_Driver {
 	{
 		// Make sure that GD2 is available
 		if ( ! function_exists('gd_info'))
-			throw new Kohana_Exception('image.gd.requires_v2');
+			throw new Kohana_Exception('The Image library requires GD2. Please see http://php.net/gd_info for more information.');
 
 		// Get the GD information
 		$info = gd_info();
 
 		// Make sure that the GD2 is installed
 		if (strpos($info['GD Version'], '2.') === FALSE)
-			throw new Kohana_Exception('image.gd.requires_v2');
+			throw new Kohana_Exception('The Image library requires GD2. Please see http://php.net/gd_info for more information.');
 	}
 
-	public function process($image, $actions, $dir, $file, $render = FALSE)
+	public function process($image, $actions, $dir, $file, $render = FALSE, $background = NULL)
 	{
 		// Set the "create" function
 		switch ($image['type'])
@@ -63,11 +63,11 @@ class Image_GD_Driver extends Image_Driver {
 
 		// Make sure the image type is supported for import
 		if (empty($create) OR ! function_exists($create))
-			throw new Kohana_Exception('image.type_not_allowed', $image['file']);
+			throw new Kohana_Exception('The specified image, :type:, is not an allowed image type.', array(':type:' => $image['file']));
 
 		// Make sure the image type is supported for saving
 		if (empty($save) OR ! function_exists($save))
-			throw new Kohana_Exception('image.type_not_allowed', $dir.$file);
+			throw new Kohana_Exception('The specified image, :type:, is not an allowed image type.', array(':type:' => $dir.$file));
 
 		// Load the image
 		$this->image = $image;
@@ -211,11 +211,11 @@ class Image_GD_Driver extends Image_Driver {
 			// Recalculate the percentage to a pixel size
 			$properties['height'] = round($height * (substr($properties['height'], 0, -1) / 100));
 		}
-		
+
 		// Recalculate the width and height, if they are missing
 		empty($properties['width'])  and $properties['width']  = round($width * $properties['height'] / $height);
 		empty($properties['height']) and $properties['height'] = round($height * $properties['width'] / $width);
-		
+
 		if ($properties['master'] === Image::AUTO)
 		{
 			// Change an automatic master dim to the correct type
@@ -314,7 +314,7 @@ class Image_GD_Driver extends Image_Driver {
 	{
 		// Make sure that the sharpening function is available
 		if ( ! function_exists('imageconvolution'))
-			throw new Kohana_Exception('image.unsupported_method', __FUNCTION__);
+			throw new Kohana_Exception('Your configured driver does not support the :method: image transformation.', array(':method:' => __FUNCTION__));
 
 		// Amount should be in the range of 18-10
 		$amount = round(abs(-18 + ($amount * 0.08)), 2);
@@ -336,21 +336,50 @@ class Image_GD_Driver extends Image_Driver {
 		switch($properties['mime'])
 		{
 			case "image/jpeg":
-			$overlay_img = imagecreatefromjpeg($properties['overlay_file']);
+				$overlay_img = imagecreatefromjpeg($properties['overlay_file']);
 			break;
 
 			case "image/gif":
-			$overlay_img = imagecreatefromgif($properties['overlay_file']);
+				$overlay_img = imagecreatefromgif($properties['overlay_file']);
 			break;
 
 			case "image/png":
-			$overlay_img = imagecreatefrompng($properties['overlay_file']);
+				$overlay_img = imagecreatefrompng($properties['overlay_file']);
 			break;
 		}
 
-		imagecopymerge($this->tmp_image, $overlay_img, $properties['x'], $properties['y'], 0, 0, imagesx($overlay_img), imagesy($overlay_img), $properties['transparency']);
+		$this->imagecopymerge_alpha($this->tmp_image, $overlay_img, $properties['x'], $properties['y'], 0, 0, imagesx($overlay_img), imagesy($overlay_img), $properties['transparency']);
+
 		imagedestroy($overlay_img);
+
 		return TRUE;
+	}
+
+	/**
+	 * A replacement for php's imagecopymerge() function that supports the alpha channel
+	 * See php bug #23815:  http://bugs.php.net/bug.php?id=23815
+	 *
+	 * @param  resource		$dst_im		Destination image link resource
+	 * @param  resource		$src_im		Source image link resource
+	 * @param  integer		$dst_x		x-coordinate of destination point
+	 * @param  integer		$dst_y		y-coordinate of destination point
+	 * @param  integer		$src_x		x-coordinate of source point
+	 * @param  integer		$src_y		y-coordinate of source point
+	 * @param  integer		$src_w		Source width
+	 * @param  integer		$src_h		Source height
+	 * @param  integer		$pct		Transparency percent (0 to 100)
+	 */
+	protected function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct)
+	{
+		// Create a new blank image the site of our source image
+		$cut = imagecreatetruecolor($src_w, $src_h);
+
+		// Copy the blank image into the destination image where the source goes
+		imagecopy($cut, $dst_im, 0, 0, $dst_x, $dst_y, $src_w, $src_h);
+
+		// Place the source image in the destination image
+		imagecopy($cut, $src_im, 0, 0, $src_x, $src_y, $src_w, $src_h);
+		imagecopymerge($dst_im, $cut, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct);
 	}
 
 	protected function properties()
@@ -368,6 +397,16 @@ class Image_GD_Driver extends Image_Driver {
 	 */
 	protected function imagecreatetransparent($width, $height)
 	{
+		if ($width < 1)
+		{
+			$width = 1;
+		}
+
+		if ($height < 1)
+		{
+			$height = 1;
+		}
+
 		if (self::$blank_png === NULL)
 		{
 			// Decode the blank PNG if it has not been done already
