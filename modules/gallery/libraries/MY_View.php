@@ -18,6 +18,31 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class View extends View_Core {
+  static $global_data;
+
+  /**
+   * Reimplement Kohana 2.3's View::set_global() functionality.
+   */
+  public function set_global($key, $value) {
+    View::$global_data->$key = $value;
+    $this->$key = $value;
+  }
+
+  public function __isset($key) {
+    if (isset(View::$global_data->$key)) {
+      return true;
+    }
+    return parent::__isset($key);
+  }
+
+  public function &__get($key) {
+    Kohana_Log::add("error",print_r("__get($key)",1));
+    if (isset(View::$global_data->$key)) {
+      return View::$global_data->$key;
+    }
+    return parent::__get($key);
+  }
+
   /**
    * Override View_Core::__construct so that we can set the csrf value into all views.
    *
@@ -38,7 +63,7 @@ class View extends View_Core {
     try {
       return parent::render($print, $renderer);
     } catch (Exception $e) {
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       return "";
     }
   }

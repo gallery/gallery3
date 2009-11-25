@@ -106,15 +106,15 @@ class Access_Helper_Test extends Unit_Test_Case {
     $item = album::create($root,  rand(), "test album");
 
     // New rows exist
-    $this->assert_true(ORM::factory("access_cache")->where("item_id", $item->id)->find()->loaded);
-    $this->assert_true(ORM::factory("access_intent")->where("item_id", $item->id)->find()->loaded);
+    $this->assert_true(ORM::factory("access_cache")->where("item_id", $item->id)->find()->loaded());
+    $this->assert_true(ORM::factory("access_intent")->where("item_id", $item->id)->find()->loaded());
 
     // Delete the item
     $item->delete();
 
     // Rows are gone
-    $this->assert_false(ORM::factory("access_cache")->where("item_id", $item->id)->find()->loaded);
-    $this->assert_false(ORM::factory("access_intent")->where("item_id", $item->id)->find()->loaded);
+    $this->assert_false(ORM::factory("access_cache")->where("item_id", $item->id)->find()->loaded());
+    $this->assert_false(ORM::factory("access_intent")->where("item_id", $item->id)->find()->loaded());
   }
 
   public function new_photos_inherit_parent_permissions_test() {

@@ -35,7 +35,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
   public function form_delete($id) {
     $tag = ORM::factory("tag", $id);
-    if ($tag->loaded) {
+    if ($tag->loaded()) {
       print tag::get_delete_form($tag);
     }
   }
@@ -44,7 +44,7 @@ class Admin_Tags_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $tag = ORM::factory("tag", $id);
-    if (!$tag->loaded) {
+    if (!$tag->loaded()) {
       kohana::show_404();
     }
 
@@ -68,7 +68,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
   public function form_rename($id) {
     $tag = ORM::factory("tag", $id);
-    if ($tag->loaded) {
+    if ($tag->loaded()) {
       print InPlaceEdit::factory($tag->name)
         ->action("admin/tags/rename/$id")
         ->render();
@@ -79,7 +79,7 @@ class Admin_Tags_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $tag = ORM::factory("tag", $id);
-    if (!$tag->loaded) {
+    if (!$tag->loaded()) {
       kohana::show_404();
     }
 

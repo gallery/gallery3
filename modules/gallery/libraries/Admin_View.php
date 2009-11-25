@@ -31,7 +31,7 @@ class Admin_View_Core extends Gallery_View {
     if (!file_exists(THEMEPATH . $theme_name)) {
       module::set_var("gallery", "active_admin_theme", "admin_wind");
       theme::load_themes();
-      Kohana::log("error", "Unable to locate theme '$theme_name', switching to default theme.");
+      Kohana_Log::add("error", "Unable to locate theme '$theme_name', switching to default theme.");
     }
     parent::__construct($name);
 

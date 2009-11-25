@@ -146,7 +146,7 @@ class SafeString_Core {
    * Escape special HTML chars ("<", ">", "&", etc.) to HTML entities.
    */
   private static function _escape_for_html($dirty_html) {
-    return html::specialchars($dirty_html);
+    return html::chars($dirty_html);
   }
 
   /**

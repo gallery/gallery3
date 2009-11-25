@@ -103,7 +103,7 @@ class Server_Add_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded || $task->owner_id != identity::active_user()->id) {
+    if (!$task->loaded() || $task->owner_id != identity::active_user()->id) {
       access::forbidden();
     }
 
@@ -216,7 +216,7 @@ class Server_Add_Controller extends Admin_Controller {
         // Look up the parent item for this entry.  By now it should exist, but if none was
         // specified, then this belongs as a child of the current item.
         $parent_entry = ORM::factory("server_add_file", $entry->parent_id);
-        if (!$parent_entry->loaded) {
+        if (!$parent_entry->loaded()) {
           $parent = ORM::factory("item", $task->get("item_id"));
         } else {
           $parent = ORM::factory("item", $parent_entry->item_id);

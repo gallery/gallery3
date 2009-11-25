@@ -33,7 +33,7 @@ class L10n_Client_Controller extends Controller {
                       "locale" => "root"))
         ->find();
 
-    if (!$root_message->loaded) {
+    if (!$root_message->loaded()) {
       throw new Exception("@todo bad request data / illegal state");
     }
     $is_plural = Gallery_I18n::is_plural_message(unserialize($root_message->message));
@@ -60,7 +60,7 @@ class L10n_Client_Controller extends Controller {
                     "locale" => $locale))
       ->find();
 
-    if (!$entry->loaded) {
+    if (!$entry->loaded()) {
       $entry->key = $key;
       $entry->locale = $locale;
       $entry->message = $root_message->message;
@@ -74,7 +74,7 @@ class L10n_Client_Controller extends Controller {
                     "locale" => $locale))
       ->find();
 
-    if (!$entry_from_incoming->loaded) {
+    if (!$entry_from_incoming->loaded()) {
       $entry->base_revision = $entry_from_incoming->revision;
     }
 

@@ -46,7 +46,7 @@ class auth_Core {
       try {
         Session::instance()->destroy();
       } catch (Exception $e) {
-        Kohana::log("error", $e);
+        Kohana_Log::add("error", $e);
       }
       module::event("user_logout", $user);
     }

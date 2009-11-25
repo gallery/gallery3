@@ -265,7 +265,7 @@ class Admin_Users_Controller extends Admin_Controller {
     if ($valid) {
       $new_name = $form->edit_group->inputs["name"]->value;
       $group = group::lookup_by_name($name);
-      if ($group->loaded) {
+      if ($group->loaded()) {
         $form->edit_group->inputs["name"]->add_error("in_use", 1);
         $valid = false;
       }

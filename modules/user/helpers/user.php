@@ -45,7 +45,7 @@ class user_Core {
    */
   static function create($name, $full_name, $password) {
     $user = ORM::factory("user")->where("name", $name)->find();
-    if ($user->loaded) {
+    if ($user->loaded()) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
     }
 
@@ -163,7 +163,7 @@ class user_Core {
   private static function _lookup_user_by_field($field_name, $value) {
     try {
       $user = model_cache::get("user", $value, $field_name);
-      if ($user->loaded) {
+      if ($user->loaded()) {
         return $user;
       }
     } catch (Exception $e) {

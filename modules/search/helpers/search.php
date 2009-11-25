@@ -61,7 +61,7 @@ class search_Core {
   static function update($item) {
     $data = new ArrayObject();
     $record = ORM::factory("search_record")->where("item_id", $item->id)->find();
-    if (!$record->loaded) {
+    if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
 

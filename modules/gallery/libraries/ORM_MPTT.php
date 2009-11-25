@@ -133,10 +133,10 @@ class ORM_MPTT_Core extends ORM {
    */
   function parents() {
     return $this
-      ->where("`left_ptr` <= {$this->left_ptr}")
-      ->where("`right_ptr` >= {$this->right_ptr}")
-      ->where("id <> {$this->id}")
-      ->orderby("left_ptr", "ASC")
+      ->where("left_ptr", "<=", $this->left_ptr)
+      ->where("right_ptr", ">=", $this->right_ptr)
+      ->where("id", "<>", $this->id)
+      ->order_by("left_ptr", "ASC")
       ->find_all();
   }
 
@@ -147,14 +147,17 @@ class ORM_MPTT_Core extends ORM {
    * @param   integer  SQL limit
    * @param   integer  SQL offset
    * @param   array    additional where clauses
-   * @param   array    orderby
+   * @param   array    order_by
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $where=array(), $orderby=array("id" => "ASC")) {
+  function children($limit=null, $offset=0, $where=null, $order_by=array("id" => "ASC")) {
+    if ($where) {
+      $this->where($where);
+    }
+
     return $this
-      ->where("parent_id", $this->id)
-      ->where($where)
-      ->orderby($orderby)
+      ->where("parent_id", "=", $this->id)
+      ->order_by($order_by)
       ->find_all($limit, $offset);
   }
 
@@ -165,10 +168,13 @@ class ORM_MPTT_Core extends ORM {
    * @param   array    additional where clauses
    * @return array ORM
    */
-  function children_count($where=array()) {
+  function children_count($where=null) {
+    if ($where) {
+      $this->where($where);
+    }
+
     return $this
-      ->where($where)
-      ->where("parent_id", $this->id)
+      ->where("parent_id", "=", $this->id)
       ->count_all();
   }
 
@@ -178,15 +184,18 @@ class ORM_MPTT_Core extends ORM {
    * @param   integer  SQL limit
    * @param   integer  SQL offset
    * @param   array    additional where clauses
-   * @param   array    orderby
+   * @param   array    order_by
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $where=array(), $orderby=array("id" => "ASC")) {
+  function descendants($limit=null, $offset=0, $where=null, $order_by=array("id" => "ASC")) {
+    if ($where) {
+      $this->where($where);
+    }
+
     return $this
-      ->where("left_ptr >", $this->left_ptr)
-      ->where("right_ptr <=", $this->right_ptr)
-      ->where($where)
-      ->orderby($orderby)
+      ->where("left_ptr", ">", $this->left_ptr)
+      ->where("right_ptr", "<=", $this->right_ptr)
+      ->order_by($order_by)
       ->find_all($limit, $offset);
   }
 
@@ -196,11 +205,14 @@ class ORM_MPTT_Core extends ORM {
    * @param    array    additional where clauses
    * @return   integer  child count
    */
-  function descendants_count($where=array()) {
+  function descendants_count($where=null) {
+    if ($where) {
+      $this->where($where);
+    }
+
     return $this
-      ->where("left_ptr >", $this->left_ptr)
-      ->where("right_ptr <=", $this->right_ptr)
-      ->where($where)
+      ->where("left_ptr", ">", $this->left_ptr)
+      ->where("right_ptr", "<=", $this->right_ptr)
       ->count_all();
   }
 

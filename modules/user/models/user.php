@@ -62,7 +62,7 @@ class User_Model extends ORM implements User_Definition {
   }
 
   public function save() {
-    if (!$this->loaded) {
+    if (!$this->loaded()) {
         $created = 1;
     }
     parent::save();

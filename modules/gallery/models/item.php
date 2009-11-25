@@ -309,7 +309,7 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function relative_path() {
-    if (!$this->loaded) {
+    if (!$this->loaded()) {
       return;
     }
 
@@ -324,7 +324,7 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function relative_url() {
-    if (!$this->loaded) {
+    if (!$this->loaded()) {
       return;
     }
 
@@ -383,7 +383,7 @@ class Item_Model extends ORM_MPTT {
 
     if (!empty($this->changed) && $significant_changes) {
       $this->updated = time();
-      if (!$this->loaded) {
+      if (!$this->loaded()) {
         $this->created = $this->updated;
         $this->weight = item::get_max_weight();
       } else {

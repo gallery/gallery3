@@ -171,7 +171,7 @@ class graphics_Core {
     } catch (Exception $e) {
       // Something went wrong rebuilding the image.  Leave it dirty and move on.
       // @todo we should handle this better.
-      Kohana::log("error", "Caught exception rebuilding image: {$item->title}\n" .
+      Kohana_Log::add("error", "Caught exception rebuilding image: {$item->title}\n" .
                   $e->getMessage() . "\n" . $e->getTraceAsString());
       throw $e;
     }

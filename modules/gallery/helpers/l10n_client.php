@@ -136,7 +136,7 @@ class l10n_client_Core {
       $entry = ORM::factory("incoming_translation")
         ->where(array("key" => $key, "locale" => $locale))
         ->find();
-      if (!$entry->loaded) {
+      if (!$entry->loaded()) {
         // @todo Load a message key -> message (text) dict into memory outside of this loop
         $root_entry = ORM::factory("incoming_translation")
           ->where(array("key" => $key, "locale" => "root"))

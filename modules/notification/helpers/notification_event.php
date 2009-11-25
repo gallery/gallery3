@@ -25,8 +25,8 @@ class notification_event_Core {
     try {
       notification::send_item_updated($new);
     } catch (Exception $e) {
-      Kohana::log("error", "@todo notification_event::item_updated() failed");
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "@todo notification_event::item_updated() failed");
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -34,8 +34,8 @@ class notification_event_Core {
     try {
       notification::send_item_add($item);
     } catch (Exception $e) {
-      Kohana::log("error", "@todo notification_event::item_created() failed");
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "@todo notification_event::item_created() failed");
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -47,8 +47,8 @@ class notification_event_Core {
         notification::remove_watch($item);
       }
     } catch (Exception $e) {
-      Kohana::log("error", "@todo notification_event::item_deleted() failed");
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "@todo notification_event::item_deleted() failed");
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -69,8 +69,8 @@ class notification_event_Core {
         notification::send_comment_published($comment);
       }
     } catch (Exception $e) {
-      Kohana::log("error", "@todo notification_event::comment_created() failed");
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "@todo notification_event::comment_created() failed");
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -80,8 +80,8 @@ class notification_event_Core {
         notification::send_comment_published($new);
       }
     } catch (Exception $e) {
-      Kohana::log("error", "@todo notification_event::comment_updated() failed");
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "@todo notification_event::comment_updated() failed");
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -91,8 +91,8 @@ class notification_event_Core {
         ->where("user_id", $user->id)
         ->delete_all();
     } catch (Exception $e) {
-      Kohana::log("error", "@todo notification_event::user_before_delete() failed");
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "@todo notification_event::user_before_delete() failed");
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 
@@ -100,8 +100,8 @@ class notification_event_Core {
     try {
       notification::send_pending_notifications();
     } catch (Exception $e) {
-      Kohana::log("error", "@todo notification_event::batch_complete() failed");
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "@todo notification_event::batch_complete() failed");
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
     }
   }
 

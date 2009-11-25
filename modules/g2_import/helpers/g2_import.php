@@ -458,7 +458,7 @@ class g2_import_Core {
     switch ($g2_type) {
     case "GalleryPhotoItem":
       if (!in_array($g2_item->getMimeType(), array("image/jpeg", "image/gif", "image/png"))) {
-        Kohana::log("alert", "$g2_path is an unsupported image type; using a placeholder gif");
+        Kohana_Log::add("alert", "$g2_path is an unsupported image type; using a placeholder gif");
         $message[] = t("'%path' is an unsupported image type, using a placeholder",
                      array("path" => $g2_path));
         $g2_path = MODPATH . "g2_import/data/broken-image.gif";
@@ -473,7 +473,7 @@ class g2_import_Core {
           self::_decode_html_special_chars(self::extract_description($g2_item)),
           self::map($g2_item->getOwnerId()));
       } catch (Exception $e) {
-        Kohana::log(
+        Kohana_Log::add(
           "alert", "Corrupt image $g2_path\n" . $e->__toString());
         $message[] = t("Corrupt image '%path'", array("path" => $g2_path));
         $message[] = $e->__toString();
@@ -493,13 +493,13 @@ class g2_import_Core {
             self::_decode_html_special_chars(self::extract_description($g2_item)),
             self::map($g2_item->getOwnerId()));
         } catch (Exception $e) {
-          Kohana::log("alert", "Corrupt movie $g2_path\n" . $e->__toString());
+          Kohana_Log::add("alert", "Corrupt movie $g2_path\n" . $e->__toString());
           $message[] = t("Corrupt movie '%path'", array("path" => $g2_path));
           $message[] = $e->__toString();
           $corrupt = 1;
         }
       } else {
-        Kohana::log("alert", "$g2_path is an unsupported movie type");
+        Kohana_Log::add("alert", "$g2_path is an unsupported movie type");
         $message[] = t("'%path' is an unsupported movie type", array("path" => $g2_path));
         $corrupt = 1;
       }
@@ -868,7 +868,7 @@ class g2_import_Core {
   static function map($g2_id) {
     if (!array_key_exists($g2_id, self::$map)) {
       $g2_map = ORM::factory("g2_map")->where("g2_id", $g2_id)->find();
-      self::$map[$g2_id] = $g2_map->loaded ? $g2_map->g3_id : null;
+      self::$map[$g2_id] = $g2_map->loaded() ? $g2_map->g3_id : null;
     }
 
     return self::$map[$g2_id];
@@ -887,7 +887,7 @@ class g2_import_Core {
 
   static function log($msg) {
     message::warning($msg);
-    Kohana::log("alert", $msg);
+    Kohana_Log::add("alert", $msg);
   }
 }
 
@@ -906,7 +906,7 @@ function g2() {
   $args = func_get_arg(0);
   $ret = array_shift($args);
   if ($ret) {
-    Kohana::log("error", "Gallery 2 call failed with: " . $ret->getAsText());
+    Kohana_Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
     throw new Exception("@todo G2_FUNCTION_FAILED");
   }
   if (count($args) == 1) {

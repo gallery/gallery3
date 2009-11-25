@@ -128,21 +128,21 @@ class Gallery_I18n_Core {
     if (!isset($this->_cache[$locale])) {
       $this->_cache[$locale] = array();
       // TODO: Load data from locale file instead of the DB.
-      foreach (Database::instance()
+      foreach (db::build()
                ->select("key", "translation")
                ->from("incoming_translations")
                ->where(array("locale" => $locale))
-               ->get()
+               ->execute()
                ->as_array() as $row) {
         $this->_cache[$locale][$row->key] = unserialize($row->translation);
       }
 
       // Override incoming with outgoing...
-      foreach (Database::instance()
+      foreach (db::build()
                ->select("key", "translation")
                ->from("outgoing_translations")
                ->where(array("locale" => $locale))
-               ->get()
+               ->execute()
                ->as_array() as $row) {
         $this->_cache[$locale][$row->key] = unserialize($row->translation);
       }

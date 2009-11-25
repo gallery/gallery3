@@ -36,7 +36,7 @@ class photo_Core {
    */
   static function create($parent, $filename, $name, $title,
                          $description=null, $owner_id=null, $slug=null) {
-    if (!$parent->loaded || !$parent->is_album()) {
+    if (!$parent->loaded() || !$parent->is_album()) {
       throw new Exception("@todo INVALID_PARENT");
     }
 

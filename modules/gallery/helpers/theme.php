@@ -43,7 +43,7 @@ class theme_Core {
     }
     $modules = Kohana::config("core.modules");
     array_unshift($modules, THEMEPATH . $theme_name);
-    Kohana::config_set("core.modules", $modules);
+    Kohana_Config::instance()->set("core.modules", $modules);
   }
 
   static function get_edit_form_admin() {

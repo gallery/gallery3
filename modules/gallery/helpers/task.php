@@ -51,7 +51,7 @@ class task_Core {
 
   static function cancel($task_id) {
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
+    if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
     $task->done = 1;
@@ -65,14 +65,14 @@ class task_Core {
 
   static function remove($task_id) {
     $task = ORM::factory("task", $task_id);
-    if ($task->loaded) {
+    if ($task->loaded()) {
       $task->delete();
     }
   }
 
   static function run($task_id) {
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
+    if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
 
@@ -84,7 +84,7 @@ class task_Core {
       }
       $task->save();
     } catch (Exception $e) {
-      Kohana::log("error", $e->__toString());
+      Kohana_Log::add("error", $e->__toString());
       $task->log($e->__toString());
       $task->state = "error";
       $task->done = true;

@@ -28,7 +28,7 @@ class Log_Model extends ORM {
       try {
         return identity::lookup_user($this->user_id);
       } catch (Exception $e) {
-        Kohana::log("alert", "Unable to load user with id $this->user_id");
+        Kohana_Log::add("alert", "Unable to load user with id $this->user_id");
         return null;
       }
     } else {

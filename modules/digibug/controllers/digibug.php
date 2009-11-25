@@ -81,7 +81,7 @@ class Digibug_Controller extends Controller {
     }
 
     $proxy = ORM::factory("digibug_proxy", array("uuid" => $id));
-    if (!$proxy->loaded || !$proxy->item->loaded) {
+    if (!$proxy->loaded() || !$proxy->item->loaded()) {
       Kohana::show_404();
     }
 

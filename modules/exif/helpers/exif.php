@@ -74,7 +74,7 @@ class exif_Core {
     $item->save();
 
     $record = ORM::factory("exif_record")->where("item_id", $item->id)->find();
-    if (!$record->loaded) {
+    if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
     $record->data = serialize($keys);
@@ -88,7 +88,7 @@ class exif_Core {
     $record = ORM::factory("exif_record")
       ->where("item_id", $item->id)
       ->find();
-    if (!$record->loaded) {
+    if (!$record->loaded()) {
       return array();
     }
 

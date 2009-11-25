@@ -54,7 +54,7 @@ class IdentityProvider_Core {
    */
   static function reset() {
     self::$instance = null;
-    Kohana::config_clear("identity");
+    Kohana_Config::instance()->clear("identity");
   }
 
   /**
@@ -90,7 +90,7 @@ class IdentityProvider_Core {
                                  get_class($this), "IdentityProvider_Driver");
     }
 
-    Kohana::log("debug", "Identity Library initialized");
+    Kohana_Log::add("debug", "Identity Library initialized");
   }
 
   /**

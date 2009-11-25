@@ -51,7 +51,7 @@ class tag_event_Core {
       try {
         tag::add($photo, $tag);
       } catch (Exception $e) {
-        Kohana::log("error", "Error adding tag: $tag\n" .
+        Kohana_Log::add("error", "Error adding tag: $tag\n" .
                     $e->getMessage() . "\n" . $e->getTraceAsString());
       }
     }

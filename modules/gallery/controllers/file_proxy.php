@@ -58,7 +58,7 @@ class File_Proxy_Controller extends Controller {
 
     // We now have the relative path to the item.  Search for it in the path cache
     $item = ORM::factory("item")->where("relative_path_cache", $path)->find();
-    if (!$item->loaded) {
+    if (!$item->loaded()) {
       // We didn't turn it up.  It's possible that the relative_path_cache is out of date here.
       // There was fallback code, but bharat deleted it in 8f1bca74.  If it turns out to be
       // necessary, it's easily resurrected.
@@ -70,14 +70,14 @@ class File_Proxy_Controller extends Controller {
         foreach (array("flv", "mp4") as $ext) {
           $movie_path = preg_replace('/.jpg$/', ".$ext", $path);
           $item = ORM::factory("item")->where("relative_path_cache", $movie_path)->find();
-          if ($item->loaded) {
+          if ($item->loaded()) {
             break;
           }
         }
       }
     }
 
-    if (!$item->loaded) {
+    if (!$item->loaded()) {
       kohana::show_404();
     }
 

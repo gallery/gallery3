@@ -43,7 +43,7 @@ class l10n_scanner_Core {
     }
 
     $entry = ORM::factory("incoming_translation", array("key" => $key));
-    if (!$entry->loaded) {
+    if (!$entry->loaded()) {
       $entry->key = $key;
       $entry->message = serialize($message);
       $entry->locale = "root";

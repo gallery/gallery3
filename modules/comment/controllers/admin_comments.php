@@ -110,7 +110,7 @@ class Admin_Comments_Controller extends Admin_Controller {
 
     $comment = ORM::factory("comment", $id);
     $orig = clone $comment;
-    if ($comment->loaded) {
+    if ($comment->loaded()) {
       $comment->state = $state;
       $comment->save();
     }

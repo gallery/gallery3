@@ -22,8 +22,8 @@ class model_cache_Core {
 
   static function get($model_name, $id, $field_name="id") {
     if (TEST_MODE || empty(self::$cache->$model_name->$field_name->$id)) {
-      $model = ORM::factory($model_name)->where($field_name, $id)->find();
-      if (!$model->loaded) {
+      $model = ORM::factory($model_name)->where($field_name, "=", $id)->find();
+      if (!$model->loaded()) {
         throw new Exception("@todo MISSING_MODEL $model_name:$id");
       }
       self::$cache->$model_name->$field_name->$id = $model;

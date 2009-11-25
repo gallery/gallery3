@@ -32,7 +32,7 @@ class Gallery_View_Core extends View {
     if (($path = gallery::find_file("js", $file, false))) {
       $this->scripts[$path] = 1;
     } else {
-      Kohana::log("error", "Can't find script file: $file");
+      Kohana_Log::add("error", "Can't find script file: $file");
     }
   }
 
@@ -55,7 +55,7 @@ class Gallery_View_Core extends View {
     if (($path = gallery::find_file("css", $file, false))) {
       $this->css[$path] = 1;
     } else {
-      Kohana::log("error", "Can't find css file: $file");
+      Kohana_Log::add("error", "Can't find css file: $file");
     }
   }
 
@@ -130,7 +130,7 @@ class Gallery_View_Core extends View {
           $search[] = $match[0];
           $replace[] = "url('" . url::abs_file($relative) . "')";
         } else {
-          Kohana::log("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
+          Kohana_Log::add("error", "Missing URL reference '{$match[1]}' in CSS file '$css_file'");
         }
       }
       $replace = str_replace(DIRECTORY_SEPARATOR, "/", $replace);

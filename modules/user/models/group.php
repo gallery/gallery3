@@ -34,7 +34,7 @@ class Group_Model extends ORM implements Group_Definition {
   }
 
   public function save() {
-    if (!$this->loaded) {
+    if (!$this->loaded()) {
         $created = 1;
     }
     parent::save();

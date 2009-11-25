@@ -38,7 +38,7 @@ class notification {
       ->where("item_id", $item->id)
       ->where("user_id", $user->id)
       ->find()
-      ->loaded;
+      ->loaded();
   }
 
   static function add_watch($item, $user=null) {

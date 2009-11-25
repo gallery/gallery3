@@ -156,13 +156,7 @@ class item_Core {
     $view_restrictions = array();
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
-        // Separate the first restriction from the rest to make it easier for us to formulate
-        // our where clause below
-        if (empty($view_restrictions)) {
-          $view_restrictions[0] = "items.view_$id";
-        } else {
-          $view_restrictions[1]["items.view_$id"] = access::ALLOW;
-        }
+        $view_restrictions[] = "items.view_$id";
       }
     }
     switch (count($view_restrictions)) {
@@ -170,14 +164,14 @@ class item_Core {
       break;
 
     case 1:
-      $model->where($view_restrictions[0], access::ALLOW);
+      $model->where($view_restrictions[0], "=", access::ALLOW);
       break;
 
     default:
-      $model->open_paren();
-      $model->where($view_restrictions[0], access::ALLOW);
-      $model->orwhere($view_restrictions[1]);
-      $model->close_paren();
+      $model
+        ->and_open()
+        ->or_where($view_restrictions, "=", access::ALLOW)
+        ->close();
       break;
     }
 

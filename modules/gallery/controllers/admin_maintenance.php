@@ -75,7 +75,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
+    if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
     $view = new View("admin_maintenance_task.html");
@@ -97,7 +97,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
+    if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
     $view = new View("admin_maintenance_show_log.html");
@@ -114,7 +114,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
+    if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
 
@@ -184,7 +184,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     try {
       $task = task::run($task_id);
     } catch (Exception $e) {
-      Kohana::log(
+      Kohana_Log::add(
         "error",
         sprintf(
           "%s in %s at line %s:\n%s", $e->getMessage(), $e->getFile(),

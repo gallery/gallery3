@@ -66,7 +66,7 @@ class gallery_task_Core {
         }
 
         $item = ORM::factory("item", $row->id);
-        if ($item->loaded) {
+        if ($item->loaded()) {
           try {
             graphics::generate($item);
             $completed++;

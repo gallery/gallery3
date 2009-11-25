@@ -31,7 +31,7 @@ class tag_rss_Core {
   static function feed($feed_id, $offset, $limit, $id) {
     if ($feed_id == "tag") {
       $tag = ORM::factory("tag", $id);
-      if (!$tag->loaded) {
+      if (!$tag->loaded()) {
         Kohana::show_404();
       }
       $feed->children = $tag->items($limit, $offset, "photo");

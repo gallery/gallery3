@@ -47,7 +47,7 @@ class Password_Controller extends Controller {
     $valid = $form->validate();
     if ($valid) {
       $user = user::lookup_by_name($form->reset->inputs["name"]->value);
-      if (!$user->loaded || empty($user->email)) {
+      if (!$user->loaded() || empty($user->email)) {
         $form->reset->inputs["name"]->add_error("no_email", 1);
         $valid = false;
       }

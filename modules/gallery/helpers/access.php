@@ -91,7 +91,7 @@ class access_Core {
    * @return boolean
    */
   static function user_can($user, $perm_name, $item) {
-    if (!$item->loaded) {
+    if (!$item->loaded()) {
       return false;
     }
 
@@ -101,7 +101,7 @@ class access_Core {
 
     $resource = $perm_name == "view" ?
       $item : model_cache::get("access_cache", $item->id, "item_id");
-    foreach ($user->groups as $group) {
+    foreach ($user->groups->find_all() as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
       }
@@ -175,7 +175,7 @@ class access_Core {
       ->limit(1)
       ->find();
 
-    if ($lock->loaded) {
+    if ($lock->loaded()) {
       return $lock;
     } else {
       return null;
@@ -201,7 +201,7 @@ class access_Core {
     if (!($group instanceof Group_Definition)) {
       throw new Exception("@todo PERMISSIONS_ONLY_WORK_ON_GROUPS");
     }
-    if (!$album->loaded) {
+    if (!$album->loaded()) {
       throw new Exception("@todo INVALID_ALBUM $album->id");
     }
     if (!$album->is_album()) {
@@ -282,7 +282,7 @@ class access_Core {
   */
   static function register_permission($name, $display_name) {
     $permission = ORM::factory("permission", $name);
-    if ($permission->loaded) {
+    if ($permission->loaded()) {
       throw new Exception("@todo PERMISSION_ALREADY_EXISTS $name");
     }
     $permission->name = $name;
@@ -305,7 +305,7 @@ class access_Core {
       self::_drop_columns($name, $group);
     }
     $permission = ORM::factory("permission")->where("name", $name)->find();
-    if ($permission->loaded) {
+    if ($permission->loaded()) {
       $permission->delete();
     }
   }
@@ -342,7 +342,7 @@ class access_Core {
    */
   static function add_item($item) {
     $access_intent = ORM::factory("access_intent", $item->id);
-    if ($access_intent->loaded) {
+    if ($access_intent->loaded()) {
       throw new Exception("@todo ITEM_ALREADY_ADDED $item->id");
     }
     $access_intent = ORM::factory("access_intent");
@@ -497,7 +497,7 @@ class access_Core {
         ->orderby("left_ptr", "DESC")
         ->limit(1)
         ->find();
-      if ($tmp_item->loaded) {
+      if ($tmp_item->loaded()) {
         $item = $tmp_item;
       }
     }
@@ -568,7 +568,7 @@ class access_Core {
         ->orderby("left_ptr", "DESC")
         ->limit(1)
         ->find();
-      if ($tmp_item->loaded) {
+      if ($tmp_item->loaded()) {
         $item = $tmp_item;
       }
     }
