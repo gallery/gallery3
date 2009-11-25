@@ -118,6 +118,10 @@ modules/gallery/views/admin_themes.html.php                  62  DIRTY    $theme
 modules/gallery/views/admin_themes.html.php                  76  DIRTY    $info->name
 modules/gallery/views/admin_themes.html.php                  78  DIRTY    $info->description
 modules/gallery/views/admin_themes_preview.html.php          7   DIRTY_ATTR $url
+modules/gallery/views/form_uploadify.html.php                20  DIRTY_JS url::file("lib/uploadify/uploadify.swf")
+modules/gallery/views/form_uploadify.html.php                21  DIRTY_JS url::site("simple_uploader/add_photo/{$album->id}")
+modules/gallery/views/form_uploadify.html.php                25  DIRTY_JS url::file("lib/uploadify/cancel.png")
+modules/gallery/views/form_uploadify.html.php                52  DIRTY_JS t("Completed")
 modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"),$hidden)
 modules/gallery/views/in_place_edit.html.php                 5   DIRTY    form::input("input",$form["input"]," class=\"textbox\"")
 modules/gallery/views/in_place_edit.html.php                 12  DIRTY    form::close()
@@ -203,10 +207,6 @@ modules/gallery/views/permissions_form.html.php              75  DIRTY_JS $item-
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $group->id
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $permission->id
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $item->id
-modules/gallery/views/simple_uploader.html.php               20  DIRTY_JS url::file("lib/uploadify/uploadify.swf")
-modules/gallery/views/simple_uploader.html.php               21  DIRTY_JS url::site("simple_uploader/add_photo/{$item->id}")
-modules/gallery/views/simple_uploader.html.php               28  DIRTY_JS url::file("lib/uploadify/cancel.png")
-modules/gallery/views/simple_uploader.html.php               56  DIRTY_JS t("Completed")
 modules/gallery/views/upgrader.html.php                      57  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      61  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      69  DIRTY_ATTR $module->version==$module->code_version?"current":"upgradeable"
@@ -285,10 +285,10 @@ modules/rss/views/feed.mrss.php                              72  DIRTY_ATTR $chi
 modules/rss/views/feed.mrss.php                              73  DIRTY_ATTR $child->width
 modules/rss/views/feed.mrss.php                              74  DIRTY_ATTR $child->mime_type
 modules/rss/views/rss_block.html.php                         6   DIRTY_JS rss::url($url)
-modules/search/views/search.html.php                         30  DIRTY_ATTR $item_class
-modules/search/views/search.html.php                         31  DIRTY_JS $item->url()
-modules/search/views/search.html.php                         32  DIRTY    $item->thumb_img()
-modules/search/views/search.html.php                         43  DIRTY    $theme->paginator()
+modules/search/views/search.html.php                         27  DIRTY_ATTR $item_class
+modules/search/views/search.html.php                         28  DIRTY_JS $item->url()
+modules/search/views/search.html.php                         29  DIRTY    $item->thumb_img()
+modules/search/views/search.html.php                         40  DIRTY    $theme->paginator()
 modules/server_add/views/admin_server_add.html.php           5   DIRTY    $form
 modules/server_add/views/admin_server_add.html.php           15  DIRTY_ATTR $id
 modules/server_add/views/server_add_tree.html.php            20  DIRTY_ATTR is_dir($file)?"ui-icon-folder-collapsed":"ui-icon-document"
@@ -371,10 +371,10 @@ themes/wind/views/page.html.php                              44  DIRTY    $thumb
 themes/wind/views/page.html.php                              81  DIRTY    $header_text
 themes/wind/views/page.html.php                              83  DIRTY_JS item::root()->url()
 themes/wind/views/page.html.php                              87  DIRTY    $theme->user_menu()
-themes/wind/views/page.html.php                              104 DIRTY_JS $parent->url($parent==$theme->item()->parent()?"show={$theme->item()->id}":null)
-themes/wind/views/page.html.php                              120 DIRTY    $content
-themes/wind/views/page.html.php                              126 DIRTY    newView("sidebar.html")
-themes/wind/views/page.html.php                              133 DIRTY    $footer_text
+themes/wind/views/page.html.php                              108 DIRTY_JS $parent->url($parent==$theme->item()->parent()?"show={$theme->item()->id}":null)
+themes/wind/views/page.html.php                              124 DIRTY    $content
+themes/wind/views/page.html.php                              130 DIRTY    newView("sidebar.html")
+themes/wind/views/page.html.php                              137 DIRTY    $footer_text
 themes/wind/views/paginator.html.php                         33  DIRTY_JS $first_page_url
 themes/wind/views/paginator.html.php                         42  DIRTY_JS $previous_page_url
 themes/wind/views/paginator.html.php                         70  DIRTY_JS $next_page_url
