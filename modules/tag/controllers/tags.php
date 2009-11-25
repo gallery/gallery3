@@ -17,10 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Tags_Controller extends REST_Controller {
-  protected $resource_type = "tag";
-
-  public function _show($tag) {
+class Tags_Controller extends Controller {
+  public function show($tag_id) {
+    $tag = ORM::factory("tag", $tag_id);
     $page_size = module::get_var("gallery", "page_size", 9);
     $page = (int) $this->input->get("page", "1");
     $children_count = $tag->items_count();
@@ -47,15 +46,15 @@ class Tags_Controller extends REST_Controller {
     print $template;
   }
 
-  public function _index() {
+  public function index() {
     // Far from perfection, but at least require view permission for the root album
     $album = ORM::factory("item", 1);
     access::required("view", $album);
     print tag::cloud(30);
   }
 
-  public function _create($tag) {
-    $item = ORM::factory("item", $this->input->post("item_id"));
+  public function create($item_id) {
+    $item = ORM::factory("item", $item_id);
     access::required("view", $item);
     access::required("edit", $item);
 
@@ -70,21 +69,12 @@ class Tags_Controller extends REST_Controller {
 
       print json_encode(
         array("result" => "success",
-              "resource" => url::site("tags/{$tag->id}"),
-              "form" => tag::get_add_form($item)->__toString()));
+              "cloud" => tag::cloud(30)->__toString()));
     } else {
       print json_encode(
         array("result" => "error",
               "form" => $form->__toString()));
     }
-  }
-
-  public function _form_add($item_id) {
-    $item = ORM::factory("item", $item_id);
-    access::required("view", $item);
-    access::required("edit", $item);
-
-    return tag::get_add_form($item);
   }
 
   public function autocomplete() {
