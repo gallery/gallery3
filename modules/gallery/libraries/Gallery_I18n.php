@@ -27,7 +27,7 @@
  * @return String The translated message string.
  */
 function t($message, $options=array()) {
-  return I18n::instance()->translate($message, $options);
+  return Gallery_I18n::instance()->translate($message, $options);
 }
 
 /**
@@ -43,11 +43,11 @@ function t($message, $options=array()) {
  * @return String The translated message string.
  */
 function t2($singular, $plural, $count, $options=array()) {
-  return I18n::instance()->translate(array("one" => $singular, "other" => $plural),
+  return Gallery_I18n::instance()->translate(array("one" => $singular, "other" => $plural),
                                      array_merge($options, array("count" => $count)));
 }
 
-class I18n_Core {
+class Gallery_I18n_Core {
   private static $_instance;
   private $_config = array();
   private $_call_log = array();
@@ -64,7 +64,7 @@ class I18n_Core {
       if (empty($config['default_locale'])) {
         $config['default_locale'] = module::get_var('gallery', 'default_locale');
       }
-      self::$_instance = new I18n_Core($config);
+      self::$_instance = new Gallery_I18n_Core($config);
     }
 
     return self::$_instance;

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class I18n_Test extends Unit_Test_Case {
+class Gallery_I18n_Test extends Unit_Test_Case {
   private $i18n;
 
   public function setup() {
@@ -26,7 +26,7 @@ class I18n_Test extends Unit_Test_Case {
         'root_locale' => 'en',
         'default_locale' => 'te_ST',
         'locale_dir' => VARPATH . 'locale/');
-    $this->i18n = I18n::instance($config);
+    $this->i18n = Gallery_I18n::instance($config);
 
     ORM::factory("incoming_translation")
       ->where("locale", "te_ST")
@@ -43,7 +43,7 @@ class I18n_Test extends Unit_Test_Case {
     foreach ($messages_te_ST as $data) {
       list ($message, $translation) = $data;
       $entry = ORM::factory("incoming_translation");
-      $entry->key = I18n::get_message_key($message);
+      $entry->key = Gallery_I18n::get_message_key($message);
       $entry->message = serialize($message);
       $entry->translation = serialize($translation);
       $entry->locale = 'te_ST';

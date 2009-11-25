@@ -24,7 +24,7 @@ class L10n_Client_Controller extends Controller {
       access::forbidden();
     }
 
-    $locale = I18n::instance()->locale();
+    $locale = Gallery_I18n::instance()->locale();
     $input = Input::instance();
     $key = $input->post("l10n-message-key");
 
@@ -36,7 +36,7 @@ class L10n_Client_Controller extends Controller {
     if (!$root_message->loaded) {
       throw new Exception("@todo bad request data / illegal state");
     }
-    $is_plural = I18n::is_plural_message(unserialize($root_message->message));
+    $is_plural = Gallery_I18n::is_plural_message(unserialize($root_message->message));
 
     if ($is_plural) {
       $plural_forms = l10n_client::plural_forms($locale);
@@ -122,9 +122,9 @@ class L10n_Client_Controller extends Controller {
         $calls[$row->key] = array(unserialize($row->message), array());
       }
     } else {
-      $calls = I18n::instance()->call_log();
+      $calls = Gallery_I18n::instance()->call_log();
     }
-    $locale = I18n::instance()->locale();
+    $locale = Gallery_I18n::instance()->locale();
 
     if ($calls) {
       $translations = array();

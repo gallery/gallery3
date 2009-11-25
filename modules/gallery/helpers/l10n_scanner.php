@@ -37,7 +37,7 @@ class l10n_scanner_Core {
       }
     }
 
-    $key = I18n::get_message_key($message);
+    $key = Gallery_I18n::get_message_key($message);
     if (array_key_exists($key, $cache)) {
       return $cache[$key];
     }
