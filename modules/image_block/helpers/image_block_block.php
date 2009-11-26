@@ -35,18 +35,18 @@ class image_block_block_Core {
 
       $items = ORM::factory("item")
         ->viewable()
-        ->where("type !=", "album")
-        ->where("rand_key < ", $random)
-        ->orderby(array("rand_key" => "DESC"))
+        ->where("type", "!=", "album")
+        ->where("rand_key", "<", $random)
+        ->order_by(array("rand_key" => "DESC"))
         ->find_all(1);
 
       if ($items->count() == 0) {
         // Try once more.  If this fails, just ditch the block altogether
         $items = ORM::factory("item")
           ->viewable()
-          ->where("type !=", "album")
-          ->where("rand_key >= ", $random)
-          ->orderby(array("rand_key" => "DESC"))
+          ->where("type", "!=", "album")
+          ->where("rand_key", ">=", $random)
+          ->order_by(array("rand_key" => "DESC"))
           ->find_all(1);
       }
 
