@@ -24,14 +24,13 @@ class Forge extends Forge_Core {
    */
   public function __construct($action=null, $title='', $method=null, $attr=array()) {
     parent::__construct($action, $title, $method, $attr);
-    $this->hidden("csrf")->value("");
+    $this->hidden("csrf")->value(access::csrf_token());
   }
 
   /**
    * Use our own template
    */
   public function render($template="form.html", $custom=false) {
-    $this->hidden["csrf"]->value(access::csrf_token());
     return parent::render($template, $custom);
   }
 
