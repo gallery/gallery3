@@ -96,11 +96,12 @@ class Admin_Comments_Controller extends Admin_Controller {
     $counts->published = 0;
     $counts->spam = 0;
     $counts->deleted = 0;
-    foreach (Database::instance()
-             ->select("state", "count(*) as c")
+    foreach (db::build()
+             ->select("state")
+             ->select(array("c" => 'COUNT("*")'))
              ->from("comments")
-             ->groupby("state")
-             ->get() as $row) {
+             ->group_by("state")
+             ->execute() as $row) {
       $counts->{$row->state} = $row->c;
     }
     return $counts;
