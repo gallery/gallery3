@@ -24,8 +24,8 @@ class notification {
     }
 
     return ORM::factory("subscription")
-      ->where("item_id", $item_id)
-      ->where("user_id", $user->id)
+      ->where("item_id", "=", $item_id)
+      ->where("user_id", "=", $user->id)
       ->find();
   }
 
@@ -35,8 +35,8 @@ class notification {
     }
 
     return ORM::factory("subscription")
-      ->where("item_id", $item->id)
-      ->where("user_id", $user->id)
+      ->where("item_id", "=", $item->id)
+      ->where("user_id", "=", $user->id)
       ->find()
       ->loaded();
   }
@@ -60,8 +60,8 @@ class notification {
       }
 
       $subscription = ORM::factory("subscription")
-        ->where("item_id", $item->id)
-        ->where("user_id", $user->id)
+        ->where("item_id", "=", $item->id)
+        ->where("user_id", "=", $user->id)
         ->find()->delete();
     }
   }
@@ -71,8 +71,8 @@ class notification {
     foreach (ORM::factory("subscription")
              ->select("user_id")
              ->join("items", "subscriptions.item_id", "items.id")
-             ->where("items.left_ptr <=", $item->left_ptr)
-             ->where("items.right_ptr >", $item->right_ptr)
+             ->where("items.left_ptr", "<=", $item->left_ptr)
+             ->where("items.right_ptr", ">", $item->right_ptr)
              ->find_all()
              ->as_array() as $subscriber) {
       $subscriber_ids[] = $subscriber->user_id;
@@ -176,7 +176,7 @@ class notification {
              ->get() as $row) {
       $email = $row->email;
       $result = ORM::factory("pending_notification")
-        ->where("email", $email)
+        ->where("email", "=", $email)
         ->find_all();
       if ($result->count() == 1) {
         $pending = $result->current();
