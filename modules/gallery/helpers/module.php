@@ -364,7 +364,7 @@ class module_Core {
         foreach (Database::instance()
                  ->select("module_name", "name", "value")
                  ->from("vars")
-                 ->orderby("module_name", "name")
+                 ->order_by("module_name", "name")
                  ->get() as $row) {
           if ($row->module_name == "gallery" && $row->name == "_cache") {
             // This could happen if there's a race condition

@@ -84,7 +84,7 @@ class Tags_Controller extends Controller {
     $tag_part = end($tag_parts);
     $tag_list = ORM::factory("tag")
       ->like("name", "{$tag_part}%", false)
-      ->orderby("name", "ASC")
+      ->order_by("name", "ASC")
       ->limit($limit)
       ->find_all();
     foreach ($tag_list as $tag) {

@@ -291,7 +291,7 @@ class Item_Model extends ORM_MPTT {
              ->where("left_ptr <=", $this->left_ptr)
              ->where("right_ptr >=", $this->right_ptr)
              ->where("id <>", 1)
-             ->orderby("left_ptr", "ASC")
+             ->order_by("left_ptr", "ASC")
              ->get() as $row) {
       // Don't encode the names segment
       $names[] = rawurlencode($row->name);
@@ -460,7 +460,7 @@ class Item_Model extends ORM_MPTT {
                ->where("parent_id", $this->id)
                ->where($sort_column, $child->$sort_column)
                ->where($where)
-               ->orderby(array("id" => "ASC"))
+               ->order_by(array("id" => "ASC"))
                ->get() as $row) {
         $position++;
         if ($row->id == $child->id) {
@@ -475,10 +475,10 @@ class Item_Model extends ORM_MPTT {
       //
       // Reproduce the children() functionality here using Database directly to avoid loading the
       // whole ORM for each row.
-      $orderby = array($this->sort_column => $this->sort_order);
+      $order_by = array($this->sort_column => $this->sort_order);
       // Use id as a tie breaker
       if ($this->sort_column != "id") {
-        $orderby["id"] = "ASC";
+        $order_by["id"] = "ASC";
       }
 
       $position = 0;
@@ -486,7 +486,7 @@ class Item_Model extends ORM_MPTT {
                ->from("items")
                ->where("parent_id", $this->id)
                ->where($where)
-               ->orderby($orderby)
+               ->order_by($order_by)
                ->get() as $row) {
         $position++;
         if ($row->id == $child->id) {
@@ -592,18 +592,18 @@ class Item_Model extends ORM_MPTT {
    * @param   integer  SQL limit
    * @param   integer  SQL offset
    * @param   array    additional where clauses
-   * @param   array    orderby
+   * @param   array    order_by
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $where=array(), $orderby=null) {
-    if (empty($orderby)) {
-      $orderby = array($this->sort_column => $this->sort_order);
+  function children($limit=null, $offset=0, $where=array(), $order_by=null) {
+    if (empty($order_by)) {
+      $order_by = array($this->sort_column => $this->sort_order);
       // Use id as a tie breaker
       if ($this->sort_column != "id") {
-        $orderby["id"] = "ASC";
+        $order_by["id"] = "ASC";
       }
     }
-    return parent::children($limit, $offset, $where, $orderby);
+    return parent::children($limit, $offset, $where, $order_by);
   }
 
   /**
@@ -617,14 +617,14 @@ class Item_Model extends ORM_MPTT {
    * @param   array    additional where clauses
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $where=array(), $orderby=null) {
-    if (empty($orderby)) {
-      $orderby = array($this->sort_column => $this->sort_order);
+  function descendants($limit=null, $offset=0, $where=array(), $order_by=null) {
+    if (empty($order_by)) {
+      $order_by = array($this->sort_column => $this->sort_order);
       // Use id as a tie breaker
       if ($this->sort_column != "id") {
-        $orderby["id"] = "ASC";
+        $order_by["id"] = "ASC";
       }
     }
-    return parent::descendants($limit, $offset, $where, $orderby);
+    return parent::descendants($limit, $offset, $where, $order_by);
   }
 }

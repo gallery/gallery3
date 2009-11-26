@@ -183,7 +183,7 @@ class graphics_Core {
       foreach (ORM::factory("graphics_rule")
                ->where("target", $target)
                ->where("active", true)
-               ->orderby("priority", "asc")
+               ->order_by("priority", "asc")
                ->find_all() as $rule) {
         $rules[] = (object)$rule->as_array();
       }

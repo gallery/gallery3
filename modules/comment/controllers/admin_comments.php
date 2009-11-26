@@ -48,7 +48,7 @@ class Admin_Comments_Controller extends Admin_Controller {
     $view->content->menu = $this->_menu($view->content->counts);
     $view->content->state = $state;
     $view->content->comments = ORM::factory("comment")
-      ->orderby("created", "DESC")
+      ->order_by("created", "DESC")
       ->where("state", $state)
       ->limit(self::$items_per_page, ($page - 1) * self::$items_per_page)
       ->find_all();

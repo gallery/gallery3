@@ -29,7 +29,7 @@ class Admin_Tags_Controller extends Admin_Controller {
     if ($filter) {
       $query->like("name", $filter);
     }
-    $view->content->tags = $query->orderby("name", "ASC")->find_all();
+    $view->content->tags = $query->order_by("name", "ASC")->find_all();
     print $view;
   }
 

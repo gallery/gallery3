@@ -171,7 +171,7 @@ class access_Core {
       ->where("items.id <> $item->id")
       ->join("access_intents", "items.id", "access_intents.item_id")
       ->where("access_intents.view_$group->id", self::DENY)
-      ->orderby("level", "DESC")
+      ->order_by("level", "DESC")
       ->limit(1)
       ->find();
 
@@ -494,7 +494,7 @@ class access_Core {
         ->where("right_ptr >", $item->right_ptr)
         ->join("access_intents", "access_intents.item_id", "items.id")
         ->where("access_intents.$field", self::DENY)
-        ->orderby("left_ptr", "DESC")
+        ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
       if ($tmp_item->loaded()) {
@@ -516,7 +516,7 @@ class access_Core {
       ->where("right_ptr <=", $item->right_ptr)
       ->where("type", "album")
       ->where("access_intents.$field IS NOT", self::INHERIT)
-      ->orderby("level", "DESC")
+      ->order_by("level", "DESC")
       ->find_all();
     foreach ($query as $row) {
       if ($row->$field == self::ALLOW) {
@@ -565,7 +565,7 @@ class access_Core {
         ->where("left_ptr <", $item->left_ptr)
         ->where("right_ptr >", $item->right_ptr)
         ->where("$field IS NOT", self::UNKNOWN)
-        ->orderby("left_ptr", "DESC")
+        ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
       if ($tmp_item->loaded()) {
@@ -581,7 +581,7 @@ class access_Core {
       ->where("left_ptr >=", $item->left_ptr)
       ->where("right_ptr <=", $item->right_ptr)
       ->where("$field IS NOT", self::INHERIT)
-      ->orderby("level", "ASC")
+      ->order_by("level", "ASC")
       ->find_all();
     foreach  ($query as $row) {
       $value = ($row->$field === self::ALLOW) ? "TRUE" : "FALSE";

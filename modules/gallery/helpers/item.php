@@ -142,7 +142,7 @@ class item_Core {
     // @todo: figure out a better way to bootstrap the weight.
     $result = Database::instance()
       ->select("weight")->from("items")
-      ->orderby("weight", "desc")->limit(1)
+      ->order_by("weight", "desc")->limit(1)
       ->get()->current();
     return ($result ? $result->weight : 0) + 1;
   }
