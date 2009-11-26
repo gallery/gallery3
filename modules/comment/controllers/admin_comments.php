@@ -49,7 +49,7 @@ class Admin_Comments_Controller extends Admin_Controller {
     $view->content->state = $state;
     $view->content->comments = ORM::factory("comment")
       ->order_by("created", "DESC")
-      ->where("state", $state)
+      ->where("state", "=", $state)
       ->limit(self::$items_per_page, ($page - 1) * self::$items_per_page)
       ->find_all();
     $view->content->pager = new Pagination();
@@ -120,7 +120,7 @@ class Admin_Comments_Controller extends Admin_Controller {
     access::verify_csrf();
 
     ORM::factory("comment")
-      ->where("state", "spam")
+      ->where("state", "=", "spam")
       ->delete_all();
     url::redirect("admin/comments/queue/spam");
   }

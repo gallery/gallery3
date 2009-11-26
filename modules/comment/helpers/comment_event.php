@@ -29,7 +29,7 @@ class comment_event_Core {
                   "guest_email" => null,
                   "guest_name" => "guest",
                   "guest_url" => null))
-      ->where(array("author_id" => $user->id))
+      ->where("author_id", "=", $user->id)
       ->update();
   }
 
@@ -40,7 +40,7 @@ class comment_event_Core {
                   "guest_email" => null,
                   "guest_name" => "guest",
                   "guest_url" => null))
-      ->where("1 = 1")
+      ->where("1", "=", "1")  // @todo: why do we do this?
       ->update();
   }
 
@@ -65,7 +65,7 @@ class comment_event_Core {
     foreach (Database::instance()
              ->select("text")
              ->from("comments")
-             ->where("item_id", $item->id)
+             ->where("item_id", "=", $item->id)
              ->get()
              ->as_array() as $row) {
       $data[] = $row->text;

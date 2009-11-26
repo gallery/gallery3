@@ -61,9 +61,9 @@ class graphics_Core {
    */
   static function remove_rule($module_name, $target, $operation) {
     ORM::factory("graphics_rule")
-      ->where("module_name", $module_name)
-      ->where("target", $target)
-      ->where("operation", $operation)
+      ->where("module_name", "=", $module_name)
+      ->where("target", "=", $target)
+      ->where("operation", "=", $operation)
       ->delete_all();
 
     self::mark_dirty($target == "thumb", $target == "resize");
@@ -181,8 +181,8 @@ class graphics_Core {
     if (empty(self::$_rules_cache[$target])) {
       $rules = array();
       foreach (ORM::factory("graphics_rule")
-               ->where("target", $target)
-               ->where("active", true)
+               ->where("target", "=", $target)
+               ->where("active", "=", true)
                ->order_by("priority", "asc")
                ->find_all() as $rule) {
         $rules[] = (object)$rule->as_array();

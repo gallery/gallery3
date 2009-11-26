@@ -24,7 +24,7 @@ class exif_theme_Core {
       $record = Database::instance()
         ->select("key_count")
         ->from("exif_records")
-        ->where("item_id", $item->id)
+        ->where("item_id", "=", $item->id)
         ->get()
         ->current();
       if ($record && $record->key_count) {

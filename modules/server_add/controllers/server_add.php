@@ -177,7 +177,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->percent_complete = min($task->percent_complete + 0.1, 10);
       $task->status = t2("Found one file", "Found %count files",
                          Database::instance()
-                         ->where("task_id", $task->id)
+                         ->where("task_id", "=", $task->id)
                          ->count_records("server_add_files"));
 
       if (!$queue) {
@@ -197,8 +197,8 @@ class Server_Add_Controller extends Admin_Controller {
       // will create albums first.  Ignore entries which already have an Item_Model attached,
       // they're done.
       $entries = ORM::factory("server_add_file")
-        ->where("task_id", $task->id)
-        ->where("item_id", null)
+        ->where("task_id", "=", $task->id)
+        ->where("item_id", "=", null)
         ->order_by("id", "ASC")
         ->limit(10)
         ->find_all();
@@ -265,7 +265,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
-      ORM::factory("server_add_file")->where("task_id", $task->id)->delete_all();
+      ORM::factory("server_add_file")->where("task_id", "=", $task->id)->delete_all();
       message::info(t2("Successfully added one photo / album",
                        "Successfully added %count photos / albums",
                        $task->get("completed_files")));

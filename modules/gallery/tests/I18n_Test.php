@@ -29,7 +29,7 @@ class Gallery_I18n_Test extends Unit_Test_Case {
     $this->i18n = Gallery_I18n::instance($config);
 
     ORM::factory("incoming_translation")
-      ->where("locale", "te_ST")
+      ->where("locale", "=", "te_ST")
       ->delete_all();
 
     $messages_te_ST = array(
@@ -62,7 +62,7 @@ class Gallery_I18n_Test extends Unit_Test_Case {
     $locale = $this->i18n->locale();
     $this->assert_equal("de_DE", $locale);
   }
-  
+
   public function translate_simple_test() {
     $result = $this->i18n->translate('Hello world');
     $this->assert_equal('Hallo Welt', $result);

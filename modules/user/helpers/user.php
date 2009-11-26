@@ -44,7 +44,7 @@ class user_Core {
    * @return User_Model
    */
   static function create($name, $full_name, $password) {
-    $user = ORM::factory("user")->where("name", $name)->find();
+    $user = ORM::factory("user")->where("name", "=", $name)->find();
     if ($user->loaded()) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
     }

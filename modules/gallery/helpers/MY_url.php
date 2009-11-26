@@ -50,12 +50,12 @@ class url extends url_Core {
     // In most cases, we'll have an exact match in the relative_url_cache item field.
     // but failing that, walk down the tree until we find it.  The fallback code will fix caches
     // as it goes, so it'll never be run frequently.
-    $item = ORM::factory("item")->where("relative_url_cache", $current_uri)->find();
+    $item = ORM::factory("item")->where("relative_url_cache", "=", $current_uri)->find();
     if (!$item->loaded()) {
       $count = count(Router::$segments);
       foreach (ORM::factory("item")
-               ->where("slug", html_entity_decode(Router::$segments[$count - 1], ENT_QUOTES))
-               ->where("level", $count + 1)
+               ->where("slug", "=", html_entity_decode(Router::$segments[$count - 1], ENT_QUOTES))
+               ->where("level", "=", $count + 1)
                ->find_all() as $match) {
         if ($match->relative_url() == $current_uri) {
           $item = $match;

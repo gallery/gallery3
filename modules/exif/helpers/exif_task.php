@@ -44,11 +44,11 @@ class exif_task_Core {
       $start = microtime(true);
       foreach (ORM::factory("item")
                ->join("exif_records", "items.id", "exif_records.item_id", "left")
-               ->where("type", "photo")
-               ->open_paren()
-               ->where("exif_records.item_id", null)
-               ->orwhere("exif_records.dirty", 1)
-               ->close_paren()
+               ->where("type", "=", "photo")
+               ->and_open()
+               ->where("exif_records.item_id", "=", null)
+               ->orwhere("exif_records.dirty", "=", 1)
+               ->close()
                ->find_all() as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.

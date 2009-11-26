@@ -166,11 +166,11 @@ class access_Core {
     // For view permissions, if any parent is self::DENY, then those parents lock this one.
     // Return
     $lock = ORM::factory("item")
-      ->where("`left_ptr` <= $item->left_ptr")
-      ->where("`right_ptr` >= $item->right_ptr")
-      ->where("items.id <> $item->id")
+      ->where("left_ptr", "<=", $item->left_ptr)
+      ->where("right_ptr", ">=", $item->right_ptr)
+      ->where("items.id", "<>", $item->id)
       ->join("access_intents", "items.id", "access_intents.item_id")
-      ->where("access_intents.view_$group->id", self::DENY)
+      ->where("access_intents.view_$group->id", "=", self::DENY)
       ->order_by("level", "DESC")
       ->limit(1)
       ->find();
@@ -304,7 +304,7 @@ class access_Core {
     foreach (self::_get_all_groups() as $group) {
       self::_drop_columns($name, $group);
     }
-    $permission = ORM::factory("permission")->where("name", $name)->find();
+    $permission = ORM::factory("permission")->where("name", "=", $name)->find();
     if ($permission->loaded()) {
       $permission->delete();
     }
@@ -354,7 +354,7 @@ class access_Core {
     $access_cache->item_id = $item->id;
     if ($item->id != 1) {
       $parent_access_cache =
-        ORM::factory("access_cache")->where("item_id", $item->parent()->id)->find();
+        ORM::factory("access_cache")->where("item_id", "=", $item->parent()->id)->find();
       foreach (self::_get_all_groups() as $group) {
         foreach (ORM::factory("permission")->find_all() as $perm) {
           $field = "{$perm->name}_{$group->id}";
@@ -377,8 +377,8 @@ class access_Core {
    * @return void
    */
   static function delete_item($item) {
-    ORM::factory("access_intent")->where("item_id", $item->id)->find()->delete();
-    ORM::factory("access_cache")->where("item_id", $item->id)->find()->delete();
+    ORM::factory("access_intent")->where("item_id", "=", $item->id)->find()->delete();
+    ORM::factory("access_cache")->where("item_id", "=", $item->id)->find()->delete();
   }
 
   /**
@@ -475,7 +475,7 @@ class access_Core {
    * @return void
    */
   private static function _update_access_view_cache($group, $item) {
-    $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
+    $access = ORM::factory("access_intent")->where("item_id", "=", $item->id)->find();
 
     $db = Database::instance();
     $field = "view_{$group->id}";
@@ -490,10 +490,10 @@ class access_Core {
     // item, then its safe to propagate from here.
     if ($access->$field !== self::DENY) {
       $tmp_item = ORM::factory("item")
-        ->where("left_ptr <", $item->left_ptr)
-        ->where("right_ptr >", $item->right_ptr)
+        ->where("left_ptr", "<", $item->left_ptr)
+        ->where("right_ptr", ">", $item->right_ptr)
         ->join("access_intents", "access_intents.item_id", "items.id")
-        ->where("access_intents.$field", self::DENY)
+        ->where("access_intents.$field", "=", self::DENY)
         ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
@@ -512,10 +512,10 @@ class access_Core {
     $query = ORM::factory("access_intent")
       ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr", "items.id"))
       ->join("items", "items.id", "access_intents.item_id")
-      ->where("left_ptr >=", $item->left_ptr)
-      ->where("right_ptr <=", $item->right_ptr)
-      ->where("type", "album")
-      ->where("access_intents.$field IS NOT", self::INHERIT)
+      ->where("left_ptr", ">=", $item->left_ptr)
+      ->where("right_ptr", "<=", $item->right_ptr)
+      ->where("type", "=", "album")
+      ->where("access_intents.$field", "IS NOT", self::INHERIT)
       ->order_by("level", "DESC")
       ->find_all();
     foreach ($query as $row) {
@@ -549,7 +549,7 @@ class access_Core {
    * @return void
    */
   private static function _update_access_non_view_cache($group, $perm_name, $item) {
-    $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
+    $access = ORM::factory("access_intent")->where("item_id", "=", $item->id)->find();
 
     $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
@@ -562,9 +562,9 @@ class access_Core {
     if ($access->$field === self::INHERIT) {
       $tmp_item = ORM::factory("item")
         ->join("access_intents", "items.id", "access_intents.item_id")
-        ->where("left_ptr <", $item->left_ptr)
-        ->where("right_ptr >", $item->right_ptr)
-        ->where("$field IS NOT", self::UNKNOWN)
+        ->where("left_ptr", "<", $item->left_ptr)
+        ->where("right_ptr", ">", $item->right_ptr)
+        ->where($field, "IS NOT", self::UNKNOWN)
         ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
@@ -578,9 +578,9 @@ class access_Core {
     $query = ORM::factory("access_intent")
       ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr"))
       ->join("items", "items.id", "access_intents.item_id")
-      ->where("left_ptr >=", $item->left_ptr)
-      ->where("right_ptr <=", $item->right_ptr)
-      ->where("$field IS NOT", self::INHERIT)
+      ->where("left_ptr", ">=", $item->left_ptr)
+      ->where("right_ptr", "<=", $item->right_ptr)
+      ->where($field, "IS NOT", self::INHERIT)
       ->order_by("level", "ASC")
       ->find_all();
     foreach  ($query as $row) {

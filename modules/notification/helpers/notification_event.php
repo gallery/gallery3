@@ -54,7 +54,7 @@ class notification_event_Core {
 
   static function user_deleted($user) {
     ORM::factory("subscriptions")
-      ->where(array("user_id", $user->id))
+      ->where("user_id", "=", $user->id)
       ->delete_all();
   }
 
@@ -88,7 +88,7 @@ class notification_event_Core {
   static function user_before_delete($user) {
     try {
       ORM::factory("subscription")
-        ->where("user_id", $user->id)
+        ->where("user_id", "=", $user->id)
         ->delete_all();
     } catch (Exception $e) {
       Kohana_Log::add("error", "@todo notification_event::user_before_delete() failed");

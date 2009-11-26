@@ -20,7 +20,7 @@
 class Cache_Test extends Unit_Test_Case {
   private $_driver;
   public function setup() {
-    Database::instance()->from("caches")->where(1)->delete();
+    Database::instance()->from("caches")->where("1", "=", "1")->delete();
     $this->_driver = new Cache_Database_Driver();
   }
 

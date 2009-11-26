@@ -33,7 +33,7 @@ class tag_Core {
       throw new exception("@todo MISSING_TAG_NAME");
     }
 
-    $tag = ORM::factory("tag")->where("name", $tag_name)->find();
+    $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
     if (!$tag->loaded()) {
       $tag->name = $tag_name;
       $tag->count = 0;
@@ -93,7 +93,7 @@ class tag_Core {
              ->select("name")
              ->from("tags")
              ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
-             ->where("items_tags.item_id", $item->id)
+             ->where("items_tags.item_id", "=", $item->id)
              ->get() as $row) {
       $tags[] = $row->name;
     }

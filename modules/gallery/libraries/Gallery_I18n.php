@@ -131,7 +131,7 @@ class Gallery_I18n_Core {
       foreach (db::build()
                ->select("key", "translation")
                ->from("incoming_translations")
-               ->where(array("locale" => $locale))
+               ->where("locale", "=", $locale)
                ->execute()
                ->as_array() as $row) {
         $this->_cache[$locale][$row->key] = unserialize($row->translation);
@@ -141,7 +141,7 @@ class Gallery_I18n_Core {
       foreach (db::build()
                ->select("key", "translation")
                ->from("outgoing_translations")
-               ->where(array("locale" => $locale))
+               ->where("locale", "=", $locale)
                ->execute()
                ->as_array() as $row) {
         $this->_cache[$locale][$row->key] = unserialize($row->translation);

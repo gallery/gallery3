@@ -31,7 +31,7 @@ class l10n_scanner_Core {
       foreach (Database::instance()
                ->select("key")
                ->from("incoming_translations")
-               ->where("locale", "root")
+               ->where("locale", "=", "root")
                ->get() as $row) {
         $cache[$row->key] = true;
       }

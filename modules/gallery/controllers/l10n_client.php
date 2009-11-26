@@ -116,7 +116,7 @@ class L10n_Client_Controller extends Controller {
       foreach (Database::instance()
                ->select("key", "message")
                ->from("incoming_translations")
-               ->where(array("locale" => 'root'))
+               ->where("locale", "=", "root"))
                ->get()
                ->as_array() as $row) {
         $calls[$row->key] = array(unserialize($row->message), array());
@@ -131,7 +131,7 @@ class L10n_Client_Controller extends Controller {
       foreach (Database::instance()
                ->select("key", "translation")
                ->from("incoming_translations")
-               ->where(array("locale" => $locale))
+               ->where("locale", "=", $locale)
                ->get()
                ->as_array() as $row) {
         $translations[$row->key] = unserialize($row->translation);
@@ -140,7 +140,7 @@ class L10n_Client_Controller extends Controller {
       foreach (Database::instance()
                ->select("key", "translation")
                ->from("outgoing_translations")
-               ->where(array("locale" => $locale))
+               ->where("locale", "=", $locale)
                ->get()
                ->as_array() as $row) {
         $translations[$row->key] = unserialize($row->translation);

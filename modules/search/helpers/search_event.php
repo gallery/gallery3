@@ -28,7 +28,7 @@ class search_event_Core {
 
   static function item_deleted($item) {
     ORM::factory("search_record")
-      ->where("item_id", $item->id)
+      ->where("item_id", "=", $item->id)
       ->delete_all();
   }
 

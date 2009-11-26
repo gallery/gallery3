@@ -126,12 +126,12 @@ class Albums_Controller extends Items_Controller {
         if ($row = Database::instance()
             ->select(array("name", "slug"))
             ->from("items")
-            ->where("parent_id", $album->parent_id)
-            ->where("id <>", $album->id)
-            ->open_paren()
-            ->where("name", $form->edit_item->dirname->value)
-            ->orwhere("slug", $form->edit_item->slug->value)
-            ->close_paren()
+            ->where("parent_id", "=", $album->parent_id)
+            ->where("id", "<>", $album->id)
+            ->and_open()
+            ->where("name", "=", $form->edit_item->dirname->value)
+            ->orwhere("slug", "=", $form->edit_item->slug->value)
+            ->close()
             ->get()
             ->current()) {
           if ($row->name == $form->edit_item->dirname->value) {

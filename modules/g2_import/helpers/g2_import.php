@@ -867,7 +867,7 @@ class g2_import_Core {
    */
   static function map($g2_id) {
     if (!array_key_exists($g2_id, self::$map)) {
-      $g2_map = ORM::factory("g2_map")->where("g2_id", $g2_id)->find();
+      $g2_map = ORM::factory("g2_map")->where("g2_id", "=", $g2_id)->find();
       self::$map[$g2_id] = $g2_map->loaded() ? $g2_map->g3_id : null;
     }
 

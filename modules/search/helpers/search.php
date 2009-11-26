@@ -60,7 +60,7 @@ class search_Core {
 
   static function update($item) {
     $data = new ArrayObject();
-    $record = ORM::factory("search_record")->where("item_id", $item->id)->find();
+    $record = ORM::factory("search_record")->where("item_id", "=", $item->id)->find();
     if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
@@ -76,10 +76,10 @@ class search_Core {
       ->select("items.id")
       ->from("items")
       ->join("search_records", "items.id", "search_records.item_id", "left")
-      ->open_paren()
-      ->where("search_records.item_id", null)
-      ->orwhere("search_records.dirty", 1)
-      ->close_paren()
+      ->and_open()
+      ->where("search_records.item_id", "=", null)
+      ->orwhere("search_records.dirty", "=", 1)
+      ->close()
       ->get()
       ->count();
 

@@ -33,15 +33,15 @@ class gallery_event_Core {
     $db = Database::instance();
     $db->from("tasks")
       ->set(array("owner_id" => $admin->id))
-      ->where(array("owner_id" => $user->id))
+      ->where("owner_id", "=", $user->id)
       ->update();
     $db->from("items")
       ->set(array("owner_id" => $admin->id))
-      ->where(array("owner_id" => $user->id))
+      ->where("owner_id", "=", $user->id)
       ->update();
     $db->from("logs")
       ->set(array("user_id" => $admin->id))
-      ->where(array("user_id" => $user->id))
+      ->where("user_id", "=", $user->id)
       ->update();
   }
 
@@ -50,15 +50,15 @@ class gallery_event_Core {
     $db = Database::instance();
     $db->from("tasks")
       ->set(array("owner_id" => $admin->id))
-      ->where("1 = 1")
+      ->where("1", "=", "1") // @todo why do we need this?
       ->update();
     $db->from("items")
       ->set(array("owner_id" => $admin->id))
-      ->where("1 = 1")
+      ->where("1", "=", "1") // @todo why do we need this?
       ->update();
     $db->from("logs")
       ->set(array("user_id" => $admin->id))
-      ->where("1 = 1")
+      ->where("1", "=", "1") // @todo why do we need this?
       ->update();
   }
 

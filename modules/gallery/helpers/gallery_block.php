@@ -45,8 +45,8 @@ class gallery_block_Core {
       $block->css_id = "g-photo-stream";
       $block->title = t("Photo stream");
       $block->content = new View("admin_block_photo_stream.html");
-      $block->content->photos =
-        ORM::factory("item")->where("type", "photo")->order_by("created", "DESC")->find_all(10);
+      $block->content->photos = ORM::factory("item")
+        ->where("type", "=", "photo")->order_by("created", "DESC")->find_all(10);
       break;
 
     case "log_entries":
@@ -62,8 +62,8 @@ class gallery_block_Core {
       $block->title = t("Gallery stats");
       $block->content = new View("admin_block_stats.html");
       $block->content->album_count =
-        ORM::factory("item")->where("type", "album")->where("id <>", 1)->count_all();
-      $block->content->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
+        ORM::factory("item")->where("type", "=", "album")->where("id", "<>", 1)->count_all();
+      $block->content->photo_count = ORM::factory("item")->where("type", "=", "photo")->count_all();
       break;
 
     case "platform_info":

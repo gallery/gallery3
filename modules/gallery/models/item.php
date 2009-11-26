@@ -288,9 +288,9 @@ class Item_Model extends ORM_MPTT {
     foreach (Database::instance()
              ->select(array("name", "slug"))
              ->from("items")
-             ->where("left_ptr <=", $this->left_ptr)
-             ->where("right_ptr >=", $this->right_ptr)
-             ->where("id <>", 1)
+             ->where("left_ptr", "<=", $this->left_ptr)
+             ->where("right_ptr", ">=", $this->right_ptr)
+             ->where("id", "<>", 1)
              ->order_by("left_ptr", "ASC")
              ->get() as $row) {
       // Don't encode the names segment
@@ -433,8 +433,8 @@ class Item_Model extends ORM_MPTT {
     // If the comparison column has NULLs in it, we can't use comparators on it and will have to
     // deal with it the hard way.
     $count = $db->from("items")
-      ->where("parent_id", $this->id)
-      ->where($this->sort_column, NULL)
+      ->where("parent_id", "=", $this->id)
+      ->where($this->sort_column, "=", NULL)
       ->where($where)
       ->count_records();
 
@@ -443,8 +443,8 @@ class Item_Model extends ORM_MPTT {
       $sort_column = $this->sort_column;
 
       $position = $db->from("items")
-        ->where("parent_id", $this->id)
-        ->where("$sort_column $comp ", $child->$sort_column)
+        ->where("parent_id", "=", $this->id)
+        ->where($sort_column, $comp, $child->$sort_column)
         ->where($where)
         ->count_records();
 
@@ -457,8 +457,8 @@ class Item_Model extends ORM_MPTT {
       // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
       // our base value.
       foreach ($db->from("items")
-               ->where("parent_id", $this->id)
-               ->where($sort_column, $child->$sort_column)
+               ->where("parent_id", "=", $this->id)
+               ->where($sort_column, "=", $child->$sort_column)
                ->where($where)
                ->order_by(array("id" => "ASC"))
                ->get() as $row) {
@@ -484,7 +484,7 @@ class Item_Model extends ORM_MPTT {
       $position = 0;
       foreach ($db->select("id")
                ->from("items")
-               ->where("parent_id", $this->id)
+               ->where("parent_id", "=", $this->id)
                ->where($where)
                ->order_by($order_by)
                ->get() as $row) {

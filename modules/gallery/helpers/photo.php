@@ -89,11 +89,11 @@ class photo_Core {
     // Randomize the name or slug if there's a conflict
     // @todo Improve this.  Random numbers are not user friendly
     while (ORM::factory("item")
-           ->where("parent_id", $parent->id)
-           ->open_paren()
-           ->where("name", $photo->name)
-           ->orwhere("slug", $photo->slug)
-           ->close_paren()
+           ->where("parent_id", "=", $parent->id)
+           ->and_open()
+           ->where("name", "=", $photo->name)
+           ->orwhere("slug", "=", $photo->slug)
+           ->close()
            ->find()->id) {
       $rand = rand();
       $photo->name = "{$name}.$rand.{$pi['extension']}";

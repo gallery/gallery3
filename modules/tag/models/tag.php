@@ -31,9 +31,9 @@ class Tag_Model extends ORM {
     $model = ORM::factory("item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
-      ->where("items_tags.tag_id", $this->id);
+      ->where("items_tags.tag_id", "=", $this->id);
     if ($type) {
-      $model->where("items.type", $type);
+      $model->where("items.type", "=", $type);
     }
     return $model->find_all($limit, $offset);
   }
@@ -47,10 +47,10 @@ class Tag_Model extends ORM {
     $model = ORM::factory("item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
-      ->where("items_tags.tag_id", $this->id);
+      ->where("items_tags.tag_id", "=", $this->id);
 
     if ($type) {
-      $model->where("items.type", $type);
+      $model->where("items.type", "=", $type);
     }
     return $model->count_all();
   }

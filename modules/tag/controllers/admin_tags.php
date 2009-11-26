@@ -106,7 +106,7 @@ class Admin_Tags_Controller extends Admin_Controller {
   }
 
   public function check_for_duplicate(Validation $post_data, $field) {
-    $tag_exists = ORM::factory("tag")->where("name", $post_data[$field])->count_all();
+    $tag_exists = ORM::factory("tag")->where("name", "=", $post_data[$field])->count_all();
     if ($tag_exists) {
       $post_data->add_error($field, "in_use");
     }

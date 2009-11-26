@@ -37,8 +37,8 @@ class comment_theme_Core {
 
     $view = new View("comments.html");
     $view->comments = ORM::factory("comment")
-      ->where("item_id", $theme->item()->id)
-      ->where("state", "published")
+      ->where("item_id", "=", $theme->item()->id)
+      ->where("state", "=", "published")
       ->order_by("created", "ASC")
       ->find_all();
 

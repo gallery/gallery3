@@ -31,7 +31,7 @@ class group_Core {
    * @return Group_Definition the group object
    */
   static function create($name) {
-    $group = ORM::factory("group")->where("name", $name)->find();
+    $group = ORM::factory("group")->where("name", "=", $name)->find();
     if ($group->loaded()) {
       throw new Exception("@todo GROUP_ALREADY_EXISTS $name");
     }

@@ -67,7 +67,7 @@ class site_status_Core {
    */
   private static function _add($msg, $severity, $permanent_key) {
     $message = ORM::factory("message")
-      ->where("key", $permanent_key)
+      ->where("key", "=", $permanent_key)
       ->find();
     if (!$message->loaded()) {
       $message->key = $permanent_key;
@@ -82,7 +82,7 @@ class site_status_Core {
    * @param string $permanent_key
    */
   static function clear($permanent_key) {
-    $message = ORM::factory("message")->where("key", $permanent_key)->find();
+    $message = ORM::factory("message")->where("key", "=", $permanent_key)->find();
     if ($message->loaded()) {
       $message->delete();
     }

@@ -20,8 +20,8 @@
 class Database_Test extends Unit_Test_Case {
   function simple_where_test() {
     $sql = Database::instance()
-      ->where("a", 1)
-      ->where("b", 2)
+      ->where("a", "=", 1)
+      ->where("b", "=", 2)
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same("SELECT * WHERE `a` = 1 AND `b` = 2", $sql);
@@ -29,12 +29,12 @@ class Database_Test extends Unit_Test_Case {
 
   function compound_where_test() {
     $sql = Database::instance()
-      ->where("outer1", 1)
-      ->open_paren()
-      ->where("inner1", 1)
-      ->orwhere("inner2", 2)
-      ->close_paren()
-      ->where("outer2", 2)
+      ->where("outer1", "=", 1)
+      ->and_open()
+      ->where("inner1", "=", 1)
+      ->orwhere("inner2", "=", 2)
+      ->close()
+      ->where("outer2", "=", 2)
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
@@ -44,12 +44,12 @@ class Database_Test extends Unit_Test_Case {
 
   function group_first_test() {
     $sql = Database::instance()
-      ->open_paren()
-      ->where("inner1", 1)
-      ->orwhere("inner2", 2)
-      ->close_paren()
-      ->where("outer1", 1)
-      ->where("outer2", 2)
+      ->and_open()
+      ->where("inner1", "=", 1)
+      ->orwhere("inner2", "=", 2)
+      ->close()
+      ->where("outer1", "=", 1)
+      ->where("outer2", "=", 2)
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
@@ -59,11 +59,12 @@ class Database_Test extends Unit_Test_Case {
 
   function where_array_test() {
     $sql = Database::instance()
-      ->where("outer1", 1)
-      ->open_paren()
-      ->where("inner1", 1)
-      ->orwhere(array("inner2" => 2, "inner3" => 3))
-      ->close_paren()
+      ->where("outer1", "=", 1)
+      ->and_open()
+      ->where("inner1", "=", 1)
+      ->orwhere("inner2", "=", 2)
+      ->orwhere("inner3", "=", 3))
+      ->close()
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
@@ -73,10 +74,10 @@ class Database_Test extends Unit_Test_Case {
 
   function notlike_test() {
     $sql = Database::instance()
-      ->where("outer1", 1)
-      ->open_paren()
-      ->ornotlike("inner1", 1)
-      ->close_paren()
+      ->where("outer1", "=", 1)
+      ->or_open()
+      ->where("inner1", "NOT LIKE", 1)
+      ->close()
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
@@ -118,7 +119,7 @@ class Database_Test extends Unit_Test_Case {
 
   function prefix_no_replacement_test() {
     $update = Database_For_Test::instance()->from("test_tables")
-      ->where("1 = 1")
+      ->where("1", "=", "1")
       ->set(array("name" => "Test Name"))
       ->update();
 

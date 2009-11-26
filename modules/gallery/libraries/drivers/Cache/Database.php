@@ -86,7 +86,7 @@ class Cache_Database_Driver extends Cache_Driver {
   public function get_tag($tags) {
     $db = db::build()->from("caches");
     foreach ($tags as $tag) {
-      $db->where("tags", "like", "<$tag>");
+      $db->where("tags", "LIKE", "<$tag>");
     }
     $db_result = $db->execute()->as_array();
 
@@ -152,12 +152,12 @@ class Cache_Database_Driver extends Cache_Driver {
   public function delete($id, $tag = false) {
     $this->db->from("caches");
     if ($id === true) {
-      $this->db->where(1);
       // Delete all caches
+      $this->db->where("1", "=", "1");
     } else if ($tag === true) {
       $this->db->like("tags", "<$id>");
     } else {
-      $this->db->where("key", $id);
+      $this->db->where("key", "=", $id);
     }
 
     $status = $this->db->delete();
@@ -178,7 +178,8 @@ class Cache_Database_Driver extends Cache_Driver {
   public function delete_expired() {
     // Delete all expired caches
     $status = $this->db->from("caches")
-      ->where(array("expiration !=" => 0, "expiration <=" => time()))
+      ->where("expiration", "<>", 0)
+      ->where("expiration", "<=", time())
       ->delete();
 
     return count($status) > 0;

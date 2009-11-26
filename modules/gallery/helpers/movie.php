@@ -90,11 +90,11 @@ class movie_Core {
     // Randomize the name if there's a conflict
     // @todo Improve this.  Random numbers are not user friendly
     while (ORM::factory("item")
-           ->where("parent_id", $parent->id)
-           ->open_paren()
-           ->where("name", $movie->name)
-           ->orwhere("slug", $movie->slug)
-           ->close_paren()
+           ->where("parent_id", "=", $parent->id)
+           ->and_open()
+           ->where("name", "=", $movie->name)
+           ->orwhere("slug", "=", $movie->slug)
+           ->close()
            ->find()->id) {
       $rand = rand();
       $movie->name = "{$name}.$rand.{$pi['extension']}";

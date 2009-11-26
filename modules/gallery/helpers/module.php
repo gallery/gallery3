@@ -354,7 +354,8 @@ class module_Core {
       $row = db::build()
         ->select("value")
         ->from("vars")
-        ->where(array("module_name" => "gallery", "name" => "_cache"))
+        ->where("module_name", "=", "gallery")
+        ->where("name", "=", "_cache")
         ->execute()
         ->current();
       if ($row) {
@@ -395,8 +396,8 @@ class module_Core {
    */
   static function set_var($module_name, $name, $value) {
     $var = ORM::factory("var")
-      ->where("module_name", $module_name)
-      ->where("name", $name)
+      ->where("module_name", "=", $module_name)
+      ->where("name", "=", $name)
       ->find();
     if (!$var->loaded()) {
       $var->module_name = $module_name;
@@ -432,8 +433,8 @@ class module_Core {
    */
   static function clear_var($module_name, $name) {
     $var = ORM::factory("var")
-      ->where("module_name", $module_name)
-      ->where("name", $name)
+      ->where("module_name", "=", $module_name)
+      ->where("name", "=", $name)
       ->find();
     if ($var->loaded()) {
       $var->delete();

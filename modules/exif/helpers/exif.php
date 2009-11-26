@@ -73,7 +73,7 @@ class exif_Core {
     }
     $item->save();
 
-    $record = ORM::factory("exif_record")->where("item_id", $item->id)->find();
+    $record = ORM::factory("exif_record")->where("item_id", "=", $item->id)->find();
     if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
@@ -86,7 +86,7 @@ class exif_Core {
   static function get($item) {
     $exif = array();
     $record = ORM::factory("exif_record")
-      ->where("item_id", $item->id)
+      ->where("item_id", "=", $item->id)
       ->find();
     if (!$record->loaded()) {
       return array();
@@ -143,11 +143,11 @@ class exif_Core {
       ->select("items.id")
       ->from("items")
       ->join("exif_records", "items.id", "exif_records.item_id", "left")
-      ->where("type", "photo")
-      ->open_paren()
-      ->where("exif_records.item_id", null)
-      ->orwhere("exif_records.dirty", 1)
-      ->close_paren()
+      ->where("type", "=", "photo")
+      ->and_open()
+      ->where("exif_records.item_id", "=", null)
+      ->orwhere("exif_records.dirty", "=", 1)
+      ->close()
       ->get()
       ->count();
 

@@ -134,12 +134,14 @@ class l10n_client_Core {
       // incoming_translations.message to be NULL?
       $locale = $message_data->locale;
       $entry = ORM::factory("incoming_translation")
-        ->where(array("key" => $key, "locale" => $locale))
+        ->where("key", "=", $key)
+        ->where("locale", "=", $locale)
         ->find();
       if (!$entry->loaded()) {
         // @todo Load a message key -> message (text) dict into memory outside of this loop
         $root_entry = ORM::factory("incoming_translation")
-          ->where(array("key" => $key, "locale" => "root"))
+          ->where("key", "=", $key)
+          ->where("locale", "=", "root")
           ->find();
         $entry->key = $key;
         $entry->message = $root_entry->message;

@@ -29,7 +29,7 @@ class Gallery_Installer_Test extends Unit_Test_Case {
   }
 
   public function install_registers_gallery_module_test() {
-    $gallery = ORM::factory("module")->where("name", "gallery")->find();
+    $gallery = ORM::factory("module")->where("name", "=", "gallery")->find();
     $this->assert_equal("gallery", $gallery->name);
   }
 
