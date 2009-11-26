@@ -20,7 +20,7 @@
 class Group_Model extends ORM implements Group_Definition {
   protected $has_and_belongs_to_many = array("users");
 
-  var $rules = array(
+  var $form_rules = array(
     "name" => "required|length[4,255]");
 
   /**

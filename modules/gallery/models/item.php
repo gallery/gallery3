@@ -21,7 +21,7 @@ class Item_Model extends ORM_MPTT {
   protected $children = 'items';
   protected $sorting = array();
 
-  var $rules = array(
+  var $form_rules = array(
     "name" => "required|length[0,255]",
     "title" => "required|length[0,255]",
     "description" => "length[0,65535]",

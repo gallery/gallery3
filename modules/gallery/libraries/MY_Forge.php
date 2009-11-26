@@ -42,8 +42,8 @@ class Forge extends Forge_Core {
       if (isset($input->inputs)) {
         $input->add_rules_from($model);
       }
-      if (isset($model->rules[$name])) {
-        $input->rules($model->rules[$name]);
+      if (isset($model->form_rules[$name])) {
+        $input->rules($model->form_rules[$name]);
       }
     }
   }
