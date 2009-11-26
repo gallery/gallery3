@@ -142,6 +142,7 @@ $config['config_drivers'] = array();
  */
 $config["modules"] = array(
   MODPATH . "forge",
+  MODPATH . "kohana23_compat",
   MODPATH . "gallery",  // gallery must be *last* in the order
 );
 
