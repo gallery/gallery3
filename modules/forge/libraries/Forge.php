@@ -277,7 +277,8 @@ class Forge_Core {
 			{
 				foreach ($this->hidden as $input)
 				{
-					$hidden[$input->name] = $input->value;
+					$hidden['name'] = $input->name;
+					$hidden['value'] = $input->value;
 				}
 			}
 
