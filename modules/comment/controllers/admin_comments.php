@@ -22,10 +22,11 @@ class Admin_Comments_Controller extends Admin_Controller {
 
   public function index() {
     // Get rid of old deleted/spam comments once in a while
-    Database::instance()->query(
-      "DELETE FROM {comments} " .
-      "WHERE state IN ('deleted', 'spam') " .
-      "AND unix_timestamp(now()) - updated > 86400 * 7");
+    db::build()
+      ->delete("comments")
+      ->where("state", "IN", array("deleted", "spam"))
+      ->where("updated", "<", "UNIX_TIMESTAMP() - 86400 * 7")
+      ->execute();
 
     // Redirect to the appropriate queue
     url::redirect("admin/comments/queue/unpublished");
