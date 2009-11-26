@@ -27,6 +27,26 @@ class View extends View_Core {
     View::$global_data[$key] = $value;
   }
 
+  public function is_set($key) {
+    return parent::is_set($key) ? true : array_key_exists($key, View::$global_data);
+  }
+
+  /**
+   * Completely replace View_Core::__get() so that local data trumps global data, trumps members.
+   * This simulates the Kohana 2.3 behavior.
+   */
+  public function &__get($key) {
+    if (isset($this->kohana_local_data[$key])) {
+      return $this->kohana_local_data[$key];
+    } else if (isset(View::$global_data[$key])) {
+      return View::$global_data[$key];
+    } else if (isset($this->$key)) {
+      return $this->$key;
+    } else {
+      throw new Kohana_Exception('Undefined view variable: :var', array(':var' => $key));
+    }
+  }
+
   /**
    * Override View_Core::__construct so that we can set the csrf value into all views.
    *
