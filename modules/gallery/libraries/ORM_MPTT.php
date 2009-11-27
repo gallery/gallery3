@@ -150,7 +150,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   array    order_by
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $where=null, $order_by=array("id" => "ASC")) {
+  function children($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
     if ($where) {
       $this->merge_where($where);
     }

@@ -8,7 +8,7 @@
     <?= html::clean($album->title) ?>
   </span>
   <ul>
-    <? foreach ($album->children(null, 0, array(array("type", "=", "album"))) as $child): ?>
+    <? foreach ($album->children(null, null, array(array("type", "=", "album"))) as $child): ?>
     <? if ($selected && $child->contains($selected)): ?>
     <?= View::factory("organize_tree.html", array("selected" => $selected, "album" => $child)); ?>
     <? else: ?>

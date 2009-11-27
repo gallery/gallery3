@@ -597,7 +597,7 @@ class Item_Model extends ORM_MPTT {
    * @param   array    order_by
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $where=array(), $order_by=null) {
+  function children($limit=null, $offset=null, $where=array(), $order_by=null) {
     if (empty($order_by)) {
       $order_by = array($this->sort_column => $this->sort_order);
       // Use id as a tie breaker
