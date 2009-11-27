@@ -228,7 +228,7 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $parent->reload();
 
     $this->assert_equal(3, $parent->descendants_count());
-    $this->assert_equal(2, $parent->descendants_count(array("type" => "photo")));
-    $this->assert_equal(1, $parent->descendants_count(array("type" => "album")));
+    $this->assert_equal(2, $parent->descendants_count(array(array("type", "=", "photo"))));
+    $this->assert_equal(1, $parent->descendants_count(array(array("type", "=", "album"))));
   }
 }
