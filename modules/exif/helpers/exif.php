@@ -39,7 +39,7 @@ class exif_Core {
             if (function_exists("mb_detect_encoding") && mb_detect_encoding($value) != "UTF-8") {
               $value = utf8_encode($value);
             }
-            $keys[$field] = utf8::clean($value);
+            $keys[$field] = Input::clean($value);
 
             if ($field == "DateTime") {
               $time = strtotime($value);
@@ -62,7 +62,7 @@ class exif_Core {
             if (function_exists("mb_detect_encoding") && mb_detect_encoding($value) != "UTF-8") {
               $value = utf8_encode($value);
             }
-            $keys[$keyword] = utf8::clean($value);
+            $keys[$keyword] = Input::clean($value);
 
             if ($keyword == "Caption" && !$item->description) {
               $item->description = $value;
