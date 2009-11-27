@@ -371,18 +371,18 @@ class graphics_Core {
     }
     switch(module::get_var("gallery", "graphics_toolkit")) {
     case "gd":
-      Kohana::config_set("image.driver", "GD");
+      Kohana_Config::instance()->set("image.driver", "GD");
       break;
 
     case "imagemagick":
-      Kohana::config_set("image.driver", "ImageMagick");
-      Kohana::config_set(
+      Kohana_Config::instance()->set("image.driver", "ImageMagick");
+      Kohana_Config::instance()->set(
         "image.params.directory", module::get_var("gallery", "graphics_toolkit_path"));
       break;
 
     case "graphicsmagick":
-      Kohana::config_set("image.driver", "GraphicsMagick");
-      Kohana::config_set(
+      Kohana_Config::instance()->set("image.driver", "GraphicsMagick");
+      Kohana_Config::instance()->set(
         "image.params.directory", module::get_var("gallery", "graphics_toolkit_path"));
       break;
     }
