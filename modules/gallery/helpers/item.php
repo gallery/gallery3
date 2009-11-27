@@ -140,10 +140,10 @@ class item_Core {
     // Guard against an empty result when we create the first item.  It's unfortunate that we
     // have to check this every time.
     // @todo: figure out a better way to bootstrap the weight.
-    $result = Database::instance()
+    $result = db::build()
       ->select("weight")->from("items")
       ->order_by("weight", "desc")->limit(1)
-      ->get()->current();
+      ->execute()->current();
     return ($result ? $result->weight : 0) + 1;
   }
 

@@ -285,14 +285,14 @@ class Item_Model extends ORM_MPTT {
   private function _build_relative_caches() {
     $names = array();
     $slugs = array();
-    foreach (Database::instance()
+    foreach (db::build()
              ->select(array("name", "slug"))
              ->from("items")
              ->where("left_ptr", "<=", $this->left_ptr)
              ->where("right_ptr", ">=", $this->right_ptr)
              ->where("id", "<>", 1)
              ->order_by("left_ptr", "ASC")
-             ->get() as $row) {
+             ->execute() as $row) {
       // Don't encode the names segment
       $names[] = rawurlencode($row->name);
       $slugs[] = rawurlencode($row->slug);
@@ -489,7 +489,7 @@ class Item_Model extends ORM_MPTT {
                ->where("parent_id", "=", $this->id)
                ->merge_where($where)
                ->order_by($order_by)
-               ->get() as $row) {
+               ->execute() as $row) {
         $position++;
         if ($row->id == $child->id) {
           break;

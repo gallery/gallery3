@@ -170,10 +170,10 @@ class notification {
   }
 
   static function send_pending_notifications() {
-    foreach (Database::instance()
+    foreach (db::build()
              ->select("DISTINCT email")
              ->from("pending_notifications")
-             ->get() as $row) {
+             ->execute() as $row) {
       $email = $row->email;
       $result = ORM::factory("pending_notification")
         ->where("email", "=", $email)

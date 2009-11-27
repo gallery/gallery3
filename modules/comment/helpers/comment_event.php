@@ -62,12 +62,11 @@ class comment_event_Core {
   }
 
   static function item_index_data($item, $data) {
-    foreach (Database::instance()
+    foreach (db::build()
              ->select("text")
              ->from("comments")
              ->where("item_id", "=", $item->id)
-             ->get()
-             ->as_array() as $row) {
+             ->execute() as $row) {
       $data[] = $row->text;
     }
   }

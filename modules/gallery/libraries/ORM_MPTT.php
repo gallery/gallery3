@@ -51,10 +51,16 @@ class ORM_MPTT_Core extends ORM {
 
     try {
       // Make a hole in the parent for this new item
-      $this->db->query(
-        "UPDATE {{$this->table_name}} SET `left_ptr` = `left_ptr` + 2 WHERE `left_ptr` >= {$parent->right_ptr}");
-      $this->db->query(
-        "UPDATE {{$this->table_name}} SET `right_ptr` = `right_ptr` + 2 WHERE `right_ptr` >= {$parent->right_ptr}");
+      $this->db_builder
+        ->update($this->table_name)
+        ->set("left_ptr", new Database_Expression("`left_ptr` + 2"))
+        ->where("left_ptr", ">=", $parent->right_ptr)
+        ->execute();
+      $this->db_builder
+        ->update($this->table_name)
+        ->set("right_ptr", new Database_Expression("`right_ptr` + 2"))
+        ->where("right_ptr", ">=", $parent->right_ptr)
+        ->execute();
       $parent->right_ptr += 2;
 
       // Insert this item into the hole
@@ -92,10 +98,16 @@ class ORM_MPTT_Core extends ORM {
 
     $this->lock();
     try {
-      $this->db->query(
-        "UPDATE {{$this->table_name}} SET `left_ptr` = `left_ptr` - 2 WHERE `left_ptr` > {$this->right_ptr}");
-      $this->db->query(
-        "UPDATE {{$this->table_name}} SET `right_ptr` = `right_ptr` - 2 WHERE `right_ptr` > {$this->right_ptr}");
+      $this->db_builder
+        ->update($this->table_name)
+        ->set("left_ptr", new Database_Expression("`left_ptr` - 2"))
+        ->where("left_ptr", ">", $this->right_ptr)
+        ->execute();
+      $this->db_builder
+        ->update($this->table_name)
+        ->set("right_ptr", new Database_Expression("`right_ptr` - 2"))
+        ->where("right_ptr", ">", $this->right_ptr)
+        ->execute();
     } catch (Exception $e) {
       $this->unlock();
       throw $e;
@@ -239,23 +251,32 @@ class ORM_MPTT_Core extends ORM {
     try {
       if ($level_delta) {
         // Update the levels for the to-be-moved items
-        $this->db->query(
-          "UPDATE {{$this->table_name}} SET `level` = `level` + $level_delta" .
-          " WHERE `left_ptr` >= $original_left_ptr AND `right_ptr` <= $original_right_ptr");
+        $this->db_builder
+          ->update($this->table_name)
+          ->set("level", new Database_Expression("`level` + $level_delta"))
+          ->where("left_ptr", ">=", $original_left_ptr)
+          ->where("right_ptr", "<=", $original_right_ptr)
+          ->execute();
       }
 
       // Make a hole in the target for the move
-      $target->db->query(
-        "UPDATE {{$this->table_name}} SET `left_ptr` = `left_ptr` + $size_of_hole" .
-        " WHERE `left_ptr` >= $target_right_ptr");
-      $target->db->query(
-        "UPDATE {{$this->table_name}} SET `right_ptr` = `right_ptr` + $size_of_hole" .
-        " WHERE `right_ptr` >= $target_right_ptr");
+      $target->db_builder
+        ->update($this->table_name)
+        ->set("left_ptr", new Database_Expression("`left_ptr` + $size_of_hole"))
+        ->where("left_ptr", ">=", $target_right_ptr)
+        ->execute();
+      $target->db_builder
+        ->update($this->table_name)
+        ->set("right_ptr", new Database_Expression("`right_ptr` + $size_of_hole"))
+        ->where("right_ptr", ">=", $target_right_ptr)
+        ->execute();
 
       // Change the parent.
-      $this->db->query(
-        "UPDATE {{$this->table_name}} SET `parent_id` = {$target->id}" .
-        " WHERE `id` = {$this->id}");
+      $this->db_builder
+        ->update($this->table_name)
+        ->set("parent_id", $target->id)
+        ->where("id", "=", $this->id)
+        ->execute();
 
       // If the source is to the right of the target then we just adjusted its left_ptr and right_ptr above.
       $left_ptr = $original_left_ptr;
@@ -266,20 +287,25 @@ class ORM_MPTT_Core extends ORM {
       }
 
       $new_offset = $target->right_ptr - $left_ptr;
-      $this->db->query(
-        "UPDATE {{$this->table_name}}" .
-        "   SET `left_ptr` = `left_ptr` + $new_offset," .
-        "       `right_ptr` = `right_ptr` + $new_offset" .
-      " WHERE `left_ptr` >= $left_ptr" .
-        "   AND `right_ptr` <= $right_ptr");
+      $this->db_builder
+        ->update($this->table_name)
+        ->set("left_ptr", new Database_Expression("`left_ptr` + $new_offset"))
+        ->set("right_ptr", new Database_Expression("`right_ptr` + $new_offset"))
+        ->where("left_ptr", ">=", $left_ptr)
+        ->where("right_ptr", "<=", $right_ptr)
+        ->execute();
 
       // Close the hole in the source's parent after the move
-      $this->db->query(
-        "UPDATE {{$this->table_name}} SET `left_ptr` = `left_ptr` - $size_of_hole" .
-        " WHERE `left_ptr` > $right_ptr");
-      $this->db->query(
-        "UPDATE {{$this->table_name}} SET `right_ptr` = `right_ptr` - $size_of_hole" .
-        " WHERE `right_ptr` > $right_ptr");
+      $this->db_builder
+        ->update($this->table_name)
+        ->set("left_ptr", new Database_Expression("`left_ptr` - $size_of_hole"))
+        ->where("left_ptr", ">", $right_ptr)
+        ->execute();
+      $this->db_builder
+        ->update($this->table_name)
+        ->set("right_ptr", new Database_Expression("`right_ptr` - $size_of_hole"))
+        ->where("right_ptr", ">", $right_ptr)
+        ->execute();
     } catch (Exception $e) {
       $this->unlock();
       throw $e;

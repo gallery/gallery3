@@ -89,12 +89,12 @@ class tag_Core {
    */
   static function item_tags($item) {
     $tags = array();
-    foreach (Database::instance()
+    foreach (db::build()
              ->select("name")
              ->from("tags")
              ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
              ->where("items_tags.item_id", "=", $item->id)
-             ->get() as $row) {
+             ->execute() as $row) {
       $tags[] = $row->name;
     }
     return $tags;
