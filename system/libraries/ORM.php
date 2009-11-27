@@ -242,7 +242,7 @@ class ORM_Core {
 						else
 						{
 							// Support for things like reset_select, reset_write, list_tables
-							return $this->db_builder->$method();
+							$this->db_builder->$method();
 						}
 					break;
 					case 1:
