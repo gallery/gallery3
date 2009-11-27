@@ -46,7 +46,7 @@ class search_task_Core {
       foreach (ORM::factory("item")
                ->join("search_records", "items.id", "search_records.item_id", "left")
                ->where("search_records.item_id", "=", null)
-               ->orwhere("search_records.dirty", "=", 1)
+               ->or_where("search_records.dirty", "=", 1)
                ->find_all() as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.

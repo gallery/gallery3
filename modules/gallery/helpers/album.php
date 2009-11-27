@@ -71,7 +71,7 @@ class album_Core {
            ->where("parent_id", "=", $parent->id)
            ->and_open()
            ->where("name", "=", $album->name)
-           ->orwhere("slug", "=", $album->slug)
+           ->or_where("slug", "=", $album->slug)
            ->close()
            ->find()->id) {
       $rand = rand();

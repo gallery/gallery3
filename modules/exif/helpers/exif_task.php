@@ -47,7 +47,7 @@ class exif_task_Core {
                ->where("type", "=", "photo")
                ->and_open()
                ->where("exif_records.item_id", "=", null)
-               ->orwhere("exif_records.dirty", "=", 1)
+               ->or_where("exif_records.dirty", "=", 1)
                ->close()
                ->find_all() as $item) {
         // The query above can take a long time, so start the timer after its done

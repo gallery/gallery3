@@ -92,7 +92,7 @@ class photo_Core {
            ->where("parent_id", "=", $parent->id)
            ->and_open()
            ->where("name", "=", $photo->name)
-           ->orwhere("slug", "=", $photo->slug)
+           ->or_where("slug", "=", $photo->slug)
            ->close()
            ->find()->id) {
       $rand = rand();

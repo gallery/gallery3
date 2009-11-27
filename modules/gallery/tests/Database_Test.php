@@ -32,7 +32,7 @@ class Database_Test extends Unit_Test_Case {
       ->where("outer1", "=", 1)
       ->and_open()
       ->where("inner1", "=", 1)
-      ->orwhere("inner2", "=", 2)
+      ->or_where("inner2", "=", 2)
       ->close()
       ->where("outer2", "=", 2)
       ->compile();
@@ -46,7 +46,7 @@ class Database_Test extends Unit_Test_Case {
     $sql = Database::instance()
       ->and_open()
       ->where("inner1", "=", 1)
-      ->orwhere("inner2", "=", 2)
+      ->or_where("inner2", "=", 2)
       ->close()
       ->where("outer1", "=", 1)
       ->where("outer2", "=", 2)
@@ -62,8 +62,8 @@ class Database_Test extends Unit_Test_Case {
       ->where("outer1", "=", 1)
       ->and_open()
       ->where("inner1", "=", 1)
-      ->orwhere("inner2", "=", 2)
-      ->orwhere("inner3", "=", 3))
+      ->or_where("inner2", "=", 2)
+      ->or_where("inner3", "=", 3))
       ->close()
       ->compile();
     $sql = str_replace("\n", " ", $sql);

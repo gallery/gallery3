@@ -146,7 +146,7 @@ class exif_Core {
       ->where("type", "=", "photo")
       ->and_open()
       ->where("exif_records.item_id", "=", null)
-      ->orwhere("exif_records.dirty", "=", 1)
+      ->or_where("exif_records.dirty", "=", 1)
       ->close()
       ->get()
       ->count();

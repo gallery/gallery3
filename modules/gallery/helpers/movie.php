@@ -93,7 +93,7 @@ class movie_Core {
            ->where("parent_id", "=", $parent->id)
            ->and_open()
            ->where("name", "=", $movie->name)
-           ->orwhere("slug", "=", $movie->slug)
+           ->or_where("slug", "=", $movie->slug)
            ->close()
            ->find()->id) {
       $rand = rand();

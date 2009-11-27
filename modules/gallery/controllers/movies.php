@@ -78,7 +78,7 @@ class Movies_Controller extends Items_Controller {
             ->where("id <>", $movie->id)
             ->and_open()
             ->where("name", "=", $form->edit_item->filename->value)
-            ->orwhere("slug", "=", $form->edit_item->slug->value)
+            ->or_where("slug", "=", $form->edit_item->slug->value)
             ->close()
             ->get()
             ->current()) {

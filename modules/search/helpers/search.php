@@ -78,7 +78,7 @@ class search_Core {
       ->join("search_records", "items.id", "search_records.item_id", "left")
       ->and_open()
       ->where("search_records.item_id", "=", null)
-      ->orwhere("search_records.dirty", "=", 1)
+      ->or_where("search_records.dirty", "=", 1)
       ->close()
       ->get()
       ->count();
