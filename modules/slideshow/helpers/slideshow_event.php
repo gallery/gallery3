@@ -32,7 +32,7 @@ class slideshow_event_Core {
 
   static function album_menu($menu, $theme) {
     $descendants_count = ORM::factory("item", $theme->item()->id)
-      ->descendants_count(array("type" => "photo"));
+      ->descendants_count(array(array("type", "=", "photo")));
     if ($descendants_count > 1) {
       $menu->append(Menu::factory("link")
                     ->id("slideshow")
