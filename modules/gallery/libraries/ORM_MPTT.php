@@ -152,7 +152,7 @@ class ORM_MPTT_Core extends ORM {
    */
   function children($limit=null, $offset=0, $where=null, $order_by=array("id" => "ASC")) {
     if ($where) {
-      $this->where($where);
+      $this->merge_where($where);
     }
 
     return $this
@@ -170,7 +170,7 @@ class ORM_MPTT_Core extends ORM {
    */
   function children_count($where=null) {
     if ($where) {
-      $this->where($where);
+      $this->merge_where($where);
     }
 
     return $this
@@ -189,7 +189,7 @@ class ORM_MPTT_Core extends ORM {
    */
   function descendants($limit=null, $offset=0, $where=null, $order_by=array("id" => "ASC")) {
     if ($where) {
-      $this->where($where);
+      $this->merge_where($where);
     }
 
     return $this
@@ -207,7 +207,7 @@ class ORM_MPTT_Core extends ORM {
    */
   function descendants_count($where=null) {
     if ($where) {
-      $this->where($where);
+      $this->merge_where($where);
     }
 
     return $this

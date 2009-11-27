@@ -21,7 +21,7 @@ class Photos_Controller extends Items_Controller {
   public function _show($photo) {
     access::required("view", $photo);
 
-    $where = array("type != " => "album");
+    $where = array(array("type", "!=", "album"));
     $position = $photo->parent()->get_position($photo, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) =

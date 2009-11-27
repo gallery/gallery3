@@ -428,14 +428,14 @@ class Item_Model extends ORM_MPTT {
     } else {
       $comp = "<";
     }
-    $db = Database::instance();
+    $db = db::build();
 
     // If the comparison column has NULLs in it, we can't use comparators on it and will have to
     // deal with it the hard way.
     $count = $db->from("items")
       ->where("parent_id", "=", $this->id)
       ->where($this->sort_column, "=", NULL)
-      ->where($where)
+      ->merge_where($where)
       ->count_records();
 
     if (empty($count)) {
@@ -445,7 +445,7 @@ class Item_Model extends ORM_MPTT {
       $position = $db->from("items")
         ->where("parent_id", "=", $this->id)
         ->where($sort_column, $comp, $child->$sort_column)
-        ->where($where)
+        ->merge_where($where)
         ->count_records();
 
       // We stopped short of our target value in the sort (notice that we're using a < comparator
@@ -456,12 +456,14 @@ class Item_Model extends ORM_MPTT {
       //
       // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
       // our base value.
-      foreach ($db->from("items")
+      foreach ($db
+               ->select("id")
+               ->from("items")
                ->where("parent_id", "=", $this->id)
                ->where($sort_column, "=", $child->$sort_column)
-               ->where($where)
+               ->merge_where($where)
                ->order_by(array("id" => "ASC"))
-               ->get() as $row) {
+               ->execute() as $row) {
         $position++;
         if ($row->id == $child->id) {
           break;
@@ -485,7 +487,7 @@ class Item_Model extends ORM_MPTT {
       foreach ($db->select("id")
                ->from("items")
                ->where("parent_id", "=", $this->id)
-               ->where($where)
+               ->merge_where($where)
                ->order_by($order_by)
                ->get() as $row) {
         $position++;
