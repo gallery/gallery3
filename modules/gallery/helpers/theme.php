@@ -25,6 +25,7 @@
  */
 class theme_Core {
   public static $active_theme;
+  public static $is_admin;
 
   /**
    * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
@@ -37,14 +38,14 @@ class theme_Core {
       $path = "/" . $input->get("kohana_uri");
     }
 
-    $is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
-    $setting_name = $is_admin ? "active_admin_theme" : "active_site_theme";
+    self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
+    $setting_name = self::$is_admin ? "active_admin_theme" : "active_site_theme";
     if (!(identity::active_user()->admin && $theme_name = $input->get("theme"))) {
       $theme_name = module::get_var("gallery", $setting_name);
 
       if (!file_exists(THEMEPATH . $theme_name)) {
         Kohana::log("error", "Unable to locate theme '$theme_name', switching to default theme.");
-        $theme_name = $is_admin ? "admin_wind" : "wind";
+        $theme_name = self::$is_admin ? "admin_wind" : "wind";
         module::set_var("gallery", $setting_name, $theme_name);
       }
     }
