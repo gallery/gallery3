@@ -29,12 +29,6 @@ class Theme_View_Core extends Gallery_View {
    * @return  void
    */
   public function __construct($name, $page_type, $page_subtype) {
-    $theme_name = module::get_var("gallery", "active_site_theme");
-    if (!file_exists(THEMEPATH . $theme_name)) {
-      module::set_var("gallery", "active_site_theme", "wind");
-      theme::load_themes();
-      Kohana::log("error", "Unable to locate theme '$theme_name', switching to default theme.");
-    }
     parent::__construct($name);
 
     $this->theme_name = module::get_var("gallery", "active_site_theme");
