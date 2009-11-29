@@ -377,11 +377,12 @@ class module_Core {
         self::$var_cache = unserialize($row->value);
       } else {
         // gallery._cache doesn't exist.  Create it now.
-        foreach (Database::instance()
+        foreach (db::build()
                  ->select("module_name", "name", "value")
                  ->from("vars")
-                 ->order_by("module_name", "name")
-                 ->get() as $row) {
+                 ->order_by("module_name")
+                 ->order_by("name")
+                 ->execute() as $row) {
           if ($row->module_name == "gallery" && $row->name == "_cache") {
             // This could happen if there's a race condition
             continue;
@@ -421,7 +422,11 @@ class module_Core {
     $var->value = $value;
     $var->save();
 
-    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
+    db::build()
+      ->delete("vars")
+      ->where("module_name", "=", "gallery")
+      ->where("name", "=", "_cache")
+      ->execute();
     self::$var_cache = null;
  }
 
