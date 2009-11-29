@@ -85,6 +85,10 @@ class theme_Core {
       ->value(module::get_var("gallery", "footer_text"));
     $group->checkbox("show_credits")->label(t("Show site credits"))->id("g-footer-text")
       ->checked(module::get_var("gallery", "show_credits"));
+
+    module::event("theme_edit_form", $form);
+
+    $group = $form->group("buttons");
     $group->submit("")->value(t("Save"));
     return $form;
   }
