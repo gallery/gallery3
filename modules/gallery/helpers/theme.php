@@ -24,6 +24,10 @@
  * Note: by design, this class does not do any permission checking.
  */
 class theme_Core {
+  public static $admin_theme_name;
+  public static $site_theme_name;
+  public static $is_admin;
+
   /**
    * Load the active theme.  This is called at bootstrap time.  We will only ever have one theme
    * active for any given request.
@@ -35,15 +39,33 @@ class theme_Core {
       $path = "/" . $input->get("kohana_uri");
     }
 
-    if (!(identity::active_user()->admin && $theme_name = $input->get("theme"))) {
-      $theme_name = module::get_var(
-        "gallery",
-        $path == "/admin" || !strncmp($path, "/admin/", 7) ?
-          "active_admin_theme" : "active_site_theme");
+    $config = Kohana_Config::instance();
+    $modules = $config->get("core.modules");
+    self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
+    self::$site_theme_name = module::get_var("gallery", "active_site_theme");
+    if (self::$is_admin) {
+      // Load the admin theme
+      self::$admin_theme_name = module::get_var("gallery", "active_admin_theme");
+      array_unshift($modules, THEMEPATH . self::$admin_theme_name);
+
+      // If the site theme has an admin subdir, load that as a module so that
+      // themes can provide their own code.
+      if (file_exists(THEMEPATH . self::$site_theme_name . "/admin")) {
+        array_unshift($modules, THEMEPATH . self::$site_theme_name . "/admin");
+      }
+    } else {
+      // Admins can override the site theme, temporarily.  This lets us preview themes.
+      if (identity::active_user()->admin && $override = $input->get("theme")) {
+        if (file_exists(THEMEPATH . $override)) {
+          self::$site_theme_name = $override;
+        } else {
+          Kohana_Log::add("error", "Missing override theme: '$override'");
+        }
+      }
+      array_unshift($modules, THEMEPATH . self::$site_theme_name);
     }
-    $modules = Kohana::config("core.modules");
-    array_unshift($modules, THEMEPATH . $theme_name);
-    Kohana_Config::instance()->set("core.modules", $modules);
+
+    $config->set("core.modules", $modules);
   }
 
   static function get_edit_form_admin() {

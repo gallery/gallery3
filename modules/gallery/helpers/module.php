@@ -338,6 +338,21 @@ class module_Core {
         call_user_func_array(array($class, $function), $args);
       }
     }
+
+    // Give the admin theme a chance to respond, if we're in admin mode.
+    if (theme::$is_admin) {
+      $class = theme::$admin_theme_name . "_event";
+      if (method_exists($class, $function)) {
+        call_user_func_array(array($class, $function), $args);
+      }
+    }
+
+    // Give the site theme a chance to respond as well.  It gets a chance even in admin mode, as
+    // long as the theme has an admin subdir.
+    $class = theme::$site_theme_name . "_event";
+    if (method_exists($class, $function)) {
+      call_user_func_array(array($class, $function), $args);
+    }
   }
 
   /**
