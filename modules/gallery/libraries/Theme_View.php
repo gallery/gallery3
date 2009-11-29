@@ -265,6 +265,13 @@ class Theme_View_Core extends Gallery_View {
         }
       }
 
+      $helper_class = theme::$site_theme_name . "_theme";
+      if (method_exists($helper_class, $function)) {
+        $blocks[] = call_user_func_array(
+          array($helper_class, $function),
+          array_merge(array($this), $args));
+      }
+
       if ($function == "head") {
         array_unshift($blocks, $this->combine_files($this->css, "css"));
         array_unshift($blocks, $this->combine_files($this->scripts, "javascript"));
