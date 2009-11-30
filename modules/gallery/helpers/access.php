@@ -610,6 +610,7 @@ class access_Core {
     }
 
     $base_url = url::site("?kohana_uri=/file_proxy");
+    $base_url = str_replace("/?", "?", $base_url);
     foreach ($dirs as $dir) {
       if ($value === self::DENY) {
         $fp = fopen("$dir/.htaccess", "w+");
