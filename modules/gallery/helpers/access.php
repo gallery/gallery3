@@ -609,7 +609,7 @@ class access_Core {
       $dirs[] = dirname($album->thumb_path());
     }
 
-    $base_url = url::site("file_proxy");
+    $base_url = url::site("?kohana_uri=/file_proxy");
     foreach ($dirs as $dir) {
       if ($value === self::DENY) {
         $fp = fopen("$dir/.htaccess", "w+");
