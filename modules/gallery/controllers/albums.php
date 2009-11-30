@@ -18,7 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Albums_Controller extends Items_Controller {
-  public function _show($album) {
+  public function index() {
+    $this->_show(ORM::factory("item", 1));
+  }
+
+  public function show($album) {
+    if (!is_object($album)) {
+      // show() must be public because we route to it in url::parse_url(), so make
+      // sure that we're actually receiving an object
+      Kohana::show_404();
+    }
     $page_size = module::get_var("gallery", "page_size", 9);
     if (!access::can("view", $album)) {
       if ($album->id == 1) {

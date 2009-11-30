@@ -23,10 +23,12 @@ class Items_Controller extends Controller {
     if (!$item->loaded) {
       return Kohana::show_404();
     }
+
     // Redirect to the more specific resource type, since it will render
-    // differently.  We could also just delegate here, but it feels more appropriate
-    // to have a single canonical resource mapping.
+    // differently.  We can't delegate here because we may have gotten to this
+    // page via /items/<id> which means that we don't have a type-specific controller.  Also, we
+    // want to drive a single canonical resource mapping where possible.
     access::required("view", $item);
-    return $this->_show($item);
+    url::redirect($item->abs_url());
   }
 }

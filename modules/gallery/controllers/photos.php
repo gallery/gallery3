@@ -18,7 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Photos_Controller extends Items_Controller {
-  public function _show($photo) {
+  public function show($photo) {
+    if (!is_object($photo)) {
+      // show() must be public because we route to it in url::parse_url(), so make
+      // sure that we're actually receiving an object
+      Kohana::show_404();
+    }
     access::required("view", $photo);
 
     $where = array("type != " => "album");

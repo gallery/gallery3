@@ -18,7 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Movies_Controller extends Items_Controller {
-  public function _show($movie) {
+  public function show($movie) {
+    if (!is_object($movie)) {
+      // show() must be public because we route to it in url::parse_url(), so make
+      // sure that we're actually receiving an object
+      Kohana::show_404();
+    }
     access::required("view", $movie);
 
     $where = array("type != " => "album");
