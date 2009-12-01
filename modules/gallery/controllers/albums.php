@@ -19,7 +19,7 @@
  */
 class Albums_Controller extends Items_Controller {
   public function index() {
-    $this->_show(ORM::factory("item", 1));
+    $this->show(ORM::factory("item", 1));
   }
 
   public function show($album) {
