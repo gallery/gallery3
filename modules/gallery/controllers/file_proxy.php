@@ -112,7 +112,7 @@ class File_Proxy_Controller extends Controller {
     Session::abort_save();
 
     // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
-    if ($type != "albums" && in_array($item->mime_type, array("video/x-flv", "video/mp4"))) {
+    if ($item->is_movie() && $type != "albums") {
       header("Content-type: image/jpeg");
     } else {
       header("Content-Type: $item->mime_type");
