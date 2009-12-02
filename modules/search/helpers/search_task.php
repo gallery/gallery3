@@ -20,10 +20,10 @@
 class search_task_Core {
   static function available_tasks() {
     // Delete extra search_records
-    Database::instance()->query(
-      "DELETE FROM {search_records} " .
-      "WHERE {search_records}.`item_id` NOT IN " .
-      "(SELECT `id` FROM {items})");
+    db::build()
+      ->delete("search_records")
+      ->where("item_id", "NOT IN", db::build()->select("id")->from("items"))
+      ->execute();
 
     list ($remaining, $total, $percent) = search::stats();
     return array(Task_Definition::factory()

@@ -20,10 +20,11 @@
 class exif_task_Core {
   static function available_tasks() {
     // Delete extra exif_records
-    Database::instance()->query(
-      "DELETE FROM {exif_records} " .
-      "WHERE {exif_records}.`item_id` NOT IN " .
-      "(SELECT `id` FROM {items} WHERE {items}.`type` = 'photo')");
+    db::build()
+      ->delete("exif_records")
+      ->where("item_id", "NOT IN",
+              db::build()->select("id")->from("items")->where("type", "=", "photo"))
+      ->execute();
 
     list ($remaining, $total, $percent) = exif::stats();
     return array(Task_Definition::factory()

@@ -139,7 +139,7 @@ class exif_Core {
   }
 
   static function stats() {
-    $missing_exif = Database::instance()
+    $missing_exif = db::build()
       ->select("items.id")
       ->from("items")
       ->join("exif_records", "items.id", "exif_records.item_id", "left")
@@ -148,10 +148,10 @@ class exif_Core {
       ->where("exif_records.item_id", "=", null)
       ->or_where("exif_records.dirty", "=", 1)
       ->close()
-      ->get()
+      ->execute()
       ->count();
 
-    $total_items = ORM::factory("item")->where("type", "photo")->count_all();
+    $total_items = ORM::factory("item")->where("type", "=", "photo")->count_all();
     if (!$total_items) {
       return array(0, 0, 0);
     }

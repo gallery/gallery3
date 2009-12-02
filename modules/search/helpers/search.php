@@ -72,7 +72,7 @@ class search_Core {
   }
 
   static function stats() {
-    $remaining = Database::instance()
+    $remaining = db::build()
       ->select("items.id")
       ->from("items")
       ->join("search_records", "items.id", "search_records.item_id", "left")
@@ -80,7 +80,7 @@ class search_Core {
       ->where("search_records.item_id", "=", null)
       ->or_where("search_records.dirty", "=", 1)
       ->close()
-      ->get()
+      ->execute()
       ->count();
 
     $total = ORM::factory("item")->count_all();

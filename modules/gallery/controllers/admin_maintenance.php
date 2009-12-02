@@ -22,11 +22,13 @@ class Admin_Maintenance_Controller extends Admin_Controller {
    * Show a list of all available, running and finished tasks.
    */
   public function index() {
-    $query = Database::instance()->query(
-      "UPDATE {tasks} SET `state` = 'stalled' " .
-      "WHERE done = 0 " .
-      "AND   state <> 'stalled' " .
-      "AND   unix_timestamp(now()) - updated > 15");
+    $query = db::build()
+      ->update("tasks")
+      ->set("state", "stalled")
+      ->where("done", "=", 0)
+      ->where("state", "<>", "stalled")
+      ->where(new Database_Expression("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
+      ->execute();
     $stalled_count = $query->count();
     if ($stalled_count) {
       log::warning("tasks",
@@ -138,10 +140,12 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
   public function cancel_running_tasks() {
     access::verify_csrf();
-    Database::instance()->update(
-      "tasks",
-      array("done" => 1, "state" => "cancelled"),
-      array("done" => 0));
+    db::build()
+      ->update("tasks")
+      ->set("done", 1)
+      ->set("state", "cancelled")
+      ->where("done", "=", 0)
+      ->execute();
     message::success(t("All running tasks cancelled"));
     url::redirect("admin/maintenance");
   }

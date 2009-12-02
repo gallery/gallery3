@@ -33,7 +33,7 @@ class Cache_Database_Driver extends Cache_Driver {
   public function exists($id) {
     $count = db::build()
       ->where("key", "=", $id)
-      ->where("expiration", ">=", "time()")
+      ->where("expiration", ">=", time())
       ->count_records("caches");
     return $count > 0;
   }
@@ -61,16 +61,18 @@ class Cache_Database_Driver extends Cache_Driver {
 
     foreach ($items as $id => $data) {
       if ($this->exists($id)) {
-        $status = db::build()->update(
-          "caches",
-          array("tags" => $tags, "expiration" => $lifetime, "cache" => serialize($data)),
-          array("key", "=", $id))
+        $status = db::build()
+          ->update("caches")
+          ->set("tags", $tags)
+          ->set("expiration", $lifetime)
+          ->set("cache", serialize($data))
+          ->where("key", "=", $id)
           ->execute();
       } else {
-        $status = db::build()->insert(
-          "caches",
-          array("key" => $id, "tags" => $tags,
-                "expiration" => $lifetime, "cache" => serialize($data)))
+        $status = db::build()
+          ->insert("caches")
+          ->columns("key", "tags", "expiration", "cache")
+          ->values($id, $tags, $lifetime, serialize($data))
           ->execute();
       }
     }
@@ -84,11 +86,13 @@ class Cache_Database_Driver extends Cache_Driver {
    * @return  array    cached data
    */
   public function get_tag($tags) {
-    $db = db::build()->from("caches");
+    $db = db::build()
+      ->select("*")
+      ->from("caches");
     foreach ($tags as $tag) {
       $db->where("tags", "LIKE", "<$tag>");
     }
-    $db_result = $db->execute()->as_array();
+    $db_result = $db->execute();
 
     // An array will always be returned
     $result = array();
@@ -116,9 +120,9 @@ class Cache_Database_Driver extends Cache_Driver {
   public function get($keys, $single=false) {
     $data = null;
     $result = db::build()
+      ->select("*")
       ->from("caches")
       ->where("key", "IN", $keys)
-      ->select()
       ->execute();
 
     if (count($result) > 0) {
@@ -150,17 +154,18 @@ class Cache_Database_Driver extends Cache_Driver {
    * @return bool
    */
   public function delete($id, $tag = false) {
-    $this->db->from("caches");
+    $db = db::build()
+      ->delete("caches");
     if ($id === true) {
       // Delete all caches
-      $this->db->where("1", "=", "1");
+      $db->where("1", "=", "1");
     } else if ($tag === true) {
-      $this->db->like("tags", "<$id>");
+      $db->where("tags", "LIKE", "<$id>");
     } else {
-      $this->db->where("key", "=", $id);
+      $db->where("key", "=", $id);
     }
 
-    $status = $this->db->delete();
+    $status = $db->execute();
 
     return count($status) > 0;
   }
@@ -177,10 +182,11 @@ class Cache_Database_Driver extends Cache_Driver {
    */
   public function delete_expired() {
     // Delete all expired caches
-    $status = $this->db->from("caches")
+    $status = db::build()
+      ->delete("caches")
       ->where("expiration", "<>", 0)
       ->where("expiration", "<=", time())
-      ->delete();
+      ->execute();
 
     return count($status) > 0;
   }
@@ -189,6 +195,6 @@ class Cache_Database_Driver extends Cache_Driver {
    * Empty the cache
    */
   public function delete_all() {
-    db::build()->query("TRUNCATE {caches}")->execute();
+    Database::instance()->query("TRUNCATE {caches}");
   }
 }

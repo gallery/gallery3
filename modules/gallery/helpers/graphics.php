@@ -197,11 +197,22 @@ class graphics_Core {
    * @return Database_Result Query result
    */
   static function find_dirty_images_query() {
-    return Database::instance()->query(
-      "SELECT `id` FROM {items} " .
-      "WHERE ((`thumb_dirty` = 1 AND (`type` <> 'album' OR `album_cover_item_id` IS NOT NULL))" .
-      "   OR (`resize_dirty` = 1 AND `type` = 'photo')) " .
-      "   AND `id` != 1");
+    return db::build()
+      ->from("items")
+      ->and_open()
+      ->and_open()
+      ->where("thumb_dirty", "=", 1)
+      ->and_open()
+      ->where("type", "<>", "album")
+      ->or_where("album_cover_item_id", "IS NOT", null)
+      ->close()
+      ->or_open()
+      ->where("resize_dirty", "=", 1)
+      ->where("type", "=", "photo")
+      ->close()
+      ->close()
+      ->where("id", "<>", 1)
+      ->close();
   }
 
   /**
@@ -209,18 +220,18 @@ class graphics_Core {
    */
   static function mark_dirty($thumbs, $resizes) {
     if ($thumbs || $resizes) {
-      $db = Database::instance();
-      $fields = array();
+      $db = db::build()
+        ->update("items");
       if ($thumbs) {
-        $fields["thumb_dirty"] = 1;
+        $db->set("thumb_dirty", 1);
       }
       if ($resizes) {
-        $fields["resize_dirty"] = 1;
+        $db->set("resize_dirty", 1);
       }
-      $db->update("items", $fields, true);
+      $db->execute();
     }
 
-    $count = self::find_dirty_images_query()->count();
+    $count = self::find_dirty_images_query()->count_records();
     if ($count) {
       site_status::warning(
           t2("One of your photos is out of date. <a %attrs>Click here to fix it</a>",
