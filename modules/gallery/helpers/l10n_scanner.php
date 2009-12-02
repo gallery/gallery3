@@ -28,11 +28,11 @@ class l10n_scanner_Core {
 
   static function process_message($message, &$cache) {
     if (empty($cache)) {
-      foreach (Database::instance()
+      foreach (db::build()
                ->select("key")
                ->from("incoming_translations")
                ->where("locale", "=", "root")
-               ->get() as $row) {
+               ->execute() as $row) {
         $cache[$row->key] = true;
       }
     }
