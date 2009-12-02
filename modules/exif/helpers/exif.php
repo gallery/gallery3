@@ -145,7 +145,7 @@ class exif_Core {
       ->join("exif_records", "items.id", "exif_records.item_id", "left")
       ->where("type", "=", "photo")
       ->and_open()
-      ->where("exif_records.item_id", "=", null)
+      ->where("exif_records.item_id", "IS", null)
       ->or_where("exif_records.dirty", "=", 1)
       ->close()
       ->execute()

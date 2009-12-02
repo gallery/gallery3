@@ -198,7 +198,7 @@ class Server_Add_Controller extends Admin_Controller {
       // they're done.
       $entries = ORM::factory("server_add_file")
         ->where("task_id", "=", $task->id)
-        ->where("item_id", "=", null)
+        ->where("item_id", "IS", null)
         ->order_by("id", "ASC")
         ->limit(10)
         ->find_all();

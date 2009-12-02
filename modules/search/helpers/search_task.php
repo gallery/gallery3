@@ -45,7 +45,7 @@ class search_task_Core {
       $start = microtime(true);
       foreach (ORM::factory("item")
                ->join("search_records", "items.id", "search_records.item_id", "left")
-               ->where("search_records.item_id", "=", null)
+               ->where("search_records.item_id", "IS", null)
                ->or_where("search_records.dirty", "=", 1)
                ->find_all() as $item) {
         // The query above can take a long time, so start the timer after its done
