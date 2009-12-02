@@ -171,7 +171,7 @@ class notification {
 
   static function send_pending_notifications() {
     foreach (db::build()
-             ->select("DISTINCT email")
+             ->select(new Database_Expression("DISTINCT `email`"))
              ->from("pending_notifications")
              ->execute() as $row) {
       $email = $row->email;
