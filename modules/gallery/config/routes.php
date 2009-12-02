@@ -25,4 +25,4 @@ $config["^admin_.*"] = null;
 $config["^form/(edit|add)/(\w+)/(.*)$"] = "$2/form_$1/$3";
 
 // Default page is the root album
-$config["_default"] = "albums/1";
+$config["_default"] = "albums";
