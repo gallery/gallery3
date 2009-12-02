@@ -87,7 +87,7 @@ class Cache_Database_Driver extends Cache_Driver {
    */
   public function get_tag($tags) {
     $db = db::build()
-      ->select("*")
+      ->select()
       ->from("caches");
     foreach ($tags as $tag) {
       $db->where("tags", "LIKE", "<$tag>");
@@ -120,7 +120,7 @@ class Cache_Database_Driver extends Cache_Driver {
   public function get($keys, $single=false) {
     $data = null;
     $result = db::build()
-      ->select("*")
+      ->select()
       ->from("caches")
       ->where("key", "IN", $keys)
       ->execute();
