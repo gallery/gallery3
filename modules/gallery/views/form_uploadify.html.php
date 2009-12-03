@@ -24,7 +24,7 @@
       fileDesc: <?= t("Photos and movies")->for_js() ?>,
       cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
       buttonText: <?= t("Select photos...")->for_js() ?>,
-      simUploadLimit: <?= $upload_limit ?>,
+      simUploadLimit: <?= $simultaneous_upload_limit ?>,
       wmode: "transparent",
       hideButton: true, /* should be true */
       auto: true,
