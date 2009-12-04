@@ -14,9 +14,7 @@
       dataType: "json",
       success: function(data) {
         if (data.result == "success") {
-          $.get($("#g-tag-cloud").attr("ref"), function(data, textStatus) {
-            $("#g-tag-cloud").html(data);
-          });
+          $("#g-tag-cloud").html(data.cloud);
         }
         $("#g-add-tag-form").resetForm();
       }

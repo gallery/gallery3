@@ -62,7 +62,7 @@ class Rss_Controller extends Controller {
         url::abs_site(str_replace("&", "&amp;", url::merge(array("page" => $page + 1))));
     }
 
-    rest::http_content_type(rest::RSS);
+    header("Content-Type: application/rss+xml");
     print $view;
   }
 }

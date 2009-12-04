@@ -298,8 +298,8 @@ modules/server_add/views/server_add_tree_dialog.html.php     4   DIRTY_JS url::s
 modules/server_add/views/server_add_tree_dialog.html.php     21  DIRTY    $tree
 modules/tag/views/admin_tags.html.php                        45  DIRTY_ATTR $tag->id
 modules/tag/views/admin_tags.html.php                        46  DIRTY    $tag->count
-modules/tag/views/tag_block.html.php                         27  DIRTY    $cloud
-modules/tag/views/tag_block.html.php                         29  DIRTY    $form
+modules/tag/views/tag_block.html.php                         25  DIRTY    $cloud
+modules/tag/views/tag_block.html.php                         27  DIRTY    $form
 modules/tag/views/tag_cloud.html.php                         4   DIRTY_ATTR (int)(($tag->count/$max_count)*7)
 modules/tag/views/tag_cloud.html.php                         5   DIRTY    $tag->count
 modules/tag/views/tag_cloud.html.php                         6   DIRTY_JS $tag->url()

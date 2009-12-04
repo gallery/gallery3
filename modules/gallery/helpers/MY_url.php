@@ -35,7 +35,8 @@ class url extends url_Core {
     if ($item && $item->loaded) {
       Router::$controller = "{$item->type}s";
       Router::$controller_path = MODPATH . "gallery/controllers/{$item->type}s.php";
-      Router::$method = $item->id;
+      Router::$method = "show";
+      Router::$arguments = array($item);
     }
   }
 

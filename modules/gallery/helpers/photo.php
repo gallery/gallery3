@@ -137,27 +137,8 @@ class photo_Core {
     return $photo;
   }
 
-  static function get_add_form($parent) {
-    $form = new Forge("albums/{$parent->id}", "", "post", array("id" => "g-add-photo-form"));
-    $group = $form->group("add_photo")->label(
-      t("Add Photo to %album_title", array("album_title" => $parent->title)));
-    $group->input("title")->label(t("Title"));
-    $group->textarea("description")->label(t("Description"));
-    $group->input("name")->label(t("Filename"));
-    $group->input("slug")->label(t("Internet Address"))->value($photo->slug)
-      ->callback("item::validate_url_safe")
-      ->error_messages(
-        "not_url_safe",
-        t("The internet address should contain only letters, numbers, hyphens and underscores"));
-    $group->upload("file")->label(t("File"))->rules("required|allow[jpg,png,gif,flv,mp4]");
-    $group->hidden("type")->value("photo");
-    $group->submit("")->value(t("Upload"));
-    $form->add_rules_from(ORM::factory("item"));
-    return $form;
-  }
-
   static function get_edit_form($photo) {
-    $form = new Forge("photos/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
+    $form = new Forge("photos/update/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title);

@@ -18,11 +18,16 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Albums_Controller extends Items_Controller {
+  public function index() {
+    $this->show(ORM::factory("item", 1));
+  }
 
-  /**
-   *  @see REST_Controller::_show($resource)
-   */
-  public function _show($album) {
+  public function show($album) {
+    if (!is_object($album)) {
+      // show() must be public because we route to it in url::parse_url(), so make
+      // sure that we're actually receiving an object
+      Kohana::show_404();
+    }
     $page_size = module::get_var("gallery", "page_size", 9);
     if (!access::can("view", $album)) {
       if ($album->id == 1) {
@@ -82,27 +87,9 @@ class Albums_Controller extends Items_Controller {
     print $template;
   }
 
-  /**
-   * @see REST_Controller::_create($resource)
-   */
-  public function _create($album) {
+  public function create($parent_id) {
     access::verify_csrf();
-    access::required("view", $album);
-    access::required("add", $album);
-
-    switch ($this->input->post("type")) {
-    case "album":
-      return $this->_create_album($album);
-
-    case "photo":
-      return $this->_create_photo($album);
-
-    default:
-      access::forbidden();
-    }
-  }
-
-  private function _create_album($album) {
+    $album = ORM::factory("item", $parent_id);
     access::required("view", $album);
     access::required("add", $album);
 
@@ -123,8 +110,7 @@ class Albums_Controller extends Items_Controller {
 
       print json_encode(
         array("result" => "success",
-              "location" => $new_album->url(),
-              "resource" => $new_album->url()));
+              "location" => $new_album->url()));
     } else {
       print json_encode(
         array(
@@ -133,43 +119,9 @@ class Albums_Controller extends Items_Controller {
     }
   }
 
-  private function _create_photo($album) {
-    access::required("view", $album);
-    access::required("add", $album);
-
-    // If we set the content type as JSON, it triggers saving the result as
-    // a document in the browser (well, in Chrome at least).
-    // @todo figure out why and fix this.
-    $form = photo::get_add_form($album);
-    if ($form->validate()) {
-      $photo = photo::create(
-        $album,
-        $this->input->post("file"),
-        $_FILES["file"]["name"],
-        $this->input->post("title", $this->input->post("name")),
-        $this->input->post("description"),
-        identity::active_user()->id);
-
-      log::success("content", "Added a photo", html::anchor("photos/$photo->id", "view photo"));
-      message::success(t("Added photo %photo_title",
-                         array("photo_title" => html::purify($photo->title))));
-
-      print json_encode(
-        array("result" => "success",
-              "resource" => $photo->url(),
-              "location" => $photo->url()));
-    } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
-    }
-  }
-
-  /**
-   * @see REST_Controller::_update($resource)
-   */
-  public function _update($album) {
+  public function update($album_id) {
     access::verify_csrf();
+    $album = ORM::factory("item", $album_id);
     access::required("view", $album);
     access::required("edit", $album);
 
@@ -229,32 +181,16 @@ class Albums_Controller extends Items_Controller {
     }
   }
 
-  /**
-   *  @see REST_Controller::_form_add($parameters)
-   */
-  public function _form_add($album_id) {
+  public function form_add($album_id) {
     $album = ORM::factory("item", $album_id);
     access::required("view", $album);
     access::required("add", $album);
 
-    switch ($this->input->get("type")) {
-    case "album":
-      print album::get_add_form($album);
-      break;
-
-    case "photo":
-      print photo::get_add_form($album);
-      break;
-
-    default:
-      kohana::show_404();
-    }
+    print album::get_add_form($album);
   }
 
-  /**
-   *  @see REST_Controller::_form_add($parameters)
-   */
-  public function _form_edit($album) {
+  public function form_edit($album_id) {
+    $album = ORM::factory("item", $album_id);
     access::required("view", $album);
     access::required("edit", $album);
 

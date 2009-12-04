@@ -129,7 +129,7 @@ class movie_Core {
   }
 
   static function get_edit_form($movie) {
-    $form = new Forge("movies/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
+    $form = new Forge("movies/update/$movie->id", "", "post", array("id" => "g-edit-movie-form"));
     $form->hidden("_method")->value("put");
     $group = $form->group("edit_item")->label(t("Edit Movie"));
     $group->input("title")->label(t("Title"))->value($movie->title);

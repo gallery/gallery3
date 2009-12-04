@@ -17,14 +17,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Items_Controller extends REST_Controller {
-  protected $resource_type = "item";
+class Items_Controller extends Controller {
+  public function __call($function, $args) {
+    $item = ORM::factory("item", (int)$function);
+    if (!$item->loaded) {
+      return Kohana::show_404();
+    }
 
-  public function _show($item) {
     // Redirect to the more specific resource type, since it will render
-    // differently.  We could also just delegate here, but it feels more appropriate
-    // to have a single canonical resource mapping.
+    // differently.  We can't delegate here because we may have gotten to this
+    // page via /items/<id> which means that we don't have a type-specific controller.  Also, we
+    // want to drive a single canonical resource mapping where possible.
     access::required("view", $item);
-    return url::redirect($item->abs_url());
+    url::redirect($item->abs_url());
   }
 }

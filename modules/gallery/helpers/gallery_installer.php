@@ -432,6 +432,13 @@ class gallery_installer {
       module::clear_var("gallery", "blocks_site.sidebar");
       module::set_version("gallery", $version = 19);
     }
+
+    // Set a default for the number of simultaneous uploads
+    // Version 20 was reverted in 57adefc5baa7a2b0dfcd3e736e80c2fa86d3bfa2, so skip it.
+    if ($version == 19 || $version == 20) {
+      module::set_var("gallery", "simultaneous_upload_limit", 5);
+      module::set_version("gallery", $version = 21);
+    }
   }
 
   static function uninstall() {

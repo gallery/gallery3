@@ -31,6 +31,6 @@ class rss_Core {
    */
   static function feed_link($uri) {
     $url = url::site("rss/feed/$uri");
-    return "<link rel=\"alternate\" type=\"" . rest::RSS . "\" href=\"$url\" />";
+    return "<link rel=\"alternate\" type=\"application/rss+xml\" href=\"$url\" />";
   }
 }

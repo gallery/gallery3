@@ -18,11 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Controller_Auth_Test extends Unit_Test_Case {
-  static $rest_methods = array("_index", "_show", "_form_edit", "_form_add", "_create",
-                               "_update", "_delete");
-
-  static $rest_methods_with_csrf_check = array("_update", "_delete", "_create");
-
   public function find_missing_auth_test() {
     $found = array();
     $controllers = explode("\n", `git ls-files '*/*/controllers/*.php'`);
@@ -46,7 +41,6 @@ class Controller_Auth_Test extends Unit_Test_Case {
       }
 
       $is_admin_controller = false;
-      $is_rest_controller = false;
 
       $open_braces = 0;
       $function = null;
@@ -64,7 +58,6 @@ class Controller_Auth_Test extends Unit_Test_Case {
               $function = null;
             } else if ($open_braces == 0) {
               $is_admin_controller = false;
-              $is_rest_controller = false;
             }
           } else if ($token == "{") {
             $open_braces++;
@@ -75,8 +68,6 @@ class Controller_Auth_Test extends Unit_Test_Case {
           if ($open_braces == 0 && $token[0] == T_EXTENDS) {
             if (self::_token_matches(array(T_STRING, "Admin_Controller"), $tokens, $token_number + 1)) {
               $is_admin_controller = true;
-            } else if (self::_token_matches(array(T_STRING, "REST_Controller"), $tokens, $token_number + 1)) {
-              $is_rest_controller = true;
             }
           } else if ($open_braces == 1 && $token[0] == T_FUNCTION) {
             $line = $token[2];
@@ -101,13 +92,8 @@ class Controller_Auth_Test extends Unit_Test_Case {
 
             $is_rss_feed = $name == "feed" && strpos(basename($controller), "_rss.php");
 
-            if ((!$is_static || $is_rss_feed) &&
-                (!$is_private ||
-                 ($is_rest_controller && in_array($name, self::$rest_methods)))) {
+            if ((!$is_static || $is_rss_feed) && !$is_private) {
               $function = self::_function($name, $line, $is_admin_controller);
-              if ($is_rest_controller && in_array($name, self::$rest_methods_with_csrf_check)) {
-                $function->checks_csrf(true);
-              }
             }
           }
 

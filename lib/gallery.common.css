@@ -621,10 +621,12 @@ div#g-action-status {
 
 #g-add-photos-status li.g-success {
   background: #d9efc2  url('images/ico-success.png') no-repeat .4em 50%;
+  width: 429px;
 }
 
 #g-add-photos-status li.g-error {
   background: #f6cbca url('images/ico-error.png') no-repeat .4em 50%;
+  width: 429px;
 /*  color: #f00;*/
 }
 

@@ -18,14 +18,11 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-// The abstract REST_Controller is not directly routable.
-$config["^rest\b.*"] = null;
-
 // Admin controllers are not available, except via /admin
 $config["^admin_.*"] = null;
 
-// Redirect /form/add and /form/edit to REST_Controller.
+// Redirect /form/add and /form/edit to the module/form_(add|edit)/parms.
 $config["^form/(edit|add)/(\w+)/(.*)$"] = "$2/form_$1/$3";
 
 // Default page is the root album
-$config["_default"] = "albums/1";
+$config["_default"] = "albums";

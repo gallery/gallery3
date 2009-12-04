@@ -18,11 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Photos_Controller extends Items_Controller {
-
-  /**
-   *  @see REST_Controller::_show($resource)
-   */
-  public function _show($photo) {
+  public function show($photo) {
+    if (!is_object($photo)) {
+      // show() must be public because we route to it in url::parse_url(), so make
+      // sure that we're actually receiving an object
+      Kohana::show_404();
+    }
     access::required("view", $photo);
 
     $where = array("type != " => "album");
@@ -53,12 +54,9 @@ class Photos_Controller extends Items_Controller {
     print $template;
   }
 
-
-  /**
-   * @see REST_Controller::_update($resource)
-   */
-  public function _update($photo) {
+  public function update($photo_id) {
     access::verify_csrf();
+    $photo = ORM::factory("item", $photo_id);
     access::required("view", $photo);
     access::required("edit", $photo);
 
@@ -125,10 +123,8 @@ class Photos_Controller extends Items_Controller {
     }
   }
 
-  /**
-   *  @see REST_Controller::_form_edit($resource)
-   */
-  public function _form_edit($photo) {
+  public function form_edit($photo_id) {
+    $photo = ORM::factory("item", $photo_id);
     access::required("view", $photo);
     access::required("edit", $photo);
 
