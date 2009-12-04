@@ -64,7 +64,8 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
       url::redirect("admin/theme_options");
     } else {
       $view = new Admin_View("admin.html");
-      $view->content = $form;
+      $view->content = new View("admin_theme_options.html");
+      $view->content->form = $form;
       print $view;
     }
   }
