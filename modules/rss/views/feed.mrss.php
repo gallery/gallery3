@@ -56,7 +56,6 @@
                          type="<?= $child->mime_type ?>"
                          height="<?= $child->resize_height ?>"
                          width="<?= $child->resize_width ?>"
-                         isDefault="true"
                          />
           <? if (access::can("view_full", $child)): ?>
             <media:content url="<?= $child->file_url(true) ?>"
@@ -64,6 +63,7 @@
                            type="<?= $child->mime_type ?>"
                            height="<?= $child->height ?>"
                            width="<?= $child->width ?>"
+                           isDefault="true"
                            />
           <? endif ?>
         <? else: ?>
