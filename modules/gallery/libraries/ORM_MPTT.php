@@ -48,6 +48,7 @@ class ORM_MPTT_Core extends ORM {
    */
   function add_to_parent($parent) {
     $this->lock();
+    $parent->reload();  // Assume that the prior lock holder may have changed the parent
 
     try {
       // Make a hole in the parent for this new item
@@ -97,6 +98,7 @@ class ORM_MPTT_Core extends ORM {
     }
 
     $this->lock();
+    $this->reload();  // Assume that the prior lock holder may have changed this entry
     try {
       $this->db_builder
         ->update($this->table_name)
@@ -248,6 +250,8 @@ class ORM_MPTT_Core extends ORM {
     $level_delta = ($target->level + 1) - $this->level;
 
     $this->lock();
+    $this->reload();  // Assume that the prior lock holder may have changed this entry
+    $target->reload();
     try {
       if ($level_delta) {
         // Update the levels for the to-be-moved items

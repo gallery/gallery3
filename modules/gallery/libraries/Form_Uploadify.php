@@ -45,6 +45,7 @@ class Form_Uploadify_Core extends Form_Input {
     $v = new View("form_uploadify.html");
     $v->album = $this->data["album"];
     $v->script_data = $this->data["script_data"];
+    $v->simultaneous_upload_limit = module::get_var("gallery", "simultaneous_upload_limit");
     return $v;
   }
 

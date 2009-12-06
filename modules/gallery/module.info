@@ -1,5 +1,4 @@
 name = "Gallery 3"
 description = "Gallery core application"
-; Note: skip version 20, use 21 as the next version
-version = 19
+version = 21
 
