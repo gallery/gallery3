@@ -268,7 +268,8 @@ class gallery_installer {
     module::set_var("gallery", "show_credits", 1);
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
-    module::set_version("gallery", 19);
+    module::set_var("gallery", "simultaneous_upload_limit", 5);
+    module::set_version("gallery", 21);
   }
 
   static function upgrade($version) {
