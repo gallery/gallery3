@@ -134,6 +134,11 @@ class Packager_Controller extends Controller {
         $line = preg_replace("/ENGINE=\S+ /", "", $line);
       }
 
+      // Null out ids in the vars table since it's an auto_increment table and this will result in
+      // more stable values so we'll have less churn in install.sql.
+      $line = preg_replace(
+        "/^INSERT INTO {vars} VALUES \(\d+/", "INSERT INTO {vars} VALUES (NULL", $line);
+
       $buf .= $line;
     }
     $fd = fopen($sql_file, "wb");
