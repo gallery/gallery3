@@ -127,7 +127,6 @@ class item_Core {
     $page_type = Input::instance()->get("page_type");
     $form = new Forge(
       "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "g-confirm-delete"));
-    $form->hidden("_method")->value("put");
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     return $form;
