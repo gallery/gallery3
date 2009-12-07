@@ -20,6 +20,17 @@
 abstract class Database extends Database_Core {
   protected $_table_names;
 
+  /**
+   * Parse the query string and convert any strings of the form `\([a-zA-Z0-9_]*?)\]
+   * table prefix . $1
+   */
+  public function query($sql = '') {
+    if (!empty($sql)) {
+      $sql = $this->add_table_prefixes($sql);
+    }
+    return parent::query($sql);
+  }
+
   public function add_table_prefixes($sql) {
     $prefix = $this->config["table_prefix"];
     if (strpos($sql, "SHOW TABLES") === 0) {
