@@ -158,17 +158,9 @@ class item_Core {
         $view_restrictions["items.view_$id"] = access::ALLOW;
       }
     }
-    switch (count($view_restrictions)) {
-    case 0:
-      break;
 
-    case 1:
-      $model->where($view_restrictions[0], "=", access::ALLOW);
-      break;
-
-    default:
+    if (count($view_restrictions)) {
       $model->and_open()->or_where($view_restrictions)->close();
-      break;
     }
 
     return $model;
