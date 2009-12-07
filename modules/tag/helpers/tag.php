@@ -125,10 +125,16 @@ class tag_Core {
    * Delete all tags associated with an item
    */
   static function clear_all($item) {
-    $db = Database::instance();
-    $db->query("UPDATE {tags} SET `count` = `count` - 1 WHERE `count` > 0 " .
-               "AND `id` IN (SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
-    $db->delete("items_tags", array("item_id" => "$item->id"));
+    db::build()
+      ->update("tags")
+      ->set("count", new Database_Expression("`count` - 1"))
+      ->where("count", ">", 0)
+      ->where("id", "IN", db::build()->select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
+      ->execute();
+    db::build()
+      ->delete("items_tags")
+      ->where("item_id", "=", $item->id)
+      ->execute();
   }
 
   /**
@@ -138,6 +144,6 @@ class tag_Core {
     // @todo There's a potential race condition here which we can solve by adding a lock around
     // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
     // extremely rare case.
-    Database::instance() ->delete("tags", array("count" => 0));
+    db::build()->delete("tags")->where("count", "=", 0)->execute();
   }
 }
