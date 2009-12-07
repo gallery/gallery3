@@ -145,6 +145,10 @@ input[type="reset"] {
   display: none;
 }
 
+input[readonly] {
+  background-color: #F4F4FC;
+}
+
 #g-dialog input.textbox,
 #g-dialog input[type=text],
 #g-dialog input[type=password],
