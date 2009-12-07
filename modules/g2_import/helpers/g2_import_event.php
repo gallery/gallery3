@@ -19,7 +19,10 @@
  */
 class g2_import_event_Core {
   static function item_deleted($item) {
-    Database::instance()->delete("g2_maps", array("g3_id" => $item->id));
+    db::build()
+      ->delete("g2_maps")
+      ->where("g3_id", "=", $item->id)
+      ->execute();
   }
 
   static function item_created($item) {
