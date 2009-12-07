@@ -83,7 +83,7 @@ class Tags_Controller extends Controller {
     $limit = $this->input->get("limit");
     $tag_part = end($tag_parts);
     $tag_list = ORM::factory("tag")
-      ->like("name", "{$tag_part}%", false)
+      ->where("name", "LIKE", "{$tag_part}%")
       ->order_by("name", "ASC")
       ->limit($limit)
       ->find_all();
