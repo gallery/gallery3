@@ -317,7 +317,7 @@ class Form_Input_Core {
 				$args = is_array($args) ? $args : array();
 
 				// Add the label or name to the beginning of the args
-				array_unshift($args, $this->label ? utf8::strtolower($this->label) : $this->name);
+				array_unshift($args, $this->label ? mb_strtolower($this->label) : $this->name);
 
 				if (isset($this->error_messages[$func]))
 				{
@@ -333,7 +333,7 @@ class Form_Input_Core {
 						case 'valid_email':
 						case 'valid_ip':
 							// Fetch an i18n error message
-							$error = Kohana::lang('validation.'.$func, $args);
+                                                        $error = 'validation.'.$func;
 							break;
 						case substr($func, 0, 6) === 'valid_':
 							// Strip 'valid_' from func name
@@ -343,11 +343,11 @@ class Form_Input_Core {
 						case 'digit':
 						case 'numeric':
 							// i18n strings have to be inserted into valid_type
-							$args[] = Kohana::lang('validation.'.$func);
-							$error = Kohana::lang('validation.valid_type', $args);
+							$args[] = 'validation.'.$func;
+							$error = 'validation.valid_type';
 							break;
 						default:
-							$error = Kohana::lang('validation.'.$func, $args);
+							$error = 'validation.'.$func;
 					}
 				}
 			}
@@ -490,7 +490,7 @@ class Form_Input_Core {
 				if ($this->value != $input->value)
 				{
 					// Field does not match
-					$this->errors['matches'] = array($input->label ? utf8::strtolower($input->label) : $input->name);
+					$this->errors['matches'] = array($input->label ? mb_strtolower($input->label) : $input->name);
 					break;
 				}
 			}
@@ -529,7 +529,7 @@ class Form_Input_Core {
 	protected function rule_length($min, $max = NULL)
 	{
 		// Get the length, return if zero
-		if (($length = utf8::strlen($this->value)) === 0)
+		if (($length = mb_strlen($this->value)) === 0)
 			return;
 
 		if ($max == NULL)
