@@ -19,29 +19,32 @@
  */
 class comment_event_Core {
   static function item_deleted($item) {
-    Database::instance()->delete("comments", array("item_id" => $item->id));
+    db::build()
+      ->delete("comments")
+      ->where("item_id", "=", $item->id);
   }
 
   static function user_deleted($user) {
     $guest = identity::guest();
-    Database::instance()->from("comments")
-      ->set(array("author_id" => $guest->id,
-                  "guest_email" => null,
-                  "guest_name" => "guest",
-                  "guest_url" => null))
+    db::build()
+      ->update("comments")
+      ->set("author_id", $guest->id)
+      ->set("guest_email", null)
+      ->set("guest_name", "guest")
+      ->set("guest_url", null)
       ->where("author_id", "=", $user->id)
-      ->update();
+      ->execute();
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
     $guest = identity::guest();
-    Database::instance()->from("comments")
-      ->set(array("author_id" => $guest->id,
-                  "guest_email" => null,
-                  "guest_name" => "guest",
-                  "guest_url" => null))
-      ->where("1", "=", "1")  // @todo: why do we do this?
-      ->update();
+    db::build()
+      ->update("comments")
+      ->set("author_id", $guest->id)
+      ->set("guest_email", null)
+      ->set("guest_name", "guest")
+      ->set("guest_url", null)
+      ->execute();
   }
 
   static function admin_menu($menu, $theme) {
