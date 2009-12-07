@@ -23,7 +23,9 @@ class Kohana_Exception extends Kohana_Exception_Core {
    */
   public static function text($e) {
     return sprintf(
-      "%s [ %s ]: %s\n%s",
-      get_class($e), $e->getCode(), strip_tags($e->getMessage()), $e->getTraceAsString());
+      "%s [ %s ]: %s\n%s [ %s ]\n%s",
+      get_class($e), $e->getCode(), strip_tags($e->getMessage()),
+      $e->getFile(), $e->getLine(),
+      $e->getTraceAsString());
   }
 }
