@@ -63,13 +63,21 @@ class Tag_Model extends ORM {
   public function save() {
     $db = Database::instance();
     $related_item_ids = array();
-    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+    foreach (db::build()
+             ->select("item_id")
+             ->from("items_tags")
+             ->where("tag_id", "=", $this->id)
+             ->execute() as $row) {
       $related_item_ids[$row->item_id] = 1;
     }
 
     $result = parent::save();
 
-    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+    foreach (db::build()
+             ->select("item_id")
+             ->from("items_tags")
+             ->where("tag_id", "=", $this->id)
+             ->execute() as $row) {
       $related_item_ids[$row->item_id] = 1;
     }
 
@@ -89,7 +97,12 @@ class Tag_Model extends ORM {
   public function delete() {
     $related_item_ids = array();
     $db = Database::Instance();
-    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+
+    foreach (db::build()
+             ->select("item_id")
+             ->from("items_tags")
+             ->where("tag_id", "=", $this->id)
+             ->execute() as $row) {
       $related_item_ids[$row->item_id] = 1;
     }
 

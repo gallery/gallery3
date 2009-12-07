@@ -51,7 +51,7 @@ class Admin_Tags_Controller extends Admin_Controller {
     $form = tag::get_delete_form($tag);
     if ($form->validate()) {
       $name = $tag->name;
-      Database::instance()->delete("items_tags", array("tag_id" => "$tag->id"));
+      db::build()->delete("items_tags")->where("tag_id", "=", $tag->id)->execute();
       $tag->delete();
       message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
       log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
