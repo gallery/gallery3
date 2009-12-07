@@ -30,7 +30,7 @@ require SYSPATH.'core/Kohana'.EXT;
 final class Kohana extends Kohana_Core {}
 
 require SYSPATH.'core/Kohana_Exception'.EXT;
-class Kohana_Exception extends Kohana_Exception_Core {}
+require MODPATH.'gallery/libraries/MY_Kohana_Exception'.EXT;
 
 require SYSPATH.'core/Kohana_Config'.EXT;
 require SYSPATH.'libraries/drivers/Config'.EXT;
