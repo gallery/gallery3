@@ -74,7 +74,10 @@ class graphics_Core {
    * @param string $module_name
    */
   static function remove_rules($module_name) {
-    $status = Database::instance()->delete("graphics_rules", array("module_name" => $module_name));
+    $status = db::build()
+      ->delete("graphics_rules")
+      ->where("module_name", "=", $module_name)
+      ->execute();
     if (count($status)) {
       self::mark_dirty(true, true);
     }
@@ -86,8 +89,11 @@ class graphics_Core {
    * module it won't cause all of your images to suddenly require a rebuild.
    */
   static function activate_rules($module_name) {
-    Database::instance()
-      ->update("graphics_rules",array("active" => true), array("module_name" => $module_name));
+    db::build()
+      ->update("graphics_rules")
+      ->set("active", true)
+      ->where("module_name", "=", $module_name)
+      ->execute();
   }
 
   /**
@@ -96,8 +102,11 @@ class graphics_Core {
    * module it won't cause all of your images to suddenly require a rebuild.
    */
   static function deactivate_rules($module_name) {
-    Database::instance()
-      ->update("graphics_rules",array("active" => false), array("module_name" => $module_name));
+    db::build()
+      ->update("graphics_rules")
+      ->set("active", false)
+      ->where("module_name", "=", $module_name)
+      ->execute();
   }
 
   /**

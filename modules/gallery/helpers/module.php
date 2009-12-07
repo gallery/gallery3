@@ -460,7 +460,11 @@ class module_Core {
       $var->delete();
     }
 
-    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
+    db::build()
+      ->delete("vars")
+      ->where("module_name", "=", "gallery")
+      ->where("name", "=", "_cache")
+      ->execute();
     self::$var_cache = null;
   }
 
