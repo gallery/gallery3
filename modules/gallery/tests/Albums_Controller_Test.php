@@ -44,7 +44,6 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $_POST["direction"] = "ASC";
     $_POST["csrf"] = access::csrf_token();
     $_POST["slug"] = "new-name";
-    $_POST["_method"] = "put";
     access::allow(identity::everybody(), "edit", $root);
 
     ob_start();
