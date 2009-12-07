@@ -127,7 +127,6 @@ class item_Core {
     $page_type = Input::instance()->get("page_type");
     $form = new Forge(
       "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "g-confirm-delete"));
-    $form->hidden("_method")->value("put");
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     return $form;
@@ -156,7 +155,7 @@ class item_Core {
     $view_restrictions = array();
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
-        $view_restrictions[] = "items.view_$id";
+        $view_restrictions["items.view_$id"] = access::ALLOW;
       }
     }
     switch (count($view_restrictions)) {
@@ -168,10 +167,7 @@ class item_Core {
       break;
 
     default:
-      $model
-        ->and_open()
-        ->or_where($view_restrictions, "=", access::ALLOW)
-        ->close();
+      $model->and_open()->or_where($view_restrictions)->close();
       break;
     }
 
