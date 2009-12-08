@@ -20,21 +20,21 @@ class Rest_Controller extends Controller {
   public function access_key() {
     $request = json_decode($this->input->post("request"));
     if (empty($request->user) || empty($request->password)) {
-      print json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed")));
+      print rest::forbidden("No user or password supplied");
       return;
     }
 
     $user = identity::lookup_user_by_name($request->user);
     if (empty($user)) {
-      print json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed")));
+      print rest::forbidden("User '{$request->user}' not found");
       return;
     }
 
     if (!identity::is_correct_password($user, $request->password)) {
-      print json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed")));
+      print rest::forbidden("Invalid password for '{$request->user}'.");
       return;
     }
-    $key = ORM::factory("rest_key")
+    $key = ORM::factory("user_access_token")
       ->where("user_id", $user->id)
       ->find();
     if (!$key->loaded) {
@@ -43,7 +43,7 @@ class Rest_Controller extends Controller {
       $key->save();
       Kohana::log("alert",  Kohana::debug($key->as_array()));
     }
-    print json_encode(array("status" => "OK", "token" => $key->access_key));
+    print rest::success(array("token" => $key->access_key));
   }
 
   public function __call($function, $args) {
@@ -51,41 +51,37 @@ class Rest_Controller extends Controller {
     $request = $this->input->post("request", null);
 
     if (empty($access_token)) {
-      print json_encode(array("status" => "ERROR",
-                              "message" => (string)t("Authorization failed")));
+      print rest::forbidden("No access token supplied.");
       return;
     }
 
-    if (!empty($request)) {
-      $method = strtolower($this->input->server("HTTP_X_HTTP_METHOD_OVERRIDE", "POST"));
-      $request = json_decode($request);
-    } else {
-        print json_encode(array("status" => "ERROR",
-                                "message" => (string)t("Authorization failed")));
-        return;
-    }
-
     try {
-      $key = ORM::factory("rest_key")
+      $key = ORM::factory("user_access_token")
         ->where("access_key", $access_token)
         ->find();
 
       if (!$key->loaded) {
-        print json_encode(array("status" => "ERROR",
-                                "message" => (string)t("Authorization failed")));
+        print rest::forbidden("Invalid key: $access_token");
         return;
       }
 
       $user = identity::lookup_user($key->user_id);
       if (empty($user)) {
-        print json_encode(array("status" => "ERROR",
-                                "message" => (string)t("Authorization failed")));
+        print rest::forbidden("User not found: {$key->user_id}");
         return;
       }
 
+      if (!empty($request)) {
+        $method = strtolower($this->input->server("HTTP_X_HTTP_METHOD_OVERRIDE", "POST"));
+        $request = json_decode($request);
+      } else {
+        print rest::invalid_request("Empty Request");
+        return;
+      }
+
+
       if (empty($args[0])) {
-        print json_encode(array("status" => "ERROR",
-                                "message" => (string)t("Invalid request parameters")));
+        print rest::invalid_request("Resource not supplied");
         return;
       }
 
@@ -93,18 +89,15 @@ class Rest_Controller extends Controller {
       $handler_method = "{$method}_{$args[0]}";
 
       if (!method_exists($handler_class, $handler_method)) {
-        Kohana::log("error", "$handler_class::$handler_method is not implemented");
-        print json_encode(array("status" => "ERROR",
-                                "message" => (string)t("Service not implemented")));
+        print rest::not_implemented("$handler_class::$handler_method is not implemented");
         return;
       }
 
-      $response = call_user_func(array($handler_class, $handler_method), $request);
+      identity::set_active_user($user);
 
-      print json_encode($response);
+      print call_user_func(array($handler_class, $handler_method), $request);
     } catch (Exception $e) {
-      Kohana::log("error", $e->__toString());
-      print json_encode(array("status" => "ERROR", "message" => (string)t("Internal error")));
+      print rest::internal_error($e);
     }
   }
 

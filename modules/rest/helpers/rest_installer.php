@@ -20,7 +20,7 @@
 class rest_installer {
   static function install() {
     Database::instance()
-      ->query("CREATE TABLE {rest_keys} (
+      ->query("CREATE TABLE {user_access_tokens} (
                 `id` int(9) NOT NULL auto_increment,
                 `user_id` int(9) NOT NULL,
                 `access_key` char(32) NOT NULL,
@@ -32,6 +32,6 @@ class rest_installer {
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {rest_keys}");
+    Database::instance()->query("DROP TABLE IF EXISTS {user_access_tokens}");
   }
 }

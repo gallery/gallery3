@@ -22,7 +22,7 @@ class rest_event {
    * the user_homes directory.
    */
   static function user_before_delete($user) {
-     ORM::factory("rest_key")
+     ORM::factory("user_access_token")
       ->where("id", $user->id)
       ->delete_all();
   }
@@ -32,7 +32,7 @@ class rest_event {
    * on every add.
    */
   static function user_add_form_admin_completed($user, $form) {
-    $key = ORM::factory("rest_key");
+    $key = ORM::factory("user_access_token");
     $key->user_id = $user->id;
     $key->access_key = md5($user->name . rand());
     $key->save();
@@ -56,7 +56,7 @@ class rest_event {
    * Get the form fields for user edit
    */
   static function _get_access_key_form($user, $form) {
-    $key = ORM::factory("rest_key")
+    $key = ORM::factory("user_access_token")
       ->where("user_id", $user->id)
       ->find();
 
@@ -66,7 +66,7 @@ class rest_event {
       $key->save();
     }
 
-    $form->edit_user->input("access_key")
+    $form->edit_user->input("user_access_token")
       ->value($key->access_key)
       ->readonly("readonly")
       ->class("g-form-static")

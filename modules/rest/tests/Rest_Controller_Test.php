@@ -21,7 +21,7 @@ class Rest_Controller_Test extends Unit_Test_Case {
   public function setup() {
     $this->_save = array($_GET, $_POST, $_SERVER);
     $this->_user = identity::create_user("access_test", "Access Test", "password");
-    $key = ORM::factory("rest_key");
+    $key = ORM::factory("user_access_token");
     $this->_access_key = $key->access_key = md5($this->_user->name . rand());
     $key->user_id = $this->_user->id;
     $key->save();
@@ -59,7 +59,7 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   public function rest_access_key_generated_test() {
-    ORM::factory("rest_key")
+    ORM::factory("user_access_token")
       ->where("access_key", $this->_access_key)
       ->delete();
     $_SERVER["REQUEST_METHOD"] = "POST";
@@ -97,46 +97,46 @@ class Rest_Controller_Test extends Unit_Test_Case {
       $this->_call_controller());
   }
 
-  public function rest_get_album_no_request_key_test() {
+  public function rest_get_resource_no_request_key_test() {
     $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
 
     $_SERVER["REQUEST_METHOD"] = "POST";
-    $_POST["request"] = json_encode(array("path" => "/test_album"));
+    $_POST["request"] = json_encode(array("path" => $this->_path));
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
       $this->_call_controller("rest"));
   }
 
-  public function rest_get_album_no_request_content_test() {
+  public function rest_get_resource_no_request_content_test() {
     $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
 
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_GET["request_key"] = $this->_access_key;
 
     $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
+      json_encode(array("status" => "ERROR", "message" => (string)t("Invalid request"))),
       $this->_call_controller("rest"));
   }
 
-  public function rest_get_album_invalid_key_test() {
+  public function rest_get_resource_invalid_key_test() {
     $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
 
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_GET["request_key"] = md5($this->_access_key); // screw up the access key
-    $_POST["request"] = json_encode(array("path" => "/test_album"));
+    $_POST["request"] = json_encode(array("path" => $this->_path));
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
       $this->_call_controller());
   }
 
-  public function rest_get_album_no_user_for_key_test() {
+  public function rest_get_resource_no_user_for_key_test() {
     $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
     $_SERVER["REQUEST_METHOD"] = "POST";
 
     $_GET["request_key"] = $this->_access_key;
-    $_POST["request"] = json_encode(array("path" => "/test_album"));
+    $_POST["request"] = json_encode(array("path" => $this->_path));
 
     $this->_user->delete();
     unset($this->_user);
@@ -146,31 +146,31 @@ class Rest_Controller_Test extends Unit_Test_Case {
       $this->_call_controller("rest"));
   }
 
-  public function rest_get_album_no_resource_test() {
+  public function rest_get_resource_no_resource_test() {
     $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
     $_SERVER["REQUEST_METHOD"] = "POST";
 
     $_GET["request_key"] = $this->_access_key;
-    $_POST["request"] = json_encode(array("path" => "/test_album"));
+    $_POST["request"] = json_encode(array("path" => $this->_path));
 
     $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Invalid request parameters"))),
+      json_encode(array("status" => "ERROR", "message" => (string)t("Invalid request"))),
       $this->_call_controller("rest"));
   }
 
-  public function rest_get_album_no_handler_test() {
+  public function rest_get_resource_no_handler_test() {
     $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
     $_SERVER["REQUEST_METHOD"] = "POST";
 
     $_GET["request_key"] = $this->_access_key;
-    $_POST["request"] = json_encode(array("path" => "/test_album"));
+    $_POST["request"] = json_encode(array("path" => $this->_path));
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Service not implemented"))),
       $this->_call_controller("rest", "album"));
   }
 
-  public function rest_get_album_test() {
+  public function rest_get_resource_test() {
     $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
     $_SERVER["REQUEST_METHOD"] = "POST";
 
@@ -214,7 +214,7 @@ class rest_rest {
     $response["description"] = $item->description;
     $response["internet_address"] = $item->slug;
     $response["type"] = $item->type;
-    return array("status" => "OK", "message" => (string)t("Processed"), "item" => $response);
+    return rest::success(array("item" => $response), t("Processed"));
   }
 
 }
