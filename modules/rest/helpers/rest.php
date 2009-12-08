@@ -32,7 +32,7 @@ class rest_Core {
   }
 
   /**
-   * Not implemented
+   * Not Implemented
    */
   static function not_implemented($log_message=null) {
     return self::_format_response(t("Service not implemented"), $log_message);
@@ -46,7 +46,14 @@ class rest_Core {
   }
 
   /**
-   * Not implemented
+   * Resource Not Found
+   */
+  static function not_found($log_message=null) {
+    return self::_format_response(t("Internal error"), $log_message);
+  }
+
+  /**
+   * Success
    */
   static function success($response_data, $message=null) {
     $response = array("status" => "OK");
