@@ -49,7 +49,7 @@ class rest_Core {
    * Resource Not Found
    */
   static function not_found($log_message=null) {
-    return self::_format_response(t("Internal error"), $log_message);
+    return self::_format_response(t("Resource not found"), $log_message);
   }
 
   /**

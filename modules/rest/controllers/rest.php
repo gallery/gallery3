@@ -48,16 +48,10 @@ class Rest_Controller extends Controller {
 
   public function __call($function, $args) {
     $request = $this->_normalize_request($args);
-
-    if (empty($request->access_token)) {
-      print rest::forbidden("No access token supplied.");
-      return;
-    }
-
     try {
       if ($this->_set_active_user($request->access_token)) {
         $handler_class = "{$function}_rest";
-        $handler_method = "{$request->method}";
+        $handler_method = $request->method;
 
         if (!method_exists($handler_class, $handler_method)) {
           print rest::not_implemented("$handler_class::$handler_method is not implemented");
@@ -67,7 +61,7 @@ class Rest_Controller extends Controller {
         print call_user_func(array($handler_class, $handler_method), $request);
       }
     } catch (Exception $e) {
-      print rest::internal_error($e);
+      print rest::internal_error($e->__toString());
     }
   }
 
@@ -83,9 +77,6 @@ class Rest_Controller extends Controller {
     } else {
       $request = new stdClass();
       foreach (array_keys($_GET) as $key) {
-        if ($key == "request_key") {
-          continue;
-        }
         $request->$key = $this->input->get($key);
       }
     }

@@ -55,7 +55,6 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
 
   public function gallery_rest_get_album_test() {
     $request = (object)array("path" => $this->_child->relative_path());
-    print Kohana::debug($request) . "\n";
 
     $this->assert_equal(
       json_encode(array("status" => "OK",
@@ -70,6 +69,20 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
                                            "has_children" => false,
                                            "path" => $this->_photo->relative_path(),
                                            "title" => $this->_photo->title))))),
-      gallery_rest::get_album($request));
+      gallery_rest::get($request));
+  }
+
+  public function gallery_rest_get_photo_test() {
+    $request = (object)array("path" => $this->_photo->relative_path());
+
+    $this->assert_equal(
+      json_encode(array("status" => "OK",
+                        "photo" => array("path" => $this->_photo->relative_path(),
+                                         "title" => $this->_photo->title,
+                                         "thumb_url" => $this->_photo->thumb_url(),
+                                         "url" => $this->_photo->abs_url(),
+                                         "description" => $this->_photo->description,
+                                         "internet_address" => $this->_photo->slug))),
+      gallery_rest::get($request));
   }
 }
