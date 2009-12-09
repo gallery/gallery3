@@ -33,7 +33,6 @@ class Rest_Controller_Test extends Unit_Test_Case {
     $filename = MODPATH . "gallery/tests/test.jpg";
     $rand = rand();
     $this->_photo = photo::create($this->_child, $filename, "$rand.jpg", $rand);
-    $this->_path = $this->_photo->relative_path();
   }
 
   public function teardown() {
@@ -97,10 +96,15 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   public function rest_get_resource_no_request_key_test() {
-    $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
+    $_SERVER["REQUEST_METHOD"] = "GET";
 
     $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
+      json_encode(array("status" => "OK", "message" => (string)t("Processed"),
+                        "photo" => array("path" => $this->_photo->relative_path(),
+                                        "title" => $this->_photo->title,
+                                        "thumb_url" => $this->_photo->thumb_url(),
+                                        "description" => $this->_photo->description,
+                                        "internet_address" => $this->_photo->slug))),
       $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
   }
 
@@ -141,12 +145,11 @@ class Rest_Controller_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "OK", "message" => (string)t("Processed"),
-                        "item" => array("path" => $this->_photo->relative_path_cache,
+                        "photo" => array("path" => $this->_photo->relative_path(),
                                         "title" => $this->_photo->title,
                                         "thumb_url" => $this->_photo->thumb_url(),
                                         "description" => $this->_photo->description,
-                                        "internet_address" => $this->_photo->slug,
-                                        "type" => $this->_photo->type))),
+                                        "internet_address" => $this->_photo->slug))),
       $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
   }
 
@@ -170,13 +173,12 @@ class rest_rest {
     $item = ORM::factory("item")
       ->where("relative_path_cache", $request->path)
       ->find();
-    $response["path"] = $item->relative_path_cache;
+    $response["path"] = $item->relative_path();
     $response["title"] = $item->title;
     $response["thumb_url"] = $item->thumb_url();
     $response["description"] = $item->description;
     $response["internet_address"] = $item->slug;
-    $response["type"] = $item->type;
-    return rest::success(array("item" => $response), t("Processed"));
+    return rest::success(array($item->type => $response), t("Processed"));
   }
 
 }
