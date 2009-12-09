@@ -24,7 +24,7 @@ class gallery_rest_Core {
     }
 
     $item = ORM::factory("item")
-      ->where("relative_path_cache", $request->path)
+      ->where("relative_url_cache", $request->path)
       ->viewable()
       ->find();
 
@@ -32,7 +32,7 @@ class gallery_rest_Core {
       return rest::not_found("Resource: {$request->path} missing.");
     }
 
-    $response_data = array("path" => $item->relative_path(),
+    $response_data = array("path" => $item->relative_url(),
                            "title" => $item->title,
                            "thumb_url" => $item->thumb_url(),
                            "url" => $item->abs_url(),
@@ -54,7 +54,7 @@ class gallery_rest_Core {
     foreach ($item->viewable()->children($limit, $offset, $where) as $child) {
       $children[] = array("type" => $child->type,
                           "has_children" => $child->children_count() > 0,
-                          "path" => $child->relative_path(),
+                          "path" => $child->relative_url(),
                           "title" => $child->title);
     }
 

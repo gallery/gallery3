@@ -100,12 +100,12 @@ class Rest_Controller_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "OK", "message" => (string)t("Processed"),
-                        "photo" => array("path" => $this->_photo->relative_path(),
+                        "photo" => array("path" => $this->_photo->relative_url(),
                                         "title" => $this->_photo->title,
                                         "thumb_url" => $this->_photo->thumb_url(),
                                         "description" => $this->_photo->description,
                                         "internet_address" => $this->_photo->slug))),
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_url())));
   }
 
   public function rest_get_resource_invalid_key_test() {
@@ -126,7 +126,7 @@ class Rest_Controller_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_url())));
   }
 
   public function rest_get_resource_no_handler_test() {
@@ -136,7 +136,7 @@ class Rest_Controller_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Service not implemented"))),
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_url())));
   }
 
   public function rest_get_resource_test() {
@@ -145,12 +145,12 @@ class Rest_Controller_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "OK", "message" => (string)t("Processed"),
-                        "photo" => array("path" => $this->_photo->relative_path(),
+                        "photo" => array("path" => $this->_photo->relative_url(),
                                         "title" => $this->_photo->title,
                                         "thumb_url" => $this->_photo->thumb_url(),
                                         "description" => $this->_photo->description,
                                         "internet_address" => $this->_photo->slug))),
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_url())));
   }
 
   private function _call_controller($method="access_key", $arg=null) {
@@ -171,9 +171,9 @@ class rest_rest {
   static function get($request) {
     self::$request = $request;
     $item = ORM::factory("item")
-      ->where("relative_path_cache", $request->path)
+      ->where("relative_url_cache", $request->path)
       ->find();
-    $response["path"] = $item->relative_path();
+    $response["path"] = $item->relative_url();
     $response["title"] = $item->title;
     $response["thumb_url"] = $item->thumb_url();
     $response["description"] = $item->description;

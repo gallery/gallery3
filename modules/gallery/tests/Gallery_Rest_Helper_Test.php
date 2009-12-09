@@ -58,7 +58,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "OK",
-                        "album" => array("path" => $this->_child->relative_path(),
+                        "album" => array("path" => $this->_child->relative_url_path(),
                                          "title" => $this->_child->title,
                                          "thumb_url" => $this->_child->thumb_url(),
                                          "url" => $this->_child->abs_url(),
@@ -67,7 +67,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
                                          "children" => array(array(
                                            "type" => "photo",
                                            "has_children" => false,
-                                           "path" => $this->_photo->relative_path(),
+                                           "path" => $this->_photo->relative_url_path(),
                                            "title" => $this->_photo->title))))),
       gallery_rest::get($request));
   }

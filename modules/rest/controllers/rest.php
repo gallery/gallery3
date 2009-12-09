@@ -34,6 +34,7 @@ class Rest_Controller extends Controller {
       print rest::forbidden("Invalid password for '{$request->user}'.");
       return;
     }
+
     $key = ORM::factory("user_access_token")
       ->where("user_id", $user->id)
       ->find();
