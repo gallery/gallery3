@@ -21,41 +21,48 @@ class rest_Core {
    * Authorization Failure
    */
   static function forbidden($log_message=null) {
-    return self::_format_response(t("Authorization failed"), $log_message);
+    return self::_format_failure_response(t("Authorization failed"), $log_message);
   }
 
   /**
    * Invalid Failure
    */
   static function invalid_request($log_message=null) {
-    return self::_format_response(t("Invalid request"), $log_message);
+    return self::_format_failure_response(t("Invalid request"), $log_message);
   }
 
   /**
    * Not Implemented
    */
   static function not_implemented($log_message=null) {
-    return self::_format_response(t("Service not implemented"), $log_message);
+    return self::_format_failure_response(t("Service not implemented"), $log_message);
   }
 
   /**
    * Internal Error
    */
   static function internal_error($log_message=null) {
-    return self::_format_response(t("Internal error"), $log_message);
+    return self::_format_failure_response(t("Internal error"), $log_message);
   }
 
   /**
    * Resource Not Found
    */
   static function not_found($log_message=null) {
-    return self::_format_response(t("Resource not found"), $log_message);
+    return self::_format_failure_response(t("Resource not found"), $log_message);
+  }
+
+  /**
+   * Resource Not Found
+   */
+  static function fail($log_message=null) {
+    return self::_format_failure_response($log_message, $log_message);
   }
 
   /**
    * Success
    */
-  static function success($response_data, $message=null) {
+  static function success($response_data=null, $message=null) {
     $response = array("status" => "OK");
     if (!empty($message)) {
       $response["message"] = (string)$message;
@@ -68,7 +75,7 @@ class rest_Core {
     return json_encode($response);
   }
 
-  private static function _format_response($message, $log_message) {
+  private static function _format_failure_response($message, $log_message) {
     if (!empty($log_message)) {
       Kohana::log("info", $log_message);
     }

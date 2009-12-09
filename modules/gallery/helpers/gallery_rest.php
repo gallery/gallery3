@@ -46,6 +46,57 @@ class gallery_rest_Core {
     return rest::success(array($item->type => $response_data));
   }
 
+  static function put($request) {
+    if (empty($request->path)) {
+      return rest::invalid_request();
+    }
+
+    $item = ORM::factory("item")
+      ->where("relative_url_cache", $request->path)
+      ->viewable()
+      ->find();
+
+    if (!$item->loaded) {
+      return rest::not_found("Resource: {$request->path} missing.");
+    }
+
+    if (!access::can("edit", $item)) {
+      return rest::not_found("Resource: {$request->path} permission denied.");
+    }
+
+    // Normalize the request
+    $new_values = array();
+    $fields = array("title", "description", "name", "slug");
+    if ($item->is_album()) {
+      $fields = array_merge($fields, array("sort_column", "sort_order"));
+    }
+    foreach ($fields as $field) {
+      $new_values[$field] = !empty($request->$field) ? $request->$field : $item->$field;
+    }
+    if ($item->id == 1) {
+      unset($new_values["name"]);
+    }
+    if ($item->id != 1 &&
+        ($new_values["name"] != $item->name || $new_values["slug"] != $item->slug)) {
+      // Make sure that there's not a conflict
+      $errors = item::check_for_conflicts($item, $new_values["name"], $new_values["slug"]);
+      if (!empty($errors["name_conflict"])) {
+        return rest::fail(t("Renaming %path failed: new name exists",
+                            array("path" => $request->path)));
+      }
+      if (!empty($errors["slug_conflict"])) {
+        return rest::fail(t("Renaming %path failed: new internet address exists",
+                            array("path" => $request->path)));
+      }
+    }
+
+    item::update($item, $new_values);
+
+    log::success("content", "Updated $item->type", "<a href=\"{$item->type}s/$item->id\">view</a>");
+
+    return rest::success();
+  }
+
   private static function _get_children($item, $request) {
     $children = array();
     $limit = empty($request->limit) ? null : $request->limit;
