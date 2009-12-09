@@ -47,58 +47,77 @@ class Rest_Controller extends Controller {
   }
 
   public function __call($function, $args) {
-    $access_token = $this->input->get("request_key");
-    $request = $this->input->post("request", null);
+    $request = $this->_normalize_request($args);
 
-    if (empty($access_token)) {
+    if (empty($request->access_token)) {
       print rest::forbidden("No access token supplied.");
       return;
     }
 
     try {
-      $key = ORM::factory("user_access_token")
-        ->where("access_key", $access_token)
-        ->find();
+      if ($this->_set_active_user($request->access_token)) {
+        $handler_class = "{$function}_rest";
+        $handler_method = "{$request->method}";
 
-      if (!$key->loaded) {
-        print rest::forbidden("Invalid key: $access_token");
-        return;
+        if (!method_exists($handler_class, $handler_method)) {
+          print rest::not_implemented("$handler_class::$handler_method is not implemented");
+          return;
+        }
+
+        print call_user_func(array($handler_class, $handler_method), $request);
       }
-
-      $user = identity::lookup_user($key->user_id);
-      if (empty($user)) {
-        print rest::forbidden("User not found: {$key->user_id}");
-        return;
-      }
-
-      if (!empty($request)) {
-        $method = strtolower($this->input->server("HTTP_X_HTTP_METHOD_OVERRIDE", "POST"));
-        $request = json_decode($request);
-      } else {
-        print rest::invalid_request("Empty Request");
-        return;
-      }
-
-
-      if (empty($args[0])) {
-        print rest::invalid_request("Resource not supplied");
-        return;
-      }
-
-      $handler_class = "{$function}_rest";
-      $handler_method = "{$method}_{$args[0]}";
-
-      if (!method_exists($handler_class, $handler_method)) {
-        print rest::not_implemented("$handler_class::$handler_method is not implemented");
-        return;
-      }
-
-      identity::set_active_user($user);
-
-      print call_user_func(array($handler_class, $handler_method), $request);
     } catch (Exception $e) {
       print rest::internal_error($e);
     }
   }
 
+  private function _normalize_request($args) {
+   $method = strtolower($this->input->server("REQUEST_METHOD"));
+    if ($method != "get") {
+      $request = $this->input->post("request", null);
+      if ($request) {
+        $request = json_decode($request);
+      } else {
+        $request = new stdClass();
+      }
+    } else {
+      $request = new stdClass();
+      foreach (array_keys($_GET) as $key) {
+        if ($key == "request_key") {
+          continue;
+        }
+        $request->$key = $this->input->get($key);
+      }
+    }
+
+    $override_method = strtolower($this->input->server("HTTP_X_GALLERY_REQUEST_METHOD", null));
+    $request->method = empty($override_method) ? $method : $override_method;
+    $request->access_token = $this->input->server("HTTP_X_GALLERY_REQUEST_KEY");
+    $request->path = implode("/", $args);
+
+    return $request;
+  }
+
+  private function _set_active_user($access_token) {
+    if (empty($access_token)) {
+      $user = identity::guest();
+    } else {
+      $key = ORM::factory("user_access_token")
+        ->where("access_key", $access_token)
+        ->find();
+
+      if ($key->loaded) {
+        $user = identity::lookup_user($key->user_id);
+        if (empty($user)) {
+          print rest::forbidden("User not found: {$key->user_id}");
+          return false;;
+        }
+      } else {
+        print rest::forbidden("Invalid user access token supplied: {$key->user_id}");
+        return false;
+      }
+    }
+    identity::set_active_user($user);
+    return true;
+  }
 }

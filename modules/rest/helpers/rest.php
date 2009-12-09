@@ -60,9 +60,12 @@ class rest_Core {
     if (!empty($message)) {
       $response["message"] = (string)$message;
     }
+    if ($response_data) {
+      $response = array_merge($response, $response_data);
+    }
     // We don't need to save the session for this request
     Session::abort_save();
-    return json_encode(array_merge($response, $response_data));
+    return json_encode($response);
   }
 
   private static function _format_response($message, $log_message) {

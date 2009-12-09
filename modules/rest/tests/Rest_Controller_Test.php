@@ -72,7 +72,7 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   public function rest_access_key_no_parameters_test() {
-    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_SERVER["REQUEST_METHOD"] = "GET";
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
@@ -90,7 +90,6 @@ class Rest_Controller_Test extends Unit_Test_Case {
 
   public function rest_access_key_invalid_password_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
-    $_POST["request"] = json_encode(array("user" => "access_test", "password" => "invalid"));
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
@@ -100,31 +99,14 @@ class Rest_Controller_Test extends Unit_Test_Case {
   public function rest_get_resource_no_request_key_test() {
     $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
 
-    $_SERVER["REQUEST_METHOD"] = "POST";
-    $_POST["request"] = json_encode(array("path" => $this->_path));
-
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
-      $this->_call_controller("rest"));
-  }
-
-  public function rest_get_resource_no_request_content_test() {
-    $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
-
-    $_SERVER["REQUEST_METHOD"] = "POST";
-    $_GET["request_key"] = $this->_access_key;
-
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Invalid request"))),
-      $this->_call_controller("rest"));
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
   }
 
   public function rest_get_resource_invalid_key_test() {
-    $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
-
-    $_SERVER["REQUEST_METHOD"] = "POST";
-    $_GET["request_key"] = md5($this->_access_key); // screw up the access key
-    $_POST["request"] = json_encode(array("path" => $this->_path));
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = md5($this->_access_key); // screw up the access key;
+    $_SERVER["REQUEST_METHOD"] = "GET";
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
@@ -132,50 +114,30 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   public function rest_get_resource_no_user_for_key_test() {
-    $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
-    $_SERVER["REQUEST_METHOD"] = "POST";
-
-    $_GET["request_key"] = $this->_access_key;
-    $_POST["request"] = json_encode(array("path" => $this->_path));
+    $_SERVER["REQUEST_METHOD"] = "GET";
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $this->_access_key;
 
     $this->_user->delete();
     unset($this->_user);
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
-      $this->_call_controller("rest"));
-  }
-
-  public function rest_get_resource_no_resource_test() {
-    $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
-    $_SERVER["REQUEST_METHOD"] = "POST";
-
-    $_GET["request_key"] = $this->_access_key;
-    $_POST["request"] = json_encode(array("path" => $this->_path));
-
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Invalid request"))),
-      $this->_call_controller("rest"));
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
   }
 
   public function rest_get_resource_no_handler_test() {
-    $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
-    $_SERVER["REQUEST_METHOD"] = "POST";
-
-    $_GET["request_key"] = $this->_access_key;
-    $_POST["request"] = json_encode(array("path" => $this->_path));
+    $_SERVER["REQUEST_METHOD"] = "GET";
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $this->_access_key;
+    $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "PUT";
 
     $this->assert_equal(
       json_encode(array("status" => "ERROR", "message" => (string)t("Service not implemented"))),
-      $this->_call_controller("rest", "album"));
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
   }
 
   public function rest_get_resource_test() {
-    $_SERVER["HTTP_X_HTTP_METHOD_OVERRIDE"] = "GET";
-    $_SERVER["REQUEST_METHOD"] = "POST";
-
-    $_GET["request_key"] = $this->_access_key;
-    $_POST["request"] = json_encode(array("path" => $this->_path));
+    $_SERVER["REQUEST_METHOD"] = "GET";
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $this->_access_key;
 
     $this->assert_equal(
       json_encode(array("status" => "OK", "message" => (string)t("Processed"),
@@ -185,14 +147,14 @@ class Rest_Controller_Test extends Unit_Test_Case {
                                         "description" => $this->_photo->description,
                                         "internet_address" => $this->_photo->slug,
                                         "type" => $this->_photo->type))),
-      $this->_call_controller("rest", "photo"));
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_path())));
   }
 
   private function _call_controller($method="access_key", $arg=null) {
     $controller = new Rest_Controller();
 
     ob_start();
-    call_user_func(array($controller, $method), $arg);
+    call_user_func_array(array($controller, $method), $arg);
     $results = ob_get_contents();
     ob_end_clean();
 
@@ -203,7 +165,7 @@ class Rest_Controller_Test extends Unit_Test_Case {
 class rest_rest {
   static $request = null;
 
-  static function get_photo($request) {
+  static function get($request) {
     self::$request = $request;
     $item = ORM::factory("item")
       ->where("relative_path_cache", $request->path)
