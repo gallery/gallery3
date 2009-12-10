@@ -97,6 +97,40 @@ class gallery_rest_Core {
     return rest::success();
   }
 
+  static function delete($request) {
+    if (empty($request->path)) {
+      return rest::invalid_request();
+    }
+
+    $item = ORM::factory("item")
+      ->where("relative_url_cache", $request->path)
+      ->viewable()
+      ->find();
+
+    if (!$item->loaded) {
+      return rest::success();
+    }
+
+    if (!access::can("edit", $item)) {
+      return rest::not_found("Resource: {$request->path} permission denied.");
+    }
+
+    if ($item->id == 1) {
+      return rest::invalid_request("Attempt to delete the root album");
+    }
+
+    $item->delete();
+
+    if ($item->is_album()) {
+      $msg = t("Deleted album <b>%title</b>", array("title" => html::purify($item->title)));
+    } else {
+      $msg = t("Deleted photo <b>%title</b>", array("title" => html::purify($item->title)));
+    }
+    log::success("content", $msg);
+
+    return rest::success();
+  }
+
   private static function _get_children($item, $request) {
     $children = array();
     $limit = empty($request->limit) ? null : $request->limit;
