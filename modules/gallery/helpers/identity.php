@@ -82,7 +82,8 @@ class identity_Core {
       }
     } catch (Exception $e) {
       // Log it, so we at least have so notification that we swallowed the exception.
-      Kohana::log("error", "Load_user Exception: " . $e->__toString());
+      Kohana::log("error", "Load_user Exception: " .
+                  $e->getMessage() . "\n" . $e->getTraceAsString());
       try {
         Session::instance()->destroy();
       } catch (Exception $e) {
