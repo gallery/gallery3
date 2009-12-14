@@ -320,6 +320,7 @@ tr.g-warning td.g-warning {
 
 form .g-error {
   background-color: #fff;
+  padding-left: 20px;
 }
 
 .g-open {
@@ -492,6 +493,7 @@ ul.sf-menu li li li.sfHover ul {
 /* Status and validation messages ~~~~ */
 
 .g-message-block {
+  background-position: .4em .3em;
   border: 1px solid #ccc;
   padding: 0;
 }
@@ -514,6 +516,10 @@ div#g-action-status {
 .g-module-status {
   clear: both;
   margin-bottom: 1em;
+}
+
+.g-message {
+  background-position: 0 50%;
 }
 
 /* Breadcrumbs ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
