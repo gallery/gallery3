@@ -161,11 +161,13 @@ class Item_Model extends ORM_MPTT {
     $this->name = $new_name;
 
     if ($this->is_album()) {
-      Database::instance()
-        ->update("items",
-                 array("relative_path_cache" => null,
-                       "relative_url_cache" => null),
-                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
+      db::build()
+        ->update("items")
+        ->set("relative_url_cache", null)
+        ->set("relative_path_cache", null)
+        ->where("left_ptr", ">", $this->left_ptr)
+        ->where("right_ptr", "<", $this->right_ptr)
+        ->execute();
     }
 
     return $this;
@@ -362,10 +364,12 @@ class Item_Model extends ORM_MPTT {
         // Clear the relative url cache for this item and all children
         $this->relative_url_cache = null;
         if ($this->is_album()) {
-          Database::instance()
-            ->update("items",
-                     array("relative_url_cache" => null),
-                     array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
+          db::build()
+            ->update("items")
+            ->set("relative_url_cache", null)
+            ->where("left_ptr", ">", $this->left_ptr)
+            ->where("right_ptr", "<", $this->right_ptr)
+            ->execute();
         }
       }
     }
