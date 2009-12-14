@@ -132,7 +132,7 @@ class Albums_Controller extends Items_Controller {
           $form->edit_item->dirname->value != $album->name ||
           $form->edit_item->slug->value != $album->slug) {
         // Make sure that there's not a conflict
-        if ($row = Database::instance()
+        if ($row = db::build()
             ->select(array("name", "slug"))
             ->from("items")
             ->where("parent_id", "=", $album->parent_id)
@@ -141,7 +141,7 @@ class Albums_Controller extends Items_Controller {
             ->where("name", "=", $form->edit_item->dirname->value)
             ->or_where("slug", "=", $form->edit_item->slug->value)
             ->close()
-            ->get()
+            ->execute()
             ->current()) {
           if ($row->name == $form->edit_item->dirname->value) {
             $form->edit_item->dirname->add_error("name_conflict", 1);
