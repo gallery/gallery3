@@ -20,7 +20,7 @@
 class gallery_rest_Core {
   static function get($request) {
     if (empty($request->path)) {
-      return rest::invalid_request();
+      $request->path = "";
     }
 
     $item = ORM::factory("item")
@@ -32,7 +32,8 @@ class gallery_rest_Core {
       return rest::not_found("Resource: {$request->path} missing.");
     }
 
-    $response_data = array("path" => $item->relative_url(),
+    $response_data = array("type" => $item->type,
+                           "path" => $item->relative_url(),
                            "title" => $item->title,
                            "thumb_url" => $item->thumb_url(),
                            "url" => $item->abs_url(),
@@ -43,7 +44,7 @@ class gallery_rest_Core {
     if (!empty($children)) {
       $response_data["children"] = $children;
     }
-    return rest::success(array($item->type => $response_data));
+    return rest::success(array("resource" => $response_data));
   }
 
   static function put($request) {
@@ -97,6 +98,65 @@ class gallery_rest_Core {
     return rest::success();
   }
 
+  static function post($request) {
+    if (empty($request->path)) {
+      return rest::invalid_request();
+    }
+
+    $components = explode("/", $request->path);
+    $name = urldecode(array_pop($components));
+
+    $parent = ORM::factory("item")
+      ->where("relative_url_cache", implode("/", $components))
+      ->viewable()
+      ->find();
+
+    if (!$parent->loaded) {
+      return rest::not_found("Resource: {$request->path} missing.");
+    }
+
+    if (!access::can("edit", $parent)) {
+      return rest::not_found("Resource: {$request->path} permission denied.");
+    }
+
+    if (empty($_FILES["image"])) {
+      $new_item = album::create(
+        $parent,
+        $name,
+        empty($request->title) ? $name : $request->title,
+        empty($request->description) ? null : $request->description,
+        identity::active_user()->id,
+        empty($request->slug) ? $name : $request->slug);
+      $log_message = t("Added an album");
+    } else {
+      $file_validation = new Validation($_FILES);
+      $file_validation->add_rules(
+        "image", "upload::valid", "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
+      if (!$file_validation->validate()) {
+        $errors = $file_validation->errors();
+        return rest::fail(
+          $errors["image"] == "type" ? "Upload failed: Unsupported file type" :
+                                       "Upload failed: Uploaded file missing");
+      }
+      $temp_filename = upload::save("image");
+      $name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
+      $title = item::convert_filename_to_title($name);
+      $path_info = @pathinfo($temp_filename);
+      if (array_key_exists("extension", $path_info) &&
+          in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
+        $new_item = movie::create($parent, $temp_filename, $name, $title);
+        $log_message = t("Added a movie");
+      } else {
+        $new_item = photo::create($parent, $temp_filename, $name, $title);
+        $log_message = t("Added a photo");
+      }
+    }
+
+    log::success("content", $log_message, "<a href=\"{$new_item->type}s/$new_item->id\">view</a>");
+
+    return rest::success(array("path" => $new_item->relative_url()));
+  }
+
   static function delete($request) {
     if (empty($request->path)) {
       return rest::invalid_request();
@@ -140,6 +200,10 @@ class gallery_rest_Core {
       $children[] = array("type" => $child->type,
                           "has_children" => $child->children_count() > 0,
                           "path" => $child->relative_url(),
+                          "thumb_url" => $child->thumb_url(true),
+                          "thumb_dimensions" => array("width" => $child->thumb_width,
+                                                     "height" => $child->thumb_height),
+                          "has_thumb" => $child->has_thumb(),
                           "title" => $child->title);
     }
 

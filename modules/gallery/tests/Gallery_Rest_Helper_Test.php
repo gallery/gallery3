@@ -19,7 +19,7 @@
  */
 class Gallery_Rest_Helper_Test extends Unit_Test_Case {
   public function setup() {
-    $this->_save = array($_GET, $_POST, $_SERVER);
+    $this->_save = array($_GET, $_POST, $_SERVER, $_FILES);
     $this->_saved_active_user = identity::active_user();
 
     $this->_user = identity::create_user("access_test", "Access Test", "password");
@@ -42,7 +42,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function teardown() {
-    list($_GET, $_POST, $_SERVER) = $this->_save;
+    list($_GET, $_POST, $_SERVER, $_FILES) = $this->_save;
     identity::set_active_user($this->_saved_active_user);
 
     try {
@@ -50,7 +50,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
         $this->_user->delete();
       }
       if (!empty($this->_album)) {
-        $this->_album->delete();
+        //$this->_album->delete();
       }
     } catch (Exception $e) { }
   }
@@ -202,5 +202,21 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     $this->assert_equal(json_encode(array("status" => "OK")), gallery_rest::delete($request));
     $this->_sibling->reload();
     $this->assert_false($this->_sibling->loaded);
+  }
+
+  public function gallery_rest_post_album_test() {
+    access::allow(identity::registered_users(), "edit", $this->_album);
+
+    $new_path = $this->_child->relative_url() . "/new%20child";
+    identity::set_active_user($this->_user);
+    $request = (object)array("path" => $new_path);
+
+    $this->assert_equal(json_encode(array("status" => "OK", "path" => $new_path)),
+                        gallery_rest::post($request));
+    $album = ORM::factory("item")
+      ->where("relative_url_cache", $new_path)
+      ->find();
+    $this->assert_true($album->loaded);
+    $this->assert_equal("new child", $album->slug);
   }
 }

@@ -18,7 +18,7 @@
  */
 class Rest_Controller extends Controller {
   public function access_key() {
-    $request = json_decode($this->input->post("request"));
+    $request = (object)$this->input->get();
     if (empty($request->user) || empty($request->password)) {
       print rest::forbidden("No user or password supplied");
       return;
@@ -66,7 +66,7 @@ class Rest_Controller extends Controller {
     }
   }
 
-  private function _normalize_request($args) {
+  private function _normalize_request($args=array()) {
    $method = strtolower($this->input->server("REQUEST_METHOD"));
     if ($method != "get") {
       $request = $this->input->post("request", null);
@@ -77,7 +77,7 @@ class Rest_Controller extends Controller {
       }
     } else {
       $request = new stdClass();
-      foreach (array_keys($_GET) as $key) {
+      foreach (array_keys($this->input->get()) as $key) {
         $request->$key = $this->input->get($key);
       }
     }
