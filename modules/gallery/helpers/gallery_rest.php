@@ -35,7 +35,8 @@ class gallery_rest_Core {
     $response_data = array("type" => $item->type,
                            "path" => $item->relative_url(),
                            "title" => $item->title,
-                           "thumb_url" => $item->thumb_url(),
+                           "thumb_url" => $item->thumb_url(true),
+                           "resize_url" => $item->resize_url(true),
                            "url" => $item->abs_url(),
                            "description" => $item->description,
                            "internet_address" => $item->slug);
