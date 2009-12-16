@@ -48,7 +48,7 @@ class gallery_rest_Core {
                            "internet_address" => $item->slug);
 
     $children = self::_get_children($item, $request);
-    if (!empty($children)) {
+    if (!empty($children) || $item->is_album()) {
       $response_data["children"] = $children;
     }
     return rest::success(array("resource" => $response_data));
