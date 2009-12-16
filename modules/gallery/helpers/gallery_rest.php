@@ -37,7 +37,7 @@ class gallery_rest_Core {
                            "title" => $item->title,
                            "thumb_url" => $item->thumb_url(true),
                            "resize_url" => $item->resize_url(true),
-                           "url" => $item->abs_url(),
+                           "url" => $item->file_url(true),
                            "description" => $item->description,
                            "internet_address" => $item->slug);
 
