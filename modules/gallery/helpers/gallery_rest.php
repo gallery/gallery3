@@ -36,8 +36,14 @@ class gallery_rest_Core {
                            "path" => $item->relative_url(),
                            "title" => $item->title,
                            "thumb_url" => $item->thumb_url(true),
+                           "thumb_size" => array("height" => $item->thumb_height,
+                                                 "width" => $item->thumb_width),
                            "resize_url" => $item->resize_url(true),
+                           "resize_size" => array("height" => (int)$item->resize_height,
+                                                  "width" => (int)$item->resize_width),
                            "url" => $item->file_url(true),
+                           "size" => array("height" => $item->height,
+                                           "width" => $item->width),
                            "description" => $item->description,
                            "internet_address" => $item->slug);
 
