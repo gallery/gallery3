@@ -157,7 +157,16 @@ class Item_Model extends ORM_MPTT {
 
     @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$new_relative_path");
     @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$new_relative_path");
-    @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$new_relative_path");
+    if ($this->is_movie()) {
+      // Movie thumbnails have a .jpg extension
+      $old_relative_thumb_path = preg_replace("/...$/", "jpg", $old_relative_path);
+      $new_relative_thumb_path = preg_replace("/...$/", "jpg", $new_relative_path);
+      @rename(VARPATH . "thumbs/$old_relative_thumb_path",
+              VARPATH . "thumbs/$new_relative_thumb_path");
+    } else {
+      @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$new_relative_path");
+    }
+
     $this->name = $new_name;
 
     if ($this->is_album()) {

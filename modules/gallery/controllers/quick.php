@@ -131,11 +131,15 @@ class Quick_Controller extends Controller {
     access::required("view", $item);
     access::required("edit", $item);
 
-    if ($item->is_album()) {
-      $form = album::get_edit_form($item);
-    } else {
-      $form = photo::get_edit_form($item);
+    switch ($item->type) {
+    case "album":
+      return print album::get_edit_form($item);
+
+    case "photo":
+      return print photo::get_edit_form($item);
+
+    case "movie":
+      return print movie::get_edit_form($item);
     }
-    print $form;
   }
 }
