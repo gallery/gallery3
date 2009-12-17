@@ -76,7 +76,7 @@ class Photos_Controller extends Items_Controller {
       if ($form->edit_item->filename->value != $photo->name ||
           $form->edit_item->slug->value != $photo->slug) {
         // Make sure that there's not a name or slug conflict
-        if ($row = Database::instance()
+        if ($row = db::build()
             ->select(array("name", "slug"))
             ->from("items")
             ->where("parent_id", "=", $photo->parent_id)
@@ -85,7 +85,7 @@ class Photos_Controller extends Items_Controller {
             ->where("name", "=", $form->edit_item->filename->value)
             ->or_where("slug", "=", $form->edit_item->slug->value)
             ->close()
-            ->get()
+            ->execute()
             ->current()) {
           if ($row->name == $form->edit_item->filename->value) {
             $form->edit_item->filename->add_error("name_conflict", 1);
