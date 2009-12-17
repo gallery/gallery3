@@ -30,7 +30,7 @@ class Packager_Controller extends Controller {
       $this->_dump_database();        // Dump the database
       $this->_dump_var();             // Dump the var directory
     } catch (Exception $e) {
-      print $e->getTraceAsString();
+      print $e->getMessage() . "\n" . $e->getTraceAsString();
       return;
     }
 
