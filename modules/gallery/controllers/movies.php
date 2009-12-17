@@ -76,16 +76,16 @@ class Movies_Controller extends Items_Controller {
       if ($form->edit_item->filename->value != $movie->name ||
           $form->edit_item->slug->value != $movie->slug) {
         // Make sure that there's not a name or slug conflict
-        if ($row = Database::instance()
+        if ($row = db::build()
             ->select(array("name", "slug"))
             ->from("items")
             ->where("parent_id", "=", $movie->parent_id)
-            ->where("id <>", $movie->id)
+            ->where("id", "<>", $movie->id)
             ->and_open()
             ->where("name", "=", $form->edit_item->filename->value)
             ->or_where("slug", "=", $form->edit_item->slug->value)
             ->close()
-            ->get()
+            ->execute()
             ->current()) {
           if ($row->name == $form->edit_item->filename->value) {
             $form->edit_item->filename->add_error("name_conflict", 1);
