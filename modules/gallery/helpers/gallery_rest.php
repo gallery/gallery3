@@ -33,6 +33,7 @@ class gallery_rest_Core {
     }
 
     $response_data = array("type" => $item->type,
+                           "name" => $item->name,
                            "path" => $item->relative_url(),
                            "title" => $item->title,
                            "thumb_url" => $item->thumb_url(true),
