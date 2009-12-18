@@ -26,7 +26,7 @@
             <h1> <?= t("That's it!") ?> </h1>
             <p>
               <?= t("Your <a href=\"%url\">Gallery</a> is up to date.",
-                  array("url" => html::mark_clean(item::root()->url()))) ?>
+                    array("url" => html::mark_clean(url::base()))) ?>
             </p>
           </div>
         </div>
