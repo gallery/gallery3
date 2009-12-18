@@ -38,11 +38,9 @@ class Packager_Controller extends Controller {
   }
 
   private function _reset() {
-    $db = Database::instance();
-
     // Drop all tables
-    foreach ($db->list_tables() as $table) {
-      $db->query("DROP TABLE IF EXISTS {{$table}}");
+    foreach (Database::instance()->list_tables() as $table) {
+      Database::instance()->query("DROP TABLE IF EXISTS {{$table}}");
     }
 
     // Clean out data
@@ -53,7 +51,7 @@ class Packager_Controller extends Controller {
     dir::unlink(VARPATH . "modules");
     dir::unlink(VARPATH . "tmp");
 
-    $db->clear_cache();
+    Database::instance()->clear_cache();
     module::$modules = array();
     module::$active = array();
 
@@ -84,11 +82,13 @@ class Packager_Controller extends Controller {
       module::set_var("gallery", "blocks_{$key}", serialize($blocks));
     }
 
-    $db = Database::instance();
-    $db->query("TRUNCATE {sessions}");
-    $db->query("TRUNCATE {logs}");
-    $db->query("DELETE FROM {vars} WHERE `module_name` = 'gallery' AND `name` = '_cache'");
-
+    Database::instance()->query("TRUNCATE {sessions}");
+    Database::instance()->query("TRUNCATE {logs}");
+    db::build()
+      ->delete("vars")
+      ->where("module_name", "=", "gallery")
+      ->where("name", "=", "_cache")
+      ->execute();
     db::build()->update("users", array("password" => ""), array("id" => 1))->execute();
     db::build()->update("users", array("password" => ""), array("id" => 2))->execute();
 
