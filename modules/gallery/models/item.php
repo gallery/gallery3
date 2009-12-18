@@ -120,11 +120,13 @@ class Item_Model extends ORM_MPTT {
     if ($this->is_album()) {
       @rename(dirname($original_resize_path), dirname($this->resize_path()));
       @rename(dirname($original_thumb_path), dirname($this->thumb_path()));
-      Database::instance()
-        ->update("items",
-                 array("relative_path_cache" => null,
-                       "relative_url_cache" => null),
-                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
+      db::build()
+        ->update("items")
+        ->set("relative_path_cache", null)
+        ->set("relative_url_cache", null)
+        ->where("left_ptr", ">", $this->left_ptr)
+        ->where("right_ptr", "<", $this->right_ptr)
+        ->execute();
     } else {
       @rename($original_resize_path, $this->resize_path());
       @rename($original_thumb_path, $this->thumb_path());
