@@ -25,7 +25,7 @@ abstract class Database extends Database_Core {
    * table prefix . $1
    */
   public function query($sql = '') {
-    if (!empty($sql)) {
+    if ($this->config["table_prefix"] && !empty($sql)) {
       $sql = $this->add_table_prefixes($sql);
     }
     return parent::query($sql);
@@ -49,19 +49,12 @@ abstract class Database extends Database_Core {
 
     if (!isset($this->_table_names)) {
       // This should only run once on the first query
-      $this->_table_names =array();
-      $len = strlen($prefix);
+      $this->_table_names = array();
       foreach($this->list_tables() as $table_name) {
-        if ($len > 0) {
-          $naked_name = strpos($table_name, $prefix) !== 0 ?
-            $table_name : substr($table_name, $len);
-        } else {
-          $naked_name = $table_name;
-        }
-        $this->_table_names["{{$naked_name}}"] = $table_name;
+        $this->_table_names["{{$table_name}}"] = $prefix . $table_name;
       }
     }
 
-    return empty($this->_table_names) ? $sql : strtr($sql, $this->_table_names);
+    return strtr($sql, $this->_table_names);
   }
 }
