@@ -20,7 +20,7 @@
 class search_Core {
   static function search($q, $limit, $offset) {
     $db = Database::instance();
-    $q = $db->escape_str($q);
+    $q = $db->escape($q);
 
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
