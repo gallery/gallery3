@@ -32,9 +32,11 @@ class gallery_rest_Core {
       return rest::not_found("Resource: {$request->path} missing.");
     }
 
+    $parent = $item->parent();
     $response_data = array("type" => $item->type,
                            "name" => $item->name,
                            "path" => $item->relative_url(),
+                           "parent_path" => empty($parent) ? null : $parent->relative_url(),
                            "title" => $item->title,
                            "thumb_url" => $item->thumb_url(true),
                            "thumb_size" => array("height" => $item->thumb_height,
