@@ -68,17 +68,13 @@ class Rest_Controller extends Controller {
 
   private function _normalize_request($args=array()) {
    $method = strtolower($this->input->server("REQUEST_METHOD"));
+    $request = new stdClass();
+    foreach (array_keys($this->input->get()) as $key) {
+      $request->$key = $this->input->get($key);
+    }
     if ($method != "get") {
-      $request = $this->input->post("request", null);
-      if ($request) {
-        $request = json_decode($request);
-      } else {
-        $request = new stdClass();
-      }
-    } else {
-      $request = new stdClass();
-      foreach (array_keys($this->input->get()) as $key) {
-        $request->$key = $this->input->get($key);
+      foreach (array_keys($this->input->post()) as $key) {
+        $request->$key = $this->input->post($key);
       }
     }
 
