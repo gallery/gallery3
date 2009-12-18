@@ -61,7 +61,6 @@ class Tag_Model extends ORM {
    * event for the union of all related items before and after the save.
    */
   public function save() {
-    $db = Database::instance();
     $related_item_ids = array();
     foreach (db::build()
              ->select("item_id")
@@ -98,8 +97,6 @@ class Tag_Model extends ORM {
    */
   public function delete() {
     $related_item_ids = array();
-    $db = Database::Instance();
-
     foreach (db::build()
              ->select("item_id")
              ->from("items_tags")
