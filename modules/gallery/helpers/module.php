@@ -432,17 +432,30 @@ class module_Core {
 
   /**
    * Increment the value of a variable for this module
+   *
+   * Note: Frequently updating counters is very inefficient because it invalidates the cache value
+   * which has to be rebuilt every time we make a change.
+   *
+   * @todo Get rid of this and find an alternate approach for all callers (currently only Akismet)
+   *
+   * @deprecated
    * @param string $module_name
    * @param string $name
    * @param string $increment (optional, default is 1)
    */
   static function incr_var($module_name, $name, $increment=1) {
-    Database::instance()->query(
-      "UPDATE {vars} SET `value` = `value` + $increment " .
-      "WHERE `module_name` = '$module_name' " .
-      "AND `name` = '$name'");
+    db::build()
+      ->update("vars")
+      ->set("value", new Database_Expression("`value` + $increment"))
+      ->where("module_name", "=", $module_name)
+      ->where("name", "=", $name)
+      ->execute();
 
-    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
+    db::build()
+      ->delete("vars")
+      ->where("module_name", "=", "gallery")
+      ->where("name", "=", "_cache")
+      ->execute();
     self::$var_cache = null;
   }
 
