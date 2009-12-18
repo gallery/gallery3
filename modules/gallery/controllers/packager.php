@@ -42,7 +42,7 @@ class Packager_Controller extends Controller {
 
     // Drop all tables
     foreach ($db->list_tables() as $table) {
-      $db->query("DROP TABLE IF EXISTS `$table`");
+      $db->query("DROP TABLE IF EXISTS {{$table}}");
     }
 
     // Clean out data
@@ -88,8 +88,9 @@ class Packager_Controller extends Controller {
     $db->query("TRUNCATE {sessions}");
     $db->query("TRUNCATE {logs}");
     $db->query("DELETE FROM {vars} WHERE `module_name` = 'gallery' AND `name` = '_cache'");
-    $db->update("users", array("password" => ""), array("id" => 1));
-    $db->update("users", array("password" => ""), array("id" => 2));
+
+    db::build()->update("users", array("password" => ""), array("id" => 1))->execute();
+    db::build()->update("users", array("password" => ""), array("id" => 2))->execute();
 
     $dbconfig = Kohana::config('database.default');
     $conn = $dbconfig["connection"];
