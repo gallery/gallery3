@@ -76,7 +76,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     access::deny(identity::registered_users(), "view", $item);
 
     $user = identity::create_user("access_test", "Access Test", "");
-    foreach ($user->groups as $group) {
+    foreach ($user->groups() as $group) {
       $user->remove($group);
     }
     $user->add($access_test);
@@ -93,7 +93,7 @@ class Access_Helper_Test extends Unit_Test_Case {
     access::deny(identity::registered_users(), "view", $item);
 
     $user = identity::create_user("access_test", "Access Test", "");
-    foreach ($user->groups as $group) {
+    foreach ($user->groups() as $group) {
       $user->remove($group);
     }
     $user->save();
@@ -288,7 +288,7 @@ class Access_Helper_Test extends Unit_Test_Case {
   public function i_can_edit_test() {
     // Create a new user that belongs to no groups
     $user = identity::create_user("access_test", "Access Test", "");
-    foreach ($user->groups as $group) {
+    foreach ($user->groups() as $group) {
       $user->remove($group);
     }
     $user->save();

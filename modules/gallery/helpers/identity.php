@@ -75,7 +75,7 @@ class identity_Core {
 
       if (!$session->get("group_ids")) {
         $ids = array();
-        foreach ($user->groups->find_all() as $group) {
+        foreach ($user->groups() as $group) {
           $ids[] = $group->id;
         }
         $session->set("group_ids", $ids);

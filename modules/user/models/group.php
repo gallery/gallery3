@@ -33,6 +33,10 @@ class Group_Model extends ORM implements Group_Definition {
     module::event("group_deleted", $old);
   }
 
+  public function users() {
+    return $this->users->find_all();
+  }
+
   public function save() {
     if (!$this->loaded()) {
         $created = 1;

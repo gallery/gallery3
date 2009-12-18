@@ -101,7 +101,7 @@ class access_Core {
 
     $resource = $perm_name == "view" ?
       $item : model_cache::get("access_cache", $item->id, "item_id");
-    foreach ($user->groups->find_all() as $group) {
+    foreach ($user->groups() as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
       }

@@ -61,6 +61,10 @@ class User_Model extends ORM implements User_Definition {
                    md5($this->email), $size, $default ? "&d=" . urlencode($default) : "");
   }
 
+  public function groups() {
+    return $this->groups->find_all();
+  }
+
   public function save() {
     if (!$this->loaded()) {
         $created = 1;
