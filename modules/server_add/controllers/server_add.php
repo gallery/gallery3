@@ -176,14 +176,13 @@ class Server_Add_Controller extends Admin_Controller {
       $task->set("queue", $queue);
       $task->percent_complete = min($task->percent_complete + 0.1, 10);
       $task->status = t2("Found one file", "Found %count files",
-                         Database::instance()
-                         ->where("task_id", "=", $task->id)
-                         ->count_records("server_add_files"));
+                         db::build()->count_records(
+                           "server_add_files", array("task_id" => $task->id)));
 
       if (!$queue) {
         $task->set("mode", "add-files");
         $task->set(
-          "total_files", database::instance()->count_records(
+          "total_files", db::build()->count_records(
             "server_add_files", array("task_id" => $task->id)));
         $task->percent_complete = 10;
       }
