@@ -57,4 +57,11 @@ abstract class Database extends Database_Core {
 
     return strtr($sql, $this->_table_names);
   }
+
+  /**
+   * This is used by the unit test code to switch the active database connection.
+   */
+  static function set_default_instance($db) {
+    self::$instances["default"] = $db;
+  }
 }
