@@ -44,7 +44,7 @@ foreach ($results as $class => $methods) {
                red_start(), color_end());
         echo "  ", $result->getMessage(), "\n";
         echo "  ", $result->getFile();
-        echo " ", "(" . Kohana::lang("unit_test.line") . " " . $result->getLine(), ")\n";
+        echo " ", "(line " . $result->getLine(), ")\n";
         if ($result->getDebug() !== null) {
           echo "  ", "(", gettype($result->getDebug()), ") ",
             var_export($result->getDebug(), true), "\n";
