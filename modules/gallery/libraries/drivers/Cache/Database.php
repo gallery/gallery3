@@ -90,7 +90,7 @@ class Cache_Database_Driver extends Cache_Driver {
       ->select()
       ->from("caches");
     foreach ($tags as $tag) {
-      $db->where("tags", "LIKE", "<$tag>");
+      $db->where("tags", "LIKE", "%<$tag>%");
     }
     $db_result = $db->execute();
 
@@ -153,14 +153,13 @@ class Cache_Database_Driver extends Cache_Driver {
    * @param  bool    delete a tag
    * @return bool
    */
-  public function delete($id, $tag = false) {
+  public function delete($id, $tag=false) {
     $db = db::build()
       ->delete("caches");
     if ($id === true) {
       // Delete all caches
-      $db->where("1", "=", "1");
     } else if ($tag === true) {
-      $db->where("tags", "LIKE", "<$id>");
+      $db->where("tags", "LIKE", "%<$id>%");
     } else {
       $db->where("key", "=", $id);
     }
