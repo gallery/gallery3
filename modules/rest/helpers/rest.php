@@ -62,14 +62,25 @@ class rest_Core {
   /**
    * Success
    */
-  static function success($response_data=null, $message=null) {
+  static function success($response_data=array(), $message=null) {
     $response = array("status" => "OK");
     if (!empty($message)) {
       $response["message"] = (string)$message;
     }
-    if ($response_data) {
-      $response = array_merge($response, $response_data);
-    }
+    $response = array_merge($response, $response_data);
+
+    // We don't need to save the session for this request
+    Session::abort_save();
+    return json_encode($response);
+  }
+
+  /**
+   * Validation Error
+   */
+  static function validation_error($error_data) {
+    $response = array("status" => "VALIDATE_ERROR");
+    $response = array_merge($response, array("fields" => $error_data));
+
     // We don't need to save the session for this request
     Session::abort_save();
     return json_encode($response);

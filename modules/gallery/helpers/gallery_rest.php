@@ -48,7 +48,7 @@ class gallery_rest_Core {
                            "size" => array("height" => $item->height,
                                            "width" => $item->width),
                            "description" => $item->description,
-                           "internet_address" => $item->slug);
+                           "slug" => $item->slug);
 
     $children = self::_get_children($item, $request);
     if (!empty($children) || $item->is_album()) {
@@ -58,10 +58,6 @@ class gallery_rest_Core {
   }
 
   static function put($request) {
-    if (empty($request->path)) {
-      return rest::invalid_request();
-    }
-
     $item = ORM::factory("item")
       ->where("relative_url_cache", $request->path)
       ->viewable()
@@ -75,37 +71,18 @@ class gallery_rest_Core {
       return rest::not_found("Resource: {$request->path} permission denied.");
     }
 
-    // Normalize the request
-    $new_values = array();
-    $fields = array("title", "description", "name", "slug");
-    if ($item->is_album()) {
-      $fields = array_merge($fields, array("sort_column", "sort_order"));
-    }
-    foreach ($fields as $field) {
-      $new_values[$field] = !empty($request->$field) ? $request->$field : $item->$field;
-    }
-    if ($item->id == 1) {
-      unset($new_values["name"]);
-    }
-    if ($item->id != 1 &&
-        ($new_values["name"] != $item->name || $new_values["slug"] != $item->slug)) {
-      // Make sure that there's not a conflict
-      $errors = item::check_for_conflicts($item, $new_values["name"], $new_values["slug"]);
-      if (!empty($errors["name_conflict"])) {
-        return rest::fail(t("Renaming %path failed: new name exists",
-                            array("path" => $request->path)));
-      }
-      if (!empty($errors["slug_conflict"])) {
-        return rest::fail(t("Renaming %path failed: new internet address exists",
-                            array("path" => $request->path)));
-      }
-    }
+    // Validate the request data
+    $new_values = gallery_rest::_validate($item, $request);
+    $errors = $new_values->errors();
+    if (empty($errors)) {
+      item::update($item, $new_values->as_array());
 
-    item::update($item, $new_values);
+      log::success("content", "Updated $item->type", "<a href=\"{$item->type}s/$item->id\">view</a>");
 
-    log::success("content", "Updated $item->type", "<a href=\"{$item->type}s/$item->id\">view</a>");
-
-    return rest::success();
+      return rest::success();
+    } else {
+      return rest::validation_error($errors);
+    }
   }
 
   static function post($request) {
@@ -128,6 +105,8 @@ class gallery_rest_Core {
     if (!access::can("edit", $parent)) {
       return rest::not_found("Resource: {$request->path} permission denied.");
     }
+
+    // @TODO validate input values (assume nothing about the quality of input)
 
     if (empty($_FILES["image"])) {
       $new_item = album::create(
@@ -189,6 +168,7 @@ class gallery_rest_Core {
       return rest::invalid_request("Attempt to delete the root album");
     }
 
+    $parent = $item->parent();
     $item->delete();
 
     if ($item->is_album()) {
@@ -198,7 +178,7 @@ class gallery_rest_Core {
     }
     log::success("content", $msg);
 
-    return rest::success();
+    return rest::success(array("resource" => array("parent_path" => $parent->relative_url())));
   }
 
   private static function _get_children($item, $request) {
@@ -218,5 +198,35 @@ class gallery_rest_Core {
     }
 
     return $children;
+  }
+
+  private static function _validate($item, $request) {
+    $new_values = array();
+    $fields = array("title", "description", "name", "slug");
+    if ($item->id == 1) {
+      unset($request["name"]);
+      unset($request["slug"]);
+    }
+    foreach ($fields as $field) {
+      $new_values[$field] = isset($request->$field) ? $request->$field : $item->$field;
+    }
+
+    $new_values = new Validation($new_values);
+    foreach ($item->rules as $field => $rules) {
+      foreach (explode("|", $rules) as $rule) {
+        $new_values->add_rules($field, $rule);
+      }
+    }
+
+    if (($valid = $new_values->validate()) && $item->id != 1) {
+      $errors = item::check_for_conflicts($item, $new_values["name"], $new_values["slug"]);
+      if ($valid = empty($errors)) {
+        !empty($errors["name_conflict"]) OR $new_values->add_error("name", "Duplicate Name");
+        !empty($errors["slug_conflict"]) OR
+          $new_values->add_error("name", "Duplicate Internet Address");
+      }
+    }
+
+    return $new_values;
   }
 }

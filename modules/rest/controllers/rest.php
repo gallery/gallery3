@@ -67,7 +67,7 @@ class Rest_Controller extends Controller {
   }
 
   private function _normalize_request($args=array()) {
-   $method = strtolower($this->input->server("REQUEST_METHOD"));
+    $method = strtolower($this->input->server("REQUEST_METHOD"));
     $request = new stdClass();
     foreach (array_keys($this->input->get()) as $key) {
       $request->$key = $this->input->get($key);
@@ -78,8 +78,7 @@ class Rest_Controller extends Controller {
       }
     }
 
-    $override_method = strtolower($this->input->server("HTTP_X_GALLERY_REQUEST_METHOD", null));
-    $request->method = empty($override_method) ? $method : $override_method;
+    $request->method = strtolower($this->input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
     $request->access_token = $this->input->server("HTTP_X_GALLERY_REQUEST_KEY");
     $request->path = implode("/", $args);
 
