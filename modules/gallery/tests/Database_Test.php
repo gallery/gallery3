@@ -19,7 +19,7 @@
  */
 class Database_Test extends Unit_Test_Case {
   function simple_where_test() {
-    $sql = Database::instance()
+    $sql = Database_Builder_For_Test::instance()
       ->where("a", "=", 1)
       ->where("b", "=", 2)
       ->compile();
@@ -28,7 +28,7 @@ class Database_Test extends Unit_Test_Case {
   }
 
   function compound_where_test() {
-    $sql = Database::instance()
+    $sql = Database_Builder_For_Test::instance()
       ->where("outer1", "=", 1)
       ->and_open()
       ->where("inner1", "=", 1)
@@ -43,7 +43,7 @@ class Database_Test extends Unit_Test_Case {
   }
 
   function group_first_test() {
-    $sql = Database::instance()
+    $sql = Database_Builder_For_Test::instance()
       ->and_open()
       ->where("inner1", "=", 1)
       ->or_where("inner2", "=", 2)
@@ -58,12 +58,12 @@ class Database_Test extends Unit_Test_Case {
   }
 
   function where_array_test() {
-    $sql = Database::instance()
+    $sql = Database_Builder_For_Test::instance()
       ->where("outer1", "=", 1)
       ->and_open()
       ->where("inner1", "=", 1)
       ->or_where("inner2", "=", 2)
-      ->or_where("inner3", "=", 3))
+      ->or_where("inner3", "=", 3)
       ->close()
       ->compile();
     $sql = str_replace("\n", " ", $sql);
@@ -73,7 +73,7 @@ class Database_Test extends Unit_Test_Case {
   }
 
   function notlike_test() {
-    $sql = Database::instance()
+    $sql = Database_Builder_For_Test::instance()
       ->where("outer1", "=", 1)
       ->or_open()
       ->where("inner1", "NOT LIKE", 1)
@@ -86,7 +86,7 @@ class Database_Test extends Unit_Test_Case {
   }
 
   function prefix_replacement_test() {
-    $db = Database_For_Test::instance();
+    $db = Database::instance();
     $converted = $db->add_table_prefixes("CREATE TABLE IF NOT EXISTS {test_tables} (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(32) NOT NULL,
@@ -118,7 +118,8 @@ class Database_Test extends Unit_Test_Case {
   }
 
   function prefix_no_replacement_test() {
-    $update = Database_For_Test::instance()->from("test_tables")
+    $update = Database_Builder_For_Test::instance()
+      ->from("test_tables")
       ->where("1", "=", "1")
       ->set(array("name" => "Test Name"))
       ->update();
@@ -129,9 +130,9 @@ class Database_Test extends Unit_Test_Case {
   }
 }
 
-class Database_For_Test extends Database {
+class Database_Builder_For_Test extends Database_Builder {
   static function instance() {
-    $db = new Database_For_Test();
+    $db = new Database_Builder_For_Test();
     $db->_table_names["{items}"] = "g3test_items";
     $db->config["table_prefix"] = "g3test_";
     return $db;
@@ -142,5 +143,9 @@ class Database_For_Test extends Database {
       $sql = $this->add_table_prefixes($sql);
     }
     return $sql;
+  }
+
+  public function compile() {
+    return parent::compile();
   }
 }

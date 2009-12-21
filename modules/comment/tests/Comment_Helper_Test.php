@@ -23,7 +23,7 @@ class Comment_Helper_Test extends Unit_Test_Case {
 
   public function setup() {
     $this->_ip_address = Input::instance()->ip_address;
-    $this->_user_agent = Kohana::$user_agent;
+    $this->_user_agent = request::user_agent();
     $this->_save = $_SERVER;
 
     $_SERVER["HTTP_ACCEPT"] = "HTTP_ACCEPT";
@@ -33,16 +33,17 @@ class Comment_Helper_Test extends Unit_Test_Case {
     $_SERVER["HTTP_CONNECTION"] = "HTTP_CONNECTION";
     $_SERVER["HTTP_HOST"] = "HTTP_HOST";
     $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
-    $_SERVER["HTTP_USER_AGENT"] = "HTTP_USER_AGENT";
     $_SERVER["QUERY_STRING"] = "QUERY_STRING";
     $_SERVER["REMOTE_ADDR"] = "REMOTE_ADDR";
     $_SERVER["REMOTE_HOST"] = "REMOTE_HOST";
     $_SERVER["REMOTE_PORT"] = "REMOTE_PORT";
+
+    request::set_user_agent("HTTP_USER_AGENT");
   }
 
   public function teardown() {
     Input::instance()->ip_address = $this->_ip_address;
-    Kohana::$user_agent = $this->_user_agent;
+    request::set_user_agent($this->_user_agent);
     $_SERVER = $this->_save;
   }
 

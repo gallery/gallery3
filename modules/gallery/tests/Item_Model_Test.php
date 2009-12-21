@@ -35,8 +35,12 @@ class Item_Model_Test extends Unit_Test_Case {
     $item = self::_create_random_item();
 
     // Force the creation date to something well known
-    $db = Database::instance();
-    $db->update("items", array("created" => 0, "updated" => 0), array("id" => $item->id));
+    db::build()
+      ->update("items")
+      ->set("created", 0)
+      ->set("updated", 0)
+      ->where("id", "=", $item->id)
+      ->execute();
     $item->reload();
     $item->title = "foo";  // force a change
     $item->save();
@@ -51,8 +55,11 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_same(0, $item->view_count);
 
     // Force the updated date to something well known
-    $db = Database::instance();
-    $db->update("items", array("updated" => 0), array("id" => $item->id));
+    db::build()
+      ->update("items")
+      ->set("updated", 0)
+      ->where("id", "=", $item->id)
+      ->execute();
     $item->reload();
     $item->view_count++;
     $item->save();
