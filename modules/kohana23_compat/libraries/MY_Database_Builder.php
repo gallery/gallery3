@@ -28,4 +28,8 @@ class Database_Builder extends Database_Builder_Core {
     }
     return $this;
   }
+
+  public function compile() {
+    return parent::compile();
+  }
 }
