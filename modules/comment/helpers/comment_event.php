@@ -21,7 +21,8 @@ class comment_event_Core {
   static function item_deleted($item) {
     db::build()
       ->delete("comments")
-      ->where("item_id", "=", $item->id);
+      ->where("item_id", "=", $item->id)
+      ->execute();
   }
 
   static function user_deleted($user) {
