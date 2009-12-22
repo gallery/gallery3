@@ -2,7 +2,7 @@
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
  *
- * $Id: Kohana.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: Kohana.php 4724 2009-12-21 16:28:54Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -44,6 +44,9 @@ abstract class Kohana_Core {
 	protected static $internal_cache_path;
 	protected static $internal_cache_key;
 	protected static $internal_cache_encrypt;
+
+	// Server API that PHP is using. Allows testing of different APIs.
+	public static $server_api = PHP_SAPI;
 
 	/**
 	 * Sets up the PHP environment. Adds error/exception handling, output
@@ -161,6 +164,35 @@ abstract class Kohana_Core {
 
 		// Set and validate the timezone
 		date_default_timezone_set(Kohana::config('locale.timezone'));
+
+		// register_globals is enabled
+		if (ini_get('register_globals'))
+		{
+			if (isset($_REQUEST['GLOBALS']))
+			{
+				// Prevent GLOBALS override attacks
+				exit('Global variable overload attack.');
+			}
+
+			// Destroy the REQUEST global
+			$_REQUEST = array();
+
+			// These globals are standard and should not be removed
+			$preserve = array('GLOBALS', '_REQUEST', '_GET', '_POST', '_FILES', '_COOKIE', '_SERVER', '_ENV', '_SESSION');
+
+			// This loop has the same effect as disabling register_globals
+			foreach (array_diff(array_keys($GLOBALS), $preserve) as $key)
+			{
+				global $$key;
+				$$key = NULL;
+
+				// Unset the global variable
+				unset($GLOBALS[$key], $$key);
+			}
+
+			// Warn the developer about register globals
+			Kohana_Log::add('debug', 'Disable register_globals! It is evil and deprecated: http://php.net/register_globals');
+		}
 
 		// Enable Kohana routing
 		Event::add('system.routing', array('Router', 'find_uri'));
@@ -602,7 +634,7 @@ abstract class Kohana_Core {
 				header('Content-Encoding: '.$compress);
 
 				// Sending Content-Length in CGI can result in unexpected behavior
-				if (stripos(PHP_SAPI, 'cgi') === FALSE)
+				if (stripos(Kohana::$server_api, 'cgi') === FALSE)
 				{
 					header('Content-Length: '.strlen($output));
 				}
@@ -875,9 +907,6 @@ abstract class Kohana_Core {
 		// Extract the main group from the key
 		$group = explode('.', $key, 2);
 		$group = $group[0];
-
-		// Get locale name
-		$locale = Kohana::config('locale.language.0');
 
 		if ( ! isset(Kohana::$internal_cache['messages'][$group]))
 		{

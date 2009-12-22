@@ -2,7 +2,7 @@
 /**
  * Security helper class.
  *
- * $Id: security.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: security.php 4698 2009-12-08 18:39:33Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -32,17 +32,6 @@ class security_Core {
 	public static function strip_image_tags($str)
 	{
 		return preg_replace('#<img\s.*?(?:src\s*=\s*["\']?([^"\'<>\s]*)["\']?[^>]*)?>#is', '$1', $str);
-	}
-
-	/**
-	 * Remove PHP tags from a string.
-	 *
-	 * @param   string  string to sanitize
-	 * @return  string
-	 */
-	public static function encode_php_tags($str)
-	{
-		return str_replace(array('<?', '?>'), array('&lt;?', '?&gt;'), $str);
 	}
 
 } // End security

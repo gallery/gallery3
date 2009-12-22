@@ -19,10 +19,13 @@
  *             thirty minutes. Specific lifetime can also be set when creating a new cache.
  *             Setting this to 0 will never automatically delete caches.
  *
+ *  prefix   - Adds a prefix to all keys and tags. This can have a severe performance impact.
+ *
  */
 $config['default'] = array
 (
 	'driver'   => 'file',
 	'params'   => array('directory' => APPPATH.'cache', 'gc_probability' => 1000),
 	'lifetime' => 1800,
+	'prefix'   => NULL
 );

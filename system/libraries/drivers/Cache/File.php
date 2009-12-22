@@ -183,7 +183,7 @@ class Cache_File_Driver extends Cache_Driver {
 				// Get the id from the filename
 				list($key, $junk) = explode('~', basename($path), 2);
 
-				if (($data = $this->get($key)) !== FALSE)
+				if (($data = $this->get($key, TRUE)) !== FALSE)
 				{
 					// Add the result to the array
 					$result[$key] = $data;
@@ -211,7 +211,7 @@ class Cache_File_Driver extends Cache_Driver {
 			// Remove the cache file
 			if ( ! unlink($path))
 			{
-				Kohana::log('error', 'Cache: Unable to delete cache file: '.$path);
+				Kohana_Log::add('error', 'Cache: Unable to delete cache file: '.$path);
 				$success = FALSE;
 			}
 		}

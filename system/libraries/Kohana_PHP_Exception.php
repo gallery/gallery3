@@ -2,7 +2,7 @@
 /**
  * Kohana PHP Error Exceptions
  *
- * $Id: Kohana_PHP_Exception.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: Kohana_PHP_Exception.php 4687 2009-11-30 21:59:26Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -89,7 +89,7 @@ class Kohana_PHP_Exception_Core extends Kohana_Exception {
 	 */
 	public static function shutdown_handler()
 	{
-		if (Kohana_PHP_Exception::$enabled AND $error = error_get_last())
+		if (Kohana_PHP_Exception::$enabled AND $error = error_get_last() AND (error_reporting() & $error['type']))
 		{
 			// Fake an exception for nice debugging
 			Kohana_Exception::handle(new Kohana_PHP_Exception($error['type'], $error['message'], $error['file'], $error['line']));

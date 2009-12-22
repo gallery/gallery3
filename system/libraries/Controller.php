@@ -3,7 +3,7 @@
  * Kohana Controller class. The controller class must be extended to work
  * properly, so this class is defined as abstract.
  *
- * $Id: Controller.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: Controller.php 4721 2009-12-17 23:02:07Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -27,12 +27,6 @@ abstract class Controller_Core {
 			// Set the instance to the first controller loaded
 			Kohana::$instance = $this;
 		}
-
-		// URI should always be available
-		$this->uri = URI::instance();
-
-		// Input should always be available
-		$this->input = Input::instance();
 	}
 
 	/**

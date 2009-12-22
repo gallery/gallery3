@@ -16,7 +16,7 @@ class Cache_Xcache_Driver extends Cache_Driver {
 	public function __construct($config)
 	{
 		if ( ! extension_loaded('xcache'))
-			throw new Kohana_Exception('The xcache PHP extension must be loaded to use this driver.');
+			throw new Cache_Exception('The xcache PHP extension must be loaded to use this driver.');
 
 		$this->config = $config;
 	}

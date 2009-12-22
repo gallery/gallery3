@@ -2,7 +2,7 @@
 /**
  * Inflector helper class.
  *
- * $Id: inflector.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: inflector.php 4722 2009-12-19 17:47:34Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -241,9 +241,9 @@ class inflector_Core {
 	}
 
 	/**
-	 * Makes an underscored or dashed phrase human-reable.
+	 * Makes an underscored or dashed phrase human-readable.
 	 *
-	 * @param   string  phrase to make human-reable
+	 * @param   string  phrase to make human-readable
 	 * @return  string
 	 */
 	public static function humanize($str)

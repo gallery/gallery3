@@ -17,7 +17,7 @@ class Cache_Memcache_Driver extends Cache_Driver {
 	public function __construct($config)
 	{
 		if ( ! extension_loaded('memcache'))
-			throw new Kohana_Exception('The memcache PHP extension must be loaded to use this driver.');
+			throw new Cache_Exception('The memcache PHP extension must be loaded to use this driver.');
 
 		ini_set('memcache.allow_failover', (isset($config['allow_failover']) AND $config['allow_failover']) ? TRUE : FALSE);
 
@@ -79,7 +79,10 @@ class Cache_Memcache_Driver extends Cache_Driver {
 
 		if ($single)
 		{
-			return ($items === FALSE OR count($items) > 0) ? current($items) : NULL;
+			if ($items === FALSE)
+			    return NULL;
+
+			return (count($items) > 0) ? current($items) : NULL;
 		}
 		else
 		{

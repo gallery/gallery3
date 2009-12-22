@@ -2,7 +2,7 @@
 /**
  * Form helper class.
  *
- * $Id: form.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: form.php 4699 2009-12-08 18:45:14Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -420,32 +420,6 @@ class form_Core {
 	{
 		if (empty($attr))
 			return '';
-
-		if (isset($attr['name']) AND empty($attr['id']) AND strpos($attr['name'], '[') === FALSE)
-		{
-			if ($type === NULL AND ! empty($attr['type']))
-			{
-				// Set the type by the attributes
-				$type = $attr['type'];
-			}
-
-			switch ($type)
-			{
-				case 'text':
-				case 'textarea':
-				case 'password':
-				case 'select':
-				case 'checkbox':
-				case 'file':
-				case 'image':
-				case 'button':
-				case 'submit':
-				case 'hidden':
-					// Only specific types of inputs use name to id matching
-					$attr['id'] = $attr['name'];
-				break;
-			}
-		}
 
 		$order = array
 		(

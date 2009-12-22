@@ -8,7 +8,7 @@
  * [ref-orm]: http://wikipedia.org/wiki/Object-relational_mapping
  * [ref-act]: http://wikipedia.org/wiki/Active_record
  *
- * $Id: ORM.php 4682 2009-11-11 20:53:23Z isaiah $
+ * $Id: ORM.php 4711 2009-12-10 20:40:52Z isaiah $
  *
  * @package    ORM
  * @author     Kohana Team
@@ -102,7 +102,7 @@ class ORM_Core {
 		$this->object_name   = strtolower(substr(get_class($this), 0, -6));
 		$this->object_plural = inflector::plural($this->object_name);
 
-		if (!isset($this->sorting))
+		if ( ! isset($this->sorting))
 		{
 			// Default sorting
 			$this->sorting = array($this->primary_key => 'asc');
@@ -119,7 +119,7 @@ class ORM_Core {
 			// Load an object
 			$this->_load_values((array) $id);
 		}
-		elseif (!empty($id))
+		elseif ( ! empty($id))
 		{
 			// Set the object's primary key, but don't load it until needed
 			$this->object[$this->primary_key] = $id;
@@ -234,7 +234,7 @@ class ORM_Core {
 				switch ($num_args)
 				{
 					case 0:
-						if (in_array($method, array('open', 'close', 'cache')))
+						if (in_array($method, array('open', 'and_open', 'or_open', 'close', 'cache')))
 						{
 							// Should return ORM, not Database
 							$this->db_builder->$method();
@@ -320,12 +320,12 @@ class ORM_Core {
 				}
 
 				// Foreign key lies in this table (this model belongs_to target model)
-				$where = array($model->foreign_key(TRUE) => $this->object[$this->foreign_key($column)]);
+				$where = array($model->foreign_key(TRUE), '=', $this->object[$this->foreign_key($column)]);
 			}
 			else
 			{
 				// Foreign key lies in the target table (this model has_one target model)
-				$where = array($this->foreign_key($column, $model->table_name) => $this->primary_key_value);
+				$where = array($this->foreign_key($column, $model->table_name), '=', $this->primary_key_value);
 			}
 
 			// one<>alias:one relationship
@@ -525,16 +525,6 @@ class ORM_Core {
 	}
 
 	/**
-	 * Displays the primary key of a model when it is converted to a string.
-	 *
-	 * @return  string
-	 */
-	public function __toString()
-	{
-		return (string) $this->primary_key_value;
-	}
-
-	/**
 	 * Returns the values of this object as an array.
 	 *
 	 * @return  array
@@ -665,7 +655,7 @@ class ORM_Core {
 			if (is_array($id))
 			{
 				// Search for all clauses
-				$this->db_builder->where($id);
+				$this->db_builder->where(array($id));
 			}
 			else
 			{
@@ -767,6 +757,9 @@ class ORM_Core {
 			ORM_Validation_Exception::handle_validation($this->table_name, $array);
 		}
 
+		// Fields may have been modified by filters
+		$this->object = array_merge($this->object, $array->getArrayCopy());
+
 		// Return validation status
 		return $this;
 	}
@@ -782,8 +775,10 @@ class ORM_Core {
 		if ( ! empty($this->changed))
 		{
 			// Require model validation before saving
-			if (!$this->_valid)
+			if ( ! $this->_valid)
+			{
 				$this->validate();
+			}
 
 			$data = array();
 			foreach ($this->changed as $column)
@@ -881,8 +876,8 @@ class ORM_Core {
 				}
 
 				// Foreign keys for the join table
-				$object_fk  = $this->foreign_key(NULL);
-				$related_fk = $model->foreign_key(NULL);
+				$object_fk  = $this->foreign_key($join_table);
+				$related_fk = $model->foreign_key($join_table);
 
 				if ( ! empty($added))
 				{
@@ -909,6 +904,12 @@ class ORM_Core {
 			}
 		}
 
+		if ($this->saved() === TRUE)
+		{
+			// Clear the per-request database cache
+			$this->db->clear_cache(NULL, Database::PER_REQUEST);
+		}
+
 		return $this;
 	}
 
@@ -932,6 +933,9 @@ class ORM_Core {
 		db::delete($this->table_name)
 			->where($this->primary_key, '=', $id)
 			->execute($this->db);
+
+		// Clear the per-request database cache
+		$this->db->clear_cache(NULL, Database::PER_REQUEST);
 
 		return $this->clear();
 	}
@@ -964,6 +968,9 @@ class ORM_Core {
 			// Do nothing - safeguard
 			return $this;
 		}
+
+		// Clear the per-request database cache
+		$this->db->clear_cache(NULL, Database::PER_REQUEST);
 
 		return $this->clear();
 	}
@@ -1154,12 +1161,13 @@ class ORM_Core {
 	 *
 	 * @chainable
 	 * @param   string  SQL query to clear
+	 * @param   integer  Type of cache to clear, Database::CROSS_REQUEST or Database::PER_REQUEST
 	 * @return  ORM
 	 */
-	public function clear_cache($sql = NULL)
+	public function clear_cache($sql = NULL, $type = NULL)
 	{
 		// Proxy to database
-		$this->db->clear_cache($sql);
+		$this->db->clear_cache($sql, $type);
 
 		ORM::$column_cache = array();
 
@@ -1550,9 +1558,9 @@ class ORM_Core {
 	 */
 	protected function load_relations($table, ORM $model)
 	{
-		$result = db::select(array('id' => $model->foreign_key(NULL)))
+		$result = db::select(array('id' => $model->foreign_key($table)))
 			->from($table)
-			->where($this->foreign_key(NULL, $table), '=', $this->primary_key_value)
+			->where($this->foreign_key($table, $table), '=', $this->primary_key_value)
 			->execute($this->db)
 			->as_object();
 

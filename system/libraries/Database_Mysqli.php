@@ -2,7 +2,7 @@
 /**
  * MySQL database connection.
  * 
- * $Id: Database_Mysqli.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: Database_Mysqli.php 4712 2009-12-10 21:47:09Z cbandy $
  * 
  * @package    Kohana
  * @author     Kohana Team
@@ -29,29 +29,29 @@ class Database_Mysqli_Core extends Database_Mysql {
 
 		$host = isset($host) ? $host : $socket;
 
-		if($this->connection = new mysqli($host, $user, $pass, $database, $port)) {
+		$mysqli = mysqli_init();
 			
-			if (isset($this->config['character_set']))
-			{
-				// Set the character set
-				$this->set_charset($this->config['character_set']);
-			}
-			
-			// Clear password after successful connect
-			$this->db_config['connection']['pass'] = NULL;
-			
-			return $this->connection;
-		}
-
-		// Unable to connect to the database
+		if ( ! $mysqli->real_connect($host, $user, $pass, $database, $port, $socket, $params))
 			throw new Database_Exception('#:errno: :error',
-				array(':error' => $this->connection->connect_error,
-				':errno' => $this->connection->connect_errno));
+				array(':error' => $mysqli->connect_error, ':errno' => $mysqli->connect_errno));
+			
+		$this->connection = $mysqli;
+			
+		if (isset($this->config['character_set']))
+		{
+			// Set the character set
+			$this->set_charset($this->config['character_set']);
+		}
 	}
 
 	public function disconnect()
 	{
-		return is_object($this->connection) and $this->connection->close();
+		if (is_object($this->connection))
+		{
+			$this->connection->close();
+		}
+
+		$this->connection = NULL;
 	}
 
 	public function set_charset($charset)

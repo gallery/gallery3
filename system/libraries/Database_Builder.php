@@ -29,6 +29,7 @@ class Database_Builder_Core {
 	protected $columns  = array();
 	protected $values   = array();
 	protected $type;
+	protected $distinct = FALSE;
 
 	// TTL for caching (using Cache library)
 	protected $ttl      = FALSE;
@@ -77,7 +78,8 @@ class Database_Builder_Core {
 		if ($this->type === Database::SELECT)
 		{
 			// SELECT columns FROM table
-			$sql = 'SELECT '.$this->compile_select();
+			$sql = $this->distinct ? 'SELECT DISTINCT ' : 'SELECT ';
+			$sql .= $this->compile_select();
 
 			if ( ! empty($this->from))
 			{
@@ -146,7 +148,13 @@ class Database_Builder_Core {
 
 		foreach ($this->select as $alias => $name)
 		{
-			if (is_string($alias))
+			if ($name instanceof Database_Builder)
+			{
+				// Using a subquery
+				$name->db = $this->db;
+				$vals[] = '('.(string) $name.') AS '.$this->db->quote_column($alias);
+			}
+			elseif (is_string($alias))
 			{
 				$vals[] = $this->db->quote_column($name, $alias);
 			}
@@ -374,28 +382,48 @@ class Database_Builder_Core {
 	/**
 	 * Add conditions to the HAVING clause (AND)
 	 *
-	 * @param  mixed   Column name or array of columns => vals
+	 * @param  mixed   Column name or array of triplets
 	 * @param  string  Operation to perform
 	 * @param  mixed   Value
 	 * @return Database_Builder
 	 */
 	public function and_having($columns, $op = '=', $value = NULL)
 	{
-		$this->having[] = array('AND' => array($columns, $op, $value));
+		if (is_array($columns))
+		{
+			foreach ($columns as $column)
+			{
+				$this->having[] = array('AND' => $column);
+			}
+		}
+		else
+		{
+			$this->having[] = array('AND' => array($columns, $op, $value));
+		}
 		return $this;
 	}
 
 	/**
 	 * Add conditions to the HAVING clause (OR)
 	 *
-	 * @param  mixed   Column name or array of columns => vals
+	 * @param  mixed   Column name or array of triplets
 	 * @param  string  Operation to perform
 	 * @param  mixed   Value
 	 * @return Database_Builder
 	 */
 	public function or_having($columns, $op = '=', $value = NULL)
 	{
-		$this->having[] = array('OR' => array($columns, $op, $value));
+		if (is_array($columns))
+		{
+			foreach ($columns as $column)
+			{
+				$this->having[] = array('OR' => $column);
+			}
+		}
+		else
+		{
+			$this->having[] = array('OR' => array($columns, $op, $value));
+		}
 		return $this;
 	}
 
@@ -408,13 +436,25 @@ class Database_Builder_Core {
 	 */
 	public function order_by($columns, $direction = NULL)
 	{
-		if (is_string($columns))
+		if (is_array($columns))
 		{
-			$columns = array($columns => $direction);
+			foreach ($columns as $column => $direction)
+			{
+				if (is_string($column))
+				{
+					$this->order_by[] = array($column => $direction);
+				}
+				else
+				{
+					// $direction is the column name when the array key is numeric
+					$this->order_by[] = array($direction => NULL);
+				}
+			}
 		}
-
-		$this->order_by[] = $columns;
-
+		else
+		{
+			$this->order_by[] = array($columns => $direction);
+		}
 		return $this;
 	}
 
@@ -542,28 +582,48 @@ class Database_Builder_Core {
 	/**
 	 * Add conditions to the WHERE clause (AND)
 	 *
-	 * @param  mixed   Column name or array of columns => vals
+	 * @param  mixed   Column name or array of triplets
 	 * @param  string  Operation to perform
 	 * @param  mixed   Value
 	 * @return Database_Builder
 	 */
 	public function and_where($columns, $op = '=', $value = NULL)
 	{
-		$this->where[] = array('AND' => array($columns, $op, $value));
+		if (is_array($columns))
+		{
+			foreach ($columns as $column)
+			{
+				$this->where[] = array('AND' => $column);
+			}
+		}
+		else
+		{
+			$this->where[] = array('AND' => array($columns, $op, $value));
+		}
 		return $this;
 	}
 
 	/**
 	 * Add conditions to the WHERE clause (OR)
 	 *
-	 * @param  mixed   Column name or array of columns => vals
+	 * @param  mixed   Column name or array of triplets
 	 * @param  string  Operation to perform
 	 * @param  mixed   Value
 	 * @return Database_Builder
 	 */
 	public function or_where($columns, $op = '=', $value = NULL)
 	{
-		$this->where[] = array('OR' => array($columns, $op, $value));
+		if (is_array($columns))
+		{
+			foreach ($columns as $column)
+			{
+				$this->where[] = array('OR' => $column);
+			}
+		}
+		else
+		{
+			$this->where[] = array('OR' => array($columns, $op, $value));
+		}
 		return $this;
 	}
 
@@ -776,6 +836,19 @@ class Database_Builder_Core {
 
 		$this->select = array_merge($this->select, $columns);
 
+		return $this;
+	}
+
+	/**
+	 * Create a SELECT query and specify selected columns
+	 *
+	 * @param   string|array    column name or array(alias => column)
+	 * @return  Database_Builder
+	 */
+	public function select_distinct($columns = NULL)
+	{
+		$this->select($columns);
+		$this->distinct = TRUE;
 		return $this;
 	}
 

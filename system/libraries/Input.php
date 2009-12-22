@@ -2,7 +2,7 @@
 /**
  * Input library.
  *
- * $Id: Input.php 4680 2009-11-10 01:57:00Z isaiah $
+ * $Id: Input.php 4720 2009-12-17 21:15:03Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -54,7 +54,7 @@ class Input_Core {
 		$_COOKIE = Input::clean($_COOKIE);
 		$_SERVER = Input::clean($_SERVER);
 
-		if (PHP_SAPI == 'cli')
+		if (Kohana::$server_api === 'cli')
 		{
 			// Convert command line arguments
 			$_SERVER['argv'] = Input::clean($_SERVER['argv']);
@@ -311,7 +311,7 @@ class Input_Core {
 		if (trim($data) === '')
 			return $data;
 
-		if ($tool === TRUE)
+		if (is_bool($tool))
 		{
 			$tool = 'default';
 		}
@@ -371,7 +371,7 @@ class Input_Core {
 		$data = html_entity_decode($data, ENT_COMPAT, 'UTF-8');
 
 		// Remove any attribute starting with "on" or xmlns
-		$data = preg_replace('#(<[^>]+?[\x00-\x20"\'])(?:on|xmlns)[^>]*+>#iu', '$1>', $data);
+		$data = preg_replace('#(?:on[a-z]+|xmlns)\s*=\s*[\'"\x00-\x20]?[^\'>"]*[\'"\x00-\x20]?\s?#iu', '', $data);
 
 		// Remove javascript: and vbscript: protocols
 		$data = preg_replace('#([a-z]*)[\x00-\x20]*=[\x00-\x20]*([`\'"]*)[\x00-\x20]*j[\x00-\x20]*a[\x00-\x20]*v[\x00-\x20]*a[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iu', '$1=$2nojavascript...', $data);

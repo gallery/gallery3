@@ -35,7 +35,8 @@ $config['default'] = array
 		'host'     => 'localhost',
 		'port'     => FALSE,
 		'socket'   => FALSE,
-		'database' => 'kohana'
+		'database' => 'kohana',
+		'params'   => NULL,
 	),
 	'character_set' => 'utf8',
 	'table_prefix'  => '',

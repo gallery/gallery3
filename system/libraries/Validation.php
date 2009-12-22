@@ -2,7 +2,7 @@
 /**
  * Validation library.
  *
- * $Id: Validation.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: Validation.php 4713 2009-12-10 22:25:38Z isaiah $
  *
  * @package    Validation
  * @author     Kohana Team
@@ -26,11 +26,11 @@ class Validation_Core extends ArrayObject {
 	protected $errors = array();
 	protected $messages = array();
 
+	// Field labels
+	protected $labels = array();
+
 	// Fields that are expected to be arrays
 	protected $array_fields = array();
-
-	// Checks if there is data to validate.
-	protected $submitted;
 
 	/**
 	 * Creates a new Validation instance.
@@ -52,9 +52,6 @@ class Validation_Core extends ArrayObject {
 	 */
 	public function __construct(array $array)
 	{
-		// The array is submitted if the array is not empty
-		$this->submitted = ! empty($array);
-
 		parent::__construct($array, ArrayObject::ARRAY_AS_PROPS | ArrayObject::STD_PROP_LIST);
 	}
 
@@ -83,21 +80,6 @@ class Validation_Core extends ArrayObject {
 		$copy->exchangeArray($array);
 
 		return $copy;
-	}
-
-	/**
-	 * Test if the data has been submitted.
-	 *
-	 * @return  boolean
-	 */
-	public function submitted($value = NULL)
-	{
-		if (is_bool($value))
-		{
-			$this->submitted = $value;
-		}
-
-		return $this->submitted;
 	}
 
 	/**
@@ -192,6 +174,42 @@ class Validation_Core extends ArrayObject {
 
 		// Merge the allowed rules
 		$this->empty_rules = array_merge($this->empty_rules, $rules);
+
+		return $this;
+	}
+
+	/**
+	* Sets or overwrites the label name for a field.
+	*
+	* @param string field name
+	* @param string label
+	* @return $this
+	*/
+	public function label($field, $label = NULL)
+	{
+		if ($label === NULL AND ($field !== TRUE OR $field !== '*') AND ! isset($this->labels[$field]))
+		{
+			// Set the field label to the field name
+			$this->labels[$field] = ucfirst(preg_replace('/[^\pL]+/u', ' ', $field));
+		}
+		elseif ($label !== NULL)
+		{
+			// Set the label for this field
+			$this->labels[$field] = $label;
+		}
+
+		return $this;
+	}
+
+	/**
+	* Sets labels using an array.
+	*
+	* @param array list of field => label names
+	* @return $this
+	*/
+	public function labels(array $labels)
+	{
+		$this->labels = $labels + $this->labels;
 
 		return $this;
 	}
@@ -338,6 +356,9 @@ class Validation_Core extends ArrayObject {
 		$rules = func_get_args();
 		$rules = array_slice($rules, 1);
 
+		// Set a default field label
+		$this->label($field);
+
 		if ($field === TRUE)
 		{
 			// Use wildcard
@@ -412,6 +433,9 @@ class Validation_Core extends ArrayObject {
 		$callbacks = func_get_args();
 		$callbacks = array_slice($callbacks, 1);
 
+		// Set a default field label
+		$this->label($field);
+
 		if ($field === TRUE)
 		{
 			// Use wildcard
@@ -470,9 +494,6 @@ class Validation_Core extends ArrayObject {
 				}
 			}
 		}
-
-		if ($this->submitted === FALSE)
-			return FALSE;
 
 		foreach ($this->rules as $field => $callbacks)
 		{
@@ -534,6 +555,7 @@ class Validation_Core extends ArrayObject {
 
 					if (($result == $is_false))
 					{
+						$rule = $is_false ? '!'.$rule : $rule;
 						$this->add_error($field, $rule, $args);
 
 						// Stop validating this field when an error is found
@@ -619,46 +641,6 @@ class Validation_Core extends ArrayObject {
 	}
 
 	/**
-	 * Sets or returns the message for an input.
-	 *
-	 * @chainable
-	 * @param   string   input key
-	 * @param   string   message to set
-	 * @return  string|object
-	 */
-	public function message($input = NULL, $message = NULL)
-	{
-		if ($message === NULL)
-		{
-			if ($input === NULL)
-			{
-				$messages = array();
-				$keys     = array_keys($this->messages);
-
-				foreach ($keys as $input)
-				{
-					$messages[] = $this->message($input);
-				}
-
-				return implode("\n", $messages);
-			}
-
-			// Return nothing if no message exists
-			if (empty($this->messages[$input]))
-				return '';
-
-			// Return the HTML message string
-			return $this->messages[$input];
-		}
-		else
-		{
-			$this->messages[$input] = $message;
-		}
-
-		return $this;
-	}
-
-	/**
 	 * Return the errors array.
 	 *
 	 * @param   boolean  load errors from a message file
@@ -677,18 +659,49 @@ class Validation_Core extends ArrayObject {
 		}
 		else
 		{
-
 			$errors = array();
 			foreach ($this->errors as $input => $error)
 			{
-				// Key for this input error
-				$key = "$file.$input.$error[0]";
+				// Locations to check for error messages
+				$error_locations = array
+				(
+					"validation/{$file}.{$input}.{$error[0]}",
+					"validation/{$file}.{$input}.default",
+					"validation/default.{$error[0]}"
+				);
 
-				if (($errors[$input] = Kohana::message('validation/'.$key, $error[1])) === $key)
+				if (($message = Kohana::message($error_locations[0])) !== $error_locations[0])
 				{
-					// Get the default error message
-					$errors[$input] = Kohana::message("$file.$input.default");
+					// Found a message for this field and error
 				}
+				elseif (($message = Kohana::message($error_locations[1])) !== $error_locations[1])
+				{
+					// Found a default message for this field
+				}
+				elseif (($message = Kohana::message($error_locations[2])) !== $error_locations[2])
+				{
+					// Found a default message for this error
+				}
+				else
+				{
+					// No message exists, display the path expected
+					$message = "validation/{$file}.{$input}.{$error[0]}";
+				}
+
+				// Start the translation values list
+				$values = array(':field' => __($this->labels[$input]));
+
+				if ( ! empty($error[1]))
+				{
+					foreach ($error[1] as $key => $value)
+					{
+						// Add each parameter as a numbered value, starting from 1
+						$values[':param'.($key + 1)] = __($value);
+					}
+				}
+
+				// Translate the message using the default language
+				$errors[$input] = __($message, $values);
 			}
 
 			return $errors;

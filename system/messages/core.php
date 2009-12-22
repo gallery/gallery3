@@ -8,7 +8,6 @@ $messages = array
 		E_PAGE_NOT_FOUND     => __('Page Not Found'),    // __('The requested page was not found. It may have moved, been deleted, or archived.'),
 		E_DATABASE_ERROR     => __('Database Error'),    // __('A database error occurred while performing the requested procedure. Please review the database error below for more information.'),
 		E_RECOVERABLE_ERROR  => __('Recoverable Error'), // __('An error was detected which prevented the loading of this page. If this problem persists, please contact the website administrator.'),
-
 		E_ERROR              => __('Fatal Error'),
 		E_COMPILE_ERROR      => __('Fatal Error'),
 		E_CORE_ERROR         => __('Fatal Error'),
@@ -30,3 +29,9 @@ $messages = array
 	'model'              => 'model',
 	'view'               => 'view',
 );
+
+// E_DEPRECATED is only defined in PHP >= 5.3.0
+if (defined('E_DEPRECATED'))
+{
+	$messages['errors'][E_DEPRECATED] = __('Deprecated');
+}

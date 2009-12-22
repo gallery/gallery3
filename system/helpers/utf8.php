@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
  */
 
-class utf8 {
+class utf8_Core {
 
 	/**
 	 * Replaces text within a portion of a UTF-8 string.

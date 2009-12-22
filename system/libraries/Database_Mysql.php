@@ -2,7 +2,7 @@
 /**
  * MySQL database connection.
  *
- * $Id: Database_Mysql.php 4684 2009-11-18 14:26:48Z isaiah $
+ * $Id: Database_Mysql.php 4712 2009-12-10 21:47:09Z cbandy $
  *
  * @package    Kohana
  * @author     Kohana Team
@@ -31,16 +31,15 @@ class Database_Mysql_Core extends Database {
 
 		extract($this->config['connection']);
 
-		// Set the connection type
-		$connect = ($this->config['persistent'] === TRUE) ? 'mysql_pconnect' : 'mysql_connect';
-
 		$host = isset($host) ? $host : $socket;
 		$port = isset($port) ? ':'.$port : '';
 
 		try
 		{
 			// Connect to the database
-			$this->connection = $connect($host.$port, $user, $pass, TRUE);
+			$this->connection = ($this->config['persistent'] === TRUE)
+				? mysql_pconnect($host.$port, $user, $pass, $params)
+				: mysql_connect($host.$port, $user, $pass, TRUE, $params);
 		}
 		catch (Kohana_PHP_Exception $e)
 		{

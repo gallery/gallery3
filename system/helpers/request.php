@@ -2,7 +2,7 @@
 /**
  * Request helper class.
  *
- * $Id: request.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: request.php 4692 2009-12-04 15:59:44Z cbandy $
  *
  * @package    Core
  * @author     Kohana Team
@@ -61,7 +61,7 @@ class request_Core {
 	 */
 	public static function protocol()
 	{
-		if (PHP_SAPI === 'cli')
+		if (Kohana::$server_api === 'cli')
 		{
 			return NULL;
 		}
