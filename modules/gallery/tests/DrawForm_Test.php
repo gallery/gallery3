@@ -25,9 +25,10 @@ class DrawForm_Test extends Unit_Test_Case {
     $form->submit("")->value(t("Submit"));
     $rendered = $form->__toString();
 
+    $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
                       "id=\"g-test-group-form\">\n" .
-                "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"  />\n" .
+                "<input type=\"hidden\" id=\"csrf\" name=\"csrf\" value=\"$csrf\"  />" .
                 "  <ul>\n" .
                 "  <li>\n" .
                 "    <label for=\"title\" >Title</label>\n" .
@@ -36,14 +37,14 @@ class DrawForm_Test extends Unit_Test_Case {
                 "  </li>\n" .
                 "  <li>\n" .
                 "    <label for=\"description\" >Text Area</label>\n" .
-                "    <textarea id=\"description\" name=\"description\" " .
+                "    <textarea id=\"description\" name=\"description\" rows=\"\" cols=\"\" " .
                               "class=\"textarea\" ></textarea>\n" .
                 "  </li>\n" .
                 "  <li>\n" .
                 "    <input type=\"submit\" value=\"Submit\" class=\"submit\"  />\n" .
                 "  </li>\n" .
                 "  </ul>\n" .
-                "</form>\n";
+                "</form>";
     $this->assert_same($expected, $rendered);
   }
 
@@ -55,9 +56,10 @@ class DrawForm_Test extends Unit_Test_Case {
     $group->submit("")->value(t("Submit"));
     $rendered = $form->__toString();
 
+    $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
                       "id=\"g-test-group-form\">\n" .
-                "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"  />\n" .
+                "<input type=\"hidden\" id=\"csrf\" name=\"csrf\" value=\"$csrf\"  />" .
                 "  <fieldset>\n" .
                 "    <legend>Test Group</legend>\n" .
                 "    <ul>\n" .
@@ -68,7 +70,7 @@ class DrawForm_Test extends Unit_Test_Case {
                 "      </li>\n" .
                 "      <li>\n" .
                 "        <label for=\"description\" >Text Area</label>\n" .
-                "        <textarea id=\"description\" name=\"description\" " .
+                "        <textarea id=\"description\" name=\"description\" rows=\"\" cols=\"\" " .
                               "class=\"textarea\" ></textarea>\n" .
                 "      </li>\n" .
                 "      <li>\n" .
@@ -76,7 +78,7 @@ class DrawForm_Test extends Unit_Test_Case {
                 "      </li>\n" .
                 "    </ul>\n" .
                 "  </fieldset>\n" .
-                "</form>\n";
+                "</form>";
     $this->assert_same($expected, $rendered);
   }
 
@@ -91,9 +93,10 @@ class DrawForm_Test extends Unit_Test_Case {
     $group->submit("")->value(t("Submit"));
     $rendered = $form->__toString();
 
+    $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
                       "id=\"g-test-group-form\">\n" .
-                "<input type=\"hidden\" name=\"csrf\" value=\"" . access::csrf_token() . "\"  />\n" .
+                "<input type=\"hidden\" id=\"csrf\" name=\"csrf\" value=\"$csrf\"  />" .
                 "  <fieldset>\n" .
                 "    <legend>Test Group</legend>\n" .
                 "    <ul>\n" .
@@ -104,7 +107,7 @@ class DrawForm_Test extends Unit_Test_Case {
                 "      </li>\n" .
                 "      <li>\n" .
                 "        <label for=\"description\" >Text Area</label>\n" .
-                "        <textarea id=\"description\" name=\"description\" " .
+                "        <textarea id=\"description\" name=\"description\" rows=\"\" cols=\"\" " .
                               "class=\"textarea\" ></textarea>\n" .
                 "      </li>\n" .
                 "      <li>\n" .
@@ -116,7 +119,7 @@ class DrawForm_Test extends Unit_Test_Case {
                 "<script type=\"text/javascript\">\n" .
                 "alert('Test Javascript');\n" .
                 "</script>\n" .
-                "</form>\n";
+                "</form>";
     $this->assert_same($expected, $rendered);
   }
 }
