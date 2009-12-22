@@ -28,16 +28,16 @@ class DrawForm_Test extends Unit_Test_Case {
     $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
                       "id=\"g-test-group-form\">\n" .
-                "<input type=\"hidden\" id=\"csrf\" name=\"csrf\" value=\"$csrf\"  />" .
+                "<input type=\"hidden\" name=\"csrf\" value=\"$csrf\"  />" .
                 "  <ul>\n" .
                 "  <li>\n" .
                 "    <label for=\"title\" >Title</label>\n" .
-                "    <input type=\"text\" id=\"title\" name=\"title\" value=\"\" " .
+                "    <input type=\"text\" name=\"title\" value=\"\" " .
                             "class=\"textbox\"  />\n" .
                 "  </li>\n" .
                 "  <li>\n" .
                 "    <label for=\"description\" >Text Area</label>\n" .
-                "    <textarea id=\"description\" name=\"description\" rows=\"\" cols=\"\" " .
+                "    <textarea name=\"description\" rows=\"\" cols=\"\" " .
                               "class=\"textarea\" ></textarea>\n" .
                 "  </li>\n" .
                 "  <li>\n" .
@@ -59,18 +59,18 @@ class DrawForm_Test extends Unit_Test_Case {
     $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
                       "id=\"g-test-group-form\">\n" .
-                "<input type=\"hidden\" id=\"csrf\" name=\"csrf\" value=\"$csrf\"  />" .
+                "<input type=\"hidden\" name=\"csrf\" value=\"$csrf\"  />" .
                 "  <fieldset>\n" .
                 "    <legend>Test Group</legend>\n" .
                 "    <ul>\n" .
                 "      <li>\n" .
                 "        <label for=\"title\" >Title</label>\n" .
-                "        <input type=\"text\" id=\"title\" name=\"title\" value=\"\" " .
+                "        <input type=\"text\" name=\"title\" value=\"\" " .
                             "class=\"textbox\"  />\n" .
                 "      </li>\n" .
                 "      <li>\n" .
                 "        <label for=\"description\" >Text Area</label>\n" .
-                "        <textarea id=\"description\" name=\"description\" rows=\"\" cols=\"\" " .
+                "        <textarea name=\"description\" rows=\"\" cols=\"\" " .
                               "class=\"textarea\" ></textarea>\n" .
                 "      </li>\n" .
                 "      <li>\n" .
@@ -96,18 +96,18 @@ class DrawForm_Test extends Unit_Test_Case {
     $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
                       "id=\"g-test-group-form\">\n" .
-                "<input type=\"hidden\" id=\"csrf\" name=\"csrf\" value=\"$csrf\"  />" .
+                "<input type=\"hidden\" name=\"csrf\" value=\"$csrf\"  />" .
                 "  <fieldset>\n" .
                 "    <legend>Test Group</legend>\n" .
                 "    <ul>\n" .
                 "      <li>\n" .
                 "        <label for=\"title\" >Title</label>\n" .
-                "        <input type=\"text\" id=\"title\" name=\"title\" value=\"\" " .
+                "        <input type=\"text\" name=\"title\" value=\"\" " .
                             "class=\"textbox\"  />\n" .
                 "      </li>\n" .
                 "      <li>\n" .
                 "        <label for=\"description\" >Text Area</label>\n" .
-                "        <textarea id=\"description\" name=\"description\" rows=\"\" cols=\"\" " .
+                "        <textarea name=\"description\" rows=\"\" cols=\"\" " .
                               "class=\"textarea\" ></textarea>\n" .
                 "      </li>\n" .
                 "      <li>\n" .
