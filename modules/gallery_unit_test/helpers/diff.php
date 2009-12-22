@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class diff_Core {
-  public function compare($a, $b) {
+  static function compare($a, $b) {
     fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), $a);
     fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), $b);
     return `diff $a_name $b_name`;
