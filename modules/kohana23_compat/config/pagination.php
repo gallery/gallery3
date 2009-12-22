@@ -1,25 +1,27 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined("SYSPATH") or die("No direct script access.");
 /**
- * @package  Pagination
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2009 Bharat Mediratta
  *
- * Pagination configuration is defined in groups which allows you to easily switch
- * between different pagination settings for different website sections.
- * Note: all groups inherit and overwrite the default group.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
  *
- * Group Options:
- *  directory      - Views folder in which your pagination style templates reside
- *  style          - Pagination style template (matches view filename)
- *  uri_segment    - URI segment (int or 'label') in which the current page number can be found
- *  query_string   - Alternative to uri_segment: query string key that contains the page number
- *  items_per_page - Number of items to display per page
- *  auto_hide      - Automatically hides pagination for single pages
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-$config['default'] = array
-(
-	'directory'      => 'pagination',
-	'style'          => 'classic',
-	'uri_segment'    => 3,
-	'query_string'   => '',
-	'items_per_page' => 20,
-	'auto_hide'      => FALSE,
+$config["default"] = array(
+  "directory"      => "pagination",
+  "style"          => "classic",
+  "uri_segment"    => 3,
+  "query_string"   => "",
+  "items_per_page" => 20,
+  "auto_hide"      => FALSE
 );

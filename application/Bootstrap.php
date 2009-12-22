@@ -1,13 +1,21 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined("SYSPATH") or die("No direct script access.");
 /**
- * Kohana process control file, loaded by the front controller.
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2009 Bharat Mediratta
  *
- * $Id: Bootstrap.php 4679 2009-11-10 01:45:52Z isaiah $
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
  *
- * @package    Core
- * @author     Kohana Team
- * @copyright  (c) 2007-2009 Kohana Team
- * @license    http://kohanaphp.com/license
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
 // Kohana benchmarks are prefixed to prevent collisions
