@@ -42,7 +42,8 @@ class Albums_Controller extends Items_Controller {
       }
     }
 
-    $show = $this->input->get("show");
+    $input = Input::instance();
+    $show = $input->get("show");
 
     if ($show) {
       $child = ORM::factory("item", $show);
@@ -57,7 +58,7 @@ class Albums_Controller extends Items_Controller {
       }
     }
 
-    $page = $this->input->get("page", "1");
+    $page = $input->get("page", "1");
     $children_count = $album->viewable()->children_count();
     $offset = ($page - 1) * $page_size;
     $max_pages = max(ceil($children_count / $page_size), 1);
@@ -94,15 +95,16 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("add", $album);
 
+    $input = Input::instance();
     $form = album::get_add_form($album);
     if ($form->validate()) {
       $new_album = album::create(
         $album,
-        $this->input->post("name"),
-        $this->input->post("title", $this->input->post("name")),
-        $this->input->post("description"),
+        $input->post("name"),
+        $input->post("title", $input->post("name")),
+        $input->post("description"),
         identity::active_user()->id,
-        $this->input->post("slug"));
+        $input->post("slug"));
 
       log::success("content", "Created an album",
                    html::anchor("albums/$new_album->id", "view album"));

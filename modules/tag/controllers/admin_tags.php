@@ -19,7 +19,7 @@
  */
 class Admin_Tags_Controller extends Admin_Controller {
   public function index() {
-    $filter = $this->input->get("filter");
+    $filter = Input::instance()->get("filter");
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_tags.html");

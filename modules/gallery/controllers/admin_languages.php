@@ -36,10 +36,11 @@ class Admin_Languages_Controller extends Admin_Controller {
   public function save() {
     access::verify_csrf();
 
-    locales::update_installed($this->input->post("installed_locales"));
+    $input = Input::instance();
+    locales::update_installed($input->post("installed_locales"));
 
     $installed_locales = array_keys(locales::installed());
-    $new_default_locale = $this->input->post("default_locale");
+    $new_default_locale = $input->post("default_locale");
     if (!in_array($new_default_locale, $installed_locales)) {
       if (!empty($installed_locales)) {
         $new_default_locale = $installed_locales[0];
@@ -61,7 +62,7 @@ class Admin_Languages_Controller extends Admin_Controller {
       return $this->index($form);
     }
 
-    if ($this->input->post("share")) {
+    if (Input::instance()->post("share")) {
       l10n_client::submit_translations();
       message::success(t("Translations submitted"));
     } else {

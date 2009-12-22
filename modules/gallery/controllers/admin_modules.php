@@ -37,7 +37,7 @@ class Admin_Modules_Controller extends Admin_Controller {
         continue;
       }
 
-      $desired = $this->input->post($module_name) == 1;
+      $desired = Input::instance()->post($module_name) == 1;
       if ($info->active && !$desired && module::is_active($module_name)) {
         $changes->deactivate[] = $module_name;
         $deactivated_names[] = t($info->name);

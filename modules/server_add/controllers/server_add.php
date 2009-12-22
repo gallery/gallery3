@@ -34,7 +34,7 @@ class Server_Add_Controller extends Admin_Controller {
   }
 
   public function children() {
-    $path = $this->input->get("path");
+    $path = Input::instance()->get("path");
 
     $tree = new View("server_add_tree.html");
     $tree->files = array();

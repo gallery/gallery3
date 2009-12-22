@@ -45,5 +45,6 @@ $config["default"] = array (
   "driver"   => "database",
   "params"   => null,
   "lifetime" => 84600,
-  "requests" => 1000
+  "requests" => 1000,
+  "prefix"   => null,
 );

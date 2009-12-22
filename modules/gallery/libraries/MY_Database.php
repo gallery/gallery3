@@ -21,6 +21,20 @@ abstract class Database extends Database_Core {
   protected $_table_names;
 
   /**
+   * Kohana 2.4 introduces a new connection parameter.  If it's not specified, make sure that we
+   * define it here to avoid an error later on.
+   *
+   * @todo: add an upgrade path to modify var/database.php so that we can avoid doing this at
+   *        runtime.
+   */
+  protected function __construct(array $config) {
+    if (!isset($config["connection"]["params"])) {
+      $config["connection"]["params"] = null;
+    }
+    parent::__construct($config);
+  }
+
+  /**
    * Parse the query string and convert any strings of the form `\([a-zA-Z0-9_]*?)\]
    * table prefix . $1
    */

@@ -59,7 +59,7 @@ class Digibug_Controller extends Controller {
     // If its a request for the full size then make sure we are coming from an
     // authorized address
     if ($type == "full") {
-      $remote_addr = ip2long($this->input->server("REMOTE_ADDR"));
+      $remote_addr = ip2long(Input::instance()->server("REMOTE_ADDR"));
       if ($remote_addr === false) {
         throw new Kohana_404_Exception();
       }
