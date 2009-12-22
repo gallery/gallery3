@@ -155,12 +155,12 @@ class item_Core {
     $view_restrictions = array();
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
-        $view_restrictions["items.view_$id"] = access::ALLOW;
+        $view_restrictions[] = array("items.view_$id", "=", access::ALLOW);
       }
     }
 
     if (count($view_restrictions)) {
-      $model->and_open()->or_where($view_restrictions)->close();
+      $model->and_open()->merge_or_where($view_restrictions)->close();
     }
 
     return $model;

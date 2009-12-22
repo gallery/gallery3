@@ -29,6 +29,17 @@ class Database_Builder extends Database_Builder_Core {
     return $this;
   }
 
+  /**
+   * Merge in a series of where clause tuples and call or_where() on each one.
+   * @chainable
+   */
+  public function merge_or_where($tuples) {
+    foreach ($tuples as $tuple) {
+      $this->or_where($tuple[0], $tuple[1], $tuple[2]);
+    }
+    return $this;
+  }
+
   public function compile() {
     return parent::compile();
   }
