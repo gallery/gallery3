@@ -55,7 +55,7 @@ class Digibug_Controller extends Controller {
     print $v;
   }
 
-  public function print_proxy($type, $id) {
+  public function print_proxy($type, $uuid) {
     // If its a request for the full size then make sure we are coming from an
     // authorized address
     if ($type == "full") {
@@ -80,7 +80,7 @@ class Digibug_Controller extends Controller {
       }
     }
 
-    $proxy = ORM::factory("digibug_proxy", array("uuid" => $id));
+    $proxy = ORM::factory("digibug_proxy")->where("uuid", "=", $uuid)->find();
     if (!$proxy->loaded() || !$proxy->item->loaded()) {
       throw new Kohana_404_Exception();
     }
