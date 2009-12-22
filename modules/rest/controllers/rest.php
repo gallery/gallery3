@@ -76,6 +76,9 @@ class Rest_Controller extends Controller {
       foreach (array_keys($this->input->post()) as $key) {
         $request->$key = $this->input->post($key);
       }
+      foreach (array_keys($_FILES) as $key) {
+        $request->$key = $_FILES[$key];
+      }
     }
 
     $request->method = strtolower($this->input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));

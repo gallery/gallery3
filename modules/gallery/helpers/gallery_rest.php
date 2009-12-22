@@ -72,7 +72,7 @@ class gallery_rest_Core {
     }
 
     // Validate the request data
-    $new_values = gallery_rest::_validate($item, $request);
+    $new_values = gallery_rest::_validate($request, $item);
     $errors = $new_values->errors();
     if (empty($errors)) {
       item::update($item, $new_values->as_array());
@@ -106,9 +106,14 @@ class gallery_rest_Core {
       return rest::not_found("Resource: {$request->path} permission denied.");
     }
 
-    // @TODO validate input values (assume nothing about the quality of input)
+    // Validate the request data
+    $new_values = gallery_rest::_validate($request);
+    $errors = $new_values->errors();
+    if (!empty($errors)) {
+      return rest::validation_error($errors);
+    }
 
-    if (empty($_FILES["image"])) {
+    if (empty($new_values["image"])) {
       $new_item = album::create(
         $parent,
         $name,
@@ -118,25 +123,16 @@ class gallery_rest_Core {
         empty($request->slug) ? $name : $request->slug);
       $log_message = t("Added an album");
     } else {
-      $file_validation = new Validation($_FILES);
-      $file_validation->add_rules(
-        "image", "upload::valid", "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
-      if (!$file_validation->validate()) {
-        $errors = $file_validation->errors();
-        return rest::fail(
-          $errors["image"] == "type" ? "Upload failed: Unsupported file type" :
-                                       "Upload failed: Uploaded file missing");
-      }
       $temp_filename = upload::save("image");
-      $name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
-      $title = item::convert_filename_to_title($name);
       $path_info = @pathinfo($temp_filename);
       if (array_key_exists("extension", $path_info) &&
           in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
-        $new_item = movie::create($parent, $temp_filename, $name, $title);
+        $new_item =
+          movie::create($parent, $temp_filename, $new_values["name"], $new_values["title"]);
         $log_message = t("Added a movie");
       } else {
-        $new_item = photo::create($parent, $temp_filename, $name, $title);
+        $new_item =
+          photo::create($parent, $temp_filename, $new_values["name"], $new_values["title"]);
         $log_message = t("Added a photo");
       }
     }
@@ -200,15 +196,23 @@ class gallery_rest_Core {
     return $children;
   }
 
-  private static function _validate($item, $request) {
+  private static function _validate($request, $item=null) {
     $new_values = array();
-    $fields = array("title", "description", "name", "slug");
+    $fields = array("title", "description", "name", "slug", "image");
+    if (empty($item)) {
+      $item = ORM::factory("item");
+      $item->id = 0;
+    }
     if ($item->id == 1) {
       unset($request["name"]);
       unset($request["slug"]);
     }
     foreach ($fields as $field) {
-      $new_values[$field] = isset($request->$field) ? $request->$field : $item->$field;
+      if (isset($request->$field)) {
+        $new_values[$field] = $request->$field;
+      } else if (isset($item->$field)) {
+        $new_values[$field] = $item->$field;
+      }
     }
 
     $new_values = new Validation($new_values);
@@ -217,13 +221,17 @@ class gallery_rest_Core {
         $new_values->add_rules($field, $rule);
       }
     }
+    if (isset($new_values["image"])) {
+      $new_values->add_rules(
+        "image", "upload::valid", "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
+    }
 
-    if (($valid = $new_values->validate()) && $item->id != 1) {
+    if ($new_values->validate() && $item->id != 1) {
       $errors = item::check_for_conflicts($item, $new_values["name"], $new_values["slug"]);
-      if ($valid = empty($errors)) {
+      if (!empty($errors)) {
         !empty($errors["name_conflict"]) OR $new_values->add_error("name", "Duplicate Name");
         !empty($errors["slug_conflict"]) OR
-          $new_values->add_error("name", "Duplicate Internet Address");
+          $new_values->add_error("slug", "Duplicate Internet Address");
       }
     }
 
