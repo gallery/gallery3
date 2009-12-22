@@ -131,7 +131,7 @@ class Access_Helper_Test extends Unit_Test_Case {
   public function can_allow_deny_and_reset_intent_test() {
     $root = ORM::factory("item", 1);
     $album = album::create($root, rand(), "test album");
-    $intent = ORM::factory("access_intent")->where("item_id", "=", $album)->find();
+    $intent = ORM::factory("access_intent")->where("item_id", "=", $album->id)->find();
 
     // Allow
     access::allow(identity::everybody(), "view", $album);
@@ -141,19 +141,19 @@ class Access_Helper_Test extends Unit_Test_Case {
     access::deny(identity::everybody(), "view", $album);
     $this->assert_same(
       access::DENY,
-      ORM::factory("access_intent")->where("item_id", "=", $album)->find()->view_1);
+      ORM::factory("access_intent")->where("item_id", "=", $album->id)->find()->view_1);
 
     // Allow again.  If the initial value was allow, then the first Allow clause above may not
     // have actually changed any values.
     access::allow(identity::everybody(), "view", $album);
     $this->assert_same(
       access::ALLOW,
-      ORM::factory("access_intent")->where("item_id", "=", $album)->find()->view_1);
+      ORM::factory("access_intent")->where("item_id", "=", $album->id)->find()->view_1);
 
     access::reset(identity::everybody(), "view", $album);
     $this->assert_same(
       null,
-      ORM::factory("access_intent")->where("item_id", "=", $album)->find()->view_1);
+      ORM::factory("access_intent")->where("item_id", "=", $album->id)->find()->view_1);
   }
 
   public function cant_reset_root_item_test() {
