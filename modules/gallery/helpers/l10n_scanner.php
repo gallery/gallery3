@@ -42,7 +42,7 @@ class l10n_scanner_Core {
       return $cache[$key];
     }
 
-    $entry = ORM::factory("incoming_translation", array("key" => $key));
+    $entry = ORM::factory("incoming_translation")->where("key", "=", $key)->find();
     if (!$entry->loaded()) {
       $entry->key = $key;
       $entry->message = serialize($message);

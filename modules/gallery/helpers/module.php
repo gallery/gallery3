@@ -51,7 +51,7 @@ class module_Core {
    */
   static function get($module_name) {
     if (empty(self::$modules[$module_name])) {
-      return ORM::factory("module", array("name" => $module_name));
+      return ORM::factory("module")->where("name", "=", $module_name)->find();
     }
     return self::$modules[$module_name];
   }
