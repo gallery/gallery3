@@ -19,17 +19,15 @@
  */
 class gallery_rest_Core {
   static function get($request) {
-    if (empty($request->path)) {
-      $request->path = "";
-    }
+    $path = implode("/", $request->arguments);
 
     $item = ORM::factory("item")
-      ->where("relative_url_cache", $request->path)
+      ->where("relative_url_cache", $path)
       ->viewable()
       ->find();
 
     if (!$item->loaded) {
-      return rest::not_found("Resource: {$request->path} missing.");
+      return rest::not_found("Resource: {$path} missing.");
     }
 
     $parent = $item->parent();
@@ -58,21 +56,22 @@ class gallery_rest_Core {
   }
 
   static function put($request) {
-    if (empty($request->path)) {
+    if (empty($request->arguments)) {
       return rest::invalid_request();
     }
+    $path = implode("/", $request->arguments);
 
     $item = ORM::factory("item")
-      ->where("relative_url_cache", $request->path)
+      ->where("relative_url_cache", $path)
       ->viewable()
       ->find();
 
     if (!$item->loaded) {
-      return rest::not_found("Resource: {$request->path} missing.");
+      return rest::not_found("Resource: {$path} missing.");
     }
 
     if (!access::can("edit", $item)) {
-      return rest::not_found("Resource: {$request->path} permission denied.");
+      return rest::not_found("Resource: {$path} permission denied.");
     }
 
     // Validate the request data
@@ -90,11 +89,12 @@ class gallery_rest_Core {
   }
 
   static function post($request) {
-    if (empty($request->path)) {
+    if (empty($request->arguments)) {
       return rest::invalid_request();
     }
+    $path = implode("/", $request->arguments);
 
-    $components = explode("/", $request->path);
+    $components = explode("/", $path);
     $name = urldecode(array_pop($components));
 
     $parent = ORM::factory("item")
@@ -103,11 +103,11 @@ class gallery_rest_Core {
       ->find();
 
     if (!$parent->loaded) {
-      return rest::not_found("Resource: {$request->path} missing.");
+      return rest::not_found("Resource: {$path} missing.");
     }
 
     if (!access::can("edit", $parent)) {
-      return rest::not_found("Resource: {$request->path} permission denied.");
+      return rest::not_found("Resource: {$path} permission denied.");
     }
 
     // Validate the request data
@@ -147,12 +147,13 @@ class gallery_rest_Core {
   }
 
   static function delete($request) {
-    if (empty($request->path)) {
+    if (empty($request->arguments)) {
       return rest::invalid_request();
     }
+    $path = implode("/", $request->arguments);
 
     $item = ORM::factory("item")
-      ->where("relative_url_cache", $request->path)
+      ->where("relative_url_cache", $path)
       ->viewable()
       ->find();
 
@@ -161,7 +162,7 @@ class gallery_rest_Core {
     }
 
     if (!access::can("edit", $item)) {
-      return rest::not_found("Resource: {$request->path} permission denied.");
+      return rest::not_found("Resource: {$path} permission denied.");
     }
 
     if ($item->id == 1) {

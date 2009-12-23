@@ -19,7 +19,8 @@
  */
 class image_block_rest_Core {
   static function get($request) {
-    switch ($request->path) {
+    $path = implode("/", $request->arguments);
+    switch ($path) {
     case "random":
       $random = ((float)mt_rand()) / (float)mt_getrandmax();
 
@@ -41,7 +42,7 @@ class image_block_rest_Core {
       }
       break;
     default:
-      return rest::fail("Unsupported block type: '{$request->path}'");
+      return rest::fail("Unsupported block type: '{$path}'");
     }
 
     if ($items->count() > 0) {

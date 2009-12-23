@@ -83,7 +83,7 @@ class Rest_Controller extends Controller {
 
     $request->method = strtolower($this->input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
     $request->access_token = $this->input->server("HTTP_X_GALLERY_REQUEST_KEY");
-    $request->path = implode("/", $args);
+    $request->arguments = $args;  // Let the rest handler figure out what the arguments mean
 
     return $request;
   }

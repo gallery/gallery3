@@ -173,7 +173,7 @@ class rest_rest {
   static function get($request) {
     self::$request = $request;
     $item = ORM::factory("item")
-      ->where("relative_url_cache", $request->path)
+      ->where("relative_url_cache", implode("/", $request->arguments))
       ->find();
     $response["path"] = $item->relative_url();
     $response["title"] = $item->title;
