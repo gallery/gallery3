@@ -201,7 +201,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   array    order_by
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $where=null, $order_by=array("id" => "ASC")) {
+  function descendants($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
     if ($where) {
       $this->merge_where($where);
     }

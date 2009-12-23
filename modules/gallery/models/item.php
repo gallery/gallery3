@@ -634,7 +634,7 @@ class Item_Model extends ORM_MPTT {
    * @param   array    additional where clauses
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $where=array(), $order_by=null) {
+  function descendants($limit=null, $offset=null, $where=array(), $order_by=null) {
     if (empty($order_by)) {
       $order_by = array($this->sort_column => $this->sort_order);
       // Use id as a tie breaker

@@ -190,8 +190,8 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $parent->reload();
 
     $this->assert_equal(3, $parent->descendants()->count());
-    $this->assert_equal(2, $parent->descendants(null, 0, array("type" => "photo"))->count());
-    $this->assert_equal(1, $parent->descendants(null, 0, array("type" => "album"))->count());
+    $this->assert_equal(2, $parent->descendants(null, null, array(array("type", "=", "photo")))->count());
+    $this->assert_equal(1, $parent->descendants(null, null, array(array("type", "=", "album")))->count());
   }
 
   public function descendant_limit_test() {
