@@ -2,7 +2,7 @@
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
  *
- * $Id: Kohana.php 4724 2009-12-21 16:28:54Z isaiah $
+ * $Id: Kohana.php 4726 2009-12-23 18:58:53Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -810,11 +810,8 @@ abstract class Kohana_Core {
 		{
 			if ($required === TRUE)
 			{
-				// Directory i18n key
-				$directory = 'core.'.inflector::singular($directory);
-
 				// If the file is required, throw an exception
-				throw new Kohana_Exception('The requested :resource:, :file:, could not be found', array(':resource:' => Kohana::message($directory), ':file:' =>$filename));
+				throw new Kohana_Exception('The requested :resource:, :file:, could not be found', array(':resource:' => __($directory), ':file:' =>$filename));
 			}
 			else
 			{

@@ -1,4 +1,12 @@
 <?php defined('SYSPATH') or die('No direct script access.');
+/**
+ * Default validation messages
+ *
+ * @package    Validation
+ * @author     Kohana Team
+ * @copyright  (c) 2009 Kohana Team
+ * @license    http://kohanaphp.com/license
+ */
 
 $messages = array(
 	'required'      => 'The :field field is required',

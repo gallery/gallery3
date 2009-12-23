@@ -2,7 +2,7 @@
 /**
  * Kohana Exceptions
  *
- * $Id: Kohana_Exception.php 4692 2009-12-04 15:59:44Z cbandy $
+ * $Id: Kohana_Exception.php 4726 2009-12-23 18:58:53Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
@@ -119,7 +119,7 @@ class Kohana_Exception_Core extends Exception {
 			// Manually save logs after exceptions
 			Kohana_Log::save();
 
-			if (Kohana::config('core.display_errors') === FALSE)
+			if (Kohana::config('kohana/core.display_errors') === FALSE)
 			{
 				// Do not show the details
 				$file = $line = NULL;
@@ -146,7 +146,7 @@ class Kohana_Exception_Core extends Exception {
 				}
 
 				// Use the human-readable error name
-				$code = Kohana::message('core.errors.'.$code);
+				$code = Kohana::message('kohana/core.errors.'.$code);
 			}
 			else
 			{
@@ -160,7 +160,7 @@ class Kohana_Exception_Core extends Exception {
 				if ($e instanceof ErrorException)
 				{
 					// Use the human-readable error name
-					$code = Kohana::message('core.errors.'.$e->getSeverity());
+					$code = Kohana::message('kohana/core.errors.'.$e->getSeverity());
 
 					if (version_compare(PHP_VERSION, '5.3', '<'))
 					{
@@ -233,11 +233,12 @@ class Kohana_Exception_Core extends Exception {
 	 *
 	 * @param   mixed    variable to dump
 	 * @param   integer  maximum length of strings
+	 * @param   integer  maximum levels of recursion
 	 * @return  string
 	 */
-	public static function dump($value, $length = 128)
+	public static function dump($value, $length = 128, $max_level = 5)
 	{
-		return Kohana_Exception::_dump($value, $length);
+		return Kohana_Exception::_dump($value, $length, $max_level);
 	}
 
 	/**
@@ -245,10 +246,11 @@ class Kohana_Exception_Core extends Exception {
 	 *
 	 * @param   mixed    variable to dump
 	 * @param   integer  maximum length of strings
-	 * @param   integer  recursion level (internal)
+	 * @param   integer  maximum levels of recursion
+	 * @param   integer  current recursion level (internal)
 	 * @return  string
 	 */
-	private static function _dump( & $var, $length = 128, $level = 0)
+	private static function _dump( & $var, $length = 128, $max_level = 5, $level = 0)
 	{
 		if ($var === NULL)
 		{
@@ -327,7 +329,7 @@ class Kohana_Exception_Core extends Exception {
 			{
 				$output[] = "(\n$space$s*RECURSION*\n$space)";
 			}
-			elseif ($level < 5)
+			elseif ($level <= $max_level)
 			{
 				$output[] = "<span>(";
 
@@ -340,7 +342,7 @@ class Kohana_Exception_Core extends Exception {
 						$key = '"'.$key.'"';
 					}
 
-					$output[] = "$space$s$key => ".Kohana_Exception::_dump($val, $length, $level + 1);
+					$output[] = "$space$s$key => ".Kohana_Exception::_dump($val, $length, $max_level, $level + 1);
 				}
 				unset($var[$marker]);
 
@@ -377,7 +379,7 @@ class Kohana_Exception_Core extends Exception {
 			{
 				$output[] = "{\n$space$s*RECURSION*\n$space}";
 			}
-			elseif ($level < 5)
+			elseif ($level <= $max_level)
 			{
 				$output[] = "<code>{";
 
@@ -397,7 +399,7 @@ class Kohana_Exception_Core extends Exception {
 						$access = '<small>public</small>';
 					}
 
-					$output[] = "$space$s$access $key => ".Kohana_Exception::_dump($val, $length, $level + 1);
+					$output[] = "$space$s$access $key => ".Kohana_Exception::_dump($val, $length, $max_level, $level + 1);
 				}
 				unset($objects[$hash]);
 
