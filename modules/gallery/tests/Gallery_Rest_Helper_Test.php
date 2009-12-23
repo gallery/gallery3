@@ -60,17 +60,33 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "OK",
-                        "album" => array("path" => $this->_child->relative_url(),
-                                         "title" => $this->_child->title,
-                                         "thumb_url" => $this->_child->thumb_url(),
-                                         "url" => $this->_child->abs_url(),
-                                         "description" => $this->_child->description,
-                                         "internet_address" => $this->_child->slug,
-                                         "children" => array(array(
-                                           "type" => "photo",
-                                           "has_children" => false,
-                                           "path" => $this->_photo->relative_url(),
-                                           "title" => $this->_photo->title))))),
+                        "resource" =>
+                          array("type" => $this->_child->type,
+                                "name" => $this->_child->name,
+                                "path" => $this->_child->relative_url(),
+                                "parent_path" => $this->_album->relative_url(),
+                                "title" => $this->_child->title,
+                                "thumb_url" => $this->_child->thumb_url(),
+                                "thumb_size" => array("height" => $this->_child->thumb_height,
+                                                      "width" => $this->_child->thumb_width),
+                                "resize_url" => $this->_child->resize_url(),
+                                "resize_size" => array("height" => 0,
+                                                       "width" => 0),
+                                "url" => $this->_child->file_url(),
+                                "size" => array("height" => $this->_child->height,
+                                                "width" => $this->_child->width),
+                                "description" => $this->_child->description,
+                                "slug" => $this->_child->slug,
+                                "children" => array(array(
+                                   "type" => "photo",
+                                   "has_children" => false,
+                                   "path" => $this->_photo->relative_url(),
+                                   "thumb_url" => $this->_photo->thumb_url(),
+                                   "thumb_dimensions" => array(
+                                     "width" => $this->_photo->thumb_width,
+                                     "height" => $this->_photo->thumb_height),
+                                   "has_thumb" => true,
+                                   "title" => $this->_photo->title))))),
       gallery_rest::get($request));
   }
 
@@ -79,12 +95,23 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "OK",
-                        "photo" => array("path" => $this->_photo->relative_url(),
-                                         "title" => $this->_photo->title,
-                                         "thumb_url" => $this->_photo->thumb_url(),
-                                         "url" => $this->_photo->abs_url(),
-                                         "description" => $this->_photo->description,
-                                         "internet_address" => $this->_photo->slug))),
+                        "resource" =>
+                        array("type" => $this->_photo->type,
+                              "name" => $this->_photo->name,
+                              "path" => $this->_photo->relative_url(),
+                              "parent_path" => $this->_child->relative_url(),
+                              "title" => $this->_photo->title,
+                              "thumb_url" => $this->_photo->thumb_url(),
+                              "thumb_size" => array("height" => $this->_photo->thumb_height,
+                                                    "width" => $this->_photo->thumb_width),
+                              "resize_url" => $this->_photo->resize_url(),
+                              "resize_size" => array("height" => $this->_photo->resize_height,
+                                                       "width" => $this->_photo->resize_width),
+                              "url" => $this->_photo->file_url(),
+                              "size" => array("height" => $this->_photo->height,
+                                              "width" => $this->_photo->width),
+                              "description" => $this->_photo->description,
+                              "slug" => $this->_photo->slug))),
       gallery_rest::get($request));
   }
 
@@ -94,8 +121,6 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     identity::set_active_user($this->_user);
     $request = (object)array("description" => "Updated description",
                              "title" => "Updated Title",
-                             "sort_order" => "DESC",
-                             "sort_column" => "title",
                              "name" => "new name");
 
     $this->assert_equal(json_encode(array("status" => "ERROR", "message" => "Invalid request")),
@@ -109,8 +134,6 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     $request = (object)array("path" => $this->_child->relative_url() . rand(),
                              "description" => "Updated description",
                              "title" => "Updated Title",
-                             "sort_order" => "DESC",
-                             "sort_column" => "title",
                              "name" => "new name");
 
     $this->assert_equal(json_encode(array("status" => "ERROR", "message" => "Resource not found")),
@@ -122,8 +145,6 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     $request = (object)array("path" => $this->_child->relative_url(),
                              "description" => "Updated description",
                              "title" => "Updated Title",
-                             "sort_order" => "DESC",
-                             "sort_column" => "title",
                              "name" => "new name");
 
     $this->assert_equal(json_encode(array("status" => "ERROR", "message" => "Resource not found")),
@@ -136,13 +157,11 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     $request = (object)array("path" => $this->_child->relative_url(),
                              "description" => "Updated description",
                              "title" => "Updated Title",
-                             "sort_order" => "DESC",
-                             "sort_column" => "title",
                              "name" => $this->_sibling->name);
 
     $this->assert_equal(
-      json_encode(array("status" => "ERROR",
-                        "message" => "Renaming album/child failed: new name exists")),
+      json_encode(array("status" => "VALIDATE_ERROR",
+                        "fields" => array("slug" => "Duplicate Internet Address"))),
       gallery_rest::put($request));
   }
 
@@ -153,16 +172,12 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     $request = (object)array("path" => $this->_child->relative_url(),
                              "description" => "Updated description",
                              "title" => "Updated Title",
-                             "sort_order" => "DESC",
-                             "sort_column" => "title",
                              "name" => "new name");
 
     $this->assert_equal(json_encode(array("status" => "OK")), gallery_rest::put($request));
     $this->_child->reload();
     $this->assert_equal("Updated description", $this->_child->description);
     $this->assert_equal("Updated Title", $this->_child->title);
-    $this->assert_equal("DESC", $this->_child->sort_order);
-    $this->assert_equal("title", $this->_child->sort_column);
     $this->assert_equal("new name",  $this->_child->name);
   }
 
@@ -188,7 +203,10 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     identity::set_active_user($this->_user);
     $request = (object)array("path" => $this->_child->relative_url());
 
-    $this->assert_equal(json_encode(array("status" => "OK")), gallery_rest::delete($request));
+    $this->assert_equal(json_encode(array("status" => "OK",
+                                          "resource" => array(
+                                            "parent_path" => $this->_album->relative_url()))),
+                        gallery_rest::delete($request));
     $this->_child->reload();
     $this->assert_false($this->_child->loaded);
   }
@@ -199,7 +217,10 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     identity::set_active_user($this->_user);
     $request = (object)array("path" => $this->_sibling->relative_url());
 
-    $this->assert_equal(json_encode(array("status" => "OK")), gallery_rest::delete($request));
+    $this->assert_equal(json_encode(array("status" => "OK",
+                                          "resource" => array(
+                                            "parent_path" => $this->_album->relative_url()))),
+                        gallery_rest::delete($request));
     $this->_sibling->reload();
     $this->assert_false($this->_sibling->loaded);
   }

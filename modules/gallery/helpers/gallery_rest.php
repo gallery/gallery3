@@ -58,6 +58,10 @@ class gallery_rest_Core {
   }
 
   static function put($request) {
+    if (empty($request->path)) {
+      return rest::invalid_request();
+    }
+
     $item = ORM::factory("item")
       ->where("relative_url_cache", $request->path)
       ->viewable()

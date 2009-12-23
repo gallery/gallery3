@@ -49,8 +49,9 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   public function rest_access_key_exists_test() {
-    $_SERVER["REQUEST_METHOD"] = "POST";
-    $_POST["request"] = json_encode(array("user" => "access_test", "password" => "password"));
+    $_SERVER["REQUEST_METHOD"] = "GET";
+    $_GET["user"] = "access_test";
+    $_GET["password"] = "password";
 
     $this->assert_equal(
       json_encode(array("status" => "OK", "token" => $this->_access_key)),
@@ -61,8 +62,9 @@ class Rest_Controller_Test extends Unit_Test_Case {
     ORM::factory("user_access_token")
       ->where("access_key", $this->_access_key)
       ->delete();
-    $_SERVER["REQUEST_METHOD"] = "POST";
-    $_POST["request"] = json_encode(array("user" => "access_test", "password" => "password"));
+    $_SERVER["REQUEST_METHOD"] = "GET";
+    $_GET["user"] = "access_test";
+    $_GET["password"] = "password";
 
     $results = json_decode($this->_call_controller());
 
