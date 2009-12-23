@@ -51,7 +51,7 @@ class gallery_rss_Core {
         ->viewable()
         ->descendants($limit, $offset, array(array("type", "=", "photo")));
       $feed->max_pages = ceil(
-        $item->viewable()->descendants_count(array("type", "=", "photo")) / $limit);
+        $item->viewable()->descendants_count(array(array("type", "=", "photo"))) / $limit);
       $feed->title = html::purify($item->title);
       $feed->description = nl2br(html::purify($item->description));
 
