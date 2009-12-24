@@ -77,7 +77,7 @@ class Admin_Users_Controller extends Admin_Controller {
 
     $user = user::lookup($id);
     if (empty($user)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $form = $this->_get_user_delete_form_admin($user);
@@ -98,7 +98,7 @@ class Admin_Users_Controller extends Admin_Controller {
   public function delete_user_form($id) {
     $user = user::lookup($id);
     if (empty($user)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
     print $this->_get_user_delete_form_admin($user);
   }
@@ -108,7 +108,7 @@ class Admin_Users_Controller extends Admin_Controller {
 
     $user = user::lookup($id);
     if (empty($user)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $form = $this->_get_user_edit_form_admin($user);
@@ -155,7 +155,7 @@ class Admin_Users_Controller extends Admin_Controller {
   public function edit_user_form($id) {
     $user = user::lookup($id);
     if (empty($user)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $v = new View("user_form.html");
@@ -224,7 +224,7 @@ class Admin_Users_Controller extends Admin_Controller {
 
     $group = group::lookup($id);
     if (empty($group)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $form = $this->_get_group_delete_form_admin($group);
@@ -245,7 +245,7 @@ class Admin_Users_Controller extends Admin_Controller {
   public function delete_group_form($id) {
     $group = group::lookup($id);
     if (empty($group)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     print $this->_get_group_delete_form_admin($group);
@@ -256,7 +256,7 @@ class Admin_Users_Controller extends Admin_Controller {
 
     $group = group::lookup($id);
     if (empty($group)) {
-       kohana::show_404();
+       throw new Kohana_404_Exception();
     }
 
     $form = $this->_get_group_edit_form_admin($group);
@@ -288,7 +288,7 @@ class Admin_Users_Controller extends Admin_Controller {
   public function edit_group_form($id) {
     $group = group::lookup($id);
     if (empty($group)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     print $this->_get_group_edit_form_admin($group);

@@ -87,7 +87,7 @@ class Digibug_Controller extends Controller {
 
     $file = $type == "full" ? $proxy->item->file_path() : $proxy->item->thumb_path();
     if (!file_exists($file)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // We don't need to save the session for this request

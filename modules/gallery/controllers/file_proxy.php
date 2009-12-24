@@ -38,19 +38,19 @@ class File_Proxy_Controller extends Controller {
     // Make sure that the request is for a file inside var
     $offset = strpos($request_uri, $var_uri);
     if ($offset === false) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $file_uri = substr($request_uri, strlen($var_uri));
 
     // Make sure that we don't leave the var dir
     if (strpos($file_uri, "..") !== false) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // If the last element is .album.jpg, pop that off since it's not a real item
@@ -78,7 +78,7 @@ class File_Proxy_Controller extends Controller {
     }
 
     if (!$item->loaded()) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     if ($type == "albums") {
@@ -91,21 +91,21 @@ class File_Proxy_Controller extends Controller {
 
     // Make sure we have access to the item
     if (!access::can("view", $item)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // Make sure we have view_full access to the original
     if ($type == "albums" && !access::can("view_full", $item)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     if (!file_exists($file)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // We don't need to save the session for this request

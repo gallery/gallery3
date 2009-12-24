@@ -44,7 +44,7 @@ class Admin_Controller extends Controller {
     }
 
     if (!method_exists($controller_name, $method)) {
-      return kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     call_user_func_array(array(new $controller_name, $method), $args);

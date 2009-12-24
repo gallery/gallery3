@@ -45,7 +45,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
     $tag = ORM::factory("tag", $id);
     if (!$tag->loaded()) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $form = tag::get_delete_form($tag);
@@ -80,7 +80,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
     $tag = ORM::factory("tag", $id);
     if (!$tag->loaded()) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $in_place_edit = InPlaceEdit::factory($tag->name)
