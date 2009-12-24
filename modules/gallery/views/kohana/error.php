@@ -72,8 +72,34 @@
         padding-bottom: 10px;
       }
 
-      #first_error {
-        padding-left: 20px;
+      .source {
+        border: solid 1px #ccc;
+        background: #efe;
+        margin-bottom: 5px;
+      }
+
+      table {
+        width: 100%;
+        display: block;
+        margin: 0 0 0.4em;
+        padding: 0;
+        border-collapse: collapse;
+        background: #efe;
+      }
+
+      table td {
+        border: solid 1px #ddd;
+        text-align: left;
+        vertical-align: top;
+        padding: 0.4em;
+      }
+
+      .args table td.key {
+        width: 200px;
+      }
+
+      .number {
+        padding-right: 1em;
       }
     </style>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -134,21 +160,23 @@
           </span>
 	</h3>
 	<div id="<?= $error_id ?>" class="content">
-          <div id="first_error">
-            <p>
-              <span class="file">
-                <?= Kohana_Exception::debug_path($file)?>[ <?= $line?> ]
-              </span>
-            </p>
-
-            <? if (Kohana_Exception::$source_output and $source_code = Kohana_Exception::debug_source($file, $line)): ?><code><? foreach ($source_code as $num => $row): ?><span class="line <?= ($num == $line) ? "highlight" : ""?>"><span class="number"><?= $num ?></span><?= htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><? endforeach ?></code>
-            <? endif ?>
-          </div>
-
-          <? if (Kohana_Exception::$trace_output): ?>
           <ol class="trace">
+            <li class="snippet">
+              <p>
+                <span class="file">
+                  <?= Kohana_Exception::debug_path($file)?>[ <?= $line?> ]
+                </span>
+              </p>
+
+              <div class="source">
+                <? if (Kohana_Exception::$source_output and $source_code = Kohana_Exception::debug_source($file, $line)): ?><code><? foreach ($source_code as $num => $row): ?><span class="line <?= ($num == $line) ? "highlight" : ""?>"><span class="number"><?= $num ?></span><?= htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><? endforeach ?></code>
+                <? endif ?>
+              </div>
+            </li>
+
+            <? if (Kohana_Exception::$trace_output): ?>
             <? foreach (Kohana_Exception::trace($trace) as $i => $step): ?>
-            <li>
+            <li class="snippet">
               <p>
                 <span class="file">
                   <? if ($step["file"]): $source_id = "$error_id.source.$i" ?>
@@ -171,12 +199,10 @@
                 <table cellspacing="0">
                   <? foreach ($step["args"] as $name => $arg): ?>
                   <tr>
-                    <td>
-                      <code>
-                        <?= $name?>
-                      </code>
+                    <td class="key">
+                      <pre><?= $name?></pre>
                     </td>
-                    <td>
+                    <td class="value">
                       <pre><?= Kohana_Exception::dump($arg) ?></pre>
                     </td>
                   </tr>
@@ -185,7 +211,7 @@
               </div>
               <? endif?>
               <? if (Kohana_Exception::$source_output and $step["source"] and isset($source_id)): ?>
-              <pre id="<?= $source_id ?>" class="source collapsed"><code><? foreach ($step["source"] as $num => $row): ?><span class="line <? if ($num == $step["line"]) echo "highlight" ?>"><span class="number"><?= $num ?></span><?= htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><? endforeach ?></code></pre>
+              <pre id="<?= $source_id ?>" class="source collapsed"><code><? foreach ($step["source"] as $num => $row): ?><span class="line <?= ($num == $step["line"]) ? "highlight" : "" ?>"><span class="number"><?= $num ?></span><?= htmlspecialchars($row, ENT_NOQUOTES, Kohana::CHARSET) ?></span><? endforeach ?></code></pre>
               <? endif?>
             </li>
             <? unset($args_id, $source_id) ?>
@@ -205,9 +231,7 @@
               <? foreach ($included as $file): ?>
               <tr>
                 <td>
-                  <code>
-                    <?= Kohana_Exception::debug_path($file)?>
-                  </code>
+                  <pre><?= Kohana_Exception::debug_path($file)?></pre>
                 </td>
               </tr>
               <? endforeach?>
@@ -220,9 +244,7 @@
               <? foreach ($included as $file): ?>
               <tr>
                 <td>
-                  <code>
-                    <?= Kohana_Exception::debug_path($file)?>
-                  </code>
+                  <pre><?= Kohana_Exception::debug_path($file)?></pre>
                 </td>
               </tr>
               <? endforeach?>
@@ -236,12 +258,12 @@
             <table cellspacing="0">
               <? foreach ($GLOBALS[$var] as $key => $value): ?>
               <tr>
-                <td>
+                <td class="key">
                   <code>
                     <?= $key?>
                   </code>
                 </td>
-                <td>
+                <td class="value">
                   <pre><?= Kohana_Exception::dump($value) ?></pre>
                 </td>
               </tr>
