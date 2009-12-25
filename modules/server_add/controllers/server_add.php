@@ -175,15 +175,15 @@ class Server_Add_Controller extends Admin_Controller {
       // over 10% in percent_complete.
       $task->set("queue", $queue);
       $task->percent_complete = min($task->percent_complete + 0.1, 10);
-      $task->status = t2("Found one file", "Found %count files",
-                         db::build()->count_records(
-                           "server_add_files", array("task_id" => $task->id)));
+      $task->status = t2(
+        "Found one file", "Found %count files",
+        ORM::factory("server_add_file")->where("task_id", "=", $task->id)->count_all());
 
       if (!$queue) {
         $task->set("mode", "add-files");
         $task->set(
-          "total_files", db::build()->count_records(
-            "server_add_files", array("task_id" => $task->id)));
+          "total_files",
+          ORM::factory("server_add_file")->where("task_id", "=", $task->id)->count_all());
         $task->percent_complete = 10;
       }
       break;
@@ -256,7 +256,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->status = t("Adding photos / albums (%completed of %total)",
                         array("completed" => $completed_files,
                               "total" => $total_files));
-      $task->percent_complete = 10 + 100 * ($completed_files / $total_files);
+      $task->percent_complete = $total_files ? 10 + 100 * ($completed_files / $total_files) : 100;
       break;
 
     case "done":
