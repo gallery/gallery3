@@ -50,13 +50,13 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
         $this->_user->delete();
       }
       if (!empty($this->_album)) {
-        //$this->_album->delete();
+        $this->_album->delete();
       }
     } catch (Exception $e) { }
   }
 
   public function gallery_rest_get_album_test() {
-    $request = (object)array("path" => $this->_child->relative_url());
+    $request = (object)array("arguments" => explode("/", $this->_child->relative_url()));
 
     $this->assert_equal(
       json_encode(array("status" => "OK",
@@ -91,7 +91,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function gallery_rest_get_photo_test() {
-    $request = (object)array("path" => $this->_photo->relative_url());
+    $request = (object)array("arguments" => explode("/", $this->_photo->relative_url()));
 
     $this->assert_equal(
       json_encode(array("status" => "OK",
@@ -131,7 +131,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     access::allow(identity::registered_users(), "edit", $this->_child);
 
     identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_child->relative_url() . rand(),
+    $request = (object)array("arguments" => explode("/", $this->_photo->relative_url() . rand()),
                              "description" => "Updated description",
                              "title" => "Updated Title",
                              "name" => "new name");
@@ -142,7 +142,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
 
   public function gallery_rest_put_album_no_edit_permission_test() {
     identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_child->relative_url(),
+    $request = (object)array("arguments" => explode("/", $this->_child->relative_url()),
                              "description" => "Updated description",
                              "title" => "Updated Title",
                              "name" => "new name");
@@ -154,7 +154,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
   public function gallery_rest_put_album_rename_conflict_test() {
     access::allow(identity::registered_users(), "edit", $this->_child);
     identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_child->relative_url(),
+    $request = (object)array("arguments" => explode("/", $this->_child->relative_url()),
                              "description" => "Updated description",
                              "title" => "Updated Title",
                              "name" => $this->_sibling->name);
@@ -169,7 +169,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     access::allow(identity::registered_users(), "edit", $this->_child);
 
     identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_child->relative_url(),
+    $request = (object)array("arguments" => explode("/", $this->_child->relative_url()),
                              "description" => "Updated description",
                              "title" => "Updated Title",
                              "name" => "new name");
@@ -185,7 +185,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     access::allow(identity::registered_users(), "edit", $this->_child);
 
     identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_photo->relative_url(),
+    $request = (object)array("arguments" => explode("/", $this->_photo->relative_url()),
                              "description" => "Updated description",
                              "title" => "Updated Title",
                              "name" => "new name");
@@ -201,7 +201,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     access::allow(identity::registered_users(), "edit", $this->_album);
 
     identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_child->relative_url());
+    $request = (object)array("arguments" => explode("/", $this->_child->relative_url()));
 
     $this->assert_equal(json_encode(array("status" => "OK",
                                           "resource" => array(
@@ -215,7 +215,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     access::allow(identity::registered_users(), "edit", $this->_album);
 
     identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_sibling->relative_url());
+    $request = (object)array("arguments" => explode("/", $this->_sibling->relative_url()));
 
     $this->assert_equal(json_encode(array("status" => "OK",
                                           "resource" => array(
@@ -230,7 +230,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
 
     $new_path = $this->_child->relative_url() . "/new%20child";
     identity::set_active_user($this->_user);
-    $request = (object)array("path" => $new_path);
+    $request = (object)array("arguments" => explode("/", $new_path));
 
     $this->assert_equal(json_encode(array("status" => "OK", "path" => $new_path)),
                         gallery_rest::post($request));
