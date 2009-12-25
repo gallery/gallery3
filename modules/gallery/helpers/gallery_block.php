@@ -34,7 +34,7 @@ class gallery_block_Core {
 
   static function get($block_id) {
     $block = new Block();
-    switch($block_id) {
+    switch ($block_id) {
     case "welcome":
       $block->css_id = "g-welcome";
       $block->title = t("Welcome to Gallery 3");
