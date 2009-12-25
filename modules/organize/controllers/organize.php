@@ -75,7 +75,11 @@ class Organize_Controller extends Controller {
       $i = 0;
       foreach ($album->children() as $child) {
         // Do this directly in the database to avoid sending notifications
-        Database::Instance()->update("items", array("weight" => ++$i), array("id" => $child->id));
+        db::build()
+          ->update("items")
+          ->set("weight", ++$i)
+          ->where("id", "=", $child->id)
+          ->execute();
       }
       $album->sort_column = "weight";
       $album->sort_order = "ASC";
@@ -91,15 +95,20 @@ class Organize_Controller extends Controller {
 
     // Make a hole
     $count = count($source_ids);
-    Database::Instance()->query(
-      "UPDATE {items} " .
-      "SET `weight` = `weight` + $count " .
-      "WHERE `weight` >= $target_weight AND `parent_id` = {$album->id}");
+    db::build()
+      ->update("items")
+      ->set("weight", new Database_Expression("`weight` + $count"))
+      ->where("weight", ">=", $target_weight)
+      ->where("parent_id", "=", $album->id)
+      ->execute();
 
     // Insert source items into the hole
     foreach ($source_ids as $source_id) {
-      Database::Instance()->update(
-        "items", array("weight" => $target_weight++), array("id" => $source_id));
+      db::build()
+        ->update("items")
+        ->set("weight", $target_weight++)
+        ->where("id", "=", $source_id)
+        ->execute();
     }
 
     module::event("album_rearrange", $album);
