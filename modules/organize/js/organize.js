@@ -162,7 +162,7 @@
     },
 
     set_handlers: function() {
-      $("#g-organize-microthumb-panel")
+      $("#g-organize-microthumb-grid")
         .selectable({filter: ".g-organize-microthumb-grid-cell"})
         .droppable($.organize.content_droppable);
       $(".g-organize-microthumb-grid-cell")
