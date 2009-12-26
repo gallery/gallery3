@@ -119,16 +119,16 @@ class item_Core {
   static function check_for_conflicts($item, $new_name, $new_slug) {
     $errors = array();
 
-    if ($row = Database::instance()
+    if ($row = db::build()
         ->select(array("name", "slug"))
         ->from("items")
         ->where("parent_id", $item->parent_id)
         ->where("id <>", $item->id)
-        ->open_paren()
+        ->and_open()
         ->where("name", $new_name)
         ->orwhere("slug", $new_slug)
-        ->close_paren()
-        ->get()
+        ->close()
+        ->execute()
         ->current()) {
       if ($row->name == $new_name) {
         $errors["name_conflict"] = 1;
