@@ -2,12 +2,12 @@
 /**
  * Simple benchmarking.
  *
- * $Id: Benchmark.php 4149 2009-04-01 13:32:50Z Shadowhand $
+ * $Id: Benchmark.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 final class Benchmark {
 
@@ -22,6 +22,9 @@ final class Benchmark {
 	 */
 	public static function start($name)
 	{
+		if (isset(self::$marks[$name]) AND self::$marks[$name][0]['stop'] === FALSE)
+			throw new Kohana_Exception('A benchmark named :name is already running.', array(':name' => $name));
+
 		if ( ! isset(self::$marks[$name]))
 		{
 			self::$marks[$name] = array();

@@ -22,7 +22,6 @@ class Combined_Controller extends Controller {
    * Return the combined Javascript bundle associated with the given key.
    */
   public function javascript($key) {
-    $key = substr($key, 0, strlen($key) - 3);  // strip off the trailing .js
     return $this->_emit("javascript", $key);
   }
 
@@ -30,7 +29,6 @@ class Combined_Controller extends Controller {
    * Return the combined CSS bundle associated with the given key.
    */
   public function css($key) {
-    $key = substr($key, 0, strlen($key) - 4);  // strip off the trailing .css
     return $this->_emit("css", $key);
   }
 
@@ -56,7 +54,7 @@ class Combined_Controller extends Controller {
     }
 
     if (empty($key)) {
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $cache = Cache::instance();
@@ -71,7 +69,7 @@ class Combined_Controller extends Controller {
       $content = $cache->get($key);
     }
     if (empty($content)) {
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // $type is either 'javascript' or 'css'

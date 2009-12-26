@@ -2,12 +2,12 @@
 /**
  * Array helper class.
  *
- * $Id: arr.php 4346 2009-05-11 17:08:15Z zombor $
+ * $Id: arr.php 4680 2009-11-10 01:57:00Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class arr_Core {
 
@@ -102,17 +102,23 @@ class arr_Core {
 		$found = array();
 		foreach ($keys as $key)
 		{
-			if (isset($search[$key]))
-			{
-				$found[$key] = $search[$key];
-			}
-			else
-			{
-				$found[$key] = NULL;
-			}
+			$found[$key] = isset($search[$key]) ? $search[$key] : NULL;
 		}
 
 		return $found;
+	}
+
+	/**
+	 * Get the value of array[key]. If it doesn't exist, return default.
+	 *
+	 * @param   array   array to search
+	 * @param   string  key name
+	 * @param   mixed   default value
+	 * @return  mixed
+	 */
+	public static function get(array $array, $key, $default = NULL)
+	{
+		return isset($array[$key]) ? $array[$key] : $default;
 	}
 
 	/**
@@ -150,44 +156,6 @@ class arr_Core {
 
 		return $array;
 	}
-
-	/**
-	 * @param mixed $needle     the value to search for
-	 * @param array $haystack   an array of values to search in
-	 * @param boolean $sort     sort the array now
-	 * @return integer|FALSE    the index of the match or FALSE when not found
-	 */
-	public static function binary_search($needle, $haystack, $sort = FALSE)
-	{
-		if ($sort)
-		{
-			sort($haystack);
-		}
-
-		$high = count($haystack) - 1;
-		$low = 0;
-
-		while ($low <= $high)
-		{
-			$mid = ($low + $high) >> 1;
-
-			if ($haystack[$mid] < $needle)
-			{
-				$low = $mid + 1;
-			}
-			elseif ($haystack[$mid] > $needle)
-			{
-				$high = $mid - 1;
-			}
-			else
-			{
-				return $mid;
-			}
-		}
-
-		return FALSE;
-	}
-
 
 	/**
 	 * Emulates array_merge_recursive, but appends numeric keys and replaces
@@ -264,27 +232,6 @@ class arr_Core {
 	}
 
 	/**
-	 * Fill an array with a range of numbers.
-	 *
-	 * @param   integer  stepping
-	 * @param   integer  ending number
-	 * @return  array
-	 */
-	public static function range($step = 10, $max = 100)
-	{
-		if ($step < 1)
-			return array();
-
-		$array = array();
-		for ($i = $step; $i <= $max; $i += $step)
-		{
-			$array[$i] = $i;
-		}
-
-		return $array;
-	}
-
-	/**
 	 * Recursively convert an array to an object.
 	 *
 	 * @param   array   array to convert
@@ -309,4 +256,20 @@ class arr_Core {
 		return $object;
 	}
 
+	/**
+	 * Returns specific key/column from an array of objects.
+	 *
+	 * @param string|integer $key The key or column number to pluck from each object.
+	 * @param array $array        The array of objects to pluck from.
+	 * @return array
+	 */
+	public static function pluck($key, $array)
+	{
+		$result = array();
+		foreach ($array as $i => $object)
+		{
+			$result[$i] = isset($object[$key]) ? $object[$key] : NULL;
+		}
+		return $result;
+	}
 } // End arr

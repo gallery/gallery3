@@ -55,13 +55,13 @@ class Digibug_Controller extends Controller {
     print $v;
   }
 
-  public function print_proxy($type, $id) {
+  public function print_proxy($type, $uuid) {
     // If its a request for the full size then make sure we are coming from an
     // authorized address
     if ($type == "full") {
-      $remote_addr = ip2long($this->input->server("REMOTE_ADDR"));
+      $remote_addr = ip2long(Input::instance()->server("REMOTE_ADDR"));
       if ($remote_addr === false) {
-        Kohana::show_404();
+        throw new Kohana_404_Exception();
       }
       $config = Kohana::config("digibug");
 
@@ -76,18 +76,18 @@ class Digibug_Controller extends Controller {
         }
       }
       if (!$authorized) {
-        Kohana::show_404();
+        throw new Kohana_404_Exception();
       }
     }
 
-    $proxy = ORM::factory("digibug_proxy", array("uuid" => $id));
-    if (!$proxy->loaded || !$proxy->item->loaded) {
-      Kohana::show_404();
+    $proxy = ORM::factory("digibug_proxy")->where("uuid", "=", $uuid)->find();
+    if (!$proxy->loaded() || !$proxy->item->loaded()) {
+      throw new Kohana_404_Exception();
     }
 
     $file = $type == "full" ? $proxy->item->file_path() : $proxy->item->thumb_path();
     if (!file_exists($file)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // We don't need to save the session for this request
@@ -115,9 +115,10 @@ class Digibug_Controller extends Controller {
   }
 
   private function _clean_expired() {
-    Database::instance()->query(
-      "DELETE FROM {digibug_proxies} " .
-      "WHERE request_date <= (CURDATE() - INTERVAL 10 DAY) " .
-      "LIMIT 20");
+    db::build()
+      ->delete("digibug_proxies")
+      ->where("request_date", "<=", new Database_Expression("(CURDATE() - INTERVAL 10 DAY)"))
+      ->limit(20)
+      ->execute();
   }
 }

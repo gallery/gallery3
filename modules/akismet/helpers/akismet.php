@@ -166,7 +166,7 @@ class akismet_Core {
     }
     $response = "";
 
-    Kohana::log("debug", "Send request\n" . print_r($http_request, 1));
+    Kohana_Log::add("debug", "Send request\n" . print_r($http_request, 1));
     if (false !== ($fs = @fsockopen($host, 80, $errno, $errstr, 5))) {
       fwrite($fs, $http_request);
       while ( !feof($fs) ) {
@@ -181,7 +181,7 @@ class akismet_Core {
     } else {
       throw new Exception("@todo CONNECTION TO SPAM SERVICE FAILED");
     }
-    Kohana::log("debug", "Received response\n" . print_r($response, 1));
+    Kohana_Log::add("debug", "Received response\n" . print_r($response, 1));
 
     return $response;
   }

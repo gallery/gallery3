@@ -20,7 +20,7 @@
 class Group_Model extends ORM implements Group_Definition {
   protected $has_and_belongs_to_many = array("users");
 
-  var $rules = array(
+  var $form_rules = array(
     "name" => "required|length[4,255]");
 
   /**
@@ -33,8 +33,12 @@ class Group_Model extends ORM implements Group_Definition {
     module::event("group_deleted", $old);
   }
 
+  public function users() {
+    return $this->users->find_all();
+  }
+
   public function save() {
-    if (!$this->loaded) {
+    if (!$this->loaded()) {
         $created = 1;
     }
     parent::save();

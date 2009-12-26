@@ -32,7 +32,7 @@ class Move_Controller extends Controller {
   public function save($source_id) {
     access::verify_csrf();
     $source = ORM::factory("item", $source_id);
-    $target = ORM::factory("item", $this->input->post("target_id"));
+    $target = ORM::factory("item", Input::instance()->post("target_id"));
 
     access::required("view", $source);
     access::required("edit", $source);
@@ -64,8 +64,8 @@ class Move_Controller extends Controller {
     $view->parent = $target;
     $view->children = ORM::factory("item")
       ->viewable()
-      ->where("type", "album")
-      ->where("parent_id", $target->id)
+      ->where("type", "=", "album")
+      ->where("parent_id", "=", $target->id)
       ->find_all();
     return $view;
   }

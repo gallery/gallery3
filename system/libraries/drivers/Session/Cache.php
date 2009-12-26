@@ -10,12 +10,12 @@
  * Lifetime does not need to be set as it is
  * overridden by the session expiration setting.
  *
- * $Id: Cache.php 4431 2009-07-01 03:41:41Z kiall $
+ * $Id: Cache.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Session_Cache_Driver implements Session_Driver {
 
@@ -30,7 +30,7 @@ class Session_Cache_Driver implements Session_Driver {
 			$this->encrypt = new Encrypt;
 		}
 
-		Kohana::log('debug', 'Session Cache Driver Initialized');
+		Kohana_Log::add('debug', 'Session Cache Driver Initialized');
 	}
 
 	public function open($path, $name)
@@ -48,7 +48,7 @@ class Session_Cache_Driver implements Session_Driver {
 
 			// Test the config group name
 			if (($config = Kohana::config('cache.'.$config)) === NULL)
-				throw new Kohana_Exception('cache.undefined_group', $name);
+				throw new Kohana_Exception('The :group: group is not defined in your configuration.', array(':group:' => $name));
 		}
 
 		$config['lifetime'] = (Kohana::config('session.expiration') == 0) ? 86400 : Kohana::config('session.expiration');

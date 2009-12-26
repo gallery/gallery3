@@ -20,10 +20,10 @@
 class search_task_Core {
   static function available_tasks() {
     // Delete extra search_records
-    Database::instance()->query(
-      "DELETE FROM {search_records} " .
-      "WHERE {search_records}.`item_id` NOT IN " .
-      "(SELECT `id` FROM {items})");
+    db::build()
+      ->delete("search_records")
+      ->where("item_id", "NOT IN", db::build()->select("id")->from("items"))
+      ->execute();
 
     list ($remaining, $total, $percent) = search::stats();
     return array(Task_Definition::factory()
@@ -45,8 +45,8 @@ class search_task_Core {
       $start = microtime(true);
       foreach (ORM::factory("item")
                ->join("search_records", "items.id", "search_records.item_id", "left")
-               ->where("search_records.item_id", null)
-               ->orwhere("search_records.dirty", 1)
+               ->where("search_records.item_id", "IS", null)
+               ->or_where("search_records.dirty", "=", 1)
                ->find_all() as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.

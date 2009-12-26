@@ -149,7 +149,7 @@
         window.location.reload();
       });
 
-      $("#g-dialog #g-organize-close").click(function(event) {
+      $("#g-organize-close").click(function(event) {
         $("#g-dialog").dialog("close");
       });
 

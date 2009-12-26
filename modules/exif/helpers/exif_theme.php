@@ -21,11 +21,11 @@ class exif_theme_Core {
   static function sidebar_bottom($theme) {
     $item = $theme->item();
     if ($item && $item->is_photo()) {
-      $record = Database::instance()
+      $record = db::build()
         ->select("key_count")
         ->from("exif_records")
-        ->where("item_id", $item->id)
-        ->get()
+        ->where("item_id", "=", $item->id)
+        ->execute()
         ->current();
       if ($record && $record->key_count) {
         $view = new View("exif_sidebar.html");

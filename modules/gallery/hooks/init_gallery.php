@@ -24,7 +24,7 @@ if (!file_exists(VARPATH . "database.php")) {
   url::redirect(url::abs_file("installer"));
 }
 
-Event::add("system.ready", array("I18n", "instance"));
+Event::add("system.ready", array("Gallery_I18n", "instance"));
 Event::add("system.ready", array("module", "load_modules"));
 Event::add("system.ready", array("gallery", "ready"));
 Event::add("system.post_routing", array("url", "parse_url"));
@@ -42,5 +42,5 @@ if ($g3sid = $input->post("g3sid", $input->get("g3sid"))) {
 }
 
 if ($user_agent = $input->post("user_agent", $input->get("user_agent"))) {
-  Kohana::$user_agent = $user_agent;
+  $_SERVER["HTTP_USER_AGENT"] = $user_agent;
 }

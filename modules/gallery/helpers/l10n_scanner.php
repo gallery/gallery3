@@ -28,22 +28,22 @@ class l10n_scanner_Core {
 
   static function process_message($message, &$cache) {
     if (empty($cache)) {
-      foreach (Database::instance()
+      foreach (db::build()
                ->select("key")
                ->from("incoming_translations")
-               ->where("locale", "root")
-               ->get() as $row) {
+               ->where("locale", "=", "root")
+               ->execute() as $row) {
         $cache[$row->key] = true;
       }
     }
 
-    $key = I18n::get_message_key($message);
+    $key = Gallery_I18n::get_message_key($message);
     if (array_key_exists($key, $cache)) {
       return $cache[$key];
     }
 
-    $entry = ORM::factory("incoming_translation", array("key" => $key));
-    if (!$entry->loaded) {
+    $entry = ORM::factory("incoming_translation")->where("key", "=", $key)->find();
+    if (!$entry->loaded()) {
       $entry->key = $key;
       $entry->message = serialize($message);
       $entry->locale = "root";

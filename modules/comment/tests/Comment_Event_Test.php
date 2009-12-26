@@ -27,6 +27,6 @@ class Comment_Event_Test extends Unit_Test_Case {
     $album->delete();
 
     $deleted_comment = ORM::factory("comment", $comment->id);
-    $this->assert_false($deleted_comment->loaded);
+    $this->assert_false($deleted_comment->loaded());
   }
 }

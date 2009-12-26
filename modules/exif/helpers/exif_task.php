@@ -20,10 +20,11 @@
 class exif_task_Core {
   static function available_tasks() {
     // Delete extra exif_records
-    Database::instance()->query(
-      "DELETE FROM {exif_records} " .
-      "WHERE {exif_records}.`item_id` NOT IN " .
-      "(SELECT `id` FROM {items} WHERE {items}.`type` = 'photo')");
+    db::build()
+      ->delete("exif_records")
+      ->where("item_id", "NOT IN",
+              db::build()->select("id")->from("items")->where("type", "=", "photo"))
+      ->execute();
 
     list ($remaining, $total, $percent) = exif::stats();
     return array(Task_Definition::factory()
@@ -44,11 +45,11 @@ class exif_task_Core {
       $start = microtime(true);
       foreach (ORM::factory("item")
                ->join("exif_records", "items.id", "exif_records.item_id", "left")
-               ->where("type", "photo")
-               ->open_paren()
-               ->where("exif_records.item_id", null)
-               ->orwhere("exif_records.dirty", 1)
-               ->close_paren()
+               ->where("type", "=", "photo")
+               ->and_open()
+               ->where("exif_records.item_id", "IS", null)
+               ->or_where("exif_records.dirty", "=", 1)
+               ->close()
                ->find_all() as $item) {
         // The query above can take a long time, so start the timer after its done
         // to give ourselves a little time to actually process rows.

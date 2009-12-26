@@ -39,7 +39,7 @@ class exif_Core {
             if (function_exists("mb_detect_encoding") && mb_detect_encoding($value) != "UTF-8") {
               $value = utf8_encode($value);
             }
-            $keys[$field] = utf8::clean($value);
+            $keys[$field] = Input::clean($value);
 
             if ($field == "DateTime") {
               $time = strtotime($value);
@@ -62,7 +62,7 @@ class exif_Core {
             if (function_exists("mb_detect_encoding") && mb_detect_encoding($value) != "UTF-8") {
               $value = utf8_encode($value);
             }
-            $keys[$keyword] = utf8::clean($value);
+            $keys[$keyword] = Input::clean($value);
 
             if ($keyword == "Caption" && !$item->description) {
               $item->description = $value;
@@ -73,8 +73,8 @@ class exif_Core {
     }
     $item->save();
 
-    $record = ORM::factory("exif_record")->where("item_id", $item->id)->find();
-    if (!$record->loaded) {
+    $record = ORM::factory("exif_record")->where("item_id", "=", $item->id)->find();
+    if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
     $record->data = serialize($keys);
@@ -86,9 +86,9 @@ class exif_Core {
   static function get($item) {
     $exif = array();
     $record = ORM::factory("exif_record")
-      ->where("item_id", $item->id)
+      ->where("item_id", "=", $item->id)
       ->find();
-    if (!$record->loaded) {
+    if (!$record->loaded()) {
       return array();
     }
 
@@ -139,19 +139,19 @@ class exif_Core {
   }
 
   static function stats() {
-    $missing_exif = Database::instance()
+    $missing_exif = db::build()
       ->select("items.id")
       ->from("items")
       ->join("exif_records", "items.id", "exif_records.item_id", "left")
-      ->where("type", "photo")
-      ->open_paren()
-      ->where("exif_records.item_id", null)
-      ->orwhere("exif_records.dirty", 1)
-      ->close_paren()
-      ->get()
+      ->where("type", "=", "photo")
+      ->and_open()
+      ->where("exif_records.item_id", "IS", null)
+      ->or_where("exif_records.dirty", "=", 1)
+      ->close()
+      ->execute()
       ->count();
 
-    $total_items = ORM::factory("item")->where("type", "photo")->count_all();
+    $total_items = ORM::factory("item")->where("type", "=", "photo")->count_all();
     if (!$total_items) {
       return array(0, 0, 0);
     }

@@ -35,7 +35,8 @@ $config['default'] = array(
     'host'     => '<?php print $host ?>',
     'port'     => <?php if (!empty($port)): ?>'<?php print $port ?>' <?php else: ?>false<?php endif ?>,
     'socket'   => false,
-    'database' => '<?php print $dbname ?>'
+    'database' => '<?php print $dbname ?>',
+    'params'   => null,
   ),
   'character_set' => 'utf8',
   'table_prefix'  => '<?php print $prefix ?>',

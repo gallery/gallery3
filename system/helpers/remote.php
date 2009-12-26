@@ -2,12 +2,12 @@
 /**
  * Remote url/file helper.
  *
- * $Id: remote.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: remote.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class remote_Core {
 
@@ -35,7 +35,7 @@ class remote_Core {
 		$CRLF = "\r\n";
 
 		// Send request
-		fwrite($remote, 'HEAD '.$url['path'].' HTTP/1.0'.$CRLF);
+		fwrite($remote, 'HEAD '.$url['path'].(isset($url['query']) ? '?'.$url['query'] : '').' HTTP/1.0'.$CRLF);
 		fwrite($remote, 'Host: '.$url['host'].$CRLF);
 		fwrite($remote, 'Connection: close'.$CRLF);
 		fwrite($remote, 'User-Agent: Kohana Framework (+http://kohanaphp.com/)'.$CRLF);

@@ -34,7 +34,7 @@ class album_Core {
    * @return Item_Model
    */
   static function create($parent, $name, $title, $description=null, $owner_id=null, $slug=null) {
-    if (!$parent->loaded || !$parent->is_album()) {
+    if (!$parent->loaded() || !$parent->is_album()) {
       throw new Exception("@todo INVALID_PARENT");
     }
 
@@ -68,11 +68,11 @@ class album_Core {
     // Randomize the name or slug if there's a conflict
     // @todo Improve this.  Random numbers are not user friendly
     while (ORM::factory("item")
-           ->where("parent_id", $parent->id)
-           ->open_paren()
-           ->where("name", $album->name)
-           ->orwhere("slug", $album->slug)
-           ->close_paren()
+           ->where("parent_id", "=", $parent->id)
+           ->and_open()
+           ->where("name", "=", $album->name)
+           ->or_where("slug", "=", $album->slug)
+           ->close()
            ->find()->id) {
       $rand = rand();
       $album->name = "{$name}-$rand";

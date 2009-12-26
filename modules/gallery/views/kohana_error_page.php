@@ -120,7 +120,7 @@
       <? else: ?>
       <? $trace = $PHP_ERROR ? array_slice(debug_backtrace(), 1) : $exception->getTraceAsString(); ?>
       <? if (!empty($trace)): ?>
-      <? Kohana::Log("error", print_r($trace, 1)); ?>
+      <? Kohana_Log::add("error", print_r($trace, 1)); ?>
       <? endif ?>
       <? endif ?>
   </body>

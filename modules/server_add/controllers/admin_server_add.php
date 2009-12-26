@@ -58,7 +58,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
   public function remove_path() {
     access::verify_csrf();
 
-    $path = $this->input->get("path");
+    $path = Input::instance()->get("path");
     $paths = unserialize(module::get_var("server_add", "authorized_paths"));
     if (isset($paths[$path])) {
       unset($paths[$path]);
@@ -71,7 +71,7 @@ class Admin_Server_Add_Controller extends Admin_Controller {
 
   public function autocomplete() {
     $directories = array();
-    $path_prefix = $this->input->get("q");
+    $path_prefix = Input::instance()->get("q");
     foreach (glob("{$path_prefix}*") as $file) {
       if (is_dir($file) && !is_link($file)) {
         $directories[] = $file;

@@ -29,13 +29,13 @@ class Gallery_Installer_Test extends Unit_Test_Case {
   }
 
   public function install_registers_gallery_module_test() {
-    $gallery = ORM::factory("module")->where("name", "gallery")->find();
+    $gallery = ORM::factory("module")->where("name", "=", "gallery")->find();
     $this->assert_equal("gallery", $gallery->name);
   }
 
   public function install_creates_root_item_test() {
     $max_right_ptr = ORM::factory("item")
-      ->select("MAX(`right_ptr`) AS `right_ptr`")
+      ->select(new Database_Expression("MAX(`right_ptr`) AS `right_ptr`"))
       ->find()->right_ptr;
     $root = ORM::factory('item')->find(1);
     $this->assert_equal("Gallery", $root->title);

@@ -2,14 +2,31 @@
 /**
  * Format helper class.
  *
- * $Id: format.php 4070 2009-03-11 20:37:38Z Geert $
+ * $Id: format.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class format_Core {
+
+	/**
+	 * Formats a number according to the current locale.
+	 *
+	 * @param   float
+	 * @param   int|boolean number of fractional digits or TRUE to use the locale default
+	 * @return  string
+	 */
+	public static function number($number, $decimals = 0)
+	{
+		$locale = localeconv();
+
+		if ($decimals === TRUE)
+			return number_format($number, $locale['frac_digits'], $locale['decimal_point'], $locale['thousands_sep']);
+
+		return number_format($number, $decimals, $locale['decimal_point'], $locale['thousands_sep']);
+	}
 
 	/**
 	 * Formats a phone number according to the specified format.
@@ -60,6 +77,37 @@ class format_Core {
 			return 'http://'.$str;
 
 		// Return the original URL
+		return $str;
+	}
+
+	/**
+	 * Normalizes a hexadecimal HTML color value. All values will be converted
+	 * to lowercase, have a "#" prepended and contain six characters.
+	 *
+	 * @param   string  hexadecimal HTML color value
+	 * @return  string
+	 */
+	public static function color($str = '')
+	{
+		// Reject invalid values
+		if ( ! valid::color($str))
+			return '';
+
+		// Convert to lowercase
+		$str = strtolower($str);
+
+		// Prepend "#"
+		if ($str[0] !== '#')
+		{
+			$str = '#'.$str;
+		}
+
+		// Expand short notation
+		if (strlen($str) === 4)
+		{
+			$str = '#'.$str[1].$str[1].$str[2].$str[2].$str[3].$str[3];
+		}
+
 		return $str;
 	}
 

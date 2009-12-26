@@ -19,7 +19,7 @@
  */
 class gallery_task_Core {
   static function available_tasks() {
-    $dirty_count = graphics::find_dirty_images_query()->count();
+    $dirty_count = graphics::find_dirty_images_query()->count_records();
     $tasks = array();
     $tasks[] = Task_Definition::factory()
                  ->callback("gallery_task::rebuild_dirty_images")
@@ -47,7 +47,7 @@ class gallery_task_Core {
   static function rebuild_dirty_images($task) {
     $errors = array();
     try {
-      $result = graphics::find_dirty_images_query();
+      $result = graphics::find_dirty_images_query()->select("id")->execute();
       $total_count = $task->get("total_count", $result->count());
       $mode = $task->get("mode", "init");
       if ($mode == "init") {
@@ -66,7 +66,7 @@ class gallery_task_Core {
         }
 
         $item = ORM::factory("item", $row->id);
-        if ($item->loaded) {
+        if ($item->loaded()) {
           try {
             graphics::generate($item);
             $completed++;

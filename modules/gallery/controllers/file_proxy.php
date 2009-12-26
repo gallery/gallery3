@@ -29,7 +29,7 @@
 class File_Proxy_Controller extends Controller {
   public function __call($function, $args) {
     // request_uri: http://example.com/gallery3/var/trunk/albums/foo/bar.jpg
-    $request_uri = $this->input->server("REQUEST_URI");
+    $request_uri = Input::instance()->server("REQUEST_URI");
     $request_uri = preg_replace("/\?.*/", "", $request_uri);
 
     // var_uri: http://example.com/gallery3/var/
@@ -38,27 +38,27 @@ class File_Proxy_Controller extends Controller {
     // Make sure that the request is for a file inside var
     $offset = strpos($request_uri, $var_uri);
     if ($offset === false) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     $file_uri = substr($request_uri, strlen($var_uri));
 
     // Make sure that we don't leave the var dir
     if (strpos($file_uri, "..") !== false) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     list ($type, $path) = explode("/", $file_uri, 2);
     if ($type != "resizes" && $type != "albums" && $type != "thumbs") {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // If the last element is .album.jpg, pop that off since it's not a real item
     $path = preg_replace("|/.album.jpg$|", "", $path);
 
     // We now have the relative path to the item.  Search for it in the path cache
-    $item = ORM::factory("item")->where("relative_path_cache", $path)->find();
-    if (!$item->loaded) {
+    $item = ORM::factory("item")->where("relative_path_cache", "=", $path)->find();
+    if (!$item->loaded()) {
       // We didn't turn it up.  It's possible that the relative_path_cache is out of date here.
       // There was fallback code, but bharat deleted it in 8f1bca74.  If it turns out to be
       // necessary, it's easily resurrected.
@@ -69,16 +69,16 @@ class File_Proxy_Controller extends Controller {
       if (preg_match('/.jpg$/', $path)) {
         foreach (array("flv", "mp4") as $ext) {
           $movie_path = preg_replace('/.jpg$/', ".$ext", $path);
-          $item = ORM::factory("item")->where("relative_path_cache", $movie_path)->find();
-          if ($item->loaded) {
+          $item = ORM::factory("item")->where("relative_path_cache", "=", $movie_path)->find();
+          if ($item->loaded()) {
             break;
           }
         }
       }
     }
 
-    if (!$item->loaded) {
-      kohana::show_404();
+    if (!$item->loaded()) {
+      throw new Kohana_404_Exception();
     }
 
     if ($type == "albums") {
@@ -91,21 +91,21 @@ class File_Proxy_Controller extends Controller {
 
     // Make sure we have access to the item
     if (!access::can("view", $item)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // Make sure we have view_full access to the original
     if ($type == "albums" && !access::can("view_full", $item)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     if (!file_exists($file)) {
-      kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // We don't need to save the session for this request

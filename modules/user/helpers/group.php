@@ -31,8 +31,8 @@ class group_Core {
    * @return Group_Definition the group object
    */
   static function create($name) {
-    $group = ORM::factory("group")->where("name", $name)->find();
-    if ($group->loaded) {
+    $group = ORM::factory("group")->where("name", "=", $name)->find();
+    if ($group->loaded()) {
       throw new Exception("@todo GROUP_ALREADY_EXISTS $name");
     }
 
@@ -86,7 +86,7 @@ class group_Core {
   private static function _lookup_by_field($field_name, $value) {
     try {
       $user = model_cache::get("group", $value, $field_name);
-      if ($user->loaded) {
+      if ($user->loaded()) {
         return $user;
       }
     } catch (Exception $e) {

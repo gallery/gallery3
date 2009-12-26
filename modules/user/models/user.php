@@ -20,7 +20,7 @@
 class User_Model extends ORM implements User_Definition {
   protected $has_and_belongs_to_many = array("groups");
 
-  var $rules = array(
+  var $form_rules = array(
     "name" => "required|length[1,32]",
     "full_name" => "length[0,255]",
     "email" => "required|valid_email|length[1,255]",
@@ -61,8 +61,12 @@ class User_Model extends ORM implements User_Definition {
                    md5($this->email), $size, $default ? "&d=" . urlencode($default) : "");
   }
 
+  public function groups() {
+    return $this->groups->find_all();
+  }
+
   public function save() {
-    if (!$this->loaded) {
+    if (!$this->loaded()) {
         $created = 1;
     }
     parent::save();

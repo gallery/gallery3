@@ -24,7 +24,7 @@ class L10n_Client_Controller extends Controller {
       access::forbidden();
     }
 
-    $locale = I18n::instance()->locale();
+    $locale = Gallery_I18n::instance()->locale();
     $input = Input::instance();
     $key = $input->post("l10n-message-key");
 
@@ -33,10 +33,10 @@ class L10n_Client_Controller extends Controller {
                       "locale" => "root"))
         ->find();
 
-    if (!$root_message->loaded) {
+    if (!$root_message->loaded()) {
       throw new Exception("@todo bad request data / illegal state");
     }
-    $is_plural = I18n::is_plural_message(unserialize($root_message->message));
+    $is_plural = Gallery_I18n::is_plural_message(unserialize($root_message->message));
 
     if ($is_plural) {
       $plural_forms = l10n_client::plural_forms($locale);
@@ -60,7 +60,7 @@ class L10n_Client_Controller extends Controller {
                     "locale" => $locale))
       ->find();
 
-    if (!$entry->loaded) {
+    if (!$entry->loaded()) {
       $entry->key = $key;
       $entry->locale = $locale;
       $entry->message = $root_message->message;
@@ -74,7 +74,7 @@ class L10n_Client_Controller extends Controller {
                     "locale" => $locale))
       ->find();
 
-    if (!$entry_from_incoming->loaded) {
+    if (!$entry_from_incoming->loaded()) {
       $entry->base_revision = $entry_from_incoming->revision;
     }
 
@@ -113,36 +113,33 @@ class L10n_Client_Controller extends Controller {
   public static function l10n_form() {
     if (Input::instance()->get("show_all_l10n_messages")) {
       $calls = array();
-      foreach (Database::instance()
+      foreach (db::build()
                ->select("key", "message")
                ->from("incoming_translations")
-               ->where(array("locale" => 'root'))
-               ->get()
-               ->as_array() as $row) {
+               ->where("locale", "=", "root")
+               ->execute() as $row) {
         $calls[$row->key] = array(unserialize($row->message), array());
       }
     } else {
-      $calls = I18n::instance()->call_log();
+      $calls = Gallery_I18n::instance()->call_log();
     }
-    $locale = I18n::instance()->locale();
+    $locale = Gallery_I18n::instance()->locale();
 
     if ($calls) {
       $translations = array();
-      foreach (Database::instance()
+      foreach (db::build()
                ->select("key", "translation")
                ->from("incoming_translations")
-               ->where(array("locale" => $locale))
-               ->get()
-               ->as_array() as $row) {
+               ->where("locale", "=", $locale)
+               ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }
       // Override incoming with outgoing...
-      foreach (Database::instance()
+      foreach (db::build()
                ->select("key", "translation")
                ->from("outgoing_translations")
-               ->where(array("locale" => $locale))
-               ->get()
-               ->as_array() as $row) {
+               ->where("locale", "=", $locale)
+               ->execute() as $row) {
         $translations[$row->key] = unserialize($row->translation);
       }
 

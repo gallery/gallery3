@@ -20,7 +20,7 @@
 class search_Core {
   static function search($q, $limit, $offset) {
     $db = Database::instance();
-    $q = $db->escape_str($q);
+    $q = $db->escape($q);
 
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
@@ -60,8 +60,8 @@ class search_Core {
 
   static function update($item) {
     $data = new ArrayObject();
-    $record = ORM::factory("search_record")->where("item_id", $item->id)->find();
-    if (!$record->loaded) {
+    $record = ORM::factory("search_record")->where("item_id", "=", $item->id)->find();
+    if (!$record->loaded()) {
       $record->item_id = $item->id;
     }
 
@@ -72,16 +72,14 @@ class search_Core {
   }
 
   static function stats() {
-    $remaining = Database::instance()
-      ->select("items.id")
+    $remaining = db::build()
       ->from("items")
       ->join("search_records", "items.id", "search_records.item_id", "left")
-      ->open_paren()
-      ->where("search_records.item_id", null)
-      ->orwhere("search_records.dirty", 1)
-      ->close_paren()
-      ->get()
-      ->count();
+      ->and_open()
+      ->where("search_records.item_id", "IS", null)
+      ->or_where("search_records.dirty", "=", 1)
+      ->close()
+      ->count_records();
 
     $total = ORM::factory("item")->count_all();
     $percent = round(100 * ($total - $remaining) / $total);

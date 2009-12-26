@@ -63,7 +63,7 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
     }
 
     // Passwords with <&"> created by G2 prior to 2.1 were hashed with entities
-    $sanitizedPassword = html::specialchars($password, false);
+    $sanitizedPassword = html::chars($password, false);
     $guess = (strlen($valid) == 32) ? md5($sanitizedPassword)
           : ($salt . md5($salt . $sanitizedPassword));
     if (!strcmp($guess, $valid)) {

@@ -35,11 +35,11 @@ class comment_rss_Core {
 
     $comments = ORM::factory("comment")
       ->viewable()
-      ->where("state", "published")
-      ->orderby("created", "DESC");
+      ->where("state", "=", "published")
+      ->order_by("created", "DESC");
 
     if ($feed_id == "item") {
-      $comments->where("item_id", $id);
+      $comments->where("item_id", "=", $id);
     }
 
     $feed->view = "comment.mrss";

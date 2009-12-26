@@ -22,7 +22,7 @@ class Akismet_Helper_Test extends Unit_Test_Case {
 
   public function setup() {
     Input::instance()->ip_address = "1.1.1.1";
-    Kohana::$user_agent = "Akismet_Helper_Test";
+    request::set_user_agent("Akismet_Helper_Test");
 
     $root = ORM::factory("item", 1);
     $this->_comment = comment::create(

@@ -59,7 +59,7 @@ class Comment_Model extends ORM {
   public function save() {
     if (!empty($this->changed)) {
       $this->updated = time();
-      if (!$this->loaded && empty($this->created)) {
+      if (!$this->loaded() && empty($this->created)) {
         $this->created = $this->updated;
         $created = true;
       }

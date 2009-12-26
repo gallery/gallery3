@@ -96,7 +96,7 @@
           <?= $theme->header_bottom() ?>
         </div>
 
-        <? if (!empty($parents)): ?>
+        <? if ($theme->item() && !empty($parents)): ?>
         <ul class="g-breadcrumbs">
           <? $i = 0 ?>
           <? foreach ($parents as $parent): ?>

@@ -21,16 +21,6 @@ class ORM extends ORM_Core {
   // Track the original value of this ORM so that we can look it up in ORM::original()
   protected $original = null;
 
-  public function open_paren() {
-    $this->db->open_paren();
-    return $this;
-  }
-
-  public function close_paren() {
-    $this->db->close_paren();
-    return $this;
-  }
-
   public function save() {
     model_cache::clear();
     $result = parent::save();

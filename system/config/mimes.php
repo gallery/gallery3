@@ -6,7 +6,7 @@
  * the operating system MIME list.
  *
  * If there are any missing options, please create a ticket on our issue tracker,
- * http://kohanaphp.com/trac/newticket. Be sure to give the filename and
+ * http://dev.kohanaphp.com/projects/kohana2. Be sure to give the filename and
  * expected MIME type, as well as any additional information you can provide.
  */
 $config = array

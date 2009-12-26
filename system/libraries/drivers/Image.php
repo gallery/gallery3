@@ -2,12 +2,12 @@
 /**
  * Image API driver.
  *
- * $Id: Image.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: Image.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Image
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 abstract class Image_Driver {
 
@@ -102,9 +102,11 @@ abstract class Image_Driver {
 	 * @param   array    actions to execute
 	 * @param   string   destination directory path
 	 * @param   string   destination filename
+	 * @param   boolean  render the image
+	 * @param   string   background color
 	 * @return  boolean
 	 */
-	abstract public function process($image, $actions, $dir, $file);
+	abstract public function process($image, $actions, $dir, $file, $render = FALSE, $background = NULL);
 
 	/**
 	 * Flip an image. Valid directions are horizontal and vertical.

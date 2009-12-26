@@ -2,12 +2,12 @@
 /**
  * Form helper class.
  *
- * $Id: form.php 4291 2009-04-29 22:51:58Z kiall $
+ * $Id: form.php 4699 2009-12-08 18:45:14Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class form_Core {
 
@@ -17,9 +17,10 @@ class form_Core {
 	 * @param   string  form action attribute
 	 * @param   array   extra attributes
 	 * @param   array   hidden fields to be created immediately after the form tag
+	 * @param   string  non-default protocol, eg: https
 	 * @return  string
 	 */
-	public static function open($action = NULL, $attr = array(), $hidden = NULL)
+	public static function open($action = NULL, $attr = array(), $hidden = NULL, $protocol = NULL)
 	{
 		// Make sure that the method is always set
 		empty($attr['method']) and $attr['method'] = 'post';
@@ -33,12 +34,12 @@ class form_Core {
 		if ($action === NULL)
 		{
 			// Use the current URL as the default action
-			$action = url::site(Router::$complete_uri);
+			$action = url::site(Router::$complete_uri, $protocol);
 		}
 		elseif (strpos($action, '://') === FALSE)
 		{
 			// Make the action URI into a URL
-			$action = url::site($action);
+			$action = url::site($action, $protocol);
 		}
 
 		// Set action
@@ -70,72 +71,23 @@ class form_Core {
 	}
 
 	/**
-	 * Generates a fieldset opening tag.
+	 * Creates a HTML form hidden input tag.
 	 *
-	 * @param   array   html attributes
-	 * @param   string  a string to be attached to the end of the attributes
+	 * @param   string|array  input name or an array of HTML attributes
+	 * @param   string        input value, when using a name
+	 * @param   string        a string to be attached to the end of the attributes
 	 * @return  string
 	 */
-	public static function open_fieldset($data = NULL, $extra = '')
-	{
-		return '<fieldset'.html::attributes((array) $data).' '.$extra.'>'."\n";
-	}
-
-	/**
-	 * Generates a fieldset closing tag.
-	 *
-	 * @return  string
-	 */
-	public static function close_fieldset()
-	{
-		return '</fieldset>'."\n";
-	}
-
-	/**
-	 * Generates a legend tag for use with a fieldset.
-	 *
-	 * @param   string  legend text
-	 * @param   array   HTML attributes
-	 * @param   string  a string to be attached to the end of the attributes
-	 * @return  string
-	 */
-	public static function legend($text = '', $data = NULL, $extra = '')
-	{
-		return '<legend'.form::attributes((array) $data).' '.$extra.'>'.$text.'</legend>'."\n";
-	}
-
-	/**
-	 * Generates hidden form fields.
-	 * You can pass a simple key/value string or an associative array with multiple values.
-	 *
-	 * @param   string|array  input name (string) or key/value pairs (array)
-	 * @param   string        input value, if using an input name
-	 * @return  string
-	 */
-	public static function hidden($data, $value = '')
+	public static function hidden($data, $value = '', $extra = '')
 	{
 		if ( ! is_array($data))
 		{
-			$data = array
-			(
-				$data => $value
-			);
+			$data = array('name' => $data);
 		}
 
-		$input = '';
-		foreach ($data as $name => $value)
-		{
-			$attr = array
-			(
-				'type'  => 'hidden',
-				'name'  => $name,
-				'value' => $value
-			);
+		$data['type'] = 'hidden';
 
-			$input .= form::input($attr)."\n";
-		}
-
-		return $input;
+		return form::input($data, $value, $extra);
 	}
 
 	/**
@@ -219,13 +171,23 @@ class form_Core {
 			$data = array('name' => $data);
 		}
 
+		if ( ! isset($data['rows']))
+		{
+			$data['rows'] = '';
+		}
+
+		if ( ! isset($data['cols']))
+		{
+			$data['cols'] = '';
+		}
+
 		// Use the value from $data if possible, or use $value
 		$value = isset($data['value']) ? $data['value'] : $value;
 
 		// Value is not part of the attributes
 		unset($data['value']);
 
-		return '<textarea'.form::attributes($data, 'textarea').' '.$extra.'>'.html::specialchars($value, $double_encode).'</textarea>';
+		return '<textarea'.form::attributes($data, 'textarea').' '.$extra.'>'.htmlspecialchars($value, ENT_QUOTES, Kohana::CHARSET, $double_encode).'</textarea>';
 	}
 
 	/**
@@ -283,21 +245,15 @@ class form_Core {
 					// Inner key should always be a string
 					$inner_key = (string) $inner_key;
 
-                                        $attr = array('value' => $inner_key);
-                                        if (in_array($inner_key, $selected)) {
-                                          $attr['selected'] = 'selected';
-                                        }
-					$input .= '<option '.html::attributes($attr).'>'.html::purify($inner_val).'</option>'."\n";
+					$sel = in_array($inner_key, $selected) ? ' selected="selected"' : '';
+					$input .= '<option value="'.$inner_key.'"'.$sel.'>'.htmlspecialchars($inner_val, ENT_QUOTES, Kohana::CHARSET, FALSE).'</option>'."\n";
 				}
 				$input .= '</optgroup>'."\n";
 			}
 			else
 			{
-					$attr = array('value' => $key);
-					if (in_array($key, $selected)) {
-						$attr['selected'] = 'selected';
-					}
-					$input .= '<option '.html::attributes($attr).'>'.html::purify($val).'</option>'."\n";
+				$sel = in_array($key, $selected) ? ' selected="selected"' : '';
+				$input .= '<option value="'.$key.'"'.$sel.'>'.htmlspecialchars($val, ENT_QUOTES, Kohana::CHARSET, FALSE).'</option>'."\n";
 			}
 		}
 		$input .= '</select>';
@@ -416,20 +372,8 @@ class form_Core {
 		{
 			$value = arr::remove('value', $data);
 		}
-                // $value must be ::purify
 
-		return '<button'.form::attributes($data, 'button').' '.$extra.'>'.html::purify($value).'</button>';
-	}
-
-	/**
-	 * Closes an open form tag.
-	 *
-	 * @param   string  string to be attached after the closing tag
-	 * @return  string
-	 */
-	public static function close($extra = '')
-	{
-		return '</form>'."\n".$extra;
+		return '<button'.form::attributes($data, 'button').' '.$extra.'>'.$value.'</button>';
 	}
 
 	/**
@@ -462,7 +406,7 @@ class form_Core {
 			$text = ucwords(inflector::humanize($data['for']));
 		}
 
-		return '<label'.form::attributes($data).' '.$extra.'>'.html::purify($text).'</label>';
+		return '<label'.form::attributes($data).' '.$extra.'>'.$text.'</label>';
 	}
 
 	/**
@@ -476,31 +420,6 @@ class form_Core {
 	{
 		if (empty($attr))
 			return '';
-
-		if (isset($attr['name']) AND empty($attr['id']) AND strpos($attr['name'], '[') === FALSE)
-		{
-			if ($type === NULL AND ! empty($attr['type']))
-			{
-				// Set the type by the attributes
-				$type = $attr['type'];
-			}
-
-			switch ($type)
-			{
-				case 'text':
-				case 'textarea':
-				case 'password':
-				case 'select':
-				case 'checkbox':
-				case 'file':
-				case 'image':
-				case 'button':
-				case 'submit':
-					// Only specific types of inputs use name to id matching
-					$attr['id'] = $attr['name'];
-				break;
-			}
-		}
 
 		$order = array
 		(

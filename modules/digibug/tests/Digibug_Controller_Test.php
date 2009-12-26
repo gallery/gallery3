@@ -24,10 +24,6 @@ class Digibug_Controller_Test extends Unit_Test_Case {
 
   public function teardown() {
     $_SERVER = $this->_server;
-
-    if ($this->_proxy) {
-      $this->_proxy->delete();
-    }
   }
 
   public function setup() {

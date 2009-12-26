@@ -22,10 +22,11 @@ class Admin_Comments_Controller extends Admin_Controller {
 
   public function index() {
     // Get rid of old deleted/spam comments once in a while
-    Database::instance()->query(
-      "DELETE FROM {comments} " .
-      "WHERE state IN ('deleted', 'spam') " .
-      "AND unix_timestamp(now()) - updated > 86400 * 7");
+    db::build()
+      ->delete("comments")
+      ->where("state", "IN", array("deleted", "spam"))
+      ->where("updated", "<", "UNIX_TIMESTAMP() - 86400 * 7")
+      ->execute();
 
     // Redirect to the appropriate queue
     url::redirect("admin/comments/queue/unpublished");
@@ -48,8 +49,8 @@ class Admin_Comments_Controller extends Admin_Controller {
     $view->content->menu = $this->_menu($view->content->counts);
     $view->content->state = $state;
     $view->content->comments = ORM::factory("comment")
-      ->orderby("created", "DESC")
-      ->where("state", $state)
+      ->order_by("created", "DESC")
+      ->where("state", "=", $state)
       ->limit(self::$items_per_page, ($page - 1) * self::$items_per_page)
       ->find_all();
     $view->content->pager = new Pagination();
@@ -95,11 +96,12 @@ class Admin_Comments_Controller extends Admin_Controller {
     $counts->published = 0;
     $counts->spam = 0;
     $counts->deleted = 0;
-    foreach (Database::instance()
-             ->select("state", "count(*) as c")
+    foreach (db::build()
+             ->select("state")
+             ->select(array("c" => 'COUNT("*")'))
              ->from("comments")
-             ->groupby("state")
-             ->get() as $row) {
+             ->group_by("state")
+             ->execute() as $row) {
       $counts->{$row->state} = $row->c;
     }
     return $counts;
@@ -110,7 +112,7 @@ class Admin_Comments_Controller extends Admin_Controller {
 
     $comment = ORM::factory("comment", $id);
     $orig = clone $comment;
-    if ($comment->loaded) {
+    if ($comment->loaded()) {
       $comment->state = $state;
       $comment->save();
     }
@@ -120,7 +122,7 @@ class Admin_Comments_Controller extends Admin_Controller {
     access::verify_csrf();
 
     ORM::factory("comment")
-      ->where("state", "spam")
+      ->where("state", "=", "spam")
       ->delete_all();
     url::redirect("admin/comments/queue/spam");
   }

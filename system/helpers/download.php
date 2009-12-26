@@ -2,18 +2,98 @@
 /**
  * Download helper class.
  *
- * $Id: download.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: download.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class download_Core {
 
 	/**
-	 * Force a download of a file to the user's browser. This function is
-	 * binary-safe and will work with any MIME type that Kohana is aware of.
+	 * Send headers necessary to invoke a "Save As" dialog
+	 *
+	 * @link http://support.microsoft.com/kb/260519
+	 * @link http://greenbytes.de/tech/tc2231/
+	 *
+	 * @param   string  file name
+	 * @return  string  file name as it was sent
+	 */
+	public static function dialog($filename)
+	{
+		$filename = basename($filename);
+
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+		return $filename;
+	}
+
+	/**
+	 * Send the contents of a file or a data string with the proper MIME type and exit.
+	 *
+	 * @uses exit()
+	 * @uses Kohana::close_buffers()
+	 *
+	 * @param   string  a file path or file name
+	 * @param   string  optional data to send
+	 * @return  void
+	 */
+	public static function send($filename, $data = NULL)
+	{
+		if ($data === NULL)
+		{
+			$filepath = realpath($filename);
+
+			$filename = basename($filepath);
+			$filesize = filesize($filepath);
+		}
+		else
+		{
+			$filename = basename($filename);
+			$filesize = strlen($data);
+		}
+
+		// Retrieve MIME type by extension
+		$mime = Kohana::config('mimes.'.strtolower(substr(strrchr($filename, '.'), 1)));
+		$mime = empty($mime) ? 'application/octet-stream' : $mime[0];
+
+		// Close output buffers
+		Kohana::close_buffers(FALSE);
+
+		// Clear any output
+		Event::add('system.display', create_function('', 'Kohana::$output = "";'));
+
+		// Send headers
+		header("Content-Type: $mime");
+		header('Content-Length: '.sprintf('%d', $filesize));
+		header('Content-Transfer-Encoding: binary');
+
+		// Send data
+		if ($data === NULL)
+		{
+			$handle = fopen($filepath, 'rb');
+
+			fpassthru($handle);
+			fclose($handle);
+		}
+		else
+		{
+			echo $data;
+		}
+
+		exit;
+	}
+
+	/**
+	 * Force the download of a file by the user's browser by preventing any
+	 * caching. Contains a workaround for Internet Explorer.
+	 *
+	 * @link http://support.microsoft.com/kb/316431
+	 * @link http://support.microsoft.com/kb/812935
+	 *
+	 * @uses download::dialog()
+	 * @uses download::send()
 	 *
 	 * @param   string  a file path or file name
 	 * @param   mixed   data to be sent if the filename does not exist
@@ -22,83 +102,35 @@ class download_Core {
 	 */
 	public static function force($filename = NULL, $data = NULL, $nicename = NULL)
 	{
-		if (empty($filename))
-			return FALSE;
+		download::dialog(empty($nicename) ? $filename : $nicename);
+
+		// Prevent caching
+		header('Expires: Thu, 01 Jan 1970 00:00:00 GMT');
+
+		if (request::user_agent('browser') === 'Internet Explorer' AND request::user_agent('version') <= '6.0')
+		{
+			// HTTP 1.0
+			header('Pragma:');
+
+			// HTTP 1.1 with IE extensions
+			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		}
+		else
+		{
+			// HTTP 1.0
+			header('Pragma: no-cache');
+
+			// HTTP 1.1
+			header('Cache-Control: no-cache, max-age=0');
+		}
 
 		if (is_file($filename))
 		{
-			// Get the real path
-			$filepath = str_replace('\\', '/', realpath($filename));
-
-			// Set filesize
-			$filesize = filesize($filepath);
-
-			// Get filename
-			$filename = substr(strrchr('/'.$filepath, '/'), 1);
-
-			// Get extension
-			$extension = strtolower(substr(strrchr($filepath, '.'), 1));
+			download::send($filename);
 		}
 		else
 		{
-			// Get filesize
-			$filesize = strlen($data);
-
-			// Make sure the filename does not have directory info
-			$filename = substr(strrchr('/'.$filename, '/'), 1);
-
-			// Get extension
-			$extension = strtolower(substr(strrchr($filename, '.'), 1));
-		}
-
-		// Get the mime type of the file
-		$mime = Kohana::config('mimes.'.$extension);
-
-		if (empty($mime))
-		{
-			// Set a default mime if none was found
-			$mime = array('application/octet-stream');
-		}
-
-		// Generate the server headers
-		header('Content-Type: '.$mime[0]);
-		header('Content-Disposition: attachment; filename="'.(empty($nicename) ? $filename : $nicename).'"');
-		header('Content-Transfer-Encoding: binary');
-		header('Content-Length: '.sprintf('%d', $filesize));
-
-		// More caching prevention
-		header('Expires: 0');
-
-		if (Kohana::user_agent('browser') === 'Internet Explorer')
-		{
-			// Send IE headers
-			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-			header('Pragma: public');
-		}
-		else
-		{
-			// Send normal headers
-			header('Pragma: no-cache');
-		}
-
-		// Clear the output buffer
-		Kohana::close_buffers(FALSE);
-
-		if (isset($filepath))
-		{
-			// Open the file
-			$handle = fopen($filepath, 'rb');
-
-			// Send the file data
-			fpassthru($handle);
-
-			// Close the file
-			fclose($handle);
-		}
-		else
-		{
-			// Send the file data
-			echo $data;
+			download::send($filename, $data);
 		}
 	}
 

@@ -19,9 +19,7 @@
  */
 class Sendmail_Test extends Unit_Test_Case {
   public function setup() {
-    $config = Kohana::config("sendmail");
-    $config["from"] = "from@gallery3.com";
-    Kohana::config_set("sendmail", $config);
+    Kohana_Config::instance()->set("sendmail.from", "from@gallery3.com");
   }
 
   public function sendmail_test() {

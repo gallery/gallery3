@@ -31,9 +31,9 @@ class Tag_Model extends ORM {
     $model = ORM::factory("item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
-      ->where("items_tags.tag_id", $this->id);
+      ->where("items_tags.tag_id", "=", $this->id);
     if ($type) {
-      $model->where("items.type", $type);
+      $model->where("items.type", "=", $type);
     }
     return $model->find_all($limit, $offset);
   }
@@ -47,10 +47,10 @@ class Tag_Model extends ORM {
     $model = ORM::factory("item")
       ->viewable()
       ->join("items_tags", "items.id", "items_tags.item_id")
-      ->where("items_tags.tag_id", $this->id);
+      ->where("items_tags.tag_id", "=", $this->id);
 
     if ($type) {
-      $model->where("items.type", $type);
+      $model->where("items.type", "=", $type);
     }
     return $model->count_all();
   }
@@ -61,20 +61,29 @@ class Tag_Model extends ORM {
    * event for the union of all related items before and after the save.
    */
   public function save() {
-    $db = Database::instance();
     $related_item_ids = array();
-    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+    foreach (db::build()
+             ->select("item_id")
+             ->from("items_tags")
+             ->where("tag_id", "=", $this->id)
+             ->execute() as $row) {
       $related_item_ids[$row->item_id] = 1;
     }
 
     $result = parent::save();
 
-    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+    foreach (db::build()
+             ->select("item_id")
+             ->from("items_tags")
+             ->where("tag_id", "=", $this->id)
+             ->execute() as $row) {
       $related_item_ids[$row->item_id] = 1;
     }
 
     if ($related_item_ids) {
-      foreach (ORM::factory("item")->in("id", array_keys($related_item_ids))->find_all() as $item) {
+      foreach (ORM::factory("item")
+               ->where("id", "IN", array_keys($related_item_ids))
+               ->find_all() as $item) {
         module::event("item_related_update", $item);
       }
     }
@@ -88,8 +97,11 @@ class Tag_Model extends ORM {
    */
   public function delete() {
     $related_item_ids = array();
-    $db = Database::Instance();
-    foreach ($db->getwhere("items_tags", array("tag_id" => $this->id)) as $row) {
+    foreach (db::build()
+             ->select("item_id")
+             ->from("items_tags")
+             ->where("tag_id", "=", $this->id)
+             ->execute() as $row) {
       $related_item_ids[$row->item_id] = 1;
     }
 

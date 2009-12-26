@@ -121,6 +121,7 @@ modules/gallery/views/admin_themes_preview.html.php          7   DIRTY_ATTR $url
 modules/gallery/views/form_uploadify.html.php                20  DIRTY_JS url::file("lib/uploadify/uploadify.swf")
 modules/gallery/views/form_uploadify.html.php                21  DIRTY_JS url::site("simple_uploader/add_photo/{$album->id}")
 modules/gallery/views/form_uploadify.html.php                25  DIRTY_JS url::file("lib/uploadify/cancel.png")
+modules/gallery/views/form_uploadify.html.php                27  DIRTY_JS $simultaneous_upload_limit
 modules/gallery/views/form_uploadify.html.php                52  DIRTY_JS t("Completed")
 modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"),$hidden)
 modules/gallery/views/in_place_edit.html.php                 5   DIRTY    form::input("input",$form["input"]," class=\"textbox\"")
@@ -274,11 +275,11 @@ modules/rss/views/feed.mrss.php                              55  DIRTY_ATTR @fil
 modules/rss/views/feed.mrss.php                              56  DIRTY_ATTR $child->mime_type
 modules/rss/views/feed.mrss.php                              57  DIRTY_ATTR $child->resize_height
 modules/rss/views/feed.mrss.php                              58  DIRTY_ATTR $child->resize_width
-modules/rss/views/feed.mrss.php                              62  DIRTY_ATTR $child->file_url(true)
-modules/rss/views/feed.mrss.php                              63  DIRTY_ATTR @filesize($child->file_path())
-modules/rss/views/feed.mrss.php                              64  DIRTY_ATTR $child->mime_type
-modules/rss/views/feed.mrss.php                              65  DIRTY_ATTR $child->height
-modules/rss/views/feed.mrss.php                              66  DIRTY_ATTR $child->width
+modules/rss/views/feed.mrss.php                              61  DIRTY_ATTR $child->file_url(true)
+modules/rss/views/feed.mrss.php                              62  DIRTY_ATTR @filesize($child->file_path())
+modules/rss/views/feed.mrss.php                              63  DIRTY_ATTR $child->mime_type
+modules/rss/views/feed.mrss.php                              64  DIRTY_ATTR $child->height
+modules/rss/views/feed.mrss.php                              65  DIRTY_ATTR $child->width
 modules/rss/views/feed.mrss.php                              70  DIRTY_ATTR $child->file_url(true)
 modules/rss/views/feed.mrss.php                              71  DIRTY_ATTR @filesize($child->file_path())
 modules/rss/views/feed.mrss.php                              72  DIRTY_ATTR $child->height

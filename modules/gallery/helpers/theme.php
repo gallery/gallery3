@@ -39,7 +39,8 @@ class theme_Core {
       $path = "/" . $input->get("kohana_uri");
     }
 
-    $modules = Kohana::config("core.modules");
+    $config = Kohana_Config::instance();
+    $modules = $config->get("core.modules");
     self::$is_admin = $path == "/admin" || !strncmp($path, "/admin/", 7);
     self::$site_theme_name = module::get_var("gallery", "active_site_theme");
     if (self::$is_admin) {
@@ -58,13 +59,13 @@ class theme_Core {
         if (file_exists(THEMEPATH . $override)) {
           self::$site_theme_name = $override;
         } else {
-          Kohana::log("error", "Missing override theme: '$override'");
+          Kohana_Log::add("error", "Missing override theme: '$override'");
         }
       }
       array_unshift($modules, THEMEPATH . self::$site_theme_name);
     }
 
-    Kohana::config_set("core.modules", $modules);
+    $config->set("core.modules", $modules);
   }
 
   static function get_edit_form_admin() {

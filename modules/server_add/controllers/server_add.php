@@ -34,7 +34,7 @@ class Server_Add_Controller extends Admin_Controller {
   }
 
   public function children() {
-    $path = $this->input->get("path");
+    $path = Input::instance()->get("path");
 
     $tree = new View("server_add_tree.html");
     $tree->files = array();
@@ -103,7 +103,7 @@ class Server_Add_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded || $task->owner_id != identity::active_user()->id) {
+    if (!$task->loaded() || $task->owner_id != identity::active_user()->id) {
       access::forbidden();
     }
 
@@ -175,16 +175,15 @@ class Server_Add_Controller extends Admin_Controller {
       // over 10% in percent_complete.
       $task->set("queue", $queue);
       $task->percent_complete = min($task->percent_complete + 0.1, 10);
-      $task->status = t2("Found one file", "Found %count files",
-                         Database::instance()
-                         ->where("task_id", $task->id)
-                         ->count_records("server_add_files"));
+      $task->status = t2(
+        "Found one file", "Found %count files",
+        ORM::factory("server_add_file")->where("task_id", "=", $task->id)->count_all());
 
       if (!$queue) {
         $task->set("mode", "add-files");
         $task->set(
-          "total_files", database::instance()->count_records(
-            "server_add_files", array("task_id" => $task->id)));
+          "total_files",
+          ORM::factory("server_add_file")->where("task_id", "=", $task->id)->count_all());
         $task->percent_complete = 10;
       }
       break;
@@ -197,9 +196,9 @@ class Server_Add_Controller extends Admin_Controller {
       // will create albums first.  Ignore entries which already have an Item_Model attached,
       // they're done.
       $entries = ORM::factory("server_add_file")
-        ->where("task_id", $task->id)
-        ->where("item_id", null)
-        ->orderby("id", "ASC")
+        ->where("task_id", "=", $task->id)
+        ->where("item_id", "IS", null)
+        ->order_by("id", "ASC")
         ->limit(10)
         ->find_all();
       if ($entries->count() == 0) {
@@ -216,7 +215,7 @@ class Server_Add_Controller extends Admin_Controller {
         // Look up the parent item for this entry.  By now it should exist, but if none was
         // specified, then this belongs as a child of the current item.
         $parent_entry = ORM::factory("server_add_file", $entry->parent_id);
-        if (!$parent_entry->loaded) {
+        if (!$parent_entry->loaded()) {
           $parent = ORM::factory("item", $task->get("item_id"));
         } else {
           $parent = ORM::factory("item", $parent_entry->item_id);
@@ -257,7 +256,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->status = t("Adding photos / albums (%completed of %total)",
                         array("completed" => $completed_files,
                               "total" => $total_files));
-      $task->percent_complete = 10 + 100 * ($completed_files / $total_files);
+      $task->percent_complete = $total_files ? 10 + 100 * ($completed_files / $total_files) : 100;
       break;
 
     case "done":
@@ -265,7 +264,7 @@ class Server_Add_Controller extends Admin_Controller {
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
-      ORM::factory("server_add_file")->where("task_id", $task->id)->delete_all();
+      ORM::factory("server_add_file")->where("task_id", "=", $task->id)->delete_all();
       message::info(t2("Successfully added one photo / album",
                        "Successfully added %count photos / albums",
                        $task->get("completed_files")));

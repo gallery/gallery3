@@ -2,12 +2,12 @@
 /**
  * Session cookie driver.
  *
- * $Id: Cookie.php 4431 2009-07-01 03:41:41Z kiall $
+ * $Id: Cookie.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Session_Cookie_Driver implements Session_Driver {
 
@@ -23,7 +23,7 @@ class Session_Cookie_Driver implements Session_Driver {
 			$this->encrypt = Encrypt::instance();
 		}
 
-		Kohana::log('debug', 'Session Cookie Driver Initialized');
+		Kohana_Log::add('debug', 'Session Cookie Driver Initialized');
 	}
 
 	public function open($path, $name)
@@ -55,7 +55,7 @@ class Session_Cookie_Driver implements Session_Driver {
 
 		if (strlen($data) > 4048)
 		{
-			Kohana::log('error', 'Session ('.$id.') data exceeds the 4KB limit, ignoring write.');
+			Kohana_Log::add('error', 'Session ('.$id.') data exceeds the 4KB limit, ignoring write.');
 			return FALSE;
 		}
 

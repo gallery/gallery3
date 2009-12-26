@@ -86,7 +86,7 @@ class Admin_Dashboard_Controller extends Admin_Controller {
 
     foreach (array("dashboard_sidebar", "dashboard_center") as $location) {
       $new_blocks = array();
-      foreach ($this->input->get($location, array()) as $id) {
+      foreach (Input::instance()->get($location, array()) as $id) {
         $new_blocks[$id] = $active_set[$id];
       }
       block_manager::set_active($location, $new_blocks);

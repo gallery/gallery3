@@ -3,12 +3,12 @@
  * Upload helper class for working with the global $_FILES
  * array and Validation library.
  *
- * $Id: upload.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: upload.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class upload_Core {
 
@@ -54,7 +54,7 @@ class upload_Core {
 		}
 
 		if ( ! is_writable($directory))
-			throw new Kohana_Exception('upload.not_writable', $directory);
+			throw new Kohana_Exception('The upload destination folder, :dir:, does not appear to be writable.', array(':dir:' => $directory));
 
 		if (is_uploaded_file($file['tmp_name']) AND move_uploaded_file($file['tmp_name'], $filename = $directory.$filename))
 		{
@@ -118,11 +118,8 @@ class upload_Core {
 		// Get the default extension of the file
 		$extension = strtolower(substr(strrchr($file['name'], '.'), 1));
 
-		// Get the mime types for the extension
-		$mime_types = Kohana::config('mimes.'.$extension);
-
-		// Make sure there is an extension, that the extension is allowed, and that mime types exist
-		return ( ! empty($extension) AND in_array($extension, $allowed_types) AND is_array($mime_types));
+		// Make sure there is an extension and that the extension is allowed
+		return ( ! empty($extension) AND in_array($extension, $allowed_types));
 	}
 
 	/**

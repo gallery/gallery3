@@ -19,7 +19,7 @@
  */
 class Admin_Tags_Controller extends Admin_Controller {
   public function index() {
-    $filter = $this->input->get("filter");
+    $filter = Input::instance()->get("filter");
 
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_tags.html");
@@ -29,13 +29,13 @@ class Admin_Tags_Controller extends Admin_Controller {
     if ($filter) {
       $query->like("name", $filter);
     }
-    $view->content->tags = $query->orderby("name", "ASC")->find_all();
+    $view->content->tags = $query->order_by("name", "ASC")->find_all();
     print $view;
   }
 
   public function form_delete($id) {
     $tag = ORM::factory("tag", $id);
-    if ($tag->loaded) {
+    if ($tag->loaded()) {
       print tag::get_delete_form($tag);
     }
   }
@@ -44,14 +44,14 @@ class Admin_Tags_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $tag = ORM::factory("tag", $id);
-    if (!$tag->loaded) {
-      kohana::show_404();
+    if (!$tag->loaded()) {
+      throw new Kohana_404_Exception();
     }
 
     $form = tag::get_delete_form($tag);
     if ($form->validate()) {
       $name = $tag->name;
-      Database::instance()->delete("items_tags", array("tag_id" => "$tag->id"));
+      db::build()->delete("items_tags")->where("tag_id", "=", $tag->id)->execute();
       $tag->delete();
       message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
       log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
@@ -68,7 +68,7 @@ class Admin_Tags_Controller extends Admin_Controller {
 
   public function form_rename($id) {
     $tag = ORM::factory("tag", $id);
-    if ($tag->loaded) {
+    if ($tag->loaded()) {
       print InPlaceEdit::factory($tag->name)
         ->action("admin/tags/rename/$id")
         ->render();
@@ -79,8 +79,8 @@ class Admin_Tags_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $tag = ORM::factory("tag", $id);
-    if (!$tag->loaded) {
-      kohana::show_404();
+    if (!$tag->loaded()) {
+      throw new Kohana_404_Exception();
     }
 
     $in_place_edit = InPlaceEdit::factory($tag->name)
@@ -106,7 +106,7 @@ class Admin_Tags_Controller extends Admin_Controller {
   }
 
   public function check_for_duplicate(Validation $post_data, $field) {
-    $tag_exists = ORM::factory("tag")->where("name", $post_data[$field])->count_all();
+    $tag_exists = ORM::factory("tag")->where("name", "=", $post_data[$field])->count_all();
     if ($tag_exists) {
       $post_data->add_error($field, "in_use");
     }

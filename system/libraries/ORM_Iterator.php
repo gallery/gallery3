@@ -2,12 +2,12 @@
 /**
 * Object Relational Mapping (ORM) result iterator.
 *
-* $Id: ORM_Iterator.php 3769 2008-12-15 00:48:56Z zombor $
+* $Id: ORM_Iterator.php 4679 2009-11-10 01:45:52Z isaiah $
 *
 * @package    ORM
 * @author     Kohana Team
-* @copyright  (c) 2007-2008 Kohana Team
-* @license    http://kohanaphp.com/license.html
+* @copyright  (c) 2007-2009 Kohana Team
+* @license    http://kohanaphp.com/license
 */
 class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 
@@ -26,27 +26,67 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 		$this->primary_key = $model->primary_key;
 		$this->primary_val = $model->primary_val;
 
-		// Database result
-		$this->result = $result->result(TRUE);
+		// Database result (make sure rows are returned as arrays)
+		$this->result = $result;
 	}
 
 	/**
-	 * Returns an array of the results as ORM objects.
+	 * Returns an array of the results as ORM objects or a nested array
 	 *
+	 * @param   bool    TRUE to return an array of ORM objects, FALSE for an array of arrays
+	 * @param   string  key column to index on, NULL to ignore
 	 * @return  array
 	 */
-	public function as_array()
+	public function as_array($objects = TRUE, $key = NULL)
 	{
 		$array = array();
 
-		if ($results = $this->result->result_array())
-		{
-			// Import class name
-			$class = $this->class_name;
+		// Import class name
+		$class = $this->class_name;
 
-			foreach ($results as $obj)
+		if ($objects)
+		{
+			// Generate an array of objects
+			foreach ($this->result as $data)
 			{
-				$array[] = new $class($obj);
+				if ($key === NULL)
+				{
+					// No indexing
+					$array[] = new $class($data);
+				}
+				else
+				{
+					// Index on the given key
+					$array[$data->$key] = new $class($data);
+				}
+			}
+		}
+		else
+		{
+			// Generate an array of arrays (and the subarrays may be nested in the case of relationships)
+			// This could be done by creating a new ORM object and calling as_array on it, but this is much faster
+			foreach ($this->result as $data)
+			{
+				// Have to do a bit of magic here to handle any relationships and generate a nested array for them
+				$temp = array();
+
+				foreach ($data as $key => $val)
+				{
+					$ptr = & $temp;
+
+					foreach (explode(':', $key) as $subkey)
+					{
+						// Walk thru the relationships (separated in the key name by a ':')
+						// 'user:email:address' will be array['user']['email']['address']
+						$ptr = & $ptr[$subkey];
+					}
+
+					// Set the value
+					$ptr = $val;
+				}
+
+				// Append the result
+				$array[] = $temp;
 			}
 		}
 
@@ -90,7 +130,7 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable {
 		}
 
 		$array = array();
-		foreach ($this->result->result_array() as $row)
+		foreach ($this->result as $row)
 		{
 			$array[$row->$key] = $row->$val;
 		}

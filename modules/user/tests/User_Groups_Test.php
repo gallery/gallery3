@@ -21,15 +21,15 @@
 class User_Groups_Test extends Unit_Test_Case {
   public function teardown() {
     try {
-      $group = ORM::factory("group")->where("name", "user_groups_test")->find();
-      if ($group->loaded) {
+      $group = ORM::factory("group")->where("name", "=", "user_groups_test")->find();
+      if ($group->loaded()) {
         $group->delete();
       }
     } catch (Exception $e) { }
 
     try {
-      $user = ORM::factory("user")->where("name", "user_groups_test")->find();
-      if ($user->loaded) {
+      $user = ORM::factory("user")->where("name", "=", "user_groups_test")->find();
+      if ($user->loaded()) {
         $user->delete();
       }
     } catch (Exception $e) { }

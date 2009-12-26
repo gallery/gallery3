@@ -17,32 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Database extends Database_Core {
+abstract class Database extends Database_Core {
   protected $_table_names;
 
-  public function open_paren() {
-    $this->where[] = "(";
-    return $this;
-  }
-
-  public function close_paren() {
-    // Search backwards for the last opening paren and resolve it
-    $i = count($this->where) - 1;
-    $this->where[$i] .= ")";
-    while (--$i >= 0) {
-      if ($this->where[$i] == "(") {
-        // Remove the paren from the where clauses, and add it to the right of the operator of the
-        // next where clause.  If removing the paren makes the next where clause the first element
-        // in the where list, then the operator shouldn't be there.  It's there because we
-        // calculate whether or not we need an operator based on the number of where clauses, and
-        // the open paren seems like a where clause even though it isn't.
-        array_splice($this->where, $i, 1);
-        $this->where[$i] = preg_replace("/^(AND|OR) /", $i ? "\\1 (" : "(", $this->where[$i]);
-        return $this;
-      }
+  /**
+   * Kohana 2.4 introduces a new connection parameter.  If it's not specified, make sure that we
+   * define it here to avoid an error later on.
+   *
+   * @todo: add an upgrade path to modify var/database.php so that we can avoid doing this at
+   *        runtime.
+   */
+  protected function __construct(array $config) {
+    if (!isset($config["connection"]["params"])) {
+      $config["connection"]["params"] = null;
     }
-
-    throw new Kohana_Database_Exception('database.missing_open_paren');
+    parent::__construct($config);
   }
 
   /**
@@ -50,7 +39,7 @@ class Database extends Database_Core {
    * table prefix . $1
    */
   public function query($sql = '') {
-    if (!empty($sql)) {
+    if ($this->config["table_prefix"] && !empty($sql)) {
       $sql = $this->add_table_prefixes($sql);
     }
     return parent::query($sql);
@@ -74,19 +63,19 @@ class Database extends Database_Core {
 
     if (!isset($this->_table_names)) {
       // This should only run once on the first query
-      $this->_table_names =array();
-      $len = strlen($prefix);
+      $this->_table_names = array();
       foreach($this->list_tables() as $table_name) {
-        if ($len > 0) {
-          $naked_name = strpos($table_name, $prefix) !== 0 ?
-            $table_name : substr($table_name, $len);
-        } else {
-          $naked_name = $table_name;
-        }
-        $this->_table_names["{{$naked_name}}"] = $table_name;
+        $this->_table_names["{{$table_name}}"] = $prefix . $table_name;
       }
     }
 
-    return empty($this->_table_names) ? $sql : strtr($sql, $this->_table_names);
+    return strtr($sql, $this->_table_names);
+  }
+
+  /**
+   * This is used by the unit test code to switch the active database connection.
+   */
+  static function set_default_instance($db) {
+    self::$instances["default"] = $db;
   }
 }

@@ -44,8 +44,8 @@ class user_Core {
    * @return User_Model
    */
   static function create($name, $full_name, $password) {
-    $user = ORM::factory("user")->where("name", $name)->find();
-    if ($user->loaded) {
+    $user = ORM::factory("user")->where("name", "=", $name)->find();
+    if ($user->loaded()) {
       throw new Exception("@todo USER_ALREADY_EXISTS $name");
     }
 
@@ -86,7 +86,7 @@ class user_Core {
     }
 
     // Passwords with <&"> created by G2 prior to 2.1 were hashed with entities
-    $sanitizedPassword = html::specialchars($password, false);
+    $sanitizedPassword = html::chars($password, false);
     $guess = (strlen($valid) == 32) ? md5($sanitizedPassword)
           : ($salt . md5($salt . $sanitizedPassword));
     if (!strcmp($guess, $valid)) {
@@ -163,7 +163,7 @@ class user_Core {
   private static function _lookup_user_by_field($field_name, $value) {
     try {
       $user = model_cache::get("user", $value, $field_name);
-      if ($user->loaded) {
+      if ($user->loaded()) {
         return $user;
       }
     } catch (Exception $e) {

@@ -21,7 +21,7 @@ class Item_Model extends ORM_MPTT {
   protected $children = 'items';
   protected $sorting = array();
 
-  var $rules = array(
+  var $form_rules = array(
     "name" => "required|length[0,255]",
     "title" => "required|length[0,255]",
     "description" => "length[0,65535]",
@@ -120,11 +120,13 @@ class Item_Model extends ORM_MPTT {
     if ($this->is_album()) {
       @rename(dirname($original_resize_path), dirname($this->resize_path()));
       @rename(dirname($original_thumb_path), dirname($this->thumb_path()));
-      Database::instance()
-        ->update("items",
-                 array("relative_path_cache" => null,
-                       "relative_url_cache" => null),
-                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
+      db::build()
+        ->update("items")
+        ->set("relative_path_cache", null)
+        ->set("relative_url_cache", null)
+        ->where("left_ptr", ">", $this->left_ptr)
+        ->where("right_ptr", "<", $this->right_ptr)
+        ->execute();
     } else {
       @rename($original_resize_path, $this->resize_path());
       @rename($original_thumb_path, $this->thumb_path());
@@ -170,11 +172,13 @@ class Item_Model extends ORM_MPTT {
     $this->name = $new_name;
 
     if ($this->is_album()) {
-      Database::instance()
-        ->update("items",
-                 array("relative_path_cache" => null,
-                       "relative_url_cache" => null),
-                 array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
+      db::build()
+        ->update("items")
+        ->set("relative_url_cache", null)
+        ->set("relative_path_cache", null)
+        ->where("left_ptr", ">", $this->left_ptr)
+        ->where("right_ptr", "<", $this->right_ptr)
+        ->execute();
     }
 
     return $this;
@@ -294,14 +298,14 @@ class Item_Model extends ORM_MPTT {
   private function _build_relative_caches() {
     $names = array();
     $slugs = array();
-    foreach (Database::instance()
+    foreach (db::build()
              ->select(array("name", "slug"))
              ->from("items")
-             ->where("left_ptr <=", $this->left_ptr)
-             ->where("right_ptr >=", $this->right_ptr)
-             ->where("id <>", 1)
-             ->orderby("left_ptr", "ASC")
-             ->get() as $row) {
+             ->where("left_ptr", "<=", $this->left_ptr)
+             ->where("right_ptr", ">=", $this->right_ptr)
+             ->where("id", "<>", 1)
+             ->order_by("left_ptr", "ASC")
+             ->execute() as $row) {
       // Don't encode the names segment
       $names[] = rawurlencode($row->name);
       $slugs[] = rawurlencode($row->slug);
@@ -318,7 +322,7 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function relative_path() {
-    if (!$this->loaded) {
+    if (!$this->loaded()) {
       return;
     }
 
@@ -333,7 +337,7 @@ class Item_Model extends ORM_MPTT {
    * @return string
    */
   public function relative_url() {
-    if (!$this->loaded) {
+    if (!$this->loaded()) {
       return;
     }
 
@@ -371,10 +375,12 @@ class Item_Model extends ORM_MPTT {
         // Clear the relative url cache for this item and all children
         $this->relative_url_cache = null;
         if ($this->is_album()) {
-          Database::instance()
-            ->update("items",
-                     array("relative_url_cache" => null),
-                     array("left_ptr >" => $this->left_ptr, "right_ptr <" => $this->right_ptr));
+          db::build()
+            ->update("items")
+            ->set("relative_url_cache", null)
+            ->where("left_ptr", ">", $this->left_ptr)
+            ->where("right_ptr", "<", $this->right_ptr)
+            ->execute();
         }
       }
     }
@@ -392,7 +398,7 @@ class Item_Model extends ORM_MPTT {
 
     if (!empty($this->changed) && $significant_changes) {
       $this->updated = time();
-      if (!$this->loaded) {
+      if (!$this->loaded()) {
         $this->created = $this->updated;
         $this->weight = item::get_max_weight();
       } else {
@@ -437,14 +443,14 @@ class Item_Model extends ORM_MPTT {
     } else {
       $comp = "<";
     }
-    $db = Database::instance();
+    $db = db::build();
 
     // If the comparison column has NULLs in it, we can't use comparators on it and will have to
     // deal with it the hard way.
     $count = $db->from("items")
-      ->where("parent_id", $this->id)
-      ->where($this->sort_column, NULL)
-      ->where($where)
+      ->where("parent_id", "=", $this->id)
+      ->where($this->sort_column, "=", NULL)
+      ->merge_where($where)
       ->count_records();
 
     if (empty($count)) {
@@ -452,9 +458,9 @@ class Item_Model extends ORM_MPTT {
       $sort_column = $this->sort_column;
 
       $position = $db->from("items")
-        ->where("parent_id", $this->id)
-        ->where("$sort_column $comp ", $child->$sort_column)
-        ->where($where)
+        ->where("parent_id", "=", $this->id)
+        ->where($sort_column, $comp, $child->$sort_column)
+        ->merge_where($where)
         ->count_records();
 
       // We stopped short of our target value in the sort (notice that we're using a < comparator
@@ -465,12 +471,14 @@ class Item_Model extends ORM_MPTT {
       //
       // Fix this by doing a 2nd query where we iterate over the equivalent columns and add them to
       // our base value.
-      foreach ($db->from("items")
-               ->where("parent_id", $this->id)
-               ->where($sort_column, $child->$sort_column)
-               ->where($where)
-               ->orderby(array("id" => "ASC"))
-               ->get() as $row) {
+      foreach ($db
+               ->select("id")
+               ->from("items")
+               ->where("parent_id", "=", $this->id)
+               ->where($sort_column, "=", $child->$sort_column)
+               ->merge_where($where)
+               ->order_by(array("id" => "ASC"))
+               ->execute() as $row) {
         $position++;
         if ($row->id == $child->id) {
           break;
@@ -484,19 +492,19 @@ class Item_Model extends ORM_MPTT {
       //
       // Reproduce the children() functionality here using Database directly to avoid loading the
       // whole ORM for each row.
-      $orderby = array($this->sort_column => $this->sort_order);
+      $order_by = array($this->sort_column => $this->sort_order);
       // Use id as a tie breaker
       if ($this->sort_column != "id") {
-        $orderby["id"] = "ASC";
+        $order_by["id"] = "ASC";
       }
 
       $position = 0;
       foreach ($db->select("id")
                ->from("items")
-               ->where("parent_id", $this->id)
-               ->where($where)
-               ->orderby($orderby)
-               ->get() as $row) {
+               ->where("parent_id", "=", $this->id)
+               ->merge_where($where)
+               ->order_by($order_by)
+               ->execute() as $row) {
         $position++;
         if ($row->id == $child->id) {
           break;
@@ -601,18 +609,18 @@ class Item_Model extends ORM_MPTT {
    * @param   integer  SQL limit
    * @param   integer  SQL offset
    * @param   array    additional where clauses
-   * @param   array    orderby
+   * @param   array    order_by
    * @return array ORM
    */
-  function children($limit=null, $offset=0, $where=array(), $orderby=null) {
-    if (empty($orderby)) {
-      $orderby = array($this->sort_column => $this->sort_order);
+  function children($limit=null, $offset=null, $where=array(), $order_by=null) {
+    if (empty($order_by)) {
+      $order_by = array($this->sort_column => $this->sort_order);
       // Use id as a tie breaker
       if ($this->sort_column != "id") {
-        $orderby["id"] = "ASC";
+        $order_by["id"] = "ASC";
       }
     }
-    return parent::children($limit, $offset, $where, $orderby);
+    return parent::children($limit, $offset, $where, $order_by);
   }
 
   /**
@@ -626,14 +634,14 @@ class Item_Model extends ORM_MPTT {
    * @param   array    additional where clauses
    * @return object ORM_Iterator
    */
-  function descendants($limit=null, $offset=0, $where=array(), $orderby=null) {
-    if (empty($orderby)) {
-      $orderby = array($this->sort_column => $this->sort_order);
+  function descendants($limit=null, $offset=null, $where=array(), $order_by=null) {
+    if (empty($order_by)) {
+      $order_by = array($this->sort_column => $this->sort_order);
       // Use id as a tie breaker
       if ($this->sort_column != "id") {
-        $orderby["id"] = "ASC";
+        $order_by["id"] = "ASC";
       }
     }
-    return parent::descendants($limit, $offset, $where, $orderby);
+    return parent::descendants($limit, $offset, $where, $order_by);
   }
 }

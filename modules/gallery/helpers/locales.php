@@ -125,13 +125,13 @@ class locales_Core {
     if (empty(self::$locales)) {
       self::_init_language_data();
     }
-    $locale or $locale = I18n::instance()->locale();
+    $locale or $locale = Gallery_I18n::instance()->locale();
 
     return self::$locales["$locale"];
   }
 
   static function is_rtl($locale=null) {
-    $locale or $locale = I18n::instance()->locale();
+    $locale or $locale = Gallery_I18n::instance()->locale();
     list ($language, $territory) = explode('_', $locale . "_");
     return in_array($language, array("he", "fa", "ar"));
   }
@@ -233,7 +233,7 @@ class locales_Core {
     }
     // If we have any preference, override the site's default locale
     if ($locale) {
-      I18n::instance()->locale($locale);
+      Gallery_I18n::instance()->locale($locale);
     }
   }
 

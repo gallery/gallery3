@@ -36,13 +36,13 @@ class module_Core {
    */
   static function set_version($module_name, $version) {
     $module = self::get($module_name);
-    if (!$module->loaded) {
+    if (!$module->loaded()) {
       $module->name = $module_name;
       $module->active = $module_name == "gallery";  // only gallery is active by default
     }
     $module->version = $version;
     $module->save();
-    Kohana::log("debug", "$module_name: version is now $version");
+    Kohana_Log::add("debug", "$module_name: version is now $version");
   }
 
   /**
@@ -51,7 +51,7 @@ class module_Core {
    */
   static function get($module_name) {
     if (empty(self::$modules[$module_name])) {
-      return ORM::factory("module", array("name" => $module_name));
+      return ORM::factory("module")->where("name", "=", $module_name)->find();
     }
     return self::$modules[$module_name];
   }
@@ -126,9 +126,10 @@ class module_Core {
    * @param string $module_name
    */
   static function install($module_name) {
-    $kohana_modules = Kohana::config("core.modules");
+    $config = Kohana_Config::instance();
+    $kohana_modules = $config->get("core.modules");
     array_unshift($kohana_modules, MODPATH . $module_name);
-    Kohana::config_set("core.modules",  $kohana_modules);
+    $config->set("core.modules",  $kohana_modules);
 
     // Rebuild the include path so the module installer can benefit from auto loading
     Kohana::include_paths(true);
@@ -142,7 +143,7 @@ class module_Core {
 
     // Now the module is installed but inactive, so don't leave it in the active path
     array_shift($kohana_modules);
-    Kohana::config_set("core.modules",  $kohana_modules);
+    $config->set("core.modules",  $kohana_modules);
 
     log::success(
       "module", t("Installed module %module_name", array("module_name" => $module_name)));
@@ -193,9 +194,10 @@ class module_Core {
    * @param string $module_name
    */
   static function activate($module_name) {
-    $kohana_modules = Kohana::config("core.modules");
+    $config = Kohana_Config::instance();
+    $kohana_modules = $config->get("core.modules");
     array_unshift($kohana_modules, MODPATH . $module_name);
-    Kohana::config_set("core.modules",  $kohana_modules);
+    $config->set("core.modules",  $kohana_modules);
 
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "activate")) {
@@ -203,7 +205,7 @@ class module_Core {
     }
 
     $module = self::get($module_name);
-    if ($module->loaded) {
+    if ($module->loaded()) {
       $module->active = true;
       $module->save();
     }
@@ -230,7 +232,7 @@ class module_Core {
     }
 
     $module = self::get($module_name);
-    if ($module->loaded) {
+    if ($module->loaded()) {
       $module->active = false;
       $module->save();
     }
@@ -257,7 +259,7 @@ class module_Core {
 
     graphics::remove_rules($module_name);
     $module = self::get($module_name);
-    if ($module->loaded) {
+    if ($module->loaded()) {
       $module->delete();
     }
     module::load_modules();
@@ -290,8 +292,9 @@ class module_Core {
       }
     }
     self::$active[] = $gallery;  // put gallery last in the module list to match core.modules
-    Kohana::config_set(
-      "core.modules", array_merge($kohana_modules, Kohana::config("core.modules")));
+    $config = Kohana_Config::instance();
+    $config->set(
+      "core.modules", array_merge($kohana_modules, $config->get("core.modules")));
   }
 
   /**
@@ -363,21 +366,23 @@ class module_Core {
     // We cache all vars in gallery._cache so that we can load all vars at once for
     // performance.
     if (empty(self::$var_cache)) {
-      $row = Database::instance()
+      $row = db::build()
         ->select("value")
         ->from("vars")
-        ->where(array("module_name" => "gallery", "name" => "_cache"))
-        ->get()
+        ->where("module_name", "=", "gallery")
+        ->where("name", "=", "_cache")
+        ->execute()
         ->current();
       if ($row) {
         self::$var_cache = unserialize($row->value);
       } else {
         // gallery._cache doesn't exist.  Create it now.
-        foreach (Database::instance()
+        foreach (db::build()
                  ->select("module_name", "name", "value")
                  ->from("vars")
-                 ->orderby("module_name", "name")
-                 ->get() as $row) {
+                 ->order_by("module_name")
+                 ->order_by("name")
+                 ->execute() as $row) {
           if ($row->module_name == "gallery" && $row->name == "_cache") {
             // This could happen if there's a race condition
             continue;
@@ -407,33 +412,50 @@ class module_Core {
    */
   static function set_var($module_name, $name, $value) {
     $var = ORM::factory("var")
-      ->where("module_name", $module_name)
-      ->where("name", $name)
+      ->where("module_name", "=", $module_name)
+      ->where("name", "=", $name)
       ->find();
-    if (!$var->loaded) {
+    if (!$var->loaded()) {
       $var->module_name = $module_name;
       $var->name = $name;
     }
     $var->value = $value;
     $var->save();
 
-    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
+    db::build()
+      ->delete("vars")
+      ->where("module_name", "=", "gallery")
+      ->where("name", "=", "_cache")
+      ->execute();
     self::$var_cache = null;
  }
 
   /**
    * Increment the value of a variable for this module
+   *
+   * Note: Frequently updating counters is very inefficient because it invalidates the cache value
+   * which has to be rebuilt every time we make a change.
+   *
+   * @todo Get rid of this and find an alternate approach for all callers (currently only Akismet)
+   *
+   * @deprecated
    * @param string $module_name
    * @param string $name
    * @param string $increment (optional, default is 1)
    */
   static function incr_var($module_name, $name, $increment=1) {
-    Database::instance()->query(
-      "UPDATE {vars} SET `value` = `value` + $increment " .
-      "WHERE `module_name` = '$module_name' " .
-      "AND `name` = '$name'");
+    db::build()
+      ->update("vars")
+      ->set("value", new Database_Expression("`value` + $increment"))
+      ->where("module_name", "=", $module_name)
+      ->where("name", "=", $name)
+      ->execute();
 
-    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
+    db::build()
+      ->delete("vars")
+      ->where("module_name", "=", "gallery")
+      ->where("name", "=", "_cache")
+      ->execute();
     self::$var_cache = null;
   }
 
@@ -444,14 +466,18 @@ class module_Core {
    */
   static function clear_var($module_name, $name) {
     $var = ORM::factory("var")
-      ->where("module_name", $module_name)
-      ->where("name", $name)
+      ->where("module_name", "=", $module_name)
+      ->where("name", "=", $name)
       ->find();
-    if ($var->loaded) {
+    if ($var->loaded()) {
       $var->delete();
     }
 
-    Database::instance()->delete("vars", array("module_name" => "gallery", "name" => "_cache"));
+    db::build()
+      ->delete("vars")
+      ->where("module_name", "=", "gallery")
+      ->where("name", "=", "_cache")
+      ->execute();
     self::$var_cache = null;
   }
 

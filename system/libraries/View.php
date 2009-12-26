@@ -3,12 +3,12 @@
  * Loads and displays Kohana view files. Can also handle output of some binary
  * files, such as image, Javascript, and CSS files.
  *
- * $Id: View.php 4072 2009-03-13 17:20:38Z jheathco $
+ * $Id: View.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class View_Core {
 
@@ -18,7 +18,6 @@ class View_Core {
 
 	// View variable storage
 	protected $kohana_local_data = array();
-	protected static $kohana_global_data = array();
 
 	/**
 	 * Creates a new View using the given parameters.
@@ -88,7 +87,7 @@ class View_Core {
 		{
 			// Check if the filetype is allowed by the configuration
 			if ( ! in_array($type, Kohana::config('view.allowed_filetypes')))
-				throw new Kohana_Exception('core.invalid_filetype', $type);
+				throw new Kohana_Exception('The requested filetype, .:type:, is not allowed in your view configuration file', array(':type:' => $type));
 
 			// Load the filename and set the content type
 			$this->kohana_filename = Kohana::find_file('views', $name, TRUE, $type);
@@ -152,13 +151,13 @@ class View_Core {
 			foreach ($key as $property)
 			{
 				// Set the result to an associative array
-				$result[$property] = (array_key_exists($property, $this->kohana_local_data) OR array_key_exists($property, View::$kohana_global_data)) ? TRUE : FALSE;
+				$result[$property] = (array_key_exists($property, $this->kohana_local_data)) ? TRUE : FALSE;
 			}
 		}
 		else
 		{
 			// Otherwise just check one property
-			$result = (array_key_exists($key, $this->kohana_local_data) OR array_key_exists($key, View::$kohana_global_data)) ? TRUE : FALSE;
+			$result = (array_key_exists($key, $this->kohana_local_data)) ? TRUE : FALSE;
 		}
 
 		// Return the result
@@ -177,28 +176,6 @@ class View_Core {
 		$this->kohana_local_data[$name] =& $var;
 
 		return $this;
-	}
-
-	/**
-	 * Sets a view global variable.
-	 *
-	 * @param   string|array  name of variable or an array of variables
-	 * @param   mixed         value when using a named variable
-	 * @return  void
-	 */
-	public static function set_global($name, $value = NULL)
-	{
-		if (is_array($name))
-		{
-			foreach ($name as $key => $value)
-			{
-				View::$kohana_global_data[$key] = $value;
-			}
-		}
-		else
-		{
-			View::$kohana_global_data[$name] = $value;
-		}
 	}
 
 	/**
@@ -223,13 +200,18 @@ class View_Core {
 	public function &__get($key)
 	{
 		if (isset($this->kohana_local_data[$key]))
+		{
 			return $this->kohana_local_data[$key];
-
-		if (isset(View::$kohana_global_data[$key]))
-			return View::$kohana_global_data[$key];
-
-		if (isset($this->$key))
+		}
+		elseif (isset($this->$key))
+		{
 			return $this->$key;
+		}
+		else
+		{
+			throw new Kohana_Exception('Undefined view variable: :var',
+				array(':var' => $key));
+		}
 	}
 
 	/**
@@ -245,8 +227,8 @@ class View_Core {
 		}
 		catch (Exception $e)
 		{
-			// Display the exception using its internal __toString method
-			return (string) $e;
+			Kohana_Exception::handle($e);
+			return (string) '';
 		}
 	}
 
@@ -255,21 +237,27 @@ class View_Core {
 	 *
 	 * @param   boolean   set to TRUE to echo the output instead of returning it
 	 * @param   callback  special renderer to pass the output through
+	 * @param   callback  modifier to pass the data through before rendering
 	 * @return  string    if print is FALSE
 	 * @return  void      if print is TRUE
 	 */
-	public function render($print = FALSE, $renderer = FALSE)
+	public function render($print = FALSE, $renderer = FALSE, $modifier = FALSE)
 	{
 		if (empty($this->kohana_filename))
-			throw new Kohana_Exception('core.view_set_filename');
+			throw new Kohana_Exception('You must set the the view filename before calling render');
 
 		if (is_string($this->kohana_filetype))
 		{
 			// Merge global and local data, local overrides global with the same name
-			$data = array_merge(View::$kohana_global_data, $this->kohana_local_data);
+			$data = $this->kohana_local_data;
 
-			// Load the view in the controller for access to $this
-			$output = Kohana::$instance->_kohana_load_view($this->kohana_filename, $data);
+			if ($modifier !== FALSE AND is_callable($modifier, TRUE))
+			{
+				// Pass the data through the user defined modifier
+				$data = call_user_func($modifier, $data);
+			}
+
+			$output = $this->load_view($this->kohana_filename, $data);
 
 			if ($renderer !== FALSE AND is_callable($renderer, TRUE))
 			{
@@ -305,5 +293,37 @@ class View_Core {
 		}
 
 		return $output;
+	}
+
+	/**
+	 * Includes a View within the controller scope.
+	 *
+	 * @param   string  view filename
+	 * @param   array   array of view variables
+	 * @return  string
+	 */
+	public function load_view($kohana_view_filename, $kohana_input_data)
+	{
+		if ($kohana_view_filename == '')
+			return;
+
+		// Buffering on
+		ob_start();
+
+		// Import the view variables to local namespace
+		extract($kohana_input_data, EXTR_SKIP);
+
+		try
+		{
+			include $kohana_view_filename;
+		}
+		catch (Exception $e)
+		{
+			ob_end_clean();
+			throw $e;
+		}
+
+		// Fetch the output and close the buffer
+		return ob_get_clean();
 	}
 } // End View

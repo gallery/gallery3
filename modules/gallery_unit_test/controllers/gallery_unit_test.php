@@ -20,7 +20,7 @@
 class Gallery_Unit_Test_Controller extends Controller {
   function Index() {
     if (!TEST_MODE) {
-      print Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     // Jump through some hoops to satisfy the way that we check for the site_domain in
@@ -30,6 +30,7 @@ class Gallery_Unit_Test_Controller extends Controller {
     $_SERVER["SCRIPT_FILENAME"] = "index.php";
     $_SERVER["SCRIPT_NAME"] = "./index.php";
 
+    $config = Kohana_Config::instance();
     $original_config = DOCROOT . "var/database.php";
     $test_config = VARPATH . "database.php";
     if (!file_exists($original_config)) {
@@ -41,20 +42,20 @@ class Gallery_Unit_Test_Controller extends Controller {
       if (empty($db_config['unit_test'])) {
         $default = $db_config['default'];
         $conn = $default['connection'];
-        Kohana::config_set('database.unit_test.benchmark', $default['benchmark']);
-        Kohana::config_set('database.unit_test.persistent', $default['persistent']);
-        Kohana::config_set('database.unit_test.connection.type', $conn['type']);
-        Kohana::config_set('database.unit_test.connection.user', $conn['user']);
-        Kohana::config_set('database.unit_test.connection.pass', $conn['pass']);
-        Kohana::config_set('database.unit_test.connection.host', $conn['host']);
-        Kohana::config_set('database.unit_test.connection.port', $conn['port']);
-        Kohana::config_set('database.unit_test.connection.socket', $conn['socket']);
-        Kohana::config_set('database.unit_test.connection.database', "{$conn['database']}_test");
-        Kohana::config_set('database.unit_test.character_set', $default['character_set']);
-        Kohana::config_set('database.unit_test.table_prefix', $default['table_prefix']);
-        Kohana::config_set('database.unit_test.object', $default['object']);
-        Kohana::config_set('database.unit_test.cache', $default['cache']);
-        Kohana::config_set('database.unit_test.escape', $default['escape']);
+        $config->set('database.unit_test.benchmark', $default['benchmark']);
+        $config->set('database.unit_test.persistent', $default['persistent']);
+        $config->set('database.unit_test.connection.type', $conn['type']);
+        $config->set('database.unit_test.connection.user', $conn['user']);
+        $config->set('database.unit_test.connection.pass', $conn['pass']);
+        $config->set('database.unit_test.connection.host', $conn['host']);
+        $config->set('database.unit_test.connection.port', $conn['port']);
+        $config->set('database.unit_test.connection.socket', $conn['socket']);
+        $config->set('database.unit_test.connection.database', "{$conn['database']}_test");
+        $config->set('database.unit_test.character_set', $default['character_set']);
+        $config->set('database.unit_test.table_prefix', $default['table_prefix']);
+        $config->set('database.unit_test.object', $default['object']);
+        $config->set('database.unit_test.cache', $default['cache']);
+        $config->set('database.unit_test.escape', $default['escape']);
         $db_config = Kohana::config('database');
       }
 
@@ -69,7 +70,7 @@ class Gallery_Unit_Test_Controller extends Controller {
         $db->connect();
 
         // Make this the default database for the rest of this run
-        Database::$instances = array('default' => $db);
+        Database::set_default_instance($db);
       } catch (Exception $e) {
         print "{$e->getMessage()}\n";
         return;
@@ -80,7 +81,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       // Clean out the database
       if ($tables = $db->list_tables()) {
         foreach ($db->list_tables() as $table) {
-          $db->query("DROP TABLE $table");
+          $db->query("DROP TABLE {{$table}}");
         }
       }
 
@@ -97,7 +98,7 @@ class Gallery_Unit_Test_Controller extends Controller {
       $db->clear_cache();
 
       // Rest the cascading class path
-      Kohana::config_set("core", Kohana::config_load("core"));
+      $config->set("core", $config->load("core"));
 
       // Install the active modules
       // Force gallery and user to be installed first to resolve dependencies.
@@ -119,7 +120,7 @@ class Gallery_Unit_Test_Controller extends Controller {
         }
       }
 
-      Kohana::config_set('unit_test.paths', $paths);
+      $config->set('unit_test.paths', $paths);
 
       // Trigger late-binding install actions (defined in gallery_event::user_login)
       graphics::choose_default_toolkit();

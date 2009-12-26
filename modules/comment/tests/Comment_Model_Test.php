@@ -29,12 +29,12 @@ class Comment_Model_Test extends Unit_Test_Case {
     access::allow(identity::everybody(), "view", $album);
     $this->assert_equal(
       1,
-      ORM::factory("comment")->viewable()->where("comments.id", $comment->id)->count_all());
+      ORM::factory("comment")->viewable()->where("comments.id", "=", $comment->id)->count_all());
 
     // We can't see the comment when permissions are denied on the album
     access::deny(identity::everybody(), "view", $album);
     $this->assert_equal(
       0,
-      ORM::factory("comment")->viewable()->where("comments.id", $comment->id)->count_all());
+      ORM::factory("comment")->viewable()->where("comments.id", "=", $comment->id)->count_all());
   }
 }

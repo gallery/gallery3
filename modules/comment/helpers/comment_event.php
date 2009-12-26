@@ -19,29 +19,33 @@
  */
 class comment_event_Core {
   static function item_deleted($item) {
-    Database::instance()->delete("comments", array("item_id" => $item->id));
+    db::build()
+      ->delete("comments")
+      ->where("item_id", "=", $item->id)
+      ->execute();
   }
 
   static function user_deleted($user) {
     $guest = identity::guest();
-    Database::instance()->from("comments")
-      ->set(array("author_id" => $guest->id,
-                  "guest_email" => null,
-                  "guest_name" => "guest",
-                  "guest_url" => null))
-      ->where(array("author_id" => $user->id))
-      ->update();
+    db::build()
+      ->update("comments")
+      ->set("author_id", $guest->id)
+      ->set("guest_email", null)
+      ->set("guest_name", "guest")
+      ->set("guest_url", null)
+      ->where("author_id", "=", $user->id)
+      ->execute();
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
     $guest = identity::guest();
-    Database::instance()->from("comments")
-      ->set(array("author_id" => $guest->id,
-                  "guest_email" => null,
-                  "guest_name" => "guest",
-                  "guest_url" => null))
-      ->where("1 = 1")
-      ->update();
+    db::build()
+      ->update("comments")
+      ->set("author_id", $guest->id)
+      ->set("guest_email", null)
+      ->set("guest_name", "guest")
+      ->set("guest_url", null)
+      ->execute();
   }
 
   static function admin_menu($menu, $theme) {
@@ -62,12 +66,11 @@ class comment_event_Core {
   }
 
   static function item_index_data($item, $data) {
-    foreach (Database::instance()
+    foreach (db::build()
              ->select("text")
              ->from("comments")
-             ->where("item_id", $item->id)
-             ->get()
-             ->as_array() as $row) {
+             ->where("item_id", "=", $item->id)
+             ->execute() as $row) {
       $data[] = $row->text;
     }
   }

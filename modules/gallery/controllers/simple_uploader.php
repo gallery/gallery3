@@ -72,7 +72,7 @@ class Simple_Uploader_Controller extends Controller {
           module::event("add_photos_form_completed", $item, $form);
         }
       } catch (Exception $e) {
-        Kohana::log("alert", $e->__toString());
+        Kohana_Log::add("alert", $e->__toString());
         if (file_exists($temp_filename)) {
           unlink($temp_filename);
         }

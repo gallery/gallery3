@@ -18,81 +18,95 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Database_Test extends Unit_Test_Case {
+  function setup() {
+    $config = Kohana_Config::instance();
+    $config->set("database.mock.connection.type", "mock");
+    $config->set("database.mock.cache", false);
+    $config->set("database.mock.table_prefix", "g_");
+  }
+
   function simple_where_test() {
-    $sql = Database::instance()
-      ->where("a", 1)
-      ->where("b", 2)
+    $sql = db::build("mock")
+      ->select("some_column")
+      ->from("some_table")
+      ->where("a", "=", 1)
+      ->where("b", "=", 2)
       ->compile();
     $sql = str_replace("\n", " ", $sql);
-    $this->assert_same("SELECT * WHERE `a` = 1 AND `b` = 2", $sql);
+    $this->assert_same("SELECT [some_column] FROM [some_table] WHERE [a] = [1] AND [b] = [2]", $sql);
   }
 
   function compound_where_test() {
-    $sql = Database::instance()
-      ->where("outer1", 1)
-      ->open_paren()
-      ->where("inner1", 1)
-      ->orwhere("inner2", 2)
-      ->close_paren()
-      ->where("outer2", 2)
+    $sql = db::build("mock")
+      ->select()
+      ->where("outer1", "=", 1)
+      ->and_open()
+      ->where("inner1", "=", 1)
+      ->or_where("inner2", "=", 2)
+      ->close()
+      ->where("outer2", "=", 2)
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
-      "SELECT * WHERE `outer1` = 1 AND (`inner1` = 1 OR `inner2` = 2) AND `outer2` = 2",
+      "SELECT [*] WHERE [outer1] = [1] AND ([inner1] = [1] OR [inner2] = [2]) AND [outer2] = [2]",
       $sql);
   }
 
   function group_first_test() {
-    $sql = Database::instance()
-      ->open_paren()
-      ->where("inner1", 1)
-      ->orwhere("inner2", 2)
-      ->close_paren()
-      ->where("outer1", 1)
-      ->where("outer2", 2)
+    $sql = db::build("mock")
+      ->select()
+      ->and_open()
+      ->where("inner1", "=", 1)
+      ->or_where("inner2", "=", 2)
+      ->close()
+      ->where("outer1", "=", 1)
+      ->where("outer2", "=", 2)
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
-      "SELECT * WHERE (`inner1` = 1 OR `inner2` = 2) AND `outer1` = 1 AND `outer2` = 2",
+      "SELECT [*] WHERE ([inner1] = [1] OR [inner2] = [2]) AND [outer1] = [1] AND [outer2] = [2]",
       $sql);
   }
 
   function where_array_test() {
-    $sql = Database::instance()
-      ->where("outer1", 1)
-      ->open_paren()
-      ->where("inner1", 1)
-      ->orwhere(array("inner2" => 2, "inner3" => 3))
-      ->close_paren()
+    $sql = db::build("mock")
+      ->select()
+      ->where("outer1", "=", 1)
+      ->and_open()
+      ->where("inner1", "=", 1)
+      ->or_where("inner2", "=", 2)
+      ->or_where("inner3", "=", 3)
+      ->close()
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
-      "SELECT * WHERE `outer1` = 1 AND (`inner1` = 1 OR `inner2` = 2 OR `inner3` = 3)",
+      "SELECT [*] WHERE [outer1] = [1] AND ([inner1] = [1] OR [inner2] = [2] OR [inner3] = [3])",
       $sql);
   }
 
   function notlike_test() {
-    $sql = Database::instance()
-      ->where("outer1", 1)
-      ->open_paren()
-      ->ornotlike("inner1", 1)
-      ->close_paren()
+    $sql = db::build("mock")
+      ->select()
+      ->where("outer1", "=", 1)
+      ->or_open()
+      ->where("inner1", "NOT LIKE", "%1%")
+      ->close()
       ->compile();
     $sql = str_replace("\n", " ", $sql);
     $this->assert_same(
-      "SELECT * WHERE `outer1` = 1 OR ( `inner1` NOT LIKE '%1%')",
+      "SELECT [*] WHERE [outer1] = [1] OR ([inner1] NOT LIKE [%1%])",
       $sql);
   }
 
   function prefix_replacement_test() {
-    $db = Database_For_Test::instance();
-    $converted = $db->add_table_prefixes("CREATE TABLE IF NOT EXISTS {test_tables} (
+    $db = Database::instance("mock");
+    $converted = $db->add_table_prefixes("CREATE TABLE IF NOT EXISTS {test} (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(32) NOT NULL,
                    PRIMARY KEY (`id`),
                    UNIQUE KEY(`name`))
                  ENGINE=InnoDB DEFAULT CHARSET=utf8");
-    $expected = "CREATE TABLE IF NOT EXISTS g3test_test_tables (
+    $expected = "CREATE TABLE IF NOT EXISTS g_test (
                    `id` int(9) NOT NULL auto_increment,
                    `name` varchar(32) NOT NULL,
                    PRIMARY KEY (`id`),
@@ -100,16 +114,16 @@ class Database_Test extends Unit_Test_Case {
                  ENGINE=InnoDB DEFAULT CHARSET=utf8";
     $this->assert_same($expected, $converted);
 
-    $sql = "UPDATE {test_tables} SET `name` = '{test string}' " .
+    $sql = "UPDATE {test} SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
-        "  (SELECT `id` FROM {items} " .
+        "  (SELECT `id` FROM {test} " .
         "  WHERE `left_ptr` >= 1 " .
         "  AND `right_ptr` <= 6)";
     $sql = $db->add_table_prefixes($sql);
 
-    $expected = "UPDATE g3test_test_tables SET `name` = '{test string}' " .
+    $expected = "UPDATE g_test SET `name` = '{test string}' " .
         "WHERE `item_id` IN " .
-        "  (SELECT `id` FROM g3test_items " .
+        "  (SELECT `id` FROM g_test " .
         "  WHERE `left_ptr` >= 1 " .
         "  AND `right_ptr` <= 6)";
 
@@ -117,29 +131,52 @@ class Database_Test extends Unit_Test_Case {
   }
 
   function prefix_no_replacement_test() {
-    $update = Database_For_Test::instance()->from("test_tables")
-      ->where("1 = 1")
+    $sql = db::build("mock")
+      ->from("test_tables")
+      ->where("1", "=", "1")
       ->set(array("name" => "Test Name"))
-      ->update();
-
-    $expected = "UPDATE `g3test_test_tables` SET `name` = 'Test Name' WHERE 1 = 1";
-
-    $this->assert_same($expected, $update);
+      ->update()
+      ->compile();
+    $sql = str_replace("\n", " ", $sql);
+    $this->assert_same("UPDATE [test_tables] SET [name] = [Test Name] WHERE [1] = [1]", $sql);
   }
 }
 
-class Database_For_Test extends Database {
-  static function instance() {
-    $db = new Database_For_Test();
-    $db->_table_names["{items}"] = "g3test_items";
-    $db->config["table_prefix"] = "g3test_";
-    return $db;
+class Database_Mock extends Database {
+  public function connect() {
   }
 
-  public function query($sql = '') {
-    if (!empty($sql)) {
-      $sql = $this->add_table_prefixes($sql);
-    }
-    return $sql;
+  public function disconnect() {
+  }
+
+  public function set_charset($charset) {
+  }
+
+  public function query_execute($sql) {
+  }
+
+  public function escape($val) {
+  }
+
+  public function list_constraints($table) {
+  }
+
+  public function list_fields($table) {
+  }
+
+  public function list_tables() {
+    return array("test");
+  }
+
+  public function quote_column($val) {
+    return "[$val]";
+  }
+
+  public function quote_table($val) {
+    return "[$val]";
+  }
+
+  public function quote($val) {
+    return "[$val]";
   }
 }

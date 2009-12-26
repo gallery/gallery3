@@ -75,15 +75,15 @@ class identity_Core {
 
       if (!$session->get("group_ids")) {
         $ids = array();
-        foreach ($user->groups as $group) {
+        foreach ($user->groups() as $group) {
           $ids[] = $group->id;
         }
         $session->set("group_ids", $ids);
       }
     } catch (Exception $e) {
       // Log it, so we at least have so notification that we swallowed the exception.
-      Kohana::log("error", "Load_user Exception: " .
-                  $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "Load_user Exception: " .
+                      $e->getMessage() . "\n" . $e->getTraceAsString());
       try {
         Session::instance()->destroy();
       } catch (Exception $e) {

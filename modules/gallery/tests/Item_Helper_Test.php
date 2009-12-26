@@ -29,13 +29,13 @@ class Item_Helper_Test extends Unit_Test_Case {
     access::allow(identity::everybody(), "view", $album);
     $this->assert_equal(
       1,
-      ORM::factory("item")->viewable()->where("id", $item->id)->count_all());
+      ORM::factory("item")->viewable()->where("id", "=", $item->id)->count_all());
 
     // We can't see the item when permissions are denied
     access::deny(identity::everybody(), "view", $album);
     $this->assert_equal(
       0,
-      ORM::factory("item")->viewable()->where("id", $item->id)->count_all());
+      ORM::factory("item")->viewable()->where("id", "=", $item->id)->count_all());
   }
 
   public function validate_url_safe_test() {

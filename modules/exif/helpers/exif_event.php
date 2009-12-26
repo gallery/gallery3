@@ -25,6 +25,9 @@ class exif_event_Core {
   }
 
   static function item_deleted($item) {
-    Database::instance()->delete("exif_records", array("item_id" => $item->id));
+    db::build()
+      ->delete("exif_records")
+      ->where("item_id", "=", $item->id)
+      ->execute();
   }
 }

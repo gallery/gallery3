@@ -184,10 +184,10 @@ class item_Core {
     // Guard against an empty result when we create the first item.  It's unfortunate that we
     // have to check this every time.
     // @todo: figure out a better way to bootstrap the weight.
-    $result = Database::instance()
+    $result = db::build()
       ->select("weight")->from("items")
-      ->orderby("weight", "desc")->limit(1)
-      ->get()->current();
+      ->order_by("weight", "desc")->limit(1)
+      ->execute()->current();
     return ($result ? $result->weight : 0) + 1;
   }
 
@@ -200,29 +200,12 @@ class item_Core {
     $view_restrictions = array();
     if (!identity::active_user()->admin) {
       foreach (identity::group_ids_for_active_user() as $id) {
-        // Separate the first restriction from the rest to make it easier for us to formulate
-        // our where clause below
-        if (empty($view_restrictions)) {
-          $view_restrictions[0] = "items.view_$id";
-        } else {
-          $view_restrictions[1]["items.view_$id"] = access::ALLOW;
-        }
+        $view_restrictions[] = array("items.view_$id", "=", access::ALLOW);
       }
     }
-    switch (count($view_restrictions)) {
-    case 0:
-      break;
 
-    case 1:
-      $model->where($view_restrictions[0], access::ALLOW);
-      break;
-
-    default:
-      $model->open_paren();
-      $model->where($view_restrictions[0], access::ALLOW);
-      $model->orwhere($view_restrictions[1]);
-      $model->close_paren();
-      break;
+    if (count($view_restrictions)) {
+      $model->and_open()->merge_or_where($view_restrictions)->close();
     }
 
     return $model;

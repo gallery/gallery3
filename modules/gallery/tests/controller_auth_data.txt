@@ -3,7 +3,8 @@ modules/comment/helpers/comment_rss.php                      feed               
 modules/digibug/controllers/digibug.php                      print_proxy          DIRTY_CSRF|DIRTY_AUTH
 modules/digibug/controllers/digibug.php                      close_window         DIRTY_AUTH
 modules/gallery/controllers/admin.php                        __call               DIRTY_AUTH
-modules/gallery/controllers/albums.php                       _show                DIRTY_CSRF
+modules/gallery/controllers/albums.php                       index                DIRTY_AUTH
+modules/gallery/controllers/albums.php                       show                 DIRTY_CSRF
 modules/gallery/controllers/combined.php                     javascript           DIRTY_AUTH
 modules/gallery/controllers/combined.php                     css                  DIRTY_AUTH
 modules/gallery/controllers/file_proxy.php                   __call               DIRTY_CSRF|DIRTY_AUTH

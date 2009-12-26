@@ -91,7 +91,7 @@ class access_Core {
    * @return boolean
    */
   static function user_can($user, $perm_name, $item) {
-    if (!$item->loaded) {
+    if (!$item->loaded()) {
       return false;
     }
 
@@ -101,7 +101,7 @@ class access_Core {
 
     $resource = $perm_name == "view" ?
       $item : model_cache::get("access_cache", $item->id, "item_id");
-    foreach ($user->groups as $group) {
+    foreach ($user->groups() as $group) {
       if ($resource->__get("{$perm_name}_{$group->id}") === self::ALLOW) {
         return true;
       }
@@ -166,16 +166,16 @@ class access_Core {
     // For view permissions, if any parent is self::DENY, then those parents lock this one.
     // Return
     $lock = ORM::factory("item")
-      ->where("`left_ptr` <= $item->left_ptr")
-      ->where("`right_ptr` >= $item->right_ptr")
-      ->where("items.id <> $item->id")
+      ->where("left_ptr", "<=", $item->left_ptr)
+      ->where("right_ptr", ">=", $item->right_ptr)
+      ->where("items.id", "<>", $item->id)
       ->join("access_intents", "items.id", "access_intents.item_id")
-      ->where("access_intents.view_$group->id", self::DENY)
-      ->orderby("level", "DESC")
+      ->where("access_intents.view_$group->id", "=", self::DENY)
+      ->order_by("level", "DESC")
       ->limit(1)
       ->find();
 
-    if ($lock->loaded) {
+    if ($lock->loaded()) {
       return $lock;
     } else {
       return null;
@@ -201,7 +201,7 @@ class access_Core {
     if (!($group instanceof Group_Definition)) {
       throw new Exception("@todo PERMISSIONS_ONLY_WORK_ON_GROUPS");
     }
-    if (!$album->loaded) {
+    if (!$album->loaded()) {
       throw new Exception("@todo INVALID_ALBUM $album->id");
     }
     if (!$album->is_album()) {
@@ -282,7 +282,7 @@ class access_Core {
   */
   static function register_permission($name, $display_name) {
     $permission = ORM::factory("permission", $name);
-    if ($permission->loaded) {
+    if ($permission->loaded()) {
       throw new Exception("@todo PERMISSION_ALREADY_EXISTS $name");
     }
     $permission->name = $name;
@@ -304,8 +304,8 @@ class access_Core {
     foreach (self::_get_all_groups() as $group) {
       self::_drop_columns($name, $group);
     }
-    $permission = ORM::factory("permission")->where("name", $name)->find();
-    if ($permission->loaded) {
+    $permission = ORM::factory("permission")->where("name", "=", $name)->find();
+    if ($permission->loaded()) {
       $permission->delete();
     }
   }
@@ -342,7 +342,7 @@ class access_Core {
    */
   static function add_item($item) {
     $access_intent = ORM::factory("access_intent", $item->id);
-    if ($access_intent->loaded) {
+    if ($access_intent->loaded()) {
       throw new Exception("@todo ITEM_ALREADY_ADDED $item->id");
     }
     $access_intent = ORM::factory("access_intent");
@@ -354,7 +354,7 @@ class access_Core {
     $access_cache->item_id = $item->id;
     if ($item->id != 1) {
       $parent_access_cache =
-        ORM::factory("access_cache")->where("item_id", $item->parent()->id)->find();
+        ORM::factory("access_cache")->where("item_id", "=", $item->parent()->id)->find();
       foreach (self::_get_all_groups() as $group) {
         foreach (ORM::factory("permission")->find_all() as $perm) {
           $field = "{$perm->name}_{$group->id}";
@@ -377,8 +377,8 @@ class access_Core {
    * @return void
    */
   static function delete_item($item) {
-    ORM::factory("access_intent")->where("item_id", $item->id)->find()->delete();
-    ORM::factory("access_cache")->where("item_id", $item->id)->find()->delete();
+    ORM::factory("access_intent")->where("item_id", "=", $item->id)->find()->delete();
+    ORM::factory("access_cache")->where("item_id", "=", $item->id)->find()->delete();
   }
 
   /**
@@ -419,8 +419,8 @@ class access_Core {
    * @return ORM_Iterator
    */
   private static function _get_all_groups() {
-    // When we build the gallery package, it's possible that there is no identity provider installed yet.
-    // This is ok at packaging time, so work around it.
+    // When we build the gallery package, it's possible that there is no identity provider
+    // installed yet.  This is ok at packaging time, so work around it.
    if (module::is_active(module::get_var("gallery", "identity_provider", "user"))) {
       return identity::groups();
     } else {
@@ -436,11 +436,10 @@ class access_Core {
    * @return void
    */
   private static function _drop_columns($perm_name, $group) {
-    $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
-    $db->query("ALTER TABLE {{$cache_table}} DROP `$field`");
-    $db->query("ALTER TABLE {access_intents} DROP `$field`");
+    Database::instance()->query("ALTER TABLE {{$cache_table}} DROP `$field`");
+    Database::instance()->query("ALTER TABLE {access_intents} DROP `$field`");
     model_cache::clear();
     ORM::factory("access_intent")->clear_cache();
   }
@@ -453,13 +452,18 @@ class access_Core {
    * @return void
    */
   private static function _add_columns($perm_name, $group) {
-    $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
     $cache_table = $perm_name == "view" ? "items" : "access_caches";
     $not_null = $cache_table == "items" ? "" : "NOT NULL";
-    $db->query("ALTER TABLE {{$cache_table}} ADD `$field` BINARY $not_null DEFAULT FALSE");
-    $db->query("ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
-    $db->update("access_intents", array($field => self::DENY), array("item_id" => 1));
+    Database::instance()->query(
+      "ALTER TABLE {{$cache_table}} ADD `$field` BINARY $not_null DEFAULT FALSE");
+    Database::instance()->query(
+      "ALTER TABLE {access_intents} ADD `$field` BINARY DEFAULT NULL");
+    db::build()
+      ->update("access_intents")
+      ->set($field, self::DENY)
+      ->where("item_id", "=", 1)
+      ->execute();
     model_cache::clear();
     ORM::factory("access_intent")->clear_cache();
   }
@@ -475,9 +479,7 @@ class access_Core {
    * @return void
    */
   private static function _update_access_view_cache($group, $item) {
-    $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
-
-    $db = Database::instance();
+    $access = ORM::factory("access_intent")->where("item_id", "=", $item->id)->find();
     $field = "view_{$group->id}";
 
     // With view permissions, deny values in the parent can override allow values in the child,
@@ -490,14 +492,14 @@ class access_Core {
     // item, then its safe to propagate from here.
     if ($access->$field !== self::DENY) {
       $tmp_item = ORM::factory("item")
-        ->where("left_ptr <", $item->left_ptr)
-        ->where("right_ptr >", $item->right_ptr)
+        ->where("left_ptr", "<", $item->left_ptr)
+        ->where("right_ptr", ">", $item->right_ptr)
         ->join("access_intents", "access_intents.item_id", "items.id")
-        ->where("access_intents.$field", self::DENY)
-        ->orderby("left_ptr", "DESC")
+        ->where("access_intents.$field", "=", self::DENY)
+        ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
-      if ($tmp_item->loaded) {
+      if ($tmp_item->loaded()) {
         $item = $tmp_item;
       }
     }
@@ -506,35 +508,53 @@ class access_Core {
     // access_caches table will already contain DENY values and we won't be able to overwrite
     // them according the rule above.  So mark every permission below this level as UNKNOWN so
     // that we can tell which permissions have been changed, and which ones need to be updated.
-    $db->update("items", array($field => self::UNKNOWN),
-                array("left_ptr >=" => $item->left_ptr, "right_ptr <=" => $item->right_ptr));
+    db::build()
+      ->update("items")
+      ->set($field, self::UNKNOWN)
+      ->where("left_ptr", ">=", $item->left_ptr)
+      ->where("right_ptr", "<=", $item->right_ptr)
+      ->execute();
 
     $query = ORM::factory("access_intent")
       ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr", "items.id"))
       ->join("items", "items.id", "access_intents.item_id")
-      ->where("left_ptr >=", $item->left_ptr)
-      ->where("right_ptr <=", $item->right_ptr)
-      ->where("type", "album")
-      ->where("access_intents.$field IS NOT", self::INHERIT)
-      ->orderby("level", "DESC")
+      ->where("left_ptr", ">=", $item->left_ptr)
+      ->where("right_ptr", "<=", $item->right_ptr)
+      ->where("type", "=", "album")
+      ->where("access_intents.$field", "IS NOT", self::INHERIT)
+      ->order_by("level", "DESC")
       ->find_all();
     foreach ($query as $row) {
       if ($row->$field == self::ALLOW) {
         // Propagate ALLOW for any row that is still UNKNOWN.
-        $db->update("items", array($field => $row->$field),
-          array($field => self::UNKNOWN, "left_ptr >=" => $row->left_ptr, "right_ptr <=" => $row->right_ptr));
+        db::build()
+          ->update("items")
+          ->set($field, $row->$field)
+          ->where($field, "IS", self::UNKNOWN) // UNKNOWN is NULL so we have to use IS
+          ->where("left_ptr", ">=", $row->left_ptr)
+          ->where("right_ptr", "<=", $row->right_ptr)
+          ->execute();
       } else if ($row->$field == self::DENY) {
         // DENY overwrites everything below it
-        $db->update("items", array($field => $row->$field),
-                    array("left_ptr >=" => $row->left_ptr, "right_ptr <=" => $row->right_ptr));
+        db::build()
+          ->update("items")
+          ->set($field, $row->$field)
+          ->where("left_ptr", ">=", $row->left_ptr)
+          ->where("right_ptr", "<=", $row->right_ptr)
+          ->execute();
       }
     }
 
     // Finally, if our intent is DEFAULT at this point it means that we were unable to find a
     // DENY parent in the hierarchy to propagate from.  So we'll still have a UNKNOWN values in
     // the hierarchy, and all of those are safe to change to ALLOW.
-    $db->update("items", array($field => self::ALLOW),
-                array($field => self::UNKNOWN, "left_ptr >=" => $item->left_ptr, "right_ptr <=" => $item->right_ptr));
+    db::build()
+      ->update("items")
+      ->set($field, self::ALLOW)
+      ->where($field, "IS", self::UNKNOWN) // UNKNOWN is NULL so we have to use IS
+      ->where("left_ptr", ">=", $item->left_ptr)
+      ->where("right_ptr", "<=", $item->right_ptr)
+      ->execute();
   }
 
   /**
@@ -549,9 +569,8 @@ class access_Core {
    * @return void
    */
   private static function _update_access_non_view_cache($group, $perm_name, $item) {
-    $access = ORM::factory("access_intent")->where("item_id", $item->id)->find();
+    $access = ORM::factory("access_intent")->where("item_id", "=", $item->id)->find();
 
-    $db = Database::instance();
     $field = "{$perm_name}_{$group->id}";
 
     // If the item's intent is DEFAULT, then we need to back up the chain to find the nearest
@@ -562,13 +581,13 @@ class access_Core {
     if ($access->$field === self::INHERIT) {
       $tmp_item = ORM::factory("item")
         ->join("access_intents", "items.id", "access_intents.item_id")
-        ->where("left_ptr <", $item->left_ptr)
-        ->where("right_ptr >", $item->right_ptr)
-        ->where("$field IS NOT", self::UNKNOWN)
-        ->orderby("left_ptr", "DESC")
+        ->where("left_ptr", "<", $item->left_ptr)
+        ->where("right_ptr", ">", $item->right_ptr)
+        ->where($field, "IS NOT", self::UNKNOWN) // UNKNOWN is NULL so we have to use IS NOT
+        ->order_by("left_ptr", "DESC")
         ->limit(1)
         ->find();
-      if ($tmp_item->loaded) {
+      if ($tmp_item->loaded()) {
         $item = $tmp_item;
       }
     }
@@ -578,19 +597,23 @@ class access_Core {
     $query = ORM::factory("access_intent")
       ->select(array("access_intents.$field", "items.left_ptr", "items.right_ptr"))
       ->join("items", "items.id", "access_intents.item_id")
-      ->where("left_ptr >=", $item->left_ptr)
-      ->where("right_ptr <=", $item->right_ptr)
-      ->where("$field IS NOT", self::INHERIT)
-      ->orderby("level", "ASC")
+      ->where("left_ptr", ">=", $item->left_ptr)
+      ->where("right_ptr", "<=", $item->right_ptr)
+      ->where($field, "IS NOT", self::INHERIT)
+      ->order_by("level", "ASC")
       ->find_all();
-    foreach  ($query as $row) {
-      $value = ($row->$field === self::ALLOW) ? "TRUE" : "FALSE";
-      $db->query(
-        "UPDATE {access_caches} SET `$field` = $value " .
-        "WHERE `item_id` IN " .
-        "  (SELECT `id` FROM {items} " .
-        "  WHERE `left_ptr` >= $row->left_ptr " .
-        "  AND `right_ptr` <= $row->right_ptr)");
+    foreach ($query as $row) {
+      $value = ($row->$field === self::ALLOW) ? true : false;
+      db::build()
+        ->update("access_caches")
+        ->set($field, $value)
+        ->where("item_id", "IN",
+                db::build()
+                ->select("id")
+                ->from("items")
+                ->where("left_ptr", ">=", $row->left_ptr)
+                ->where("right_ptr", "<=", $row->right_ptr))
+        ->execute();
     }
   }
 

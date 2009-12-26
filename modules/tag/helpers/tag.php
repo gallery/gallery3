@@ -33,8 +33,8 @@ class tag_Core {
       throw new exception("@todo MISSING_TAG_NAME");
     }
 
-    $tag = ORM::factory("tag")->where("name", $tag_name)->find();
-    if (!$tag->loaded) {
+    $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
+    if (!$tag->loaded()) {
       $tag->name = $tag_name;
       $tag->count = 0;
       $tag->save();
@@ -57,7 +57,7 @@ class tag_Core {
    */
   static function popular_tags($count) {
     return ORM::factory("tag")
-      ->orderby("count", "DESC")
+      ->order_by("count", "DESC")
       ->limit($count)
       ->find_all();
   }
@@ -89,12 +89,12 @@ class tag_Core {
    */
   static function item_tags($item) {
     $tags = array();
-    foreach (Database::instance()
+    foreach (db::build()
              ->select("name")
              ->from("tags")
              ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
-             ->where("items_tags.item_id", $item->id)
-             ->get() as $row) {
+             ->where("items_tags.item_id", "=", $item->id)
+             ->execute() as $row) {
       $tags[] = $row->name;
     }
     return $tags;
@@ -125,10 +125,16 @@ class tag_Core {
    * Delete all tags associated with an item
    */
   static function clear_all($item) {
-    $db = Database::instance();
-    $db->query("UPDATE {tags} SET `count` = `count` - 1 WHERE `count` > 0 " .
-               "AND `id` IN (SELECT `tag_id` from {items_tags} WHERE `item_id` = $item->id)");
-    $db->delete("items_tags", array("item_id" => "$item->id"));
+    db::build()
+      ->update("tags")
+      ->set("count", new Database_Expression("`count` - 1"))
+      ->where("count", ">", 0)
+      ->where("id", "IN", db::build()->select("tag_id")->from("items_tags")->where("item_id", "=", $item->id))
+      ->execute();
+    db::build()
+      ->delete("items_tags")
+      ->where("item_id", "=", $item->id)
+      ->execute();
   }
 
   /**
@@ -138,6 +144,6 @@ class tag_Core {
     // @todo There's a potential race condition here which we can solve by adding a lock around
     // this and all the cases where we create/update tags.  I'm loathe to do that since it's an
     // extremely rare case.
-    Database::instance() ->delete("tags", array("count" => 0));
+    db::build()->delete("tags")->where("count", "=", 0)->execute();
   }
 }

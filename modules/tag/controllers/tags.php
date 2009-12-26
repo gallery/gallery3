@@ -21,7 +21,7 @@ class Tags_Controller extends Controller {
   public function show($tag_id) {
     $tag = ORM::factory("tag", $tag_id);
     $page_size = module::get_var("gallery", "page_size", 9);
-    $page = (int) $this->input->get("page", "1");
+    $page = (int) Input::instance()->get("page", "1");
     $children_count = $tag->items_count();
     $offset = ($page-1) * $page_size;
     $max_pages = max(ceil($children_count / $page_size), 1);
@@ -79,12 +79,12 @@ class Tags_Controller extends Controller {
 
   public function autocomplete() {
     $tags = array();
-    $tag_parts = preg_split("#,#", $this->input->get("q"));
-    $limit = $this->input->get("limit");
+    $tag_parts = preg_split("#,#", Input::instance()->get("q"));
+    $limit = Input::instance()->get("limit");
     $tag_part = end($tag_parts);
     $tag_list = ORM::factory("tag")
-      ->like("name", "{$tag_part}%", false)
-      ->orderby("name", "ASC")
+      ->where("name", "LIKE", "{$tag_part}%")
+      ->order_by("name", "ASC")
       ->limit($limit)
       ->find_all();
     foreach ($tag_list as $tag) {

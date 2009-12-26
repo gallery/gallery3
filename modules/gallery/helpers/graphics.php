@@ -61,9 +61,9 @@ class graphics_Core {
    */
   static function remove_rule($module_name, $target, $operation) {
     ORM::factory("graphics_rule")
-      ->where("module_name", $module_name)
-      ->where("target", $target)
-      ->where("operation", $operation)
+      ->where("module_name", "=", $module_name)
+      ->where("target", "=", $target)
+      ->where("operation", "=", $operation)
       ->delete_all();
 
     self::mark_dirty($target == "thumb", $target == "resize");
@@ -74,7 +74,10 @@ class graphics_Core {
    * @param string $module_name
    */
   static function remove_rules($module_name) {
-    $status = Database::instance()->delete("graphics_rules", array("module_name" => $module_name));
+    $status = db::build()
+      ->delete("graphics_rules")
+      ->where("module_name", "=", $module_name)
+      ->execute();
     if (count($status)) {
       self::mark_dirty(true, true);
     }
@@ -86,8 +89,11 @@ class graphics_Core {
    * module it won't cause all of your images to suddenly require a rebuild.
    */
   static function activate_rules($module_name) {
-    Database::instance()
-      ->update("graphics_rules",array("active" => true), array("module_name" => $module_name));
+    db::build()
+      ->update("graphics_rules")
+      ->set("active", true)
+      ->where("module_name", "=", $module_name)
+      ->execute();
   }
 
   /**
@@ -96,8 +102,11 @@ class graphics_Core {
    * module it won't cause all of your images to suddenly require a rebuild.
    */
   static function deactivate_rules($module_name) {
-    Database::instance()
-      ->update("graphics_rules",array("active" => false), array("module_name" => $module_name));
+    db::build()
+      ->update("graphics_rules")
+      ->set("active", false)
+      ->where("module_name", "=", $module_name)
+      ->execute();
   }
 
   /**
@@ -171,7 +180,7 @@ class graphics_Core {
     } catch (Exception $e) {
       // Something went wrong rebuilding the image.  Leave it dirty and move on.
       // @todo we should handle this better.
-      Kohana::log("error", "Caught exception rebuilding image: {$item->title}\n" .
+      Kohana_Log::add("error", "Caught exception rebuilding image: {$item->title}\n" .
                   $e->getMessage() . "\n" . $e->getTraceAsString());
       throw $e;
     }
@@ -181,9 +190,9 @@ class graphics_Core {
     if (empty(self::$_rules_cache[$target])) {
       $rules = array();
       foreach (ORM::factory("graphics_rule")
-               ->where("target", $target)
-               ->where("active", true)
-               ->orderby("priority", "asc")
+               ->where("target", "=", $target)
+               ->where("active", "=", true)
+               ->order_by("priority", "asc")
                ->find_all() as $rule) {
         $rules[] = (object)$rule->as_array();
       }
@@ -197,11 +206,22 @@ class graphics_Core {
    * @return Database_Result Query result
    */
   static function find_dirty_images_query() {
-    return Database::instance()->query(
-      "SELECT `id` FROM {items} " .
-      "WHERE ((`thumb_dirty` = 1 AND (`type` <> 'album' OR `album_cover_item_id` IS NOT NULL))" .
-      "   OR (`resize_dirty` = 1 AND `type` = 'photo')) " .
-      "   AND `id` != 1");
+    return db::build()
+      ->from("items")
+      ->and_open()
+      ->and_open()
+      ->where("thumb_dirty", "=", 1)
+      ->and_open()
+      ->where("type", "<>", "album")
+      ->or_where("album_cover_item_id", "IS NOT", null)
+      ->close()
+      ->or_open()
+      ->where("resize_dirty", "=", 1)
+      ->where("type", "=", "photo")
+      ->close()
+      ->close()
+      ->where("id", "<>", 1)
+      ->close();
   }
 
   /**
@@ -209,18 +229,18 @@ class graphics_Core {
    */
   static function mark_dirty($thumbs, $resizes) {
     if ($thumbs || $resizes) {
-      $db = Database::instance();
-      $fields = array();
+      $db = db::build()
+        ->update("items");
       if ($thumbs) {
-        $fields["thumb_dirty"] = 1;
+        $db->set("thumb_dirty", 1);
       }
       if ($resizes) {
-        $fields["resize_dirty"] = 1;
+        $db->set("resize_dirty", 1);
       }
-      $db->update("items", $fields, true);
+      $db->execute();
     }
 
-    $count = self::find_dirty_images_query()->count();
+    $count = self::find_dirty_images_query()->count_records();
     if ($count) {
       site_status::warning(
           t2("One of your photos is out of date. <a %attrs>Click here to fix it</a>",
@@ -371,18 +391,18 @@ class graphics_Core {
     }
     switch(module::get_var("gallery", "graphics_toolkit")) {
     case "gd":
-      Kohana::config_set("image.driver", "GD");
+      Kohana_Config::instance()->set("image.driver", "GD");
       break;
 
     case "imagemagick":
-      Kohana::config_set("image.driver", "ImageMagick");
-      Kohana::config_set(
+      Kohana_Config::instance()->set("image.driver", "ImageMagick");
+      Kohana_Config::instance()->set(
         "image.params.directory", module::get_var("gallery", "graphics_toolkit_path"));
       break;
 
     case "graphicsmagick":
-      Kohana::config_set("image.driver", "GraphicsMagick");
-      Kohana::config_set(
+      Kohana_Config::instance()->set("image.driver", "GraphicsMagick");
+      Kohana_Config::instance()->set(
         "image.params.directory", module::get_var("gallery", "graphics_toolkit_path"));
       break;
     }

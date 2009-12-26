@@ -20,21 +20,9 @@
 /*
  * Based on the Cache_Sqlite_Driver developed by the Kohana Team
  */
-class Cache_Database_Driver implements Cache_Driver {
+class Cache_Database_Driver extends Cache_Driver {
   // Kohana database instance
   protected $db;
-
-  /**
-   * Tests that the storage location is a directory and is writable.
-   */
-  public function __construct() {
-    // Open up an instance of the database
-    $this->db = Database::instance();
-
-    if (!$this->db->table_exists("caches")) {
-      throw new Exception("@todo Cache table is not defined");
-    }
-  }
 
   /**
    * Checks if a cache id is already set.
@@ -43,20 +31,22 @@ class Cache_Database_Driver implements Cache_Driver {
    * @return boolean
    */
   public function exists($id) {
-    $count = $this->db->count_records("caches", array("key" => $id, "expiration >=" => time()));
+    $count = db::build()
+      ->where("key", "=", $id)
+      ->where("expiration", ">=", time())
+      ->count_records("caches");
     return $count > 0;
   }
 
   /**
    * Sets a cache item to the given data, tags, and lifetime.
    *
-   * @param   string   cache id to set
-   * @param   string   data in the cache
+   * @param   array    assoc array of key => value pairs
    * @param   array    cache tags
    * @param   integer  lifetime
    * @return  bool
    */
-  public function set($id, $data, array $tags = NULL, $lifetime) {
+  public function set($items, $tags=null, $lifetime=null) {
     if (!empty($tags)) {
       // Escape the tags, adding brackets so the tag can be explicitly matched
       $tags = "<" . implode(">,<", $tags) . ">";
@@ -69,46 +59,53 @@ class Cache_Database_Driver implements Cache_Driver {
       $lifetime += time();
     }
 
-    if ($this->exists($id)) {
-      $status = $this->db->update(
-        "caches",
-        array("tags" => $tags, "expiration" => $lifetime, "cache" => serialize($data)), array("key" => $id));
-    } else {
-      $status = $this->db->insert(
-        "caches",
-        array("key" => $id, "tags" => $tags, "expiration" => $lifetime, "cache" => serialize($data)));
+    foreach ($items as $id => $data) {
+      if ($this->exists($id)) {
+        $status = db::build()
+          ->update("caches")
+          ->set("tags", $tags)
+          ->set("expiration", $lifetime)
+          ->set("cache", serialize($data))
+          ->where("key", "=", $id)
+          ->execute();
+      } else {
+        $status = db::build()
+          ->insert("caches")
+          ->columns("key", "tags", "expiration", "cache")
+          ->values($id, $tags, $lifetime, serialize($data))
+          ->execute();
+      }
     }
 
-    return count($status) > 0;
+    return true;
   }
 
   /**
-   * Finds an array of ids for a given tag.
-   *
-   * @param  string  tag name
-   * @return array   of ids that match the tag
+   * Get cache items by tag
+   * @param   array    cache tags
+   * @return  array    cached data
    */
-  public function find($tag) {
-    $db_result = $this->db->from("caches")
-      ->like("tags", "<$tag>")
-      ->get()
-      ->result(true);
+  public function get_tag($tags) {
+    $db = db::build()
+      ->select()
+      ->from("caches");
+    foreach ($tags as $tag) {
+      $db->where("tags", "LIKE", "%<$tag>%");
+    }
+    $db_result = $db->execute();
 
     // An array will always be returned
     $result = array();
 
+    // Disable notices for unserializing
+    $ER = error_reporting(~E_NOTICE);
     if ($db_result->count() > 0) {
-      // Disable notices for unserializing
-      $ER = error_reporting(~E_NOTICE);
-
       foreach ($db_result as $row) {
         // Add each cache to the array
         $result[$row->key] = unserialize($row->cache);
       }
-
-      // Turn notices back on
-      error_reporting($ER);
     }
+    error_reporting($ER);
 
     return $result;
   }
@@ -120,9 +117,13 @@ class Cache_Database_Driver implements Cache_Driver {
    * @param  string  cache id
    * @return mixed|NULL
    */
-  public function get($id) {
+  public function get($keys, $single=false) {
     $data = null;
-    $result = $this->db->getwhere("caches", array("key" => $id));
+    $result = db::build()
+      ->select()
+      ->from("caches")
+      ->where("key", "IN", $keys)
+      ->execute();
 
     if (count($result) > 0) {
       $cache = $result->current();
@@ -152,20 +153,27 @@ class Cache_Database_Driver implements Cache_Driver {
    * @param  bool    delete a tag
    * @return bool
    */
-  public function delete($id, $tag = false) {
-    $this->db->from("caches");
+  public function delete($id, $tag=false) {
+    $db = db::build()
+      ->delete("caches");
     if ($id === true) {
-      $this->db->where(1);
       // Delete all caches
     } else if ($tag === true) {
-      $this->db->like("tags", "<$id>");
+      $db->where("tags", "LIKE", "%<$id>%");
     } else {
-      $this->db->where("key", $id);
+      $db->where("key", "=", $id);
     }
 
-    $status = $this->db->delete();
+    $status = $db->execute();
 
     return count($status) > 0;
+  }
+
+  /**
+   * Delete cache items by tag
+   */
+  public function delete_tag($tags) {
+    return $this->delete($tags, true);
   }
 
   /**
@@ -173,11 +181,19 @@ class Cache_Database_Driver implements Cache_Driver {
    */
   public function delete_expired() {
     // Delete all expired caches
-    $status = $this->db->from("caches")
-      ->where(array("expiration !=" => 0, "expiration <=" => time()))
-      ->delete();
+    $status = db::build()
+      ->delete("caches")
+      ->where("expiration", "<>", 0)
+      ->where("expiration", "<=", time())
+      ->execute();
 
     return count($status) > 0;
   }
 
-} // End Cache Database Driver
+  /**
+   * Empty the cache
+   */
+  public function delete_all() {
+    Database::instance()->query("TRUNCATE {caches}");
+  }
+}

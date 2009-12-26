@@ -57,7 +57,7 @@ class Permissions_Controller extends Controller {
     access::required("view", $item);
     access::required("edit", $item);
 
-    if (!empty($group) && $perm->loaded && $item->loaded) {
+    if (!empty($group) && $perm->loaded() && $item->loaded()) {
       switch($command) {
       case "allow":
         access::allow($group, $perm->name, $item);

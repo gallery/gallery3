@@ -57,10 +57,12 @@ class File_Structure_Test extends Unit_Test_Case {
   }
 
   private function _check_view_preamble($path, &$errors) {
+    $expected_2 = null;
     // The preamble for views is a single line that prevents direct script access
     if (strpos($path, SYSPATH) === 0) {
       // Kohana preamble
       $expected = "<?php defined('SYSPATH') OR die('No direct access allowed.'); ?>\n";
+      $expected_2 = "<?php defined('SYSPATH') OR die('No direct access allowed.');\n";  // error.php
     } else {
       // Gallery preamble
       // @todo use the same preamble for both!
@@ -71,26 +73,32 @@ class File_Structure_Test extends Unit_Test_Case {
     $actual = fgets($fp);
     fclose($fp);
 
-    if ($expected != $actual) {
+    if ($expected != $actual && $expected_2 != $actual) {
       $errors[] = "$path:1\n  expected:\n\t$expected\n  actual:\n\t$actual";
     }
   }
 
   private function _check_php_preamble($path, &$errors) {
+    $expected_2 = null; $expected_3 = null; $expected_4 = null;
     if (strpos($path, SYSPATH) === 0 ||
         strpos($path, MODPATH . "unit_test") === 0) {
       // Kohana: we only care about the first line
       $fp = fopen($path, "r");
       $actual = array(fgets($fp));
       fclose($fp);
-      $expected = array("<?php defined('SYSPATH') OR die('No direct access allowed.');\n");
+      $expected = array("<?php defined('SYSPATH') OR die('No direct script access.');\n");
+      $expected_2 = array("<?php defined('SYSPATH') OR die('No direct access allowed.');\n");
+      $expected_3 = array("<?php defined('SYSPATH') or die('No direct access allowed.');\n");
+      $expected_4 = array("<?php defined('SYSPATH') or die('No direct script access.');\n");
     } else if (strpos($path, MODPATH . "forge") === 0 ||
                strpos($path, MODPATH . "exif/lib") === 0 ||
                strpos($path, MODPATH . "gallery/lib/HTMLPurifier") === 0 ||
                $path == MODPATH . "user/lib/PasswordHash.php" ||
                $path == DOCROOT . "var/database.php") {
       // 3rd party module security-only preambles, similar to Gallery's
-      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
+      $expected = array("<?php defined(\"SYSPATH\") or die(\"No direct access allowed.\");\n");
+      $expected_2 = array("<?php defined('SYSPATH') OR die('No direct access allowed.');\n");
+      $expected_3 = array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\");\n");
       $fp = fopen($path, "r");
       $actual = array(fgets($fp));
       fclose($fp);
@@ -131,7 +139,7 @@ class File_Structure_Test extends Unit_Test_Case {
         " */",
       );
     }
-    if ($expected != $actual) {
+    if ($expected != $actual && $expected_2 != $actual && $expected_3 != $actual && $expected_4 != $actual) {
       $errors[] = "$path:1\n  expected\n\t" . join("\n\t", $expected) .
         "\n  actual:\n\t" . join("\n\t", $actual);
     }

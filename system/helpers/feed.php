@@ -2,12 +2,12 @@
 /**
  * Feed helper class.
  *
- * $Id: feed.php 4152 2009-04-03 23:26:23Z ixmatus $
+ * $Id: feed.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class feed_Core {
 

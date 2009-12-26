@@ -277,7 +277,8 @@ class Forge_Core {
 			{
 				foreach ($this->hidden as $input)
 				{
-					$hidden[$input->name] = $input->value;
+					$hidden['name'] = $input->name;
+					$hidden['value'] = $input->value;
 				}
 			}
 
@@ -299,7 +300,7 @@ class Forge_Core {
 
 			// Set the form open and close
 			$form->open  = form::$form_type(arr::remove('action', $this->attr), $this->attr, $hidden);
-			$form->close = form::close();
+			$form->close = "</form>";
 
 			// Set the inputs
 			$form->inputs = $this->inputs;

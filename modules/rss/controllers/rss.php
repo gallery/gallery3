@@ -21,13 +21,13 @@ class Rss_Controller extends Controller {
   public static $page_size = 20;
 
   public function feed($module_id, $feed_id, $id=null) {
-    $page = (int) $this->input->get("page", 1);
+    $page = (int) Input::instance()->get("page", 1);
     if ($page < 1) {
       url::redirect(url::merge(array("page" => 1)));
     }
 
     // Configurable page size between 1 and 100, default 20
-    $page_size = max(1, min(100, (int) $this->input->get("page_size", self::$page_size)));
+    $page_size = max(1, min(100, (int) Input::instance()->get("page_size", self::$page_size)));
 
     // Run the appropriate feed callback
     if (module::is_active($module_id)) {
@@ -39,7 +39,7 @@ class Rss_Controller extends Controller {
       }
     }
     if (empty($feed)) {
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
     if ($feed->max_pages && $page > $feed->max_pages) {

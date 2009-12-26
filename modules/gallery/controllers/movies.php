@@ -26,7 +26,7 @@ class Movies_Controller extends Items_Controller {
     }
     access::required("view", $movie);
 
-    $where = array("type != " => "album");
+    $where = array(array("type", "!=", "album"));
     $position = $movie->parent()->get_position($movie, $where);
     if ($position > 1) {
       list ($previous_item, $ignore, $next_item) =

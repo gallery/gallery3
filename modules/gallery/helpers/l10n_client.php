@@ -80,11 +80,10 @@ class l10n_client_Core {
     }
 
     // @todo Batch requests (max request size)
-    foreach (Database::instance()
+    foreach (db::build()
              ->select("key", "locale", "revision", "translation")
              ->from("incoming_translations")
-             ->get()
-             ->as_array() as $row) {
+             ->execute() as $row) {
       if (!isset($request->messages->{$row->key})) {
         $request->messages->{$row->key} = 1;
       }
@@ -134,12 +133,14 @@ class l10n_client_Core {
       // incoming_translations.message to be NULL?
       $locale = $message_data->locale;
       $entry = ORM::factory("incoming_translation")
-        ->where(array("key" => $key, "locale" => $locale))
+        ->where("key", "=", $key)
+        ->where("locale", "=", $locale)
         ->find();
-      if (!$entry->loaded) {
+      if (!$entry->loaded()) {
         // @todo Load a message key -> message (text) dict into memory outside of this loop
         $root_entry = ORM::factory("incoming_translation")
-          ->where(array("key" => $key, "locale" => "root"))
+          ->where("key", "=", $key)
+          ->where("locale", "=", "root")
           ->find();
         $entry->key = $key;
         $entry->message = $root_entry->message;
@@ -166,10 +167,10 @@ class l10n_client_Core {
 
     // @todo Batch requests (max request size)
     // @todo include base_revision in submission / how to handle resubmissions / edit fights?
-    foreach (Database::instance()
+    foreach (db::build()
              ->select("key", "message", "locale", "base_revision", "translation")
              ->from("outgoing_translations")
-             ->get() as $row) {
+             ->execute() as $row) {
       $key = $row->key;
       if (!isset($request->{$key})) {
         $request->{$key}->message = json_encode(unserialize($row->message));

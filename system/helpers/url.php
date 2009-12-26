@@ -2,12 +2,12 @@
 /**
  * URL helper class.
  *
- * $Id: url.php 4479 2009-07-23 04:51:22Z ixmatus $
+ * $Id: url.php 4685 2009-11-30 21:24:06Z isaiah $
  *
  * @package    Core
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class url_Core {
 
@@ -15,7 +15,7 @@ class url_Core {
 	 * Fetches the current URI.
 	 *
 	 * @param   boolean  include the query string
-	 * @param   boolean  include the suffix  
+	 * @param   boolean  include the suffix
 	 * @return  string
 	 */
 	public static function current($qs = FALSE, $suffix = FALSE)
@@ -160,17 +160,26 @@ class url_Core {
 	 *
 	 * @param   string  phrase to convert
 	 * @param   string  word separator (- or _)
+	 * @param   boolean  transliterate to ASCII
 	 * @return  string
 	 */
-	public static function title($title, $separator = '-')
+	public static function title($title, $separator = '-', $ascii_only = FALSE)
 	{
 		$separator = ($separator === '-') ? '-' : '_';
 
-		// Replace accented characters by their unaccented equivalents
-		$title = utf8::transliterate_to_ascii($title);
+		if ($ascii_only === TRUE)
+		{
+			// Replace accented characters by their unaccented equivalents
+			$title = text::transliterate_to_ascii($title);
 
-		// Remove all characters that are not the separator, a-z, 0-9, or whitespace
-		$title = preg_replace('/[^'.$separator.'a-z0-9\s]+/', '', strtolower($title));
+			// Remove all characters that are not the separator, a-z, 0-9, or whitespace
+			$title = preg_replace('/[^'.$separator.'a-z0-9\s]+/', '', strtolower($title));
+		}
+		else
+		{
+			// Remove all characters that are not the separator, letters, numbers, or whitespace
+			$title = preg_replace('/[^'.$separator.'\pL\pN\s]+/u', '', mb_strtolower($title));
+		}
 
 		// Replace all separator characters and whitespace by a single separator
 		$title = preg_replace('/['.$separator.'\s]+/', $separator, $title);

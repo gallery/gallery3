@@ -22,11 +22,13 @@ class Admin_Maintenance_Controller extends Admin_Controller {
    * Show a list of all available, running and finished tasks.
    */
   public function index() {
-    $query = Database::instance()->query(
-      "UPDATE {tasks} SET `state` = 'stalled' " .
-      "WHERE done = 0 " .
-      "AND   state <> 'stalled' " .
-      "AND   unix_timestamp(now()) - updated > 15");
+    $query = db::build()
+      ->update("tasks")
+      ->set("state", "stalled")
+      ->where("done", "=", 0)
+      ->where("state", "<>", "stalled")
+      ->where(new Database_Expression("UNIX_TIMESTAMP(NOW()) - `updated` > 15"))
+      ->execute();
     $stalled_count = $query->count();
     if ($stalled_count) {
       log::warning("tasks",
@@ -41,9 +43,9 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->content = new View("admin_maintenance.html");
     $view->content->task_definitions = task::get_definitions();
     $view->content->running_tasks = ORM::factory("task")
-      ->where("done", 0)->orderby("updated", "DESC")->find_all();
+      ->where("done", "=", 0)->order_by("updated", "DESC")->find_all();
     $view->content->finished_tasks = ORM::factory("task")
-      ->where("done", 1)->orderby("updated", "DESC")->find_all();
+      ->where("done", "=", 1)->order_by("updated", "DESC")->find_all();
     print $view;
   }
 
@@ -75,7 +77,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
+    if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
     $view = new View("admin_maintenance_task.html");
@@ -97,7 +99,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
+    if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
     $view = new View("admin_maintenance_show_log.html");
@@ -114,7 +116,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $task = ORM::factory("task", $task_id);
-    if (!$task->loaded) {
+    if (!$task->loaded()) {
       throw new Exception("@todo MISSING_TASK");
     }
 
@@ -138,10 +140,12 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
   public function cancel_running_tasks() {
     access::verify_csrf();
-    Database::instance()->update(
-      "tasks",
-      array("done" => 1, "state" => "cancelled"),
-      array("done" => 0));
+    db::build()
+      ->update("tasks")
+      ->set("done", 1)
+      ->set("state", "cancelled")
+      ->where("done", "=", 0)
+      ->execute();
     message::success(t("All running tasks cancelled"));
     url::redirect("admin/maintenance");
   }
@@ -164,7 +168,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
 
     // Do it the long way so we can call delete and remove the cache.
     $finished = ORM::factory("task")
-      ->where(array("done" => 1))
+      ->where("done", "=", 1)
       ->find_all();
     foreach ($finished as $task) {
       task::remove($task->id);
@@ -184,7 +188,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     try {
       $task = task::run($task_id);
     } catch (Exception $e) {
-      Kohana::log(
+      Kohana_Log::add(
         "error",
         sprintf(
           "%s in %s at line %s:\n%s", $e->getMessage(), $e->getFile(),

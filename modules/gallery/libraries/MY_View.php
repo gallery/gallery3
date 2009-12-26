@@ -18,6 +18,35 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class View extends View_Core {
+  static $global_data = array();
+
+  /**
+   * Reimplement Kohana 2.3's View::set_global() functionality.
+   */
+  public function set_global($key, $value) {
+    View::$global_data[$key] = $value;
+  }
+
+  public function is_set($key) {
+    return parent::is_set($key) ? true : array_key_exists($key, View::$global_data);
+  }
+
+  /**
+   * Completely replace View_Core::__get() so that local data trumps global data, trumps members.
+   * This simulates the Kohana 2.3 behavior.
+   */
+  public function &__get($key) {
+    if (isset($this->kohana_local_data[$key])) {
+      return $this->kohana_local_data[$key];
+    } else if (isset(View::$global_data[$key])) {
+      return View::$global_data[$key];
+    } else if (isset($this->$key)) {
+      return $this->$key;
+    } else {
+      throw new Kohana_Exception('Undefined view variable: :var', array(':var' => $key));
+    }
+  }
+
   /**
    * Override View_Core::__construct so that we can set the csrf value into all views.
    *
@@ -34,11 +63,12 @@ class View extends View_Core {
    *
    * @see View_Core::render
    */
-  public function render($print=false, $renderer=false) {
+  public function render($print=false, $renderer=false, $modifier=false) {
     try {
-      return parent::render($print, $renderer);
+      $this->kohana_local_data = array_merge(View::$global_data, $this->kohana_local_data);
+      return parent::render($print, $renderer, $modifier);
     } catch (Exception $e) {
-      Kohana::Log("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       return "";
     }
   }

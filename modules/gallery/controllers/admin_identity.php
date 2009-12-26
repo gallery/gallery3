@@ -30,7 +30,7 @@ class Admin_Identity_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $v = new View("admin_identity_confirm.html");
-    $v->new_provider = $this->input->post("provider");
+    $v->new_provider = Input::instance()->post("provider");
 
     print $v;
   }
@@ -40,7 +40,7 @@ class Admin_Identity_Controller extends Admin_Controller {
 
     $active_provider = module::get_var("gallery", "identity_provider", "user");
     $providers = identity::providers();
-    $new_provider = $this->input->post("provider");
+    $new_provider = Input::instance()->post("provider");
 
     if ($new_provider != $active_provider) {
 

@@ -2,12 +2,12 @@
 /**
  * Provides a table layout for sections in the Profiler library.
  *
- * $Id$
+ * $Id: Profiler_Table.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Profiler
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Profiler_Table_Core {
 
@@ -26,7 +26,7 @@ class Profiler_Table_Core {
 		if ( ! $styles_output)
 		{
 			$styles_output = TRUE;
-			return file_get_contents(Kohana::find_file('views', 'kohana_profiler_table', FALSE, 'css'));
+			return file_get_contents(Kohana::find_file('views', 'profiler/table', FALSE, 'css'));
 		}
 
 		return '';
@@ -64,6 +64,6 @@ class Profiler_Table_Core {
 	{
 		$data['rows'] = $this->rows;
 		$data['columns'] = $this->columns;
-		return View::factory('kohana_profiler_table', $data)->render();
+		return View::factory('profiler/table', $data)->render();
 	}
 }

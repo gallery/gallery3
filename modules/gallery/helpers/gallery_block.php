@@ -34,7 +34,7 @@ class gallery_block_Core {
 
   static function get($block_id) {
     $block = new Block();
-    switch($block_id) {
+    switch ($block_id) {
     case "welcome":
       $block->css_id = "g-welcome";
       $block->title = t("Welcome to Gallery 3");
@@ -45,8 +45,8 @@ class gallery_block_Core {
       $block->css_id = "g-photo-stream";
       $block->title = t("Photo stream");
       $block->content = new View("admin_block_photo_stream.html");
-      $block->content->photos =
-        ORM::factory("item")->where("type", "photo")->orderby("created", "DESC")->find_all(10);
+      $block->content->photos = ORM::factory("item")
+        ->where("type", "=", "photo")->order_by("created", "DESC")->find_all(10);
       break;
 
     case "log_entries":
@@ -54,7 +54,7 @@ class gallery_block_Core {
       $block->title = t("Log entries");
       $block->content = new View("admin_block_log_entries.html");
       $block->content->entries = ORM::factory("log")
-        ->orderby(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
+        ->order_by(array("timestamp" => "DESC", "id" => "DESC"))->find_all(5);
       break;
 
     case "stats":
@@ -62,8 +62,8 @@ class gallery_block_Core {
       $block->title = t("Gallery stats");
       $block->content = new View("admin_block_stats.html");
       $block->content->album_count =
-        ORM::factory("item")->where("type", "album")->where("id <>", 1)->count_all();
-      $block->content->photo_count = ORM::factory("item")->where("type", "photo")->count_all();
+        ORM::factory("item")->where("type", "=", "album")->where("id", "<>", 1)->count_all();
+      $block->content->photo_count = ORM::factory("item")->where("type", "=", "photo")->count_all();
       break;
 
     case "platform_info":
@@ -101,8 +101,7 @@ class gallery_block_Core {
         $block->css_id = "g-user-language-block";
         $block->title = t("Language preference");
         $block->content = new View("user_languages_block.html");
-        $block->content->installed_locales =
-          array_merge(array("" => t("« none »")), $locales);
+        $block->content->installed_locales = array_merge(array("" => t("« none »")), $locales);
         $block->content->selected = (string) locales::cookie_locale();
       } else {
         $block = "";

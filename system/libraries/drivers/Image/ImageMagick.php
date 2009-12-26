@@ -2,12 +2,12 @@
 /**
  * ImageMagick Image Driver.
  *
- * $Id: ImageMagick.php 3769 2008-12-15 00:48:56Z zombor $
+ * $Id: ImageMagick.php 4679 2009-11-10 01:45:52Z isaiah $
  *
  * @package    Image
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
 class Image_ImageMagick_Driver extends Image_Driver {
 
@@ -33,7 +33,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 		{
 			// Attempt to locate IM by using "which" (only works for *nix!)
 			if ( ! is_file($path = exec('which convert')))
-				throw new Kohana_Exception('image.imagemagick.not_found');
+				throw new Kohana_Exception('The ImageMagick directory specified does not contain a required program.');
 
 			$config['directory'] = dirname($path);
 		}
@@ -43,7 +43,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 
 		// Check to make sure the provided path is correct
 		if ( ! is_file(realpath($config['directory']).'/convert'.$this->ext))
-			throw new Kohana_Exception('image.imagemagick.not_found', 'convert'.$this->ext);
+			throw new Kohana_Exception('The ImageMagick directory specified does not contain a required program, :im:', array(':im:' => 'convert'.$this->ext));
 
 		// Set the installation directory
 		$this->dir = str_replace('\\', '/', realpath($config['directory'])).'/';
@@ -53,7 +53,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 	 * Creates a temporary image and executes the given actions. By creating a
 	 * temporary copy of the image before manipulating it, this process is atomic.
 	 */
-	public function process($image, $actions, $dir, $file, $render = FALSE)
+	public function process($image, $actions, $dir, $file, $render = FALSE, $background = NULL)
 	{
 		// We only need the filename
 		$image = $image['file'];
@@ -70,23 +70,34 @@ class Image_ImageMagick_Driver extends Image_Driver {
 		// Use 95 for the default quality
 		empty($quality) and $quality = 95;
 
+		if (is_string($background))
+		{
+			// Set the background color
+			$this->background = escapeshellarg($background);
+		}
+		else
+		{
+			// Use a transparent background
+			$this->background = 'transparent';
+		}
+
 		// All calls to these will need to be escaped, so do it now
 		$this->cmd_image = escapeshellarg($this->tmp_image);
-		$this->new_image = ($render)? $this->cmd_image : escapeshellarg($dir.$file);
+		$this->new_image = $render ? $this->cmd_image : escapeshellarg($dir.$file);
 
 		if ($status = $this->execute($actions))
 		{
 			// Use convert to change the image into its final version. This is
 			// done to allow the file type to change correctly, and to handle
 			// the quality conversion in the most effective way possible.
-			if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -quality '.$quality.'% '.$this->cmd_image.' '.$this->new_image))
+			if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -background '.$this->background.' -flatten -quality '.$quality.'% '.$this->cmd_image.' '.$this->new_image))
 			{
 				$this->errors[] = $error;
 			}
 			else
 			{
 				// Output the image directly to the browser
-				if ($render !== FALSE)
+				if ($render === TRUE)
 				{
 					$contents = file_get_contents($this->tmp_image);
 					switch (substr($file, strrpos($file, '.') + 1))
@@ -122,7 +133,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 		// Set the IM geometry based on the properties
 		$geometry = escapeshellarg($prop['width'].'x'.$prop['height'].'+'.$prop['left'].'+'.$prop['top']);
 
-		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -crop '.$geometry.' '.$this->cmd_image.' '.$this->cmd_image))
+		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -background '.$this->background.' -flatten -crop '.$geometry.' '.$this->cmd_image.' '.$this->cmd_image))
 		{
 			$this->errors[] = $error;
 			return FALSE;
@@ -136,7 +147,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 		// Convert the direction into a IM command
 		$dir = ($dir === Image::HORIZONTAL) ? '-flop' : '-flip';
 
-		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' '.$dir.' '.$this->cmd_image.' '.$this->cmd_image))
+		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -background '.$this->background.' -flatten '.$dir.' '.$this->cmd_image.' '.$this->cmd_image))
 		{
 			$this->errors[] = $error;
 			return FALSE;
@@ -164,7 +175,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 		}
 
 		// Use "convert" to change the width and height
-		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -resize '.$dim.' '.$this->cmd_image.' '.$this->cmd_image))
+		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -background '.$this->background.' -flatten -resize '.$dim.' '.$this->cmd_image.' '.$this->cmd_image))
 		{
 			$this->errors[] = $error;
 			return FALSE;
@@ -175,7 +186,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 
 	public function rotate($amt)
 	{
-		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -rotate '.escapeshellarg($amt).' -background transparent '.$this->cmd_image.' '.$this->cmd_image))
+		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -background '.$this->background.' -flatten -rotate '.escapeshellarg($amt).' -background transparent '.$this->cmd_image.' '.$this->cmd_image))
 		{
 			$this->errors[] = $error;
 			return FALSE;
@@ -195,7 +206,7 @@ class Image_ImageMagick_Driver extends Image_Driver {
 		// Convert the amount to an IM command
 		$sharpen = escapeshellarg($radius.'x'.$sigma.'+'.$amount.'+0');
 
-		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -unsharp '.$sharpen.' '.$this->cmd_image.' '.$this->cmd_image))
+		if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -background '.$this->background.' -flatten -unsharp '.$sharpen.' '.$this->cmd_image.' '.$this->cmd_image))
 		{
 			$this->errors[] = $error;
 			return FALSE;

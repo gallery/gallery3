@@ -5,7 +5,7 @@
 <head>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title><?php echo html::specialchars($title) ?></title>
+	<title><?php echo html::chars(__($title)) ?></title>
 
 	<style type="text/css">
 	html { background: #83c018 url(<?php echo url::base(FALSE) ?>kohana.png) 50% 0 no-repeat; }
@@ -24,11 +24,11 @@
 </head>
 <body>
 
-	<h1><?php echo html::specialchars($title) ?></h1>
+	<h1><?php echo html::chars(__($title)) ?></h1>
 	<?php echo $content ?>
 
 	<p class="copyright">
-		Rendered in {execution_time} seconds, using {memory_usage} of memory<br />
+		<?php echo __('Rendered in {execution_time} seconds, using {memory_usage} of memory')?><br />
 		Copyright ©2007–2008 Kohana Team
 	</p>
 
