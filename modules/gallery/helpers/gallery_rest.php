@@ -22,11 +22,11 @@ class gallery_rest_Core {
     $path = implode("/", $request->arguments);
 
     $item = ORM::factory("item")
-      ->where("relative_url_cache", $path)
+      ->where("relative_url_cache", "=", $path)
       ->viewable()
       ->find();
 
-    if (!$item->loaded) {
+    if (!$item->loaded()) {
       return rest::not_found("Resource: {$path} missing.");
     }
 
@@ -62,11 +62,11 @@ class gallery_rest_Core {
     $path = implode("/", $request->arguments);
 
     $item = ORM::factory("item")
-      ->where("relative_url_cache", $path)
+      ->where("relative_url_cache", "=", $path)
       ->viewable()
       ->find();
 
-    if (!$item->loaded) {
+    if (!$item->loaded()) {
       return rest::not_found("Resource: {$path} missing.");
     }
 
@@ -75,12 +75,13 @@ class gallery_rest_Core {
     }
 
     // Validate the request data
-    $new_values = gallery_rest::_validate($request, $item);
+    $new_values = gallery_rest::_validate($request, $item->parent_id, $item->id);
     $errors = $new_values->errors();
     if (empty($errors)) {
       item::update($item, $new_values->as_array());
 
-      log::success("content", "Updated $item->type", "<a href=\"{$item->type}s/$item->id\">view</a>");
+      log::success("content", "Updated $item->type",
+                   "<a href=\"{$item->type}s/$item->id\">view</a>");
 
       return rest::success();
     } else {
@@ -94,15 +95,15 @@ class gallery_rest_Core {
     }
     $path = implode("/", $request->arguments);
 
-    $components = explode("/", $path);
+    $components = $request->arguments;
     $name = urldecode(array_pop($components));
 
     $parent = ORM::factory("item")
-      ->where("relative_url_cache", implode("/", $components))
+      ->where("relative_url_cache", "=", implode("/", $components))
       ->viewable()
       ->find();
 
-    if (!$parent->loaded) {
+    if (!$parent->loaded()) {
       return rest::not_found("Resource: {$path} missing.");
     }
 
@@ -111,7 +112,7 @@ class gallery_rest_Core {
     }
 
     // Validate the request data
-    $new_values = gallery_rest::_validate($request);
+    $new_values = gallery_rest::_validate($request, $parent->id);
     $errors = $new_values->errors();
     if (!empty($errors)) {
       return rest::validation_error($errors);
@@ -121,10 +122,10 @@ class gallery_rest_Core {
       $new_item = album::create(
         $parent,
         $name,
-        empty($request->title) ? $name : $request->title,
-        empty($request->description) ? null : $request->description,
+        empty($new_values["title"]) ? $name : $new_values["title"],
+        empty($new_values["description"]) ? null : $new_values["description"],
         identity::active_user()->id,
-        empty($request->slug) ? $name : $request->slug);
+        empty($new_values["slug"]) ? $name : $new_values["slug"]);
       $log_message = t("Added an album");
     } else {
       $temp_filename = upload::save("image");
@@ -153,11 +154,11 @@ class gallery_rest_Core {
     $path = implode("/", $request->arguments);
 
     $item = ORM::factory("item")
-      ->where("relative_url_cache", $path)
+      ->where("relative_url_cache", "=", $path)
       ->viewable()
       ->find();
 
-    if (!$item->loaded) {
+    if (!$item->loaded()) {
       return rest::success();
     }
 
@@ -193,7 +194,7 @@ class gallery_rest_Core {
                           "path" => $child->relative_url(),
                           "thumb_url" => $child->thumb_url(true),
                           "thumb_dimensions" => array("width" => $child->thumb_width,
-                                                     "height" => $child->thumb_height),
+                                                      "height" => $child->thumb_height),
                           "has_thumb" => $child->has_thumb(),
                           "title" => $child->title);
     }
@@ -201,38 +202,40 @@ class gallery_rest_Core {
     return $children;
   }
 
-  private static function _validate($request, $item=null) {
+  private static function _validate($request, $parent_id, $item_id=0) {
     $new_values = array();
-    $fields = array("title", "description", "name", "slug", "image");
-    if (empty($item)) {
-      $item = ORM::factory("item");
-      $item->id = 0;
-    }
-    if ($item->id == 1) {
+    $fields = array("name" => "length[0,255]",
+                    "title" => "required|length[0,255]",
+                    "description" => "length[0,65535]",
+                    "slug" => "required|length[0,255]");
+    if ($item_id == 1) {
       unset($request["name"]);
       unset($request["slug"]);
     }
-    foreach ($fields as $field) {
+    foreach (array_keys($fields) as $field) {
       if (isset($request->$field)) {
         $new_values[$field] = $request->$field;
       } else if (isset($item->$field)) {
         $new_values[$field] = $item->$field;
       }
     }
-
-    $new_values = new Validation($new_values);
-    foreach ($item->rules as $field => $rules) {
-      foreach (explode("|", $rules) as $rule) {
-        $new_values->add_rules($field, $rule);
-      }
+    if (!empty($request->image)) {
+      $new_values["image"] = $request->image;
     }
+
+    $new_values = Validation::factory($new_values)
+      ->add_rules("name", "length[0,255]")
+      ->add_rules("title", "length[0,255]")
+      ->add_rules("description", "length[0,65535]")
+      ->add_rules("slug", "length[0,255]");
     if (isset($new_values["image"])) {
       $new_values->add_rules(
         "image", "upload::valid", "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
     }
 
-    if ($new_values->validate() && $item->id != 1) {
-      $errors = item::check_for_conflicts($item, $new_values["name"], $new_values["slug"]);
+    if ($new_values->validate() && $item_id != 1) {
+      $errors = gallery_rest::_check_for_conflicts($parent_id, $item_id,
+                                                   $new_values["name"], $new_values["slug"]);
       if (!empty($errors)) {
         !empty($errors["name_conflict"]) OR $new_values->add_error("name", "Duplicate Name");
         !empty($errors["slug_conflict"]) OR
@@ -242,4 +245,30 @@ class gallery_rest_Core {
 
     return $new_values;
   }
+
+  private static function _check_for_conflicts($parent_id, $item_id, $new_name, $new_slug) {
+    $errors = array();
+
+    if ($row = db::build()
+        ->select(array("name", "slug"))
+        ->from("items")
+        ->where("parent_id", "=", $parent_id)
+        ->where("id", "<>", $item_id)
+        ->and_open()
+        ->where("name", "=", $new_name)
+        ->or_where("slug", "=", $new_slug)
+        ->close()
+        ->execute()
+        ->current()) {
+      if ($row->name == $new_name) {
+        $errors["name_conflict"] = 1;
+      }
+      if ($row->slug == $new_slug) {
+        $errors["slug_conflict"] = 1;
+      }
+    }
+
+    return $errors;
+  }
+
 }

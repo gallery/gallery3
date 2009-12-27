@@ -88,7 +88,7 @@ class rest_Core {
 
   private static function _format_failure_response($message, $log_message) {
     if (!empty($log_message)) {
-      Kohana::log("info", $log_message);
+      Kohana_Log::add("info", $log_message);
     }
     // We don't need to save the session for this request
     Session::abort_save();

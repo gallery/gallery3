@@ -18,7 +18,7 @@
  */
 class Rest_Controller extends Controller {
   public function access_key() {
-    $request = (object)$this->input->get();
+    $request = (object)Input::instance()->get();
     if (empty($request->user) || empty($request->password)) {
       print rest::forbidden("No user or password supplied");
       return;
@@ -36,13 +36,13 @@ class Rest_Controller extends Controller {
     }
 
     $key = ORM::factory("user_access_token")
-      ->where("user_id", $user->id)
+      ->where("user_id", "=", $user->id)
       ->find();
-    if (!$key->loaded) {
+    if (!$key->loaded()) {
       $key->user_id = $user->id;
       $key->access_key = md5($user->name . rand());
       $key->save();
-      Kohana::log("alert",  Kohana::debug($key->as_array()));
+      Kohana_Log::add("alert",  Kohana::debug($key->as_array()));
     }
     print rest::success(array("token" => $key->access_key));
   }
@@ -67,22 +67,23 @@ class Rest_Controller extends Controller {
   }
 
   private function _normalize_request($args=array()) {
-    $method = strtolower($this->input->server("REQUEST_METHOD"));
+    $input = Input::instance();
+    $method = strtolower($input->server("REQUEST_METHOD"));
     $request = new stdClass();
-    foreach (array_keys($this->input->get()) as $key) {
-      $request->$key = $this->input->get($key);
+    foreach (array_keys($input->get()) as $key) {
+      $request->$key = $input->get($key);
     }
     if ($method != "get") {
-      foreach (array_keys($this->input->post()) as $key) {
-        $request->$key = $this->input->post($key);
+      foreach (array_keys($input->post()) as $key) {
+        $request->$key = $input->post($key);
       }
       foreach (array_keys($_FILES) as $key) {
         $request->$key = $_FILES[$key];
       }
     }
 
-    $request->method = strtolower($this->input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
-    $request->access_token = $this->input->server("HTTP_X_GALLERY_REQUEST_KEY");
+    $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
+    $request->access_token = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
     $request->arguments = $args;  // Let the rest handler figure out what the arguments mean
 
     return $request;
@@ -93,10 +94,10 @@ class Rest_Controller extends Controller {
       $user = identity::guest();
     } else {
       $key = ORM::factory("user_access_token")
-        ->where("access_key", $access_token)
+        ->where("access_key", "=", $access_token)
         ->find();
 
-      if ($key->loaded) {
+      if ($key->loaded()) {
         $user = identity::lookup_user($key->user_id);
         if (empty($user)) {
           print rest::forbidden("User not found: {$key->user_id}");

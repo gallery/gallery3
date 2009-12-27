@@ -108,7 +108,9 @@ class Tag_Model extends ORM {
     $result = parent::delete();
 
     if ($related_item_ids) {
-      foreach (ORM::factory("item")->in("id", array_keys($related_item_ids))->find_all() as $item) {
+      foreach (ORM::factory("item")
+               ->where("id", "IN", array_keys($related_item_ids))
+               ->find_all() as $item) {
         module::event("item_related_update", $item);
       }
     }

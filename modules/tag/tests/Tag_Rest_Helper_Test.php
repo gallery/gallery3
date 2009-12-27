@@ -210,11 +210,11 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     $this->assert_equal(json_encode(array("status" => "OK")), tag_rest::delete($request));
 
     $request = (object)array("arguments" => array("T1,P1"));
-    $this->assert_equal(json_encode(array("status" => "OK", "resources" => array())),
+    $this->assert_equal(json_encode(array("status" => "OK")),
                         tag_rest::get($request));
   }
 
-  public function tag_rest_delete_tag_from_item_test() {
+  public function tag_rest_delete_tagc_from_item_test() {
     $request = (object)array("arguments" => array("T1,P1"),
                              $this->_photo->relative_url());
 

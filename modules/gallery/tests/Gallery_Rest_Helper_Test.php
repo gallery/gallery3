@@ -208,7 +208,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
                                             "parent_path" => $this->_album->relative_url()))),
                         gallery_rest::delete($request));
     $this->_child->reload();
-    $this->assert_false($this->_child->loaded);
+    $this->assert_false($this->_child->loaded());
   }
 
   public function gallery_rest_delete_photo_test() {
@@ -222,7 +222,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
                                             "parent_path" => $this->_album->relative_url()))),
                         gallery_rest::delete($request));
     $this->_sibling->reload();
-    $this->assert_false($this->_sibling->loaded);
+    $this->assert_false($this->_sibling->loaded());
   }
 
   public function gallery_rest_post_album_test() {
@@ -235,9 +235,9 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     $this->assert_equal(json_encode(array("status" => "OK", "path" => $new_path)),
                         gallery_rest::post($request));
     $album = ORM::factory("item")
-      ->where("relative_url_cache", $new_path)
+      ->where("relative_url_cache", "=", $new_path)
       ->find();
-    $this->assert_true($album->loaded);
+    $this->assert_true($album->loaded());
     $this->assert_equal("new child", $album->slug);
   }
 }
