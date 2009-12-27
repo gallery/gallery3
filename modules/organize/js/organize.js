@@ -162,16 +162,8 @@
     },
 
     set_handlers: function() {
-      $("#g-organize-microthumb-panel")
-        .selectable({
-          filter: ".g-organize-microthumb-grid-cell",
-          selected: function(event, ui) {
-            $(ui.selected).children(".g-organize-microthumb").addClass("ui-state-highlight");
-          },
-          unselected: function(event, ui) {
-            $(ui.unselected).children(".g-organize-microthumb").removeClass("ui-state-highlight");
-          }
-        })
+      $("#g-organize-microthumb-grid")
+        .selectable({filter: ".g-organize-microthumb-grid-cell"})
         .droppable($.organize.content_droppable);
       $(".g-organize-microthumb-grid-cell")
         .draggable($.organize.micro_thumb_draggable)
