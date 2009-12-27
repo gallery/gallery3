@@ -31,31 +31,34 @@ class slideshow_event_Core {
   }
 
   static function album_menu($menu, $theme) {
+    $max_scale = module::get_var("slideshow", "max_scale");
     if ($theme->item()->descendants_count(array(array("type", "=", "photo")))) {
       $menu->append(Menu::factory("link")
                     ->id("slideshow")
                     ->label(t("View slideshow"))
                     ->url("javascript:cooliris.embed.show(" .
-                          "{maxScale:0,feed:'" . self::_feed_url($theme) . "'})")
+                          "{maxScale:$max_scale,feed:'" . self::_feed_url($theme) . "'})")
                     ->css_id("g-slideshow-link"));
     }
   }
 
   static function photo_menu($menu, $theme) {
+    $max_scale = module::get_var("slideshow", "max_scale");
     $menu->append(Menu::factory("link")
                   ->id("slideshow")
                   ->label(t("View slideshow"))
                   ->url("javascript:cooliris.embed.show(" .
-                        "{maxScale:0,feed:'" . self::_feed_url($theme) . "'})")
+                        "{maxScale:$max_scale,feed:'" . self::_feed_url($theme) . "'})")
                   ->css_id("g-slideshow-link"));
   }
 
   static function tag_menu($menu, $theme) {
+    $max_scale = module::get_var("slideshow", "max_scale");
     $menu->append(Menu::factory("link")
                   ->id("slideshow")
                   ->label(t("View slideshow"))
                   ->url("javascript:cooliris.embed.show(" .
-                        "{maxScale:0,feed:'" . self::_feed_url($theme) . "'})")
+                        "{maxScale:$max_scale,feed:'" . self::_feed_url($theme) . "'})")
                   ->css_id("g-slideshow-link"));
   }
 
