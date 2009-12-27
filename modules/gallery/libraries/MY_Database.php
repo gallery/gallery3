@@ -39,7 +39,7 @@ abstract class Database extends Database_Core {
    * table prefix . $1
    */
   public function query($sql = '') {
-    if ($this->config["table_prefix"] && !empty($sql)) {
+    if (!empty($sql)) {
       $sql = $this->add_table_prefixes($sql);
     }
     return parent::query($sql);
