@@ -23,8 +23,8 @@ class rest_event {
    */
   static function user_before_delete($user) {
      ORM::factory("user_access_token")
-      ->where("id", $user->id)
-      ->delete_all();
+       ->where("id", "=", $user->id)
+       ->delete_all();
   }
 
   /**
@@ -57,10 +57,10 @@ class rest_event {
    */
   static function _get_access_key_form($user, $form) {
     $key = ORM::factory("user_access_token")
-      ->where("user_id", $user->id)
+      ->where("user_id", "=", $user->id)
       ->find();
 
-    if (!$key->loaded) {
+    if (!$key->loaded()) {
       $key->user_id = $user->id;
       $key->access_key = md5($user->name . rand());
       $key->save();
