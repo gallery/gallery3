@@ -99,6 +99,12 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
+    // Check that the content hasn't expired or it wasn't changed since cached
+    if (($last_modified = expires::get()) !== false &&
+        $item->updated < $last_modified)  {
+      expires::check(2592000);
+    }
+
     // Don't try to load a directory
     if ($type == "albums" && $item->is_album()) {
       throw new Kohana_404_Exception();
@@ -110,6 +116,8 @@ class File_Proxy_Controller extends Controller {
 
     // We don't need to save the session for this request
     Session::abort_save();
+
+    expires::set(2592000);  // 30 days
 
     // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
     if ($item->is_movie() && $type != "albums") {
