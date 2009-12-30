@@ -42,7 +42,7 @@ class tag_rest_Core {
     case 1:
       $resources = tag_rest::_get_items($request);
       if (!empty($resources)) {
-        $resources = array("resources" =>$resources);
+        $resources = array("resources" => $resources);
         break;
       }
     default:
