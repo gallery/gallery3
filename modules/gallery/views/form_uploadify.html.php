@@ -1,15 +1,19 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <style>
 #g-add-photos-canvas object {
-  left: -50px;
+  height: 33px;
+  left: -60px;
   position: relative;
   z-index: 100;
 }
 #g-add-photos-button {
-  left: 55px;
+  float: left;
+  left: 175px;
+  padding-bottom: .5em;
+  padding-top: .5em;
   position: relative;
-  top: -15px;
-  z-index: -1;
+  width: 110px;
+  z-index: 1;
 }
 </style>
 <script type="text/javascript" src="<?= url::file("lib/swfobject.js") ?>"></script>
@@ -23,7 +27,6 @@
       fileExt: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
       fileDesc: <?= t("Photos and movies")->for_js() ?>,
       cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
-      buttonText: <?= t("Select photos...")->for_js() ?>,
       simUploadLimit: <?= $simultaneous_upload_limit ?>,
       wmode: "transparent",
       hideButton: true, /* should be true */
@@ -77,7 +80,6 @@
         $("#g-add-photos-status ul").append(
           "<li class=\"g-error\">" + fileObj.name + msg + "</li>");
         $("#g-uploadify" + queueID).remove();
-        //return false;
       },
       onSelect: function(event) {
         if ($("#g-upload-cancel-all").hasClass("ui-state-disabled")) {
@@ -114,7 +116,7 @@
 </div>
 
 <div id="g-add-photos-canvas" style="text-align: center;">
-  <a id="g-add-photos-button" class="ui-corner-all" style="padding-bottom: 1em;" href="#"><?= t("Select photos...") ?></a>
+  <a id="g-add-photos-button" class="ui-corner-all" href="#"><?= t("Select photos...") ?></a>
   <span id="g-uploadify"></span>
 </div>
 <div id="g-add-photos-status" style="text-align: center;">
