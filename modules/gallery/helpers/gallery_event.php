@@ -109,6 +109,7 @@ class gallery_event_Core {
                       ->label(t("Login")));
       } else {
         $csrf = access::csrf_token();
+        $item = $theme->item();
         $menu->append(Menu::factory("dialog")
                       ->id("user_menu_edit_profile")
                       ->css_id("g-user-profile-link")
@@ -119,7 +120,7 @@ class gallery_event_Core {
                     ->id("user_menu_logout")
                     ->css_id("g-logout-link")
                     ->url(url::site("logout?csrf=$csrf&amp;continue=" .
-                                    urlencode(url::current(true))))
+                                    urlencode($item->url())))
                     ->label(t("Logout")));
       }
     }
