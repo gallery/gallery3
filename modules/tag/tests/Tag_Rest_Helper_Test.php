@@ -119,9 +119,12 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   public function tag_rest_add_tags_for_item_not_found_test() {
     $request = (object)array("path" => $this->_photo->relative_url() . "b",
                              "arguments" => array("new,one"));
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => "Resource not found")),
-      tag_rest::post($request));
+    try {
+      tag_rest::post($request);
+    } catch (Kohana_404_Exception $k404) {
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function tag_rest_add_tags_for_item_no_access_test() {
@@ -129,9 +132,12 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     $request = (object)array("path" => $this->_photo->relative_url(),
                              "arguments" => array("new,one"));
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => "Resource not found")),
-      tag_rest::post($request));
+    try {
+      tag_rest::post($request);
+    } catch (Kohana_404_Exception $k404) {
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function tag_rest_add_tags_for_item_test() {
@@ -175,9 +181,12 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   public function tag_rest_update_tags_not_found_test() {
     $request = (object)array("arguments" => array("not"), "new_name" => "found");
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => "Resource not found")),
-      tag_rest::put($request));
+    try {
+      tag_rest::put($request);
+    } catch (Kohana_404_Exception $k404) {
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function tag_rest_update_tags_test() {

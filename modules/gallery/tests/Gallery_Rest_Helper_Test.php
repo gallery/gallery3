@@ -136,8 +136,12 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
                              "title" => "Updated Title",
                              "name" => "new name");
 
-    $this->assert_equal(json_encode(array("status" => "ERROR", "message" => "Resource not found")),
-                        gallery_rest::put($request));
+    try {
+      gallery_rest::put($request);
+    } catch (Kohana_404_Exception $k404) {
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function gallery_rest_put_album_no_edit_permission_test() {
@@ -147,8 +151,12 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
                              "title" => "Updated Title",
                              "name" => "new name");
 
-    $this->assert_equal(json_encode(array("status" => "ERROR", "message" => "Resource not found")),
-                        gallery_rest::put($request));
+    try {
+      gallery_rest::put($request);
+    } catch (Kohana_404_Exception $k404) {
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function gallery_rest_put_album_rename_conflict_test() {

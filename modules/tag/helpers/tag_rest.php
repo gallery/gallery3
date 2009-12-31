@@ -70,11 +70,11 @@ class tag_rest_Core {
       ->viewable()
       ->find();
     if (!$item->loaded()) {
-      return rest::not_found("Resource: {$path} missing.");
+      throw new Kohana_404_Exception();
     }
 
     if (!access::can("edit", $item)) {
-      return rest::not_found("Resource: {$path} permission denied.");
+      throw new Kohana_404_Exception();
     }
 
     foreach ($tags as $tag) {
@@ -94,7 +94,7 @@ class tag_rest_Core {
       ->where("name", "=", $name)
       ->find();
     if (!$tag->loaded()) {
-      return rest::not_found("Tag: {$name} not found.");
+      throw new Kohana_404_Exception();
     }
 
     $tag->name = $request->new_name;

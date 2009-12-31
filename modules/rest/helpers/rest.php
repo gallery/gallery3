@@ -46,14 +46,7 @@ class rest_Core {
   }
 
   /**
-   * Resource Not Found
-   */
-  static function not_found($log_message=null) {
-    return self::_format_failure_response(t("Resource not found"), $log_message);
-  }
-
-  /**
-   * Resource Not Found
+   * Request failed
    */
   static function fail($log_message=null) {
     return self::_format_failure_response($log_message, $log_message);

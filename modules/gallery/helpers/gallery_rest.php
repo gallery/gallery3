@@ -21,14 +21,7 @@ class gallery_rest_Core {
   static function get($request) {
     $path = implode("/", $request->arguments);
 
-    $item = ORM::factory("item")
-      ->where("relative_url_cache", "=", $path)
-      ->viewable()
-      ->find();
-
-    if (!$item->loaded()) {
-      return rest::not_found("Resource: {$path} missing.");
-    }
+    $item = gallery_rest::_get_item($path);
 
     $parent = $item->parent();
     $response_data = array("type" => $item->type,
@@ -60,25 +53,19 @@ class gallery_rest_Core {
       return rest::invalid_request();
     }
     $path = implode("/", $request->arguments);
-
-    $item = ORM::factory("item")
-      ->where("relative_url_cache", "=", $path)
-      ->viewable()
-      ->find();
-
-    if (!$item->loaded()) {
-      return rest::not_found("Resource: {$path} missing.");
-    }
-
-    if (!access::can("edit", $item)) {
-      return rest::not_found("Resource: {$path} permission denied.");
-    }
+    $item = gallery_rest::_get_item($path, "edit");
 
     // Validate the request data
     $new_values = gallery_rest::_validate($request, $item->parent_id, $item->id);
     $errors = $new_values->errors();
     if (empty($errors)) {
-      item::update($item, $new_values->as_array());
+      $item->title = $new_values->title;
+      $item->description = $new_values->description;
+      if ($item->id != 1) {
+        $item->rename($new_values->name);
+      }
+      $item->slug = $new_values->slug;
+      $item->save();
 
       log::success("content", "Updated $item->type",
                    "<a href=\"{$item->type}s/$item->id\">view</a>");
@@ -93,23 +80,11 @@ class gallery_rest_Core {
     if (empty($request->arguments)) {
       return rest::invalid_request();
     }
-    $path = implode("/", $request->arguments);
 
     $components = $request->arguments;
     $name = urldecode(array_pop($components));
 
-    $parent = ORM::factory("item")
-      ->where("relative_url_cache", "=", implode("/", $components))
-      ->viewable()
-      ->find();
-
-    if (!$parent->loaded()) {
-      return rest::not_found("Resource: {$path} missing.");
-    }
-
-    if (!access::can("edit", $parent)) {
-      return rest::not_found("Resource: {$path} permission denied.");
-    }
+    $parent = gallery_rest::_get_item(implode("/", $components), "edit");
 
     // Validate the request data
     $new_values = gallery_rest::_validate($request, $parent->id);
@@ -153,18 +128,7 @@ class gallery_rest_Core {
     }
     $path = implode("/", $request->arguments);
 
-    $item = ORM::factory("item")
-      ->where("relative_url_cache", "=", $path)
-      ->viewable()
-      ->find();
-
-    if (!$item->loaded()) {
-      return rest::success();
-    }
-
-    if (!access::can("edit", $item)) {
-      return rest::not_found("Resource: {$path} permission denied.");
-    }
+    $item = gallery_rest::_get_item($path, "edit");
 
     if ($item->id == 1) {
       return rest::invalid_request("Attempt to delete the root album");
@@ -181,6 +145,20 @@ class gallery_rest_Core {
     log::success("content", $msg);
 
     return rest::success(array("resource" => array("parent_path" => $parent->relative_url())));
+  }
+
+  private static function _get_item($path, $permission="view") {
+    $item = url::get_item_from_uri($path);
+
+    if (!$item->loaded()) {
+      throw new Kohana_404_Exception();
+    }
+
+    if (!access::can($permission, $item)) {
+      throw new Kohana_404_Exception();
+    }
+
+    return $item;
   }
 
   private static function _get_children($item, $request) {
