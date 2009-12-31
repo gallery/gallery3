@@ -41,7 +41,6 @@ class Rest_Controller extends Controller {
       $key->user_id = $user->id;
       $key->access_key = md5($user->name . rand());
       $key->save();
-      Kohana_Log::add("alert",  Kohana::debug($key->as_array()));
     }
     print rest::success(array("token" => $key->access_key));
   }

@@ -21,35 +21,6 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   public function setup() {
     $this->_save = array($_GET, $_POST, $_SERVER, $_FILES);
     $this->_saved_active_user = identity::active_user();
-
-    $this->_user = identity::create_user("access_test", "Access Test", "password");
-    $key = ORM::factory("user_access_token");
-    $this->_access_key = $key->access_key = md5($this->_user->name . rand());
-    $key->user_id = $this->_user->id;
-    $key->save();
-
-    $root = ORM::factory("item", 1);
-    $this->_album = album::create($root, "album", "Test Album", rand());
-    tag::add($this->_album, "albums");
-    tag::add($this->_album, "A1");
-    tag::add($this->_album, "T1");
-    $this->_child = album::create($this->_album, "child", "Test Child Album", rand());
-    tag::add($this->_child, "albums");
-    tag::add($this->_child, "C1");
-    tag::add($this->_child, "T1");
-
-    $filename = MODPATH . "gallery/tests/test.jpg";
-    $rand = rand();
-    $this->_photo = photo::create($this->_child, $filename, "$rand.jpg", $rand);
-    tag::add($this->_photo, "photos");
-    tag::add($this->_photo, "P1");
-    tag::add($this->_photo, "T1");
-
-    $filename = MODPATH . "gallery/tests/test.jpg";
-    $rand = rand();
-    $this->_sibling = photo::create($this->_album, $filename, "$rand.jpg", $rand);
-    tag::add($this->_sibling, "photos");
-    tag::add($this->_sibling, "P3");
   }
 
   public function teardown() {
@@ -57,19 +28,52 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     identity::set_active_user($this->_saved_active_user);
 
     try {
-      if (!empty($this->_user)) {
-        $this->_user->delete();
-      }
-      if (!empty($this->_album)) {
-        $this->_album->delete();
-      }
       Database::instance()->query("TRUNCATE {tags}");
       Database::instance()->query("TRUNCATE {items_tags}");
 
     } catch (Exception $e) { }
   }
 
+  private function _create_user() {
+    $user = identity::create_user("access_test" . rand(), "Access Test", "password");
+    $key = ORM::factory("user_access_token");
+    $key->access_key = md5($user->name . rand());
+    $key->user_id = $user->id;
+    $key->save();
+    identity::set_active_user($user);
+    return $user;
+  }
+  private function _create_album($tags=array(), $parent=null) {
+    $album_name = "album_" . rand();
+    if (empty($parent)) {
+      $parent = ORM::factory("item", 1);
+    }
+    $album = album::create($parent, $album_name, $album_name, $album_name);
+    foreach ($tags as $tag) {
+      tag::add($album, $tag);
+    }
+    return $album;
+  }
+
+  private function _create_image($tags=array(), $parent=null) {
+    $filename = MODPATH . "gallery/tests/test.jpg";
+    $image_name = "image_" . rand();
+    if (empty($parent)) {
+      $parent = ORM::factory("item", 1);
+    }
+    $photo = photo::create($parent, $filename, "$image_name.jpg", $image_name);
+    foreach ($tags as $tag) {
+      tag::add($photo, $tag);
+    }
+    return $photo;
+  }
+
   public function tag_rest_get_all_test() {
+    $album = $this->_create_album(array("albums", "A1", "T1"));
+    $child = $this->_create_album(array("albums", "C1", "T1"), $album);
+    $photo = $this->_create_image(array("photos", "P1", "T1"), $child);
+    $sibling = $this->_create_image(array("photos", "P3"), $album);
+
     $request = (object)array("arguments" => array(), "limit" => 2, "offset" => 1);
 
     $this->assert_equal(
@@ -80,7 +84,9 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function tag_rest_get_tags_for_item_test() {
-    $request = (object)array("arguments" => explode("/", $this->_photo->relative_url()));
+    $photo = $this->_create_image(array("photos", "P1", "T1"));
+
+    $request = (object)array("arguments" => explode("/", $photo->relative_url()));
 
     $this->assert_equal(
       json_encode(array("status" => "OK",
@@ -89,10 +95,14 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function tag_rest_get_items_test() {
+    $album = $this->_create_album(array("albums", "A1", "T1"));
+    $child = $this->_create_album(array("albums", "A1", "T1"), $album);
+    $photo = $this->_create_image(array("photos", "P1", "T1"), $child);
+    $sibling = $this->_create_image(array("photos", "P3"), $album);
     $request = (object)array("arguments" => array("albums"));
 
     $resources = array();
-    foreach (array($this->_album, $this->_child) as $resource) {
+    foreach (array($album, $child) as $resource) {
       $resources[] = array("type" => $resource->type,
                            "has_children" => $resource->children_count() > 0,
                            "path" => $resource->relative_url(),
@@ -111,13 +121,18 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   public function tag_rest_add_tags_for_item_no_path_test() {
     $request = (object)array("arguments" => array("new,one"));
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => "Invalid request")),
-      tag_rest::post($request));
+    try {
+      tag_rest::post($request);
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("400 Bad request", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function tag_rest_add_tags_for_item_not_found_test() {
-    $request = (object)array("path" => $this->_photo->relative_url() . "b",
+    $photo = $this->_create_image(array("photos", "P1", "T1"));
+    $request = (object)array("path" => $photo->relative_url() . "b",
                              "arguments" => array("new,one"));
     try {
       tag_rest::post($request);
@@ -128,8 +143,9 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function tag_rest_add_tags_for_item_no_access_test() {
-    identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_photo->relative_url(),
+    $photo = $this->_create_image(array("photos", "P1", "T1"));
+    $this->_create_user();
+    $request = (object)array("path" => $photo->relative_url(),
                              "arguments" => array("new,one"));
 
     try {
@@ -141,15 +157,19 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function tag_rest_add_tags_for_item_test() {
-    access::allow(identity::registered_users(), "edit", $this->_child);
-    identity::set_active_user($this->_user);
-    $request = (object)array("path" => $this->_photo->relative_url(),
+    $album = $this->_create_album(array("albums", "A1", "T1"));
+    $child = $this->_create_album(array("albums", "A1", "T1"), $album);
+    $photo = $this->_create_image(array("photos", "P1", "T1"), $child);
+    $sibling = $this->_create_image(array("photos", "P3"), $album);
+    access::allow(identity::registered_users(), "edit", $child);
+    $this->_create_user();
+    $request = (object)array("path" => $photo->relative_url(),
                              "arguments" => array("new,one"));
 
     $this->assert_equal(
       json_encode(array("status" => "OK")),
       tag_rest::post($request));
-    $request = (object)array("arguments" => explode("/", $this->_photo->relative_url()));
+    $request = (object)array("arguments" => explode("/", $photo->relative_url()));
     $this->assert_equal(
       json_encode(array("status" => "OK",
                         "tags" => array("photos", "P1", "T1", "new", "one"))),
@@ -159,23 +179,33 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   public function tag_rest_update_tag_no_arguments_test() {
     $request = (object)array("arguments" => array());
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => "Invalid request")),
-      tag_rest::put($request));
+    try {
+      tag_rest::put($request);
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("400 Bad request", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function tag_rest_update_tag_one_arguments_test() {
     $request = (object)array("arguments" => array("photos"));
-
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => "Invalid request")),
-      tag_rest::put($request));
+    try {
+      tag_rest::put($request);
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("400 Bad request", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
 
     $request = (object)array("arguments" => array(), "new_name" => "valid");
-
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => "Invalid request")),
-      tag_rest::put($request));
+    try {
+      tag_rest::put($request);
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("400 Bad request", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function tag_rest_update_tags_not_found_test() {
@@ -190,13 +220,17 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function tag_rest_update_tags_test() {
+    $album = $this->_create_album(array("albums", "A1", "T1"));
+    $child = $this->_create_album(array("albums", "A1", "T1"), $album);
+    $photo = $this->_create_image(array("photos", "P1", "T1"), $child);
+    $sibling = $this->_create_image(array("photos", "P3"), $album);
     $request = (object)array("arguments" => array("albums"), "new_name" => "new name");
 
     $this->assert_equal(json_encode(array("status" => "OK")), tag_rest::put($request));
 
     $request = (object)array("arguments" => array("new name"));
     $resources = array();
-    foreach (array($this->_album, $this->_child) as $resource) {
+    foreach (array($album, $child) as $resource) {
       $resources[] = array("type" => $resource->type,
                            "has_children" => $resource->children_count() > 0,
                            "path" => $resource->relative_url(),
@@ -214,8 +248,11 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function tag_rest_delete_tag_test() {
-    $request = (object)array("arguments" => array("T1,P1"));
+    $album = $this->_create_album(array("albums", "A1", "T1"));
+    $child = $this->_create_album(array("albums", "A1", "T1"), $album);
+    $photo = $this->_create_image(array("photos", "P1", "T1"), $child);
 
+    $request = (object)array("arguments" => array("T1,P1"));
     $this->assert_equal(json_encode(array("status" => "OK")), tag_rest::delete($request));
 
     $request = (object)array("arguments" => array("T1,P1"));
@@ -224,12 +261,15 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   public function tag_rest_delete_tagc_from_item_test() {
+    $album = $this->_create_album(array("albums", "A1", "T1"));
+    $child = $this->_create_album(array("albums", "A1", "T1"), $album);
+    $photo = $this->_create_image(array("photos", "P1", "T1"), $child);
     $request = (object)array("arguments" => array("T1,P1"),
-                             $this->_photo->relative_url());
+                             $photo->relative_url());
 
     $this->assert_equal(json_encode(array("status" => "OK")), tag_rest::delete($request));
 
-    $request = (object)array("arguments" => explode("/", $this->_photo->relative_url()));
+    $request = (object)array("arguments" => explode("/", $photo->relative_url()));
     $this->assert_equal(json_encode(array("status" => "OK", "tags" => array("photos"))),
                         tag_rest::get($request));
   }
