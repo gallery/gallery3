@@ -96,51 +96,6 @@ class item_Core {
     }
   }
 
-
-  static function update($item, $fields) {
-    $dirty = false;
-    if ($item->id != 1 && !empty($fields["name"]) && $fields["name"] != $item->name) {
-      $item->rename($fields["name"]);
-      unset($fields["name"]);
-      $dirty = true;
-    }
-    foreach ($fields as $field => $value) {
-      if ($value !== $item->$field) {
-        $item->$field = $value;
-        $dirty = true;
-      }
-    }
-
-    if ($dirty) {
-      $item->save();
-    }
-  }
-
-  static function check_for_conflicts($item, $new_name, $new_slug) {
-    $errors = array();
-
-    if ($row = db::build()
-        ->select(array("name", "slug"))
-        ->from("items")
-        ->where("parent_id", "=", $item->parent_id)
-        ->where("id", "<>", $item->id)
-        ->and_open()
-        ->where("name", "=", $new_name)
-        ->or_where("slug", "=", $new_slug)
-        ->close()
-        ->execute()
-        ->current()) {
-      if ($row->name == $new_name) {
-        $errors["name_conflict"] = 1;
-      }
-      if ($row->slug == $new_slug) {
-        $errors["slug_conflict"] = 1;
-      }
-    }
-
-    return $errors;
-  }
-
   /**
    * Sanitize a filename into something presentable as an item title
    * @param string $filename

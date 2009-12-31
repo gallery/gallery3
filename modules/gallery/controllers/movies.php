@@ -76,26 +76,34 @@ class Movies_Controller extends Items_Controller {
       if ($form->edit_item->filename->value != $movie->name ||
           $form->edit_item->slug->value != $movie->slug) {
         // Make sure that there's not a name or slug conflict
-        $errors = item::check_for_conflicts(
-          $movie, $form->edit_item->filename->value, $form->edit_item->slug->value);
-
-        if (!empty($errors["name_conflict"])) {
-          $form->edit_item->filename->add_error("name_conflict", 1);
+        if ($row = db::build()
+            ->select(array("name", "slug"))
+            ->from("items")
+            ->where("parent_id", "=", $movie->parent_id)
+            ->where("id", "<>", $movie->id)
+            ->and_open()
+            ->where("name", "=", $form->edit_item->filename->value)
+            ->or_where("slug", "=", $form->edit_item->slug->value)
+            ->close()
+            ->execute()
+            ->current()) {
+          if ($row->name == $form->edit_item->filename->value) {
+            $form->edit_item->filename->add_error("name_conflict", 1);
+          }
+          if ($row->slug == $form->edit_item->slug->value) {
+            $form->edit_item->slug->add_error("slug_conflict", 1);
+          }
+          $valid = false;
         }
-        if (!empty($errors["slug_conflict"])) {
-          $form->edit_item->slug->add_error("slug_conflict", 1);
-        }
-        $valid = empty($errors);
       }
     }
 
     if ($valid) {
-      $new_values = array("title" => $form->edit_item->title->value,
-                          "description" => $form->edit_item->description->value,
-                          "name" => $form->edit_item->filename->value,
-                          "slug" => $form->edit_item->slug->value);
-      item::update($movie, $new_values);
-
+      $movie->title = $form->edit_item->title->value;
+      $movie->description = $form->edit_item->description->value;
+      $movie->slug = $form->edit_item->slug->value;
+      $movie->rename($form->edit_item->filename->value);
+      $movie->save();
       module::event("item_edit_form_completed", $movie, $form);
 
       log::success("content", "Updated movie", "<a href=\"{$movie->url()}\">view</a>");

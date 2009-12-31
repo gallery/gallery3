@@ -134,32 +134,40 @@ class Albums_Controller extends Items_Controller {
           $form->edit_item->dirname->value != $album->name ||
           $form->edit_item->slug->value != $album->slug) {
         // Make sure that there's not a conflict
-        $errors = item::check_for_conflicts(
-          $album, $form->edit_item->dirname->value, $form->edit_item->slug->value);
-
-        if (!empty($errors["name_conflict"])) {
-          $form->edit_item->dirname->add_error("name_conflict", 1);
+        if ($row = db::build()
+            ->select(array("name", "slug"))
+            ->from("items")
+            ->where("parent_id", "=", $album->parent_id)
+            ->where("id", "<>", $album->id)
+            ->and_open()
+            ->where("name", "=", $form->edit_item->dirname->value)
+            ->or_where("slug", "=", $form->edit_item->slug->value)
+            ->close()
+            ->execute()
+            ->current()) {
+          if ($row->name == $form->edit_item->dirname->value) {
+            $form->edit_item->dirname->add_error("name_conflict", 1);
+          }
+          if ($row->slug == $form->edit_item->slug->value) {
+            $form->edit_item->slug->add_error("slug_conflict", 1);
+          }
+          $valid = false;
         }
-        if (!empty($errors["slug_conflict"])) {
-          $form->edit_item->slug->add_error("slug_conflict", 1);
-        }
-        $valid = empty($errors);
       }
     }
 
     if ($valid) {
       $watching_album = $album->url() != ($location = parse_url(request::referrer(), PHP_URL_PATH));
 
-      $new_values = array("title" => $form->edit_item->title->value,
-                          "description" => $form->edit_item->description->value,
-                          "sort_column" => $form->edit_item->sort_order->column->value,
-                          "sort_order" => $form->edit_item->sort_order->direction->value,
-                          "slug" => $form->edit_item->slug->value);
+      $album->title = $form->edit_item->title->value;
+      $album->description = $form->edit_item->description->value;
+      $album->sort_column = $form->edit_item->sort_order->column->value;
+      $album->sort_order = $form->edit_item->sort_order->direction->value;
       if ($album->id != 1) {
-        $new_values["name"] = $form->edit_item->dirname->value;
+        $album->rename($form->edit_item->dirname->value);
       }
-      item::update($album, $new_values);
-
+      $album->slug = $form->edit_item->slug->value;
+      $album->save();
       module::event("item_edit_form_completed", $album, $form);
 
       log::success("content", "Updated album", "<a href=\"albums/$album->id\">view</a>");
