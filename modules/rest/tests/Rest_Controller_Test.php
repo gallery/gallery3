@@ -20,50 +20,49 @@
 class Rest_Controller_Test extends Unit_Test_Case {
   public function setup() {
     $this->_save = array($_GET, $_POST, $_SERVER);
-    $this->_user = identity::create_user("access_test", "Access Test", "password");
-    $key = ORM::factory("user_access_token");
-    $this->_access_key = $key->access_key = md5($this->_user->name . rand());
-    $key->user_id = $this->_user->id;
-    $key->save();
-
-    $root = ORM::factory("item", 1);
-    $this->_album = album::create($root, "album", "Test Album", rand());
-    $this->_child = album::create($this->_album, "child", "Test Child Album", rand());
-
-    $filename = MODPATH . "gallery/tests/test.jpg";
-    $rand = rand();
-    $this->_photo = photo::create($this->_child, $filename, "$rand.jpg", $rand);
   }
+
+  private function _create_user() {
+    $user = identity::create_user("access_test" . rand(), "Access Test", "password");
+    $key = ORM::factory("user_access_token");
+    $key->access_key = md5($user->name . rand());
+    $key->user_id = $user->id;
+    $key->save();
+    return array($key->access_key, $user);
+  }
+
+  private function _create_image($parent=null) {
+    $filename = MODPATH . "gallery/tests/test.jpg";
+    $image_name = "image_" . rand();
+    if (empty($parent)) {
+      $parent = ORM::factory("item", 1);
+    }
+    return photo::create($parent, $filename, "$image_name.jpg", $image_name);
+  }
+
 
   public function teardown() {
     list($_GET, $_POST, $_SERVER) = $this->_save;
-
-    try {
-      if (!empty($this->_user)) {
-        $this->_user->delete();
-      }
-      if (!empty($this->_album)) {
-        $this->_album->delete();
-      }
-    } catch (Exception $e) { }
   }
 
   public function rest_access_key_exists_test() {
+    list ($access_key, $user) = $this->_create_user();
     $_SERVER["REQUEST_METHOD"] = "GET";
-    $_GET["user"] = "access_test";
+    $_GET["user"] = $user->name;;
     $_GET["password"] = "password";
 
     $this->assert_equal(
-      json_encode(array("status" => "OK", "token" => $this->_access_key)),
+      json_encode(array("status" => "OK", "token" => $access_key)),
       $this->_call_controller());
   }
 
   public function rest_access_key_generated_test() {
+    list ($access_key, $user) = $this->_create_user();
     ORM::factory("user_access_token")
-      ->where("access_key", $this->_access_key)
+      ->where("access_key", $access_key)
       ->delete();
     $_SERVER["REQUEST_METHOD"] = "GET";
-    $_GET["user"] = "access_test";
+    $_GET["user"] = $user->name;
     $_GET["password"] = "password";
 
     $results = json_decode($this->_call_controller());
@@ -111,19 +110,21 @@ class Rest_Controller_Test extends Unit_Test_Case {
 
   public function rest_get_resource_no_request_key_test() {
     $_SERVER["REQUEST_METHOD"] = "GET";
+    $photo = $this->_create_image();
 
     $this->assert_equal(
       json_encode(array("status" => "OK", "message" => (string)t("Processed"),
-                        "photo" => array("path" => $this->_photo->relative_url(),
-                                        "title" => $this->_photo->title,
-                                        "thumb_url" => $this->_photo->thumb_url(),
-                                        "description" => $this->_photo->description,
-                                        "internet_address" => $this->_photo->slug))),
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_url())));
+                        "photo" => array("path" => $photo->relative_url(),
+                                        "title" => $photo->title,
+                                        "thumb_url" => $photo->thumb_url(),
+                                        "description" => $photo->description,
+                                        "internet_address" => $photo->slug))),
+      $this->_call_controller("rest", explode("/", $photo->relative_url())));
   }
 
   public function rest_get_resource_invalid_key_test() {
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = md5($this->_access_key); // screw up the access key;
+    list ($access_key, $user) = $this->_create_user();
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = md5($access_key); // screw up the access key;
     $_SERVER["REQUEST_METHOD"] = "GET";
 
     try {
@@ -136,14 +137,16 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   public function rest_get_resource_no_user_for_key_test() {
+    list ($access_key, $user) = $this->_create_user();
     $_SERVER["REQUEST_METHOD"] = "GET";
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $this->_access_key;
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $access_key;
 
-    $this->_user->delete();
-    unset($this->_user);
+    $user->delete();
+
+    $photo = $this->_create_image();
 
     try {
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_url()));
+      $this->_call_controller("rest", explode("/", $photo->relative_url()));
     } catch (Rest_Exception $e) {
       $this->assert_equal("403 Forbidden", $e->getMessage());
     } catch (Exception $e) {
@@ -152,12 +155,14 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   public function rest_get_resource_no_handler_test() {
+    list ($access_key, $user) = $this->_create_user();
     $_SERVER["REQUEST_METHOD"] = "GET";
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $this->_access_key;
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $access_key;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "PUT";
+    $photo = $this->_create_image();
 
     try {
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_url()));
+      $this->_call_controller("rest", explode("/", $photo->relative_url()));
     } catch (Rest_Exception $e) {
       $this->assert_equal("501 Not Implemented", $e->getMessage());
     } catch (Exception $e) {
@@ -166,17 +171,19 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   public function rest_get_resource_test() {
+    list ($access_key, $user) = $this->_create_user();
     $_SERVER["REQUEST_METHOD"] = "GET";
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $this->_access_key;
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $access_key;
 
+    $photo = $this->_create_image();
     $this->assert_equal(
       json_encode(array("status" => "OK", "message" => (string)t("Processed"),
-                        "photo" => array("path" => $this->_photo->relative_url(),
-                                        "title" => $this->_photo->title,
-                                        "thumb_url" => $this->_photo->thumb_url(),
-                                        "description" => $this->_photo->description,
-                                        "internet_address" => $this->_photo->slug))),
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_url())));
+                        "photo" => array("path" => $photo->relative_url(),
+                                        "title" => $photo->title,
+                                        "thumb_url" => $photo->thumb_url(),
+                                        "description" => $photo->description,
+                                        "internet_address" => $photo->slug))),
+      $this->_call_controller("rest", explode("/", $photo->relative_url())));
   }
 
   private function _call_controller($method="access_key", $arg=null) {
