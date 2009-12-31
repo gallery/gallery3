@@ -47,9 +47,9 @@ class Rest_Controller extends Controller {
   }
 
   public function __call($function, $args) {
-    $request = $this->_normalize_request($args);
+    $request = rest::normalize_request($args);
     try {
-      if ($this->_set_active_user($request->access_token)) {
+      if (rest::set_active_user($request->access_token)) {
         $handler_class = "{$function}_rest";
         $handler_method = $request->method;
 
@@ -65,51 +65,5 @@ class Rest_Controller extends Controller {
       Kohana_Log::add("error", $e->__toString());
       header("HTTP/1.1 500 Internal Error");
     }
-  }
-
-  private function _normalize_request($args=array()) {
-    $input = Input::instance();
-    $method = strtolower($input->server("REQUEST_METHOD"));
-    $request = new stdClass();
-    foreach (array_keys($input->get()) as $key) {
-      $request->$key = $input->get($key);
-    }
-    if ($method != "get") {
-      foreach (array_keys($input->post()) as $key) {
-        $request->$key = $input->post($key);
-      }
-      foreach (array_keys($_FILES) as $key) {
-        $request->$key = $_FILES[$key];
-      }
-    }
-
-    $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
-    $request->access_token = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
-    $request->arguments = $args;  // Let the rest handler figure out what the arguments mean
-
-    return $request;
-  }
-
-  private function _set_active_user($access_token) {
-    if (empty($access_token)) {
-      $user = identity::guest();
-    } else {
-      $key = ORM::factory("user_access_token")
-        ->where("access_key", "=", $access_token)
-        ->find();
-
-      if ($key->loaded()) {
-        $user = identity::lookup_user($key->user_id);
-        if (empty($user)) {
-          Rest_Exception::trigger(403, "Forbidden", $log_message,
-                                  "User not found: {$key->user_id}");
-        }
-      } else {
-        Rest_Exception::trigger(403, "Forbidden", $log_message,
-                                "Invalid user access token supplied: {$key->user_id}");
-      }
-    }
-    identity::set_active_user($user);
-    return true;
   }
 }
