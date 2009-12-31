@@ -75,26 +75,38 @@ class Rest_Controller_Test extends Unit_Test_Case {
   public function rest_access_key_no_parameters_test() {
     $_SERVER["REQUEST_METHOD"] = "GET";
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
-      $this->_call_controller());
+    try {
+      $this->_call_controller();
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("403 Forbidden", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function rest_access_key_user_not_found_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["request"] = json_encode(array("user" => "access_test2", "password" => "password"));
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
-      $this->_call_controller());
+    try {
+      $this->_call_controller();
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("403 Forbidden", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function rest_access_key_invalid_password_test() {
     $_SERVER["REQUEST_METHOD"] = "POST";
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
-      $this->_call_controller());
+    try {
+      $this->_call_controller();
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("403 Forbidden", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function rest_get_resource_no_request_key_test() {
@@ -114,9 +126,13 @@ class Rest_Controller_Test extends Unit_Test_Case {
     $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = md5($this->_access_key); // screw up the access key;
     $_SERVER["REQUEST_METHOD"] = "GET";
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
-      $this->_call_controller());
+    try {
+      $this->_call_controller();
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("403 Forbidden", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function rest_get_resource_no_user_for_key_test() {
@@ -126,9 +142,13 @@ class Rest_Controller_Test extends Unit_Test_Case {
     $this->_user->delete();
     unset($this->_user);
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Authorization failed"))),
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_url())));
+    try {
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_url()));
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("403 Forbidden", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function rest_get_resource_no_handler_test() {
@@ -136,9 +156,13 @@ class Rest_Controller_Test extends Unit_Test_Case {
     $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $this->_access_key;
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "PUT";
 
-    $this->assert_equal(
-      json_encode(array("status" => "ERROR", "message" => (string)t("Service not implemented"))),
-      $this->_call_controller("rest", explode("/", $this->_photo->relative_url())));
+    try {
+      $this->_call_controller("rest", explode("/", $this->_photo->relative_url()));
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("501 Not Implemented", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function rest_get_resource_test() {

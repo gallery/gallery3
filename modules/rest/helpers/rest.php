@@ -18,38 +18,22 @@
  */
 class rest_Core {
   /**
-   * Authorization Failure
-   */
-  static function forbidden($log_message=null) {
-    return self::_format_failure_response(t("Authorization failed"), $log_message);
-  }
-
-  /**
-   * Invalid Failure
-   */
-  static function invalid_request($log_message=null) {
-    return self::_format_failure_response(t("Invalid request"), $log_message);
-  }
-
-  /**
    * Not Implemented
    */
   static function not_implemented($log_message=null) {
-    return self::_format_failure_response(t("Service not implemented"), $log_message);
-  }
-
-  /**
-   * Internal Error
-   */
-  static function internal_error($log_message=null) {
-    return self::_format_failure_response(t("Internal error"), $log_message);
+    Rest_Exception::trigger(501, "Not implemented", $log_message);
   }
 
   /**
    * Request failed
    */
   static function fail($log_message=null) {
-    return self::_format_failure_response($log_message, $log_message);
+    if (!empty($log_message)) {
+      Kohana_Log::add("info", $log_message);
+    }
+    // We don't need to save the session for this request
+    Session::abort_save();
+    return json_encode(array("status" => "ERROR", "message" => (string)$message));
   }
 
   /**
@@ -77,14 +61,5 @@ class rest_Core {
     // We don't need to save the session for this request
     Session::abort_save();
     return json_encode($response);
-  }
-
-  private static function _format_failure_response($message, $log_message) {
-    if (!empty($log_message)) {
-      Kohana_Log::add("info", $log_message);
-    }
-    // We don't need to save the session for this request
-    Session::abort_save();
-    return json_encode(array("status" => "ERROR", "message" => (string)$message));
   }
 }

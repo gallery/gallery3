@@ -20,18 +20,17 @@ class Rest_Controller extends Controller {
   public function access_key() {
     $request = (object)Input::instance()->get();
     if (empty($request->user) || empty($request->password)) {
-      print rest::forbidden("No user or password supplied");
-      return;
+      Rest_Exception::trigger(403, "Forbidden", "No user or password supplied");
     }
 
     $user = identity::lookup_user_by_name($request->user);
     if (empty($user)) {
-      print rest::forbidden("User '{$request->user}' not found");
+      Rest_Exception::trigger(403, "Forbidden", "User '{$request->user}' not found");
       return;
     }
 
     if (!identity::is_correct_password($user, $request->password)) {
-      print rest::forbidden("Invalid password for '{$request->user}'.");
+      Rest_Exception::trigger(403, "Forbidden", "Invalid password for '{$request->user}'.");
       return;
     }
 
@@ -55,14 +54,16 @@ class Rest_Controller extends Controller {
         $handler_method = $request->method;
 
         if (!method_exists($handler_class, $handler_method)) {
-          print rest::not_implemented("$handler_class::$handler_method is not implemented");
-          return;
+          Rest_Exception::trigger(501, "Not implemented", "$handler_class::$handler_method");
         }
 
         print call_user_func(array($handler_class, $handler_method), $request);
       }
+    } catch (Rest_Exception $e) {
+      $e->sendHeaders();
     } catch (Exception $e) {
-      print rest::internal_error($e->__toString());
+      Kohana_Log::add("error", $e->__toString());
+      header("HTTP/1.1 500 Internal Error");
     }
   }
 
@@ -100,12 +101,12 @@ class Rest_Controller extends Controller {
       if ($key->loaded()) {
         $user = identity::lookup_user($key->user_id);
         if (empty($user)) {
-          print rest::forbidden("User not found: {$key->user_id}");
-          return false;;
+          Rest_Exception::trigger(403, "Forbidden", $log_message,
+                                  "User not found: {$key->user_id}");
         }
       } else {
-        print rest::forbidden("Invalid user access token supplied: {$key->user_id}");
-        return false;
+        Rest_Exception::trigger(403, "Forbidden", $log_message,
+                                "Invalid user access token supplied: {$key->user_id}");
       }
     }
     identity::set_active_user($user);
