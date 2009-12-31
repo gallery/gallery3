@@ -23,7 +23,6 @@ class DrawForm_Test extends Unit_Test_Case {
     $form->input("title")->label(t("Title"));
     $form->textarea("description")->label(t("Text Area"));
     $form->submit("")->value(t("Submit"));
-    $rendered = $form->__toString();
 
     $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
@@ -45,7 +44,7 @@ class DrawForm_Test extends Unit_Test_Case {
                 "  </li>\n" .
                 "  </ul>\n" .
                 "</form>";
-    $this->assert_same($expected, $rendered);
+    $this->assert_same($expected, (string) $form);
   }
 
   function group_test() {
@@ -54,7 +53,6 @@ class DrawForm_Test extends Unit_Test_Case {
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Text Area"));
     $group->submit("")->value(t("Submit"));
-    $rendered = $form->__toString();
 
     $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
@@ -79,7 +77,7 @@ class DrawForm_Test extends Unit_Test_Case {
                 "    </ul>\n" .
                 "  </fieldset>\n" .
                 "</form>";
-    $this->assert_same($expected, $rendered);
+    $this->assert_same($expected, (string) $form);
   }
 
   function form_script_test() {
@@ -91,7 +89,6 @@ class DrawForm_Test extends Unit_Test_Case {
       ->url(url::file("test.js"))
       ->text("alert('Test Javascript');");
     $group->submit("")->value(t("Submit"));
-    $rendered = $form->__toString();
 
     $csrf = access::csrf_token();
     $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" " .
@@ -120,7 +117,21 @@ class DrawForm_Test extends Unit_Test_Case {
                 "alert('Test Javascript');\n" .
                 "</script>\n" .
                 "</form>";
-    $this->assert_same($expected, $rendered);
+    $this->assert_same($expected, (string) $form);
+  }
+
+  function two_hiddens_test() {
+    $form = new Forge("test/controller", "", "post");
+    $form->hidden("HIDDEN_NAME")->value("HIDDEN_VALUE");
+
+    $csrf = access::csrf_token();
+    $expected = "<form action=\"http://./index.php/test/controller\" method=\"post\" class=\"form\">\n" .
+                "<input type=\"hidden\" name=\"csrf\" value=\"$csrf\"  />" .
+                "<input type=\"hidden\" name=\"HIDDEN_NAME\" value=\"HIDDEN_VALUE\"  />" .
+                "  <ul>\n" .
+                "  </ul>\n" .
+                "</form>";
+    $this->assert_same($expected, (string) $form);
   }
 }
 

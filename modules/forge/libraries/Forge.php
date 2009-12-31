@@ -299,7 +299,10 @@ class Forge_Core {
 			}
 
 			// Set the form open and close
-			$form->open  = form::$form_type(arr::remove('action', $this->attr), $this->attr, $hidden);
+			$form->open  = form::$form_type(arr::remove('action', $this->attr), $this->attr);
+                        foreach ($this->hidden as $hidden) {
+                                $form->open .= form::hidden($hidden->name, $hidden->value);
+                        }
 			$form->close = "</form>";
 
 			// Set the inputs
