@@ -87,6 +87,7 @@ class gallery_rest_Core {
     $parent = gallery_rest::_get_item(implode("/", $components), "edit");
 
     // Validate the request data
+    $request->name = $name;
     $new_values = gallery_rest::_validate($request, $parent->id);
     $errors = $new_values->errors();
     if (!empty($errors)) {
@@ -181,32 +182,28 @@ class gallery_rest_Core {
   }
 
   private static function _validate($request, $parent_id, $item_id=0) {
-    $new_values = array();
-    $fields = array("name" => "length[0,255]",
-                    "title" => "required|length[0,255]",
-                    "description" => "length[0,65535]",
-                    "slug" => "required|length[0,255]");
-    if ($item_id == 1) {
-      unset($request["name"]);
-      unset($request["slug"]);
-    }
-    foreach (array_keys($fields) as $field) {
+    $item = ORM::factory("item", $item_id);
+
+    // Normalize the inputs so all fields have a value
+    $new_values = Validation::factory(array());
+    foreach ($item->form_rules as $field => $rule_set) {
       if (isset($request->$field)) {
         $new_values[$field] = $request->$field;
       } else if (isset($item->$field)) {
         $new_values[$field] = $item->$field;
       }
+      foreach (explode("|", $rule_set) as $rule) {
+        $new_values->add_rules($field, $rule);
+      }
     }
+    $name = $new_values["name"];
+    $new_values["title"] = empty($new_values["title"]) ? $name : $new_values["title"];
+    $new_values["description"] =
+      empty($new_values["description"]) ? null : $new_values["description"];
+    $new_values["slug"] = empty($new_values["slug"]) ? $name : $new_values["slug"];
+
     if (!empty($request->image)) {
       $new_values["image"] = $request->image;
-    }
-
-    $new_values = Validation::factory($new_values)
-      ->add_rules("name", "length[0,255]")
-      ->add_rules("title", "length[0,255]")
-      ->add_rules("description", "length[0,65535]")
-      ->add_rules("slug", "length[0,255]");
-    if (isset($new_values["image"])) {
       $new_values->add_rules(
         "image", "upload::valid", "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
     }
@@ -215,9 +212,9 @@ class gallery_rest_Core {
       $errors = gallery_rest::_check_for_conflicts($parent_id, $item_id,
                                                    $new_values["name"], $new_values["slug"]);
       if (!empty($errors)) {
-        !empty($errors["name_conflict"]) OR $new_values->add_error("name", "Duplicate Name");
+        !empty($errors["name_conflict"]) OR $new_values->add_error("name", "Duplicate name");
         !empty($errors["slug_conflict"]) OR
-          $new_values->add_error("slug", "Duplicate Internet Address");
+          $new_values->add_error("slug", "Duplicate Internet address");
       }
     }
 
@@ -248,5 +245,4 @@ class gallery_rest_Core {
 
     return $errors;
   }
-
 }
