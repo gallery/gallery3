@@ -110,8 +110,13 @@ class Movies_Controller extends Items_Controller {
       message::success(
         t("Saved movie %movie_title", array("movie_title" => $movie->title)));
 
-      print json_encode(
-        array("result" => "success"));
+      if ($form->from_id->value == $movie->id) {
+        // Use the new url; it might have changed.
+        print json_encode(array("result" => "success", "location" => $movie->url()));
+      } else {
+        // Stay on the same page
+        print json_encode(array("result" => "success"));
+      }
     } else {
       print json_encode(
         array("result" => "error",
@@ -123,6 +128,7 @@ class Movies_Controller extends Items_Controller {
     $movie = ORM::factory("item", $movie_id);
     access::required("view", $movie);
     access::required("edit", $movie);
+
     print movie::get_edit_form($movie);
   }
 }

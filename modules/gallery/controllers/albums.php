@@ -157,8 +157,6 @@ class Albums_Controller extends Items_Controller {
     }
 
     if ($valid) {
-      $watching_album = $album->url() != ($location = parse_url(request::referrer(), PHP_URL_PATH));
-
       $album->title = $form->edit_item->title->value;
       $album->description = $form->edit_item->description->value;
       $album->sort_column = $form->edit_item->sort_order->column->value;
@@ -174,9 +172,13 @@ class Albums_Controller extends Items_Controller {
       message::success(t("Saved album %album_title",
                          array("album_title" => html::purify($album->title))));
 
-      print json_encode(
-        array("result" => "success",
-              "location" => $watching_album ? $location : $album->url()));
+      if ($form->from_id->value == $album->id) {
+        // Use the new url; it might have changed.
+        print json_encode(array("result" => "success", "location" => $album->url()));
+      } else {
+        // Stay on the same page
+        print json_encode(array("result" => "success"));
+      }
     } else {
       print json_encode(
         array("result" => "error",

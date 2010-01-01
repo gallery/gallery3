@@ -99,8 +99,6 @@ class Photos_Controller extends Items_Controller {
     }
 
     if ($valid) {
-      $watching_album = $photo->url() != ($location = parse_url(request::referrer(), PHP_URL_PATH));
-
       $photo->title = $form->edit_item->title->value;
       $photo->description = $form->edit_item->description->value;
       $photo->slug = $form->edit_item->slug->value;
@@ -110,12 +108,15 @@ class Photos_Controller extends Items_Controller {
 
       log::success("content", "Updated photo", "<a href=\"{$photo->url()}\">view</a>");
       message::success(
-                       t("Saved photo %photo_title",
-                         array("photo_title" => html::purify($photo->title))));
+        t("Saved photo %photo_title", array("photo_title" => html::purify($photo->title))));
 
-      print json_encode(
-        array("result" => "success",
-              "location" => $watching_album ? $location : $photo->url()));
+      if ($form->from_id->value == $photo->id) {
+        // Use the new url; it might have changed.
+        print json_encode(array("result" => "success", "location" => $photo->url()));
+      } else {
+        // Stay on the same page
+        print json_encode(array("result" => "success"));
+      }
     } else {
       print json_encode(
         array("result" => "error",
