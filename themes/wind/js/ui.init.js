@@ -63,8 +63,8 @@ $(document).ready(function() {
         // Set the hover item's height
         $(this).height("auto");
         var context_menu = $(this).find(".g-context-menu");
-        var adj_height = $(this).height() + context_menu.height(); 
-        $(this).height(adj_height); 
+        var adj_height = $(this).height() + context_menu.height();
+        $(this).height(adj_height);
       },
       function() {
         // Reset item height and position
@@ -87,12 +87,12 @@ $(document).ready(function() {
   }
 
   // Photo/Item item view
-  if ($("#g-photo").length) {
+  if ($("#g-photo,#g-movie").length) {
     // Ensure the resized image fits within its container
-    $("#g-photo").gallery_fit_photo();
+    $("#g-photo,#g-movie").gallery_fit_photo();
 
     // Initialize context menus
-    var resize = $("#g-photo").gallery_get_photo();
+    var resize = $("#g-photo,#g-movie").gallery_get_photo();
     $(resize).hover(function(){
       $(this).gallery_context_menu();
     });
