@@ -63,7 +63,7 @@ class Packager_Controller extends Controller {
 
     module::load_modules();
 
-    foreach (array("user", "comment", "organize", "info", "rss",
+    foreach (array("user", "comment", "organize", "info", "rest", "rss",
                    "search", "slideshow", "tag") as $module_name) {
       module::install($module_name);
       module::activate($module_name);
@@ -89,8 +89,10 @@ class Packager_Controller extends Controller {
       ->where("module_name", "=", "gallery")
       ->where("name", "=", "_cache")
       ->execute();
-    db::build()->update("users", array("password" => ""), array("id" => 1))->execute();
-    db::build()->update("users", array("password" => ""), array("id" => 2))->execute();
+    db::build()->update("users")
+      ->set(array("password" => ""))
+      ->where("id", "in", array(1, 2))
+      ->execute();
 
     $dbconfig = Kohana::config('database.default');
     $conn = $dbconfig["connection"];
