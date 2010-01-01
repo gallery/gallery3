@@ -133,13 +133,21 @@ class Quick_Controller extends Controller {
 
     switch ($item->type) {
     case "album":
-      return print album::get_edit_form($item);
+      $form = album::get_edit_form($item);
+      break;
 
     case "photo":
-      return print photo::get_edit_form($item);
+      $form = photo::get_edit_form($item);
+      break;
 
     case "movie":
-      return print movie::get_edit_form($item);
+      $form = movie::get_edit_form($item);
+      break;
     }
+
+    // Pass on the source item where this form was generated, so we have an idea where to return to.
+    $form->hidden("from_id")->value((int)Input::instance()->get("from_id", 0));
+
+    print $form;
   }
 }
