@@ -21,6 +21,7 @@
 class g2_import_Core {
   public static $init = false;
   public static $map = array();
+  public static $g2_base_url = null;
 
   private static $current_g2_item = null;
 
@@ -155,6 +156,20 @@ class g2_import_Core {
     $admin = g2(GalleryCoreApi::loadEntitiesById($admin_id));
     $GLOBALS["gallery"]->setActiveUser($admin);
 
+    // Make sure we have an embed location so that embedded url generation comes out ok.  Without
+    // this, the Gallery2 ModRewrite code won't try to do url generation.
+    $g2_embed_location =
+      g2(GalleryCoreApi::getPluginParameter("module", "rewrite", "modrewrite.embeddedLocation"));
+
+    if (empty($g2_embed_location)) {
+      $g2_embed_location =
+        g2(GalleryCoreApi::getPluginParameter("module", "rewrite", "modrewrite.galleryLocation"));
+      g2(GalleryCoreApi::setPluginParameter(
+           "module", "rewrite", "modrewrite.embeddedLocation", $g2_embed_location));
+      g2($gallery->getStorage()->checkPoint());
+    }
+    self::$g2_base_url = $g2_embed_location;
+
     return true;
   }
 
@@ -254,7 +269,7 @@ class g2_import_Core {
     }
 
     if (isset($group)) {
-      self::set_map($g2_group->getId(), $group->id);
+      self::set_map($g2_group->getId(), $group->id, "group");
     }
 
     return $message;
@@ -270,7 +285,7 @@ class g2_import_Core {
     }
 
     if (g2(GalleryCoreApi::isAnonymousUser($g2_user_id))) {
-      self::set_map($g2_user_id, identity::guest()->id);
+      self::set_map($g2_user_id, identity::guest()->id, "group");
       return t("Skipping anonymous user");
     }
 
@@ -308,7 +323,7 @@ class g2_import_Core {
     }
     $user->save();
 
-    self::set_map($g2_user->getId(), $user->id);
+    self::set_map($g2_user->getId(), $user->id, "user");
 
     return $message;
   }
@@ -376,7 +391,11 @@ class g2_import_Core {
     $album->save();
 
     self::import_keywords_as_tags($g2_album->getKeywords(), $album);
-    self::set_map($g2_album_id, $album->id);
+
+    self::set_map(
+      $g2_album_id, $album->id,
+      "album",
+      self::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_album->getId())));
 
     // @todo import album highlights
   }
@@ -515,19 +534,30 @@ class g2_import_Core {
       self::import_keywords_as_tags($g2_item->getKeywords(), $item);
     }
 
+    $g2_item_url = self::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_item->getId()));
     if (isset($item)) {
-      self::set_map($g2_item_id, $item->id);
       $item->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
       $item->save();
+
+      self::set_map($g2_item_id, $item->id, "item", $g2_item_url);
+      $derivatives = g2(GalleryCoreApi::fetchDerivativesByItemIds(array($g2_item_id)));
+      if (!empty($derivatives[$g2_item_id])) {
+        foreach ($derivatives[$g2_item_id] as $derivative) {
+          switch ($derivative->getDerivativeType()) {
+          case DERIVATIVE_TYPE_IMAGE_THUMBNAIL: $resource_type = "thumbnail"; break;
+          case DERIVATIVE_TYPE_IMAGE_RESIZE:    $resource_type = "resize"; break;
+          case DERIVATIVE_TYPE_IMAGE_PREFERRED: $resource_type = "full"; break;
+          }
+
+          self::set_map(
+            $derivative->getId(), $item->id,
+            $resource_type,
+            self::g2_url(array("view" => "core.DownloadItem", "itemId" => $derivative->getId())));
+        }
+      }
     }
 
     if ($corrupt) {
-      $url_generator = $GLOBALS["gallery"]->getUrlGenerator();
-      // @todo we need a more persistent warning
-      $g2_item_url = $url_generator->generateUrl(array("itemId" => $g2_item->getId()));
-      // Why oh why did I ever approve the session id placeholder idea in G2?
-      $g2_item_url =
-        str_replace('&amp;g2_GALLERYSID=TMP_SESSION_ID_DI_NOISSES_PMT', '', $g2_item_url);
       if (!empty($item)) {
         $message[] =
           t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
@@ -874,10 +904,12 @@ class g2_import_Core {
   /**
    * Associate a Gallery 2 id with a Gallery 3 item id.
    */
-  static function set_map($g2_id, $g3_id) {
+  static function set_map($g2_id, $g3_id, $resource_type, $g2_url=null) {
     $g2_map = ORM::factory("g2_map");
     $g2_map->g3_id = $g3_id;
     $g2_map->g2_id = $g2_id;
+    $g2_map->resource_type = $resource_type;
+    $g2_map->g2_url = $g2_url;
     $g2_map->save();
     self::$map[$g2_id] = $g3_id;
   }
@@ -885,6 +917,17 @@ class g2_import_Core {
   static function log($msg) {
     message::warning($msg);
     Kohana_Log::add("alert", $msg);
+  }
+
+  static function g2_url($params) {
+    global $gallery;
+    $url = $gallery->getUrlGenerator()->generateUrl(
+      $params,
+      array("forceSessionId" => false,
+            "htmlEntities" => false,
+            "urlEncode" => false,
+            "useAuthToken" => false));
+    return str_replace(self::$g2_base_url, "", $url);
   }
 }
 
@@ -901,7 +944,7 @@ class g2_import_Core {
  */
 function g2() {
   $args = func_get_arg(0);
-  $ret = array_shift($args);
+  $ret = is_array($args) ? array_shift($args) : $args;
   if ($ret) {
     Kohana_Log::add("error", "Gallery 2 call failed with: " . $ret->getAsText());
     throw new Exception("@todo G2_FUNCTION_FAILED");
