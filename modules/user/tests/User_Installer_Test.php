@@ -41,18 +41,10 @@ class User_Installer_Test extends Unit_Test_Case {
     $group = ORM::factory("group", 1);
     $this->assert_equal("Everybody", $group->name);
     $this->assert_true($group->special);
-
-    $this->assert_equal(
-      array("guest", "admin"),
-      array_keys($group->users->select_list("name")));
   }
 
   public function install_creates_registered_group_test() {
     $group = ORM::factory("group", 2);
     $this->assert_equal("Registered Users", $group->name);
-
-    $this->assert_equal(
-      array("admin"),
-      array_keys($group->users->select_list("name")));
   }
 }
