@@ -21,16 +21,23 @@ class G2_Controller extends Admin_Controller {
   /**
    * Redirect Gallery 2 urls to their appropriate matching Gallery 3 url.
    *
-   * Inputs look like this:
-   *   /g2/map?url=v/Family/Wedding/IMG_3.jpg.html
-   *   /g2/map?id=1931
+   * We use mod_rewrite to create this path, so Gallery2 urls like this:
+   *   /gallery2/v/Family/Wedding.jpg.html
+   *   /gallery2/main.php?g2_view=core.ShowItem&g2_itemId=1234
+   *
+   * Show up here like this:
+   *   /g2/map?path=v/Family/Wedding.jpg.html
+   *   /g2/map?g2_view=core.ShowItem&g2_itemId=1931
    */
   public function map() {
     $input = Input::instance();
-    if ($g2_id = $input->get("id")) {
-      $where = array("g2_id", "=", $g2_id);
-    } else if ($g2_url = $input->get("url")) {
-      $where = array("g2_url", "=", $g2_url);
+    $path = $input->get("path");
+    $id = $input->get("g2_itemId");
+
+    if ($id) {
+      $where = array("g2_id", "=", $id);
+    } else if ($path) {
+      $where = array("g2_url", "=", $path);
     } else {
       throw new Kohana_404_Exception();
     }
