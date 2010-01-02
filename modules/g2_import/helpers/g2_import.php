@@ -396,8 +396,6 @@ class g2_import_Core {
       $g2_album_id, $album->id,
       "album",
       self::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_album->getId())));
-
-    // @todo import album highlights
   }
 
   /**
