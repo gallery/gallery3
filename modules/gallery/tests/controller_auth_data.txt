@@ -2,6 +2,7 @@ modules/comment/controllers/admin_comments.php               queue              
 modules/comment/helpers/comment_rss.php                      feed                 DIRTY_AUTH
 modules/digibug/controllers/digibug.php                      print_proxy          DIRTY_CSRF|DIRTY_AUTH
 modules/digibug/controllers/digibug.php                      close_window         DIRTY_AUTH
+modules/g2_import/controllers/g2.php                         map                  DIRTY_CSRF
 modules/gallery/controllers/admin.php                        __call               DIRTY_AUTH
 modules/gallery/controllers/albums.php                       index                DIRTY_AUTH
 modules/gallery/controllers/albums.php                       show                 DIRTY_CSRF
@@ -14,10 +15,12 @@ modules/gallery/controllers/login.php                        html               
 modules/gallery/controllers/login.php                        auth_html            DIRTY_AUTH
 modules/gallery/controllers/logout.php                       index                DIRTY_CSRF|DIRTY_AUTH
 modules/gallery/controllers/maintenance.php                  index                DIRTY_AUTH
+modules/gallery/controllers/quick.php                        form_edit            DIRTY_CSRF
 modules/gallery/controllers/simple_uploader.php              start                DIRTY_AUTH
 modules/gallery/controllers/simple_uploader.php              finish               DIRTY_AUTH
 modules/gallery/controllers/upgrader.php                     index                DIRTY_AUTH
 modules/gallery/controllers/welcome_message.php              index                DIRTY_AUTH
+modules/rest/controllers/rest.php                            access_key           DIRTY_CSRF|DIRTY_AUTH
 modules/rss/controllers/rss.php                              feed                 DIRTY_CSRF|DIRTY_AUTH
 modules/search/controllers/search.php                        index                DIRTY_CSRF|DIRTY_AUTH
 modules/server_add/controllers/admin_server_add.php          autocomplete         DIRTY_CSRF
