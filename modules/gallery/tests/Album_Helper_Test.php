@@ -57,7 +57,7 @@ class Album_Helper_Test extends Unit_Test_Case {
     $rand = rand();
     $root = ORM::factory("item", 1);
     $album = album::create($root, $rand, $rand, $rand);
-    $this->assert_equal("http://./var/resizes/$rand/.album.jpg", $album->resize_url());
+    $this->assert_equal("http://./var/resizes/$rand/.album.jpg?m={$album->updated}", $album->resize_url());
   }
 
   public function create_album_shouldnt_allow_names_with_slash_test() {
