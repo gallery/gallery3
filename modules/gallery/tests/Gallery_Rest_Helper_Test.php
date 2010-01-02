@@ -132,8 +132,13 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
                              "title" => "Updated Title",
                              "name" => "new name");
 
-    $this->assert_equal(json_encode(array("status" => "ERROR", "message" => "Invalid request")),
-                        gallery_rest::put($request));
+    try {
+      gallery_rest::put($request);
+    } catch (Rest_Exception $e) {
+      $this->assert_equal("400 Bad request", $e->getMessage());
+    } catch (Exception $e) {
+      $this->assert_false(true, $e->__toString());
+    }
   }
 
   public function gallery_rest_put_album_not_found_test() {
