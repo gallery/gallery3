@@ -102,7 +102,7 @@
       <code>
         &lt;IfModule mod_rewrite.c&gt;<br/>
           RewriteEngine On<br/>
-          RewriteBase <?= g2_import::$g2_base_url ?><br/>
+          RewriteBase <?= html::clean(g2_import::$g2_base_url) ?><br/>
           RewriteRule ^(.*)$ <?= url::site("g2/map?path=\$1") ?>   [QSA,L]<br/>
         &lt;/IfModule&gt;<br/>
       </code>
