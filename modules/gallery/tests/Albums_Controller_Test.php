@@ -35,8 +35,10 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $this->_album = album::create($root, "test", "test", "test");
     $orig_name = $this->_album->name;
 
-    $_POST["dirname"] = "test";
-    $_POST["name"] = "new name";
+    // Randomize to avoid conflicts.
+    $new_dirname = "new_name_" . rand();
+
+    $_POST["dirname"] = $new_dirname;
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
     $_POST["column"] = "weight";
@@ -54,11 +56,9 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $this->assert_equal(
       json_encode(array("result" => "success")),
       $results);
+    $this->assert_equal($new_dirname, $this->_album->name);
     $this->assert_equal("new title", $this->_album->title);
     $this->assert_equal("new description", $this->_album->description);
-
-    // We don't change the name, yet.
-    $this->assert_equal($orig_name, $this->_album->name);
   }
 
   public function change_album_no_csrf_fails_test() {
