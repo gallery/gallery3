@@ -39,7 +39,7 @@ modules/digibug/views/digibug_form.html.php                  5   DIRTY    form::
 modules/digibug/views/digibug_form.html.php                  6   DIRTY    form::close()
 modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
 modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]
-modules/g2_import/views/admin_g2_import.html.php             29  DIRTY    $form
+modules/g2_import/views/admin_g2_import.html.php             30  DIRTY    $form
 modules/gallery/views/admin_advanced_settings.html.php       21  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/gallery/views/admin_advanced_settings.html.php       22  DIRTY    $var->module_name
 modules/gallery/views/admin_block_log_entries.html.php       4   DIRTY_ATTR log::severity_class($entry->severity)
@@ -118,11 +118,11 @@ modules/gallery/views/admin_themes.html.php                  62  DIRTY    $theme
 modules/gallery/views/admin_themes.html.php                  76  DIRTY    $info->name
 modules/gallery/views/admin_themes.html.php                  78  DIRTY    $info->description
 modules/gallery/views/admin_themes_preview.html.php          7   DIRTY_ATTR $url
-modules/gallery/views/form_uploadify.html.php                20  DIRTY_JS url::file("lib/uploadify/uploadify.swf")
-modules/gallery/views/form_uploadify.html.php                21  DIRTY_JS url::site("simple_uploader/add_photo/{$album->id}")
-modules/gallery/views/form_uploadify.html.php                25  DIRTY_JS url::file("lib/uploadify/cancel.png")
-modules/gallery/views/form_uploadify.html.php                27  DIRTY_JS $simultaneous_upload_limit
-modules/gallery/views/form_uploadify.html.php                52  DIRTY_JS t("Completed")
+modules/gallery/views/form_uploadify.html.php                24  DIRTY_JS url::file("lib/uploadify/uploadify.swf")
+modules/gallery/views/form_uploadify.html.php                25  DIRTY_JS url::site("simple_uploader/add_photo/{$album->id}")
+modules/gallery/views/form_uploadify.html.php                29  DIRTY_JS url::file("lib/uploadify/cancel.png")
+modules/gallery/views/form_uploadify.html.php                30  DIRTY_JS $simultaneous_upload_limit
+modules/gallery/views/form_uploadify.html.php                55  DIRTY_JS t("Completed")
 modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"),$hidden)
 modules/gallery/views/in_place_edit.html.php                 5   DIRTY    form::input("input",$form["input"]," class=\"textbox\"")
 modules/gallery/views/in_place_edit.html.php                 12  DIRTY    form::close()
@@ -245,7 +245,7 @@ modules/organize/views/organize_thumb_grid.html.php          7   DIRTY    $child
 modules/organize/views/organize_thumb_grid.html.php          15  DIRTY_JS url::site("organize/album/$album->id/".($offset+25))
 modules/organize/views/organize_tree.html.php                2   DIRTY_ATTR access::can("edit",$album)?"":"g-view-only"
 modules/organize/views/organize_tree.html.php                3   DIRTY_ATTR $album->id
-modules/organize/views/organize_tree.html.php                6   DIRTY_ATTR $selected&&$album->id==$selected->id?"selected":""
+modules/organize/views/organize_tree.html.php                6   DIRTY_ATTR $selected&&$album->id==$selected->id?"ui-state-focus":""
 modules/organize/views/organize_tree.html.php                7   DIRTY_ATTR $album->id
 modules/organize/views/organize_tree.html.php                13  DIRTY    View::factory("organize_tree.html",array("selected"=>$selected,"album"=>$child));
 modules/organize/views/organize_tree.html.php                15  DIRTY_ATTR access::can("edit",$child)?"":"g-view-only"
