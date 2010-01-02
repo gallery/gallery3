@@ -36,6 +36,10 @@ class File_Structure_Test extends Unit_Test_Case {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
+      if (strpos($file, "modules/gallery/views/kohana/error.php")) {
+        continue;
+      }
+
       if (strpos($file, "views")) {
         $this->assert_true(
           preg_match("#/views/.*?(\.html|mrss|txt)\.php$#", $file->getPathname()),
