@@ -226,18 +226,17 @@ CREATE TABLE {modules} (
   `version` int(9) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {modules} VALUES (1,1,'gallery',21);
 INSERT INTO {modules} VALUES (2,1,'user',2);
 INSERT INTO {modules} VALUES (3,1,'comment',2);
 INSERT INTO {modules} VALUES (4,1,'organize',1);
 INSERT INTO {modules} VALUES (5,1,'info',1);
-INSERT INTO {modules} VALUES (6,1,'rest',1);
-INSERT INTO {modules} VALUES (7,1,'rss',1);
-INSERT INTO {modules} VALUES (8,1,'search',1);
-INSERT INTO {modules} VALUES (9,1,'slideshow',2);
-INSERT INTO {modules} VALUES (10,1,'tag',1);
+INSERT INTO {modules} VALUES (6,1,'rss',1);
+INSERT INTO {modules} VALUES (7,1,'search',1);
+INSERT INTO {modules} VALUES (8,1,'slideshow',2);
+INSERT INTO {modules} VALUES (9,1,'tag',1);
 DROP TABLE IF EXISTS {outgoing_translations};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -334,18 +333,6 @@ CREATE TABLE {themes} (
 SET character_set_client = @saved_cs_client;
 INSERT INTO {themes} VALUES (1,'wind',1);
 INSERT INTO {themes} VALUES (2,'admin_wind',1);
-DROP TABLE IF EXISTS {user_access_tokens};
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-CREATE TABLE {user_access_tokens} (
-  `id` int(9) NOT NULL auto_increment,
-  `user_id` int(9) NOT NULL,
-  `access_key` char(32) NOT NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `access_key` (`access_key`),
-  UNIQUE KEY `user_id` (`user_id`)
-) DEFAULT CHARSET=utf8;
-SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {users};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;

@@ -24,12 +24,25 @@ class g2_import_installer {
                  `id` int(9) NOT NULL auto_increment,
                  `g2_id` int(9) NOT NULL,
                  `g3_id` int(9) NOT NULL,
+                 `g2_url` varchar(255) default NULL,
+                 `resource_type` varchar(64) default NULL,
                PRIMARY KEY (`id`),
-               KEY (`g2_id`))
+               KEY `g2_url` (`g2_url`),
+               KEY `g2_id` (`g2_id`))
                DEFAULT CHARSET=utf8;");
 
     module::set_version("g2_import", 1);
     mkdir(VARPATH . "modules/g2_import");
+  }
+
+  static function upgrade($version) {
+    $db = Database::instance();
+    if ($version == 1) {
+      $db->query("ALTER TABLE {g2_maps} ADD COLUMN `g2_url` VARCHAR(255)");
+      $db->query("ALTER TABLE {g2_maps} ADD COLUMN `resource_type` VARCHAR(64)");
+      $db->query("ALTER TABLE {g2_maps} ADD KEY `g2_url` (`g2_url`)");
+      module::set_version("g2_import", $version = 2);
+    }
   }
 
   static function uninstall() {
