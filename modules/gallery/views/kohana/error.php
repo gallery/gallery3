@@ -1,4 +1,4 @@
-<? defined("SYSPATH") or die("No direct script access.") ?>
+<?php defined("SYSPATH") or die("No direct script access.") ?>
 <? $error_id = uniqid("error") ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
@@ -151,15 +151,15 @@
         <?= t("Hey wait, you're an admin!  We can tell you stuff.") ?>
       </h2>
       <div id="kohana_error">
-	<h3>
+        <h3>
           <span class="type">
             <?= $type?> [ <?= $code ?> ]:
           </span>
           <span class="message">
             <?= $message?>
           </span>
-	</h3>
-	<div id="<?= $error_id ?>" class="content">
+        </h3>
+        <div id="<?= $error_id ?>" class="content">
           <ol class="trace">
             <li class="snippet">
               <p>
@@ -219,11 +219,11 @@
           </ol>
           <? endif ?>
 
-	</div>
-	<h2>
+        </div>
+        <h2>
           <a href="#<?= $env_id = $error_id."environment" ?>" onclick="return koggle('<?= $env_id ?>')"><?= t("Environment")?></a>
         </h2>
-	<div id="<?= $env_id ?>" class="content collapsed">
+        <div id="<?= $env_id ?>" class="content collapsed">
           <? $included = get_included_files()?>
           <h3><a href="#<?= $env_id = $error_id."environment_included" ?>" onclick="return koggle('<?= $env_id ?>')"><?= t("Included files")?></a>(<?= count($included)?>)</h3>
           <div id="<?= $env_id ?>" class="collapsed">
@@ -271,7 +271,7 @@
             </table>
           </div>
           <? endforeach?>
-	</div>
+        </div>
       </div>
     </div>
     <? endif ?>
