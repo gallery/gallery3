@@ -49,8 +49,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $results = ob_get_contents();
     ob_end_clean();
 
-    $this->assert_equal(
-      json_encode(array("result" => "success", "location" => "HTTP_REFERER")), $results);
+    $this->assert_equal(json_encode(array("result" => "success")), $results);
     $this->assert_equal("new-slug", $photo->slug);
     $this->assert_equal("new title", $photo->title);
     $this->assert_equal("new description", $photo->description);
