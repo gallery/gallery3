@@ -16,10 +16,10 @@
           <?= t("Permissions are <b>not imported</b>.  You will have to set them again manually (for now).") ?>
         </li>
         <li>
-          <?= t("The only supported image formats are JPG, PNG and GIF.  Other formats will be skipped.") ?>
+          <?= t("The only supported file formats are JPG, PNG and GIF, FLV and MP4.  Other formats will be skipped.") ?>
         </li>
         <li>
-          <?= t("The only supported movie formats are FLV and MP4.  Other formats will be skipped.") ?>
+          <?= t("Deactivating the <b>notification</b>, <b>search</b> and <b>exif</b> modules during your import will make it go faster.") ?>
         </li>
         <li>
           <?= t("The eAccelerator PHP performance extension is known to cause issues.  If you're using eAccelerator and having problems, please disable it while you do your import.  One way to do that is to put <code>php_value eaccelerator.enable 0</code> in gallery3/.htaccess") ?>
