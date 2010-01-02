@@ -76,9 +76,18 @@ class Item_Model extends ORM_MPTT {
 
     parent::delete();
     if (is_dir($path)) {
+      // Take some precautions against accidentally deleting way too much
+      $delete_resize_path = dirname($resize_path);
+      $delete_thumb_path = dirname($thumb_path);
+      if ($delete_resize_path == VARPATH . "resizes" ||
+          $delete_thumb_path == VARPATH . "thumbs" ||
+          $path == VARPATH . "albums") {
+        throw new Exception(
+          "@todo DELETING_TOO_MUCH ($delete_resize_path, $delete_thumb_path, $path)");
+      }
       @dir::unlink($path);
-      @dir::unlink(dirname($resize_path));
-      @dir::unlink(dirname($thumb_path));
+      @dir::unlink($delete_resize_path);
+      @dir::unlink($delete_thumb_path);
     } else {
       @unlink($path);
       @unlink($resize_path);
