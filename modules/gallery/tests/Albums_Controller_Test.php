@@ -20,7 +20,6 @@
 class Albums_Controller_Test extends Unit_Test_Case {
   public function setup() {
     $this->_save = array($_POST, $_SERVER);
-    $_SERVER["HTTP_REFERER"] = "HTTP_REFERER";
   }
 
   public function teardown() {
@@ -53,7 +52,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     ob_end_clean();
 
     $this->assert_equal(
-      json_encode(array("result" => "success", "location" => "HTTP_REFERER")),
+      json_encode(array("result" => "success")),
       $results);
     $this->assert_equal("new title", $this->_album->title);
     $this->assert_equal("new description", $this->_album->description);
