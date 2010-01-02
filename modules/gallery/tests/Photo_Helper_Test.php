@@ -78,7 +78,18 @@ class Photo_Helper_Test extends Unit_Test_Case {
     $album = album::create($root, $rand, $rand, $rand);
     $photo = photo::create($album, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
 
-    $this->assert_equal("http://./var/resizes/{$rand}/{$rand}.jpg", $photo->resize_url());
+    $this->assert_equal(
+      "http://./var/resizes/{$rand}/{$rand}.jpg?m={$photo->updated}", $photo->resize_url());
+  }
+
+  public function file_url_test() {
+    $rand = rand();
+    $root = ORM::factory("item", 1);
+    $album = album::create($root, $rand, $rand, $rand);
+    $photo = photo::create($album, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
+
+    $this->assert_equal(
+      "http://./var/albums/{$rand}/{$rand}.jpg?m={$photo->updated}", $photo->file_url());
   }
 
   public function create_photo_creates_reasonable_slug_test() {
