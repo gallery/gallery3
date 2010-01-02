@@ -19,6 +19,10 @@
  */
 class Tag_Rest_Helper_Test extends Unit_Test_Case {
   public function setup() {
+    try {
+      Database::instance()->query("TRUNCATE {tags}");
+      Database::instance()->query("TRUNCATE {items_tags}");
+    } catch (Exception $e) { }
     $this->_save = array($_GET, $_POST, $_SERVER, $_FILES);
     $this->_saved_active_user = identity::active_user();
   }
@@ -28,9 +32,6 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     identity::set_active_user($this->_saved_active_user);
 
     try {
-      Database::instance()->query("TRUNCATE {tags}");
-      Database::instance()->query("TRUNCATE {items_tags}");
-
       if (!empty($this->_user)) {
         $this->_user->delete();
       }
@@ -50,7 +51,7 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   private function _create_album($tags=array(), $parent=null) {
-    $album_name = "album_" . rand();
+    $album_name = "tag_album_" . rand();
     if (empty($parent)) {
       $parent = ORM::factory("item", 1);
     }
@@ -63,7 +64,7 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
 
   private function _create_image($tags=array(), $parent=null) {
     $filename = MODPATH . "gallery/tests/test.jpg";
-    $image_name = "image_" . rand();
+    $image_name = "tag_image_" . rand();
     if (empty($parent)) {
       $parent = ORM::factory("item", 1);
     }
@@ -105,6 +106,9 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     $child = $this->_create_album(array("albums", "A1", "T1"), $album);
     $photo = $this->_create_image(array("photos", "P1", "T1"), $child);
     $sibling = $this->_create_image(array("photos", "P3"), $album);
+    $child->reload();
+    $album->reload();
+
     $request = (object)array("arguments" => array("albums"));
 
     $resources = array();
@@ -113,9 +117,8 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
                            "has_children" => $resource->children_count() > 0,
                            "path" => $resource->relative_url(),
                            "thumb_url" => $resource->thumb_url(),
-                           "thumb_dimensions" => array(
-                             "width" => $resource->thumb_width,
-                             "height" => $resource->thumb_height),
+                           "thumb_dimensions" => array("width" => $resource->thumb_width,
+                                                       "height" => $resource->thumb_height),
                            "has_thumb" => $resource->has_thumb(),
                            "title" => $resource->title);
 
@@ -229,7 +232,11 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     $album = $this->_create_album(array("albums", "A1", "T1"));
     $child = $this->_create_album(array("albums", "A1", "T1"), $album);
     $photo = $this->_create_image(array("photos", "P1", "T1"), $child);
+    $child->reload();
     $sibling = $this->_create_image(array("photos", "P3"), $album);
+    $child->reload();
+    $album->reload();
+
     $request = (object)array("arguments" => array("albums"), "new_name" => "new name");
 
     $this->assert_equal(json_encode(array("status" => "OK")), tag_rest::put($request));
@@ -241,9 +248,8 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
                            "has_children" => $resource->children_count() > 0,
                            "path" => $resource->relative_url(),
                            "thumb_url" => $resource->thumb_url(),
-                           "thumb_dimensions" => array(
-                             "width" => $resource->thumb_width,
-                             "height" => $resource->thumb_height),
+                           "thumb_dimensions" => array("width" => $resource->thumb_width,
+                                                       "height" => $resource->thumb_height),
                            "has_thumb" => $resource->has_thumb(),
                            "title" => $resource->title);
 
