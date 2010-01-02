@@ -26,17 +26,25 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
   public function teardown() {
     list($_GET, $_POST, $_SERVER, $_FILES) = $this->_save;
     identity::set_active_user($this->_saved_active_user);
+    if (!empty($this->_user)) {
+      try {
+        $this->_user->delete();
+      } catch (Exception $e) { }
+    }
   }
 
   private function _create_user() {
-    $user = identity::create_user("access_test" . rand(), "Access Test", "password");
-    $key = ORM::factory("user_access_token");
-    $key->access_key = md5($user->name . rand());
-    $key->user_id = $user->id;
-    $key->save();
-    identity::set_active_user($user);
-    return $user;
+    if (empty($this->_user)) {
+      $this->_user = identity::create_user("access_test" . rand(), "Access Test", "password");
+      $key = ORM::factory("user_access_token");
+      $key->access_key = md5($this->_user->name . rand());
+      $key->user_id = $this->_user->id;
+      $key->save();
+      identity::set_active_user($this->_user);
+    }
+    return $this->_user;
   }
+
   private function _create_album($parent=null) {
     $album_name = "album_" . rand();
     if (empty($parent)) {

@@ -31,18 +31,24 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
       Database::instance()->query("TRUNCATE {tags}");
       Database::instance()->query("TRUNCATE {items_tags}");
 
+      if (!empty($this->_user)) {
+        $this->_user->delete();
+      }
     } catch (Exception $e) { }
   }
 
   private function _create_user() {
-    $user = identity::create_user("access_test" . rand(), "Access Test", "password");
-    $key = ORM::factory("user_access_token");
-    $key->access_key = md5($user->name . rand());
-    $key->user_id = $user->id;
-    $key->save();
-    identity::set_active_user($user);
-    return $user;
+    if (empty($this->_user)) {
+      $this->_user = identity::create_user("access_test" . rand(), "Access Test", "password");
+      $key = ORM::factory("user_access_token");
+      $key->access_key = md5($this->_user->name . rand());
+      $key->user_id = $this->_user->id;
+      $key->save();
+      identity::set_active_user($this->_user);
+    }
+    return $this->_user;
   }
+
   private function _create_album($tags=array(), $parent=null) {
     $album_name = "album_" . rand();
     if (empty($parent)) {

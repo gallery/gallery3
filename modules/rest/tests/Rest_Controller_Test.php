@@ -23,12 +23,24 @@ class Rest_Controller_Test extends Unit_Test_Case {
   }
 
   private function _create_user() {
-    $user = identity::create_user("access_test" . rand(), "Access Test", "password");
-    $key = ORM::factory("user_access_token");
-    $key->access_key = md5($user->name . rand());
-    $key->user_id = $user->id;
-    $key->save();
-    return array($key->access_key, $user);
+    if (empty($this->_user)) {
+      $this->_user = identity::create_user("access_test" . rand(), "Access Test", "password");
+      $this->_key = ORM::factory("user_access_token");
+      $this->_key->access_key = md5($this->_user->name . rand());
+      $this->_key->user_id = $this->_user->id;
+      $this->_key->save();
+      identity::set_active_user($this->_user);
+    }
+    return array($this->_key->access_key, $this->_user);
+  }
+
+  public function teardown() {
+    list($_GET, $_POST, $_SERVER) = $this->_save;
+    if (!empty($this->_user)) {
+      try {
+        $this->_user->delete();
+      } catch (Exception $e) { }
+    }
   }
 
   private function _create_image($parent=null) {
@@ -38,11 +50,6 @@ class Rest_Controller_Test extends Unit_Test_Case {
       $parent = ORM::factory("item", 1);
     }
     return photo::create($parent, $filename, "$image_name.jpg", $image_name);
-  }
-
-
-  public function teardown() {
-    list($_GET, $_POST, $_SERVER) = $this->_save;
   }
 
   public function rest_access_key_exists_test() {
