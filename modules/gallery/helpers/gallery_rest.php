@@ -50,7 +50,7 @@ class gallery_rest_Core {
 
   static function put($request) {
     if (empty($request->arguments)) {
-      Rest_Exception::trigger(400, "Bad request");
+      throw new Rest_Exception(400, "Bad request");
     }
     $path = implode("/", $request->arguments);
     $item = gallery_rest::_get_item($path, "edit");
@@ -78,7 +78,7 @@ class gallery_rest_Core {
 
   static function post($request) {
     if (empty($request->arguments)) {
-      Rest_Exception::trigger(400, "Bad request");
+      throw new Rest_Exception(400, "Bad request");
     }
 
     $components = $request->arguments;
@@ -125,15 +125,14 @@ class gallery_rest_Core {
 
   static function delete($request) {
     if (empty($request->arguments)) {
-      Rest_Exception::trigger(400, "Bad request", $log_message);
-      return rest::invalid_request();
+      throw new Rest_Exception(400, "Bad request");
     }
     $path = implode("/", $request->arguments);
 
     $item = gallery_rest::_get_item($path, "edit");
 
     if ($item->id == 1) {
-      Rest_Exception::trigger(400, "Bad request", "Attempt to delete the root album");
+      throw new Rest_Exception(400, "Bad request");
     }
 
     $parent = $item->parent();

@@ -92,12 +92,10 @@ class rest_Core {
       if ($key->loaded()) {
         $user = identity::lookup_user($key->user_id);
         if (empty($user)) {
-          Rest_Exception::trigger(403, "Forbidden", $log_message,
-                                  "User not found: {$key->user_id}");
+          throw new Rest_Exception(403, "Forbidden");
         }
       } else {
-        Rest_Exception::trigger(403, "Forbidden", $log_message,
-                                "Invalid user access token supplied: {$key->user_id}");
+        throw new Rest_Exception(403, "Forbidden");
       }
     }
     identity::set_active_user($user);

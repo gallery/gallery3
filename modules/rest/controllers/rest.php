@@ -19,32 +19,34 @@
  */
 class Rest_Controller extends Controller {
   public function access_key() {
-    $request = (object)Input::instance()->get();
-    if (empty($request->user) || empty($request->password)) {
-      Rest_Exception::trigger(403, "Forbidden", "No user or password supplied");
-    }
+    try {
+      $request = (object)Input::instance()->get();
+      if (empty($request->user) || empty($request->password)) {
+        throw new Rest_Exception(403, "Forbidden");
+      }
 
-    $user = identity::lookup_user_by_name($request->user);
-    if (empty($user)) {
-      Rest_Exception::trigger(403, "Forbidden", "User '{$request->user}' not found");
-      return;
-    }
+      $user = identity::lookup_user_by_name($request->user);
+      if (empty($user)) {
+        throw new Rest_Exception(403, "Forbidden");
+      }
 
-    if (!identity::is_correct_password($user, $request->password)) {
-      Rest_Exception::trigger(403, "Forbidden", "Invalid password for '{$request->user}'.");
-      return;
-    }
+      if (!identity::is_correct_password($user, $request->password)) {
+        throw new Rest_Exception(403, "Forbidden");
+      }
 
-    $key = ORM::factory("user_access_token")
-      ->where("user_id", "=", $user->id)
-      ->find();
-    if (!$key->loaded()) {
-      $key->user_id = $user->id;
-      $key->access_key = md5($user->name . rand());
-      $key->save();
+      $key = ORM::factory("user_access_token")
+        ->where("user_id", "=", $user->id)
+        ->find();
+      if (!$key->loaded()) {
+        $key->user_id = $user->id;
+        $key->access_key = md5($user->name . rand());
+        $key->save();
+      }
+      print rest::success(array("token" => $key->access_key));
+    } catch (Rest_Exception $e) {
+      $e->sendHeaders();
     }
-    print rest::success(array("token" => $key->access_key));
-  }
+ }
 
   public function __call($function, $args) {
     $request = rest::normalize_request($args);
@@ -54,16 +56,13 @@ class Rest_Controller extends Controller {
         $handler_method = $request->method;
 
         if (!method_exists($handler_class, $handler_method)) {
-          Rest_Exception::trigger(501, "Not implemented", "$handler_class::$handler_method");
+          throw new Rest_Exception(403, "Forbidden");
         }
 
         print call_user_func(array($handler_class, $handler_method), $request);
       }
     } catch (Rest_Exception $e) {
       $e->sendHeaders();
-    } catch (Exception $e) {
-      Kohana_Log::add("error", $e->__toString());
-      header("HTTP/1.1 500 Internal Error");
     }
   }
 }

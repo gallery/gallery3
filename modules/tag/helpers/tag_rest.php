@@ -60,7 +60,7 @@ class tag_rest_Core {
 
   static function post($request) {
     if (empty($request->arguments) || count($request->arguments) != 1 || empty($request->path)) {
-      Rest_Exception::trigger(400, "Bad request");
+      throw new Rest_Exception(400, "Bad request");
     }
     $path = $request->path;
     $tags = explode(",", $request->arguments[0]);
@@ -85,7 +85,7 @@ class tag_rest_Core {
 
   static function put($request) {
     if (empty($request->arguments[0]) || empty($request->new_name)) {
-      Rest_Exception::trigger(400, "Bad request");
+      throw new Rest_Exception(400, "Bad request");
     }
 
     $name = $request->arguments[0];
@@ -105,7 +105,7 @@ class tag_rest_Core {
 
   static function delete($request) {
     if (empty($request->arguments[0])) {
-      Rest_Exception::trigger(400, "Bad request");
+      throw new Rest_Exception(400, "Bad request");
     }
     $tags = explode(",", $request->arguments[0]);
     if (!empty($request->path)) {
