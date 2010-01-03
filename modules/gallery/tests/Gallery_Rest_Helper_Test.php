@@ -46,7 +46,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
   }
 
   private function _create_album($parent=null) {
-    $album_name = "album_" . rand();
+    $album_name = "rest_album_" . rand();
     if (empty($parent)) {
       $parent = ORM::factory("item", 1);
     }
@@ -55,7 +55,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
 
   private function _create_image($parent=null) {
     $filename = MODPATH . "gallery/tests/test.jpg";
-    $image_name = "image_" . rand();
+    $image_name = "rest_image_" . rand();
     if (empty($parent)) {
       $parent = ORM::factory("item", 1);
     }
@@ -66,6 +66,7 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     $album = $this->_create_album();
     $child = $this->_create_album($album);
     $photo = $this->_create_image($child);
+    $child->reload();
     $request = (object)array("arguments" => explode("/", $child->relative_url()));
 
     $this->assert_equal(
@@ -194,16 +195,17 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     $this->_create_user();
     access::allow(identity::registered_users(), "edit", $child);
 
+    $new_name = "new_album_name" . rand();
     $request = (object)array("arguments" => explode("/", $child->relative_url()),
                              "description" => "Updated description",
                              "title" => "Updated Title",
-                             "name" => "new name");
+                             "name" => $new_name);
 
     $this->assert_equal(json_encode(array("status" => "OK")), gallery_rest::put($request));
     $child->reload();
     $this->assert_equal("Updated description", $child->description);
     $this->assert_equal("Updated Title", $child->title);
-    $this->assert_equal("new name",  $child->name);
+    $this->assert_equal($new_name,  $child->name);
   }
 
   public function gallery_rest_put_photo_test() {
