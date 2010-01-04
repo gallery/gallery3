@@ -17,12 +17,16 @@ class expires_Core {
 	 * @param   integer Seconds before the content expires
 	 * @return  integer Timestamp when the content expires
 	 */
-	public static function set($seconds = 60)
+	public static function set($seconds = 60, $last_modified=null)
 	{
 		$now = time();
 		$expires = $now + $seconds;
+		if (empty($last_modified))
+		{
+                	$last_modified = $now;
+		}
 
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $now));
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $last_modified));
 
 		// HTTP 1.0
 		header('Expires: '.gmdate('D, d M Y H:i:s T', $expires));
@@ -66,26 +70,32 @@ class expires_Core {
 	 * @uses    expires::get()
 	 *
 	 * @param   integer         Maximum age of the content in seconds
+	 * @param   integer         Last modified timestamp in seconds
 	 * @return  integer|boolean Timestamp of the If-Modified-Since header or FALSE when header is lacking or malformed
 	 */
-	public static function check($seconds = 60)
+	public static function check($seconds = 60, $modified=null)
 	{
 		if ($last_modified = expires::get())
 		{
-			$expires = $last_modified + $seconds;
-			$max_age = $expires - time();
+			$now = time();
 
-			if ($max_age > 0)
+		 	if (empty($modified))
+		 	{
+                	 	$modified = $now;
+		 	}
+
+			if ($modified <= $last_modified)
 			{
 				// Content has not expired
 				header($_SERVER['SERVER_PROTOCOL'].' 304 Not Modified');
 				header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $last_modified));
 
+				$expires = $now + $seconds;
 				// HTTP 1.0
 				header('Expires: '.gmdate('D, d M Y H:i:s T', $expires));
 
 				// HTTP 1.1
-				header('Cache-Control: max-age='.$max_age);
+				header('Cache-Control: max-age='.$seconds);
 
 				// Clear any output
 				Event::add('system.display', create_function('', 'Kohana::$output = "";'));
