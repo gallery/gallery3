@@ -460,7 +460,7 @@ class Item_Model extends ORM_MPTT {
     // deal with it the hard way.
     $count = $db->from("items")
       ->where("parent_id", "=", $this->id)
-      ->where($this->sort_column, "=", NULL)
+      ->where($this->sort_column, "IS", NULL)
       ->merge_where($where)
       ->count_records();
 
