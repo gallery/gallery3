@@ -18,87 +18,37 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class rest_Core {
-  /**
-   * Request failed
-   */
-  static function fail($log_message=null) {
-    if (!empty($log_message)) {
-      Kohana_Log::add("info", $log_message);
-    }
-    // We don't need to save the session for this request
+  static function reply($data=array()) {
     Session::abort_save();
-    return json_encode(array("status" => "ERROR", "message" => (string)$message));
-  }
 
-  /**
-   * Success
-   */
-  static function success($response_data=array(), $message=null) {
-    $response = array("status" => "OK");
-    if (!empty($message)) {
-      $response["message"] = (string)$message;
+    if ($data) {
+      print json_encode($data);
     }
-    $response = array_merge($response, $response_data);
-
-    // We don't need to save the session for this request
-    Session::abort_save();
-    return json_encode($response);
-  }
-
-  /**
-   * Validation Error
-   */
-  static function validation_error($error_data) {
-    $response = array("status" => "VALIDATE_ERROR");
-    $response = array_merge($response, array("fields" => $error_data));
-
-    // We don't need to save the session for this request
-    Session::abort_save();
-    return json_encode($response);
-  }
-
-
-  static function normalize_request($args=array()) {
-    $input = Input::instance();
-    $method = strtolower($input->server("REQUEST_METHOD"));
-    $request = new stdClass();
-    foreach (array_keys($input->get()) as $key) {
-      $request->$key = $input->get($key);
-    }
-    if ($method != "get") {
-      foreach (array_keys($input->post()) as $key) {
-        $request->$key = $input->post($key);
-      }
-      foreach (array_keys($_FILES) as $key) {
-        $request->$key = $_FILES[$key];
-      }
-    }
-
-    $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
-    $request->access_token = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
-    $request->arguments = $args;  // Let the rest handler figure out what the arguments mean
-
-    return $request;
   }
 
   static function set_active_user($access_token) {
     if (empty($access_token)) {
-      $user = identity::guest();
-    } else {
-      $key = ORM::factory("user_access_token")
-        ->where("access_key", "=", $access_token)
-        ->find();
-
-      if ($key->loaded()) {
-        $user = identity::lookup_user($key->user_id);
-        if (empty($user)) {
-          throw new Rest_Exception(403, "Forbidden");
-        }
-      } else {
-        throw new Rest_Exception(403, "Forbidden");
-      }
+      identity::set_active_user(identity::guest());
+      return;
     }
+
+    $key = ORM::factory("user_access_token")
+      ->where("access_key", "=", $access_token)
+      ->find();
+
+    if (!$key->loaded()) {
+      throw new Rest_Exception("Forbidden", 403);
+    }
+
+    $user = identity::lookup_user($key->user_id);
+    if (empty($user)) {
+      throw new Rest_Exception("Forbidden", 403);
+    }
+
     identity::set_active_user($user);
-    return true;
+  }
+
+  static function send_headers($exception) {
+    header("HTTP/1.1 " . $exception->getCode() . " " . $exception->getMessage());
   }
 }

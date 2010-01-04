@@ -18,20 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Controller extends Controller {
-  public function access_key() {
+  public function index() {
     try {
-      $request = (object)Input::instance()->get();
-      if (empty($request->user) || empty($request->password)) {
-        throw new Rest_Exception(403, "Forbidden");
-      }
+      $username = Input::instance()->post("user");
+      $password = Input::instance()->post("password");
 
-      $user = identity::lookup_user_by_name($request->user);
-      if (empty($user)) {
-        throw new Rest_Exception(403, "Forbidden");
-      }
-
-      if (!identity::is_correct_password($user, $request->password)) {
-        throw new Rest_Exception(403, "Forbidden");
+      $user = identity::lookup_user_by_name($username);
+      if (empty($user) || !identity::is_correct_password($user, $password)) {
+        throw new Rest_Exception("Forbidden", 403);
       }
 
       $key = ORM::factory("user_access_token")
@@ -42,27 +36,45 @@ class Rest_Controller extends Controller {
         $key->access_key = md5($user->name . rand());
         $key->save();
       }
-      print rest::success(array("token" => $key->access_key));
-    } catch (Rest_Exception $e) {
-      $e->sendHeaders();
+
+      rest::reply($key->access_key);
+    } catch (Exception $e) {
+      rest::send_headers($e);
     }
  }
 
   public function __call($function, $args) {
-    $request = rest::normalize_request($args);
-    try {
-      if (rest::set_active_user($request->access_token)) {
-        $handler_class = "{$function}_rest";
-        $handler_method = $request->method;
+    $input = Input::instance();
+    switch ($method = strtolower($input->server("REQUEST_METHOD"))) {
+    case "get":
+      $request->params = (object) Input::instance()->get();
+      break;
 
-        if (!method_exists($handler_class, $handler_method)) {
-          throw new Rest_Exception(403, "Forbidden");
-        }
-
-        print call_user_func(array($handler_class, $handler_method), $request);
+    case "post":
+      $request->params = (object) Input::instance()->post();
+      if (isset($_FILES["file"])) {
+        $request->file = upload::save("file");
       }
+      break;
+    }
+
+    $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
+    $request->access_token = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
+    $request->path = implode("/", $args);
+
+    try {
+      rest::set_active_user($request->access_token);
+
+      $handler_class = "{$function}_rest";
+      $handler_method = $request->method;
+
+      if (!method_exists($handler_class, $handler_method)) {
+        throw new Rest_Exception("Forbidden", 403);
+      }
+
+      print call_user_func(array($handler_class, $handler_method), $request);
     } catch (Rest_Exception $e) {
-      $e->sendHeaders();
+      rest::send_headers($e);
     }
   }
 }

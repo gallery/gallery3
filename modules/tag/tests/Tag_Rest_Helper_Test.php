@@ -133,7 +133,8 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     try {
       tag_rest::post($request);
     } catch (Rest_Exception $e) {
-      $this->assert_equal("400 Bad request", $e->getMessage());
+      $this->assert_equal(400, $e->getCode());
+      $this->assert_equal("Bad request", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -191,7 +192,8 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     try {
       tag_rest::put($request);
     } catch (Rest_Exception $e) {
-      $this->assert_equal("400 Bad request", $e->getMessage());
+      $this->assert_equal(400, $e->getCode());
+      $this->assert_equal("Bad request", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -202,7 +204,8 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     try {
       tag_rest::put($request);
     } catch (Rest_Exception $e) {
-      $this->assert_equal("400 Bad request", $e->getMessage());
+      $this->assert_equal(400, $e->getCode());
+      $this->assert_equal("Bad request", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -211,7 +214,8 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
     try {
       tag_rest::put($request);
     } catch (Rest_Exception $e) {
-      $this->assert_equal("400 Bad request", $e->getMessage());
+      $this->assert_equal(400, $e->getCode());
+      $this->assert_equal("Bad request", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }

@@ -18,19 +18,4 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Exception_Core extends Exception {
-  /**
-   * Set internal properties.
-   */
-  public function __construct($code, $text) {
-    parent::__construct("$code $text");
-  }
-
-  /**
-   * Sends the headers, to emulate server behavior.
-   *
-   * @return void
-   */
-  public function sendHeaders() {
-    header('HTTP/1.1 {$this->getMessage()}');
-  }
-} // End Rest Exception
+}

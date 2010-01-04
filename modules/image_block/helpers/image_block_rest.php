@@ -54,9 +54,9 @@ class image_block_rest_Core {
                              "thumb_size" => array("height" => $item->thumb_height,
                                                    "width" => $item->thumb_width));
 
-      return rest::success(array("resource" => $response_data));
+      return rest::reply(array("resource" => $response_data));
     } else {
-      return rest::fail("No Image found");
+      return rest::reply();
     }
   }
 }

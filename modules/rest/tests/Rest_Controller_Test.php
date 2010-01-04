@@ -84,7 +84,8 @@ class Rest_Controller_Test extends Unit_Test_Case {
     try {
       $this->_call_controller();
     } catch (Rest_Exception $e) {
-      $this->assert_equal("403 Forbidden", $e->getMessage());
+      $this->assert_equal(403, $e->getCode());
+      $this->assert_equal("Forbidden", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -97,7 +98,8 @@ class Rest_Controller_Test extends Unit_Test_Case {
     try {
       $this->_call_controller();
     } catch (Rest_Exception $e) {
-      $this->assert_equal("403 Forbidden", $e->getMessage());
+      $this->assert_equal(403, $e->getCode());
+      $this->assert_equal("Forbidden", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -109,7 +111,8 @@ class Rest_Controller_Test extends Unit_Test_Case {
     try {
       $this->_call_controller();
     } catch (Rest_Exception $e) {
-      $this->assert_equal("403 Forbidden", $e->getMessage());
+      $this->assert_equal(403, $e->getCode());
+      $this->assert_equal("Forbidden", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -137,7 +140,8 @@ class Rest_Controller_Test extends Unit_Test_Case {
     try {
       $this->_call_controller();
     } catch (Rest_Exception $e) {
-      $this->assert_equal("403 Forbidden", $e->getMessage());
+      $this->assert_equal(403, $e->getCode());
+      $this->assert_equal("Forbidden", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -155,7 +159,8 @@ class Rest_Controller_Test extends Unit_Test_Case {
     try {
       $this->_call_controller("rest", explode("/", $photo->relative_url()));
     } catch (Rest_Exception $e) {
-      $this->assert_equal("403 Forbidden", $e->getMessage());
+      $this->assert_equal(403, $e->getCode());
+      $this->assert_equal("Forbidden", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -171,7 +176,8 @@ class Rest_Controller_Test extends Unit_Test_Case {
     try {
       $this->_call_controller("rest", explode("/", $photo->relative_url()));
     } catch (Rest_Exception $e) {
-      $this->assert_equal("501 Not Implemented", $e->getMessage());
+      $this->assert_equal(501, $e->getCode());
+      $this->assert_equal("Not Implemented", $e->getMessage());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
@@ -218,7 +224,7 @@ class rest_rest {
     $response["thumb_url"] = $item->thumb_url();
     $response["description"] = $item->description;
     $response["internet_address"] = $item->slug;
-    return rest::success(array($item->type => $response), t("Processed"));
+    return rest::reply(array($item->type => $response));
   }
 
 }

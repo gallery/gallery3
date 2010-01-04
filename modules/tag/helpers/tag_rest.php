@@ -55,12 +55,12 @@ class tag_rest_Core {
       }
     }
 
-    return rest::success($resources);
+    return rest::reply($resources);
   }
 
   static function post($request) {
     if (empty($request->arguments) || count($request->arguments) != 1 || empty($request->path)) {
-      throw new Rest_Exception(400, "Bad request");
+      throw new Rest_Exception("Bad request", 400);
     }
     $path = $request->path;
     $tags = explode(",", $request->arguments[0]);
@@ -80,12 +80,12 @@ class tag_rest_Core {
     foreach ($tags as $tag) {
       tag::add($item, $tag);
     }
-    return rest::success();
+    return rest::reply();
   }
 
   static function put($request) {
     if (empty($request->arguments[0]) || empty($request->new_name)) {
-      throw new Rest_Exception(400, "Bad request");
+      throw new Rest_Exception("Bad request", 400);
     }
 
     $name = $request->arguments[0];
@@ -100,12 +100,12 @@ class tag_rest_Core {
     $tag->name = $request->new_name;
     $tag->save();
 
-    return rest::success();
+    return rest::reply();
   }
 
   static function delete($request) {
     if (empty($request->arguments[0])) {
-      throw new Rest_Exception(400, "Bad request");
+      throw new Rest_Exception("Bad request", 400);
     }
     $tags = explode(",", $request->arguments[0]);
     if (!empty($request->path)) {
@@ -127,7 +127,7 @@ class tag_rest_Core {
     };
 
     tag::compact();
-    return rest::success();
+    return rest::reply();
   }
 
   private static function _get_items($request) {

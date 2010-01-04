@@ -136,7 +136,8 @@ class Gallery_Rest_Helper_Test extends Unit_Test_Case {
     try {
       gallery_rest::put($request);
     } catch (Rest_Exception $e) {
-      $this->assert_equal("400 Bad request", $e->getMessage());
+      $this->assert_equal("Bad request", $e->getMessage());
+      $this->assert_equal(400, $e->getCode());
     } catch (Exception $e) {
       $this->assert_false(true, $e->__toString());
     }
