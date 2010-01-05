@@ -19,22 +19,71 @@
  */
 class tag_rest_Core {
   static function get($request) {
-    return rest::reply(rest::resolve($request->url)->as_array());
+    $tag = rest::resolve($request->url);
+    $items = array();
+    foreach ($tag->items() as $item) {
+      $items[] = url::abs_site("rest/gallery/" . $item->relative_url());
+    }
+
+    return rest::reply(array("resource" => $tag->as_array(), "members" => $items));
   }
 
   static function post($request) {
-    $tag = rest::resolve($request->url);
-
     if (empty($request->params->url)) {
       throw new Rest_Exception("Bad request", 400);
     }
 
+    $tag = rest::resolve($request->url);
     $item = rest::resolve($request->params->url);
-
     access::required("edit", $item);
-    tag::add($item, $tag->name);
 
-    return rest::reply();
+    tag::add($item, $tag->name);
+    return rest::reply(array("url" => url::abs_site("rest/tag/" . rawurlencode($tag->name))));
+  }
+
+  static function put($request) {
+    $tag = rest::resolve($request->url);
+
+    // @todo: what permission should be required to edit a tag?
+    // for now, require edit at the top level.  Perhaps later, just require any edit perms,
+    // anywhere in the gallery?
+
+    if (isset($request->params->remove)) {
+      if (!is_array($request->params->remove)) {
+        throw new Exception("Bad request", 400);
+      }
+
+      foreach ($request->params->remove as $item_url) {
+        $item = rest::resolve($item_url);
+        access::required("edit", $item);
+        $tag->remove($item);
+      }
+    }
+
+    if (isset($request->params->name)) {
+      $tag->name = $request->params->name;
+    }
+
+    $tag->save();
+    return rest::reply(array("url" => url::abs_site("rest/tag/" . rawurlencode($tag->name))));
+  }
+
+  static function delete($request) {
+    $tag = rest::resolve($request->url);
+
+    if (empty($request->params->url)) {
+      // Delete the tag
+      $tag->delete();
+      return rest::reply();
+    } else {
+      // Remove an item from the tag
+      $item = rest::resolve($request->params->url);
+      $tag->remove($item);
+      $tag->save();
+
+      tag::compact();
+      return rest::reply(array("url" => url::abs_site("rest/tag/" . rawurlencode($tag->name))));
+    }
   }
 
   static function resolve($tag_name) {
@@ -44,82 +93,5 @@ class tag_rest_Core {
     }
 
     return $tag;
-  }
-
-  // ------------------------------------------------------------
-
-  static function put($request) {
-    if (empty($request->arguments[0]) || empty($request->new_name)) {
-      throw new Rest_Exception("Bad request", 400);
-    }
-
-    $name = $request->arguments[0];
-
-    $tag = ORM::factory("tag")
-      ->where("name", "=", $name)
-      ->find();
-    if (!$tag->loaded()) {
-      throw new Kohana_404_Exception();
-    }
-
-    $tag->name = $request->new_name;
-    $tag->save();
-
-    return rest::reply();
-  }
-
-  static function delete($request) {
-    if (empty($request->arguments[0])) {
-      throw new Rest_Exception("Bad request", 400);
-    }
-    $tags = explode(",", $request->arguments[0]);
-    if (!empty($request->path)) {
-      $tag_list = ORM::factory("tag")
-        ->join("items_tags", "tags.id", "items_tags.tag_id")
-        ->join("items", "items.id", "items_tags.item_id")
-        ->where("tags.name", "IN",  $tags)
-        ->where("relative_url_cache", "=", $request->path)
-        ->viewable()
-        ->find_all();
-    } else {
-      $tag_list = ORM::factory("tag")
-        ->where("name", "IN", $tags)
-        ->find_all();
-    }
-
-    foreach ($tag_list as $row) {
-      $row->delete();
-    };
-
-    tag::compact();
-    return rest::reply();
-  }
-
-  private static function _get_items($request) {
-    $tags = explode(",", $request->arguments[0]);
-    $items = ORM::factory("item")
-      ->select_distinct("*")
-      ->join("items_tags", "items.id", "items_tags.item_id")
-      ->join("tags", "tags.id", "items_tags.tag_id")
-      ->where("tags.name", "IN",  $tags);
-    if (!empty($request->limit)) {
-      $items->limit($request->limit);
-    }
-    if (!empty($request->offset)) {
-      $items->offset($request->offset);
-    }
-    $resources = array();
-    foreach ($items->find_all() as $item) {
-      $resources[] = array("type" => $item->type,
-                           "has_children" => $item->children_count() > 0,
-                           "path" => $item->relative_url(),
-                           "thumb_url" => $item->thumb_url(true),
-                           "thumb_dimensions" => array("width" => $item->thumb_width,
-                                                       "height" => $item->thumb_height),
-                           "has_thumb" => $item->has_thumb(),
-                           "title" => $item->title);
-    }
-
-    return $resources;
   }
 }

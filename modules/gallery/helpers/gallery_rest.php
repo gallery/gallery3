@@ -40,7 +40,12 @@ class gallery_rest_Core {
     $item = rest::resolve($request->url);
     access::required("view", $item);
 
-    return rest::reply($item->as_array());
+    $children = array();
+    foreach ($item->children() as $child) {
+      $children[] = url::abs_site("rest/gallery/" . $child->relative_url());
+    }
+
+    return rest::reply(array("resource" => $item->as_array(), "members" => $children));
   }
 
   static function put($request) {

@@ -19,11 +19,11 @@
  */
 class tags_rest_Core {
   static function get($request) {
-    $data = array();
+    $tags = array();
     foreach (ORM::factory("tag")->find_all() as $tag) {
-      $data[$tag->name] = url::abs_site("rest/tags/" . rawurlencode($tag->name));
+      $tags[$tag->name] = url::abs_site("rest/tags/" . rawurlencode($tag->name));
     }
-    return rest::reply($data);
+    return rest::reply(array("members" => $tags));
   }
 
   static function post($request) {
