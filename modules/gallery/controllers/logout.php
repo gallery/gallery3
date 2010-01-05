@@ -19,6 +19,7 @@
  */
 class Logout_Controller extends Controller {
   public function index() {
+    access::verify_csrf();
     auth::logout();
     if ($continue_url = Input::instance()->get("continue")) {
       $item = url::get_item_from_uri($continue_url);
