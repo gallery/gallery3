@@ -41,7 +41,7 @@ class tag_Core {
     }
 
     if (!$tag->has($item)) {
-      if (!$tag->add($item, $tag)) {
+      if (!$tag->add($item)) {
         throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
       }
       $tag->count++;

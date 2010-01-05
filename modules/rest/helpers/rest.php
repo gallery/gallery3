@@ -51,4 +51,24 @@ class rest_Core {
   static function send_headers($exception) {
     header("HTTP/1.1 " . $exception->getCode() . " " . $exception->getMessage());
   }
+
+  /**
+   * Convert a REST url into an object.
+   * Eg: "http://example.com/gallery3/index.php/rest/gallery/Family/Wedding" -> Item_Model
+   *
+   * @param string  the fully qualified REST url
+   * @return mixed  the corresponding object (usually a model of some kind)
+   */
+  static function resolve($url) {
+    $components = explode("/", substr($url, strlen(url::abs_site("rest"))), 3);
+
+    // The first component will be empty because of the slash between "rest" and the
+    // resource type.
+    $class = "$components[1]_rest";
+    if (!method_exists($class, "resolve")) {
+      throw new Kohana_404_Exception($url);
+    }
+
+    return call_user_func(array($class, "resolve"), !empty($components[2]) ? $components[2] : null);
+  }
 }

@@ -37,14 +37,14 @@
 
 class gallery_rest_Core {
   static function get($request) {
-    $item = url::get_item_from_uri($request->path);
+    $item = rest::resolve($request->url);
     access::required("view", $item);
 
-    return json_encode($item->as_array());
+    return rest::reply($item->as_array());
   }
 
   static function put($request) {
-    $item = url::get_item_from_uri($request->path);
+    $item = rest::resolve($request->url);
     access::required("edit", $item);
 
     $params = $request->params;
@@ -60,7 +60,7 @@ class gallery_rest_Core {
   }
 
   static function post($request) {
-    $parent = url::get_item_from_uri($request->path);
+    $parent = rest::resolve($request->url);
     access::required("edit", $parent);
 
     $params = $request->params;
@@ -90,10 +90,14 @@ class gallery_rest_Core {
   }
 
   static function delete($request) {
-    $item = url::get_item_from_uri($request->path);
+    $item = rest::resolve($request->url);
     access::required("edit", $item);
 
     $item->delete();
     return rest::reply();
+  }
+
+  static function resolve($path) {
+    return url::get_item_from_uri($path);
   }
 }

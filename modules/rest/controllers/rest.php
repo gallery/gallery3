@@ -60,7 +60,7 @@ class Rest_Controller extends Controller {
 
     $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
     $request->access_token = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
-    $request->path = implode("/", $args);
+    $request->url = url::abs_current(true);
 
     try {
       rest::set_active_user($request->access_token);

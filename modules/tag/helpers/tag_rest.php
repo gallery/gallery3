@@ -18,70 +18,35 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class tag_rest_Core {
-  // If no arguments just return all the tags.  If 2 or more then it is a path then
-  // return the tags for that item.  But if its only 1, then is it a path or a tag?
-  // Assume a tag first, if nothing is found then try finding the item.
   static function get($request) {
-    $resources = array();
-    switch (count($request->arguments)) {
-    case 0:
-      $tags = ORM::factory("tag")
-        ->select("name", "count")
-        ->order_by("count", "DESC");
-      if (!empty($request->limit)) {
-        $tags->limit($request->limit);
-      }
-      if (!empty($request->offset)) {
-        $tags->offset($request->offset);
-      }
-      $resources = array("tags" => array());
-      foreach ($tags->find_all() as $row) {
-        $resources["tags"][] = array("name" => $row->name, "count" => $row->count);
-      }
-      break;
-    case 1:
-      $resources = tag_rest::_get_items($request);
-      if (!empty($resources)) {
-        $resources = array("resources" => $resources);
-        break;
-      }
-    default:
-      $item = ORM::factory("item")
-        ->where("relative_url_cache", "=", implode("/", $request->arguments))
-        ->viewable()
-        ->find();
-      if ($item->loaded()) {
-        $resources = array("tags" => tag::item_tags($item));
-      }
-    }
-
-    return rest::reply($resources);
+    return rest::reply(rest::resolve($request->url)->as_array());
   }
 
   static function post($request) {
-    if (empty($request->arguments) || count($request->arguments) != 1 || empty($request->path)) {
+    $tag = rest::resolve($request->url);
+
+    if (empty($request->params->url)) {
       throw new Rest_Exception("Bad request", 400);
     }
-    $path = $request->path;
-    $tags = explode(",", $request->arguments[0]);
 
-    $item = ORM::factory("item")
-      ->where("relative_url_cache", "=", $path)
-      ->viewable()
-      ->find();
-    if (!$item->loaded()) {
-      throw new Kohana_404_Exception();
-    }
+    $item = rest::resolve($request->params->url);
 
-    if (!access::can("edit", $item)) {
-      throw new Kohana_404_Exception();
-    }
+    access::required("edit", $item);
+    tag::add($item, $tag->name);
 
-    foreach ($tags as $tag) {
-      tag::add($item, $tag);
-    }
     return rest::reply();
   }
+
+  static function resolve($tag_name) {
+    $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
+    if (!$tag->loaded()) {
+      throw new Kohana_404_Exception();
+    }
+
+    return $tag;
+  }
+
+  // ------------------------------------------------------------
 
   static function put($request) {
     if (empty($request->arguments[0]) || empty($request->new_name)) {
