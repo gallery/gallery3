@@ -41,10 +41,14 @@ if (!installer::connect($config)) {
 } else if (!installer::select_db($config)) {
   oops("Database {$config['dbname']} doesn't exist and can't be created.  " .
        "Please create the database by hand.");
-} else if (!installer::db_empty($config)) {
-  oops("Database {$config['dbname']} already has Gallery 3 tables in it. \n" .
-       "    Please remove the Gallery 3 tables, change your prefix,\n" .
-       "    or specify an empty database.\n");
+} else if (is_string($count = installer::db_empty($config)) || !$count) {
+  if (is_string($count)) {
+    oops($count);
+  } else {
+    oops("Database {$config['dbname']} already has Gallery 3 tables in it. \n" .
+         "    Please remove the Gallery 3 tables, change your prefix,\n" .
+         "    or specify an empty database.\n");
+  }
 } else if (!installer::unpack_var()) {
   oops("Unable to create files inside the 'var' directory");
 } else if (!installer::unpack_sql($config)) {

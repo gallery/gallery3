@@ -46,8 +46,12 @@ if (installer::already_installed()) {
       $content = render("invalid_db_version.html.php");
     } else if (!installer::select_db($config)) {
       $content = render("missing_db.html.php");
-    } else if (!installer::db_empty($config)) {
-      $content = render("db_not_empty.html.php");
+    } else if (is_string($count = installer::db_empty($config)) || !$count) {
+      if (is_string($count)) {
+        $content = oops($count);
+      } else {
+        $content = render("db_not_empty.html.php");
+      }
     } else if (!installer::unpack_var()) {
       $content = oops("Unable to create files inside the <code>var</code> directory");
     } else if (!installer::unpack_sql($config)) {
