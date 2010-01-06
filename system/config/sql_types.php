@@ -1,10 +1,16 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
- * @package  Database
+ * SQL data types. If there are missing values, please report them
+ * at the [issue tracker](http://dev.kohanaphp.com/projects/kohana2/issues)
  *
- * SQL data types. If there are missing values, please report them:
- *
- * @link http://dev.kohanaphp.com/projects/kohana2
+ * @package    Kohana
+ * @author     Kohana Team
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
+ */
+
+/**
+ * Database sql types
  */
 $config = array
 (

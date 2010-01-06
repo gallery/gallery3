@@ -2,9 +2,7 @@
 /**
  * Request helper class.
  *
- * $Id: request.php 4692 2009-12-04 15:59:44Z cbandy $
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

@@ -1,11 +1,21 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
  * Credit card validation configuration.
- * 
+ *
  * Options for each credit card:
- *  length - All the allowed card number lengths, in a comma separated string
- *  prefix - The digits the card needs to start with, in regex format
- *  luhn   - Enable or disable card number validation by the Luhn algorithm
+ *
+ * - length - All the allowed card number lengths, in a comma separated string
+ * - prefix - The digits the card needs to start with, in regex format
+ * - luhn   - Enable or disable card number validation by the Luhn algorithm
+ *
+ * @package    Kohana
+ * @author     Kohana Team
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
+ */
+
+/**
+ * Default credit card configuration
  */
 $config = array
 (

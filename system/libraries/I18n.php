@@ -2,34 +2,11 @@
 /**
  * Kohana I18N System
  *
- * $Id: I18n.php 4679 2009-11-10 01:45:52Z isaiah $
- *
- * @package    Cache
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license
  */
-
-/**
- * Loads the configured driver and validates it.
- *
- * @param   string  Text to output
- * @param   array   Key/Value pairs of arguments to replace in the string
- * @return  string  Translated text
- */
-function __($string, $args = NULL)
-{
-	// KOHANA_LOCALE is the default locale, in which all of Kohana's __() calls are written in
-	if (I18n::get_locale() != Kohana::LOCALE)
-	{
-		$string = I18n::get_text($string);
-	}
-
-	if ($args === NULL)
-		return $string;
-
-	return strtr($string, $args);
-}
 
 class I18n_Core
 {
@@ -99,5 +76,25 @@ class I18n_Core
 		else
 			return $string;
 	}
+}
 
+/**
+ * Loads the configured driver and validates it.
+ *
+ * @param   string  Text to output
+ * @param   array   Key/Value pairs of arguments to replace in the string
+ * @return  string  Translated text
+ */
+function __($string, $args = NULL)
+{
+	// KOHANA_LOCALE is the default locale, in which all of Kohana's __() calls are written in
+	if (I18n::get_locale() != Kohana::LOCALE)
+	{
+		$string = I18n::get_text($string);
+	}
+
+	if ($args === NULL)
+		return $string;
+
+	return strtr($string, $args);
 }

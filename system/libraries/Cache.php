@@ -4,9 +4,7 @@
  * resources. Caches are identified by a unique string. Tagging of caches is
  * also supported, and caches can be found and deleted by id or tag.
  *
- * $Id: Cache.php 4605 2009-09-14 17:22:21Z kiall $
- *
- * @package    Cache
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license
@@ -106,7 +104,7 @@ class Cache_Core {
 		if ($this->config['prefix'] !== NULL)
 		{
 			$key = $this->add_prefix($key);
-			
+
 			if ($tags !== NULL)
 			{
 				$tags = $this->add_prefix($tags, FALSE);
@@ -132,14 +130,14 @@ class Cache_Core {
 		if ($this->config['prefix'] !== NULL)
 		{
 			$keys = $this->add_prefix($keys, FALSE);
-			
+
 			if ( ! $single)
 			{
 			    return $this->strip_prefix($this->driver->get($keys, $single));
 			}
 
 		}
-		
+
 		return $this->driver->get($keys, $single);
 	}
 

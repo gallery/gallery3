@@ -2,9 +2,7 @@
 /**
  * Kohana Exceptions
  *
- * $Id: Kohana_Exception.php 4726 2009-12-23 18:58:53Z isaiah $
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license
@@ -428,6 +426,9 @@ class Kohana_Exception_Core extends Exception {
 	 */
 	public static function debug_path($file)
 	{
+		// Normalize directory separator
+		$file = str_replace('\\', '/', $file);
+
 		if (strpos($file, APPPATH) === 0)
 		{
 			$file = 'APPPATH/'.substr($file, strlen(APPPATH));

@@ -1,12 +1,16 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
- * @package  Core
- *
  * This file contains four arrays of user agent data.  It is used by the
  * User Agent library to help identify browser, platform, robot, and
  * mobile device data. The array keys are used to identify the device
  * and the array values are used to set the actual name of the item.
+ *
+ * @package    Kohana
+ * @author     Kohana Team
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
  */
+
 $config['platform'] = array
 (
 	'windows nt 6.0' => 'Windows Vista',
@@ -49,8 +53,10 @@ $config['platform'] = array
 	'unix'           => 'Unknown Unix OS',
 );
 
-// The order of this array should NOT be changed. Many browsers return
-// multiple browser types so we want to identify the sub-type first.
+/**
+ * The order of this array should NOT be changed. Many browsers return
+ * multiple browser types so we want to identify the sub-type first.
+ */
 $config['browser'] = array
 (
 	'Opera'             => 'Opera',
@@ -98,7 +104,9 @@ $config['mobile'] = array
 	'android'        => 'Android',
 );
 
-// There are hundreds of bots but these are the most common.
+/**
+ * There are hundreds of bots but these are the most common.
+ */
 $config['robot'] = array
 (
 	'googlebot'   => 'Googlebot',

@@ -2,8 +2,6 @@
 /**
  * Database wrapper.
  *
- * $Id: Database.php 4709 2009-12-10 05:09:35Z isaiah $
- *
  * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team

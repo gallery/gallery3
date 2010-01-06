@@ -2,9 +2,7 @@
 /**
  * Text helper class.
  *
- * $Id: text.php 4689 2009-12-02 01:39:24Z isaiah $
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

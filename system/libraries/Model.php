@@ -2,9 +2,9 @@
 /**
  * Model base class.
  *
- * $Id: Model.php 4679 2009-11-10 01:45:52Z isaiah $
+ * $Id: Model.php 4729 2009-12-29 20:35:19Z isaiah $
  *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

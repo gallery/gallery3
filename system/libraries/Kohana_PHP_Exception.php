@@ -2,9 +2,9 @@
 /**
  * Kohana PHP Error Exceptions
  *
- * $Id: Kohana_PHP_Exception.php 4687 2009-11-30 21:59:26Z isaiah $
+ * $Id: Kohana_PHP_Exception.php 4729 2009-12-29 20:35:19Z isaiah $
  *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license
