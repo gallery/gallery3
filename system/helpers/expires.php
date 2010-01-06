@@ -72,7 +72,7 @@ class expires_Core {
 	 * @param   integer Last modified timestamp in seconds(optional)
 	 * @return  integer|boolean Timestamp of the If-Modified-Since header or FALSE when header is lacking or malformed
 	 */
-	public static function check($seconds = 60, $modified=null))
+	public static function check($seconds = 60, $modified=null)
 	{
 		if ($last_modified = expires::get())
 		{
