@@ -107,7 +107,7 @@ class installer {
       return true;
     }
 
-    return mysql_query("CREATE DATABASE {$config['dbname']}") &&
+    return mysql_query("CREATE DATABASE `{$config['dbname']}`") &&
       mysql_select_db($config["dbname"]);
   }
 
@@ -122,8 +122,13 @@ class installer {
   }
 
   static function db_empty($config) {
-    $query = "SHOW TABLES IN {$config['dbname']} LIKE '{$config['prefix']}items'";
-    return mysql_num_rows(mysql_query($query)) == 0;
+    $query = "SHOW TABLES LIKE '{$config['prefix']}items'";
+    $results = mysql_query($query);
+    if ($results === false) {
+      $msg = mysql_error();
+      return $msg;
+    }
+    return mysql_num_rows($results) === 0;
   }
 
   static function create_admin($config) {

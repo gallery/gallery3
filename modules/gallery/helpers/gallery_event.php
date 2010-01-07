@@ -117,11 +117,11 @@ class gallery_event_Core {
                       ->url(url::site("form/edit/users/{$user->id}"))
                       ->label($user->display_name()));
         $menu->append(Menu::factory("link")
-                    ->id("user_menu_logout")
-                    ->css_id("g-logout-link")
-                    ->url(url::site("logout?csrf=$csrf&amp;continue=" .
-                                    urlencode($item->url())))
-                    ->label(t("Logout")));
+                      ->id("user_menu_logout")
+                      ->css_id("g-logout-link")
+                      ->url(url::site("logout?csrf=$csrf&amp;continue=" .
+                                      urlencode(url::abs_current())))
+                      ->label(t("Logout")));
       }
     }
   }

@@ -2,9 +2,7 @@
 /**
  * Provides a table layout for sections in the Profiler library.
  *
- * $Id: Profiler_Table.php 4679 2009-11-10 01:45:52Z isaiah $
- *
- * @package    Profiler
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

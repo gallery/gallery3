@@ -2,9 +2,9 @@
 /**
  * Router
  *
- * $Id: Router.php 4693 2009-12-04 17:11:16Z cbandy $
+ * $Id: Router.php 4729 2009-12-29 20:35:19Z isaiah $
  *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

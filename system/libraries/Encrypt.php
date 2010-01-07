@@ -4,9 +4,9 @@
  * using the MCrypt extension.
  * @see http://php.net/mcrypt
  *
- * $Id: Encrypt.php 4683 2009-11-14 17:10:53Z isaiah $
+ * $Id: Encrypt.php 4729 2009-12-29 20:35:19Z isaiah $
  *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

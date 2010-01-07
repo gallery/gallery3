@@ -3,9 +3,7 @@
  * Provides a driver-based interface for setting and getting
  * configuration options for the Kohana environment
  *
- * $Id: Kohana_Config.php 4679 2009-11-10 01:45:52Z isaiah $
- *
- * @package    KohanaConfig
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

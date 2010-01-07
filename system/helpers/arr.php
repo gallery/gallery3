@@ -2,9 +2,7 @@
 /**
  * Array helper class.
  *
- * $Id: arr.php 4680 2009-11-10 01:57:00Z isaiah $
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

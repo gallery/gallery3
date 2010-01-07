@@ -13,7 +13,7 @@ modules/gallery/controllers/login.php                        ajax               
 modules/gallery/controllers/login.php                        auth_ajax            DIRTY_AUTH
 modules/gallery/controllers/login.php                        html                 DIRTY_AUTH
 modules/gallery/controllers/login.php                        auth_html            DIRTY_AUTH
-modules/gallery/controllers/logout.php                       index                DIRTY_CSRF|DIRTY_AUTH
+modules/gallery/controllers/logout.php                       index                DIRTY_AUTH
 modules/gallery/controllers/maintenance.php                  index                DIRTY_AUTH
 modules/gallery/controllers/quick.php                        form_edit            DIRTY_CSRF
 modules/gallery/controllers/simple_uploader.php              start                DIRTY_AUTH

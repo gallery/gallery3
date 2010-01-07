@@ -2,8 +2,6 @@
 /**
  * MySQL database result.
  *
- * $Id: Database_Mysql_Result.php 4679 2009-11-10 01:45:52Z isaiah $
- *
  * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team

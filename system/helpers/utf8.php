@@ -12,9 +12,7 @@
  * string functions.
  * @see http://php.net/mbstring
  *
- * $Id$
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @copyright  (c) 2005 Harry Fuecks
