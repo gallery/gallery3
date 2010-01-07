@@ -2,9 +2,9 @@
 /**
  * Input library.
  *
- * $Id: Input.php 4727 2009-12-23 19:03:05Z isaiah $
+ * $Id: Input.php 4729 2009-12-29 20:35:19Z isaiah $
  *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

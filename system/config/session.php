@@ -1,6 +1,14 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
- * @package Session
+ * Session Config
+ *
+ * @package    Kohana
+ * @author     Kohana Team
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
+ */
+
+/**
  *
  * Session driver name.
  */

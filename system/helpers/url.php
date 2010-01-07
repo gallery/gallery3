@@ -2,9 +2,7 @@
 /**
  * URL helper class.
  *
- * $Id: url.php 4685 2009-11-30 21:24:06Z isaiah $
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

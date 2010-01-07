@@ -2,9 +2,7 @@
 /**
  * Inflector helper class.
  *
- * $Id: inflector.php 4722 2009-12-19 17:47:34Z isaiah $
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

@@ -2,8 +2,6 @@
 /**
  * MySQL database connection.
  *
- * $Id: Database_Mysql.php 4712 2009-12-10 21:47:09Z cbandy $
- *
  * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team
@@ -216,7 +214,7 @@ class Database_Mysql_Core extends Database {
 		$prefix = strlen($this->table_prefix());
 		$tables = array();
 
-		foreach ($this->query('SHOW TABLES FROM '.$this->escape($this->config['connection']['database']).' LIKE '.$this->quote($this->table_prefix().'%'))->as_array() as $row)
+		foreach ($this->query('SHOW TABLES LIKE '.$this->quote($this->table_prefix().'%'))->as_array() as $row)
 		{
 			// The value is the table name
 			$tables[] = substr(current($row), $prefix);

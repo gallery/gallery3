@@ -1,9 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
  * MySQL database connection.
- * 
- * $Id: Database_Mysqli.php 4712 2009-12-10 21:47:09Z cbandy $
- * 
+ *
  * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team
@@ -30,13 +28,13 @@ class Database_Mysqli_Core extends Database_Mysql {
 		$host = isset($host) ? $host : $socket;
 
 		$mysqli = mysqli_init();
-			
+
 		if ( ! $mysqli->real_connect($host, $user, $pass, $database, $port, $socket, $params))
 			throw new Database_Exception('#:errno: :error',
 				array(':error' => $mysqli->connect_error, ':errno' => $mysqli->connect_errno));
-			
+
 		$this->connection = $mysqli;
-			
+
 		if (isset($this->config['character_set']))
 		{
 			// Set the character set

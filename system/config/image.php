@@ -1,8 +1,17 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
- * @package  Image
+ * Image library config
  *
- * Driver name. Default: GD
+ * @package    Kohana
+ * @author     Kohana Team
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license
+ */
+
+/**
+ * Image driver
+ *
+ * @default: 'GD'
  */
 $config['driver'] = 'GD';
 

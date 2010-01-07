@@ -2,9 +2,7 @@
 /**
  * Form helper class.
  *
- * $Id: form.php 4699 2009-12-08 18:45:14Z isaiah $
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license

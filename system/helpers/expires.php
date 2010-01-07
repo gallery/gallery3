@@ -2,9 +2,7 @@
 /**
  * Controls headers that effect client caching of pages
  *
- * $Id: expires.php 4679 2009-11-10 01:45:52Z isaiah $
- *
- * @package    Core
+ * @package    Kohana
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license
@@ -15,18 +13,19 @@ class expires_Core {
 	 * Sets the amount of time before content expires
 	 *
 	 * @param   integer Seconds before the content expires
-	 * @return  integer Timestamp when the content expires
+	 * @param   integer Last modified timestamp in seconds(optional)
+ 	 * @return  integer Timestamp when the content expires
 	 */
 	public static function set($seconds = 60, $last_modified=null)
 	{
 		$now = time();
 		$expires = $now + $seconds;
-		if (empty($last_modified))
-		{
-                	$last_modified = $now;
-		}
+ 		if (empty($last_modified))
+ 		{
+ 			$last_modified = $now;
+ 		}
 
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $last_modified));
+ 		 header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $last_modified));
 
 		// HTTP 1.0
 		header('Expires: '.gmdate('D, d M Y H:i:s T', $expires));
@@ -70,7 +69,7 @@ class expires_Core {
 	 * @uses    expires::get()
 	 *
 	 * @param   integer         Maximum age of the content in seconds
-	 * @param   integer         Last modified timestamp in seconds
+	 * @param   integer Last modified timestamp in seconds(optional)
 	 * @return  integer|boolean Timestamp of the If-Modified-Since header or FALSE when header is lacking or malformed
 	 */
 	public static function check($seconds = 60, $modified=null)
@@ -79,10 +78,11 @@ class expires_Core {
 		{
 			$now = time();
 
-		 	if (empty($modified))
-		 	{
-                	 	$modified = $now;
-		 	}
+ 			if (empty($last_modified))
+ 			{
+ 				$last_modified = $now;
+ 			}
+			$max_age = $expires - time();
 
 			if ($modified <= $last_modified)
 			{
