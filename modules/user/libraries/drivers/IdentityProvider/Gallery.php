@@ -127,9 +127,8 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
    */
   public function get_user_list($ids) {
     return ORM::factory("user")
-      ->in("id", $ids)
-      ->find_all()
-      ->as_array();
+      ->where("id", "IN", $ids)
+      ->find_all();
   }
 
   /**
