@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class slideshow_theme_Core {
-  static function head($theme) {
+  static function page_bottom($theme) {
     $proto = (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] === "off") ? "http" : "https";
     return "<script src=\"$proto://apps.cooliris.com/slideshow/go.js\" " .
       "type=\"text/javascript\"></script>";
