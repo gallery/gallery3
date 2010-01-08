@@ -60,10 +60,10 @@ class rest_Core {
    * @return mixed  the corresponding object (usually a model of some kind)
    */
   static function resolve($url) {
-    $components = explode("/", substr($url, strlen(url::abs_site("rest"))), 3);
+    $relative_url = substr($url, strlen(url::abs_site("rest")));
+    $path = parse_url($relative_url, PHP_URL_PATH);
+    $components = explode("/", $path, 3);
 
-    // The first component will be empty because of the slash between "rest" and the
-    // resource type.
     $class = "$components[1]_rest";
     if (!method_exists($class, "resolve")) {
       throw new Kohana_404_Exception($url);
