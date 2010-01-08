@@ -30,7 +30,7 @@ class image_block_block_Core {
       $block->css_id = "g-image-block";
       $block->title = t("Random image");
       $block->content = new View("image_block_block.html");
-      $block->content->items = item::random(array(array("type", "!=", "album")));
+      $block->content->items = item::random_query(array(array("type", "!=", "album")))->find_all(1);
 
       if ($block->content->items->count() == 0) {
         $block = "";

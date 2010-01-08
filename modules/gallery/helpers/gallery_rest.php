@@ -36,22 +36,63 @@
 // just like #1 except in a helper instead of in the model?
 
 class gallery_rest_Core {
+
+  /**
+   * For items that are collections, you can specify the following additional query parameters to
+   * query the collection.  You can specify them in any combination.
+   *
+   *   scope=direct
+   *     only return items that are immediately under this one
+   *   scope=all
+   *     return items anywhere under this one
+   *
+   *   name=<substring>
+   *     only return items where the name contains this substring
+   *
+   *   random=true
+   *     return a single random item
+   *
+   *   type=<comma separate list of photo, movie or album>
+   *     limit the type to types in this list.  eg, "type=photo,movie"
+   */
   static function get($request) {
     $item = rest::resolve($request->url);
     access::required("view", $item);
 
-    if (isset($request->params->name)) {
-      $where[] = array("name", "=", $request->params->name);
+    $p = $request->params;
+    if (isset($p->random)) {
+      $orm = item::random_query()->offset(0)->limit(1);
     } else {
-      $where = array();
+      $orm = ORM::factory("item")->viewable();
     }
 
-    $children = array();
-    foreach ($item->children($where) as $child) {
-      $children[] = url::abs_site("rest/gallery/" . $child->relative_url());
+    if (!empty($p->scope) && !in_array($p->scope, array("direct", "all"))) {
+      throw new Exception("Bad Request", 400);
+    }
+    if (!empty($p->scope)) {
+      if ($p->scope == "direct") {
+        $orm->where("parent_id", "=", $item->id);
+      } else {
+        $orm->where("left_ptr", ">=", $item->left_ptr);
+        $orm->where("right_ptr", "<=", $item->left_ptr);
+        $orm->where("id", "<>", $item->id);
+      }
     }
 
-    return rest::reply(array("resource" => $item->as_array(), "members" => $children));
+    if (isset($p->name)) {
+      $orm->where("name", "LIKE", "%{$p->name}%");
+    }
+
+    if (isset($p->type)) {
+      $orm->where("type", "IN", explode(",", $p->type));
+    }
+
+    $members = array();
+    foreach ($orm->find_all() as $child) {
+      $members[] = url::abs_site("rest/gallery/" . $child->relative_url());
+    }
+
+    return rest::reply(array("resource" => $item->as_array(), "members" => $members));
   }
 
   static function put($request) {
