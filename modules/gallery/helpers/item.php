@@ -186,7 +186,6 @@ class item_Core {
     // that we chose the smallest number in the system, choose the item with the smallest number.
     // This approach works best when the random numbers in the system are roughly evenly
     // distributed so this is going to be more efficient with larger data sets.
-    $random = 0.0;
     $items = ORM::factory("item")
       ->viewable()
       ->where("rand_key", "<", $random)
