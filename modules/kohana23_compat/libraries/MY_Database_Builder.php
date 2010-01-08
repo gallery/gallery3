@@ -23,8 +23,10 @@ class Database_Builder extends Database_Builder_Core {
    * @chainable
    */
   public function merge_where($tuples) {
-    foreach ($tuples as $tuple) {
-      $this->where($tuple[0], $tuple[1], $tuple[2]);
+    if ($tuples) {
+      foreach ($tuples as $tuple) {
+        $this->where($tuple[0], $tuple[1], $tuple[2]);
+      }
     }
     return $this;
   }
@@ -34,8 +36,10 @@ class Database_Builder extends Database_Builder_Core {
    * @chainable
    */
   public function merge_or_where($tuples) {
-    foreach ($tuples as $tuple) {
-      $this->or_where($tuple[0], $tuple[1], $tuple[2]);
+    if ($tuples) {
+      foreach ($tuples as $tuple) {
+        $this->or_where($tuple[0], $tuple[1], $tuple[2]);
+      }
     }
     return $this;
   }
