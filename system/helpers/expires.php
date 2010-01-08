@@ -82,7 +82,6 @@ class expires_Core {
  			{
  				$last_modified = $now;
  			}
-			$max_age = $expires - time();
 
 			if ($modified <= $last_modified)
 			{

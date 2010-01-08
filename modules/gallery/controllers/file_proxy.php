@@ -28,16 +28,17 @@
  */
 class File_Proxy_Controller extends Controller {
   public function __call($function, $args) {
-    // request_uri: http://example.com/gallery3/var/trunk/albums/foo/bar.jpg
-    $request_uri = Input::instance()->server("REQUEST_URI");
+    // request_uri: gallery3/var/trunk/albums/foo/bar.jpg
+    $request_uri = rawurldecode(Input::instance()->server("REQUEST_URI"));
+
     $request_uri = preg_replace("/\?.*/", "", $request_uri);
 
-    // var_uri: http://example.com/gallery3/var/
+    // var_uri: gallery3/var/
     $var_uri = url::file("var/");
 
     // Make sure that the request is for a file inside var
-    $offset = strpos($request_uri, $var_uri);
-    if ($offset === false) {
+    $offset = strpos(rawurldecode($request_uri), $var_uri);
+    if ($offset !== 0) {
       throw new Kohana_404_Exception();
     }
 
@@ -55,9 +56,16 @@ class File_Proxy_Controller extends Controller {
 
     // If the last element is .album.jpg, pop that off since it's not a real item
     $path = preg_replace("|/.album.jpg$|", "", $path);
+    $encoded_path = array();
+    foreach (explode("/", $path) as $path_part) {
+      $encoded_path[] = rawurlencode($path_part);
+    }
 
     // We now have the relative path to the item.  Search for it in the path cache
-    $item = ORM::factory("item")->where("relative_path_cache", "=", $path)->find();
+    // The patch cache is urlencoded so re-encode the path. (it was decoded earlier to
+    // insure that the paths are normalized.
+    $item = ORM::factory("item")
+      ->where("relative_path_cache", "=", implode("/", $encoded_path))->find();
     if (!$item->loaded()) {
       // We didn't turn it up.  It's possible that the relative_path_cache is out of date here.
       // There was fallback code, but bharat deleted it in 8f1bca74.  If it turns out to be
@@ -81,14 +89,6 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
-    if ($type == "albums") {
-      $file = $item->file_path();
-    } else if ($type == "resizes") {
-      $file = $item->resize_path();
-    } else {
-      $file = $item->thumb_path();
-    }
-
     // Make sure we have access to the item
     if (!access::can("view", $item)) {
       throw new Kohana_404_Exception();
@@ -104,11 +104,18 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
+    if ($type == "albums") {
+      $file = $item->file_path();
+    } else if ($type == "resizes") {
+      $file = $item->resize_path();
+    } else {
+      $file = $item->thumb_path();
+    }
+
     if (!file_exists($file)) {
       throw new Kohana_404_Exception();
     }
 
-    header('Last-Modified: '.gmdate('D, d M Y H:i:s T', $item->updated));
     header("Pragma:");
     // Check that the content hasn't expired or it wasn't changed since cached
     expires::check(2592000, $item->updated);

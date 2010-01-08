@@ -278,9 +278,10 @@ class Theme_View_Core extends Gallery_View {
       }
 
       if (Session::instance()->get("debug")) {
-        if ($function != "head") {
+        if ($function != "head" && $function != "body_attributes") {
           array_unshift(
-            $blocks, "<div class=\"g-annotated-theme-block g-annotated-theme-block_$function g-clear-fix\">" .
+            $blocks,
+            "<div class=\"g-annotated-theme-block g-annotated-theme-block_$function g-clear-fix\">" .
             "<div class=\"title\">$function</div>");
           $blocks[] = "</div>";
         }
