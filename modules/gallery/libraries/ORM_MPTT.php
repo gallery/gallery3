@@ -165,11 +165,8 @@ class ORM_MPTT_Core extends ORM {
    * @return array ORM
    */
   function children($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    if ($where) {
-      $this->merge_where($where);
-    }
-
     return $this
+      ->merge_where($where)
       ->where("parent_id", "=", $this->id)
       ->order_by($order_by)
       ->find_all($limit, $offset);
@@ -183,11 +180,8 @@ class ORM_MPTT_Core extends ORM {
    * @return array ORM
    */
   function children_count($where=null) {
-    if ($where) {
-      $this->merge_where($where);
-    }
-
     return $this
+      ->merge_where($where)
       ->where("parent_id", "=", $this->id)
       ->count_all();
   }
@@ -202,11 +196,8 @@ class ORM_MPTT_Core extends ORM {
    * @return object ORM_Iterator
    */
   function descendants($limit=null, $offset=null, $where=null, $order_by=array("id" => "ASC")) {
-    if ($where) {
-      $this->merge_where($where);
-    }
-
     return $this
+      ->merge_where($where);
       ->where("left_ptr", ">", $this->left_ptr)
       ->where("right_ptr", "<=", $this->right_ptr)
       ->order_by($order_by)
@@ -220,11 +211,8 @@ class ORM_MPTT_Core extends ORM {
    * @return   integer  child count
    */
   function descendants_count($where=null) {
-    if ($where) {
-      $this->merge_where($where);
-    }
-
     return $this
+      ->merge_where($where);
       ->where("left_ptr", ">", $this->left_ptr)
       ->where("right_ptr", "<=", $this->right_ptr)
       ->count_all();
