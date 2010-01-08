@@ -56,11 +56,16 @@ class File_Proxy_Controller extends Controller {
 
     // If the last element is .album.jpg, pop that off since it's not a real item
     $path = preg_replace("|/.album.jpg$|", "", $path);
+    $encoded_path = array();
+    foreach (explode("/", $path) as $path_part) {
+      $encoded_path[] = rawurlencode($path_part);
+    }
 
     // We now have the relative path to the item.  Search for it in the path cache
     // The patch cache is urlencoded so re-encode the path. (it was decoded earlier to
     // insure that the paths are normalized.
-    $item = ORM::factory("item")->where("relative_path_cache", "=", rawurlencode($path))->find();
+    $item = ORM::factory("item")
+      ->where("relative_path_cache", "=", implode("/", $encoded_path))->find();
     if (!$item->loaded()) {
       // We didn't turn it up.  It's possible that the relative_path_cache is out of date here.
       // There was fallback code, but bharat deleted it in 8f1bca74.  If it turns out to be
