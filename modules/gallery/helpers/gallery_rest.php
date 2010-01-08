@@ -40,8 +40,14 @@ class gallery_rest_Core {
     $item = rest::resolve($request->url);
     access::required("view", $item);
 
+    if (isset($request->params->name)) {
+      $where[] = array("name", "=", $request->params->name);
+    } else {
+      $where = array();
+    }
+
     $children = array();
-    foreach ($item->children() as $child) {
+    foreach ($item->children($where) as $child) {
       $children[] = url::abs_site("rest/gallery/" . $child->relative_url());
     }
 
