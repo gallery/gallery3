@@ -173,4 +173,34 @@ class item_Core {
   static function root() {
     return model_cache::get("item", 1);
   }
+
+  /**
+   * Return a random Item_Model, with optional filters
+   *
+   * @param array   (optional) where tuple
+   */
+  static function random($where=null) {
+    $random = ((float)mt_rand()) / (float)mt_getrandmax();
+
+    // Pick a random number and find the item that's got nearest smaller number.  In the rare case
+    // that we chose the smallest number in the system, choose the item with the smallest number.
+    // This approach works best when the random numbers in the system are roughly evenly
+    // distributed so this is going to be more efficient with larger data sets.
+    $random = 0.0;
+    $items = ORM::factory("item")
+      ->viewable()
+      ->where("rand_key", "<", $random)
+      ->merge_where($where)
+      ->order_by("rand_key", "DESC")
+      ->find_all(1);
+
+    if ($items->count() == 0) {
+        $items = ORM::factory("item")
+          ->viewable()
+          ->merge_where($where)
+          ->order_by("rand_key", "ASC")
+          ->find_all(1);
+    }
+    return $items;
+  }
 }
