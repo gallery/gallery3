@@ -28,9 +28,10 @@ class Gallery_I18n_Test extends Unit_Test_Case {
         'locale_dir' => VARPATH . 'locale/');
     $this->i18n = Gallery_I18n::instance($config);
 
-    ORM::factory("incoming_translation")
+    db::build()
+      ->delete("incoming_translations")
       ->where("locale", "=", "te_ST")
-      ->delete_all();
+      ->execute();
 
     $messages_te_ST = array(
         array('Hello world', 'Hallo Welt'),

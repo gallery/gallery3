@@ -121,9 +121,10 @@ class Admin_Comments_Controller extends Admin_Controller {
   public function delete_all_spam() {
     access::verify_csrf();
 
-    ORM::factory("comment")
+    db::build()
+      ->delete("comments")
       ->where("state", "=", "spam")
-      ->delete_all();
+      ->execute();
     url::redirect("admin/comments/queue/spam");
   }
 }

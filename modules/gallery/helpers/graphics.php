@@ -60,11 +60,12 @@ class graphics_Core {
    * @param string  $operation   the name of the operation(<defining class>::method)
    */
   static function remove_rule($module_name, $target, $operation) {
-    ORM::factory("graphics_rule")
+    db::build()
+      ->delete("graphics_rules")
       ->where("module_name", "=", $module_name)
       ->where("target", "=", $target)
       ->where("operation", "=", $operation)
-      ->delete_all();
+      ->execute();
 
     self::mark_dirty($target == "thumb", $target == "resize");
   }
