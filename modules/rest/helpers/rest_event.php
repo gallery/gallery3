@@ -23,9 +23,10 @@ class rest_event {
    * the user_homes directory.
    */
   static function user_before_delete($user) {
-     ORM::factory("user_access_token")
+    db::build()
+      ->delete("user_access_tokens")
        ->where("id", "=", $user->id)
-       ->delete_all();
+       ->execute();
   }
 
   /**
