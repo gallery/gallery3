@@ -453,7 +453,6 @@ class gallery_installer {
         $args["height"] = 640;
         $resize_rule->args = serialize($args);
         $resize_rule->save();
-        graphics::mark_dirty(false, true);
       }
       module::set_version("gallery", $version = 22);
     }
