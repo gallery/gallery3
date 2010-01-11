@@ -89,7 +89,7 @@ CREATE TABLE {graphics_rules} (
 ) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {graphics_rules} VALUES (1,1,'a:3:{s:5:\"width\";i:200;s:6:\"height\";i:200;s:6:\"master\";i:2;}','gallery','gallery_graphics::resize',100,'thumb');
-INSERT INTO {graphics_rules} VALUES (2,1,'a:3:{s:5:\"width\";i:640;s:6:\"height\";i:480;s:6:\"master\";i:2;}','gallery','gallery_graphics::resize',100,'resize');
+INSERT INTO {graphics_rules} VALUES (2,1,'a:3:{s:5:\"width\";i:640;s:6:\"height\";i:640;s:6:\"master\";i:2;}','gallery','gallery_graphics::resize',100,'resize');
 DROP TABLE IF EXISTS {groups};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;

@@ -240,7 +240,7 @@ class gallery_installer {
       100);
     graphics::add_rule(
       "gallery", "resize", "gallery_graphics::resize",
-      array("width" => 640, "height" => 480, "master" => Image::AUTO),
+      array("width" => 640, "height" => 640, "master" => Image::AUTO),
       100);
 
     // Instantiate default themes (site and admin)
@@ -439,6 +439,23 @@ class gallery_installer {
     if ($version == 19 || $version == 20) {
       module::set_var("gallery", "simultaneous_upload_limit", 5);
       module::set_version("gallery", $version = 21);
+    }
+
+    // Update the graphics rules table so that the maximum height for resizes is 640 not 480.
+    // Fixes ticket #671
+    if ( $version == 21) {
+      $resize_rule = ORM::factory("graphics_rule")
+        ->where("id", "=", "2")
+        ->find();
+      // make sure it hasn't been changed already
+      $args = unserialize($resize_rule->args);
+      if ($args["height"] == 480 && $args["width"] == 640) {
+        $args["height"] = 640;
+        $resize_rule->args = serialize($args);
+        $resize_rule->save();
+        graphics::mark_dirty(false, true);
+      }
+      module::set_version("gallery", $version = 22);
     }
   }
 
