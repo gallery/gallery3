@@ -101,10 +101,10 @@ class notification {
     $v = new View("item_updated.html");
     $v->item = $item;
     $v->subject = $item->is_album() ?
-      t("Album %title updated", array("title" => $item->original("title"))) :
+      t("Album \"%title\" updated", array("title" => $item->original()->title)) :
       ($item->is_photo() ?
-       t("Photo %title updated", array("title" => $item->original("title")))
-       : t("Movie %title updated", array("title" => $item->original("title"))));
+       t("Photo \"%title\" updated", array("title" => $item->original()->title))
+       : t("Movie \"%title\" updated", array("title" => $item->original()->title)));
 
     self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
@@ -119,12 +119,12 @@ class notification {
     $v = new View("item_added.html");
     $v->item = $item;
     $v->subject = $item->is_album() ?
-      t("Album %title added to %parent_title",
+      t("Album \"%title\" added to \"%parent_title\"",
         array("title" => $item->title, "parent_title" => $parent->title)) :
       ($item->is_photo() ?
-       t("Photo %title added to %parent_title",
+       t("Photo \"%title\" added to \"%parent_title\"",
          array("title" => $item->title, "parent_title" => $parent->title)) :
-       t("Movie %title added to %parent_title",
+       t("Movie \"%title\" added to \"%parent_title\"",
            array("title" => $item->title, "parent_title" => $parent->title)));
 
     self::_notify($subscribers, $item, $v->render(), $v->subject);
@@ -140,12 +140,12 @@ class notification {
     $v = new View("item_deleted.html");
     $v->item = $item;
     $v->subject = $item->is_album() ?
-      t("Album %title removed from %parent_title",
+      t("Album \"%title\" removed from \"%parent_title\"",
         array("title" => $item->title, "parent_title" => $parent->title)) :
       ($item->is_photo() ?
-       t("Photo %title removed from %parent_title",
+       t("Photo \"%title\" removed from \"%parent_title\"",
          array("title" => $item->title, "parent_title" => $parent->title))
-       : t("Movie %title removed from %parent_title",
+       : t("Movie \"%title\" removed from \"%parent_title\"",
            array("title" => $item->title, "parent_title" => $parent->title)));
 
     self::_notify($subscribers, $item, $v->render(), $v->subject);
@@ -161,10 +161,10 @@ class notification {
     $v = new View("comment_published.html");
     $v->comment = $comment;
     $v->subject = $item->is_album() ?
-      t("A new comment was published for album %title", array("title" => $item->title)) :
+      t("A new comment was published for album \"%title\"", array("title" => $item->title)) :
       ($item->is_photo() ?
-       t("A new comment was published for photo %title", array("title" => $item->title))
-       : t("A new comment was published for movie %title", array("title" => $item->title)));
+       t("A new comment was published for photo \"%title\"", array("title" => $item->title))
+       : t("A new comment was published for movie \"%title\"", array("title" => $item->title)));
 
     self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
