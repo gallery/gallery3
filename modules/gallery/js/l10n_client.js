@@ -234,6 +234,11 @@ Gallery.behaviors.l10nClient = function(context) {
     $.hotkeys.add(Gallery.l10nClient.keys['clear'], {target:'#l10n-client #g-l10n-search', type:'keyup'}, function(){Gallery.l10nClient.key('clear');});
   }
 
+  // never actually submit the form as the search is done in the browser
+  $('#g-l10n-search-form').submit(function() {
+    return false;
+  });
+
   // Custom listener for l10n_client livesearch
   $('#l10n-client #g-l10n-search').keyup(function(key) {
     Gallery.l10nClient.filter($('#l10n-client #g-l10n-search').val());
