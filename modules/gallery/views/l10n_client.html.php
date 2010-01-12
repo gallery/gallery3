@@ -40,7 +40,7 @@
       <form method="post" action="<?= url::site("l10n_client/save") ?>" id="g-l10n-client-save-form">
         <?= access::csrf_form_field() ?>
         <?= form::hidden("l10n-message-key") ?>
-        <?= form::textarea("l10n-edit-translation", "", ' rows="5" class="translationField"') ?>
+        <?= form::textarea("l10n-edit-translation", "", ' id="l10n-edit-translation" rows="5" class="translationField"') ?>
         <div id="plural-zero" class="translationField hidden">
           <label for="l10n-edit-plural-translation-zero">[zero]</label>
           <?= form::textarea("l10n-edit-plural-translation-zero", "", ' rows="2"') ?>
