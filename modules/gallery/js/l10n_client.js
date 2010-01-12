@@ -86,7 +86,10 @@ jQuery.extend(Gallery, {
 
     // Get a string from the DOM tree
     this.getString = function(index, type) {
-      return l10n_client_data[index][type];
+      if (index < l10n_client_data.length) {
+        return l10n_client_data[index][type];
+      }
+      return "";
     };
 
     // Set a string in the DOM tree
