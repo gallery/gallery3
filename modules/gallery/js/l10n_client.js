@@ -17,7 +17,6 @@ $(document).ready(function() {
   Gallery.attachBehaviors(this);
 });
 
-
 // Store all l10n_client related data + methods in its own object
 jQuery.extend(Gallery, {
   l10nClient: new (function() {
@@ -51,7 +50,8 @@ jQuery.extend(Gallery, {
           this.filter(false);
         break;
       }
-    }
+    };
+
     // Toggle the l10nclient
     this.toggle = function(state) {
       switch(state) {
@@ -82,15 +82,18 @@ jQuery.extend(Gallery, {
           $.cookie('Gallery_l10n_client', '0', {expires: 7, path: '/'});
         break;
       }
-    }
+    };
+
     // Get a string from the DOM tree
     this.getString = function(index, type) {
       return l10n_client_data[index][type];
-    }
+    };
+
     // Set a string in the DOM tree
     this.setString = function(index, data) {
       l10n_client_data[index]['translation'] = data;
-    }
+    };
+
     // Display the source message
     this.showSourceMessage = function(source, is_plural) {
       if (is_plural) {
@@ -101,10 +104,11 @@ jQuery.extend(Gallery, {
         var pretty_source = $('#source-text-tmp-space').text(source).html();
       }
       $('#l10n-client-string-editor .source-text').html(pretty_source);
-    }
+    };
     this.isPluralMessage = function(message) {
       return typeof(message) == 'object';
-    }
+    };
+
     this.updateTranslationForm = function(translation, is_plural) {
       $('.translationField').addClass('hidden');
       if (is_plural) {
@@ -122,10 +126,11 @@ jQuery.extend(Gallery, {
           $('#plural-' + form).removeClass('hidden');
         }
       } else {
-          $('#l10n-edit-translation').attr('value', translation);
+        $('#l10n-edit-translation').attr('value', translation);
         $('#l10n-edit-translation').removeClass('hidden');
       }
-    }
+    };
+
     // Filter the string list by a search string
     this.filter = function(search) {
       if(search == false || search == '') {
@@ -140,7 +145,7 @@ jQuery.extend(Gallery, {
           $('#l10n-client #g-l10n-search').val(search);
         }
       }
-    }
+    };
 
     this.copySourceText = function() {
       var index  = Gallery.l10nClient.selected;
@@ -166,7 +171,7 @@ jQuery.extend(Gallery, {
         }
 
       }
-    }
+    };
   })
 });
 
@@ -205,8 +210,8 @@ Gallery.behaviors.l10nClient = function(context) {
       Gallery.l10nClient.toggle(0);
     }
   });
-	
-	// Close the l10n client using an AJAX call and refreshing the page
+
+  // Close the l10n client using an AJAX call and refreshing the page
   $('#g-close-l10n').click(function(event) {
 		$.ajax({
       type: "GET",
@@ -222,8 +227,8 @@ Gallery.behaviors.l10nClient = function(context) {
   // Register keybindings using jQuery hotkeys
   // TODO: Either remove hotkeys code or add query.hotkeys.js.
   if($.hotkeys) {
-    $.hotkeys.add(Gallery.l10nClient.keys['toggle'], function(){Gallery.l10nClient.key('toggle')});
-    $.hotkeys.add(Gallery.l10nClient.keys['clear'], {target:'#l10n-client #g-l10n-search', type:'keyup'}, function(){Gallery.l10nClient.key('clear')});
+    $.hotkeys.add(Gallery.l10nClient.keys['toggle'], function(){Gallery.l10nClient.key('toggle');});
+    $.hotkeys.add(Gallery.l10nClient.keys['clear'], {target:'#l10n-client #g-l10n-search', type:'keyup'}, function(){Gallery.l10nClient.key('clear');});
   }
 
   // Custom listener for l10n_client livesearch
@@ -246,9 +251,9 @@ Gallery.behaviors.l10nClient = function(context) {
               var num_plural_forms = plural_forms.length;
 
               // Store translation in local js
+              var translation = {};
               if (is_plural) {
-                  var translation = {};
-                  for (var i = 0; i < num_plural_forms; i++) {
+                   for (var i = 0; i < num_plural_forms; i++) {
                       var form = plural_forms[i];
                       translation[form] = $('#g-l10n-client-save-form #l10n-edit-plural-translation-' + form).attr('value');
                   }
