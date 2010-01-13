@@ -29,9 +29,9 @@ class L10n_Client_Controller extends Controller {
     $key = $input->post("l10n-message-key");
 
     $root_message = ORM::factory("incoming_translation")
-        ->where(array("key" => $key,
-                      "locale" => "root"))
-        ->find();
+      ->where("key", "=", $key)
+      ->where("locale", "=", "root")
+      ->find();
 
     if (!$root_message->loaded()) {
       throw new Exception("@todo bad request data / illegal state");
@@ -56,8 +56,8 @@ class L10n_Client_Controller extends Controller {
     }
 
     $entry = ORM::factory("outgoing_translation")
-      ->where(array("key" => $key,
-                    "locale" => $locale))
+      ->where("key", "=", $key)
+      ->where("locale", "=", $locale)
       ->find();
 
     if (!$entry->loaded()) {
@@ -70,8 +70,8 @@ class L10n_Client_Controller extends Controller {
     $entry->translation = serialize($translation);
 
     $entry_from_incoming = ORM::factory("incoming_translation")
-      ->where(array("key" => $key,
-                    "locale" => $locale))
+      ->where("key", "=", $key)
+      ->where("locale", "=", $locale)
       ->find();
 
     if (!$entry_from_incoming->loaded()) {
