@@ -26,7 +26,8 @@ class Item_Model extends ORM_MPTT {
     "title"       => array("rules" => array("length[0,255]", "required")),
     "slug"        => array("rules" => array("length[0,255]", "required")),
     "description" => array("rules" => array("length[0,65535]")),
-    "parent_id"   => array("rules" => array("Item_Model::valid_parent"))
+    "parent_id"   => array("rules" => array("Item_Model::valid_parent")),
+    "type"        => array("rules" => array("Item_Model::valid_type")),
   );
 
   /**
@@ -734,6 +735,13 @@ class Item_Model extends ORM_MPTT {
                ->count_records()) {
       $v->add_error("name", "conflict");
     }
+  }
+
+  /**
+   * Make sure that the type is valid.
+   */
+  static function valid_type($value) {
+    return in_array($value, array("album", "photo", "movie"));
   }
 
   /**
