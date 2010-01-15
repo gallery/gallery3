@@ -40,44 +40,43 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
-   * Add this node as a child of the parent provided.
+   * Overload ORM::save() to update the MPTT tree when we add new items to the hierarchy.
    *
    * @chainable
-   * @param integer $parent_id the id of the parent node
-   * @return ORM
+   * @return  ORM
    */
-  function add_to_parent($parent) {
-    $this->lock();
-    $parent->reload();  // Assume that the prior lock holder may have changed the parent
+  function save() {
+    if (!$this->loaded()) {
+      $this->lock();
+      $parent = ORM::factory("item")->where("id", "=", $this->parent_id)->find();
 
-    try {
-      // Make a hole in the parent for this new item
-      $this->db_builder
-        ->update($this->table_name)
-        ->set("left_ptr", new Database_Expression("`left_ptr` + 2"))
-        ->where("left_ptr", ">=", $parent->right_ptr)
-        ->execute();
-      $this->db_builder
-        ->update($this->table_name)
-        ->set("right_ptr", new Database_Expression("`right_ptr` + 2"))
-        ->where("right_ptr", ">=", $parent->right_ptr)
-        ->execute();
-      $parent->right_ptr += 2;
+      try {
+        // Make a hole in the parent for this new item
+        $this->db_builder
+          ->update($this->table_name)
+          ->set("left_ptr", new Database_Expression("`left_ptr` + 2"))
+          ->where("left_ptr", ">=", $parent->right_ptr)
+          ->execute();
+        $this->db_builder
+          ->update($this->table_name)
+          ->set("right_ptr", new Database_Expression("`right_ptr` + 2"))
+          ->where("right_ptr", ">=", $parent->right_ptr)
+          ->execute();
+        $parent->right_ptr += 2;
 
-      // Insert this item into the hole
-      $this->left_ptr = $parent->right_ptr - 2;
-      $this->right_ptr = $parent->right_ptr - 1;
-      $this->parent_id = $parent->id;
-      $this->level = $parent->level + 1;
-      $this->save();
-      $parent->reload();
-    } catch (Exception $e) {
+        // Insert this item into the hole
+        $this->left_ptr = $parent->right_ptr - 2;
+        $this->right_ptr = $parent->right_ptr - 1;
+        $this->parent_id = $parent->id;
+        $this->level = $parent->level + 1;
+      } catch (Exception $e) {
+        $this->unlock();
+        throw $e;
+      }
       $this->unlock();
-      throw $e;
     }
 
-    $this->unlock();
-    return $this;
+    return parent::save();
   }
 
   /**

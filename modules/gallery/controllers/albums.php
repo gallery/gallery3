@@ -96,29 +96,35 @@ class Albums_Controller extends Items_Controller {
     access::required("add", $album);
 
     $form = album::get_add_form($album);
-    if ($form->validate()) {
-      $new_album = album::create(
-        $album,
-        $form->add_album->inputs["name"]->value,
-        $form->add_album->title->value ?
-          $form->add_album->title->value : $form->add_album->inputs["name"]->value,
-        $form->add_album->description->value,
-        identity::active_user()->id,
-        $form->add_album->slug->value);
+    try {
+      $valid = $form->validate();
+      $album = ORM::factory("item");
+      $album->type = "album";
+      $album->parent_id = $parent_id;
+      $album->name = $form->add_album->inputs["name"]->value;
+      $album->title = $form->add_album->title->value ?
+        $form->add_album->title->value : $form->add_album->inputs["name"]->value;
+      $album->description = $form->add_album->description->value;
+      $album->slug = $form->add_album->slug->value;
+      $album->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        $form->add_album->inputs[$key]->add_error($error, 1);
+      }
+      $valid = false;
+    }
 
+    if ($valid) {
+      $album->save();
       log::success("content", "Created an album",
-                   html::anchor("albums/$new_album->id", "view album"));
+                   html::anchor("albums/$album->id", "view album"));
       message::success(t("Created album %album_title",
-                         array("album_title" => html::purify($new_album->title))));
+                         array("album_title" => html::purify($album->title))));
 
-      print json_encode(
-        array("result" => "success",
-              "location" => $new_album->url()));
+      print json_encode(array("result" => "success", "location" => $album->url()));
     } else {
-      print json_encode(
-        array(
-          "result" => "error",
-          "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 

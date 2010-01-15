@@ -24,71 +24,6 @@
  * Note: by design, this class does not do any permission checking.
  */
 class album_Core {
-  /**
-   * Create a new album.
-   * @param integer $parent_id id of parent album
-   * @param string  $name the name of this new album (it will become the directory name on disk)
-   * @param integer $title the title of the new album
-   * @param string  $description (optional) the longer description of this album
-   * @param string  $slug (optional) the url component for this photo
-   * @return Item_Model
-   */
-  static function create($parent, $name, $title, $description=null, $owner_id=null, $slug=null) {
-    if (!$parent->loaded() || !$parent->is_album()) {
-      throw new Exception("@todo INVALID_PARENT");
-    }
-
-    if (strpos($name, "/")) {
-      throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
-    }
-
-    // We don't allow trailing periods as a security measure
-    // ref: http://dev.kohanaphp.com/issues/684
-    if (rtrim($name, ".") != $name) {
-      throw new Exception("@todo NAME_CANNOT_END_IN_PERIOD");
-    }
-
-    if (empty($slug)) {
-      $slug = item::convert_filename_to_slug($name);
-    }
-
-    $album = ORM::factory("item");
-    $album->type = "album";
-    $album->title = $title;
-    $album->description = $description;
-    $album->name = $name;
-    $album->owner_id = $owner_id;
-    $album->thumb_dirty = 1;
-    $album->resize_dirty = 1;
-    $album->slug = $slug;
-    $album->sort_column = "created";
-    $album->sort_order = "ASC";
-
-    // Randomize the name or slug if there's a conflict
-    // @todo Improve this.  Random numbers are not user friendly
-    while (ORM::factory("item")
-           ->where("parent_id", "=", $parent->id)
-           ->and_open()
-           ->where("name", "=", $album->name)
-           ->or_where("slug", "=", $album->slug)
-           ->close()
-           ->find()->id) {
-      $rand = rand();
-      $album->name = "{$name}-$rand";
-      $album->slug = "{$slug}-$rand";
-    }
-
-    $album = $album->add_to_parent($parent);
-    mkdir($album->file_path());
-    mkdir(dirname($album->thumb_path()));
-    mkdir(dirname($album->resize_path()));
-
-    // @todo: publish this from inside Item_Model::save() when we refactor to the point where
-    // there's only one save() happening here.
-    module::event("item_created", $album);
-
-    return $album;
-  }
 
   static function get_add_form($parent) {
     $form = new Forge("albums/create/{$parent->id}", "", "post", array("id" => "g-add-album-form"));
@@ -97,10 +32,8 @@ class album_Core {
     $group->input("title")->label(t("Title"));
     $group->textarea("description")->label(t("Description"));
     $group->input("name")->label(t("Directory name"))
-      ->callback("item::validate_no_slashes")
       ->error_messages("no_slashes", t("The directory name can't contain the \"/\" character"));
     $group->input("slug")->label(t("Internet Address"))
-      ->callback("item::validate_url_safe")
       ->error_messages(
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"));

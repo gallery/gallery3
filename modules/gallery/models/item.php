@@ -25,7 +25,8 @@ class Item_Model extends ORM_MPTT {
     "name"        => array("rules" => array("length[0,255]", "required")),
     "title"       => array("rules" => array("length[0,255]", "required")),
     "slug"        => array("rules" => array("length[0,255]", "required")),
-    "description" => array("rules" => array("length[0,65535]"))
+    "description" => array("rules" => array("length[0,65535]")),
+    "parent_id"   => array("rules" => array("Item_Model::valid_parent"))
   );
 
   /**
@@ -355,7 +356,10 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * Handle any business logic necessary to create an item.
    * @see ORM::save()
+   *
+   * @return ORM Item_Model
    */
   public function save() {
     $significant_changes = $this->changed;
@@ -366,12 +370,55 @@ class Item_Model extends ORM_MPTT {
     if (!empty($this->changed) && $significant_changes) {
       $this->updated = time();
       if (!$this->loaded()) {
+        // Create a new item.  Use whatever fields are set, and specify defaults for the rest.
         $this->created = $this->updated;
         $this->weight = item::get_max_weight();
         $this->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-      } else {
-        $send_event = 1;
+        $this->thumb_dirty = 1;
+        $this->resize_dirty = 1;
+        if (empty($this->sort_column)) {
+          $this->sort_column = "created";
+        }
+        if (empty($this->sort_order)) {
+          $this->sort_order = "ASC";
+        }
+        if (empty($this->owner_id)) {
+          $this->owner_id = identity::active_user()->id;
+        }
+        if (empty($this->slug)) {
+          $tmp = pathinfo($this->name, PATHINFO_FILENAME);
+          $tmp = preg_replace("/[^A-Za-z0-9-_]+/", "-", $tmp);
+          $this->slug = trim($tmp, "-");
+        }
 
+        // Randomize the name or slug if there's a conflict
+        // @todo Improve this.  Random numbers are not user friendly
+        $base_name = $this->name;
+        $base_slug = $this->slug;
+        while (ORM::factory("item")
+               ->where("parent_id", "=", $this->parent_id)
+               ->and_open()
+               ->where("name", "=", $this->name)
+               ->or_where("slug", "=", $this->slug)
+               ->close()
+               ->find()->id) {
+          $rand = rand();
+          $this->name = "$base_name-$rand";
+          $this->slug = "$base_slug-$rand";
+        }
+
+        parent::save();
+
+        // Call this after we finish saving so that the paths are correct.
+        if ($this->is_album()) {
+          mkdir($this->file_path());
+          mkdir(dirname($this->thumb_path()));
+          mkdir(dirname($this->resize_path()));
+        }
+
+        module::event("item_created", $this);
+      } else {
+        // Update an existing item
         if ($this->original()->name != $this->name) {
           $this->rename($this->name);
           $this->relative_path_cache = null;
@@ -394,14 +441,11 @@ class Item_Model extends ORM_MPTT {
             ->where("right_ptr", "<", $this->right_ptr)
             ->execute();
         }
+        parent::save();
+        module::event("item_updated", $this->original(), $this);
       }
     }
 
-    parent::save();
-
-    if (isset($send_event)) {
-      module::event("item_updated", $this->original(), $this);
-    }
     return $this;
   }
 
@@ -663,7 +707,7 @@ class Item_Model extends ORM_MPTT {
   public function valid_slug(Validation $v, $value) {
     if (preg_match("/[^A-Za-z0-9-_]/", $value)) {
       $v->add_error("slug", "not_url_safe");
-    } else if ($row = db::build()
+    } else if (db::build()
         ->from("items")
         ->where("parent_id", "=", $this->parent_id)
         ->where("id", "<>", $this->id)
@@ -682,7 +726,7 @@ class Item_Model extends ORM_MPTT {
       $v->add_error("name", "no_slashes");
     } else if (rtrim($value, ".") !== $value) {
       $v->add_error("name", "no_trailing_period");
-    } else if ($row = db::build()
+    } else if (db::build()
                ->from("items")
                ->where("parent_id", "=", $this->parent_id)
                ->where("id", "<>", $this->id)
@@ -690,5 +734,16 @@ class Item_Model extends ORM_MPTT {
                ->count_records()) {
       $v->add_error("name", "conflict");
     }
+  }
+
+  /**
+   * Make sure that the parent id refers to an album.
+   */
+  static function valid_parent($value) {
+    return db::build()
+      ->from("items")
+      ->where("id", "=", $value)
+      ->where("type", "=", "album")
+      ->count_records() == 1;
   }
 }
