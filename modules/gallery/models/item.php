@@ -666,7 +666,7 @@ class Item_Model extends ORM_MPTT {
         ->from("items")
         ->where("parent_id", "=", $this->parent_id)
         ->where("id", "<>", $this->id)
-        ->where("slug", "=", $this->slug)
+        ->where("slug", "=", $value)
         ->count_records()) {
       $v->add_error("slug", "conflict");
     }
@@ -685,7 +685,7 @@ class Item_Model extends ORM_MPTT {
                ->from("items")
                ->where("parent_id", "=", $this->parent_id)
                ->where("id", "<>", $this->id)
-               ->where("name", "=", $this->name)
+               ->where("name", "=", $value)
                ->count_records()) {
       $v->add_error("name", "conflict");
     }
