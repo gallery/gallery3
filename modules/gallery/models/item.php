@@ -21,11 +21,11 @@ class Item_Model extends ORM_MPTT {
   protected $children = 'items';
   protected $sorting = array();
 
-  var $form_rules = array(
-    "name" => "required|length[0,255]",
-    "title" => "required|length[0,255]",
-    "description" => "length[0,65535]",
-    "slug" => "required|length[0,255]"
+  var $rules = array(
+    "name"        => array("rules" => array("length[0,255]", "required")),
+    "title"       => array("rules" => array("length[0,255]", "required")),
+    "slug"        => array("rules" => array("length[0,255]", "required")),
+    "description" => array("rules" => array("length[0,65535]"))
   );
 
   /**
@@ -146,21 +146,12 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Rename the underlying file for this item to a new name.  Move all the files.  This requires a
-   * save.
+   * Rename the underlying file for this item to a new name and move all related files.
    *
    * @chainable
    */
-  public function rename($new_name) {
-    if ($new_name == $this->name) {
-      return;
-    }
-
-    if (strpos($new_name, "/")) {
-      throw new Exception("@todo NAME_CANNOT_CONTAIN_SLASH");
-    }
-
-    $old_relative_path = urldecode($this->relative_path());
+  private function rename($new_name) {
+    $old_relative_path = urldecode($this->original()->relative_path());
     $new_relative_path = dirname($old_relative_path) . "/" . $new_name;
     if (file_exists(VARPATH . "albums/$new_relative_path")) {
       throw new Exception("@todo INVALID_RENAME_FILE_EXISTS: $new_relative_path");
@@ -176,18 +167,6 @@ class Item_Model extends ORM_MPTT {
               VARPATH . "thumbs/$new_relative_thumb_path");
     } else {
       @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$new_relative_path");
-    }
-
-    $this->name = $new_name;
-
-    if ($this->is_album()) {
-      db::build()
-        ->update("items")
-        ->set("relative_url_cache", null)
-        ->set("relative_path_cache", null)
-        ->where("left_ptr", ">", $this->left_ptr)
-        ->where("right_ptr", "<", $this->right_ptr)
-        ->execute();
     }
 
     return $this;
@@ -376,29 +355,6 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * @see ORM::__set()
-   */
-  public function __set($column, $value) {
-    if ($column == "name") {
-      $this->relative_path_cache = null;
-    } else if ($column == "slug") {
-      if ($this->slug != $value) {
-        // Clear the relative url cache for this item and all children
-        $this->relative_url_cache = null;
-        if ($this->is_album()) {
-          db::build()
-            ->update("items")
-            ->set("relative_url_cache", null)
-            ->where("left_ptr", ">", $this->left_ptr)
-            ->where("right_ptr", "<", $this->right_ptr)
-            ->execute();
-        }
-      }
-    }
-    parent::__set($column, $value);
-  }
-
-  /**
    * @see ORM::save()
    */
   public function save() {
@@ -414,9 +370,34 @@ class Item_Model extends ORM_MPTT {
         $this->weight = item::get_max_weight();
       } else {
         $send_event = 1;
+
+        if ($this->original()->name != $this->name) {
+          $this->rename($this->name);
+          $this->relative_path_cache = null;
+        }
+
+        if ($this->original()->slug != $this->slug) {
+          // Clear the relative url cache for this item and all children
+          $this->relative_url_cache = null;
+        }
+
+        // Changing the name or the slug ripples downwards
+        if ($this->is_album() &&
+            ($this->original()->name != $this->name ||
+             $this->original()->slug != $this->slug)) {
+          db::build()
+            ->update("items")
+            ->set("relative_url_cache", null)
+            ->set("relative_path_cache", null)
+            ->where("left_ptr", ">", $this->left_ptr)
+            ->where("right_ptr", "<", $this->right_ptr)
+            ->execute();
+        }
       }
     }
+
     parent::save();
+
     if (isset($send_event)) {
       module::event("item_updated", $this->original(), $this);
     }
@@ -654,5 +635,59 @@ class Item_Model extends ORM_MPTT {
       }
     }
     return parent::descendants($limit, $offset, $where, $order_by);
+  }
+
+  /**
+   * Add some custom per-instance rules.
+   */
+  public function validate($array=null) {
+    if (!$array) {
+      // The root item has different rules for the name and slug.
+      if ($this->id == 1) {
+        $this->rules["name"]["rules"][] = "length[0]";
+        $this->rules["slug"]["rules"][] = "length[0]";
+      }
+
+      // Names and slugs can't conflict
+      $this->rules["name"]["callbacks"][] = array($this, "valid_name");
+      $this->rules["slug"]["callbacks"][] = array($this, "valid_slug");
+    }
+
+    parent::validate($array);
+  }
+
+  /**
+   * Validate that the desired slug does not conflict.
+   */
+  public function valid_slug(Validation $v, $value) {
+    if (preg_match("/[^A-Za-z0-9-_]/", $value)) {
+      $v->add_error("slug", "not_url_safe");
+    } else if ($row = db::build()
+        ->from("items")
+        ->where("parent_id", "=", $this->parent_id)
+        ->where("id", "<>", $this->id)
+        ->where("slug", "=", $this->slug)
+        ->count_records()) {
+      $v->add_error("slug", "conflict");
+    }
+  }
+
+  /**
+   * Validate the item name.  It can't conflict with other names, can't contain slashes or
+   * trailing periods.
+   */
+  public function valid_name(Validation $v, $value) {
+    if (strpos($value, "/") !== false) {
+      $v->add_error("name", "no_slashes");
+    } else if (rtrim($value, ".") !== $value) {
+      $v->add_error("name", "no_trailing_period");
+    } else if ($row = db::build()
+               ->from("items")
+               ->where("parent_id", "=", $this->parent_id)
+               ->where("id", "<>", $this->id)
+               ->where("name", "=", $this->name)
+               ->count_records()) {
+      $v->add_error("name", "conflict");
+    }
   }
 }

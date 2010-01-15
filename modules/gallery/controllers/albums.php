@@ -129,42 +129,27 @@ class Albums_Controller extends Items_Controller {
     access::required("edit", $album);
 
     $form = album::get_edit_form($album);
-    if ($valid = $form->validate()) {
-      if ($album->id != 1 &&
-          $form->edit_item->dirname->value != $album->name ||
-          $form->edit_item->slug->value != $album->slug) {
-        // Make sure that there's not a conflict
-        if ($row = db::build()
-            ->select(array("name", "slug"))
-            ->from("items")
-            ->where("parent_id", "=", $album->parent_id)
-            ->where("id", "<>", $album->id)
-            ->and_open()
-            ->where("name", "=", $form->edit_item->dirname->value)
-            ->or_where("slug", "=", $form->edit_item->slug->value)
-            ->close()
-            ->execute()
-            ->current()) {
-          if ($row->name == $form->edit_item->dirname->value) {
-            $form->edit_item->dirname->add_error("name_conflict", 1);
-          }
-          if ($row->slug == $form->edit_item->slug->value) {
-            $form->edit_item->slug->add_error("slug_conflict", 1);
-          }
-          $valid = false;
-        }
-      }
-    }
-
-    if ($valid) {
+    try {
+      $valid = $form->validate();
       $album->title = $form->edit_item->title->value;
       $album->description = $form->edit_item->description->value;
       $album->sort_column = $form->edit_item->sort_order->column->value;
       $album->sort_order = $form->edit_item->sort_order->direction->value;
-      if ($album->id != 1) {
-        $album->rename($form->edit_item->dirname->value);
-      }
+      $album->name = $form->edit_item->dirname->value;
       $album->slug = $form->edit_item->slug->value;
+      $album->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        if ($key == "name") {
+          $key = "dirname";
+        }
+        $form->edit_item->inputs[$key]->add_error($error, 1);
+      }
+      $valid = false;
+    }
+
+    if ($valid) {
       $album->save();
       module::event("item_edit_form_completed", $album, $form);
 
@@ -180,9 +165,7 @@ class Albums_Controller extends Items_Controller {
         print json_encode(array("result" => "success"));
       }
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 

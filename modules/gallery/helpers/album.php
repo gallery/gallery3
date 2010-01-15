@@ -107,7 +107,6 @@ class album_Core {
         t("The internet address should contain only letters, numbers, hyphens and underscores"));
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Create"));
-    $form->add_rules_from(ORM::factory("item"));
     $form->script("")
       ->url(url::abs_file("modules/gallery/js/albums_form_add.js"));
     return $form;
@@ -124,15 +123,12 @@ class album_Core {
       $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
         ->rules("required")
         ->error_messages(
-          "name_conflict", t("There is already a movie, photo or album with this name"))
-        ->callback("item::validate_no_slashes")
+          "conflict", t("There is already a movie, photo or album with this name"))
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
-        ->callback("item::validate_no_trailing_period")
         ->error_messages("no_trailing_period", t("The directory name can't end in \".\""));
       $group->input("slug")->label(t("Internet Address"))->value($parent->slug)
         ->error_messages(
-          "slug_conflict", t("There is already a movie, photo or album with this internet address"))
-        ->callback("item::validate_url_safe")
+          "conflict", t("There is already a movie, photo or album with this internet address"))
         ->error_messages(
           "not_url_safe",
           t("The internet address should contain only letters, numbers, hyphens and underscores"));
@@ -159,7 +155,6 @@ class album_Core {
     $group = $form->group("buttons")->label("");
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Modify"));
-    $form->add_rules_from(ORM::factory("item"));
     return $form;
   }
 

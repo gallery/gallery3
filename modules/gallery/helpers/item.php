@@ -78,24 +78,6 @@ class item_Core {
     graphics::generate($album);
   }
 
-  static function validate_no_slashes($input) {
-    if (strpos($input->value, "/") !== false) {
-      $input->add_error("no_slashes", 1);
-    }
-  }
-
-  static function validate_no_trailing_period($input) {
-    if (rtrim($input->value, ".") !== $input->value) {
-      $input->add_error("no_trailing_period", 1);
-    }
-  }
-
-  static function validate_url_safe($input) {
-    if (preg_match("/[^A-Za-z0-9-_]/", $input->value)) {
-      $input->add_error("not_url_safe", 1);
-    }
-  }
-
   /**
    * Sanitize a filename into something presentable as an item title
    * @param string $filename
