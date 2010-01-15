@@ -95,16 +95,16 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("add", $album);
 
-    $input = Input::instance();
     $form = album::get_add_form($album);
     if ($form->validate()) {
       $new_album = album::create(
         $album,
-        $input->post("name"),
-        $input->post("title", $input->post("name")),
-        $input->post("description"),
+        $form->add_album->inputs["name"]->value,
+        $form->add_album->title->value ?
+          $form->add_album->title->value : $form->add_album->inputs["name"]->value,
+        $form->add_album->description->value,
         identity::active_user()->id,
-        $input->post("slug"));
+        $form->add_album->slug->value);
 
       log::success("content", "Created an album",
                    html::anchor("albums/$new_album->id", "view album"));
