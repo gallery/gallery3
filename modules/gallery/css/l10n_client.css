@@ -86,7 +86,7 @@
 }
 
 #l10n-client .string-list {
-  height:17em;
+  height: 16em;
   overflow:auto;
   list-style:none; list-style-image:none;
   margin:0em; padding:0em;}
@@ -129,10 +129,9 @@
   font-weight:bold;}
 
 #l10n-client #g-l10n-search-form {
-  background:#eee;
-  text-align:center;
-  height:2em; line-height:2em;
-  margin:0em; padding:.5em .5em;
+  background: #eee;
+  margin: 0em;
+  padding: .25em .25em;
 }
 
 #l10n-client #g-l10n-search-form .form-item,
@@ -148,8 +147,14 @@
   padding:0em;
 }
 
-#l10n-client #g-l10n-search-form input.form-text {
-  width:80%;
+#l10n-client #g-l10n-search-form fieldset {
+  margin-bottom: 0;
+  padding: .25em .25em;
+}
+
+
+#l10n-client #g-l10n-search-form input {
+  width: 96.75%;
 }
 
 #l10n-client #g-l10n-search-form #search-filter-clear {
@@ -164,7 +169,9 @@
 
 #l10n-client-string-editor .source {
   overflow:hidden;
-  width:50%; float:left;}
+  width:50%;
+  float:left;
+}
 
 #l10n-client-string-editor .source .source-text {
   line-height:1.5em;
@@ -178,10 +185,13 @@
 
 #l10n-client-string-editor .translation {
   overflow:hidden;
-  width:49%; float:right;}
+  width:49%;
+  float: right;
+}
 
 #g-l10n-client-save-form {
-  padding:0em;}
+  padding: 0em;
+}
 
 #l10n-client form ul,
 #l10n-client form li,

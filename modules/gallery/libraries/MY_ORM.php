@@ -19,12 +19,11 @@
  */
 class ORM extends ORM_Core {
   // Track the original value of this ORM so that we can look it up in ORM::original()
-  protected $original = null;
+  protected $original;
 
   public function save() {
     model_cache::clear();
     $result = parent::save();
-    $this->original = clone $this;
     return $result;
   }
 
@@ -48,7 +47,24 @@ class ORM extends ORM_Core {
     return parent::__unset($column);
   }
 
+  public function reload($reload_all=true) {
+    if ($reload_all) {
+      parent::reload();
+    }
+    $this->original = clone $this;
+    return $this;
+  }
+
+  public function clear() {
+    parent::clear();
+    $this->original = clone $this;
+    return $this;
+  }
+
   public function original() {
+    if (!isset($this->original)) {
+      $this->original = clone $this;
+    }
     return $this->original;
   }
 }
