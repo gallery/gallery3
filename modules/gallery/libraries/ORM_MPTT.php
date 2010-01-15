@@ -73,10 +73,13 @@ class ORM_MPTT_Core extends ORM {
         $this->unlock();
         throw $e;
       }
+      parent::save();
       $this->unlock();
+    } else {
+      parent::save();
     }
 
-    return parent::save();
+    return $this;
   }
 
   /**
