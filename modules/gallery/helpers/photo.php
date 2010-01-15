@@ -84,7 +84,6 @@ class photo_Core {
     $photo->resize_dirty = 1;
     $photo->sort_column = "weight";
     $photo->slug = $slug;
-    $photo->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
     // Randomize the name or slug if there's a conflict
     // @todo Improve this.  Random numbers are not user friendly

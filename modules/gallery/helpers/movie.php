@@ -85,7 +85,6 @@ class movie_Core {
     $movie->resize_dirty = 1;
     $movie->sort_column = "weight";
     $movie->slug = $slug;
-    $movie->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
 
     // Randomize the name if there's a conflict
     // @todo Improve this.  Random numbers are not user friendly

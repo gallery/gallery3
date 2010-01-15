@@ -368,6 +368,7 @@ class Item_Model extends ORM_MPTT {
       if (!$this->loaded()) {
         $this->created = $this->updated;
         $this->weight = item::get_max_weight();
+        $this->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
       } else {
         $send_event = 1;
 
