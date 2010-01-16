@@ -442,8 +442,9 @@ class Item_Model extends ORM_MPTT {
             ->where("right_ptr", "<", $this->right_ptr)
             ->execute();
         }
+        $original = clone $this->original();
         parent::save();
-        module::event("item_updated", $this->original(), $this);
+        module::event("item_updated", $original, $this);
       }
     }
 

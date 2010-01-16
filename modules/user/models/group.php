@@ -41,11 +41,13 @@ class Group_Model extends ORM implements Group_Definition {
     if (!$this->loaded()) {
         $created = 1;
     }
+
+    $original = clone $this->original();
     parent::save();
     if (isset($created)) {
       module::event("group_created", $this);
     } else {
-      module::event("group_updated", $this->original(), $this);
+      module::event("group_updated", $original, $this);
     }
     return $this;
   }

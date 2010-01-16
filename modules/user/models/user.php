@@ -69,11 +69,13 @@ class User_Model extends ORM implements User_Definition {
     if (!$this->loaded()) {
         $created = 1;
     }
+
+    $original = clone $this->original();
     parent::save();
     if (isset($created)) {
       module::event("user_created", $this);
     } else {
-      module::event("user_updated", $this->original(), $this);
+      module::event("user_updated", $original, $this);
     }
     return $this;
   }

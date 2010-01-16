@@ -166,7 +166,6 @@ class Item_Model_Test extends Unit_Test_Case {
     $item = self::_create_random_item();
     $item->title = "ORIGINAL_VALUE";
     $item->save();
-    $item->reload(false);
     $item->title = "NEW_VALUE";
 
     $this->assert_same("ORIGINAL_VALUE", $item->original()->title);
