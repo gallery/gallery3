@@ -7,7 +7,7 @@
     <h2> <?= html::clean($subject) ?> </h2>
     <table>
       <tr>
-        <? if ($item->original("title") != $item->title): ?>
+        <? if ($original->title != $item->title): ?>
         <td><?= t("New title:") ?></td>
         <td><?= html::clean($item->title) ?></td>
         <? else: ?>
@@ -19,7 +19,7 @@
         <td><?= t("Url:") ?></td>
         <td><a href="<?= $item->abs_url() ?>"><?= $item->abs_url() ?></a></td>
       </tr>
-      <? if ($item->original("description") != $item->description): ?>
+      <? if ($original->description != $item->description): ?>
       <tr>
         <td><?= t("New description:") ?></td>
         <td><?= html::clean($item->description) ?></td>

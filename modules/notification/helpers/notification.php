@@ -92,19 +92,22 @@ class notification {
     return array_keys($subscribers);
   }
 
-  static function send_item_updated($item) {
+  static function send_item_updated($original, $item) {
     $subscribers = self::get_subscribers($item);
     if (!$subscribers) {
       return;
     }
 
     $v = new View("item_updated.html");
+    $v->original = $original;
     $v->item = $item;
     $v->subject = $item->is_album() ?
-      t("Album \"%title\" updated", array("title" => $item->original()->title)) :
+      t("Album \"%title\" updated", array("title" => $original->title)) :
       ($item->is_photo() ?
-       t("Photo \"%title\" updated", array("title" => $item->original()->title))
-       : t("Movie \"%title\" updated", array("title" => $item->original()->title)));
+       t("Photo \"%title\" updated", array("title" => $original->title))
+       : t("Movie \"%title\" updated", array("title" => $original->title)));
+
+    Kohana_Log::add("error",print_r($v->render(),1));
 
     self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
