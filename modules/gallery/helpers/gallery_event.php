@@ -79,7 +79,9 @@ class gallery_event_Core {
       try {
         graphics::generate($item);
       } catch (Exception $e) {
-        log::failure("Unable to create a thumbnail for item id {$item->id}");
+        log::error("graphics", t("Couldn't create a thumbnail or resize for %item_title",
+                                 array("item_title" => $item->title)),
+                   html::anchor($item->abs_url(), t("details")));
         Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       }
 
