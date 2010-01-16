@@ -47,8 +47,8 @@ class ORM extends ORM_Core {
     return parent::__unset($column);
   }
 
-  public function reload($reload_all=true) {
-    if ($reload_all) {
+  public function reload($original_only=false) {
+    if (!$original_only) {
       parent::reload();
     }
     $this->original = clone $this;
