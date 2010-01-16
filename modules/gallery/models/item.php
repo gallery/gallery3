@@ -376,7 +376,6 @@ class Item_Model extends ORM_MPTT {
     unset($significant_changes["relative_url_cache"]);
     unset($significant_changes["relative_path_cache"]);
 
-
     if (!empty($this->changed) && $significant_changes) {
       $this->updated = time();
       if (!$this->loaded()) {
@@ -403,23 +402,32 @@ class Item_Model extends ORM_MPTT {
           $this->slug = trim($tmp, "-");
         }
 
+        // Get the width, height and mime type from our data file for photos and movies.
         if ($this->is_movie() || $this->is_photo()) {
-          $image_info = getimagesize($this->data_file);
+          $pi = pathinfo($this->data_file);
 
           if ($this->is_photo()) {
+            $image_info = getimagesize($this->data_file);
             $this->width = $image_info[0];
             $this->height = $image_info[1];
-            $this->mime_type =
-              empty($image_info['mime']) ? "application/unknown" : $image_info['mime'];
-          }
+            $this->mime_type = $image_info["mime"];
 
-          // Force an extension onto the name if necessary
-          $pi = pathinfo($this->data_file);
-          if (empty($pi["extension"])) {
-            $pi["extension"] = image_type_to_extension($image_info[2], false);
-            $this->name .= "." . $pi["extension"];
-          }
+            // Force an extension onto the name if necessary
+            if (empty($pi["extension"])) {
+              $pi["extension"] = image_type_to_extension($image_info[2], false);
+              $this->name .= "." . $pi["extension"];
+            }
+          } else {
+            list ($this->width, $this->height) = movie::getmoviesize($this->data_file);
 
+            // No extension?  Assume FLV.
+            if (empty($pi["extension"])) {
+              $pi["extension"] = "flv";
+              $this->name .= "." . $pi["extension"];
+            }
+
+            $this->mime_type = strtolower($pi["extension"]) == "mp4" ? "video/mp4" : "video/x-flv";
+          }
         }
 
         // Randomize the name or slug if there's a conflict.  Preserve the extension.
@@ -445,8 +453,9 @@ class Item_Model extends ORM_MPTT {
 
         parent::save();
 
-        // Build our url caches and save again.  If we could depend on a save happening later we
-        // could defer this 2nd save.
+        // Build our url caches, then save again.  We have to do this after it's already been
+        // saved once because we use only information from the database to build the paths.  If we
+        // could depend on a save happening later we could defer this 2nd save.
         $this->_build_relative_caches();
         parent::save();
 
@@ -459,6 +468,7 @@ class Item_Model extends ORM_MPTT {
           break;
 
         case "photo":
+        case "movie":
           // The thumb or resize may already exist in the case where a movie and a photo generate
           // a thumbnail of the same name (eg, foo.flv movie and foo.jpg photo will generate
           // foo.jpg thumbnail).  If that happens, randomize and save again.
@@ -746,25 +756,26 @@ class Item_Model extends ORM_MPTT {
    * Add some custom per-instance rules.
    */
   public function validate($array=null) {
+    // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
-      // The root item has different rules for the name and slug.
       if ($this->id == 1) {
+        // Root album can't have a name or slug
         $this->rules["name"] = array("rules" => array("length[0]"));
         $this->rules["slug"] = array("rules" => array("length[0]"));
+      } else {
+        // Layer some callbacks on top of the existing rules
+        $this->rules["name"]["callbacks"] = array(array($this, "valid_name"));
+        $this->rules["slug"]["callbacks"] = array(array($this, "valid_slug"));
       }
 
-      // Names and slugs can't conflict
-      $this->rules["name"]["callbacks"][] = array($this, "valid_name");
-      $this->rules["slug"]["callbacks"][] = array($this, "valid_slug");
-    }
+      // Movies and photos must have data files
+      if (($this->is_photo() || $this->is_movie()) && !$this->loaded()) {
+        $this->rules["name"]["callbacks"][] = array($this, "valid_data_file");
+      }
 
-    // Movies and photos must have data files
-    if (($this->is_photo() || $this->is_movie()) && !$this->loaded()) {
-      $this->rules["name"]["callbacks"][] = array($this, "valid_data_file");
+      // All items must have a legal parent
+      $this->rules["parent_id"]["callbacks"] = array(array($this, "valid_parent"));
     }
-
-    // All items must have a legal parent
-    $this->rules["parent_id"]["callbacks"][] = array($this, "valid_parent");
 
     parent::validate($array);
   }
@@ -801,11 +812,19 @@ class Item_Model extends ORM_MPTT {
     }
 
     if ($this->is_movie() || $this->is_photo()) {
-      $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
-      $old_ext = pathinfo($this->original()->name, PATHINFO_EXTENSION);
-      if (strcasecmp($new_ext, $old_ext)) {
-        $v->add_error("name", "illegal_extension");
-        return;
+      if ($this->loaded()) {
+        // Existing items can't change their extension
+        $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
+        $old_ext = pathinfo($this->original()->name, PATHINFO_EXTENSION);
+        if (strcasecmp($new_ext, $old_ext)) {
+          $v->add_error("name", "illegal_extension");
+          return;
+        }
+      } else {
+        // New items must have an extension
+        if (!pathinfo($this->name, PATHINFO_EXTENSION)) {
+          $v->add_error("name", "illegal_extension");
+        }
       }
     }
 

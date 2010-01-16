@@ -79,6 +79,13 @@ class Simple_Uploader_Controller extends Controller {
       } catch (Exception $e) {
         // The Flash uploader has no good way of reporting complex errors, so just keep it simple.
         Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+
+        // Ugh.  I hate to use instanceof, But this beats catching the exception separately since
+        // we mostly want to treat it the same way as all other exceptions
+        if ($e instanceof ORM_Validation_Exception) {
+          Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+        }
+
         if (file_exists($temp_filename)) {
           unlink($temp_filename);
         }
