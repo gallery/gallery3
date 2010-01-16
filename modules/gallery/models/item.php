@@ -759,7 +759,7 @@ class Item_Model extends ORM_MPTT {
     }
 
     // Movies and photos must have data files
-    if ($this->is_photo() || $this->is_movie() && !$this->loaded()) {
+    if (($this->is_photo() || $this->is_movie()) && !$this->loaded()) {
       $this->rules["name"]["callbacks"][] = array($this, "valid_data_file");
     }
 
@@ -792,14 +792,29 @@ class Item_Model extends ORM_MPTT {
   public function valid_name(Validation $v, $field) {
     if (strpos($this->name, "/") !== false) {
       $v->add_error("name", "no_slashes");
-    } else if (rtrim($this->name, ".") !== $this->name) {
+      return;
+    }
+
+    if (rtrim($this->name, ".") !== $this->name) {
       $v->add_error("name", "no_trailing_period");
-    } else if (db::build()
-               ->from("items")
-               ->where("parent_id", "=", $this->parent_id)
-               ->where("id", "<>", $this->id)
-               ->where("name", "=", $this->name)
-               ->count_records()) {
+      return;
+    }
+
+    if ($this->is_movie() || $this->is_photo()) {
+      $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
+      $old_ext = pathinfo($this->original()->name, PATHINFO_EXTENSION);
+      if (strcasecmp($new_ext, $old_ext)) {
+        $v->add_error("name", "illegal_extension");
+        return;
+      }
+    }
+
+    if (db::build()
+        ->from("items")
+        ->where("parent_id", "=", $this->parent_id)
+        ->where("id", "<>", $this->id)
+        ->where("name", "=", $this->name)
+        ->count_records()) {
       $v->add_error("name", "conflict");
     }
   }
