@@ -31,18 +31,13 @@ class photo_Core {
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("filename")->label(t("Filename"))->value($photo->name)
-      ->rules("required")
-      ->error_messages(
-        "name_conflict", t("There is already a movie, photo or album with this name"))
-      ->callback("item::validate_no_slashes")
+      ->error_messages("conflict", t("There is already a movie, photo or album with this name"))
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
-      ->callback("item::validate_no_trailing_period")
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""))
       ->error_messages("illegal_extension", t("You cannot change the filename extension"));
     $group->input("slug")->label(t("Internet Address"))->value($photo->slug)
-      ->callback("item::validate_url_safe")
       ->error_messages(
-        "slug_conflict", t("There is already a movie, photo or album with this internet address"))
+        "conflict", t("There is already a movie, photo or album with this internet address"))
       ->error_messages(
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"));
@@ -51,7 +46,6 @@ class photo_Core {
 
     $group = $form->group("buttons")->label("");
     $group->submit("")->value(t("Modify"));
-    $form->add_rules_from(ORM::factory("item"));
     return $form;
   }
 

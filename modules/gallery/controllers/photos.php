@@ -61,48 +61,25 @@ class Photos_Controller extends Items_Controller {
     access::required("edit", $photo);
 
     $form = photo::get_edit_form($photo);
-    $valid = $form->validate();
-
-    if ($valid) {
-      $new_ext = pathinfo($form->edit_item->filename->value, PATHINFO_EXTENSION);
-      $old_ext = pathinfo($photo->name, PATHINFO_EXTENSION);
-      if (strcasecmp($new_ext, $old_ext)) {
-        $form->edit_item->filename->add_error("illegal_extension", 1);
-        $valid = false;
-      }
-    }
-
-    if ($valid) {
-      if ($form->edit_item->filename->value != $photo->name ||
-          $form->edit_item->slug->value != $photo->slug) {
-        // Make sure that there's not a name or slug conflict
-        if ($row = db::build()
-            ->select(array("name", "slug"))
-            ->from("items")
-            ->where("parent_id", "=", $photo->parent_id)
-            ->where("id", "<>", $photo->id)
-            ->and_open()
-            ->where("name", "=", $form->edit_item->filename->value)
-            ->or_where("slug", "=", $form->edit_item->slug->value)
-            ->close()
-            ->execute()
-            ->current()) {
-          if ($row->name == $form->edit_item->filename->value) {
-            $form->edit_item->filename->add_error("name_conflict", 1);
-          }
-          if ($row->slug == $form->edit_item->slug->value) {
-            $form->edit_item->slug->add_error("slug_conflict", 1);
-          }
-          $valid = false;
-        }
-      }
-    }
-
-    if ($valid) {
+    try {
+      $valid = $form->validate();
       $photo->title = $form->edit_item->title->value;
       $photo->description = $form->edit_item->description->value;
       $photo->slug = $form->edit_item->slug->value;
-      $photo->rename($form->edit_item->filename->value);
+      $photo->name = $form->edit_item->filename->value;
+      $photo->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        if ($key == "name") {
+          $key = "filename";
+        }
+        $form->edit_item->inputs[$key]->add_error($error, 1);
+      }
+      $valid = false;
+    }
+
+    if ($valid) {
       $photo->save();
       module::event("item_edit_form_completed", $photo, $form);
 
@@ -118,9 +95,7 @@ class Photos_Controller extends Items_Controller {
         print json_encode(array("result" => "success"));
       }
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 
