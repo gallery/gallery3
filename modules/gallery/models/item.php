@@ -416,9 +416,11 @@ class Item_Model extends ORM_MPTT {
         $send_event = 1;
       }
     }
+
+    $original = clone $this->original();
     parent::save();
     if (isset($send_event)) {
-      module::event("item_updated", $this->original(), $this);
+      module::event("item_updated", $original, $this);
     }
     return $this;
   }
