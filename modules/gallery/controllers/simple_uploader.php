@@ -40,39 +40,45 @@ class Simple_Uploader_Controller extends Controller {
     access::required("add", $album);
     access::verify_csrf();
 
+    // The Flash uploader not call /start directly, so simulate it here for now.
+    if (!batch::in_progress()) {
+      batch::start();
+    }
+
+    $form = $this->_get_add_form($album);
+
+    // Uploadify adds its own field to the form, so validate that separately.
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules(
       "Filedata", "upload::valid",  "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
-    if ($file_validation->validate()) {
-      // SimpleUploader.swf does not yet call /start directly, so simulate it here for now.
-      if (!batch::in_progress()) {
-        batch::start();
-      }
 
+    if ($form->validate() && $file_validation->validate()) {
       $temp_filename = upload::save("Filedata");
       try {
-        $name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
-        $title = item::convert_filename_to_title($name);
+        $item = ORM::factory("item");
+        $item->name = substr(basename($temp_filename), 10);  // Skip unique identifier Kohana adds
+        $item->title = item::convert_filename_to_title($item->name);
+        $item->parent_id = $album->id;
+        $item->set_data_file($temp_filename);
+
         $path_info = @pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
             in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
-          $item = movie::create($album, $temp_filename, $name, $title);
+          $item->type = "movie";
+          $item->save();
           log::success("content", t("Added a movie"),
                        html::anchor("movies/$item->id", t("view movie")));
         } else {
-          $item = photo::create($album, $temp_filename, $name, $title);
+          $item->type = "photo";
+          $item->save();
           log::success("content", t("Added a photo"),
                        html::anchor("photos/$item->id", t("view photo")));
         }
 
-        // We currently have no way of showing errors if validation fails, so only call our event
-        // handlers if validation passes.
-        $form = $this->_get_add_form($album);
-        if ($form->validate()) {
-          module::event("add_photos_form_completed", $item, $form);
-        }
+        module::event("add_photos_form_completed", $item, $form);
       } catch (Exception $e) {
-        Kohana_Log::add("alert", $e->__toString());
+        // The Flash uploader has no good way of reporting complex errors, so just keep it simple.
+        Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
         if (file_exists($temp_filename)) {
           unlink($temp_filename);
         }
@@ -84,7 +90,7 @@ class Simple_Uploader_Controller extends Controller {
       print "FILEID: $item->id";
     } else {
       header("HTTP/1.1 400 Bad Request");
-      print "ERROR: " . t("Invalid Upload");
+      print "ERROR: " . t("Invalid upload");
     }
   }
 

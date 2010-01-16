@@ -73,6 +73,22 @@ class gallery_event_Core {
 
   static function item_created($item) {
     access::add_item($item);
+
+    if ($item->is_photo() || $item->is_movie()) {
+      // Build our thumbnail/resizes.
+      try {
+        graphics::generate($item);
+      } catch (Exception $e) {
+        log::failure("Unable to create a thumbnail for item id {$item->id}");
+        Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      }
+
+      // If the parent has no cover item, make this it.
+      $parent = $item->parent();
+      if (access::can("edit", $parent) && $parent->album_cover_item_id == null)  {
+        item::make_album_cover($item);
+      }
+    }
   }
 
   static function item_deleted($item) {

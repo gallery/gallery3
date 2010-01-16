@@ -20,13 +20,13 @@
 class Item_Model extends ORM_MPTT {
   protected $children = 'items';
   protected $sorting = array();
+  protected $data_file = null;
 
   var $rules = array(
     "name"        => array("rules" => array("length[0,255]", "required")),
     "title"       => array("rules" => array("length[0,255]", "required")),
     "slug"        => array("rules" => array("length[0,255]", "required")),
     "description" => array("rules" => array("length[0,65535]")),
-    "parent_id"   => array("rules" => array("Item_Model::valid_parent")),
     "type"        => array("rules" => array("Item_Model::valid_type")),
   );
 
@@ -175,6 +175,14 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * Specify the path to the data file associated with this item.  To actually associate it,
+   * you still have to call save().
+   */
+  public function set_data_file($data_file) {
+    $this->data_file = $data_file;
+  }
+
+  /**
    * Return the server-relative url to this item, eg:
    *   /gallery3/index.php/BobsWedding?page=2
    *   /gallery3/index.php/BobsWedding/Eating-Cake.jpg
@@ -304,7 +312,7 @@ class Item_Model extends ORM_MPTT {
     }
     $this->relative_path_cache = implode($names, "/");
     $this->relative_url_cache = implode($slugs, "/");
-    $this->save();
+    return $this;
   }
 
   /**
@@ -319,7 +327,7 @@ class Item_Model extends ORM_MPTT {
     }
 
     if (!isset($this->relative_path_cache)) {
-      $this->_build_relative_caches();
+      $this->_build_relative_caches()->save();
     }
     return $this->relative_path_cache;
   }
@@ -334,7 +342,7 @@ class Item_Model extends ORM_MPTT {
     }
 
     if (!isset($this->relative_url_cache)) {
-      $this->_build_relative_caches();
+      $this->_build_relative_caches()->save();
     }
     return $this->relative_url_cache;
   }
@@ -368,6 +376,7 @@ class Item_Model extends ORM_MPTT {
     unset($significant_changes["relative_url_cache"]);
     unset($significant_changes["relative_path_cache"]);
 
+
     if (!empty($this->changed) && $significant_changes) {
       $this->updated = time();
       if (!$this->loaded()) {
@@ -386,15 +395,37 @@ class Item_Model extends ORM_MPTT {
         if (empty($this->owner_id)) {
           $this->owner_id = identity::active_user()->id;
         }
+
+        // Make an url friendly slug from the name, if necessary
         if (empty($this->slug)) {
           $tmp = pathinfo($this->name, PATHINFO_FILENAME);
           $tmp = preg_replace("/[^A-Za-z0-9-_]+/", "-", $tmp);
           $this->slug = trim($tmp, "-");
         }
 
-        // Randomize the name or slug if there's a conflict
+        if ($this->is_movie() || $this->is_photo()) {
+          $image_info = getimagesize($this->data_file);
+
+          if ($this->is_photo()) {
+            $this->width = $image_info[0];
+            $this->height = $image_info[1];
+            $this->mime_type =
+              empty($image_info['mime']) ? "application/unknown" : $image_info['mime'];
+          }
+
+          // Force an extension onto the name if necessary
+          $pi = pathinfo($this->data_file);
+          if (empty($pi["extension"])) {
+            $pi["extension"] = image_type_to_extension($image_info[2], false);
+            $this->name .= "." . $pi["extension"];
+          }
+
+        }
+
+        // Randomize the name or slug if there's a conflict.  Preserve the extension.
         // @todo Improve this.  Random numbers are not user friendly
-        $base_name = $this->name;
+        $base_name = pathinfo($this->name, PATHINFO_FILENAME);
+        $base_ext = pathinfo($this->name, PATHINFO_EXTENSION);
         $base_slug = $this->slug;
         while (ORM::factory("item")
                ->where("parent_id", "=", $this->parent_id)
@@ -404,19 +435,46 @@ class Item_Model extends ORM_MPTT {
                ->close()
                ->find()->id) {
           $rand = rand();
-          $this->name = "$base_name-$rand";
+          if ($base_ext) {
+            $this->name = "$base_name-$rand.$base_ext";
+          } else {
+            $this->name = "$base_name-$rand";
+          }
           $this->slug = "$base_slug-$rand";
         }
 
         parent::save();
 
-        // Call this after we finish saving so that the paths are correct.
-        if ($this->is_album()) {
+        // Build our url caches and save again.  If we could depend on a save happening later we
+        // could defer this 2nd save.
+        $this->_build_relative_caches();
+        parent::save();
+
+        // Take any actions that we can only do once all our paths are set correctly after saving.
+        switch ($this->type) {
+        case "album":
           mkdir($this->file_path());
           mkdir(dirname($this->thumb_path()));
           mkdir(dirname($this->resize_path()));
+          break;
+
+        case "photo":
+          // The thumb or resize may already exist in the case where a movie and a photo generate
+          // a thumbnail of the same name (eg, foo.flv movie and foo.jpg photo will generate
+          // foo.jpg thumbnail).  If that happens, randomize and save again.
+          if (file_exists($this->resize_path()) ||
+              file_exists($this->thumb_path())) {
+            $pi = pathinfo($this->name);
+            $this->name = $pi["filename"] . "-" . rand() . "." . $pi["extension"];
+            parent::save();
+          }
+
+          copy($this->data_file, $this->file_path());
+          break;
         }
 
+        // This will almost definitely trigger another save, so put it at the end so that we're
+        // tail recursive.
         module::event("item_created", $this);
       } else {
         // Update an existing item
@@ -691,8 +749,8 @@ class Item_Model extends ORM_MPTT {
     if (!$array) {
       // The root item has different rules for the name and slug.
       if ($this->id == 1) {
-        $this->rules["name"]["rules"][] = "length[0]";
-        $this->rules["slug"]["rules"][] = "length[0]";
+        $this->rules["name"] = array("rules" => array("length[0]"));
+        $this->rules["slug"] = array("rules" => array("length[0]"));
       }
 
       // Names and slugs can't conflict
@@ -700,20 +758,28 @@ class Item_Model extends ORM_MPTT {
       $this->rules["slug"]["callbacks"][] = array($this, "valid_slug");
     }
 
+    // Movies and photos must have data files
+    if ($this->is_photo() || $this->is_movie() && !$this->loaded()) {
+      $this->rules["name"]["callbacks"][] = array($this, "valid_data_file");
+    }
+
+    // All items must have a legal parent
+    $this->rules["parent_id"]["callbacks"][] = array($this, "valid_parent");
+
     parent::validate($array);
   }
 
   /**
    * Validate that the desired slug does not conflict.
    */
-  public function valid_slug(Validation $v, $value) {
-    if (preg_match("/[^A-Za-z0-9-_]/", $value)) {
+  public function valid_slug(Validation $v, $field) {
+    if (preg_match("/[^A-Za-z0-9-_]/", $this->slug)) {
       $v->add_error("slug", "not_url_safe");
     } else if (db::build()
         ->from("items")
         ->where("parent_id", "=", $this->parent_id)
         ->where("id", "<>", $this->id)
-        ->where("slug", "=", $value)
+        ->where("slug", "=", $this->slug)
         ->count_records()) {
       $v->add_error("slug", "conflict");
     }
@@ -723,18 +789,48 @@ class Item_Model extends ORM_MPTT {
    * Validate the item name.  It can't conflict with other names, can't contain slashes or
    * trailing periods.
    */
-  public function valid_name(Validation $v, $value) {
-    if (strpos($value, "/") !== false) {
+  public function valid_name(Validation $v, $field) {
+    if (strpos($this->name, "/") !== false) {
       $v->add_error("name", "no_slashes");
-    } else if (rtrim($value, ".") !== $value) {
+    } else if (rtrim($this->name, ".") !== $this->name) {
       $v->add_error("name", "no_trailing_period");
     } else if (db::build()
                ->from("items")
                ->where("parent_id", "=", $this->parent_id)
                ->where("id", "<>", $this->id)
-               ->where("name", "=", $value)
+               ->where("name", "=", $this->name)
                ->count_records()) {
       $v->add_error("name", "conflict");
+    }
+  }
+
+  /**
+   * Make sure that the data file is well formed (it exists and isn't empty).
+   */
+  public function valid_data_file(Validation $v, $field) {
+    if (!is_file($this->data_file)) {
+      $v->add_error("file", "bad_path");
+    } else if (filesize($this->data_file) == 0) {
+      $v->add_error("file", "empty_file");
+    }
+  }
+
+  /**
+   * Make sure that the parent id refers to an album.
+   */
+  public function valid_parent(Validation $v, $field) {
+    if ($this->id == 1) {
+      if ($this->parent_id != 0) {
+        $v->add_error("parent_id", "invalid");
+      }
+    } else {
+      if (db::build()
+          ->from("items")
+          ->where("id", "=", $this->parent_id)
+          ->where("type", "=", "album")
+          ->count_records() != 1) {
+        $v->add_error("parent_id", "invalid");
+      }
     }
   }
 
@@ -743,16 +839,5 @@ class Item_Model extends ORM_MPTT {
    */
   static function valid_type($value) {
     return in_array($value, array("album", "photo", "movie"));
-  }
-
-  /**
-   * Make sure that the parent id refers to an album.
-   */
-  static function valid_parent($value) {
-    return db::build()
-      ->from("items")
-      ->where("id", "=", $value)
-      ->where("type", "=", "album")
-      ->count_records() == 1;
   }
 }
