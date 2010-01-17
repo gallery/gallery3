@@ -20,8 +20,6 @@
 class Group_Model extends ORM implements Group_Definition {
   protected $has_and_belongs_to_many = array("users");
 
-  var $rules = array("name" => array("rules" => array("required", "length[4,255]")));
-
   /**
    * @see ORM::delete()
    */
@@ -37,12 +35,14 @@ class Group_Model extends ORM implements Group_Definition {
   }
 
   /**
-   * Add some custom per-instance rules.
+   * Specify our rules here so that we have access to the instance of this model.
    */
   public function validate($array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
-      $this->rules["name"]["callbacks"] = array(array($this, "valid_name"));
+      $this->rules = array(
+        "name" => array("rules" => array("required", "length[4,255]"),
+                        "callbacks" => array(array($this, "valid_name"))));
     }
 
     parent::validate($array);
@@ -71,7 +71,7 @@ class Group_Model extends ORM implements Group_Definition {
         ->where("name", "=", $this->name)
         ->where("id", "<>", $this->id)
         ->count_records() == 1) {
-      $v->add_error("name", "in_use");
+      $v->add_error("name", "conflict");
     }
   }
 }

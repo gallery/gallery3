@@ -21,15 +21,6 @@ class User_Model extends ORM implements User_Definition {
   protected $has_and_belongs_to_many = array("groups");
   protected $password_length = null;
 
-  var $rules = array(
-    "name"      => array("rules" => array("length[1,32]", "required")),
-    "locale"    => array("rules" => array("length[2,10]")),
-    "password"  => array("rules" => array("length[5,40]")),  // note: overridden in validate()
-    "email"     => array("rules" => array("length[1,255]", "required", "valid::email")),
-    "full_name" => array("rules" => array("length[0,255]")),
-    "url"       => array("rules" => array("valid::url")),
-  );
-
   public function __set($column, $value) {
     switch ($column) {
     case "hashed_password":
@@ -69,16 +60,22 @@ class User_Model extends ORM implements User_Definition {
   }
 
   /**
-   * Add some custom per-instance rules.
+   * Specify our rules here so that we have access to the instance of this model.
    */
   public function validate($array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
-      $this->rules["name"]["callbacks"] = array(array($this, "valid_name"));
+      $this->rules = array(
+        "admin"     => array("callbacks" => array(array($this, "valid_admin"))),
+        "email"     => array("rules"     => array("length[1,255]", "required", "valid::email")),
+        "full_name" => array("rules"     => array("length[0,255]")),
+        "locale"    => array("rules"     => array("length[2,10]")),
+        "name"      => array("rules"     => array("length[1,32]", "required"),
+                             "callbacks" => array(array($this, "valid_name"))),
+        "password"  => array("callbacks" => array(array($this, "valid_password"))),
+        "url"       => array("rules"     => array("valid::url")),
+      );
     }
-
-    $this->rules["password"]["callbacks"] = array(array($this, "valid_password"));
-    $this->rules["admin"]["callbacks"] = array(array($this, "valid_admin"));
 
     parent::validate($array);
   }
@@ -124,7 +121,7 @@ class User_Model extends ORM implements User_Definition {
         ->where("name", "=", $this->name)
         ->where("id", "<>", $this->id)
         ->count_records() == 1) {
-      $v->add_error("name", "in_use");
+      $v->add_error("name", "conflict");
     }
   }
 
@@ -134,8 +131,8 @@ class User_Model extends ORM implements User_Definition {
   public function valid_password(Validation $v, $field) {
     if (!$this->loaded() || $this->password_length) {
       $minimum_length = module::get_var("user", "mininum_password_length", 5);
-      if ($this->password_length < $minimum_length || $this->password_length > 40) {
-        $v->add_error("password", "length");
+      if ($this->password_length < $minimum_length) {
+        $v->add_error("password", "min_length");
       }
     }
   }

@@ -287,7 +287,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $group = $form->group("edit_user")->label(t("Edit user"));
     $group->input("name")->label(t("Username"))->id("g-username")->value($user->name);
     $group->inputs["name"]->error_messages(
-      "in_use", t("There is already a user with that username"));
+      "conflict", t("There is already a user with that username"));
     $group->input("full_name")->label(t("Full name"))->id("g-fullname")->value($user->full_name);
     self::_add_locale_dropdown($group, $user);
     $group->password("password")->label(t("Password"))->id("g-password");
@@ -306,7 +306,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
     $group = $form->group("add_user")->label(t("Add user"));
     $group->input("name")->label(t("Username"))->id("g-username")
-      ->error_messages("in_use", t("There is already a user with that username"));
+      ->error_messages("conflict", t("There is already a user with that username"));
     $group->input("full_name")->label(t("Full name"))->id("g-fullname");
     $group->password("password")->label(t("Password"))->id("g-password");
     $group->password("password2")->label(t("Confirm password"))->id("g-password2")
@@ -351,7 +351,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $form_group = $form->group("edit_group")->label(t("Edit group"));
     $form_group->input("name")->label(t("Name"))->id("g-name")->value($group->name);
     $form_group->inputs["name"]->error_messages(
-      "in_use", t("There is already a group with that name"));
+      "conflict", t("There is already a group with that name"));
     $form_group->submit("")->value(t("Save"));
     return $form;
   }
@@ -361,7 +361,7 @@ class Admin_Users_Controller extends Admin_Controller {
     $form_group = $form->group("add_group")->label(t("Add group"));
     $form_group->input("name")->label(t("Name"))->id("g-name");
     $form_group->inputs["name"]->error_messages(
-      "in_use", t("There is already a group with that name"));
+      "conflict", t("There is already a group with that name"));
     $form_group->submit("")->value(t("Add group"));
     return $form;
   }
