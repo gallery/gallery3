@@ -365,7 +365,7 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Handle any business logic necessary to create an item.
+   * Handle any business logic necessary to create or modify an item.
    * @see ORM::save()
    *
    * @return ORM Item_Model
