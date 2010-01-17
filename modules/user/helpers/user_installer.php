@@ -53,21 +53,39 @@ class user_installer {
                  UNIQUE KEY(`user_id`, `group_id`))
                DEFAULT CHARSET=utf8;");
 
-    $everybody = group::create("Everybody");
+    $everybody = ORM::factory("group");
+    $everybody->name = "Everybody";
     $everybody->special = true;
     $everybody->save();
 
-    $registered = group::create("Registered Users");
+    $registered = ORM::factory("group");
+    $registered->name = "Registered Users";
     $registered->special = true;
     $registered->save();
 
-    $guest = user::create("guest", "Guest User", "");
-    $guest->guest = true;
-    $guest->remove($registered);
+    // Avoid ORM to sidestep validation.
+    db::build()->insert(
+      "users",
+      array("name" => "guest",
+            "full_name" => "Guest User",
+            "guest" => true))
+      ->execute();
+
+    $guest = ORM::factory("user")->where("id", "=", 1)->find();
+    $guest->add($everybody);
     $guest->save();
 
-    $admin = user::create("admin", "Gallery Administrator", "admin");
-    $admin->admin = true;
+    db::build()->insert(
+      "users",
+      array("name" => "admin",
+            "full_name" => "Gallery Administrator",
+            "password" => "admin",
+            "admin" => true))
+      ->execute();
+
+    $admin = ORM::factory("user")->where("id", "=", 2)->find();
+    $admin->add($everybody);
+    $admin->add($registered);
     $admin->save();
 
     $current_provider = module::get_var("gallery", "identity_provider");

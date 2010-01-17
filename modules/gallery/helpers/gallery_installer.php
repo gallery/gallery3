@@ -209,19 +209,26 @@ class gallery_installer {
     t("Edit");
     t("Add");
 
-    $root = ORM::factory("item");
-    $root->type = "album";
-    $root->title = "Gallery";
-    $root->description = "";
-    $root->left_ptr = 1;
-    $root->right_ptr = 2;
-    $root->parent_id = 0;
-    $root->level = 1;
-    $root->thumb_dirty = 1;
-    $root->resize_dirty = 1;
-    $root->sort_column = "weight";
-    $root->sort_order = "ASC";
-    $root->save();
+    // Hardcode the first item to sidestep ORM validation rules
+    $now = time();
+    db::build()->insert(
+      "items",
+      array("created" => $now,
+            "description" => "",
+            "left_ptr" => 1,
+            "level" => 1,
+            "parent_id" => 0,
+            "resize_dirty" => 1,
+            "right_ptr" => 2,
+            "sort_column" => "weight",
+            "sort_order" => "ASC",
+            "thumb_dirty" => 1,
+            "title" => "Gallery",
+            "type" => "album",
+            "updated" => $now,
+            "weight" => 1))
+      ->execute();
+    $root = ORM::factory("item")->where("id", "=", 1)->find();
     access::add_item($root);
 
     module::set_var("gallery", "active_site_theme", "wind");
