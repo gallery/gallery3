@@ -26,34 +26,36 @@ class Users_Controller extends Controller {
     }
 
     $form = $this->_get_edit_form($user);
-    $valid = $form->validate();
-    if ($valid) {
+    try {
+      $valid = $form->validate();
       $user->full_name = $form->edit_user->full_name->value;
-      if ($form->edit_user->password->value) {
-        $user->password = $form->edit_user->password->value;
-      }
+      $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
-      if ($form->edit_user->locale) {
-        $desired_locale = $form->edit_user->locale->value;
-        $new_locale = $desired_locale == "none" ? null : $desired_locale;
-        if ($new_locale != $user->locale) {
-          // Delete the session based locale preference
-          setcookie("g_locale", "", time() - 24 * 3600, "/");
-        }
-        $user->locale = $new_locale;
+      $user->locale = $form->edit_user->locale->value;
+      $user->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        $form->edit_user->inputs[$key]->add_error($error, 1);
+     }
+      $valid = false;
+    }
+
+    if ($valid) {
+      if ($user->original()->locale != $user->locale) {
+        // Delete the session based locale preference
+        setcookie("g_locale", "", time() - 24 * 3600, "/");
       }
+
       $user->save();
       module::event("user_edit_form_completed", $user, $form);
-
       message::success(t("User information updated."));
       print json_encode(
         array("result" => "success",
               "resource" => url::site("users/{$user->id}")));
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -78,11 +80,6 @@ class Users_Controller extends Controller {
       ->matches($group->password);
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
-    $form->add_rules_from($user);
-
-    $minimum_length = module::get_var("user", "mininum_password_length", 5);
-    $form->edit_user->password
-      ->rules($minimum_length ? "length[$minimum_length, 40]" : "length[40]");
 
     module::event("user_edit_form", $user, $form);
     $group->submit("")->value(t("Save"));
