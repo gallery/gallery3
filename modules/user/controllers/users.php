@@ -95,14 +95,13 @@ class Users_Controller extends Controller {
     foreach ($locales as $locale => $display_name) {
       $locales[$locale] = SafeString::of_safe_html($display_name);
     }
-    if (count($locales) > 1) {
-      // Put "none" at the first position in the array
-      $locales = array_merge(array("" => t("« none »")), $locales);
-      $selected_locale = ($user && $user->locale) ? $user->locale : "";
-      $form->dropdown("locale")
-        ->label(t("Language Preference"))
-        ->options($locales)
-        ->selected($selected_locale);
-    }
+
+    // Put "none" at the first position in the array
+    $locales = array_merge(array("" => t("« none »")), $locales);
+    $selected_locale = ($user && $user->locale) ? $user->locale : "";
+    $form->dropdown("locale")
+      ->label(t("Language Preference"))
+      ->options($locales)
+      ->selected($selected_locale);
   }
 }

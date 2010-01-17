@@ -37,10 +37,9 @@ class Admin_Users_Controller extends Admin_Controller {
       $user->full_name = $form->add_user->full_name->value;
       $user->password = $form->add_user->password->value;
       $user->email = $form->add_user->email->value;
-
-      if (!empty($form->add_user->locale->value)) {
-        $user->locale = $form->add_user->locale->value;
-      }
+      $user->url = $form->edit_user->url->value;
+      $user->locale = $form->add_user->locale->value;
+      $user->admin = $form->edit_user->admin->checked;
       $user->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
@@ -110,43 +109,34 @@ class Admin_Users_Controller extends Admin_Controller {
     }
 
     $form = $this->_get_user_edit_form_admin($user);
-    $valid = $form->validate();
-    if ($valid) {
-      $new_name = $form->edit_user->inputs["name"]->value;
-      $temp_user = user::lookup_by_name($new_name);
-      if ($new_name != $user->name &&
-          ($temp_user && $temp_user->id != $user->id)) {
-        $form->edit_user->inputs["name"]->add_error("in_use", 1);
-        $valid = false;
-      } else {
-        $user->name = $new_name;
-      }
-    }
-
-    if ($valid) {
+    try {
+      $valid = $form->validate();
+      $user->name = $form->edit_user->inputs["name"]->value;
       $user->full_name = $form->edit_user->full_name->value;
-      if ($form->edit_user->password->value) {
-        $user->password = $form->edit_user->password->value;
-      }
+      $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
-      if ($form->edit_user->locale) {
-        $desired_locale = $form->edit_user->locale->value;
-        $user->locale = $desired_locale == "none" ? null : $desired_locale;
-      }
-
-      // An admin can change the admin status for any user but themselves
+      $user->locale = $form->edit_user->locale->value;
       if ($user->id != identity::active_user()->id) {
         $user->admin = $form->edit_user->admin->checked;
       }
+
+      $user->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        $form->edit_user->inputs[$key]->add_error($error, 1);
+      }
+      $valid = false;
+    }
+
+    if ($valid) {
       $user->save();
       module::event("user_edit_form_admin_completed", $user, $form);
-
       message::success(t("Changed user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error",
-                              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -191,25 +181,26 @@ class Admin_Users_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $form = $this->_get_group_add_form_admin();
-    $valid = $form->validate();
-    if ($valid) {
-      $new_name = $form->add_group->inputs["name"]->value;
-      $group = group::lookup_by_name($new_name);
-      if (!empty($group)) {
-        $form->add_group->inputs["name"]->add_error("in_use", 1);
-        $valid = false;
+    try {
+      $valid = $form->validate();
+      $group = ORM::factory("group");
+      $group->name = $form->add_group->inputs["name"]->value;
+      $group->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        $form->add_group->inputs[$key]->add_error($error, 1);
       }
+      $valid = false;
     }
 
     if ($valid) {
-      $group = group::create($new_name);
       $group->save();
       message::success(
         t("Created group %group_name", array("group_name" => $group->name)));
       print json_encode(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error",
-                              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -258,19 +249,19 @@ class Admin_Users_Controller extends Admin_Controller {
     }
 
     $form = $this->_get_group_edit_form_admin($group);
-    $valid = $form->validate();
-
-    if ($valid) {
-      $new_name = $form->edit_group->inputs["name"]->value;
-      $group = group::lookup_by_name($name);
-      if ($group->loaded()) {
-        $form->edit_group->inputs["name"]->add_error("in_use", 1);
-        $valid = false;
+    try {
+      $valid = $form->validate();
+      $group->name = $form->edit_group->inputs["name"]->value;
+      $group->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        $form->edit_group->inputs[$key]->add_error($error, 1);
       }
+      $valid = false;
     }
 
     if ($valid) {
-      $group->name = $form->edit_group->inputs["name"]->value;
       $group->save();
       message::success(
         t("Changed group %group_name", array("group_name" => $group->name)));
@@ -278,8 +269,7 @@ class Admin_Users_Controller extends Admin_Controller {
     } else {
       message::error(
         t("Failed to change group %group_name", array("group_name" => $group->name)));
-      print json_encode(array("result" => "error",
-                              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -308,10 +298,6 @@ class Admin_Users_Controller extends Admin_Controller {
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
-    $form->add_rules_from($user);
-    $minimum_length = module::get_var("user", "mininum_password_length", 5);
-    $form->edit_user->password
-      ->rules($minimum_length ? "length[$minimum_length, 40]" : "length[40]");
 
     module::event("user_edit_form_admin", $user, $form);
     $group->submit("")->value(t("Modify User"));
@@ -342,15 +328,14 @@ class Admin_Users_Controller extends Admin_Controller {
     foreach ($locales as $locale => $display_name) {
       $locales[$locale] = SafeString::of_safe_html($display_name);
     }
-    if (count($locales) > 1) {
-      // Put "none" at the first position in the array
-      $locales = array_merge(array("" => t("« none »")), $locales);
-      $selected_locale = ($user && $user->locale) ? $user->locale : "";
-      $form->dropdown("locale")
-        ->label(t("Language Preference"))
-        ->options($locales)
-        ->selected($selected_locale);
-    }
+
+    // Put "none" at the first position in the array
+    $locales = array_merge(array("" => t("« none »")), $locales);
+    $selected_locale = ($user && $user->locale) ? $user->locale : "";
+    $form->dropdown("locale")
+      ->label(t("Language Preference"))
+      ->options($locales)
+      ->selected($selected_locale);
   }
 
   private function _get_user_delete_form_admin($user) {
@@ -370,7 +355,6 @@ class Admin_Users_Controller extends Admin_Controller {
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
     $form_group->submit("")->value(t("Save"));
-    $form->add_rules_from($group);
     return $form;
   }
 
@@ -381,7 +365,6 @@ class Admin_Users_Controller extends Admin_Controller {
     $form_group->inputs["name"]->error_messages(
       "in_use", t("There is already a group with that name"));
     $form_group->submit("")->value(t("Add group"));
-    $form->add_rules_from(ORM::factory("group"));
     return $form;
   }
 

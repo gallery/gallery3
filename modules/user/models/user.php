@@ -78,6 +78,7 @@ class User_Model extends ORM implements User_Definition {
     }
 
     $this->rules["password"]["callbacks"] = array(array($this, "valid_password"));
+    $this->rules["admin"]["callbacks"] = array(array($this, "valid_admin"));
 
     parent::validate($array);
   }
@@ -131,9 +132,20 @@ class User_Model extends ORM implements User_Definition {
    * Validate the password.
    */
   public function valid_password(Validation $v, $field) {
-    $minimum_length = module::get_var("user", "mininum_password_length", 5);
-    if ($this->password_length < $minimum_length || $this->password_length > 40) {
-      $v->add_error("password", "length");
+    if (!$this->loaded() || $this->password_length) {
+      $minimum_length = module::get_var("user", "mininum_password_length", 5);
+      if ($this->password_length < $minimum_length || $this->password_length > 40) {
+        $v->add_error("password", "length");
+      }
+    }
+  }
+
+  /**
+   * Validate the admin bit.
+   */
+  public function valid_admin(Validation $v, $field) {
+    if ($this->id == identity::active_user()->id && !$this->admin) {
+      $v->add_error("admin", "locked");
     }
   }
 }

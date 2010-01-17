@@ -20,8 +20,7 @@
 class Group_Model extends ORM implements Group_Definition {
   protected $has_and_belongs_to_many = array("users");
 
-  var $form_rules = array(
-    "name" => "required|length[4,255]");
+  var $rules = array("name" => array("rules" => array("required", "length[4,255]")));
 
   /**
    * @see ORM::delete()
@@ -37,18 +36,42 @@ class Group_Model extends ORM implements Group_Definition {
     return $this->users->find_all();
   }
 
-  public function save() {
-    if (!$this->loaded()) {
-        $created = 1;
+  /**
+   * Add some custom per-instance rules.
+   */
+  public function validate($array=null) {
+    // validate() is recursive, only modify the rules on the outermost call.
+    if (!$array) {
+      $this->rules["name"]["callbacks"] = array(array($this, "valid_name"));
     }
 
-    $original = clone $this->original();
-    parent::save();
-    if (isset($created)) {
+    parent::validate($array);
+  }
+
+  public function save() {
+    if (!$this->loaded()) {
+      // New group
+      parent::save();
       module::event("group_created", $this);
     } else {
+      // Updated group
+      $original = clone $this->original();
+      parent::save();
       module::event("group_updated", $original, $this);
     }
+
     return $this;
+  }
+
+  /**
+   * Validate the user name.  Make sure there are no conflicts.
+   */
+  public function valid_name(Validation $v, $field) {
+    if (db::build()->from("groups")
+        ->where("name", "=", $this->name)
+        ->where("id", "<>", $this->id)
+        ->count_records() == 1) {
+      $v->add_error("name", "in_use");
+    }
   }
 }

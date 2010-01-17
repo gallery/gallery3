@@ -25,23 +25,6 @@
  */
 class group_Core {
   /**
-   * Create a new group.
-   *
-   * @param string  $name
-   * @return Group_Definition the group object
-   */
-  static function create($name) {
-    $group = ORM::factory("group")->where("name", "=", $name)->find();
-    if ($group->loaded()) {
-      throw new Exception("@todo GROUP_ALREADY_EXISTS $name");
-    }
-
-    $group->name = $name;
-    $group->save();
-    return $group;
-  }
-
-  /**
    * The group of all possible visitors.  This includes the guest user.
    *
    * @return Group_Definition the group object
