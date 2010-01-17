@@ -49,6 +49,10 @@ class ORM extends ORM_Core {
   }
 
   public function original() {
+    if (!isset($this->original)) {
+      $this->original = clone $this;
+    }
+
     return $this->original;
   }
 }
