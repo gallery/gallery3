@@ -82,8 +82,7 @@ class Admin_Users_Controller extends Admin_Controller {
       $name = $user->name;
       $user->delete();
     } else {
-      print json_encode(array("result" => "error",
-                              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
 
     $message = t("Deleted user %user_name", array("user_name" => $name));
@@ -221,8 +220,7 @@ class Admin_Users_Controller extends Admin_Controller {
       $name = $group->name;
       $group->delete();
     } else {
-      print json_encode(array("result" => "error",
-                              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
 
     $message = t("Deleted group %group_name", array("group_name" => $name));

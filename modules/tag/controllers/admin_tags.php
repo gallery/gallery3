@@ -60,9 +60,7 @@ class Admin_Tags_Controller extends Admin_Controller {
         array("result" => "success",
               "location" => url::site("admin/tags")));
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 

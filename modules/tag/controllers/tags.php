@@ -71,9 +71,7 @@ class Tags_Controller extends Controller {
         array("result" => "success",
               "cloud" => tag::cloud(30)->__toString()));
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 

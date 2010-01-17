@@ -33,9 +33,7 @@ class Login_Controller extends Controller {
       print json_encode(
         array("result" => "success"));
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 
