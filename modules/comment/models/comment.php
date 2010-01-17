@@ -18,11 +18,6 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Comment_Model extends ORM {
-  var $rules = array(
-    "text" => array("rules" => array("required")),
-    "state" => array("rules" => array("Comment_Model::valid_state"))
-  );
-
   function item() {
     return ORM::factory("item", $this->item_id);
   }
@@ -64,8 +59,12 @@ class Comment_Model extends ORM {
   public function validate($array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
-      $this->rules["item_id"]["callbacks"] = array(array($this, "valid_item"));
-      $this->rules["guest_name"]["callbacks"] = array(array($this, "valid_author"));
+      $this->rules = array(
+        "guest_name" => array("callbacks" => array(array($this, "valid_author"))),
+        "item_id"    => array("callbacks" => array(array($this, "valid_item"))),
+        "state"      => array("rules"     => array("Comment_Model::valid_state")),
+        "text"       => array("rules"     => array("required")),
+      );
     }
 
     parent::validate($array);
@@ -134,7 +133,9 @@ class Comment_Model extends ORM {
    * Make sure we have an appropriate author id set, or a guest name.
    */
   public function valid_author(Validation $v, $field) {
-    if ($this->author_id == identity::guest()->id && empty($this->guest_name)) {
+    if (empty($this->author_id)) {
+      $v->add_error("author_id", "required");
+    } else if ($this->author_id == identity::guest()->id && empty($this->guest_name)) {
       $v->add_error("guest_name", "required");
     }
   }
