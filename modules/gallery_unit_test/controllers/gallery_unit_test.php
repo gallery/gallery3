@@ -127,6 +127,12 @@ class Gallery_Unit_Test_Controller extends Controller {
 
       $filter = count($_SERVER["argv"]) > 2 ? $_SERVER["argv"][2] : null;
       print new Unit_Test($modules, $filter);
+    } catch (ORM_Validation_Exception $e) {
+      print "Validation Exception: {$e->getMessage()}\n";
+      print $e->getTraceAsString() . "\n";
+      foreach ($e->validation->errors() as $field => $msg) {
+        print "$field: $msg\n";
+      }
     } catch (Exception $e) {
       print "Exception: {$e->getMessage()}\n";
       print $e->getTraceAsString() . "\n";
