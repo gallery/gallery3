@@ -514,6 +514,10 @@ class Item_Model extends ORM_MPTT {
         parent::save();
         module::event("item_updated", $original, $this);
       }
+    } else if (!empty($this->changed)) {
+      // Insignificant changes only.  Don't fire events or do any special checking to try to keep
+      // this lightweight.
+      parent::save();
     }
 
     return $this;
