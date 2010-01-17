@@ -18,17 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Item_Model extends ORM_MPTT {
-  protected $children = 'items';
+  protected $children = "items";
   protected $sorting = array();
   protected $data_file = null;
-
-  var $rules = array(
-    "name"        => array("rules" => array("length[0,255]", "required")),
-    "title"       => array("rules" => array("length[0,255]", "required")),
-    "slug"        => array("rules" => array("length[0,255]", "required")),
-    "description" => array("rules" => array("length[0,65535]")),
-    "type"        => array("rules" => array("Item_Model::valid_type")),
-  );
 
   /**
    * Add a set of restrictions to any following queries to restrict access only to items
@@ -757,28 +749,41 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Add some custom per-instance rules.
+   * Specify our rules here so that we have access to the instance of this model.
    */
   public function validate($array=null) {
-    // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
+      $this->rules = array(
+        "album_cover_item_id" => array("callbacks" => array(array($this, "valid_item"))),
+        "description"         => array("rules"     => array("length[0,65535]")),
+        "left_ptr"            => array("callbacks" => array(array($this, "internal_only"))),
+        "level"               => array("callbacks" => array(array($this, "internal_only"))),
+        "mime_type"           => array("callbacks" => array(array($this, "valid_field"))),
+        "name"                => array("rules"     => array("length[0,255]", "required"),
+                                       "callbacks" => array(array($this, "valid_name"))),
+        "parent_id"           => array("callbacks" => array(array($this, "valid_parent"))),
+        "rand_key"            => array("rule"      => array("decimal")),
+        "right_ptr"           => array("callbacks" => array(array($this, "internal_only"))),
+        "slug"                => array("rules"     => array("length[0,255]", "required"),
+                                       "callbacks" => array(array($this, "valid_slug"))),
+        "sort_column"         => array("callbacks" => array(array($this, "valid_field"))),
+        "sort_order"          => array("callbacks" => array(array($this, "valid_field"))),
+        "title"               => array("rules"     => array("length[0,255]", "required")),
+        "type"                => array("callbacks" => array(array($this, "read_only"),
+                                                            array($this, "valid_field"))),
+      );
+
+      // Conditional rules
       if ($this->id == 1) {
-        // Root album can't have a name or slug
+        // Root album can't have a name or slug so replace the rules
         $this->rules["name"] = array("rules" => array("length[0]"));
         $this->rules["slug"] = array("rules" => array("length[0]"));
-      } else {
-        // Layer some callbacks on top of the existing rules
-        $this->rules["name"]["callbacks"] = array(array($this, "valid_name"));
-        $this->rules["slug"]["callbacks"] = array(array($this, "valid_slug"));
       }
 
       // Movies and photos must have data files
       if (($this->is_photo() || $this->is_movie()) && !$this->loaded()) {
         $this->rules["name"]["callbacks"][] = array($this, "valid_data_file");
       }
-
-      // All items must have a legal parent
-      $this->rules["parent_id"]["callbacks"] = array(array($this, "valid_parent"));
     }
 
     parent::validate($array);
@@ -821,13 +826,13 @@ class Item_Model extends ORM_MPTT {
         $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
         $old_ext = pathinfo($this->original()->name, PATHINFO_EXTENSION);
         if (strcasecmp($new_ext, $old_ext)) {
-          $v->add_error("name", "illegal_extension");
+          $v->add_error("name", "illegal_data_file_extension");
           return;
         }
       } else {
         // New items must have an extension
         if (!pathinfo($this->name, PATHINFO_EXTENSION)) {
-          $v->add_error("name", "illegal_extension");
+          $v->add_error("name", "illegal_data_file_extension");
         }
       }
     }
@@ -847,9 +852,9 @@ class Item_Model extends ORM_MPTT {
    */
   public function valid_data_file(Validation $v, $field) {
     if (!is_file($this->data_file)) {
-      $v->add_error("file", "bad_path");
+      $v->add_error("name", "bad_data_file_path");
     } else if (filesize($this->data_file) == 0) {
-      $v->add_error("file", "empty_file");
+      $v->add_error("name", "empty_data_file");
     }
   }
 
@@ -873,9 +878,70 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
+   * Make sure the field refers to a valid item by id, or is null.
+   */
+  public function valid_item(Validation $v, $field) {
+    if ($this->$field && db::build()
+        ->from("items")
+        ->where("id", "=", $this->$field)
+        ->count_records() != 1) {
+      $v->add_error($field, "invalid_item");
+    }
+  }
+
+  /**
    * Make sure that the type is valid.
    */
-  static function valid_type($value) {
-    return in_array($value, array("album", "photo", "movie"));
+  public function valid_field(Validation $v, $field) {
+    switch($field) {
+    case "mime_type":
+      if ($this->is_movie()) {
+        $legal_values = array("video/flv", "video/mp4");
+      } if ($this->is_photo()) {
+        $legal_values = array("image/jpeg", "image/gif", "image/png");
+      }
+      break;
+
+    case "sort_column":
+      if (!array_key_exists($this->sort_column, $this->object)) {
+        $v->add_error($field, "invalid");
+      }
+      break;
+
+    case "sort_order":
+      $legal_values = array("ASC", "DESC", "asc", "desc");
+      break;
+
+    case "type":
+      $legal_values = array("album", "photo", "movie");
+      break;
+
+    default:
+      $v->add_error($field, "unvalidated_field");
+      break;
+    }
+
+    if (isset($legal_values) && !in_array($this->$field, $legal_values)) {
+      $v->add_error($field, "invalid");
+    }
+  }
+
+  /**
+   * This field cannot be changed externally, it can only be changed inside save() after
+   * validation has been performed.
+   */
+  public function internal_only(Validation $v, $field) {
+    if ($this->original()->$field != $this->$field) {
+      $v->add_error($field, "internal_only");
+    }
+  }
+
+  /**
+   * This field cannot be changed after it's been set.
+   */
+  public function read_only(Validation $v, $field) {
+    if ($this->loaded() && $this->original()->$field != $this->$field) {
+      $v->add_error($field, "read_only");
+    }
   }
 }
