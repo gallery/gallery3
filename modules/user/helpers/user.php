@@ -36,32 +36,6 @@ class user_Core {
   }
 
   /**
-   * Create a new user.
-   *
-   * @param string  $name
-   * @param string  $full_name
-   * @param string  $password
-   * @return User_Model
-   */
-  static function create($name, $full_name, $password) {
-    $user = ORM::factory("user")->where("name", "=", $name)->find();
-    if ($user->loaded()) {
-      throw new Exception("@todo USER_ALREADY_EXISTS $name");
-    }
-
-    $user->name = $name;
-    $user->full_name = $full_name;
-    $user->password = $password;
-
-    // Required groups
-    $user->add(group::everybody());
-    $user->add(group::registered_users());
-
-    $user->save();
-    return $user;
-  }
-
-  /**
    * Is the password provided correct?
    *
    * @param user User Model

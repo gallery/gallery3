@@ -30,31 +30,33 @@ class Admin_Users_Controller extends Admin_Controller {
     access::verify_csrf();
 
     $form = $this->_get_user_add_form_admin();
-    $valid = $form->validate();
-    $name = $form->add_user->inputs["name"]->value;
-    if ($user = user::lookup_by_name($name)) {
-      $form->add_user->inputs["name"]->add_error("in_use", 1);
+    try {
+      $user = ORM::factory("user");
+      $valid = $form->validate();
+      $user->name = $form->add_user->inputs["name"]->value;
+      $user->full_name = $form->add_user->full_name->value;
+      $user->password = $form->add_user->password->value;
+      $user->email = $form->add_user->email->value;
+
+      if (!empty($form->add_user->locale->value)) {
+        $user->locale = $form->add_user->locale->value;
+      }
+      $user->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        $form->add_user->inputs[$key]->add_error($error, 1);
+      }
       $valid = false;
     }
 
     if ($valid) {
-      $user = user::create(
-        $name, $form->add_user->full_name->value, $form->add_user->password->value);
-      $user->email = $form->add_user->email->value;
-      $user->admin = $form->add_user->admin->checked;
-
-      if ($form->add_user->locale) {
-        $desired_locale = $form->add_user->locale->value;
-        $user->locale = $desired_locale == "none" ? null : $desired_locale;
-      }
       $user->save();
       module::event("user_add_form_admin_completed", $user, $form);
-
       message::success(t("Created user %user_name", array("user_name" => $user->name)));
       print json_encode(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error",
-                              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -329,11 +331,6 @@ class Admin_Users_Controller extends Admin_Controller {
     $group->input("url")->label(t("URL"))->id("g-url");
     self::_add_locale_dropdown($group);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
-    $form->add_rules_from(ORM::factory("user"));
-
-    $minimum_length = module::get_var("user", "mininum_password_length", 5);
-    $form->add_user->password
-      ->rules($minimum_length ? "required|length[$minimum_length, 40]" : "length[40]");
 
     module::event("user_add_form_admin", $user, $form);
     $group->submit("")->value(t("Add user"));

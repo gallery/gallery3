@@ -19,14 +19,16 @@
  */
 class User_Model extends ORM implements User_Definition {
   protected $has_and_belongs_to_many = array("groups");
+  protected $password_length = null;
 
-  var $form_rules = array(
-    "name" => "required|length[1,32]",
-    "full_name" => "length[0,255]",
-    "email" => "required|valid_email|length[1,255]",
-    "password" => "length[1,40]",
-    "url" => "valid_url",
-    "locale" => "length[2,10]");
+  var $rules = array(
+    "name"      => array("rules" => array("length[1,32]", "required")),
+    "locale"    => array("rules" => array("length[2,10]")),
+    "password"  => array("rules" => array("length[5,40]")),  // note: overridden in validate()
+    "email"     => array("rules" => array("length[1,255]", "required", "valid::email")),
+    "full_name" => array("rules" => array("length[0,255]")),
+    "url"       => array("rules" => array("valid::url")),
+  );
 
   public function __set($column, $value) {
     switch ($column) {
@@ -35,6 +37,7 @@ class User_Model extends ORM implements User_Definition {
       break;
 
     case "password":
+      $this->password_length = strlen($value);
       $value = user::hash_password($value);
       break;
     }
@@ -65,18 +68,41 @@ class User_Model extends ORM implements User_Definition {
     return $this->groups->find_all();
   }
 
-  public function save() {
-    if (!$this->loaded()) {
-        $created = 1;
+  /**
+   * Add some custom per-instance rules.
+   */
+  public function validate($array=null) {
+    // validate() is recursive, only modify the rules on the outermost call.
+    if (!$array) {
+      $this->rules["name"]["callbacks"] = array(array($this, "valid_name"));
     }
 
-    $original = clone $this->original();
-    parent::save();
-    if (isset($created)) {
+    $this->rules["password"]["callbacks"] = array(array($this, "valid_password"));
+
+    parent::validate($array);
+  }
+
+  /**
+   * Handle any business logic necessary to create or update a user.
+   * @see ORM::save()
+   *
+   * @return ORM User_Model
+   */
+  public function save() {
+    if (!$this->loaded()) {
+      // New user
+      $this->add(group::everybody());
+      $this->add(group::registered_users());
+
+      parent::save();
       module::event("user_created", $this);
     } else {
+      // Updated user
+      $original = clone $this->original();
+      parent::save();
       module::event("user_updated", $original, $this);
     }
+
     return $this;
   }
 
@@ -87,5 +113,27 @@ class User_Model extends ORM implements User_Definition {
    */
   public function display_name() {
     return empty($this->full_name) ? $this->name : $this->full_name;
+  }
+
+  /**
+   * Validate the user name.  Make sure there are no conflicts.
+   */
+  public function valid_name(Validation $v, $field) {
+    if (db::build()->from("users")
+        ->where("name", "=", $this->name)
+        ->where("id", "<>", $this->id)
+        ->count_records() == 1) {
+      $v->add_error("name", "in_use");
+    }
+  }
+
+  /**
+   * Validate the password.
+   */
+  public function valid_password(Validation $v, $field) {
+    $minimum_length = module::get_var("user", "mininum_password_length", 5);
+    if ($this->password_length < $minimum_length || $this->password_length > 40) {
+      $v->add_error("password", "length");
+    }
   }
 }
