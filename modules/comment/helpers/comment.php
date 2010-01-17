@@ -24,46 +24,6 @@
  * Note: by design, this class does not do any permission checking.
  */
 class comment_Core {
-  /**
-   * Create a new comment.
-   * @param Item_MOdel $item         the parent item
-   * @param User_Model $author       the author User_Model
-   * @param string     $text         comment body
-   * @param string     $guest_name   guest's name (if the author is a guest user, default empty)
-   * @param string     $guest_email  guest's email (if the author is a guest user, default empty)
-   * @param string     $guest_url    guest's url (if the author is a guest user, default empty)
-   * @return Comment_Model
-   */
-  static function create($item, $author, $text, $guest_name=null,
-                         $guest_email=null, $guest_url=null) {
-    $comment = ORM::factory("comment");
-    $comment->author_id = $author->id;
-    $comment->guest_email = $guest_email;
-    $comment->guest_name = $guest_name;
-    $comment->guest_url = $guest_url;
-    $comment->item_id = $item->id;
-    $comment->text = $text;
-    $comment->state = "published";
-
-    // These values are useful for spam fighting, so save them with the comment.
-    $input = Input::instance();
-    $comment->server_http_accept = substr($input->server("HTTP_ACCEPT"), 0, 128);
-    $comment->server_http_accept_charset = substr($input->server("HTTP_ACCEPT_CHARSET"), 0, 64);
-    $comment->server_http_accept_encoding = substr($input->server("HTTP_ACCEPT_ENCODING"), 0, 64);
-    $comment->server_http_accept_language = substr($input->server("HTTP_ACCEPT_LANGUAGE"), 0, 64);
-    $comment->server_http_connection = substr($input->server("HTTP_CONNECTION"), 0, 64);
-    $comment->server_http_host = substr($input->server("HTTP_HOST"), 0, 64);
-    $comment->server_http_referer = substr($input->server("HTTP_REFERER"), 0, 255);
-    $comment->server_http_user_agent = substr($input->server("HTTP_USER_AGENT"), 0, 128);
-    $comment->server_query_string = substr($input->server("QUERY_STRING"), 0, 64);
-    $comment->server_remote_addr = substr($input->server("REMOTE_ADDR"), 0, 32);
-    $comment->server_remote_host = substr($input->server("REMOTE_HOST"), 0, 64);
-    $comment->server_remote_port = substr($input->server("REMOTE_PORT"), 0, 16);
-    $comment->save();
-
-    return $comment;
-  }
-
   static function get_add_form($item) {
     $form = new Forge("comments/create/{$item->id}", "", "post", array("id" => "g-comment-form"));
     $group = $form->group("add_comment")->label(t("Add comment"));

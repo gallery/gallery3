@@ -26,50 +26,39 @@ class Comments_Controller extends Controller {
     access::required("view", $item);
 
     $form = comment::get_add_form($item);
-    $valid = $form->validate();
-    if ($valid) {
-      if (identity::active_user()->guest && !$form->add_comment->inputs["name"]->value) {
-        $form->add_comment->inputs["name"]->add_error("missing", 1);
-        $valid = false;
+    try {
+      $valid = $form->validate();
+      $comment = ORM::factory("comment");
+      $comment->item_id = $id;
+      $comment->author_id = identity::active_user()->id;
+      $comment->text = $form->add_comment->text->value;
+      $comment->guest_name = $form->add_comment->inputs["name"]->value;
+      $comment->guest_email = $form->add_comment->email->value;
+      $comment->guest_url = $form->add_comment->url->value;
+      $comment->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        switch ($key) {
+        case "guest_name":  $key = "name";  break;
+        case "guest_email": $key = "email"; break;
+        }
+        $form->add_comment->inputs[$key]->add_error($error, 1);
       }
-
-      if (!$form->add_comment->text->value) {
-        $form->add_comment->text->add_error("missing", 1);
-        $valid = false;
-      }
+      $valid = false;
     }
 
     if ($valid) {
-      $comment = comment::create(
-        $item, identity::active_user(),
-        $form->add_comment->text->value,
-        $form->add_comment->inputs["name"]->value,
-        $form->add_comment->email->value,
-        $form->add_comment->url->value);
-
-      $active = identity::active_user();
-      if ($active->guest) {
-        $form->add_comment->inputs["name"]->value("");
-        $form->add_comment->email->value("");
-        $form->add_comment->url->value("");
-      } else {
-        $form->add_comment->inputs["name"]->value($active->full_name);
-        $form->add_comment->email->value($active->email);
-        $form->add_comment->url->value($active->url);
-      }
-
-      $form->add_comment->text->value("");
+      $comment->save();
       $view = new Theme_View("comment.html", "other", "comment-fragment");
       $view->comment = $comment;
 
       print json_encode(
         array("result" => "success",
-              "view" => $view->__toString(),
-              "form" => $form->__toString()));
+              "view" => (string) $view,
+              "form" => (string) comment::get_add_form($item)));
     } else {
-      print json_encode(
-        array("result" => "error",
-              "form" => $form->__toString()));
+      print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
 
