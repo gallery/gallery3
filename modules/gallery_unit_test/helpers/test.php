@@ -47,4 +47,12 @@ class test_Core {
   static function random_photo($parent=null) {
     return test::random_photo_unsaved($parent)->save();
   }
+
+  static function random_name($item=null) {
+    $rand = "name_" . rand();
+    if ($item && $item->is_photo()) {
+      $rand .= ".jpg";
+    }
+    return $rand;
+  }
 }
