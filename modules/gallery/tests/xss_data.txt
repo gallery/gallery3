@@ -137,7 +137,7 @@ modules/gallery/views/l10n_client.html.php                   26  DIRTY    $strin
 modules/gallery/views/l10n_client.html.php                   32  DIRTY    $l10n_search_form
 modules/gallery/views/l10n_client.html.php                   41  DIRTY    access::csrf_form_field()
 modules/gallery/views/l10n_client.html.php                   42  DIRTY    form::hidden("l10n-message-key")
-modules/gallery/views/l10n_client.html.php                   43  DIRTY    form::textarea("l10n-edit-translation","",' rows="5" class="translationField"')
+modules/gallery/views/l10n_client.html.php                   43  DIRTY    form::textarea("l10n-edit-translation","",' id="l10n-edit-translation" rows="5" class="translationField"')
 modules/gallery/views/l10n_client.html.php                   46  DIRTY    form::textarea("l10n-edit-plural-translation-zero","",' rows="2"')
 modules/gallery/views/l10n_client.html.php                   50  DIRTY    form::textarea("l10n-edit-plural-translation-one","",' rows="2"')
 modules/gallery/views/l10n_client.html.php                   54  DIRTY    form::textarea("l10n-edit-plural-translation-two","",' rows="2"')
