@@ -68,6 +68,7 @@ class user_installer {
       "users",
       array("name" => "guest",
             "full_name" => "Guest User",
+            "password" => "",
             "guest" => true))
       ->execute();
 
