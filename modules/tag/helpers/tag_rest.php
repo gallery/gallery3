@@ -44,10 +44,6 @@ class tag_rest_Core {
   static function put($request) {
     $tag = rest::resolve($request->url);
 
-    // @todo: what permission should be required to edit a tag?
-    // for now, require edit at the top level.  Perhaps later, just require any edit perms,
-    // anywhere in the gallery?
-
     if (isset($request->params->remove)) {
       if (!is_array($request->params->remove)) {
         throw new Exception("Bad request", 400);
