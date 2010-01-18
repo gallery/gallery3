@@ -72,7 +72,14 @@ class Rest_Controller extends Controller {
         throw new Rest_Exception("Forbidden", 403);
       }
 
-      print call_user_func(array($handler_class, $handler_method), $request);
+      try {
+        print call_user_func(array($handler_class, $handler_method), $request);
+      } catch (ORM_Validation_Exception $e) {
+        foreach ($e->validation->errors() as $key => $value) {
+          $msgs[] = "$key: $value";
+        }
+        throw new Rest_Exception("Bad Request: " . join(", ", $msgs), 400);
+      }
     } catch (Rest_Exception $e) {
       rest::send_headers($e);
     }
