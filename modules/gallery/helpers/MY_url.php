@@ -89,4 +89,18 @@ class url extends url_Core {
   static function abs_current($qs=false) {
     return self::abs_site(url::current($qs));
   }
+
+  /**
+   * Just like url::merge except that it escapes any XSS in the path.
+   */
+  static function merge($params) {
+    return htmlspecialchars(parent::merge($params));
+  }
+
+  /**
+   * Just like url::current except that it escapes any XSS in the path.
+   */
+  static function current($qs=false, $suffix=false) {
+    return htmlspecialchars(parent::current($qs, $suffix));
+  }
 }
