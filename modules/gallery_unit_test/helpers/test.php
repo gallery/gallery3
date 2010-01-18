@@ -24,7 +24,8 @@ class test_Core {
     $album = ORM::factory("item");
     $album->type = "album";
     $album->parent_id = $parent ? $parent->id : 1;
-    $album->name = "test_$rand";
+    $album->name = "name_$rand";
+    $album->title = "title_$rand";
     return $album->save();
   }
 }
