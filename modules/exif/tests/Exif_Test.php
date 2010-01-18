@@ -19,7 +19,7 @@
  */
 class Exif_Test extends Unit_Test_Case {
   public function exif_extract_test() {
-    $photo = test::random_photo()
+    $photo = test::random_photo_unsaved()
       ->set_data_file(MODPATH . "exif/tests/data/image.jpg")
       ->save();
 
