@@ -41,7 +41,7 @@ class Gallery_Installer_Test extends Unit_Test_Case {
     $this->assert_equal("Gallery", $root->title);
     $this->assert_equal(1, $root->left_ptr);
     $this->assert_equal($max_right_ptr, $root->right_ptr);
-    $this->assert_equal(null, $root->parent_id);
+    $this->assert_equal(0, $root->parent_id);
     $this->assert_equal(1, $root->level);
   }
 }
