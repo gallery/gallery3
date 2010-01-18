@@ -28,4 +28,15 @@ class test_Core {
     $album->title = "title_$rand";
     return $album->save();
   }
+
+  static function random_photo($parent=null) {
+    $rand = rand();
+    $photo = ORM::factory("item");
+    $photo->type = "photo";
+    $photo->parent_id = $parent ? $parent->id : 1;
+    $photo->set_data_file(MODPATH . "gallery/tests/test.jpg");
+    $photo->name = "name_$rand.jpg";
+    $photo->title = "title_$rand";
+    return $photo->save();
+  }
 }
