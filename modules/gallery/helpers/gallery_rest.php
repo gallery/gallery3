@@ -19,7 +19,6 @@
  */
 
 // @todo Add logging
-// @todo VALIDATION
 
 // Validation questions
 //
@@ -100,10 +99,15 @@ class gallery_rest_Core {
     access::required("edit", $item);
 
     $params = $request->params;
-    foreach (array("captured", "description", "slug", "sort_column", "sort_order",
-                   "title", "view_count", "weight") as $key) {
-      if (isset($params->$key)) {
-        $item->$key = $params->$key;
+
+    // Only change fields from a whitelist.
+    foreach (array("album_cover_item_id", "captured", "description",
+                   "height", "mime_type", "name", "parent_id", "rand_key", "resize_dirty",
+                   "resize_height", "resize_width", "slug", "sort_column", "sort_order",
+                   "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
+                   "weight", "width") as $key) {
+      if (array_key_exists($key, $request->params)) {
+        $item->$key = $request->params->$key;
       }
     }
     $item->save();
@@ -116,22 +120,26 @@ class gallery_rest_Core {
     access::required("edit", $parent);
 
     $params = $request->params;
+    $item = ORM::factory("item");
     switch ($params->type) {
     case "album":
-      $item = album::create(
-        $parent,
-        $params->name,
-        isset($params->title) ? $params->title : $name,
-        isset($params->description) ? $params->description : null);
+      $item->type = "album";
+      $item->parent_id = $parent->id;
+      $item->name = $params->name;
+      $item->title = isset($params->title) ? $params->title : $name;
+      $item->description = isset($params->description) ? $params->description : null;
+      $item->save();
       break;
 
     case "photo":
-      $item = photo::create(
-        $parent,
-        $request->file,
-        $params->name,
-        isset($params->title) ? $params->title : $name,
-        isset($params->description) ? $params->description : null);
+    case "movie":
+      $item->type = $params->type;
+      $item->parent_id = $parent->id;
+      $item->set_data_file($request->file);
+      $item->name = $params->name;
+      $item->title = isset($params->title) ? $params->title : $name;
+      $item->description = isset($params->description) ? $params->description : null;
+      $item->save();
       break;
 
     default:
