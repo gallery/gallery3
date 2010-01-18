@@ -72,7 +72,8 @@ class Item_Model_Test extends Unit_Test_Case {
     $new_name = rand();
 
     // Now rename it
-    $item->rename($new_name)->save();
+    $item->name = $new_name;
+    $item->save();
 
     // Expected: the name changed, the name is now baked into all paths, and all files were moved.
     $this->assert_equal($new_name, $item->name);
