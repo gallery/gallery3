@@ -839,8 +839,8 @@ class Item_Model extends ORM_MPTT {
     if (db::build()
         ->from("items")
         ->where("parent_id", "=", $this->parent_id)
-        ->where("id", "<>", $this->id)
         ->where("name", "=", $this->name)
+        ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
         ->count_records()) {
       $v->add_error("name", "conflict");
     }
