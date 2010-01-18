@@ -88,6 +88,7 @@ class Item_Model_Test extends Unit_Test_Case {
   public function rename_album_test() {
     $album = test::random_album();
     $photo = test::random_photo($album);
+    $album->reload();
 
     file_put_contents($photo->thumb_path(), "thumb");
     file_put_contents($photo->resize_path(), "resize");
@@ -98,7 +99,8 @@ class Item_Model_Test extends Unit_Test_Case {
     $new_album_name = rand();
 
     // Now rename the album
-    $album->rename($new_album_name)->save();
+    $album->name = $new_album_name;
+    $album->save();
     $photo->reload();
 
     // Expected:
