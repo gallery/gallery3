@@ -141,17 +141,16 @@ class Item_Model_Test extends Unit_Test_Case {
     $item = test::random_photo();
     $item2 = test::random_photo();
 
-    $new_name = $item2->name;
-
     try {
-      $item->rename($new_name)->save();
-    } catch (Exception $e) {
-      // pass
-      $this->assert_true(strpos($e->getMessage(), "INVALID_RENAME_FILE_EXISTS") !== false,
-                         "incorrect exception.");
+      $item->name = $item2->name;
+      $item->validate();  // @todo: switch this to save() once
+                          // http://dev.kohanaphp.com/issues/2504 is fixed.
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_true(in_array("conflict", $e->validation->errors()));
       return;
     }
-    $this->assert_false(true, "Item_Model::rename should fail.");
+
+    $this->assert_false(true, "rename should conflict");
   }
 
   public function save_original_values_test() {
