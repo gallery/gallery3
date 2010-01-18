@@ -155,8 +155,8 @@ class identity_Core {
   /**
    * @see IdentityProvider_Driver::create_user.
    */
-  static function create_user($name, $full_name, $password) {
-    return IdentityProvider::instance()->create_user($name, $full_name, $password);
+  static function create_user($name, $full_name, $password, $email) {
+    return IdentityProvider::instance()->create_user($name, $full_name, $password, $email);
   }
 
   /**

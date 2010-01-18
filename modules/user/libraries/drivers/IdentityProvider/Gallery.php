@@ -38,11 +38,12 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
   /**
    * @see IdentityProvider_Driver::create_user.
    */
-  public function create_user($name, $full_name, $password) {
+  public function create_user($name, $full_name, $password, $email) {
     $user = ORM::factory("user");
     $user->name = $name;
     $user->full_name = $full_name;
     $user->password = $password;
+    $user->email = $email;
     return $user->save();
   }
 

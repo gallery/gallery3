@@ -119,8 +119,8 @@ class IdentityProvider_Core {
   /**
    * @see IdentityProvider_Driver::create_user.
    */
-  public function create_user($name, $full_name, $password) {
-    return $this->driver->create_user($name, $full_name, $password);
+  public function create_user($name, $full_name, $password, $email) {
+    return $this->driver->create_user($name, $full_name, $password, $email);
   }
 
   /**

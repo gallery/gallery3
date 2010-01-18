@@ -38,9 +38,10 @@ interface IdentityProvider_Driver {
    * @param string  $name
    * @param string  $full_name
    * @param string  $password
+   * @param string  $email
    * @return User_Definition the user object
    */
-  public function create_user($name, $full_name, $password);
+  public function create_user($name, $full_name, $password, $email);
 
   /**
    * Is the password provided correct?
