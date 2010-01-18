@@ -23,19 +23,26 @@ class Akismet_Helper_Test extends Unit_Test_Case {
   public function setup() {
     Input::instance()->ip_address = "1.1.1.1";
     request::set_user_agent("Akismet_Helper_Test");
+    module::set_var("akismet", "api_key", "TEST_KEY");
+  }
 
-    $root = ORM::factory("item", 1);
-    $this->_comment = comment::create(
-      $root, identity::guest(), "This is a comment",
-      "John Doe", "john@gallery2.org", "http://gallery2.org");
-    foreach ($this->_comment->list_fields("comments") as $name => $field) {
+  private function _make_comment() {
+    $comment = ORM::factory("comment");
+    $comment->item_id = item::root()->id;
+    $comment->author_id = identity::guest()->id;
+    $comment->text = "This is a comment";
+    $comment->guest_name = "John Doe";
+    $comment->guest_email = "john@gallery2.org";
+    $comment->guest_url = "http://gallery2.org";
+    $comment->save();
+
+    // Set the server fields to a known placeholder
+    foreach ($comment->list_fields("comments") as $name => $field) {
       if (strpos($name, "server_") === 0) {
-        $this->_comment->$name = substr($name, strlen("server_"));
+        $comment->$name = substr($name, strlen("server_"));
       }
     }
-    $this->_comment->save();
-
-    module::set_var("akismet", "api_key", "TEST_KEY");
+    return $comment->save();
   }
 
   public function build_verify_request_test() {
@@ -51,8 +58,8 @@ class Akismet_Helper_Test extends Unit_Test_Case {
   }
 
   public function build_comment_check_request_test() {
-    $request = akismet::_build_request("comment-check", $this->_comment);
-    $id = $this->_comment->id;
+    $comment = $this->_make_comment();
+    $request = akismet::_build_request("comment-check", $comment);
     $expected = "POST /1.1/comment-check HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
       "Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n" .
@@ -66,15 +73,15 @@ class Akismet_Helper_Test extends Unit_Test_Case {
       "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&" .
       "blog=http%3A%2F%2F.%2F&comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
       "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
-      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$id}&" .
+      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
     $this->assert_equal($expected, $request);
   }
 
   public function build_submit_spam_request_test() {
-    $request = akismet::_build_request("submit-spam", $this->_comment);
-    $id = $this->_comment->id;
+    $comment = $this->_make_comment();
+    $request = akismet::_build_request("submit-spam", $comment);
     $expected =
       "POST /1.1/submit-spam HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
@@ -89,15 +96,15 @@ class Akismet_Helper_Test extends Unit_Test_Case {
       "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&" .
       "blog=http%3A%2F%2F.%2F&comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
       "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
-      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$id}&" .
+      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
     $this->assert_equal($expected, $request);
   }
 
   public function build_submit_ham_request_test() {
-    $request = akismet::_build_request("submit-ham", $this->_comment);
-    $id = $this->_comment->id;
+    $comment = $this->_make_comment();
+    $request = akismet::_build_request("submit-ham", $comment);
     $expected =
       "POST /1.1/submit-ham HTTP/1.0\r\n" .
       "Host: TEST_KEY.rest.akismet.com\r\n" .
@@ -112,7 +119,7 @@ class Akismet_Helper_Test extends Unit_Test_Case {
       "SERVER_HTTP_ACCEPT_CHARSET=http_accept_charset&blog=http%3A%2F%2F.%2F&" .
       "comment_author=John+Doe&comment_author_email=john%40gallery2.org&" .
       "comment_author_url=http%3A%2F%2Fgallery2.org&comment_content=This+is+a+comment&" .
-      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$id}&" .
+      "comment_type=comment&permalink=http%3A%2F%2F.%2Findex.php%2Fcomments%2F{$comment->id}&" .
       "referrer=http_referer&user_agent=http_user_agent&user_ip=remote_addr";
 
     $this->assert_equal($expected, $request);
