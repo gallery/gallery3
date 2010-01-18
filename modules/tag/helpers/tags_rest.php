@@ -33,7 +33,7 @@ class tags_rest_Core {
     access::required("edit", item::root());
 
     if (empty($request->params->name)) {
-      throw new Rest_Exception("Bad Request", 400);
+      throw new Rest_Exception("Bad Request: missing name", 400);
     }
 
     $tag = ORM::factory("tag")->where("name", "=", $request->params->name)->find();
