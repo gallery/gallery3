@@ -74,6 +74,7 @@ class Access_Helper_Test extends Unit_Test_Case {
 
     access::deny(identity::everybody(), "view", $item);
     access::deny(identity::registered_users(), "view", $item);
+    $item->reload();
 
     $user = identity::create_user("access_test", "Access Test", "");
     foreach ($user->groups() as $group) {
