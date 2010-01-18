@@ -756,14 +756,11 @@ class Item_Model extends ORM_MPTT {
       $this->rules = array(
         "album_cover_item_id" => array("callbacks" => array(array($this, "valid_item"))),
         "description"         => array("rules"     => array("length[0,65535]")),
-        "left_ptr"            => array("callbacks" => array(array($this, "internal_only"))),
-        "level"               => array("callbacks" => array(array($this, "internal_only"))),
         "mime_type"           => array("callbacks" => array(array($this, "valid_field"))),
         "name"                => array("rules"     => array("length[0,255]", "required"),
                                        "callbacks" => array(array($this, "valid_name"))),
         "parent_id"           => array("callbacks" => array(array($this, "valid_parent"))),
         "rand_key"            => array("rule"      => array("decimal")),
-        "right_ptr"           => array("callbacks" => array(array($this, "internal_only"))),
         "slug"                => array("rules"     => array("length[0,255]", "required"),
                                        "callbacks" => array(array($this, "valid_slug"))),
         "sort_column"         => array("callbacks" => array(array($this, "valid_field"))),
@@ -923,16 +920,6 @@ class Item_Model extends ORM_MPTT {
 
     if (isset($legal_values) && !in_array($this->$field, $legal_values)) {
       $v->add_error($field, "invalid");
-    }
-  }
-
-  /**
-   * This field cannot be changed externally, it can only be changed inside save() after
-   * validation has been performed.
-   */
-  public function internal_only(Validation $v, $field) {
-    if ($this->original()->$field != $this->$field) {
-      $v->add_error($field, "internal_only");
     }
   }
 
