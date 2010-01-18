@@ -169,9 +169,11 @@ class Item_Model extends ORM_MPTT {
   /**
    * Specify the path to the data file associated with this item.  To actually associate it,
    * you still have to call save().
+   * @chainable
    */
   public function set_data_file($data_file) {
     $this->data_file = $data_file;
+    return $this;
   }
 
   /**
