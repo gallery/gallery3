@@ -19,14 +19,17 @@
  */
 class Comment_Event_Test extends Unit_Test_Case {
   public function deleting_an_item_deletes_its_comments_too_test() {
-    $rand = rand();
-    $album = album::create(ORM::factory("item", 1), "test_$rand", "test_$rand");
-    $comment = comment::create(
-      $album, identity::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
+    $album = test::random_album();
+
+    $comment = ORM::factory("comment");
+    $comment->item_id = $album->id;
+    $comment->author_id = identity::guest()->id;
+    $comment->guest_name = "test";
+    $comment->text = "text";
+    $comment->save();
 
     $album->delete();
 
-    $deleted_comment = ORM::factory("comment", $comment->id);
-    $this->assert_false($deleted_comment->loaded());
+    $this->assert_false(ORM::factory("comment")->where("id", "=", $comment->id)->find()->loaded());
   }
 }
