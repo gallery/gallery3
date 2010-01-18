@@ -39,7 +39,11 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::create_user.
    */
   public function create_user($name, $full_name, $password) {
-    return user::create($name, $full_name, $password);
+    $user = ORM::factory("user");
+    $user->name = $name;
+    $user->full_name = $full_name;
+    $user->password = $password;
+    return $user->save();
   }
 
   /**
@@ -91,7 +95,9 @@ class IdentityProvider_Gallery_Driver implements IdentityProvider_Driver {
    * @see IdentityProvider_Driver::create_group.
    */
   public function create_group($name) {
-    return group::create($name);
+    $group = ORM::factory("group");
+    $group->name = $name;
+    return $group->save();
   }
 
   /**
