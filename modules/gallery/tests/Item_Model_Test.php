@@ -19,20 +19,13 @@
  */
 class Item_Model_Test extends Unit_Test_Case {
   public function saving_sets_created_and_updated_dates_test() {
-    $item = self::_create_random_item();
+    $item = test::random_photo();
     $this->assert_true(!empty($item->created));
     $this->assert_true(!empty($item->updated));
   }
 
-  private static function _create_random_item($root=null, $rand=null) {
-    $root = $root ? $root : ORM::factory("item", 1);
-    $rand = $rand ? $rand : rand();
-    $item = photo::create($root, MODPATH . "gallery/tests/test.jpg", "$rand.jpg", $rand, $rand);
-    return $item;
-  }
-
   public function updating_doesnt_change_created_date_test() {
-    $item = self::_create_random_item();
+    $item = test::random_photo();
 
     // Force the creation date to something well known
     db::build()
@@ -50,7 +43,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function updating_view_count_only_doesnt_change_updated_date_test() {
-    $item = self::_create_random_item();
+    $item = test::random_photo();
     $item->reload();
     $this->assert_same(0, $item->view_count);
 
@@ -69,8 +62,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function rename_photo_test() {
-    // Create a test photo
-    $item = self::_create_random_item();
+    $item = test::random_photo();
 
     file_put_contents($item->thumb_path(), "thumb");
     file_put_contents($item->resize_path(), "resize");
@@ -93,10 +85,8 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function rename_album_test() {
-    // Create an album with a photo in it
-    $root = ORM::factory("item", 1);
-    $album = album::create($root, rand(), rand(), rand());
-    $photo = self::_create_random_item($album);
+    $album = test::random_album();
+    $photo = test::random_photo($album);
 
     file_put_contents($photo->thumb_path(), "thumb");
     file_put_contents($photo->resize_path(), "resize");
@@ -130,8 +120,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function item_rename_wont_accept_slash_test() {
-    // Create a test photo
-    $item = self::_create_random_item();
+    $item = test::random_photo();
 
     $new_name = rand() . "/";
 
@@ -146,8 +135,8 @@ class Item_Model_Test extends Unit_Test_Case {
 
   public function item_rename_fails_with_existing_name_test() {
     // Create a test photo
-    $item = self::_create_random_item();
-    $item2 = self::_create_random_item();
+    $item = test::random_photo();
+    $item2 = test::random_photo();
 
     $new_name = $item2->name;
 
@@ -163,7 +152,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function save_original_values_test() {
-    $item = self::_create_random_item();
+    $item = test::random_photo_unsaved();
     $item->title = "ORIGINAL_VALUE";
     $item->save();
     $item->title = "NEW_VALUE";
@@ -173,7 +162,7 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function urls_are_rawurlencoded_test() {
-    $item = self::_create_random_item();
+    $item = test::random_photo_unsaved();
     $item->slug = "foo bar";
     $item->name = "foo bar.jpg";
     $item->save();
@@ -183,18 +172,16 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function move_album_test() {
-    // Create an album with a photo in it
-    $root = ORM::factory("item", 1);
-    $album2 = album::create($root, rand(), rand(), rand());
-    $album = album::create($album2, rand(), rand(), rand());
-    $photo = self::_create_random_item($album);
+    $album2 = test::random_album();
+    $album = test::random_album($album2);
+    $photo = test::random_photo($album);
 
     file_put_contents($photo->thumb_path(), "thumb");
     file_put_contents($photo->resize_path(), "resize");
     file_put_contents($photo->file_path(), "file");
 
     // Now move the album
-    $album->move_to($root);
+    $album->move_to(item::root());
     $photo->reload();
 
     // Expected:
@@ -212,11 +199,9 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function move_photo_test() {
-    // Create an album with a photo in it
-    $root = ORM::factory("item", 1);
-    $album2 = album::create($root, rand(), rand(), rand());
-    $album = album::create($album2, rand(), rand(), rand());
-    $photo = self::_create_random_item($album);
+    $album2 = test::random_album();
+    $album = test::random_album($album2);
+    $photo  = test::random_photo($album);
 
     file_put_contents($photo->thumb_path(), "thumb");
     file_put_contents($photo->resize_path(), "resize");
@@ -241,32 +226,23 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function move_album_fails_invalid_target_test() {
-    // Create an album with a photo in it
-    $root = ORM::factory("item", 1);
-    $name = rand();
-    $album = album::create($root, $name, $name, $name);
-    $source = album::create($album, $name, $name, $name);
+    $album = test::random_album();
+    $source = test::random_album($album);
 
     try {
-      $source->move_to($root);
+      $source->move_to(item::root());
     } catch (Exception $e) {
       // pass
       $this->assert_true(strpos($e->getMessage(), "INVALID_MOVE_TARGET_EXISTS") !== false,
                          "incorrect exception.");
       return;
     }
-
-    $this->assert_false(true, "Item_Model::rename should not accept / characters");
   }
 
   public function move_photo_fails_invalid_target_test() {
-    // Create an album with a photo in it
-    $root = ORM::factory("item", 1);
-    $photo_name = rand();
-    $photo1 = self::_create_random_item($root, $photo_name);
-    $name = rand();
-    $album = album::create($root, $name, $name, $name);
-    $photo2 = self::_create_random_item($album, $photo_name);
+    $photo1 = test::random_photo();
+    $album = test::random_album();
+    $photo2 = test::random_photo($album);
 
     try {
       $photo2->move_to($root);
@@ -276,7 +252,5 @@ class Item_Model_Test extends Unit_Test_Case {
                          "incorrect exception.");
       return;
     }
-
-    $this->assert_false(true, "Item_Model::rename should not accept / characters");
   }
 }
