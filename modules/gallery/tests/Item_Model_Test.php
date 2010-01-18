@@ -143,8 +143,7 @@ class Item_Model_Test extends Unit_Test_Case {
 
     try {
       $item->name = $item2->name;
-      $item->validate();  // @todo: switch this to save() once
-                          // http://dev.kohanaphp.com/issues/2504 is fixed.
+      $item->save();
     } catch (ORM_Validation_Exception $e) {
       $this->assert_true(in_array("conflict", $e->validation->errors()));
       return;
