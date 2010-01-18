@@ -18,41 +18,41 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Digibug_Controller_Test extends Unit_Test_Case {
-  private $_proxy;
-  private $_item;
   private $_server;
+
+  public function setup() {
+    $this->_server = $_SERVER;
+  }
 
   public function teardown() {
     $_SERVER = $this->_server;
   }
 
-  public function setup() {
-    $this->_server = $_SERVER;
+  private function _get_proxy() {
+    $album = test::random_album();
+    $photo = test::random_photo($album);
 
-    $root = ORM::factory("item", 1);
-    $this->_album = album::create($root,  rand(), "test album");
-    access::deny(identity::everybody(), "view_full", $this->_album);
-    access::deny(identity::registered_users(), "view_full", $this->_album);
+    access::deny(identity::everybody(), "view_full", $album);
+    access::deny(identity::registered_users(), "view_full", $album);
 
-    $rand = rand();
-    $this->_item = photo::create($this->_album, MODPATH . "gallery/tests/test.jpg", "$rand.jpg",
-                                 $rand, $rand);
-    $this->_proxy = ORM::factory("digibug_proxy");
-    $this->_proxy->uuid = md5(rand());
-    $this->_proxy->item_id = $this->_item->id;
-    $this->_proxy->save();
+    $proxy = ORM::factory("digibug_proxy");
+    $proxy->uuid = md5(rand());
+    $proxy->item_id = $photo->id;
+    return $proxy->save();
   }
 
   public function digibug_request_thumb_test() {
+    $proxy = $this->_get_proxy();
+
     $controller = new Digibug_Controller();
-    $controller->print_proxy("thumb", $this->_proxy->uuid);
+    $controller->print_proxy("thumb", $proxy->uuid);
   }
 
   public function digibug_request_full_malicious_ip_test() {
     $_SERVER["REMOTE_ADDR"] = "123.123.123.123";
     try {
       $controller = new Digibug_Controller();
-      $controller->print_proxy("full", $this->_proxy->uuid);
+      $controller->print_proxy("full", $this->_get_proxy()->uuid);
       $this->assert_true(false, "Should have failed with an 404 exception");
     } catch (Kohana_404_Exception $e) {
       // expected behavior
@@ -69,6 +69,6 @@ class Digibug_Controller_Test extends Unit_Test_Case {
 
     $_SERVER["REMOTE_ADDR"] = long2ip(rand($low, $high));
     $controller = new Digibug_Controller();
-    $controller->print_proxy("full", $this->_proxy->uuid);
+    $controller->print_proxy("full", $this->_get_proxy()->uuid);
   }
 }
