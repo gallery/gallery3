@@ -57,6 +57,12 @@ foreach ($results as $class => $methods) {
         if ($result->getMessage()) {
           echo "  ", $result->getMessage(), "\n";
         }
+        if ($result instanceof ORM_Validation_Exception) {
+          echo "  Validation errors:\n";
+          foreach ($result->validation->errors() as $key => $value) {
+            echo "    $key: $value\n";
+          }
+        }
         echo "  ", $result->getFile(), " (Line ", $result->getLine(), ")\n";
         echo "\n";
         echo $result->getTraceAsString(), "\n";
