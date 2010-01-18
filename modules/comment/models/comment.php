@@ -60,10 +60,12 @@ class Comment_Model extends ORM {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
       $this->rules = array(
-        "guest_name" => array("callbacks" => array(array($this, "valid_author"))),
-        "item_id"    => array("callbacks" => array(array($this, "valid_item"))),
-        "state"      => array("rules"     => array("Comment_Model::valid_state")),
-        "text"       => array("rules"     => array("required")),
+        "guest_name"  => array("callbacks" => array(array($this, "valid_author"))),
+        "guest_email" => array("rules"     => array("email")),
+        "guest_url"   => array("rules"     => array("url")),
+        "item_id"     => array("callbacks" => array(array($this, "valid_item"))),
+        "state"       => array("rules"     => array("Comment_Model::valid_state")),
+        "text"        => array("rules"     => array("required")),
       );
     }
 
