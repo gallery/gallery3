@@ -20,21 +20,24 @@
 class Comment_Model_Test extends Unit_Test_Case {
 
   public function cant_view_comments_for_unviewable_items_test() {
-    $root = ORM::factory("item", 1);
-    $album = album::create($root, rand(), rand(), rand());
-    $comment = comment::create($album, identity::guest(), "text", "name", "email", "url");
+    $album = test::random_album();
+
+    $comment = ORM::factory("comment");
+    $comment->item_id = $album->id;
+    $comment->author_id = identity::admin_user()->id;
+    $comment->text = "text";
+    $comment->save();
+
     identity::set_active_user(identity::guest());
 
     // We can see the comment when permissions are granted on the album
     access::allow(identity::everybody(), "view", $album);
-    $this->assert_equal(
-      1,
+    $this->assert_true(
       ORM::factory("comment")->viewable()->where("comments.id", "=", $comment->id)->count_all());
 
     // We can't see the comment when permissions are denied on the album
     access::deny(identity::everybody(), "view", $album);
-    $this->assert_equal(
-      0,
+    $this->assert_false(
       ORM::factory("comment")->viewable()->where("comments.id", "=", $comment->id)->count_all());
   }
 }
