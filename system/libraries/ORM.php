@@ -443,11 +443,11 @@ class ORM_Core {
 				// Data has changed
 				$this->changed[$column] = $column;
 
-				// Object is no longer saved
-				$this->_saved = FALSE;
+				// Object is no longer saved or valid
+				$this->_saved = $this->_valid = FALSE;
 			}
 
-			$this->object[$column] = $this->load_type($column, $value);
+			$this->object[$column] = $value;
 		}
 		elseif (in_array($column, $this->has_and_belongs_to_many) AND is_array($value))
 		{
@@ -904,6 +904,9 @@ class ORM_Core {
 
 		if ($this->saved() === TRUE)
 		{
+			// Always force revalidation after saving
+			$this->_valid = FALSE;
+
 			// Clear the per-request database cache
 			$this->db->clear_cache(NULL, Database::PER_REQUEST);
 		}
@@ -1374,12 +1377,6 @@ class ORM_Core {
 			{
 				if ( ! $ignore_changed OR ! isset($this->changed[$column]))
 				{
-					if (isset($this->table_columns[$column]))
-					{
-						// The type of the value can be determined, convert the value
-						$value = $this->load_type($column, $value);
-					}
-
 					$this->object[$column] = $value;
 				}
 			}
@@ -1401,64 +1398,6 @@ class ORM_Core {
 		}
 
 		return $this;
-	}
-
-
-	/**
-	 * Loads a value according to the types defined by the column metadata.
-	 *
-	 * @param   string  column name
-	 * @param   mixed   value to load
-	 * @return  mixed
-	 */
-	protected function load_type($column, $value)
-	{
-		$type = gettype($value);
-		if ($type == 'object' OR $type == 'array' OR ! isset($this->table_columns[$column]))
-			return $value;
-
-		// Load column data
-		$column = $this->table_columns[$column];
-
-		if ($value === NULL AND ! empty($column['nullable']))
-			return $value;
-
-		if ( ! empty($column['binary']) AND ! empty($column['exact']) AND (int) $column['length'] === 1)
-		{
-			// Use boolean for BINARY(1) fields
-			$column['type'] = 'boolean';
-		}
-
-		switch ($column['type'])
-		{
-			case 'int':
-				if ($value === '' AND ! empty($column['nullable']))
-				{
-					// Forms will only submit strings, so empty integer values must be null
-					$value = NULL;
-				}
-				elseif ((float) $value > PHP_INT_MAX)
-				{
-					// This number cannot be represented by a PHP integer, so we convert it to a string
-					$value = (string) $value;
-				}
-				else
-				{
-					$value = (int) $value;
-				}
-			break;
-			case 'float':
-				$value = (float) $value;
-			break;
-			case 'boolean':
-				$value = (bool) $value;
-			break;
-			case 'string':
-				$value = (string) $value;
-			break;
-		}
-
-		return $value;
 	}
 
 	/**

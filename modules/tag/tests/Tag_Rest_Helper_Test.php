@@ -85,8 +85,8 @@ class Tag_Rest_Helper_Test extends Unit_Test_Case {
 
     $this->assert_equal(
       json_encode(array("status" => "OK",
-                        "tags" => array(array("name" => "albums", "count" => 2),
-                                        array("name" => "photos", "count" => 2)))),
+                        "tags" => array(array("name" => "albums", "count" => "2"),
+                                        array("name" => "photos", "count" => "2")))),
       tag_rest::get($request));
   }
 

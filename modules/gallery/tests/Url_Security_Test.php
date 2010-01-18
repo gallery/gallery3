@@ -17,26 +17,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class model_cache_Core {
-  private static $cache = array();
-
-  static function get($model_name, $id, $field_name="id") {
-    if (TEST_MODE || empty(self::$cache[$model_name][$field_name][$id])) {
-      $model = ORM::factory($model_name)->where($field_name, "=", $id)->find();
-      if (!$model->loaded()) {
-        throw new Exception("@todo MISSING_MODEL $model_name:$id");
-      }
-      self::$cache[$model_name][$field_name][$id] = $model;
-    }
-
-    return self::$cache[$model_name][$field_name][$id];
+class Url_Security_Test extends Unit_Test_Case {
+  public function setup() {
+    $this->save = array(Router::$current_uri, Router::$complete_uri, $_GET);
   }
 
-  static function clear() {
-    self::$cache = array();
+  public function teardown() {
+    list(Router::$current_uri, Router::$complete_uri, $_GET) = $this->save;
   }
 
-  static function set($model) {
-    self::$cache[$model->object_name][$model->primary_key][$model->{$model->primary_key}] = $model;
+  public function xss_in_current_url_test() {
+    Router::$current_uri = "foo/<xss>/bar";
+    Router::$complete_uri = "foo/<xss>/bar?foo=bar";
+    $this->assert_same("foo/&lt;xss&gt;/bar", url::current());
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", url::current(true));
+  }
+
+  public function xss_in_merged_url_test() {
+    Router::$current_uri = "foo/<xss>/bar";
+    Router::$complete_uri = "foo/<xss>/bar?foo=bar";
+    $_GET = array("foo" => "bar");
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar", url::merge(array()));
+    $this->assert_same("foo/&lt;xss&gt;/bar?foo=bar&amp;a=b", url::merge(array("a" => "b")));
   }
 }

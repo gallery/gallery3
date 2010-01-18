@@ -66,8 +66,8 @@
  *   the Access_Intent_Model
  */
 class access_Core {
-  const DENY      = false;
-  const ALLOW     = true;
+  const DENY      = "0";
+  const ALLOW     = "1";
   const INHERIT   = null; // access_intent
   const UNKNOWN   = null; // cache (access_cache, items)
 

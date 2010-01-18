@@ -45,7 +45,7 @@ class Item_Model_Test extends Unit_Test_Case {
   public function updating_view_count_only_doesnt_change_updated_date_test() {
     $item = test::random_photo();
     $item->reload();
-    $this->assert_same(0, $item->view_count);
+    $this->assert_equal(0, $item->view_count);
 
     // Force the updated date to something well known
     db::build()
