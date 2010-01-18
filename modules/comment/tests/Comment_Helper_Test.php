@@ -48,15 +48,19 @@ class Comment_Helper_Test extends Unit_Test_Case {
   }
 
   public function create_comment_for_guest_test() {
-    $rand = rand();
-    $root = ORM::factory("item", 1);
-    $comment = comment::create(
-      $root, identity::guest(), "text_$rand", "name_$rand", "email_$rand", "url_$rand");
+    $comment = ORM::factory("comment");
+    $comment->item_id = item::root()->id;
+    $comment->text = "text";
+    $comment->author_id = identity::guest()->id;
+    $comment->guest_name = "name";
+    $comment->guest_email = "email@email.com";
+    $comment->guest_url = "http://url.com";
+    $comment->save();
 
-    $this->assert_equal("name_$rand", $comment->author_name());
-    $this->assert_equal("email_$rand", $comment->author_email());
-    $this->assert_equal("url_$rand", $comment->author_url());
-    $this->assert_equal("text_$rand", $comment->text);
+    $this->assert_equal("name", $comment->author_name());
+    $this->assert_equal("email@email.com", $comment->author_email());
+    $this->assert_equal("http://url.com", $comment->author_url());
+    $this->assert_equal("text", $comment->text);
     $this->assert_equal(1, $comment->item_id);
 
     $this->assert_equal("REMOTE_ADDR", $comment->server_remote_addr);
@@ -78,16 +82,18 @@ class Comment_Helper_Test extends Unit_Test_Case {
   }
 
   public function create_comment_for_user_test() {
-    $rand = rand();
-    $root = ORM::factory("item", 1);
     $admin = identity::admin_user();
-    $comment = comment::create(
-      $root, $admin, "text_$rand", "name_$rand", "email_$rand", "url_$rand");
+
+    $comment = ORM::factory("comment");
+    $comment->item_id = item::root()->id;
+    $comment->text = "text";
+    $comment->author_id = $admin->id;
+    $comment->save();
 
     $this->assert_equal($admin->full_name, $comment->author_name());
     $this->assert_equal($admin->email, $comment->author_email());
     $this->assert_equal($admin->url, $comment->author_url());
-    $this->assert_equal("text_$rand", $comment->text);
+    $this->assert_equal("text", $comment->text);
     $this->assert_equal(1, $comment->item_id);
 
     $this->assert_equal("REMOTE_ADDR", $comment->server_remote_addr);
