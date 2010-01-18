@@ -237,7 +237,7 @@ class Item_Model_Test extends Unit_Test_Case {
     $photo2 = test::random_photo($album);
 
     try {
-      $photo2->move_to($root);
+      $photo2->move_to(item::root());
     } catch (Exception $e) {
       // pass
       $this->assert_true(strpos($e->getMessage(), "INVALID_MOVE_TARGET_EXISTS") !== false,
