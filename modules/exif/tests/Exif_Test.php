@@ -19,10 +19,9 @@
  */
 class Exif_Test extends Unit_Test_Case {
   public function exif_extract_test() {
-    $rand = rand();
-    $root = ORM::factory("item", 1);
-    $photo = photo::create(
-      $root, MODPATH . "exif/tests/data/image.jpg", "$rand.jpg", $rand, $rand);
+    $photo = test::random_photo()
+      ->set_data_file(MODPATH . "exif/tests/data/image.jpg")
+      ->save();
 
     $expected = array(
       array("caption" => "Camera Maker", "value" => "Pentax Corporation"),
