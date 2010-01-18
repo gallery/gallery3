@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class test_Core {
-  static function random_album($parent=null) {
+  static function random_album_unsaved($parent=null) {
     $rand = rand();
 
     $album = ORM::factory("item");
@@ -26,10 +26,14 @@ class test_Core {
     $album->parent_id = $parent ? $parent->id : 1;
     $album->name = "name_$rand";
     $album->title = "title_$rand";
-    return $album->save();
+    return $album;
   }
 
-  static function random_photo($parent=null) {
+  static function random_album($parent=null) {
+    return test::random_album_unsaved($parent)->save();
+  }
+
+  static function random_photo_unsaved($parent=null) {
     $rand = rand();
     $photo = ORM::factory("item");
     $photo->type = "photo";
@@ -37,6 +41,10 @@ class test_Core {
     $photo->set_data_file(MODPATH . "gallery/tests/test.jpg");
     $photo->name = "name_$rand.jpg";
     $photo->title = "title_$rand";
-    return $photo->save();
+    return $photo;
+  }
+
+  static function random_photo($parent=null) {
+    return test::random_photo_unsaved($parent)->save();
   }
 }
