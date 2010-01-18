@@ -163,16 +163,6 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_same("NEW_VALUE", $item->title);
   }
 
-  public function urls_are_rawurlencoded_test() {
-    $item = test::random_photo_unsaved();
-    $item->slug = "foo bar";
-    $item->name = "foo bar.jpg";
-    $item->save();
-
-    $this->assert_equal("foo%20bar", $item->relative_url());
-    $this->assert_equal("foo%20bar.jpg", $item->relative_path());
-  }
-
   public function move_album_test() {
     $album2 = test::random_album();
     $album = test::random_album($album2);
@@ -254,5 +244,35 @@ class Item_Model_Test extends Unit_Test_Case {
                          "incorrect exception.");
       return;
     }
+  }
+
+  public function basic_validation_test() {
+    $item = ORM::factory("item");
+    $item->album_cover_item_id = rand();  // invalid
+    $item->description = str_repeat("x", 70000);  // invalid
+    $item->name = null;
+    $item->parent_id = rand();
+    $item->slug = null;
+    $item->sort_column = "bogus";
+    $item->sort_order = "bogus";
+    $item->title = null;
+    $item->type = "bogus";
+    try {
+      $item->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("description" => "length",
+                               "name" => "required",
+                               "slug" => "required",
+                               "title" => "required",
+                               "album_cover_item_id" => "invalid_item",
+                               "parent_id" => "invalid",
+                               "sort_column" => "invalid",
+                               "sort_order" => "invalid",
+                               "type" => "invalid"),
+                         $e->validation->errors());
+      return;
+    }
+
+    $this->assert_false(true, "Shouldn't get here");
   }
 }
