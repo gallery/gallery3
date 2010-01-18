@@ -38,7 +38,7 @@ class Album_Helper_Test extends Unit_Test_Case {
   }
 
   public function create_conflicting_album_test() {
-    $rand = rand();
+    $rand = "name_" . rand();
     $root = ORM::factory("item", 1);
     $album1 = album::create($root, $rand, $rand, $rand);
     $album2 = album::create($root, $rand, $rand, $rand);
