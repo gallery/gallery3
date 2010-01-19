@@ -232,6 +232,10 @@ class ORM_MPTT_Core extends ORM {
       throw new Exception("@todo INVALID_TARGET can't move item inside itself");
     }
 
+    $this->lock();
+    $this->reload();  // Assume that the prior lock holder may have changed this entry
+    $target->reload();
+
     $number_to_move = (int)(($this->right_ptr - $this->left_ptr) / 2 + 1);
     $size_of_hole = $number_to_move * 2;
     $original_left_ptr = $this->left_ptr;
@@ -239,9 +243,6 @@ class ORM_MPTT_Core extends ORM {
     $target_right_ptr = $target->right_ptr;
     $level_delta = ($target->level + 1) - $this->level;
 
-    $this->lock();
-    $this->reload();  // Assume that the prior lock holder may have changed this entry
-    $target->reload();
     try {
       if ($level_delta) {
         // Update the levels for the to-be-moved items
