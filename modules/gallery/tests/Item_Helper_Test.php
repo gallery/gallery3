@@ -20,9 +20,8 @@
 class Item_Helper_Test extends Unit_Test_Case {
 
   public function viewable_test() {
-    $root = ORM::factory("item", 1);
-    $album = album::create($root, rand(), rand(), rand());
-    $item = self::_create_random_item($album);
+    $album = test::random_album();
+    $item = test::random_photo($album);
     identity::set_active_user(identity::guest());
 
     // We can see the item when permissions are granted
@@ -38,33 +37,8 @@ class Item_Helper_Test extends Unit_Test_Case {
       ORM::factory("item")->viewable()->where("id", "=", $item->id)->count_all());
   }
 
-  public function validate_url_safe_test() {
-    $input = new MockInput();
-    $input->value = "Ab_cd-ef-d9";
-    item::validate_url_safe($input);
-    $this->assert_true(!isset($input->not_url_safe));
-
-    $input->value = "ab&cd";
-    item::validate_url_safe($input);
-    $this->assert_equal(1, $input->not_url_safe);
-  }
-
   public function convert_filename_to_slug_test() {
     $this->assert_equal("foo", item::convert_filename_to_slug("{[foo]}"));
     $this->assert_equal("foo-bar", item::convert_filename_to_slug("{[foo!@#!$@#^$@($!(@bar]}"));
-  }
-
-  private static function _create_random_item($album) {
-    // Set all required fields (values are irrelevant)
-    $item = ORM::factory("item");
-    $item->name = rand();
-    $item->type = "photo";
-    return $item->add_to_parent($album);
-  }
-}
-
-class MockInput {
-  function add_error($error, $value) {
-    $this->$error = $value;
   }
 }
