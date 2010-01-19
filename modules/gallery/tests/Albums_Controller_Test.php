@@ -24,16 +24,11 @@ class Albums_Controller_Test extends Unit_Test_Case {
 
   public function teardown() {
     list($_POST, $_SERVER) = $this->_save;
-    if (isset($this->_album)) {
-      $this->_album->delete();
-    }
   }
 
   public function change_album_test() {
     $controller = new Albums_Controller();
-    $root = ORM::factory("item", 1);
-    $this->_album = album::create($root, "test", "test", "test");
-    $orig_name = $this->_album->name;
+    $album = test::random_album();
 
     // Randomize to avoid conflicts.
     $new_dirname = "new_name_" . rand();
@@ -45,36 +40,35 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $_POST["direction"] = "ASC";
     $_POST["csrf"] = access::csrf_token();
     $_POST["slug"] = "new-name";
-    access::allow(identity::everybody(), "edit", $root);
+    access::allow(identity::everybody(), "edit", item::root());
 
     ob_start();
-    $controller->update($this->_album->id);
-    $this->_album->reload();
+    $controller->update($album->id);
+    $album->reload();
     $results = ob_get_contents();
     ob_end_clean();
 
-    $this->assert_equal(
-      json_encode(array("result" => "success")),
-      $results);
-    $this->assert_equal($new_dirname, $this->_album->name);
-    $this->assert_equal("new title", $this->_album->title);
-    $this->assert_equal("new description", $this->_album->description);
+    $this->assert_equal(json_encode(array("result" => "success")), $results);
+    $this->assert_equal($new_dirname, $album->name);
+    $this->assert_equal("new title", $album->title);
+    $this->assert_equal("new description", $album->description);
   }
 
   public function change_album_no_csrf_fails_test() {
     $controller = new Albums_Controller();
-    $root = ORM::factory("item", 1);
-    $this->_album = album::create($root, "test", "test", "test");
+    $album = test::random_album();
+
     $_POST["name"] = "new name";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
-    access::allow(identity::everybody(), "edit", $root);
+    access::allow(identity::everybody(), "edit", item::root());
 
     try {
-      $controller->_update($this->_album);
+      $controller->update($album->id);
       $this->assert_true(false, "This should fail");
     } catch (Exception $e) {
       // pass
+      $this->assert_same("@todo FORBIDDEN", $e->getMessage());
     }
   }
 }
