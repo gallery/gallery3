@@ -71,4 +71,14 @@ class rest_Core {
 
     return call_user_func(array($class, "resolve"), !empty($components[2]) ? $components[2] : null);
   }
+
+  /**
+   * Return an absolute url used for REST resource location.
+   * @param  string  module name (eg, "gallery", "tags")
+   * @param  string  relative path (eg "Family/Weddings.jpg")
+   * @return string  complete url
+   */
+  static function url($module, $path) {
+    return url::abs_site("rest/$module/$path");
+  }
 }
