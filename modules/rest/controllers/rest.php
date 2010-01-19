@@ -73,7 +73,7 @@ class Rest_Controller extends Controller {
       }
 
       try {
-        print call_user_func(array($handler_class, $handler_method), $request);
+        print rest::reply(call_user_func(array($handler_class, $handler_method), $request));
       } catch (ORM_Validation_Exception $e) {
         foreach ($e->validation->errors() as $key => $value) {
           $msgs[] = "$key: $value";
