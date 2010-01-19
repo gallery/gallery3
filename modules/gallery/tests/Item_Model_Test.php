@@ -127,9 +127,8 @@ class Item_Model_Test extends Unit_Test_Case {
 
     try {
       $item->rename($new_name)->save();
-    } catch (Exception $e) {
-      // pass
-      return;
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_equals(array("name" => "no_slashes"), $e->validation->errors());
     }
     $this->assert_false(true, "Item_Model::rename should not accept / characters");
   }
@@ -170,13 +169,17 @@ class Item_Model_Test extends Unit_Test_Case {
     file_put_contents($photo->file_path(), "file");
 
     // Now move the album
-    $album->move_to(item::root());
+    $album->parent_id = item::root()->id;
+    $album->save();
     $photo->reload();
 
     // Expected:
-    // * the album dirs are all moved
+    // * album is not inside album2 anymore
     // * the photo's paths are all inside the albums paths
     // * the photo files are all still intact and accessible
+
+    $this->assert_same(null, strpos($album->relative_path(), $album2->relative_path()),
+                       $album2->relative_path() . " should not be in: " . $album->relative_path());
 
     $this->assert_same(0, strpos($photo->file_path(), $album->file_path()));
     $this->assert_same(0, strpos($photo->thumb_path(), dirname($album->thumb_path())));
@@ -188,26 +191,26 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function move_photo_test() {
+    $album1 = test::random_album();
+    $photo  = test::random_photo($album1);
+
     $album2 = test::random_album();
-    $album = test::random_album($album2);
-    $photo  = test::random_photo($album);
 
     file_put_contents($photo->thumb_path(), "thumb");
     file_put_contents($photo->resize_path(), "resize");
     file_put_contents($photo->file_path(), "file");
 
-    // Now move the album
-    $photo->move_to($album2);
-    $photo->reload();
+    // Now move the photo
+    $photo->parent_id = $album2->id;
+    $photo->save();
 
     // Expected:
-    // * the album dirs are all moved
-    // * the photo's paths are all inside the albums paths
+    // * the photo's paths are inside the album2 not album1
     // * the photo files are all still intact and accessible
 
-    $this->assert_same(0, strpos($photo->file_path(), $album->file_path()));
-    $this->assert_same(0, strpos($photo->thumb_path(), dirname($album->thumb_path())));
-    $this->assert_same(0, strpos($photo->resize_path(), dirname($album->resize_path())));
+    $this->assert_same(0, strpos($photo->file_path(), $album2->file_path()));
+    $this->assert_same(0, strpos($photo->thumb_path(), dirname($album2->thumb_path())));
+    $this->assert_same(0, strpos($photo->resize_path(), dirname($album2->resize_path())));
 
     $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
     $this->assert_equal("resize", file_get_contents($photo->resize_path()));
@@ -216,32 +219,59 @@ class Item_Model_Test extends Unit_Test_Case {
 
   public function move_album_fails_invalid_target_test() {
     $album = test::random_album();
-    $source = test::random_album($album);
+    $source = test::random_album_unsaved($album);
+    $source->name = $album->name;
+    $source->save();
+
+    // $source and $album have the same name, so if we move $source into the root they should
+    // conflict.
 
     try {
-      $source->move_to(item::root());
-    } catch (Exception $e) {
-      // pass
-      $this->assert_true(strpos($e->getMessage(), "INVALID_MOVE_TARGET_EXISTS") !== false,
-                         "incorrect exception.");
-      return;
+      $source->parent_id = item::root()->id;
+      $source->save();
+      $this->assert_true(false, "Shouldn't get here");
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_equal(
+        array("name" => "conflict", "slug" => "conflict"), $e->validation->errors());
     }
   }
 
   public function move_photo_fails_invalid_target_test() {
     $photo1 = test::random_photo();
     $album = test::random_album();
-    $photo2 = test::random_photo($album);
+    $photo2 = test::random_photo_unsaved($album);
+    $photo2->name = $photo1->name;
+    $photo2->save();
+
+    // $photo1 and $photo2 have the same name, so if we move $photo1 into the root they should
+    // conflict.
 
     try {
-      $photo2->move_to(item::root());
+      $photo2->parent_id = item::root()->id;
+      $photo2->save();
+      $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
-      $this->assert_true(strpos($e->getMessage(), "INVALID_MOVE_TARGET_EXISTS") !== false,
-                         "incorrect exception.");
+      $this->assert_equal(
+        array("name" => "conflict", "slug" => "conflict"), $e->validation->errors());
       return;
     }
   }
+
+  public function move_album_inside_descendent_fails_test() {
+    $album = test::random_album();
+    $album2 = test::random_album($album);
+    $album3 = test::random_album($album2);
+
+    try {
+      $album->parent_id = $album3->id;
+      $album->save();
+      $this->assert_true(false, "Shouldn't get here");
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_equal(array("parent_id" => "invalid"), $e->validation->errors());
+    }
+  }
+
 
   public function basic_validation_test() {
     $item = ORM::factory("item");
