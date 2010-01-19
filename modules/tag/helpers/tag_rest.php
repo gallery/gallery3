@@ -90,7 +90,7 @@ class tag_rest_Core {
     return $tag;
   }
 
-  static function url($item) {
+  static function url($tag) {
     return url::abs_site("rest/tag/" . rawurlencode($tag->name));
   }
 }
