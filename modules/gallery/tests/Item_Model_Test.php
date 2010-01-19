@@ -111,9 +111,9 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_equal($new_album_name, basename(dirname($album->thumb_path())));
     $this->assert_equal($new_album_name, basename(dirname($album->resize_path())));
 
-    $this->assert_same(0, strpos($photo->file_path(), $album->file_path()));
-    $this->assert_same(0, strpos($photo->thumb_path(), dirname($album->thumb_path())));
-    $this->assert_same(0, strpos($photo->resize_path(), dirname($album->resize_path())));
+    $this->assert_true(test::starts_with($photo->file_path(), $album->file_path()));
+    $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album->thumb_path())));
+    $this->assert_true(test::starts_with($photo->resize_path(), dirname($album->resize_path())));
 
     $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
     $this->assert_equal("resize", file_get_contents($photo->resize_path()));
@@ -205,9 +205,9 @@ class Item_Model_Test extends Unit_Test_Case {
     // * the photo's paths are inside the album2 not album1
     // * the photo files are all still intact and accessible
 
-    $this->assert_same(0, strpos($photo->file_path(), $album2->file_path()));
-    $this->assert_same(0, strpos($photo->thumb_path(), dirname($album2->thumb_path())));
-    $this->assert_same(0, strpos($photo->resize_path(), dirname($album2->resize_path())));
+    $this->assert_true(test::starts_with($photo->file_path(), $album2->file_path()));
+    $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album2->thumb_path())));
+    $this->assert_true(test::starts_with($photo->resize_path(), dirname($album2->resize_path())));
 
     $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
     $this->assert_equal("resize", file_get_contents($photo->resize_path()));
