@@ -63,16 +63,14 @@ class Item_Model_Test extends Unit_Test_Case {
 
   public function rename_photo_test() {
     $item = test::random_photo();
+    $original_name = $item->name;
 
     file_put_contents($item->thumb_path(), "thumb");
     file_put_contents($item->resize_path(), "resize");
     file_put_contents($item->file_path(), "file");
 
-    $original_name = $item->name;
-    $new_name = rand();
-
     // Now rename it
-    $item->name = $new_name;
+    $item->name = ($new_name = test::random_name($item));
     $item->save();
 
     // Expected: the name changed, the name is now baked into all paths, and all files were moved.
@@ -96,7 +94,7 @@ class Item_Model_Test extends Unit_Test_Case {
 
     $original_album_name = $album->name;
     $original_photo_name = $photo->name;
-    $new_album_name = rand();
+    $new_album_name = test::random_name();
 
     // Now rename the album
     $album->name = $new_album_name;
@@ -125,7 +123,7 @@ class Item_Model_Test extends Unit_Test_Case {
   public function item_rename_wont_accept_slash_test() {
     $item = test::random_photo();
 
-    $new_name = rand() . "/";
+    $new_name = test::random_name() . "/";
 
     try {
       $item->rename($new_name)->save();
