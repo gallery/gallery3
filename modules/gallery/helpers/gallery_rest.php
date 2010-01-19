@@ -91,7 +91,7 @@ class gallery_rest_Core {
       $members[] = url::abs_site("rest/gallery/" . $child->relative_url());
     }
 
-    return rest::reply(array("resource" => $item->as_array(), "members" => $members));
+    return array("resource" => $item->as_array(), "members" => $members);
   }
 
   static function put($request) {
@@ -112,7 +112,7 @@ class gallery_rest_Core {
     }
     $item->save();
 
-    return rest::reply(array("url" => url::abs_site("/rest/gallery/" . $item->relative_url())));
+    return array("url" => url::abs_site("/rest/gallery/" . $item->relative_url()));
   }
 
   static function post($request) {
@@ -146,7 +146,7 @@ class gallery_rest_Core {
       throw new Rest_Exception("Invalid type: $args->type", 400);
     }
 
-    return rest::reply(array("url" => url::abs_site("/rest/gallery/" . $item->relative_url())));
+    return array("url" => url::abs_site("/rest/gallery/" . $item->relative_url()));
   }
 
   static function delete($request) {
@@ -154,7 +154,6 @@ class gallery_rest_Core {
     access::required("edit", $item);
 
     $item->delete();
-    return rest::reply();
   }
 
   static function resolve($path) {
