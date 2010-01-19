@@ -19,19 +19,8 @@
  */
 class ORM_MPTT_Test extends Unit_Test_Case {
 
-  private function create_item_and_add_to_parent($parent) {
-    $album = album::create($parent,  rand(), "test album");
-    return $album;
-  }
-
   public function add_to_parent_test() {
-    $root = ORM::factory("item", 1);
-    $album = ORM::factory("item");
-    $album->type = "album";
-    $album->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $album->sort_column = "weight";
-    $album->sort_order = "ASC";
-    $album->add_to_parent($root);
+    $album = test::random_album();
 
     $this->assert_equal($album->parent()->right_ptr - 2, $album->left_ptr);
     $this->assert_equal($album->parent()->right_ptr - 1, $album->right_ptr);
@@ -40,12 +29,11 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function add_hierarchy_test() {
-    $root = ORM::factory("item", 1);
-    $album1 = self::create_item_and_add_to_parent($root);
-    $album1_1 = self::create_item_and_add_to_parent($album1);
-    $album1_2 = self::create_item_and_add_to_parent($album1);
-    $album1_1_1 = self::create_item_and_add_to_parent($album1_1);
-    $album1_1_2 = self::create_item_and_add_to_parent($album1_1);
+    $album1 = test::random_album();
+    $album1_1 = test::random_album($album1);
+    $album1_2 = test::random_album($album1);
+    $album1_1_1 = test::random_album($album1_1);
+    $album1_1_2 = test::random_album($album1_1);
 
     $album1->reload();
     $this->assert_equal(9, $album1->right_ptr - $album1->left_ptr);
@@ -55,12 +43,11 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function delete_hierarchy_test() {
-    $root = ORM::factory("item", 1);
-    $album1 = self::create_item_and_add_to_parent($root);
-    $album1_1 = self::create_item_and_add_to_parent($album1);
-    $album1_2 = self::create_item_and_add_to_parent($album1);
-    $album1_1_1 = self::create_item_and_add_to_parent($album1_1);
-    $album1_1_2 = self::create_item_and_add_to_parent($album1_1);
+    $album1 = test::random_album();
+    $album1_1 = test::random_album($album1);
+    $album1_2 = test::random_album($album1);
+    $album1_1_1 = test::random_album($album1_1);
+    $album1_1_2 = test::random_album($album1_1);
 
     $album1_1->delete();
     $album1->reload();
@@ -70,12 +57,11 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function move_to_test() {
-    $root = ORM::factory("item", 1);
-    $album1 = album::create($root, "move_to_test_1", "move_to_test_1");
-    $album1_1 = album::create($album1, "move_to_test_1_1", "move_to_test_1_1");
-    $album1_2 = album::create($album1, "move_to_test_1_2", "move_to_test_1_2");
-    $album1_1_1 = album::create($album1_1, "move_to_test_1_1_1", "move_to_test_1_1_1");
-    $album1_1_2 = album::create($album1_1, "move_to_test_1_1_2", "move_to_test_1_1_2");
+    $album1 = test::random_album();
+    $album1_1 = test::random_album($album1);
+    $album1_2 = test::random_album($album1);
+    $album1_1_1 = test::random_album($album1_1);
+    $album1_1_2 = test::random_album($album1_1);
 
     $album1_2->reload();
     $album1_1_1->reload();
@@ -89,39 +75,37 @@ class ORM_MPTT_Test extends Unit_Test_Case {
     $this->assert_equal(3, $album1_2->right_ptr - $album1_2->left_ptr);
 
     $this->assert_equal(
-      array($album1_1_2->id => "move_to_test_1_1_2"),
+      array($album1_1_2->id => $album1_1_2->name),
       $album1_1->children()->select_list());
 
     $this->assert_equal(
-      array($album1_1_1->id => "move_to_test_1_1_1"),
+      array($album1_1_1->id => $album1_1_1->name),
       $album1_2->children()->select_list());
   }
 
   public function cant_move_parent_into_own_subtree_test() {
-    $album1 = album::create(item::root(), "move_to_test", "move_to_test");
-    $album2 = album::create($album1, "move_to_test", "move_to_test");
-    $album3 = album::create($album2, "move_to_test", "move_to_test");
+    $album1 = test::random_album(item::root());
+    $album2 = test::random_album($album1);
+    $album3 = test::random_album($album2);
 
     try {
       $album1->move_to($album3);
-      $self->assert_true(false, "We should be unable to move an item inside its own hierarchy");
+      $this->assert_true(false, "We should be unable to move an item inside its own hierarchy");
     } catch (Exception $e) {
       // pass
     }
   }
 
   public function parent_test() {
-    $root = ORM::factory("item", 1);
-    $album = self::create_item_and_add_to_parent($root);
+    $album = test::random_album();
 
     $parent = ORM::factory("item", 1);
     $this->assert_equal($parent->id, $album->parent()->id);
   }
 
   public function parents_test() {
-    $root = ORM::factory("item", 1);
-    $outer = self::create_item_and_add_to_parent($root);
-    $inner = self::create_item_and_add_to_parent($outer);
+    $outer = test::random_album();
+    $inner = test::random_album($outer);
 
     $parent_ids = array();
     foreach ($inner->parents() as $parent) {
@@ -131,10 +115,9 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function children_test() {
-    $root = ORM::factory("item", 1);
-    $outer = self::create_item_and_add_to_parent($root);
-    $inner1 = self::create_item_and_add_to_parent($outer);
-    $inner2 = self::create_item_and_add_to_parent($outer);
+    $outer = test::random_album();
+    $inner1 = test::random_album($outer);
+    $inner2 = test::random_album($outer);
 
     $child_ids = array();
     foreach ($outer->children() as $child) {
@@ -144,48 +127,27 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function children_limit_test() {
-    $root = ORM::factory("item", 1);
-    $outer = self::create_item_and_add_to_parent($root);
-    $inner1 = self::create_item_and_add_to_parent($outer);
-    $inner2 = self::create_item_and_add_to_parent($outer);
+    $outer = test::random_album();
+    $inner1 = test::random_album($outer);
+    $inner2 = test::random_album($outer);
 
     $this->assert_equal(array($inner2->id => $inner2->name),
                         $outer->children(1, 1)->select_list('id'));
   }
 
   public function children_count_test() {
-    $root = ORM::factory("item", 1);
-    $outer = self::create_item_and_add_to_parent($root);
-    $inner1 = self::create_item_and_add_to_parent($outer);
-    $inner2 = self::create_item_and_add_to_parent($outer);
+    $outer = test::random_album();
+    $inner1 = test::random_album($outer);
+    $inner2 = test::random_album($outer);
 
     $this->assert_equal(2, $outer->children_count());
   }
 
   public function descendant_test() {
-    $root = ORM::factory("item", 1);
-
-    $parent = ORM::factory("item");
-    $parent->type = "album";
-    $parent->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $parent->sort_column = "weight";
-    $parent->sort_order = "ASC";
-    $parent->add_to_parent($root);
-
-    $photo = ORM::factory("item");
-    $photo->type = "photo";
-    $photo->add_to_parent($parent);
-
-    $album1 = ORM::factory("item");
-    $album1->type = "album";
-    $album1->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-    $album1->sort_column = "weight";
-    $album1->sort_order = "ASC";
-    $album1->add_to_parent($parent);
-
-    $photo1 = ORM::factory("item");
-    $photo1->type = "photo";
-    $photo1->add_to_parent($album1);
+    $parent = test::random_album();
+    $photo = test::random_photo($parent);
+    $album1 = test::random_album($parent);
+    $photo1 = test::random_photo($album1);
 
     $parent->reload();
 
@@ -195,36 +157,20 @@ class ORM_MPTT_Test extends Unit_Test_Case {
   }
 
   public function descendant_limit_test() {
-    $root = ORM::factory("item", 1);
-
-    $parent = self::create_item_and_add_to_parent($root);
-    $album1 = self::create_item_and_add_to_parent($parent);
-    $album2 = self::create_item_and_add_to_parent($parent);
-    $album3 = self::create_item_and_add_to_parent($parent);
-
+    $parent = test::random_album();
+    $album1 = test::random_album($parent);
+    $album2 = test::random_album($parent);
+    $album3 = test::random_album($parent);
     $parent->reload();
+
     $this->assert_equal(2, $parent->descendants(2)->count());
   }
 
   public function descendant_count_test() {
-    $root = ORM::factory("item", 1);
-
-    $parent = ORM::factory("item");
-    $parent->type = "album";
-    $parent->add_to_parent($root);
-
-    $photo = ORM::factory("item");
-    $photo->type = "photo";
-    $photo->add_to_parent($parent);
-
-    $album1 = ORM::factory("item");
-    $album1->type = "album";
-    $album1->add_to_parent($parent);
-
-    $photo1 = ORM::factory("item");
-    $photo1->type = "photo";
-    $photo1->add_to_parent($album1);
-
+    $parent = test::random_album();
+    $photo = test::random_photo($parent);
+    $album1 = test::random_album($parent);
+    $photo1 = test::random_photo($album1);
     $parent->reload();
 
     $this->assert_equal(3, $parent->descendants_count());
