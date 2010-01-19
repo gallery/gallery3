@@ -92,54 +92,6 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Move this item to the specified target.
-   * @chainable
-   * @param   Item_Model $target  Target item (must be an album)
-   * @return  ORM_MPTT
-   */
-  function move_to($target) {
-    if (!$target->is_album()) {
-      throw new Exception("@todo INVALID_MOVE_TYPE $target->type");
-    }
-
-    if (file_exists($target_file = "{$target->file_path()}/$this->name")) {
-      throw new Exception("@todo INVALID_MOVE_TARGET_EXISTS: $target_file");
-    }
-
-    if ($this->id == 1) {
-      throw new Exception("@todo INVALID_SOURCE root album");
-    }
-
-    $original_path = $this->file_path();
-    $original_resize_path = $this->resize_path();
-    $original_thumb_path = $this->thumb_path();
-    $original_parent = $this->parent();
-
-    parent::move_to($target, true);
-    model_cache::clear();
-    $this->relative_path_cache = null;
-
-    rename($original_path, $this->file_path());
-    if ($this->is_album()) {
-      @rename(dirname($original_resize_path), dirname($this->resize_path()));
-      @rename(dirname($original_thumb_path), dirname($this->thumb_path()));
-      db::build()
-        ->update("items")
-        ->set("relative_path_cache", null)
-        ->set("relative_url_cache", null)
-        ->where("left_ptr", ">", $this->left_ptr)
-        ->where("right_ptr", "<", $this->right_ptr)
-        ->execute();
-    } else {
-      @rename($original_resize_path, $this->resize_path());
-      @rename($original_thumb_path, $this->thumb_path());
-    }
-
-    module::event("item_moved", $this, $original_parent);
-    return $this;
-  }
-
-  /**
    * Specify the path to the data file associated with this item.  To actually associate it,
    * you still have to call save().
    * @chainable
@@ -466,12 +418,12 @@ class Item_Model extends ORM_MPTT {
 
         $original = clone $this->original();
 
-        if ($original->name != $this->name) {
-          // Get the old relative path for when we rename below
+        if ($original->name != $this->name || $original->parent_id != $this->parent_id) {
+          // Get the old relative path for when we rename or move below
           if (!isset($this->relative_path_cache)) {
             $this->_build_relative_caches();  // but don't call save()
           }
-          $old_relative_path = $this->relative_path_cache;
+          $before_save = clone $this;
           $this->relative_path_cache = null;
         }
 
@@ -481,9 +433,33 @@ class Item_Model extends ORM_MPTT {
 
         parent::save();
 
-        // Changing the name or the slug ripples downwards
+        if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
+          if ($original->parent_id != $this->parent_id) {
+            // Move the ORM pointers around
+            parent::move_to($this->parent());
+          }
+
+          // Move all of the items associated data files
+          @rename($before_save->file_path(), $this->file_path());
+          if ($this->is_album()) {
+            @rename(dirname($before_save->resize_path()), dirname($this->resize_path()));
+            @rename(dirname($before_save->thumb_path()), dirname($this->thumb_path()));
+          } else {
+            @rename($before_save->resize_path(), $this->resize_path());
+            @rename($before_save->thumb_path(), $this->thumb_path());
+          }
+
+          if ($original->parent_id != $this->parent_id) {
+            // This will result in 2 events since we'll still fire the item_updated event below
+            module::event("item_moved", $this, $original->parent());
+          }
+        }
+
+        // Changing the name, slug or parent ripples downwards
         if ($this->is_album() &&
-            ($original->name != $this->name || $original->slug != $this->slug)) {
+            ($original->name != $this->name ||
+             $original->slug != $this->slug ||
+             $original->parent_id != $this->parent_id)) {
           db::build()
             ->update("items")
             ->set("relative_url_cache", null)
@@ -491,22 +467,6 @@ class Item_Model extends ORM_MPTT {
             ->where("left_ptr", ">", $this->left_ptr)
             ->where("right_ptr", "<", $this->right_ptr)
             ->execute();
-        }
-
-        // If we renamed this item, move all of its associated data files.
-        if ($original->name != $this->name) {
-          $relative_path = urldecode($this->relative_path());
-          @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$relative_path");
-          @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$relative_path");
-          if ($this->is_movie()) {
-            // Movie thumbnails have a .jpg extension
-            $old_relative_thumb_path = preg_replace("/...$/", "jpg", $old_relative_path);
-            $relative_thumb_path = preg_replace("/...$/", "jpg", $relative_path);
-            @rename(VARPATH . "thumbs/$old_relative_thumb_path",
-                    VARPATH . "thumbs/$relative_thumb_path");
-          } else {
-            @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$relative_path");
-          }
         }
 
         module::event("item_updated", $original, $this);
@@ -873,6 +833,10 @@ class Item_Model extends ORM_MPTT {
           ->from("items")
           ->where("id", "=", $this->parent_id)
           ->where("type", "=", "album")
+          ->and_open()
+          ->where("left_ptr", "<", $this->left_ptr)
+          ->or_where("right_ptr", ">", $this->right_ptr)
+          ->close()
           ->count_records() != 1) {
         $v->add_error("parent_id", "invalid");
       }
