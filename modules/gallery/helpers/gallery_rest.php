@@ -90,7 +90,7 @@ class gallery_rest_Core {
                    "resize_height", "resize_width", "slug", "sort_column", "sort_order",
                    "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
                    "weight", "width") as $key) {
-      if (array_key_exists($key, $request->params)) {
+      if (property_exists($request->params, $key)) {
         $item->$key = $request->params->$key;
       }
     }
