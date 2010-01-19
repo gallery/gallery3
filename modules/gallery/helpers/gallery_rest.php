@@ -65,17 +65,19 @@ class gallery_rest_Core {
       $orm = ORM::factory("item")->viewable();
     }
 
-    if (!empty($p->scope) && !in_array($p->scope, array("direct", "all"))) {
+    if (empty($p->scope)) {
+      $p->scope = "direct";
+    }
+
+    if (!in_array($p->scope, array("direct", "all"))) {
       throw new Exception("Bad Request", 400);
     }
-    if (!empty($p->scope)) {
-      if ($p->scope == "direct") {
-        $orm->where("parent_id", "=", $item->id);
-      } else {
-        $orm->where("left_ptr", ">=", $item->left_ptr);
-        $orm->where("right_ptr", "<=", $item->left_ptr);
-        $orm->where("id", "<>", $item->id);
-      }
+
+    if ($p->scope == "direct") {
+      $orm->where("parent_id", "=", $item->id);
+    } else {
+      $orm->where("left_ptr", ">", $item->left_ptr);
+      $orm->where("right_ptr", "<", $item->right_ptr);
     }
 
     if (isset($p->name)) {
@@ -128,6 +130,7 @@ class gallery_rest_Core {
       $item->name = $params->name;
       $item->title = isset($params->title) ? $params->title : $name;
       $item->description = isset($params->description) ? $params->description : null;
+      $item->slug = isset($params->slug) ? $params->slug : null;
       $item->save();
       break;
 
@@ -137,13 +140,14 @@ class gallery_rest_Core {
       $item->parent_id = $parent->id;
       $item->set_data_file($request->file);
       $item->name = $params->name;
-      $item->title = isset($params->title) ? $params->title : $name;
+      $item->title = isset($params->title) ? $params->title : $params->name;
       $item->description = isset($params->description) ? $params->description : null;
+      $item->slug = isset($params->slug) ? $params->slug : null;
       $item->save();
       break;
 
     default:
-      throw new Rest_Exception("Invalid type: $args->type", 400);
+      throw new Rest_Exception("Invalid type: $params->type", 400);
     }
 
     return array("url" => url::abs_site("/rest/gallery/" . $item->relative_url()));
