@@ -273,7 +273,8 @@ class ORM_MPTT_Core extends ORM {
         ->where("id", "=", $this->id)
         ->execute();
 
-      // If the source is to the right of the target then we just adjusted its left_ptr and right_ptr above.
+      // If the source is to the right of the target then we just adjusted its left_ptr and
+      // right_ptr above.
       $left_ptr = $original_left_ptr;
       $right_ptr = $original_right_ptr;
       if ($original_left_ptr > $target_right_ptr) {
