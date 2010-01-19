@@ -21,9 +21,9 @@ class tags_rest_Core {
   static function get($request) {
     $tags = array();
     foreach (ORM::factory("tag")->find_all() as $tag) {
-      $tags[$tag->name] = url::abs_site("rest/tags/" . rawurlencode($tag->name));
+      $tags[$tag->name] = rest::url("tags", $tag);
     }
-    return rest::reply(array("members" => $tags));
+    return array("members" => $tags);
   }
 
   static function post($request) {
@@ -43,6 +43,6 @@ class tags_rest_Core {
       $tag->save();
     }
 
-    return rest::reply(array("url" => url::abs_site("rest/tag/" . rawurlencode($tag->name))));
+    return array("url" => rest::url("tag", $tag));
   }
 }

@@ -75,10 +75,14 @@ class rest_Core {
   /**
    * Return an absolute url used for REST resource location.
    * @param  string  module name (eg, "gallery", "tags")
-   * @param  string  relative path (eg "Family/Weddings.jpg")
-   * @return string  complete url
+   * @param  object  resource
    */
-  static function url($module, $path) {
-    return url::abs_site("rest/$module/$path");
+  static function url($module, $resource) {
+    $class = "{$module}_rest";
+    if (!method_exists($class, "url")) {
+      throw new Exception("@todo MISSING REST CLASS: $class");
+    }
+
+    return call_user_func(array($class, "url"), $resource);
   }
 }

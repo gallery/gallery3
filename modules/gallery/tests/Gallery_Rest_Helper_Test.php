@@ -28,7 +28,7 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function resolve_test() {
     $album = test::random_album();
-    $resolved = rest::resolve(rest::url("gallery", $album->relative_url()));
+    $resolved = rest::resolve(rest::url("gallery", $album));
     $this->assert_equal($album->id, $resolved->id);
   }
 
@@ -40,32 +40,32 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1->reload();
 
     // No scope is the same as "direct"
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params = new stdClass();
     $this->assert_equal_array(
       array("resource" => $album1->as_array(),
             "members" => array(
-              rest::url("gallery", $photo1->relative_url()),
-              rest::url("gallery", $album2->relative_url()))),
+              rest::url("gallery", $photo1),
+              rest::url("gallery", $album2))),
       gallery_rest::get($request));
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->scope = "direct";
     $this->assert_equal_array(
       array("resource" => $album1->as_array(),
             "members" => array(
-              rest::url("gallery", $photo1->relative_url()),
-              rest::url("gallery", $album2->relative_url()))),
+              rest::url("gallery", $photo1),
+              rest::url("gallery", $album2))),
       gallery_rest::get($request));
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->scope = "all";
     $this->assert_equal_array(
       array("resource" => $album1->as_array(),
             "members" => array(
-              rest::url("gallery", $photo1->relative_url()),
-              rest::url("gallery", $album2->relative_url()),
-              rest::url("gallery", $photo2->relative_url()))),
+              rest::url("gallery", $photo1),
+              rest::url("gallery", $album2),
+              rest::url("gallery", $photo2))),
       gallery_rest::get($request));
   }
 
@@ -77,12 +77,12 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $photo2->save();
     $album1->reload();
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->name = "foo";
     $this->assert_equal_array(
       array("resource" => $album1->as_array(),
             "members" => array(
-              rest::url("gallery", $photo2->relative_url()))),
+              rest::url("gallery", $photo2))),
       gallery_rest::get($request));
   }
 
@@ -92,12 +92,12 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album2 = test::random_album($album1);
     $album1->reload();
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->type = "album";
     $this->assert_equal_array(
       array("resource" => $album1->as_array(),
             "members" => array(
-              rest::url("gallery", $album2->relative_url()))),
+              rest::url("gallery", $album2))),
       gallery_rest::get($request));
   }
 
@@ -105,11 +105,11 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->title = "my new title";
 
     $this->assert_equal_array(
-      array("url" => rest::url("gallery", $album1->relative_url())),
+      array("url" => rest::url("gallery", $album1)),
       gallery_rest::put($request));
     $this->assert_equal("my new title", $album1->reload()->title);
   }
@@ -118,7 +118,7 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->title = "my new title";
     $request->params->slug = "not url safe";
 
@@ -135,7 +135,7 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->type = "album";
     $request->params->name = "my album";
     $request->params->title = "my album";
@@ -150,7 +150,7 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->type = "album";
     $request->params->name = "my album";
     $request->params->title = "my album";
@@ -170,7 +170,7 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     $request->params->type = "photo";
     $request->params->name = "my photo.jpg";
     $request->file = MODPATH . "gallery/tests/test.jpg";
@@ -185,7 +185,7 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     gallery_rest::delete($request);
 
     $album1->reload();
@@ -195,7 +195,7 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function delete_album_fails_without_permission_test() {
     $album1 = test::random_album();
 
-    $request->url = rest::url("gallery", $album1->relative_url());
+    $request->url = rest::url("gallery", $album1);
     try {
       gallery_rest::delete($request);
     } catch (Exception $e) {

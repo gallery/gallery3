@@ -22,10 +22,10 @@ class tag_rest_Core {
     $tag = rest::resolve($request->url);
     $items = array();
     foreach ($tag->items() as $item) {
-      $items[] = url::abs_site("rest/gallery/" . $item->relative_url());
+      $items[] = rest::url("gallery", $item);
     }
 
-    return rest::reply(array("resource" => $tag->as_array(), "members" => $items));
+    return array("resource" => $tag->as_array(), "members" => $items);
   }
 
   static function post($request) {
@@ -38,7 +38,7 @@ class tag_rest_Core {
     access::required("edit", $item);
 
     tag::add($item, $tag->name);
-    return rest::reply(array("url" => url::abs_site("rest/tag/" . rawurlencode($tag->name))));
+    return array("url" => rest::url("tag", $tag));
   }
 
   static function put($request) {
@@ -61,7 +61,7 @@ class tag_rest_Core {
     }
 
     $tag->save();
-    return rest::reply(array("url" => url::abs_site("rest/tag/" . rawurlencode($tag->name))));
+    return array("url" => rest::url("tag", $tag));
   }
 
   static function delete($request) {
@@ -70,7 +70,6 @@ class tag_rest_Core {
     if (empty($request->params->url)) {
       // Delete the tag
       $tag->delete();
-      return rest::reply();
     } else {
       // Remove an item from the tag
       $item = rest::resolve($request->params->url);
@@ -78,7 +77,7 @@ class tag_rest_Core {
       $tag->save();
 
       tag::compact();
-      return rest::reply(array("url" => url::abs_site("rest/tag/" . rawurlencode($tag->name))));
+      return array("url" => rest::url("tag", $tag));
     }
   }
 
@@ -89,5 +88,9 @@ class tag_rest_Core {
     }
 
     return $tag;
+  }
+
+  static function url($item) {
+    return url::abs_site("rest/tag/" . rawurlencode($tag->name));
   }
 }

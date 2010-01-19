@@ -17,25 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-// @todo Add logging
-
-// Validation questions
-//
-// We need to be able to properly validate anything we want to enter here.  But all of our
-// validation currently happens at the controller / form level, and we're not using the same
-// controllers or forms.
-//
-// Possible solutions:
-// 1) Move validation into the model and use it both here and in the regular controllers.  But
-// if we do that, how do we translate validation failures into a user-consumable output which
-// we need so that we can return proper error responses to form submissions?
-//
-// 2) Create some kind of validation helper that can validate every field.  Wait, isn't this
-// just like #1 except in a helper instead of in the model?
-
 class gallery_rest_Core {
-
   /**
    * For items that are collections, you can specify the following additional query parameters to
    * query the collection.  You can specify them in any combination.
@@ -90,7 +72,7 @@ class gallery_rest_Core {
 
     $members = array();
     foreach ($orm->find_all() as $child) {
-      $members[] = url::abs_site("rest/gallery/" . $child->relative_url());
+      $members[] = rest::url("gallery", $child);
     }
 
     return array("resource" => $item->as_array(), "members" => $members);
@@ -114,7 +96,7 @@ class gallery_rest_Core {
     }
     $item->save();
 
-    return array("url" => url::abs_site("/rest/gallery/" . $item->relative_url()));
+    return array("url" => rest::url("gallery", $item));
   }
 
   static function post($request) {
@@ -150,7 +132,7 @@ class gallery_rest_Core {
       throw new Rest_Exception("Invalid type: $params->type", 400);
     }
 
-    return array("url" => url::abs_site("/rest/gallery/" . $item->relative_url()));
+    return array("url" => rest::url("gallery", $item));
   }
 
   static function delete($request) {
@@ -162,5 +144,9 @@ class gallery_rest_Core {
 
   static function resolve($path) {
     return url::get_item_from_uri($path);
+  }
+
+  static function url($item) {
+    return url::abs_site("rest/gallery/" . $item->relative_url());
   }
 }
