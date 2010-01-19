@@ -140,33 +140,6 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Rename the underlying file for this item to a new name and move all related files.
-   *
-   * @chainable
-   */
-  private function rename($new_name) {
-    $old_relative_path = urldecode($this->original()->relative_path());
-    $new_relative_path = dirname($old_relative_path) . "/" . $new_name;
-    if (file_exists(VARPATH . "albums/$new_relative_path")) {
-      throw new Exception("@todo INVALID_RENAME_FILE_EXISTS: $new_relative_path");
-    }
-
-    @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$new_relative_path");
-    @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$new_relative_path");
-    if ($this->is_movie()) {
-      // Movie thumbnails have a .jpg extension
-      $old_relative_thumb_path = preg_replace("/...$/", "jpg", $old_relative_path);
-      $new_relative_thumb_path = preg_replace("/...$/", "jpg", $new_relative_path);
-      @rename(VARPATH . "thumbs/$old_relative_thumb_path",
-              VARPATH . "thumbs/$new_relative_thumb_path");
-    } else {
-      @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$new_relative_path");
-    }
-
-    return $this;
-  }
-
-  /**
    * Specify the path to the data file associated with this item.  To actually associate it,
    * you still have to call save().
    * @chainable
@@ -482,20 +455,35 @@ class Item_Model extends ORM_MPTT {
         module::event("item_created", $this);
       } else {
         // Update an existing item
-        if ($this->original()->name != $this->name) {
-          $this->rename($this->name);
+
+        // The new values have to be valid before we do anything with them.  If we make any
+        // other changes before we call parent::save() below, we'll have to validate those changes
+        // again.  But, we can't take any action on these values until we know they're ok so this
+        // is unavoidable.
+        if (!$this->_valid) {
+          $this->validate();
+        }
+
+        $original = clone $this->original();
+
+        if ($original->name != $this->name) {
+          // Get the old relative path for when we rename below
+          if (!isset($this->relative_path_cache)) {
+            $this->_build_relative_caches();  // but don't call save()
+          }
+          $old_relative_path = $this->relative_path_cache;
           $this->relative_path_cache = null;
         }
 
-        if ($this->original()->slug != $this->slug) {
-          // Clear the relative url cache for this item and all children
+        if ($original->slug != $this->slug) {
           $this->relative_url_cache = null;
         }
 
+        parent::save();
+
         // Changing the name or the slug ripples downwards
         if ($this->is_album() &&
-            ($this->original()->name != $this->name ||
-             $this->original()->slug != $this->slug)) {
+            ($original->name != $this->name || $original->slug != $this->slug)) {
           db::build()
             ->update("items")
             ->set("relative_url_cache", null)
@@ -504,8 +492,23 @@ class Item_Model extends ORM_MPTT {
             ->where("right_ptr", "<", $this->right_ptr)
             ->execute();
         }
-        $original = clone $this->original();
-        parent::save();
+
+        // If we renamed this item, move all of its associated data files.
+        if ($original->name != $this->name) {
+          $relative_path = urldecode($this->relative_path());
+          @rename(VARPATH . "albums/$old_relative_path", VARPATH . "albums/$relative_path");
+          @rename(VARPATH . "resizes/$old_relative_path", VARPATH . "resizes/$relative_path");
+          if ($this->is_movie()) {
+            // Movie thumbnails have a .jpg extension
+            $old_relative_thumb_path = preg_replace("/...$/", "jpg", $old_relative_path);
+            $relative_thumb_path = preg_replace("/...$/", "jpg", $relative_path);
+            @rename(VARPATH . "thumbs/$old_relative_thumb_path",
+                    VARPATH . "thumbs/$relative_thumb_path");
+          } else {
+            @rename(VARPATH . "thumbs/$old_relative_path", VARPATH . "thumbs/$relative_path");
+          }
+        }
+
         module::event("item_updated", $original, $this);
       }
     } else if (!empty($this->changed)) {
