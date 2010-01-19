@@ -52,12 +52,12 @@ class ORM_MPTT_Core extends ORM {
 
       try {
         // Make a hole in the parent for this new item
-        $this->db_builder
+        db::build()
           ->update($this->table_name)
           ->set("left_ptr", new Database_Expression("`left_ptr` + 2"))
           ->where("left_ptr", ">=", $parent->right_ptr)
           ->execute();
-        $this->db_builder
+        db::build()
           ->update($this->table_name)
           ->set("right_ptr", new Database_Expression("`right_ptr` + 2"))
           ->where("right_ptr", ">=", $parent->right_ptr)
@@ -102,12 +102,12 @@ class ORM_MPTT_Core extends ORM {
     $this->lock();
     $this->reload();  // Assume that the prior lock holder may have changed this entry
     try {
-      $this->db_builder
+      db::build()
         ->update($this->table_name)
         ->set("left_ptr", new Database_Expression("`left_ptr` - 2"))
         ->where("left_ptr", ">", $this->right_ptr)
         ->execute();
-      $this->db_builder
+      db::build()
         ->update($this->table_name)
         ->set("right_ptr", new Database_Expression("`right_ptr` - 2"))
         ->where("right_ptr", ">", $this->right_ptr)
@@ -246,7 +246,7 @@ class ORM_MPTT_Core extends ORM {
     try {
       if ($level_delta) {
         // Update the levels for the to-be-moved items
-        $this->db_builder
+        db::build()
           ->update($this->table_name)
           ->set("level", new Database_Expression("`level` + $level_delta"))
           ->where("left_ptr", ">=", $original_left_ptr)
@@ -255,19 +255,19 @@ class ORM_MPTT_Core extends ORM {
       }
 
       // Make a hole in the target for the move
-      $target->db_builder
+      db::build()
         ->update($this->table_name)
         ->set("left_ptr", new Database_Expression("`left_ptr` + $size_of_hole"))
         ->where("left_ptr", ">=", $target_right_ptr)
         ->execute();
-      $target->db_builder
+      db::build()
         ->update($this->table_name)
         ->set("right_ptr", new Database_Expression("`right_ptr` + $size_of_hole"))
         ->where("right_ptr", ">=", $target_right_ptr)
         ->execute();
 
       // Change the parent.
-      $this->db_builder
+      db::build()
         ->update($this->table_name)
         ->set("parent_id", $target->id)
         ->where("id", "=", $this->id)
@@ -282,7 +282,7 @@ class ORM_MPTT_Core extends ORM {
       }
 
       $new_offset = $target->right_ptr - $left_ptr;
-      $this->db_builder
+      db::build()
         ->update($this->table_name)
         ->set("left_ptr", new Database_Expression("`left_ptr` + $new_offset"))
         ->set("right_ptr", new Database_Expression("`right_ptr` + $new_offset"))
@@ -291,12 +291,12 @@ class ORM_MPTT_Core extends ORM {
         ->execute();
 
       // Close the hole in the source's parent after the move
-      $this->db_builder
+      db::build()
         ->update($this->table_name)
         ->set("left_ptr", new Database_Expression("`left_ptr` - $size_of_hole"))
         ->where("left_ptr", ">", $right_ptr)
         ->execute();
-      $this->db_builder
+      db::build()
         ->update($this->table_name)
         ->set("right_ptr", new Database_Expression("`right_ptr` - $size_of_hole"))
         ->where("right_ptr", ">", $right_ptr)
