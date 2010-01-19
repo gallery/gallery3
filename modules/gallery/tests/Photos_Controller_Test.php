@@ -29,19 +29,14 @@ class Photos_Controller_Test extends Unit_Test_Case {
 
   public function change_photo_test() {
     $controller = new Photos_Controller();
-    $root = ORM::factory("item", 1);
-    $photo = photo::create(
-      $root, MODPATH . "gallery/tests/test.jpg", "test.jpeg",
-      "test", "test", identity::active_user()->id, "slug");
-    $orig_name = $photo->name;
+    $photo = test::random_photo();
 
-    $_POST["filename"] = "test.jpeg";
-    $_POST["name"] = "new name";
+    $_POST["filename"] = "new name.jpg";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
     $_POST["slug"] = "new-slug";
     $_POST["csrf"] = access::csrf_token();
-    access::allow(identity::everybody(), "edit", $root);
+    access::allow(identity::everybody(), "edit", item::root());
 
     ob_start();
     $controller->update($photo->id);
@@ -53,26 +48,25 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $this->assert_equal("new-slug", $photo->slug);
     $this->assert_equal("new title", $photo->title);
     $this->assert_equal("new description", $photo->description);
-
-    // We don't change the name, yet.
-    $this->assert_equal($orig_name, $photo->name);
+    $this->assert_equal("new name.jpeg", $photo->name);
   }
 
   public function change_photo_no_csrf_fails_test() {
     $controller = new Photos_Controller();
-    $root = ORM::factory("item", 1);
-    $photo = photo::create(
-      $root, MODPATH . "gallery/tests/test.jpg", "test.jpg", "test", "test");
-    $_POST["name"] = "new name";
+    $photo = test::random_photo();
+
+    $_POST["filename"] = "new name.jpg";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
-    access::allow(identity::everybody(), "edit", $root);
+    $_POST["slug"] = "new slug";
+    access::allow(identity::everybody(), "edit", item::root());
 
     try {
-      $controller->_update($photo);
+      $controller->update($photo);
       $this->assert_true(false, "This should fail");
     } catch (Exception $e) {
       // pass
+      $this->assert_same("@todo FORBIDDEN", $e->getMessage());
     }
   }
 }
