@@ -217,7 +217,7 @@ class Item_Model_Test extends Unit_Test_Case {
     $this->assert_equal("file", file_get_contents($photo->file_path()));
   }
 
-  public function move_album_fails_invalid_target_test() {
+  public function move_album_fails_conflicting_target_test() {
     $album = test::random_album();
     $source = test::random_album_unsaved($album);
     $source->name = $album->name;
@@ -236,7 +236,23 @@ class Item_Model_Test extends Unit_Test_Case {
     }
   }
 
-  public function move_photo_fails_invalid_target_test() {
+  public function move_album_fails_wrong_target_type_test() {
+    $album = test::random_album();
+    $photo = test::random_photo();
+
+    // $source and $album have the same name, so if we move $source into the root they should
+    // conflict.
+
+    try {
+      $album->parent_id = $photo->id;
+      $album->save();
+      $this->assert_true(false, "Shouldn't get here");
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_equal(array("parent_id" => "invalid"), $e->validation->errors());
+    }
+  }
+
+  public function move_photo_fails_conflicting_target_test() {
     $photo1 = test::random_photo();
     $album = test::random_album();
     $photo2 = test::random_photo_unsaved($album);
