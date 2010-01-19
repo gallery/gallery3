@@ -122,15 +122,14 @@ class Item_Model_Test extends Unit_Test_Case {
 
   public function item_rename_wont_accept_slash_test() {
     $item = test::random_photo();
-
-    $new_name = test::random_name() . "/";
-
     try {
-      $item->rename($new_name)->save();
+      $item->name = test::random_name() . "/";
+      $item->save();
     } catch (ORM_Validation_Exception $e) {
-      $this->assert_equals(array("name" => "no_slashes"), $e->validation->errors());
+      $this->assert_equal(array("name" => "no_slashes"), $e->validation->errors());
+      return;
     }
-    $this->assert_false(true, "Item_Model::rename should not accept / characters");
+    $this->assert_true(false, "Shouldn't get here");
   }
 
   public function item_rename_fails_with_existing_name_test() {
@@ -161,16 +160,16 @@ class Item_Model_Test extends Unit_Test_Case {
 
   public function move_album_test() {
     $album2 = test::random_album();
-    $album = test::random_album($album2);
-    $photo = test::random_photo($album);
+    $album1 = test::random_album($album2);
+    $photo = test::random_photo($album1);
 
     file_put_contents($photo->thumb_path(), "thumb");
     file_put_contents($photo->resize_path(), "resize");
     file_put_contents($photo->file_path(), "file");
 
     // Now move the album
-    $album->parent_id = item::root()->id;
-    $album->save();
+    $album1->parent_id = item::root()->id;
+    $album1->save();
     $photo->reload();
 
     // Expected:
@@ -178,12 +177,10 @@ class Item_Model_Test extends Unit_Test_Case {
     // * the photo's paths are all inside the albums paths
     // * the photo files are all still intact and accessible
 
-    $this->assert_same(null, strpos($album->relative_path(), $album2->relative_path()),
-                       $album2->relative_path() . " should not be in: " . $album->relative_path());
-
-    $this->assert_same(0, strpos($photo->file_path(), $album->file_path()));
-    $this->assert_same(0, strpos($photo->thumb_path(), dirname($album->thumb_path())));
-    $this->assert_same(0, strpos($photo->resize_path(), dirname($album->resize_path())));
+    $this->assert_false(test::starts_with($album2->file_path(), $album1->file_path()));
+    $this->assert_true(test::starts_with($photo->file_path(), $album1->file_path()));
+    $this->assert_true(test::starts_with($photo->thumb_path(), dirname($album1->thumb_path())));
+    $this->assert_true(test::starts_with($photo->resize_path(), dirname($album1->resize_path())));
 
     $this->assert_equal("thumb", file_get_contents($photo->thumb_path()));
     $this->assert_equal("resize", file_get_contents($photo->resize_path()));
@@ -229,11 +226,12 @@ class Item_Model_Test extends Unit_Test_Case {
     try {
       $source->parent_id = item::root()->id;
       $source->save();
-      $this->assert_true(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $this->assert_equal(
         array("name" => "conflict", "slug" => "conflict"), $e->validation->errors());
+      return;
     }
+    $this->assert_true(false, "Shouldn't get here");
   }
 
   public function move_album_fails_wrong_target_type_test() {
@@ -246,10 +244,11 @@ class Item_Model_Test extends Unit_Test_Case {
     try {
       $album->parent_id = $photo->id;
       $album->save();
-      $this->assert_true(false, "Shouldn't get here");
     } catch (ORM_Validation_Exception $e) {
       $this->assert_equal(array("parent_id" => "invalid"), $e->validation->errors());
+      return;
     }
+    $this->assert_true(false, "Shouldn't get here");
   }
 
   public function move_photo_fails_conflicting_target_test() {
@@ -265,27 +264,28 @@ class Item_Model_Test extends Unit_Test_Case {
     try {
       $photo2->parent_id = item::root()->id;
       $photo2->save();
-      $this->assert_true(false, "Shouldn't get here");
     } catch (Exception $e) {
       // pass
       $this->assert_equal(
         array("name" => "conflict", "slug" => "conflict"), $e->validation->errors());
       return;
     }
+    $this->assert_true(false, "Shouldn't get here");
   }
 
   public function move_album_inside_descendent_fails_test() {
-    $album = test::random_album();
-    $album2 = test::random_album($album);
+    $album1 = test::random_album();
+    $album2 = test::random_album($album1);
     $album3 = test::random_album($album2);
 
     try {
-      $album->parent_id = $album3->id;
-      $album->save();
-      $this->assert_true(false, "Shouldn't get here");
+      $album1->parent_id = $album3->id;
+      $album1->save();
     } catch (ORM_Validation_Exception $e) {
       $this->assert_equal(array("parent_id" => "invalid"), $e->validation->errors());
+      return;
     }
+    $this->assert_true(false, "Shouldn't get here");
   }
 
 
