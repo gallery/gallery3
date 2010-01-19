@@ -55,4 +55,8 @@ class test_Core {
     }
     return $rand;
   }
+
+  static function starts_with($outer, $inner) {
+    return strpos($outer, $inner) === 0;
+  }
 }
