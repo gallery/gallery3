@@ -59,7 +59,7 @@ class item_Core {
     $parent->save();
     graphics::generate($parent);
     $grand_parent = $parent->parent();
-    if ($grand_parent && $grand_parent->album_cover_item_id == null)  {
+    if (access::can("edit", $grand_parent) && $grand_parent->album_cover_item_id == null)  {
       item::make_album_cover($parent);
     }
   }
