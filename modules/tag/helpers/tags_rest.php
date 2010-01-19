@@ -21,7 +21,7 @@ class tags_rest_Core {
   static function get($request) {
     $tags = array();
     foreach (ORM::factory("tag")->find_all() as $tag) {
-      $tags[$tag->name] = rest::url("tags", $tag);
+      $tags[$tag->name] = rest::url("tag", $tag);
     }
     return array("members" => $tags);
   }
