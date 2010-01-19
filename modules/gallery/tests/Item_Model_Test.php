@@ -318,4 +318,20 @@ class Item_Model_Test extends Unit_Test_Case {
 
     $this->assert_false(true, "Shouldn't get here");
   }
+
+  public function slug_is_url_safe_test() {
+    $album = test::random_album_unsaved();
+
+    try {
+      $album->slug = "illegal chars! !@#@#$!@~";
+      $album->save();
+      $this->assert_true(false, "Shouldn't be able to save");
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("slug" => "not_url_safe"), $e->validation->errors());
+    }
+
+    // This should work
+    $album->slug = "the_quick_brown_fox";
+    $album->save();
+  }
 }
