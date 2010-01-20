@@ -31,9 +31,9 @@ class Albums_Controller_Test extends Unit_Test_Case {
     $album = test::random_album();
 
     // Randomize to avoid conflicts.
-    $new_dirname = "new_name_" . rand();
+    $new_name = "new_name_" . rand();
 
-    $_POST["dirname"] = $new_dirname;
+    $_POST["name"] = $new_name;
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
     $_POST["column"] = "weight";
@@ -49,7 +49,7 @@ class Albums_Controller_Test extends Unit_Test_Case {
     ob_end_clean();
 
     $this->assert_equal(json_encode(array("result" => "success")), $results);
-    $this->assert_equal($new_dirname, $album->name);
+    $this->assert_equal($new_name, $album->name);
     $this->assert_equal("new title", $album->title);
     $this->assert_equal("new description", $album->description);
   }

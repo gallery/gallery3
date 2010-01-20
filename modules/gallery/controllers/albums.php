@@ -141,15 +141,12 @@ class Albums_Controller extends Items_Controller {
       $album->description = $form->edit_item->description->value;
       $album->sort_column = $form->edit_item->sort_order->column->value;
       $album->sort_order = $form->edit_item->sort_order->direction->value;
-      $album->name = $form->edit_item->dirname->value;
+      $album->name = $form->edit_item->inputs["name"]->value;
       $album->slug = $form->edit_item->slug->value;
       $album->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
       foreach ($e->validation->errors() as $key => $error) {
-        if ($key == "name") {
-          $key = "dirname";
-        }
         $form->edit_item->inputs[$key]->add_error($error, 1);
       }
       $valid = false;

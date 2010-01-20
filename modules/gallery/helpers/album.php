@@ -52,7 +52,7 @@ class album_Core {
     $group->input("title")->label(t("Title"))->value($parent->title);
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
-      $group->input("dirname")->label(t("Directory Name"))->value($parent->name)
+      $group->input("name")->label(t("Directory Name"))->value($parent->name)
         ->rules("required")
         ->error_messages(
           "conflict", t("There is already a movie, photo or album with this name"))
@@ -65,7 +65,7 @@ class album_Core {
           "not_url_safe",
           t("The internet address should contain only letters, numbers, hyphens and underscores"));
     } else {
-      $group->hidden("dirname")->value($parent->name);
+      $group->hidden("name")->value($parent->name);
       $group->hidden("slug")->value($parent->slug);
     }
 
