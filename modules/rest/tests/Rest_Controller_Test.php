@@ -46,11 +46,17 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function login_failed_test() {
     $user = test::random_user("password");
-    $_POST["user"] = $user->name;
-    $_POST["password"] = "WRONG PASSWORD";
 
-    // @todo check the http response code
-    $this->assert_equal(null, test::call_and_capture(array(new Rest_Controller(), "index")));
+    try {
+      $_POST["user"] = $user->name;
+      $_POST["password"] = "WRONG PASSWORD";
+      test::call_and_capture(array(new Rest_Controller(), "index"));
+    } catch (Rest_Exception $e) {
+      $this->assert_equal(403, $e->getCode());
+      return;
+    }
+
+    $this->assert_true(false, "Shouldn't get here");
   }
 
   public function rest_get_resource_no_request_key_test_() {

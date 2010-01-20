@@ -19,28 +19,24 @@
  */
 class Rest_Controller extends Controller {
   public function index() {
-    try {
-      $username = Input::instance()->post("user");
-      $password = Input::instance()->post("password");
+    $username = Input::instance()->post("user");
+    $password = Input::instance()->post("password");
 
-      $user = identity::lookup_user_by_name($username);
-      if (empty($user) || !identity::is_correct_password($user, $password)) {
-        throw new Rest_Exception("Forbidden", 403);
-      }
-
-      $key = ORM::factory("user_access_token")
-        ->where("user_id", "=", $user->id)
-        ->find();
-      if (!$key->loaded()) {
-        $key->user_id = $user->id;
-        $key->access_key = md5($user->name . rand());
-        $key->save();
-      }
-
-      rest::reply($key->access_key);
-    } catch (Exception $e) {
-      rest::send_headers($e);
+    $user = identity::lookup_user_by_name($username);
+    if (empty($user) || !identity::is_correct_password($user, $password)) {
+      throw new Rest_Exception("Forbidden", 403);
     }
+
+    $key = ORM::factory("user_access_token")
+      ->where("user_id", "=", $user->id)
+      ->find();
+    if (!$key->loaded()) {
+      $key->user_id = $user->id;
+      $key->access_key = md5($user->name . rand());
+      $key->save();
+    }
+
+    rest::reply($key->access_key);
  }
 
   public function __call($function, $args) {
@@ -62,26 +58,22 @@ class Rest_Controller extends Controller {
     $request->access_token = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
     $request->url = url::abs_current(true);
 
+    rest::set_active_user($request->access_token);
+
+    $handler_class = "{$function}_rest";
+    $handler_method = $request->method;
+
+    if (!method_exists($handler_class, $handler_method)) {
+      throw new Rest_Exception("Forbidden", 403);
+    }
+
     try {
-      rest::set_active_user($request->access_token);
-
-      $handler_class = "{$function}_rest";
-      $handler_method = $request->method;
-
-      if (!method_exists($handler_class, $handler_method)) {
-        throw new Rest_Exception("Forbidden", 403);
+      print rest::reply(call_user_func(array($handler_class, $handler_method), $request));
+    } catch (ORM_Validation_Exception $e) {
+      foreach ($e->validation->errors() as $key => $value) {
+        $msgs[] = "$key: $value";
       }
-
-      try {
-        print rest::reply(call_user_func(array($handler_class, $handler_method), $request));
-      } catch (ORM_Validation_Exception $e) {
-        foreach ($e->validation->errors() as $key => $value) {
-          $msgs[] = "$key: $value";
-        }
-        throw new Rest_Exception("Bad Request: " . join(", ", $msgs), 400);
-      }
-    } catch (Rest_Exception $e) {
-      rest::send_headers($e);
+      throw new Rest_Exception("Bad Request: " . join(", ", $msgs), 400);
     }
   }
 }
