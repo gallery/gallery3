@@ -782,21 +782,15 @@ class Item_Model extends ORM_MPTT {
     if (strpos($this->name, "/") !== false) {
       $v->add_error("name", "no_slashes");
       return;
-    }
-
-    if (rtrim($this->name, ".") !== $this->name) {
+    } else if (rtrim($this->name, ".") !== $this->name) {
       $v->add_error("name", "no_trailing_period");
-      return;
-    }
-
-    if ($this->is_movie() || $this->is_photo()) {
-      if ($this->loaded()) {
+    } else if ($this->is_movie() || $this->is_photo()) {
+      if ($this->original()->loaded()) {
         // Existing items can't change their extension
         $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
         $old_ext = pathinfo($this->original()->name, PATHINFO_EXTENSION);
         if (strcasecmp($new_ext, $old_ext)) {
           $v->add_error("name", "illegal_data_file_extension");
-          return;
         }
       } else {
         // New items must have an extension
@@ -804,9 +798,7 @@ class Item_Model extends ORM_MPTT {
           $v->add_error("name", "illegal_data_file_extension");
         }
       }
-    }
-
-    if (db::build()
+    } else if (db::build()
         ->from("items")
         ->where("parent_id", "=", $this->parent_id)
         ->where("name", "=", $this->name)
@@ -908,7 +900,7 @@ class Item_Model extends ORM_MPTT {
    * This field cannot be changed after it's been set.
    */
   public function read_only(Validation $v, $field) {
-    if ($this->loaded() && $this->original()->$field != $this->$field) {
+    if ($this->original()->loaded() && $this->original()->$field != $this->$field) {
       $v->add_error($field, "read_only");
     }
   }

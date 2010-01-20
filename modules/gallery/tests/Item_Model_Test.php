@@ -320,9 +320,8 @@ class Item_Model_Test extends Unit_Test_Case {
   }
 
   public function slug_is_url_safe_test() {
-    $album = test::random_album_unsaved();
-
     try {
+      $album = test::random_album_unsaved();
       $album->slug = "illegal chars! !@#@#$!@~";
       $album->save();
       $this->assert_true(false, "Shouldn't be able to save");
@@ -333,5 +332,18 @@ class Item_Model_Test extends Unit_Test_Case {
     // This should work
     $album->slug = "the_quick_brown_fox";
     $album->save();
+  }
+
+  public function cant_change_item_type_test() {
+    $photo = test::random_photo();
+    try {
+      $photo->type = "movie";
+      $photo->mime_type = "video/x-flv";
+      $photo->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("type" => "read_only"), $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
   }
 }
