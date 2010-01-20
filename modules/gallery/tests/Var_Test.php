@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Var_Test extends Unit_Test_Case {
+class Var_Test extends Gallery_Unit_Test_Case {
   public function add_parameter_test() {
     module::set_var("gallery", "Parameter", "original value");
     $this->assert_equal("original value", module::get_var("gallery", "Parameter"));

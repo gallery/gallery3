@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Digibug_Controller_Test extends Unit_Test_Case {
+class Digibug_Controller_Test extends Gallery_Unit_Test_Case {
   private $_server;
 
   public function setup() {

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Sendmail_Test extends Unit_Test_Case {
+class Sendmail_Test extends Gallery_Unit_Test_Case {
   public function setup() {
     Kohana_Config::instance()->set("sendmail.from", "from@gallery3.com");
   }

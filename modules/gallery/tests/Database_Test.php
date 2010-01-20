@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Database_Test extends Unit_Test_Case {
+class Database_Test extends Gallery_Unit_Test_Case {
   function setup() {
     $config = Kohana_Config::instance();
     $config->set("database.mock.connection.type", "mock");

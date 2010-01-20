@@ -19,7 +19,7 @@
  */
 require_once(MODPATH . "gallery/tests/Gallery_Filters.php");
 
-class File_Structure_Test extends Unit_Test_Case {
+class File_Structure_Test extends Gallery_Unit_Test_Case {
   public function no_trailing_closing_php_tag_test() {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));

@@ -19,7 +19,7 @@
  */
 require_once(MODPATH . "gallery/tests/Gallery_Filters.php");
 
-class No_Direct_ORM_Access_Test extends Unit_Test_Case {
+class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
   public function no_access_to_users_table_test() {
     $dir = new UserModuleFilterIterator(
       new PhpCodeFilterIterator(

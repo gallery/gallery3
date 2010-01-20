@@ -48,6 +48,11 @@ class test_Core {
     return test::random_photo_unsaved($parent)->save();
   }
 
+  static function random_user($password="password") {
+    $rand = "name_" . rand();
+    return identity::create_user($rand, $rand, $password, "$rand@rand.com");
+  }
+
   static function random_name($item=null) {
     $rand = "name_" . rand();
     if ($item && $item->is_photo()) {
@@ -58,5 +63,11 @@ class test_Core {
 
   static function starts_with($outer, $inner) {
     return strpos($outer, $inner) === 0;
+  }
+
+  static function call_and_capture($callback) {
+    ob_start();
+    call_user_func($callback);
+    return ob_get_clean();
   }
 }

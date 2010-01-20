@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-class User_Groups_Test extends Unit_Test_Case {
+class User_Groups_Test extends Gallery_Unit_Test_Case {
   public function teardown() {
     try {
       $group = ORM::factory("group")->where("name", "=", "user_groups_test")->find();
