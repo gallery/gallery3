@@ -19,24 +19,17 @@
  */
 class Tag_Test extends Gallery_Unit_Test_Case {
   public function create_tag_test() {
-    $rand = rand();
-    $root = ORM::factory("item", 1);
-    $album = album::create($root, $rand, $rand, $rand);
-    $tag1 = "tag1";
+    $album = test::random_album();
 
-    tag::add($album, $tag1);
-    $tag = ORM::factory("tag")->where("name", "=", $tag1)->find();
+    tag::add($album, "tag1");
+    $tag = ORM::factory("tag")->where("name", "=", "tag1")->find();
     $this->assert_true(1, $tag->count);
 
     // Make sure adding the tag again doesn't increase the count
-    tag::add($album, $tag1);
-    $tag = ORM::factory("tag")->where("name", "=", $tag1)->find();
-    $this->assert_true(1, $tag->count);
+    tag::add($album, "tag1");
+    $this->assert_true(1, $tag->reload()->count);
 
-    $rand = rand();
-    $album = album::create($root, $rand, $rand, $rand);
-    tag::add($album, $tag1);
-    $tag = ORM::factory("tag")->where("name", "=", $tag1)->find();
-    $this->assert_true(2, $tag->count);
+    tag::add(test::random_album(), "tag1");
+    $this->assert_true(2, $tag->reload()->count);
   }
 }
