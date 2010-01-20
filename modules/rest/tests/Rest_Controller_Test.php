@@ -59,84 +59,87 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(false, "Shouldn't get here");
   }
 
-  public function rest_get_resource_no_request_key_test_() {
+  public function get_test() {
     $_SERVER["REQUEST_METHOD"] = "GET";
-    $photo = $this->_create_image();
+    $_GET["key"] = "value";
 
-    $this->assert_equal(
-      json_encode(array("status" => "OK", "message" => (string)t("Processed"),
-                        "photo" => array("path" => $photo->relative_url(),
-                                        "title" => $photo->title,
-                                        "thumb_url" => $photo->thumb_url(),
-                                        "description" => $photo->description,
-                                        "internet_address" => $photo->slug))),
-      $this->_call_controller("rest", explode("/", $photo->relative_url())));
+    $this->assert_array_equal_to_json(
+      array("params" => array("key" => "value"),
+            "method" => "get",
+            "access_token" => null,
+            "url" => "http://./index.php/gallery_unit_test"),
+      test::call_and_capture(array(new Rest_Controller(), "mock")));
   }
 
-  public function rest_get_resource_invalid_key_test_() {
-    list ($access_key, $user) = $this->_create_user();
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = md5($access_key); // screw up the access key;
-    $_SERVER["REQUEST_METHOD"] = "GET";
+  public function get_with_access_key_test() {
+    $key = rest::get_access_token(1);  // admin user
 
+    $_SERVER["REQUEST_METHOD"] = "GET";
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $key->access_key;
+    $_GET["key"] = "value";
+
+    $this->assert_array_equal_to_json(
+      array("params" => array("key" => "value"),
+            "method" => "get",
+            "access_token" => $key->access_key,
+            "url" => "http://./index.php/gallery_unit_test"),
+      test::call_and_capture(array(new Rest_Controller(), "mock")));
+  }
+
+  public function post_test() {
+    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_POST["key"] = "value";
+
+    $this->assert_array_equal_to_json(
+      array("params" => array("key" => "value"),
+            "method" => "post",
+            "access_token" => null,
+            "url" => "http://./index.php/gallery_unit_test"),
+      test::call_and_capture(array(new Rest_Controller(), "mock")));
+  }
+
+  public function put_test() {
+    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "put";
+    $_POST["key"] = "value";
+
+    $this->assert_array_equal_to_json(
+      array("params" => array("key" => "value"),
+            "method" => "put",
+            "access_token" => null,
+            "url" => "http://./index.php/gallery_unit_test"),
+      test::call_and_capture(array(new Rest_Controller(), "mock")));
+  }
+
+  public function delete_test() {
+    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "delete";
+    $_POST["key"] = "value";
+
+    $this->assert_array_equal_to_json(
+      array("params" => array("key" => "value"),
+            "method" => "delete",
+            "access_token" => null,
+            "url" => "http://./index.php/gallery_unit_test"),
+      test::call_and_capture(array(new Rest_Controller(), "mock")));
+  }
+
+  public function bogus_method_test() {
+    $_SERVER["REQUEST_METHOD"] = "POST";
+    $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "BOGUS";
     try {
-      $this->_call_controller();
-    } catch (Rest_Exception $e) {
+      test::call_and_capture(array(new Rest_Controller(), "mock"));
+    } catch (Exception $e) {
       $this->assert_equal(403, $e->getCode());
-      $this->assert_equal("Forbidden", $e->getMessage());
-    } catch (Exception $e) {
-      $this->assert_false(true, $e->__toString());
+      return;
     }
+    $this->assert_true(false, "Shouldn't get here");
   }
+}
 
-  public function rest_get_resource_no_user_for_key_test_() {
-    list ($access_key, $user) = $this->_create_user();
-    $_SERVER["REQUEST_METHOD"] = "GET";
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $access_key;
-
-    $user->delete();
-
-    $photo = $this->_create_image();
-
-    try {
-      $this->_call_controller("rest", explode("/", $photo->relative_url()));
-    } catch (Rest_Exception $e) {
-      $this->assert_equal(403, $e->getCode());
-      $this->assert_equal("Forbidden", $e->getMessage());
-    } catch (Exception $e) {
-      $this->assert_false(true, $e->__toString());
-    }
-  }
-
-  public function rest_get_resource_no_handler_test_() {
-    list ($access_key, $user) = $this->_create_user();
-    $_SERVER["REQUEST_METHOD"] = "GET";
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $access_key;
-    $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "PUT";
-    $photo = $this->_create_image();
-
-    try {
-      $this->_call_controller("rest", explode("/", $photo->relative_url()));
-    } catch (Rest_Exception $e) {
-      $this->assert_equal(501, $e->getCode());
-      $this->assert_equal("Not Implemented", $e->getMessage());
-    } catch (Exception $e) {
-      $this->assert_false(true, $e->__toString());
-    }
-  }
-
-  public function rest_get_resource_test_() {
-    list ($access_key, $user) = $this->_create_user();
-    $_SERVER["REQUEST_METHOD"] = "GET";
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $access_key;
-
-    $photo = $this->_create_image();
-    $this->assert_equal(
-      json_encode(array("status" => "OK", "message" => (string)t("Processed"),
-                        "photo" => array("path" => $photo->relative_url(),
-                                        "title" => $photo->title,
-                                        "thumb_url" => $photo->thumb_url(),
-                                        "description" => $photo->description,
-                                        "internet_address" => $photo->slug))),
-      $this->_call_controller("rest", explode("/", $photo->relative_url())));
-  }
+class mock_rest {
+  function get($request)    { return $request; }
+  function post($request)   { return $request; }
+  function put($request)    { return $request; }
+  function delete($request) { return $request; }
 }
