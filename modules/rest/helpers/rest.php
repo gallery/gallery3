@@ -50,7 +50,9 @@ class rest_Core {
   }
 
   static function send_headers($exception) {
-    header("HTTP/1.1 " . $exception->getCode() . " " . $exception->getMessage());
+    if (!headers_sent()) {
+      header("HTTP/1.1 " . $exception->getCode() . " " . $exception->getMessage());
+    }
   }
 
   /**
