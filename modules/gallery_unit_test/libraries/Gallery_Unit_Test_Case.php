@@ -29,4 +29,8 @@ class Gallery_Unit_Test_Case extends Unit_Test_Case {
     }
     return $this;
   }
+
+  public function assert_array_equal_to_json($expected_array, $actual_json, $debug=null) {
+    return $this->assert_equal_array($expected_array, json_decode($actual_json, true), $debug);
+  }
 }
