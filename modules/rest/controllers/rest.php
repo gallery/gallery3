@@ -47,11 +47,11 @@ class Rest_Controller extends Controller {
     $input = Input::instance();
     switch ($method = strtolower($input->server("REQUEST_METHOD"))) {
     case "get":
-      $request->params = (object) Input::instance()->get();
+      $request->params = (object) $input->get();
       break;
 
     case "post":
-      $request->params = (object) Input::instance()->post();
+      $request->params = (object) $input->post();
       if (isset($_FILES["file"])) {
         $request->file = upload::save("file");
       }
