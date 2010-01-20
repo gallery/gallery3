@@ -49,12 +49,6 @@ class rest_Core {
     identity::set_active_user($user);
   }
 
-  static function send_headers($exception) {
-    if (!headers_sent()) {
-      header("HTTP/1.1 " . $exception->getCode() . " " . $exception->getMessage());
-    }
-  }
-
   /**
    * Convert a REST url into an object.
    * Eg: "http://example.com/gallery3/index.php/rest/gallery/Family/Wedding" -> Item_Model
