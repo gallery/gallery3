@@ -27,15 +27,7 @@ class Rest_Controller extends Controller {
       throw new Rest_Exception("Forbidden", 403);
     }
 
-    $key = ORM::factory("user_access_token")
-      ->where("user_id", "=", $user->id)
-      ->find();
-    if (!$key->loaded()) {
-      $key->user_id = $user->id;
-      $key->access_key = md5($user->name . rand());
-      $key->save();
-    }
-
+    $key = rest::get_access_token($user->id);
     rest::reply($key->access_key);
  }
 

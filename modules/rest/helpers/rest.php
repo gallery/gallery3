@@ -49,6 +49,20 @@ class rest_Core {
     identity::set_active_user($user);
   }
 
+  static function get_access_token($user_id) {
+    $key = ORM::factory("user_access_token")
+      ->where("user_id", "=", $user_id)
+      ->find();
+
+    if (!$key->loaded()) {
+      $key->user_id = $user_id;
+      $key->access_key = md5(rand());
+      $key->save();
+    }
+    return $key;
+  }
+
+
   /**
    * Convert a REST url into an object.
    * Eg: "http://example.com/gallery3/index.php/rest/gallery/Family/Wedding" -> Item_Model
