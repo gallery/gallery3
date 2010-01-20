@@ -862,7 +862,7 @@ class Item_Model extends ORM_MPTT {
     switch($field) {
     case "mime_type":
       if ($this->is_movie()) {
-        $legal_values = array("video/flv", "video/mp4");
+        $legal_values = array("video/flv", "video/x-flv", "video/mp4");
       } if ($this->is_photo()) {
         $legal_values = array("image/jpeg", "image/gif", "image/png");
       }
