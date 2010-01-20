@@ -183,10 +183,10 @@ class access_Core {
   }
 
   /**
-   * Terminate immediately with an HTTP 503 Forbidden response.
+   * Terminate immediately with an HTTP 403 Forbidden response.
    */
   static function forbidden() {
-    throw new Exception("@todo FORBIDDEN", 503);
+    throw new Exception("@todo FORBIDDEN", 403);
   }
 
   /**
