@@ -22,6 +22,21 @@ class Item_Model extends ORM_MPTT {
   protected $sorting = array();
   protected $data_file = null;
 
+  public function __construct($id=null) {
+    parent::__construct($id);
+
+    if (!$this->loaded()) {
+      // Set reasonable defaults
+      $this->created = time();
+      $this->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
+      $this->thumb_dirty = 1;
+      $this->resize_dirty = 1;
+      $this->sort_column = "created";
+      $this->sort_order = "ASC";
+      $this->owner_id = identity::active_user()->id;
+    }
+  }
+
   /**
    * Add a set of restrictions to any following queries to restrict access only to items
    * viewable by the active user.
@@ -298,20 +313,12 @@ class Item_Model extends ORM_MPTT {
     if (!empty($this->changed) && $significant_changes) {
       $this->updated = time();
       if (!$this->loaded()) {
-        // Create a new item.  Use whatever fields are set, and specify defaults for the rest.
-        $this->created = $this->updated;
-        $this->weight = item::get_max_weight();
-        $this->rand_key = ((float)mt_rand()) / (float)mt_getrandmax();
-        $this->thumb_dirty = 1;
-        $this->resize_dirty = 1;
-        if (empty($this->sort_column)) {
-          $this->sort_column = "created";
-        }
-        if (empty($this->sort_order)) {
-          $this->sort_order = "ASC";
-        }
-        if (empty($this->owner_id)) {
-          $this->owner_id = identity::active_user()->id;
+        // Create a new item.
+
+        // Set a weight if it's missing.  We don't do this in the constructor because it's not a
+        // simple assignment.
+        if (empty($this->weight)) {
+          $this->weight = item::get_max_weight();
         }
 
         // Make an url friendly slug from the name, if necessary
@@ -829,15 +836,20 @@ class Item_Model extends ORM_MPTT {
         $v->add_error("parent_id", "invalid");
       }
     } else {
-      if (db::build()
-          ->from("items")
-          ->where("id", "=", $this->parent_id)
-          ->where("type", "=", "album")
-          ->and_open()
+      $query = db::build()
+        ->from("items")
+        ->where("id", "=", $this->parent_id)
+        ->where("type", "=", "album");
+
+      // If this is an existing item, make sure the new parent is not part of our hierarchy
+      if ($this->loaded()) {
+        $query->and_open()
           ->where("left_ptr", "<", $this->left_ptr)
           ->or_where("right_ptr", ">", $this->right_ptr)
-          ->close()
-          ->count_records() != 1) {
+          ->close();
+      }
+
+      if ($query->count_records() != 1) {
         $v->add_error("parent_id", "invalid");
       }
     }
