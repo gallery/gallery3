@@ -31,7 +31,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $controller = new Photos_Controller();
     $photo = test::random_photo();
 
-    $_POST["filename"] = "new name.jpg";
+    $_POST["name"] = "new name.jpg";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
     $_POST["slug"] = "new-slug";
@@ -55,7 +55,7 @@ class Photos_Controller_Test extends Unit_Test_Case {
     $controller = new Photos_Controller();
     $photo = test::random_photo();
 
-    $_POST["filename"] = "new name.jpg";
+    $_POST["name"] = "new name.jpg";
     $_POST["title"] = "new title";
     $_POST["description"] = "new description";
     $_POST["slug"] = "new slug";

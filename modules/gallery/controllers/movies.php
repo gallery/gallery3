@@ -66,14 +66,11 @@ class Movies_Controller extends Items_Controller {
       $movie->title = $form->edit_item->title->value;
       $movie->description = $form->edit_item->description->value;
       $movie->slug = $form->edit_item->slug->value;
-      $movie->name = $form->edit_item->filename->value;
+      $movie->name = $form->edit_item->inputs["name"]->value;
       $movie->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
       foreach ($e->validation->errors() as $key => $error) {
-        if ($key == "name") {
-          $key = "filename";
-        }
         $form->edit_item->inputs[$key]->add_error($error, 1);
       }
       $valid = false;

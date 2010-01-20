@@ -30,7 +30,7 @@ class photo_Core {
     $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title);
     $group->textarea("description")->label(t("Description"))->value($photo->description);
-    $group->input("filename")->label(t("Filename"))->value($photo->name)
+    $group->input("name")->label(t("Filename"))->value($photo->name)
       ->error_messages("conflict", t("There is already a movie, photo or album with this name"))
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""))

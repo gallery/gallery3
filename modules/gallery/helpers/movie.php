@@ -30,7 +30,7 @@ class movie_Core {
     $group = $form->group("edit_item")->label(t("Edit Movie"));
     $group->input("title")->label(t("Title"))->value($movie->title);
     $group->textarea("description")->label(t("Description"))->value($movie->description);
-    $group->input("filename")->label(t("Filename"))->value($movie->name)
+    $group->input("name")->label(t("Filename"))->value($movie->name)
       ->error_messages(
         "conflict", t("There is already a movie, photo or album with this name"))
       ->error_messages("no_slashes", t("The movie name can't contain a \"/\""))

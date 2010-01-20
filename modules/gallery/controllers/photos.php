@@ -66,14 +66,11 @@ class Photos_Controller extends Items_Controller {
       $photo->title = $form->edit_item->title->value;
       $photo->description = $form->edit_item->description->value;
       $photo->slug = $form->edit_item->slug->value;
-      $photo->name = $form->edit_item->filename->value;
+      $photo->name = $form->edit_item->inputs["name"]->value;
       $photo->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
       foreach ($e->validation->errors() as $key => $error) {
-        if ($key == "name") {
-          $key = "filename";
-        }
         $form->edit_item->inputs[$key]->add_error($error, 1);
       }
       $valid = false;
