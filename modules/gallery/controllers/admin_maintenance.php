@@ -216,7 +216,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
                               "task" => array(
                                 "percent_complete" => $task->percent_complete,
                                 "status" => $task->status,
-                                "done" => $task->done),
+                                "done" => (bool) $task->done),
                               "location" => url::site("admin/maintenance")));
 
     } else {
@@ -224,7 +224,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
                               "task" => array(
                                 "percent_complete" => $task->percent_complete,
                                 "status" => $task->status,
-                                "done" => $task->done)));
+                                "done" => (bool) $task->done)));
     }
   }
 }
