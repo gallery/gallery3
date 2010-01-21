@@ -39,7 +39,8 @@ class item_Core {
       }
     }
 
-    $source->move_to($target);
+    $source->parent_id = $target->id;
+    $source->save();
 
     // If the target has no cover item, make this it.
     if ($target->album_cover_item_id == null)  {
@@ -59,7 +60,8 @@ class item_Core {
     $parent->save();
     graphics::generate($parent);
     $grand_parent = $parent->parent();
-    if (access::can("edit", $grand_parent) && $grand_parent->album_cover_item_id == null)  {
+    if ($grand_parent && access::can("edit", $grand_parent) &&
+        $grand_parent->album_cover_item_id == null)  {
       item::make_album_cover($parent);
     }
   }
