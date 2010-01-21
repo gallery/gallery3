@@ -75,6 +75,10 @@ class rest_Core {
     $path = parse_url($relative_url, PHP_URL_PATH);
     $components = explode("/", $path, 3);
 
+    if (count($components) != 3) {
+      throw new Kohana_404_Exception($url);
+    }
+
     $class = "$components[1]_rest";
     if (!method_exists($class, "resolve")) {
       throw new Kohana_404_Exception($url);
