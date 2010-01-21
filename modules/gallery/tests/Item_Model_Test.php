@@ -149,16 +149,6 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_false(true, "rename should conflict");
   }
 
-  public function save_original_values_test() {
-    $item = test::random_photo_unsaved();
-    $item->title = "ORIGINAL_VALUE";
-    $item->save();
-    $item->title = "NEW_VALUE";
-
-    $this->assert_same("ORIGINAL_VALUE", $item->original()->title);
-    $this->assert_same("NEW_VALUE", $item->title);
-  }
-
   public function move_album_test() {
     $album2 = test::random_album();
     $album1 = test::random_album($album2);
