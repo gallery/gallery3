@@ -43,19 +43,6 @@ class tag_rest_Core {
 
   static function put($request) {
     $tag = rest::resolve($request->url);
-
-    if (isset($request->params->remove)) {
-      if (!is_array($request->params->remove)) {
-        throw new Exception("Bad request", 400);
-      }
-
-      foreach ($request->params->remove as $item_url) {
-        $item = rest::resolve($item_url);
-        access::required("edit", $item);
-        $tag->remove($item);
-      }
-    }
-
     if (isset($request->params->name)) {
       $tag->name = $request->params->name;
     }
@@ -73,11 +60,10 @@ class tag_rest_Core {
     } else {
       // Remove an item from the tag
       $item = rest::resolve($request->params->url);
+      access::required("edit", $item);
       $tag->remove($item);
       $tag->save();
-
       tag::compact();
-      return array("url" => rest::url("tag", $tag));
     }
   }
 
