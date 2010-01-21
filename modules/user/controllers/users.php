@@ -43,7 +43,7 @@ class Users_Controller extends Controller {
     }
 
     if ($valid) {
-      if ($user->original()->locale != $user->locale) {
+      if (isset($user->changed["locale"])) {
         // Delete the session based locale preference
         setcookie("g_locale", "", time() - 24 * 3600, "/");
       }
