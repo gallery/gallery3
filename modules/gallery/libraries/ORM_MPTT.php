@@ -227,7 +227,7 @@ class ORM_MPTT_Core extends ORM {
    * @param   Item_Model $target Target node
    * @return  ORM_MTPP
    */
-  function move_to($target) {
+  protected function move_to($target) {
     if ($this->contains($target)) {
       throw new Exception("@todo INVALID_TARGET can't move item inside itself");
     }
