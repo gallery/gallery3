@@ -25,9 +25,48 @@ class Admin_Modules_Controller extends Admin_Controller {
     print $view;
   }
 
+
+  public function confirm() {
+    access::verify_csrf();
+
+    $messages = array("error" => array(), "warn" => array());
+    $desired_list = array();
+    foreach (module::available() as $module_name => $info) {
+      if ($info->locked) {
+        continue;
+      }
+
+      if ($desired = Input::instance()->post($module_name) == 1) {
+        $desired_list[] = $module_name;
+      }
+      if ($info->active && !$desired && module::is_active($module_name)) {
+        $messages = array_merge($messages, module::can_deactivate($module_name));
+      } else if (!$info->active && $desired && !module::is_active($module_name)) {
+        $messages = array_merge($messages, module::check_environment($module_name));
+      }
+    }
+
+    if (empty($messages["error"]) && empty($messages["warn"])) {
+      $this->_do_save();
+      $result["reload"] = 1;
+    } else {
+      $v = new View("admin_modules_confirm.html");
+      $v->messages = $messages;
+      $v->modules = $desired_list;
+      $result["dialog"] = (string)$v;
+      $result["allow_continue"] = empty($messages["error"]);
+    }
+    print json_encode($result);
+  }
+
   public function save() {
     access::verify_csrf();
 
+    $this->_do_save();
+    url::redirect("admin/modules");
+  }
+
+  private function _do_save() {
     $changes->activate = array();
     $changes->deactivate = array();
     $activated_names = array();
@@ -45,6 +84,7 @@ class Admin_Modules_Controller extends Admin_Controller {
       } else if (!$info->active && $desired && !module::is_active($module_name)) {
         $changes->activate[] = $module_name;
         $activated_names[] = t($info->name);
+
         if (module::is_installed($module_name)) {
           module::upgrade($module_name);
         } else {
@@ -63,7 +103,6 @@ class Admin_Modules_Controller extends Admin_Controller {
     if ($deactivated_names) {
       message::success(t("Deactivated: %names", array("names" => join(", ", $deactivated_names))));
     }
-    url::redirect("admin/modules");
   }
 }
 
