@@ -102,13 +102,14 @@ class Comment_Model extends ORM {
         $this->server_remote_host = substr($input->server("REMOTE_HOST"), 0, 64);
         $this->server_remote_port = substr($input->server("REMOTE_PORT"), 0, 16);
       }
-      $visible_change = $this->original()->state == "published" || $this->state == "published";
+
+      $visible_change = $this->state == "published";
       parent::save();
       module::event("comment_created", $this);
     } else {
       // Updated comment
-      $visible_change = $this->original()->state == "published" || $this->state == "published";
-      $original = clone $this->original();
+      $original = ORM::factory("comment")->where("id", "=", $this->id)->find();
+      $visible_change = $original->state == "published" || $this->state == "published";
       parent::save();
       module::event("comment_updated", $original, $this);
     }
