@@ -22,6 +22,7 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
   public function viewable_test() {
     $album = test::random_album();
     $item = test::random_photo($album);
+    $album->reload();
     identity::set_active_user(identity::guest());
 
     // We can see the item when permissions are granted
