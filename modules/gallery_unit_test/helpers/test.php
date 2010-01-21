@@ -70,4 +70,12 @@ class test_Core {
     call_user_func($callback);
     return ob_get_clean();
   }
+
+  static function random_tag() {
+    $tag = ORM::factory("tag");
+    $tag->name = (string)rand();
+
+    // have to reload because ORM::load has string versions of values that we set as integers.
+    return $tag->save()->reload();
+  }
 }
