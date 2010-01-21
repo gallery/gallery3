@@ -37,9 +37,9 @@ class Admin_Users_Controller extends Admin_Controller {
       $user->full_name = $form->add_user->full_name->value;
       $user->password = $form->add_user->password->value;
       $user->email = $form->add_user->email->value;
-      $user->url = $form->edit_user->url->value;
+      $user->url = $form->add_user->url->value;
       $user->locale = $form->add_user->locale->value;
-      $user->admin = $form->edit_user->admin->checked;
+      $user->admin = $form->add_user->admin->checked;
       $user->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
