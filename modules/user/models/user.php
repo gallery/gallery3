@@ -96,7 +96,7 @@ class User_Model extends ORM implements User_Definition {
       module::event("user_created", $this);
     } else {
       // Updated user
-      $original = clone $this->original();
+      $original = ORM::factory("user")->where("id", "=", $this->id)->find();
       parent::save();
       module::event("user_updated", $original, $this);
     }
