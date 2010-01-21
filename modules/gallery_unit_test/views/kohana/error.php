@@ -1,20 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <?
-echo $error, "\n\n";
-if (!empty($description)) {
-  echo wordwrap($description, 80), "\n\n";
-}
-if (!empty($line) && !empty($file)) {
-  echo $file, "[", $line, "]:\n";
-}
-echo $message, "\n\n";
-
-if (!empty($trace)) {
-  $trace = preg_replace(
-    array('/<li>/', '/<(.*?)>/', '/&gt;/'),
-    array("  ",     '',          '>'),
-    $trace);
-  echo "Stack Trace:\n";
-  echo $trace, "\n";
-}
+echo $e->getMessage(), "\n";
+echo $e->getFile(), ":", $e->getLine(), "\n";
+echo $e->getTraceAsString(), "\n";
 
