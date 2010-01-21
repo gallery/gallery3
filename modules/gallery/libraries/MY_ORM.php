@@ -20,7 +20,7 @@
 class ORM extends ORM_Core {
   public function save() {
     model_cache::clear();
-    $result = parent::save();
+    return parent::save();
   }
 }
 
