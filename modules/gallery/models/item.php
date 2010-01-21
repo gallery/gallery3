@@ -415,65 +415,58 @@ class Item_Model extends ORM_MPTT {
       } else {
         // Update an existing item
 
-        // The new values have to be valid before we do anything with them.  If we make any
-        // other changes before we call parent::save() below, we'll have to validate those changes
-        // again.  But, we can't take any action on these values until we know they're ok so this
-        // is unavoidable.
-        if (!$this->_valid) {
-          $this->validate();
-        }
-
-        $original = clone $this->original();
-
-        if ($original->name != $this->name || $original->parent_id != $this->parent_id) {
-          // Get the old relative path for when we rename or move below
-          if (!isset($this->relative_path_cache)) {
-            $this->_build_relative_caches();  // but don't call save()
-          }
-          $before_save = clone $this;
+        // If any significant fields have changed, load up a copy of the original item and
+        // keep it around.
+        if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
+          $original = ORM::factory("item")->where("id", "=", $this->id)->find();
+          $original->_build_relative_caches();
           $this->relative_path_cache = null;
-        }
-
-        if ($original->slug != $this->slug) {
           $this->relative_url_cache = null;
         }
 
         parent::save();
 
-        if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
+        // Now update the filesystem and any database caches if there were significant value
+        // changes.  If anything past this point fails, then we'll have an inconsistent database
+        // so this code should be as robust as we can make it.
+        if (isset($original)) {
+          // Update the MPTT pointers, if necessary.  We have to do this before we generate any
+          // cached paths!
           if ($original->parent_id != $this->parent_id) {
-            // Move the ORM pointers around
             parent::move_to($this->parent());
           }
 
-          // Move all of the items associated data files
-          @rename($before_save->file_path(), $this->file_path());
-          if ($this->is_album()) {
-            @rename(dirname($before_save->resize_path()), dirname($this->resize_path()));
-            @rename(dirname($before_save->thumb_path()), dirname($this->thumb_path()));
-          } else {
-            @rename($before_save->resize_path(), $this->resize_path());
-            @rename($before_save->thumb_path(), $this->thumb_path());
+          if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
+            // Move all of the items associated data files
+            @rename($original->file_path(), $this->file_path());
+            if ($this->is_album()) {
+              @rename(dirname($original->resize_path()), dirname($this->resize_path()));
+              @rename(dirname($original->thumb_path()), dirname($this->thumb_path()));
+            } else {
+              @rename($original->resize_path(), $this->resize_path());
+              @rename($original->thumb_path(), $this->thumb_path());
+            }
+
+
+            if ($original->parent_id != $this->parent_id) {
+              // This will result in 2 events since we'll still fire the item_updated event below
+              module::event("item_moved", $this, $original->parent());
+            }
           }
 
-          if ($original->parent_id != $this->parent_id) {
-            // This will result in 2 events since we'll still fire the item_updated event below
-            module::event("item_moved", $this, $original->parent());
+          // Changing the name, slug or parent ripples downwards
+          if ($this->is_album() &&
+              ($original->name != $this->name ||
+               $original->slug != $this->slug ||
+               $original->parent_id != $this->parent_id)) {
+            db::build()
+              ->update("items")
+              ->set("relative_url_cache", null)
+              ->set("relative_path_cache", null)
+              ->where("left_ptr", ">", $this->left_ptr)
+              ->where("right_ptr", "<", $this->right_ptr)
+              ->execute();
           }
-        }
-
-        // Changing the name, slug or parent ripples downwards
-        if ($this->is_album() &&
-            ($original->name != $this->name ||
-             $original->slug != $this->slug ||
-             $original->parent_id != $this->parent_id)) {
-          db::build()
-            ->update("items")
-            ->set("relative_url_cache", null)
-            ->set("relative_path_cache", null)
-            ->where("left_ptr", ">", $this->left_ptr)
-            ->where("right_ptr", "<", $this->right_ptr)
-            ->execute();
         }
 
         module::event("item_updated", $original, $this);
@@ -784,27 +777,36 @@ class Item_Model extends ORM_MPTT {
       return;
     } else if (rtrim($this->name, ".") !== $this->name) {
       $v->add_error("name", "no_trailing_period");
-    } else if ($this->is_movie() || $this->is_photo()) {
-      if ($this->original()->loaded()) {
+      return;
+    }
+
+    if ($this->is_movie() || $this->is_photo()) {
+      if ($this->loaded()) {
         // Existing items can't change their extension
+        $original = ORM::factory("item")->where("id", "=", $this->id)->find();
         $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
-        $old_ext = pathinfo($this->original()->name, PATHINFO_EXTENSION);
+        $old_ext = pathinfo($original->name, PATHINFO_EXTENSION);
         if (strcasecmp($new_ext, $old_ext)) {
           $v->add_error("name", "illegal_data_file_extension");
+          return;
         }
       } else {
         // New items must have an extension
         if (!pathinfo($this->name, PATHINFO_EXTENSION)) {
           $v->add_error("name", "illegal_data_file_extension");
+          return;
         }
       }
-    } else if (db::build()
+    }
+
+    if (db::build()
         ->from("items")
         ->where("parent_id", "=", $this->parent_id)
         ->where("name", "=", $this->name)
         ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
         ->count_records()) {
       $v->add_error("name", "conflict");
+      return;
     }
   }
 
@@ -900,7 +902,7 @@ class Item_Model extends ORM_MPTT {
    * This field cannot be changed after it's been set.
    */
   public function read_only(Validation $v, $field) {
-    if ($this->original()->loaded() && $this->original()->$field != $this->$field) {
+    if ($this->loaded() && isset($this->changed[$field])) {
       $v->add_error($field, "read_only");
     }
   }

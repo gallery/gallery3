@@ -139,6 +139,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
 
     try {
       $item->name = $item2->name;
+      print "SAVE\n";
       $item->save();
     } catch (ORM_Validation_Exception $e) {
       $this->assert_true(in_array("conflict", $e->validation->errors()));
