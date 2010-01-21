@@ -186,7 +186,7 @@ class access_Core {
    * Terminate immediately with an HTTP 403 Forbidden response.
    */
   static function forbidden() {
-    throw new Exception("@todo FORBIDDEN", 403);
+    throw new Kohana_Exception("@todo FORBIDDEN", null, 403);
   }
 
   /**
