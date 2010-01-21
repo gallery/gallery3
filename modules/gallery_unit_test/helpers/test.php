@@ -75,7 +75,7 @@ class test_Core {
     $tag = ORM::factory("tag");
     $tag->name = (string)rand();
 
-    // have to reload because ORM::load has string versions of values that we set as integers.
+    // Reload so that ORM coerces all fields into strings.
     return $tag->save()->reload();
   }
 }
