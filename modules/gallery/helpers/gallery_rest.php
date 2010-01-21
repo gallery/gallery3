@@ -52,7 +52,7 @@ class gallery_rest_Core {
     }
 
     if (!in_array($p->scope, array("direct", "all"))) {
-      throw new Exception("Bad Request", 400);
+      throw new Rest_Exception("Bad Request", 400);
     }
 
     if ($p->scope == "direct") {
