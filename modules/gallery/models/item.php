@@ -447,7 +447,6 @@ class Item_Model extends ORM_MPTT {
               @rename($original->thumb_path(), $this->thumb_path());
             }
 
-
             if ($original->parent_id != $this->parent_id) {
               // This will result in 2 events since we'll still fire the item_updated event below
               module::event("item_moved", $this, $original->parent());
