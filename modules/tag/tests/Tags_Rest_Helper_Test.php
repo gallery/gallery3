@@ -22,24 +22,20 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       Database::instance()->query("TRUNCATE {tags}");
       Database::instance()->query("TRUNCATE {items_tags}");
-    } catch (Exception $e) { }
-    $this->_save = array($_GET, $_POST, $_SERVER);
-  }
-
-  public function teardown() {
-    list($_GET, $_POST, $_SERVER) = $this->_save;
+    } catch (Exception $e) {
+    }
   }
 
   public function get_test() {
-    tag::add(item::root(), "t1");
-    tag::add(item::root(), "t2");
+    $t1 = tag::add(item::root(), "t1");
+    $t2 = tag::add(item::root(), "t2");
 
     $request = new stdClass();
     $this->assert_equal_array(
       array(
         "members" => array(
-          "t1" => rest::url("tag", ORM::factory("tag")->where("name", "=", "t1")->find()),
-          "t2" => rest::url("tag", ORM::factory("tag")->where("name", "=", "t2")->find()))),
+          rest::url("tag", $t1),
+          rest::url("tag", $t2))),
       tags_rest::get($request));
   }
 
@@ -48,7 +44,7 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
     $request->params->name = "test tag";
     $this->assert_equal(
-      array("url" => url::site("rest/tag/test%20tag")),
+      array("url" => url::site("rest/tag/1")),
       tags_rest::post($request));
   }
 
