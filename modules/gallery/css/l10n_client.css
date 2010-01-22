@@ -184,7 +184,9 @@
 }
 
 #l10n-client-string-editor .translation {
-  overflow:hidden;
+  overflow-y:auto;
+  overflow-x: hidden;
+  height: 20em;
   width:49%;
   float: right;
 }
