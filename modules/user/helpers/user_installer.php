@@ -20,6 +20,13 @@
 class user_installer {
   static function install() {
     $db = Database::instance();
+    $current_provider = module::get_var("gallery", "identity_provider");
+    if (!empty($current_provider)) {
+      module::uninstall($current_provider);
+    }
+    IdentityProvider::reset();
+    module::set_var("gallery", "identity_provider", "user");
+
     $db->query("CREATE TABLE IF NOT EXISTS {users} (
                  `id` int(9) NOT NULL auto_increment,
                  `name` varchar(32) NOT NULL,
@@ -70,19 +77,6 @@ class user_installer {
     $admin->admin = true;
     $admin->save();
 
-    $current_provider = module::get_var("gallery", "identity_provider");
-    if (empty($current_provider)) {
-      // If there is no provider defined then we are doing an initial install
-      // so we need to set the provider and make the administrator own everything
-      // If the installer is called and there is an identity provider, then we
-      // are switching identity providers and and the event handlers will do the
-      // right things
-      module::set_var("gallery", "identity_provider", "user");
-
-      // Let the admin own everything
-      $db->query("update {items} set owner_id = {$admin->id}");
-    }
-
     $root = ORM::factory("item", 1);
     access::allow($everybody, "view", $root);
     access::allow($everybody, "view_full", $root);
@@ -93,6 +87,10 @@ class user_installer {
     module::set_var("user", "mininum_password_length", 5);
 
     module::set_version("user", 2);
+    module::event("identity_provider_changed", $current_provider, "user");
+
+    auth::login(IdentityProvider::instance()->admin_user());
+    Session::instance()->regenerate();
   }
 
   static function upgrade($version) {

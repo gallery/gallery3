@@ -30,21 +30,23 @@ class gallery_event_Core {
 
   static function user_deleted($user) {
     $admin = identity::admin_user();
-    db::build()
-      ->update("tasks")
-      ->set("owner_id", $admin->id)
-      ->where("owner_id", "=", $user->id)
-      ->execute();
-    db::build()
-      ->update("items")
-      ->set("owner_id", $admin->id)
-      ->where("owner_id", "=", $user->id)
-      ->execute();
-    db::build()
-      ->update("logs")
-      ->set("user_id", $admin->id)
-      ->where("user_id", "=", $user->id)
-      ->execute();
+    if (!empty($admin)) {          // could be empty if there is not identity provider
+      db::build()
+        ->update("tasks")
+        ->set("owner_id", $admin->id)
+        ->where("owner_id", "=", $user->id)
+        ->execute();
+      db::build()
+        ->update("items")
+        ->set("owner_id", $admin->id)
+        ->where("owner_id", "=", $user->id)
+        ->execute();
+      db::build()
+        ->update("logs")
+        ->set("user_id", $admin->id)
+        ->where("user_id", "=", $user->id)
+        ->execute();
+    }
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
