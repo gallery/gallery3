@@ -305,7 +305,7 @@ class gallery_event_Core {
           ->append(
             Menu::factory("ajax_link")
             ->id("rotate_ccw")
-            ->label(t("Rotate 90&deg; counter clockwise"))
+            ->label(t("Rotate 90° counter clockwise"))
             ->css_class("ui-icon-rotate-ccw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
@@ -313,7 +313,7 @@ class gallery_event_Core {
           ->append(
             Menu::factory("ajax_link")
             ->id("rotate_cw")
-            ->label(t("Rotate 90&deg; clockwise"))
+            ->label(t("Rotate 90° clockwise"))
             ->css_class("ui-icon-rotate-cw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
