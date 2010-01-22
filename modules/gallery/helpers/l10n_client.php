@@ -68,9 +68,15 @@ class l10n_client_Core {
   }
 
   /**
-   * @return an array of messages that will be written to the task log
+   * Fetches translations for l10n messages. Must be called repeatedly
+   * until 0 is returned (which is a countdown indicating progress).
+   *
+   * @param $num_fetched in/out parameter to specify which batch of
+   *     messages to fetch translations for.
+   * @return The number of messages for which we didn't fetch
+   *     translations for.
    */
-  static function fetch_updates() {
+  static function fetch_updates(&$num_fetched) {
     $request->locales = array();
     $request->messages = new stdClass();
 
@@ -79,22 +85,41 @@ class l10n_client_Core {
       $request->locales[] = $locale;
     }
 
-    // @todo Batch requests (max request size)
-    foreach (db::build()
-             ->select("key", "locale", "revision", "translation")
-             ->from("incoming_translations")
-             ->execute() as $row) {
+    // See the server side code for how we arrive at this
+    // number as a good limit for #locales * #messages.
+    $max_messages = 2000 / count($locales);
+    $num_messages = 0;
+    $rows = db::build()
+        ->select("key", "locale", "revision", "translation")
+        ->from("incoming_translations")
+        ->order_by("key")
+        ->limit(1000000)  // ignore, just there to satisfy SQL syntax
+        ->offset($num_fetched)
+        ->execute();
+    $num_remaining = $rows->count();
+    foreach ($rows as $row) {
       if (!isset($request->messages->{$row->key})) {
+        if ($num_messages >= $max_messages) {
+          break;
+        }
         $request->messages->{$row->key} = 1;
+        $num_messages++;
       }
-      if (!empty($row->revision) && !empty($row->translation)) {
+      if (!empty($row->revision) && !empty($row->translation) &&
+          isset($locales[$row->locale])) {
         if (!is_object($request->messages->{$row->key})) {
           $request->messages->{$row->key} = new stdClass();
         }
-        $request->messages->{$row->key}->{$row->locale} = $row->revision;
+        $request->messages->{$row->key}->{$row->locale} = (int) $row->revision;
       }
+      $num_fetched++;
+      $num_remaining--;
     }
     // @todo Include messages from outgoing_translations?
+
+    if (!$num_messages) {
+      return $num_remaining;
+    }
 
     $request_data = json_encode($request);
     $url = self::_server_url() . "?q=translations/fetch";
@@ -103,7 +128,7 @@ class l10n_client_Core {
       throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED " . $response_status);
     }
     if (empty($response_data)) {
-      return array(t("Translations fetch request resulted in an empty response"));
+      return $num_remaining;
     }
 
     $response = json_decode($response_data);
@@ -150,6 +175,8 @@ class l10n_client_Core {
       $entry->translation = $translation;
       $entry->save();
     }
+
+    return $num_remaining;
   }
 
   static function submit_translations() {
