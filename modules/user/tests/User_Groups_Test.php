@@ -19,32 +19,9 @@
  */
 
 class User_Groups_Test extends Gallery_Unit_Test_Case {
-  public function teardown() {
-    try {
-      $group = ORM::factory("group")->where("name", "=", "user_groups_test")->find();
-      if ($group->loaded()) {
-        $group->delete();
-      }
-    } catch (Exception $e) { }
-
-    try {
-      $user = ORM::factory("user")->where("name", "=", "user_groups_test")->find();
-      if ($user->loaded()) {
-        $user->delete();
-      }
-    } catch (Exception $e) { }
-  }
-
   public function add_user_to_group_test() {
-    $user = ORM::factory("user");
-    $user->name = "user_groups_test";
-    $user->full_name = "user groups test";
-    $user->password = "test password";
-    $user->save();
-
-    $group = ORM::factory("group");
-    $group->name = "user_groups_test";
-    $group->save();
+    $user = test::random_user();
+    $group = test::random_group();
 
     $group->add($user);
     $group->save();
