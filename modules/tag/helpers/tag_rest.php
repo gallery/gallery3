@@ -31,6 +31,7 @@ class tag_rest_Core {
       "url" => $request->url,
       "resource" => $tag->as_array(),
       "relationships" => array(
+        "url" => rest::url("tag_items", $tag),
         "items" => $tag_items));
   }
 
@@ -67,7 +68,10 @@ class tag_rest_Core {
       foreach (tag::item_tags($resource) as $tag) {
         $tags[] = rest::url("tag_item", $tag, $resource);
       }
-      return array("tags" => $tags);
+      return array(
+        "tags" => array(
+          "url" => rest::url("item_tags", $resource),
+          "members" => $tags));
     }
   }
 
