@@ -122,7 +122,7 @@ class gallery_task_Core {
       $start = microtime(true);
       $data = Cache::instance()->get("update_l10n_cache:{$task->id}");
       if ($data) {
-        list($dirs, $files, $cache) = unserialize($data);
+        list($dirs, $files, $cache, $num_fetched) = unserialize($data);
       }
       $i = 0;
 
@@ -130,6 +130,7 @@ class gallery_task_Core {
       case "init":  // 0%
         $dirs = array("gallery", "modules", "themes", "installer");
         $files = $cache = array();
+        $num_fetched = 0;
         $task->set("mode", "find_files");
         $task->status = t("Finding files");
         break;
@@ -161,7 +162,7 @@ class gallery_task_Core {
         }
         break;
 
-      case "scan_files": // 10% - 90%
+      case "scan_files": // 10% - 70%
         while (($file = array_pop($files)) && microtime(true) - $start < 0.5) {
           $file = DOCROOT . $file;
           switch (pathinfo($file, PATHINFO_EXTENSION)) {
@@ -179,25 +180,31 @@ class gallery_task_Core {
         $task->status = t2("Scanning files: scanned 1 file",
                            "Scanning files: scanned %count files", $total_files - count($files));
 
-        $task->percent_complete = 10 + 80 * ($total_files - count($files)) / $total_files;
+        $task->percent_complete = 10 + 60 * ($total_files - count($files)) / $total_files;
         if (empty($files)) {
           $task->set("mode", "fetch_updates");
           $task->status = t("Fetching updates");
-          $task->percent_complete = 90;
+          $task->percent_complete = 70;
         }
         break;
 
-      case "fetch_updates":  // 90% - 100%
-        l10n_client::fetch_updates();
-        $task->done = true;
-        $task->state = "success";
-        $task->status = t("Translations installed/updated");
-        $task->percent_complete = 100;
+      case "fetch_updates":  // 70% - 100%
+        // Send fetch requests in batches until we're done
+        $num_remaining = l10n_client::fetch_updates($num_fetched);
+        if ($num_remaining) {
+          $total = $num_fetched + $num_remaining;
+          $task->percent_complete = 70 + 30 * ((float) $num_fetched / $total);
+        } else {
+          $task->done = true;
+          $task->state = "success";
+          $task->status = t("Translations installed/updated");
+          $task->percent_complete = 100;
+        }
       }
 
-      if ($task->percent_complete < 100) {
+      if (!$task->done) {
         Cache::instance()->set("update_l10n_cache:{$task->id}",
-                               serialize(array($dirs, $files, $cache)));
+                               serialize(array($dirs, $files, $cache, $num_fetched)));
       } else {
         Cache::instance()->delete("update_l10n_cache:{$task->id}");
       }
