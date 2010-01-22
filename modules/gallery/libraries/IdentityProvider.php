@@ -58,6 +58,35 @@ class IdentityProvider_Core {
   }
 
   /**
+   * Return a commen confirmation message
+   */
+  static function confirmation_message() {
+    return t("Are you sure you want to change your Identity Provider? " .
+             "Continuing will delete all existing users.");
+  }
+
+  static function change_provider($new_provider) {
+    $current_provider = module::get_var("gallery", "identity_provider");
+    if (!empty($current_provider)) {
+      module::uninstall($current_provider);
+    }
+
+    IdentityProvider::reset();
+    $provider = new IdentityProvider($new_provider);
+
+    module::set_var("gallery", "identity_provider", $new_provider);
+
+    if (method_exists("{$new_provider}_installer", "initialize")) {
+      call_user_func("{$new_provider}_installer::initialize");
+    }
+
+    module::event("identity_provider_changed", $current_provider, $new_provider);
+
+    auth::login($provider->admin_user());
+    Session::instance()->regenerate();
+  }
+
+  /**
    * Loads the configured driver and validates it.
    *
    * @return  void

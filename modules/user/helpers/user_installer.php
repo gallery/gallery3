@@ -18,15 +18,40 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_installer {
-  static function install() {
-    $db = Database::instance();
-    $current_provider = module::get_var("gallery", "identity_provider");
-    if (!empty($current_provider)) {
-      module::uninstall($current_provider);
-    }
-    IdentityProvider::reset();
-    module::set_var("gallery", "identity_provider", "user");
+  static function check_environment() {
+    return array("warn" => array(IdentityProvider::confirmation_message()));
+  }
 
+  static function install() {
+    IdentityProvider::change_provider("user");
+  }
+
+  static function upgrade($version) {
+    if ($version == 1) {
+      module::set_var("user", "mininum_password_length", 5);
+
+      module::set_version("user", $version = 2);
+    }
+  }
+
+  static function uninstall() {
+    // Delete all users and groups so that we give other modules an opportunity to clean up
+    foreach (ORM::factory("user")->find_all() as $user) {
+      $user->delete();
+    }
+
+    foreach (ORM::factory("group")->find_all() as $group) {
+      $group->delete();
+    }
+
+    $db = Database::instance();
+    $db->query("DROP TABLE IF EXISTS {users};");
+    $db->query("DROP TABLE IF EXISTS {groups};");
+    $db->query("DROP TABLE IF EXISTS {groups_users};");
+  }
+
+  static function initialize() {
+    $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {users} (
                  `id` int(9) NOT NULL auto_increment,
                  `name` varchar(32) NOT NULL,
@@ -84,36 +109,7 @@ class user_installer {
     access::allow($registered, "view", $root);
     access::allow($registered, "view_full", $root);
 
-    module::set_var("user", "mininum_password_length", 5);
-
     module::set_version("user", 2);
-    module::event("identity_provider_changed", $current_provider, "user");
-
-    auth::login(IdentityProvider::instance()->admin_user());
-    Session::instance()->regenerate();
-  }
-
-  static function upgrade($version) {
-    if ($version == 1) {
-      module::set_var("user", "mininum_password_length", 5);
-
-      module::set_version("user", $version = 2);
-    }
-  }
-
-  static function uninstall() {
-    // Delete all users and groups so that we give other modules an opportunity to clean up
-    foreach (ORM::factory("user")->find_all() as $user) {
-      $user->delete();
-    }
-
-    foreach (ORM::factory("group")->find_all() as $group) {
-      $group->delete();
-    }
-
-    $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {users};");
-    $db->query("DROP TABLE IF EXISTS {groups};");
-    $db->query("DROP TABLE IF EXISTS {groups_users};");
+    module::set_var("user", "mininum_password_length", 5);
   }
 }
