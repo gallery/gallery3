@@ -91,16 +91,10 @@ class tag_Core {
    * @return array
    */
   static function item_tags($item) {
-    $tags = array();
-    foreach (db::build()
-             ->select("name")
-             ->from("tags")
-             ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
-             ->where("items_tags.item_id", "=", $item->id)
-             ->execute() as $row) {
-      $tags[] = $row->name;
-    }
-    return $tags;
+    return ORM::factory("tag")
+      ->join("items_tags", "tags.id", "items_tags.tag_id", "left")
+      ->where("items_tags.item_id", "=", $item->id)
+      ->find_all();
   }
 
   static function get_add_form($item) {

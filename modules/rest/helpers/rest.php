@@ -22,8 +22,16 @@ class rest_Core {
     Session::abort_save();
 
     if ($data) {
-      header("Content-type: application/json");
-      print json_encode($data);
+      if (Input::instance()->get("output_type") == "html") {
+        header("Content-type: text/html");
+        $html = preg_replace(
+          "#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)#ise", "'\\1<a href=\"\\2\" >\\2</a>'",
+          print_r($data, 1));
+        print "<pre>$html</pre>";
+      } else {
+        header("Content-type: application/json");
+        print json_encode($data);
+      }
     }
   }
 
@@ -64,7 +72,10 @@ class rest_Core {
 
   /**
    * Convert a REST url into an object.
-   * Eg: "http://example.com/gallery3/index.php/rest/gallery/Family/Wedding" -> Item_Model
+   * Eg:
+   *   http://example.com/gallery3/index.php/rest/item/35          -> Item_Model
+   *   http://example.com/gallery3/index.php/rest/tag/16           -> Tag_Model
+   *   http://example.com/gallery3/index.php/rest/tagged_item/1,16 -> [Tag_Model, Item_Model]
    *
    * @param string  the fully qualified REST url
    * @return mixed  the corresponding object (usually a model of some kind)
@@ -88,15 +99,38 @@ class rest_Core {
 
   /**
    * Return an absolute url used for REST resource location.
-   * @param  string  module name (eg, "gallery", "tags")
+   * @param  string  resource type (eg, "item", "tag")
    * @param  object  resource
    */
-  static function url($module, $resource) {
-    $class = "{$module}_rest";
+  static function url() {
+    $args = func_get_args();
+    $resource_type = array_shift($args);
+
+    $class = "{$resource_type}_rest";
     if (!method_exists($class, "url")) {
-      throw new Exception("@todo MISSING REST CLASS: $class");
+      throw new Rest_Exception("Bad Request", 400);
     }
 
-    return call_user_func(array($class, "url"), $resource);
+    $url = call_user_func_array(array($class, "url"), $args);
+    if (Input::instance()->get("output_type") == "html") {
+      $url .= "?output_type=html";
+    }
+    return $url;
+  }
+
+  static function relationships($resource_type, $resource) {
+    $results = array();
+    foreach (module::active() as $module) {
+      foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
+        $class = str_replace(".php", "", basename($filename));
+        if (method_exists($class, "relationships")) {
+          $results = array_merge(
+            $results,
+            call_user_func(array($class, "relationships"), $resource_type, $resource));
+        }
+      }
+    }
+
+    return $results;
   }
 }

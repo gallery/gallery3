@@ -20,12 +20,18 @@
 class tag_rest_Core {
   static function get($request) {
     $tag = rest::resolve($request->url);
-    $items = array();
+    $tag_items = array();
     foreach ($tag->items() as $item) {
-      $items[] = rest::url("gallery", $item);
+      if (access::can("view", $item)) {
+        $tag_items[] = rest::url("tag_item", $tag, $item);
+      }
     }
 
-    return array("resource" => $tag->as_array(), "members" => $items);
+    return array(
+      "url" => $request->url,
+      "resource" => $tag->as_array(),
+      "relationships" => array(
+        "items" => $tag_items));
   }
 
   static function post($request) {
@@ -38,37 +44,34 @@ class tag_rest_Core {
     access::required("edit", $item);
 
     tag::add($item, $tag->name);
-    return array("url" => rest::url("tag", $tag));
   }
 
   static function put($request) {
     $tag = rest::resolve($request->url);
     if (isset($request->params->name)) {
       $tag->name = $request->params->name;
+      $tag->save();
     }
-
-    $tag->save();
-    return array("url" => rest::url("tag", $tag));
   }
 
   static function delete($request) {
     $tag = rest::resolve($request->url);
+    $tag->delete();
+  }
 
-    if (empty($request->params->url)) {
-      // Delete the tag
-      $tag->delete();
-    } else {
-      // Remove an item from the tag
-      $item = rest::resolve($request->params->url);
-      access::required("edit", $item);
-      $tag->remove($item);
-      $tag->save();
-      tag::compact();
+  static function relationships($resource_type, $resource) {
+    switch ($resource_type) {
+    case "item":
+      $tags = array();
+      foreach (tag::item_tags($resource) as $tag) {
+        $tags[] = rest::url("tag_item", $tag, $resource);
+      }
+      return array("tags" => $tags);
     }
   }
 
-  static function resolve($tag_name) {
-    $tag = ORM::factory("tag")->where("name", "=", $tag_name)->find();
+  static function resolve($id) {
+    $tag = ORM::factory("tag")->where("id", "=", $id)->find();
     if (!$tag->loaded()) {
       throw new Kohana_404_Exception();
     }
@@ -77,6 +80,6 @@ class tag_rest_Core {
   }
 
   static function url($tag) {
-    return url::abs_site("rest/tag/" . rawurlencode($tag->name));
+    return url::abs_site("rest/tag/{$tag->id}");
   }
 }

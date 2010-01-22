@@ -17,32 +17,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class tags_rest_Core {
+class tag_item_rest_Core {
   static function get($request) {
-    $tags = array();
-    foreach (ORM::factory("tag")->find_all() as $tag) {
-      $tags[] = rest::url("tag", $tag);
-    }
-    return array("members" => $tags);
+    list ($tag, $item) = rest::resolve($request->url);
+    return array(
+      "url" => $request->url,
+      "members" => array(
+        rest::url("tag", $tag),
+        rest::url("item", $item)));
   }
 
-  static function post($request) {
-    // @todo: what permission should be required to create a tag here?
-    // for now, require edit at the top level.  Perhaps later, just require any edit perms,
-    // anywhere in the gallery?
-    access::required("edit", item::root());
+  static function delete($request) {
+    list ($tag, $item) = rest::resolve($request->url);
+    $tag->remove($item);
+    $tag->save();
+  }
 
-    if (empty($request->params->name)) {
-      throw new Rest_Exception("Bad Request", 400);
+  static function resolve($tuple) {
+    list ($tag_id, $item_id) = split(",", $tuple);
+    $tag = ORM::factory("tag")->where("id", "=", $tag_id)->find();
+    $item = ORM::factory("item")->where("id", "=", $item_id)->find();
+    if (!$tag->loaded() || !$item->loaded() || !$tag->has($item)) {
+      throw new Kohana_404_Exception();
     }
 
-    $tag = ORM::factory("tag")->where("name", "=", $request->params->name)->find();
-    if (!$tag->loaded()) {
-      $tag->name = $request->params->name;
-      $tag->count = 0;
-      $tag->save();
-    }
+    return array($tag, $item);
+  }
 
-    return array("url" => rest::url("tag", $tag));
+  static function url($tag, $item) {
+    return url::abs_site("rest/tag_item/{$tag->id},{$item->id}");
   }
 }

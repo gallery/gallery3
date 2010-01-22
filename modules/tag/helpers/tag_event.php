@@ -71,9 +71,13 @@ class tag_event_Core {
                 $('form input[id=tags]').autocomplete(
                   '$url', {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1});
               });");
-    $tag_value = implode(", ", tag::item_tags($item));
+
+    $tag_names = array();
+    foreach (tag::item_tags($item) as $tag) {
+      $tag_names[] = $tag->name;
+    }
     $form->edit_item->input("tags")->label(t("Tags (comma separated)"))
-      ->value($tag_value);
+      ->value(implode(", ", $tag_names));
   }
 
   static function item_edit_form_completed($item, $form) {
@@ -95,7 +99,9 @@ class tag_event_Core {
   }
 
   static function item_index_data($item, $data) {
-    $data[] = join(" ", tag::item_tags($item));
+    foreach (tag::item_tags($item) as $tag) {
+      $data[] = $tag->name;
+    }
   }
 
   static function add_photos_form($album, $form) {

@@ -56,7 +56,7 @@ class Rest_Controller extends Controller {
     $handler_method = $request->method;
 
     if (!method_exists($handler_class, $handler_method)) {
-      throw new Rest_Exception("Forbidden", 403);
+      throw new Rest_Exception("Bad Request", 400);
     }
 
     try {

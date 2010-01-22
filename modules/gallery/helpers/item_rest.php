@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class gallery_rest_Core {
+class item_rest_Core {
   /**
    * For items that are collections, you can specify the following additional query parameters to
    * query the collection.  You can specify them in any combination.
@@ -72,10 +72,14 @@ class gallery_rest_Core {
 
     $members = array();
     foreach ($orm->find_all() as $child) {
-      $members[] = rest::url("gallery", $child);
+      $members[] = rest::url("item", $child);
     }
 
-    return array("resource" => $item->as_array(), "members" => $members);
+    return array(
+      "url" => $request->url,
+      "resource" => $item->as_array(),
+      "members" => $members,
+      "relationships" => rest::relationships("item", $item));
   }
 
   static function put($request) {
@@ -94,9 +98,9 @@ class gallery_rest_Core {
         $item->$key = $request->params->$key;
       }
     }
-    $item->save();
-
-    return array("url" => rest::url("gallery", $item));
+    if ($item->changed) {
+      $item->save();
+    }
   }
 
   static function post($request) {
@@ -131,8 +135,6 @@ class gallery_rest_Core {
     default:
       throw new Rest_Exception("Invalid type: $params->type", 400);
     }
-
-    return array("url" => rest::url("gallery", $item));
   }
 
   static function delete($request) {
@@ -142,11 +144,15 @@ class gallery_rest_Core {
     $item->delete();
   }
 
-  static function resolve($path) {
-    return url::get_item_from_uri($path);
+  static function resolve($id) {
+    $item = ORM::factory("item")->where("id", "=", $id)->find();
+    if (!access::can("view", $item)) {
+      throw new Kohana_404_Exception();
+    }
+    return $item;
   }
 
   static function url($item) {
-    return url::abs_site("rest/gallery/" . $item->relative_url());
+    return url::abs_site("rest/item/{$item->id}");
   }
 }
