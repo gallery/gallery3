@@ -20,8 +20,8 @@ modules/gallery/controllers/simple_uploader.php              start              
 modules/gallery/controllers/simple_uploader.php              finish               DIRTY_AUTH
 modules/gallery/controllers/upgrader.php                     index                DIRTY_AUTH
 modules/gallery/controllers/welcome_message.php              index                DIRTY_AUTH
-modules/rest/controllers/rest.php                            access_key           DIRTY_CSRF|DIRTY_AUTH
-modules/rest/controllers/rest.php                            __call               DIRTY_AUTH
+modules/rest/controllers/rest.php                            index                DIRTY_CSRF|DIRTY_AUTH
+modules/rest/controllers/rest.php                            __call               DIRTY_CSRF|DIRTY_AUTH
 modules/rss/controllers/rss.php                              feed                 DIRTY_CSRF|DIRTY_AUTH
 modules/search/controllers/search.php                        index                DIRTY_CSRF|DIRTY_AUTH
 modules/server_add/controllers/admin_server_add.php          autocomplete         DIRTY_CSRF
