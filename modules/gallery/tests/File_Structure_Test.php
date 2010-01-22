@@ -36,7 +36,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
     $dir = new GalleryCodeFilterIterator(
       new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DOCROOT)));
     foreach ($dir as $file) {
-      if (strpos($file, "modules/gallery/views/kohana/error.php")) {
+      if (strpos($file, "views/kohana/error.php")) {
         continue;
       }
 
