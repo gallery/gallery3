@@ -98,9 +98,7 @@ class item_rest_Core {
         $item->$key = $request->params->$key;
       }
     }
-    if ($item->changed) {
-      $item->save();
-    }
+    $item->save();
   }
 
   static function post($request) {
@@ -135,6 +133,8 @@ class item_rest_Core {
     default:
       throw new Rest_Exception("Invalid type: $params->type", 400);
     }
+
+    return array("url" => rest::url("item", $item));
   }
 
   static function delete($request) {
