@@ -48,7 +48,7 @@ class Photos_Controller_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal("new-slug", $photo->slug);
     $this->assert_equal("new title", $photo->title);
     $this->assert_equal("new description", $photo->description);
-    $this->assert_equal("new name.jpeg", $photo->name);
+    $this->assert_equal("new name.jpg", $photo->name);
   }
 
   public function change_photo_no_csrf_fails_test() {
