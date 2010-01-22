@@ -18,12 +18,12 @@
             height: 400,
             width: 500,
             position: "center",
-            title: "Confirm Module Activation",
+            title: <?= t("Confirm Module Activation")->for_js() ?>,
             buttons: {
-              "Continue": function() {
+              <?= t("Continue")->for_js() ?>: function() {
                 $("form", this).submit();
               },
-              Cancel: function() {
+              <?= t("Cancel")->for_js() ?>: function() {
                 $(this).dialog("destroy").remove();
               }
             }

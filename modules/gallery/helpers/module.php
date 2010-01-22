@@ -122,6 +122,7 @@ class module_Core {
   /**
    * Check that the module can be installed. (i.e. all the prerequistes exist)
    * @param string $module_name
+   * @return array an array of warning or error messages to be displayed
    */
   static function check_environment($module_name) {
     module::_add_to_path($module_name);
@@ -132,14 +133,15 @@ class module_Core {
       $messages = call_user_func(array($installer_class, "check_environment"));
     }
 
-    // Now the module is installed but inactive, so don't leave it in the active path
+    // Remove it from the active path
     module::_remove_from_path($module_name);
     return $messages;
   }
 
   /**
-   * Check that the module can be installed. (i.e. all the prerequistes exist)
+   * Allow modules to indicate the impact of deactivating the specifeid module
    * @param string $module_name
+   * @return array an array of warning or error messages to be displayed
    */
   static function can_deactivate($module_name) {
     $data = (object)array("module" => $module_name, "messages" => array());
