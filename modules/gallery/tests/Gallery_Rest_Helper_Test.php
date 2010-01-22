@@ -194,6 +194,7 @@ class Gallery_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function delete_album_fails_without_permission_test() {
     $album1 = test::random_album();
+    access::deny(identity::everybody(), "edit", $album1);
 
     $request->url = rest::url("gallery", $album1);
     try {
