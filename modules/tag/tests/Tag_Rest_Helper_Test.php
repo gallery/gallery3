@@ -124,6 +124,8 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $tag = tag::add($album, "tag1");
     $this->assert_equal(1, $tag->items()->count());
 
+    access::deny(identity::everybody(), "edit", $album);
+
     $request->url = rest::url("tag", $tag);
     $request->params->url = rest::url("gallery", $album);
 
