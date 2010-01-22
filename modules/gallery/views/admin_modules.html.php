@@ -22,6 +22,9 @@
             buttons: {
               <?= t("Continue")->for_js() ?>: function() {
                 $("form", this).submit();
+                $(".ui-dialog-buttonpane button:contains(Continue)")
+                  .attr("disabled", "disabled")
+                  .addClass("ui-state-disabled");
               },
               <?= t("Cancel")->for_js() ?>: function() {
                 $(this).dialog("destroy").remove();
