@@ -32,7 +32,12 @@ class Users_Controller extends Controller {
       $user->password = $form->edit_user->password->value;
       $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
-      $user->locale = $form->edit_user->locale->value;
+
+      if ($user->locale !=  $form->edit_user->locale->value) {
+        $user->locale = $form->edit_user->locale->value;
+        $flush_locale_cookie = true;
+      }
+
       $user->validate();
     } catch (ORM_Validation_Exception $e) {
       // Translate ORM validation errors into form error messages
@@ -43,7 +48,7 @@ class Users_Controller extends Controller {
     }
 
     if ($valid) {
-      if (isset($user->changed["locale"])) {
+      if (isset($flush_locale_cookie)) {
         // Delete the session based locale preference
         setcookie("g_locale", "", time() - 24 * 3600, "/");
       }
