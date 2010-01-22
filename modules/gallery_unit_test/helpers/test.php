@@ -30,7 +30,7 @@ class test_Core {
   }
 
   static function random_album($parent=null) {
-    return test::random_album_unsaved($parent)->save();
+    return test::random_album_unsaved($parent)->save()->reload();
   }
 
   static function random_photo_unsaved($parent=null) {
@@ -45,7 +45,7 @@ class test_Core {
   }
 
   static function random_photo($parent=null) {
-    return test::random_photo_unsaved($parent)->save();
+    return test::random_photo_unsaved($parent)->save()->reload();
   }
 
   static function random_user($password="password") {
