@@ -23,11 +23,6 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       Database::instance()->query("TRUNCATE {tags}");
       Database::instance()->query("TRUNCATE {items_tags}");
     } catch (Exception $e) { }
-    $this->_save = array($_GET, $_POST, $_SERVER);
-  }
-
-  public function teardown() {
-    list($_GET, $_POST, $_SERVER) = $this->_save;
   }
 
   public function get_test() {
@@ -35,8 +30,11 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
     $request->url = rest::url("tag", $tag);
     $this->assert_equal_array(
-      array("resource" => $tag->as_array(),
-            "members" => array(rest::url("gallery", item::root()))),
+      array("url" => rest::url("tag", $tag),
+            "resource" => $tag->as_array(),
+            "relationships" => array(
+              "items" => array(
+                rest::url("tag_item", $tag, item::root())))),
       tag_rest::get($request));
   }
 
@@ -50,12 +48,15 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(false, "Shouldn't get here");
   }
 
-  public function get_with_no_members_test() {
+  public function get_with_no_relationships_test() {
     $tag = test::random_tag();
 
     $request->url = rest::url("tag", $tag);
     $this->assert_equal_array(
-      array("resource" => $tag->as_array(), "members" => array()),
+      array("url" => rest::url("tag", $tag),
+            "resource" => $tag->as_array(),
+            "relationships" => array(
+              "items" => array())),
       tag_rest::get($request));
   }
 
@@ -68,9 +69,9 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
     // Add the album to the tag
     $request->url = rest::url("tag", $tag);
-    $request->params->url = rest::url("gallery", $album);
+    $request->params->url = rest::url("item", $album);
     $this->assert_equal_array(
-      array("url" => rest::url("tag", $tag)),
+      array("url" => rest::url("tag_item", $tag, $album)),
       tag_rest::post($request));
   }
 
@@ -91,9 +92,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->url = rest::url("tag", $tag);
     $request->params->name = "new name";
 
-    $this->assert_equal_array(
-      array("url" => str_replace($tag->name, "new%20name", rest::url("tag", $tag))),
-      tag_rest::put($request));
+    tag_rest::put($request);
     $this->assert_equal("new name", $tag->reload()->name);
   }
 
@@ -103,40 +102,6 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     tag_rest::delete($request);
 
     $this->assert_false($tag->reload()->loaded());
-  }
-
-  public function delete_item_from_tag_test() {
-    $album = test::random_album();
-    access::allow(identity::everybody(), "edit", $album);
-
-    $tag = tag::add($album, "tag1");
-    $this->assert_equal(1, $tag->items()->count());
-
-    $request->url = rest::url("tag", $tag);
-    $request->params->url = rest::url("gallery", $album);
-    tag_rest::delete($request);
-
-    $this->assert_equal(0, $tag->items()->count());
-  }
-
-  public function delete_item_from_tag_fails_without_permissions_test() {
-    $album = test::random_album();
-    $tag = tag::add($album, "tag1");
-    $this->assert_equal(1, $tag->items()->count());
-
-    access::deny(identity::everybody(), "edit", $album);
-
-    $request->url = rest::url("tag", $tag);
-    $request->params->url = rest::url("gallery", $album);
-
-    try {
-      tag_rest::delete($request);
-    } catch (Exception $e) {
-      $this->assert_equal(403, $e->getCode());
-      return;
-    }
-
-    $this->assert_true(false, "Shouldn't get here");
   }
 
   public function resolve_test() {
