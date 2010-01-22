@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_installer {
-  static function check_environment() {
+  static function can_activate() {
     return array("warn" => array(IdentityProvider::confirmation_message()));
   }
 

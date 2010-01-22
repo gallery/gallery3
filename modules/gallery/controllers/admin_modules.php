@@ -42,7 +42,7 @@ class Admin_Modules_Controller extends Admin_Controller {
       if ($info->active && !$desired && module::is_active($module_name)) {
         $messages = array_merge($messages, module::can_deactivate($module_name));
       } else if (!$info->active && $desired && !module::is_active($module_name)) {
-        $messages = array_merge($messages, module::check_environment($module_name));
+        $messages = array_merge($messages, module::can_activate($module_name));
       }
     }
 

@@ -34,7 +34,7 @@ class slideshow_installer {
     site_status::clear("slideshow_needs_rss");
   }
 
-  static function check_environment() {
+  static function can_activate() {
     $messages = array();
     if (!module::is_active("rss")) {
       $messages["warn"][] = t("The Slideshow module requires the RSS module.");
