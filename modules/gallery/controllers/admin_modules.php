@@ -76,21 +76,24 @@ class Admin_Modules_Controller extends Admin_Controller {
         continue;
       }
 
-      $desired = Input::instance()->post($module_name) == 1;
-      if ($info->active && !$desired && module::is_active($module_name)) {
-        $changes->deactivate[] = $module_name;
-        $deactivated_names[] = t($info->name);
-        module::deactivate($module_name);
-      } else if (!$info->active && $desired && !module::is_active($module_name)) {
-        $changes->activate[] = $module_name;
-        $activated_names[] = t($info->name);
-
-        if (module::is_installed($module_name)) {
-          module::upgrade($module_name);
-        } else {
-          module::install($module_name);
+      try {
+        $desired = Input::instance()->post($module_name) == 1;
+        if ($info->active && !$desired && module::is_active($module_name)) {
+          module::deactivate($module_name);
+          $changes->deactivate[] = $module_name;
+          $deactivated_names[] = t($info->name);
+        } else if (!$info->active && $desired && !module::is_active($module_name)) {
+          if (module::is_installed($module_name)) {
+            module::upgrade($module_name);
+          } else {
+            module::install($module_name);
+          }
+          module::activate($module_name);
+          $changes->activate[] = $module_name;
+          $activated_names[] = t($info->name);
         }
-        module::activate($module_name);
+      } catch (Exception $e) {
+        Kohana_Log::add("error", (string)$e);
       }
     }
 

@@ -71,19 +71,35 @@ class IdentityProvider_Core {
       module::uninstall($current_provider);
     }
 
-    IdentityProvider::reset();
-    $provider = new IdentityProvider($new_provider);
+    try {
+      IdentityProvider::reset();
+      $provider = new IdentityProvider($new_provider);
 
-    module::set_var("gallery", "identity_provider", $new_provider);
+      module::set_var("gallery", "identity_provider", $new_provider);
 
-    if (method_exists("{$new_provider}_installer", "initialize")) {
-      call_user_func("{$new_provider}_installer::initialize");
+      if (method_exists("{$new_provider}_installer", "initialize")) {
+        call_user_func("{$new_provider}_installer::initialize");
+      }
+
+      module::event("identity_provider_changed", $current_provider, $new_provider);
+
+      auth::login($provider->admin_user());
+      Session::instance()->regenerate();
+    } catch (Exception $e) {
+      // Make sure new provider is not in the database
+      module::uninstall($new_provider);
+
+      // Lets reset to the current provider so that the gallery installation is still
+      // working.
+      module::set_var("gallery", "identity_provider", null);
+      IdentityProvider::change_provider($current_provider);
+      module::activate($current_provider);
+      message::error(
+        t("Error attempting to enable \"%new_provider\" identity provider, " .
+          "reverted to \"%old_provider\" identity provider",
+          array("new_provider" => $new_provider, "old_provider" => $current_provider)));
+      throw $e;
     }
-
-    module::event("identity_provider_changed", $current_provider, $new_provider);
-
-    auth::login($provider->admin_user());
-    Session::instance()->regenerate();
   }
 
   /**
