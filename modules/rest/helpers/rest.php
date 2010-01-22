@@ -22,7 +22,7 @@ class rest_Core {
     Session::abort_save();
 
     if ($data) {
-      if (Input::instance()->get("output_type") == "html") {
+      if (Input::instance()->get("output") == "html") {
         header("Content-type: text/html");
         $html = preg_replace(
           "#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)#ise", "'\\1<a href=\"\\2\" >\\2</a>'",
@@ -112,8 +112,8 @@ class rest_Core {
     }
 
     $url = call_user_func_array(array($class, "url"), $args);
-    if (Input::instance()->get("output_type") == "html") {
-      $url .= "?output_type=html";
+    if (Input::instance()->get("output") == "html") {
+      $url .= "?output=html";
     }
     return $url;
   }
