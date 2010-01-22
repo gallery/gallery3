@@ -66,7 +66,8 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
     $album1_2->reload();
     $album1_1_1->reload();
 
-    $album1_1_1->move_to($album1_2);
+    $album1_1_1->parent_id = $album1_2->id;
+    $album1_1_1->save();
 
     $album1_1->reload();
     $album1_2->reload();
