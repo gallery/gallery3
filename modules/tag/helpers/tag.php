@@ -73,6 +73,9 @@ class tag_Core {
     if ($tags) {
       $cloud = new View("tag_cloud.html");
       $cloud->max_count = $tags[0]->count;
+      if (!$cloud->max_count) {
+        return;
+      }
       usort($tags, array("tag", "sort_by_name"));
       $cloud->tags = $tags;
       return $cloud;
