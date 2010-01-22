@@ -62,7 +62,6 @@ class rest_Core {
     return $key;
   }
 
-
   /**
    * Convert a REST url into an object.
    * Eg: "http://example.com/gallery3/index.php/rest/gallery/Family/Wedding" -> Item_Model
