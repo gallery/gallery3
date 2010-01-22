@@ -33,4 +33,12 @@ class slideshow_installer {
   static function deactivate() {
     site_status::clear("slideshow_needs_rss");
   }
+
+  static function check_environment() {
+    $messages = array();
+    if (!module::is_active("rss")) {
+      $messages["warn"][] = t("The Slideshow module requires the RSS module.");
+    }
+    return $messages;
+  }
 }

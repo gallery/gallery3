@@ -120,19 +120,46 @@ class module_Core {
   }
 
   /**
+   * Check that the module can be installed. (i.e. all the prerequistes exist)
+   * @param string $module_name
+   * @return array an array of warning or error messages to be displayed
+   */
+  static function check_environment($module_name) {
+    module::_add_to_path($module_name);
+    $messages = array();
+
+    $installer_class = "{$module_name}_installer";
+    if (method_exists($installer_class, "check_environment")) {
+      $messages = call_user_func(array($installer_class, "check_environment"));
+    }
+
+    // Remove it from the active path
+    module::_remove_from_path($module_name);
+    return $messages;
+  }
+
+  /**
+   * Allow modules to indicate the impact of deactivating the specifeid module
+   * @param string $module_name
+   * @return array an array of warning or error messages to be displayed
+   */
+  static function can_deactivate($module_name) {
+    $data = (object)array("module" => $module_name, "messages" => array());
+
+    module::event("pre_deactivate", $data);
+
+    return $data->messages;
+  }
+
+  /**
    * Install a module.  This will call <module>_installer::install(), which is responsible for
    * creating database tables, setting module variables and calling module::set_version().
    * Note that after installing, the module must be activated before it is available for use.
    * @param string $module_name
    */
   static function install($module_name) {
-    $config = Kohana_Config::instance();
-    $kohana_modules = $config->get("core.modules");
-    array_unshift($kohana_modules, MODPATH . $module_name);
-    $config->set("core.modules",  $kohana_modules);
+    module::_add_to_path($module_name);
 
-    // Rebuild the include path so the module installer can benefit from auto loading
-    Kohana::include_paths(true);
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "install")) {
       call_user_func_array(array($installer_class, "install"), array());
@@ -142,11 +169,30 @@ class module_Core {
     module::load_modules();
 
     // Now the module is installed but inactive, so don't leave it in the active path
-    array_shift($kohana_modules);
-    $config->set("core.modules",  $kohana_modules);
+    module::_remove_from_path($module_name);
 
     log::success(
       "module", t("Installed module %module_name", array("module_name" => $module_name)));
+  }
+
+  private static function _add_to_path($module_name) {
+    $config = Kohana_Config::instance();
+    $kohana_modules = $config->get("core.modules");
+    array_unshift($kohana_modules, MODPATH . $module_name);
+    $config->set("core.modules",  $kohana_modules);
+    // Rebuild the include path so the module installer can benefit from auto loading
+    Kohana::include_paths(true);
+  }
+
+  private static function _remove_from_path($module_name) {
+    $config = Kohana_Config::instance();
+    $kohana_modules = $config->get("core.modules");
+    if (($key = array_search(MODPATH . $module_name, $kohana_modules)) !== false) {
+      unset($kohana_modules[$key]);
+      $kohana_modules = array_values($kohana_modules); // reindex
+    }
+    $config->set("core.modules",  $kohana_modules);
+    Kohana::include_paths(true);
   }
 
   /**
@@ -194,10 +240,7 @@ class module_Core {
    * @param string $module_name
    */
   static function activate($module_name) {
-    $config = Kohana_Config::instance();
-    $kohana_modules = $config->get("core.modules");
-    array_unshift($kohana_modules, MODPATH . $module_name);
-    $config->set("core.modules",  $kohana_modules);
+    module::_add_to_path($module_name);
 
     $installer_class = "{$module_name}_installer";
     if (method_exists($installer_class, "activate")) {

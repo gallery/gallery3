@@ -18,6 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class slideshow_event_Core {
+  static function pre_deactivate($data) {
+    if ($data->module == "rss") {
+      $data->messages["warn"][] = t("The Slideshow module requires the RSS module.");
+    }
+  }
+
   static function module_change($changes) {
     if (!module::is_active("rss") || in_array("rss", $changes->deactivate)) {
       site_status::warning(

@@ -1,12 +1,50 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div class="g-block ui-helper-clearfix">
+  <script type="text/javascript">
+  $("#g-module-update-form").ready(function() {
+    $("#g-module-update-form").ajaxForm({
+      dataType: "json",
+      success: function(data) {
+        if (data.reload) {
+          window.location.reload();
+        } else {
+          $("body").append('<div id="g-dialog">' + data.dialog + '</div>');
+          $("#g-dialog").dialog({
+            bgiframe: true,
+            autoOpen: true,
+            autoResize: true,
+            modal: true,
+            resizable: false,
+            height: 400,
+            width: 500,
+            position: "center",
+            title: <?= t("Confirm Module Activation")->for_js() ?>,
+            buttons: {
+              <?= t("Continue")->for_js() ?>: function() {
+                $("form", this).submit();
+              },
+              <?= t("Cancel")->for_js() ?>: function() {
+                $(this).dialog("destroy").remove();
+              }
+            }
+          });
+          if (!data.allow_continue) {
+            $(".ui-dialog-buttonpane button:contains(Continue)")
+              .attr("disabled", "disabled")
+              .addClass("ui-state-disabled");
+          }
+        }
+      }
+    });
+  });
+  </script>
   <h1> <?= t("Gallery Modules") ?> </h1>
   <p>
     <?= t("Power up your Gallery by adding more modules! Each module provides new cool features.") ?>
   </p>
 
   <div class="g-block-content">
-    <form method="post" action="<?= url::site("admin/modules/save") ?>">
+    <form id="g-module-update-form" method="post" action="<?= url::site("admin/modules/confirm") ?>">
       <?= access::csrf_form_field() ?>
       <table>
         <tr>
