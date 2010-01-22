@@ -44,6 +44,7 @@ class tag_rest_Core {
     access::required("edit", $item);
 
     tag::add($item, $tag->name);
+    return array("url" => rest::url("tag_item", $tag, $item));
   }
 
   static function put($request) {
