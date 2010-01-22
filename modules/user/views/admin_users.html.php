@@ -107,7 +107,7 @@
       </div>
     </div>
 
-    <div id="g-group-admin" class="g-block g-right ui-helper-clearfix">
+    <div id="g-group-admin" class="g-block ui-helper-clearfix">
       <a href="<?= url::site("admin/users/add_group_form") ?>"
           class="g-dialog-link g-button g-right ui-icon-left ui-state-default ui-corner-all"
           title="<?= t("Create a new group")->for_html_attr() ?>">
