@@ -53,6 +53,10 @@ class test_Core {
     return identity::create_user($rand, $rand, $password, "$rand@rand.com");
   }
 
+  static function random_group() {
+    return identity::create_group((string)rand());
+  }
+
   static function random_name($item=null) {
     $rand = "name_" . rand();
     if ($item && $item->is_photo()) {
