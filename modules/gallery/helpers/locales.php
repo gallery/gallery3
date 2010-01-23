@@ -41,7 +41,7 @@ class locales_Core {
     $default = module::get_var("gallery", "default_locale");
     $codes = explode("|", module::get_var("gallery", "installed_locales", $default));
     foreach ($codes as $code) {
-      if (isset($available->$code)) {
+      if (isset($available[$code])) {
         $installed[$code] = $available[$code];
       }
     }
@@ -127,7 +127,7 @@ class locales_Core {
     }
     $locale or $locale = Gallery_I18n::instance()->locale();
 
-    return self::$locales["$locale"];
+    return self::$locales[$locale];
   }
 
   static function is_rtl($locale=null) {
