@@ -36,11 +36,21 @@ class Admin_View_Core extends Gallery_View {
     $this->sidebar = "";
     $this->set_global("theme", $this);
     $this->set_global("user", identity::active_user());
+    $this->set_global("page_type", "admin");
+    $this->set_global("page_subtype", $name);
   }
 
   public function admin_menu() {
     $menu = Menu::factory("root");
     module::event("admin_menu", $menu, $this);
+    return $menu->render();
+  }
+
+  public function user_menu() {
+    $menu = Menu::factory("root")
+      ->css_id("g-login-menu")
+      ->css_class("g-inline ui-helper-clear-fix");
+    module::event("user_menu", $menu, $this);
     return $menu->render();
   }
 

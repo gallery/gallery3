@@ -43,23 +43,10 @@
       <?= $theme->site_status() ?>
       <div id="g-header" class="ui-helper-clearfix">
         <?= $theme->admin_header_top() ?>
-        <ul id="g-login-menu" class="g-inline g-right">
-          <li class="g-first">
-            <? if (identity::is_writable()): ?>
-            <?= t('Logged in as %name', array('name' => html::mark_clean(
-              '<a href="' . url::site("form/edit/users/{$user->id}") .
-              '" title="' . t("Edit your profile")->for_html_attr() .
-              '" id="g-user-profile-link" class="g-dialog-link">' .
-              html::clean($user->display_name()) . '</a>'))) ?>
-            <? else: ?>
-            <?= t('Logged in as %name', array('name' => html::clean($user->display_name()))) ?>
-            <? endif ?>
-          </li>
-          <li id="g-logout-link"><a href="<?= url::site("logout?csrf=$csrf&amp;continue=" . urlencode(item::root()->url())) ?>"><?= t("Logout") ?></a></li>
-        </ul>
         <a id="g-logo" class="g-left" href="<?= item::root()->url() ?>" title="<?= t("go back to the Gallery")->for_html_attr() ?>">
           &larr; <?= t("back to the ...") ?>
         </a>
+        <?= $theme->user_menu() ?>
         <div id="g-site-admin-menu" class="ui-helper-clearfix">
           <?= $theme->admin_menu() ?>
         </div>
