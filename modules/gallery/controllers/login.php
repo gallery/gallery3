@@ -50,7 +50,11 @@ class Login_Controller extends Controller {
     if ($valid) {
       url::redirect(item::root()->abs_url());
     } else {
-      print $form;
+      $view = new Theme_View("page.html", "other", "login");
+      $view->page_title = t("Log in to Gallery");
+      $view->content = new View("login_ajax.html");
+      $view->content->form = $form;
+      print $view;
     }
   }
 
