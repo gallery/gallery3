@@ -41,7 +41,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
               rest::url("item", $photo1),
               rest::url("item", $album2)),
             "relationships" => array(
-              "tags" => array())),
+              "tags" => array(
+                "url" => rest::url("item_tags", $album1),
+                "members" => array()))),
       item_rest::get($request));
 
     $request->url = rest::url("item", $album1);
@@ -53,7 +55,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
               rest::url("item", $photo1),
               rest::url("item", $album2)),
             "relationships" => array(
-              "tags" => array())),
+              "tags" => array(
+                "url" => rest::url("item_tags", $album1),
+                "members" => array()))),
       item_rest::get($request));
 
     $request->url = rest::url("item", $album1);
@@ -66,7 +70,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
               rest::url("item", $album2),
               rest::url("item", $photo2)),
             "relationships" => array(
-              "tags" => array())),
+              "tags" => array(
+                "url" => rest::url("item_tags", $album1),
+                "members" => array()))),
       item_rest::get($request));
   }
 
@@ -86,7 +92,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
             "members" => array(
               rest::url("item", $photo2)),
             "relationships" => array(
-              "tags" => array())),
+              "tags" => array(
+                "url" => rest::url("item_tags", $album1),
+                "members" => array()))),
       item_rest::get($request));
   }
 
@@ -104,7 +112,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
             "members" => array(
               rest::url("item", $album2)),
             "relationships" => array(
-              "tags" => array())),
+              "tags" => array(
+                "url" => rest::url("item_tags", $album1),
+                "members" => array() ))),
       item_rest::get($request));
   }
 

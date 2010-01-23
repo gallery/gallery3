@@ -31,8 +31,9 @@ class tag_rest_Core {
       "url" => $request->url,
       "resource" => $tag->as_array(),
       "relationships" => array(
-        "url" => rest::url("tag_items", $tag),
-        "items" => $tag_items));
+        "items" => array(
+          "url" => rest::url("tag_items", $tag),
+          "members" => $tag_items)));
   }
 
   static function post($request) {

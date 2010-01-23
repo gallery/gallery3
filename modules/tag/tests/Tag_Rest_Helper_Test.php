@@ -34,7 +34,9 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
             "resource" => $tag->as_array(),
             "relationships" => array(
               "items" => array(
-                rest::url("tag_item", $tag, item::root())))),
+                "url" => rest::url("tag_items", $tag),
+                "members" => array(
+                  rest::url("tag_item", $tag, item::root()))))),
       tag_rest::get($request));
   }
 
@@ -56,7 +58,9 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       array("url" => rest::url("tag", $tag),
             "resource" => $tag->as_array(),
             "relationships" => array(
-              "items" => array())),
+              "items" => array(
+                "url" => rest::url("tag_items", $tag),
+                "members" => array()))),
       tag_rest::get($request));
   }
 

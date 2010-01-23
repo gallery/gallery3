@@ -130,7 +130,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
     try {
       test::call_and_capture(array(new Rest_Controller(), "mock"));
     } catch (Exception $e) {
-      $this->assert_equal(403, $e->getCode());
+      $this->assert_equal(400, $e->getCode());
       return;
     }
     $this->assert_true(false, "Shouldn't get here");
