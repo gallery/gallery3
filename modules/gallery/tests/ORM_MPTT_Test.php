@@ -90,7 +90,8 @@ class ORM_MPTT_Test extends Gallery_Unit_Test_Case {
     $album3 = test::random_album($album2);
 
     try {
-      $album1->move_to($album3);
+      $album1->parent_id = $album3->id;
+      $album1->save();
       $this->assert_true(false, "We should be unable to move an item inside its own hierarchy");
     } catch (Exception $e) {
       // pass
