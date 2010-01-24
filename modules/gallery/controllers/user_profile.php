@@ -51,6 +51,7 @@ class User_Profile_Controller extends Controller {
   }
 
   public function send($id) {
+    access::verify_csrf();
     $user = identity::lookup_user($id);
     $form = user_profile::get_contact_form($user);
     if ($form->validate()) {
