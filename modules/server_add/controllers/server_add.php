@@ -226,16 +226,33 @@ class Server_Add_Controller extends Admin_Controller {
         $name = basename($entry->file);
         $title = item::convert_filename_to_title($name);
         if (is_dir($entry->file)) {
-          $album = album::create($parent, $name, $title, null, $owner_id);
+          $album = ORM::factory("item");
+          $album->type = "album";
+          $album->name = $name;
+          $album->title = $title;
+          $album->owner_id = $owner_id;
+          $album->save();
           $entry->item_id = $album->id;
         } else {
           try {
             $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
             if (in_array($extension, array("gif", "png", "jpg", "jpeg"))) {
-              $photo = photo::create($parent, $entry->file, $name, $title, null, $owner_id);
+              $photo = ORM::factory("item");
+              $photo->type = "photo";
+              $photo->set_data_file($entry->file);
+              $photo->name = $name;
+              $photo->title = $title;
+              $photo->owner_id = $owner_id;
+              $photo->save();
               $entry->item_id = $photo->id;
             } else if (in_array($extension, array("flv", "mp4"))) {
-              $movie = movie::create($parent, $entry->file, $name, $title, null, $owner_id);
+              $movie = ORM::factory("item");
+              $movie->type = "movie";
+              $movie->set_data_file($entry->file);
+              $movie->name = $name;
+              $movie->title = $title;
+              $movie->owner_id = $owner_id;
+              $movie->save();
               $entry->item_id = $movie->id;
             } else {
               // This should never happen, because we don't add stuff to the list that we can't
