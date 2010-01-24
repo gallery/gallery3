@@ -299,17 +299,16 @@ class g2_import_Core {
     }
     $g2_groups = g2(GalleryCoreApi::fetchGroupsForUser($g2_user->getId()));
 
-    try {
+    $user = identity::lookup_user_by_name($g2_user->getUsername());
+    if ($user) {
+      $message = t("Loaded existing user: '%name'.", array("name" => $user->name));
+    } else {
       $user = identity::create_user($g2_user->getUsername(), $g2_user->getfullname(), "");
       $message = t("Created user: '%name'.", array("name" => $user->name));
-    } catch (Exception $e) {
-      // @todo For now we assume this is a "duplicate user" exception
-      $user = identity::lookup_user_by_name($g2_user->getUsername());
-      $message = t("Loaded existing user: '%name'.", array("name" => $user->name));
     }
 
     $user->hashed_password = $g2_user->getHashedPassword();
-    $user->email = $g2_user->getEmail();
+    $user->email = $g2_user->getEmail() ? $g2_user->getEmail() : "unknown@unknown.com";
     $user->locale = $g2_user->getLanguage();
     foreach ($g2_groups as $g2_group_id => $g2_group_name) {
       if ($g2_group_id == $g2_admin_group_id) {
@@ -353,21 +352,22 @@ class g2_import_Core {
       $g2_album = g2(GalleryCoreApi::loadEntitiesById($g2_album_id));
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 album with id: %id\n%exception",
-               array("id" => $g2_album_id, "exception" => $e->__toString()));
+               array("id" => $g2_album_id, "exception" => (string)$e));
     }
 
     if ($g2_album->getParentId() == null) {
       return t("Skipping Gallery 2 root album");
     }
-    $parent_album = ORM::factory("item", self::map($g2_album->getParentId()));
+    $parent_album =
+      ORM::factory("item")->where("id", "=", self::map($g2_album->getParentId()))->find();
 
-    $album = album::create(
-      $parent_album,
-      $g2_album->getPathComponent(),
-      self::_decode_html_special_chars($g2_album->getTitle()),
-      self::_decode_html_special_chars(self::extract_description($g2_album)),
-      self::map($g2_album->getOwnerId()));
-
+    $album = ORM::factory("item");
+    $album->type = "album";
+    $album->parent_id = self::map($g2_album->getParentId());
+    $album->name = $g2_album->getPathComponent();
+    $album->title = self::_decode_html_special_chars($g2_album->getTitle());
+    $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
+    $album->owner_id = self::map($g2_album->getOwnerId());
     $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
     $album->created = $g2_album->getCreationTimestamp();
 
@@ -423,8 +423,8 @@ class g2_import_Core {
       }
       $item_id = self::map($g2_source->getId());
       if ($item_id) {
-        $item = ORM::factory("item", $item_id);
-        $g2_album = ORM::factory("item", $g3_album_id);
+        $item = ORM::factory("item")->where("id", "=", $item_id)->find();
+        $g2_album = ORM::factory("item")->where("id", "=", $g3_album_id)->find();
         $g2_album->album_cover_item_id = $item->id;
         $g2_album->thumb_dirty = 1;
         $g2_album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
@@ -452,7 +452,7 @@ class g2_import_Core {
                array("id" => $g2_item_id, "exception" => $e->__toString()));
     }
 
-    $parent = ORM::factory("item", self::map($g2_item->getParentId()));
+    $parent = ORM::factory("item")->where("id", "=", self::map($g2_item->getParentId()))->find();
 
     $g2_type = $g2_item->getEntityType();
     $corrupt = 0;
@@ -482,19 +482,21 @@ class g2_import_Core {
         $corrupt = 1;
       }
       try {
-        $item = photo::create(
-          $parent,
-          $g2_path,
-          $g2_item->getPathComponent(),
-          self::_decode_html_special_chars($g2_item->getTitle()),
-          self::_decode_html_special_chars(self::extract_description($g2_item)),
-          self::map($g2_item->getOwnerId()));
+        $item = ORM::factory("item");
+        $item->type = "photo";
+        $item->parent_id = $parent->id;
+        $item->set_data_file($g2_path);
+        $item->name = $g2_item->getPathComponent();
+        $item->title = self::_decode_html_special_chars($g2_item->getTitle());
+        $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
+        $item->owner_id = self::map($g2_item->getOwnerId());
+        $item->save();
       } catch (Exception $e) {
-        Kohana_Log::add(
-          "alert", "Corrupt image $g2_path\n" . $e->__toString());
+        Kohana_Log::add("alert", "Corrupt image $g2_path\n" . (string)$e);
         $message[] = t("Corrupt image '%path'", array("path" => $g2_path));
-        $message[] = $e->__toString();
+        $message[] = (string)$e;
         $corrupt = 1;
+        $item = null;
       }
       break;
 
@@ -502,18 +504,19 @@ class g2_import_Core {
       // @todo we should transcode other types into FLV
       if (in_array($g2_item->getMimeType(), array("video/mp4", "video/x-flv"))) {
         try {
-          $item = movie::create(
-            $parent,
-            $g2_path,
-            $g2_item->getPathComponent(),
-            self::_decode_html_special_chars($g2_item->getTitle()),
-            self::_decode_html_special_chars(self::extract_description($g2_item)),
-            self::map($g2_item->getOwnerId()));
+          $item = ORM::factory("item");
+          $item->parent_id = $parent->id;
+          $item->set_data_file($g2_path);
+          $item->name = $g2_item->getPathComponent();
+          $item->title = self::_decode_html_special_chars($g2_item->getTitle());
+          $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
+          $item->owner_id = self::map($g2_item->getOwnerId());
         } catch (Exception $e) {
-          Kohana_Log::add("alert", "Corrupt movie $g2_path\n" . $e->__toString());
+          Kohana_Log::add("alert", "Corrupt movie $g2_path\n" . (string)$e);
           $message[] = t("Corrupt movie '%path'", array("path" => $g2_path));
-          $message[] = $e->__toString();
+          $message[] = (string)$e;
           $corrupt = 1;
+          $item = null;
         }
       } else {
         Kohana_Log::add("alert", "$g2_path is an unsupported movie type");
@@ -630,7 +633,10 @@ class g2_import_Core {
 
     GalleryCoreApi::requireOnce("modules/tags/classes/TagsHelper.class");
     $g2_item_id = array_shift($queue);
-    $g3_item = ORM::factory("item", self::map($g2_item_id));
+    $g3_item = ORM::factory("item")->where("id", "=", self::map($g2_item_id))->find();
+    if (!$g3_item->loaded()) {
+      return;
+    }
 
     try {
       $tag_names = array_values(g2(TagsHelper::getTagsByItemId($g2_item_id)));
@@ -639,7 +645,6 @@ class g2_import_Core {
                array("id" => $g2_item_id, "exception" => $e->__toString()));
     }
 
-    // Multiword tags have the space changed to dots.s
     foreach ($tag_names as $tag_name) {
       tag::add($g3_item, $tag_name);
     }
