@@ -111,11 +111,11 @@ class gallery_event_Core {
                       ->label(t("Login")));
       } else {
         $csrf = access::csrf_token();
-        $menu->append(Menu::factory("dialog")
+        $menu->append(Menu::factory("link")
                       ->id("user_menu_edit_profile")
                       ->css_id("g-user-profile-link")
                       ->view("login_current_user.html")
-                      ->url(url::site("form/edit/user/{$user->id}"))
+                      ->url(user_profile::url($user->id))
                       ->label($user->display_name()));
         $menu->append(Menu::factory("link")
                       ->id("user_menu_logout")

@@ -8,8 +8,9 @@
          width="32"
          height="32" />
     <?= gallery::date_time($comment->created) ?>
-    <?= t('<a href="#">%author_name</a> said <em>%comment_text</em>',
+    <?= t('<a href="%url">%author_name</a> said <em>%comment_text</em>',
           array("author_name" => html::clean($comment->author_name()),
+                "url" => user_profile::url($comment->author_id),
                 "comment_text" => text::limit_words(nl2br(html::purify($comment->text)), 50))); ?>
   </li>
   <? endforeach ?>
