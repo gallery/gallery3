@@ -37,17 +37,11 @@ class tag_Core {
     if (!$tag->loaded()) {
       $tag->name = $tag_name;
       $tag->count = 0;
-      $tag->save();
     }
 
-    if (!$tag->has($item)) {
-      if (!$tag->add($item)) {
-        throw new Exception("@todo {$tag->name} WAS_NOT_ADDED_TO {$item->id}");
-      }
-      $tag->count++;
-      $tag->save();
-    }
-    return $tag;
+    $tag->add($item);
+    $tag->count++;
+    return $tag->save();
   }
 
   /**
