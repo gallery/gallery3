@@ -120,17 +120,17 @@ class module_Core {
   }
 
   /**
-   * Check that the module can be installed. (i.e. all the prerequistes exist)
+   * Check that the module can be activated. (i.e. all the prerequistes exist)
    * @param string $module_name
    * @return array an array of warning or error messages to be displayed
    */
-  static function check_environment($module_name) {
+  static function can_activate($module_name) {
     module::_add_to_path($module_name);
     $messages = array();
 
     $installer_class = "{$module_name}_installer";
-    if (method_exists($installer_class, "check_environment")) {
-      $messages = call_user_func(array($installer_class, "check_environment"));
+    if (method_exists($installer_class, "can_activate")) {
+      $messages = call_user_func(array($installer_class, "can_activate"));
     }
 
     // Remove it from the active path

@@ -18,7 +18,39 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class user_installer {
+  static function can_activate() {
+    return array("warn" => array(IdentityProvider::confirmation_message()));
+  }
+
   static function install() {
+    IdentityProvider::change_provider("user");
+  }
+
+  static function upgrade($version) {
+    if ($version == 1) {
+      module::set_var("user", "mininum_password_length", 5);
+
+      module::set_version("user", $version = 2);
+    }
+  }
+
+  static function uninstall() {
+    // Delete all users and groups so that we give other modules an opportunity to clean up
+    foreach (ORM::factory("user")->find_all() as $user) {
+      $user->delete();
+    }
+
+    foreach (ORM::factory("group")->find_all() as $group) {
+      $group->delete();
+    }
+
+    $db = Database::instance();
+    $db->query("DROP TABLE IF EXISTS {users};");
+    $db->query("DROP TABLE IF EXISTS {groups};");
+    $db->query("DROP TABLE IF EXISTS {groups_users};");
+  }
+
+  static function initialize() {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {users} (
                  `id` int(9) NOT NULL auto_increment,
@@ -89,19 +121,6 @@ class user_installer {
     $admin->add($registered);
     $admin->save();
 
-    $current_provider = module::get_var("gallery", "identity_provider");
-    if (empty($current_provider)) {
-      // If there is no provider defined then we are doing an initial install
-      // so we need to set the provider and make the administrator own everything
-      // If the installer is called and there is an identity provider, then we
-      // are switching identity providers and and the event handlers will do the
-      // right things
-      module::set_var("gallery", "identity_provider", "user");
-
-      // Let the admin own everything
-      $db->query("update {items} set owner_id = {$admin->id}");
-    }
-
     $root = ORM::factory("item", 1);
     access::allow($everybody, "view", $root);
     access::allow($everybody, "view_full", $root);
@@ -109,32 +128,7 @@ class user_installer {
     access::allow($registered, "view", $root);
     access::allow($registered, "view_full", $root);
 
-    module::set_var("user", "mininum_password_length", 5);
-
     module::set_version("user", 2);
-  }
-
-  static function upgrade($version) {
-    if ($version == 1) {
-      module::set_var("user", "mininum_password_length", 5);
-
-      module::set_version("user", $version = 2);
-    }
-  }
-
-  static function uninstall() {
-    // Delete all users and groups so that we give other modules an opportunity to clean up
-    foreach (ORM::factory("user")->find_all() as $user) {
-      $user->delete();
-    }
-
-    foreach (ORM::factory("group")->find_all() as $group) {
-      $group->delete();
-    }
-
-    $db = Database::instance();
-    $db->query("DROP TABLE IF EXISTS {users};");
-    $db->query("DROP TABLE IF EXISTS {groups};");
-    $db->query("DROP TABLE IF EXISTS {groups_users};");
+    module::set_var("user", "mininum_password_length", 5);
   }
 }

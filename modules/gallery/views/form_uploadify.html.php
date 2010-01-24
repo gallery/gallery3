@@ -2,17 +2,21 @@
 <style>
 #g-add-photos-canvas object {
   height: 33px;
-  left: -60px;
+  left: -80px;
   position: relative;
   z-index: 100;
 }
+#g-add-photos-canvas span {
+  height: 33px;
+  width: 150px;
+}
 #g-add-photos-button {
   float: left;
-  left: 175px;
+  left: 155px;
   padding-bottom: .5em;
   padding-top: .5em;
   position: relative;
-  width: 110px;
+  width: 150px;
   z-index: 1;
 }
 </style>
@@ -21,6 +25,8 @@
 <script type="text/javascript">
   $("#g-add-photos-canvas").ready(function () {
     $("#g-uploadify").uploadify({
+      width: 150,
+      height: 33,
       uploader: "<?= url::file("lib/uploadify/uploadify.swf") ?>",
       script: "<?= url::site("simple_uploader/add_photo/{$album->id}") ?>",
       scriptData: <?= json_encode($script_data) ?>,

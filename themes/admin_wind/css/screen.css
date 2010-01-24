@@ -229,6 +229,7 @@ th {
 
 #g-header #g-login-menu {
   margin-top: 1em;
+  float: right;
 }
 
 /* View container ~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -471,6 +472,10 @@ th {
 .rtl #g-site-admin-menu {
   left: auto;
   right: 150px;
+}
+
+.rtl #g-header #g-login-menu {
+  float: left;
 }
 
 .rtl #g-header #g-login-menu li {

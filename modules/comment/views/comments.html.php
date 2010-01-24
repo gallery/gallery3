@@ -22,8 +22,9 @@
              width="40"
              height="40" />
       </a>
-      <?= t('on %date <a href="#">%name</a> said',
+      <?= t('on %date <a href="%url">%name</a> said',
             array("date" => date("Y-M-d H:i:s", $comment->created),
+                  "url" => user_profile::url($comment->author_id),
                   "name" => html::clean($comment->author_name()))); ?>
     </p>
     <div>
