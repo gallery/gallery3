@@ -85,6 +85,13 @@ class task_Core {
       $task->save();
     } catch (Exception $e) {
       Kohana_Log::add("error", $e->__toString());
+
+      // Ugh.  I hate to use instanceof, But this beats catching the exception separately since
+      // we mostly want to treat it the same way as all other exceptions
+      if ($e instanceof ORM_Validation_Exception) {
+        Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+      }
+
       $task->log($e->__toString());
       $task->state = "error";
       $task->done = true;
