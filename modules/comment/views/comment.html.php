@@ -8,8 +8,9 @@
            width="40"
            height="40" />
     </a>
-    <?= t("on %date_time,  <a href=\"#\">%name</a> said",
+    <?= t("on %date_time,  <a href=\"%url\">%name</a> said",
           array("date_time" => gallery::date_time($comment->created),
+                "url" => user_profile::url($comment->author_id),
                 "name" => html::clean($comment->author_name()))) ?>
   </p>
   <div>

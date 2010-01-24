@@ -30,21 +30,23 @@ class gallery_event_Core {
 
   static function user_deleted($user) {
     $admin = identity::admin_user();
-    db::build()
-      ->update("tasks")
-      ->set("owner_id", $admin->id)
-      ->where("owner_id", "=", $user->id)
-      ->execute();
-    db::build()
-      ->update("items")
-      ->set("owner_id", $admin->id)
-      ->where("owner_id", "=", $user->id)
-      ->execute();
-    db::build()
-      ->update("logs")
-      ->set("user_id", $admin->id)
-      ->where("user_id", "=", $user->id)
-      ->execute();
+    if (!empty($admin)) {          // could be empty if there is not identity provider
+      db::build()
+        ->update("tasks")
+        ->set("owner_id", $admin->id)
+        ->where("owner_id", "=", $user->id)
+        ->execute();
+      db::build()
+        ->update("items")
+        ->set("owner_id", $admin->id)
+        ->where("owner_id", "=", $user->id)
+        ->execute();
+      db::build()
+        ->update("logs")
+        ->set("user_id", $admin->id)
+        ->where("user_id", "=", $user->id)
+        ->execute();
+    }
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
@@ -127,12 +129,11 @@ class gallery_event_Core {
                       ->label(t("Login")));
       } else {
         $csrf = access::csrf_token();
-        $item = $theme->item();
-        $menu->append(Menu::factory("dialog")
+        $menu->append(Menu::factory("link")
                       ->id("user_menu_edit_profile")
                       ->css_id("g-user-profile-link")
                       ->view("login_current_user.html")
-                      ->url(url::site("form/edit/users/{$user->id}"))
+                      ->url(user_profile::url($user->id))
                       ->label($user->display_name()));
         $menu->append(Menu::factory("link")
                       ->id("user_menu_logout")
@@ -246,11 +247,7 @@ class gallery_event_Core {
                ->append(Menu::factory("link")
                         ->id("advanced")
                         ->label(t("Advanced"))
-                        ->url(url::site("admin/advanced_settings")))
-               ->append(Menu::factory("link")
-                        ->id("authentication")
-                        ->label(t("Authentication"))
-                        ->url(url::site("admin/identity"))))
+                        ->url(url::site("admin/advanced_settings"))))
       ->append(Menu::factory("link")
                ->id("modules")
                ->label(t("Modules"))

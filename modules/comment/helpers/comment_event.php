@@ -27,14 +27,16 @@ class comment_event_Core {
 
   static function user_deleted($user) {
     $guest = identity::guest();
-    db::build()
-      ->update("comments")
-      ->set("author_id", $guest->id)
-      ->set("guest_email", null)
-      ->set("guest_name", "guest")
-      ->set("guest_url", null)
-      ->where("author_id", "=", $user->id)
-      ->execute();
+    if (!empty($guest)) {          // could be empty if there is not identity provider
+      db::build()
+        ->update("comments")
+        ->set("author_id", $guest->id)
+        ->set("guest_email", null)
+        ->set("guest_name", "guest")
+        ->set("guest_url", null)
+        ->where("author_id", "=", $user->id)
+        ->execute();
+    }
   }
 
   static function identity_provider_changed($old_provider, $new_provider) {
