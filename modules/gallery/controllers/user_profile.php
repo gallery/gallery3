@@ -33,7 +33,6 @@ class User_Profile_Controller extends Controller {
     $v->content->user = $user;
     $v->content->not_current = !$is_current_active;
     $v->content->editable = identity::is_writable() && $display_all;
-    $v->content->return = SafeString::of(Input::instance()->get("return"));
 
     $event_data = (object)array("user" => $user, "display_all" => $display_all, "content" => array());
     module::event("show_user_profile", $event_data);

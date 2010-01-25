@@ -21,8 +21,14 @@
     border: none;
     padding: 0;
   }
-
 </style>
+<script>
+  $(document).ready(function() {
+    $("#g-profile-return").click(function(event) {
+      history.go(-1);
+    })
+  });
+</script>
 <div id="g-user-profile">
   <h1>
     <a href="#">
@@ -55,7 +61,7 @@
     </a>
     <? endif ?>
 
-    <a class="g-button ui-icon-right ui-state-default ui-corner-all" href="<?= $return->for_html_attr() ?>">
+    <a id="g-profile-return" class="g-button ui-icon-right ui-state-default ui-corner-all" href="#">
       <?= t("Return") ?>
     </a>
   </div>

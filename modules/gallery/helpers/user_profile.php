@@ -24,8 +24,7 @@ class user_profile_Core {
    * @return url for the profile display
    */
   static function url($user_id) {
-    $return_url = urlencode(url::abs_current());
-    return url::site("user_profile/show/{$user_id}?return=$return_url");
+    return url::site("user_profile/show/{$user_id}");
   }
 
   static function get_contact_form($user) {
