@@ -74,4 +74,21 @@ class rest_event {
       ->class("g-form-static")
       ->label(t("Remote access key"));
   }
+
+  static function show_user_profile($data) {
+    if ($data->display_all) {
+      $view = new View("user_profile_rest.html");
+      $key = ORM::factory("user_access_token")
+        ->where("user_id", "=", $data->user->id)
+        ->find();
+
+      if (!$key->loaded()) {
+        $key->user_id = $data->user->id;
+        $key->access_key = md5($data->user->name . rand());
+        $key->save();
+      }
+      $view->rest_key = $key->access_key;
+      $data->content[] = (object)array("title" => t("Rest api"), "view" => $view);
+    }
+  }
 }

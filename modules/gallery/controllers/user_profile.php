@@ -30,8 +30,6 @@ class User_Profile_Controller extends Controller {
     $v->content = new View("user_profile.html");
 
     // @todo modify user_home to supply a link to their album,
-    // @todo add list of watches
-    // @todo add rest api key
     $v->content->user = $user;
     $v->content->not_current = !$is_current_active;
     $v->content->editable = identity::is_writable() && $display_all;
@@ -39,7 +37,6 @@ class User_Profile_Controller extends Controller {
 
     $event_data = (object)array("user" => $user, "display_all" => $display_all, "content" => array());
     module::event("show_user_profile", $event_data);
-    Kohana_Log::add("error", Kohana::debug($event_data));
     $v->content->info_parts = $event_data->content;
 
     print $v;
