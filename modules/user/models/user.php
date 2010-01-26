@@ -67,7 +67,8 @@ class User_Model extends ORM implements User_Definition {
     if (!$array) {
       $this->rules = array(
         "admin"     => array("callbacks" => array(array($this, "valid_admin"))),
-        "email"     => array("rules"     => array("length[1,255]", "required", "valid::email")),
+        "email"     => array("rules"     => array("length[1,255]", "valid::email"),
+                             "callbacks" => array(array($this, "valid_email"))),
         "full_name" => array("rules"     => array("length[0,255]")),
         "locale"    => array("rules"     => array("length[2,10]")),
         "name"      => array("rules"     => array("length[1,32]", "required"),
@@ -90,7 +91,9 @@ class User_Model extends ORM implements User_Definition {
     if (!$this->loaded()) {
       // New user
       $this->add(group::everybody());
-      $this->add(group::registered_users());
+      if (!$this->guest) {
+        $this->add(group::registered_users());
+      }
 
       parent::save();
       module::event("user_created", $this);
@@ -129,6 +132,10 @@ class User_Model extends ORM implements User_Definition {
    * Validate the password.
    */
   public function valid_password(Validation $v, $field) {
+    if ($this->guest) {
+      return;
+    }
+
     if (!$this->loaded() || $this->password_length) {
       $minimum_length = module::get_var("user", "mininum_password_length", 5);
       if ($this->password_length < $minimum_length) {
@@ -143,6 +150,19 @@ class User_Model extends ORM implements User_Definition {
   public function valid_admin(Validation $v, $field) {
     if ($this->id == identity::active_user()->id && !$this->admin) {
       $v->add_error("admin", "locked");
+    }
+  }
+
+  /**
+   * Validate the email field.
+   */
+  public function valid_email(Validation $v, $field) {
+    if ($this->guest) {  // guests don't require an email address
+      return;
+    }
+
+    if (empty($this->email)) {
+      $v->add_error("email", "required");
     }
   }
 }
