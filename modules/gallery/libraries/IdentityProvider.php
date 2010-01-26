@@ -86,18 +86,28 @@ class IdentityProvider_Core {
       auth::login($provider->admin_user());
       Session::instance()->regenerate();
     } catch (Exception $e) {
-      // Make sure new provider is not in the database
-      module::uninstall($new_provider);
+      static $restore_already_running;
 
-      // Lets reset to the current provider so that the gallery installation is still
-      // working.
-      module::set_var("gallery", "identity_provider", null);
-      IdentityProvider::change_provider($current_provider);
-      module::activate($current_provider);
-      message::error(
-        t("Error attempting to enable \"%new_provider\" identity provider, " .
-          "reverted to \"%old_provider\" identity provider",
-          array("new_provider" => $new_provider, "old_provider" => $current_provider)));
+      // In case of error, make an attempt to restore the old provider.  Since that's calling into
+      // this function again and can fail, we should be sure not to get into an infinite recursion.
+      if (!$restore_already_running) {
+        $restore_already_running = true;
+
+        // Make sure new provider is not in the database
+        module::uninstall($new_provider);
+
+        // Lets reset to the current provider so that the gallery installation is still
+        // working.
+        module::set_var("gallery", "identity_provider", null);
+        IdentityProvider::change_provider($current_provider);
+        module::activate($current_provider);
+        message::error(
+          t("Error attempting to enable \"%new_provider\" identity provider, " .
+            "reverted to \"%old_provider\" identity provider",
+            array("new_provider" => $new_provider, "old_provider" => $current_provider)));
+
+        $restore_already_running = false;
+      }
       throw $e;
     }
   }
