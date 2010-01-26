@@ -717,7 +717,7 @@ class Item_Model extends ORM_MPTT {
   public function validate($array=null) {
     if (!$array) {
       $this->rules = array(
-        "album_cover_item_id" => array("callbacks" => array(array($this, "valid_item"))),
+        "album_cover_item_id" => array("callbacks" => array(array($this, "valid_album_cover"))),
         "description"         => array("rules"     => array("length[0,65535]")),
         "mime_type"           => array("callbacks" => array(array($this, "valid_field"))),
         "name"                => array("rules"     => array("length[0,255]", "required"),
@@ -848,14 +848,18 @@ class Item_Model extends ORM_MPTT {
   }
 
   /**
-   * Make sure the field refers to a valid item by id, or is null.
+   * Make sure the album cover item id refers to a valid item, or is null.
    */
-  public function valid_item(Validation $v, $field) {
-    if ($this->$field && db::build()
+  public function valid_album_cover(Validation $v, $field) {
+    if ($this->id == 1) {
+      return;
+    }
+
+    if ($this->album_cover_item_id && db::build()
         ->from("items")
-        ->where("id", "=", $this->$field)
+        ->where("id", "=", $this->album_cover_item_id)
         ->count_records() != 1) {
-      $v->add_error($field, "invalid_item");
+      $v->add_error("album_cover_item_id", "invalid_item");
     }
   }
 
