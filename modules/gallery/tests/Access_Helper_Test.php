@@ -193,6 +193,18 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(access::group_can(identity::everybody(), "view", $album));
   }
 
+  public function view_permissions_propagate_down_to_photos_test() {
+    $album = album::create(item::root(), rand(), "test album");
+    $photo = photo::create($album, MODPATH . "gallery/images/gallery.png", "", "");
+    identity::set_active_user(identity::guest());
+
+    $this->assert_true(access::can("view", $photo));
+    access::deny(identity::everybody(), "view", $album);
+
+    $photo->reload();  // view permissions are cached in the photo
+    $this->assert_false(access::can("view", $photo));
+  }
+
   public function can_toggle_view_permissions_propagate_down_test() {
     $album1 = test::random_album(item::root());
     $album2 = test::random_album($album1);
