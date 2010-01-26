@@ -23,7 +23,8 @@ class tags_rest_Core {
     foreach (ORM::factory("tag")->find_all() as $tag) {
       $tags[] = rest::url("tag", $tag);
     }
-    return array("members" => $tags);
+    return array("url" => rest::url("tags"),
+                 "members" => $tags);
   }
 
   static function post($request) {
@@ -44,5 +45,9 @@ class tags_rest_Core {
     }
 
     return array("url" => rest::url("tag", $tag));
+  }
+
+  static function url() {
+    return url::abs_site("rest/tags");
   }
 }

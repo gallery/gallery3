@@ -32,6 +32,19 @@ class tag_items_rest_Core {
       "members" => $items);
   }
 
+  static function post($request) {
+    $tag = rest::resolve($request->params->tag);
+    $item = rest::resolve($request->params->item);
+    access::required("view", $item);
+
+    tag::add($item, $tag->name);
+    return array(
+      "url" => rest::url("tag_item", $tag, $item),
+      "members" => array(
+        rest::url("tag", $tag),
+        rest::url("item", $item)));
+  }
+
   static function delete($request) {
     list ($tag, $item) = rest::resolve($request->url);
     $tag->remove($item);
