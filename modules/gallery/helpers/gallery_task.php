@@ -37,6 +37,11 @@ class gallery_task_Core {
                  ->description(t("Download new and updated translated strings"))
       ->severity(log::SUCCESS);
 
+    $tasks[] = Task_Definition::factory()
+                 ->callback("gallery_task::file_cleanup")
+                 ->name(t("Remove old files"))
+                 ->description(t("Remove files from the logs and tmp directory"))
+      ->severity(log::SUCCESS);
     return $tasks;
   }
 
@@ -116,7 +121,7 @@ class gallery_task_Core {
     }
   }
 
-  static function update_l10n(&$task) {
+  static function update_l10n($task) {
     $errors = array();
     try {
       $start = microtime(true);
@@ -207,6 +212,73 @@ class gallery_task_Core {
                                serialize(array($dirs, $files, $cache, $num_fetched)));
       } else {
         Cache::instance()->delete("update_l10n_cache:{$task->id}");
+      }
+    } catch (Exception $e) {
+      $task->done = true;
+      $task->state = "error";
+      $task->status = $e->getMessage();
+      $errors[] = $e->__toString();
+    }
+    if ($errors) {
+      $task->log($errors);
+    }
+  }
+
+  /**
+   * Task that removes old files from var/logs and var/tmp.
+   * @param Task_Model the task
+   */
+  static function file_cleanup($task) {
+    $errors = array();
+    try {
+      $start = microtime(true);
+      $data = Cache::instance()->get("file_cleanup_cache:{$task->id}");
+      if ($data) {
+        $files = unserialize($data);
+      }
+      $i = 0;
+
+      switch ($task->get("mode", "init")) {
+      case "init":  // 0%
+        $threshold = time() - 1209600; // older than 2 weeks
+        foreach(array("logs", "tmp") as $dir) {
+          $dir = VARPATH . $dir;
+          if ($dh = opendir($dir)) {
+            while (($file = readdir($dh)) !== false) {
+              if ($file[0] == ".") {
+                continue;
+              }
+
+              if (filemtime("$dir/$file") <= $threshold) {
+                $files[] = "$dir/$file";
+              }
+            }
+          }
+        }
+        $task->set("mode", "delete_files");
+        $task->set("current", 0);
+        $task->set("total", count($files));
+        Cache::instance()->set("file_cleanup_cache:{$task->id}", serialize($files));
+        if (count($files) == 0) {
+          break;
+        }
+      case "delete_files":
+        $current = $task->get("current");
+        $total = $task->get("total");
+        while ($current < $total && microtime(true) - $start < 1) {
+          @unlink($files[$current]);
+          $task->log(t("%file removed", array("file" => $files[$current++])));
+        }
+        $task->percent_complete = $current / $total * 100;
+        $task->set("current", $current);
+      }
+
+      $task->status = t("Removed: %count files. Total: %total_count.",
+                        array("count" => $current, "total_count" => $total));
+
+      if ($total == $current) {
+        $task->done = true;
+        $task->state = "success";
       }
     } catch (Exception $e) {
       $task->done = true;
