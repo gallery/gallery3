@@ -98,7 +98,7 @@ class module_Core {
         $m->active = self::is_active($module_name);
         $m->code_version = $m->version;
         $m->version = self::get_version($module_name);
-        $m->locked = !empty($m->no_module_admin);
+        $m->locked = false;
       }
 
       // Lock certain modules

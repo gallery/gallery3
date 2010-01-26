@@ -1,9 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <style>
-  #g-user-profile #g-profile-buttons {
-    bottom: 0;
-    position: absolute;
-    right: 0;
+  #g-user-profile div {
+    margin-top: 1em;
   }
 
   #g-user-profile fieldset {
@@ -23,32 +21,33 @@
     border: none;
     padding: 0;
   }
-
 </style>
 <script>
-  $("#g-user-profile").ready(function() {
-                                           //$("#g-profile-return").click(function(event) {
-    //  window.location = <?= $return->for_js() ?>;
-                                           //});
+  $(document).ready(function() {
+    $("#g-profile-return").click(function(event) {
+      history.go(-1);
+    })
   });
 </script>
-<div id="g-user-profile" style="height: <?= $height ?>px">
-  <h1 style="display: none"><?= t("%name Profile", array("name" => $user->display_name())) ?></h1>
+<div id="g-user-profile">
+  <h1>
+    <a href="#">
+      <img src="<?= $user->avatar_url(40, $theme->url("images/avatar.jpg", true)) ?>"
+           alt="<?= html::clean_attribute($user->display_name()) ?>"
+           class="g-avatar" width="40" height="40" />
+    </a>
+    <?= t("%name Profile", array("name" => $user->display_name())) ?>
+  </h1>
+  <? foreach ($info_parts as $info): ?>
   <div>
     <fieldset>
-    <label><?= t("User information") ?></label>
+    <label><?= $info->title ?></label>
     <div>
-    <table>
-    <? foreach ($fields as $field => $value): ?>
-    <tr>
-      <td><?= $field ?></td>
-      <td><?= $value ?></td>
-    </tr>
-    <? endforeach ?>
-    </table>
+    <?= $info->view ?>
     </div>
     </fieldset>
   </div>
+  <? endforeach ?>
   <div id="g-profile-buttons" class="ui-helper-clearfix g-right">
     <? if (!$user->guest && $not_current && !empty($user->email)): ?>
     <a class="g-button ui-icon-right ui-state-default ui-corner-all g-dialog-link"
@@ -62,7 +61,7 @@
     </a>
     <? endif ?>
 
-    <a class="g-button ui-icon-right ui-state-default ui-corner-all" href="<?= $return->for_html_attr() ?>">
+    <a id="g-profile-return" class="g-button ui-icon-right ui-state-default ui-corner-all" href="#">
       <?= t("Return") ?>
     </a>
   </div>

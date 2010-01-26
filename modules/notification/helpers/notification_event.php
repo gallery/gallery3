@@ -126,4 +126,25 @@ class notification_event_Core {
       }
     }
   }
+
+  static function show_user_profile($data) {
+    if ($data->display_all) {
+      $view = new View("user_profile_notification.html");
+      $view->subscriptions = array();
+      foreach(ORM::factory("subscription")
+              ->where("user_id", "=", $data->user->id)
+              ->find_all() as $subscription) {
+        $item = ORM::factory("item")
+          ->where("id", "=", $subscription->item_id)
+          ->find();
+        if ($item->loaded()) {
+          $view->subscriptions[] = (object)array("id" => $subscription->id, "title" => $item->title,
+                                                 "url" => $item->url());
+        }
+      }
+      if (count($view->subscriptions) > 0) {
+        $data->content[] = (object)array("title" => t("Watching"), "view" => $view);
+      }
+    }
+  }
 }

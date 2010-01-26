@@ -30,26 +30,13 @@ class User_Profile_Controller extends Controller {
     $v->content = new View("user_profile.html");
 
     // @todo modify user_home to supply a link to their album,
-    // @todo add list of watches
-    // @todo add all comments
-    // @todo add rest api key
     $v->content->user = $user;
-    $v->content->height = 250;
     $v->content->not_current = !$is_current_active;
     $v->content->editable = identity::is_writable() && $display_all;
-    $v->content->return = SafeString::of(Input::instance()->get("return"));
 
-    $fields = array("name" => t("Name"), "locale" => t("Locale"), "email" => t("Email"),
-                    "full_name" => t("Full name"), "url" => "Web site");
-    if (!$display_all) {
-      $fields = array("name" => t("Name"), "full_name" => t("Full name"), "url" => "Web site");
-    }
-    $v->content->fields = array();
-    foreach ($fields as $field => $label) {
-      if (!empty($user->$field)) {
-        $v->content->fields[(string)$label->for_html()] = $user->$field;
-      }
-    }
+    $event_data = (object)array("user" => $user, "display_all" => $display_all, "content" => array());
+    module::event("show_user_profile", $event_data);
+    $v->content->info_parts = $event_data->content;
 
     print $v;
   }
@@ -60,6 +47,7 @@ class User_Profile_Controller extends Controller {
   }
 
   public function send($id) {
+    access::verify_csrf();
     $user = identity::lookup_user($id);
     $form = user_profile::get_contact_form($user);
     if ($form->validate()) {

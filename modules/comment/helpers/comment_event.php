@@ -76,4 +76,16 @@ class comment_event_Core {
       $data[] = $row->text;
     }
   }
+
+  static function show_user_profile($data) {
+    $view = new View("user_profile_comments.html");
+    $view->comments = ORM::factory("comment")
+      ->order_by("created", "DESC")
+      ->where("state", "=", "published")
+      ->where("author_id", "=", $data->user->id)
+      ->find_all();
+    if ($view->comments->count()) {
+      $data->content[] = (object)array("title" => t("Comments"), "view" => $view);
+    }
+  }
 }
