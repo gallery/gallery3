@@ -417,8 +417,8 @@ class Item_Model extends ORM_MPTT {
 
         // If any significant fields have changed, load up a copy of the original item and
         // keep it around.
+        $original = ORM::factory("item")->where("id", "=", $this->id)->find();
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
-          $original = ORM::factory("item")->where("id", "=", $this->id)->find();
           $original->_build_relative_caches();
           $this->relative_path_cache = null;
           $this->relative_url_cache = null;
@@ -429,43 +429,42 @@ class Item_Model extends ORM_MPTT {
         // Now update the filesystem and any database caches if there were significant value
         // changes.  If anything past this point fails, then we'll have an inconsistent database
         // so this code should be as robust as we can make it.
-        if (isset($original)) {
-          // Update the MPTT pointers, if necessary.  We have to do this before we generate any
-          // cached paths!
+
+        // Update the MPTT pointers, if necessary.  We have to do this before we generate any
+        // cached paths!
+        if ($original->parent_id != $this->parent_id) {
+          parent::move_to($this->parent());
+        }
+
+        if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
+          // Move all of the items associated data files
+          @rename($original->file_path(), $this->file_path());
+          if ($this->is_album()) {
+            @rename(dirname($original->resize_path()), dirname($this->resize_path()));
+            @rename(dirname($original->thumb_path()), dirname($this->thumb_path()));
+          } else {
+            @rename($original->resize_path(), $this->resize_path());
+            @rename($original->thumb_path(), $this->thumb_path());
+          }
+
           if ($original->parent_id != $this->parent_id) {
-            parent::move_to($this->parent());
+            // This will result in 2 events since we'll still fire the item_updated event below
+            module::event("item_moved", $this, $original->parent());
           }
+        }
 
-          if ($original->parent_id != $this->parent_id || $original->name != $this->name) {
-            // Move all of the items associated data files
-            @rename($original->file_path(), $this->file_path());
-            if ($this->is_album()) {
-              @rename(dirname($original->resize_path()), dirname($this->resize_path()));
-              @rename(dirname($original->thumb_path()), dirname($this->thumb_path()));
-            } else {
-              @rename($original->resize_path(), $this->resize_path());
-              @rename($original->thumb_path(), $this->thumb_path());
-            }
-
-            if ($original->parent_id != $this->parent_id) {
-              // This will result in 2 events since we'll still fire the item_updated event below
-              module::event("item_moved", $this, $original->parent());
-            }
-          }
-
-          // Changing the name, slug or parent ripples downwards
-          if ($this->is_album() &&
-              ($original->name != $this->name ||
-               $original->slug != $this->slug ||
-               $original->parent_id != $this->parent_id)) {
-            db::build()
-              ->update("items")
-              ->set("relative_url_cache", null)
-              ->set("relative_path_cache", null)
-              ->where("left_ptr", ">", $this->left_ptr)
-              ->where("right_ptr", "<", $this->right_ptr)
-              ->execute();
-          }
+        // Changing the name, slug or parent ripples downwards
+        if ($this->is_album() &&
+            ($original->name != $this->name ||
+             $original->slug != $this->slug ||
+             $original->parent_id != $this->parent_id)) {
+          db::build()
+            ->update("items")
+            ->set("relative_url_cache", null)
+            ->set("relative_path_cache", null)
+            ->where("left_ptr", ">", $this->left_ptr)
+            ->where("right_ptr", "<", $this->right_ptr)
+            ->execute();
         }
 
         module::event("item_updated", $original, $this);
