@@ -95,30 +95,19 @@ class user_installer {
     $registered->special = true;
     $registered->save();
 
-    // Avoid ORM to sidestep validation.
-    db::build()->insert(
-      "users",
-      array("name" => "guest",
-            "full_name" => "Guest User",
-            "password" => "",
-            "guest" => true))
-      ->execute();
-
-    $guest = ORM::factory("user")->where("id", "=", 1)->find();
-    $guest->add($everybody);
+    $guest = ORM::factory("user");
+    $guest->name = "guest";
+    $guest->full_name = "Guest User";
+    $guest->password = "";
+    $guest->guest = true;
     $guest->save();
 
-    db::build()->insert(
-      "users",
-      array("name" => "admin",
-            "full_name" => "Gallery Administrator",
-            "password" => "admin",
-            "admin" => true))
-      ->execute();
-
-    $admin = ORM::factory("user")->where("id", "=", 2)->find();
-    $admin->add($everybody);
-    $admin->add($registered);
+    $admin = ORM::factory("user");
+    $admin->name = "admin";
+    $admin->full_name = "Gallery Administrator";
+    $admin->password = "admin";
+    $admin->email = "unknown@unknown.com";
+    $admin->admin = true;
     $admin->save();
 
     $root = ORM::factory("item", 1);
