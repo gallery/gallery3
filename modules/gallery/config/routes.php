@@ -21,6 +21,10 @@
 // Admin controllers are not available, except via /admin
 $config["^admin_.*"] = null;
 
+// Redirect /form/add/admin/controller and /form/edit/admin/controller to
+// admin/controller/form_(add|edit)/parms. provides the same as below for admin pages
+$config["^form/(edit|add)/admin/(\w+)/(.*)$"] = "admin/$2/form_$1/$3";
+
 // Redirect /form/add and /form/edit to the module/form_(add|edit)/parms.
 $config["^form/(edit|add)/(\w+)/(.*)$"] = "$2/form_$1/$3";
 
