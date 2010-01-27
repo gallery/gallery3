@@ -33,6 +33,7 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $this->assert_equal_array(
       array(
+        "url" => rest::url("tags"),
         "members" => array(
           rest::url("tag", $t1),
           rest::url("tag", $t2))),
@@ -50,6 +51,7 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function post_fails_without_permissions_test() {
     access::deny(identity::everybody(), "edit", item::root());
+    identity::set_active_user(identity::guest());
 
     try {
       $request->params->name = "test tag";
