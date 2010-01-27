@@ -194,14 +194,15 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function view_permissions_propagate_down_to_photos_test() {
-    $album = album::create(item::root(), rand(), "test album");
-    $photo = photo::create($album, MODPATH . "gallery/images/gallery.png", "", "");
+    $album = test::random_album();
+    $photo = test::random_photo($album);
     identity::set_active_user(identity::guest());
 
     $this->assert_true(access::can("view", $photo));
+    $album->reload();  // MPTT pointers have changed, so reload before calling access::deny
     access::deny(identity::everybody(), "view", $album);
 
-    $photo->reload();  // view permissions are cached in the photo
+    $photo->reload();  // view permissions are cached in the photo, so reload before checking
     $this->assert_false(access::can("view", $photo));
   }
 
