@@ -101,7 +101,7 @@ modules/gallery/views/admin_modules.html.php                 51  DIRTY    access
 modules/gallery/views/admin_modules.html.php                 60  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/gallery/views/admin_modules.html.php                 63  DIRTY    form::checkbox($data,'1',module::is_active($module_name))
 modules/gallery/views/admin_modules.html.php                 65  DIRTY    $module_info->version
-modules/gallery/views/admin_modules_confirm.html.php         11  DIRTY_ATTR $class
+modules/gallery/views/admin_modules_confirm.html.php         11  DIRTY_ATTR $css_class
 modules/gallery/views/admin_modules_confirm.html.php         11  DIRTY    $message
 modules/gallery/views/admin_modules_confirm.html.php         16  DIRTY    access::csrf_form_field()
 modules/gallery/views/admin_modules_confirm.html.php         18  DIRTY    form::hidden($module,1)
