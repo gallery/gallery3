@@ -28,19 +28,25 @@ class photo_Core {
     $form = new Forge("photos/update/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
     $form->hidden("from_id");
     $group = $form->group("edit_item")->label(t("Edit Photo"));
-    $group->input("title")->label(t("Title"))->value($photo->title);
+    $group->input("title")->label(t("Title"))->value($photo->title)
+      ->error_messages("required", t("You must provide a title"))
+      ->error_messages("length", t("Your title is too long"));
     $group->textarea("description")->label(t("Description"))->value($photo->description);
     $group->input("name")->label(t("Filename"))->value($photo->name)
       ->error_messages("conflict", t("There is already a movie, photo or album with this name"))
       ->error_messages("no_slashes", t("The photo name can't contain a \"/\""))
       ->error_messages("no_trailing_period", t("The photo name can't end in \".\""))
-      ->error_messages("illegal_extension", t("You cannot change the filename extension"));
+      ->error_messages("illegal_data_file_extension", t("You cannot change the photo file extension"))
+      ->error_messages("required", t("You must provide a photo file name"))
+      ->error_messages("length", t("Your photo file name is too long"));
     $group->input("slug")->label(t("Internet Address"))->value($photo->slug)
       ->error_messages(
         "conflict", t("There is already a movie, photo or album with this internet address"))
       ->error_messages(
         "not_url_safe",
-        t("The internet address should contain only letters, numbers, hyphens and underscores"));
+        t("The internet address should contain only letters, numbers, hyphens and underscores"))
+      ->error_messages("required", t("You must provide an internet address"))
+      ->error_messages("length", t("Your internet address is too long"));
 
     module::event("item_edit_form", $photo, $form);
 
