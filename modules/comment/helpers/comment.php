@@ -50,10 +50,7 @@ class comment_Core {
       $group->inputs["name"]->value($active->full_name)->disabled("disabled");
       $group->email->value($active->email)->disabled("disabled");
       $group->url->value($active->url)->disabled("disabled");
-    } else {
-      $group->inputs["name"]->error_messages("missing", t("You must provide a name"));
     }
-    $group->text->error_messages("missing", t("You must provide a comment"));
 
     return $form;
   }
