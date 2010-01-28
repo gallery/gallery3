@@ -53,7 +53,6 @@ class album_Core {
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
       $group->input("name")->label(t("Directory Name"))->value($parent->name)
-        ->rules("required")
         ->error_messages(
           "conflict", t("There is already a movie, photo or album with this name"))
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
