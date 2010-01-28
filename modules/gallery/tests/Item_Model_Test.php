@@ -336,4 +336,14 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     }
     $this->assert_true(false, "Shouldn't get here");
   }
+
+  public function cant_delete_root_album_test() {
+    try {
+      item::root()->delete();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_same(array("id" => "cant_delete_root_album"), $e->validation->errors());
+      return;  // pass
+    }
+    $this->assert_true(false, "Shouldn't get here");
+  }
 }

@@ -71,6 +71,12 @@ class Item_Model extends ORM_MPTT {
   }
 
   public function delete() {
+    if ($this->id == 1) {
+      $v = new Validation(array("id"));
+      $v->add_error("id", "cant_delete_root_album");
+      ORM_Validation_Exception::handle_validation($this->table_name, $v);
+    }
+
     $old = clone $this;
     module::event("item_before_delete", $this);
 
