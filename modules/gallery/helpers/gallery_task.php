@@ -81,7 +81,7 @@ class gallery_task_Core {
           } catch (Exception $e) {
             $errors[] = t("Unable to rebuild images for '%title'",
                           array("title" => html::purify($item->title)));
-            $errors[] = $e->__toString();
+            $errors[] = (string)$e;
             $ignored[$item->id] = 1;
           }
         }
@@ -114,7 +114,7 @@ class gallery_task_Core {
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
-      $errors[] = $e->__toString();
+      $errors[] = (string)$e;
     }
     if ($errors) {
       $task->log($errors);
@@ -217,7 +217,7 @@ class gallery_task_Core {
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
-      $errors[] = $e->__toString();
+      $errors[] = (string)$e;
     }
     if ($errors) {
       $task->log($errors);
@@ -284,7 +284,7 @@ class gallery_task_Core {
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
-      $errors[] = $e->__toString();
+      $errors[] = (string)$e;
     }
     if ($errors) {
       $task->log($errors);

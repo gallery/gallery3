@@ -82,7 +82,7 @@ class exif_task_Core {
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
-      $task->log($e->__toString());
+      $task->log((string)$e);
     }
   }
 }

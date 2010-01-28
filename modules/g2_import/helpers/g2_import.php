@@ -239,7 +239,7 @@ class g2_import_Core {
       $g2_group = g2(GalleryCoreApi::loadEntitiesById($g2_group_id));
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 group with id: %id\n%exception",
-               array("id" => $g2_group_id, "exception" => $e->__toString()));
+               array("id" => $g2_group_id, "exception" => (string)$e));
     }
 
     switch ($g2_group->getGroupType()) {
@@ -295,7 +295,7 @@ class g2_import_Core {
       $g2_user = g2(GalleryCoreApi::loadEntitiesById($g2_user_id));
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 user with id: %id\n%exception",
-               array("id" => $g2_user_id, "exception" => $e->__toString()));
+               array("id" => $g2_user_id, "exception" => (string)$e));
     }
     $g2_groups = g2(GalleryCoreApi::fetchGroupsForUser($g2_user->getId()));
 
@@ -449,7 +449,7 @@ class g2_import_Core {
       $g2_path = g2($g2_item->fetchPath());
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 item with id: %id\n%exception",
-               array("id" => $g2_item_id, "exception" => $e->__toString()));
+               array("id" => $g2_item_id, "exception" => (string)$e));
     }
 
     $parent = ORM::factory("item")->where("id", "=", self::map($g2_item->getParentId()))->find();
@@ -596,7 +596,7 @@ class g2_import_Core {
       $g2_comment = g2(GalleryCoreApi::loadEntitiesById($g2_comment_id));
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 comment with id: %id\%exception",
-               array("id" => $g2_comment_id, "exception" => $e->__toString()));
+               array("id" => $g2_comment_id, "exception" => (string)$e));
     }
 
     $text = $g2_comment->getSubject();
@@ -642,7 +642,7 @@ class g2_import_Core {
       $tag_names = array_values(g2(TagsHelper::getTagsByItemId($g2_item_id)));
     } catch (Exception $e) {
       return t("Failed to import Gallery 2 tags for item with id: %id\n%exception",
-               array("id" => $g2_item_id, "exception" => $e->__toString()));
+               array("id" => $g2_item_id, "exception" => (string)$e));
     }
 
     foreach ($tag_names as $tag_name) {

@@ -36,7 +36,7 @@ class Organize_Controller extends Controller {
     access::required("edit", $album);
 
     print json_encode(
-      array("grid" => self::_get_micro_thumb_grid($album, $offset)->__toString(),
+      array("grid" => (string)self::_get_micro_thumb_grid($album, $offset),
             "sort_column" => $album->sort_column,
             "sort_order" => $album->sort_order));
   }
@@ -57,8 +57,8 @@ class Organize_Controller extends Controller {
     }
 
     print json_encode(
-      array("tree" => self::_expanded_tree(ORM::factory("item", 1), $target_album)->__toString(),
-            "grid" => self::_get_micro_thumb_grid($target_album, 0)->__toString()));
+      array("tree" => (string)self::_expanded_tree(ORM::factory("item", 1), $target_album),
+            "grid" => (string)self::_get_micro_thumb_grid($target_album, 0)));
   }
 
   function rearrange($target_id, $before_or_after) {
@@ -114,7 +114,7 @@ class Organize_Controller extends Controller {
     module::event("album_rearrange", $album);
 
     print json_encode(
-      array("grid" => self::_get_micro_thumb_grid($album, 0)->__toString(),
+      array("grid" => (string)self::_get_micro_thumb_grid($album, 0),
             "sort_column" => $album->sort_column,
             "sort_order" => $album->sort_order));
   }
@@ -136,7 +136,7 @@ class Organize_Controller extends Controller {
     $album->save();
 
     print json_encode(
-      array("grid" => self::_get_micro_thumb_grid($album, 0)->__toString(),
+      array("grid" => (string)self::_get_micro_thumb_grid($album, 0),
             "sort_column" => $album->sort_column,
             "sort_order" => $album->sort_order));
   }
