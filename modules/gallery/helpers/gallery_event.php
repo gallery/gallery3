@@ -404,14 +404,14 @@ class gallery_event_Core {
     if (!$data->display_all) {
       $fields = array("name" => t("Name"), "full_name" => t("Full name"), "url" => "Web site");
     }
-    $v->fields = array();
+    $v->user_profile_data = array();
     foreach ($fields as $field => $label) {
       if (!empty($data->user->$field)) {
         $value = $data->user->$field;
         if ($field == "locale") {
           $value = locales::display_name($value);
         }
-        $v->fields[(string) $label] = $value;
+        $v->user_profile_data[(string) $label] = $value;
       }
     }
     $data->content[] = (object) array("title" => t("User information"), "view" => $v);
