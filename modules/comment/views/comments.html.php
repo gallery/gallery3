@@ -22,10 +22,16 @@
              width="40"
              height="40" />
       </a>
+      <? if ($comment->author()->guest): ?>
+      <?= t('on %date %name said',
+            array("date" => date("Y-M-d H:i:s", $comment->created),
+                  "name" => html::clean($comment->author_name()))); ?>
+      <? else: ?>
       <?= t('on %date <a href="%url">%name</a> said',
             array("date" => date("Y-M-d H:i:s", $comment->created),
                   "url" => user_profile::url($comment->author_id),
                   "name" => html::clean($comment->author_name()))); ?>
+      <? endif ?>
     </p>
     <div>
       <?= nl2br(html::purify($comment->text)) ?>
