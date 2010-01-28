@@ -58,7 +58,7 @@
             "<li class=\"g-error\">" + fileObj.name + " - " + msg[1] + "</li>");
         } else {
           $("#g-add-photos-status ul").append(
-            "<li class=\"g-success\">" + fileObj.name + " - <?= t("Completed") ?></li>");
+            "<li class=\"g-success\">" + fileObj.name + " - " + <?= t("Completed")->for_js() ?> + "</li>");
         }
         return true;
       },

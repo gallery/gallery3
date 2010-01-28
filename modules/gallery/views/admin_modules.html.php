@@ -22,7 +22,7 @@
             buttons: {
               <?= t("Continue")->for_js() ?>: function() {
                 $("form", this).submit();
-                $(".ui-dialog-buttonpane button:contains(<?= t("Continue") ?>)")
+                $(".ui-dialog-buttonpane button:contains(" + <?= t("Continue")->for_js() ?> + ")")
                   .attr("disabled", "disabled")
                   .addClass("ui-state-disabled");
               },
@@ -32,7 +32,7 @@
             }
           });
           if (!data.allow_continue) {
-            $(".ui-dialog-buttonpane button:contains(<?= t("Continue") ?>)")
+            $(".ui-dialog-buttonpane button:contains(" + <?= t("Continue")->for_js() ?> + ")")
               .attr("disabled", "disabled")
               .addClass("ui-state-disabled");
           }
