@@ -41,7 +41,7 @@
   <? foreach ($info_parts as $info): ?>
   <div>
     <fieldset>
-    <label><?= $info->title ?></label>
+    <label><?= html::purify($info->title) ?></label>
     <div>
     <?= $info->view ?>
     </div>

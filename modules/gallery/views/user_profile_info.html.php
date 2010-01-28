@@ -3,7 +3,7 @@
   <? foreach ($fields as $field => $value): ?>
   <tr>
     <td><?= $field ?></td>
-    <td><?= $value ?></td>
+    <td><?= html::purify($value) ?></td>
   </tr>
   <? endforeach ?>
 </table>

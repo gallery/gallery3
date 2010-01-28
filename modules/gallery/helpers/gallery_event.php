@@ -411,7 +411,7 @@ class gallery_event_Core {
         if ($field == "locale") {
           $value = locales::display_name($value);
         }
-        $v->fields[(string) $label] = html::clean($value);
+        $v->fields[(string) $label] = $value;
       }
     }
     $data->content[] = (object) array("title" => t("User information"), "view" => $v);

@@ -53,11 +53,11 @@ class User_Profile_Controller extends Controller {
     if ($form->validate()) {
       Sendmail::factory()
         ->to($user->email)
-        ->subject($form->message->subject->value)
+        ->subject(html::clean($form->message->subject->value))
         ->header("Mime-Version", "1.0")
         ->header("Content-type", "text/html; charset=iso-8859-1")
         ->reply_to($form->message->reply_to->value)
-        ->message($form->message->message->value)
+        ->message(html::purify($form->message->message->value))
         ->send();
       message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
       print json_encode(array("result" => "success"));
