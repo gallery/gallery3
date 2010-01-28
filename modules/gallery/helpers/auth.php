@@ -51,6 +51,8 @@ class auth_Core {
       module::event("user_logout", $user);
     }
     log::info("user", t("User %name logged out", array("name" => $user->name)),
-              html::anchor("user/$user->id", html::clean($user->name)));
+              t('<a href="%url">%user_name</a>',
+                array("url" => user_profile::url($user->id),
+                      "user_name" => html::clean($user->name))));
   }
 }
