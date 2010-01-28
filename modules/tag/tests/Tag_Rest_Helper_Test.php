@@ -31,7 +31,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->url = rest::url("tag", $tag);
     $this->assert_equal_array(
       array("url" => rest::url("tag", $tag),
-            "resource" => $tag->as_array(),
+            "entity" => $tag->as_array(),
             "relationships" => array(
               "items" => array(
                 "url" => rest::url("tag_items", $tag),
@@ -56,7 +56,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->url = rest::url("tag", $tag);
     $this->assert_equal_array(
       array("url" => rest::url("tag", $tag),
-            "resource" => $tag->as_array(),
+            "entity" => $tag->as_array(),
             "relationships" => array(
               "items" => array(
                 "url" => rest::url("tag_items", $tag),

@@ -29,7 +29,7 @@ class tag_rest_Core {
 
     return array(
       "url" => $request->url,
-      "resource" => $tag->as_array(),
+      "entity" => $tag->as_array(),
       "relationships" => array(
         "items" => array(
           "url" => rest::url("tag_items", $tag),

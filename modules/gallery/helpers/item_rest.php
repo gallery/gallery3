@@ -77,7 +77,7 @@ class item_rest_Core {
 
     return array(
       "url" => $request->url,
-      "resource" => $item->as_array(),
+      "entity" => $item->as_array(),
       "members" => $members,
       "relationships" => rest::relationships("item", $item));
   }
