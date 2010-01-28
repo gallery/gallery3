@@ -41,8 +41,8 @@ class album_Core {
       ->error_messages(
         "not_url_safe",
         t("The internet address should contain only letters, numbers, hyphens and underscores"))
-      ->error_messages("required", t("You must provide an Internet Address"))
-      ->error_messages("length", t("Your Internet Address is too long"));
+      ->error_messages("required", t("You must provide an internet address"))
+      ->error_messages("length", t("Your internet address is too long"));
     $group->hidden("type")->value("album");
     $group->submit("")->value(t("Create"));
     $form->script("")
@@ -73,8 +73,8 @@ class album_Core {
         ->error_messages(
           "not_url_safe",
           t("The internet address should contain only letters, numbers, hyphens and underscores"))
-        ->error_messages("required", t("You must provide an Internet Address"))
-        ->error_messages("length", t("Your Internet Address is too long"));
+        ->error_messages("required", t("You must provide an internet address"))
+        ->error_messages("length", t("Your internet address is too long"));
     } else {
       $group->hidden("name")->value($parent->name);
       $group->hidden("slug")->value($parent->slug);
