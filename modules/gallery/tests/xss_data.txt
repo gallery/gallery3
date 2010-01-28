@@ -34,6 +34,9 @@ modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $chi
 modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $child->thumb_width
 modules/comment/views/comments.html.php                      16  DIRTY_ATTR $comment->id
 modules/comment/views/comments.html.php                      19  DIRTY_ATTR $comment->author()->avatar_url(40,$theme->url(,true))
+modules/comment/views/user_profile_comments.html.php         5   DIRTY_ATTR $comment->id
+modules/comment/views/user_profile_comments.html.php         10  DIRTY_JS $comment->item()->url()
+modules/comment/views/user_profile_comments.html.php         11  DIRTY    $comment->item()->thumb_img(array(),50)
 modules/digibug/views/digibug_form.html.php                  4   DIRTY    form::open("http://www.digibug.com/dapi/order.php")
 modules/digibug/views/digibug_form.html.php                  5   DIRTY    form::hidden($order_parms)
 modules/digibug/views/digibug_form.html.php                  6   DIRTY    form::close()
@@ -43,10 +46,10 @@ modules/g2_import/views/admin_g2_import.html.php             30  DIRTY    $form
 modules/gallery/views/admin_advanced_settings.html.php       21  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/gallery/views/admin_advanced_settings.html.php       22  DIRTY    $var->module_name
 modules/gallery/views/admin_block_log_entries.html.php       4   DIRTY_ATTR log::severity_class($entry->severity)
-modules/gallery/views/admin_block_log_entries.html.php       5   DIRTY_JS user_profile::url($entryr->id)
-modules/gallery/views/admin_block_log_entries.html.php       6   DIRTY    gallery::date_time($entry->timestamp)
-modules/gallery/views/admin_block_log_entries.html.php       7   DIRTY    $entry->message
-modules/gallery/views/admin_block_log_entries.html.php       8   DIRTY    $entry->html
+modules/gallery/views/admin_block_log_entries.html.php       8   DIRTY_JS user_profile::url($entry->user->id)
+modules/gallery/views/admin_block_log_entries.html.php       10  DIRTY    gallery::date_time($entry->timestamp)
+modules/gallery/views/admin_block_log_entries.html.php       11  DIRTY    $entry->message
+modules/gallery/views/admin_block_log_entries.html.php       12  DIRTY    $entry->html
 modules/gallery/views/admin_block_news.html.php              5   DIRTY_JS $entry["link"]
 modules/gallery/views/admin_block_news.html.php              5   DIRTY    $entry["title"]
 modules/gallery/views/admin_block_news.html.php              7   DIRTY    text::limit_words(strip_tags($entry["description"]),25);
@@ -219,10 +222,9 @@ modules/gallery/views/upgrader.html.php                      77  DIRTY    $modul
 modules/gallery/views/upgrader.html.php                      99  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      102 DIRTY_ATTR $done?"muted":""
 modules/gallery/views/user_languages_block.html.php          2   DIRTY    form::dropdown("g-select-session-locale",$installed_locales,$selected)
-modules/gallery/views/user_profile.html.php                  35  DIRTY_ATTR $height
-modules/gallery/views/user_profile.html.php                  44  DIRTY    $field
-modules/gallery/views/user_profile.html.php                  45  DIRTY    $value
-modules/gallery/views/user_profile.html.php                  65  DIRTY_JS $return->for_html_attr()
+modules/gallery/views/user_profile.html.php                  35  DIRTY_ATTR $user->avatar_url(40,$theme->url(,true))
+modules/gallery/views/user_profile.html.php                  46  DIRTY    $info->view
+modules/gallery/views/user_profile_info.html.php             5   DIRTY    $field
 modules/image_block/views/image_block_block.html.php         3   DIRTY_JS $item->url()
 modules/image_block/views/image_block_block.html.php         4   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
 modules/info/views/info_block.html.php                       22  DIRTY    date("M j, Y H:i:s",$item->captured)
@@ -235,6 +237,8 @@ modules/notification/views/item_deleted.html.php             18  DIRTY_JS $item-
 modules/notification/views/item_deleted.html.php             19  DIRTY    $item->parent()->abs_url()
 modules/notification/views/item_updated.html.php             20  DIRTY_JS $item->abs_url()
 modules/notification/views/item_updated.html.php             20  DIRTY    $item->abs_url()
+modules/notification/views/user_profile_notification.html.php 5   DIRTY_ATTR $subscription->id
+modules/notification/views/user_profile_notification.html.php 6   DIRTY_JS $subscription->url
 modules/organize/views/organize_dialog.html.php              3   DIRTY_JS url::site("organize/move_to/__ALBUM_ID__?csrf=$csrf")
 modules/organize/views/organize_dialog.html.php              4   DIRTY_JS url::site("organize/rearrange/__TARGET_ID__/__BEFORE__?csrf=$csrf")
 modules/organize/views/organize_dialog.html.php              5   DIRTY_JS url::site("organize/sort_order/__ALBUM_ID__/__COL__/__DIR__?csrf=$csrf")
