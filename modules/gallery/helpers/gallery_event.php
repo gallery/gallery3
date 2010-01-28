@@ -399,18 +399,22 @@ class gallery_event_Core {
   static function show_user_profile($data) {
     $v = new View("user_profile_info.html");
 
-    $fields = array("name" => t("Name"), "locale" => t("Locale"), "email" => t("Email"),
-                    "full_name" => t("Full name"), "url" => "Web site");
+    $fields = array("name" => t("Name"), "locale" => t("Language Preference"),
+                    "email" => t("Email"), "full_name" => t("Full name"), "url" => "Web site");
     if (!$data->display_all) {
       $fields = array("name" => t("Name"), "full_name" => t("Full name"), "url" => "Web site");
     }
     $v->fields = array();
     foreach ($fields as $field => $label) {
       if (!empty($data->user->$field)) {
-        $v->fields[(string)$label->for_html()] = $data->user->$field;
+        $value = $data->user->$field;
+        if ($field == "locale") {
+          $value = locales::display_name($value);
+        }
+        $v->fields[(string) $label] = html::clean($value);
       }
     }
-    $data->content[] = (object)array("title" => t("User information"), "view" => $v);
+    $data->content[] = (object) array("title" => t("User information"), "view" => $v);
 
   }
 }
