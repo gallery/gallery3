@@ -50,7 +50,7 @@ class G2_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    $item = ORM::factory("item")->where("id", "=", $g2_map->g3_id)->find();
+    $item = ORM::factory("item", $g2_map->g3_id);
     if (!$item->loaded() || !access::can("view", $item)) {
       throw new Kohana_404_Exception();
     }

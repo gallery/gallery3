@@ -228,7 +228,7 @@ class gallery_installer {
             "updated" => $now,
             "weight" => 1))
       ->execute();
-    $root = ORM::factory("item")->where("id", "=", 1)->find();
+    $root = ORM::factory("item", 1);
     access::add_item($root);
 
     module::set_var("gallery", "active_site_theme", "wind");

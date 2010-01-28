@@ -50,7 +50,7 @@ class item_tags_rest_Core {
   }
 
   static function resolve($id) {
-    $item = ORM::factory("item")->where("id", "=", $id)->find();
+    $item = ORM::factory("item", $id);
     if (!access::can("view", $item)) {
       throw new Kohana_404_Exception();
     }

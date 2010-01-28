@@ -24,7 +24,7 @@ class Server_Add_Controller extends Admin_Controller {
       $files[] = $path;
     }
 
-    $item = ORM::factory("item")->where("id", "=", $id)->find();
+    $item = ORM::factory("item", $id);
     $view = new View("server_add_tree_dialog.html");
     $view->item = $item;
     $view->tree = new View("server_add_tree.html");
@@ -78,7 +78,7 @@ class Server_Add_Controller extends Admin_Controller {
    */
   public function start() {
     access::verify_csrf();
-    $item = ORM::factory("item")->where("id", "=", Input::instance()->get("item_id"))->find();
+    $item = ORM::factory("item", Input::instance()->get("item_id"));
 
     foreach (Input::instance()->post("paths") as $path) {
       if (server_add::is_valid_path($path)) {
@@ -104,7 +104,7 @@ class Server_Add_Controller extends Admin_Controller {
   function run($task_id) {
     access::verify_csrf();
 
-    $task = ORM::factory("task")->where("id", "=", $task_id)->find();
+    $task = ORM::factory("task", $task_id);
     if (!$task->loaded() || $task->owner_id != identity::active_user()->id) {
       access::forbidden();
     }
@@ -216,12 +216,11 @@ class Server_Add_Controller extends Admin_Controller {
 
         // Look up the parent item for this entry.  By now it should exist, but if none was
         // specified, then this belongs as a child of the current item.
-        $parent_entry =
-          ORM::factory("server_add_file")->where("id", "=", $entry->parent_id)->find();
+        $parent_entry = ORM::factory("server_add_file", $entry->parent_id);
         if (!$parent_entry->loaded()) {
-          $parent = ORM::factory("item")->where("id", "=", $task->get("item_id"))->find();
+          $parent = ORM::factory("item", $task->get("item_id"));
         } else {
-          $parent = ORM::factory("item")->where("id", "=", $parent_entry->item_id)->find();
+          $parent = ORM::factory("item", $parent_entry->item_id);
         }
 
         $name = basename($entry->file);

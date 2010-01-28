@@ -55,7 +55,7 @@ class Group_Model extends ORM implements Group_Definition {
       module::event("group_created", $this);
     } else {
       // Updated group
-      $original = ORM::factory("group")->where("id", "=", $this->id)->find();
+      $original = ORM::factory("group", $this->id);
       parent::save();
       module::event("group_updated", $original, $this);
     }

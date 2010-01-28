@@ -35,8 +35,8 @@ class tag_item_rest_Core {
 
   static function resolve($tuple) {
     list ($tag_id, $item_id) = split(",", $tuple);
-    $tag = ORM::factory("tag")->where("id", "=", $tag_id)->find();
-    $item = ORM::factory("item")->where("id", "=", $item_id)->find();
+    $tag = ORM::factory("tag", $tag_id);
+    $item = ORM::factory("item", $item_id);
     if (!$tag->loaded() || !$item->loaded() || !$tag->has($item)) {
       throw new Kohana_404_Exception();
     }

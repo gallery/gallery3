@@ -423,7 +423,7 @@ class Item_Model extends ORM_MPTT {
 
         // If any significant fields have changed, load up a copy of the original item and
         // keep it around.
-        $original = ORM::factory("item")->where("id", "=", $this->id)->find();
+        $original = ORM::factory("item", $this->id);
         if (array_intersect($this->changed, array("parent_id", "name", "slug"))) {
           $original->_build_relative_caches();
           $this->relative_path_cache = null;
@@ -787,7 +787,7 @@ class Item_Model extends ORM_MPTT {
     if ($this->is_movie() || $this->is_photo()) {
       if ($this->loaded()) {
         // Existing items can't change their extension
-        $original = ORM::factory("item")->where("id", "=", $this->id)->find();
+        $original = ORM::factory("item", $this->id);
         $new_ext = pathinfo($this->name, PATHINFO_EXTENSION);
         $old_ext = pathinfo($original->name, PATHINFO_EXTENSION);
         if (strcasecmp($new_ext, $old_ext)) {

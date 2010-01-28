@@ -108,7 +108,7 @@ class Comment_Model extends ORM {
       module::event("comment_created", $this);
     } else {
       // Updated comment
-      $original = ORM::factory("comment")->where("id", "=", $this->id)->find();
+      $original = ORM::factory("comment", $this->id);
       $visible_change = $original->state == "published" || $this->state == "published";
       parent::save();
       module::event("comment_updated", $original, $this);

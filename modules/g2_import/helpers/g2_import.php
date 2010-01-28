@@ -358,8 +358,7 @@ class g2_import_Core {
     if ($g2_album->getParentId() == null) {
       return t("Skipping Gallery 2 root album");
     }
-    $parent_album =
-      ORM::factory("item")->where("id", "=", self::map($g2_album->getParentId()))->find();
+    $parent_album = ORM::factory("item", self::map($g2_album->getParentId()));
 
     $album = ORM::factory("item");
     $album->type = "album";
@@ -423,8 +422,8 @@ class g2_import_Core {
       }
       $item_id = self::map($g2_source->getId());
       if ($item_id) {
-        $item = ORM::factory("item")->where("id", "=", $item_id)->find();
-        $g2_album = ORM::factory("item")->where("id", "=", $g3_album_id)->find();
+        $item = ORM::factory("item", $item_id);
+        $g2_album = ORM::factory("item", $g3_album_id);
         $g2_album->album_cover_item_id = $item->id;
         $g2_album->thumb_dirty = 1;
         $g2_album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
@@ -452,7 +451,7 @@ class g2_import_Core {
                array("id" => $g2_item_id, "exception" => (string)$e));
     }
 
-    $parent = ORM::factory("item")->where("id", "=", self::map($g2_item->getParentId()))->find();
+    $parent = ORM::factory("item", self::map($g2_item->getParentId()));
 
     $g2_type = $g2_item->getEntityType();
     $corrupt = 0;
@@ -633,7 +632,7 @@ class g2_import_Core {
 
     GalleryCoreApi::requireOnce("modules/tags/classes/TagsHelper.class");
     $g2_item_id = array_shift($queue);
-    $g3_item = ORM::factory("item")->where("id", "=", self::map($g2_item_id))->find();
+    $g3_item = ORM::factory("item", self::map($g2_item_id));
     if (!$g3_item->loaded()) {
       return;
     }

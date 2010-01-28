@@ -77,7 +77,7 @@ class tag_rest_Core {
   }
 
   static function resolve($id) {
-    $tag = ORM::factory("tag")->where("id", "=", $id)->find();
+    $tag = ORM::factory("tag", $id);
     if (!$tag->loaded()) {
       throw new Kohana_404_Exception();
     }

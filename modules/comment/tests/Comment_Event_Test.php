@@ -30,6 +30,6 @@ class Comment_Event_Test extends Gallery_Unit_Test_Case {
 
     $album->delete();
 
-    $this->assert_false(ORM::factory("comment")->where("id", "=", $comment->id)->find()->loaded());
+    $this->assert_false(ORM::factory("comment", $comment->id)->loaded());
   }
 }

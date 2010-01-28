@@ -52,7 +52,7 @@ class tag_items_rest_Core {
   }
 
   static function resolve($id) {
-    return ORM::factory("tag")->where("id", "=", $id)->find();
+    return ORM::factory("tag", $id);
   }
 
   static function url($tag) {

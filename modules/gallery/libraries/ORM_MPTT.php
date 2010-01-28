@@ -48,7 +48,7 @@ class ORM_MPTT_Core extends ORM {
   function save() {
     if (!$this->loaded()) {
       $this->lock();
-      $parent = ORM::factory("item")->where("id", "=", $this->parent_id)->find();
+      $parent = ORM::factory("item", $this->parent_id);
 
       try {
         // Make a hole in the parent for this new item
