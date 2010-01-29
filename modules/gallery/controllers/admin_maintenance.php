@@ -215,7 +215,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       print json_encode(array("result" => "success",
                               "task" => array(
                                 "percent_complete" => $task->percent_complete,
-                                "status" => $task->status,
+                                "status" => (string) $task->status,
                                 "done" => (bool) $task->done),
                               "location" => url::site("admin/maintenance")));
 
@@ -223,7 +223,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       print json_encode(array("result" => "in_progress",
                               "task" => array(
                                 "percent_complete" => $task->percent_complete,
-                                "status" => $task->status,
+                                "status" => (string) $task->status,
                                 "done" => (bool) $task->done)));
     }
   }
