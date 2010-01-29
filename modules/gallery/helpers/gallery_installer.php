@@ -479,6 +479,7 @@ class gallery_installer {
         db::build()
           ->update("items")
           ->set("slug", $new_slug)
+          ->set("relative_url_cache", null)
           ->where("id", "=", $row->id)
           ->execute();
       }
