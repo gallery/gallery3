@@ -31,7 +31,7 @@ class g2_import_installer {
                KEY `g2_id` (`g2_id`))
                DEFAULT CHARSET=utf8;");
 
-    module::set_version("g2_import", 1);
+    module::set_version("g2_import", 2);
     mkdir(VARPATH . "modules/g2_import");
   }
 
