@@ -25,8 +25,8 @@ class rest_Core {
       if (Input::instance()->get("output") == "html") {
         header("Content-type: text/html");
         $html = preg_replace(
-          "#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t<]*)#ise", "'\\1<a href=\"\\2\" >\\2</a>'",
-          print_r($data, 1));
+          "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
+          var_export($data, 1));
         print "<pre>$html</pre>";
       } else {
         header("Content-type: application/json");
