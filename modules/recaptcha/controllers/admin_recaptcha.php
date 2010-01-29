@@ -42,7 +42,7 @@ class Admin_Recaptcha_Controller extends Admin_Controller {
         } else {
           module::set_var("recaptcha", "public_key", "");
           module::set_var("recaptcha", "private_key", "");
-          message::success(t("reCAPTCHA disabled!"));
+          message::success(t("No keys provided.  reCAPTCHA is disabled!"));
           log::success("recaptcha", t("reCAPTCHA public and private keys cleared"));
           url::redirect("admin/recaptcha");
         }
