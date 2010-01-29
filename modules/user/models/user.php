@@ -62,7 +62,7 @@ class User_Model extends ORM implements User_Definition {
   /**
    * Specify our rules here so that we have access to the instance of this model.
    */
-  public function validate($array=null) {
+  public function validate(Validation $array=null) {
     // validate() is recursive, only modify the rules on the outermost call.
     if (!$array) {
       $this->rules = array(
