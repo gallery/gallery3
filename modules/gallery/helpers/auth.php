@@ -30,12 +30,12 @@ class auth_Core {
   }
 
   static function login($user) {
+    identity::set_active_user($user);
     if (identity::is_writable()) {
       $user->login_count += 1;
       $user->last_login = time();
       $user->save();
     }
-    identity::set_active_user($user);
     log::info("user", t("User %name logged in", array("name" => $user->name)));
     module::event("user_login", $user);
   }
