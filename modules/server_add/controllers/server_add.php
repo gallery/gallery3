@@ -110,7 +110,7 @@ class Server_Add_Controller extends Admin_Controller {
     }
 
     $task = task::run($task_id);
-    print json_encode(array("done" => $task->done,
+    print json_encode(array("done" => (bool)$task->done,
                             "status" => $task->status,
                             "percent_complete" => $task->percent_complete));
   }
