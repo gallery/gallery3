@@ -78,12 +78,17 @@ class Users_Controller extends Controller {
   private function _get_edit_form($user) {
     $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
-    $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name);
+    $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name)
+      ->error_messages("length", t("Your name is too long"));
     self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->password("password")->label(t("Password"))->id("g-password")
+      ->error_messages("min_length", t("Your password is too short"));
     $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
-      ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
+      ->matches($group->password)
+      ->error_messages("matches", t("The passwords you entered do not match"));
+    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email)
+      ->error_messages("email", t("You must enter a valid email address"))
+      ->error_messages("required", t("You must enter a valid email address"));
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
 
     module::event("user_edit_form", $user, $form);
