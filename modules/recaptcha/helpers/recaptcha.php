@@ -60,7 +60,7 @@ class recaptcha_Core {
    * @return boolean
    */
   static function verify_key($private_key_input) {
-    if (empty($private_key_input->value)) {
+    if (!$private_key_input->value) {
       $private_key_input->add_error("required", 1);
       return;
     }
