@@ -3,7 +3,7 @@
   <body>
     <?= form::open("http://www.digibug.com/dapi/order.php") ?>
     <?= form::hidden($order_parms) ?>
-    <?= form::close() ?>
+    </form>
     <script type="text/javascript">
       document.forms[0].submit();
     </script>

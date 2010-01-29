@@ -70,7 +70,6 @@ class InPlaceEdit_Core {
 
   public function render() {
     $v = new View("in_place_edit.html");
-    $v->hidden = array("csrf" => access::csrf_token());
     $v->action = url::site($this->action);
     $v->form = $this->form;
     $v->errors = $this->errors;

@@ -25,17 +25,8 @@ class Admin_Akismet_Controller extends Admin_Controller {
       // @todo move the "post" handler part of this code into a separate function
       access::verify_csrf();
 
-      $valid = $form->validate();
-
-      if ($valid) {
+      if ($form->validate()) {
         $new_key = $form->configure_akismet->api_key->value;
-        if ($new_key && !akismet::validate_key($new_key)) {
-          $form->configure_akismet->api_key->add_error("invalid", 1);
-          $valid = false;
-        }
-      }
-
-      if ($valid) {
         $old_key = module::get_var("akismet", "api_key");
         if ($old_key && !$new_key) {
           message::success(t("Your Akismet key has been cleared."));

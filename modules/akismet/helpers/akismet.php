@@ -23,8 +23,9 @@ class akismet_Core {
   static function get_configure_form() {
     $form = new Forge("admin/akismet", "", "post", array("id" => "g-configure-akismet-form"));
     $group = $form->group("configure_akismet")->label(t("Configure Akismet"));
-    $group->input("api_key")->label(t("API Key"))->value(module::get_var("akismet", "api_key"));
-    $group->api_key->error_messages("invalid", t("The API key you provided is invalid."));
+    $group->input("api_key")->label(t("API Key"))->value(module::get_var("akismet", "api_key"))
+      ->callback("akismet::validate_key")
+      ->error_messages("invalid", t("The API key you provided is invalid."));
     $group->submit("")->value(t("Save"));
     return $form;
   }
@@ -82,10 +83,14 @@ class akismet_Core {
    * @param  string   $api_key the API key
    * @return boolean
    */
-  static function validate_key($api_key) {
-    $request = self::_build_verify_request($api_key);
-    $response = self::_http_post($request, "rest.akismet.com");
-    return "valid" == $response->body[0];
+  static function validate_key($api_key_input) {
+    if ($api_key_input->value) {
+      $request = self::_build_verify_request($api_key_input->value);
+      $response = self::_http_post($request, "rest.akismet.com");
+      if ("valid" != $response->body[0]) {
+        $api_key_input->add_error("invalid", 1);
+      }
+    }
   }
 
 
