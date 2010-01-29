@@ -47,6 +47,7 @@ class Quick_Controller extends Controller {
       graphics::generate($item);
 
       $parent = $item->parent();
+      // @todo: this is an inadequate way to regenerate the parent's thumbnail after rotation.
       if ($parent->album_cover_item_id == $item->id) {
         copy($item->thumb_path(), $parent->thumb_path());
         $parent->thumb_width = $item->thumb_width;
