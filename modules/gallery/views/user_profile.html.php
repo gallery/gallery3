@@ -26,6 +26,7 @@
   $(document).ready(function() {
     $("#g-profile-return").click(function(event) {
       history.go(-1);
+      return false;
     })
   });
 </script>

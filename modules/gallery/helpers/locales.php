@@ -238,7 +238,9 @@ class locales_Core {
   }
 
   static function cookie_locale() {
-    $cookie_data = Input::instance()->cookie("g_locale");
+    // Can't use Input framework for client side cookies since
+    // they're not signed.
+    $cookie_data = isset($_COOKIE["g_locale"]) ? $_COOKIE["g_locale"] : null;
     $locale = null;
     if ($cookie_data) {
       if (preg_match("/^([a-z]{2,3}(?:_[A-Z]{2})?)$/", trim($cookie_data), $matches)) {
