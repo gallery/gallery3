@@ -83,7 +83,7 @@ class IdentityProvider_Core {
 
       module::event("identity_provider_changed", $current_provider, $new_provider);
 
-      auth::login($provider->admin_user());
+      identity::set_active_user($provider->admin_user());
       Session::instance()->regenerate();
     } catch (Exception $e) {
       static $restore_already_running;
