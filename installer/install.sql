@@ -355,7 +355,7 @@ CREATE TABLE {users} (
 ) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {users} VALUES (1,'guest','Guest User','',0,0,NULL,0,1,NULL,NULL,NULL);
-INSERT INTO {users} VALUES (2,'admin','Gallery Administrator','',0,0,NULL,1,0,NULL,NULL,NULL);
+INSERT INTO {users} VALUES (2,'admin','Gallery Administrator','',0,0,'unknown@unknown.com',1,0,NULL,NULL,NULL);
 DROP TABLE IF EXISTS {vars};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -366,7 +366,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -385,8 +385,8 @@ INSERT INTO {vars} VALUES (NULL,'gallery','date_time_format','Y-M-d H:i:s');
 INSERT INTO {vars} VALUES (NULL,'gallery','date_format','Y-M-d');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_center','a:3:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','choose_default_tookit','1');
+INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
 INSERT INTO {vars} VALUES (NULL,'user','mininum_password_length','5');
 INSERT INTO {vars} VALUES (NULL,'comment','spam_caught','0');
-INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_site_sidebar','a:3:{i:9;a:2:{i:0;s:4:\"info\";i:1;s:8:\"metadata\";}i:10;a:2:{i:0;s:3:\"rss\";i:1;s:9:\"rss_feeds\";}i:11;a:2:{i:0;s:3:\"tag\";i:1;s:3:\"tag\";}}');
 INSERT INTO {vars} VALUES (NULL,'slideshow','max_scale','0');
