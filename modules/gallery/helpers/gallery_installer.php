@@ -276,7 +276,7 @@ class gallery_installer {
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
     module::set_var("gallery", "simultaneous_upload_limit", 5);
-    module::set_version("gallery", 21);
+    module::set_version("gallery", 22);
   }
 
   static function upgrade($version) {
