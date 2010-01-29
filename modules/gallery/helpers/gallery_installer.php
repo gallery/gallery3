@@ -450,7 +450,7 @@ class gallery_installer {
 
     // Update the graphics rules table so that the maximum height for resizes is 640 not 480.
     // Fixes ticket #671
-    if ( $version == 21) {
+    if ($version == 21) {
       $resize_rule = ORM::factory("graphics_rule")
         ->where("id", "=", "2")
         ->find();
@@ -462,6 +462,27 @@ class gallery_installer {
         $resize_rule->save();
       }
       module::set_version("gallery", $version = 22);
+    }
+
+    // Update slug values to be legal.  We should have done this in the 11->12 upgrader, but I was
+    // lazy.  Mea culpa!
+    if ($version == 22) {
+      foreach (db::build()
+               ->from("items")
+               ->select("id", "slug")
+               ->where(new Database_Expression("`slug` REGEXP '[^_A-Za-z0-9-]'"), "=", 1)
+               ->execute() as $row) {
+        $new_slug = item::convert_filename_to_slug($row->slug);
+        if (empty($new_slug)) {
+          $new_slug = rand();
+        }
+        db::build()
+          ->update("items")
+          ->set("slug", $new_slug)
+          ->where("id", "=", $row->id)
+          ->execute();
+      }
+      module::set_version("gallery", $version = 23);
     }
   }
 
