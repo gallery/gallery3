@@ -68,9 +68,7 @@ class identity_Core {
       // upconvert into a user.
       // @todo set the user name into the session instead of 2 and then use it to get the user object
       if ($user === 2) {
-        $user = IdentityProvider::instance()->admin_user();
-        self::set_active_user($user);
-        $session->set("user", $user);
+        auth::login(IdentityProvider::instance()->admin_user());
       }
 
       if (!$session->get("group_ids")) {
@@ -82,7 +80,7 @@ class identity_Core {
       }
     } catch (Exception $e) {
       // Log it, so we at least have so notification that we swallowed the exception.
-      Kohana_Log::add("error", "Load_user Exception: " .
+      Kohana_Log::add("error", "load_user Exception: " .
                       $e->getMessage() . "\n" . $e->getTraceAsString());
       try {
         Session::instance()->destroy();
