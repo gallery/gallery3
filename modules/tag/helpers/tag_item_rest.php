@@ -23,8 +23,8 @@ class tag_item_rest_Core {
     return array(
       "url" => $request->url,
       "members" => array(
-        rest::url("tag", $tag),
-        rest::url("item", $item)));
+        "tag" => rest::url("tag", $tag),
+        "item" => rest::url("item", $item)));
   }
 
   static function delete($request) {
@@ -37,7 +37,7 @@ class tag_item_rest_Core {
     list ($tag_id, $item_id) = split(",", $tuple);
     $tag = ORM::factory("tag", $tag_id);
     $item = ORM::factory("item", $item_id);
-    if (!$tag->loaded() || !$item->loaded() || !$tag->has($item)) {
+    if (!$tag->loaded() || !$item->loaded() || !$tag->has($item) || !access::can("view", $item)) {
       throw new Kohana_404_Exception();
     }
 

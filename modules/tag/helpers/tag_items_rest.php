@@ -37,12 +37,16 @@ class tag_items_rest_Core {
     $item = rest::resolve($request->params->item);
     access::required("view", $item);
 
+    if (!$tag->loaded()) {
+      throw new Kohana_404_Exception();
+    }
+
     tag::add($item, $tag->name);
     return array(
       "url" => rest::url("tag_item", $tag, $item),
       "members" => array(
-        rest::url("tag", $tag),
-        rest::url("item", $item)));
+        "tag" => rest::url("tag", $tag),
+        "item" => rest::url("item", $item)));
   }
 
   static function delete($request) {
