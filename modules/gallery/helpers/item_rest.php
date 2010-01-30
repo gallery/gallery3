@@ -75,9 +75,20 @@ class item_rest_Core {
       $members[] = rest::url("item", $child);
     }
 
+    // Convert item ids to rest URLs for consistency
+    $entity = $item->as_array();
+    if ($tmp = $item->parent()) {
+      $entity["parent"] = rest::url("item", $tmp);
+    }
+    unset($entity["parent_id"]);
+    if ($tmp = $item->album_cover()) {
+      $entity["album_cover"] = rest::url("item", $tmp);
+    }
+    unset($entity["album_cover_id"]);
+
     return array(
       "url" => $request->url,
-      "entity" => $item->as_array(),
+      "entity" => $entity,
       "members" => $members,
       "relationships" => rest::relationships("item", $item));
   }
@@ -89,13 +100,31 @@ class item_rest_Core {
     $params = $request->params;
 
     // Only change fields from a whitelist.
-    foreach (array("album_cover_item_id", "captured", "description",
-                   "height", "mime_type", "name", "parent_id", "rand_key", "resize_dirty",
+    foreach (array("album_cover", "captured", "description",
+                   "height", "mime_type", "name", "parent", "rand_key", "resize_dirty",
                    "resize_height", "resize_width", "slug", "sort_column", "sort_order",
                    "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
                    "weight", "width") as $key) {
-      if (property_exists($request->params, $key)) {
-        $item->$key = $request->params->$key;
+      switch ($key) {
+      case "album_cover":
+        if (property_exists($request->params, "album_cover")) {
+          $album_cover_item = rest::resolve($request->params->album_cover);
+          access::required("view", $album_cover_item);
+          $item->album_cover_item_id = $album_cover_item->id;
+        }
+        break;
+
+      case "parent":
+        if (property_exists($request->params, "parent")) {
+          $parent = rest::resolve($request->params->parent);
+          access::required("edit", $parent);
+          $item->parent_id = $parent->id;
+        }
+        break;
+      default:
+        if (property_exists($request->params, $key)) {
+          $item->$key = $request->params->$key;
+        }
       }
     }
     $item->save();
