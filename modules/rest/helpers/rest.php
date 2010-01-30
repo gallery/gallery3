@@ -113,7 +113,11 @@ class rest_Core {
 
     $url = call_user_func_array(array($class, "url"), $args);
     if (Input::instance()->get("output") == "html") {
-      $url .= "?output=html";
+      if (strpos($url, "?") === false) {
+        $url .= "?output=html";
+      } else {
+        $url .= "&output=html";
+      }
     }
     return $url;
   }
