@@ -28,10 +28,18 @@ class tags_rest_Core {
   }
 
   static function post($request) {
-    // @todo: what permission should be required to create a tag here?
-    // for now, require edit at the top level.  Perhaps later, just require any edit perms,
-    // anywhere in the gallery?
-    access::required("edit", item::root());
+    // The user must have some edit permission somewhere to create a tag.
+    if (!identity::active_user()->admin) {
+      $query = db::build()->from("access_caches")->and_open();
+      foreach (identity::active_user()->groups() as $group) {
+        $query->or_where("edit_{$group->id}", "=", access::ALLOW);
+      }
+      $has_any_edit_perm = $query->close()->count_records();
+
+      if (!$has_any_edit_perm) {
+        access::forbidden();
+      }
+    }
 
     if (empty($request->params->name)) {
       throw new Rest_Exception("Bad Request", 400);
