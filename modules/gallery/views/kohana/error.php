@@ -1,5 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? $error_id = uniqid("error") ?>
+<? if (!function_exists("t")) { function t($msg) { return $msg; } } ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <style type="text/css">
@@ -131,7 +132,7 @@
   </head>
   <body>
     <? try { $user = identity::active_user(); } catch (Exception $e) { } ?>
-    <? $admin = php_sapi_name() == "cli" || isset($user) && $user->admin ?>
+    <? $admin = php_sapi_name() == "cli" || (class_exists("User_Model") && isset($user) && $user->admin) ?>
     <div class="big_box" id="framework_error">
       <h1>
         <?= t("Dang...  Something went wrong!") ?>
