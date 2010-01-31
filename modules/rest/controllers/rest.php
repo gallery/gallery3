@@ -22,7 +22,7 @@ class Rest_Controller extends Controller {
     $username = Input::instance()->post("user");
     $password = Input::instance()->post("password");
 
-    if (empty($username) || !auth::validate_too_many_failed_logins($username)) {
+    if (empty($username) || auth::too_many_failed_logins($username)) {
       throw new Rest_Exception("Forbidden", 403);
     }
 
