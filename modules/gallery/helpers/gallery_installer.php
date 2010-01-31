@@ -204,6 +204,9 @@ class gallery_installer {
 
     foreach (array("albums", "logs", "modules", "resizes", "thumbs", "tmp", "uploads") as $dir) {
       @mkdir(VARPATH . $dir);
+      if (in_array($dir, array("logs", "tmp", "uploads"))) {
+        self::_protect_directory(VARPATH . $dir);
+      }
     }
 
     access::register_permission("view", "View");
@@ -284,7 +287,7 @@ class gallery_installer {
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
     module::set_var("gallery", "simultaneous_upload_limit", 5);
-    module::set_version("gallery", 23);
+    module::set_version("gallery", 25);
   }
 
   static function upgrade($version) {
@@ -494,7 +497,7 @@ class gallery_installer {
       module::set_version("gallery", $version = 23);
     }
 
-    if ($version = 23) {
+    if ($version == 23) {
       $db->query("CREATE TABLE {failed_logins} (
                   `id` int(9) NOT NULL auto_increment,
                   `count` int(9) NOT NULL,
@@ -503,6 +506,13 @@ class gallery_installer {
                   PRIMARY KEY (`id`))
                   DEFAULT CHARSET=utf8;");
       module::set_version("gallery", $version = 24);
+    }
+
+    if ($version == 24) {
+      foreach (array("logs", "tmp", "uploads") as $dir) {
+        self::_protect_directory(VARPATH . $dir);
+      }
+      module::set_version("gallery", $version = 25);
     }
   }
 
@@ -527,5 +537,13 @@ class gallery_installer {
                    "modules", "logs", "database.php") as $entry) {
       system("/bin/rm -rf " . VARPATH . $entry);
     }
+  }
+
+  static function _protect_directory($dir) {
+    $fp = @fopen("$dir/.htaccess", "w+");
+    fwrite($fp, "DirectoryIndex .htaccess\nSetHandler Gallery_Security_Do_Not_Remove\n" .
+           "Options None\n<IfModule mod_rewrite.c>\nRewriteEngine off\n</IfModule>\n" .
+           "Order allow,deny\nDeny from all\n");
+    fclose($fp);
   }
 }
