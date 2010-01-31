@@ -346,4 +346,16 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     }
     $this->assert_true(false, "Shouldn't get here");
   }
+
+  public function as_restful_array_test() {
+    $album = test::random_album();
+    $photo = test::random_photo($album);
+    $album->reload();
+
+    $result = $album->as_restful_array();
+    $this->assert_same(rest::url("item", item::root()), $result["parent"]);
+    $this->assert_same(rest::url("item", $photo), $result["album_cover"]);
+    $this->assert_true(!array_key_exists("parent_id", $result));
+    $this->assert_true(!array_key_exists("album_cover_item_id", $result));
+  }
 }
