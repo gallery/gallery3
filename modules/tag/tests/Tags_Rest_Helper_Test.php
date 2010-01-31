@@ -50,7 +50,8 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function post_fails_without_permissions_test() {
-    access::deny(identity::everybody(), "edit", item::root());
+    // We have to remove edit permissions from everywhere
+    Database::instance()->query("UPDATE {access_caches} SET edit_1=0");
     identity::set_active_user(identity::guest());
 
     try {
