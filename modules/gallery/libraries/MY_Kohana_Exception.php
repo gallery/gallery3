@@ -28,4 +28,11 @@ class Kohana_Exception extends Kohana_Exception_Core {
       $e->getFile(), $e->getLine(),
       $e->getTraceAsString());
   }
+
+  public static function handle(Exception $e) {
+    if ($e instanceof ORM_Validation_Exception) {
+      Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+    }
+    return parent::handle($e);
+  }
 }
