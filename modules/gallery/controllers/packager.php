@@ -164,7 +164,7 @@ class Packager_Controller extends Controller {
     foreach($objects as $name => $file){
       if ($file->getBasename() == "database.php") {
         continue;
-      } else if (basename($file->getPath()) == "logs") {
+      } else if (basename($file->getPath()) == "logs" && $file->getBasename() != ".htaccess") {
         continue;
       }
 
@@ -172,8 +172,8 @@ class Packager_Controller extends Controller {
         $paths[] = "VARPATH . \"" . substr($name, strlen(VARPATH)) . "\"";
       } else {
         // @todo: serialize non-directories
-        print "IGNORING FILE: $name\n";
-        return;
+        $files["VARPATH . \"" . substr($name, strlen(VARPATH)) . "\""] =
+          base64_encode(file_get_contents($name));
       }
     }
     // Sort the paths so that the var file is stable
@@ -184,6 +184,9 @@ class Packager_Controller extends Controller {
     fwrite($fd, "<?php\n");
     foreach ($paths as $path) {
       fwrite($fd, "!file_exists($path) && mkdir($path);\n");
+    }
+    foreach ($files as $file => $contents) {
+      fwrite($fd, "file_put_contents($file, base64_decode(\"$contents\"));\n");
     }
     fclose($fd);
   }
