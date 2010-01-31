@@ -32,7 +32,7 @@ $config['language'] = array('en_US', 'English_United States');
  * Locale timezone. Defaults to use the server timezone.
  * @see http://php.net/timezones
  */
-$config['timezone'] = '';
+$config['timezone'] = ini_get('date.timezone');
 
 // i18n settings
 
