@@ -110,6 +110,11 @@ class gallery_event_Core {
       graphics::choose_default_toolkit();
       module::clear_var("gallery", "choose_default_tookit");
     }
+    auth::record_successful_login($user);
+  }
+
+  static function user_login_failed($name) {
+    auth::record_failed_login($name);
   }
 
   static function item_index_data($item, $data) {

@@ -22,7 +22,10 @@ class auth_Core {
     $form = new Forge($url, "", "post", array("id" => "g-login-form"));
     $form->set_attr('class', "g-narrow");
     $group = $form->group("login")->label(t("Login"));
-    $group->input("name")->label(t("Username"))->id("g-username")->class(null);
+    $group->input("name")->label(t("Username"))->id("g-username")->class(null)
+      ->callback("auth::validate_too_many_failed_logins")
+      ->error_messages(
+        "too_many_failed_logins", t("Too many failed login attempts.  Try again later"));
     $group->password("password")->label(t("Password"))->id("g-password")->class(null);
     $group->inputs["name"]->error_messages("invalid_login", t("Invalid name or password"));
     $group->submit("")->value(t("Login"));
@@ -54,5 +57,45 @@ class auth_Core {
               t('<a href="%url">%user_name</a>',
                 array("url" => user_profile::url($user->id),
                       "user_name" => html::clean($user->name))));
+  }
+
+  /**
+   * After there have been 5 failed login attempts, any failure leads to getting locked out for a
+   * minute.
+   */
+  static function validate_too_many_failed_logins($name_input) {
+    $failed_login = ORM::factory("failed_login")
+      ->where("name", "=", $name_input->value)
+      ->find();
+    if ($failed_login->loaded() &&
+        $failed_login->count > 5 &&
+        (time() - $failed_login->time < 60)) {
+      $name_input->add_error("too_many_failed_logins", 1);
+    }
+  }
+
+  /**
+   * Record a failed login for this user
+   */
+  static function record_failed_login($name) {
+    $failed_login = ORM::factory("failed_login")
+      ->where("name", "=", $name)
+      ->find();
+    if (!$failed_login->loaded()) {
+      $failed_login->name = $name;
+    }
+    $failed_login->time = time();
+    $failed_login->count++;
+    $failed_login->save();
+  }
+
+  /**
+   * Clear any failed logins for this user
+   */
+  static function record_successful_login($user) {
+    db::build()
+      ->delete("failed_logins")
+      ->where("name", "=", $user->name)
+      ->execute();
   }
 }

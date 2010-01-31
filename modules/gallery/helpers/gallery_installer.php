@@ -42,6 +42,14 @@ class gallery_installer {
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
+    $db->query("CREATE TABLE {failed_logins} (
+                `id` int(9) NOT NULL auto_increment,
+                `count` int(9) NOT NULL,
+                `name` varchar(255) NOT NULL,
+                `time` int(9) NOT NULL,
+                PRIMARY KEY (`id`))
+                DEFAULT CHARSET=utf8;");
+
     $db->query("CREATE TABLE {graphics_rules} (
                  `id` int(9) NOT NULL auto_increment,
                  `active` BOOLEAN default 0,
@@ -276,7 +284,7 @@ class gallery_installer {
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
     module::set_var("gallery", "simultaneous_upload_limit", 5);
-    module::set_version("gallery", 22);
+    module::set_version("gallery", 23);
   }
 
   static function upgrade($version) {
@@ -485,6 +493,17 @@ class gallery_installer {
       }
       module::set_version("gallery", $version = 23);
     }
+
+    if ($version = 23) {
+      $db->query("CREATE TABLE {failed_logins} (
+                  `id` int(9) NOT NULL auto_increment,
+                  `count` int(9) NOT NULL,
+                  `name` varchar(255) NOT NULL,
+                  `time` int(9) NOT NULL,
+                  PRIMARY KEY (`id`))
+                  DEFAULT CHARSET=utf8;");
+      module::set_version("gallery", $version = 24);
+    }
   }
 
   static function uninstall() {
@@ -493,6 +512,7 @@ class gallery_installer {
     $db->query("DROP TABLE IF EXISTS {access_intents}");
     $db->query("DROP TABLE IF EXISTS {graphics_rules}");
     $db->query("DROP TABLE IF EXISTS {incoming_translations}");
+    $db->query("DROP TABLE IF EXISTS {failed_logins}");
     $db->query("DROP TABLE IF EXISTS {items}");
     $db->query("DROP TABLE IF EXISTS {logs}");
     $db->query("DROP TABLE IF EXISTS {modules}");

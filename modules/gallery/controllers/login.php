@@ -62,11 +62,10 @@ class Login_Controller extends Controller {
     if ($valid) {
       $user = identity::lookup_user_by_name($form->login->inputs["name"]->value);
       if (empty($user) || !identity::is_correct_password($user, $form->login->password->value)) {
-        log::warning(
-          "user",
-          t("Failed login for %name",
-            array("name" => $form->login->inputs["name"]->value)));
         $form->login->inputs["name"]->add_error("invalid_login", 1);
+        $name = $form->login->inputs["name"]->value;
+        log::warning("user", t("Failed login for %name", array("name" => $name)));
+        module::event("user_login_failed", $name);
         $valid = false;
       }
     }
