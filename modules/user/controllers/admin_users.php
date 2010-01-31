@@ -112,7 +112,9 @@ class Admin_Users_Controller extends Admin_Controller {
       $valid = $form->validate();
       $user->name = $form->edit_user->inputs["name"]->value;
       $user->full_name = $form->edit_user->full_name->value;
-      $user->password = $form->edit_user->password->value;
+      if ($form->edit_user->password->value) {
+        $user->password = $form->edit_user->password->value;
+      }
       $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
       $user->locale = $form->edit_user->locale->value;

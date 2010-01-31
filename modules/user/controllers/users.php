@@ -29,7 +29,9 @@ class Users_Controller extends Controller {
     try {
       $valid = $form->validate();
       $user->full_name = $form->edit_user->full_name->value;
-      $user->password = $form->edit_user->password->value;
+      if ($form->edit_user->password->value) {
+        $user->password = $form->edit_user->password->value;
+      }
       $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
 
