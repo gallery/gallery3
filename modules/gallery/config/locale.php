@@ -33,6 +33,10 @@ $config['language'] = array('en_US', 'English_United States');
  * @see http://php.net/timezones
  */
 $config['timezone'] = ini_get('date.timezone');
+if (empty($config['timezone'])) {
+  // This is a required field.  Pick something as a default.
+  $config['timezone'] = "America/Los_Angeles";
+}
 
 // i18n settings
 
