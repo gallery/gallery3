@@ -22,10 +22,17 @@ class Rest_Controller extends Controller {
     $username = Input::instance()->post("user");
     $password = Input::instance()->post("password");
 
-    $user = identity::lookup_user_by_name($username);
-    if (empty($user) || !identity::is_correct_password($user, $password)) {
+    if (empty($username) || !auth::validate_too_many_failed_logins($username)) {
       throw new Rest_Exception("Forbidden", 403);
     }
+
+    $user = identity::lookup_user_by_name($username);
+    if (empty($user) || !identity::is_correct_password($user, $password)) {
+      module::event("user_login_failed", $username);
+      throw new Rest_Exception("Forbidden", 403);
+    }
+
+    auth::login($user);
 
     $key = rest::get_access_token($user->id);
     rest::reply($key->access_key);

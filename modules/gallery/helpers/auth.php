@@ -64,14 +64,19 @@ class auth_Core {
    * minute.
    */
   static function validate_too_many_failed_logins($name_input) {
+    $name = is_object($name_input) ? $name_input->value : $name_input;
     $failed_login = ORM::factory("failed_login")
-      ->where("name", "=", $name_input->value)
+      ->where("name", "=", $name)
       ->find();
     if ($failed_login->loaded() &&
         $failed_login->count > 5 &&
         (time() - $failed_login->time < 60)) {
-      $name_input->add_error("too_many_failed_logins", 1);
+      if (is_object($name_input)) {
+        $name_input->add_error("too_many_failed_logins", 1);
+      }
+      return false;
     }
+    return true;
   }
 
   /**

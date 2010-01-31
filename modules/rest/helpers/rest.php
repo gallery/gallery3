@@ -64,7 +64,7 @@ class rest_Core {
 
     if (!$key->loaded()) {
       $key->user_id = $user_id;
-      $key->access_key = md5(rand());
+      $key->access_key = md5(md5(uniqid(mt_rand(), true) . access::private_key()));
       $key->save();
     }
     return $key;
