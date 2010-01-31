@@ -663,23 +663,28 @@ class access_Core {
    * working and our permission system works.
    */
   static function htaccess_works() {
-    $success_url = url::file("var/tmp/security_test/success");
+    $success_url = url::file("var/security_test/success");
 
-    @mkdir(VARPATH . "tmp/security_test");
-    if ($fp = @fopen(VARPATH . "tmp/security_test/.htaccess", "w+")) {
-      fwrite($fp, "RewriteEngine On\n");
-      fwrite($fp, "RewriteRule verify $success_url [L]\n");
-      fclose($fp);
+    @mkdir(VARPATH . "security_test");
+    try {
+      if ($fp = @fopen(VARPATH . "security_test/.htaccess", "w+")) {
+        fwrite($fp, "RewriteEngine On\n");
+        fwrite($fp, "RewriteRule verify $success_url [L]\n");
+        fclose($fp);
+      }
+
+      if ($fp = @fopen(VARPATH . "security_test/success", "w+")) {
+        fwrite($fp, "success");
+        fclose($fp);
+      }
+
+      list ($response) = remote::do_request(url::abs_file("var/security_test/verify"));
+      $works = $response == "HTTP/1.1 200 OK";
+    } catch (Exception $e) {
+      @dir::unlink(VARPATH . "security_test");
+      throw $e;
     }
-
-    if ($fp = @fopen(VARPATH . "tmp/security_test/success", "w+")) {
-      fwrite($fp, "success");
-      fclose($fp);
-    }
-
-    list ($response) = remote::do_request(url::abs_file("var/tmp/security_test/verify"));
-    $works = $response == "HTTP/1.1 200 OK";
-    @dir::unlink(VARPATH . "tmp/security_test");
+    @dir::unlink(VARPATH . "security_test");
 
     return $works;
   }
