@@ -112,7 +112,9 @@
         <? else: // can_upgrade ?>
         <h1> <?= t("Who are you?") ?> </h1>
         <p>
-          <?= t("You're not logged in as an administrator, so we have to verify you to make sure it's ok for you to do an upgrade.  To prove you can run an upgrade, create a file called <br/><b>%name</b> in your <b>gallery3/var/tmp</b> directory.", array("name" => "$upgrade_token")) ?>
+          <?= t("You're not logged in as an administrator, so we have to verify you to make sure it's ok for you to do an upgrade.  To prove you can run an upgrade, create a file called <b>%name</b> in your <b>%tmp_dir_path</b> directory.",
+                array("name" => "$upgrade_token",
+                      "tmp_dir_path" => "gallery3/var/tmp")) ?>
         </p>
         <a href="<?= url::site("upgrader?") ?>"><?= t("Ok, I've done that") ?></a>
         <? endif // can_upgrade ?>
