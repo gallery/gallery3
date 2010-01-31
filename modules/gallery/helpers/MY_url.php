@@ -93,8 +93,8 @@ class url extends url_Core {
   /**
    * Just like url::merge except that it escapes any XSS in the path.
    */
-  static function merge($params) {
-    return htmlspecialchars(parent::merge($params));
+  static function merge(array $arguments) {
+    return htmlspecialchars(parent::merge($arguments));
   }
 
   /**
