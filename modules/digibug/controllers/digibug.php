@@ -36,7 +36,7 @@ class Digibug_Controller extends Controller {
     }
 
     $v = new View("digibug_form.html");
-    $v->order_parms = array(
+    $v->order_params = array(
       "digibug_api_version" => "100",
       "company_id" => module::get_var("digibug", "company_id"),
       "event_id" => module::get_var("digibug", "event_id"),
