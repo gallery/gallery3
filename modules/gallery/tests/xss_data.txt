@@ -38,8 +38,7 @@ modules/comment/views/user_profile_comments.html.php         5   DIRTY_ATTR $com
 modules/comment/views/user_profile_comments.html.php         10  DIRTY_JS $comment->item()->url()
 modules/comment/views/user_profile_comments.html.php         11  DIRTY    $comment->item()->thumb_img(array(),50)
 modules/digibug/views/digibug_form.html.php                  4   DIRTY    form::open("http://www.digibug.com/dapi/order.php")
-modules/digibug/views/digibug_form.html.php                  5   DIRTY    form::hidden($order_parms)
-modules/digibug/views/digibug_form.html.php                  6   DIRTY    form::close()
+modules/digibug/views/digibug_form.html.php                  6   DIRTY    form::hidden($key,$value)
 modules/exif/views/exif_dialog.html.php                      14  DIRTY    $details[$i]["caption"]
 modules/exif/views/exif_dialog.html.php                      21  DIRTY    $details[$i]["caption"]
 modules/g2_import/views/admin_g2_import.html.php             30  DIRTY    $form
@@ -125,10 +124,9 @@ modules/gallery/views/form_uploadify.html.php                30  DIRTY_JS url::f
 modules/gallery/views/form_uploadify.html.php                31  DIRTY_JS url::site("simple_uploader/add_photo/{$album->id}")
 modules/gallery/views/form_uploadify.html.php                35  DIRTY_JS url::file("lib/uploadify/cancel.png")
 modules/gallery/views/form_uploadify.html.php                36  DIRTY_JS $simultaneous_upload_limit
-modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"),$hidden)
-modules/gallery/views/in_place_edit.html.php                 5   DIRTY    form::input("input",$form["input"]," class=\"textbox\"")
-modules/gallery/views/in_place_edit.html.php                 12  DIRTY    form::close()
-modules/gallery/views/in_place_edit.html.php                 14  DIRTY    $errors["input"]
+modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"))
+modules/gallery/views/in_place_edit.html.php                 3   DIRTY    access::csrf_form_field()
+modules/gallery/views/in_place_edit.html.php                 6   DIRTY    form::input("input",$form["input"]," class=\"textbox\"")
 modules/gallery/views/kohana_error_page.php                  102 DIRTY    $message
 modules/gallery/views/kohana_error_page.php                  116 DIRTY    $trace
 modules/gallery/views/kohana_profiler.php                    32  DIRTY    $profile->render();
@@ -219,8 +217,8 @@ modules/gallery/views/upgrader.html.php                      77  DIRTY    $modul
 modules/gallery/views/upgrader.html.php                      99  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      102 DIRTY_ATTR $done?"muted":""
 modules/gallery/views/user_languages_block.html.php          2   DIRTY    form::dropdown("g-select-session-locale",$installed_locales,$selected)
-modules/gallery/views/user_profile.html.php                  35  DIRTY_ATTR $user->avatar_url(40,$theme->url(,true))
-modules/gallery/views/user_profile.html.php                  46  DIRTY    $info->view
+modules/gallery/views/user_profile.html.php                  36  DIRTY_ATTR $user->avatar_url(40,$theme->url(,true))
+modules/gallery/views/user_profile.html.php                  47  DIRTY    $info->view
 modules/image_block/views/image_block_block.html.php         3   DIRTY_JS $item->url()
 modules/image_block/views/image_block_block.html.php         4   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
 modules/info/views/info_block.html.php                       22  DIRTY    date("M j, Y H:i:s",$item->captured)
