@@ -148,7 +148,8 @@ class User_Model extends ORM implements User_Definition {
    * Validate the admin bit.
    */
   public function valid_admin(Validation $v, $field) {
-    if ($this->id == identity::active_user()->id && !$this->admin) {
+    $active = identity::active_user();
+    if ($this->id == $active->id && $active->admin && !$this->admin) {
       $v->add_error("admin", "locked");
     }
   }
