@@ -91,7 +91,5 @@ class Admin_Dashboard_Controller extends Admin_Controller {
       }
       block_manager::set_active($location, $new_blocks);
     }
-
-    $this->_force_block_adder();
   }
 }
