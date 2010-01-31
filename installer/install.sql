@@ -74,6 +74,17 @@ CREATE TABLE {comments} (
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
+DROP TABLE IF EXISTS {failed_logins};
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE {failed_logins} (
+  `id` int(9) NOT NULL auto_increment,
+  `count` int(9) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `time` int(9) NOT NULL,
+  PRIMARY KEY  (`id`)
+) DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS {graphics_rules};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
@@ -228,7 +239,7 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,1,'gallery',22);
+INSERT INTO {modules} VALUES (1,1,'gallery',23);
 INSERT INTO {modules} VALUES (2,1,'user',2);
 INSERT INTO {modules} VALUES (3,1,'comment',2);
 INSERT INTO {modules} VALUES (4,1,'organize',1);
