@@ -36,7 +36,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params = new stdClass();
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_array(),
+            "entity" => $album1->as_restful_array(),
             "members" => array(
               rest::url("item", $photo1),
               rest::url("item", $album2)),
@@ -50,7 +50,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->scope = "direct";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_array(),
+            "entity" => $album1->as_restful_array(),
             "members" => array(
               rest::url("item", $photo1),
               rest::url("item", $album2)),
@@ -64,7 +64,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->scope = "all";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_array(),
+            "entity" => $album1->as_restful_array(),
             "members" => array(
               rest::url("item", $photo1),
               rest::url("item", $album2),
@@ -88,7 +88,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->name = "foo";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_array(),
+            "entity" => $album1->as_restful_array(),
             "members" => array(
               rest::url("item", $photo2)),
             "relationships" => array(
@@ -108,7 +108,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->type = "album";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_array(),
+            "entity" => $album1->as_restful_array(),
             "members" => array(
               rest::url("item", $album2)),
             "relationships" => array(

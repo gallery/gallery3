@@ -75,20 +75,9 @@ class item_rest_Core {
       $members[] = rest::url("item", $child);
     }
 
-    // Convert item ids to rest URLs for consistency
-    $entity = $item->as_array();
-    if ($tmp = $item->parent()) {
-      $entity["parent"] = rest::url("item", $tmp);
-    }
-    unset($entity["parent_id"]);
-    if ($tmp = $item->album_cover()) {
-      $entity["album_cover"] = rest::url("item", $tmp);
-    }
-    unset($entity["album_cover_id"]);
-
     return array(
       "url" => $request->url,
-      "entity" => $entity,
+      "entity" => $item->as_restful_array(),
       "members" => $members,
       "relationships" => rest::relationships("item", $item));
   }
