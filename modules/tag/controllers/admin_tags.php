@@ -97,7 +97,8 @@ class Admin_Tags_Controller extends Admin_Controller {
       message::success($message);
       log::success("tags", $message);
 
-      print json_encode(array("result" => "success"));
+      print json_encode(array("result" => "success",
+              "location" => url::site("admin/tags")));
     } else {
       print json_encode(array("result" => "error", "form" => $in_place_edit->render()));
     }
