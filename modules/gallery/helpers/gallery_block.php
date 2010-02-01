@@ -72,7 +72,7 @@ class gallery_block_Core {
       $block->content = new View("admin_block_platform.html");
       if (is_readable("/proc/loadavg")) {
         $block->content->load_average =
-          join(" ", array_slice(explode(" ", array_shift(file("/proc/loadavg"))), 0, 3));
+          join(" ", array_slice(explode(" ", current(file("/proc/loadavg"))), 0, 3));
       } else {
         $block->content->load_average = t("Unavailable");
       }

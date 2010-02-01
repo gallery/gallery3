@@ -121,7 +121,7 @@ class File_Proxy_Controller extends Controller {
     expires::check(2592000, $item->updated);
 
     // We don't need to save the session for this request
-    Session::abort_save();
+    Session::instance()->abort_save();
 
     expires::set(2592000, $item->updated);  // 30 days
 

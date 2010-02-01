@@ -91,7 +91,7 @@ class Digibug_Controller extends Controller {
     }
 
     // We don't need to save the session for this request
-    Session::abort_save();
+    Session::instance()->abort_save();
 
     if (!TEST_MODE) {
       // Dump out the image

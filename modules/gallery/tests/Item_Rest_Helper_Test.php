@@ -32,6 +32,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1->reload();
 
     // No scope is the same as "direct"
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
     $request->params = new stdClass();
     $this->assert_equal_array(
@@ -84,7 +85,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $photo2->save();
     $album1->reload();
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
+    $request->params = new stdClass();
     $request->params->name = "foo";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
@@ -104,7 +107,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album2 = test::random_album($album1);
     $album1->reload();
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
+    $request->params = new stdClass();
     $request->params->type = "album";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
@@ -122,7 +127,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
+    $request->params = new stdClass();
     $request->params->title = "my new title";
 
     item_rest::put($request);
@@ -133,7 +140,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
+    $request->params = new stdClass();
     $request->params->title = "my new title";
     $request->params->slug = "not url safe";
 
@@ -150,7 +159,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
+    $request->params = new stdClass();
     $request->params->type = "album";
     $request->params->name = "my album";
     $request->params->title = "my album";
@@ -165,7 +176,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
+    $request->params = new stdClass();
     $request->params->type = "album";
     $request->params->name = "my album";
     $request->params->title = "my album";
@@ -185,7 +198,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
+    $request->params = new stdClass();
     $request->params->type = "photo";
     $request->params->name = "my photo.jpg";
     $request->file = MODPATH . "gallery/tests/test.jpg";
@@ -200,6 +215,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $album1 = test::random_album();
     access::allow(identity::everybody(), "edit", $album1);
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
     item_rest::delete($request);
 
@@ -212,6 +228,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     access::deny(identity::everybody(), "edit", $album1);
     identity::set_active_user(identity::guest());
 
+    $request = new stdClass();
     $request->url = rest::url("item", $album1);
     try {
       item_rest::delete($request);

@@ -43,6 +43,8 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function post_test() {
     access::allow(identity::everybody(), "edit", item::root());
 
+    $request = new stdClass();
+    $request->params = new stdClass();
     $request->params->name = "test tag";
     $this->assert_equal(
       array("url" => url::site("rest/tag/1")),
@@ -55,6 +57,8 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     identity::set_active_user(identity::guest());
 
     try {
+      $request = new stdClass();
+      $request->params = new stdClass();
       $request->params->name = "test tag";
       tags_rest::post($request);
     } catch (Exception $e) {

@@ -34,6 +34,8 @@ class tag_rss_Core {
       if (!$tag->loaded()) {
         throw new Kohana_404_Exception();
       }
+
+      $feed = new stdClass();
       $feed->children = $tag->items($limit, $offset, "photo");
       $feed->max_pages = ceil($tag->count / $limit);
       $feed->title = $tag->name;

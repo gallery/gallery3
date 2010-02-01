@@ -70,7 +70,7 @@ class Item_Model extends ORM_MPTT {
     return $this->type == 'movie';
   }
 
-  public function delete() {
+  public function delete($ignored_id=null) {
     if ($this->id == 1) {
       $v = new Validation(array("id"));
       $v->add_error("id", "cant_delete_root_album");

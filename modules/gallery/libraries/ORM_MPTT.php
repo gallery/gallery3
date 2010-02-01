@@ -85,7 +85,7 @@ class ORM_MPTT_Core extends ORM {
   /**
    * Delete this node and all of its children.
    */
-  public function delete() {
+  public function delete($ignored_id=null) {
     $children = $this->children();
     if ($children) {
       foreach ($this->children() as $item) {

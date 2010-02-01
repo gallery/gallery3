@@ -38,7 +38,7 @@ abstract class Database extends Database_Core {
    * Parse the query string and convert any strings of the form `\([a-zA-Z0-9_]*?)\]
    * table prefix . $1
    */
-  public function query($sql = '') {
+  public function query($sql) {
     if (!empty($sql)) {
       $sql = $this->add_table_prefixes($sql);
     }

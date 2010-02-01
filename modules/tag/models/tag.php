@@ -95,7 +95,7 @@ class Tag_Model extends ORM {
    * Overload ORM::delete() to trigger an item_related_update event for all items that are
    * related to this tag.
    */
-  public function delete() {
+  public function delete($ignored_id=null) {
     $related_item_ids = array();
     foreach (db::build()
              ->select("item_id")

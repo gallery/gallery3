@@ -35,7 +35,6 @@ class tags_rest_Core {
         $query->or_where("edit_{$group->id}", "=", access::ALLOW);
       }
       $has_any_edit_perm = $query->close()->count_records();
-
       if (!$has_any_edit_perm) {
         access::forbidden();
       }

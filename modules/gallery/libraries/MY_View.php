@@ -27,7 +27,7 @@ class View extends View_Core {
     View::$global_data[$key] = $value;
   }
 
-  public function is_set($key) {
+  public function is_set($key=null) {
     return parent::is_set($key) ? true : array_key_exists($key, View::$global_data);
   }
 

@@ -41,7 +41,7 @@ class Combined_Controller extends Controller {
     $input = Input::instance();
 
     // We don't need to save the session for this request
-    Session::abort_save();
+    Session::instance()->abort_save();
 
     // Our data is immutable, so if they already have a copy then it needs no updating.
     if ($input->server("HTTP_IF_MODIFIED_SINCE")) {

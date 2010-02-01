@@ -19,17 +19,19 @@
  */
 class g2_import_task_Core {
   static function available_tasks() {
+    g2_import::lower_error_reporting();
     if (g2_import::is_configured()) {
       g2_import::init();
     }
-
+    $version = g2_import::version();
+    g2_import::restore_error_reporting();
 
     if (class_exists("GalleryCoreApi")) {
       return array(Task_Definition::factory()
                    ->callback("g2_import_task::import")
                    ->name(t("Import from Gallery 2"))
                    ->description(
-                     t("Gallery %version detected", array("version" => g2_import::version())))
+                     t("Gallery %version detected", array("version" => $version)))
                    ->severity(log::SUCCESS));
     }
 
@@ -37,6 +39,8 @@ class g2_import_task_Core {
   }
 
   static function import($task) {
+    g2_import::lower_error_reporting();
+
     $start = microtime(true);
     g2_import::init();
 
@@ -207,5 +211,7 @@ class g2_import_task_Core {
     $task->set("mode", $mode);
     $task->set("queue", $queue);
     $task->set("done", $done);
+
+    g2_import::restore_error_reporting();
   }
 }

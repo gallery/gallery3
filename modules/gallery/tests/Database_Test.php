@@ -168,12 +168,12 @@ class Database_Mock extends Database {
     return array("test");
   }
 
-  public function quote_column($val) {
-    return "[$val]";
+  public function quote_column($val, $alias=null) {
+    return $alias ? "[$val,$alias]" : "[$val]";
   }
 
-  public function quote_table($val) {
-    return "[$val]";
+  public function quote_table($val, $alias=null) {
+    return $alias ? "[$val,$alias]" : "[$val]";
   }
 
   public function quote($val) {

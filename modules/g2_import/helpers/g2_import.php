@@ -24,6 +24,7 @@ class g2_import_Core {
   public static $g2_base_url = null;
 
   private static $current_g2_item = null;
+  private static $error_reporting = null;
 
   static function is_configured() {
     return module::get_var("g2_import", "embed_path");
@@ -930,6 +931,16 @@ class g2_import_Core {
             "urlEncode" => false,
             "useAuthToken" => false));
     return str_replace(self::$g2_base_url, "", $url);
+  }
+
+  static function lower_error_reporting() {
+    // Gallery 2 was not designed to run in E_STRICT mode and will barf out errors.  So dial down
+    // the error reporting when we make G2 calls.
+    self::$error_reporting = error_reporting(error_reporting() & ~E_STRICT);
+  }
+
+  static function restore_error_reporting() {
+    error_reporting(self::$error_reporting);
   }
 }
 

@@ -25,6 +25,7 @@ class gallery_rss_Core {
   }
 
   static function feed($feed_id, $offset, $limit, $id) {
+    $feed = new stdClass();
     switch ($feed_id) {
     case "latest":
       $feed->children = ORM::factory("item")

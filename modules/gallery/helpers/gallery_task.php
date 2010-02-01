@@ -111,6 +111,7 @@ class gallery_task_Core {
         site_status::clear("graphics_dirty");
       }
     } catch (Exception $e) {
+      Kohana_Log::add("error",(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -214,6 +215,7 @@ class gallery_task_Core {
         Cache::instance()->delete("update_l10n_cache:{$task->id}");
       }
     } catch (Exception $e) {
+      Kohana_Log::add("error",(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();
@@ -233,10 +235,10 @@ class gallery_task_Core {
     try {
       $start = microtime(true);
       $data = Cache::instance()->get("file_cleanup_cache:{$task->id}");
-      if ($data) {
-        $files = unserialize($data);
-      }
+      $files = $data ? unserialize($data) : array();
       $i = 0;
+      $current = 0;
+      $total = 0;
 
       switch ($task->get("mode", "init")) {
       case "init":  // 0%
@@ -262,6 +264,7 @@ class gallery_task_Core {
         if (count($files) == 0) {
           break;
         }
+
       case "delete_files":
         $current = $task->get("current");
         $total = $task->get("total");
@@ -279,8 +282,10 @@ class gallery_task_Core {
       if ($total == $current) {
         $task->done = true;
         $task->state = "success";
+        $task->percent_complete = 100;
       }
     } catch (Exception $e) {
+      Kohana_Log::add("error",(string)$e);
       $task->done = true;
       $task->state = "error";
       $task->status = $e->getMessage();

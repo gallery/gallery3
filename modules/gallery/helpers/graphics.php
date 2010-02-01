@@ -262,6 +262,9 @@ class graphics_Core {
    */
   static function detect_toolkits() {
     $toolkits = new stdClass();
+    $toolkits->gd = new stdClass();
+    $toolkits->imagemagick = new stdClass();
+    $toolkits->graphicsmagick = new stdClass();
 
     // GD is special, it doesn't use exec()
     $gd = function_exists("gd_info") ? gd_info() : array();

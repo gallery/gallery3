@@ -40,6 +40,7 @@ class Rest_Controller extends Controller {
 
   public function __call($function, $args) {
     $input = Input::instance();
+    $request = new stdClass();
     switch ($method = strtolower($input->server("REQUEST_METHOD"))) {
     case "get":
       $request->params = (object) $input->get();

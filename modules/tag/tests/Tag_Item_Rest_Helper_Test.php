@@ -28,6 +28,7 @@ class Tag_Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function get_test() {
     $tag = tag::add(item::root(), "tag1")->reload();
 
+    $request = new stdClass();
     $request->url = rest::url("tag_item", $tag, item::root());
     $this->assert_equal_array(
       array("url" => rest::url("tag_item", $tag, item::root()),
@@ -38,6 +39,7 @@ class Tag_Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_with_invalid_url_test() {
+    $request = new stdClass();
     $request->url = "bogus";
     try {
       tag_item_rest::get($request);
@@ -50,6 +52,7 @@ class Tag_Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function delete_test() {
     $tag = tag::add(item::root(), "tag1")->reload();
 
+    $request = new stdClass();
     $request->url = rest::url("tag_item", $tag, item::root());
     tag_item_rest::delete($request);
 
@@ -59,7 +62,6 @@ class Tag_Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function resolve_test() {
     $album = test::random_album();
     $tag = tag::add($album, "tag1")->reload();
-
 
     $tuple = rest::resolve(rest::url("tag_item", $tag, $album));
     $this->assert_equal_array($tag->as_array(), $tuple[0]->as_array());

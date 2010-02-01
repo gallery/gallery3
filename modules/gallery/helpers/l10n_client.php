@@ -77,6 +77,7 @@ class l10n_client_Core {
    *     translations for.
    */
   static function fetch_updates(&$num_fetched) {
+    $request = new stdClass();
     $request->locales = array();
     $request->messages = new stdClass();
 
