@@ -40,7 +40,7 @@ class gallery_task_Core {
     $tasks[] = Task_Definition::factory()
                  ->callback("gallery_task::file_cleanup")
                  ->name(t("Remove old files"))
-                 ->description(t("Remove files from the logs and tmp directory"))
+                 ->description(t("Remove expired files from the logs and tmp directory"))
       ->severity(log::SUCCESS);
     return $tasks;
   }
