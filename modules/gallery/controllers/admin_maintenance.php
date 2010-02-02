@@ -44,10 +44,17 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view->content->task_definitions = task::get_definitions();
     $view->content->running_tasks = ORM::factory("task")
       ->where("done", "=", 0)->order_by("updated", "DESC")->find_all();
-    $view->content->schedule_definitions =
-      module::is_active("scheduler") ? scheduler::get_definitions() : "";
     $view->content->finished_tasks = ORM::factory("task")
       ->where("done", "=", 1)->order_by("updated", "DESC")->find_all();
+    $task_buttons =
+      new ArrayObject(array((object)array("text" => t("run"),
+                                          "url" =>url::site("admin/maintenance/start"))));
+    module::event("admin_maintenance_task_buttons", $task_buttons);
+    $view->content->task_buttons = $task_buttons;
+
+    $maintenance_content = new ArrayObject();
+    module::event("admin_maintenance_content", $maintenance_content);
+    $view->content->task_maintenance_content = $maintenance_content;
     print $view;
   }
 
