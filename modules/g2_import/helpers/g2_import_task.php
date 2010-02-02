@@ -189,7 +189,7 @@ class g2_import_task_Core {
         }
         $task->status = t(
           "Album highlights (%count of %total)",
-          array("count" => $done["tags"] + 1, "total" => $stats["albums"]));
+          array("count" => $done["highlights"] + 1, "total" => $stats["highlights"]));
 
         break;
 
