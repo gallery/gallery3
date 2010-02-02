@@ -40,7 +40,7 @@ class gallery_task_Core {
     $tasks[] = Task_Definition::factory()
                  ->callback("gallery_task::file_cleanup")
                  ->name(t("Remove old files"))
-                 ->description(t("Remove files from the logs and tmp directory"))
+                 ->description(t("Remove expired files from the logs and tmp directory"))
       ->severity(log::SUCCESS);
     return $tasks;
   }
@@ -241,7 +241,7 @@ class gallery_task_Core {
       $total = 0;
 
       switch ($task->get("mode", "init")) {
-      case "init":  // 0%
+      case "init":
         $threshold = time() - 1209600; // older than 2 weeks
         foreach(array("logs", "tmp") as $dir) {
           $dir = VARPATH . $dir;
@@ -276,8 +276,9 @@ class gallery_task_Core {
         $task->set("current", $current);
       }
 
-      $task->status = t("Removed: %count files. Total: %total_count.",
-                        array("count" => $current, "total_count" => $total));
+      $task->status = t2("Removed: 1 file. Total: %total_count.",
+                         "Removed: %count files. Total: %total_count.",
+                         $current, array("total_count" => $total));
 
       if ($total == $current) {
         $task->done = true;
