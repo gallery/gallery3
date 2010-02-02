@@ -42,7 +42,7 @@
     </div>
 
     <? foreach ($task_maintenance_content as $content): ?>
-    <?= $content ?>
+    <?= html::purify($content) ?>
     <? endforeach ?>
 
     <? if ($running_tasks->count()): ?>

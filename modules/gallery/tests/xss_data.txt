@@ -82,7 +82,6 @@ modules/gallery/views/admin_maintenance.html.php             25  DIRTY_ATTR log:
 modules/gallery/views/admin_maintenance.html.php             26  DIRTY    $task->name
 modules/gallery/views/admin_maintenance.html.php             29  DIRTY    $task->description
 modules/gallery/views/admin_maintenance.html.php             33  DIRTY_JS "{$button->url}/$task->callback?csrf=$csrf"
-modules/gallery/views/admin_maintenance.html.php             45  DIRTY    $content
 modules/gallery/views/admin_maintenance.html.php             76  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/gallery/views/admin_maintenance.html.php             76  DIRTY_ATTR $task->state=="stalled"?"g-warning":""
 modules/gallery/views/admin_maintenance.html.php             77  DIRTY_ATTR $task->state=="stalled"?"g-warning":""
