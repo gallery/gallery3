@@ -35,6 +35,15 @@ class task_Core {
     return $tasks;
   }
 
+  static function start($task_callback, $context=array()) {
+    $tasks = task::get_definitions();
+    $task = task::create($tasks[$task_callback], array());
+
+    $task->log(t("Task %task_name started (task id %task_id)",
+                 array("task_name" => $task->name, "task_id" => $task->id)));
+    return $task;
+  }
+
   static function create($task_def, $context) {
     $task = ORM::factory("task");
     $task->callback = $task_def->callback;

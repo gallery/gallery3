@@ -58,13 +58,10 @@ class Admin_Maintenance_Controller extends Admin_Controller {
   public function start($task_callback) {
     access::verify_csrf();
 
-    $tasks = task::get_definitions();
-    $task = task::create($tasks[$task_callback], array());
+    $task = task::start($task_callback);
     $view = new View("admin_maintenance_task.html");
     $view->task = $task;
 
-    $task->log(t("Task %task_name started (task id %task_id)",
-                         array("task_name" => $task->name, "task_id" => $task->id)));
     log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
