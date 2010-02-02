@@ -19,7 +19,7 @@
  */
 class rest_Core {
   static function reply($data=array()) {
-    Session::abort_save();
+    Session::instance()->abort_save();
 
     if ($data) {
       if (Input::instance()->get("output") == "html") {

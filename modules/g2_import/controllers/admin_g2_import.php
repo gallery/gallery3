@@ -19,6 +19,7 @@
  */
 class Admin_g2_import_Controller extends Admin_Controller {
   public function index() {
+    g2_import::lower_error_reporting();
     if (g2_import::is_configured()) {
       g2_import::init();
     }
@@ -31,6 +32,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_g2_import.html");
     $view->content->form = $this->_get_import_form();
+    $view->content->version = g2_import::version();
 
     if (g2_import::is_initialized()) {
       $view->content->g2_stats = $g2_stats;
@@ -38,11 +40,13 @@ class Admin_g2_import_Controller extends Admin_Controller {
       $view->content->thumb_size = module::get_var("gallery", "thumb_size");
       $view->content->resize_size = module::get_var("gallery", "resize_size");
     }
+    g2_import::restore_error_reporting();
     print $view;
   }
 
   public function save() {
     access::verify_csrf();
+    g2_import::lower_error_reporting();
 
     $form = $this->_get_import_form();
     if ($form->validate()) {
@@ -63,6 +67,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_g2_import.html");
     $view->content->form = $form;
+    g2_import::restore_error_reporting();
     print $view;
   }
 

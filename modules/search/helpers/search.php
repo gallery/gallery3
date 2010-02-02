@@ -65,7 +65,8 @@ class search_Core {
       $record->item_id = $item->id;
     }
 
-    module::event("item_index_data", $record->item(), $data);
+    $item = $record->item();
+    module::event("item_index_data", $item, $data);
     $record->data = join(" ", (array)$data);
     $record->dirty = 0;
     $record->save();

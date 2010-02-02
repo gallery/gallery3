@@ -18,10 +18,14 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Gallery_Unit_Test_Controller extends Controller {
-  function Index() {
+  function index() {
     if (!TEST_MODE) {
       throw new Kohana_404_Exception();
     }
+
+    // Force strict behavior to flush out bugs early
+    ini_set("display_errors", true);
+    error_reporting(-1);
 
     // Jump through some hoops to satisfy the way that we check for the site_domain in
     // config.php.  We structure this such that the code in config will leave us with a

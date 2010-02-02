@@ -42,6 +42,7 @@ class comment_rss_Core {
       $comments->where("item_id", "=", $id);
     }
 
+    $feed = new stdClass();
     $feed->view = "comment.mrss";
     $feed->children = array();
     foreach ($comments->find_all($limit, $offset) as $comment) {

@@ -50,7 +50,7 @@ class Form_Script_Core extends Forge {
     return $this;
   }
 
-  public function render() {
+  public function render($template="forge_template", $custom=false) {
     $script = array();
     if (!empty($this->data["url"])) {
       $script[] = html::script($this->data["url"]);
@@ -63,4 +63,4 @@ class Form_Script_Core extends Forge {
     return implode("\n", $script);
   }
 
-} // End Form Script
+}

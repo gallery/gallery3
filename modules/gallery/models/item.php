@@ -70,7 +70,7 @@ class Item_Model extends ORM_MPTT {
     return $this->type == 'movie';
   }
 
-  public function delete() {
+  public function delete($ignored_id=null) {
     if ($this->id == 1) {
       $v = new Validation(array("id"));
       $v->add_error("id", "cant_delete_root_album");
@@ -929,6 +929,11 @@ class Item_Model extends ORM_MPTT {
       $data["album_cover"] = rest::url("item", $tmp);
     }
     unset($data["album_cover_item_id"]);
+
+    // Elide some internal-only data that is going to cause confusion in the client.
+    foreach (array("relative_path_cache", "relative_url_cache", "left_ptr", "right_ptr") as $key) {
+      unset($data[$key]);
+    }
     return $data;
   }
 }

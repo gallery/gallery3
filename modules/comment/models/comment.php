@@ -116,7 +116,8 @@ class Comment_Model extends ORM {
 
     // We only notify on the related items if we're making a visible change.
     if ($visible_change) {
-      module::event("item_related_update", $this->item());
+      $item = $this->item();
+      module::event("item_related_update", $item);
     }
 
     return $this;

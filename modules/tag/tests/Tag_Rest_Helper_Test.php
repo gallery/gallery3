@@ -28,6 +28,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function get_test() {
     $tag = tag::add(item::root(), "tag1")->reload();
 
+    $request = new stdClass();
     $request->url = rest::url("tag", $tag);
     $this->assert_equal_array(
       array("url" => rest::url("tag", $tag),
@@ -41,6 +42,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_with_invalid_url_test() {
+    $request = new stdClass();
     $request->url = "bogus";
     try {
       tag_rest::get($request);
@@ -53,6 +55,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   public function get_with_no_relationships_test() {
     $tag = test::random_tag();
 
+    $request = new stdClass();
     $request->url = rest::url("tag", $tag);
     $this->assert_equal_array(
       array("url" => rest::url("tag", $tag),
@@ -72,7 +75,9 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     access::allow(identity::everybody(), "edit", $album);
 
     // Add the album to the tag
+    $request = new stdClass();
     $request->url = rest::url("tag", $tag);
+    $request->params = new stdClass();
     $request->params->url = rest::url("item", $album);
     $this->assert_equal_array(
       array("url" => rest::url("tag_item", $tag, $album)),
@@ -93,7 +98,9 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function put_test() {
     $tag = test::random_tag();
+    $request = new stdClass();
     $request->url = rest::url("tag", $tag);
+    $request->params = new stdClass();
     $request->params->name = "new name";
 
     tag_rest::put($request);
@@ -102,6 +109,7 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
   public function delete_tag_test() {
     $tag = test::random_tag();
+    $request = new stdClass();
     $request->url = rest::url("tag", $tag);
     tag_rest::delete($request);
 

@@ -29,8 +29,20 @@ class user_installer {
   static function upgrade($version) {
     if ($version == 1) {
       module::set_var("user", "mininum_password_length", 5);
-
       module::set_version("user", $version = 2);
+    }
+
+    if ($version == 2) {
+      db::build()
+        ->update("users")
+        ->set("email", "unknown@unknown.com")
+        ->where("guest", "=", 0)
+        ->and_open()
+        ->where("email", "IS", null)
+        ->or_where("email", "=", "")
+        ->close()
+        ->execute();
+      module::set_version("user", $version = 3);
     }
   }
 
@@ -117,7 +129,7 @@ class user_installer {
     access::allow($registered, "view", $root);
     access::allow($registered, "view_full", $root);
 
-    module::set_version("user", 2);
     module::set_var("user", "mininum_password_length", 5);
+    module::set_version("user", 3);
   }
 }

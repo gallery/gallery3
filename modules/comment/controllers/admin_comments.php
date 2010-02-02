@@ -92,6 +92,7 @@ class Admin_Comments_Controller extends Admin_Controller {
   }
 
   private function _counts() {
+    $counts = new stdClass();
     $counts->unpublished = 0;
     $counts->published = 0;
     $counts->spam = 0;

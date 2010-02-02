@@ -430,7 +430,8 @@ class module_Core {
             // This could happen if there's a race condition
             continue;
           }
-          self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
+          // Mute the "Creating default object from empty value" warning below
+          @self::$var_cache->{$row->module_name}->{$row->name} = $row->value;
         }
         $cache = ORM::factory("var");
         $cache->module_name = "gallery";

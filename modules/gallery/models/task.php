@@ -27,7 +27,7 @@ class Task_Model extends ORM {
     }
   }
 
-  public function set($key, $value) {
+  public function set($key, $value=null) {
     $context = unserialize($this->context);
     $context[$key] = $value;
     $this->context = serialize($context);
@@ -40,7 +40,7 @@ class Task_Model extends ORM {
     return parent::save();
   }
 
-  public function delete() {
+  public function delete($ignored_id=null) {
     Cache::instance()->delete($this->_cache_key());
     return parent::delete();
   }

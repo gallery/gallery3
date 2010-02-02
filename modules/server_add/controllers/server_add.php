@@ -42,7 +42,6 @@ class Server_Add_Controller extends Admin_Controller {
 
     // Make a tree with the parents back up to the authorized path, and all the children under the
     // current path.
-    Kohana_Log::add("error", $path);
     if (server_add::is_valid_path($path)) {
       $tree->parents[] = $path;
       while (server_add::is_valid_path(dirname($tree->parents[0]))) {

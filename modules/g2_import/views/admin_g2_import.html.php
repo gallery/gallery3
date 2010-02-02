@@ -34,7 +34,7 @@
       <h2> <?= t("Import") ?> </h2>
       <ul id="g-action-status" class="g-message-block">
         <li class="g-success">
-          <?= t("Gallery version %version detected", array("version" => g2_import::version())) ?>
+          <?= t("Gallery version %version detected", array("version" => $version)) ?>
         </li>
         <? if ($g2_sizes["thumb"]["size"] && $thumb_size != $g2_sizes["thumb"]["size"]): ?>
         <li class="g-warning">

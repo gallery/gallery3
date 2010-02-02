@@ -323,7 +323,7 @@ class Admin_Users_Controller extends Admin_Controller {
     return $form;
   }
 
-  private function _add_locale_dropdown(&$form, $user=null) {
+  private static function _add_locale_dropdown(&$form, $user=null) {
     $locales = locales::installed();
     foreach ($locales as $locale => $display_name) {
       $locales[$locale] = SafeString::of_safe_html($display_name);

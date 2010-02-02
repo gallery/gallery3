@@ -67,6 +67,7 @@ class Admin_Modules_Controller extends Admin_Controller {
   }
 
   private function _do_save() {
+    $changes = new stdClass();
     $changes->activate = array();
     $changes->deactivate = array();
     $activated_names = array();

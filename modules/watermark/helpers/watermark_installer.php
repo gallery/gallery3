@@ -33,7 +33,7 @@ class watermark_installer {
                DEFAULT CHARSET=utf8;");
 
     @mkdir(VARPATH . "modules/watermark");
-    module::set_version("watermark", 1);
+    module::set_version("watermark", 2);
   }
 
   static function uninstall() {
