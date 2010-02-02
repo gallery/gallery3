@@ -25,10 +25,10 @@
           <a href="<?= url::site("admin/advanced_settings/edit/$var->module_name/" . html::clean($var->name)) ?>"
             class="g-dialog-link"
             title="<?= t("Edit %var (%module_name)", array("var" => $var->name, "module_name" => $var->module_name))->for_html_attr() ?>">
-            <? if (isset($var->value)): ?>
-            <?= html::clean($var->value) ?>
-            <? else: ?>
+            <? if (!isset($var->value) || $var->value === ""): ?>
             <i> <?= t("empty") ?> </i>
+            <? else: ?>
+            <?= html::clean($var->value) ?>
             <? endif ?>
         </a>
         </td>

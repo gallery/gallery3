@@ -45,7 +45,6 @@
   display:block;
   position:absolute; right:0em;
   height:2em; line-height:2em;
-  text-transform:uppercase;
   text-align:center; background:#000;
 }
 #l10n-client-toggler a {
@@ -62,7 +61,7 @@
   height:1em; line-height:1em;
   padding: .5em; margin:0px;
   font-size:1em;
-  text-transform:uppercase;}
+}
 
 #l10n-client .strings h2 {
   border:0px;}
