@@ -33,11 +33,19 @@
               class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all">
               <?= t("run") ?>
             </a>
+            <? if (module::is_active("scheduler")): ?>
+            <a href="<?= url::site("form/add/admin/schedule/$task->callback?csrf=$csrf") ?>"
+              class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all">
+              <?= t("schedule") ?>
+            </a>
+            <? endif ?>
           </td>
         </tr>
         <? endforeach ?>
       </table>
     </div>
+
+    <?= $schedule_definitions ?>
 
     <? if ($running_tasks->count()): ?>
     <div id="g-running-tasks">
