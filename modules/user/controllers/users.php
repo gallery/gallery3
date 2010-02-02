@@ -90,6 +90,7 @@ class Users_Controller extends Controller {
       ->error_messages("matches", t("The passwords you entered do not match"));
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email)
       ->error_messages("email", t("You must enter a valid email address"))
+      ->error_messages("length", t("Your email address is too long"))
       ->error_messages("required", t("You must enter a valid email address"));
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
 
