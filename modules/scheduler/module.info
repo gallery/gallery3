@@ -1,0 +1,3 @@
+name = "Scheduler"
+description = "Schedule tasks to run at specific times and intervals"
+version = 1
