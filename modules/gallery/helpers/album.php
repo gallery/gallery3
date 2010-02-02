@@ -36,7 +36,8 @@ class album_Core {
     $group->input("name")->label(t("Directory name"))
       ->error_messages("no_slashes", t("The directory name can't contain the \"/\" character"))
       ->error_messages("required", t("You must provide a directory name"))
-      ->error_messages("length", t("Your directory name is too long"));
+      ->error_messages("length", t("Your directory name is too long"))
+      ->error_messages("conflict", t("There is already a movie, photo or album with this name"));
     $group->input("slug")->label(t("Internet Address"))
       ->error_messages(
         "not_url_safe",
@@ -51,7 +52,8 @@ class album_Core {
   }
 
   static function get_edit_form($parent) {
-    $form = new Forge("albums/update/{$parent->id}", "", "post", array("id" => "g-edit-album-form"));
+    $form = new Forge(
+      "albums/update/{$parent->id}", "", "post", array("id" => "g-edit-album-form"));
     $form->hidden("from_id");
     $group = $form->group("edit_item")->label(t("Edit Album"));
 
@@ -61,8 +63,7 @@ class album_Core {
     $group->textarea("description")->label(t("Description"))->value($parent->description);
     if ($parent->id != 1) {
       $group->input("name")->label(t("Directory Name"))->value($parent->name)
-        ->error_messages(
-          "conflict", t("There is already a movie, photo or album with this name"))
+        ->error_messages("conflict", t("There is already a movie, photo or album with this name"))
         ->error_messages("no_slashes", t("The directory name can't contain a \"/\""))
         ->error_messages("no_trailing_period", t("The directory name can't end in \".\""))
         ->error_messages("required", t("You must provide a directory name"))
