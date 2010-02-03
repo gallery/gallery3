@@ -102,7 +102,7 @@ class auth_Core {
   /**
    * Clear any failed logins for this user
    */
-  static function clear_failed_logins($user) {
+  static function clear_failed_auth_attempts($user) {
     db::build()
       ->delete("failed_logins")
       ->where("name", "=", $user->name)
