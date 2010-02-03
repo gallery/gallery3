@@ -70,6 +70,12 @@ class user_Core {
     return false;
   }
 
+  static function valid_password($password_input) {
+    if (!user::is_correct_password(identity::active_user(), $password_input->value)) {
+      $password_input->add_error("invalid", 1);
+    }
+  }
+
   /**
    * Create the hashed passwords.
    * @param string $password a plaintext password
