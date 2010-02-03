@@ -4,15 +4,15 @@
       handle: ".ui-selected",
       distance: 10,
       cursorAt: { left: -10, top: -10},
-      appendTo: "#g-organize-microthumb-panel",
+      appendTo: "#g-organize",
       helper: function(event, ui) {
         var selected = $(".ui-draggable.ui-selected img");
         if (selected.length) {
           var set = $('<div class="g-drag-helper"></div>')
 		      .css({
-            zIndex: 2000,
-            width: 80,
-            height: Math.ceil(selected.length / 5) * 16
+                        zIndex: 2000,
+                        width: 80,
+                        height: Math.ceil(selected.length / 5) * 16
 		      });
           var offset = $(this).offset();
           var click = {left: event.pageX - offset.left, top: event.pageY - offset.top};
@@ -37,16 +37,16 @@
       },
 
       start: function(event, ui) {
-        $("#g-organize-microthumb-panel .ui-selected").hide();
+        $("#g-organize-microthumb-grid .ui-selected").hide();
       },
 
       drag: function(event, ui) {
-        var top = $("#g-organize-microthumb-panel").offset().top;
-        var height = $("#g-organize-microthumb-panel").height();
+        var top = $("#g-organize-microthumb-grid").offset().top;
+        var height = $("#g-organize-microthumb-grid").height();
         if (ui.offset.top > height + top - 20) {
-          $("#g-organize-microthumb-panel").get(0).scrollTop += 100;
+          $("#g-organize-microthumb-grid").get(0).scrollTop += 100;
         } else if (ui.offset.top < top + 20) {
-          $("#g-organize-microthumb-panel").get(0).scrollTop = Math.max(0, $("#g-organize-microthumb-panel").get(0).scrollTop - 100);
+          $("#g-organize-microthumb-grid").get(0).scrollTop = Math.max(0, $("#g-organize-microthumb-grid").get(0).scrollTop - 100);
         }
       }
     },
@@ -63,7 +63,7 @@
           target_id = $(".currentDropTarget").attr("ref");
         } else {
           before_or_after = "after";
-          target_id = $("#g-organize-microthumb-grid li:last").attr("ref");
+          target_id = $("#g-organize-microthumb-grid div:last").attr("ref");
         }
         $.organize.do_drop({
           url: rearrange_url
@@ -92,7 +92,7 @@
     },
 
     do_drop: function(options) {
-      $("#g-organize-microthumb-panel").selectable("destroy");
+      $("#g-organize-microthumb-grid").selectable("destroy");
       var source_ids = [];
       $(options.source).each(function(i) {
         source_ids.push($(this).attr("ref"));
@@ -102,7 +102,7 @@
         $.post(options.url,
 	        { "source_ids[]": source_ids },
 	        function(data) {
-            $.organize._refresh(data);
+                  $.organize._refresh(data);
 	        },
 	      "json");
       }
@@ -141,8 +141,6 @@
       $("#g-dialog").dialog("option", "zIndex", 70);
       $("#g-dialog").bind("dialogopen", function(event, ui) {
         $("#g-organize").height($("#g-dialog").innerHeight() - 20);
-        $("#g-organize-microthumb-grid").height($("#g-dialog").innerHeight() - 91);
-        $("#g-organize-tree-container").height($("#g-dialog").innerHeight() - 60);
       });
 
       $("#g-dialog").bind("dialogclose", function(event, ui) {
@@ -210,11 +208,11 @@
       if ($(parent).hasClass("g-view-only")) {
         return;
       }
-      $("#g-organize-microthumb-panel").selectable("destroy");
+      $("#g-organize-microthumb-grid").selectable("destroy");
       var id = $(event.currentTarget).attr("ref");
       $(".g-organize-album-text.ui-state-focus").removeClass("ui-state-focus");
       $(".g-organize-album-text[ref=" + id + "]").addClass("ui-state-focus");
-      var url = $("#g-organize-microthumb-panel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
+      var url = $("#g-organize-microthumb-grid").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
       $.get(url, {},
         function(data) {
           $("#g-organize-microthumb-grid").html(data.grid);

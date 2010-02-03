@@ -1,12 +1,10 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <? foreach ($album->children(25, $offset) as $child): ?>
-<li class="g-organize-microthumb-grid-cell g-left ui-state-default ui-state-active" ref="<?= $child->id ?>">
-  <!-- div id="g-organize-microthumb-<?= $child->id ?>"
-       class="g-organize-microthumb <?= $child->is_album() ? "g-album" : "g-photo" ?> ui-state-active" -->
-    <?= $child->thumb_img(array("class" => "g-thumbnail", "ref" => $child->id), 90, true) ?>
-    <span<?= $child->is_album() ? " class=\"ui-icon ui-icon-note\"" : "" ?>></span>
-  <!-- /div -->
-</li>
+<div class="g-organize-microthumb-grid-cell g-left ui-state-default ui-state-active <?= $child->is_album() ? "g-album" : "g-photo" ?>"
+    ref="<?= $child->id ?>">
+  <?= $child->thumb_img(array("class" => "g-thumbnail", "ref" => $child->id), 90, true) ?>
+  <span<?= $child->is_album() ? " class=\"ui-icon ui-icon-note\"" : "" ?>></span>
+</div>
 <? endforeach ?>
 
 <? if ($album->children_count() > $offset): ?>

@@ -1,0 +1,10 @@
+/** *******************************************************************
+ * Organize styles that are theme overrideable
+ *********************************************************************/
+.g-organize-microthumb-grid-cell.ui-selected {
+  background: #DFEFFC !important;
+}
+
+#g-organize-microthumb-grid {
+  border: 1px solid #79B7E7;
+}
