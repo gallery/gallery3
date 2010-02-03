@@ -87,16 +87,10 @@
 }
 
 .g-organize-microthumb-grid-cell {
-  margin: 6px;
-  padding: 0 !important;
-  position: relative;
-}
-
-.g-organize-microthumb {
   display: block;
   height: 100px;
-  margin: 0;
-  padding: .4em 0;
+  margin: 6px;
+  padding: .4em 0 !important;
   position: relative;
   text-align: center;
   width: 110px;
@@ -106,7 +100,7 @@
   z-index: 2000 !important;
 }
 
-.g-organize-microthumb .ui-icon {
+.g-organize-microthumb-grid-cell .ui-icon {
   bottom: 0;
   left: 0;
   position: absolute;
