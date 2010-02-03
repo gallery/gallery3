@@ -29,15 +29,21 @@
             <?= $task->description ?>
           </td>
           <td>
-            <a href="<?= url::site("admin/maintenance/start/$task->callback?csrf=$csrf") ?>"
+            <? foreach ($task_buttons as $button): ?>
+            <a href="<?= "{$button->url}/$task->callback?csrf=$csrf" ?>"
               class="g-dialog-link g-button ui-icon-left ui-state-default ui-corner-all">
-              <?= t("run") ?>
+              <?= html::clean($button->text) ?>
             </a>
+            <? endforeach ?>
           </td>
         </tr>
         <? endforeach ?>
       </table>
     </div>
+
+    <? foreach ($task_maintenance_content as $content): ?>
+    <?= html::purify($content) ?>
+    <? endforeach ?>
 
     <? if ($running_tasks->count()): ?>
     <div id="g-running-tasks">

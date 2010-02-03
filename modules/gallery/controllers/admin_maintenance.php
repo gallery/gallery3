@@ -46,6 +46,15 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       ->where("done", "=", 0)->order_by("updated", "DESC")->find_all();
     $view->content->finished_tasks = ORM::factory("task")
       ->where("done", "=", 1)->order_by("updated", "DESC")->find_all();
+    $task_buttons =
+      new ArrayObject(array((object)array("text" => t("run"),
+                                          "url" =>url::site("admin/maintenance/start"))));
+    module::event("admin_maintenance_task_buttons", $task_buttons);
+    $view->content->task_buttons = $task_buttons;
+
+    $maintenance_content = new ArrayObject();
+    module::event("admin_maintenance_content", $maintenance_content);
+    $view->content->task_maintenance_content = $maintenance_content;
     print $view;
   }
 
@@ -56,13 +65,10 @@ class Admin_Maintenance_Controller extends Admin_Controller {
   public function start($task_callback) {
     access::verify_csrf();
 
-    $tasks = task::get_definitions();
-    $task = task::create($tasks[$task_callback], array());
+    $task = task::start($task_callback);
     $view = new View("admin_maintenance_task.html");
     $view->task = $task;
 
-    $task->log(t("Task %task_name started (task id %task_id)",
-                         array("task_name" => $task->name, "task_id" => $task->id)));
     log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
