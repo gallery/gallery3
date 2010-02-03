@@ -78,10 +78,16 @@ class auth_Core {
     }
   }
 
+  static function validate_too_many_failed_password_changes($password_input) {
+    if (self::too_many_failed_logins(identity::active_user()->name)) {
+      $password_input->add_error("too_many_failed_password_changes", 1);
+    }
+  }
+
   /**
    * Record a failed login for this user
    */
-  static function record_failed_login($name) {
+  static function record_failed_auth_attempts($name) {
     $failed_login = ORM::factory("failed_login")
       ->where("name", "=", $name)
       ->find();
@@ -96,7 +102,7 @@ class auth_Core {
   /**
    * Clear any failed logins for this user
    */
-  static function record_successful_login($user) {
+  static function clear_failed_logins($user) {
     db::build()
       ->delete("failed_logins")
       ->where("name", "=", $user->name)

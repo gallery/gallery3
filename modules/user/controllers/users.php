@@ -77,7 +77,7 @@ class Users_Controller extends Controller {
       // Translate ORM validation errors into form error messages
       foreach ($e->validation->errors() as $key => $error) {
         $form->change_password->inputs[$key]->add_error($error, 1);
-     }
+      }
       $valid = false;
     }
 
@@ -85,10 +85,14 @@ class Users_Controller extends Controller {
       $user->save();
       module::event("user_change_password_form_completed", $user, $form);
       message::success(t("Password changed"));
+      module::event("user_password_change", $user);
       print json_encode(
         array("result" => "success",
               "resource" => url::site("users/{$user->id}")));
     } else {
+      log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
+      $name = $user->name;
+      module::event("user_password_change_failed", $name);
       print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
@@ -116,8 +120,12 @@ class Users_Controller extends Controller {
       "users/change_password/$user->id", "", "post", array("id" => "g-change-password-user-form"));
     $group = $form->group("change_password")->label(t("Change your password"));
     $group->password("old_password")->label(t("Old password"))->id("g-password")
+      ->callback("auth::validate_too_many_failed_password_changes")
       ->callback("user::valid_password")
-      ->error_messages("invalid", t("Incorrect password"));
+      ->error_messages("invalid", t("Incorrect password"))
+      ->error_messages(
+        "too_many_failed_password_changes",
+        t("Too many incorrect passwords.  Try again later"));
     $group->password("password")->label(t("New password"))->id("g-password")
       ->error_messages("min_length", t("Your new password is too short"));
     $group->script("")
