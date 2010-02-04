@@ -73,6 +73,10 @@ class Organize_Controller extends Controller {
     access::required("view", $album);
     access::required("edit", $album);
 
+    if (locales::is_rtl()) {    // invert the position if the locale is rtl
+      $before_or_after = $before_or_after == "after" ? "before" : "after";
+    }
+
     $source_ids = Input::instance()->post("source_ids", array());
 
     if ($album->sort_column != "weight") {
