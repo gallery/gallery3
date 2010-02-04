@@ -107,8 +107,6 @@ class notification {
        t("Photo \"%title\" updated", array("title" => $original->title))
        : t("Movie \"%title\" updated", array("title" => $original->title)));
 
-    Kohana_Log::add("error",print_r($v->render(),1));
-
     self::_notify($subscribers, $item, $v->render(), $v->subject);
   }
 
