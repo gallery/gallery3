@@ -53,6 +53,11 @@
   width: auto;
 }
 
+.g-organize-album-text:hover {
+  border-width: 1px;
+  border-style: dotted;
+}
+
 /*******************************************************************
  * Album panel styles
  */
@@ -76,6 +81,8 @@
 }
 
 #g-organize-microthumb-grid {
+  border-width: 1px;
+  border-style: solid;
   bottom: 1.8em;
   left: 0;
   margin: 0 !important;

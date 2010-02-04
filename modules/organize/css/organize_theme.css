@@ -5,6 +5,7 @@
   background: #DFEFFC !important;
 }
 
-#g-organize-microthumb-grid {
-  border: 1px solid #79B7E7;
+#g-organize-microthumb-grid,
+.g-organize-album-text:hover {
+  border-color: #79B7E7;
 }
