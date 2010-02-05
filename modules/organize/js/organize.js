@@ -4,7 +4,7 @@
       handle: ".ui-selected",
       distance: 10,
       cursorAt: { left: -10, top: -10},
-      appendTo: "#g-organize",
+      appendTo: "#g-organize-content-pane",
       helper: function(event, ui) {
         var selected = $(".ui-draggable.ui-selected img");
         if (selected.length) {
@@ -14,8 +14,6 @@
                         width: 80,
                         height: Math.ceil(selected.length / 5) * 16
 		      });
-          var offset = $(this).offset();
-          var click = {left: event.pageX - offset.left, top: event.pageY - offset.top};
 
           selected.each(function(i) {
             var row = parseInt(i / 5);
@@ -43,11 +41,13 @@
       drag: function(event, ui) {
         var top = $("#g-organize-microthumb-grid").offset().top;
         var height = $("#g-organize-microthumb-grid").height();
+        var scrollTop = $("#g-organize-microthumb-grid").scrollTop();
         if (ui.offset.top > height + top - 20) {
-          $("#g-organize-microthumb-grid").get(0).scrollTop += 100;
+          scrollTop += 100;
         } else if (ui.offset.top < top + 20) {
-          $("#g-organize-microthumb-grid").get(0).scrollTop = Math.max(0, $("#g-organize-microthumb-grid").get(0).scrollTop - 100);
+          scrollTop = Math.max(0,  scrollTop - 100);
         }
+        $("#g-organize-microthumb-grid").scrollTop(scrollTop);
       }
     },
 
