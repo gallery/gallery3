@@ -60,7 +60,7 @@
         $.organize.do_drop({
           url: rearrange_url
           .replace("__TARGET_ID__", target.id)
-          .replace("__BEFORE__", target.before ? "before" : "after"),
+          .replace("__BEFORE__", target.position ? "before" : "after"),
           source: $(ui.helper).children("img")
         });
       }
