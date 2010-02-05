@@ -91,12 +91,24 @@
       });
 
       if (source_ids.length) {
+        var loading = $('<div class="g-dialog-loading-large">&nbsp;</div>')
+	  .css({bottom: 5,
+                opacity: .5,
+                left: 0,
+                position: "absolute",
+                right: 0,
+                top: 0,
+                zIndex: 2000
+	    });
+        $("#g-organize-microthumb-grid").append(loading);
+
         $.post(options.url,
-	        { "source_ids[]": source_ids },
-	        function(data) {
-                  $.organize._refresh(data);
-	        },
-	      "json");
+               { "source_ids[]": source_ids },
+	       function(data) {
+                 $.organize._refresh(data);
+                 $(".g-dialog-loading-large").remove();
+	       },
+	       "json");
       }
     },
 
