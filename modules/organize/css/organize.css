@@ -88,7 +88,7 @@
 #g-organize #g-organize-detail .g-message-block li {
   padding-bottom: .2em;
   padding-top: .2em;
-  width: inherit;
+  width: auto;
 }
 
 #g-organize-microthumb-grid {
@@ -139,7 +139,13 @@
   right: 0;
 }
 
+#g-organize-controls #g-organize-sort-order-text {
+  padding: .2em 0 0 0;
+}
+
+
 #g-organize-controls select {
+  margin-left: .42em;
   display: inline;
 }
 

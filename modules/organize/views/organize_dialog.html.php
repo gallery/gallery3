@@ -26,9 +26,11 @@
         <a id="g-organize-close" href="#" ref="done"
            class="g-button g-right ui-corner-all ui-state-default"><?= t("Close") ?></a>
         <form>
-          <?= t("Sort order") ?>
-          <?= form::dropdown(array("id" => "g-organize-sort-column"), album::get_sort_order_options(), $album->sort_column) ?>
-          <?= form::dropdown(array("id" => "g-organize-sort-order"), array("ASC" => "Ascending", "DESC" => "Descending"), $album->sort_order) ?>
+          <ul>
+            <li id="g-organize-sort-order-text" class="g-left"><?= t("Sort order") ?></li>
+            <li class="g-left">
+          <?= form::dropdown(array("id" => "g-organize-sort-column"), album::get_sort_order_options(), $album->sort_column) ?></li><li class="g-left">
+          <?= form::dropdown(array("id" => "g-organize-sort-order"), array("ASC" => "Ascending", "DESC" => "Descending"), $album->sort_order) ?></li></ul>
         </form>
       </div>
     </div>
