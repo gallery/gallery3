@@ -6,6 +6,11 @@
 }
 
 #g-organize-microthumb-grid,
+#g-organize-drop-target-marker,
 .g-organize-album-text:hover {
   border-color: #79B7E7;
+}
+
+#g-organize-drop-target-marker {
+ background-color: #79B7E7;
 }
