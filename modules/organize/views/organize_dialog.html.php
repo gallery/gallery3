@@ -30,7 +30,9 @@
             <li id="g-organize-sort-order-text" class="g-left"><?= t("Sort order") ?></li>
             <li class="g-left">
           <?= form::dropdown(array("id" => "g-organize-sort-column"), album::get_sort_order_options(), $album->sort_column) ?></li><li class="g-left">
-          <?= form::dropdown(array("id" => "g-organize-sort-order"), array("ASC" => "Ascending", "DESC" => "Descending"), $album->sort_order) ?></li></ul>
+          <?= form::dropdown(array("id" => "g-organize-sort-order"),
+                             array("ASC" => t("Ascending"), "DESC" => t("Descending")),
+                             $album->sort_order) ?></li></ul>
         </form>
       </div>
     </div>
