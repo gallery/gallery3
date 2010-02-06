@@ -59,8 +59,8 @@
         var target = $("#g-organize-drop-target-marker").data("drop_position");
         $.organize.do_drop({
           url: rearrange_url
-          .replace("__TARGET_ID__", target.id)
-          .replace("__BEFORE__", target.position ? "before" : "after"),
+            .replace("__TARGET_ID__", target.id)
+            .replace("__BEFORE__", target.position ? "before" : "after"),
           source: $(ui.helper).children("img")
         });
       }
@@ -72,8 +72,8 @@
       greedy: true,
       drop: function(event, ui) {
         if ($(event.target).hasClass("g-view-only")) {
+          $("#g-organize-drop-target-marker").remove();
           $(".ui-selected").show();
-          $(".g-organize-microthumb-grid-cell").css("borderStyle", "none");
         } else {
           $.organize.do_drop({
             url: move_url.replace("__ALBUM_ID__", $(event.target).attr("ref")),
@@ -134,48 +134,35 @@
       if ($(".g-drag-helper").length) {
         var cellSize = $("#g-organize").data("cellSize");
         var thumbnailCount = $(".g-organize-microthumb-grid-cell:visible").length;
-        var rows = Math.ceil(thumbnailCount / cellSize.columns);
 
-
+        var scrollTop = $("#g-organize-microthumb-grid").scrollTop();
         var itemPos = {
-          col: Math.floor((event.pageX - $(this).offset().left) / cellSize.width),
-          row: Math.floor((event.pageY - $(this).offset().top) / cellSize.height)
+          col: Math.floor((event.pageX - $("#g-organize-microthumb-grid").offset().left) / cellSize.width),
+          row: Math.floor((event.pageY + scrollTop - $("#g-organize-microthumb-grid").offset().top) / cellSize.height)
         };
+
         var itemIndex = itemPos.row * cellSize.columns + itemPos.col;
+        var item = itemIndex < thumbnailCount ? $(".g-organize-microthumb-grid-cell:visible").get(itemIndex) :
+                                                $(".g-organize-microthumb-grid-cell:visible:last");
 
-        var item;
-        if (itemIndex < thumbnailCount) {
-          item = $(".g-organize-microthumb-grid-cell:visible").get(itemIndex);
-        } else {
-          item = $(".g-organize-microthumb-grid-cell:visible:last");
-        }
-
-        var old_position = {top: 0, left: 0};
-        if ($("#g-organize-drop-target-marker").length) {
-          old_position = $("#g-organize-drop-target-marker").position();
-        }
         var before = event.pageX < ($(item).offset().left + $(item).width() / 2);
-
         var left = (before && itemIndex < thumbnailCount ? $(item).position().left : $(item).position().left + cellSize.width) - 3;
-        var top = $(item).position().top + 6;
+        var top = $(item).position().top + 6 + scrollTop;
 
-        if (old_position.top != top || old_position.left != left) {
-          if ($("#g-organize-drop-target-marker").length) {
-            $("#g-organize-drop-target-marker").remove();
-          }
-          var set = $('<div id="g-organize-drop-target-marker"></div>')
-	    .css({zIndex: 2000,
-                  width: 2,
-                  height: 112,
-                  borderWidth: 1,
-                  borderStyle: "solid",
-                  position: "absolute",
-                  top: top,
-                  left: left
-	         })
-            .data("drop_position", {id: $(item).attr("ref"), position: before});
-          $("#g-organize-microthumb-grid").append(set);
+        if ($("#g-organize-drop-target-marker").length) {
+          $("#g-organize-drop-target-marker").remove();
         }
+        var set = $('<div id="g-organize-drop-target-marker"></div>')
+	  .css({zIndex: 2000,
+                width: 2,
+                height: 112,
+                borderWidth: 1,
+                borderStyle: "solid",
+                position: "absolute",
+                top: top, left: left
+	       })
+          .data("drop_position", {id: $(item).attr("ref"), position: before});
+        $("#g-organize-microthumb-grid").append(set);
       }
     },
 
@@ -190,12 +177,13 @@
       $("#g-dialog").bind("dialogopen", function(event, ui) {
         var outerHeight = $(".g-organize-microthumb-grid-cell").outerHeight(true);
         var outerWidth = $(".g-organize-microthumb-grid-cell").outerWidth(true);
+        var gridInnerWidth = $("#g-organize-microthumb-grid").innerWidth() - 2 * parseFloat($("#g-organize-microthumb-grid").css("paddingLeft"));
         $("#g-organize")
           .height($("#g-dialog").innerHeight() - 20)
           .data("cellSize", {
                   height: outerHeight,
                   width: outerWidth,
-                  columns: Math.floor($("#g-organize-microthumb-grid").innerWidth() / outerWidth)
+                  columns: Math.floor(gridInnerWidth / outerWidth)
           });
       });
 
@@ -222,6 +210,8 @@
         .mouseleave($.organize.grid_mouse_leave_handler)
         .droppable($.organize.content_droppable);
       $(".g-organize-microthumb-grid-cell")
+        // need to manually add this class in case we care calling with additional elements
+        .addClass("ui-selectee")
         .draggable($.organize.micro_thumb_draggable);
       $(".g-organize-album").droppable($.organize.branch_droppable);
       $(".g-organize-album-text").click($.organize.show_album);
