@@ -19,14 +19,15 @@
  */
 class g2_import_task_Core {
   static function available_tasks() {
+    $version = '';
     g2_import::lower_error_reporting();
     if (g2_import::is_configured()) {
       g2_import::init();
+      $version = g2_import::version();
     }
-    $version = g2_import::version();
     g2_import::restore_error_reporting();
 
-    if (class_exists("GalleryCoreApi")) {
+    if (g2_import::is_initialized()) {
       return array(Task_Definition::factory()
                    ->callback("g2_import_task::import")
                    ->name(t("Import from Gallery 2"))
