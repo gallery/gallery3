@@ -541,6 +541,10 @@ class g2_import_Core {
       $item->save();
 
       self::set_map($g2_item_id, $item->id, "item", $g2_item_url);
+
+      self::set_map($g2_item_id, $item->id, "file",
+                    self::g2_url(array("view" => "core.DownloadItem", "itemId" => $g2_item_id)));
+
       $derivatives = g2(GalleryCoreApi::fetchDerivativesByItemIds(array($g2_item_id)));
       if (!empty($derivatives[$g2_item_id])) {
         foreach ($derivatives[$g2_item_id] as $derivative) {

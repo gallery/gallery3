@@ -64,6 +64,7 @@ class G2_Controller extends Controller {
     case "resize":
       url::redirect($item->resize_url(true));
 
+    case "file":
     case "full":
       url::redirect($item->file_url(true));
 
