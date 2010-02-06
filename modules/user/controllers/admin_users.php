@@ -60,9 +60,7 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function add_user_form() {
-    $v = new View("user_form.html");
-    $v->form = $this->_get_user_add_form_admin();
-    print $v;
+    print $this->_get_user_add_form_admin();
   }
 
   public function delete_user($id) {
@@ -147,13 +145,7 @@ class Admin_Users_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    $v = new View("user_form.html");
-    $v->form = $this->_get_user_edit_form_admin($user);
-    // Don't allow the user to control their own admin bit, else you can lock yourself out
-    if ($user->id == identity::active_user()->id) {
-      $v->form->edit_user->admin->disabled(1);
-    }
-    print $v;
+    print $this->_get_user_edit_form_admin($user);
   }
 
   public function add_user_to_group($user_id, $group_id) {
@@ -293,6 +285,9 @@ class Admin_Users_Controller extends Admin_Controller {
       ->error_messages("length", t("This name is too long"));
     $group->password("password")->label(t("Password"))->id("g-password")
       ->error_messages("min_length", t("This password is too short"));
+    $group->script("")
+      ->text(
+        '$("form").ready(function(){$(\'input[name="password"]\').user_password_strength();});');
     $group->password("password2")->label(t("Confirm password"))->id("g-password2")
       ->error_messages("matches", t("The passwords you entered do not match"))
       ->matches($group->password);
@@ -304,6 +299,11 @@ class Admin_Users_Controller extends Admin_Controller {
       ->error_messages("url", t("You must enter a valid URL"));
     self::_add_locale_dropdown($group, $user);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
+
+    // Don't allow the user to control their own admin bit, else you can lock yourself out
+    if ($user->id == identity::active_user()->id) {
+      $group->admin->disabled(1);
+    }
 
     module::event("user_edit_form_admin", $user, $form);
     $group->submit("")->value(t("Modify User"));
@@ -321,6 +321,9 @@ class Admin_Users_Controller extends Admin_Controller {
       ->error_messages("length", t("This name is too long"));
     $group->password("password")->label(t("Password"))->id("g-password")
       ->error_messages("min_length", t("This password is too short"));
+    $group->script("")
+      ->text(
+        '$("form").ready(function(){$(\'input[name="password"]\').user_password_strength();});');
     $group->password("password2")->label(t("Confirm password"))->id("g-password2")
       ->error_messages("matches", t("The passwords you entered do not match"))
       ->matches($group->password);
