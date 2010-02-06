@@ -31,7 +31,7 @@ class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
       //if (basename(dirname($file)) == "helpers") {
       $file_as_string = file_get_contents($file);
       if (preg_match("/ORM::factory\\(\"user\"/", $file_as_string)) {
-        foreach (split("\n", $file_as_string) as $l => $line) {
+        foreach (explode("\n", $file_as_string) as $l => $line) {
           if (preg_match('/ORM::factory\\(\"user\"/', $line)) {
             $errors[] = "$file($l) => $line";
           }
@@ -54,7 +54,7 @@ class No_Direct_ORM_Access_Test extends Gallery_Unit_Test_Case {
     foreach ($dir as $file) {
       $file_as_string = file_get_contents($file);
       if (preg_match("/ORM::factory\\(\"group\"/", $file_as_string)) {
-        foreach (split("\n", $file_as_string) as $l => $line) {
+        foreach (explode("\n", $file_as_string) as $l => $line) {
           if (preg_match('/ORM::factory\\(\"group\"/', $line)) {
             $errors[] = "$file($l) => $line";
           }

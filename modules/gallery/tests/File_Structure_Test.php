@@ -195,7 +195,7 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
     foreach ($dir as $file) {
       $file_as_string = file_get_contents($file);
       if (preg_match('/\t/', $file_as_string)) {
-        foreach (split("\n", $file_as_string) as $l => $line) {
+        foreach (explode("\n", $file_as_string) as $l => $line) {
           if (preg_match('/\t/', $line)) {
             $errors[] = "$file:$l has tab(s) ($line)";
           }

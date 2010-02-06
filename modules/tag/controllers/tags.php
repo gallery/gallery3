@@ -60,7 +60,7 @@ class Tags_Controller extends Controller {
 
     $form = tag::get_add_form($item);
     if ($form->validate()) {
-      foreach (split(",", $form->add_tag->inputs["name"]->value) as $tag_name) {
+      foreach (explode(",", $form->add_tag->inputs["name"]->value) as $tag_name) {
         $tag_name = trim($tag_name);
         if ($tag_name) {
           $tag = tag::add($item, $tag_name);
@@ -77,9 +77,9 @@ class Tags_Controller extends Controller {
 
   public function autocomplete() {
     $tags = array();
-    $tag_parts = preg_split("#,#", Input::instance()->get("q"));
+    $tag_parts = explode(",", Input::instance()->get("q"));
     $limit = Input::instance()->get("limit");
-    $tag_part = end($tag_parts);
+    $tag_part = ltrim(end($tag_parts));
     $tag_list = ORM::factory("tag")
       ->where("name", "LIKE", "{$tag_part}%")
       ->order_by("name", "ASC")
