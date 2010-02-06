@@ -122,7 +122,7 @@ class User_Model extends ORM implements User_Definition {
   public function valid_name(Validation $v, $field) {
     if (db::build()->from("users")
         ->where("name", "=", $this->name)
-        ->where("id", "<>", $this->id)
+        ->merge_where($this->id ? array(array("id", "<>", $this->id)) : null)
         ->count_records() == 1) {
       $v->add_error("name", "conflict");
     }
@@ -136,7 +136,7 @@ class User_Model extends ORM implements User_Definition {
       return;
     }
 
-    if (!$this->loaded() || $this->password_length) {
+    if (!$this->loaded() || isset($this->password_length)) {
       $minimum_length = module::get_var("user", "mininum_password_length", 5);
       if ($this->password_length < $minimum_length) {
         $v->add_error("password", "min_length");

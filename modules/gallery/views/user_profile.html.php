@@ -57,8 +57,11 @@
     </a>
     <? endif ?>
     <? if ($editable): ?>
-       <a class="g-button ui-icon-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("form/edit/users/{$user->id}") ?>">
+    <a class="g-button ui-icon-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("form/edit/users/{$user->id}") ?>">
       <?= t("Edit") ?>
+    </a>
+    <a class="g-button ui-icon-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("users/form_change_password/{$user->id}") ?>">
+      <?= t("Change password") ?>
     </a>
     <? endif ?>
 

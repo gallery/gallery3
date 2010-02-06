@@ -48,8 +48,12 @@ class Organize_Controller extends Controller {
     access::required("view", $target_album);
     access::required("add", $target_album);
 
+    $source_album = null;
     foreach (Input::instance()->post("source_ids") as $source_id) {
       $source = ORM::factory("item", $source_id);
+      if (empty($source_album)) {     // get the source_album
+        $source_album = $source->parent();
+      }
       if (!$source->contains($target_album)) {
         access::required("edit", $source);
         item::move($source, $target_album);
@@ -57,8 +61,8 @@ class Organize_Controller extends Controller {
     }
 
     print json_encode(
-      array("tree" => (string)self::_expanded_tree(ORM::factory("item", 1), $target_album),
-            "grid" => (string)self::_get_micro_thumb_grid($target_album, 0)));
+      array("tree" => (string)self::_expanded_tree(ORM::factory("item", 1), $source_album),
+            "grid" => (string)self::_get_micro_thumb_grid($source_album, 0)));
   }
 
   function rearrange($target_id, $before_or_after) {
@@ -68,6 +72,10 @@ class Organize_Controller extends Controller {
     $album = $target->parent();
     access::required("view", $album);
     access::required("edit", $album);
+
+    if (locales::is_rtl()) {    // invert the position if the locale is rtl
+      $before_or_after = $before_or_after == "after" ? "before" : "after";
+    }
 
     $source_ids = Input::instance()->post("source_ids", array());
 

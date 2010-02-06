@@ -4,18 +4,16 @@
       handle: ".ui-selected",
       distance: 10,
       cursorAt: { left: -10, top: -10},
-      appendTo: "#g-organize-microthumb-panel",
+      appendTo: "#g-organize-content-pane",
       helper: function(event, ui) {
         var selected = $(".ui-draggable.ui-selected img");
         if (selected.length) {
           var set = $('<div class="g-drag-helper"></div>')
 		      .css({
-            zIndex: 2000,
-            width: 80,
-            height: Math.ceil(selected.length / 5) * 16
+                        zIndex: 2000,
+                        width: 80,
+                        height: Math.ceil(selected.length / 5) * 16
 		      });
-          var offset = $(this).offset();
-          var click = {left: event.pageX - offset.left, top: event.pageY - offset.top};
 
           selected.each(function(i) {
             var row = parseInt(i / 5);
@@ -37,17 +35,19 @@
       },
 
       start: function(event, ui) {
-        $("#g-organize-microthumb-panel .ui-selected").hide();
+        $("#g-organize-microthumb-grid .ui-selected").hide();
       },
 
       drag: function(event, ui) {
-        var top = $("#g-organize-microthumb-panel").offset().top;
-        var height = $("#g-organize-microthumb-panel").height();
+        var top = $("#g-organize-microthumb-grid").offset().top;
+        var height = $("#g-organize-microthumb-grid").height();
+        var scrollTop = $("#g-organize-microthumb-grid").scrollTop();
         if (ui.offset.top > height + top - 20) {
-          $("#g-organize-microthumb-panel").get(0).scrollTop += 100;
+          scrollTop += 100;
         } else if (ui.offset.top < top + 20) {
-          $("#g-organize-microthumb-panel").get(0).scrollTop = Math.max(0, $("#g-organize-microthumb-panel").get(0).scrollTop - 100);
+          scrollTop = Math.max(0,  scrollTop - 100);
         }
+        $("#g-organize-microthumb-grid").scrollTop(scrollTop);
       }
     },
 
@@ -56,19 +56,11 @@
       tolerance: "pointer",
       greedy: true,
       drop: function(event, ui) {
-        var before_or_after = null;
-        var target_id = null;
-        if ($(".currentDropTarget").length) {
-          before_or_after = $(".currentDropTarget").css("borderLeftStyle") == "solid" ? "before" : "after";
-          target_id = $(".currentDropTarget").attr("ref");
-        } else {
-          before_or_after = "after";
-          target_id = $("#g-organize-microthumb-grid li:last").attr("ref");
-        }
+        var target = $("#g-organize-drop-target-marker").data("drop_position");
         $.organize.do_drop({
           url: rearrange_url
-          .replace("__TARGET_ID__", target_id)
-          .replace("__BEFORE__", before_or_after),
+            .replace("__TARGET_ID__", target.id)
+            .replace("__BEFORE__", target.position ? "before" : "after"),
           source: $(ui.helper).children("img")
         });
       }
@@ -80,8 +72,8 @@
       greedy: true,
       drop: function(event, ui) {
         if ($(event.target).hasClass("g-view-only")) {
+          $("#g-organize-drop-target-marker").remove();
           $(".ui-selected").show();
-          $(".g-organize-microthumb-grid-cell").css("borderStyle", "none");
         } else {
           $.organize.do_drop({
             url: move_url.replace("__ALBUM_ID__", $(event.target).attr("ref")),
@@ -92,19 +84,31 @@
     },
 
     do_drop: function(options) {
-      $("#g-organize-microthumb-panel").selectable("destroy");
+      $("#g-organize-microthumb-grid").selectable("destroy");
       var source_ids = [];
       $(options.source).each(function(i) {
         source_ids.push($(this).attr("ref"));
       });
 
       if (source_ids.length) {
+        var loading = $('<div class="g-dialog-loading-large">&nbsp;</div>')
+	  .css({bottom: 5,
+                opacity: .5,
+                left: 0,
+                position: "absolute",
+                right: 0,
+                top: 0,
+                zIndex: 2000
+	    });
+        $("#g-organize-microthumb-grid").append(loading);
+
         $.post(options.url,
-	        { "source_ids[]": source_ids },
-	        function(data) {
-            $.organize._refresh(data);
-	        },
-	      "json");
+               { "source_ids[]": source_ids },
+	       function(data) {
+                 $.organize._refresh(data);
+                 $(".g-dialog-loading-large").remove();
+	       },
+	       "json");
       }
     },
 
@@ -120,14 +124,45 @@
       $.organize.set_handlers();
     },
 
-    mouse_move_handler: function(event) {
+    grid_mouse_leave_handler: function(event) {
+      if ($(".g-drag-helper").length && $("#g-organize-drop-target-marker").length) {
+        $("#g-organize-drop-target-marker").remove();
+      }
+    },
+
+    grid_mouse_move_handler: function(event) {
       if ($(".g-drag-helper").length) {
-        $(".g-organize-microthumb-grid-cell").css({borderStyle: "hidden", margin: "6px"});
-        $(".currentDropTarget").removeClass("currentDropTarget");
-        var borderStyle = event.pageX < $(this).offset().left + $(this).width() / 2 ?
-          {borderLeftStyle: "solid", marginLeft: "2px"} : {borderRightStyle: "solid", marginRight: "2px"};
-        $(this).addClass("currentDropTarget")
-          .css(borderStyle);
+        var cellSize = $("#g-organize").data("cellSize");
+        var thumbnailCount = $(".g-organize-microthumb-grid-cell:visible").length;
+
+        var scrollTop = $("#g-organize-microthumb-grid").scrollTop();
+        var itemPos = {
+          col: Math.floor((event.pageX - $("#g-organize-microthumb-grid").offset().left) / cellSize.width),
+          row: Math.floor((event.pageY + scrollTop - $("#g-organize-microthumb-grid").offset().top) / cellSize.height)
+        };
+
+        var itemIndex = itemPos.row * cellSize.columns + itemPos.col;
+        var item = itemIndex < thumbnailCount ? $(".g-organize-microthumb-grid-cell:visible").get(itemIndex) :
+                                                $(".g-organize-microthumb-grid-cell:visible:last");
+
+        var before = event.pageX < ($(item).offset().left + $(item).width() / 2);
+        var left = (before && itemIndex < thumbnailCount ? $(item).position().left : $(item).position().left + cellSize.width) - 3;
+        var top = $(item).position().top + 6 + scrollTop;
+
+        if ($("#g-organize-drop-target-marker").length) {
+          $("#g-organize-drop-target-marker").remove();
+        }
+        var set = $('<div id="g-organize-drop-target-marker"></div>')
+	  .css({zIndex: 2000,
+                width: 2,
+                height: 112,
+                borderWidth: 1,
+                borderStyle: "solid",
+                position: "absolute",
+                top: top, left: left
+	       })
+          .data("drop_position", {id: $(item).attr("ref"), position: before});
+        $("#g-organize-microthumb-grid").append(set);
       }
     },
 
@@ -140,9 +175,16 @@
       $(".sf-menu li.sfHover ul").css("z-index", 68);
       $("#g-dialog").dialog("option", "zIndex", 70);
       $("#g-dialog").bind("dialogopen", function(event, ui) {
-        $("#g-organize").height($("#g-dialog").innerHeight() - 20);
-        $("#g-organize-microthumb-grid").height($("#g-dialog").innerHeight() - 91);
-        $("#g-organize-tree-container").height($("#g-dialog").innerHeight() - 60);
+        var outerHeight = $(".g-organize-microthumb-grid-cell").outerHeight(true);
+        var outerWidth = $(".g-organize-microthumb-grid-cell").outerWidth(true);
+        var gridInnerWidth = $("#g-organize-microthumb-grid").innerWidth() - 2 * parseFloat($("#g-organize-microthumb-grid").css("paddingLeft"));
+        $("#g-organize")
+          .height($("#g-dialog").innerHeight() - 20)
+          .data("cellSize", {
+                  height: outerHeight,
+                  width: outerWidth,
+                  columns: Math.floor(gridInnerWidth / outerWidth)
+          });
       });
 
       $("#g-dialog").bind("dialogclose", function(event, ui) {
@@ -164,11 +206,13 @@
     set_handlers: function() {
       $("#g-organize-microthumb-grid")
         .selectable({filter: ".g-organize-microthumb-grid-cell"})
+        .mousemove($.organize.grid_mouse_move_handler)
+        .mouseleave($.organize.grid_mouse_leave_handler)
         .droppable($.organize.content_droppable);
       $(".g-organize-microthumb-grid-cell")
-        .draggable($.organize.micro_thumb_draggable)
-        .mouseleave($.organize.mouse_leave_handler)
-        .mousemove($.organize.mouse_move_handler);
+        // need to manually add this class in case we care calling with additional elements
+        .addClass("ui-selectee")
+        .draggable($.organize.micro_thumb_draggable);
       $(".g-organize-album").droppable($.organize.branch_droppable);
       $(".g-organize-album-text").click($.organize.show_album);
       $("#g-organize-album-tree .ui-icon-plus,#g-organize-album-tree .ui-icon-minus").click($.organize.toggle_branch);
@@ -210,18 +254,18 @@
       if ($(parent).hasClass("g-view-only")) {
         return;
       }
-      $("#g-organize-microthumb-panel").selectable("destroy");
+      $("#g-organize-microthumb-grid").selectable("destroy");
       var id = $(event.currentTarget).attr("ref");
       $(".g-organize-album-text.ui-state-focus").removeClass("ui-state-focus");
       $(".g-organize-album-text[ref=" + id + "]").addClass("ui-state-focus");
-      var url = $("#g-organize-microthumb-panel").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
+      var url = $("#g-organize-microthumb-grid").attr("ref").replace("__ITEM_ID__", id).replace("__OFFSET__", 0);
       $.get(url, {},
-        function(data) {
-          $("#g-organize-microthumb-grid").html(data.grid);
-          $("#g-organize-sort-column").attr("value", data.sort_column);
-          $("#g-organize-sort-order").attr("value", data.sort_order);
-          $.organize.set_handlers();
-        },
+            function(data) {
+              $("#g-organize-microthumb-grid").html(data.grid);
+              $("#g-organize-sort-column").attr("value", data.sort_column);
+              $("#g-organize-sort-order").attr("value", data.sort_order);
+              $.organize.set_handlers();
+            },
 	    "json");
     },
 

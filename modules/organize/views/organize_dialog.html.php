@@ -15,22 +15,28 @@
       </ul>
     </div>
     <div id="g-organize-detail" class="g-left ui-helper-clearfix">
-      <div id="g-organize-microthumb-panel" class="ui-widget"
+      <ul id="g-action-status" class="g-message-block">
+        <li class="g-info"><?= t("Drag and drop photos to re-order or move between albums") ?></li>
+      </ul>
+      <div id="g-organize-microthumb-grid" class="ui-widget"
            ref="<?= url::site("organize/album/__ITEM_ID__/__OFFSET__") ?>">
-        <ul id="g-action-status" class="g-message-block">
-          <li class="g-info"><?= t("Drag and drop photos to re-order or move between albums") ?></li>
-        </ul>
-        <ul id="g-organize-microthumb-grid" class="ui-widget-content">
           <?= $micro_thumb_grid ?>
-        </ul>
       </div>
       <div id="g-organize-controls" class="ui-widget-header">
         <a id="g-organize-close" href="#" ref="done"
            class="g-button g-right ui-corner-all ui-state-default"><?= t("Close") ?></a>
         <form>
-          <?= t("Sort order") ?>
-          <?= form::dropdown(array("id" => "g-organize-sort-column"), album::get_sort_order_options(), $album->sort_column) ?>
-          <?= form::dropdown(array("id" => "g-organize-sort-order"), array("ASC" => "Ascending", "DESC" => "Descending"), $album->sort_order) ?>
+          <ul>
+            <li id="g-organize-sort-order-text" class="g-left"><?= t("Sort order") ?></li>
+            <li class="g-left">
+            <?= form::dropdown(array("id" => "g-organize-sort-column"),
+                               album::get_sort_order_options(), $album->sort_column) ?>
+            </li>
+            <li class="g-left">
+            <?= form::dropdown(array("id" => "g-organize-sort-order"),
+                               array("ASC" => t("Ascending"), "DESC" => t("Descending")), $album->sort_order) ?>
+            </li>
+          </ul>
         </form>
       </div>
     </div>

@@ -287,7 +287,7 @@ class gallery_installer {
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
     module::set_var("gallery", "simultaneous_upload_limit", 5);
-    module::set_version("gallery", 25);
+    module::set_version("gallery", 26);
   }
 
   static function upgrade($version) {
@@ -513,6 +513,18 @@ class gallery_installer {
         self::_protect_directory(VARPATH . $dir);
       }
       module::set_version("gallery", $version = 25);
+    }
+
+    if ($version == 25) {
+      db::build()
+        ->update("items")
+        ->set("title", new Database_Expression("`name`"))
+        ->and_open()
+        ->where("title", "IS", null)
+        ->or_where("title", "=", "")
+        ->close()
+        ->execute();
+      module::set_version("gallery", $version = 26);
     }
   }
 

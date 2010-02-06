@@ -27,6 +27,7 @@ class organize_theme {
       // approach that lets us continue to use the Kohana cascading filesystem.
       $theme->script("organize.js");
       $theme->css("organize.css");
+      $theme->css("organize_theme.css");
     }
   }
 }

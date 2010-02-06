@@ -60,9 +60,7 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function add_user_form() {
-    $v = new View("user_form.html");
-    $v->form = $this->_get_user_add_form_admin();
-    print $v;
+    print $this->_get_user_add_form_admin();
   }
 
   public function delete_user($id) {
@@ -147,13 +145,7 @@ class Admin_Users_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    $v = new View("user_form.html");
-    $v->form = $this->_get_user_edit_form_admin($user);
-    // Don't allow the user to control their own admin bit, else you can lock yourself out
-    if ($user->id == identity::active_user()->id) {
-      $v->form->edit_user->admin->disabled(1);
-    }
-    print $v;
+    print $this->_get_user_edit_form_admin($user);
   }
 
   public function add_user_to_group($user_id, $group_id) {
@@ -287,17 +279,31 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = new Forge(
       "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit user"));
-    $group->input("name")->label(t("Username"))->id("g-username")->value($user->name);
-    $group->inputs["name"]->error_messages(
-      "conflict", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full name"))->id("g-fullname")->value($user->full_name);
-    self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->input("name")->label(t("Username"))->id("g-username")->value($user->name)
+      ->error_messages("conflict", t("There is already a user with that username"));
+    $group->input("full_name")->label(t("Full name"))->id("g-fullname")->value($user->full_name)
+      ->error_messages("length", t("This name is too long"));
+    $group->password("password")->label(t("Password"))->id("g-password")
+      ->error_messages("min_length", t("This password is too short"));
+    $group->script("")
+      ->text(
+        '$("form").ready(function(){$(\'input[name="password"]\').user_password_strength();});');
     $group->password("password2")->label(t("Confirm password"))->id("g-password2")
+      ->error_messages("matches", t("The passwords you entered do not match"))
       ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email);
-    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
+    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email)
+      ->error_messages("required", t("You must enter a valid email address"))
+      ->error_messages("length", t("This email address is too long"))
+      ->error_messages("email", t("You must enter a valid email address"));
+    $group->input("url")->label(t("URL"))->id("g-url")->value($user->url)
+      ->error_messages("url", t("You must enter a valid URL"));
+    self::_add_locale_dropdown($group, $user);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin")->checked($user->admin);
+
+    // Don't allow the user to control their own admin bit, else you can lock yourself out
+    if ($user->id == identity::active_user()->id) {
+      $group->admin->disabled(1);
+    }
 
     module::event("user_edit_form_admin", $user, $form);
     $group->submit("")->value(t("Modify User"));
@@ -308,13 +314,25 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = new Forge("admin/users/add_user", "", "post", array("id" => "g-add-user-form"));
     $group = $form->group("add_user")->label(t("Add user"));
     $group->input("name")->label(t("Username"))->id("g-username")
+      ->error_messages("required", t("A name is required"))
+      ->error_messages("length", t("This name is too long"))
       ->error_messages("conflict", t("There is already a user with that username"));
-    $group->input("full_name")->label(t("Full name"))->id("g-fullname");
-    $group->password("password")->label(t("Password"))->id("g-password");
+    $group->input("full_name")->label(t("Full name"))->id("g-fullname")
+      ->error_messages("length", t("This name is too long"));
+    $group->password("password")->label(t("Password"))->id("g-password")
+      ->error_messages("min_length", t("This password is too short"));
+    $group->script("")
+      ->text(
+        '$("form").ready(function(){$(\'input[name="password"]\').user_password_strength();});');
     $group->password("password2")->label(t("Confirm password"))->id("g-password2")
+      ->error_messages("matches", t("The passwords you entered do not match"))
       ->matches($group->password);
-    $group->input("email")->label(t("Email"))->id("g-email");
-    $group->input("url")->label(t("URL"))->id("g-url");
+    $group->input("email")->label(t("Email"))->id("g-email")
+      ->error_messages("required", t("You must enter a valid email address"))
+      ->error_messages("length", t("This email address is too long"))
+      ->error_messages("email", t("You must enter a valid email address"));
+    $group->input("url")->label(t("URL"))->id("g-url")
+      ->error_messages("url", t("You must enter a valid URL"));
     self::_add_locale_dropdown($group);
     $group->checkbox("admin")->label(t("Admin"))->id("g-admin");
 

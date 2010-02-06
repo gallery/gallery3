@@ -304,13 +304,16 @@ tr.g-error td.g-error {
 }
 
 .g-success,
-.g-allowed,
-tr.g-success td.g-success {
-  background: #d9efc2  url('images/ico-success.png') no-repeat .4em 50%;
+.g-allowed {
+  background: #d9efc2 url('images/ico-success.png') no-repeat .4em 50%;
+}
+
+tr.g-success {
+	background-image: none;
 }
 
 tr.g-success td.g-success {
-  background-color: transparent;
+	background-image: url('images/ico-success.png');
 }
 
 .g-warning,

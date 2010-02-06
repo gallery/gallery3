@@ -110,11 +110,19 @@ class gallery_event_Core {
       graphics::choose_default_toolkit();
       module::clear_var("gallery", "choose_default_tookit");
     }
-    auth::record_successful_login($user);
+    auth::clear_failed_auth_attempts($user);
   }
 
   static function user_login_failed($name) {
-    auth::record_failed_login($name);
+    auth::record_failed_auth_attempts($name);
+  }
+
+  static function user_password_changed($user) {
+    auth::clear_failed_auth_attempts($user);
+  }
+
+  static function user_password_change_failed($name) {
+    auth::record_failed_auth_attempts($name);
   }
 
   static function item_index_data($item, $data) {

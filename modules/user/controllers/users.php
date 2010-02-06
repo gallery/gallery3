@@ -20,7 +20,6 @@
 class Users_Controller extends Controller {
   public function update($id) {
     $user = user::lookup($id);
-
     if ($user->guest || $user->id != identity::active_user()->id) {
       access::forbidden();
     }
@@ -29,9 +28,6 @@ class Users_Controller extends Controller {
     try {
       $valid = $form->validate();
       $user->full_name = $form->edit_user->full_name->value;
-      if ($form->edit_user->password->value) {
-        $user->password = $form->edit_user->password->value;
-      }
       $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
 
@@ -57,11 +53,46 @@ class Users_Controller extends Controller {
 
       $user->save();
       module::event("user_edit_form_completed", $user, $form);
-      message::success(t("User information updated."));
+      message::success(t("User information updated"));
       print json_encode(
         array("result" => "success",
               "resource" => url::site("users/{$user->id}")));
     } else {
+      print json_encode(array("result" => "error", "form" => (string) $form));
+    }
+  }
+
+  public function change_password($id) {
+    $user = user::lookup($id);
+    if ($user->guest || $user->id != identity::active_user()->id) {
+      access::forbidden();
+    }
+
+    $form = $this->_get_change_password_form($user);
+    try {
+      $valid = $form->validate();
+      $user->password = $form->change_password->password->value;
+      $user->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        $form->change_password->inputs[$key]->add_error($error, 1);
+      }
+      $valid = false;
+    }
+
+    if ($valid) {
+      $user->save();
+      module::event("user_change_password_form_completed", $user, $form);
+      message::success(t("Password changed"));
+      module::event("user_password_change", $user);
+      print json_encode(
+        array("result" => "success",
+              "resource" => url::site("users/{$user->id}")));
+    } else {
+      log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
+      $name = $user->name;
+      module::event("user_password_change_failed", $name);
       print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
@@ -72,24 +103,52 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    $v = new View("user_form.html");
-    $v->form = $this->_get_edit_form($user);
-    print $v;
+    print $this->_get_edit_form($user);
+  }
+
+  public function form_change_password($id) {
+    $user = user::lookup($id);
+    if ($user->guest || $user->id != identity::active_user()->id) {
+      access::forbidden();
+    }
+
+    print $this->_get_change_password_form($user);
+  }
+
+  private function _get_change_password_form($user) {
+    $form = new Forge(
+      "users/change_password/$user->id", "", "post", array("id" => "g-change-password-user-form"));
+    $group = $form->group("change_password")->label(t("Change your password"));
+    $group->password("old_password")->label(t("Old password"))->id("g-password")
+      ->callback("auth::validate_too_many_failed_password_changes")
+      ->callback("user::valid_password")
+      ->error_messages("invalid", t("Incorrect password"))
+      ->error_messages(
+        "too_many_failed_password_changes",
+        t("Too many incorrect passwords.  Try again later"));
+    $group->password("password")->label(t("New password"))->id("g-password")
+      ->error_messages("min_length", t("Your new password is too short"));
+    $group->script("")
+      ->text(
+        '$("form").ready(function(){$(\'input[name="password"]\').user_password_strength();});');
+    $group->password("password2")->label(t("Confirm new password"))->id("g-password2")
+      ->matches($group->password)
+      ->error_messages("matches", t("The passwords you entered do not match"));
+
+    module::event("user_change_password_form", $user, $form);
+    $group->submit("")->value(t("Save"));
+    return $form;
   }
 
   private function _get_edit_form($user) {
     $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
-    $group = $form->group("edit_user")->label(t("Edit User: %name", array("name" => $user->name)));
+    $group = $form->group("edit_user")->label(t("Edit your profile"));
     $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name)
       ->error_messages("length", t("Your name is too long"));
     self::_add_locale_dropdown($group, $user);
-    $group->password("password")->label(t("Password"))->id("g-password")
-      ->error_messages("min_length", t("Your password is too short"));
-    $group->password("password2")->label(t("Confirm Password"))->id("g-password2")
-      ->matches($group->password)
-      ->error_messages("matches", t("The passwords you entered do not match"));
     $group->input("email")->label(t("Email"))->id("g-email")->value($user->email)
       ->error_messages("email", t("You must enter a valid email address"))
+      ->error_messages("length", t("Your email address is too long"))
       ->error_messages("required", t("You must enter a valid email address"));
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
 
