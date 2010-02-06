@@ -32,13 +32,14 @@ class Admin_g2_import_Controller extends Admin_Controller {
     $view = new Admin_View("admin.html");
     $view->content = new View("admin_g2_import.html");
     $view->content->form = $this->_get_import_form();
-    $view->content->version = g2_import::version();
+    $view->content->version = '';
 
     if (g2_import::is_initialized()) {
       $view->content->g2_stats = $g2_stats;
       $view->content->g2_sizes = $g2_sizes;
       $view->content->thumb_size = module::get_var("gallery", "thumb_size");
       $view->content->resize_size = module::get_var("gallery", "resize_size");
+      $view->content->version = g2_import::version();
     }
     g2_import::restore_error_reporting();
     print $view;
