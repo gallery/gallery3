@@ -84,6 +84,20 @@ class movie_Core {
       " -an -ss 00:00:03 -an -r 1 -vframes 1" .
       " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
     exec($cmd);
+
+    clearstatcache();  // use $filename parameter when PHP_version is 5.3+
+    if (filesize($output_file) == 0) {
+      // Maybe the movie is shorter, fall back to the first frame.
+      $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($input_file) .
+        " -an -an -r 1 -vframes 1" .
+        " -y -f mjpeg " . escapeshellarg($output_file) . " 2>&1";
+      exec($cmd);
+
+      clearstatcache();
+      if (filesize($output_file) == 0) {
+        throw new Exception("@todo FFMPEG_FAILED");
+      }
+    }
   }
 
   static function find_ffmpeg() {
