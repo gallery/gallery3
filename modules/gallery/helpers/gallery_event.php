@@ -113,11 +113,11 @@ class gallery_event_Core {
     auth::clear_failed_attempts($user);
   }
 
-  static function user_authenticate_failed($name) {
+  static function user_auth_failed($name) {
     auth::record_failed_attempt($name);
   }
 
-  static function user_authenticate($user) {
+  static function user_auth($user) {
     auth::clear_failed_attempts($user);
   }
 

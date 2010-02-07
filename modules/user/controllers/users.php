@@ -84,7 +84,7 @@ class Users_Controller extends Controller {
       $user->save();
       module::event("user_change_password_form_completed", $user, $form);
       message::success(t("Password changed"));
-      module::event("user_authenticate", $user);
+      module::event("user_auth", $user);
       module::event("user_password_change", $user);
       print json_encode(
         array("result" => "success",
@@ -92,7 +92,7 @@ class Users_Controller extends Controller {
     } else {
       log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
       $name = $user->name;
-      module::event("user_authenticate_failed", $name);
+      module::event("user_auth_failed", $name);
       print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
@@ -120,14 +120,14 @@ class Users_Controller extends Controller {
       $user->save();
       module::event("user_change_email_form_completed", $user, $form);
       message::success(t("Email address changed"));
-      module::event("user_authenticate", $user);
+      module::event("user_auth", $user);
       print json_encode(
         array("result" => "success",
               "resource" => url::site("users/{$user->id}")));
     } else {
       log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
       $name = $user->name;
-      module::event("user_authenticate_failed", $name);
+      module::event("user_auth_failed", $name);
       print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
