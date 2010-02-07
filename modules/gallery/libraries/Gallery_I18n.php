@@ -88,7 +88,7 @@ class Gallery_I18n_Core {
   }
 
   public function is_rtl($locale=null) {
-    $is_rtl = !empty($this->_config["force_rtl"]) and $this->_config["force_rtl"];
+    $is_rtl = !empty($this->_config["force_rtl"]);
     if (empty($is_rtl)) {
       $locale or $locale = $this->locale();
       list ($language, $territory) = explode('_', $locale . "_");
