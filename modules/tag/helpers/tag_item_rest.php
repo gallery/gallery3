@@ -34,7 +34,7 @@ class tag_item_rest_Core {
   }
 
   static function resolve($tuple) {
-    list ($tag_id, $item_id) = split(",", $tuple);
+    list ($tag_id, $item_id) = explode(",", $tuple);
     $tag = ORM::factory("tag", $tag_id);
     $item = ORM::factory("item", $item_id);
     if (!$tag->loaded() || !$item->loaded() || !$tag->has($item) || !access::can("view", $item)) {
