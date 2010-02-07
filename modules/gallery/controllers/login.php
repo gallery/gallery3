@@ -65,7 +65,7 @@ class Login_Controller extends Controller {
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $name = $form->login->inputs["name"]->value;
         log::warning("user", t("Failed login for %name", array("name" => $name)));
-        module::event("user_login_failed", $name);
+        module::event("user_auth_failed", $name);
         $valid = false;
       }
     }

@@ -42,7 +42,7 @@ class gallery_installer {
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {failed_logins} (
+    $db->query("CREATE TABLE {failed_auth} (
                 `id` int(9) NOT NULL auto_increment,
                 `count` int(9) NOT NULL,
                 `name` varchar(255) NOT NULL,
@@ -526,6 +526,11 @@ class gallery_installer {
         ->execute();
       module::set_version("gallery", $version = 26);
     }
+
+    if ($version == 26) {
+      $db->query("RENAME TABLE {failed_logins} TO {failed_auths}");
+      module::set_version("gallery", $version = 27);
+    }
   }
 
   static function uninstall() {
@@ -534,7 +539,7 @@ class gallery_installer {
     $db->query("DROP TABLE IF EXISTS {access_intents}");
     $db->query("DROP TABLE IF EXISTS {graphics_rules}");
     $db->query("DROP TABLE IF EXISTS {incoming_translations}");
-    $db->query("DROP TABLE IF EXISTS {failed_logins}");
+    $db->query("DROP TABLE IF EXISTS {failed_auths}");
     $db->query("DROP TABLE IF EXISTS {items}");
     $db->query("DROP TABLE IF EXISTS {logs}");
     $db->query("DROP TABLE IF EXISTS {modules}");

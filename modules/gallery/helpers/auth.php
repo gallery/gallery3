@@ -20,7 +20,7 @@
 class auth_Core {
   static function get_login_form($url) {
     $form = new Forge($url, "", "post", array("id" => "g-login-form"));
-    $form->set_attr('class', "g-narrow");
+    $form->set_attr("class", "g-narrow");
     $group = $form->group("login")->label(t("Login"));
     $group->input("name")->label(t("Username"))->id("g-username")->class(null)
       ->callback("auth::validate_too_many_failed_logins")
@@ -60,52 +60,51 @@ class auth_Core {
   }
 
   /**
-   * After there have been 5 failed login attempts, any failure leads to getting locked out for a
+   * After there have been 5 failed auth attempts, any failure leads to getting locked out for a
    * minute.
    */
-  static function too_many_failed_logins($name) {
-    $failed_login = ORM::factory("failed_login")
+  static function too_many_failures($name) {
+    $failed = ORM::factory("failed_auth")
       ->where("name", "=", $name)
       ->find();
-    return ($failed_login->loaded() &&
-            $failed_login->count > 5 &&
-            (time() - $failed_login->time < 60));
+    return ($failed->loaded() &&
+            $failed->count > 5 &&
+            (time() - $failed->time < 60));
   }
 
   static function validate_too_many_failed_logins($name_input) {
-    if (self::too_many_failed_logins($name_input->value)) {
+    if (self::too_many_failures($name_input->value)) {
       $name_input->add_error("too_many_failed_logins", 1);
     }
   }
 
   static function validate_too_many_failed_password_changes($password_input) {
-    if (self::too_many_failed_logins(identity::active_user()->name)) {
+    if (self::too_many_failures(identity::active_user()->name)) {
       $password_input->add_error("too_many_failed_password_changes", 1);
     }
   }
 
   /**
-   * Record a failed login for this user
+   * Record a failed authentication for this user
    */
-  static function record_failed_auth_attempts($name) {
-    $failed_login = ORM::factory("failed_login")
+  static function record_failed_attempt($name) {
+    $failed = ORM::factory("failed_auth")
       ->where("name", "=", $name)
       ->find();
-    if (!$failed_login->loaded()) {
-      $failed_login->name = $name;
+    if (!$failed->loaded()) {
+      $failed->name = $name;
     }
-    $failed_login->time = time();
-    $failed_login->count++;
-    $failed_login->save();
+    $failed->time = time();
+    $failed->count++;
+    $failed->save();
   }
 
   /**
    * Clear any failed logins for this user
    */
-  static function clear_failed_auth_attempts($user) {
-    db::build()
-      ->delete("failed_logins")
+  static function clear_failed_attempts($user) {
+    ORM::factory("failed_auth")
       ->where("name", "=", $user->name)
-      ->execute();
+      ->delete_all();
   }
 }
