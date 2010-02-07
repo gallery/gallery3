@@ -40,12 +40,12 @@
 
 #g-organize-album-tree ul li {
   padding: 0 0 .2em 1.2em;
-  width: 100%;
+  width: 90%;
 }
 
 .rtl #g-organize-album-tree ul li {
   padding: 0 1.2em .2em 0;
-  width: 100%;
+  width: 90%;
 }
 
 .g-organize-album span {
