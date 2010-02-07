@@ -28,7 +28,6 @@ class Users_Controller extends Controller {
     try {
       $valid = $form->validate();
       $user->full_name = $form->edit_user->full_name->value;
-      $user->email = $form->edit_user->email->value;
       $user->url = $form->edit_user->url->value;
 
       if ($user->locale !=  $form->edit_user->locale->value) {
@@ -97,6 +96,41 @@ class Users_Controller extends Controller {
     }
   }
 
+  public function change_email($id) {
+    $user = user::lookup($id);
+    if ($user->guest || $user->id != identity::active_user()->id) {
+      access::forbidden();
+    }
+
+    $form = $this->_get_change_email_form($user);
+    try {
+      $valid = $form->validate();
+      $user->email = $form->change_email->email->value;
+      $user->validate();
+    } catch (ORM_Validation_Exception $e) {
+      // Translate ORM validation errors into form error messages
+      foreach ($e->validation->errors() as $key => $error) {
+        $form->change_email->inputs[$key]->add_error($error, 1);
+      }
+      $valid = false;
+    }
+
+    if ($valid) {
+      $user->save();
+      module::event("user_change_email_form_completed", $user, $form);
+      message::success(t("Email address changed"));
+      module::event("user_login", $user);  // since there's no user_authenticated event
+      print json_encode(
+        array("result" => "success",
+              "resource" => url::site("users/{$user->id}")));
+    } else {
+      log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
+      $name = $user->name;
+      module::event("user_login_failed", $name);
+      print json_encode(array("result" => "error", "form" => (string) $form));
+    }
+  }
+
   public function form_edit($id) {
     $user = user::lookup($id);
     if ($user->guest || $user->id != identity::active_user()->id) {
@@ -113,6 +147,15 @@ class Users_Controller extends Controller {
     }
 
     print $this->_get_change_password_form($user);
+  }
+
+  public function form_change_email($id) {
+    $user = user::lookup($id);
+    if ($user->guest || $user->id != identity::active_user()->id) {
+      access::forbidden();
+    }
+
+    print $this->_get_change_email_form($user);
   }
 
   private function _get_change_password_form($user) {
@@ -140,16 +183,33 @@ class Users_Controller extends Controller {
     return $form;
   }
 
+  private function _get_change_email_form($user) {
+    $form = new Forge(
+      "users/change_email/$user->id", "", "post", array("id" => "g-change-email-user-form"));
+    $group = $form->group("change_email")->label(t("Change your email address"));
+    $group->password("password")->label(t("Current password"))->id("g-password")
+      ->callback("auth::validate_too_many_failed_password_changes")
+      ->callback("user::valid_password")
+      ->error_messages("invalid", t("Incorrect password"))
+      ->error_messages(
+        "too_many_failed_password_changes",
+        t("Too many incorrect passwords.  Try again later"));
+    $group->input("email")->label(t("New email address"))->id("g-email")->value($user->email)
+      ->error_messages("email", t("You must enter a valid email address"))
+      ->error_messages("length", t("Your email address is too long"))
+      ->error_messages("required", t("You must enter a valid email address"));
+
+    module::event("user_change_password_form", $user, $form);
+    $group->submit("")->value(t("Save"));
+    return $form;
+  }
+
   private function _get_edit_form($user) {
     $form = new Forge("users/update/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit your profile"));
     $group->input("full_name")->label(t("Full Name"))->id("g-fullname")->value($user->full_name)
       ->error_messages("length", t("Your name is too long"));
     self::_add_locale_dropdown($group, $user);
-    $group->input("email")->label(t("Email"))->id("g-email")->value($user->email)
-      ->error_messages("email", t("You must enter a valid email address"))
-      ->error_messages("length", t("Your email address is too long"))
-      ->error_messages("required", t("You must enter a valid email address"));
     $group->input("url")->label(t("URL"))->id("g-url")->value($user->url);
 
     module::event("user_edit_form", $user, $form);

@@ -63,6 +63,9 @@
     <a class="g-button ui-icon-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("users/form_change_password/{$user->id}") ?>">
       <?= t("Change password") ?>
     </a>
+    <a class="g-button ui-icon-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("users/form_change_email/{$user->id}") ?>">
+      <?= t("Change email") ?>
+    </a>
     <? endif ?>
 
     <a id="g-profile-return" class="g-button ui-icon-right ui-state-default ui-corner-all" href="#">

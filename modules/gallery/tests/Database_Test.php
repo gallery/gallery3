@@ -130,6 +130,13 @@ class Database_Test extends Gallery_Unit_Test_Case {
     $this->assert_same($expected, $sql);
   }
 
+  function prefix_replacement_for_rename_table_test() {
+    $db = Database::instance("mock");
+    $this->assert_same(
+      "RENAME TABLE g_test TO g_new_test",
+      $db->add_table_prefixes("RENAME TABLE {test} TO {new_test}"));
+  }
+
   function prefix_no_replacement_test() {
     $sql = db::build("mock")
       ->from("test_tables")
