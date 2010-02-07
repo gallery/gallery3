@@ -56,6 +56,7 @@
       tolerance: "pointer",
       greedy: true,
       drop: function(event, ui) {
+        $(".g-mouse-drag-over").removeClass("g-mouse-drag-over");
         var target = $("#g-organize-drop-target-marker").data("drop_position");
         $.organize.do_drop({
           url: rearrange_url
@@ -137,19 +138,25 @@
         var visibleCells = $(".g-organize-microthumb-grid-cell:visible");
         var scrollTop = thumbGrid.scrollTop();
 
-        var itemColumn = Math.floor((event.pageX - thumbGrid.offset().left) / organizeData.width);
-        var itemRow = Math.floor((event.pageY + scrollTop - thumbGrid.offset().top) / organizeData.height);
-        var itemIndex = Math.min(itemRow * organizeData.columns + itemColumn, visibleCells.length - 1);
-        var item = visibleCells.get(itemIndex);
+        var item = $(".g-mouse-drag-over");
+        if (item.length == 0) {
+          console.log("no item");
+
+          var itemColumn = Math.floor((event.pageX - thumbGrid.offset().left) / organizeData.width);
+          itemColumn = organizeData.rtl ? organizeData.width - itemColumn : itemColumn;
+          var itemRow = Math.floor((event.pageY + scrollTop - thumbGrid.offset().top) / organizeData.height);
+          var itemIndex = Math.min(itemRow * organizeData.columns + itemColumn, visibleCells.length - 1);
+          item = visibleCells.get(itemIndex);
+        }
 
         var before = event.pageX < ($(item).offset().left + $(item).width() / 2);
-        var left = (before && itemIndex < visibleCells.length ?
-                      $(item).position().left : $(item).position().left + organizeData.width) - 3;
+        var left = $(item).position().left + (before ? 0 : organizeData.width) - 3;
         var top = $(item).position().top + 6 + scrollTop;
 
         if ($("#g-organize-drop-target-marker").length) {
           $("#g-organize-drop-target-marker").remove();
         }
+
         var set = $('<div id="g-organize-drop-target-marker"></div>')
 	  .css({zIndex: 2000,
                 width: 2,
@@ -159,9 +166,11 @@
                 position: "absolute",
                 top: top, left: left
 	       })
-          .data("drop_position", {id: $(item).attr("ref"), position: before});
+          .data("drop_position", {id: $(item).attr("ref"),
+                                  position: organizeData.rtl ? !before : before});
         thumbGrid.append(set);
       }
+      return true;
     },
 
     /**
@@ -173,17 +182,17 @@
       $(".sf-menu li.sfHover ul").css("z-index", 68);
       $("#g-dialog").dialog("option", "zIndex", 70);
       $("#g-dialog").bind("dialogopen", function(event, ui) {
-        var outerHeight = $(".g-organize-microthumb-grid-cell").outerHeight(true);
-        var outerWidth = $(".g-organize-microthumb-grid-cell").outerWidth(true);
-        var gridInnerWidth = $("#g-organize-microthumb-grid").innerWidth() - 2 * parseFloat($("#g-organize-microthumb-grid").css("paddingLeft"));
-        $("#g-organize")
-          .height($("#g-dialog").innerHeight() - 20)
-          .data("organizeData", {
-                  leftright: !$("body").hasClass("rtl"),
-                  height: outerHeight,
-                  width: outerWidth,
-                  columns: Math.floor(gridInnerWidth / outerWidth)
-          });
+      var outerHeight = $(".g-organize-microthumb-grid-cell").outerHeight(true);
+      var outerWidth = $(".g-organize-microthumb-grid-cell").outerWidth(true);
+      var gridInnerWidth = $("#g-organize-microthumb-grid").innerWidth() - 2 * parseFloat($("#g-organize-microthumb-grid").css("paddingLeft"));
+      $("#g-organize")
+        .height($("#g-dialog").innerHeight() - 20)
+        .data("organizeData", {
+          rtl: $("body").hasClass("rtl"),
+          height: outerHeight,
+          width: outerWidth,
+          columns: Math.floor(gridInnerWidth / outerWidth)
+        });
       });
 
       $("#g-dialog").bind("dialogclose", function(event, ui) {
@@ -211,6 +220,17 @@
       $(".g-organize-microthumb-grid-cell")
         // need to manually add this class in case we care calling with additional elements
         .addClass("ui-selectee")
+        .mouseleave(function(event) {
+          if ($(".g-drag-helper").length) {
+            $(this).removeClass("g-mouse-drag-over");
+          }
+        })
+        .mouseenter(function(event) {
+          $(".g-mouse-drag-over").removeClass("g-mouse-drag-over");
+          if ($(".g-drag-helper").length) {
+            $(this).addClass("g-mouse-drag-over");
+          }
+        })
         .draggable($.organize.micro_thumb_draggable);
       $(".g-organize-album").droppable($.organize.branch_droppable);
       $(".g-organize-album-text").click($.organize.show_album);
