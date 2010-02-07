@@ -42,7 +42,7 @@ class gallery_installer {
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
-    $db->query("CREATE TABLE {failed_auth} (
+    $db->query("CREATE TABLE {failed_auths} (
                 `id` int(9) NOT NULL auto_increment,
                 `count` int(9) NOT NULL,
                 `name` varchar(255) NOT NULL,
@@ -287,7 +287,8 @@ class gallery_installer {
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
     module::set_var("gallery", "simultaneous_upload_limit", 5);
-    module::set_version("gallery", 26);
+    module::set_var("gallery", "admin_area_timeout", 20 * 60);
+    module::set_version("gallery", 28);
   }
 
   static function upgrade($version) {
@@ -530,6 +531,12 @@ class gallery_installer {
     if ($version == 26) {
       $db->query("RENAME TABLE {failed_logins} TO {failed_auths}");
       module::set_version("gallery", $version = 27);
+    }
+
+    if ($version == 27) {
+      // Set the admin area timeout to 20 minutes
+      module::set_var("gallery", "admin_area_timeout", 20 * 60);
+      module::set_version("gallery", $version = 28);
     }
   }
 

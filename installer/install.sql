@@ -74,10 +74,10 @@ CREATE TABLE {comments} (
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS {failed_logins};
+DROP TABLE IF EXISTS {failed_auths};
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE {failed_logins} (
+CREATE TABLE {failed_auths} (
   `id` int(9) NOT NULL auto_increment,
   `count` int(9) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -239,8 +239,8 @@ CREATE TABLE {modules} (
   UNIQUE KEY `name` (`name`)
 ) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
-INSERT INTO {modules} VALUES (1,1,'gallery',25);
-INSERT INTO {modules} VALUES (2,1,'user',2);
+INSERT INTO {modules} VALUES (1,1,'gallery',28);
+INSERT INTO {modules} VALUES (2,1,'user',3);
 INSERT INTO {modules} VALUES (3,1,'comment',2);
 INSERT INTO {modules} VALUES (4,1,'organize',1);
 INSERT INTO {modules} VALUES (5,1,'info',1);
@@ -377,7 +377,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -391,6 +391,7 @@ INSERT INTO {vars} VALUES (NULL,'gallery','time_format','H:i:s');
 INSERT INTO {vars} VALUES (NULL,'gallery','show_credits','1');
 INSERT INTO {vars} VALUES (NULL,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>');
 INSERT INTO {vars} VALUES (NULL,'gallery','simultaneous_upload_limit','5');
+INSERT INTO {vars} VALUES (NULL,'gallery','admin_area_timeout','1200');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','date_time_format','Y-M-d H:i:s');
 INSERT INTO {vars} VALUES (NULL,'gallery','date_format','Y-M-d');
