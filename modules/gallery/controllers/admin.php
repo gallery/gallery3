@@ -21,7 +21,7 @@ class Admin_Controller extends Controller {
   private $theme;
 
   public function __construct($theme=null) {
-    if (!(identity::active_user()->admin)) {
+    if (!identity::active_user()->admin) {
       access::forbidden();
     }
 
@@ -29,6 +29,10 @@ class Admin_Controller extends Controller {
   }
 
   public function __call($controller_name, $args) {
+    if (auth::must_reauth_for_admin_area()) {
+      return url::redirect("reauthenticate");
+    }
+
     if (request::method() == "post") {
       access::verify_csrf();
     }

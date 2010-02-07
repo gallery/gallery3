@@ -78,9 +78,9 @@ class auth_Core {
     }
   }
 
-  static function validate_too_many_failed_password_changes($password_input) {
+  static function validate_too_many_failed_auth_attempts($form_input) {
     if (self::too_many_failures(identity::active_user()->name)) {
-      $password_input->add_error("too_many_failed_password_changes", 1);
+      $form_input->add_error("too_many_failed_auth_attempts", 1);
     }
   }
 
@@ -106,5 +106,28 @@ class auth_Core {
     ORM::factory("failed_auth")
       ->where("name", "=", $user->name)
       ->delete_all();
+  }
+
+  /**
+   * Checks whether the current user (= admin) must
+   * actively re-authenticate before access is given
+   * to the admin area.
+   */
+  static function must_reauth_for_admin_area() {
+    if (!identity::active_user()->admin) {
+      access::forbidden();
+    }
+
+    $session = Session::instance();
+    $last_active_auth = $session->get("active_auth_timestamp", 0);
+    $last_admin_area_activity = $session->get("admin_area_activity_timestamp", 0);
+    $admin_area_timeout = module::get_var("gallery", "admin_area_timeout");
+
+    if (max($last_active_auth, $last_admin_area_activity) + $admin_area_timeout < time()) {
+      return true;
+    }
+
+    $session->set("admin_area_activity_timestamp", time());
+    return false;
   }
 }

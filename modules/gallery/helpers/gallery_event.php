@@ -110,6 +110,7 @@ class gallery_event_Core {
       graphics::choose_default_toolkit();
       module::clear_var("gallery", "choose_default_tookit");
     }
+    Session::instance()->set("active_auth_timestamp", time());
     auth::clear_failed_attempts($user);
   }
 
@@ -119,6 +120,7 @@ class gallery_event_Core {
 
   static function user_auth($user) {
     auth::clear_failed_attempts($user);
+    Session::instance()->set("active_auth_timestamp", time());
   }
 
   static function item_index_data($item, $data) {

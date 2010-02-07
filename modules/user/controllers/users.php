@@ -164,11 +164,11 @@ class Users_Controller extends Controller {
       "users/change_password/$user->id", "", "post", array("id" => "g-change-password-user-form"));
     $group = $form->group("change_password")->label(t("Change your password"));
     $group->password("old_password")->label(t("Old password"))->id("g-password")
-      ->callback("auth::validate_too_many_failed_password_changes")
+      ->callback("auth::validate_too_many_failed_auth_attempts")
       ->callback("user::valid_password")
       ->error_messages("invalid", t("Incorrect password"))
       ->error_messages(
-        "too_many_failed_password_changes",
+        "too_many_failed_auth_attempts",
         t("Too many incorrect passwords.  Try again later"));
     $group->password("password")->label(t("New password"))->id("g-password")
       ->error_messages("min_length", t("Your new password is too short"));
@@ -189,11 +189,11 @@ class Users_Controller extends Controller {
       "users/change_email/$user->id", "", "post", array("id" => "g-change-email-user-form"));
     $group = $form->group("change_email")->label(t("Change your email address"));
     $group->password("password")->label(t("Current password"))->id("g-password")
-      ->callback("auth::validate_too_many_failed_password_changes")
+      ->callback("auth::validate_too_many_failed_auth_attempts")
       ->callback("user::valid_password")
       ->error_messages("invalid", t("Incorrect password"))
       ->error_messages(
-        "too_many_failed_password_changes",
+        "too_many_failed_auth_attempts",
         t("Too many incorrect passwords.  Try again later"));
     $group->input("email")->label(t("New email address"))->id("g-email")->value($user->email)
       ->error_messages("email", t("You must enter a valid email address"))
