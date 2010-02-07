@@ -23,7 +23,11 @@ class g2_import_task_Core {
     g2_import::lower_error_reporting();
     if (g2_import::is_configured()) {
       g2_import::init();
-      $version = g2_import::version();
+      // Guard from common case where the import has been
+      // completed and the original files have been removed.
+      if (class_exists("GalleryCoreApi")) {
+        $version = g2_import::version();
+      }
     }
     g2_import::restore_error_reporting();
 
