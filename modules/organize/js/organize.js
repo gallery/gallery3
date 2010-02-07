@@ -58,6 +58,12 @@
       drop: function(event, ui) {
         $(".g-mouse-drag-over").removeClass("g-mouse-drag-over");
         var target = $("#g-organize-drop-target-marker").data("drop_position");
+        if (target == null) {
+          target = {
+            position: false,
+            id: $(".g-organize-microthumb-grid-cell:visible:last").attr("ref")
+          };
+        }
         $.organize.do_drop({
           url: rearrange_url
             .replace("__TARGET_ID__", target.id)
@@ -140,8 +146,6 @@
 
         var item = $(".g-mouse-drag-over");
         if (item.length == 0) {
-          console.log("no item");
-
           var itemColumn = Math.floor((event.pageX - thumbGrid.offset().left) / organizeData.width);
           itemColumn = organizeData.rtl ? organizeData.width - itemColumn : itemColumn;
           var itemRow = Math.floor((event.pageY + scrollTop - thumbGrid.offset().top) / organizeData.height);
