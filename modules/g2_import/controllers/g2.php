@@ -35,15 +35,25 @@ class G2_Controller extends Controller {
     $id = $input->get("g2_itemId");
 
     if ($id) {
-      $where = array("g2_id", "=", $id);
+      // Requests by id are either core.DownloadItem or
+      // core.ShowItem requests.
+      // Later versions of Gallery 2 don't specify g2_view if
+      // it's the default (core.ShowItem).
+      // And in some cases (bbcode, embedding) people are using
+      // the id style URLs although URL rewriting is enabled.
+      $where = array(array("g2_id", "=", $id));
+      $view = $input->get("g2_view");
+      if ($view) {
+        $where[] = array("g2_url", "like", "%g2_view=$view%");
+      } // else: Assuming that the first search hit is sufficiently good.
     } else if ($path) {
-      $where = array("g2_url", "=", $path);
+      $where = array(array("g2_url", "=", $path));
     } else {
       throw new Kohana_404_Exception();
     }
 
     $g2_map = ORM::factory("g2_map")
-      ->merge_where(array($where))
+      ->merge_where($where)
       ->find();
 
     if (!$g2_map->loaded()) {
