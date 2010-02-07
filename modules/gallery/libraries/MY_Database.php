@@ -54,8 +54,15 @@ abstract class Database extends Database_Core {
        */
       return $sql;
     } else if (strpos($sql, "CREATE TABLE") === 0) {
-      // Creating a new table add it to the table cache.
+      // Creating a new table; add it to the table cache.
       $open_brace = strpos($sql, "{") + 1;
+      $close_brace = strpos($sql, "}", $open_brace);
+      $name = substr($sql, $open_brace, $close_brace - $open_brace);
+      $this->_table_names["{{$name}}"] = "{$prefix}$name";
+    } else if (strpos($sql, "RENAME TABLE") === 0) {
+      // Renaming a table; add it to the table cache.
+      // You must use the form "TO {new_table_name}" exactly for this to work.
+      $open_brace = strpos($sql, "TO {") + 4;
       $close_brace = strpos($sql, "}", $open_brace);
       $name = substr($sql, $open_brace, $close_brace - $open_brace);
       $this->_table_names["{{$name}}"] = "{$prefix}$name";
