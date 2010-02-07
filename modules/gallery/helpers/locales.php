@@ -131,9 +131,7 @@ class locales_Core {
   }
 
   static function is_rtl($locale=null) {
-    $locale or $locale = Gallery_I18n::instance()->locale();
-    list ($language, $territory) = explode('_', $locale . "_");
-    return in_array($language, array("he", "fa", "ar"));
+    return  Gallery_I18n::instance()->is_rtl($locale);
   }
 
   /**

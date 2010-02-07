@@ -87,6 +87,16 @@ class Gallery_I18n_Core {
     return $this->_config['default_locale'];
   }
 
+  public function is_rtl($locale=null) {
+    $is_rtl = !empty($this->_config["force_rtl"]) and $this->_config["force_rtl"];
+    if (empty($is_rtl)) {
+      $locale or $locale = $this->locale();
+      list ($language, $territory) = explode('_', $locale . "_");
+      $is_rtl = in_array($language, array("he", "fa", "ar"));
+    }
+    return $is_rtl;
+  }
+
   /**
    * Translates a localizable message.
    *
