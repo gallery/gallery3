@@ -132,21 +132,19 @@
 
     grid_mouse_move_handler: function(event) {
       if ($(".g-drag-helper").length) {
-        var cellSize = $("#g-organize").data("cellSize");
-        var thumbnailCount = $(".g-organize-microthumb-grid-cell:visible").length;
+        var organizeData = $("#g-organize").data("organizeData");
+        var thumbGrid = $("#g-organize-microthumb-grid");
+        var visibleCells = $(".g-organize-microthumb-grid-cell:visible");
+        var scrollTop = thumbGrid.scrollTop();
 
-        var scrollTop = $("#g-organize-microthumb-grid").scrollTop();
-        var itemPos = {
-          col: Math.floor((event.pageX - $("#g-organize-microthumb-grid").offset().left) / cellSize.width),
-          row: Math.floor((event.pageY + scrollTop - $("#g-organize-microthumb-grid").offset().top) / cellSize.height)
-        };
-
-        var itemIndex = itemPos.row * cellSize.columns + itemPos.col;
-        var item = itemIndex < thumbnailCount ? $(".g-organize-microthumb-grid-cell:visible").get(itemIndex) :
-                                                $(".g-organize-microthumb-grid-cell:visible:last");
+        var itemColumn = Math.floor((event.pageX - thumbGrid.offset().left) / organizeData.width);
+        var itemRow = Math.floor((event.pageY + scrollTop - thumbGrid.offset().top) / organizeData.height);
+        var itemIndex = Math.min(itemRow * organizeData.columns + itemColumn, visibleCells.length - 1);
+        var item = visibleCells.get(itemIndex);
 
         var before = event.pageX < ($(item).offset().left + $(item).width() / 2);
-        var left = (before && itemIndex < thumbnailCount ? $(item).position().left : $(item).position().left + cellSize.width) - 3;
+        var left = (before && itemIndex < visibleCells.length ?
+                      $(item).position().left : $(item).position().left + organizeData.width) - 3;
         var top = $(item).position().top + 6 + scrollTop;
 
         if ($("#g-organize-drop-target-marker").length) {
@@ -162,7 +160,7 @@
                 top: top, left: left
 	       })
           .data("drop_position", {id: $(item).attr("ref"), position: before});
-        $("#g-organize-microthumb-grid").append(set);
+        thumbGrid.append(set);
       }
     },
 
@@ -180,7 +178,8 @@
         var gridInnerWidth = $("#g-organize-microthumb-grid").innerWidth() - 2 * parseFloat($("#g-organize-microthumb-grid").css("paddingLeft"));
         $("#g-organize")
           .height($("#g-dialog").innerHeight() - 20)
-          .data("cellSize", {
+          .data("organizeData", {
+                  leftright: !$("body").hasClass("rtl"),
                   height: outerHeight,
                   width: outerWidth,
                   columns: Math.floor(gridInnerWidth / outerWidth)
