@@ -37,7 +37,8 @@ class Reauthenticate_Controller extends Controller {
     if ($valid) {
       message::success(t("Successfully re-authenticated!"));
       module::event("user_auth", $user);
-      url::redirect("admin");
+      $continue_url = Session::instance()->get_once("continue_url", "admin");
+      url::redirect($continue_url);
     } else {
       $name = $user->name;
       log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
