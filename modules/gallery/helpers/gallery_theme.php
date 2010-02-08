@@ -90,6 +90,17 @@ class gallery_theme_Core {
       $profiler = new Profiler();
       $profiler->render();
     }
+
+    // Redirect to the root album when the admin session expires.
+    $redirect_url = url::abs_site("");
+    $admin_area_timeout = 1000 * module::get_var("gallery", "admin_area_timeout");
+    $admin_session_redirect_check = '<script type="text/javascript">
+        var page_loaded_timestamp = new Date();
+        setInterval("if (new Date() - page_loaded_timestamp > ' . $admin_area_timeout .
+        ') document.location = \'' . $redirect_url . '\';", 60 * 1000);
+        </script>';
+    print $admin_session_redirect_check;
+
     if ($session->get("l10n_mode", false)) {
       return L10n_Client_Controller::l10n_form();
     }
