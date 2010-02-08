@@ -7,31 +7,28 @@
       appendTo: "#g-organize-content-pane",
       helper: function(event, ui) {
         var selected = $(".ui-draggable.ui-selected img");
-        if (selected.length) {
-          var set = $('<div class="g-drag-helper"></div>')
-		      .css({
-                        zIndex: 2000,
-                        width: 80,
-                        height: Math.ceil(selected.length / 5) * 16
-		      });
+        var set = $('<div class="g-drag-helper"></div>')
+          .css({
+            zIndex: 2000,
+            width: 80,
+            height: Math.ceil(selected.length / 5) * 16
+	  });
 
-          selected.each(function(i) {
-            var row = parseInt(i / 5);
-            var j = i - (row * 5);
-            var o = $(this).offset();
-            var copy = $(this).clone()
-              .css({
-                width: $(this).width(), height: $(this).height(), display: "block",
-                margin: 0, position: 'absolute', outline: '5px solid #fff',
-                left: o.left - event.pageX, top: o.top - event.pageY
-              })
-              .appendTo(set)
-              .animate({ width: 10, height: 10, outlineWidth: 1, margin: 1,
-                left: (20 * j), top: (row * 20) }, 500);
-          });
-          return set;
-        }
-        return null;
+        selected.each(function(i) {
+          var row = parseInt(i / 5);
+          var j = i - (row * 5);
+          var o = $(this).offset();
+          var copy = $(this).clone()
+            .css({
+              width: $(this).width(), height: $(this).height(), display: "block",
+              margin: 0, position: 'absolute', outline: '5px solid #fff',
+              left: o.left - event.pageX, top: o.top - event.pageY
+            })
+            .appendTo(set)
+            .animate({ width: 10, height: 10, outlineWidth: 1, margin: 1,
+              left: (20 * j), top: (row * 20) }, 500);
+        });
+        return set;
       },
 
       start: function(event, ui) {

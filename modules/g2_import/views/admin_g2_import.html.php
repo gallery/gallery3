@@ -13,7 +13,7 @@
       </p>
       <ul>
         <li>
-          <?= t("Permissions are <b>not imported</b>.  You will have to set them again manually (for now).") ?>
+          <?= t("Please <b>review album permissions</b> after the import! Permissions are imported, but user specific and item specific permissions are not supported in Gallery 3 and thus ignored.") ?>
         </li>
         <li>
           <?= t("The only supported file formats are JPG, PNG and GIF, FLV and MP4.  Other formats will be skipped.") ?>

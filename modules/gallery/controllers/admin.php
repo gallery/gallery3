@@ -30,7 +30,7 @@ class Admin_Controller extends Controller {
 
   public function __call($controller_name, $args) {
     if (auth::must_reauth_for_admin_area()) {
-      return url::redirect("reauthenticate");
+      return self::_prompt_for_reauth($controller_name, $args);
     }
 
     if (request::method() == "post") {
@@ -52,6 +52,16 @@ class Admin_Controller extends Controller {
     }
 
     call_user_func_array(array(new $controller_name, $method), $args);
+  }
+
+  private static function _prompt_for_reauth($controller_name, $args) {
+    if (request::method() == "get" && !request::is_ajax()) {
+      $url_args = array("admin", $controller_name) + $args;
+      $continue_url = join("/", $url_args);
+      // Avoid anti-phishing protection by passing the url as session variable.
+      Session::instance()->set("continue_url", $continue_url);
+    }
+    url::redirect("reauthenticate");
   }
 }
 
