@@ -73,13 +73,8 @@ class g2_import_task_Core {
       }
       $task->set("done", $done);
 
-      $root_g2_id = g2(GalleryCoreApi::getDefaultAlbumId());
-      $root = ORM::factory("g2_map")->where("g2_id", "=", $root_g2_id)->find();
-      if (!$root->loaded()) {
-        $root->g2_id = $root_g2_id;
-        $root->g3_id = 1;
-        $root->save();
-      }
+      // Ensure G2 ACLs are compacted to speed up import.
+      g2(GalleryCoreApi::compactAccessLists());
     }
 
     $modes = array("groups", "users", "albums", "items", "comments", "tags", "highlights", "done");
@@ -128,7 +123,9 @@ class g2_import_task_Core {
 
       case "albums":
         if (empty($queue)) {
-          $task->set("queue", $queue = g2(GalleryCoreApi::fetchAlbumTree()));
+          $g2_root_id = g2(GalleryCoreApi::getDefaultAlbumId());
+          $tree = g2(GalleryCoreApi::fetchAlbumTree());
+          $task->set("queue", $queue = array($g2_root_id => $tree));
         }
         $log_message = g2_import::import_album($queue);
         if ($log_message) {
