@@ -64,7 +64,7 @@ class locales_Core {
   // @todo Might want to add a localizable language name as well.
   private static function _init_language_data() {
     $l["af_ZA"] = "Afrikaans";                // Afrikaans
-    $l["ar_SA"] = "العربي";                   // Arabic
+    $l["ar_SA"] = "العربية";                   // Arabic
     $l["be_BY"] = "Беларускі";           // Belarusian
     $l["bg_BG"] = "български";           // Bulgarian
     $l["ca_ES"] = "Catalan";                  // Catalan
