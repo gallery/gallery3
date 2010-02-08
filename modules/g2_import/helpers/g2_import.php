@@ -357,45 +357,48 @@ class g2_import_Core {
     }
 
     if ($g2_album->getParentId() == null) {
-      return t("Skipping Gallery 2 root album");
+      $album = item::root();
+    } else {
+      $parent_album = ORM::factory("item", self::map($g2_album->getParentId()));
+
+      $album = ORM::factory("item");
+      $album->type = "album";
+      $album->parent_id = self::map($g2_album->getParentId());
+      $album->name = $g2_album->getPathComponent();
+      $album->title = self::_decode_html_special_chars($g2_album->getTitle());
+      $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
+      $album->owner_id = self::map($g2_album->getOwnerId());
+      $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+      $album->created = $g2_album->getCreationTimestamp();
+
+      $order_map = array(
+        "originationTimestamp" => "captured",
+        "creationTimestamp" => "created",
+        "description" => "description",
+        "modificationTimestamp" => "updated",
+        "orderWeight" => "weight",
+        "pathComponent" => "name",
+        "summary" => "description",
+        "title" => "title",
+        "viewCount" => "view_count");
+      $direction_map = array(
+        ORDER_ASCENDING => "asc",
+        ORDER_DESCENDING => "desc");
+      if (array_key_exists($g2_order = $g2_album->getOrderBy(), $order_map)) {
+        $album->sort_column = $order_map[$g2_order];
+        $album->sort_order = $direction_map[$g2_album->getOrderDirection()];
+      }
+      $album->save();
+
+      self::import_keywords_as_tags($g2_album->getKeywords(), $album);
     }
-    $parent_album = ORM::factory("item", self::map($g2_album->getParentId()));
-
-    $album = ORM::factory("item");
-    $album->type = "album";
-    $album->parent_id = self::map($g2_album->getParentId());
-    $album->name = $g2_album->getPathComponent();
-    $album->title = self::_decode_html_special_chars($g2_album->getTitle());
-    $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
-    $album->owner_id = self::map($g2_album->getOwnerId());
-    $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
-    $album->created = $g2_album->getCreationTimestamp();
-
-    $order_map = array(
-      "originationTimestamp" => "captured",
-      "creationTimestamp" => "created",
-      "description" => "description",
-      "modificationTimestamp" => "updated",
-      "orderWeight" => "weight",
-      "pathComponent" => "name",
-      "summary" => "description",
-      "title" => "title",
-      "viewCount" => "view_count");
-    $direction_map = array(
-      ORDER_ASCENDING => "asc",
-      ORDER_DESCENDING => "desc");
-    if (array_key_exists($g2_order = $g2_album->getOrderBy(), $order_map)) {
-      $album->sort_column = $order_map[$g2_order];
-      $album->sort_order = $direction_map[$g2_album->getOrderDirection()];
-    }
-    $album->save();
-
-    self::import_keywords_as_tags($g2_album->getKeywords(), $album);
 
     self::set_map(
       $g2_album_id, $album->id,
       "album",
       self::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_album->getId())));
+
+    self::_import_permissions($g2_album, $album);
   }
 
   /**
@@ -588,6 +591,125 @@ class g2_import_Core {
   private static function _decode_html_special_chars($value) {
     return str_replace(array("&amp;", "&quot;", "&lt;", "&gt;"),
                        array("&", "\"", "<", ">"), $value);
+  }
+
+  private static $_permission_map = array(
+    "core.view" => "view",
+    "core.viewSource" => "view_full",
+    "core.edit" => "edit",
+    "core.addDataItem" => "add",
+    "core.addAlbumItem" => "add");
+
+  /**
+   * Imports G2 permissions, mapping G2's permission model to G3's
+   * much simplified permissions.
+   *
+   *  - Ignores user permissions, G3 only supports group permissions.
+   *  - Ignores item permissions, G3 only supports album permissions.
+   *
+   *  G2 permission   ->  G3 permission
+   *  ---------------------------------
+   *  core.view           view
+   *  core.viewSource     view_full
+   *  core.edit           edit
+   *  core.addDataItem    add
+   *  core.addAlbumItem   add
+   *  core.viewResizes    <ignored>
+   *  core.delete         <ignored>
+   *  comment.*           <ignored>
+   */
+  private static function _import_permissions($g2_album, $g3_album) {
+    // No need to do anything if this album has the same G2 ACL as its parent.
+    if ($g2_album->getParentId() != null &&
+        g2(GalleryCoreApi::fetchAccessListId($g2_album->getId())) ==
+        g2(GalleryCoreApi::fetchAccessListId($g2_album->getParentId()))) {
+      return;
+    }
+
+    $granted_permissions = self::_map_permissions($g2_album->getId());
+
+    if ($g2_album->getParentId() == null) {
+      // Compare to current permissions, and change them if necessary.
+      $g3_parent_album = item::root();
+    } else {
+      $g3_parent_album = $g3_album->parent();
+    }
+    $granted_parent_permissions = array();
+    $perm_ids = array_unique(array_values(self::$_permission_map));
+    foreach (identity::groups() as $group) {
+      $granted_parent_permissions[$group->id] = array();
+      foreach ($perm_ids as $perm_id) {
+        if (access::group_can($group, $perm_id, $g3_parent_album)) {
+          $granted_parent_permissions[$group->id][$perm_id] = 1;
+        }
+      }
+    }
+
+    // Note: Only registering permissions if they're not the same as
+    //       the inherited ones.
+    foreach ($granted_permissions as $group_id => $permissions) {
+      if (!isset($granted_parent_permissions[$group_id])) {
+        foreach (array_keys($permissions) as $perm_id) {
+          access::allow(identity::lookup_group($group_id), $perm_id, $g3_album);
+        }
+      } else if ($permissions != $granted_parent_permissions[$group_id]) {
+        $parent_permissions = $granted_parent_permissions[$group_id];
+        // @todo Probably worth caching the group instances.
+        $group = identity::lookup_group($group_id);
+        // Note: Cannot use array_diff_key.
+        foreach (array_keys($permissions) as $perm_id) {
+          if (!isset($parent_permissions[$perm_id])) {
+            access::allow($group, $perm_id, $g3_album);
+          }
+        }
+        foreach (array_keys($parent_permissions) as $perm_id) {
+          if (!isset($permissions[$perm_id])) {
+            access::deny($group, $perm_id, $g3_album);
+          }
+        }
+      }
+    }
+
+    foreach ($granted_parent_permissions as $group_id => $parent_permissions) {
+      if (isset($granted_permissions[$group_id])) {
+        continue;  // handled above
+      }
+      $group = identity::lookup_group($group_id);
+      foreach (array_keys($parent_permissions) as $perm_id) {
+        access::deny($group, $perm_id, $g3_album);
+      }
+    }
+  }
+
+  /**
+   * Loads all the granted group G2 permissions for a specific
+   * album and returns an array with G3 groups ids and G3 permission ids.
+   */
+  private static function _map_permissions($g2_album_id) {
+    $g2_permissions = g2(GalleryCoreApi::fetchAllPermissionsForItem($g2_album_id));
+    $permissions = array();
+    foreach ($g2_permissions as $entry) {
+      // @todo Do something about user permissions? E.g. map G2's user albums
+      //       to a user-specific group in G3?
+      if (!isset($entry["groupId"])) {
+        continue;
+      }
+      $g2_permission_id = $entry["permission"];
+      if (!isset(self::$_permission_map[$g2_permission_id])) {
+        continue;
+      }
+      $group_id = self::map($entry["groupId"]);
+      if ($group_id == null) {
+        // E.g. the G2 admin group isn't mapped.
+        continue;
+      }
+      $permission_id = self::$_permission_map[$g2_permission_id];
+      if (!isset($permissions[$group_id])) {
+        $permissions[$group_id] = array();
+      }
+      $permissions[$group_id][$permission_id] = 1;
+    }
+    return $permissions;
   }
 
   /**
