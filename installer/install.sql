@@ -391,7 +391,7 @@ INSERT INTO {vars} VALUES (NULL,'gallery','time_format','H:i:s');
 INSERT INTO {vars} VALUES (NULL,'gallery','show_credits','1');
 INSERT INTO {vars} VALUES (NULL,'gallery','credits','Powered by <a href=\"%url\">Gallery %version</a>');
 INSERT INTO {vars} VALUES (NULL,'gallery','simultaneous_upload_limit','5');
-INSERT INTO {vars} VALUES (NULL,'gallery','admin_area_timeout','1200');
+INSERT INTO {vars} VALUES (NULL,'gallery','admin_area_timeout','5400');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','date_time_format','Y-M-d H:i:s');
 INSERT INTO {vars} VALUES (NULL,'gallery','date_format','Y-M-d');
