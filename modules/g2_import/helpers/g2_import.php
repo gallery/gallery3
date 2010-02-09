@@ -389,9 +389,14 @@ class g2_import_Core {
       $direction_map = array(
         ORDER_ASCENDING => "asc",
         ORDER_DESCENDING => "desc");
-      if (array_key_exists($g2_order = $g2_album->getOrderBy(), $order_map)) {
+      // Only consider G2's first sort order
+      $g2_order = explode("|", $g2_album->getOrderBy() . "");
+      $g2_order = $g2_order[0];
+      $g2_order_direction = explode("|", $g2_album->getOrderDirection() . "");
+      $g2_order_direction = $g2_order_direction[0];
+      if (array_key_exists($g2_order, $order_map)) {
         $album->sort_column = $order_map[$g2_order];
-        $album->sort_order = $direction_map[$g2_album->getOrderDirection()];
+        $album->sort_order = $direction_map[$g2_order_direction];
       }
       $album->save();
 
