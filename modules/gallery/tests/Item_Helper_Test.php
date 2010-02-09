@@ -42,4 +42,51 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal("foo", item::convert_filename_to_slug("{[foo]}"));
     $this->assert_equal("foo-bar", item::convert_filename_to_slug("{[foo!@#!$@#^$@($!(@bar]}"));
   }
+
+  public function move_test() {
+    identity::set_active_user(identity::admin_user());
+    $photo = test::random_photo(item::root());
+    $dst_album = test::random_album();
+
+    item::move($photo, $dst_album);
+    $this->assert_same($dst_album->id, $photo->parent_id);
+  }
+
+
+  public function move_updates_album_covers_test() {
+    identity::set_active_user(identity::admin_user());
+
+    // 2 photos in the source album
+    $src_album = test::random_album();
+    $photo1 = test::random_photo($src_album);
+    $photo2 = test::random_photo($src_album);
+    $src_album->reload();
+
+    // destination album
+    $dst_album = test::random_album();
+
+    item::move($photo1, $dst_album);
+
+    // Refresh cached copies
+    $src_album->reload();
+    $dst_album->reload();
+
+    // photo 2 becomes the album cover for the source album and photo 1
+    // becomes the album cover for the destination
+    $this->assert_same($photo1->id, $dst_album->album_cover_item_id);
+    $this->assert_same($photo2->id, $src_album->album_cover_item_id);
+  }
+
+  public function move_leaves_empty_album_with_no_album_cover_test() {
+    identity::set_active_user(identity::admin_user());
+
+    $src_album = test::random_album();
+    $photo = test::random_photo($src_album);
+
+    item::move($photo, item::root());
+
+    $src_album->reload();
+    $this->assert_false($src_album->album_cover_item_id);
+  }
+
 }
