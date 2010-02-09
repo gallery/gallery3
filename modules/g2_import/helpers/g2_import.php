@@ -304,7 +304,11 @@ class g2_import_Core {
     if ($user) {
       $message = t("Loaded existing user: '%name'.", array("name" => $user->name));
     } else {
-      $user = identity::create_user($g2_user->getUsername(), $g2_user->getfullname(), "");
+      $user = identity::create_user($g2_user->getUsername(), $g2_user->getfullname(),
+                                    // Note: The API expects a password in cleartext.
+                                    // Just use the hashed password as an unpredictable
+                                    // value here. The user will have to reset the password.
+                                    $g2_user->getHashedPassword(), $g2_user->getEmail());
       $message = t("Created user: '%name'.", array("name" => $user->name));
     }
 
@@ -366,6 +370,7 @@ class g2_import_Core {
       $album->parent_id = self::map($g2_album->getParentId());
       $album->name = $g2_album->getPathComponent();
       $album->title = self::_decode_html_special_chars($g2_album->getTitle());
+      $album->title or $album->title = $album->name;
       $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
       $album->owner_id = self::map($g2_album->getOwnerId());
       $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
@@ -491,6 +496,7 @@ class g2_import_Core {
         $item->set_data_file($g2_path);
         $item->name = $g2_item->getPathComponent();
         $item->title = self::_decode_html_special_chars($g2_item->getTitle());
+        $item->title or $item->title = $item->name;
         $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
         $item->owner_id = self::map($g2_item->getOwnerId());
         $item->save();
@@ -512,6 +518,7 @@ class g2_import_Core {
           $item->set_data_file($g2_path);
           $item->name = $g2_item->getPathComponent();
           $item->title = self::_decode_html_special_chars($g2_item->getTitle());
+          $item->title or $item->title = $item->name;
           $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
           $item->owner_id = self::map($g2_item->getOwnerId());
         } catch (Exception $e) {
