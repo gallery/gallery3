@@ -287,7 +287,7 @@ class gallery_installer {
     // @todo this string needs to be picked up by l10n_scanner
     module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
     module::set_var("gallery", "simultaneous_upload_limit", 5);
-    module::set_var("gallery", "admin_area_timeout", 20 * 60);
+    module::set_var("gallery", "admin_area_timeout", 90 * 60);
     module::set_version("gallery", 28);
   }
 
@@ -534,8 +534,8 @@ class gallery_installer {
     }
 
     if ($version == 27) {
-      // Set the admin area timeout to 20 minutes
-      module::set_var("gallery", "admin_area_timeout", 20 * 60);
+      // Set the admin area timeout to 90 minutes
+      module::set_var("gallery", "admin_area_timeout", 90 * 60);
       module::set_version("gallery", $version = 28);
     }
   }
