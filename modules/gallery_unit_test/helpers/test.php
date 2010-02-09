@@ -82,4 +82,10 @@ class test_Core {
     // Reload so that ORM coerces all fields into strings.
     return $tag->save()->reload();
   }
+
+  static function diff($a, $b) {
+    fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), $a);
+    fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), $b);
+    return `diff $a_name $b_name`;
+  }
 }
