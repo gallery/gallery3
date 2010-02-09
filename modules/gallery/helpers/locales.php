@@ -131,7 +131,7 @@ class locales_Core {
   }
 
   static function is_rtl($locale=null) {
-    return  Gallery_I18n::instance()->is_rtl($locale);
+    return Gallery_I18n::instance()->is_rtl($locale);
   }
 
   /**
