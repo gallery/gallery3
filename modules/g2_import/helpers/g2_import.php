@@ -732,6 +732,12 @@ class g2_import_Core {
                array("id" => $g2_comment_id, "exception" => (string)$e));
     }
 
+    $item_id = self::map($g2_comment->getParentId());
+    if (empty($item_id)) {
+      // Item was not mapped.
+      return;
+    }
+
     $text = $g2_comment->getSubject();
     if ($text) {
       $text .= " ";
@@ -742,18 +748,17 @@ class g2_import_Core {
     // we don't trigger spam filtering events
     $comment = ORM::factory("comment");
     $comment->author_id = self::map($g2_comment->getCommenterId());
-    $comment->guest_name = $g2_comment->getAuthor();
-    $comment->item_id = self::map($g2_comment->getParentId());
+    $comment->guest_name = "";
+    if ($comment->author_id == identity::guest()->id) {
+      $comment->guest_name = $g2_comment->getAuthor();
+      $comment->guest_name or $comment->guest_name = (string) t("Anonymous coward");
+    }
+    $comment->item_id = $item_id;
     $comment->text = self::_transform_bbcode($text);
     $comment->state = "published";
     $comment->server_http_host = $g2_comment->getHost();
     $comment->created = $g2_comment->getDate();
     $comment->save();
-
-    self::map($g2_comment->getId(), $comment->id);
-    return t("Imported comment '%comment' for item with id: %id",
-             array("id" => $comment->item_id,
-                   "comment" => text::limit_words(nl2br(html::purify($comment->text)), 50)));
   }
 
   /**
