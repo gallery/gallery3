@@ -309,6 +309,10 @@ class g2_import_Core {
                                     // Just use the hashed password as an unpredictable
                                     // value here. The user will have to reset the password.
                                     $g2_user->getHashedPassword(), $g2_user->getEmail());
+      if (class_exists("User_Model") && $user instanceof User_Model) {
+        // This will work if G2's password is a PasswordHash password as well.
+        $user->hashed_password = $g2_user->getHashedPassword();
+      }
       $message = t("Created user: '%name'.", array("name" => $user->name));
     }
 
