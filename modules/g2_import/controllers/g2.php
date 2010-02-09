@@ -61,9 +61,10 @@ class G2_Controller extends Controller {
     }
 
     $item = ORM::factory("item", $g2_map->g3_id);
-    if (!$item->loaded() || !access::can("view", $item)) {
+    if (!$item->loaded()) {
       throw new Kohana_404_Exception();
     }
+    access::required("view", $item);
 
 
     // Redirect the user to the new url
