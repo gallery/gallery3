@@ -6,7 +6,7 @@
           media="screen,print,projection" />
     <script src="<?= url::file("lib/jquery.js") ?>" type="text/javascript"></script>
   </head>
-  <body>
+  <body<? if (locales::is_rtl()) { echo ' class="rtl"'; } ?>>
     <div id="outer">
       <img src="<?= url::file("modules/gallery/images/gallery.png") ?>" />
       <div id="inner">
@@ -59,7 +59,7 @@
         </p>
         <table>
           <tr class="<?= $done ? "muted" : "" ?>">
-            <th> <?= t("Module name") ?> </th>
+            <th class="name"> <?= t("Module name") ?> </th>
             <th> <?= t("Installed version") ?> </th>
             <th> <?= t("Available version") ?> </th>
           </tr>
