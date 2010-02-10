@@ -110,7 +110,7 @@ class Password_Controller extends Controller {
       "mistyped", t("The password and the confirm password must match"));
     $group->submit("")->value(t("Update"));
 
-    $template->content = new View("user_form.html");
+    $template->content = new View("confirm_reset_password.html");
     $template->content->form = $form;
     return $template;
   }

@@ -304,7 +304,15 @@ class g2_import_Core {
     if ($user) {
       $message = t("Loaded existing user: '%name'.", array("name" => $user->name));
     } else {
-      $user = identity::create_user($g2_user->getUsername(), $g2_user->getfullname(), "");
+      $user = identity::create_user($g2_user->getUsername(), $g2_user->getfullname(),
+                                    // Note: The API expects a password in cleartext.
+                                    // Just use the hashed password as an unpredictable
+                                    // value here. The user will have to reset the password.
+                                    $g2_user->getHashedPassword(), $g2_user->getEmail());
+      if (class_exists("User_Model") && $user instanceof User_Model) {
+        // This will work if G2's password is a PasswordHash password as well.
+        $user->hashed_password = $g2_user->getHashedPassword();
+      }
       $message = t("Created user: '%name'.", array("name" => $user->name));
     }
 
@@ -366,6 +374,7 @@ class g2_import_Core {
       $album->parent_id = self::map($g2_album->getParentId());
       $album->name = $g2_album->getPathComponent();
       $album->title = self::_decode_html_special_chars($g2_album->getTitle());
+      $album->title or $album->title = $album->name;
       $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
       $album->owner_id = self::map($g2_album->getOwnerId());
       $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
@@ -384,9 +393,14 @@ class g2_import_Core {
       $direction_map = array(
         ORDER_ASCENDING => "asc",
         ORDER_DESCENDING => "desc");
-      if (array_key_exists($g2_order = $g2_album->getOrderBy(), $order_map)) {
+      // Only consider G2's first sort order
+      $g2_order = explode("|", $g2_album->getOrderBy() . "");
+      $g2_order = $g2_order[0];
+      $g2_order_direction = explode("|", $g2_album->getOrderDirection() . "");
+      $g2_order_direction = $g2_order_direction[0];
+      if (array_key_exists($g2_order, $order_map)) {
         $album->sort_column = $order_map[$g2_order];
-        $album->sort_order = $direction_map[$g2_album->getOrderDirection()];
+        $album->sort_order = $direction_map[$g2_order_direction];
       }
       $album->save();
 
@@ -491,6 +505,7 @@ class g2_import_Core {
         $item->set_data_file($g2_path);
         $item->name = $g2_item->getPathComponent();
         $item->title = self::_decode_html_special_chars($g2_item->getTitle());
+        $item->title or $item->title = $item->name;
         $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
         $item->owner_id = self::map($g2_item->getOwnerId());
         $item->save();
@@ -512,6 +527,7 @@ class g2_import_Core {
           $item->set_data_file($g2_path);
           $item->name = $g2_item->getPathComponent();
           $item->title = self::_decode_html_special_chars($g2_item->getTitle());
+          $item->title or $item->title = $item->name;
           $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
           $item->owner_id = self::map($g2_item->getOwnerId());
         } catch (Exception $e) {
@@ -725,6 +741,12 @@ class g2_import_Core {
                array("id" => $g2_comment_id, "exception" => (string)$e));
     }
 
+    $item_id = self::map($g2_comment->getParentId());
+    if (empty($item_id)) {
+      // Item was not mapped.
+      return;
+    }
+
     $text = $g2_comment->getSubject();
     if ($text) {
       $text .= " ";
@@ -735,18 +757,17 @@ class g2_import_Core {
     // we don't trigger spam filtering events
     $comment = ORM::factory("comment");
     $comment->author_id = self::map($g2_comment->getCommenterId());
-    $comment->guest_name = $g2_comment->getAuthor();
-    $comment->item_id = self::map($g2_comment->getParentId());
+    $comment->guest_name = "";
+    if ($comment->author_id == identity::guest()->id) {
+      $comment->guest_name = $g2_comment->getAuthor();
+      $comment->guest_name or $comment->guest_name = (string) t("Anonymous coward");
+    }
+    $comment->item_id = $item_id;
     $comment->text = self::_transform_bbcode($text);
     $comment->state = "published";
     $comment->server_http_host = $g2_comment->getHost();
     $comment->created = $g2_comment->getDate();
     $comment->save();
-
-    self::map($g2_comment->getId(), $comment->id);
-    return t("Imported comment '%comment' for item with id: %id",
-             array("id" => $comment->item_id,
-                   "comment" => text::limit_words(nl2br(html::purify($comment->text)), 50)));
   }
 
   /**

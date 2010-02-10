@@ -70,7 +70,7 @@ class gallery_block_Core {
       $block->css_id = "g-platform";
       $block->title = t("Platform information");
       $block->content = new View("admin_block_platform.html");
-      if (is_readable("/proc/loadavg")) {
+      if (@is_readable("/proc/loadavg")) {
         $block->content->load_average =
           join(" ", array_slice(explode(" ", current(file("/proc/loadavg"))), 0, 3));
       } else {

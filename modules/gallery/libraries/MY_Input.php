@@ -17,10 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class diff_Core {
-  static function compare($a, $b) {
-    fwrite(fopen($a_name = tempnam("/tmp", "test"), "w"), $a);
-    fwrite(fopen($b_name = tempnam("/tmp", "test"), "w"), $b);
-    return `diff $a_name $b_name`;
+class Input extends Input_Core {
+  /**
+   * Modified form of Input::clean_input_keys() that replaces malformed values
+   * instead of dying on bad input.
+   *
+   * @param   string  string to clean
+   * @return  string
+   */
+  public function clean_input_keys($str) {
+    return preg_replace('#^[\pL0-9:_.-]++$#uD', '_', $str);
   }
 }

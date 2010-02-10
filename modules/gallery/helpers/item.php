@@ -40,7 +40,56 @@ class item_Core {
     }
 
     $source->parent_id = $target->id;
-    $source->save();
+
+    // Moving may result in name or slug conflicts.  If that happens, try up to 5 times to pick a
+    // random name (or slug) to avoid the conflict.
+    $orig_name = $source->name;
+    $orig_name_filename = pathinfo($source->name, PATHINFO_FILENAME);
+    $orig_name_extension = pathinfo($source->name, PATHINFO_EXTENSION);
+    $orig_slug = $source->slug;
+    for ($i = 0; $i < 5; $i++) {
+      try {
+        $source->save();
+        if ($orig_name != $source->name) {
+          switch ($source->type) {
+          case "album":
+            message::info(
+              t("Album <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
+                array("old_name" => $orig_name, "new_name" => $source->name)));
+            break;
+
+          case "photo":
+            message::info(
+              t("Photo <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
+                array("old_name" => $orig_name, "new_name" => $source->name)));
+            break;
+
+          case "movie":
+            message::info(
+              t("Movie <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
+                array("old_name" => $orig_name, "new_name" => $source->name)));
+            break;
+          }
+        }
+        break;
+      } catch (ORM_Validation_Exception $e) {
+        $rand = rand(10, 99);
+        $errors = $e->validation->errors();
+        if (isset($errors["name"])) {
+          $source->name = $orig_name_filename . "-{$rand}." . $orig_name_extension;
+          unset($errors["name"]);
+        }
+        if (isset($errors["slug"])) {
+          $source->slug = $orig_slug . "-{$rand}";
+          unset($errors["slug"]);
+        }
+
+        if ($errors) {
+          // There were other validation issues-- we don't know how to handle those
+          throw $e;
+        }
+      }
+    }
 
     // If the target has no cover item, make this it.
     if ($target->album_cover_item_id == null)  {

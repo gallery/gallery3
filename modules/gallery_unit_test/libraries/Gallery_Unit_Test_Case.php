@@ -24,7 +24,7 @@ class Gallery_Unit_Test_Case extends Unit_Test_Case {
         sprintf("Expected (%s) %s but received (%s) %s\n Diff: %s",
                 gettype($expected), var_export($expected, true),
                 gettype($actual), var_export($actual, true),
-                diff::compare(var_export($expected, true), var_export($actual, true))),
+                test::diff(var_export($expected, true), var_export($actual, true))),
         $debug);
     }
     return $this;
