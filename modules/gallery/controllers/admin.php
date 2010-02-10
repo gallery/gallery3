@@ -56,10 +56,8 @@ class Admin_Controller extends Controller {
 
   private static function _prompt_for_reauth($controller_name, $args) {
     if (request::method() == "get" && !request::is_ajax()) {
-      $url_args = array("admin", $controller_name) + $args;
-      $continue_url = join("/", $url_args);
       // Avoid anti-phishing protection by passing the url as session variable.
-      Session::instance()->set("continue_url", $continue_url);
+      Session::instance()->set("continue_url", url::current(true));
     }
     url::redirect("reauthenticate");
   }

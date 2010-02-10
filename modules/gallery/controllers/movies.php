@@ -24,7 +24,11 @@ class Movies_Controller extends Items_Controller {
       // sure that we're actually receiving an object
       Kohana::show_404();
     }
-    access::required("view", $movie);
+
+    if (!access::can("view", $movie)) {
+      print auth::require_login();
+      return;
+    }
 
     $where = array(array("type", "!=", "album"));
     $position = $movie->parent()->get_position($movie, $where);

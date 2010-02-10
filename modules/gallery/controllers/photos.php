@@ -24,7 +24,11 @@ class Photos_Controller extends Items_Controller {
       // sure that we're actually receiving an object
       Kohana::show_404();
     }
-    access::required("view", $photo);
+
+    if (!access::can("view", $photo)) {
+      print auth::require_login();
+      return;
+    }
 
     $where = array(array("type", "!=", "album"));
     $position = $photo->parent()->get_position($photo, $where);
