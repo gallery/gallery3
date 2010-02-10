@@ -30,13 +30,7 @@ class Albums_Controller extends Items_Controller {
     }
 
     if (!access::can("view", $album)) {
-      $view = new Theme_View("page.html", "other", "login");
-      $view->page_title = t("Log in to Gallery");
-      $view->content = new View("login_ajax.html");
-      $view->content->form = auth::get_login_form("login/auth_html");
-      // Avoid anti-phishing protection by passing the url as session variable.
-      Session::instance()->set("continue_url", url::current(true));
-      print $view;
+      print auth::require_login();
       return;
     }
 
