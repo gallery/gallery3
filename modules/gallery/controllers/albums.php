@@ -28,20 +28,19 @@ class Albums_Controller extends Items_Controller {
       // sure that we're actually receiving an object
       Kohana::show_404();
     }
-    $page_size = module::get_var("gallery", "page_size", 9);
+
     if (!access::can("view", $album)) {
-      if ($album->id == 1) {
-        $view = new Theme_View("page.html", "other", "login");
-        $view->page_title = t("Log in to Gallery");
-        $view->content = new View("login_ajax.html");
-        $view->content->form = auth::get_login_form("login/auth_html");
-        print $view;
-        return;
-      } else {
-        access::forbidden();
-      }
+      $view = new Theme_View("page.html", "other", "login");
+      $view->page_title = t("Log in to Gallery");
+      $view->content = new View("login_ajax.html");
+      $view->content->form = auth::get_login_form("login/auth_html");
+      // Avoid anti-phishing protection by passing the url as session variable.
+      Session::instance()->set("continue_url", url::current(true));
+      print $view;
+      return;
     }
 
+    $page_size = module::get_var("gallery", "page_size", 9);
     $input = Input::instance();
     $show = $input->get("show");
 

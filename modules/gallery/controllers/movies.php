@@ -24,7 +24,16 @@ class Movies_Controller extends Items_Controller {
       // sure that we're actually receiving an object
       Kohana::show_404();
     }
-    access::required("view", $movie);
+
+    if (!access::can("view", $movie)) {
+      $view = new Theme_View("page.html", "other", "login");
+      $view->page_title = t("Log in to Gallery");
+      $view->content = new View("login_ajax.html");
+      $view->content->form = auth::get_login_form("login/auth_html");
+
+      print $view;
+      return;
+    }
 
     $where = array(array("type", "!=", "album"));
     $position = $movie->parent()->get_position($movie, $where);
