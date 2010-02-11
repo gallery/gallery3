@@ -116,20 +116,19 @@ class Password_Controller extends Controller {
       "mistyped", t("The password and the confirm password must match"));
     $group->submit("")->value(t("Update"));
 
-    $template->content = new View("confirm_reset_password.html");
-    $template->content->form = $form;
+    $template->content = $form;
     return $template;
   }
 
   private function _change_password() {
     $view = $this->_new_password_form();
-    if ($view->content->form->validate()) {
+    if ($view->content->validate()) {
       $user = user::lookup_by_hash(Input::instance()->post("hash"));
       if (empty($user)) {
         throw new Exception("@todo FORBIDDEN", 503);
       }
 
-      $user->password = $view->content->form->reset->password->value;
+      $user->password = $view->content->reset->password->value;
       $user->hash = null;
       $user->save();
       message::success(t("Password reset successfully"));
