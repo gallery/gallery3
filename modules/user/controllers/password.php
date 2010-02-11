@@ -49,7 +49,8 @@ class Password_Controller extends Controller {
   }
 
   private function _send_reset($form) {
-    $user = user::lookup_by_name($form->reset->inputs["name"]->value);
+    $user_name = $form->reset->inputs["name"]->value;
+    $user = user::lookup_by_name($user_name);
     if ($user && !empty($user->email)) {
       $user->hash = md5(rand());
       $user->save();
@@ -71,7 +72,8 @@ class Password_Controller extends Controller {
     } else if (!$user) {
       // Don't include the username here until you're sure that it's XSS safe
       log::warning(
-          "user", t("Password reset email requested for bogus user"));
+                   "user", t("Password reset email requested for user %user_name, which does not exist.",
+                             array("user_name" => $user_name)));
     } else  {
       log::warning(
           "user", t("Password reset failed for %user_name (has no email address on record).",
