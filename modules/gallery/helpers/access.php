@@ -118,7 +118,12 @@ class access_Core {
    */
   static function required($perm_name, $item) {
     if (!self::can($perm_name, $item)) {
-      self::forbidden();
+      if ($perm_name == "view") {
+        // Treat as if the item didn't exist, don't leak any information.
+        throw new Kohana_404_Exception();
+      } else {
+        self::forbidden();
+      }
     }
   }
 
