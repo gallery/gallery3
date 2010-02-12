@@ -22,14 +22,11 @@ class Photos_Controller extends Items_Controller {
     if (!is_object($photo)) {
       // show() must be public because we route to it in url::parse_url(), so make
       // sure that we're actually receiving an object
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
-
-    if (!access::can("view", $photo)) {
-      print auth::require_login();
-      return;
-    }
-
+  
+    access::required("view", $photo);
+  
     $where = array(array("type", "!=", "album"));
     $position = $photo->parent()->get_position($photo, $where);
     if ($position > 1) {

@@ -20,7 +20,7 @@
 class Users_Controller extends Controller {
   public function update($id) {
     $user = user::lookup($id);
-    if ($user->guest || $user->id != identity::active_user()->id) {
+    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
       access::forbidden();
     }
 
@@ -63,7 +63,7 @@ class Users_Controller extends Controller {
 
   public function change_password($id) {
     $user = user::lookup($id);
-    if ($user->guest || $user->id != identity::active_user()->id) {
+    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
       access::forbidden();
     }
 
@@ -99,7 +99,7 @@ class Users_Controller extends Controller {
 
   public function change_email($id) {
     $user = user::lookup($id);
-    if ($user->guest || $user->id != identity::active_user()->id) {
+    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
       access::forbidden();
     }
 
@@ -134,7 +134,7 @@ class Users_Controller extends Controller {
 
   public function form_edit($id) {
     $user = user::lookup($id);
-    if ($user->guest || $user->id != identity::active_user()->id) {
+    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
       access::forbidden();
     }
 
@@ -143,7 +143,7 @@ class Users_Controller extends Controller {
 
   public function form_change_password($id) {
     $user = user::lookup($id);
-    if ($user->guest || $user->id != identity::active_user()->id) {
+    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
       access::forbidden();
     }
 
@@ -152,7 +152,7 @@ class Users_Controller extends Controller {
 
   public function form_change_email($id) {
     $user = user::lookup($id);
-    if ($user->guest || $user->id != identity::active_user()->id) {
+    if (!$user || $user->guest || $user->id != identity::active_user()->id) {
       access::forbidden();
     }
 

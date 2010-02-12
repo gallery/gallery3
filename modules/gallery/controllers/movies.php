@@ -22,13 +22,10 @@ class Movies_Controller extends Items_Controller {
     if (!is_object($movie)) {
       // show() must be public because we route to it in url::parse_url(), so make
       // sure that we're actually receiving an object
-      Kohana::show_404();
+      throw new Kohana_404_Exception();
     }
 
-    if (!access::can("view", $movie)) {
-      print auth::require_login();
-      return;
-    }
+    access::required("view", $movie);
 
     $where = array(array("type", "!=", "album"));
     $position = $movie->parent()->get_position($movie, $where);

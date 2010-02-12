@@ -19,12 +19,19 @@
  */
 class Password_Controller extends Controller {
   public function reset() {
+    $form = self::_reset_form();
     if (request::method() == "post") {
       // @todo separate the post from get parts of this function
       access::verify_csrf();
-      $this->_send_reset();
+      // Basic validation (was some user name specified?)
+      if ($form->validate()) {
+        $this->_send_reset($form);
+      } else {
+        print json_encode(array("result" => "error",
+                                "form" => (string) $form));
+      }
     } else {
-      print $this->_reset_form();
+      print $form;
     }
   }
 
@@ -41,19 +48,10 @@ class Password_Controller extends Controller {
     }
   }
 
-  private function _send_reset() {
-    $form = $this->_reset_form();
-
-    $valid = $form->validate();
-    if ($valid) {
-      $user = user::lookup_by_name($form->reset->inputs["name"]->value);
-      if (!$user->loaded() || empty($user->email)) {
-        $form->reset->inputs["name"]->add_error("no_email", 1);
-        $valid = false;
-      }
-    }
-
-    if ($valid) {
+  private function _send_reset($form) {
+    $user_name = $form->reset->inputs["name"]->value;
+    $user = user::lookup_by_name($user_name);
+    if ($user && !empty($user->email)) {
       $user->hash = md5(rand());
       $user->save();
       $message = new View("reset_password.html");
@@ -71,22 +69,30 @@ class Password_Controller extends Controller {
       log::success(
         "user",
         t("Password reset email sent for user %name", array("name" => $user->name)));
-    } else {
+    } else if (!$user) {
       // Don't include the username here until you're sure that it's XSS safe
       log::warning(
-        "user", "Password reset email requested for bogus user");
+                   "user", t("Password reset email requested for user %user_name, which does not exist.",
+                             array("user_name" => $user_name)));
+    } else  {
+      log::warning(
+          "user", t("Password reset failed for %user_name (has no email address on record).",
+                    array("user_name" => $user->name)));
     }
 
+    // Always pretend that an email has been sent to avoid leaking
+    // information on what user names are actually real.
     message::success(t("Password reset email sent"));
     print json_encode(
       array("result" => "success"));
   }
 
-  private function _reset_form() {
+  private static function _reset_form() {
     $form = new Forge(url::current(true), "", "post", array("id" => "g-reset-form"));
     $group = $form->group("reset")->label(t("Reset Password"));
-    $group->input("name")->label(t("Username"))->id("g-name")->class(null)->rules("required");
-    $group->inputs["name"]->error_messages("no_email", t("No email, unable to reset password"));
+    $group->input("name")->label(t("Username"))->id("g-name")->class(null)
+      ->rules("required")
+      ->error_messages("required", t("You must enter a user name"));
     $group->submit("")->value(t("Reset"));
 
     return $form;
@@ -110,20 +116,19 @@ class Password_Controller extends Controller {
       "mistyped", t("The password and the confirm password must match"));
     $group->submit("")->value(t("Update"));
 
-    $template->content = new View("confirm_reset_password.html");
-    $template->content->form = $form;
+    $template->content = $form;
     return $template;
   }
 
   private function _change_password() {
     $view = $this->_new_password_form();
-    if ($view->content->form->validate()) {
+    if ($view->content->validate()) {
       $user = user::lookup_by_hash(Input::instance()->post("hash"));
       if (empty($user)) {
         throw new Exception("@todo FORBIDDEN", 503);
       }
 
-      $user->password = $view->content->form->reset->password->value;
+      $user->password = $view->content->reset->password->value;
       $user->hash = null;
       $user->save();
       message::success(t("Password reset successfully"));
