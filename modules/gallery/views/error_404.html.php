@@ -15,7 +15,7 @@
   <? else: ?>
     <p>
       <?= t("Maybe the page exists, but is only visible to authorized users.") ?>
-      <?= t("Talk to your Gallery administrator if you think this is an error for help fixing this!") ?>
+      <?= t("If you think this is an error, talk to your Gallery administrator!") ?>
     </p>
  <? endif; ?>
 </div>
