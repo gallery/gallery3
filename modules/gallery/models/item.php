@@ -918,49 +918,22 @@ class Item_Model extends ORM_MPTT {
   /**
    * Same as ORM::as_array() but convert id fields into their RESTful form.
    */
-  public function as_restful_array($depth=0, $level=0) {
+  public function as_restful_array() {
     // Convert item ids to rest URLs for consistency
-    $data = array("url" => rest::url("item", $this),
-                  "entity" => $this->as_array(),
-                  "members" => array(),
-                  "relationships" => array());
-
+    $data = $this->as_array();
     if ($tmp = $this->parent()) {
-      $data["entity"]["parent"] = rest::url("item", $tmp);
+      $data["parent"] = rest::url("item", $tmp);
     }
-    unset($data["entity"]["parent_id"]);
+    unset($data["parent_id"]);
     if ($tmp = $this->album_cover()) {
-      $data["entity"]["album_cover"] = rest::url("item", $tmp);
+      $data["album_cover"] = rest::url("item", $tmp);
     }
-    unset($data["entity"]["album_cover_item_id"]);
+    unset($data["album_cover_item_id"]);
 
     // Elide some internal-only data that is going to cause confusion in the client.
     foreach (array("relative_path_cache", "relative_url_cache", "left_ptr", "right_ptr") as $key) {
-      unset($data["entity"][$key]);
+      unset($data[$key]);
     }
-
-    // check that we have given enough information. At this point we don't
-    // return relationships and we give enough information to determine how to handle
-    // the children.
-    $summarize = $depth < $level;
-    if (!$summarize) {
-      $data["relationships"] = rest::relationships("item", $this);
-    }
-
-    $next_level = $level + 1;
-    foreach ($this->children() as $child) {
-      if ($summarize) {
-        $data["members"][] = array("url" => rest::url("item", $child),
-                                   "entity" => array("title" => $child->title,
-                                                     "type" => $child->type),
-                                   "members" => array(),
-                                   "summary" => true,
-                                   "relationships" => array());
-      } else {
-        $data["members"][] = $child->as_restful_array($depth, $next_level);
-      }
-    }
-    $data["summary"] = $summarize;
     return $data;
   }
 }

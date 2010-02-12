@@ -30,9 +30,6 @@ class item_rest_Core {
    *   name=<substring>
    *     only return items where the name contains this substring
    *
-   *   depth=<number>
-   *     return the children to the depth specified.
-   *
    *   random=true
    *     return a single random item
    *
@@ -73,7 +70,16 @@ class item_rest_Core {
       $orm->where("type", "IN", explode(",", $p->type));
     }
 
-    return  $item->as_restful_array(isset($p->depth) ? $p->depth : 0);
+    $members = array();
+    foreach ($orm->find_all() as $child) {
+      $members[] = rest::url("item", $child);
+    }
+
+    return array(
+      "url" => $request->url,
+      "entity" => $item->as_restful_array(),
+      "members" => $members,
+      "relationships" => rest::relationships("item", $item));
   }
 
   static function put($request) {
