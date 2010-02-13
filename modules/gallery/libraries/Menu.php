@@ -216,6 +216,19 @@ class Menu_Core extends Menu_Element {
     return null;
   }
 
+  public function is_empty() {
+    foreach ($this->elements as $element) {
+      if ($element instanceof Menu) {
+        if (!$element->is_empty()) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public function render() {
     $view = new View(isset($this->view) ? $this->view : "menu.html");
     $view->menu = $this;

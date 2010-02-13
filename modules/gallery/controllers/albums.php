@@ -29,16 +29,7 @@ class Albums_Controller extends Items_Controller {
       throw new Kohana_404_Exception();
     }
 
-    if (!access::can("view", $album)) {
-      if ($album->id == 1) {
-        // Even show the login page to logged in users.
-        // It's a better user experience than a "Dang" error page.
-        print auth::login_page();
-        return;
-      } else {
-        access::required("view", $album);
-      }
-    }
+    access::required("view", $album);
 
     $page_size = module::get_var("gallery", "page_size", 9);
     $input = Input::instance();

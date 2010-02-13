@@ -130,18 +130,4 @@ class auth_Core {
     $session->set("admin_area_activity_timestamp", time());
     return false;
   }
-
-  /**
-   * Returns the themed login page.
-   */
-  static function login_page($continue_url=null) {
-    $view = new Theme_View("page.html", "other", "login");
-    $view->page_title = t("Log in to Gallery");
-    $view->content = new View("login_ajax.html");
-    $view->content->form = auth::get_login_form("login/auth_html");
-    // Avoid anti-phishing protection by passing the url as session variable.
-    $continue_url or $continue_url = url::current(true);
-    Session::instance()->set("continue_url", $continue_url);
-    return $view;
-  }
 }
