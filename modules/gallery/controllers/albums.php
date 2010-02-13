@@ -26,19 +26,10 @@ class Albums_Controller extends Items_Controller {
     if (!is_object($album)) {
       // show() must be public because we route to it in url::parse_url(), so make
       // sure that we're actually receiving an object
-      throw new Kohana_404_Exception();
+      Event::run('system.404');
     }
 
-    if (!access::can("view", $album)) {
-      if ($album->id == 1) {
-        // Even show the login page to logged in users.
-        // It's a better user experience than a "Dang" error page.
-        print auth::login_page();
-        return;
-      } else {
-        access::required("view", $album);
-      }
-    }
+    access::required("view", $album);
 
     $page_size = module::get_var("gallery", "page_size", 9);
     $input = Input::instance();

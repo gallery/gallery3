@@ -33,6 +33,63 @@ class Kohana_Exception extends Kohana_Exception_Core {
     if ($e instanceof ORM_Validation_Exception) {
       Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
     }
-    return parent::handle($e);
+    try {
+      $user = identity::active_user();
+      $try_themed_view = $user && !$user->admin;
+    } catch (Exception $e2) {
+      $try_themed_view = false;
+    }
+
+    if ($try_themed_view) {
+      try {
+        return self::_show_themed_error_page($e);
+      } catch (Exception $e3) {
+        Kohana_Log::add("error", "Exception in exception handling code: " . self::text($e3));
+        return parent::handle($e);
+      }
+    } else {
+      return parent::handle($e);
+    }
+  }
+
+  /**
+   * Shows a themed error page.
+   * @see Kohana_Exception::handle
+   */
+  private static function _show_themed_error_page(Exception $e) {
+    // Create a text version of the exception
+    $error = Kohana_Exception::text($e);
+    
+    // Add this exception to the log
+    Kohana_Log::add('error', $error);
+
+    // Manually save logs after exceptions
+    Kohana_Log::save();
+
+    if (!headers_sent()) {
+      if ($e instanceof Kohana_Exception) {
+        $e->sendHeaders();
+      } else {
+        header("HTTP/1.1 500 Internal Server Error");
+      }
+    }
+
+    $view = new Theme_View("page.html", "other", "error");
+    if ($e instanceof Kohana_404_Exception) {
+      $view->page_title = t("Dang...  Page not found!");
+      $view->content = new View("error_404.html");
+      $user = identity::active_user();
+      $view->content->is_guest = $user && $user->guest;
+      if ($view->content->is_guest) {
+        $view->content->login_form = new View("login_ajax.html");
+        $view->content->login_form->form = auth::get_login_form("login/auth_html");
+        // Avoid anti-phishing protection by passing the url as session variable.
+        Session::instance()->set("continue_url", url::current(true));
+      }
+    } else {
+      $view->page_title = t("Dang...  Something went wrong!");
+      $view->content = new View("error.html");
+    }
+    print $view;
   }
 }
