@@ -21,7 +21,7 @@ class Items_Controller extends Controller {
   public function __call($function, $args) {
     $item = ORM::factory("item", (int)$function);
     if (!$item->loaded()) {
-      Event::run('system.404');
+      throw new Kohana_404_Exception();
     }
 
     // Redirect to the more specific resource type, since it will render

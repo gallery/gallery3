@@ -120,7 +120,7 @@ class access_Core {
     if (!self::can($perm_name, $item)) {
       if ($perm_name == "view") {
         // Treat as if the item didn't exist, don't leak any information.
-        Event::run('system.404');
+        throw new Kohana_404_Exception();
       } else {
         self::forbidden();
       }

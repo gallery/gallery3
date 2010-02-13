@@ -22,7 +22,7 @@ class Photos_Controller extends Items_Controller {
     if (!is_object($photo)) {
       // show() must be public because we route to it in url::parse_url(), so make
       // sure that we're actually receiving an object
-      Event::run('system.404');
+      throw new Kohana_404_Exception();
     }
   
     access::required("view", $photo);
