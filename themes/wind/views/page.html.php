@@ -91,7 +91,7 @@
           <div id="g-site-menu" style="visibility: hidden">
           <?= $theme->site_menu() ?>
           </div>
-          <script> $(document).ready(function() { $("#g-site-menu").css("visibility", "visible"); }) </script>
+          <script type="text/javascript"> $(document).ready(function() { $("#g-site-menu").css("visibility", "visible"); }) </script>
 
           <?= $theme->header_bottom() ?>
         </div>
