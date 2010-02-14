@@ -22,7 +22,7 @@
     padding: 0;
   }
 </style>
-<script>
+<script type="text/javascript">
   $(document).ready(function() {
     $("#g-profile-return").click(function(event) {
       history.go(-1);
