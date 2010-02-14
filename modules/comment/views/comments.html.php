@@ -10,7 +10,9 @@
   <?= t("No comments yet. Be the first to <a %attrs>comment</a>!",
         array("attrs" => html::mark_clean("id= \"g-no-comments\" href=\"" . url::site("form/add/comments/{$item->id}") . "\" class=\"showCommentForm\""))) ?>
 </p>
+<ul>&nbsp;</ul>
 <? endif ?>
+<? if ($comments->count()): ?>
 <ul>
   <? foreach ($comments as $comment): ?>
   <li id="g-comment-<?= $comment->id ?>">
@@ -39,4 +41,5 @@
   </li>
   <? endforeach ?>
 </ul>
+<? endif ?>
 </div>

@@ -29,6 +29,9 @@ class Admin_Controller extends Controller {
   }
 
   public function __call($controller_name, $args) {
+    if (Input::instance()->get("reauth_check")) {
+      return self::_reauth_check();
+    }
     if (auth::must_reauth_for_admin_area()) {
       return self::_prompt_for_reauth($controller_name, $args);
     }
@@ -52,6 +55,24 @@ class Admin_Controller extends Controller {
     }
 
     call_user_func_array(array(new $controller_name, $method), $args);
+  }
+
+  private static function _reauth_check() {
+    $session = Session::instance();
+    $last_active_auth = $session->get("active_auth_timestamp", 0);
+    $last_admin_area_activity = $session->get("admin_area_activity_timestamp", 0);
+    $admin_area_timeout = module::get_var("gallery", "admin_area_timeout");
+
+    $time_remaining = max($last_active_auth, $last_admin_area_activity) +
+      $admin_area_timeout - time();
+
+    $result = new stdClass();
+    $result->result = "success";
+    if ($time_remaining < 30) {
+      $result->location = url::abs_site("");
+    }
+
+    print json_encode($result);
   }
 
   private static function _prompt_for_reauth($controller_name, $args) {
