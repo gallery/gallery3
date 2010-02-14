@@ -4,6 +4,7 @@
 
 #g-banner {
   z-index: 2;
+  zoom: 1;
 }
 
 input.submit {
