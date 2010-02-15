@@ -66,7 +66,7 @@ class IdentityProvider_Core {
   }
 
   static function change_provider($new_provider) {
-    if (!identity::active_user()->admin) {
+    if (!identity::active_user()->admin && PHP_SAPI != "cli") {
       // Below, the active user is set to the primary admin.
       access::forbidden();
     }
