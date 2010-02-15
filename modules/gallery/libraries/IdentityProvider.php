@@ -66,6 +66,11 @@ class IdentityProvider_Core {
   }
 
   static function change_provider($new_provider) {
+    if (!identity::active_user()->admin) {
+      // Below, the active user is set to the primary admin.
+      access::forbidden();
+    }
+
     $current_provider = module::get_var("gallery", "identity_provider");
     if (!empty($current_provider)) {
       module::uninstall($current_provider);

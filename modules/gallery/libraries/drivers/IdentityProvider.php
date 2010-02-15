@@ -26,7 +26,7 @@ interface IdentityProvider_Driver {
   public function guest();
 
   /**
-   * Return the admins user.
+   * Return the primary admin user.
    *
    * @return User_Definition the user object
    */
