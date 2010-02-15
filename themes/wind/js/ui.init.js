@@ -43,7 +43,7 @@ $(document).ready(function() {
     });
   }
 
-  // Album view only
+  // Album and search results views
   if ($("#g-album-grid").length) {
     // Set equal height for album items and vertically align thumbnails/metadata
     $('.g-item').equal_heights().gallery_valign();
@@ -64,7 +64,13 @@ $(document).ready(function() {
         $(this).height("auto");
         var context_menu = $(this).find(".g-context-menu");
         var adj_height = $(this).height() + context_menu.height();
-        $(this).height(adj_height);
+        if ($(this).next().height() > $(this).height()) {
+          $(this).height($(this).next().height());
+        } else if ($(this).prev().height() > $(this).height()) {
+          $(this).height($(this).prev().height());
+        } else {
+          $(this).height(adj_height);
+        }
       },
       function() {
         // Reset item height and position
