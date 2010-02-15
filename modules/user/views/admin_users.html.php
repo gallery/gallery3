@@ -78,7 +78,7 @@
               <?= html::clean($user->name) ?>
             </td>
             <td>
-              <?= html::clean($user->full_name) ?>
+            <?= t(html::clean($user->full_name)) ?>
             </td>
             <td>
               <?= html::clean($user->email) ?>

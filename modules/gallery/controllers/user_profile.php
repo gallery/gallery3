@@ -23,7 +23,8 @@ class User_Profile_Controller extends Controller {
     $user = identity::lookup_user($id);
     $active_user = identity::active_user();
     $is_current_active = $active_user->id == $id;
-    $display_all =  $active_user->admin || ($is_current_active && !$active_user->guest);
+    $can_edit = $is_current_active && !$active_user->guest;
+    $display_all = $active_user->admin || $can_edit;
 
     $v = new Theme_View("page.html", "other", "profile");
     $v->page_title = t("%name Profile", array("name" => $user->display_name()));
@@ -32,7 +33,7 @@ class User_Profile_Controller extends Controller {
     // @todo modify user_home to supply a link to their album,
     $v->content->user = $user;
     $v->content->not_current = !$is_current_active;
-    $v->content->editable = identity::is_writable() && $display_all;
+    $v->content->editable = identity::is_writable() && $can_edit;
 
     $event_data = (object)array("user" => $user, "display_all" => $display_all, "content" => array());
     module::event("show_user_profile", $event_data);

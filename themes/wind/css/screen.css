@@ -275,6 +275,13 @@ td {
   z-index: 1;
 }
 
+/* Search results ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-content #g-search-results {
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
 /* Individual photo content ~~~~~~~~~~~~~~ */
 
 #g-item {
@@ -300,14 +307,10 @@ td {
   padding-right: 1.2em;
 }
 
-#g-content #g-search-results {
-  margin-top: 1em;
-  padding-top: 1em;
-}
-
 /* In-line editing  ~~~~~~~~~~~~~~~~~~~~~~ */
+
 #g-in-place-edit-message {
-  background-color: #FFF;
+  background-color: #fff;
 }
 
 /** *******************************************************************

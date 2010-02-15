@@ -112,9 +112,12 @@ class gallery_theme_Core {
   }
 
   static function credits() {
-     return "<li class=\"g-first\">" .
+    $version_string = SafeString::of_safe_html(
+        '<bdo dir="ltr">Gallery ' . gallery::VERSION . '</bdo>');
+    return "<li class=\"g-first\">" .
       t(module::get_var("gallery", "credits"),
-        array("url" => "http://gallery.menalto.com", "version" => gallery::VERSION)) .
+        array("url" => "http://gallery.menalto.com",
+              "gallery_version" => $version_string)) .
       "</li>";
   }
 
