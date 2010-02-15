@@ -113,7 +113,7 @@ class User_Model extends ORM implements User_Definition {
    * @return string
    */
   public function display_name() {
-    return empty($this->full_name) ? $this->name : $this->full_name;
+    return empty($this->full_name) ? $this->name : t($this->full_name);
   }
 
   /**
