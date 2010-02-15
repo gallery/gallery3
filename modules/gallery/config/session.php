@@ -39,7 +39,7 @@ $config['name'] = 'g3sid';
 /**
  * Session parameters to validate: user_agent, ip_address, expiration.
  */
-$config['validate'] = array('user_agent');
+$config['validate'] = array('user_agent', 'expiration');
 
 /**
  * Enable or disable session encryption.
