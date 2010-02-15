@@ -284,11 +284,13 @@ class gallery_installer {
     module::set_var("gallery", "date_time_format", "Y-M-d H:i:s");
     module::set_var("gallery", "time_format", "H:i:s");
     module::set_var("gallery", "show_credits", 1);
-    // @todo this string needs to be picked up by l10n_scanner
-    module::set_var("gallery", "credits", "Powered by <a href=\"%url\">Gallery %version</a>");
+    // Mark string for translation
+    $powered_by_string = t("Powered by <a href=\"%url\">%gallery_version</a>",
+                           array("locale" => "root"));
+    module::set_var("gallery", "credits", $powered_by_string);
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
-    module::set_version("gallery", 28);
+    module::set_version("gallery", 29);
   }
 
   static function upgrade($version) {
@@ -537,6 +539,11 @@ class gallery_installer {
       // Set the admin area timeout to 90 minutes
       module::set_var("gallery", "admin_area_timeout", 90 * 60);
       module::set_version("gallery", $version = 28);
+    }
+
+    if ($version == 28) {
+      module::set_var("gallery", "credits", "Powered by <a href=\"%url\">%gallery_version</a>");
+      module::set_version("gallery", $version = 29);
     }
   }
 
