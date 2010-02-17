@@ -98,8 +98,7 @@ $(document).ready(function() {
     $("#g-photo,#g-movie").gallery_fit_photo();
 
     // Initialize context menus
-    var resize = $("#g-photo,#g-movie").gallery_get_photo();
-    $(resize).hover(function(){
+    $("#g-photo,#g-movie").hover(function(){
       $(this).gallery_context_menu();
     });
 

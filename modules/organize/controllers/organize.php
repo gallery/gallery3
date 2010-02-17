@@ -127,7 +127,7 @@ class Organize_Controller extends Controller {
             "sort_order" => $album->sort_order));
   }
 
-  function sort_order($album_id, $col, $dir) {
+  public function sort_order($album_id, $col, $dir) {
     access::verify_csrf();
 
     $album = ORM::factory("item", $album_id);
@@ -149,10 +149,10 @@ class Organize_Controller extends Controller {
             "sort_order" => $album->sort_order));
   }
 
-  private static function _get_micro_thumb_grid($album, $offset) {
+  private static function _get_micro_thumb_grid(Item_Model $album, $offset) {
     $v = new View("organize_thumb_grid.html");
     $v->album = $album;
-    $v->offset = $offset;
+    $v->offset = (int) $offset;
     return $v;
   }
 

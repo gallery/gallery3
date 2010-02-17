@@ -931,13 +931,13 @@ class Item_Model extends ORM_MPTT {
     unset($data["album_cover_item_id"]);
 
     if (access::can("view_fillsize", $this)  && $this->is_photo()) {
-      $data["fullsize_url"] = $this->abs_url();
+      $data["fullsize_url"] = $this->abs_url(true);
     }
 
-    if ($tmp = $this->resize_url()  && $this->is_photo()) {
+    if ($tmp = $this->resize_url(true)  && $this->is_photo()) {
       $data["resize_url"] = $tmp;
     }
-    $data["thumb_url"] = $this->thumb_url();
+    $data["thumb_url"] = $this->thumb_url(true);
 
     // Elide some internal-only data that is going to cause confusion in the client.
     foreach (array("relative_path_cache", "relative_url_cache", "left_ptr", "right_ptr",

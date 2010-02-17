@@ -49,32 +49,30 @@
                        height="<?= $child->thumb_height ?>"
                        width="<?= $child->thumb_width ?>"
                        />
+    <? $view_full = access::can("view_full", $child); ?>
+    <? if ($child->type == "photo" && $view_full): ?>
       <media:group>
-        <? if ($child->type == "photo"): ?>
-          <media:content url="<?= $child->resize_url(true) ?>"
-                         fileSize="<?= @filesize($child->resize_path()) ?>"
-                         type="<?= $child->mime_type ?>"
-                         height="<?= $child->resize_height ?>"
-                         width="<?= $child->resize_width ?>"
-                         />
-          <? if (access::can("view_full", $child)): ?>
-            <media:content url="<?= $child->file_url(true) ?>"
-                           fileSize="<?= @filesize($child->file_path()) ?>"
-                           type="<?= $child->mime_type ?>"
-                           height="<?= $child->height ?>"
-                           width="<?= $child->width ?>"
-                           isDefault="true"
-                           />
-          <? endif ?>
-        <? else: ?>
-          <media:content url="<?= $child->file_url(true) ?>"
-                         fileSize="<?= @filesize($child->file_path()) ?>"
-                         height="<?= $child->height ?>"
-                         width="<?= $child->width ?>"
-                         type="<?= $child->mime_type ?>"
-                         />
-        <? endif ?>
+    <? endif ?>
+      <? if ($child->type == "photo"): ?>
+        <media:content url="<?= $child->resize_url(true) ?>"
+                       fileSize="<?= @filesize($child->resize_path()) ?>"
+                       type="<?= $child->mime_type ?>"
+                       height="<?= $child->resize_height ?>"
+                       width="<?= $child->resize_width ?>"
+                       />
+      <? endif ?>
+      <? if ($view_full): ?>
+        <media:content url="<?= $child->file_url(true) ?>"
+                       fileSize="<?= @filesize($child->file_path()) ?>"
+                       type="<?= $child->mime_type ?>"
+                       height="<?= $child->height ?>"
+                       width="<?= $child->width ?>"
+                       isDefault="true"
+                       />
+      <? endif ?>
+    <? if ($child->type == "photo" && $view_full): ?>
       </media:group>
+    <? endif ?>
     </item>
     <? endforeach ?>
   </channel>
