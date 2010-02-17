@@ -7,6 +7,16 @@
   zoom: 1;
 }
 
+#g-photo,
+#g-movie {
+	zoom: 1;
+}
+
+#g-photo .g-context-menu,
+#g-movie .g-context-menu {
+	width: 240px;
+}
+
 input.submit {
   clear: none !important;
   display: inline !important;
