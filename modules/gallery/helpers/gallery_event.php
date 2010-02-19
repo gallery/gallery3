@@ -423,9 +423,6 @@ class gallery_event_Core {
         if ($field == "locale") {
           $value = locales::display_name($value);
         }
-        if ($field == "full_name") {
-          $value = t($value);
-        }
         $v->user_profile_data[(string) $label] = $value;
       }
     }
