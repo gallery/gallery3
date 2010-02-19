@@ -98,25 +98,25 @@ class user_installer {
                DEFAULT CHARSET=utf8;");
 
     $everybody = ORM::factory("group");
-    $everybody->name = (string) t("Everybody", array("locale" => "root"));
+    $everybody->name = t("Everybody", array("locale" => "root"));
     $everybody->special = true;
     $everybody->save();
 
     $registered = ORM::factory("group");
-    $registered->name = (string) t("Registered Users", array("locale" => "root"));
+    $registered->name = t("Registered Users", array("locale" => "root"));
     $registered->special = true;
     $registered->save();
 
     $guest = ORM::factory("user");
     $guest->name = "guest";
-    $guest->full_name = (string) t("Guest User", array("locale" => "root"));
+    $guest->full_name = t("Guest User", array("locale" => "root"));
     $guest->password = "";
     $guest->guest = true;
     $guest->save();
 
     $admin = ORM::factory("user");
     $admin->name = "admin";
-    $admin->full_name = (string) t("Gallery Administrator", array("locale" => "root"));
+    $admin->full_name = t("Gallery Administrator", array("locale" => "root"));
     $admin->password = "admin";
     $admin->email = "unknown@unknown.com";
     $admin->admin = true;

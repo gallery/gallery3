@@ -287,7 +287,7 @@ class gallery_installer {
     // Mark string for translation
     $powered_by_string = t("Powered by <a href=\"%url\">%gallery_version</a>",
                            array("locale" => "root"));
-    module::set_var("gallery", "credits", (string) $powered_by_string);
+    module::set_var("gallery", "credits", $powered_by_string);
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
     module::set_version("gallery", 29);
