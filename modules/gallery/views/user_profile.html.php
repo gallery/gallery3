@@ -12,18 +12,18 @@
     <a id="g-profile-return" class="g-button g-right ui-state-default ui-corner-all" href="#">
       <?= t("Return") ?>
     </a>
+    <? if ($editable): ?>
     <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("users/form_change_email/{$user->id}") ?>">
       <?= t("Change email") ?>
     </a>
     <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("users/form_change_password/{$user->id}") ?>">
       <?= t("Change password") ?>
     </a>
-    <? if ($editable): ?>
     <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link" href="<?= url::site("form/edit/users/{$user->id}") ?>">
       <?= t("Edit") ?>
     </a>
     <? endif ?>
-    <? if (!$user->guest && $not_current && !empty($user->email)): ?>
+    <? if ($contactable): ?>
     <a class="g-button g-right ui-state-default ui-corner-all g-dialog-link"
        href="<?= url::site("user_profile/contact/{$user->id}") ?>">
       <?= t("Contact") ?>
