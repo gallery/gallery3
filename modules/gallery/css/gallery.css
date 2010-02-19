@@ -55,6 +55,34 @@
   margin: 0;
 }
 
+/* User profile ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-user-profile h1 {
+  margin: 1em 0;
+}
+
+#g-user-profile .g-avatar {
+  margin-right: .6em;
+}
+
+#g-user-profile .g-block {
+  margin-top: 0;
+}
+
+#g-user-profile .g-block-content {
+  margin-top: 0;
+}
+
+#g-user-profile th,
+#g-user-profile td {
+  border: none;
+}
+
+#g-user-profile th {
+  white-space: nowrap;
+  width: 1%;
+}
+
 /** *******************************************************************
  * 2) Admin
  **********************************************************************/
@@ -96,4 +124,8 @@
 .rtl #g-block-admin .g-left {
   margin-left: 1em;
   margin-right: 0;
+}
+
+.rtl #g-user-profile .g-avatar {
+  margin-left: .6em;
 }

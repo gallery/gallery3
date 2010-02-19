@@ -73,12 +73,26 @@ class Gallery_I18n_Core {
   public function locale($locale=null) {
     if ($locale) {
       $this->_config['default_locale'] = $locale;
-      // Attempt to set PHP's locale as well (for number formatting, collation, etc.)
-      // TODO: See G2 for better fallack code.
-      $locale_prefs = array($locale);
-      $locale_prefs[] = 'en_US';
-      $new_locale = setlocale(LC_ALL, $locale_prefs);
-      if (is_string($new_locale) && strpos($new_locale, 'tr') === 0) {
+      $php_locale = setlocale(LC_ALL, 0);
+      list ($php_locale, $unused) = explode('.', $php_locale . '.');
+      if ($php_locale != $locale) {
+        // Attempt to set PHP's locale as well (for number formatting, collation, etc.)
+        $locale_prefs = array($locale);
+        // Try appending some character set names; some systems (like FreeBSD) need this.
+        // Some systems require a format with hyphen (eg. Gentoo) and others without (eg. FreeBSD).
+        $charsets = array('utf8', 'UTF-8', 'UTF8', 'ISO8859-1', 'ISO-8859-1');
+        if (substr($locale, 0, 2) != 'en') {
+          $charsets = array_merge($charsets, array(
+              'EUC', 'Big5', 'euc', 'ISO8859-2', 'ISO8859-5', 'ISO8859-7',
+              'ISO8859-9', 'ISO-8859-2', 'ISO-8859-5', 'ISO-8859-7', 'ISO-8859-9'));
+        }
+        foreach ($charsets as $charset) {
+          $locale_prefs[] = $locale . '.' . $charset;
+        }
+        $locale_prefs[] = 'en_US';
+        $php_locale = setlocale(LC_ALL, $locale_prefs);
+      }
+      if (is_string($php_locale) && substr($php_locale, 0, 2) == 'tr') {
         // Make PHP 5 work with Turkish (the localization results are mixed though).
         // Hack for http://bugs.php.net/18556
         setlocale(LC_CTYPE, 'C');
@@ -117,9 +131,6 @@ class Gallery_I18n_Core {
     $count = isset($options['count']) ? $options['count'] : null;
     $values = $options;
     unset($values['locale']);
-    if ($message instanceof SafeString) {
-      $message = (string) $message;
-    }
     $this->log($message, $options);
 
     $entry = $this->lookup($locale, $message);
