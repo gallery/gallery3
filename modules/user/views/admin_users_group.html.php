@@ -1,9 +1,9 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <h4>
-  <?= t(html::clean($group->name)) ?>
+  <?= html::clean($group->name) ?>
   <? if (!$group->special): ?>
   <a href="<?= url::site("admin/users/delete_group_form/$group->id") ?>"
-    title="<?= t("Delete the %name group", array("name" => t(html::clean($group->name))))->for_html_attr() ?>"
+    title="<?= t("Delete the %name group", array("name" => $group->name))->for_html_attr() ?>"
     class="g-dialog-link g-button g-right">
     <span class="ui-icon ui-icon-trash"><?= t("Delete") ?></span></a>
   <? else: ?>
@@ -22,7 +22,7 @@
     <a href="javascript:remove_user(<?= $user->id ?>, <?= $group->id ?>)"
        class="g-button g-right ui-state-default ui-corner-all ui-icon-left"
        title="<?= t("Remove %user from %group group",
-              array("user" => $user->name, "group" => t(html::clean($group->name))))->for_html_attr() ?>">
+              array("user" => $user->name, "group" => $group->name))->for_html_attr() ?>">
       <span class="ui-icon ui-icon-closethick"><?= t("Remove") ?></span>
     </a>
     <? endif ?>

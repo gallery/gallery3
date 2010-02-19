@@ -5,7 +5,7 @@
     <tr>
       <th> </th>
       <? foreach ($groups as $group): ?>
-      <th> <?= html::clean(t($group->name)) ?> </th>
+      <th> <?= html::clean($group->name) ?> </th>
       <? endforeach ?>
     </tr>
 
