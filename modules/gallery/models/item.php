@@ -931,10 +931,10 @@ class Item_Model extends ORM_MPTT {
     unset($data["album_cover_item_id"]);
 
     if (access::can("view_full", $this) && $this->is_photo()) {
-      $data["file_url"] = $this->abs_url(true);
+      $data["file_url"] = $this->file_url(true);
     }
 
-    if ($tmp = $this->resize_url(true) && $this->is_photo()) {
+    if (($tmp = $this->resize_url(true)) && $this->is_photo()) {
       $data["resize_url"] = $tmp;
     }
     $data["thumb_url"] = $this->thumb_url(true);
