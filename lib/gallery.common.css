@@ -743,6 +743,11 @@ div#g-action-status {
   margin-right: .4em;
 }
 
+.rtl #g-admin-comment-button {
+  right: inherit;
+  left: 0;
+}
+
 /* RTL Superfish ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .rtl .sf-menu a {
