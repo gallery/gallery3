@@ -420,6 +420,11 @@ abstract class Database_Core {
 		{
 			return (string) $value;
 		}
+		elseif (is_float($value))
+		{
+			// Convert to non-locale aware float to prevent possible commas
+			return sprintf('%F', $value);
+		}
 
 		return '\''.$this->escape($value).'\'';
 	}
