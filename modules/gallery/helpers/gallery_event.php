@@ -413,7 +413,7 @@ class gallery_event_Core {
 
     $fields = array("name" => t("Name"), "locale" => t("Language Preference"),
                     "email" => t("Email"), "full_name" => t("Full name"), "url" => "Web site");
-    if (!$data->display_all) {
+    if (!$data->user->guest) {
       $fields = array("name" => t("Name"), "full_name" => t("Full name"), "url" => "Web site");
     }
     $v->user_profile_data = array();
