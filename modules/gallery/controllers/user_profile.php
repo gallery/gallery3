@@ -21,21 +21,21 @@ class User_Profile_Controller extends Controller {
   public function show($id) {
     // If we get here, then we should have a user id other than guest.
     $user = identity::lookup_user($id);
-    $active_user = identity::active_user();
-    $is_current_active = $active_user->id == $id;
-    $can_edit = $is_current_active && !$active_user->guest;
-    $display_all = $active_user->admin || $can_edit;
+    if (!$user) {
+      throw new Kohana_404_Exception();
+    }
 
     $v = new Theme_View("page.html", "other", "profile");
     $v->page_title = t("%name Profile", array("name" => $user->display_name()));
     $v->content = new View("user_profile.html");
 
-    // @todo modify user_home to supply a link to their album,
     $v->content->user = $user;
-    $v->content->not_current = !$is_current_active;
-    $v->content->editable = identity::is_writable() && $can_edit;
+    $v->content->contactable =
+      !$user->guest && $user->id != identity::active_user()->id && $user->email;
+    $v->content->editable =
+      identity::is_writable() && !$user->guest && $user->id == identity::active_user()->id;
 
-    $event_data = (object)array("user" => $user, "display_all" => $display_all, "content" => array());
+    $event_data = (object)array("user" => $user, "content" => array());
     module::event("show_user_profile", $event_data);
     $v->content->info_parts = $event_data->content;
 

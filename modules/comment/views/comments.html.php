@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
   <a href="<?= url::site("form/add/comments/{$item->id}") ?>" id="g-admin-comment-button"
-   class="g-button ui-corner-all ui-icon-left ui-state-default right">
+   class="g-button ui-corner-all ui-icon-left ui-state-default">
   <span class="ui-icon ui-icon-comment"></span>
   <?= t("Add a comment") ?>
 </a>

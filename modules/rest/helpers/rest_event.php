@@ -76,19 +76,27 @@ class rest_event {
   }
 
   static function show_user_profile($data) {
-    if ($data->display_all) {
-      $view = new View("user_profile_rest.html");
-      $key = ORM::factory("user_access_token")
+    // Guests can't see a REST key
+    if (identity::active_user()->guest) {
+      return;
+    }
+
+    // Only logged in users can see their own REST key
+    if (identity::active_user()->id != $data->user->id) {
+      return;
+    }
+
+    $view = new View("user_profile_rest.html");
+    $key = ORM::factory("user_access_token")
         ->where("user_id", "=", $data->user->id)
         ->find();
 
-      if (!$key->loaded()) {
-        $key->user_id = $data->user->id;
-        $key->access_key = md5($data->user->name . rand());
-        $key->save();
-      }
-      $view->rest_key = $key->access_key;
-      $data->content[] = (object)array("title" => t("Rest api"), "view" => $view);
+    if (!$key->loaded()) {
+      $key->user_id = $data->user->id;
+      $key->access_key = md5($data->user->name . rand());
+      $key->save();
     }
+    $view->rest_key = $key->access_key;
+    $data->content[] = (object)array("title" => t("Rest api"), "view" => $view);
   }
 }

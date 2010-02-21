@@ -413,7 +413,7 @@ class gallery_event_Core {
 
     $fields = array("name" => t("Name"), "locale" => t("Language Preference"),
                     "email" => t("Email"), "full_name" => t("Full name"), "url" => "Web site");
-    if (!$data->display_all) {
+    if (!$data->user->guest) {
       $fields = array("name" => t("Name"), "full_name" => t("Full name"), "url" => "Web site");
     }
     $v->user_profile_data = array();
@@ -422,9 +422,6 @@ class gallery_event_Core {
         $value = $data->user->$field;
         if ($field == "locale") {
           $value = locales::display_name($value);
-        }
-        if ($field == "full_name") {
-          $value = t($value);
         }
         $v->user_profile_data[(string) $label] = $value;
       }

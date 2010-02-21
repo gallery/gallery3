@@ -131,9 +131,6 @@ class Gallery_I18n_Core {
     $count = isset($options['count']) ? $options['count'] : null;
     $values = $options;
     unset($values['locale']);
-    if ($message instanceof SafeString) {
-      $message = (string) $message;
-    }
     $this->log($message, $options);
 
     $entry = $this->lookup($locale, $message);
