@@ -67,6 +67,12 @@ $config["url_suffix"] = "";
  * can give significant speed improvements at the expense of delayed updating.
  */
 $config["internal_cache"] = FALSE;
+/**
+ * Enable or disable writing to the internal cache. Used by Gallery to treat
+ * the cache as read-only until all active modules and themes are in the
+ * include path.
+ */
+$config["internal_cache_read_only"] = TRUE;
 $config["internal_cache_path"] = VARPATH . "tmp/";
 
 /**

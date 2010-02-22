@@ -25,6 +25,7 @@ class gallery_event_Core {
   static function gallery_ready() {
     identity::load_user();
     theme::load_themes();
+    Kohana_Config::instance()->set('core.internal_cache_read_only', false);
     locales::set_request_locale();
   }
 
