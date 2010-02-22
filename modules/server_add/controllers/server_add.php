@@ -109,9 +109,11 @@ class Server_Add_Controller extends Admin_Controller {
     }
 
     $task = task::run($task_id);
+    // Prevent the JavaScript code from breaking by forcing a period as
+    // decimal separator for all locales with sprintf("%F", $value).
     print json_encode(array("done" => (bool)$task->done,
                             "status" => $task->status,
-                            "percent_complete" => $task->percent_complete));
+                            "percent_complete" => sprintf("%F", $task->percent_complete)));
   }
 
   /**
