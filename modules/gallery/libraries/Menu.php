@@ -184,7 +184,7 @@ class Menu_Core extends Menu_Element {
   }
 
   /**
-   * Add a new element to this menu
+   * Add a new element to this menu, after the specific element
    */
   public function add_after($target_id, $new_menu_element) {
     $copy = array();
@@ -193,6 +193,21 @@ class Menu_Core extends Menu_Element {
       if ($id == $target_id) {
         $copy[$new_menu_element->id] = $new_menu_element;
       }
+    }
+    $this->elements = $copy;
+    return $this;
+  }
+
+  /**
+   * Add a new element to this menu, before the specific element
+   */
+  public function add_before($target_id, $new_menu_element) {
+    $copy = array();
+    foreach ($this->elements as $id => $menu_element) {
+      if ($id == $target_id) {
+        $copy[$new_menu_element->id] = $new_menu_element;
+      }
+      $copy[$id] = $menu_element;
     }
     $this->elements = $copy;
     return $this;
