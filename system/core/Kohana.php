@@ -365,17 +365,13 @@ abstract class Kohana_Core {
 			// Add SYSPATH as the last path
 			Kohana::$include_paths[] = SYSPATH;
 
-			if ( ! Kohana::config('core.internal_cache_read_only'))
+			// Clear cached include paths
+			self::$internal_cache['find_file_paths'] = array();
+			if ( ! isset(self::$write_cache['find_file_paths']))
 			{
-				// Clear cached include paths
-				self::$internal_cache['find_file_paths'] = array();
-
-				if ( ! isset(self::$write_cache['find_file_paths']))
-				{
-					// Write cache at shutdown
-					self::$write_cache['find_file_paths'] = TRUE;
-				}
-                        }
+				// Write cache at shutdown
+				self::$write_cache['find_file_paths'] = TRUE;
+			}
 
 		}
 
@@ -822,17 +818,13 @@ abstract class Kohana_Core {
 			}
 		}
 
-		if ( ! Kohana::config('core.internal_cache_read_only'))
+		if ( ! isset(Kohana::$write_cache['find_file_paths']))
 		{
-			Kohana::$internal_cache['find_file_paths'][$search] = $found;
-
-			if ( ! isset(Kohana::$write_cache['find_file_paths']))
-			{
-				// Write cache at shutdown
-				Kohana::$write_cache['find_file_paths'] = TRUE;
-			}
+			// Write cache at shutdown
+			Kohana::$write_cache['find_file_paths'] = TRUE;
 		}
-		return $found;
+
+		return Kohana::$internal_cache['find_file_paths'][$search] = $found;
 	}
 
 	/**
@@ -908,7 +900,8 @@ abstract class Kohana_Core {
 	public static function message($key, $args = array())
 	{
 		// Extract the main group from the key
-		list ($group, $subkey) = explode('.', $key, 2);
+		$group = explode('.', $key, 2);
+		$group = $group[0];
 
 		if ( ! isset(Kohana::$internal_cache['messages'][$group]))
 		{
@@ -920,23 +913,17 @@ abstract class Kohana_Core {
 				include $file[0];
 			}
 
-			if ( ! isset(Kohana::$write_cache['messages']) && ! Kohana::config('core.internal_cache_read_only'))
+			if ( ! isset(Kohana::$write_cache['messages']))
 			{
 				// Write language cache
 				Kohana::$write_cache['messages'] = TRUE;
 			}
-			if ( ! Kohana::config('core.internal_cache_read_only'))
-			{
-				Kohana::$internal_cache['messages'][$group] = $messages;
-			}
-		}
-		else
-		{
-			$messages = Kohana::$internal_cache['messages'][$group];
+
+			Kohana::$internal_cache['messages'][$group] = $messages;
 		}
 
 		// Get the line from cache
-		$line = Kohana::key_string($messages, $subkey);
+		$line = Kohana::key_string(Kohana::$internal_cache['messages'], $key);
 
 		if ($line === NULL)
 		{
