@@ -82,6 +82,7 @@ class Packager_Controller extends Controller {
       module::set_var("gallery", "blocks_{$key}", serialize($blocks));
     }
 
+    Database::instance()->query("TRUNCATE {caches}");
     Database::instance()->query("TRUNCATE {sessions}");
     Database::instance()->query("TRUNCATE {logs}");
     db::build()

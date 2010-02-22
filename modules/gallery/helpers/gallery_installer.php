@@ -32,6 +32,10 @@ class gallery_installer {
                  PRIMARY KEY (`id`))
                DEFAULT CHARSET=utf8;");
 
+    // Using a simple index instead of a unique key for the
+    // key column to avoid handling of concurrency issues
+    // on insert. Thus allowing concurrent inserts on the
+    // same cache key, as does Memcache / xcache.
     $db->query("CREATE TABLE {caches} (
                 `id` int(9) NOT NULL auto_increment,
                 `key` varchar(255) NOT NULL,
@@ -39,6 +43,7 @@ class gallery_installer {
                 `expiration` int(9) NOT NULL,
                 `cache` longblob,
                 PRIMARY KEY (`id`),
+                KEY (`key`),
                 KEY (`tags`))
                 DEFAULT CHARSET=utf8;");
 
@@ -290,7 +295,7 @@ class gallery_installer {
     module::set_var("gallery", "credits", (string) $powered_by_string);
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
-    module::set_version("gallery", 29);
+    module::set_version("gallery", 30);
   }
 
   static function upgrade($version) {
@@ -545,6 +550,11 @@ class gallery_installer {
       module::set_var("gallery", "credits", "Powered by <a href=\"%url\">%gallery_version</a>");
       module::set_version("gallery", $version = 29);
     }
+
+    if ($version == 29) {
+      $db->query("ALTER TABLE {caches} ADD KEY (`key`);");
+      module::set_version("gallery", $version = 30);
+    }                
   }
 
   static function uninstall() {
