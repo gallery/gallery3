@@ -304,20 +304,27 @@ class g2_import_Core {
     if ($user) {
       $message = t("Loaded existing user: '%name'.", array("name" => $user->name));
     } else {
+      $email = $g2_user->getEmail();
+      if (empty($email) || !valid::email($email)) {
+        $email = "unknown@unknown.com";
+      }
       $user = identity::create_user($g2_user->getUsername(), $g2_user->getfullname(),
                                     // Note: The API expects a password in cleartext.
                                     // Just use the hashed password as an unpredictable
                                     // value here. The user will have to reset the password.
-                                    $g2_user->getHashedPassword(), $g2_user->getEmail());
+                                    $g2_user->getHashedPassword(), $email);
       if (class_exists("User_Model") && $user instanceof User_Model) {
         // This will work if G2's password is a PasswordHash password as well.
         $user->hashed_password = $g2_user->getHashedPassword();
       }
       $message = t("Created user: '%name'.", array("name" => $user->name));
+      if ($email == "unknown@unknown.com") {
+        $message .= t("\n\tFixed invalid email (was '%invalid_email')",
+                      array("invalid_email" => $g2_user->getEmail()));
+      }
     }
 
     $user->hashed_password = $g2_user->getHashedPassword();
-    $user->email = $g2_user->getEmail() ? $g2_user->getEmail() : "unknown@unknown.com";
     $user->locale = $g2_user->getLanguage();
     foreach ($g2_groups as $g2_group_id => $g2_group_name) {
       if ($g2_group_id == $g2_admin_group_id) {
