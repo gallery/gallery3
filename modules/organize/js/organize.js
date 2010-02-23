@@ -270,7 +270,7 @@
       if ($(event.currentTarget).hasClass("ui-state-focus")) {
         return;
       }
-      var parent = $(event.currentTarget).parents(".g-organize-branch");
+      var parent = $(event.currentTarget).parents(".g-organize-album");
       if ($(parent).hasClass("g-view-only")) {
         return;
       }

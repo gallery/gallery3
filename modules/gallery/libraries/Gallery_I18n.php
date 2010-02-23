@@ -166,7 +166,8 @@ class Gallery_I18n_Core {
     $cache_key = "translation|" . $locale;
     $cache = Cache::instance();
     $translations = $cache->get($cache_key);
-    if (empty($translations)) {
+    if (!isset($translations) || !is_array($translations)) {
+      $translations = array();
       foreach (db::build()
                ->select("key", "translation")
                ->from("incoming_translations")
