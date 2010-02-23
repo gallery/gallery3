@@ -47,7 +47,7 @@
 
         <? if ($g2_sizes["resize"]["size"] && $resize_size != $g2_sizes["resize"]["size"]): ?>
         <li class="g-warning">
-          <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 thumbnail size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
+          <?= t("Your most common intermediate size in Gallery 2 is %g2_pixels pixels, but your Gallery 3 intermediate size is set to %g3_pixels pixels. <a href=\"%url\">Using the same value</a> will speed up your import.",
               array("g2_pixels" => $g2_sizes["resize"]["size"],
                     "g3_pixels" => $resize_size,
                     "url" => html::mark_clean(url::site("admin/theme_options")))) ?>
