@@ -530,6 +530,7 @@ class g2_import_Core {
       if (in_array($g2_item->getMimeType(), array("video/mp4", "video/x-flv"))) {
         try {
           $item = ORM::factory("item");
+          $item->type = "movie";
           $item->parent_id = $parent->id;
           $item->set_data_file($g2_path);
           $item->name = $g2_item->getPathComponent();
