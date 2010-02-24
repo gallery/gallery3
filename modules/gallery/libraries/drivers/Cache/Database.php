@@ -130,7 +130,7 @@ class Cache_Database_Driver extends Cache_Driver {
       // Make sure the expiration is valid and that the hash matches
       if ($cache->expiration != 0 && $cache->expiration <= time()) {
         // Cache is not valid, delete it now
-        $this->delete($cache->id);
+        $this->delete(array($cache->id));
       } else {
         // Disable notices for unserializing
         $ER = error_reporting(~E_NOTICE);
