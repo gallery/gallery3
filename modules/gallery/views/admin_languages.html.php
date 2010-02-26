@@ -49,13 +49,14 @@
             </tr>
             <? $i = 0 ?>
             <? foreach ($available_locales as $code => $display_name):  ?>
-            <? if ($i == (count($available_locales)/2)): ?>
-            <table>
-              <tr>
-                <th> <?= t("Installed") ?> </th>
-                <th> <?= t("Language") ?> </th>
-                <th> <?= t("Default language") ?> </th>
-              </tr>
+            <? if ($i == (int) (count($available_locales)/2)): ?>
+          </table>
+          <table>
+            <tr>
+              <th> <?= t("Installed") ?> </th>
+              <th> <?= t("Language") ?> </th>
+              <th> <?= t("Default language") ?> </th>
+            </tr>
             <? endif ?>
             <tr class="<?= (isset($installed_locales[$code])) ? "g-available" : "" ?><?= ($default_locale == $code) ? " g-selected" : "" ?>">
               <td> <?= form::checkbox("installed_locales[]", $code, isset($installed_locales[$code])) ?> </td>

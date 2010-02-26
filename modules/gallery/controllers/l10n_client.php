@@ -80,6 +80,8 @@ class L10n_Client_Controller extends Controller {
 
     $entry->save();
 
+    Gallery_I18n::clear_cache($locale);
+
     print json_encode(new stdClass());
   }
 

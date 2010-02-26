@@ -150,24 +150,7 @@ class Gallery_I18n_Core {
 
   private function lookup($locale, $message) {
     if (!isset($this->_cache[$locale])) {
-      $this->_cache[$locale] = array();
-      // TODO: Load data from locale file instead of the DB.
-      foreach (db::build()
-               ->select("key", "translation")
-               ->from("incoming_translations")
-               ->where("locale", "=", $locale)
-               ->execute() as $row) {
-        $this->_cache[$locale][$row->key] = unserialize($row->translation);
-      }
-
-      // Override incoming with outgoing...
-      foreach (db::build()
-               ->select("key", "translation")
-               ->from("outgoing_translations")
-               ->where("locale", "=", $locale)
-               ->execute() as $row) {
-        $this->_cache[$locale][$row->key] = unserialize($row->translation);
-      }
+      $this->_cache[$locale] = self::load_translations($locale);
     }
 
     $key = self::get_message_key($message);
@@ -177,6 +160,34 @@ class Gallery_I18n_Core {
     } else {
       return null;
     }
+  }
+
+  private static function load_translations($locale) {
+    $cache_key = "translation|" . $locale;
+    $cache = Cache::instance();
+    $translations = $cache->get($cache_key);
+    if (!isset($translations) || !is_array($translations)) {
+      $translations = array();
+      foreach (db::build()
+               ->select("key", "translation")
+               ->from("incoming_translations")
+               ->where("locale", "=", $locale)
+               ->execute() as $row) {
+        $translations[$row->key] = unserialize($row->translation);
+      }
+      
+      // Override incoming with outgoing...
+      foreach (db::build()
+               ->select("key", "translation")
+               ->from("outgoing_translations")
+               ->where("locale", "=", $locale)
+               ->execute() as $row) {
+        $translations[$row->key] = unserialize($row->translation);
+      }
+      
+      $cache->set($cache_key, $translations, array("translation"), 0);
+    }
+    return $translations;
   }
 
   public function has_translation($message, $options=null) {
@@ -254,6 +265,15 @@ class Gallery_I18n_Core {
 
   public function call_log() {
     return $this->_call_log;
+  }
+
+  public static function clear_cache($locale=null) {
+    $cache = Cache::instance();
+    if ($locale) {
+      $cache->delete("translation|" . $locale);
+    } else {
+      $cache->delete_tag("translation");
+    }
   }
 
   private static function get_plural_key($locale, $count) {

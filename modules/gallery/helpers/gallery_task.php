@@ -201,6 +201,8 @@ class gallery_task_Core {
           $total = $num_fetched + $num_remaining;
           $task->percent_complete = 70 + 30 * ((float) $num_fetched / $total);
         } else {
+          Gallery_I18n::clear_cache();
+
           $task->done = true;
           $task->state = "success";
           $task->status = t("Translations installed/updated");

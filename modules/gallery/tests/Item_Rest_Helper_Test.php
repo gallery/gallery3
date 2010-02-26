@@ -18,6 +18,10 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
+  public function teardown() {
+    identity::set_active_user(identity::admin_user());
+  }
+
   public function resolve_test() {
     $album = test::random_album();
     $resolved = rest::resolve(rest::url("item", $album));

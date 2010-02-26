@@ -209,9 +209,10 @@ class Admin_Maintenance_Controller extends Admin_Controller {
         message::success(t("Task failed"));
         break;
       }
+      // Using sprintf("%F") to avoid comma as decimal separator.
       print json_encode(array("result" => "success",
                               "task" => array(
-                                "percent_complete" => $task->percent_complete,
+                                "percent_complete" => sprintf("%F", $task->percent_complete),
                                 "status" => (string) $task->status,
                                 "done" => (bool) $task->done),
                               "location" => url::site("admin/maintenance")));
@@ -219,7 +220,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     } else {
       print json_encode(array("result" => "in_progress",
                               "task" => array(
-                                "percent_complete" => $task->percent_complete,
+                                "percent_complete" => sprintf("%F", $task->percent_complete),
                                 "status" => (string) $task->status,
                                 "done" => (bool) $task->done)));
     }

@@ -81,6 +81,7 @@ class locales_Core {
     $l["eu_ES"] = "Euskara";                  // Basque
     $l["fa_IR"] = "فارس";                     // Farsi
     $l["fi_FI"] = "Suomi";                    // Finnish
+    $l["fo_FO"] = "Føroyskt";                    // Faroese
     $l["fr_FR"] = "Français";                 // French
     $l["ga_IE"] = "Gaeilge";                  // Irish
     $l["he_IL"] = "עברית";                    // Hebrew

@@ -20,6 +20,10 @@
 class Access_Helper_Test extends Gallery_Unit_Test_Case {
   private $_group;
 
+  public function setup() {
+    identity::set_active_user(identity::guest());
+  }
+
   public function teardown() {
     try {
       $group = identity::lookup_group_by_name("access_test");
@@ -41,10 +45,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
 
     // Reset some permissions that we mangle below
     access::allow(identity::everybody(), "view", item::root());
-  }
-
-  public function setup() {
-    identity::set_active_user(identity::guest());
+    identity::set_active_user(identity::admin_user());
   }
 
   public function groups_and_permissions_are_bound_to_columns_test() {

@@ -26,6 +26,10 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     }
   }
 
+  public function teardown() {
+    identity::set_active_user(identity::admin_user());
+  }
+
   public function get_test() {
     $t1 = tag::add(item::root(), "t1");
     $t2 = tag::add(item::root(), "t2");
