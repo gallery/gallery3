@@ -1,6 +1,6 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div class="g-block">
-  <h1> <?= t("Add from server admininstration") ?> </h1>
+  <h1> <?= t("Add from server administration") ?> </h1>
   <div class="g-block-content">
     <?= $form ?>
     <h2><?= t("Authorized paths") ?></h2>
