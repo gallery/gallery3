@@ -57,7 +57,7 @@
           Password
         </td>
         <td>
-          <input name="dbpass" value=""/>
+          <input name="dbpass" value="" type="password" />
         </td>
       </tr>
       <tr>
