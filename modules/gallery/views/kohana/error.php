@@ -204,7 +204,7 @@
                       <pre><?= $name?></pre>
                     </td>
                     <td class="value">
-                      <pre><?= Kohana_Exception::dump($arg) ?></pre>
+                      <pre><?= Kohana_Exception::safe_dump($arg, $name) ?></pre>
                     </td>
                   </tr>
                   <? endforeach?>
@@ -265,7 +265,7 @@
                   </code>
                 </td>
                 <td class="value">
-                  <pre><?= Kohana_Exception::dump($value) ?></pre>
+                  <pre><?= Kohana_Exception::safe_dump($value, $key) ?></pre>
                 </td>
               </tr>
               <? endforeach?>
