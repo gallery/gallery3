@@ -166,7 +166,7 @@ jQuery.extend(Gallery, {
             if (form == 'one') {
               text = source['one'];
             }
-            $('#l10n-edit-plural-translation-' + form)
+            $("#plural-" + form + " textarea[name='l10n-edit-plural-translation-" + form + "']")
                 .attr('value', text);
           }
         } else {
@@ -264,8 +264,8 @@ Gallery.behaviors.l10nClient = function(context) {
               if (is_plural) {
                    for (var i = 0; i < num_plural_forms; i++) {
                       var form = plural_forms[i];
-                      translation[form] = $('#g-l10n-client-save-form #l10n-edit-plural-translation-' + form).attr('value');
-                      is_non_empty |= translation[form];
+                      translation[form] = $("#plural-" + form + " textarea[name='l10n-edit-plural-translation-" + form + "']").attr('value');
+                      is_non_empty = is_non_empty || translation[form];
                   }
               } else {
                   translation = $('#l10n-edit-translation').attr('value');
@@ -287,7 +287,7 @@ Gallery.behaviors.l10nClient = function(context) {
 
               for (var i = 0; i < num_plural_forms; i++) {
                   var form = plural_forms[i];
-                  $('#g-l10n-client-save-form #l10n-edit-plural-translation-' + form).val('');
+                  $("#plural-" + form + " textarea[name='l10n-edit-plural-translation-" + form + "']").val('');
               }
               $("#g-l10n-client-save-form input[name='l10n-message-key']").val('');
           },
