@@ -60,25 +60,31 @@ class L10n_Client_Controller extends Controller {
       ->where("locale", "=", $locale)
       ->find();
 
-    if (!$entry->loaded()) {
-      $entry->key = $key;
-      $entry->locale = $locale;
-      $entry->message = $root_message->message;
-      $entry->base_revision = null;
+    if (empty($translation)) {
+      if ($entry->loaded()) {
+        $entry->delete();
+      }
+    } else {
+      if (!$entry->loaded()) {
+        $entry->key = $key;
+        $entry->locale = $locale;
+        $entry->message = $root_message->message;
+        $entry->base_revision = null;
+      }
+
+      $entry->translation = serialize($translation);
+
+      $entry_from_incoming = ORM::factory("incoming_translation")
+        ->where("key", "=", $key)
+        ->where("locale", "=", $locale)
+        ->find();
+
+      if (!$entry_from_incoming->loaded()) {
+        $entry->base_revision = $entry_from_incoming->revision;
+      }
+
+      $entry->save();
     }
-
-    $entry->translation = serialize($translation);
-
-    $entry_from_incoming = ORM::factory("incoming_translation")
-      ->where("key", "=", $key)
-      ->where("locale", "=", $locale)
-      ->find();
-
-    if (!$entry_from_incoming->loaded()) {
-      $entry->base_revision = $entry_from_incoming->revision;
-    }
-
-    $entry->save();
 
     Gallery_I18n::clear_cache($locale);
 
