@@ -124,7 +124,7 @@ jQuery.extend(Gallery, {
           if (translation[form] == undefined) {
             translation[form] = '';
           }
-          $('#l10n-edit-plural-translation-' + form)
+          $("#plural-" + form + " textarea[name='l10n-edit-plural-translation-" + form + "']")
               .attr('value', translation[form]);
           $('#plural-' + form).removeClass('hidden');
         }
