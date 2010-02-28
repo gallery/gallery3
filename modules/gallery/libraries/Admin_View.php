@@ -38,6 +38,7 @@ class Admin_View_Core extends Gallery_View {
     $this->set_global("user", identity::active_user());
     $this->set_global("page_type", "admin");
     $this->set_global("page_subtype", $name);
+    $this->set_global("page_title", null);
   }
 
   public function admin_menu() {
