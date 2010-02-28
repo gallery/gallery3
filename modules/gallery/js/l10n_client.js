@@ -260,18 +260,26 @@ Gallery.behaviors.l10nClient = function(context) {
 
               // Store translation in local js
               var translation = {};
+              var is_non_empty = false;
               if (is_plural) {
                    for (var i = 0; i < num_plural_forms; i++) {
                       var form = plural_forms[i];
                       translation[form] = $('#g-l10n-client-save-form #l10n-edit-plural-translation-' + form).attr('value');
+                      is_non_empty |= translation[form];
                   }
               } else {
                   translation = $('#l10n-edit-translation').attr('value');
+                  is_non_empty = translation;
               }
               Gallery.l10nClient.setString(Gallery.l10nClient.selected, translation);
 
-              // Mark message as translated.
-              $('#l10n-client-string-select li').eq(Gallery.l10nClient.selected).removeClass('untranslated').removeClass('active').addClass('translated');
+              // Mark message as translated / untranslated.
+              var source_element = $('#l10n-client-string-select li').eq(Gallery.l10nClient.selected);
+              if (is_non_empty) {
+                  source_element.removeClass('untranslated').removeClass('active').addClass('translated');
+              } else {
+                  source_element.removeClass('active').removeClass('translated').addClass('untranslated');
+              }
 
               // Clear the translation form fields
               Gallery.l10nClient.showSourceMessage('', false);
