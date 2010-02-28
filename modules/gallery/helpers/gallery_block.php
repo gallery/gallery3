@@ -93,7 +93,7 @@ class gallery_block_Core {
 
     case "language":
       $locales = locales::installed();
-      if (count($locales)) {
+      if (count($locales) > 1) {
         foreach ($locales as $locale => $display_name) {
           $locales[$locale] = SafeString::of_safe_html($display_name);
         }

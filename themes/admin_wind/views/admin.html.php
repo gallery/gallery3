@@ -4,7 +4,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title><?= t("Admin dashboard") ?></title>
+    <title>
+      <? if ($page_title): ?>
+        <?= $page_title ?>
+      <? else: ?>
+        <?= t("Admin dashboard") ?>
+      <? endif ?>
+    </title>
     <link rel="shortcut icon" href="<?= url::file("lib/images/favicon.ico") ?>" type="image/x-icon" />
 
     <?= $theme->css("yui/reset-fonts-grids.css") ?>
