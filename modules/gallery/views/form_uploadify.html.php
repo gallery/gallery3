@@ -1,25 +1,4 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-<style>
-#g-add-photos-canvas object {
-  height: 33px;
-  left: -80px;
-  position: relative;
-  z-index: 100;
-}
-#g-add-photos-canvas span {
-  height: 33px;
-  width: 150px;
-}
-#g-add-photos-button {
-  float: left;
-  left: 155px;
-  padding-bottom: .5em;
-  padding-top: .5em;
-  position: relative;
-  width: 150px;
-  z-index: 1;
-}
-</style>
 <script type="text/javascript" src="<?= url::file("lib/swfobject.js") ?>"></script>
 <script type="text/javascript" src="<?= url::file("lib/uploadify/jquery.uploadify.min.js") ?>"></script>
 <script type="text/javascript">
@@ -121,11 +100,11 @@
   </ul>
 </div>
 
-<div id="g-add-photos-canvas" style="text-align: center;clear: both">
-  <a id="g-add-photos-button" class="ui-corner-all" href="#"><?= t("Select photos...") ?></a>
+<div id="g-add-photos-canvas">
+  <button id="g-add-photos-button" class="g-button ui-state-default ui-corner-all" href="#"><?= t("Select photos...") ?></button>
   <span id="g-uploadify"></span>
 </div>
-<div id="g-add-photos-status" style="text-align: center;">
-  <ul>
+<div id="g-add-photos-status">
+  <ul id="g-action-status" class="g-message-block">
   </ul>
 </div>
