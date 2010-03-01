@@ -92,7 +92,7 @@
   <p>
     <?= t("Photos will be uploaded to album: ") ?>
   </p>
-  <ul class="g-breadcrumbs">
+  <ul class="g-breadcrumbs ui-helper-clearfix">
     <? foreach ($album->parents() as $i => $parent): ?>
     <li<? if ($i == 0) print " class=\"g-first\"" ?>> <?= html::clean($parent->title) ?> </li>
     <? endforeach ?>
