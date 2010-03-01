@@ -26,7 +26,7 @@ class organize_event_Core {
         ->append(Menu::factory("dialog")
                  ->id("organize")
                  ->label(t("Organize album"))
-                 ->css_id("g-organize-link")
+                 ->css_id("g-menu-organize-link")
                  ->url(url::site("organize/dialog/{$item->id}")));
     }
   }
@@ -37,8 +37,7 @@ class organize_event_Core {
         ->append(Menu::factory("dialog")
                  ->id("organize")
                  ->label(t("Organize album"))
-                 ->css_id("g-organize-link")
-                 ->css_class("ui-icon-folder-open")
+                 ->css_class("ui-icon-folder-open g-organize-link")
                  ->url(url::site("organize/dialog/{$item->id}")));
     }
   }
