@@ -414,7 +414,12 @@ class g2_import_Core {
       $album->title or $album->title = $album->name;
       $album->description = self::_decode_html_special_chars(self::extract_description($g2_album));
       $album->owner_id = self::map($g2_album->getOwnerId());
-      $album->view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+      try {
+        $album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+      } catch (Exception $e) {
+        // @todo log
+        $album->view_count = 0;
+      }
       $album->created = $g2_album->getCreationTimestamp();
 
       $order_map = array(
@@ -490,7 +495,11 @@ class g2_import_Core {
         $g3_album = ORM::factory("item", $g3_album_id);
         $g3_album->album_cover_item_id = $item->id;
         $g3_album->thumb_dirty = 1;
-        $g3_album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+        try {
+          $g3_album->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_album_id));
+        } catch (Exception $e) {
+          $g3_album->view_count = 0;
+        }
         try {
           $g3_album->save();
           graphics::generate($g2_album);
@@ -614,11 +623,11 @@ class g2_import_Core {
 
     $g2_item_url = self::g2_url(array("view" => "core.ShowItem", "itemId" => $g2_item->getId()));
     if (isset($item)) {
-      $view_count = g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
-      if (!is_numeric($view_count)) {
-        $messages[] = t("Bad view count value '%view_count'", array("view_count" => $view_count));
+      try {
+        $item->view_count = (int) g2(GalleryCoreApi::fetchItemViewCount($g2_item_id));
+      } catch (Exception $e) {
+        $view_count = 1;
       }
-      $item->view_count = (int) $view_count;
       $item->save();
 
       self::set_map($g2_item_id, $item->id, "item", $g2_item_url);
