@@ -11,6 +11,70 @@
  * 1) End-user
  **********************************************************************/
 
+/* Uploader ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+#g-add-photos-canvas,
+#g-add-photos-status {
+  width: 469px;
+}
+
+#g-add-photos-canvas {
+  border: 1px solid  #ccc;
+  height: 200px;
+  margin: .5em 0;
+  padding: 1.8em 0 0 0;
+  overflow: auto;
+  position: relative;
+}
+
+#g-add-photos-canvas object,
+#g-add-photos-button {
+  left: 137px;
+  margin: 0 0 .5em 0;
+  padding: .4em 1em;
+  position: absolute;
+  top: 0;
+  width: 175px;
+}
+
+#g-add-photos-canvas object {
+  margin: 0;
+  z-index: 100;
+}
+
+#g-add-photos-canvas .uploadifyQueueItem {
+  margin: 0;
+}
+
+#g-add-photos-button {
+  z-index: 1;
+}
+
+#g-add-photos-status {
+  border: 1px solid #ccc;
+  height: 125px;
+  margin: .4em 0;
+  overflow: auto;
+}
+
+#g-add-photos-status .g-message-block {
+  border: none;
+}
+
+#g-add-photos-status #g-action-status li {
+  margin: 0 0 1px 0;
+  padding-top: .7em;
+  width: 433px;
+}
+
+#g-add-photos-form .g-breadcrumbs {
+  margin: 0;
+}
+
+#g-add-photos-form p {
+  margin-bottom: 0
+}
+
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-edit-permissions-form {
@@ -120,6 +184,10 @@
 /** *******************************************************************
  * 3) Right to left language styles
  **********************************************************************/
+
+.rtl #g-add-photos-status #g-action-status li {
+  width: 407px;
+}
 
 .rtl #g-block-admin .g-left {
   margin-left: 1em;
