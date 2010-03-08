@@ -383,7 +383,7 @@ class gallery_event_Core {
                    ->id("delete")
                    ->label($delete_title)
                    ->css_class("ui-icon-trash")
-                   ->css_id("g-quick-delete")
+                   ->css_class("g-quick-delete")
                    ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
       }
 

@@ -39,8 +39,7 @@ class rest_Core {
 
   static function set_active_user($access_token) {
     if (empty($access_token)) {
-      identity::set_active_user(identity::guest());
-      return;
+      throw new Rest_Exception("Forbidden", 403);
     }
 
     $key = ORM::factory("user_access_token")
