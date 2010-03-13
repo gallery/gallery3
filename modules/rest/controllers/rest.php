@@ -46,7 +46,7 @@ class Rest_Controller extends Controller {
       $request->params = (object) $input->get();
       break;
 
-    case "post":
+    default:
       $request->params = (object) $input->post();
       if (isset($_FILES["file"])) {
         $request->file = upload::save("file");

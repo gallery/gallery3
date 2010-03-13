@@ -19,10 +19,12 @@
  */
 class items_rest_Core {
   static function get($request) {
+    $parent = rest::resolve($request->url);
+    access::required("view", $parent);
 
     $items = array();
     if (isset($request->params->url)) {
-      foreach($request->params->url as $url) {
+      foreach ($request->params->url as $url) {
         $item = rest::resolve($url);
         if (access::can("view", $item)) {
           $members = array();
@@ -40,5 +42,13 @@ class items_rest_Core {
     }
 
     return $items;
+  }
+
+  static function resolve($id) {
+    $item = ORM::factory("item", $id);
+    if (!access::can("view", $item)) {
+      throw new Kohana_404_Exception();
+    }
+    return $item;
   }
 }

@@ -88,35 +88,91 @@ class item_rest_Core {
 
     $params = $request->params;
 
+    $sort_order_changed_to_weight = false;
+    // Start the batch
+    batch::start();
+
     // Only change fields from a whitelist.
     foreach (array("album_cover", "captured", "description",
                    "height", "mime_type", "name", "parent", "rand_key", "resize_dirty",
                    "resize_height", "resize_width", "slug", "sort_column", "sort_order",
                    "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
                    "weight", "width") as $key) {
-      switch ($key) {
-      case "album_cover":
-        if (property_exists($request->params, "album_cover")) {
+      if (property_exists($request->params, $key)) {
+        switch ($key) {
+        case "album_cover":
           $album_cover_item = rest::resolve($request->params->album_cover);
           access::required("view", $album_cover_item);
           $item->album_cover_item_id = $album_cover_item->id;
-        }
-        break;
+          break;
 
-      case "parent":
-        if (property_exists($request->params, "parent")) {
+        case "sort_column":
+          if ($request->params->sort_column == "weight" && $item->sort_column != "weight") {
+            $sort_order_changed_to_weight = true;
+            $item->sort_column = "weight";
+          }
+          break;
+        case "parent":
           $parent = rest::resolve($request->params->parent);
           access::required("edit", $parent);
           $item->parent_id = $parent->id;
-        }
         break;
-      default:
-        if (property_exists($request->params, $key)) {
+        default:
           $item->$key = $request->params->$key;
         }
       }
     }
     $item->save();
+
+    //  If children are supplied, then update the children based on that client tells us.
+    //  if the sort order changed, then update the weights if there are no children to be updated
+    if (property_exists($request->params, "children")) {
+      // Map the existing children by their restful urls
+      $children = array();
+      foreach ($item->children() as $child) {
+        $children[rest::url("item", $child)] = $child;
+      }
+      $update_weight = $item->sort_column == "weight";
+      $weight = $item->sort_order == "ASC" ? -1 : $request->params->url->length;
+      $weight_increment =  $item->sort_order == "ASC" ? 1 : -1;
+
+      foreach($request->params->children as $url) {
+        if (isset($children[$url])) {
+          $child = $children[$url];
+          unset($children[$url]);
+        } else {
+          $child = rest::resolve($url);
+          $child->parent_id = $item->id;
+        }
+        $child->save();
+        if ($update_weight) {
+          $weight += $weight_increment;
+          db::build()
+            ->update("items")
+            ->set("weight",  $weight)
+            ->where("id", "=", $child->id)
+            ->execute();
+        }
+      }
+      // Anything left in the mapping needs to be deleted
+      foreach ($children as $child) {
+        $child->delete();
+      }
+    } else if ($sort_order_changed_to_weight) {
+      $weight = $item->sort_order == "ASC" ? -1 : $request->params->url->length;
+      $weight_increment =  $item->sort_order == "ASC" ? 1 : -1;
+      foreach ($item->children() as $child) {
+        // Do this directly in the database to avoid sending notifications
+        $weight += $weight_increment;
+        db::build()
+          ->update("items")
+          ->set("weight",  $weight)
+          ->where("id", "=", $child->id)
+          ->execute();
+      }
+    }
+
+    batch::stop();
   }
 
   static function post($request) {
