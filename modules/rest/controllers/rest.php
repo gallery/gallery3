@@ -36,7 +36,7 @@ class Rest_Controller extends Controller {
 
     $key = rest::get_access_token($user->id);
     rest::reply($key->access_key);
- }
+  }
 
   public function __call($function, $args) {
     $input = Input::instance();
