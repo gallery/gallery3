@@ -70,6 +70,8 @@ class item_rest_Core {
       $orm->where("type", "IN", explode(",", $p->type));
     }
 
+    // Respect the requested ordering
+    $orm->order_by($item->sort_column, $item->sort_order);
     $members = array();
     foreach ($orm->find_all() as $child) {
       $members[] = rest::url("item", $child);
