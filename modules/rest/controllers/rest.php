@@ -41,6 +41,7 @@ class Rest_Controller extends Controller {
   public function __call($function, $args) {
     $input = Input::instance();
     $request = new stdClass();
+
     switch ($method = strtolower($input->server("REQUEST_METHOD"))) {
     case "get":
       $request->params = (object) $input->get();
@@ -56,6 +57,11 @@ class Rest_Controller extends Controller {
 
     $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
     $request->access_token = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
+
+    if (empty($request->access_token) && !empty($request->params->access_token)) {
+      $request->access_token = $request->params->access_token;
+    }
+
     $request->url = url::abs_current(true);
 
     rest::set_active_user($request->access_token);
