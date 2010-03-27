@@ -1,16 +1,18 @@
 /** *******************************************************************
  * Organize styles that are theme overrideable
  *********************************************************************/
-.g-organize-microthumb-grid-cell.ui-selected {
-  background: #DFEFFC !important;
+#g-organize {
+  background-color: #FFFFFF;
+  border: 0px solid #000000;
+  color: #0E2B52;
 }
 
-#g-organize-microthumb-grid,
-#g-organize-drop-target-marker,
-.g-organize-album-text:hover {
-  border-color: #79B7E7;
+#g-organize-hover {
+  background-color: #CFDEFF;
+  display: none;
 }
 
-#g-organize-drop-target-marker {
- background-color: #79B7E7;
+#g-organize-active {
+  background-color: #6699CC;
+  display: none;
 }
