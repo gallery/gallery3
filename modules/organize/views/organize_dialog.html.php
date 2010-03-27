@@ -1,7 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript" src="<?= url::file("lib/swfobject.js") ?>"></script>
-<script type="text/javascript" src="<?= url::file("modules/organize/lib/history/history.js") ?>"></script>
-<link rel="stylesheet" type="text/css" href="<?= url::file("modules/organize/lib/history/history.css") ?>" />
 <style type="text/css" media="screen">
   #flashContent {
     display:none;
@@ -20,7 +18,6 @@
   #g-dialog {
     padding: 0;
   }
-
 </style>
 
 <script type="text/javascript">
@@ -79,7 +76,7 @@
   */
   var swfVersionStr = "0.0.0";
   /* To use express install, set to playerProductInstall.swf, otherwise the empty string.*/
-  var xiSwfUrlStr = "modules/organize/lib/playerProductInstall.swf";
+  var xiSwfUrlStr = "";
   var flashvars = {
     selectedAlbum: "<?= $album->id?>",
     fileFilter: '<?= $file_filter ?>',
@@ -105,19 +102,9 @@
   swfobject.embedSWF("<?= url::file("modules/organize/lib/organize.swf") ?>",
                      "flashContent", size.width() - 100,  size.height() - 135,
                      swfVersionStr, xiSwfUrlStr, flashvars, params, attributes);
-  /*
-    JavaScript enabled so display the flashContent div in case it is not replaced with a swf object.
-  */
-  swfobject.createCSS("#flashContent", "display:block;text-align:left;");
 </script>
-<?
-/*
-  SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when
-  enough JavaScript and Flash plug-in support is available. The div is initially hidden so that
-   it doesn't show when JavaScript is disabled.
-*/
-?>
 <div id="g-organize" class="g-dialog-panel">
+    <!-- The following spans are placeholders so we can load the hover and active styles for the flex component -->
     <span id="g-organize-hover" /><span id="g-organize-active" />
   <h1 style="display:none"><?= t("Organize %name", array("name" => html::purify($album->title))) ?></h1>
     <div id="flashContent">&nbsp;</div>
