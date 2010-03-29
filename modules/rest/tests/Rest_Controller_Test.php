@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,9 @@
 class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   public function setup() {
     $this->_save = array($_GET, $_POST, $_SERVER);
+
+    $key = rest::get_access_token(1);  // admin user
+    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $key->access_key;
   }
 
   public function teardown() {
@@ -60,24 +63,26 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
   }
 
   public function get_test() {
+    unset($_SERVER["HTTP_X_GALLERY_REQUEST_KEY"]);
+
     $_SERVER["REQUEST_METHOD"] = "GET";
     $_GET["key"] = "value";
 
-    $this->assert_array_equal_to_json(
-      array("params" => array("key" => "value"),
-            "method" => "get",
-            "access_token" => null,
-            "url" => "http://./index.php/gallery_unit_test"),
-      test::call_and_capture(array(new Rest_Controller(), "mock")));
+    try {
+      test::call_and_capture(array(new Rest_Controller(), "mock"));
+    } catch (Rest_Exception $e) {
+      $this->assert_same(403, $e->getCode());
+      return;
+    }
+
+    $this->assert_true(false, "Should be forbidden");
   }
 
   public function get_with_access_key_test() {
-    $key = rest::get_access_token(1);  // admin user
-
     $_SERVER["REQUEST_METHOD"] = "GET";
-    $_SERVER["HTTP_X_GALLERY_REQUEST_KEY"] = $key->access_key;
     $_GET["key"] = "value";
 
+    $key = rest::get_access_token(1);  // admin user
     $this->assert_array_equal_to_json(
       array("params" => array("key" => "value"),
             "method" => "get",
@@ -90,10 +95,11 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
     $_SERVER["REQUEST_METHOD"] = "POST";
     $_POST["key"] = "value";
 
+    $key = rest::get_access_token(1);  // admin user
     $this->assert_array_equal_to_json(
       array("params" => array("key" => "value"),
             "method" => "post",
-            "access_token" => null,
+            "access_token" => $key->access_key,
             "url" => "http://./index.php/gallery_unit_test"),
       test::call_and_capture(array(new Rest_Controller(), "mock")));
   }
@@ -103,10 +109,11 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "put";
     $_POST["key"] = "value";
 
+    $key = rest::get_access_token(1);  // admin user
     $this->assert_array_equal_to_json(
       array("params" => array("key" => "value"),
             "method" => "put",
-            "access_token" => null,
+            "access_token" => $key->access_key,
             "url" => "http://./index.php/gallery_unit_test"),
       test::call_and_capture(array(new Rest_Controller(), "mock")));
   }
@@ -116,10 +123,11 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
     $_SERVER["HTTP_X_GALLERY_REQUEST_METHOD"] = "delete";
     $_POST["key"] = "value";
 
+    $key = rest::get_access_token(1);  // admin user
     $this->assert_array_equal_to_json(
       array("params" => array("key" => "value"),
             "method" => "delete",
-            "access_token" => null,
+            "access_token" => $key->access_key,
             "url" => "http://./index.php/gallery_unit_test"),
       test::call_and_capture(array(new Rest_Controller(), "mock")));
   }

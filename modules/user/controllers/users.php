@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,8 @@ class Users_Controller extends Controller {
       $user->full_name = $form->edit_user->full_name->value;
       $user->url = $form->edit_user->url->value;
 
-      if ($user->locale !=  $form->edit_user->locale->value) {
+      if (count(locales::installed()) > 1 &&
+          $user->locale != $form->edit_user->locale->value) {
         $user->locale = $form->edit_user->locale->value;
         $flush_locale_cookie = true;
       }
@@ -221,6 +222,10 @@ class Users_Controller extends Controller {
   /** @todo combine with Admin_Users_Controller::_add_locale_dropdown */
   private function _add_locale_dropdown(&$form, $user=null) {
     $locales = locales::installed();
+    if (count($locales) <= 1) {
+      return;
+    }
+
     foreach ($locales as $locale => $display_name) {
       $locales[$locale] = SafeString::of_safe_html($display_name);
     }

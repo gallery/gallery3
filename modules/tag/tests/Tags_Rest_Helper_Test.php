@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,10 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       Database::instance()->query("TRUNCATE {items_tags}");
     } catch (Exception $e) {
     }
+  }
+
+  public function teardown() {
+    identity::set_active_user(identity::admin_user());
   }
 
   public function get_test() {

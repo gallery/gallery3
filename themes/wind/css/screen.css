@@ -213,8 +213,14 @@ td {
   padding-left: 0;
 }
 
+/* Sidebar  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
 #g-sidebar .g-block-content {
   padding-left: 1em;
+}
+
+#g-sidebar #g-image-block {
+  overflow: hidden;
 }
 
 /* Album content ~~~~~~~~~~~~~~~~~~~~~~~~~ */

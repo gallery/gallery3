@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ class Admin_View_Core extends Gallery_View {
     $this->set_global("user", identity::active_user());
     $this->set_global("page_type", "admin");
     $this->set_global("page_subtype", $name);
+    $this->set_global("page_title", null);
   }
 
   public function admin_menu() {

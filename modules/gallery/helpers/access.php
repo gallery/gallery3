@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -637,8 +637,22 @@ class access_Core {
       $dirs[] = dirname($album->thumb_path());
     }
 
-    $base_url = url::site("?kohana_uri=/file_proxy");
-    $base_url = str_replace("/?", "?", $base_url);
+    $base_url = url::base(true);
+    $sep = "?";
+    if (strpos($base_url, "?") !== false) {
+      $sep = "&";
+    }
+    $base_url .= $sep . "kohana_uri=/file_proxy";
+    // Replace "/index.php/?kohana..." with "/index.php?koahan..."
+    // Doesn't apply to "/?kohana..." or "/foo/?kohana..."
+    // Can't check for "index.php" since the file might be renamed, and
+    // there might be more Apache aliases / rewrites at work.
+    $url_path = parse_url($base_url, PHP_URL_PATH);
+    // Does the URL path have a file component?
+    if (preg_match("#[^/]+\.php#i", $url_path)) {
+      $base_url = str_replace("/?", "?", $base_url);
+    }
+
     foreach ($dirs as $dir) {
       if ($value === self::DENY) {
         $fp = fopen("$dir/.htaccess", "w+");

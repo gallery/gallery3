@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ class gallery_block_Core {
 
     case "language":
       $locales = locales::installed();
-      if (count($locales)) {
+      if (count($locales) > 1) {
         foreach ($locales as $locale => $display_name) {
           $locales[$locale] = SafeString::of_safe_html($display_name);
         }

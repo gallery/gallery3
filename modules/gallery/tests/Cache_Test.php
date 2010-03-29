@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
-    $this->_driver->delete($id1);
+    $this->_driver->delete(array($id1));
 
     $this->assert_false($this->_driver->exists($id1), "$id1 should have been deleted");
     $this->assert_true($this->_driver->exists($id2), "$id2 should not have been deleted");
@@ -138,7 +138,7 @@ class Cache_Test extends Gallery_Unit_Test_Case {
     $value3 = array("field5" => "value5", "field6" => "value6");
     $this->_driver->set(array($id3 => $value3), array("tag3", "tag4"), 84600);
 
-    $data = $this->_driver->delete("tag3", true);
+    $data = $this->_driver->delete_tag(array("tag3"));
 
     $this->assert_true($this->_driver->exists($id1), "$id1 should not have been deleted");
     $this->assert_false($this->_driver->exists($id2), "$id2 should have been deleted");

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ class L10n_Client_Controller extends Controller {
     }
     $is_plural = Gallery_I18n::is_plural_message(unserialize($root_message->message));
 
+    $is_empty = true;
     if ($is_plural) {
       $plural_forms = l10n_client::plural_forms($locale);
       $translation = array();
@@ -47,9 +48,11 @@ class L10n_Client_Controller extends Controller {
           throw new Exception("@todo bad request data");
         }
         $translation[$plural_form] = $value;
+        $is_empty = $is_empty && empty($value);
       }
     } else {
       $translation = $input->post("l10n-edit-translation");
+      $is_empty = empty($translation);
       if (null === $translation || !is_string($translation)) {
         throw new Exception("@todo bad request data");
       }
@@ -60,25 +63,31 @@ class L10n_Client_Controller extends Controller {
       ->where("locale", "=", $locale)
       ->find();
 
-    if (!$entry->loaded()) {
-      $entry->key = $key;
-      $entry->locale = $locale;
-      $entry->message = $root_message->message;
-      $entry->base_revision = null;
+    if ($is_empty) {
+      if ($entry->loaded()) {
+        $entry->delete();
+      }
+    } else {
+      if (!$entry->loaded()) {
+        $entry->key = $key;
+        $entry->locale = $locale;
+        $entry->message = $root_message->message;
+        $entry->base_revision = null;
+      }
+
+      $entry->translation = serialize($translation);
+
+      $entry_from_incoming = ORM::factory("incoming_translation")
+        ->where("key", "=", $key)
+        ->where("locale", "=", $locale)
+        ->find();
+
+      if (!$entry_from_incoming->loaded()) {
+        $entry->base_revision = $entry_from_incoming->revision;
+      }
+
+      $entry->save();
     }
-
-    $entry->translation = serialize($translation);
-
-    $entry_from_incoming = ORM::factory("incoming_translation")
-      ->where("key", "=", $key)
-      ->where("locale", "=", $locale)
-      ->find();
-
-    if (!$entry_from_incoming->loaded()) {
-      $entry->base_revision = $entry_from_incoming->revision;
-    }
-
-    $entry->save();
 
     Gallery_I18n::clear_cache($locale);
 

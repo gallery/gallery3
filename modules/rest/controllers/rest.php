@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class Rest_Controller extends Controller {
 
     $key = rest::get_access_token($user->id);
     rest::reply($key->access_key);
- }
+  }
 
   public function __call($function, $args) {
     $input = Input::instance();
@@ -68,7 +68,7 @@ class Rest_Controller extends Controller {
     }
 
     try {
-      print rest::reply(call_user_func(array($handler_class, $handler_method), $request));
+      rest::reply(call_user_func(array($handler_class, $handler_method), $request));
     } catch (ORM_Validation_Exception $e) {
       foreach ($e->validation->errors() as $key => $value) {
         $msgs[] = "$key: $value";

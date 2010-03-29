@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.");
 /**
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2009 Bharat Mediratta
+ * Copyright (C) 2000-2010 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@
  */
 class Access_Helper_Test extends Gallery_Unit_Test_Case {
   private $_group;
+
+  public function setup() {
+    identity::set_active_user(identity::guest());
+  }
 
   public function teardown() {
     try {
@@ -41,10 +45,7 @@ class Access_Helper_Test extends Gallery_Unit_Test_Case {
 
     // Reset some permissions that we mangle below
     access::allow(identity::everybody(), "view", item::root());
-  }
-
-  public function setup() {
-    identity::set_active_user(identity::guest());
+    identity::set_active_user(identity::admin_user());
   }
 
   public function groups_and_permissions_are_bound_to_columns_test() {
