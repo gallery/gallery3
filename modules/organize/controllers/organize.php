@@ -45,4 +45,12 @@ class Organize_Controller extends Controller {
     $v->api_key = rest::get_access_token($user->id)->access_key;
     print $v;
   }
+
+  function add_album_fields() {
+    print json_encode(array("title" => (string)t("Title"),
+                            "description" => (string)t("Description"),
+                            "name" => (string)t("Directory name"),
+                            "slug" => (string)t("Internet Address")));
+  }
+
 }
