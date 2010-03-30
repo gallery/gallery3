@@ -34,14 +34,14 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
 
     // There's no access key at first
     $this->assert_false(
-      ORM::factory("user_access_token")->where("user_id", "=", $user->id)->find()->loaded());
+      ORM::factory("user_access_key")->where("user_id", "=", $user->id)->find()->loaded());
 
     $_POST["user"] = $user->name;
     $_POST["password"] = "password";
 
     $response = test::call_and_capture(array(new Rest_Controller(), "index"));
     $expected =
-      ORM::factory("user_access_token")->where("user_id", "=", $user->id)->find()->access_key;
+      ORM::factory("user_access_key")->where("user_id", "=", $user->id)->find()->access_key;
 
     // Now there is an access key, and it was returned
     $this->assert_equal(json_encode($expected), $response);

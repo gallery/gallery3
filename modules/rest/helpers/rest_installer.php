@@ -20,7 +20,7 @@
 class rest_installer {
   static function install() {
     Database::instance()
-      ->query("CREATE TABLE {user_access_tokens} (
+      ->query("CREATE TABLE {user_access_keys} (
                 `id` int(9) NOT NULL auto_increment,
                 `user_id` int(9) NOT NULL,
                 `access_key` char(32) NOT NULL,
@@ -28,10 +28,18 @@ class rest_installer {
                 UNIQUE KEY(`access_key`),
                 UNIQUE KEY(`user_id`))
               DEFAULT CHARSET=utf8;");
-    module::set_version("rest", 1);
+    module::set_version("rest", 2);
+  }
+
+  static function upgrade($version) {
+    $db = Database::instance();
+    if ($version == 1) {
+      $db->query("RENAME TABLE {user_access_tokens} TO {user_access_keys}");
+      module::set_version("rest", $version = 2);
+    }
   }
 
   static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {user_access_tokens}");
+    Database::instance()->query("DROP TABLE IF EXISTS {user_access_keys}");
   }
 }

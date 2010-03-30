@@ -42,7 +42,7 @@ class rest_Core {
       throw new Rest_Exception("Forbidden", 403);
     }
 
-    $key = ORM::factory("user_access_token")
+    $key = ORM::factory("user_access_key")
       ->where("access_key", "=", $access_token)
       ->find();
 
@@ -59,7 +59,7 @@ class rest_Core {
   }
 
   static function get_access_token($user_id) {
-    $key = ORM::factory("user_access_token")
+    $key = ORM::factory("user_access_key")
       ->where("user_id", "=", $user_id)
       ->find();
 
