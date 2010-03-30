@@ -37,13 +37,13 @@ class rest_Core {
     }
   }
 
-  static function set_active_user($access_token) {
-    if (empty($access_token)) {
+  static function set_active_user($access_key) {
+    if (empty($access_key)) {
       throw new Rest_Exception("Forbidden", 403);
     }
 
     $key = ORM::factory("user_access_key")
-      ->where("access_key", "=", $access_token)
+      ->where("access_key", "=", $access_key)
       ->find();
 
     if (!$key->loaded()) {
@@ -58,7 +58,7 @@ class rest_Core {
     identity::set_active_user($user);
   }
 
-  static function get_access_token($user_id) {
+  static function get_access_key($user_id) {
     $key = ORM::factory("user_access_key")
       ->where("user_id", "=", $user_id)
       ->find();
