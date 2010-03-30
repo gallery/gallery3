@@ -56,8 +56,9 @@
   function getTextStrings() {
     var strings = {
       "statusText": <?= t("Drag and drop photos to re-order or move between album")->for_js() ?>,
-      "addToolTip": <?= t("Add")->for_js() ?>,
-      "deleteToolTip": <?= t("Delete")->for_js() ?>,
+      "addAlbum": <?= t("Add album")->for_js() ?>,
+      "addImages": <?= t("Add photo")->for_js() ?>,
+      "deleteSelected": <?= t("Delete")->for_js() ?>,
       "uploadedText": <?= t("Uploaded {0}")->for_js() ?>,
       "removeFileText": <?= t("Remove")->for_js() ?>,
       "totalFiles": <?= t("Total Files: {0}")->for_js() ?>,
@@ -66,6 +67,8 @@
       "kilobytes": <?= t("{0} KB")->for_js() ?>,
       "megabytes": <?= t("{0} MB")->for_js() ?>,
       "gigabytes": <?= t("{0} GB")->for_js() ?>,
+      "cancel": <?= t("Cancel")->for_js() ?>,
+      "close": <?= t("Close")->for_js() ?>
     };
     return strings;
   }
@@ -84,7 +87,8 @@
     sortOrder: '<?= $sort_order ?>',
     sortFields: '<?= $sort_fields ?>',
     baseUrl: '<?= $base_url ?>',
-    apiKey: '<?= $api_key ?>'
+    apiKey: '<?= $api_key ?>',
+    controller: '<?= url::abs_site("organize") ?>/'
   };
 
   var size = $.gallery_get_viewport_size();
