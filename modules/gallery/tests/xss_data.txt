@@ -70,12 +70,12 @@ modules/gallery/views/admin_graphics_imagemagick.html.php    2   DIRTY_ATTR $is_
 modules/gallery/views/admin_graphics_imagemagick.html.php    2   DIRTY_ATTR $tk->installed?"  g-installed-toolkit":" g-unavailable"
 modules/gallery/views/admin_graphics_imagemagick.html.php    18  DIRTY    $tk->error
 modules/gallery/views/admin_languages.html.php               43  DIRTY    access::csrf_form_field()
-modules/gallery/views/admin_languages.html.php               60  DIRTY_ATTR (isset($installed_locales[$code]))?"g-available":""
-modules/gallery/views/admin_languages.html.php               60  DIRTY_ATTR ($default_locale==$code)?" g-selected":""
-modules/gallery/views/admin_languages.html.php               61  DIRTY    form::checkbox("installed_locales[]",$code,isset($installed_locales[$code]))
-modules/gallery/views/admin_languages.html.php               62  DIRTY    $display_name
-modules/gallery/views/admin_languages.html.php               64  DIRTY    form::radio("default_locale",$code,($default_locale==$code),((isset($installed_locales[$code]))?'':'disabled="disabled"'))
-modules/gallery/views/admin_languages.html.php               109 DIRTY    $share_translations_form
+modules/gallery/views/admin_languages.html.php               61  DIRTY_ATTR (isset($installed_locales[$code]))?"g-available":""
+modules/gallery/views/admin_languages.html.php               61  DIRTY_ATTR ($default_locale==$code)?" g-selected":""
+modules/gallery/views/admin_languages.html.php               62  DIRTY    form::checkbox("installed_locales[]",$code,isset($installed_locales[$code]))
+modules/gallery/views/admin_languages.html.php               63  DIRTY    $display_name
+modules/gallery/views/admin_languages.html.php               65  DIRTY    form::radio("default_locale",$code,($default_locale==$code),((isset($installed_locales[$code]))?'':'disabled="disabled"'))
+modules/gallery/views/admin_languages.html.php               110 DIRTY    $share_translations_form
 modules/gallery/views/admin_maintenance.html.php             24  DIRTY_ATTR text::alternate("g-odd","g-even")
 modules/gallery/views/admin_maintenance.html.php             24  DIRTY_ATTR log::severity_class($task->severity)
 modules/gallery/views/admin_maintenance.html.php             25  DIRTY_ATTR log::severity_class($task->severity)
@@ -121,10 +121,10 @@ modules/gallery/views/admin_themes.html.php                  76  DIRTY    $info-
 modules/gallery/views/admin_themes.html.php                  78  DIRTY    $info->description
 modules/gallery/views/admin_themes_preview.html.php          7   DIRTY_ATTR $url
 modules/gallery/views/error_404.html.php                     14  DIRTY    $login_form
-modules/gallery/views/form_uploadify.html.php                30  DIRTY_JS url::file("lib/uploadify/uploadify.swf")
-modules/gallery/views/form_uploadify.html.php                31  DIRTY_JS url::site("simple_uploader/add_photo/{$album->id}")
-modules/gallery/views/form_uploadify.html.php                35  DIRTY_JS url::file("lib/uploadify/cancel.png")
-modules/gallery/views/form_uploadify.html.php                36  DIRTY_JS $simultaneous_upload_limit
+modules/gallery/views/form_uploadify.html.php                9   DIRTY_JS url::file("lib/uploadify/uploadify.swf")
+modules/gallery/views/form_uploadify.html.php                10  DIRTY_JS url::site("simple_uploader/add_photo/{$album->id}")
+modules/gallery/views/form_uploadify.html.php                14  DIRTY_JS url::file("lib/uploadify/cancel.png")
+modules/gallery/views/form_uploadify.html.php                15  DIRTY_JS $simultaneous_upload_limit
 modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"))
 modules/gallery/views/in_place_edit.html.php                 3   DIRTY    access::csrf_form_field()
 modules/gallery/views/in_place_edit.html.php                 6   DIRTY    form::input("input",$form["input"]," class=\"textbox\"")
@@ -320,19 +320,20 @@ modules/user/views/admin_users_group.html.php                24  DIRTY_JS $group
 modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $width
 modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $height
 modules/watermark/views/admin_watermarks.html.php            20  DIRTY_ATTR $url
-themes/admin_wind/views/admin.html.php                       16  DIRTY_JS $theme->url()
-themes/admin_wind/views/admin.html.php                       33  DIRTY    $theme->admin_head()
-themes/admin_wind/views/admin.html.php                       37  DIRTY    $theme->admin_page_top()
-themes/admin_wind/views/admin.html.php                       45  DIRTY    $theme->admin_header_top()
-themes/admin_wind/views/admin.html.php                       46  DIRTY_JS item::root()->url()
-themes/admin_wind/views/admin.html.php                       49  DIRTY    $theme->user_menu()
-themes/admin_wind/views/admin.html.php                       51  DIRTY    $theme->admin_menu()
-themes/admin_wind/views/admin.html.php                       53  DIRTY    $theme->admin_header_bottom()
-themes/admin_wind/views/admin.html.php                       60  DIRTY    $content
-themes/admin_wind/views/admin.html.php                       66  DIRTY    $sidebar
-themes/admin_wind/views/admin.html.php                       71  DIRTY    $theme->admin_footer()
-themes/admin_wind/views/admin.html.php                       73  DIRTY    $theme->admin_credits()
-themes/admin_wind/views/admin.html.php                       77  DIRTY    $theme->admin_page_bottom()
+themes/admin_wind/views/admin.html.php                       9   DIRTY    $page_title
+themes/admin_wind/views/admin.html.php                       22  DIRTY_JS $theme->url()
+themes/admin_wind/views/admin.html.php                       39  DIRTY    $theme->admin_head()
+themes/admin_wind/views/admin.html.php                       43  DIRTY    $theme->admin_page_top()
+themes/admin_wind/views/admin.html.php                       51  DIRTY    $theme->admin_header_top()
+themes/admin_wind/views/admin.html.php                       52  DIRTY_JS item::root()->url()
+themes/admin_wind/views/admin.html.php                       55  DIRTY    $theme->user_menu()
+themes/admin_wind/views/admin.html.php                       57  DIRTY    $theme->admin_menu()
+themes/admin_wind/views/admin.html.php                       59  DIRTY    $theme->admin_header_bottom()
+themes/admin_wind/views/admin.html.php                       66  DIRTY    $content
+themes/admin_wind/views/admin.html.php                       72  DIRTY    $sidebar
+themes/admin_wind/views/admin.html.php                       77  DIRTY    $theme->admin_footer()
+themes/admin_wind/views/admin.html.php                       79  DIRTY    $theme->admin_credits()
+themes/admin_wind/views/admin.html.php                       83  DIRTY    $theme->admin_page_bottom()
 themes/admin_wind/views/block.html.php                       3   DIRTY_ATTR $anchor
 themes/admin_wind/views/block.html.php                       5   DIRTY    $id
 themes/admin_wind/views/block.html.php                       5   DIRTY_ATTR $css_id

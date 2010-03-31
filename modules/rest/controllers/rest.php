@@ -34,7 +34,7 @@ class Rest_Controller extends Controller {
 
     auth::login($user);
 
-    $key = rest::get_access_token($user->id);
+    $key = rest::get_access_key($user->id);
     rest::reply($key->access_key);
   }
 
@@ -56,15 +56,15 @@ class Rest_Controller extends Controller {
     }
 
     $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
-    $request->access_token = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
+    $request->access_key = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
 
-    if (empty($request->access_token) && !empty($request->params->access_token)) {
-      $request->access_token = $request->params->access_token;
+    if (empty($request->access_key) && !empty($request->params->access_key)) {
+      $request->access_key = $request->params->access_key;
     }
 
     $request->url = url::abs_current(true);
 
-    rest::set_active_user($request->access_token);
+    rest::set_active_user($request->access_key);
 
     $handler_class = "{$function}_rest";
     $handler_method = $request->method;

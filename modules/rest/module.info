@@ -1,4 +1,4 @@
 name = "REST Access Module"
 description = "The RESTful implementation/interface to Gallery3"
 
-version = 1
+version = 2

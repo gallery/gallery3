@@ -24,7 +24,7 @@ class rest_event {
    */
   static function user_before_delete($user) {
     db::build()
-      ->delete("user_access_tokens")
+      ->delete("user_access_keys")
        ->where("id", "=", $user->id)
        ->execute();
   }
@@ -34,7 +34,7 @@ class rest_event {
    * on every add.
    */
   static function user_add_form_admin_completed($user, $form) {
-    $key = ORM::factory("user_access_token");
+    $key = ORM::factory("user_access_key");
     $key->user_id = $user->id;
     $key->access_key = md5($user->name . rand());
     $key->save();
@@ -58,7 +58,7 @@ class rest_event {
    * Get the form fields for user edit
    */
   static function _get_access_key_form($user, $form) {
-    $key = ORM::factory("user_access_token")
+    $key = ORM::factory("user_access_key")
       ->where("user_id", "=", $user->id)
       ->find();
 
@@ -68,7 +68,7 @@ class rest_event {
       $key->save();
     }
 
-    $form->edit_user->input("user_access_token")
+    $form->edit_user->input("user_access_key")
       ->value($key->access_key)
       ->readonly("readonly")
       ->class("g-form-static")
@@ -87,9 +87,9 @@ class rest_event {
     }
 
     $view = new View("user_profile_rest.html");
-    $key = ORM::factory("user_access_token")
-        ->where("user_id", "=", $data->user->id)
-        ->find();
+    $key = ORM::factory("user_access_key")
+      ->where("user_id", "=", $data->user->id)
+      ->find();
 
     if (!$key->loaded()) {
       $key->user_id = $data->user->id;

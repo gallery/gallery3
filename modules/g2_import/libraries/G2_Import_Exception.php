@@ -17,29 +17,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class rest_installer {
-  static function install() {
-    Database::instance()
-      ->query("CREATE TABLE {user_access_keys} (
-                `id` int(9) NOT NULL auto_increment,
-                `user_id` int(9) NOT NULL,
-                `access_key` char(32) NOT NULL,
-                PRIMARY KEY (`id`),
-                UNIQUE KEY(`access_key`),
-                UNIQUE KEY(`user_id`))
-              DEFAULT CHARSET=utf8;");
-    module::set_version("rest", 2);
-  }
 
-  static function upgrade($version) {
-    $db = Database::instance();
-    if ($version == 1) {
-      $db->query("RENAME TABLE {user_access_tokens} TO {user_access_keys}");
-      module::set_version("rest", $version = 2);
+/**
+ * A wrapper for exceptions to report more details in case
+ * it's a ORM validation exception.
+ */
+class G2_Import_Exception extends Exception {
+  public function __construct($message, Exception $previous=null, $additional_messages=null) {
+    if ($additional_messages) {
+      $message .= "\n" . implode("\n", $additional_messages);
     }
-  }
-
-  static function uninstall() {
-    Database::instance()->query("DROP TABLE IF EXISTS {user_access_keys}");
+    if ($previous && $previous instanceof ORM_Validation_Exception) {
+      $message .= "\nORM validation errors: " . print_r($previous->validation->errors(), true);
+    }
+    if ($previous) {
+      $message .= "\n" . (string) $previous;
+    }
+    // The $previous parameter is supported in PHP 5.3.0+.
+    parent::__construct($message);
   }
 }
