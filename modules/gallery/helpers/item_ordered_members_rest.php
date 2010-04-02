@@ -64,6 +64,8 @@ class item_ordered_members_rest_Core {
         "item_ordered_members" => array(
           "url" => rest::url("item_ordered_members", $resource)));
     }
+
+    return array();
   }
 
   static function resolve($id) {
