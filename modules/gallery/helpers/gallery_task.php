@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_task_Core {
+  const MPTT_LEFT = 0;
+  const MPTT_RIGHT = 1;
+
   static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count_records();
     $tasks = array();
@@ -42,6 +45,14 @@ class gallery_task_Core {
                  ->name(t("Remove old files"))
                  ->description(t("Remove expired files from the logs and tmp directory"))
       ->severity(log::SUCCESS);
+
+    $tasks[] = Task_Definition::factory()
+      ->callback("gallery_task::fix_mptt")
+      ->name(t("Fix Album/Photo hierarchy"))
+      ->description(t("Fix problems where your album/photo breadcrumbs are out of " .
+                      "sync with your actual hierarchy."))
+      ->severity(log::SUCCESS);
+
     return $tasks;
   }
 
@@ -297,5 +308,80 @@ class gallery_task_Core {
     if ($errors) {
       $task->log($errors);
     }
+  }
+
+  static function fix_mptt($task) {
+    $start = microtime(true);
+
+    $total = $task->get("total");
+    if (empty($total)) {
+      $task->set("total", $total = db::build()->count_records("items"));
+      $task->set("stack", "1:" . self::MPTT_LEFT);
+      $task->set("ptr", 1);
+      $task->set("completed", 0);
+    }
+
+    $ptr = $task->get("ptr");
+    $stack = explode(" ", $task->get("stack"));
+    $completed = $task->get("completed");
+
+    // Implement a depth-first tree walk using a stack.  Not the most efficient, but it's simple.
+    while ($stack && microtime(true) - $start < 1.5) {
+      list($id, $state) = explode(":", array_pop($stack));
+      switch ($state) {
+      case self::MPTT_LEFT:
+        self::fix_mptt_set_left($id, $ptr++);
+        $item = ORM::factory("item", $id);
+        array_push($stack, $id . ":" . self::MPTT_RIGHT);
+        foreach (self::fix_mptt_children($id) as $child) {
+          array_push($stack, $child->id . ":" . self::MPTT_LEFT);
+        }
+        break;
+
+      case self::MPTT_RIGHT:
+        self::fix_mptt_set_right($id, $ptr++);
+        $completed++;
+        break;
+      }
+    }
+
+    $task->set("stack", implode(" ", $stack));
+    $task->set("ptr", $ptr);
+    $task->set("completed", $completed);
+
+    if ($total == $completed) {
+      $task->done = true;
+      $task->state = "success";
+      $task->percent_complete = 100;
+    } else {
+      $task->percent_complete = round(100 * $completed / $total);
+    }
+    $task->status = t2("One row updated", "%count / %total rows updated", $completed,
+                       array("total" => $total));
+  }
+
+  static function fix_mptt_children($parent_id) {
+    return db::build()
+      ->select("id")
+      ->from("items")
+      ->where("parent_id", "=", $parent_id)
+      ->order_by("left_ptr", "ASC")
+      ->execute();
+  }
+
+  static function fix_mptt_set_left($id, $value) {
+    db::build()
+      ->update("items")
+      ->set("left_ptr", $value)
+      ->where("id", "=", $id)
+      ->execute();
+  }
+
+  static function fix_mptt_set_right($id, $value) {
+    db::build()
+      ->update("items")
+      ->set("right_ptr", $value)
+      ->where("id", "=", $id)
+      ->execute();
   }
 }
