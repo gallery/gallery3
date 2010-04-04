@@ -36,28 +36,25 @@ class tag_rest_Core {
           "members" => $tag_items)));
   }
 
-  static function post($request) {
-    if (empty($request->params->url)) {
-      throw new Rest_Exception("Bad request", 400);
-    }
-
-    $tag = rest::resolve($request->url);
-    $item = rest::resolve($request->params->url);
-    access::required("edit", $item);
-
-    tag::add($item, $tag->name);
-    return array("url" => rest::url("tag_item", $tag, $item));
-  }
-
   static function put($request) {
+    // Who can we allow to edit a tag name?  If we allow anybody to do it then any logged in
+    // user can rename all your tags to something offensive.  Right now limit renaming to admins.
+    if (!identity::active_user()->admin) {
+      access::forbidden();
+    }
     $tag = rest::resolve($request->url);
-    if (isset($request->params->name)) {
-      $tag->name = $request->params->name;
+    if (isset($request->params->entity->name)) {
+      $tag->name = $request->params->entity->name;
       $tag->save();
     }
   }
 
   static function delete($request) {
+    // Restrict deleting tags to admins.  Otherwise, a logged in user can do great harm to an
+    // install.
+    if (!identity::active_user()->admin) {
+      access::forbidden();
+    }
     $tag = rest::resolve($request->url);
     $tag->delete();
   }

@@ -54,6 +54,13 @@ class Rest_Controller extends Controller {
       break;
     }
 
+    if (isset($request->params->entity)) {
+      $request->params->entity = json_decode($request->params->entity);
+    }
+    if (isset($request->params->members)) {
+      $request->params->members = json_decode($request->params->members);
+    }
+
     $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
     $request->access_key = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
     $request->url = url::abs_current(true);

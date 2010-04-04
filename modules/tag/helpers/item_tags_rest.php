@@ -31,8 +31,8 @@ class item_tags_rest_Core {
   }
 
   static function post($request) {
-    $tag = rest::resolve($request->params->tag);
-    $item = rest::resolve($request->params->item);
+    $tag = rest::resolve($request->params->entity->tag);
+    $item = rest::resolve($request->params->entity->item);
     access::required("view", $item);
 
     tag::add($item, $tag->name);
@@ -45,6 +45,7 @@ class item_tags_rest_Core {
 
   static function delete($request) {
     list ($tag, $item) = rest::resolve($request->url);
+    access::required("edit", $item);
     $tag->remove($item);
     $tag->save();
   }

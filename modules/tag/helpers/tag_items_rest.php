@@ -33,8 +33,8 @@ class tag_items_rest_Core {
   }
 
   static function post($request) {
-    $tag = rest::resolve($request->params->tag);
-    $item = rest::resolve($request->params->item);
+    $tag = rest::resolve($request->params->entity->tag);
+    $item = rest::resolve($request->params->entity->item);
     access::required("view", $item);
 
     if (!$tag->loaded()) {
