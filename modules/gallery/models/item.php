@@ -332,6 +332,12 @@ class Item_Model extends ORM_MPTT {
           $tmp = pathinfo($this->name, PATHINFO_FILENAME);
           $tmp = preg_replace("/[^A-Za-z0-9-_]+/", "-", $tmp);
           $this->slug = trim($tmp, "-");
+
+          // If the filename is all invalid characters, then the slug may be empty here.  Pick a
+          // random value.
+          if (empty($this->slug)) {
+            $this->slug = (string)rand(1000, 9999);
+          }
         }
 
         // Get the width, height and mime type from our data file for photos and movies.

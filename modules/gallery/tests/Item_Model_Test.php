@@ -324,6 +324,12 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $album->save();
   }
 
+  public function name_with_only_invalid_chars_is_still_valid_test() {
+    $album = test::random_album_unsaved();
+    $album->name = "[]";
+    $album->save();
+  }
+
   public function cant_change_item_type_test() {
     $photo = test::random_photo();
     try {
