@@ -22,7 +22,7 @@ class tag_item_rest_Core {
     list ($tag, $item) = rest::resolve($request->url);
     return array(
       "url" => $request->url,
-      "members" => array(
+      "entity" => array(
         "tag" => rest::url("tag", $tag),
         "item" => rest::url("item", $item)));
   }

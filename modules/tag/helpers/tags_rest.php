@@ -40,13 +40,13 @@ class tags_rest_Core {
       }
     }
 
-    if (empty($request->params->name)) {
+    if (empty($request->params->entity->name)) {
       throw new Rest_Exception("Bad Request", 400);
     }
 
-    $tag = ORM::factory("tag")->where("name", "=", $request->params->name)->find();
+    $tag = ORM::factory("tag")->where("name", "=", $request->params->entity->name)->find();
     if (!$tag->loaded()) {
-      $tag->name = $request->params->name;
+      $tag->name = $request->params->entity->name;
       $tag->count = 0;
       $tag->save();
     }

@@ -947,7 +947,7 @@ class Item_Model extends ORM_MPTT {
 
     // Elide some internal-only data that is going to cause confusion in the client.
     foreach (array("relative_path_cache", "relative_url_cache", "left_ptr", "right_ptr",
-                   "thumb_dirty", "resize_dirty") as $key) {
+                   "thumb_dirty", "resize_dirty", "weight") as $key) {
       unset($data[$key]);
     }
     return $data;

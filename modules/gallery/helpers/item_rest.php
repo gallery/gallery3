@@ -70,8 +70,14 @@ class item_rest_Core {
       $orm->where("type", "IN", explode(",", $p->type));
     }
 
-    // Respect the requested ordering
-    $orm->order_by($item->sort_column, $item->sort_order);
+    // Apply the item's sort order, using id as the tie breaker.
+    // See Item_Model::children()
+    $order_by = array($item->sort_column => $item->sort_order);
+    if ($item->sort_column != "id") {
+      $order_by["id"] = "ASC";
+    }
+    $orm->order_by($order_by);
+
     $members = array();
     foreach ($orm->find_all() as $child) {
       $members[] = rest::url("item", $child);
@@ -88,126 +94,81 @@ class item_rest_Core {
     $item = rest::resolve($request->url);
     access::required("edit", $item);
 
-    $params = $request->params;
-
-    $sort_order_changed_to_weight = false;
-    // Start the batch
-    batch::start();
-
-    // Only change fields from a whitelist.
-    foreach (array("album_cover", "captured", "description",
-                   "height", "mime_type", "name", "parent", "rand_key", "resize_dirty",
-                   "resize_height", "resize_width", "slug", "sort_column", "sort_order",
-                   "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
-                   "weight", "width") as $key) {
-      if (property_exists($request->params, $key)) {
+    if ($entity = $request->params->entity) {
+      // Only change fields from a whitelist.
+      foreach (array("album_cover", "captured", "description",
+                     "height", "mime_type", "name", "parent", "rand_key", "resize_dirty",
+                     "resize_height", "resize_width", "slug", "sort_column", "sort_order",
+                     "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
+                     "width") as $key) {
         switch ($key) {
         case "album_cover":
-          $album_cover_item = rest::resolve($request->params->album_cover);
-          access::required("view", $album_cover_item);
-          $item->album_cover_item_id = $album_cover_item->id;
-          break;
-
-        case "sort_column":
-          if ($request->params->sort_column == "weight" && $item->sort_column != "weight") {
-            $sort_order_changed_to_weight = true;
-            $item->sort_column = "weight";
+          if (property_exists($entity, "album_cover")) {
+            $album_cover_item = rest::resolve($entity->album_cover);
+            access::required("view", $album_cover_item);
+            $item->album_cover_item_id = $album_cover_item->id;
           }
           break;
+
         case "parent":
-          $parent = rest::resolve($request->params->parent);
-          access::required("edit", $parent);
-          $item->parent_id = $parent->id;
-        break;
+          if (property_exists($entity, "parent")) {
+            $parent = rest::resolve($entity->parent);
+            access::required("edit", $parent);
+            $item->parent_id = $parent->id;
+          }
+          break;
         default:
-          $item->$key = $request->params->$key;
+          if (property_exists($entity, $key)) {
+            $item->$key = $entity->$key;
+          }
+        }
+      }
+    }
+
+    $weight = 0;
+    if (isset($request->params->members)) {
+      foreach ($request->params->members as $url) {
+        $child = rest::resolve($url);
+        if ($child->parent_id == $item->id && $child->weight != $weight) {
+          $child->weight = $weight++;
+          $child->save();
         }
       }
     }
     $item->save();
-
-    //  If children are supplied, then update the children based on that client tells us.
-    //  if the sort order changed, then update the weights if there are no children to be updated
-    if (property_exists($request->params, "children")) {
-      // Map the existing children by their restful urls
-      $children = array();
-      foreach ($item->children() as $child) {
-        $children[rest::url("item", $child)] = $child;
-      }
-      $update_weight = $item->sort_column == "weight";
-      $weight = $item->sort_order == "ASC" ? -1 : $request->params->url->length;
-      $weight_increment =  $item->sort_order == "ASC" ? 1 : -1;
-
-      foreach($request->params->children as $url) {
-        if (isset($children[$url])) {
-          $child = $children[$url];
-          unset($children[$url]);
-        } else {
-          $child = rest::resolve($url);
-          $child->parent_id = $item->id;
-        }
-        $child->save();
-        if ($update_weight) {
-          $weight += $weight_increment;
-          db::build()
-            ->update("items")
-            ->set("weight",  $weight)
-            ->where("id", "=", $child->id)
-            ->execute();
-        }
-      }
-      // Anything left in the mapping needs to be deleted
-      foreach ($children as $child) {
-        $child->delete();
-      }
-    } else if ($sort_order_changed_to_weight) {
-      $weight = $item->sort_order == "ASC" ? -1 : $request->params->url->length;
-      $weight_increment =  $item->sort_order == "ASC" ? 1 : -1;
-      foreach ($item->children() as $child) {
-        // Do this directly in the database to avoid sending notifications
-        $weight += $weight_increment;
-        db::build()
-          ->update("items")
-          ->set("weight",  $weight)
-          ->where("id", "=", $child->id)
-          ->execute();
-      }
-    }
-
-    batch::stop();
   }
 
   static function post($request) {
     $parent = rest::resolve($request->url);
     access::required("edit", $parent);
 
-    $params = $request->params;
+    $entity = $request->params->entity;
     $item = ORM::factory("item");
-    switch ($params->type) {
+    switch ($entity->type) {
     case "album":
       $item->type = "album";
       $item->parent_id = $parent->id;
-      $item->name = $params->name;
-      $item->title = isset($params->title) ? $params->title : $name;
-      $item->description = isset($params->description) ? $params->description : null;
-      $item->slug = isset($params->slug) ? $params->slug : null;
+      $item->name = $entity->name;
+      $item->title = isset($entity->title) ? $entity->title : $name;
+      $item->description = isset($entity->description) ? $entity->description : null;
+      $item->slug = isset($entity->slug) ? $entity->slug : null;
       $item->save();
       break;
 
     case "photo":
     case "movie":
-      $item->type = $params->type;
+      $item->type = $entity->type;
       $item->parent_id = $parent->id;
       $item->set_data_file($request->file);
-      $item->name = $params->name;
-      $item->title = isset($params->title) ? $params->title : $params->name;
-      $item->description = isset($params->description) ? $params->description : null;
-      $item->slug = isset($params->slug) ? $params->slug : null;
+      $item->name = $entity->name;
+      $item->title = isset($entity->title) ? $entity->title : $entity->name;
+      $item->description = isset($entity->description) ? $entity->description : null;
+      $item->slug = isset($entity->slug) ? $entity->slug : null;
       $item->save();
       break;
 
     default:
-      throw new Rest_Exception("Invalid type: $params->type", 400);
+      throw new Rest_Exception("Invalid type: $entity->type", 400);
     }
 
     return array("url" => rest::url("item", $item));
