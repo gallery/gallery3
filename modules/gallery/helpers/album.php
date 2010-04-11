@@ -45,9 +45,13 @@ class album_Core {
       ->error_messages("required", t("You must provide an internet address"))
       ->error_messages("length", t("Your internet address is too long"));
     $group->hidden("type")->value("album");
+
+    module::event("album_add_form", $parent, $form);
+
     $group->submit("")->value(t("Create"));
     $form->script("")
       ->url(url::abs_file("modules/gallery/js/albums_form_add.js"));
+
     return $form;
   }
 
