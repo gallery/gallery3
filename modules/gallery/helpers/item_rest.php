@@ -78,16 +78,18 @@ class item_rest_Core {
     }
     $orm->order_by($order_by);
 
-    $members = array();
-    foreach ($orm->find_all() as $child) {
-      $members[] = rest::url("item", $child);
-    }
-
-    return array(
+    $result = array(
       "url" => $request->url,
       "entity" => $item->as_restful_array(),
-      "members" => $members,
       "relationships" => rest::relationships("item", $item));
+    if ($item->is_album()) {
+      $result["members"] = array();
+      foreach ($orm->find_all() as $child) {
+        $result["members"][] = rest::url("item", $child);
+      }
+    }
+
+    return $result;
   }
 
   static function put($request) {
