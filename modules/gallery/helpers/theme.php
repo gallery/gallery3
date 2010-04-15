@@ -73,12 +73,18 @@ class theme_Core {
     $group = $form->group("edit_theme");
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
+      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("valid_digit", t("You must enter a number"))
       ->value(module::get_var("gallery", "page_size"));
     $group->input("thumb_size")->label(t("Thumbnail size (in pixels)"))->id("g-thumb-size")
       ->rules("required|valid_digit")
+      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("valid_digit", t("You must enter a number"))
       ->value(module::get_var("gallery", "thumb_size"));
     $group->input("resize_size")->label(t("Resized image size (in pixels)"))->id("g-resize-size")
       ->rules("required|valid_digit")
+      ->error_messages("required", t("You must enter a number"))
+      ->error_messages("valid_digit", t("You must enter a number"))
       ->value(module::get_var("gallery", "resize_size"));
     $group->textarea("header_text")->label(t("Header text"))->id("g-header-text")
       ->value(module::get_var("gallery", "header_text"));
