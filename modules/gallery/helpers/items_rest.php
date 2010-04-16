@@ -24,19 +24,20 @@ class items_rest_Core {
 
     $items = array();
     if (isset($request->params->url)) {
-      foreach ($request->params->url as $url) {
+      foreach (json_decode($request->params->url) as $url) {
         $item = rest::resolve($url);
         if (access::can("view", $item)) {
-          $members = array();
+          $item_rest = array("url" => $url,
+                             "entity" => $item->as_restful_array(),
+                             "relationship" => rest::relationships("item", $item));
           if ($item->type == "album") {
+            $members = array();
             foreach ($item->children() as $child) {
               $members[] = rest::url("item", $child);
             }
+            $item_rest["members"] = $members;
           }
-          $items[] = array("url" => $url,
-                           "entity" => $item->as_restful_array(),
-                           "members" => $members,
-                           "relationship" => rest::relationships("item", $item));
+          $items[] = $item_rest;
         }
       }
     }
