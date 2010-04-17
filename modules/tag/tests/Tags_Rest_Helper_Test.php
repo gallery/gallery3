@@ -45,11 +45,12 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function post_test() {
-    access::allow(identity::everybody(), "edit", item::root());
+    identity::set_active_user(identity::guest());
 
     $request = new stdClass();
     $request->params = new stdClass();
-    $request->params->name = "test tag";
+    $request->params->entity = new stdClass();
+    $request->params->entity->name = "test tag";
     $this->assert_equal(
       array("url" => url::site("rest/tag/1")),
       tags_rest::post($request));
@@ -63,7 +64,8 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     try {
       $request = new stdClass();
       $request->params = new stdClass();
-      $request->params->name = "test tag";
+      $request->params->entity = new stdClass();
+      $request->params->entity->name = "test tag";
       tags_rest::post($request);
     } catch (Exception $e) {
       $this->assert_equal(403, $e->getCode());

@@ -67,41 +67,13 @@ class Tag_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       tag_rest::get($request));
   }
 
-  public function post_test() {
-    $tag = test::random_tag();
-
-    // Create an editable item to be tagged
-    $album = test::random_album();
-    access::allow(identity::everybody(), "edit", $album);
-
-    // Add the album to the tag
-    $request = new stdClass();
-    $request->url = rest::url("tag", $tag);
-    $request->params = new stdClass();
-    $request->params->url = rest::url("item", $album);
-    $this->assert_equal_array(
-      array("url" => rest::url("tag_item", $tag, $album)),
-      tag_rest::post($request));
-  }
-
-  public function post_with_no_item_url_test() {
-    $request = new stdClass();
-    try {
-      tag_rest::post($request);
-    } catch (Rest_Exception $e) {
-      $this->assert_equal(400, $e->getCode());
-      return;
-    }
-
-    $this->assert_true(false, "Shouldn't get here");
-  }
-
   public function put_test() {
     $tag = test::random_tag();
     $request = new stdClass();
     $request->url = rest::url("tag", $tag);
     $request->params = new stdClass();
-    $request->params->name = "new name";
+    $request->params->entity = new stdClass();
+    $request->params->entity->name = "new name";
 
     tag_rest::put($request);
     $this->assert_equal("new name", $tag->reload()->name);

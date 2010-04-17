@@ -42,13 +42,14 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
-            "members" => array(
-              rest::url("item", $photo1),
-              rest::url("item", $album2)),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
-                "members" => array()))),
+                "members" => array())),
+            "members" => array(
+              rest::url("item", $photo1),
+              rest::url("item", $album2)),
+            ),
       item_rest::get($request));
 
     $request->url = rest::url("item", $album1);
@@ -56,13 +57,14 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
-            "members" => array(
-              rest::url("item", $photo1),
-              rest::url("item", $album2)),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
-                "members" => array()))),
+                "members" => array())),
+            "members" => array(
+              rest::url("item", $photo1),
+              rest::url("item", $album2)),
+            ),
       item_rest::get($request));
 
     $request->url = rest::url("item", $album1);
@@ -70,14 +72,15 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
+            "relationships" => array(
+              "tags" => array(
+                "url" => rest::url("item_tags", $album1),
+                "members" => array())),
             "members" => array(
               rest::url("item", $photo1),
               rest::url("item", $album2),
               rest::url("item", $photo2)),
-            "relationships" => array(
-              "tags" => array(
-                "url" => rest::url("item_tags", $album1),
-                "members" => array()))),
+            ),
       item_rest::get($request));
   }
 
@@ -96,12 +99,13 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
-            "members" => array(
-              rest::url("item", $photo2)),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
-                "members" => array()))),
+                "members" => array())),
+            "members" => array(
+              rest::url("item", $photo2)),
+            ),
       item_rest::get($request));
   }
 
@@ -118,12 +122,13 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
-            "members" => array(
-              rest::url("item", $album2)),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
-                "members" => array() ))),
+                "members" => array())),
+            "members" => array(
+              rest::url("item", $album2)),
+            ),
       item_rest::get($request));
   }
 
@@ -134,7 +139,8 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
     $request->params = new stdClass();
-    $request->params->title = "my new title";
+    $request->params->entity = new stdClass();
+    $request->params->entity->title = "my new title";
 
     item_rest::put($request);
     $this->assert_equal("my new title", $album1->reload()->title);
@@ -147,8 +153,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
     $request->params = new stdClass();
-    $request->params->title = "my new title";
-    $request->params->slug = "not url safe";
+    $request->params->entity = new stdClass();
+    $request->params->entity->title = "my new title";
+    $request->params->entity->slug = "not url safe";
 
     try {
       item_rest::put($request);
@@ -166,9 +173,10 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
     $request->params = new stdClass();
-    $request->params->type = "album";
-    $request->params->name = "my album";
-    $request->params->title = "my album";
+    $request->params->entity = new stdClass();
+    $request->params->entity->type = "album";
+    $request->params->entity->name = "my album";
+    $request->params->entity->title = "my album";
     $response = item_rest::post($request);
     $new_album = rest::resolve($response["url"]);
 
@@ -183,10 +191,11 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
     $request->params = new stdClass();
-    $request->params->type = "album";
-    $request->params->name = "my album";
-    $request->params->title = "my album";
-    $request->params->slug = "not url safe";
+    $request->params->entity = new stdClass();
+    $request->params->entity->type = "album";
+    $request->params->entity->name = "my album";
+    $request->params->entity->title = "my album";
+    $request->params->entity->slug = "not url safe";
 
     try {
       item_rest::post($request);
@@ -205,8 +214,9 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request = new stdClass();
     $request->url = rest::url("item", $album1);
     $request->params = new stdClass();
-    $request->params->type = "photo";
-    $request->params->name = "my photo.jpg";
+    $request->params->entity = new stdClass();
+    $request->params->entity->type = "photo";
+    $request->params->entity->name = "my photo.jpg";
     $request->file = MODPATH . "gallery/tests/test.jpg";
     $response = item_rest::post($request);
     $new_photo = rest::resolve($response["url"]);

@@ -27,6 +27,7 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
 
   public function teardown() {
     list($_GET, $_POST, $_SERVER) = $this->_save;
+    identity::set_active_user(identity::admin_user());
   }
 
   public function login_test() {
