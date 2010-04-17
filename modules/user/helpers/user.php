@@ -76,6 +76,12 @@ class user_Core {
     }
   }
 
+  static function valid_username($text_input) {
+    if (!self::lookup_by_name($text_input->value)) {
+      $text_input->add_error("invalid_username", 1);
+    }
+  }
+
   /**
    * Create the hashed passwords.
    * @param string $password a plaintext password
