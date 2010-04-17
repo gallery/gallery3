@@ -72,7 +72,7 @@ class user_Core {
 
   static function valid_password($password_input) {
     if (!user::is_correct_password(identity::active_user(), $password_input->value)) {
-      $password_input->add_error("invalid", 1);
+      $password_input->add_error("invalid_password", 1);
     }
   }
 
