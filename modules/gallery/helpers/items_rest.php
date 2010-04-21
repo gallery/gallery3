@@ -29,7 +29,7 @@ class items_rest_Core {
         if (access::can("view", $item)) {
           $item_rest = array("url" => $url,
                              "entity" => $item->as_restful_array(),
-                             "relationship" => rest::relationships("item", $item));
+                             "relationships" => rest::relationships("item", $item));
           if ($item->type == "album") {
             $members = array();
             foreach ($item->children() as $child) {
