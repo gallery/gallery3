@@ -107,6 +107,7 @@ class Albums_Controller extends Items_Controller {
 
     if ($valid) {
       $album->save();
+      module::event("album_add_form_completed", $album, $form);
       log::success("content", "Created an album",
                    html::anchor("albums/$album->id", "view album"));
       message::success(t("Created album %album_title",

@@ -32,7 +32,7 @@ class Tag_Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->url = rest::url("tag_item", $tag, item::root());
     $this->assert_equal_array(
       array("url" => rest::url("tag_item", $tag, item::root()),
-            "members" => array(
+            "entity" => array(
               "tag" => rest::url("tag", $tag),
               "item" => rest::url("item", item::root()))),
       tag_item_rest::get($request));
