@@ -295,7 +295,6 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     } catch (ORM_Validation_Exception $e) {
       $this->assert_same(array("description" => "length",
                                "name" => "required",
-                               "slug" => "required",
                                "title" => "required",
                                "album_cover_item_id" => "invalid_item",
                                "parent_id" => "invalid",
