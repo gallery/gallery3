@@ -44,6 +44,7 @@ class Admin_Comments_Controller extends Admin_Controller {
     $page = max(Input::instance()->get("page"), 1);
 
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Manage comments");
     $view->content = new View("admin_comments.html");
     $view->content->counts = $this->_counts();
     $view->content->menu = $this->_menu($view->content->counts);

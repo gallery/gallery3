@@ -20,6 +20,7 @@
 class Admin_Digibug_Controller extends Admin_Controller {
   public function index() {
     $v = new Admin_View("admin.html");
+    $v->page_title = t("Digibug");
     $v->content = new View("admin_digibug.html");
     print $v;
   }

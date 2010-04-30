@@ -51,6 +51,7 @@ class Admin_Recaptcha_Controller extends Admin_Controller {
 
     recaptcha::check_config();
     $view = new Admin_View("admin.html");
+    $view->page_title = t("reCAPTCHA");
     $view->content = new View("admin_recaptcha.html");
     $view->content->public_key = module::get_var("recaptcha", "public_key");
     $view->content->private_key = module::get_var("recaptcha", "private_key");

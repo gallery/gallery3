@@ -20,6 +20,7 @@
 class Admin_Sidebar_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Manage sidebar");
     $view->content = new View("admin_sidebar.html");
     $view->content->csrf = access::csrf_token();
     $view->content->available = new View("admin_sidebar_blocks.html");

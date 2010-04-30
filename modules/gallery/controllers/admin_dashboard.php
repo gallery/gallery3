@@ -20,6 +20,7 @@
 class Admin_Dashboard_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Dashboard");
     $view->content = new View("admin_dashboard.html");
     $view->content->blocks = block_manager::get_html("dashboard_center");
     $view->sidebar = "<div id=\"g-admin-dashboard-sidebar\">" .

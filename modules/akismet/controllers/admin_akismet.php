@@ -50,6 +50,7 @@ class Admin_Akismet_Controller extends Admin_Controller {
 
     akismet::check_config();
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Akismet spam filtering");
     $view->content = new View("admin_akismet.html");
     $view->content->valid_key = $valid_key;
     $view->content->form = $form;

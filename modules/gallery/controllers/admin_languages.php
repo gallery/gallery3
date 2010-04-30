@@ -20,6 +20,7 @@
 class Admin_Languages_Controller extends Admin_Controller {
   public function index($share_translations_form=null) {
     $v = new Admin_View("admin.html");
+    $v->page_title = t("Languages and translations");
     $v->content = new View("admin_languages.html");
                 $v->content->available_locales = locales::available();
     $v->content->installed_locales = locales::installed();
