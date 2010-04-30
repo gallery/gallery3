@@ -30,6 +30,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
     }
 
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Gallery 2 import");
     $view->content = new View("admin_g2_import.html");
     $view->content->form = $this->_get_import_form();
     $view->content->version = '';

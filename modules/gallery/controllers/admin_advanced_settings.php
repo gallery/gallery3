@@ -20,6 +20,7 @@
 class Admin_Advanced_Settings_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Advanced settings");
     $view->content = new View("admin_advanced_settings.html");
     $view->content->vars = ORM::factory("var")
       ->order_by("module_name")

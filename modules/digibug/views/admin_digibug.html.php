@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <div class="g-block">
   <img src="<?= url::file("modules/digibug/images/digibug_logo.png") ?>" alt="Digibug logo" class="g-right"/>
-  <h1> <?= t("Digibug Photo Printing") ?> </h1>
+  <h1> <?= t("Digibug photo printing") ?> </h1>
   <div class="g-block-content">
     <p>
       <?= t("Turn your photos into a wide variety of prints, gifts and games!") ?>

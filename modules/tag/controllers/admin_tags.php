@@ -22,6 +22,7 @@ class Admin_Tags_Controller extends Admin_Controller {
     $filter = Input::instance()->get("filter");
 
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Manage tags");
     $view->content = new View("admin_tags.html");
     $view->content->filter = $filter;
 

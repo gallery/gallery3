@@ -16,7 +16,7 @@
 <? $column_tag_count = 0 ?>
 
 <div class="g-block">
-  <h1> <?= t("Tag Admin") ?> </h1>
+  <h1> <?= t("Manage tags") ?> </h1>
 
   <div class="g-block-content">
     <table id="g-tag-admin">

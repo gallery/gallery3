@@ -20,6 +20,7 @@
 class Admin_Themes_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Theme choice");
     $view->content = new View("admin_themes.html");
     $view->content->admin = module::get_var("gallery", "active_admin_theme");
     $view->content->site = module::get_var("gallery", "active_site_theme");
