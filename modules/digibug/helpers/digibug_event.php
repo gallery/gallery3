@@ -26,14 +26,17 @@ class digibug_event_Core {
         ->url(url::site("admin/digibug")));
   }
 
-  static function photo_menu($menu, $theme) {
+  static function site_menu($menu, $theme) {
     $item = $theme->item();
-    $menu->append(Menu::factory("link")
-                  ->id("digibug")
-                  ->label(t("Print with Digibug"))
-                  ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
-                  ->css_id("g-print-digibug-link")
-                  ->css_class("g-print-digibug-link ui-icon-print"));
+    if ($item->type == "photo") {
+      $menu->get("options_menu")
+        ->append(Menu::factory("link")
+                    ->id("digibug")
+                    ->label(t("Print with Digibug"))
+                    ->url(url::site("digibug/print_photo/$item->id?csrf=$theme->csrf"))
+                    ->css_id("g-print-digibug-link")
+                    ->css_class("g-print-digibug-link ui-icon-print"));
+    }
   }
 
   static function context_menu($menu, $theme, $item) {
