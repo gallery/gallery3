@@ -20,6 +20,7 @@
 class Admin_Users_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Users and groups");
     $view->content = new View("admin_users.html");
     $view->content->users = ORM::factory("user")->order_by("name", "ASC")->find_all();
     $view->content->groups = ORM::factory("group")->order_by("name", "ASC")->find_all();

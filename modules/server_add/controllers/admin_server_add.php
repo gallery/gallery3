@@ -20,6 +20,7 @@
 class Admin_Server_Add_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Add from server");
     $view->content = new View("admin_server_add.html");
     $view->content->form = $this->_get_admin_form();
     $paths = unserialize(module::get_var("server_add", "authorized_paths", "a:0:{}"));

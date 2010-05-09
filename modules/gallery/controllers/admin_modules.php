@@ -20,6 +20,7 @@
 class Admin_Modules_Controller extends Admin_Controller {
   public function index() {
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Modules");
     $view->content = new View("admin_modules.html");
     $view->content->available = module::available();
     print $view;

@@ -5,12 +5,13 @@
     "<?= $attrs["id"] ?>",
     {
       src: "<?= url::abs_file("lib/flowplayer.swf") ?>",
-      wmode: "transparent"
+      wmode: "transparent",
+      provider: "pseudostreaming"
     },
     {
       plugins: {
-        h264streaming: {
-          url: "<?= url::abs_file("lib/flowplayer.h264streaming.swf") ?>"
+        pseudostreaming: {
+          url: "<?= url::abs_file("lib/flowplayer.pseudostreaming.swf") ?>"
         },
         controls: {
           autoHide: 'always',

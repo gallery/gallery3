@@ -22,6 +22,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
     $name = module::get_var("watermark", "name");
 
     $view = new Admin_View("admin.html");
+    $view->page_title = t("Watermarks");
     $view->content = new View("admin_watermarks.html");
     if ($name) {
       $view->content->name = module::get_var("watermark", "name");
