@@ -50,6 +50,91 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       items_rest::get($request));
   }
 
+  public function get_url_filter_album_test() {
+    $album1 = test::random_album();
+    $photo1 = test::random_photo($album1);
+    $album2 = test::random_album($album1);
+    $photo2 = test::random_photo($album2);
+    $album1->reload();
+    $album2->reload();
+
+    $request = new stdClass();
+    $request->params = new stdClass();
+    $request->params->urls = json_encode(array(
+      rest::url("item", $photo1),
+      rest::url("item", $album2)));
+    $request->params->type = "album";
+    $this->assert_equal_array(
+      array(
+         array("url" => rest::url("item", $album2),
+               "entity" => $album2->as_restful_array(),
+               "relationships" => array(
+                 "tags" => array(
+                   "url" => rest::url("item_tags", $album2),
+                   "members" => array())),
+               "members" => array(
+                 rest::url("item", $photo2)))),
+      items_rest::get($request));
+  }
+
+  public function get_url_filter_photo_test() {
+    $album1 = test::random_album();
+    $photo1 = test::random_photo($album1);
+    $album2 = test::random_album($album1);
+    $photo2 = test::random_photo($album2);
+    $album1->reload();
+    $album2->reload();
+
+    $request = new stdClass();
+    $request->params = new stdClass();
+    $request->params->urls = json_encode(array(
+      rest::url("item", $photo1),
+      rest::url("item", $album2)));
+    $request->params->type = "photo";
+    $this->assert_equal_array(
+      array(
+        array("url" => rest::url("item", $photo1),
+              "entity" => $photo1->as_restful_array(),
+              "relationships" => array(
+                "tags" => array(
+                  "url" => rest::url("item_tags", $photo1),
+                  "members" => array())))),
+      items_rest::get($request));
+  }
+
+  public function get_url_filter_albums_photos_test() {
+    $album1 = test::random_album();
+    $photo1 = test::random_photo($album1);
+    $album2 = test::random_album($album1);
+    $photo2 = test::random_photo($album2);
+    $album1->reload();
+    $album2->reload();
+
+    $request = new stdClass();
+    $request->params = new stdClass();
+    $request->params->urls = json_encode(array(
+      rest::url("item", $photo1),
+      rest::url("item", $album2)));
+    $request->params->type = "photo,album";
+    $this->assert_equal_array(
+      array(
+        array("url" => rest::url("item", $photo1),
+              "entity" => $photo1->as_restful_array(),
+              "relationships" => array(
+                "tags" => array(
+                  "url" => rest::url("item_tags", $photo1),
+                  "members" => array()))),
+         array("url" => rest::url("item", $album2),
+               "entity" => $album2->as_restful_array(),
+               "relationships" => array(
+                 "tags" => array(
+                   "url" => rest::url("item_tags", $album2),
+                   "members" => array())),
+               "members" => array(
+                 rest::url("item", $photo2)))),
+      items_rest::get($request));
+  }
+
   public function get_ancestor_test() {
     $album1 = test::random_album();
     $photo1 = test::random_photo($album1);
