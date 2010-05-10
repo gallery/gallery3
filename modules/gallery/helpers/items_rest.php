@@ -19,23 +19,37 @@
  */
 class items_rest_Core {
   /**
-   * To retrieve a collection of items, you can specify the following query parameters to specify the
-   * type of the collection.  If both are specified, then the url parameter is used and the
-   * ancestor_for is ignored.
+   * To retrieve a collection of items, you can specify the following query parameters to specify
+   * the type of the collection.  If both are specified, then the url parameter is used and the
+   * ancestor_for is ignored.  Specifying the "type" parameter with the urls parameter, will
+   * filter the results based on the specified type.  Using the type parameter with the
+   * ancestor_for parameter makes no sense and will be ignored.
    *
    *   urls=url1,url2,url3
    *     return items that match the specified urls.  Typically used to return the member detail
    *
    *   ancestor_for=url
    *     return the ancestors of the specified item
+   *
+   *   type=<comma separate list of photo, movie or album>
+   *     limit the type to types in this list.  eg, "type=photo,movie"
    */
   static function get($request) {
     $items = array();
     if (isset($request->params->urls)) {
       foreach (json_decode($request->params->urls) as $url) {
+        if (isset($request->params->type)) {
+          $types = explode(",", $request->params->type);
+        }
         $item = rest::resolve($url);
         if (access::can("view", $item)) {
-          $items[] = items_rest::format_restful_item($item);
+          if (isset($types)) {
+            if (in_array($item->type, $types)) {
+              $items[] = items_rest::format_restful_item($item);
+            }
+          } else {
+            $items[] = items_rest::format_restful_item($item);
+          }
         }
       }
     } else if (isset($request->params->ancestor_for)) {
