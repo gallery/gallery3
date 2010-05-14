@@ -167,7 +167,7 @@ class gallery_event_Core {
     }
   }
 
-  static function site_menu($menu, $theme) {
+  static function site_menu($menu, $theme, $item_css_selector) {
     if ($theme->page_subtype != "login") {
       $menu->append(Menu::factory("link")
                     ->id("home")
@@ -239,6 +239,9 @@ class gallery_event_Core {
           }
         }
 
+        $csrf = access::csrf_token();
+        $theme_item = $theme->item();
+        $page_type = $theme->page_type();
         if ($item->is_photo() && graphics::can("rotate")) {
           $options_menu
             ->append(
@@ -247,7 +250,7 @@ class gallery_event_Core {
               ->label(t("Rotate 90° counter clockwise"))
               ->css_class("ui-icon-rotate-ccw")
               ->ajax_handler("function(data) { " .
-                             "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
+                             "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
               ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")))
             ->append(
               Menu::factory("ajax_link")
@@ -255,7 +258,7 @@ class gallery_event_Core {
               ->label(t("Rotate 90° clockwise"))
               ->css_class("ui-icon-rotate-cw")
               ->ajax_handler("function(data) { " .
-                             "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
+                             "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
               ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
         }
 

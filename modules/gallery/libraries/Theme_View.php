@@ -86,9 +86,9 @@ class Theme_View_Core extends Gallery_View {
     return $menu->render();
   }
 
-  public function site_menu() {
+  public function site_menu($item_css_selector) {
     $menu = Menu::factory("root");
-    module::event("site_menu", $menu, $this);
+    module::event("site_menu", $menu, $this, $item_css_selector);
     return $menu->render();
   }
 
