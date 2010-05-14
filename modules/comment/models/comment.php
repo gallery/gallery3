@@ -61,7 +61,7 @@ class Comment_Model extends ORM {
     if (!$array) {
       $this->rules = array(
         "guest_name"  => array("callbacks" => array(array($this, "valid_author"))),
-        "guest_email" => array("rules"     => array("email")),
+        "guest_email" => array("callbacks" => array(array($this, "valid_email"))),
         "guest_url"   => array("rules"     => array("url")),
         "item_id"     => array("callbacks" => array(array($this, "valid_item"))),
         "state"       => array("rules"     => array("Comment_Model::valid_state")),
@@ -141,6 +141,19 @@ class Comment_Model extends ORM {
       $v->add_error("author_id", "required");
     } else if ($this->author_id == identity::guest()->id && empty($this->guest_name)) {
       $v->add_error("guest_name", "required");
+    }
+  }
+
+  /**
+   * Make sure that the email address is legal.
+   */
+  public function valid_email(Validation $v, $field) {
+    if ($this->author_id == identity::guest()->id) {
+      if (empty($v->guest_email)) {
+        $v->add_error("guest_email", "required");
+      } else if (!valid::email($v->guest_email)) {
+        $v->add_error("guest_email", "invalid");
+      }
     }
   }
 
