@@ -58,12 +58,12 @@ class Quick_Controller extends Controller {
 
     if (Input::instance()->get("page_type") == "collection") {
       print json_encode(
-        array("src" => $item->thumb_url() . "?rnd=" . rand(),
+        array("src" => $item->thumb_url(),
               "width" => $item->thumb_width,
               "height" => $item->thumb_height));
     } else {
       print json_encode(
-        array("src" => $item->resize_url() . "?rnd=" . rand(),
+        array("src" => $item->resize_url(),
               "width" => $item->resize_width,
               "height" => $item->resize_height));
     }
