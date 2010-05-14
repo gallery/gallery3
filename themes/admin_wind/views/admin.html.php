@@ -6,7 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <title>
       <? if ($page_title): ?>
-        <?= $page_title ?>
+        Gallery Admin: <?= $page_title ?>
       <? else: ?>
         <?= t("Admin dashboard") ?>
       <? endif ?>
