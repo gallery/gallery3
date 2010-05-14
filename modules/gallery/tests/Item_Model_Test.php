@@ -363,4 +363,12 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(!array_key_exists("parent_id", $result));
     $this->assert_true(!array_key_exists("album_cover_item_id", $result));
   }
+
+  public function first_photo_becomes_album_cover() {
+    $album = test::random_album();
+    $photo = test::random_photo($album);
+    $album->reload();
+
+    $this->assert_same($photo->id, $album->album_cover_item_id);
+  }
 }
