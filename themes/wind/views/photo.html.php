@@ -27,7 +27,6 @@
     </a>
     <? endif ?>
     <?= $theme->resize_bottom($item) ?>
-    <?= $theme->context_menu($item, "#g-photo-id-{$item->id}") ?>
   </div>
 
   <div id="g-info">
