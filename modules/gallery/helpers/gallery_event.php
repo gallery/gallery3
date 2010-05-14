@@ -97,6 +97,17 @@ class gallery_event_Core {
 
   static function item_deleted($item) {
     access::delete_item($item);
+
+    $parent = $item->parent();
+    if (!$parent->album_cover_item_id) {
+      // Assume we deleted the album cover and pick a new one.  Choosing the first photo in the
+      // album is logical, but it's not the most efficient in the case where we're deleting all
+      // the photos in the album one at a time since we'll probably delete them in order which
+      // means that we'll be resetting the album cover each time.
+      if ($child = $parent->children(1)->current()) {
+        item::make_album_cover($child);
+      }
+    }
   }
 
   static function item_moved($item, $old_parent) {
