@@ -88,5 +88,4 @@ class items_rest_Core {
 
     return $item_rest;
   }
-
 }
