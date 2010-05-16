@@ -108,6 +108,9 @@ $(document).ready(function() {
       duration: 1000,
       hash: true
     });
+
+    $(this).find(".g-dialog-link").gallery_dialog();
+    $(this).find(".g-ajax-link").gallery_ajax();
   }
 
   // Initialize button hover effect

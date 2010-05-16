@@ -25,6 +25,7 @@ class Comment_Event_Test extends Gallery_Unit_Test_Case {
     $comment->item_id = $album->id;
     $comment->author_id = identity::guest()->id;
     $comment->guest_name = "test";
+    $comment->guest_email = "test@test.com";
     $comment->text = "text";
     $comment->save();
 

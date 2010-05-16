@@ -5,8 +5,7 @@
   <?= $theme->paginator() ?>
 
   <div id="g-movie" class="ui-helper-clearfix">
-    <?= $item->movie_img(array("class" => "g-movie", "id" => "g-movie-id-{$item->id}")) ?>
-    <?= $theme->context_menu($item, "#g-movie-id-{$item->id}") ?>
+    <?= $item->movie_img(array("class" => "g-movie", "id" => "g-item-id-{$item->id}")) ?>
   </div>
 
   <div id="g-info">

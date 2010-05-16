@@ -22,6 +22,37 @@ class Comment_Model_Test extends Gallery_Unit_Test_Case {
     identity::set_active_user(identity::admin_user());
   }
 
+  public function guest_name_and_email_is_required_test() {
+    try {
+      $comment = ORM::factory("comment");
+      $comment->item_id = item::root()->id;
+      $comment->author_id = identity::guest()->id;
+      $comment->text = "text";
+      $comment->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_equal(array("guest_name" => "required",
+                                "guest_email" => "required"),
+                          $e->validation->errors());
+      return;
+    }
+  }
+
+  public function guest_email_must_be_well_formed_test() {
+    try {
+      $comment = ORM::factory("comment");
+      $comment->item_id = item::root()->id;
+      $comment->author_id = identity::guest()->id;
+      $comment->guest_name = "guest";
+      $comment->guest_email = "bogus";
+      $comment->text = "text";
+      $comment->save();
+    } catch (ORM_Validation_Exception $e) {
+      $this->assert_equal(array("guest_email" => "invalid"),
+                          $e->validation->errors());
+      return;
+    }
+  }
+
   public function cant_view_comments_for_unviewable_items_test() {
     $album = test::random_album();
 

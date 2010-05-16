@@ -33,7 +33,9 @@ class comment_Core {
       ->error_messages("required", t("You must enter a name for yourself"));
     $group->input("email")
       ->label(t("Email (hidden)"))
-      ->id("g-email");
+      ->id("g-email")
+      ->error_messages("required", t("You must enter a valid email address"))
+      ->error_messages("invalid", t("You must enter a valid email address"));
     $group->input("url")
       ->label(t("Website (hidden)"))
       ->id("g-url");
@@ -45,13 +47,17 @@ class comment_Core {
     module::event("comment_add_form", $form);
     $group->submit("")->value(t("Add"))->class("ui-state-default ui-corner-all");
 
+    return $form;
+  }
+
+  static function prefill_add_form($form) {
     $active = identity::active_user();
     if (!$active->guest) {
+      $group = $form->add_comment;
       $group->inputs["name"]->value($active->full_name)->disabled("disabled");
       $group->email->value($active->email)->disabled("disabled");
       $group->url->value($active->url)->disabled("disabled");
     }
-
     return $form;
   }
 }

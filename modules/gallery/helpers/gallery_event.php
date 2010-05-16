@@ -167,7 +167,7 @@ class gallery_event_Core {
     }
   }
 
-  static function site_menu($menu, $theme) {
+  static function site_menu($menu, $theme, $item_css_selector) {
     if ($theme->page_subtype != "login") {
       $menu->append(Menu::factory("link")
                     ->id("home")
@@ -236,6 +236,63 @@ class gallery_event_Core {
                                     ->label(t("Edit permissions"))
                                     ->url(url::site("permissions/browse/$item->id")));
             }
+          }
+        }
+
+        $csrf = access::csrf_token();
+        $theme_item = $theme->item();
+        $page_type = $theme->page_type();
+        if ($item->is_photo() && graphics::can("rotate")) {
+          $options_menu
+            ->append(
+              Menu::factory("ajax_link")
+              ->id("rotate_ccw")
+              ->label(t("Rotate 90° counter clockwise"))
+              ->css_class("ui-icon-rotate-ccw")
+              ->ajax_handler("function(data) { " .
+                             "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
+              ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")))
+            ->append(
+              Menu::factory("ajax_link")
+              ->id("rotate_cw")
+              ->label(t("Rotate 90° clockwise"))
+              ->css_class("ui-icon-rotate-cw")
+              ->ajax_handler("function(data) { " .
+                             "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
+              ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+        }
+
+        if ($item->id != item::root()->id) {
+          $parent = $item->parent();
+          if (access::can("edit", $parent)) {
+            // We can't make this item the highlight if it's an album with no album cover, or if it's
+            // already the album cover.
+            if (($item->type == "album" && empty($item->album_cover_item_id)) ||
+                ($item->type == "album" && $parent->album_cover_item_id == $item->album_cover_item_id) ||
+                $parent->album_cover_item_id == $item->id) {
+              $disabledState = " ui-state-disabled";
+            } else {
+              $disabledState = " ";
+            }
+
+            if ($item->parent()->id != 1) {
+              $options_menu
+                ->append(
+                  Menu::factory("ajax_link")
+                  ->id("make_album_cover")
+                  ->label(t("Choose as the album cover"))
+                  ->css_class("ui-icon-star")
+                  ->ajax_handler("function(data) { window.location.reload() }")
+                  ->url(url::site("quick/make_album_cover/$item->id?csrf=$csrf")));
+            }
+            $options_menu
+              ->append(
+                Menu::factory("dialog")
+                ->id("delete")
+                ->label(t("Delete this photo"))
+                ->css_class("ui-icon-trash")
+                ->css_class("g-quick-delete")
+                ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
           }
         }
       }
@@ -394,7 +451,6 @@ class gallery_event_Core {
                    ->id("delete")
                    ->label($delete_title)
                    ->css_class("ui-icon-trash")
-                   ->css_class("g-quick-delete")
                    ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
       }
 

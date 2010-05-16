@@ -58,6 +58,7 @@ class Comments_Controller extends Controller {
               "view" => (string) $view,
               "form" => (string) comment::get_add_form($item)));
     } else {
+      $form = comment::prefill_add_form($form);
       print json_encode(array("result" => "error", "form" => (string) $form));
     }
   }
@@ -69,6 +70,6 @@ class Comments_Controller extends Controller {
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
 
-    print comment::get_add_form($item);
+    print comment::prefill_add_form(comment::get_add_form($item));
   }
 }
