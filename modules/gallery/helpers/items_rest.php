@@ -18,28 +18,60 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class items_rest_Core {
+  /**
+   * To retrieve a collection of items, you can specify the following query parameters to specify the
+   * type of the collection.  If both are specified, then the url parameter is used and the
+   * ancestor_for is ignored.
+   *
+   *   urls=url1,url2,url3
+   *     return items that match the specified urls.  Typically used to return the member detail
+   *
+   *   ancestor_for=url
+   *     return the ancestors of the specified item
+   */
   static function get($request) {
-
     $items = array();
-    if (isset($request->params->url)) {
-      foreach (json_decode($request->params->url) as $url) {
+    if (isset($request->params->urls)) {
+      foreach (json_decode($request->params->urls) as $url) {
         $item = rest::resolve($url);
         if (access::can("view", $item)) {
-          $item_rest = array("url" => $url,
-                             "entity" => $item->as_restful_array(),
-                             "relationship" => rest::relationships("item", $item));
-          if ($item->type == "album") {
-            $members = array();
-            foreach ($item->children() as $child) {
-              $members[] = rest::url("item", $child);
-            }
-            $item_rest["members"] = $members;
-          }
-          $items[] = $item_rest;
+          $items[] = items_rest::format_restful_item($item);
         }
       }
+    } else if (isset($request->params->ancestor_for)) {
+      $item = rest::resolve($request->params->ancestor_for);
+      if (!access::can("view", $item)) {
+        throw new Kohana_404_Exception();
+      }
+      $items[] = items_rest::format_restful_item($item);
+      while (($item = $item->parent()) != null) {
+        array_unshift($items, items_rest::format_restful_item($item));
+      };
     }
 
     return $items;
+  }
+
+  static function resolve($id) {
+    $item = ORM::factory("item", $id);
+    if (!access::can("view", $item)) {
+      throw new Kohana_404_Exception();
+    }
+    return $item;
+  }
+
+  private static function format_restful_item($item) {
+    $item_rest = array("url" => rest::url("item", $item),
+                       "entity" => $item->as_restful_array(),
+                       "relationships" => rest::relationships("item", $item));
+    if ($item->type == "album") {
+      $members = array();
+      foreach ($item->children() as $child) {
+        $members[] = rest::url("item", $child);
+      }
+      $item_rest["members"] = $members;
+    }
+
+    return $item_rest;
   }
 }
