@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Admin_Comments_Controller extends Admin_Controller {
+class Admin_Manage_Comments_Controller extends Admin_Controller {
   private static $items_per_page = 20;
 
   public function index() {
@@ -29,7 +29,7 @@ class Admin_Comments_Controller extends Admin_Controller {
       ->execute();
 
     // Redirect to the appropriate queue
-    url::redirect("admin/comments/queue/unpublished");
+    url::redirect("admin/manage_comments/queue/unpublished");
   }
 
   public function menu_labels() {
@@ -71,25 +71,25 @@ class Admin_Comments_Controller extends Admin_Controller {
                ->label(t2("Awaiting Moderation (%count)",
                           "Awaiting Moderation (%count)",
                           $counts->unpublished))
-               ->url(url::site("admin/comments/queue/unpublished")))
+               ->url(url::site("admin/manage_comments/queue/unpublished")))
       ->append(Menu::factory("link")
                ->id("published")
                ->label(t2("Approved (%count)",
                           "Approved (%count)",
                           $counts->published))
-               ->url(url::site("admin/comments/queue/published")))
+               ->url(url::site("admin/manage_comments/queue/published")))
       ->append(Menu::factory("link")
                ->id("spam")
                ->label(t2("Spam (%count)",
                           "Spam (%count)",
                           $counts->spam))
-               ->url(url::site("admin/comments/queue/spam")))
+               ->url(url::site("admin/manage_comments/queue/spam")))
       ->append(Menu::factory("link")
                ->id("deleted")
                ->label(t2("Recently Deleted (%count)",
                           "Recently Deleted (%count)",
                           $counts->deleted))
-               ->url(url::site("admin/comments/queue/deleted")));
+               ->url(url::site("admin/manage_comments/queue/deleted")));
   }
 
   private function _counts() {
@@ -127,7 +127,7 @@ class Admin_Comments_Controller extends Admin_Controller {
       ->delete("comments")
       ->where("state", "=", "spam")
       ->execute();
-    url::redirect("admin/comments/queue/spam");
+    url::redirect("admin/manage_comments/queue/spam");
   }
 }
 

@@ -1,7 +1,7 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
 <script type="text/javascript">
   var set_state_url =
-    <?= html::js_string(url::site("admin/comments/set_state/__ID__/__STATE__?csrf=$csrf")) ?>;
+    <?= html::js_string(url::site("admin/manage_comments/set_state/__ID__/__STATE__?csrf=$csrf")) ?>;
   function set_state(state, id) {
     $.get(set_state_url.replace("__STATE__", state).replace("__ID__", id),
           {},
@@ -12,7 +12,7 @@
   }
 
   var delete_url =
-    <?= html::js_string(url::site("admin/comments/delete/__ID__?csrf=$csrf")) ?>;
+    <?= html::js_string(url::site("admin/manage_comments/delete/__ID__?csrf=$csrf")) ?>;
 
   function del(id) {
     $.get(delete_url.replace("__ID__", id),
@@ -24,7 +24,7 @@
   }
 
   function update_menu() {
-    $.get(<?= html::js_string(url::site("admin/comments/menu_labels")) ?>, {},
+    $.get(<?= html::js_string(url::site("admin/manage_comments/menu_labels")) ?>, {},
           function(data) {
             for (var i = 0; i < data.length; i++) {
               $("#g-admin-comments-menu li:eq(" + i + ") a").html(data[i]);
@@ -73,7 +73,7 @@
                $counts->spam) ?>
       </p>
       <p>
-        <a href="<?= url::site("admin/comments/delete_all_spam?csrf=$csrf") ?>">
+        <a href="<?= url::site("admin/manage_comments/delete_all_spam?csrf=$csrf") ?>">
           <?= t("Delete all spam") ?>
         </a>
         <? else: ?>
