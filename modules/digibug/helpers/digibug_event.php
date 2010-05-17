@@ -28,7 +28,7 @@ class digibug_event_Core {
 
   static function site_menu($menu, $theme) {
     $item = $theme->item();
-    if ($item->type == "photo") {
+    if ($item && $item->type == "photo") {
       $menu->get("options_menu")
         ->append(Menu::factory("link")
                     ->id("digibug")
