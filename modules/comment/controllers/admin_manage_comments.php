@@ -45,7 +45,7 @@ class Admin_Manage_Comments_Controller extends Admin_Controller {
 
     $view = new Admin_View("admin.html");
     $view->page_title = t("Manage comments");
-    $view->content = new View("admin_comments.html");
+    $view->content = new View("admin_manage_comments.html");
     $view->content->counts = $this->_counts();
     $view->content->menu = $this->_menu($view->content->counts);
     $view->content->state = $state;
