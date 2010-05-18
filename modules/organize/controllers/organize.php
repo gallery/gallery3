@@ -42,7 +42,7 @@ class Organize_Controller extends Controller {
     $v->sort_fields = json_encode($sort_fields);
 
     $user = identity::active_user();
-    $v->api_key = rest::get_access_token($user->id)->access_key;
+    $v->api_key = rest::get_access_key($user->id)->access_key;
     print $v;
   }
 

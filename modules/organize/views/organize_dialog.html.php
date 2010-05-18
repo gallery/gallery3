@@ -22,10 +22,12 @@
 
 <script type="text/javascript">
       $("#g-dialog").bind("dialogclose", function(event, ui) {
+        // @todo do a call to organize/closing to end the batch
         window.location.reload();
       });
 
   function closeOrganizeDialog() {
+    console.log("closeOrganizeDialog");
     $("#g-dialog").dialog("close");
   }
 
@@ -37,12 +39,10 @@
       "rollOverColor": colorToHex($("#g-organize-hover").css("backgroundColor")),
       "selectionColor": colorToHex($("#g-organize-active").css("backgroundColor"))
     };
-    console.dir(styles);
     return styles;
   }
 
   function colorToHex(color) {
-    console.log("color: " + color);
     var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
 
     var red = parseInt(digits[2]);
@@ -81,13 +81,13 @@
   /* To use express install, set to playerProductInstall.swf, otherwise the empty string.*/
   var xiSwfUrlStr = "";
   var flashvars = {
-    selectedAlbum: "<?= $album->id?>",
     fileFilter: '<?= $file_filter ?>',
     domains: '["<?= $domain ?>"]',
     sortOrder: '<?= $sort_order ?>',
     sortFields: '<?= $sort_fields ?>',
     baseUrl: '<?= $base_url ?>',
     apiKey: '<?= $api_key ?>',
+    albumId: "<?= $album->id ?>",
     controller: '<?= url::abs_site("organize") ?>/'
   };
 
@@ -103,7 +103,7 @@
   attributes.id = "g-organize-object";
   attributes.name = "organize";
   attributes.align = "middle";
-  swfobject.embedSWF("<?= url::file("modules/organize/lib/organize.swf") ?>",
+  swfobject.embedSWF("<?= url::file("modules/organize/lib/Gallery3WebClient.swf") ?>",
                      "flashContent", size.width() - 100,  size.height() - 135,
                      swfVersionStr, xiSwfUrlStr, flashvars, params, attributes);
 </script>
