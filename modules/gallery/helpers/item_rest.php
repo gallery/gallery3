@@ -126,18 +126,19 @@ class item_rest_Core {
         }
       }
     }
+    $item->save();
 
-    $weight = 0;
     if (isset($request->params->members)) {
+      $weight = 0;
       foreach ($request->params->members as $url) {
         $child = rest::resolve($url);
         if ($child->parent_id == $item->id && $child->weight != $weight) {
-          $child->weight = $weight++;
+          $child->weight = $weight;
           $child->save();
         }
+        $weight++;
       }
     }
-    $item->save();
   }
 
   static function post($request) {
