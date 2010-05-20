@@ -28,8 +28,10 @@ class Organize_Controller extends Controller {
     $v = new View("organize_dialog.html");
     $v->album = $album;
     // @todo turn this into an api call.
-    $v->file_filter = json_encode(array("Images" => "*.jpg; *.jpeg; *.gif; *.png",
-                                        "Movies" => "*.flv; *.mp4"));
+    $v->file_filter = json_encode(
+      array("photo" => array("label" => "Images",
+                             "types" => array("*.jpg", "*.jpeg", "*.png", "*.gif")),
+            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4"))));
     $v->domain = $input->server("SERVER_NAME");
     // @todo figure out how to connect this w/o a dependency
     $v->base_url = url::abs_site("rest") . "/";
