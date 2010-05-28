@@ -61,12 +61,15 @@
       "deleteSelected": <?= t("Delete")->for_js() ?>,
       "uploadedText": <?= t("Uploaded {0}")->for_js() ?>,
       "removeFileText": <?= t("Remove")->for_js() ?>,
-      "totalFiles": <?= t("Total Files: {0}")->for_js() ?>,
-      "totalSize": <?= t("Total Size: {0}")->for_js() ?>,
       "bytes": <?= t("{0} bytes")->for_js() ?>,
       "kilobytes": <?= t("{0} KB")->for_js() ?>,
       "megabytes": <?= t("{0} MB")->for_js() ?>,
       "gigabytes": <?= t("{0} GB")->for_js() ?>,
+      "progressLabel":  <?= t("Completed image %1 of %2")->for_js() ?>,
+      "uploadLabel":  <?= t("Loaded %1 of %2 bytes")->for_js() ?>,
+      "moveTitle":  <?= t("Move images")->for_js() ?>,
+      "deleteTitle":  <?= t("Delete image")->for_js() ?>,
+      "uploadTitle":  <?= t("Upload image")->for_js() ?>,
       "cancel": <?= t("Cancel")->for_js() ?>,
       "close": <?= t("Close")->for_js() ?>
     };
