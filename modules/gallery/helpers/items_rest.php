@@ -45,10 +45,10 @@ class items_rest_Core {
         if (access::can("view", $item)) {
           if (isset($types)) {
             if (in_array($item->type, $types)) {
-              $items[] = items_rest::format_restful_item($item);
+              $items[] = items_rest::_format_restful_item($item);
             }
           } else {
-            $items[] = items_rest::format_restful_item($item);
+            $items[] = items_rest::_format_restful_item($item);
           }
         }
       }
@@ -57,9 +57,9 @@ class items_rest_Core {
       if (!access::can("view", $item)) {
         throw new Kohana_404_Exception();
       }
-      $items[] = items_rest::format_restful_item($item);
+      $items[] = items_rest::_format_restful_item($item);
       while (($item = $item->parent()) != null) {
-        array_unshift($items, items_rest::format_restful_item($item));
+        array_unshift($items, items_rest::_format_restful_item($item));
       };
     }
 
@@ -74,7 +74,7 @@ class items_rest_Core {
     return $item;
   }
 
-  private static function format_restful_item($item) {
+  private static function _format_restful_item($item) {
     $item_rest = array("url" => rest::url("item", $item),
                        "entity" => $item->as_restful_array(),
                        "relationships" => rest::relationships("item", $item));
