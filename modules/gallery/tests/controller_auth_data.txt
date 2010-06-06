@@ -1,4 +1,4 @@
-modules/comment/controllers/admin_comments.php               queue                DIRTY_CSRF
+modules/comment/controllers/admin_manage_comments.php        queue                DIRTY_CSRF
 modules/comment/helpers/comment_rss.php                      feed                 DIRTY_AUTH
 modules/digibug/controllers/digibug.php                      print_proxy          DIRTY_CSRF|DIRTY_AUTH
 modules/digibug/controllers/digibug.php                      close_window         DIRTY_AUTH
