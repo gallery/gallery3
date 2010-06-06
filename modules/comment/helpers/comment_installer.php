@@ -47,7 +47,8 @@ class comment_installer {
                DEFAULT CHARSET=utf8;");
 
     module::set_var("comment", "spam_caught", 0);
-    module::set_version("comment", 2);
+    module::set_var("comment", "access_permissions", "everybody");
+    module::set_version("comment", 3);
   }
 
   static function upgrade($version) {
@@ -55,6 +56,11 @@ class comment_installer {
     if ($version == 1) {
       $db->query("ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
       module::set_version("comment", 2);
+    }
+
+    if ($version == 2) {
+      module::set_var("comment", "access_permissions", "everybody");
+      module::set_version("comment", 3);
     }
   }
 
