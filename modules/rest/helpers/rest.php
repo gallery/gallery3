@@ -39,7 +39,12 @@ class rest_Core {
 
   static function set_active_user($access_key) {
     if (empty($access_key)) {
-      throw new Rest_Exception("Forbidden", 403);
+      if (module::get_var("rest", "allow_guest_access")) {
+        identity::set_active_user(identity::guest());
+        return;
+      } else {
+        throw new Rest_Exception("Forbidden", 403);
+      }
     }
 
     $key = ORM::factory("user_access_key")
