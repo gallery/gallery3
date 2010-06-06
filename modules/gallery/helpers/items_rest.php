@@ -21,14 +21,14 @@ class items_rest_Core {
   /**
    * To retrieve a collection of items, you can specify the following query parameters to specify
    * the type of the collection.  If both are specified, then the url parameter is used and the
-   * ancestor_for is ignored.  Specifying the "type" parameter with the urls parameter, will
+   * ancestors_for is ignored.  Specifying the "type" parameter with the urls parameter, will
    * filter the results based on the specified type.  Using the type parameter with the
-   * ancestor_for parameter makes no sense and will be ignored.
+   * ancestors_for parameter makes no sense and will be ignored.
    *
    *   urls=url1,url2,url3
    *     return items that match the specified urls.  Typically used to return the member detail
    *
-   *   ancestor_for=url
+   *   ancestors_for=url
    *     return the ancestors of the specified item
    *
    *   type=<comma separate list of photo, movie or album>
@@ -52,8 +52,8 @@ class items_rest_Core {
           }
         }
       }
-    } else if (isset($request->params->ancestor_for)) {
-      $item = rest::resolve($request->params->ancestor_for);
+    } else if (isset($request->params->ancestors_for)) {
+      $item = rest::resolve($request->params->ancestors_for);
       if (!access::can("view", $item)) {
         throw new Kohana_404_Exception();
       }
