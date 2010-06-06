@@ -215,7 +215,7 @@ class module_Core {
       }
     }
 
-    // Now the module is upgraded so deactivate it, but we can'it deactivae gallery or the
+    // Now the module is upgraded so deactivate it, but we can't deactivate gallery or the
     // current identity provider.
     $identity_provider = module::get_var("gallery", "identity_provider", "user");
     if (!in_array($module_name, array("gallery", $identity_provider)) ) {
