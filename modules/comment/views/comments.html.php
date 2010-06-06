@@ -1,9 +1,12 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
-  <a href="<?= url::site("form/add/comments/{$item->id}") ?>#comment-form" id="g-add-comment"
+<? if (comment::can_comment()): ?>
+<a href="<?= url::site("form/add/comments/{$item->id}") ?>#comment-form" id="g-add-comment"
    class="g-button ui-corner-all ui-icon-left ui-state-default">
   <span class="ui-icon ui-icon-comment"></span>
   <?= t("Add a comment") ?>
 </a>
+<? endif ?>
+
 <div id="g-comment-detail">
   <? if (!$comments->count()): ?>
   <p class="g-no-comments">

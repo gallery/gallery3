@@ -60,5 +60,10 @@ class comment_Core {
     }
     return $form;
   }
+
+  static function can_comment() {
+    return !identity::active_user()->guest ||
+      module::get_var("comment", "access_permissions") == "everybody";
+  }
 }
 

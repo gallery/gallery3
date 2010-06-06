@@ -24,6 +24,9 @@ class Comments_Controller extends Controller {
   public function create($id) {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
+    if (!comment::can_comment()) {
+      access::forbidden();
+    }
 
     $form = comment::get_add_form($item);
     try {
@@ -69,6 +72,9 @@ class Comments_Controller extends Controller {
   public function form_add($item_id) {
     $item = ORM::factory("item", $item_id);
     access::required("view", $item);
+    if (!comment::can_comment()) {
+      access::forbidden();
+    }
 
     print comment::prefill_add_form(comment::get_add_form($item));
   }

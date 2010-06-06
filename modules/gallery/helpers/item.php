@@ -209,17 +209,14 @@ class item_Core {
 
   /**
    * Return a query to get a random Item_Model, with optional filters
-   *
-   * @param array   (optional) where tuple
    */
-  static function random_query($where=null) {
+  static function random_query() {
     // Pick a random number and find the item that's got nearest smaller number.
     // This approach works best when the random numbers in the system are roughly evenly
     // distributed so this is going to be more efficient with larger data sets.
     return ORM::factory("item")
       ->viewable()
       ->where("rand_key", "<", ((float)mt_rand()) / (float)mt_getrandmax())
-      ->merge_where($where)
       ->order_by("rand_key", "DESC");
   }
 }

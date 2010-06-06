@@ -214,13 +214,6 @@ class module_Core {
         throw new Exception("@todo UNKNOWN_MODULE");
       }
     }
-
-    // Now the module is upgraded so deactivate it, but we can'it deactivae gallery or the
-    // current identity provider.
-    $identity_provider = module::get_var("gallery", "identity_provider", "user");
-    if (!in_array($module_name, array("gallery", $identity_provider)) ) {
-      self::deactivate($module_name);
-    }
     module::load_modules();
 
     $version_after = module::get_version($module_name);

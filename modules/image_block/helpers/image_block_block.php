@@ -31,7 +31,7 @@ class image_block_block_Core {
       // @todo Consider another fallback if further optimizations are necessary.
       $attempts = 0;
       do {
-        $item = item::random_query(array(array("type", "!=", "album")))->find_all(1)->current();
+        $item = item::random_query()->where("type", "!=", "album")->find_all(1)->current();
       } while (!$item && $attempts++ < 3);
       if ($item && $item->loaded()) {
         $block = new Block();

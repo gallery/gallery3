@@ -152,7 +152,7 @@ class item_rest_Core {
       $item->type = "album";
       $item->parent_id = $parent->id;
       $item->name = $entity->name;
-      $item->title = isset($entity->title) ? $entity->title : $name;
+      $item->title = isset($entity->title) ? $entity->title : $entity->name;
       $item->description = isset($entity->description) ? $entity->description : null;
       $item->slug = isset($entity->slug) ? $entity->slug : null;
       $item->save();

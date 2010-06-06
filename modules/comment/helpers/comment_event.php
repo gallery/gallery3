@@ -51,13 +51,11 @@ class comment_event_Core {
   }
 
   static function admin_menu($menu, $theme) {
-    /*
     $menu->get("settings_menu")
       ->append(Menu::factory("link")
                ->id("comment")
                ->label(t("Comments"))
                ->url(url::site("admin/comments")));
-    */
 
     $menu->get("content_menu")
       ->append(Menu::factory("link")
