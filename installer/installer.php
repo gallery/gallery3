@@ -225,6 +225,10 @@ class installer {
       $errors[] = "PHP is missing the <a href=\"http://php.net/manual/en/book.json.php\">JavaScript Object Notation (JSON) extension</a>.  Please install it.";
     }
 
+    if (!ini_get("short_open_tag")) {
+      $errors[] = "Gallery requires <a href=\"http://php.net/manual/en/ini.core.php\">short_open_tag</a> to be on.  Please enable it in your php.ini.";
+    }
+
     return @$errors;
   }
 
