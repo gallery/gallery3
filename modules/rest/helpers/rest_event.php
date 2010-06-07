@@ -29,6 +29,13 @@ class rest_event {
        ->execute();
   }
 
+
+  static function change_provider($new_provider) {
+    db::build()
+      ->delete("user_access_keys")
+      ->execute();
+  }
+
   /**
    * Called after a user has been added.  Just add a remote access key
    * on every add.
