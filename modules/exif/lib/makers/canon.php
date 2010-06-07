@@ -40,6 +40,7 @@ function lookup_Canon_tag($tag) {
 		case "0009": $tag = "OwnerName";break;
 		case "000c": $tag = "CameraSerialNumber";break;	
 		case "000f": $tag = "CustomFunctions";break;	
+		case "0095": $tag = "LensInfo";break;	
 		
 		default: $tag = "unknown:".$tag;break;
 	}
@@ -57,13 +58,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 	if($type=="ASCII") {
 		$result = $data = str_replace("\0", "", $data);
 	} else if($type=="URATIONAL" || $type=="SRATIONAL") {
-		$data = bin2hex($data);
-		if($intel==1) $data = intel2Moto($data);
-		$top = hexdec(substr($data,8,8));
-		$bottom = hexdec(substr($data,0,8));
-		if($bottom!=0) $data=$top/$bottom;
-		else if($top==0) $data = 0;
-		else $data=$top."/".$bottom;
+		$data = unRational($data,$type,$intel);
 	
 		if($tag=="0204") { //DigitalZoom
 			$data=$data."x";
@@ -71,7 +66,7 @@ function formatCanonData($type,$tag,$intel,$data,$exif,&$result) {
 		
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
 		
-		$data = bin2hex($data);
+		$data = rational($data,$type,$intel);
 		$result['RAWDATA'] = $data;
 	
 		if($tag=="0001") { //first chunk
@@ -377,20 +372,18 @@ function parseCanon($block,&$result,$seek, $globalOffset) {
 			//2 byte type
 		$type = bin2hex(substr($block,$place,2));$place+=2;
 		if($intel==1) $type = intel2Moto($type);
-		lookup_type($type,$size);
+		lookup_type($type,$size);		
 		
 			//4 byte count of number of data units
 		$count = bin2hex(substr($block,$place,4));$place+=4;
 		if($intel==1) $count = intel2Moto($count);
 		$bytesofdata = $size*hexdec($count);
-	
 		if($bytesofdata<=0) {
 			return; //if this value is 0 or less then we have read all the tags we can
 		}
 		
 			//4 byte value of data or pointer to data
 		$value = substr($block,$place,4);$place+=4;
-		
 		if($bytesofdata<=4) {
 			$data = $value;
 		} else {

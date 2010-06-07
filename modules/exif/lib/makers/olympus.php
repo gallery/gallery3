@@ -57,24 +57,17 @@ function formatOlympusData($type,$tag,$intel,$data) {
 	if($type=="ASCII") {
 		
 	} else if($type=="URATIONAL" || $type=="SRATIONAL") {
-		$data = bin2hex($data);
+		$data = unRational($data,$type,$intel);
 		if($intel==1) $data = intel2Moto($data);
-		$top = hexdec(substr($data,8,8));
-		$bottom = hexdec(substr($data,0,8));
-		if($bottom!=0) $data=$top/$bottom;
-		else if($top==0) $data = 0;
-		else $data=$top."/".$bottom;
 	
 		if($tag=="0204") { //DigitalZoom
 			$data=$data."x";
 		} 
 		if($tag=="0205") { //Unknown2
-			$data=$top."/".$bottom;
+
 		} 
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
-		$data = bin2hex($data);
-		if($intel==1) $data = intel2Moto($data);
-		$data=hexdec($data);
+		$data = rational($data,$type,$intel);
 		
 		if($tag=="0201") { //JPEGQuality
 			if($data == 1) $data = "SQ";
