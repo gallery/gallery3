@@ -242,7 +242,7 @@ class gallery_event_Core {
         $csrf = access::csrf_token();
         $theme_item = $theme->item();
         $page_type = $theme->page_type();
-        if ($item->is_photo() && graphics::can("rotate")) {
+        if ($can_edit && $item->is_photo() && graphics::can("rotate")) {
           $options_menu
             ->append(
               Menu::factory("ajax_link")
