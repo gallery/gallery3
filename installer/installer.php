@@ -187,45 +187,49 @@ class installer {
   }
 
   static function check_environment() {
-  if (!function_exists("mysql_query") && !function_exists("mysqli_set_charset")) {
-    $errors[] = "Gallery 3 requires a MySQL database, but PHP doesn't have either the <a href=\"http://php.net/mysql\">MySQL</a> or the  <a href=\"http://php.net/mysqli\">MySQLi</a> extension.";
-  }
+    if (!function_exists("mysql_query") && !function_exists("mysqli_set_charset")) {
+      $errors[] = "Gallery 3 requires a MySQL database, but PHP doesn't have either the <a href=\"http://php.net/mysql\">MySQL</a> or the  <a href=\"http://php.net/mysqli\">MySQLi</a> extension.";
+    }
 
-  if (!@preg_match("/^.$/u", utf8_encode("\xF1"))) {
-    $errors[] = "PHP is missing <a href=\"http://php.net/pcre\">Perl-Compatible Regular Expression</a> support.";
-  }
+    if (!@preg_match("/^.$/u", utf8_encode("\xF1"))) {
+      $errors[] = "PHP is missing <a href=\"http://php.net/pcre\">Perl-Compatible Regular Expression</a> support.";
+    }
 
-  if (!(function_exists("spl_autoload_register"))) {
-    $errors[] = "PHP is missing <a href=\"http://php.net/spl\">Standard PHP Library (SPL)</a> support";
-  }
+    if (!(function_exists("spl_autoload_register"))) {
+      $errors[] = "PHP is missing <a href=\"http://php.net/spl\">Standard PHP Library (SPL)</a> support";
+    }
 
-  if (!(class_exists("ReflectionClass"))) {
-    $errors[] = "PHP is missing <a href=\"http://php.net/reflection\">reflection</a> support";
-  }
+    if (!(class_exists("ReflectionClass"))) {
+      $errors[] = "PHP is missing <a href=\"http://php.net/reflection\">reflection</a> support";
+    }
 
-  if (!(function_exists("filter_list"))) {
-    $errors[] = "PHP is missing the <a href=\"http://php.net/filter\">filter extension</a>";
-  }
+    if (!(function_exists("filter_list"))) {
+      $errors[] = "PHP is missing the <a href=\"http://php.net/filter\">filter extension</a>";
+    }
 
-  if (!(extension_loaded("iconv"))) {
-    $errors[] = "PHP is missing the <a href=\"http://php.net/iconv\">iconv extension</a>";
-  }
+    if (!(extension_loaded("iconv"))) {
+      $errors[] = "PHP is missing the <a href=\"http://php.net/iconv\">iconv extension</a>";
+    }
 
-  if (!(extension_loaded("simplexml"))) {
-    $errors[] = "PHP is missing the <a href=\"http://php.net/simplexml\">SimpleXML extension</a>";
-  }
+    if (!(extension_loaded("simplexml"))) {
+      $errors[] = "PHP is missing the <a href=\"http://php.net/simplexml\">SimpleXML extension</a>";
+    }
 
-  if (!extension_loaded("mbstring")) {
-    $errors[] = "PHP is missing the <a href=\"http://php.net/mbstring\">mbstring extension</a>";
-  } else if (ini_get("mbstring.func_overload") & MB_OVERLOAD_STRING) {
-    $errors[] = "The <a href=\"http://php.net/mbstring\">mbstring extension</a> is overloading PHP's native string functions.  Please disable it.";
-  }
+    if (!extension_loaded("mbstring")) {
+      $errors[] = "PHP is missing the <a href=\"http://php.net/mbstring\">mbstring extension</a>";
+    } else if (ini_get("mbstring.func_overload") & MB_OVERLOAD_STRING) {
+      $errors[] = "The <a href=\"http://php.net/mbstring\">mbstring extension</a> is overloading PHP's native string functions.  Please disable it.";
+    }
 
-  if (!function_exists("json_encode")) {
-    $errors[] = "PHP is missing the <a href=\"http://php.net/manual/en/book.json.php\">JavaScript Object Notation (JSON) extension</a>.  Please install it.";
-  }
+    if (!function_exists("json_encode")) {
+      $errors[] = "PHP is missing the <a href=\"http://php.net/manual/en/book.json.php\">JavaScript Object Notation (JSON) extension</a>.  Please install it.";
+    }
 
-  return @$errors;
-}
+    if (!ini_get("short_open_tag")) {
+      $errors[] = "Gallery requires <a href=\"http://php.net/manual/en/ini.core.php\">short_open_tag</a> to be on.  Please enable it in your php.ini.";
+    }
+
+    return @$errors;
+  }
 
 }

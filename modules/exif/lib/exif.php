@@ -140,6 +140,8 @@
 	  
 	  + Fixed bug with newer Olympus cameras where number of fields was miscalculated leading to bad performance.
 		+ More logical fraction calculation for shutter speed.
+
+2009: For all further changes, see the Zenphoto change logs.
 		
 */
 
@@ -160,13 +162,11 @@ function intel2Moto($intel) {
 
 	$cache[$intel] = '';
 	$len  = strlen($intel);
-	if ($len > 1000) {
-		debugLogBacktrace('intel2Moto called with unreasonable data string: length='.$len);	
-		trigger_error(sprintf((string) t('intel2Moto called with unreasonable data string: length=%s. See debug log for details. (Setting DEBUG_EXIF to true might help locate problem images.)'),$len));
-	} else {
-		for($i = 0; $i <= $len; $i += 2) {		
-			$cache[$intel] .= substr($intel, $len-$i, 2);
-		}
+	if ($len > 1000) { // an unreasonable length, override it.
+		$len = 1000;
+	}
+	for($i = 0; $i <= $len; $i += 2) {		
+		$cache[$intel] .= substr($intel, $len-$i, 2);
 	}
 	return $cache[$intel];
 }
@@ -212,7 +212,7 @@ function lookup_tag($tag) {
 		case '8827': $tag = 'ISOSpeedRatings'; break;          // integer 0-65535
 		case '9000': $tag = 'ExifVersion'; break;              // ??
 		case '9003': $tag = 'DateTimeOriginal'; break;         // YYYY:MM:DD HH:MM:SS
-		case '9004': $tag = 'DateTimedigitized'; break;        // YYYY:MM:DD HH:MM:SS
+		case '9004': $tag = 'DateTimeDigitized'; break;        // YYYY:MM:DD HH:MM:SS
 		case '9101': $tag = 'ComponentsConfiguration'; break;  // ??
 		case '9102': $tag = 'CompressedBitsPerPixel'; break;   // positive rational number
 		case '9201': $tag = 'ShutterSpeedValue'; break;        // seconds or fraction of seconds 1/x
@@ -348,258 +348,321 @@ function lookup_type(&$type,&$size) {
 }
 
 //================================================================================================
+// processes a irrational number
+//================================================================================================
+function unRational($data, $type, $intel) {
+		$data = bin2hex($data);
+		if ($intel == 1) {
+			$data = intel2Moto($data);
+			$top = hexdec(substr($data,8,8));   // intel stores them bottom-top
+			$bottom = hexdec(substr($data,0,8));  // intel stores them bottom-top
+		} else {
+			$top = hexdec(substr($data,0,8));        // motorola stores them top-bottom
+			$bottom = hexdec(substr($data,8,8));      // motorola stores them top-bottom
+		}
+		
+		if ($type == 'SRATIONAL' && $top > 2147483647) $top = $top - 4294967296;    // this makes the number signed instead of unsigned
+		if ($bottom != 0)
+			$data=$top/$bottom;
+		else 
+			if ($top == 0)
+				$data = 0;
+			else
+				$data = $top.'/'.$bottom;
+	return $data;
+}
+
+//================================================================================================
+// processes a rational number
+//================================================================================================
+function rational($data,$type,$intel) {
+	if (($type == 'USHORT' || $type == 'SSHORT')) {
+		$data = substr($data,0,2);
+	}
+	$data = bin2hex($data);
+	if ($intel == 1) {
+		$data = intel2Moto($data);
+	}
+	$data = hexdec($data);
+	if ($type == 'SSHORT' && $data > 32767)     $data = $data - 65536;  // this makes the number signed instead of unsigned
+	if ($type == 'SLONG' && $data > 2147483647) $data = $data - 4294967296;  // this makes the number signed instead of unsigned
+	return $data;
+}
+
+//================================================================================================
 // Formats Data for the data type
 //================================================================================================
 function formatData($type,$tag,$intel,$data) {
-
-	if ($type == 'ASCII') {
-		// Search for a null byte and stop there.
-		if (($pos = strpos($data, chr(0))) !== false) {
-			$data = substr($data, 0, $pos);
-		}
-		// Format certain kinds of strings nicely (Camera make etc.)
-		if ($tag == '010f') $data = ucwords(strtolower(trim($data)));
-
-	} else if ($type == 'URATIONAL' || $type == 'SRATIONAL') {
-		$data = bin2hex($data);
-		if ($intel == 1) $data = intel2Moto($data);
-		
-		if ($intel == 1) $top = hexdec(substr($data,8,8));   // intel stores them bottom-top
-		else  $top = hexdec(substr($data,0,8));        // motorola stores them top-bottom
-		
-		if ($intel == 1) $bottom = hexdec(substr($data,0,8));  // intel stores them bottom-top
-		else  $bottom = hexdec(substr($data,8,8));      // motorola stores them top-bottom
-		
-		if ($type == 'SRATIONAL' && $top > 2147483647) $top = $top - 4294967296;    // this makes the number signed instead of unsigned
-		if ($bottom != 0) $data=$top/$bottom;
-		else if ($top == 0) $data = 0;
-		else $data = $top.'/'.$bottom;
-		
-		if (($tag == '011a' || $tag == '011b') && $bottom == 1) { // XResolution YResolution
-			$data = $top.' dots per ResolutionUnit';
-		} else if ($tag == '829a') { // Exposure Time
-			if ($bottom != 0) {
-				$data = $top / $bottom;
-			} else {
-				$data = 0;
+	switch ($type) {
+		case 'ASCII':
+			if (($pos = strpos($data, chr(0))) !== false) {	// Search for a null byte and stop there.
+				$data = substr($data, 0, $pos);
 			}
-			$data = formatExposure($data);
-		} else if ($tag == '829d') { // FNumber
-			$data = 'f/'.$data;
-		} else if ($tag == '9204') { // ExposureBiasValue
-			$data = round($data, 2) . ' EV';
-		} else if ($tag == '9205' || $tag == '9202') { // ApertureValue and MaxApertureValue
-			// ApertureValue is given in the APEX Mode. Many thanks to Matthieu Froment for this code
-			// The formula is : Aperture = 2*log2(FNumber) <=> FNumber = e((Aperture.ln(2))/2)
-			$data = exp(($data*log(2))/2);
-			$data = round($data, 1);// Focal is given with a precision of 1 digit.
-			$data='f/'.$data; 
-		} else if ($tag == '920a') { // FocalLength
-			$data = $data.' mm';
-		} else if ($tag == '9201') { // ShutterSpeedValue
-			// The ShutterSpeedValue is given in the APEX mode. Many thanks to Matthieu Froment for this code
-			// The formula is : Shutter = - log2(exposureTime) (Appendix C of EXIF spec.)
-			// Where shutter is in APEX, log2(exposure) = ln(exposure)/ln(2)
-			// So final formula is : exposure = exp(-ln(2).shutter)
-			// The formula can be developed : exposure = 1/(exp(ln(2).shutter))
-			$data = exp($data * log(2));
-			if ($data != 0) $data = 1/$data;
-			$data = formatExposure($data);
-		} 
-		
-	} else if ($type == 'USHORT' || $type == 'SSHORT' || $type == 'ULONG' || $type == 'SLONG' || $type == 'FLOAT' || $type == 'DOUBLE') {
-		$data = bin2hex($data);
-		if ($intel == 1) $data = intel2Moto($data);
-		if ($intel == 0 && ($type == 'USHORT' || $type == 'SSHORT')) $data = substr($data,0,4);
-		$data = hexdec($data);
-		
-		if ($type == 'SSHORT' && $data > 32767)     $data = $data - 65536;  // this makes the number signed instead of unsigned
-		if ($type == 'SLONG' && $data > 2147483647) $data = $data - 4294967296;  // this makes the number signed instead of unsigned
-		
-		if ($tag == '0112') { // Orientation
-			// Example of how all of these tag formatters should be...
-			switch ($data) {
-				case 1  :   $data = (string) t('1: Normal (0 deg)');      break;
-				case 2  :   $data = (string) t('2: Mirrored');            break;
-				case 3  :   $data = (string) t('3: Upsidedown');          break;
-				case 4  :   $data = (string) t('4: Upsidedown Mirrored'); break;
-				case 5  :   $data = (string) t('5: 90 deg CW Mirrored');  break;
-				case 6  :   $data = (string) t('6: 90 deg CCW');          break;
-				case 7  :   $data = (string) t('7: 90 deg CCW Mirrored'); break;
-				case 8  :   $data = (string) t('8: 90 deg CW');           break;
-				default :   $data = (string) t('Unknown').': '.$data;
+			if ($tag == '010f') $data = ucwords(strtolower(trim($data)));	// Format certain kinds of strings nicely (Camera make etc.)
+			break;
+		case 'URATIONAL':
+		case 'SRATIONAL':
+			switch ($tag) {
+				case '011a': // XResolution
+				case '011b': // YResolution
+					$data = round(unRational($data,$type,$intel)).' dots per ResolutionUnit';
+					break;
+				case '829a': // Exposure Time
+					$data = formatExposure(unRational($data,$type,$intel));
+					break;
+				case '829d': // FNumber
+					$data = 'f/'.unRational($data,$type,$intel);
+					break;
+				case '9204': // ExposureBiasValue
+					$data = round(unRational($data,$type,$intel), 2) . ' EV';
+					break;
+				case '9205': // ApertureValue
+				case '9202': // MaxApertureValue
+					// ApertureValue is given in the APEX Mode. Many thanks to Matthieu Froment for this code
+					// The formula is : Aperture = 2*log2(FNumber) <=> FNumber = e((Aperture.ln(2))/2)
+					$datum = exp((unRational($data,$type,$intel)*log(2))/2);
+					$data = round($datum, 1);// Focal is given with a precision of 1 digit.
+					$data='f/'.$datum; 
+					break;
+				case '920a': // FocalLength
+					$data = unRational($data,$type,$intel).' mm';
+					break;
+				case '9201': // ShutterSpeedValue
+					// The ShutterSpeedValue is given in the APEX mode. Many thanks to Matthieu Froment for this code
+					// The formula is : Shutter = - log2(exposureTime) (Appendix C of EXIF spec.)
+					// Where shutter is in APEX, log2(exposure) = ln(exposure)/ln(2)
+					// So final formula is : exposure = exp(-ln(2).shutter)
+					// The formula can be developed : exposure = 1/(exp(ln(2).shutter))
+					$datum = exp(unRational($data,$type,$intel) * log(2));
+					if ($datum != 0) $datum = 1/$datum;
+					$data = formatExposure($datum);
+					break;
+				default:
+					$data = unRational($data,$type,$intel);
+					break;
 			}
-			
-		} else if ($tag == '0128' || $tag == 'a210' || $tag == '0128') {  // ResolutionUnit and FocalPlaneResolutionUnit and ThumbnailResolutionUnit
-			if ($data == 1)         $data = (string) t('No Unit');
-			else if ($data == 2)    $data = (string) t('Inch');
-			else if ($data == 3)    $data = (string) t('Centimeter');
-			
-		} else if ($tag == '0213') { // YCbCrPositioning
-			if ($data == 1)         $data = (string) t('Center of Pixel Array');
-			else if ($data == 2)    $data = (string) t('Datum Point');
-			
-		} else if ($tag == '8822') { // ExposureProgram
-			if ($data == 1)         $data = (string) t('Manual');
-			else if ($data == 2)    $data = (string) t('Program');
-			else if ($data == 3)    $data = (string) t('Aperture Priority');
-			else if ($data == 4)    $data = (string) t('Shutter Priority');
-			else if ($data == 5)    $data = (string) t('Program Creative');
-			else if ($data == 6)    $data = (string) t('Program Action');
-			else if ($data == 7)    $data = (string) t('Portrat');
-			else if ($data == 8)    $data = (string) t('Landscape');
-			else                    $data = (string) t('Unknown').': '.$data;
-			
-		} else if ($tag == '9207') { // MeteringMode
-			if ($data == 0) $data = (string) t('Unknown');
-			else if ($data == 1)    $data = (string) t('Average');
-			else if ($data == 2)    $data = (string) t('Center Weighted Average');
-			else if ($data == 3)    $data = (string) t('Spot');
-			else if ($data == 4)    $data = (string) t('Multi-Spot');
-			else if ($data == 5)    $data = (string) t('Multi-Segment');
-			else if ($data == 6)    $data = (string) t('Partial');
-			else if ($data == 255)  $data = (string) t('Other');
-			else                    $data = (string) t('Unknown').': '.$data;
-			
-		} else if ($tag == '9208') { // LightSource
-			if ($data == 0) $data = (string) t('Unknown or Auto');
-			else if ($data == 1)    $data = (string) t('Daylight');
-			else if ($data == 2)    $data = (string) t('Flourescent');
-			else if ($data == 3)    $data = (string) t('Tungsten');	// 3 Tungsten (Incandescent light)
-										// 4 Flash
-										// 9 Fine Weather
-			else if ($data == 10)   $data = (string) t('Flash');	// 10 Cloudy Weather
-										// 11 Shade
-										// 12 Daylight Fluorescent (D 5700 - 7100K)
-										// 13 Day White Fluorescent (N 4600 - 5400K)
-										// 14 Cool White Fluorescent (W 3900 -4500K)
-										// 15 White Fluorescent (WW 3200 - 3700K)
-										// 10 Flash
-			else if ($data == 17)   $data = (string) t('Standard Light A');
-			else if ($data == 18)   $data = (string) t('Standard Light B');
-			else if ($data == 19)   $data = (string) t('Standard Light C');
-			else if ($data == 20)   $data = (string) t('D55');
-			else if ($data == 21)   $data = (string) t('D65');
-			else if ($data == 22)   $data = (string) t('D75');
-			else if ($data == 23)   $data = (string) t('D50');
-			else if ($data == 24)   $data = (string) t('ISO Studio Tungsten');
-			else if ($data == 255)  $data = (string) t('Other');
-			else                    $data = (string) t('Unknown').': '.$data;
-			
-		} else if ($tag == '9209') { // Flash
-			if ($data == 0) $data = (string) t('No Flash');
-			else if ($data == 1)    $data = (string) t('Flash');
-			else if ($data == 5)    $data = (string) t('Flash, strobe return light not detected');
-			else if ($data == 7)    $data = (string) t('Flash, strobe return light detected');
-			else if ($data == 9)    $data = (string) t('Compulsory Flash');
-			else if ($data == 13)   $data = (string) t('Compulsory Flash, Return light not detected');
-			else if ($data == 15)   $data = (string) t('Compulsory Flash, Return light detected');
-			else if ($data == 16)   $data = (string) t('No Flash');
-			else if ($data == 24)   $data = (string) t('No Flash');
-			else if ($data == 25)   $data = (string) t('Flash, Auto-Mode');
-			else if ($data == 29)   $data = (string) t('Flash, Auto-Mode, Return light not detected');
-			else if ($data == 31)   $data = (string) t('Flash, Auto-Mode, Return light detected');
-			else if ($data == 32)   $data = (string) t('No Flash');
-			else if ($data == 65)   $data = (string) t('Red Eye');
-			else if ($data == 69)   $data = (string) t('Red Eye, Return light not detected');
-			else if ($data == 71)   $data = (string) t('Red Eye, Return light detected');
-			else if ($data == 73)   $data = (string) t('Red Eye, Compulsory Flash');
-			else if ($data == 77)   $data = (string) t('Red Eye, Compulsory Flash, Return light not detected');
-			else if ($data == 79)   $data = (string) t('Red Eye, Compulsory Flash, Return light detected');
-			else if ($data == 89)   $data = (string) t('Red Eye, Auto-Mode');
-			else if ($data == 93)   $data = (string) t('Red Eye, Auto-Mode, Return light not detected');
-			else if ($data == 95)   $data = (string) t('Red Eye, Auto-Mode, Return light detected');
-			else                    $data = (string) t('Unknown').': '.$data;
-			
-		} else if ($tag == 'a001') { // ColorSpace
-			if ($data == 1)         $data = (string) t('sRGB');
-			else                    $data = (string) t('Uncalibrated');
-			
-		} else if ($tag == 'a002' || $tag == 'a003') { // ExifImageWidth/Height
-			$data = $data. ' '.(string) t('pixels');
-			
-		} else if ($tag == '0103') { // Compression
-			if ($data == 1)      $data = (string) t('No Compression');
-			else if ($data == 6) $data = (string) t('Jpeg Compression');
-			else                 $data = (string) t('Unknown').': '.$data;
-			
-		} else if ($tag == 'a217') { // SensingMethod
-			if ($data == 1)      $data = (string) t('Not defined');
-			if ($data == 2)      $data = (string) t('One Chip Color Area Sensor');
-			if ($data == 3)      $data = (string) t('Two Chip Color Area Sensor');
-			if ($data == 4)      $data = (string) t('Three Chip Color Area Sensor');
-			if ($data == 5)      $data = (string) t('Color Sequential Area Sensor');
-			if ($data == 7)      $data = (string) t('Trilinear Sensor');
-			if ($data == 8)      $data = (string) t('Color Sequential Linear Sensor');
-			else                 $data = (string) t('Unknown').': '.$data;
-			
-		} else if ($tag == '0106') { // PhotometricInterpretation
-			if ($data == 1)      $data = (string) t('Monochrome');
-			else if ($data == 2) $data = (string) t('RGB');
-			else if ($data == 6) $data = (string) t('YCbCr');
-			else                 $data = (string) t('Unknown').': '.$data;
-		}
-		//} else if($tag=="a408" || $tag=="a40a") { // Contrast, Sharpness
-		//	switch($data) {
-		//		case 0: $data="Normal"; break;
-		//		case 1: $data="Soft"; break;
-		//		case 2: $data="Hard"; break;
-		//		default: $data="Unknown"; break;
-		//	}
-		//} else if($tag=="a409") { // Saturation
-		//	switch($data) {
-		//		case 0: $data="Normal"; break;
-		//		case 1: $data="Low saturation"; break;
-		//		case 2: $data="High saturation"; break;
-		//		default: $data="Unknown"; break;
-		//	}
-		//} else if($tag=="a402") { // Exposure Mode
-		//	switch($data) {
-		//		case 0: $data="Auto exposure"; break;
-		//		case 1: $data="Manual exposure"; break;
-		//		case 2: $data="Auto bracket"; break;
-		//		default: $data="Unknown"; break;
-		//	}
-	
-	} else if ($type == 'UNDEFINED') {
-		
-		if ($tag == '9000' || $tag == 'a000' || $tag == '0002') { // ExifVersion,FlashPixVersion,InteroperabilityVersion
-			$data=(string) t('version').' '.$data/100;
-		}
-		if ($tag == 'a300') { // FileSource
+			break;
+		case 'USHORT':
+		case 'SSHORT':
+		case 'ULONG':
+		case 'SLONG':
+		case 'FLOAT':
+		case 'DOUBLE':
+			$data = rational($data,$type,$intel);
+			switch ($tag) {
+				case '0112':	// Orientation
+					// Example of how all of these tag formatters should be...
+					switch ($data) {
+						case 0	:		// not set, presume normal
+						case 1  :   $data = (string) t('1: Normal (0 deg)');      break;
+						case 2  :   $data = (string) t('2: Mirrored');            break;
+						case 3  :   $data = (string) t('3: Upside-down');          break;
+						case 4  :   $data = (string) t('4: Upside-down Mirrored'); break;
+						case 5  :   $data = (string) t('5: 90 deg CW Mirrored');  break;
+						case 6  :   $data = (string) t('6: 90 deg CCW');          break;
+						case 7  :   $data = (string) t('7: 90 deg CCW Mirrored'); break;
+						case 8  :   $data = (string) t('8: 90 deg CW');           break;
+						default :   $data = sprintf((string) t('%d: Unknown'),$data);	break;
+					}
+					break;
+				case '0128':	// ResolutionUnit
+				case 'a210':	// FocalPlaneResolutionUnit
+				case '0128':	// ThumbnailResolutionUnit
+					switch ($data) {
+						case 1:	$data = (string) t('No Unit');	break;
+						case 2:	$data = (string) t('Inch');	break;
+						case 3:	$data = (string) t('Centimeter');	break;
+					}
+					break;
+				case '0213':	// YCbCrPositioning
+					switch ($data) {
+						case 1:	$data = (string) t('Center of Pixel Array');	break;
+						case 2:	$data = (string) t('Datum Point');	break;
+					}
+					break;
+				case '8822':	// ExposureProgram
+					switch ($data) {
+						case 1:		$data = (string) t('Manual');	break;
+						case 2:		$data = (string) t('Program');	break;
+						case 3:		$data = (string) t('Aperture Priority');	break;
+						case 4:		$data = (string) t('Shutter Priority');	break;
+						case 5:		$data = (string) t('Program Creative');	break;
+						case 6:		$data = (string) t('Program Action');	break;
+						case 7:		$data = (string) t('Portrait');	break;
+						case 8:		$data = (string) t('Landscape');	break;
+						default:	$data = (string) t('Unknown').': '.$data;	break;
+					}
+					break;
+				case '9207':	// MeteringMode
+					switch ($data) {
+						case 1:		$data = (string) t('Average');	break;
+						case 2:		$data = (string) t('Center Weighted Average');	break;
+						case 3:		$data = (string) t('Spot');	break;
+						case 4:		$data = (string) t('Multi-Spot');	break;
+						case 5:		$data = (string) t('Pattern');	break;
+						case 6:		$data = (string) t('Partial');	break;
+						case 255:	$data = (string) t('Other');	break;
+						default:	$data = (string) t('Unknown').': '.$data;	break;
+					}
+					break;
+				case '9208':	// LightSource
+					switch ($data) {
+						case 1:		$data = (string) t('Daylight');	break;
+						case 2:				$data = (string) t('Fluorescent');	break;
+						case 3:			$data = (string) t('Tungsten');	break;	// 3 Tungsten (Incandescent light)
+													// 4 Flash
+													// 9 Fine Weather
+						case 10:		$data = (string) t('Flash');	break;	// 10 Cloudy Weather
+													// 11 Shade
+													// 12 Daylight Fluorescent (D 5700 - 7100K)
+													// 13 Day White Fluorescent (N 4600 - 5400K)
+													// 14 Cool White Fluorescent (W 3900 -4500K)
+													// 15 White Fluorescent (WW 3200 - 3700K)
+													// 10 Flash
+						case 17:		$data = (string) t('Standard Light A');	break;
+						case 18:		$data = (string) t('Standard Light B');	break;
+						case 19:		$data = (string) t('Standard Light C');	break;
+						case 20:		$data = (string) t('D55');	break;
+						case 21:		$data = (string) t('D65');	break;
+						case 22:		$data = (string) t('D75');	break;
+						case 23:		$data = (string) t('D50');	break;
+						case 24:		$data = (string) t('ISO Studio Tungsten');	break;
+						case 255:		$data = (string) t('Other');	break;
+						default:		$data = (string) t('Unknown').': '.$data;	break;
+					}
+					break;
+				case '9209':	// Flash
+					switch ($data) {
+						case 0:			$data = (string) t('No Flash');	break;
+						case 1:			$data = (string) t('Flash');	break;
+						case 5:			$data = (string) t('Flash, strobe return light not detected');	break;
+						case 7:			$data = (string) t('Flash, strobe return light detected');	break;
+						case 9:			$data = (string) t('Compulsory Flash');	break;
+						case 13:		$data = (string) t('Compulsory Flash, Return light not detected');	break;
+						case 15:		$data = (string) t('Compulsory Flash, Return light detected');	break;
+						case 16:		$data = (string) t('No Flash');	break;
+						case 24:		$data = (string) t('No Flash');	break;
+						case 25:		$data = (string) t('Flash, Auto-Mode');	break;
+						case 29:		$data = (string) t('Flash, Auto-Mode, Return light not detected');	break;
+						case 31:		$data = (string) t('Flash, Auto-Mode, Return light detected');	break;
+						case 32:		$data = (string) t('No Flash');	break;
+						case 65:		$data = (string) t('Red Eye');	break;
+						case 69:		$data = (string) t('Red Eye, Return light not detected');	break;
+						case 71:		$data = (string) t('Red Eye, Return light detected');	break;
+						case 73:		$data = (string) t('Red Eye, Compulsory Flash');	break;
+						case 77:		$data = (string) t('Red Eye, Compulsory Flash, Return light not detected');	break;
+						case 79:		$data = (string) t('Red Eye, Compulsory Flash, Return light detected');	break;
+						case 89:		$data = (string) t('Red Eye, Auto-Mode');	break;
+						case 93:		$data = (string) t('Red Eye, Auto-Mode, Return light not detected');	break;
+						case 95:		$data = (string) t('Red Eye, Auto-Mode, Return light detected');	break;
+						default:		$data = (string) t('Unknown').': '.$data;	break;
+					}
+					break;
+				case 'a001':	// ColorSpace
+					if ($data == 1)         $data = (string) t('sRGB');
+					else                    $data = (string) t('Uncalibrated');
+					break;
+				case 'a002':	// ExifImageWidth
+				case 'a003':	// ExifImageHeight
+					$data = $data. ' '.(string) t('pixels');
+					break;
+				case '0103':	// Compression
+					switch ($data) {
+						case 1:		$data = (string) t('No Compression');	break;
+						case 6:		$data = (string) t('Jpeg Compression');	break;
+						default:	$data = (string) t('Unknown').': '.$data;	break;
+					}
+					break;
+				case 'a217':	// SensingMethod
+					switch ($data) {
+						case 1:		$data = (string) t('Not defined');	break;
+						case 2:		$data = (string) t('One Chip Color Area Sensor');	break;
+						case 3:		$data = (string) t('Two Chip Color Area Sensor');	break;
+						case 4:		$data = (string) t('Three Chip Color Area Sensor');	break;
+						case 5:		$data = (string) t('Color Sequential Area Sensor');	break;
+						case 7:		$data = (string) t('Trilinear Sensor');	break;
+						case 8:		$data = (string) t('Color Sequential Linear Sensor');	break;
+						default:	$data = (string) t('Unknown').': '.$data;	break;
+					}
+					break;
+				case '0106':	// PhotometricInterpretation
+					switch ($data) {
+						case 1:		$data = (string) t('Monochrome');	break;
+						case 2:		$data = (string) t('RGB');	break;
+						case 6:		$data = (string) t('YCbCr');	break;
+						default:	$data = (string) t('Unknown').': '.$data;	break;
+					}
+					break;
+				//case "a408":	// Contrast
+				//case "a40a":	//Sharpness
+				//	switch($data) {
+				//		case 0: $data="Normal"; break;
+				//		case 1: $data="Soft"; break;
+				//		case 2: $data="Hard"; break;
+				//		default: $data="Unknown"; break;
+				//	}
+				//	break;
+				//case "a409":	// Saturation
+				//	switch($data) {
+				//		case 0: $data="Normal"; break;
+				//		case 1: $data="Low saturation"; break;
+				//		case 2: $data="High saturation"; break;
+				//		default: $data="Unknown"; break;
+				//	}
+				//	break;
+				//case "a402":	// Exposure Mode
+				//	switch($data) {
+				//		case 0: $data="Auto exposure"; break;
+				//		case 1: $data="Manual exposure"; break;
+				//		case 2: $data="Auto bracket"; break;
+				//		default: $data="Unknown"; break;
+				//	}
+				//	break;
+			}
+			break;
+		case 'UNDEFINED':
+			switch ($tag) {
+				case '9000':	// ExifVersion
+				case 'a000':	// FlashPixVersion
+				case '0002':	// InteroperabilityVersion
+					$data=(string) t('version').' '.$data/100;
+					break;
+				case 'a300':	// FileSource
+					$data = bin2hex($data);
+					$data = str_replace('00','',$data);
+					$data = str_replace('03',(string) t('Digital Still Camera'),$data);
+					break;
+				case 'a301':	// SceneType
+					$data = bin2hex($data);
+					$data = str_replace('00','',$data);
+					$data = str_replace('01',(string) t('Directly Photographed'),$data);
+					break;
+				case '9101':	// ComponentsConfiguration
+					$data = bin2hex($data);
+					$data = str_replace('01','Y',$data);
+					$data = str_replace('02','Cb',$data);
+					$data = str_replace('03','Cr',$data);
+					$data = str_replace('04','R',$data);
+					$data = str_replace('05','G',$data);
+					$data = str_replace('06','B',$data);
+					$data = str_replace('00','',$data);
+					break;
+				//case "9286":	//UserComment
+				//	$encoding	= rtrim(substr($data, 0, 8));
+				//	$data		= rtrim(substr($data, 8));
+				//	break;
+			}
+			break;
+		default:
 			$data = bin2hex($data);
-			$data = str_replace('00','',$data);
-			$data = str_replace('03',(string) t('Digital Still Camera'),$data);
-		}
-		if ($tag == 'a301') { // SceneType
-			$data = bin2hex($data);
-			$data = str_replace('00','',$data);
-			$data = str_replace('01',(string) t('Directly Photographed'),$data);
-		}
-		if ($tag == '9101') {  // ComponentsConfiguration
-			$data = bin2hex($data);
-			$data = str_replace('01','Y',$data);
-			$data = str_replace('02','Cb',$data);
-			$data = str_replace('03','Cr',$data);
-			$data = str_replace('04','R',$data);
-			$data = str_replace('05','G',$data);
-			$data = str_replace('06','B',$data);
-			$data = str_replace('00','',$data);
-		}
-		//if($tag=="9286") { //UserComment
-		//	$encoding	= rtrim(substr($data, 0, 8));
-		//	$data		= rtrim(substr($data, 8));
-		//}
-	} else {
-		$data = bin2hex($data);
-		if ($intel == 1) $data = intel2Moto($data);
+			if ($intel == 1) $data = intel2Moto($data);
+			break;
 	}
-	
 	return $data;
 }
 
 function formatExposure($data) {
-	if ($data > 0) {
+	if (strpos($data,'/')===false) {
 		if ($data > 1) {
 			return round($data, 2).' '.(string) t('sec');
 		} else {
@@ -666,30 +729,30 @@ function read_entry(&$result,$in,$seek,$intel,$ifd_name,$globalOffset) {
 		if ($result['VerboseOutput'] == 1) {
 			$result[$ifd_name]['MakerNote']['RawData'] = $data;
 		}
-		if (eregi('NIKON',$make)) {
+		if (preg_match('/NIKON/i',$make)) {
 			require_once(dirname(__FILE__).'/makers/nikon.php');
 			parseNikon($data,$result);
 			$result[$ifd_name]['KnownMaker'] = 1;
-		} else if (eregi('OLYMPUS',$make)) {
+		} else if (preg_match('/OLYMPUS/i',$make)) {
 			require_once(dirname(__FILE__).'/makers/olympus.php');
 			parseOlympus($data,$result,$seek,$globalOffset);
 			$result[$ifd_name]['KnownMaker'] = 1;
-		} else if (eregi('Canon',$make)) {
+		} else if (preg_match('/Canon/i',$make)) {
 			require_once(dirname(__FILE__).'/makers/canon.php');
 			parseCanon($data,$result,$seek,$globalOffset);
 			$result[$ifd_name]['KnownMaker'] = 1;
-		} else if (eregi('FUJIFILM',$make)) {
+		} else if (preg_match('/FUJIFILM/i',$make)) {
 			require_once(dirname(__FILE__).'/makers/fujifilm.php');
 			parseFujifilm($data,$result);
 			$result[$ifd_name]['KnownMaker'] = 1;
-		} else if (eregi('SANYO',$make)) {
+		} else if (preg_match('/SANYO/i',$make)) {
 			require_once(dirname(__FILE__).'/makers/sanyo.php');
 			parseSanyo($data,$result,$seek,$globalOffset);
 			$result[$ifd_name]['KnownMaker'] = 1;
-	} else if (eregi('Panasonic',$make)) { 
-		require_once(dirname(__FILE__).'/makers/panasonic.php'); 
-		parsePanasonic($data,$result,$seek,$globalOffset); 
-		$result[$ifd_name]['KnownMaker'] = 1; 
+		} else if (preg_match('/Panasonic/i',$make)) { 
+			require_once(dirname(__FILE__).'/makers/panasonic.php'); 
+			parsePanasonic($data,$result,$seek,$globalOffset); 
+			$result[$ifd_name]['KnownMaker'] = 1; 
 		} else {
 			$result[$ifd_name]['KnownMaker'] = 0;
 		}
@@ -709,9 +772,9 @@ function read_entry(&$result,$in,$seek,$intel,$ifd_name,$globalOffset) {
 				$data = bin2hex($data);
 				if ($intel == 1) $data = intel2Moto($data);
 			}
-			$result[$ifd_name][$tag_name.'_Verbose']['RawData'] = $data;
+		$result[$ifd_name][$tag_name.'_Verbose']['RawData'] = $data;
 		$result[$ifd_name][$tag_name.'_Verbose']['Type'] = $type;
-			$result[$ifd_name][$tag_name.'_Verbose']['Bytes'] = $bytesofdata;
+		$result[$ifd_name][$tag_name.'_Verbose']['Bytes'] = $bytesofdata;
 		}
 	}
 }
@@ -912,7 +975,7 @@ if ($result['ValidJpeg'] == 1) {
 	$v = fseek($in,$globalOffset+$ExitOffset);
 	if ($v == -1) {
 		$result['Errors'] = $result['Errors']+1;
-		$result['Error'][$result['Errors']] = (string) t('Couldnt Find SubIFD');
+		$result['Error'][$result['Errors']] = (string) t('Could not Find SubIFD');
 	}
 	
 	//===========================================================
@@ -932,7 +995,12 @@ if ($result['ValidJpeg'] == 1) {
 	}
 	
 	// Add the 35mm equivalent focal length:
-	$result['SubIFD']['FocalLength35mmEquiv'] = get35mmEquivFocalLength($result);
+	if (isset($result['IFD0']['FocalLengthIn35mmFilm']) && !isset($result['SubIFD']['FocalLengthIn35mmFilm'])) { // found in the wrong place
+		$result['SubIFD']['FocalLengthIn35mmFilm'] = $result['IFD0']['FocalLengthIn35mmFilm'];
+	}
+	if (!isset($result['SubIFD']['FocalLengthIn35mmFilm'])) {
+		$result['SubIFD']['FocalLengthIn35mmFilm'] = get35mmEquivFocalLength($result);
+	}
 	
 	// Check for IFD1
 	if (!isset($result['IFD1Offset']) || $result['IFD1Offset'] == 0) {
@@ -944,7 +1012,7 @@ if ($result['ValidJpeg'] == 1) {
 	$v = fseek($in,$globalOffset+$result['IFD1Offset']);
 	if ($v == -1) {
 		$result['Errors'] = $result['Errors']+1;
-		$result['Error'][$result['Errors']] = (string) t('Couldnt Find IFD1');
+		$result['Error'][$result['Errors']] = (string) t('Could not Find IFD1');
 	}
 	
 	//===========================================================
@@ -984,7 +1052,7 @@ if ($result['ValidJpeg'] == 1) {
 	$v = fseek($in,$globalOffset+$result['SubIFD']['ExifInteroperabilityOffset']);
 	if ($v == -1) {
 		$result['Errors'] = $result['Errors']+1;
-		$result['Error'][$result['Errors']] = (string) t('Couldnt Find InteroperabilityIFD');
+		$result['Error'][$result['Errors']] = (string) t('Could not Find InteroperabilityIFD');
 	}
 	
 	//===========================================================
@@ -1029,7 +1097,7 @@ function ConvertToFraction($v, &$n, &$d)
 //================================================================================================
 function get35mmEquivFocalLength(&$result) {
 	if (isset($result['SubIFD']['ExifImageWidth'])) {
-	$width = $result['SubIFD']['ExifImageWidth'];
+		$width = $result['SubIFD']['ExifImageWidth'];
 	} else {
 		$width = 0;
 	}
@@ -1055,19 +1123,13 @@ function get35mmEquivFocalLength(&$result) {
 	} else {
 		$fl = 0;
 	}
-	
+
 	if (($width != 0) && !empty($units) && !empty($xres) && !empty($fl) && !empty($width)) {
 		$ccdwidth = ($width * $unitfactor) / $xres;
 		$equivfl = $fl / $ccdwidth*36+0.5;
 		return $equivfl;
 	}
 	return null;
-}
-
-if (!function_exists('debugLogBacktrace')) {
-	// define this function for stand-alone uses if exifier
-	function debugLogBacktrace($msg) {
-	}
 }
 
 ?>

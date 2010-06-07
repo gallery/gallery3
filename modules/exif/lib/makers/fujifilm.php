@@ -44,7 +44,6 @@ function lookup_Fujifilm_tag($tag) {
 		case "1021": $tag = "FocusMode";break;	
 		case "1030": $tag = "SlowSync";break;	
 		case "1031": $tag = "PictureMode";break;	
-		case "1032": $tag = "Unknown";break;	
 		case "1100": $tag = "ContinuousTakingBracket";break;	
 		case "1200": $tag = "Unknown";break;	
 		case "1300": $tag = "BlurWarning";break;	
@@ -66,22 +65,14 @@ function formatFujifilmData($type,$tag,$intel,$data) {
 		
 		
 	} else if($type=="URATIONAL" || $type=="SRATIONAL") {
-		$data = bin2hex($data);
-		if($intel==1) $data = intel2Moto($data);
-		$top = hexdec(substr($data,8,8));
-		$bottom = hexdec(substr($data,0,8));
-		if($bottom!=0) $data=$top/$bottom;
-		else if($top==0) $data = 0;
-		else $data=$top."/".$bottom;
+		$data = unRational($data,$type,$intel);
 	
 		if($tag=="1011") { //FlashStrength
 			$data=$data." EV";
 		} 
 		
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
-		$data = bin2hex($data);
-		if($intel==1) $data = intel2Moto($data);
-		$data=hexdec($data);
+		$data =rational($data,$type,$intel);
 		
 		if($tag=="1001") { //Sharpness
 			if($data == 1) $data = (string) t("Soft");
