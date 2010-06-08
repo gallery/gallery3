@@ -78,9 +78,10 @@ class item_rest_Core {
     }
     $orm->order_by($order_by);
 
+    $preserve_ids = isset($p->preserve_ids) ? (bool)$p->preserve_ids : false;
     $result = array(
       "url" => $request->url,
-      "entity" => $item->as_restful_array(),
+      "entity" => $item->as_restful_array($preserve_ids),
       "relationships" => rest::relationships("item", $item));
     if ($item->is_album()) {
       $result["members"] = array();

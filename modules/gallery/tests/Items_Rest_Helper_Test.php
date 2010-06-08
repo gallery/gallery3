@@ -34,13 +34,13 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array(
         array("url" => rest::url("item", $photo1),
-              "entity" => $photo1->as_restful_array(),
+              "entity" => $photo1->as_restful_array(false),
               "relationships" => array(
                 "tags" => array(
                   "url" => rest::url("item_tags", $photo1),
                   "members" => array()))),
          array("url" => rest::url("item", $album2),
-               "entity" => $album2->as_restful_array(),
+               "entity" => $album2->as_restful_array(false),
                "relationships" => array(
                  "tags" => array(
                    "url" => rest::url("item_tags", $album2),
@@ -67,7 +67,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array(
          array("url" => rest::url("item", $album2),
-               "entity" => $album2->as_restful_array(),
+               "entity" => $album2->as_restful_array(false),
                "relationships" => array(
                  "tags" => array(
                    "url" => rest::url("item_tags", $album2),
@@ -94,7 +94,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array(
         array("url" => rest::url("item", $photo1),
-              "entity" => $photo1->as_restful_array(),
+              "entity" => $photo1->as_restful_array(false),
               "relationships" => array(
                 "tags" => array(
                   "url" => rest::url("item_tags", $photo1),
@@ -119,13 +119,13 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal_array(
       array(
         array("url" => rest::url("item", $photo1),
-              "entity" => $photo1->as_restful_array(),
+              "entity" => $photo1->as_restful_array(false),
               "relationships" => array(
                 "tags" => array(
                   "url" => rest::url("item_tags", $photo1),
                   "members" => array()))),
          array("url" => rest::url("item", $album2),
-               "entity" => $album2->as_restful_array(),
+               "entity" => $album2->as_restful_array(false),
                "relationships" => array(
                  "tags" => array(
                    "url" => rest::url("item_tags", $album2),
@@ -146,7 +146,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $root = ORM::factory("item", 1);
     $restful_root = array(
       "url" => rest::url("item", $root),
-      "entity" => $root->as_restful_array(),
+      "entity" => $root->as_restful_array(false),
       "relationships" => rest::relationships("item", $root));
     $restful_root["members"] = array();
     foreach ($root->children() as $child) {
@@ -155,12 +155,12 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
     $request = new stdClass();
     $request->params = new stdClass();
-    $request->params->ancestor_for = rest::url("item", $photo2);
+    $request->params->ancestors_for = rest::url("item", $photo2);
     $this->assert_equal_array(
       array(
         $restful_root,
         array("url" => rest::url("item", $album1),
-              "entity" => $album1->as_restful_array(),
+              "entity" => $album1->as_restful_array(false),
               "relationships" => array(
                 "tags" => array(
                   "url" => rest::url("item_tags", $album1),
@@ -170,7 +170,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
                 rest::url("item", $album2)),
             ),
         array("url" => rest::url("item", $album2),
-              "entity" => $album2->as_restful_array(),
+              "entity" => $album2->as_restful_array(false),
               "relationships" => array(
                 "tags" => array(
                   "url" => rest::url("item_tags", $album2),
@@ -178,11 +178,24 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
               "members" => array(
                 rest::url("item", $photo2))),
         array("url" => rest::url("item", $photo2),
-              "entity" => $photo2->as_restful_array(),
+              "entity" => $photo2->as_restful_array(false),
               "relationships" => array(
                 "tags" => array(
                   "url" => rest::url("item_tags", $photo2),
                   "members" => array())))),
       items_rest::get($request));
+  }
+
+  public function get_ancestor_with_ids_test() {
+    $album1 = test::random_album();
+    $photo1 = test::random_photo($album1);
+
+    $request = new stdClass();
+    $request->params = new stdClass();
+    $request->params->ancestors_for = rest::url("item", $photo1);
+    $request->params->preserve_ids = 1;
+
+    $response = items_rest::get($request);
+    $this->assert_same(item::root()->id, $response[1]["entity"]["parent_id"]); // Spot check
   }
 }
