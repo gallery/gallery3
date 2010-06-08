@@ -161,7 +161,7 @@ class item_rest_Core {
     case "photo":
     case "movie":
       if (empty($request->file)) {
-        throw new Rest_Exception("Bad Request: Upload failed", 400);
+        throw new Rest_Exception("file: Upload failed", 400);
       }
       $item->type = $entity->type;
       $item->parent_id = $parent->id;

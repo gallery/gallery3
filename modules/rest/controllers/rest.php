@@ -39,54 +39,82 @@ class Rest_Controller extends Controller {
   }
 
   public function __call($function, $args) {
-    $input = Input::instance();
-    $request = new stdClass();
-
-    switch ($method = strtolower($input->server("REQUEST_METHOD"))) {
-    case "get":
-      $request->params = (object) $input->get();
-      break;
-
-    default:
-      $request->params = (object) $input->post();
-      if (isset($_FILES["file"])) {
-        $request->file = upload::save("file");
-      }
-      break;
-    }
-
-    if (isset($request->params->entity)) {
-      $request->params->entity = json_decode($request->params->entity);
-    }
-    if (isset($request->params->members)) {
-      $request->params->members = json_decode($request->params->members);
-    }
-
-    $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
-    $request->access_key = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
-
-    if (empty($request->access_key) && !empty($request->params->access_key)) {
-      $request->access_key = $request->params->access_key;
-    }
-
-    $request->url = url::abs_current(true);
-
-    rest::set_active_user($request->access_key);
-
-    $handler_class = "{$function}_rest";
-    $handler_method = $request->method;
-
-    if (!method_exists($handler_class, $handler_method)) {
-      throw new Rest_Exception("Bad Request", 400);
-    }
-
     try {
-      rest::reply(call_user_func(array($handler_class, $handler_method), $request));
-    } catch (ORM_Validation_Exception $e) {
-      foreach ($e->validation->errors() as $key => $value) {
-        $msgs[] = "$key: $value";
+      $input = Input::instance();
+      $request = new stdClass();
+
+      switch ($method = strtolower($input->server("REQUEST_METHOD"))) {
+      case "get":
+        $request->params = (object) $input->get();
+        break;
+
+      default:
+        $request->params = (object) $input->post();
+        if (isset($_FILES["file"])) {
+          $request->file = upload::save("file");
+        }
+        break;
       }
-      throw new Rest_Exception("Bad Request: " . join(", ", $msgs), 400);
+
+      if (isset($request->params->entity)) {
+        $request->params->entity = json_decode($request->params->entity);
+      }
+      if (isset($request->params->members)) {
+        $request->params->members = json_decode($request->params->members);
+      }
+
+      $request->method = strtolower($input->server("HTTP_X_GALLERY_REQUEST_METHOD", $method));
+      $request->access_key = $input->server("HTTP_X_GALLERY_REQUEST_KEY");
+
+      if (empty($request->access_key) && !empty($request->params->access_key)) {
+        $request->access_key = $request->params->access_key;
+      }
+
+      $request->url = url::abs_current(true);
+
+      rest::set_active_user($request->access_key);
+
+      $handler_class = "{$function}_rest";
+      $handler_method = $request->method;
+
+      if (!method_exists($handler_class, $handler_method)) {
+        throw new Rest_Exception("Bad Request", 400);
+      }
+
+      $response = call_user_func(array($handler_class, $handler_method), $request);
+    } catch (Exception $e) {
+      $response = $this->_format_exception_response($e);
     }
+
+    rest::reply($response);
+  }
+
+  private function _format_exception_response($e) {
+    // Add this exception to the log
+    Kohana_Log::add('error', Kohana_Exception::text($e));
+
+    $e->sendHeaders();
+
+    $rest_exception = array();
+    if ($e instanceof ORM_Validation_Exception) {
+      $detail_response = true;
+      $rest_exception["code"] = 400;
+      $rest_exception["message"] = t("Validation errors");
+      $rest_exception["fields"] = $e->validation->errors;
+    } else if ($e instanceof Rest_Exception) {
+      $rest_exception["code"] = $e->getCode();
+      if ($e->getMessage() != "Bad Request") {
+         $rest_exception["message"] = "Bad Request";
+         $rest_exception["fields"] = array("type", $e->getMessage());
+     } else {
+        $rest_exception["message"] = $e->getMessage();
+      }
+      header("HTTP/1.1 400 Bad Request");
+    } else {
+      $rest_exception["code"] = 500;
+      $rest_exception["message"] = t("Remote server call failed. Please contact the Adminstrator.");
+    }
+
+    return $rest_exception;
   }
 }
