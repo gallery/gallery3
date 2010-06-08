@@ -64,11 +64,12 @@ if (PHP_SAPI == "cli") {
   case "test":
     array_splice($_SERVER["argv"], 1, 1, "gallery_unit_test");
     define("TEST_MODE", 1);
-    define("VARPATH", realpath("test/var") . "/");
-    if (!is_dir("test/var/logs")) {
+    if (!is_dir("test/var")) {
+      @mkdir("test/var", 0777, true);
       @mkdir("test/var/logs", 0777, true);
-      @copy("var/database.php", VARPATH . "database.php");
     }
+    @copy("var/database.php", "test/var/database.php");
+    define("VARPATH", realpath("test/var") . "/");
     break;
 
   default:
