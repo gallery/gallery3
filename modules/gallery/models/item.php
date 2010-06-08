@@ -924,17 +924,21 @@ class Item_Model extends ORM_MPTT {
   /**
    * Same as ORM::as_array() but convert id fields into their RESTful form.
    */
-  public function as_restful_array() {
+  public function as_restful_array($convert_ids=true) {
     // Convert item ids to rest URLs for consistency
     $data = $this->as_array();
-    if ($tmp = $this->parent()) {
-      $data["parent"] = rest::url("item", $tmp);
+
+    if ($convert_ids) {
+      if ($tmp = $this->parent()) {
+        $data["parent"] = rest::url("item", $tmp);
+      }
+      unset($data["parent_id"]);
+
+      if ($tmp = $this->album_cover()) {
+        $data["album_cover"] = rest::url("item", $tmp);
+      }
+      unset($data["album_cover_item_id"]);
     }
-    unset($data["parent_id"]);
-    if ($tmp = $this->album_cover()) {
-      $data["album_cover"] = rest::url("item", $tmp);
-    }
-    unset($data["album_cover_item_id"]);
 
     if (access::can("view_full", $this) && $this->is_photo()) {
       $data["file_url"] = $this->file_url(true);

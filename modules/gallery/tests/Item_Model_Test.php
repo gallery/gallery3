@@ -364,6 +364,18 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $this->assert_true(!array_key_exists("album_cover_item_id", $result));
   }
 
+  public function as_restful_array_with_ids_test() {
+    $album = test::random_album();
+    $photo = test::random_photo($album);
+    $album->reload();
+
+    $result = $album->as_restful_array(false);
+    $this->assert_same(item::root()->id, $result["parent_id"]);
+    $this->assert_same($photo->id, $result["album_cover_item_id"]);
+    $this->assert_true(!array_key_exists("parent", $result));
+    $this->assert_true(!array_key_exists("album_cover_item", $result));
+  }
+
   public function first_photo_becomes_album_cover() {
     $album = test::random_album();
     $photo = test::random_photo($album);
