@@ -24,7 +24,7 @@ class Rest_Exception_Core extends Kohana_Exception {
 
   public function sendHeaders() {
     if (!headers_sent()) {
-      header("HTTP/1.1 " . $this->getCode() . " " . $this->getMessage());
+      header("HTTP/1.1 " . $this->getCode() . "Bad Request");
     }
   }
 }
