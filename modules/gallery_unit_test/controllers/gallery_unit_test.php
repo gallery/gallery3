@@ -89,7 +89,9 @@ class Gallery_Unit_Test_Controller extends Controller {
         }
       }
 
-      // Clean out the filesystem
+      // Clean out the filesystem.  Note that this cleans out test/var/database.php, but that's ok
+      // because we technically don't need it anymore.  If this is confusing, we could always
+      // arrange to preserve that one file.
       @system("rm -rf test/var");
       @mkdir('test/var/logs', 0777, true);
 
