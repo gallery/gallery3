@@ -951,6 +951,7 @@ class Item_Model extends ORM_MPTT {
       $data["resize_url"] = $tmp;
     }
     $data["thumb_url"] = $this->thumb_url(true);
+    $data["can_edit"] = access::can("edit", $this);
 
     // Elide some internal-only data that is going to cause confusion in the client.
     foreach (array("relative_path_cache", "relative_url_cache", "left_ptr", "right_ptr",
