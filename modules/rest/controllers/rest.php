@@ -93,26 +93,28 @@ class Rest_Controller extends Controller {
     // Add this exception to the log
     Kohana_Log::add('error', Kohana_Exception::text($e));
 
-    $e->sendHeaders();
-
     $rest_exception = array();
     if ($e instanceof ORM_Validation_Exception) {
       $detail_response = true;
       $rest_exception["code"] = 400;
-      $rest_exception["message"] = t("Validation errors");
-      $rest_exception["fields"] = $e->validation->errors;
+      $rest_exception["message"] = "Validation errors";
+      $rest_exception["fields"] = $e->validation->errors();
     } else if ($e instanceof Rest_Exception) {
       $rest_exception["code"] = $e->getCode();
       if ($e->getMessage() != "Bad Request") {
          $rest_exception["message"] = "Bad Request";
          $rest_exception["fields"] = array("type", $e->getMessage());
-     } else {
+      } else {
         $rest_exception["message"] = $e->getMessage();
       }
-      header("HTTP/1.1 400 Bad Request");
     } else {
       $rest_exception["code"] = 500;
       $rest_exception["message"] = t("Remote server call failed. Please contact the Adminstrator.");
+    }
+
+    if (!headers_sent()) {
+      header($rest_exception["code"] == 500 ? "HTTP/1.1 500 Internal Server Error" :
+             "HTTP/1.1 400 Bad Request");
     }
 
     return $rest_exception;
