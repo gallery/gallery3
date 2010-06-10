@@ -4,6 +4,7 @@ modules/akismet/views/admin_akismet_stats.html.php           9   DIRTY_ATTR urle
 modules/comment/views/admin_block_recent_comments.html.php   4   DIRTY_ATTR text::alternate("g-even","g-odd")
 modules/comment/views/admin_block_recent_comments.html.php   5   DIRTY_ATTR $comment->author()->avatar_url(32,$theme->url(,true))
 modules/comment/views/admin_block_recent_comments.html.php   10  DIRTY    gallery::date_time($comment->created)
+modules/comment/views/admin_comments.html.php                5   DIRTY    $form
 modules/comment/views/admin_manage_comments.html.php         43  DIRTY    $menu->render()
 modules/comment/views/admin_manage_comments.html.php         107 DIRTY_ATTR $comment->id
 modules/comment/views/admin_manage_comments.html.php         107 DIRTY_ATTR text::alternate("g-odd","g-even")
@@ -32,8 +33,8 @@ modules/comment/views/comment.mrss.php                       29  DIRTY    $child
 modules/comment/views/comment.mrss.php                       34  DIRTY_ATTR $child->thumb_url
 modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $child->thumb_height
 modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $child->thumb_width
-modules/comment/views/comments.html.php                      18  DIRTY_ATTR $comment->id
-modules/comment/views/comments.html.php                      21  DIRTY_ATTR $comment->author()->avatar_url(40,$theme->url(,true))
+modules/comment/views/comments.html.php                      21  DIRTY_ATTR $comment->id
+modules/comment/views/comments.html.php                      24  DIRTY_ATTR $comment->author()->avatar_url(40,$theme->url(,true))
 modules/comment/views/user_profile_comments.html.php         5   DIRTY_ATTR $comment->id
 modules/comment/views/user_profile_comments.html.php         10  DIRTY_JS $comment->item()->url()
 modules/comment/views/user_profile_comments.html.php         11  DIRTY    $comment->item()->thumb_img(array(),50)

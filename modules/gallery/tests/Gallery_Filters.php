@@ -28,8 +28,10 @@ class GalleryCodeFilterIterator extends FilterIterator {
   public function accept() {
     // Skip anything that we didn"t write
     $path_name = $this->getInnerIterator()->getPathName();
+    $file_name = $this->getInnerIterator()->getFileName();
     return !(
-      strpos($path_name, ".svn") ||
+      $file_name == "." ||
+      $file_name == ".." ||
       strpos($path_name, DOCROOT . "test") !== false ||
       strpos($path_name, DOCROOT . "var") !== false ||
       strpos($path_name, MODPATH . "forge") !== false ||

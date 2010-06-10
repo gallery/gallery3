@@ -135,7 +135,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       items_rest::get($request));
   }
 
-  public function get_ancestor_test() {
+  public function get_ancestors_test() {
     $album1 = test::random_album();
     $photo1 = test::random_photo($album1);
     $album2 = test::random_album($album1);
@@ -155,7 +155,7 @@ class Items_Rest_Helper_Test extends Gallery_Unit_Test_Case {
 
     $request = new stdClass();
     $request->params = new stdClass();
-    $request->params->ancestor_for = rest::url("item", $photo2);
+    $request->params->ancestors_for = rest::url("item", $photo2);
     $this->assert_equal_array(
       array(
         $restful_root,
