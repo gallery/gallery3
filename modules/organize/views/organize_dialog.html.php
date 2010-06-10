@@ -31,6 +31,10 @@
     $("#g-dialog").dialog("close");
   }
 
+  function setTitle(title) {
+    $("#ui-dialog-title-g-dialog").text(<?= t("Organize: ")->for_js() ?> + title);
+  }
+
   function getOrganizeStyles() {
     var styles = {
       "color": colorToHex($("#g-organize").css("color")),
@@ -117,6 +121,6 @@
 <div id="g-organize" class="g-dialog-panel">
     <!-- The following spans are placeholders so we can load the hover and active styles for the flex component -->
     <span id="g-organize-hover" /><span id="g-organize-active" />
-  <h1 style="display:none"><?= t("Organize %name", array("name" => html::purify($album->title))) ?></h1>
+  <h1 style="display:none"><?= t("Organize: %name", array("name" => html::purify($album->title))) ?></h1>
     <div id="flashContent">&nbsp;</div>
 </div>
