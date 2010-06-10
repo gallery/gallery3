@@ -923,15 +923,12 @@ class Item_Model extends ORM_MPTT {
 
   /**
    * Same as ORM::as_array() but convert id fields into their RESTful form.
-   * Convert any item ids into REST urls
-   *
-   * @param bool preserve_ids true if we should preserve ids
    */
-  public function as_restful_array($preserve_ids) {
+  public function as_restful_array($convert_ids=true) {
     // Convert item ids to rest URLs for consistency
     $data = $this->as_array();
 
-    if (!$preserve_ids) {
+    if ($convert_ids) {
       if ($tmp = $this->parent()) {
         $data["parent"] = rest::url("item", $tmp);
       }

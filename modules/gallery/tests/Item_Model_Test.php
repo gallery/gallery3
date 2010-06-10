@@ -361,7 +361,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $photo = test::random_photo($album);
     $album->reload();
 
-    $result = $album->as_restful_array(false);
+    $result = $album->as_restful_array();
     $this->assert_same(rest::url("item", item::root()), $result["parent"]);
     $this->assert_same(rest::url("item", $photo), $result["album_cover"]);
     $this->assert_true(!array_key_exists("parent_id", $result));
@@ -373,7 +373,7 @@ class Item_Model_Test extends Gallery_Unit_Test_Case {
     $photo = test::random_photo($album);
     $album->reload();
 
-    $result = $album->as_restful_array(true);
+    $result = $album->as_restful_array(false);
     $this->assert_same(item::root()->id, $result["parent_id"]);
     $this->assert_same($photo->id, $result["album_cover_item_id"]);
     $this->assert_true(!array_key_exists("parent", $result));

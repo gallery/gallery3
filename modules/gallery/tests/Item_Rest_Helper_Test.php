@@ -28,17 +28,6 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_equal($album->id, $resolved->id);
   }
 
-  public function get_with_ids_test() {
-    $photo1 = test::random_photo(item::root());
-    $request = new stdClass();
-    $request->url = rest::url("item", $photo1);
-    $request->params = new stdClass();
-    $request->params->preserve_ids = 1;
-
-    $response = item_rest::get($request);
-    $this->assert_equal(item::root()->id, $response["entity"]["parent_id"]);    // Spot check
-  }
-
   public function get_scope_test() {
     $album1 = test::random_album();
     $photo1 = test::random_photo($album1);
@@ -52,7 +41,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params = new stdClass();
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_restful_array(false),
+            "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
@@ -67,7 +56,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->scope = "direct";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_restful_array(false),
+            "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
@@ -82,7 +71,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->scope = "all";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_restful_array(false),
+            "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
@@ -109,7 +98,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->name = "foo";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_restful_array(false),
+            "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
@@ -132,7 +121,7 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
     $request->params->type = "album";
     $this->assert_equal_array(
       array("url" => rest::url("item", $album1),
-            "entity" => $album1->as_restful_array(false),
+            "entity" => $album1->as_restful_array(),
             "relationships" => array(
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),

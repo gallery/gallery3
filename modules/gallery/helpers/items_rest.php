@@ -36,8 +36,6 @@ class items_rest_Core {
    */
   static function get($request) {
     $items = array();
-    $preserve_ids = isset($request->params->preserve_ids) ?
-      (bool)$request->params->preserve_ids : false;
     if (isset($request->params->urls)) {
       foreach (json_decode($request->params->urls) as $url) {
         if (isset($request->params->type)) {
@@ -47,10 +45,10 @@ class items_rest_Core {
         if (access::can("view", $item)) {
           if (isset($types)) {
             if (in_array($item->type, $types)) {
-              $items[] = items_rest::_format_restful_item($item, $preserve_ids);
+              $items[] = items_rest::_format_restful_item($item);
             }
           } else {
-            $items[] = items_rest::_format_restful_item($item, $preserve_ids);
+            $items[] = items_rest::_format_restful_item($item);
           }
         }
       }
@@ -59,9 +57,9 @@ class items_rest_Core {
       if (!access::can("view", $item)) {
         throw new Kohana_404_Exception();
       }
-      $items[] = items_rest::_format_restful_item($item, $preserve_ids);
+      $items[] = items_rest::_format_restful_item($item);
       while (($item = $item->parent()) != null) {
-        array_unshift($items, items_rest::_format_restful_item($item, $preserve_ids));
+        array_unshift($items, items_rest::_format_restful_item($item));
       };
     }
 
@@ -76,9 +74,9 @@ class items_rest_Core {
     return $item;
   }
 
-  private static function _format_restful_item($item, $preserve_ids) {
+  private static function _format_restful_item($item) {
     $item_rest = array("url" => rest::url("item", $item),
-                       "entity" => $item->as_restful_array($preserve_ids),
+                       "entity" => $item->as_restful_array(),
                        "relationships" => rest::relationships("item", $item));
     if ($item->type == "album") {
       $members = array();
