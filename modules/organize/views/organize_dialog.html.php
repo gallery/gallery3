@@ -56,6 +56,10 @@
   function getTextStrings() {
     var strings = {
       "statusText": <?= t("Drag and drop photos to re-order or move between album")->for_js() ?>,
+      "remoteError":
+        <?= t("Remote server error, please contact your gallery administrator")->for_js() ?>,
+      "addAlbumError": <?= t("The above highlighted fields are invalid")->for_js() ?>,
+      "errorOccurred": <?= t("Remote error ocurred")->for_js() ?>,
       "addAlbum": <?= t("Add album")->for_js() ?>,
       "addImages": <?= t("Add photo")->for_js() ?>,
       "deleteSelected": <?= t("Delete")->for_js() ?>,
