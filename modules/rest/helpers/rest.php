@@ -18,9 +18,12 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class rest_Core {
+  const API_VERSION = "3.0";
+
   static function reply($data=array()) {
     Session::instance()->abort_save();
 
+    header("X-Gallery-API-Version: " . rest::API_VERSION);
     if (Input::instance()->get("output") == "html") {
       header("Content-type: text/html");
       if ($data) {
