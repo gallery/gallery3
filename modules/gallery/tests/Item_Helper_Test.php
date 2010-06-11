@@ -41,6 +41,11 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
       ORM::factory("item")->viewable()->where("id", "=", $item->id)->count_all());
   }
 
+  public function convert_filename_to_title_test() {
+    $this->assert_equal("foo", item::convert_filename_to_title("foo.jpg"));
+    $this->assert_equal("foo.bar", item::convert_filename_to_title("foo.bar.jpg"));
+  }
+
   public function convert_filename_to_slug_test() {
     $this->assert_equal("foo", item::convert_filename_to_slug("{[foo]}"));
     $this->assert_equal("foo-bar", item::convert_filename_to_slug("{[foo!@#!$@#^$@($!(@bar]}"));
