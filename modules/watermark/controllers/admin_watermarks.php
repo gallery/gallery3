@@ -124,7 +124,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         array("result" => "success",
               "location" => url::site("admin/watermarks")));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      print json_encode(array("result" => "error", "form" => rawurlencode((string) $form)));
     }
   }
 
