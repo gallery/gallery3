@@ -73,8 +73,8 @@ class Albums_Controller extends Items_Controller {
 
     // We can't use math in ORM or the query builder, so do this by hand.  It's important
     // that we do this with math, otherwise concurrent accesses will damage accuracy.
-    db::query(
-      "UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $album->id");
+    db::query("UPDATE {items} SET `view_count` = `view_count` + 1 WHERE `id` = $album->id")
+      ->execute();
 
     print $template;
   }
