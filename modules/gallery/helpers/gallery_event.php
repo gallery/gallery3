@@ -157,11 +157,22 @@ class gallery_event_Core {
                       ->view("login_current_user.html")
                       ->url(user_profile::url($user->id))
                       ->label($user->display_name()));
+
+        if (isset($theme->item)) {
+          if (access::user_can(identity::guest(), "view", $theme->item)) {
+            $continue_url = $theme->item->abs_url();
+          } else {
+            $continue_url = item::root()->abs_url();
+          }
+        } else {
+          $continue_url = url::abs_current();
+        }
+
         $menu->append(Menu::factory("link")
                       ->id("user_menu_logout")
                       ->css_id("g-logout-link")
                       ->url(url::site("logout?csrf=$csrf&amp;continue=" .
-                                      urlencode(url::abs_current())))
+                                      urlencode($continue_url)))
                       ->label(t("Logout")));
       }
     }
