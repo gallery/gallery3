@@ -38,7 +38,10 @@ class Login_Controller extends Controller {
   }
 
   public function html() {
-    print auth::get_login_form("login/auth_html");
+    $view = new Theme_View("page.html", "other", "login");
+    $view->page_title = t("Login");
+    $view->content = auth::get_login_form("login/auth_html");
+    print $view;
   }
 
   public function auth_html() {
@@ -46,8 +49,8 @@ class Login_Controller extends Controller {
 
     list ($valid, $form) = $this->_auth("login/auth_html");
     if ($valid) {
-      url::redirect($form->continue_url->value ? $form->continue_url_value :
-                    item::root()->abs_url());
+      $continue_url = $form->continue_url->value;
+      url::redirect($continue_url ? $continue_url : item::root()->abs_url());
     } else {
       $view = new Theme_View("page.html", "other", "login");
       $view->page_title = t("Log in to Gallery");

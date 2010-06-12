@@ -22,7 +22,12 @@ class Admin_Controller extends Controller {
 
   public function __construct($theme=null) {
     if (!identity::active_user()->admin) {
-      access::forbidden();
+      if (identity::active_user()->guest) {
+        Session::instance()->set("continue_url", url::abs_current(true));
+        url::redirect("login");
+      } else {
+        access::forbidden();
+      }
     }
 
     parent::__construct();
