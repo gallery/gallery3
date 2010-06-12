@@ -44,10 +44,10 @@ class Login_Controller extends Controller {
   public function auth_html() {
     access::verify_csrf();
 
-    $continue_url = Session::instance()->get("continue_url", null);
     list ($valid, $form) = $this->_auth("login/auth_html");
     if ($valid) {
-      url::redirect($continue_url ? $continue_url : item::root()->abs_url());
+      url::redirect($form->continue_url->value ? $form->continue_url_value :
+                    item::root()->abs_url());
     } else {
       $view = new Theme_View("page.html", "other", "login");
       $view->page_title = t("Log in to Gallery");
