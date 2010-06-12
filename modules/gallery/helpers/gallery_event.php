@@ -171,7 +171,7 @@ class gallery_event_Core {
         $menu->append(Menu::factory("link")
                       ->id("user_menu_logout")
                       ->css_id("g-logout-link")
-                      ->url(url::site("logout?csrf=$csrf&amp;continue=" .
+                      ->url(url::site("logout?csrf=$csrf&amp;continue_url=" .
                                       urlencode($continue_url)))
                       ->label(t("Logout")));
       }
