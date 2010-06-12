@@ -767,6 +767,13 @@ class Item_Model extends ORM_MPTT {
   public function valid_slug(Validation $v, $field) {
     if (preg_match("/[^A-Za-z0-9-_]/", $this->slug)) {
       $v->add_error("slug", "not_url_safe");
+    } else if (db::build()
+        ->from("items")
+        ->where("parent_id", "=", $this->parent_id)
+        ->where("id", "<>", $this->id)
+        ->where("slug", "=", $this->slug)
+        ->count_records()) {
+      $v->add_error("slug", "conflict");
     }
   }
 
