@@ -60,25 +60,21 @@ jQuery.extend(Gallery, {
           $('#l10n-client').height('22em').removeClass('hidden');
 					//$('#l10n-client').slideUp();
 					$('#g-minimize-l10n').text("_");
-        /*
-         * This CSS clashes with Gallery's CSS, probably due to
-         * YUI's grid / floats.
-          if(!$.browser.msie) {
-              $('body').css('border-bottom', '22em solid #fff');
-          }
-        */
+	  // This CSS clashes with Gallery's CSS, probably due to
+	  // YUI's grid / floats.
+	  // if(!$.browser.msie) {
+	  //     $('body').css('border-bottom', '22em solid #fff');
+	  // }
           $.cookie('Gallery_l10n_client', '1', {expires: 7, path: '/'});
         break;
         case 0:
           $('#l10n-client-string-select, #l10n-client-string-editor, #l10n-client .labels .label').hide();
           $('#l10n-client').height('2em').addClass('hidden');
           // TODO: Localize this message
-					$('#g-minimize-l10n').text(MSG_TRANSLATE_TEXT);
-        /*
-          if(!$.browser.msie) {
-            $('body').css('border-bottom', '0px');
-          }
-        */
+          $('#g-minimize-l10n').text(MSG_TRANSLATE_TEXT);
+          // if(!$.browser.msie) {
+          //   $('body').css('border-bottom', '0px');
+          // }
           $.cookie('Gallery_l10n_client', '0', {expires: 7, path: '/'});
         break;
       }
