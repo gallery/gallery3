@@ -28,23 +28,24 @@ class Organize_Controller extends Controller {
     $v = new View("organize_dialog.html");
     $v->album = $album;
     // @todo turn this into an api call.
-    $v->file_filter = json_encode(
+    $v->file_filter = addslashes(json_encode(
       array("photo" => array("label" => "Images",
                              "types" => array("*.jpg", "*.jpeg", "*.png", "*.gif")),
-            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4"))));
+            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4")))));
     $v->domain = $input->server("SERVER_NAME");
     // @todo figure out how to connect this w/o a dependency
     $v->base_url = url::abs_site("rest") . "/";
 
-    $v->sort_order = json_encode(array("ASC" => (string)t("Ascending"), "DESC" => (string)t("Descending")));
+    $v->sort_order = addslashes(json_encode(array("ASC" => (string)t("Ascending"), "DESC" => (string)t("Descending"))));
     $sort_fields = array();
     foreach (album::get_sort_order_options() as $field => $description) {
       $sort_fields[$field] = (string)$description;
     }
-    $v->sort_fields = json_encode($sort_fields);
+    $v->sort_fields = addslashes(json_encode($sort_fields));
 
     $user = identity::active_user();
-    $v->api_key = rest::get_access_key($user->id)->access_key;
+    $v->access_key = rest::get_access_key($user->id)->access_key;
+    Kohana_Log::add("error", $v->__toString());
     print $v;
   }
 
