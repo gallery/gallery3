@@ -120,7 +120,7 @@
       <div class="g-block-content">
         <ul>
           <? foreach ($groups as $i => $group): ?>
-          <li id="g-group-<?= $group->id ?>" class="g-group g-left <?= ($group->special ? "g-default-group" : "") ?>" />
+          <li id="g-group-<?= $group->id ?>" class="g-group g-left <?= ($group->special ? "g-default-group" : "") ?>">
             <? $v = new View("admin_users_group.html"); $v->group = $group; ?>
             <?= $v ?>
           </li>
