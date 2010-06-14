@@ -45,7 +45,6 @@ class Organize_Controller extends Controller {
 
     $user = identity::active_user();
     $v->access_key = rest::get_access_key($user->id)->access_key;
-    Kohana_Log::add("error", $v->__toString());
     print $v;
   }
 
