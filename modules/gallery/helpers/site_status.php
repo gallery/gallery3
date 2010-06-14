@@ -100,7 +100,7 @@ class site_status_Core {
     }
     $buf = array();
     foreach (ORM::factory("message")->find_all() as $msg) {
-      $value = str_replace('__CSRF__', access::csrf_token(), $msg->value);
+      $value = str_replace("__CSRF__", access::csrf_token(), $msg->value);
       $buf[] = "<li class=\"" . self::severity_class($msg->severity) . "\">$value</li>";
     }
 

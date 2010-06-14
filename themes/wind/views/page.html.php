@@ -87,7 +87,7 @@
           <?= $theme->user_menu() ?>
           <?= $theme->header_top() ?>
 
-          <!-- hide the menu and make it visible after the page has loaded, to minimize menu flicker -->
+          <!-- hide the menu until after the page has loaded, to minimize menu flicker -->
           <div id="g-site-menu" style="visibility: hidden">
             <?= $theme->site_menu($theme->item() ? "#g-item-id-{$theme->item()->id}" : "") ?>
           </div>
