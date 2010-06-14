@@ -59,7 +59,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
   private static function _show_themed_error_page(Exception $e) {
     // Create a text version of the exception
     $error = Kohana_Exception::text($e);
-    
+
     // Add this exception to the log
     Kohana_Log::add('error', $error);
 
@@ -83,8 +83,6 @@ class Kohana_Exception extends Kohana_Exception_Core {
       if ($view->content->is_guest) {
         $view->content->login_form = new View("login_ajax.html");
         $view->content->login_form->form = auth::get_login_form("login/auth_html");
-        // Avoid anti-phishing protection by passing the url as session variable.
-        Session::instance()->set("continue_url", url::current(true));
       }
     } else {
       $view->page_title = t("Dang...  Something went wrong!");

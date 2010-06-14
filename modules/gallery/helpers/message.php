@@ -78,6 +78,7 @@ class message_Core {
 
     $messages = Session::instance()->get_once("messages", array());
     foreach ($messages as $msg) {
+      $msg[0] = str_replace("__CSRF__", access::csrf_token(), $msg[0]);
       $buf[] = "<li class=\"" . self::severity_class($msg[1]) . "\">$msg[0]</li>";
     }
     if ($buf) {

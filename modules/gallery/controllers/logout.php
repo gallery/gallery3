@@ -21,14 +21,9 @@ class Logout_Controller extends Controller {
   public function index() {
     access::verify_csrf();
     auth::logout();
-    if ($continue_url = Input::instance()->get("continue")) {
-      $item = url::get_item_from_uri($continue_url);
-      if (access::can("view", $item)) {
-        // Don't use url::redirect() because it'll call url::site() and munge the continue url.
-        header("Location: $continue_url");
-      } else {
-        url::redirect(item::root()->abs_url());
-      }
+    if ($continue_url = Input::instance()->get("continue_url")) {
+      url::redirect($continue_url);
     }
+    url::redirect(item::root()->abs_url());
   }
 }

@@ -42,7 +42,7 @@ class search_Core {
     $data = $db->query($query);
     $count = $db->query("SELECT FOUND_ROWS() as c")->current()->c;
 
-    return array($count, new ORM_Iterator(ORM::factory("item"), $db->query($query)));
+    return array($count, new ORM_Iterator(ORM::factory("item"), $data));
   }
 
   /**

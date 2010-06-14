@@ -53,9 +53,11 @@
           &larr; <?= t("back to the ...") ?>
         </a>
         <?= $theme->user_menu() ?>
-        <div id="g-site-admin-menu" class="ui-helper-clearfix">
+        <!-- hide the menu until after the page has loaded, to minimize menu flicker -->
+        <div id="g-site-admin-menu" class="ui-helper-clearfix" style="visibility: hidden">
           <?= $theme->admin_menu() ?>
         </div>
+        <script type="text/javascript"> $(document).ready(function() { $("#g-site-admin-menu").css("visibility", "visible"); }) </script>
         <?= $theme->admin_header_bottom() ?>
       </div>
       <div id="bd">

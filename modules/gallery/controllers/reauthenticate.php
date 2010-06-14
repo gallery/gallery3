@@ -37,8 +37,7 @@ class Reauthenticate_Controller extends Controller {
     if ($valid) {
       message::success(t("Successfully re-authenticated!"));
       module::event("user_auth", $user);
-      $continue_url = Session::instance()->get_once("continue_url", "admin");
-      url::redirect($continue_url);
+      url::redirect($form->continue_url->value);
     } else {
       $name = $user->name;
       log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
@@ -59,6 +58,7 @@ class Reauthenticate_Controller extends Controller {
   private static function _form() {
     $form = new Forge("reauthenticate/auth", "", "post", array("id" => "g-reauthenticate-form"));
     $form->set_attr('class', "g-narrow");
+    $form->hidden("continue_url")->value(Session::instance()->get("continue_url", "admin"));
     $group = $form->group("reauthenticate")->label(t("Re-authenticate"));
     $group->password("password")->label(t("Password"))->id("g-password")->class(null)
       ->callback("auth::validate_too_many_failed_auth_attempts")
