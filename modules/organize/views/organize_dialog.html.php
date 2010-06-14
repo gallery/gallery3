@@ -87,14 +87,17 @@
 
   function getGalleryParameters() {
     return {
-      fileFilter: "<?= $file_filter ?>",
+      dialogWidth: $("#g-dialog:parent").width(),
+      dialogHeight: $("#g-dialog").height(),
       domain: "<?= $domain ?>",
+      accessKey: "<?= $access_key ?>",
+      protocol: "<?= $protocol ?>",
+      fileFilter: "<?= $file_filter ?>",
       sortOrder: "<?= $sort_order ?>",
       sortFields: "<?= $sort_fields ?>",
-      baseUrl: "<?= $base_url ?>",
-      accessKey: "<?= $access_key ?>",
       albumId: "<?= $album->id ?>",
-      controller: "<?= url::abs_site("organize") ?>/"
+      restUri: "<?= url::site("rest") ?>/",
+      controller: "<?= url::site("organize") ?>/"
     };
   };
   /*

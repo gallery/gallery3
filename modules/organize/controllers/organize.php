@@ -45,6 +45,8 @@ class Organize_Controller extends Controller {
 
     $user = identity::active_user();
     $v->access_key = rest::get_access_key($user->id)->access_key;
+
+    $v->protocol = (empty($_SERVER["HTTPS"]) OR $_SERVER["HTTPS"] === "off") ? "http" : "https";
     print $v;
   }
 
