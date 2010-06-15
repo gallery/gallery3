@@ -52,7 +52,7 @@
       <table>
         <tr>
           <th> <?= t("Installed") ?> </th>
-          <th> <?= t("Name") ?> </th>
+          <th style="width: 8em"> <?= t("Name") ?> </th>
           <th> <?= t("Version") ?> </th>
           <th> <?= t("Description") ?> </th>
         </tr>
