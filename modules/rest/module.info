@@ -1,4 +1,4 @@
-name = "REST Access Module"
-description = "The RESTful implementation/interface to Gallery3"
+name = "REST API Module"
+description = "A REST-based API that allows desktop clients and other apps to interact with Gallery 3"
 
 version = 3
