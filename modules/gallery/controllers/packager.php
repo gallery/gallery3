@@ -163,9 +163,11 @@ class Packager_Controller extends Controller {
 
     $paths = array();
     foreach($objects as $name => $file){
-      if ($file->getBasename() == "database.php") {
+      $path = $file->getPath();
+      $basename = $file->getBasename();
+      if ($basename == "database.php" || $basename == "." || $basename == "..") {
         continue;
-      } else if (basename($file->getPath()) == "logs" && $file->getBasename() != ".htaccess") {
+      } else if (basename($path) == "logs" && $basename != ".htaccess") {
         continue;
       }
 
@@ -186,6 +188,7 @@ class Packager_Controller extends Controller {
     foreach ($paths as $path) {
       fwrite($fd, "!file_exists($path) && mkdir($path);\n");
     }
+    ksort($files);
     foreach ($files as $file => $contents) {
       fwrite($fd, "file_put_contents($file, base64_decode(\"$contents\"));\n");
     }
