@@ -65,12 +65,16 @@ class Simple_Uploader_Controller extends Controller {
         if (array_key_exists("extension", $path_info) &&
             in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
           $item->type = "movie";
-          $item->save();
+        } else {
+          $item->type = "photo";
+        }
+
+        item::save_with_retries($item);
+
+        if ($item->type == "movie") {
           log::success("content", t("Added a movie"),
                        html::anchor("movies/$item->id", t("view movie")));
         } else {
-          $item->type = "photo";
-          $item->save();
           log::success("content", t("Added a photo"),
                        html::anchor("photos/$item->id", t("view photo")));
         }
