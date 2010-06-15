@@ -128,7 +128,7 @@ class item_rest_Core {
     }
     $item->save();
 
-    if (isset($request->params->members)) {
+    if (isset($request->params->members) && $item->sort_column == "weight") {
       $weight = 0;
       foreach ($request->params->members as $url) {
         $child = rest::resolve($url);
