@@ -24,6 +24,15 @@ if (!file_exists(VARPATH . "database.php")) {
   url::redirect(url::abs_file("installer"));
 }
 
+// Simple and cheap test to make sure that the database config is ok.  Do this before we do
+// anything else database related.
+try {
+  Database::instance()->connect();
+} catch (Kohana_PHP_Exception $e) {
+  print "Database configuration error.  Please check var/database.php";
+  exit;
+}
+
 Event::add("system.ready", array("Gallery_I18n", "instance"));
 Event::add("system.ready", array("module", "load_modules"));
 Event::add("system.ready", array("gallery", "ready"));
