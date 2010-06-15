@@ -99,7 +99,7 @@ class item_rest_Core {
     if ($entity = $request->params->entity) {
       // Only change fields from a whitelist.
       foreach (array("album_cover", "captured", "description",
-                     "height", "mime_type", "name", "parent", "rand_key", "resize_dirty",
+                     "height", "mime_type", "name", "rand_key", "resize_dirty",
                      "resize_height", "resize_width", "slug", "sort_column", "sort_order",
                      "thumb_dirty", "thumb_height", "thumb_width", "title", "view_count",
                      "width") as $key) {
@@ -113,11 +113,6 @@ class item_rest_Core {
           break;
 
         case "parent":
-          if (property_exists($entity, "parent")) {
-            $parent = rest::resolve($entity->parent);
-            access::required("edit", $parent);
-            $item->parent_id = $parent->id;
-          }
           break;
         default:
           if (property_exists($entity, $key)) {
@@ -125,8 +120,15 @@ class item_rest_Core {
           }
         }
       }
+
+      // There is an explicit save in item::move
+      if (property_exists($entity, "parent")) {
+        $parent = rest::resolve($entity->parent);
+        item::move($item, $parent);
+      } else {
+        $item->save();
+      }
     }
-    $item->save();
 
     if (isset($request->params->members) && $item->sort_column == "weight") {
       $weight = 0;
