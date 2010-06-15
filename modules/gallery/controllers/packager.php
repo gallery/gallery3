@@ -63,8 +63,8 @@ class Packager_Controller extends Controller {
 
     module::load_modules();
 
-    foreach (array("user", "comment", "organize", "info", "rss",
-                   "search", "slideshow", "tag") as $module_name) {
+    foreach (array("user", "comment", "organize", "info", "rest",
+                   "rss", "search", "slideshow", "tag") as $module_name) {
       module::install($module_name);
       module::activate($module_name);
     }

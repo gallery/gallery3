@@ -238,17 +238,18 @@ CREATE TABLE {modules} (
   `version` int(9) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {modules} VALUES (1,1,'gallery',30);
 INSERT INTO {modules} VALUES (2,1,'user',3);
 INSERT INTO {modules} VALUES (3,1,'comment',3);
 INSERT INTO {modules} VALUES (4,1,'organize',1);
 INSERT INTO {modules} VALUES (5,1,'info',1);
-INSERT INTO {modules} VALUES (6,1,'rss',1);
-INSERT INTO {modules} VALUES (7,1,'search',1);
-INSERT INTO {modules} VALUES (8,1,'slideshow',2);
-INSERT INTO {modules} VALUES (9,1,'tag',1);
+INSERT INTO {modules} VALUES (6,1,'rest',3);
+INSERT INTO {modules} VALUES (7,1,'rss',1);
+INSERT INTO {modules} VALUES (8,1,'search',1);
+INSERT INTO {modules} VALUES (9,1,'slideshow',2);
+INSERT INTO {modules} VALUES (10,1,'tag',1);
 DROP TABLE IF EXISTS {outgoing_translations};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -345,6 +346,18 @@ CREATE TABLE {themes} (
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {themes} VALUES (1,'wind',1);
 INSERT INTO {themes} VALUES (2,'admin_wind',1);
+DROP TABLE IF EXISTS {user_access_keys};
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE {user_access_keys} (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `user_id` int(9) NOT NULL,
+  `access_key` char(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `access_key` (`access_key`),
+  UNIQUE KEY `user_id` (`user_id`)
+) DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS {users};
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -378,7 +391,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -402,5 +415,6 @@ INSERT INTO {vars} VALUES (NULL,'gallery','identity_provider','user');
 INSERT INTO {vars} VALUES (NULL,'user','mininum_password_length','5');
 INSERT INTO {vars} VALUES (NULL,'comment','access_permissions','everybody');
 INSERT INTO {vars} VALUES (NULL,'comment','spam_caught','0');
+INSERT INTO {vars} VALUES (NULL,'rest','allow_guest_access','0');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_site_sidebar','a:3:{i:9;a:2:{i:0;s:4:\"info\";i:1;s:8:\"metadata\";}i:10;a:2:{i:0;s:3:\"rss\";i:1;s:9:\"rss_feeds\";}i:11;a:2:{i:0;s:3:\"tag\";i:1;s:3:\"tag\";}}');
 INSERT INTO {vars} VALUES (NULL,'slideshow','max_scale','0');
