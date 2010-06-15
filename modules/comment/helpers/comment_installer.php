@@ -55,12 +55,12 @@ class comment_installer {
     $db = Database::instance();
     if ($version == 1) {
       $db->query("ALTER TABLE {comments} CHANGE `state` `state` varchar(15) default 'unpublished'");
-      module::set_version("comment", 2);
+      module::set_version("comment", $version = 2);
     }
 
     if ($version == 2) {
       module::set_var("comment", "access_permissions", "everybody");
-      module::set_version("comment", 3);
+      module::set_version("comment", $version = 3);
     }
   }
 
