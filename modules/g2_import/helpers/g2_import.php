@@ -826,6 +826,7 @@ class g2_import_Core {
       $text .= " ";
     }
     $text .= $g2_comment->getComment();
+    $text = html_entity_decode($text);
 
     // Just import the fields we know about.  Do this outside of the comment API for now so that
     // we don't trigger spam filtering events
@@ -835,6 +836,7 @@ class g2_import_Core {
     if ($comment->author_id == identity::guest()->id) {
       $comment->guest_name = $g2_comment->getAuthor();
       $comment->guest_name or $comment->guest_name = (string) t("Anonymous coward");
+      $comment->guest_email = "unknown@nobody.com";
     }
     $comment->item_id = $item_id;
     $comment->text = self::_transform_bbcode($text);
