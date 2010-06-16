@@ -438,8 +438,15 @@ class g2_import_Core {
       // Only consider G2's first sort order
       $g2_order = explode("|", $g2_album->getOrderBy() . "");
       $g2_order = $g2_order[0];
+      if (empty($g2_order)) {
+        $g2_order = g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy'));
+      }
       $g2_order_direction = explode("|", $g2_album->getOrderDirection() . "");
       $g2_order_direction = $g2_order_direction[0];
+      if (empty($g2_order_direction)) {
+        $g2_order_direction =
+          g2(GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection'));
+      }
       if (array_key_exists($g2_order, $order_map)) {
         $album->sort_column = $order_map[$g2_order];
         $album->sort_order = $direction_map[$g2_order_direction];
