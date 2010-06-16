@@ -33,13 +33,20 @@ class comment_rss_Core {
       return;
     }
 
+    Kohana_Log::add("error", "feed($feed_id, $offset, $limit, $id)");
     $comments = ORM::factory("comment")
       ->viewable()
       ->where("state", "=", "published")
       ->order_by("created", "DESC");
 
     if ($feed_id == "item") {
-      $comments->where("item_id", "=", $id);
+      $item = ORM::factory("item", $id);
+      $subquery = db::select("id")
+        ->from("items")
+        ->where("left_ptr", ">=", $item->left_ptr)
+        ->where("right_ptr", "<=", $item->right_ptr);
+      $comments
+        ->where("item_id", "in", $subquery);
     }
 
     $feed = new stdClass();
