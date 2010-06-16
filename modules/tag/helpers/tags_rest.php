@@ -18,9 +18,22 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class tags_rest_Core {
+  /**
+   * Possible request parameters:
+   *   start=#
+   *     start at the Nth comment (zero based)
+   *
+   *   num=#
+   *     return up to N comments (max 100)
+   */
   static function get($request) {
     $tags = array();
-    foreach (ORM::factory("tag")->find_all() as $tag) {
+
+    $p = $request->params;
+    $num = isset($p->num) ? min((int)$p->num, 100) : 10;
+    $start = isset($p->start) ? (int)$p->start : 0;
+
+    foreach (ORM::factory("tag")->find_all($num, $start) as $tag) {
       $tags[] = rest::url("tag", $tag);
     }
     return array("url" => rest::url("tags"),
