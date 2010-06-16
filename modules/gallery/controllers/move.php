@@ -34,10 +34,12 @@ class Move_Controller extends Controller {
     $source = ORM::factory("item", $source_id);
     $target = ORM::factory("item", Input::instance()->post("target_id"));
 
-    $message = item::move($source, $target);
-    if (!empty($message)) {
-      message.info($message);
-    }
+    access::required("view", $source);
+    access::required("edit", $source);
+    access::required("view", $target);
+    access::required("edit", $target);
+
+    item::move($source, $target);
 
     print json_encode(
       array("result" => "success",

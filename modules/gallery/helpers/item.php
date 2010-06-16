@@ -47,28 +47,27 @@ class item_Core {
     $orig_name_filename = pathinfo($source->name, PATHINFO_FILENAME);
     $orig_name_extension = pathinfo($source->name, PATHINFO_EXTENSION);
     $orig_slug = $source->slug;
-    $message = "";
     for ($i = 0; $i < 5; $i++) {
       try {
         $source->save();
         if ($orig_name != $source->name) {
           switch ($source->type) {
           case "album":
-            $message =
+            message::info(
               t("Album <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-                array("old_name" => $orig_name, "new_name" => $source->name));
+                array("old_name" => $orig_name, "new_name" => $source->name)));
             break;
 
           case "photo":
-            $message =
+            message::info(
               t("Photo <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-                array("old_name" => $orig_name, "new_name" => $source->name));
+                array("old_name" => $orig_name, "new_name" => $source->name)));
             break;
 
           case "movie":
-            $message =
+            message::info(
               t("Movie <b>%old_name</b> renamed to <b>%new_name</b> to avoid a conflict",
-                array("old_name" => $orig_name, "new_name" => $source->name));
+                array("old_name" => $orig_name, "new_name" => $source->name)));
             break;
           }
         }
@@ -96,8 +95,6 @@ class item_Core {
     if ($target->album_cover_item_id == null)  {
       item::make_album_cover($source);
     }
-
-    return $message;
   }
 
   static function make_album_cover($item) {
