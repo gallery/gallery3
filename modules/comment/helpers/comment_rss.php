@@ -39,7 +39,13 @@ class comment_rss_Core {
       ->order_by("created", "DESC");
 
     if ($feed_id == "item") {
-      $comments->where("item_id", "=", $id);
+      $item = ORM::factory("item", $id);
+      $subquery = db::select("id")
+        ->from("items")
+        ->where("left_ptr", ">=", $item->left_ptr)
+        ->where("right_ptr", "<=", $item->right_ptr);
+      $comments
+        ->where("item_id", "in", $subquery);
     }
 
     $feed = new stdClass();
