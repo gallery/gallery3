@@ -26,7 +26,7 @@
 class photo_Core {
   static function get_edit_form($photo) {
     $form = new Forge("photos/update/$photo->id", "", "post", array("id" => "g-edit-photo-form"));
-    $form->hidden("from_id");
+    $form->hidden("from_id")->value($photo->id);
     $group = $form->group("edit_item")->label(t("Edit Photo"));
     $group->input("title")->label(t("Title"))->value($photo->title)
       ->error_messages("required", t("You must provide a title"))
