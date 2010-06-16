@@ -33,7 +33,6 @@ class comment_rss_Core {
       return;
     }
 
-    Kohana_Log::add("error", "feed($feed_id, $offset, $limit, $id)");
     $comments = ORM::factory("comment")
       ->viewable()
       ->where("state", "=", "published")
