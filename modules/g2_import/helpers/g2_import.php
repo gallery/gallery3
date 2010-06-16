@@ -502,7 +502,7 @@ class g2_import_Core {
         }
         try {
           $g3_album->save();
-          graphics::generate($g2_album);
+          graphics::generate($g3_album);
         } catch (Exception $e) {
           return (string) new G2_Import_Exception(
               t("Failed to generate an album highlight for album '%name'.",
