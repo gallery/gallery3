@@ -112,6 +112,8 @@ class item_rest_Core {
           }
           break;
 
+        case "parent":
+          break;
         default:
           if (property_exists($entity, $key)) {
             $item->$key = $entity->$key;
@@ -124,7 +126,7 @@ class item_rest_Core {
         $parent = rest::resolve($entity->parent);
         item::move($item, $parent);
       } else {
-        $item::save_with_retries($item);
+        $item->save();
       }
     }
 
@@ -155,7 +157,7 @@ class item_rest_Core {
       $item->title = isset($entity->title) ? $entity->title : $entity->name;
       $item->description = isset($entity->description) ? $entity->description : null;
       $item->slug = isset($entity->slug) ? $entity->slug : null;
-      $item::save_with_retries($item);
+      $item->save();
       break;
 
     case "photo":
@@ -170,7 +172,7 @@ class item_rest_Core {
       $item->title = isset($entity->title) ? $entity->title : $entity->name;
       $item->description = isset($entity->description) ? $entity->description : null;
       $item->slug = isset($entity->slug) ? $entity->slug : null;
-      $item::save_with_retries($item);
+      $item->save();
       break;
 
     default:

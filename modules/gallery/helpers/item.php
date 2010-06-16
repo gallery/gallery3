@@ -43,17 +43,6 @@ class item_Core {
 
     // Moving may result in name or slug conflicts.  If that happens, try up to 5 times to pick a
     // random name (or slug) to avoid the conflict.
-    $message = item::save_with_retries($source);
-
-    // If the target has no cover item, make this it.
-    if ($target->album_cover_item_id == null)  {
-      item::make_album_cover($source);
-    }
-
-    return $message;
-  }
-
-  static function save_with_retries($source, $retries=5) {
     $orig_name = $source->name;
     $orig_name_filename = pathinfo($source->name, PATHINFO_FILENAME);
     $orig_name_extension = pathinfo($source->name, PATHINFO_EXTENSION);
@@ -102,6 +91,12 @@ class item_Core {
         }
       }
     }
+
+    // If the target has no cover item, make this it.
+    if ($target->album_cover_item_id == null)  {
+      item::make_album_cover($source);
+    }
+
     return $message;
   }
 
