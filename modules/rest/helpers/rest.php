@@ -137,9 +137,9 @@ class rest_Core {
       foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
         $class = str_replace(".php", "", basename($filename));
         if (method_exists($class, "relationships")) {
-          $results = array_merge(
-            $results,
-            call_user_func(array($class, "relationships"), $resource_type, $resource));
+          if ($tmp = call_user_func(array($class, "relationships"), $resource_type, $resource)) {
+            $results = array_merge($results, $tmp);
+          }
         }
       }
     }
