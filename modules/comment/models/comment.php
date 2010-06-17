@@ -175,4 +175,20 @@ class Comment_Model extends ORM {
   static function valid_state($value) {
     return in_array($value, array("published", "unpublished", "spam", "deleted"));
   }
+
+  /**
+   * Same as ORM::as_array() but convert id fields into their RESTful form.
+   */
+  public function as_restful_array() {
+    $data = array();
+    foreach ($this->as_array() as $key => $value) {
+      if (strncmp($key, "server_", 7)) {
+        $data[$key] = $value;
+      }
+    }
+    $data["item"] = rest::url("item", $this->item());
+    unset($data["item_id"]);
+
+    return $data;
+  }
 }
