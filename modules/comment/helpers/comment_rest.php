@@ -40,17 +40,6 @@ class comment_rest_Core {
     $comment->save();
   }
 
-  static function post($request) {
-    $item = rest::resolve($request->url);
-    access::required("edit", $item);
-
-    $entity = $request->params->entity;
-    $comment->text = $request->params->text;
-    $comment->save();
-
-    return array("url" => rest::url("comment", $comment));
-  }
-
   static function delete($request) {
     if (!identity::active_user()->admin) {
       access::forbidden();
