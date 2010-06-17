@@ -10,12 +10,16 @@
 <div id="g-comment-detail">
   <? if (!$comments->count()): ?>
   <p class="g-no-comments">
+    <? if (comment::can_comment()): ?>
     <?= t("No comments yet. Be the first to <a %attrs>comment</a>!",
           array("attrs" => html::mark_clean("href=\"" . url::site("form/add/comments/{$item->id}") . "\" class=\"showCommentForm\""))) ?>
+    <? else: ?>
+    <?= t("No comments yet.") ?>
+    <? endif ?>
   </p>
   <ul><li class="g-no-comments">&nbsp;</li></ul>
-  <? endif ?>
-  <? if ($comments->count()): ?>
+  <? else: ?>
+
   <ul>
     <? foreach ($comments as $comment): ?>
     <li id="g-comment-<?= $comment->id ?>">
