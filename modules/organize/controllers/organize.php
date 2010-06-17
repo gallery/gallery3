@@ -47,6 +47,8 @@ class Organize_Controller extends Controller {
     $v->access_key = rest::get_access_key($user->id)->access_key;
 
     $v->protocol = (empty($_SERVER["HTTPS"]) OR $_SERVER["HTTPS"] === "off") ? "http" : "https";
+    $v->swf_url = url::file("modules/organize/lib/Gallery3WebClient.swf?") .
+      filemtime(MODPATH . "organize/lib/Gallery3WebClient.swf");
     print $v;
   }
 

@@ -121,7 +121,7 @@
   attributes.id = "Gallery3WebClient";
   attributes.name = "Gallery3WebClient";
   attributes.align = "middle";
-  swfobject.embedSWF("<?= url::file("modules/organize/lib/Gallery3WebClient.swf") ?>",
+  swfobject.embedSWF("<?= $swf_url ?>",
                      "flashContent", size.width() - 100,  size.height() - 135,
                      swfVersionStr, xiSwfUrlStr, flashvars, params, attributes);
 </script>
