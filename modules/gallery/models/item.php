@@ -684,8 +684,8 @@ class Item_Model extends ORM_MPTT {
       }
     }
 
-    $v->attrs = array_merge($extra_attrs,
-      array("style" => "display:block;width:{$width}px;height:{$height}px"));
+    $v->attrs = array_merge($extra_attrs, array("style" => "width:{$width}px;height:{$height}px",
+                                                "class" => "g-movie"));
     if (empty($v->attrs["id"])) {
        $v->attrs["id"] = "g-item-id-{$this->id}";
     }

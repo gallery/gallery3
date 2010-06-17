@@ -302,7 +302,7 @@ td {
 }
 
 #g-item img.g-resize,
-#g-item a.g-movie object {
+#g-item a.g-movie {
   display: block;
   margin: 0 auto;
 }
