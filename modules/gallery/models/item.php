@@ -671,8 +671,21 @@ class Item_Model extends ORM_MPTT {
    */
   public function movie_img($extra_attrs) {
     $v = new View("movieplayer.html");
+    $max_size = module::get_var("gallery", "resize_size", 640);
+    $width = $this->width;
+    $height = $this->height;
+    if ($width > $max_size || $height > $max_size) {
+      if ($width > $height) {
+        $height *= $max_size / $width;
+        $width = $max_size;
+      } else {
+        $width *= $max_size / $height;
+        $height = $max_size;
+      }
+    }
+
     $v->attrs = array_merge($extra_attrs,
-      array("style" => "display:block;width:{$this->width}px;height:{$this->height}px"));
+      array("style" => "display:block;width:{$width}px;height:{$height}px"));
     if (empty($v->attrs["id"])) {
        $v->attrs["id"] = "g-item-id-{$this->id}";
     }
