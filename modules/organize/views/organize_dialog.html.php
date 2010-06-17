@@ -97,7 +97,7 @@
       sortFields: "<?= $sort_fields ?>",
       albumId: "<?= $album->id ?>",
       restUri: "<?= url::site("rest") ?>/",
-      controller: "<?= url::site("organize") ?>/"
+      controllerUri: "<?= url::site("organize") ?>/"
     };
   };
   /*
