@@ -96,8 +96,8 @@
       sortOrder: "<?= $sort_order ?>",
       sortFields: "<?= $sort_fields ?>",
       albumId: "<?= $album->id ?>",
-      restUri: "<?= url::site("rest") ?>/",
-      controllerUri: "<?= url::site("organize") ?>/"
+      restUri: "<?= $rest_uri ?>",
+      controllerUri: "<?= $controller_uri ?>/"
     };
   };
   /*
