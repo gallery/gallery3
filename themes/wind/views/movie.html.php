@@ -5,7 +5,9 @@
   <?= $theme->paginator() ?>
 
   <div id="g-movie" class="ui-helper-clearfix">
+    <?= $theme->resize_top($item) ?>
     <?= $item->movie_img(array("class" => "g-movie", "id" => "g-item-id-{$item->id}")) ?>
+    <?= $theme->resize_bottom($item) ?>
   </div>
 
   <div id="g-info">
