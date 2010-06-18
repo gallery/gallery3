@@ -97,7 +97,7 @@
       sortFields: "<?= $sort_fields ?>",
       albumId: "<?= $album->id ?>",
       restUri: "<?= $rest_uri ?>",
-      controllerUri: "<?= $controller_uri ?>/"
+      controllerUri: "<?= $controller_uri ?>"
     };
   };
   /*
