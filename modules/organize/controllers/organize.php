@@ -33,8 +33,6 @@ class Organize_Controller extends Controller {
     $user = identity::active_user();
     $v->access_key = rest::get_access_key($user->id)->access_key;
 
-    $v->protocol = (empty($_SERVER["HTTPS"]) OR $_SERVER["HTTPS"] === "off") ? "http" : "https";
-
     $v->file_filter = addslashes(json_encode(
       array("photo" => array("label" => "Images",
                              "types" => array("*.jpg", "*.jpeg", "*.png", "*.gif")),

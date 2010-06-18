@@ -91,7 +91,7 @@
       dialogHeight: $("#g-dialog").height(),
       domain: "<?= $domain ?>",
       accessKey: "<?= $access_key ?>",
-      protocol: "<?= $protocol ?>",
+      protocol: "<?= request::protocol() ?>",
       fileFilter: "<?= $file_filter ?>",
       sortOrder: "<?= $sort_order ?>",
       sortFields: "<?= $sort_fields ?>",
