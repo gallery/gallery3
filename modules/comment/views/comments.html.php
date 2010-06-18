@@ -16,10 +16,13 @@
     <? else: ?>
     <?= t("No comments yet.") ?>
     <? endif ?>
-  </p>
-  <ul><li class="g-no-comments">&nbsp;</li></ul>
-  <? else: ?>
+   </p>
+  <ul>
+    <li class="g-no-comments">&nbsp;</li>
+  </ul>
+  <? endif ?>
 
+  <? if ($comments->count()): ?>
   <ul>
     <? foreach ($comments as $comment): ?>
     <li id="g-comment-<?= $comment->id ?>">
