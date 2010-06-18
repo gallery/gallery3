@@ -483,3 +483,8 @@ th {
   padding-left: 0;
   padding-right: 1.2em;
 }
+
+.rtl .g-selected img,
+.rtl .g-available .g-block img {
+  margin: 0 0 1em 1em;
+}
