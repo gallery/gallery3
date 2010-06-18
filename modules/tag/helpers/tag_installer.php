@@ -22,7 +22,7 @@ class tag_installer {
     $db = Database::instance();
     $db->query("CREATE TABLE IF NOT EXISTS {tags} (
                  `id` int(9) NOT NULL auto_increment,
-                 `name` varchar(64) NOT NULL,
+                 `name` varchar(128) NOT NULL,
                  `count` int(10) unsigned NOT NULL DEFAULT 0,
                  PRIMARY KEY (`id`),
                  UNIQUE KEY(`name`))
@@ -36,7 +36,15 @@ class tag_installer {
                  KEY(`tag_id`, `id`),
                  KEY(`item_id`, `id`))
                DEFAULT CHARSET=utf8;");
-    module::set_version("tag", 1);
+    module::set_version("tag", 2);
+  }
+
+  static function upgrade($version) {
+    $db = Database::instance();
+    if ($version == 1) {
+      $db->query("ALTER TABLE {tags} MODIFY COLUMN `name` VARCHAR(128)");
+      module::set_version("tag", $version = 2);
+    }
   }
 
   static function uninstall() {

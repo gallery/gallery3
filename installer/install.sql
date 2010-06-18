@@ -309,7 +309,7 @@ DROP TABLE IF EXISTS {tags};
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE {tags} (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) NOT NULL,
+  `name` varchar(128) NOT NULL,
   `count` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
