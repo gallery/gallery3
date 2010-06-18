@@ -51,3 +51,8 @@ THE SOFTWARE.
 	width: 1px;
 	height: 3px;
 }
+
+/* RTL support ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.rtl .uploadifyQueueItem .cancel {
+	float: left;
+}
