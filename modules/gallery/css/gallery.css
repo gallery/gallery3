@@ -197,3 +197,11 @@
 .rtl #g-user-profile .g-avatar {
   margin-left: .6em;
 }
+
+.rtl #g-languages-form table {
+  margin: 0 0 1em 3em;
+}
+
+.rtl #g-translations ol {
+  margin: 0 2em 1em 0;
+}
