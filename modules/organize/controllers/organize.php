@@ -25,32 +25,27 @@ class Organize_Controller extends Controller {
     access::required("view", $album);
     access::required("edit", $album);
 
-    $v = new View("organize_dialog.html");
-    $v->album = $album;
-
-    $v->domain = $input->server("SERVER_NAME");
-
     $user = identity::active_user();
-    $v->access_key = rest::get_access_key($user->id)->access_key;
-
-    $v->file_filter = addslashes(json_encode(
-      array("photo" => array("label" => "Images",
-                             "types" => array("*.jpg", "*.jpeg", "*.png", "*.gif")),
-            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4")))));
-
-    $v->sort_order = addslashes(
-      json_encode(array("ASC" => (string)t("Ascending"), "DESC" => (string)t("Descending"))));
     $sort_fields = array();
     foreach (album::get_sort_order_options() as $field => $description) {
       $sort_fields[$field] = (string)$description;
     }
+    $sort_order = array("ASC" => (string)t("Ascending"), "DESC" => (string)t("Descending"));
+    $file_filter = json_encode(
+      array("photo" => array("label" => "Images",
+                             "types" => array("*.jpg", "*.jpeg", "*.png", "*.gif")),
+            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4"))));
+
+    $v = new View("organize_dialog.html");
+    $v->album = $album;
+    $v->domain = $input->server("SERVER_NAME");
+    $v->access_key = rest::get_access_key($user->id)->access_key;
+    $v->file_filter = addslashes($file_filter);
+    $v->sort_order = addslashes(json_encode($sort_order));
     $v->sort_fields = addslashes(json_encode($sort_fields));
-
     $v->rest_uri = url::site("rest") . "/";
-
     $v->controller_uri = url::site("organize") . "/";
-
-    $v->swf_url = url::file("modules/organize/lib/Gallery3WebClient.swf?") .
+    $v->swf_uri = url::file("modules/organize/lib/Gallery3WebClient.swf?") .
       filemtime(MODPATH . "organize/lib/Gallery3WebClient.swf");
     print $v;
   }

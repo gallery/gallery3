@@ -87,8 +87,6 @@
 
   function getGalleryParameters() {
     return {
-      dialogWidth: $("#g-dialog:parent").width(),
-      dialogHeight: $("#g-dialog").height(),
       domain: "<?= $domain ?>",
       accessKey: "<?= $access_key ?>",
       protocol: "<?= request::protocol() ?>",
@@ -121,7 +119,7 @@
   attributes.id = "Gallery3WebClient";
   attributes.name = "Gallery3WebClient";
   attributes.align = "middle";
-  swfobject.embedSWF("<?= $swf_url ?>",
+  swfobject.embedSWF("<?= $swf_uri ?>",
                      "flashContent", size.width() - 100,  size.height() - 135,
                      swfVersionStr, xiSwfUrlStr, flashvars, params, attributes);
 </script>
