@@ -43,6 +43,8 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
+              "comments" => array(
+                "url" => rest::url("item_comments", $album1)),
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
                 "members" => array())),
@@ -58,6 +60,8 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
+              "comments" => array(
+                "url" => rest::url("item_comments", $album1)),
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
                 "members" => array())),
@@ -73,6 +77,8 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
+              "comments" => array(
+                "url" => rest::url("item_comments", $album1)),
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
                 "members" => array())),
@@ -100,6 +106,8 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
+              "comments" => array(
+                "url" => rest::url("item_comments", $album1)),
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
                 "members" => array())),
@@ -123,6 +131,8 @@ class Item_Rest_Helper_Test extends Gallery_Unit_Test_Case {
       array("url" => rest::url("item", $album1),
             "entity" => $album1->as_restful_array(),
             "relationships" => array(
+              "comments" => array(
+                "url" => rest::url("item_comments", $album1)),
               "tags" => array(
                 "url" => rest::url("item_tags", $album1),
                 "members" => array())),
