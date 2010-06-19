@@ -29,9 +29,13 @@ class tags_rest_Core {
   static function get($request) {
     $tags = array();
 
-    $p = $request->params;
-    $num = isset($p->num) ? min((int)$p->num, 100) : 10;
-    $start = isset($p->start) ? (int)$p->start : 0;
+    $num = 10;
+    $start = 0;
+    if (isset($request->params)) {
+      $p = $request->params;
+      $num = isset($p->num) ? min((int)$p->num, 100) : 10;
+      $start = isset($p->start) ? (int)$p->start : 0;
+    }
 
     foreach (ORM::factory("tag")->find_all($num, $start) as $tag) {
       $tags[] = rest::url("tag", $tag);
