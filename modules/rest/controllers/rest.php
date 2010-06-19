@@ -34,8 +34,7 @@ class Rest_Controller extends Controller {
 
     auth::login($user);
 
-    $key = rest::get_access_key($user->id);
-    rest::reply($key->access_key);
+    rest::reply(rest::access_key());
   }
 
   public function __call($function, $args) {

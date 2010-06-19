@@ -66,9 +66,9 @@ class rest_Core {
     identity::set_active_user($user);
   }
 
-  static function get_access_key($user_id) {
+  static function access_key() {
     $key = ORM::factory("user_access_key")
-      ->where("user_id", "=", $user_id)
+      ->where("user_id", "=", identity::active_user()->id)
       ->find();
 
     if (!$key->loaded()) {
@@ -76,7 +76,8 @@ class rest_Core {
       $key->access_key = md5(md5(uniqid(mt_rand(), true) . access::private_key()));
       $key->save();
     }
-    return $key;
+
+    return $key->access_key;
   }
 
   /**
