@@ -81,41 +81,12 @@ class Rest_Controller extends Controller {
       }
 
       $response = call_user_func(array($handler_class, $handler_method), $request);
-    } catch (Exception $e) {
-      $response = $this->_format_exception_response($e);
+      rest::reply($response);
+    } catch (ORM_Validation_Exception $e) {
+      // Note: this is totally insufficient because it doesn't take into account localization.  We
+      // either need to map the result values to localized strings in the application code, or every
+      // client needs its own l10n string set.
+      throw new Rest_Exception("Bad Request", 400, $e->validation->errors());
     }
-
-    rest::reply($response);
-  }
-
-  private function _format_exception_response($e) {
-    // Add this exception to the log
-    Kohana_Log::add("error", Kohana_Exception::text($e));
-
-    $rest_exception = array();
-    if ($e instanceof ORM_Validation_Exception) {
-      $detail_response = true;
-      $rest_exception["code"] = 400;
-      $rest_exception["message"] = "Validation errors";
-      $rest_exception["fields"] = $e->validation->errors();
-    } else if ($e instanceof Rest_Exception) {
-      $rest_exception["code"] = $e->getCode();
-      if ($e->getMessage() != "Bad Request") {
-         $rest_exception["message"] = "Bad Request";
-         $rest_exception["fields"] = array("type", $e->getMessage());
-      } else {
-        $rest_exception["message"] = $e->getMessage();
-      }
-    } else {
-      $rest_exception["code"] = 500;
-      $rest_exception["message"] = t("Remote server call failed. Please contact the Adminstrator.");
-    }
-
-    if (!headers_sent()) {
-      header($rest_exception["code"] == 500 ? "HTTP/1.1 500 Internal Server Error" :
-             "HTTP/1.1 400 Bad Request");
-    }
-
-    return $rest_exception;
   }
 }

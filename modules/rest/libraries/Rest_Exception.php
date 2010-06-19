@@ -18,13 +18,20 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Rest_Exception_Core extends Kohana_Exception {
-  public function __construct($message, $code) {
+  var $response = array();
+
+  public function __construct($message, $code, $response) {
     parent::__construct($message, null, $code);
+    $this->response = $response;
   }
 
   public function sendHeaders() {
     if (!headers_sent()) {
-      header("HTTP/1.1 " . $this->getCode() . "Bad Request");
+      header("HTTP/1.1 " . $this->getCode() . " " . $this->getMessage());
     }
+  }
+
+  public function getTemplate() {
+    return "error_rest";
   }
 }
