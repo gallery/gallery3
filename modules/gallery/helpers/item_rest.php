@@ -161,20 +161,22 @@ class item_rest_Core {
     case "photo":
     case "movie":
       if (empty($request->file)) {
-        throw new Rest_Exception("file: Upload failed", 400);
+        throw new Rest_Exception(
+          "Bad Request", 400, array("errors" => array("file" => t("Upload failed"))));
       }
-      $item->type = $entity->type;
-      $item->parent_id = $parent->id;
-      $item->set_data_file($request->file);
-      $item->name = $entity->name;
-      $item->title = isset($entity->title) ? $entity->title : $entity->name;
-      $item->description = isset($entity->description) ? $entity->description : null;
-      $item->slug = isset($entity->slug) ? $entity->slug : null;
-      $item->save();
-      break;
+    $item->type = $entity->type;
+    $item->parent_id = $parent->id;
+    $item->set_data_file($request->file);
+    $item->name = $entity->name;
+    $item->title = isset($entity->title) ? $entity->title : $entity->name;
+    $item->description = isset($entity->description) ? $entity->description : null;
+    $item->slug = isset($entity->slug) ? $entity->slug : null;
+    $item->save();
+    break;
 
     default:
-      throw new Rest_Exception("Invalid type: $entity->type", 400);
+      throw new Rest_Exception(
+        "Bad Request", 400, array("errors" => array("type" => "invalid")));
     }
 
     return array("url" => rest::url("item", $item));
