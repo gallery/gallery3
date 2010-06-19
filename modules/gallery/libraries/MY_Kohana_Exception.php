@@ -61,7 +61,7 @@ class Kohana_Exception extends Kohana_Exception_Core {
     $error = Kohana_Exception::text($e);
 
     // Add this exception to the log
-    Kohana_Log::add('error', $error);
+    Kohana_Log::add("error", $error);
 
     // Manually save logs after exceptions
     Kohana_Log::save();
