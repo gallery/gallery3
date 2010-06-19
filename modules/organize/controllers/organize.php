@@ -39,7 +39,7 @@ class Organize_Controller extends Controller {
     $v = new View("organize_dialog.html");
     $v->album = $album;
     $v->domain = $input->server("SERVER_NAME");
-    $v->access_key = rest::get_access_key($user->id)->access_key;
+    $v->access_key = rest::access_key();
     $v->file_filter = addslashes($file_filter);
     $v->sort_order = addslashes(json_encode($sort_order));
     $v->sort_fields = addslashes(json_encode($sort_fields));

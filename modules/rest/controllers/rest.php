@@ -34,8 +34,7 @@ class Rest_Controller extends Controller {
 
     auth::login($user);
 
-    $key = rest::get_access_key($user->id);
-    rest::reply($key->access_key);
+    rest::reply(rest::access_key());
   }
 
   public function __call($function, $args) {
@@ -91,7 +90,7 @@ class Rest_Controller extends Controller {
 
   private function _format_exception_response($e) {
     // Add this exception to the log
-    Kohana_Log::add('error', Kohana_Exception::text($e));
+    Kohana_Log::add("error", Kohana_Exception::text($e));
 
     $rest_exception = array();
     if ($e instanceof ORM_Validation_Exception) {
