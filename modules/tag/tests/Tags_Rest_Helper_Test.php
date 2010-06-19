@@ -45,7 +45,7 @@ class Tags_Rest_Helper_Test extends Gallery_Unit_Test_Case {
   }
 
   public function post_test() {
-    identity::set_active_user(identity::guest());
+    identity::set_active_user(identity::admin_user());
 
     $request = new stdClass();
     $request->params = new stdClass();
