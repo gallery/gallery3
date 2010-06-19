@@ -20,7 +20,7 @@
 class Rest_Exception_Core extends Kohana_Exception {
   var $response = array();
 
-  public function __construct($message, $code, $response) {
+  public function __construct($message, $code, $response=array()) {
     parent::__construct($message, null, $code);
     $this->response = $response;
   }
