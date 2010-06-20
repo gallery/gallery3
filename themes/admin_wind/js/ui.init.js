@@ -4,7 +4,7 @@
  */
 
 $(document).ready(function(){
-  
+
   // Initialize Superfish menus
   $("#g-site-admin-menu .g-menu").hide().addClass("sf-menu");
   $("#g-site-admin-menu .g-menu").superfish({
@@ -54,7 +54,9 @@ $(document).ready(function(){
   $(".g-available .g-block").addClass("ui-corner-all");
   $(".g-unavailable").addClass("ui-corner-all");
 
+  // Remove titles for menu options since we're displaying that text anyway
+  $(".sf-menu a, .sf-menu li").removeAttr("title");
+
   // Initialize button hover effect
   $.fn.gallery_hover_init();
-
 });

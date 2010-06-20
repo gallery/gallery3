@@ -43,6 +43,9 @@ $(document).ready(function() {
     });
   }
 
+  // Remove titles for menu options since we're displaying that text anyway
+  $(".sf-menu a, .sf-menu li").removeAttr("title");
+
   // Album and search results views
   if ($("#g-album-grid").length) {
     // Set equal height for album items and vertically align thumbnails/metadata
