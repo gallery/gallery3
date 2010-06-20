@@ -40,4 +40,3 @@ if ($e instanceof Kohana_404_Exception) {
 
 header("HTTP/1.1 500 Internal Server Error");
 include Kohana::find_file("views", "error_user.html");
-?>
