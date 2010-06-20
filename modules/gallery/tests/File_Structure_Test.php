@@ -42,8 +42,8 @@ class File_Structure_Test extends Gallery_Unit_Test_Case {
 
       if (strpos($file, "views")) {
         $this->assert_true(
-          preg_match("#/views/.*?(\.html|mrss|txt)\.php$#", $file->getPathname()),
-          "{$file->getPathname()} should end in .{html,mrss,txt}.php");
+          preg_match("#/views/.*?\.(html|mrss|txt|json)\.php$#", $file->getPathname()),
+          "{$file->getPathname()} should end in .{html,mrss,txt,json}.php");
       }
     }
   }
