@@ -454,6 +454,10 @@ ul.sf-menu li li li.sfHover ul {
   -moz-outline-style: none;
 }
 
+button {
+  padding: 2px 4px 2px 4px;
+}
+
 /* jQuery UI ThemeRoller buttons ~~~~~~~~~ */
 
 .g-buttonset {
