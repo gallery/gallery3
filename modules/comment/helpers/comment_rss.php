@@ -35,17 +35,14 @@ class comment_rss_Core {
 
     $comments = ORM::factory("comment")
       ->viewable()
-      ->where("state", "=", "published")
-      ->order_by("created", "DESC");
+      ->where("comments.state", "=", "published")
+      ->order_by("comments.created", "DESC");
 
     if ($feed_id == "item") {
       $item = ORM::factory("item", $id);
-      $subquery = db::select("id")
-        ->from("items")
-        ->where("left_ptr", ">=", $item->left_ptr)
-        ->where("right_ptr", "<=", $item->right_ptr);
       $comments
-        ->where("item_id", "in", $subquery);
+        ->where("items.left_ptr", ">=", $item->left_ptr)
+        ->where("items.right_ptr", "<=", $item->right_ptr);
     }
 
     $feed = new stdClass();
@@ -64,6 +61,8 @@ class comment_rss_Core {
               "author" => html::clean($comment->author_name())),
         ArrayObject::ARRAY_AS_PROPS);
     }
+
+    Kohana_Log::add("error",print_r(Database::instance()->last_query(),1));
 
     $feed->max_pages = ceil($comments->count_all() / $limit);
     $feed->title = htmlspecialchars(t("Recent Comments"));
