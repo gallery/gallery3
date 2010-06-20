@@ -41,7 +41,7 @@ class Tags_Controller extends Controller {
     $template->set_global("children", $tag->items($page_size, $offset));
     $template->set_global("children_count", $children_count);
     $template->content = new View("dynamic.html");
-    $template->content->title = $tag->name;
+    $template->content->title = t("Tag: %tag_name", array("tag_name" => $tag->name));
 
     print $template;
   }
