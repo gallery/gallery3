@@ -11,3 +11,4 @@ Disallow: /var/resizes/
 Disallow: /var/thumbs/
 Disallow: /var/tmp/
 Disallow: /var/uploads/
+Disallow: /digibug/print_photo/
