@@ -162,6 +162,8 @@ class item_Core {
       "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "g-confirm-delete"));
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
+    $form->script("")
+      ->url(url::abs_file("modules/gallery/js/item_form_delete.js"));
     return $form;
   }
 
