@@ -363,13 +363,11 @@ form .g-error {
 
 .g-loading-large,
 .g-dialog-loading-large {
-  background: #e8e8e8 url('images/loading-large.gif') no-repeat center center;
-  font-size: 0;
+  background: #e8e8e8 url('images/loading-large.gif') no-repeat center center !important;
 }
 
 .g-loading-small {
-  background: #e8e8e8 url('images/loading-small.gif') no-repeat center center;
-  font-size: 0;
+  background: #e8e8e8 url('images/loading-small.gif') no-repeat center center !important;
 }
 
 /** *******************************************************************
