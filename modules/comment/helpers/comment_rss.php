@@ -62,8 +62,6 @@ class comment_rss_Core {
         ArrayObject::ARRAY_AS_PROPS);
     }
 
-    Kohana_Log::add("error",print_r(Database::instance()->last_query(),1));
-
     $feed->max_pages = ceil($comments->count_all() / $limit);
     $feed->title = htmlspecialchars(t("Recent Comments"));
     $feed->uri = url::abs_site("albums/" . (empty($id) ? "1" : $id));
