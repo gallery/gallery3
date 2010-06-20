@@ -12,6 +12,11 @@
        <?= t("Please sign in to find out.") ?>
     </p>
     <?= $login_form ?>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $("#g-username").focus();
+      });
+    </script>
   <? else: ?>
     <p>
       <?= t("Maybe the page exists, but is only visible to authorized users.") ?>
