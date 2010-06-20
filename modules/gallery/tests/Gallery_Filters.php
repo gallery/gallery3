@@ -32,6 +32,7 @@ class GalleryCodeFilterIterator extends FilterIterator {
     return !(
       $file_name == "." ||
       $file_name == ".." ||
+      strpos($path_name, DOCROOT . ".git") !== false ||
       strpos($path_name, DOCROOT . "test") !== false ||
       strpos($path_name, DOCROOT . "var") !== false ||
       strpos($path_name, MODPATH . "forge") !== false ||
