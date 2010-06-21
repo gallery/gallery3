@@ -20,57 +20,57 @@
     <? endif ?>
     <pubDate><?= $pub_date ?></pubDate>
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
-    <? foreach ($feed->children as $child): ?>
+    <? foreach ($feed->items as $item): ?>
     <item>
-      <title><?= html::purify($child->title) ?></title>
-      <link><?= url::abs_site("{$child->type}s/{$child->id}") ?></link>
-      <guid isPermaLink="true"><?= url::abs_site("{$child->type}s/{$child->id}") ?></guid>
-      <pubDate><?= date("D, d M Y H:i:s T", $child->created); ?></pubDate>
-      <description><?= html::purify($child->description) ?></description>
+      <title><?= html::purify($item->title) ?></title>
+      <link><?= url::abs_site("{$item->type}s/{$item->id}") ?></link>
+      <guid isPermaLink="true"><?= url::abs_site("{$item->type}s/{$item->id}") ?></guid>
+      <pubDate><?= date("D, d M Y H:i:s T", $item->created); ?></pubDate>
+      <description><?= html::purify($item->description) ?></description>
       <content:encoded>
         <![CDATA[
-          <span><?= html::purify($child->description) ?></span>
+          <span><?= html::purify($item->description) ?></span>
           <p>
-          <? if ($child->type == "photo"): ?>
-            <img alt="" src="<?= $child->resize_url(true) ?>"
-                 title="<?= html::purify($child->title)->for_html_attr() ?>"
-                 height="<?= $child->resize_height ?>" width="<?= $child->resize_width ?>" /><br />
+          <? if ($item->type == "photo"): ?>
+            <img alt="" src="<?= $item->resize_url(true) ?>"
+                 title="<?= html::purify($item->title)->for_html_attr() ?>"
+                 height="<?= $item->resize_height ?>" width="<?= $item->resize_width ?>" /><br />
           <? else: ?>
-            <a href="<?= url::abs_site("{$child->type}s/{$child->id}") ?>">
-            <img alt="" src="<?= $child->thumb_url(true) ?>"
-                 title="<?= html::purify($child->title)->for_html_attr() ?>"
-                 height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" /></a><br />
+            <a href="<?= url::abs_site("{$item->type}s/{$item->id}") ?>">
+            <img alt="" src="<?= $item->thumb_url(true) ?>"
+                 title="<?= html::purify($item->title)->for_html_attr() ?>"
+                 height="<?= $item->thumb_height ?>" width="<?= $item->thumb_width ?>" /></a><br />
           <? endif ?>
-            <?= html::purify($child->description) ?>
+            <?= html::purify($item->description) ?>
           </p>
         ]]>
       </content:encoded>
-      <media:thumbnail url="<?= $child->thumb_url(true) ?>"
-                       height="<?= $child->thumb_height ?>"
-                       width="<?= $child->thumb_width ?>"
+      <media:thumbnail url="<?= $item->thumb_url(true) ?>"
+                       height="<?= $item->thumb_height ?>"
+                       width="<?= $item->thumb_width ?>"
                        />
-    <? $view_full = access::can("view_full", $child); ?>
-    <? if ($child->type == "photo" && $view_full): ?>
+    <? $view_full = access::can("view_full", $item); ?>
+    <? if ($item->type == "photo" && $view_full): ?>
       <media:group>
     <? endif ?>
-      <? if ($child->type == "photo"): ?>
-        <media:content url="<?= $child->resize_url(true) ?>"
-                       fileSize="<?= @filesize($child->resize_path()) ?>"
-                       type="<?= $child->mime_type ?>"
-                       height="<?= $child->resize_height ?>"
-                       width="<?= $child->resize_width ?>"
+      <? if ($item->type == "photo"): ?>
+        <media:content url="<?= $item->resize_url(true) ?>"
+                       fileSize="<?= @filesize($item->resize_path()) ?>"
+                       type="<?= $item->mime_type ?>"
+                       height="<?= $item->resize_height ?>"
+                       width="<?= $item->resize_width ?>"
                        />
       <? endif ?>
       <? if ($view_full): ?>
-        <media:content url="<?= $child->file_url(true) ?>"
-                       fileSize="<?= @filesize($child->file_path()) ?>"
-                       type="<?= $child->mime_type ?>"
-                       height="<?= $child->height ?>"
-                       width="<?= $child->width ?>"
+        <media:content url="<?= $item->file_url(true) ?>"
+                       fileSize="<?= @filesize($item->file_path()) ?>"
+                       type="<?= $item->mime_type ?>"
+                       height="<?= $item->height ?>"
+                       width="<?= $item->width ?>"
                        isDefault="true"
                        />
       <? endif ?>
-    <? if ($child->type == "photo" && $view_full): ?>
+    <? if ($item->type == "photo" && $view_full): ?>
       </media:group>
     <? endif ?>
     </item>

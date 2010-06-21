@@ -28,18 +28,18 @@ class gallery_rss_Core {
     $feed = new stdClass();
     switch ($feed_id) {
     case "latest":
-      $feed->children = ORM::factory("item")
+      $feed->items = ORM::factory("item")
         ->viewable()
         ->where("type", "<>", "album")
         ->order_by("created", "DESC")
         ->find_all($limit, $offset);
 
-      $all_children = ORM::factory("item")
+      $all_items = ORM::factory("item")
         ->viewable()
         ->where("type", "<>", "album")
         ->order_by("created", "DESC");
 
-      $feed->max_pages = ceil($all_children->find_all()->count() / $limit);
+      $feed->max_pages = ceil($all_items->find_all()->count() / $limit);
       $feed->title = t("Recent updates");
       $feed->description = t("Recent updates");
       return $feed;
@@ -48,7 +48,7 @@ class gallery_rss_Core {
       $item = ORM::factory("item", $id);
       access::required("view", $item);
 
-      $feed->children = $item
+      $feed->items = $item
         ->viewable()
         ->descendants($limit, $offset, array(array("type", "=", "photo")));
       $feed->max_pages = ceil(
