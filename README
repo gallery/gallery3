@@ -14,14 +14,7 @@ release is out, we make no guarantees that it won't do bad things.
 
 Note:
  - We've contracted a professional security audit, received their results
-   and resolved all the really dire issues they found.  There are still some
-   issues, but they are more along the lines of "you should ask for the old
-   password as a confirmation when you let users change their password".
-   Ie, they're issues but they're not really bad.  We'll take care of them
-   before the final release.
- - Most of the key features are in, but some of them (notably the "add from
-   server" and "organize album" features) are probably going to be completely
-   rewritten.
+   and resolved all the issues they found.
  - You can upgrade from beta 1, but not from alpha releases.
 
 The intended audience of this release is folks who are willing to live
@@ -61,7 +54,7 @@ INSTALLATION FROM THE COMMAND LINE:
 BUGS?
 Go to http://apps.sourceforge.net/trac/gallery/ click the "login" link
 and log in with your SourceForge username and password, then click the
-"new ticket" button.  Mark any issues you find with the "Beta 2"
+"new ticket" button.  Mark any issues you find with the "3.0"
 milestone and we'll try to get 'em done for the next release.
 
 
@@ -69,6 +62,4 @@ QUESTIONS, PROBLEMS:
  - Check out the gallery3 FAQ http://codex.gallery2.org/Gallery3:FAQ
  - Post to the Gallery 3 forums: http://gallery.menalto.com/forum/96
  - Email gallery-devel@lists.sourceforge.net
-
-
 
