@@ -20,19 +20,19 @@
     <? endif ?>
     <pubDate><?= $pub_date ?></pubDate>
     <lastBuildDate><?= $pub_date ?></lastBuildDate>
-    <? foreach ($feed->children as $child): ?>
+    <? foreach ($feed->comments as $comment): ?>
     <item>
-      <title><?= html::purify($child->title) ?></title>
-      <link><?= html::clean($child->item_uri) ?></link>
-      <author><?= html::clean($child->author) ?></author>
-      <guid isPermaLink="true"><?= $child->item_uri ?></guid>
-      <pubDate><?= $child->pub_date ?></pubDate>
+      <title><?= html::purify($comment->title) ?></title>
+      <link><?= html::clean($comment->item_uri) ?></link>
+      <author><?= html::clean($comment->author) ?></author>
+      <guid isPermaLink="true"><?= $comment->item_uri ?></guid>
+      <pubDate><?= $comment->pub_date ?></pubDate>
       <content:encoded>
         <![CDATA[
-          <p><?= nl2br(html::purify($child->text)) ?></p>
+          <p><?= nl2br(html::purify($comment->text)) ?></p>
           <p>
-            <img alt="" src="<?= $child->thumb_url ?>"
-                 height="<?= $child->thumb_height ?>" width="<?= $child->thumb_width ?>" />
+            <img alt="" src="<?= $comment->thumb_url ?>"
+                 height="<?= $comment->thumb_height ?>" width="<?= $comment->thumb_width ?>" />
             <br />
           </p>
         ]]>

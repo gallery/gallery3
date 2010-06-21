@@ -47,10 +47,10 @@ class comment_rss_Core {
 
     $feed = new stdClass();
     $feed->view = "comment.mrss";
-    $feed->children = array();
+    $feed->comments = array();
     foreach ($comments->find_all($limit, $offset) as $comment) {
       $item = $comment->item();
-      $feed->children[] = new ArrayObject(
+      $feed->comments[] = new ArrayObject(
         array("pub_date" => date("D, d M Y H:i:s T", $comment->created),
               "text" => nl2br(html::purify($comment->text)),
               "thumb_url" => $item->thumb_url(),
