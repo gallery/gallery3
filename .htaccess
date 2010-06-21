@@ -17,6 +17,17 @@
   SecFilterScanPOST Off
 </IfModule>
 
+# Increase security by uncommenting this block.  It keeps browsers
+# from seeing support files that they shouldn't have access to.  We
+# comment this out because Apache2 requires some minor configuration
+# in order for you to use it.  You must specify "AllowOverride Limit"
+# in your Apache2 config file before you uncomment this block or
+# you'll get an "Internal Server Error".
+#
+# <FilesMatch "(\.(class|fla|inc|sql|txt|gitignore)|(README|LICENSE))$">
+#   Order allow,deny
+# </FilesMatch>
+
 # Improve performance by uncommenting this block.  It tells the
 # browser that your images don't change very often so it won't keep
 # asking for them.  If you get an error after uncommenting this, make
