@@ -30,7 +30,7 @@
 #g-add-photos-canvas object,
 #g-add-photos-button {
   left: 137px;
-  margin: 0 0 .5em 0;
+  margin: .5em  0;
   padding: .4em 1em;
   position: absolute;
   top: 0;
@@ -38,8 +38,11 @@
 }
 
 #g-add-photos-canvas object {
-  margin: 0;
   z-index: 100;
+}
+
+#g-add-photos-canvas .uploadifyQueue {
+  margin-top: .5em;
 }
 
 #g-add-photos-canvas .uploadifyQueueItem {
