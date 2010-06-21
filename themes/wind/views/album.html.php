@@ -29,7 +29,7 @@
   <? endforeach ?>
 <? else: ?>
   <? if ($user->admin || access::can("add", $item)): ?>
-  <? $addurl = url::file("index.php/simple_uploader/app/$item->id") ?>
+  <? $addurl = url::site("flash_uploader/app/$item->id") ?>
   <li><?= t("There aren't any photos here yet! <a %attrs>Add some</a>.",
             array("attrs" => html::mark_clean("href=\"$addurl\" class=\"g-dialog-link\""))) ?></li>
   <? else: ?>

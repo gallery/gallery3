@@ -7,7 +7,7 @@
       width: 150,
       height: 33,
       uploader: "<?= url::file("lib/uploadify/uploadify.swf") ?>",
-      script: "<?= url::site("simple_uploader/add_photo/{$album->id}") ?>",
+      script: "<?= url::site("flash_uploader/add_photo/{$album->id}") ?>",
       scriptData: <?= json_encode($script_data) ?>,
       fileExt: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4",
       fileDesc: <?= t("Photos and movies")->for_js() ?>,
