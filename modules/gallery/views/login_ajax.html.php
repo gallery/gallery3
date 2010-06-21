@@ -10,9 +10,16 @@
           $(".submit").addClass("g-button ui-state-default ui-corner-all");
           $(".submit").gallery_hover_init();
           ajaxify_login_reset_form();
+
+          // See comment about IE7 below
+          setTimeout('$("#g-name").focus()', 100);
         }
       });
     });
+
+    // Setting the focus here doesn't work on IE7, perhaps because the field is
+    // not ready yet?  So set a timeout and do it the next time we're idle
+    setTimeout('$("#g-username").focus()', 100);
   });
 
   function ajaxify_login_reset_form() {
