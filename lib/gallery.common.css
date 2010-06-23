@@ -840,10 +840,18 @@ div#g-action-status {
 .rtl .sf-shadow ul {
 	background:	url('superfish/images/shadow.png') no-repeat bottom left;
 	padding: 0 0 9px 8px;
-	-moz-border-radius-bottomright: 17px;
+	border-top-right-radius: 0;
+	border-bottom-left-radius: 0;
+	-moz-border-radius-topright: 0;
+	-moz-border-radius-bottomleft: 0;
+	-webkit-border-top-right-radius: 0;
+	-webkit-border-bottom-left-radius: 0;
 	-moz-border-radius-topleft: 17px;
+	-moz-border-radius-bottomright: 17px;
 	-webkit-border-top-left-radius: 17px;
 	-webkit-border-bottom-right-radius: 17px;
+	border-top-left-radius: 17px;
+	border-bottom-right-radius: 17px;
 }
 
 /* RTL ThemeRoller ~~~~~~~~~~~~~~~~~~~~~~~~ */
