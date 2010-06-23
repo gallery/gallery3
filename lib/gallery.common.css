@@ -780,7 +780,7 @@ div#g-action-status {
 /* RTL Superfish ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .rtl .sf-menu a {
-  border-left: none;
+    border-left: none;
 	border-right:1px solid #fff;
 }
 
@@ -791,7 +791,7 @@ div#g-action-status {
 
 .rtl .sf-sub-indicator {
 	left: .75em !important;
-  right: auto;
+    right: auto;
 	background: url('superfish/images/arrows-ffffff-rtl.png') no-repeat -10px -100px; /* 8-bit indexed alpha png. IE6 gets solid image only */
 }
 .rtl a > .sf-sub-indicator {  /* give all except IE6 the correct values */
@@ -822,7 +822,7 @@ div#g-action-status {
 .rtl .sf-menu li:hover ul,
 .rtl .sf-menu li.sfHover ul {
 	right: 0;
-    left: auto;
+	left: auto;
 }
 
 .rtl ul.sf-menu li li:hover ul,
