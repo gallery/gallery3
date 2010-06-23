@@ -822,6 +822,7 @@ div#g-action-status {
 .rtl .sf-menu li:hover ul,
 .rtl .sf-menu li.sfHover ul {
 	right: 0;
+    left: auto;
 }
 
 .rtl ul.sf-menu li li:hover ul,
