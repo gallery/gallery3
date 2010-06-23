@@ -828,10 +828,12 @@ div#g-action-status {
 .rtl ul.sf-menu li li:hover ul,
 .rtl ul.sf-menu li li.sfHover ul {
 	right:	12em; /* match ul width */
+	left: auto;
 }
 .rtl ul.sf-menu li li li:hover ul,
 .rtl ul.sf-menu li li li.sfHover ul {
 	right:	12em; /* match ul width */
+	left: auto;
 }
 
 /*** shadows for all but IE6 ***/
