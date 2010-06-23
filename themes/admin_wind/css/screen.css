@@ -488,7 +488,3 @@ th {
 .rtl .g-available .g-block img {
   margin: 0 0 1em 1em;
 }
-
-.rtl #g-sidebar .g-block-content {
-  padding-right: 1em;
-}
