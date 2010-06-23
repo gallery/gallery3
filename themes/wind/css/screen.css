@@ -461,3 +461,7 @@ td {
   padding-right: 1em;
   padding-left: 0;
 }
+
+.rtl #g-footer #g-credits li {
+  padding-left: 1.2em;
+}
