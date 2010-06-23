@@ -846,6 +846,22 @@ div#g-action-status {
 	-webkit-border-bottom-right-radius: 17px;
 }
 
+/* RTL ThemeRoller ~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+.rtl .ui-dialog .ui-dialog-titlebar {
+  padding: 0.5em 1em 0.3em 0.3em;
+}
+
+.rtl .ui-dialog .ui-dialog-title {
+  float: right;
+}
+
+.rtl .ui-dialog .ui-dialog-titlebar-close {
+  left: 0.3em;
+  right: auto;
+}
+
+
 /* RTL paginator ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .rtl .g-paginator .g-info {
