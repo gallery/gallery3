@@ -459,4 +459,5 @@ td {
 
 .rtl #g-sidebar .g-block-content {
   padding-right: 1em;
+  padding-left: 0;
 }
