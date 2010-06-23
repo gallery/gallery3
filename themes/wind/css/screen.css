@@ -457,3 +457,6 @@ td {
   background-image: url('../images/ico-view-slideshow-rtl.png');
 }
 
+.rtl #g-sidebar .g-block-content {
+  padding-right: 1em;
+}
