@@ -57,11 +57,11 @@ class theme_Core {
       if (identity::active_user()->admin && $override = $input->get("theme")) {
         if (file_exists(THEMEPATH . $override)) {
           self::$admin_theme_name = $override;
+          array_unshift($modules, THEMEPATH . self::$admin_theme_name);
         } else {
           Kohana_Log::add("error", "Missing override theme: '$override'");
         }
       }
-      array_unshift($modules, THEMEPATH . self::$admin_theme_name);
     } else {
       // Admins can override the site theme, temporarily.  This lets us preview themes.
       if (identity::active_user()->admin && $override = $input->get("theme")) {
