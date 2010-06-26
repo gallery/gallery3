@@ -10,17 +10,17 @@
          var text = $("legend", this).text();
          var tabId = "tab_" + index;
          var tabContentId = "tab_content_" + index;
-         console.log(tabId+": text='"+text+"'");
          if (text == "") {
            text = <?= t("Tab_")->for_js() ?> + index;
          }
-         $(".tabnav").append("<li><a id='"+ tabId + "' href='#" + tabContentId + "'>"+text+"</a></li>");
-         $("#g-theme-options-form-tabs").append("<div id='" + tabContentId + "' class='tabdiv'></div>");
-
+         $(".tabnav").append(
+           "<li><a id='" + tabId + "' href='#" + tabContentId + "'>" + text + "</a></li>");
+         $("#g-theme-options-form-tabs").append(
+           "<div id='" + tabContentId + "' class='tabdiv'></div>");
          if ($("li.g-error", this).length > 0) {
-           $("#"+tabId).addClass("g-error");
+           $("#" + tabId).addClass("g-error");
          }
-         $("#"+tabContentId).append($("ul", this));
+         $("#" + tabContentId).append($("ul", this));
          $(this).remove();
        });
        $("#g-theme-options-form-tabs").tabs({});
@@ -31,8 +31,7 @@
 </script>
 
 <div class="g-block">
-  <h1> <?= t("Theme Options") ?> </h1>
-
+  <h1> <?= t("Theme options") ?> </h1>
   <div class="g-block-content">
   <?= $form ?>
   </div>
