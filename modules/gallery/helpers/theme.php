@@ -59,7 +59,7 @@ class theme_Core {
           self::$admin_theme_name = $override;
           array_unshift($modules, THEMEPATH . self::$admin_theme_name);
         } else {
-          Kohana_Log::add("error", "Missing override theme: '$override'");
+          Kohana_Log::add("error", "Missing override admin theme: '$override'");
         }
       }
     } else {
@@ -68,7 +68,7 @@ class theme_Core {
         if (file_exists(THEMEPATH . $override)) {
           self::$site_theme_name = $override;
         } else {
-          Kohana_Log::add("error", "Missing override theme: '$override'");
+          Kohana_Log::add("error", "Missing override site theme: '$override'");
         }
       }
       array_unshift($modules, THEMEPATH . self::$site_theme_name);
