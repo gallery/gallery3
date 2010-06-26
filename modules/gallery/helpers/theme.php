@@ -79,7 +79,7 @@ class theme_Core {
 
   static function get_edit_form_admin() {
     $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"g-theme-options-form"));
-    $group = $form->group("edit_theme")->label(t("Theme Layout"));
+    $group = $form->group("edit_theme")->label(t("Theme layout"));
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
       ->error_messages("required", t("You must enter a number"))
