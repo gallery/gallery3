@@ -67,8 +67,8 @@ class tag_event_Core {
   static function item_edit_form($item, $form) {
     $url = url::site("tags/autocomplete");
     $form->script("")
-      ->text("$('form input[id=tags]').ready(function() {
-                $('form input[id=tags]').autocomplete(
+      ->text("$('form input[name=tags]').ready(function() {
+                $('form input[name=tags]').autocomplete(
                   '$url', {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1});
               });");
 
