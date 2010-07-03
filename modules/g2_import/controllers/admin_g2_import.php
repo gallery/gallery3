@@ -60,7 +60,7 @@ class Admin_g2_import_Controller extends Admin_Controller {
       }
 
       if (g2_import::is_valid_embed_path($embed_path)) {
-        message::success("Gallery 2 path saved.");
+        message::success(t("Gallery 2 path saved"));
         module::set_var("g2_import", "embed_path", $embed_path);
         url::redirect("admin/g2_import");
       } else {
