@@ -98,6 +98,15 @@ class gallery_event_Core {
   static function item_deleted($item) {
     access::delete_item($item);
 
+    // Find any other albums that had the deleted item as the album cover and null it out.
+    // In some cases this may leave us with a missing album cover up in this item's parent
+    // hierarchy, but in most cases it'll work out fine.
+    foreach (ORM::factory("item")
+             ->where("album_cover_item_id", "=", $item->id)
+             ->find_all() as $parent) {
+      item::remove_album_cover($parent);
+    }
+
     $parent = $item->parent();
     if (!$parent->album_cover_item_id) {
       // Assume we deleted the album cover and pick a new one.  Choosing the first photo in the

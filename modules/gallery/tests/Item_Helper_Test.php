@@ -111,15 +111,18 @@ class Item_Helper_Test extends Gallery_Unit_Test_Case {
     $this->assert_not_same($rand, $photo2->slug);
   }
 
-  public function delete_cover_photo_picks_new_album_cover() {
-    $album = test::random_album();
+  public function delete_cover_photo_picks_new_album_cover_test() {
+    $parent = test::random_album();
+    $album = test::random_album($parent);
     $photo1 = test::random_photo($album);
     // At this point, $photo1 is the album cover.  We verify this in
     // Item_Model_Test::first_photo_becomes_album_cover
     $photo2 = test::random_photo($album);
     $photo1->delete();
     $album->reload();
+    $parent->reload();
 
     $this->assert_same($photo2->id, $album->album_cover_item_id);
+    $this->assert_same($photo2->id, $parent->album_cover_item_id);
   }
 }
