@@ -34,7 +34,7 @@ class Organize_Controller extends Controller {
     $file_filter = json_encode(
       array("photo" => array("label" => "Images",
                              "types" => array("*.jpg", "*.jpeg", "*.png", "*.gif")),
-            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4"))));
+            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4", "*.m4v"))));
 
     $v = new View("organize_dialog.html");
     $v->album = $album;
