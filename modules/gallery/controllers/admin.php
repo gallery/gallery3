@@ -38,7 +38,8 @@ class Admin_Controller extends Controller {
       return self::_reauth_check();
     }
     if (auth::must_reauth_for_admin_area()) {
-      return self::_prompt_for_reauth($controller_name, $args);
+      print self::_prompt_for_reauth($controller_name, $args);
+      return;
     }
 
     if (request::method() == "post") {
@@ -86,7 +87,13 @@ class Admin_Controller extends Controller {
       // Avoid anti-phishing protection by passing the url as session variable.
       Session::instance()->set("continue_url", url::abs_current(true));
     }
-    url::redirect("reauthenticate");
+
+    // Check that we we not in a dialog. If we are, then use an ajax response.
+    if (strpos(Router::$query_string, "g-in-dialog") === false) {
+      url::redirect("reauthenticate");
+    } else {
+      return reauthenticate::get_authenticate_form();
+    }
   }
 }
 

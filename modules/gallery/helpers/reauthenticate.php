@@ -17,16 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
-// Admin controllers are not available, except via /admin
-$config["^admin_.*"] = null;
-
-// Redirect /form/add/admin/controller and /form/edit/admin/controller to
-// admin/controller/form_(add|edit)/parms. provides the same as below for admin pages
-$config["^form/(edit|add)/admin/(\w+)/?(.*)$"] = "admin/$2/form_$1/$3";
-
-// Redirect /form/add and /form/edit to the module/form_(add|edit)/parms.
-$config["^form/(edit|add)/(\w+)/?(.*)$"] = "$2/form_$1/$3";
-
-// Default page is the root album
-$config["_default"] = "albums";
+class reauthenticate_Core {
+  static function get_authenticate_form() {
+    $form = new Forge("reauthenticate/auth", "", "post", array("id" => "g-reauthenticate-form"));
+    $form->set_attr('class', "g-narrow");
+    $form->hidden("continue_url")->value(Session::instance()->get("continue_url", "admin"));
+    $group = $form->group("reauthenticate")->label(t("Re-authenticate"));
+    $group->password("password")->label(t("Password"))->id("g-password")->class(null)
+      ->callback("auth::validate_too_many_failed_auth_attempts")
+      ->callback("user::valid_password")
+      ->error_messages("invalid_password", t("Incorrect password"))
+      ->error_messages(
+        "too_many_failed_auth_attempts",
+        t("Too many incorrect passwords.  Try again later"));
+    $group->submit("")->value(t("Submit"));
+    return $form;
+  }
+}
