@@ -74,6 +74,7 @@ class Admin_Controller extends Controller {
     $result = new stdClass();
     $result->result = "success";
     if ($time_remaining < 30) {
+      message::success(t("Automatically logged out of the admin area for your security"));
       $result->location = url::abs_site("");
     }
 
