@@ -228,14 +228,17 @@ class gallery_event_Core {
         case "album":
           $option_text = t("Album options");
           $edit_text = t("Edit album");
+          $delete_text = t("Delete album");
           break;
         case "movie":
           $option_text = t("Movie options");
           $edit_text = t("Edit movie");
+          $delete_text = t("Delete movie");
           break;
         default:
           $option_text = t("Photo options");
           $edit_text = t("Edit photo");
+          $delete_text = t("Delete photo");
         }
 
         $menu->append($options_menu = Menu::factory("submenu")
@@ -309,7 +312,7 @@ class gallery_event_Core {
               ->append(
                 Menu::factory("dialog")
                 ->id("delete")
-                ->label(t("Delete this photo"))
+                ->label($delete_text)
                 ->css_class("ui-icon-trash")
                 ->css_class("g-quick-delete")
                 ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
