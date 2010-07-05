@@ -22,7 +22,7 @@ class Reauthenticate_Controller extends Controller {
     if (!identity::active_user()->admin) {
       access::forbidden();
     }
-    return self::_show_form(self::_form());
+    return self::_show_form(reauthenticate::get_authenticate_form());
   }
 
   public function auth() {
@@ -31,7 +31,7 @@ class Reauthenticate_Controller extends Controller {
     }
     access::verify_csrf();
 
-    $form = self::_form();
+    $form = reauthenticate::get_authenticate_form();
     $valid = $form->validate();
     $user = identity::active_user();
     if ($valid) {
@@ -53,21 +53,5 @@ class Reauthenticate_Controller extends Controller {
     $view->content->form = $form;
     $view->content->user_name = identity::active_user()->name;
     print $view;
-  }
-
-  private static function _form() {
-    $form = new Forge("reauthenticate/auth", "", "post", array("id" => "g-reauthenticate-form"));
-    $form->set_attr('class', "g-narrow");
-    $form->hidden("continue_url")->value(Session::instance()->get("continue_url", "admin"));
-    $group = $form->group("reauthenticate")->label(t("Re-authenticate"));
-    $group->password("password")->label(t("Password"))->id("g-password")->class(null)
-      ->callback("auth::validate_too_many_failed_auth_attempts")
-      ->callback("user::valid_password")
-      ->error_messages("invalid_password", t("Incorrect password"))
-      ->error_messages(
-        "too_many_failed_auth_attempts",
-        t("Too many incorrect passwords.  Try again later"));
-    $group->submit("")->value(t("Submit"));
-    return $form;
   }
 }
