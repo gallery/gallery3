@@ -28,11 +28,11 @@ modules/comment/views/comment.mrss.php                       16  DIRTY_JS $feed-
 modules/comment/views/comment.mrss.php                       19  DIRTY_JS $feed->next_page_uri
 modules/comment/views/comment.mrss.php                       21  DIRTY    $pub_date
 modules/comment/views/comment.mrss.php                       22  DIRTY    $pub_date
-modules/comment/views/comment.mrss.php                       28  DIRTY    $child->item_uri
-modules/comment/views/comment.mrss.php                       29  DIRTY    $child->pub_date
-modules/comment/views/comment.mrss.php                       34  DIRTY_ATTR $child->thumb_url
-modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $child->thumb_height
-modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $child->thumb_width
+modules/comment/views/comment.mrss.php                       28  DIRTY    $comment->item_uri
+modules/comment/views/comment.mrss.php                       29  DIRTY    $comment->pub_date
+modules/comment/views/comment.mrss.php                       34  DIRTY_ATTR $comment->thumb_url
+modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $comment->thumb_height
+modules/comment/views/comment.mrss.php                       35  DIRTY_ATTR $comment->thumb_width
 modules/comment/views/comments.html.php                      28  DIRTY_ATTR $comment->id
 modules/comment/views/comments.html.php                      31  DIRTY_ATTR $comment->author()->avatar_url(40,$theme->url(,true))
 modules/comment/views/user_profile_comments.html.php         5   DIRTY_ATTR $comment->id
@@ -109,7 +109,7 @@ modules/gallery/views/admin_sidebar.html.php                 50  DIRTY    $avail
 modules/gallery/views/admin_sidebar.html.php                 58  DIRTY    $active
 modules/gallery/views/admin_sidebar_blocks.html.php          4   DIRTY_ATTR $ref
 modules/gallery/views/admin_sidebar_blocks.html.php          4   DIRTY    $text
-modules/gallery/views/admin_theme_options.html.php           6   DIRTY    $form
+modules/gallery/views/admin_theme_options.html.php           36  DIRTY    $form
 modules/gallery/views/admin_themes.html.php                  3   DIRTY_JS url::site("admin/themes/choose")
 modules/gallery/views/admin_themes.html.php                  5   DIRTY_JS $csrf
 modules/gallery/views/admin_themes.html.php                  22  DIRTY    $themes[$site]->name
@@ -120,7 +120,7 @@ modules/gallery/views/admin_themes.html.php                  60  DIRTY    $theme
 modules/gallery/views/admin_themes.html.php                  62  DIRTY    $themes[$admin]->description
 modules/gallery/views/admin_themes.html.php                  76  DIRTY    $info->name
 modules/gallery/views/admin_themes.html.php                  78  DIRTY    $info->description
-modules/gallery/views/admin_themes_preview.html.php          7   DIRTY_ATTR $url
+modules/gallery/views/admin_themes_preview.html.php          8   DIRTY_ATTR $url
 modules/gallery/views/error_404.html.php                     14  DIRTY    $login_form
 modules/gallery/views/error_admin.html.php                   150 DIRTY    $type
 modules/gallery/views/error_admin.html.php                   150 DIRTY    $code
@@ -167,7 +167,7 @@ modules/gallery/views/error_admin.html.php                   251 DIRTY_ATTR $env
 modules/gallery/views/error_admin.html.php                   257 DIRTY    $key
 modules/gallery/views/error_admin.html.php                   261 DIRTY    Kohana_Exception::safe_dump($value,$key)
 modules/gallery/views/form_uploadify.html.php                9   DIRTY_JS url::file("lib/uploadify/uploadify.swf")
-modules/gallery/views/form_uploadify.html.php                10  DIRTY_JS url::site("simple_uploader/add_photo/{$album->id}")
+modules/gallery/views/form_uploadify.html.php                10  DIRTY_JS url::site("flash_uploader/add_photo/{$album->id}")
 modules/gallery/views/form_uploadify.html.php                14  DIRTY_JS url::file("lib/uploadify/cancel.png")
 modules/gallery/views/form_uploadify.html.php                15  DIRTY_JS $simultaneous_upload_limit
 modules/gallery/views/in_place_edit.html.php                 2   DIRTY    form::open($action,array("method"=>"post","id"=>"g-in-place-edit-form","class"=>"g-short-form"))
@@ -190,7 +190,7 @@ modules/gallery/views/l10n_client.html.php                   58  DIRTY    form::
 modules/gallery/views/l10n_client.html.php                   62  DIRTY    form::textarea("l10n-edit-plural-translation-many","",' rows="2"')
 modules/gallery/views/l10n_client.html.php                   67  DIRTY    form::textarea("l10n-edit-plural-translation-other","",' rows="2"')
 modules/gallery/views/login_ajax.html.php                    6   DIRTY_JS url::site("password/reset")
-modules/gallery/views/login_ajax.html.php                    37  DIRTY    $form
+modules/gallery/views/login_ajax.html.php                    44  DIRTY    $form
 modules/gallery/views/maintenance.html.php                   46  DIRTY    auth::get_login_form("login/auth_html")
 modules/gallery/views/menu.html.php                          4   DIRTY    $menu->css_id?"id='$menu->css_id'":""
 modules/gallery/views/menu.html.php                          4   DIRTY_ATTR $menu->css_class
@@ -298,26 +298,26 @@ modules/rss/views/feed.mrss.php                              16  DIRTY_JS $feed-
 modules/rss/views/feed.mrss.php                              19  DIRTY_JS $feed->next_page_uri
 modules/rss/views/feed.mrss.php                              21  DIRTY    $pub_date
 modules/rss/views/feed.mrss.php                              22  DIRTY    $pub_date
-modules/rss/views/feed.mrss.php                              28  DIRTY    date("D, d M Y H:i:s T",$child->created);
-modules/rss/views/feed.mrss.php                              35  DIRTY_ATTR $child->resize_url(true)
-modules/rss/views/feed.mrss.php                              37  DIRTY_ATTR $child->resize_height
-modules/rss/views/feed.mrss.php                              37  DIRTY_ATTR $child->resize_width
-modules/rss/views/feed.mrss.php                              40  DIRTY_ATTR $child->thumb_url(true)
-modules/rss/views/feed.mrss.php                              42  DIRTY_ATTR $child->thumb_height
-modules/rss/views/feed.mrss.php                              42  DIRTY_ATTR $child->thumb_width
-modules/rss/views/feed.mrss.php                              48  DIRTY_ATTR $child->thumb_url(true)
-modules/rss/views/feed.mrss.php                              49  DIRTY_ATTR $child->thumb_height
-modules/rss/views/feed.mrss.php                              50  DIRTY_ATTR $child->thumb_width
-modules/rss/views/feed.mrss.php                              57  DIRTY_ATTR $child->resize_url(true)
-modules/rss/views/feed.mrss.php                              58  DIRTY_ATTR @filesize($child->resize_path())
-modules/rss/views/feed.mrss.php                              59  DIRTY_ATTR $child->mime_type
-modules/rss/views/feed.mrss.php                              60  DIRTY_ATTR $child->resize_height
-modules/rss/views/feed.mrss.php                              61  DIRTY_ATTR $child->resize_width
-modules/rss/views/feed.mrss.php                              65  DIRTY_ATTR $child->file_url(true)
-modules/rss/views/feed.mrss.php                              66  DIRTY_ATTR @filesize($child->file_path())
-modules/rss/views/feed.mrss.php                              67  DIRTY_ATTR $child->mime_type
-modules/rss/views/feed.mrss.php                              68  DIRTY_ATTR $child->height
-modules/rss/views/feed.mrss.php                              69  DIRTY_ATTR $child->width
+modules/rss/views/feed.mrss.php                              28  DIRTY    date("D, d M Y H:i:s T",$item->created);
+modules/rss/views/feed.mrss.php                              35  DIRTY_ATTR $item->resize_url(true)
+modules/rss/views/feed.mrss.php                              37  DIRTY_ATTR $item->resize_height
+modules/rss/views/feed.mrss.php                              37  DIRTY_ATTR $item->resize_width
+modules/rss/views/feed.mrss.php                              40  DIRTY_ATTR $item->thumb_url(true)
+modules/rss/views/feed.mrss.php                              42  DIRTY_ATTR $item->thumb_height
+modules/rss/views/feed.mrss.php                              42  DIRTY_ATTR $item->thumb_width
+modules/rss/views/feed.mrss.php                              48  DIRTY_ATTR $item->thumb_url(true)
+modules/rss/views/feed.mrss.php                              49  DIRTY_ATTR $item->thumb_height
+modules/rss/views/feed.mrss.php                              50  DIRTY_ATTR $item->thumb_width
+modules/rss/views/feed.mrss.php                              57  DIRTY_ATTR $item->resize_url(true)
+modules/rss/views/feed.mrss.php                              58  DIRTY_ATTR @filesize($item->resize_path())
+modules/rss/views/feed.mrss.php                              59  DIRTY_ATTR $item->mime_type
+modules/rss/views/feed.mrss.php                              60  DIRTY_ATTR $item->resize_height
+modules/rss/views/feed.mrss.php                              61  DIRTY_ATTR $item->resize_width
+modules/rss/views/feed.mrss.php                              65  DIRTY_ATTR $item->file_url(true)
+modules/rss/views/feed.mrss.php                              66  DIRTY_ATTR @filesize($item->file_path())
+modules/rss/views/feed.mrss.php                              67  DIRTY_ATTR $item->mime_type
+modules/rss/views/feed.mrss.php                              68  DIRTY_ATTR $item->height
+modules/rss/views/feed.mrss.php                              69  DIRTY_ATTR $item->width
 modules/rss/views/rss_block.html.php                         6   DIRTY_JS rss::url($url)
 modules/search/views/search.html.php                         27  DIRTY_ATTR $item_class
 modules/search/views/search.html.php                         28  DIRTY_JS $item->url()
@@ -406,9 +406,9 @@ themes/wind/views/page.html.php                              81  DIRTY    $heade
 themes/wind/views/page.html.php                              83  DIRTY_JS item::root()->url()
 themes/wind/views/page.html.php                              87  DIRTY    $theme->user_menu()
 themes/wind/views/page.html.php                              108 DIRTY_JS $parent->url($parent==$theme->item()->parent()?"show={$theme->item()->id}":null)
-themes/wind/views/page.html.php                              124 DIRTY    $content
-themes/wind/views/page.html.php                              130 DIRTY    newView("sidebar.html")
-themes/wind/views/page.html.php                              137 DIRTY    $footer_text
+themes/wind/views/page.html.php                              126 DIRTY    $content
+themes/wind/views/page.html.php                              132 DIRTY    newView("sidebar.html")
+themes/wind/views/page.html.php                              139 DIRTY    $footer_text
 themes/wind/views/paginator.html.php                         33  DIRTY_JS $first_page_url
 themes/wind/views/paginator.html.php                         42  DIRTY_JS $previous_page_url
 themes/wind/views/paginator.html.php                         70  DIRTY_JS $next_page_url
