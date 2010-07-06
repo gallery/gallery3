@@ -9,10 +9,11 @@ interface.
 
 
 SECURITY (& INTENDED AUDIENCE):
-This is the second release candidate of Gallery 3.0.  We're putting it
-out there so that we can find out if we overlooked any small things.
-We expect the final version to be virtually identical.  You can
-install it on public websites and use it freely -- we recommend it!
+This is the second (and hopefully final) release candidate of Gallery
+3.0.  We're putting it out there so that we can find out if we
+overlooked any small things.  We expect the final version to be
+virtually identical.  You can install it on public websites and use it
+freely -- we recommend it!
 
 Note:
  - We've contracted a professional security audit, received their results
