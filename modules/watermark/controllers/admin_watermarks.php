@@ -35,7 +35,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function form_edit() {
-    print watermark::get_edit_form();
+    print json_encode(array("form" => (string) watermark::get_edit_form()));
   }
 
   public function edit() {
@@ -58,7 +58,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function form_delete() {
-    print watermark::get_delete_form();
+    print json_encode(array("form" => (string) watermark::get_delete_form()));
   }
 
   public function delete() {
@@ -88,7 +88,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function form_add() {
-    print watermark::get_add_form();
+    print json_encode(array("form" => (string) watermark::get_add_form()));
   }
 
   public function add() {

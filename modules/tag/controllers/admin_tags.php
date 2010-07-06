@@ -37,7 +37,7 @@ class Admin_Tags_Controller extends Admin_Controller {
   public function form_delete($id) {
     $tag = ORM::factory("tag", $id);
     if ($tag->loaded()) {
-      print tag::get_delete_form($tag);
+      print json_encode(array("form" => (string) tag::get_delete_form($tag)));
     }
   }
 

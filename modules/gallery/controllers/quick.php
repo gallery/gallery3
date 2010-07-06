@@ -90,17 +90,10 @@ class Quick_Controller extends Controller {
     access::required("view", $item);
     access::required("edit", $item);
 
-    if ($item->is_album()) {
-      print t(
-        "Delete the album <b>%title</b>? All photos and movies in the album will also be deleted.",
-        array("title" => html::purify($item->title)));
-    } else {
-      print t("Are you sure you want to delete <b>%title</b>?",
-              array("title" => html::purify($item->title)));
-    }
-
-    $form = item::get_delete_form($item);
-    print $form;
+    $v = new View("quick_delete_confirm.html");
+    $v->item = $item;
+    $v->form = item::get_delete_form($item);
+    print json_encode(array("form" => (string) $v));
   }
 
   public function delete($id) {
@@ -149,6 +142,6 @@ class Quick_Controller extends Controller {
     // Pass on the source item where this form was generated, so we have an idea where to return to.
     $form->hidden("from_id")->value((int)Input::instance()->get("from_id", 0));
 
-    print $form;
+    print json_encode(array("form" => (string) $form));
   }
 }

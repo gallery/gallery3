@@ -26,7 +26,8 @@ class Flash_Uploader_Controller extends Controller {
       $item = $item->parent();
     }
 
-    print $this->_get_add_form($item);
+    print json_encode(array("form" => (string)$this->_get_add_form($item)));
+    //print $this->_get_add_form($item);
   }
 
   public function start() {

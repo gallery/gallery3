@@ -44,7 +44,7 @@ class User_Profile_Controller extends Controller {
 
   public function contact($id) {
     $user = identity::lookup_user($id);
-    print user_profile::get_contact_form($user);
+    print json_encode(array("form" => (string) user_profile::get_contact_form($user)));
   }
 
   public function send($id) {

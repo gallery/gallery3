@@ -102,6 +102,6 @@ class Movies_Controller extends Items_Controller {
     access::required("view", $movie);
     access::required("edit", $movie);
 
-    print movie::get_edit_form($movie);
+    print json_encode(array("form" => (string) movie::get_edit_form($movie)));
   }
 }

@@ -1,4 +1,5 @@
 <?php defined("SYSPATH") or die("No direct script access.") ?>
+<div>
 <script type="text/javascript">
  var load_tree = function(target_id, locked) {
    var load_url = "<?= url::site("move/show_sub_tree/{$source->id}/__TARGETID__") ?>";
@@ -24,13 +25,13 @@
    }
  }
 </script>
-<h1 style="display: none">
+<h1 style="display:none" >
   <? if ($source->type == "photo"): ?>
-  <? t("Move this photo to a new album") ?>
+  <?= t("Move this photo to a new album") ?>
   <? elseif ($source->type == "movie"): ?>
-  <? t("Move this movie to a new album") ?>
+  <?= t("Move this movie to a new album") ?>
   <? elseif ($source->type == "album"): ?>
-  <? t("Move this album to a new album") ?>
+  <?= t("Move this album to a new album") ?>
   <? endif ?>
 </h1>
 <div id="g-move">
@@ -42,6 +43,8 @@
   <form method="post" action="<?= url::site("move/save/$source->id") ?>">
     <?= access::csrf_form_field() ?>
     <input type="hidden" name="target_id" value="" />
-    <input type="submit" id="g-move-button" value="<?= t("Move")->for_html_attr() ?>" disabled="disabled"/>
+    <input type="submit" id="g-move-button" value="<?= t("Move")->for_html_attr() ?>"
+       disabled="disabled" class="submit" />
   </form>
+</div>
 </div>

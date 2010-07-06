@@ -30,7 +30,7 @@ class Server_Add_Controller extends Admin_Controller {
     $view->tree = new View("server_add_tree.html");
     $view->tree->files = $files;
     $view->tree->parents = array();
-    print $view;
+    print json_encode(array("form" => (string) $view));
   }
 
   public function children() {

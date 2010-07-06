@@ -64,7 +64,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
-    print $view;
+    print json_encode(array("form" => (string) $view));
   }
 
   /**
@@ -86,7 +86,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     log::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
-    print $view;
+    print json_encode(array("form" => (string) $view));
   }
 
   /**
@@ -103,7 +103,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view = new View("admin_maintenance_show_log.html");
     $view->task = $task;
 
-    print $view;
+    print json_encode(array("form" => (string) $view));
   }
 
   /**

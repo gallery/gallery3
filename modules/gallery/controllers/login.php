@@ -22,7 +22,7 @@ class Login_Controller extends Controller {
   public function ajax() {
     $view = new View("login_ajax.html");
     $view->form = auth::get_login_form("login/auth_ajax");
-    print $view;
+    print json_encode(array("form" => (string) $view));
   }
 
   public function auth_ajax() {

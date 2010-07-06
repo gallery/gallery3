@@ -168,7 +168,7 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("add", $album);
 
-    print album::get_add_form($album);
+    print json_encode(array("form" => (string) album::get_add_form($album)));
   }
 
   public function form_edit($album_id) {
@@ -176,6 +176,6 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("edit", $album);
 
-    print album::get_edit_form($album);
+    print json_encode(array("form" => (string) album::get_edit_form($album)));
   }
 }
