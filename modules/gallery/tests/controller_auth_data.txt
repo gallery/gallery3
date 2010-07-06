@@ -9,6 +9,8 @@ modules/gallery/controllers/albums.php                       show               
 modules/gallery/controllers/combined.php                     javascript           DIRTY_AUTH
 modules/gallery/controllers/combined.php                     css                  DIRTY_AUTH
 modules/gallery/controllers/file_proxy.php                   __call               DIRTY_CSRF|DIRTY_AUTH
+modules/gallery/controllers/flash_uploader.php               start                DIRTY_AUTH
+modules/gallery/controllers/flash_uploader.php               finish               DIRTY_AUTH
 modules/gallery/controllers/login.php                        ajax                 DIRTY_AUTH
 modules/gallery/controllers/login.php                        auth_ajax            DIRTY_AUTH
 modules/gallery/controllers/login.php                        html                 DIRTY_AUTH
@@ -16,8 +18,6 @@ modules/gallery/controllers/login.php                        auth_html          
 modules/gallery/controllers/logout.php                       index                DIRTY_AUTH
 modules/gallery/controllers/maintenance.php                  index                DIRTY_AUTH
 modules/gallery/controllers/quick.php                        form_edit            DIRTY_CSRF
-modules/gallery/controllers/simple_uploader.php              start                DIRTY_AUTH
-modules/gallery/controllers/simple_uploader.php              finish               DIRTY_AUTH
 modules/gallery/controllers/upgrader.php                     index                DIRTY_AUTH
 modules/gallery/controllers/user_profile.php                 show                 DIRTY_AUTH
 modules/gallery/controllers/user_profile.php                 contact              DIRTY_AUTH
