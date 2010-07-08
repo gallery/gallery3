@@ -43,10 +43,10 @@ class Reauthenticate_Controller extends Controller {
     $valid = $form->validate();
     $user = identity::active_user();
     if ($valid) {
-      message::success(t("Successfully re-authenticated!"));
       module::event("user_auth", $user);
       Session::instance()->delete("reauthenticate");
       if (empty($reauthenticate["in_dialog"])) {
+        message::success(t("Successfully re-authenticated!"));
         url::redirect($reauthenticate["continue_url"]);
       } else {
         self::_call_admin_function($reauthenticate);
