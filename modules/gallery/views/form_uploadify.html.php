@@ -88,6 +88,7 @@
 </ul>
 <? endif ?>
 
+<? if (!empty($album)): ?>
 <div>
   <p>
     <?= t("Photos will be uploaded to album: ") ?>
@@ -99,6 +100,7 @@
     <li class="g-active"> <?= html::purify($album->title) ?> </li>
   </ul>
 </div>
+<? endif ?>
 
 <div id="g-add-photos-canvas">
   <button id="g-add-photos-button" class="g-button ui-state-default ui-corner-all" href="#"><?= t("Select photos...") ?></button>
