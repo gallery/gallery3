@@ -37,7 +37,6 @@ class Reauthenticate_Controller extends Controller {
     access::verify_csrf();
 
     $reauthenticate = Session::instance()->get("reauthenticate", array());
-    Kohana_Log::add("error", Kohana::debug($reauthenticate));
 
     $form = self::_form();
     $valid = $form->validate();
