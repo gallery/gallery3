@@ -119,7 +119,9 @@ class Quick_Controller extends Controller {
     $item->delete();
     message::success($msg);
 
-    if (Input::instance()->get("page_type") == "collection") {
+    $from_id = Input::instance()->get("from_id");
+    if (Input::instance()->get("page_type") == "collection" &&
+        $from_id != $id /* deleted the item we were viewing */) {
       print json_encode(array("result" => "success", "reload" => 1));
     } else {
       print json_encode(array("result" => "success",
