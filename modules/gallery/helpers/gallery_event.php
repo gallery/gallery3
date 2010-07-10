@@ -249,7 +249,7 @@ class gallery_event_Core {
             $options_menu->append(Menu::factory("dialog")
                                   ->id("edit_item")
                                   ->label($edit_text)
-                                  ->url(url::site("form/edit/{$item->type}s/$item->id")));
+                                  ->url(url::site("form/edit/{$item->type}s/$item->id?from_id={$item->id}")));
           }
 
           if ($item->is_album()) {
@@ -263,7 +263,6 @@ class gallery_event_Core {
         }
 
         $csrf = access::csrf_token();
-        $theme_item = $theme->item();
         $page_type = $theme->page_type();
         if ($can_edit && $item->is_photo() && graphics::can("rotate")) {
           $options_menu
@@ -274,7 +273,7 @@ class gallery_event_Core {
               ->css_class("ui-icon-rotate-ccw")
               ->ajax_handler("function(data) { " .
                              "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
-              ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")))
+              ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")))
             ->append(
               Menu::factory("ajax_link")
               ->id("rotate_cw")
@@ -282,7 +281,7 @@ class gallery_event_Core {
               ->css_class("ui-icon-rotate-cw")
               ->ajax_handler("function(data) { " .
                              "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
-              ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+              ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
         }
 
         if ($item->id != item::root()->id) {
@@ -315,7 +314,7 @@ class gallery_event_Core {
                 ->label($delete_text)
                 ->css_class("ui-icon-trash")
                 ->css_class("g-quick-delete")
-                ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+                ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
           }
         }
       }
@@ -416,7 +415,7 @@ class gallery_event_Core {
                             ->id("edit")
                             ->label($edit_title)
                             ->css_class("ui-icon-pencil")
-                            ->url(url::site("quick/form_edit/$item->id?from_id=$theme_item->id")));
+                            ->url(url::site("quick/form_edit/$item->id?from_id={$theme_item->id}")));
 
       if ($item->is_photo() && graphics::can("rotate")) {
         $options_menu
@@ -427,7 +426,7 @@ class gallery_event_Core {
             ->css_class("ui-icon-rotate-ccw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
-            ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")))
+            ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")))
           ->append(
             Menu::factory("ajax_link")
             ->id("rotate_cw")
@@ -435,7 +434,7 @@ class gallery_event_Core {
             ->css_class("ui-icon-rotate-cw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
-            ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+            ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
       }
 
       // @todo Don't move photos from the photo page; we don't yet have a good way of redirecting
@@ -474,7 +473,7 @@ class gallery_event_Core {
                    ->id("delete")
                    ->label($delete_title)
                    ->css_class("ui-icon-trash")
-                   ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+                   ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
       }
 
       if ($item->is_album()) {
