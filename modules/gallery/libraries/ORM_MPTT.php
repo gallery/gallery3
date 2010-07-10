@@ -176,7 +176,7 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
-   * Return all of the children of this node, ordered by id.
+   * Return the number of children of this node.
    *
    * @chainable
    * @param   array    additional where clauses
