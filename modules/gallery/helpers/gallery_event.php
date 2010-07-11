@@ -142,6 +142,11 @@ class gallery_event_Core {
 
   static function item_moved($item, $old_parent) {
     access::recalculate_permissions($item->parent());
+
+    // If the new parent doesn't have an album cover, make this it.
+    if (!$item->parent()->album_cover_item_id) {
+      item::make_album_cover($item);
+    }
   }
 
   static function user_login($user) {
