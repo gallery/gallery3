@@ -364,7 +364,7 @@ class Item_Model extends ORM_MPTT {
               $this->name .= "." . $pi["extension"];
             }
 
-            $this->mime_type = strtolower($pi["extension"]) == "mp4" ? "video/mp4" : "video/x-flv";
+            $this->mime_type = in_array(strtolower($pi["extension"]), array("mp4", "m4v")) ? "video/mp4" : "video/x-flv";
           }
         }
 

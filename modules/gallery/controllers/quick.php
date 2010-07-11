@@ -46,13 +46,14 @@ class Quick_Controller extends Controller {
 
       graphics::generate($item);
 
-      $parent = $item->parent();
-      // @todo: this is an inadequate way to regenerate the parent's thumbnail after rotation.
-      if ($parent->album_cover_item_id == $item->id) {
-        copy($item->thumb_path(), $parent->thumb_path());
-        $parent->thumb_width = $item->thumb_width;
-        $parent->thumb_height = $item->thumb_height;
-        $parent->save();
+      // @todo: this is an inadequate way to regenerate album cover thumbnails after rotation.
+      foreach (ORM::factory("item")
+               ->where("album_cover_item_id", "=", $item->id)
+               ->find_all() as $target) {
+        copy($item->thumb_path(), $target->thumb_path());
+        $target->thumb_width = $item->thumb_width;
+        $target->thumb_height = $item->thumb_height;
+        $target->save();
       }
     }
 
@@ -109,10 +110,21 @@ class Quick_Controller extends Controller {
     }
 
     $parent = $item->parent();
-    $item->delete();
+
+    if ($item->is_album()) {
+      // Album delete will trigger deletes for all children.  Do this in a batch so that we can be
+      // smart about notifications, album cover updates, etc.
+      batch::start();
+      $item->delete();
+      batch::stop();
+    } else {
+      $item->delete();
+    }
     message::success($msg);
 
-    if (Input::instance()->get("page_type") == "collection") {
+    $from_id = Input::instance()->get("from_id");
+    if (Input::instance()->get("page_type") == "collection" &&
+        $from_id != $id /* deleted the item we were viewing */) {
       print json_encode(array("result" => "success", "reload" => 1));
     } else {
       print json_encode(array("result" => "success",

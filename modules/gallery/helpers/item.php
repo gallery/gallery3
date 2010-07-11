@@ -158,8 +158,10 @@ class item_Core {
    */
   static function get_delete_form($item) {
     $page_type = Input::instance()->get("page_type");
+    $from_id = Input::instance()->get("from_id");
     $form = new Forge(
-      "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "g-confirm-delete"));
+      "quick/delete/$item->id?page_type=$page_type&from_id=$from_id", "",
+      "post", array("id" => "g-confirm-delete"));
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     $form->script("")

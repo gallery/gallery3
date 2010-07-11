@@ -58,7 +58,7 @@ class album_Core {
   static function get_edit_form($parent) {
     $form = new Forge(
       "albums/update/{$parent->id}", "", "post", array("id" => "g-edit-album-form"));
-    $form->hidden("from_id");
+    $form->hidden("from_id")->value($parent->id);
     $group = $form->group("edit_item")->label(t("Edit Album"));
 
     $group->input("title")->label(t("Title"))->value($parent->title)

@@ -92,6 +92,7 @@ class ORM_MPTT_Core extends ORM {
         // Deleting children affects the MPTT tree, so we have to reload each child before we
         // delete it so that we have current left_ptr/right_ptr pointers.  This is inefficient.
         // @todo load each child once, not twice.
+        set_time_limit(30);
         $item->reload()->delete();
       }
 
@@ -175,7 +176,7 @@ class ORM_MPTT_Core extends ORM {
   }
 
   /**
-   * Return all of the children of this node, ordered by id.
+   * Return the number of children of this node.
    *
    * @chainable
    * @param   array    additional where clauses
