@@ -109,14 +109,35 @@ class gallery_event_Core {
 
     $parent = $item->parent();
     if (!$parent->album_cover_item_id) {
-      // Assume we deleted the album cover and pick a new one.  Choosing the first photo in the
-      // album is logical, but it's not the most efficient in the case where we're deleting all
-      // the photos in the album one at a time since we'll probably delete them in order which
-      // means that we'll be resetting the album cover each time.
-      if ($child = $parent->children(1)->current()) {
-        item::make_album_cover($child);
+      // Assume that we deleted the album cover
+      if (batch::in_progress()) {
+        // Remember that this parent is missing an album cover, for later.
+        $batch_missing_album_cover = Session::instance()->get("batch_missing_album_cover", array());
+        $batch_missing_album_cover[$parent->id] = 1;
+        Session::instance()->set("batch_missing_album_cover", $batch_missing_album_cover);
+      } else {
+        // Choose the first child as the new cover.
+        if ($child = $parent->children(1)->current()) {
+          item::make_album_cover($child);
+        }
       }
     }
+  }
+
+  static function batch_complete() {
+    // Set the album covers for any items that where we probably deleted the album cover during
+    // this batch.  The item may have been deleted, so don't count on it being around.  Choose the
+    // first child as the new album cover.
+    // NOTE: if the first child doesn't have an album cover, then this won't work.
+    foreach (array_keys(Session::instance()->get("batch_missing_album_cover", array())) as $id) {
+      $item = ORM::factory("item", $id);
+      if ($item->loaded() && !$item->album_cover_item_id) {
+        if ($child = $item->children(1)->current()) {
+          item::make_album_cover($child);
+        }
+      }
+    }
+    Session::instance()->delete("batch_missing_album_cover");
   }
 
   static function item_moved($item, $old_parent) {

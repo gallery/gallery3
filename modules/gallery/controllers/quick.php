@@ -116,7 +116,16 @@ class Quick_Controller extends Controller {
     }
 
     $parent = $item->parent();
-    $item->delete();
+
+    if ($item->is_album()) {
+      // Album delete will trigger deletes for all children.  Do this in a batch so that we can be
+      // smart about notifications, album cover updates, etc.
+      batch::start();
+      $item->delete();
+      batch::stop();
+    } else {
+      $item->delete();
+    }
     message::success($msg);
 
     $from_id = Input::instance()->get("from_id");
