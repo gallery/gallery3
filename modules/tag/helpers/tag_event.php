@@ -106,6 +106,10 @@ class tag_event_Core {
   }
 
   static function add_photos_form($album, $form) {
+    if (!isset($group->uploadify)) {
+      return;
+    }
+    
     $group = $form->add_photos;
     $group->input("tags")
       ->label(t("Add tags to all uploaded files"))
@@ -125,6 +129,10 @@ class tag_event_Core {
   }
 
   static function add_photos_form_completed($album, $form) {
+    if (!isset($group->uploadify)) {
+      return;
+    }
+    
     foreach (explode(",", $form->add_photos->tags->value) as $tag_name) {
       $tag_name = trim($tag_name);
       if ($tag_name) {
