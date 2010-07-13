@@ -79,7 +79,7 @@ class Reauthenticate_Controller extends Controller {
     $group = $form->group("reauthenticate")->label(t("Re-authenticate"));
     $group->password("password")->label(t("Password"))->id("g-password")->class(null)
       ->callback("auth::validate_too_many_failed_auth_attempts")
-      ->callback("user::valid_password")
+      ->callback("Reauthenticate_Controller::valid_password")
       ->error_messages("invalid_password", t("Incorrect password"))
       ->error_messages(
         "too_many_failed_auth_attempts",
@@ -107,5 +107,11 @@ class Reauthenticate_Controller extends Controller {
     }
 
     call_user_func_array(array(new $controller_name, $method), $args);
+  }
+
+  static function valid_password($password_input) {
+    if (!identity::is_correct_password(identity::active_user(), $password_input->value)) {
+      $password_input->add_error("invalid_password", 1);
+    }
   }
 }
