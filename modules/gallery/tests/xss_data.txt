@@ -253,6 +253,7 @@ modules/gallery/views/permissions_form.html.php              75  DIRTY_JS $item-
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $group->id
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $permission->id
 modules/gallery/views/permissions_form.html.php              80  DIRTY_JS $item->id
+modules/gallery/views/quick_delete_confirm.html.php          11  DIRTY    $form
 modules/gallery/views/reauthenticate.html.php                9   DIRTY    $form
 modules/gallery/views/upgrader.html.php                      57  DIRTY_ATTR $done?"muted":""
 modules/gallery/views/upgrader.html.php                      61  DIRTY_ATTR $done?"muted":""

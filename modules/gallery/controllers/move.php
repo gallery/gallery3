@@ -26,7 +26,7 @@ class Move_Controller extends Controller {
     $view = new View("move_browse.html");
     $view->source = $source;
     $view->tree = $this->_get_tree_html($source, ORM::factory("item", 1));
-    print $view;
+    print json_encode(array("form" => (string) $view));
   }
 
   public function save($source_id) {

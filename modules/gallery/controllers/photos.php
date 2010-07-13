@@ -24,9 +24,9 @@ class Photos_Controller extends Items_Controller {
       // sure that we're actually receiving an object
       throw new Kohana_404_Exception();
     }
-  
+
     access::required("view", $photo);
-  
+
     $where = array(array("type", "!=", "album"));
     $position = $photo->parent()->get_position($photo, $where);
     if ($position > 1) {
@@ -102,6 +102,6 @@ class Photos_Controller extends Items_Controller {
     access::required("view", $photo);
     access::required("edit", $photo);
 
-    print photo::get_edit_form($photo);
+    print json_encode(array("form" => (string) photo::get_edit_form($photo)));
   }
 }

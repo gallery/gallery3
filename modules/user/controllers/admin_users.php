@@ -61,7 +61,7 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function add_user_form() {
-    print $this->_get_user_add_form_admin();
+    print json_encode(array("form" => (string) $this->_get_user_add_form_admin()));
   }
 
   public function delete_user($id) {
@@ -95,7 +95,7 @@ class Admin_Users_Controller extends Admin_Controller {
     if (empty($user)) {
       throw new Kohana_404_Exception();
     }
-    print $this->_get_user_delete_form_admin($user);
+    print json_encode(array("form" => (string) $this->_get_user_delete_form_admin($user)));
   }
 
   public function edit_user($id) {
@@ -146,7 +146,7 @@ class Admin_Users_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    print $this->_get_user_edit_form_admin($user);
+    print json_encode(array("form" => (string) $this->_get_user_edit_form_admin($user)));
   }
 
   public function add_user_to_group($user_id, $group_id) {
@@ -199,7 +199,7 @@ class Admin_Users_Controller extends Admin_Controller {
   }
 
   public function add_group_form() {
-    print $this->_get_group_add_form_admin();
+    print json_encode(array("form" => (string) $this->_get_group_add_form_admin()));
   }
 
   public function delete_group($id) {
@@ -230,7 +230,7 @@ class Admin_Users_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    print $this->_get_group_delete_form_admin($group);
+    print json_encode(array("form" => (string) $this->_get_group_delete_form_admin($group)));
   }
 
   public function edit_group($id) {
@@ -272,7 +272,7 @@ class Admin_Users_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    print $this->_get_group_edit_form_admin($group);
+    print json_encode(array("form" => (string) $this->_get_group_edit_form_admin($group)));
   }
 
   /* User Form Definitions */

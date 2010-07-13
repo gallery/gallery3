@@ -139,7 +139,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    print $this->_get_edit_form($user);
+    print json_encode(array("form" => (string) $this->_get_edit_form($user)));
   }
 
   public function form_change_password($id) {
@@ -148,7 +148,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    print $this->_get_change_password_form($user);
+    print json_encode(array("form" => (string) $this->_get_change_password_form($user)));
   }
 
   public function form_change_email($id) {
@@ -157,7 +157,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    print $this->_get_change_email_form($user);
+    print json_encode(array("form" => (string) $this->_get_change_email_form($user)));
   }
 
   private function _get_change_password_form($user) {

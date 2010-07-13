@@ -52,7 +52,7 @@ class Admin_Themes_Controller extends Admin_Controller {
     } else {
       $view->url = item::root()->url("theme=$theme_name");
     }
-    print $view;
+    print json_encode(array("form" => (string) $view));
   }
 
   public function choose($type, $theme_name) {
