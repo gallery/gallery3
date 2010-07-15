@@ -46,10 +46,8 @@ class Reauthenticate_Controller extends Controller {
       Session::instance()->delete("reauthenticate");
       if (empty($reauthenticate["in_dialog"])) {
         message::success(t("Successfully re-authenticated!"));
-        url::redirect($reauthenticate["continue_url"]);
-      } else {
-        self::_call_admin_function($reauthenticate);
       }
+      url::redirect($reauthenticate["continue_url"]);
     } else {
       $name = $user->name;
       log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
@@ -86,27 +84,6 @@ class Reauthenticate_Controller extends Controller {
         t("Too many incorrect passwords.  Try again later"));
     $group->submit("")->value(t("Submit"));
     return $form;
-  }
-
-  private static function _call_admin_function($reauthenticate) {
-    $controller_name = $reauthenticate["controller"];
-    $args = $reauthenticate["args"];
-    if ($controller_name == "index") {
-      $controller_name = "dashboard";
-    }
-
-    $controller_name = "Admin_{$controller_name}_Controller";
-    if ($args) {
-      $method = array_shift($args);
-    } else {
-      $method = "index";
-    }
-
-    if (!method_exists($controller_name, $method)) {
-      throw new Kohana_404_Exception();
-    }
-
-    call_user_func_array(array(new $controller_name, $method), $args);
   }
 
   static function valid_password($password_input) {
