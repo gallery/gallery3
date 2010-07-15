@@ -84,9 +84,9 @@ class Admin_Controller extends Controller {
   private static function _prompt_for_reauth($controller_name, $args) {
     if (request::method() == "get") {
       // Avoid anti-phishing protection by passing the url as session variable.
-      $reauthenticate = array("continue_url" => url::abs_current(true),
-                              "in_dialog" => strpos(Router::$query_string, "g-in-dialog") !== false,
-                              "controller" => $controller_name, "args" => $args);
+      $reauthenticate =
+        array("continue_url" => url::abs_current(true),
+              "in_dialog" => strpos(Router::$query_string, "gallery_dialog_request") !== false);
       Session::instance()->set("reauthenticate", $reauthenticate);
     }
 
