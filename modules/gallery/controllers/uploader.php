@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Flash_Uploader_Controller extends Controller {
-  public function app($id) {
+class Uploader_Controller extends Controller {
+  public function index($id) {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
     access::required("add", $item);
@@ -110,7 +110,7 @@ class Flash_Uploader_Controller extends Controller {
   }
 
   private function _get_add_form($album)  {
-    $form = new Forge("flash_uploader/finish", "", "post", array("id" => "g-add-photos-form"));
+    $form = new Forge("uploader/finish", "", "post", array("id" => "g-add-photos-form"));
     $group = $form->group("add_photos")
       ->label(t("Add photos to %album_title", array("album_title" => html::purify($album->title))));
     $group->uploadify("uploadify")->album($album);

@@ -237,7 +237,7 @@ class gallery_event_Core {
             $add_menu->append(Menu::factory("dialog")
                               ->id("add_photos_item")
                               ->label(t("Add photos"))
-                              ->url(url::site("flash_uploader/app/$item->id")));
+                              ->url(url::site("uploader/index/$item->id")));
             if ($item->is_album()) {
               $add_menu->append(Menu::factory("dialog")
                                 ->id("add_album_item")
@@ -508,7 +508,7 @@ class gallery_event_Core {
                    ->id("add_item")
                    ->label(t("Add a photo"))
                    ->css_class("ui-icon-plus")
-                   ->url(url::site("flash_uploader/app/$item->id")))
+                   ->url(url::site("uploader/index/$item->id")))
           ->append(Menu::factory("dialog")
                    ->id("add_album")
                    ->label(t("Add an album"))
