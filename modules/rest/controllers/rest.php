@@ -81,6 +81,11 @@ class Rest_Controller extends Controller {
       }
 
       $response = call_user_func(array($handler_class, $handler_method), $request);
+      if ($handler_method == "post") {
+        // post methods must return a response containing a URI.
+        header("HTTP/1.1 201 Created");
+        header("Location: {$response['url']}");
+      }
       rest::reply($response);
     } catch (ORM_Validation_Exception $e) {
       // Note: this is totally insufficient because it doesn't take into account localization.  We
