@@ -22,11 +22,10 @@ class Reauthenticate_Controller extends Controller {
     if (!identity::active_user()->admin) {
       access::forbidden();
     }
-    $reauthenticate = Session::instance()->get("reauthenticate", array());
-    if (empty($reauthenticate["in_dialog"])) {
-      self::_show_form(self::_form());
-    } else {
+    if (request::is_ajax()) {
       print json_encode(array("form" => (string) self::_form()));
+    } else {
+      self::_show_form(self::_form());
     }
   }
 
@@ -36,18 +35,15 @@ class Reauthenticate_Controller extends Controller {
     }
     access::verify_csrf();
 
-    $reauthenticate = Session::instance()->get("reauthenticate", array());
-
     $form = self::_form();
     $valid = $form->validate();
     $user = identity::active_user();
     if ($valid) {
       module::event("user_auth", $user);
-      Session::instance()->delete("reauthenticate");
-      if (empty($reauthenticate["in_dialog"])) {
+      if (!request::is_ajax()) {
         message::success(t("Successfully re-authenticated!"));
       }
-      url::redirect($reauthenticate["continue_url"]);
+      url::redirect(Session::instance()->get_once("continue_url"));
     } else {
       $name = $user->name;
       log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
@@ -72,8 +68,7 @@ class Reauthenticate_Controller extends Controller {
 
   private static function _form() {
     $form = new Forge("reauthenticate/auth", "", "post", array("id" => "g-reauthenticate-form"));
-    $form->set_attr('class', "g-narrow");
-    $form->hidden("continue_url")->value(Session::instance()->get("continue_url", "admin"));
+    $form->set_attr("class", "g-narrow");
     $group = $form->group("reauthenticate")->label(t("Re-authenticate"));
     $group->password("password")->label(t("Password"))->id("g-password")->class(null)
       ->callback("auth::validate_too_many_failed_auth_attempts")
