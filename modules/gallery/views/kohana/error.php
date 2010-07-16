@@ -25,16 +25,20 @@ try {
 
 // Try to show a themed error page for 404 errors
 if ($e instanceof Kohana_404_Exception) {
-  $view = new Theme_View("page.html", "other", "error");
-  $view->page_title = t("Dang...  Page not found!");
-  $view->content = new View("error_404.html");
-  $user = identity::active_user();
-  $view->content->is_guest = $user && $user->guest;
-  if ($view->content->is_guest) {
-    $view->content->login_form = new View("login_ajax.html");
-    $view->content->login_form->form = auth::get_login_form("login/auth_html");
+  if (Router::$controller == "file_proxy") {
+    print "File not found";
+  } else {
+    $view = new Theme_View("page.html", "other", "error");
+    $view->page_title = t("Dang...  Page not found!");
+    $view->content = new View("error_404.html");
+    $user = identity::active_user();
+    $view->content->is_guest = $user && $user->guest;
+    if ($view->content->is_guest) {
+      $view->content->login_form = new View("login_ajax.html");
+      $view->content->login_form->form = auth::get_login_form("login/auth_html");
+    }
+    print $view;
   }
-  print $view;
   return;
 }
 
