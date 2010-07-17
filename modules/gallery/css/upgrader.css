@@ -9,16 +9,15 @@ h1 {
 }
 
 div#outer {
-  width: 650px;
-  background: white;
+  background: #fff;
   border: 1px solid #999;
   margin: 0 auto;
-  padding: -10px;
+  width: 650px;
 }
 
 div#inner {
-  padding: 0 1em 0 1em;
-  margin: 0px;
+  margin: 0;
+  padding: 0 1em;
 }
 
 div#footer {
