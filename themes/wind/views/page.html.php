@@ -29,7 +29,7 @@
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("gallery.common.css") ?>
     <?= $theme->css("screen.css") ?>
-    <!--[if lt IE 8]>
+    <!--[if lte IE 8]>
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
