@@ -24,9 +24,12 @@ class watermark_Core {
     }
 
     $form = new Forge("admin/watermarks/add", "", "post", array("id" => "g-add-watermark-form"));
-    $group = $form->group("add_watermark")->label(t("Upload Watermark"));
-    $group->upload("file")->label(t("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required");
-    $group->dropdown("position")->label(t("Watermark Position"))
+    $group = $form->group("add_watermark")->label(t("Upload watermark"));
+    $group->upload("file")->label(t("Watermark"))->rules("allow[jpg,png,gif]|size[1MB]|required")
+      ->error_messages("required", "You must select a watermark")
+      ->error_messages("invalid_type", "The watermark must be a JPG, GIF or PNG")
+      ->error_messages("max_size", "The watermark is too big (1 MB max)");
+    $group->dropdown("position")->label(t("Watermark position"))
       ->options(self::positions())
       ->selected("southeast");
     $group->dropdown("transparency")->label(t("Transparency (100% = completely transparent)"))
