@@ -260,6 +260,7 @@ class Admin_Users_Controller extends Admin_Controller {
         t("Changed group %group_name", array("group_name" => $group->name)));
       print json_encode(array("result" => "success"));
     } else {
+      $group->reload();
       message::error(
         t("Failed to change group %group_name", array("group_name" => $group->name)));
       print json_encode(array("result" => "error", "form" => (string) $form));
