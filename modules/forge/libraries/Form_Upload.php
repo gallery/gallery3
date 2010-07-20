@@ -135,6 +135,10 @@ class Form_Upload_Core extends Form_Input {
 			$mime = $this->upload['type'];
 		}
 
+                // Get rid of the ";charset=binary" that can occasionally occur and is
+                // legal via RFC2045
+                $mime = preg_replace('/; charset=binary/', '', $mime);
+
 		// Allow nothing by default
 		$allow = FALSE;
 
