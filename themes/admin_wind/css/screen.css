@@ -419,6 +419,17 @@ th {
   color: #FF0000 !important;
 }
 
+/* Language options  ~~~~~~~~~~~~~~~~~~~~~~~~ */
+#g-share-translations-form fieldset {
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+}
+
+#g-share-translations-form fieldset legend {
+  display: none;
+}
+
 /** *******************************************************************
  * 5) Navigation and menus
  *********************************************************************/

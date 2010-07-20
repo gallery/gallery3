@@ -107,6 +107,9 @@
         </a>
 
         <h3><?= t("Sharing your translations") ?></h3>
+          <p>
+            <?= t("Sharing your own translations with the Gallery community is easy. Please do!") ?>
+          </p>
         <?= $share_translations_form ?>
       </div>
     </div>
