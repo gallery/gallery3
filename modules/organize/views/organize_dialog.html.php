@@ -98,12 +98,12 @@
       controllerUri: "<?= $controller_uri ?>"
     };
   };
-  /*
-    For version detection, set to min. required Flash Player version, or 0 (or 0.0.0),
-    for no version detection.
-  */
-  var swfVersionStr = "10.0.0";
-  /* To use express install, set to playerProductInstall.swf, otherwise the empty string.*/
+
+  // For version detection, set to minimum required Flash Player version, or 0 (or 0.0.0),
+  // for no version detection.
+  var swfVersionStr = "<?= $flash_minimum_version = "10.0.0" ?>";
+
+  // To use express install, set to playerProductInstall.swf, otherwise the empty string.
   var xiSwfUrlStr = "";
   var flashvars = {};
 
@@ -129,12 +129,14 @@
   <h1 style="display:none"><?= t("Organize :: %name", array("name" => html::purify($album->title))) ?></h1>
     <div id="flashContent">
       <p>
-      <?= t("To view the organize dialog ensure that Adobe Flash Player version 10.0.0 or greater is installed.") ?>
+        <?= t("To use the Organize feature, please ensure that Adobe Flash Player version %flash_minimum_version " .
+              "or greater is installed.", array("flash_minimum_version" => $flash_minimum_version)) ?>
       </p>
       <script type="text/javascript">
 	var pageHost = ((document.location.protocol == "https:") ? "https://" :	"http://");
         $("#flashContent").append("<a href='http://www.adobe.com/go/getflashplayer'><img src='"	+ pageHost +
-                                  "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='<?= t("Get Adobe Flash player") ?>' /></a>" );
+                                  "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' " +
+                                  alt='<?= t("Get Adobe Flash Player") ?>' /></a>" );
      </script>
 </div>
 </div>
