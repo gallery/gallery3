@@ -371,8 +371,10 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = new Forge("admin/users/edit_group/$group->id", "", "post", array("id" => "g-edit-group-form"));
     $form_group = $form->group("edit_group")->label(t("Edit group"));
     $form_group->input("name")->label(t("Name"))->id("g-name")->value($group->name);
-    $form_group->inputs["name"]->error_messages(
-      "conflict", t("There is already a group with that name"));
+    $form_group->inputs["name"]->error_messages("conflict", t("There is already a group with that name"))
+      ->error_messages("required", t("You must enter a group name"))
+      ->error_messages("length", t("The group name must be at least %min_length characters",
+                                   array("min_length" => 4)));
     $form_group->submit("")->value(t("Save"));
     return $form;
   }
@@ -381,8 +383,10 @@ class Admin_Users_Controller extends Admin_Controller {
     $form = new Forge("admin/users/add_group", "", "post", array("id" => "g-add-group-form"));
     $form_group = $form->group("add_group")->label(t("Add group"));
     $form_group->input("name")->label(t("Name"))->id("g-name");
-    $form_group->inputs["name"]->error_messages(
-      "conflict", t("There is already a group with that name"));
+    $form_group->inputs["name"]->error_messages("conflict", t("There is already a group with that name"))
+      ->error_messages("required", t("You must enter a group name"))
+      ->error_messages("length", t("The group name must be at least %min_length characters",
+                                   array("min_length" => 4)));
     $form_group->submit("")->value(t("Add group"));
     return $form;
   }
