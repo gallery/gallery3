@@ -381,6 +381,8 @@ class gallery_task_Core {
     db::build()
       ->update("items")
       ->set("right_ptr", $value)
+      ->set("relative_path_cache", null)
+      ->set("relative_url_cache", null)
       ->where("id", "=", $id)
       ->execute();
   }
