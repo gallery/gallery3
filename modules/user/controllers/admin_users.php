@@ -54,14 +54,14 @@ class Admin_Users_Controller extends Admin_Controller {
       $user->save();
       module::event("user_add_form_admin_completed", $user, $form);
       message::success(t("Created user %user_name", array("user_name" => $user->name)));
-      print json_encode(array("result" => "success"));
+      json::reply(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
   }
 
   public function add_user_form() {
-    print json_encode(array("form" => (string) $this->_get_user_add_form_admin()));
+    json::reply(array("form" => (string) $this->_get_user_add_form_admin()));
   }
 
   public function delete_user($id) {
@@ -81,13 +81,13 @@ class Admin_Users_Controller extends Admin_Controller {
       $name = $user->name;
       $user->delete();
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
 
     $message = t("Deleted user %user_name", array("user_name" => $name));
     log::success("user", $message);
     message::success($message);
-    print json_encode(array("result" => "success"));
+    json::reply(array("result" => "success"));
   }
 
   public function delete_user_form($id) {
@@ -95,7 +95,7 @@ class Admin_Users_Controller extends Admin_Controller {
     if (empty($user)) {
       throw new Kohana_404_Exception();
     }
-    print json_encode(array("form" => (string) $this->_get_user_delete_form_admin($user)));
+    json::reply(array("form" => (string) $this->_get_user_delete_form_admin($user)));
   }
 
   public function edit_user($id) {
@@ -134,9 +134,9 @@ class Admin_Users_Controller extends Admin_Controller {
       $user->save();
       module::event("user_edit_form_admin_completed", $user, $form);
       message::success(t("Changed user %user_name", array("user_name" => $user->name)));
-      print json_encode(array("result" => "success"));
+      json::reply(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -146,7 +146,7 @@ class Admin_Users_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    print json_encode(array("form" => (string) $this->_get_user_edit_form_admin($user)));
+    json::reply(array("form" => (string) $this->_get_user_edit_form_admin($user)));
   }
 
   public function add_user_to_group($user_id, $group_id) {
@@ -192,14 +192,14 @@ class Admin_Users_Controller extends Admin_Controller {
       $group->save();
       message::success(
         t("Created group %group_name", array("group_name" => $group->name)));
-      print json_encode(array("result" => "success"));
+      json::reply(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
   }
 
   public function add_group_form() {
-    print json_encode(array("form" => (string) $this->_get_group_add_form_admin()));
+    json::reply(array("form" => (string) $this->_get_group_add_form_admin()));
   }
 
   public function delete_group($id) {
@@ -215,13 +215,13 @@ class Admin_Users_Controller extends Admin_Controller {
       $name = $group->name;
       $group->delete();
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
 
     $message = t("Deleted group %group_name", array("group_name" => $name));
     log::success("group", $message);
     message::success($message);
-    print json_encode(array("result" => "success"));
+    json::reply(array("result" => "success"));
   }
 
   public function delete_group_form($id) {
@@ -230,7 +230,7 @@ class Admin_Users_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    print json_encode(array("form" => (string) $this->_get_group_delete_form_admin($group)));
+    json::reply(array("form" => (string) $this->_get_group_delete_form_admin($group)));
   }
 
   public function edit_group($id) {
@@ -258,12 +258,12 @@ class Admin_Users_Controller extends Admin_Controller {
       $group->save();
       message::success(
         t("Changed group %group_name", array("group_name" => $group->name)));
-      print json_encode(array("result" => "success"));
+      json::reply(array("result" => "success"));
     } else {
       $group->reload();
       message::error(
         t("Failed to change group %group_name", array("group_name" => $group->name)));
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -273,7 +273,7 @@ class Admin_Users_Controller extends Admin_Controller {
       throw new Kohana_404_Exception();
     }
 
-    print json_encode(array("form" => (string) $this->_get_group_edit_form_admin($group)));
+    json::reply(array("form" => (string) $this->_get_group_edit_form_admin($group)));
   }
 
   /* User Form Definitions */
