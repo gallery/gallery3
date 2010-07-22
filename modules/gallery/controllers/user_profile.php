@@ -44,7 +44,7 @@ class User_Profile_Controller extends Controller {
 
   public function contact($id) {
     $user = identity::lookup_user($id);
-    print json_encode(array("form" => (string) user_profile::get_contact_form($user)));
+    json::reply(array("form" => (string) user_profile::get_contact_form($user)));
   }
 
   public function send($id) {
@@ -61,9 +61,9 @@ class User_Profile_Controller extends Controller {
         ->message(html::purify($form->message->message->value))
         ->send();
       message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
-      print json_encode(array("result" => "success"));
+      json::reply(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error", "form" => (string)$form));
+      json::reply(array("result" => "error", "form" => (string)$form));
     }
   }
 }

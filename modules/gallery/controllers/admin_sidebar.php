@@ -50,7 +50,7 @@ class Admin_Sidebar_Controller extends Admin_Controller {
     $result["active"] = $v->render();
     $message = t("Updated sidebar blocks");
     $result["message"] = (string) $message;
-    print json_encode($result);
+    json::reply($result);
   }
 
   private function _get_blocks() {

@@ -35,8 +35,7 @@ class rest_Core {
       }
       print "<pre>$html</pre>";
     } else {
-      header("Content-type: application/json");
-      print json_encode($data);
+      json::reply($data);
     }
   }
 

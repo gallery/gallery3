@@ -47,14 +47,14 @@ class Organize_Controller extends Controller {
     $v->controller_uri = url::site("organize") . "/";
     $v->swf_uri = url::file("modules/organize/lib/Gallery3WebClient.swf?") .
       filemtime(MODPATH . "organize/lib/Gallery3WebClient.swf");
-    print json_encode(array("form" => (string) $v));
+    json::reply(array("form" => (string) $v));
   }
 
   function add_album_fields() {
-    print json_encode(array("title" => (string)t("Title"),
-                            "description" => (string)t("Description"),
-                            "name" => (string)t("Directory name"),
-                            "slug" => (string)t("Internet Address")));
+    json::reply(array("title" => (string)t("Title"),
+                      "description" => (string)t("Description"),
+                      "name" => (string)t("Directory name"),
+                      "slug" => (string)t("Internet Address")));
   }
 
 }

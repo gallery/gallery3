@@ -28,6 +28,6 @@ class Exif_Controller extends Controller {
     $view = new View("exif_dialog.html");
     $view->details = exif::get($item);
 
-    print json_encode(array("form" => (string) $view));
+    json::reply(array("form" => (string) $view));
   }
 }

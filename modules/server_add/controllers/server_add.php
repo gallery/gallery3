@@ -30,7 +30,7 @@ class Server_Add_Controller extends Admin_Controller {
     $view->tree = new View("server_add_tree.html");
     $view->tree->files = $files;
     $view->tree->parents = array();
-    print json_encode(array("form" => (string) $view));
+    json::reply(array("form" => (string) $view));
   }
 
   public function children() {
@@ -91,7 +91,7 @@ class Server_Add_Controller extends Admin_Controller {
       ->name(t("Add from server"));
     $task = task::create($task_def, array("item_id" => $item->id, "queue" => $paths));
 
-    print json_encode(
+    json::reply(
       array("result" => "started",
             "status" => (string)$task->status,
             "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())));
@@ -111,7 +111,7 @@ class Server_Add_Controller extends Admin_Controller {
     $task = task::run($task_id);
     // Prevent the JavaScript code from breaking by forcing a period as
     // decimal separator for all locales with sprintf("%F", $value).
-    print json_encode(array("done" => (bool)$task->done,
+    json::reply(array("done" => (bool)$task->done,
                             "status" => (string)$task->status,
                             "percent_complete" => sprintf("%F", $task->percent_complete)));
   }

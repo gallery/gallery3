@@ -22,7 +22,7 @@ class Login_Controller extends Controller {
   public function ajax() {
     $view = new View("login_ajax.html");
     $view->form = auth::get_login_form("login/auth_ajax");
-    print json_encode(array("form" => (string) $view));
+    json::reply(array("form" => (string) $view));
   }
 
   public function auth_ajax() {
@@ -30,10 +30,9 @@ class Login_Controller extends Controller {
 
     list ($valid, $form) = $this->_auth("login/auth_ajax");
     if ($valid) {
-      print json_encode(
-        array("result" => "success"));
+      json::reply(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
   }
 
