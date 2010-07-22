@@ -91,7 +91,7 @@ class L10n_Client_Controller extends Controller {
 
     Gallery_I18n::clear_cache($locale);
 
-    print json_encode(new stdClass());
+    json::reply(new stdClass());
   }
 
   public function toggle_l10n_mode() {

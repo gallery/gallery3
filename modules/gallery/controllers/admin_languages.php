@@ -51,7 +51,7 @@ class Admin_Languages_Controller extends Admin_Controller {
     }
     module::set_var("gallery", "default_locale", $new_default_locale);
 
-    print json_encode(array("result" => "success"));
+    json::reply(array("result" => "success"));
   }
 
   public function share() {

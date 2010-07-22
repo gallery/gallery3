@@ -33,7 +33,7 @@ class Permissions_Controller extends Controller {
     $view->parents = $item->parents();
     $view->form = $this->_get_form($item);
 
-    print json_encode(array("form" => (string) $view));
+    json::reply(array("form" => (string) $view));
   }
 
   function form($id) {

@@ -26,7 +26,7 @@ class Uploader_Controller extends Controller {
       $item = $item->parent();
     }
 
-    print json_encode(array("form" => (string)$this->_get_add_form($item)));
+    json::reply(array("form" => (string)$this->_get_add_form($item)));
     //print $this->_get_add_form($item);
   }
 
@@ -106,7 +106,7 @@ class Uploader_Controller extends Controller {
     access::verify_csrf();
 
     batch::stop();
-    print json_encode(array("result" => "success"));
+    json::reply(array("result" => "success"));
   }
 
   private function _get_add_form($album)  {

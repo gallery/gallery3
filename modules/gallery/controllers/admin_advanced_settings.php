@@ -39,7 +39,7 @@ class Admin_Advanced_Settings_Controller extends Admin_Controller {
     $group->input("var_name")->label(t("Setting"))->value($var_name)->disabled(1);
     $group->textarea("value")->label(t("Value"))->value($value);
     $group->submit("")->value(t("Save"));
-    print json_encode(array("form" => (string) $form));
+    json::reply(array("form" => (string) $form));
   }
 
   public function save($module_name, $var_name) {
@@ -50,6 +50,6 @@ class Admin_Advanced_Settings_Controller extends Admin_Controller {
       t("Saved value for %var (%module_name)",
         array("var" => $var_name, "module_name" => $module_name)));
 
-    print json_encode(array("result" => "success"));
+    json::reply(array("result" => "success"));
   }
 }

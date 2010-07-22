@@ -37,7 +37,7 @@ class Admin_Tags_Controller extends Admin_Controller {
   public function form_delete($id) {
     $tag = ORM::factory("tag", $id);
     if ($tag->loaded()) {
-      print json_encode(array("form" => (string) tag::get_delete_form($tag)));
+      json::reply(array("form" => (string) tag::get_delete_form($tag)));
     }
   }
 
@@ -57,11 +57,9 @@ class Admin_Tags_Controller extends Admin_Controller {
       message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
       log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
 
-      print json_encode(
-        array("result" => "success",
-              "location" => url::site("admin/tags")));
+      json::reply(array("result" => "success", "location" => url::site("admin/tags")));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -98,10 +96,9 @@ class Admin_Tags_Controller extends Admin_Controller {
       message::success($message);
       log::success("tags", $message);
 
-      print json_encode(array("result" => "success",
-              "location" => url::site("admin/tags")));
+      json::reply(array("result" => "success", "location" => url::site("admin/tags")));
     } else {
-      print json_encode(array("result" => "error", "form" => $in_place_edit->render()));
+      json::reply(array("result" => "error", "form" => $in_place_edit->render()));
     }
   }
 

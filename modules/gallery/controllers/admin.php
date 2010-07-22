@@ -78,7 +78,7 @@ class Admin_Controller extends Controller {
       $result->location = url::abs_site("");
     }
 
-    print json_encode($result);
+    json::reply($result);
   }
 
   private static function _prompt_for_reauth($controller_name, $args) {

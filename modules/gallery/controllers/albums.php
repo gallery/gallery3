@@ -113,9 +113,9 @@ class Albums_Controller extends Items_Controller {
       message::success(t("Created album %album_title",
                          array("album_title" => html::purify($album->title))));
 
-      print json_encode(array("result" => "success", "location" => $album->url()));
+      json::reply(array("result" => "success", "location" => $album->url()));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -153,13 +153,13 @@ class Albums_Controller extends Items_Controller {
 
       if ($form->from_id->value == $album->id) {
         // Use the new url; it might have changed.
-        print json_encode(array("result" => "success", "location" => $album->url()));
+        json::reply(array("result" => "success", "location" => $album->url()));
       } else {
         // Stay on the same page
-        print json_encode(array("result" => "success"));
+        json::reply(array("result" => "success"));
       }
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string) $form));
     }
   }
 
@@ -168,7 +168,7 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("add", $album);
 
-    print json_encode(array("form" => (string) album::get_add_form($album)));
+    json::reply(array("form" => (string) album::get_add_form($album)));
   }
 
   public function form_edit($album_id) {
@@ -176,6 +176,6 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("edit", $album);
 
-    print json_encode(array("form" => (string) album::get_edit_form($album)));
+    json::reply(array("form" => (string) album::get_edit_form($album)));
   }
 }

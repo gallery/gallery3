@@ -26,7 +26,7 @@ class Move_Controller extends Controller {
     $view = new View("move_browse.html");
     $view->source = $source;
     $view->tree = $this->_get_tree_html($source, ORM::factory("item", 1));
-    print json_encode(array("form" => (string) $view));
+    json::reply(array("form" => (string) $view));
   }
 
   public function save($source_id) {
@@ -41,9 +41,7 @@ class Move_Controller extends Controller {
 
     item::move($source, $target);
 
-    print json_encode(
-      array("result" => "success",
-            "location" => $target->url()));
+    json::reply(array("result" => "success", "location" => $target->url()));
   }
 
   public function show_sub_tree($source_id, $target_id) {

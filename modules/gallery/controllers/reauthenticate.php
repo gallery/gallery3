@@ -23,7 +23,7 @@ class Reauthenticate_Controller extends Controller {
       access::forbidden();
     }
     if (request::is_ajax()) {
-      print json_encode(array("form" => (string) self::_form()));
+      json::reply(array("form" => (string) self::_form()));
     } else {
       self::_show_form(self::_form());
     }
@@ -51,7 +51,7 @@ class Reauthenticate_Controller extends Controller {
       if (empty($reauthenticate["in_dialog"])) {
         self::_show_form($form);
       } else {
-        print json_encode(array("form" => (string) $form));
+        json::reply(array("form" => (string) $form));
       }
     }
   }

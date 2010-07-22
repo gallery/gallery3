@@ -64,7 +64,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
-    print json_encode(array("form" => (string) $view));
+    json::reply(array("form" => (string) $view));
   }
 
   /**
@@ -86,7 +86,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     log::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
-    print json_encode(array("form" => (string) $view));
+    json::reply(array("form" => (string) $view));
   }
 
   /**
@@ -103,7 +103,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view = new View("admin_maintenance_show_log.html");
     $view->task = $task;
 
-    print json_encode(array("form" => (string) $view));
+    json::reply(array("form" => (string) $view));
   }
 
   /**
@@ -211,7 +211,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
         break;
       }
       // Using sprintf("%F") to avoid comma as decimal separator.
-      print json_encode(array("result" => "success",
+      json::reply(array("result" => "success",
                               "task" => array(
                                 "percent_complete" => sprintf("%F", $task->percent_complete),
                                 "status" => (string) $task->status,
@@ -219,7 +219,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
                               "location" => url::site("admin/maintenance")));
 
     } else {
-      print json_encode(array("result" => "in_progress",
+      json::reply(array("result" => "in_progress",
                               "task" => array(
                                 "percent_complete" => sprintf("%F", $task->percent_complete),
                                 "status" => (string) $task->status,
