@@ -136,7 +136,7 @@
 	var pageHost = ((document.location.protocol == "https:") ? "https://" :	"http://");
         $("#flashContent").append("<a href='http://www.adobe.com/go/getflashplayer'><img src='"	+ pageHost +
                                   "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' " +
-                                  alt='<?= t("Get Adobe Flash Player") ?>' /></a>" );
+                                  "alt='<?= t("Get Adobe Flash Player") ?>' /></a>" );
      </script>
 </div>
 </div>
