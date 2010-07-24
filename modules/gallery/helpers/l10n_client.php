@@ -194,12 +194,15 @@ class l10n_client_Core {
 
     // @todo Batch requests (max request size)
     // @todo include base_revision in submission / how to handle resubmissions / edit fights?
+    $request = new stdClass();
     foreach (db::build()
              ->select("key", "message", "locale", "base_revision", "translation")
              ->from("outgoing_translations")
              ->execute() as $row) {
       $key = $row->key;
       if (!isset($request->{$key})) {
+        $request->{$key} = new stdClass();
+        $request->{$key}->translations = new stdClass();
         $request->{$key}->message = json_encode(unserialize($row->message));
       }
       $request->{$key}->translations->{$row->locale} = json_encode(unserialize($row->translation));
