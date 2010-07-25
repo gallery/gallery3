@@ -222,7 +222,7 @@ class access_Core {
       self::_update_access_non_view_cache($group, $perm_name, $album);
     }
 
-    self::_update_htaccess_files($album, $group, $perm_name, $value);
+    self::update_htaccess_files($album, $group, $perm_name, $value);
     model_cache::clear();
   }
 
@@ -623,10 +623,16 @@ class access_Core {
   }
 
   /**
-   * Maintain .htacccess files to prevent direct access to albums, resizes and thumbnails when we
-   * apply the view and view_full permissions to guest users.
+   * Rebuild the .htaccess files that prevent direct access to albums, resizes and thumbnails.  We
+   * call this internally any time we change the view or view_full permissions for guest users.
+   * This function is only public because we use it in maintenance tasks.
+   *
+   * @param  Item_Model   the album
+   * @param  Group_Model  the group whose permission is changing
+   * @param  string       the permission name
+   * @param  string       the new permission value (eg access::DENY)
    */
-  private static function _update_htaccess_files($album, $group, $perm_name, $value) {
+  public static function update_htaccess_files($album, $group, $perm_name, $value) {
     if ($group->id != identity::everybody()->id ||
         !($perm_name == "view" || $perm_name == "view_full")) {
       return;
