@@ -627,7 +627,8 @@ class access_Core {
    * apply the view and view_full permissions to guest users.
    */
   private static function _update_htaccess_files($album, $group, $perm_name, $value) {
-    if ($group->id != 1 || !($perm_name == "view" || $perm_name == "view_full")) {
+    if ($group->id != identity::everybody()->id ||
+        !($perm_name == "view" || $perm_name == "view_full")) {
       return;
     }
 
