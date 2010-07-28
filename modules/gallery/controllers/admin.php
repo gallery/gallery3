@@ -86,7 +86,8 @@ class Admin_Controller extends Controller {
       // Avoid anti-phishing protection by passing the url as session variable.
       Session::instance()->set("continue_url", url::abs_current(true));
     }
-
+    // Save the is_ajax value as we lose it, if set, when we redirect
+    Session::instance()->set("is_ajax_request", request::is_ajax());
     url::redirect("reauthenticate");
   }
 }
