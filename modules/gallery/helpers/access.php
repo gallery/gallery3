@@ -632,7 +632,7 @@ class access_Core {
    * @param  string       the permission name
    * @param  string       the new permission value (eg access::DENY)
    */
-  public static function update_htaccess_files($album, $group, $perm_name, $value) {
+  static function update_htaccess_files($album, $group, $perm_name, $value) {
     if ($group->id != identity::everybody()->id ||
         !($perm_name == "view" || $perm_name == "view_full")) {
       return;
