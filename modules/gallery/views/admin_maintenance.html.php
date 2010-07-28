@@ -41,6 +41,9 @@
 
     <? if ($running_tasks->count()): ?>
     <div id="g-running-tasks">
+      <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
+         class="g-button g-right ui-icon-left ui-state-default ui-corner-all">
+        <?= t("cancel all running") ?></a>
       <h2> <?= t("Running tasks") ?> </h2>
       <table>
         <tr>
@@ -60,9 +63,6 @@
             <?= t("Owner") ?>
           </th>
           <th>
-            <a href="<?= url::site("admin/maintenance/cancel_running_tasks?csrf=$csrf") ?>"
-               class="g-button g-right ui-icon-left ui-state-default ui-corner-all">
-              <?= t("cancel all") ?></a>
             <?= t("Action") ?>
           </th>
         </tr>

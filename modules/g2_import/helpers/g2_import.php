@@ -139,6 +139,15 @@ class g2_import_Core {
                 "function G2_Gallery"),
           array_merge(array("<?php defined(\"SYSPATH\") or die(\"No direct script access.\") ?>\n"),
                       file("$base_dir/modules/core/classes/Gallery.class"))));
+    } else {
+      // Ok, this is a good one.  If you're running a bytecode accelerator and you move your
+      // Gallery install, these files sometimes get cached with the wrong path and then fail to
+      // load properly.
+      // Documented in https://sourceforge.net/apps/trac/gallery/ticket/1253
+      touch("$mod_path/embed.php");
+      touch("$mod_path/main.php");
+      touch("$mod_path/bootstrap.inc");
+      touch("$mod_path/Gallery.class.inc");
     }
 
     require("$mod_path/embed.php");

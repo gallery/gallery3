@@ -127,16 +127,14 @@
     <!-- The following spans are placeholders so we can load the hover and active styles for the flex component -->
     <span id="g-organize-hover" /><span id="g-organize-active" />
   <h1 style="display:none"><?= t("Organize :: %name", array("name" => html::purify($album->title))) ?></h1>
-    <div id="flashContent">
-      <p>
-        <?= t("To use the Organize feature, please ensure that Adobe Flash Player version %flash_minimum_version " .
-              "or greater is installed.", array("flash_minimum_version" => $flash_minimum_version)) ?>
-      </p>
-      <script type="text/javascript">
-	var pageHost = ((document.location.protocol == "https:") ? "https://" :	"http://");
-        $("#flashContent").append("<a href='http://www.adobe.com/go/getflashplayer'><img src='"	+ pageHost +
-                                  "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' " +
-                                  "alt='<?= t("Get Adobe Flash Player") ?>' /></a>" );
-     </script>
-</div>
+  <div id="flashContent">
+    <p>
+      <?= t("To use the Organize feature, please ensure that Adobe Flash Player version %flash_minimum_version " .
+            "or greater is installed.", array("flash_minimum_version" => $flash_minimum_version)) ?>
+    </p>
+    <a href="http://www.adobe.com/go/getflashplayer">
+      <img src="<?= request::protocol() ?>://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
+           alt=<?= t("Get Adobe Flash Player")->for_js() ?> />
+    </a>
+  </div>
 </div>

@@ -50,7 +50,14 @@ class gallery_task_Core {
       ->callback("gallery_task::fix_mptt")
       ->name(t("Fix Album/Photo hierarchy"))
       ->description(t("Fix problems where your album/photo breadcrumbs are out of " .
-                      "sync with your actual hierarchy."))
+                      "sync with your actual hierarchy"))
+      ->severity(log::SUCCESS);
+
+    $tasks[] = Task_Definition::factory()
+      ->callback("gallery_task::fix_permissions")
+      ->name(t("Fix permissions"))
+      ->description(t("Resynchronize database permissions with the .htaccess " .
+                      "files in your gallery3/var directory"))
       ->severity(log::SUCCESS);
 
     return $tasks;
@@ -385,5 +392,55 @@ class gallery_task_Core {
       ->set("relative_url_cache", null)
       ->where("id", "=", $id)
       ->execute();
+  }
+
+  static function fix_permissions($task) {
+    $start = microtime(true);
+
+    $total = $task->get("total");
+    if (empty($total)) {
+      $everybody_id = identity::everybody()->id;
+      $stack = array();
+      foreach (db::build()
+               ->select("id")
+               ->from("access_intents")
+               ->where("view_{$everybody_id}", "=", 0)
+               ->or_where("view_full_{$everybody_id}", "=", 0)
+               ->execute() as $row) {
+        $stack[] = $row->id;
+      }
+
+      $task->set("total", $total = count($stack));
+      $task->set("stack", implode(" ", $stack));
+      $task->set("completed", 0);
+    }
+
+    $stack = explode(" ", $task->get("stack"));
+    $completed = $task->get("completed");
+
+    while ($stack && microtime(true) - $start < 1.5) {
+      $album = ORM::factory("item", array_pop($stack));
+      $everybody = identity::everybody();
+      if (!access::group_can($everybody, "view", $album)) {
+        access::update_htaccess_files($album, identity::everybody(), "view", access::DENY);
+      } else {
+        // It's one or the other, so if they have view then they don't have view_full
+        access::update_htaccess_files($album, identity::everybody(), "view_full", access::DENY);
+      }
+      $completed++;
+    }
+
+    $task->set("stack", implode(" ", $stack));
+    $task->set("completed", $completed);
+
+    if ($total == $completed) {
+      $task->done = true;
+      $task->state = "success";
+      $task->percent_complete = 100;
+    } else {
+      $task->percent_complete = round(100 * $completed / $total);
+    }
+    $task->status = t2("One album updated", "%count / %total albums updated", $completed,
+                       array("total" => $total));
   }
 }
