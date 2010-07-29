@@ -28,6 +28,7 @@ class Reauthenticate_Controller extends Controller {
     if ($is_ajax) {
       $v = new View("reauthenticate.html");
       $v->form = self::_form();
+      $v->user_name = identity::active_user()->name;
       json::reply(array("form" => (string) $v));
     } else {
       self::_show_form(self::_form());
