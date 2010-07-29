@@ -32,7 +32,9 @@ class Login_Controller extends Controller {
     if ($valid) {
       json::reply(array("result" => "success"));
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      $view = new View("login_ajax.html");
+      $view->form = $form;
+      json::reply(array("result" => "error", "form" => (string) $view));
     }
   }
 
