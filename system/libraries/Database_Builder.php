@@ -1021,14 +1021,14 @@ class Database_Builder_Core {
 			$sql .= "\n".'WHERE '.$this->compile_conditions($this->where);
 		}
 
-		if ( ! empty($this->having))
-		{
-			$sql .= "\n".'HAVING '.$this->compile_conditions($this->having);
-		}
-
 		if ( ! empty($this->group_by))
 		{
 			$sql .= "\n".'GROUP BY '.$this->compile_group_by();
+		}
+
+		if ( ! empty($this->having))
+		{
+			$sql .= "\n".'HAVING '.$this->compile_conditions($this->having);
 		}
 
 		if ( ! empty($this->order_by))

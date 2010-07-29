@@ -18,8 +18,9 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_task_Core {
-  const MPTT_LEFT = 0;
-  const MPTT_RIGHT = 1;
+  const FIX_STATE_MPTT_LEFT = 0;
+  const FIX_STATE_MPTT_RIGHT = 1;
+  const FIX_STATE_ALBUM_PERMISSIONS = 2;
 
   static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count_records();
@@ -47,17 +48,10 @@ class gallery_task_Core {
       ->severity(log::SUCCESS);
 
     $tasks[] = Task_Definition::factory()
-      ->callback("gallery_task::fix_mptt")
-      ->name(t("Fix Album/Photo hierarchy"))
-      ->description(t("Fix problems where your album/photo breadcrumbs are out of " .
-                      "sync with your actual hierarchy"))
-      ->severity(log::SUCCESS);
-
-    $tasks[] = Task_Definition::factory()
-      ->callback("gallery_task::fix_permissions")
-      ->name(t("Fix permissions"))
-      ->description(t("Resynchronize database permissions with the .htaccess " .
-                      "files in your gallery3/var directory"))
+      ->callback("gallery_task::fix")
+      ->name(t("Fix your Gallery"))
+      ->description(t("Fix up a variety of little problems that might be causing " .
+                      "your Gallery to act a little weird"))
       ->severity(log::SUCCESS);
 
     return $tasks;
@@ -317,13 +311,13 @@ class gallery_task_Core {
     }
   }
 
-  static function fix_mptt($task) {
+  static function fix($task) {
     $start = microtime(true);
 
     $total = $task->get("total");
     if (empty($total)) {
       $task->set("total", $total = db::build()->count_records("items"));
-      $task->set("stack", "1:" . self::MPTT_LEFT);
+      $task->set("stack", item::root()->id . ":" . self::FIX_STATE_ALBUM_PERMISSIONS);
       $task->set("ptr", 1);
       $task->set("completed", 0);
     }
@@ -332,21 +326,68 @@ class gallery_task_Core {
     $stack = explode(" ", $task->get("stack"));
     $completed = $task->get("completed");
 
-    // Implement a depth-first tree walk using a stack.  Not the most efficient, but it's simple.
+    // This is a state machine that checks each item in the database.  It verifies the following
+    // attributes for an item.
+    // 1. The .htaccess permission files for restricted items exist and are well formed.
+    // 2. Left and right MPTT pointers are correct
+    // 3. The relative_path_cache and relative_url_cache values are set to null.
+    //
+    // We'll do a depth-first tree walk over our hierarchy using only the adjacency data because
+    // we don't trust MPTT here (that might be what we're here to fix!).  Avoid avoid using ORM
+    // calls as much as possible since they're expensive.
     while ($stack && microtime(true) - $start < 1.5) {
       list($id, $state) = explode(":", array_pop($stack));
       switch ($state) {
-      case self::MPTT_LEFT:
-        self::fix_mptt_set_left($id, $ptr++);
-        $item = ORM::factory("item", $id);
-        array_push($stack, $id . ":" . self::MPTT_RIGHT);
-        foreach (self::fix_mptt_children($id) as $child) {
-          array_push($stack, $child->id . ":" . self::MPTT_LEFT);
+      case self::FIX_STATE_ALBUM_PERMISSIONS:
+        $everybody = identity::everybody();
+        $view_col = "view_{$everybody->id}";
+        $view_full_col = "view_full_{$everybody->id}";
+        $intent = ORM::factory("access_intent")->where("item_id", "=", $id)->find();
+
+        // Only load the item if we're going to use it below
+        if ($intent->$view_col === access::DENY ||
+            $intent->$view_full_col === access::DENY) {
+          $item = ORM::factory("item", $id);
+        }
+        if ($intent->$view_col === access::DENY) {
+          access::update_htaccess_files($item, $everybody, "view", access::DENY);
+        }
+        if ($intent->$view_full_col === access::DENY) {
+          access::update_htaccess_files($item, $everybody, "view_full", access::DENY);
+        }
+        array_push($stack, "$id:" . self::FIX_STATE_MPTT_LEFT);
+        break;
+
+      case self::FIX_STATE_MPTT_LEFT:
+        db::build()
+          ->update("items")
+          ->set("left_ptr", $ptr++)
+          ->where("id", "=", $id)
+          ->execute();
+        array_push($stack, "$id:" . self::FIX_STATE_MPTT_RIGHT);
+
+        foreach (db::build()
+                 ->select(array("id", "type"))
+                 ->from("items")
+                 ->where("parent_id", "=", $id)
+                 ->order_by("left_ptr", "ASC")
+                 ->execute() as $child) {
+          if ($child->type == "album") {
+            array_push($stack, "{$child->id}:" . self::FIX_STATE_ALBUM_PERMISSIONS);
+          } else {
+            array_push($stack, "{$child->id}:" . self::FIX_STATE_MPTT_LEFT);
+          }
         }
         break;
 
-      case self::MPTT_RIGHT:
-        self::fix_mptt_set_right($id, $ptr++);
+      case self::FIX_STATE_MPTT_RIGHT:
+        db::build()
+          ->update("items")
+          ->set("right_ptr", $ptr++)
+          ->set("relative_path_cache", null)
+          ->set("relative_url_cache", null)
+          ->where("id", "=", $id)
+          ->execute();
         $completed++;
         break;
       }
@@ -364,83 +405,6 @@ class gallery_task_Core {
       $task->percent_complete = round(100 * $completed / $total);
     }
     $task->status = t2("One row updated", "%count / %total rows updated", $completed,
-                       array("total" => $total));
-  }
-
-  static function fix_mptt_children($parent_id) {
-    return db::build()
-      ->select("id")
-      ->from("items")
-      ->where("parent_id", "=", $parent_id)
-      ->order_by("left_ptr", "ASC")
-      ->execute();
-  }
-
-  static function fix_mptt_set_left($id, $value) {
-    db::build()
-      ->update("items")
-      ->set("left_ptr", $value)
-      ->where("id", "=", $id)
-      ->execute();
-  }
-
-  static function fix_mptt_set_right($id, $value) {
-    db::build()
-      ->update("items")
-      ->set("right_ptr", $value)
-      ->set("relative_path_cache", null)
-      ->set("relative_url_cache", null)
-      ->where("id", "=", $id)
-      ->execute();
-  }
-
-  static function fix_permissions($task) {
-    $start = microtime(true);
-
-    $total = $task->get("total");
-    if (empty($total)) {
-      $everybody_id = identity::everybody()->id;
-      $stack = array();
-      foreach (db::build()
-               ->select("id")
-               ->from("access_intents")
-               ->where("view_{$everybody_id}", "=", 0)
-               ->or_where("view_full_{$everybody_id}", "=", 0)
-               ->execute() as $row) {
-        $stack[] = $row->id;
-      }
-
-      $task->set("total", $total = count($stack));
-      $task->set("stack", implode(" ", $stack));
-      $task->set("completed", 0);
-    }
-
-    $stack = explode(" ", $task->get("stack"));
-    $completed = $task->get("completed");
-
-    while ($stack && microtime(true) - $start < 1.5) {
-      $album = ORM::factory("item", array_pop($stack));
-      $everybody = identity::everybody();
-      if (!access::group_can($everybody, "view", $album)) {
-        access::update_htaccess_files($album, identity::everybody(), "view", access::DENY);
-      } else {
-        // It's one or the other, so if they have view then they don't have view_full
-        access::update_htaccess_files($album, identity::everybody(), "view_full", access::DENY);
-      }
-      $completed++;
-    }
-
-    $task->set("stack", implode(" ", $stack));
-    $task->set("completed", $completed);
-
-    if ($total == $completed) {
-      $task->done = true;
-      $task->state = "success";
-      $task->percent_complete = 100;
-    } else {
-      $task->percent_complete = round(100 * $completed / $total);
-    }
-    $task->status = t2("One album updated", "%count / %total albums updated", $completed,
                        array("total" => $total));
   }
 }
