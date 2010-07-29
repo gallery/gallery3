@@ -54,10 +54,13 @@ class Reauthenticate_Controller extends Controller {
       $name = $user->name;
       log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
       module::event("user_auth_failed", $name);
-      if (empty($reauthenticate["in_dialog"])) {
-        self::_show_form($form);
+      if (request::is_ajax()) {
+        $v = new View("reauthenticate.html");
+        $v->form = $form;
+        $v->user_name = identity::active_user()->name;
+        json::reply(array("form" => (string) $v));
       } else {
-        json::reply(array("form" => (string) $form));
+        self::_show_form($form);
       }
     }
   }
