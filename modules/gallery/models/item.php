@@ -760,9 +760,9 @@ class Item_Model extends ORM_MPTT {
 
       // Conditional rules
       if ($this->id == 1) {
-        // Root album can't have a name or slug so replace the rules
-        $this->rules["name"] = array("rules" => array("length[0]"));
-        $this->rules["slug"] = array("rules" => array("length[0]"));
+        // We don't care about the name and slug for the root album.
+        $this->rules["name"] = array();
+        $this->rules["slug"] = array();
       }
 
       // Movies and photos must have data files
