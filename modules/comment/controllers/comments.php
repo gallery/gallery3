@@ -57,11 +57,11 @@ class Comments_Controller extends Controller {
       $view->comment = $comment;
 
       json::reply(array("result" => "success",
-			"view" => (string) $view,
-			"form" => (string) comment::get_add_form($item)));
+			"view" => (string)$view,
+			"form" => (string)comment::get_add_form($item)));
     } else {
       $form = comment::prefill_add_form($form);
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "form" => (string)$form));
     }
   }
 

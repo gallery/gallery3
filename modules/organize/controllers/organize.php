@@ -47,7 +47,7 @@ class Organize_Controller extends Controller {
     $v->controller_uri = url::site("organize") . "/";
     $v->swf_uri = url::file("modules/organize/lib/Gallery3WebClient.swf?") .
       filemtime(MODPATH . "organize/lib/Gallery3WebClient.swf");
-    json::reply(array("form" => (string) $v));
+    print $v;
   }
 
   function add_album_fields() {

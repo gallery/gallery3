@@ -57,7 +57,7 @@ class Users_Controller extends Controller {
       json::reply(array("result" => "success",
 			"resource" => url::site("users/{$user->id}")));
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -92,7 +92,7 @@ class Users_Controller extends Controller {
       log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
       $name = $user->name;
       module::event("user_auth_failed", $name);
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -126,7 +126,7 @@ class Users_Controller extends Controller {
       log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
       $name = $user->name;
       module::event("user_auth_failed", $name);
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -136,7 +136,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    json::reply(array("form" => (string) $this->_get_edit_form($user)));
+    print $this->_get_edit_form($user);
   }
 
   public function form_change_password($id) {
@@ -145,7 +145,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    json::reply(array("form" => (string) $this->_get_change_password_form($user)));
+    print $this->_get_change_password_form($user);
   }
 
   public function form_change_email($id) {
@@ -154,7 +154,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    json::reply(array("form" => (string) $this->_get_change_email_form($user)));
+    print $this->_get_change_email_form($user);
   }
 
   private function _get_change_password_form($user) {
@@ -231,7 +231,7 @@ class Users_Controller extends Controller {
     $locales = array_merge(array("" => t("« none »")), $locales);
     $selected_locale = ($user && $user->locale) ? $user->locale : "";
     $form->dropdown("locale")
-      ->label(t("Language Preference"))
+      ->label(t("Language preference"))
       ->options($locales)
       ->selected($selected_locale);
   }

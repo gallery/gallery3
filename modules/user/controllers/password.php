@@ -27,10 +27,10 @@ class Password_Controller extends Controller {
       if ($form->validate()) {
         $this->_send_reset($form);
       } else {
-        json::reply(array("result" => "error", "form" => (string) $form));
+        json::reply(array("result" => "error", "html" => (string)$form));
       }
     } else {
-        json::reply(array("form" => (string) $form));
+      print $form;
     }
   }
 

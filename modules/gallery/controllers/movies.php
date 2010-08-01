@@ -93,7 +93,7 @@ class Movies_Controller extends Items_Controller {
         json::reply(array("result" => "success"));
       }
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string) $form));
     }
   }
 
@@ -102,6 +102,6 @@ class Movies_Controller extends Items_Controller {
     access::required("view", $movie);
     access::required("edit", $movie);
 
-    json::reply(array("form" => (string) movie::get_edit_form($movie)));
+    print movie::get_edit_form($movie);
   }
 }

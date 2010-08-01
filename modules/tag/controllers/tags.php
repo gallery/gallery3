@@ -69,7 +69,7 @@ class Tags_Controller extends Controller {
 
       json::reply(array("result" => "success", "cloud" => (string)tag::cloud(30)));
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 

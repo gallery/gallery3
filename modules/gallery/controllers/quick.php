@@ -94,7 +94,7 @@ class Quick_Controller extends Controller {
     $v = new View("quick_delete_confirm.html");
     $v->item = $item;
     $v->form = item::get_delete_form($item);
-    json::reply(array("form" => (string) $v));
+    print $v;
   }
 
   public function delete($id) {
@@ -127,8 +127,7 @@ class Quick_Controller extends Controller {
         $from_id != $id /* deleted the item we were viewing */) {
       json::reply(array("result" => "success", "reload" => 1));
     } else {
-      json::reply(array("result" => "success",
-                              "location" => $parent->url()));
+      json::reply(array("result" => "success", "location" => $parent->url()));
     }
   }
 
@@ -154,6 +153,6 @@ class Quick_Controller extends Controller {
     // Pass on the source item where this form was generated, so we have an idea where to return to.
     $form->hidden("from_id")->value((int)Input::instance()->get("from_id", 0));
 
-    json::reply(array("form" => (string) $form));
+    print $form;
   }
 }

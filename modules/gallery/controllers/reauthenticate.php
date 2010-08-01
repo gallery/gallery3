@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Reauthenticate_Controller extends Controller {
-  public function index($share_translations_form=null) {
+  public function index() {
     if (!identity::active_user()->admin) {
       access::forbidden();
     }
@@ -29,7 +29,7 @@ class Reauthenticate_Controller extends Controller {
       $v = new View("reauthenticate.html");
       $v->form = self::_form();
       $v->user_name = identity::active_user()->name;
-      json::reply(array("form" => (string) $v));
+      print $v;
     } else {
       self::_show_form(self::_form());
     }
@@ -58,7 +58,7 @@ class Reauthenticate_Controller extends Controller {
         $v = new View("reauthenticate.html");
         $v->form = $form;
         $v->user_name = identity::active_user()->name;
-        json::reply(array("form" => (string) $v));
+        json::reply(array("html" => (string)$v));
       } else {
         self::_show_form($form);
       }
