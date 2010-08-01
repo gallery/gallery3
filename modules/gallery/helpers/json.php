@@ -27,7 +27,7 @@ class json_Core {
    */
   static function reply($message) {
     if (!headers_sent()) {
-      header("Content-Type: application/json");
+      header("Content-Type: application/json; charset=" . Kohana::CHARSET);
     }
     print json_encode($message);
   }
