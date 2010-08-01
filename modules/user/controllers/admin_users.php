@@ -282,6 +282,7 @@ class Admin_Users_Controller extends Admin_Controller {
       "admin/users/edit_user/$user->id", "", "post", array("id" => "g-edit-user-form"));
     $group = $form->group("edit_user")->label(t("Edit user"));
     $group->input("name")->label(t("Username"))->id("g-username")->value($user->name)
+      ->error_messages("required", t("A name is required"))
       ->error_messages("conflict", t("There is already a user with that username"))
       ->error_messages("length", t("This name is too long"));
     $group->input("full_name")->label(t("Full name"))->id("g-fullname")->value($user->full_name)

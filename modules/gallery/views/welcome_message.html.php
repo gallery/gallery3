@@ -18,7 +18,7 @@
     <a href="<?= url::site("admin/users/edit_user_form/{$user->id}") ?>"
       title="<?= t("Edit your profile")->for_html_attr() ?>"
       id="g-after-install-change-password-link"
-      class="g-button ui-state-default ui-corners-all">
+      class="g-button ui-state-default ui-corner-all">
       <?= t("Change password and email now") ?>
     </a>
     <script type="text/javascript">

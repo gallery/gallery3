@@ -72,8 +72,8 @@ class File_Proxy_Controller extends Controller {
       // necessary, it's easily resurrected.
 
       // If we're looking for a .jpg then it's it's possible that we're requesting the thumbnail
-      // for a movie.  In that case, the .flv, .mp4 or .m4v file would have been converted to a .jpg.
-      // So try some alternate types:
+      // for a movie.  In that case, the .flv, .mp4 or .m4v file would have been converted to a
+      // .jpg. So try some alternate types:
       if (preg_match('/.jpg$/', $path)) {
         foreach (array("flv", "mp4", "m4v") as $ext) {
           $movie_path = preg_replace('/.jpg$/', ".$ext", $encoded_path);
@@ -131,10 +131,7 @@ class File_Proxy_Controller extends Controller {
     } else {
       header("Content-Type: $item->mime_type");
     }
-
     Kohana::close_buffers(false);
-    $fd = fopen($file, "rb");
-    fpassthru($fd);
-    fclose($fd);
+    readfile($file);
   }
 }
