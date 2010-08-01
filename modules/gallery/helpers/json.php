@@ -19,11 +19,10 @@
  */
 class json_Core {
   /**
-   * Does the active user have this permission on this item?
+   * JSON Encode a reply to the browser and set the content type to specify that it's a JSON
+   * payload.
    *
-   * @param  string     $perm_name
-   * @param  Item_Model $item
-   * @return boolean
+   * @param  mixed $message string or object to json encode and print
    */
   static function reply($message) {
     if (!headers_sent()) {
