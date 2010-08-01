@@ -30,7 +30,7 @@ class Server_Add_Controller extends Admin_Controller {
     $view->tree = new View("server_add_tree.html");
     $view->tree->files = $files;
     $view->tree->parents = array();
-    json::reply(array("form" => (string) $view));
+    print $view;
   }
 
   public function children() {
@@ -112,8 +112,8 @@ class Server_Add_Controller extends Admin_Controller {
     // Prevent the JavaScript code from breaking by forcing a period as
     // decimal separator for all locales with sprintf("%F", $value).
     json::reply(array("done" => (bool)$task->done,
-                            "status" => (string)$task->status,
-                            "percent_complete" => sprintf("%F", $task->percent_complete)));
+                      "status" => (string)$task->status,
+                      "percent_complete" => sprintf("%F", $task->percent_complete)));
   }
 
   /**

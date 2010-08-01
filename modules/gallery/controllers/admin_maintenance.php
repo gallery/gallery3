@@ -64,7 +64,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     log::info("tasks", t("Task %task_name started (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
-    json::reply(array("form" => (string) $view));
+    print $view;
   }
 
   /**
@@ -86,7 +86,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     log::info("tasks", t("Task %task_name resumed (task id %task_id)",
                          array("task_name" => $task->name, "task_id" => $task->id)),
               html::anchor("admin/maintenance", t("maintenance")));
-    json::reply(array("form" => (string) $view));
+    print $view;
   }
 
   /**
@@ -103,7 +103,7 @@ class Admin_Maintenance_Controller extends Admin_Controller {
     $view = new View("admin_maintenance_show_log.html");
     $view->task = $task;
 
-    json::reply(array("form" => (string) $view));
+    print $view;
   }
 
   /**
@@ -212,18 +212,18 @@ class Admin_Maintenance_Controller extends Admin_Controller {
       }
       // Using sprintf("%F") to avoid comma as decimal separator.
       json::reply(array("result" => "success",
-                              "task" => array(
-                                "percent_complete" => sprintf("%F", $task->percent_complete),
-                                "status" => (string) $task->status,
-                                "done" => (bool) $task->done),
-                              "location" => url::site("admin/maintenance")));
+                        "task" => array(
+                          "percent_complete" => sprintf("%F", $task->percent_complete),
+                          "status" => (string) $task->status,
+                          "done" => (bool) $task->done),
+                        "location" => url::site("admin/maintenance")));
 
     } else {
       json::reply(array("result" => "in_progress",
-                              "task" => array(
-                                "percent_complete" => sprintf("%F", $task->percent_complete),
-                                "status" => (string) $task->status,
-                                "done" => (bool) $task->done)));
+                        "task" => array(
+                          "percent_complete" => sprintf("%F", $task->percent_complete),
+                          "status" => (string) $task->status,
+                          "done" => (bool) $task->done)));
     }
   }
 }

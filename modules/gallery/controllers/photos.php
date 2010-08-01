@@ -93,7 +93,7 @@ class Photos_Controller extends Items_Controller {
         json::reply(array("result" => "success"));
       }
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -102,6 +102,6 @@ class Photos_Controller extends Items_Controller {
     access::required("view", $photo);
     access::required("edit", $photo);
 
-    json::reply(array("form" => (string) photo::get_edit_form($photo)));
+    print photo::get_edit_form($photo);
   }
 }

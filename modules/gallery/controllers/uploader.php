@@ -26,8 +26,7 @@ class Uploader_Controller extends Controller {
       $item = $item->parent();
     }
 
-    json::reply(array("form" => (string)$this->_get_add_form($item)));
-    //print $this->_get_add_form($item);
+    print $this->_get_add_form($item);
   }
 
   public function start() {

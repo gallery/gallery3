@@ -35,7 +35,7 @@ class Admin_Watermarks_Controller extends Admin_Controller {
   }
 
   public function form_edit() {
-    json::reply(array("form" => (string) watermark::get_edit_form()));
+    print watermark::get_edit_form();
   }
 
   public function edit() {
@@ -53,12 +53,12 @@ class Admin_Watermarks_Controller extends Admin_Controller {
         array("result" => "success",
               "location" => url::site("admin/watermarks")));
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
   public function form_delete() {
-    json::reply(array("form" => (string) watermark::get_delete_form()));
+    print watermark::get_delete_form();
   }
 
   public function delete() {
@@ -81,12 +81,12 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       }
       json::reply(array("result" => "success", "location" => url::site("admin/watermarks")));
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
   public function form_add() {
-    json::reply(array("form" => (string) watermark::get_add_form()));
+    print watermark::get_add_form();
   }
 
   public function add() {
@@ -120,7 +120,10 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       log::success("watermark", t("Watermark saved"));
       json::reply(array("result" => "success", "location" => url::site("admin/watermarks")));
     } else {
-      json::reply(array("result" => "error", "form" => rawurlencode((string) $form)));
+      // rawurlencode the results because the JS code that uploads the file buffers it in an
+      // iframe which entitizes the HTML and makes it difficult for the JS to process.  If we url
+      // encode it now, it passes through cleanly.  See ticket #797.
+      json::reply(array("result" => "error", "html" => rawurlencode((string)$form)));
     }
   }
 

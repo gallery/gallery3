@@ -115,7 +115,7 @@ class Albums_Controller extends Items_Controller {
 
       json::reply(array("result" => "success", "location" => $album->url()));
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      print $form;
     }
   }
 
@@ -159,7 +159,7 @@ class Albums_Controller extends Items_Controller {
         json::reply(array("result" => "success"));
       }
     } else {
-      json::reply(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -168,7 +168,7 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("add", $album);
 
-    json::reply(array("form" => (string) album::get_add_form($album)));
+    print album::get_add_form($album);
   }
 
   public function form_edit($album_id) {
@@ -176,6 +176,6 @@ class Albums_Controller extends Items_Controller {
     access::required("view", $album);
     access::required("edit", $album);
 
-    json::reply(array("form" => (string) album::get_edit_form($album)));
+    print album::get_edit_form($album);
   }
 }

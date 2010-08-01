@@ -44,7 +44,7 @@ class User_Profile_Controller extends Controller {
 
   public function contact($id) {
     $user = identity::lookup_user($id);
-    json::reply(array("form" => (string) user_profile::get_contact_form($user)));
+    print user_profile::get_contact_form($user);
   }
 
   public function send($id) {
@@ -63,7 +63,7 @@ class User_Profile_Controller extends Controller {
       message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
       json::reply(array("result" => "success"));
     } else {
-      json::reply(array("result" => "error", "form" => (string)$form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 }

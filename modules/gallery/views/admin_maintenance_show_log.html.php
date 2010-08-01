@@ -15,5 +15,5 @@ appendTo('body').submit().remove();
     <pre><?= html::purify($task->get_log()) ?></pre>
   </div>
   <button id="g-close" class="ui-state-default ui-corner-all" onclick="dismiss()"><?= t("Close") ?></button>
-  <button id="g-save" class="ui-state-default ui-corner-all" onclick="download()"><?= t("Save") ?></button>
+  <button id="g-save" class="ui-state-default ui-corner-all" onclick="download()"><?= t("Download") ?></button>
 </div>
