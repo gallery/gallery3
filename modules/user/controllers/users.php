@@ -54,11 +54,10 @@ class Users_Controller extends Controller {
       $user->save();
       module::event("user_edit_form_completed", $user, $form);
       message::success(t("User information updated"));
-      print json_encode(
-        array("result" => "success",
-              "resource" => url::site("users/{$user->id}")));
+      json::reply(array("result" => "success",
+			"resource" => url::site("users/{$user->id}")));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -87,14 +86,13 @@ class Users_Controller extends Controller {
       message::success(t("Password changed"));
       module::event("user_auth", $user);
       module::event("user_password_change", $user);
-      print json_encode(
-        array("result" => "success",
-              "resource" => url::site("users/{$user->id}")));
+      json::reply(array("result" => "success",
+			"resource" => url::site("users/{$user->id}")));
     } else {
       log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
       $name = $user->name;
       module::event("user_auth_failed", $name);
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -122,14 +120,13 @@ class Users_Controller extends Controller {
       module::event("user_change_email_form_completed", $user, $form);
       message::success(t("Email address changed"));
       module::event("user_auth", $user);
-      print json_encode(
-        array("result" => "success",
-              "resource" => url::site("users/{$user->id}")));
+      json::reply(array("result" => "success",
+			"resource" => url::site("users/{$user->id}")));
     } else {
       log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
       $name = $user->name;
       module::event("user_auth_failed", $name);
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 
@@ -139,7 +136,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    print json_encode(array("form" => (string) $this->_get_edit_form($user)));
+    print $this->_get_edit_form($user);
   }
 
   public function form_change_password($id) {
@@ -148,7 +145,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    print json_encode(array("form" => (string) $this->_get_change_password_form($user)));
+    print $this->_get_change_password_form($user);
   }
 
   public function form_change_email($id) {
@@ -157,7 +154,7 @@ class Users_Controller extends Controller {
       access::forbidden();
     }
 
-    print json_encode(array("form" => (string) $this->_get_change_email_form($user)));
+    print $this->_get_change_email_form($user);
   }
 
   private function _get_change_password_form($user) {
@@ -234,7 +231,7 @@ class Users_Controller extends Controller {
     $locales = array_merge(array("" => t("« none »")), $locales);
     $selected_locale = ($user && $user->locale) ? $user->locale : "";
     $form->dropdown("locale")
-      ->label(t("Language Preference"))
+      ->label(t("Language preference"))
       ->options($locales)
       ->selected($selected_locale);
   }

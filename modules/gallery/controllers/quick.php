@@ -58,12 +58,12 @@ class Quick_Controller extends Controller {
     }
 
     if (Input::instance()->get("page_type") == "collection") {
-      print json_encode(
+      json::reply(
         array("src" => $item->thumb_url(),
               "width" => $item->thumb_width,
               "height" => $item->thumb_height));
     } else {
-      print json_encode(
+      json::reply(
         array("src" => $item->resize_url(),
               "width" => $item->resize_width,
               "height" => $item->resize_height));
@@ -83,7 +83,7 @@ class Quick_Controller extends Controller {
     item::make_album_cover($item);
     message::success($msg);
 
-    print json_encode(array("result" => "success", "reload" => 1));
+    json::reply(array("result" => "success", "reload" => 1));
   }
 
   public function form_delete($id) {
@@ -94,7 +94,7 @@ class Quick_Controller extends Controller {
     $v = new View("quick_delete_confirm.html");
     $v->item = $item;
     $v->form = item::get_delete_form($item);
-    print json_encode(array("form" => (string) $v));
+    print $v;
   }
 
   public function delete($id) {
@@ -125,10 +125,9 @@ class Quick_Controller extends Controller {
     $from_id = Input::instance()->get("from_id");
     if (Input::instance()->get("page_type") == "collection" &&
         $from_id != $id /* deleted the item we were viewing */) {
-      print json_encode(array("result" => "success", "reload" => 1));
+      json::reply(array("result" => "success", "reload" => 1));
     } else {
-      print json_encode(array("result" => "success",
-                              "location" => $parent->url()));
+      json::reply(array("result" => "success", "location" => $parent->url()));
     }
   }
 
@@ -154,6 +153,6 @@ class Quick_Controller extends Controller {
     // Pass on the source item where this form was generated, so we have an idea where to return to.
     $form->hidden("from_id")->value((int)Input::instance()->get("from_id", 0));
 
-    print json_encode(array("form" => (string) $form));
+    print $form;
   }
 }

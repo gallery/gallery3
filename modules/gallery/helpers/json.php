@@ -17,17 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Exif_Controller extends Controller {
+class json_Core {
   /**
-   * Display the EXIF data for an item.
+   * JSON Encode a reply to the browser and set the content type to specify that it's a JSON
+   * payload.
+   *
+   * @param  mixed $message string or object to json encode and print
    */
-  public function show($item_id) {
-    $item = ORM::factory("item", $item_id);
-    access::required("view", $item);
-
-    $view = new View("exif_dialog.html");
-    $view->details = exif::get($item);
-
-    print $view;
+  static function reply($message) {
+    if (!headers_sent()) {
+      header("Content-Type: application/json; charset=" . Kohana::CHARSET);
+    }
+    print json_encode($message);
   }
 }

@@ -18,12 +18,18 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class Reauthenticate_Controller extends Controller {
-  public function index($share_translations_form=null) {
+  public function index() {
     if (!identity::active_user()->admin) {
       access::forbidden();
     }
-    if (request::is_ajax()) {
-      print json_encode(array("form" => (string) self::_form()));
+    // On redirects from the admin controller, the ajax request indicator is lost,
+    // so we store it in the session.
+    $is_ajax = Session::instance()->get_once("is_ajax_request", request::is_ajax());
+    if ($is_ajax) {
+      $v = new View("reauthenticate.html");
+      $v->form = self::_form();
+      $v->user_name = identity::active_user()->name;
+      print $v;
     } else {
       self::_show_form(self::_form());
     }
@@ -48,10 +54,13 @@ class Reauthenticate_Controller extends Controller {
       $name = $user->name;
       log::warning("user", t("Failed re-authentication for %name", array("name" => $name)));
       module::event("user_auth_failed", $name);
-      if (empty($reauthenticate["in_dialog"])) {
-        self::_show_form($form);
+      if (request::is_ajax()) {
+        $v = new View("reauthenticate.html");
+        $v->form = $form;
+        $v->user_name = identity::active_user()->name;
+        json::reply(array("html" => (string)$v));
       } else {
-        print json_encode(array("form" => (string) $form));
+        self::_show_form($form);
       }
     }
   }

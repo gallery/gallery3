@@ -57,7 +57,7 @@ class Admin_Modules_Controller extends Admin_Controller {
       $result["dialog"] = (string)$v;
       $result["allow_continue"] = empty($messages["error"]);
     }
-    print json_encode($result);
+    json::reply($result);
   }
 
   public function save() {
