@@ -125,6 +125,13 @@ class Admin_Watermarks_Controller extends Admin_Controller {
       // encode it now, it passes through cleanly.  See ticket #797.
       json::reply(array("result" => "error", "html" => rawurlencode((string)$form)));
     }
+
+    // Override the application/json mime type.  The dialog based HTML uploader uses an iframe to
+    // buffer the reply, and on some browsers (Firefox 3.6) it does not know what to do with the
+    // JSON that it gets back so it puts up a dialog asking the user what to do with it.  So force
+    // the encoding type back to HTML for the iframe.
+    // See: http://jquery.malsup.com/form/#file-upload
+    header("Content-Type: text/html; charset=" . Kohana::CHARSET);
   }
 
   private function _update_graphics_rules() {
