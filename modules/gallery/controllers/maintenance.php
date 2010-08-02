@@ -19,6 +19,7 @@
  */
 class Maintenance_Controller extends Controller {
   function index() {
+    Session::instance()->set("continue_url", url::abs_site("admin/maintenance"));
     print new View("maintenance.html");
  }
 }
