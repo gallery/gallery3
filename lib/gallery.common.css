@@ -638,7 +638,7 @@ div#g-action-status {
 .rtl .g-warning,
 .rtl #g-add-photos-status .g-success,
 .rtl #g-add-photos-status .g-error {
-  background-position: center right;
+  background-position: 99% 50%;
   padding-right: 30px !important;
 }
 
