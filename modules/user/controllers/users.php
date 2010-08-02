@@ -189,7 +189,7 @@ class Users_Controller extends Controller {
     $group->password("password")->label(t("Current password"))->id("g-password")
       ->callback("auth::validate_too_many_failed_auth_attempts")
       ->callback("user::valid_password")
-      ->error_messages("invalid", t("Incorrect password"))
+      ->error_messages("invalid_password", t("Incorrect password"))
       ->error_messages(
         "too_many_failed_auth_attempts",
         t("Too many incorrect passwords.  Try again later"));
