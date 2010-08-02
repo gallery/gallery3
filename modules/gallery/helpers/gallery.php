@@ -26,11 +26,13 @@ class gallery_Core {
    */
   static function maintenance_mode() {
     if (Router::$controller != "login" &&
+        Router::$controller != "combined" &&
         module::get_var("gallery", "maintenance_mode", 0) &&
         !identity::active_user()->admin) {
-      Router::$controller = "maintenance";
-      Router::$controller_path = MODPATH . "gallery/controllers/maintenance.php";
-      Router::$method = "index";
+      Session::instance()->set("continue_url", url::abs_site("admin/maintenance"));
+      Router::$controller = "login";
+      Router::$controller_path = MODPATH . "gallery/controllers/login.php";
+      Router::$method = "html";
     }
   }
 
