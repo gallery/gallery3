@@ -20,8 +20,8 @@
 class gallery_task_Core {
   const FIX_STATE_START_MPTT = 0;
   const FIX_STATE_RUN_MPTT = 1;
-  const FIX_STATE_START_PERMISSIONS = 2;
-  const FIX_STATE_RUN_PERMISSIONS = 3;
+  const FIX_STATE_START_ALBUMS = 2;
+  const FIX_STATE_RUN_ALBUMS = 3;
   const FIX_STATE_START_DUPE_SLUGS = 4;
   const FIX_STATE_RUN_DUPE_SLUGS = 5;
   const FIX_STATE_START_DUPE_NAMES = 6;
@@ -323,7 +323,7 @@ class gallery_task_Core {
     $total = $task->get("total");
     if (empty($total)) {
       // mptt: 2 operations for every item
-      // permissions: 1 operation for every album
+      // album audit (permissions and bogus album covers): 1 operation for every album
       // dupe slugs: 1 operation for each unique conflicted slug
       $total = 2 * db::build()->count_records("items");
       $total += db::build()->where("type", "=", "album")->count_records("items");
@@ -352,6 +352,7 @@ class gallery_task_Core {
     // 1. Left and right MPTT pointers are correct
     // 2. The .htaccess permission files for restricted items exist and are well formed.
     // 3. The relative_path_cache and relative_url_cache values are set to null.
+    // 4. there are no album_cover_item_ids pointing to missing items
     //
     // We'll do a depth-first tree walk over our hierarchy using only the adjacency data because
     // we don't trust MPTT here (that might be what we're here to fix!).  Avoid avoid using ORM
@@ -460,7 +461,7 @@ class gallery_task_Core {
           $task->set("stack", implode(" ", $stack));
           $state = self::FIX_STATE_RUN_DUPE_NAMES;
         } else {
-          $state = self::FIX_STATE_START_PERMISSIONS;
+          $state = self::FIX_STATE_START_ALBUMS;
         }
         break;
 
@@ -493,11 +494,11 @@ class gallery_task_Core {
         $completed++;
 
         if (empty($stack)) {
-          $state = self::FIX_STATE_START_PERMISSIONS;
+          $state = self::FIX_STATE_START_ALBUMS;
         }
         break;
 
-      case self::FIX_STATE_START_PERMISSIONS:
+      case self::FIX_STATE_START_ALBUMS:
         $stack = array();
         foreach (db::build()
                  ->select("id")
@@ -507,23 +508,26 @@ class gallery_task_Core {
           $stack[] = $row->id;
         }
         $task->set("stack", implode(" ", $stack));
-        $state = self::FIX_STATE_RUN_PERMISSIONS;
+        $state = self::FIX_STATE_RUN_ALBUMS;
         break;
 
-      case self::FIX_STATE_RUN_PERMISSIONS:
+      case self::FIX_STATE_RUN_ALBUMS:
         $stack = explode(" ", $task->get("stack"));
         $id = array_pop($stack);
+
+        $item = ORM::factory("item", $id);
+        if ($item->album_cover_item_id) {
+          $album_cover_item = ORM::factory("item", $item->album_cover_item_id);
+          if (!$album_cover_item->loaded()) {
+            $item->album_cover_item_id = null;
+            $item->save();
+          }
+        }
 
         $everybody = identity::everybody();
         $view_col = "view_{$everybody->id}";
         $view_full_col = "view_full_{$everybody->id}";
         $intent = ORM::factory("access_intent")->where("item_id", "=", $id)->find();
-
-        // Only load the item if we're going to use it below
-        if ($intent->$view_col === access::DENY ||
-            $intent->$view_full_col === access::DENY) {
-          $item = ORM::factory("item", $id);
-        }
         if ($intent->$view_col === access::DENY) {
           access::update_htaccess_files($item, $everybody, "view", access::DENY);
         }
