@@ -56,8 +56,8 @@ class gallery_task_Core {
     $tasks[] = Task_Definition::factory()
       ->callback("gallery_task::fix")
       ->name(t("Fix your Gallery"))
-      ->description(t("Fix up a variety of little problems that might be causing " .
-                      "your Gallery to act a little weird"))
+      ->description(t("Fix a variety of problems that might cause your Gallery to act " .
+                      "strangely.  Requires maintenance mode."))
       ->severity(log::SUCCESS);
 
     return $tasks;
@@ -343,6 +343,10 @@ class gallery_task_Core {
     $completed = $task->get("completed");
     $state = $task->get("state");
 
+    if (!module::get_var("gallery", "maintenance_mode")) {
+      module::set_var("gallery", "maintenance_mode", 1);
+    }
+
     // This is a state machine that checks each item in the database.  It verifies the following
     // attributes for an item.
     // 1. Left and right MPTT pointers are correct
@@ -543,6 +547,7 @@ class gallery_task_Core {
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
+      module::set_var("gallery", "maintenance_mode", 0);
     } else {
       $task->percent_complete = round(100 * $completed / $total);
     }

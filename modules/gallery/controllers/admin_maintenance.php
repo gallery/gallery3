@@ -226,4 +226,10 @@ class Admin_Maintenance_Controller extends Admin_Controller {
                           "done" => (bool) $task->done)));
     }
   }
+
+  public function maintenance_mode($value) {
+    access::verify_csrf();
+    module::set_var("gallery", "maintenance_mode", $value);
+    url::redirect("admin/maintenance");
+  }
 }

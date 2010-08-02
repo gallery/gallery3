@@ -295,7 +295,8 @@ class gallery_installer {
     module::set_var("gallery", "credits", (string) $powered_by_string);
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
-    module::set_version("gallery", 30);
+    module::set_var("gallery", "maintenance_mode", 0);
+    module::set_version("gallery", 31);
   }
 
   static function upgrade($version) {
@@ -554,7 +555,12 @@ class gallery_installer {
     if ($version == 29) {
       $db->query("ALTER TABLE {caches} ADD KEY (`key`);");
       module::set_version("gallery", $version = 30);
-    }                
+    }
+
+    if ($version == 30) {
+      module::set_var("gallery", "maintenance_mode", 0);
+      module::set_version("gallery", $version = 31);
+    }
   }
 
   static function uninstall() {

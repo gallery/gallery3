@@ -46,9 +46,11 @@ class Theme_View_Core extends Gallery_View {
       $this->set_global("thumb_proportion", $this->thumb_proportion());
     }
 
-    $maintenance_mode = Kohana::config("core.maintenance_mode", false, false);
-    if ($maintenance_mode) {
-      message::warning(t("This site is currently in maintenance mode"));
+    if (module::get_var("gallery", "maintenance_mode", false)) {
+      if (identity::active_user()->admin) {
+        message::warning(t("This site is currently in maintenance mode.  Visit the <a href=\"%maintenance_url\">maintenance page</a>", array("maintenance_url" => url::site("admin/maintenance"))));
+    } else
+        message::warning(t("This site is currently in maintenance mode."));
     }
   }
 
