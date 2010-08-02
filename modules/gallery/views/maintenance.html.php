@@ -44,6 +44,9 @@
       <?= t("This site is currently only accessible by site administrators.") ?>
     </p>
     <?= auth::get_login_form("login/auth_html") ?>
+    <script type="text/javascript">
+      document.forms[0].name.focus();
+    </script>
   </body>
 </html>
 
