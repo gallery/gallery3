@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class Flash_Uploader_Controller extends Controller {
-  public function app($id) {
+class Uploader_Controller extends Controller {
+  public function index($id) {
     $item = ORM::factory("item", $id);
     access::required("view", $item);
     access::required("add", $item);
@@ -50,7 +50,7 @@ class Flash_Uploader_Controller extends Controller {
     // Uploadify adds its own field to the form, so validate that separately.
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules(
-      "Filedata", "upload::valid",  "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4]");
+      "Filedata", "upload::valid",  "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4,m4v]");
 
     if ($form->validate() && $file_validation->validate()) {
       $temp_filename = upload::save("Filedata");
@@ -63,7 +63,7 @@ class Flash_Uploader_Controller extends Controller {
 
         $path_info = @pathinfo($temp_filename);
         if (array_key_exists("extension", $path_info) &&
-            in_array(strtolower($path_info["extension"]), array("flv", "mp4"))) {
+            in_array(strtolower($path_info["extension"]), array("flv", "mp4", "m4v"))) {
           $item->type = "movie";
           $item->save();
           log::success("content", t("Added a movie"),
@@ -105,11 +105,11 @@ class Flash_Uploader_Controller extends Controller {
     access::verify_csrf();
 
     batch::stop();
-    print json_encode(array("result" => "success"));
+    json::reply(array("result" => "success"));
   }
 
   private function _get_add_form($album)  {
-    $form = new Forge("flash_uploader/finish", "", "post", array("id" => "g-add-photos-form"));
+    $form = new Forge("uploader/finish", "", "post", array("id" => "g-add-photos-form"));
     $group = $form->group("add_photos")
       ->label(t("Add photos to %album_title", array("album_title" => html::purify($album->title))));
     $group->uploadify("uploadify")->album($album);

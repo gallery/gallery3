@@ -18,8 +18,15 @@
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
 class gallery_task_Core {
-  const MPTT_LEFT = 0;
-  const MPTT_RIGHT = 1;
+  const FIX_STATE_START_MPTT = 0;
+  const FIX_STATE_RUN_MPTT = 1;
+  const FIX_STATE_START_PERMISSIONS = 2;
+  const FIX_STATE_RUN_PERMISSIONS = 3;
+  const FIX_STATE_START_DUPE_SLUGS = 4;
+  const FIX_STATE_RUN_DUPE_SLUGS = 5;
+  const FIX_STATE_START_DUPE_NAMES = 6;
+  const FIX_STATE_RUN_DUPE_NAMES = 7;
+  const FIX_STATE_DONE = 8;
 
   static function available_tasks() {
     $dirty_count = graphics::find_dirty_images_query()->count_records();
@@ -47,10 +54,10 @@ class gallery_task_Core {
       ->severity(log::SUCCESS);
 
     $tasks[] = Task_Definition::factory()
-      ->callback("gallery_task::fix_mptt")
-      ->name(t("Fix Album/Photo hierarchy"))
-      ->description(t("Fix problems where your album/photo breadcrumbs are out of " .
-                      "sync with your actual hierarchy."))
+      ->callback("gallery_task::fix")
+      ->name(t("Fix your Gallery"))
+      ->description(t("Fix up a variety of little problems that might be causing " .
+                      "your Gallery to act a little weird"))
       ->severity(log::SUCCESS);
 
     return $tasks;
@@ -310,78 +317,261 @@ class gallery_task_Core {
     }
   }
 
-  static function fix_mptt($task) {
+  static function fix($task) {
     $start = microtime(true);
 
     $total = $task->get("total");
     if (empty($total)) {
-      $task->set("total", $total = db::build()->count_records("items"));
-      $task->set("stack", "1:" . self::MPTT_LEFT);
+      // mptt: 2 operations for every item
+      // permissions: 1 operation for every album
+      // dupe slugs: 1 operation for each unique conflicted slug
+      $total = 2 * db::build()->count_records("items");
+      $total += db::build()->where("type", "=", "album")->count_records("items");
+      foreach (self::find_dupe_slugs() as $row) {
+        $total++;
+      }
+      foreach (self::find_dupe_names() as $row) {
+        $total++;
+      }
+
+      $task->set("total", $total);
+      $task->set("state", $state = self::FIX_STATE_START_MPTT);
       $task->set("ptr", 1);
       $task->set("completed", 0);
     }
 
-    $ptr = $task->get("ptr");
-    $stack = explode(" ", $task->get("stack"));
     $completed = $task->get("completed");
+    $state = $task->get("state");
 
-    // Implement a depth-first tree walk using a stack.  Not the most efficient, but it's simple.
-    while ($stack && microtime(true) - $start < 1.5) {
-      list($id, $state) = explode(":", array_pop($stack));
+    // This is a state machine that checks each item in the database.  It verifies the following
+    // attributes for an item.
+    // 1. Left and right MPTT pointers are correct
+    // 2. The .htaccess permission files for restricted items exist and are well formed.
+    // 3. The relative_path_cache and relative_url_cache values are set to null.
+    //
+    // We'll do a depth-first tree walk over our hierarchy using only the adjacency data because
+    // we don't trust MPTT here (that might be what we're here to fix!).  Avoid avoid using ORM
+    // calls as much as possible since they're expensive.
+    while ($state != self::FIX_STATE_DONE && microtime(true) - $start < 1.5) {
       switch ($state) {
-      case self::MPTT_LEFT:
-        self::fix_mptt_set_left($id, $ptr++);
-        $item = ORM::factory("item", $id);
-        array_push($stack, $id . ":" . self::MPTT_RIGHT);
-        foreach (self::fix_mptt_children($id) as $child) {
-          array_push($stack, $child->id . ":" . self::MPTT_LEFT);
+      case self::FIX_STATE_START_MPTT:
+        $task->set("ptr", $ptr = 1);
+        $task->set("stack", item::root()->id . ":L");
+        $state = self::FIX_STATE_RUN_MPTT;
+        break;
+
+      case self::FIX_STATE_RUN_MPTT:
+        $ptr = $task->get("ptr");
+        $stack = explode(" ", $task->get("stack"));
+        list ($id, $ptr_mode) = explode(":", array_pop($stack));
+        if ($ptr_mode == "L") {
+          $stack[] = "$id:R";
+          db::build()
+            ->update("items")
+            ->set("left_ptr", $ptr++)
+            ->where("id", "=", $id)
+            ->execute();
+
+          foreach (db::build()
+                   ->select(array("id"))
+                   ->from("items")
+                   ->where("parent_id", "=", $id)
+                   ->order_by("left_ptr", "ASC")
+                   ->execute() as $child) {
+            array_push($stack, "{$child->id}:L");
+          }
+        } else if ($ptr_mode == "R") {
+          db::build()
+            ->update("items")
+            ->set("right_ptr", $ptr++)
+            ->set("relative_path_cache", null)
+            ->set("relative_url_cache", null)
+            ->where("id", "=", $id)
+            ->execute();
+        }
+        $task->set("ptr", $ptr);
+        $task->set("stack", implode(" ", $stack));
+        $completed++;
+
+        if (empty($stack)) {
+          $state = self::FIX_STATE_START_DUPE_SLUGS;
         }
         break;
 
-      case self::MPTT_RIGHT:
-        self::fix_mptt_set_right($id, $ptr++);
+
+      case self::FIX_STATE_START_DUPE_SLUGS:
+        $stack = array();
+        foreach (self::find_dupe_slugs() as $row) {
+          list ($parent_id, $slug) = explode(":", $row->parent_slug, 2);
+          $stack[] = join(":", array($parent_id, $slug));
+        }
+        if ($stack) {
+          $task->set("stack", implode(" ", $stack));
+          $state = self::FIX_STATE_RUN_DUPE_SLUGS;
+        } else {
+          $state = self::FIX_STATE_START_DUPE_NAMES;
+        }
+        break;
+
+      case self::FIX_STATE_RUN_DUPE_SLUGS:
+        $stack = explode(" ", $task->get("stack"));
+        list ($parent_id, $slug) = explode(":", array_pop($stack));
+
+        // We want to leave the first one alone and update all conflicts to be random values.
+        $fixed = 0;
+        $conflicts = ORM::factory("item")
+          ->where("parent_id", "=", $parent_id)
+          ->where("slug", "=", $slug)
+          ->find_all(1, 1);
+        if ($conflicts->count() && $conflict = $conflicts->current()) {
+          $task->log("Fixing conflicting slug for item id {$conflict->id}");
+          db::build()
+            ->update("items")
+            ->set("slug", $slug . "-" . (string)rand(1000, 9999))
+            ->where("id", "=", $conflict->id)
+            ->execute();
+
+          // We fixed one conflict, but there might be more so put this parent back on the stack
+          // and try again.  We won't consider it completed when we don't fix a conflict.  This
+          // guarantees that we won't spend too long fixing one set of conflicts, and that we
+          // won't stop before all are fixed.
+          $stack[] = "$parent_id:$slug";
+          break;
+        }
+        $task->set("stack", implode(" ", $stack));
         $completed++;
+
+        if (empty($stack)) {
+          $state = self::FIX_STATE_START_DUPE_NAMES;
+        }
+        break;
+
+      case self::FIX_STATE_START_DUPE_NAMES:
+        $stack = array();
+        foreach (self::find_dupe_names() as $row) {
+          list ($parent_id, $name) = explode(":", $row->parent_name, 2);
+          $stack[] = join(":", array($parent_id, $name));
+        }
+        if ($stack) {
+          $task->set("stack", implode(" ", $stack));
+          $state = self::FIX_STATE_RUN_DUPE_NAMES;
+        } else {
+          $state = self::FIX_STATE_START_PERMISSIONS;
+        }
+        break;
+
+      case self::FIX_STATE_RUN_DUPE_NAMES:
+        $stack = explode(" ", $task->get("stack"));
+        list ($parent_id, $name) = explode(":", array_pop($stack));
+
+        $fixed = 0;
+        // We want to leave the first one alone and update all conflicts to be random values.
+        $conflicts = ORM::factory("item")
+          ->where("parent_id", "=", $parent_id)
+          ->where("name", "=", $name)
+          ->find_all(1, 1);
+        if ($conflicts->count() && $conflict = $conflicts->current()) {
+          $task->log("Fixing conflicting name for item id {$conflict->id}");
+          db::build()
+            ->update("items")
+            ->set("name", $name . "-" . (string)rand(1000, 9999))
+            ->where("id", "=", $conflict->id)
+            ->execute();
+
+          // We fixed one conflict, but there might be more so put this parent back on the stack
+          // and try again.  We won't consider it completed when we don't fix a conflict.  This
+          // guarantees that we won't spend too long fixing one set of conflicts, and that we
+          // won't stop before all are fixed.
+          $stack[] = "$parent_id:$name";
+          break;
+        }
+        $task->set("stack", implode(" ", $stack));
+        $completed++;
+
+        if (empty($stack)) {
+          $state = self::FIX_STATE_START_PERMISSIONS;
+        }
+        break;
+
+      case self::FIX_STATE_START_PERMISSIONS:
+        $stack = array();
+        foreach (db::build()
+                 ->select("id")
+                 ->from("items")
+                 ->where("type", "=", "album")
+                 ->execute() as $row) {
+          $stack[] = $row->id;
+        }
+        $task->set("stack", implode(" ", $stack));
+        $state = self::FIX_STATE_RUN_PERMISSIONS;
+        break;
+
+      case self::FIX_STATE_RUN_PERMISSIONS:
+        $stack = explode(" ", $task->get("stack"));
+        $id = array_pop($stack);
+
+        $everybody = identity::everybody();
+        $view_col = "view_{$everybody->id}";
+        $view_full_col = "view_full_{$everybody->id}";
+        $intent = ORM::factory("access_intent")->where("item_id", "=", $id)->find();
+
+        // Only load the item if we're going to use it below
+        if ($intent->$view_col === access::DENY ||
+            $intent->$view_full_col === access::DENY) {
+          $item = ORM::factory("item", $id);
+        }
+        if ($intent->$view_col === access::DENY) {
+          access::update_htaccess_files($item, $everybody, "view", access::DENY);
+        }
+        if ($intent->$view_full_col === access::DENY) {
+          access::update_htaccess_files($item, $everybody, "view_full", access::DENY);
+        }
+        $task->set("stack", implode(" ", $stack));
+        $completed++;
+
+        if (empty($stack)) {
+          $state = self::FIX_STATE_DONE;
+        }
         break;
       }
     }
 
-    $task->set("stack", implode(" ", $stack));
-    $task->set("ptr", $ptr);
+    $task->set("state", $state);
     $task->set("completed", $completed);
 
-    if ($total == $completed) {
+    if ($state == self::FIX_STATE_DONE) {
       $task->done = true;
       $task->state = "success";
       $task->percent_complete = 100;
     } else {
       $task->percent_complete = round(100 * $completed / $total);
     }
-    $task->status = t2("One row updated", "%count / %total rows updated", $completed,
+    $task->status = t2("One operation complete", "%count / %total operations complete", $completed,
                        array("total" => $total));
   }
 
-  static function fix_mptt_children($parent_id) {
+  static function find_dupe_slugs() {
     return db::build()
+      ->select_distinct(
+        array("parent_slug" => new Database_Expression("CONCAT(`parent_id`, ':', `slug`)")))
       ->select("id")
+      ->select(array("C" => "COUNT(\"*\")"))
       ->from("items")
-      ->where("parent_id", "=", $parent_id)
-      ->order_by("left_ptr", "ASC")
+      ->having("C", ">", 1)
+      ->group_by("parent_slug")
       ->execute();
   }
 
-  static function fix_mptt_set_left($id, $value) {
-    db::build()
-      ->update("items")
-      ->set("left_ptr", $value)
-      ->where("id", "=", $id)
-      ->execute();
-  }
-
-  static function fix_mptt_set_right($id, $value) {
-    db::build()
-      ->update("items")
-      ->set("right_ptr", $value)
-      ->where("id", "=", $id)
+  static function find_dupe_names() {
+    return db::build()
+      ->select_distinct(
+        array("parent_name" => new Database_Expression("CONCAT(`parent_id`, ':', `name`)")))
+      ->select("id")
+      ->select(array("C" => "COUNT(\"*\")"))
+      ->from("items")
+      ->where("type", "<>", "album")
+      ->having("C", ">", 1)
+      ->group_by("parent_name")
       ->execute();
   }
 }

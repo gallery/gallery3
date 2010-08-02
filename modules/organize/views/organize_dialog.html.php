@@ -2,7 +2,7 @@
 <script type="text/javascript" src="<?= url::file("lib/swfobject.js") ?>"></script>
 <style type="text/css" media="screen">
   #flashContent {
-    display:none;
+  //display:none;
   }
 
   .g-organize {
@@ -98,12 +98,12 @@
       controllerUri: "<?= $controller_uri ?>"
     };
   };
-  /*
-    For version detection, set to min. required Flash Player version, or 0 (or 0.0.0),
-    for no version detection.
-  */
-  var swfVersionStr = "0.0.0";
-  /* To use express install, set to playerProductInstall.swf, otherwise the empty string.*/
+
+  // For version detection, set to minimum required Flash Player version, or 0 (or 0.0.0),
+  // for no version detection.
+  var swfVersionStr = "<?= $flash_minimum_version = "10.0.0" ?>";
+
+  // To use express install, set to playerProductInstall.swf, otherwise the empty string.
   var xiSwfUrlStr = "";
   var flashvars = {};
 
@@ -127,5 +127,14 @@
     <!-- The following spans are placeholders so we can load the hover and active styles for the flex component -->
     <span id="g-organize-hover" /><span id="g-organize-active" />
   <h1 style="display:none"><?= t("Organize :: %name", array("name" => html::purify($album->title))) ?></h1>
-    <div id="flashContent">&nbsp;</div>
+  <div id="flashContent">
+    <p>
+      <?= t("To use the Organize feature, please ensure that Adobe Flash Player version %flash_minimum_version " .
+            "or greater is installed.", array("flash_minimum_version" => $flash_minimum_version)) ?>
+    </p>
+    <a href="http://www.adobe.com/go/getflashplayer">
+      <img src="<?= request::protocol() ?>://www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
+           alt=<?= t("Get Adobe Flash Player")->for_js() ?> />
+    </a>
+  </div>
 </div>

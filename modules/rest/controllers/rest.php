@@ -81,12 +81,19 @@ class Rest_Controller extends Controller {
       }
 
       $response = call_user_func(array($handler_class, $handler_method), $request);
+      if ($handler_method == "post") {
+        // post methods must return a response containing a URI.
+        header("HTTP/1.1 201 Created");
+        header("Location: {$response['url']}");
+      }
       rest::reply($response);
     } catch (ORM_Validation_Exception $e) {
       // Note: this is totally insufficient because it doesn't take into account localization.  We
       // either need to map the result values to localized strings in the application code, or every
       // client needs its own l10n string set.
       throw new Rest_Exception("Bad Request", 400, $e->validation->errors());
+    } catch (Kohana_404_Exception $e) {
+      throw new Rest_Exception("Not Found", 404);
     }
   }
 }

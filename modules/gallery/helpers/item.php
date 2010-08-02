@@ -105,9 +105,15 @@ class item_Core {
 
     model_cache::clear();
     $parent->album_cover_item_id = $item->is_album() ? $item->album_cover_item_id : $item->id;
-    $parent->thumb_dirty = 1;
+    if ($item->thumb_dirty) {
+      $parent->thumb_dirty = 1;
+      graphics::generate($parent);
+    } else {
+      copy($item->thumb_path(), $parent->thumb_path());
+      $parent->thumb_width = $item->thumb_width;
+      $parent->thumb_height = $item->thumb_height;
+    }
     $parent->save();
-    graphics::generate($parent);
     $grand_parent = $parent->parent();
     if ($grand_parent && access::can("edit", $grand_parent) &&
         $grand_parent->album_cover_item_id == null)  {
@@ -158,8 +164,10 @@ class item_Core {
    */
   static function get_delete_form($item) {
     $page_type = Input::instance()->get("page_type");
+    $from_id = Input::instance()->get("from_id");
     $form = new Forge(
-      "quick/delete/$item->id?page_type=$page_type", "", "post", array("id" => "g-confirm-delete"));
+      "quick/delete/$item->id?page_type=$page_type&from_id=$from_id", "",
+      "post", array("id" => "g-confirm-delete"));
     $group = $form->group("confirm_delete")->label(t("Confirm Deletion"));
     $group->submit("")->value(t("Delete"));
     $form->script("")

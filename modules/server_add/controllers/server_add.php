@@ -55,7 +55,7 @@ class Server_Add_Controller extends Admin_Controller {
         }
         if (!is_dir($file)) {
           $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-          if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4"))) {
+          if (!in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4", "m4v"))) {
             continue;
           }
         }
@@ -91,9 +91,9 @@ class Server_Add_Controller extends Admin_Controller {
       ->name(t("Add from server"));
     $task = task::create($task_def, array("item_id" => $item->id, "queue" => $paths));
 
-    print json_encode(
+    json::reply(
       array("result" => "started",
-            "status" => $task->status,
+            "status" => (string)$task->status,
             "url" => url::site("server_add/run/$task->id?csrf=" . access::csrf_token())));
   }
 
@@ -111,9 +111,9 @@ class Server_Add_Controller extends Admin_Controller {
     $task = task::run($task_id);
     // Prevent the JavaScript code from breaking by forcing a period as
     // decimal separator for all locales with sprintf("%F", $value).
-    print json_encode(array("done" => (bool)$task->done,
-                            "status" => $task->status,
-                            "percent_complete" => sprintf("%F", $task->percent_complete)));
+    json::reply(array("done" => (bool)$task->done,
+                      "status" => (string)$task->status,
+                      "percent_complete" => sprintf("%F", $task->percent_complete)));
   }
 
   /**
@@ -162,7 +162,7 @@ class Server_Add_Controller extends Admin_Controller {
             $queue[] = array($child, $entry_id);
           } else {
             $ext = strtolower(pathinfo($child, PATHINFO_EXTENSION));
-            if (in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4")) &&
+            if (in_array($ext, array("gif", "jpeg", "jpg", "png", "flv", "mp4", "m4v")) &&
                 filesize($child) > 0) {
               $child_entry = ORM::factory("server_add_file");
               $child_entry->task_id = $task->id;
@@ -249,7 +249,7 @@ class Server_Add_Controller extends Admin_Controller {
               $photo->owner_id = $owner_id;
               $photo->save();
               $entry->item_id = $photo->id;
-            } else if (in_array($extension, array("flv", "mp4"))) {
+            } else if (in_array($extension, array("flv", "mp4", "m4v"))) {
               $movie = ORM::factory("item");
               $movie->type = "movie";
               $movie->parent_id = $parent->id;

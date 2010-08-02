@@ -53,13 +53,22 @@ class theme_Core {
       if (file_exists(THEMEPATH . self::$site_theme_name . "/admin")) {
         array_unshift($modules, THEMEPATH . self::$site_theme_name . "/admin");
       }
+      // Admins can override the site theme, temporarily.  This lets us preview themes.
+      if (identity::active_user()->admin && $override = $input->get("theme")) {
+        if (file_exists(THEMEPATH . $override)) {
+          self::$admin_theme_name = $override;
+          array_unshift($modules, THEMEPATH . self::$admin_theme_name);
+        } else {
+          Kohana_Log::add("error", "Missing override admin theme: '$override'");
+        }
+      }
     } else {
       // Admins can override the site theme, temporarily.  This lets us preview themes.
       if (identity::active_user()->admin && $override = $input->get("theme")) {
         if (file_exists(THEMEPATH . $override)) {
           self::$site_theme_name = $override;
         } else {
-          Kohana_Log::add("error", "Missing override theme: '$override'");
+          Kohana_Log::add("error", "Missing override site theme: '$override'");
         }
       }
       array_unshift($modules, THEMEPATH . self::$site_theme_name);
@@ -70,7 +79,7 @@ class theme_Core {
 
   static function get_edit_form_admin() {
     $form = new Forge("admin/theme_options/save/", "", null, array("id" =>"g-theme-options-form"));
-    $group = $form->group("edit_theme");
+    $group = $form->group("edit_theme")->label(t("Theme layout"));
     $group->input("page_size")->label(t("Items per page"))->id("g-page-size")
       ->rules("required|valid_digit")
       ->error_messages("required", t("You must enter a number"))
@@ -95,7 +104,8 @@ class theme_Core {
 
     module::event("theme_edit_form", $form);
 
-    $group = $form->group("buttons");
+    $group = $form->group("buttons")
+      ->set_attr("style","border: none");
     $group->submit("")->value(t("Save"));
     return $form;
   }

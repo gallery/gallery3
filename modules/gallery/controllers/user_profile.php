@@ -61,9 +61,9 @@ class User_Profile_Controller extends Controller {
         ->message(html::purify($form->message->message->value))
         ->send();
       message::success(t("Sent message to %user_name", array("user_name" => $user->display_name())));
-      print json_encode(array("result" => "success"));
+      json::reply(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error", "form" => (string)$form));
+      json::reply(array("result" => "error", "html" => (string)$form));
     }
   }
 }

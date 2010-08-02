@@ -98,20 +98,55 @@ class gallery_event_Core {
   static function item_deleted($item) {
     access::delete_item($item);
 
+    // Find any other albums that had the deleted item as the album cover and null it out.
+    // In some cases this may leave us with a missing album cover up in this item's parent
+    // hierarchy, but in most cases it'll work out fine.
+    foreach (ORM::factory("item")
+             ->where("album_cover_item_id", "=", $item->id)
+             ->find_all() as $parent) {
+      item::remove_album_cover($parent);
+    }
+
     $parent = $item->parent();
     if (!$parent->album_cover_item_id) {
-      // Assume we deleted the album cover and pick a new one.  Choosing the first photo in the
-      // album is logical, but it's not the most efficient in the case where we're deleting all
-      // the photos in the album one at a time since we'll probably delete them in order which
-      // means that we'll be resetting the album cover each time.
-      if ($child = $parent->children(1)->current()) {
-        item::make_album_cover($child);
+      // Assume that we deleted the album cover
+      if (batch::in_progress()) {
+        // Remember that this parent is missing an album cover, for later.
+        $batch_missing_album_cover = Session::instance()->get("batch_missing_album_cover", array());
+        $batch_missing_album_cover[$parent->id] = 1;
+        Session::instance()->set("batch_missing_album_cover", $batch_missing_album_cover);
+      } else {
+        // Choose the first child as the new cover.
+        if ($child = $parent->children(1)->current()) {
+          item::make_album_cover($child);
+        }
       }
     }
   }
 
+  static function batch_complete() {
+    // Set the album covers for any items that where we probably deleted the album cover during
+    // this batch.  The item may have been deleted, so don't count on it being around.  Choose the
+    // first child as the new album cover.
+    // NOTE: if the first child doesn't have an album cover, then this won't work.
+    foreach (array_keys(Session::instance()->get("batch_missing_album_cover", array())) as $id) {
+      $item = ORM::factory("item", $id);
+      if ($item->loaded() && !$item->album_cover_item_id) {
+        if ($child = $item->children(1)->current()) {
+          item::make_album_cover($child);
+        }
+      }
+    }
+    Session::instance()->delete("batch_missing_album_cover");
+  }
+
   static function item_moved($item, $old_parent) {
     access::recalculate_permissions($item->parent());
+
+    // If the new parent doesn't have an album cover, make this it.
+    if (!$item->parent()->album_cover_item_id) {
+      item::make_album_cover($item);
+    }
   }
 
   static function user_login($user) {
@@ -158,7 +193,9 @@ class gallery_event_Core {
                       ->url(user_profile::url($user->id))
                       ->label($user->display_name()));
 
-        if (isset($theme->item)) {
+        if (Router::$controller == "admin") {
+          $continue_url = url::site("");
+        } else if (isset($theme->item)) {
           if (access::user_can(identity::guest(), "view", $theme->item)) {
             $continue_url = $theme->item->abs_url();
           } else {
@@ -171,8 +208,7 @@ class gallery_event_Core {
         $menu->append(Menu::factory("link")
                       ->id("user_menu_logout")
                       ->css_id("g-logout-link")
-                      ->url(url::site("logout?csrf=$csrf&amp;continue_url=" .
-                                      urlencode($continue_url)))
+                      ->url(url::site("logout?csrf=$csrf&amp;continue_url=" . urlencode($continue_url)))
                       ->label(t("Logout")));
       }
     }
@@ -202,7 +238,7 @@ class gallery_event_Core {
             $add_menu->append(Menu::factory("dialog")
                               ->id("add_photos_item")
                               ->label(t("Add photos"))
-                              ->url(url::site("flash_uploader/app/$item->id")));
+                              ->url(url::site("uploader/index/$item->id")));
             if ($item->is_album()) {
               $add_menu->append(Menu::factory("dialog")
                                 ->id("add_album_item")
@@ -219,14 +255,17 @@ class gallery_event_Core {
         case "album":
           $option_text = t("Album options");
           $edit_text = t("Edit album");
+          $delete_text = t("Delete album");
           break;
         case "movie":
           $option_text = t("Movie options");
           $edit_text = t("Edit movie");
+          $delete_text = t("Delete movie");
           break;
         default:
           $option_text = t("Photo options");
           $edit_text = t("Edit photo");
+          $delete_text = t("Delete photo");
         }
 
         $menu->append($options_menu = Menu::factory("submenu")
@@ -237,7 +276,7 @@ class gallery_event_Core {
             $options_menu->append(Menu::factory("dialog")
                                   ->id("edit_item")
                                   ->label($edit_text)
-                                  ->url(url::site("form/edit/{$item->type}s/$item->id")));
+                                  ->url(url::site("form/edit/{$item->type}s/$item->id?from_id={$item->id}")));
           }
 
           if ($item->is_album()) {
@@ -251,7 +290,6 @@ class gallery_event_Core {
         }
 
         $csrf = access::csrf_token();
-        $theme_item = $theme->item();
         $page_type = $theme->page_type();
         if ($can_edit && $item->is_photo() && graphics::can("rotate")) {
           $options_menu
@@ -262,7 +300,7 @@ class gallery_event_Core {
               ->css_class("ui-icon-rotate-ccw")
               ->ajax_handler("function(data) { " .
                              "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
-              ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")))
+              ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")))
             ->append(
               Menu::factory("ajax_link")
               ->id("rotate_cw")
@@ -270,7 +308,7 @@ class gallery_event_Core {
               ->css_class("ui-icon-rotate-cw")
               ->ajax_handler("function(data) { " .
                              "\$.gallery_replace_image(data, \$('$item_css_selector')) }")
-              ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+              ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
         }
 
         if ($item->id != item::root()->id) {
@@ -300,10 +338,10 @@ class gallery_event_Core {
               ->append(
                 Menu::factory("dialog")
                 ->id("delete")
-                ->label(t("Delete this photo"))
+                ->label($delete_text)
                 ->css_class("ui-icon-trash")
                 ->css_class("g-quick-delete")
-                ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+                ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id={$item->id}&amp;page_type=$page_type")));
           }
         }
       }
@@ -404,7 +442,7 @@ class gallery_event_Core {
                             ->id("edit")
                             ->label($edit_title)
                             ->css_class("ui-icon-pencil")
-                            ->url(url::site("quick/form_edit/$item->id?from_id=$theme_item->id")));
+                            ->url(url::site("quick/form_edit/$item->id?from_id={$theme_item->id}")));
 
       if ($item->is_photo() && graphics::can("rotate")) {
         $options_menu
@@ -415,7 +453,7 @@ class gallery_event_Core {
             ->css_class("ui-icon-rotate-ccw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
-            ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")))
+            ->url(url::site("quick/rotate/$item->id/ccw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")))
           ->append(
             Menu::factory("ajax_link")
             ->id("rotate_cw")
@@ -423,7 +461,7 @@ class gallery_event_Core {
             ->css_class("ui-icon-rotate-cw")
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
-            ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+            ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
       }
 
       // @todo Don't move photos from the photo page; we don't yet have a good way of redirecting
@@ -462,7 +500,7 @@ class gallery_event_Core {
                    ->id("delete")
                    ->label($delete_title)
                    ->css_class("ui-icon-trash")
-                   ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id=$theme_item->id&amp;page_type=$page_type")));
+                   ->url(url::site("quick/form_delete/$item->id?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
       }
 
       if ($item->is_album()) {
@@ -471,7 +509,7 @@ class gallery_event_Core {
                    ->id("add_item")
                    ->label(t("Add a photo"))
                    ->css_class("ui-icon-plus")
-                   ->url(url::site("flash_uploader/app/$item->id")))
+                   ->url(url::site("uploader/index/$item->id")))
           ->append(Menu::factory("dialog")
                    ->id("add_album")
                    ->label(t("Add an album"))

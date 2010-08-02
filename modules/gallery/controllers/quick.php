@@ -46,23 +46,24 @@ class Quick_Controller extends Controller {
 
       graphics::generate($item);
 
-      $parent = $item->parent();
-      // @todo: this is an inadequate way to regenerate the parent's thumbnail after rotation.
-      if ($parent->album_cover_item_id == $item->id) {
-        copy($item->thumb_path(), $parent->thumb_path());
-        $parent->thumb_width = $item->thumb_width;
-        $parent->thumb_height = $item->thumb_height;
-        $parent->save();
+      // @todo: this is an inadequate way to regenerate album cover thumbnails after rotation.
+      foreach (ORM::factory("item")
+               ->where("album_cover_item_id", "=", $item->id)
+               ->find_all() as $target) {
+        copy($item->thumb_path(), $target->thumb_path());
+        $target->thumb_width = $item->thumb_width;
+        $target->thumb_height = $item->thumb_height;
+        $target->save();
       }
     }
 
     if (Input::instance()->get("page_type") == "collection") {
-      print json_encode(
+      json::reply(
         array("src" => $item->thumb_url(),
               "width" => $item->thumb_width,
               "height" => $item->thumb_height));
     } else {
-      print json_encode(
+      json::reply(
         array("src" => $item->resize_url(),
               "width" => $item->resize_width,
               "height" => $item->resize_height));
@@ -82,7 +83,7 @@ class Quick_Controller extends Controller {
     item::make_album_cover($item);
     message::success($msg);
 
-    print json_encode(array("result" => "success", "reload" => 1));
+    json::reply(array("result" => "success", "reload" => 1));
   }
 
   public function form_delete($id) {
@@ -90,17 +91,10 @@ class Quick_Controller extends Controller {
     access::required("view", $item);
     access::required("edit", $item);
 
-    if ($item->is_album()) {
-      print t(
-        "Delete the album <b>%title</b>? All photos and movies in the album will also be deleted.",
-        array("title" => html::purify($item->title)));
-    } else {
-      print t("Are you sure you want to delete <b>%title</b>?",
-              array("title" => html::purify($item->title)));
-    }
-
-    $form = item::get_delete_form($item);
-    print $form;
+    $v = new View("quick_delete_confirm.html");
+    $v->item = $item;
+    $v->form = item::get_delete_form($item);
+    print $v;
   }
 
   public function delete($id) {
@@ -116,14 +110,24 @@ class Quick_Controller extends Controller {
     }
 
     $parent = $item->parent();
-    $item->delete();
+
+    if ($item->is_album()) {
+      // Album delete will trigger deletes for all children.  Do this in a batch so that we can be
+      // smart about notifications, album cover updates, etc.
+      batch::start();
+      $item->delete();
+      batch::stop();
+    } else {
+      $item->delete();
+    }
     message::success($msg);
 
-    if (Input::instance()->get("page_type") == "collection") {
-      print json_encode(array("result" => "success", "reload" => 1));
+    $from_id = Input::instance()->get("from_id");
+    if (Input::instance()->get("page_type") == "collection" &&
+        $from_id != $id /* deleted the item we were viewing */) {
+      json::reply(array("result" => "success", "reload" => 1));
     } else {
-      print json_encode(array("result" => "success",
-                              "location" => $parent->url()));
+      json::reply(array("result" => "success", "location" => $parent->url()));
     }
   }
 

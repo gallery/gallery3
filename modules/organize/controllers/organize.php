@@ -34,7 +34,7 @@ class Organize_Controller extends Controller {
     $file_filter = json_encode(
       array("photo" => array("label" => "Images",
                              "types" => array("*.jpg", "*.jpeg", "*.png", "*.gif")),
-            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4"))));
+            "movie" => array("label" => "Movies", "types" => array("*.flv", "*.mp4", "*.m4v"))));
 
     $v = new View("organize_dialog.html");
     $v->album = $album;
@@ -51,10 +51,10 @@ class Organize_Controller extends Controller {
   }
 
   function add_album_fields() {
-    print json_encode(array("title" => (string)t("Title"),
-                            "description" => (string)t("Description"),
-                            "name" => (string)t("Directory name"),
-                            "slug" => (string)t("Internet Address")));
+    json::reply(array("title" => (string)t("Title"),
+                      "description" => (string)t("Description"),
+                      "name" => (string)t("Directory name"),
+                      "slug" => (string)t("Internet Address")));
   }
 
 }

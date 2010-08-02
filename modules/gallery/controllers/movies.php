@@ -87,13 +87,13 @@ class Movies_Controller extends Items_Controller {
 
       if ($form->from_id->value == $movie->id) {
         // Use the new url; it might have changed.
-        print json_encode(array("result" => "success", "location" => $movie->url()));
+        json::reply(array("result" => "success", "location" => $movie->url()));
       } else {
         // Stay on the same page
-        print json_encode(array("result" => "success"));
+        json::reply(array("result" => "success"));
       }
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      json::reply(array("result" => "error", "html" => (string) $form));
     }
   }
 

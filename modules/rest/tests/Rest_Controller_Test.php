@@ -142,8 +142,8 @@ class Rest_Controller_Test extends Gallery_Unit_Test_Case {
 }
 
 class mock_rest {
-  static function get($request)    { return $request; }
-  static function post($request)   { return $request; }
-  static function put($request)    { return $request; }
-  static function delete($request) { return $request; }
+  static function get($request)    { return (array)$request; }
+  static function post($request)   { return (array)$request; }
+  static function put($request)    { return (array)$request; }
+  static function delete($request) { return (array)$request; }
 }

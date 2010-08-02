@@ -27,8 +27,7 @@ class Password_Controller extends Controller {
       if ($form->validate()) {
         $this->_send_reset($form);
       } else {
-        print json_encode(array("result" => "error",
-                                "form" => (string) $form));
+        json::reply(array("result" => "error", "html" => (string)$form));
       }
     } else {
       print $form;
@@ -83,8 +82,7 @@ class Password_Controller extends Controller {
     // Always pretend that an email has been sent to avoid leaking
     // information on what user names are actually real.
     message::success(t("Password reset email sent"));
-    print json_encode(
-      array("result" => "success"));
+    json::reply(array("result" => "success"));
   }
 
   private static function _reset_form() {

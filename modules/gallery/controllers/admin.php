@@ -74,17 +74,20 @@ class Admin_Controller extends Controller {
     $result = new stdClass();
     $result->result = "success";
     if ($time_remaining < 30) {
+      message::success(t("Automatically logged out of the admin area for your security"));
       $result->location = url::abs_site("");
     }
 
-    print json_encode($result);
+    json::reply($result);
   }
 
   private static function _prompt_for_reauth($controller_name, $args) {
-    if (request::method() == "get" && !request::is_ajax()) {
+    if (request::method() == "get") {
       // Avoid anti-phishing protection by passing the url as session variable.
       Session::instance()->set("continue_url", url::abs_current(true));
     }
+    // Save the is_ajax value as we lose it, if set, when we redirect
+    Session::instance()->set("is_ajax_request", request::is_ajax());
     url::redirect("reauthenticate");
   }
 }

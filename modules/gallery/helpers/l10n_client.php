@@ -20,13 +20,12 @@
 
 class l10n_client_Core {
 
-  private static function _server_url() {
-    return "http://gallery.menalto.com/index.php";
+  private static function _server_url($path) {
+    return "http://gallery.menalto.com/translations/$path";
   }
 
   static function server_api_key_url() {
-    return self::_server_url() . "?q=translations/userkey/" .
-      self::client_token();
+    return self::_server_url("userkey/" . self::client_token());
   }
 
   static function client_token() {
@@ -53,7 +52,7 @@ class l10n_client_Core {
 
   static function validate_api_key($api_key) {
     $version = "1.0";
-    $url = self::_server_url() . "?q=translations/status";
+    $url = self::_server_url("status");
     $signature = self::_sign($version, $api_key);
 
     list ($response_data, $response_status) = remote::post(
@@ -123,7 +122,7 @@ class l10n_client_Core {
     }
 
     $request_data = json_encode($request);
-    $url = self::_server_url() . "?q=translations/fetch";
+    $url = self::_server_url("fetch");
     list ($response_data, $response_status) = remote::post($url, array("data" => $request_data));
     if (!remote::success($response_status)) {
       throw new Exception("@todo TRANSLATIONS_FETCH_REQUEST_FAILED " . $response_status);
@@ -195,12 +194,15 @@ class l10n_client_Core {
 
     // @todo Batch requests (max request size)
     // @todo include base_revision in submission / how to handle resubmissions / edit fights?
+    $request = new stdClass();
     foreach (db::build()
              ->select("key", "message", "locale", "base_revision", "translation")
              ->from("outgoing_translations")
              ->execute() as $row) {
       $key = $row->key;
       if (!isset($request->{$key})) {
+        $request->{$key} = new stdClass();
+        $request->{$key}->translations = new stdClass();
         $request->{$key}->message = json_encode(unserialize($row->message));
       }
       $request->{$key}->translations->{$row->locale} = json_encode(unserialize($row->translation));
@@ -208,7 +210,7 @@ class l10n_client_Core {
 
     // @todo reduce memory consumption, e.g. free $request
     $request_data = json_encode($request);
-    $url = self::_server_url() . "?q=translations/submit";
+    $url = self::_server_url("submit");
     $signature = self::_sign($request_data);
 
     list ($response_data, $response_status) = remote::post(

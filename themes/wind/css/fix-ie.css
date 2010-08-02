@@ -7,6 +7,10 @@
   zoom: 1;
 }
 
+#g-sidebar {
+  overflow: hidden;
+}
+
 #g-photo,
 #g-movie {
 	zoom: 1;
@@ -22,8 +26,17 @@ input.submit {
   display: inline !important;
 }
 
+.g-short-form input[type='submit'] {
+  line-height: 1em;
+  padding: .38em .3em;
+}
+
 #g-add-tag-form input.textbox {
-  width: 110px;
+  width: 110px !important;
+}
+
+#g-add-tag-form input[type='submit'] {
+  padding: .3em 0 !important;
 }
 
 #g-dialog .g-cancel {

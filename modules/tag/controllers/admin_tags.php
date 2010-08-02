@@ -57,11 +57,9 @@ class Admin_Tags_Controller extends Admin_Controller {
       message::success(t("Deleted tag %tag_name", array("tag_name" => $name)));
       log::success("tags", t("Deleted tag %tag_name", array("tag_name" => $name)));
 
-      print json_encode(
-        array("result" => "success",
-              "location" => url::site("admin/tags")));
+      json::reply(array("result" => "success", "location" => url::site("admin/tags")));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      print $form;
     }
   }
 
@@ -93,15 +91,14 @@ class Admin_Tags_Controller extends Admin_Controller {
       $tag->name = $in_place_edit->value();
       $tag->save();
 
-      $message = t("Renamed tag %old_name to %new_name",
+      $message = t("Renamed tag <b>%old_name</b> to <b>%new_name</b>",
                    array("old_name" => $old_name, "new_name" => $tag->name));
       message::success($message);
       log::success("tags", $message);
 
-      print json_encode(array("result" => "success",
-              "location" => url::site("admin/tags")));
+      json::reply(array("result" => "success", "location" => url::site("admin/tags")));
     } else {
-      print json_encode(array("result" => "error", "form" => $in_place_edit->render()));
+      json::reply(array("result" => "error", "form" => (string)$in_place_edit->render()));
     }
   }
 

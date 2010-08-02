@@ -41,9 +41,7 @@ class Move_Controller extends Controller {
 
     item::move($source, $target);
 
-    print json_encode(
-      array("result" => "success",
-            "location" => $target->url()));
+    json::reply(array("result" => "success", "location" => $target->url()));
   }
 
   public function show_sub_tree($source_id, $target_id) {

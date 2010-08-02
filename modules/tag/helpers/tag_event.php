@@ -36,7 +36,8 @@ class tag_event_Core {
             $tag = str_replace("\0",  "", $tag);
             foreach (explode(",", $tag) as $word) {
               $word = trim($word);
-              if (function_exists("mb_detect_encoding") && mb_detect_encoding($word) != "UTF-8") {
+              if (function_exists("mb_detect_encoding") &&
+                  mb_detect_encoding($word, "ISO-8859-1, UTF-8") != "UTF-8") {
                 $word = utf8_encode($word);
               }
               $tags[$word] = 1;
@@ -67,8 +68,8 @@ class tag_event_Core {
   static function item_edit_form($item, $form) {
     $url = url::site("tags/autocomplete");
     $form->script("")
-      ->text("$('form input[id=tags]').ready(function() {
-                $('form input[id=tags]').autocomplete(
+      ->text("$('form input[name=tags]').ready(function() {
+                $('form input[name=tags]').autocomplete(
                   '$url', {max: 30, multiple: true, multipleSeparator: ',', cacheLength: 1});
               });");
 
@@ -105,6 +106,10 @@ class tag_event_Core {
   }
 
   static function add_photos_form($album, $form) {
+    if (!isset($group->uploadify)) {
+      return;
+    }
+    
     $group = $form->add_photos;
     $group->input("tags")
       ->label(t("Add tags to all uploaded files"))
@@ -124,6 +129,10 @@ class tag_event_Core {
   }
 
   static function add_photos_form_completed($album, $form) {
+    if (!isset($group->uploadify)) {
+      return;
+    }
+    
     foreach (explode(",", $form->add_photos->tags->value) as $tag_name) {
       $tag_name = trim($tag_name);
       if ($tag_name) {

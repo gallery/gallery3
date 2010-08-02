@@ -29,7 +29,7 @@
     <?= $theme->css("themeroller/ui.base.css") ?>
     <?= $theme->css("gallery.common.css") ?>
     <?= $theme->css("screen.css") ?>
-    <!--[if lt IE 8]>
+    <!--[if lte IE 8]>
     <link rel="stylesheet" type="text/css" href="<?= $theme->url("css/fix-ie.css") ?>"
           media="screen,print,projection" />
     <![endif]-->
@@ -107,13 +107,13 @@
                  level you're on the right page. -->
             <a href="<?= $parent->url($parent == $theme->item()->parent() ?
                      "show={$theme->item()->id}" : null) ?>">
-              <?= text::limit_chars(html::purify($parent->title), 15) ?>
+              <?= html::purify(text::limit_chars($parent->title, 15)) ?>
             </a>
           </li>
           <? $i++ ?>
           <? endforeach ?>
           <li class="g-active<? if ($i == 0) print " g-first" ?>">
-            <?= text::limit_chars(html::purify($theme->item()->title), 15) ?>
+            <?= html::purify(text::limit_chars($theme->item()->title, 15)) ?>
           </li>
         </ul>
         <? endif ?>

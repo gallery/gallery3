@@ -67,6 +67,10 @@ class View extends View_Core {
     try {
       $this->kohana_local_data = array_merge(View::$global_data, $this->kohana_local_data);
       return parent::render($print, $renderer, $modifier);
+    } catch (ORM_Validation_Exception $e) {
+      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
+      Kohana_Log::add("error", "Validation errors: " . print_r($e->validation->errors(), 1));
+      return "";
     } catch (Exception $e) {
       Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
       return "";

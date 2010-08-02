@@ -30,10 +30,11 @@ class Login_Controller extends Controller {
 
     list ($valid, $form) = $this->_auth("login/auth_ajax");
     if ($valid) {
-      print json_encode(
-        array("result" => "success"));
+      json::reply(array("result" => "success"));
     } else {
-      print json_encode(array("result" => "error", "form" => (string) $form));
+      $view = new View("login_ajax.html");
+      $view->form = $form;
+      json::reply(array("result" => "error", "html" => (string)$view));
     }
   }
 
