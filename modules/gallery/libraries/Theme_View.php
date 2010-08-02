@@ -46,7 +46,7 @@ class Theme_View_Core extends Gallery_View {
       $this->set_global("thumb_proportion", $this->thumb_proportion());
     }
 
-    if (module::get_var("gallery", "maintenance_mode", false)) {
+    if (module::get_var("gallery", "maintenance_mode", 0)) {
       if (identity::active_user()->admin) {
         message::warning(t("This site is currently in maintenance mode.  Visit the <a href=\"%maintenance_url\">maintenance page</a>", array("maintenance_url" => url::site("admin/maintenance"))));
     } else

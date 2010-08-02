@@ -26,7 +26,7 @@ class gallery_Core {
    */
   static function maintenance_mode() {
     if (Router::$controller != "login" &&
-        module::get_var("gallery", "maintenance_mode", false) &&
+        module::get_var("gallery", "maintenance_mode", 0) &&
         !identity::active_user()->admin) {
       Router::$controller = "maintenance";
       Router::$controller_path = MODPATH . "gallery/controllers/maintenance.php";
