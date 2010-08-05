@@ -357,6 +357,10 @@ class gallery_task_Core {
     // We'll do a depth-first tree walk over our hierarchy using only the adjacency data because
     // we don't trust MPTT here (that might be what we're here to fix!).  Avoid avoid using ORM
     // calls as much as possible since they're expensive.
+    //
+    // NOTE: the MPTT check will only traverse items that have valid parents.  It's possible that
+    // we have some tree corruption where there are items with parent ids to non-existent items.
+    // We should probably do something about that.
     while ($state != self::FIX_STATE_DONE && microtime(true) - $start < 1.5) {
       switch ($state) {
       case self::FIX_STATE_START_MPTT:
