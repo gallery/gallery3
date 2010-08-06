@@ -144,8 +144,10 @@ class gallery_installer {
                  `active` BOOLEAN default 0,
                  `name` varchar(64) default NULL,
                  `version` int(9) default NULL,
+                 `weight` int(9) default NULL,
                  PRIMARY KEY (`id`),
-                 UNIQUE KEY(`name`))
+                 UNIQUE KEY(`name`),
+                 KEY (`weight`))
                DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {outgoing_translations} (
@@ -296,7 +298,7 @@ class gallery_installer {
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
     module::set_var("gallery", "maintenance_mode", 0);
-    module::set_version("gallery", 31);
+    module::set_version("gallery", 32);
   }
 
   static function upgrade($version) {
@@ -560,6 +562,13 @@ class gallery_installer {
     if ($version == 30) {
       module::set_var("gallery", "maintenance_mode", 0);
       module::set_version("gallery", $version = 31);
+    }
+
+    if ($version == 31) {
+      db::update("modules")
+        ->set("weight", "=", "id")
+        ->execute();
+      module::set_version("gallery", $version = 32);
     }
   }
 
