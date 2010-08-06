@@ -59,11 +59,7 @@ class Packager_Controller extends Controller {
     // numbers, keeping our install.sql file more stable.
     srand(0);
 
-    gallery_installer::install(true);
-
-    module::load_modules();
-
-    foreach (array("user", "comment", "organize", "info", "rest",
+    foreach (array("gallery", "user", "comment", "organize", "info", "rest",
                    "rss", "search", "slideshow", "tag") as $module_name) {
       module::install($module_name);
       module::activate($module_name);
