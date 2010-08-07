@@ -565,8 +565,10 @@ class gallery_installer {
     }
 
     if ($version == 31) {
+      $db->query("ALTER TABLE {modules} ADD COLUMN `weight` int(9) DEFAULT NULL");
+      $db->query("ALTER TABLE {modules} ADD KEY (`weight`)");
       db::update("modules")
-        ->set("weight", "=", "id")
+        ->set("weight", new Database_Expression("`id`"))
         ->execute();
       module::set_version("gallery", $version = 32);
     }
