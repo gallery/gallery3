@@ -114,7 +114,8 @@ class gallery_installer {
                  KEY `parent_id` (`parent_id`),
                  KEY `type` (`type`),
                  KEY `random` (`rand_key`),
-                 KEY `weight` (`weight` DESC))
+                 KEY `weight` (`weight` DESC),
+                 KEY `left_ptr` (`left_ptr`))
                DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {logs} (
@@ -298,7 +299,7 @@ class gallery_installer {
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
     module::set_var("gallery", "maintenance_mode", 0);
-    module::set_version("gallery", 32);
+    module::set_version("gallery", 33);
   }
 
   static function upgrade($version) {
@@ -571,6 +572,11 @@ class gallery_installer {
         ->set("weight", new Database_Expression("`id`"))
         ->execute();
       module::set_version("gallery", $version = 32);
+    }
+
+    if ($version == 32) {
+      $db->query("ALTER TABLE {items} ADD KEY (`left_ptr`)");
+      module::set_version("gallery", $version = 33);
     }
   }
 
