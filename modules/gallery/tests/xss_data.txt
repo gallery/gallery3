@@ -267,7 +267,7 @@ modules/gallery/views/user_profile.html.php                  34  DIRTY_ATTR $use
 modules/gallery/views/user_profile.html.php                  43  DIRTY    $info->view
 modules/image_block/views/image_block_block.html.php         3   DIRTY_JS $item->url()
 modules/image_block/views/image_block_block.html.php         4   DIRTY    $item->thumb_img(array("class"=>"g-thumbnail"))
-modules/info/views/info_block.html.php                       22  DIRTY    date("M j, Y H:i:s",$item->captured)
+modules/info/views/info_block.html.php                       22  DIRTY    gallery::date_time($item->captured)
 modules/info/views/info_block.html.php                       29  DIRTY_JS $item->owner->url
 modules/notification/views/comment_published.html.php        28  DIRTY_JS $comment->item()->abs_url()
 modules/notification/views/comment_published.html.php        29  DIRTY    $comment->item()->abs_url()
