@@ -50,7 +50,8 @@ class Uploader_Controller extends Controller {
     // Uploadify adds its own field to the form, so validate that separately.
     $file_validation = new Validation($_FILES);
     $file_validation->add_rules(
-      "Filedata", "upload::valid",  "upload::required", "upload::type[gif,jpg,jpeg,png,flv,mp4,m4v]");
+      "Filedata", "upload::valid",  "upload::required",
+      "upload::type[gif,jpg,jpeg,png,flv,mp4,m4v]");
 
     if ($form->validate() && $file_validation->validate()) {
       $temp_filename = upload::save("Filedata");
