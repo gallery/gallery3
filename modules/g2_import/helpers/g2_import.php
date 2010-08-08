@@ -859,7 +859,6 @@ class g2_import_Core {
     $comment->text = self::_transform_bbcode($text);
     $comment->state = "published";
     $comment->server_http_host = $g2_comment->getHost();
-    $comment->created = $g2_comment->getDate();
     try {
       $comment->save();
     } catch (Exception $e) {
@@ -868,6 +867,14 @@ class g2_import_Core {
             array("id" => $g2_comment_id)),
           $e);
     }
+
+    // Backdate the creation date.  We can't do this at creation time because
+    // Comment_Model::save() will override it.
+    db::update("comments")
+      ->set("created", $g2_comment->getDate())
+      ->set("updated", $g2_comment->getDate())
+      ->where("id", "=", $comment->id)
+      ->execute();
   }
 
   /**
