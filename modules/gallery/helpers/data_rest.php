@@ -58,18 +58,6 @@ class data_rest_Core {
     return $result;
   }
 
-  static function put($request) {
-    $item = rest::resolve($request->url);
-    access::required("edit", $item);
-
-    if ($item->is_album()) {
-      throw new Rest_Exception("Bad Request", 400, array("errors" => array("type" => "invalid")));
-    }
-
-    $item->set_data_file($request->file);
-    $item->save();
-  }
-
   static function resolve($id) {
     $item = ORM::factory("item", $id);
     if (!access::can("view", $item)) {
