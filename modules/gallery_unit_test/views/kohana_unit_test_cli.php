@@ -71,7 +71,7 @@ foreach ($results as $class => $methods) {
   }
 
   echo "+", str_repeat("=", 87), "+", str_repeat("=", 10), "+\n";
-  printf("| %-40.40s %-13.13s %-13.13s %-13.13s %-13.13s |\n",
+  printf("| %-40.40s %-10.10s %-10.10s %-10.10s %-10.10s %-10.10s  |\n",
          $class,
          "Score: {$stats[$class]['score']}",
          "Total: {$stats[$class]['total']}",
@@ -81,7 +81,7 @@ foreach ($results as $class => $methods) {
   echo "+", str_repeat("=", 98), "+\n\n\n";
 }
 
-printf("  %-40.40s %-13.13s %-13.13s %-13.13s %-13.13s\n",
+printf("  %-40.40s %-10.10s %-10.10s %-10.10s %-10.10s %-10.10s\n",
        "TOTAL",
        "Score: " . ($totals["total"] ? 100 * ($totals["passed"] / $totals["total"]) : 0),
        "Total: {$totals['total']}",
