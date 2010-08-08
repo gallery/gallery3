@@ -32,9 +32,9 @@
 
       #framework_error .title {
         position: relative;
-        top: -3em;
+        top: -2.5em;
+        padding: 0px;
         text-align: center;
-        margin: 0 auto;
       }
 
       div#error_details {
