@@ -55,7 +55,7 @@ class Users_Controller extends Controller {
       module::event("user_edit_form_completed", $user, $form);
       message::success(t("User information updated"));
       json::reply(array("result" => "success",
-			"resource" => url::site("users/{$user->id}")));
+                        "resource" => url::site("users/{$user->id}")));
     } else {
       json::reply(array("result" => "error", "html" => (string)$form));
     }
@@ -87,7 +87,7 @@ class Users_Controller extends Controller {
       module::event("user_auth", $user);
       module::event("user_password_change", $user);
       json::reply(array("result" => "success",
-			"resource" => url::site("users/{$user->id}")));
+                        "resource" => url::site("users/{$user->id}")));
     } else {
       log::warning("user", t("Failed password change for %name", array("name" => $user->name)));
       $name = $user->name;
@@ -121,7 +121,7 @@ class Users_Controller extends Controller {
       message::success(t("Email address changed"));
       module::event("user_auth", $user);
       json::reply(array("result" => "success",
-			"resource" => url::site("users/{$user->id}")));
+                        "resource" => url::site("users/{$user->id}")));
     } else {
       log::warning("user", t("Failed email change for %name", array("name" => $user->name)));
       $name = $user->name;
