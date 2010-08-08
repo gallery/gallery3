@@ -442,6 +442,7 @@ class g2_import_Core {
         "title" => "title",
         "viewCount" => "view_count");
       $direction_map = array(
+        1 => "asc",
         ORDER_ASCENDING => "asc",
         ORDER_DESCENDING => "desc");
       // Only consider G2's first sort order
