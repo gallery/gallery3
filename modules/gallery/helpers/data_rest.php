@@ -23,7 +23,11 @@ class data_rest_Core {
     access::required("view", $item);
 
     $p = $request->params;
-    switch (isset($p->size) ? $p->size : "full") {
+    if (!isset($p->size) || !in_array($p->size, array("thumb", "resize", "full"))) {
+      throw new Rest_Exception("Bad Request", 400, array("errors" => array("size" => "invalid")));
+    }
+
+    switch ($p->size) {
     case "thumb":
       $entity = array(
         "width" => $item->thumb_width,
@@ -38,7 +42,6 @@ class data_rest_Core {
         "path" => $item->resize_path());
       break;
 
-    default:
     case "full":
       $entity = array(
         "width" => $item->width,
@@ -47,8 +50,13 @@ class data_rest_Core {
       break;
     }
 
-    $entity["size"] = filesize($entity["path"]);
-    $entity["contents"] = file_get_contents($entity["path"]);
+    if (file_exists($entity["path"]) && is_file($entity["path"])) {
+      $entity["size"] = filesize($entity["path"]);
+      $entity["contents"] = file_get_contents($entity["path"]);
+    } else {
+      $entity["size"] = null;
+      $entity["contents"] = null;
+    }
     unset($entity["path"]);
 
     $result = array(
