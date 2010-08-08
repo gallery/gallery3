@@ -57,23 +57,6 @@ class movie_Core {
     return $form;
   }
 
-
-  static function getmoviesize($filename) {
-    $ffmpeg = self::find_ffmpeg();
-    if (empty($ffmpeg)) {
-      throw new Exception("@todo MISSING_FFMPEG");
-    }
-
-    $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($filename) . " 2>&1";
-    $result = `$cmd`;
-    if (preg_match("/Stream.*?Video:.*?(\d+)x(\d+)/", $result, $regs)) {
-      list ($width, $height) = array($regs[1], $regs[2]);
-    } else {
-      list ($width, $height) = array(0, 0);
-    }
-    return array($width, $height);
-  }
-
   static function extract_frame($input_file, $output_file) {
     $ffmpeg = self::find_ffmpeg();
     if (empty($ffmpeg)) {
@@ -114,4 +97,31 @@ class movie_Core {
     }
     return $ffmpeg_path;
   }
+
+
+  /**
+   * Return the width, height, mime_type and extension of the given movie file.
+   */
+  static function get_file_metadata($file_path) {
+    $ffmpeg = self::find_ffmpeg();
+    if (empty($ffmpeg)) {
+      throw new Exception("@todo MISSING_FFMPEG");
+    }
+
+    $cmd = escapeshellcmd($ffmpeg) . " -i " . escapeshellarg($file_path) . " 2>&1";
+    $result = `$cmd`;
+    if (preg_match("/Stream.*?Video:.*?(\d+)x(\d+)/", $result, $regs)) {
+      list ($width, $height) = array($regs[1], $regs[2]);
+    } else {
+      list ($width, $height) = array(0, 0);
+    }
+
+    $pi = pathinfo($file_path);
+    $extension = isset($pi["extension"]) ? $pi["extension"] : "flv"; // No extension?  Assume FLV.
+    $mime_type = in_array(strtolower($extension), array("mp4", "m4v")) ?
+      "video/mp4" : "video/x-flv";
+
+    return array($width, $height, $mime_type, $extension);
+  }
+
 }

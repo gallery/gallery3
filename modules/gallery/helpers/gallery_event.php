@@ -124,6 +124,20 @@ class gallery_event_Core {
     }
   }
 
+  static function item_updated_data_file($item) {
+    graphics::generate($item);
+
+    // Update any places where this is the album cover
+    foreach (ORM::factory("item")
+             ->where("album_cover_item_id", "=", $item->id)
+             ->find_all() as $target) {
+      copy($item->thumb_path(), $target->thumb_path());
+      $target->thumb_width = $item->thumb_width;
+      $target->thumb_height = $item->thumb_height;
+      $target->save();
+    }
+  }
+
   static function batch_complete() {
     // Set the album covers for any items that where we probably deleted the album cover during
     // this batch.  The item may have been deleted, so don't count on it being around.  Choose the

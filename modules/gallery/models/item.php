@@ -316,7 +316,7 @@ class Item_Model extends ORM_MPTT {
     unset($significant_changes["relative_url_cache"]);
     unset($significant_changes["relative_path_cache"]);
 
-    if (!empty($this->changed) && $significant_changes) {
+    if ((!empty($this->changed) && $significant_changes) || isset($this->data_file)) {
       $this->updated = time();
       if (!$this->loaded()) {
         // Create a new item.
@@ -341,30 +341,19 @@ class Item_Model extends ORM_MPTT {
         }
 
         // Get the width, height and mime type from our data file for photos and movies.
-        if ($this->is_movie() || $this->is_photo()) {
-          $pi = pathinfo($this->data_file);
-
+        if ($this->is_photo() || $this->is_movie()) {
           if ($this->is_photo()) {
-            $image_info = getimagesize($this->data_file);
-            $this->width = $image_info[0];
-            $this->height = $image_info[1];
-            $this->mime_type = $image_info["mime"];
+            list ($this->width, $this->height, $this->mime_type, $extension) =
+              photo::get_file_metadata($this->data_file);
+          } else if ($this->is_movie()) {
+            list ($this->width, $this->height, $this->mime_type, $extension) =
+              movie::get_file_metadata($this->data_file);
+          }
 
-            // Force an extension onto the name if necessary
-            if (empty($pi["extension"])) {
-              $pi["extension"] = image_type_to_extension($image_info[2], false);
-              $this->name .= "." . $pi["extension"];
-            }
-          } else {
-            list ($this->width, $this->height) = movie::getmoviesize($this->data_file);
-
-            // No extension?  Assume FLV.
-            if (empty($pi["extension"])) {
-              $pi["extension"] = "flv";
-              $this->name .= "." . $pi["extension"];
-            }
-
-            $this->mime_type = in_array(strtolower($pi["extension"]), array("mp4", "m4v")) ? "video/mp4" : "video/x-flv";
+          // Force an extension onto the name if necessary
+          $pi = pathinfo($this->data_file);
+          if (empty($pi["extension"])) {
+            $this->name = "{$this->name}.$extension";
           }
         }
 
@@ -479,7 +468,30 @@ class Item_Model extends ORM_MPTT {
             ->execute();
         }
 
+        // Replace the data file, if requested.
+        // @todo: we don't handle the case where you swap in a file of a different mime type
+        //        should we prevent that in validation?  or in set_data_file()
+        if ($this->data_file && ($this->is_photo() || $this->is_movie())) {
+          copy($this->data_file, $this->file_path());
+
+          // Get the width, height and mime type from our data file for photos and movies.
+          if ($this->is_photo()) {
+            list ($this->width, $this->height) = photo::get_file_metadata($this->file_path());
+          } else if ($this->is_movie()) {
+            list ($this->width, $this->height) = movie::get_file_metadata($this->file_path());
+          }
+          $this->thumb_dirty = 1;
+          $this->resize_dirty = 1;
+        }
+
         module::event("item_updated", $original, $this);
+
+        if ($this->data_file) {
+          // Null out the data file variable here, otherwise this event will trigger another
+          // save() which will think that we're doing another file move.
+          $this->data_file = null;
+          module::event("item_updated_data_file", $this);
+        }
       }
     } else if (!empty($this->changed)) {
       // Insignificant changes only.  Don't fire events or do any special checking to try to keep
@@ -765,8 +777,9 @@ class Item_Model extends ORM_MPTT {
         $this->rules["slug"] = array();
       }
 
-      // Movies and photos must have data files
-      if (($this->is_photo() || $this->is_movie()) && !$this->loaded()) {
+      // Movies and photos must have data files.  Verify the data file on new items, or if it has
+      // been replaced.
+      if (($this->is_photo() || $this->is_movie()) && $this->data_file) {
         $this->rules["name"]["callbacks"][] = array($this, "valid_data_file");
       }
     }
@@ -841,6 +854,17 @@ class Item_Model extends ORM_MPTT {
       $v->add_error("name", "bad_data_file_path");
     } else if (filesize($this->data_file) == 0) {
       $v->add_error("name", "empty_data_file");
+    }
+
+    if ($this->loaded()) {
+      if ($this->is_photo()) {
+        list ($a, $b, $mime_type) = photo::get_file_metadata($this->data_file);
+      } else if ($this->is_movie()) {
+        list ($a, $b, $mime_type) = movie::get_file_metadata($this->data_file);
+      }
+      if ($mime_type != $this->mime_type) {
+        $v->add_error("name", "cant_change_mime_type");
+      }
     }
   }
 

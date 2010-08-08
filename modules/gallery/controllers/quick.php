@@ -36,25 +36,11 @@ class Quick_Controller extends Controller {
     }
 
     if ($degrees) {
-      gallery_graphics::rotate($item->file_path(), $item->file_path(),
-                               array("degrees" => $degrees));
-
-      list($item->width, $item->height) = getimagesize($item->file_path());
-      $item->resize_dirty= 1;
-      $item->thumb_dirty= 1;
+      $tmpfile = tempnam(TMPPATH, "rotate");
+      gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $degrees));
+      $item->set_data_file($tmpfile);
       $item->save();
-
-      graphics::generate($item);
-
-      // @todo: this is an inadequate way to regenerate album cover thumbnails after rotation.
-      foreach (ORM::factory("item")
-               ->where("album_cover_item_id", "=", $item->id)
-               ->find_all() as $target) {
-        copy($item->thumb_path(), $target->thumb_path());
-        $target->thumb_width = $item->thumb_width;
-        $target->thumb_height = $item->thumb_height;
-        $target->save();
-      }
+      unlink($tmpfile);
     }
 
     if (Input::instance()->get("page_type") == "collection") {
