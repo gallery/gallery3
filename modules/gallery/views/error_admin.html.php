@@ -20,8 +20,21 @@
         margin: 20px auto;
       }
 
-      div#framework_error {
+      #framework_error {
+        height: 6em;
+      }
+
+      #framework_error .crashlogo {
+        position: relative;
+        top: .3em;
+        font-size: 6.0em;
+      }
+
+      #framework_error .title {
+        position: relative;
+        top: -3em;
         text-align: center;
+        margin: 0 auto;
       }
 
       div#error_details {
@@ -137,12 +150,17 @@
   <body>
     <? try { $user = identity::active_user(); } catch (Exception $e) { } ?>
     <div class="big_box" id="framework_error">
-      <h1>
-        <?= t("Dang...  Something went wrong!") ?>
-      </h1>
-      <h2>
-        <?= t("We tried really hard, but it's broken.") ?>
-      </h2>
+      <div class="crashlogo">
+        :-(
+      </div>
+      <div class="title">
+        <h1>
+          <?= t("Dang...  Something went wrong!") ?>
+        </h1>
+        <h2>
+          <?= t("We tried really hard, but it's broken.") ?>
+        </h2>
+      </div>
     </div>
     <div class="big_box" id="error_details">
       <h2>

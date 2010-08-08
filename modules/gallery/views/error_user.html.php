@@ -19,8 +19,21 @@
         margin: 20px auto;
       }
 
-      div#framework_error {
+      #framework_error {
+        height: 8em;
+      }
+
+      #framework_error .crashlogo {
+        position: relative;
+        top: .3em;
+        font-size: 6em;
+      }
+
+      #framework_error .title {
+        position: relative;
+        top: -3em;
         text-align: center;
+        margin: 0 auto;
       }
     </style>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -28,15 +41,20 @@
   </head>
   <body>
     <div class="big_box" id="framework_error">
-      <h1>
-        <?= t("Dang...  Something went wrong!") ?>
-      </h1>
-      <h2>
-        <?= t("We tried really hard, but it's broken.") ?>
-      </h2>
-      <p>
-        <?= t("Talk to your Gallery administrator for help fixing this!") ?>
-      </p>
+      <div class="crashlogo">
+        :-(
+      </div>
+      <div class="title">
+        <h1>
+          <?= t("Dang...  Something went wrong!") ?>
+        </h1>
+        <h2>
+          <?= t("We tried really hard, but it's broken.") ?>
+        </h2>
+        <p>
+          <?= t("Talk to your Gallery administrator for help fixing this!") ?>
+        </p>
+      </div>
     </div>
   </body>
 </html>
