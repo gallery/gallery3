@@ -22,11 +22,15 @@ class Kohana_Exception extends Kohana_Exception_Core {
    * Dump out the full stack trace as part of the text representation of the exception.
    */
   public static function text($e) {
-    return sprintf(
-      "%s [ %s ]: %s\n%s [ %s ]\n%s",
-      get_class($e), $e->getCode(), strip_tags($e->getMessage()),
-      $e->getFile(), $e->getLine(),
-      $e->getTraceAsString());
+    if ($e instanceof Kohana_404_Exception) {
+      return "File not found: " . Router::$complete_uri;
+    } else {
+      return sprintf(
+        "%s [ %s ]: %s\n%s [ %s ]\n%s",
+        get_class($e), $e->getCode(), strip_tags($e->getMessage()),
+        $e->getFile(), $e->getLine(),
+        $e->getTraceAsString());
+    }
   }
 
   /**
