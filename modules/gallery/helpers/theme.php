@@ -111,7 +111,7 @@ class theme_Core {
   }
 
   static function get_info($theme_name) {
-    $theme_name = preg_replace("/[^\w]/", "", $theme_name);
+    $theme_name = preg_replace("/[^a-zA-Z0-9\._-]/", "", $theme_name);
     $file = THEMEPATH . "$theme_name/theme.info";
     $theme_info = new ArrayObject(parse_ini_file($file), ArrayObject::ARRAY_AS_PROPS);
     $theme_info->description = t($theme_info->description);
