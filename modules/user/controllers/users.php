@@ -41,7 +41,7 @@ class Users_Controller extends Controller {
       // Translate ORM validation errors into form error messages
       foreach ($e->validation->errors() as $key => $error) {
         $form->edit_user->inputs[$key]->add_error($error, 1);
-     }
+      }
       $valid = false;
     }
 
