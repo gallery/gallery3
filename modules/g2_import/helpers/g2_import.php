@@ -588,6 +588,20 @@ class g2_import_Core {
         $item->description = self::_decode_html_special_chars(self::extract_description($g2_item));
         $item->owner_id = self::map($g2_item->getOwnerId());
         $item->save();
+
+        // If the item has a preferred derivative with a rotation, then rotate this image
+        // accordingly.  Should we obey scale rules as well?  I vote no because rotation is less
+        // destructive -- you lose too much data from scaling.
+        $g2_preferred = g2(GalleryCoreApi::fetchPreferredSource($g2_item));
+        if ($g2_preferred && $g2_preferred instanceof GalleryDerivative) {
+          if (preg_match("/rotate\|(-?\d+)/", $g2_preferred->getDerivativeOperations(), $matches)) {
+            $tmpfile = tempnam(TMPPATH, "rotate");
+            gallery_graphics::rotate($item->file_path(), $tmpfile, array("degrees" => $matches[1]));
+            $item->set_data_file($tmpfile);
+            $item->save();
+            unlink($tmpfile);
+          }
+        }
       } catch (Exception $e) {
         $exception_info = (string) new G2_Import_Exception(
             t("Corrupt image '%path'", array("path" => $g2_path)),
