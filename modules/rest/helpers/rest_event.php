@@ -55,13 +55,6 @@ class rest_event {
   }
 
   /**
-   * Called when user is editing their own form
-   */
-  static function user_edit_form($user, $form) {
-    self::_get_access_key_form($user, $form);
-  }
-
-  /**
    * Get the form fields for user edit
    */
   static function _get_access_key_form($user, $form) {

@@ -87,6 +87,16 @@ class rest_Core {
     identity::set_active_user($user);
   }
 
+  static function reset_access_key() {
+    $key = ORM::factory("user_access_key")
+      ->where("user_id", "=", identity::active_user()->id)
+      ->find();
+    if ($key->loaded()) {
+      $key->delete();
+    }
+    return rest::access_key();
+  }
+
   static function access_key() {
     $key = ORM::factory("user_access_key")
       ->where("user_id", "=", identity::active_user()->id)
