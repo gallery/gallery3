@@ -838,11 +838,7 @@ class g2_import_Core {
       return;
     }
 
-    $text = $g2_comment->getSubject();
-    if ($text) {
-      $text .= " ";
-    }
-    $text .= $g2_comment->getComment();
+    $text = join("\n", array($g2_comment->getSubject(), $g2_comment->getComment()));
     $text = html_entity_decode($text);
 
     // Just import the fields we know about.  Do this outside of the comment API for now so that
