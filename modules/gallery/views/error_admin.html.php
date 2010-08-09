@@ -116,7 +116,7 @@
         padding-right: 1em;
       }
 
-      #g-platform h2 {
+      #g-platform h2, #g-stats h2 {
         font-size: 1.1em;
       }
     </style>
@@ -174,8 +174,9 @@
         of <a href="http://sourceforge.net/apps/trac/gallery/roadmap">open
         tickets</a> to see if the problem you're seeing has been
         reported.  If you post a request, here's some useful
-        information to include: <?  @$block =
-        gallery_block::get("platform_info"); @print $block; ?>
+        information to include:
+        <?=  @gallery_block::get("platform_info") ?>
+        <?=  @gallery_block::get("stats") ?>
       </p>
       <div id="kohana_error">
         <h3>
