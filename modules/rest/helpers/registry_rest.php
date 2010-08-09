@@ -17,15 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
-class json_Core {
-  /**
-   * JSON Encode a reply to the browser and set the content type to specify that it's a JSON
-   * payload.
-   *
-   * @param  mixed $message string or object to json encode and print
-   */
-  static function reply($message) {
-    header("Content-Type: application/json; charset=" . Kohana::CHARSET);
-    print json_encode($message);
+class registry_rest_Core {
+  static function get($request) {
+    $results = array();
+    foreach (module::active() as $module) {
+      foreach (glob(MODPATH . "{$module->name}/helpers/*_rest.php") as $filename) {
+        $results[] = str_replace("_rest.php", "", basename($filename));
+      }
+    }
+    return array_unique($results);
   }
 }

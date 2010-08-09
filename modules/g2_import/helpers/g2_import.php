@@ -442,6 +442,7 @@ class g2_import_Core {
         "title" => "title",
         "viewCount" => "view_count");
       $direction_map = array(
+        1 => "asc",
         ORDER_ASCENDING => "asc",
         ORDER_DESCENDING => "desc");
       // Only consider G2's first sort order
@@ -837,11 +838,7 @@ class g2_import_Core {
       return;
     }
 
-    $text = $g2_comment->getSubject();
-    if ($text) {
-      $text .= " ";
-    }
-    $text .= $g2_comment->getComment();
+    $text = join("\n", array($g2_comment->getSubject(), $g2_comment->getComment()));
     $text = html_entity_decode($text);
 
     // Just import the fields we know about.  Do this outside of the comment API for now so that
@@ -858,7 +855,6 @@ class g2_import_Core {
     $comment->text = self::_transform_bbcode($text);
     $comment->state = "published";
     $comment->server_http_host = $g2_comment->getHost();
-    $comment->created = $g2_comment->getDate();
     try {
       $comment->save();
     } catch (Exception $e) {
@@ -867,6 +863,14 @@ class g2_import_Core {
             array("id" => $g2_comment_id)),
           $e);
     }
+
+    // Backdate the creation date.  We can't do this at creation time because
+    // Comment_Model::save() will override it.
+    db::update("comments")
+      ->set("created", $g2_comment->getDate())
+      ->set("updated", $g2_comment->getDate())
+      ->where("id", "=", $comment->id)
+      ->execute();
   }
 
   /**

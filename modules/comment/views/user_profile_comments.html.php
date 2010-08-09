@@ -4,8 +4,8 @@
   <? foreach ($comments as $comment): ?>
   <li id="g-comment-<?= $comment->id ?>">
     <p class="g-author">
-      <?= t('on %date for %title ',
-            array("date" => date("Y-M-d H:i:s", $comment->created),
+      <?= t("on %date for %title ",
+            array("date" => gallery::date_time($comment->created),
                   "title" => $comment->item()->title)); ?>
       <a href="<?= $comment->item()->url() ?>">
         <?= $comment->item()->thumb_img(array(), 50) ?>

@@ -24,7 +24,27 @@ class rest_Core {
     Session::instance()->abort_save();
 
     header("X-Gallery-API-Version: " . rest::API_VERSION);
-    if (Input::instance()->get("output") == "html") {
+    switch (Input::instance()->get("output", "json")) {
+    case "json":
+      json::reply($data);
+      break;
+
+    case "jsonp":
+      if (!($callback = Input::instance()->get("callback", ""))) {
+        throw new Rest_Exception(
+          "Bad Request", 400, array("errors" => array("callback" => "missing")));
+      }
+
+      if (preg_match('/^[$A-Za-z_][0-9A-Za-z_]*$/', $callback) == 1) {
+        header("Content-type: application/javascript");
+        print "$callback(" . json_encode($data) . ")";
+      } else {
+        throw new Rest_Exception(
+          "Bad Request", 400, array("errors" => array("callback" => "invalid")));
+      }
+      break;
+
+    case "html":
       header("Content-type: text/html");
       if ($data) {
         $html = preg_replace(
@@ -34,8 +54,10 @@ class rest_Core {
         $html = t("Empty response");
       }
       print "<pre>$html</pre>";
-    } else {
-      json::reply($data);
+      break;
+
+    default:
+      throw new Rest_Exception("Bad Request", 400);
     }
   }
 

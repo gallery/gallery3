@@ -36,11 +36,11 @@
         </a>
         <? if ($comment->author()->guest): ?>
         <?= t('on %date %name said',
-              array("date" => date("Y-M-d H:i:s", $comment->created),
-                    "name" => html::clean($comment->author_name()))); ?>
+            array("date" => gallery::date_time($comment->created),
+                  "name" => html::clean($comment->author_name()))); ?>
         <? else: ?>
         <?= t('on %date <a href="%url">%name</a> said',
-              array("date" => date("Y-M-d H:i:s", $comment->created),
+              array("date" => gallery::date_time($comment->created),
                     "url" => user_profile::url($comment->author_id),
                     "name" => html::clean($comment->author_name()))); ?>
         <? endif ?>
