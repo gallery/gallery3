@@ -72,12 +72,14 @@ class identity_Core {
         auth::login(IdentityProvider::instance()->admin_user());
       }
 
-      if (!$session->get("group_ids")) {
+      // Cache the group ids for a day to trade off performance for security updates.
+      if (!$session->get("group_ids") || $session->get("group_ids_timeout", 0) < time()) {
         $ids = array();
         foreach ($user->groups() as $group) {
           $ids[] = $group->id;
         }
         $session->set("group_ids", $ids);
+        $session->set("group_ids_timeout", time() + 86400);
       }
     } catch (Exception $e) {
       // Log it, so we at least have so notification that we swallowed the exception.
