@@ -66,7 +66,8 @@ class identity_Core {
 
       // The installer cannot set a user into the session, so it just sets an id which we should
       // upconvert into a user.
-      // @todo set the user name into the session instead of 2 and then use it to get the user object
+      // @todo set the user name into the session instead of 2 and then use it to get the
+      //       user object
       if ($user === 2) {
         auth::login(IdentityProvider::instance()->admin_user());
       }
