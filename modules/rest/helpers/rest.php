@@ -45,7 +45,7 @@ class rest_Core {
       break;
 
     case "html":
-      header("Content-type: text/html");
+      header("Content-type: text/html; charset=UTF-8");
       if ($data) {
         $html = preg_replace(
           "#([\w]+?://[\w]+[^ \'\"\n\r\t<]*)#ise", "'<a href=\"\\1\" >\\1</a>'",
