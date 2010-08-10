@@ -127,7 +127,7 @@ class File_Proxy_Controller extends Controller {
 
     // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
     if ($item->is_movie() && $type != "albums") {
-      header("Content-type: image/jpeg");
+      header("Content-Type: image/jpeg");
     } else {
       header("Content-Type: $item->mime_type");
     }
