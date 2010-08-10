@@ -974,13 +974,26 @@ class Item_Model extends ORM_MPTT {
     unset($data["album_cover_item_id"]);
 
     if (access::can("view_full", $this) && $this->is_photo()) {
-      $data["file_url"] = $this->file_url(true);
+      if (access::user_can(identity::guest(), "view_full", $this)) {
+        $data["file_url"] = $this->file_url(true);
+      } else {
+        $data["file_url"] = rest::url("data", $this, "full");
+      }
     }
 
     if (($tmp = $this->resize_url(true)) && $this->is_photo()) {
-      $data["resize_url"] = $tmp;
+      if (access::user_can(identity::guest(), "view", $this)) {
+        $data["resize_url"] = $tmp;
+      } else {
+        $data["resize_url"] = rest::url("data", $this, "resize");
+      }
     }
-    $data["thumb_url"] = $this->thumb_url(true);
+
+    if (access::user_can(identity::guest(), "view", $this)) {
+      $data["thumb_url"] = $this->thumb_url(true);
+    } else {
+      $data["thumb_url"] = rest::url("data", $this, "thumb");
+    }
     $data["can_edit"] = access::can("edit", $this);
 
     // Elide some internal-only data that is going to cause confusion in the client.
