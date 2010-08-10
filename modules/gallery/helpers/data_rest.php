@@ -17,6 +17,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
+/**
+ * This resource returns the raw contents of Item_Model data files.  It's analogous to the
+ * file_proxy controller, but it uses the REST authentication model.
+ */
 class data_rest_Core {
   static function get($request) {
     $item = rest::resolve($request->url);
@@ -29,41 +34,41 @@ class data_rest_Core {
 
     switch ($p->size) {
     case "thumb":
-      $entity = array(
-        "width" => $item->thumb_width,
-        "height" => $item->thumb_height,
-        "path" => $item->thumb_path());
+      $file = $item->thumb_path();
       break;
 
     case "resize":
-      $entity = array(
-        "width" => $item->resize_width,
-        "height" => $item->resize_height,
-        "path" => $item->resize_path());
+      $file = $item->resize_path();
       break;
 
     case "full":
-      $entity = array(
-        "width" => $item->width,
-        "height" => $item->height,
-        "path" => $item->file_path());
+      $file = $item->file_path();
       break;
     }
 
-    if (file_exists($entity["path"]) && is_file($entity["path"])) {
-      $entity["size"] = filesize($entity["path"]);
-      $entity["contents"] = file_get_contents($entity["path"]);
-    } else {
-      $entity["size"] = null;
-      $entity["contents"] = null;
+    if (!file_exists($file)) {
+      throw new Kohana_404_Exception();
     }
-    unset($entity["path"]);
 
-    $result = array(
-      "url" => $request->url,
-      "entity" => $entity,
-      "relationships" => rest::relationships("data", $item));
-    return $result;
+    // Note: this code is roughly duplicated in data_rest, so if you modify this, please look to
+    // see if you should make the same change there as well.
+    //
+    // We don't have a cache buster in the url, so don't set cache headers here.
+    // We don't need to save the session for this request
+    Session::instance()->abort_save();
+
+    // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
+    if ($item->is_movie() && $p->size == "thumb") {
+      header("Content-Type: image/jpeg");
+    } else {
+      header("Content-Type: {$item->mime_type}");
+    }
+    Kohana::close_buffers(false);
+    readfile($file);
+
+    // We must exit here to keep the regular REST framework reply code from adding more bytes on
+    // at the end or tinkering with headers.
+    exit;
   }
 
   static function resolve($id) {
@@ -74,7 +79,7 @@ class data_rest_Core {
     return $item;
   }
 
-  static function url($item) {
-    return url::abs_site("rest/data/{$item->id}");
+  static function url($item, $size) {
+    return url::abs_site("rest/data/{$item->id}?size=$size");
   }
 }
