@@ -77,9 +77,11 @@
       </div>
       <div id="g-footer" class="g-inline ui-helper-clearfix">
         <?= $theme->admin_footer() ?>
-        <div>
+        <? if (module::get_var("gallery", "show_credits")): ?>
+        <ul id="g-credits" class="g-inline">
           <?= $theme->admin_credits() ?>
-        </div>
+        </ul>
+        <? endif ?>
       </div>
     </div>
     <?= $theme->admin_page_bottom() ?>
