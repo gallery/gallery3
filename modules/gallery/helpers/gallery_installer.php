@@ -23,7 +23,8 @@ class gallery_installer {
     $db->query("CREATE TABLE {access_caches} (
                  `id` int(9) NOT NULL auto_increment,
                  `item_id` int(9),
-                 PRIMARY KEY (`id`))
+                 PRIMARY KEY (`id`),
+                 KEY (`item_id`))
                DEFAULT CHARSET=utf8;");
 
     $db->query("CREATE TABLE {access_intents} (
@@ -299,7 +300,7 @@ class gallery_installer {
     module::set_var("gallery", "simultaneous_upload_limit", 5);
     module::set_var("gallery", "admin_area_timeout", 90 * 60);
     module::set_var("gallery", "maintenance_mode", 0);
-    module::set_version("gallery", 33);
+    module::set_version("gallery", 34);
   }
 
   static function upgrade($version) {
@@ -577,6 +578,11 @@ class gallery_installer {
     if ($version == 32) {
       $db->query("ALTER TABLE {items} ADD KEY (`left_ptr`)");
       module::set_version("gallery", $version = 33);
+    }
+
+    if ($version == 33) {
+      $db->query("ALTER TABLE {access_caches} ADD KEY (`item_id`)");
+      module::set_version("gallery", $version = 34);
     }
   }
 

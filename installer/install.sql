@@ -10,7 +10,8 @@ CREATE TABLE {access_caches} (
   `view_full_2` binary(1) NOT NULL DEFAULT '0',
   `edit_2` binary(1) NOT NULL DEFAULT '0',
   `add_2` binary(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `item_id` (`item_id`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {access_caches} VALUES (1,1,'1','0','0','1','0','0');
@@ -243,7 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',33,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',34,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
 INSERT INTO {modules} VALUES (4,1,'organize',1,4);
