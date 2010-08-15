@@ -56,7 +56,7 @@ class User_Profile_Controller extends Controller {
         ->to($user->email)
         ->subject(html::clean($form->message->subject->value))
         ->header("Mime-Version", "1.0")
-        ->header("Content-type", "text/html; charset=iso-8859-1")
+        ->header("Content-type", "text/html; charset=UTF-8")
         ->reply_to($form->message->reply_to->value)
         ->message(html::purify($form->message->message->value))
         ->send();

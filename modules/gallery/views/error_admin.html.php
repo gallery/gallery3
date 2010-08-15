@@ -120,7 +120,7 @@
         font-size: 1.1em;
       }
     </style>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title><?= t("Something went wrong!") ?></title>
 
     <script type="text/javascript">

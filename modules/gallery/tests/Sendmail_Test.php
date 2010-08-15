@@ -65,14 +65,14 @@ class Sendmail_Test extends Gallery_Unit_Test_Case {
                 "From: from@gallery3.com\n" .
                 "Reply-To: public@gallery3.com\n" .
                 "MIME-Version: 1.0\n" .
-                "Content-type: text/html; charset=iso-8859-1\r\n" .
+                "Content-Type: text/html; charset=UTF-8\r\n" .
                 "Subject: Test Email Unit test\r\n\r\n" .
                 "<html><body><p>This is an html msg</p></body></html>";
     $result = Sendmail_For_Test::factory()
       ->to("receiver@someemail.com")
       ->subject("Test Email Unit test")
       ->header("MIME-Version", "1.0")
-      ->header("Content-type", "text/html; charset=iso-8859-1")
+      ->header("Content-Type", "text/html; charset=UTF-8")
       ->message("<html><body><p>This is an html msg</p></body></html>")
       ->send()
       ->send_text;
