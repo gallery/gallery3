@@ -116,6 +116,8 @@ class File_Proxy_Controller extends Controller {
       throw new Kohana_404_Exception();
     }
 
+    header("Content-Length: " . filesize($file));
+
     header("Pragma:");
     // Check that the content hasn't expired or it wasn't changed since cached
     expires::check(2592000, $item->updated);

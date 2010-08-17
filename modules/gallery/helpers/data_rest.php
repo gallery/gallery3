@@ -57,9 +57,17 @@ class data_rest_Core {
     // We don't need to save the session for this request
     Session::instance()->abort_save();
 
+    if ($item->is_album() && !$item->album_cover_item_id) {
+      // No thumbnail.  Return nothing.
+      // @todo: what should we do here?
+      return;
+    }
+
     // Dump out the image.  If the item is a movie, then its thumbnail will be a JPG.
     if ($item->is_movie() && $p->size == "thumb") {
       header("Content-Type: image/jpeg");
+    } else if ($item->is_album()) {
+      header("Content-Type: " . $item->album_cover()->mime_type);
     } else {
       header("Content-Type: {$item->mime_type}");
     }

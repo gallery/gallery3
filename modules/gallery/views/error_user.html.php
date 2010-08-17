@@ -36,7 +36,7 @@
         margin: 0 auto;
       }
     </style>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title><?= t("Something went wrong!") ?></title>
   </head>
   <body>

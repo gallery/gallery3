@@ -1,5 +1,5 @@
 /**
- * Fix display in IE 6, 7
+ * Fix display in IE 6, 7, and 8
  */
 
 #g-banner {
@@ -26,9 +26,15 @@ input.submit {
   display: inline !important;
 }
 
-.g-short-form input[type='submit'] {
+.g-short-form input.text,
+.g-short-form input.submit {
+  font-size: 1em;
   line-height: 1em;
   padding: .38em .3em;
+}
+
+#g-search-form input#q {
+  width: 300px;
 }
 
 #g-add-tag-form input.textbox {

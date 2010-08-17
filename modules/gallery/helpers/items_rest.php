@@ -80,7 +80,7 @@ class items_rest_Core {
                        "relationships" => rest::relationships("item", $item));
     if ($item->type == "album") {
       $members = array();
-      foreach ($item->children() as $child) {
+      foreach ($item->viewable()->children() as $child) {
         $members[] = rest::url("item", $child);
       }
       $item_rest["members"] = $members;

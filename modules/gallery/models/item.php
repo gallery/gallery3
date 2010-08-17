@@ -668,9 +668,9 @@ class Item_Model extends ORM_MPTT {
   public function resize_img($extra_attrs) {
     $attrs = array_merge($extra_attrs,
             array("src" => $this->resize_url(),
-              "alt" => $this->title,
-              "width" => $this->resize_width,
-              "height" => $this->resize_height)
+                  "alt" => $this->title,
+                  "width" => $this->resize_width,
+                  "height" => $this->resize_height)
             );
     // html::image forces an absolute url which we don't want
     return "<img" . html::attributes($attrs) . "/>";
@@ -973,27 +973,25 @@ class Item_Model extends ORM_MPTT {
     }
     unset($data["album_cover_item_id"]);
 
-    if (access::can("view_full", $this) && $this->is_photo()) {
-      if (access::user_can(identity::guest(), "view_full", $this)) {
-        $data["file_url"] = $this->file_url(true);
-      } else {
-        $data["file_url"] = rest::url("data", $this, "full");
-      }
+    if (access::can("view_full", $this) && !$this->is_album()) {
+      $data["file_url"] = rest::url("data", $this, "full");
+    }
+    if (access::user_can(identity::guest(), "view_full", $this)) {
+      $data["file_url_public"] = $this->file_url(true);
     }
 
-    if (($tmp = $this->resize_url(true)) && $this->is_photo()) {
+    if ($this->is_photo()) {
+      $data["resize_url"] = rest::url("data", $this, "resize");
       if (access::user_can(identity::guest(), "view", $this)) {
-        $data["resize_url"] = $tmp;
-      } else {
-        $data["resize_url"] = rest::url("data", $this, "resize");
+        $data["resize_url_public"] = $this->resize_url(true);
       }
     }
 
+    $data["thumb_url"] = rest::url("data", $this, "thumb");
     if (access::user_can(identity::guest(), "view", $this)) {
-      $data["thumb_url"] = $this->thumb_url(true);
-    } else {
-      $data["thumb_url"] = rest::url("data", $this, "thumb");
+      $data["thumb_url_public"] = $this->thumb_url(true);
     }
+
     $data["can_edit"] = access::can("edit", $this);
 
     // Elide some internal-only data that is going to cause confusion in the client.

@@ -61,7 +61,7 @@ class Password_Controller extends Controller {
         ->to($user->email)
         ->subject(t("Password Reset Request"))
         ->header("Mime-Version", "1.0")
-        ->header("Content-type", "text/html; charset=iso-8859-1")
+        ->header("Content-type", "text/html; charset=UTF-8")
         ->message($message->render())
         ->send();
 

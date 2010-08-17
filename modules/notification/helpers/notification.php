@@ -185,7 +185,7 @@ class notification {
           ->to($email)
           ->subject($pending->subject)
           ->header("Mime-Version", "1.0")
-          ->header("Content-type", "text/html; charset=utf-8")
+          ->header("Content-Type", "text/html; charset=UTF-8")
           ->message($pending->body)
           ->send();
         $pending->delete();
@@ -199,7 +199,7 @@ class notification {
           ->to($email)
           ->subject(t("Multiple events have occurred")) // @todo fix this terrible subject line
           ->header("Mime-Version", "1.0")
-          ->header("Content-type", "text/html; charset=utf-8")
+          ->header("Content-Type", "text/html; charset=UTF-8")
           ->message($text)
           ->send();
       }
@@ -213,7 +213,7 @@ class notification {
           ->to($subscribers)
           ->subject($subject)
           ->header("Mime-Version", "1.0")
-          ->header("Content-type", "text/html; charset=utf-8")
+          ->header("Content-Type", "text/html; charset=UTF-8")
           ->message($text)
           ->send();
       } else {
