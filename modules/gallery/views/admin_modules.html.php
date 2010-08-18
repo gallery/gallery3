@@ -18,7 +18,7 @@
             height: 400,
             width: 500,
             position: "center",
-            title: <?= t("Confirm Module Activation")->for_js() ?>,
+            title: <?= t("Confirm module activation")->for_js() ?>,
             buttons: {
               <?= t("Continue")->for_js() ?>: function() {
                 $("form", this).submit();
