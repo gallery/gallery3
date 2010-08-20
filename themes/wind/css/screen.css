@@ -319,6 +319,23 @@ td {
   background-color: #fff;
 }
 
+/* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+#g-edit-permissions-form td {
+  background-image: none;
+}
+
+#g-edit-permissions-form fieldset {
+  border: 1px solid #ccc;
+}
+
+#g-permissions .g-denied {
+  background-color: #fcc;
+}
+
+#g-permissions .g-allowed {
+  background-color: #cfc;
+}
+
 /** *******************************************************************
  * 5) Navigation and menus
  *********************************************************************/
