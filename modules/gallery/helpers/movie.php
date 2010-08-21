@@ -84,7 +84,7 @@ class movie_Core {
   }
 
   static function find_ffmpeg() {
-    if (!$ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) {
+    if (!($ffmpeg_path = module::get_var("gallery", "ffmpeg_path")) || !file_exists($ffmpeg_path)) {
       $graphics_path = module::get_var("gallery", "graphics_toolkit_path", null);
 
       putenv("PATH=" . getenv("PATH") . (empty($graphics_path) ? "" : ":$graphics_path") .
