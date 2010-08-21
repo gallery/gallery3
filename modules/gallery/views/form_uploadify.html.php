@@ -9,7 +9,7 @@
       uploader: "<?= url::file("lib/uploadify/uploadify.swf") ?>",
       script: "<?= url::site("uploader/add_photo/{$album->id}") ?>",
       scriptData: <?= json_encode($script_data) ?>,
-      fileExt: "*.gif;*.jpg;*.jpeg;*.png;*.flv;*.mp4;*.m4v;*.GIF;*.JPG;*.JPEG;*.PNG;*.FLV;*.MP4;*.M4V",
+      fileExt: "*.gif;*.jpg;*.jpeg;*.png;*.GIF;*.JPG;*.JPEG;*.PNG<? if ($movies_allowed): ?>;*.flv;*.mp4;*.m4v;*.FLV;*.MP4;*.M4V<? endif ?>",
       fileDesc: <?= t("Photos and movies")->for_js() ?>,
       cancelImg: "<?= url::file("lib/uploadify/cancel.png") ?>",
       simUploadLimit: <?= $simultaneous_upload_limit ?>,
@@ -78,14 +78,22 @@
   });
 </script>
 
-<? if (ini_get("suhosin.session.encrypt")): ?>
-<ul id="g-action-status" class="g-message-block">
-  <li class="g-error">
+<? if ($suhosin_session_encrypt || !$movies_allowed): ?>
+<div class="g-message-block g-info">
+  <? if ($suhosin_session_encrypt): ?>
+  <p class="g-error">
     <?= t("Error: your server is configured to use the <a href=\"%encrypt_url\"><code>suhosin.session.encrypt</code></a> setting from <a href=\"%suhosin_url\">Suhosin</a>.  You must disable this setting to upload photos.",
         array("encrypt_url" => "http://www.hardened-php.net/suhosin/configuration.html#suhosin.session.encrypt",
     "suhosin_url" => "http://www.hardened-php.net/suhosin/")) ?>
-  </li>
-</ul>
+  </p>
+  <? endif ?>
+
+  <? if (!$movies_allowed): ?>
+  <p class="g-warning">
+    <?= t("Can't find <i>ffmpeg</i> on your system. Movie uploading disabled. <a href=\"%help_url\">Help!</a>", array("help_url" => "http://codex.gallery2.org/Gallery3:FAQ#Why_does_it_say_I.27m_missing_ffmpeg.3F")) ?>
+  </p>
+  <? endif ?>
+</div>
 <? endif ?>
 
 <div>
