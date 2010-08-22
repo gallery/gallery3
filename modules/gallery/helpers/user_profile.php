@@ -48,6 +48,7 @@ class user_profile_Core {
       ->rules("required")
       ->error_messages("required", t("You must enter a message"));
     module::event("user_profile_contact_form", $form);
+    module::event("captcha_protect_form", $form);
     $group->submit("")->value(t("Send"));
     return $form;
   }
