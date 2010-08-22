@@ -42,6 +42,7 @@ class Organize_Controller extends Controller {
     $v->file_filter = addslashes($file_filter);
     $v->sort_order = addslashes(json_encode($sort_order));
     $v->sort_fields = addslashes(json_encode($sort_fields));
+    $v->selected_id = Input::instance()->get("selected_id", null);
     $v->rest_uri = url::site("rest") . "/";
     $v->controller_uri = url::site("organize") . "/";
     $v->swf_uri = url::file("modules/organize/lib/Gallery3WebClient.swf?") .

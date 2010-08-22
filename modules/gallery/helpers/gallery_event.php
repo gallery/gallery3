@@ -447,7 +447,6 @@ class gallery_event_Core {
         break;
       }
       $cover_title = t("Choose as the album cover");
-      $move_title = t("Move to another album");
 
       $csrf = access::csrf_token();
 
@@ -476,17 +475,6 @@ class gallery_event_Core {
             ->ajax_handler("function(data) { " .
                            "\$.gallery_replace_image(data, \$('$thumb_css_selector')) }")
             ->url(url::site("quick/rotate/$item->id/cw?csrf=$csrf&amp;from_id={$theme_item->id}&amp;page_type=$page_type")));
-      }
-
-      // @todo Don't move photos from the photo page; we don't yet have a good way of redirecting
-      // after move
-      if ($theme->page_subtype() == "album") {
-        $options_menu
-          ->append(Menu::factory("dialog")
-                   ->id("move")
-                   ->label($move_title)
-                   ->css_class("ui-icon-folder-open")
-                   ->url(url::site("move/browse/$item->id")));
       }
 
       $parent = $item->parent();

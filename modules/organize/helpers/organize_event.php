@@ -32,13 +32,23 @@ class organize_event_Core {
   }
 
   static function context_menu($menu, $theme, $item) {
-    if ($item->is_album() && access::can("edit", $item)) {
-      $menu->get("options_menu")
-        ->append(Menu::factory("dialog")
-                 ->id("organize")
-                 ->label(t("Organize album"))
-                 ->css_class("ui-icon-folder-open g-organize-link")
-                 ->url(url::site("organize/dialog/{$item->id}")));
+    if (access::can("edit", $item)) {
+      if ($item->is_album()) {
+        $menu->get("options_menu")
+          ->append(Menu::factory("dialog")
+                   ->id("organize")
+                   ->label(t("Organize album"))
+                   ->css_class("ui-icon-folder-open g-organize-link")
+                   ->url(url::site("organize/dialog/{$item->id}")));
+      } else {
+        $parent = $item->parent();
+        $menu->get("options_menu")
+          ->append(Menu::factory("dialog")
+                   ->id("move")
+                   ->label(t("Move to another album"))
+                   ->css_class("ui-icon-folder-open g-organize-link")
+                   ->url(url::site("organize/dialog/{$parent->id}?selected_id={$item->id}")));
+      }
     }
   }
 

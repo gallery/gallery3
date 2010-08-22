@@ -94,6 +94,7 @@
       sortOrder: "<?= $sort_order ?>",
       sortFields: "<?= $sort_fields ?>",
       albumId: "<?= $album->id ?>",
+      selectedId: "<?= $selected_id ?>",
       restUri: "<?= $rest_uri ?>",
       controllerUri: "<?= $controller_uri ?>"
     };
