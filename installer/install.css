@@ -4,8 +4,12 @@ h1, h2, h3 {
 
 body {
     background: #eee;
-    font-family: Trebuchet MS;
+    font-family: Trebuchet MS, Verdana;
     font-size: 1.1em;
+}
+
+em {
+  font-style: italic;
 }
 
 div#outer {
@@ -47,11 +51,14 @@ fieldset {
     border: 0px;
     padding-left: 0px;
     margin-top: 1em;
+    border: 1px solid #ccc;
+    padding: 8px;
 }
 
 fieldset legend {
     font-weight: bold;
-    padding-left: 0px;
+    margin: 8px;
+    padding: 2px;
 }
 
 table#db_info {
@@ -66,6 +73,9 @@ code {
   background: #eee;
   border: 1px solid #bbb;
   padding: 2px;
+  display: block;
+  width: 200px;
+  margin: 4px 4px 4px 20px;
 }
 
 code.location {
@@ -74,3 +84,9 @@ code.location {
   padding: 4px;
   width: auto;
 }
+
+span.subtext {
+  font-size: .7em;
+  color: #999;
+}
+
