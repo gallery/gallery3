@@ -411,7 +411,9 @@ class Item_Model extends ORM_MPTT {
         }
 
         // This will almost definitely trigger another save, so put it at the end so that we're
-        // tail recursive.
+        // tail recursive.  Null out the data file variable first, otherwise the next save will
+        // trigger an item_updated_data_file event.
+        $this->data_file = null;
         module::event("item_created", $this);
       } else {
         // Update an existing item
