@@ -21,15 +21,6 @@ class notification_event_Core {
   // The assumption is that the exception was logged at a lower level, but we
   // don't want to screw up the processing that was generating the notification
   // so we don't pass the exception up the call stack
-  static function item_updated($original, $new) {
-    try {
-      notification::send_item_updated($original, $new);
-    } catch (Exception $e) {
-      Kohana_Log::add("error", "@todo notification_event::item_updated() failed");
-      Kohana_Log::add("error", $e->getMessage() . "\n" . $e->getTraceAsString());
-    }
-  }
-
   static function item_created($item) {
     try {
       notification::send_item_add($item);
