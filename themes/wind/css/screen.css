@@ -336,6 +336,15 @@ td {
   background-color: #cfc;
 }
 
+#g-permissions .g-breadcrumbs a {
+  border: 1px solid #fff;
+}
+
+#g-permissions .g-active a {
+  border: 1px solid #ddd;
+  background: #eee;
+}
+
 /** *******************************************************************
  * 5) Navigation and menus
  *********************************************************************/
