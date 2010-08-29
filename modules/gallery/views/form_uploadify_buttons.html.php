@@ -4,5 +4,5 @@
   <?= t("Done") ?>
 </button>
 <button id="g-upload-cancel-all" class="ui-state-default ui-corner-all ui-state-disabled" onclick="$('#g-uploadify').uploadifyClearQueue();return false;" disabled="disabled">
-  <?= t("Cancel All") ?>
+  <?= t("Cancel uploads") ?>
 </button>
