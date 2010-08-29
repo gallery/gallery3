@@ -244,7 +244,7 @@ CREATE TABLE {modules} (
   KEY `weight` (`weight`)
 ) AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO {modules} VALUES (1,1,'gallery',35,1);
+INSERT INTO {modules} VALUES (1,1,'gallery',36,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
 INSERT INTO {modules} VALUES (4,1,'organize',2,4);
@@ -395,7 +395,7 @@ CREATE TABLE {vars} (
   `value` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `module_name` (`module_name`,`name`)
-) AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO {vars} VALUES (NULL,'gallery','active_site_theme','wind');
 INSERT INTO {vars} VALUES (NULL,'gallery','active_admin_theme','admin_wind');
@@ -414,6 +414,7 @@ INSERT INTO {vars} VALUES (NULL,'gallery','maintenance_mode','0');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_sidebar','a:4:{i:2;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"block_adder\";}i:3;a:2:{i:0;s:7:\"gallery\";i:1;s:5:\"stats\";}i:4;a:2:{i:0;s:7:\"gallery\";i:1;s:13:\"platform_info\";}i:5;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"project_news\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','visible_title_length','15');
 INSERT INTO {vars} VALUES (NULL,'gallery','date_time_format','Y-M-d H:i:s');
+INSERT INTO {vars} VALUES (NULL,'gallery','favicon_url','lib/images/favicon.ico');
 INSERT INTO {vars} VALUES (NULL,'gallery','date_format','Y-M-d');
 INSERT INTO {vars} VALUES (NULL,'gallery','blocks_dashboard_center','a:3:{i:6;a:2:{i:0;s:7:\"gallery\";i:1;s:7:\"welcome\";}i:7;a:2:{i:0;s:7:\"gallery\";i:1;s:12:\"photo_stream\";}i:8;a:2:{i:0;s:7:\"gallery\";i:1;s:11:\"log_entries\";}}');
 INSERT INTO {vars} VALUES (NULL,'gallery','choose_default_tookit','1');
