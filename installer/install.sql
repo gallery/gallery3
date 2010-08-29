@@ -247,7 +247,7 @@ CREATE TABLE {modules} (
 INSERT INTO {modules} VALUES (1,1,'gallery',34,1);
 INSERT INTO {modules} VALUES (2,1,'user',3,2);
 INSERT INTO {modules} VALUES (3,1,'comment',3,3);
-INSERT INTO {modules} VALUES (4,1,'organize',1,4);
+INSERT INTO {modules} VALUES (4,1,'organize',2,4);
 INSERT INTO {modules} VALUES (5,1,'info',1,5);
 INSERT INTO {modules} VALUES (6,1,'rest',3,6);
 INSERT INTO {modules} VALUES (7,1,'rss',1,7);
