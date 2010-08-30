@@ -399,26 +399,6 @@ th {
   background-color: #FFF;
 }
 
-/* Theme options  ~~~~~~~~~~~~~~~~~~~~~~~~ */
-#g-theme-options-form {
-  border: 1px solid #a6c9e2;
-}
-#g-theme-options-form-tabs {
-  border: none !important;
-}
-#g-theme-options-form fieldset {
-  border: none;
-}
-
-.ui-tabs .ui-tabs-nav li a {
-  padding: 0 1em;
-}
-
-.ui-tabs .ui-tabs-nav li a.g-error {
-  background: none no-repeat scroll 0 0 transparent;
-  color: #FF0000 !important;
-}
-
 /* Language options  ~~~~~~~~~~~~~~~~~~~~~~~~ */
 #g-share-translations-form fieldset {
   border: 0px;

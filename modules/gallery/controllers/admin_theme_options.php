@@ -102,8 +102,7 @@ class Admin_Theme_Options_Controller extends Admin_Controller {
 
     module::event("theme_edit_form", $form);
 
-    $group = $form->group("buttons")
-      ->set_attr("style","border: none");
+    $group = $form->group("buttons");
     $group->submit("")->value(t("Save"));
     return $form;
   }
