@@ -689,8 +689,7 @@ class g2_import_Core {
         $title = $g2_item->getTitle();
         $title or $title = $g2_item->getPathComponent();
         $messages[] =
-          t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; " .
-            "(imported as <a href=\"%g3_url\">%title</a>)",
+          t("<a href=\"%g2_url\">%title</a> from Gallery 2 could not be processed; (imported as <a href=\"%g3_url\">%title</a>)",
             array("g2_url" => $g2_item_url,
                   "g3_url" => $item->url(),
                   "title" => $title));

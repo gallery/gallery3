@@ -338,8 +338,7 @@ class graphics_Core {
         } else {
           $toolkits->imagemagick->installed = false;
           $toolkits->imagemagick->error =
-            t("ImageMagick is installed, but PHP's open_basedir restriction " .
-              "prevents Gallery from using it.");
+            t("ImageMagick is installed, but PHP's open_basedir restriction prevents Gallery from using it.");
         }
       } else {
         $toolkits->imagemagick->installed = false;
@@ -363,8 +362,7 @@ class graphics_Core {
         } else {
           $toolkits->graphicsmagick->installed = false;
           $toolkits->graphicsmagick->error =
-            t("GraphicsMagick is installed, but PHP's open_basedir restriction " .
-              "prevents Gallery from using it.");
+            t("GraphicsMagick is installed, but PHP's open_basedir restriction prevents Gallery from using it.");
         }
       } else {
         $toolkits->graphicsmagick->installed = false;
