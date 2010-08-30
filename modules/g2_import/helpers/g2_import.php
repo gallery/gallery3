@@ -845,6 +845,11 @@ class g2_import_Core {
                array("id" => $g2_comment_id, "exception" => (string)$e));
     }
 
+    if (self::map($g2_comment->getId())) {
+      // Already imported
+      return;
+    }
+
     $item_id = self::map($g2_comment->getParentId());
     if (empty($item_id)) {
       // Item was not mapped.
@@ -876,6 +881,8 @@ class g2_import_Core {
             array("id" => $g2_comment_id)),
           $e);
     }
+
+    self::set_map($g2_comment->getId(), $comment->id, "comment");
 
     // Backdate the creation date.  We can't do this at creation time because
     // Comment_Model::save() will override it.
