@@ -178,7 +178,17 @@ class g2_import_Core {
            "module", "rewrite", "modrewrite.embeddedLocation", $g2_embed_location));
       g2($gallery->getStorage()->checkPoint());
     }
-    self::$g2_base_url = $g2_embed_location;
+
+    if ($g2_embed_location) {
+      self::$g2_base_url = $g2_embed_location;
+    } else {
+      self::$g2_base_url = $GLOBALS["gallery"]->getUrlGenerator()->generateUrl(
+        array(),
+        array("forceSessionId" => false,
+              "htmlEntities" => false,
+              "urlEncode" => false,
+              "useAuthToken" => false));
+    }
 
     return true;
   }
