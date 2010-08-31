@@ -78,6 +78,10 @@
   margin-bottom: 0
 }
 
+#g-add-photos-status-message {
+  float: right;
+}
+
 /* Permissions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #g-edit-permissions-form {

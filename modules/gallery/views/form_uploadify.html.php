@@ -3,7 +3,24 @@
 <script type="text/javascript" src="<?= url::file("lib/uploadify/jquery.uploadify.min.js") ?>"></script>
 <script type="text/javascript">
   <? $flash_minimum_version = "9.0.24" ?>
+  var success_count = 0;
+  var error_count = 0;
+  var updating = 0;
   $("#g-add-photos-canvas").ready(function () {
+    var update_status = function() {
+      if (updating) {
+        // poor man's mutex
+        setTimeout(function() { update_status(); }, 500);
+      }
+      updating = 1;
+      $.get("<?= url::site("uploader/status/_S/_E") ?>"
+            .replace("_S", success_count).replace("_E", error_count),
+          function(data) {
+            $("#g-add-photos-status-message").html(data);
+            updating = 0;
+          });
+    };
+
     if (swfobject.hasFlashPlayerVersion("<?= $flash_minimum_version ?>")) {
       $("#g-uploadify").uploadify({
         width: 150,
@@ -40,13 +57,12 @@
         onComplete: function(event, queueID, fileObj, response, data) {
           var re = /^error: (.*)$/i;
           var msg = re.exec(response);
-          if (msg) {
-            $("#g-add-photos-status ul").append(
-              "<li class=\"g-error\">" + fileObj.name + " - " + msg[1] + "</li>");
-          } else {
-            $("#g-add-photos-status ul").append(
-              "<li class=\"g-success\">" + fileObj.name + " - " + <?= t("Completed")->for_js() ?> + "</li>");
-          }
+          $("#g-add-photos-status ul").append(
+            "<li id=\"q" + queueID + "\" class=\"g-success\">" + fileObj.name + " - " +
+            <?= t("Completed")->for_js() ?> + "</li>");
+          setTimeout(function() { $("#q" + queueID).slideUp("slow") }, 5000);
+          success_count++;
+          update_status();
           return true;
         },
         onError: function(event, queueID, fileObj, errorObj) {
@@ -73,6 +89,8 @@
           $("#g-add-photos-status ul").append(
             "<li class=\"g-error\">" + fileObj.name + msg + "</li>");
           $("#g-uploadify" + queueID).remove();
+          error_count++;
+          update_status();
         },
         onSelect: function(event) {
           if ($("#g-upload-cancel-all").hasClass("ui-state-disabled")) {
